@@ -856,3 +856,19 @@ them. Asks, from what I found:
 4. **Starting setups:** what each shop module of the seeded works is set to at day 0, as seed state
    (the yard's welding bays, machining centres, assembly shop and building dock).
 5. Gates (`making.module` on a gate) aren't built yet: their parts and the ring's assembly come next.
+
+**Starting stock and setups (2026-10-05: the user wants things built, and chose the registry for
+this).** What the game needs, as seed state of the world at day 0:
+
+- **Stock lying in each works' store and each warehouse:** per facility, a list of `{ item, quantity }`
+  (stock keys; kg for bulk stock, a count for parts, products and hulls). Enough at least for
+  Port Trethi's chain to run until ships bring more: deuterium for its power station, bauxite,
+  caustic soda, carbon anodes and oxygen for the smelter, and the alloying metals; whatever you see
+  as its yard's opening stock (sheet, plate, bought-in goods: electronics, motors, pumps, heat
+  pumps, computers, carbon).
+- **Starting setups (optional):** per facility, a module and the item it is set to make, where it
+  isn't the line's own `makes` (the yard's shop modules). If none is given, the yard's company
+  operator in the game chooses.
+- Suggested shape: on the facility record, `stock: [{ item, quantity }]` and
+  `setups: [{ module, makes }]`, or a seeding record per settlement. Your call; the engine reads
+  either.

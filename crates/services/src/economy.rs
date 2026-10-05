@@ -164,8 +164,18 @@ impl Works {
     }
 
     /// Does it take `item` (as an input or a fuel)?
+    #[cfg(test)]
     fn uses(&self, item: usize) -> bool {
         self.takes().iter().any(|(i, _)| *i == item)
+    }
+
+    /// Is `item` for sale from here: something its modules make (as they're
+    /// set) that none of them could take in, set to anything? (What it was
+    /// given or bought to make things with, and what one of its modules
+    /// could build on, it keeps.)
+    fn sells(&self, item: usize) -> bool {
+        let makes = self.setups.iter().filter_map(Setup::recipe).any(|r| r.makes == item || r.outputs.iter().any(|o| o.0 == item));
+        makes && !self.setups.iter().any(|s| universe_world::recipes::of(&s.module.identity.key).iter().any(|r| r.inputs.iter().any(|x| x.0 == item)))
     }
 
     /// The power it supplies at full output (W).
@@ -555,7 +565,7 @@ impl Economy {
                 if k == h {
                     continue;
                 }
-                let spare: Vec<(usize, f64)> = self.works[k].pool.stock.iter().filter(|(i, _)| !self.works[k].uses(**i)).map(|(i, kg)| (*i, *kg)).collect();
+                let spare: Vec<(usize, f64)> = self.works[k].pool.stock.iter().filter(|(i, _)| self.works[k].sells(**i)).map(|(i, kg)| (*i, *kg)).collect();
                 for (i, kg) in spare {
                     let price = self.places[p].price(&goods[i]);
                     let t = kg.min(self.works[h].pool.free());

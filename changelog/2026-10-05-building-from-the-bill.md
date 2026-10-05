@@ -32,3 +32,15 @@
 - Parts are named with their code (`MC07-01 NOSE CAP`): every product has a first wall.
 - Dev scenario `economymodules`: Trethi's modules, the yard's welding bays set (as its owner) to
   the MC-07's nose cap.
+- **Companies run their works** (`sim::company`, a client, as miners and traders are; the same
+  `set_up` a player has). A yard builds the hull its building dock makes: the dock set to it, the
+  assembly shop to whichever of the hull's fitted products its store has least of, each welding bay
+  and machining centre to the part most lacking; a module keeps to its part until there's enough.
+  A module whose line makes what none of that goes into stands idle (the yard's cutting table and
+  panel former: the MC-07's skin parts are welded from sheet, so their panels would only use it up).
+- **A works sells only what it finished:** what its modules make that none of them could take in.
+  It keeps what it was given or bought to make things with, and the parts it builds on. So a yard
+  sells its hulls and equipment to the warehouse, and keeps its plate and parts.
+- **Trethi Yard builds an MC-07 in 22.9 days** (the registry's figure: 21.6), given its stock and
+  fuel for the power station: a test, through the economy alone. In the running game nothing is
+  built yet: there's no starting stock until the registry gives it.
