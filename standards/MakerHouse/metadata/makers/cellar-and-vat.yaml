@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.cellar-and-vat
+  name: "Cellar & Vat"
+kind: company
+ticker: CAV
+address: { at: settlement.treistun.port-eikir }
+note: "Beer, wine and bread"
+who: "Brewers, vintners and bakers under one name."
+what: "Brews beer, makes wine and bakes bread."

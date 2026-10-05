@@ -468,6 +468,21 @@ added here stops your build. Waiting on you for that reason: a settlement's `str
 artisans, fabs and the rest as modules with recipes: nobody has figures); the MC-07's bay depth
 and its three buckling sections (`docs/ships/mc-07-to-measure.md`).
 
+## Food (2026-10-04): the user's, while waiting on you
+
+`docs/registry-food.md`. In short: 75 goods (57 food), 18 farm and food modules with 76 recipes
+balanced by mass, 9 companies. All in kinds you read, all with fields you have: your build and
+tests pass. This is your item 6 for food, done as modules with recipes, not copied from
+`recipes.ron`.
+
+**Asked of you:** a zone `use` of `agricultural` and a facility `kind` for a farm (and food works,
+and a store), so the farms can be placed; and how a module says it stands under an open sky, where
+a crop's carbon dioxide and water are the world's own.
+
+**Nine more makers are in your brand list** (`org.eikir-growers` and the rest): companies of the
+food trade, with no products of the kind your brands have. If a brand must sell ship equipment,
+they need a `business` of their own: say which.
+
 ## Next on `fso`, in this order
 
 Your items 5 to 8 each need something agreed before records are written:

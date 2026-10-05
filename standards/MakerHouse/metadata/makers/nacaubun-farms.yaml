@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.nacaubun-farms
+  name: "Nacaubun Cold Country Farms"
+kind: company
+ticker: NCF
+address: { at: settlement.treistun.port-nacaubun }
+note: "Potatoes, oats, barley and dairy from the cold country"
+who: "The farms of Treistun e, where the summers are short and the light is thin. They grow what a cold country grows and keep cattle on hay through the winter."
+what: "Grows potatoes, oats, barley, sugar beet and hay; keeps dairy herds."
+story:
+  - "Nacaubun was the first port in the system and its farms the first to feed it. Everything they grow is something that does not mind frost."

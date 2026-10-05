@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.lantern-halls
+  name: "Lantern Halls"
+kind: company
+ticker: LNH
+address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 27, section: C, unit: 4 }
+note: "Fresh food grown under lamps, where there is no sky"
+who: "Builds and runs grow halls on stations, airless worlds and moons, for the fresh food that does not ship well. It costs a great deal of power, and those who buy from it know it."
+what: "Grows leaf crops, tomatoes, potatoes and soft fruit in tiers under lamps."

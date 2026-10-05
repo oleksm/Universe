@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.greenfall
+  name: "Greenfall Agrochemical"
+kind: company
+ticker: GFA
+address: { at: settlement.treistun.port-eikir }
+note: "Fertiliser"
+who: "Fixes nitrogen for the ground. Every crop that leaves a world takes some of its soil with it; Greenfall is how it is put back."
+what: "Makes fertiliser from nitrogen and hydrogen."

@@ -237,19 +237,28 @@
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
 - { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
 - { key: org.aurel, game: "brand.aurel", in: "brands.ron" }
+- { key: org.brightwater-dairy, game: "brand.brightwater_dairy", in: "brands.ron" }
 - { key: org.castellan, game: "brand.castellan", in: "brands.ron" }
+- { key: org.cellar-and-vat, game: "brand.cellar_and_vat", in: "brands.ron" }
 - { key: org.cormorant, game: "brand.cormorant", in: "brands.ron" }
+- { key: org.eikir-growers, game: "brand.eikir_growers", in: "brands.ron" }
 - { key: org.garrick, game: "brand.garrick", in: "brands.ron" }
+- { key: org.greenfall, game: "brand.greenfall", in: "brands.ron" }
 - { key: org.hadley, game: "brand.hadley", in: "brands.ron" }
 - { key: org.halcyon, game: "brand.halcyon", in: "brands.ron" }
+- { key: org.halloran-mills, game: "brand.halloran_mills", in: "brands.ron" }
 - { key: org.halvard, game: "brand.halvard", in: "brands.ron" }
 - { key: org.kestrel, game: "brand.kestrel", in: "brands.ron" }
+- { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
+- { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }
 - { key: org.meridian, game: "brand.meridian", in: "brands.ron" }
+- { key: org.nacaubun-farms, game: "brand.nacaubun_farms", in: "brands.ron" }
 - { key: org.orbital, game: "brand.orbital", in: "brands.ron" }
 - { key: org.sfo, game: "body.sfo", in: "bodies.ron" }
 - { key: org.tallis, game: "brand.tallis", in: "brands.ron" }
 - { key: org.tolland, game: "brand.tolland", in: "brands.ron" }
 - { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "brands.ron" }
+- { key: org.verdance, game: "brand.verdance", in: "brands.ron" }
 - { key: org.vireo, game: "brand.vireo", in: "brands.ron" }
 - { key: population.biraidim.shikra-family, game: "Shikra family", in: "by name: celestial.ron, the seed" }
 - { key: population.biraidim.taumeibru-family, game: "Taumeibru family", in: "by name: celestial.ron, the seed" }
