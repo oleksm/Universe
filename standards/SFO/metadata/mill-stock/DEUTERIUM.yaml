@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# Deuterium as it is moved, kept and sold: stock, like any other. What burns it does not care how it
+# came: a power plant or a drive names the material, and takes whatever stock of it there is.
+# How cold it must be kept, and in what, is not said yet.
+identity:
+  key: stock.deuterium
+  traded_as: market.fuel
+  code: DEUTERIUM
+  name: "Deuterium"
+  form: fluid
+made_from:
+  - item: material.deuterium
