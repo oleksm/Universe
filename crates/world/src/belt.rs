@@ -442,6 +442,21 @@ impl StarSystem {
     /// The system's bodies followed by field `f`'s swarm: what a ship near
     /// it moves among (the swarm's bodies are generated on first look).
     pub fn field_bodies(&self, f: usize) -> Arc<Vec<Body>> {
+        if let Some(patch) = crate::belts::field_patch(f) {
+            let mut cache = self.patches.lock().unwrap_or_else(|e| e.into_inner());
+            if let Some(b) = cache.get(&f) {
+                return b.clone();
+            }
+            // (Kept a while: the nearest few hundred patches looked at.)
+            if cache.len() > 256 {
+                cache.clear();
+            }
+            let mut bodies = self.bodies.clone();
+            bodies.extend(crate::belts::patch_rocks(self, &self.belts, patch, self.belt_seed).iter().enumerate().map(|(k, r)| crate::belts::rock_body(self, patch, k, r)));
+            let bodies = Arc::new(bodies);
+            cache.insert(f, bodies.clone());
+            return bodies;
+        }
         let field = &self.fields[f];
         field
             .local
@@ -456,9 +471,35 @@ impl StarSystem {
 
     /// Field `f`'s own rocks, as indices among its bodies (see
     /// `field_bodies`): its remnant, and its swarm.
-    pub fn field_rocks(&self, f: usize) -> impl Iterator<Item = usize> {
+    pub fn field_rocks(&self, f: usize) -> Box<dyn Iterator<Item = usize>> {
         let n = self.bodies.len();
-        std::iter::once(self.fields[f].body).chain(n..n + self.fields[f].count)
+        if crate::belts::field_patch(f).is_some() {
+            return Box::new(n..self.field_bodies(f).len());
+        }
+        Box::new(std::iter::once(self.fields[f].body).chain(n..n + self.fields[f].count))
+    }
+
+    /// Whether field number `f` is one (a field of the system's, or a belt patch).
+    pub fn has_field(&self, f: usize) -> bool {
+        f < self.fields.len() || crate::belts::field_patch(f).is_some_and(|p| self.belts.get(p.belt as usize).and_then(|b| b.classes.get(p.class as usize)).is_some_and(|c| (p.ring as usize) < c.rings.len()))
+    }
+
+    /// What field `f`'s rocks are placed by, among the system's bodies: its
+    /// remnant, or (a belt patch) the star.
+    pub fn field_anchor(&self, f: usize) -> usize {
+        if f < self.fields.len() { self.fields[f].body } else { 0 }
+    }
+
+    /// Field `f`'s name: a field's, or its belt's.
+    pub fn field_name(&self, f: usize) -> String {
+        match crate::belts::field_patch(f) {
+            Some(p) => self.belts.get(p.belt as usize).map_or("BELT".into(), |b| match b.kind {
+                crate::belts::BeltKind::Main => "MAIN BELT".into(),
+                crate::belts::BeltKind::Outer => "OUTER BELT".into(),
+                crate::belts::BeltKind::Trojan { giant, lead } => format!("{} {} TROJANS", self.bodies[giant].name.to_uppercase(), if lead { "LEADING" } else { "TRAILING" }),
+            }),
+            None => self.fields.get(f).map_or(String::new(), |fl| fl.name.clone()),
+        }
     }
 
     /// Where body `i` among field `f`'s bodies is at `t`, and how it moves

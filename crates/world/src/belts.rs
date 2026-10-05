@@ -279,6 +279,10 @@ pub fn patches_near(belts: &[Belt], p: DVec3, t: f64, reach: f64, smallest: f64)
         if r + reach < belt.inner * (1.0 - MOST_ECCENTRIC) || r - reach > belt.outer * (1.0 + MOST_ECCENTRIC) {
             continue;
         }
+        // (None of its rocks rises higher over the plane than its steepest tilt takes it.)
+        if p.y.abs() - reach > belt.outer * (1.0 + MOST_ECCENTRIC) * (belt.tilt * 3.0).sin() {
+            continue;
+        }
         for (c, class) in belt.classes.iter().enumerate() {
             if class.hi < smallest {
                 continue;
@@ -342,4 +346,96 @@ pub fn rocks_near(sys: &StarSystem, belts: &[Belt], seed: u64, p: DVec3, t: f64,
 /// A belt rock's density (kg/m³), as its class says for its size.
 pub fn density(rock: &BeltRock) -> f64 {
     rock.class.density(if rock.diameter < 200.0 { Structure::Monolith } else { Structure::Rubble })
+}
+
+/// Field numbers from here up are belt patches (see `patch_field`): a patch
+/// is addressed as a field is (its rocks as `(field, body)`, as a swarm's).
+pub const PATCH_FIELD: usize = 1 << 52;
+
+/// Patch `p`'s field number: its belt (8 bits), class (3), ring (17) and
+/// segment (24) packed over `PATCH_FIELD`. The same every time, so a rock
+/// locked, anchored to or saved is found again.
+pub fn patch_field(p: Patch) -> usize {
+    PATCH_FIELD | ((p.belt as usize & 0xff) << 44) | ((p.class as usize & 0x7) << 41) | ((p.ring as usize & 0x1_ffff) << 24) | (p.segment as usize & 0xff_ffff)
+}
+
+/// The patch field number `f` is, if it's one.
+pub fn field_patch(f: usize) -> Option<Patch> {
+    (f >= PATCH_FIELD).then(|| Patch { belt: ((f >> 44) & 0xff) as u16, class: ((f >> 41) & 0x7) as u8, ring: ((f >> 24) & 0x1_ffff) as u32, segment: (f & 0xff_ffff) as u32 })
+}
+
+/// A sensor resolves a rock this many times its size away (m per m): a 15 m
+/// rock at 150,000 km, a kilometre's at ten million. (Invented: a survey
+/// sensor's figure, for its product's record.)
+pub const SURVEY_RESOLVES: f64 = 1.0e7;
+/// The farthest a survey looks (m).
+pub const SURVEY_REACH: f64 = 2.0e10;
+
+/// One rock a survey finds: its field and body (for a lock), what it is,
+/// how big, and how far.
+#[derive(Clone, Debug)]
+pub struct Found {
+    pub field: usize,
+    pub body: usize,
+    pub class: RockClass,
+    pub diameter: f64,
+    pub distance: f64,
+}
+
+/// The belt rocks a survey from `p` at `t` resolves: each class of size
+/// looked for as far as its smallest resolves, nearest first. Its body
+/// number is among the patch's bodies (after the system's own).
+pub fn survey(sys: &StarSystem, p: DVec3, t: f64) -> Vec<Found> {
+    let n = sys.bodies.len();
+    let mut out = Vec::new();
+    let classes = sys.belts.iter().flat_map(|b| b.classes.iter().map(|c| (c.lo, c.hi))).fold(Vec::<(f64, f64)>::new(), |mut v, c| {
+        if !v.iter().any(|x| (x.0 - c.0).abs() < 1e-6) {
+            v.push(c);
+        }
+        v
+    });
+    for (lo, hi) in classes {
+        let reach = (lo * SURVEY_RESOLVES).min(SURVEY_REACH);
+        for patch in patches_near(&sys.belts, p, t, reach, lo) {
+            if sys.belts[patch.belt as usize].classes[patch.class as usize].lo != lo {
+                continue;
+            }
+            for (k, rock) in patch_rocks(sys, &sys.belts, patch, sys.belt_seed).into_iter().enumerate() {
+                let distance = rock.orbit.position(t).distance(p);
+                if rock.diameter < hi && distance <= (rock.diameter * SURVEY_RESOLVES).min(SURVEY_REACH) {
+                    out.push(Found { field: patch_field(patch), body: n + k, class: rock.class, diameter: rock.diameter, distance });
+                }
+            }
+        }
+    }
+    out.sort_by(|a, b| a.distance.total_cmp(&b.distance));
+    out
+}
+
+/// A belt rock as a body among the system's: its shape and make-up from its
+/// seed, its orbit round the star.
+pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> crate::system::Body {
+    let mut rng = Rng::new(rock.seed);
+    let structure = if rock.diameter < 200.0 { Structure::Monolith } else { Structure::Rubble };
+    let shape = crate::belt::RockShape::new(rock.diameter / 2.0, &mut rng);
+    let composition = crate::belt::Composition::of(rock.class, rng.f64(), &mut rng);
+    let density = density(rock);
+    let mass = density * shape.volume();
+    let day = (rng.range(2.3f64.ln(), 30.0f64.ln())).exp() * crate::units::HOUR;
+    let tilt = glam::DQuat::from_rotation_arc(DVec3::Y, rng.unit_vector());
+    let name = format!("{}-{}{}", belt_name(&sys.belts[patch.belt as usize]), patch.ring, k);
+    let mut b = crate::system::natural(name, BodyKind::Asteroid, mass, shape.radius, day, rock.class.color(), None, 0, rock.orbit.clone(), tilt);
+    b.rail.attracts = false;
+    b.rock = Some(std::sync::Arc::new(crate::belt::Rock { class: rock.class, structure, composition, density, shape }));
+    b
+}
+
+/// A belt's name, for its rocks' and a patch's.
+pub fn belt_name(b: &Belt) -> &'static str {
+    match b.kind {
+        BeltKind::Main => "MB",
+        BeltKind::Trojan { lead: true, .. } => "TL",
+        BeltKind::Trojan { lead: false, .. } => "TT",
+        BeltKind::Outer => "OB",
+    }
 }

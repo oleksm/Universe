@@ -255,12 +255,33 @@ impl World {
         now
     }
 
-    /// The asteroid field ship `p` is among or near in `system` at `t`, if any.
+    /// The asteroid field ship `p` is among or near in `system` at `t`, if any:
+    /// a field's swarm, else the belt patch of the nearest belt rock close by.
     pub fn field_at(&self, sys: &StarSystem, system: usize, p: DVec3, t: f64) -> Option<usize> {
-        if sys.fields.is_empty() {
+        if !sys.fields.is_empty()
+            && let Some(f) = sys.field_near(p, &self.rails_at(system, t))
+        {
+            return Some(f);
+        }
+        let close = universe_physics::integrate::FINE_RANGE;
+        // (Belt rocks go round the star, which itself wobbles round the system's middle.)
+        let star = self.rails_at(system, t).first().copied().unwrap_or_default();
+        let p = p - star;
+        // (Most ships are nowhere near a belt: by their distance from the star alone.)
+        let r = p.length();
+        if !sys.belts.iter().any(|b| r + close >= b.inner * (1.0 - crate::belts::MOST_ECCENTRIC) && r - close <= b.outer * (1.0 + crate::belts::MOST_ECCENTRIC)) {
             return None;
         }
-        sys.field_near(p, &self.rails_at(system, t))
+        let n = sys.bodies.len();
+        crate::belts::patches_near(&sys.belts, p, t, close, 0.0)
+            .into_iter()
+            .filter_map(|patch| {
+                let f = crate::belts::patch_field(patch);
+                let bodies = sys.field_bodies(f);
+                (n..bodies.len()).filter_map(|i| Some(bodies[i].rail.orbit.as_ref()?.position(t).distance(p) - bodies[i].rail.radius)).filter(|&gap| gap < close).map(|gap| (f, gap)).min_by(|a, b| a.1.total_cmp(&b.1))
+            })
+            .min_by(|a, b| a.1.total_cmp(&b.1))
+            .map(|(f, _)| f)
     }
 
     /// Hand the ship's devices new commands, with no time passing: the engine

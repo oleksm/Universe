@@ -298,6 +298,30 @@ mod tests {
         p.ship.excavator = true;
         anchor_cmd(&mut p, false);
         assert!(!p.ship.excavator && p.ship.hopper == 0.0);
+        // A belt rock, found by a survey hours away, anchors and digs the same.
+        let mut p = Probe::new(1984);
+        let sys = p.sys();
+        let t = p.world.time;
+        let main = sys.belts.iter().find(|b| b.kind == crate::belts::BeltKind::Main).expect("a main belt");
+        let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
+        let found = crate::belts::survey(&sys, from, t);
+        let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight");
+        let bodies = sys.field_bodies(f.field);
+        let mut pos = Vec::new();
+        universe_physics::positions(&bodies[..], t, &mut pos);
+        let (b, i) = (&bodies[f.body], f.body);
+        let up = DVec3::Y;
+        p.ship.position = pos[i] + up * (b.surface_radius(b.rotation(t).inverse() * up) + SHIP_RADIUS + 10.0);
+        p.ship.velocity = universe_physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(p.ship.position - pos[i]);
+        p.ship.angular_velocity = DVec3::ZERO;
+        p.system = sys.index;
+        anchor_cmd(&mut p, true);
+        assert!(matches!(p.ship.state, ShipState::Anchored { field, body, .. } if field == f.field && body == i), "anchored to the belt rock: {:?}", p.events.last());
+        p.command(&ShipCommands { excavate: Some(true), ..p.ship.holding() });
+        for _ in 0..600 {
+            p.step(1.0 / 60.0, 1.0);
+        }
+        assert!(p.ship.hopper > 0.0, "it digs");
     }
 
 }

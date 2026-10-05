@@ -64,6 +64,23 @@ fn swarm_in_sight(sys: &StarSystem, p: DVec3, positions: &[DVec3]) -> Option<usi
     sys.fields.iter().position(|f| positions.get(f.body).is_some_and(|q| q.distance(p) < f.extent + SWARM_SIGHT))
 }
 
+/// The belt rocks in sight from `p` at `t` (the star at `star`): each its
+/// patch field, its body among the patch's bodies, and where it is.
+fn belt_in_sight(sys: &StarSystem, p: DVec3, star: DVec3, t: f64) -> Vec<(usize, usize, DVec3)> {
+    let n = sys.bodies.len();
+    universe_sim::world::belts::patches_near(&sys.belts, p - star, t, SWARM_SIGHT, 0.0)
+        .into_iter()
+        .flat_map(|patch| {
+            let f = universe_sim::world::belts::patch_field(patch);
+            let bodies = sys.field_bodies(f);
+            (n..bodies.len())
+                .filter_map(|i| Some((f, i, star + bodies[i].rail.orbit.as_ref()?.position(t))))
+                .filter(|(_, _, at)| at.distance(p) < SWARM_SIGHT)
+                .collect::<Vec<_>>()
+        })
+        .collect()
+}
+
 impl App {
     /// Meshes for the remnants in view, and for the swarm in sight (built once, on first sight).
     pub fn build_rocks(&mut self) {
@@ -77,6 +94,14 @@ impl App {
                 && let Some(m) = mesh(&sys.bodies[field.body])
             {
                 self.rocks.insert((origin, f, field.body), m.into());
+            }
+        }
+        // (Belt rocks in sight.)
+        for (f, i, _) in belt_in_sight(&sys, self.camera.position, self.view.positions[0], self.now()) {
+            if !self.rocks.contains_key(&(origin, f, i))
+                && let Some(m) = mesh(&sys.field_bodies(f)[i])
+            {
+                self.rocks.insert((origin, f, i), m.into());
             }
         }
         let Some(f) = swarm_in_sight(&sys, self.camera.position, &self.view.positions) else { return };
@@ -148,13 +173,17 @@ pub fn draw(frame: &mut Frame, app: &App) {
     for (f, field) in sys.fields.iter().enumerate() {
         rock(frame, app, f, field.body, &sys.bodies[field.body], app.view.positions[field.body], t);
     }
+    // The belt's own rocks, each on its orbit round the star.
+    for (f, i, at) in belt_in_sight(sys, frame.camera.position, app.view.positions[0], t) {
+        rock(frame, app, f, i, &sys.field_bodies(f)[i], at, t);
+    }
     let Some(f) = swarm_in_sight(sys, frame.camera.position, &app.view.positions) else { return };
     let bodies = sys.field_bodies(f);
     let n = sys.bodies.len();
     let mut positions = Vec::with_capacity(bodies.len());
     universe_sim::world::physics::positions(&bodies[..], t, &mut positions);
     // (The remnant's place as the view has it, so the swarm sits round it.)
-    let shift = app.view.positions[sys.fields[f].body] - positions[sys.fields[f].body];
+    let shift = app.view.positions[sys.field_anchor(f)] - positions[sys.field_anchor(f)];
     for i in n..bodies.len() {
         rock(frame, app, f, i, &bodies[i], positions[i] + shift, t);
     }
@@ -189,13 +218,13 @@ pub fn scan(app: &App) -> Option<Scan> {
     let (f, anchored) = match (app.ship.state.clone(), app.v.avionics.rock_lock) {
         (universe_sim::ShipState::Anchored { field, body, .. }, _) => (field, Some(body)),
         // The locked rock.
-        (_, Some((field, body))) if field < sys.fields.len() => (field, Some(body)),
+        (_, Some((field, body))) if sys.has_field(field) => (field, Some(body)),
         _ => (sys.fields.iter().position(|f| app.view.positions[f.body].distance(ship) < f.extent + SCAN_RANGE)?, None),
     };
     let bodies = sys.field_bodies(f);
     let mut positions = Vec::with_capacity(bodies.len());
     universe_sim::world::physics::positions(&bodies[..], t, &mut positions);
-    let shift = app.view.positions[sys.fields[f].body] - positions[sys.fields[f].body];
+    let shift = app.view.positions[sys.field_anchor(f)] - positions[sys.field_anchor(f)];
     let rocks = || sys.field_rocks(f);
     let gap = |i: usize| (positions[i] + shift).distance(ship) - bodies[i].rail.radius - universe_sim::world::ship::SHIP_RADIUS;
     let nose = app.ship.forward();

@@ -379,7 +379,7 @@ impl Cockpit {
     /// one lock at a time, so a ship's goes.
     pub fn lock_rock(&mut self, rock: Option<(usize, usize)>) {
         let (_, sys, _) = self.system();
-        let name = rock.and_then(|(f, b)| sys.fields.get(f).and_then(|_| sys.field_bodies(f).get(b).map(|b| b.name.clone())));
+        let name = rock.and_then(|(f, b)| sys.has_field(f).then(|| sys.field_bodies(f).get(b).map(|b| b.name.clone())).flatten());
         let rock = rock.filter(|_| name.is_some());
         self.pilot.avionics.rock_lock = rock;
         if rock.is_some() {

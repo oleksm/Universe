@@ -178,6 +178,8 @@ pub struct StarSystem {
     /// the seed their rocks are made from.
     pub belts: Vec<crate::belts::Belt>,
     pub belt_seed: u64,
+    /// Belt patches looked at: their bodies (the system's, then the patch's rocks), kept a while.
+    pub patches: std::sync::Mutex<std::collections::HashMap<usize, std::sync::Arc<Vec<Body>>>>,
 }
 
 const ROCKY_COLORS: [[f32; 3]; 4] = [[0.8, 0.5, 0.3], [0.65, 0.65, 0.65], [0.85, 0.75, 0.5], [0.75, 0.4, 0.35]];
@@ -361,7 +363,7 @@ impl StarSystem {
             a *= rng.range(1.5, 2.1);
         }
 
-        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new(), small: 0..0, belts: Vec::new(), belt_seed: mix(star.seed, 0xbe175) };
+        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new(), small: 0..0, belts: Vec::new(), belt_seed: mix(star.seed, 0xbe175), patches: Default::default() };
         // (What the registry has curated or frozen stands in place of what the seed made: see `celestial`.)
         // (A body taken off the system's roster there takes the others' numbers with it.)
         if let Some(moved) = crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed) {

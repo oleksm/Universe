@@ -207,7 +207,7 @@ impl Avionics {
         let mark = match f.anchor {
             Anchor::Ship(_) => mark,
             Anchor::Place(t) => target_position(bus, t).map(|p| (p, place_velocity(&sys, t, now))),
-            Anchor::Rock { field, body } => (field < sys.fields.len() && body < sys.field_bodies(field).len()).then(|| sys.field_body_state(field, body, now)),
+            Anchor::Rock { field, body } => (sys.has_field(field) && body < sys.field_bodies(field).len()).then(|| sys.field_body_state(field, body, now)),
         };
         let Some((at, velocity)) = mark else {
             self.stop_following(bus, events);
@@ -311,8 +311,8 @@ fn avoid_rocks(sys: &StarSystem, field: usize, target: usize, ship: &universe_wo
     let bodies = sys.field_bodies(field);
     let mut accel = DVec3::ZERO;
     let mut nearest = f64::INFINITY;
-    // (The remnant solved once; its swarm round it.)
-    let remnant = sys.fields[field].body;
+    // (The remnant solved once; its swarm round it. A belt patch's rocks go round the star.)
+    let remnant = sys.field_anchor(field);
     let (rc, rv) = sys.field_body_state(field, remnant, now);
     for j in sys.field_rocks(field).filter(|&j| j != target) {
         let rail = &bodies[j].rail;

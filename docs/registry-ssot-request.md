@@ -804,3 +804,9 @@ your page's "moons of a giant" can widen to all moons.
 round; a trojan swarm is rings within 5% of its giant's orbit. Its own figures to move to a seeding
 record: the main belt's typical tilt (9°), the trojans' (10°), the swarm's 5% width, 64 rocks a
 patch.
+
+**Belt rocks in play (2026-10-04).** The prospect now surveys the belt as well. A sensor resolves a
+rock at `SURVEY_RESOLVES` = 10⁷ times its size, out to 2×10¹⁰ m (`belts.rs`): invented, for a
+**survey sensor's** record. Please describe one: a product (equipment of a new `function` kind,
+`survey`, or a figure on `sensors`) with how far it resolves a rock for its size, and how long a
+sweep takes. The game will read it from the fitted sensor instead of the constant.

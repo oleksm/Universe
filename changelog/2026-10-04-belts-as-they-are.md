@@ -20,3 +20,19 @@
   from its point, a twentieth of a turn in some ten of the giant's years.
 - **Not in play yet:** the fields of fragments round a remnant are still what ships mine. Belt
   rocks join play next. `registry-figures` writes each charted system's belt counts.
+
+## Belt rocks in play
+
+- **The prospect surveys the belt too:** with the pulse for rocks within 30 km, the survey lists
+  the nearest 20 belt rocks it resolves (a rock is seen at ten million times its size: a 15 m one
+  at 150,000 km, a kilometre's at ten million). In Treistun's main belt, the nearest is typically a
+  few tens of metres across and some 90,000 km off, hours away.
+- **A surveyed rock is locked, followed, anchored to and dug as a field's is.** Lock it from the
+  list, keep at a range from it (the autopilot flies there), anchor, dig. A belt patch is
+  addressed as a field is, by a number of its own, so a lock, an anchor and what's been dug from a
+  rock keep across saves.
+- **Belt rocks are drawn** where they are on their orbits, from within 300,000 km.
+- **Ships near a belt rock meet it:** the physics takes the rocks within 30 km of a ship, swarm or
+  belt.
+- **NPC miners keep to the fields for now.** The fields of fragments round a remnant stay as they
+  were: recent break-ups, the one place rocks are close together.

@@ -16,6 +16,8 @@ use crate::{fmt, App};
 
 /// The pulse reaches this far (m)...
 pub const PULSE_RANGE: f64 = 30_000.0;
+/// The survey's rocks listed, at most (the nearest).
+const SURVEY_LISTED: usize = 20;
 /// ...in this long (real s).
 const PULSE_SECS: f32 = 3.0;
 /// What it found shows this long after the pulse (real s), fading over the last `FADE`.
@@ -44,6 +46,8 @@ pub struct Prospect {
     pub system: usize,
     pub age: f32,
     pub found: Vec<(usize, usize, f64)>,
+    /// The belt rocks the survey resolved (field, body, how far, m): found at once, as far as each size is seen.
+    pub surveyed: Vec<(usize, usize, f64)>,
 }
 
 impl Prospect {
@@ -83,6 +87,7 @@ pub fn rows(app: &App) -> Vec<Row> {
         .found
         .iter()
         .filter(|f| f.2 <= p.reach())
+        .chain(p.surveyed.iter())
         .filter_map(|&(field, body, _)| {
             let bodies = sys.field_bodies(field);
             let b = bodies.get(body)?;
@@ -176,9 +181,21 @@ fn prospect(app: &mut App) {
             }
         }
     }
+    // The survey: the belt's rocks, each seen as far as its size lets (see `belts::survey`).
+    let surveyed: Vec<(usize, usize, f64)> = universe_sim::world::belts::survey(&sys, ship - app.view.positions[0], t)
+        .into_iter()
+        .take(SURVEY_LISTED)
+        .map(|f| (f.field, f.body, f.distance))
+        .collect();
     let n = found.len();
-    app.mining.prospect = Some(Prospect { system: app.v.ship_system, age: 0.0, found });
-    app.say(if n == 0 { "PROSPECT - NOTHING WITHIN 30 KM".into() } else { format!("PROSPECT - {n} ROCKS WITHIN 30 KM") });
+    let near = if n == 0 { "PROSPECT - NOTHING WITHIN 30 KM".to_string() } else { format!("PROSPECT - {n} ROCKS WITHIN 30 KM") };
+    let far = match surveyed.first() {
+        Some(&(_, _, d)) => format!("; SURVEY - {} BELT ROCKS, THE NEAREST {}", surveyed.len(), fmt::distance(d)),
+        None if !sys.belts.is_empty() => "; SURVEY - NO BELT ROCK IN SIGHT".into(),
+        None => String::new(),
+    };
+    app.mining.prospect = Some(Prospect { system: app.v.ship_system, age: 0.0, found, surveyed });
+    app.say(format!("{near}{far}"));
 }
 
 /// The pulse's shell, and the rocks found tagged with their numbers.
