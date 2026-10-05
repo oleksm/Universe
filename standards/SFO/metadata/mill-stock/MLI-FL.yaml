@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.mli-fl
+  code: MLI-FL
+  name: "Multi-layer insulation blanket"
+  form: film
+made_from:
+  - item: material.multi-layer-insulation
+size:
+  thickness: 0.01
+basis:
+  - { of: [size], tier: invented, review: true, note: "Chosen: a blanket of some thirty layers." }

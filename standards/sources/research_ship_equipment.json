@@ -1,0 +1,2415 @@
+{
+ "fusion_drive_mass_breakdown": {
+  "value": {
+   "payload": 172,
+   "structure_total": 646,
+   "central_truss": 6,
+   "fusion_reactor": 310,
+   "magnetic_nozzle_and_divertor": 6,
+   "reaction_control": 16,
+   "power_conversion": 30,
+   "coolant_system": 11,
+   "fast_wave_plasma_heating": 5,
+   "propellant_cryo_tankage": 88,
+   "refrigeration": 2,
+   "fuel_tankage_and_injector": 6,
+   "startup_fission_reactor": 10,
+   "battery_bank": 5,
+   "avionics_and_communication": 2,
+   "weight_growth_contingency": 149,
+   "D3He_fuel": 11,
+   "hydrogen_propellant": 861,
+   "IMLEO": 1690
+  },
+  "unit": "t",
+  "what": "NASA Discovery II (Williams et al., NASA/TM-2005-213559) vehicle mass property summary, metric tons; D-3He spherical torus fusion propulsion, 172 t crew payload to Jupiter in 118 days",
+  "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+  "quote": "Table 1: Vehicle Mass Property Summary: Payload 172 [Structure 38, Shielding 69, Crew systems 25, Weight growth contingency 40]; Structure 646 [Central truss 6, Fusion reactor 310, Magnetic nozzle and divertor 6, Reaction control 16, Power conversion 30, Coolant system 11, Fast wave plasma heating 5, Propellant cryo-tankage 88, Refrigeration 2, Fuel tankage and injector 6, Startup/re-start fission reactor 10, Battery bank 5, Avionics and communication 2, Weight growth contingency 149]; D3He fuel 11; Hydrogen propellant 861 [Main impulse 807, Reaction control 20, Flight performance reserve 8, Residuals/losses 26]; IMLEO (mt) 1,690",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "first_wall": 14,
+     "toroidal_field_coils_12": 129,
+     "poloidal_field_coils_7_and_cross_bracing": 77,
+     "neutron_and_radiation_shielding": 90,
+     "total": 310
+    },
+    "unit": "t",
+    "what": "Discovery II fusion reactor mass properties",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 12: Fusion Reactor Mass Properties: First wall 14; Toroidal field coils (12) 129; Poloidal field coils (7) and cross bracing 77; Neutron and radiation shielding 90; Total (mt) 310",
+    "verified": true
+   },
+   {
+    "value": {
+     "specific_power_kW_per_kg": 8.62,
+     "specific_impulse_s": 35435,
+     "jet_power_MW": 4830,
+     "jet_efficiency": 0.8,
+     "thrust_lbf": 6250,
+     "total_flow_rate_kg_s": 0.08,
+     "initial_thrust_to_mass_milli_g": 1.68,
+     "trip_time_days": 118
+    },
+    "unit": "mixed",
+    "what": "Discovery II performance, Jupiter rendezvous case",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 2: Performance Analysis Results (Jupiter): Specific power (kW/kg) 8.62; Specific impulse (lbf sec/lbm) 35,435; Payload mass (mt) 172; IMLEO (mt) 1,690; Trip time (days) 118; Jet power (MW) 4,830; Jet efficiency 0.8; Thrust (lbf) 6,250; Total flow rate (kg/sec) 0.080; Initial thrust/mass (milli-g) 1.68",
+    "verified": true
+   },
+   {
+    "value": 347,
+    "unit": "km/s",
+    "what": "Discovery II exhaust velocity at magnetic nozzle exit (figure annotation)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Pressure = 0.545 MPa ... Exhaust Velocity = 347 km/sec",
+    "verified": true
+   },
+   {
+    "value": 7895,
+    "unit": "MW",
+    "what": "Discovery II total fusion power",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "To sustain a total fusion power of 7,895 MW,",
+    "verified": true
+   },
+   {
+    "value": {
+     "magnets": 1.5,
+     "strengtheners": 127.1
+    },
+    "unit": "t",
+    "what": "Discovery II: mass of the 12 TF coils split into YBCO magnets and Ti-6Al-4V I-beam strengtheners (structure dominates)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 11: TF Coil Characteristics ... Superconductor material YBCO ... Operating temperature (K) 65; Refrigerant LN2 ... Coil strengthener material Ti-6Al-4V ... Total mass of 12 TF coils: magnets (mt) 1.5; strengtheners (mt) 127.1",
+    "verified": true
+   },
+   {
+    "value": {
+     "compressor": 3,
+     "turbine": 1,
+     "alternator": 3,
+     "management_and_distribution": 6,
+     "radiator": 9,
+     "power_conditioning_radiator": 1,
+     "support_structure": 2,
+     "flywheel": 5,
+     "total": 30
+    },
+    "unit": "t",
+    "what": "Discovery II Brayton power conversion system mass (28.6 MW electrical output)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 18: Power Conversion Mass Properties: Compressor 3; Turbine 1; Alternator 3; Management and distribution 6; Radiator 9; Power conditioning radiator 1; Support structure 2; Flywheel 5; Total (mt) 30",
+    "verified": true
+   },
+   {
+    "value": 3,
+    "unit": "t",
+    "what": "Discovery II magnetic nozzle: 12 m long assembly, total mass",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "The entire length of the assembly was somewhat arbitrarily set to 12 m with a total mass estimated at 3 mt.",
+    "verified": true
+   },
+   {
+    "value": {
+     "total_dry_mass_8_thrusters_t": 16,
+     "propellant_t": 20
+    },
+    "unit": "t",
+    "what": "Discovery II reaction control system (8 hydrogen arcjet thrusters, 8 MW each)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 16: Total propellant mass (mt) 20; Total system dry mass (8 thrusters) (mt) 16",
+    "verified": true
+   },
+   {
+    "value": {
+     "J-T_LN2_64K": 1.66,
+     "Stirling_GHe_10K": 0.45,
+     "Stirling_GHe_3K": 0.19
+    },
+    "unit": "t",
+    "what": "Discovery II refrigeration system masses; heat lifted 133,350 W / 519 W / 13 W, power required 3,950 / 118 / 10 kWe",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 22: Cycle J-T, Stirling, Stirling; Refrigerant LN2, GHe, GHe; COP (% Carnot) 15; Temperature (cold) (K) 64.3, 10, 3; Heat transferred (Wth) 133,350, 519, 13; Power required (kWe) 3,950, 118, 10; Mass (mt) 1.66, 0.45, 0.19",
+    "verified": true
+   },
+   {
+    "value": 5.6,
+    "unit": "t",
+    "what": "Discovery II battery bank mass",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 26: Battery Bank Characteristics ... Mass (mt) 5.6",
+    "verified": true
+   },
+   {
+    "value": {
+     "initial_mass_t": 54000,
+     "fuel_t": 50000,
+     "payload_t": 500,
+     "stage1_empty_t": 1690,
+     "stage2_empty_t": 980,
+     "stage1_propellant_t": 46000,
+     "stage2_propellant_t": 4000,
+     "stage1_thrust_N": 7540000,
+     "stage2_thrust_N": 663000,
+     "stage1_exhaust_velocity_m_s": 10600000,
+     "stage2_exhaust_velocity_m_s": 9210000
+    },
+    "unit": "mixed",
+    "what": "Project Daedalus (BIS 1973-78) two-stage D/He-3 pulse fusion probe, as summarised by Wikipedia (secondary source)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Project_Daedalus&action=raw",
+    "quote": "Daedalus would be constructed in Earth orbit and have an initial mass of 54,000 tonnes including 50,000 tonnes of fuel and 500 tonnes of scientific payload. | Empty mass | 1,690 tonnes (at staging) || 980 tonnes (at cruise speed) | Propellant mass | 46,000 tonnes || 4,000 tonnes | Thrust | 7,540,000 newtons || 663,000 newtons | Engine exhaust velocity | 10,600,000 m/s || 9,210,000 m/s",
+    "verified": true
+   },
+   {
+    "value": {
+     "total_reactor_power_MW": 2,
+     "engine_specific_power_kW_per_kg": 0.71,
+     "thrust_efficiency": 0.5,
+     "thrust_N": 20.1,
+     "specific_impulse_s": 10141.6,
+     "engine_mass_kg": 2816.9,
+     "fuel_mass_kg": 3695.2,
+     "total_mission_mass_kg": 7586.0,
+     "payload_kg": 1000
+    },
+    "unit": "mixed",
+    "what": "Princeton Direct Fusion Drive, Pluto orbiter example mission (NIAC Phase I final report, Thomas et al. 2017)",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "Table 7: Payload Mass 1000 kg; Total Reactor Power 2 MW; Engine Specific Power 0.71 kW/kg; Thrust Efficiency 0.5 ... Table 8: Thrust 20.1 N; Specific Impulse 10141.6 s; Engine Mass 2816.9 kg; Fuel Mass 3695.2 kg; Total Mission Mass 7586.0 kg",
+    "verified": true
+   },
+   {
+    "value": {
+     "engines_x2": 1357,
+     "radiators_x2": 66.75,
+     "magnetic_nozzles_x2": 71.43,
+     "D2_tank_full": 3432,
+     "He3_tank": 0.22,
+     "insulating_shell": 200,
+     "optical_truss_x2": 10,
+     "gimbals_x2": 3.75,
+     "laser_comm_x2": 2,
+     "orbiter_payload": 270,
+     "lander": 230,
+     "total": 7154
+    },
+    "unit": "kg",
+    "what": "Direct Fusion Drive Pluto orbiter mass budget (as printed; whether per-unit or for the quantity is not stated in the row)",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "Table 18 Orbiter Mass Budget: Engine 2 1357; Radiators 2 66.75; Magnetic Nozzles 2 71.43; D2 Tank (full) 1 3432; He3 Tank 1 0.22; Insulating Shell 1 200; Optical Truss 2 10; Gimbals 2 3.75; Laser Communication Unit 2 2; Orbiter Payload 1 270; Lander 1 230; TOTAL 7154",
+    "verified": true
+   },
+   {
+    "value": {
+     "turbines_and_compressors": 30,
+     "piping_stainless": 130,
+     "generator": 80,
+     "subtotal": 240
+    },
+    "unit": "kg",
+    "what": "Direct Fusion Drive: Brayton power-conversion component mass estimates",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "Table 2. Brayton Engine Component Mass Estimates: Turbines and Compressors 30 kg; Piping (stainless steel) 130 kg; Generator 80 kg; SUBTOTAL 240 kg",
+    "verified": true
+   },
+   {
+    "value": [
+     5,
+     10
+    ],
+    "unit": "N per MW fusion power",
+    "what": "Direct Fusion Drive thrust per MW of fusion power (Wikipedia summary of PSS estimate; secondary)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Direct_Fusion_Drive&action=raw",
+    "quote": "Princeton Satellite Systems estimate that the Direct Fusion Drive may be capable of producing between 5-10 Newtons thrust per each MW of generated fusion power, with a specific impulse (Isp) of about 10,000 seconds and 200 kW available as electrical power.",
+    "verified": true
+   },
+   {
+    "value": {
+     "payload_system": 289,
+     "payload": 100,
+     "payload_shield": 189,
+     "propellant_system": 4458,
+     "non_fuel_target_mass": 36.5,
+     "DT_fuel": 3.72,
+     "expellant_H2": 4100,
+     "tritium_refrigerator": 50,
+     "propellant_tanks": 207,
+     "tritium_tank": 61,
+     "driver_system": 268,
+     "laser_driver": 150,
+     "driver_radiators": 118,
+     "thrust_chamber_system": 805,
+     "coil": 216,
+     "coil_shield_and_structure": 523,
+     "thrust_chamber_radiators": 66,
+     "auxiliary_systems": 180,
+     "startup_reactor_equipment": 5,
+     "all_radiator_shields": 18,
+     "trusses": 42,
+     "inductor_coil_power_system": 115,
+     "total_dry_mass": 1860,
+     "total_wet_mass": 6000
+    },
+    "unit": "t",
+    "what": "VISTA (Orth, UCRL-LR-110500, 2003) laser-ICF fusion vehicle, advanced-technology Mars mission mass distribution",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Table XI-2 Distribution of mass in metric tons for VISTA advanced-technology mission to Mars: Payload System 289 (Payload 100, Payload Shield 189); Propellant System 4458 (Non-fuel target mass 36.5, DT fuel 3.72, Expellant (0.077 g/cm3 H2) 4100, Tritium refrigerator 50, Propellant tanks 207, Tritium tank 61); Driver System 268 (Laser driver 150, Driver radiators 118); Thrust Chamber System 805 (Coil 216, Coil shield + structure 523, Radiators 66); Auxiliary Systems 180 (Startup reactor equipment 5, ALL radiator shields 18, Trusses 42, Inductor-coil power system 115); Total DRY MASS 1860; TOTAL WET MASS 6000",
+    "verified": true
+   },
+   {
+    "value": {
+     "current_turns_MA": 16.8,
+     "stored_energy_MJ": 9200,
+     "peak_field_T": 12,
+     "radius_m": 13,
+     "coil_mass_t": 216,
+     "shield_mass_t": 505
+    },
+    "unit": "mixed",
+    "what": "VISTA superconducting thrust-chamber magnet coil parameters and mass",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Table V-2 Magnet Coil Parameters: Current-turns 16.8 MA-turns; Stored Energy 9,200 MJ; Peak Field 12 Tesla; Inductance 65 uH; Radius 13 m ... the masses of the coil and shield should in fact be about 216 tons and 505 tons, respectively (Table V-3).",
+    "verified": true
+   },
+   {
+    "value": {
+     "driver_energy_MJ": 5,
+     "driver_efficiency": 0.12,
+     "jet_efficiency": 0.32,
+     "capsule_gain": 1500,
+     "max_pulse_rate_Hz": 30,
+     "heat_pipe_radiator_kg_per_kWt_at_1000K": 0.07
+    },
+    "unit": "mixed",
+    "what": "VISTA assumed parameters, advanced-technology case",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Table XI-1: Driver energy 5 MJ; Driver efficiency 12%; Jet efficiency 32%; Fuel type DT; Fuel capsule gain 1500; Maximum pulse rate (Hz) 30; Heat-pipe radiator kg/kWth @ 1000 K 0.07; Induction electrical system efficiency 50%",
+    "verified": true
+   },
+   {
+    "value": {
+     "spacecraft_structure": 3.4,
+     "lithium_containment_vessel": 0.1,
+     "FRC_formation_system": 0.5,
+     "propellant_feed_mechanism": 1.2,
+     "energy_storage_capacitors": 2.5,
+     "liner_driver_coils": 0.3,
+     "energy_delivery_system": 1.2,
+     "solar_panels": 2.0,
+     "thermal_management": 1.1,
+     "magnetic_expander": 0.2,
+     "margin": 2.5,
+     "spacecraft_mass": 15,
+     "crew_habitat": 63,
+     "lithium_propellant": 56,
+     "total": 134
+    },
+    "unit": "t",
+    "what": "Fusion Driven Rocket (Slough et al., NIAC Phase I final report) spacecraft mass budget; engine 36 MW jet power at Isp 5000 s",
+    "source": "https://ntrs.nasa.gov/api/citations/20190001178/downloads/20190001178.pdf",
+    "quote": "Table 6: FDR Spacecraft Mass Budget: Spacecraft structure 3.4; Lithium containment vessel 0.1; FRC formation system 0.5; Propellant Feed mechanism 1.2; Energy storage 2.5; Liner driver coils 0.3; Energy delivery system 1.2; Solar Panels 2.0; Thermal management 1.1; Magnetic expander 0.2; Margin 2.5; Spacecraft Mass 15; Crew habitat (DRA5.0) 63; Lithium Propellant 56; Total Mass 134 ... 3. Capacitors (1.8 MJ @ 1 kJ/KG), switches, power bus ... 6. 180 kW @ 200 W/kg",
+    "verified": true
+   },
+   {
+    "value": {
+     "jet_power_MW": 36,
+     "Isp_s": 5000,
+     "dry_mass_limit_t": 15
+    },
+    "unit": "mixed",
+    "what": "Fusion Driven Rocket engine requirement",
+    "source": "https://ntrs.nasa.gov/api/citations/20190001178/downloads/20190001178.pdf",
+    "quote": "a spacecraft that is less than 15 MT and is comprised of a rocket engine that can produce 36 MW of jet power at an Isp of 5000 s.",
+    "verified": true
+   }
+  ]
+ },
+ "fusion_reactor_mass_breakdown": {
+  "value": {
+   "magnets_total_t": 10000,
+   "stored_magnetic_energy_GJ": 51,
+   "TF_coil_each_t": 330,
+   "TF_coils": 18,
+   "TF_structure_t": 3400,
+   "TF_magnetic_energy_GJ": 41,
+   "TF_peak_field_T": 11.8,
+   "central_solenoid_t": 1000,
+   "heaviest_PF_coil_t": 400,
+   "Nb3Sn_strand_t": 500
+  },
+  "unit": "mixed",
+  "what": "ITER magnet system masses and stored energy",
+  "source": "https://www.iter.org/machine/magnets",
+  "quote": "Ten thousand tonnes of magnets, with a combined stored magnetic energy of 51 Gigajoules (GJ) ... 500 metric tonnes of strand (more than 100,000 km) were produced ... The toroidal field coils are designed to produce a total magnetic energy of 41 gigajoules and a maximum magnetic field of 11.8 tesla. Weighing 330 tonnes each, and measuring 9 x 17 m ... With a total weight of 3,400 tonnes, the \"superstructure\" of toroidal field coils ... The largest coil has a diameter of 24 metres; the heaviest is 400 tonnes. ... Thirteen metres tall (18 metres, with structure), four metres wide and one thousand tonnes, the central solenoid",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "cryostat_t": 3850,
+     "base_section_t": 1250
+    },
+    "unit": "t",
+    "what": "ITER cryostat mass (stainless steel)",
+    "source": "https://www.iter.org/machine/cryostat",
+    "quote": "Manufactured from stainless steel, the cryostat weighs 3,850 tonnes. Its base section - 1,250 tonnes - will be the single largest load of ITER tokamak assembly.",
+    "verified": true
+   },
+   {
+    "value": 4.6,
+    "unit": "t",
+    "what": "ITER blanket module mass (1 x 1.5 m each; blanket covers 600 m2)",
+    "source": "https://www.iter.org/machine/blanket",
+    "quote": "Each blanket module measures 1 x 1.5 metres and weighs up to 4.6 tonnes. ... The ITER blanket, which covers a surface of 600 m2",
+    "verified": true
+   },
+   {
+    "value": {
+     "vacuum_vessel_with_shielding_and_ports_t": 5116,
+     "sector_each_t": 450
+    },
+    "unit": "t",
+    "what": "ITER vacuum vessel mass (Wikipedia, citing iter.org)",
+    "source": "https://en.wikipedia.org/w/index.php?title=ITER&action=raw",
+    "quote": "each of the nine torus-shaped sectors will weigh approximately 450 tonnes. When all the shielding and port structures are included, this adds up to a total of 5,116 tonnes.",
+    "verified": true
+   },
+   {
+    "value": 500,
+    "unit": "MW",
+    "what": "ITER design fusion power (Q=10 from 50 MW heating)",
+    "source": "https://www.iter.org/few-lines",
+    "quote": "ITER is designed to yield in its plasma a ten-fold return on power (Q=10), or 500 MW of fusion power from 50 MW of input heating power.",
+    "verified": true
+   },
+   {
+    "value": {
+     "first_wall_W": 3.72,
+     "inner_VV_wall_Inconel718": 16.6,
+     "multiplier_Be": 3.82,
+     "outer_VV_wall_Inconel718": 51.4,
+     "VV_ribbing": 6.8,
+     "VV_posts": 4.14,
+     "replaceable_VV_subtotal": 86.5,
+     "blanket_tank_Inconel718": 97.1,
+     "TiH2_shield": 380,
+     "channel_FLiBe": 8.07,
+     "blanket_tank_FLiBe": 475,
+     "heat_exchanger_FLiBe": 475,
+     "blanket_subtotal": 1440,
+     "magnet_structure_SS316LN": 4350,
+     "magnet_top_ring_SS316LN": 959,
+     "REBCO_structure_copper": 358,
+     "REBCO_tape_km": 5730,
+     "magnet_structure_subtotal": 5670,
+     "grand_total": 7190
+    },
+    "unit": "t",
+    "what": "MIT ARC reactor weight breakdown (excluding balance of plant); fusion power 525 MW, major radius 3.3 m (Sorbom et al. 2015)",
+    "source": "https://arxiv.org/pdf/1409.3540",
+    "quote": "Table 11: First wall 2.01 m3 3.72 tonnes Tungsten; Inner VV wall 16.6 tonnes Inconel 718; Multiplier 3.82 tonnes Beryllium; Outer VV wall 51.4 tonnes Inconel 718; VV ribbing 6.80 tonnes; VV posts 4.14 tonnes; Replaceable VV Subtotal 86.5 Tonnes; Blanket tank 97.1 tonnes Inconel 718; TiH2 shield 380 tonnes; Channel FLiBe 8.07 tonnes; Blanket tank FLiBe 475 tonnes; Heat exchanger FLiBe 475 tonnes; Blanket Subtotal 1440 tonnes; Magnet structure 544 m3 4350 tonnes SS316 LN; Magnet top ring 959 tonnes; REBCO structure 40 m3 358 tonnes Copper; REBCO tape 5730 km ~0 tonnes; Magnet/Structure Subtotal 5670 tonnes; Grand Total 1320 m3 7190 tonnes",
+    "verified": true
+   },
+   {
+    "value": 525,
+    "unit": "MW",
+    "what": "ARC fusion power",
+    "source": "https://arxiv.org/pdf/1409.3540",
+    "quote": "Fusion power Pf 525 MW",
+    "verified": true
+   },
+   {
+    "value": {
+     "fusion_power_MW": 140,
+     "major_radius_m": 1.85,
+     "minor_radius_m": 0.57
+    },
+    "unit": "mixed",
+    "what": "SPARC tokamak size and peak fusion power (Wikipedia infobox; no mass given)",
+    "source": "https://en.wikipedia.org/w/index.php?title=SPARC_(tokamak)&action=raw",
+    "quote": "major_radius = 1.85 m | minor_radius = 0.57 m ... may be capable of achieving up to 140 MW of fusion power for 10-second bursts",
+    "verified": true
+   }
+  ]
+ },
+ "superconductor_composition": {
+  "value": {
+   "tape_width_mm": 12,
+   "tape_thickness_mm": 0.1,
+   "cable_current_kA": 70
+  },
+  "unit": "mixed",
+  "what": "REBCO tape geometry used in ARC TF coil cables (stack of tapes in extruded copper stabiliser, steel jacket)",
+  "source": "https://arxiv.org/pdf/1409.3540",
+  "quote": "This current is carried by 70 kA REBCO cables, each composed of a stack of 12 mm wide, 0.1 mm thick REBCO tapes. The cables are built with the cable-in-conduit conductor (CICC) method: the superconducting tapes lay in grooves in an extruded copper stabilizer, forming a cable that is surrounded by a square steel jacket.",
+  "verified": true,
+  "more": [
+   {
+    "value": 95,
+    "unit": "% of mass",
+    "what": "Share of commercial HTS tape mass that is cladding (steel/copper) rather than superconductor",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "in most commercial Hi-T superconducting tape, 95% of the mass is in the 5-mil thick stainless steel or copper cladding (on both sides) that encapsulates the 10-[micron] thick Hi-T material.",
+    "verified": true
+   },
+   {
+    "value": {
+     "NbTi_0.7mm": {
+      "g_per_cm": 0.0372,
+      "T_K": 4.2,
+      "I_A": 350
+     },
+     "NbTi_1.04mm": {
+      "g_per_cm": 0.063,
+      "T_K": 4.2,
+      "I_A": 700
+     },
+     "Amperium_12mm_30K": {
+      "g_per_cm": 0.2,
+      "T_K": 30,
+      "I_A": 700
+     },
+     "Amperium_12mm_77K": {
+      "g_per_cm": 0.2,
+      "T_K": 77,
+      "I_A": 350
+     }
+    },
+    "unit": "g/cm, K, A",
+    "what": "Linear density and operating current of NbTi wire and 12 mm HTS (Amperium) tape used in DFD coil sizing",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "Table 4: NbTi 0.7 mm 0.0372 g/cm 4.2 K 350 A; NbTi 1.04 mm 0.063 g/cm 4.2 K 700 A; Amperium 12 mm 0.2 g/cm 30 K 700 A; Amperium 12 mm 0.2 g/cm 77 K 350 A",
+    "verified": true
+   },
+   {
+    "value": 196000,
+    "unit": "kg/GJ (DERIVED)",
+    "what": "DERIVED: ITER magnet system mass per stored magnetic energy = 10,000 t / 51 GJ = 196 t/GJ (i.e. about 5.1 kJ/kg)",
+    "source": "https://www.iter.org/machine/magnets",
+    "quote": "Ten thousand tonnes of magnets, with a combined stored magnetic energy of 51 Gigajoules (GJ)",
+    "verified": true
+   },
+   {
+    "value": {
+     "V": 0.487,
+     "Al": 0.315,
+     "C": 0.103,
+     "Ga": 0.079,
+     "H": 0.016
+    },
+    "unit": "mass fraction",
+    "what": "VISTA assumed magnet coil winding matrix composition (V3Ga-type superconductor in aluminium/composite), density 4.3 g/cm3",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Table V-1 Assumed Magnet Coil Matrix Composition (Density = 4.3 g/cm2 [sic]): V 0.487; Al 0.315; C 0.103; Ga 0.079; H 0.016",
+    "verified": true
+   },
+   {
+    "value": 23500,
+    "unit": "kg/GJ (DERIVED)",
+    "what": "DERIVED: VISTA coil mass per stored energy = 216 t / 9.2 GJ = 23.5 t/GJ (42.6 kJ/kg)",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Stored Energy 9,200 MJ ... the masses of the coil and shield should in fact be about 216 tons and 505 tons",
+    "verified": true
+   },
+   {
+    "value": {
+     "substrate_um": [
+      30,
+      50
+     ],
+     "widths_mm": [
+      2,
+      3,
+      4,
+      6,
+      12
+     ],
+     "stabilizer": "Ag only (SF) or Ag plus electroplated Cu (SCS)",
+     "Cu_stabilizer_total_um": [
+      10,
+      110
+     ],
+     "Ic_77K_self_field_A_per_4mm": [
+      80,
+      160
+     ],
+     "tensile_strength_MPa": 550
+    },
+    "unit": "mixed",
+    "what": "SuperPower REBCO 2G HTS tape specification: layer thicknesses and critical current",
+    "source": "https://www.superpower-inc.com/specification.aspx",
+    "quote": "Substrate thickness | 50 um, or 30 um; Width | 12, 6, 4, 3, or 2 mm; Stabilizer | Ag only - Type SF (Stabilizer Free), or Ag plus electroplated Cu - Type SCS (Surround Cu Stabilizer); Electroplated Cu stabilizer thickness | 10 um to 110 um total (5 um to 55 um per side); Ic (77K, self-field) | 120~160 A/4mm for AP tapes, 80~120 A/4mm for HM tapes; ... (e.g., 550 MPa for tapes on 50 um thick substrate with total 40 um Cu stabilizer)",
+    "verified": true
+   },
+   {
+    "value": {
+     "Nb3Sn_strand_t": 600,
+     "NbTi_strand_t": 250,
+     "Nb3Sn_non_Cu_Jc_A_mm2_12T_4.2K": 2643
+    },
+    "unit": "mixed",
+    "what": "ITER superconducting strand quantities and record Nb3Sn non-copper critical current density (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Niobium–tin&action=raw",
+    "quote": "In April 2008 a record non-copper current density was claimed of 2,643 A mm-2 at 12 T and 4.2 K. ... Estimated use is 600 MT of Nb3Sn strands and 250 metric tonnes of NbTi strands.",
+    "verified": true
+   },
+   {
+    "value": {
+     "substrate_um": 50,
+     "Cu_stabilizer_um": 20
+    },
+    "unit": "um",
+    "what": "SuperPower REBCO coated conductor as used in a fatigue study (review, Natl Sci Rev 2023)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10065139/fullTextXML",
+    "quote": "The CC made by SuperPower with 50 um thick substrate and 20 um thick Cu stabilizer showed no degradation of critical current after 200k cycles",
+    "verified": true
+   },
+   {
+    "value": {
+     "TF_current_per_coil_MA": 9.2,
+     "current_density_MA_m2": 12000,
+     "superconductor_area_fraction": 0.75,
+     "refrigerant_area_fraction": 0.2,
+     "operating_T_K": 65
+    },
+    "unit": "mixed",
+    "what": "Discovery II YBCO toroidal-field coil design parameters (design study)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Superconductor material YBCO ... Cross sectional area (superconductor) (%) 75; Cross sectional area (refrigerant) (%) 20; Current per coil (MA) 9.2; Current density (MA/m2) 12,000 ... Operating temperature (K) 65; Refrigerant LN2",
+    "verified": true
+   }
+  ]
+ },
+ "magnetic_nozzle": {
+  "value": 0.8,
+  "unit": "fraction",
+  "what": "Jet efficiency assumed for Discovery II magnetic nozzle (design assumption, not measured; the authors call nozzle efficiency 'largely speculative')",
+  "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+  "quote": "Jet efficiency 0.8 ... Until mature design concepts with experimental data are available, magnetic nozzle designs, operations, and nJ for fusion propulsion will be largely speculative.",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.5,
+    "unit": "fraction",
+    "what": "Direct Fusion Drive thrust efficiency (conversion of output power to thrust) used in mission analysis; 0.3 used in a second case",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "a thrust efficiency (conversion of output power to thrust) of 0.5 ... Specific power is 1000 W/kg, thrust efficiency is 0.3",
+    "verified": true
+   },
+   {
+    "value": 0.32,
+    "unit": "fraction",
+    "what": "VISTA jet efficiency (jet power / (driver power + fusion target power)) assumed for the magnetic thrust chamber; Hyde's earlier design assumed 42%",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Jet efficiency 32% ... operated at 100 Hz with an assumed jet efficiency of 42%.",
+    "verified": true
+   },
+   {
+    "value": 0.9,
+    "unit": "fraction",
+    "what": "Fusion Driven Rocket: assumed conversion efficiency of liner/plasma energy to jet power in the magnetic expander",
+    "source": "https://ntrs.nasa.gov/api/citations/20190001178/downloads/20190001178.pdf",
+    "quote": "To achieve an average jet power of 36 MW with 90% conversion efficiency will require a rep rate of 1/14 sec-1",
+    "verified": true
+   },
+   {
+    "value": 0.3,
+    "unit": "fraction",
+    "what": "Measured conversion efficiency from RF power to thrust energy in a laboratory magnetic-nozzle helicon plasma thruster (whole-thruster efficiency, highest to date in 2022; Takahashi, Sci Rep 2022)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC9649674/fullTextXML",
+    "quote": "Here we report a 30% conversion efficiency from the rf power to the thrust energy in the MN rf plasma thruster, which is the highest to date, where a cusp magnetic field is formed in the upstream side of the source tube",
+    "verified": true
+   }
+  ]
+ },
+ "neutron_shielding": {
+  "value": {
+   "B4C_10cm_cylinder_kg": 1757.5,
+   "B4C_20cm_cylinder_kg": 3990.1,
+   "W_0.5cm_kg": 585.1,
+   "W_1cm_kg": 1179.3,
+   "B4C_density_kg_m3": 2520,
+   "LiH_density_kg_m3": 820
+  },
+  "unit": "mixed",
+  "what": "Direct Fusion Drive shield masses for a 3 m long reactor (inner radius 32 cm) and material densities; design uses about 10 cm of 10B4C to protect HTS coils",
+  "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+  "quote": "Table 6. Shielding Mass Calculations for a 3 m long FRC: B4C 10 cm 1757.5 (cylinder) 1472.5 (stepped); B4C 20 cm 3990.1 3420.1; Tungsten 0.5 cm 585.1 476.25; Tungsten 1 cm 1179.3 961.56 ... Boron carbide has a density of 2520 g/cm3 [sic, kg/m3], lithium hydride 820 kg/m3. ... Therefore, we use about 10 cm of 10B4C shielding in our current engine models.",
+  "verified": true,
+  "more": [
+   {
+    "value": 90,
+    "unit": "t",
+    "what": "Discovery II carbon-graphite neutron/radiation shield total mass (0.5 m thick C-G shield protecting TF coils per figure 13)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "The total C-G shield mass was 90 mt.",
+    "verified": true
+   },
+   {
+    "value": 380,
+    "unit": "t",
+    "what": "ARC TiH2 neutron shield mass (101 m3)",
+    "source": "https://arxiv.org/pdf/1409.3540",
+    "quote": "TiH2 shield 101 m3 380 tonnes TiH2",
+    "verified": true
+   },
+   {
+    "value": {
+     "Be": {
+      "density_g_cm3": 1.84,
+      "thickness_cm": 4,
+      "mass_t": 8
+     },
+     "liquid_Li_1500K": {
+      "density_g_cm3": 0.41,
+      "thickness_cm": 80,
+      "mass_t": 36
+     },
+     "LiH": {
+      "density_g_cm3": 0.7,
+      "thickness_cm": 120,
+      "mass_t": 101
+     },
+     "Pb": {
+      "density_g_cm3": 11.34,
+      "thickness_cm": [
+       15,
+       20
+      ],
+      "mass_t": 360
+     },
+     "coil_Al_hoop": {
+      "density_g_cm3": 2.7,
+      "thickness_cm": 20,
+      "mass_t": 90
+     },
+     "coil_winding_matrix": {
+      "density_g_cm3": 4.3,
+      "thickness_cm": 60,
+      "mass_t": 126
+     },
+     "total_t": 721
+    },
+    "unit": "mixed",
+    "what": "VISTA DT-fusion coil shield layer stack (materials, densities, layer thicknesses, masses) protecting a superconducting coil",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "Table V-3 216-ton Magnet and 505-ton Shield Composition: Be 1.84 g/cm3, 4 cm, 8 t; 1500 K liquid Li 0.41, 80 cm, 36 t; LiH 0.70, ~120 cm, 101 t; Pb 11.34, 15 to 20 cm, 360 t; Coil Al hoop 2.7, 20 cm, 90 t; Coil Winding Matrix 4.3, 60 cm, 126 t; Totals 721",
+    "verified": true
+   },
+   {
+    "value": {
+     "1_year_cm": 20,
+     "30_year_cm_enriched": 33,
+     "30_year_cm_natural": 39,
+     "tungsten_cm": [
+      0.5,
+      1
+     ],
+     "tungsten_fluence_reduction": [
+      0.07,
+      0.14
+     ]
+    },
+    "unit": "cm",
+    "what": "Boron carbide shield thickness protecting HTS coils of a 1 MW/m D-He3 FRC reactor to a fluence limit of 6e21 n/m2 (DFD report, ATTILA neutronics)",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "The ATTILA results indicate that 20 cm of enriched, 10B4C shielding would protect the coils of a 1 MW/m FRC for one year of continuous operation to a dose of 6e21 n/m2. A 30 year lifespan would require 33 cm of enriched shielding or 39 cm of natural B4C shielding. The tungsten layers required to absorb the bremsstrahlung radiation x-rays, on the order of magnitude of 0.5 to 1 cm thick, reduces the fluence by another 7 to 14%.",
+    "verified": true
+   },
+   {
+    "value": {
+     "tenth_value_thickness_cm": 8.8,
+     "areal_mass_kg_m2": 222
+    },
+    "unit": "cm, kg/m2 (DERIVED)",
+    "what": "DERIVED from the DFD report: going from 20 cm to 33 cm of enriched B4C buys a factor of 30 in fluence, so one factor of 10 = 13 cm / log10(30) = 8.8 cm; at 2520 kg/m3 that is 222 kg/m2 per factor of 10 (for D-He3 neutron spectrum, 2.45 MeV dominated)",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "20 cm of enriched, 10B4C shielding would protect the coils ... for one year ... A 30 year lifespan would require 33 cm of enriched shielding ... Boron carbide has a density of 2520",
+    "verified": true
+   },
+   {
+    "value": 9e-05,
+    "unit": "flux reduction factor",
+    "what": "ARC: neutron flux reduction to the TF coil by the FLiBe blanket plus TiH2 shield combination (DT fusion, MCNP)",
+    "source": "https://arxiv.org/pdf/1409.3540",
+    "quote": "the blanket/neutron shield combination reduces the neutron flux to the TF coil by a factor of 9 x 10-5. This ensures at least 9 full-power years (FPY) of operation",
+    "verified": true
+   },
+   {
+    "value": 0.78,
+    "unit": "g/cm3",
+    "what": "Density of lithium hydride (Wikipedia chembox)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Lithium_hydride&action=raw",
+    "quote": "Density = 0.78 g/cm3",
+    "verified": true
+   },
+   {
+    "value": 2.5,
+    "unit": "g/cm3",
+    "what": "Density of boron carbide (Wikipedia chembox); high neutron absorption cross-section",
+    "source": "https://en.wikipedia.org/w/index.php?title=Boron_carbide&action=raw",
+    "quote": "Density = 2.50 g/cm3, solid. ... high cross section for absorption of neutrons (i.e. good shielding properties against neutrons)",
+    "verified": true
+   }
+  ]
+ },
+ "radiator_areal_mass": {
+  "value": {
+   "demonstrated": 1.5,
+   "assumed": 1.0
+  },
+  "unit": "kg/m2",
+  "what": "Carbon-carbon heat-pipe radiator specific mass (per radiating area, both sides), Discovery II; inlet 966 K, emissivity 0.9, total 10,000 m2",
+  "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+  "quote": "These tests confirmed a radiator specific mass of 1.5 kg/m2 and suggested further improvement to < 1 kg/m2 may be possible (based on radiation from both sides). Thus a radiator specific mass value of 1.0 kg/m2 was assumed here.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "current": 10,
+     "goal": 2,
+     "assumed_carbon_carbon": 2.75
+    },
+    "unit": "kg/m2",
+    "what": "Radiator areal mass: current state of the art vs carbon-carbon goal, per DFD report (625 K average)",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "The goal is reduce the areal mass of radiators from about 10 kg/m2 currently to 2 kg/m2 or less. Our proposal and Phase I work assumes carbon-carbon radiators with an areal mass of 2.75 kg/m2 and an average temperature of 625 K.",
+    "verified": true
+   },
+   {
+    "value": {
+     "SP100_based_kg_m2": 14,
+     "SP100_based_kg_per_kW_at_1000K": 0.2,
+     "Hyde_heat_pipe_kg_m2": 5,
+     "Hyde_heat_pipe_kg_per_kW_at_1000K": 0.07
+    },
+    "unit": "mixed",
+    "what": "Heat-pipe radiator specific mass at 1000 K rejection, VISTA study",
+    "source": "https://digital.library.unt.edu/ark:/67531/metadc1413261/m2/1/high_res_d/15015945.pdf",
+    "quote": "If we begin with SP-100 specifications and use the NASTRAN computer code to design the required cone strength, we get an average specific radiator mass of about 14 kg/m2. This corresponds to approximately 0.2 kg/kW at 1000 K. However, ... we can incorporate most of the ideas of Rod Hyde's heat-pipe design and thereby reduce the specific mass to about 5 kg/m2, or 0.07 kg/kW at 1000 K.",
+    "verified": true
+   },
+   {
+    "value": {
+     "mass_kg": 740.7,
+     "heat_rejection_kW": 14,
+     "deployed_size_m": [
+      3.12,
+      13.6
+     ],
+     "panels": 7
+    },
+    "unit": "mixed",
+    "what": "ISS Photovoltaic Radiator (PVR), ammonia loop, deployable: mass, heat rejection, size",
+    "source": "https://www.nasa.gov/wp-content/uploads/2021/02/473486main_iss_atcs_overview.pdf",
+    "quote": "In total, the PVR can reject up to 14 kW of heat into deep space. The PVR weighs 1,633 pounds (740.7 kilograms) and when deployed measures 10.24 feet (3.12 meters) by 44.62 feet (13.6 meters).",
+    "verified": true
+   },
+   {
+    "value": {
+     "kg_per_m2_planform": 17.5,
+     "kg_per_kW": 52.9
+    },
+    "unit": "kg/m2, kg/kW (DERIVED)",
+    "what": "DERIVED from ISS PVR: 740.7 kg / (3.12 m x 13.6 m = 42.4 m2 planform) = 17.5 kg/m2 (8.7 kg/m2 per radiating side); 740.7 kg / 14 kW = 52.9 kg/kW",
+    "source": "https://www.nasa.gov/wp-content/uploads/2021/02/473486main_iss_atcs_overview.pdf",
+    "quote": "The PVR weighs 1,633 pounds (740.7 kilograms) and when deployed measures 10.24 feet (3.12 meters) by 44.62 feet (13.6 meters).",
+    "verified": true
+   },
+   {
+    "value": 70,
+    "unit": "kW",
+    "what": "ISS External Active Thermal Control System total heat rejection (35 kW per loop, two loops); ammonia supply set at 2.8 C",
+    "source": "https://www.nasa.gov/wp-content/uploads/2021/02/473486main_iss_atcs_overview.pdf",
+    "quote": "The EATCS is designed to provide 35 kW of heat rejection per loop for a total capability of 70 kW. ... Ammonia supply temperature is currently set at 37 F (2.8 C)",
+    "verified": true
+   },
+   {
+    "value": 7,
+    "unit": "x lighter (ratio)",
+    "what": "Liquid droplet radiator vs conventional heat-pipe radiator of similar size (Wikipedia, citing Buckner 1987; secondary)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Liquid_droplet_radiator&action=raw",
+    "quote": "for rejection temperatures below approximately 700 K, the LDR system is significantly lighter in weight than the other advanced radiator concepts. A LDR can be seven times lighter than conventional heat pipe radiators of similar size.",
+    "verified": true
+   },
+   {
+    "value": 1,
+    "unit": "kW/kg",
+    "what": "Fusion Driven Rocket: assumed specific power of a high-temperature space radiator",
+    "source": "https://ntrs.nasa.gov/api/citations/20190001178/downloads/20190001178.pdf",
+    "quote": "For high temperatures, space radiator specific mass of 1 kW/kg is quite conceivable.",
+    "verified": true
+   },
+   {
+    "value": {
+     "mass_kg": 1122.64,
+     "size_m": [
+      23.3,
+      3.4
+     ],
+     "panels": 8,
+     "ORUs": 6,
+     "total_rejection_kW": 70
+    },
+    "unit": "mixed",
+    "what": "ISS main (EATCS/HRS) radiator ORU: mass and deployed size; six ORUs reject 70 kW in total",
+    "source": "https://www.nasa.gov/wp-content/uploads/2021/02/473486main_iss_atcs_overview.pdf",
+    "quote": "Each radiator ORU is composed of eight panels, squib units, ... Each Radiator ORU measures 76.4 feet (23.3 meters) by 11.2 feet (3.4 meters) and weighs 2,475 pounds (1,122.64 kilograms) ... two sets of rotating radiator wings - each composed of three separate radiator ORUs",
+    "verified": true
+   },
+   {
+    "value": {
+     "kg_per_m2_planform": 14.2,
+     "kg_per_kW": 96
+    },
+    "unit": "kg/m2, kg/kW (DERIVED)",
+    "what": "DERIVED from ISS main radiator ORU: 1122.64 kg / (23.3 x 3.4 = 79.2 m2 planform) = 14.2 kg/m2 (7.1 kg/m2 per radiating side); 6 x 1122.64 kg / 70 kW = 96 kg/kW at about 3 C ammonia supply",
+    "source": "https://www.nasa.gov/wp-content/uploads/2021/02/473486main_iss_atcs_overview.pdf",
+    "quote": "Each Radiator ORU measures 76.4 feet (23.3 meters) by 11.2 feet (3.4 meters) and weighs 2,475 pounds (1,122.64 kilograms)",
+    "verified": true
+   }
+  ]
+ },
+ "heat_pipe_materials": {
+  "value": {
+   "helium": [
+    2,
+    4
+   ],
+   "ammonia": [
+    213,
+    373
+   ],
+   "methanol": [
+    283,
+    403
+   ],
+   "ethanol": [
+    273,
+    403
+   ],
+   "water": [
+    298,
+    573
+   ],
+   "mercury": [
+    523,
+    923
+   ],
+   "sodium": [
+    873,
+    1473
+   ],
+   "indium": [
+    2000,
+    3000
+   ]
+  },
+  "unit": "K",
+  "what": "Heat pipe working fluids and their operating temperature ranges (Wikipedia; secondary)",
+  "source": "https://en.wikipedia.org/w/index.php?title=Heat_pipe&action=raw",
+  "quote": "Working fluids are chosen according to the required operating temperatures, with examples ranging from liquid helium for extremely low-temperature applications (2-4 K) to mercury (523-923 K), sodium (873-1473 K), and even indium (2000-3000 K) for extremely high temperatures. The vast majority of heat pipes for room-temperature applications use ammonia (213-373 K), alcohol (methanol (283-403 K), ethanol (273-403 K)), or water (298-573 K).",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "spacecraft": "aluminum envelope / ammonia",
+     "cold_spacecraft": "aluminum / ethane",
+     "below_100K": "stainless steel / nitrogen, oxygen, neon, hydrogen, helium",
+     "electronics": "copper / water, copper / methanol",
+     "high_temp": "superalloy / cesium, potassium, sodium",
+     "above_1050C": "refractory metal / lithium"
+    },
+    "unit": "envelope / fluid pairs",
+    "what": "Common heat pipe envelope and working fluid combinations (Wikipedia, citing Advanced Cooling Technologies)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Heat_pipe&action=raw",
+    "quote": "Aluminum envelope with ammonia fluid for spacecraft thermal control. Superalloy envelope with alkali metal (cesium, potassium, sodium) fluid for high-temperature applications ... Other combinations include stainless-steel envelopes with nitrogen, oxygen, neon, hydrogen, or helium working fluids at temperatures below 100 K, copper/methanol for electronics cooling ..., aluminum/ethane heat pipes for spacecraft thermal control in environments when ammonia can freeze, and refractory-metal envelope / lithium fluid for applications above 1050 C.",
+    "verified": true
+   }
+  ]
+ },
+ "cryotank_mass_fraction": {
+  "value": {
+   "ET_empty_lb": 58500,
+   "ET_gross_lb": 1680000,
+   "LOX_lb": 1387457,
+   "LH2_lb": 234265,
+   "LH2_tank_length_ft": 97.0,
+   "diameter_ft": 27.6,
+   "LH2_volume_cuft": 52881.61,
+   "material": "Al-Li 2195 (SLWT); Al-Cu 2219 (LWT/SWT)",
+   "insulation": "spray-on foam insulation (SOFI)"
+  },
+  "unit": "mixed",
+  "what": "Space Shuttle Super Lightweight External Tank: whole-tank empty mass vs propellant (LH2 tank alone not separately stated) (Wikipedia)",
+  "source": "https://en.wikipedia.org/w/index.php?title=Space_Shuttle_external_tank&action=raw",
+  "quote": "SLWT specifications: Empty weight: 58500 lb; Gross liftoff weight: 1680000 lb; LOX mass (at 22 psig): 1387457 lb; LH2 tank Length: 97.0 ft; Diameter: 27.6 ft; Volume (at 29.3 psig): 52881.61 cuft; LH2 mass (at 29.3 psig): 234265 lb",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.0361,
+    "unit": "dry/propellant (DERIVED)",
+    "what": "DERIVED: Shuttle SLWT whole tank empty mass / propellant = 58,500 lb / (1,387,457 + 234,265 lb) = 3.61 %",
+    "source": "https://en.wikipedia.org/w/index.php?title=Space_Shuttle_external_tank&action=raw",
+    "quote": "Empty weight: 58500 lb ... LOX mass 1387457 lb ... LH2 mass 234265 lb",
+    "verified": true
+   },
+   {
+    "value": {
+     "empty_kg_single_engine": 2247,
+     "propellant_kg": 20830,
+     "wall": "stainless steel balloon tank, 0.020 in (0.51 mm) walls"
+    },
+    "unit": "mixed",
+    "what": "Centaur III (Atlas V) LH2/LOX stage: inert vs propellant mass and tank wall (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Centaur_(rocket_stage)&action=raw",
+    "quote": "propmass = 20830 kg | empty = 2247 kg, single engine; 2462 kg, dual engine ... Centaur stages are built around stainless steel pressure-stabilized balloon propellant tanks with 0.020 in thick walls.",
+    "verified": true
+   },
+   {
+    "value": 0.108,
+    "unit": "dry/propellant (DERIVED)",
+    "what": "DERIVED: Centaur III stage empty (with engine) / propellant = 2247 / 20830 = 10.8 %",
+    "source": "https://en.wikipedia.org/w/index.php?title=Centaur_(rocket_stage)&action=raw",
+    "quote": "propmass = 20830 kg | empty = 2247 kg, single engine",
+    "verified": true
+   },
+   {
+    "value": {
+     "empty_lb": 215910,
+     "propellant_lb": 2177000,
+     "LH2_lb": 317000,
+     "LOX_lb": 1860000,
+     "material": "Al-Cu 2219, friction stir welded, machined orthogrid"
+    },
+    "unit": "mixed",
+    "what": "SLS core stage (whole stage incl. engine section) (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Space_Launch_System_core_stage&action=raw",
+    "quote": "empty=215,910 lb | propmass=2177000 lbs | 317000 lbs LH2, 1860000 lbs LOX ... Primary structure material | Al-Cu 2219 | Al-Li 2195 | Al-Cu 2219",
+    "verified": true
+   },
+   {
+    "value": {
+     "4m_empty_kg": 2850,
+     "4m_gross_kg": 24170,
+     "5m_empty_kg": 3490,
+     "5m_gross_kg": 30710
+    },
+    "unit": "kg",
+    "what": "Delta Cryogenic Second Stage (Delta IV 4 m and 5 m variants): empty and gross mass (Wikipedia infobox)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Delta_Cryogenic_Second_Stage&action=raw",
+    "quote": "empty = 2850 kg | gross = 24170 kg ... empty = 3490 kg | gross = 30710 kg",
+    "verified": true
+   },
+   {
+    "value": {
+     "structure_t": 16,
+     "electrical_power_fluid_t": 2,
+     "reaction_control_t": 2,
+     "interface_hardware_t": 2,
+     "dry_total_t": 22,
+     "tankable_propellant_t": 215
+    },
+    "unit": "t",
+    "what": "Discovery II slush-hydrogen propellant tank (design study): dry mass by subsystem vs 215 t tankable hydrogen (dry/propellant = 10.2 % DERIVED)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Table 20: Propellant Tankage Dry Mass Properties (single tank): Structure (barrels, domes, insulation, skirts, etc.) 16; Electrical, power, fluid systems (avionics, etc.) 2; Reaction control (thrusters, propellants, etc.) 2; Interface hardware (OMV, launch attachments) 2; Total (mt) 22 ... Total tankable propellant (mt) 215",
+    "verified": true
+   },
+   {
+    "value": 0.02,
+    "unit": "fraction",
+    "what": "Direct Fusion Drive: assumed tank structural fraction for liquid deuterium tank",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "Tank Structural Fraction 0.02",
+    "verified": true
+   },
+   {
+    "value": [
+     0.22,
+     0.27
+    ],
+    "unit": "W/m2",
+    "what": "Heat leak through a multilayer insulation blanket on a liquid-hydrogen test tank (Multipurpose Hydrogen Test Bed) with a 305 K warm boundary; MLI over a SOFI layer",
+    "source": "https://ntrs.nasa.gov/api/citations/20110009964/downloads/20110009964.pdf",
+    "quote": "The original MHTB roll-wrapped MLI blanket yielded heat leak results (excluding penetration heat leak) on the order of 0.22 - 0.27 W/m2 at the warm boundary condition (305 K) for multiple tests",
+    "verified": true
+   },
+   {
+    "value": 0.0725,
+    "unit": "W/m2",
+    "what": "Discovery II: average heat leak per multilayer-insulated tank area assumed in deep space (design study)",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "approximately 0.0725 W/m2 was the average thermal power per (multilayer insulated) area to be removed (Q) from the propellant and fuel tanks",
+    "verified": true
+   }
+  ]
+ },
+ "liquid_deuterium": {
+  "value": 162.4,
+  "unit": "kg/m3",
+  "what": "Density of liquid deuterium (D2) at about 18 K (triple point) (Wikipedia)",
+  "source": "https://en.wikipedia.org/w/index.php?title=Deuterium&action=raw",
+  "quote": "Data at about 18 K for 2H2 (triple point): Density: Liquid: 162.4 kg/m3; Gas: 0.452 kg/m3",
+  "verified": true,
+  "more": [
+   {
+    "value": 23.64,
+    "unit": "K",
+    "what": "Boiling point of deuterium (D2) (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Deuterium&action=raw",
+    "quote": "pure deuterium (2H2) has a higher melting point (18.72 K vs. 13.99 K), a higher boiling point (23.64 vs. ",
+    "verified": true
+   }
+  ]
+ },
+ "rcs_thruster": {
+  "value": {
+   "thrust_N": 490,
+   "mass_kg_164to1": 3.76,
+   "mass_kg_300to1": 4.31,
+   "Isp_s": [
+    311,
+    315.5
+   ],
+   "chamber_pressure_bar": 7.45,
+   "propellant": "MMH/NTO (MON-3)",
+   "chamber_material": "C-103 niobium alloy (C-103/Ti nozzle for 300:1)"
+  },
+  "unit": "mixed",
+  "what": "Aerojet Rocketdyne R-4D-11 490 N bipropellant thruster data sheet",
+  "source": "https://web.archive.org/web/2022id_/https://www.rocket.com/sites/default/files/documents/In-Space%20Data%20Sheets_7.19.21.pdf",
+  "quote": "R-4D-11 490 N (110 lbf) Bipropellant Rocket Engine: Propellant MMH/NTO (MON-3); Nominal Thrust (steady state) 490 N (110 lbf); Chamber Pressure 7.45 bar (108 psia); Specific Impulse 164:1 = 311 sec, 300:1 = 315.5 sec; Mass 164:1 = 3.76 kg (8.3 lbm), 300:1 = 4.31 kg (9.5 lbm); C-103/Ti 300:1 = 85 thermal cycles; C-103 164:1 = 245 thermal cycles",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "thrust_N": [
+      10,
+      34
+     ],
+     "mass_kg": 0.59,
+     "Isp_s": [
+      228,
+      235
+     ],
+     "propellant": "hydrazine",
+     "catalyst": "S-405/LCH-202",
+     "valve_power_W": 25.1
+    },
+    "unit": "mixed",
+    "what": "Aerojet Rocketdyne MR-106L 22 N monopropellant thruster data sheet",
+    "source": "https://web.archive.org/web/2022id_/https://www.rocket.com/sites/default/files/documents/In-Space%20Data%20Sheets_7.19.21.pdf",
+    "quote": "MR-106L 22N (5.0 lbf) Rocket Engine Assembly: Propellant Hydrazine; Catalyst S-405/LCH-202; Thrust/Steady State 34 - 10 N (7.7 - 2.3 lbf); Specific Impulse 235 - 228 sec; Valve Power 25.1 Watts Max @ 28 Vdc; Mass 0.59 kg (1.14 lbm) Nom",
+    "verified": true
+   },
+   {
+    "value": {
+     "thrust_N": 445,
+     "mass_kg": [
+      5.2,
+      5.44
+     ],
+     "Isp_s": [
+      320.6,
+      322.2
+     ]
+    },
+    "unit": "mixed",
+    "what": "Aerojet Rocketdyne R-4D-15 HiPAT 445 N high-performance apogee thruster",
+    "source": "https://web.archive.org/web/2022id_/https://www.rocket.com/sites/default/files/documents/In-Space%20Data%20Sheets_7.19.21.pdf",
+    "quote": "R-4D-15 HiPAT 445 N (100 lbf) ... Nominal Thrust (steady state) 445 N (100 lbf) ... Mass 300:1, 5.2 kg (11.5 lbm) / 375:1, 5.44 kg (12.0 lbm) ... 320.6 s (typical for 60 s run)",
+    "verified": true
+   },
+   {
+    "value": "molybdenum (disilicide coated) -> niobium alloy -> iridium-lined rhenium",
+    "unit": "materials",
+    "what": "R-4D combustion chamber material history (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=R-4D&action=raw",
+    "quote": "The original R-4D's combustion chamber was formed from an alloy of molybdenum, coated in a layer of disilicide. Later versions switched to a niobium alloy, for its greater ductility. Beginning with the R-4D-14, the design was changed again to use an iridium-lined rhenium combustion chamber",
+    "verified": true
+   },
+   {
+    "value": {
+     "thrust_N": 400,
+     "Isp_s": 300,
+     "propellant": "MMH/NTO"
+    },
+    "unit": "mixed",
+    "what": "SpaceX Draco thruster (Wikipedia infobox; mass not given)",
+    "source": "https://en.wikipedia.org/w/index.php?title=SpaceX_Draco&action=raw",
+    "quote": "thrust(Vac)= 400 N (90 lbf) | specific_impulse_vacuum= 300 isp",
+    "verified": true
+   }
+  ]
+ },
+ "rocket_engine_materials": {
+  "value": {
+   "dry_mass_kg": 3177,
+   "dry_mass_lb": 7004,
+   "thrust_vac_lbf": 512300,
+   "thrust_SL_lbf": 418000,
+   "thrust_to_weight": 73.1
+  },
+  "unit": "mixed",
+  "what": "RS-25 (SSME) mass and thrust (Wikipedia infobox); kg value DERIVED by unit conversion of 7,004 lb",
+  "source": "https://en.wikipedia.org/w/index.php?title=RS-25&action=raw",
+  "quote": "thrust(SL) = 418000 lbf | thrust(Vac) = 512300 lbf | thrust_to_weight = 73.1 | dry_weight = 7,004 lb",
+  "verified": true,
+  "more": [
+   {
+    "value": "MCC: Inconel 718 structural shell with NARloy-Z (Cu-Ag-Zr) liner, ~390 milled coolant channels; nozzle: brazed stainless steel tubes",
+    "unit": "materials",
+    "what": "RS-25 main combustion chamber and nozzle materials (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=RS-25&action=raw",
+    "quote": "[The MCC comprises a structural shell made of] Inconel 718 which is lined with a copper-silver-zirconium alloy called NARloy-Z, developed specifically for the RS-25 in the 1970s. Around 390 channels are machined into the liner wall to carry liquid hydrogen through the liner to provide MCC cooling ... The inner surface of each nozzle is cooled by liquid hydrogen flowing through brazed stainless steel tube wall coolant passages.",
+    "verified": true
+   },
+   {
+    "value": {
+     "dry_mass_kg": 301,
+     "thrust_vac_kN": 110.1
+    },
+    "unit": "mixed",
+    "what": "RL10 (Wikipedia infobox, RL10B-2 class); extendable nozzle is carbon-carbon",
+    "source": "https://en.wikipedia.org/w/index.php?title=RL10&action=raw",
+    "quote": "thrust(Vac) = 110.1 kN | dry_weight = 301 kg ... The RL10B-2 ... incorporated an extendable nozzle made from carbon-carbon",
+    "verified": true
+   },
+   {
+    "value": {
+     "total_mass_kg": 277,
+     "combustor_mass_kg": 80,
+     "power_MW": 249
+    },
+    "unit": "mixed",
+    "what": "RL-10B-2 mass and power as cited in the DFD report",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "the RL-10B-2 engine produces 249 MW with a total mass of 277 kg; approximately 80 kg of this mass is the combustor unit itself.",
+    "verified": true
+   },
+   {
+    "value": {
+     "dry_mass_lb": 1030,
+     "thrust_SL_kN": 845,
+     "thrust_vac_kN": 981,
+     "thrust_to_weight": 184
+    },
+    "unit": "mixed",
+    "what": "SpaceX Merlin 1D (Wikipedia infobox); Merlin Vacuum nozzle extension is niobium alloy sheet",
+    "source": "https://en.wikipedia.org/w/index.php?title=SpaceX_Merlin&action=raw",
+    "quote": "thrust(Vac) = 981 kN | thrust(SL) = 845 kN | thrust_to_weight = 184 | dry_weight = 1030 lb ... two cracks were discovered in the 9 ft-long niobium-alloy-sheet nozzle of the Merlin Vacuum engine",
+    "verified": true
+   }
+  ]
+ },
+ "energy_storage_density": {
+  "value": {
+   "standard_Wh_kg": [
+    160,
+    300
+   ],
+   "specialty_Wh_kg": 450,
+   "specific_power_W_kg": [
+    1,
+    10000
+   ]
+  },
+  "unit": "mixed",
+  "what": "Lithium-ion cell specific energy and specific power (Wikipedia infobox)",
+  "source": "https://en.wikipedia.org/w/index.php?title=Lithium-ion_battery&action=raw",
+  "quote": "EtoW = Standard: 160-300 W.h/kg; Specialty: up to 450 W.h/kg | PtoW = 1-10,000 W/kg",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "commercial_Wh_kg": [
+      0.5,
+      15
+     ],
+     "EDLC_organic_Wh_kg": [
+      5,
+      8
+     ],
+     "electrolytic_capacitor_Wh_kg": [
+      0.01,
+      0.3
+     ]
+    },
+    "unit": "Wh/kg",
+    "what": "Supercapacitor specific energy, commercial range, vs electrolytic capacitors (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Supercapacitor&action=raw",
+    "quote": "Commercial specific energies range from around 0.5 to 15 Wh/kg. For comparison, an aluminum electrolytic capacitor stores typically 0.01 to 0.3 Wh/kg ... Current EDLCs containing organic electrolytes operate at 2.7 V and reach energy densities around 5-8 Wh/kg and 7 to 10 Wh/L.",
+    "verified": true
+   },
+   {
+    "value": {
+     "specific_energy_Wh_kg": [
+      100,
+      130
+     ],
+     "round_trip_efficiency": 0.9,
+     "NASA_G2_Wh_kg": 5.32,
+     "NASA_G2_W_kg": 10.11
+    },
+    "unit": "mixed",
+    "what": "Flywheel energy storage specific energy (rotor-level claim) and NASA G2 laboratory unit system-level values (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Flywheel_energy_storage&action=raw",
+    "quote": "high specific energy (100-130 W.h/kg, or 360-500 kJ/kg) ... round-trip efficiency, can be as high as 90%. ... Weight was limited to 250 lbs. Storage was 525 Wh and could be charged or discharged at 1 kW, leading to a specific energy of 5.32 W.h/kg and power density of 10.11 W/kg.",
+    "verified": true
+   },
+   {
+    "value": {
+     "kJ_kg": [
+      4,
+      40
+     ],
+     "Wh_kg": [
+      1,
+      10
+     ],
+     "charge_discharge_efficiency": 0.95
+    },
+    "unit": "mixed",
+    "what": "Superconducting magnetic energy storage specific energy (Wikipedia infobox)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Superconducting_magnetic_energy_storage&action=raw",
+    "quote": "EtoW=4-40 kJ/kg; 1-10 W.h/kg | CtoDE=95%",
+    "verified": true
+   },
+   {
+    "value": {
+     "assumed_space_rated_kJ_kg": 1,
+     "commercial_demonstrated_kJ_kg": 3,
+     "bank_MJ": 6.2,
+     "capacitor_mass_t": 2.5
+    },
+    "unit": "mixed",
+    "what": "Pulsed-power capacitor bank specific energy (Fusion Driven Rocket report): commercial pulse capacitors up to 3 J/g; derated for flight",
+    "source": "https://ntrs.nasa.gov/api/citations/20190001178/downloads/20190001178.pdf",
+    "quote": "A 6.2 MJ bank of capacitors is thus required. Commercial high voltage, high energy density, pulse capacitors have demonstrated energy densities as high as 3 J/g. ... resulting in a total capacitor mass ~ 2.5 MT ... 3. Capacitors (1.8 MJ @ 1 kJ/KG), switches, power bus",
+    "verified": true
+   },
+   {
+    "value": 360,
+    "unit": "J/kg",
+    "what": "Upper bound of conventional (non-super) capacitor specific energy (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Capacitor&action=raw",
+    "quote": "Conventional capacitors provide less than 360 joules per kilogram of specific energy, whereas a conventional alkaline battery has a density of 590 kJ/kg.",
+    "verified": true
+   },
+   {
+    "value": 5100,
+    "unit": "J/kg (DERIVED)",
+    "what": "DERIVED: ITER superconducting magnet system as energy store = 51 GJ / 10,000 t = 5.1 kJ/kg",
+    "source": "https://www.iter.org/machine/magnets",
+    "quote": "Ten thousand tonnes of magnets, with a combined stored magnetic energy of 51 Gigajoules (GJ)",
+    "verified": true
+   }
+  ]
+ },
+ "iss_eclss_mass": {
+  "value": {
+   "WRS_initial_mass_kg": 1385,
+   "racks": 2,
+   "avg_production_kg_per_day": 12.7,
+   "equivalent_persons": 3.4,
+   "water_recovery_efficiency": 0.88
+  },
+  "unit": "mixed",
+  "what": "ISS Water Recovery System (Urine Processor Assembly + Water Processor Assembly, two racks) launch mass and on-orbit production (Bagdigian et al., ICES-2015-094)",
+  "source": "https://ttu-ir.tdl.org/server/api/core/bitstreams/eca47072-52d2-43f7-bdad-f9fb1b78302e/content",
+  "quote": "The initial mass of the WRS when it was launched in 2008 was 1385 kg (3048 lb). This mass includes the combined mass of all installed UPA and WPA processing and storage tank ORUs, two process controllers, rack outfitting equipment ..., structure (including two standard ISS racks, shelves, and brackets), and interconnecting cables and hoses. ... the average daily potable water production rate has been approximately 12.7 kg/day (28 lb/day), corresponding roughly to a 3.4-person water processing rate. Overall water recovery efficiency has been approximately 88%.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "OGS_initial_mass_kg": 676,
+     "racks": 1,
+     "avg_O2_kg_per_day": 2.34,
+     "equivalent_persons": 2.9
+    },
+    "unit": "mixed",
+    "what": "ISS Oxygen Generation System (OGA in one rack) launch mass and average production",
+    "source": "https://ttu-ir.tdl.org/server/api/core/bitstreams/eca47072-52d2-43f7-bdad-f9fb1b78302e/content",
+    "quote": "The initial mass of the OGS when it was launched in 2007 was 676 kg (1487 lb). This mass includes the combined mass of the OGA ORUs and controller, rack outfitting equipment ..., structure (including the standard ISS rack, shelves, and brackets), and interconnecting hoses and cables. ... the average daily oxygen production rate has been 2.34 kg/day (5.15 lb/day), corresponding roughly to a 2.9 person",
+    "verified": true
+   },
+   {
+    "value": {
+     "WRS_kg_equipment_per_kg_water": 0.16,
+     "OGS_kg_equipment_per_kg_O2": 0.25,
+     "OGS_recurring": 0.07
+    },
+    "unit": "kg/kg",
+    "what": "ISS life-cycle hardware mass used per kg of product (initial system + replacements)",
+    "source": "https://ttu-ir.tdl.org/server/api/core/bitstreams/eca47072-52d2-43f7-bdad-f9fb1b78302e/content",
+    "quote": "utilization mass of 0.16 kg of equipment per kg of water produced ... utilization mass of 0.25 kg of equipment per kg of oxygen produced. The recurring portion of this mass utilization rate is 0.07 kg of equipment per kg of oxygen produced.",
+    "verified": true
+   },
+   {
+    "value": {
+     "O2_rate_lbm_per_day": [
+      5.1,
+      20.4
+     ],
+     "crew_at_max": 10.88,
+     "O2_per_crew_lbm_per_day": 1.874
+    },
+    "unit": "mixed",
+    "what": "ISS Oxygen Generation Assembly production range and crew supported",
+    "source": "https://ntrs.nasa.gov/api/citations/20205001388/downloads/ICES%202020%20190%20AOGA%20final%205%201%2020.pdf",
+    "quote": "The ISS OGA generates oxygen at a selectable rate between 5.1 and 20.4 lbm/day. At the nominal rate, the ISS OGA can support oxygen needs for 3 crew, while at the maximum rate it can support 10.88 crew (assumes 1.874 lbm oxygen/day/crew metabolic rate).",
+    "verified": true
+   },
+   {
+    "value": {
+     "UPA_design_load_kg_per_day": 9,
+     "crew": 6,
+     "design_recovery": 0.85
+    },
+    "unit": "mixed",
+    "what": "ISS Urine Processor Assembly design load (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=ISS_ECLSS&action=raw",
+    "quote": "The Urine Processor Assembly is designed to handle a load of 9 kg/day, corresponding to the needs of a 6-person crew. Although the design called for the recovery of 85% of the water conte[nt]",
+    "verified": true
+   },
+   {
+    "value": {
+     "WRS_kg_per_design_crew": 231,
+     "OGS_kg_per_crew_at_max_rate": 62
+    },
+    "unit": "kg per crew (DERIVED)",
+    "what": "DERIVED: WRS 1385 kg / 6-person design crew = 231 kg per crew; OGS 676 kg / 10.88 crew at maximum rate = 62 kg per crew",
+    "source": "https://ttu-ir.tdl.org/server/api/core/bitstreams/eca47072-52d2-43f7-bdad-f9fb1b78302e/content",
+    "quote": "The initial mass of the WRS ... was 1385 kg ... The initial mass of the OGS ... was 676 kg",
+    "verified": true
+   }
+  ]
+ },
+ "crew_accommodation_mass": {
+  "value": {
+   "4_crew_total_m3": 115.83,
+   "6_crew_total_m3": 170.14,
+   "per_crew_4_m3": 28.96,
+   "per_crew_6_m3": 28.36
+  },
+  "unit": "m3",
+  "what": "Minimum net habitable volume for long-duration missions (NASA BVAD 2022, Table 3-8)",
+  "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+  "quote": "Total Minimum Net Habitable Volume 115.83 (4-person Crew) 170.14 (6-person Crew); Minimum Net Habitable Volume per Crew Member 28.96 28.36",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "Apollo_A7L": 83.0,
+     "Apollo_A7LB": 90.7,
+     "Shuttle_ISS_EMU_with_PLSS": 154
+    },
+    "unit": "kg",
+    "what": "Spacesuit masses (NASA BVAD 2022, Table 4-67)",
+    "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+    "quote": "Table 4-67 Historical Extravehicular Activity Masses: Apollo Program Spacesuit, A7L 83.0; Apollo Program Spacesuit, A7LB 90.7; Shuttle/ISS Program Spacesuit [EMU, including portable life support system (PLSS)] 154",
+    "verified": true
+   },
+   {
+    "value": {
+     "deployed_volume_m3": 2.1,
+     "radiation_shield_UHMWPE_kg": 125,
+     "acoustic_blankets_kg": 23,
+     "electronics_heat_W": 153
+    },
+    "unit": "mixed",
+    "what": "ISS crew quarters (one rack-sized cabin per crew): volume, radiation shielding polyethylene mass per CQ rack, acoustic blanket mass (total CQ mass not stated in text)",
+    "source": "https://ntrs.nasa.gov/api/citations/20100017014/downloads/20100017014.pdf",
+    "quote": "The total deployed volume of CQ is ~2.1 m3 ... The CQ racks also incorporated ~125 kg of ultra high molecular weight polyethylene for reduction of radiation ... blankets still weighed ~23 kg per CQ and occupied ~0.1 m3 of volume.",
+    "verified": true
+   },
+   {
+    "value": 37.3,
+    "unit": "kg",
+    "what": "Launch/entry pressure suit and equipment, unit mass per crew member (NASA BVAD 2022, Table 4-46)",
+    "source": "https://ntrs.nasa.gov/api/citations/20210024855/downloads/BVAD_2.15.22-final.pdf",
+    "quote": "Pressure Suits & Equipment for Launch: Unit Volume 0.188 m3 ... Unit Mass 37.3 kg ... 149.1 kg (4 CM)",
+    "verified": true
+   },
+   {
+    "value": {
+     "Expliseat_titanium_composite_kg": 4,
+     "other_lightest_economy_kg": [
+      10,
+      11
+     ]
+    },
+    "unit": "kg",
+    "what": "Economy-class aircraft seat mass per passenger place (Wikipedia, Expliseat article)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Expliseat&action=raw",
+    "quote": "Expliseat has certified the first aircraft seat made of composite and titanium at just 4 kg that offers a 50-percent saving compared with the lightest models made by other manufacturers like Recaro, Safran or Rockwell Collins which weigh between 10 and 11 kilograms.",
+    "verified": true
+   }
+  ]
+ },
+ "radar_mass_power": {
+  "value": {
+   "antenna_mass_kg": 880,
+   "antenna_size_m": [
+    12.3,
+    0.821
+   ],
+   "instrument_mass_kg": 945,
+   "rf_peak_power_kW": 4.368,
+   "dc_power_kW": 4.075
+  },
+  "unit": "mixed",
+  "what": "Sentinel-1 C-band SAR active phased-array antenna (eoPortal)",
+  "source": "https://www.eoportal.org/satellite-missions/copernicus-sentinel-1",
+  "quote": "Antenna size | 12.3 m x 0.821 m ; Antenna mass | 880 kg (representing 40% of the total launch mass) ; RF Peak Power (sum of all TRM, at TRM o/p) DC power consumption | - 4.368 kW - 4.075 kW [IW (Interferometric Wide Swath Mode), two polarizations] ; Total instrument mass (including antenna) | 945 kg",
+  "verified": true,
+  "more": [
+   {
+    "value": 87,
+    "unit": "kg/m2 (DERIVED)",
+    "what": "DERIVED: Sentinel-1 SAR antenna areal mass = 880 kg / (12.3 m x 0.821 m = 10.1 m2) = 87 kg/m2",
+    "source": "https://www.eoportal.org/satellite-missions/copernicus-sentinel-1",
+    "quote": "Antenna size | 12.3 m x 0.821 m ; Antenna mass | 880 kg",
+    "verified": true
+   },
+   {
+    "value": {
+     "modules": 1956,
+     "range_mi": 320
+    },
+    "unit": "mixed",
+    "what": "AN/APG-77 (F-22) AESA radar: T/R module count and detection range (Wikipedia; mass and power not public there)",
+    "source": "https://en.wikipedia.org/w/index.php?title=AN/APG-77&action=raw",
+    "quote": "Composed of 1,956 transmit/receive modules (TRM), each about the size of a gum stick ... range = >320 mi",
+    "verified": true
+   },
+   {
+    "value": {
+     "mass_kg": [
+      98,
+      135
+     ],
+     "volume_m3": [
+      0.08,
+      0.102
+     ],
+     "range_nmi": 80
+    },
+    "unit": "mixed",
+    "what": "AN/APG-66 (F-16A) pulse-Doppler fire-control radar mass, volume and range (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=AN/APG-66&action=raw",
+    "quote": "Weight: 98-135 kg depending on configuration; Volume: 0.08-0.102 m3 depending on configuration ... medium range (up to 80 nmi)",
+    "verified": true
+   },
+   {
+    "value": {
+     "range_km": 150
+    },
+    "unit": "km",
+    "what": "AN/APG-81 (F-35) AESA radar range (Wikipedia, flagged citation needed)",
+    "source": "https://en.wikipedia.org/w/index.php?title=AN/APG-81&action=raw",
+    "quote": "range = > 150 km, 93 miles",
+    "verified": true
+   },
+   {
+    "value": {
+     "transmitter_kW": 500,
+     "frequency_MHz": 8500,
+     "antenna_m": 70
+    },
+    "unit": "mixed",
+    "what": "Goldstone Solar System Radar transmitter power and antenna (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Goldstone_Solar_System_Radar&action=raw",
+    "quote": "it comprises a 500-kW X-band (8500 MHz) transmitter and a low-noise receiver on the 70-m DSS 14 antenna",
+    "verified": true
+   },
+   {
+    "value": {
+     "EIRP_TW_2380MHz": 22,
+     "EIRP_TW_430MHz_peak": 3.2,
+     "dish_m": 305
+    },
+    "unit": "mixed",
+    "what": "Arecibo telescope radar effective isotropic radiated power (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Arecibo_Telescope&action=raw",
+    "quote": "The telescope had three radar transmitters, with effective isotropic radiated powers (EIRPs) of 22 TW (continuous) at 2380 MHz, 3.2 TW (pulse peak) at 430 MHz, and 200 MW at 47 MHz",
+    "verified": true
+   },
+   {
+    "value": "GaN replacing GaAs in T/R modules",
+    "unit": "materials",
+    "what": "T/R module semiconductor: AN/SPY-6 uses gallium nitride for higher power density than gallium arsenide (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=AN/SPY-6&action=raw",
+    "quote": "The transmit-receive modules will use new gallium nitride (GaN) semiconductor technology, allowing for a higher power density than the previous gallium arsenide radar modules. The new radar will require twice the electrical power as the previous generation, while generating over 35 times as much radar power.",
+    "verified": true
+   }
+  ]
+ },
+ "telescope_survey": {
+  "value": {
+   "aperture_cm": 50,
+   "channels_um": [
+    [
+     4,
+     5.2
+    ],
+    [
+     6,
+     10
+    ]
+   ],
+   "target": "2/3 of potentially hazardous asteroids larger than 140 m in 5 years",
+   "sensitivity_uJy_NC2": [
+    110,
+    280
+   ]
+  },
+  "unit": "mixed",
+  "what": "NEO Surveyor space infrared survey telescope: aperture, bands, requirement (Mainzer et al. 2023)",
+  "source": "https://arxiv.org/pdf/2310.12918",
+  "quote": "The observatory consists of a 50-cm infrared telescope operating at two channels ... Channel NC1, spanning 4-5.2 um ... Channel NC2 spans 6-10 um ... The mission's driving Level 1 requirement is to find 2/3 of PHAs larger than 140 m within its 5-year baseline mission. ... required to be within 65-120 uJy in the NC1 channel and 110-280 uJy in the NC2 channel.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "inner_main_belt_m": 400,
+     "middle_main_belt_m": 500,
+     "outer_main_belt_m": 750
+    },
+    "unit": "m",
+    "what": "NEO Surveyor: smallest main-belt asteroid sizes detectable (90 % probability) at perihelion at 120 deg solar elongation, where 5-sigma sensitivity is 50 uJy",
+    "source": "https://arxiv.org/pdf/2310.12918",
+    "quote": "This was assessed by placing the objects at their perihelia at 120 deg solar elongation (equivalent to the region where the NEO Surveyor 5-sigma sensitivity is 50 uJy). This corresponds to size limits of 400 m, 500 m, and 750 m in the inner, middle, and outer main belt respectively",
+    "verified": true
+   },
+   {
+    "value": {
+     "launch_mass_kg": 1300,
+     "telescope_cm": 50
+    },
+    "unit": "mixed",
+    "what": "NEO Surveyor spacecraft mass (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=NEO_Surveyor&action=raw",
+    "quote": "launch_mass = 1300 kg ... telescope_diameter = 50 cm",
+    "verified": true
+   },
+   {
+    "value": {
+     "launch_mass_kg": 661,
+     "payload_mass_kg": 347,
+     "telescope_cm": 40,
+     "sensitivity_uJy_3.4_4.6_12_22um": [
+      68,
+      98,
+      860,
+      5400
+     ]
+    },
+    "unit": "mixed",
+    "what": "WISE infrared survey spacecraft: mass, aperture, achieved 5-sigma sensitivity (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Wide-field_Infrared_Survey_Explorer&action=raw",
+    "quote": "launch_mass = 661 kg | payload_mass = 347 kg | telescope_diameter = 40 cm ... WISE achieved at least 68, 98, 860, and 5400 uJy; 5 sigma sensitivity at 3.4, 4.6, 12, and 22 um",
+    "verified": true
+   },
+   {
+    "value": [
+     200,
+     300
+    ],
+    "unit": "m",
+    "what": "Smallest near-Earth object diameters probed by WISE/NEOWISE (as stated in the NEO Surveyor paper)",
+    "source": "https://arxiv.org/pdf/2310.12918",
+    "quote": "the range of diameters probed by WISE (~200-300m and larger; Mainzer et al. 2011b)",
+    "verified": true
+   },
+   {
+    "value": {
+     "aperture_m": 1.8,
+     "telescopes": 2,
+     "field_of_view_deg": 3,
+     "camera_pixels": 1400000000.0,
+     "limiting_magnitude": 22,
+     "exposure_s": [
+      30,
+      60
+     ]
+    },
+    "unit": "mixed",
+    "what": "Pan-STARRS ground survey telescopes (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Pan-STARRS&action=raw",
+    "quote": "Pan-STARRS consists of two 1.8-m Ritchey-Chretien telescopes located at Haleakala in Hawaii. ... The telescope has a 3 deg field of view ... recording almost 1.4 billion pixels per image. ... exposure times will be 30 to 60 seconds (enough to record objects down to apparent magnitude 22)",
+    "verified": true
+   }
+  ]
+ },
+ "spacecraft_comm": {
+  "value": {
+   "X_band_transponder_total": 6.4,
+   "SDSTs_x2": 5.8,
+   "TWTA_group_total": 12.1,
+   "X_band_TWTAs_x2": 1.9,
+   "Ka_band_TWTA": 0.8,
+   "X_band_EPCs": 3.0,
+   "Ka_band_EPC": 1.5,
+   "antennas_total": 22.6,
+   "HGA_prime_reflector_3m": 19.1,
+   "antenna_feed": 1.6,
+   "HGA_gimbals_and_motors": 45.0,
+   "waveguides_and_coax": 8.3,
+   "USOs_x2": 1.7,
+   "UHF_subsystem": 11.5,
+   "Electra_transceivers_x2": 10.1,
+   "telecom_total": 107.7
+  },
+  "unit": "kg",
+  "what": "Mars Reconnaissance Orbiter telecom subsystem mass breakdown (JPL DESCANSO)",
+  "source": "https://descanso.jpl.nasa.gov/DPSummary/MRO_092106.pdf",
+  "quote": "Table 2-1. MRO telecom mass and power summary: X-band transponder 6.4 kg, 16 W [SDSTs (2) 5.8]; Traveling-wave tube amplifiers 12.1 [X-band TWTAs (2) 1.9, 172 W in, 102 W RF out, 100 W nominal; Ka-band TWTA 0.8, 81 W in, 34 W RF, 35 W nominal; X-band electronic power converters 3.0; Ka-band electronic power converter 1.5]; X-band and Ka-band antennas 22.6 [HGA prime reflector 19.1; Antenna feed assembly 1.6]; HGA gimbals and drive motors 45.0, 14 W; Waveguides and coax 8.3; USOs (2) 1.7, 5 W; UHF subsystem 11.5 [Electra transceivers (2) 10.1, 71 W]; Telecom total 107.7 kg, 359 W",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "X_TWTA_dc_in_W": 172,
+     "X_TWTA_rf_out_W": 102,
+     "Ka_TWTA_dc_in_W": 81,
+     "Ka_TWTA_rf_out_W": 34,
+     "SDST_W": 16,
+     "telecom_total_W": 359
+    },
+    "unit": "W",
+    "what": "MRO telecom power: DC input vs RF output (X-band TWTA efficiency 102/172 = 59 % DERIVED)",
+    "source": "https://descanso.jpl.nasa.gov/DPSummary/MRO_092106.pdf",
+    "quote": "X-band TWTAs (2) 1.9 [kg] 172 [W input] 102 [RF W output] 100 W nominal; Ka-band TWTA 0.8 81 34 35 W nominal ... Telecom total 107.7 359",
+    "verified": true
+   },
+   {
+    "value": {
+     "rate_kbps_min": 500,
+     "distance_km": 400000000.0,
+     "max_rate_Mbps": 6.6
+    },
+    "unit": "mixed",
+    "what": "MRO downlink data rate vs distance (3 m HGA, 100 W X-band TWTA, 34 m/70 m DSN)",
+    "source": "https://descanso.jpl.nasa.gov/DPSummary/MRO_092106.pdf",
+    "quote": "At a maximum distance from Earth (400 million km [250 million miles]), the orbiter is designed to send data at a rate of at least 500 kbps. ... The maximum rate for RS-only data is 6.6 Mbps (6.6 Msps).",
+    "verified": true
+   },
+   {
+    "value": 3,
+    "unit": "kg",
+    "what": "Small Deep Space Transponder mass (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Small_Deep_Space_Transponder&action=raw",
+    "quote": "It unifies a number of communication functions - receiver, command detector, telemetry modulator, exciters, beacon tone generator, and control functions - into one 3-kg package.",
+    "verified": true
+   }
+  ]
+ },
+ "flight_computer": {
+  "value": {
+   "cpu_W": 5,
+   "board_W": 10,
+   "cpu_dose_rad": [
+    200000,
+    1000000
+   ],
+   "board_dose_rad": 100000
+  },
+  "unit": "mixed",
+  "what": "RAD750 radiation-hardened processor: power of CPU and of single-board computer (Wikipedia, citing BAE brochures; board mass not given)",
+  "source": "https://en.wikipedia.org/w/index.php?title=RAD750&action=raw",
+  "quote": "The CPU can withstand an absorbed radiation dose of 2,000 to 10,000 grays (200,000 to 1,000,000 rads), temperatures between -55 C and 125 C, and requires 5 watts of power. The standard RAD750 single-board system (CPU and motherboard) can withstand 1,000 grays (100,000 rads), temperatures between -55 C and 70 C, and requires 10 watts of power.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "Honeywell_MIMU": {
+      "kg": 4,
+      "W": 34,
+      "type": "RLG"
+     },
+     "Honeywell_HG1700": {
+      "kg": 0.9,
+      "W": 5,
+      "type": "RLG"
+     },
+     "Northrop_LN-200S": {
+      "kg": 0.748,
+      "W": 12,
+      "type": "FOG"
+     },
+     "Safran_STIM300": {
+      "kg": 0.055,
+      "W": 2,
+      "type": "MEMS"
+     }
+    },
+    "unit": "kg, W",
+    "what": "Inertial measurement unit mass and power (NASA State-of-the-Art Small Spacecraft Technology, Table 5-9)",
+    "source": "https://www.nasa.gov/smallsat-institute/sst-soa/guidance-navigation-and-control/",
+    "quote": "Honeywell USA | MIMU | IMU | RLG | 4 | 34 | 3 | 0.05 ... HG1700 | IMU | RLG | 0.9 | 5.000 ... Northrop Grumman USA | LN-200S | IMU | FOG, SiAc | 0.748 | 12 ... STIM300 | IMU | MEMS | 0.055 | 2.000",
+    "verified": true
+   },
+   {
+    "value": {
+     "BAE_CT-2020": {
+      "kg": 3.0,
+      "W": 8
+     },
+     "Leonardo_Spacestar": {
+      "kg": 1.6,
+      "W": 6
+     },
+     "Redwire_Star_Tracker": {
+      "kg": 0.475,
+      "W": 2.5
+     },
+     "Jena-Optronik_ASTRO_CL": {
+      "kg": 0.305,
+      "W": 1.0
+     },
+     "Sodern_Auriga-CP": {
+      "kg": 0.225,
+      "W": 0.8
+     }
+    },
+    "unit": "kg, W",
+    "what": "Star tracker mass and power (NASA State-of-the-Art Small Spacecraft Technology, Table 5-5: Manufacturer | Model | Mass (kg) | Power (W) | ...)",
+    "source": "https://www.nasa.gov/smallsat-institute/sst-soa/guidance-navigation-and-control/",
+    "quote": "BAE Systems Inc, Space and Mission Systems USA | CT-2020 | 3.000 | 8 ... Leonardo Italy | Spacestar | 1.600 | 6 ... Redwire Space USA | Star Tracker | 0.475 | 2.5 ... Jena-Optronik Germany | ASTRO CL | 0.305 | <1.0 ... Sodern France | Auriga-CP | 0.225 | 0.8",
+    "verified": true
+   },
+   {
+    "value": {
+     "AP-101B_MIPS": 0.42,
+     "AP-101S_MIPS": 1.27
+    },
+    "unit": "MIPS",
+    "what": "Space Shuttle General Purpose Computer (IBM AP-101) performance (Wikipedia; mass and power not stated there)",
+    "source": "https://en.wikipedia.org/w/index.php?title=IBM_System/4_Pi&action=raw",
+    "quote": "The AP-101B performance was 0.420 MIPS, while the AP-101S was 1.27 MIPS.",
+    "verified": true
+   },
+   {
+    "value": 2,
+    "unit": "t",
+    "what": "Discovery II design study: avionics and communication suite mass allocation",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Avionics and communication 2",
+    "verified": true
+   }
+  ]
+ },
+ "rock_cutting_energy": {
+  "value": {
+   "no_slot": 5.2,
+   "slot_2.5mm": 4.8,
+   "slot_12.5mm": 4.3
+  },
+  "unit": "MJ/m3",
+  "what": "Rock-breaking specific energy of a TBM disc cutter in hard rock (bluestone, UCS 122 MPa), discrete-element simulation validated by tests (Sci Rep 2023)",
+  "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC10307829/fullTextXML",
+  "quote": "The specific energy consumption of the disc cutter without the advanced slotting is 5.2 MJ/m3, when the advanced slotting depth is 2.5 mm and 12.5 mm, the specific energy consumption of the disc cutter is 4.8 MJ/m3 and 4.3 MJ/m3 ... a discrete element model of hard rock mass (simulated bluestone) with a uniaxial compressive strength of 122 MPa",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "penetration_2mm": 7.33,
+     "penetration_4mm": 8.42
+    },
+    "unit": "kWh/m3",
+    "what": "Specific energy of disc-cutter linear cutting tests on hard ore-bearing rock (dry UCS 125-181 MPa), Jinchuan No. 3 Mine (Sci Rep 2025); 7.33 kWh/m3 = 26.4 MJ/m3",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12830785/fullTextXML",
+    "quote": "The mean rolling forces are 3.5 kN and 3.6 kN at 2 mm and 4 mm penetration, respectively. Considering the same cutting displacement of 80 mm, their SEs are 7.33 kWh/m3 and 8.42 kWh/m3. ... 1300a | 2.96 | 24.32 | 0.19 | 125.24 [Dry UCS MPa] ... 1330 | 3.03 | ... | 181.42",
+    "verified": true
+   },
+   {
+    "value": {
+     "cement_mortar_UCS59.6MPa": [
+      96.9,
+      413.7
+     ],
+     "sandstone_UCS79.1MPa": [
+      113.6,
+      2125.3
+     ],
+     "granite_UCS131.2MPa": [
+      367.9,
+      833.0
+     ]
+    },
+    "unit": "MJ/m3",
+    "what": "Specific energy in SMALL-SCALE rotary disc-cutter tests (penetration 0.1-4.9 mm; far higher than full-scale machines because of shallow cuts) (Sci Rep 2024)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC11573981/fullTextXML",
+    "quote": "Rock type | p (mm) | Fn (kN) | Fr (kN) | CC (%) | NFR | BI (kN/mm) | SE (MJ/m3): Cement mortar | 0.286 | ... | 413.708; 3.322 | ... | 96.902; Chongqing Sandstone | 0.099 | ... | 2125.282; 3.289 | ... | 113.587; Beishan granite | 0.833 | ... | 832.981; 3.864 | ... | 367.854 ... Chongqing Sandstone | 13.6 | 0.211 | 79.06 [sigma_c MPa]; Beishan granite | 33.16 | 0.22 | 131.15",
+    "verified": true
+   },
+   {
+    "value": {
+     "granite": 211.9,
+     "dolomite": 113.4,
+     "limestone": 188.5,
+     "greywacke": 85.5,
+     "sandstone": 54.4,
+     "gneiss": 146.7
+    },
+    "unit": "MPa",
+    "what": "Uniaxial compressive strength of six tested rock types (Sci Rep 2025, Cerchar scratch study, Table 1)",
+    "source": "https://www.ebi.ac.uk/europepmc/webservices/rest/PMC12689621/fullTextXML",
+    "quote": "Rock | rho[kg/m3] | UCS[MPa] | BTS[MPa] | E[GPa]: Granite | 2612.7 | 211.9 | 12.8 | 31.6; Dolomite | 2561.2 | 113.4; Limestone | 2568.3 | 188.5; Greywacke | 2818.2 | 85.5; Sandstone | 2060.8 | 54.4; Gneiss | 2714.4 | 146.7",
+    "verified": true
+   },
+   {
+    "value": {
+     "radial_picks_max_UCS_MPa": [
+      40,
+      60
+     ],
+     "conical_picks_max_UCS_MPa": [
+      100,
+      120
+     ],
+     "axial_head_MPa": [
+      60,
+      80
+     ],
+     "transverse_head_MPa": [
+      100,
+      120
+     ],
+     "transverse_jointed_MPa": [
+      160,
+      180
+     ]
+    },
+    "unit": "MPa",
+    "what": "Rock strength classes cuttable by roadheaders, by pick and cutterhead type (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Roadheader&action=raw",
+    "quote": "Radial (point-attack) picks ... (UCS) typically up to 40-60 MPa. Conical (tangential-rotary) picks ... suitable for rocks up to approximately 100-120 MPa UCS. ... Axial (longitudinal) cutterhead roadheaders are generally limited to non-abrasive massive rock up to 60-80 MPa UCS ... Transverse cutterhead roadheaders can excavate non-abrasive to moderately abrasive massive rock up to 100-120 MPa UCS, and up to 160-180 MPa in well-jointed or laminated rock masses.",
+    "verified": true
+   }
+  ]
+ },
+ "mining_machine_mass": {
+  "value": {
+   "total_weight_t": 130,
+   "cutter_motor_kW": 300,
+   "total_installed_power_kW": 522,
+   "conveyor_capacity_m3_h": 400,
+   "length_m": 19.35,
+   "rock_UCS_MPa": ">120"
+  },
+  "unit": "mixed",
+  "what": "Sandvik MT720 roadheader technical data (manufacturer leaflet)",
+  "source": "https://www.mining.sandvik/globalassets/products/mechanical-cutting-equipment/pdf/mt720-brochure-english.pdf",
+  "quote": "Machine model MT720; Total weight +/-5 (t) 130; Overall length (m) 19.35; Capacity of conveyor, max. (m3/h) 400; Cutter motor (kW) 300; Total installed power (kW) 522 ... engineered to cut hard and abrasive rock beyond 120 MPa compressive strength",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "t_per_cutter_kW": 0.433,
+     "t_per_installed_kW": 0.249
+    },
+    "unit": "t/kW (DERIVED)",
+    "what": "DERIVED: Sandvik MT720 mass per power = 130 t / 300 kW cutter motor = 433 kg/kW; 130 t / 522 kW installed = 249 kg/kW",
+    "source": "https://www.mining.sandvik/globalassets/products/mechanical-cutting-equipment/pdf/mt720-brochure-english.pdf",
+    "quote": "Total weight +/-5 (t) 130 ... Cutter motor (kW) 300 ... Total installed power (kW) 522",
+    "verified": true
+   },
+   {
+    "value": {
+     "cutterhead_power_kW": [
+      40,
+      400
+     ],
+     "machine_mass_t": [
+      26,
+      100
+     ]
+    },
+    "unit": "mixed",
+    "what": "Roadheader class range: cutterhead power and machine mass (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Roadheader&action=raw",
+    "quote": "Installed cutterhead power ranges from around 40 kW in light machines to over 400 kW in the heaviest class, with machine weights spanning from roughly 26 tonnes up to over 100 tonnes in the largest heavy-duty units.",
+    "verified": true
+   },
+   {
+    "value": {
+     "shearer_t": [
+      75,
+      120
+     ],
+     "roof_support_chock_t": [
+      30,
+      40
+     ]
+    },
+    "unit": "t",
+    "what": "Longwall coal mining machines: shearer and powered roof support masses (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Longwall_mining&action=raw",
+    "quote": "An individual chock can weigh 30-40 tonnes ... the shearer (power loader). This machine can weigh 75-120 tonnes typically",
+    "verified": true
+   },
+   {
+    "value": "tungsten carbide (cobalt-bonded cemented carbide) tips",
+    "unit": "materials",
+    "what": "Cutter pick tip material (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Roadheader&action=raw",
+    "quote": "Conical (tangential-rotary) picks - mounted on a cylindrical shank that rotates freely in the holder during cutting, distributing wear evenly around the tungsten-carbide tip and extending tool life",
+    "verified": true
+   },
+   {
+    "value": {
+     "mass_t": 4500,
+     "cutterhead_power_kW": 12000,
+     "total_installed_MW": 18,
+     "excavation_diameter_m": 15.62,
+     "length_m": 130
+    },
+    "unit": "mixed",
+    "what": "Herrenknecht 'Martina' hard-rock tunnel boring machine (Wikipedia); 375 kg per cutterhead kW DERIVED",
+    "source": "https://en.wikipedia.org/w/index.php?title=Martina_(tunnel_boring_machine)&action=raw",
+    "quote": "has a shield diameter of 15.55 metres, an excavation diameter of 15.62 metres, a length of 130 metres, a total weight of 4500 tonnes ... The cutterhead required 12,000 kW of power whilst the overall vehicle requires 18 MW total installed capacity",
+    "verified": true
+   },
+   {
+    "value": {
+     "mass_short_tons": 6700,
+     "cutterhead_drive_MW": 12.1,
+     "motors": "24 x 505.7 kW",
+     "diameter_ft": 57.5,
+     "length_ft": 326
+    },
+    "unit": "mixed",
+    "what": "Hitachi Zosen 'Bertha' earth-pressure-balance TBM (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Bertha_(tunnel_boring_machine)&action=raw",
+    "quote": "24 x 505.7 kW (687.5 hp) cutterhead drive motors; Total: 12.1 MW (16,500 hp) ... The machine was 326 ft long and weighed 6,700 ST.",
+    "verified": true
+   },
+   {
+    "value": {
+     "mass_t": 14200,
+     "power_MW": 16.56,
+     "bucket_m3": 15.0,
+     "buckets": 18
+    },
+    "unit": "mixed",
+    "what": "Bagger 293 bucket-wheel excavator (Wikipedia infobox); 857 kg per kW DERIVED; bucket volume converted from 19.6 cu yd",
+    "source": "https://en.wikipedia.org/w/index.php?title=Bagger_293&action=raw",
+    "quote": "gross_power = 16.56 megawatts of externally supplied electricity | weight = 14,200 tonne | blade_capacity = 69.9 ft in diameter, 18 buckets each holding 19.6 cuyd or 16.5 ST",
+    "verified": true
+   }
+  ]
+ },
+ "conveyor_crusher_mass": {
+  "value": {
+   "length_km": 17,
+   "capacity_t_per_h": 960,
+   "drive_power_MW": 1.8
+  },
+  "unit": "mixed",
+  "what": "Long overland belt conveyor (Meghalaya-Chhatak limestone conveyor): length, throughput, total drive power (Wikipedia); mass per metre not stated",
+  "source": "https://en.wikipedia.org/w/index.php?title=Conveyor_belt&action=raw",
+  "quote": "It is about 17 km long and conveys limestone and shale at 960 t/h ... The conveyor is actuated by three synchronized drive units for a total power of about 1.8 MW supplied by ABB",
+  "verified": true,
+  "more": [
+   {
+    "value": 0.11,
+    "unit": "kW per (t/h) per km (DERIVED)",
+    "what": "DERIVED: 1.8 MW / 960 t/h / 17 km = 0.11 kW per t/h per km of belt conveyor (1.9 kW per t/h overall)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Conveyor_belt&action=raw",
+    "quote": "about 17 km long and conveys limestone and shale at 960 t/h ... total power of about 1.8 MW",
+    "verified": true
+   },
+   {
+    "value": {
+     "CH440": {
+      "capacity_mtph": [
+       58,
+       336
+      ],
+      "max_feed_mm": 250,
+      "motor_kW": 220
+     },
+     "CH895i": {
+      "capacity_mtph": [
+       258,
+       1077
+      ],
+      "max_feed_mm": 127,
+      "motor_kW": 750
+     }
+    },
+    "unit": "mixed",
+    "what": "Sandvik stationary cone crushers: nominal capacity, feed size, motor power (manufacturer product listing served at this URL; crusher mass not shown there)",
+    "source": "https://www.rocktechnology.sandvik/en/products/stationary-crushers-and-screens/stationary-cone-crushers/ch440-cone-crusher/",
+    "quote": "CH440 | Nominal capacity | 58 - 336 mtph (64 - 370 stph) | Max. feed size | 250.0 mm (9.8 in.) | Motor power | 220 kW (295 hp) ... CH895i | Nominal capacity | 258 - 1,077 mtph (284 - 1,187 stph) | Max. feed size | 127 mm (5 in.) | Motor power | 750 kW (1,000 hp)",
+    "verified": true
+   },
+   {
+    "value": [
+     0.65,
+     3.8
+    ],
+    "unit": "kW per (t/h) (DERIVED)",
+    "what": "DERIVED: Sandvik CH440 cone crusher installed motor power per throughput = 220 kW / 336 t/h to 220 kW / 58 t/h",
+    "source": "https://www.rocktechnology.sandvik/en/products/stationary-crushers-and-screens/stationary-cone-crushers/ch440-cone-crusher/",
+    "quote": "CH440 | Nominal capacity | 58 - 336 mtph | Motor power | 220 kW (295 hp)",
+    "verified": true
+   }
+  ]
+ },
+ "asteroid_mining_concepts": {
+  "value": {
+   "asteroid_mass_t": 500,
+   "asteroid_diameter_m": 7,
+   "IMLEO_kg": 18000,
+   "SEP_power_kW": 40,
+   "Isp_s": 3000,
+   "mass_amplification": 28,
+   "flight_time_years": [
+    6,
+    10
+   ]
+  },
+  "unit": "mixed",
+  "what": "KISS Asteroid Retrieval Feasibility Study (Brophy et al. 2012): capture and return of a whole small asteroid",
+  "source": "https://web.archive.org/web/2020id_/https://kiss.caltech.edu/final_reports/Asteroid_final_report.pdf",
+  "quote": "The transportation capability would be enabled by a ~40-kW solar electric propulsion system with a specific impulse of 3,000 s. ... With an initial mass to low-Earth orbit (IMLEO) of 18,000 kg, the subsequent delivery of a 500-t asteroid to lunar orbit represents a mass amplification factor of about 28-to-1.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "bag_length_m": 10,
+     "bag_diameter_m": 15,
+     "parts": "inflatable deployable arms, high-strength bag assembly, cinching cables"
+    },
+    "unit": "m",
+    "what": "KISS asteroid capture mechanism size and construction (mass of the mechanism is not listed separately in the report text)",
+    "source": "https://web.archive.org/web/2020id_/https://kiss.caltech.edu/final_reports/Asteroid_final_report.pdf",
+    "quote": "The capture mechanisms would include inflatable deployable arms, a high-strength bag assembly, and cinching cables. When inflated and rigidized, four or more arms connected by two or more inflated circumferential hoops would provide the compressive strength to hold open the bag, which would be roughly 10 m long x 15 m in diameter",
+    "verified": true
+   },
+   {
+    "value": {
+     "wet_mass_kg": 15500,
+     "xenon_kg": 10958.3,
+     "hall_thrusters": "five 10-kW, max four operating",
+     "solar_array_area_m2_per_wing": 90
+    },
+    "unit": "mixed",
+    "what": "KISS asteroid retrieval spacecraft: wet mass, propellant, propulsion and array size",
+    "source": "https://web.archive.org/web/2020id_/https://kiss.caltech.edu/final_reports/Asteroid_final_report.pdf",
+    "quote": "This MEL indicates a maximum expected wet mass of 15,500 kg ... The EP subsystem concept includes a total of five 10-kW Hall thrusters and Power Processor Units (PPUs). A maximum of 4 thruster/PPU strings are operated at a time. ... each wing having a total area of approximately 90 m2. ... Propellant (EP) 10958.3",
+    "verified": true
+   },
+   {
+    "value": {
+     "ISS_OGA_mass_kg": 446,
+     "O2_kg_per_day": 5
+    },
+    "unit": "mixed",
+    "what": "Water electrolysis hardware scale as cited in the DFD report (relevant to processing mined water into propellant)",
+    "source": "https://ntrs.nasa.gov/api/citations/20170003126/downloads/20170003126.pdf",
+    "quote": "The ISS unit has a mass of 446 kg and can produce 5 kg of oxygen per day.",
+    "verified": true
+   }
+  ]
+ },
+ "railgun": {
+  "value": {
+   "muzzle_energy_MJ": [
+    20,
+    32
+   ],
+   "speed_mph": [
+    4500,
+    5600
+   ],
+   "mach": [
+    5.9,
+    7.4
+   ],
+   "range_nmi": [
+    50,
+    100
+   ],
+   "projectile_lb": 28,
+   "HVP_launch_package_lb": 40,
+   "rate_of_fire_rpm": 6
+  },
+  "unit": "mixed",
+  "what": "US Navy electromagnetic railgun (EMRG) and hypervelocity projectile (CRS report R44175)",
+  "source": "https://www.congress.gov/crs_external_products/R/PDF/R44175/R44175.80.pdf",
+  "quote": "launch projectiles at [speeds of] 4,500 mph to 5,600 mph, or roughly Mach 5.9 to Mach 7.4 at sea level. ... to fire projectiles at energy levels of 20 to 32 megajoules, which is enough to propel a projectile 50 to 100 nautical miles. ... BAE Systems states that HVP is 24 inches long and weighs 28 pounds, including a 15-pound payload. The total length and weight of an HVP launch package, BAE Systems states, is 26 inches and 40 pounds. ... 6 rounds per minute from EMRG.",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "muzzle_energy_MJ": 10.64,
+     "muzzle_velocity_m_s": 2520,
+     "capacitor_bank_MJ": [
+      9,
+      32
+     ]
+    },
+    "unit": "mixed",
+    "what": "2008 US Navy railgun test: muzzle energy vs pulsed-power stored energy (Wikipedia); DERIVED upper-bound efficiency 10.64/41 = 26 % if both banks were fully used",
+    "source": "https://en.wikipedia.org/w/index.php?title=Railgun&action=raw",
+    "quote": "On 31 January 2008, the U.S. Navy tested a railgun that fired a projectile at 10.64 MJ with a muzzle velocity of 2520 m/s. The power was provided by a new 9-megajoule prototype capacitor bank using solid-state switches and high-energy-density capacitors delivered in 2007 and an older 32-MJ pulse power system",
+    "verified": true
+   },
+   {
+    "value": {
+     "projectile_kg": 3.2,
+     "velocity_m_s": 3390,
+     "energy_MJ": 18.4,
+     "record_shot_MJ": 33
+    },
+    "unit": "mixed",
+    "what": "BAE/US Navy railgun shots 2010 (Wikipedia; one sentence flagged 'failed verification')",
+    "source": "https://en.wikipedia.org/w/index.php?title=Railgun&action=raw",
+    "quote": "In 2010, the United States Navy tested a BAE Systems-designed compact-sized railgun for ship emplacement that accelerated a 3.2 kg projectile to hypersonic velocities of approximately 3390 m/s ... with 18.4 MJ of kinetic energy. ... the Office of Naval Research set a world record by conducting a 33 MJ shot from the railgun",
+    "verified": true
+   },
+   {
+    "value": {
+     "projectile_lb": 23,
+     "mach": 7,
+     "muzzle_energy_MJ": 32,
+     "goal_shots_per_minute": 10,
+     "launch_current_MA": 5
+    },
+    "unit": "mixed",
+    "what": "US Navy railgun projectile and goals (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Railgun&action=raw",
+    "quote": "Though the 23 lb projectiles have no explosives, their Mach 7 velocity gives them 32 megajoules of energy ... The goal ... was ten shots per minute at 32 megajoule[s] ... a typical railgun power supply might be designed to deliver a launch current of 5 MA for a few milliseconds.",
+    "verified": true
+   }
+  ]
+ },
+ "laser_weapon": {
+  "value": 0.25,
+  "unit": "fraction",
+  "what": "Wall-plug (electrical-to-optical) efficiency of the fibre-laser LaWS (CRS report R41526); cooling load = 3x beam power",
+  "source": "https://web.archive.org/web/2020id_/https://fas.org/sgp/crs/weapons/R41526.pdf",
+  "quote": "LaWS is about 25% efficient, meaning that about 400 kW of ship's power would be needed to operate a future version of LaWS producing 100 kW of laser light. The remaining 300 kW of electrical energy would be converted into waste thermal energy (heat) that needs to be removed from the system using the ship's cooling capacity.",
+  "verified": true,
+  "more": [
+   {
+    "value": [
+     0.2,
+     0.25
+    ],
+    "unit": "fraction",
+    "what": "Efficiency of slab solid-state lasers; future about 30 %",
+    "source": "https://web.archive.org/web/2020id_/https://fas.org/sgp/crs/weapons/R41526.pdf",
+    "quote": "Slab SSLs are currently about 20% to 25% efficient, meaning that about 400 kW to 500 kW of a ship's power would be needed to operate a system producing 100 kW of laser light. ... Future slab SSLs might have efficiencies of about 30%.",
+    "verified": true
+   },
+   {
+    "value": 0.3,
+    "unit": "fraction",
+    "what": "Efficiency of the Tactical Laser System (10 kW fibre laser)",
+    "source": "https://web.archive.org/web/2020id_/https://fas.org/sgp/crs/weapons/R41526.pdf",
+    "quote": "The TLS is about 30% efficient, meaning 34 kW of power is needed to operate the 10 kW",
+    "verified": true
+   },
+   {
+    "value": {
+     "kg_per_kW_goal": 5,
+     "power_kW": 150,
+     "volume_m3": 3
+    },
+    "unit": "mixed",
+    "what": "DARPA HELLADS laser weapon system design goals",
+    "source": "https://web.archive.org/web/2019id_/https://www.darpa.mil/program/high-energy-liquid-laser-area-defense-system",
+    "quote": "The goal of the HELLADS program is to develop a 150 kilowatt (kW) laser weapon system that is ten times smaller and lighter than current lasers of similar power ... With a weight goal of less than five kilograms per kilowatt, and volume of three cubic meters for the laser system",
+    "verified": true
+   },
+   {
+    "value": {
+     "LaWS_kW": 30,
+     "HELIOS_kW": 60
+    },
+    "unit": "kW",
+    "what": "Beam power of US Navy shipboard lasers (CRS R44175)",
+    "source": "https://www.congress.gov/crs_external_products/R/PDF/R44175/R44175.80.pdf",
+    "quote": "LaWS had a reported beam power of 30 kilowatts (kW). ... HELIOS is a 60-kilowatt solid-state laser capable of scalable effects",
+    "verified": true
+   },
+   {
+    "value": {
+     "initial": "<400 kW and 68 tons",
+     "added": "<2.5 MW and 560 tons",
+     "later": "~10-20 MW and ~1,400 tons"
+    },
+    "unit": "ship power and cooling capacity (tons of refrigeration)",
+    "what": "US Navy 2011 vision: required ship electrical power and cooling capacity for three successive classes of shipboard high-energy laser (67 % duty cycle)",
+    "source": "https://web.archive.org/web/2020id_/https://fas.org/sgp/crs/weapons/R41526.pdf",
+    "quote": "Required ship power (in kW or MW) and cooling capacity (in tons): <400 kW and 68 tons | <2.5MW and 560 tons | ~10-20 MW and ~1,400 tons ... Power and cooling requirements assume continuous firing of the laser with a 67% duty cycle",
+    "verified": true
+   },
+   {
+    "value": [
+     1.3,
+     0.4,
+     0.5
+    ],
+    "unit": "m",
+    "what": "Size of General Atomics Gen 3 HEL laser module (>50 kW class) (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=High_Energy_Liquid_Laser_Area_Defense_System&action=raw",
+    "quote": "the assembly is small at only 1.3 x 0.4 x 0.5 m, and is powered by a compact Lithium-ion battery ... beam quality of electrically-pumped lasers can be maintained above 50 kilowatts",
+    "verified": true
+   }
+  ]
+ },
+ "spacecraft_mass_fractions": {
+  "value": {
+   "payloads": 339.0,
+   "avionics": 60.9,
+   "communications_and_tracking": 61.8,
+   "GNC": 20.5,
+   "electrical_power": 928.8,
+   "solar_arrays": 742.8,
+   "power_management_distribution": 104.6,
+   "battery": 21.4,
+   "thermal_control": 315.6,
+   "structures_and_mechanisms": 525.1,
+   "structures": 386.8,
+   "mechanisms": 138.3,
+   "propulsion_system_dry": 906.7,
+   "EP_hardware": 114.0,
+   "propellant_management": 465.3,
+   "PPU": 160.0,
+   "RCS_hardware": 167.4,
+   "propellant": 11869.2,
+   "total_basic_mass": 15027.6,
+   "predicted_mass_with_growth": 15539.2
+  },
+  "unit": "kg",
+  "what": "Master equipment list (basic mass, before growth) of a real conceptual design: KISS/NASA GRC COMPASS asteroid-return spacecraft, 40 kW solar-electric (Table 3, read from the page image)",
+  "source": "https://web.archive.org/web/2020id_/https://kiss.caltech.edu/final_reports/Asteroid_final_report.pdf",
+  "quote": "Table 3. Asteroid Capture and Return Conceptual Spacecraft MEL: FETCH - Asteroid Return Spacecraft 15027.6 [growth 511.6, predicted 15539.2]; Payloads 339.0; Avionics 60.9; Communications and Tracking 61.8; Guidance, Navigation, and Control (GN&C) 20.5; Electrical Power Subsystem 928.8 (Solar Arrays 742.8; Power Cable and Harness 60.0; Power Management & Distribution 104.6; Battery System 21.4); Thermal Control (Non-Propellant) 315.6; Structures and Mechanisms 525.1 (Structures 386.8; Mechanisms 138.3); Propulsion System 906.7 (Propulsion Hardware (EP) 114.0; Propellant Management (EP) 465.3; Power Processing Unit (PPU) 160.0; Reaction Control System Hardware 167.4); Propellant 11869.2 (Propellant (EP) 10958.3; Pressurant 34.3; RCS Propellant 876.6)",
+  "verified": true,
+  "more": [
+   {
+    "value": {
+     "structures_and_mechanisms": 0.166,
+     "electrical_power": 0.294,
+     "propulsion_dry": 0.287,
+     "thermal": 0.1,
+     "payload": 0.107,
+     "avionics": 0.019,
+     "communications": 0.02,
+     "GNC": 0.006
+    },
+    "unit": "fraction of dry mass (DERIVED)",
+    "what": "DERIVED from the KISS asteroid-return MEL: each subsystem basic mass / dry mass, dry mass = 15027.6 - 11869.2 = 3158.4 kg (an electric-propulsion-heavy spacecraft, so power and propulsion fractions are high)",
+    "source": "https://web.archive.org/web/2020id_/https://kiss.caltech.edu/final_reports/Asteroid_final_report.pdf",
+    "quote": "Electrical Power Subsystem 928.8 ... Thermal Control (Non-Propellant) 315.6 ... Structures and Mechanisms 525.1 ... Propulsion System 906.7 ... Propellant 11869.2",
+    "verified": true
+   },
+   {
+    "value": [
+     0.025,
+     0.05
+    ],
+    "unit": "fraction of MTOW",
+    "what": "Aircraft landing gear mass as a share of maximum takeoff weight (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Landing_gear&action=raw",
+    "quote": "The landing gear represents 2.5 to 5% of the maximum takeoff weight (MTOW) and 1.5 to 1.75% of the aircraft cost, but 20% of the airframe direct maintenance cost.",
+    "verified": true
+   },
+   {
+    "value": {
+     "payload": 0.102,
+     "structure_and_systems": 0.382,
+     "fuel_and_propellant": 0.516
+    },
+    "unit": "fraction of IMLEO (DERIVED)",
+    "what": "DERIVED from Discovery II Table 1: payload 172 / 1690; dry structure and systems 646 / 1690; D3He fuel + hydrogen 872 / 1690",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Payload 172 ... Structure 646 ... D3He fuel 11 ... Hydrogen propellant 861 ... IMLEO (mt) 1,690",
+    "verified": true
+   },
+   {
+    "value": {
+     "structure": 38,
+     "shielding": 69,
+     "crew_systems": 25,
+     "weight_growth_contingency": 40,
+     "total": 172
+    },
+    "unit": "t",
+    "what": "Discovery II crew payload (7 habitable modules, artificial gravity) mass breakdown; 30 % growth contingency",
+    "source": "https://ntrs.nasa.gov/api/citations/20050160960/downloads/20050160960.pdf",
+    "quote": "Payload 172: Structure 38; Shielding 69; Crew systems 25; Weight growth contingency 40 ... a 30% weight growth contingency (40 mt)",
+    "verified": true
+   }
+  ]
+ },
+ "docking_mechanism": {
+  "value": 324,
+  "unit": "kg",
+  "what": "NASA Docking System Block 1 mass, not to exceed (integrated mechanism incl. electrical boxes) (NDS Interface Definitions Document)",
+  "source": "https://ntrs.nasa.gov/api/citations/20150014481/downloads/20150014481.pdf",
+  "quote": "TABLE 3.2-1: NDSB1 MASS PROPERTIES: Mass lb (kg) [Not to exceed] 715 (324)",
+  "verified": true,
+  "more": [
+   {
+    "value": 286,
+    "unit": "kg",
+    "what": "APAS-95 androgynous docking mechanism mass (Wikipedia)",
+    "source": "https://en.wikipedia.org/w/index.php?title=Androgynous_Peripheral_Attach_System&action=raw",
+    "quote": "Although Energia's code for the Shuttle APAS is APAS-95, it has been described as being basically the same as APAS-89. It had a mass of 286 kg.",
+    "verified": true
+   },
+   {
+    "value": {
+     "primary_struts": 211.3,
+     "secondary_struts": 68.8,
+     "footpads": 44.9,
+     "deployment_truss_and_mechanisms": 80.4,
+     "surface_sensing_probes": 6.1,
+     "thermal_insulation": 68.4,
+     "total": 486.5,
+     "honeycomb_absorbers_included": 61
+    },
+    "unit": "lb",
+    "what": "Apollo 11 Lunar Module landing gear weight by component (NASA TN D-6850); 486.5 lb = 220.7 kg; against a 16,000 lb touchdown weight = 3.0 % (DERIVED)",
+    "source": "https://ntrs.nasa.gov/api/citations/19720018253/downloads/19720018253.pdf",
+    "quote": "WEIGHT SUMMARY: Primary struts 211.3; Secondary struts 68.8; Footpads 44.9; Deployment truss and deployment mechanisms 80.4; Lunar-surface-sensing probes 6.1; Thermal insulation 68.4; Total 486.5; a: Total honeycomb-energy-absorber weight in all struts is approximately 61 pounds. ... Based on an LM touchdown weight of 16 000 earth pounds",
+    "verified": true
+   }
+  ]
+ },
+ "not_found": [
+  "fusion_drive_mass_breakdown: Project Daedalus primary source (BIS report) not opened; figures are from Wikipedia. Direct Fusion Drive Table 18 does not say whether quantity-2 rows are per unit",
+  "fusion_reactor_mass_breakdown: SPARC mass; ITER whole-machine total mass and blanket total mass (only per-module 4.6 t read)",
+  "superconductor_composition: REBCO layer-by-layer mass fractions (Hastelloy/silver/REBCO percentages by mass); Nb3Sn and NbTi strand copper-to-superconductor ratios",
+  "magnetic_nozzle: a measured nozzle-only efficiency (thermal-to-directed) for fusion-class plasmas; only design assumptions and a whole-thruster laboratory figure found",
+  "neutron_shielding: published tenth-value thicknesses for 14 MeV neutrons in LiH, borated polyethylene and tungsten (only a derived B4C value for D-He3 spectrum)",
+  "radiator_areal_mass: liquid droplet radiator kg/kW figure (only the 'seven times lighter' statement)",
+  "cryotank_mass_fraction: Shuttle External Tank LH2 tank dry mass on its own; SOFI and MLI areal mass in kg/m2; boil-off rate in % per day; Delta IV/Centaur tank-only masses (stage masses include engines)",
+  "rcs_thruster: Draco mass and chamber material",
+  "rocket_engine_materials: component-by-component mass breakdown of RS-25/RL10/Merlin",
+  "energy_storage_density: specific power (kW/kg) of commercial supercapacitors and of pulsed-power capacitor banks; SMES system-level mass",
+  "iss_eclss_mass: CDRA and Sabatier mass/power/volume; power and volume of OGA and WRS (Wieland NASA/TM-1998-206956 is a scanned PDF without text layer)",
+  "crew_accommodation_mass: business-class seat mass; total mass of an ISS crew quarters rack",
+  "radar_mass_power: mass and prime power of AN/APG-77 and AN/APG-81; Goldstone/Arecibo detection range for a given target size; transmitter power of Arecibo in MW (only EIRP)",
+  "telescope_survey: Pan-STARRS telescope mass; explicit 'size X at distance Y' detection limits for WISE and Pan-STARRS",
+  "spacecraft_comm: standalone TWTA mass with EPC as one unit is given only as MRO line items",
+  "flight_computer: RAD750 board mass; Orion Vehicle Management Computer mass/power; Shuttle GPC (AP-101S) mass and power",
+  "rock_cutting_energy: field (full-scale machine) specific energy by rock class for roadheaders and TBMs; a table of UCS classes with MJ/m3",
+  "mining_machine_mass: continuous miner (Joy/Komatsu) mass, cutter power and t/h; roadheader cutting rate in t/h",
+  "conveyor_crusher_mass: belt conveyor mass per metre; jaw and cone crusher machine mass (only motor power and capacity found)",
+  "asteroid_mining_concepts: NASA ARM capture mechanism mass; TransAstra/Honeybee optical-mining power per kg of water and kg per hour",
+  "railgun: barrel mass and length; pulsed-power system mass; stated stored-to-muzzle efficiency",
+  "laser_weapon: beam director aperture; diode wall-plug efficiency; system mass per kW for LaWS and HELIOS (only the HELLADS 5 kg/kW goal)",
+  "spacecraft_mass_fractions: SMAD typical subsystem mass-fraction tables (book not accessible online); only one worked design example and a derived split",
+  "docking_mechanism: IDSS standard itself gives no mass; only NDS Block 1 not-to-exceed and APAS-95 found",
+  "general: the web-search tool was exhausted for this session and public search pages blocked automated queries, so sources were limited to pages reachable by known URL or by the NTRS and Europe PMC search APIs"
+ ]
+}
