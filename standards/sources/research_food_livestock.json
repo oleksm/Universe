@@ -1,0 +1,440 @@
+{
+ "fcr_pigs": {
+  "value": [
+   1,
+   3
+  ],
+  "unit": "kg feed per kg liveweight gain",
+  "what": "FCR on liveweight gain, commercial pigs UK/Europe 2011: about 1 as piglets rising to about 3 at slaughter (US 2012: 3.46 at 240-250 lb, i.e. the marginal FCR of the last weight band). Feed as fed, not stated as dry matter.",
+  "source": "https://en.wikipedia.org/wiki/Feed_conversion_ratio",
+  "quote": "As of 2011, pigs used commercially in the UK and Europe had an FCR, calculated using weight gain, of about 1 as piglets and ending about 3 at time of slaughter.",
+  "verified": true
+ },
+ "fcr_broilers": {
+  "value": 1.7,
+  "unit": "kg feed per kg liveweight",
+  "what": "US broiler industry average 2025, feed per unit liveweight (1.91-1.92 in 2011; world average 2013 about 2.0 liveweight / 2.8 carcass per Wikipedia FCR article citing FAO).",
+  "source": "https://www.nationalchickencouncil.org/about-the-industry/statistics/u-s-broiler-performance/",
+  "quote": "Table row (Year / Market Age days / Market Weight lb liveweight / Feed to Meat Gain, pounds of feed to one pound of broiler, liveweight / Mortality %): 2025 47.5 6.63 1.70 5.95",
+  "verified": true
+ },
+ "fcr_layers": {
+  "value": 2,
+  "unit": "kg feed per kg eggs",
+  "what": "FCR of US laying hens 2011, feed mass per mass of eggs (OWID/Alexander et al. 2016 gives 2.3 for eggs).",
+  "source": "https://en.wikipedia.org/wiki/Feed_conversion_ratio",
+  "quote": "For hens used in egg production in the US, as of 2011 the FCR was about 2, with each hen laying about 330 eggs per year.",
+  "verified": true
+ },
+ "fcr_beef": {
+  "value": [
+   4.5,
+   7.5
+  ],
+  "unit": "kg feed per kg liveweight gain",
+  "what": "US beef cattle 2013, FCR on liveweight gain, normal range; above 6 typical; carcass-weight FCR above 10. Page does not say dry matter explicitly (source is a feed-efficiency talk where intake is normally DM). Whole-system figure per kg edible product is far higher: OWID/Alexander 2016 gives 25.",
+  "source": "https://en.wikipedia.org/wiki/Feed_conversion_ratio",
+  "quote": "As of 2013 in the US, an FCR calculated on live weight gain of 4.5–7.5 was in the normal range with an FCR above 6 being typical. Divided by an average carcass yield of 62.2%, the typical carcass weight FCR is above 10.",
+  "verified": true
+ },
+ "fcr_sheep": {
+  "value": [
+   4,
+   5
+  ],
+  "unit": "kg feed dry matter per kg liveweight gain",
+  "what": "Lambs on high-concentrate rations; 5 to 6 on good-quality forage.",
+  "source": "https://en.wikipedia.org/wiki/Feed_conversion_ratio",
+  "quote": "An FCR (kg feed dry matter intake per kg live mass gain) for lambs is often in the range of about 4 to 5 on high-concentrate rations, 5 to 6 on some forages of good quality",
+  "verified": true
+ },
+ "fcr_fish": {
+  "value": [
+   1,
+   1.5
+  ],
+  "unit": "kg feed per kg liveweight",
+  "what": "Farmed fish FCR on whole live fish: Atlantic salmon ~1 (2015), tilapia ~1.5, catfish ~1 (2013). Edible-fillet FCR: tilapia ~4.6, Chinese carp ~4.9.",
+  "source": "https://en.wikipedia.org/wiki/Feed_conversion_ratio",
+  "quote": "As of 2015 farm-raised Atlantic salmon had a commodified feed supply with four main suppliers, and an FCR of around 1. Tilapia is about 1.5, and as of 2013 farmed catfish had an FCR of about 1. [...] The edible (fillet) FCR of tilapia is around 4.6 and the FCR of Chinese carp is around 4.9.",
+  "verified": true,
+  "by_species": {
+   "atlantic_salmon": 1,
+   "tilapia": 1.5,
+   "catfish": 1,
+   "tilapia_fillet_basis": 4.6,
+   "chinese_carp_fillet_basis": 4.9
+  }
+ },
+ "feed_per_kg_milk": {
+  "value": 0.7,
+  "unit": "kg feed per kg whole milk",
+  "what": "Feed required per kg of whole milk, OWID chart 'Feed required to produce one kilogram of meat or dairy product' (data: Alexander et al. 2016; the dry-matter basis is my reading of that dataset, not printed in the CSV). Corroboration: Wikipedia FCR article says dairy feed efficiency (milk/intake by weight) of 1.30-1.70 is normal, i.e. 0.59-0.77 kg feed per kg milk.",
+  "source": "https://ourworldindata.org/grapher/feed-required-to-produce-one-kilogram-of-meat-or-dairy-product",
+  "quote": "CSV row: Whole Milk,2013,0.7 (column feed_conversion_ratio__alexander_et_al__2016); same file: Beef 25, Lamb/mutton 15, Pork 6.4, Poultry 3.3, Eggs 2.3",
+  "verified": true
+ },
+ "milk_per_cow": {
+  "value": [
+   1154,
+   12546
+  ],
+  "unit": "kg milk per cow per year",
+  "what": "Cow milk yield per cow per year: India 1,154 kg (2010, low), USA 9,954 kg (2010), Israel 12,546 kg (highest, FAO survey 2001-2007). World average across ALL milk animals (cows, buffalo, goats, sheep) 2024 = 1,161 kg/animal/yr and USA 10,680 (OWID grapher milk-yields-per-animal, rows 'World,OWID_WRL,2024,1160.9434' and 'United States,USA,2024,10679.531').",
+  "source": "https://en.wikipedia.org/wiki/Milk",
+  "quote": "FAO reports Israel dairy farms are the most productive in the world, with a yield of 12,546 kg milk per cow per year. [...] The milk yield per cow in the United States was 9,954 kg per year in 2010. In contrast, the milk yields per cow in India and China – the second and third largest producers – were respectively 1,154 kg and 2,282 kg per year.",
+  "verified": true,
+  "world_all_milk_animals_2024": 1160.9,
+  "world_source": "https://ourworldindata.org/grapher/milk-yields-per-animal"
+ },
+ "eggs_per_hen": {
+  "value": 330,
+  "unit": "eggs per hen per year",
+  "what": "US commercial laying hens, 2011. Egg mass: no published AVERAGE found; US size class 'Large' has minimum mass 56.8 g per egg, Medium 49.6 g (Wikipedia Chicken egg sizes table). OWID egg yield per bird 2024: USA 17.26 kg/bird/yr, World 11.29 kg/bird/yr (grapher egg-yield-per-bird); 17.26 kg / 330 eggs would imply ~52 g but that mixes years and sources.",
+  "source": "https://en.wikipedia.org/wiki/Feed_conversion_ratio",
+  "quote": "For hens used in egg production in the US, as of 2011 the FCR was about 2, with each hen laying about 330 eggs per year.",
+  "verified": true,
+  "egg_mass_g_us_large_minimum": 56.8,
+  "egg_mass_source": "https://en.wikipedia.org/wiki/Chicken_egg_sizes",
+  "egg_mass_quote": "Large (L) | 56.8 g | 2 oz. ; Medium (M) | 49.6 g | 1.75 oz.",
+  "egg_kg_per_bird_year": {
+   "USA_2024": 17.264,
+   "World_2024": 11.292
+  },
+  "egg_kg_source": "https://ourworldindata.org/grapher/egg-yield-per-bird"
+ },
+ "water_pigs": {
+  "value": [
+   7.3,
+   10
+  ],
+  "unit": "L per head per day",
+  "what": "Feeder pig 70-110 kg: requirement range 7.3-10, typical 9 L/day (23-36 kg: 3.2-4.5; lactating sow 18.1-22.7). Ontario OMAFRA Factsheet 07-023 'Water Requirements of Livestock' (archived copy). Drinking water.",
+  "source": "https://web.archive.org/web/20201215232003/http://www.omafra.gov.on.ca/english/engineer/facts/07-023.htm",
+  "quote": "Table 3. Water Consumption by Swine: Feeder pig | 70-110 | 7.3-10 | 9 ... 'five hundred 23-kg (50-lb) pigs at the start of a growout cycle will each consume 4.5 L/day. By the end of the growout cycle, the water requirements of these same 500 pigs, now weighing 100 kg (220 lb), will have doubled to 9 L/day each.'",
+  "verified": true
+ },
+ "water_cattle": {
+  "value": [
+   27,
+   55
+  ],
+  "unit": "L per head per day",
+  "what": "Feedlot beef cattle 364-636 kg: range 27-55, typical 41 L/day (backgrounder 181-364 kg: 15-40, typical 25; lactating cows with calves 43-67). Ontario OMAFRA Factsheet 07-023 'Water Requirements of Livestock' (archived copy). Drinking water.",
+  "source": "https://web.archive.org/web/20201215232003/http://www.omafra.gov.on.ca/english/engineer/facts/07-023.htm",
+  "quote": "Table 2. Water Consumption by Beef Cattle: Feedlot cattle: Short keep | 364-636 (800-1,400 lb) | 27-55 | 41",
+  "verified": true
+ },
+ "water_dairy_cow": {
+  "value": [
+   68,
+   155
+  ],
+  "unit": "L per head per day",
+  "what": "Milking cows: 68-83 L/day at 13.6 kg milk/day up to 132-155 at 45.5 kg milk/day; average typical 115 L/day; dry cows 34-49. Ontario OMAFRA Factsheet 07-023 'Water Requirements of Livestock' (archived copy). Drinking water.",
+  "source": "https://web.archive.org/web/20201215232003/http://www.omafra.gov.on.ca/english/engineer/facts/07-023.htm",
+  "quote": "Table 1. Water Consumption by Dairy Cattle: Milking cows | 13.6 | 68-83 | 115 ; Milking cows | 36.3 | 114-136 | 115 ; Milking cows | 45.5 | 132-155 | 115 ; Dry cows | - | 34-49 | 41",
+  "verified": true
+ },
+ "water_sheep": {
+  "value": [
+   3.6,
+   5.2
+  ],
+  "unit": "L per head per day",
+  "what": "Feeder lamb 27-50 kg: 3.6-5.2, typical 4.4 L/day (gestating meat ewe 4.0-6.5; lactating ewe with lambs 9.0-10.5). Ontario OMAFRA Factsheet 07-023 'Water Requirements of Livestock' (archived copy). Drinking water.",
+  "source": "https://web.archive.org/web/20201215232003/http://www.omafra.gov.on.ca/english/engineer/facts/07-023.htm",
+  "quote": "Table 5. Water Consumption by Sheep: Feeder lamb | 27-50 | 3.6-5.2 | 4.4 ; Gestating meat ewe/ram | 80 | 4.0-6.5 | 5.25 ; Lactating meat ewe plus unweaned offspring | 80+ | 9.0-10.5 | 10",
+  "verified": true
+ },
+ "water_poultry": {
+  "value": [
+   0.25,
+   0.28
+  ],
+  "unit": "L per bird per day",
+  "what": "Typical annual-average: laying hens 250 L per 1,000 birds/day (range 180-320) = 0.25 L/bird; broilers 280 L per 1,000 birds/day (summer 450) = 0.28 L/bird; broilers by age at 21 C: 50-260 (weeks 1-4), 345-470 (weeks 5-8) L/1,000 birds/day. Layers ~4 kg water per dozen eggs. Ontario OMAFRA Factsheet 07-023 'Water Requirements of Livestock' (archived copy). Drinking water.",
+  "source": "https://web.archive.org/web/20201215232003/http://www.omafra.gov.on.ca/english/engineer/facts/07-023.htm",
+  "quote": "Table 7: Winter, fall, spring | 280 ; Summer | 450 (L/1,000 birds/day). Table 8: Laying hens | 1.6-1.9 | 180-320 | 250. 'It has been estimated that laying hens will drink about 4 kg of water per dozen eggs produced.'",
+  "verified": true
+ },
+ "pig_slaughter_weight": {
+  "value": [
+   122,
+   129
+  ],
+  "unit": "kg liveweight",
+  "what": "US hog slaughter weight 270-285 lb (converted at 0.4536 kg/lb), reached in 22-26 weeks from birth. USDA ERS.",
+  "source": "https://www.ers.usda.gov/topics/animal-products/hogs-pork/sector-at-a-glance",
+  "quote": "Farrow-to-finish operations raise hogs from birth to slaughter weight, about 270–285 pounds. [...] In a farrow-to-finish operation, 22–26 weeks (or about 6 months, starting at birth) are required to grow a pig to slaughter weight.",
+  "verified": true
+ },
+ "broiler_slaughter_weight": {
+  "value": 3.01,
+  "unit": "kg liveweight",
+  "what": "US average broiler market liveweight 2025: 6.63 lb (converted). Europe-style lighter bird: 'about 2 kg in only 5 to 7 weeks' (Wikipedia Broiler).",
+  "source": "https://www.nationalchickencouncil.org/about-the-industry/statistics/u-s-broiler-performance/",
+  "quote": "2025 47.5 6.63 1.70 5.95 (Market Age average days / Market Weight pounds, liveweight / feed per lb liveweight / mortality %)",
+  "verified": true
+ },
+ "broiler_cycle_days": {
+  "value": 47.5,
+  "unit": "days",
+  "what": "US average broiler market age 2025 (at 6.63 lb / 3.0 kg). Wikipedia Broiler: slaughter-weight of about 2 kg in 5 to 7 weeks.",
+  "source": "https://www.nationalchickencouncil.org/about-the-industry/statistics/u-s-broiler-performance/",
+  "quote": "2025 47.5 6.63 1.70 5.95",
+  "verified": true
+ },
+ "dressing_beef": {
+  "value": [
+   60,
+   63
+  ],
+  "unit": "% of liveweight",
+  "what": "Carcass weight as % of liveweight, grain-fed beef (grass-fed 56-58). SDSU: 62-64% for fed beef; Penn State: 63% average.",
+  "source": "https://web.archive.org/web/20210117003053/http://www2.ca.uky.edu/agcomm/pubs/asc/asc179/asc179.pdf",
+  "quote": "Table 1. Average dressing percentages for the four major livestock species: Beef (grain-fed) 60 – 63; Beef (grass-fed) 56 – 58; Pork (skin-on) 70 – 73; Sheep (shorn) 50 – 53; Goat 45 – 50",
+  "verified": true
+ },
+ "dressing_pork": {
+  "value": [
+   70,
+   73
+  ],
+  "unit": "% of liveweight",
+  "what": "Carcass (skin-on) as % of liveweight. Oklahoma brochure: 250 lb hog -> 180 lb dressed (72%).",
+  "source": "https://web.archive.org/web/20210117003053/http://www2.ca.uky.edu/agcomm/pubs/asc/asc179/asc179.pdf",
+  "quote": "Pork (skin-on) 70 – 73",
+  "verified": true
+ },
+ "dressing_lamb": {
+  "value": [
+   50,
+   53
+  ],
+  "unit": "% of liveweight",
+  "what": "Carcass as % of liveweight, shorn sheep.",
+  "source": "https://web.archive.org/web/20210117003053/http://www2.ca.uky.edu/agcomm/pubs/asc/asc179/asc179.pdf",
+  "quote": "Sheep (shorn) 50 – 53",
+  "verified": true
+ },
+ "dressing_chicken": {
+  "value": 75,
+  "unit": "% of liveweight",
+  "what": "Dressed weight of chickens and other fowl (skin on, feathers off) as % of liveweight. Wikipedia article (flagged 'more citations needed').",
+  "source": "https://en.wikipedia.org/wiki/Dressed_weight",
+  "quote": "the dress weight for chickens and other fowl is closer to 75% of the live weight, which is significantly higher than that of cattle, which can be from 50-70% depending on breed and methods used.",
+  "verified": true
+ },
+ "meat_yield_beef": {
+  "value": 65,
+  "unit": "% of carcass weight",
+  "what": "Boneless trimmed beef (steaks, roasts, lean trim) from a 750 lb carcass of a 1,200 lb steer: 490 lb = 65% of carcass, = 41% of liveweight (490/1200, my arithmetic). Range of retail yield 55-75% of carcass.",
+  "source": "https://extension.sdstate.edu/how-much-meat-can-you-expect-fed-steer",
+  "quote": "A typical 750 carcass with ½ inch of fat over the rib eye and average muscling of a 12-13 square inch rib eye will yield about 65% of the carcass weight as retail cuts (roasts and steaks) and lean trim. [...] A 1200 steer, ½ inch fat, average muscling, yields a 750 pound carcass. The 750 pound carcass yields approximately: 490 pounds boneless trimmed beef; 150 pounds fat trim; 110 pounds bone",
+  "verified": true,
+  "pct_of_liveweight_computed": 41
+ },
+ "meat_yield_pork": {
+  "value": 57,
+  "unit": "% of liveweight",
+  "what": "Retail cuts (mixed bone-in and boneless, includes feet/head/back fat lines in the brochure) from a 250 lb hog: 144 lb = 57% of live, 80% of the 180 lb carcass. NOT strictly boneless. Oklahoma Dept. of Agriculture 'How Much Meat?' (archived).",
+  "source": "https://web.archive.org/web/20201112043103/https://www.oda.state.ok.us/food/fs-hogweight.pdf",
+  "quote": "On average about 57% of a hog make it from the pen to the pan. A 250 lb. hog will yield approximately 144 lbs of retail cuts. Around 28% of a hog's live weight is inedible product removed during the slaughter and dressing procedure bringing our 250 lb. live hog to 180 lbs. dressed. [...] another 20% of the weight is removed bringing our 180 lb. carcass to 144 lbs. of retail cuts.",
+  "verified": true
+ },
+ "meat_yield_lamb": {
+  "value": 38,
+  "unit": "% of the stated 120 lb (see caveat)",
+  "what": "BONE-IN chops and roasts plus ground lamb: 46 lb from a '120-pound lamb' = 38% (my arithmetic). CAVEAT: the table title says '120-pound lamb carcass' but the sister tables ('1,200-pound beef carcass', '250-pound pig carcass') are clearly live weights, so this is most likely % of LIVEWEIGHT; the table's own source line reads 'SOURCE?'. Low confidence; no boneless lamb figure found.",
+  "source": "https://web.archive.org/web/20210117003053/http://www2.ca.uky.edu/agcomm/pubs/asc/asc179/asc179.pdf",
+  "quote": "Table 4. Average amount of meat from a 120-pound lamb carcass. Bone-in chops and roasts, shorn fleece | Shorn | 80 | 20 | 46 [approx. amt. of freezer meat (lb)] ... SOURCE? Note: Estimations may vary.",
+  "verified": true
+ },
+ "fillet_yield_fish": {
+  "value": [
+   34,
+   50
+  ],
+  "unit": "% of whole fish weight",
+  "what": "Skinless fillet as % of whole fish, FAO Fisheries Technical Paper 309 Table 1: Atlantic cod 34, Alaska pollack 36, common carp 36, tilapias [37], Pacific salmon (chum/coho/pink/sockeye) [50]. Square brackets = provisional values in the source. Total edible flesh: cod 47, pollack 41, salmon 62.",
+  "source": "https://www.fao.org/4/t0219e/T0219E01.htm",
+  "quote": "Species | Yield (as % of whole fish or shellfish weight) Skinless Fillet | Edible Flesh ...: Alaska pollack 36 41 ; Atlantic cod 34 47 ; Common carp 36 [54] ; Tilapias nei [37] 37 ; Chum salmon (13) [50] 62",
+  "verified": true,
+  "by_species": {
+   "atlantic_cod": 34,
+   "alaska_pollack": 36,
+   "common_carp": 36,
+   "tilapia_provisional": 37,
+   "pacific_salmon_provisional": 50
+  }
+ },
+ "manure_pigs": {
+  "value": 4.3,
+  "unit": "kg fresh manure per head per day",
+  "what": "Grow-finish pig, 150 lb (68 kg) average weight: 9.5 lb/day. Ohio State Univ. Extension Bulletin 604, Table 1 'Fresh Manure Production and Characteristics per Animal Type' (adapted from MWPS-18); table is in lb/day, converted here at 0.4536 kg/lb. Fresh manure = faeces + urine.",
+  "source": "https://agcrops.osu.edu/sites/agcrops/files/imce/fertility/bulletin_604.pdf",
+  "quote": "Swine: Grow-Finish 150 [lb] 0.063 89 11 80.0 7.66 4.78 3.83 9.5 [lb/day] 0.153 [cu ft/day]",
+  "verified": true
+ },
+ "manure_dairy_cow": {
+  "value": [
+   58,
+   69
+  ],
+  "unit": "kg fresh manure per head per day",
+  "what": "Lactating cow 1,400 lb (635 kg): 128 lb/day at 50 lb milk/day, 153 lb/day at 90 lb milk/day. Ohio State Univ. Extension Bulletin 604, Table 1 'Fresh Manure Production and Characteristics per Animal Type' (adapted from MWPS-18); table is in lb/day, converted here at 0.4536 kg/lb. Fresh manure = faeces + urine.",
+  "source": "https://agcrops.osu.edu/sites/agcrops/files/imce/fertility/bulletin_604.pdf",
+  "quote": "Lactating Cow—50 1,400 0.091 88 12 85.0 5.45 0.71 2.50 128 2.06 ; Lactating Cow—90 1,400 0.110 88 12 85.0 5.44 0.80 2.50 153 2.48",
+  "verified": true
+ },
+ "manure_beef": {
+  "value": 36,
+  "unit": "kg fresh manure per head per day",
+  "what": "Beef cattle on high-energy (feedlot) ration, 1,100 lb (499 kg): 80 lb/day; high-forage 1,100 lb: 92 lb/day (42 kg). Ohio State Univ. Extension Bulletin 604, Table 1 'Fresh Manure Production and Characteristics per Animal Type' (adapted from MWPS-18); table is in lb/day, converted here at 0.4536 kg/lb. Fresh manure = faeces + urine.",
+  "source": "https://agcrops.osu.edu/sites/agcrops/files/imce/fertility/bulletin_604.pdf",
+  "quote": "Beef Cattle: High Forage 1,100 0.084 92 8 89.4 8.29 2.85 4.89 92 1.48 ; High Energy 1,100 0.073 92 8 91.9 8.44 3.28 5.00 80 1.29",
+  "verified": true
+ },
+ "manure_layers": {
+  "value": 0.118,
+  "unit": "kg fresh manure per bird per day",
+  "what": "Layer, 4 lb (1.8 kg) bird: 0.26 lb/day. Ohio State Univ. Extension Bulletin 604, Table 1 'Fresh Manure Production and Characteristics per Animal Type' (adapted from MWPS-18); table is in lb/day, converted here at 0.4536 kg/lb. Fresh manure = faeces + urine.",
+  "source": "https://agcrops.osu.edu/sites/agcrops/files/imce/fertility/bulletin_604.pdf",
+  "quote": "Poultry: Layer 4 0.065 75 25 75.4 5.38 4.15 2.46 0.26 0.00400",
+  "verified": true
+ },
+ "manure_broilers": {
+  "value": 0.082,
+  "unit": "kg fresh manure per bird per day",
+  "what": "Broiler, 2 lb (0.9 kg) average bird: 0.18 lb/day. Ohio State Univ. Extension Bulletin 604, Table 1 'Fresh Manure Production and Characteristics per Animal Type' (adapted from MWPS-18); table is in lb/day, converted here at 0.4536 kg/lb. Fresh manure = faeces + urine.",
+  "source": "https://agcrops.osu.edu/sites/agcrops/files/imce/fertility/bulletin_604.pdf",
+  "quote": "Broiler 2 0.090 74 26 72.3 4.91 2.99 2.35 0.18 0.00286",
+  "verified": true
+ },
+ "flour_extraction": {
+  "value": 72,
+  "unit": "% of wheat kernel mass",
+  "what": "White (roller-milled) flour extraction rate: about 72% or less of the whole grain. Kansas Wheat: a 60 lb bushel yields ~42 lb white flour (70%).",
+  "source": "https://en.wikipedia.org/wiki/Flour_extraction",
+  "quote": "extracting about 72% of the whole grain kernel [...] This lower extraction (typically 72% or less) is most commonly Roller Milled White Enriched Flour",
+  "verified": true
+ },
+ "oil_content_rapeseed": {
+  "value": 44,
+  "unit": "% of seed mass",
+  "what": "Oil content of canola/rapeseed seed; crushing yield 10 L oil (about 9.2 kg at 0.92 g/ml) from 23 kg seed = ~40% by mass. Feedipedia: 46% of DM (40-50%).",
+  "source": "https://en.wikipedia.org/wiki/Rapeseed_oil",
+  "quote": "About 44% of a seed is oil, with the remainder as a canola meal used for animal feed. About 23 kg of canola seed makes 10 litre of canola oil.",
+  "verified": true
+ },
+ "oil_content_sunflower": {
+  "value": 40,
+  "unit": "% of seed mass",
+  "what": "Oil-type sunflower seeds (whole, with hull; hull = 20% of seed); confectionery types 30%. Same page: oil is 'about 50% of the seed dry weight'.",
+  "source": "https://www.feedipedia.org/node/40",
+  "quote": "Oil type seeds contain 40% oil and represent 80-95% of sunflower seed production. The hulls (20% of the seed) are black and tend to adhere to the kernels (USDA, 2010).",
+  "verified": true
+ },
+ "oil_content_soybean": {
+  "value": [
+   18,
+   19
+  ],
+  "unit": "% of seed mass",
+  "what": "Oil content of soybean seed (same article elsewhere: 'approximately 20%').",
+  "source": "https://en.wikipedia.org/wiki/Soybean",
+  "quote": "Soybean seed contains 18–19% oil. To extract soybean oil from seed, the soybeans are cracked, adjusted for moisture content, rolled into flakes, and solvent-extracted",
+  "verified": true
+ },
+ "sugar_from_beet": {
+  "value": 150,
+  "unit": "kg sugar per tonne of beet",
+  "what": "Sugar obtained per tonne of sugar beet roots (plus 500 kg wet pulp). Beet sugar content 12-21%, about 20% typical (Wikipedia Sugar beet).",
+  "source": "https://www.feedipedia.org/node/710",
+  "quote": "It has been reported that 1 ton of sugarbeets yields approximately 150 kg of sugar and 500 kg of wet beet pulp (or 210 kg pressed beet pulp, or 50 kg dehydrated beet pulp) (Legrand, 2015).",
+  "verified": true
+ },
+ "sugar_from_cane": {
+  "value": 135,
+  "unit": "kg sucrose per tonne of clean cane stalk",
+  "what": "SUCROSE CONTAINED in one tonne of burned-and-cropped cane stalk (Brazil), not recovered white sugar; recovery would be lower. Same article: mature stalk is 12-16% soluble sugars.",
+  "source": "https://en.wikipedia.org/wiki/Sugarcane",
+  "quote": "Each ton of b&c yields 740 kg of juice (135 kg of sucrose and 605 kg of water) and 260 kg of moist bagasse (130 kg of dry bagasse).",
+  "verified": true
+ },
+ "cheese_yield": {
+  "value": 14.4,
+  "unit": "kg milk per kg cheese",
+  "what": "Grana Padano (hard, long-aged cheese). Parmesan article: 1,100 L milk per vat makes two wheels of ~45 kg fresh curd each. No figure found for Cheddar.",
+  "source": "https://en.wikipedia.org/wiki/Grana_Padano",
+  "quote": "About 14.4 kg of milk yield 1 kg of cheese.",
+  "verified": true
+ },
+ "butter_yield": {
+  "value": 23,
+  "unit": "kg milk per kg butter",
+  "what": "Theoretical yield worked example, University of Guelph Dairy Science and Technology eBook: 100 kg of 3.6% fat milk -> 8.9 kg of 40% cream -> 4.35 kg butter (81.5% fat), i.e. 100/4.35 = 23 kg milk per kg butter (my division).",
+  "source": "https://books.lib.uoguelph.ca/dairyscienceandtechnologyebook/chapter/butter-manufacture/",
+  "quote": "If 100 kg of milk was used, 8.9 kg of cream would be produced (from a Pearson Square mass balance) and 4.35 kg butter would be produced from that. This is the theoretical yield based on no losses.",
+  "verified": true
+ },
+ "bread_yield": {
+  "value": 1.5,
+  "unit": "kg bread per kg flour",
+  "what": "US commercial white bread: 16 oz flour in a 24 oz loaf = 1.5 (my division). Same page: a bushel (42 lb white flour) makes 42 one-and-a-half pound loaves.",
+  "source": "https://web.archive.org/web/20200810073531/http://kswheat.com/consumers/wheat-facts",
+  "quote": "There are approximately 16 ounces of flour in a one-and-a-half pound loaf of bread. [...] A bushel of wheat yields 42 commercial loaves of white bread (one-and-a-half pound loaves).",
+  "verified": true
+ },
+ "beer_malt": {
+  "value": 11.3,
+  "unit": "kg malt per hectolitre of beer",
+  "what": "Maltsters' Association of Great Britain: 1 tonne malt -> 8,837 L beer, i.e. 1000/88.37 = 11.3 kg malt/hl (my division); 1.3 t barley per t malt -> about 14.7 kg barley/hl.",
+  "source": "https://www.ukmalt.com/uk-malting-industry/malt-facts/",
+  "quote": "1.3 tonne of barley makes 1 tonne of malt; 1 tonne of malt makes 54 barrels of beer; 1 barrel of beer = 163.65 litres; 54 barrels = 8,837 litres",
+  "verified": true
+ },
+ "wine_yield": {
+  "value": [
+   1.3,
+   1.6
+  ],
+  "unit": "kg grapes per litre of wine",
+  "what": "Grapes needed per litre: 1.6 kg white, 1.3 kg red, 1.4 kg mixed (= 625 / 770 / 715 L wine per tonne of grapes, my conversion).",
+  "source": "https://en.wikipedia.org/wiki/Yield_(wine)",
+  "quote": "Representative figures for the amount of grapes needed for 100 L of wine are 160 kg for white wine, 130 kg for red wine, and 140 kg for a mixture of red and white wine.",
+  "verified": true
+ },
+ "ammonia_energy": {
+  "value": [
+   28,
+   41
+  ],
+  "unit": "GJ per tonne NH3",
+  "what": "Haber-Bosch incl. feedstock energy: best available technology 28 GJ/t (natural gas), 36 GJ/t (coal); global average today ~41 GJ/t net. IEA Ammonia Technology Roadmap executive summary (archived). Royal Society 2020 briefing: conventional production consumes '8 MWh of energy per tonne of ammonia' (28.8 GJ/t). No published electrolysis-route figure was read.",
+  "source": "https://web.archive.org/web/20231202000735/https://www.iea.org/reports/ammonia-technology-roadmap/executive-summary",
+  "quote": "The global average energy intensity of ammonia production today is around 41 GJ/t on a net basis, compared with best available technology (BAT) energy performance levels of 28 GJ/t for natural gas-based production and 36 GJ/t for coal-based production.",
+  "verified": true,
+  "second_source": "https://royalsociety.org/-/media/policy/projects/green-ammonia/green-ammonia-policy-briefing.pdf",
+  "second_quote": "Overall, brown ammonia production is energy intensive, consuming 8 MWh of energy per tonne of ammonia."
+ },
+ "fertiliser_n_rate": {
+  "value": 67.7,
+  "unit": "kg N per ha of cropland per year",
+  "what": "World average nitrogen fertiliser use per hectare of cropland, 2023 (FAO data via OWID). Same file 2023: USA 59.08, Netherlands 90.56, Denmark 81.86. Not crop-specific.",
+  "source": "https://ourworldindata.org/grapher/nitrogen-fertilizer-application-per-hectare-of-cropland",
+  "quote": "CSV row: World,OWID_WRL,2023,67.72 (column: nutrient nitrogen N (total), use per area of cropland, kilograms per hectare)",
+  "verified": true
+ },
+ "not_found": [
+  "olive_oil_yield",
+  "meat_yield_chicken"
+ ],
+ "notes": [
+  "All entries were read from the fetched page text (curl), none from search excerpts; the web-search tool was unavailable (session budget exhausted), so sources are pages reachable by known URL: fewer primary sources than ideal, several via Wikipedia.",
+  "Partial gaps inside found items: ammonia_energy has no electrolysis-route figure; eggs_per_hen has no true average egg mass (size-class minimum only); sugar_from_cane is sucrose content, not recovered sugar; cheese_yield is Grana Padano only; meat_yield_pork and meat_yield_lamb are not strictly boneless; fcr_beef/fcr_pigs sources do not state dry-matter basis; feed_per_kg_milk dry-matter basis not printed in the CSV.",
+  "Values marked 'my arithmetic/division/conversion' are unit conversions or ratios of the quoted figures, not printed in the source.",
+  "Quotes from Wikipedia have wiki markup and reference tags removed; table rows are flattened text."
+ ]
+}

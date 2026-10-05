@@ -50,7 +50,7 @@ properties:
       properties:
         nozzle: { type: string, description: "The nozzle: a node of its model, by name." }
         slot: { type: string, description: "The slot whose equipment drives it, by the slot's name." }
-        share: { type: number, minimum: 0, maximum: 1, description: "the share of that equipment's thrust it gives" }
+        share: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the share of that equipment's thrust it gives" }
   flight:
     description: "What the engine flies and breaks it by, that its parts do not say yet."
     type: object
@@ -84,9 +84,9 @@ properties:
       thrust_path: { type: array, items: { type: string, x-ref: [part] }, description: "The parts its main drive's push passes through, from the engine forward, by key. Each is checked against it." }
       landing_speed: { type: number, x-unit: "m/s", description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
       cabin_pressure: { type: number, x-unit: "Pa", description: "Pa, of the air its pressurised parts hold against vacuum" }
-      safety_factor: { type: number, description: "how many times its load a part must take before it yields" }
-      pressure_factor: { type: number, description: "a further factor on cabin pressure" }
-      strut_efficiency: { type: number, description: "the share of a landing leg's stroke that does work" }
+      safety_factor: { type: number, x-unit: "1", description: "how many times its load a part must take before it yields" }
+      pressure_factor: { type: number, x-unit: "1", description: "a further factor on cabin pressure" }
+      strut_efficiency: { type: number, x-unit: "1", description: "the share of a landing leg's stroke that does work" }
       minimum_gauge: { type: number, x-unit: "m", description: "m, the thinnest skin used where no load says more" }
   open_questions:
     description: What is not settled about it. Kept with the hull so it is not forgotten.

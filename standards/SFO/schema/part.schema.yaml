@@ -68,9 +68,9 @@ properties:
     properties:
       load_case: { enum: [pressure, landing], description: "The load its gauge is checked against: holding the cabin's air, or taking the landing." }
       design_load: { type: number, x-unit: "N", description: "N, the load it is built to carry" }
-      safety_factor: { type: number, description: "how many times its design load it takes before it breaks" }
+      safety_factor: { type: number, x-unit: "1", description: "how many times its design load it takes before it breaks" }
       pressure: { type: number, x-unit: "Pa", description: "Pa it holds" }
-      fatigue_life: { type: number, description: "cycles of its design load" }
+      fatigue_life: { type: number, x-unit: "1", description: "cycles of its design load" }
       failure: { enum: [critical, degraded, cosmetic], description: "What its failing means for the ship." }
 
   life:
@@ -81,5 +81,5 @@ properties:
       inspection_interval: { type: number, x-unit: "s", description: "s of flight between inspections" }
       field_replaceable: { type: boolean, description: Can be changed without a yard. }
       repairable: { type: boolean, description: Can be mended, not only replaced. }
-      recoverable: { type: number, minimum: 0, maximum: 1, description: "the share of its mass got back as material when it is scrapped" }
+      recoverable: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the share of its mass got back as material when it is scrapped" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

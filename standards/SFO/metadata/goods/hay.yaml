@@ -5,6 +5,6 @@ identity:
   kind: intermediate
   description: "Grass cut and dried, for animals."
 physical:
-  bulk_density: 150
+  bulk_density: 232
 basis:
-  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/density-materials-d_1652.html", note: "As stored or shipped in bulk." }

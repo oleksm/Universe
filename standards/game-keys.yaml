@@ -193,9 +193,9 @@
 - { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
 - { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }
 - { key: org.meridian, game: "brand.meridian", in: "brands.ron" }
-- { key: org.nacaubun-farms, game: "brand.nacaubun_farms", in: "brands.ron" }
 - { key: org.orbital, game: "brand.orbital", in: "brands.ron" }
 - { key: org.sfo, game: "body.sfo", in: "bodies.ron" }
+- { key: org.sunward-planters, game: "brand.sunward_planters", in: "brands.ron" }
 - { key: org.tallis, game: "brand.tallis", in: "brands.ron" }
 - { key: org.tolland, game: "brand.tolland", in: "brands.ron" }
 - { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "brands.ron" }

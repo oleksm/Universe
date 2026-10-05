@@ -10,6 +10,7 @@ physical:
   height: 10
 recipes:
   - makes: good.wine
+    does: "1.3 to 1.6 kg of grapes to the litre."
     inputs:
       - { item: good.grapes, quantity: 1.4 }
     outputs:
@@ -17,4 +18,5 @@ recipes:
     rate: 0.2778
     power: 100000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "1.3 to 1.6 kg of grapes a litre. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

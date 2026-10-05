@@ -10,12 +10,14 @@ physical:
   height: 15
 recipes:
   - makes: good.beer
+    does: "11.3 kg of malt to the hectolitre; the barley to make that malt taken as a quarter more."
     inputs:
-      - { item: good.barley, quantity: 0.2 }
-      - { item: good.water, quantity: 1.1 }
+      - { item: good.barley, quantity: 0.14 }
+      - { item: good.water, quantity: 1.0 }
     outputs:
-      - { item: good.spent-grain, quantity: 0.3 }
+      - { item: good.spent-grain, quantity: 0.14 }
     rate: 1.389
     power: 400000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "11.3 kg of malt a hectolitre; the barley to make the malt is a guess. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

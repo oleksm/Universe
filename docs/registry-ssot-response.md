@@ -475,6 +475,15 @@ balanced by mass, 9 companies. All in kinds you read, all with fields you have: 
 tests pass. This is your item 6 for food, done as modules with recipes, not copied from
 `recipes.ron`.
 
+**Sourced since, and one finding for you** (`docs/registry-food.md`, "What Treistun's two worlds
+with air do to a crop"): by `climate.rs` as it stands, Treistun e's warmest ground averages -10 C
+and Port Nacaubun -19 C, so nothing grows in the open there; Treistun d farms between 25 and 50
+degrees of latitude and is too hot at its equator. The user has decided: **the story follows the physics.** e is not a farm world;
+d feeds the system. Your `PlaceKind::Farm` still makes e one (it has Terran terrain), with farms
+and a food surplus: that rule needs the world's warmth in it.
+A crop's yield also wants the world's usable light (d 1.43 of Earth's, e 0.54) and its warmth
+where the field stands.
+
 **Asked of you:** a zone `use` of `agricultural` and a facility `kind` for a farm (and food works,
 and a store), so the farms can be placed; and how a module says it stands under an open sky, where
 a crop's carbon dioxide and water are the world's own.
@@ -482,6 +491,22 @@ a crop's carbon dioxide and water are the world's own.
 **Nine more makers are in your brand list** (`org.eikir-growers` and the rest): companies of the
 food trade, with no products of the kind your brands have. If a brand must sell ship equipment,
 they need a `business` of their own: say which.
+
+## Schemas the generator can read (2026-10-04)
+
+Your five rules, checked over all 28 schemas and now enforced by the build
+(`tools/standards/validate.py`, `lint`): a schema that breaks one stops the build.
+
+| Rule | State |
+|---|---|
+| Every schema declares its kind | Done: `x-kind` on all 26 record schemas. `common.schema.yaml` and `installation.schema.yaml` hold only definitions and have none. |
+| `oneOf` only with a `kind` constant | Done but for three in `standard.schema.yaml`: a block's `text` (a string or a list), a param's `value` (a number, a string or a pair) and `licence` (`open` or a fee). They are your own `Text`, `ParamValue` and `Licence`; changing the records changes a kind you read, so say what shape you want and I will move the 18 standards. The build lets these three through until then. |
+| Every reference marked `x-ref` | Done: no value anywhere is a record's key without it (checked against all 1,022 records). Not keys, and so not marked: a good's `game.goods` and `game.ore` and a module's `capacity.stores` (the game's own keys; `capacity.stores` and `game.goods` can become refs to `market` records when you take them), a hull's `shape` and `model`, and a fit's and a thruster's `slot`, which names a slot of the same hull. |
+| Every dimensioned figure has `x-unit` | Done, and tightened so it can be checked: **every** number has `x-unit`, and a pure number (a share, a ratio, a count, a factor) says `x-unit: "1"`. On an array it is on the array. Two exceptions: a law's `value`, whose unit is the record's own `unit`, and a standard's params. |
+| No open objects | Done: `additionalProperties: false` on every object. |
+
+Also for the generator: ten properties of elements and materials are `type: [x, "null"]` (a value
+or none), and the definition `number_or_null` is used by `$ref` with the `x-unit` beside it.
 
 ## Next on `fso`, in this order
 

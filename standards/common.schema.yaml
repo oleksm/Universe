@@ -39,7 +39,7 @@ definitions:
       tolerance: { type: number, x-unit: "m", description: "m, on its dimensions" }
       tooling: { type: string, description: "The jig, die or mould it needs." }
       batch_size: { type: integer, minimum: 1, description: How many are made at a time. }
-      yield: { type: number, minimum: 0, maximum: 1, description: "the share of those made that pass inspection" }
+      yield: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the share of those made that pass inspection" }
       inspection: { type: string, description: "How it is checked: measured, X-rayed, pressure-tested." }
   physical:
     description: "What every physical thing has: what it weighs, the room it takes, what it stands. What a ship hauling it and a warehouse holding it have to know. A record uses those that apply to it."

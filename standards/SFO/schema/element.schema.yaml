@@ -46,7 +46,7 @@ properties:
           required: [mass_number, abundance]
           properties:
             mass_number: { type: integer, minimum: 1 }
-            abundance: { type: number, minimum: 0, maximum: 1 }
+            abundance: { type: number, x-unit: "1", minimum: 0, maximum: 1 }
       half_life: { $ref: "#/definitions/number_or_null", x-unit: "s", description: "s, of its longest-lived isotope; null if stable" }
       decay_mode: { enum: [alpha, beta-, beta+, electron capture, spontaneous fission, null], description: null if stable. }
 
@@ -54,7 +54,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      electronegativity: { $ref: "#/definitions/number_or_null", description: Pauling scale }
+      electronegativity: { $ref: "#/definitions/number_or_null", x-unit: "1", description: Pauling scale }
       first_ionisation_energy: { $ref: "#/definitions/number_or_null", x-unit: "J/mol", description: J/mol }
       electron_affinity: { $ref: "#/definitions/number_or_null", x-unit: "J/mol", description: "J/mol; left out where no stable negative ion forms" }
       oxidation_states: { type: array, items: { type: integer }, description: The common ones. }
@@ -105,7 +105,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      hardness: { $ref: "#/definitions/number_or_null", description: Mohs scale }
+      hardness: { $ref: "#/definitions/number_or_null", x-unit: "1", description: Mohs scale }
       youngs_modulus: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: Pa }
       tensile_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa, annealed" }
       ductility: { enum: [brittle, ductile, very ductile, null], description: "By Pugh's ratio (bulk / shear modulus): over 2.5 very ductile, over 1.75 ductile, else brittle." }

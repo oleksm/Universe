@@ -5,7 +5,7 @@ identity:
   name: "Marrow & Pike"
 kind: company
 ticker: MPK
-address: { at: settlement.treistun.port-nacaubun }
+address: { at: settlement.treistun.port-eikir }
 note: "Meat and fish"
 who: "Stockmen and fish farmers who also run the meat works."
 what: "Raises cattle, pigs, sheep, poultry and fish, slaughters, cuts and chills."

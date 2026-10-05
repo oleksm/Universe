@@ -35,7 +35,7 @@ properties:
         properties:
           kind: { const: power_plant }
           output: { type: number, x-unit: "W", description: "W it supplies" }
-          efficiency: { type: number, description: "the share of its fuel's energy it turns to power; the rest is heat" }
+          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy it turns to power; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
       - description: "The main drive."
         type: object
@@ -45,7 +45,7 @@ properties:
           kind: { const: drive }
           thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
           exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
-          efficiency: { type: number, description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
+          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
       - description: "Translation and attitude thrusters."
         type: object
@@ -55,7 +55,7 @@ properties:
           kind: { const: thrusters }
           thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
           exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
-          efficiency: { type: number, description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
+          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
       - description: "The belly lift."
         type: object
@@ -65,7 +65,7 @@ properties:
           kind: { const: lift }
           thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
           exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
-          efficiency: { type: number, description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
+          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
       - description: "Holds fuel."
         type: object
@@ -103,7 +103,7 @@ properties:
         required: [kind]
         properties:
           kind: { const: hyperdrive }
-          efficiency: { type: number, description: "the share of its draw that goes into the field; the rest is heat" }
+          efficiency: { type: number, x-unit: "1", description: "the share of its draw that goes into the field; the rest is heat" }
           top_speed: { type: number, x-unit: "m/s", description: "m/s, the fastest it can go" }
       - description: "Flies the ship by wire."
         type: object

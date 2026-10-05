@@ -108,6 +108,40 @@ def units(sch, at=""):
             yield from units(x, at)
 
 
+# What a schema must be for the engine's generator to make a type of it (the integrator's rules,
+# 2026-10-04). A standard's three text-or-number unions are known and wait on the engine.
+WAITING = {("standard.schema.yaml", "oneOf")}
+
+
+def lint(sch, name, at="", unit=False, top=True):
+    """Where a schema breaks the rules: (where, what)."""
+    if not isinstance(sch, dict):
+        return
+    if top and "properties" in sch and not sch.get("x-kind"):
+        yield at or "the schema", "says no x-kind: the kind of record it holds"
+    t = sch.get("type")
+    if (t == "object" or "properties" in sch) and "$ref" not in sch and sch.get("additionalProperties") is not False:
+        yield at or "the schema", "an open object: additionalProperties must be false"
+    for key in ("oneOf", "anyOf"):
+        for a in sch.get(key) or []:
+            if (name, "oneOf") not in WAITING and not (isinstance(a, dict) and "const" in ((a.get("properties") or {}).get("kind") or {})):
+                yield at, f"{key}: each shape must have a `kind` that is a constant"
+                break
+    unit = unit or "x-unit" in sch
+    numeric = t == "number" or (isinstance(t, list) and "number" in t) or str(sch.get("$ref", "")).endswith("number_or_null")
+    if numeric and not unit and name not in ("standard.schema.yaml", "law.schema.yaml") and not at.endswith("#number_or_null"):
+        yield at, "a number with no x-unit (a pure number says x-unit: \"1\")"
+    for k, x in (sch.get("properties") or {}).items():
+        yield from lint(x, name, f"{at}.{k}" if at else k, False, False)
+    for k, x in (sch.get("definitions") or {}).items():
+        yield from lint(x, name, f"{at}#{k}", False, False)
+    if isinstance(sch.get("items"), dict):
+        yield from lint(sch["items"], name, at + "[]", unit, False)
+    for key in ("oneOf", "anyOf"):
+        for a in sch.get(key) or []:
+            yield from lint(a, name, at, unit, False)
+
+
 def refs(v, sch, here, at=""):
     """Every place in `v` that names another record (its schema says `x-ref`): (holder, index, kinds, where)."""
     if not isinstance(sch, dict):
@@ -269,6 +303,8 @@ def check_all():
     for path, sch in sorted(_schemas.items()):
         for at, unit in units(sch):
             found.append((path, f"{at}: x-unit {unit!r} is not an SI unit (or deg)"))
+        for at, what in lint(sch, os.path.basename(path)):
+            found.append((path, f"{at}: {what}"))
     # (What each record names: a record's key, of a kind the property takes.)
     for full, at, key, kinds in named:
         if key not in KEYS:

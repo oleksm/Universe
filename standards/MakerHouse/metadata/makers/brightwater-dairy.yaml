@@ -5,7 +5,7 @@ identity:
   name: "Brightwater Dairy"
 kind: company
 ticker: BWD
-address: { at: settlement.treistun.port-nacaubun }
+address: { at: settlement.treistun.port-eikir }
 note: "Milk, cheese, butter and eggs"
-who: "A dairy company on Treistun e. Milk does not travel, so it makes what does."
+who: "A dairy company on Treistun d, where the hay is. Milk does not travel, so it makes what does."
 what: "Collects milk, makes cheese and butter, and keeps laying flocks."
