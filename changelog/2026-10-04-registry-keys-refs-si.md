@@ -77,3 +77,5 @@
   gives up its energy and how much.
 - **Hulls say what the engine needs of them:** their model, their slots, which nozzle each slot's
   equipment drives, their radius and drag. The registry checks that what is fitted fits its slot.
+- **Structures are records:** the station platform, the spaceport, the outpost and the orbital
+  site, each with its maker and what is fitted to it.

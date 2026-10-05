@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/structure.schema.yaml
+identity:
+  key: structure.outpost
+  name: "Halvard outpost"
+  maker: org.halvard
+  kind: outpost
+  revision: outdated
+  description: "A small settlement's port: pads, a works, a few thousand people."
+fit:
+  - { item: equipment.terminal.ground, count: 1 }
+basis:
+  - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }

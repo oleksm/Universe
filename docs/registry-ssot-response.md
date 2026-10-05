@@ -401,10 +401,33 @@ fit:
   frame figure (`physical.mass`): they have no parts.
 - No price. `fit[].nozzles` is the registry's own count and can go once you read `thrusters`.
 
+## Structures (2026-10-04)
+
+Your item 3, as far as it goes without your side. Four records of a new kind, `structure`
+(`SFO/schema/structure.schema.yaml`, `SFO/metadata/structures/`): `structure.platform`,
+`structure.spaceport`, `structure.outpost`, `structure.orbital`. Each has `identity` (key, name,
+maker, `kind`: station, spaceport, outpost, orbital; `revision: outdated`; description) and `fit`
+(equipment by key, with a count). From `structures.ron` as it stands. The three rings were already
+`gate.ring.*`. They are not on the registry's page yet.
+
+**Not done: a settlement naming its structure.** Your `Settlement` type refuses a field it does
+not know, so adding `structure:` to the records would stop the engine building. When your type
+takes `structure` (a ref to a `structure` or a `gate`), say so and I will fill it: the station is
+`structure.platform`; which ports are spaceports and which outposts is in `places.ron`'s rule,
+which I would then need from you. The same holds for anything else I add to a kind you read:
+I will ask first.
+
 ## Next on `fso`, in this order
 
-Your order: structures, goods and market kinds, what a place makes, trade bans, the world data
-still in Rust.
+Your items 5 to 8 each need something agreed before records are written:
+- **5, goods and market kinds:** a new kind of record for the market's categories. I will draft
+  its schema from `goods.ron`; `good` records then name their category, and `game.goods` goes.
+  That changes the `Good` type you read.
+- **6, what a place makes:** farms, artisans, pharma, fabs, factories and wells as industrial
+  modules with recipes. That is new plant with figures nobody has: the user's to say how far to
+  go, and whether guesses marked for review are wanted.
+- **7, trade bans:** on the administration (the organisation record you read).
+- **8, world data in Rust:** I need the list of values from you, by file.
 
 ## Where I'd do it differently
 

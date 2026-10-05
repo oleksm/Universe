@@ -173,7 +173,7 @@ def schema_of(rel):
         if len(p) == 3:
             return ORG if name == "SFO.yaml" else S(root, "standard")
         kind = p[2]
-        return S(root, {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "parts": "part"}.get(kind, ""))
+        return S(root, {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate", "parts": "part", "structures": "structure"}.get(kind, ""))
     return None
 
 
@@ -194,7 +194,7 @@ def key_of(rel, rec):
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
-        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part."}[kind] + low
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "parts": "part.", "structures": "structure."}[kind] + low
     if root == "MakerHouse":
         return "org."
     if root == "Dogma":
