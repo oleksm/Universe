@@ -112,12 +112,17 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
     keys.dedup();
     let index: HashMap<String, usize> = keys.iter().enumerate().map(|(i, k)| (k.clone(), i)).collect();
     // A unit's mass (kg): a tonne of bulk stock; one part, product or hull (a hull: its parts').
+    // (A part made of parts weighs what they do: in its folder, by their counts.)
+    fn of_parts(reg: &crate::registry::Registry, key: &str) -> Option<f64> {
+        let m: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
+        (m > 0.0).then_some(m)
+    }
     let piece = |key: &str| -> Option<f64> {
-        let p = reg.parts.iter().find(|p| p.identity.key == key).map(|p| p.physical.mass);
+        let p = reg.parts.iter().find(|p| p.identity.key == key).map(|p| p.physical.mass.or_else(|| of_parts(reg, key)));
         let e = || reg.equipment.iter().find(|e| e.identity.key == key).map(|e| e.physical.mass);
         let h = || {
             let h = reg.hulls.iter().find(|h| h.identity.key == key)?;
-            let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass? * *n as f64)).sum();
+            let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
             Some(h.physical.mass.or((parts > 0.0).then_some(parts)))
         };
         p.or_else(e).or_else(h).flatten()

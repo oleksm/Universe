@@ -64,14 +64,15 @@ pub(crate) fn build(reg: &Registry, index: &HashMap<String, usize>, mass: &dyn F
         let outputs = p.made_from.iter().find_map(|x| scrap_of(&x.item)).filter(|_| cut > 1e-9).map(|s| vec![(s, cut)]).unwrap_or_default();
         out.entry(module).or_default().push(Recipe { makes, inputs, outputs, rate: t.rate, power: t.power.unwrap_or(0.0), index: None });
     }
-    // Equipment and hulls: from their parts.
-    let products = reg.equipment.iter().map(|e| (&e.identity.key, &e.making.module)).chain(reg.hulls.iter().map(|h| (&h.identity.key, &h.making.module)));
+    // Equipment, hulls and parts made of parts: from their parts.
+    let assemblies = reg.parts.iter().filter(|p| p.made_from.is_empty()).map(|p| (&p.identity.key, &p.making.module));
+    let products = reg.equipment.iter().map(|e| (&e.identity.key, &e.making.module)).chain(reg.hulls.iter().map(|h| (&h.identity.key, &h.making.module))).chain(assemblies);
     for (key, module) in products {
         let (Some(makes), Some((module, t))) = (id(key), shop(module)) else { continue };
         let each = mass(makes);
         // (A part the registry hasn't described yet, with no mass and nothing it's made of,
         // isn't built into it: there's nothing to build it from.)
-        let parts: Vec<_> = reg.built_of(key).into_iter().filter(|(p, _)| p.physical.mass.is_some() || !p.made_from.is_empty()).collect();
+        let parts: Vec<_> = reg.built_of(key).into_iter().filter(|(p, _)| p.physical.mass.is_some() || !p.made_from.is_empty() || !reg.built_of(&p.identity.key).is_empty()).collect();
         let inputs: Vec<(usize, f64)> = parts.iter().filter_map(|(p, n)| Some((id(&p.identity.key)?, mass(id(&p.identity.key)?) * *n as f64 / each))).collect();
         if each <= 0.0 || inputs.is_empty() || inputs.len() < parts.len() {
             continue;

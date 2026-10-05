@@ -157,14 +157,16 @@ impl Registry {
         self.goods.iter().find(|g| g.identity.key == key)
     }
 
-    /// What `product` (a piece of equipment, a hull) is built of: its parts,
-    /// each with how many it takes. Equipment names its folder of parts
-    /// (`built_of.parts`); a hull's is the folder of its own name, until hulls
-    /// name theirs.
+    /// What `product` (a piece of equipment, a hull, a part made of parts) is
+    /// built of: its parts, each with how many it takes. Equipment and hulls
+    /// name their folder of parts (`built_of.parts`; a hull without, the
+    /// folder of its own name); a part made of parts has its own, named by
+    /// its code (`parts/mc-07/MC07-23/`).
     pub fn built_of(&self, product: &str) -> Vec<(&Part, u32)> {
         let folder = match product.split_once('.') {
             Some(("equipment", _)) => self.equipment.iter().find(|e| e.identity.key == product).and_then(|e| e.built_of.parts.clone()),
-            Some(("hull", name)) => Some(name.to_string()),
+            Some(("hull", name)) => Some(self.hulls.iter().find(|h| h.identity.key == product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
+            Some(("part", _)) => self.parts.iter().find(|p| p.identity.key == product).map(|p| p.identity.code.clone()),
             _ => None,
         };
         let Some(folder) = folder else { return Vec::new() };

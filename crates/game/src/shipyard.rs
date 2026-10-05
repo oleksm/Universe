@@ -104,6 +104,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(y) = app.shipyard.as_mut() else { return false };
     // (The interior studio kept in step either way: its plan, the decks, saving.)
     y.interior.sync(&spec.key, spec.shape(), &mut app.deckplans, ctx.dt);
+    y.interior.refit(spec);
     // CTRL+S in the deck studio: saved with the interior's plan.
     let ctrl = ctx.input.down(universe_engine::KeyCode::ControlLeft) || ctx.input.down(universe_engine::KeyCode::ControlRight);
     if y.page == Page::Layout && ctrl && ctx.input.pressed(universe_engine::KeyCode::KeyS) {
