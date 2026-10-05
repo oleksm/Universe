@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.treistun.tomiria, name: Tomiria, kind: centaur, parent: body.treistun.treistun, about: An ice body wandering
+    among the giants.}
+orbit: {semi_major_axis: 1014100000000.0, eccentricity: 0.3411, period: 663189120.0, inclination: 16.037}
+physical: {mass: 6.655e+16, radius: 27283.5, density: 782, day: 10117.8}
+rock: {class: rock-class.icy, structure: rubble pile}

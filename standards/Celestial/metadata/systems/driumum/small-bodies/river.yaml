@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.driumum.river, name: River, kind: crossing asteroid, parent: body.driumum.driumum, about: Knocked out
+    of the belt onto an orbit that comes in among the rocky planets.}
+orbit: {semi_major_axis: 24689700000.0, eccentricity: 0.8174, period: 4049688.96, inclination: 22.671}
+physical: {mass: 6050800000000.0, radius: 836.065, density: 2472, day: 16903.08}
+rock: {class: rock-class.stony, structure: rubble pile}

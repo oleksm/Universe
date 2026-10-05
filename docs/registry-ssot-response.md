@@ -754,5 +754,14 @@ move the farm goods.
 **Also in:** the metals an ore carries beside its main one (three new works, more recipes on the
 concentrator and the smelters): see `docs/geology-registry-note.md`.
 
-**Still owed:** small bodies from your export (`celestial_export.py`, and the seeder stopped);
-`registry-figures` read by the page's build; crops' base temperature and light need.
+**Small bodies are yours now (same day).** `celestial_export.py` writes the bodies your export
+marks `small` into `systems/<system>/small-bodies/`, without `in_game`, with their rock class,
+structure and density (a round one has no class: its density is its mass over its size), and a
+line of `about` by kind. A seeded one your export no longer makes is removed; a curated or frozen
+one is left. I ran it: 54 written, my 55 removed. `celestial_seed.py` seeds only regions now (the
+scattered disc, the far cloud, a stream for each returning comet in the records): 4 old streams
+went with their comets, 4 new ones came. Your guard can hold the small bodies to their records.
+All nine captured moons came out carbonaceous in the export I ran, though `primitive` has its
+colour since yesterday: worth a look on your side.
+
+**Still owed:** `registry-figures` read by the page's build; crops' base temperature and light need.
