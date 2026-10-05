@@ -182,7 +182,7 @@ fn panel_list(studio: &Studio, deck: &Deck, sides: Option<&Sides>, holes: &[Vec<
         }).collect(),
         Tool::Wall | Tool::Door => deck.walls.iter().enumerate().map(|(k, w)| {
             let doors = match w.doors.len() { 0 => String::new(), 1 => "  1 DOOR".into(), n => format!("  {n} DOORS") };
-            (Pick::Wall(k), format!("WALL {}  {:.1} M{doors}", k + 1, w.length()))
+            (Pick::Wall(k), format!("{} {}  {:.1} M{doors}", if w.rail { "RAILING" } else { "WALL" }, k + 1, w.length()))
         }).collect(),
         Tool::Ladder => deck.ladders.iter().enumerate().map(|(k, _)| (Pick::Ladder(k), format!("LADDER {}", k + 1))).collect(),
         Tool::Stair => deck.stairs.iter().enumerate().map(|(k, st)| (Pick::Stair(k), format!("STAIR {}  {:.1} M RUN", k + 1, (st.to - st.from).length()))).collect(),
@@ -334,7 +334,7 @@ fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
 /// What the tool does and how it's used (the tools' column, under them).
 fn tool_help(tool: Tool) -> &'static str {
     match tool {
-        Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. DEL REMOVES WHAT'S PICKED.",
+        Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. R MAKES A PICKED WALL A RAILING (1.1 M HIGH) OR BACK. DEL REMOVES WHAT'S PICKED.",
         Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK. FILL: A FLOOR OVER THE WHOLE DECK AT ONCE, FOLLOWING THE HULL (ONE FOR EACH PART OF IT AT THIS HEIGHT).",
         Tool::Wall => "A WALL ON THIS DECK, AS TALL AS THE DECK. CLICK ITS POINTS ONE BY ONE; ENTER ENDS IT. IT STOPS WHERE IT MEETS THE HULL (BEYOND, FAINT RED). TO CURVE A SEGMENT, PICK THE WALL WITH SELECT AND DRAG THE RING AT ITS MIDDLE. BACKSPACE TAKES THE LAST POINT BACK.",
         Tool::Door => "A DOORWAY IN A WALL, 0.9 M WIDE AND 2.1 M TALL. CLICK ON A WALL WHERE IT GOES; CLICK AN EXISTING DOOR TO REMOVE IT.",
@@ -741,7 +741,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 } else if studio.tool == Tool::Wall && studio.drawing.len() >= 2 {
                     let points = std::mem::take(&mut studio.drawing);
                     let bulges = vec![0.0; points.len() - 1];
-                    deck.walls.push(Wall { points, bulges, doors: Vec::new() });
+                    deck.walls.push(Wall { points, bulges, doors: Vec::new(), rail: false });
                 }
             }
         }
@@ -856,6 +856,13 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
         {
             studio.pick = Some(*pick);
         }
+    }
+    // R: a picked wall made a railing (RAIL high, not to the ceiling), or back.
+    if input.pressed(KeyCode::KeyR)
+        && let Some(Pick::Wall(k)) = studio.pick
+        && let Some(w) = deck.walls.get_mut(k)
+    {
+        w.rail = !w.rail;
     }
     // What's picked removed (with any tool).
     if remove {
