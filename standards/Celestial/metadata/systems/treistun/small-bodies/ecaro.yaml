@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.treistun.ecaro, name: Ecaro, kind: captured moon, parent: body.treistun.treistun-i, about: 'A small body
+    its giant caught: far out, on a tilted and stretched orbit, going round backward.'}
+orbit: {semi_major_axis: 4409280000.0, eccentricity: 0.3536, period: 19081180.8, inclination: 154.332}
+physical: {mass: 6.3347e+17, radius: 47476.2, density: 1413, day: 11688.48}
+rock: {class: rock-class.carbonaceous, structure: rubble pile}
