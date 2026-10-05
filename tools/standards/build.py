@@ -529,8 +529,14 @@ PORT = {
 
 # The game's kinds of goods: each one's name and how much a cubic metre of it weighs as stowed
 # (content/base/goods.ron).
-ORES = set(re.findall(r'key: "(ore\.[a-z_]+)"', open(os.path.join(ROOT, "content", "base", "ores.ron"), encoding="utf-8").read()))
-GOODS_KINDS = {k: {"name": n.title(), "density": float(d)} for k, n, d in re.findall(r'key: "(goods\.[a-z_]+)",\s*name: "([^"]*)",.*?bulk_density: ([0-9.]+)', open(os.path.join(ROOT, "content", "base", "goods.ron"), encoding="utf-8").read(), re.S)}
+# (The game no longer has ores.ron or goods.ron: it reads the goods and the market's categories from
+# the registry. Both are taken from the records here, under the names the rest of this build uses.)
+_sfo_meta = os.path.join(TREE, "SFO", "metadata")
+ORES = {m for f in sorted(os.listdir(os.path.join(_sfo_meta, "goods"))) for m in re.findall(r"^\s*ore: (ore\.[a-z_]+)", open(os.path.join(_sfo_meta, "goods", f), encoding="utf-8").read(), re.M)}
+GOODS_KINDS = {}
+for _mf in sorted(os.listdir(os.path.join(_sfo_meta, "markets"))):
+    _mk = yaml.safe_load(open(os.path.join(_sfo_meta, "markets", _mf), encoding="utf-8"))
+    GOODS_KINDS["goods." + _mf[:-5].replace("-", "_")] = {"name": _mk["identity"]["name"].title(), "density": (_mk.get("bulk_density") or 0) / 1000}
 
 
 TIERS = ["sourced", "derived", "invented"]
