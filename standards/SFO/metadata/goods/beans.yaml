@@ -2,11 +2,10 @@
 identity:
   key: good.beans
   name: "Beans"
+  traded_as: market.food
   kind: product
   description: "Dried beans."
 physical:
   bulk_density: 700
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html", note: "As stored or shipped in bulk." }

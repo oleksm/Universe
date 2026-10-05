@@ -7,7 +7,7 @@ identity:
   section: dogma.measures
 value: 6371000
 unit: "m"
-kind: real
+kind: reference
 note: "What a planet's radius is read in."
 basis:
   - { of: [value], tier: sourced, source: "IUGG: the Earth's mean radius, 6,371.0 km" }

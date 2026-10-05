@@ -2,11 +2,12 @@
 identity:
   key: good.woollens
   name: "Woollens"
+  traded_as: market.textiles
   kind: product
   description: "Coats, jumpers, blankets: warm things, of wool."
 physical:
   bulk_density: 200
-game:
-  goods: goods.textiles
+life: 144533808
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "4.58 years: a coat, in the same survey." }

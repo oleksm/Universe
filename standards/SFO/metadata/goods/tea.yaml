@@ -2,11 +2,10 @@
 identity:
   key: good.tea
   name: "Tea"
+  traded_as: market.food
   kind: product
   description: "Leaves, withered and dried."
 physical:
   bulk_density: 192
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/density-materials-d_1652.html", note: "As stored or shipped in bulk." }

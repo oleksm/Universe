@@ -2,11 +2,10 @@
 identity:
   key: good.sugar
   name: "Sugar"
+  traded_as: market.food
   kind: product
   description: "White sugar."
 physical:
   bulk_density: 850
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

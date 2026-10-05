@@ -15,7 +15,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-  kind: { enum: [foundry, mill, yard, power, warehouse] }
+  kind: { enum: [foundry, mill, yard, power, warehouse, farm, food works, store] }
   parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
   processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }

@@ -9,3 +9,4 @@ address: { at: settlement.treistun.port-eikir }
 note: "Milk, cheese, butter and eggs"
 who: "A dairy company on Treistun d, where the hay is. Milk does not travel, so it makes what does."
 what: "Collects milk, makes cheese and butter, and keeps laying flocks."
+business: food

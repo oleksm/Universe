@@ -2,10 +2,9 @@
 identity:
   key: good.water
   name: Water
+  traded_as: market.water
   kind: raw
   description: "Water, as ice or liquid."
-game:
-  goods: goods.water
 source:
   won_from: good.asteroid-water-ice
   note: "Melted and filtered."

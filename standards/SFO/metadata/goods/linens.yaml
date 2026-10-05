@@ -2,11 +2,12 @@
 identity:
   key: good.linens
   name: "Linens"
+  traded_as: market.textiles
   kind: product
   description: "Sheets, towels, table cloths, and clothes for hot places: of linen."
 physical:
   bulk_density: 250
-game:
-  goods: goods.textiles
+life: 104140080
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [life], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Taken as clothing: 3.3 years." }

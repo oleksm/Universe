@@ -192,5 +192,5 @@ properties:
         additionalProperties: false
         required: [kind]
         properties:
-          kind: { const: throat_coil }
+          kind: { const: throat_coil, x-in-game: "not made" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

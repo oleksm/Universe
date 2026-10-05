@@ -1063,8 +1063,8 @@ for s in standards:
             if known is None:
                 problem(full, f"unknown group '{group}'")
                 continue
-            for k in props or {}:
-                if k not in known["properties"]:
+            for k in (props if isinstance(props, dict) else {}):
+                if k not in known.get("properties", {}):
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
@@ -2223,7 +2223,7 @@ _pdir = os.path.join(TREE, "People", "metadata")
 needs = [dict(load(os.path.join(_pdir, "needs", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "needs")))] if os.path.isdir(_pdir) else []
 professions = [dict(load(os.path.join(_pdir, "professions", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "professions")))] if os.path.isdir(_pdir) else []
 _made = {rc.get("product") for m in modules for rc in m.get("recipes") or []} | {x.get("item") for m in modules for rc in m.get("recipes") or [] for x in rc.get("outputs") or []}
-_markets = {(g.get("game") or {}).get("goods", "").replace("goods.", "") for g in goods if any(g["slug"] == pr for pr in _made)}
+_markets = {str((g.get("identity") or {}).get("traded_as", "")).split(".")[-1] for g in goods if any(g["slug"] == pr for pr in _made)}
 _bdir = os.path.join(TREE, "SFO", "metadata", "buildings")
 buildings = [dict(load(os.path.join(_bdir, f)), slug=f[:-5]) for f in sorted(os.listdir(_bdir))] if os.path.isdir(_bdir) else []
 tail = lambda k: str(k).split(".")[-1]

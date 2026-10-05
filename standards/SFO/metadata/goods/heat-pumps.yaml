@@ -2,11 +2,12 @@
 identity:
   key: good.heat-pumps
   name: "Heat pumps"
+  traded_as: market.machinery
   kind: product
   description: "Machines that move heat from where it is not wanted to where it can be shed: chillers, coolers, climate plant."
 physical:
   bulk_density: 600
-game:
-  goods: goods.machinery
+life: 394470000
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_machines.json", note: "10 to 15 years." }

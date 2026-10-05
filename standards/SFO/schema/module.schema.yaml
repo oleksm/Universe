@@ -14,6 +14,7 @@ definitions:
       properties:
         item: { type: string, x-ref: [element, material, good, stock, part], description: "What it is, by its key." }
         quantity: { type: number, x-unit: "1", description: "kg of it for each kg of what the recipe makes" }
+        from: { enum: [stock, place], description: "For what goes in: where it is taken from. stock (the default): the works' store. place: where the module stands, for one under the open sky: the world's own air, rain or ground water. A world that has none of it cannot give it." }
 properties:
   identity:
     type: object
@@ -34,6 +35,14 @@ properties:
       volume: { type: number, x-unit: "m3", description: "m3 it can store" }
       stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
       handling: { type: number, x-unit: "kg/s", description: "kg/s it can move in or out" }
+  site: { enum: [enclosed, open sky], description: "Where it stands. enclosed (the default): under a roof, or sealed; it runs the same anywhere. open sky: on open ground, under a world's sun and weather, which it lives by." }
+  climate:
+    description: "For a sealed module that must hold its inside at a temperature: what that is. All the power its recipe draws ends as heat inside and has to be got out. Where outside is colder, the heat runs out by itself; where it is hotter, it is pumped uphill, and that takes power on top: heat x (outside - inside) / (inside x efficiency)."
+    type: object
+    additionalProperties: false
+    properties:
+      holds: { type: number, x-unit: "K", description: "K it holds inside" }
+      efficiency: { type: number, x-unit: "1", description: "its heat pumps' share of the best physics allows (Carnot's)" }
   recipes:
     description: "What it can be set to make: each one thing, with what that takes. A module with one recipe makes one thing and needs no choosing; one with several is set to one of them at a time (its setup, which is the game's state, not written here)."
     type: array

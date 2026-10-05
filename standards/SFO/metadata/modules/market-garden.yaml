@@ -7,12 +7,13 @@ identity:
 physical:
   length: 400
   width: 250
+site: open sky
 recipes:
   - makes: good.tomatoes
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1376 }
-      - { item: good.water, quantity: 1.002 }
+      - { item: good.carbon-dioxide, quantity: 0.1376, from: place }
+      - { item: good.water, quantity: 1.002, from: place }
       - { item: good.fertiliser, quantity: 0.002243 }
     outputs:
       - { item: element.o, quantity: 0.1017 }
@@ -22,8 +23,8 @@ recipes:
   - makes: good.onions
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1721 }
-      - { item: good.water, quantity: 0.963 }
+      - { item: good.carbon-dioxide, quantity: 0.1721, from: place }
+      - { item: good.water, quantity: 0.963, from: place }
       - { item: good.fertiliser, quantity: 0.003594 }
     outputs:
       - { item: element.o, quantity: 0.1278 }
@@ -33,8 +34,8 @@ recipes:
   - makes: good.cabbage
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1464 }
-      - { item: good.water, quantity: 0.9828 }
+      - { item: good.carbon-dioxide, quantity: 0.1464, from: place }
+      - { item: good.water, quantity: 0.9828, from: place }
       - { item: good.fertiliser, quantity: 0.002701 }
     outputs:
       - { item: element.o, quantity: 0.1085 }
@@ -44,8 +45,8 @@ recipes:
   - makes: good.carrots
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.2038 }
-      - { item: good.water, quantity: 0.9672 }
+      - { item: good.carbon-dioxide, quantity: 0.2038, from: place }
+      - { item: good.water, quantity: 0.9672, from: place }
       - { item: good.fertiliser, quantity: 0.002318 }
     outputs:
       - { item: element.o, quantity: 0.1499 }
@@ -55,8 +56,8 @@ recipes:
   - makes: good.lettuce
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.06892 }
-      - { item: good.water, quantity: 0.9852 }
+      - { item: good.carbon-dioxide, quantity: 0.06892, from: place }
+      - { item: good.water, quantity: 0.9852, from: place }
       - { item: good.fertiliser, quantity: 0.001439 }
     outputs:
       - { item: element.o, quantity: 0.05117 }
@@ -66,8 +67,8 @@ recipes:
   - makes: good.cucumbers
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1028 }
-      - { item: good.water, quantity: 0.9952 }
+      - { item: good.carbon-dioxide, quantity: 0.1028, from: place }
+      - { item: good.water, quantity: 0.9952, from: place }
       - { item: good.fertiliser, quantity: 0.002146 }
     outputs:
       - { item: element.o, quantity: 0.07634 }
@@ -77,8 +78,8 @@ recipes:
   - makes: good.peppers
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1405 }
-      - { item: good.water, quantity: 0.9976 }
+      - { item: good.carbon-dioxide, quantity: 0.1405, from: place }
+      - { item: good.water, quantity: 0.9976, from: place }
       - { item: good.fertiliser, quantity: 0.002933 }
     outputs:
       - { item: element.o, quantity: 0.1043 }
@@ -88,8 +89,8 @@ recipes:
   - makes: good.pumpkins
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1811 }
-      - { item: good.water, quantity: 0.9916 }
+      - { item: good.carbon-dioxide, quantity: 0.1811, from: place }
+      - { item: good.water, quantity: 0.9916, from: place }
       - { item: good.fertiliser, quantity: 0.00378 }
     outputs:
       - { item: element.o, quantity: 0.1344 }
@@ -99,8 +100,8 @@ recipes:
   - makes: good.spinach
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1363 }
-      - { item: good.water, quantity: 0.9708 }
+      - { item: good.carbon-dioxide, quantity: 0.1363, from: place }
+      - { item: good.water, quantity: 0.9708, from: place }
       - { item: good.fertiliser, quantity: 0.002515 }
     outputs:
       - { item: element.o, quantity: 0.1009 }
@@ -110,8 +111,8 @@ recipes:
   - makes: good.garlic
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.6637 }
-      - { item: good.water, quantity: 0.8592 }
+      - { item: good.carbon-dioxide, quantity: 0.6637, from: place }
+      - { item: good.water, quantity: 0.8592, from: place }
       - { item: good.fertiliser, quantity: 0.004659 }
     outputs:
       - { item: element.o, quantity: 0.4861 }
@@ -121,8 +122,8 @@ recipes:
   - makes: good.strawberries
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1692 }
-      - { item: good.water, quantity: 0.9801 }
+      - { item: good.carbon-dioxide, quantity: 0.1692, from: place }
+      - { item: good.water, quantity: 0.9801, from: place }
       - { item: good.fertiliser, quantity: 0.003356 }
     outputs:
       - { item: element.o, quantity: 0.1255 }
@@ -132,8 +133,8 @@ recipes:
   - makes: good.watermelons
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1732 }
-      - { item: good.water, quantity: 0.9863 }
+      - { item: good.carbon-dioxide, quantity: 0.1732, from: place }
+      - { item: good.water, quantity: 0.9863, from: place }
       - { item: good.fertiliser, quantity: 0.002401 }
     outputs:
       - { item: element.o, quantity: 0.1277 }

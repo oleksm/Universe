@@ -3,6 +3,7 @@
 identity:
   key: good.asteroid-water-ice
   name: Asteroid Water Ice
+  traded_as: market.water
   kind: rock
   description: "Ice dug from an asteroid: water, frozen, with dust in it."
 physical:

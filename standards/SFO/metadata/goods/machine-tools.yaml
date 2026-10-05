@@ -2,11 +2,10 @@
 identity:
   key: good.machine-tools
   name: "Machine tools"
+  traded_as: market.machinery
   kind: product
   description: "Machining centres, lathes, presses: the machines that make machines."
 physical:
   bulk_density: 1500
-game:
-  goods: goods.machinery
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

@@ -13,7 +13,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-  use: { enum: [port, industrial, commercial, civic, residential] }
+  use: { enum: [port, industrial, commercial, civic, residential, agricultural] }
   outline:
     description: "Its corners, in order: metres [east, north] of the settlement's position, on the ground."
     type: array

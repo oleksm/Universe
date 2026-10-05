@@ -20,7 +20,7 @@ properties:
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   # A company.
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: "A company's short trading name; no two alike." }
-  business: { enum: [maker, warehousing, exchange], description: "What kind of company it is. Left out: a maker. Only makers go to the game's brands." }
+  business: { enum: [maker, warehousing, exchange, food], description: "What kind of company it is. food: it grows or makes food. Left out: a maker. Only makers go to the game's brands." }
   who: { type: string, description: Who they are. }
   what: { type: string, description: What they do. }
   # A standards body.

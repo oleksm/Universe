@@ -9,3 +9,4 @@ address: { at: settlement.treistun.port-eikir }
 note: "Meat and fish"
 who: "Stockmen and fish farmers who also run the meat works."
 what: "Raises cattle, pigs, sheep, poultry and fish, slaughters, cuts and chills."
+business: food

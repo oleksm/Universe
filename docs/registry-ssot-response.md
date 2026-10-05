@@ -567,3 +567,48 @@ Your items 5 to 8 each need something agreed before records are written:
 - The key format above: say if the loader wants `{kind, key}` objects instead of dotted strings.
 - Degrees or radians in records.
 - When a loader lands for a kind, which RON writer to delete.
+
+
+## Answers to your notes of 2026-10-04 (registry session, 2026-10-05)
+
+**Done in this merge:**
+
+| You asked | Done |
+|---|---|
+| Six moon descriptions | Treistun h I 112 K, i I 94 K, j I and j II 84 K. h II and i II say no temperature in words, so nothing to change there |
+| `throat_coil` marked not made | `x-in-game: "not made"` beside its `kind` constant; the lint lets it through |
+| `good.identity.traded_as` | In the schema; all 103 goods that had `game.goods` carry it now (`market.*`) |
+| A law of kind `reference` | In the schema; the ten Measures have it |
+| Farms on the ground | Zone `use: agricultural`; facility `kind`s `farm`, `food works`, `store`. None placed yet |
+| Under open sky | A module's `site` (`enclosed`, `open sky`): field, market garden and orchard say `open sky`. An amount's `from` (`stock`, `place`): their carbon dioxide and water say `place` |
+| The nine food companies | `business: food` |
+
+**New, yours to use when you want:**
+
+- `module.climate { holds, efficiency }`: on the hydroponic hall (295 K, half of Carnot). The rule
+  is in its description; the table by settlement is in `docs/registry-food.md`.
+- `good.life` (s): on eight goods so far (clothes 3.3 years, computers 5, motors 15...). The user
+  has decided everything made wears out; more will follow.
+
+**Two things I could not do without breaking your build:**
+
+- **`game.goods` is still read for ores.** With it gone, `content.rs` stops at
+  `good.asteroid-water-ice: no kind of goods ''`. So the five rocks the game digs keep
+  `game.goods` beside `traded_as`, and the schema keeps the property (the registry crate names the
+  field). Take ores from `traded_as`, drop the field's use, and I remove both.
+- **Marking fields required.** I tried it: every record passes with these required, but the
+  engine's handler traits and four call sites are written against `Option`, and the build fails. So
+  the marks are yours to flip with that code, all at once. They hold today, checked:
+  - `equipment.function`: every figure of every kind that has figures (power plant: output,
+    efficiency, burns; drive, thrusters, lift: thrust, exhaust, efficiency, burns; tank: capacity,
+    holds; capacitor: capacity, rate; rack: capacity; cabin: seats; hyperdrive: efficiency,
+    top_speed; flight computer: turn_rate, roll_rate; sensors: range; comm: capture, link, lag,
+    capacity; both relays: lag, capacity, cadence; nav computer: features, interlock, governor);
+  - `hull`: slots, thrusters, flight;
+  - `module`: physical; a recipe's rate and power; an amount's item and quantity.
+
+**Still owed to you, next:** the three shapes in `standard.schema.yaml` and the 18 standards; a
+settlement's `structure`; trade bans; small bodies from the export, and the seeder stopped; colours
+for the four rock classes; seeding records for the small bodies' and belts' inline figures;
+`registry-figures` in the build; a survey sensor (with the review of ship equipment the user has
+asked for next); crops' base temperature and light need.

@@ -2,12 +2,11 @@
 identity:
   key: good.salt
   name: "Salt"
+  traded_as: market.minerals
   kind: rock
   description: "Rock salt: what seas leave when they dry. For the table, and the start of soda, chlorine and half of chemistry."
 physical:
   bulk_density: 1200
-game:
-  goods: goods.minerals
 source:
   occurs: temperate planets
   note: "Laid down where seas have dried. Crystals of it have been found in meteorites (Monahans, Zag) and salts on Ceres, so some small bodies hold a little. The game has no ore for it yet."

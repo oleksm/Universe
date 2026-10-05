@@ -2,11 +2,10 @@
 identity:
   key: good.olive-oil
   name: "Olive oil"
+  traded_as: market.food
   kind: product
   description: "Oil pressed from olives."
 physical:
   bulk_density: 915
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

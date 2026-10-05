@@ -2,11 +2,10 @@
 identity:
   key: good.brick
   name: "Brick"
+  traded_as: market.minerals
   kind: product
   description: "Clay shaped and fired."
 physical:
   bulk_density: 1800
-game:
-  goods: goods.minerals
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

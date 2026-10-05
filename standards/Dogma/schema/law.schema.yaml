@@ -18,6 +18,6 @@ properties:
       section: { type: string, x-ref: [dogma] }
   value: { type: number }
   unit: { type: string, description: "Its unit, in SI: checked by the build as an x-unit is. Left out: a pure number (an exponent, a share, a count of scale heights)." }
-  kind: { enum: [real, simplified, invented], description: "real: measured nature, or a value fixed by definition or convention (the Measures: a light year, a standard gravity). simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
+  kind: { enum: [real, simplified, invented, reference], description: "real: measured nature. reference: a value fixed by definition or convention (the Measures: a light year, a standard gravity). simplified: an approximation of the real, to refine. invented: this world's own (the hyper layer), by written rule." }
   note: { type: string, description: "What it is for; for an invented one, the target it was chosen to meet." }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
