@@ -8,8 +8,8 @@ identity:
 physical:
   mass: 12000
 made_from:
-  - item: stock.sta36-pl-20
-    quantity: 13806.0
+  - item: stock.sta36-pl-20-panel
+    quantity: 12005.217
 making:
   module: module.welding-bay
 fit:
@@ -17,4 +17,4 @@ fit:
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product", note: "A pallet stacker crane 24 m high: 12 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
-  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }
+  - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
