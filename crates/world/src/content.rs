@@ -28,7 +28,6 @@ use crate::ship::ClassSpec;
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("prices.ron", include_str!("../../../content/base/prices.ron")),
-    ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
     ("ores.ron", include_str!("../../../content/base/ores.ron")),
     ("recipes.ron", include_str!("../../../content/base/recipes.ron")),
@@ -354,21 +353,21 @@ impl Content {
         for (_, m) in modules.iter() {
             // (Every product has a maker.)
             if resolve(&brands, &aliases, &m.brand).is_none() {
-                return Err(format!("modules.ron '{}': no brand '{}' (every product has a maker)", m.key, m.brand));
+                return Err(format!("{}: no brand '{}' (every product has a maker)", m.key, m.brand));
             }
             // What it holds or burns is a material, at its real properties.
-            let of = |key: &str| resolve(&materials, &aliases, key).map(|h| materials.get(h)).ok_or_else(|| format!("modules.ron '{}': no material '{key}'", m.key));
+            let of = |key: &str| resolve(&materials, &aliases, key).map(|h| materials.get(h)).ok_or_else(|| format!("{}: no material '{key}'", m.key));
             match &m.does {
                 crate::modules::Does::Tank { capacity, holds } => {
                     let mat = of(holds)?;
                     if *capacity > mat.density * m.volume * 1.001 {
-                        return Err(format!("modules.ron '{}': holds {:.0} kg of {} in {:.0} m³: denser than it is ({:.0} kg/m³)", m.key, capacity, mat.name, m.volume, mat.density));
+                        return Err(format!("{}: holds {:.0} kg of {} in {:.0} m³: denser than it is ({:.0} kg/m³)", m.key, capacity, mat.name, m.volume, mat.density));
                     }
                 }
                 crate::modules::Does::PowerPlant { burns, .. } => {
                     let mat = of(burns)?;
                     if mat.process == crate::materials::Process::None {
-                        return Err(format!("modules.ron '{}': {} doesn't burn", m.key, mat.name));
+                        return Err(format!("{}: {} doesn't burn", m.key, mat.name));
                     }
                 }
                 // An engine's jet can't carry more energy per kg than its fuel gives at its efficiency.
@@ -377,7 +376,7 @@ impl Content {
                         let mat = of(burns)?;
                         let jet = 0.5 * exhaust * exhaust;
                         if jet > efficiency * mat.energy * 1.001 {
-                            return Err(format!("modules.ron '{}': an exhaust of {:.0} m/s carries {:.1e} J/kg; {} at {:.0}% gives {:.1e}", m.key, exhaust, jet, mat.name, efficiency * 100.0, efficiency * mat.energy));
+                            return Err(format!("{}: an exhaust of {:.0} m/s carries {:.1e} J/kg; {} at {:.0}% gives {:.1e}", m.key, exhaust, jet, mat.name, efficiency * 100.0, efficiency * mat.energy));
                         }
                     }
                 }
@@ -385,15 +384,21 @@ impl Content {
         }
         let module = |key: &str| resolve(&modules, &aliases, key).map(|h| (h, modules.get(h)));
         let hulls: Registry<ClassSpec> = Registry::build(
-            Self::defs::<crate::ship::HullDef>(&packs, "hulls.ron")?
+            // Hulls: the registry's, those with a shape in the content (the MC-07 is built from its model), at the game's prices.
+            crate::registry::registry()
+                .hulls
+                .iter()
+                .filter(|h| h.shape.is_some())
+                .map(|h| crate::ship::HullDef::from_record(h, price(&h.identity.key)?).ok_or_else(|| format!("{}: no shape", h.identity.key)))
+                .collect::<Result<Vec<_>, String>>()?
                 .into_iter()
                 .map(|d| {
                     let key = d.key().to_string();
                     if resolve(&brands, &aliases, d.brand()).is_none() {
-                        return Err(format!("hulls.ron '{key}': no brand '{}' (every product has a maker)", d.brand()));
+                        return Err(format!("{key}: no brand '{}' (every product has a maker)", d.brand()));
                     }
-                    let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("hulls.ron '{key}': no shape '{}'", d_shape(&d)))?;
-                    d.build(shape, shapes.get(shape), module).map_err(|e| format!("hulls.ron '{key}': {e}"))
+                    let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("{key}: no shape '{}'", d_shape(&d)))?;
+                    d.build(shape, shapes.get(shape), module).map_err(|e| format!("{key}: {e}"))
                 })
                 .collect::<Result<_, String>>()?,
         )?;
@@ -619,7 +624,7 @@ entry!(PlaceDef, "places.ron", places, |p| {
 });
 
 impl Entry for ClassSpec {
-    const FILE: &'static str = "hulls.ron";
+    const FILE: &'static str = "the registry's hulls";
 
     fn key(&self) -> &str {
         &self.key

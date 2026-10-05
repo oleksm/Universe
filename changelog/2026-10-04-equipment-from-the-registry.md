@@ -18,3 +18,8 @@
   record). `structures.ron` is gone. A ring is `gate.ring.i` now, not `structure.ring.i`. The
   rings' throat coils (60 to a ring in the records) aren't fitted in the game: it doesn't make them
   yet.
+- **The five stock hulls are the registry's** (`hull.drover`, `.sprint`, `.hauler`, `.prospector`,
+  `.interceptor`): frame, slots, fit, nozzles, radius, drag and strength from their records, the
+  same as before. `hulls.ron` is gone; their prices are in `prices.ron`. The MC-07 is still built
+  from its model by the importer: moving it to its record changes how it flies (its mass from its
+  parts, its ore bay), and that waits on the user.

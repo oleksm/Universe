@@ -32,7 +32,7 @@ pub use common::{Address, MadeFrom, Making, Physical};
 pub use organisation::{Business, Details, Form, OrgIdentity, OrgKind, Organisation, ZoneRule, ZoneUse};
 pub use material::{ElectricalMagnetic, Environment, Form as MaterialForm, Fuel, Joining, Level, Magnetism, Material, MaterialClass, MaterialIdentity, MaterialMaking, MaterialMass, Mechanical, Optical, Rating, Release, Thermal};
 pub use land::{Facility, FacilityKind, GatePlace, KeyName, KeyOnly, Line, ModuleCount, Parcel, Pipeline, Point, Position, PowerLine, Settlement, SettlementKind, SitePart, Spin, Street, StreetAddress, Zone};
-pub use sfo::{BuiltOf, Fitted, Gate, GateIdentity, GatePerformance, GatePower, GateSize, Structure, StructureIdentity, StructureKind, Engine, Equipment, EquipmentIdentity, Function, NavFeature, Relay, Revision, SlotKind, Market, MarketIdentity, MarketNames, Stock, StockIdentity, StockSize, Amount, Burn, Capacity, Changeover, Generation, Module, ModuleIdentity, Needs, Recipe, Throughput, Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
+pub use sfo::{Flight, Hull, HullCapacity, HullDesign, HullIdentity, HullSlot, Lands, Nozzle, SlotFit, BuiltOf, Fitted, Gate, GateIdentity, GatePerformance, GatePower, GateSize, Structure, StructureIdentity, StructureKind, Engine, Equipment, EquipmentIdentity, Function, NavFeature, Relay, Revision, SlotKind, Market, MarketIdentity, MarketNames, Stock, StockIdentity, StockSize, Amount, Burn, Capacity, Changeover, Generation, Module, ModuleIdentity, Needs, Recipe, Throughput, Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
 pub use celestial::{Atmosphere, Body, BodyIdentity, BodyKind, BodyOrbit, BodyPhysical, BodyRock, InGame, Population, PopulationIdentity, PopulationKind, PopulationRocks, RockStructure, Star, Surface, Terrain, ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
 
 /// Where a record's figures come from (the common schema's `basis`).
@@ -86,6 +86,8 @@ pub struct Registry {
     pub standards: Vec<Standard>,
     /// Materials, the fuels among them.
     pub materials: Vec<Material>,
+    /// Hulls.
+    pub hulls: Vec<Hull>,
     /// Stations, spaceports, outposts and orbital sites.
     pub structures: Vec<Structure>,
     /// Gate rings.
@@ -187,6 +189,7 @@ impl Registry {
                 "org" => parse(&mut |t| Ok(reg.organisations.push(serde_norway::from_str(t)?))),
                 "standard" => parse(&mut |t| Ok(reg.standards.push(serde_norway::from_str(t)?))),
                 "material" => parse(&mut |t| Ok(reg.materials.push(serde_norway::from_str(t)?))),
+                "hull" => parse(&mut |t| Ok(reg.hulls.push(serde_norway::from_str(t)?))),
                 "structure" => parse(&mut |t| Ok(reg.structures.push(serde_norway::from_str(t)?))),
                 "gate" => parse(&mut |t| Ok(reg.gates.push(serde_norway::from_str(t)?))),
                 "equipment" => parse(&mut |t| Ok(reg.equipment.push(serde_norway::from_str(t)?))),

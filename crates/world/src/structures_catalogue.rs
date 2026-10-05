@@ -1,4 +1,4 @@
-//! The structures catalogue (content: `structures.ron`): stations, spaceports,
+//! The structures catalogue (the registry's structures and gate rings): stations, spaceports,
 //! outposts and gate rings as products of their makers, like modules and hulls.
 
 use serde::Deserialize;

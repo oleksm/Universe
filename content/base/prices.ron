@@ -58,4 +58,10 @@
     "equipment.relay.hyper": 350000.0,
     "equipment.terminal.ground": 60000.0,
     "equipment.relay.gate": 900000.0,
+    // Hulls: the frame alone (what's fitted is priced on top).
+    "hull.drover": 100000.0,
+    "hull.sprint": 60000.0,
+    "hull.hauler": 240000.0,
+    "hull.prospector": 110000.0,
+    "hull.interceptor": 120000.0,
 }
