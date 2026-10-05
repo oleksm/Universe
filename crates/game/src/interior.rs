@@ -342,9 +342,7 @@ impl Interior {
             })
         };
         type At = fn((Vec3, Vec3)) -> Vec3;
-        let places: [(&str, &str, At); 9] = [
-            // (The scoop's mouth: the middle of its top, where the ore drops in.)
-            ("OreScoop_", "MINING OPENING", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
+        let places: [(&str, &str, At); 8] = [
             ("Hull_EngineBlock", "SERVICE ENGINE BLOCK", |b| (b.0 + b.1) * 0.5),
             // (A leg's strut at its top, in its bay.)
             ("Gear_FL_Strut", "SERVICE GEAR FL", |(lo, hi)| Vec3::new((lo.x + hi.x) * 0.5, hi.y, (lo.z + hi.z) * 0.5)),
@@ -364,6 +362,20 @@ impl Interior {
         if let Some((lo, hi)) = span("ClampAft_") {
             points.push(Point { at: Vec3::new((lo.x + hi.x) * 0.5, lo.y, (lo.z + hi.z) * 0.5), name: Some("SERVICE CLAMP AFT".into()) });
         }
+        // Where the ore comes in: the scoop's middle, level with the hull round it
+        // (its top just outside the scoop, straight down from above).
+        if let (Some((lo, hi)), Some(mesh)) = (span("OreScoop_"), shape.walk.as_ref()) {
+            let c = (lo + hi) * 0.5;
+            let reach = (hi - lo) * 0.5 + Vec3::splat(0.5);
+            let top = mesh.hi.y + 1.0;
+            let level = [(reach.x, 0.0), (-reach.x, 0.0), (0.0, reach.z), (0.0, -reach.z)]
+                .iter()
+                .filter_map(|(dx, dz)| mesh.ray(universe_engine::glam::DVec3::new((c.x + dx) as f64, top, (c.z + dz) as f64), universe_engine::glam::DVec3::NEG_Y, top - mesh.lo.y).map(|(d, _)| (top - d) as f32))
+                .fold(f32::INFINITY, f32::min);
+            if level.is_finite() {
+                points.push(Point { at: Vec3::new(c.x, level, c.z), name: Some("MINING OPENING".into()) });
+            }
+        }
         // Its crew doors; every window (each pane of its glass, less the doors'); and
         // its dash, a point at each screen.
         for (prefix, name) in [("CrewDoor_L", "DOOR L"), ("CrewDoor_R", "DOOR R")] {
@@ -371,11 +383,19 @@ impl Interior {
                 points.push(Point { at: (lo + hi) * 0.5, name: Some(name.into()) });
             }
         }
-        let panes = |what: &str| -> Vec<Vec3> { shape.islands.iter().filter(|(n, _, _)| n.contains(what) && !n.starts_with("CrewDoor")).map(|(_, lo, hi)| ((*lo + *hi) * 0.5).as_vec3()).collect() };
-        for (k, at) in panes("Glass").into_iter().enumerate() {
+        let panes = |what: &str| -> Vec<(Vec3, Vec3)> { shape.islands.iter().filter(|(n, _, _)| n.contains(what) && !n.starts_with("CrewDoor")).map(|(_, lo, hi)| (lo.as_vec3(), hi.as_vec3())).collect() };
+        // (A window a pane of a square metre or more: smaller glass is a lens or a
+        // gauge's. A stand-in until a model names its windows.)
+        let area = |(lo, hi): &(Vec3, Vec3)| {
+            let mut d = (*hi - *lo).to_array();
+            d.sort_by(f32::total_cmp);
+            d[1] * d[2]
+        };
+        let windows: Vec<Vec3> = panes("Glass").into_iter().filter(|p| area(p) >= 1.0).map(|(lo, hi)| (lo + hi) * 0.5).collect();
+        for (k, at) in windows.into_iter().enumerate() {
             points.push(Point { at, name: Some(format!("WINDOW {}", k + 1)) });
         }
-        for (k, at) in panes("DashScreen").into_iter().enumerate() {
+        for (k, at) in panes("DashScreen").into_iter().map(|(lo, hi)| (lo + hi) * 0.5).enumerate() {
             points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
         self.plan = Plan { hull: key.into(), points, lines: Vec::new() };
@@ -753,11 +773,20 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                     }
                 };
                 if let Some(k) = to {
+                    let onto = matches!(interior.hover, Some(Hover::Point(_)));
                     if let Some(a) = interior.from
                         && a != k
                         && !interior.plan.lines.iter().any(|&(p, q, _)| (p, q) == (a, k) || (p, q) == (k, a))
                     {
                         interior.plan.lines.push((a, k, interior.profile));
+                        // (Joined to a point already there: that tunnel done, picked to
+                        // be worked on, the path tool put down.)
+                        if onto {
+                            interior.pick = Some(Hover::Line(interior.plan.lines.len() - 1));
+                            interior.from = None;
+                            interior.tool = Tool::Look;
+                            return true;
+                        }
                     }
                     interior.from = Some(k);
                 }
@@ -1053,7 +1082,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         frame.hud_box(p, c, PLANE.scale(1.5));
         let (title, help) = match interior.tool {
             Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT, WHEEL FOR NEARER OR FARTHER. CLICK A POINT OR A LINE TO PICK IT. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
-            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO JOIN TO IT AND GO ON FROM IT. RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
+            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
