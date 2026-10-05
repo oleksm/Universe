@@ -530,7 +530,7 @@
 - { record: hull.drover, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "40183594605f7555" }
 - { record: hull.hauler, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "ae598a3b14eb6674" }
 - { record: hull.interceptor, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "a2483b54edae422a" }
-- { record: hull.mc-07, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ad6c99a1beffcdfd" }
+- { record: hull.mc-07, at: "2026-10-05T18:29:49Z", status: draft, summary: "changed: revision", sha: "8950f95b4ce950ad" }
 - { record: hull.prospector, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "f0eb05e617876ba6" }
 - { record: hull.sprint, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "a75996b17b34b8ef" }
 - { record: law.air-heat-capacity, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "76b6ebdfb0ab99b4" }

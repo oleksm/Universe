@@ -98,12 +98,11 @@ design:
   strut_efficiency: 0.85
   minimum_gauge: 0.002
 revision:
-  status: review
+  status: draft
   owner: registry
   on_conflict: propose
-  open_to: [physical.mass, capacity.hold, capacity.hold_volume, fit]
   fixed: [slots, thrusters, model]
-  because: "Its structure is sized from its loads. Its slots and nozzles are its model's. Its ore bay's depth has not been measured and three thin sections buckle (docs/ships/mc-07-to-measure.md); its fit is the game's cheapest set, not chosen."
+  because: "Deferred by the user (2026-10-05) until the ship is fitted and flown: its hold, tank and lift are to be reworked from what flying it shows, not on paper. What paper says so far: docs/ships/mc-07-sizing.md. Its slots and nozzles are its model's."
   ask: docs/registry-ssot-request.md
 basis:
   - { of: [slots, thrusters], tier: sourced, source: "the game: the MC-07 as it imports its model (crates/world/src/import.rs)", note: "Its slots are the standard set for a class 3 hull with two hardpoints; its nozzles are the model's, each at full share." }

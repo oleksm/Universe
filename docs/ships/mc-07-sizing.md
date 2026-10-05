@@ -85,9 +85,9 @@ as 8 m deep and never measured, full of stony ore (`docs/ships/mc-07-to-measure.
 it is 750 t. And the game flies the ship at 88 t, not 154. The three figures (hold, tank, lift)
 have to be settled together.
 
-## For the user
+## Deferred (the user, 2026-10-05)
 
-1. **Does a mining ship land with its ore,** or does it set it down at a station or a moon and
-   never bring a full hold into a deep well? The lift is 8 times apart between the two.
-2. **How long may a run to the belt take?** Days, weeks? The tank follows from that.
-3. **Fit the MC-07 to its slots** (S3 lift, S4 tank) in its record? It changes how it flies.
+"Defer MC to once we start fitting it, keep draft. I want to hit the issue from the actual try-fly
+side, then we will rework." So: nothing here is acted on. The MC-07's record stays a draft and its
+fit stays as it is. The three questions that were asked (does it land with its ore, how long may a
+run take, fit it to its slots) wait for the flying.
