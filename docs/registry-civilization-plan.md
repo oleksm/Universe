@@ -266,3 +266,18 @@ wet world's rock. The fertiliser works' power is now worked out (15.8 MW) and no
 **Left for later in Making:** the food by-products as feed (their protein is found; the feed
 mill's mix is still a guess); phosphate and potash fertiliser; paper; the other metals (the 26
 parked processes); electronics and machines; the works that build works; wear.
+
+**3. Making, third step: four more metals (2026-10-04).**
+
+| Metal | To ingot | Worked to |
+|---|---|---|
+| 304 stainless | Ladle station (liquid steel with chromium and nickel), casting bay | 3 mm plate, in the hot rolling mill |
+| Copper | Foundry (new) | 2 mm wire, in a wire mill (new) |
+| Bearing bronze | Foundry | 50 mm bar, as cast |
+| Ti-6Al-4V | Vacuum arc furnace (new) | 5 mm plate, in the hot rolling mill |
+
+The metals come as elements, as the alloying additions always have: winning copper or titanium
+from ore waits on what the worlds are made of. Copper and titanium scrap are melted again;
+stainless scrap has no taker yet. Every figure for the three new works is a guess or worked out
+from memory, marked. The four parked processes these stand in for (three alloyings, wire drawing)
+are still on file: a facility at Port Trethi names one, and facilities are the engine's to change.

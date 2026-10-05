@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.wire-mill
+  name: "Wire mill"
+  step: "Draw wire"
+  description: "Rolls an ingot down to rod and pulls the rod through smaller and smaller dies."
+physical:
+  length: 200
+  width: 30
+  height: 10
+recipes:
+  - makes: stock.cu-wire-2
+    does: "A copper ingot is rolled to rod and drawn to wire."
+    inputs:
+      - { item: stock.cu-ingot, quantity: 1.02 }
+    outputs:
+      - { item: stock.cu-scrap, quantity: 0.02 }
+    rate: 2.0
+    power: 2160000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "0.3 kWh a kg and 2% lost: guesses, from memory. To be reviewed." }

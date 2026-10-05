@@ -185,6 +185,7 @@
 - { key: module.fish-farm, game: "fish-farm", in: "industry.ron, settlements.ron" }
 - { key: module.flour-mill, game: "flour-mill", in: "industry.ron, settlements.ron" }
 - { key: module.forging-press, game: "forging-press", in: "industry.ron, settlements.ron" }
+- { key: module.foundry, game: "foundry", in: "industry.ron, settlements.ron" }
 - { key: module.fusion-power-station, game: "fusion-power-station", in: "industry.ron, settlements.ron" }
 - { key: module.general-warehouse, game: "general-warehouse", in: "industry.ron, settlements.ron" }
 - { key: module.glassworks, game: "glassworks", in: "industry.ron, settlements.ron" }
@@ -220,9 +221,11 @@
 - { key: module.synthesis-plant, game: "synthesis-plant", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
 - { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }
+- { key: module.vacuum-furnace, game: "vacuum-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.water-works, game: "water-works", in: "industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
 - { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
+- { key: module.wire-mill, game: "wire-mill", in: "industry.ron, settlements.ron" }
 - { key: org.aurel, game: "brand.aurel", in: "brands.ron" }
 - { key: org.brightwater-dairy, game: "brand.brightwater_dairy", in: "brands.ron" }
 - { key: org.castellan, game: "brand.castellan", in: "brands.ron" }

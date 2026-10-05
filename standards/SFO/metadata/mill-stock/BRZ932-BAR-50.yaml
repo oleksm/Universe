@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.brz932-bar-50
+  code: BRZ932-BAR-50
+  name: "Bearing bronze bar 50 mm"
+  form: bar
+made_from:
+  - item: material.bearing-bronze-c93200
+size:
+  diameter: 0.05
+basis:
+  - { of: [size], tier: invented, review: true, note: "The gauge was chosen: one size standing for all." }

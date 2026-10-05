@@ -13,6 +13,8 @@ identity:
   - part: element.v
     share: 0.04
   form:
+  - ingot
+  - scrap
   - sheet
   - plate
   - bar

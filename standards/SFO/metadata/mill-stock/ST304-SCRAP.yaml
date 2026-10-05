@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st304-scrap
+  code: ST304-SCRAP
+  name: "304 stainless scrap"
+  form: scrap
+made_from:
+  - item: material.stainless-steel-304

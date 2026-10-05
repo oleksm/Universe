@@ -27,6 +27,18 @@ recipes:
       - { item: stock.sta36-ingot, quantity: 1.0 }
     rate: 33.3333333333333
     power: 45000000
+  - makes: good.hot-ingot-304
+    does: "The ingot is heated through to the temperature it rolls at."
+    inputs:
+      - { item: stock.st304-ingot, quantity: 1.0 }
+    rate: 33.3333333333333
+    power: 45000000
+  - makes: good.hot-ingot-ti64
+    does: "The ingot is heated through to the temperature it rolls at."
+    inputs:
+      - { item: stock.ti64-ingot, quantity: 1.0 }
+    rate: 33.3333333333333
+    power: 45000000
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, power, what is lost), used for each metal it works: a guess, to be reviewed. Each metal has its own." }
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "100 to 420 t/h for one furnace." }

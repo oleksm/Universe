@@ -33,6 +33,18 @@ recipes:
     rate: 41.6666666666667
     batch: 80000
     power: 7500000.0
+  - makes: good.refined-steel-304
+    does: "Chromium and nickel are added, a quarter of the melt and more, with manganese and silicon; dissolved gas is removed."
+    inputs:
+      - { item: good.liquid-steel, quantity: 0.684 }
+      - { item: element.cr, quantity: 0.19 }
+      - { item: element.ni, quantity: 0.095 }
+      - { item: element.mn, quantity: 0.02 }
+      - { item: element.si, quantity: 0.01 }
+      - { item: element.ar, quantity: 0.001 }
+    rate: 41.6666666666667
+    batch: 80000
+    power: 7500000.0
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, batch, power), used for each grade it makes: a guess, to be reviewed. Each grade has its own." }
   - { of: [recipes.inputs], tier: derived, note: "The liquid metal and what is added to it, in the shares of the grade it makes (its material's composition); the loss is the module's." }

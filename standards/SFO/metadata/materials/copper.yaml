@@ -8,6 +8,8 @@ identity:
   - part: element.cu
     share: 1.0
   form:
+  - ingot
+  - scrap
   - wire
   - sheet
   - tube

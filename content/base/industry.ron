@@ -34,6 +34,7 @@
     (key: "fish-farm", name: "Fish farm", length: 200.0, width: 100.0, height: 3.0, needs: 0.05, supplies: 0.0, holds: 0.0),
     (key: "flour-mill", name: "Flour mill", length: 60.0, width: 30.0, height: 30.0, needs: 0.5, supplies: 0.0, holds: 0.0),
     (key: "forging-press", name: "Forging press", length: 60.0, width: 40.0, height: 25.0, needs: 6.0, supplies: 0.0, holds: 0.0),
+    (key: "foundry", name: "Foundry", length: 80.0, width: 40.0, height: 15.0, needs: 2.05, supplies: 0.0, holds: 0.0),
     (key: "fusion-power-station", name: "Fusion power station", length: 120.0, width: 80.0, height: 40.0, needs: 0.0, supplies: 400.0, holds: 0.0),
     (key: "general-warehouse", name: "General warehouse", length: 150.0, width: 100.0, height: 12.0, needs: 0.0, supplies: 0.0, holds: 0.0),
     (key: "glassworks", name: "Glassworks", length: 400.0, width: 60.0, height: 15.0, needs: 20.5, supplies: 0.0, holds: 0.0),
@@ -69,7 +70,9 @@
     (key: "synthesis-plant", name: "Synthesis plant", length: 300.0, width: 200.0, height: 50.0, needs: 10.8, supplies: 0.0, holds: 0.0),
     (key: "tank-farm", name: "Tank farm", length: 100.0, width: 100.0, height: 20.0, needs: 0.0, supplies: 0.0, holds: 0.0),
     (key: "textile-mill", name: "Textile mill", length: 150.0, width: 80.0, height: 12.0, needs: 1.8, supplies: 0.0, holds: 0.0),
+    (key: "vacuum-furnace", name: "Vacuum arc furnace", length: 40.0, width: 30.0, height: 25.0, needs: 1.8, supplies: 0.0, holds: 0.0),
     (key: "water-works", name: "Water works", length: 80.0, width: 50.0, height: 10.0, needs: 0.756, supplies: 0.0, holds: 0.0),
     (key: "welding-bay", name: "Welding bay", length: 60.0, width: 40.0, height: 25.0, needs: 0.13, supplies: 0.0, holds: 0.0),
     (key: "winery", name: "Winery", length: 60.0, width: 40.0, height: 10.0, needs: 0.1, supplies: 0.0, holds: 0.0),
+    (key: "wire-mill", name: "Wire mill", length: 200.0, width: 30.0, height: 10.0, needs: 2.16, supplies: 0.0, holds: 0.0),
 ]

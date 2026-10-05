@@ -18,6 +18,8 @@ identity:
   - part: element.c
     share: 0.0008
   form:
+  - ingot
+  - scrap
   - sheet
   - plate
   - bar

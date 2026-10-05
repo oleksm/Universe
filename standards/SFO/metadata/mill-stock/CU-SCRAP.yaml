@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cu-scrap
+  code: CU-SCRAP
+  name: "Copper scrap"
+  form: scrap
+made_from:
+  - item: material.copper

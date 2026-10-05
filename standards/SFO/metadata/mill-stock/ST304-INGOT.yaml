@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st304-ingot
+  code: ST304-INGOT
+  name: "304 stainless ingot"
+  form: ingot
+made_from:
+  - item: material.stainless-steel-304

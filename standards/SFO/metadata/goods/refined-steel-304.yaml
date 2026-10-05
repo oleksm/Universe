@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.refined-steel-304
+  name: "Refined steel, 304"
+  kind: intermediate
+  description: "Molten steel with chromium and nickel added to the 304 stainless grade, ready to cast."
