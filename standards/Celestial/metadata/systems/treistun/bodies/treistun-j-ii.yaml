@@ -4,10 +4,10 @@ provenance: seeded
 identity: {key: body.treistun.treistun-j-ii, name: Treistun j II, kind: moon, parent: body.treistun.treistun-j, about: 'A
     moon of the gas giant Treistun j, 10.5 AU from the star, the outermost planet. 720 km in radius, 0.06 g at the surface,
     no air, about 60 K on average. Its day lasts 38 hours.'}
-orbit: {semi_major_axis: 563890000.0, eccentricity: 0.0151, period: 138102.624, inclination: 4.072}
+orbit: {semi_major_axis: 563890000.0, eccentricity: 0.0121, period: 138102.624, inclination: 4.072}
 physical: {mass: 4.693e+21, radius: 720133.0, gravity: 0.604, day: 138103.2, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500
-  mean_temperature: 60.4
+  mean_temperature: 83.5
   colour: [0.7, 0.7, 0.7]

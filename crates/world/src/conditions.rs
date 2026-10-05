@@ -11,13 +11,12 @@ fn record() -> Option<&'static crate::registry::Seeding> {
     crate::registry::registry().seeding.iter().find(|s| s.identity.key == "seeding.conditions")
 }
 
-/// The heat made inside body `i` (a moon of a giant) by its planet kneading
-/// it on its stretched orbit (W): 21/2 (k2/Q) G M² R⁵ n e² / a⁶. None for
-/// anything else.
+/// The heat made inside body `i` (a moon) by its planet kneading it on its
+/// stretched orbit (W): 21/2 (k2/Q) G M² R⁵ n e² / a⁶. None for anything else.
 pub fn tidal_heat(sys: &StarSystem, i: usize) -> Option<f64> {
     let b = &sys.bodies[i];
     let parent = &sys.bodies[b.rail.parent?];
-    if b.kind != BodyKind::Moon || !matches!(parent.kind, BodyKind::GasGiant | BodyKind::IceGiant) {
+    if b.kind != BodyKind::Moon || !parent.kind.is_planet() {
         return None;
     }
     let k2q = record()?.tidal_heating.love_over_q?;
@@ -25,6 +24,19 @@ pub fn tidal_heat(sys: &StarSystem, i: usize) -> Option<f64> {
     let (m, r, a, e) = (parent.mass, b.rail.radius, o.semi_major_axis, o.eccentricity);
     let n = (G * m / a.powi(3)).sqrt();
     Some(10.5 * k2q * G * m * m * r.powi(5) * n * e * e / a.powi(6))
+}
+
+/// The most a moon of radius `moon_radius` at `a` round a planet of `mass`
+/// keeps stretched: its tides round its orbit off until they heat it no more
+/// than the most active moon known (twice the record's volcanic threshold,
+/// about Io's). Its orbit, as the seed makes it, is held to this.
+pub fn tidal_eccentricity_limit(mass: f64, moon_radius: f64, a: f64) -> f64 {
+    let Some(th) = record().map(|r| &r.tidal_heating) else { return f64::INFINITY };
+    let (Some(k2q), Some(volcanic)) = (th.love_over_q, th.volcanic_above) else { return f64::INFINITY };
+    let limit = 2.0 * volcanic;
+    let n = (G * mass / a.powi(3)).sqrt();
+    // (flux = 21/2 (k2/Q) G M² R⁵ n e² / a⁶ / (4π R²), for e.)
+    (limit * 4.0 * std::f64::consts::PI * moon_radius * moon_radius * a.powi(6) / (10.5 * k2q * G * mass * mass * moon_radius.powi(5) * n)).sqrt()
 }
 
 /// That heat for each m² of its surface (W/m²).

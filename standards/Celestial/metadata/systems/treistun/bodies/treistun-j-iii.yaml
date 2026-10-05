@@ -9,5 +9,5 @@ physical: {mass: 2.2093e+21, radius: 560210.0, gravity: 0.47, day: 329875.2, til
 surface:
   terrain: cratered
   relief: 1500
-  mean_temperature: 60.5
+  mean_temperature: 60.7
   colour: [0.7, 0.7, 0.7]

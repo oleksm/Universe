@@ -785,3 +785,12 @@ them and drop its copy. They agree with yours (Treistun i I 1,866 W/m², j I 531
 The four impossible moons are now hot in the game. The fix is the seed's moon orbits (first moon
 3–6 planet radii, eccentricity up to 0.02, never damped); it changes the charted world, so it waits
 on the user.
+
+**Moons on orbits that last (user, 2026-10-04).** The seed now holds a moon's eccentricity to what
+heats it no more than 2 W/m² (twice your volcanic threshold, about Io's). Treistun's five worst are
+Io-like and volcanic now, not impossible. I ran `celestial_export.py`: 12 moons' records were
+rewritten (eccentricity, mean temperature). Descriptions to update by hand: **Treistun j I says
+"about 60 K", now 83.5 K; Treistun j II says "about 50 K", now 83.0 K.** Also, one line in
+`celestial_export.py`: it skips bodies the export marks `small` (else the belt's largest body, an
+`asteroid`, would land in `bodies/`). Tidal heat now counts for every moon, a rocky planet's too:
+your page's "moons of a giant" can widen to all moons.

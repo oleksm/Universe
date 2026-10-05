@@ -10,10 +10,10 @@ identity:
     hours.
   story: ['Small, hot and light. It matters because of what it orbits: it is the nearest place to c where a ship can land
       and lift cheaply.']
-orbit: {semi_major_axis: 45208900.0, eccentricity: 0.009422, period: 53532.144, inclination: 1.295}
+orbit: {semi_major_axis: 45208900.0, eccentricity: 0.0004529, period: 53532.144, inclination: 1.295}
 physical: {mass: 2.9408e+22, radius: 1327660.0, gravity: 1.113, day: 53532.0, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500
-  mean_temperature: 424.8
+  mean_temperature: 424.9
   colour: [0.7, 0.7, 0.7]

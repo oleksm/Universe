@@ -65,7 +65,8 @@ for s in data["systems"]:
         "position": {"from_home": [si(round(v, 3) * LY) for v in s["from_home_ly"]], "distance": si(round(d, 3) * LY)},
     })
     for b in s["bodies"]:
-        if b["kind"] not in NATURAL:
+        # (Small bodies, marked by the export, go to small-bodies/: not written here yet.)
+        if b["kind"] not in NATURAL or b.get("small"):
             continue
         rec = {"provenance": "seeded", "identity": {"key": f"body.{slug(s['name'])}.{slug(b['name'])}", "name": b["name"], "kind": b["kind"]}}
         if "parent" in b:

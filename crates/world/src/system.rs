@@ -320,15 +320,10 @@ impl StarSystem {
                     EARTH_RADIUS * rng.range(0.08, 0.45)
                 };
                 let moon_mass = 3000.0 * 4.0 / 3.0 * std::f64::consts::PI * moon_radius.powi(3);
-                let orbit = Orbit::new(
-                    moon_a,
-                    rng.range(0.0, 0.02),
-                    rng.range(0.0, 5.0).to_radians(),
-                    rng.range(0.0, TAU),
-                    rng.range(0.0, TAU),
-                    rng.range(0.0, TAU),
-                    G * (mass + moon_mass),
-                );
+                let (e, inclination, node, periapsis, m0) = (rng.range(0.0, 0.02), rng.range(0.0, 5.0).to_radians(), rng.range(0.0, TAU), rng.range(0.0, TAU), rng.range(0.0, TAU));
+                // (Tides round a close moon's orbit: none keeps a stretch that heats it past the most active moon known.)
+                let e = e.min(crate::conditions::tidal_eccentricity_limit(mass, moon_radius, moon_a));
+                let orbit = Orbit::new(moon_a, e, inclination, node, periapsis, m0, G * (mass + moon_mass));
                 bodies.push(Body {
                     name: format!("{planet_name} {}", names::roman(m)),
                     kind: BodyKind::Moon,

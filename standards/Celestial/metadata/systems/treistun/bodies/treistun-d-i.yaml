@@ -10,10 +10,10 @@ identity:
     hours.
   story: ['Airless and a little cooler than d below it. It was settled as d''s yard: a place to keep ships without bringing
       them down through the air.']
-orbit: {semi_major_axis: 28454600.0, eccentricity: 0.002057, period: 44059.4208, inclination: 0.016}
+orbit: {semi_major_axis: 28454600.0, eccentricity: 0.000227, period: 44059.4208, inclination: 0.016}
 physical: {mass: 4.4763e+22, radius: 1527230.0, gravity: 1.281, day: 44060.4, tilt: 0.0, albedo: 0.12}
 surface:
   terrain: cratered
   relief: 1500
-  mean_temperature: 305.7
+  mean_temperature: 306.0
   colour: [0.6, 0.58, 0.55]
