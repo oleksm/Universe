@@ -175,14 +175,17 @@ impl Gen {
             let name = self.emit_name(hint);
             let mut s = format!("{}#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]\npub enum {name} {{\n", doc(v, ""));
             let mut seen = HashSet::new();
+            let mut arms = String::new();
             for x in &variants {
                 let mut id = camel(x);
                 while !seen.insert(id.clone()) {
                     id.push('_');
                 }
                 writeln!(s, "    #[serde(rename = {x:?})]\n    {id},").unwrap();
+                writeln!(arms, "            {name}::{id} => {x:?},").unwrap();
             }
             s.push_str("}\n\n");
+            writeln!(s, "impl {name} {{\n    /// As the registry writes it.\n    pub fn as_str(self) -> &'static str {{\n        match self {{\n{arms}        }}\n    }}\n}}\n").unwrap();
             self.out.push_str(&s);
             return Ty { rust: if has_null { format!("Option<{name}>") } else { name }, walk: Walk::None, optional: has_null };
         }

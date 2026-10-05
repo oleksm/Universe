@@ -289,7 +289,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
                 let blocks = lay_out(&parcel.outline.iter().map(pt).collect::<Vec<_>>(), &street, &order).unwrap_or_else(|e| panic!("{}: {e}", f.identity.key));
                 Facility {
                     name: f.identity.name.clone(),
-                    kind: format!("{:?}", f.kind).to_lowercase(),
+                    kind: f.kind.as_str().to_string(),
                     parcel: parcel.number,
                     makes: lines.iter().map(|l| (l.product.clone(), l.output)).collect(),
                     draws: lines.iter().map(|l| l.power).sum::<f64>(),
@@ -307,7 +307,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
             system,
             body: name(at),
             name: s.identity.name.clone(),
-            zones: zones.iter().map(|z| Zone { name: z.identity.name.clone(), use_: format!("{:?}", z.use_).to_lowercase(), outline: z.outline.iter().map(pt).collect() }).collect(),
+            zones: zones.iter().map(|z| Zone { name: z.identity.name.clone(), use_: z.use_.as_str().to_string(), outline: z.outline.iter().map(pt).collect() }).collect(),
             parcels: parcels
                 .iter()
                 .map(|p| Parcel { number: p.number, owner: p.owner.clone().unwrap_or_default(), owner_name: p.owner.as_deref().map(name).unwrap_or_default(), outline: p.outline.iter().map(pt).collect() })

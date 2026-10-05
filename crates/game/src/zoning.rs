@@ -257,6 +257,7 @@ fn tint(use_: &str) -> Color {
         "industrial" => Color::hex(0x2c2412),
         "commercial" => Color::hex(0x1c1a30),
         "civic" => Color::hex(0x23202a),
+        "agricultural" => Color::hex(0x1a2c14),
         _ => Color::hex(0x1a2420),
     }
 }

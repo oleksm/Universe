@@ -51,7 +51,21 @@ pub fn mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 
 }
 
 fn greenhouse(sys: &StarSystem, i: usize) -> f64 {
-    sys.bodies[i].rail.atmosphere.map_or(0.0, |a| GREENHOUSE * (a.surface_density / 1.225).powf(0.6))
+    sys.bodies[i].rail.atmosphere.map_or(0.0, |a| GREENHOUSE * (a.surface_density / universe_physics::laws::EARTH_AIR_DENSITY).powf(0.6))
+}
+
+/// A place's temperature through a day and night (K) on world `i`, at
+/// `latitude` (rad): under air, its latitude's mean and the air's greenhouse
+/// (the day's swing evens out); airless, its latitude's mean.
+pub fn site_mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], latitude: f64) -> f64 {
+    let s = flux(sys, positions, positions[i]);
+    let a = albedo(sys, i);
+    let mean = (s * (1.0 - a) / (4.0 * SIGMA)).powf(0.25);
+    let lat = latitude.sin().abs();
+    match sys.bodies[i].rail.atmosphere {
+        Some(_) => mean * (1.0 - 0.25 * lat * lat) + greenhouse(sys, i),
+        None => mean * (1.0 - 0.25 * lat * lat),
+    }
 }
 
 /// A world's surface temperature (K) at `dir` (unit, from its centre, in the
