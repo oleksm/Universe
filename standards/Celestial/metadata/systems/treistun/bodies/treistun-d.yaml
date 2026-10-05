@@ -9,8 +9,8 @@ identity:
   about: 'The third planet, 0.41 AU out. 6,654 km in radius, 1.07 g, with air as dense as e''s. It is warm: about 320 K on
     average. Its day lasts 20 hours. One moon.'
   story: ['The warm world, and the second with air. It was settled after e, by people who wanted open sky and were willing
-      to take the heat that came with it.', 'Its equator is too hot for any crop and its poles are frozen. Between them lie the only fields in the
-      system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.']
+      to take the heat that came with it.', 'Its equator is too hot for any crop and its poles are frozen. Between them lie
+      the only fields in the system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.']
 orbit: {semi_major_axis: 61008400000.0, eccentricity: 0.04874, period: 9785923.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
@@ -18,4 +18,4 @@ surface:
   relief: 4658
   mean_temperature: 321.6
   colour: [0.3, 0.85, 0.45]
-atmosphere: {surface_density: 1.225, scale_height: 7931.0, top: 111000.0}
+atmosphere: {surface_density: 1.225, scale_height: 7928.0, top: 111000.0}
