@@ -131,7 +131,7 @@ to, and flows live in one place, the module's recipes.
   the panel former are steps again.
 
 - **What is moved, kept and sold is stock; what burns it does not care.** Fuel on a ship, in a
-  warehouse or on the market is a stock item (`stock.deuterium`, traded as `market.fuel`). A power
+  warehouse or on the market is a stock item (`stock.deuterium-liq`, traded as `market.fuel`). A power
   plant, a drive or a tank names the material (`material.deuterium`) and takes whatever stock of
   that material there is. The same holds for anything that names a material where stock lies.
 

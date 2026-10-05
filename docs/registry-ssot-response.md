@@ -378,7 +378,7 @@ the fusion power station's `generation.burns` names it. What it trades as is on 
 finds a flow's market kind with `reg.good(item)`, which is `None` for `material.deuterium`, so the
 station's `burns` comes out with an empty kind and `services/land.rs:365` has nothing to buy.
 The tests pass, so nothing catches it. The user then settled what is what: **fuel is moved, kept and sold as stock, and what burns it
-does not care.** So there is `stock.deuterium` (made from `material.deuterium`, `traded_as:
+does not care.** So there is `stock.deuterium-liq` (made from `material.deuterium`, `traded_as:
 market.fuel`): that is what lies in a store, on a ship and on the market. The power station and
 ship equipment name the material and take whatever stock of it there is. For you: a `burns` or
 `holds` that names a material is met by any stock item `made_from` it, and the market kind is the
@@ -390,7 +390,7 @@ stock item's `identity.traded_as`.
   `goods.ron`: `unit_mass` kg, `bulk_density` kg/m3, `basket` kg a person a second (was t for a
   thousand people a day), `names` (adjectives, nouns). No price.
 - **Any physical record can name its category:** `identity.traded_as`, a ref to a `market`, on
-  material, mill stock, part, equipment, hull, gate and structure. Only `stock.deuterium` has one so far.
+  material, mill stock, part, equipment, hull, gate and structure. Only `stock.deuterium-liq` has one so far.
 - **Goods still have `game.goods`**, because your `Good` type refuses a field it does not know.
   When it takes `identity.traded_as`, I will move the nine over and `game.goods` goes.
 

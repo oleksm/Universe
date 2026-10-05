@@ -25,7 +25,7 @@
         facilities: [
             (name: "Aipika Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -67,7 +67,7 @@
         facilities: [
             (name: "Eikir Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -109,7 +109,7 @@
         facilities: [
             (name: "Fabindum Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -151,7 +151,7 @@
         facilities: [
             (name: "Lisaur Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -193,7 +193,7 @@
         facilities: [
             (name: "Nacaubun Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -235,7 +235,7 @@
         facilities: [
             (name: "Seiwiti Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -277,7 +277,7 @@
         facilities: [
             (name: "Sirnendis Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -362,7 +362,7 @@
             ]),
             (name: "Trethi Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 1600.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 3.344e-05)],
+                takes: [], gives: [], burns: [("Deuterium", "", 3.344e-05)],
                 modules: [("fusion-power-station", 4)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -433,7 +433,7 @@
         facilities: [
             (name: "Weisonum Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
@@ -475,7 +475,7 @@
         facilities: [
             (name: "Zaudalein Power Station", kind: "power", parcel: 2,
                 makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
-                takes: [], gives: [], burns: [("Deuterium", "goods.fuel", 8.36e-06)],
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),

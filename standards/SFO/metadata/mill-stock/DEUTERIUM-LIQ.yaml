@@ -3,10 +3,10 @@
 # came: a power plant or a drive names the material, and takes whatever stock of it there is.
 # How cold it must be kept, and in what, is not said yet.
 identity:
-  key: stock.deuterium
+  key: stock.deuterium-liq
   traded_as: market.fuel
-  code: DEUTERIUM
-  name: "Deuterium"
+  code: DEUTERIUM-LIQ
+  name: "Deuterium, liquid"
   form: fluid
 made_from:
   - item: material.deuterium
