@@ -182,7 +182,7 @@ fn prospect(app: &mut App) {
         }
     }
     // The survey: the belt's rocks, each seen as far as its size lets (see `belts::survey`).
-    let surveyed: Vec<(usize, usize, f64)> = universe_sim::world::belts::survey(&sys, ship - app.view.positions[0], t)
+    let surveyed: Vec<(usize, usize, f64)> = universe_sim::world::belts::survey(&sys, ship - app.view.positions[0], t, universe_sim::world::belts::Survey::of(app.ship.spec()))
         .into_iter()
         .take(SURVEY_LISTED)
         .map(|f| (f.field, f.body, f.distance))

@@ -476,7 +476,7 @@ pub fn apply(app: &mut App, name: &str) {
             let main = sys.belts.iter().find(|b| b.kind == universe_sim::world::belts::BeltKind::Main).expect("a main belt");
             let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
             let star = positions[0];
-            let found = universe_sim::world::belts::survey(&sys, from, t);
+            let found = universe_sim::world::belts::survey(&sys, from, t, universe_sim::world::belts::Survey::radar());
             let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight").clone();
             let bodies = sys.field_bodies(f.field);
             let mut pos = Vec::new();

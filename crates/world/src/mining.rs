@@ -304,7 +304,7 @@ mod tests {
         let t = p.world.time;
         let main = sys.belts.iter().find(|b| b.kind == crate::belts::BeltKind::Main).expect("a main belt");
         let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
-        let found = crate::belts::survey(&sys, from, t);
+        let found = crate::belts::survey(&sys, from, t, crate::belts::Survey::radar());
         let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight");
         let bodies = sys.field_bodies(f.field);
         let mut pos = Vec::new();

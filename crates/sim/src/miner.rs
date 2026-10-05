@@ -63,10 +63,10 @@ pub fn route(charts: &Charts, system: usize, seed: u64) -> Option<Vec<Stop>> {
 /// A belt rock worth the trip from `at` (system frame) at time `t`: among
 /// the nearest the survey resolves (more than 20 m across), one of the best
 /// few by worth (the `seed`'s pick): (its patch field, its body).
-fn belt_rock(charts: &Charts, sys: &StarSystem, at: glam::DVec3, t: f64, seed: u64) -> Option<(usize, usize)> {
+fn belt_rock(charts: &Charts, sys: &StarSystem, at: glam::DVec3, t: f64, sensor: universe_world::belts::Survey, seed: u64) -> Option<(usize, usize)> {
     let mut star = Vec::new();
     sys.positions(t, &mut star);
-    let found = universe_world::belts::survey(sys, at - star.first().copied()?, t);
+    let found = universe_world::belts::survey(sys, at - star.first().copied()?, t, sensor);
     let mut rocks: Vec<(usize, usize, f64)> = found.iter().filter(|f| f.diameter > 20.0).take(12).map(|f| (f.field, f.body, worth(charts, sys, f.field, f.body))).collect();
     rocks.sort_by(|a, b| b.2.total_cmp(&a.2));
     rocks.truncate(4);
@@ -76,7 +76,8 @@ fn belt_rock(charts: &Charts, sys: &StarSystem, at: glam::DVec3, t: f64, seed: u
 /// A miner parked with its route done: the next trip. A belt miner's is its
 /// rock, picked here, and its market twice (the first stands for the rock:
 /// it digs off the route, and full, moves on to the second).
-pub(crate) fn new_route(a: &mut Avionics, dig: &mut Dig, charts: &Charts, system: usize, at: glam::DVec3, t: f64, seed: u64, home: u64) -> bool {
+#[allow(clippy::too_many_arguments)]
+pub(crate) fn new_route(a: &mut Avionics, dig: &mut Dig, charts: &Charts, system: usize, at: glam::DVec3, t: f64, sensor: universe_world::belts::Survey, seed: u64, home: u64) -> bool {
     if dig.rock.is_some() && !a.route.active && a.route.next == 0 {
         return true; // (a belt trip, set: lifting off for it)
     }
@@ -90,7 +91,7 @@ pub(crate) fn new_route(a: &mut Avionics, dig: &mut Dig, charts: &Charts, system
             _ => f64::INFINITY,
         };
         let market = universe_world::traffic::facilities(&sys).into_iter().filter(|&f| universe_world::settlements::has_market(&sys, f)).min_by(|a, b| near(a).total_cmp(&near(b)));
-        if let (Some(market), Some(rock)) = (market, belt_rock(charts, &sys, at, t, seed)) {
+        if let (Some(market), Some(rock)) = (market, belt_rock(charts, &sys, at, t, sensor, seed)) {
             a.route = Route { stops: vec![Stop { system, target: market }; 2], next: 0, active: false, dwell_until: None, departing: false, stay: None, hangar_ordered: 0.0 };
             *dig = Dig { rock: Some(rock), tries: 0 };
             return true;

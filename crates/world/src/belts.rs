@@ -364,12 +364,37 @@ pub fn field_patch(f: usize) -> Option<Patch> {
     (f >= PATCH_FIELD).then(|| Patch { belt: ((f >> 44) & 0xff) as u16, class: ((f >> 41) & 0x7) as u8, ring: ((f >> 24) & 0x1_ffff) as u32, segment: (f & 0xff_ffff) as u32 })
 }
 
-/// A sensor resolves a rock this many times its size away (m per m): a 15 m
-/// rock at 150,000 km, a kilometre's at ten million. (Invented: a survey
-/// sensor's figure, for its product's record.)
-pub const SURVEY_RESOLVES: f64 = 1.0e7;
-/// The farthest a survey looks (m).
-pub const SURVEY_REACH: f64 = 2.0e10;
+/// What a sensor can survey: it makes out a rock `resolves` times its size
+/// away (m per m), out to `reach` (m). The fitted sensor's figures (the
+/// radar's: a 15 m rock at 150,000 km, a kilometre's at ten million).
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Survey {
+    pub resolves: f64,
+    pub reach: f64,
+}
+
+impl Survey {
+    /// What ship spec `spec`'s fitted sensors survey (none fitted: nothing).
+    pub fn of(spec: &crate::ship::ClassSpec) -> Survey {
+        let c = crate::content::content();
+        spec.fit
+            .iter()
+            .find_map(|(_, m)| match c.get(*m).does {
+                crate::modules::Does::Sensors { resolves, survey_range, .. } => Some(Survey { resolves, reach: survey_range }),
+                _ => None,
+            })
+            .unwrap_or(Survey { resolves: 0.0, reach: 0.0 })
+    }
+
+    /// The registry's radar's (for tests and scenarios).
+    pub fn radar() -> Survey {
+        let c = crate::content::content();
+        match c.handle::<crate::modules::Module>("equipment.sensors.radar.s1").map(|h| &c.get(h).does) {
+            Some(crate::modules::Does::Sensors { resolves, survey_range, .. }) => Survey { resolves: *resolves, reach: *survey_range },
+            _ => Survey { resolves: 0.0, reach: 0.0 },
+        }
+    }
+}
 
 /// One rock a survey finds: its field and body (for a lock), what it is,
 /// how big, and how far.
@@ -385,7 +410,10 @@ pub struct Found {
 /// The belt rocks a survey from `p` at `t` resolves: each class of size
 /// looked for as far as its smallest resolves, nearest first. Its body
 /// number is among the patch's bodies (after the system's own).
-pub fn survey(sys: &StarSystem, p: DVec3, t: f64) -> Vec<Found> {
+pub fn survey(sys: &StarSystem, p: DVec3, t: f64, sensor: Survey) -> Vec<Found> {
+    if sensor.resolves <= 0.0 || sensor.reach <= 0.0 {
+        return Vec::new();
+    }
     let n = sys.bodies.len();
     let mut out = Vec::new();
     let classes = sys.belts.iter().flat_map(|b| b.classes.iter().map(|c| (c.lo, c.hi))).fold(Vec::<(f64, f64)>::new(), |mut v, c| {
@@ -395,14 +423,14 @@ pub fn survey(sys: &StarSystem, p: DVec3, t: f64) -> Vec<Found> {
         v
     });
     for (lo, hi) in classes {
-        let reach = (lo * SURVEY_RESOLVES).min(SURVEY_REACH);
+        let reach = (lo * sensor.resolves).min(sensor.reach);
         for patch in patches_near(&sys.belts, p, t, reach, lo) {
             if sys.belts[patch.belt as usize].classes[patch.class as usize].lo != lo {
                 continue;
             }
             for (k, rock) in patch_rocks(sys, &sys.belts, patch, sys.belt_seed).into_iter().enumerate() {
                 let distance = rock.orbit.position(t).distance(p);
-                if rock.diameter < hi && distance <= (rock.diameter * SURVEY_RESOLVES).min(SURVEY_REACH) {
+                if rock.diameter < hi && distance <= (rock.diameter * sensor.resolves).min(sensor.reach) {
                     out.push(Found { field: patch_field(patch), body: n + k, class: rock.class, diameter: rock.diameter, distance });
                 }
             }

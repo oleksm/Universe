@@ -14,8 +14,8 @@
 //! reference price (see `goods`), moved by how the warehouse's stock of it
 //! stands against what the settlement's works take of it over `COVER_DAYS`.
 //!
-//! A settlement's people: the registry gives no population yet, so there are
-//! none, and nothing is eaten (their needs are `need.*`, for when there are).
+//! A settlement's people: as many as the registry says live there. What they
+//! eat and use (their needs are `need.*`) isn't run yet.
 
 use std::collections::{BTreeMap, HashMap};
 
@@ -136,6 +136,13 @@ impl Works {
         let holds: f64 = setups.iter().map(|s| s.module.capacity.holds.unwrap_or(0.0) * s.count as f64).sum();
         let mut w = Works { ground, works, name: f.identity.name.clone(), setups, pool: Pool::default(), exchange: f.exchange.is_some() };
         w.pool.room = if holds > 0.0 { holds } else { w.takes().iter().map(|(_, r)| r * UNSTORED).sum() };
+        // (What lies in it at day 0: the registry's seed state.)
+        let goods = &universe_world::content::content().stock;
+        for s in &f.stock {
+            if let Some(i) = universe_world::goods::item(&s.item) {
+                w.pool.put(i, s.quantity.unwrap_or(0.0) + s.pieces.map_or(0.0, |n| n as f64 * goods[i].mass));
+            }
+        }
         Some(w)
     }
 
@@ -195,9 +202,16 @@ impl Works {
         k
     }
 
-    /// The power it draws at full rate (W).
+    /// The power it would draw this step at full rate (W): a module set to a
+    /// recipe, if its store holds something of each of its inputs (an idle one
+    /// asks for none); one with no recipe, what it draws all the time.
     fn draws(&self) -> f64 {
-        self.setups.iter().map(|s| s.recipe().map(|r| r.power).or(s.module.needs.power).unwrap_or(0.0) * s.count as f64).sum()
+        let draw = |s: &Setup| match s.recipe() {
+            Some(r) if r.inputs.iter().all(|&(i, _)| self.pool.of(i) > 0.0) => r.power,
+            Some(_) => 0.0,
+            None => s.module.needs.power.unwrap_or(0.0),
+        };
+        self.setups.iter().map(|s| draw(s) * s.count as f64).sum()
     }
 }
 
@@ -308,6 +322,8 @@ impl Economy {
         for (k, g) in land.grounds.iter().enumerate() {
             let facility = Facility::Spaceport(g.port);
             e.index.insert((g.system, facility), e.places.len());
+            // (Its people, as the registry has them: thousands.)
+            let people = universe_world::registry::registry().settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&g.recorded.name)).and_then(|s| s.population).map_or(0.0, |n| n as f64 / 1000.0);
             e.places.push(Place {
                 system: g.system,
                 facility,
@@ -316,8 +332,8 @@ impl Economy {
                 warehouse: None,
                 stock: Pool::default(),
                 wants: Vec::new(),
-                population: 0.0,
-                founded: 0.0,
+                population: people,
+                founded: people,
                 fed: 1.0,
                 waiting: 0.0,
                 made: BTreeMap::new(),

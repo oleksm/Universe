@@ -36,7 +36,9 @@ pub enum Does {
     FlightComputer { turn_rate: f64, roll_rate: f64 },
     Transponder,
     /// Sensors: how far they see a ship (m).
-    Sensors { range: f64 },
+    /// `resolves`: how far it makes out a rock, for its size (m per m), and
+    /// `survey_range` the farthest it looks (m): 0, it doesn't survey.
+    Sensors { range: f64, resolves: f64, survey_range: f64 },
     /// A comm (the hypernet, `docs/hypernet.md`): it hears what happens within
     /// `capture` (m), links to another comm within `link` (m; the shorter of
     /// the two decides), passes a message on after `lag` (s), and handles
@@ -274,7 +276,7 @@ impl Module {
             Does::Tank { capacity, .. } | Does::Rack { capacity } => positive("capacity", *capacity),
             Does::Cabin { seats } => positive("seats", *seats as f64),
             Does::FlightComputer { turn_rate, roll_rate } => positive("turn_rate", *turn_rate).and(positive("roll_rate", *roll_rate)),
-            Does::Sensors { range } => positive("range", *range),
+            Does::Sensors { range, .. } => positive("range", *range),
             Does::Comm { capture, link, lag, capacity } => positive("capture", *capture).and(positive("link", *link)).and(positive("capacity", *capacity)).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::GateRelay { lag, capacity, .. } | Does::HyperRelay { lag, capacity, .. } => positive("capacity", *capacity).and(if lag.is_finite() && *lag >= 0.0 { Ok(()) } else { Err(format!("lag can't be negative ({lag})")) }),
             Does::Hyperdrive { efficiency, top_speed } => positive("top_speed", *top_speed).and(if *efficiency > 0.0 && *efficiency <= 1.0 { Ok(()) } else { Err(format!("efficiency must be in 0..1 ({efficiency})")) }),
@@ -349,7 +351,7 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
         Some(Does::FlightComputer { turn_rate: it.turn_rate, roll_rate: it.roll_rate })
     }
     fn sensors(&mut self, it: &r::EquipmentFunctionSensors) -> Self::Out {
-        Some(Does::Sensors { range: it.range })
+        Some(Does::Sensors { range: it.range, resolves: it.resolves.unwrap_or(0.0), survey_range: it.survey_range.unwrap_or(0.0) })
     }
     fn comm(&mut self, it: &r::EquipmentFunctionComm) -> Self::Out {
         Some(Does::Comm { capture: it.capture, link: it.link, lag: it.lag, capacity: it.capacity })

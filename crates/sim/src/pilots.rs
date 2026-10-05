@@ -308,7 +308,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     if human.is_none() {
         if !pilot.avionics.route.active && matches!(ship.state, ShipState::Landed { .. }) {
             let seed = crate::rng::mix(pilot.route_seed, pilot.stops_made);
-            if !(pilot.miner && crate::miner::new_route(&mut pilot.avionics, &mut pilot.dig, &view.charts, system, ship.position, view.time, seed, pilot.route_seed)) {
+            if !(pilot.miner && crate::miner::new_route(&mut pilot.avionics, &mut pilot.dig, &view.charts, system, ship.position, view.time, universe_world::belts::Survey::of(ship.spec()), seed, pilot.route_seed)) {
                 crate::operator::new_route(pilot, &view.charts, system);
             }
         }

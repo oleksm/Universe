@@ -57,6 +57,8 @@ pub fn run(u: &mut Universe) {
         let made_by = |i: usize| shop.iter().find_map(|&s| recipes::of(module(s)).iter().find(|r| r.makes == i));
         let want = wanted(&goals, &mass, &made_by);
         let short = |i: usize| want.get(&i).copied().unwrap_or(0.0) - w.pool.of(i);
+        // (Something to make it from: every input in store.)
+        let ready = |r: &Recipe| r.inputs.iter().all(|&(i, _)| w.pool.of(i) > 0.0);
         let mut picks: Vec<(usize, Option<usize>)> = Vec::new();
         let mut taken: Vec<usize> = Vec::new();
         for &s in &shop {
@@ -64,12 +66,13 @@ pub fn run(u: &mut Universe) {
             let now = w.setups[s].recipe;
             let pick = if module(s) == "module.building-dock" {
                 (!list.is_empty()).then_some(0)
-            } else if now.is_some_and(|r| short(list[r].makes) > 0.0) {
+            } else if now.is_some_and(|r| short(list[r].makes) > 0.0 && ready(&list[r])) {
                 now
             } else {
-                // (The most lacking it can make, that no other module of this works is on.)
-                let at = |i: usize| want.get(&i).is_some_and(|_| short(i) > 0.0 && !taken.contains(&i));
-                let best = (0..list.len()).filter(|&r| at(list[r].makes)).max_by(|&a, &b| short(list[a].makes).total_cmp(&short(list[b].makes)));
+                // (The most lacking it can make, and has the makings of, that no other module of
+                // this works is on.)
+                let at = |r: &Recipe| want.get(&r.makes).is_some_and(|_| short(r.makes) > 0.0 && !taken.contains(&r.makes)) && ready(r);
+                let best = (0..list.len()).filter(|&r| at(&list[r])).max_by(|&a, &b| short(list[a].makes).total_cmp(&short(list[b].makes)));
                 best.or(None)
             };
             if let Some(r) = pick {
