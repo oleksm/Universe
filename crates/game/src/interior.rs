@@ -993,7 +993,7 @@ impl Interior {
         }
         let (tx, rx) = mpsc::channel();
         let (mesh, lo, hi) = (h.mesh.clone(), h.lo, h.hi);
-        std::thread::spawn(move || {
+        job("studio-hollow", move || {
             use universe_sim::world::deckplan::{enclosed, in_material};
             let mut cells = Vec::new();
             let mut z = lo.z.floor() + 0.5;
@@ -1026,7 +1026,7 @@ impl Interior {
         if self.lines.as_ref().is_none_or(|(k, _)| k != key) && self.job.as_ref().is_none_or(|(k, _)| k != key) {
             let (tx, rx) = mpsc::channel();
             let mesh = mesh.clone();
-            std::thread::spawn(move || {
+            job("studio-lines", move || {
                 // (Its creases of 30° or more, less the tiniest bevels: the shape, not its
                 // grain.)
                 let lines = mesh.creases(30.0).into_iter().filter(|[a, b]| a.distance(*b) >= 0.02).collect();
@@ -1581,6 +1581,12 @@ fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
     layers_rect(layers_corner(size), LAYERS.len())
 }
 
+/// The studios' work done aside: on a thread of its own, named (so it can be
+/// told apart from the world's, in the observer and in `top -H`).
+pub fn job(name: &str, work: impl FnOnce() + Send + 'static) {
+    std::thread::Builder::new().name(name.into()).spawn(work).ok();
+}
+
 /// Where the layers panel's bottom right corner is in this studio.
 fn layers_corner(size: Vec2) -> Vec2 {
     Vec2::new(size.x - 12.0, size.y - 26.0)
@@ -1865,7 +1871,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             let (mesh, walls, decks, plan) = (h.mesh.clone(), interior.walls(), interior.decks_now.clone(), interior.plan.clone());
             let (tx, rx) = mpsc::channel();
             let snapshot = plan.clone();
-            std::thread::spawn(move || {
+            job("studio-reach", move || {
                 tx.send(reach(&mesh, &walls, decks.as_ref(), &plan)).ok();
             });
             interior.reach_job = Some((snapshot, rx));

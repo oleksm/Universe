@@ -247,7 +247,7 @@ impl Studio {
         if self.elev.as_ref().is_none_or(|(k, _)| k != hull_key) && self.elev_job.as_ref().is_none_or(|(k, _)| k != hull_key) {
             let (tx, rx) = std::sync::mpsc::channel();
             let (mesh, nose) = (mesh.clone(), nose_of(shape));
-            std::thread::spawn(move || {
+            crate::interior::job("studio-elev", move || {
                 let e = Elevations { side: [mesh.elevation(0, -1.0), mesh.elevation(0, 1.0)], end: [mesh.elevation(2, nose), mesh.elevation(2, -nose)] };
                 tx.send(e).ok();
             });

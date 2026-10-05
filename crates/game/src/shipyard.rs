@@ -130,6 +130,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         // A walk-through: its walled tubes the hull's walls, the shipyard put by, the
         // pilot on foot there, first person.
         if let Some(at) = interior.walk.take() {
+            app.send_layout();
             app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls: interior.walls() });
             app.engine.send(universe_sim::Command::Preview(Some(at)));
             app.preview = app.shipyard.take().map(|mut y| {
@@ -157,6 +158,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     if let Some(at) = studio.walk.take() {
         // (The interior studio's walled tubes walked in too.)
         let walls = app.shipyard.as_ref().map(|y| y.interior.walls()).unwrap_or_default();
+        app.send_layout();
         app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls });
         app.engine.send(universe_sim::Command::Preview(Some(at)));
         app.preview = app.shipyard.take().map(|mut y| {

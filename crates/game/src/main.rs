@@ -206,7 +206,7 @@ pub struct App {
     /// session only (not saved); a layout we're happy with is made content.
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
-    pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
+    layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
     /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
     pub preview: Option<shipyard::Shipyard>,
     /// The hull being designed, and those commissioned (in the save).
@@ -291,6 +291,17 @@ pub struct App {
 }
 
 impl App {
+    /// Our hull's inside as laid out, to the world engine if it's changed since it
+    /// was last sent (to walk in).
+    pub fn send_layout(&mut self) {
+        let key = &self.ship.spec().key;
+        let plan = self.deckplans.iter().find(|p| &p.hull == key).cloned().unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: key.clone(), decks: Vec::new() });
+        if self.layout_sent.as_ref() != Some(&plan) {
+            self.engine.send(Command::Layout(plan.clone()));
+            self.layout_sent = Some(plan);
+        }
+    }
+
     fn new() -> Self {
         let mut u = Universe::new(seed());
         // UNIVERSE_RECORD=path: record the session from its start, saved there
@@ -1225,12 +1236,10 @@ impl Game for App {
         // Keys go to the top layer only (see `Layer`): what's open over the world
         // takes them, and nothing under it sees them; the system's keys work in any.
         self.system_keys(ctx);
-        // Our hull's inside as laid out, to the world engine when it changes (to walk in).
-        let key = &self.ship.spec().key;
-        let plan = self.deckplans.iter().find(|p| &p.hull == key).cloned().unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: key.clone(), decks: Vec::new() });
-        if self.layout_sent.as_ref() != Some(&plan) {
-            self.engine.send(Command::Layout(plan.clone()));
-            self.layout_sent = Some(plan);
+        // Our hull's inside as laid out, to the world engine when it changes (to walk
+        // in); not while it's being designed in the shipyard (a walk-through sends it).
+        if self.shipyard.is_none() {
+            self.send_layout();
         }
         // Where we are is explored.
         self.explored.insert(self.v.ship_system);
@@ -1241,7 +1250,7 @@ impl Game for App {
                 if ctx.cursor_grabbed() {
                     ctx.grab_cursor(false);
                 }
-                if !shipyard::input(self, ctx) {
+                if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
                     self.shipyard = None;
                 }
             }
