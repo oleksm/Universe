@@ -118,3 +118,49 @@ lost:** cobalt, and the silver of epithermal and massive sulphide ores.
   (`arc_volcanic`), to carry on the registry's records.
 - Which deposit type geochemistry does not answer to.
 - When layered intrusions arrive (step 3): the platinum metals split by metal, if it can be had.
+
+## After the brief's v0.3 and the note on airless worlds (2026-10-05, evening)
+
+**Taken in from v0.3:**
+
+- **All 27 deposit types** are records, with their new counts, sizes and grades (the sulphur an
+  ore carries is now among them). Three more events (`coast`, `salt flat`, `ocean floor`) and one
+  more method (`sonar`) are in the dictionary. A type under the sea says `offshore: true`.
+- **Your new commodities, as the registry has them:** an oxide's grade is put as its element's
+  (TiO2, V2O5, MgO, ZrO2, K2O, P2O5, Nb2O5, as Cr2O3 before); NaCl is `good.salt`; the rare-earth
+  oxides are put as cerium, the commonest of them, which is a stand-in: say if you can split them.
+- **An ore for each new type** (12 new goods; rock salt is `good.salt`), and the mine digs them.
+- **Won from them so far:** ilmenite from beach sand and potash from potash ore (in the
+  concentrator); sulphur from both sulphur ores (a sulphur works); manganese (the ferroalloy
+  furnace, as ferromanganese); magnesium from magnesite (a magnesium works); phosphate fertiliser
+  from phosphate rock and sulphuric acid, leaving gypsum (a phosphate works).
+- **Described but not yet won:** the reef's chromium and platinum, titanomagnetite's vanadium and
+  titanium, zircon, the nodules, carbonatite's rare earths and niobium, lithium from brine.
+
+### The five questions of the note on airless worlds
+
+1. **An olivine class: yes, added.** `rock-class.olivine` (A-type), with a density and a colour so
+   it can be drawn, and nothing else: no shares by zone, since they should come out of what your
+   model breaks. Fill `found` from your runs and I will check it against the falls.
+2. **Composition fields: yes, added** to the rock class's `composition`, each an optional range,
+   lean to rich: `sulphide`, `titanium`, `kreep` (potassium, the rare earths, phosphorus, thorium
+   and uranium together), `helium_3`. No values yet: give me ranges with where they come from and
+   I will write them, or propose them here.
+3. **A moon's surface units: records, of the kind the ten are.** Anorthosite highland, mare
+   basalt, KREEP terrain, ice shell, salt deposits would be `rock-unit` records, each with its
+   density, what makes it (new events in the dictionary: a magma ocean, a lava plain, an impact,
+   an ice shell) and what it yields. Where each lies on a body stays yours. Send the list when it
+   is stable and I will write them as drafts, as the ten were.
+4. **Where the ports are: the user's to say.** The facts today, in Treistun: of ten ports without
+   air, three stand on airless rocky planets (b, c, f: 562, 421 and 189 K), three on the cratered
+   moons of rocky planets (b I, c I, d I), two on cold moons of giants (h II at 112 K, i II at
+   94 K); and ships mine asteroids, which is the only mining the game has. So by what is there:
+   **airless rocky worlds and moons first, asteroids second, icy moons third.**
+5. **Each asteroid its own richness: yes.** The game already gives every rock its own composition
+   within its class's range, and the registry's `rich_above` and `rich_yields` turn on it. Use the
+   class's ranges as the limits.
+
+**One thing your model should know of the registry's side.** A rock class's `found` shares and the
+falls are the registry's present truth for what a belt holds, and the engine seeds belts by them
+(`seeding.asteroids`). If your broken bodies give other shares, that is a finding, not an error:
+bring it and the records change.

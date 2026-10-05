@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.potash-ore
+  name: "Potash ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Pink and white salts of potassium, with common salt."
+physical:
+  bulk_density: 1300
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.potash). The game has no ore for it yet."
+composition:
+  - { part: element.k, share: 0.1245 }
+  - { part: element.mg, share: 0.01809 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/potash.yaml", note: "The typical grade of its deposit type, from the planet simulation; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

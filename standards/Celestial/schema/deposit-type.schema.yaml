@@ -27,6 +27,7 @@ properties:
         item: { type: string, x-ref: [element, good], description: "What is won from it, by its key." }
         grade: { type: number, x-unit: "1", description: "kg of it in each kg of ore, typically" }
         said_as: { type: string, description: "The simulation's own name and unit for it (Cu %, Au g/t), where ours differs." }
+  offshore: { type: boolean, description: "It lies under the sea." }
   ore: { type: string, x-ref: [good], description: "The good its ore is, as dug, by its key." }
   size:
     type: object

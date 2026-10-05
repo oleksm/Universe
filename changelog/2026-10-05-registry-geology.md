@@ -13,3 +13,9 @@
 - **The metals an ore carries beside its main one are won:** molybdenum, lead, silver, gold,
   tungsten, platinum, diamonds, and nickel from laterite. Three new works (lead smelter,
   molybdenum works, tungsten works).
+- **27 deposit types** (the simulation's v0.3): layered intrusions, magnetite seams, manganese,
+  magnesite, sulphur, beach sands, nodules, rock salt, potash, phosphorite, carbonatite, brines.
+  An ore for each; sulphur, manganese, magnesium, potash, phosphate fertiliser and ilmenite from
+  sand are won.
+- **For worlds without plates:** an olivine rock class, and four more composition ranges a rock
+  class can carry (sulphide, titanium, KREEP, helium-3).

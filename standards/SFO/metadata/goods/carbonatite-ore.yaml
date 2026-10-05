@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.carbonatite-ore
+  name: "Carbonatite ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Carbonate rock with phosphate, rare earths and niobium."
+physical:
+  bulk_density: 1800
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.carbonatite). The game has no ore for it yet."
+composition:
+  - { part: element.p, share: 0.03491 }
+  - { part: element.ce, share: 0.01628 }
+  - { part: element.nb, share: 0.003495 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/carbonatite.yaml", note: "The typical grade of its deposit type, from the planet simulation; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.carbonatite
+  name: "Carbonatite"
+  about: "A rare magma of carbonate, in rifts: it carries phosphate, the rare earths and niobium."
+formed_by: rift
+carries:
+  - { item: element.p, grade: 0.03491, said_as: "P2O5 %" }
+  - { item: element.ce, grade: 0.01628, said_as: "rare-earth oxides %" }
+  - { item: element.nb, grade: 0.003495, said_as: "Nb2O5 %" }
+ore: good.carbonatite-ore
+size:
+  median: 33600000000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+  - { method: radiometrics, reach: 0 }
+  - { method: magnetics, reach: 800 }
+counted:
+  test_world: 58
+  earth: 50
+basis:
+  - { of: [formed_by, carries, size, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world E4", note: "As the simulation has it: grades and sizes from its models of each type, counts from one test world. An oxide's grade is put as the element's (chromium, titanium, vanadium, magnesium, zirconium, potassium, phosphorus, niobium); the platinum metals as platinum; the rare earths as cerium, the commonest. Which methods see it is from the brief's survey table; geochemistry is put on every metal deposit on land." }

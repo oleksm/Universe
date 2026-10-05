@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.magnetite-seams
+  name: "Vanadium-titanium magnetite seams"
+  about: "Seams of magnetite high in a layered intrusion, carrying titanium and vanadium."
+formed_by: plume
+carries:
+  - { item: element.fe, grade: 0.55, said_as: "Fe %" }
+  - { item: element.ti, grade: 0.07791, said_as: "TiO2 %" }
+  - { item: element.v, grade: 0.008402, said_as: "V2O5 %" }
+ore: good.titanomagnetite-ore
+size:
+  median: 132900000000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+  - { method: magnetics, reach: 800 }
+  - { method: gravity, reach: 800 }
+counted:
+  test_world: 66
+  earth: 60
+basis:
+  - { of: [formed_by, carries, size, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world E4", note: "As the simulation has it: grades and sizes from its models of each type, counts from one test world. An oxide's grade is put as the element's (chromium, titanium, vanadium, magnesium, zirconium, potassium, phosphorus, niobium); the platinum metals as platinum; the rare earths as cerium, the commonest. Which methods see it is from the brief's survey table; geochemistry is put on every metal deposit on land." }

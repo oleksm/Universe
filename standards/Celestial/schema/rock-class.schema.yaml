@@ -37,6 +37,10 @@ properties:
       metal: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "nickel-iron: share, lean to rich" }
       volatiles: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "frozen carbon dioxide, ammonia, methane: share, lean to rich" }
       pgm: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "platinum-group metals: share, lean to rich" }
+      sulphide: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "sulphur held as sulphide (troilite and its kin): share, lean to rich" }
+      titanium: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "titanium, as ilmenite: share, lean to rich" }
+      kreep: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "the elements that fit no crystal and gather in the last melt: potassium, the rare earths, phosphorus, thorium, uranium, together: share, lean to rich" }
+      helium_3: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "helium-3 driven into the soil by the star's wind: share, lean to rich" }
   found:
     description: "How much of what is there is of this class, by where a body formed. The zones are by distance from the star against its frost line (see the asteroids record)."
     type: object

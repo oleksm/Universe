@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/rock-class.schema.yaml
+# Not in the game yet. Asked for by the planet simulation (its note on airless worlds, 2026-10-05): the mantle of a body
+# that melted and was broken has to be some class. What is not written here is not known to the registry, and is not made up.
+identity:
+  key: rock-class.olivine
+  name: Olivine
+  letter: A
+  about: "Pieces of the mantle of a body that melted through and was later broken: green olivine, with little else. Rare: a broken body's mantle should be most of it, and why so little is seen is an old puzzle."
+physical:
+  density_rubble: 2300
+  density_monolith: 3300
+  albedo: 0.2
+  colour: [0.55, 0.6, 0.42]
+basis:
+  - { of: [physical.density_monolith], tier: invented, review: true, note: "Olivine rich in magnesium is about 3,300 kg/m3: from memory, no source was looked up." }
+  - { of: [physical.density_rubble, physical.albedo, physical.colour], tier: invented, review: true, note: "Chosen: rubble at about two thirds of the solid, as the stony class's; olive green, of middling brightness. To be reviewed." }

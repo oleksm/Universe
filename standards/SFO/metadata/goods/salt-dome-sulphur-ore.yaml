@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.salt-dome-sulphur-ore
+  name: "Salt-dome sulphur ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Limestone cap rock filled with native sulphur."
+physical:
+  bulk_density: 1900
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.salt-dome-sulphur). The game has no ore for it yet."
+composition:
+  - { part: element.s, share: 0.25 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/salt-dome-sulphur.yaml", note: "The typical grade of its deposit type, from the planet simulation; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

@@ -125,6 +125,7 @@
 - { key: module.loading-dock, game: "loading-dock", in: "industry.ron, settlements.ron" }
 - { key: module.machine-works, game: "machine-works", in: "industry.ron, settlements.ron" }
 - { key: module.machining-centre, game: "machining-centre", in: "industry.ron, settlements.ron" }
+- { key: module.magnesium-works, game: "magnesium-works", in: "industry.ron, settlements.ron" }
 - { key: module.market-garden, game: "market-garden", in: "industry.ron, settlements.ron" }
 - { key: module.meat-works, game: "meat-works", in: "industry.ron, settlements.ron" }
 - { key: module.mine, game: "mine", in: "industry.ron, settlements.ron" }
@@ -137,6 +138,7 @@
 - { key: module.panel-line, game: "panel-line", in: "industry.ron, settlements.ron" }
 - { key: module.pellet-plant, game: "pellet-plant", in: "industry.ron, settlements.ron" }
 - { key: module.pharma-works, game: "pharma-works", in: "industry.ron, settlements.ron" }
+- { key: module.phosphate-works, game: "phosphate-works", in: "industry.ron, settlements.ron" }
 - { key: module.piercing-mill, game: "piercing-mill", in: "industry.ron, settlements.ron" }
 - { key: module.potline, game: "potline", in: "industry.ron, settlements.ron" }
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
@@ -148,6 +150,7 @@
 - { key: module.soda-works, game: "soda-works", in: "industry.ron, settlements.ron" }
 - { key: module.stock-yard, game: "stock-yard", in: "industry.ron, settlements.ron" }
 - { key: module.sugar-works, game: "sugar-works", in: "industry.ron, settlements.ron" }
+- { key: module.sulphur-works, game: "sulphur-works", in: "industry.ron, settlements.ron" }
 - { key: module.synthesis-plant, game: "synthesis-plant", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
 - { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }

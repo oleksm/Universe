@@ -61,7 +61,7 @@ definitions:
       gate: "A gate ring's, not a hull's."
   geological_event:
     description: "What happens to a world's crust that lays down rock and ore, in the planet simulation."
-    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering]
+    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering, coast, salt flat, ocean floor]
     x-values:
       ridge: "A mid-ocean ridge: new ocean floor."
       arc: "A subduction arc: volcanoes over a sinking plate."
@@ -72,9 +72,12 @@ definitions:
       sea: "A shallow sea or basin laying down sediment."
       craton: "Old, thick, stable crust."
       weathering: "Tropical rain rotting flat ground deep: it needs a climate."
+      coast: "Waves on a low coast, sorting sand by its weight."
+      salt flat: "A dry, high, closed basin beside volcanoes, where water only leaves by drying."
+      ocean floor: "Old, deep ocean floor far from land."
   survey_method:
     description: "A way of looking for ore without digging."
-    enum: [geochemistry, radiometrics, electromagnetics, induced polarisation, magnetics, gravity]
+    enum: [geochemistry, radiometrics, electromagnetics, induced polarisation, magnetics, gravity, sonar]
     x-values:
       geochemistry: "Soil and stream samples: finds what all but crops out."
       radiometrics: "The ground's own radiation: the surface only."
@@ -82,3 +85,4 @@ definitions:
       induced polarisation: "The ground's slow electrical answer: finds scattered sulphides."
       magnetics: "The ground's magnetism, from the air or orbit."
       gravity: "The ground's pull: finds what is dense."
+      sonar: "Sound off the sea bed: finds what lies on it."
