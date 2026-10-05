@@ -6,5 +6,5 @@ identity:
   name: Power line 2
 from: facility.treistun.port-trethi.trethi-power-station
 to: facility.treistun.port-trethi.trethi-mill
-capacity: 150000000
+capacity: 250000000
 line: [[1275, 250], [1275, 262], [800, 262], [800, 250]]

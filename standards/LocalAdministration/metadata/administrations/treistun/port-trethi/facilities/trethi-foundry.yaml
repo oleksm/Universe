@@ -14,7 +14,7 @@ processes:
 # economy's business.
 lines:
   - makes: stock.sta36-ingot
-    also: [stock.st4340-ingot]
+    also: [stock.st4340-ingot, stock.st304-ingot]
     modules:
       - { module: module.ore-yard, count: 1 }
       - { module: module.pellet-plant, count: 1 }
@@ -24,3 +24,10 @@ lines:
       - { module: module.ladle-station, count: 1 }
       - { module: module.casting-bay, count: 1 }
       - { module: module.ingot-yard, count: 1 }
+  - makes: stock.ti64-ingot
+    modules:
+      - { module: module.vacuum-furnace, count: 1 }
+  - makes: stock.cu-ingot
+    also: [stock.brz932-bar-50]
+    modules:
+      - { module: module.foundry, count: 1 }
