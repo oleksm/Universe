@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.tools
+  name: "Tools"
+  kind: product
+  description: "Hand tools and cutting tools."
+physical:
+  bulk_density: 2000
+game:
+  goods: goods.tools
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

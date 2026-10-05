@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.silicon-refinery
+  name: "Silicon refinery"
+  step: "Purify silicon"
+  description: "Turns silicon to a gas, distils it, and grows it back on hot rods; then pulls single crystals from the melt and saws them to wafers."
+physical:
+  length: 300
+  width: 150
+  height: 30
+recipes:
+  - makes: good.polysilicon
+    does: "Silicon is made into trichlorosilane, distilled, and laid down pure on hot rods (the Siemens process)."
+    inputs:
+      - { item: good.silicon, quantity: 1.13 }
+    outputs:
+      - { item: good.dust, quantity: 0.13 }
+    rate: 0.1
+    power: 20500000
+  - makes: good.wafers
+    does: "A single crystal is pulled from molten polysilicon, sawn into discs and polished. Most of the silicon is lost as sawdust and offcuts, which go back to be purified again."
+    inputs:
+      - { item: good.polysilicon, quantity: 3.57 }
+    outputs:
+      - { item: good.silicon, quantity: 2.57 }
+    rate: 0.004
+    power: 11400000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "Polysilicon: 1.13 kg of silicon, 49 kWh of power and 8 of heat for each kg (solar grade; chip grade took 300 in the 1990s). Wafers: half the polysilicon becomes crystal and 56% of the crystal becomes wafer, so 3.57 kg to the kg." }
+  - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_machines.json", note: "The wafer step, 790 kWh a kg: what is left of the 0.34 kWh for each cm2 that a wafer took from quartz in the 1990s, less its polysilicon then. Rough." }
+  - { of: [recipes.outputs], tier: invented, review: true, note: "That all the lost silicon comes back as silicon fit to purify again is a guess. To be reviewed." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. The wafers are those of one large fab, 80,000 a month. To be reviewed." }

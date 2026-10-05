@@ -1,0 +1,52 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.electronics-works
+  name: "Electronics works"
+  step: "Assemble electronics"
+  description: "Lines that make boards, set parts on them, and build them into cases. Set to one product at a time."
+physical:
+  length: 200
+  width: 100
+  height: 12
+recipes:
+  - makes: good.circuit-boards
+    does: "Glass cloth and resin are pressed into board and copper tracks etched on."
+    inputs:
+      - { item: good.glass, quantity: 0.47 }
+      - { item: good.polyethylene, quantity: 0.23 }
+      - { item: stock.cu-wire-2, quantity: 0.3 }
+    rate: 0.1
+    power: 1500000
+  - makes: good.electronics
+    does: "Chips are set on boards and the boards built into cases."
+    inputs:
+      - { item: good.circuit-boards, quantity: 0.5 }
+      - { item: good.chips, quantity: 0.02 }
+      - { item: stock.al6061-sh-2, quantity: 0.3 }
+      - { item: good.polyethylene, quantity: 0.18 }
+    rate: 0.1
+    power: 1500000
+  - makes: good.computers
+    does: "Boards, a screen and a store of power in a case of aluminium."
+    inputs:
+      - { item: stock.al6061-sh-2, quantity: 0.45 }
+      - { item: good.glass, quantity: 0.145 }
+      - { item: good.circuit-boards, quantity: 0.085 }
+      - { item: good.chips, quantity: 0.01 }
+      - { item: good.electronics, quantity: 0.23 }
+      - { item: good.polyethylene, quantity: 0.08 }
+    rate: 0.1
+    power: 1500000
+  - makes: good.lamps
+    does: "Diodes on a board, on a heat sink of aluminium, under a cover."
+    inputs:
+      - { item: stock.al6061-sh-2, quantity: 0.38 }
+      - { item: good.circuit-boards, quantity: 0.09 }
+      - { item: good.chips, quantity: 0.01 }
+      - { item: good.glass, quantity: 0.25 }
+      - { item: good.polyethylene, quantity: 0.27 }
+    rate: 0.1
+    power: 1500000
+basis:
+  - { of: [recipes, recipes.inputs], tier: derived, review: true, source: "standards/sources/research_machines.json", note: "Shares by weight of real things, fitted to what is described: a board is 30% metal and the rest glass fibre and resin (two parts to one); a laptop is 40% aluminium, 23% battery, 14% screen, 8.5% boards (a MacBook Air); a lamp is 38% heat sink and 8% board (a 12.5 W lamp). Resin and plastics are all taken as polyethylene, the metal of a board as copper, a battery as electronics, a screen as glass. To be reviewed." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, source: "standards/sources/research_machines.json", note: "15 MJ a kg: a guess. Making a laptop's parts into a laptop is reckoned at 148 MJ of primary energy for 2.8 kg. To be reviewed." }

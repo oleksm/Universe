@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.heat-pumps
+  name: "Heat pumps"
+  kind: product
+  description: "Machines that move heat from where it is not wanted to where it can be shed: chillers, coolers, climate plant."
+physical:
+  bulk_density: 600
+game:
+  goods: goods.machinery
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

@@ -202,8 +202,9 @@ rest on a published figure (NASA's for a crew, the WHO's, the World Bank's); art
 travel and the weight of medicines are still guesses. A person balances: 4.9 kg a day in (oxygen,
 water, food), 4.9 out (carbon dioxide, waste water).
 
-**2. Body (2026-10-04).** 12 of 20 needs are now met by something described (11 of the 13 on the
-first two rungs; medicines and somewhere for a constable and a judge are what is left there).
+**2. Body (2026-10-04).** 9 of 20 needs are now met by something described (9 of the 13 on the
+first two rungs; medicines, work, news, and somewhere for a constable and a judge are what is left
+there).
 
 | What | Records |
 |---|---|
@@ -260,7 +261,7 @@ chemicals, next.
 | Pharma works | Medicines | Sugar, methanol, acid, alkali, water: a guess, at 50 kg of waste a kg |
 
 With no oil, carbon chemistry starts from carbon dioxide and hydrogen: plastic is made of breath
-and water, at a price in power. Medicine is now met: 13 of 20 needs. Salt, like limestone, is a
+and water, at a price in power. Medicine is now met: 10 of 20 needs. Salt, like limestone, is a
 wet world's rock. The fertiliser works' power is now worked out (15.8 MW) and not a guess.
 
 **Left for later in Making:** the food by-products as feed (their protein is found; the feed
@@ -281,3 +282,42 @@ from ore waits on what the worlds are made of. Copper and titanium scrap are mel
 stainless scrap has no taker yet. Every figure for the three new works is a guess or worked out
 from memory, marked. The four parked processes these stand in for (three alloyings, wire drawing)
 are still on file: a facility at Port Trethi names one, and facilities are the engine's to change.
+
+**3. Making, fourth step: electronics and machines (2026-10-04).** Figures: `standards/sources/research_machines.json`.
+
+| Works | Makes | From |
+|---|---|---|
+| Silicon furnace | Silicon | Quartz sand, carbon, an electrode: 11.4 MWh a tonne |
+| Silicon refinery | Polysilicon; wafers | Silicon; 3.57 kg of polysilicon to a kg of wafers |
+| Chip fab | Chips | Wafers, 254 kg of chemicals and 96 t of water for each kg; 119 MW |
+| Electronics works | Circuit boards, electronics, computers, lamps | Glass, plastic, copper wire, aluminium sheet, chips |
+| Machine works | Motors, pumps, heat pumps, machine tools, tools | Steel, aluminium, copper, stainless |
+
+Tools of a trade are now met: **11 of 20 needs.** The nine left are places and people, not things:
+somewhere for a constable, a judge, a teacher, a reporter, a pilot, an artist, an innkeeper and a
+performer to work; and work and travel, which nothing can yet be said to meet.
+
+Guesses replaced by found figures: the foundry (1.25 MJ a kg), the wire mill (7.1 MJ a kg), the
+lime kiln (3.7 GJ a tonne), the crushing plant (1.95 kWh a tonne). Still a guess: the vacuum arc
+furnace.
+
+## Where the batch stands (2026-10-04)
+
+In the registry now: 20 needs, 36 trades, 4 buildings, 79 modules (50 before), 163 goods (106
+before). A settlement on a wet world can be described from rock to bread, clothes, a roof, a
+doctor, a lamp and a motor.
+
+**Not done, for a later batch:**
+
+- **People and work:** crews on modules (asked of the engine).
+- **Making:** the food by-products as feed; phosphate and potash; paper; the 26 parked processes
+  not yet replaced; the works that build works; wear (a `life` on goods, parts and modules, asked
+  of the engine); the hydroponic hall's lamps, climate plant and pumps as parts (a part cannot be
+  made from a good; lamps, heat pumps and pumps are goods).
+- **Takers:** 19 things given off still have none.
+- **Moving, Order, Money, Mind and Spirit:** not begun.
+- **Waiting on the user:** what the worlds are made of (wells, mines, ores of copper and
+  titanium); worship.
+
+**Next (the user, 2026-10-04):** spaceship modules: engines, miners, sensors, everything. The 57
+equipment records are the starting point.

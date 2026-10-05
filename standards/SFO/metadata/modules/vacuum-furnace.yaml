@@ -29,4 +29,4 @@ recipes:
     power: 1800000
 basis:
   - { of: [recipes, recipes.inputs], tier: derived, review: true, note: "The metals in the shares of the grade: 90 titanium, 6 aluminium, 4 vanadium. The 3% lost is a guess." }
-  - { of: [physical, recipes.rate, recipes.outputs, recipes.power], tier: invented, review: true, note: "1 kWh a kg, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical, recipes.rate, recipes.outputs, recipes.power], tier: invented, review: true, note: "1 kWh a kg, from memory. No figure for vacuum arc melting alone was found: making titanium bar from its chloride takes 70 MWh a tonne in all, 21.5 of it for the sponge. To be reviewed." }

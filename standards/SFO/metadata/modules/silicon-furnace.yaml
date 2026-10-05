@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.silicon-furnace
+  name: "Silicon furnace"
+  step: "Smelt silicon"
+  description: "An arc furnace, its electrodes sunk in the charge, where carbon takes the oxygen from quartz."
+physical:
+  length: 100
+  width: 50
+  height: 30
+recipes:
+  - makes: good.silicon
+    does: "Quartz and carbon are heated by arc to 2,000 C; the carbon leaves with the oxygen."
+    inputs:
+      - { item: good.silica-sand, quantity: 2.7 }
+      - { item: good.carbon, quantity: 1.3 }
+      - { item: good.graphite-electrode, quantity: 0.1 }
+      - { item: element.o, quantity: 2.591 }
+    outputs:
+      - { item: good.dust, quantity: 0.5607 }
+      - { item: good.carbon-dioxide, quantity: 5.13 }
+    rate: 1.0
+    power: 41000000
+basis:
+  - { of: [recipes.inputs, recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "For each tonne of silicon: 2.7 t of quartz, 1.15 to 1.5 t of carbon, 100 kg of electrode, 10.8 to 12 MWh (Europe's furnaces). The wood chips they also charge are left out." }
+  - { of: [recipes.outputs], tier: derived, note: "By balance: the silicon that does not come out as metal leaves as silica fume; the carbon burns to carbon dioxide above the charge, with oxygen from the air." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

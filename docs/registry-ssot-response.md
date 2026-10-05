@@ -492,6 +492,14 @@ recipe draws; you then add |heat| x (outside - inside) / (inside x efficiency) w
 hotter, and next to nothing where it is colder. Figures and a table by settlement:
 `docs/registry-food.md`, "The hydroponic hall". Say if you want the field, and its name.
 
+**The whole batch of 2026-10-04, in one place:** `docs/registry-civilization-plan.md`, "Done" and
+"Where the batch stands". Since the note below: 29 more modules and 57 more goods (building
+materials, chemicals, four more metals, electronics and machines), 11 new mill stock items, all in
+kinds you read and with no new fields. Three materials (copper, Ti-6Al-4V, 304) gained the forms
+`ingot` and `scrap`. Three more rocks that only a wet world has (limestone, clay, silica sand) and
+salt: the game has no ore for any of them. Several modules now have more than one recipe making the
+same item from different inputs (arc furnace: liquid steel from nickel-iron or from scrap).
+
 **People and Body (2026-10-04), nothing you must do yet.** Two new roots of records the engine
 does not read: `standards/People/` (kinds `need`, `profession`) and `SFO/metadata/buildings/` (kind
 `building`: floor, weight, life, the needs it meets for how many, its staff by trade). 8 new

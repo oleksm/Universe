@@ -16,7 +16,8 @@ recipes:
     outputs:
       - { item: good.carbon-dioxide, quantity: 0.7848 }
     rate: 5.0
-    power: 22500000
+    power: 18500000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, note: "From the chemistry: 100 parts of calcium carbonate give 56 of lime and 44 of carbon dioxide." }
-  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "4.5 MJ a kg of lime: the 3.2 the reaction takes, from memory, and losses. To be reviewed." }
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "3.7 GJ a tonne of lime: the best kilns take 3.2 to 4.2, of which 3.2 is what the reaction itself takes. Taken as electric." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Chosen. To be reviewed." }
