@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.fcs1-04
+  code: FCS1-04
+  name: "Cabinet and cold plates"
+  revision: draft
+  description: ""
+physical:
+  mass: 40
+made_from:
+  - item: stock.al6061-sh-2
+    quantity: 46.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

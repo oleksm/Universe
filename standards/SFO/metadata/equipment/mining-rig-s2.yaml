@@ -12,7 +12,12 @@ physical:
   volume: 6
 needs:
   power: 500000
+built_of:
+  parts: mining-rig-s2
+making:
+  module: module.assembly-shop
 function:
   kind: mining_rig
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a cutting head of picks on an arm, a motor to turn it, an anchor and winch to hold the ship to the rock, and a conveyor to the hold. A roadheader with a 300 kW head weighs 130 t on Earth, because its weight is what holds it to the face; here the anchor does that, and the rig is 2.5 t." }

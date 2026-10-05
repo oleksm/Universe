@@ -12,7 +12,12 @@ physical:
   volume: 0.1
 needs:
   power: 1000
+built_of:
+  parts: transponder-s1
+making:
+  module: module.assembly-shop
 function:
   kind: transponder
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a radio in a box with its aerial." }

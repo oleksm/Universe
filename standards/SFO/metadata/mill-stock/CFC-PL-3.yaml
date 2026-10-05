@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cfc-pl-3
+  code: CFC-PL-3
+  name: "Carbon fibre composite plate 3 mm"
+  form: plate
+made_from:
+  - item: material.carbon-fibre-composite
+size:
+  thickness: 0.003
+basis:
+  - { of: [size], tier: invented, review: true, note: "Chosen: one gauge standing for all." }
