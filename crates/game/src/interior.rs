@@ -127,6 +127,9 @@ pub struct Interior {
     saved_decks: Option<Option<universe_sim::world::deckplan::DeckPlan>>,
     decks_now: Option<universe_sim::world::deckplan::DeckPlan>,
     load_decks: Option<universe_sim::world::deckplan::DeckPlan>,
+    /// The reach check's findings, for which plan; and being worked out.
+    reach: Option<(Plan, Arc<Reach>)>,
+    reach_job: Option<(Plan, mpsc::Receiver<Reach>)>,
     /// The plan as last saved or opened; closing with unsaved changes asked
     /// (`confirm`); a message for a while (s).
     saved: Option<Plan>,
@@ -379,17 +382,20 @@ impl Tube {
         planes
     }
 
-    /// A box in its frame (along `s0..s1`, across `u0..u1`, up `v0..v1` round its
-    /// axis) as planes (inside where `n·p < c`).
-    fn cut(&self, s: (f32, f32), u: (f32, f32), v: (f32, f32)) -> Vec<(Vec3, f32)> {
-        let o = self.a;
+    /// A doorway through it, standing plumb whatever its slope: centred `s` along it
+    /// (on its floor), `half` along level each way, across `u0..u1`, from its floor
+    /// up to a level top `DOORWAY.1` over the floor there; as planes.
+    fn doorway(&self, s: f32, half: f32, across: (f32, f32)) -> Vec<(Vec3, f32)> {
+        let (floor, _) = self.floor_and_half();
+        let level = Vec3::new(self.d.x, 0.0, self.d.z).try_normalize().unwrap_or(Vec3::Z);
+        let c = self.at(s, Vec2::new(0.0, floor));
         vec![
-            (-self.d, -self.d.dot(o) - s.0),
-            (self.d, self.d.dot(o) + s.1),
-            (-self.u, -self.u.dot(o) - u.0),
-            (self.u, self.u.dot(o) + u.1),
-            (-self.v, -self.v.dot(o) - v.0),
-            (self.v, self.v.dot(o) + v.1),
+            (-level, -(level.dot(c) - half)),
+            (level, level.dot(c) + half),
+            (-self.u, -self.u.dot(self.a) - across.0),
+            (self.u, self.u.dot(self.a) + across.1),
+            (-self.v, -self.v.dot(self.a) - floor),
+            (Vec3::Y, c.y + DOORWAY.1),
         ]
     }
 
@@ -460,22 +466,24 @@ impl Plan {
         let rooms: Vec<Vec<(Vec3, f32)>> = tubes.iter().map(Tube::planes).collect();
         // Doorways: boxes cutting a tube's wall, from its floor up (in a side, at a way
         // along; in an end's wall, at its middle).
-        let (dw, dh) = DOORWAY;
+        let dw = DOORWAY.0;
         let mut doorways: Vec<Vec<(Vec3, f32)>> = Vec::new();
         for t in &tubes {
-            let (floor, half) = t.floor_and_half();
-            let up = (floor, (floor + dh).min(-floor));
+            let (_, half) = t.floor_and_half();
             for &(k, at, right) in &self.doors {
                 if k == t.line {
                     let s = at * t.len;
                     let across = if right { (0.0, half + 0.5) } else { (-half - 0.5, 0.0) };
-                    doorways.push(t.cut((s - dw * 0.5, s + dw * 0.5), across, up));
+                    doorways.push(t.doorway(s, dw * 0.5, across));
                 }
             }
             for (e, how) in t.ends.iter().enumerate() {
                 if *how == Some(End::Door) {
                     let s = if e == 0 { 0.0 } else { t.len };
-                    doorways.push(t.cut((s - 0.5, s + 0.5), (-dw * 0.5, dw * 0.5), up));
+                    // (As deep as its end wall leans, a sloping tube's: through all of it.)
+                    let lean = t.d.y.abs() / Vec2::new(t.d.x, t.d.z).length().max(0.1);
+                    let tall = t.corners.iter().map(|c| c.y).fold(f32::MIN, f32::max) - t.corners.iter().map(|c| c.y).fold(f32::MAX, f32::min);
+                    doorways.push(t.doorway(s, 0.5 + tall * lean, (-dw * 0.5, dw * 0.5)));
                 }
             }
         }
@@ -1129,7 +1137,7 @@ const TOOLBAR: [(&str, &str, Tool); 3] = [("V", "LOOK", Tool::Look), ("P", "PATH
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
-    (Vec2::new(12.0 + k as f32 * 124.0, 30.0), Vec2::new(120.0, 16.0))
+    (Vec2::new(12.0 + k as f32 * 104.0, 30.0), Vec2::new(100.0, 16.0))
 }
 
 fn button_at(q: Vec2) -> Option<Tool> {
@@ -1151,6 +1159,101 @@ fn walk_button() -> (Vec2, Vec2) {
 /// SAVE (0) and OPEN (1), after WALK HERE.
 fn file_button(k: usize) -> (Vec2, Vec2) {
     button(TOOLBAR.len() + HISTORY.len() + 1 + k)
+}
+
+/// REACH, after SAVE and OPEN.
+fn reach_button() -> (Vec2, Vec2) {
+    button(TOOLBAR.len() + HISTORY.len() + 3)
+}
+
+/// What the reach check found: the floor a walker gets to from the hatch (spots
+/// on it), where the floor drops away, and, of the plan, what it gets to.
+pub struct Reach {
+    floor: Vec<Vec3>,
+    drops: Vec<Vec3>,
+    /// Each walled tube's line and whether it's got to; each deck and whether;
+    /// the named points looked for (service, dash, doors) and whether.
+    tubes: Vec<(usize, bool)>,
+    decks: Vec<(usize, bool)>,
+    points: Vec<(String, bool)>,
+}
+
+/// The reach check: from the hatch, every way a walker can go over the hull's
+/// floors, the decks and the walled tubes (a step 40 cm at a time: up or down no
+/// more than 0.5 m, head room 1.75 m, nothing in the way over a step's height or at
+/// the chest); where the floor drops more than that, a drop. Then what of the plan it
+/// gets to.
+fn reach(hull: &universe_sim::world::walk::WalkMesh, walls: &[[universe_engine::glam::DVec3; 3]], decks: Option<&universe_sim::world::deckplan::DeckPlan>, plan: &Plan) -> Reach {
+    use universe_engine::glam::DVec3;
+    use universe_sim::world::walk::WalkMesh;
+    let walls = (!walls.is_empty()).then(|| WalkMesh::new(walls));
+    let built = decks.map(|d| {
+        let sides: Vec<_> = d.decks.iter().map(|k| universe_sim::world::deckplan::deck_sides(hull, k.floor)).collect();
+        universe_sim::world::deckplan::Walkable::from(&universe_sim::world::deckplan::build(d, &sides))
+    });
+    let meshes: Vec<&WalkMesh> = std::iter::once(hull).chain(walls.as_ref()).chain(built.as_ref().map(|b| &b.mesh)).collect();
+    let ray = |from: DVec3, dir: DVec3, max: f64| meshes.iter().filter_map(|m| m.ray(from, dir, max)).min_by(|a, b| a.0.total_cmp(&b.0));
+    // The floor under `p` from `p.y`, within `max` (a surface facing up).
+    let floor = |p: DVec3, max: f64| ray(p, DVec3::NEG_Y, max).and_then(|(d, n)| (n.y > 0.6).then_some(p.y - d));
+    const STEP: f64 = 0.4;
+    let key = |p: DVec3| ((p.x / STEP).round() as i64, (p.z / STEP).round() as i64, (p.y / 0.25).round() as i64);
+    let mut out = Reach { floor: Vec::new(), drops: Vec::new(), tubes: Vec::new(), decks: Vec::new(), points: Vec::new() };
+    let Some(hatch) = plan.points.iter().find(|p| p.name.as_deref() == Some("HATCH")).map(|p| p.at.as_dvec3()) else { return out };
+    let Some(y0) = floor(hatch + DVec3::Y * 0.5, 2.0) else { return out };
+    let start = DVec3::new(hatch.x, y0, hatch.z);
+    let mut seen = std::collections::HashSet::new();
+    let mut todo = std::collections::VecDeque::from([start]);
+    seen.insert(key(start));
+    while let Some(p) = todo.pop_front() {
+        out.floor.push(p.as_vec3());
+        if out.floor.len() > 80_000 {
+            break;
+        }
+        for d in [DVec3::X, -DVec3::X, DVec3::Z, -DVec3::Z] {
+            // (Nothing in the way at the knee and the chest, a body's width on.)
+            if [0.65, 1.4].iter().any(|h| ray(p + DVec3::Y * h, d, STEP + 0.2).is_some()) {
+                continue;
+            }
+            let q = p + d * STEP;
+            match floor(q + DVec3::Y * 0.55, 1.1) {
+                Some(y) => {
+                    let to = DVec3::new(q.x, y, q.z);
+                    // (Head room there.)
+                    if ray(to + DVec3::Y * 0.05, DVec3::Y, 1.7).is_some() || !seen.insert(key(to)) {
+                        continue;
+                    }
+                    todo.push_back(to);
+                }
+                None => out.drops.push(q.as_vec3()),
+            }
+        }
+    }
+    // What of the plan's got to: a walled tube with floor reached inside it; a deck
+    // with floor reached on it; a point with floor reached within 2.5 m.
+    let tubes = plan.tubes();
+    let inside = |t: &Tube, p: Vec3| t.planes().iter().all(|&(n, c)| n.dot(p + Vec3::Y * 0.3) < c);
+    out.tubes = tubes.iter().map(|t| (t.line, out.floor.iter().any(|p| inside(t, *p)))).collect();
+    if let Some(d) = decks {
+        // (On its floor: at its height and inside one of its floor's outlines.)
+        let within = |poly: &[universe_engine::glam::DVec2], x: f64, z: f64| {
+            let mut odd = false;
+            for k in 0..poly.len() {
+                let (a, b) = (poly[k], poly[(k + 1) % poly.len()]);
+                if (a.y > z) != (b.y > z) && x < a.x + (b.x - a.x) * (z - a.y) / (b.y - a.y) {
+                    odd = !odd;
+                }
+            }
+            odd
+        };
+        out.decks = d.decks.iter().enumerate().map(|(k, deck)| {
+            (k, out.floor.iter().any(|p| (f64::from(p.y) - deck.floor).abs() < 0.3 && deck.planes.iter().any(|poly| within(poly, f64::from(p.x), f64::from(p.z)))))
+        }).collect();
+    }
+    out.points = plan.points.iter().filter_map(|p| {
+        let name = p.name.as_deref()?;
+        (name.starts_with("SERVICE") || name.starts_with("DASH") || name.starts_with("DOOR")).then(|| (name.to_string(), out.floor.iter().any(|f| f.distance(p.at) < 2.5)))
+    }).collect();
+    out
 }
 
 /// The close dialog: where it is, and its buttons (SAVE AND CLOSE, DISCARD, KEEP
@@ -1428,6 +1531,25 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     if (ctrl && input.pressed(KeyCode::KeyO)) || clicked(file_button(1)) {
         interior.open();
+        return true;
+    }
+    // REACH: the check run (on a thread); its findings picked up when done.
+    if let Some((plan, rx)) = &interior.reach_job
+        && let Ok(found) = rx.try_recv()
+    {
+        interior.reach = Some((plan.clone(), Arc::new(found)));
+        interior.reach_job = None;
+    }
+    if clicked(reach_button()) && interior.reach_job.is_none() {
+        if let Some((_, h)) = &interior.lines {
+            let (mesh, walls, decks, plan) = (h.mesh.clone(), interior.walls(), interior.decks_now.clone(), interior.plan.clone());
+            let (tx, rx) = mpsc::channel();
+            let snapshot = plan.clone();
+            std::thread::spawn(move || {
+                tx.send(reach(&mesh, &walls, decks.as_ref(), &plan)).ok();
+            });
+            interior.reach_job = Some((snapshot, rx));
+        }
         return true;
     }
     let click = |k: usize| input.button_pressed(MouseButton::Left) && inside(history_button(k), input.cursor);
@@ -1837,6 +1959,11 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let lamp = if interior.walk_armed || inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, "F", "WALK HERE", lamp);
         }
+        {
+            let (p, c) = reach_button();
+            let lamp = if interior.reach_job.is_some() { Lamp::Busy } else if inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, "", if interior.reach_job.is_some() { "CHECKING" } else { "REACH" }, lamp);
+        }
         for (k, (key, name)) in [("^S", if interior.unsaved() { "SAVE *" } else { "SAVE" }), ("^O", "OPEN")].into_iter().enumerate() {
             let (p, c) = file_button(k);
             let lamp = if inside((p, c), interior.cursor) { Lamp::On } else if k == 0 && interior.unsaved() { Lamp::Busy } else { Lamp::Off };
@@ -2080,10 +2207,15 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let mut frames: Vec<[Vec3; 4]> = Vec::new();
             for &(k, at, right) in &plan.doors {
                 if k == t.line {
-                    let (s0, s1) = (at * t.len - dw * 0.5, at * t.len + dw * 0.5);
-                    // (On the wall: as far out as the outline reaches at the floor.)
+                    // (Plumb, as it's cut: its sides `dw/2` along level from its middle on
+                    // the floor, on the wall as far out as the outline reaches there; its
+                    // top level, `dh` over the floor at its middle.)
+                    let along = (Vec2::new(t.d.x, t.d.z).length()).max(0.2);
+                    let (s0, s1) = (at * t.len - dw * 0.5 / along, at * t.len + dw * 0.5 / along);
                     let x = if right { half } else { -half };
-                    frames.push([t.at(s0, Vec2::new(x, floor)), t.at(s1, Vec2::new(x, floor)), t.at(s1, Vec2::new(x, top)), t.at(s0, Vec2::new(x, top))]);
+                    let lid = t.at(at * t.len, Vec2::new(0.0, floor)).y + dh;
+                    let (b0, b1) = (t.at(s0, Vec2::new(x, floor)), t.at(s1, Vec2::new(x, floor)));
+                    frames.push([b0, b1, Vec3::new(b1.x, lid, b1.z), Vec3::new(b0.x, lid, b0.z)]);
                 }
             }
             for (e, how) in t.ends.iter().enumerate() {
@@ -2166,6 +2298,48 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             if plus {
                 frame.text_scaled(q - Vec2::new(3.0, 4.0), name, col, 0.7);
             }
+        }
+    }
+    // The reach check's findings: the floor got to (dots), where it drops away, and
+    // a report (out of date once the plan's changed).
+    if let Some((checked, found)) = &interior.reach {
+        let fresh = *checked == interior.plan;
+        if fresh {
+            for p in &found.floor {
+                if let Some((q, _)) = cam.project(*p) {
+                    frame.hud_rect(q - Vec2::splat(0.75), Vec2::splat(1.5), Color([0.4, 1.0, 0.55, 0.5]));
+                }
+            }
+            for p in &found.drops {
+                if let Some((q, _)) = cam.project(*p) {
+                    frame.hud_line(q - Vec2::splat(2.5), q + Vec2::splat(2.5), Color([1.0, 0.65, 0.2, 0.8]));
+                    frame.hud_line(q + Vec2::new(-2.5, 2.5), q + Vec2::new(2.5, -2.5), Color([1.0, 0.65, 0.2, 0.8]));
+                }
+            }
+        }
+        let count = |v: &[(usize, bool)]| (v.iter().filter(|x| x.1).count(), v.len());
+        let (t_ok, t_all) = count(&found.tubes);
+        let (d_ok, d_all) = count(&found.decks);
+        let p_ok = found.points.iter().filter(|x| x.1).count();
+        let mut lines = vec![
+            if fresh { "REACH FROM THE HATCH".to_string() } else { "REACH: OUT OF DATE (RUN AGAIN)".to_string() },
+            format!("WALLED TUBES {t_ok} OF {t_all}"),
+            format!("DECKS {d_ok} OF {d_all}"),
+            format!("SERVICE, DASH, DOORS {p_ok} OF {}", found.points.len()),
+            format!("DROPS {}", found.drops.len()),
+        ];
+        let missed: Vec<String> = found.tubes.iter().filter(|x| !x.1).map(|x| format!("TUBE {}", x.0 + 1)).chain(found.points.iter().filter(|x| !x.1).map(|x| x.0.clone())).collect();
+        if !missed.is_empty() {
+            lines.push("NOT GOT TO:".into());
+            lines.extend(missed.into_iter().take(10));
+        }
+        let (w, line) = (260.0, 13.0);
+        let at = Vec2::new(size.x - 12.0 - w, 150.0);
+        frame.hud_rect(at, Vec2::new(w, lines.len() as f32 * line + 10.0), Color([0.02, 0.06, 0.13, 0.85]));
+        frame.hud_box(at, Vec2::new(w, lines.len() as f32 * line + 10.0), PLANE.scale(1.5));
+        for (k, l) in lines.iter().enumerate() {
+            let col = if k == 0 { if fresh { PATH } else { PICKED } } else { LABEL };
+            frame.text_scaled(at + Vec2::new(6.0, 5.0 + k as f32 * line), l, col, 0.7);
         }
     }
     // The legend: what each colour is, points and ways.
