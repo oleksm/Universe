@@ -36,6 +36,10 @@ pub struct Registry {
     pub names: BTreeMap<String, String>,
     /// How many records of each kind there are (by kind: `hull`, `part`, ...).
     pub counts: BTreeMap<String, usize>,
+    /// The folder each part lies in (`parts/<folder>/`), by its key: the
+    /// product it is a part of names that folder.
+    #[serde(default)]
+    pub folders: BTreeMap<String, String>,
 }
 
 impl std::ops::Deref for Registry {
@@ -103,6 +107,11 @@ impl Registry {
                 reg.names.insert(key.clone(), name);
             }
             let kind = key.split('.').next().unwrap_or_default().to_string();
+            if kind == "part"
+                && let Some(folder) = file.parent().and_then(|d| d.file_name()).and_then(|d| d.to_str())
+            {
+                reg.folders.insert(key.clone(), folder.to_string());
+            }
             *reg.counts.entry(kind.clone()).or_default() += 1;
             match reg.records.parse(&kind, &text) {
                 Ok(true) => {}
@@ -146,6 +155,20 @@ impl Registry {
     /// The good with this key.
     pub fn good(&self, key: &str) -> Option<&Good> {
         self.goods.iter().find(|g| g.identity.key == key)
+    }
+
+    /// What `product` (a piece of equipment, a hull) is built of: its parts,
+    /// each with how many it takes. Equipment names its folder of parts
+    /// (`built_of.parts`); a hull's is the folder of its own name, until hulls
+    /// name theirs.
+    pub fn built_of(&self, product: &str) -> Vec<(&Part, u32)> {
+        let folder = match product.split_once('.') {
+            Some(("equipment", _)) => self.equipment.iter().find(|e| e.identity.key == product).and_then(|e| e.built_of.parts.clone()),
+            Some(("hull", name)) => Some(name.to_string()),
+            _ => None,
+        };
+        let Some(folder) = folder else { return Vec::new() };
+        self.parts.iter().filter(|p| self.folders.get(&p.identity.key) == Some(&folder)).map(|p| (p, p.fit.count.unwrap_or(1).max(1) as u32)).collect()
     }
 
     /// The module with this key.

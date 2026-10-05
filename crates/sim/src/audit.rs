@@ -51,6 +51,8 @@ pub enum Op {
     Claim { system: usize, port: usize, outline: Vec<(f64, f64)> },
     BuyParcel { system: usize, port: usize, number: u32 },
     Build { system: usize, port: usize, number: u32, blueprint: String },
+    /// A works' module set to one of its recipes (or to nothing).
+    SetUp { works: usize, setup: usize, recipe: Option<usize> },
 }
 
 impl Universe {
@@ -84,6 +86,9 @@ impl Universe {
             }
             Op::Build { system, port, number, blueprint } => {
                 let _ = self.pilot_build(crate::combat::PLAYER, system, port, number, &blueprint);
+            }
+            Op::SetUp { works, setup, recipe } => {
+                let _ = self.pilot_set_up(crate::combat::PLAYER, works, setup, recipe);
             }
         }
     }

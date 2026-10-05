@@ -59,6 +59,23 @@ impl Universe {
     }
 }
 
+impl Universe {
+    /// Set module `setup` of works `works` (the economy's) to `recipe` (its
+    /// place in what the module can make; None: to nothing), as the player:
+    /// theirs to set if the works stands on their lot.
+    pub fn set_up(&mut self, works: usize, setup: usize, recipe: Option<usize>) -> Result<String, String> {
+        self.note(|| Input::Op(Op::SetUp { works, setup, recipe }));
+        self.pilot_set_up(crate::combat::PLAYER, works, setup, recipe)
+    }
+
+    pub(crate) fn pilot_set_up(&mut self, id: usize, works: usize, setup: usize, recipe: Option<usize>) -> Result<String, String> {
+        self.markets.economy.set_up(&self.land, works, setup, recipe, Party::Pilot(id))?;
+        let s = &self.markets.economy.works[works].setups[setup];
+        let what = s.recipe().map_or("NOTHING".to_string(), |r| self.world.goods[r.makes].name.to_uppercase());
+        Ok(format!("{} SET TO MAKE {what}", s.module.identity.name.to_uppercase()))
+    }
+}
+
 /// The registry's facility `name`, as a blueprint: its kind and its modules
 /// (in the order they're laid out).
 pub fn blueprint_of(name: &str) -> Option<(&'static str, Vec<(&'static universe_world::settlements::IndustrialModule, u32)>)> {

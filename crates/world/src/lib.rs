@@ -23,6 +23,7 @@ pub mod design;
 pub mod events;
 pub mod galaxy;
 pub mod goods;
+pub mod recipes;
 pub mod gate;
 pub mod heat;
 pub mod hyperdrive;
