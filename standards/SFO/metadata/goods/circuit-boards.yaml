@@ -2,11 +2,10 @@
 identity:
   key: good.circuit-boards
   name: "Circuit boards"
+  traded_as: market.electronics
   kind: intermediate
   description: "Boards of glass fibre and resin with copper tracks, bare."
 physical:
   bulk_density: 900
-game:
-  goods: goods.electronics
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

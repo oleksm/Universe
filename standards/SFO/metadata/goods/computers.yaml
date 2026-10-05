@@ -2,11 +2,12 @@
 identity:
   key: good.computers
   name: "Computers"
+  traded_as: market.computers
   kind: product
   description: "Machines that compute, with their screens."
 physical:
   bulk_density: 300
-game:
-  goods: goods.computers
+life: 157788000
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_machines.json", note: "5 years: a laptop's working life in Europe (a desktop's is 6)." }

@@ -15,14 +15,14 @@ definitions:
     description: "A kind of slot a hull has, and so the kind of equipment that fits it. gate: a gate ring's, not a hull's."
     enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, gate]
   made_from:
-    description: "What a made thing is made from: each a material, an item of stock or a part, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
+    description: "What a made thing is made from: each a material, an item of stock, a part or a good, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
     type: array
     items:
       type: object
       additionalProperties: false
       required: [item]
       properties:
-        item: { type: string, x-ref: [material, stock, part], description: "What it is made from, by its key." }
+        item: { type: string, x-ref: [material, stock, part, good], description: "What it is made from, by its key. A good, for what is bought in whole and built in: a motor, a board, a pump." }
         quantity: { type: number, x-unit: "kg", description: "kg of it one takes: the piece as cut from the stock, before it is shaped. What is cut away is the difference from the thing's own mass, and is scrap." }
         blank: { type: string, description: "The piece cut from the stock before it is shaped: 1.2 x 0.8 m, 400 mm long." }
         grain: { type: string, description: "The direction the stock's grain or fibre runs in it." }

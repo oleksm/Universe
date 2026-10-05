@@ -9,3 +9,4 @@ address: { at: settlement.treistun.port-eikir }
 note: "Flour, sugar, oil and feed"
 who: "A milling company: it buys what the farms grow and turns it into what keeps and ships."
 what: "Runs flour mills, sugar works, oil presses and feed mills, and the silos that hold the crop."
+business: food

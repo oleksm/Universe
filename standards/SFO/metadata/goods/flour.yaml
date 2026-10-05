@@ -2,11 +2,10 @@
 identity:
   key: good.flour
   name: "Flour"
+  traded_as: market.food
   kind: product
   description: "Wheat milled fine, the bran taken off."
 physical:
   bulk_density: 590
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

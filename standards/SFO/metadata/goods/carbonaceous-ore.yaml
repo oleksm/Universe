@@ -3,6 +3,7 @@
 identity:
   key: good.carbonaceous-ore
   name: Carbonaceous Ore
+  traded_as: market.ores
   kind: rock
   description: "Dark, crumbly asteroid rock rich in carbon and bound water."
 physical:

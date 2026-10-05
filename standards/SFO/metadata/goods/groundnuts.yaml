@@ -2,11 +2,10 @@
 identity:
   key: good.groundnuts
   name: "Groundnuts"
+  traded_as: market.food
   kind: product
   description: "Peanuts, in the shell."
 physical:
   bulk_density: 270
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html", note: "As stored or shipped in bulk." }

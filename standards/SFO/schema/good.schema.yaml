@@ -13,6 +13,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       kind: { enum: [rock, raw, consumable, fuel, intermediate, product, by-product], description: 'rock: dug as it lies. raw: won from a rock, what industry starts from.' }
       description: { type: string }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
@@ -39,6 +40,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      goods: { type: string, description: "The kind of goods it is in the game's markets (content/base/goods.ron)." }
+      goods: { type: string, description: "Going: a good's market category is identity.traded_as. Still said, beside it, on the rocks the game digs, until the engine stops reading it for ores." }
       ore: { type: string, description: "For a rock: the game's ore it is (content/base/ores.ron), dug from asteroids by mining ships." }
+  life: { type: number, x-unit: "s", description: "s a made thing lasts in use before it is worn out and must be made again" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

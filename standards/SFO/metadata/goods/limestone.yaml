@@ -2,12 +2,11 @@
 identity:
   key: good.limestone
   name: "Limestone"
+  traded_as: market.minerals
   kind: rock
   description: "Rock of calcium carbonate, laid down in seas: the stuff of lime, cement and glass."
 physical:
   bulk_density: 1600
-game:
-  goods: goods.minerals
 source:
   occurs: temperate planets
   note: "It forms only where there has been liquid water for a very long time. The game has no ore for it yet."

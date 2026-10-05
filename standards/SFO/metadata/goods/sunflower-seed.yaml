@@ -2,11 +2,10 @@
 identity:
   key: good.sunflower-seed
   name: "Sunflower seed"
+  traded_as: market.food
   kind: product
   description: "An oilseed for warm ground."
 physical:
   bulk_density: 577
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/density-materials-d_1652.html", note: "As stored or shipped in bulk." }

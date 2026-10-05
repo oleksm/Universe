@@ -2,11 +2,10 @@
 identity:
   key: good.pvc
   name: "PVC"
+  traded_as: market.chemicals
   kind: product
   description: "A hard plastic, more than half chlorine by weight: pipes, window frames, cable sheath."
 physical:
   bulk_density: 560
-game:
-  goods: goods.chemicals
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

@@ -2,11 +2,10 @@
 identity:
   key: good.polyethylene
   name: "Polyethylene"
+  traded_as: market.chemicals
   kind: product
   description: "The commonest plastic, in pellets: film, pipe, bottles, sheet."
 physical:
   bulk_density: 560
-game:
-  goods: goods.chemicals
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

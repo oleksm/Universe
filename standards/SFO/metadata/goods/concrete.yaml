@@ -2,11 +2,10 @@
 identity:
   key: good.concrete
   name: "Concrete"
+  traded_as: market.minerals
   kind: product
   description: "Cement, water and aggregate, mixed: poured wet, it sets to stone. What most things that stand are made of."
 physical:
   bulk_density: 2400
-game:
-  goods: goods.minerals
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

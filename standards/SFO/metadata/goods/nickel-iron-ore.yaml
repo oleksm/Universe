@@ -3,6 +3,7 @@
 identity:
   key: good.nickel-iron-ore
   name: Nickel-Iron Ore
+  traded_as: market.ores
   kind: rock
   description: "Asteroid metal: iron with nickel in it, already metal and not an oxide."
 physical:

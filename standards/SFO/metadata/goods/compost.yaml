@@ -2,11 +2,10 @@
 identity:
   key: good.compost
   name: "Compost"
+  traded_as: market.chemicals
   kind: product
   description: "Dung and stalks rotted down: dark, crumbly, and good for ground."
 physical:
   bulk_density: 600
-game:
-  goods: goods.chemicals
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

@@ -2,13 +2,12 @@
 identity:
   key: good.bread
   name: "Bread"
+  traded_as: market.food
   kind: product
   description: "Baked from flour and water."
 physical:
   bulk_density: 250
   storage_max_temperature: 293
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
   - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

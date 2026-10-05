@@ -2,11 +2,10 @@
 identity:
   key: good.silicon
   name: "Silicon"
+  traded_as: market.metals
   kind: intermediate
   description: "Silicon metal as tapped from the furnace, about 99% pure: for alloys, and the start of chips."
 physical:
   bulk_density: 1300
-game:
-  goods: goods.metals
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

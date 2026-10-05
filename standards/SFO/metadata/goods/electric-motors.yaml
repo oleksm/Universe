@@ -2,11 +2,12 @@
 identity:
   key: good.electric-motors
   name: "Electric motors"
+  traded_as: market.machinery
   kind: product
   description: "Induction motors: a steel core, copper windings, a frame."
 physical:
   bulk_density: 2500
-game:
-  goods: goods.machinery
+life: 473364000
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_machines.json", note: "15 years: an 11 kW motor (12 for a small one, 20 for a large)." }

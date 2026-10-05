@@ -1063,8 +1063,8 @@ for s in standards:
             if known is None:
                 problem(full, f"unknown group '{group}'")
                 continue
-            for k in props or {}:
-                if k not in known["properties"]:
+            for k in (props if isinstance(props, dict) else {}):
+                if k not in known.get("properties", {}):
                     problem(full, f"{group}: unknown property '{k}'")
         e["under"] = s["id"]
         e["file"] = os.path.relpath(full, TREE)
@@ -1541,8 +1541,14 @@ for pt in parts:
     where = os.path.join(TREE, pt["file"])
     mf, ident = pt.get("made_from") or {}, pt.get("identity") or {}
     ms = stock_of.get(mf.get("item"))
-    if "item" in mf and ms is None:
-        problem(where, f"made_from.item: no mill stock '{mf['item']}'")
+    bought = next((g for g in goods if g["slug"] == mf.get("item")), None) if ms is None else None
+    if bought is not None:
+        # (Bought in whole and built in: a good, by weight.)
+        pt["bought"] = bought["slug"]
+        if "quantity" in mf:
+            pt["stock_mass"] = mf["quantity"]
+    elif "item" in mf and ms is None:
+        problem(where, f"made_from.item: no mill stock and no good '{mf['item']}'")
     elif ms is not None and "quantity" in mf:
         # (The record says kg. The page still shows it as the stock is counted: m2 of sheet, m of bar.)
         pt["stock_mass"] = mf["quantity"]
@@ -1811,7 +1817,33 @@ for hl in hulls:
             problem(where, f"thrusters: nozzle {t_.get('nozzle')} is driven by '{t_.get('slot')}', which is no slot of it")
 # (The hulls whose parts are listed: the others are coarse, in the Hulls report.)
 built_hulls = [hl for hl in hulls if hl.get("parts_mass")]
-for hl in built_hulls + structures:
+# (Equipment whose parts are listed: each part weighs what it says; one made of parts, what they do.)
+built_equipment = []
+for e in equipment:
+    name = (e.get("built_of") or {}).get("parts")
+    if not name:
+        continue
+    mine = [pt for pt in parts if pt["hull"] == name]
+    if not mine:
+        problem(os.path.join(TREE, e["file"]), f"built_of.parts: no folder of parts '{name}'")
+        continue
+    for pt in mine:
+        if (pt.get("physical") or {}).get("mass") is not None:
+            pt["mass"], pt["mass_from"] = pt["physical"]["mass"], "said"
+    for c in mine:
+        if kids(c) and all("mass" in k for k in kids(c)):
+            c["mass"], c["mass_from"] = sum(k["mass"] * times(k) for k in kids(c)), "parts"
+    e["parts_mass"] = sum(pt["mass"] * times(pt) for pt in mine if not pt.get("parent") and "mass" in pt)
+    built_equipment.append({"slug": name, "key": "eq:" + e["slug"], "identity": {"name": e["identity"]["name"]}, "making": e.get("making") or {}, "parts_mass": e["parts_mass"], "equipment": e})
+makes_good = lambda slug: [m for m in modules if any(rc.get("product") == slug for rc in m.get("recipes") or [])]
+rows = []
+for be in built_equipment:
+    e = be["equipment"]; said = (e.get("physical") or {}).get("mass") or 0
+    mine = [pt for pt in parts if pt["hull"] == be["slug"] and not pt.get("parent")]
+    off = abs(be["parts_mass"] - said) / said if said else 1
+    rows.append(row("ok" if off < 0.01 else "gap", link(e["identity"]["name"], "eq:" + e["slug"]), len(mine), tonnes(be["parts_mass"]), tonnes(said), "agree" if off < 0.01 else f"{off:.0%} apart"))
+report("equipment-parts", "Equipment: what each is built of", "Each piece of equipment whose parts are listed: how many kinds of part, what they weigh together, and what the product is said to weigh. They should agree.", ["Equipment", "Kinds of part", "Its parts weigh", "It is said to weigh", "State"], rows)
+for hl in built_hulls + structures + built_equipment:
     mine = [pt for pt in parts if pt["hull"] == hl["slug"]]
     leaves = [pt for pt in mine if not kids(pt)]
     rows = []
@@ -1826,6 +1858,12 @@ for hl in built_hulls + structures:
         rows.append(row("ok" if reached == len(steps) else "gap", key, f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
     for pt in leaves:
         ms = stock_of.get((pt.get("made_from") or {}).get("item"))
+        if pt.get("bought"):
+            steps = [("has a mass", "mass" in pt), ("says what it is made from", True), ("a module has a recipe that makes that good", bool(makes_good(pt["bought"]))),
+                     ("says how it is built in", bool(how(pt)) and all(q in mod_of for q in how(pt))), ("a yard is built to build it in", bool(how(pt)) and all(shop_lines(q) for q in how(pt)))]
+            reached = next((i for i, (_, good) in enumerate(steps) if not good), len(steps))
+            rows.append(row("ok" if reached == len(steps) else "gap", part_link(pt), f"{reached} of {len(steps)}", "complete" if reached == len(steps) else "stops at: " + steps[reached][0]))
+            continue
         steps = [
             ("has a mass", "mass" in pt),
             ("says what it is cut from", ms is not None),
@@ -2223,7 +2261,7 @@ _pdir = os.path.join(TREE, "People", "metadata")
 needs = [dict(load(os.path.join(_pdir, "needs", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "needs")))] if os.path.isdir(_pdir) else []
 professions = [dict(load(os.path.join(_pdir, "professions", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "professions")))] if os.path.isdir(_pdir) else []
 _made = {rc.get("product") for m in modules for rc in m.get("recipes") or []} | {x.get("item") for m in modules for rc in m.get("recipes") or [] for x in rc.get("outputs") or []}
-_markets = {(g.get("game") or {}).get("goods", "").replace("goods.", "") for g in goods if any(g["slug"] == pr for pr in _made)}
+_markets = {str((g.get("identity") or {}).get("traded_as", "")).split(".")[-1] for g in goods if any(g["slug"] == pr for pr in _made)}
 _bdir = os.path.join(TREE, "SFO", "metadata", "buildings")
 buildings = [dict(load(os.path.join(_bdir, f)), slug=f[:-5]) for f in sorted(os.listdir(_bdir))] if os.path.isdir(_bdir) else []
 tail = lambda k: str(k).split(".")[-1]

@@ -2,13 +2,12 @@
 identity:
   key: good.butter
   name: "Butter"
+  traded_as: market.food
   kind: product
   description: "The fat of milk, churned."
 physical:
   bulk_density: 950
   storage_max_temperature: 277
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
   - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

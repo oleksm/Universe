@@ -2,12 +2,11 @@
 identity:
   key: good.fish
   name: "Fish fillets"
+  traded_as: market.food
   kind: product
 physical:
   bulk_density: 1000
   storage_max_temperature: 273
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
   - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

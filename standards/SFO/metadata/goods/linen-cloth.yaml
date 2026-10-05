@@ -2,11 +2,10 @@
 identity:
   key: good.linen-cloth
   name: "Linen cloth"
+  traded_as: market.textiles
   kind: intermediate
   description: "Cloth woven of flax, on the roll."
 physical:
   bulk_density: 300
-game:
-  goods: goods.textiles
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

@@ -2,13 +2,12 @@
 identity:
   key: good.cheese
   name: "Cheese"
+  traded_as: market.food
   kind: product
   description: "A hard cheese: milk curdled, pressed and kept."
 physical:
   bulk_density: 1000
   storage_max_temperature: 283
-game:
-  goods: goods.food
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
   - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

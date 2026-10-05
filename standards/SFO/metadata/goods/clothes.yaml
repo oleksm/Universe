@@ -2,11 +2,12 @@
 identity:
   key: good.clothes
   name: "Clothes"
+  traded_as: market.textiles
   kind: product
   description: "Shirts, trousers, dresses, work clothes: cut and sewn of cotton."
 physical:
   bulk_density: 200
-game:
-  goods: goods.textiles
+life: 104140080
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "3.3 years: how long clothing lasts in Britain before it is thrown out or passed on." }
