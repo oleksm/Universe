@@ -91,9 +91,9 @@ pub struct Pilot {
     pub shuttle: bool,
     /// A miner, and the rock it's working (see `miner`).
     pub miner: bool,
-    pub(crate) dig: crate::miner::Dig,
+    pub dig: crate::miner::Dig,
     pub(crate) paid: std::collections::BTreeMap<usize, f64>,
-    pub(crate) route_seed: u64,
+    pub route_seed: u64,
     pub(crate) stops_made: u64,
     market: Option<crate::contract::MarketAnswer>,
 }
@@ -308,7 +308,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     if human.is_none() {
         if !pilot.avionics.route.active && matches!(ship.state, ShipState::Landed { .. }) {
             let seed = crate::rng::mix(pilot.route_seed, pilot.stops_made);
-            if !(pilot.miner && crate::miner::new_route(&mut pilot.avionics, &mut pilot.dig, &view.charts, system, seed)) {
+            if !(pilot.miner && crate::miner::new_route(&mut pilot.avionics, &mut pilot.dig, &view.charts, system, ship.position, view.time, seed, pilot.route_seed)) {
                 crate::operator::new_route(pilot, &view.charts, system);
             }
         }

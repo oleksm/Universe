@@ -1,6 +1,10 @@
 //! The miner's business (the NPC operator's, a client's): what a player
 //! could do, done the same way. Its route is a work site, an asteroid field
-//! in its home system, then a market there to sell at. The route autopilot
+//! in its home system, then a market there to sell at. Some miners (the
+//! operator's choice, `BELT_SHARE` of them) work the belt instead: from its
+//! port it surveys the belt, as a player's prospect does, picks a rock worth
+//! the trip, lifts off and follows the rock out (hours away, on its own
+//! engines); then on as at a field. The route autopilot
 //! takes it out to the field; there it picks a rock worth digging (ore price
 //! × dig rate, a little of its own choice among the best), closes on the
 //! surface and matches its drift (the follow program), fires the anchor,
@@ -17,11 +21,15 @@ use universe_world::charts::Charts;
 use universe_world::goods::TONNE;
 use universe_world::mining::{self, ANCHOR_REACH, ANCHOR_SPEED};
 use universe_world::ship::{ShipCommands, SHIP_RADIUS};
-use universe_world::{ShipEvent, ShipState, StarSystem};
+use universe_world::{Facility, ShipEvent, ShipState, StarSystem};
 
 use crate::contract::MarketAnswer;
 use crate::rng::{mix, Rng};
 use crate::vessel::Request;
+
+/// The share of miners that work the belt rather than a field. Invented:
+/// the operator's choice.
+const BELT_SHARE: u64 = 3;
 
 /// It fires the anchor drifting slower than this against the surface (m/s).
 const FIRE_DRIFT: f64 = 0.6 * ANCHOR_SPEED;
@@ -52,8 +60,42 @@ pub fn route(charts: &Charts, system: usize, seed: u64) -> Option<Vec<Stop>> {
     Some(vec![Stop { system, target: NavTarget::Asteroid(sys.fields[f].body) }, Stop { system, target: market }])
 }
 
-/// A miner parked with its route done: the next trip.
-pub(crate) fn new_route(a: &mut Avionics, dig: &mut Dig, charts: &Charts, system: usize, seed: u64) -> bool {
+/// A belt rock worth the trip from `at` (system frame) at time `t`: among
+/// the nearest the survey resolves (more than 20 m across), one of the best
+/// few by worth (the `seed`'s pick): (its patch field, its body).
+fn belt_rock(charts: &Charts, sys: &StarSystem, at: glam::DVec3, t: f64, seed: u64) -> Option<(usize, usize)> {
+    let mut star = Vec::new();
+    sys.positions(t, &mut star);
+    let found = universe_world::belts::survey(sys, at - star.first().copied()?, t);
+    let mut rocks: Vec<(usize, usize, f64)> = found.iter().filter(|f| f.diameter > 20.0).take(12).map(|f| (f.field, f.body, worth(charts, sys, f.field, f.body))).collect();
+    rocks.sort_by(|a, b| b.2.total_cmp(&a.2));
+    rocks.truncate(4);
+    rocks.get((mix(seed, 0x6265_6c74) % rocks.len().max(1) as u64) as usize).map(|r| (r.0, r.1))
+}
+
+/// A miner parked with its route done: the next trip. A belt miner's is its
+/// rock, picked here, and its market twice (the first stands for the rock:
+/// it digs off the route, and full, moves on to the second).
+pub(crate) fn new_route(a: &mut Avionics, dig: &mut Dig, charts: &Charts, system: usize, at: glam::DVec3, t: f64, seed: u64, home: u64) -> bool {
+    if dig.rock.is_some() && !a.route.active && a.route.next == 0 {
+        return true; // (a belt trip, set: lifting off for it)
+    }
+    if home % BELT_SHARE == 0 {
+        let sys = charts.system(system);
+        // (It sells at the nearest market: a port's, where its world is now.)
+        let mut pos = Vec::new();
+        sys.positions(t, &mut pos);
+        let near = |f: &Facility| match f {
+            Facility::Spaceport(p) => pos[sys.spaceports[*p].body].distance(at),
+            _ => f64::INFINITY,
+        };
+        let market = universe_world::traffic::facilities(&sys).into_iter().filter(|&f| universe_world::settlements::has_market(&sys, f)).min_by(|a, b| near(a).total_cmp(&near(b)));
+        if let (Some(market), Some(rock)) = (market, belt_rock(charts, &sys, at, t, seed)) {
+            a.route = Route { stops: vec![Stop { system, target: market }; 2], next: 0, active: false, dwell_until: None, departing: false, stay: None, hangar_ordered: 0.0 };
+            *dig = Dig { rock: Some(rock), tries: 0 };
+            return true;
+        }
+    }
     let Some(stops) = route(charts, system, seed) else { return false };
     a.route = Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay: None, hangar_ordered: 0.0 };
     *dig = Dig::default();
@@ -97,6 +139,15 @@ pub(crate) fn work(a: &mut Avionics, dig: &mut Dig, charts: &Charts, seed: u64, 
         }
         ShipState::Anchored { .. } if !ship.excavator => order(a, bus, events, |c| c.excavate = Some(true)),
         ShipState::Anchored { .. } => {}
+        // Off to a belt rock: lift off, and climb clear before following it.
+        ShipState::Landed { .. } if dig.rock.is_some() && !a.route.active => order(a, bus, events, |c| {
+            c.power = Some(true);
+            c.rcs = glam::DVec3::Y;
+        }),
+        ShipState::Flying if !ship.hyperdrive && dig.rock.is_some_and(|(f, _)| universe_world::belts::field_patch(f).is_some()) && a.following.is_none() && !universe_avionics::route::clear_to_jump(bus) => order(a, bus, events, |c| {
+            c.rcs = glam::DVec3::Y;
+            c.throttle = 0.0;
+        }),
         ShipState::Flying if !ship.hyperdrive => {
             let sys = bus.star_system();
             if dig.rock.is_none() {

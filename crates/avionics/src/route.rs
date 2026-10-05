@@ -112,7 +112,7 @@ fn ground_altitude(bus: &mut impl Bus) -> f64 {
 
 /// Climbing out: clear of the ground, of any station (well above its deck),
 /// and of the hyperdrive's interlock (with room to spare), so the drive will run.
-fn clear_to_jump(bus: &mut impl Bus) -> bool {
+pub fn clear_to_jump(bus: &mut impl Bus) -> bool {
     let (sys, positions) = bus.positions();
     let p = bus.ship().position;
     if sys.bodies.iter().enumerate().any(|(i, b)| b.kind == BodyKind::Station && positions[i].distance(p) < 1500.0) {

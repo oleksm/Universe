@@ -254,6 +254,47 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     assert!(u.craft_credits(0) > credits + 50.0, "paid {} (the exchange's bid for what no works here takes)", u.craft_credits(0) - credits);
     let route = u.pilots()[0].avionics.route.clone();
     assert!(route.active && route.next == 0 && matches!(route.stops[0].target, NavTarget::Asteroid(_)), "a new trip: {route:?}");
+
+    // A belt miner (one in three, by its operator's seed) landed at Port Trethi, inside
+    // the belt: its survey picks a rock, and it lifts off for it.
+    let mut u = bench(1);
+    let sys = u.ship_system();
+    let trethi = Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());
+    u.crafts[0].ship = u.world.ship_on(home, trethi, 0);
+    u.crafts[0].ship.class = universe_sim::world::content::content().handle("hull.prospector").unwrap();
+    u.crafts[0].ship.refresh();
+    {
+        let mut p = u.pilots();
+        p[0].miner = true;
+        p[0].route_seed = 3;
+        p[0].avionics.route.clear();
+    }
+    for _ in 0..60 * 4 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+    }
+    let (rock, route) = {
+        let p = u.pilots();
+        (p[0].dig.rock, p[0].avionics.route.clone())
+    };
+    let (f, i) = rock.expect("a belt rock picked");
+    assert!(universe_sim::world::belts::field_patch(f).is_some(), "of the belt: {f}");
+    assert_eq!(route.stops.last().map(|s| s.target), Some(trethi), "it sells where it set out");
+    assert!(matches!(u.crafts[0].ship.state, ShipState::Flying), "lifted off: {:?}", u.crafts[0].ship.state);
+    // By its rock (put there: the trip is hours): it closes, anchors and digs.
+    let t = u.world.time;
+    let (center, velocity) = sys.field_body_state(f, i, t);
+    let b = &sys.field_bodies(f)[i];
+    let up = (u.crafts[0].ship.position - center).normalize();
+    u.crafts[0].ship.position = center + up * (b.surface_radius_at(center, center + up * 1e4, t) + 300.0);
+    u.crafts[0].ship.velocity = velocity + b.angular_velocity().cross(u.crafts[0].ship.position - center);
+    u.crafts[0].ship.angular_velocity = DVec3::ZERO;
+    for _ in 0..60 * 120 {
+        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
+        if u.crafts[0].ship.hopper > 0.0 {
+            break;
+        }
+    }
+    assert!(matches!(u.crafts[0].ship.state, ShipState::Anchored { field, .. } if field == f) && u.crafts[0].ship.hopper > 0.0, "digging the belt rock: {:?}", u.crafts[0].ship.state);
 }
 
 
