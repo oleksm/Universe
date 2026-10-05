@@ -27,7 +27,6 @@ use crate::ship::ClassSpec;
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
-    ("materials.ron", include_str!("../../../content/base/materials.ron")),
     ("structures.ron", include_str!("../../../content/base/structures.ron")),
     ("prices.ron", include_str!("../../../content/base/prices.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
@@ -297,7 +296,11 @@ impl Content {
             let key = d.key.clone();
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
-        let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
+        let materials: Registry<crate::materials::Material> = {
+            // Materials: the registry's fuels (those burnt for their energy, or thrown as reaction mass).
+            let reg = crate::registry::registry();
+            Registry::build(reg.materials.iter().filter_map(|m| crate::materials::Material::from_record(reg, m)).collect())?
+        };
         // Brands: the registry's makers (the companies whose business is making things).
         let brands: Registry<crate::modules::Brand> = Registry::build(
             crate::registry::registry()
@@ -592,7 +595,7 @@ entry!(crate::modules::Module, "the registry's equipment", modules, |m| m.check(
 entry!(crate::modules::Brand, "the registry's makers", brands, |_b| Ok(()));
 entry!(crate::standards::Body, "the registry's standards bodies", bodies, |b| b.check());
 entry!(crate::standards::Standard, "the registry's standards", standards, |s| s.check());
-entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
+entry!(crate::materials::Material, "the registry's fuels", materials, |m| m.check());
 entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {

@@ -10,3 +10,6 @@
 - **Prices are the game's own**, in `content/base/prices.ron` by registry key, until a stock
   exchange sets them (prices are volatile, never the registry's). The registry's throat coil is
   left out: the game doesn't make one yet.
+- **Fuels are the registry's materials** (those with a `fuel` group: how they give up their energy
+  and how much). `materials.ron` is gone. Three are spelled as the registry has them now:
+  `material.helium-3`, `material.d-he3`, `material.d-t`.
