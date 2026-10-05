@@ -231,10 +231,11 @@ pub struct Place {
 /// One item as a market stands on it.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Price {
-    /// What you pay a tonne (None: none in stock), and what it pays you.
+    /// What you pay a unit (None: none in stock), and what it pays you.
     pub ask: Option<f64>,
     pub bid: f64,
-    /// Tonnes in stock, and tonnes it would take (its room).
+    /// Units in stock, and units it would take (its room): tonnes of bulk
+    /// stock, pieces of parts, products and hulls.
     pub stock: f64,
     pub room: f64,
     /// Do its works take it?
@@ -251,14 +252,14 @@ impl Place {
     pub fn price(&self, item: &Item) -> Price {
         let have = self.stock.of(item.id);
         let want = self.need(item.id) * COVER_DAYS;
-        let (stock, room) = (have / 1000.0, self.stock.free() / 1000.0);
+        let (stock, room) = (have / item.mass, self.stock.free() / item.mass);
         if want > 0.0 {
             let factor = (want / have.max(want * 0.05)).powf(0.6).clamp(0.4, 3.0);
             let p = item.price * factor;
-            Price { ask: (have >= 1000.0).then_some(p * ASK), bid: p * BID, stock, room, wanted: true }
+            Price { ask: (stock >= 1.0 - 1e-9).then_some(p * ASK), bid: p * BID, stock, room, wanted: true }
         } else {
             let fill = if self.stock.room > 0.0 { self.stock.free() / self.stock.room } else { 0.0 };
-            Price { ask: (have >= 1000.0).then_some(item.price * ASK), bid: item.price * SPECULATE * fill, stock, room, wanted: false }
+            Price { ask: (stock >= 1.0 - 1e-9).then_some(item.price * ASK), bid: item.price * SPECULATE * fill, stock, room, wanted: false }
         }
     }
 

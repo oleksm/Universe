@@ -18,3 +18,9 @@
   motivation"): a hull the registry describes by the model imported has its parts' mass and price.
   153.6 t dry fitted, not about 100. Its lift (1,320 kN) can't hold it up at Zaudalein, Eikir and
   Nacaubun (0.8 to 0.9 of its weight) or Lisaur (0.5); it can at Treistun's six lighter worlds.
+- **A port's market sells ship modules and hulls from its warehouse.** Landed at a port with a
+  market, a refit takes the module from what lies in the warehouse, at the exchange's ask, and the
+  one taken out goes into the warehouse at its bid; a hull is bought only if a frame of it lies
+  there (its stock fit still brought in). Stations sell as before, brought in from outside.
+- **Stock is counted in units on the market:** tonnes of bulk stock, pieces of parts, products and
+  hulls; one 144 kg part is on sale (it took a tonne before).

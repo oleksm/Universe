@@ -336,6 +336,21 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
     assert_eq!(u.ship.spec().dry_mass, 61_540.0 - 1500.0 + 800.0, "(with its 1.5 t capacitor bank and 40 kg comm)");
+    // At Port Trethi's market: a rack lying in its warehouse goes in, the one taken out goes
+    // into the warehouse; a hull it hasn't got isn't sold.
+    let trethi = Facility::Spaceport(u.ship_system().spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());
+    let ship = u.ship.clone();
+    u.ship = { let mut s = u.world.ship_on(home, trethi, 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
+    let item = |k: &str| universe_sim::world::goods::item(k).unwrap();
+    let (s3, s2) = (item("equipment.rack.s3"), item("equipment.rack.s2"));
+    assert!(u.refit("cargo", Some(m("equipment.rack.s3"))).is_err(), "none in stock");
+    let mass = u.world.goods[s3].mass;
+    u.markets.economy.put(home, trethi, s3, mass);
+    u.refit("cargo", Some(m("equipment.rack.s3"))).unwrap();
+    let stock = |u: &Universe, i: usize| u.markets.economy.place(home, trethi).unwrap().stock.of(i);
+    assert!(stock(&u, s3) < 1.0 && (stock(&u, s2) - u.world.goods[s2].mass).abs() < 1e-6, "the rack from the warehouse, the old one into it");
+    assert!(u.buy_hull(content().handle("hull.hauler").unwrap()).unwrap_err().contains("IN STOCK"));
+    u.ship = { let mut s = u.world.ship_on(home, Facility::Station(station), 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
     // The gun out: it doesn't fire.
     u.refit("hardpoint_1", None).unwrap();
     assert!(!u.ship.spec().has(universe_sim::world::modules::Gear::Gun));

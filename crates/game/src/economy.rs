@@ -165,7 +165,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         let text = format!(
             "{:<18} {:>6.0} {:>6.0} {:>6.0} {:>6.0} {:>6} {:>6.0}",
             g.name.to_uppercase().chars().take(18).collect::<String>(),
-            q.stock,
+            q.stock * g.mass / 1000.0,
             p.need(i) / 1000.0,
             p.made.get(&i).copied().unwrap_or(0.0) / 1000.0,
             p.used.get(&i).copied().unwrap_or(0.0) / 1000.0,
