@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.sediment-copper-ore
+  name: "Sediment copper ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Shale and sandstone with copper sulphides."
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.sediment-copper). The game has no ore for it yet."
+composition:
+  - { part: element.cu, share: 0.021 }
+  - { part: element.ag, share: 2.0e-05 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/sediment-copper.yaml", note: "The typical grade of its deposit type, from the planet simulation's brief of 2026-10-05; the rest is rock." }

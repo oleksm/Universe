@@ -6,6 +6,7 @@ identity:
 formed_by: sea
 carries:
   - { item: element.fe, grade: 0.53, said_as: "Fe %" }
+ore: good.iron-ore
 size:
   median: 88600000000
 cluster:

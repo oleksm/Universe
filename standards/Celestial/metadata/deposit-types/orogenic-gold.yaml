@@ -6,6 +6,7 @@ identity:
 formed_by: collision
 carries:
   - { item: element.au, grade: 1.0e-05, said_as: "Au g/t" }
+ore: good.orogenic-gold-ore
 size:
   median: 51000000
 cluster:

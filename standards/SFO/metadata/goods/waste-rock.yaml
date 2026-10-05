@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.waste-rock
+  name: "Waste rock"
+  kind: by-product
+  description: "The barren rock moved to reach ore."

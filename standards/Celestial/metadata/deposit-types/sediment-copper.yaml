@@ -7,6 +7,7 @@ formed_by: rift
 carries:
   - { item: element.cu, grade: 0.021, said_as: "Cu %" }
   - { item: element.ag, grade: 2.0e-05, said_as: "Ag g/t" }
+ore: good.sediment-copper-ore
 size:
   median: 15600000000
 cluster:

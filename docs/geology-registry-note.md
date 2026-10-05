@@ -19,7 +19,7 @@ ore mean the same thing by each:
 | Rock units | `standards/Celestial/metadata/rock-units/` | your 10, each with density, magnetic susceptibility, erodibility and what forms it |
 | Events and survey methods | `standards/dictionary.schema.yaml` (`geological_event`, `survey_method`) | 9 and 6 |
 | Commodities | each deposit type's `carries` | your 15 names mapped to the registry's elements and goods |
-| Ore to metal | modules with recipes | in work |
+| Ore to metal | modules with recipes | a mine, a concentrator, and works for copper, zinc, nickel, chromium, tin, gold and titanium |
 
 All of it is `draft` (a record's `revision`): build against the words, not the figures. The
 registry is in SI: a grade is kg in each kg (0.44% is 0.0044; 0.1 g/t is 1e-07), a size is kg, a
@@ -80,3 +80,17 @@ Not settled, and not started. The questions as the registry sees them:
   simulation of its history.
 - The registry's bodies were seeded by other rules than the simulation's. Which worlds are baked,
   and what do the others say?
+
+## Ore to metal, as the registry now has it (2026-10-05)
+
+- **An ore for each deposit type,** as a good made of what its type carries: 12 new, with iron ore
+  and bauxite already there. Ilmenite is the registry's own, on rocky planets and moons, until you
+  have a type for it.
+- **A mine:** set to the ore that lies where it stands. Its ore and the barren rock over it are
+  taken from the place (`from: place`), 0.83 t of rock a tonne of ore.
+- **A concentrator:** copper, zinc, nickel and tin concentrates, each from the ores that carry it.
+- **Works:** copper smelter, zinc works, nickel smelter, ferroalloy furnace (chromium), tin smelter,
+  gold works, titanium works. Each balances by mass; the sulphur of the sulphide ores is caught.
+
+**Not yet won, though your deposits carry them:** molybdenum, silver, lead, tungsten, cobalt, the
+platinum metals, diamonds, and laterite nickel. They go to tailings or slag for now.

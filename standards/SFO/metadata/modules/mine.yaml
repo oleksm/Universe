@@ -1,0 +1,151 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.mine
+  name: "Mine"
+  step: "Dig ore"
+  description: "A pit, its shovels and trucks, or a shaft and its drifts: where ore is broken out of the ground and brought up. It is set to the ore that lies where it stands, and can dig no other."
+physical:
+  length: 1000
+  width: 1000
+  height: 200
+site: open sky
+recipes:
+  - makes: good.porphyry-copper-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.porphyry-copper-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.epithermal-gold-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.epithermal-gold-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.massive-sulphide-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.massive-sulphide-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.orogenic-gold-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.orogenic-gold-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.tin-tungsten-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.tin-tungsten-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.nickel-sulphide-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.nickel-sulphide-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.chromite-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.chromite-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.carbonate-zinc-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.carbonate-zinc-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.shale-zinc-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.shale-zinc-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.sediment-copper-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.sediment-copper-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.kimberlite
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.kimberlite, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.laterite-nickel-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.laterite-nickel-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.iron-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.iron-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.bauxite
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.bauxite, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.ilmenite
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.ilmenite, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "What it takes, it takes from the place it stands: the ore, and 0.83 t of barren rock for each tonne of ore (the United States' copper mines; a gold pit moves 2.4)." }
+  - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "129 MJ a tonne of ore: mining copper took 23.4 GJ for each tonne of metal at an ore of 0.55%. Diesel, taken as power." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

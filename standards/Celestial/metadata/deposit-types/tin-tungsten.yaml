@@ -7,6 +7,7 @@ formed_by: collision
 carries:
   - { item: element.sn, grade: 0.0028, said_as: "Sn %" }
   - { item: element.w, grade: 0.001, said_as: "W %" }
+ore: good.tin-tungsten-ore
 size:
   median: 4410000000
 cluster:

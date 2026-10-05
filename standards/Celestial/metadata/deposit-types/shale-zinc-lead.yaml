@@ -8,6 +8,7 @@ carries:
   - { item: element.zn, grade: 0.056, said_as: "Zn %" }
   - { item: element.pb, grade: 0.028, said_as: "Pb %" }
   - { item: element.ag, grade: 5.0e-05, said_as: "Ag g/t" }
+ore: good.shale-zinc-ore
 size:
   median: 21300000000
 cluster:

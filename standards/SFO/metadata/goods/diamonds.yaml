@@ -5,3 +5,7 @@ identity:
   traded_as: market.minerals
   kind: raw
   description: "Rough diamonds, as sorted from the rock: the hardest thing there is, for cutting and for show."
+source:
+  won_from: good.kimberlite
+  yield: 1.0e-07
+  note: "Half a carat from each tonne of the pipe's rock."

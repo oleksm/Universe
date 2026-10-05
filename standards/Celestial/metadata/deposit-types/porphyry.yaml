@@ -8,6 +8,7 @@ carries:
   - { item: element.cu, grade: 0.0044, said_as: "Cu %" }
   - { item: element.mo, grade: 0.00015, said_as: "Mo %" }
   - { item: element.au, grade: 1.0e-07, said_as: "Au g/t" }
+ore: good.porphyry-copper-ore
 size:
   median: 181600000000
 cluster:

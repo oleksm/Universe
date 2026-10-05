@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.copper-concentrate
+  name: "Copper concentrate"
+  traded_as: market.ores
+  kind: intermediate
+  description: "Ground ore floated until it is 28% copper: mostly chalcopyrite."

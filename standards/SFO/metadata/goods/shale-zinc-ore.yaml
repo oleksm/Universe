@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.shale-zinc-ore
+  name: "Shale zinc-lead ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Shale layered with sphalerite and galena."
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.shale-zinc-lead). The game has no ore for it yet."
+composition:
+  - { part: element.zn, share: 0.056 }
+  - { part: element.pb, share: 0.028 }
+  - { part: element.ag, share: 5.0e-05 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/shale-zinc-lead.yaml", note: "The typical grade of its deposit type, from the planet simulation's brief of 2026-10-05; the rest is rock." }

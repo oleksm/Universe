@@ -8,6 +8,7 @@ carries:
   - { item: element.ni, grade: 0.008, said_as: "Ni %" }
   - { item: element.cu, grade: 0.005, said_as: "Cu %" }
   - { item: element.pt, grade: 1.0e-06, said_as: "PGE g/t" }
+ore: good.nickel-sulphide-ore
 size:
   median: 1550000000
 cluster:

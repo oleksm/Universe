@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.ilmenite
+  name: "Ilmenite"
+  traded_as: market.ores
+  kind: rock
+  description: "Black sand and rock of iron-titanium oxide: half of it is titanium dioxide. The ore of titanium."
+source:
+  occurs: rocky planets and moons
+  note: "Common in the dark lavas of airless moons, and in beach sands. Not yet among the planet simulation's deposit types: asked for (docs/geology-registry-note.md). The game has no ore for it yet."
+composition:
+  - { part: element.ti, share: 0.316 }
+  - { part: element.fe, share: 0.368 }
+  - { part: element.o, share: 0.316 }
+basis:
+  - { of: [composition], tier: derived, source: "standards/sources/research_ore_processing.json", note: "Pure ilmenite, FeTiO3. Concentrates run 40 to 65% titanium dioxide; the pure mineral is 52.7%." }

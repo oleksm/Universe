@@ -8,6 +8,7 @@ carries:
   - { item: element.cu, grade: 0.013, said_as: "Cu %" }
   - { item: element.zn, grade: 0.02, said_as: "Zn %" }
   - { item: element.ag, grade: 3.0e-05, said_as: "Ag g/t" }
+ore: good.massive-sulphide-ore
 size:
   median: 1290000000
 cluster:

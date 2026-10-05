@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.ferroalloy-furnace
+  name: "Ferroalloy furnace"
+  step: "Smelt chromium"
+  description: "An arc furnace, its electrodes sunk in the charge, where carbon takes the oxygen from chromite. What it taps is chromium with its iron: ferrochrome."
+physical:
+  length: 100
+  width: 50
+  height: 30
+recipes:
+  - makes: element.cr
+    does: "Chromite and carbon are smelted by arc; chromium and iron run off together and the rest is slag."
+    inputs:
+      - { item: good.chromite-ore, quantity: 4.5 }
+      - { item: good.carbon, quantity: 1.042 }
+      - { item: good.graphite-electrode, quantity: 0.0275 }
+      - { item: element.o, quantity: 2.196 }
+    outputs:
+      - { item: element.fe, quantity: 0.6667 }
+      - { item: good.carbon-dioxide, quantity: 3.918 }
+      - { item: good.slag, quantity: 2.181 }
+    rate: 1.0
+    power: 24900000
+basis:
+  - { of: [recipes.inputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "For each tonne of ferrochrome (60% chromium taken; 50 to 70): 2.4 to 3.0 t of chromite, 550 to 700 kg of carbon, 8 to 25 kg of electrode, 3,800 to 4,500 kWh." }
+  - { of: [recipes.outputs], tier: derived, review: true, note: "By balance. The chromium and the iron are counted apart, though they leave the furnace as one alloy, because recipes take them apart." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

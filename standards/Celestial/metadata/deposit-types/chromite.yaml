@@ -6,6 +6,7 @@ identity:
 formed_by: collision front
 carries:
   - { item: element.cr, grade: 0.3079, said_as: "Cr2O3 %" }
+ore: good.chromite-ore
 size:
   median: 17000000
 cluster:

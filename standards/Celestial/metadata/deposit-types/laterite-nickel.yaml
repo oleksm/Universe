@@ -7,6 +7,7 @@ formed_by: weathering
 carries:
   - { item: element.ni, grade: 0.013, said_as: "Ni %" }
   - { item: element.co, grade: 0.0008, said_as: "Co %" }
+ore: good.laterite-nickel-ore
 size:
   median: 4080000000
 cluster:

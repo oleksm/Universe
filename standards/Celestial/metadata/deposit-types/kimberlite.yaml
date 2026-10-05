@@ -6,6 +6,7 @@ identity:
 formed_by: craton
 carries:
   - { item: good.diamonds, grade: 1.0e-07, said_as: "ct/t" }
+ore: good.kimberlite
 size:
   median: 31900000000
 cluster:

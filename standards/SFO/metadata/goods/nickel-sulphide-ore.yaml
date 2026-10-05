@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.nickel-sulphide-ore
+  name: "Nickel sulphide ore"
+  traded_as: market.ores
+  kind: rock
+  description: "Sulphide of nickel, copper and iron settled out of basalt."
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.nickel-sulphide). The game has no ore for it yet."
+composition:
+  - { part: element.ni, share: 0.008 }
+  - { part: element.cu, share: 0.005 }
+  - { part: element.pt, share: 1.0e-06 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/nickel-sulphide.yaml", note: "The typical grade of its deposit type, from the planet simulation's brief of 2026-10-05; the rest is rock." }

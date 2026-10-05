@@ -7,6 +7,7 @@ formed_by: arc
 carries:
   - { item: element.au, grade: 7.5e-06, said_as: "Au g/t" }
   - { item: element.ag, grade: 0.00011, said_as: "Ag g/t" }
+ore: good.epithermal-gold-ore
 size:
   median: 600000000
 cluster:

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.gold-works
+  name: "Gold works"
+  step: "Win gold"
+  description: "Mills, tanks where a weak cyanide solution takes up the gold from ground ore, and a room where it is smelted. A hundred thousand tonnes of rock go through for each tonne of gold."
+physical:
+  length: 200
+  width: 100
+  height: 20
+recipes:
+  - makes: element.au
+    does: "Epithermal gold ore is ground and leached; the gold is taken up on carbon and smelted to bars."
+    inputs:
+      - { item: good.epithermal-gold-ore, quantity: 148100.0 }
+    outputs:
+      - { item: good.tailings, quantity: 148100.0 }
+    rate: 0.000675
+    power: 6600000
+  - makes: element.au
+    does: "Orogenic gold ore is ground and leached; the gold is taken up on carbon and smelted to bars."
+    inputs:
+      - { item: good.orogenic-gold-ore, quantity: 111100.0 }
+    outputs:
+      - { item: good.tailings, quantity: 111100.0 }
+    rate: 0.0009
+    power: 6600000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "From each ore's grade, with 90% of the gold won (easily leached ores give over 90%; heaps 60 to 70%). The cyanide is not counted, nor the silver of an epithermal ore." }
+  - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "66 MJ a tonne of ore: the 12% of a gold mine's 549 MJ a tonne that is processing." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
