@@ -13,3 +13,8 @@
 - **Fuels are the registry's materials** (those with a `fuel` group: how they give up their energy
   and how much). `materials.ron` is gone. Three are spelled as the registry has them now:
   `material.helium-3`, `material.d-he3`, `material.d-t`.
+- **Structures are the registry's:** the platform, spaceport, outpost and orbital site
+  (`structure.*`) and the three gate rings (`gate.*`, span and capture speed from the ring's
+  record). `structures.ron` is gone. A ring is `gate.ring.i` now, not `structure.ring.i`. The
+  rings' throat coils (60 to a ring in the records) aren't fitted in the game: it doesn't make them
+  yet.

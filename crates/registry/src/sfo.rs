@@ -614,3 +614,131 @@ pub enum NavFeature {
     Hyperdrive,
     Route,
 }
+
+/// One piece of equipment fitted, and how many.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Fitted {
+    pub item: String,
+    #[serde(default = "one")]
+    pub count: u32,
+}
+
+fn one() -> u32 {
+    1
+}
+
+/// `structure.*`: a station, spaceport, outpost or orbital site, a maker's
+/// product.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Structure {
+    pub identity: StructureIdentity,
+    #[serde(default)]
+    pub fit: Vec<Fitted>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StructureIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    pub maker: String,
+    pub kind: StructureKind,
+    #[serde(default)]
+    pub revision: Option<Revision>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StructureKind {
+    /// In orbit, with pads.
+    Station,
+    /// On a world's ground.
+    Spaceport,
+    /// A small settlement's port.
+    Outpost,
+    /// A transceiver and a relay in orbit, no pads.
+    Orbital,
+}
+
+/// `gate.*`: a gate ring (SFO 17), a maker's product.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Gate {
+    pub identity: GateIdentity,
+    #[serde(default)]
+    pub size: Option<GateSize>,
+    #[serde(default)]
+    pub performance: Option<GatePerformance>,
+    #[serde(default)]
+    pub built_of: Option<BuiltOf>,
+    #[serde(default)]
+    pub fit: Vec<Fitted>,
+    #[serde(default)]
+    pub power: Option<GatePower>,
+    #[serde(default)]
+    pub making: Option<crate::Making>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GateIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    #[serde(default)]
+    pub maker: Option<String>,
+    /// A higher one spans further.
+    #[serde(default)]
+    pub class: Option<u8>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GateSize {
+    /// The ring's diameter, and its tube's (m).
+    #[serde(default)]
+    pub opening: Option<f64>,
+    /// How thick its structure is (m).
+    #[serde(default)]
+    pub thickness: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GatePerformance {
+    /// The longest tube it can hold (m).
+    #[serde(default)]
+    pub span: Option<f64>,
+    /// The fastest a ship may enter it (m/s).
+    #[serde(default)]
+    pub capture_speed: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BuiltOf {
+    /// The folder of parts it is built of.
+    #[serde(default)]
+    pub parts: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GatePower {
+    /// The industrial module that powers it, by key.
+    #[serde(default)]
+    pub station: Option<String>,
+}

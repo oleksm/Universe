@@ -27,7 +27,6 @@ use crate::ship::ClassSpec;
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
-    ("structures.ron", include_str!("../../../content/base/structures.ron")),
     ("prices.ron", include_str!("../../../content/base/prices.ron")),
     ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
@@ -328,15 +327,17 @@ impl Content {
                 .map(|(e, m)| Ok(crate::modules::Module { price: price(&e.identity.key)?, ..m }))
                 .collect::<Result<Vec<_>, String>>()?,
         )?;
-        let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
+        // Structures: the registry's stations, ports, outposts, orbital sites and gate rings.
+        let structures: Registry<crate::structures_catalogue::Structure> =
+            Registry::build(crate::structures_catalogue::Structure::from_registry(crate::registry::registry(), |k| resolve(&modules, &aliases, k).is_some()))?;
         for (_, s) in structures.iter() {
             if resolve(&brands, &aliases, &s.brand).is_none() {
-                return Err(format!("structures.ron '{}': no brand '{}' (every product has a maker)", s.key, s.brand));
+                return Err(format!("{}: no brand '{}' (every product has a maker)", s.key, s.brand));
             }
             // What's installed: a comm on each, a gate relay only on a ring.
-            let fitted = s.fit.iter().map(|k| resolve(&modules, &aliases, k).map(|h| modules.get(h)).ok_or_else(|| format!("structures.ron '{}': no module '{k}'", s.key))).collect::<Result<Vec<_>, _>>()?;
+            let fitted = s.fit.iter().map(|k| resolve(&modules, &aliases, k).map(|h| modules.get(h)).ok_or_else(|| format!("{}: no module '{k}'", s.key))).collect::<Result<Vec<_>, _>>()?;
             if !fitted.iter().any(|m| m.does.comm().is_some()) {
-                return Err(format!("structures.ron '{}': no comm (every structure has one)", s.key));
+                return Err(format!("{}: no comm (every structure has one)", s.key));
             }
             // (Relays only in space; a gate relay only on a ring.)
             let ring = matches!(s.kind, crate::structures_catalogue::StructureKind::GateRing { .. });
@@ -347,7 +348,7 @@ impl Content {
                 d => d.comm().is_some(),
             };
             if let Some(m) = fitted.iter().find(|m| !fits(&m.does)) {
-                return Err(format!("structures.ron '{}': {} doesn't go on it", s.key, m.key));
+                return Err(format!("{}: {} doesn't go on it", s.key, m.key));
             }
         }
         for (_, m) in modules.iter() {
@@ -596,7 +597,7 @@ entry!(crate::modules::Brand, "the registry's makers", brands, |_b| Ok(()));
 entry!(crate::standards::Body, "the registry's standards bodies", bodies, |b| b.check());
 entry!(crate::standards::Standard, "the registry's standards", standards, |s| s.check());
 entry!(crate::materials::Material, "the registry's fuels", materials, |m| m.check());
-entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
+entry!(crate::structures_catalogue::Structure, "the registry's structures", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;
