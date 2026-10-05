@@ -439,6 +439,35 @@ takes `structure` (a ref to a `structure` or a `gate`), say so and I will fill i
 which I would then need from you. The same holds for anything else I add to a kind you read:
 I will ask first.
 
+## For the hand-off (2026-10-04, after 60b6327)
+
+What is on `fso` since your last merge, in the order to take it:
+
+1. **Equipment** (57 records, a `function` by kind), **fuels** (9 materials), **hulls** (model,
+   slots, thrusters, flight), **structures** (4 records): sections above. New kinds, or kinds you
+   do not read yet: nothing of yours breaks.
+2. **Deuterium.** `good.deuterium` is gone. `material.deuterium` is the substance;
+   `stock.deuterium-liq` is what is moved, kept and sold, `traded_as: market.fuel`. The fusion
+   power station's `generation.burns` names the material. **Your side must change with this
+   merge**, or power stations stop buying fuel and no test says so: a `burns` or `holds` that names
+   a material is met by any stock item `made_from` it, and its market kind is that stock item's
+   `identity.traded_as` (`settlements.rs:261`, `services/land.rs:365`).
+3. **Market categories** (20 `market` records) and `identity.traded_as` on every physical kind you
+   do not read. Goods keep `game.goods` until your `Good` type takes `identity.traded_as`.
+
+**Prices.** There is none anywhere in the registry, and there will not be: the user's rule is that
+prices are the game's state. Every price in `modules.ron`, `hulls.ron`, `goods.ron` and
+`structures.ron` was left out on purpose when those were brought in. When you retire those files,
+their prices need a home on your side; nothing here holds them.
+
+**I will not touch a kind you read without asking.** Your types refuse unknown fields, so a field
+added here stops your build. Waiting on you for that reason: a settlement's `structure`, a good's
+`identity.traded_as`, trade bans on the administration, a law's fourth kind.
+
+**Open with the user, not for you to build yet:** who makes the MC-07; what a place makes (farms,
+artisans, fabs and the rest as modules with recipes: nobody has figures); the MC-07's bay depth
+and its three buckling sections (`docs/ships/mc-07-to-measure.md`).
+
 ## Next on `fso`, in this order
 
 Your items 5 to 8 each need something agreed before records are written:
