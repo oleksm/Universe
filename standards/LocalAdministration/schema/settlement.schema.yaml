@@ -42,6 +42,7 @@ properties:
   processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
+  structure: { type: string, x-ref: [structure], description: "The built thing it is, by its key: a spaceport, an outpost, a platform." }
   population: { type: integer, minimum: 0, description: "How many people live there at day 0: seed state of the world. What becomes of them after is the game's." }
   about: { type: string, description: What it is. }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }

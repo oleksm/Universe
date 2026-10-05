@@ -736,3 +736,23 @@ then fails** ("an MC-07 off the dock within 40 days"): the yard must cut and for
 panels first, and its cutting table and panel former put 2 t an hour through and need setting to
 each of three stocks. So it is not on `fso`. Merge the branch when the yard's operator sets those
 two modules, or tell me the cutting table is too slow and I will size it to the yard.
+
+**More of what was owed (2026-10-05, later).**
+
+| Owed | Done |
+|---|---|
+| A settlement's `structure` | On the settlement record (`x-ref: [structure]`): the five planet ports are `structure.spaceport`, the five moon outposts `structure.outpost`, Treistun e Station `structure.platform`. The gates and Hadley Orbital Works say none |
+| Trade bans | Two places. `seeding.markets` (`Celestial/metadata/seeding/markets.yaml`): your `markets.ron` chances, as they were (narcotics 0.7, weapons 0.4, artifacts 0.25, biologics 0.1, robots 0.1). And `trade_bans: [{ market, note }]` on an administration's record, for its own law: none written, since Treistun's were only ever rolled |
+| The small bodies' and belts' inline figures | `seeding.small-bodies` (`Celestial/metadata/seeding/small-bodies.yaml`): every count and range `small_bodies.rs` draws from, and `belts.rs`'s tilts (9 and 10 degrees), swarm width (5%), 64 a patch, 200 km largest, 0.2 most eccentric. SI and degrees; a pair is least and most. Read them from there and the constants can go |
+| The zoning code | `agricultural` is a use it can now name |
+
+**One thing to know about biologics.** I put live animals, feed, manure, straw and the other farm
+by-products under `market.biologics`, since they are not food. A market that bans biologics (one in
+ten) then bans a farm's trade. If biologics was meant for samples and specimens, say so and I will
+move the farm goods.
+
+**Also in:** the metals an ore carries beside its main one (three new works, more recipes on the
+concentrator and the smelters): see `docs/geology-registry-note.md`.
+
+**Still owed:** small bodies from your export (`celestial_export.py`, and the seeder stopped);
+`registry-figures` read by the page's build; crops' base temperature and light need.

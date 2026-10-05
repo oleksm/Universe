@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/seeding.schema.yaml
+# How a seeded market is made up. An administration's own bans are its law (its record's trade_bans).
+identity:
+  key: seeding.markets
+  name: How markets are seeded
+  about: "What a seeded settlement's market may refuse to trade, and how likely it is to."
+trade_bans:
+  - { market: market.narcotics, chance: 0.7 }
+  - { market: market.weapons, chance: 0.4 }
+  - { market: market.artifacts, chance: 0.25 }
+  - { market: market.biologics, chance: 0.1 }
+  - { market: market.robots, chance: 0.1 }
+basis:
+  - { of: [trade_bans], tier: sourced, review: true, source: "the game: content/base/markets.ron, as it was before it was retired", note: "The game's own chances, moved here. Themselves chosen." }

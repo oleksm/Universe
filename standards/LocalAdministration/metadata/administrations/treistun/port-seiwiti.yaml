@@ -5,6 +5,7 @@ identity:
 kind: settlement
 at: body.treistun.treistun-b-i
 position: { latitude: -27.005, longitude: -104.409 }
+structure: structure.outpost
 population: 3000
 about: "The port on Treistun b I, the moon of the innermost planet, at 27° south. Gravity 0.14 g, no air."
 story:
