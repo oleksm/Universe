@@ -102,6 +102,8 @@ pub struct Interior {
     slider: Option<usize>,
     /// Points laid dropped to the hull's floor under the work plane.
     snap_floor: bool,
+    /// The hatch new doorways get (the DOOR tool's shape, size and slide).
+    hatch: Hatch,
     /// The hull at the work plane's height: for which height, each metre cell's
     /// middle and what's there (hollow, solid); and being worked out, for which.
     hollow: Option<(f32, Arc<Vec<Cell>>)>,
@@ -206,10 +208,70 @@ struct Plan {
     /// Walled tubes' free ends set apart from what they'd be (closed; open near an
     /// entry): (line, end 0 or 1, how).
     #[serde(default)]
-    ends: Vec<(usize, usize, End)>,
-    /// Doorways in walled tubes' sides: (line, how far along it 0-1, on its right?).
+    ends: Vec<EndSet>,
+    /// Doorways in walled tubes' sides: (line, how far along it 0-1, on its right?,
+    /// its hatch).
     #[serde(default)]
-    doors: Vec<(usize, f32, bool)>,
+    doors: Vec<SideDoor>,
+}
+
+/// A doorway in a walled tube's side: its line, how far along it (0-1), on its
+/// right?, its hatch.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct SideDoor(usize, f32, bool, #[serde(default)] Hatch);
+
+/// A walled tube's free end set: its line, which end, how it is, its hatch (if a
+/// doorway).
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct EndSet(usize, usize, End, #[serde(default)] Hatch);
+
+/// A hatch: its doorway's shape and size (standing on the floor), and how its leaf
+/// moves (none: an open doorway).
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct Hatch {
+    section: Section,
+    width: f32,
+    height: f32,
+    slide: Slide,
+}
+
+impl Default for Hatch {
+    fn default() -> Self {
+        Hatch { section: Section::Square, width: DOORWAY.0, height: DOORWAY.1, slide: Slide::Side }
+    }
+}
+
+/// How a hatch's leaf opens: none (no leaf), sliding up, sliding aside.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+enum Slide {
+    None,
+    Up,
+    Side,
+}
+
+impl Hatch {
+    /// Its outline's corners round its middle (across, up), anticlockwise.
+    fn corners(&self) -> Vec<Vec2> {
+        let section = if self.section == Section::Line { Section::Square } else { self.section };
+        Profile { section, width: self.width, height: self.height, stand: false }.corners()
+    }
+
+    /// Its window's corners round its middle: the same shape, small, high in the leaf.
+    fn window(&self) -> Vec<Vec2> {
+        let (w, h) = ((self.width * 0.35).min(0.35), (self.height * 0.2).min(0.4));
+        let section = if self.section == Section::Line { Section::Square } else { self.section };
+        let lift = self.height * 0.22;
+        Profile { section, width: w, height: h, stand: false }.corners().into_iter().map(|c| c + Vec2::new(0.0, lift)).collect()
+    }
+}
+
+/// A hatch as placed: its leaf's outline and window (closed, the hull's frame), the
+/// way it slides fully open, and its middle (who's near opens it).
+pub struct Leaf {
+    pub outline: Vec<Vec3>,
+    pub window: Vec<Vec3>,
+    pub open: Vec3,
+    pub middle: Vec3,
 }
 
 /// How a walled tube's free end is: walled across, a doorway in that wall, or open.
@@ -359,6 +421,7 @@ struct Tube {
     /// Its line, and how each of its ends is (none: joined to another tube there).
     line: usize,
     ends: [Option<End>; 2],
+    hatches: [Hatch; 2],
 }
 
 impl Tube {
@@ -382,21 +445,71 @@ impl Tube {
         planes
     }
 
-    /// A doorway through it, standing plumb whatever its slope: centred `s` along it
-    /// (on its floor), `half` along level each way, across `u0..u1`, from its floor
-    /// up to a level top `DOORWAY.1` over the floor there; as planes.
-    fn doorway(&self, s: f32, half: f32, across: (f32, f32)) -> Vec<(Vec3, f32)> {
+    /// Its level way along (its direction with the climb taken out).
+    fn level(&self) -> Vec3 {
+        Vec3::new(self.d.x, 0.0, self.d.z).try_normalize().unwrap_or(Vec3::Z)
+    }
+
+    /// Where a doorway stands: in its side (`s` along it, on its right?) or in an
+    /// end's wall (`s` its end): its middle (standing on the floor there), the way
+    /// across its face, and the way through it.
+    fn door_frame(&self, s: f32, side: Option<bool>, h: &Hatch) -> (Vec3, Vec3, Vec3) {
         let (floor, _) = self.floor_and_half();
-        let level = Vec3::new(self.d.x, 0.0, self.d.z).try_normalize().unwrap_or(Vec3::Z);
-        let c = self.at(s, Vec2::new(0.0, floor));
-        vec![
-            (-level, -(level.dot(c) - half)),
-            (level, level.dot(c) + half),
-            (-self.u, -self.u.dot(self.a) - across.0),
-            (self.u, self.u.dot(self.a) + across.1),
-            (-self.v, -self.v.dot(self.a) - floor),
-            (Vec3::Y, c.y + DOORWAY.1),
-        ]
+        let middle = self.at(s, Vec2::new(0.0, floor)) + Vec3::Y * (h.height * 0.5);
+        match side {
+            Some(_) => (middle, self.level(), self.u),
+            None => (middle, self.u, self.level()),
+        }
+    }
+
+    /// A doorway through it as planes: its hatch's outline standing plumb on the
+    /// floor (`s` along it), through its wall on that side (side doors), or through
+    /// its end's wall, as deep as that leans (end doors).
+    fn door_cut(&self, s: f32, side: Option<bool>, h: &Hatch) -> Vec<(Vec3, f32)> {
+        let (c, across, through) = self.door_frame(s, side, h);
+        let corners = h.corners();
+        let n = corners.len();
+        let mut planes: Vec<(Vec3, f32)> = (0..n).map(|k| {
+            let (p0, p1) = (corners[k], corners[(k + 1) % n]);
+            let e = p1 - p0;
+            let normal = across * e.y - Vec3::Y * e.x;
+            (normal, normal.dot(c + across * p0.x + Vec3::Y * p0.y))
+        }).collect();
+        let (_, half) = self.floor_and_half();
+        match side {
+            Some(right) => {
+                let (lo, hi) = if right { (0.0, half + 0.5) } else { (-half - 0.5, 0.0) };
+                planes.push((-through, -(through.dot(self.a) + lo)));
+                planes.push((through, through.dot(self.a) + hi));
+            }
+            None => {
+                let lean = self.d.y.abs() / Vec2::new(self.d.x, self.d.z).length().max(0.1);
+                let tall = self.corners.iter().map(|q| q.y).fold(f32::MIN, f32::max) - self.corners.iter().map(|q| q.y).fold(f32::MAX, f32::min);
+                let deep = 0.5 + tall * lean;
+                planes.push((-through, -(through.dot(c) - deep)));
+                planes.push((through, through.dot(c) + deep));
+            }
+        }
+        planes
+    }
+
+    /// Its hatch's leaf there, closed: in its wall (side doors) or across its end.
+    fn leaf(&self, s: f32, side: Option<bool>, h: &Hatch) -> Option<Leaf> {
+        if h.slide == Slide::None {
+            return None;
+        }
+        let (c, across, _) = self.door_frame(s, side, h);
+        let (_, half) = self.floor_and_half();
+        let out = match side {
+            Some(right) => self.u * if right { half } else { -half },
+            None => Vec3::ZERO,
+        };
+        let place = |q: Vec2| c + out + across * q.x + Vec3::Y * q.y;
+        let open = match h.slide {
+            Slide::Up => Vec3::Y * h.height,
+            _ => across * h.width,
+        };
+        Some(Leaf { outline: h.corners().into_iter().map(place).collect(), window: h.window().into_iter().map(place).collect(), open, middle: c + out })
     }
 
     /// Its floor's height round its axis, and its half width (m).
@@ -453,7 +566,7 @@ impl Plan {
             };
             let mitres = [mitre(a, -d).map(|n| -n), mitre(b, d)];
             let ends = [self.free_end(k, a).then(|| self.end_of(k, 0)), self.free_end(k, b).then(|| self.end_of(k, 1))];
-            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends }
+            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends, hatches: [self.end_hatch(k, 0), self.end_hatch(k, 1)] }
         }).collect()
     }
 
@@ -466,24 +579,16 @@ impl Plan {
         let rooms: Vec<Vec<(Vec3, f32)>> = tubes.iter().map(Tube::planes).collect();
         // Doorways: boxes cutting a tube's wall, from its floor up (in a side, at a way
         // along; in an end's wall, at its middle).
-        let dw = DOORWAY.0;
         let mut doorways: Vec<Vec<(Vec3, f32)>> = Vec::new();
         for t in &tubes {
-            let (_, half) = t.floor_and_half();
-            for &(k, at, right) in &self.doors {
+            for &SideDoor(k, at, right, h) in &self.doors {
                 if k == t.line {
-                    let s = at * t.len;
-                    let across = if right { (0.0, half + 0.5) } else { (-half - 0.5, 0.0) };
-                    doorways.push(t.doorway(s, dw * 0.5, across));
+                    doorways.push(t.door_cut(at * t.len, Some(right), &h));
                 }
             }
             for (e, how) in t.ends.iter().enumerate() {
                 if *how == Some(End::Door) {
-                    let s = if e == 0 { 0.0 } else { t.len };
-                    // (As deep as its end wall leans, a sloping tube's: through all of it.)
-                    let lean = t.d.y.abs() / Vec2::new(t.d.x, t.d.z).length().max(0.1);
-                    let tall = t.corners.iter().map(|c| c.y).fold(f32::MIN, f32::max) - t.corners.iter().map(|c| c.y).fold(f32::MAX, f32::min);
-                    doorways.push(t.doorway(s, 0.5 + tall * lean, (-dw * 0.5, dw * 0.5)));
+                    doorways.push(t.door_cut(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
                 }
             }
         }
@@ -563,20 +668,43 @@ impl Plan {
             g.lines = g.lines.iter().filter_map(|&k| to.get(k).copied().flatten()).collect();
         }
         self.groups.retain(|g| !g.lines.is_empty());
-        self.ends = self.ends.iter().filter_map(|&(k, e, how)| Some((to.get(k).copied().flatten()?, e, how))).collect();
-        self.doors = self.doors.iter().filter_map(|&(k, t, right)| Some((to.get(k).copied().flatten()?, t, right))).collect();
+        self.ends = self.ends.iter().filter_map(|&EndSet(k, e, how, h)| Some(EndSet(to.get(k).copied().flatten()?, e, how, h))).collect();
+        self.doors = self.doors.iter().filter_map(|&SideDoor(k, t, right, h)| Some(SideDoor(to.get(k).copied().flatten()?, t, right, h))).collect();
     }
 
     /// How line `k`'s end `e` is: as set, else open if it's within 2 m of an entry
     /// (the hatch, a crew door), else closed. (Only a free end has a wall to be.)
     fn end_of(&self, k: usize, e: usize) -> End {
-        if let Some(&(_, _, how)) = self.ends.iter().find(|&&(j, f, _)| j == k && f == e) {
+        if let Some(&EndSet(_, _, how, _)) = self.ends.iter().find(|&&EndSet(j, f, _, _)| j == k && f == e) {
             return how;
         }
         let p = if e == 0 { self.lines[k].0 } else { self.lines[k].1 };
         let at = self.points[p].at;
         let entry = self.points.iter().any(|q| q.name.as_deref().is_some_and(|n| n == "HATCH" || n.starts_with("DOOR")) && q.at.distance(at) < 2.0);
         if entry { End::Open } else { End::Closed }
+    }
+
+    /// Its hatches' leaves, closed, each where it stands.
+    fn leaves(&self) -> Vec<Leaf> {
+        let mut out = Vec::new();
+        for t in self.tubes() {
+            for &SideDoor(k, at, right, h) in &self.doors {
+                if k == t.line {
+                    out.extend(t.leaf(at * t.len, Some(right), &h));
+                }
+            }
+            for (e, how) in t.ends.iter().enumerate() {
+                if *how == Some(End::Door) {
+                    out.extend(t.leaf(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                }
+            }
+        }
+        out
+    }
+
+    /// Line `k`'s end `e`'s hatch (as set; else the usual one).
+    fn end_hatch(&self, k: usize, e: usize) -> Hatch {
+        self.ends.iter().find(|&&EndSet(j, f, _, _)| j == k && f == e).map_or_else(Hatch::default, |s| s.3)
     }
 
     /// Is point `p` an end of walled line `k` that no other walled line shares?
@@ -621,7 +749,7 @@ const ROOM_MIN: f32 = 0.3;
 const ROOM_MAX: f32 = 6.0;
 
 /// The shape of a line's cross-section.
-#[derive(Clone, Copy, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+#[derive(Clone, Copy, Debug, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 enum Section {
     /// None: a bare line.
     #[default]
@@ -974,6 +1102,11 @@ impl Interior {
         self.message.as_ref().map(|m| m.0.as_str())
     }
 
+    /// Its hatches' leaves, closed (the walk-through slides them open).
+    pub fn leaves(&self) -> Vec<Leaf> {
+        self.plan.leaves()
+    }
+
     /// Where the cursor was last seen (HUD pixels).
     pub fn cursor(&self) -> Vec2 {
         self.cursor
@@ -1297,6 +1430,8 @@ enum Action {
     Stand,
     /// Points laid dropped to the floor, or not.
     SnapFloor,
+    /// How new hatches slide.
+    Slide(Slide),
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -1328,7 +1463,11 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     }).collect();
     let shapes = shapes.into_iter();
     match tool {
-        Tool::Door => Vec::new(),
+        Tool::Door => {
+            // (A hatch's shape: not NONE; how it slides.)
+            let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            shapes.filter(|b| b.2 != Action::Section(Section::Line)).chain([(at(246.0, 0.0, w3), "SLIDE UP", Action::Slide(Slide::Up)), (at(246.0, w3 + 6.0, w3), "SLIDE SIDE", Action::Slide(Slide::Side)), (at(246.0, 2.0 * (w3 + 6.0), w3), "NO LEAF", Action::Slide(Slide::None))]).collect()
+        }
         Tool::Path => {
             // (Presets in two rows: two, then three.)
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -1668,7 +1807,19 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             }
         }
         Tool::Path => set(&mut interior.profile),
-        Tool::Door => {}
+        // (The hatch new doorways get: its shape and size as a cross-section's.)
+        Tool::Door => {
+            let h = &mut interior.hatch;
+            let mut p = Profile { section: h.section, width: h.width, height: h.height, stand: false };
+            set(&mut p);
+            if p.section != Section::Line {
+                h.section = p.section;
+            }
+            (h.width, h.height) = (p.width, p.height);
+            if let Some(Action::Slide(slide)) = action {
+                h.slide = slide;
+            }
+        }
     }
     // Groups: the picked lines one (out of any other); their groups broken up; walled
     // off or opened up (lines in no group made one first).
@@ -1845,7 +1996,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                         // (A room preset's: its free ends doorways.)
                         if PRESETS.iter().any(|(_, p, doors)| *doors && *p == interior.profile) {
                             let new = interior.plan.lines.len() - 1;
-                            interior.plan.ends.extend([(new, 0, End::Door), (new, 1, End::Door)]);
+                            interior.plan.ends.extend([EndSet(new, 0, End::Door, interior.hatch), EndSet(new, 1, End::Door, interior.hatch)]);
                         }
                         // (Joined to a point already there: that tunnel done, picked to
                         // be worked on, the path tool put down.)
@@ -1875,8 +2026,8 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                                 End::Door => End::Open,
                                 End::Open => End::Closed,
                             };
-                            interior.plan.ends.retain(|&(j, f, _)| !(j == k && f == e));
-                            interior.plan.ends.push((k, e, next));
+                            interior.plan.ends.retain(|&EndSet(j, f, _, _)| !(j == k && f == e));
+                            interior.plan.ends.push(EndSet(k, e, next, interior.hatch));
                             if !interior.plan.free_end(k, [a, b][e]) {
                                 interior.message = Some(("THAT END JOINS ANOTHER TUBE: IT'S A WAY THROUGH ALREADY".into(), 3.0));
                             }
@@ -1888,12 +2039,12 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                                 let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
                                 let right = u.dot(cam.eye - at) > 0.0;
                                 let t = ((at - pa).dot(d) / len).clamp(0.0, 1.0);
-                                let near = interior.plan.doors.iter().position(|&(j, s, r)| j == k && r == right && (s - t).abs() * len < 1.0);
+                                let near = interior.plan.doors.iter().position(|&SideDoor(j, s, r, _)| j == k && r == right && (s - t).abs() * len < 1.0);
                                 match near {
                                     Some(n) => {
                                         interior.plan.doors.remove(n);
                                     }
-                                    None => interior.plan.doors.push((k, t, right)),
+                                    None => interior.plan.doors.push(SideDoor(k, t, right, interior.hatch)),
                                 }
                             }
                         }
@@ -2198,37 +2349,20 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
     }
-    // Doorways' frames (in a side, in an end's wall), so they're found.
-    {
-        let (dw, dh) = DOORWAY;
-        for t in plan.tubes() {
-            let (floor, half) = t.floor_and_half();
-            let top = (floor + dh).min(-floor);
-            let mut frames: Vec<[Vec3; 4]> = Vec::new();
-            for &(k, at, right) in &plan.doors {
-                if k == t.line {
-                    // (Plumb, as it's cut: its sides `dw/2` along level from its middle on
-                    // the floor, on the wall as far out as the outline reaches there; its
-                    // top level, `dh` over the floor at its middle.)
-                    let along = (Vec2::new(t.d.x, t.d.z).length()).max(0.2);
-                    let (s0, s1) = (at * t.len - dw * 0.5 / along, at * t.len + dw * 0.5 / along);
-                    let x = if right { half } else { -half };
-                    let lid = t.at(at * t.len, Vec2::new(0.0, floor)).y + dh;
-                    let (b0, b1) = (t.at(s0, Vec2::new(x, floor)), t.at(s1, Vec2::new(x, floor)));
-                    frames.push([b0, b1, Vec3::new(b1.x, lid, b1.z), Vec3::new(b0.x, lid, b0.z)]);
-                }
-            }
-            for (e, how) in t.ends.iter().enumerate() {
-                if *how == Some(End::Door) {
-                    let s = if e == 0 { 0.0 } else { t.len };
-                    frames.push([t.at(s, Vec2::new(-dw * 0.5, floor)), t.at(s, Vec2::new(dw * 0.5, floor)), t.at(s, Vec2::new(dw * 0.5, top)), t.at(s, Vec2::new(-dw * 0.5, top))]);
-                }
-            }
-            for f in frames {
-                for k in 0..4 {
-                    seg(frame, f[k], f[(k + 1) % 4], DOOR_FRAME);
-                }
-            }
+    // Hatches, closed: each leaf filled, its outline and its window (an open
+    // doorway: just the hole).
+    for leaf in plan.leaves() {
+        let on: Option<Vec<Vec2>> = leaf.outline.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
+        let glass: Option<Vec<Vec2>> = leaf.window.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
+        let (Some(on), Some(glass)) = (on, glass) else { continue };
+        for k in 1..on.len().saturating_sub(1) {
+            frame.hud_triangle_colored([on[0], on[k], on[k + 1]], [Color([1.0, 0.65, 0.2, 0.18]); 3]);
+        }
+        for k in 0..on.len() {
+            frame.hud_line(on[k], on[(k + 1) % on.len()], DOOR_FRAME);
+        }
+        for k in 0..glass.len() {
+            frame.hud_line(glass[k], glass[(k + 1) % glass.len()], Color([0.45, 0.9, 1.0, 1.0]));
         }
     }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
@@ -2381,7 +2515,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let (title, help) = match interior.tool {
             Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT. CLICK A POINT OR A TUBE TO PICK IT (A TUBE IN A GROUP: THE GROUP); SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
-            Tool::Door => ("DOOR", "A WALLED TUBE'S FREE END IS WALLED ACROSS (OPEN NEAR THE HATCH OR A CREW DOOR). CLICK NEAR AN END: CLOSED, A DOORWAY, OPEN, IN TURN. CLICK ALONG A TUBE: A DOORWAY (0.9 BY 2.1 M) IN THE WALL FACING YOU; CLICK IT AGAIN: GONE."),
+            Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
@@ -2420,12 +2554,18 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 138.0), &format!("PLANE {:.1} M UP", plane - lo.y), PATH, 0.8);
         }
         // (The cross-section lit: the picked line's in LOOK, else the one new lines get.)
+        let h = interior.hatch;
         let now = match (interior.tool, interior.pick) {
             (Tool::Look, Some(Hover::Line(k))) => Some(plan.lines[k].2),
-            (Tool::Look | Tool::Door, _) => None,
+            (Tool::Look, _) => None,
+            (Tool::Door, _) => Some(Profile { section: h.section, width: h.width, height: h.height, stand: false }),
             _ => Some(interior.profile),
         };
-        let what = if interior.tool == Tool::Look { "THE PICKED LINE'S CROSS-SECTION" } else { "NEW LINES' CROSS-SECTION" };
+        let what = match interior.tool {
+            Tool::Look => "THE PICKED LINE'S CROSS-SECTION",
+            Tool::Door => "NEW HATCHES: SHAPE, SIZE, SLIDE",
+            Tool::Path => "NEW LINES' CROSS-SECTION",
+        };
         frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), what, LABEL.scale(0.8), 0.7);
         if interior.tool == Tool::Path {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 295.0), "ROOM PRESETS (ROOMS: DOORWAYS AT THEIR ENDS)", LABEL.scale(0.8), 0.7);
@@ -2450,6 +2590,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 || matches!(a, Action::Preset(k) if now == Some(PRESETS[k].1))
                 || (a == Action::Stand && now.is_some_and(|p| p.stand))
                 || (a == Action::SnapFloor && interior.snap_floor)
+                || matches!(a, Action::Slide(sl) if interior.tool == Tool::Door && h.slide == sl)
             {
                 Lamp::On
             } else {

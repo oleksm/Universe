@@ -1260,6 +1260,12 @@ pub fn apply(app: &mut App, name: &str) {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
             };
+            // (UNIVERSE_WALKAT=x,y,z,yaw: a walk-through there, as WALK HERE.)
+            if let Some(v) = std::env::var("UNIVERSE_WALKAT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse::<f64>().ok()).collect::<Vec<_>>())
+                && v.len() == 4
+            {
+                y.interior_mut().walk = Some((universe_engine::glam::DVec3::new(v[0], v[1], v[2]), v[3]));
+            }
             // (UNIVERSE_PLAN: a sample access plan drawn.)
             if std::env::var_os("UNIVERSE_PLAN").is_some() {
                 let spec = app.ship.spec();

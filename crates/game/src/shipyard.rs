@@ -34,6 +34,11 @@ impl Shipyard {
         Some(self.interior.walls())
     }
 
+    /// The interior studio's hatches' leaves (closed).
+    pub fn leaves(&self) -> Vec<crate::interior::Leaf> {
+        self.interior.leaves()
+    }
+
     /// Those walls to draw: each triangle with its colour.
     pub fn wall_faces(&self) -> Option<Vec<crate::interior::WallFace>> {
         Some(self.interior.wall_faces())

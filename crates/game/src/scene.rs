@@ -865,6 +865,22 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         {
             frame.in_scene(|frame| frame.model_colored(&mesh, t, 0.55, 1.0));
         }
+        // The interior studio's hatches, walked through: each slid open as far as the
+        // eye is near it (open within 1.6 m, shut from 2.8 m).
+        if std::ptr::eq(ship, &app.ship)
+            && let Some(y) = app.preview.as_ref()
+        {
+            let leaves = y.leaves();
+            let meshes = crate::models::hatches(&leaves);
+            let rot = t.rotation.as_dquat();
+            let eye = (rot.inverse() * (frame.camera.position - t.position)).as_vec3();
+            for (leaf, mesh) in leaves.iter().zip(&meshes) {
+                let open = ((2.8 - eye.distance(leaf.middle)) / 1.2).clamp(0.0, 1.0);
+                let open = open * open * (3.0 - 2.0 * open);
+                let shift = rot * (leaf.open * open).as_dvec3();
+                frame.in_scene(|frame| frame.model_colored(mesh, &universe_engine::Transform { position: t.position + shift, ..*t }, 0.8, 1.0));
+            }
+        }
         // Its ramp (part 1), swung down about its hinge as far as it is.
         if let Some(r) = &shape.ramp {
             let turn = r.turn(universe_sim::world::crew::ramp_angle(&app.view.system, ship));

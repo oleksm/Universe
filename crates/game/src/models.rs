@@ -77,6 +77,48 @@ pub fn walls(faces: &[crate::interior::WallFace]) -> Option<Mesh> {
     Some(mesh)
 }
 
+/// Hatch leaves as meshes, one each, closed (the hull's frame): a steel slab 8 cm
+/// thick, its window glass set in each face, its outline drawn. Made again when they
+/// change.
+pub fn hatches(leaves: &[crate::interior::Leaf]) -> Vec<Mesh> {
+    use std::sync::Mutex;
+    type Key = Vec<(Vec<Vec3>, Vec<Vec3>)>;
+    static BUILT: Mutex<Option<(Key, Vec<Mesh>)>> = Mutex::new(None);
+    let key: Key = leaves.iter().map(|l| (l.outline.clone(), l.window.clone())).collect();
+    let mut built = BUILT.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some((k, m)) = built.as_ref()
+        && *k == key
+    {
+        return m.clone();
+    }
+    let meshes: Vec<Mesh> = leaves.iter().map(|l| {
+        let mut m = WireModel::default();
+        let o = &l.outline;
+        let n = (o[1] - o[0]).cross(o[2] - o[0]).normalize_or_zero();
+        let mut fan = |pts: &[Vec3], off: f32, c: [f32; 4], edges: bool| {
+            let base = m.positions.len() as u32;
+            m.positions.extend(pts.iter().map(|p| *p + n * off));
+            m.colors.extend(std::iter::repeat_n(c, pts.len()));
+            for k in 1..pts.len().saturating_sub(1) as u32 {
+                m.faces.push([base, base + k, base + k + 1]);
+            }
+            if edges {
+                for k in 0..pts.len() as u32 {
+                    m.edges.push([base + k, base + (k + 1) % pts.len() as u32]);
+                }
+            }
+        };
+        let (steel, glass) = ([0.46, 0.48, 0.52, 1.0], [0.12, 0.22, 0.32, 1.0]);
+        for side in [0.04, -0.04] {
+            fan(o, side, steel, true);
+            fan(&l.window, side * 1.15, glass, true);
+        }
+        Mesh::new(m)
+    }).collect();
+    *built = Some((key, meshes.clone()));
+    meshes
+}
+
 pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_sim::world::shape::Shape) -> Option<Mesh> {
     use std::sync::Mutex;
     use universe_sim::world::deckplan;
