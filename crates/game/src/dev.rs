@@ -1260,6 +1260,10 @@ pub fn apply(app: &mut App, name: &str) {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
             };
+            // (UNIVERSE_HIDE=k,k,...: those layers hidden.)
+            for k in std::env::var("UNIVERSE_HIDE").unwrap_or_default().split(',').filter_map(|n| n.trim().parse().ok()) {
+                y.interior_mut().hide(k);
+            }
             // (UNIVERSE_WALKAT=x,y,z,yaw: a walk-through there, as WALK HERE.)
             if let Some(v) = std::env::var("UNIVERSE_WALKAT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse::<f64>().ok()).collect::<Vec<_>>())
                 && v.len() == 4
