@@ -1269,6 +1269,12 @@ fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Opt
     Some(at)
 }
 
+/// A run's length (m) and its slope from level (degrees).
+fn slope_of(a: Vec3, b: Vec3) -> (f32, f32) {
+    let d = b - a;
+    (d.length(), d.y.abs().atan2(Vec2::new(d.x, d.z).length()).to_degrees())
+}
+
 /// What's under the cursor: a point (within 8 px), or else a line (within 5 px).
 fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
     let screen: Vec<Option<Vec2>> = i.plan.points.iter().map(|p| cam.project(p.at).map(|s| s.0)).collect();
@@ -1995,6 +2001,14 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         };
         let end = to.and_then(|p| cam.project(p)).map_or(interior.cursor, |(q, _)| q);
         frame.hud_line(pa, end, PICKED.scale(0.6));
+        // Its length and its slope (amber past a comfortable 35°, red past the walker's
+        // 50°: too steep to walk).
+        if let Some(b) = to {
+            let (len, slope) = slope_of(plan.points[a].at, b);
+            let col = if slope > 50.0 { CLASH } else if slope > 35.0 { Color([1.0, 0.65, 0.2, 1.0]) } else { PICKED };
+            let what = if slope > 50.0 { "  TOO STEEP TO WALK" } else if slope > 2.0 { "  RAMP" } else { "" };
+            frame.text_scaled(end + Vec2::new(12.0, 8.0), &format!("{len:.1} M  {slope:.0}°{what}"), col, 0.75);
+        }
     }
     for (k, p) in plan.points.iter().enumerate() {
         let Some((q, _)) = cam.project(p.at) else { continue };
@@ -2089,7 +2103,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 let (a, b, profile) = plan.lines[k];
                 let len = plan.points[a].at.distance(plan.points[b].at);
                 let hits = clash.get(k).map_or(0, |c| c.len());
-                format!("A LINE {len:.1} M{}", if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1}X{:.1}", profile.section.name(), profile.width, profile.height) }
+                let slope = slope_of(plan.points[a].at, plan.points[b].at).1;
+                format!("A LINE {len:.1} M {slope:.0}°{}{}", if slope > 50.0 { " TOO STEEP" } else { "" }, if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1}X{:.1}", profile.section.name(), profile.width, profile.height) }
             }
             None => {
                 let len: f32 = plan.lines.iter().map(|&(a, b, _)| plan.points[a].at.distance(plan.points[b].at)).sum();
