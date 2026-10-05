@@ -1,4 +1,4 @@
-//! The structures catalogue (content: `structures.ron`): stations, spaceports,
+//! The structures catalogue (the registry's structures and gate rings): stations, spaceports,
 //! outposts and gate rings as products of their makers, like modules and hulls.
 
 use serde::Deserialize;
@@ -48,5 +48,44 @@ impl Structure {
             return Err(format!("a ring's capture speed must be positive ({capture})"));
         }
         Ok(())
+    }
+}
+
+impl Structure {
+    /// The registry's structures (`structure.*`) and gate rings (`gate.*`),
+    /// fitted with the equipment the game has (`has`: a key it knows; a
+    /// gate's throat coils it doesn't make yet are left off).
+    pub fn from_registry(reg: &crate::registry::Registry, has: impl Fn(&str) -> bool) -> Vec<Self> {
+        use crate::registry::StructureKind as K;
+        let fit = |f: &[crate::registry::Fitted]| f.iter().filter(|x| has(&x.item)).flat_map(|x| std::iter::repeat_n(x.item.clone(), x.count as usize)).collect::<Vec<_>>();
+        let structures = reg.structures.iter().map(|s| Structure {
+            key: s.identity.key.clone(),
+            brand: s.identity.maker.clone(),
+            name: crate::standards::caps(&s.identity.name),
+            kind: match s.identity.kind {
+                K::Station => StructureKind::Station,
+                K::Spaceport => StructureKind::Spaceport,
+                K::Outpost => StructureKind::Outpost,
+                K::Orbital => StructureKind::Orbital,
+            },
+            fit: fit(&s.fit),
+            note: s.identity.description.clone().unwrap_or_default(),
+        });
+        let rings = reg.gates.iter().map(|g| {
+            let p = g.performance.as_ref();
+            Structure {
+                key: g.identity.key.clone(),
+                brand: g.identity.maker.clone().unwrap_or_default(),
+                name: crate::standards::caps(&g.identity.name),
+                kind: StructureKind::GateRing {
+                    class: g.identity.class.unwrap_or(1),
+                    span_ly: p.and_then(|p| p.span).unwrap_or(0.0) / crate::units::LIGHT_YEAR,
+                    capture: p.and_then(|p| p.capture_speed).unwrap_or(0.0),
+                },
+                fit: fit(&g.fit),
+                note: g.identity.description.clone().unwrap_or_default(),
+            }
+        });
+        structures.chain(rings).collect()
     }
 }

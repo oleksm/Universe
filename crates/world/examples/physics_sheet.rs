@@ -21,7 +21,7 @@ fn main() {
     };
     table("Dogma's laws", "standards/Dogma", universe_physics::laws::SECTIONS, universe_physics::laws::SHEET);
     table("The base world's numbers", "content/base/sheet.ron", universe_world::sheet::SECTIONS, universe_world::sheet::SHEET);
-    md.push_str("# The base world's materials\n\nFrom `content/base/materials.ron`.\n\n| Material | Density (kg/m³) | Energy (J/kg) | Process | Trades as | Note |\n|---|---|---|---|---|---|\n");
+    md.push_str("# The base world's materials\n\nFrom the registry's fuels (`standards/SFO/metadata/materials`).\n\n| Material | Density (kg/m³) | Energy (J/kg) | Process | Trades as | Note |\n|---|---|---|---|---|---|\n");
     for (_, m) in content().materials.iter() {
         md.push_str(&format!("| {} | {} | {} | {:?} | {} | {} |\n", m.name, fmt(m.density), fmt(m.energy), m.process, if m.goods.is_empty() { "-" } else { &m.goods }, m.note));
     }

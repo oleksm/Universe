@@ -14,7 +14,7 @@ use universe_physics::RigidBody;
 /// The hull a new ship is built as, unless it's told otherwise.
 pub const STARTING_HULL: &str = "hull.drover";
 
-/// What a hull is built with (content: `content/*/hulls.ron`). Everything
+/// What a hull is built with (the registry's hulls). Everything
 /// about how a ship flies follows from these and the physics: its
 /// accelerations are its thrusts over its mass as loaded, so a heavy ship is
 /// slow, and one whose lift can't carry its weight can't hover or land on a
@@ -151,8 +151,8 @@ pub struct Thruster {
     pub efficiency: f64,
 }
 
-/// A hull as `hulls.ron` has it: its thrusters by nozzle name.
-#[derive(Deserialize)]
+/// A hull as the registry has it: its thrusters by nozzle name.
+#[derive(Debug, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(crate) struct HullDef {
     key: String,
@@ -173,7 +173,7 @@ pub(crate) struct HullDef {
     hull_strength: f64,
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, PartialEq, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct ThrusterDef {
     nozzle: String,
@@ -199,6 +199,49 @@ impl HullDef {
 
     pub(crate) fn key(&self) -> &str {
         &self.key
+    }
+
+    /// From the registry's record of a hull with a shape in the game's content
+    /// (None for one built from its model, as the MC-07 is: see `import`), at
+    /// `price` (the game's).
+    pub(crate) fn from_record(h: &crate::registry::Hull, price: f64) -> Option<Self> {
+        use crate::modules::SlotKind as G;
+        use crate::registry::SlotKind as R;
+        let shape = h.shape.clone()?;
+        let flight = h.flight.as_ref();
+        let kind = |k: R| match k {
+            R::Power => G::Power,
+            R::Drive => G::Drive,
+            R::Thrusters => G::Thrusters,
+            R::Lift => G::Lift,
+            R::Tank => G::Tank,
+            R::Cargo => G::Cargo,
+            R::Hyperdrive => G::Hyperdrive,
+            R::Capacitor => G::Capacitor,
+            R::Computer => G::Computer,
+            R::Transponder => G::Transponder,
+            R::Sensors => G::Sensors,
+            R::Comm => G::Comm,
+            R::LifeSupport => G::LifeSupport,
+            R::Hardpoint => G::Hardpoint,
+            R::Utility => G::Utility,
+            R::Avionics => G::Avionics,
+            R::Gate => G::Relay,
+        };
+        Some(HullDef {
+            key: h.identity.key.clone(),
+            name: crate::standards::caps(&h.identity.name),
+            brand: h.identity.maker.clone().unwrap_or_default(),
+            shape,
+            frame_mass: h.physical.mass.unwrap_or(0.0),
+            price,
+            slots: h.slots.iter().map(|s| (s.name.clone(), kind(s.kind), s.size)).collect(),
+            fit: h.fit.iter().map(|f| (f.slot.clone(), f.item.clone())).collect(),
+            thrusters: h.thrusters.iter().map(|t| ThrusterDef { nozzle: t.nozzle.clone(), slot: t.slot.clone(), share: t.share }).collect(),
+            radius: flight.and_then(|f| f.radius).unwrap_or(0.0),
+            drag_area: flight.and_then(|f| f.drag_area).unwrap_or(0.0),
+            hull_strength: flight.and_then(|f| f.hull_strength).unwrap_or(0.0),
+        })
     }
 
     pub(crate) fn brand(&self) -> &str {
@@ -1364,4 +1407,5 @@ mod energy_tests {
         assert_eq!((ship.energy, ship.fuel), (spec.capacitor_capacity, fuel));
     }
 }
+
 

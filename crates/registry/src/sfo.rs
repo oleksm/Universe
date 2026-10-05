@@ -426,3 +426,459 @@ pub struct StockSize {
     #[serde(default)]
     pub wall: Option<f64>,
 }
+
+/// `equipment.*`: a piece of equipment a hull or a structure is fitted with,
+/// a maker's product. What it does is its `function`.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Equipment {
+    pub identity: EquipmentIdentity,
+    /// 1 to 4: it fits a slot at least as big.
+    #[serde(default)]
+    pub size_class: Option<u8>,
+    pub physical: Physical,
+    #[serde(default)]
+    pub needs: Option<Needs>,
+    pub function: Function,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct EquipmentIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    /// The maker whose product it is, by key.
+    pub maker: String,
+    #[serde(default)]
+    pub revision: Option<Revision>,
+    #[serde(default)]
+    pub slot: Option<SlotKind>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+/// Where a designed thing stands.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum Revision {
+    Draft,
+    Released,
+    Superseded,
+    Outdated,
+}
+
+/// A kind of slot, and so the kind of equipment that fits it.
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "snake_case")]
+pub enum SlotKind {
+    Power,
+    Drive,
+    Thrusters,
+    Lift,
+    Tank,
+    Cargo,
+    Hyperdrive,
+    Capacitor,
+    Computer,
+    Transponder,
+    Sensors,
+    Comm,
+    LifeSupport,
+    Hardpoint,
+    Utility,
+    Avionics,
+    Gate,
+}
+
+/// What a piece of equipment does: one kind of device, with that kind's
+/// figures (SI). A figure left out is none.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "kind", rename_all = "snake_case", deny_unknown_fields)]
+pub enum Function {
+    PowerPlant {
+        #[serde(default)]
+        output: f64,
+        #[serde(default)]
+        efficiency: f64,
+        #[serde(default)]
+        burns: String,
+    },
+    Drive(Engine),
+    Thrusters(Engine),
+    Lift(Engine),
+    Tank {
+        #[serde(default)]
+        capacity: f64,
+        #[serde(default)]
+        holds: String,
+    },
+    Capacitor {
+        #[serde(default)]
+        capacity: f64,
+        #[serde(default)]
+        rate: f64,
+    },
+    Rack {
+        #[serde(default)]
+        capacity: f64,
+    },
+    Cabin {
+        #[serde(default)]
+        seats: u32,
+    },
+    Hyperdrive {
+        #[serde(default)]
+        efficiency: f64,
+        /// m/s.
+        #[serde(default)]
+        top_speed: f64,
+    },
+    FlightComputer {
+        #[serde(default)]
+        turn_rate: f64,
+        #[serde(default)]
+        roll_rate: f64,
+    },
+    Sensors {
+        #[serde(default)]
+        range: f64,
+    },
+    Comm {
+        #[serde(default)]
+        capture: f64,
+        #[serde(default)]
+        link: f64,
+        #[serde(default)]
+        lag: f64,
+        /// Messages a second.
+        #[serde(default)]
+        capacity: f64,
+    },
+    GateRelay(Relay),
+    HyperRelay(Relay),
+    NavComputer {
+        #[serde(default)]
+        features: Vec<NavFeature>,
+        #[serde(default)]
+        interlock: f64,
+        #[serde(default)]
+        governor: f64,
+    },
+    Transponder,
+    LifeSupport,
+    Gun,
+    Laser,
+    MiningRig,
+    ThroatCoil,
+}
+
+/// A drive's, thrusters' or lift's figures: a full-share nozzle's thrust (N),
+/// its exhaust speed (m/s), the share of its fuel's energy in the exhaust, and
+/// the fuel it burns (a material's key).
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Engine {
+    #[serde(default)]
+    pub thrust: f64,
+    #[serde(default)]
+    pub exhaust: f64,
+    #[serde(default)]
+    pub efficiency: f64,
+    #[serde(default)]
+    pub burns: String,
+}
+
+/// A relay's figures: lag (s), messages a second, a batch every `cadence` s.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Relay {
+    #[serde(default)]
+    pub lag: f64,
+    #[serde(default)]
+    pub capacity: f64,
+    #[serde(default)]
+    pub cadence: f64,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum NavFeature {
+    Docking,
+    Landing,
+    Gate,
+    Follow,
+    Hyperdrive,
+    Route,
+}
+
+/// One piece of equipment fitted, and how many.
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Fitted {
+    pub item: String,
+    #[serde(default = "one")]
+    pub count: u32,
+}
+
+fn one() -> u32 {
+    1
+}
+
+/// `structure.*`: a station, spaceport, outpost or orbital site, a maker's
+/// product.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Structure {
+    pub identity: StructureIdentity,
+    #[serde(default)]
+    pub fit: Vec<Fitted>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StructureIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    pub maker: String,
+    pub kind: StructureKind,
+    #[serde(default)]
+    pub revision: Option<Revision>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum StructureKind {
+    /// In orbit, with pads.
+    Station,
+    /// On a world's ground.
+    Spaceport,
+    /// A small settlement's port.
+    Outpost,
+    /// A transceiver and a relay in orbit, no pads.
+    Orbital,
+}
+
+/// `gate.*`: a gate ring (SFO 17), a maker's product.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Gate {
+    pub identity: GateIdentity,
+    #[serde(default)]
+    pub size: Option<GateSize>,
+    #[serde(default)]
+    pub performance: Option<GatePerformance>,
+    #[serde(default)]
+    pub built_of: Option<BuiltOf>,
+    #[serde(default)]
+    pub fit: Vec<Fitted>,
+    #[serde(default)]
+    pub power: Option<GatePower>,
+    #[serde(default)]
+    pub making: Option<crate::Making>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GateIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    #[serde(default)]
+    pub maker: Option<String>,
+    /// A higher one spans further.
+    #[serde(default)]
+    pub class: Option<u8>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GateSize {
+    /// The ring's diameter, and its tube's (m).
+    #[serde(default)]
+    pub opening: Option<f64>,
+    /// How thick its structure is (m).
+    #[serde(default)]
+    pub thickness: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GatePerformance {
+    /// The longest tube it can hold (m).
+    #[serde(default)]
+    pub span: Option<f64>,
+    /// The fastest a ship may enter it (m/s).
+    #[serde(default)]
+    pub capture_speed: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct BuiltOf {
+    /// The folder of parts it is built of.
+    #[serde(default)]
+    pub parts: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct GatePower {
+    /// The industrial module that powers it, by key.
+    #[serde(default)]
+    pub station: Option<String>,
+}
+
+/// `hull.*`: a hull (SFO 2), a maker's product: its slots, what it's sold
+/// fitted with, its nozzles, how it flies.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Hull {
+    pub identity: HullIdentity,
+    #[serde(default)]
+    pub physical: Physical,
+    #[serde(default)]
+    pub capacity: Option<HullCapacity>,
+    /// Its model (`assets/models/*.glb`).
+    #[serde(default)]
+    pub model: Option<String>,
+    /// Its shape in the game's content (`shapes.ron`), for one with no model.
+    #[serde(default)]
+    pub shape: Option<String>,
+    #[serde(default)]
+    pub slots: Vec<HullSlot>,
+    #[serde(default)]
+    pub thrusters: Vec<Nozzle>,
+    #[serde(default)]
+    pub flight: Option<Flight>,
+    #[serde(default)]
+    pub fit: Vec<SlotFit>,
+    #[serde(default)]
+    pub making: Option<crate::Making>,
+    #[serde(default)]
+    pub design: Option<HullDesign>,
+    #[serde(default)]
+    pub open_questions: Vec<String>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HullIdentity {
+    pub key: String,
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub name: String,
+    #[serde(default)]
+    pub maker: Option<String>,
+    #[serde(default)]
+    pub class: Option<String>,
+    #[serde(default)]
+    pub revision: Option<Revision>,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HullCapacity {
+    #[serde(default)]
+    pub hold_volume: Option<f64>,
+    #[serde(default)]
+    pub hold: Option<f64>,
+    #[serde(default)]
+    pub fuel: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HullSlot {
+    pub name: String,
+    pub kind: SlotKind,
+    pub size: u8,
+}
+
+/// A nozzle, driven by a slot's equipment at a share of its rating.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Nozzle {
+    pub nozzle: String,
+    pub slot: String,
+    pub share: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Flight {
+    /// m.
+    #[serde(default)]
+    pub radius: Option<f64>,
+    /// m².
+    #[serde(default)]
+    pub drag_area: Option<f64>,
+    /// J.
+    #[serde(default)]
+    pub hull_strength: Option<f64>,
+    /// The material its frame is of, by key (its strength worked out from it).
+    #[serde(default)]
+    pub frame_material: Option<String>,
+}
+
+/// What a slot is sold fitted with.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SlotFit {
+    pub slot: String,
+    pub item: String,
+    #[serde(default)]
+    pub nozzles: Option<u32>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct HullDesign {
+    #[serde(default)]
+    pub lands: Option<Lands>,
+    #[serde(default)]
+    pub loaded_mass: Option<f64>,
+    #[serde(default)]
+    pub main_thrust: Option<f64>,
+    #[serde(default)]
+    pub lift_thrust: Option<f64>,
+    #[serde(default)]
+    pub thrust_path: Vec<String>,
+    #[serde(default)]
+    pub landing_speed: Option<f64>,
+    #[serde(default)]
+    pub cabin_pressure: Option<f64>,
+    #[serde(default)]
+    pub safety_factor: Option<f64>,
+    #[serde(default)]
+    pub pressure_factor: Option<f64>,
+    #[serde(default)]
+    pub strut_efficiency: Option<f64>,
+    #[serde(default)]
+    pub minimum_gauge: Option<f64>,
+}
+
+#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename_all = "lowercase")]
+pub enum Lands {
+    Empty,
+    Loaded,
+}

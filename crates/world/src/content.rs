@@ -27,10 +27,7 @@ use crate::ship::ClassSpec;
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
-    ("materials.ron", include_str!("../../../content/base/materials.ron")),
-    ("structures.ron", include_str!("../../../content/base/structures.ron")),
-    ("modules.ron", include_str!("../../../content/base/modules.ron")),
-    ("hulls.ron", include_str!("../../../content/base/hulls.ron")),
+    ("prices.ron", include_str!("../../../content/base/prices.ron")),
     ("goods.ron", include_str!("../../../content/base/goods.ron")),
     ("ores.ron", include_str!("../../../content/base/ores.ron")),
     ("recipes.ron", include_str!("../../../content/base/recipes.ron")),
@@ -297,7 +294,11 @@ impl Content {
             let key = d.key.clone();
             d.build().map_err(|e| format!("shapes.ron '{key}': {e}"))
         }).collect::<Result<_, String>>()?)?;
-        let materials: Registry<crate::materials::Material> = Registry::build(Self::defs(&packs, "materials.ron")?)?;
+        let materials: Registry<crate::materials::Material> = {
+            // Materials: the registry's fuels (those burnt for their energy, or thrown as reaction mass).
+            let reg = crate::registry::registry();
+            Registry::build(reg.materials.iter().filter_map(|m| crate::materials::Material::from_record(reg, m)).collect())?
+        };
         // Brands: the registry's makers (the companies whose business is making things).
         let brands: Registry<crate::modules::Brand> = Registry::build(
             crate::registry::registry()
@@ -307,16 +308,35 @@ impl Content {
                 .map(|o| crate::modules::Brand::from_record(crate::registry::registry(), o))
                 .collect(),
         )?;
-        let modules: Registry<crate::modules::Module> = Registry::build(Self::defs(&packs, "modules.ron")?)?;
-        let structures: Registry<crate::structures_catalogue::Structure> = Registry::build(Self::defs(&packs, "structures.ron")?)?;
+        // Prices: the game's own (volatile; not the registry's), by registry key.
+        let mut prices: HashMap<String, f64> = HashMap::new();
+        for p in &packs {
+            if let Some(s) = p.source("prices.ron") {
+                let more: HashMap<String, f64> = ron::from_str(s).map_err(|e| format!("{} prices.ron: {e}", p.name))?;
+                prices.extend(more);
+            }
+        }
+        let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
+        // Modules: the registry's ship equipment, at the game's prices.
+        let modules: Registry<crate::modules::Module> = Registry::build(
+            crate::registry::registry()
+                .equipment
+                .iter()
+                .filter_map(|e| Some((e, crate::modules::Module::from_record(e, 0.0)?)))
+                .map(|(e, m)| Ok(crate::modules::Module { price: price(&e.identity.key)?, ..m }))
+                .collect::<Result<Vec<_>, String>>()?,
+        )?;
+        // Structures: the registry's stations, ports, outposts, orbital sites and gate rings.
+        let structures: Registry<crate::structures_catalogue::Structure> =
+            Registry::build(crate::structures_catalogue::Structure::from_registry(crate::registry::registry(), |k| resolve(&modules, &aliases, k).is_some()))?;
         for (_, s) in structures.iter() {
             if resolve(&brands, &aliases, &s.brand).is_none() {
-                return Err(format!("structures.ron '{}': no brand '{}' (every product has a maker)", s.key, s.brand));
+                return Err(format!("{}: no brand '{}' (every product has a maker)", s.key, s.brand));
             }
             // What's installed: a comm on each, a gate relay only on a ring.
-            let fitted = s.fit.iter().map(|k| resolve(&modules, &aliases, k).map(|h| modules.get(h)).ok_or_else(|| format!("structures.ron '{}': no module '{k}'", s.key))).collect::<Result<Vec<_>, _>>()?;
+            let fitted = s.fit.iter().map(|k| resolve(&modules, &aliases, k).map(|h| modules.get(h)).ok_or_else(|| format!("{}: no module '{k}'", s.key))).collect::<Result<Vec<_>, _>>()?;
             if !fitted.iter().any(|m| m.does.comm().is_some()) {
-                return Err(format!("structures.ron '{}': no comm (every structure has one)", s.key));
+                return Err(format!("{}: no comm (every structure has one)", s.key));
             }
             // (Relays only in space; a gate relay only on a ring.)
             let ring = matches!(s.kind, crate::structures_catalogue::StructureKind::GateRing { .. });
@@ -327,27 +347,27 @@ impl Content {
                 d => d.comm().is_some(),
             };
             if let Some(m) = fitted.iter().find(|m| !fits(&m.does)) {
-                return Err(format!("structures.ron '{}': {} doesn't go on it", s.key, m.key));
+                return Err(format!("{}: {} doesn't go on it", s.key, m.key));
             }
         }
         for (_, m) in modules.iter() {
             // (Every product has a maker.)
             if resolve(&brands, &aliases, &m.brand).is_none() {
-                return Err(format!("modules.ron '{}': no brand '{}' (every product has a maker)", m.key, m.brand));
+                return Err(format!("{}: no brand '{}' (every product has a maker)", m.key, m.brand));
             }
             // What it holds or burns is a material, at its real properties.
-            let of = |key: &str| resolve(&materials, &aliases, key).map(|h| materials.get(h)).ok_or_else(|| format!("modules.ron '{}': no material '{key}'", m.key));
+            let of = |key: &str| resolve(&materials, &aliases, key).map(|h| materials.get(h)).ok_or_else(|| format!("{}: no material '{key}'", m.key));
             match &m.does {
                 crate::modules::Does::Tank { capacity, holds } => {
                     let mat = of(holds)?;
                     if *capacity > mat.density * m.volume * 1.001 {
-                        return Err(format!("modules.ron '{}': holds {:.0} kg of {} in {:.0} m³: denser than it is ({:.0} kg/m³)", m.key, capacity, mat.name, m.volume, mat.density));
+                        return Err(format!("{}: holds {:.0} kg of {} in {:.0} m³: denser than it is ({:.0} kg/m³)", m.key, capacity, mat.name, m.volume, mat.density));
                     }
                 }
                 crate::modules::Does::PowerPlant { burns, .. } => {
                     let mat = of(burns)?;
                     if mat.process == crate::materials::Process::None {
-                        return Err(format!("modules.ron '{}': {} doesn't burn", m.key, mat.name));
+                        return Err(format!("{}: {} doesn't burn", m.key, mat.name));
                     }
                 }
                 // An engine's jet can't carry more energy per kg than its fuel gives at its efficiency.
@@ -356,7 +376,7 @@ impl Content {
                         let mat = of(burns)?;
                         let jet = 0.5 * exhaust * exhaust;
                         if jet > efficiency * mat.energy * 1.001 {
-                            return Err(format!("modules.ron '{}': an exhaust of {:.0} m/s carries {:.1e} J/kg; {} at {:.0}% gives {:.1e}", m.key, exhaust, jet, mat.name, efficiency * 100.0, efficiency * mat.energy));
+                            return Err(format!("{}: an exhaust of {:.0} m/s carries {:.1e} J/kg; {} at {:.0}% gives {:.1e}", m.key, exhaust, jet, mat.name, efficiency * 100.0, efficiency * mat.energy));
                         }
                     }
                 }
@@ -364,15 +384,21 @@ impl Content {
         }
         let module = |key: &str| resolve(&modules, &aliases, key).map(|h| (h, modules.get(h)));
         let hulls: Registry<ClassSpec> = Registry::build(
-            Self::defs::<crate::ship::HullDef>(&packs, "hulls.ron")?
+            // Hulls: the registry's, those with a shape in the content (the MC-07 is built from its model), at the game's prices.
+            crate::registry::registry()
+                .hulls
+                .iter()
+                .filter(|h| h.shape.is_some())
+                .map(|h| crate::ship::HullDef::from_record(h, price(&h.identity.key)?).ok_or_else(|| format!("{}: no shape", h.identity.key)))
+                .collect::<Result<Vec<_>, String>>()?
                 .into_iter()
                 .map(|d| {
                     let key = d.key().to_string();
                     if resolve(&brands, &aliases, d.brand()).is_none() {
-                        return Err(format!("hulls.ron '{key}': no brand '{}' (every product has a maker)", d.brand()));
+                        return Err(format!("{key}: no brand '{}' (every product has a maker)", d.brand()));
                     }
-                    let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("hulls.ron '{key}': no shape '{}'", d_shape(&d)))?;
-                    d.build(shape, shapes.get(shape), module).map_err(|e| format!("hulls.ron '{key}': {e}"))
+                    let shape = resolve(&shapes, &aliases, &d_shape(&d)).ok_or_else(|| format!("{key}: no shape '{}'", d_shape(&d)))?;
+                    d.build(shape, shapes.get(shape), module).map_err(|e| format!("{key}: {e}"))
                 })
                 .collect::<Result<_, String>>()?,
         )?;
@@ -571,12 +597,12 @@ entry!(GoodsKind, "goods.ron", goods, |k| {
 });
 entry!(OreEntry, "ores.ron", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
-entry!(crate::modules::Module, "modules.ron", modules, |m| m.check());
-entry!(crate::modules::Brand, "brands.ron", brands, |_b| Ok(()));
-entry!(crate::standards::Body, "bodies.ron", bodies, |b| b.check());
-entry!(crate::standards::Standard, "standards.ron", standards, |s| s.check());
-entry!(crate::materials::Material, "materials.ron", materials, |m| m.check());
-entry!(crate::structures_catalogue::Structure, "structures.ron", structures, |s| s.check());
+entry!(crate::modules::Module, "the registry's equipment", modules, |m| m.check());
+entry!(crate::modules::Brand, "the registry's makers", brands, |_b| Ok(()));
+entry!(crate::standards::Body, "the registry's standards bodies", bodies, |b| b.check());
+entry!(crate::standards::Standard, "the registry's standards", standards, |s| s.check());
+entry!(crate::materials::Material, "the registry's fuels", materials, |m| m.check());
+entry!(crate::structures_catalogue::Structure, "the registry's structures", structures, |s| s.check());
 entry!(Recipe, "recipes.ron", recipes, |r| {
     for (_, t) in r.takes.iter().chain(&r.makes) {
         positive("a rate", *t)?;
@@ -598,7 +624,7 @@ entry!(PlaceDef, "places.ron", places, |p| {
 });
 
 impl Entry for ClassSpec {
-    const FILE: &'static str = "hulls.ron";
+    const FILE: &'static str = "the registry's hulls";
 
     fn key(&self) -> &str {
         &self.key

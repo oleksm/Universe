@@ -154,7 +154,7 @@ pub fn position(sys: &StarSystem, node: &Node, t: f64, positions: &[DVec3]) -> D
     }
 }
 
-/// The comm a structure product (`structures.ron`-style module key) is: a
+/// The comm a structure product (an equipment key) is: a
 /// beacon's, say.
 pub fn comm_of(module: &str) -> Option<Comm> {
     let c = content();

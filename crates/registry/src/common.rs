@@ -76,3 +76,31 @@ pub struct MadeFrom {
     #[serde(default)]
     pub finish: Option<String>,
 }
+
+/// How a made thing is made.
+#[derive(Clone, Debug, Default, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct Making {
+    /// The industrial module that makes it, by key.
+    #[serde(default)]
+    pub module: Option<String>,
+    /// The module that fits it with its equipment, by key.
+    #[serde(default)]
+    pub fitting_out: Option<String>,
+    #[serde(default)]
+    pub facility: Option<String>,
+    /// s to make one.
+    #[serde(default)]
+    pub time: Option<f64>,
+    /// m, on its dimensions.
+    #[serde(default)]
+    pub tolerance: Option<f64>,
+    #[serde(default)]
+    pub tooling: Option<String>,
+    #[serde(default)]
+    pub batch_size: Option<u32>,
+    #[serde(default, rename = "yield")]
+    pub yields: Option<f64>,
+    #[serde(default)]
+    pub inspection: Option<String>,
+}

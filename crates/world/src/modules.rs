@@ -1,4 +1,4 @@
-//! Modules: what a hull is fitted with (content: `modules.ron`). Each is a
+//! Modules: what a hull is fitted with (the registry's equipment, SFO 16). Each is a
 //! real thing — a mass, a volume, a power draw (or, for a power plant, an
 //! output), a price — doing one job: a drive, thrusters, a tank, a rack,
 //! the flight computer... A ship's numbers come from its hull's frame and
@@ -286,5 +286,65 @@ impl Module {
             }),
             _ => Ok(()),
         }
+    }
+}
+
+impl Module {
+    /// From the registry's record of a piece of equipment, at `price` (the
+    /// game's: prices aren't the registry's). None for a kind of device the
+    /// game doesn't make yet (a gate's throat coil).
+    pub fn from_record(e: &crate::registry::Equipment, price: f64) -> Option<Self> {
+        use crate::registry::{Function as F, NavFeature as N};
+        let c = universe_physics::laws::SPEED_OF_LIGHT;
+        let engine = |x: &crate::registry::Engine| (x.thrust, x.exhaust, x.efficiency, x.burns.clone());
+        let does = match &e.function {
+            F::PowerPlant { output, efficiency, burns } => Does::PowerPlant { output: *output, efficiency: *efficiency, burns: burns.clone() },
+            F::Drive(x) => { let (thrust, exhaust, efficiency, burns) = engine(x); Does::Drive { thrust, exhaust, efficiency, burns } }
+            F::Thrusters(x) => { let (thrust, exhaust, efficiency, burns) = engine(x); Does::Thrusters { thrust, exhaust, efficiency, burns } }
+            F::Lift(x) => { let (thrust, exhaust, efficiency, burns) = engine(x); Does::Lift { thrust, exhaust, efficiency, burns } }
+            F::Tank { capacity, holds } => Does::Tank { capacity: *capacity, holds: holds.clone() },
+            F::Capacitor { capacity, rate } => Does::Capacitor { capacity: *capacity, rate: *rate },
+            F::Rack { capacity } => Does::Rack { capacity: *capacity },
+            F::Cabin { seats } => Does::Cabin { seats: *seats },
+            F::Hyperdrive { efficiency, top_speed } => Does::Hyperdrive { efficiency: *efficiency, top_c: top_speed / c },
+            F::FlightComputer { turn_rate, roll_rate } => Does::FlightComputer { turn_rate: *turn_rate, roll_rate: *roll_rate },
+            F::Sensors { range } => Does::Sensors { range: *range },
+            // (The game counts messages an hour.)
+            F::Comm { capture, link, lag, capacity } => Does::Comm { capture: *capture, link: *link, lag: *lag, capacity: capacity * 3600.0 },
+            F::GateRelay(r) => Does::GateRelay { lag: r.lag, capacity: r.capacity * 3600.0, cadence: r.cadence },
+            F::HyperRelay(r) => Does::HyperRelay { lag: r.lag, capacity: r.capacity * 3600.0, cadence: r.cadence },
+            F::NavComputer { features, interlock, governor } => Does::NavComputer {
+                features: features
+                    .iter()
+                    .map(|f| match f {
+                        N::Docking => Feature::Docking,
+                        N::Landing => Feature::Landing,
+                        N::Gate => Feature::Gate,
+                        N::Follow => Feature::Follow,
+                        N::Hyperdrive => Feature::Hyperdrive,
+                        N::Route => Feature::Route,
+                    })
+                    .collect(),
+                interlock: *interlock,
+                governor: *governor,
+            },
+            F::Transponder => Does::Transponder,
+            F::LifeSupport => Does::LifeSupport,
+            F::Gun => Does::Gun,
+            F::Laser => Does::Laser,
+            F::MiningRig => Does::MiningRig,
+            F::ThroatCoil => return None,
+        };
+        Some(Module {
+            key: e.identity.key.clone(),
+            name: crate::standards::caps(&e.identity.name),
+            brand: e.identity.maker.clone(),
+            does,
+            size: e.size_class.unwrap_or(1),
+            mass: e.physical.mass.unwrap_or(0.0),
+            volume: e.physical.volume.unwrap_or(0.0),
+            power: e.needs.as_ref().and_then(|n| n.power).unwrap_or(0.0),
+            price,
+        })
     }
 }
