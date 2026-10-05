@@ -100,6 +100,8 @@ pub struct Interior {
     /// The cross-section new lines get; the slider held (its width 0, height 1).
     profile: Profile,
     slider: Option<usize>,
+    /// Points laid dropped to the hull's floor under the work plane.
+    snap_floor: bool,
     /// A slide under way has its undo step already; SHIFT held (squaring a path).
     sliding: bool,
     shift: bool,
@@ -176,8 +178,9 @@ fn room(a: Vec3, b: Vec3, p: Profile) -> (Vec<[Vec3; 2]>, Vec<Vec3>) {
 fn clashes(mesh: &universe_sim::world::walk::WalkMesh, plan: &Plan) -> Vec<Vec<Vec3>> {
     use universe_sim::world::deckplan::in_material;
     use universe_engine::glam::DVec2;
-    plan.lines.iter().map(|&(a, b, profile)| {
-        room(plan.points[a].at, plan.points[b].at, profile).1.into_iter().filter(|p| in_material(mesh, DVec2::new(p.x as f64, p.z as f64), p.y as f64)).collect()
+    plan.lines.iter().enumerate().map(|(k, &(_, _, profile))| {
+        let (pa, pb) = plan.axis(k);
+        room(pa, pb, profile).1.into_iter().filter(|p| in_material(mesh, DVec2::new(p.x as f64, p.z as f64), p.y as f64)).collect()
     }).collect()
 }
 
@@ -422,7 +425,7 @@ impl Plan {
         };
         walled.iter().map(|&k| {
             let (a, b, profile) = self.lines[k];
-            let (pa, pb) = (self.points[a].at, self.points[b].at);
+            let (pa, pb) = self.axis(k);
             let len = pa.distance(pb);
             let d = (pb - pa) / len;
             let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
@@ -566,6 +569,14 @@ impl Plan {
         !self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).any(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p))
     }
 
+    /// Line `k`'s axis, its ends: its points, or (standing on its line) half its
+    /// height over them.
+    fn axis(&self, k: usize) -> (Vec3, Vec3) {
+        let (a, b, p) = self.lines[k];
+        let up = if p.stand && p.section != Section::Line { Vec3::Y * (p.height * 0.5) } else { Vec3::ZERO };
+        (self.points[a].at + up, self.points[b].at + up)
+    }
+
     /// The group line `k` is in, if any.
     fn group_of(&self, k: usize) -> Option<usize> {
         self.groups.iter().position(|g| g.lines.contains(&k))
@@ -579,11 +590,14 @@ struct Profile {
     section: Section,
     width: f32,
     height: f32,
+    /// Stands on its line (the line its floor), rather than round it (its axis).
+    #[serde(default)]
+    stand: bool,
 }
 
 impl Default for Profile {
     fn default() -> Self {
-        Profile { section: Section::Line, width: 1.5, height: 2.0 }
+        Profile { section: Section::Line, width: 1.5, height: 2.0, stand: true }
     }
 }
 
@@ -671,6 +685,8 @@ enum Hover {
 
 /// The hull as the studio draws it: its lines and its bounds (its frame, m).
 pub struct Hull {
+    /// Its surfaces (to find floors by).
+    mesh: Arc<universe_sim::world::walk::WalkMesh>,
     lines: Vec<[Vec3; 2]>,
     /// Where it bends gently (round things): edges with their faces' normals, drawn
     /// where they're its outline from the camera.
@@ -681,7 +697,7 @@ pub struct Hull {
 
 impl Interior {
     pub fn new() -> Self {
-        Interior { yaw: 0.9, pitch: 0.35, ..Default::default() }
+        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, ..Default::default() }
     }
 
     /// A sample plan for a look (dev scenarios): from the hatch, a run of points on
@@ -700,7 +716,7 @@ impl Interior {
         let a = add(Vec3::new(h.x, h.y + 1.0, (h.z + c.z) * 0.5), &mut self.plan);
         let b = add(Vec3::new(c.x, h.y + 1.0, c.z), &mut self.plan);
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
-        let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0 }, Profile { section: Section::Hex, width: 0.9, height: 0.9 });
+        let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0, stand: false }, Profile { section: Section::Hex, width: 0.9, height: 0.9, stand: false });
         self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
         // (The corridor walled off, a group.)
         self.plan.groups.push(Group { lines: vec![0, 1, 2, 3, 4], walled: true });
@@ -741,7 +757,7 @@ impl Interior {
         let (a, b, profile) = self.plan.lines[k];
         let d = (self.plan.points[b].at - self.plan.points[a].at).normalize_or_zero();
         let walled = self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled) && profile.section != Section::Line;
-        let floor = if walled { at - Vec3::Y * (profile.height * 0.5) } else { at };
+        let floor = if walled && !profile.stand { at - Vec3::Y * (profile.height * 0.5) } else { at };
         ((floor + Vec3::Y * 0.05).as_dvec3(), f64::from(d.x).atan2(f64::from(d.z)))
     }
 
@@ -773,7 +789,7 @@ impl Interior {
                 // (Its creases of 30° or more, less the tiniest bevels: the shape, not its
                 // grain.)
                 let lines = mesh.creases(30.0).into_iter().filter(|[a, b]| a.distance(*b) >= 0.02).collect();
-                tx.send(Hull { lines, bends: mesh.bends(2.0, 30.0), lo: mesh.lo.as_vec3(), hi: mesh.hi.as_vec3() }).ok();
+                tx.send(Hull { mesh: mesh.clone(), lines, bends: mesh.bends(2.0, 30.0), lo: mesh.lo.as_vec3(), hi: mesh.hi.as_vec3() }).ok();
             });
             self.job = Some((key.into(), rx));
         }
@@ -892,9 +908,10 @@ impl Interior {
     pub fn access(&self) -> Access {
         let plan = &self.plan;
         Access {
-            tunnels: plan.lines.iter().enumerate().map(|(k, &(a, b, p))| {
+            tunnels: plan.lines.iter().enumerate().map(|(k, &(_, _, p))| {
                 let room = (p.section != Section::Line).then_some((p.width, p.height));
-                (plan.points[a].at, plan.points[b].at, room, plan.group_of(k).is_some_and(|g| plan.groups[g].walled))
+                let (pa, pb) = plan.axis(k);
+                (pa, pb, room, plan.group_of(k).is_some_and(|g| plan.groups[g].walled))
             }).collect(),
             points: plan.points.iter().map(|p| (p.at, sort(p.name.as_deref()).0)).collect(),
         }
@@ -1112,11 +1129,11 @@ const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 356.0));
 /// Room presets for new lines: name, cross-section, and whether their free ends get
 /// doorways (a room's) rather than walls.
 const PRESETS: [(&str, Profile, bool); 5] = [
-    ("CORRIDOR", Profile { section: Section::Square, width: 1.6, height: 2.4 }, false),
-    ("CRAWLWAY", Profile { section: Section::Hex, width: 1.0, height: 1.0 }, false),
-    ("CABIN", Profile { section: Section::Square, width: 2.6, height: 2.6 }, true),
-    ("GALLEY", Profile { section: Section::Oct, width: 5.0, height: 3.0 }, true),
-    ("BRIDGE", Profile { section: Section::Oct, width: 10.0, height: 4.0 }, true),
+    ("CORRIDOR", Profile { section: Section::Square, width: 1.6, height: 2.4, stand: true }, false),
+    ("CRAWLWAY", Profile { section: Section::Hex, width: 1.0, height: 1.0, stand: true }, false),
+    ("CABIN", Profile { section: Section::Square, width: 2.6, height: 2.6, stand: true }, true),
+    ("GALLEY", Profile { section: Section::Oct, width: 5.0, height: 3.0, stand: true }, true),
+    ("BRIDGE", Profile { section: Section::Oct, width: 10.0, height: 4.0, stand: true }, true),
 ];
 
 /// The panel's actions: the work plane down and up, what's picked out.
@@ -1129,6 +1146,10 @@ enum Action {
     Section(Section),
     /// A room preset for new lines (its number in `PRESETS`).
     Preset(usize),
+    /// Standing on its line, or round it (new lines', or the picked ones').
+    Stand,
+    /// Points laid dropped to the floor, or not.
+    SnapFloor,
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -1167,11 +1188,11 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
             let presets = PRESETS.iter().enumerate().map(|(k, (name, _, _))| {
                 if k < 2 { (at(308.0, k as f32 * (w + 6.0), w), *name, Action::Preset(k)) } else { (at(330.0, (k - 2) as f32 * (w3 + 6.0), w3), *name, Action::Preset(k)) }
             });
-            shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).chain(presets).collect()
+            shapes.chain([(at(246.0, 0.0, w3), "PLANE DOWN", Action::PlaneDown), (at(246.0, w3 + 6.0, w3), "PLANE UP", Action::PlaneUp), (at(246.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).chain(presets).collect()
         }
         Tool::Look => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
-            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect()
+            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).collect()
         }
     }
 }
@@ -1283,6 +1304,18 @@ fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Opt
             at.z = from.z;
         } else {
             at.x = from.x;
+        }
+    }
+    // SNAP FLOOR: down to the hull's floor under it (the first surface below, if it
+    // faces up; within 8 m).
+    if i.snap_floor
+        && let Some((_, h)) = &i.lines
+    {
+        let from = universe_engine::glam::DVec3::new(f64::from(at.x), f64::from(plane) + 0.05, f64::from(at.z));
+        if let Some((d, n)) = h.mesh.ray(from, universe_engine::glam::DVec3::NEG_Y, 8.0)
+            && n.y > 0.6
+        {
+            at.y = (from.y - d) as f32;
         }
     }
     Some(at)
@@ -1433,6 +1466,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     if lift != 0.0 {
         interior.plane = Some((plane_of(interior, &h) + lift).clamp(h.lo.y, h.hi.y));
     }
+    if action == Some(Action::SnapFloor) {
+        interior.snap_floor = !interior.snap_floor;
+    }
     // A cross-section, its shape (a button) or its width or height (a slider, held
     // and slid): for new lines; picked in LOOK, that line's.
     if pressed {
@@ -1446,6 +1482,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let set = |p: &mut Profile| {
         if let Some(Action::Preset(k)) = action {
             *p = PRESETS[k].1;
+        }
+        if action == Some(Action::Stand) {
+            p.stand = !p.stand;
         }
         if let Some(Action::Section(s)) = action {
             p.section = s;
@@ -2007,7 +2046,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let col = if lit { PICKED } else if hits.is_empty() { PATH } else { CLASH };
         seg(frame, plan.points[a].at, plan.points[b].at, col);
         let edge = Color([col.0[0], col.0[1], col.0[2], 0.45]);
-        for [p, q] in room(plan.points[a].at, plan.points[b].at, profile).0 {
+        let (pa, pb) = plan.axis(k);
+        for [p, q] in room(pa, pb, profile).0 {
             seg(frame, p, q, edge);
         }
         for p in hits {
@@ -2169,15 +2209,26 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let walled = !picked.is_empty() && picked.iter().all(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled));
         let grouped = picked.iter().any(|&k| plan.group_of(k).is_some());
         for (r, name, a) in panel_buttons(interior.tool) {
-            let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) || matches!(a, Action::Preset(k) if now == Some(PRESETS[k].1)) { Lamp::On } else { Lamp::Off };
+            let lamp = if inside(r, interior.cursor)
+                || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s))
+                || matches!(a, Action::Preset(k) if now == Some(PRESETS[k].1))
+                || (a == Action::Stand && now.is_some_and(|p| p.stand))
+                || (a == Action::SnapFloor && interior.snap_floor)
+            {
+                Lamp::On
+            } else {
+                Lamp::Off
+            };
             let off = match a {
                 Action::Remove => interior.pick.is_none(),
-                Action::Section(_) => now.is_none(),
+                Action::Section(_) | Action::Stand => now.is_none(),
                 Action::Group | Action::Wall => picked.is_empty(),
                 Action::Ungroup => !grouped,
                 _ => false,
             };
             let name = if a == Action::Wall && walled { "OPEN UP" } else { name };
+            // (Standing on its line: the line its floor; else its axis.)
+            let name = if a == Action::Stand { if now.is_some_and(|p| !p.stand) { "AXIS ON LINE" } else { "FLOOR ON LINE" } } else { name };
             draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
         }
     }
