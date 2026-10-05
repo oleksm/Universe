@@ -86,8 +86,11 @@ pub struct Interior {
     /// undone (REDO).
     undo: Vec<Plan>,
     redo: Vec<Plan>,
-    /// The cross-section new lines get.
+    /// The cross-section new lines get; the slider held (its width 0, height 1).
     profile: Profile,
+    slider: Option<usize>,
+    /// A slide under way has its undo step already.
+    sliding: bool,
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
@@ -157,18 +160,24 @@ struct Plan {
     lines: Vec<(usize, usize, Profile)>,
 }
 
-/// A line's cross-section: its shape and its size across (m), laid round the line.
+/// A line's cross-section: its shape, its width and its height (m), laid round the
+/// line.
 #[derive(Clone, Copy, PartialEq)]
 struct Profile {
     section: Section,
-    size: f32,
+    width: f32,
+    height: f32,
 }
 
 impl Default for Profile {
     fn default() -> Self {
-        Profile { section: Section::Line, size: 1.2 }
+        Profile { section: Section::Line, width: 2.0, height: 1.5 }
     }
 }
+
+/// The sliders' range for a cross-section's width and height (m).
+const ROOM_MIN: f32 = 0.3;
+const ROOM_MAX: f32 = 6.0;
 
 /// The shape of a line's cross-section.
 #[derive(Clone, Copy, Default, PartialEq)]
@@ -178,7 +187,7 @@ enum Section {
     Line,
     Round,
     Square,
-    /// Six-sided, its size across its flats.
+    /// Six-sided, its width and height across its flats.
     Hex,
 }
 
@@ -198,17 +207,18 @@ impl Section {
 impl Profile {
     /// Its outline's corners round the line (across, up; m): a round one as 16.
     fn corners(self) -> Vec<Vec2> {
-        let r = self.size * 0.5;
-        let ring = |n: usize, radius: f32, turn: f32| (0..n).map(|k| {
+        // (A shape a metre across, stretched to its width and height.)
+        let ring = |n: usize, radius: f32, turn: f32| -> Vec<Vec2> { (0..n).map(|k| {
             let a = turn + k as f32 / n as f32 * std::f32::consts::TAU;
             Vec2::new(a.cos(), a.sin()) * radius
-        }).collect();
-        match self.section {
+        }).collect() };
+        let unit = match self.section {
             Section::Line => Vec::new(),
-            Section::Round => ring(16, r, 0.0),
-            Section::Square => ring(4, r * std::f32::consts::SQRT_2, std::f32::consts::FRAC_PI_4),
-            Section::Hex => ring(6, r / (std::f32::consts::PI / 6.0).cos(), 0.0),
-        }
+            Section::Round => ring(16, 0.5, 0.0),
+            Section::Square => ring(4, 0.5 * std::f32::consts::SQRT_2, std::f32::consts::FRAC_PI_4),
+            Section::Hex => ring(6, 0.5 / (std::f32::consts::PI / 6.0).cos(), std::f32::consts::FRAC_PI_6).into_iter().map(|c| c * Vec2::new((std::f32::consts::PI / 6.0).cos(), 1.0)).collect(),
+        };
+        unit.into_iter().map(|c| c * Vec2::new(self.width, self.height)).collect()
     }
 }
 
@@ -266,7 +276,7 @@ impl Interior {
         let a = add(Vec3::new(h.x, h.y, (h.z + c.z) * 0.5), &mut self.plan);
         let b = add(Vec3::new(c.x, h.y, c.z), &mut self.plan);
         let d = add(Vec3::new(e.x, h.y, (h.z + e.z) * 0.5), &mut self.plan);
-        let (round, hex) = (Profile { section: Section::Round, size: 1.6 }, Profile { section: Section::Hex, size: 0.9 });
+        let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0 }, Profile { section: Section::Hex, width: 0.9, height: 0.9 });
         self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
         self.tool = Tool::Path;
     }
@@ -433,7 +443,7 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
 }
 
 /// The tool's panel, at the left: where it is and its size.
-const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 270.0));
+const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 294.0));
 
 /// The panel's actions: the work plane down and up, what's picked out.
 #[derive(Clone, Copy, PartialEq)]
@@ -441,10 +451,15 @@ enum Action {
     PlaneDown,
     PlaneUp,
     Remove,
-    /// The cross-section's shape, and its size smaller or bigger: for new lines
-    /// (laying paths), or the picked line's.
+    /// The cross-section's shape: for new lines (laying paths), or the picked line's.
     Section(Section),
-    Size(f32),
+}
+
+/// The panel's sliders: the cross-section's width (0) and height (1), each its
+/// track (where, its size).
+fn sliders() -> [(Vec2, Vec2); 2] {
+    let (p, c) = PANEL;
+    [0.0, 24.0].map(|dy| (Vec2::new(p.x + 92.0, p.y + 202.0 + dy), Vec2::new(c.x - 100.0, 10.0)))
 }
 
 /// The panel's buttons for the tool in hand (where, its label, what it does).
@@ -454,10 +469,9 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     let w = (c.x - 16.0 - 6.0) / 2.0;
     let w4 = (c.x - 16.0 - 18.0) / 4.0;
     let shapes = Section::ALL.iter().enumerate().map(|(k, s)| (at(174.0, k as f32 * (w4 + 6.0), w4), s.name(), Action::Section(*s)));
-    let size = [(at(198.0, 0.0, w), "SIZE -", Action::Size(-0.1)), (at(198.0, w + 6.0, w), "SIZE +", Action::Size(0.1))];
     match tool {
-        Tool::Path => shapes.chain(size).chain([(at(222.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(222.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(246.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
-        Tool::Look => shapes.chain(size).chain([(at(246.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Path => shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Look => shapes.chain([(at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
     }
 }
 
@@ -465,16 +479,45 @@ fn panel_button_at(tool: Tool, q: Vec2) -> Option<Action> {
     panel_buttons(tool).into_iter().find(|(r, _, _)| inside(*r, q)).map(|(_, _, a)| a)
 }
 
-/// The work plane's handle: the middle of its edge nearest the camera that's on
-/// screen (its frame).
+/// The work plane's handle: on its edge nearest the camera, the corner that edge
+/// runs to on the right (its frame); failing that one on screen, the next edge's.
 fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
-    let (lo, hi, m) = (h.lo, h.hi, (h.lo + h.hi) * 0.5);
-    let edges = [Vec3::new(lo.x, plane, m.z), Vec3::new(hi.x, plane, m.z), Vec3::new(m.x, plane, lo.z), Vec3::new(m.x, plane, hi.z)];
+    let (lo, hi) = (h.lo, h.hi);
+    let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
+    let mut edges: Vec<(Vec3, Vec3)> = (0..4).map(|k| (c[k], c[(k + 1) % 4])).collect();
+    edges.sort_by(|a, b| ((a.0 + a.1) * 0.5).distance(cam.eye).total_cmp(&((b.0 + b.1) * 0.5).distance(cam.eye)));
     let size = cam.centre * 2.0;
-    let seen = |p: &Vec3| cam.project(*p).is_some_and(|(q, _)| q.x > 20.0 && q.y > 60.0 && q.x < size.x - 20.0 && q.y < size.y - 30.0);
-    let mut by_near = edges;
-    by_near.sort_by(|a, b| a.distance(cam.eye).total_cmp(&b.distance(cam.eye)));
-    by_near.iter().copied().find(seen).unwrap_or(by_near[0])
+    // (On screen, and not under the panel or the legend.)
+    let on = |q: Vec2| q.x > 20.0 && q.y > 60.0 && q.x < size.x - 20.0 && q.y < size.y - 30.0 && !inside(legend_rect(size), q) && !inside(PANEL, q);
+    let right = |(a, b): (Vec3, Vec3)| match (cam.project(a), cam.project(b)) {
+        (Some((qa, _)), Some((qb, _))) => Some(if qa.x >= qb.x { (a, qa) } else { (b, qb) }),
+        (Some((qa, _)), None) => Some((a, qa)),
+        (None, Some((qb, _))) => Some((b, qb)),
+        _ => None,
+    };
+    edges.iter().filter_map(|e| right(*e)).find(|(_, q)| on(*q)).map_or(c[0], |(p, _)| p)
+}
+
+/// The legend, at the bottom right: where it is and its size.
+fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
+    let (w, line) = (230.0, 14.0);
+    let height = (SORTS.len() + 2) as f32 * line + line * 0.5 + 10.0;
+    (Vec2::new(size.x - w - 12.0, size.y - 30.0 - height), Vec2::new(w, height))
+}
+
+/// The globe at the top right: its middle and radius (px).
+fn globe(size: Vec2) -> (Vec2, f32) {
+    (Vec2::new(size.x - 64.0, 100.0), 38.0)
+}
+
+/// The globe's axis ends as seen: each axis's direction both ways, where its end
+/// is on screen, and how near the camera it points (to draw the far ones first).
+fn globe_ends(cam: &Camera, size: Vec2) -> Vec<(Vec3, Vec2, f32)> {
+    let (c, r) = globe(size);
+    [Vec3::X, Vec3::Y, Vec3::Z, -Vec3::X, -Vec3::Y, -Vec3::Z]
+        .into_iter()
+        .map(|a| (a, c + Vec2::new(a.dot(cam.right), -a.dot(cam.up)) * r * 0.8, -a.dot(cam.forward)))
+        .collect()
 }
 
 /// The work plane's height (its frame): as set, or the hatch's (where the crew come in).
@@ -518,10 +561,13 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     let before = interior.plan.clone();
     let stay = input_plan(app, ctx, interior);
-    if interior.plan != before && interior.plan.hull == before.hull {
+    // (A slide is one step, however many frames it changes the plan.)
+    let changed = interior.plan != before && interior.plan.hull == before.hull;
+    if changed && !interior.sliding {
         interior.undo.push(before);
         interior.redo.clear();
     }
+    interior.sliding = interior.slider.is_some() && (changed || interior.sliding);
     // The plan checked against the hull, again when it's changed.
     if interior.checked.as_ref().is_none_or(|(p, _)| *p != interior.plan)
         && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
@@ -547,6 +593,19 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.cursor = cursor;
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
+    // The globe: an axis's end clicked, the view turned to look along it from there
+    // (straight down that axis), to set the plane, or a point, true.
+    if pressed
+        && let Some((a, _, _)) = globe_ends(&cam, size).into_iter().find(|(_, q, _)| q.distance(cursor) < 9.0)
+    {
+        if a.y.abs() > 0.5 {
+            interior.pitch = 1.5 * a.y.signum();
+        } else {
+            interior.pitch = 0.0;
+            interior.yaw = a.x.atan2(a.z);
+        }
+        return true;
+    }
     // The tools (toolbar or key); the panel's actions.
     let tool = if pressed { button_at(cursor) } else { None };
     for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path)] {
@@ -566,20 +625,31 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     if lift != 0.0 {
         interior.plane = Some((plane_of(interior, &h) + lift).clamp(h.lo.y, h.hi.y));
     }
-    // A cross-section, its shape or size: for new lines; picked in LOOK, that line's.
-    if let Some(a @ (Action::Section(_) | Action::Size(_))) = action {
-        let profile = match (interior.tool, interior.pick) {
-            (Tool::Look, Some(Hover::Line(k))) => Some(&mut interior.plan.lines[k].2),
-            (Tool::Look, _) => None,
-            _ => Some(&mut interior.profile),
-        };
-        if let Some(p) = profile {
-            match a {
-                Action::Section(s) => p.section = s,
-                Action::Size(d) => p.size = ((p.size + d) * 10.0).round().clamp(3.0, 60.0) / 10.0,
-                _ => {}
-            }
+    // A cross-section, its shape (a button) or its width or height (a slider, held
+    // and slid): for new lines; picked in LOOK, that line's.
+    if pressed {
+        interior.slider = sliders().iter().position(|t| inside((t.0 - Vec2::new(0.0, 4.0), t.1 + Vec2::new(0.0, 8.0)), cursor));
+    }
+    if !input.button_down(MouseButton::Left) {
+        interior.slider = None;
+    }
+    let profile = match (interior.tool, interior.pick) {
+        (Tool::Look, Some(Hover::Line(k))) => Some(&mut interior.plan.lines[k].2),
+        (Tool::Look, _) => None,
+        _ => Some(&mut interior.profile),
+    };
+    if let Some(p) = profile {
+        if let Some(Action::Section(s)) = action {
+            p.section = s;
         }
+        if let Some(k) = interior.slider {
+            let (at, len) = sliders()[k];
+            let v = ROOM_MIN + ((cursor.x - at.x) / len.x).clamp(0.0, 1.0) * (ROOM_MAX - ROOM_MIN);
+            *(if k == 0 { &mut p.width } else { &mut p.height }) = (v * 10.0).round() / 10.0;
+        }
+    }
+    if interior.slider.is_some() {
+        return true;
     }
     interior.hover = hover_at(interior, &cam, cursor);
     // Removed: what's under the cursor (DEL), or what's picked (REMOVE); the hull's
@@ -908,13 +978,34 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(q + Vec2::new(6.0, -4.0), name, if lit { col } else { Color([col.0[0], col.0[1], col.0[2], 0.55]) }, 0.7);
         }
     }
+    // The globe: the axes as the camera sees them (X red, Y green, Z blue; their far
+    // ends faint); an end clicked looks along it.
+    {
+        let (c, r) = globe(size);
+        frame.hud_box(c - Vec2::splat(r), Vec2::splat(r * 2.0), PLANE.scale(0.8));
+        let mut ends = globe_ends(&cam, size);
+        ends.sort_by(|a, b| a.2.total_cmp(&b.2));
+        for (a, q, _) in ends {
+            let (col, name) = if a.x.abs() > 0.5 { (Color([1.0, 0.35, 0.35, 1.0]), "X") } else if a.y.abs() > 0.5 { (Color([0.4, 1.0, 0.45, 1.0]), "Y") } else { (Color([0.4, 0.6, 1.0, 1.0]), "Z") };
+            let plus = a.x + a.y + a.z > 0.0;
+            let hover = q.distance(interior.cursor) < 9.0;
+            let col = if hover { PICKED } else if plus { col } else { Color([col.0[0], col.0[1], col.0[2], 0.45]) };
+            if plus {
+                frame.hud_line(c, q, col);
+            }
+            frame.hud_rect(q - Vec2::splat(6.0), Vec2::splat(12.0), Color([0.02, 0.06, 0.13, 1.0]));
+            frame.hud_box(q - Vec2::splat(6.0), Vec2::splat(12.0), col);
+            if plus {
+                frame.text_scaled(q - Vec2::new(3.0, 4.0), name, col, 0.7);
+            }
+        }
+    }
     // The legend: what each colour is, points and ways.
     {
-        let (w, line) = (230.0, 14.0);
-        let height = (SORTS.len() + 2) as f32 * line + line * 0.5 + 10.0;
-        let p = Vec2::new(size.x - w - 12.0, size.y - 30.0 - height);
-        frame.hud_rect(p, Vec2::new(w, height), Color([0.02, 0.06, 0.13, 0.85]));
-        frame.hud_box(p, Vec2::new(w, height), PLANE.scale(1.5));
+        let line = 14.0;
+        let (p, dims) = legend_rect(size);
+        frame.hud_rect(p, dims, Color([0.02, 0.06, 0.13, 0.85]));
+        frame.hud_box(p, dims, PLANE.scale(1.5));
         // (Points a square, ways a stroke.)
         let row = |frame: &mut Frame, y: f32, col: Color, text: &str, square: bool| {
             if square {
@@ -942,7 +1033,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         frame.hud_box(p, c, PLANE.scale(1.5));
         let (title, help) = match interior.tool {
             Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT, WHEEL FOR NEARER OR FARTHER. CLICK A POINT OR A LINE TO PICK IT. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
-            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO JOIN TO IT AND GO ON FROM IT. RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ON ITS NEAR EDGE) UP OR DOWN."),
+            Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO JOIN TO IT AND GO ON FROM IT. RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
@@ -959,7 +1050,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 let (a, b, profile) = plan.lines[k];
                 let len = plan.points[a].at.distance(plan.points[b].at);
                 let hits = clash.get(k).map_or(0, |c| c.len());
-                format!("A LINE {len:.1} M{}", if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1} M", profile.section.name(), profile.size) }
+                format!("A LINE {len:.1} M{}", if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1}X{:.1}", profile.section.name(), profile.width, profile.height) }
             }
             None => {
                 let len: f32 = plan.lines.iter().map(|&(a, b, _)| plan.points[a].at.distance(plan.points[b].at)).sum();
@@ -978,11 +1069,22 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             _ => Some(interior.profile),
         };
         let what = if interior.tool == Tool::Look { "THE PICKED LINE'S CROSS-SECTION" } else { "NEW LINES' CROSS-SECTION" };
-        let size = now.map_or(String::new(), |p| format!("   {:.1} M ACROSS", p.size));
-        frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), &format!("{what}{size}"), LABEL.scale(0.8), 0.7);
+        frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), what, LABEL.scale(0.8), 0.7);
+        // Its width and height: a slider each, its knob where it is.
+        for (k, (at, len)) in sliders().into_iter().enumerate() {
+            let value = now.map(|q| if k == 0 { q.width } else { q.height });
+            let name = if k == 0 { "WIDTH" } else { "HEIGHT" };
+            let col = if value.is_none() { LABEL.scale(0.4) } else if interior.slider == Some(k) { PICKED } else { LABEL };
+            frame.text_scaled(Vec2::new(p.x + 8.0, at.y), &value.map_or(name.to_string(), |v| format!("{name} {v:.1}")), col, 0.7);
+            frame.hud_line(at + Vec2::new(0.0, len.y * 0.5), at + Vec2::new(len.x, len.y * 0.5), col.scale(0.6));
+            if let Some(v) = value {
+                let x = at.x + (v - ROOM_MIN) / (ROOM_MAX - ROOM_MIN) * len.x;
+                frame.hud_rect(Vec2::new(x - 3.0, at.y - 2.0), Vec2::new(6.0, len.y + 4.0), col);
+            }
+        }
         for (r, name, a) in panel_buttons(interior.tool) {
             let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) { Lamp::On } else { Lamp::Off };
-            let off = (a == Action::Remove && interior.pick.is_none()) || (matches!(a, Action::Section(_) | Action::Size(_)) && now.is_none());
+            let off = (a == Action::Remove && interior.pick.is_none()) || (matches!(a, Action::Section(_)) && now.is_none());
             draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
         }
     }
