@@ -104,8 +104,8 @@ pub struct Interior {
     snap_floor: bool,
     /// The hull at the work plane's height: for which height, each metre cell's
     /// middle and what's there (hollow, solid); and being worked out, for which.
-    hollow: Option<(f32, Arc<Vec<(Vec2, bool)>>)>,
-    hollow_job: Option<(f32, mpsc::Receiver<Vec<(Vec2, bool)>>)>,
+    hollow: Option<(f32, Arc<Vec<Cell>>)>,
+    hollow_job: Option<(f32, mpsc::Receiver<Vec<Cell>>)>,
     /// A slide under way has its undo step already; SHIFT held (squaring a path).
     sliding: bool,
     shift: bool,
@@ -287,6 +287,9 @@ fn deck_shapes(plan: &universe_sim::world::deckplan::DeckPlan, mesh: &universe_s
     }
     out
 }
+
+/// A cell of the hollow map: its middle (x, z) and whether it's hollow (else solid).
+type Cell = (Vec2, bool);
 
 /// A deck's floor piece or wall run, flat (its outline) and which.
 type DeckShape = (Vec<Vec3>, bool);
