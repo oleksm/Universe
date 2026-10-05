@@ -11,9 +11,7 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # (x-kind: [hull]; a settlement's schema holds two, [settlement, rig]). The build checks each record's
 # key against it.
 definitions:
-  slot_kind:
-    description: "A kind of slot a hull has, and so the kind of equipment that fits it. gate: a gate ring's, not a hull's."
-    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, gate]
+  slot_kind: { $ref: "dictionary.schema.yaml#/definitions/slot_kind" }
   made_from:
     description: "What a made thing is made from: each a material, an item of stock, a part or a good, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
     type: array
@@ -72,7 +70,7 @@ definitions:
       required: [of, tier]
       properties:
         of: { type: array, minItems: 1, items: { type: string } }
-        tier: { enum: [sourced, derived, invented] }
+        tier: { $ref: "dictionary.schema.yaml#/definitions/tier" }
         source: { type: string }
         note: { type: string }
         review: { type: boolean, description: "A guess put in so the figure is there: to be reviewed." }
@@ -87,12 +85,19 @@ definitions:
       deck: { type: integer, minimum: 1 }
       section: { type: string }
       unit: { type: integer, minimum: 1 }
-  provenance:
-    description: "How a record came to be. seeded: made from the galaxy's seed, and may be made again. curated: changed by hand; the record is the truth. frozen: curated and not to be changed (other work is built on it)."
-    enum: [seeded, curated, frozen]
-  revision:
-    description: "Where a designed thing stands. draft: being worked out. released: settled, to be built from. superseded: replaced by a later one. outdated: an early rough guess, kept as a record, not to be balanced against."
-    enum: [draft, released, superseded, outdated]
-  in_game:
-    description: "Whether the game makes it yet."
-    enum: [made, partly, not made]
+  provenance: { $ref: "dictionary.schema.yaml#/definitions/provenance" }
+  revision: { $ref: "dictionary.schema.yaml#/definitions/design_stage" }
+  in_game: { $ref: "dictionary.schema.yaml#/definitions/in_game" }
+  record_revision:
+    description: "A record's revision: how firm it is, who decides a change to it, and what another agent does when it does not fit its own work. Read it before balancing against a record or building on it. A kind's schema gives the revision its records have unless they say otherwise (its default)."
+    type: object
+    additionalProperties: false
+    required: [status]
+    properties:
+      status: { $ref: "dictionary.schema.yaml#/definitions/revision_status" }
+      owner: { $ref: "dictionary.schema.yaml#/definitions/owner" }
+      on_conflict: { $ref: "dictionary.schema.yaml#/definitions/on_conflict" }
+      open_to: { type: array, items: { type: string }, description: "The groups or figures (group.property) that may still be proposed for change, where the rest may not." }
+      fixed: { type: array, items: { type: string }, description: "The groups or figures that will not change, where the rest may." }
+      because: { type: string, description: "Why it stands where it does: what it rests on, or what waits on it." }
+      ask: { type: string, description: "Where a proposal to change it goes: a file of the repository." }

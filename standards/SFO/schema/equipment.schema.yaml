@@ -200,4 +200,7 @@ properties:
         required: [kind]
         properties:
           kind: { const: throat_coil, x-in-game: "not made" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: sketch, owner: registry, on_conflict: propose, because: "First designs: weights from the game's early list, parts by the shares of one real design or chosen. Nothing is yet sized from what it must do.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

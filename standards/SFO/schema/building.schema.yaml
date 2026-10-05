@@ -49,4 +49,7 @@ properties:
         item: { type: string, x-ref: [good, stock, material], description: "What goes into it, by its key." }
         quantity: { type: number, x-unit: "kg", description: "kg of it in the whole building" }
   life: { type: number, x-unit: "s", description: "s it is built to stand before it must be rebuilt" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: sketch, owner: registry, on_conflict: propose, because: "A first building of its kind, sized from one real example.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

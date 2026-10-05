@@ -28,4 +28,7 @@ properties:
       properties:
         item: { type: string, x-ref: [equipment], description: "The equipment (SFO 16), by its key." }
         count: { type: integer, minimum: 1 }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: sketch, owner: registry, on_conflict: propose, because: "A list of equipment, not yet a built thing.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

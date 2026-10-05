@@ -650,3 +650,25 @@ validator down to a ten-line walk with a standard library, every rule in the sch
 kinds deriving from one `physical_object` base with required figures above nothing. The plan is
 `docs/registry-validation-plan.md`. Two things reach you: the generator will need `allOf`, and the
 required figures become plain fields. Not started; it follows the ship equipment work.
+
+**A record's revision, and the dictionary (the user, 2026-10-05). For every agent that builds on
+the registry.**
+
+- **`revision`** (top level, optional, on equipment, parts, hulls, modules, goods, stock,
+  materials, buildings, gates, structures, needs, professions): how firm the record is and what to
+  do when it does not fit your work.
+  - `status`: `sketch` (do not balance against it), `design` (build against it, propose changes),
+    `agreed` (needs the user), `sealed` (a hard limit: fit to it). Only the user seals.
+  - `on_conflict`: `adjust`, `propose`, `escalate`, `conform`.
+  - `owner`, `open_to` (what may still change), `fixed` (what will not), `because`, `ask` (where a
+    proposal goes).
+- **A record that says nothing has its kind's default,** written in the kind's schema (`default`
+  on its `revision` property). Today: equipment, parts, hulls, buildings, structures and
+  professions are `sketch`; modules, goods, stock, materials, gates and needs are `design`. All
+  are `propose`. Two records say their own so far: the MC-07 and the 4 t tank.
+- **`identity.revision` stays** as it was (draft, released, superseded, outdated): a product's
+  stage, which you read. The new section does not replace it yet.
+- **`standards/dictionary.schema.yaml`** (new): the shared lists of values, each value with its
+  meaning (`x-values`). `common.schema.yaml`'s `slot_kind`, `provenance`, `revision`, `in_game`
+  and a basis's `tier` now point into it. Your generator followed the chain: the tests pass.
+- On the page: reports **Dictionary** and **Revisions**.

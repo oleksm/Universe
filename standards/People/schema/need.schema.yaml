@@ -49,4 +49,7 @@ properties:
         serves: { type: number, x-unit: "1", description: "how many people one of that trade serves" }
   lasts: { type: number, x-unit: "s", description: "s a person can go without it before it harms them" }
   unmet: { type: string, description: "What going without it does." }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: design, owner: registry, on_conflict: propose, because: "From published figures where its basis says so.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

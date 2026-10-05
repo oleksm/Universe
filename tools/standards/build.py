@@ -135,7 +135,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "revision", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -1048,7 +1048,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis") or (kind == "modules" and group == "recipes"):
+            if group in ("slug", "basis", "revision") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -2324,6 +2324,19 @@ for it in sorted(_outs, key=lambda i: item_name(i).lower()):
     takers = list(dict.fromkeys(_ins.get(it) or []))
     rows.append(row("ok" if takers else "gap", item_name(it), ", ".join(list(dict.fromkeys(_outs[it]))[:6]) + (" and others" if len(set(_outs[it])) > 6 else ""), ", ".join(takers[:6]) + (" and others" if len(takers) > 6 else "") or "nothing takes it"))
 report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed.", ["Given off", "By", "Taken by"], rows)
+
+# 3d. The dictionary: the registry's shared words, and what each value means (standards/dictionary.schema.yaml).
+_dict = load(os.path.join(TREE, "dictionary.schema.yaml")).get("definitions") or {}
+rows = [row("note", name if i == 0 else "", v, (d.get("x-values") or {}).get(v, ""), d.get("description", "") if i == 0 else "") for name, d in _dict.items() for i, v in enumerate(d.get("enum") or [])]
+report("dictionary", "Dictionary: the registry's shared words", "Each list of values a field may take, and what each value means. A record's revision says how firm it is (status) and what to do when it does not fit your work (on_conflict): read those two first.", ["Word", "Value", "Means", "About"], rows)
+# (How firm each kind's records are unless one says otherwise: its schema's default revision.)
+rows = []
+for kind, sch in SCHEMAS.items():
+    dflt = ((sch.get("properties") or {}).get("revision") or {}).get("default")
+    if dflt:
+        own = [e for e in {"equipment": equipment, "hulls": hulls, "parts": parts, "modules": modules, "goods": goods, "materials": materials, "gates": gates}.get(kind, []) if e.get("revision")]
+        rows.append(row("note", KIND_NAME.get(kind, kind) if "KIND_NAME" in globals() else kind, dflt.get("status", ""), dflt.get("on_conflict", ""), dflt.get("because", ""), ", ".join(f"{e['identity'].get('name', e['slug'])}: {e['revision']['status']}" for e in own) or "none"))
+report("revisions", "Revisions: how firm each kind of record is", "What a record of each kind is unless it says otherwise, and the records that say otherwise. sketch: do not balance against it. design: build against it, propose changes. agreed: needs the user. sealed: a hard limit.", ["Kind", "Status", "On conflict", "Because", "Records that say otherwise"], rows)
 
 # 4. What goes in against what comes out, for each industrial module.
 rows = []

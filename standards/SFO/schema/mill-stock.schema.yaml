@@ -26,4 +26,7 @@ properties:
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
       wall: { type: number, x-unit: "m", description: "m, of a tube" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: design, owner: registry, on_conflict: propose, because: "One gauge standing for all of its form: more gauges may be asked for.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

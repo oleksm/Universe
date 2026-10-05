@@ -130,4 +130,7 @@ properties:
       castability: { $ref: "#/definitions/rating", description: "Cast or printed." }
       repairability: { $ref: "#/definitions/rating" }
       recyclability: { $ref: "#/definitions/rating" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: design, owner: registry, on_conflict: propose, because: "Properties of a real material, as its basis says.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

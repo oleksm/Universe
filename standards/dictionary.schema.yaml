@@ -1,0 +1,62 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Dictionary
+description: 'standards/dictionary.schema.yaml: the registry''s shared words. Each is a list of values a field may take, with what each value means (x-values). A schema that uses one refers to it and does not write its own list. Read this first when a value in a record is not plain.'
+definitions:
+  revision_status:
+    description: "How firm a record is, for anyone building on it or against it. Only the user seals a record."
+    enum: [sketch, design, agreed, sealed]
+    x-values:
+      sketch: "A rough guess, there so the record exists. Do not balance against it; expect it to move."
+      design: "Worked out, and open. Build against it, and propose a change with a reason."
+      agreed: "Settled with the user. Changing it needs the user."
+      sealed: "A hard limit: other work is built on it. Fit your work to it."
+  on_conflict:
+    description: "What another agent does when a record does not fit its own work."
+    enum: [adjust, propose, escalate, conform]
+    x-values:
+      adjust: "Change it yourself, and say why in the record."
+      propose: "Leave it. Write the proposal where the record says to ask, and work on a stated assumption meanwhile."
+      escalate: "Stop and bring it to the user."
+      conform: "It will not change. Fit to it."
+  owner:
+    description: "Who decides a change to a record."
+    enum: [registry, ships, integration, user]
+    x-values:
+      registry: "The registry session (the facts and their spec), on branch fso."
+      ships: "The ships session (hulls and their models), on branch ships."
+      integration: "The integrating session (the game's code), on main."
+      user: "The user alone."
+  design_stage:
+    description: "Where a designed thing stands in its life as a product. Not how firm its record is: that is its revision's status."
+    enum: [draft, released, superseded, outdated]
+    x-values:
+      draft: "Being worked out."
+      released: "Settled, to be built from."
+      superseded: "Replaced by a later one."
+      outdated: "An early rough guess, kept as a record, not to be balanced against."
+  in_game:
+    description: "Whether the game makes it yet."
+    enum: [made, partly, not made]
+    x-values:
+      made: "The game makes it."
+      partly: "The game makes some of it."
+      not made: "Described here, not yet in the game."
+  provenance:
+    description: "How a record of the charted world came to be."
+    enum: [seeded, curated, frozen]
+    x-values:
+      seeded: "Made from the galaxy's seed, and may be made again."
+      curated: "Changed by hand; the record is the truth."
+      frozen: "Curated and not to be changed: other work is built on it."
+  tier:
+    description: "Where a figure comes from."
+    enum: [sourced, derived, invented]
+    x-values:
+      sourced: "From a published source or the game, named."
+      derived: "Worked out from other figures, by physics or from a model."
+      invented: "Chosen."
+  slot_kind:
+    description: "A kind of slot a hull has, and so the kind of equipment that fits it."
+    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, gate]
+    x-values:
+      gate: "A gate ring's, not a hull's."

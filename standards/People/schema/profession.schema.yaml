@@ -20,4 +20,7 @@ properties:
     properties:
       learned: { enum: [on the job, apprenticeship, school, college], description: "Where it is learned. on the job: beside someone who does it, earning. apprenticeship: bound to a master for a term. school: a trade school. college: years of study first." }
       time: { type: number, x-unit: "s", description: "s to learn it, from nothing to working alone" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: sketch, owner: registry, on_conflict: propose, because: "Broad trades, by the user's word; training times are chosen.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

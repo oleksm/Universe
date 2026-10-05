@@ -43,4 +43,7 @@ properties:
       goods: { type: string, description: "Going: a good's market category is identity.traded_as. Still said, beside it, on the rocks the game digs, until the engine stops reading it for ores." }
       ore: { type: string, description: "For a rock: the game's ore it is (content/base/ores.ron), dug from asteroids by mining ships." }
   life: { type: number, x-unit: "s", description: "s a made thing lasts in use before it is worn out and must be made again" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: design, owner: registry, on_conflict: propose, because: "What it is is settled by the recipes that make and use it; its figures are as its basis says.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
