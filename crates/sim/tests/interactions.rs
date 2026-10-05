@@ -336,6 +336,21 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
     assert_eq!(u.ship.spec().dry_mass, 61_540.0 - 1500.0 + 800.0, "(with its 1.5 t capacitor bank and 40 kg comm)");
+    // At Port Trethi's market: a rack lying in its warehouse goes in, the one taken out goes
+    // into the warehouse; a hull it hasn't got isn't sold.
+    let trethi = Facility::Spaceport(u.ship_system().spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());
+    let ship = u.ship.clone();
+    u.ship = { let mut s = u.world.ship_on(home, trethi, 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
+    let item = |k: &str| universe_sim::world::goods::item(k).unwrap();
+    let (s3, s2) = (item("equipment.rack.s3"), item("equipment.rack.s2"));
+    assert!(u.refit("cargo", Some(m("equipment.rack.s3"))).is_err(), "none in stock");
+    let mass = u.world.goods[s3].mass;
+    u.markets.economy.put(home, trethi, s3, mass);
+    u.refit("cargo", Some(m("equipment.rack.s3"))).unwrap();
+    let stock = |u: &Universe, i: usize| u.markets.economy.place(home, trethi).unwrap().stock.of(i);
+    assert!(stock(&u, s3) < 1.0 && (stock(&u, s2) - u.world.goods[s2].mass).abs() < 1e-6, "the rack from the warehouse, the old one into it");
+    assert!(u.buy_hull(content().handle("hull.hauler").unwrap()).unwrap_err().contains("IN STOCK"));
+    u.ship = { let mut s = u.world.ship_on(home, Facility::Station(station), 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
     // The gun out: it doesn't fire.
     u.refit("hardpoint_1", None).unwrap();
     assert!(!u.ship.spec().has(universe_sim::world::modules::Gear::Gun));
@@ -551,4 +566,56 @@ fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
     }
     let universe_sim::world::Place::Aboard { position, .. } = u.crew.place else { panic!("still aboard: {:?}", u.crew.place) };
     assert!(position.length() < 40.0, "still in the ship: {position:?}");
+}
+
+#[test]
+fn a_yard_builds_an_mc07_from_its_stock() {
+    use universe_sim::world::recipes;
+    let mut u = bench(0);
+    let e = &mut u.markets.economy;
+    let yard = e.works.iter().position(|w| w.name == "Trethi Yard").expect("Trethi Yard");
+    let station = e.works.iter().position(|w| w.name == "Trethi Power Station").expect("its power station");
+    // What it takes that it doesn't make itself, from the hull and its fit down: two hulls' worth.
+    let goods = u.world.goods.clone();
+    let hull = universe_sim::world::goods::item("hull.mc-07").unwrap();
+    let shop: Vec<&str> = e.works[yard].setups.iter().map(|s| s.module.identity.key.as_str()).collect();
+    let made_by = |i: usize| shop.iter().find_map(|m| recipes::of(m).iter().find(|r| r.makes == i));
+    let reg = universe_sim::world::registry::registry();
+    let fit: Vec<usize> = reg.hulls.iter().find(|h| h.identity.key == "hull.mc-07").unwrap().fit.iter().filter_map(|f| universe_sim::world::goods::item(&f.item)).collect();
+    let mut need: Vec<(usize, f64)> = std::iter::once(hull).chain(fit).map(|i| (i, goods[i].mass)).collect();
+    let mut raw: std::collections::BTreeMap<usize, f64> = Default::default();
+    while let Some((i, kg)) = need.pop() {
+        match made_by(i) {
+            Some(r) => need.extend(r.inputs.iter().map(|&(x, q)| (x, q * kg))),
+            None => *raw.entry(i).or_default() += kg,
+        }
+    }
+    e.works[yard].pool.room = f64::INFINITY;
+    for (&i, &kg) in &raw {
+        e.works[yard].pool.put(i, 2.0 * kg);
+    }
+    let fuel = universe_sim::world::goods::item("stock.deuterium-liq").unwrap();
+    e.works[station].pool.room = f64::INFINITY;
+    e.works[station].pool.put(fuel, 1.0e6);
+    // Its company sees to it: a month, step by step of the economy.
+    let step = universe_sim::services::economy::STEP;
+    let mut t = u.world.time;
+    let mut built = None;
+    for n in 0..(40.0 * 86_400.0 / step) as usize {
+        t += step;
+        u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
+        universe_sim::company::run(&mut u);
+        let e = &u.markets.economy;
+        let place = e.places.iter().find(|p| p.name == "Port Trethi").unwrap();
+        if e.works[yard].pool.of(hull) + place.stock.of(hull) >= goods[hull].mass - 1.0 {
+            built = Some(n as f64 * step / 86_400.0);
+            break;
+        }
+    }
+    let days = built.expect("an MC-07 off the dock within 40 days");
+    eprintln!("an MC-07 built in {days:.1} days");
+    assert!(days > 10.0, "as fast as its modules go: {days:.1} days");
+    // Its company set the yard as a player could: the dock to the hull, the bays to its parts.
+    let e = &u.markets.economy;
+    assert!(e.works[yard].setups.iter().find(|s| s.module.identity.key == "module.building-dock").is_some_and(|s| s.recipe().is_some_and(|r| r.makes == hull)));
 }

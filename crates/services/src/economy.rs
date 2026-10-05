@@ -20,7 +20,8 @@
 use std::collections::{BTreeMap, HashMap};
 
 use universe_world::goods::{Item, POWER_PRICE};
-use universe_world::registry::{Module, ModuleRecipe};
+use universe_world::recipes::Recipe;
+use universe_world::registry::Module;
 use universe_world::traffic::Facility;
 use universe_world::units::DAY;
 
@@ -72,7 +73,9 @@ impl Pool {
 
     /// Take up to `kg`; what was taken.
     pub fn take(&mut self, item: usize, kg: f64) -> f64 {
-        let Some(have) = self.stock.get_mut(&item) else { return 0.0 };
+        let Some(have) = self.stock.get_mut(&item) else {
+            return 0.0;
+        };
         let t = kg.min(*have).max(0.0);
         *have -= t;
         if *have <= 1e-9 {
@@ -83,7 +86,7 @@ impl Pool {
 }
 
 /// A module (`count` of them) and what it's set to: one of its recipes (by
-/// its place in the module's list), or none.
+/// its place in `recipes::of` the module), or none.
 #[derive(Clone, Debug)]
 pub struct Setup {
     pub module: &'static Module,
@@ -92,8 +95,8 @@ pub struct Setup {
 }
 
 impl Setup {
-    pub fn recipe(&self) -> Option<&'static ModuleRecipe> {
-        self.recipe.and_then(|r| self.module.recipes.get(r))
+    pub fn recipe(&self) -> Option<&'static Recipe> {
+        self.recipe.and_then(|r| universe_world::recipes::of(&self.module.identity.key).get(r))
     }
 }
 
@@ -122,6 +125,8 @@ impl Works {
             let steps: Vec<&str> = line.modules.iter().map(|m| m.module.as_str()).collect();
             let chosen = line.makes.as_deref().and_then(|t| universe_world::settlements::route(reg, &steps, t).ok()).unwrap_or_else(|| vec![None; steps.len()]);
             for (m, r) in line.modules.iter().zip(chosen) {
+                // (The registry's recipe, as the engine has it.)
+                let r = r.and_then(|k| universe_world::recipes::of(&m.module).iter().position(|x| x.index == Some(k)));
                 setups.push(Setup { module: module(&m.module)?, count: m.count, recipe: r });
             }
         }
@@ -145,10 +150,8 @@ impl Works {
         for s in &self.setups {
             if let Some(r) = s.recipe() {
                 let rate = r.rate * s.count as f64;
-                for a in r.inputs.iter().filter(|a| !universe_world::goods::from_place(a)) {
-                    if let Some(i) = universe_world::goods::item(&a.item) {
-                        add(i, rate * a.quantity);
-                    }
+                for &(i, q) in &r.inputs {
+                    add(i, rate * q);
                 }
             }
             for b in s.module.generation.iter().flat_map(|g| &g.burns) {
@@ -161,8 +164,18 @@ impl Works {
     }
 
     /// Does it take `item` (as an input or a fuel)?
+    #[cfg(test)]
     fn uses(&self, item: usize) -> bool {
         self.takes().iter().any(|(i, _)| *i == item)
+    }
+
+    /// Is `item` for sale from here: something its modules make (as they're
+    /// set) that none of them could take in, set to anything? (What it was
+    /// given or bought to make things with, and what one of its modules
+    /// could build on, it keeps.)
+    fn sells(&self, item: usize) -> bool {
+        let makes = self.setups.iter().filter_map(Setup::recipe).any(|r| r.makes == item || r.outputs.iter().any(|o| o.0 == item));
+        makes && !self.setups.iter().any(|s| universe_world::recipes::of(&s.module.identity.key).iter().any(|r| r.inputs.iter().any(|x| x.0 == item)))
     }
 
     /// The power it supplies at full output (W).
@@ -230,10 +243,11 @@ pub struct Place {
 /// One item as a market stands on it.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Price {
-    /// What you pay a tonne (None: none in stock), and what it pays you.
+    /// What you pay a unit (None: none in stock), and what it pays you.
     pub ask: Option<f64>,
     pub bid: f64,
-    /// Tonnes in stock, and tonnes it would take (its room).
+    /// Units in stock, and units it would take (its room): tonnes of bulk
+    /// stock, pieces of parts, products and hulls.
     pub stock: f64,
     pub room: f64,
     /// Do its works take it?
@@ -250,14 +264,14 @@ impl Place {
     pub fn price(&self, item: &Item) -> Price {
         let have = self.stock.of(item.id);
         let want = self.need(item.id) * COVER_DAYS;
-        let (stock, room) = (have / 1000.0, self.stock.free() / 1000.0);
+        let (stock, room) = (have / item.mass, self.stock.free() / item.mass);
         if want > 0.0 {
             let factor = (want / have.max(want * 0.05)).powf(0.6).clamp(0.4, 3.0);
             let p = item.price * factor;
-            Price { ask: (have >= 1000.0).then_some(p * ASK), bid: p * BID, stock, room, wanted: true }
+            Price { ask: (stock >= 1.0 - 1e-9).then_some(p * ASK), bid: p * BID, stock, room, wanted: true }
         } else {
             let fill = if self.stock.room > 0.0 { self.stock.free() / self.stock.room } else { 0.0 };
-            Price { ask: (have >= 1000.0).then_some(item.price * ASK), bid: item.price * SPECULATE * fill, stock, room, wanted: false }
+            Price { ask: (stock >= 1.0 - 1e-9).then_some(item.price * ASK), bid: item.price * SPECULATE * fill, stock, room, wanted: false }
         }
     }
 
@@ -284,6 +298,7 @@ pub struct Economy {
     index: HashMap<(usize, Facility), usize>,
     pub stepped_to: f64,
     snapshot: Option<std::sync::Arc<Vec<Place>>>,
+    works_snap: Option<std::sync::Arc<Vec<Works>>>,
 }
 
 impl Economy {
@@ -326,6 +341,11 @@ impl Economy {
                 }
             }
         }
+        self.sync_wants();
+    }
+
+    /// Each market's warehouse, and what its works take.
+    fn sync_wants(&mut self) {
         for p in &mut self.places {
             p.warehouse = self.works.iter().position(|w| w.ground == p.ground && w.exchange);
             let mut wants: Vec<(usize, f64)> = Vec::new();
@@ -343,6 +363,27 @@ impl Economy {
             }
         }
         self.snapshot = None;
+        self.works_snap = None;
+    }
+
+    /// Set module `setup` of works `works` to `recipe` (its place in
+    /// `recipes::of` the module; None: to nothing). Its owner's to choose, a
+    /// player's or a company's alike: anyone else is refused. (What a
+    /// changeover costs isn't described yet: it is at once.)
+    pub fn set_up(&mut self, land: &LandOffice, works: usize, setup: usize, recipe: Option<usize>, by: Party) -> Result<(), String> {
+        let w = self.works.get(works).ok_or("NO SUCH WORKS")?;
+        let g = &land.grounds[w.ground];
+        let owner = g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel)).and_then(|l| land.party(&l.owner));
+        if owner != Some(by) {
+            return Err("NOT YOURS TO SET".into());
+        }
+        let s = w.setups.get(setup).ok_or("NO SUCH MODULE")?;
+        if recipe.is_some_and(|r| r >= universe_world::recipes::of(&s.module.identity.key).len()) {
+            return Err(format!("{} CAN'T BE SET TO THAT", s.module.identity.name.to_uppercase()));
+        }
+        self.works[works].setups[setup].recipe = recipe;
+        self.sync_wants();
+        Ok(())
     }
 
     pub fn place(&self, system: usize, f: Facility) -> Option<&Place> {
@@ -351,7 +392,13 @@ impl Economy {
 
     pub fn place_mut(&mut self, system: usize, f: Facility) -> Option<&mut Place> {
         self.snapshot = None;
+        self.works_snap = None;
         self.index.get(&(system, f)).map(|&i| &mut self.places[i])
+    }
+
+    /// The works as they stand (shared: copied when they've changed).
+    pub fn works_snapshot(&mut self) -> std::sync::Arc<Vec<Works>> {
+        self.works_snap.get_or_insert_with(|| std::sync::Arc::new(self.works.clone())).clone()
     }
 
     pub fn snapshot(&mut self) -> std::sync::Arc<Vec<Place>> {
@@ -363,12 +410,15 @@ impl Economy {
         let i = *self.index.get(&(system, f))?;
         let h = self.places[i].warehouse?;
         self.snapshot = None;
+        self.works_snap = None;
         Some((&mut self.places[i], &mut self.works[h].pool))
     }
 
     /// Put `kg` of `item` into the market at (`system`, `f`) (sold to it), as far as it has room; what went in.
     pub fn put(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> f64 {
-        let Some((p, pool)) = self.market_mut(system, f) else { return 0.0 };
+        let Some((p, pool)) = self.market_mut(system, f) else {
+            return 0.0;
+        };
         let t = kg.min(pool.free()).max(0.0);
         pool.put(item, t);
         p.stock = pool.clone();
@@ -377,7 +427,9 @@ impl Economy {
 
     /// Take up to `kg` of `item` out of the market at (`system`, `f`) (bought from it); what came out.
     pub fn take(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> f64 {
-        let Some((p, pool)) = self.market_mut(system, f) else { return 0.0 };
+        let Some((p, pool)) = self.market_mut(system, f) else {
+            return 0.0;
+        };
         let t = pool.take(item, kg);
         p.stock = pool.clone();
         t
@@ -400,6 +452,7 @@ impl Economy {
             }
         }
         self.snapshot = None;
+        self.works_snap = None;
     }
 
     fn run_place(&mut self, p: usize, at: f64, land: &mut LandOffice, ledger: &mut Ledger, goods: &[Item], tick: u64) {
@@ -436,18 +489,15 @@ impl Economy {
                 let full = rate * dt;
                 let mut k = share;
                 let mut why = (share < 1.0).then(|| "POWER".to_string());
-                // (What's drawn where it stands, the world gives: it isn't in the pool.)
-                let input = |a: &universe_world::registry::Amount| Some((universe_world::goods::item(&a.item)?, a.quantity)).filter(|_| !universe_world::goods::from_place(a));
-                for (i, q) in r.inputs.iter().filter_map(input) {
+                for &(i, q) in &r.inputs {
                     let can = w.pool.of(i) / (q * full).max(1e-12);
                     if can < k {
                         k = can;
                         why = Some(goods[i].name.to_uppercase());
                     }
                 }
-                let Some(product) = universe_world::goods::item(&r.makes) else { continue };
-                let out: Vec<(usize, f64)> = std::iter::once((product, 1.0)).chain(r.outputs.iter().filter_map(input)).collect();
-                let grows = out.iter().map(|o| o.1).sum::<f64>() - r.inputs.iter().filter_map(input).map(|o| o.1).sum::<f64>();
+                let out: Vec<(usize, f64)> = std::iter::once((r.makes, 1.0)).chain(r.outputs.iter().copied()).collect();
+                let grows = out.iter().map(|o| o.1).sum::<f64>() - r.inputs.iter().map(|o| o.1).sum::<f64>();
                 if grows > 0.0 {
                     let can = w.pool.free() / (grows * full);
                     if can < k {
@@ -456,7 +506,7 @@ impl Economy {
                     }
                 }
                 let k = k.clamp(0.0, 1.0);
-                for (i, q) in r.inputs.iter().filter_map(input) {
+                for &(i, q) in &r.inputs {
                     let t = w.pool.take(i, q * full * k);
                     *used.entry(i).or_default() += t;
                 }
@@ -515,7 +565,7 @@ impl Economy {
                 if k == h {
                     continue;
                 }
-                let spare: Vec<(usize, f64)> = self.works[k].pool.stock.iter().filter(|(i, _)| !self.works[k].uses(**i)).map(|(i, kg)| (*i, *kg)).collect();
+                let spare: Vec<(usize, f64)> = self.works[k].pool.stock.iter().filter(|(i, _)| self.works[k].sells(**i)).map(|(i, kg)| (*i, *kg)).collect();
                 for (i, kg) in spare {
                     let price = self.places[p].price(&goods[i]);
                     let t = kg.min(self.works[h].pool.free());
@@ -535,7 +585,9 @@ impl Economy {
                     if t <= 0.0 {
                         continue;
                     }
-                    let Some(ask) = self.places[p].price(&goods[i]).ask else { continue };
+                    let Some(ask) = self.places[p].price(&goods[i]).ask else {
+                        continue;
+                    };
                     self.works[h].pool.take(i, t);
                     self.works[k].pool.put(i, t);
                     let cost = t / 1000.0 * ask;
@@ -578,7 +630,7 @@ mod tests {
         let smelter = e.works.iter().position(|x| x.name == "Trethi Smelter").expect("its smelter");
         let ingot = universe_world::goods::item("stock.al6061-ingot").unwrap();
         let casthouse = e.works[smelter].setups.iter().find(|s| s.module.identity.key == "module.casthouse").unwrap();
-        assert_eq!(casthouse.recipe().unwrap().makes, "stock.al6061-ingot", "set back from what its line makes");
+        assert_eq!(casthouse.recipe().unwrap().makes, ingot, "set back from what its line makes");
         let mut ledger = Ledger::default();
         let goods = universe_world::goods::catalog();
 
@@ -613,5 +665,23 @@ mod tests {
         let room = e.places[trethi].stock.free();
         e.put(w.home_system, Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == "Port Trethi").unwrap()), ore, room * 0.9);
         assert!(e.places[trethi].price(&goods[ore]).bid < before.bid * 0.2, "a full warehouse pays little");
+
+        // Its owner sets the yard's welding bays to the MC-07's nose cap (a recipe from
+        // the bill: the part, from the sheet it's cut from); given sheet, it welds them.
+        let yard = e.works.iter().position(|x| x.name == "Trethi Yard").expect("its yard");
+        let bay = e.works[yard].setups.iter().position(|s| s.module.identity.key == "module.welding-bay").unwrap();
+        let cap = universe_world::goods::item("part.mc07-01").unwrap();
+        let recipe = universe_world::recipes::of("module.welding-bay").iter().position(|r| r.makes == cap).expect("a recipe for it");
+        let g = &land.grounds[e.works[yard].ground];
+        let lot = g.lots.iter().find(|l| l.number == g.works[e.works[yard].works].parcel).unwrap();
+        let owner = land.party(&lot.owner).expect("an owner");
+        assert!(e.set_up(&land, yard, bay, Some(recipe), Party::Pilot(7)).is_err(), "not someone else's to set");
+        e.set_up(&land, yard, bay, Some(recipe), owner).unwrap();
+        let sheet = universe_world::goods::item("stock.al6061-sh-2").unwrap();
+        e.works[yard].pool.put(sheet, 20_000.0);
+        e.step_to(4.0 * STEP, &mut land, &mut ledger, &goods, 2);
+        let made = e.places[trethi].made.get(&cap).copied().unwrap_or(0.0) * STEP / DAY;
+        assert!(made > 0.0 && made <= 20_000.0 / 1710.72 * goods[cap].mass + 1.0, "nose caps welded from the sheet: {made} kg");
+        assert!(e.works[yard].pool.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) + e.places[trethi].stock.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) > 0.0, "and the offcuts, scrap");
     }
 }

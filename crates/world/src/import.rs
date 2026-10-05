@@ -82,8 +82,11 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     shape.islands = read.islands.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     let (lo, hi) = shape.mesh.extent();
     let size = hi - lo;
-    let frame_mass = FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0);
-    let price = PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>();
+    // (A hull the registry describes by this model weighs what its parts do, at its price;
+    // any other, by its size.)
+    let recorded = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual)).and_then(|h| crate::goods::item(&h.identity.key)).map(|i| &content().stock[i]);
+    let frame_mass = recorded.map_or(FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0), |h| h.mass);
+    let price = recorded.map_or(PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>(), |h| h.price);
     let fit = stock_fit(&slots)?;
     let radius = 0.3 * size.max_element() * 0.5 + 6.0;
     let drag = size.x * size.y * 0.6;

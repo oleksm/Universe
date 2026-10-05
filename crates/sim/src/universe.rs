@@ -344,7 +344,12 @@ impl Universe {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
         universe_prof::time("sim/recorder", || self.record());
+        let stepped = self.markets.economy.stepped_to;
         universe_prof::time("sim/economy", || self.markets.step(self.world.time, &mut self.land, &mut self.ledger, self.tick));
+        // (The companies see to their works once a step of the economy.)
+        if self.markets.economy.stepped_to > stepped {
+            universe_prof::time("sim/companies", || crate::company::run(self));
+        }
         self.publish_boards();
         self.update_standings();
         // (The dead-man rule counts in seconds: a look once a second.)

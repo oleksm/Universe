@@ -21,6 +21,13 @@ pub struct EconomyPanel {
     held: f32,
     /// The zoning view of the selected place's ground, while open (Enter).
     pub zoning: Option<crate::zoning::Zoning>,
+    /// Its works' modules, while open (Tab): the one under the cursor.
+    pub module: Option<usize>,
+}
+
+/// The modules of place `p`'s works, in order: (works, its setup).
+fn modules(app: &App, p: &Place) -> Vec<(usize, usize)> {
+    app.v.works.iter().enumerate().filter(|(_, w)| w.ground == p.ground).flat_map(|(k, w)| (0..w.setups.len()).map(move |s| (k, s))).collect()
 }
 
 /// Keys while open. False when it should close.
@@ -44,6 +51,40 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             p.zoning = Some(z);
             return true;
         }
+    }
+    // Its works' modules (Tab): up and down a module, left and right what it's set to make
+    // (Shift: ten at a time), sent as its owner's choice (refused if not yours).
+    let selected = app.economy_panel.as_ref().map_or(0, |p| p.selected);
+    if input.pressed(KeyCode::Tab)
+        && let Some(p) = app.economy_panel.as_mut()
+    {
+        p.module = if p.module.is_some() { None } else { Some(0) };
+        return true;
+    }
+    if let Some(at) = app.economy_panel.as_ref().and_then(|p| p.module) {
+        let rows = app.v.economy.get(selected).map(|p| modules(app, p)).unwrap_or_default();
+        let n = rows.len().max(1);
+        let (left, right) = (input.pressed(KeyCode::ArrowLeft), input.pressed(KeyCode::ArrowRight));
+        if (left || right)
+            && let Some(&(k, s)) = rows.get(at)
+        {
+            let setup = &app.v.works[k].setups[s];
+            let count = universe_sim::world::recipes::of(&setup.module.identity.key).len();
+            if count > 0 {
+                // (Nothing, then each thing it can make, round.)
+                let step = if input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight) { 10 } else { 1 };
+                let now = setup.recipe.map_or(0, |r| r + 1) as i64;
+                let next = (now + if right { step } else { -step }).rem_euclid(count as i64 + 1) as usize;
+                app.engine.send(universe_sim::Command::SetUp { works: k, setup: s, recipe: next.checked_sub(1) });
+            }
+        }
+        let Some(panel) = &mut app.economy_panel else { return false };
+        let (down, up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
+        let steps = crate::navmap::repeat(&mut panel.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt);
+        for _ in 0..steps {
+            panel.module = Some(if down { (at + 1) % n } else { (at + n - 1) % n });
+        }
+        return true;
     }
     let n = app.v.economy.len().max(1);
     let Some(panel) = &mut app.economy_panel else { return false };
@@ -86,7 +127,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     let tonnes = |p: &Place| p.stock.total() / 1000.0;
     frame.text(
         Vec2::new(12.0, y),
-        &format!("ECONOMY - {} SETTLEMENTS THE REGISTRY DESCRIBES   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE, ENTER ITS GROUND)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
+        &format!("ECONOMY - {} SETTLEMENTS THE REGISTRY DESCRIBES   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE, ENTER ITS GROUND, TAB ITS MODULES)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
         TEXT,
     );
     y += line * 1.5;
@@ -145,6 +186,43 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         y += line;
     }
     y += line * 0.5;
+    // Its works' modules (Tab), and what each is set to make.
+    if let Some(at) = panel.module {
+        let rows = modules(app, p);
+        frame.text(Vec2::new(x, y), &format!(" {:<24} {:>5}  {}", "MODULE", "COUNT", "SET TO MAKE"), DIM);
+        y += line;
+        let bottom = size.y - 30.0 - line * 2.0;
+        let room = ((bottom - y) / line).floor().max(2.0) as usize;
+        // (From the first row that keeps the cursor's on screen, works headings counted.)
+        let lines = |from: usize, to: usize| (from..=to.min(rows.len().saturating_sub(1))).map(|r| 1 + usize::from(r == from || rows[r].0 != rows[r - 1].0)).sum::<usize>();
+        let first = (0..=at).find(|&f| lines(f, at) <= room).unwrap_or(at);
+        let mut last = usize::MAX;
+        for (r, &(k, s)) in rows.iter().enumerate().skip(first) {
+            if y > bottom {
+                break;
+            }
+            let w = &app.v.works[k];
+            if k != last {
+                let theirs = ground(p).and_then(|g| g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel))).map(|l| l.owner.clone());
+                let yours = matches!(theirs, Some(universe_sim::services::land::Owner::Party(universe_sim::services::Party::Pilot(universe_sim::PLAYER))));
+                frame.text(Vec2::new(x, y), &format!(" {}{}", w.name.to_uppercase(), if yours { " (YOURS)" } else { "" }), DIM);
+                y += line;
+                last = k;
+            }
+            let setup = &w.setups[s];
+            let what = match setup.recipe() {
+                Some(r) => app.charts.goods[r.makes].name.to_uppercase(),
+                None if universe_sim::world::recipes::of(&setup.module.identity.key).is_empty() => "-".to_string(),
+                None => "NOTHING".to_string(),
+            };
+            let mark = if r == at { ">" } else { " " };
+            frame.text(Vec2::new(x, y), &format!("{mark} {:<23} {:>5}  {}", setup.module.identity.name.to_uppercase().chars().take(23).collect::<String>(), setup.count, what.chars().take(30).collect::<String>()), if r == at { TEXT } else { DIM });
+            y += line;
+        }
+        let note = "TAB BACK   UP/DOWN MODULE   LEFT/RIGHT WHAT IT MAKES (SHIFT: 10)   ONLY ITS OWNER SETS IT";
+        frame.text(Vec2::new((size.x - text_size(note).x) / 2.0, size.y - 14.0), note, DIM);
+        return;
+    }
     // Its market: what lies in the warehouse, and what its works take.
     if p.warehouse.is_none() {
         frame.text(Vec2::new(x, y), "NO WAREHOUSE: NO MARKET", DIM);
@@ -165,7 +243,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         let text = format!(
             "{:<18} {:>6.0} {:>6.0} {:>6.0} {:>6.0} {:>6} {:>6.0}",
             g.name.to_uppercase().chars().take(18).collect::<String>(),
-            q.stock,
+            q.stock * g.mass / 1000.0,
             p.need(i) / 1000.0,
             p.made.get(&i).copied().unwrap_or(0.0) / 1000.0,
             p.used.get(&i).copied().unwrap_or(0.0) / 1000.0,

@@ -99,7 +99,7 @@ impl Markets {
         let it = &self.goods[item];
         let p = place.price(it);
         let side = if p.ask.is_some() { Side::Sells } else { Side::Buys };
-        let usual = if p.wanted { place.need(item) * crate::economy::COVER_DAYS / 1000.0 } else { p.stock };
+        let usual = if p.wanted { place.need(item) * crate::economy::COVER_DAYS / it.mass } else { p.stock };
         Some(Quote { offer: Offer { item, side, base: it.price, usual }, level: if side == Side::Sells { p.stock.floor() } else { p.room.floor() }, buy: p.ask, sell: p.bid })
     }
 

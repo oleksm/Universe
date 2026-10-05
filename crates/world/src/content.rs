@@ -205,6 +205,8 @@ pub struct Content {
     /// The stock catalogue (see `goods`), and its items by key.
     pub stock: Vec<Item>,
     pub stock_index: HashMap<String, usize>,
+    /// What each module can be set to make, by its key (see `recipes`).
+    pub recipes: HashMap<String, Vec<crate::recipes::Recipe>>,
     /// Standards bodies, and the standards in their registers.
     pub bodies: Registry<crate::standards::Body>,
     pub standards: Registry<crate::standards::Standard>,
@@ -423,7 +425,7 @@ impl Content {
         )?;
         let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
         // The stock catalogue: the registry's, at the game's prices.
-        let stock = crate::goods::build_catalog(reg, &prices, &goods);
+        let (stock, recipes) = crate::goods::build_catalog(reg, &prices, &goods);
         let stock_index: HashMap<String, usize> = stock.iter().map(|i| (i.key.clone(), i.id)).collect();
         // Ships' fuel, as traded: what the starting hull's tanks hold.
         let starter = resolve(&hulls, &aliases, crate::ship::STARTING_HULL).ok_or("no starting hull")?;
@@ -450,7 +452,7 @@ impl Content {
         for s in &settlements {
             s.check()?;
         }
-let c = Content { shapes, materials, brands, structures, modules, hulls, goods, stock, stock_index, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+let c = Content { shapes, materials, brands, structures, modules, hulls, goods, stock, stock_index, recipes, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }

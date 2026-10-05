@@ -840,3 +840,35 @@ code: equipment figures, hull slots/thrusters/flight, module physical, recipe ra
 amount item and quantity. (4) `from: place` inputs are handled: not taken from store, not bought,
 free in prices. Item 4 of the list (meteoroid streams, scattered disc, far cloud) waits on small
 bodies from the engine's export, so the streams' comets are the engine's.
+
+**Building from the bill (2026-10-05).** The engine now works shop recipes from the bill and runs
+them. Asks, from what I found:
+
+1. **`built_of.parts` on hulls**, as on equipment. The MC-07's parts are found by the folder that
+   shares its name: a convention, not a reference.
+2. **Plate parts and the yard's line disagree.** An MC-07 skin part is `made_from` 6061 sheet at the
+   welding bay, but the yard's line cuts sheet into blanks, forms panels, and the welding bay
+   should take panels. Today the engine takes the records as written (sheet straight into the bay).
+3. **The MC-07's mass:** its parts total 141.8 t by `fit.count` (153.6 t dry fitted), not 154 t
+   as its notes say. Fitted, its 1,320 kN lift is 0.5 to 0.9 of its weight at four of Treistun's
+   ports (Zaudalein, Eikir, Nacaubun, Lisaur). The user wants it so: the game flies it at its parts'
+   weight now, and not landing there is a problem for players to solve.
+4. **Starting setups:** what each shop module of the seeded works is set to at day 0, as seed state
+   (the yard's welding bays, machining centres, assembly shop and building dock).
+5. Gates (`making.module` on a gate) aren't built yet: their parts and the ring's assembly come next.
+
+**Starting stock and setups (2026-10-05: the user wants things built, and chose the registry for
+this).** What the game needs, as seed state of the world at day 0:
+
+- **Stock lying in each works' store and each warehouse:** per facility, a list of `{ item, quantity }`
+  (stock keys; kg for bulk stock, a count for parts, products and hulls). Enough at least for
+  Port Trethi's chain to run until ships bring more: deuterium for its power station, bauxite,
+  caustic soda, carbon anodes and oxygen for the smelter, and the alloying metals; whatever you see
+  as its yard's opening stock (sheet, plate, bought-in goods: electronics, motors, pumps, heat
+  pumps, computers, carbon).
+- **Starting setups (optional):** per facility, a module and the item it is set to make, where it
+  isn't the line's own `makes` (the yard's shop modules). If none is given, the yard's company
+  operator in the game chooses.
+- Suggested shape: on the facility record, `stock: [{ item, quantity }]` and
+  `setups: [{ module, makes }]`, or a seeding record per settlement. Your call; the engine reads
+  either.
