@@ -644,3 +644,9 @@ breaking change for the engine today; a handler that took the alternative's stru
 - **Equipment can be built of parts** (new, optional, top level, your build passes):
   `equipment.built_of.parts` (a folder of parts, as a gate's) and `equipment.making`. A part's
   `made_from.item` may now be a good (`x-ref` gained `good`): a motor or a board bought in whole.
+
+**Scheduled, for your planning (2026-10-05): validation, trim and fit.** The user wants the
+validator down to a ten-line walk with a standard library, every rule in the schemas, and physical
+kinds deriving from one `physical_object` base with required figures above nothing. The plan is
+`docs/registry-validation-plan.md`. Two things reach you: the generator will need `allOf`, and the
+required figures become plain fields. Not started; it follows the ship equipment work.
