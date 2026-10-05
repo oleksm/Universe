@@ -613,6 +613,15 @@ impl Universe {
         }
     }
 
+    /// A hull's inside as walls (its frame's triangles): walked in and bumped into.
+    pub fn set_walls(&mut self, hull: &str, walls: &[[DVec3; 3]]) {
+        if walls.is_empty() {
+            self.layouts.remove(hull);
+        } else {
+            self.layouts.insert(hull.to_string(), Arc::new(universe_world::deckplan::Walkable { mesh: universe_world::walk::WalkMesh::new(walls), climbs: Vec::new() }));
+        }
+    }
+
     pub fn set_layout(&mut self, plan: &universe_world::deckplan::DeckPlan) {
         let Some(h) = universe_world::content::content().handle::<universe_world::ship::ClassSpec>(&plan.hull) else { return };
         let Some(mesh) = universe_world::content::content().get(h).shape().walk.clone() else { return };

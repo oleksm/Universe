@@ -98,6 +98,10 @@ pub struct Interior {
     /// A slide under way has its undo step already; SHIFT held (squaring a path).
     sliding: bool,
     shift: bool,
+    /// WALK HERE pressed: the next click on a point or a tube is where; and a walk
+    /// asked for: feet (the hull's frame) and facing (see `shipyard`).
+    walk_armed: bool,
+    pub walk: Option<(universe_engine::glam::DVec3, f64)>,
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
@@ -332,6 +336,50 @@ impl Interior {
         self.tool = Tool::Path;
     }
 
+    /// Its walled groups as walls: each tube's sides, two triangles a panel (the
+    /// hull's frame), to walk in and bump into.
+    pub fn walls(&self) -> Vec<[universe_engine::glam::DVec3; 3]> {
+        let plan = &self.plan;
+        let mut out = Vec::new();
+        for g in plan.groups.iter().filter(|g| g.walled) {
+            for &k in &g.lines {
+                let (a, b, profile) = plan.lines[k];
+                let (pa, pb) = (plan.points[a].at, plan.points[b].at);
+                let corners = profile.corners();
+                let d = (pb - pa).normalize_or_zero();
+                let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+                let v = u.cross(d);
+                let at = |o: Vec3, c: Vec2| (o + u * c.x + v * c.y).as_dvec3();
+                for j in 0..corners.len() {
+                    let (c0, c1) = (corners[j], corners[(j + 1) % corners.len()]);
+                    let q = [at(pa, c0), at(pa, c1), at(pb, c1), at(pb, c0)];
+                    out.push([q[0], q[1], q[2]]);
+                    out.push([q[0], q[2], q[3]]);
+                }
+            }
+        }
+        out
+    }
+
+    /// Where one starts at `at` on line `k` (none: a point off any), facing along it:
+    /// there, to settle onto whatever's under it (a walled tube's floor, or the
+    /// hull's if that's higher).
+    fn feet(&self, at: Vec3, k: Option<usize>) -> (universe_engine::glam::DVec3, f64) {
+        let yaw = k.map_or(0.0, |k| {
+            let (a, b, _) = self.plan.lines[k];
+            let d = (self.plan.points[b].at - self.plan.points[a].at).normalize_or_zero();
+            f64::from(d.x).atan2(f64::from(d.z))
+        });
+        ((at + Vec3::Y * 0.05).as_dvec3(), yaw)
+    }
+
+    /// A walk asked for in the middle of line `k` (dev scenarios), as WALK HERE.
+    pub fn walk_line(&mut self, k: usize) {
+        if let Some(&(a, b, _)) = self.plan.lines.get(k) {
+            self.walk = Some(self.feet(self.plan.points[a].at.lerp(self.plan.points[b].at, 0.5), Some(k)));
+        }
+    }
+
     /// Turned to look from `yaw`, `pitch` (rad; dev scenarios).
     pub fn turned(yaw: f32, pitch: f32) -> Self {
         Interior { yaw, pitch, ..Default::default() }
@@ -507,6 +555,11 @@ const HISTORY: [(&str, &str, bool); 2] = [("^Z", "UNDO", false), ("^Y", "REDO", 
 
 fn history_button(k: usize) -> (Vec2, Vec2) {
     button(TOOLBAR.len() + k)
+}
+
+/// WALK HERE, after UNDO and REDO.
+fn walk_button() -> (Vec2, Vec2) {
+    button(TOOLBAR.len() + HISTORY.len())
 }
 
 fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
@@ -840,6 +893,28 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         return true;
     }
     interior.hover = hover_at(interior, &cam, cursor);
+    // A walk-through: F over a point or a tube, there; WALK HERE, then a click on one.
+    if pressed && inside(walk_button(), cursor) {
+        interior.walk_armed = !interior.walk_armed;
+        return true;
+    }
+    let walk_here = input.pressed(KeyCode::KeyF) || (interior.walk_armed && pressed && !inside(PANEL, cursor));
+    if walk_here {
+        let spot = match interior.hover {
+            Some(Hover::Point(k)) => {
+                // (At a point: on the floor of a tube it ends, if one does.)
+                let line = interior.plan.lines.iter().position(|&(a, b, _)| a == k || b == k);
+                Some(interior.feet(interior.plan.points[k].at, line))
+            }
+            Some(Hover::Line(k)) => on_line(interior, &cam, cursor, k).map(|(at, _)| interior.feet(at, Some(k))),
+            None => None,
+        };
+        if let Some(at) = spot {
+            interior.walk = Some(at);
+            interior.walk_armed = false;
+            return true;
+        }
+    }
     // Removed: what's under the cursor (DEL), or what's picked (REMOVE); the hull's
     // own points stay; a point takes its lines with it.
     let gone = if input.pressed(KeyCode::Delete) { interior.hover.or(interior.pick) } else if action == Some(Action::Remove) { interior.pick } else { None };
@@ -1019,6 +1094,11 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let (p, c) = button(k);
             let lamp = if *tool == interior.tool || button_at(interior.cursor) == Some(*tool) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, key, name, lamp);
+        }
+        {
+            let (p, c) = walk_button();
+            let lamp = if interior.walk_armed || inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, "F", "WALK HERE", lamp);
         }
         for (k, (key, name, redo)) in HISTORY.iter().enumerate() {
             let (p, c) = history_button(k);

@@ -28,6 +28,12 @@ impl Shipyard {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::new() }
     }
 
+    /// The walls being walked through: the interior studio's walled tubes (none from
+    /// the deck studio).
+    pub fn walls(&self) -> Option<Vec<[universe_engine::glam::DVec3; 3]>> {
+        (self.page == Page::Interior).then(|| self.interior.walls())
+    }
+
     /// The interior studio turned to look from `yaw`, `pitch` (dev scenarios).
     pub fn interior_turned(yaw: f32, pitch: f32) -> Self {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::turned(yaw, pitch) }
@@ -68,6 +74,19 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     if y.page == Page::Interior {
         let mut interior = std::mem::take(&mut y.interior);
         let stay = crate::interior::input(app, ctx, &mut interior);
+        // A walk-through: its walled tubes the hull's walls, the shipyard put by, the
+        // pilot on foot there, first person.
+        if let Some(at) = interior.walk.take() {
+            app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls: interior.walls() });
+            app.engine.send(universe_sim::Command::Preview(Some(at)));
+            app.preview = app.shipyard.take().map(|mut y| {
+                y.interior = interior;
+                y
+            });
+            app.mode = crate::Mode::Pilot;
+            app.chase_cam = false;
+            return false;
+        }
         if let Some(y) = app.shipyard.as_mut() {
             y.interior = interior;
         }
@@ -78,7 +97,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     // A walk-through: the studio put by, the pilot on foot there, first person.
     if let Some(at) = studio.walk.take() {
         app.engine.send(universe_sim::Command::Preview(Some(at)));
-        app.preview = Some(studio);
+        app.preview = Some(Shipyard::back_to(studio));
         app.mode = crate::Mode::Pilot;
         app.chase_cam = false;
         return false;

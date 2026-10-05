@@ -207,8 +207,8 @@ pub struct App {
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
     pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
-    /// Walking through the plan from the studio: the studio as it was left (ESC goes back to it).
-    pub preview: Option<studio::Studio>,
+    /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
+    pub preview: Option<shipyard::Shipyard>,
     /// The hull being designed, and those commissioned (in the save).
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
@@ -601,7 +601,7 @@ impl App {
         if self.preview.is_some() && (input.pressed(KeyCode::Escape) || keys::pressed(input, keys::Act::Shipyard)) {
             self.engine.send(Command::Preview(None));
             if let Some(s) = self.preview.take() {
-                self.shipyard = Some(shipyard::Shipyard::back_to(s));
+                self.shipyard = Some(s);
             }
             ctx.grab_cursor(false);
             return;

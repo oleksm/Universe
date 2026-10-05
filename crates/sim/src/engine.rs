@@ -51,6 +51,9 @@ pub enum Command {
     Walk(WalkCommands, f64),
     /// A hull's inside as laid out (the shipyard's studio): built, walked in.
     Layout(universe_world::deckplan::DeckPlan),
+    /// A hull's inside as walls (the interior studio's walled tubes): its frame's
+    /// triangles, walked in and bumped into; none, nothing.
+    Walls { hull: String, walls: Vec<[DVec3; 3]> },
     /// The studio's walk-through: the pilot on foot at these feet (ship frame)
     /// facing this yaw, or (None) back in the seat.
     Preview(Option<(DVec3, f64)>),
@@ -281,6 +284,7 @@ impl Engine {
             Command::Walk(c, dt) => u.walk(&c, dt),
             Command::Layout(plan) => u.set_layout(&plan),
             Command::Preview(at) => u.preview(at),
+            Command::Walls { hull, walls } => u.set_walls(&hull, &walls),
             Command::ToggleHyperdrive => u.toggle_hyperdrive(),
             Command::SetNavTarget(t) => u.set_nav_target(t),
             Command::RequestClearance => {

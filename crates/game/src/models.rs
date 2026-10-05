@@ -43,6 +43,34 @@ impl Models {
 /// frame: floors and walls (trimmed to the hull) in flat shades, edges drawn.
 /// Unlit: inside the hull it's in the hull's shadow, and there are no lamps
 /// yet. Made again when the plan changes.
+/// Walls as a mesh to draw in our hull's frame (the interior studio's walled tubes,
+/// walked through): flat, a shade lighter than the hull's inside, edges drawn. Made
+/// again when they change.
+pub fn walls(walls: &[[DVec3; 3]]) -> Option<Mesh> {
+    use std::sync::Mutex;
+    static BUILT: Mutex<Option<(Vec<[DVec3; 3]>, Mesh)>> = Mutex::new(None);
+    if walls.is_empty() {
+        return None;
+    }
+    let mut built = BUILT.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some((w, m)) = built.as_ref()
+        && w.as_slice() == walls
+    {
+        return Some(m.clone());
+    }
+    let mut m = WireModel::default();
+    let c = [0.38 * 0.95, 0.38, 0.38 * 1.08, 1.0];
+    for t in walls {
+        let base = m.positions.len() as u32;
+        m.positions.extend(t.iter().map(|p| p.as_vec3()));
+        m.colors.extend([c; 3]);
+        m.faces.push([base, base + 1, base + 2]);
+    }
+    let mesh = Mesh::new(m);
+    *built = Some((walls.to_vec(), mesh.clone()));
+    Some(mesh)
+}
+
 pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_sim::world::shape::Shape) -> Option<Mesh> {
     use std::sync::Mutex;
     use universe_sim::world::deckplan;
