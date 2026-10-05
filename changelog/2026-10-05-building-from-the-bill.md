@@ -14,5 +14,7 @@
   setups are seeded.
 - The registry crate remembers each part's folder; `built_of(product)` gives its parts with their
   counts (a hull's: the folder of its name, until hulls name theirs).
-- **Held, for the user:** the MC-07 flown at its parts' weight (153.6 t dry, not about 100). Its
-  lift (1,320 kN) then can't raise it at Zaudalein, Eikir, Nacaubun or Lisaur.
+- **The MC-07 weighs what its parts do** (the user: "not being able to land should create some
+  motivation"): a hull the registry describes by the model imported has its parts' mass and price.
+  153.6 t dry fitted, not about 100. Its lift (1,320 kN) can't hold it up at Zaudalein, Eikir and
+  Nacaubun (0.8 to 0.9 of its weight) or Lisaur (0.5); it can at Treistun's six lighter worlds.

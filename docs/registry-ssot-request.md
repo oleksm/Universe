@@ -851,7 +851,8 @@ them. Asks, from what I found:
    should take panels. Today the engine takes the records as written (sheet straight into the bay).
 3. **The MC-07's mass:** its parts total 141.8 t by `fit.count` (153.6 t dry fitted), not 154 t
    as its notes say. Fitted, its 1,320 kN lift is 0.5 to 0.9 of its weight at four of Treistun's
-   ports (Zaudalein, Eikir, Nacaubun, Lisaur). Held in the game until the user decides.
+   ports (Zaudalein, Eikir, Nacaubun, Lisaur). The user wants it so: the game flies it at its parts'
+   weight now, and not landing there is a problem for players to solve.
 4. **Starting setups:** what each shop module of the seeded works is set to at day 0, as seed state
    (the yard's welding bays, machining centres, assembly shop and building dock).
 5. Gates (`making.module` on a gate) aren't built yet: their parts and the ring's assembly come next.
