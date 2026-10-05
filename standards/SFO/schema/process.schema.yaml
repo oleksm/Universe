@@ -15,7 +15,7 @@ definitions:
       properties:
         item: { type: string, x-ref: [element, material, good] }
         name: { type: string }
-        amount: { type: number, minimum: 0 }
+        amount: { type: number, x-unit: "1", minimum: 0 }
         form: { type: string }
         grade: { type: string }
   rating:
@@ -42,7 +42,7 @@ properties:
       purity: { type: string, description: The purity or grade required. }
       consumables: { $ref: "#/definitions/amount_list", description: "Used up but not part of the product: flux, electrodes, catalyst, solvent." }
       gases: { type: array, items: { type: string }, description: "Process gases: argon shield, hydrogen, oxygen." }
-      coolant: { type: number, description: "t of water or coolant per t of product" }
+      coolant: { type: number, x-unit: "1", description: "t of water or coolant per t of product" }
 
   outputs:
     description: What comes out.
@@ -51,10 +51,10 @@ properties:
     properties:
       products: { $ref: "#/definitions/amount_list", description: "The material made, its form and grade." }
       sizes: { type: string, description: The dimensions it can make. }
-      yield: { type: number, minimum: 0, maximum: 1, description: The share of the input that becomes product. }
+      yield: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: The share of the input that becomes product. }
       by_products: { $ref: "#/definitions/amount_list", description: "Useful: slag, off-gas." }
       waste: { $ref: "#/definitions/amount_list", description: What must be disposed of. }
-      scrap: { type: number, minimum: 0, maximum: 1, description: The share that goes back to the start as reusable material. }
+      scrap: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: The share that goes back to the start as reusable material. }
 
   conditions:
     type: object
@@ -123,7 +123,7 @@ properties:
     additionalProperties: false
     properties:
       tolerance: { type: number, x-unit: "m", description: "m, on dimensions" }
-      defect_rate: { type: number, minimum: 0, maximum: 1 }
+      defect_rate: { type: number, x-unit: "1", minimum: 0, maximum: 1 }
       property_change: { type: string, description: "What it does to the material: more strength, less ductility." }
       inspection: { type: string, description: How the result is checked. }
 
@@ -135,7 +135,7 @@ properties:
       wear_parts: { type: string, description: "What wears and how often it's replaced: furnace lining, rolls." }
       maintenance_interval: { type: number, x-unit: "s", description: "s between maintenance" }
       maintenance_downtime: { type: number, x-unit: "s", description: s }
-      consumable_use: { type: number, description: "t of consumables per t of product" }
+      consumable_use: { type: number, x-unit: "1", description: "t of consumables per t of product" }
 
   hazards:
     description: Hazards and surroundings.

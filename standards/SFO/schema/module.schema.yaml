@@ -13,7 +13,7 @@ definitions:
       additionalProperties: false
       properties:
         item: { type: string, x-ref: [element, material, good, stock, part], description: "What it is, by its key." }
-        quantity: { type: number, description: "kg of it for each kg of what the recipe makes" }
+        quantity: { type: number, x-unit: "1", description: "kg of it for each kg of what the recipe makes" }
 properties:
   identity:
     type: object

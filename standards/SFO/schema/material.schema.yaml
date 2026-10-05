@@ -32,7 +32,7 @@ properties:
           required: [part, share]
           properties:
             part: { type: string, x-ref: [element, material] }
-            share: { type: number, minimum: 0, maximum: 1 }
+            share: { type: number, x-unit: "1", minimum: 0, maximum: 1 }
       form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel] }, description: The forms it comes in. }
       grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }
 
@@ -56,19 +56,19 @@ properties:
     properties:
       youngs_modulus: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; stiffness" }
       shear_modulus: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: Pa }
-      poissons_ratio: { $ref: "#/definitions/number_or_null" }
+      poissons_ratio: { $ref: "#/definitions/number_or_null", x-unit: "1" }
       yield_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; where it starts to bend for good" }
       tensile_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; where it breaks, pulled" }
       compressive_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; where it breaks, pressed" }
       shear_strength: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: Pa }
-      elongation_at_break: { $ref: "#/definitions/number_or_null", description: "share of its length (0.2: 20%); ductility" }
-      hardness: { $ref: "#/definitions/number_or_null", description: Mohs scale }
+      elongation_at_break: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "share of its length (0.2: 20%); ductility" }
+      hardness: { $ref: "#/definitions/number_or_null", x-unit: "1", description: Mohs scale }
       fracture_toughness: { $ref: "#/definitions/number_or_null", x-unit: "Pa m^0.5", description: "Pa m^0.5; resistance to cracks growing" }
       impact_toughness: { $ref: "#/definitions/number_or_null", x-unit: "J", description: "J (Charpy); resistance to sudden blows" }
       fatigue_limit: { $ref: "#/definitions/number_or_null", x-unit: "Pa", description: "Pa; the load it survives over many cycles" }
       creep_resistance: { $ref: "#/definitions/rating", description: "Against slow sagging under long load, hot above all." }
       wear_resistance: { $ref: "#/definitions/rating" }
-      friction_coefficient: { $ref: "#/definitions/number_or_null", description: "against steel, dry" }
+      friction_coefficient: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "against steel, dry" }
 
   thermal:
     type: object
@@ -81,8 +81,8 @@ properties:
       specific_heat_capacity: { $ref: "#/definitions/number_or_null", x-unit: "J/(kg K)", description: J/(kg K) }
       thermal_expansion: { $ref: "#/definitions/number_or_null", x-unit: "1/K", description: "1/K, linear" }
       thermal_shock_resistance: { $ref: "#/definitions/rating" }
-      emissivity: { $ref: "#/definitions/number_or_null", description: "0 to 1; how well it radiates heat" }
-      absorptivity: { $ref: "#/definitions/number_or_null", description: "0 to 1; how much sunlight it soaks up" }
+      emissivity: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "0 to 1; how well it radiates heat" }
+      absorptivity: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "0 to 1; how much sunlight it soaks up" }
 
   electrical_magnetic:
     type: object
@@ -97,9 +97,9 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      transparency: { $ref: "#/definitions/number_or_null", description: "0 to 1; the share of visible light passed" }
-      refractive_index: { $ref: "#/definitions/number_or_null" }
-      reflectivity: { $ref: "#/definitions/number_or_null", description: "0 to 1, of visible light" }
+      transparency: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "0 to 1; the share of visible light passed" }
+      refractive_index: { $ref: "#/definitions/number_or_null", x-unit: "1" }
+      reflectivity: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "0 to 1, of visible light" }
       colour: { type: [string, "null"] }
 
   environment:
@@ -110,7 +110,7 @@ properties:
       corrosion_resistance: { $ref: "#/definitions/rating" }
       oxidation_resistance: { $ref: "#/definitions/rating", description: "Hot, in air." }
       chemical_resistance: { $ref: "#/definitions/rating", description: "To fuels and acids." }
-      outgassing: { $ref: "#/definitions/number_or_null", description: "share of its mass lost in vacuum (total mass loss, 0 to 1)" }
+      outgassing: { $ref: "#/definitions/number_or_null", x-unit: "1", description: "share of its mass lost in vacuum (total mass loss, 0 to 1)" }
       radiation_resistance: { $ref: "#/definitions/rating", description: "Against damage from radiation over time." }
       radiation_shielding: { $ref: "#/definitions/rating", description: "How well it stops radiation." }
       uv_resistance: { $ref: "#/definitions/rating" }

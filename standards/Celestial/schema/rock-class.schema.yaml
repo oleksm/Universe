@@ -22,29 +22,29 @@ properties:
     properties:
       density_rubble: { type: number, x-unit: "kg/m3", description: "kg/m3 as a rubble pile (a third or more empty space)" }
       density_monolith: { type: number, x-unit: "kg/m3", description: "kg/m3 as one solid piece" }
-      albedo: { type: number, description: "the share of light it reflects" }
-      colour: { type: array, items: { type: number }, minItems: 3, maxItems: 3, description: "red, green, blue, each 0 to 1" }
+      albedo: { type: number, x-unit: "1", description: "the share of light it reflects" }
+      colour: { type: array, items: { type: number }, x-unit: "1", minItems: 3, maxItems: 3, description: "red, green, blue, each 0 to 1" }
   composition:
     description: "What it is made of, by mass: each a range, from a lean family to a rich one. The rest is silicate rock."
     type: object
     additionalProperties: false
     properties:
-      water: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "share, lean to rich" }
-      organics: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "carbon and organic compounds: share, lean to rich" }
-      metal: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "nickel-iron: share, lean to rich" }
-      volatiles: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "frozen carbon dioxide, ammonia, methane: share, lean to rich" }
-      pgm: { type: array, items: { type: number }, minItems: 2, maxItems: 2, description: "platinum-group metals: share, lean to rich" }
+      water: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "share, lean to rich" }
+      organics: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "carbon and organic compounds: share, lean to rich" }
+      metal: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "nickel-iron: share, lean to rich" }
+      volatiles: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "frozen carbon dioxide, ammonia, methane: share, lean to rich" }
+      pgm: { type: array, items: { type: number }, x-unit: "1", minItems: 2, maxItems: 2, description: "platinum-group metals: share, lean to rich" }
   found:
     description: "How much of what is there is of this class, by where a body formed. The zones are by distance from the star against its frost line (see the asteroids record)."
     type: object
     additionalProperties: false
     properties:
-      warm: { type: number, description: "share of the bodies that formed well inside the frost line" }
-      frost_line: { type: number, description: "share of those that formed about the frost line" }
-      cold: { type: number, description: "share of those that formed beyond it, in the main belt" }
-      trojans: { type: number, description: "share of the bodies in a giant's two swarms" }
-      outer: { type: number, description: "share of the bodies of the outer belt" }
-      falls: { type: number, description: "its share of the meteorites seen to fall on Earth: a check, weighted toward tough rock from close by" }
+      warm: { type: number, x-unit: "1", description: "share of the bodies that formed well inside the frost line" }
+      frost_line: { type: number, x-unit: "1", description: "share of those that formed about the frost line" }
+      cold: { type: number, x-unit: "1", description: "share of those that formed beyond it, in the main belt" }
+      trojans: { type: number, x-unit: "1", description: "share of the bodies in a giant's two swarms" }
+      outer: { type: number, x-unit: "1", description: "share of the bodies of the outer belt" }
+      falls: { type: number, x-unit: "1", description: "its share of the meteorites seen to fall on Earth: a check, weighted toward tough rock from close by" }
   mining:
     type: object
     additionalProperties: false
@@ -52,5 +52,5 @@ properties:
       cut_energy: { type: number, x-unit: "J", description: "J to break a kg loose from a solid piece (a rubble pile scoops up at 2,000)" }
       yields: { type: string, x-ref: [good], description: "The rock it yields when dug (SFO 11, Goods), by its key." }
       rich_yields: { type: string, x-ref: [good], description: "What it yields instead where it is rich enough." }
-      rich_above: { type: number, description: "the share of platinum-group metals above which it yields that instead" }
+      rich_above: { type: number, x-unit: "1", description: "the share of platinum-group metals above which it yields that instead" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

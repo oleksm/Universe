@@ -492,6 +492,22 @@ a crop's carbon dioxide and water are the world's own.
 food trade, with no products of the kind your brands have. If a brand must sell ship equipment,
 they need a `business` of their own: say which.
 
+## Schemas the generator can read (2026-10-04)
+
+Your five rules, checked over all 28 schemas and now enforced by the build
+(`tools/standards/validate.py`, `lint`): a schema that breaks one stops the build.
+
+| Rule | State |
+|---|---|
+| Every schema declares its kind | Done: `x-kind` on all 26 record schemas. `common.schema.yaml` and `installation.schema.yaml` hold only definitions and have none. |
+| `oneOf` only with a `kind` constant | Done but for three in `standard.schema.yaml`: a block's `text` (a string or a list), a param's `value` (a number, a string or a pair) and `licence` (`open` or a fee). They are your own `Text`, `ParamValue` and `Licence`; changing the records changes a kind you read, so say what shape you want and I will move the 18 standards. The build lets these three through until then. |
+| Every reference marked `x-ref` | Done: no value anywhere is a record's key without it (checked against all 1,022 records). Not keys, and so not marked: a good's `game.goods` and `game.ore` and a module's `capacity.stores` (the game's own keys; `capacity.stores` and `game.goods` can become refs to `market` records when you take them), a hull's `shape` and `model`, and a fit's and a thruster's `slot`, which names a slot of the same hull. |
+| Every dimensioned figure has `x-unit` | Done, and tightened so it can be checked: **every** number has `x-unit`, and a pure number (a share, a ratio, a count, a factor) says `x-unit: "1"`. On an array it is on the array. Two exceptions: a law's `value`, whose unit is the record's own `unit`, and a standard's params. |
+| No open objects | Done: `additionalProperties: false` on every object. |
+
+Also for the generator: ten properties of elements and materials are `type: [x, "null"]` (a value
+or none), and the definition `number_or_null` is used by `$ref` with the `x-unit` beside it.
+
 ## Next on `fso`, in this order
 
 Your items 5 to 8 each need something agreed before records are written:
