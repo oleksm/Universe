@@ -729,3 +729,22 @@ rest are `Option`. Where a thing can't be without a figure, mark it required:
 - a module's `physical` size.
 
 That lets the engine use the records directly, with no copies of its own (next on my side).
+
+## The engine's figures for the page (2026-10-04)
+
+`cargo run --release -p universe-world --bin registry-figures <out.json>` writes what the engine
+works out from the records, in SI, so `build.py` can read the engine's laws instead of keeping
+Python copies of them:
+- **`lines`:** each facility's lines at their most, in the record's order. For each: product,
+  output, the tightest module, power, ground covered, supplies, by-products, what's used again on
+  site, and each module's row (count, what it can put through, what the line asks of it, its
+  share, its ground, its power). The same rule as your `plan()`.
+- **`gates`:** each ring's tube by Dogma's Tube law: mass, energy to open, power to hold, the
+  natural crossing time for 1 kg and 100 t.
+- **`bodies`:** each body's surface gravity.
+
+`celestial_export.py` already runs a cargo example the same way: call this from the build, read
+the JSON, and drop the matching Python formulas (`plan`, the `tube_*` lambdas, the gravity
+sums). More figures join as the engine gains them: tidal heat and radiation dose next. A hull's
+mass from its parts waits on a part naming its hull (`parent` or `of`): today only its folder
+says.

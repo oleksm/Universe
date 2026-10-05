@@ -334,6 +334,30 @@ pub struct LineMost {
     pub power: f64,
     /// (module key, how many), in its order.
     pub modules: Vec<(String, u32)>,
+    /// The module that holds the line to `output` (None: a shop line).
+    pub tightest: Option<String>,
+    /// Each module's share of the work, in its order.
+    pub rows: Vec<LineRow>,
+    /// What one step gives off and another takes on the same site (kg/s).
+    pub reused: Vec<(String, f64)>,
+    /// The ground its modules cover (m²).
+    pub area: f64,
+}
+
+/// One module of a line at its most.
+#[derive(Clone, Debug)]
+pub struct LineRow {
+    pub module: String,
+    pub count: u32,
+    /// What its count can put through, set as it is (kg/s; None: it makes nothing itself).
+    pub can: Option<f64>,
+    /// What the line asks of it flat out (kg/s).
+    pub at_full: Option<f64>,
+    /// `at_full` over `can`.
+    pub used: Option<f64>,
+    /// m², and W.
+    pub area: f64,
+    pub power: f64,
 }
 
 /// A line of `facility` at its most. A line that says what it makes: back
@@ -351,7 +375,18 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         let rate: f64 = line.modules.iter().map(|m| module(&m.module).throughput.as_ref().map_or(0.0, |t| t.rate) * m.count as f64).sum();
         let power: f64 = line.modules.iter().map(|m| module(&m.module).throughput.as_ref().and_then(|t| t.power).unwrap_or(0.0) * m.count as f64).sum();
         let product = line.modules.iter().map(|m| module(&m.module).identity.name.clone()).collect::<Vec<_>>().join(", ");
-        return LineMost { product, output: rate, made: Vec::new(), supplies: Vec::new(), by_products: Vec::new(), power, modules };
+        let rows = line
+            .modules
+            .iter()
+            .map(|m| {
+                let md = module(&m.module);
+                let t = md.throughput.as_ref();
+                let can = t.map(|t| t.rate * m.count as f64);
+                LineRow { module: m.module.clone(), count: m.count, can, at_full: can, used: can.map(|_| 1.0), area: footprint(md) * m.count as f64, power: t.and_then(|t| t.power).unwrap_or(0.0) * m.count as f64 }
+            })
+            .collect::<Vec<_>>();
+        let area = rows.iter().map(|r| r.area).sum();
+        return LineMost { product, output: rate, made: Vec::new(), supplies: Vec::new(), by_products: Vec::new(), power, modules, tightest: None, rows, reused: Vec::new(), area };
     };
     // Back from what it makes: the recipe each module is set to.
     let steps: Vec<&str> = {
@@ -404,28 +439,46 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
             }
         }
         // (What is given off and needed on the same site is used again.)
+        let mut reused = Vec::new();
         for (item, v) in supplies.iter_mut() {
             if let Some(b) = by.iter_mut().find(|(k, _)| k == item) {
                 let used = v.min(b.1);
                 *v -= used;
                 b.1 -= used;
+                reused.push((item.clone(), used));
             }
         }
-        let power: f64 = (0..steps.len())
+        let powers: Vec<f64> = (0..steps.len())
             .map(|i| match chosen[i] {
                 Some(r) if r.rate.is_some() => r.power.unwrap_or(0.0) * demand[i] / r.rate.unwrap(),
                 _ => module(steps[i]).needs.power.unwrap_or(0.0),
             })
-            .sum();
-        (demand, supplies, by, power)
+            .collect();
+        (demand, supplies, by, powers, reused)
     };
     let has = |s: &str| line.modules.iter().filter(|m| m.module == s).map(|m| m.count).sum::<u32>() as f64;
     let (unit, ..) = plan(1.0);
-    let most = (0..steps.len())
-        .filter_map(|i| Some((chosen[i]?.rate?, unit[i])).filter(|(_, d)| *d > 0.0).map(|(rate, d)| has(steps[i]) * rate / d))
-        .fold(f64::INFINITY, f64::min);
+    let (most, tightest) = (0..steps.len())
+        .filter_map(|i| Some((chosen[i]?.rate?, unit[i], i)).filter(|(_, d, _)| *d > 0.0).map(|(rate, d, i)| (has(steps[i]) * rate / d, Some(steps[i].to_string()))))
+        .fold((f64::INFINITY, None), |a, b| if b.0 < a.0 { b } else { a });
     let most = if most.is_finite() { most } else { 0.0 };
-    let (_, supplies, by, power) = plan(most);
+    let (demand, supplies, by, powers, reused) = plan(most);
+    let rows: Vec<LineRow> = steps
+        .iter()
+        .enumerate()
+        .map(|(i, s)| {
+            let n = has(s);
+            let can = chosen[i].and_then(|r| r.rate).map(|rate| rate * n);
+            let at_full = can.map(|_| demand[i]);
+            LineRow { module: s.to_string(), count: n as u32, can, at_full, used: can.zip(at_full).map(|(c, a)| if c > 0.0 { a / c } else { 0.0 }), area: footprint(module(s)) * n, power: powers[i] }
+        })
+        .collect();
     let keep = |l: Vec<(String, f64)>| l.into_iter().filter(|(_, v)| *v > 1e-9).collect::<Vec<_>>();
-    LineMost { product: reg.name(target).unwrap_or(target).to_string(), output: most, made: vec![(target.clone(), most)], supplies: keep(supplies), by_products: keep(by), power, modules }
+    let area = rows.iter().map(|r| r.area).sum();
+    LineMost { product: reg.name(target).unwrap_or(target).to_string(), output: most, made: vec![(target.clone(), most)], supplies: keep(supplies), by_products: keep(by), power: powers.iter().sum(), modules, tightest, rows, reused: keep(reused), area }
+}
+
+/// A module's footprint (m²).
+fn footprint(m: &crate::registry::Module) -> f64 {
+    m.physical.length.unwrap_or(0.0) * m.physical.width.unwrap_or(0.0)
 }
