@@ -13,6 +13,7 @@ pub mod belt;
 pub mod charts;
 pub mod climate;
 pub mod collisions;
+pub mod conditions;
 pub mod content;
 pub mod crew;
 pub mod deckplan;

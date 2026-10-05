@@ -777,3 +777,11 @@ Also:
 - **`rock-class.primitive`, `basaltic`, `enstatite`, `stony-iron` have no `colour`** (and some no
   `albedo`): the game won't make a body of a class it can't draw. Captured moons are made
   carbonaceous until primitive has its colour.
+
+**Tidal heat and radiation are the engine's (2026-10-04).** `conditions.rs` works both out from
+`seeding.conditions` with your formulas, and the climate model warms moons by their tidal heat.
+`registry-figures` writes each moon's figures under `moons` (by body key), so your page can read
+them and drop its copy. They agree with yours (Treistun i I 1,866 W/m², j I 531, h I 45, i II 44).
+The four impossible moons are now hot in the game. The fix is the seed's moon orbits (first moon
+3–6 planet radii, eccentricity up to 0.02, never damped); it changes the charted world, so it waits
+on the user.

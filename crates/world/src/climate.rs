@@ -47,7 +47,16 @@ pub fn albedo(sys: &StarSystem, i: usize) -> f64 {
 pub fn mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 {
     let s = flux(sys, positions, positions[i]);
     let equilibrium = (s * (1.0 - albedo(sys, i)) / (4.0 * SIGMA)).powf(0.25);
-    equilibrium + greenhouse(sys, i)
+    kneaded(sys, i, equilibrium + greenhouse(sys, i))
+}
+
+/// A temperature `t` (K) of world `i` with the heat its planet's kneading
+/// makes inside it coming out through its surface (see `conditions`).
+fn kneaded(sys: &StarSystem, i: usize, t: f64) -> f64 {
+    match crate::conditions::tidal_flux(sys, i) {
+        Some(flux) if flux > 0.0 => (t.powi(4) + flux / SIGMA).powf(0.25),
+        _ => t,
+    }
 }
 
 fn greenhouse(sys: &StarSystem, i: usize) -> f64 {
@@ -62,10 +71,10 @@ pub fn site_mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], la
     let a = albedo(sys, i);
     let mean = (s * (1.0 - a) / (4.0 * SIGMA)).powf(0.25);
     let lat = latitude.sin().abs();
-    match sys.bodies[i].rail.atmosphere {
+    kneaded(sys, i, match sys.bodies[i].rail.atmosphere {
         Some(_) => mean * (1.0 - 0.25 * lat * lat) + greenhouse(sys, i),
         None => mean * (1.0 - 0.25 * lat * lat),
-    }
+    })
 }
 
 /// A world's surface temperature (K) at `dir` (unit, from its centre, in the
@@ -87,14 +96,15 @@ pub fn surface_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], t: f
     // The bare day (facing the sun, re-radiating what it takes in) and night.
     let day = (s * (1.0 - a) * mu.max(0.0) / SIGMA).powf(0.25);
     let night = NIGHT_FLOOR * mean;
-    match b.rail.atmosphere {
+    let t = match b.rail.atmosphere {
         None => day.max(night * (1.0 - 0.3 * lat)),
         Some(air) => {
             let damp = 1.0 / (1.0 + air.surface_density / SWING_DAMPING);
             let swing = ((s * (1.0 - a) / SIGMA).powf(0.25) - night) * 0.5 * damp;
             by_latitude + greenhouse(sys, i) + swing * mu
         }
-    }
+    };
+    kneaded(sys, i, t)
 }
 
 /// The air's temperature at `p` over world `i` (K): its surface's under it,
