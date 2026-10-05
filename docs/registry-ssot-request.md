@@ -567,3 +567,69 @@ the result matched on every power figure, store, flow of goods and module layout
 - **The engine's line maths is now the one the build's reports should read** (gaps, "what a works
   can do", the hulls report's loads). When you want it, I'll add a command that writes the engine's
   figures out for the page, as agreed.
+
+## Next: the rest of the game's content into the registry (the user, 2026-10-04: "everything moves to the registry")
+
+The game reads all the registry's own kinds directly now. What's left is the game's hand-written
+content and the world data still in Rust. The game side is ready to take each kind once its records
+exist: the loader pattern is the same every time. In the order I'd take them:
+
+1. **Ship equipment** (`modules.ron`, 56 entries, SFO 16; 39 records today).
+   - **The 17 missing records:** cabin.s1–s4, capacitor.s3, comm.long.s1, drive.kestrel.k2,
+     hyperdrive.halcyon.s1–s3, power.aurel.s1–s3, rack.s2, tank.s2, terminal.ground,
+     transceiver.station.
+   - **A `function` group: the kind of device and only its parameters.** These are the kinds the
+     engine has today, with their parameters, all SI:
+     - power plant: output W, efficiency, burns (ref)
+     - drive / thrusters / lift: thrust N, exhaust m/s, efficiency, burns (ref)
+     - tank: capacity kg, holds (ref)
+     - capacitor: capacity J, rate W
+     - rack: capacity kg
+     - cabin: seats
+     - hyperdrive: efficiency, top speed m/s
+     - flight computer: turn rate, roll rate rad/s
+     - sensors: range m
+     - comm: capture, link m, lag s, capacity
+     - gate relay / hyper relay: lag s, capacity, cadence s
+     - nav computer: features, interlock, governor
+     - no parameters: transponder, life support, gun, laser, mining rig, docking
+
+     Weapons' and mining figures now in Rust (`weapons.rs`, `missiles.rs`, `turrets.rs`,
+     `radar.rs`, `mining.rs` excavator and anchor) go under the same group.
+   - **Plus:** its size class (1–4, the slot it fits) and its maker (`org.*`).
+   - **No price:** prices stay game-side until the exchange.
+2. **Hulls** (`hulls.ron`). The MC-07 first, then the outdated five as records (they may break).
+   What the engine needs of a hull:
+   - its model (`assets/models/*.glb`)
+   - its slots (name, kind, size) and its fit (slot → equipment key)
+   - its thrusters (nozzle, slot, share of thrust)
+   - radius, drag area
+   - hull strength, or the frame material it's worked out from
+   - its maker
+
+   Its mass is the sum of its parts', worked out by the engine.
+3. **Structures** (`structures.ron`): station, spaceport, outpost and orbital site as products
+   (with maker, fit and size), like the gate rings. Settlements and rigs then name the structure
+   they are.
+4. **Fuels** (`materials.ron`, 9): deuterium, helium-3, D–He3, D–T, uranium, methalox, kerolox,
+   hydrolox, hydrogen. Each as a material with energy per kg, how it releases it (fusion, fission,
+   chemical) and its density as stored.
+5. **Goods** (`goods.ron`, `ores.ron`). A record kind for the market's categories (food, metals,
+   machinery…): unit mass, bulk density, whether it's in the household basket, and the words its
+   items are named from (seeding vocabulary). The ores are already goods of kind rock; once the
+   game reads them, `game.ore` can go.
+6. **What a place makes** (`recipes.ron`, `places.ron`): retired, not copied. A settlement's
+   population on the settlement record. Farms, artisans, pharma, fabs, factories and wells as
+   modules with recipes, so every settlement's production is facility lines. `sells` and `wants`
+   are the economy's to work out.
+7. **Trade bans** (`markets.ron`): administration law, beside the zoning code.
+8. **The world data still in Rust and `sheet.ron`** (section 5b above):
+   - the system, belt and terrain generators' settings (seeding)
+   - landing and pads (structures and hulls)
+   - a person (eye height, walk, run, jump)
+   - the land office's rates, population and market rules (administration and economy)
+   - news cadence
+   - the start record
+
+**Staying game-side:** prices (volatile, for the exchange), `shapes.ron` (the models' geometry,
+an asset the hull record points at), `aliases.ron` (old saves).
