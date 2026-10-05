@@ -14,8 +14,8 @@ use universe_world::World;
 /// And what the registry has taken over is as its record says.
 #[test]
 fn the_charted_world_is_as_the_registry_has_it() {
-    let g = &registry().seeding.galaxy.galaxy;
-    let w = World::new(g.seed);
+    let g = registry().galaxy().expect("the galaxy is written out");
+    let w = World::new(g.seed as u64);
     let home = registry().system(&g.home).expect("home is a system written out");
     assert_eq!(w.system(w.home_system).name, home.identity.name);
     // (The kinds of asteroid the seed makes are described: what the game needs of them is in their records.)
@@ -23,7 +23,7 @@ fn the_charted_world_is_as_the_registry_has_it() {
     for key in ["rock-class.stony", "rock-class.carbonaceous", "rock-class.metallic", "rock-class.icy"] {
         let c = RockClass::by_key(key).unwrap_or_else(|| panic!("the registry has no {key}"));
         assert!(c.density(Structure::Rubble) > 0.0 && c.density(Structure::Monolith) > c.density(Structure::Rubble) && c.albedo() > 0.0, "{key}");
-        let m = c.record().mining.as_ref().unwrap_or_else(|| panic!("{key} yields nothing"));
+        let m = &c.record().mining;
         assert!(m.cut_energy.is_some() && m.yields.is_some(), "{key}: how it's cut and what it yields");
         for good in m.yields.iter().chain(&m.rich_yields) {
             assert!(universe_world::goods::Ore::from_key(good).is_some(), "{key} yields {good}, which the game's excavators don't dig");

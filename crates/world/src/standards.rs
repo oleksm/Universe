@@ -193,9 +193,9 @@ pub(crate) fn caps(t: &str) -> String {
 /// prefix its key names (`standard.sfo.18`: SFO's), its branch its first
 /// topic (its body's branches: its standards' topics, for now).
 pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Body>, Vec<Standard>) {
-    use crate::registry::{Check as C, Licence as L, OrgKind, ParamValue, StandardStatus as S};
-    let orgs: Vec<_> = reg.organisations.iter().filter(|o| o.kind == OrgKind::StandardsBody).collect();
-    let prefix_of = |o: &crate::registry::Organisation| o.prefix.clone().unwrap_or_else(|| panic!("{}: a standards body with no prefix", o.identity.key));
+    use crate::registry::{OrgKind, StandardLicence as L, StandardParamValue as ParamValue, StandardRequireCheck as C, StandardStatus as S};
+    let orgs: Vec<_> = reg.orgs.iter().filter(|o| o.kind == OrgKind::StandardsBody).collect();
+    let prefix_of = |o: &crate::registry::Org| o.prefix.clone().unwrap_or_else(|| panic!("{}: a standards body with no prefix", o.identity.key));
     let body_of = |key: &str| {
         let segment = key.split('.').nth(1).unwrap_or_else(|| panic!("{key}: no body in its key"));
         orgs.iter().find(|o| prefix_of(o).eq_ignore_ascii_case(segment)).unwrap_or_else(|| panic!("{key}: no standards body {segment}"))
@@ -218,7 +218,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Body>, Vec<Standar
             body: body_of(&s.identity.key).identity.key.clone(),
             branch: topic(s),
             version: s.version.unwrap_or(1),
-            title: caps(s.title.as_deref().unwrap_or_default()),
+            title: caps(&s.title),
             scope: caps(s.scope.as_deref().unwrap_or_default()),
             status: match s.status.unwrap_or(S::Draft) {
                 S::Draft => Status::Draft,
@@ -258,8 +258,8 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Body>, Vec<Standar
                 })
                 .collect(),
             text: caps(s.text.as_deref().unwrap_or_default()),
-            licence: match s.licence {
-                Some(L::Fee { fee }) => Licence::Fee(fee),
+            licence: match &s.licence {
+                Some(L::Fee(f)) => Licence::Fee(f.fee),
                 _ => Licence::Open,
             },
             published: s.published.unwrap_or(0.0),

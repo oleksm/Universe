@@ -106,8 +106,8 @@ impl RockClass {
         &letters[self.0 as usize]
     }
 
-    fn physical(self) -> &'static crate::registry::RockPhysical {
-        self.record().physical.as_ref().unwrap_or_else(|| panic!("{} isn't described (no physical)", self.key()))
+    fn physical(self) -> &'static crate::registry::RockClassPhysical {
+        &self.record().physical
     }
 
     /// Bulk density (kg/m³): a rubble pile is a third or more empty space.

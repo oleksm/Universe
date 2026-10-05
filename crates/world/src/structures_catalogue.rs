@@ -56,8 +56,8 @@ impl Structure {
     /// fitted with the equipment the game has (`has`: a key it knows; a
     /// gate's throat coils it doesn't make yet are left off).
     pub fn from_registry(reg: &crate::registry::Registry, has: impl Fn(&str) -> bool) -> Vec<Self> {
-        use crate::registry::StructureKind as K;
-        let fit = |f: &[crate::registry::Fitted]| f.iter().filter(|x| has(&x.item)).flat_map(|x| std::iter::repeat_n(x.item.clone(), x.count as usize)).collect::<Vec<_>>();
+        use crate::registry::StructureIdentityKind as K;
+        let fit = |f: Vec<(&String, u32)>| f.into_iter().filter(|(item, _)| has(item)).flat_map(|(item, n)| std::iter::repeat_n(item.clone(), n as usize)).collect::<Vec<_>>();
         let structures = reg.structures.iter().map(|s| Structure {
             key: s.identity.key.clone(),
             brand: s.identity.maker.clone(),
@@ -68,21 +68,21 @@ impl Structure {
                 K::Outpost => StructureKind::Outpost,
                 K::Orbital => StructureKind::Orbital,
             },
-            fit: fit(&s.fit),
+            fit: fit(s.fit.iter().map(|x| (&x.item, x.count.unwrap_or(1))).collect()),
             note: s.identity.description.clone().unwrap_or_default(),
         });
         let rings = reg.gates.iter().map(|g| {
-            let p = g.performance.as_ref();
+            let p = &g.performance;
             Structure {
                 key: g.identity.key.clone(),
                 brand: g.identity.maker.clone().unwrap_or_default(),
                 name: crate::standards::caps(&g.identity.name),
                 kind: StructureKind::GateRing {
-                    class: g.identity.class.unwrap_or(1),
-                    span_ly: p.and_then(|p| p.span).unwrap_or(0.0) / crate::units::LIGHT_YEAR,
-                    capture: p.and_then(|p| p.capture_speed).unwrap_or(0.0),
+                    class: g.identity.class.unwrap_or(1) as u8,
+                    span_ly: p.span.unwrap_or(0.0) / crate::units::LIGHT_YEAR,
+                    capture: p.capture_speed.unwrap_or(0.0),
                 },
-                fit: fit(&g.fit),
+                fit: fit(g.fit.iter().map(|x| (&x.item, x.count)).collect()),
                 note: g.identity.description.clone().unwrap_or_default(),
             }
         });

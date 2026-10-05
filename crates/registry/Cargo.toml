@@ -3,10 +3,13 @@ name = "universe-registry"
 edition.workspace = true
 version.workspace = true
 
-# Freefall Facts, the registry under `standards/`, as typed records: read from
-# its YAML when the game is built, carried in the binary as a compact encoding,
-# decoded once at start. Knows nothing about the game.
+# Freefall Facts, the registry under `standards/`, as typed records generated
+# from its schemas: read from its YAML when the game is built, carried in the
+# binary as a compact encoding, decoded once at start. Knows nothing about the game.
 [dependencies]
 serde.workspace = true
 serde_norway = "0.9"
 rmp-serde = "1"
+
+[build-dependencies]
+serde_norway = "0.9"

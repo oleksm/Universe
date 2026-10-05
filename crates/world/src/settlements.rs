@@ -245,7 +245,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
         .iter()
         .map(|m| {
             let p = &m.physical;
-            let needs = m.needs.as_ref().and_then(|n| n.power).or_else(|| m.recipes.first().and_then(|r| r.power)).or_else(|| m.throughput.as_ref().and_then(|t| t.power)).unwrap_or(0.0);
+            let needs = m.needs.power.or_else(|| m.recipes.first().and_then(|r| r.power)).or_else(|| m.throughput.as_ref().and_then(|t| t.power)).unwrap_or(0.0);
             IndustrialModule {
                 key: m.identity.key.clone(),
                 name: m.identity.name.clone(),
@@ -254,7 +254,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
                 height: p.height.unwrap_or(0.0),
                 needs: needs / 1e6,
                 supplies: m.generation.as_ref().map_or(0.0, |g| g.supplies) / 1e6,
-                holds: m.capacity.as_ref().and_then(|c| c.holds).unwrap_or(0.0) / 1e3,
+                holds: m.capacity.holds.unwrap_or(0.0) / 1e3,
             }
         })
         .collect();
@@ -297,7 +297,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
                     makes: lines.iter().map(|l| (l.product.clone(), l.output * T_PER_H)).collect(),
                     draws: lines.iter().map(|l| l.power).sum::<f64>() / 1e6,
                     supplies: built.iter().map(|(m, n)| m.generation.as_ref().map_or(0.0, |g| g.supplies) * *n as f64).sum::<f64>() / 1e6,
-                    holds: built.iter().map(|(m, n)| m.capacity.as_ref().and_then(|c| c.holds).unwrap_or(0.0) * *n as f64).sum::<f64>() / 1e3,
+                    holds: built.iter().map(|(m, n)| m.capacity.holds.unwrap_or(0.0) * *n as f64).sum::<f64>() / 1e3,
                     modules: listed,
                     takes: lines.iter().flat_map(|l| &l.supplies).map(flow).collect(),
                     gives: lines.iter().flat_map(|l| &l.made).chain(lines.iter().flat_map(|l| &l.by_products)).map(flow).collect(),
@@ -310,7 +310,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
             system,
             body: name(at),
             name: s.identity.name.clone(),
-            zones: zones.iter().map(|z| Zone { name: z.identity.name.clone(), use_: format!("{:?}", z.zone).to_lowercase(), outline: z.outline.iter().map(pt).collect() }).collect(),
+            zones: zones.iter().map(|z| Zone { name: z.identity.name.clone(), use_: format!("{:?}", z.use_).to_lowercase(), outline: z.outline.iter().map(pt).collect() }).collect(),
             parcels: parcels
                 .iter()
                 .map(|p| Parcel { number: p.number, owner: p.owner.clone().unwrap_or_default(), owner_name: p.owner.as_deref().map(name).unwrap_or_default(), outline: p.outline.iter().map(pt).collect() })
@@ -367,12 +367,12 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         s
     };
     let mut need: Vec<&str> = vec![target];
-    let mut chosen: Vec<Option<&crate::registry::Recipe>> = vec![None; steps.len()];
+    let mut chosen: Vec<Option<&crate::registry::ModuleRecipe>> = vec![None; steps.len()];
     for (i, s) in steps.iter().enumerate().rev() {
         let m = module(s);
         match m.recipes.iter().find(|r| need.contains(&r.makes.as_str())) {
             Some(r) => {
-                need.extend(r.inputs.iter().map(|x| x.item.as_str()));
+                need.extend(r.inputs.iter().filter_map(|x| x.item.as_deref()));
                 chosen[i] = Some(r);
             }
             None if !m.recipes.is_empty() => panic!("{facility}: {} has no recipe that leads to {target}", m.identity.name),
@@ -395,13 +395,15 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
             let Some(r) = chosen[i] else { continue };
             let d = demand[i];
             for x in &r.inputs {
-                match made_by(&x.item) {
-                    Some(src) if src < i => demand[src] += d * x.quantity,
-                    _ => add(&mut supplies, &x.item, d * x.quantity),
+                let (Some(item), q) = (x.item.as_deref(), x.quantity.unwrap_or(0.0)) else { continue };
+                match made_by(item) {
+                    Some(src) if src < i => demand[src] += d * q,
+                    _ => add(&mut supplies, item, d * q),
                 }
             }
             for x in &r.outputs {
-                add(&mut by, &x.item, d * x.quantity);
+                let (Some(item), q) = (x.item.as_deref(), x.quantity.unwrap_or(0.0)) else { continue };
+                add(&mut by, item, d * q);
             }
         }
         // (What is given off and needed on the same site is used again.)
@@ -415,7 +417,7 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         let power: f64 = (0..steps.len())
             .map(|i| match chosen[i] {
                 Some(r) if r.rate.is_some() => r.power.unwrap_or(0.0) * demand[i] / r.rate.unwrap(),
-                _ => module(steps[i]).needs.as_ref().and_then(|n| n.power).unwrap_or(0.0),
+                _ => module(steps[i]).needs.power.unwrap_or(0.0),
             })
             .sum();
         (demand, supplies, by, power)

@@ -20,7 +20,7 @@ use universe_physics::Orbit;
 
 use crate::belt::RockClass;
 use crate::galaxy::StarClass;
-use crate::registry::{Body as RegBody, BodyKind as RegKind, InGame, PopulationKind, Provenance, Registry, Terrain as RegTerrain};
+use crate::registry::{Body as RegBody, BodyIdentityKind as RegKind, BodySurfaceTerrain as RegTerrain, InGame, PopulationIdentityKind as PopulationKind, Provenance, Registry};
 use crate::system::{BodyKind, StarSystem};
 use crate::terrain::{Terrain, TerrainKind};
 use crate::units::{G, SUN_MASS};
@@ -128,9 +128,9 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
         index: s.identity.index.unwrap_or_else(|| panic!("{}: no index among the seed's stars", s.identity.key)) as usize,
         status: s.provenance,
         star: Star {
-            class: star.star.as_ref().and_then(|st| st.class.clone()).unwrap_or_else(|| panic!("{}: no class", star.identity.key)),
+            class: star.star.class.clone().unwrap_or_else(|| panic!("{}: no class", star.identity.key)),
             mass: need("mass", &star.identity.key, star.physical.mass) / SUN_MASS,
-            luminosity: need("luminosity", &star.identity.key, star.star.as_ref().and_then(|st| st.luminosity)) / universe_physics::laws::SOLAR_LUMINOSITY,
+            luminosity: need("luminosity", &star.identity.key, star.star.luminosity) / universe_physics::laws::SOLAR_LUMINOSITY,
         },
         bodies: bodies
             .iter()
@@ -145,7 +145,7 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
                     RegKind::Asteroid => BodyKind::Asteroid,
                     k => panic!("{key}: the game makes no {k:?}"),
                 };
-                let (o, p, f) = (b.orbit.clone().unwrap_or_default(), &b.physical, &b.surface);
+                let (o, p, f) = (&b.orbit, &b.physical, &b.surface);
                 let colour = f.colour.unwrap_or([0.5; 3]);
                 Body {
                     name: b.identity.name.clone(),
@@ -157,15 +157,15 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
                     day: need("day", key, p.day),
                     semi_major_axis: o.semi_major_axis,
                     eccentricity: o.eccentricity,
-                    inclination: o.inclination.map(f64::to_radians),
-                    tilt: p.tilt.unwrap_or(0.0).to_radians(),
+                    inclination: o.inclination.map(|d| d.rad()),
+                    tilt: p.tilt.map_or(0.0, |d| d.rad()),
                     terrain: f.terrain.map(|t| match t {
                         RegTerrain::Terran => TerrainKind::Terran,
                         RegTerrain::Dry => TerrainKind::Dry,
                         RegTerrain::Cratered => TerrainKind::Cratered,
                     }),
                     relief: f.relief,
-                    atmosphere: b.atmosphere.as_ref().map(|a| (need("air density", key, a.surface_density), need("scale height", key, a.scale_height), need("air's top", key, a.top))),
+                    atmosphere: Some(&b.atmosphere).filter(|a| a.surface_density.is_some()).map(|a| (need("air density", key, a.surface_density), need("scale height", key, a.scale_height), need("air's top", key, a.top))),
                     colour: (colour[0] as f32, colour[1] as f32, colour[2] as f32),
                     rings: p.rings.map(|[inner, outer]| (inner, outer)),
                     landscape: f.landscape.clone(),
@@ -178,7 +178,7 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
             .filter(|p| in_system(&p.identity.key, "population", name) && made(p.in_game) && matches!(p.identity.kind, PopulationKind::Family | PopulationKind::Trojan | PopulationKind::Outer))
             .map(|p| {
                 let key = &p.identity.key;
-                let rocks = p.rocks.as_ref().unwrap_or_else(|| panic!("{key}: no rocks"));
+                let rocks = &p.rocks;
                 let class = rocks.class.as_deref().unwrap_or_else(|| panic!("{key}: no class"));
                 Field {
                     name: p.identity.name.clone(),

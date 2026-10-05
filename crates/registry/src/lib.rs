@@ -2,18 +2,20 @@
 //! typed records. It is the only copy: the game holds no table of its own of
 //! anything the registry describes.
 //!
+//! **The types are generated from the registry's schemas** (`build.rs`, into
+//! [`generated`]): a record's struct is its schema, field for field, unknown
+//! fields refused. A schema changed is a rebuild; nothing here is kept by hand.
+//!
 //! How it reaches the game: when the game is built, [`Registry::read`] reads
 //! every record under `standards/` (each file's `identity.key` says its kind,
-//! the first part of the key), parses the kinds the game uses into their types
-//! (unknown fields refused), checks the references between them, and
-//! [`Registry::encode`]s the result. The binary carries that encoding;
-//! [`Registry::decode`] turns it back into records once at start. Nothing is
-//! read from disk while the game runs, and nothing is looked up by key in play:
-//! the game resolves keys to its own handles when it loads.
+//! the first part of the key), parses it into its kind's type, checks every
+//! reference (each property marked `x-ref` must name a record of a kind it
+//! allows), and [`Registry::encode`]s the result. The binary carries that
+//! encoding; [`Registry::decode`] turns it back into records once at start.
+//! Nothing is read from disk while the game runs.
 //!
-//! Units are SI, as the records hold them (angles in degrees, marked so in the
-//! schema). A record's figures each carry a [`Basis`]: where they come from,
-//! and whether they're a guess to review.
+//! Units are SI, as the records hold them; an angle is [`Degrees`] (the one
+//! exception), with `.rad()` for the engine.
 
 use std::collections::{BTreeMap, HashMap};
 use std::fmt;
@@ -21,102 +23,26 @@ use std::path::{Path, PathBuf};
 
 use serde::{Deserialize, Serialize};
 
-mod celestial;
-mod common;
-mod land;
-mod material;
-mod organisation;
-mod sfo;
+pub mod generated;
 
-pub use common::{Address, MadeFrom, Making, Physical};
-pub use organisation::{Business, Details, Form, OrgIdentity, OrgKind, Organisation, ZoneRule, ZoneUse};
-pub use material::{ElectricalMagnetic, Environment, Form as MaterialForm, Fuel, Joining, Level, Magnetism, Material, MaterialClass, MaterialIdentity, MaterialMaking, MaterialMass, Mechanical, Optical, Rating, Release, Thermal};
-pub use land::{Facility, FacilityKind, GatePlace, KeyName, KeyOnly, Line, ModuleCount, Parcel, Pipeline, Point, Position, PowerLine, Settlement, SettlementKind, SitePart, Spin, Street, StreetAddress, Zone};
-pub use sfo::{Flight, Hull, HullCapacity, HullDesign, HullIdentity, HullSlot, Lands, Nozzle, SlotFit, BuiltOf, Fitted, Gate, GateIdentity, GatePerformance, GatePower, GateSize, Structure, StructureIdentity, StructureKind, Engine, Equipment, EquipmentIdentity, Function, NavFeature, Relay, Revision, SlotKind, Market, MarketIdentity, MarketNames, Stock, StockIdentity, StockSize, Amount, Burn, Capacity, Changeover, Generation, Module, ModuleIdentity, Needs, Recipe, Throughput, Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
-pub use celestial::{Atmosphere, Body, BodyIdentity, BodyKind, BodyOrbit, BodyPhysical, BodyRock, InGame, Population, PopulationIdentity, PopulationKind, PopulationRocks, RockStructure, Star, Surface, Terrain, ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
+pub use generated::*;
 
-/// Where a record's figures come from (the common schema's `basis`).
-#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
-#[serde(deny_unknown_fields)]
-pub struct Basis {
-    /// The groups, or `group.property`, it covers.
-    pub of: Vec<String>,
-    pub tier: Tier,
-    #[serde(default)]
-    pub source: Option<String>,
-    #[serde(default)]
-    pub note: Option<String>,
-    /// A guess put in so the figure is there, to be reviewed.
-    #[serde(default)]
-    pub review: bool,
-}
-
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum Tier {
-    Sourced,
-    Derived,
-    Invented,
-}
-
-/// Is any of `field`'s figures (`group` or `group.property`) a guess to review?
-pub fn under_review(basis: &[Basis], field: &str) -> bool {
-    basis.iter().any(|b| b.review && b.of.iter().any(|o| o == field || field.starts_with(&format!("{o}.")) || o.starts_with(&format!("{field}."))))
-}
-
-/// Whether the seed's record of a celestial thing is the truth (`curated`,
-/// `frozen`) or only what the seed makes, written down (`seeded`).
-#[derive(Clone, Copy, Debug, Serialize, Deserialize, PartialEq, Eq)]
-#[serde(rename_all = "lowercase")]
-pub enum Provenance {
-    Seeded,
-    Curated,
-    Frozen,
-}
-
-/// The registry, as far as the game reads it.
+/// The registry: every record, by kind ([`Records`], generated), and every
+/// record's name by key.
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Registry {
-    pub seeding: Seeding,
-    pub rock_classes: Vec<RockClass>,
-    pub goods: Vec<Good>,
-    /// Companies, standards bodies and administrations.
-    pub organisations: Vec<Organisation>,
-    /// Every standards body's standards.
-    pub standards: Vec<Standard>,
-    /// Materials, the fuels among them.
-    pub materials: Vec<Material>,
-    /// Hulls.
-    pub hulls: Vec<Hull>,
-    /// Stations, spaceports, outposts and orbital sites.
-    pub structures: Vec<Structure>,
-    /// Gate rings.
-    pub gates: Vec<Gate>,
-    /// Ship equipment.
-    pub equipment: Vec<Equipment>,
-    /// The market's categories.
-    pub markets: Vec<Market>,
-    /// Mill stock.
-    pub stock: Vec<Stock>,
-    /// Industrial modules, with their recipes.
-    pub modules: Vec<Module>,
-    /// Settlements and rigs, and the ground of each settlement.
-    pub settlements: Vec<Settlement>,
-    pub zones: Vec<Zone>,
-    pub parcels: Vec<Parcel>,
-    pub streets: Vec<Street>,
-    pub power_lines: Vec<PowerLine>,
-    pub facilities: Vec<Facility>,
-    /// Every record's name, by key (the kinds the game doesn't read yet too).
+    pub records: Records,
+    /// Every record's name, by key.
     pub names: BTreeMap<String, String>,
-    pub systems: Vec<System>,
-    /// Stars, planets, moons and small bodies, of every system written out.
-    pub bodies: Vec<Body>,
-    /// Fields of asteroids and regions of small bodies.
-    pub populations: Vec<Population>,
-    /// How many records of each kind there are, the ones the game doesn't
-    /// read yet included (by kind: `hull`, `part`, ...).
+    /// How many records of each kind there are (by kind: `hull`, `part`, ...).
     pub counts: BTreeMap<String, usize>,
+}
+
+impl std::ops::Deref for Registry {
+    type Target = Records;
+    fn deref(&self) -> &Records {
+        &self.records
+    }
 }
 
 /// Something wrong with the records: the game isn't built from them until
@@ -158,7 +84,6 @@ impl Registry {
         let mut problems = Vec::new();
         let mut reg = Registry::default();
         let mut keys: HashMap<String, PathBuf> = HashMap::new();
-        let mut galaxy = None;
         for file in &files {
             let text = match std::fs::read_to_string(file) {
                 Ok(t) => t,
@@ -171,76 +96,29 @@ impl Registry {
             let Ok(head) = serde_norway::from_str::<Head>(&text) else { continue };
             let Some(identity) = head.identity else { continue };
             let Some(key) = identity.key else { continue };
-            if let Some(name) = identity.name {
-                reg.names.insert(key.clone(), name);
-            }
             if let Some(first) = keys.insert(key.clone(), file.clone()) {
                 problems.push(Problem { file: file.clone(), what: format!("{key} is also {}", first.display()) });
             }
+            if let Some(name) = identity.name {
+                reg.names.insert(key.clone(), name);
+            }
             let kind = key.split('.').next().unwrap_or_default().to_string();
             *reg.counts.entry(kind.clone()).or_default() += 1;
-            let mut parse = |what: &mut dyn FnMut(&str) -> Result<(), serde_norway::Error>| {
-                if let Err(e) = what(&text) {
-                    problems.push(Problem { file: file.clone(), what: format!("{key}: {e}") });
-                }
-            };
-            match kind.as_str() {
-                "rock-class" => parse(&mut |t| Ok(reg.rock_classes.push(serde_norway::from_str(t)?))),
-                "org" => parse(&mut |t| Ok(reg.organisations.push(serde_norway::from_str(t)?))),
-                "standard" => parse(&mut |t| Ok(reg.standards.push(serde_norway::from_str(t)?))),
-                "material" => parse(&mut |t| Ok(reg.materials.push(serde_norway::from_str(t)?))),
-                "hull" => parse(&mut |t| Ok(reg.hulls.push(serde_norway::from_str(t)?))),
-                "structure" => parse(&mut |t| Ok(reg.structures.push(serde_norway::from_str(t)?))),
-                "gate" => parse(&mut |t| Ok(reg.gates.push(serde_norway::from_str(t)?))),
-                "equipment" => parse(&mut |t| Ok(reg.equipment.push(serde_norway::from_str(t)?))),
-                "market" => parse(&mut |t| Ok(reg.markets.push(serde_norway::from_str(t)?))),
-                "stock" => parse(&mut |t| Ok(reg.stock.push(serde_norway::from_str(t)?))),
-                "module" => parse(&mut |t| Ok(reg.modules.push(serde_norway::from_str(t)?))),
-                "settlement" | "rig" => parse(&mut |t| Ok(reg.settlements.push(serde_norway::from_str(t)?))),
-                "zone" => parse(&mut |t| Ok(reg.zones.push(serde_norway::from_str(t)?))),
-                "parcel" => parse(&mut |t| Ok(reg.parcels.push(serde_norway::from_str(t)?))),
-                "street" => parse(&mut |t| Ok(reg.streets.push(serde_norway::from_str(t)?))),
-                "power-line" => parse(&mut |t| Ok(reg.power_lines.push(serde_norway::from_str(t)?))),
-                "facility" => parse(&mut |t| Ok(reg.facilities.push(serde_norway::from_str(t)?))),
-                "good" => parse(&mut |t| Ok(reg.goods.push(serde_norway::from_str(t)?))),
-                "body" => parse(&mut |t| Ok(reg.bodies.push(serde_norway::from_str(t)?))),
-                "population" => parse(&mut |t| Ok(reg.populations.push(serde_norway::from_str(t)?))),
-                "system" => parse(&mut |t| Ok(reg.systems.push(serde_norway::from_str(t)?))),
-                "seeding" if key == "seeding.galaxy" => parse(&mut |t| Ok(galaxy = Some(serde_norway::from_str::<GalaxySeeding>(t)?))),
-                _ => {}
+            match reg.records.parse(&kind, &text) {
+                Ok(true) => {}
+                Ok(false) => problems.push(Problem { file: file.clone(), what: format!("{key}: no schema has the kind {kind}") }),
+                Err(e) => problems.push(Problem { file: file.clone(), what: format!("{key}: {e}") }),
             }
         }
-        match galaxy {
-            Some(g) => reg.seeding.galaxy = g,
-            None => problems.push(Problem { file: root.to_path_buf(), what: "no seeding.galaxy".into() }),
-        }
-        // References the game follows: each must name a record of its kind.
-        let has = |k: &str| keys.contains_key(k);
-        if !has(&reg.seeding.galaxy.galaxy.home) || !reg.seeding.galaxy.galaxy.home.starts_with("system.") {
-            problems.push(Problem { file: keys.get("seeding.galaxy").cloned().unwrap_or_default(), what: format!("home {} is no system", reg.seeding.galaxy.galaxy.home) });
-        }
-        let kind_of = |k: &str, kind: &str| has(k) && k.split('.').next() == Some(kind);
-        for b in &reg.bodies {
-            if let Some(p) = &b.identity.parent && !kind_of(p, "body") {
-                problems.push(Problem { file: keys[&b.identity.key].clone(), what: format!("its parent {p} is no body") });
+        // Every reference names a record of a kind it may.
+        reg.records.refs(&mut |from, to, kinds| {
+            let kind = to.split('.').next().unwrap_or_default();
+            if !keys.contains_key(to) || !kinds.contains(&kind) {
+                problems.push(Problem { file: keys.get(from).cloned().unwrap_or_default(), what: format!("{from} names {to}, which is no {}", kinds.join(" or ")) });
             }
-            if let Some(c) = b.rock.as_ref().and_then(|r| r.class.as_ref()) && !kind_of(c, "rock-class") {
-                problems.push(Problem { file: keys[&b.identity.key].clone(), what: format!("its rock class {c} is none") });
-            }
-        }
-        for p in &reg.populations {
-            for (what, r, kind) in [("anchor", &p.identity.anchor, "body"), ("parent", &p.identity.parent, "body"), ("class", &p.rocks.as_ref().and_then(|r| r.class.clone()), "rock-class")] {
-                if let Some(r) = r && !kind_of(r, kind) {
-                    problems.push(Problem { file: keys[&p.identity.key].clone(), what: format!("its {what} {r} is no {kind}") });
-                }
-            }
-        }
-        for r in &reg.rock_classes {
-            for y in [r.mining.as_ref().and_then(|m| m.yields.as_ref()), r.mining.as_ref().and_then(|m| m.rich_yields.as_ref())].into_iter().flatten() {
-                if !has(y) || !y.starts_with("good.") {
-                    problems.push(Problem { file: keys[&r.identity.key].clone(), what: format!("yields {y}, which is no good") });
-                }
-            }
+        });
+        if reg.galaxy().is_none() {
+            problems.push(Problem { file: root.to_path_buf(), what: "no seeding.galaxy".into() });
         }
         if problems.is_empty() { Ok(reg) } else { Err(problems) }
     }
@@ -255,31 +133,19 @@ impl Registry {
         rmp_serde::from_slice(bytes).expect("the registry built into the game decodes")
     }
 
-    /// The good with this key.
-    pub fn good(&self, key: &str) -> Option<&Good> {
-        self.goods.iter().find(|g| g.identity.key == key)
-    }
-
     /// A record's name, by its key.
     pub fn name(&self, key: &str) -> Option<&str> {
         self.names.get(key).map(String::as_str)
     }
 
-    /// What `item` (a good, a stock item or a material) is traded as: a
-    /// market category, by key (`market.fuel`). A material is traded as the
-    /// stock made from it is: what burns or holds a material takes any stock
-    /// of it. (A good without `traded_as` yet: its `game.goods`, the game's
-    /// old name for the category.)
-    pub fn traded_as(&self, item: &str) -> Option<String> {
-        match item.split('.').next() {
-            Some("good") => {
-                let g = self.good(item)?;
-                g.identity.traded_as.clone().or_else(|| Some(format!("market.{}", g.game.as_ref()?.goods.as_deref()?.strip_prefix("goods.")?.replace('_', "-"))))
-            }
-            Some("stock") => self.stock.iter().find(|s| s.identity.key == item)?.identity.traded_as.clone(),
-            Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
-            _ => None,
-        }
+    /// The world as a whole: `seeding.galaxy`'s settings.
+    pub fn galaxy(&self) -> Option<&SeedingGalaxy> {
+        self.seeding.iter().find(|s| s.identity.key == "seeding.galaxy")?.galaxy.as_ref()
+    }
+
+    /// The good with this key.
+    pub fn good(&self, key: &str) -> Option<&Good> {
+        self.goods.iter().find(|g| g.identity.key == key)
     }
 
     /// The module with this key.
@@ -290,6 +156,23 @@ impl Registry {
     /// The system with this key.
     pub fn system(&self, key: &str) -> Option<&System> {
         self.systems.iter().find(|s| s.identity.key == key)
+    }
+
+    /// What `item` (a good, a stock item or a material) is traded as: a
+    /// market category, by key (`market.fuel`). A material is traded as the
+    /// stock made from it is: what burns or holds a material takes any stock
+    /// of it. (A good says it by its `game.goods`, the game's old name for the
+    /// category, until its schema has `traded_as`.)
+    pub fn traded_as(&self, item: &str) -> Option<String> {
+        match item.split('.').next() {
+            Some("good") => {
+                let g = self.good(item)?;
+                Some(format!("market.{}", g.game.goods.as_deref()?.strip_prefix("goods.")?.replace('_', "-")))
+            }
+            Some("stock") => self.stock.iter().find(|s| s.identity.key == item)?.identity.traded_as.clone(),
+            Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
+            _ => None,
+        }
     }
 }
 
@@ -310,15 +193,16 @@ fn yaml_files(dir: &Path, out: &mut Vec<PathBuf>) {
 mod tests {
     use super::*;
 
-    /// The registry in the repository reads without a problem, and comes back
-    /// the same through the binary's encoding.
+    /// The registry in the repository reads without a problem (every record
+    /// into its generated type, every reference to a record of a kind it may
+    /// name), and comes back the same through the binary's encoding.
     #[test]
     fn the_registry_reads_and_round_trips() {
         let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../standards");
         let reg = Registry::read(&root).unwrap_or_else(|p| panic!("{}", p.iter().map(|p| p.to_string()).collect::<Vec<_>>().join("\n")));
-        assert!(reg.rock_classes.len() >= 4 && !reg.systems.is_empty());
         let back = Registry::decode(&reg.encode());
-        assert_eq!(back.seeding.galaxy.galaxy.seed, reg.seeding.galaxy.galaxy.seed);
-        assert_eq!(back.rock_classes.len(), reg.rock_classes.len());
+        assert_eq!(back.galaxy().map(|g| g.seed), reg.galaxy().map(|g| g.seed));
+        assert_eq!((back.equipment.len(), back.bodies.len(), back.hulls.len()), (reg.equipment.len(), reg.bodies.len(), reg.hulls.len()));
+        assert_eq!(back.hulls, reg.hulls);
     }
 }

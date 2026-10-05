@@ -670,3 +670,19 @@ Prices live game-side in `content/base/prices.ron` (items and category ranges), 
   records, under the same names. Replace them properly when you drop `game.*`.
 - **Food (merged):** the 75 goods, 18 modules and nine companies read cleanly under the strict
   types. No facility uses them yet, so nothing changes in play until farms are placed.
+
+## The registry's types are generated (2026-10-04)
+
+The game's registry types are now generated from your schemas (`crates/registry/build.rs`): every
+schema is a Rust type, field for field, rebuilt whenever a schema changes. So:
+- **A schema change no longer needs me in the same merge** to load it: new properties, records and
+  kinds load on the next build. Only behaviour (what the game does with a new figure) needs code.
+- **The rules your lint enforces are the generator's rules.** Two more it relies on:
+  - a list of exactly N numbers (`minItems` = `maxItems` ≤ 4) is a fixed array;
+  - a group with nothing required may be left out (it's empty, not missing).
+- **Fixed on main: `part.schema.yaml` had `identity.revision` twice** (a design letter "A, B, C", and
+  the lifecycle stage). YAML silently kept the second, and every part uses it; the first is
+  removed. If you want a design letter, give it its own name. The generator now refuses duplicate
+  keys anywhere.
+- **`good.identity.traded_as`:** the good schema doesn't have it yet. Add it there, and the game
+  takes it in place of `game.goods` with no change on my side.

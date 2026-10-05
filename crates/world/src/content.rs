@@ -300,9 +300,9 @@ impl Content {
         // Brands: the registry's makers (the companies whose business is making things).
         let brands: Registry<crate::modules::Brand> = Registry::build(
             crate::registry::registry()
-                .organisations
+                .orgs
                 .iter()
-                .filter(|o| o.is_maker())
+                .filter(|o| o.kind == crate::registry::OrgKind::Company && o.business.is_none_or(|b| b == crate::registry::OrgBusiness::Maker))
                 .map(|o| crate::modules::Brand::from_record(crate::registry::registry(), o))
                 .collect(),
         )?;
@@ -414,7 +414,7 @@ impl Content {
                 .iter()
                 .map(|m| {
                     let key = &m.identity.key;
-                    let names = m.names.clone().unwrap_or(crate::registry::MarketNames { adjectives: Vec::new(), nouns: Vec::new() });
+                    let names = m.names.clone();
                     Ok(GoodsKind {
                         key: key.clone(),
                         name: crate::standards::caps(&m.identity.name),

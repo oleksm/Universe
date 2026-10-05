@@ -208,7 +208,7 @@ impl HullDef {
         use crate::modules::SlotKind as G;
         use crate::registry::SlotKind as R;
         let shape = h.shape.clone()?;
-        let flight = h.flight.as_ref();
+        let flight = &h.flight;
         let kind = |k: R| match k {
             R::Power => G::Power,
             R::Drive => G::Drive,
@@ -235,12 +235,12 @@ impl HullDef {
             shape,
             frame_mass: h.physical.mass.unwrap_or(0.0),
             price,
-            slots: h.slots.iter().map(|s| (s.name.clone(), kind(s.kind), s.size)).collect(),
+            slots: h.slots.iter().map(|s| (s.name.clone(), kind(s.kind), s.size as u8)).collect(),
             fit: h.fit.iter().map(|f| (f.slot.clone(), f.item.clone())).collect(),
             thrusters: h.thrusters.iter().map(|t| ThrusterDef { nozzle: t.nozzle.clone(), slot: t.slot.clone(), share: t.share }).collect(),
-            radius: flight.and_then(|f| f.radius).unwrap_or(0.0),
-            drag_area: flight.and_then(|f| f.drag_area).unwrap_or(0.0),
-            hull_strength: flight.and_then(|f| f.hull_strength).unwrap_or(0.0),
+            radius: flight.radius.unwrap_or(0.0),
+            drag_area: flight.drag_area.unwrap_or(0.0),
+            hull_strength: flight.hull_strength.unwrap_or(0.0),
         })
     }
 

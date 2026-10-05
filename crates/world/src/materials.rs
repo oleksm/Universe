@@ -57,12 +57,12 @@ impl Material {
     /// From the registry's record of a material that is burnt for its energy,
     /// or thrown as reaction mass (one with a `fuel` group); None for any other.
     pub fn from_record(reg: &crate::registry::Registry, m: &crate::registry::Material) -> Option<Self> {
-        use crate::registry::Release as R;
+        use crate::registry::MaterialFuelRelease as R;
         let fuel = m.fuel.as_ref()?;
         Some(Material {
             key: m.identity.key.clone(),
             name: crate::standards::caps(&m.identity.name),
-            density: m.mass.as_ref().and_then(|x| x.density).unwrap_or(0.0),
+            density: m.mass.density.unwrap_or(0.0),
             energy: fuel.energy.unwrap_or(0.0),
             process: match fuel.release {
                 R::Fusion => Process::Fusion,

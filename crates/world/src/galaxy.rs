@@ -114,15 +114,17 @@ pub struct Charted {
 pub fn charted() -> &'static Charted {
     static CHARTED: std::sync::OnceLock<Charted> = std::sync::OnceLock::new();
     CHARTED.get_or_init(|| {
-        let g = &crate::registry::registry().seeding.galaxy.galaxy;
+        let g = crate::registry::registry().galaxy().expect("the registry has seeding.galaxy");
         let ly = crate::units::LIGHT_YEAR;
-        let m = g.class_mix;
+        let m = &g.class_mix;
         let mut cut = 0.0;
         let class_cuts = [m.M, m.K, m.G, m.F, m.A, m.B].map(|share| {
+            let share = share.unwrap_or(0.0);
             cut += share;
             cut
         });
-        Charted { region: g.region / ly, star_density: g.star_density * ly.powi(3), sector: g.sector / ly, class_cuts }
+        let need = |v: Option<f64>, what: &str| v.unwrap_or_else(|| panic!("seeding.galaxy has no {what}"));
+        Charted { region: need(g.region, "region") / ly, star_density: need(g.star_density, "star density") * ly.powi(3), sector: need(g.sector, "sector") / ly, class_cuts }
     })
 }
 

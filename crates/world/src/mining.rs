@@ -45,7 +45,7 @@ const RUBBLE_ENERGY: f64 = 2_000.0;
 pub fn specific_energy(rock: &Rock) -> f64 {
     match rock.structure {
         Structure::Rubble => RUBBLE_ENERGY,
-        Structure::Monolith => rock.class.record().mining.as_ref().and_then(|m| m.cut_energy).unwrap_or_else(|| panic!("{:?} has no cut energy", rock.class)),
+        Structure::Monolith => rock.class.record().mining.cut_energy.unwrap_or_else(|| panic!("{:?} has no cut energy", rock.class)),
     }
 }
 
@@ -58,7 +58,7 @@ pub fn dig_rate(rock: &Rock) -> f64 {
 /// (`rich_yields`) where it holds more platinum-group metals than
 /// `rich_above`; as the game's ore that good is.
 pub fn ore(rock: &Rock) -> Ore {
-    let m = rock.class.record().mining.as_ref().unwrap_or_else(|| panic!("{:?} yields nothing", rock.class));
+    let m = &rock.class.record().mining;
     let rich = m.rich_above.is_some_and(|share| rock.composition.pgm_ppm * 1e-6 >= share);
     let good = if rich { m.rich_yields.as_ref() } else { m.yields.as_ref() }.unwrap_or_else(|| panic!("{:?} yields nothing", rock.class));
     Ore::from_key(good).unwrap_or_else(|| panic!("{good} is no ore the game's excavators dig"))
