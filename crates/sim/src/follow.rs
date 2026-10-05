@@ -3,7 +3,6 @@
 //! range from the locked contact or the nav target, or to orbit it.
 
 use glam::DVec3;
-use universe_world::radar::RADAR_RANGE;
 
 
 /// Which kind of follow the pilot asked for.
@@ -14,9 +13,10 @@ pub enum FollowKind {
 }
 
 
-/// Ship `id` as the frame's snapshot has it, seen from `from` in `system`.
-pub(crate) fn mark_in(snaps: &[crate::traffic::Snap], system: usize, from: DVec3, id: usize) -> Option<(DVec3, DVec3)> {
+/// Ship `id` as the frame's snapshot has it, seen from `from` in `system` by
+/// sensors that see `range` (m).
+pub(crate) fn mark_in(snaps: &[crate::traffic::Snap], system: usize, from: DVec3, range: f64, id: usize) -> Option<(DVec3, DVec3)> {
     let s = snaps.get(id)?;
-    (s.system == system && s.flying && !s.hyperdrive && s.position.distance(from) < RADAR_RANGE).then_some((s.position, s.velocity))
+    (s.system == system && s.flying && !s.hyperdrive && s.position.distance(from) < range).then_some((s.position, s.velocity))
 }
 

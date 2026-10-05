@@ -279,7 +279,7 @@ impl Universe {
         let now = self.world.time;
         let mut transponders = std::collections::HashMap::new();
         let (system, at) = (self.ship_system, self.ship.position);
-        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::RADAR_RANGE) {
+        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::range(self.ship.spec())) {
             let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
             transponders.insert(i, crate::contract::Transponder {
                 name: c.name.clone(),

@@ -1,6 +1,5 @@
 use universe_engine::glam::{DVec3, Vec2, Vec3Swizzles};
 use universe_engine::{text_size, Color, Context, Frame, GLYPH};
-use universe_sim::world::radar::RADAR_RANGE;
 use universe_sim::world::weapons::{gun_on, within_gimbal, GIMBAL_LIMIT};
 use universe_sim::world::station::DECK_SPEED;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingStatus, ShipState};
@@ -292,7 +291,7 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
     rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
     if !app.contacts.is_empty() {
-        rows.push(text_row("RADAR", format!("{} IN {}", app.contacts.len(), fmt::distance(RADAR_RANGE)), DIM));
+        rows.push(text_row("RADAR", format!("{} IN {}", app.contacts.len(), fmt::distance(universe_sim::world::radar::range(app.ship.spec()))), DIM));
     }
     let h = rows.len() as f32 * ROW + 8.0;
     frame.hud_rect(at, Vec2::new(W, h), SOFT_PANEL);

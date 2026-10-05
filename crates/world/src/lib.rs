@@ -67,7 +67,7 @@ mod world;
 pub use crew::{CrewEvent, Person, Place, WalkCommands};
 pub use events::{ClearanceKind, ShipEvent, TrafficEvent};
 pub use galaxy::{Galaxy, GalaxyStar, StarClass};
-pub use radar::{Blip, RADAR_RANGE};
+pub use radar::Blip;
 pub use gate::GateFrame;
 pub use ship::{Controls, Destination, HyperdriveCommand, Ship, ShipCommands, ShipState, Triggers};
 pub use weapons::{Armed, Beam, Impact, Slug};
