@@ -20,6 +20,8 @@ const PATH: Color = Color([0.4, 1.0, 0.75, 0.95]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
 const PLANE: Color = Color([0.4, 1.0, 0.75, 0.35]);
 const CLASH: Color = Color([1.0, 0.3, 0.25, 1.0]);
+/// A doorway's frame.
+const DOOR_FRAME: Color = Color([1.0, 0.65, 0.2, 1.0]);
 /// The deck studio's floors and walls, shown here.
 const DECK_FLOOR: Color = Color([1.0, 0.8, 0.5, 0.16]);
 const DECK_WALL: Color = Color([1.0, 0.8, 0.5, 0.55]);
@@ -183,9 +185,27 @@ struct Plan {
     /// Each line: its two points and its cross-section.
     lines: Vec<(usize, usize, Profile)>,
     /// Lines grouped (each a group's lines), and whether it's walled off: walls
-    /// along its tubes' sides, their ends open.
+    /// along its tubes' sides, and across their free ends.
     groups: Vec<Group>,
+    /// Walled tubes' free ends set apart from what they'd be (closed; open near an
+    /// entry): (line, end 0 or 1, how).
+    #[serde(default)]
+    ends: Vec<(usize, usize, End)>,
+    /// Doorways in walled tubes' sides: (line, how far along it 0-1, on its right?).
+    #[serde(default)]
+    doors: Vec<(usize, f32, bool)>,
 }
+
+/// How a walled tube's free end is: walled across, a doorway in that wall, or open.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+enum End {
+    Closed,
+    Door,
+    Open,
+}
+
+/// A doorway's width and height (m).
+const DOORWAY: (f32, f32) = (0.9, 2.1);
 
 #[derive(Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
 struct Group {
@@ -317,6 +337,9 @@ struct Tube {
     /// Its walls' ends: square across it, or (where it meets one other tube) on the
     /// plane halfway between their ways (a mitre): that plane's normal, at the end.
     mitres: [Option<Vec3>; 2],
+    /// Its line, and how each of its ends is (none: joined to another tube there).
+    line: usize,
+    ends: [Option<End>; 2],
 }
 
 impl Tube {
@@ -338,6 +361,27 @@ impl Tube {
         planes.push((-self.d, -self.d.dot(self.a)));
         planes.push((self.d, self.d.dot(self.a) + self.len));
         planes
+    }
+
+    /// A box in its frame (along `s0..s1`, across `u0..u1`, up `v0..v1` round its
+    /// axis) as planes (inside where `n·p < c`).
+    fn cut(&self, s: (f32, f32), u: (f32, f32), v: (f32, f32)) -> Vec<(Vec3, f32)> {
+        let o = self.a;
+        vec![
+            (-self.d, -self.d.dot(o) - s.0),
+            (self.d, self.d.dot(o) + s.1),
+            (-self.u, -self.u.dot(o) - u.0),
+            (self.u, self.u.dot(o) + u.1),
+            (-self.v, -self.v.dot(o) - v.0),
+            (self.v, self.v.dot(o) + v.1),
+        ]
+    }
+
+    /// Its floor's height round its axis, and its half width (m).
+    fn floor_and_half(&self) -> (f32, f32) {
+        let lo = self.corners.iter().map(|c| c.y).fold(f32::MAX, f32::min);
+        let half = self.corners.iter().map(|c| c.x.abs()).fold(0.0, f32::max);
+        (lo, half)
     }
 
     /// Where along it its side line through corner `c` ends at its start (0) or its
@@ -386,7 +430,8 @@ impl Plan {
                 (n.dot(into) < 0.999).then_some(n)
             };
             let mitres = [mitre(a, -d).map(|n| -n), mitre(b, d)];
-            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres }
+            let ends = [self.free_end(k, a).then(|| self.end_of(k, 0)), self.free_end(k, b).then(|| self.end_of(k, 1))];
+            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends }
         }).collect()
     }
 
@@ -397,6 +442,27 @@ impl Plan {
     fn wall_panels(&self) -> Vec<Panel> {
         let tubes = self.tubes();
         let rooms: Vec<Vec<(Vec3, f32)>> = tubes.iter().map(Tube::planes).collect();
+        // Doorways: boxes cutting a tube's wall, from its floor up (in a side, at a way
+        // along; in an end's wall, at its middle).
+        let (dw, dh) = DOORWAY;
+        let mut doorways: Vec<Vec<(Vec3, f32)>> = Vec::new();
+        for t in &tubes {
+            let (floor, half) = t.floor_and_half();
+            let up = (floor, (floor + dh).min(-floor));
+            for &(k, at, right) in &self.doors {
+                if k == t.line {
+                    let s = at * t.len;
+                    let across = if right { (0.0, half + 0.5) } else { (-half - 0.5, 0.0) };
+                    doorways.push(t.cut((s - dw * 0.5, s + dw * 0.5), across, up));
+                }
+            }
+            for (e, how) in t.ends.iter().enumerate() {
+                if *how == Some(End::Door) {
+                    let s = if e == 0 { 0.0 } else { t.len };
+                    doorways.push(t.cut((s - 0.5, s + 0.5), (-dw * 0.5, dw * 0.5), up));
+                }
+            }
+        }
         let mut out = Vec::new();
         for (i, t) in tubes.iter().enumerate() {
             let n = t.corners.len();
@@ -425,8 +491,33 @@ impl Plan {
                             pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
                         }
                     }
+                    for door in &doorways {
+                        pieces = pieces.into_iter().flat_map(|p| outside(p, door)).collect();
+                    }
                     out.extend(pieces.into_iter().map(|outline| Panel { outline, part, band: k.rem_euclid(2) == 1 }));
                 }
+            }
+            // Its free ends walled across (not where they're open), less what's inside
+            // another tube (one coming through) or a doorway.
+            for (e, how) in t.ends.iter().enumerate() {
+                if !matches!(how, Some(End::Closed | End::Door)) {
+                    continue;
+                }
+                let s = if e == 0 { 0.0 } else { t.len };
+                let mut cap: Vec<Vec3> = t.corners.iter().map(|c| t.at(s, *c)).collect();
+                if e == 1 {
+                    cap.reverse();
+                }
+                let mut pieces = vec![cap];
+                for (o, room) in rooms.iter().enumerate() {
+                    if o != i {
+                        pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                    }
+                }
+                for door in &doorways {
+                    pieces = pieces.into_iter().flat_map(|p| outside(p, door)).collect();
+                }
+                out.extend(pieces.into_iter().map(|outline| Panel { outline, part: Part::Wall, band: false }));
             }
         }
         out
@@ -448,6 +539,25 @@ impl Plan {
             g.lines = g.lines.iter().filter_map(|&k| to.get(k).copied().flatten()).collect();
         }
         self.groups.retain(|g| !g.lines.is_empty());
+        self.ends = self.ends.iter().filter_map(|&(k, e, how)| Some((to.get(k).copied().flatten()?, e, how))).collect();
+        self.doors = self.doors.iter().filter_map(|&(k, t, right)| Some((to.get(k).copied().flatten()?, t, right))).collect();
+    }
+
+    /// How line `k`'s end `e` is: as set, else open if it's within 2 m of an entry
+    /// (the hatch, a crew door), else closed. (Only a free end has a wall to be.)
+    fn end_of(&self, k: usize, e: usize) -> End {
+        if let Some(&(_, _, how)) = self.ends.iter().find(|&&(j, f, _)| j == k && f == e) {
+            return how;
+        }
+        let p = if e == 0 { self.lines[k].0 } else { self.lines[k].1 };
+        let at = self.points[p].at;
+        let entry = self.points.iter().any(|q| q.name.as_deref().is_some_and(|n| n == "HATCH" || n.starts_with("DOOR")) && q.at.distance(at) < 2.0);
+        if entry { End::Open } else { End::Closed }
+    }
+
+    /// Is point `p` an end of walled line `k` that no other walled line shares?
+    fn free_end(&self, k: usize, p: usize) -> bool {
+        !self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).any(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p))
     }
 
     /// The group line `k` is in, if any.
@@ -542,6 +652,9 @@ enum Tool {
     /// Laying paths: a click on the work plane puts a point there, joined to the last;
     /// a click on a point joins to it and runs on from it.
     Path,
+    /// Doorways: a click on a tube's end cycles it closed, a doorway, open; on its
+    /// side, a doorway there in the wall facing you (again: gone).
+    Door,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -826,7 +939,7 @@ impl Interior {
         for (k, at) in panes("DashScreen").into_iter().map(|(lo, hi)| (lo + hi) * 0.5).enumerate() {
             points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
-        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new() };
+        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new() };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
@@ -882,7 +995,7 @@ impl Camera {
 }
 
 /// The toolbar: the tools (key, name).
-const TOOLBAR: [(&str, &str, Tool); 2] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path)];
+const TOOLBAR: [(&str, &str, Tool); 3] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door)];
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
@@ -966,6 +1079,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     }).collect();
     let shapes = shapes.into_iter();
     match tool {
+        Tool::Door => Vec::new(),
         Tool::Path => shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
         Tool::Look => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -1226,7 +1340,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The tools (toolbar or key); the panel's actions.
     let tool = if pressed { button_at(cursor) } else { None };
-    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path)] {
+    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path), (KeyCode::KeyD, Tool::Door)] {
         if input.pressed(key) || tool == Some(t) {
             interior.tool = t;
             interior.from = None;
@@ -1263,12 +1377,14 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             *(if k == 0 { &mut p.width } else { &mut p.height }) = (v * 10.0).round() / 10.0;
         }
     };
-    if interior.tool == Tool::Look {
-        for &k in &picked {
-            set(&mut interior.plan.lines[k].2);
+    match interior.tool {
+        Tool::Look => {
+            for &k in &picked {
+                set(&mut interior.plan.lines[k].2);
+            }
         }
-    } else {
-        set(&mut interior.profile);
+        Tool::Path => set(&mut interior.profile),
+        Tool::Door => {}
     }
     // Groups: the picked lines one (out of any other); their groups broken up; walled
     // off or opened up (lines in no group made one first).
@@ -1453,6 +1569,45 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             }
             // A click picks what's under the cursor (a line in a group: with the rest
             // of it); with SHIFT, a line added to the picked ones, or taken out.
+            // A doorway: at a tube's end (within 30 px of it on screen), that end
+            // cycled; along it, one in the wall facing the camera (or that one gone).
+            Tool::Door => {
+                if let Some(Hover::Line(k)) = interior.hover {
+                    let (a, b, _) = interior.plan.lines[k];
+                    let (pa, pb) = (interior.plan.points[a].at, interior.plan.points[b].at);
+                    let near_end = [pa, pb].iter().position(|p| cam.project(*p).is_some_and(|(q, _)| q.distance(cursor) < 30.0));
+                    match near_end {
+                        Some(e) => {
+                            let next = match interior.plan.end_of(k, e) {
+                                End::Closed => End::Door,
+                                End::Door => End::Open,
+                                End::Open => End::Closed,
+                            };
+                            interior.plan.ends.retain(|&(j, f, _)| !(j == k && f == e));
+                            interior.plan.ends.push((k, e, next));
+                            if !interior.plan.free_end(k, [a, b][e]) {
+                                interior.message = Some(("THAT END JOINS ANOTHER TUBE: IT'S A WAY THROUGH ALREADY".into(), 3.0));
+                            }
+                        }
+                        None => {
+                            if let Some((at, _)) = on_line(interior, &cam, cursor, k) {
+                                let len = pa.distance(pb).max(1e-3);
+                                let d = (pb - pa) / len;
+                                let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+                                let right = u.dot(cam.eye - at) > 0.0;
+                                let t = ((at - pa).dot(d) / len).clamp(0.0, 1.0);
+                                let near = interior.plan.doors.iter().position(|&(j, s, r)| j == k && r == right && (s - t).abs() * len < 1.0);
+                                match near {
+                                    Some(n) => {
+                                        interior.plan.doors.remove(n);
+                                    }
+                                    None => interior.plan.doors.push((k, t, right)),
+                                }
+                            }
+                        }
+                    }
+                }
+            }
             Tool::Look => match (interior.hover, interior.shift) {
                 (Some(Hover::Line(k)), true) => {
                     let mut lines = picked_lines(interior);
@@ -1734,6 +1889,34 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
     }
+    // Doorways' frames (in a side, in an end's wall), so they're found.
+    {
+        let (dw, dh) = DOORWAY;
+        for t in plan.tubes() {
+            let (floor, half) = t.floor_and_half();
+            let top = (floor + dh).min(-floor);
+            let mut frames: Vec<[Vec3; 4]> = Vec::new();
+            for &(k, at, right) in &plan.doors {
+                if k == t.line {
+                    let (s0, s1) = (at * t.len - dw * 0.5, at * t.len + dw * 0.5);
+                    // (On the wall: as far out as the outline reaches at the floor.)
+                    let x = if right { half } else { -half };
+                    frames.push([t.at(s0, Vec2::new(x, floor)), t.at(s1, Vec2::new(x, floor)), t.at(s1, Vec2::new(x, top)), t.at(s0, Vec2::new(x, top))]);
+                }
+            }
+            for (e, how) in t.ends.iter().enumerate() {
+                if *how == Some(End::Door) {
+                    let s = if e == 0 { 0.0 } else { t.len };
+                    frames.push([t.at(s, Vec2::new(-dw * 0.5, floor)), t.at(s, Vec2::new(dw * 0.5, floor)), t.at(s, Vec2::new(dw * 0.5, top)), t.at(s, Vec2::new(-dw * 0.5, top))]);
+                }
+            }
+            for f in frames {
+                for k in 0..4 {
+                    seg(frame, f[k], f[(k + 1) % 4], DOOR_FRAME);
+                }
+            }
+        }
+    }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
         let lit = interior.hover == Some(Hover::Line(k)) || picked.contains(&k);
         let hits = clash.get(k).map_or(&[][..], |c| c.as_slice());
@@ -1830,6 +2013,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let (title, help) = match interior.tool {
             Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT. CLICK A POINT OR A TUBE TO PICK IT (A TUBE IN A GROUP: THE GROUP); SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
+            Tool::Door => ("DOOR", "A WALLED TUBE'S FREE END IS WALLED ACROSS (OPEN NEAR THE HATCH OR A CREW DOOR). CLICK NEAR AN END: CLOSED, A DOORWAY, OPEN, IN TURN. CLICK ALONG A TUBE: A DOORWAY (0.9 BY 2.1 M) IN THE WALL FACING YOU; CLICK IT AGAIN: GONE."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
@@ -1869,7 +2053,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         // (The cross-section lit: the picked line's in LOOK, else the one new lines get.)
         let now = match (interior.tool, interior.pick) {
             (Tool::Look, Some(Hover::Line(k))) => Some(plan.lines[k].2),
-            (Tool::Look, _) => None,
+            (Tool::Look | Tool::Door, _) => None,
             _ => Some(interior.profile),
         };
         let what = if interior.tool == Tool::Look { "THE PICKED LINE'S CROSS-SECTION" } else { "NEW LINES' CROSS-SECTION" };
