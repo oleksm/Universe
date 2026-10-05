@@ -190,10 +190,13 @@ enum Section {
     /// Six-sided, flat at its top and bottom: its height between its flats, its width
     /// across its corners.
     Hex,
+    /// Eight-sided, flat at its top, bottom and sides: its width and height between
+    /// its flats.
+    Oct,
 }
 
 impl Section {
-    const ALL: [Section; 4] = [Section::Line, Section::Round, Section::Square, Section::Hex];
+    const ALL: [Section; 5] = [Section::Line, Section::Round, Section::Square, Section::Hex, Section::Oct];
 
     fn name(self) -> &'static str {
         match self {
@@ -201,6 +204,7 @@ impl Section {
             Section::Round => "ROUND",
             Section::Square => "SQUARE",
             Section::Hex => "HEX",
+            Section::Oct => "OCT",
         }
     }
 }
@@ -220,6 +224,7 @@ impl Profile {
             // (Flat at its top and bottom, its corners at the sides: a metre between its
             // flats, and across its corners.)
             Section::Hex => ring(6, 0.5 / (std::f32::consts::PI / 6.0).cos(), 0.0).into_iter().map(|c| c * Vec2::new((std::f32::consts::PI / 6.0).cos(), 1.0)).collect(),
+            Section::Oct => ring(8, 0.5 / (std::f32::consts::PI / 8.0).cos(), std::f32::consts::PI / 8.0),
         };
         unit.into_iter().map(|c| c * Vec2::new(self.width, self.height)).collect()
     }
@@ -470,8 +475,18 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     let (p, c) = PANEL;
     let at = |row: f32, col: f32, w: f32| (Vec2::new(p.x + 8.0 + col, p.y + row), Vec2::new(w, 16.0));
     let w = (c.x - 16.0 - 6.0) / 2.0;
-    let w4 = (c.x - 16.0 - 18.0) / 4.0;
-    let shapes = Section::ALL.iter().enumerate().map(|(k, s)| (at(174.0, k as f32 * (w4 + 6.0), w4), s.name(), Action::Section(*s)));
+    // (Each as wide as its name, the row's spare width shared out.)
+    let letters: usize = Section::ALL.iter().map(|s| s.name().len()).sum();
+    let gap = 4.0;
+    let spare = (c.x - 16.0 - gap * (Section::ALL.len() - 1) as f32 - letters as f32 * 8.0) / Section::ALL.len() as f32;
+    let mut x = 0.0;
+    let shapes: Vec<_> = Section::ALL.iter().map(|s| {
+        let w = s.name().len() as f32 * 8.0 + spare;
+        let b = (at(174.0, x, w), s.name(), Action::Section(*s));
+        x += w + gap;
+        b
+    }).collect();
+    let shapes = shapes.into_iter();
     match tool {
         Tool::Path => shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
         Tool::Look => shapes.chain([(at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
