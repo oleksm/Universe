@@ -94,3 +94,23 @@ Not settled, and not started. The questions as the registry sees them:
 
 **Not yet won, though your deposits carry them:** molybdenum, silver, lead, tungsten, cobalt, the
 platinum metals, diamonds, and laterite nickel. They go to tailings or slag for now.
+
+## After the brief's v0.1 (2026-10-05, later)
+
+**Taken in:**
+
+- **Bulk rock:** each rock unit's record now says what it yields (`yields`, with your quality
+  range as you give it) where the registry has the good: aggregate, limestone, glass sand, clay.
+  What it has no good for yet is listed beside (`also`): dolomite, dimension stone, pozzolan,
+  feldspar, basalt fibre stock, slate, olivine, serpentine. The mine can now be set to limestone,
+  clay and glass sand as well as the ores.
+- **IDs:** noted (`E4-PCU-010264A-01`: world, type, district, number; `district_id`, `belt_id`).
+  Nothing in the registry points at a deposit yet.
+- **Caps and the schedule:** noted. Steps 3 to 5 are what the registry waits on most.
+
+**Still asked:**
+
+- Your short codes for the 14 types (`PCU` is porphyry copper) and your ids for the 10 rock units
+  (`arc_volcanic`), to carry on the registry's records.
+- Which deposit type geochemistry does not answer to.
+- When layered intrusions arrive (step 3): the platinum metals split by metal, if it can be had.

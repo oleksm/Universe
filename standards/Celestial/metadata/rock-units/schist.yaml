@@ -8,5 +8,10 @@ physical:
   density: 2750
   magnetic_susceptibility: 0.0005
   erodibility: 0.6
+yields:
+  - { item: good.aggregate }
+also:
+  - "slate"
 basis:
   - { of: [made_by, physical], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it." }
+  - { of: [yields, also], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4, v0.1 (bulk_rock.json)", note: "As the simulation has it." }

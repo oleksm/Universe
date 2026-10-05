@@ -145,6 +145,33 @@ recipes:
       - { item: good.waste-rock, quantity: 0.83 }
     rate: 500.0
     power: 64500000
+  - makes: good.limestone
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.limestone, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.clay
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.clay, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.silica-sand
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.silica-sand, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "What it takes, it takes from the place it stands: the ore, and 0.83 t of barren rock for each tonne of ore (the United States' copper mines; a gold pit moves 2.4)." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "129 MJ a tonne of ore: mining copper took 23.4 GJ for each tonne of metal at an ore of 0.55%. Diesel, taken as power." }

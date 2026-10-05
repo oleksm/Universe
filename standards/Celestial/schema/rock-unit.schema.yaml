@@ -25,7 +25,14 @@ properties:
   yields:
     description: "What is quarried from it in bulk: the whole unit is the resource, not a deposit in it."
     type: array
-    items: { type: string, x-ref: [good] }
+    items:
+      type: object
+      additionalProperties: false
+      required: [item]
+      properties:
+        item: { type: string, x-ref: [good], description: "The good it yields, by its key." }
+        quality: { type: string, description: "How good, as the simulation gives its range." }
+  also: { type: array, items: { type: string }, description: "What else the simulation says it yields, for which the registry has no good yet." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "The simulation's rock units as of its first brief: the list is stable, the figures are from one test world.", ask: docs/geology-registry-note.md }

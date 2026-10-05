@@ -677,7 +677,7 @@
 - { record: module.machining-centre, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "163b4ebe8c671b67" }
 - { record: module.market-garden, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3b465c148099beb2" }
 - { record: module.meat-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c244506b83d5e90e" }
-- { record: module.mine, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "93b677d018f6d5ab" }
+- { record: module.mine, at: "2026-10-05T17:30:42Z", status: review, summary: "changed: recipes", sha: "67c0a4439088b670" }
 - { record: module.nickel-smelter, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "a328c85f0e1d24f1" }
 - { record: module.oil-press, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "bf67b0e7c9041155" }
 - { record: module.orchard, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b6ff51fc9314269f" }
@@ -1494,16 +1494,16 @@
 - { record: rock-class.primitive, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "223e005fe835124f" }
 - { record: rock-class.stony, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d0176dc7decdcbec" }
 - { record: rock-class.stony-iron, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "956cfda090523f66" }
-- { record: rock-unit.andesite, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "9d67d8e68f6cc4b2" }
-- { record: rock-unit.flood-basalt, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "e279cd46d824b99f" }
-- { record: rock-unit.gneiss-basement, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "bf0f1046070d20c9" }
-- { record: rock-unit.granite, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "899a224be4c4adbd" }
-- { record: rock-unit.granodiorite, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "12408feb7fcb432a" }
-- { record: rock-unit.limestone, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "d5ab6ee6eca360d9" }
-- { record: rock-unit.ophiolite, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "1b71dd9bf9d28bed" }
-- { record: rock-unit.rift-basalt, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "c162eb4d86f89bf4" }
-- { record: rock-unit.sandstone-shale, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "2f1c9aa5f4c294d6" }
-- { record: rock-unit.schist, at: "2026-10-05T17:09:39Z", status: draft, summary: "first tracked", sha: "7398bf7ae2283cb2" }
+- { record: rock-unit.andesite, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "5ebe922ffa900428" }
+- { record: rock-unit.flood-basalt, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "585ec6616728eda8" }
+- { record: rock-unit.gneiss-basement, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, basis", sha: "49ff20db44d2604a" }
+- { record: rock-unit.granite, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "060d51656cc755ff" }
+- { record: rock-unit.granodiorite, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "56f80d978df0b30f" }
+- { record: rock-unit.limestone, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "ae18128c2be99b04" }
+- { record: rock-unit.ophiolite, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: also, basis", sha: "408598f953649f6f" }
+- { record: rock-unit.rift-basalt, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "5207212f224c002f" }
+- { record: rock-unit.sandstone-shale, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, basis", sha: "b9ac80af597f689d" }
+- { record: rock-unit.schist, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "8abd22c1fc3016fb" }
 - { record: seeding.asteroids, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8a7b9174fcf77850" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "20a73d10ecbf84f6" }
