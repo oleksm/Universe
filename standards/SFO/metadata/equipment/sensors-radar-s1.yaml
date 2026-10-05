@@ -12,8 +12,13 @@ physical:
   volume: 0.8
 needs:
   power: 100000
+built_of:
+  parts: sensors-radar-s1
+making:
+  module: module.assembly-shop
 function:
   kind: sensors
   range: 500000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a flat array of transmit-receive modules on an aluminium frame, as a radar satellite's. Sentinel-1's antenna is 880 of its instrument's 945 kg." }

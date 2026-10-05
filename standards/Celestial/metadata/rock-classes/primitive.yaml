@@ -10,6 +10,7 @@ physical:
   density_rubble: 900
   density_monolith: 1700
   albedo: 0.056
+  colour: [0.3, 0.24, 0.2]
 found:
   cold: 0.0
   trojans: 0.7
@@ -17,3 +18,4 @@ basis:
   - { of: [physical.density_rubble, physical.density_monolith], tier: invented, review: true, note: "A guess, to be reviewed. Dark, porous, icy rock: the trojans' measured densities run from 800 to 2,500." }
   - { of: [found.trojans], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Jupiter_trojan", note: "A guess, to be reviewed, made to follow what is known: the Jupiter trojans mostly are D-type asteroids. The share is chosen." }
   - { of: [physical.albedo], tier: sourced, source: "https://en.wikipedia.org/wiki/Jupiter_trojan", note: "The Jupiter trojans' average, for those over 57 km. Their densities run from 800 to 2,500 kg/m3." }
+  - { of: [physical.colour], tier: invented, review: true, note: "Chosen, so the game can draw it: very dark and reddish. To be reviewed." }

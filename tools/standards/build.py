@@ -135,7 +135,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -1444,8 +1444,8 @@ for s in standards:
         if not os.path.isdir(hdir):
             problem(hdir, "parts are filed in a folder named after their hull")
             continue
-        if hull not in hull_of and hull not in {(g.get("built_of") or {}).get("parts") for g in gates} and hull not in {m.get("slug") for m in modules}:
-            problem(hdir, f"no hull or industrial module '{hull}' in the SFO, and no gate built of it")
+        if hull not in hull_of and hull not in {(g.get("built_of") or {}).get("parts") for g in gates} and hull not in {m.get("slug") for m in modules} and hull not in {(e_.get("built_of") or {}).get("parts") for e_ in equipment}:
+            problem(hdir, f"no hull or industrial module '{hull}' in the SFO, and no gate or equipment built of it")
         for fn in sorted(os.listdir(hdir)):
             full = os.path.join(hdir, fn)
             if os.path.isdir(full):

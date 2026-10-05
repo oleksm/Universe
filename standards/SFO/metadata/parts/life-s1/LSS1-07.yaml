@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.lss1-07
+  code: LSS1-07
+  name: "Scrubber beds and ducts"
+  revision: draft
+  description: "Take the carbon dioxide out."
+physical:
+  mass: 60
+made_from:
+  - item: stock.al6061-sh-2
+    quantity: 69.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

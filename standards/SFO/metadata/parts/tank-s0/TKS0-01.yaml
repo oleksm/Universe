@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.tks0-01
+  code: TKS0-01
+  name: "Shell"
+  revision: draft
+  description: "The pressure wall: 41 m2 of 2 mm sheet is 221 kg; the rest is frames and domes."
+physical:
+  mass: 280
+made_from:
+  - item: stock.al6061-sh-2
+    quantity: 322.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen to sum to the product's weight. Discovery II's tank is 73% structure, 9% fluid and electrical gear, 9% mountings (and its own thrusters, left out here)." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }

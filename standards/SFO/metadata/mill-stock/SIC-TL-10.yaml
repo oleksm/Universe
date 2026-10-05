@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.sic-tl-10
+  code: SIC-TL-10
+  name: "Silicon carbide tile 10 mm"
+  form: tile
+made_from:
+  - item: material.silicon-carbide
+size:
+  thickness: 0.01
+basis:
+  - { of: [size], tier: invented, review: true, note: "Chosen: one tile standing for all." }

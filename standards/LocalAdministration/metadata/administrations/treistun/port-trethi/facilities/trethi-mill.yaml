@@ -27,6 +27,14 @@ lines:
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.forging-press, count: 1 }
+  - makes: stock.st304-pl-3
+    also: [stock.ti64-pl-5]
+    modules:
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.hot-rolling-mill, count: 1 }
+  - makes: stock.cu-wire-2
+    modules:
+      - { module: module.wire-mill, count: 1 }
 # Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }
