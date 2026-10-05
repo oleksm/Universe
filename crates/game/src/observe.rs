@@ -160,7 +160,9 @@ fn status(app: &App, ctx: &Context) -> Value {
 fn cpu() -> Value {
     use std::collections::HashMap;
     use std::sync::Mutex;
-    static LAST: Mutex<Option<(std::time::Instant, HashMap<String, (String, u64)>)>> = Mutex::new(None);
+    // (Each thread's name and CPU ticks, by its id, when last asked.)
+    type Sample = (std::time::Instant, HashMap<String, (String, u64)>);
+    static LAST: Mutex<Option<Sample>> = Mutex::new(None);
     let Ok(tasks) = std::fs::read_dir("/proc/self/task") else { return Value::Null };
     let mut now = HashMap::new();
     for t in tasks.flatten() {
