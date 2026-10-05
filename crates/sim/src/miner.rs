@@ -19,7 +19,7 @@ use universe_avionics::{Avionics, Bus, Event, NavTarget};
 use universe_services::market::Side;
 use universe_world::charts::Charts;
 use universe_world::goods::TONNE;
-use universe_world::mining::{self, ANCHOR_REACH, ANCHOR_SPEED};
+use universe_world::mining::{self, Rig};
 use universe_world::ship::{ShipCommands, SHIP_RADIUS};
 use universe_world::{Facility, ShipEvent, ShipState, StarSystem};
 
@@ -31,8 +31,8 @@ use crate::vessel::Request;
 /// the operator's choice.
 const BELT_SHARE: u64 = 3;
 
-/// It fires the anchor drifting slower than this against the surface (m/s).
-const FIRE_DRIFT: f64 = 0.6 * ANCHOR_SPEED;
+/// It fires the anchor drifting slower than this share of what its anchor holds against.
+const FIRE_DRIFT: f64 = 0.6;
 
 /// The rock a miner is working (field, body among the field's bodies), and
 /// how many it has tried.
@@ -45,7 +45,7 @@ pub struct Dig {
 /// The value of digging body `i` of field `f` (credits per second).
 fn worth(charts: &Charts, sys: &StarSystem, f: usize, i: usize) -> f64 {
     let bodies = sys.field_bodies(f);
-    bodies[i].rock.as_ref().map_or(0.0, |r| charts.goods[mining::ore(r).item()].price / TONNE * mining::dig_rate(r))
+    bodies[i].rock.as_ref().map_or(0.0, |r| charts.goods[mining::ore(r).item()].price / TONNE * Rig::common().dig_rate(r))
 }
 
 /// A miner's route in `system` (seeded): the field best worth working (its
@@ -166,7 +166,8 @@ pub(crate) fn work(a: &mut Avionics, dig: &mut Dig, charts: &Charts, seed: u64, 
             let b = &sys.field_bodies(f)[i];
             let gap = ship.position.distance(center) - b.surface_radius_at(center, ship.position, bus.time()) - SHIP_RADIUS;
             let drift = (ship.velocity - velocity - b.angular_velocity().cross(ship.position - center)).length();
-            if gap < ANCHOR_REACH * 0.8 && drift < FIRE_DRIFT {
+            let rig = Rig::of(ship.spec()).unwrap_or_else(Rig::common);
+            if gap < rig.anchor_reach * 0.8 && drift < FIRE_DRIFT * rig.anchor_speed {
                 a.stop_following(bus, events);
                 order(a, bus, events, |c| {
                     c.anchor = Some(true);

@@ -56,8 +56,8 @@ pub enum Does {
     LifeSupport,
     Gun,
     Laser,
-    /// The anchor and excavator.
-    MiningRig,
+    /// The anchor and excavator (see `mining::Rig`).
+    MiningRig(crate::mining::Rig),
     /// Runs these autopilots; and its hyperdrive interlock: never closer
     /// than `interlock` m to a body's highest ground (0: it has none).
     NavComputer {
@@ -125,7 +125,7 @@ impl Does {
         match self {
             Does::Gun => Some(Gear::Gun),
             Does::Laser => Some(Gear::Laser),
-            Does::MiningRig => Some(Gear::MiningRig),
+            Does::MiningRig(_) => Some(Gear::MiningRig),
             Does::Hyperdrive { .. } => Some(Gear::Hyperdrive),
             _ => None,
         }
@@ -167,7 +167,7 @@ impl Does {
             Does::GateRelay { .. } | Does::HyperRelay { .. } => SlotKind::Relay,
             Does::LifeSupport => SlotKind::LifeSupport,
             Does::Gun | Does::Laser => SlotKind::Hardpoint,
-            Does::MiningRig => SlotKind::Utility,
+            Does::MiningRig(_) => SlotKind::Utility,
             Does::NavComputer { .. } => SlotKind::Avionics,
         }
     }
@@ -390,8 +390,9 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn laser(&mut self, _: &r::EquipmentFunctionLaser) -> Self::Out {
         Some(Does::Laser)
     }
-    fn mining_rig(&mut self, _: &r::EquipmentFunctionMiningRig) -> Self::Out {
-        Some(Does::MiningRig)
+    fn mining_rig(&mut self, it: &r::EquipmentFunctionMiningRig) -> Self::Out {
+        let f = |v: Option<f64>| v.unwrap_or(0.0);
+        Some(Does::MiningRig(crate::mining::Rig { excavator_power: f(it.excavator_power), throughput: f(it.throughput), anchor_reach: f(it.anchor_reach), anchor_speed: f(it.anchor_speed) }))
     }
     /// A gate's throat coil: not made yet (the schema is to say so: `x-in-game: not made`).
     fn throat_coil(&mut self, _: &r::EquipmentFunctionThroatCoil) -> Self::Out {

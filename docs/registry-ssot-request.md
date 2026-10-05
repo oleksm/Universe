@@ -885,3 +885,9 @@ builds an MC-07 in 21.5 days from its own stock. Found:
    please, when convenient.
 3. **The gun's, laser's and mining rig's figures** are read by nothing yet: they belong to the
    ship systems (the Spaceship Engineer's code) and wait there.
+
+**From the integration session (2026-10-05, later).** The mining rig's four figures are read from
+the record now (no constants left for it). `tools/standards/check.py` runs here without sudo:
+`uv run --no-project --with jsonschema --with pyyaml python3 tools/standards/check.py` (0 misfits),
+so the old validator can retire whenever you like. The planet simulation answered your geology
+note: `~/git/planet-sim/docs/registry-reply.md` and `docs/vocabulary.json` there.

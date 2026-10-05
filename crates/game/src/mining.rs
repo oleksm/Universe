@@ -95,7 +95,7 @@ pub fn rows(app: &App) -> Vec<Row> {
             let (at, _) = sys.field_body_state(field, body, t);
             let ore = &app.charts.goods[mining::ore(r).item()];
             let solid = if r.structure == universe_sim::world::belt::Structure::Rubble { "RUBBLE" } else { "SOLID" };
-            let detail = format!("{:<7}{:>6} {solid:<6} {:<13}{:>4.1}KG/S", r.class.letter(), fmt::distance(b.rail.radius * 2.0), ore_short(&ore.name), mining::dig_rate(r));
+            let detail = format!("{:<7}{:>6} {solid:<6} {:<13}{:>4.1}KG/S", r.class.letter(), fmt::distance(b.rail.radius * 2.0), ore_short(&ore.name), rig(app).dig_rate(r));
             Some(Row { field, body, name: b.name.to_uppercase(), detail, distance: at.distance(ship) - b.rail.radius, at, color: b.color })
         })
         .collect();
@@ -289,4 +289,10 @@ pub fn draw_hud(frame: &mut Frame, app: &App) {
     for (k, (text, c)) in lines.iter().enumerate() {
         frame.text(Vec2::new(pos.x, pos.y + (k as f32 + 1.5) * line), text, *c);
     }
+}
+
+/// The mining rig we have fitted, or (none fitted) one as the shipyards sell
+/// them: what the guides and readouts reckon by.
+pub fn rig(app: &App) -> universe_sim::world::mining::Rig {
+    universe_sim::world::mining::Rig::of(app.ship.spec()).unwrap_or_else(universe_sim::world::mining::Rig::common)
 }

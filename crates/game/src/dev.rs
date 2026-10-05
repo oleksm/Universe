@@ -525,7 +525,7 @@ pub fn apply(app: &mut App, name: &str) {
             let (bodies, i) = (0..sys.fields.len())
                 .find_map(|f| {
                     let bodies = sys.field_bodies(f);
-                    let i = (sys.bodies.len()..bodies.len()).find(|&i| bodies[i].rail.radius > 20.0 && bodies[i].rock.as_ref().is_some_and(|r| universe_sim::world::mining::dig_rate(r) >= 10.0))?;
+                    let i = (sys.bodies.len()..bodies.len()).find(|&i| bodies[i].rail.radius > 20.0 && bodies[i].rock.as_ref().is_some_and(|r| universe_sim::world::mining::Rig::common().dig_rate(r) >= 10.0))?;
                     Some((bodies, i))
                 })
                 .expect("a rubble fragment");

@@ -8,7 +8,6 @@
 use universe_engine::glam::{DVec3, Vec2};
 use universe_engine::{text_size, Color, Frame, GLYPH};
 use universe_sim::avionics::follow::{Anchor, Follow, Manoeuvre};
-use universe_sim::world::mining::{ANCHOR_REACH, ANCHOR_SPEED};
 use universe_sim::world::ship::SHIP_RADIUS;
 
 use crate::{fmt, App};
@@ -99,9 +98,9 @@ fn standing(app: &App) -> Option<Standing> {
     let closing = rel.dot((goal - ship).normalize_or(DVec3::ZERO));
     let step = match (follow.manoeuvre, rock) {
         (Manoeuvre::Surface(_), Some((gap, drift, _, _))) => {
-            if gap > ANCHOR_REACH * 2.0 {
+            if gap > crate::mining::rig(app).anchor_reach * 2.0 {
                 0
-            } else if drift > ANCHOR_SPEED * 0.9 || gap > ANCHOR_REACH {
+            } else if drift > crate::mining::rig(app).anchor_speed * 0.9 || gap > crate::mining::rig(app).anchor_reach {
                 1
             } else {
                 2
@@ -299,10 +298,10 @@ pub fn lines(app: &App, lines: &mut Vec<(String, Color)>) {
     }
     lines.push((format!("{label} {} - {} TO GO, CLOSING {}  {} TO CANCEL", s.name, fmt::distance(s.to_go), fmt::speed(s.closing), crate::keys::key(crate::keys::Act::Cancel)), AMBER));
     if let Some((gap, drift, _, _)) = s.rock {
-        let ready = gap < ANCHOR_REACH && drift < ANCHOR_SPEED;
+        let ready = gap < crate::mining::rig(app).anchor_reach && drift < crate::mining::rig(app).anchor_speed;
         let c = if ready { OK } else { AMBER };
         lines.push((
-            format!("SURFACE {}  DRIFT {drift:.2} M/S (ANCHOR: WITHIN {:.0} M, UNDER {:.1} M/S){}", fmt::distance(gap.max(0.0)), ANCHOR_REACH, ANCHOR_SPEED, if ready { format!("  {} TO ANCHOR", crate::keys::key(crate::keys::Act::Anchor)) } else { String::new() }),
+            format!("SURFACE {}  DRIFT {drift:.2} M/S (ANCHOR: WITHIN {:.0} M, UNDER {:.1} M/S){}", fmt::distance(gap.max(0.0)), crate::mining::rig(app).anchor_reach, crate::mining::rig(app).anchor_speed, if ready { format!("  {} TO ANCHOR", crate::keys::key(crate::keys::Act::Anchor)) } else { String::new() }),
             c,
         ));
     }
@@ -349,8 +348,8 @@ pub fn draw(frame: &mut Frame, app: &App) {
         Manoeuvre::Surface(_) => {
             // The anchor's reach, ringed on the surface under us.
             if let Some((gap, drift, spot, up)) = s.rock {
-                let ready = gap < ANCHOR_REACH && drift < ANCHOR_SPEED;
-                frame.circle(spot, up, ANCHOR_REACH, 48, if ready { OK } else { AMBER.scale(0.8) });
+                let ready = gap < crate::mining::rig(app).anchor_reach && drift < crate::mining::rig(app).anchor_speed;
+                frame.circle(spot, up, crate::mining::rig(app).anchor_reach, 48, if ready { OK } else { AMBER.scale(0.8) });
                 frame.circle(spot, up, 3.0, 12, if ready { OK } else { AMBER });
             }
         }

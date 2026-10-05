@@ -480,14 +480,14 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
         HUD,
     ));
     if !anchored {
-        let ready = s.gap < mining::ANCHOR_REACH && s.drift < mining::ANCHOR_SPEED;
-        let c = if ready { HUD } else if s.gap < mining::ANCHOR_REACH { AMBER } else { DIM };
+        let ready = s.gap < crate::mining::rig(app).anchor_reach && s.drift < crate::mining::rig(app).anchor_speed;
+        let c = if ready { HUD } else if s.gap < crate::mining::rig(app).anchor_reach { AMBER } else { DIM };
         let closing = app.following.as_ref().is_some_and(|f| matches!(f.0, universe_sim::avionics::follow::Manoeuvre::Surface(_)));
         let hint = if ready {
             format!("  {} TO ANCHOR (MINING)", crate::keys::key(crate::keys::Act::Anchor))
         } else if closing {
             "  CLOSING IN".into()
-        } else if s.gap < mining::ANCHOR_REACH {
+        } else if s.gap < crate::mining::rig(app).anchor_reach {
             "  MATCH ITS DRIFT".into()
         } else if app.v.avionics.rock_lock.is_some() {
             format!("  {} TO ZERO IN (MINING)", crate::keys::key(crate::keys::Act::ZeroIn))
@@ -510,7 +510,7 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
         }
         lines.push((parts.join("  "), DIM));
         let ore = &app.charts.goods[mining::ore(r).item()];
-        lines.push((format!("ORE {}  DIG {:.1} KG/S  ({:.0} KJ/KG)", ore.name.to_uppercase(), mining::dig_rate(r), mining::specific_energy(r) / 1000.0), DIM));
+        lines.push((format!("ORE {}  DIG {:.1} KG/S  ({:.0} KJ/KG)", ore.name.to_uppercase(), crate::mining::rig(app).dig_rate(r), mining::specific_energy(r) / 1000.0), DIM));
     } else {
         lines.push((format!("SPECTRUM {}  (SURVEY WITHIN {})", r.class.label(), fmt::distance(crate::rocks::SURVEY_RANGE)), DIM));
     }
@@ -521,7 +521,7 @@ fn prospect_info(app: &App, lines: &mut Vec<(String, Color)>) {
         lines.push((format!("{state}  HOPPER [{hopper}]  HOLD {:.1}/{:.0} T  ROCK LEFT {}", app.ship.cargo / 1000.0, app.ship.spec().hold_capacity / 1000.0, fmt::tonnes(left)), if app.ship.excavator { AMBER } else { HUD }));
         if app.ship.excavator {
             // The flow, and when the next tonne goes into the hold.
-            let rate = mining::dig_rate(r);
+            let rate = crate::mining::rig(app).dig_rate(r);
             let next = (universe_sim::world::goods::TONNE - app.ship.hopper) / rate;
             let ore = &app.charts.goods[mining::ore(r).item()];
             lines.push((format!("EXTRACTING {} {rate:.1} KG/S ({:.0} T/H)  NEXT TONNE IN {}", ore.name.to_uppercase(), rate * 3.6, fmt::countdown(next)), AMBER));
@@ -1572,7 +1572,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
     };
     // Y / H: the anchor (a rock in reach) and the excavator (anchored).
     let anchored = matches!(ship.state, ShipState::Anchored { .. });
-    let in_reach = || crate::rocks::scan(app).is_some_and(|s| s.gap < universe_sim::world::mining::ANCHOR_REACH);
+    let in_reach = || crate::rocks::scan(app).is_some_and(|s| s.gap < crate::mining::rig(app).anchor_reach);
     let anchor_lamp = if anchored {
         Lamp::On
     } else if flying && !ship.hyperdrive && in_reach() {
