@@ -2,6 +2,7 @@
 identity:
   key: good.graphite-electrode
   name: Graphite electrode
+  traded_as: market.minerals
   kind: consumable
   description: "The carbon rods that carry the current into an arc furnace. They burn away as they work."
 physical:

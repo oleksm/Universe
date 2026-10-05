@@ -2,6 +2,7 @@
 identity:
   key: good.methane
   name: "Methane"
+  traded_as: market.fuel
   kind: by-product
   description: "A light gas that burns: what is left when carbon dioxide is joined to hydrogen to get its oxygen back as water."
 physical:

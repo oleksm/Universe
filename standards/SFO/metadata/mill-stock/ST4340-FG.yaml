@@ -3,6 +3,7 @@ identity:
   key: stock.st4340-fg
   code: ST4340-FG
   name: "4340 forging"
+  traded_as: market.metals
   form: forging
   temper: "quenched and tempered"
 made_from:

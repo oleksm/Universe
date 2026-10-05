@@ -18,6 +18,11 @@ making:
   module: module.assembly-shop
 function:
   kind: mining_rig
+  excavator_power: 300000
+  throughput: 10
+  anchor_reach: 30
+  anchor_speed: 0.5
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a cutting head of picks on an arm, a motor to turn it, an anchor and winch to hold the ship to the rock, and a conveyor to the hold. A roadheader with a 300 kW head weighs 130 t on Earth, because its weight is what holds it to the face; here the anchor does that, and the rig is 2.5 t." }
+  - { of: [function.excavator_power, function.throughput, function.anchor_reach, function.anchor_speed], tier: sourced, review: true, source: "the game: crates/world/src/mining.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }

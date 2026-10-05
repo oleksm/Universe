@@ -2,6 +2,7 @@
 identity:
   key: good.tallow
   name: "Tallow"
+  traded_as: market.chemicals
   kind: product
   description: "Fat rendered from what is left of animals: for soap, candles and grease."
 physical:

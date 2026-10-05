@@ -2,6 +2,7 @@
 identity:
   key: good.refined-steel-304
   name: "Refined steel, 304"
+  traded_as: market.metals
   kind: intermediate
   description: "Molten steel with chromium and nickel added to the 304 stainless grade, ready to cast."
 physical:

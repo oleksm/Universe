@@ -2,6 +2,7 @@
 identity:
   key: good.live-sheep
   name: "Sheep"
+  traded_as: market.biologics
   kind: intermediate
   description: "Sheep, live, by weight."
 physical:

@@ -2,6 +2,7 @@
 identity:
   key: good.sponge-iron
   name: Sponge iron
+  traded_as: market.metals
   kind: intermediate
   description: "Solid iron left when the oxygen is taken out of ore without melting it."
 physical:

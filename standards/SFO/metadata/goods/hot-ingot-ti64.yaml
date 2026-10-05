@@ -2,6 +2,7 @@
 identity:
   key: good.hot-ingot-ti64
   name: "Hot ingot, Ti-6Al-4V"
+  traded_as: market.metals
   kind: intermediate
   description: "An ingot of titanium alloy heated through to the temperature it is worked at."
 physical:

@@ -4,6 +4,7 @@ identity:
   key: stock.sta36-scrap
   code: STA36-SCRAP
   name: "A36 steel scrap"
+  traded_as: market.metals
   form: scrap
 made_from:
   - item: material.structural-steel-a36

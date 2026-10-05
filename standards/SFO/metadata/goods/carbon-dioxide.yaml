@@ -2,6 +2,7 @@
 identity:
   key: good.carbon-dioxide
   name: Carbon dioxide
+  traded_as: market.chemicals
   kind: by-product
   description: "The gas breath, rot and burning give off, and smelting too. Plants are made of it."
 physical:

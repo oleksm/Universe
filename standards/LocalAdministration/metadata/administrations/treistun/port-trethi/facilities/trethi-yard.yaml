@@ -23,3 +23,25 @@ lines:
 # Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }
+# What lies in its store at day 0 (seed state: what happens to it after is the economy's). The stock and bought-in goods for two MC-07s and their equipment, by their parts' bills.
+stock:
+  - { item: good.carbon, quantity: 3720.0 }
+  - { item: good.computers, quantity: 512.0 }
+  - { item: good.electric-motors, quantity: 2490.0 }
+  - { item: good.electronics, quantity: 2240.0 }
+  - { item: good.heat-pumps, quantity: 720.0 }
+  - { item: good.pumps, quantity: 542.0 }
+  - { item: good.tools, quantity: 600.0 }
+  - { item: stock.al6061-pl-5, quantity: 212000.0 }
+  - { item: stock.al6061-sh-2, quantity: 131000.0 }
+  - { item: stock.cfc-pl-3, quantity: 115.0 }
+  - { item: stock.cu-wire-2, quantity: 299.0 }
+  - { item: stock.mli-fl, quantity: 46.0 }
+  - { item: stock.sic-tl-10, quantity: 662.0 }
+  - { item: stock.st304-pl-3, quantity: 1240.0 }
+  - { item: stock.st4340-bar-120, quantity: 3530.0 }
+  - { item: stock.st4340-fg, quantity: 4550.0 }
+  - { item: stock.st4340-tb-120x10, quantity: 838.0 }
+  - { item: stock.st4340-tb-150x10, quantity: 1380.0 }
+  - { item: stock.st4340-tb-200x15, quantity: 7460.0 }
+  - { item: stock.ti64-pl-5, quantity: 12600.0 }

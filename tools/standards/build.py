@@ -187,6 +187,9 @@ EQUIPMENT_READS = {
     "holds": "What it holds.", "seats": "how many it seats", "top_speed": "times the speed of light", "turn_rate": "rad/s it can turn the ship at", "roll_rate": "rad/s it can roll the ship at",
     "range": "km", "capture": "km, how far it hears", "link": "km, how far it reaches another", "lag": "s to pass a message on", "messages": "messages an hour",
     "features": "What it can do.", "interlock": "m it holds the ship from a body's ground in hyperdrive", "governor": "1/s, its hyperdrive governor", "cadence": "s between its throws",
+    "resolves": "a survey makes out a rock at this many times its size", "survey_range": "m, the farthest a survey reaches",
+    "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
+    "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
 }
 
 
@@ -622,7 +625,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -723,7 +726,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange", "stock"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")

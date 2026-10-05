@@ -9,3 +9,6 @@ kind: power
 parcel: parcel.treistun.port-nacaubun.2
 modules:
   - { module: module.fusion-power-station, count: 1 }
+# What lies in its store at day 0 (seed state: what happens to it after is the economy's). A year of deuterium at full output.
+stock:
+  - { item: stock.deuterium-liq, quantity: 73.3 }

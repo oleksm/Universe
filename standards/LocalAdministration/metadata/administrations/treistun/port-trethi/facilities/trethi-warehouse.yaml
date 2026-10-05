@@ -10,3 +10,6 @@ modules:
   - { module: module.tank-farm, count: 2 }
   - { module: module.ore-yard, count: 1 }
   - { module: module.loading-dock, count: 2 }
+# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 100 t of deuterium, for the ships that call: twenty-five fills of a 4 t tank. Chosen.
+stock:
+  - { item: stock.deuterium-liq, quantity: 100000.0 }

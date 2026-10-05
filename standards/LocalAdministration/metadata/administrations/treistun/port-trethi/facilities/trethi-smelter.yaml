@@ -14,3 +14,14 @@ lines:
       - { module: module.potline, count: 1 }
       - { module: module.casthouse, count: 1 }
       - { module: module.ingot-yard, count: 1 }
+# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 7 days of what its lines take in at full rate, of what is not made on its own ground.
+stock:
+  - { item: element.cr, quantity: 12500.0 }
+  - { item: element.cu, quantity: 17600.0 }
+  - { item: element.fe, quantity: 22600.0 }
+  - { item: element.mg, quantity: 64000.0 }
+  - { item: element.o, quantity: 870000.0 }
+  - { item: element.si, quantity: 38200.0 }
+  - { item: good.bauxite, quantity: 25600000.0 }
+  - { item: good.carbon-anode, quantity: 2800000.0 }
+  - { item: good.caustic-soda, quantity: 1200000.0 }

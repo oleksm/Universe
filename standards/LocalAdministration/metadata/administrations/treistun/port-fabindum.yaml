@@ -5,6 +5,7 @@ identity:
 kind: settlement
 at: body.treistun.treistun-c-i
 position: { latitude: -43.742, longitude: -87.965 }
+population: 3000
 about: "The port on Treistun c I, the moon of c, at 44° south. Gravity 0.11 g, no air."
 story:
   - "The answer to Lisaur. Heavy lifters bring cargo up from c and ordinary ships collect it here, so that only the ships built for 1.67 g ever have to face it."

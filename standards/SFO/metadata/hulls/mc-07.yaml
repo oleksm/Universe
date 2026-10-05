@@ -70,6 +70,8 @@ flight:
   radius: 15.9
   drag_area: 399
   frame_material: material.aluminium-alloy-6061
+built_of:
+  parts: mc-07
 fit:
   - { slot: drive, item: equipment.drive.torch.s1, nozzles: 6 }
   - { slot: thrusters, item: equipment.thrusters.quad.s1 }

@@ -2,6 +2,7 @@
 identity:
   key: good.hot-ingot-304
   name: "Hot ingot, 304 stainless"
+  traded_as: market.metals
   kind: intermediate
   description: "An ingot of 304 stainless steel heated through to the temperature it is worked at."
 physical:

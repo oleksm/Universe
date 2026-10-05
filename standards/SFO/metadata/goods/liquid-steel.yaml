@@ -2,6 +2,7 @@
 identity:
   key: good.liquid-steel
   name: Liquid steel
+  traded_as: market.metals
   kind: intermediate
   description: "Molten steel straight from the furnace, not yet to grade."
 physical:

@@ -2,6 +2,7 @@
 identity:
   key: good.animal-feed
   name: "Animal feed"
+  traded_as: market.biologics
   kind: intermediate
   description: "Grain, oilseed meal and bran milled together: what pigs, poultry, fish and (with hay) cattle are fed."
 physical:

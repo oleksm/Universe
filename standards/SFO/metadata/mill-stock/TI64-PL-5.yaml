@@ -3,6 +3,7 @@ identity:
   key: stock.ti64-pl-5
   code: TI64-PL-5
   name: "Ti-6Al-4V plate 5 mm"
+  traded_as: market.metals
   form: plate
 made_from:
   - item: material.titanium-alloy-ti-6al-4v

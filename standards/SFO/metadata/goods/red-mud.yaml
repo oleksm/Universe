@@ -2,6 +2,7 @@
 identity:
   key: good.red-mud
   name: Red mud
+  traded_as: market.minerals
   kind: by-product
   description: "The iron-rich residue left when alumina is taken out of bauxite."
 physical:

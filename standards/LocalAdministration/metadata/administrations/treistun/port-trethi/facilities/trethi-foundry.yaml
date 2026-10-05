@@ -34,3 +34,20 @@ lines:
   - makes: stock.sic-tl-10
     modules:
       - { module: module.carbide-furnace, count: 1 }
+# What lies in its store at day 0 (seed state: what happens to it after is the economy's). 7 days of what its lines take in at full rate, of what is not made on its own ground.
+stock:
+  - { item: element.al, quantity: 18700.0 }
+  - { item: element.ar, quantity: 13600.0 }
+  - { item: element.c, quantity: 200000.0 }
+  - { item: element.cu, quantity: 1260000.0 }
+  - { item: element.mn, quantity: 140000.0 }
+  - { item: element.o, quantity: 151000.0 }
+  - { item: element.si, quantity: 54300.0 }
+  - { item: element.ti, quantity: 280000.0 }
+  - { item: element.v, quantity: 12500.0 }
+  - { item: good.carbon, quantity: 129000.0 }
+  - { item: good.graphite-electrode, quantity: 40100.0 }
+  - { item: good.iron-ore, quantity: 20100000.0 }
+  - { item: good.lime, quantity: 668000.0 }
+  - { item: good.silica-sand, quantity: 216000.0 }
+  - { item: good.water, quantity: 29400.0 }

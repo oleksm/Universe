@@ -2,6 +2,7 @@
 identity:
   key: good.iron-ore-pellets
   name: Iron ore pellets
+  traded_as: market.metals
   kind: intermediate
   description: "Cleaned ore formed into hard balls a furnace can take."
 physical:

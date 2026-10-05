@@ -61,11 +61,11 @@
 - { key: body.treistun.truhora, game: "Truhora", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.tukau, game: "Tukau", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.ugaula, game: "Ugaula", in: "by name: celestial.ron, the seed" }
-- { key: good.asteroid-water-ice, game: "goods.water, ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.carbonaceous-ore, game: "goods.ores, ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.nickel-iron-ore, game: "goods.ores, ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.pgm-rich-ore, game: "goods.ores, ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.stony-ore, game: "goods.ores, ore.stony", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.asteroid-water-ice, game: "ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.carbonaceous-ore, game: "ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.nickel-iron-ore, game: "ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.pgm-rich-ore, game: "ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.stony-ore, game: "ore.stony", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: module.acid-plant, game: "acid-plant", in: "industry.ron, settlements.ron" }
 - { key: module.air-plant, game: "air-plant", in: "industry.ron, settlements.ron" }
 - { key: module.alumina-refinery, game: "alumina-refinery", in: "industry.ron, settlements.ron" }

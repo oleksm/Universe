@@ -2,6 +2,7 @@
 identity:
   key: good.solvay-waste
   name: "Soda works waste"
+  traded_as: market.chemicals
   kind: by-product
   description: "What a soda works runs off: calcium chloride, salt that did not react, and spent lime, in water."
 physical:

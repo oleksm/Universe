@@ -3,6 +3,7 @@ identity:
   key: stock.brz932-bar-50
   code: BRZ932-BAR-50
   name: "Bearing bronze bar 50 mm"
+  traded_as: market.metals
   form: bar
 made_from:
   - item: material.bearing-bronze-c93200

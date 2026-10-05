@@ -2,6 +2,7 @@
 identity:
   key: good.hot-ingot-6061
   name: "Hot ingot, 6061 aluminium"
+  traded_as: market.metals
   kind: intermediate
   description: "An ingot of 6061 aluminium heated through to the temperature it is worked at."
 physical:

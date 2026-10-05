@@ -3,6 +3,7 @@ identity:
   key: stock.st4340-bar-120
   code: ST4340-BAR-120
   name: "4340 bar 120 mm"
+  traded_as: market.metals
   form: bar
   temper: "quenched and tempered"
 made_from:

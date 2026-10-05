@@ -3,6 +3,7 @@ identity:
   key: stock.st304-pl-3
   code: ST304-PL-3
   name: "304 stainless plate 3 mm"
+  traded_as: market.metals
   form: plate
 made_from:
   - item: material.stainless-steel-304

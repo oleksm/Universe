@@ -2,6 +2,7 @@
 identity:
   key: good.whey
   name: "Whey"
+  traded_as: market.biologics
   kind: by-product
   description: "The thin milk left when cheese or butter is made."
 physical:

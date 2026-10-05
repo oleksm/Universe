@@ -3,6 +3,7 @@ identity:
   key: stock.cu-ingot
   code: CU-INGOT
   name: "Copper ingot"
+  traded_as: market.metals
   form: ingot
 made_from:
   - item: material.copper

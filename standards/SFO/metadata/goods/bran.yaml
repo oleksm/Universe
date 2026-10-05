@@ -2,6 +2,7 @@
 identity:
   key: good.bran
   name: "Bran"
+  traded_as: market.biologics
   kind: by-product
   description: "The husk of milled grain: fed to animals."
 physical:

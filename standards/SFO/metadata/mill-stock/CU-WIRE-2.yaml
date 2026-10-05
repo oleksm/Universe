@@ -3,6 +3,7 @@ identity:
   key: stock.cu-wire-2
   code: CU-WIRE-2
   name: "Copper wire 2 mm"
+  traded_as: market.metals
   form: wire
 made_from:
   - item: material.copper

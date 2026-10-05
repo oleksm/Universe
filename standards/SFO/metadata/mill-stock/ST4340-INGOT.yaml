@@ -4,6 +4,7 @@ identity:
   key: stock.st4340-ingot
   code: ST4340-INGOT
   name: "4340 steel ingot"
+  traded_as: market.metals
   form: ingot
 made_from:
   - item: material.high-strength-steel-4340

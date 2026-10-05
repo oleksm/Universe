@@ -3,6 +3,7 @@ identity:
   key: stock.sta36-pl-20
   code: STA36-PL-20
   name: "A36 plate 20 mm"
+  traded_as: market.metals
   form: plate
 made_from:
   - item: material.structural-steel-a36

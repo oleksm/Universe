@@ -3,6 +3,7 @@ identity:
   key: stock.st4340-tb-120x10
   code: ST4340-TB-120X10
   name: "4340 tube 120 x 10 mm"
+  traded_as: market.metals
   form: tube
   temper: "quenched and tempered"
 made_from:

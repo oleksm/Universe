@@ -2,6 +2,7 @@
 identity:
   key: good.carbon-anode
   name: Carbon anode
+  traded_as: market.minerals
   kind: consumable
   description: "Blocks of baked carbon that carry the current into a smelting pot. They burn away as the metal is made."
 physical:

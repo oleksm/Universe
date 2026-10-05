@@ -2,6 +2,7 @@
 identity:
   key: good.tailings
   name: Tailings
+  traded_as: market.minerals
   kind: by-product
   description: "The waste rock left when ore is cleaned."
 physical:

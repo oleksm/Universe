@@ -2,6 +2,7 @@
 identity:
   key: good.flax
   name: "Flax"
+  traded_as: market.textiles
   kind: intermediate
   description: "Flax fibre, retted and scutched from the straw: what linen is spun from."
 physical:

@@ -5,6 +5,7 @@ identity:
 kind: settlement
 at: body.treistun.treistun-f
 position: { latitude: 6.331, longitude: 52.014 }
+population: 20000
 about: "The port on Treistun f, near the equator at 6° north. Gravity 0.41 g, no air, and about 190 K."
 story:
   - "The last port on solid ground before the giants. Outbound ships top up here because it is the cheapest lift-off of any planet in the system."
