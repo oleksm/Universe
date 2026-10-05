@@ -5,8 +5,8 @@ identity:
   kind: product
   description: "Protein and oil: pressed for oil, the rest fed to animals."
 physical:
-  bulk_density: 750
+  bulk_density: 770
 game:
   goods: goods.food
 basis:
-  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html", note: "As stored or shipped in bulk." }

@@ -13,4 +13,4 @@ capacity:
 needs:
   power: 100000
 basis:
-  - { of: [physical, capacity, needs], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical, capacity, needs], tier: invented, review: true, note: "Chosen. To be reviewed." }

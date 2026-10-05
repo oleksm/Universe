@@ -10,41 +10,45 @@ physical:
   height: 12
 recipes:
   - makes: good.beef
-    does: "A little over two fifths of the animal is meat off the bone."
+    does: "The carcass is 60 to 63% of the animal and 65% of the carcass is meat off the bone: two fifths of the animal."
     inputs:
-      - { item: good.live-cattle, quantity: 2.4 }
+      - { item: good.live-cattle, quantity: 2.5 }
     outputs:
-      - { item: good.offal, quantity: 1.4 }
+      - { item: good.offal, quantity: 1.5 }
     rate: 1.389
     power: 500000
   - makes: good.pork
+    does: "57% of the pig is cuts for sale."
     inputs:
-      - { item: good.live-pigs, quantity: 1.75 }
+      - { item: good.live-pigs, quantity: 1.754 }
     outputs:
-      - { item: good.offal, quantity: 0.75 }
+      - { item: good.offal, quantity: 0.754 }
     rate: 1.389
     power: 500000
   - makes: good.mutton
+    does: "About 38% of the lamb is cuts for sale, on the bone (a weak figure: to be reviewed)."
     inputs:
-      - { item: good.live-sheep, quantity: 2.2 }
+      - { item: good.live-sheep, quantity: 2.63 }
     outputs:
-      - { item: good.offal, quantity: 1.2 }
+      - { item: good.offal, quantity: 1.63 }
     rate: 0.5556
     power: 500000
   - makes: good.chicken
+    does: "The dressed bird is 75% of the live one."
     inputs:
-      - { item: good.live-chickens, quantity: 1.5 }
+      - { item: good.live-chickens, quantity: 1.333 }
     outputs:
-      - { item: good.offal, quantity: 0.5 }
+      - { item: good.offal, quantity: 0.333 }
     rate: 1.389
     power: 500000
   - makes: good.fish
-    does: "Half the fish is fillet."
+    does: "The fillet is 34 to 50% of the fish, by its kind; 42% taken."
     inputs:
-      - { item: good.live-fish, quantity: 2.0 }
+      - { item: good.live-fish, quantity: 2.38 }
     outputs:
-      - { item: good.offal, quantity: 1.0 }
+      - { item: good.offal, quantity: 1.38 }
     rate: 0.5556
     power: 500000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Carcass and meat shares of the live animal. Chicken is the dressed bird (no figure for meat off the bone was found); the lamb figure is weak; fish is the middle of 34 to 50%. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

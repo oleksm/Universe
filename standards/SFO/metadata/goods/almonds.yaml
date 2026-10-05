@@ -3,10 +3,10 @@ identity:
   key: good.almonds
   name: "Almonds"
   kind: product
-  description: "Shelled."
+  description: "In the shell."
 physical:
-  bulk_density: 600
+  bulk_density: 521
 game:
   goods: goods.food
 basis:
-  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/density-materials-d_1652.html", note: "As stored or shipped in bulk." }

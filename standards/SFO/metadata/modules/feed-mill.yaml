@@ -19,4 +19,4 @@ recipes:
     rate: 2.778
     power: 300000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.power], tier: invented, review: true, note: "A mix chosen, not a ration anyone has worked out. To be reviewed." }

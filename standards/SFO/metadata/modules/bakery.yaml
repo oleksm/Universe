@@ -10,13 +10,14 @@ physical:
   height: 10
 recipes:
   - makes: good.bread
-    does: "Water goes off in the oven."
+    does: "A kilogram of flour makes a kilogram and a half of bread; some water goes off in the oven."
     inputs:
-      - { item: good.flour, quantity: 0.72 }
-      - { item: good.water, quantity: 0.45 }
+      - { item: good.flour, quantity: 0.667 }
+      - { item: good.water, quantity: 0.5 }
     outputs:
-      - { item: good.water, quantity: 0.17 }
+      - { item: good.water, quantity: 0.167 }
     rate: 0.5556
     power: 300000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "A kg of flour makes 1.5 kg of bread; the water that goes off is by balance. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

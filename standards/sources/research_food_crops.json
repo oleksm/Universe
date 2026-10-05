@@ -1,0 +1,1167 @@
+{
+ "wheat": {
+  "yield": {
+   "value": 3.6374,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Wheat'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Wheat (CPC 0111); Element=Yield; Year=2024; Unit=kg/ha; Value=3637.400000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.89,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Winter Wheat': Dry matter fraction of harvested product (DRY) = 0.89",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.5,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "Under favourable conditions with no stress, HI ranges between 0.45 and 0.55 for modern wheat cultivars (Austin, 1999).",
+   "verified": true,
+   "note": "midpoint of the stated range"
+  },
+  "bulk_density": {
+   "value": 770,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Grain, Wheat | 770 (kg/m3)",
+   "verified": true
+  }
+ },
+ "rice": {
+  "yield": {
+   "value": 4.7573,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Rice' (paddy)",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Rice (CPC 0113); Element=Yield; Year=2024; Unit=kg/ha; Value=4757.300000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.88,
+   "source": "https://www.feedipedia.org/node/226",
+   "quote": "Rough rice, paddy rice: Dry matter % as fed Avg 88.0, SD 2.1, Min 83.6, Max 92.4, Nb 29",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.45,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "HI of modern, short-duration tropical cultivars is about 0.45 to 0.5 (45 to 50 percent) in the dry season and 0.35 to 0.4 in the wet season. ... HI of modern hybrid rice in China range from 0.4 to 0.5.",
+   "verified": true,
+   "note": "0.45 taken as the value common to the stated ranges"
+  },
+  "bulk_density": {
+   "value": 580,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Grain, Rice rough | 580 (kg/m3)",
+   "verified": true
+  }
+ },
+ "maize": {
+  "yield": {
+   "value": 5.8022,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Maize (corn)'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Maize (corn) (CPC 0112); Element=Yield; Year=2024; Unit=kg/ha; Value=5802.200000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.87,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Maize': Dry matter fraction of harvested product (DRY) = 0.87",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.5,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "At full maturity and under favourable conditions, the grain of modern cultivars comprises around 50 percent of the above-ground biomass produced by the crop, that is, the harvest index is close to 0.50 (or 50 percent).",
+   "verified": true
+  },
+  "bulk_density": {
+   "value": 720,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Grain, Corn - shelled | 720 (kg/m3)",
+   "verified": true
+  }
+ },
+ "barley": {
+  "yield": {
+   "value": 3.2238,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Barley'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Barley (CPC 0115); Element=Yield; Year=2024; Unit=kg/ha; Value=3223.800000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.89,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Barley': Dry matter fraction of harvested product (DRY) = 0.89",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.475,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "Harvest index for barley is similar or only slightly lower than for wheat, and ranges from 0.45 to 0.5 for modern cultivars under favourable conditions.",
+   "verified": true,
+   "note": "midpoint of the stated range"
+  },
+  "bulk_density": {
+   "value": 620,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Grain, Barley | 620 (kg/m3)",
+   "verified": true
+  }
+ },
+ "oats": {
+  "yield": {
+   "value": 2.6281,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Oats'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Oats (CPC 0117); Element=Yield; Year=2024; Unit=kg/ha; Value=2628.100000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.89,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Oats': Dry matter fraction of harvested product (DRY) = 0.89",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.435,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Oats': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 1.3",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  },
+  "bulk_density": {
+   "value": 410,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Grain, Oats | 410 (kg/m3)",
+   "verified": true
+  }
+ },
+ "potatoes": {
+  "yield": {
+   "value": 22.8644,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Potatoes'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Potatoes (CPC 01510); Element=Yield; Year=2024; Unit=kg/ha; Value=22864.400000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.2075,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170026 'Potatoes, flesh and skin, raw': Water (nutrient 1051) = 79.25 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170026/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.75,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "HI for root crops, on the other hand, are usually much higher, with the range of 0.7 to 0.8 being common for high-yielding cultivars of potato, sweet potato, and sugar beet",
+   "verified": true,
+   "note": "midpoint of the stated range; high-yielding cultivars"
+  },
+  "storage_temperature": {
+   "value": 8.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Tubers for fresh consumption are stored at 7 to 10 °C (45 to 50 °F), to minimize conversion of non-reducing sugars such as starch to reducing sugars",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint; same passage: seed tubers 4 to 5 °C, frying 10 to 15 °C"
+  }
+ },
+ "sweet-potatoes": {
+  "yield": {
+   "value": 12.6029,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Sweet potatoes'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Sweet potatoes (CPC 01530); Element=Yield; Year=2024; Unit=kg/ha; Value=12602.900000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.2272,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 168482 'Sweet potato, raw, unprepared (Includes foods for USDA's Food Distribution Program)': Water (nutrient 1051) = 77.28 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/168482/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.75,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "HI for root crops, on the other hand, are usually much higher, with the range of 0.7 to 0.8 being common for high-yielding cultivars of potato, sweet potato, and sugar beet",
+   "verified": true,
+   "note": "midpoint of the stated range; high-yielding cultivars"
+  },
+  "storage_temperature": {
+   "value": 14,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Following curing, sweetpotatoes should be carefully moved, usually in palletized containers, to a separate storage room and held at 14±1 °C (57±2 °F) with 90% RH (Kushman 1975).",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "cassava": {
+  "yield": {
+   "value": 10.1862,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Cassava, fresh'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Cassava, fresh (CPC 01520.01); Element=Yield; Year=2024; Unit=kg/ha; Value=10186.200000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.4032,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 169985 'Cassava, raw': Water (nutrient 1051) = 59.68 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/169985/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 2.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Waxing and holding at 0 to 5 ºC (32 to 41 °F) extends shipping time to over 30 days with minimal vascular streaking.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint of 0 to 5 °C; applies to waxed export roots"
+  }
+ },
+ "soybeans": {
+  "yield": {
+   "value": 2.7775,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Soya beans'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Soya beans (CPC 0141); Element=Yield; Year=2024; Unit=kg/ha; Value=2777.500000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.91,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Soybeans': Dry matter fraction of harvested product (DRY) = 0.91",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.323,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Soybeans': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 2.1",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  },
+  "bulk_density": {
+   "value": 770,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Soybeans, whole | 770 (kg/m3)",
+   "verified": true
+  }
+ },
+ "beans": {
+  "yield": {
+   "value": 0.8984,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Beans, dry'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Beans, dry (CPC 01701); Element=Yield; Year=2024; Unit=kg/ha; Value=898.400000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.8825,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 175193 'Beans, kidney, all types, mature seeds, raw': Water (nutrient 1051) = 11.75 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/175193/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.323,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Beans and Pulses': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 2.1",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  },
+  "bulk_density": {
+   "value": 700,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Beans | 700 (kg/m3)",
+   "verified": true
+  }
+ },
+ "peas": {
+  "yield": {
+   "value": 1.924,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Peas, dry'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Peas, dry (CPC 01705); Element=Yield; Year=2024; Unit=kg/ha; Value=1924.000000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.9131,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 172428 'Peas, green, split, mature seeds, raw': Water (nutrient 1051) = 8.69 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/172428/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.323,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Beans and Pulses': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 2.1",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  },
+  "bulk_density": {
+   "value": 800,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Peas, dried | 800 (kg/m3)",
+   "verified": true
+  }
+ },
+ "lentils": {
+  "yield": {
+   "value": 1.2282,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Lentils, dry'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Lentils, dry (CPC 01704); Element=Yield; Year=2024; Unit=kg/ha; Value=1228.200000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.9174,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 172420 'Lentils, raw': Water (nutrient 1051) = 8.26 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/172420/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.323,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Beans and Pulses': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 2.1",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  }
+ },
+ "chickpeas": {
+  "yield": {
+   "value": 1.1952,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Chick peas, dry'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Chick peas, dry (CPC 01703); Element=Yield; Year=2024; Unit=kg/ha; Value=1195.200000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.9232,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 173756 'Chickpeas (garbanzo beans, bengal gram), mature seeds, raw': Water (nutrient 1051) = 7.68 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/173756/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.323,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Beans and Pulses': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 2.1",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  }
+ },
+ "rapeseed": {
+  "yield": {
+   "value": 2.0496,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Rape or colza seed'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Rape or colza seed (CPC 01443); Element=Yield; Year=2024; Unit=kg/ha; Value=2049.600000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.923,
+   "source": "https://www.feedipedia.org/node/15617",
+   "quote": "Rapeseeds, low erucic, low glucosinolates: Dry matter % as fed Avg 92.3, SD 1.1, Min 87.3, Max 94.9, Nb 3844",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.325,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "HI for oil seed crops are substantially lower than for grain crops, between 0.25 to 0.4.",
+   "verified": true,
+   "note": "midpoint of the range stated for oil seed crops in general, not rapeseed specifically"
+  },
+  "bulk_density": {
+   "value": 770,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Rapeseed | 770 (kg/m3)",
+   "verified": true
+  }
+ },
+ "sunflower-seed": {
+  "yield": {
+   "value": 1.8176,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Sunflower seed'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Sunflower seed (CPC 01445); Element=Yield; Year=2024; Unit=kg/ha; Value=1817.600000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.9527,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170562 'Seeds, sunflower seed kernels, dried': Water (nutrient 1051) = 4.73 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170562/nutrients; dry matter = 1 - water; figure is for dried kernels, not whole in-hull seed as traded"
+  },
+  "harvest_index": {
+   "value": 0.35,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "the harvest index of sunflower (computed on a dry matter basis) is relatively low, from less than 0.3 in long-season cultivars up to 0.4 in short-season hybrids.",
+   "verified": true,
+   "note": "midpoint of 0.3 to 0.4"
+  },
+  "bulk_density": {
+   "value": 577,
+   "source": "https://www.engineeringtoolbox.com/density-materials-d_1652.html",
+   "quote": "Densities of common Products table, Density (lbs/ft3): Sunflower seed | 36",
+   "verified": true,
+   "note": "converted from lb/ft3 at 16.0185 kg/m3 per lb/ft3; 36 lb/ft3"
+  }
+ },
+ "groundnuts": {
+  "yield": {
+   "value": 1.8473,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Groundnuts, excluding shelled' (in shell)",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Groundnuts, excluding shelled (CPC 0142); Element=Yield; Year=2024; Unit=kg/ha; Value=1847.300000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.929,
+   "source": "https://www.feedipedia.org/node/55",
+   "quote": "Peanuts, with shells: Dry matter % as fed Avg 92.9, SD 0.2, Min 92.7, Max 93.1, Nb 3",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.5,
+   "source": "https://www.ipcc-nggip.iges.or.jp/public/2019rf/pdf/4_Volume4/19R_V4_Ch11_Soils_N2O_CO2.pdf",
+   "quote": "Table 11.1A (New), row 'Peanuts': Ratio of above-ground residue dry matter to harvested yield (R_AG) = 1.0",
+   "verified": true,
+   "note": "DERIVED, not stated in the source: harvest index = 1/(1+R_AG); IPCC default, generic row"
+  },
+  "bulk_density": {
+   "value": 270,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Peanuts in shells | 270 (kg/m3)",
+   "verified": true
+  }
+ },
+ "sugar-beet": {
+  "yield": {
+   "value": 63.0895,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Sugar beet'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Sugar beet (CPC 01801); Element=Yield; Year=2024; Unit=kg/ha; Value=63089.500000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.188,
+   "source": "https://www.feedipedia.org/node/535",
+   "quote": "Beet root, sugar type, fresh: Dry matter % as fed Avg 18.8, SD 4.2, Min 14.5, Max 24.1, Nb 4",
+   "verified": true
+  },
+  "harvest_index": {
+   "value": 0.75,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "HI for root crops, on the other hand, are usually much higher, with the range of 0.7 to 0.8 being common for high-yielding cultivars of potato, sweet potato, and sugar beet",
+   "verified": true,
+   "note": "midpoint of the stated range, root dry matter basis; the same document gives 0.4 to 0.55 on a sucrose basis"
+  },
+  "bulk_density": {
+   "value": 760,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Beets, whole | 760 (kg/m3)",
+   "verified": true,
+   "note": "row says 'Beets, whole' without naming sugar beet"
+  }
+ },
+ "sugarcane": {
+  "yield": {
+   "value": 72.5317,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Sugar cane'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Sugar cane (CPC 01802); Element=Yield; Year=2024; Unit=kg/ha; Value=72531.700000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.302,
+   "source": "https://www.feedipedia.org/node/14462",
+   "quote": "Sugarcane stalks, fresh: Dry matter % as fed Avg 30.2, Min 22.3, Max 47, Nb 4",
+   "verified": true
+  }
+ },
+ "hay": {
+  "yield": {
+   "value": 5.56,
+   "unit": "t/ha/yr",
+   "year": 2025,
+   "scope": "United States, all dry hay (not a world average), as-harvested hay weight",
+   "source": "https://usda.library.cornell.edu/sites/default/release-files/795725/cropan26.txt",
+   "quote": "All Hay Area Harvested, Yield, and Production - States and United States: 2023-2025 ... Yield per acre (tons) ... United States ...: 2.25 (2023) 2.48 (2024) 2.48 (2025)",
+   "verified": true,
+   "note": "USDA NASS Crop Production 2025 Summary (January 2026); converted from 2.48 short tons/acre (x 2.2417). Same table: alfalfa and alfalfa mixtures hay 3.42 short tons/acre in 2025 = 7.67 t/ha. Multiply by 0.87 for dry matter"
+  },
+  "dry_matter": {
+   "value": 0.87,
+   "source": "https://usda.library.cornell.edu/sites/default/release-files/795725/cropan26.txt",
+   "quote": "The conversion is based on the assumption that one ton of dry hay is 0.87 ton of dry matter, one ton of haylage is 0.45 ton dry matter and one ton of greenchop is 0.25 ton dry matter.",
+   "verified": true,
+   "note": "Feedipedia (https://www.feedipedia.org/node/275) gives alfalfa hay dry matter 89.4 % as fed (n=1151)"
+  },
+  "bulk_density": {
+   "value": 232,
+   "source": "https://www.engineeringtoolbox.com/density-materials-d_1652.html",
+   "quote": "Densities of common Products table, Density (lbs/ft3): Hay | 5 - 24",
+   "verified": true,
+   "note": "converted from lb/ft3 at 16.0185 kg/m3 per lb/ft3; midpoint of 5 to 24 lb/ft3 (80 to 384 kg/m3); the source does not say loose or baled"
+  }
+ },
+ "tomatoes": {
+  "yield": {
+   "value": 36.8098,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Tomatoes'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Tomatoes (CPC 01234); Element=Yield; Year=2024; Unit=kg/ha; Value=36809.800000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0548,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170457 'Tomatoes, red, ripe, raw, year round average': Water (nutrient 1051) = 94.52 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170457/nutrients; dry matter = 1 - water"
+  },
+  "harvest_index": {
+   "value": 0.575,
+   "source": "https://www.fao.org/3/i2800e/i2800e.pdf",
+   "quote": "Harvest Index (HI, the ratio of yield measured as dry matter to total above ground biomass) normally ranges from 0.5 to 0.65.",
+   "verified": true,
+   "note": "midpoint; processing tomato"
+  },
+  "storage_temperature": {
+   "value": 13,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Table 1. Fresh produce susceptible to chilling injury ... Lowest Safe Temperature: Tomatoes, Ripe 7-10 °C (45-50 °F); Mature-green 13 °C (55 °F)",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); value is for mature-green fruit as shipped; ripe fruit 7 to 10 °C"
+  }
+ },
+ "onions": {
+  "yield": {
+   "value": 18.9275,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Onions and shallots, dry (excluding dehydrated)'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Onions and shallots, dry (excluding dehydrated) (CPC 01253.02); Element=Yield; Year=2024; Unit=kg/ha; Value=18927.500000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1089,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170000 'Onions, raw': Water (nutrient 1051) = 89.11 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170000/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Pungent dry onions can be stored for 6 to 9 mo at 0 °C (32 °F) with 65 to 75% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "cabbage": {
+  "yield": {
+   "value": 30.5743,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Cabbages'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Cabbages (CPC 01212); Element=Yield; Year=2024; Unit=kg/ha; Value=30574.300000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0782,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 169975 'Cabbage, raw': Water (nutrient 1051) = 92.18 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/169975/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Cabbage should be stored at 0 °C (32 °F) with 98 to 100% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "carrots": {
+  "yield": {
+   "value": 35.6223,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Carrots and turnips'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Carrots and turnips (CPC 01251); Element=Yield; Year=2024; Unit=kg/ha; Value=35622.300000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1171,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170393 'Carrots, raw': Water (nutrient 1051) = 88.29 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170393/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Storage at 0 to 1 °C (32 to 34 °F) is essential to minimize decay and sprouting during storage.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "lettuce": {
+  "yield": {
+   "value": 21.9091,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Lettuce and chicory'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Lettuce and chicory (CPC 01214); Element=Yield; Year=2024; Unit=kg/ha; Value=21909.100000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0436,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 169248 'Lettuce, iceberg (includes crisphead types), raw': Water (nutrient 1051) = 95.64 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/169248/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Lettuce should be quickly cooled and maintained as close to 0 °C (32 °F) as possible with 98 to 100% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "cucumbers": {
+  "yield": {
+   "value": 38.4249,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Cucumbers and gherkins'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Cucumbers and gherkins (CPC 01232); Element=Yield; Year=2024; Unit=kg/ha; Value=38424.900000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0477,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 168409 'Cucumber, with peel, raw': Water (nutrient 1051) = 95.23 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/168409/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 11.25,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Recommended conditions for commercial storage of cucumbers are 10 to 12.5 ºC (50 to 54 °F) at 95% RH (Hardenburg et al. 1986).",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "peppers": {
+  "yield": {
+   "value": 15.91,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Chillies and peppers, green (Capsicum spp. and Pimenta spp.)'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Chillies and peppers, green (Capsicum spp. and Pimenta spp.) (CPC 01231); Element=Yield; Year=2024; Unit=kg/ha; Value=15910.000000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0611,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170427 'Peppers, sweet, green, raw': Water (nutrient 1051) = 93.89 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170427/nutrients; dry matter = 1 - water; hot chili, green, raw (fdc_id 170497) has water 87.74 g"
+  },
+  "storage_temperature": {
+   "value": 7,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Fresh peppers can be kept for 2 to 3 weeks at 7 °C (45 °F) with 90 to 95% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "pumpkins": {
+  "yield": {
+   "value": 15.3851,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Pumpkins, squash and gourds'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Pumpkins, squash and gourds (CPC 01235); Element=Yield; Year=2024; Unit=kg/ha; Value=15385.100000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.084,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 168448 'Pumpkin, raw': Water (nutrient 1051) = 91.6 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/168448/nutrients; dry matter = 1 - water; winter squash, all varieties, raw (fdc_id 170489) has water 89.76 g"
+  },
+  "storage_temperature": {
+   "value": 11.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Recommended conditions for storage of pumpkins and winter squashes are 10 to 13 °C (50 to 55 °F).",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "spinach": {
+  "yield": {
+   "value": 32.8255,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Spinach'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Spinach (CPC 01215); Element=Yield; Year=2024; Unit=kg/ha; Value=32825.500000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.086,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 168462 'Spinach, raw': Water (nutrient 1051) = 91.4 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/168462/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Greens should be stored near 0 °C (32 °F) with 95 to 98% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); from the 'Greens for Cooking' section, which covers spinach"
+  }
+ },
+ "garlic": {
+  "yield": {
+   "value": 17.7159,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Green garlic'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Green garlic (CPC 01252); Element=Yield; Year=2024; Unit=kg/ha; Value=17715.900000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.4142,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 169230 'Garlic, raw': Water (nutrient 1051) = 58.58 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/169230/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": -1,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Garlic is not chilling sensitive, and the optimum storage temperature of -1 °C (30 °F) is just above the freezing point of garlic.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "strawberries": {
+  "yield": {
+   "value": 24.6036,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Strawberries'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Strawberries (CPC 01354); Element=Yield; Year=2024; Unit=kg/ha; Value=24603.600000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0905,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 167762 'Strawberries, raw': Water (nutrient 1051) = 90.95 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/167762/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Store at 0 °C (32 °F) with 90 to 95% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "watermelons": {
+  "yield": {
+   "value": 34.377,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Watermelons'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Watermelons (CPC 01221); Element=Yield; Year=2024; Unit=kg/ha; Value=34377.000000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.0855,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 167765 'Watermelon, raw': Water (nutrient 1051) = 91.45 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/167765/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 12.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "The ideal storage temperature is in the range of 10 to 15 °C (50 to 59 °F) with approximately 90% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "apples": {
+  "yield": {
+   "value": 20.8908,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Apples'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Apples (CPC 01341); Element=Yield; Year=2024; Unit=kg/ha; Value=20890.800000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1444,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 171688 'Apples, raw, with skin (Includes foods for USDA's Food Distribution Program)': Water (nutrient 1051) = 85.56 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/171688/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 0,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Most apple varieties are not sensitive to chilling and should be stored as close to 0 °C (32 °F) as possible. However, varieties that are susceptible to low-temperature disorders should be stored at 2 to 3 °C (36 to 37 °F).",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016)"
+  }
+ },
+ "oranges": {
+  "yield": {
+   "value": 19.889,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Oranges'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Oranges (CPC 01323); Element=Yield; Year=2024; Unit=kg/ha; Value=19889.000000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1325,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 169097 'Oranges, raw, all commercial varieties': Water (nutrient 1051) = 86.75 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/169097/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": 4,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Recommended storage conditions are— Growing Region / Temperature / Relative Humidity: Florida & Texas 0 to 1 °C, 85 to 90%; California & Arizona 3 to 8 °C, 90 to 95%",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); value is the midpoint of the whole 0 to 8 °C span; the recommendation differs by growing region"
+  }
+ },
+ "lemons": {
+  "yield": {
+   "value": 15.9597,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Lemons and limes'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Lemons and limes (CPC 01322); Element=Yield; Year=2024; Unit=kg/ha; Value=15959.700000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1102,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 167746 'Lemons, raw, without peel': Water (nutrient 1051) = 88.98 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/167746/nutrients; dry matter = 1 - water; figure is for fruit without peel; limes, raw (fdc_id 168155) have water 88.26 g"
+  },
+  "storage_temperature": {
+   "value": 9.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Lemons should be stored between 7 and 12 °C (45 and 54 °F) depending on the maturity-ripeness stage at harvest, season of harvest, storage time, and production area.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "bananas": {
+  "yield": {
+   "value": 23.7029,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Bananas'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Bananas (CPC 01312); Element=Yield; Year=2024; Unit=kg/ha; Value=23702.900000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.2509,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 173944 'Bananas, raw': Water (nutrient 1051) = 74.91 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/173944/nutrients; dry matter = 1 - water; edible flesh, not whole fruit with peel"
+  },
+  "storage_temperature": {
+   "value": 13.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Optimum temperatures for storage and holding of green bananas are 13 to 14 ºC (56 to 58 ºF) (Thompson and Burden 1995).",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "grapes": {
+  "yield": {
+   "value": 11.2855,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Grapes'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Grapes (CPC 01330); Element=Yield; Year=2024; Unit=kg/ha; Value=11285.500000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1946,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 174683 'Grapes, red or green (European type, such as Thompson seedless), raw': Water (nutrient 1051) = 80.54 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/174683/nutrients; dry matter = 1 - water"
+  },
+  "storage_temperature": {
+   "value": -0.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Ideally, storage rooms should operate at -1 to 0 ºC (30 to 32 ºF) with 90 to 95% RH",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint; table grapes"
+  }
+ },
+ "mangoes": {
+  "yield": {
+   "value": 9.8179,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Mangoes, guavas and mangosteens'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Mangoes, guavas and mangosteens (CPC 01316); Element=Yield; Year=2024; Unit=kg/ha; Value=9817.900000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.1654,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 169910 'Mangos, raw': Water (nutrient 1051) = 83.46 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/169910/nutrients; dry matter = 1 - water; edible flesh"
+  },
+  "storage_temperature": {
+   "value": 11.5,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Storage at 10 to 13 °C (50 to 55 °F) with 85 to 90% RH should give a shelf-life of 14 to 28 days for mature green fruit, depending on variety.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint"
+  }
+ },
+ "olives": {
+  "yield": {
+   "value": 2.309,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Olives'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Olives (CPC 01450); Element=Yield; Year=2024; Unit=kg/ha; Value=2309.000000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.25,
+   "source": "https://en.wikipedia.org/wiki/Olive",
+   "quote": "Green olives are 75% water, 15% fat, 4% carbohydrates and 1% protein (table).",
+   "verified": true,
+   "note": "the Wikipedia nutrition table describes cured green olives, not raw fruit as harvested; no raw-olive figure found"
+  },
+  "storage_temperature": {
+   "value": 6.25,
+   "source": "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf",
+   "quote": "Olives should be stored at 5 to 7.5 °C (41 to 46 °F) with 90 to 95% RH.",
+   "verified": true,
+   "note": "USDA Agriculture Handbook 66 (2016); midpoint; fresh olives"
+  }
+ },
+ "almonds": {
+  "yield": {
+   "value": 1.6463,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Almonds, in shell' (in shell, not shelled kernels)",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Almonds, in shell (CPC 01371); Element=Yield; Year=2024; Unit=kg/ha; Value=1646.300000; Flag=A (official figure)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.9559,
+   "source": "https://fdc.nal.usda.gov/fdc-datasets/FoodData_Central_sr_legacy_food_csv_2018-04.zip",
+   "quote": "fdc_id 170567 'Nuts, almonds': Water (nutrient 1051) = 4.41 g per 100 g",
+   "verified": true,
+   "note": "USDA FoodData Central SR Legacy download; food page https://fdc.nal.usda.gov/food-details/170567/nutrients; dry matter = 1 - water; figure is for kernels, not in-shell nuts"
+  },
+  "bulk_density": {
+   "value": 521,
+   "source": "https://www.engineeringtoolbox.com/density-materials-d_1652.html",
+   "quote": "Densities of common Products table, Density (lbs/ft3): Almonds, shelled | 30 - 35",
+   "verified": true,
+   "note": "converted from lb/ft3 at 16.0185 kg/m3 per lb/ft3; midpoint of 30 to 35 lb/ft3; shelled kernels, whereas the yield is in shell"
+  }
+ },
+ "coffee": {
+  "yield": {
+   "value": 0.9044,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Coffee, green'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Coffee, green (CPC 01610); Element=Yield; Year=2024; Unit=kg/ha; Value=904.400000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.89,
+   "source": "https://en.wikipedia.org/wiki/Coffee_production",
+   "quote": "Washed coffee leaves the mill at about 53 per cent moisture, and must be dried to 10–12 per cent on a wet basis before it is stable.",
+   "verified": true,
+   "note": "1 minus the midpoint (11 %) of the stated moisture range"
+  },
+  "bulk_density": {
+   "value": 673,
+   "source": "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html",
+   "quote": "Food Products - Bulk Densities table: Coffee beans, green | 673 (kg/m3)",
+   "verified": true
+  }
+ },
+ "tea": {
+  "yield": {
+   "value": 5.911,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Tea leaves' -- FRESH GREEN LEAF, NOT made tea",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Tea leaves (CPC 01620); Element=Yield; Year=2024; Unit=kg/ha; Value=5911.000000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha; FAOSTAT reports tea as harvested leaves, so this is not the made-tea yield asked for"
+  },
+  "bulk_density": {
+   "value": 192,
+   "source": "https://www.engineeringtoolbox.com/density-materials-d_1652.html",
+   "quote": "Densities of common Products table, Density (lbs/ft3): Tea leaves | 12",
+   "verified": true,
+   "note": "converted from lb/ft3 at 16.0185 kg/m3 per lb/ft3; 12 lb/ft3; the source does not say whether fresh or made tea"
+  }
+ },
+ "cocoa": {
+  "yield": {
+   "value": 0.4753,
+   "unit": "t/ha/yr",
+   "year": 2024,
+   "scope": "world average, FAOSTAT item 'Cocoa beans'",
+   "source": "https://bulks-faostat.fao.org/production/Production_Crops_Livestock_E_All_Data_(Normalized).zip",
+   "quote": "Area=World; Item=Cocoa beans (CPC 01640); Element=Yield; Year=2024; Unit=kg/ha; Value=475.300000; Flag=E (estimated value)",
+   "verified": true,
+   "note": "FAOSTAT 'Production: Crops and livestock products' bulk download (file dated 2025-12-23), browsable at https://www.fao.org/faostat/en/#data/QCL; value converted kg/ha -> t/ha"
+  },
+  "dry_matter": {
+   "value": 0.925,
+   "source": "https://www.icco.org/harvesting-post-harvest-new/",
+   "quote": "Cocoa beans are dried after fermentation in order to reduce the moisture content from about 60% to about 7.5%.",
+   "verified": true,
+   "note": "1 minus 7.5 % moisture"
+  }
+ },
+ "not_found": [
+  "tea: made-tea yield (only FAOSTAT fresh tea-leaf yield recorded, 5.911 t/ha); dry_matter of made tea",
+  "hay: no world-average yield exists in FAOSTAT; United States all-hay figure recorded instead",
+  "olives: dry_matter of raw olives as harvested (cured green olive figure recorded)",
+  "almonds: dry_matter and bulk_density of in-shell almonds (kernel figures recorded)",
+  "sunflower-seed: dry_matter of whole in-hull seed (kernel figure recorded)",
+  "harvest_index not found for: sugarcane, cassava, hay, onions, cabbage, carrots, lettuce, cucumbers, peppers, pumpkins, spinach, garlic, strawberries, watermelons, apples, oranges, lemons, bananas, grapes, mangoes, olives, almonds, coffee, tea, cocoa",
+  "harvest_index for oats, soybeans, beans, peas, lentils, chickpeas, groundnuts is derived from IPCC residue ratios (1/(1+R_AG)), not a stated harvest index; rapeseed uses the generic oil-seed range",
+  "bulk_density not found for: potatoes, sweet-potatoes, cassava, lentils, chickpeas, sugarcane, tomatoes, onions, cabbage, carrots, lettuce, cucumbers, peppers, pumpkins, spinach, garlic, strawberries, watermelons, apples, oranges, lemons, bananas, grapes, mangoes, olives, cocoa",
+  "storage_temperature not found for: sugar-beet, sugarcane"
+ ]
+}

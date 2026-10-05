@@ -9,4 +9,5 @@ physical:
 game:
   goods: goods.food
 basis:
-  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

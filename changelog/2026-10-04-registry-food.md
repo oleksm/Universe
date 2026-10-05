@@ -14,3 +14,11 @@
   stockmen, a grow-hall company, a fertiliser maker, brewers and bakers.
 - **The sum:** feeding the system's 220,000 people a full diet takes about 350 km2 of farms,
   nearly half of it to feed animals. Written up in `docs/registry-food.md`.
+- **The food figures were looked up.** All 42 crops' yields are the world's averages for 2024;
+  feed, water, milk, eggs, meat shares and the mills' and presses' yields are sourced too, as are
+  yields under lamps. Some moved: spinach yields twice the guess, a hard cheese takes 14.4 kg of
+  milk, cattle need 6.5 kg of feed for each kg. What is still a guess is marked.
+- **What the two worlds with air do to a crop** is worked out: Treistun d has 1.4 times Earth's
+  usable light and farms between 25 and 50 degrees of latitude; Treistun e, by the game's own
+  climate, never thaws, and grows nothing in the open. Feeding everyone from d takes about
+  270 km2.

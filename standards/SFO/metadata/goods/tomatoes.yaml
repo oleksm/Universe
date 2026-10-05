@@ -6,8 +6,9 @@ identity:
   description: "A vegetable of the market garden."
 physical:
   bulk_density: 600
-  storage_max_temperature: 286
+  storage_max_temperature: 286.1
 game:
   goods: goods.food
 basis:
-  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.storage_max_temperature], tier: sourced, source: "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf", note: "The temperature it is stored at; kept at or below it." }

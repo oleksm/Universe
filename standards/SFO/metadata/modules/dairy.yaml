@@ -10,20 +10,21 @@ physical:
   height: 10
 recipes:
   - makes: good.cheese
-    does: "Ten of milk to one of cheese."
+    does: "14.4 kg of milk to one of a hard, long-kept cheese."
     inputs:
-      - { item: good.milk, quantity: 10.0 }
+      - { item: good.milk, quantity: 14.4 }
     outputs:
-      - { item: good.whey, quantity: 9.0 }
+      - { item: good.whey, quantity: 13.4 }
     rate: 0.2778
     power: 300000
   - makes: good.butter
-    does: "Twenty-two of milk to one of butter."
+    does: "23 kg of milk to one of butter."
     inputs:
-      - { item: good.milk, quantity: 22.0 }
+      - { item: good.milk, quantity: 23.0 }
     outputs:
-      - { item: good.whey, quantity: 21.0 }
+      - { item: good.whey, quantity: 22.0 }
     rate: 0.1389
     power: 300000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "14.4 kg of milk to a kg of hard cheese (Grana Padano); 23 kg to a kg of butter. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

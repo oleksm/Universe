@@ -10,11 +10,11 @@ physical:
   height: 30
 recipes:
   - makes: good.sugar
-    does: "A tonne of sugar from six and a half of beet."
+    does: "150 kg of sugar from a tonne of beet."
     inputs:
-      - { item: good.sugar-beet, quantity: 6.5 }
+      - { item: good.sugar-beet, quantity: 6.667 }
     outputs:
-      - { item: good.beet-pulp, quantity: 5.5 }
+      - { item: good.beet-pulp, quantity: 5.667 }
     rate: 2.778
     power: 2000000
   - makes: good.sugar
@@ -26,4 +26,5 @@ recipes:
     rate: 2.778
     power: 2000000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "150 kg of sugar a tonne of beet. A tonne of cane holds 135 kg of sucrose; 111 kg got out is a guess. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

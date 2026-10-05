@@ -10,12 +10,13 @@ physical:
   height: 30
 recipes:
   - makes: good.flour
-    does: "Three quarters of the grain becomes flour; the rest is bran."
+    does: "72% of the grain becomes white flour; the rest is bran."
     inputs:
-      - { item: good.wheat, quantity: 1.333 }
+      - { item: good.wheat, quantity: 1.389 }
     outputs:
-      - { item: good.bran, quantity: 0.333 }
+      - { item: good.bran, quantity: 0.389 }
     rate: 2.778
     power: 500000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "72% of wheat becomes white flour. What is left over is by balance." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }

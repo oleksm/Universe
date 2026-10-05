@@ -11,134 +11,136 @@ recipes:
   - makes: good.tomatoes
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1302 }
-      - { item: good.water, quantity: 0.994 }
-      - { item: good.fertiliser, quantity: 0.0018 }
+      - { item: good.carbon-dioxide, quantity: 0.1376 }
+      - { item: good.water, quantity: 1.002 }
+      - { item: good.fertiliser, quantity: 0.002243 }
     outputs:
-      - { item: element.o, quantity: 0.09603 }
-      - { item: good.crop-residue, quantity: 0.03 }
-    rate: 0.01172
+      - { item: element.o, quantity: 0.1017 }
+      - { item: good.crop-residue, quantity: 0.0405 }
+    rate: 0.01166
     power: 10000
   - makes: good.onions
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1751 }
-      - { item: good.water, quantity: 0.9626 }
-      - { item: good.fertiliser, quantity: 0.00242 }
+      - { item: good.carbon-dioxide, quantity: 0.1721 }
+      - { item: good.water, quantity: 0.963 }
+      - { item: good.fertiliser, quantity: 0.003594 }
     outputs:
-      - { item: element.o, quantity: 0.1291 }
-      - { item: good.crop-residue, quantity: 0.011 }
-    rate: 0.006021
+      - { item: element.o, quantity: 0.1278 }
+      - { item: good.crop-residue, quantity: 0.01089 }
+    rate: 0.005999
     power: 10000
   - makes: good.cabbage
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1505 }
-      - { item: good.water, quantity: 0.9824 }
-      - { item: good.fertiliser, quantity: 0.00208 }
+      - { item: good.carbon-dioxide, quantity: 0.1464 }
+      - { item: good.water, quantity: 0.9828 }
+      - { item: good.fertiliser, quantity: 0.002701 }
     outputs:
-      - { item: element.o, quantity: 0.111 }
-      - { item: good.crop-residue, quantity: 0.024 }
-    rate: 0.009506
+      - { item: element.o, quantity: 0.1085 }
+      - { item: good.crop-residue, quantity: 0.02346 }
+    rate: 0.009687
     power: 10000
   - makes: good.carrots
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.2084 }
-      - { item: good.water, quantity: 0.9664 }
-      - { item: good.fertiliser, quantity: 0.00288 }
+      - { item: good.carbon-dioxide, quantity: 0.2038 }
+      - { item: good.water, quantity: 0.9672 }
+      - { item: good.fertiliser, quantity: 0.002318 }
     outputs:
-      - { item: element.o, quantity: 0.1536 }
-      - { item: good.crop-residue, quantity: 0.024 }
-    rate: 0.009823
+      - { item: element.o, quantity: 0.1499 }
+      - { item: good.crop-residue, quantity: 0.02342 }
+    rate: 0.01129
     power: 10000
   - makes: good.lettuce
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.07959 }
-      - { item: good.water, quantity: 0.983 }
-      - { item: good.fertiliser, quantity: 0.0011 }
+      - { item: good.carbon-dioxide, quantity: 0.06892 }
+      - { item: good.water, quantity: 0.9852 }
+      - { item: good.fertiliser, quantity: 0.001439 }
     outputs:
-      - { item: element.o, quantity: 0.05869 }
-      - { item: good.crop-residue, quantity: 0.005 }
-    rate: 0.007922
+      - { item: element.o, quantity: 0.05117 }
+      - { item: good.crop-residue, quantity: 0.00436 }
+    rate: 0.006943
     power: 10000
   - makes: good.cucumbers
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.08682 }
-      - { item: good.water, quantity: 0.996 }
-      - { item: good.fertiliser, quantity: 0.0012 }
+      - { item: good.carbon-dioxide, quantity: 0.1028 }
+      - { item: good.water, quantity: 0.9952 }
+      - { item: good.fertiliser, quantity: 0.002146 }
     outputs:
-      - { item: element.o, quantity: 0.06402 }
-      - { item: good.crop-residue, quantity: 0.02 }
-    rate: 0.009506
+      - { item: element.o, quantity: 0.07634 }
+      - { item: good.crop-residue, quantity: 0.02385 }
+    rate: 0.01217
     power: 10000
   - makes: good.peppers
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1852 }
-      - { item: good.water, quantity: 0.9968 }
-      - { item: good.fertiliser, quantity: 0.00256 }
+      - { item: good.carbon-dioxide, quantity: 0.1405 }
+      - { item: good.water, quantity: 0.9976 }
+      - { item: good.fertiliser, quantity: 0.002933 }
     outputs:
-      - { item: element.o, quantity: 0.1366 }
-      - { item: good.crop-residue, quantity: 0.048 }
-    rate: 0.005387
+      - { item: element.o, quantity: 0.1043 }
+      - { item: good.crop-residue, quantity: 0.03666 }
+    rate: 0.005042
     power: 10000
   - makes: good.pumpkins
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1953 }
-      - { item: good.water, quantity: 0.991 }
-      - { item: good.fertiliser, quantity: 0.0027 }
+      - { item: good.carbon-dioxide, quantity: 0.1811 }
+      - { item: good.water, quantity: 0.9916 }
+      - { item: good.fertiliser, quantity: 0.00378 }
     outputs:
-      - { item: element.o, quantity: 0.144 }
-      - { item: good.crop-residue, quantity: 0.045 }
-    rate: 0.004436
+      - { item: element.o, quantity: 0.1344 }
+      - { item: good.crop-residue, quantity: 0.042 }
+    rate: 0.004877
     power: 10000
   - makes: good.spinach
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1273 }
-      - { item: good.water, quantity: 0.9728 }
-      - { item: good.fertiliser, quantity: 0.00176 }
+      - { item: good.carbon-dioxide, quantity: 0.1363 }
+      - { item: good.water, quantity: 0.9708 }
+      - { item: good.fertiliser, quantity: 0.002515 }
     outputs:
-      - { item: element.o, quantity: 0.0939 }
-      - { item: good.crop-residue, quantity: 0.008 }
-    rate: 0.004753
+      - { item: element.o, quantity: 0.1009 }
+      - { item: good.crop-residue, quantity: 0.0086 }
+    rate: 0.0104
     power: 10000
   - makes: good.garlic
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.6048 }
-      - { item: good.water, quantity: 0.8708 }
-      - { item: good.fertiliser, quantity: 0.00836 }
+      - { item: good.carbon-dioxide, quantity: 0.6637 }
+      - { item: good.water, quantity: 0.8592 }
+      - { item: good.fertiliser, quantity: 0.004659 }
     outputs:
-      - { item: element.o, quantity: 0.446 }
-      - { item: good.crop-residue, quantity: 0.038 }
-    rate: 0.005387
+      - { item: element.o, quantity: 0.4861 }
+      - { item: good.crop-residue, quantity: 0.04142 }
+    rate: 0.005615
     power: 10000
   - makes: good.strawberries
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1693 }
-      - { item: good.water, quantity: 0.9802 }
-      - { item: good.fertiliser, quantity: 0.00234 }
+      - { item: good.carbon-dioxide, quantity: 0.1692 }
+      - { item: good.water, quantity: 0.9801 }
+      - { item: good.fertiliser, quantity: 0.003356 }
     outputs:
-      - { item: element.o, quantity: 0.1248 }
-      - { item: good.crop-residue, quantity: 0.027 }
-    rate: 0.006338
+      - { item: element.o, quantity: 0.1255 }
+      - { item: good.crop-residue, quantity: 0.02715 }
+    rate: 0.007795
     power: 10000
   - makes: good.watermelons
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
     inputs:
-      - { item: good.carbon-dioxide, quantity: 0.1621 }
-      - { item: good.water, quantity: 0.9872 }
-      - { item: good.fertiliser, quantity: 0.00224 }
+      - { item: good.carbon-dioxide, quantity: 0.1732 }
+      - { item: good.water, quantity: 0.9863 }
+      - { item: good.fertiliser, quantity: 0.002401 }
     outputs:
-      - { item: element.o, quantity: 0.1195 }
-      - { item: good.crop-residue, quantity: 0.032 }
-    rate: 0.009506
+      - { item: element.o, quantity: 0.1277 }
+      - { item: good.crop-residue, quantity: 0.0342 }
+    rate: 0.01089
     power: 10000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.rate], tier: sourced, source: "standards/sources/research_food_crops.json", note: "World-average yields for 2024 (FAOSTAT), over the module's 10 ha. Each figure and its page: the file named." }
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_food_crops.json", note: "Worked out, not measured: a plant is made of carbon dioxide and water and gives off oxygen (1.47 kg and 0.6 kg in, 1.07 kg out, for each kg of dry plant), with the water the crop holds. Each crop's dry share is sourced. How much of the plant is crop, and so how much straw is left, is sourced for some and a guess for onions, cabbage, carrots, lettuce, cucumbers, peppers, pumpkins, spinach, garlic, strawberries, watermelons. Fertiliser is the world's average, 67.7 kg of nitrogen a hectare a year, as ammonia." }
+  - { of: [physical, recipes.power], tier: invented, review: true, note: "Its size is chosen; what its machines draw is a guess. To be reviewed." }

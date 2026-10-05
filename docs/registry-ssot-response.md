@@ -475,6 +475,14 @@ balanced by mass, 9 companies. All in kinds you read, all with fields you have: 
 tests pass. This is your item 6 for food, done as modules with recipes, not copied from
 `recipes.ron`.
 
+**Sourced since, and one finding for you** (`docs/registry-food.md`, "What Treistun's two worlds
+with air do to a crop"): by `climate.rs` as it stands, Treistun e's warmest ground averages -10 C
+and Port Nacaubun -19 C, so nothing grows in the open there; Treistun d farms between 25 and 50
+degrees of latitude and is too hot at its equator. If e is meant to be a farm world (your
+`PlaceKind::Farm` makes it one, with 60,000 people), either its warmth or its role has to change.
+A crop's yield also wants the world's usable light (d 1.43 of Earth's, e 0.54) and its warmth
+where the field stands.
+
 **Asked of you:** a zone `use` of `agricultural` and a facility `kind` for a farm (and food works,
 and a store), so the farms can be placed; and how a module says it stands under an open sky, where
 a crop's carbon dioxide and water are the world's own.

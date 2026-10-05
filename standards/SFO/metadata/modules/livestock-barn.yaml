@@ -10,73 +10,75 @@ physical:
   height: 8
 recipes:
   - makes: good.live-pigs
-    does: "About 5,000 pigs a year raised to 110 kg, on 3 kg of feed for each kg they gain."
+    does: "About 5,000 pigs a year raised to 125 kg, on 3 kg of feed for each kg they gain by the time they are killed, and 9 litres of water a day each."
     inputs:
       - { item: good.animal-feed, quantity: 3.0 }
-      - { item: good.water, quantity: 6.0 }
+      - { item: good.water, quantity: 8.0 }
       - { item: element.o, quantity: 1.2 }
     outputs:
       - { item: good.carbon-dioxide, quantity: 1.65 }
-      - { item: good.manure, quantity: 7.55 }
-    rate: 0.01743
+      - { item: good.manure, quantity: 9.55 }
+    rate: 0.01981
     power: 50000
   - makes: good.live-chickens
-    does: "About 30,000 birds at a time, six or seven flocks a year, on 1.8 kg of feed for each kg they gain."
+    does: "About 30,000 birds at a time, raised to 3 kg in 47 days, six and a half flocks a year, on 1.7 kg of feed for each kg."
     inputs:
-      - { item: good.animal-feed, quantity: 1.8 }
-      - { item: good.water, quantity: 3.5 }
-      - { item: element.o, quantity: 0.72 }
+      - { item: good.animal-feed, quantity: 1.7 }
+      - { item: good.water, quantity: 4.4 }
+      - { item: element.o, quantity: 0.68 }
     outputs:
-      - { item: good.carbon-dioxide, quantity: 0.99 }
-      - { item: good.manure, quantity: 4.03 }
-    rate: 0.01553
+      - { item: good.carbon-dioxide, quantity: 0.935 }
+      - { item: good.manure, quantity: 4.845 }
+    rate: 0.01854
     power: 50000
   - makes: good.eggs
-    does: "About 30,000 laying hens, 18 kg of eggs a year each, on 2.2 kg of feed for each kg of eggs."
+    does: "About 30,000 laying hens, 330 eggs a year each (18.7 kg at 57 g an egg), on 2 kg of feed for each kg of eggs."
     inputs:
-      - { item: good.animal-feed, quantity: 2.2 }
-      - { item: good.water, quantity: 4.0 }
-      - { item: element.o, quantity: 0.88 }
+      - { item: good.animal-feed, quantity: 2.0 }
+      - { item: good.water, quantity: 4.9 }
+      - { item: element.o, quantity: 0.8 }
     outputs:
-      - { item: good.carbon-dioxide, quantity: 1.21 }
-      - { item: good.manure, quantity: 4.87 }
-    rate: 0.01711
+      - { item: good.carbon-dioxide, quantity: 1.1 }
+      - { item: good.manure, quantity: 5.6 }
+    rate: 0.01775
     power: 50000
   - makes: good.milk
-    does: "About 200 cows giving 8 t of milk a year each, on a kilogram of hay and feed for each kg of milk."
+    does: "About 200 cows giving 10 t of milk a year each (a high-yielding herd; the United States averages 9,954 kg), on 0.7 kg of dry feed for each kg of milk and 115 litres of water a day."
     inputs:
-      - { item: good.hay, quantity: 0.6 }
-      - { item: good.animal-feed, quantity: 0.4 }
-      - { item: good.water, quantity: 4.5 }
-      - { item: element.o, quantity: 0.4 }
+      - { item: good.hay, quantity: 0.45 }
+      - { item: good.animal-feed, quantity: 0.35 }
+      - { item: good.water, quantity: 4.2 }
+      - { item: element.o, quantity: 0.32 }
     outputs:
-      - { item: good.carbon-dioxide, quantity: 0.55 }
-      - { item: good.manure, quantity: 4.35 }
-    rate: 0.0507
+      - { item: good.carbon-dioxide, quantity: 0.44 }
+      - { item: good.manure, quantity: 3.88 }
+    rate: 0.06306
     power: 50000
   - makes: good.live-cattle
-    does: "About 1,000 head fattened a year, on 8 kg of hay and feed for each kg they gain."
+    does: "About 1,000 head fattened a year, on 6.5 kg of hay and feed for each kg they gain (4.5 to 7.5 is usual) and 41 litres of water a day."
     inputs:
-      - { item: good.hay, quantity: 6.0 }
+      - { item: good.hay, quantity: 4.5 }
       - { item: good.animal-feed, quantity: 2.0 }
-      - { item: good.water, quantity: 30.0 }
-      - { item: element.o, quantity: 3.2 }
+      - { item: good.water, quantity: 29.0 }
+      - { item: element.o, quantity: 2.6 }
     outputs:
-      - { item: good.carbon-dioxide, quantity: 4.4 }
-      - { item: good.manure, quantity: 35.8 }
+      - { item: good.carbon-dioxide, quantity: 3.575 }
+      - { item: good.manure, quantity: 33.52 }
     rate: 0.01584
     power: 50000
   - makes: good.live-sheep
-    does: "A flock raised for meat, on 8 kg of hay and feed for each kg they gain."
+    does: "A flock raised for meat, on 5.5 kg of hay and feed for each kg they gain (5 to 6 on good forage)."
     inputs:
-      - { item: good.hay, quantity: 7.0 }
+      - { item: good.hay, quantity: 4.5 }
       - { item: good.animal-feed, quantity: 1.0 }
-      - { item: good.water, quantity: 20.0 }
-      - { item: element.o, quantity: 3.2 }
+      - { item: good.water, quantity: 15.0 }
+      - { item: element.o, quantity: 2.2 }
     outputs:
-      - { item: good.carbon-dioxide, quantity: 4.4 }
-      - { item: good.manure, quantity: 25.8 }
+      - { item: good.carbon-dioxide, quantity: 3.025 }
+      - { item: good.manure, quantity: 18.68 }
     rate: 0.004753
     power: 50000
 basis:
-  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
+  - { of: [recipes, recipes.rate, recipes.inputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Feed for each kg, water a head, eggs a hen, milk a cow, weights at slaughter: the file named. The herd and flock sizes, and so the barn's rate, are chosen. Sheep's water for each kg gained is worked out from a guess at how fast they gain." }
+  - { of: [recipes.outputs], tier: derived, review: true, note: "By balance: what goes in and does not leave as the animal or its breath is manure. Breath is taken as 0.55 kg of carbon dioxide for each kg of feed, a guess." }
+  - { of: [physical, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
