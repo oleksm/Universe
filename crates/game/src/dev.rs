@@ -1260,6 +1260,13 @@ pub fn apply(app: &mut App, name: &str) {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
             };
+            // (UNIVERSE_VIEW=top|side|front: seen flat.)
+            match std::env::var("UNIVERSE_VIEW").as_deref() {
+                Ok("top") => y.interior_mut().set_view(crate::interior::View::Top),
+                Ok("side") => y.interior_mut().set_view(crate::interior::View::Side),
+                Ok("front") => y.interior_mut().set_view(crate::interior::View::Front),
+                _ => {}
+            }
             // (UNIVERSE_PLAN: a sample access plan drawn.)
             if std::env::var_os("UNIVERSE_PLAN").is_some() {
                 let spec = app.ship.spec();

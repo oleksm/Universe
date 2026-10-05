@@ -107,6 +107,8 @@ pub struct Interior {
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
     /// The plan as its walls were last worked out, and their panels.
     panelled: Option<(Plan, Vec<Panel>)>,
+    /// How it's seen (in the round or flat).
+    view: View,
     /// The plan as last saved or opened; closing with unsaved changes asked
     /// (`confirm`); a message for a while (s).
     saved: Option<Plan>,
@@ -581,6 +583,11 @@ impl Interior {
         ((floor + Vec3::Y * 0.05).as_dvec3(), f64::from(d.x).atan2(f64::from(d.z)))
     }
 
+    /// Seen as `view` (dev scenarios).
+    pub fn set_view(&mut self, view: View) {
+        self.view = view;
+    }
+
     /// A walk asked for in the middle of line `k` (dev scenarios), as WALK HERE.
     pub fn walk_line(&mut self, k: usize) {
         if let Some(&(a, b, _)) = self.plan.lines.get(k) {
@@ -785,6 +792,34 @@ struct Camera {
     forward: Vec3,
     focal: f32,
     centre: Vec2,
+    /// Flat (2D): pixels a metre, everything seen straight on; none: in perspective.
+    flat: Option<f32>,
+    /// How far it's zoomed out (m: the eye from its target, in perspective).
+    zoom: f32,
+}
+
+/// How the plan is seen: in the round (turned with the mouse), or flat, straight
+/// down, from the side or from the nose, as a drawing. The same plan and tools.
+#[derive(Clone, Copy, Default, PartialEq)]
+pub enum View {
+    #[default]
+    Round,
+    Top,
+    Side,
+    Front,
+}
+
+impl View {
+    const ALL: [View; 4] = [View::Round, View::Top, View::Side, View::Front];
+
+    fn name(self) -> &'static str {
+        match self {
+            View::Round => "3D",
+            View::Top => "TOP",
+            View::Side => "SIDE",
+            View::Front => "FRONT",
+        }
+    }
 }
 
 impl Camera {
@@ -795,25 +830,54 @@ impl Camera {
         let focal = size.y * 0.5 / (FOV * 0.5).tan();
         // (Far enough back that the whole hull fits, unless zoomed.)
         let distance = i.distance.unwrap_or(radius / (FOV * 0.5).tan() * 0.8);
-        let back = Vec3::new(i.pitch.cos() * i.yaw.sin(), i.pitch.sin(), i.pitch.cos() * i.yaw.cos());
-        let eye = target + back * distance;
-        let forward = (target - eye).normalize();
-        let right = forward.cross(Vec3::Y).normalize();
-        let up = right.cross(forward);
-        Camera { eye, right, up, forward, focal, centre: size * 0.5 }
+        // Flat: straight down (the nose up the screen), from its starboard side (the
+        // nose to the right), from its nose; the eye far back, its scale as the
+        // perspective's at its target.
+        let (forward, up) = match i.view {
+            View::Round => {
+                let back = Vec3::new(i.pitch.cos() * i.yaw.sin(), i.pitch.sin(), i.pitch.cos() * i.yaw.cos());
+                let forward = -back;
+                (forward, forward.cross(Vec3::Y).normalize().cross(forward))
+            }
+            View::Top => (-Vec3::Y, -Vec3::Z),
+            View::Side => (-Vec3::X, Vec3::Y),
+            View::Front => (Vec3::Z, Vec3::Y),
+        };
+        let right = forward.cross(up).normalize();
+        // (Flat and not zoomed: the hull fitted to the screen, the panels round it left.)
+        let extent = h.hi - h.lo;
+        let fit = ((size.x - 560.0) / extent.dot(right.abs())).min((size.y - 140.0) / extent.dot(up.abs()));
+        let distance = if i.view != View::Round && i.distance.is_none() { focal / fit.max(1e-3) } else { distance };
+        let flat = (i.view != View::Round).then_some(focal / distance);
+        let eye = target - forward * if flat.is_some() { radius * 6.0 } else { distance };
+        Camera { eye, right, up, forward, focal, centre: size * 0.5, flat, zoom: distance }
     }
 
-    /// The way into the scene through screen point `q`.
-    fn ray(&self, q: Vec2) -> Vec3 {
-        let d = (q - self.centre) / self.focal;
-        (self.forward + self.right * d.x - self.up * d.y).normalize()
+    /// The way into the scene through screen point `q`: where from and which way.
+    fn ray(&self, q: Vec2) -> (Vec3, Vec3) {
+        match self.flat {
+            Some(s) => {
+                let d = (q - self.centre) / s;
+                (self.eye + self.right * d.x - self.up * d.y, self.forward)
+            }
+            None => {
+                let d = (q - self.centre) / self.focal;
+                (self.eye, (self.forward + self.right * d.x - self.up * d.y).normalize())
+            }
+        }
+    }
+
+    /// Metres a pixel at `p`.
+    fn per_pixel(&self, p: Vec3) -> f32 {
+        self.flat.map_or_else(|| (p - self.eye).length() / self.focal, |s| 1.0 / s)
     }
 
     /// Where `p` lands on screen, and how far in front it is (none: behind).
     fn project(&self, p: Vec3) -> Option<(Vec2, f32)> {
         let d = p - self.eye;
         let z = d.dot(self.forward);
-        (z > 0.1).then(|| (self.centre + Vec2::new(d.dot(self.right), -d.dot(self.up)) * (self.focal / z), z))
+        let scale = self.flat.unwrap_or(self.focal / z.max(1e-6));
+        (z > 0.1).then(|| (self.centre + Vec2::new(d.dot(self.right), -d.dot(self.up)) * scale, z))
     }
 }
 
@@ -940,6 +1004,13 @@ fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
     (Vec2::new(size.x - w - 12.0, size.y - 30.0 - height), Vec2::new(w, height))
 }
 
+/// The views' buttons, in a row under the globe.
+fn view_button(size: Vec2, k: usize) -> (Vec2, Vec2) {
+    let (w, gap) = (50.0, 4.0);
+    let x0 = size.x - 12.0 - 4.0 * w - 3.0 * gap;
+    (Vec2::new(x0 + k as f32 * (w + gap), 146.0), Vec2::new(w, 16.0))
+}
+
 /// The globe at the top right: its middle and radius (px).
 fn globe(size: Vec2) -> (Vec2, f32) {
     (Vec2::new(size.x - 64.0, 100.0), 38.0)
@@ -1004,22 +1075,43 @@ fn on_line(i: &Interior, cam: &Camera, q: Vec2, k: usize) -> Option<(Vec3, Optio
 /// with SHIFT, from the path's last point straight along the plane's x or z,
 /// whichever is nearer.
 fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Option<Vec3> {
-    let ray = cam.ray(q);
-    let t = if ray.y.abs() > 1e-4 { (plane - cam.eye.y) / ray.y } else { -1.0 };
+    let (axis, level) = work_plane(i, plane);
+    let (from, ray) = cam.ray(q);
+    let t = if ray[axis].abs() > 1e-4 { (level - from[axis]) / ray[axis] } else { -1.0 };
     if t <= 0.0 {
         return None;
     }
-    let at = cam.eye + ray * t;
-    let mut at = Vec3::new((at.x * 4.0).round() / 4.0, plane, (at.z * 4.0).round() / 4.0);
+    let mut at = ((from + ray * t) * 4.0).round() / 4.0;
+    at[axis] = level;
+    // (SHIFT: squared to the last point, along whichever of the plane's two ways is
+    // nearer.)
     if shift && let Some(a) = i.from {
-        let from = i.plan.points[a].at;
-        if (at.x - from.x).abs() > (at.z - from.z).abs() {
-            at.z = from.z;
+        let last = i.plan.points[a].at;
+        let ways: Vec<usize> = (0..3).filter(|&k| k != axis).collect();
+        let (u, v) = (ways[0], ways[1]);
+        if (at[u] - last[u]).abs() > (at[v] - last[v]).abs() {
+            at[v] = last[v];
         } else {
-            at.x = from.x;
+            at[u] = last[u];
         }
     }
     Some(at)
+}
+
+/// The plane points are laid on: its axis (0 x, 1 y, 2 z) and level there. In the
+/// round and from above, the work plane (level, at its height); from the side, the
+/// upright one through the path's last point (or the picked one, else the middle);
+/// from the nose, the one across.
+fn work_plane(i: &Interior, plane: f32) -> (usize, f32) {
+    let at = i.from.or(match i.pick {
+        Some(Hover::Point(k)) => Some(k),
+        _ => None,
+    }).and_then(|k| i.plan.points.get(k)).map(|p| p.at);
+    match i.view {
+        View::Round | View::Top => (1, plane),
+        View::Side => (0, at.map_or(0.0, |p| p.x)),
+        View::Front => (2, at.map_or(0.0, |p| p.z)),
+    }
 }
 
 /// What's under the cursor: a point (within 8 px), or else a line (within 5 px).
@@ -1137,7 +1229,17 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     // levelled (no tilt up or down), its turn round the ship kept. Y: its turn round
     // the ship squared to the nearest quarter, its tilt kept. (Z would be a roll,
     // which this view never has.)
+    // The views: their buttons under the globe, or keys 1 to 4 (the same plan, the
+    // same tools; the round view as it was left).
+    for (k, v) in View::ALL.into_iter().enumerate() {
+        let key = [KeyCode::Digit1, KeyCode::Digit2, KeyCode::Digit3, KeyCode::Digit4][k];
+        if input.pressed(key) || (pressed && inside(view_button(size, k), cursor)) {
+            interior.view = v;
+            return true;
+        }
+    }
     if pressed
+        && interior.view == View::Round
         && let Some((a, _, _)) = globe_ends(&cam, size).into_iter().find(|(_, q, _)| q.distance(cursor) < 9.0)
     {
         if a.x.abs() > 0.5 {
@@ -1291,13 +1393,13 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The plane's handle (laying paths): held, it goes up and down with the mouse.
     let plane = plane_of(interior, &h);
-    if pressed && interior.tool == Tool::Path && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
+    if pressed && interior.tool == Tool::Path && interior.view != View::Top && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
         interior.lifting = true;
     }
     if interior.lifting {
         if input.button_down(MouseButton::Left) {
             let handle = plane_handle(&cam, &h, plane);
-            let per_pixel = (handle - cam.eye).length() / cam.focal;
+            let per_pixel = cam.per_pixel(handle);
             // (Where the mouse has it, unsnapped, so it moves on past a point.)
             let free = interior.lift_free.unwrap_or(plane) - d.y * per_pixel;
             interior.lift_free = Some(free.clamp(h.lo.y, h.hi.y));
@@ -1323,7 +1425,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         interior.press = Some(cursor);
     }
     let dragged = interior.press.is_some_and(|p| p.distance(cursor) > 4.0);
-    if input.button_down(MouseButton::Left) && (dragged || interior.tool == Tool::Look) {
+    if interior.view == View::Round && input.button_down(MouseButton::Left) && (dragged || interior.tool == Tool::Look) {
         interior.yaw -= d.x * 0.008;
         interior.pitch = (interior.pitch + d.y * 0.008).clamp(-1.5, 1.5);
     }
@@ -1400,7 +1502,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         }
     }
     let radius = (h.hi - h.lo).length() * 0.5;
-    let distance = (cam.eye - interior.target.unwrap_or((h.lo + h.hi) * 0.5)).length();
+    let distance = cam.zoom;
     if (input.button_down(MouseButton::Right) && !interior.stopped) || input.button_down(MouseButton::Middle) {
         let per_pixel = distance / cam.focal;
         let target = interior.target.unwrap_or((h.lo + h.hi) * 0.5);
@@ -1422,7 +1524,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let spec = app.ship.spec();
     frame.hud_rect(Vec2::ZERO, size, PAPER);
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {}", spec.name), LABEL);
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES", LABEL.scale(0.6), 0.7);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), if interior.view == View::Round { "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - 1-4: 3D, TOP, SIDE, FRONT - HOME: AS IT WAS - ESC CLOSES" } else { "FLAT: RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - POINTS LAID ON THE PLANE FACING YOU - 1-4: 3D, TOP, SIDE, FRONT - ESC CLOSES" }, LABEL.scale(0.6), 0.7);
     // The toolbar: the tool in hand lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -1576,9 +1678,11 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             seg(frame, Vec3::new(lo.x, plane, z), Vec3::new(hi.x, plane, z), PLANE.scale(0.5));
             z += 5.0;
         }
-        // Its handle: dragged up or down.
+        // Its handle: dragged up or down (not from above: it's face on there).
         let handle = plane_handle(&cam, &h, plane);
-        if let Some((q, _)) = cam.project(handle) {
+        if interior.view != View::Top
+            && let Some((q, _)) = cam.project(handle)
+        {
             let held = interior.lifting || q.distance(interior.cursor) < 10.0;
             // (A grip, not a square: a bar across with arrows up and down.)
             let col = if held { PICKED } else { PATH };
@@ -1680,9 +1784,18 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(q + Vec2::new(6.0, -4.0), name, if lit { col } else { Color([col.0[0], col.0[1], col.0[2], 0.55]) }, 0.7);
         }
     }
-    // The globe: the axes as the camera sees them (X red, Y green, Z blue; their far
-    // ends faint); X clicked levels the view, Y squares it.
+    // The views' buttons, the one in use lit.
     {
+        use crate::hud::{draw_cell, Lamp};
+        for (k, v) in View::ALL.into_iter().enumerate() {
+            let (p, c) = view_button(size, k);
+            let lamp = if v == interior.view || inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, &(k + 1).to_string(), v.name(), lamp);
+        }
+    }
+    // The globe: the axes as the camera sees them (X red, Y green, Z blue; their far
+    // ends faint); X clicked levels the view, Y squares it. (In the round only.)
+    if interior.view == View::Round {
         let (c, r) = globe(size);
         frame.hud_box(c - Vec2::splat(r), Vec2::splat(r * 2.0), PLANE.scale(0.8));
         let mut ends = globe_ends(&cam, size);
