@@ -34,6 +34,11 @@ impl Shipyard {
         (self.page == Page::Interior).then(|| self.interior.walls())
     }
 
+    /// Those walls to draw: each triangle with its colour.
+    pub fn wall_faces(&self) -> Option<Vec<crate::interior::WallFace>> {
+        (self.page == Page::Interior).then(|| self.interior.wall_faces())
+    }
+
     /// The interior studio turned to look from `yaw`, `pitch` (dev scenarios).
     pub fn interior_turned(yaw: f32, pitch: f32) -> Self {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::turned(yaw, pitch) }

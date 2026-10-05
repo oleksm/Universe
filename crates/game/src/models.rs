@@ -44,30 +44,36 @@ impl Models {
 /// Unlit: inside the hull it's in the hull's shadow, and there are no lamps
 /// yet. Made again when the plan changes.
 /// Walls as a mesh to draw in our hull's frame (the interior studio's walled tubes,
-/// walked through): flat, a shade lighter than the hull's inside, edges drawn. Made
-/// again when they change.
-pub fn walls(walls: &[[DVec3; 3]]) -> Option<Mesh> {
+/// walked through): each triangle in its colour (floor, wall, ceiling, panel by
+/// panel), each panel's seams drawn. Made again when they change.
+pub fn walls(faces: &[crate::interior::WallFace]) -> Option<Mesh> {
     use std::sync::Mutex;
-    static BUILT: Mutex<Option<(Vec<[DVec3; 3]>, Mesh)>> = Mutex::new(None);
-    if walls.is_empty() {
+    type Faces = Vec<crate::interior::WallFace>;
+    static BUILT: Mutex<Option<(Faces, Mesh)>> = Mutex::new(None);
+    if faces.is_empty() {
         return None;
     }
     let mut built = BUILT.lock().unwrap_or_else(|e| e.into_inner());
-    if let Some((w, m)) = built.as_ref()
-        && w.as_slice() == walls
+    if let Some((f, m)) = built.as_ref()
+        && f.as_slice() == faces
     {
         return Some(m.clone());
     }
     let mut m = WireModel::default();
-    let c = [0.38 * 0.95, 0.38, 0.38 * 1.08, 1.0];
-    for t in walls {
+    for (t, c, seams) in faces {
         let base = m.positions.len() as u32;
         m.positions.extend(t.iter().map(|p| p.as_vec3()));
-        m.colors.extend([c; 3]);
+        m.colors.extend([*c; 3]);
         m.faces.push([base, base + 1, base + 2]);
+        // (Its panel's seams, darker by the line tint against the panel's shade.)
+        for (k, seam) in seams.iter().enumerate() {
+            if *seam {
+                m.edges.push([base + k as u32, base + (k as u32 + 1) % 3]);
+            }
+        }
     }
     let mesh = Mesh::new(m);
-    *built = Some((walls.to_vec(), mesh.clone()));
+    *built = Some((faces.to_vec(), mesh.clone()));
     Some(mesh)
 }
 

@@ -106,7 +106,7 @@ pub struct Interior {
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
     /// The plan as its walls were last worked out, and their panels.
-    panelled: Option<(Plan, Vec<Vec<Vec3>>)>,
+    panelled: Option<(Plan, Vec<Panel>)>,
 }
 
 /// A line's room, its cross-section along it round it (the line its axis): the
@@ -218,6 +218,43 @@ fn outside(poly: Vec<Vec3>, planes: &[(Vec3, f32)]) -> Vec<Vec<Vec3>> {
     out
 }
 
+/// A wall triangle to draw: its corners (the hull's frame), its colour, which of
+/// its edges are seams.
+pub type WallFace = ([universe_engine::glam::DVec3; 3], [f32; 4], [bool; 3]);
+
+/// A piece of a walled tube's wall: its outline (flat, convex), what it is, and
+/// whether it's an odd panel along (shaded a little apart, so the way reads).
+#[derive(Clone)]
+struct Panel {
+    outline: Vec<Vec3>,
+    part: Part,
+    band: bool,
+}
+
+#[derive(Clone, Copy, PartialEq)]
+enum Part {
+    Floor,
+    Wall,
+    Ceiling,
+}
+
+/// A wall panel's length along its tube (m).
+const PANEL_LENGTH: f32 = 1.2;
+
+impl Panel {
+    /// Its colour inside (unlit flat: the floor dark deck grating, the walls mid
+    /// grey-blue, the ceiling light; every other panel a shade apart).
+    fn colour(&self) -> [f32; 4] {
+        let (base, step) = match self.part {
+            Part::Floor => ([0.17, 0.16, 0.14], 0.025),
+            Part::Wall => ([0.36, 0.40, 0.46], 0.05),
+            Part::Ceiling => ([0.58, 0.60, 0.62], 0.04),
+        };
+        let k = if self.band { -step } else { 0.0 };
+        [base[0] + k, base[1] + k, base[2] + k, 1.0]
+    }
+}
+
 /// A walled tube: its axis (from `a`, along `d`, `len` long), across it (`u`
 /// level, `v` up) and its outline's corners round the axis.
 struct Tube {
@@ -307,22 +344,39 @@ impl Plan {
     /// one other tube), less what's inside another walled tube, cut exactly along its
     /// surface (where tubes cross or meet, the way through opens); their ends open.
     /// Each piece a flat convex outline.
-    fn wall_panels(&self) -> Vec<Vec<Vec3>> {
+    fn wall_panels(&self) -> Vec<Panel> {
         let tubes = self.tubes();
         let rooms: Vec<Vec<(Vec3, f32)>> = tubes.iter().map(Tube::planes).collect();
         let mut out = Vec::new();
         for (i, t) in tubes.iter().enumerate() {
             let n = t.corners.len();
+            let (lo, hi) = t.corners.iter().fold((f32::MAX, f32::MIN), |m, c| (m.0.min(c.y), m.1.max(c.y)));
             for j in 0..n {
                 let (c0, c1) = (t.corners[j], t.corners[(j + 1) % n]);
-                let side = vec![t.at(t.reach(0, c0), c0), t.at(t.reach(0, c1), c1), t.at(t.reach(1, c1), c1), t.at(t.reach(1, c0), c0)];
-                let mut pieces = vec![side];
-                for (o, room) in rooms.iter().enumerate() {
-                    if o != i {
-                        pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                // (Floor, wall or ceiling, by where the side is round the axis.)
+                let mid = (c0.y + c1.y) * 0.5;
+                let part = if mid < lo + (hi - lo) * 0.2 { Part::Floor } else if mid > hi - (hi - lo) * 0.2 { Part::Ceiling } else { Part::Wall };
+                let reach = [t.reach(0, c0), t.reach(0, c1), t.reach(1, c1), t.reach(1, c0)];
+                let side = vec![t.at(reach[0], c0), t.at(reach[1], c1), t.at(reach[2], c1), t.at(reach[3], c0)];
+                // In panels `PANEL_LENGTH` along (from its start), each cut where it's
+                // inside another tube.
+                let (s0, s1) = (reach.iter().copied().fold(f32::MAX, f32::min), reach.iter().copied().fold(f32::MIN, f32::max));
+                let base = t.d.dot(t.a);
+                let first = (s0 / PANEL_LENGTH).floor() as i32;
+                for k in first..((s1 / PANEL_LENGTH).ceil() as i32) {
+                    let (a, b) = (k as f32 * PANEL_LENGTH, (k + 1) as f32 * PANEL_LENGTH);
+                    let strip = clip(&clip(&side, t.d, base + b), -t.d, -(base + a));
+                    if strip.len() < 3 {
+                        continue;
                     }
+                    let mut pieces = vec![strip];
+                    for (o, room) in rooms.iter().enumerate() {
+                        if o != i {
+                            pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                        }
+                    }
+                    out.extend(pieces.into_iter().map(|outline| Panel { outline, part, band: k.rem_euclid(2) == 1 }));
                 }
-                out.extend(pieces);
             }
         }
         out
@@ -487,11 +541,23 @@ impl Interior {
     /// Its walled groups as walls: each tube's sides, two triangles a panel (the
     /// hull's frame), to walk in and bump into.
     pub fn walls(&self) -> Vec<[universe_engine::glam::DVec3; 3]> {
-        self.panels().iter().flat_map(|q| (1..q.len().saturating_sub(1)).map(move |k| [q[0].as_dvec3(), q[k].as_dvec3(), q[k + 1].as_dvec3()])).collect()
+        self.wall_faces().into_iter().map(|(t, _, _)| t).collect()
+    }
+
+    /// Its walls as faces to draw: each triangle, its colour, and which of its edges
+    /// (first to second, second to third, third to first) are its panel's outline:
+    /// its seams.
+    pub fn wall_faces(&self) -> Vec<WallFace> {
+        self.panels().iter().flat_map(|p| {
+            let q = &p.outline;
+            let c = p.colour();
+            let last = q.len().saturating_sub(2);
+            (1..q.len().saturating_sub(1)).map(move |k| ([q[0].as_dvec3(), q[k].as_dvec3(), q[k + 1].as_dvec3()], c, [k == 1, true, k == last]))
+        }).collect()
     }
 
     /// Its walls' panels: as last worked out for this plan, or worked out now.
-    fn panels(&self) -> std::borrow::Cow<'_, [Vec<Vec3>]> {
+    fn panels(&self) -> std::borrow::Cow<'_, [Panel]> {
         match &self.panelled {
             Some((p, panels)) if *p == self.plan => std::borrow::Cow::Borrowed(panels.as_slice()),
             _ => std::borrow::Cow::Owned(self.plan.wall_panels()),
@@ -1433,7 +1499,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     let picked = picked_lines(interior);
     // Walled groups: their tubes' walls (cut away inside one another, their ends open).
     for q in interior.panels().iter() {
-        let on: Option<Vec<Vec2>> = q.iter().map(|p| cam.project(*p).map(|s| s.0)).collect();
+        let on: Option<Vec<Vec2>> = q.outline.iter().map(|p| cam.project(*p).map(|s| s.0)).collect();
         if let Some(on) = on {
             for k in 1..on.len().saturating_sub(1) {
                 frame.hud_triangle_colored([on[0], on[k], on[k + 1]], [WALL; 3]);

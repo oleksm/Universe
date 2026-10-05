@@ -860,10 +860,10 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         }
         // The interior studio's walled tubes, walked through.
         if std::ptr::eq(ship, &app.ship)
-            && let Some(walls) = app.preview.as_ref().and_then(|y| y.walls())
-            && let Some(mesh) = crate::models::walls(&walls)
+            && let Some(faces) = app.preview.as_ref().and_then(|y| y.wall_faces())
+            && let Some(mesh) = crate::models::walls(&faces)
         {
-            frame.in_scene(|frame| frame.model_colored(&mesh, t, 2.2, 1.0));
+            frame.in_scene(|frame| frame.model_colored(&mesh, t, 0.55, 1.0));
         }
         // Its ramp (part 1), swung down about its hinge as far as it is.
         if let Some(r) = &shape.ramp {
