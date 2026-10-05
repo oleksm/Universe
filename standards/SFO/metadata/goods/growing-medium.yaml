@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.growing-medium
+  name: "Growing medium"
+  kind: consumable
+  description: "What roots are held in where there is no soil: spun rock, fired clay or coir, in slabs and pellets. It clogs and is changed."
+physical:
+  bulk_density: 100
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

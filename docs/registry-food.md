@@ -171,6 +171,76 @@ physics** (the user, 2026-10-04: "what is possible is possible"): e is a cold wo
 and water, settled first and never able to farm; d's fields feed the system. The records say so
 now (the two worlds' stories, the two ports', the food companies').
 
+## The hydroponic hall: food anywhere
+
+The user, 2026-10-04: "we need to grow more food or everyone is going to die... something like
+airtight hydroponics... installed on any planet, but the difference to balance temperature will
+cost energy, so hopefully the market will price it."
+
+The grow hall is now that: `module.grow-hall`, the **hydroponic hall**. An airtight hall with a
+hectare of troughs in tiers under lamps. No sky, no soil, no weather: it stands on any world, in
+orbit or underground.
+
+**What it takes in.** Everything a crop is made of, because nothing comes from outside: carbon
+dioxide (people breathe it out), water, all its nutrients as fertiliser, a growing medium for the
+roots that clogs and is changed, and light. It gives the crop, oxygen, the plant's leavings and the
+spent medium.
+
+**What it grows.** 30 crops: every field and garden crop, not only salad. Seven are as measured
+under lamps (lettuce, tomatoes, peppers, potatoes, wheat, soybeans; spinach as lettuce). The other
+23 are worked out from the light: NASA's chamber crops made 0.2 to 0.6 g of dry crop for each mol
+of light, leaf and root at the top, grain at the bottom. Trees it does not grow: fruit, nuts,
+olives, coffee, tea and cocoa still need an orchard under a sky.
+
+**What a kilogram costs in power.**
+
+| Crop | From a hectare a year | Power | For each kg |
+|---|---|---|---|
+| Lettuce, spinach | 800 t | 0.9 MW | 10 kWh |
+| Cabbage, cucumbers, carrots, onions | 720 to 1,080 t | 2.9 MW | 23 to 35 kWh |
+| Tomatoes | 650 t | 2.3 MW | 32 kWh |
+| Potatoes, sugar beet, sweet potatoes | 350 to 450 t | 2.1 to 2.9 MW | 53 to 68 kWh |
+| Maize | 58 t | 2.9 MW | 430 kWh |
+| Wheat, rice, barley, pulses, oilseeds | 24 to 52 t | 1.7 to 4.9 MW | 630 to 830 kWh |
+
+Leaf and root are dear; grain is ruinous; meat fed on grain from a hall is worse. The market will
+say so.
+
+**Feeding everyone from halls alone,** the same diet less what grows on trees:
+
+| | Halls (hectares of beds) | Power | For each person |
+|---|---|---|---|
+| Without meat, milk or eggs | 940 | 3.2 GW | 43 m2, 15 kW |
+| With them | 2,030 | 6.4 GW | 92 m2, 29 kW |
+
+That is eight fusion power stations for the plain diet and sixteen with animals, against 12 MW for
+the same food from Treistun d's fields. NASA's own reckoning for a crew is 20 to 50 m2 a person:
+the plain diet lands inside it.
+
+**The heat.** Every watt the lamps draw ends as heat in the hall, and has to be got out. Where it
+stands decides what that costs: where outside is colder than the 22 C inside, the heat runs out
+by itself and fans are all it takes; where outside is hotter, it has to be pumped uphill.
+
+| Where it stands | Outside | Power to shed the heat, on top of the lamps' |
+|---|---|---|
+| Port Trethi (Treistun f), Port Nacaubun (e), the cold moons, orbit | 80 to 254 K | about 2% |
+| Port Eikir (Treistun d, 46 north) | 285 K | about 2% |
+| Port Sirnendis (d's moon) | 306 K | 7% |
+| Treistun d's equator | 322 K | 18% |
+| Port Lisaur (Treistun c) | 421 K | 85% |
+| Port Zaudalein (Treistun b) | 562 K | 180% |
+
+Worked out, not in the records: a heat pump at half of what physics allows at best, against the
+ground's mean temperature. On an airless world the heat goes out through radiators, and shade or
+a hole in the ground would do better than this. **The record cannot say this yet:** a recipe has
+one power figure. For the engine to charge by where a hall stands, a module needs to say what
+heat it must shed, what temperature it holds, and how well its plant does it (asked below).
+
+**What it is built of.** Eight components, about 3,100 t (`SFO/metadata/parts/grow-hall/`): a
+pressure shell of 2,500 t of steel plate, lining, racks and troughs, tanks and pipes, two airlocks
+(all cut from stock a yard can make), and a lamp array, a climate plant, and pumps and controls,
+which nothing yet says how to make. All guesses, marked.
+
 ## What waits on the engine
 
 Placing any of this on the ground needs two values the engine's types do not have, and a type that

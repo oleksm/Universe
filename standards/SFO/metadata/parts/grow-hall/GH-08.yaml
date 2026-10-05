@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.gh-08
+  code: GH-08
+  name: "Pumps and controls"
+  revision: draft
+  description: "Pumps, valves, sensors and the computer that doses the water."
+physical:
+  mass: 20000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed. A guess. What they are made of is not described." }

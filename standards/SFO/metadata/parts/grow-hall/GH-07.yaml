@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.gh-07
+  code: GH-07
+  name: "Climate plant"
+  revision: draft
+  description: "Heat pumps, fans, coils and radiators: what takes the lamps' heat out of the hall and holds its air at what the crop likes."
+physical:
+  mass: 200000
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed. A guess. What it is made of is not described." }

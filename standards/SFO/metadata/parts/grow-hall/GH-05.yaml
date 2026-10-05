@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.gh-05
+  code: GH-05
+  name: "Airlock"
+  revision: draft
+  description: "The way in and out, for people and for the crop, without letting the air out."
+physical:
+  mass: 40000
+made_from:
+  - item: stock.sta36-pl-20
+    quantity: 46000.0
+making:
+  module: module.welding-bay
+fit:
+  count: 2
+basis:
+  - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. A guess. Taken as cut from plate with 15% lost; a real one is of many materials." }

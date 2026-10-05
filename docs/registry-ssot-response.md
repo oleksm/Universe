@@ -484,6 +484,14 @@ and a food surplus: that rule needs the world's warmth in it.
 A crop's yield also wants the world's usable light (d 1.43 of Earth's, e 0.54) and its warmth
 where the field stands.
 
+**The hydroponic hall** (`module.grow-hall`, the user's: food anywhere, at a price): 30 recipes
+now, every annual crop, with a growing medium that is used up. **Asked of you for it:** a sealed
+module's power should follow where it stands. Proposed on a module: `climate: { holds: K,
+efficiency: share of the best physics allows }`, with the heat to shed taken as the power its
+recipe draws; you then add |heat| x (outside - inside) / (inside x efficiency) where outside is
+hotter, and next to nothing where it is colder. Figures and a table by settlement:
+`docs/registry-food.md`, "The hydroponic hall". Say if you want the field, and its name.
+
 **Asked of you:** a zone `use` of `agricultural` and a facility `kind` for a farm (and food works,
 and a store), so the farms can be placed; and how a module says it stands under an open sky, where
 a crop's carbon dioxide and water are the world's own.
