@@ -756,3 +756,13 @@ concentrator and the smelters): see `docs/geology-registry-note.md`.
 
 **Still owed:** small bodies from your export (`celestial_export.py`, and the seeder stopped);
 `registry-figures` read by the page's build; crops' base temperature and light need.
+
+**Small bodies from your export: on a branch, for you (2026-10-05).** `origin/fso-small-bodies` is
+`fso` plus one commit: `celestial_export.py` writes the bodies your export marks `small` into
+`small-bodies/` without `in_game` (54 written, my 55 seeded ones removed), and `celestial_seed.py`
+seeds only regions. **Your loader then stops:** `celestial.rs:146`, "body.biraidim.gaumzasti: the
+game makes no CrossingAsteroid". A small body's record with no `in_game: not made` is read as one
+the game makes from its record, and the loader knows only planets, moons and asteroids. So it is
+not on `fso`. Merge the branch with the loader's side (skip the kinds the engine seeds itself, or
+hold them by your guard). One more thing from the run: all nine captured moons came out
+carbonaceous, though `primitive` has had its colour since yesterday.
