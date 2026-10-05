@@ -89,8 +89,9 @@ pub struct Interior {
     /// The cross-section new lines get; the slider held (its width 0, height 1).
     profile: Profile,
     slider: Option<usize>,
-    /// A slide under way has its undo step already.
+    /// A slide under way has its undo step already; SHIFT held (squaring a path).
     sliding: bool,
+    shift: bool,
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
@@ -563,6 +564,46 @@ fn plane_of(i: &Interior, h: &Hull) -> f32 {
     i.plane.unwrap_or_else(|| i.plan.points.iter().find(|p| p.name.as_deref() == Some("HATCH")).map_or((h.lo.y + h.hi.y) * 0.5, |p| p.at.y))
 }
 
+/// Where on line `k` the cursor is: its quarter, middle or three-quarter mark if
+/// within 10 px of one (which), else straight across from the cursor.
+fn on_line(i: &Interior, cam: &Camera, q: Vec2, k: usize) -> Option<(Vec3, Option<usize>)> {
+    let (a, b, _) = i.plan.lines[k];
+    let (pa, pb) = (i.plan.points[a].at, i.plan.points[b].at);
+    let (sa, sb) = (cam.project(pa)?.0, cam.project(pb)?.0);
+    let marks = [0.25f32, 0.5, 0.75];
+    let near = marks.iter().enumerate().map(|(m, t)| (m, sa.lerp(sb, *t).distance(q))).filter(|(_, d)| *d < 10.0).min_by(|x, y| x.1.total_cmp(&y.1));
+    Some(match near {
+        Some((m, _)) => (pa.lerp(pb, marks[m]), Some(m)),
+        None => {
+            let ab = sb - sa;
+            let t = ((q - sa).dot(ab) / ab.length_squared().max(1e-6)).clamp(0.05, 0.95);
+            (pa.lerp(pb, t), None)
+        }
+    })
+}
+
+/// Where on the work plane a click at `q` would lay a point: snapped to 25 cm;
+/// with SHIFT, from the path's last point straight along the plane's x or z,
+/// whichever is nearer.
+fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Option<Vec3> {
+    let ray = cam.ray(q);
+    let t = if ray.y.abs() > 1e-4 { (plane - cam.eye.y) / ray.y } else { -1.0 };
+    if t <= 0.0 {
+        return None;
+    }
+    let at = cam.eye + ray * t;
+    let mut at = Vec3::new((at.x * 4.0).round() / 4.0, plane, (at.z * 4.0).round() / 4.0);
+    if shift && let Some(a) = i.from {
+        let from = i.plan.points[a].at;
+        if (at.x - from.x).abs() > (at.z - from.z).abs() {
+            at.z = from.z;
+        } else {
+            at.x = from.x;
+        }
+    }
+    Some(at)
+}
+
 /// What's under the cursor: a point (within 8 px), or else a line (within 5 px).
 fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
     let screen: Vec<Option<Vec2>> = i.plan.points.iter().map(|p| cam.project(p.at).map(|s| s.0)).collect();
@@ -629,6 +670,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let cam = Camera::of(interior, &h, size);
     let cursor = input.cursor;
     interior.cursor = cursor;
+    interior.shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
     // The globe: an axis clicked undoes the view's turn about that axis only. X:
@@ -758,19 +800,24 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     {
         match interior.tool {
             Tool::Path => {
-                // On a point: joined to it, and on from it. Else on the plane: a new
-                // point there, joined to the last.
+                // On a point: joined to it, and on from it. On a line: a point there
+                // (its quarter, middle or three-quarter mark if near one), the line
+                // split through it. Else on the plane: a new point there. Either new
+                // one joined to the last.
                 let to = match interior.hover {
                     Some(Hover::Point(k)) => Some(k),
-                    _ => {
-                        let ray = cam.ray(cursor);
-                        let t = if ray.y.abs() > 1e-4 { (plane - cam.eye.y) / ray.y } else { -1.0 };
-                        (t > 0.0).then(|| {
-                            let at = cam.eye + ray * t;
-                            interior.plan.points.push(Point { at: Vec3::new((at.x * 4.0).round() / 4.0, plane, (at.z * 4.0).round() / 4.0), name: None });
-                            interior.plan.points.len() - 1
-                        })
-                    }
+                    Some(Hover::Line(k)) => on_line(interior, &cam, cursor, k).map(|(at, _)| {
+                        let (a, b, profile) = interior.plan.lines[k];
+                        interior.plan.points.push(Point { at, name: None });
+                        let n = interior.plan.points.len() - 1;
+                        interior.plan.lines[k] = (a, n, profile);
+                        interior.plan.lines.push((n, b, profile));
+                        n
+                    }),
+                    None => on_plane(interior, &cam, plane, cursor, interior.shift).map(|at| {
+                        interior.plan.points.push(Point { at, name: None });
+                        interior.plan.points.len() - 1
+                    }),
                 };
                 if let Some(k) = to {
                     let onto = matches!(interior.hover, Some(Hover::Point(_)));
@@ -977,14 +1024,34 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
             frame.text_scaled(q + Vec2::new(16.0, -4.0), &format!("PLANE {:.1} M", plane - lo.y), col, 0.7);
         }
-        // Where a click would put a point (not over one: that joins to it).
-        let ray = cam.ray(interior.cursor);
-        if ray.y.abs() > 1e-4 && !matches!(interior.hover, Some(Hover::Point(_))) {
-            let t = (plane - cam.eye.y) / ray.y;
-            if t > 0.0 {
-                let at = cam.eye + ray * t;
-                let at = Vec3::new((at.x * 4.0).round() / 4.0, plane, (at.z * 4.0).round() / 4.0);
-                if let Some((q, _)) = cam.project(at) {
+        // Where a click would put a point: over a line, its quarter marks (the one
+        // it'd snap to lit); else on the plane (SHIFT: squared to the last point).
+        // Not over a point: that joins to it.
+        match interior.hover {
+            Some(Hover::Line(k)) => {
+                let (a, b, _) = interior.plan.lines[k];
+                let (pa, pb) = (interior.plan.points[a].at, interior.plan.points[b].at);
+                let snap = on_line(interior, &cam, interior.cursor, k);
+                for (m, t) in [0.25f32, 0.5, 0.75].into_iter().enumerate() {
+                    if let Some((q, _)) = cam.project(pa.lerp(pb, t)) {
+                        let lit = snap.is_some_and(|s| s.1 == Some(m));
+                        let r = if m == 1 { 5.0 } else { 3.5 };
+                        let col = if lit { PICKED } else { Color([1.0, 1.0, 1.0, 0.9]) };
+                        frame.hud_line(q - Vec2::new(r, r), q + Vec2::new(r, r), col);
+                        frame.hud_line(q - Vec2::new(r, -r), q + Vec2::new(r, -r), col);
+                    }
+                }
+                if let Some((at, _)) = snap
+                    && let Some((q, _)) = cam.project(at)
+                {
+                    frame.hud_box(q - Vec2::splat(4.0), Vec2::splat(8.0), PICKED);
+                }
+            }
+            Some(Hover::Point(_)) => {}
+            None => {
+                if let Some(at) = on_plane(interior, &cam, plane, interior.cursor, interior.shift)
+                    && let Some((q, _)) = cam.project(at)
+                {
                     frame.hud_box(q - Vec2::splat(3.0), Vec2::splat(6.0), PICKED.scale(0.6));
                 }
             }
@@ -1015,7 +1082,14 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         && let Some(a) = interior.from
         && let Some((pa, _)) = cam.project(plan.points[a].at)
     {
-        frame.hud_line(pa, interior.cursor, PICKED.scale(0.6));
+        // (To where a click would go: a point, a line's mark, or the plane's spot.)
+        let to = match interior.hover {
+            Some(Hover::Point(k)) => Some(plan.points[k].at),
+            Some(Hover::Line(k)) => on_line(interior, &cam, interior.cursor, k).map(|s| s.0),
+            None => on_plane(interior, &cam, plane, interior.cursor, interior.shift),
+        };
+        let end = to.and_then(|p| cam.project(p)).map_or(interior.cursor, |(q, _)| q);
+        frame.hud_line(pa, end, PICKED.scale(0.6));
     }
     for (k, p) in plan.points.iter().enumerate() {
         let Some((q, _)) = cam.project(p.at) else { continue };
