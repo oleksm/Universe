@@ -35,6 +35,8 @@ struct Read {
     nodes: Vec<(String, DVec3, DVec3)>,
     /// Each named mesh's box: (name, least corner, most corner).
     pieces: Vec<(String, DVec3, DVec3)>,
+    /// Glass and screen meshes' pieces one by one, each's box.
+    islands: Vec<(String, DVec3, DVec3)>,
 }
 
 /// A hull from a glTF file's bytes (`.glb`); `visual`: the file's path, for
@@ -77,6 +79,7 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
     shape.ramp = ramp(&shape, read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
     shape.pieces = read.pieces.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
+    shape.islands = read.islands.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     let (lo, hi) = shape.mesh.extent();
     let size = hi - lo;
     let frame_mass = FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0);
@@ -133,11 +136,50 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         ramp: Vec::new(),
         nodes: Vec::new(),
         pieces: Vec::new(),
+        islands: Vec::new(),
     };
     for node in scene.nodes() {
         walk(&node, DMat4::IDENTITY, blob, false, &mut read);
     }
     Ok(read)
+}
+
+/// A mesh's pieces that don't touch (triangles joined where they share a corner,
+/// to a millimetre), each one's box.
+fn islands(tris: &[[DVec3; 3]]) -> Vec<(DVec3, DVec3)> {
+    let key = |p: DVec3| ((p.x * 1000.0).round() as i64, (p.y * 1000.0).round() as i64, (p.z * 1000.0).round() as i64);
+    let mut ids: std::collections::HashMap<(i64, i64, i64), usize> = std::collections::HashMap::new();
+    let mut up: Vec<usize> = Vec::new();
+    fn root(up: &mut [usize], mut x: usize) -> usize {
+        while up[x] != x {
+            up[x] = up[up[x]];
+            x = up[x];
+        }
+        x
+    }
+    let mut corner = |p: DVec3, up: &mut Vec<usize>| *ids.entry(key(p)).or_insert_with(|| {
+        up.push(up.len());
+        up.len() - 1
+    });
+    let mut at = Vec::new();
+    for t in tris {
+        let k = t.map(|p| corner(p, &mut up));
+        for &j in &k[1..] {
+            let (a, b) = (root(&mut up, k[0]), root(&mut up, j));
+            up[b] = a;
+        }
+        at.push((k[0], t));
+    }
+    let mut boxes: std::collections::BTreeMap<usize, (DVec3, DVec3)> = std::collections::BTreeMap::new();
+    for (k, t) in at {
+        let r = root(&mut up, k);
+        let b = boxes.entry(r).or_insert((t[0], t[0]));
+        for p in t {
+            b.0 = b.0.min(*p);
+            b.1 = b.1.max(*p);
+        }
+    }
+    boxes.into_values().collect()
 }
 
 fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read: &mut Read) {
@@ -165,6 +207,9 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
         }
         if let Some((lo, hi)) = points.iter().fold(None, |b: Option<(DVec3, DVec3)>, p| Some(b.map_or((*p, *p), |(l, h)| (l.min(*p), h.max(*p))))) {
             read.pieces.push((name.clone(), lo, hi));
+        }
+        if name.contains("Glass") || name.contains("Screen") {
+            read.islands.extend(islands(&tris).into_iter().map(|(lo, hi)| (name.clone(), lo, hi)));
         }
         if name.starts_with("COL_") {
             read.collision.push((name.clone(), points));

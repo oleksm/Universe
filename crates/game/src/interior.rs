@@ -17,13 +17,35 @@ const LABEL: Color = Color([0.7, 0.85, 1.0, 1.0]);
 const DIMENSION: Color = Color([0.75, 0.88, 1.0, 0.75]);
 /// The access plan: its lines and points, the hull's own points, what's lit, the work plane.
 const PATH: Color = Color([0.4, 1.0, 0.75, 0.95]);
-const ANCHOR: Color = Color([1.0, 0.6, 0.3, 1.0]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
 const PLANE: Color = Color([0.4, 1.0, 0.75, 0.35]);
 const CLASH: Color = Color([1.0, 0.3, 0.25, 1.0]);
-/// The hull's own points: where it's serviced, where the ore comes in.
-const SERVICE: Color = Color([0.8, 0.6, 1.0, 1.0]);
-const MINING: Color = Color([1.0, 0.85, 0.3, 1.0]);
+
+/// The kinds of point, by their colour (the legend's, in its order): the hull's
+/// own (named) by what they are, and the ones laid.
+const SORTS: [(&str, Color); 7] = [
+    ("ENTRY: HATCH, DOORS", Color([1.0, 1.0, 1.0, 1.0])),
+    ("DASH", Color([0.6, 1.0, 0.35, 1.0])),
+    ("WINDOW", Color([0.45, 0.9, 1.0, 1.0])),
+    ("SERVICE", Color([0.8, 0.6, 1.0, 1.0])),
+    ("MINING OPENING", Color([1.0, 1.0, 0.3, 1.0])),
+    ("MOUNTS, DOCKS, ENGINES", Color([1.0, 0.6, 0.3, 1.0])),
+    ("LAID", Color([0.4, 1.0, 0.75, 0.95])),
+];
+
+/// A point's kind (its colour, its name in the legend), by its name.
+fn sort(name: Option<&str>) -> (Color, &'static str) {
+    let k = match name {
+        None => 6,
+        Some(n) if n == "HATCH" || n.starts_with("DOOR") => 0,
+        Some(n) if n.starts_with("DASH") => 1,
+        Some(n) if n.starts_with("WINDOW") => 2,
+        Some(n) if n.starts_with("SERVICE") => 3,
+        Some(n) if n.starts_with("MINING") => 4,
+        Some(_) => 5,
+    };
+    (SORTS[k].1, SORTS[k].0)
+}
 
 /// The camera's field of view up and down (rad).
 const FOV: f32 = 0.85;
@@ -175,8 +197,8 @@ impl Kind {
     fn colour(self) -> Color {
         match self {
             Kind::Corridor => PATH,
-            Kind::Crawlway => Color([0.75, 0.6, 1.0, 0.95]),
-            Kind::Cargo => Color([1.0, 0.8, 0.35, 0.95]),
+            Kind::Crawlway => Color([1.0, 0.5, 0.8, 0.95]),
+            Kind::Cargo => Color([1.0, 0.72, 0.2, 0.95]),
         }
     }
 }
@@ -226,7 +248,7 @@ impl Interior {
     pub fn sample(&mut self, key: &str, shape: &universe_sim::world::shape::Shape) {
         self.seed(key, shape);
         let at = |name: &str, plan: &Plan| plan.points.iter().position(|p| p.name.as_deref() == Some(name));
-        let (Some(hatch), Some(cockpit), Some(engines)) = (at("HATCH", &self.plan), at("COCKPIT", &self.plan), at("ENGINES", &self.plan)) else { return };
+        let (Some(hatch), Some(cockpit), Some(engines)) = (at("HATCH", &self.plan), at("DASH 1", &self.plan), at("ENGINES", &self.plan)) else { return };
         let (h, c, e) = (self.plan.points[hatch].at, self.plan.points[cockpit].at, self.plan.points[engines].at);
         let add = |p: Vec3, plan: &mut Plan| {
             plan.points.push(Point { at: p, name: None });
@@ -277,7 +299,7 @@ impl Interior {
         let mut points: Vec<Point> = shape
             .nodes
             .iter()
-            .filter(|n| matches!(n.role, Role::Hatch | Role::Cockpit | Role::Mount | Role::Dock))
+            .filter(|n| matches!(n.role, Role::Hatch | Role::Mount | Role::Dock))
             .map(|n| Point { at: n.at.as_vec3(), name: Some(n.name.to_uppercase().replace('_', " ")) })
             .collect();
         let engines: Vec<Vec3> = shape.nodes(Role::Nozzle).filter(|n| n.name.starts_with("nozzle_main")).map(|n| n.at.as_vec3()).collect();
@@ -314,6 +336,20 @@ impl Interior {
         }
         if let Some((lo, hi)) = span("ClampAft_") {
             points.push(Point { at: Vec3::new((lo.x + hi.x) * 0.5, lo.y, (lo.z + hi.z) * 0.5), name: Some("SERVICE CLAMP AFT".into()) });
+        }
+        // Its crew doors; every window (each pane of its glass, less the doors'); and
+        // its dash, a point at each screen.
+        for (prefix, name) in [("CrewDoor_L", "DOOR L"), ("CrewDoor_R", "DOOR R")] {
+            if let Some((lo, hi)) = span(prefix) {
+                points.push(Point { at: (lo + hi) * 0.5, name: Some(name.into()) });
+            }
+        }
+        let panes = |what: &str| -> Vec<Vec3> { shape.islands.iter().filter(|(n, _, _)| n.contains(what) && !n.starts_with("CrewDoor")).map(|(_, lo, hi)| ((*lo + *hi) * 0.5).as_vec3()).collect() };
+        for (k, at) in panes("Glass").into_iter().enumerate() {
+            points.push(Point { at, name: Some(format!("WINDOW {}", k + 1)) });
+        }
+        for (k, at) in panes("DashScreen").into_iter().enumerate() {
+            points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
         self.plan = Plan { hull: key.into(), points, lines: Vec::new() };
     }
@@ -852,18 +888,40 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     for (k, p) in plan.points.iter().enumerate() {
         let Some((q, _)) = cam.project(p.at) else { continue };
         let lit = interior.hover == Some(Hover::Point(k)) || interior.from == Some(k) || interior.pick == Some(Hover::Point(k));
-        let col = match p.name.as_deref() {
-            _ if lit => PICKED,
-            Some(n) if n.starts_with("SERVICE") => SERVICE,
-            Some(n) if n.starts_with("MINING") => MINING,
-            Some(_) => ANCHOR,
-            None => PATH,
-        };
+        let col = if lit { PICKED } else { sort(p.name.as_deref()).0 };
         frame.hud_rect(q - Vec2::splat(3.0), Vec2::splat(6.0), col);
         if let Some(name) = &p.name {
             // (Dimmer unless it's under the cursor: there are many.)
             frame.text_scaled(q + Vec2::new(6.0, -4.0), name, if lit { col } else { Color([col.0[0], col.0[1], col.0[2], 0.55]) }, 0.7);
         }
+    }
+    // The legend: what each colour is, points and ways.
+    {
+        let (w, line) = (230.0, 14.0);
+        let height = (SORTS.len() + Kind::ALL.len() + 1) as f32 * line + line * 0.5 + 10.0;
+        let p = Vec2::new(size.x - w - 12.0, size.y - 30.0 - height);
+        frame.hud_rect(p, Vec2::new(w, height), Color([0.02, 0.06, 0.13, 0.85]));
+        frame.hud_box(p, Vec2::new(w, height), PLANE.scale(1.5));
+        // (Points a square, ways a stroke.)
+        let row = |frame: &mut Frame, y: f32, col: Color, text: &str, square: bool| {
+            if square {
+                frame.hud_rect(Vec2::new(p.x + 8.0, y + 2.0), Vec2::splat(6.0), col);
+            } else {
+                frame.hud_rect(Vec2::new(p.x + 6.0, y + 4.0), Vec2::new(12.0, 2.0), col);
+            }
+            frame.text_scaled(Vec2::new(p.x + 24.0, y), text, LABEL.scale(0.85), 0.7);
+        };
+        let mut y = p.y + 6.0;
+        for (name, col) in SORTS {
+            row(frame, y, col, name, true);
+            y += line;
+        }
+        y += line * 0.5;
+        for kind in Kind::ALL {
+            row(frame, y, kind.colour(), kind.name(), false);
+            y += line;
+        }
+        row(frame, y, CLASH, "CLASH: CUTS THE HULL", false);
     }
     // The tool's panel: what it does and how, its actions, how much is drawn.
     {

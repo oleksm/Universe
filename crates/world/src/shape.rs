@@ -80,6 +80,9 @@ pub struct Shape {
     /// A modelled hull's named parts and the box round each (its frame: least and
     /// most corners), to find places by (the ore scoop, a gear bay...).
     pub pieces: Vec<(String, DVec3, DVec3)>,
+    /// Its glass and screens one by one (a mesh of windows split where its pieces
+    /// don't touch): (the mesh's name, least corner, most corner), its frame.
+    pub islands: Vec<(String, DVec3, DVec3)>,
 }
 
 /// A ramp hinged to a hull (its frame): it swings down about `axis` through
@@ -375,6 +378,6 @@ impl ShapeDef {
                 Part { centre, radius, probes }
             })
             .collect();
-        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c, walk: None, ramp: None, pieces: Vec::new() })
+        Ok(Shape { key: self.key, mesh, loops, nodes, solid, spheres, solids, part_points, parts, made_centre: c, walk: None, ramp: None, pieces: Vec::new(), islands: Vec::new() })
     }
 }
