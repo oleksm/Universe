@@ -593,16 +593,18 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.cursor = cursor;
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
-    // The globe: an axis's end clicked, the view turned to look along it from there
-    // (straight down that axis), to set the plane, or a point, true.
+    // The globe: an axis clicked undoes the view's turn about that axis only. X:
+    // levelled (no tilt up or down), its turn round the ship kept. Y: its turn round
+    // the ship squared to the nearest quarter, its tilt kept. (Z would be a roll,
+    // which this view never has.)
     if pressed
         && let Some((a, _, _)) = globe_ends(&cam, size).into_iter().find(|(_, q, _)| q.distance(cursor) < 9.0)
     {
-        if a.y.abs() > 0.5 {
-            interior.pitch = 1.5 * a.y.signum();
-        } else {
+        if a.x.abs() > 0.5 {
             interior.pitch = 0.0;
-            interior.yaw = a.x.atan2(a.z);
+        } else if a.y.abs() > 0.5 {
+            let quarter = std::f32::consts::FRAC_PI_2;
+            interior.yaw = (interior.yaw / quarter).round() * quarter;
         }
         return true;
     }
@@ -979,7 +981,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         }
     }
     // The globe: the axes as the camera sees them (X red, Y green, Z blue; their far
-    // ends faint); an end clicked looks along it.
+    // ends faint); X clicked levels the view, Y squares it.
     {
         let (c, r) = globe(size);
         frame.hud_box(c - Vec2::splat(r), Vec2::splat(r * 2.0), PLANE.scale(0.8));
