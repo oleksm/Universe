@@ -1107,7 +1107,17 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
 }
 
 /// The tool's panel, at the left: where it is and its size.
-const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 294.0));
+const PANEL: (Vec2, Vec2) = (Vec2::new(12.0, 56.0), Vec2::new(250.0, 356.0));
+
+/// Room presets for new lines: name, cross-section, and whether their free ends get
+/// doorways (a room's) rather than walls.
+const PRESETS: [(&str, Profile, bool); 5] = [
+    ("CORRIDOR", Profile { section: Section::Square, width: 1.6, height: 2.4 }, false),
+    ("CRAWLWAY", Profile { section: Section::Hex, width: 1.0, height: 1.0 }, false),
+    ("CABIN", Profile { section: Section::Square, width: 2.6, height: 2.6 }, true),
+    ("GALLEY", Profile { section: Section::Oct, width: 5.0, height: 3.0 }, true),
+    ("BRIDGE", Profile { section: Section::Oct, width: 10.0, height: 4.0 }, true),
+];
 
 /// The panel's actions: the work plane down and up, what's picked out.
 #[derive(Clone, Copy, PartialEq)]
@@ -1117,6 +1127,8 @@ enum Action {
     Remove,
     /// The cross-section's shape: for new lines (laying paths), or the picked line's.
     Section(Section),
+    /// A room preset for new lines (its number in `PRESETS`).
+    Preset(usize),
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -1149,7 +1161,14 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     let shapes = shapes.into_iter();
     match tool {
         Tool::Door => Vec::new(),
-        Tool::Path => shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect(),
+        Tool::Path => {
+            // (Presets in two rows: two, then three.)
+            let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            let presets = PRESETS.iter().enumerate().map(|(k, (name, _, _))| {
+                if k < 2 { (at(308.0, k as f32 * (w + 6.0), w), *name, Action::Preset(k)) } else { (at(330.0, (k - 2) as f32 * (w3 + 6.0), w3), *name, Action::Preset(k)) }
+            });
+            shapes.chain([(at(246.0, 0.0, w), "PLANE DOWN", Action::PlaneDown), (at(246.0, w + 6.0, w), "PLANE UP", Action::PlaneUp), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).chain(presets).collect()
+        }
         Tool::Look => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, c.x - 16.0), "REMOVE PICKED", Action::Remove)]).collect()
@@ -1425,6 +1444,9 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     // (In LOOK, every line picked; laying paths, the new lines'.)
     let picked = picked_lines(interior);
     let set = |p: &mut Profile| {
+        if let Some(Action::Preset(k)) = action {
+            *p = PRESETS[k].1;
+        }
         if let Some(Action::Section(s)) = action {
             p.section = s;
         }
@@ -1612,6 +1634,11 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
                         && !interior.plan.lines.iter().any(|&(p, q, _)| (p, q) == (a, k) || (p, q) == (k, a))
                     {
                         interior.plan.lines.push((a, k, interior.profile));
+                        // (A room preset's: its free ends doorways.)
+                        if PRESETS.iter().any(|(_, p, doors)| *doors && *p == interior.profile) {
+                            let new = interior.plan.lines.len() - 1;
+                            interior.plan.ends.extend([(new, 0, End::Door), (new, 1, End::Door)]);
+                        }
                         // (Joined to a point already there: that tunnel done, picked to
                         // be worked on, the path tool put down.)
                         if onto {
@@ -2124,6 +2151,9 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         };
         let what = if interior.tool == Tool::Look { "THE PICKED LINE'S CROSS-SECTION" } else { "NEW LINES' CROSS-SECTION" };
         frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), what, LABEL.scale(0.8), 0.7);
+        if interior.tool == Tool::Path {
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 295.0), "ROOM PRESETS (ROOMS: DOORWAYS AT THEIR ENDS)", LABEL.scale(0.8), 0.7);
+        }
         // Its width and height: a slider each, its knob where it is.
         for (k, (at, len)) in sliders().into_iter().enumerate() {
             let value = now.map(|q| if k == 0 { q.width } else { q.height });
@@ -2139,7 +2169,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         let walled = !picked.is_empty() && picked.iter().all(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled));
         let grouped = picked.iter().any(|&k| plan.group_of(k).is_some());
         for (r, name, a) in panel_buttons(interior.tool) {
-            let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) { Lamp::On } else { Lamp::Off };
+            let lamp = if inside(r, interior.cursor) || matches!(a, Action::Section(s) if now.is_some_and(|p| p.section == s)) || matches!(a, Action::Preset(k) if now == Some(PRESETS[k].1)) { Lamp::On } else { Lamp::Off };
             let off = match a {
                 Action::Remove => interior.pick.is_none(),
                 Action::Section(_) => now.is_none(),
