@@ -3,12 +3,16 @@ identity:
   key: equipment.life.s1
   name: "Life support S1"
   maker: org.hadley
+  revision: outdated
   slot: life
   description: "Air, water and warmth for the crew."
+size_class: 1
 physical:
   mass: 800
   volume: 4
-performance:
-  power_draw: 100000
+needs:
+  power: 100000
+function:
+  kind: life_support
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

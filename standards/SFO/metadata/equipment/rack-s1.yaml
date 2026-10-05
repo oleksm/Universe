@@ -3,12 +3,15 @@ identity:
   key: equipment.rack.s1
   name: "Cargo racks 4 t"
   maker: org.hadley
+  revision: outdated
   slot: cargo
   description: "Racks that hold cargo in the hold."
+size_class: 1
 physical:
   mass: 350
   volume: 6
-performance:
+function:
+  kind: rack
   capacity: 4000
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

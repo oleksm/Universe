@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# A fuel, as the game has it (content/base/materials.ron).
+identity:
+  key: material.d-t
+  name: "D–T blend"
+  class: fluid
+  description: "Deuterium and tritium (bred from lithium); its neutrons wear a reactor."
+fuel:
+  release: fusion
+  energy: 340000000000000
+mass:
+  density: 200
+basis:
+  - { of: [fuel, mass], tier: invented, review: true, note: "The game's figures (content/base/materials.ron), with no source looked up: to be reviewed. Its density is as it is stored (liquid, or solid)." }

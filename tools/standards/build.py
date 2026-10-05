@@ -131,6 +131,11 @@ def read_schema(path):
         if isinstance(node, dict):
             node["description"] = how["reads"]
     kind = os.path.basename(path)[:-12]
+    if kind == "equipment":
+        for g in ("function", "needs", "size_class"):
+            props.pop(g, None)
+        props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -171,6 +176,57 @@ def read_schema(path):
                 new[k] = v
         sch["properties"] = new
     return sch
+
+
+# A piece of equipment's `function` (its kind, and that kind's figures in SI), its `needs` and its size
+# class, as this build and the page still take them: one `performance` group, in the units people read.
+EQUIPMENT_READS = {
+    "kind": "What kind of device it is.", "size_class": "Its size class, 1 to 4: it fits a slot at least as big.",
+    "power_draw": "kW, working", "output": "MW it supplies", "efficiency": "the share of its fuel's or its draw's energy it turns to use",
+    "thrust": "kN, of one nozzle at full share", "exhaust_speed": "km/s", "burns": "What it burns.", "capacity": "kg it holds (a capacitor: J)", "rate": "W it can take in or give out",
+    "holds": "What it holds.", "seats": "how many it seats", "top_speed": "times the speed of light", "turn_rate": "rad/s it can turn the ship at", "roll_rate": "rad/s it can roll the ship at",
+    "range": "km", "capture": "km, how far it hears", "link": "km, how far it reaches another", "lag": "s to pass a message on", "messages": "messages an hour",
+    "features": "What it can do.", "interlock": "m it holds the ship from a body's ground in hyperdrive", "governor": "1/s, its hyperdrive governor", "cadence": "s between its throws",
+}
+
+
+def equipment_view(rec):
+    f, needs = rec.pop("function", None) or {}, rec.pop("needs", None) or {}
+    kind = f.get("kind")
+    perf = {"kind": (kind or "").replace("_", " ")}
+    if "size_class" in rec:
+        perf["size_class"] = rec.pop("size_class")
+    if "power" in needs:
+        perf["power_draw"] = needs["power"] / 1e3
+    g = lambda v, per: float(f"{v / per:.12g}")
+    for k, v in f.items():
+        if k == "kind":
+            continue
+        if k == "output":
+            perf["output"] = g(v, 1e6)
+        elif k == "thrust":
+            perf["thrust"] = g(v, 1e3)
+        elif k == "exhaust":
+            perf["exhaust_speed"] = g(v, 1e3)
+        elif k == "top_speed":
+            perf["top_speed"] = g(v, 299792458.0)
+        elif k in ("range", "capture", "link"):
+            perf[k] = g(v, 1e3)
+        elif k == "capacity" and kind in ("comm", "gate_relay", "hyper_relay"):
+            perf["messages"] = g(v * 3600, 1)
+        else:
+            perf[k] = v
+    new = {}
+    for k, v in rec.items():
+        new[k] = v
+        if k == "physical":
+            new["performance"] = perf
+    if "performance" not in new:
+        new["performance"] = perf
+    for b in new.get("basis") or []:
+        if isinstance(b, dict) and isinstance(b.get("of"), list):
+            b["of"] = list(dict.fromkeys({"needs": "performance", "function": "performance", "size_class": "performance"}.get(x, x) for x in b["of"]))
+    return new
 
 
 def old_groups(rec, rel):
@@ -222,6 +278,8 @@ def old_names(rec, path):
             flat = {**rec.pop("galaxy"), **({"note": idn["about"]} if "about" in idn else {})}
             rec.update(flat)
     kind = rel.split(os.sep)[2] if rel.count(os.sep) >= 3 else ""
+    if isinstance(rec, dict) and kind == "equipment":
+        rec = equipment_view(rec)
     if isinstance(rec, dict) and kind == "modules" and "generation" in rec:
         # (One that makes power, as this build still takes it: a recipe that supplies, its fuel as inputs.)
         gen = rec.pop("generation")

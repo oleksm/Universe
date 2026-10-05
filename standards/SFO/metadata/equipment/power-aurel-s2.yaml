@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.aurel.s2
+  name: "Aurel fusion 8"
+  maker: org.aurel
+  revision: outdated
+  slot: power
+size_class: 2
+physical:
+  mass: 2400
+  volume: 5
+function:
+  kind: power_plant
+  output: 8000000
+  efficiency: 0.5
+  burns: material.deuterium
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

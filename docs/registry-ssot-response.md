@@ -319,12 +319,63 @@ Simplified, Invented, so the engine would not build. They are `real` again, and 
 has three values. When `LawKind` and the engine's `Kind` have a fourth, say so and I will put it
 back; or name another way you would rather it were marked.
 
+## The rest of the game's content: equipment and fuels (2026-10-04)
+
+Your items 1 and 4. The user's word on the equipment: outdated, to be reviewed and brought in
+properly, but to be salvaged. So every record from the game's list is `identity.revision:
+outdated`, and its figures are `invented`, `review: true`.
+
+**Ship equipment: 57 records** (`SFO/metadata/equipment/`): the game's 56, each keyed
+`equipment.<its key>` with `_` as `-`, and the throat coil, which is the registry's own.
+
+```yaml
+identity: { key: equipment.drive.torch.s1, name: "Torch drive S1", maker: org.kestrel, revision: outdated, slot: drive, description: "..." }
+size_class: 1                 # 1 to 4: it fits a slot at least as big
+physical: { mass: 3500, volume: 8 }          # kg, m3
+needs: { power: 700000 }                     # W, working; left out where it draws none
+function: { kind: drive, thrust: 900000, exhaust: 10000000, efficiency: 0.3, burns: material.deuterium }
+```
+
+- `identity`, `function` and `physical` are required; `maker` is required.
+- `function` is one of 21 shapes, told apart by `kind` (a `oneOf` with `kind` a constant in each:
+  an internally tagged enum). Each has only its own figures, all SI, each with its `x-unit`:
+
+| `kind` | Its figures |
+|---|---|
+| `power_plant` | `output` W, `efficiency`, `burns` |
+| `drive`, `thrusters`, `lift` | `thrust` N (one nozzle at full share), `exhaust` m/s, `efficiency`, `burns` |
+| `tank` | `capacity` kg, `holds` |
+| `capacitor` | `capacity` J, `rate` W |
+| `rack` | `capacity` kg |
+| `cabin` | `seats` |
+| `hyperdrive` | `efficiency`, `top_speed` m/s (was `top_c`) |
+| `flight_computer` | `turn_rate`, `roll_rate` rad/s |
+| `sensors` | `range` m |
+| `comm` | `capture` m, `link` m, `lag` s, `capacity` 1/s (was messages an hour) |
+| `gate_relay`, `hyper_relay` | `lag` s, `capacity` 1/s, `cadence` s |
+| `nav_computer` | `features` (docking, landing, gate, follow, hyperdrive, route), `interlock` m, `governor` 1/s |
+| `transponder`, `life_support`, `gun`, `laser`, `mining_rig`, `throat_coil` | none |
+
+- `burns` and `holds` name a material (`material.deuterium`).
+- No price. Guns', lasers' and the mining rig's figures are still in your Rust: nothing was copied
+  or made up for them. `docking` has no record, so no shape yet.
+- `identity.slot` is still free text (drive, cargo, hardpoint, gate...): the kinds of slot are not
+  records. With `function.kind` and `size_class` it may not be needed: say.
+
+**Fuels: 9 materials** (`SFO/metadata/materials/`): deuterium, helium-3, d-he3, d-t, uranium,
+methalox, kerolox, hydrolox, hydrogen. Keys `material.<name>`, with `material.helium3` now
+`material.helium-3`, `d_he3` `d-he3`, `d_t` `d-t`. Each has a `fuel` group: `release` (fusion,
+fission, chemical, none) and `energy` (J/kg; left out where it gives none). Its density as stored
+is `mass.density`. The game's figures, marked to review. A material now takes `basis` and a
+description.
+
+`good.deuterium` is still there beside `material.deuterium`: it is what the fusion power station
+burns and what a market trades. One of them should name the other; that belongs with your item 5.
+
 ## Next on `fso`, in this order
 
-1. What each kind requires (problem 4), with you.
-2. The product base: maker and mass on modules and gates, a part's parent as a ref, structures as
-   records.
-3. Equipment: `function`, slots, the 17 missing, fuels.
+Your order: hulls (the MC-07's slots, thrusters, model; then the five), structures, goods and
+market kinds, what a place makes, trade bans, the world data still in Rust.
 
 ## Where I'd do it differently
 

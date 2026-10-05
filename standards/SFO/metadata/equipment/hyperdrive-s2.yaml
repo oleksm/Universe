@@ -3,14 +3,18 @@ identity:
   key: equipment.hyperdrive.s2
   name: "Hyperdrive S2"
   maker: org.kestrel
+  revision: outdated
   slot: hyperdrive
   description: "The drive that crosses between stars."
+size_class: 2
 physical:
   mass: 4000
   volume: 10
-performance:
-  power_draw: 1500000
+needs:
+  power: 1500000
+function:
+  kind: hyperdrive
   efficiency: 0.6
   top_speed: 899377374000
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

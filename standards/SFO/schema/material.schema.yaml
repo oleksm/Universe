@@ -20,6 +20,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
+      description: { type: string, description: "What it is, in a sentence." }
       class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }
       composition:
         description: What it's made of, each part's share by mass (0 to 1). A part is an element or another material, by its key.
@@ -34,6 +35,14 @@ properties:
       form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel] }, description: The forms it comes in. }
       grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }
 
+  fuel:
+    description: "For one that is burnt for its energy, or thrown as reaction mass."
+    type: object
+    additionalProperties: false
+    required: [release]
+    properties:
+      release: { enum: [fusion, fission, chemical, none], description: "How it gives up its energy. chemical: burnt with the oxidiser it carries. none: inert, or reaction mass." }
+      energy: { type: number, x-unit: "J/kg", description: "J/kg it gives up" }
   mass:
     type: object
     additionalProperties: false
@@ -120,3 +129,4 @@ properties:
       castability: { $ref: "#/definitions/rating", description: "Cast or printed." }
       repairability: { $ref: "#/definitions/rating" }
       recyclability: { $ref: "#/definitions/rating" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -116,6 +116,11 @@ def refs(v, sch, here, at=""):
         target, path = resolve(sch["$ref"], here)
         yield from refs(v, target, path, at)
         return
+    for key in ("oneOf", "anyOf"):
+        # (One of several shapes: the one it fits.)
+        alt = next((a for a in sch.get(key) or [] if not validate(v, a, here)), None)
+        if alt is not None:
+            yield from refs(v, alt, here, at)
     if isinstance(v, list) and "items" in sch:
         for i, x in enumerate(v):
             if "x-ref" in (sch["items"] if isinstance(sch["items"], dict) else {}):

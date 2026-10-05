@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cabin.s4
+  name: "Passenger cabin 200"
+  maker: org.hadley
+  revision: outdated
+  slot: cargo
+size_class: 4
+physical:
+  mass: 26000
+  volume: 220
+needs:
+  power: 400000
+function:
+  kind: cabin
+  seats: 200
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

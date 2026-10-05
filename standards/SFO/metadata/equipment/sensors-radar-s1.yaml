@@ -3,13 +3,17 @@ identity:
   key: equipment.sensors.radar.s1
   name: "Radar 500 km"
   maker: org.orbital
+  revision: outdated
   slot: sensors
   description: "Radar."
+size_class: 1
 physical:
   mass: 300
   volume: 0.8
-performance:
-  power_draw: 100000
+needs:
+  power: 100000
+function:
+  kind: sensors
   range: 500000
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }

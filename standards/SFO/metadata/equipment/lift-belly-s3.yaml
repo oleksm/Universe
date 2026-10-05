@@ -3,16 +3,20 @@ identity:
   key: equipment.lift.belly.s3
   name: "Belly Lift S3"
   maker: org.kestrel
+  revision: outdated
   slot: lift
   description: "Lift jets under the hull, to hover and set down."
+size_class: 3
 physical:
   mass: 7000
   volume: 14
-performance:
-  power_draw: 800000
-  efficiency: 0.3
+needs:
+  power: 800000
+function:
+  kind: lift
   thrust: 1600000
-  exhaust_speed: 10000000
-  burns: good.deuterium
+  exhaust: 10000000
+  efficiency: 0.3
+  burns: material.deuterium
 basis:
-  - { of: [physical, performance], tier: sourced, source: "the game: content/base/modules.ron" }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
