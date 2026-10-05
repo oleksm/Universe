@@ -1,0 +1,32 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Rock unit
+x-kind: [rock-unit]
+description: "standards/Celestial/metadata/rock-units/<name>.yaml: one kind of rock a world's crust is mapped in, as the planet simulation makes it. The shared word for it: where each lies on a world is the simulation's to say, not the registry's."
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  made_by: { type: array, items: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event" }, description: "The events that lay it down." }
+  physical:
+    type: object
+    additionalProperties: false
+    properties:
+      density: { type: number, x-unit: "kg/m3", description: "kg/m3" }
+      magnetic_susceptibility: { type: number, x-unit: "1", description: "how strongly it is magnetised by a field (SI, a pure number): what a magnetic survey reads" }
+      erodibility: { type: number, x-unit: "1", description: "how fast it wears away, against limestone as 1" }
+  yields:
+    description: "What is quarried from it in bulk: the whole unit is the resource, not a deposit in it."
+    type: array
+    items: { type: string, x-ref: [good] }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "The simulation's rock units as of its first brief: the list is stable, the figures are from one test world.", ask: docs/geology-registry-note.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.sediment-copper
+  name: "Sediment-hosted copper"
+  about: "Copper in a rift's red beds and shales."
+formed_by: rift
+carries:
+  - { item: element.cu, grade: 0.021, said_as: "Cu %" }
+  - { item: element.ag, grade: 2.0e-05, said_as: "Ag g/t" }
+size:
+  median: 15600000000
+cluster:
+  deposits: 3
+  along: 40000
+  across: 10000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+  - { method: induced polarisation, reach: 500 }
+counted:
+  test_world: 64
+  earth: 60
+basis:
+  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }

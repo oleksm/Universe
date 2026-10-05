@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.porphyry
+  name: "Porphyry copper-molybdenum-gold"
+  about: "A great low-grade body in the roots of an arc volcano: most of a world's copper."
+formed_by: arc
+carries:
+  - { item: element.cu, grade: 0.0044, said_as: "Cu %" }
+  - { item: element.mo, grade: 0.00015, said_as: "Mo %" }
+  - { item: element.au, grade: 1.0e-07, said_as: "Au g/t" }
+size:
+  median: 181600000000
+cluster:
+  deposits: 3
+  along: 20000
+  across: 8000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+  - { method: induced polarisation, reach: 500 }
+  - { method: magnetics, reach: 800 }
+counted:
+  test_world: 434
+  earth: 420
+basis:
+  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }

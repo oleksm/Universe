@@ -191,6 +191,8 @@ def schema_of(rel):
             return None
         if p[2] == "rock-classes":
             return S(root, "rock-class")
+        if p[2] in ("rock-units", "deposit-types"):
+            return S(root, p[2][:-1])
         if p[2] == "vocabulary":
             return S(root, "vocabulary")
         if p[2] == "systems":
@@ -242,8 +244,8 @@ def key_of(rel, rec):
             return "seeding." + low
         if len(p) == 3:
             return "seeding." + low
-        if p[2] in ("rock-classes", "vocabulary"):
-            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary."}[p[2]] + low
+        if p[2] in ("rock-classes", "vocabulary", "rock-units", "deposit-types"):
+            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary.", "rock-units": "rock-unit.", "deposit-types": "deposit-type."}[p[2]] + low
         if len(p) == 4:
             return "system." + low
         return {"bodies": "body.", "fields": "population.", "small-bodies": "body.", "regions": "population."}[p[4]] + p[3] + "." + low

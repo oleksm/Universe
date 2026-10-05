@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+identity:
+  key: rock-unit.limestone
+  name: "Limestone and dolomite"
+  about: "Laid down in warm shallow seas."
+made_by: [sea]
+physical:
+  density: 2700
+  magnetic_susceptibility: 1.0e-05
+  erodibility: 1.0
+yields: [good.limestone]
+basis:
+  - { of: [made_by, physical], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it." }
+  - { of: [yields], tier: invented, review: true, note: "The registry's reading: asked of the simulation (docs/geology-registry-note.md)." }

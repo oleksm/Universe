@@ -59,3 +59,26 @@ definitions:
     enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, gate]
     x-values:
       gate: "A gate ring's, not a hull's."
+  geological_event:
+    description: "What happens to a world's crust that lays down rock and ore, in the planet simulation."
+    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering]
+    x-values:
+      ridge: "A mid-ocean ridge: new ocean floor."
+      arc: "A subduction arc: volcanoes over a sinking plate."
+      collision: "Continents meeting: mountains, and granite where the crust thickens."
+      collision front: "Ocean floor thrust onto land where continents meet."
+      plume: "A mantle plume: floods of basalt."
+      rift: "A continent pulling apart."
+      sea: "A shallow sea or basin laying down sediment."
+      craton: "Old, thick, stable crust."
+      weathering: "Tropical rain rotting flat ground deep: it needs a climate."
+  survey_method:
+    description: "A way of looking for ore without digging."
+    enum: [geochemistry, radiometrics, electromagnetics, induced polarisation, magnetics, gravity]
+    x-values:
+      geochemistry: "Soil and stream samples: finds what all but crops out."
+      radiometrics: "The ground's own radiation: the surface only."
+      electromagnetics: "Induced currents: finds what conducts."
+      induced polarisation: "The ground's slow electrical answer: finds scattered sulphides."
+      magnetics: "The ground's magnetism, from the air or orbit."
+      gravity: "The ground's pull: finds what is dense."

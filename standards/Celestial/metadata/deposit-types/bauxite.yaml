@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+identity:
+  key: deposit-type.bauxite
+  name: "Lateritic bauxite"
+  about: "Aluminium ore left in deep tropical soil."
+formed_by: weathering
+carries:
+  - { item: good.alumina, grade: 0.45, said_as: "Al2O3 %" }
+ore: good.bauxite
+size:
+  median: 12300000000
+cluster:
+  deposits: 4
+  along: 20000
+  across: 20000
+seen_by:
+  - { method: geochemistry, reach: 50 }
+counted:
+  test_world: 50
+  earth: 100
+basis:
+  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }
