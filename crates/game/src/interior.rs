@@ -105,6 +105,8 @@ pub struct Interior {
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
+    /// The plan as its walls were last worked out, and their panels.
+    panelled: Option<(Plan, Vec<[Vec3; 4]>)>,
 }
 
 /// A line's room, its cross-section along it round it (the line its axis): the
@@ -180,7 +182,81 @@ struct Group {
     walled: bool,
 }
 
+/// A walled tube: its axis (from `a`, along `d`, `len` long), across it (`u`
+/// level, `v` up) and its outline's corners round the axis.
+struct Tube {
+    a: Vec3,
+    d: Vec3,
+    len: f32,
+    u: Vec3,
+    v: Vec3,
+    corners: Vec<Vec2>,
+}
+
+impl Tube {
+    fn at(&self, s: f32, c: Vec2) -> Vec3 {
+        self.a + self.d * s + self.u * c.x + self.v * c.y
+    }
+
+    /// Is `p` inside it (a hair in from its sides and ends)? (Its outline convex, its
+    /// corners round it anticlockwise.)
+    fn holds(&self, p: Vec3) -> bool {
+        let r = p - self.a;
+        let s = r.dot(self.d);
+        if s < 1e-3 || s > self.len - 1e-3 {
+            return false;
+        }
+        let q = Vec2::new(r.dot(self.u), r.dot(self.v));
+        let n = self.corners.len();
+        (0..n).all(|k| {
+            let (c0, c1) = (self.corners[k], self.corners[(k + 1) % n]);
+            (c1 - c0).perp_dot(q - c0) > 1e-3
+        })
+    }
+}
+
 impl Plan {
+    /// Its walled tubes: the lines of its walled groups that have a cross-section.
+    fn tubes(&self) -> Vec<Tube> {
+        self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).filter_map(|&k| {
+            let (a, b, profile) = self.lines[k];
+            let (pa, pb) = (self.points[a].at, self.points[b].at);
+            let len = pa.distance(pb);
+            (profile.section != Section::Line && len > 1e-3).then(|| {
+                let d = (pb - pa) / len;
+                let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+                Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners() }
+            })
+        }).collect()
+    }
+
+    /// Its walls: its walled tubes' sides in panels about 25 cm along and two across
+    /// each side, less those inside another walled tube (where tubes cross or meet,
+    /// the way through opens); their ends open.
+    fn wall_panels(&self) -> Vec<[Vec3; 4]> {
+        let tubes = self.tubes();
+        let mut out = Vec::new();
+        for (i, t) in tubes.iter().enumerate() {
+            let steps = (t.len / 0.25).ceil().max(1.0) as usize;
+            let n = t.corners.len();
+            for j in 0..n {
+                let (c0, c1) = (t.corners[j], t.corners[(j + 1) % n]);
+                for k in 0..steps {
+                    let (s0, s1) = (t.len * k as f32 / steps as f32, t.len * (k + 1) as f32 / steps as f32);
+                    for half in 0..2 {
+                        let (e0, e1) = (c0.lerp(c1, half as f32 * 0.5), c0.lerp(c1, (half + 1) as f32 * 0.5));
+                        let q = [t.at(s0, e0), t.at(s0, e1), t.at(s1, e1), t.at(s1, e0)];
+                        let middle = (q[0] + q[1] + q[2] + q[3]) * 0.25;
+                        if !tubes.iter().enumerate().any(|(o, other)| o != i && other.holds(middle)) {
+                            out.push(q);
+                        }
+                    }
+                }
+            }
+        }
+        out
+    }
+
     /// Its lines that `keep` says stay, the others gone (the groups' kept in step;
     /// a group left with none, gone).
     fn keep_lines(&mut self, keep: impl Fn(usize, &(usize, usize, Profile)) -> bool) {
@@ -333,33 +409,25 @@ impl Interior {
         let (round, hex) = (Profile { section: Section::Round, width: 1.6, height: 2.0 }, Profile { section: Section::Hex, width: 0.9, height: 0.9 });
         self.plan.lines.extend([(hatch, a, round), (a, b, round), (b, cockpit, round), (hatch, d, hex), (d, engines, hex)]);
         // (The corridor walled off, a group.)
-        self.plan.groups.push(Group { lines: vec![0, 1, 2], walled: true });
+        self.plan.groups.push(Group { lines: vec![0, 1, 2, 3, 4], walled: true });
         self.tool = Tool::Path;
     }
 
     /// Its walled groups as walls: each tube's sides, two triangles a panel (the
     /// hull's frame), to walk in and bump into.
     pub fn walls(&self) -> Vec<[universe_engine::glam::DVec3; 3]> {
-        let plan = &self.plan;
-        let mut out = Vec::new();
-        for g in plan.groups.iter().filter(|g| g.walled) {
-            for &k in &g.lines {
-                let (a, b, profile) = plan.lines[k];
-                let (pa, pb) = (plan.points[a].at, plan.points[b].at);
-                let corners = profile.corners();
-                let d = (pb - pa).normalize_or_zero();
-                let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
-                let v = u.cross(d);
-                let at = |o: Vec3, c: Vec2| (o + u * c.x + v * c.y).as_dvec3();
-                for j in 0..corners.len() {
-                    let (c0, c1) = (corners[j], corners[(j + 1) % corners.len()]);
-                    let q = [at(pa, c0), at(pa, c1), at(pb, c1), at(pb, c0)];
-                    out.push([q[0], q[1], q[2]]);
-                    out.push([q[0], q[2], q[3]]);
-                }
-            }
+        self.panels().iter().flat_map(|q| {
+            let q = q.map(|p| p.as_dvec3());
+            [[q[0], q[1], q[2]], [q[0], q[2], q[3]]]
+        }).collect()
+    }
+
+    /// Its walls' panels: as last worked out for this plan, or worked out now.
+    fn panels(&self) -> std::borrow::Cow<'_, [[Vec3; 4]]> {
+        match &self.panelled {
+            Some((p, panels)) if *p == self.plan => std::borrow::Cow::Borrowed(panels.as_slice()),
+            _ => std::borrow::Cow::Owned(self.plan.wall_panels()),
         }
-        out
     }
 
     /// Where one starts at `at` on line `k` (none: a point off any), facing along it:
@@ -772,6 +840,10 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         interior.redo.clear();
     }
     interior.sliding = interior.slider.is_some() && (changed || interior.sliding);
+    // Its walls worked out again when it's changed.
+    if interior.panelled.as_ref().is_none_or(|(p, _)| *p != interior.plan) {
+        interior.panelled = Some((interior.plan.clone(), interior.plan.wall_panels()));
+    }
     // The plan checked against the hull, again when it's changed.
     if interior.checked.as_ref().is_none_or(|(p, _)| *p != interior.plan)
         && let Some(mesh) = app.ship.spec().shape().walk.as_ref()
@@ -1293,26 +1365,12 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     // clashes with the hull, its clashes marked).
     let clash = interior.checked.as_ref().filter(|(p, _)| p == plan).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
     let picked = picked_lines(interior);
-    // Walled groups: their tubes' sides as walls, panels between the corners along
-    // each (their ends open).
-    for g in plan.groups.iter().filter(|g| g.walled) {
-        for &k in &g.lines {
-            let (a, b, profile) = plan.lines[k];
-            let (pa, pb) = (plan.points[a].at, plan.points[b].at);
-            let corners = profile.corners();
-            let n = corners.len();
-            let d = (pb - pa).normalize_or_zero();
-            let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
-            let v = u.cross(d);
-            let at = |o: Vec3, c: Vec2| o + u * c.x + v * c.y;
-            for j in 0..n {
-                let (c0, c1) = (corners[j], corners[(j + 1) % n]);
-                if let [Some((q0, _)), Some((q1, _)), Some((q2, _)), Some((q3, _))] = [at(pa, c0), at(pa, c1), at(pb, c1), at(pb, c0)].map(|p| cam.project(p)) {
-                    let fill = [WALL; 3];
-                    frame.hud_triangle_colored([q0, q1, q2], fill);
-                    frame.hud_triangle_colored([q0, q2, q3], fill);
-                }
-            }
+    // Walled groups: their tubes' walls (cut away inside one another, their ends open).
+    for q in interior.panels().iter() {
+        if let [Some((q0, _)), Some((q1, _)), Some((q2, _)), Some((q3, _))] = q.map(|p| cam.project(p)) {
+            let fill = [WALL; 3];
+            frame.hud_triangle_colored([q0, q1, q2], fill);
+            frame.hud_triangle_colored([q0, q2, q3], fill);
         }
     }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
