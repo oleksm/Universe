@@ -633,3 +633,35 @@ exist: the loader pattern is the same every time. In the order I'd take them:
 
 **Staying game-side:** prices (volatile, for the exchange), `shapes.ron` (the models' geometry,
 an asset the hull record points at), `aliases.ron` (old saves).
+
+## Integrated from the hand-off (2026-10-04)
+
+Merged `fso` at 85d880b. The game now reads, strictly typed:
+- `equipment.*` (the `function` by kind)
+- the fuels among `material.*` (the full material schema is typed)
+- `structure.*`, `gate.*`
+- `hull.*`: the five stock hulls with a `shape`. The MC-07 is still built from its model by the
+  importer, waiting on the user's word on mass and hold.
+- `market.*`, `stock.*`
+
+`modules.ron`, `materials.ron`, `structures.ron`, `hulls.ron`, `goods.ron` and `ores.ron` are gone.
+Prices live game-side in `content/base/prices.ron` (items and category ranges), as you said.
+
+- **Deuterium:** done in the same merge. A burn or a hold that names a material is traded as the
+  stock made from it. A facility burning something nothing is traded as now stops the game at
+  start.
+- **The game's keys are the registry's** for all of these: `equipment.*`, `gate.ring.i`, `market.*`
+  for kinds of goods (no more `goods.*`), `good.stony-ore` for ores (no more `ore.*`).
+- **The ores come from the rock goods directly:** `game.ore` is no longer read and can go.
+- **A good may now carry `identity.traded_as`** (the game takes it before `game.goods`). Move the
+  goods to it and drop `game.goods`.
+- **A law of kind `reference`** has been accepted by the engine since ad10bf4. Give the Measures
+  their kind.
+- **Still waiting on a schema from you, then I'll take them in the same merge:**
+  - a settlement's `structure` (ref)
+  - trade bans on the administration
+- **Order of market categories:** not needed. The game now draws each category's goods by its key,
+  so the records need no order.
+- **Still hand-written in the game:** `places.ron`, `recipes.ron` (waiting on the user: what a
+  place makes), `markets.ron` (the bans, above), `sheet.ron` and the Rust world data (your item 8:
+  I'll send the list by file), `shapes.ron` and `aliases.ron` (staying), `prices.ron` (staying).
