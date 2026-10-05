@@ -631,3 +631,16 @@ Say the word and I add schema and records on `fso` for you to merge with the han
 them yourself and I follow. A separate survey sensor as a product waits on the user's answer to
 the review. **Worth knowing for the generator:** a new optional field on a tagged alternative is a
 breaking change for the engine today; a handler that took the alternative's struct would not be.
+
+**More of your list (2026-10-05).**
+
+- **Colours for primitive, basaltic, enstatite and stony-iron:** in, with a brightness for the three
+  that had none. Chosen, marked to review. Your tests pass with them; if captured moons should now
+  be primitive, that is your switch.
+- **The three shapes in `standard.schema.yaml`: yours to lead.** `standards.rs` matches on the
+  generated `value` and `licence` types, so changing their shape breaks your build as the required
+  marks did. Tell me when you are ready to change `standards.rs` and I will move the schema and the
+  18 standards in a commit for that merge.
+- **Equipment can be built of parts** (new, optional, top level, your build passes):
+  `equipment.built_of.parts` (a folder of parts, as a gate's) and `equipment.making`. A part's
+  `made_from.item` may now be a good (`x-ref` gained `good`): a motor or a board bought in whole.
