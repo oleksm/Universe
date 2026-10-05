@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is tungsten concentrate as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.tungsten-concentrate-bulk
+  traded_as: market.ores
+  code: TUNGSTEN-CONCENTRATE-BULK
+  name: "Tungsten concentrate, in bulk"
+  form: bulk
+made_from:
+  - item: good.tungsten-concentrate

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is heat pumps as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.heat-pumps-bulk
+  traded_as: market.machinery
+  code: HEAT-PUMPS-BULK
+  name: "Heat pumps, in bulk"
+  form: bulk
+made_from:
+  - item: good.heat-pumps

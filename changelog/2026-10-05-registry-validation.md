@@ -10,3 +10,5 @@
 - 54 missing figures filled, as guesses marked to review.
 - **Dimensions are required** of equipment, parts and hulls. 599 records that had none carry a
   marked stand-in; a new report counts which sizes are real.
+- **What is sold is stock, enforced.** A good or a material that names a market category no longer
+  validates. Each good that was traded has a stock item, in bulk, that carries it.

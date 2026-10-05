@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is sunflower seed as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.sunflower-seed-bulk
+  traded_as: market.food
+  code: SUNFLOWER-SEED-BULK
+  name: "Sunflower seed, in bulk"
+  form: bulk
+made_from:
+  - item: good.sunflower-seed

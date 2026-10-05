@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is hot ingot, 6061 aluminium as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.hot-ingot-6061-bulk
+  traded_as: market.metals
+  code: HOT-INGOT-6061-BULK
+  name: "Hot ingot, 6061 aluminium, in bulk"
+  form: bulk
+made_from:
+  - item: good.hot-ingot-6061

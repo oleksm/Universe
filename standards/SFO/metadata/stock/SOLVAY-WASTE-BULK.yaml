@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is soda works waste as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.solvay-waste-bulk
+  traded_as: market.chemicals
+  code: SOLVAY-WASTE-BULK
+  name: "Soda works waste, in bulk"
+  form: bulk
+made_from:
+  - item: good.solvay-waste

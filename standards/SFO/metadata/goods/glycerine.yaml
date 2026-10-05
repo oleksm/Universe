@@ -2,7 +2,6 @@
 identity:
   key: good.glycerine
   name: "Glycerine"
-  traded_as: market.chemicals
   kind: by-product
   description: "The sweet, thick liquid left when fat is made into soap."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.potatoes
   name: "Potatoes"
-  traded_as: market.food
   kind: product
   description: "The most food from a hectare of cool ground."
 physical:

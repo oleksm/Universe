@@ -2,7 +2,6 @@
 identity:
   key: good.clothes
   name: "Clothes"
-  traded_as: market.textiles
   kind: product
   description: "Shirts, trousers, dresses, work clothes: cut and sewn of cotton."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.massive-sulphide-ore
   name: "Massive sulphide ore"
-  traded_as: market.ores
   kind: rock
   description: "Solid sulphide of iron, copper and zinc."
 physical:

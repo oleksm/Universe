@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is silicon wafers as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.wafers-bulk
+  traded_as: market.electronics
+  code: WAFERS-BULK
+  name: "Silicon wafers, in bulk"
+  form: bulk
+made_from:
+  - item: good.wafers

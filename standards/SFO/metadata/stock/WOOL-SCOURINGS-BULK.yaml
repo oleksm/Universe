@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is wool scourings as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.wool-scourings-bulk
+  traded_as: market.chemicals
+  code: WOOL-SCOURINGS-BULK
+  name: "Wool scourings, in bulk"
+  form: bulk
+made_from:
+  - item: good.wool-scourings

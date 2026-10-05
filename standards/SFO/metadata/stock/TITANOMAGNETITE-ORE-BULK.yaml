@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is titanomagnetite ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.titanomagnetite-ore-bulk
+  traded_as: market.ores
+  code: TITANOMAGNETITE-ORE-BULK
+  name: "Titanomagnetite ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.titanomagnetite-ore

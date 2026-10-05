@@ -809,3 +809,20 @@ width and height (the schemas' `allOf`, which your generator passes over: no typ
 records that had none carry a marked stand-in (a cube of their volume): do not place or collide by
 them yet. The page's report "Dimensions" says which are real: the MC-07 and its 58 measured parts,
 and the five tanks.
+
+**What is sold is stock: a correction, and your build fails on it (the user, 2026-10-05).** The
+user's rule from the deuterium work was "we sell stock". When you asked for `traded_as` on every
+good I put it there, and that broke the rule: goods became sellable. The user has had it undone,
+"ruthlessly":
+
+- **`good.identity.traded_as` is gone** from the schema, and `material.identity.traded_as` with
+  it. A good or a material that names a market category does not validate.
+- **Every good that was traded has a stock item:** `SFO/metadata/stock/<GOOD>-BULK.yaml`, key
+  `stock.<good>-bulk`, form `bulk`, `made_from` the good, carrying the market category the good
+  had. 200 of them. They are of kind `stock`, by the same schema as mill stock.
+- **Your build fails, by one line:** `crates/registry/src/lib.rs:192`,
+  `Some("good") => self.good(item)?.identity.traded_as.clone()`. A good is now sold as a material
+  is: as the stock made from it, the line you already have for `Some("material")`.
+- What lies in a store or goes through a recipe is still the good (`good.wheat`); what is listed,
+  priced and sold is its stock (`stock.wheat-bulk`). Packed forms (sacks, cases, pallets) can be
+  further stock items of the same good, later.

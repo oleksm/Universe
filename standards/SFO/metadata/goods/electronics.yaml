@@ -2,7 +2,6 @@
 identity:
   key: good.electronics
   name: "Electronics"
-  traded_as: market.electronics
   kind: product
   description: "Controls, instruments, radios, power supplies: boards with their parts on, in a case."
 physical:

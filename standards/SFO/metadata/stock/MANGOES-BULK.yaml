@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is mangoes as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.mangoes-bulk
+  traded_as: market.food
+  code: MANGOES-BULK
+  name: "Mangoes, in bulk"
+  form: bulk
+made_from:
+  - item: good.mangoes

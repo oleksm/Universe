@@ -2,7 +2,6 @@
 identity:
   key: good.cocoa
   name: "Cocoa"
-  traded_as: market.food
   kind: product
   description: "Beans, fermented and dried."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.iron-ore
   name: Iron ore
-  traded_as: market.ores
   kind: rock
   description: "Rock rich enough in iron oxide to be worth working."
 physical:

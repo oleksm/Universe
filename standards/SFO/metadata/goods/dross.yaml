@@ -2,7 +2,6 @@
 identity:
   key: good.dross
   name: Dross
-  traded_as: market.minerals
   kind: by-product
   description: "The skin of oxide skimmed off molten aluminium."
 physical:

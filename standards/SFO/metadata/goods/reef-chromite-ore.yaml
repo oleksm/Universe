@@ -2,7 +2,6 @@
 identity:
   key: good.reef-chromite-ore
   name: "Reef chromite ore"
-  traded_as: market.ores
   kind: rock
   description: "Chromite from the seams of a layered intrusion, with the platinum metals in it."
 physical:

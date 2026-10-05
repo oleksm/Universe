@@ -2,7 +2,6 @@
 identity:
   key: good.groundnuts
   name: "Groundnuts"
-  traded_as: market.food
   kind: product
   description: "Peanuts, in the shell."
 physical:

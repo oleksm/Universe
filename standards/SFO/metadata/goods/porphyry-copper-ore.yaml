@@ -2,7 +2,6 @@
 identity:
   key: good.porphyry-copper-ore
   name: "Porphyry copper ore"
-  traded_as: market.ores
   kind: rock
   description: "Rock of an arc volcano's roots, with half a percent of copper scattered through it."
 physical:

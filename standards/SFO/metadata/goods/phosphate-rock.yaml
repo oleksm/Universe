@@ -2,7 +2,6 @@
 identity:
   key: good.phosphate-rock
   name: "Phosphate rock"
-  traded_as: market.ores
   kind: rock
   description: "Rock of calcium phosphate: what phosphate fertiliser is made from."
 physical:

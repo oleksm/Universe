@@ -2,7 +2,6 @@
 identity:
   key: good.live-pigs
   name: "Pigs"
-  traded_as: market.biologics
   kind: intermediate
   description: "Pigs, live, by weight."
 physical:

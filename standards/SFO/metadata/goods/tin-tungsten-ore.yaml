@@ -2,7 +2,6 @@
 identity:
   key: good.tin-tungsten-ore
   name: "Tin-tungsten ore"
-  traded_as: market.ores
   kind: rock
   description: "Granite roof rock with cassiterite and wolframite."
 physical:

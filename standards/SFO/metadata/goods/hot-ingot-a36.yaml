@@ -2,7 +2,6 @@
 identity:
   key: good.hot-ingot-a36
   name: "Hot ingot, A36 steel"
-  traded_as: market.metals
   kind: intermediate
   description: "An ingot of A36 steel heated through to the temperature it is worked at."
 physical:

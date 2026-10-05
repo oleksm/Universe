@@ -2,7 +2,6 @@
 identity:
   key: good.limestone
   name: "Limestone"
-  traded_as: market.minerals
   kind: rock
   description: "Rock of calcium carbonate, laid down in seas: the stuff of lime, cement and glass."
 physical:

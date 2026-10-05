@@ -2,7 +2,6 @@
 identity:
   key: good.molybdenum-concentrate
   name: "Molybdenum concentrate"
-  traded_as: market.ores
   kind: intermediate
   description: "Molybdenite floated off a copper ore: half molybdenum, a third sulphur."
 physical:

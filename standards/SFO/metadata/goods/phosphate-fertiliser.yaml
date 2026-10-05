@@ -2,7 +2,6 @@
 identity:
   key: good.phosphate-fertiliser
   name: "Phosphate fertiliser"
-  traded_as: market.chemicals
   kind: product
   description: "Phosphoric acid made from phosphate rock, counted as its phosphate: the phosphorus a crop needs."
 physical:

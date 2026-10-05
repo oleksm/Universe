@@ -2,7 +2,6 @@
 identity:
   key: good.lithium-brine
   name: "Lithium brine"
-  traded_as: market.ores
   kind: rock
   description: "Brine pumped from under a salt flat: lithium, potassium and magnesium in salt water."
 physical:

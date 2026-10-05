@@ -2,7 +2,6 @@
 identity:
   key: good.spent-medium
   name: "Spent growing medium"
-  traded_as: market.biologics
   kind: by-product
   description: "Growing medium that has been through a crop: full of old roots."
 physical:

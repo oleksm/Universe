@@ -2,7 +2,6 @@
 identity:
   key: good.potash-ore
   name: "Potash ore"
-  traded_as: market.ores
   kind: rock
   description: "Pink and white salts of potassium, with common salt."
 physical:

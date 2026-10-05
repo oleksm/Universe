@@ -2,7 +2,6 @@
 identity:
   key: good.coffee
   name: "Coffee"
-  traded_as: market.food
   kind: product
   description: "Green beans, dried, not yet roasted."
 physical:

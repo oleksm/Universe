@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is pigs as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.live-pigs-bulk
+  traded_as: market.biologics
+  code: LIVE-PIGS-BULK
+  name: "Pigs, in bulk"
+  form: bulk
+made_from:
+  - item: good.live-pigs

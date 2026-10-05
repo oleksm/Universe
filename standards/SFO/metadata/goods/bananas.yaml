@@ -2,7 +2,6 @@
 identity:
   key: good.bananas
   name: "Bananas"
-  traded_as: market.food
   kind: product
   description: "A fruit of the orchard."
 physical:

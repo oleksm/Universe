@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is wheat as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.wheat-bulk
+  traded_as: market.food
+  code: WHEAT-BULK
+  name: "Wheat, in bulk"
+  form: bulk
+made_from:
+  - item: good.wheat

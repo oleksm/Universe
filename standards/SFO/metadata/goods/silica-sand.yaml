@@ -2,7 +2,6 @@
 identity:
   key: good.silica-sand
   name: "Silica sand"
-  traded_as: market.minerals
   kind: rock
   description: "Sand that is nearly all quartz, sorted by water: what glass is melted from."
 physical:

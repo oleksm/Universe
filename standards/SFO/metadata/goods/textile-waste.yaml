@@ -2,7 +2,6 @@
 identity:
   key: good.textile-waste
   name: "Textile waste"
-  traded_as: market.textiles
   kind: by-product
   description: "Short fibre, dust and offcuts from spinning, weaving and cutting."
 physical:

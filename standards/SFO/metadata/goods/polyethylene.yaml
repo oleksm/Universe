@@ -2,7 +2,6 @@
 identity:
   key: good.polyethylene
   name: "Polyethylene"
-  traded_as: market.chemicals
   kind: product
   description: "The commonest plastic, in pellets: film, pipe, bottles, sheet."
 physical:

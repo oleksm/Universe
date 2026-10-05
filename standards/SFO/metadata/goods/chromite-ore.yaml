@@ -2,7 +2,6 @@
 identity:
   key: good.chromite-ore
   name: "Chromite ore"
-  traded_as: market.ores
   kind: rock
   description: "Pods of nearly pure chromite."
 physical:

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is glycerine as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.glycerine-bulk
+  traded_as: market.chemicals
+  code: GLYCERINE-BULK
+  name: "Glycerine, in bulk"
+  form: bulk
+made_from:
+  - item: good.glycerine

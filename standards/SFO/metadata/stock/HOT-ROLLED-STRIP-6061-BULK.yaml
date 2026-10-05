@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is hot-rolled strip, 6061 aluminium as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.hot-rolled-strip-6061-bulk
+  traded_as: market.metals
+  code: HOT-ROLLED-STRIP-6061-BULK
+  name: "Hot-rolled strip, 6061 aluminium, in bulk"
+  form: bulk
+made_from:
+  - item: good.hot-rolled-strip-6061

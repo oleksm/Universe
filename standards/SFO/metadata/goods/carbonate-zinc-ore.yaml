@@ -2,7 +2,6 @@
 identity:
   key: good.carbonate-zinc-ore
   name: "Carbonate zinc-lead ore"
-  traded_as: market.ores
   kind: rock
   description: "Limestone with sphalerite and galena."
 physical:

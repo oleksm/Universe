@@ -2,7 +2,6 @@
 identity:
   key: good.cold-rolled-strip-6061
   name: "Cold-rolled strip, 6061 aluminium"
-  traded_as: market.metals
   kind: intermediate
   description: "6061 aluminium strip rolled cold to its final thickness, not yet levelled, tempered or cut."
 physical:

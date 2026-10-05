@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is carbonatite ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.carbonatite-ore-bulk
+  traded_as: market.ores
+  code: CARBONATITE-ORE-BULK
+  name: "Carbonatite ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.carbonatite-ore

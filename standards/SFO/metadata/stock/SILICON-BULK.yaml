@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is silicon as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.silicon-bulk
+  traded_as: market.metals
+  code: SILICON-BULK
+  name: "Silicon, in bulk"
+  form: bulk
+made_from:
+  - item: good.silicon

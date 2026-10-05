@@ -2,7 +2,6 @@
 identity:
   key: good.brick
   name: "Brick"
-  traded_as: market.minerals
   kind: product
   description: "Clay shaped and fired."
 physical:

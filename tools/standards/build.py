@@ -536,6 +536,13 @@ PORT = {
 # (The game no longer has ores.ron or goods.ron: it reads the goods and the market's categories from
 # the registry. Both are taken from the records here, under the names the rest of this build uses.)
 _sfo_meta = os.path.join(TREE, "SFO", "metadata")
+# (What is sold is stock: a good's market category is its stock's.)
+SOLD_AS = {}
+_sdir = os.path.join(TREE, "SFO", "metadata", "stock")
+for _f in sorted(os.listdir(_sdir)) if os.path.isdir(_sdir) else []:
+    _s = yaml.safe_load(open(os.path.join(_sdir, _f), encoding="utf-8")) or {}
+    for _m in _s.get("made_from") or []:
+        SOLD_AS[str(_m.get("item", "")).split(".", 1)[-1]] = str((_s.get("identity") or {}).get("traded_as", ""))
 ORES = {m for f in sorted(os.listdir(os.path.join(_sfo_meta, "goods"))) for m in re.findall(r"^\s*ore: (ore\.[a-z_]+)", open(os.path.join(_sfo_meta, "goods", f), encoding="utf-8").read(), re.M)}
 GOODS_KINDS = {}
 for _mf in sorted(os.listdir(os.path.join(_sfo_meta, "markets"))):
@@ -1703,7 +1710,7 @@ def write_ron():
                 # goods it is, if it has one yet: none, and the game doesn't trade it.)
                 def flow(slug, rate):
                     rec = next((r for r in goods + materials if r.get("slug") == slug), None)
-                    as_ = ((rec or {}).get("identity") or {}).get("traded_as")          # (a market category, as the game keys it)
+                    as_ = (SOLD_AS.get(slug) or "").split(".")[-1] or None          # (the market category of the stock it is sold as)
                     kind = ((rec or {}).get("game") or {}).get("goods", "") or ("goods." + as_.replace("-", "_") if as_ else "")
                     return f"({ron_str(name_of(slug))}, {ron_str(kind)}, {float(rate)!r})"
                 takes = [flow(i["item"], i["rate"]) for ln in fc.get("lines") or [] if ln.get("most") for i in ln["most"]["supplies"]]
@@ -2266,7 +2273,7 @@ _pdir = os.path.join(TREE, "People", "metadata")
 needs = [dict(load(os.path.join(_pdir, "needs", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "needs")))] if os.path.isdir(_pdir) else []
 professions = [dict(load(os.path.join(_pdir, "professions", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "professions")))] if os.path.isdir(_pdir) else []
 _made = {rc.get("product") for m in modules for rc in m.get("recipes") or []} | {x.get("item") for m in modules for rc in m.get("recipes") or [] for x in rc.get("outputs") or []}
-_markets = {str((g.get("identity") or {}).get("traded_as", "")).split(".")[-1] for g in goods if any(g["slug"] == pr for pr in _made)}
+_markets = {SOLD_AS.get(g["slug"], "").split(".")[-1] for g in goods if any(g["slug"] == pr for pr in _made)}
 _bdir = os.path.join(TREE, "SFO", "metadata", "buildings")
 buildings = [dict(load(os.path.join(_bdir, f)), slug=f[:-5]) for f in sorted(os.listdir(_bdir))] if os.path.isdir(_bdir) else []
 tail = lambda k: str(k).split(".")[-1]

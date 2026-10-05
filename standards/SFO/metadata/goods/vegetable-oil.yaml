@@ -2,7 +2,6 @@
 identity:
   key: good.vegetable-oil
   name: "Vegetable oil"
-  traded_as: market.food
   kind: product
   description: "Oil pressed from oilseeds."
 physical:

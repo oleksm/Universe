@@ -2,7 +2,6 @@
 identity:
   key: good.barley
   name: "Barley"
-  traded_as: market.food
   kind: product
   description: "For beer and for animals."
 physical:

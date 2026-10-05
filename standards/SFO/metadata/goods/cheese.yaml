@@ -2,7 +2,6 @@
 identity:
   key: good.cheese
   name: "Cheese"
-  traded_as: market.food
   kind: product
   description: "A hard cheese: milk curdled, pressed and kept."
 physical:

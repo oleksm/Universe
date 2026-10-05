@@ -2,7 +2,6 @@
 identity:
   key: good.onions
   name: "Onions"
-  traded_as: market.food
   kind: product
   description: "A vegetable of the market garden."
 physical:

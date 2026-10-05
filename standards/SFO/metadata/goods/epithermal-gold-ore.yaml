@@ -2,7 +2,6 @@
 identity:
   key: good.epithermal-gold-ore
   name: "Epithermal gold ore"
-  traded_as: market.ores
   kind: rock
   description: "Vein quartz with gold and silver."
 physical:

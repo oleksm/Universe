@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is sweet potatoes as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.sweet-potatoes-bulk
+  traded_as: market.food
+  code: SWEET-POTATOES-BULK
+  name: "Sweet potatoes, in bulk"
+  form: bulk
+made_from:
+  - item: good.sweet-potatoes

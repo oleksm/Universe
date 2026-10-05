@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is growing medium as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.growing-medium-bulk
+  traded_as: market.biologics
+  code: GROWING-MEDIUM-BULK
+  name: "Growing medium, in bulk"
+  form: bulk
+made_from:
+  - item: good.growing-medium

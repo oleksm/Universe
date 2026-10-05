@@ -2,7 +2,6 @@
 identity:
   key: good.medicines
   name: "Medicines"
-  traded_as: market.medicine
   kind: product
   description: "Drugs, dressings and vaccines."
 physical:

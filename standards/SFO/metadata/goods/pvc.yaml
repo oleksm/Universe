@@ -2,7 +2,6 @@
 identity:
   key: good.pvc
   name: "PVC"
-  traded_as: market.chemicals
   kind: product
   description: "A hard plastic, more than half chlorine by weight: pipes, window frames, cable sheath."
 physical:

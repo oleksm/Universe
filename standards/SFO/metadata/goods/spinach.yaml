@@ -2,7 +2,6 @@
 identity:
   key: good.spinach
   name: "Spinach"
-  traded_as: market.food
   kind: product
   description: "A vegetable of the market garden."
 physical:

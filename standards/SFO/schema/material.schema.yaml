@@ -21,7 +21,6 @@ properties:
     required: [key, name, class]
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
-      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       name: { type: string }
       description: { type: string, description: "What it is, in a sentence." }
       class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }

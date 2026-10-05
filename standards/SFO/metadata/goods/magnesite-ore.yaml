@@ -2,7 +2,6 @@
 identity:
   key: good.magnesite-ore
   name: "Magnesite ore"
-  traded_as: market.ores
   kind: rock
   description: "White magnesium carbonate rock."
 physical:

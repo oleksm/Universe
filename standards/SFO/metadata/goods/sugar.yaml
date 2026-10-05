@@ -2,7 +2,6 @@
 identity:
   key: good.sugar
   name: "Sugar"
-  traded_as: market.food
   kind: product
   description: "White sugar."
 physical:

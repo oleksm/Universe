@@ -2,7 +2,6 @@
 identity:
   key: good.bread
   name: "Bread"
-  traded_as: market.food
   kind: product
   description: "Baked from flour and water."
 physical:

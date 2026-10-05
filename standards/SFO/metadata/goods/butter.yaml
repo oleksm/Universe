@@ -2,7 +2,6 @@
 identity:
   key: good.butter
   name: "Butter"
-  traded_as: market.food
   kind: product
   description: "The fat of milk, churned."
 physical:

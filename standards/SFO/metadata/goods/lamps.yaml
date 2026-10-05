@@ -2,7 +2,6 @@
 identity:
   key: good.lamps
   name: "Lamps"
-  traded_as: market.electronics
   kind: product
   description: "Lamps of light-emitting diodes, for rooms, streets and growing halls."
 physical:

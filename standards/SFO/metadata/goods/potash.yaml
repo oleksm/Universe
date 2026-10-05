@@ -2,7 +2,6 @@
 identity:
   key: good.potash
   name: "Potash"
-  traded_as: market.chemicals
   kind: product
   description: "Potassium chloride, sorted from the salt it lay with: the potassium a crop needs. 60% potash by the trade's count."
 physical:

@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Good
 x-kind: [good]
-description: Something that moves in bulk through industry and is neither an element nor a finished material. Rock as it is dug, raw matter won from it, what is used up, what one step hands to the next, what comes out besides the product.
+description: A good is not sold. What is sold is stock, an item made from it (SFO/metadata/stock), which names its market category; a good that names one does not fit. Something that moves in bulk through industry and is neither an element nor a finished material. Rock as it is dug, raw matter won from it, what is used up, what one step hands to the next, what comes out besides the product.
 type: object
 additionalProperties: false
 required: [identity]
@@ -16,7 +16,6 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       kind: { enum: [rock, raw, consumable, fuel, intermediate, product, by-product], description: 'rock: dug as it lies. raw: won from a rock, what industry starts from.' }
       description: { type: string }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }

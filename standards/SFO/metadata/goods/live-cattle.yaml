@@ -2,7 +2,6 @@
 identity:
   key: good.live-cattle
   name: "Cattle"
-  traded_as: market.biologics
   kind: intermediate
   description: "Beef cattle, live, by weight."
 physical:

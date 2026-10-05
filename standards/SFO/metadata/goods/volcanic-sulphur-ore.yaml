@@ -2,7 +2,6 @@
 identity:
   key: good.volcanic-sulphur-ore
   name: "Volcanic sulphur ore"
-  traded_as: market.ores
   kind: rock
   description: "Rock and ash cemented with native sulphur."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.circuit-boards
   name: "Circuit boards"
-  traded_as: market.electronics
   kind: intermediate
   description: "Boards of glass fibre and resin with copper tracks, bare."
 physical:

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is hot ingot, ti-6al-4v as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.hot-ingot-ti64-bulk
+  traded_as: market.metals
+  code: HOT-INGOT-TI64-BULK
+  name: "Hot ingot, Ti-6Al-4V, in bulk"
+  form: bulk
+made_from:
+  - item: good.hot-ingot-ti64
