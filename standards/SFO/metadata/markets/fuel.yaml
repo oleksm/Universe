@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.fuel
+  name: "Deuterium"
+unit_mass: 160
+bulk_density: 160
+basket: 1.15740740741e-06
+names:
+  adjectives: ["Liquid", "Slush", "Cryo", "Refined", "Pure", "Reactor-Grade", "Standard", "Bulk", "Certified", "Premium", "Industrial", "Clean"]
+  nouns: ["Deuterium", "Heavy Hydrogen", "D2", "Deuterium Ice", "Fusion Deuterium"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

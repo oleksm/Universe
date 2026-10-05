@@ -81,3 +81,6 @@
   site, each with its maker and what is fitted to it.
 - **Deuterium is one record,** a material, where it was also a good. The fusion power station burns
   that one. (The game needs a small change to find its market kind there.)
+- **Anything physical can be traded.** The market's twenty categories (food, fuel, ores, metals...)
+  are records, and any physical thing can say which it is traded as. Deuterium, a material, is
+  traded as fuel.

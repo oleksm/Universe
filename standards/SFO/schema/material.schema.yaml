@@ -19,6 +19,7 @@ properties:
     required: [key, name, class]
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       name: { type: string }
       description: { type: string, description: "What it is, in a sentence." }
       class: { enum: [metal, alloy, ceramic, glass, polymer, composite, fluid] }
@@ -35,12 +36,6 @@ properties:
       form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel] }, description: The forms it comes in. }
       grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }
 
-  game:
-    description: "What it is in the game's own files, while those are the game's."
-    type: object
-    additionalProperties: false
-    properties:
-      goods: { type: string, description: "The kind of goods it is traded as in the game's markets (content/base/goods.ron)." }
   fuel:
     description: "For one that is burnt for its energy, or thrown as reaction mass."
     type: object

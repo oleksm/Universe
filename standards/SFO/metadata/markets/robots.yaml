@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.robots
+  name: "Robots"
+unit_mass: 250
+bulk_density: 700
+basket: 3.47222222222e-08
+names:
+  adjectives: ["Service", "Mining", "Cargo", "Medical", "Farm", "Security", "Repair", "Survey", "Companion"]
+  nouns: ["Drones", "Walkers", "Arms", "Units", "Crawlers", "Androids", "Swarms", "Rovers", "Frames"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

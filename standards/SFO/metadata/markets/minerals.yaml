@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.minerals
+  name: "Minerals"
+unit_mass: 20
+bulk_density: 2000
+names:
+  adjectives: ["Cut", "Rough", "Polished", "Industrial", "Clear", "Flawed", "Star", "Deep", "Asteroid"]
+  nouns: ["Quartz", "Diamonds", "Beryl", "Corundum", "Garnets", "Opal", "Jade", "Spinel", "Topaz"]
+basis:
+  - { of: [unit_mass, bulk_density], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.luxuries
+  name: "Luxuries"
+unit_mass: 10
+bulk_density: 500
+basket: 2.31481481481e-07
+names:
+  adjectives: ["Vintage", "Imported", "Handmade", "Gilded", "Rare", "Designer", "Aged", "Perfumed", "Exotic"]
+  nouns: ["Wines", "Spirits", "Furs", "Perfume", "Chocolate", "Coffee", "Tea", "Tobacco", "Jewellery"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

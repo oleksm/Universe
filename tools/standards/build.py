@@ -1686,7 +1686,8 @@ def write_ron():
                 # goods it is, if it has one yet: none, and the game doesn't trade it.)
                 def flow(slug, rate):
                     rec = next((r for r in goods + materials if r.get("slug") == slug), None)
-                    kind = ((rec or {}).get("game") or {}).get("goods", "")
+                    as_ = ((rec or {}).get("identity") or {}).get("traded_as")          # (a market category, as the game keys it)
+                    kind = ((rec or {}).get("game") or {}).get("goods", "") or ("goods." + as_.replace("-", "_") if as_ else "")
                     return f"({ron_str(name_of(slug))}, {ron_str(kind)}, {float(rate)!r})"
                 takes = [flow(i["item"], i["rate"]) for ln in fc.get("lines") or [] if ln.get("most") for i in ln["most"]["supplies"]]
                 gives = [flow(ln["most"]["product"], ln["most"]["output"]) for ln in fc.get("lines") or [] if ln.get("most")]

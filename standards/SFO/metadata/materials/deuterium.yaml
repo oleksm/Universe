@@ -2,11 +2,10 @@
 # A fuel, as the game has it (content/base/materials.ron).
 identity:
   key: material.deuterium
+  traded_as: market.fuel
   name: "Deuterium"
   class: fluid
   description: "Heavy hydrogen, the fuel of fusion plants. Catalysed D–D fusion (the tritium and helium-3 it makes burnt too). A tonne in about 31,000 t of water."
-game:
-  goods: goods.fuel
 fuel:
   release: fusion
   energy: 345000000000000

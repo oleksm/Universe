@@ -1,0 +1,26 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Market category
+x-kind: [market]
+description: "One of the categories the markets trade in: food, fuel, ores, metals, machinery... Anything physical can be traded; what it is traded as is one of these, named by the thing itself (`identity.traded_as`). No price: prices are the game's state."
+type: object
+additionalProperties: false
+required: [identity]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+  unit_mass: { type: number, x-unit: "kg", description: "kg, about what one item of it weighs, for goods the seed names itself" }
+  bulk_density: { type: number, x-unit: "kg/m3", description: "kg/m3, as stowed in a hold" }
+  basket: { type: number, x-unit: "kg/s", description: "kg a person uses of it each second (left out: people do not use it up)" }
+  names:
+    description: "The words the seed names its goods of this category from."
+    type: object
+    additionalProperties: false
+    properties:
+      adjectives: { type: array, items: { type: string } }
+      nouns: { type: array, items: { type: string } }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

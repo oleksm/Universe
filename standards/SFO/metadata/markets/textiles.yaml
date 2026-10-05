@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/market.schema.yaml
+identity:
+  key: market.textiles
+  name: "Textiles"
+unit_mass: 200
+bulk_density: 350
+basket: 5.78703703704e-07
+names:
+  adjectives: ["Woven", "Spun", "Synthetic", "Fine", "Bulk", "Insulated", "Dyed", "Printed", "Smart"]
+  nouns: ["Cotton", "Silk", "Canvas", "Fibre", "Nanoweave", "Wool", "Linen", "Mesh", "Felt"]
+basis:
+  - { of: [unit_mass, bulk_density, basket], tier: invented, review: true, note: "The game's figures (content/base/goods.ron), with no source looked up: to be reviewed." }

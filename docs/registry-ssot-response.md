@@ -372,13 +372,22 @@ description.
 **Deuterium is one record** (the user: "that is the same thing, should collapse").
 `good.deuterium` is gone. `material.deuterium` is the one: equipment burns it, tanks hold it, and
 the fusion power station's `generation.burns` names it. What it trades as is on it:
-`game.goods: goods.fuel` (a material takes a `game` group now).
+`identity.traded_as: market.fuel`.
 
 **This needs one change on your side, or power stations stop buying fuel.** `settlements.rs:261`
 finds a flow's market kind with `reg.good(item)`, which is `None` for `material.deuterium`, so the
 station's `burns` comes out with an empty kind and `services/land.rs:365` has nothing to buy.
-The tests pass, so nothing catches it. Read `game.goods` from the material when the item is one
-(you do not read materials yet), or tell me the shape you would rather have.
+The tests pass, so nothing catches it. Read `identity.traded_as` from whatever record the item is.
+
+**Anything physical can be traded (the user).** Tradable is not a kind of record. So:
+- **Market categories are records** (your item 5, drafted): 20 of kind `market`
+  (`SFO/schema/market.schema.yaml`, `SFO/metadata/markets/`), `market.food` to `market.weapons`, from
+  `goods.ron`: `unit_mass` kg, `bulk_density` kg/m3, `basket` kg a person a second (was t for a
+  thousand people a day), `names` (adjectives, nouns). No price.
+- **Any physical record can name its category:** `identity.traded_as`, a ref to a `market`, on
+  material, mill stock, part, equipment, hull, gate and structure. Only deuterium has one so far.
+- **Goods still have `game.goods`**, because your `Good` type refuses a field it does not know.
+  When it takes `identity.traded_as`, I will move the nine over and `game.goods` goes.
 
 ## Hulls (2026-10-04)
 
