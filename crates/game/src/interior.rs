@@ -171,7 +171,7 @@ struct Profile {
 
 impl Default for Profile {
     fn default() -> Self {
-        Profile { section: Section::Line, width: 2.0, height: 1.5 }
+        Profile { section: Section::Line, width: 1.5, height: 2.0 }
     }
 }
 
@@ -187,7 +187,8 @@ enum Section {
     Line,
     Round,
     Square,
-    /// Six-sided, its width and height across its flats.
+    /// Six-sided, flat at its top and bottom: its height between its flats, its width
+    /// across its corners.
     Hex,
 }
 
@@ -216,7 +217,9 @@ impl Profile {
             Section::Line => Vec::new(),
             Section::Round => ring(16, 0.5, 0.0),
             Section::Square => ring(4, 0.5 * std::f32::consts::SQRT_2, std::f32::consts::FRAC_PI_4),
-            Section::Hex => ring(6, 0.5 / (std::f32::consts::PI / 6.0).cos(), std::f32::consts::FRAC_PI_6).into_iter().map(|c| c * Vec2::new((std::f32::consts::PI / 6.0).cos(), 1.0)).collect(),
+            // (Flat at its top and bottom, its corners at the sides: a metre between its
+            // flats, and across its corners.)
+            Section::Hex => ring(6, 0.5 / (std::f32::consts::PI / 6.0).cos(), 0.0).into_iter().map(|c| c * Vec2::new((std::f32::consts::PI / 6.0).cos(), 1.0)).collect(),
         };
         unit.into_iter().map(|c| c * Vec2::new(self.width, self.height)).collect()
     }
