@@ -17,15 +17,15 @@ use universe_world::recipes::{self, Recipe};
 
 use crate::universe::Universe;
 
-/// What a works wants on hand of each thing it builds toward (kg): one of each.
+/// What a works wants on hand of each thing it builds toward (kg): one of
+/// each, and what goes into it, down the bill (a hull's parts, a leg's own).
 fn wanted(goals: &[usize], mass: &dyn Fn(usize) -> f64, made_by: &dyn Fn(usize) -> Option<&'static Recipe>) -> HashMap<usize, f64> {
     let mut want: HashMap<usize, f64> = HashMap::new();
-    for &g in goals {
-        *want.entry(g).or_default() += mass(g);
-        if let Some(r) = made_by(g) {
-            for &(i, q) in &r.inputs {
-                *want.entry(i).or_default() += q * mass(g);
-            }
+    let mut open: Vec<(usize, f64, usize)> = goals.iter().map(|&g| (g, mass(g), 0)).collect();
+    while let Some((i, kg, depth)) = open.pop() {
+        *want.entry(i).or_default() += kg;
+        if let Some(r) = made_by(i).filter(|_| depth < 8) {
+            open.extend(r.inputs.iter().map(|&(x, q)| (x, q * kg, depth + 1)));
         }
     }
     want

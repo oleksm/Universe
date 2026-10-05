@@ -12,3 +12,15 @@ registry):
   (a tenth of its weight at Zaudalein); the record means it to unload in orbit.
 - Hulls the registry doesn't describe keep the stock fit; the stock hulls' records list their
   racks as before.
+
+## Parts made of parts
+
+- **A part made of parts** (the MC-07's landing legs, cargo ramp, clamps and mining laser: no
+  mass of their own, a folder named by their code, `parts/mc-07/MC07-23/`) is built at its module
+  from those parts and weighs what they do, by their counts. `Registry::built_of` finds a part's
+  parts by its code, and a hull's by its `built_of.parts`.
+- **The MC-07's frame is 154.2 t** (its record's 154), 165.6 t dry fitted. Empty, its lift is 0.83
+  of its weight at Zaudalein, 0.74 at Eikir, 0.81 at Nacaubun, 0.48 at Lisaur; 1.91 at Trethi.
+- **Companies plan down the bill:** a yard wants each thing its hull and fit take, and what goes
+  into those, to the bottom (it set nothing to the legs' own parts before). Trethi Yard builds an
+  MC-07, legs and all, in 23.9 days from its day-0 stock.
