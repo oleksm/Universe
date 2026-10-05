@@ -555,3 +555,15 @@ typed.
   property `as the game shows it.: null` (the same slip as `seeding.galaxy.home`).
 - **Branches are still the topics, flat.** If the register is to be a tree (`parent`), say so, and
   the game's standards view will follow the parents.
+
+**Settlements and industry (this commit).** `settlement.*`, `rig.*`, `zone.*`, `parcel.*`, `street.*`,
+`power-line.*`, `facility.*` and `module.*` are read whole, strictly typed. The engine works out a
+line's maximum itself (`settlements::line_most`). Held against `settlements.ron` before the switch,
+the result matched on every power figure, store, flow of goods and module layout.
+- **`settlements.ron` and `industry.ron` are no longer loaded.** None of the eight RON files
+  `build.py` writes are read by the game any more: `write_ron()` can go whole.
+- **`facility.schema.yaml`, `pipelines.from`/`to`:** the descriptions are cut at a comma ("by name.":
+  null), the third case of that slip. A grep for `: null` in the schemas finds them all.
+- **The engine's line maths is now the one the build's reports should read** (gaps, "what a works
+  can do", the hulls report's loads). When you want it, I'll add a command that writes the engine's
+  figures out for the page, as agreed.

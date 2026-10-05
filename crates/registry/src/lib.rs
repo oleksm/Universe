@@ -23,12 +23,14 @@ use serde::{Deserialize, Serialize};
 
 mod celestial;
 mod common;
+mod land;
 mod organisation;
 mod sfo;
 
 pub use common::{Address, Physical};
 pub use organisation::{Business, Details, Form, OrgIdentity, OrgKind, Organisation, ZoneRule, ZoneUse};
-pub use sfo::{Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
+pub use land::{Facility, FacilityKind, GatePlace, KeyName, KeyOnly, Line, ModuleCount, Parcel, Pipeline, Point, Position, PowerLine, Settlement, SettlementKind, SitePart, Spin, Street, StreetAddress, Zone};
+pub use sfo::{Amount, Burn, Capacity, Changeover, Generation, Module, ModuleIdentity, Needs, Recipe, Throughput, Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
 pub use celestial::{Atmosphere, Body, BodyIdentity, BodyKind, BodyOrbit, BodyPhysical, BodyRock, InGame, Population, PopulationIdentity, PopulationKind, PopulationRocks, RockStructure, Star, Surface, Terrain, ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
 
 /// Where a record's figures come from (the common schema's `basis`).
@@ -80,6 +82,17 @@ pub struct Registry {
     pub organisations: Vec<Organisation>,
     /// Every standards body's standards.
     pub standards: Vec<Standard>,
+    /// Industrial modules, with their recipes.
+    pub modules: Vec<Module>,
+    /// Settlements and rigs, and the ground of each settlement.
+    pub settlements: Vec<Settlement>,
+    pub zones: Vec<Zone>,
+    pub parcels: Vec<Parcel>,
+    pub streets: Vec<Street>,
+    pub power_lines: Vec<PowerLine>,
+    pub facilities: Vec<Facility>,
+    /// Every record's name, by key (the kinds the game doesn't read yet too).
+    pub names: BTreeMap<String, String>,
     pub systems: Vec<System>,
     /// Stars, planets, moons and small bodies, of every system written out.
     pub bodies: Vec<Body>,
@@ -115,6 +128,8 @@ struct Head {
 struct HeadIdentity {
     #[serde(default)]
     key: Option<String>,
+    #[serde(default)]
+    name: Option<String>,
 }
 
 impl Registry {
@@ -138,7 +153,11 @@ impl Registry {
             };
             // Schemas and the registry's own files have no key: they aren't records.
             let Ok(head) = serde_norway::from_str::<Head>(&text) else { continue };
-            let Some(key) = head.identity.and_then(|i| i.key) else { continue };
+            let Some(identity) = head.identity else { continue };
+            let Some(key) = identity.key else { continue };
+            if let Some(name) = identity.name {
+                reg.names.insert(key.clone(), name);
+            }
             if let Some(first) = keys.insert(key.clone(), file.clone()) {
                 problems.push(Problem { file: file.clone(), what: format!("{key} is also {}", first.display()) });
             }
@@ -153,6 +172,13 @@ impl Registry {
                 "rock-class" => parse(&mut |t| Ok(reg.rock_classes.push(serde_norway::from_str(t)?))),
                 "org" => parse(&mut |t| Ok(reg.organisations.push(serde_norway::from_str(t)?))),
                 "standard" => parse(&mut |t| Ok(reg.standards.push(serde_norway::from_str(t)?))),
+                "module" => parse(&mut |t| Ok(reg.modules.push(serde_norway::from_str(t)?))),
+                "settlement" | "rig" => parse(&mut |t| Ok(reg.settlements.push(serde_norway::from_str(t)?))),
+                "zone" => parse(&mut |t| Ok(reg.zones.push(serde_norway::from_str(t)?))),
+                "parcel" => parse(&mut |t| Ok(reg.parcels.push(serde_norway::from_str(t)?))),
+                "street" => parse(&mut |t| Ok(reg.streets.push(serde_norway::from_str(t)?))),
+                "power-line" => parse(&mut |t| Ok(reg.power_lines.push(serde_norway::from_str(t)?))),
+                "facility" => parse(&mut |t| Ok(reg.facilities.push(serde_norway::from_str(t)?))),
                 "good" => parse(&mut |t| Ok(reg.goods.push(serde_norway::from_str(t)?))),
                 "body" => parse(&mut |t| Ok(reg.bodies.push(serde_norway::from_str(t)?))),
                 "population" => parse(&mut |t| Ok(reg.populations.push(serde_norway::from_str(t)?))),
@@ -209,6 +235,16 @@ impl Registry {
     /// The good with this key.
     pub fn good(&self, key: &str) -> Option<&Good> {
         self.goods.iter().find(|g| g.identity.key == key)
+    }
+
+    /// A record's name, by its key.
+    pub fn name(&self, key: &str) -> Option<&str> {
+        self.names.get(key).map(String::as_str)
+    }
+
+    /// The module with this key.
+    pub fn module(&self, key: &str) -> Option<&Module> {
+        self.modules.iter().find(|m| m.identity.key == key)
     }
 
     /// The system with this key.

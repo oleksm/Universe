@@ -37,8 +37,6 @@ const BASE: &[(&str, &str)] = &[
     ("places.ron", include_str!("../../../content/base/places.ron")),
     ("markets.ron", include_str!("../../../content/base/markets.ron")),
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
-    ("settlements.ron", include_str!("../../../content/base/settlements.ron")),
-    ("industry.ron", include_str!("../../../content/base/industry.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether
@@ -428,17 +426,10 @@ impl Content {
                 }
             }
         }
-        let settlements: Vec<crate::settlements::Settlement> = Self::defs(&packs, "settlements.ron")?;
+        // Settlements' ground and the industrial modules: the registry's (Local Administration, SFO 10).
+        let (settlements, industry) = crate::settlements::from_registry(crate::registry::registry());
         for s in &settlements {
             s.check()?;
-        }
-        let industry: Vec<crate::settlements::IndustrialModule> = Self::defs(&packs, "industry.ron")?;
-        for s in &settlements {
-            for (m, _) in s.facilities.iter().flat_map(|f| &f.modules) {
-                if !industry.iter().any(|i| &i.key == m) {
-                    return Err(format!("settlements.ron '{}': no industrial module '{m}'", s.name));
-                }
-            }
         }
 let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;

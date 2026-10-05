@@ -219,3 +219,132 @@ pub enum Licence {
 pub enum OpenLicence {
     Open,
 }
+
+/// `module.*`: an industrial module (SFO 10), one step of a line.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Module {
+    pub identity: ModuleIdentity,
+    #[serde(default)]
+    pub physical: Physical,
+    /// For one that stores or handles.
+    #[serde(default)]
+    pub capacity: Option<Capacity>,
+    /// Everything it can be set to make.
+    #[serde(default)]
+    pub recipes: Vec<Recipe>,
+    /// For a shop module: how much it puts through of whatever it's given.
+    #[serde(default)]
+    pub throughput: Option<Throughput>,
+    /// For one that makes power.
+    #[serde(default)]
+    pub generation: Option<Generation>,
+    /// For one with no recipe: what it draws all the time.
+    #[serde(default)]
+    pub needs: Option<Needs>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ModuleIdentity {
+    pub key: String,
+    pub name: String,
+    /// The step it performs.
+    pub step: String,
+    #[serde(default)]
+    pub description: Option<String>,
+}
+
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Capacity {
+    /// kg it can store.
+    #[serde(default)]
+    pub holds: Option<f64>,
+    /// m³ it can store.
+    #[serde(default)]
+    pub volume: Option<f64>,
+    /// The kinds of goods it stores, by the game's keys.
+    #[serde(default)]
+    pub stores: Vec<String>,
+    /// kg/s it can move in or out.
+    #[serde(default)]
+    pub handling: Option<f64>,
+}
+
+/// One thing a module can be set to make: what it makes, what that takes
+/// (per kg made), what else comes out, how fast, at what power.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Recipe {
+    pub makes: String,
+    #[serde(default)]
+    pub does: Option<String>,
+    pub inputs: Vec<Amount>,
+    #[serde(default)]
+    pub outputs: Vec<Amount>,
+    /// kg/s of what it makes, at full rate.
+    #[serde(default)]
+    pub rate: Option<f64>,
+    #[serde(default)]
+    pub batch: Option<f64>,
+    /// W at full rate.
+    #[serde(default)]
+    pub power: Option<f64>,
+    #[serde(default)]
+    pub changeover: Option<Changeover>,
+}
+
+/// kg of an item for each kg the recipe makes.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Amount {
+    pub item: String,
+    pub quantity: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Changeover {
+    #[serde(default)]
+    pub time: Option<f64>,
+    #[serde(default)]
+    pub loss: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Throughput {
+    /// kg/s of what it is making, at full rate.
+    pub rate: f64,
+    /// W at full rate.
+    #[serde(default)]
+    pub power: Option<f64>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Generation {
+    /// W at full output.
+    pub supplies: f64,
+    #[serde(default)]
+    pub burns: Vec<Burn>,
+}
+
+/// What it burns at full output (kg/s).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Burn {
+    pub item: String,
+    pub rate: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Needs {
+    /// W.
+    #[serde(default)]
+    pub power: Option<f64>,
+}
