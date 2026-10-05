@@ -334,25 +334,57 @@ pub struct Fitted {
 /// The ore bay's id among the placed blocks.
 const HOLD: &str = "HOLD";
 
-/// What `spec` is fitted with, and its hold (if it has one), to be placed.
+/// What `spec` is fitted with, and its ore bay, to be placed: as its hull's record
+/// in the registry fits it (found by its model), each item's mass, volume and size
+/// from its equipment record; a hull the registry doesn't describe, as the game fits
+/// it.
 fn fit_of(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
+    use universe_sim::world::registry::{registry, EquipmentFunction};
+    let reg = registry();
+    let Some(hull) = spec.visual.as_deref().and_then(|v| reg.hulls.iter().find(|h| h.model.as_deref() == Some(v))) else { return game_fit(spec) };
+    let content = universe_sim::world::content::content();
+    let mut out: Vec<Fitted> = hull.fit.iter().filter_map(|f| {
+        let e = reg.equipment.iter().find(|e| e.identity.key == f.item)?;
+        let p = &e.physical;
+        let round = matches!(e.function, EquipmentFunction::Tank(_));
+        let size = match (p.width, p.height, p.length) {
+            // (Its own size, where its record says it: across, up, along.)
+            (Some(w), Some(h), Some(l)) => Vec3::new(w as f32, h as f32, l as f32),
+            _ => {
+                let volume = p.volume.unwrap_or(1.0) as f32;
+                if round {
+                    Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt())
+                } else {
+                    // (Its volume, in the game's proportions for its kind, if the game
+                    // has it; else a cube.)
+                    let a = content.handle::<universe_sim::world::modules::Module>(&e.identity.key).map_or(Vec3::ONE, |h| content.get(h).dims().as_vec3());
+                    a * (volume / (a.x * a.y * a.z)).cbrt()
+                }
+            }
+        };
+        let volume = p.volume.map_or(size.x * size.y * size.z, |v| v as f32);
+        Some(Fitted { id: f.slot.clone(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size })
+    }).collect();
+    // (Its ore bay: its hold; broad and low, under doors.)
+    if let Some(volume) = hull.capacity.hold_volume.filter(|v| *v > 0.0).map(|v| v as f32) {
+        let a = Vec3::new(1.2, 0.8, 1.0);
+        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt() });
+    }
+    out
+}
+
+/// What `spec` is fitted with as the game fits it (a hull the registry doesn't
+/// describe).
+fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
     use universe_sim::world::modules::SlotKind;
     let content = universe_sim::world::content::content();
-    let mut out: Vec<Fitted> = spec.fit.iter().map(|(slot, h)| {
+    spec.fit.iter().map(|(slot, h)| {
         let m = content.get(*h);
         let volume = m.volume as f32;
         let round = m.does.slot() == SlotKind::Tank;
         let size = if round { Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt()) } else { m.dims().as_vec3() };
         Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size }
-    }).collect();
-    // (Its ore bay: the hold its hull's record in the registry gives it, found by its
-    // model; broad and low, under doors.)
-    let bay = spec.visual.as_deref().and_then(|v| universe_sim::world::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(v))).and_then(|h| h.capacity.hold_volume);
-    if let Some(volume) = bay.filter(|v| *v > 0.0).map(|v| v as f32) {
-        let a = Vec3::new(1.2, 0.8, 1.0);
-        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt() });
-    }
-    out
+    }).collect()
 }
 
 impl Block {
