@@ -77,6 +77,8 @@ pub struct Interior {
     /// stop a path (so it doesn't move the view too).
     lifting: bool,
     stopped: bool,
+    /// The plane's level as the drag has it, before a snap to the selected point.
+    lift_free: Option<f32>,
     /// The point, or else the line, under the cursor, and the one picked (REMOVE
     /// takes it out); the cursor (HUD pixels).
     hover: Option<Hover>,
@@ -559,6 +561,16 @@ fn globe_ends(cam: &Camera, size: Vec2) -> Vec<(Vec3, Vec2, f32)> {
         .collect()
 }
 
+/// The selected point's level: the one picked, or the one a path runs on from.
+fn selected_level(i: &Interior) -> Option<f32> {
+    let k = match (i.pick, i.from) {
+        (Some(Hover::Point(k)), _) => k,
+        (_, Some(k)) => k,
+        _ => return None,
+    };
+    i.plan.points.get(k).map(|p| p.at.y)
+}
+
 /// The work plane's height (its frame): as set, or the hatch's (where the crew come in).
 fn plane_of(i: &Interior, h: &Hull) -> f32 {
     i.plane.unwrap_or_else(|| i.plan.points.iter().find(|p| p.name.as_deref() == Some("HATCH")).map_or((h.lo.y + h.hi.y) * 0.5, |p| p.at.y))
@@ -777,10 +789,22 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         if input.button_down(MouseButton::Left) {
             let handle = plane_handle(&cam, &h, plane);
             let per_pixel = (handle - cam.eye).length() / cam.focal;
-            interior.plane = Some((plane - d.y * per_pixel).clamp(h.lo.y, h.hi.y));
+            // (Where the mouse has it, unsnapped, so it moves on past a point.)
+            let free = interior.lift_free.unwrap_or(plane) - d.y * per_pixel;
+            interior.lift_free = Some(free.clamp(h.lo.y, h.hi.y));
+            interior.plane = interior.lift_free;
+            // Within 30 cm of the selected point's level: on it.
+            if let Some(y) = selected_level(interior)
+                && (free - y).abs() < 0.3
+            {
+                interior.plane = Some(y);
+            }
         } else {
             interior.lifting = false;
-            interior.plane = interior.plane.map(|y| (y * 10.0).round() / 10.0);
+            interior.lift_free = None;
+            if interior.plane.is_some_and(|y| selected_level(interior) != Some(y)) {
+                interior.plane = interior.plane.map(|y| (y * 10.0).round() / 10.0);
+            }
         }
         return true;
     }
@@ -1022,7 +1046,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 frame.hud_line(q + Vec2::new(0.0, dy), q + Vec2::new(-4.0, dy - 4.0 * dy.signum()), col);
                 frame.hud_line(q + Vec2::new(0.0, dy), q + Vec2::new(4.0, dy - 4.0 * dy.signum()), col);
             }
-            frame.text_scaled(q + Vec2::new(16.0, -4.0), &format!("PLANE {:.1} M", plane - lo.y), col, 0.7);
+            let at_point = selected_level(interior) == Some(plane);
+            frame.text_scaled(q + Vec2::new(16.0, -4.0), &format!("PLANE {:.1} M{}", plane - lo.y, if at_point { "  AT POINT" } else { "" }), if at_point { PICKED } else { col }, 0.7);
         }
         // Where a click would put a point: over a line, its quarter marks (the one
         // it'd snap to lit); else on the plane (SHIFT: squared to the last point).
