@@ -935,8 +935,26 @@ mod tests {
 
     #[test]
     fn landing_gear_lands_gently_and_breaks_on_a_hard_touchdown() {
-        for (label, sink, lands) in [("gentle", 5.0, true), ("hard", 100.0, false)] {
+        // The MC-07 on its legs (`legs`): they take what they take, for its mass on this ground.
+        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb")).expect("the MC-07 model");
+        let mc07 = crate::import::commission(&bytes, "assets/models/mc07.glb").expect("it imports");
+        let legs = crate::legs::of_spec(crate::content::content().get(mc07)).expect("its legs");
+        let hardest = {
             let mut p = Probe::new(42);
+            let sys = p.sys();
+            let b = &sys.bodies[sys.bodies[sys.station().unwrap()].rail.parent.unwrap()];
+            let mut ship = p.ship.clone();
+            ship.class = mc07;
+            ship.refresh();
+            legs.hardest(ship.mass(), crate::units::G * b.mass / (b.rail.radius * b.rail.radius))
+        };
+        assert!(hardest > legs.designed + 1.0, "its legs take more than they're designed for: {hardest:.1} m/s");
+        for (label, sink, lands, hull) in [("gentle", 5.0, true, None), ("hard", 100.0, false, None), ("mc-07 designed", legs.designed * 0.9, true, Some(mc07)), ("mc-07 hard", (legs.designed + hardest) / 2.0, true, Some(mc07)), ("mc-07 a leg gives", hardest + 0.5, false, Some(mc07))] {
+            let mut p = Probe::new(42);
+            if let Some(h) = hull {
+                p.ship.class = h;
+                p.ship.refresh();
+            }
             let sys = p.sys();
             let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
             let port = sys.spaceports.iter().position(|sp| sp.body == planet).expect("home planet has a spaceport");
@@ -944,7 +962,9 @@ mod tests {
             let (b, t) = (&sys.bodies[planet], p.world.time);
             let up = b.rotation(t) * sys.spaceports[port].direction;
             // Just above the pad, moving with the ground and sinking.
-            p.ship.position = pos[planet] + up * (b.rail.radius + crate::ship::SHIP_RADIUS + 3.0);
+            // (An MC-07 just over its own feet, so it touches down at the sink it's given.)
+            let above = if hull.is_some() { p.ship.rest_height() + 0.05 } else { crate::ship::SHIP_RADIUS + 3.0 };
+            p.ship.position = pos[planet] + up * (b.rail.radius + above);
             p.ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(p.ship.position - pos[planet]) - up * sink;
             p.ship.orientation = upright(up, up.any_orthonormal_vector());
             for _ in 0..120 {
@@ -953,6 +973,8 @@ mod tests {
             if lands {
                 assert!(matches!(p.ship.state, ShipState::Landed { body, .. } if body == planet), "{label}: {:?}", p.events);
                 assert!(p.events.iter().any(|e| matches!(e, ShipEvent::LandedAtPort { .. })), "{label}: on the pad: {:?}", p.events);
+                let hard = p.events.iter().any(|e| matches!(e, ShipEvent::HardLanding { .. }));
+                assert_eq!(hard, label == "mc-07 hard", "{label}: a hard landing told only when it was one: {:?}", p.events);
             } else {
                 assert!(p.crashed() && matches!(p.ship.state, ShipState::Destroyed { .. }), "{label}: {:?}", p.events);
             }

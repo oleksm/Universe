@@ -1070,6 +1070,7 @@ impl App {
                     format!("+1 T {name} TO THE HOLD ({units} T IN ALL, HOLD {:.0}/{:.0} T)", self.v.ship.cargo / 1000.0, self.v.ship.spec().hold_capacity / 1000.0)
                 }
                 Event::Ship(ShipEvent::StruckRock { speed, .. }) => format!("ROCK STRIKE AT {speed:.1} M/S"),
+                Event::Ship(ShipEvent::HardLanding { sink, jolt }) => format!("HARD LANDING: {sink:.1} M/S DOWN, {jolt:.1} G ABOARD"),
                 // Anything else says nothing (add a line here for a new event that should).
                 _ => continue,
             };
