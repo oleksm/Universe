@@ -475,7 +475,9 @@ impl Tube {
             let normal = across * e.y - Vec3::Y * e.x;
             (normal, normal.dot(c + across * p0.x + Vec3::Y * p0.y))
         }).collect();
-        let (_, half) = self.floor_and_half();
+        let (floor, half) = self.floor_and_half();
+        // (Never below its own floor: a sloping tube's floor runs on under its door.)
+        planes.push((-self.v, -(self.v.dot(self.a) + floor)));
         match side {
             Some(right) => {
                 let (lo, hi) = if right { (0.0, half + 0.5) } else { (-half - 0.5, 0.0) };
