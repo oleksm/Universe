@@ -612,3 +612,22 @@ settlement's `structure`; trade bans; small bodies from the export, and the seed
 for the four rock classes; seeding records for the small bodies' and belts' inline figures;
 `registry-figures` in the build; a survey sensor (with the review of ship equipment the user has
 asked for next); crops' base temperature and light need.
+
+**Ship equipment: figures to move out of your code (2026-10-05).** The review is
+`docs/ships/equipment-review.md`. I added these to `equipment.function` and the build failed: the
+generated handler of a kind takes its fields as parameters (`gun` has 1 parameter, the trait 5), so
+a new figure on a kind needs your handler in the same merge. So they are not in; here they are, to
+add together (each optional, SI, the values your constants hold):
+
+| Kind | Field | Unit | Value today | Your constant |
+|---|---|---|---|---|
+| `sensors` | `resolves` | 1 | 1e7 | `SURVEY_RESOLVES` |
+| `sensors` | `survey_range` | m | 2e10 | `SURVEY_REACH` |
+| `gun` | `muzzle_speed`, `rate`, `slug_mass`, `magazine` | m/s, 1/s, kg, count | 3000, 10, 0.5, 500 | `GUN_MUZZLE`, `GUN_RATE`, `SLUG_MASS`, `GUN_AMMO` |
+| `laser` | `beam_power`, `focus`, `range`, `burn`, `cool` | W, m, m, s, s | 2e6, 2000, 30000, 8, 4 | `LASER_*` |
+| `mining_rig` | `excavator_power`, `throughput`, `anchor_reach`, `anchor_speed` | W, kg/s, m, m/s | 3e5, 10, 30, 0.5 | `EXCAVATOR_*`, `ANCHOR_*` |
+
+Say the word and I add schema and records on `fso` for you to merge with the handlers; or add
+them yourself and I follow. A separate survey sensor as a product waits on the user's answer to
+the review. **Worth knowing for the generator:** a new optional field on a tagged alternative is a
+breaking change for the engine today; a handler that took the alternative's struct would not be.
