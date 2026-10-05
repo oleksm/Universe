@@ -790,3 +790,16 @@ It has a density and a colour but **no `mining` group** (no cutting energy, no y
 one would stop at "has no cut energy". Either leave it out of what can be dug, or tell me and I
 give it the stony class's figures as a marked guess. All nine classes also gained `sulphide` and
 `titanium` ranges in `composition`. Your tests pass with all of it.
+
+**No more side branches (the user, 2026-10-05): "I don't want branch separation, it consumes more
+cycles; I'll coordinate when to merge."** So `fso-panels` and `fso-small-bodies` are merged into
+`fso` and deleted. **`fso` as it stands now fails two of your tests, knowingly, until your side
+moves:**
+
+- `plan::tests::the_plan_is_the_flight` and everything that loads the world: `celestial.rs:146`
+  stops on the small bodies' kinds (crossing asteroid, captured moon, centaur, comet, dwarf
+  planet), now written without `in_game: not made`.
+- `a_yard_builds_an_mc07_from_its_stock`: plate parts are welded from panels, so the yard must
+  cut and form them first.
+
+The user decides when you merge. Also the user's: the metallic share at the frost line stays 0.15.
