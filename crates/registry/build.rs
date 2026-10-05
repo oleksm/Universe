@@ -350,12 +350,15 @@ impl Gen {
         let name = self.emit_name(hint);
         let mut s = String::new();
         let mut walks = String::new();
+        let mut variants: Vec<(String, String, Vec<(String, String)>, bool)> = Vec::new();
         if tagged {
             writeln!(s, "#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]\n#[serde(tag = \"kind\", deny_unknown_fields)]\npub enum {name} {{").unwrap();
             for a in alts {
                 let kind = a["properties"]["kind"]["const"].as_str().unwrap_or_else(|| panic!("{at}: a kind that isn't text"));
                 assert!(a.get("additionalProperties") == Some(&Value::Bool(false)), "{at}: {kind}: an open object");
                 let variant = camel(kind);
+                let not_made = a.get("x-in-game").and_then(Value::as_str) == Some("not made");
+                let mut params: Vec<(String, String)> = Vec::new();
                 let required: HashSet<&str> = a.get("required").and_then(Value::as_sequence).map(|r| r.iter().filter_map(Value::as_str).collect()).unwrap_or_default();
                 s.push_str(&doc(a, "    "));
                 writeln!(s, "    #[serde(rename = {kind:?})]\n    {variant} {{").unwrap();
@@ -381,17 +384,20 @@ impl Gen {
                         writeln!(s, "        #[serde({})]", attrs.join(", ")).unwrap();
                     }
                     writeln!(s, "        {id}: {rust},").unwrap();
+                    params.push((id.to_string(), rust.clone()));
                     if let Some(w) = walk_at(&walk, id, 2) {
                         binds.push(id.to_string());
                         body.push_str(&w);
                     }
                 }
                 s.push_str("    },\n");
+                variants.push((kind.to_string(), variant.clone(), params, not_made));
                 if !binds.is_empty() {
                     writeln!(walks, "            {name}::{variant} {{ {}, .. }} => {{\n{body}            }}", binds.join(", ")).unwrap();
                 }
             }
             s.push_str("}\n\n");
+            s.push_str(&handler(&name, &variants));
         } else {
             // (Untagged: each shape tried in turn. A text and a list of texts, a constant and an object.)
             writeln!(s, "#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]\n#[serde(untagged)]\npub enum {name} {{").unwrap();
@@ -424,6 +430,36 @@ impl Gen {
         self.out.push_str(&s);
         Ty { rust: name, walk: Walk::Typed, optional: false }
     }
+}
+
+/// A handler trait for a tagged enum: one method per kind, which the engine
+/// implements (a kind added in the registry is a method the engine must
+/// write, or the build stops); a kind marked `x-in-game: not made` defaults
+/// to `not_made`. And `kind()`, its registry name, and `handle`, to dispatch.
+fn handler(name: &str, variants: &[(String, String, Vec<(String, String)>, bool)]) -> String {
+    let mut t = format!("/// What the engine does with each kind of [`{name}`]: one method a kind.\npub trait {name}Handler {{\n    type Out;\n");
+    if variants.iter().any(|v| v.3) {
+        t.push_str("    /// A kind the game doesn't make yet.\n    fn not_made(&mut self, kind: &'static str) -> Self::Out;\n");
+    }
+    let mut arms = String::new();
+    let mut kinds = String::new();
+    for (kind, variant, params, not_made) in variants {
+        let method = snake(kind);
+        let sig: String = params.iter().map(|(id, ty)| format!(", {id}: &{ty}")).collect();
+        let args = params.iter().map(|(id, _)| id.as_str()).collect::<Vec<_>>().join(", ");
+        if *not_made {
+            writeln!(t, "    #[allow(unused_variables)]\n    fn {method}(&mut self{sig}) -> Self::Out {{\n        self.not_made({kind:?})\n    }}").unwrap();
+        } else {
+            writeln!(t, "    fn {method}(&mut self{sig}) -> Self::Out;").unwrap();
+        }
+        let bind = if params.is_empty() { String::new() } else { format!(" {{ {args} }}") };
+        let pat = if params.is_empty() { format!("{name}::{variant} {{}}") } else { format!("{name}::{variant}{bind}") };
+        writeln!(arms, "            {pat} => h.{method}({args}),").unwrap();
+        writeln!(kinds, "            {name}::{variant} {{ .. }} => {kind:?},").unwrap();
+    }
+    t.push_str("}\n\n");
+    writeln!(t, "impl {name} {{\n    /// Its kind, as the registry names it.\n    pub fn kind(&self) -> &'static str {{\n        match self {{\n{kinds}        }}\n    }}\n\n    /// Hands it to `h`, by its kind.\n    pub fn handle<H: {name}Handler>(&self, h: &mut H) -> H::Out {{\n        match self {{\n{arms}        }}\n    }}\n}}\n").unwrap();
+    t
 }
 
 /// The code that hands `expr`'s references to `f`, if it has any.

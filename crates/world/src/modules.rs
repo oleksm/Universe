@@ -294,46 +294,7 @@ impl Module {
     /// game's: prices aren't the registry's). None for a kind of device the
     /// game doesn't make yet (a gate's throat coil).
     pub fn from_record(e: &crate::registry::Equipment, price: f64) -> Option<Self> {
-        use crate::registry::{EquipmentFunction as F, EquipmentFunctionNavComputerFeature as N};
-        let n = |v: &Option<f64>| v.unwrap_or(0.0);
-        let text = |v: &Option<String>| v.clone().unwrap_or_default();
-        let does = match &e.function {
-            F::PowerPlant { output, efficiency, burns } => Does::PowerPlant { output: n(output), efficiency: n(efficiency), burns: text(burns) },
-            F::Drive { thrust, exhaust, efficiency, burns } => Does::Drive { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) },
-            F::Thrusters { thrust, exhaust, efficiency, burns } => Does::Thrusters { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) },
-            F::Lift { thrust, exhaust, efficiency, burns } => Does::Lift { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) },
-            F::Tank { capacity, holds } => Does::Tank { capacity: n(capacity), holds: text(holds) },
-            F::Capacitor { capacity, rate } => Does::Capacitor { capacity: n(capacity), rate: n(rate) },
-            F::Rack { capacity } => Does::Rack { capacity: n(capacity) },
-            F::Cabin { seats } => Does::Cabin { seats: seats.unwrap_or(0) as u32 },
-            F::Hyperdrive { efficiency, top_speed } => Does::Hyperdrive { efficiency: n(efficiency), top_speed: n(top_speed) },
-            F::FlightComputer { turn_rate, roll_rate } => Does::FlightComputer { turn_rate: n(turn_rate), roll_rate: n(roll_rate) },
-            F::Sensors { range } => Does::Sensors { range: n(range) },
-            F::Comm { capture, link, lag, capacity } => Does::Comm { capture: n(capture), link: n(link), lag: n(lag), capacity: n(capacity) },
-            F::GateRelay { lag, capacity, cadence } => Does::GateRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) },
-            F::HyperRelay { lag, capacity, cadence } => Does::HyperRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) },
-            F::NavComputer { features, interlock, governor } => Does::NavComputer {
-                features: features
-                    .iter()
-                    .map(|f| match f {
-                        N::Docking => Feature::Docking,
-                        N::Landing => Feature::Landing,
-                        N::Gate => Feature::Gate,
-                        N::Follow => Feature::Follow,
-                        N::Hyperdrive => Feature::Hyperdrive,
-                        N::Route => Feature::Route,
-                    })
-                    .collect(),
-                interlock: n(interlock),
-                governor: n(governor),
-            },
-            F::Transponder {} => Does::Transponder,
-            F::LifeSupport {} => Does::LifeSupport,
-            F::Gun {} => Does::Gun,
-            F::Laser {} => Does::Laser,
-            F::MiningRig {} => Does::MiningRig,
-            F::ThroatCoil {} => return None,
-        };
+        let does = e.function.handle(&mut Kinds)?;
         Some(Module {
             key: e.identity.key.clone(),
             name: crate::standards::caps(&e.identity.name),
@@ -345,5 +306,97 @@ impl Module {
             power: e.needs.power.unwrap_or(0.0),
             price,
         })
+    }
+}
+
+/// What the engine makes of each kind of device in the registry (one method a
+/// kind, generated from the schema: a new kind there is a method to write here).
+struct Kinds;
+
+fn n(v: &Option<f64>) -> f64 {
+    v.unwrap_or(0.0)
+}
+
+fn text(v: &Option<String>) -> String {
+    v.clone().unwrap_or_default()
+}
+
+impl crate::registry::EquipmentFunctionHandler for Kinds {
+    type Out = Option<Does>;
+    fn power_plant(&mut self, output: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
+        Some(Does::PowerPlant { output: n(output), efficiency: n(efficiency), burns: text(burns) })
+    }
+    fn drive(&mut self, thrust: &Option<f64>, exhaust: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
+        Some(Does::Drive { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) })
+    }
+    fn thrusters(&mut self, thrust: &Option<f64>, exhaust: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
+        Some(Does::Thrusters { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) })
+    }
+    fn lift(&mut self, thrust: &Option<f64>, exhaust: &Option<f64>, efficiency: &Option<f64>, burns: &Option<String>) -> Self::Out {
+        Some(Does::Lift { thrust: n(thrust), exhaust: n(exhaust), efficiency: n(efficiency), burns: text(burns) })
+    }
+    fn tank(&mut self, capacity: &Option<f64>, holds: &Option<String>) -> Self::Out {
+        Some(Does::Tank { capacity: n(capacity), holds: text(holds) })
+    }
+    fn capacitor(&mut self, capacity: &Option<f64>, rate: &Option<f64>) -> Self::Out {
+        Some(Does::Capacitor { capacity: n(capacity), rate: n(rate) })
+    }
+    fn rack(&mut self, capacity: &Option<f64>) -> Self::Out {
+        Some(Does::Rack { capacity: n(capacity) })
+    }
+    fn cabin(&mut self, seats: &Option<i64>) -> Self::Out {
+        Some(Does::Cabin { seats: seats.unwrap_or(0) as u32 })
+    }
+    fn hyperdrive(&mut self, efficiency: &Option<f64>, top_speed: &Option<f64>) -> Self::Out {
+        Some(Does::Hyperdrive { efficiency: n(efficiency), top_speed: n(top_speed) })
+    }
+    fn flight_computer(&mut self, turn_rate: &Option<f64>, roll_rate: &Option<f64>) -> Self::Out {
+        Some(Does::FlightComputer { turn_rate: n(turn_rate), roll_rate: n(roll_rate) })
+    }
+    fn sensors(&mut self, range: &Option<f64>) -> Self::Out {
+        Some(Does::Sensors { range: n(range) })
+    }
+    fn comm(&mut self, capture: &Option<f64>, link: &Option<f64>, lag: &Option<f64>, capacity: &Option<f64>) -> Self::Out {
+        Some(Does::Comm { capture: n(capture), link: n(link), lag: n(lag), capacity: n(capacity) })
+    }
+    fn gate_relay(&mut self, lag: &Option<f64>, capacity: &Option<f64>, cadence: &Option<f64>) -> Self::Out {
+        Some(Does::GateRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) })
+    }
+    fn hyper_relay(&mut self, lag: &Option<f64>, capacity: &Option<f64>, cadence: &Option<f64>) -> Self::Out {
+        Some(Does::HyperRelay { lag: n(lag), capacity: n(capacity), cadence: n(cadence) })
+    }
+    fn nav_computer(&mut self, features: &Vec<crate::registry::EquipmentFunctionNavComputerFeature>, interlock: &Option<f64>, governor: &Option<f64>) -> Self::Out {
+        use crate::registry::EquipmentFunctionNavComputerFeature as N;
+        let features = features
+            .iter()
+            .map(|f| match f {
+                N::Docking => Feature::Docking,
+                N::Landing => Feature::Landing,
+                N::Gate => Feature::Gate,
+                N::Follow => Feature::Follow,
+                N::Hyperdrive => Feature::Hyperdrive,
+                N::Route => Feature::Route,
+            })
+            .collect();
+        Some(Does::NavComputer { features, interlock: n(interlock), governor: n(governor) })
+    }
+    fn transponder(&mut self) -> Self::Out {
+        Some(Does::Transponder)
+    }
+    fn life_support(&mut self) -> Self::Out {
+        Some(Does::LifeSupport)
+    }
+    fn gun(&mut self) -> Self::Out {
+        Some(Does::Gun)
+    }
+    fn laser(&mut self) -> Self::Out {
+        Some(Does::Laser)
+    }
+    fn mining_rig(&mut self) -> Self::Out {
+        Some(Does::MiningRig)
+    }
+    /// A gate's throat coil: not made yet (the schema is to say so: `x-in-game: not made`).
+    fn throat_coil(&mut self) -> Self::Out {
+        None
     }
 }

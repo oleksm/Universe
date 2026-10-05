@@ -748,3 +748,10 @@ the JSON, and drop the matching Python formulas (`plan`, the `tube_*` lambdas, t
 sums). More figures join as the engine gains them: tidal heat and radiation dose next. A hull's
 mass from its parts waits on a part naming its hull (`parent` or `of`): today only its folder
 says.
+
+**Handler traits (generated).** For every `oneOf` tagged by `kind`, the generator writes a trait
+with one method a kind. The engine implements it (equipment's `function` first). A kind you add is a
+method the game's build asks for. Mark an alternative `x-in-game: "not made"` (beside its `kind`
+constant) for one the game shouldn't have to handle yet: it then defaults to "not made", and the
+build passes. **`throat_coil` wants that mark**: the game handles it by hand as not made today.
+Let the lint allow `x-in-game` there.

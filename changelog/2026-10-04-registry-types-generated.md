@@ -13,3 +13,10 @@
   had `revision` twice (a design letter and the lifecycle stage). YAML kept the second; the first
   is removed.
 - Nothing changes in play.
+- **Handler traits, generated:** for every kind-tagged choice in a schema (a device's `function`),
+  a trait with one method a kind, `kind()` (its registry name) and `handle()`. The engine turns
+  equipment into its devices by implementing it. A kind added in the registry is a method the build
+  asks for. A kind marked `x-in-game: not made` defaults to `not_made`, so the build passes until
+  there's behaviour for it.
+- **Every generated enum has `as_str()`,** its registry text, so a new zone use or facility kind is
+  named as the registry writes it.
