@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.sugarcane
+  name: "Sugarcane"
+  kind: product
+  description: "A tall grass grown for its sugar, in hot ground."
+physical:
+  bulk_density: 350
+  storage_max_temperature: 293
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

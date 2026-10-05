@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.potatoes
+  name: "Potatoes"
+  kind: product
+  description: "The most food from a hectare of cool ground."
+physical:
+  bulk_density: 670
+  storage_max_temperature: 283
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

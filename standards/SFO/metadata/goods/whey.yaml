@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.whey
+  name: "Whey"
+  kind: by-product
+  description: "The thin milk left when cheese or butter is made."
+physical:
+  bulk_density: 1030
+  storage_max_temperature: 277
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

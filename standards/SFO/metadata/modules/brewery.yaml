@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.brewery
+  name: "Brewery"
+  step: "Brew beer"
+  description: "Malts barley, mashes it in hot water, ferments and conditions the beer."
+physical:
+  length: 60
+  width: 40
+  height: 15
+recipes:
+  - makes: good.beer
+    inputs:
+      - { item: good.barley, quantity: 0.2 }
+      - { item: good.water, quantity: 1.1 }
+    outputs:
+      - { item: good.spent-grain, quantity: 0.3 }
+    rate: 1.389
+    power: 400000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

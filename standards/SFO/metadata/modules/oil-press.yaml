@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.oil-press
+  name: "Oil press"
+  step: "Press oil"
+  description: "Crushes oilseeds and olives and takes off the oil."
+physical:
+  length: 60
+  width: 40
+  height: 15
+recipes:
+  - makes: good.vegetable-oil
+    does: "Rapeseed is about 40% oil."
+    inputs:
+      - { item: good.rapeseed, quantity: 2.5 }
+    outputs:
+      - { item: good.oilseed-meal, quantity: 1.5 }
+    rate: 1.389
+    power: 400000
+  - makes: good.vegetable-oil
+    does: "Sunflower seed is about 42% oil."
+    inputs:
+      - { item: good.sunflower-seed, quantity: 2.4 }
+    outputs:
+      - { item: good.oilseed-meal, quantity: 1.4 }
+    rate: 1.389
+    power: 400000
+  - makes: good.vegetable-oil
+    does: "Soybeans are about 18% oil: most of what comes out is meal."
+    inputs:
+      - { item: good.soybeans, quantity: 5.5 }
+    outputs:
+      - { item: good.oilseed-meal, quantity: 4.5 }
+    rate: 0.5556
+    power: 400000
+  - makes: good.olive-oil
+    does: "Olives give about a fifth of their weight as oil."
+    inputs:
+      - { item: good.olives, quantity: 5.0 }
+    outputs:
+      - { item: good.pomace, quantity: 4.0 }
+    rate: 0.5556
+    power: 400000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

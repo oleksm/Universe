@@ -1,0 +1,133 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.orchard
+  name: "Orchard"
+  step: "Grow fruit"
+  description: "A hundred hectares of trees, vines or bushes, years in the planting: fruit, nuts, olives, and the bushes coffee, tea and cocoa come from. What it grows is not changed lightly: its trees are what it is set to."
+physical:
+  length: 1000
+  width: 1000
+recipes:
+  - makes: good.apples
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.2388 }
+      - { item: good.water, quantity: 0.949 }
+      - { item: good.fertiliser, quantity: 0.0033 }
+    outputs:
+      - { item: element.o, quantity: 0.1761 }
+      - { item: good.crop-residue, quantity: 0.015 }
+    rate: 0.05387
+    power: 10000
+  - makes: good.oranges
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.2069 }
+      - { item: good.water, quantity: 0.9558 }
+      - { item: good.fertiliser, quantity: 0.00286 }
+    outputs:
+      - { item: element.o, quantity: 0.1526 }
+      - { item: good.crop-residue, quantity: 0.013 }
+    rate: 0.05704
+    power: 10000
+  - makes: good.lemons
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.1751 }
+      - { item: good.water, quantity: 0.9626 }
+      - { item: good.fertiliser, quantity: 0.00242 }
+    outputs:
+      - { item: element.o, quantity: 0.1291 }
+      - { item: good.crop-residue, quantity: 0.011 }
+    rate: 0.04753
+    power: 10000
+  - makes: good.bananas
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.5426 }
+      - { item: good.water, quantity: 0.975 }
+      - { item: good.fertiliser, quantity: 0.0075 }
+    outputs:
+      - { item: element.o, quantity: 0.4001 }
+      - { item: good.crop-residue, quantity: 0.125 }
+    rate: 0.06654
+    power: 10000
+  - makes: good.grapes
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.3299 }
+      - { item: good.water, quantity: 0.9468 }
+      - { item: good.fertiliser, quantity: 0.00456 }
+    outputs:
+      - { item: element.o, quantity: 0.2433 }
+      - { item: good.crop-residue, quantity: 0.038 }
+    rate: 0.03169
+    power: 10000
+  - makes: good.mangoes
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.2706 }
+      - { item: good.water, quantity: 0.9422 }
+      - { item: good.fertiliser, quantity: 0.00374 }
+    outputs:
+      - { item: element.o, quantity: 0.1995 }
+      - { item: good.crop-residue, quantity: 0.017 }
+    rate: 0.02852
+    power: 10000
+  - makes: good.olives
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.9406 }
+      - { item: good.water, quantity: 0.89 }
+      - { item: good.fertiliser, quantity: 0.013 }
+    outputs:
+      - { item: element.o, quantity: 0.6935 }
+      - { item: good.crop-residue, quantity: 0.15 }
+    rate: 0.007922
+    power: 10000
+  - makes: good.almonds
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 3.437 }
+      - { item: good.water, quantity: 1.475 }
+      - { item: good.fertiliser, quantity: 0.0475 }
+    outputs:
+      - { item: element.o, quantity: 2.534 }
+      - { item: good.crop-residue, quantity: 1.425 }
+    rate: 0.003803
+    power: 10000
+  - makes: good.coffee
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 3.863 }
+      - { item: good.water, quantity: 1.712 }
+      - { item: good.fertiliser, quantity: 0.0534 }
+    outputs:
+      - { item: element.o, quantity: 2.849 }
+      - { item: good.crop-residue, quantity: 1.78 }
+    rate: 0.002852
+    power: 10000
+  - makes: good.tea
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 2.749 }
+      - { item: good.water, quantity: 1.19 }
+      - { item: good.fertiliser, quantity: 0.038 }
+    outputs:
+      - { item: element.o, quantity: 2.027 }
+      - { item: good.crop-residue, quantity: 0.95 }
+    rate: 0.004753
+    power: 10000
+  - makes: good.cocoa
+    does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 5.383 }
+      - { item: good.water, quantity: 2.302 }
+      - { item: good.fertiliser, quantity: 0.0744 }
+    outputs:
+      - { item: element.o, quantity: 3.969 }
+      - { item: good.crop-residue, quantity: 2.79 }
+    rate: 0.001584
+    power: 10000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

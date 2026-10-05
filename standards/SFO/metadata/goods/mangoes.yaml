@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.mangoes
+  name: "Mangoes"
+  kind: product
+  description: "A fruit of the orchard."
+physical:
+  bulk_density: 600
+  storage_max_temperature: 286
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

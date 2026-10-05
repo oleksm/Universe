@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.bakery
+  name: "Bakery"
+  step: "Bake bread"
+  description: "Mixes, proves and bakes."
+physical:
+  length: 50
+  width: 30
+  height: 10
+recipes:
+  - makes: good.bread
+    does: "Water goes off in the oven."
+    inputs:
+      - { item: good.flour, quantity: 0.72 }
+      - { item: good.water, quantity: 0.45 }
+    outputs:
+      - { item: good.water, quantity: 0.17 }
+    rate: 0.5556
+    power: 300000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

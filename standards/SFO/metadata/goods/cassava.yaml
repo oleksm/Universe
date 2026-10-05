@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.cassava
+  name: "Cassava"
+  kind: product
+  description: "A starchy root that stands heat and poor soil."
+physical:
+  bulk_density: 600
+  storage_max_temperature: 288
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

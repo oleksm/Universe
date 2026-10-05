@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.offal
+  name: "Offal and hides"
+  kind: by-product
+  description: "What is left of an animal when the meat is cut: hides, bones, blood and offal."
+physical:
+  bulk_density: 900
+  storage_max_temperature: 275
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

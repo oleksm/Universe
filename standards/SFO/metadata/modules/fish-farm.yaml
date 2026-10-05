@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.fish-farm
+  name: "Fish farm"
+  step: "Raise fish"
+  description: "Ponds or tanks where fish are raised on feed."
+physical:
+  length: 200
+  width: 100
+  height: 3
+recipes:
+  - makes: good.live-fish
+    does: "Fish raised on 1.3 kg of feed for each kg they gain. The water they live in is kept, not used up."
+    inputs:
+      - { item: good.animal-feed, quantity: 1.3 }
+      - { item: element.o, quantity: 0.52 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 0.715 }
+      - { item: good.manure, quantity: 0.105 }
+    rate: 0.009506
+    power: 50000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

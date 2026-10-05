@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.grain-silo
+  name: "Grain silo"
+  step: "Store dry"
+  description: "Tall bins for grain, pulses and other dry crops."
+physical:
+  length: 60
+  width: 30
+  height: 40
+capacity:
+  holds: 20000000
+needs:
+  power: 100000
+basis:
+  - { of: [physical, capacity, needs], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

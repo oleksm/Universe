@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.sunflower-seed
+  name: "Sunflower seed"
+  kind: product
+  description: "An oilseed for warm ground."
+physical:
+  bulk_density: 410
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

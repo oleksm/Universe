@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.pomace
+  name: "Pomace"
+  kind: by-product
+  description: "Skins, stones and pulp left from pressing olives or grapes."
+physical:
+  bulk_density: 600
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

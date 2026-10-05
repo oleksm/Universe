@@ -1,0 +1,82 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.livestock-barn
+  name: "Livestock barn"
+  step: "Raise animals"
+  description: "Sheds, yards and feed stores for animals raised on feed and hay brought to them. Set to one kind of animal at a time."
+physical:
+  length: 200
+  width: 50
+  height: 8
+recipes:
+  - makes: good.live-pigs
+    does: "About 5,000 pigs a year raised to 110 kg, on 3 kg of feed for each kg they gain."
+    inputs:
+      - { item: good.animal-feed, quantity: 3.0 }
+      - { item: good.water, quantity: 6.0 }
+      - { item: element.o, quantity: 1.2 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 1.65 }
+      - { item: good.manure, quantity: 7.55 }
+    rate: 0.01743
+    power: 50000
+  - makes: good.live-chickens
+    does: "About 30,000 birds at a time, six or seven flocks a year, on 1.8 kg of feed for each kg they gain."
+    inputs:
+      - { item: good.animal-feed, quantity: 1.8 }
+      - { item: good.water, quantity: 3.5 }
+      - { item: element.o, quantity: 0.72 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 0.99 }
+      - { item: good.manure, quantity: 4.03 }
+    rate: 0.01553
+    power: 50000
+  - makes: good.eggs
+    does: "About 30,000 laying hens, 18 kg of eggs a year each, on 2.2 kg of feed for each kg of eggs."
+    inputs:
+      - { item: good.animal-feed, quantity: 2.2 }
+      - { item: good.water, quantity: 4.0 }
+      - { item: element.o, quantity: 0.88 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 1.21 }
+      - { item: good.manure, quantity: 4.87 }
+    rate: 0.01711
+    power: 50000
+  - makes: good.milk
+    does: "About 200 cows giving 8 t of milk a year each, on a kilogram of hay and feed for each kg of milk."
+    inputs:
+      - { item: good.hay, quantity: 0.6 }
+      - { item: good.animal-feed, quantity: 0.4 }
+      - { item: good.water, quantity: 4.5 }
+      - { item: element.o, quantity: 0.4 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 0.55 }
+      - { item: good.manure, quantity: 4.35 }
+    rate: 0.0507
+    power: 50000
+  - makes: good.live-cattle
+    does: "About 1,000 head fattened a year, on 8 kg of hay and feed for each kg they gain."
+    inputs:
+      - { item: good.hay, quantity: 6.0 }
+      - { item: good.animal-feed, quantity: 2.0 }
+      - { item: good.water, quantity: 30.0 }
+      - { item: element.o, quantity: 3.2 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 4.4 }
+      - { item: good.manure, quantity: 35.8 }
+    rate: 0.01584
+    power: 50000
+  - makes: good.live-sheep
+    does: "A flock raised for meat, on 8 kg of hay and feed for each kg they gain."
+    inputs:
+      - { item: good.hay, quantity: 7.0 }
+      - { item: good.animal-feed, quantity: 1.0 }
+      - { item: good.water, quantity: 20.0 }
+      - { item: element.o, quantity: 3.2 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 4.4 }
+      - { item: good.manure, quantity: 25.8 }
+    rate: 0.004753
+    power: 50000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

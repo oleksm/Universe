@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.flour-mill
+  name: "Flour mill"
+  step: "Mill flour"
+  description: "Rollers and sieves that take wheat down to flour and take off the bran."
+physical:
+  length: 60
+  width: 30
+  height: 30
+recipes:
+  - makes: good.flour
+    does: "Three quarters of the grain becomes flour; the rest is bran."
+    inputs:
+      - { item: good.wheat, quantity: 1.333 }
+    outputs:
+      - { item: good.bran, quantity: 0.333 }
+    rate: 2.778
+    power: 500000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }
