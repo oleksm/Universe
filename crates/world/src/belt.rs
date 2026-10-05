@@ -107,10 +107,13 @@ impl RockClass {
     }
 
     /// Whether its record has all the game needs to make one: its densities,
-    /// albedo and colour.
+    /// albedo and colour, and what digging it yields (as an ore the game's
+    /// excavators dig).
     pub fn described(self) -> bool {
-        let p = &self.record().physical;
-        p.density_rubble.is_some() && p.density_monolith.is_some() && p.albedo.is_some() && p.colour.is_some()
+        let r = self.record();
+        let p = &r.physical;
+        let yields = r.mining.yields.as_deref().is_some_and(|g| crate::goods::Ore::from_key(g).is_some());
+        p.density_rubble.is_some() && p.density_monolith.is_some() && p.albedo.is_some() && p.colour.is_some() && yields
     }
 
     fn physical(self) -> &'static crate::registry::RockClassPhysical {

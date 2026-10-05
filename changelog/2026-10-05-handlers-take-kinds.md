@@ -11,3 +11,6 @@
 - **Inputs drawn where a module stands** (`from: place`, the world's air, rain or ground water, for
   open-sky modules) don't come out of a works' store, aren't bought, count as no supply of a line,
   and cost nothing in a worked-out price.
+- **A rock class is made only when the game can dig it** (after merging the registry's colours for
+  four more classes): its record needs densities, albedo, colour, and a `yields` that is an ore the
+  excavators dig. Basaltic, primitive, enstatite and stony-iron wait for theirs.
