@@ -12,6 +12,9 @@ identity:
 physical:
   volume: 54301
   mass: 118000
+  length: 60.0
+  width: 30.1
+  height: 30.1
 capacity:
   fuel: 80000
   hold: 150000
@@ -79,3 +82,4 @@ design:
   lift_thrust: 6400000.0
 basis:
   - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design, slots, thrusters, flight], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not measured: as long as twice the radius the game flies it at, and square in section to give its volume. An early hull, outdated: a placeholder." }

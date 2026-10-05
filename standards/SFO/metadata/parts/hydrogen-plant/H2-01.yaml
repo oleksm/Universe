@@ -7,8 +7,12 @@ identity:
   description: "Cells that split water into hydrogen and oxygen with electric current."
 physical:
   mass: 71440
+  length: 5.23
+  width: 5.23
+  height: 5.23
 fit:
   count: 44
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://nelhydrogen.com/wp-content/uploads/2024/08/A-Series-Spec-Sheet\u2013DOC001974_03.pdf", note: "A Nel A485 alkaline stack module in operation: 71,440 kg, making 485 normal m3 of hydrogen an hour." }
   - { of: [fit], tier: derived, review: true, note: "This plant's 1.89 t of hydrogen an hour is 21,000 normal m3, at 485 a stack." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room it would take at 500 kg for each m3, as the equipment list has it: what it is made of is not said. A placeholder until it is sized." }

@@ -7,6 +7,9 @@ identity:
   description: "Tanks the water and nutrients are mixed in, and the pipes that carry them to the troughs and back."
 physical:
   mass: 60000
+  length: 2.81
+  width: 2.81
+  height: 2.81
 made_from:
   - item: stock.al6061-pl-5-panel
     quantity: 60000.0
@@ -16,3 +19,4 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. A guess. Taken as cut from plate with 15% lost; a real one is of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

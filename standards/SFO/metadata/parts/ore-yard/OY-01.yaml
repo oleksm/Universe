@@ -7,6 +7,9 @@ identity:
   description: "A bucket wheel on a long boom that travels the yard, stacking what arrives and reclaiming it for the plant."
 physical:
   mass: 885000
+  length: 4.84
+  width: 4.84
+  height: 4.84
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 885000
@@ -18,3 +21,4 @@ basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://directindustry.com/prod/takraf/product-58547-505661.html", note: "A TAKRAF bucket wheel reclaimer with a 46 m boom: 885 t. Seen only as a search excerpt, not on the page. The largest, at 20,000 t an hour, weigh 2,000 to 3,000 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

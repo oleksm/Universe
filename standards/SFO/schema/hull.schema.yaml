@@ -7,7 +7,7 @@ additionalProperties: false
 required: [identity, slots, thrusters, flight]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
-  - { properties: { physical: { required: [volume] } } }
+  - { properties: { physical: { required: [volume, length, width, height] } } }
 properties:
   identity:
     type: object

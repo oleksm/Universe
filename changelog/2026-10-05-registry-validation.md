@@ -8,3 +8,5 @@
 - **Physical things derive from one base:** a kind that exists in the world must have its physical
   figures, each above nothing. Companies, laws and needs do not.
 - 54 missing figures filled, as guesses marked to review.
+- **Dimensions are required** of equipment, parts and hulls. 599 records that had none carry a
+  marked stand-in; a new report counts which sizes are real.

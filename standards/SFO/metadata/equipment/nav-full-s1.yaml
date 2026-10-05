@@ -10,6 +10,9 @@ size_class: 1
 physical:
   mass: 150
   volume: 0.3
+  length: 0.669
+  width: 0.669
+  height: 0.669
 needs:
   power: 20000
 built_of:
@@ -24,3 +27,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a computer, its sensors and a case." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }

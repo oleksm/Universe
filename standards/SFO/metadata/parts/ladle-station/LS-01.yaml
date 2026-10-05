@@ -7,6 +7,9 @@ identity:
   description: "A lined bucket that carries a heat of liquid steel."
 physical:
   mass: 42000
+  length: 1.75
+  width: 1.75
+  height: 1.75
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 42000
@@ -18,3 +21,4 @@ basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://www.sheffieldforgemasters.com/news-and-insights/news/01/sheffield-forgemasters-enhances-ladle-fleet/", note: "A lined ladle for 105 t of steel weighs about 55 t empty: scaled to an 80 t heat. Seen only as a search excerpt, not on the page." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

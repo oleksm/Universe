@@ -2333,6 +2333,14 @@ for it in sorted(_outs, key=lambda i: item_name(i).lower()):
     rows.append(row("ok" if takers else "gap", item_name(it), ", ".join(list(dict.fromkeys(_outs[it]))[:6]) + (" and others" if len(set(_outs[it])) > 6 else ""), ", ".join(takers[:6]) + (" and others" if len(takers) > 6 else "") or "nothing takes it"))
 report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed. Elements are left out: a metal won beside the main one is a product.", ["Given off", "By", "Taken by"], rows)
 
+# 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
+_stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
+rows = []
+for kind_, recs_ in (("Hulls", hulls), ("Equipment", equipment), ("Parts", parts)):
+    owed = [e_ for e_ in recs_ if _stand_in(e_)]
+    rows.append(row("gap" if owed else "ok", kind_, len(recs_), len(recs_) - len(owed), len(owed), ", ".join((e_.get("identity") or {}).get("name", e_.get("slug", "")) for e_ in owed[:8]) + (f" and {len(owed) - 8} more" if len(owed) > 8 else "")))
+report("dimensions", "Dimensions: sized, or only standing in", "Every hull, piece of equipment and part must say its length, width and height. Where nobody has worked a size out, a cube of its volume stands in, marked: those are owed a real size.", ["Kind", "Records", "Sized", "Standing in", "Owed"], rows)
+
 # 3d. The dictionary: the registry's shared words, and what each value means (standards/dictionary.schema.yaml).
 _dict = load(os.path.join(TREE, "dictionary.schema.yaml")).get("definitions") or {}
 rows = [row("note", name if i == 0 else "", v, (d.get("x-values") or {}).get(v, ""), d.get("description", "") if i == 0 else "") for name, d in _dict.items() for i, v in enumerate(d.get("enum") or [])]

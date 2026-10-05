@@ -7,8 +7,12 @@ identity:
   description: "Lines the vessel: takes the neutrons' energy as heat and stops the radiation."
 physical:
   mass: 3300000
+  length: 18.8
+  width: 18.8
+  height: 18.8
 fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's blanket and divertor: its vessel weighs 8,500 tonnes with them and 5,200 without." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room it would take at 500 kg for each m3, as the equipment list has it: what it is made of is not said. A placeholder until it is sized." }

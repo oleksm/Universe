@@ -7,6 +7,9 @@ identity:
   description: "Tiers of troughs the crop stands in, a hectare of them."
 physical:
   mass: 135000
+  length: 3.68
+  width: 3.68
+  height: 3.68
 made_from:
   - item: stock.al6061-pl-5-panel
     quantity: 135000.0
@@ -16,3 +19,4 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. 10,000 m2 of trough in 5 mm plate. Taken as cut from plate with 15% lost; a real one is of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

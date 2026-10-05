@@ -10,6 +10,9 @@ size_class: 1
 physical:
   mass: 250
   volume: 0.5
+  length: 0.794
+  width: 0.794
+  height: 0.794
 needs:
   power: 80000
 built_of:
@@ -23,3 +26,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: as the standard flight computer, with heavier thruster drivers." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }

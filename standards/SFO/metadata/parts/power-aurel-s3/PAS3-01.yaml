@@ -7,6 +7,9 @@ identity:
   description: "The lining that faces the burning plasma."
 physical:
   mass: 157
+  length: 0.366
+  width: 0.366
+  height: 0.366
 made_from:
   - item: stock.sic-tl-10
     quantity: 180.5
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of reactor and power conversion, as in NASA's Discovery II (2005), brought to this product's weight." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

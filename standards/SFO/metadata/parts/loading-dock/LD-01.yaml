@@ -7,6 +7,9 @@ identity:
   description: "Lifts cargo between ships and the dock."
 physical:
   mass: 241000
+  length: 3.14
+  width: 3.14
+  height: 3.14
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 241000
@@ -18,3 +21,4 @@ basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.liebherr.com/en-hk/p/lhm420-5244437", note: "A Liebherr LHM 280 mobile harbour crane, which lifts 84 t: 241 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

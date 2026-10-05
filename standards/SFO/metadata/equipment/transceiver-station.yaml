@@ -9,6 +9,9 @@ size_class: 4
 physical:
   mass: 20000
   volume: 60
+  length: 3.91
+  width: 3.91
+  height: 3.91
 needs:
   power: 1000000
 built_of:
@@ -24,3 +27,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }

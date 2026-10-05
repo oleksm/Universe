@@ -10,6 +10,9 @@ size_class: 2
 physical:
   mass: 2500
   volume: 6
+  length: 1.82
+  width: 1.82
+  height: 1.82
 needs:
   power: 500000
 built_of:
@@ -26,3 +29,4 @@ basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a cutting head of picks on an arm, a motor to turn it, an anchor and winch to hold the ship to the rock, and a conveyor to the hold. A roadheader with a 300 kW head weighs 130 t on Earth, because its weight is what holds it to the face; here the anchor does that, and the rig is 2.5 t." }
   - { of: [function.excavator_power, function.throughput, function.anchor_reach, function.anchor_speed], tier: sourced, review: true, source: "the game: crates/world/src/mining.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }

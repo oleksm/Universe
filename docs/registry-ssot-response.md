@@ -803,3 +803,9 @@ moves:**
   cut and form them first.
 
 The user decides when you merge. Also the user's: the metallic share at the frost line stays 0.15.
+
+**Dimensions required (the user, 2026-10-05).** Equipment, parts and hulls must now say a length,
+width and height (the schemas' `allOf`, which your generator passes over: no type changed). 599
+records that had none carry a marked stand-in (a cube of their volume): do not place or collide by
+them yet. The page's report "Dimensions" says which are real: the MC-07 and its 58 measured parts,
+and the five tanks.

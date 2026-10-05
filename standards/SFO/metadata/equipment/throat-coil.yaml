@@ -8,6 +8,9 @@ identity:
 physical:
   volume: 60
   mass: 150000
+  length: 3.91
+  width: 3.91
+  height: 3.91
 built_of:
   parts: throat-coil
 making:
@@ -18,3 +21,4 @@ basis:
   - { of: [physical], tier: invented, review: true, note: "A guess, to be reviewed: nothing says what holds a tube or what it weighs. Not in the game yet." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: one great coil of a gate ring, in its case, with its cold plant. ITER's eighteen coils weigh 330 t each; this is 150 t." }
   - { of: [physical.volume], tier: invented, review: true, note: "Chosen: about twice the room its 150 t of metal takes." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }

@@ -7,6 +7,9 @@ identity:
   description: "The inner skin, with its insulation behind: what keeps the hall's warmth from the shell."
 physical:
   mass: 86000
+  length: 3.17
+  width: 3.17
+  height: 3.17
 made_from:
   - item: stock.al6061-sh-2-panel
     quantity: 86000.0
@@ -16,3 +19,4 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. 16,000 m2 of 2 mm sheet; the insulation behind it is not counted. Taken as cut from plate with 15% lost; a real one is of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

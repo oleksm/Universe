@@ -10,6 +10,9 @@ size_class: 3
 physical:
   mass: 2000
   volume: 300
+  length: 8.31
+  width: 8.31
+  height: 8.31
 built_of:
   parts: tank-s3
 making:
@@ -21,3 +24,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: the 4 t tank's, larger. A real tank's wall grows with its surface and its fuel with its volume, so a larger one should be lighter for what it holds: these are, a little (7.5 to 6.3% of the fuel's weight)." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }

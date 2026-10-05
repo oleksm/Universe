@@ -7,6 +7,9 @@ identity:
   description: "A turning drum of steel balls that grinds the ore fine."
 physical:
   mass: 400000
+  length: 3.72
+  width: 3.72
+  height: 3.72
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 400000
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
