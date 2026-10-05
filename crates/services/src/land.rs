@@ -294,7 +294,9 @@ fn price(place: &crate::economy::Place, key: &str) -> Option<(universe_world::go
 /// One step of a settlement's facilities (see `LandOffice::run`): how each ran.
 fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate::economy::Place, ledger: &mut Ledger, market: Party, tick: u64) -> Vec<Option<Run>> {
     let c = universe_world::content::content();
-    let hours = STEP / 3600.0;
+    // (Its flows are kg/s and W; the market counts tonnes, and power is billed by the MWh.)
+    let tonnes = |kg_per_s: f64| kg_per_s * STEP / universe_world::goods::TONNE;
+    let mwh = |watts: f64| watts * STEP / 3.6e9;
     let built: Vec<bool> = g.works.iter().map(|w| w.built(at)).collect();
     let supplies = |w: &Works| w.blocks.iter().filter_map(|b| c.industrial(&b.module)).map(|m| m.supplies).sum::<f64>();
     let supply: f64 = g.works.iter().zip(&built).filter(|(_, b)| **b).map(|(w, _)| supplies(w)).sum();
@@ -313,7 +315,7 @@ fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate:
         // (As fast as the market's stock of what it takes lets it.)
         for (name, key, rate) in &f.takes {
             if let Some((kind, _)) = price(place, key) {
-                let need = rate * hours;
+                let need = tonnes(*rate);
                 if need > 0.0 && place.stock_of(kind) < need * run.rate {
                     run.rate = place.stock_of(kind) / need;
                     run.held_by = Some(name.to_uppercase());
@@ -322,7 +324,7 @@ fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate:
         }
         for (_, key, rate) in &f.takes {
             if let Some((kind, p)) = price(place, key) {
-                let t = rate * hours * run.rate;
+                let t = tonnes(*rate) * run.rate;
                 place.take(kind, t);
                 let _ = ledger.transfer(owner, market, Asset::Credits, t * p, tick, cause);
                 run.earned -= t * p;
@@ -330,15 +332,15 @@ fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate:
         }
         for (_, key, rate) in &f.gives {
             if let Some((kind, p)) = price(place, key) {
-                let t = rate * hours * run.rate;
+                let t = tonnes(*rate) * run.rate;
                 place.put(kind, t);
                 let _ = ledger.transfer(market, owner, Asset::Credits, t * p, tick, cause);
                 run.earned += t * p;
             }
         }
-        let mwh = f.draws * hours * run.rate;
-        used_mwh += mwh;
-        power_bill.push((k, owner, mwh));
+        let drawn = mwh(f.draws) * run.rate;
+        used_mwh += drawn;
+        power_bill.push((k, owner, drawn));
         runs[k] = Some(run);
     }
     // Power: paid for by what drew it, to the stations by what each supplies;
@@ -350,7 +352,7 @@ fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate:
         }
         let part = s / supply.max(1e-9);
         let delivered = used_mwh * part;
-        let mut run = Run { rate: delivered / (s * hours).max(1e-9), held_by: None, earned: 0.0 };
+        let mut run = Run { rate: delivered / mwh(s).max(1e-12), held_by: None, earned: 0.0 };
         for &(j, payer, mwh) in &power_bill {
             let bill = mwh * part * POWER_PRICE;
             if payer != owner {
@@ -365,7 +367,7 @@ fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate:
             for (_, key, rate) in &f.burns {
                 if let Some((kind, p)) = price(place, key) {
                     // (Its burn flat out, as a share of what it supplied.)
-                    let t = rate * hours * run.rate;
+                    let t = tonnes(*rate) * run.rate;
                     place.take(kind, t);
                     let _ = ledger.transfer(owner, market, Asset::Credits, t * p, tick, cause);
                     run.earned -= t * p;

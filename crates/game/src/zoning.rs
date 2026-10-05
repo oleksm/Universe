@@ -269,14 +269,14 @@ fn maxima(w: &Works) -> Vec<String> {
     let mut out = Vec::new();
     let same = c.settlements.iter().flat_map(|s| &s.facilities).find(|f| f.blocks.len() == w.blocks.len() && f.blocks.iter().zip(&w.blocks).all(|(a, b)| a.module == b.module));
     if let Some(f) = same {
-        out.extend(f.makes.iter().map(|(what, t)| format!("MAKES {} UP TO {t:.1} T/H", what.to_uppercase())));
+        out.extend(f.makes.iter().map(|(what, rate)| format!("MAKES {} UP TO {:.1} T/H", what.to_uppercase(), rate * 3.6)));
         if f.draws > 0.0 {
-            out.push(format!("DRAWS {:.0} MW FLAT OUT", f.draws));
+            out.push(format!("DRAWS {:.0} MW FLAT OUT", f.draws / 1e6));
         }
     }
     let supplies: f64 = w.blocks.iter().filter_map(|b| c.industrial(&b.module)).map(|m| m.supplies).sum();
     if supplies > 0.0 {
-        out.push(format!("SUPPLIES UP TO {supplies:.0} MW"));
+        out.push(format!("SUPPLIES UP TO {:.0} MW", supplies / 1e6));
     }
     out
 }
