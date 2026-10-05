@@ -75,3 +75,5 @@
   coil, each saying what kind of device it is and only that kind's figures. It is the game's early
   list, marked outdated and to be reviewed. **Fuels are materials:** nine of them, each with how it
   gives up its energy and how much.
+- **Hulls say what the engine needs of them:** their model, their slots, which nozzle each slot's
+  equipment drives, their radius and drag. The registry checks that what is fitted fits its slot.

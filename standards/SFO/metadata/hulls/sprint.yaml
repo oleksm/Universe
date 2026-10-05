@@ -15,6 +15,46 @@ physical:
 capacity:
   fuel: 8000
   hold: 4000
+shape: shape.sprint
+slots:
+  - { name: power, kind: power, size: 1 }
+  - { name: drive, kind: drive, size: 1 }
+  - { name: thrusters, kind: thrusters, size: 1 }
+  - { name: lift, kind: lift, size: 1 }
+  - { name: tank, kind: tank, size: 2 }
+  - { name: cargo, kind: cargo, size: 1 }
+  - { name: hyperdrive, kind: hyperdrive, size: 1 }
+  - { name: capacitor, kind: capacitor, size: 1 }
+  - { name: computer, kind: computer, size: 1 }
+  - { name: transponder, kind: transponder, size: 1 }
+  - { name: sensors, kind: sensors, size: 1 }
+  - { name: comm, kind: comm, size: 1 }
+  - { name: life, kind: life_support, size: 1 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1 }
+  - { name: avionics, kind: avionics, size: 1 }
+thrusters:
+  - { nozzle: nozzle_main_0, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_1, slot: drive, share: 1 }
+  - { nozzle: nozzle_nose_left_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_nose_left_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_left_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_nose_right_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_tail_left_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_up, slot: thrusters, share: 0.5 }
+  - { nozzle: nozzle_tail_right_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_lift_nose_left, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_nose_right, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_tail_left, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_tail_right, slot: lift, share: 1 }
+flight:
+  radius: 9
+  drag_area: 30
+  hull_strength: 9000000
 fit:
   - { slot: power, item: equipment.power.fusion.s1 }
   - { slot: drive, item: equipment.drive.torch.s1 }
@@ -36,4 +76,4 @@ design:
   main_thrust: 1800000.0
   lift_thrust: 880000.0
 basis:
-  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
+  - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design, slots, thrusters, flight], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }

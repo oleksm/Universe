@@ -4,7 +4,7 @@ identity:
   name: "Life support S1"
   maker: org.hadley
   revision: outdated
-  slot: life
+  slot: life_support
   description: "Air, water and warmth for the crew."
 size_class: 1
 physical:

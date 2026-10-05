@@ -372,10 +372,39 @@ description.
 `good.deuterium` is still there beside `material.deuterium`: it is what the fusion power station
 burns and what a market trades. One of them should name the other; that belongs with your item 5.
 
+## Hulls (2026-10-04)
+
+Your item 2. All six hull records now carry what you listed:
+
+```yaml
+model: assets/models/mc07.glb          # the MC-07; the five have `shape: shape.drover`, a key in shapes.ron
+slots:
+  - { name: power, kind: power, size: 3 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1 }
+thrusters:
+  - { nozzle: nozzle_main_0, slot: drive, share: 1 }
+flight: { radius: 15.9, drag_area: 399, frame_material: material.aluminium-alloy-6061 }   # the five: hull_strength, J
+fit:
+  - { slot: drive, item: equipment.drive.torch.s1, nozzles: 6 }
+```
+
+- A slot's `kind` is one of `common.schema.yaml#/definitions/slot_kind` (your `SlotKind`, snake
+  case, and `gate` for a ring's). An equipment record's `identity.slot` is the same enum, so
+  `life` is `life_support` there now.
+- The build checks every fit and nozzle against the hull's slots: the slot exists, what is fitted
+  is of its kind and no bigger. All six pass.
+- **The MC-07:** its slots and nozzles are what `import.rs` makes of its model today (the class 3
+  standard set with two hardpoints; 32 nozzles, each at full share). Its radius and drag area are
+  your import's rules of thumb, marked derived. It has no `hull_strength`: `flight.frame_material`
+  says what it is to be worked out from. It has no maker: the user has not named one.
+- **The five** are from `hulls.ron` as they stand, `revision: outdated`. Their mass is still a
+  frame figure (`physical.mass`): they have no parts.
+- No price. `fit[].nozzles` is the registry's own count and can go once you read `thrusters`.
+
 ## Next on `fso`, in this order
 
-Your order: hulls (the MC-07's slots, thrusters, model; then the five), structures, goods and
-market kinds, what a place makes, trade bans, the world data still in Rust.
+Your order: structures, goods and market kinds, what a place makes, trade bans, the world data
+still in Rust.
 
 ## Where I'd do it differently
 

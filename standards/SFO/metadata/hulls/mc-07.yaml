@@ -16,6 +16,60 @@ capacity:
   hold_volume: 669
   fuel: 4000
   hold: 1200000
+model: assets/models/mc07.glb
+slots:
+  - { name: power, kind: power, size: 3 }
+  - { name: drive, kind: drive, size: 3 }
+  - { name: thrusters, kind: thrusters, size: 3 }
+  - { name: lift, kind: lift, size: 3 }
+  - { name: tank, kind: tank, size: 4 }
+  - { name: hyperdrive, kind: hyperdrive, size: 3 }
+  - { name: computer, kind: computer, size: 1 }
+  - { name: transponder, kind: transponder, size: 1 }
+  - { name: sensors, kind: sensors, size: 1 }
+  - { name: comm, kind: comm, size: 1 }
+  - { name: life, kind: life_support, size: 2 }
+  - { name: avionics, kind: avionics, size: 1 }
+  - { name: cargo, kind: cargo, size: 4 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1 }
+  - { name: hardpoint_2, kind: hardpoint, size: 1 }
+thrusters:
+  - { nozzle: nozzle_lift_0, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_1, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_2, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_3, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_4, slot: lift, share: 1 }
+  - { nozzle: nozzle_lift_5, slot: lift, share: 1 }
+  - { nozzle: nozzle_main_0, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_1, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_2, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_3, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_4, slot: drive, share: 1 }
+  - { nozzle: nozzle_main_5, slot: drive, share: 1 }
+  - { nozzle: nozzle_nose_left_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_left_down, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_left_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_left_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_left_up, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_down, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_nose_right_up, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_down, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_left_up, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_aft, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_down, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_fore, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_side, slot: thrusters, share: 1 }
+  - { nozzle: nozzle_tail_right_up, slot: thrusters, share: 1 }
+flight:
+  radius: 15.9
+  drag_area: 399
+  frame_material: material.aluminium-alloy-6061
 fit:
   - { slot: drive, item: equipment.drive.torch.s1, nozzles: 6 }
   - { slot: thrusters, item: equipment.thrusters.quad.s1 }
@@ -44,6 +98,8 @@ design:
   strut_efficiency: 0.85
   minimum_gauge: 0.002
 basis:
+  - { of: [slots, thrusters], tier: sourced, source: "the game: the MC-07 as it imports its model (crates/world/src/import.rs)", note: "Its slots are the standard set for a class 3 hull with two hardpoints; its nozzles are the model's, each at full share." }
+  - { of: [flight.radius, flight.drag_area], tier: derived, source: "the game: crates/world/src/import.rs", note: "Worked out by the engine from the model's size: 0.3 of half its longest side and 6 m; 0.6 of its width by its height. Rough rules, the engine's." }
   - { of: [fit], tier: sourced, source: "the game: the fit it gives the MC-07 as imported", note: "The cheapest module for each of its slots, less the cargo racks: its hold is its ore bay. Fixed for now." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume." }
   - { of: [capacity.hold_volume], tier: invented, review: true, note: "A guess, to be reviewed: the ore bay under its two top doors. The opening is the doors' (9.95 by 8.4 m, measured from the model); its depth of 8 m is chosen, leaving the cargo deck below. The model's inside has not been measured." }
@@ -57,6 +113,8 @@ basis:
   - { of: [design.cabin_pressure], tier: invented, note: "Sea-level air, chosen. Airliners hold 54 to 65 kPa above the outside." }
   - { of: [design.minimum_gauge], tier: invented, note: "Chosen. Airliner skin is about 1 mm." }
 open_questions:
+  - "Who makes it: it has no maker."
+  - "How strong it is: the game takes 600 J for each kg of an 88 t frame. Its frame is 6061 aluminium; what wrecks it is to be worked out from its parts."
   - "Its mass: its parts come to 154 t; the game flies it with an 88 t frame, worked out from its size. The spec's is what is meant; the game is to follow."
   - "Its ore bay: its depth is a guess, and so what it carries. The model's inside needs measuring."
   - "Its skin under the main drive's push: 2 mm sheet buckles unless it is stiffened closely or made thicker (see the structure report). No frames or stringers are parts yet, so their weight is not counted."

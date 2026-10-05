@@ -11,6 +11,9 @@ description: 'standards/common.schema.yaml: what every schema of the registry sh
 # (x-kind: [hull]; a settlement's schema holds two, [settlement, rig]). The build checks each record's
 # key against it.
 definitions:
+  slot_kind:
+    description: "A kind of slot a hull has, and so the kind of equipment that fits it. gate: a gate ring's, not a hull's."
+    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, gate]
   made_from:
     description: "What a made thing is made from: each a material, an item of stock or a part, by its key, and how much of it one takes. (A thing put together from parts of its own has none: they are in its folder.)"
     type: array

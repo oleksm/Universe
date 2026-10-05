@@ -1046,7 +1046,7 @@ for s in standards:
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
-            if kind in ("hulls", "gates") and group == "fit":
+            if kind in ("hulls", "gates") and group in ("fit", "slots", "thrusters", "model", "shape"):
                 continue
             if kind == "goods" and group == "composition":
                 for c in props or []:
@@ -1785,6 +1785,23 @@ makers_of = lambda item: [m for m in modules if any(r.get("product") == item for
 ingot_makers = lambda mat: [q for q in processes + routes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
 eq_of = {e["slug"]: e for e in equipment}
+# (A hull's fit and nozzles against its slots: each names a slot it has, and what is fitted is of the slot's kind and no bigger.)
+for hl in hulls:
+    where = os.path.join(TREE, hl["file"])
+    slots = {s_["name"]: s_ for s_ in hl.get("slots") or []}
+    if not slots:
+        continue
+    for ft in hl.get("fit") or []:
+        s_, e_ = slots.get(ft.get("slot")), eq_of.get(ft.get("item"))
+        if s_ is None:
+            problem(where, f"fit: it has no slot '{ft.get('slot')}'")
+        elif e_ is not None and (e_.get("identity") or {}).get("slot") != s_["kind"]:
+            problem(where, f"fit: {ft['item']} is for a {(e_.get('identity') or {}).get('slot')} slot; {ft['slot']} is a {s_['kind']} slot")
+        elif e_ is not None and ((e_.get("performance") or {}).get("size_class") or 1) > s_["size"]:
+            problem(where, f"fit: {ft['item']} is of size class {e_['performance']['size_class']}, too big for {ft['slot']} (size {s_['size']})")
+    for t_ in hl.get("thrusters") or []:
+        if t_.get("slot") not in slots:
+            problem(where, f"thrusters: nozzle {t_.get('nozzle')} is driven by '{t_.get('slot')}', which is no slot of it")
 # (The hulls whose parts are listed: the others are coarse, in the Hulls report.)
 built_hulls = [hl for hl in hulls if hl.get("parts_mass")]
 for hl in built_hulls + structures:
