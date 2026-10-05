@@ -348,3 +348,81 @@ pub struct Needs {
     #[serde(default)]
     pub power: Option<f64>,
 }
+
+/// `market.*`: one of the categories the markets trade in. Anything physical
+/// is traded as one (its `traded_as`).
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Market {
+    pub identity: MarketIdentity,
+    /// About what one item weighs, for goods the seed names itself (kg).
+    #[serde(default)]
+    pub unit_mass: Option<f64>,
+    /// As stowed in a hold (kg/m³).
+    #[serde(default)]
+    pub bulk_density: Option<f64>,
+    /// kg a person uses of it each second (none: people don't use it up).
+    #[serde(default)]
+    pub basket: Option<f64>,
+    #[serde(default)]
+    pub names: Option<MarketNames>,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MarketIdentity {
+    pub key: String,
+    pub name: String,
+}
+
+/// The words the seed names its goods of a category from.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct MarketNames {
+    #[serde(default)]
+    pub adjectives: Vec<String>,
+    #[serde(default)]
+    pub nouns: Vec<String>,
+}
+
+/// `stock.*`: an item of mill stock: a material in a form and a size.
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct Stock {
+    pub identity: StockIdentity,
+    #[serde(default)]
+    pub made_from: Vec<crate::MadeFrom>,
+    #[serde(default)]
+    pub size: Option<StockSize>,
+    #[serde(default)]
+    pub physical: Physical,
+    #[serde(default)]
+    pub basis: Vec<Basis>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StockIdentity {
+    pub key: String,
+    /// The market category it's traded as, by key.
+    #[serde(default)]
+    pub traded_as: Option<String>,
+    pub code: String,
+    pub name: String,
+    pub form: String,
+    #[serde(default)]
+    pub temper: Option<String>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct StockSize {
+    #[serde(default)]
+    pub thickness: Option<f64>,
+    #[serde(default)]
+    pub diameter: Option<f64>,
+    #[serde(default)]
+    pub wall: Option<f64>,
+}

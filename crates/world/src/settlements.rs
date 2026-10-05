@@ -103,6 +103,9 @@ impl Settlement {
     /// game has as brands: not checked here.)
     pub fn check(&self) -> Result<(), String> {
         for f in &self.facilities {
+            if let Some((what, ..)) = f.burns.iter().find(|(_, kind, _)| kind.is_empty()) {
+                return Err(format!("{}: {} burns {what}, which nothing is traded as", self.name, f.name));
+            }
             if !self.parcels.iter().any(|p| p.number == f.parcel) {
                 return Err(format!("{}: {} stands on no parcel {}", self.name, f.name, f.parcel));
             }
@@ -258,7 +261,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
     let module_of = |k: &str| reg.module(k).unwrap_or_else(|| panic!("no {k}"));
     let industrial = |k: &str| industry.iter().find(|m| m.key == k).unwrap_or_else(|| panic!("no {k}"));
     let name = |k: &str| reg.name(k).unwrap_or(k).to_string();
-    let kind_of = |item: &str| reg.good(item).and_then(|g| g.game.as_ref()?.goods.clone()).unwrap_or_default();
+    let kind_of = |item: &str| reg.traded_as(item).unwrap_or_default();
     // Records filed under a settlement: `zone.treistun.port-trethi.x` is Port Trethi's.
     let under = |key: &str, s: &str| key.split_once('.').is_some_and(|(_, rest)| rest.strip_prefix(s).is_some_and(|r| r.starts_with('.')));
     let pt = |p: &[f64; 2]| (p[0], p[1]);

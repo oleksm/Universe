@@ -60,3 +60,19 @@ pub struct Address {
     #[serde(default)]
     pub unit: Option<u32>,
 }
+
+/// One thing a made thing is made from: a material, a stock item or a part,
+/// by key, and how much of it one takes (kg, the piece as cut).
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq)]
+#[serde(deny_unknown_fields)]
+pub struct MadeFrom {
+    pub item: String,
+    #[serde(default)]
+    pub quantity: Option<f64>,
+    #[serde(default)]
+    pub blank: Option<String>,
+    #[serde(default)]
+    pub grain: Option<String>,
+    #[serde(default)]
+    pub finish: Option<String>,
+}

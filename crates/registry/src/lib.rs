@@ -27,10 +27,10 @@ mod land;
 mod organisation;
 mod sfo;
 
-pub use common::{Address, Physical};
+pub use common::{Address, MadeFrom, Physical};
 pub use organisation::{Business, Details, Form, OrgIdentity, OrgKind, Organisation, ZoneRule, ZoneUse};
 pub use land::{Facility, FacilityKind, GatePlace, KeyName, KeyOnly, Line, ModuleCount, Parcel, Pipeline, Point, Position, PowerLine, Settlement, SettlementKind, SitePart, Spin, Street, StreetAddress, Zone};
-pub use sfo::{Amount, Burn, Capacity, Changeover, Generation, Module, ModuleIdentity, Needs, Recipe, Throughput, Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
+pub use sfo::{Market, MarketIdentity, MarketNames, Stock, StockIdentity, StockSize, Amount, Burn, Capacity, Changeover, Generation, Module, ModuleIdentity, Needs, Recipe, Throughput, Block, Check, Good, GoodIdentity, GoodInGame, GoodKind, GoodSource, Licence, OpenLicence, Param, ParamValue, Part, Requirement, Standard, StandardIdentity, StandardStatus, Table, Text};
 pub use celestial::{Atmosphere, Body, BodyIdentity, BodyKind, BodyOrbit, BodyPhysical, BodyRock, InGame, Population, PopulationIdentity, PopulationKind, PopulationRocks, RockStructure, Star, Surface, Terrain, ClassMix, Composition, Found, Galaxy, GalaxySeeding, Mining, NamedIdentity, RockClass, RockClassIdentity, RockPhysical, Seeding, System, SystemIdentity, SystemPosition};
 
 /// Where a record's figures come from (the common schema's `basis`).
@@ -82,6 +82,10 @@ pub struct Registry {
     pub organisations: Vec<Organisation>,
     /// Every standards body's standards.
     pub standards: Vec<Standard>,
+    /// The market's categories.
+    pub markets: Vec<Market>,
+    /// Mill stock.
+    pub stock: Vec<Stock>,
     /// Industrial modules, with their recipes.
     pub modules: Vec<Module>,
     /// Settlements and rigs, and the ground of each settlement.
@@ -172,6 +176,8 @@ impl Registry {
                 "rock-class" => parse(&mut |t| Ok(reg.rock_classes.push(serde_norway::from_str(t)?))),
                 "org" => parse(&mut |t| Ok(reg.organisations.push(serde_norway::from_str(t)?))),
                 "standard" => parse(&mut |t| Ok(reg.standards.push(serde_norway::from_str(t)?))),
+                "market" => parse(&mut |t| Ok(reg.markets.push(serde_norway::from_str(t)?))),
+                "stock" => parse(&mut |t| Ok(reg.stock.push(serde_norway::from_str(t)?))),
                 "module" => parse(&mut |t| Ok(reg.modules.push(serde_norway::from_str(t)?))),
                 "settlement" | "rig" => parse(&mut |t| Ok(reg.settlements.push(serde_norway::from_str(t)?))),
                 "zone" => parse(&mut |t| Ok(reg.zones.push(serde_norway::from_str(t)?))),
@@ -240,6 +246,19 @@ impl Registry {
     /// A record's name, by its key.
     pub fn name(&self, key: &str) -> Option<&str> {
         self.names.get(key).map(String::as_str)
+    }
+
+    /// What `item` (a good, a stock item or a material) is traded as: the
+    /// game's kind of goods (`goods.fuel`). A material is traded as the stock
+    /// made from it is: what burns or holds a material takes any stock of it.
+    pub fn traded_as(&self, item: &str) -> Option<String> {
+        let market = match item.split('.').next() {
+            Some("good") => return self.good(item)?.game.as_ref()?.goods.clone(),
+            Some("stock") => self.stock.iter().find(|s| s.identity.key == item)?.identity.traded_as.clone(),
+            Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
+            _ => None,
+        }?;
+        Some(format!("goods.{}", market.strip_prefix("market.")?.replace('-', "_")))
     }
 
     /// The module with this key.
