@@ -98,7 +98,7 @@ design:
   strut_efficiency: 0.85
   minimum_gauge: 0.002
 revision:
-  status: design
+  status: review
   owner: registry
   on_conflict: propose
   open_to: [physical.mass, capacity.hold, capacity.hold_volume, fit]

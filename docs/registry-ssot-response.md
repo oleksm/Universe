@@ -657,14 +657,15 @@ the registry.**
 - **`revision`** (top level, optional, on equipment, parts, hulls, modules, goods, stock,
   materials, buildings, gates, structures, needs, professions): how firm the record is and what to
   do when it does not fit your work.
-  - `status`: `sketch` (do not balance against it), `design` (build against it, propose changes),
-    `agreed` (needs the user), `sealed` (a hard limit: fit to it). Only the user seals.
+  - `status`: `draft` (a rough guess: do not balance against it, propose freely), `review` (build
+    against it, propose changes with a reason), `complete` (a hard limit: fit to it). Only the user
+    makes a record complete.
   - `on_conflict`: `adjust`, `propose`, `escalate`, `conform`.
   - `owner`, `open_to` (what may still change), `fixed` (what will not), `because`, `ask` (where a
     proposal goes).
 - **A record that says nothing has its kind's default,** written in the kind's schema (`default`
   on its `revision` property). Today: equipment, parts, hulls, buildings, structures and
-  professions are `sketch`; modules, goods, stock, materials, gates and needs are `design`. All
+  professions are `draft`; modules, goods, stock, materials, gates and needs are `review`. All
   are `propose`. Two records say their own so far: the MC-07 and the 4 t tank.
 - **`identity.revision` stays** as it was (draft, released, superseded, outdated): a product's
   stage, which you read. The new section does not replace it yet.
@@ -672,3 +673,14 @@ the registry.**
   meaning (`x-values`). `common.schema.yaml`'s `slot_kind`, `provenance`, `revision`, `in_game`
   and a basis's `tier` now point into it. Your generator followed the chain: the tests pass.
 - On the page: reports **Dictionary** and **Revisions**.
+
+**The change tracker (the user, 2026-10-05): `standards/changes.yaml`.** Generated, never changed
+by hand (its header says so). One line for every record: its key, when it last changed, its
+status, what changed, the hash of its file. Written by the build and by
+`tools/standards/tracker.py`, only when the registry is whole.
+
+- **A record whose line says `complete` may not change.** `validate.py` fails, and the build
+  stops, if its file's hash is no longer the line's, or if the record is gone.
+- **Only the user reopens one:** `python3 tools/standards/tracker.py reopen <key> "<why>"`.
+- Nothing is complete today. When you merge `fso`, take `changes.yaml` as it comes; if you change a
+  record on `main`, run the tracker (or the build) so its line follows.

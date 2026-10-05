@@ -94,5 +94,5 @@ properties:
     items: { type: string }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
-    default: { status: sketch, owner: registry, on_conflict: propose, because: "An early rough hull, unless its record says otherwise.", ask: docs/registry-ssot-request.md }
+    default: { status: draft, owner: registry, on_conflict: propose, because: "An early rough hull, unless its record says otherwise.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

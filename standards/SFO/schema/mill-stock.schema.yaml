@@ -28,5 +28,5 @@ properties:
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
-    default: { status: design, owner: registry, on_conflict: propose, because: "One gauge standing for all of its form: more gauges may be asked for.", ask: docs/registry-ssot-request.md }
+    default: { status: review, owner: registry, on_conflict: propose, because: "One gauge standing for all of its form: more gauges may be asked for.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -83,5 +83,5 @@ properties:
       recoverable: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the share of its mass got back as material when it is scrapped" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
-    default: { status: sketch, owner: registry, on_conflict: propose, because: "A first breakdown: weights by share, materials fitted to what the registry can make.", ask: docs/registry-ssot-request.md }
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A first breakdown: weights by share, materials fitted to what the registry can make.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

@@ -2336,7 +2336,7 @@ for kind, sch in SCHEMAS.items():
     if dflt:
         own = [e for e in {"equipment": equipment, "hulls": hulls, "parts": parts, "modules": modules, "goods": goods, "materials": materials, "gates": gates}.get(kind, []) if e.get("revision")]
         rows.append(row("note", KIND_NAME.get(kind, kind) if "KIND_NAME" in globals() else kind, dflt.get("status", ""), dflt.get("on_conflict", ""), dflt.get("because", ""), ", ".join(f"{e['identity'].get('name', e['slug'])}: {e['revision']['status']}" for e in own) or "none"))
-report("revisions", "Revisions: how firm each kind of record is", "What a record of each kind is unless it says otherwise, and the records that say otherwise. sketch: do not balance against it. design: build against it, propose changes. agreed: needs the user. sealed: a hard limit.", ["Kind", "Status", "On conflict", "Because", "Records that say otherwise"], rows)
+report("revisions", "Revisions: how firm each kind of record is", "What a record of each kind is unless it says otherwise, and the records that say otherwise. draft: do not balance against it. review: build against it, propose changes. complete: a hard limit, and its record may not change.", ["Kind", "Status", "On conflict", "Because", "Records that say otherwise"], rows)
 
 # 4. What goes in against what comes out, for each industrial module.
 rows = []
@@ -2820,6 +2820,10 @@ for _full, _what in _misfits:
     problem(_full, "schema: " + _what)
 for _rel in _unheld:
     problem(os.path.join(TREE, _rel), "no schema holds it")
+# (The change tracker follows a registry that is whole: standards/changes.yaml.)
+if not _misfits and not _unheld:
+    import tracker
+    tracker.write(V.SEEN)
 
 
 def write_game_keys():

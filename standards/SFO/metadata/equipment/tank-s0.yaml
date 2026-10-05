@@ -19,7 +19,7 @@ function:
   capacity: 4000
   holds: material.deuterium
 revision:
-  status: design
+  status: review
   owner: registry
   on_conflict: propose
   open_to: [physical.volume, physical.mass]

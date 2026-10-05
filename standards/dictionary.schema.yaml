@@ -3,13 +3,12 @@ title: Dictionary
 description: 'standards/dictionary.schema.yaml: the registry''s shared words. Each is a list of values a field may take, with what each value means (x-values). A schema that uses one refers to it and does not write its own list. Read this first when a value in a record is not plain.'
 definitions:
   revision_status:
-    description: "How firm a record is, for anyone building on it or against it. Only the user seals a record."
-    enum: [sketch, design, agreed, sealed]
+    description: "How firm a record is, for anyone building on it or against it. Only the user makes a record complete, and only the user reopens one."
+    enum: [draft, review, complete]
     x-values:
-      sketch: "A rough guess, there so the record exists. Do not balance against it; expect it to move."
-      design: "Worked out, and open. Build against it, and propose a change with a reason."
-      agreed: "Settled with the user. Changing it needs the user."
-      sealed: "A hard limit: other work is built on it. Fit your work to it."
+      draft: "A rough guess, there so the record exists. Do not balance against it; expect it to move; propose freely."
+      review: "Worked out, and open. Build against it, and propose a change with a reason."
+      complete: "A hard limit: other work is built on it. Fit your work to it. Validation fails if its record changes (standards/changes.yaml)."
   on_conflict:
     description: "What another agent does when a record does not fit its own work."
     enum: [adjust, propose, escalate, conform]

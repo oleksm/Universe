@@ -262,10 +262,14 @@ def key_in(rec):
     return (rec.get("identity") or {}).get("key") if isinstance(rec.get("identity"), dict) else rec.get("key")
 
 
+SEEN = []      # (every record the last check_all read: its key, file, content and schema)
+
+
 def check_all():
     """Every record against its schema: (file, what does not fit)."""
     found, unheld, named, labels = [], [], [], {}
     KEYS.clear()
+    SEEN.clear()
     for dp, dns, fns in os.walk(TREE):
         dns[:] = [d for d in dns if d not in ("schema", "sources", "logos", "icons")]
         for fn in sorted(fns):
@@ -297,6 +301,7 @@ def check_all():
                 found.append((full, f"key: {key} is also {KEYS[key]}'s"))
             else:
                 KEYS[key] = rel
+                SEEN.append((key, full, rec, schema(sp)))
             named += [(full, at, holder[i], kinds) for holder, i, kinds, at in refs(rec, schema(sp), sp)]
             if rel.startswith("Dogma") and (rec.get("identity") or {}).get("label"):
                 if rec["identity"]["label"] in labels:
@@ -315,6 +320,9 @@ def check_all():
             found.append((full, f"{at}: {key!r} is no record's key"))
         elif key.split(".")[0] not in kinds:
             found.append((full, f"{at}: {key} is not {' or '.join(('an ' if k[0] in 'aeiou' else 'a ') + k for k in kinds)}"))
+    # (A record the tracker holds as complete may not have changed: standards/changes.yaml.)
+    import tracker
+    found += list(tracker.check(SEEN))
     return found, unheld
 
 

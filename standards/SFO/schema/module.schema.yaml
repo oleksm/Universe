@@ -99,5 +99,5 @@ properties:
       power: { type: number, x-unit: "W", description: "W" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
-    default: { status: design, owner: registry, on_conflict: propose, because: "Recipes balance by mass and rest on sourced figures where its basis says so; sizes and rates are mostly chosen.", ask: docs/registry-ssot-request.md }
+    default: { status: review, owner: registry, on_conflict: propose, because: "Recipes balance by mass and rest on sourced figures where its basis says so; sizes and rates are mostly chosen.", ask: docs/registry-ssot-request.md }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
