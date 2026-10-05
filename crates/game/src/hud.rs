@@ -546,7 +546,7 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
         let v = m / 1000.0 / g.bulk_density;
         let w = g.price * units as f64;
         (mass, volume, worth) = (mass + m, volume + v, worth + w);
-        lines.push((format!("{:<26} {:<10} {:>5} {:>8} {:>6.1}M3 {:>6.0} CR", g.name.to_uppercase().chars().take(26).collect::<String>(), g.category.name(), units, fmt::tonnes(m), v, w), HUD));
+        lines.push((format!("{:<26} {:<10} {:>5} {:>8} {:>6.1}M3 {:>6.0} CR", g.name.to_uppercase().chars().take(26).collect::<String>(), g.kind_name(), units, fmt::tonnes(m), v, w), HUD));
     }
     if app.v.hold.is_empty() {
         lines.push(("(EMPTY)".into(), DIM));

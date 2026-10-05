@@ -135,7 +135,7 @@ impl World {
             missiles: Vec::new(),
             beams: Vec::new(),
             impacts: Vec::new(),
-            goods: crate::goods::catalog(seed),
+            goods: crate::goods::catalog(),
             mined: HashMap::new(),
             turrets: Default::default(),
             turret_guns: HashMap::new(),

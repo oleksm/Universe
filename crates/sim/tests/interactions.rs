@@ -146,15 +146,19 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     use universe_sim::services::{Asset, Party};
     let mut u = bench(0);
     let (sys, _) = positions(&mut u);
-    let station = sys.station().unwrap();
     let home = u.ship_system;
-    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
-    let f = Facility::Station(station);
+    // Landed at Port Trethi, whose warehouse has ten tonnes of 6061 plate in it.
+    let f = Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == "Port Trethi").expect("Port Trethi"));
+    u.ship = u.world.ship_on(home, f, 0);
+    let plate = universe_sim::world::goods::item("stock.al6061-pl-5").unwrap();
+    assert_eq!(u.markets.economy.put(home, f, plate, 10_000.0), 10_000.0);
     let before = u.credits();
-    let (quotes, _) = u.market_quotes(f);
-    let q = quotes.iter().find(|q| q.buy.is_some() && q.level >= 3.0).expect("something to buy");
+    let quotes = u.market_quotes(f);
+    let q = quotes.iter().find(|q| q.offer.item == plate && q.buy.is_some()).expect("the plate on the market");
+    assert_eq!(q.level, 10.0);
     let item = q.offer.item;
     let paid = u.trade(f, item, 3).expect("bought");
+    assert!((u.markets.economy.place(home, f).unwrap().stock.of(plate) - 7_000.0).abs() < 1e-6, "out of the warehouse");
     assert!((u.credits() - (before - paid)).abs() < 1e-6);
     assert_eq!(u.hold(), vec![(item, 3)]);
     assert!((u.ship.cargo - 3.0 * u.world.goods[item].mass).abs() < 1e-6, "the core's mass follows the hold");
@@ -235,9 +239,9 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     let me = universe_sim::craft_id(0);
     let home = u.ship_system;
     let market = u.pilots()[0].avionics.route.stops[1].target;
-    let NavTarget::Station(station) = market else { panic!("a station market") };
-    // Docked at its market with ten tonnes of ore, the route at that stop.
-    u.crafts[0].ship = u.world.ship_on(home, Facility::Station(station), 0);
+    assert!(matches!(market, NavTarget::Spaceport(_)), "a port with a warehouse: {market:?}");
+    // Landed at its market with ten tonnes of ore, the route at that stop.
+    u.crafts[0].ship = u.world.ship_on(home, market, 0);
     let ore = universe_sim::world::goods::Ore::Carbonaceous.item();
     u.ledger.settle(Party::Pilot(me), Asset::Goods(ore), 10.0, u.tick, universe_sim::protocol::Cause::Rules);
     u.crafts[0].ship.cargo = 10_000.0;
@@ -247,14 +251,14 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
     assert!(u.ledger.hold(me).is_empty(), "sold: {:?}", u.ledger.hold(me));
-    assert!(u.craft_credits(0) > credits + 100.0, "paid {}", u.craft_credits(0) - credits);
+    assert!(u.craft_credits(0) > credits + 50.0, "paid {} (the exchange's bid for what no works here takes)", u.craft_credits(0) - credits);
     let route = u.pilots()[0].avionics.route.clone();
     assert!(route.active && route.next == 0 && matches!(route.stops[0].target, NavTarget::Asteroid(_)), "a new trip: {route:?}");
 }
 
 
 #[test]
-fn a_pilot_refuels_at_a_station_from_its_stock_and_pays_its_price() {
+fn a_pilot_refuels_at_a_station_and_pays_its_price() {
     let mut u = bench(0);
     let (sys, _) = positions(&mut u);
     let home = u.ship_system;
@@ -262,14 +266,11 @@ fn a_pilot_refuels_at_a_station_from_its_stock_and_pays_its_price() {
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let full = u.ship.spec().fuel_capacity;
     u.ship.fuel = full - 4000.0;
-    let stock = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::fuel());
     let credits = u.credits();
     u.refuel_player();
     assert!((u.ship.fuel - full).abs() < 1e-6, "full: {}", u.ship.fuel);
     let paid = credits - u.credits();
     assert!((paid - 4.0 * universe_sim::services::market::FUEL_PRICE).abs() < 4.0 * 60.0 * 0.5, "paid {paid}");
-    let left = u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::fuel());
-    assert!((stock - left - 4.0).abs() < 1e-6, "four tonnes from the station's stock");
     assert!(u.ledger.balanced());
 }
 
@@ -285,16 +286,12 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let credits = u.credits();
     // Smaller racks: lighter, a smaller hold, and the old racks sold back;
-    // at this station's price (its maker's home is some gates off), built
-    // from the station's machinery.
+    // at this station's price (its maker's home is some gates off).
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
     let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.rack.s2")));
-    let machinery = |u: &Universe| u.markets.economy.place(home, here).unwrap().stock_of(universe_sim::world::goods::Category::of("market.machinery").unwrap());
-    let before = machinery(&u);
     let cost = u.refit("cargo", Some(m("equipment.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
-    assert!((machinery(&u) - (before - 0.8 + 0.75)).abs() < 1e-6, "0.8 t built, half the old 1.5 t back");
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
     assert_eq!(u.ship.spec().dry_mass, 61_540.0 - 1500.0 + 800.0, "(with its 1.5 t capacitor bank and 40 kg comm)");
@@ -332,15 +329,12 @@ fn a_ship_is_bought_at_a_station_trading_in_the_old_one() {
     u.ledger.settle(Party::Pilot(universe_sim::PLAYER), Asset::Credits, 500_000.0, u.tick, universe_sim::protocol::Cause::Rules);
     u.ship.cargo = 3_000.0;
     let (price, trade_in) = u.hull_offer(universe_sim::PLAYER, hauler).unwrap();
-    let metals = |u: &Universe| u.markets.economy.place(home, Facility::Station(station)).unwrap().stock_of(universe_sim::world::goods::Category::of("market.metals").unwrap());
-    let before = metals(&u);
     let cost = u.buy_hull(hauler).unwrap();
     assert!((cost - (price - trade_in)).abs() < 1e-6 && trade_in > 0.0, "{cost} = {price} - {trade_in}");
     assert!((u.credits() - (500_000.0 - cost)).abs() < 1e-6);
     assert_eq!(u.ship.class, hauler);
     assert_eq!(u.ship.spec().hold_capacity, 150_000.0);
     assert_eq!(u.ship.cargo, 3_000.0, "the cargo moved over");
-    assert!((before - metals(&u) - 118.0).abs() < 1e-6, "its frame built from the station's metals");
     assert!(u.buy_hull(hauler).is_err(), "that's the ship we have");
 }
 
@@ -457,28 +451,33 @@ fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fa
     let mut u = bench(0);
     let home = u.ship_system;
     let station = u.ship_system().station().unwrap();
-    let here = Facility::Station(station);
-    // The station hungry: a thousand of its people waiting to leave.
-    {
-        let p = u.markets.economy.place_mut(home, here).unwrap();
-        p.fed = 0.6;
-        p.waiting = 1.0;
+    // (No settlement has people in the registry yet: two ports given some.)
+    let sys = u.ship_system();
+    let port = |name: &str| Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == name).unwrap());
+    let here = port("Port Trethi");
+    for (f, fed) in [(here, 0.6), (port("Port Eikir"), 1.0)] {
+        let p = u.markets.economy.place_mut(home, f).unwrap();
+        (p.population, p.founded, p.fed) = (10.0, 10.0, fed);
     }
+    // Port Trethi hungry: a thousand of its people waiting to leave.
+    u.markets.economy.place_mut(home, here).unwrap().waiting = 1.0;
     let bookings = u.bookings(home, here);
     assert!(!bookings.is_empty(), "they book passage somewhere fed");
     let b = bookings[0];
     let to = (b.system, b.to);
-    // Docked without a cabin: no seats.
+    // Landed without a cabin: no seats.
     u.ship = u.world.ship_on(home, here, 0);
     assert!(u.board_passengers(universe_sim::PLAYER, here, to).is_err(), "no cabin, no passengers");
-    // A cabin in a cargo slot (one this station sells): its seats.
+    // A cabin in a cargo slot (one the station sells): its seats.
+    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let cabins: Vec<_> = content().modules.iter().filter_map(|(h, m)| if let universe_sim::world::modules::Does::Cabin { seats } = m.does { Some((h, seats)) } else { None }).collect();
-    let seats = cabins.iter().find(|(h, _)| u.refit("cargo", Some(*h)).is_ok()).map(|c| c.1).expect("a cabin sold here");
+    let seats = cabins.iter().find(|(h, _)| u.refit("cargo", Some(*h)).is_ok()).map(|c| c.1).expect("a cabin sold there");
+    u.ship = { let mut s = u.world.ship_on(home, here, 0); s.class = u.ship.class; s.fit = u.ship.fit.clone(); s.refresh(); s };
     let n = u.board_passengers(universe_sim::PLAYER, here, to).unwrap();
     assert_eq!(n, seats.min(b.people));
     assert_eq!(u.ship.passengers, n);
     let waiting = u.markets.economy.place(home, here).unwrap().waiting;
-    assert!((waiting - (1.0 - n as f64 / 1000.0)).abs() < 1e-9, "they left the station");
+    assert!((waiting - (1.0 - n as f64 / 1000.0)).abs() < 1e-9, "they left the port");
     // Landed anywhere else: refused. Where they booked: they settle, and the fare's paid.
     assert!(u.land_passengers(universe_sim::PLAYER, here).is_err());
     let (people, credits) = (u.markets.economy.place(to.0, to.1).unwrap().population, u.credits());

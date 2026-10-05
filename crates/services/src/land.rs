@@ -14,8 +14,7 @@ use std::sync::Arc;
 
 use universe_world::settlements::{lay_out, rects_overlap, area, Block, IndustrialModule, Settlement};
 
-use crate::economy::{Economy, STEP};
-use crate::ledger::{Asset, Ledger, Party};
+use crate::ledger::Party;
 
 /// What the administration asks for land (credits per m²). Invented, to be
 /// tuned with the economy.
@@ -30,9 +29,6 @@ pub const BUILD_RATE: f64 = 50_000.0 / 60.0;
 /// The ground round a port that is flat enough to build on (m): the
 /// terrain's own (`terrain::PAD_FLAT_INNER`).
 pub const REACH: f64 = 4_000.0;
-/// What a facility pays for power, to whoever supplies it (credits per MWh).
-/// Invented, to be tuned with the economy.
-pub const POWER_PRICE: f64 = 40.0;
 /// A claim's least side (m).
 pub const LEAST_SIDE: f64 = 50.0;
 /// Paving each side of a street's line (m).
@@ -156,32 +152,6 @@ impl LandOffice {
         }
     }
 
-    /// Run every built facility up to world time `now`, a `STEP` at a time
-    /// (the economy's): each settlement's power shared out among what draws
-    /// it, each line as fast as its power and the market's stock of what it
-    /// takes allow; its owner buying what it takes from the settlement's
-    /// market and selling it what it gives, at the market's prices (goods
-    /// with no game kind yet aren't traded: what it takes of them comes from
-    /// outside, what it gives of them goes unsold); power paid for by what
-    /// draws it to whoever supplies it, who buys the fuel it burns.
-    pub fn run(&mut self, now: f64, economy: &mut Economy, ledger: &mut Ledger, tick: u64) {
-        while self.ran_to + STEP <= now {
-            self.ran_to += STEP;
-            let at = self.ran_to;
-            for k in 0..self.grounds.len() {
-                let g = &self.grounds[k];
-                let market = Party::Market(g.system, universe_world::Facility::Spaceport(g.port));
-                let Some(place) = economy.place_mut(g.system, universe_world::Facility::Spaceport(g.port)) else { continue };
-                let parties: Vec<Option<Party>> = g.works.iter().map(|w| g.lots.iter().find(|l| l.number == w.parcel).and_then(|l| self.party(&l.owner))).collect();
-                let runs = run_ground(g, &parties, at, place, ledger, market, tick);
-                let g = Arc::make_mut(&mut self.grounds[k]);
-                for (w, r) in g.works.iter_mut().zip(runs) {
-                    w.last = r;
-                }
-            }
-        }
-    }
-
     pub fn ground(&self, system: usize, port: usize) -> Option<&Ground> {
         self.grounds.iter().find(|g| g.system == system && g.port == port).map(|g| &**g)
     }
@@ -281,100 +251,7 @@ fn blueprint(name: &str) -> Option<&'static universe_world::settlements::Facilit
     universe_world::content::content().settlements.iter().flat_map(|s| &s.facilities).find(|f| f.name.eq_ignore_ascii_case(name))
 }
 
-/// What the market at `place` pays or asks for a tonne of kind `key`: the
-/// middle of its catalogue range, by the place's want of it.
-fn price(place: &crate::economy::Place, key: &str) -> Option<(universe_world::goods::Category, f64)> {
-    let c = universe_world::content::content();
-    let kind = c.handle::<universe_world::goods::GoodsKind>(key)?;
-    let g = c.get(kind);
-    let per_tonne = (g.price.0 * g.price.1).sqrt() * 1000.0 / g.mass.max(1e-9);
-    Some((kind, per_tonne * place.factor(kind).unwrap_or(0.4)))
-}
-
-/// One step of a settlement's facilities (see `LandOffice::run`): how each ran.
-fn run_ground(g: &Ground, parties: &[Option<Party>], at: f64, place: &mut crate::economy::Place, ledger: &mut Ledger, market: Party, tick: u64) -> Vec<Option<Run>> {
-    let c = universe_world::content::content();
-    // (Its flows are kg/s and W; the market counts tonnes, and power is billed by the MWh.)
-    let tonnes = |kg_per_s: f64| kg_per_s * STEP / universe_world::goods::TONNE;
-    let mwh = |watts: f64| watts * STEP / 3.6e9;
-    let built: Vec<bool> = g.works.iter().map(|w| w.built(at)).collect();
-    let supplies = |w: &Works| w.blocks.iter().filter_map(|b| c.industrial(&b.module)).map(|m| m.supplies).sum::<f64>();
-    let supply: f64 = g.works.iter().zip(&built).filter(|(_, b)| **b).map(|(w, _)| supplies(w)).sum();
-    let demand: f64 = g.works.iter().zip(&built).filter(|(_, b)| **b).filter_map(|(w, _)| blueprint(&w.blueprint)).map(|f| f.draws).sum();
-    let share = if demand > 0.0 { (supply / demand).min(1.0) } else { 1.0 };
-    let cause = universe_protocol::Cause::Rules;
-    let mut runs: Vec<Option<Run>> = vec![None; g.works.len()];
-    let mut used_mwh = 0.0;
-    let mut power_bill: Vec<(usize, Party, f64)> = Vec::new();
-    for (k, w) in g.works.iter().enumerate() {
-        let (Some(f), true, Some(owner)) = (blueprint(&w.blueprint), built[k], parties[k]) else { continue };
-        if f.gives.is_empty() {
-            continue;
-        }
-        let mut run = Run { rate: if f.draws > 0.0 { share } else { 1.0 }, held_by: (f.draws > 0.0 && share < 1.0).then(|| "POWER".to_string()), earned: 0.0 };
-        // (As fast as the market's stock of what it takes lets it.)
-        for (name, key, rate) in &f.takes {
-            if let Some((kind, _)) = price(place, key) {
-                let need = tonnes(*rate);
-                if need > 0.0 && place.stock_of(kind) < need * run.rate {
-                    run.rate = place.stock_of(kind) / need;
-                    run.held_by = Some(name.to_uppercase());
-                }
-            }
-        }
-        for (_, key, rate) in &f.takes {
-            if let Some((kind, p)) = price(place, key) {
-                let t = tonnes(*rate) * run.rate;
-                place.take(kind, t);
-                let _ = ledger.transfer(owner, market, Asset::Credits, t * p, tick, cause);
-                run.earned -= t * p;
-            }
-        }
-        for (_, key, rate) in &f.gives {
-            if let Some((kind, p)) = price(place, key) {
-                let t = tonnes(*rate) * run.rate;
-                place.put(kind, t);
-                let _ = ledger.transfer(market, owner, Asset::Credits, t * p, tick, cause);
-                run.earned += t * p;
-            }
-        }
-        let drawn = mwh(f.draws) * run.rate;
-        used_mwh += drawn;
-        power_bill.push((k, owner, drawn));
-        runs[k] = Some(run);
-    }
-    // Power: paid for by what drew it, to the stations by what each supplies;
-    // each station buying the fuel it burned for it.
-    for (k, w) in g.works.iter().enumerate() {
-        let (s, true, Some(owner)) = (supplies(w), built[k], parties[k]) else { continue };
-        if s <= 0.0 {
-            continue;
-        }
-        let part = s / supply.max(1e-9);
-        let delivered = used_mwh * part;
-        let mut run = Run { rate: delivered / mwh(s).max(1e-12), held_by: None, earned: 0.0 };
-        for &(j, payer, mwh) in &power_bill {
-            let bill = mwh * part * POWER_PRICE;
-            if payer != owner {
-                let _ = ledger.transfer(payer, owner, Asset::Credits, bill, tick, cause);
-                if let Some(r) = runs[j].as_mut() {
-                    r.earned -= bill;
-                }
-                run.earned += bill;
-            }
-        }
-        if let Some(f) = blueprint(&w.blueprint) {
-            for (_, key, rate) in &f.burns {
-                if let Some((kind, p)) = price(place, key) {
-                    // (Its burn flat out, as a share of what it supplied.)
-                    let t = tonnes(*rate) * run.rate;
-                    place.take(kind, t);
-                    let _ = ledger.transfer(owner, market, Asset::Credits, t * p, tick, cause);
-                    run.earned -= t * p;
-                }
-            }
-        }
-        runs[k] = Some(run);
-    }
-    runs
+/// The registry key of the facility a blueprint (by name) is.
+pub fn blueprint_key(name: &str) -> Option<String> {
+    blueprint(name).map(|f| f.key.clone())
 }

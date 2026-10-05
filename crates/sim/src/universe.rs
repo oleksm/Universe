@@ -148,7 +148,7 @@ impl Universe {
             atc: Default::default(),
             ledger: Default::default(),
             land: Default::default(),
-            markets: universe_services::Markets::new(seed, goods),
+            markets: universe_services::Markets::new(goods),
             boards: Default::default(),
             standings: Default::default(),
             messages: 0,
@@ -164,12 +164,13 @@ impl Universe {
         settled.sort_unstable();
         settled.dedup();
         let systems: Vec<(usize, Arc<StarSystem>)> = settled.into_iter().map(|i| (i, u.world.system(i))).collect();
-        u.markets.economy = universe_services::economy::Economy::new(systems.iter().map(|(i, s)| (*i, &**s)), u.world.time);
         // The land office, from the registry: each settlement recorded, at its system and port.
         let content = universe_world::content::content();
         u.land = universe_services::land::LandOffice::seed(systems.iter().flat_map(|(i, sys)| {
             sys.spaceports.iter().enumerate().filter_map(move |(p, sp)| content.settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name).map(|s| (*i, p, s)))
         }));
+        // The settlements' economy: their facilities and markets, on the land office's ground.
+        u.markets.economy = universe_services::economy::Economy::new(&u.land, u.world.time);
         u.start_docked();
         u.events.clear();
         u.player_feed.clear();
@@ -343,8 +344,7 @@ impl Universe {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
         universe_prof::time("sim/recorder", || self.record());
-        universe_prof::time("sim/economy", || self.markets.economy.step_to(self.world.time));
-        universe_prof::time("sim/facilities", || self.land.run(self.world.time, &mut self.markets.economy, &mut self.ledger, self.tick));
+        universe_prof::time("sim/economy", || self.markets.step(self.world.time, &mut self.land, &mut self.ledger, self.tick));
         self.publish_boards();
         self.update_standings();
         // (The dead-man rule counts in seconds: a look once a second.)
@@ -705,11 +705,10 @@ impl Universe {
         universe_world::traffic::docked_at(&sys, &self.ship)
     }
 
-    /// A market in our system: its quotes, and what it bans.
-    pub fn market_quotes(&mut self, f: Facility) -> (Vec<universe_services::market::Quote>, Vec<universe_world::goods::Category>) {
+    /// A market in our system: its quotes.
+    pub fn market_quotes(&mut self, f: Facility) -> Vec<universe_services::market::Quote> {
         let (system, sys, now) = (self.ship_system, self.ship_system(), self.world.time);
-        let banned = self.markets.market(system, &sys, f).map(|m| m.banned.clone()).unwrap_or_default();
-        (self.markets.quotes(system, &sys, f, now), banned)
+        self.markets.quotes(system, &sys, f, now)
     }
 
     /// A market's quote for one item (listed, or of a kind it wants), if any.

@@ -58,7 +58,11 @@ pub struct PowerLine {
 /// A facility on a parcel: what kind, and its modules where they stand.
 #[derive(Clone, Debug)]
 pub struct Facility {
+    /// Its registry key.
+    pub key: String,
     pub name: String,
+    /// A warehouse an exchange has approved: what lies in it is on the market.
+    pub exchange: bool,
     pub kind: String,
     pub parcel: u32,
     /// The most it can do, as the engine works it out from its modules:
@@ -288,7 +292,9 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
                 let order: Vec<(&IndustrialModule, u32)> = listed.iter().map(|(m, n)| (industrial(m), *n)).collect();
                 let blocks = lay_out(&parcel.outline.iter().map(pt).collect::<Vec<_>>(), &street, &order).unwrap_or_else(|e| panic!("{}: {e}", f.identity.key));
                 Facility {
+                    key: f.identity.key.clone(),
                     name: f.identity.name.clone(),
+                    exchange: f.exchange.is_some(),
                     kind: f.kind.as_str().to_string(),
                     parcel: parcel.number,
                     makes: lines.iter().map(|l| (l.product.clone(), l.output)).collect(),
@@ -360,6 +366,28 @@ pub struct LineRow {
     pub power: f64,
 }
 
+/// Back from `target` through `steps` (modules, each once, in a line's
+/// order): the recipe each is set to (by its place in the module's list), so
+/// that what each makes is what a later one takes, or the line's product.
+/// A module with no recipes (a store, a shop) is set to none. Err: the name of
+/// a module that has recipes and none that leads there.
+pub fn route(reg: &crate::registry::Registry, steps: &[&str], target: &str) -> Result<Vec<Option<usize>>, String> {
+    let mut need: Vec<&str> = vec![target];
+    let mut chosen = vec![None; steps.len()];
+    for (i, s) in steps.iter().enumerate().rev() {
+        let Some(m) = reg.module(s) else { return Err(s.to_string()) };
+        match m.recipes.iter().position(|r| need.contains(&r.makes.as_str())) {
+            Some(k) => {
+                need.extend(m.recipes[k].inputs.iter().filter_map(|x| x.item.as_deref()));
+                chosen[i] = Some(k);
+            }
+            None if !m.recipes.is_empty() => return Err(m.identity.name.clone()),
+            None => {}
+        }
+    }
+    Ok(chosen)
+}
+
 /// A line of `facility` at its most. A line that says what it makes: back
 /// from that item through its modules' recipes, each module set to the
 /// recipe that makes what the next one needs (a module with recipes and none
@@ -398,19 +426,7 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
         }
         s
     };
-    let mut need: Vec<&str> = vec![target];
-    let mut chosen: Vec<Option<&crate::registry::ModuleRecipe>> = vec![None; steps.len()];
-    for (i, s) in steps.iter().enumerate().rev() {
-        let m = module(s);
-        match m.recipes.iter().find(|r| need.contains(&r.makes.as_str())) {
-            Some(r) => {
-                need.extend(r.inputs.iter().filter_map(|x| x.item.as_deref()));
-                chosen[i] = Some(r);
-            }
-            None if !m.recipes.is_empty() => panic!("{facility}: {} has no recipe that leads to {target}", m.identity.name),
-            None => {}
-        }
-    }
+    let chosen: Vec<Option<&crate::registry::ModuleRecipe>> = route(reg, &steps, target).unwrap_or_else(|m| panic!("{facility}: {m} has no recipe that leads to {target}")).into_iter().zip(&steps).map(|(r, s)| r.map(|r| &module(s).recipes[r])).collect();
     let plan = |output: f64| {
         let making: Vec<usize> = (0..steps.len()).filter(|&i| chosen[i].is_some_and(|r| r.rate.is_some())).collect();
         let made_by = |item: &str| making.iter().copied().find(|&i| chosen[i].is_some_and(|r| r.makes == item));
@@ -481,4 +497,12 @@ pub fn line_most(reg: &crate::registry::Registry, facility: &str, line: &crate::
 /// A module's footprint (m²).
 fn footprint(m: &crate::registry::Module) -> f64 {
     m.physical.length.unwrap_or(0.0) * m.physical.width.unwrap_or(0.0)
+}
+
+/// Is there a market at `f` in `sys`: a settlement the registry records
+/// there, with a warehouse an exchange has approved?
+pub fn has_market(sys: &crate::system::StarSystem, f: crate::traffic::Facility) -> bool {
+    let crate::traffic::Facility::Spaceport(p) = f else { return false };
+    let Some(sp) = sys.spaceports.get(p) else { return false };
+    crate::content::content().settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name).is_some_and(|s| s.facilities.iter().any(|f| f.exchange))
 }

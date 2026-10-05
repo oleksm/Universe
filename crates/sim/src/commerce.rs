@@ -239,11 +239,11 @@ impl Universe {
     /// elsewhere, its newest board that's reached us over the net (`age`:
     /// how old; None: nothing of it reaches us, and no quotes).
     pub fn market_view(&mut self, f: Facility) -> crate::engine::MarketView {
-        let (live, banned) = self.market_quotes(f);
+        let live = self.market_quotes(f);
         let held: Vec<usize> = self.hold().into_iter().map(|(i, _)| i).collect();
         if self.docked_market() == Some(f) {
             let held = held.into_iter().filter(|i| !live.iter().any(|q| q.offer.item == *i)).map(|i| (i, self.quote_for(f, i))).collect();
-            return crate::engine::MarketView { market: f, quotes: live, banned, held, age: Some(0.0) };
+            return crate::engine::MarketView { market: f, quotes: live, held, age: Some(0.0) };
         }
         // (In a gate's tube we're off the net: what we knew going in.)
         let when = match self.ship.state {
@@ -251,11 +251,11 @@ impl Universe {
             _ => self.world.time,
         };
         let known = self.boards.known_at(self.ship_system, f, self.ship.position, &self.ship.spec().comm, when).map(|(age, b)| (age + self.world.time - when, b));
-        let Some((age, board)) = known else { return crate::engine::MarketView { market: f, quotes: Vec::new(), banned, held: Vec::new(), age: None } };
+        let Some((age, board)) = known else { return crate::engine::MarketView { market: f, quotes: Vec::new(), held: Vec::new(), age: None } };
         // (What it listed then, in its listing's order; and what we hold besides.)
         let quotes: Vec<Quote> = live.iter().filter_map(|q| board.get(q.offer.item).copied().flatten()).collect();
         let held = held.into_iter().filter(|i| !quotes.iter().any(|q| q.offer.item == *i)).map(|i| (i, board.get(i).copied().flatten())).collect();
-        crate::engine::MarketView { market: f, quotes, banned, held, age: Some(age) }
+        crate::engine::MarketView { market: f, quotes, held, age: Some(age) }
     }
 
     /// Every market in the gate network puts out its board, when due.
@@ -409,28 +409,10 @@ impl crate::universe::Universe {
             }
             None => 0.0,
         };
-        if let Some(place) = self.markets.economy.place(system, here)
-            && let Some(m) = module
-        {
-            let (kind, tonnes) = outfitter::materials(c.get(m));
-            if place.stock_of(kind) < tonnes {
-                return Err(format!("OUT OF {} TO BUILD IT", kind.name()));
-            }
-        }
         let cost = price - taken.map_or(0.0, |m| c.get(m).price * BUYBACK);
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         let cause = universe_protocol::Cause::Rules;
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
-        if let Some(place) = self.markets.economy.place_mut(system, here) {
-            if let Some(m) = module {
-                let (kind, tonnes) = outfitter::materials(c.get(m));
-                place.take(kind, tonnes);
-            }
-            if let Some(m) = taken {
-                let (kind, tonnes) = outfitter::materials(c.get(m));
-                place.put(kind, tonnes * 0.5);
-            }
-        }
         match id {
             crate::combat::PLAYER => self.ship = refitted,
             _ => self.crafts[id - 1].ship = refitted,
@@ -473,7 +455,7 @@ impl crate::universe::Universe {
     /// frame) and its modules' own materials; its cargo moves over (if the
     /// new hold takes it) and its fuel (up to the new tank). The credits it cost.
     pub fn buy_hull_as(&mut self, id: usize, hull: universe_world::ship::Hull) -> Result<f64, String> {
-        use universe_services::{outfitter, Asset, Party};
+        use universe_services::{Asset, Party};
         let (price, trade_in) = self.hull_offer(id, hull)?;
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         if ship.class == hull && ship.fit.is_none() {
@@ -486,26 +468,10 @@ impl crate::universe::Universe {
         if ship.cargo + ship.hopper > spec.hold_capacity + 1e-6 {
             return Err(format!("ITS HOLD TAKES {:.0} T, THERE'S {:.1} T IN YOURS", spec.hold_capacity / 1000.0, (ship.cargo + ship.hopper) / 1000.0));
         }
-        // What building it takes from the station's stock.
-        let metals = universe_world::goods::Category::of("market.metals").expect("metals are a kind of goods");
-        let mut needs: Vec<(universe_world::goods::Category, f64)> = vec![(metals, spec.frame.frame_mass / 1000.0)];
-        needs.extend(spec.fit.iter().map(|(_, m)| outfitter::materials(c.get(*m))));
-        if let Some(place) = self.markets.economy.place(system, here) {
-            for k in universe_world::goods::Category::all() {
-                let want: f64 = needs.iter().filter(|(c, _)| *c == k).map(|(_, t)| t).sum();
-                if want > 0.0 && place.stock_of(k) < want {
-                    return Err(format!("NOT ENOUGH {} TO BUILD IT ({:.0} OF {:.0} T)", k.name(), place.stock_of(k), want));
-                }
-            }
-        }
+        // (What building it takes is brought in from outside the economy, for now.)
         let cost = price - trade_in;
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
-        if let Some(place) = self.markets.economy.place_mut(system, here) {
-            for (k, t) in needs {
-                place.take(k, t);
-            }
-        }
         // The new ship where the old one stood, with its cargo and fuel.
         let old = self.ship_by_id(id).expect("there").2.clone();
         let mut new = old.clone();
@@ -538,17 +504,14 @@ impl crate::universe::Universe {
     }
 }
 
-/// A whole hull's repair costs this share of its frame's price, and takes
-/// this share of its frame's mass in metals.
+/// A whole hull's repair costs this share of its frame's price.
 pub const REPAIR_PRICE: f64 = 0.3;
-pub const REPAIR_METALS: f64 = 0.05;
 /// A ship lost is replaced, the same hull and fit, for this share of its value.
 pub const INSURANCE_EXCESS: f64 = 0.1;
 
 impl crate::universe::Universe {
     /// Pilot `id`'s hull mended at the station it's docked at, as far as its
-    /// credits (and the station's metals) go: `REPAIR_PRICE` of the frame's
-    /// price for a whole hull, from `REPAIR_METALS` of its mass in metals.
+    /// credits go: `REPAIR_PRICE` of the frame's price for a whole hull.
     /// What it cost, and how far it's mended now.
     pub fn repair(&mut self, id: usize) -> Result<(f64, f64), String> {
         use universe_services::{Asset, Party};
@@ -560,20 +523,15 @@ impl crate::universe::Universe {
             return Err("THE HULL IS SOUND".into());
         }
         let spec = ship.spec();
-        let (full_price, full_metals) = (spec.frame.price * REPAIR_PRICE, spec.frame.frame_mass / 1000.0 * REPAIR_METALS);
-        let metals = universe_world::goods::Category::of("market.metals").expect("metals are a kind of goods");
-        // As much as the credits, and the station's metals, allow.
+        let full_price = spec.frame.price * REPAIR_PRICE;
+        // As much as the credits allow (the metals brought in from outside the economy, for now).
         let credits = self.ledger.credits(Party::Pilot(id)).max(0.0);
-        let stock = self.markets.economy.place(system, here).map_or(f64::INFINITY, |p| p.stock_of(metals));
-        let part = missing.min(credits / full_price).min(stock / full_metals);
+        let part = missing.min(credits / full_price);
         if part <= 1e-6 {
-            return Err(if credits < 1.0 { "NO CREDITS FOR REPAIRS".into() } else { "NO METALS FOR REPAIRS".into() });
+            return Err("NO CREDITS FOR REPAIRS".into());
         }
         let cost = part * full_price;
         self.ledger.transfer(Party::Pilot(id), Party::Market(system, here), Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
-        if let Some(p) = self.markets.economy.place_mut(system, here) {
-            p.take(metals, part * full_metals);
-        }
         let hull = match id {
             crate::combat::PLAYER => &mut self.ship,
             _ => &mut self.crafts[id - 1].ship,

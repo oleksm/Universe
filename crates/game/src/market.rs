@@ -10,7 +10,6 @@
 use universe_sim::Command;
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode, GLYPH};
-use universe_sim::world::goods::Category;
 use universe_sim::services::market::{Quote, Side};
 use universe_sim::world::Facility;
 
@@ -19,7 +18,6 @@ use crate::App;
 const TEXT: Color = Color::hex(0xdcebf2);
 const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
-const RED: Color = Color::hex(0xff4040);
 const AMBER: Color = Color::hex(0xffb040);
 const ROWS: usize = 34;
 
@@ -38,7 +36,6 @@ pub struct MarketView {
     pub scroll: usize,
     /// Refreshed every frame from the world.
     pub rows: Vec<Row>,
-    pub banned: Vec<Category>,
     pub docked: Option<Facility>,
     /// How old its quotes are (see `MarketView::age`).
     pub age: Option<f64>,
@@ -52,7 +49,7 @@ impl MarketView {
         let markets = app.v.markets.clone();
         let docked = app.v.docked_market;
         let shown = docked.and_then(|d| markets.iter().position(|(f, _)| *f == d)).unwrap_or(0);
-        let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), banned: Vec::new(), docked, age: None, held: 0.0 };
+        let mut v = MarketView { markets, shown, selected: 0, scroll: 0, rows: Vec::new(), docked, age: None, held: 0.0 };
         v.refresh(app);
         v
     }
@@ -72,10 +69,9 @@ impl MarketView {
         }
         let m = app.v.market.as_ref().expect("watched");
         let mut rows: Vec<Row> = m.quotes.iter().map(|q| Row { item: q.offer.item, quote: Some(*q) }).collect();
-        // Not listed: it may still take it, being of a kind it wants.
+        // Not listed: the exchange may still take it, while it has room.
         rows.extend(m.held.iter().map(|&(item, quote)| Row { item, quote }));
         self.rows = rows;
-        self.banned = m.banned.clone();
         self.age = m.age;
         self.selected = self.selected.min(self.rows.len().saturating_sub(1));
     }
@@ -155,38 +151,29 @@ pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     frame.text(Vec2::new(x, y), &status, sc);
     y += line;
     let ship = &app.v.ship;
-    let banned = if v.banned.is_empty() { "NOTHING".to_string() } else { v.banned.iter().map(|c| c.name()).collect::<Vec<_>>().join(", ") };
-    frame.text(
-        Vec2::new(x, y),
-        &format!("CREDITS {:.0}   HOLD {:.1} / {:.1} T   BANNED HERE: {banned}", app.v.credits, ship.cargo / 1000.0, ship.spec().hold_capacity / 1000.0),
-        TEXT,
-    );
+    frame.text(Vec2::new(x, y), &format!("CREDITS {:.0}   HOLD {:.1} / {:.1} T", app.v.credits, ship.cargo / 1000.0, ship.spec().hold_capacity / 1000.0), TEXT);
     y += line * 1.6;
-    let header = format!("  {:<26} {:<11} {:<6} {:>9} {:>9} {:>7} {:>6} {:>5}", "GOODS", "KIND", "TRADE", "BUY AT", "SELL AT", "LEVEL", "KG/U", "HELD");
+    let header = format!("  {:<30} {:<11} {:<6} {:>10} {:>10} {:>9} {:>6}", "STOCK", "KIND", "TRADE", "ASK CR/T", "BID CR/T", "STOCK/ROOM T", "HELD T");
     frame.text(Vec2::new(x, y), &header, DIM);
     y += line;
     for (i, row) in v.rows.iter().enumerate().skip(v.scroll).take(ROWS) {
         let item = &app.charts.goods[row.item];
         let held = app.v.hold.iter().find(|h| h.0 == row.item).map_or(0, |h| h.1);
-        let banned = v.banned.contains(&item.category);
         let (side, buy, sell, level) = match &row.quote {
             Some(q) => (
-                if q.offer.side == Side::Sells { "SELLS" } else { "WANTS" },
+                if q.offer.side == Side::Sells { "SELLS" } else { "BUYS" },
                 q.buy.map_or("-".to_string(), |p| format!("{p:.1}")),
                 format!("{:.1}", q.sell),
                 format!("{:.0}", q.level),
             ),
-            None if banned => ("ILLEGAL", "-".into(), "-".into(), String::new()),
             None => ("-", "-".into(), "-".into(), String::new()),
         };
         let cursor = if i == v.selected { ">" } else { " " };
         let held_s = if held > 0 { held.to_string() } else { String::new() };
         let mut name = item.name.to_uppercase();
-        name.truncate(26);
-        let text = format!("{cursor} {:<26} {:<11} {:<6} {:>9} {:>9} {:>7} {:>6.0} {:>5}", name, item.category.name(), side, buy, sell, level, item.mass, held_s);
-        let c = if banned {
-            RED
-        } else if i == v.selected {
+        name.truncate(30);
+        let text = format!("{cursor} {:<30} {:<11} {:<6} {:>10} {:>10} {:>12} {:>6}", name, item.kind_name(), side, buy, sell, level, held_s);
+        let c = if i == v.selected {
             SELECT
         } else if row.quote.is_none() {
             DIM

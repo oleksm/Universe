@@ -326,7 +326,29 @@ pub fn apply(app: &mut App, name: &str) {
                 app.engine.refresh();
                 app.v = app.engine.view();
             }
-            app.economy_panel = Some(Default::default());
+            // Port Trethi's works given a day of what they take, run twenty minutes.
+            trethi_stocked(app);
+            let u = app.engine.universe();
+            let e = &mut u.markets.economy;
+            let ground = e.places.iter().find(|p| p.name == "Port Trethi").map(|p| p.ground);
+            let takes: Vec<(usize, f64)> = e.works.iter().filter(|x| Some(x.ground) == ground).flat_map(|x| x.takes()).collect();
+            for x in e.works.iter_mut().filter(|x| Some(x.ground) == ground && !x.exchange) {
+                for &(i, r) in &takes {
+                    if x.takes().iter().any(|t| t.0 == i) {
+                        let room = x.pool.free();
+                        x.pool.put(i, (r * 86_400.0).min(room));
+                    }
+                }
+            }
+            let u = app.engine.universe();
+            let now = u.world.time + 1200.0;
+            u.markets.step(now, &mut u.land, &mut u.ledger, u.tick);
+            app.engine.refresh();
+            app.v = app.engine.view();
+            let at = app.v.economy.iter().position(|p| p.name == "Port Trethi").unwrap_or(0);
+            let mut panel: crate::economy::EconomyPanel = Default::default();
+            panel.selected = at;
+            app.economy_panel = Some(panel);
         }
         "navmap" | "netmap" | "navzoom" => {
             app.mode = Mode::Pilot;
@@ -1508,12 +1530,15 @@ pub fn apply(app: &mut App, name: &str) {
             log::info!("scenario trades: {} trades so far, last {:?}", u.records.stats.trades, u.records.trades.last().map(|r| (&r.trader, &r.item)));
         }
         "market" => {
-            // Docked at the home station, the market open; bought ten of something.
+            // Landed at Port Trethi, its warehouse stocked with a few things, the
+            // market open; bought ten tonnes of plate.
             apply(app, "docked");
+            trethi_stocked(app);
             let u = app.engine.universe();
             if let Some(f) = u.docked_market() {
-                let (quotes, _) = u.market_quotes(f);
-                if let Some(q) = quotes.iter().find(|q| q.buy.is_some()) {
+                let quotes = u.market_quotes(f);
+                let plate = universe_sim::world::goods::item("stock.al6061-pl-5");
+                if let Some(q) = quotes.iter().find(|q| q.buy.is_some() && Some(q.offer.item) == plate).or(quotes.iter().find(|q| q.buy.is_some())) {
                     let item = q.offer.item;
                     let r = u.trade(f, item, 10);
                     log::info!("scenario market: bought 10 of {}: {r:?}", u.world.goods[item].name);
@@ -1563,7 +1588,8 @@ pub fn apply(app: &mut App, name: &str) {
             }
             let u = app.engine.universe();
             let names = u.markets();
-            let pick = if name == "marketnear" { "Port Sosavi" } else { "Port Fuba" };
+            trethi_stocked(app);
+            let pick = if name == "marketnear" { "Port Eikir" } else { "Port Zaudalein" };
             let f = names.iter().find(|(_, n)| n.starts_with(pick)).or(names.last()).map(|m| m.0);
             app.engine.send(universe_sim::Command::WatchMarket(f));
             app.engine.refresh();
@@ -1664,4 +1690,20 @@ fn demo_plan(app: &App) -> universe_sim::world::deckplan::DeckPlan {
     let mut upper = Deck::at(floor + 3.8);
     upper.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
     DeckPlan { hull: app.ship.spec().key.clone(), decks: vec![deck, upper] }
+}
+
+/// Landed at Port Trethi, its warehouse holding a few tonnes of what the
+/// registry's stock is (none is seeded yet).
+fn trethi_stocked(app: &mut App) {
+    let u = app.engine.universe();
+    let home = u.ship_system;
+    let sys = u.ship_system();
+    let Some(p) = sys.spaceports.iter().position(|s| s.name == "Port Trethi") else { return };
+    let f = universe_sim::world::Facility::Spaceport(p);
+    u.ship = u.world.ship_on(home, f, 0);
+    for (key, t) in [("stock.al6061-pl-5", 40.0), ("stock.al6061-ingot", 120.0), ("good.bauxite", 900.0), ("stock.deuterium-liq", 30.0), ("good.bread", 12.0)] {
+        if let Some(i) = universe_sim::world::goods::item(key) {
+            u.markets.economy.put(home, f, i, t * 1000.0);
+        }
+    }
 }

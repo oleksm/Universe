@@ -810,3 +810,23 @@ rock at `SURVEY_RESOLVES` = 10⁷ times its size, out to 2×10¹⁰ m (`belts.rs
 **survey sensor's** record. Please describe one: a product (equipment of a new `function` kind,
 `survey`, or a figure on `sensors`) with how far it resolves a rock for its size, and how long a
 sweep takes. The game will read it from the fitted sensor instead of the constant.
+
+**The economy on stock (2026-10-05).** The user decided: only what the registry describes runs (a
+hard switch), and markets trade stock, physically, lying in the exchange-approved warehouses. The
+game's `recipes.ron`, `places.ron` and `markets.ron` are gone; `docs/economy-stock.md` has the
+engine's design. What the game now needs from the registry, most wanted first:
+
+1. **Starting stock** (the user chose "exchange + starting stock"): what lies at day 0 in each
+   warehouse and each works' store. Without it, Trethi's works stand still: its power station has no
+   deuterium, its smelter no bauxite, soda or anodes.
+2. **A population for each settlement.** People eat (`need.*`), wait for passage and settle;
+   with none, there are no passengers.
+3. **`traded_as` on every good and stock item.** 60 goods and 31 of 32 stock items have none,
+   and show as OTHER on the market.
+4. **The deuterium plant's water.** Its recipe buys about 31,000 t of traded water for each tonne of
+   deuterium, which prices fuel at about 700,000 cr/t. The plant draws seawater where it stands; the
+   recipe should name water in place, not bought. The game prices deuterium itself for now.
+5. **Waste.** Red mud, slag, dross, furnace dust and CO₂ come out of the works and are sold to the
+   exchange like anything else. Should waste be marked (to be disposed of, at a cost), or stored?
+6. The market categories' `names` (adjectives and nouns for invented goods) and `basket` are no
+   longer read: the needs records replace the basket.

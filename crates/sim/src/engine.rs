@@ -21,7 +21,6 @@ use universe_avionics::route::Stop;
 use universe_avionics::{Avionics, Event, NavTarget, Plan, Solution, Track};
 use universe_world::charts::Charts;
 use universe_world::crew::Reach;
-use universe_world::goods::Category;
 use universe_services::market::Quote;
 use universe_world::turrets::Turret;
 use universe_world::weapons::{Beam, Impact};
@@ -136,7 +135,6 @@ pub struct CraftView {
 pub struct MarketView {
     pub market: Facility,
     pub quotes: Vec<Quote>,
-    pub banned: Vec<Category>,
     /// Quotes for what's in the hold and not listed (it may still be taken).
     pub held: Vec<(usize, Option<Quote>)>,
     /// How old the quotes are (s): 0 where we're docked; elsewhere, its price
@@ -392,7 +390,7 @@ impl Engine {
             .collect();
         drop(gather);
         let rest = universe_prof::scope("sim/view/rest");
-        let markets = universe_world::traffic::facilities(&sys).into_iter().map(|f| (f, f.name(&sys))).collect();
+        let markets = universe_world::traffic::facilities(&sys).into_iter().filter(|&f| universe_world::settlements::has_market(&sys, f)).map(|f| (f, f.name(&sys))).collect();
         let market = self.watched.map(|f| u.market_view(f));
         let pads = (0..sys.spaceports.len()).map(|p| u.atc.owners(system, universe_world::Facility::Spaceport(p))).collect();
         self.serial += 1;

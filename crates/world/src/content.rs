@@ -20,7 +20,7 @@ use std::sync::OnceLock;
 use serde::de::DeserializeOwned;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 
-use crate::goods::{Category, GoodsKind, MarketRules, OreEntry, PlaceDef, Recipe};
+use crate::goods::{Category, GoodsKind, Item};
 use crate::shape::Shape;
 use crate::ship::ClassSpec;
 
@@ -28,9 +28,6 @@ use crate::ship::ClassSpec;
 const BASE: &[(&str, &str)] = &[
     ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
     ("prices.ron", include_str!("../../../content/base/prices.ron")),
-    ("recipes.ron", include_str!("../../../content/base/recipes.ron")),
-    ("places.ron", include_str!("../../../content/base/places.ron")),
-    ("markets.ron", include_str!("../../../content/base/markets.ron")),
     ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
 ];
 
@@ -167,7 +164,7 @@ impl<T: Entry> Registry<T> {
         self.entries.iter().enumerate().map(|(i, e)| (Handle::new(i), e)).chain((0..added).filter_map(move |k| self.extra[k].get().map(|e| (Handle::new(base + k), *e))))
     }
 
-    fn find(&self, key: &str) -> Option<Handle<T>> {
+    pub(crate) fn find(&self, key: &str) -> Option<Handle<T>> {
         self.index.get(key).map(|&i| Handle::new(i as usize)).or_else(|| self.extra_index.read().unwrap_or_else(|e| e.into_inner()).get(key).map(|&i| Handle::new(i as usize)))
     }
 
@@ -205,10 +202,9 @@ pub struct Content {
     pub modules: Registry<crate::modules::Module>,
     pub hulls: Registry<ClassSpec>,
     pub goods: Registry<GoodsKind>,
-    pub ores: Registry<OreEntry>,
-    pub recipes: Registry<Recipe>,
-    pub places: Registry<PlaceDef>,
-    pub markets: MarketRules,
+    /// The stock catalogue (see `goods`), and its items by key.
+    pub stock: Vec<Item>,
+    pub stock_index: HashMap<String, usize>,
     /// Standards bodies, and the standards in their registers.
     pub bodies: Registry<crate::standards::Body>,
     pub standards: Registry<crate::standards::Standard>,
@@ -414,7 +410,6 @@ impl Content {
                 .iter()
                 .map(|m| {
                     let key = &m.identity.key;
-                    let names = m.names.clone();
                     Ok(GoodsKind {
                         key: key.clone(),
                         name: crate::standards::caps(&m.identity.name),
@@ -422,45 +417,14 @@ impl Content {
                         mass: m.unit_mass.unwrap_or(0.0),
                         // (The game holds t/m³, and a thousand people's day in t.)
                         bulk_density: m.bulk_density.unwrap_or(0.0) / 1000.0,
-                        basket: m.basket.unwrap_or(0.0) * crate::units::DAY,
-                        adjectives: names.adjectives,
-                        nouns: names.nouns,
                     })
                 })
                 .collect::<Result<Vec<_>, String>>()?,
         )?;
         let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
-        let ores = Registry::build(
-            // Ores: the registry's rock goods the game's excavators dig (`goods::Ore`), at the game's prices.
-            crate::goods::Ore::ALL
-                .iter()
-                .map(|o| {
-                    let g = reg.good(o.key()).ok_or_else(|| format!("the registry has no {}", o.key()))?;
-                    let k = kind(&reg.traded_as(o.key()).unwrap_or_default(), o.key())?;
-                    let bulk = g.physical.bulk_density.map_or(goods.get(k).bulk_density, |d| d / 1000.0);
-                    Ok(OreEntry { bulk_density: bulk, kind: k, key: o.key().to_string(), name: g.identity.name.clone(), price: price(o.key())? })
-                })
-                .collect::<Result<_, String>>()?,
-        )?;
-        let pairs = |list: &[(String, f64)], whose: &str| list.iter().map(|(k, t)| Ok((kind(k, whose)?, *t))).collect::<Result<Vec<_>, String>>();
-        let recipes: Registry<Recipe> = Registry::build(
-            Self::defs::<crate::goods::RecipeDef>(&packs, "recipes.ron")?
-                .into_iter()
-                .map(|d| Ok(Recipe { takes: pairs(&d.takes, &d.key)?, makes: pairs(&d.makes, &d.key)?, key: d.key, name: d.name }))
-                .collect::<Result<_, String>>()?,
-        )?;
-        let kinds = |list: &[String], whose: &str| list.iter().map(|k| kind(k, whose)).collect::<Result<Vec<_>, String>>();
-        let places = Registry::build(
-            Self::defs::<crate::goods::PlaceDefSource>(&packs, "places.ron")?
-                .into_iter()
-                .map(|d| {
-                    let works = d.works.iter().map(|(r, n)| resolve(&recipes, &aliases, r).map(|h| (h, *n)).ok_or_else(|| format!("{}: no recipe '{r}'", d.key))).collect::<Result<_, String>>()?;
-                    Ok(PlaceDef { works, sells: kinds(&d.sells, &d.key)?, wants: kinds(&d.wants, &d.key)?, key: d.key, label: d.label, population: d.population, ship_fuel: d.ship_fuel })
-                })
-                .collect::<Result<_, String>>()?,
-        )?;
-        let rules = Self::single::<crate::goods::MarketRulesDef>(&packs, "markets.ron")?;
-        let markets = MarketRules { bans: rules.bans.iter().map(|(k, p)| Ok((kind(k, "markets.ron")?, *p))).collect::<Result<_, String>>()? };
+        // The stock catalogue: the registry's, at the game's prices.
+        let stock = crate::goods::build_catalog(reg, &prices, &goods);
+        let stock_index: HashMap<String, usize> = stock.iter().map(|i| (i.key.clone(), i.id)).collect();
         // Ships' fuel, as traded: what the starting hull's tanks hold.
         let starter = resolve(&hulls, &aliases, crate::ship::STARTING_HULL).ok_or("no starting hull")?;
         let tank_fuel = &hulls.get(starter).fuel;
@@ -486,7 +450,7 @@ impl Content {
         for s in &settlements {
             s.check()?;
         }
-let c = Content { shapes, materials, brands, structures, modules, hulls, goods, ores, recipes, places, markets, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
+let c = Content { shapes, materials, brands, structures, modules, hulls, goods, stock, stock_index, bodies, standards, settlements, industry, fuel, aliases, hash, packs: packs.into_iter().map(|p| p.name).collect() };
         c.check()?;
         Ok(c)
     }
@@ -513,22 +477,16 @@ let c = Content { shapes, materials, brands, structures, modules, hulls, goods, 
         Ok(all)
     }
 
-    /// A file that's one record: the last pack's that has it.
-    fn single<D: DeserializeOwned>(packs: &[Pack], file: &str) -> Result<D, String> {
-        let (p, s) = packs.iter().rev().find_map(|p| p.source(file).map(|s| (p, s))).ok_or_else(|| format!("no pack has {file}"))?;
-        ron::from_str(s).map_err(|e| format!("{} {file}: {e}", p.name))
-    }
-
     /// What must hold across the content as a whole.
     fn check(&self) -> Result<(), String> {
         for (old, new) in &self.aliases {
-            let found = self.shapes.find(new).is_some() || self.brands.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || self.ores.find(new).is_some() || self.recipes.find(new).is_some() || self.places.find(new).is_some();
+            let found = self.shapes.find(new).is_some() || self.brands.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some();
             if !found {
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
             }
         }
         for ore in crate::goods::Ore::ALL {
-            if self.ores.find(ore.key()).is_none() {
+            if !self.stock_index.contains_key(ore.key()) {
                 return Err(format!("no ore '{}' (asteroids are made of it)", ore.key()));
             }
         }
@@ -616,15 +574,8 @@ entry!(GoodsKind, "the registry's market categories", goods, |k| {
     if k.price.1 < k.price.0 {
         return Err("price range upside down".into());
     }
-    if k.basket < 0.0 {
-        return Err("basket can't be negative".into());
-    }
-    if k.adjectives.is_empty() || k.nouns.is_empty() || k.adjectives.len() * k.nouns.len() < crate::goods::PER_KIND {
-        return Err(format!("too few names: {} adjectives × {} nouns for {} goods", k.adjectives.len(), k.nouns.len(), crate::goods::PER_KIND));
-    }
     Ok(())
 });
-entry!(OreEntry, "the registry's ores", ores, |o| positive("price", o.price));
 entry!(Shape, "shapes.ron", shapes, |_s| Ok(()));
 entry!(crate::modules::Module, "the registry's equipment", modules, |m| m.check());
 entry!(crate::modules::Brand, "the registry's makers", brands, |_b| Ok(()));
@@ -632,26 +583,6 @@ entry!(crate::standards::Body, "the registry's standards bodies", bodies, |b| b.
 entry!(crate::standards::Standard, "the registry's standards", standards, |s| s.check());
 entry!(crate::materials::Material, "the registry's fuels", materials, |m| m.check());
 entry!(crate::structures_catalogue::Structure, "the registry's structures", structures, |s| s.check());
-entry!(Recipe, "recipes.ron", recipes, |r| {
-    for (_, t) in r.takes.iter().chain(&r.makes) {
-        positive("a rate", *t)?;
-    }
-    if r.makes.is_empty() {
-        return Err("makes nothing".into());
-    }
-    Ok(())
-});
-entry!(PlaceDef, "places.ron", places, |p| {
-    positive("population", p.population)?;
-    if p.ship_fuel < 0.0 {
-        return Err("ship_fuel can't be negative".into());
-    }
-    for (_, n) in &p.works {
-        positive("a works count", *n)?;
-    }
-    Ok(())
-});
-
 impl Entry for ClassSpec {
     const FILE: &'static str = "the registry's hulls";
 

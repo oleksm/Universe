@@ -1,17 +1,15 @@
-//! Goods: the catalogue of everything that's bought and sold, generated from
-//! the galaxy's seed from the kinds of goods (the registry's market categories):
-//! `PER_KIND` of each, with a name, a base price and a mass per unit; then
-//! the ores dug out of asteroids (the registry's rock goods). Same seed and content, same
-//! goods. Also the economy's other content: recipes, kinds of place, and
-//! how markets are made up.
+//! Stock: everything bought, sold, carried or stored, as the registry has it
+//! (goods, mill stock, and the elements and materials a recipe names), in a
+//! fixed order by key. A ledger line and a hold name one by its place in
+//! that order. Each is counted by the tonne. Its price here is the game's
+//! reference: what nothing makes is priced in `prices.ron`; what is made, by
+//! what goes into making it. Markets move off it with their stock.
+
+use std::collections::HashMap;
 
 use serde::Deserialize;
 
 use crate::content::{content, Handle};
-use crate::rng::{mix, Rng};
-
-/// Goods of each kind in the catalogue.
-pub const PER_KIND: usize = 50;
 
 /// A kind of goods: one of the registry's market categories.
 #[derive(Clone, Debug, PartialEq, Deserialize)]
@@ -25,12 +23,6 @@ pub struct GoodsKind {
     pub mass: f64,
     /// Bulk density as stowed in a hold (t/m³): crated, sacked or loose.
     pub bulk_density: f64,
-    /// What a thousand people use in a day (t).
-    #[serde(default)]
-    pub basket: f64,
-    /// What goes into its goods' names.
-    pub adjectives: Vec<String>,
-    pub nouns: Vec<String>,
 }
 
 /// A kind of goods of the loaded content.
@@ -48,11 +40,6 @@ impl Handle<GoodsKind> {
     /// Bulk density as stowed in a hold (t/m³).
     pub fn bulk_density(self) -> f64 {
         self.kind().bulk_density
-    }
-
-    /// What a thousand people use in a day (t).
-    pub fn basket(self) -> f64 {
-        self.kind().basket
     }
 
     /// Every kind, in order.
@@ -76,102 +63,110 @@ pub fn kinds() -> usize {
     content().goods.len()
 }
 
-/// How many goods are generated (the ores come after).
-pub fn catalog_size() -> usize {
-    kinds() * PER_KIND
-}
-
-/// An ore of the loaded content: the goods an excavator fills a hold
-/// with, by the tonne (price per tonne).
-#[derive(Clone, Debug, PartialEq)]
-pub struct OreEntry {
-    pub key: String,
-    pub name: String,
-    pub kind: Category,
-    pub price: f64,
-    /// As stowed, broken, in a hold (t/m³).
-    pub bulk_density: f64,
-}
-
-/// A recipe as `recipes.ron` has it.
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct RecipeDef {
-    pub key: String,
-    pub name: String,
-    pub takes: Vec<(String, f64)>,
-    pub makes: Vec<(String, f64)>,
-}
-
-/// A works: what it takes and what it makes, in tonnes a day.
-#[derive(Clone, Debug, PartialEq)]
-pub struct Recipe {
-    pub key: String,
-    pub name: String,
-    pub takes: Vec<(Category, f64)>,
-    pub makes: Vec<(Category, f64)>,
-}
-
-/// A kind of place as `places.ron` has it.
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct PlaceDefSource {
-    pub key: String,
-    pub label: String,
-    pub population: f64,
-    pub ship_fuel: f64,
-    pub works: Vec<(String, f64)>,
-    pub sells: Vec<String>,
-    pub wants: Vec<String>,
-}
-
-/// A kind of place in the economy.
-#[derive(Clone, Debug, PartialEq)]
-pub struct PlaceDef {
-    pub key: String,
-    pub label: String,
-    /// People (thousands).
-    pub population: f64,
-    /// Fuel it keeps for the ships that call (t/day).
-    pub ship_fuel: f64,
-    /// Its works: (recipe, how many).
-    pub works: Vec<(Handle<Recipe>, f64)>,
-    /// What its market leans to selling and wanting where there's no
-    /// economy behind it (beyond the gate network).
-    pub sells: Vec<Category>,
-    pub wants: Vec<Category>,
-}
-
-/// How markets are made up, as `markets.ron` has it.
-#[derive(Deserialize)]
-#[serde(deny_unknown_fields)]
-pub(crate) struct MarketRulesDef {
-    pub bans: Vec<(String, f64)>,
-}
-
-/// How markets are made up.
-#[derive(Clone, Debug, PartialEq)]
-pub struct MarketRules {
-    /// What a market may refuse to trade, and how likely it is to (rolled in this order).
-    pub bans: Vec<(Category, f64)>,
-}
-
-/// One kind of goods.
+/// One stock item.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Item {
     pub id: usize,
-    /// Its stable key: a generated good's is its kind's and its number among
-    /// them (`goods.food/17`), an ore's its own (`ore.stony`).
+    /// Its registry key (`good.bread`, `stock.al6061-pl-5`).
     pub key: String,
     pub name: String,
-    pub category: Category,
-    /// Base price per unit (credits): what it's worth where it's neither
-    /// made nor wanted.
+    /// The market category it is traded as (None: the registry doesn't say yet).
+    pub category: Option<Category>,
+    /// Reference price (credits a tonne): what it's worth where it's neither
+    /// short nor in glut.
     pub price: f64,
-    /// Mass per unit (kg).
+    /// Mass per unit (kg): a tonne.
     pub mass: f64,
-    /// As stowed in a hold (t/m³): its kind's, or (an ore) its own.
+    /// As stowed in a hold (t/m³).
     pub bulk_density: f64,
+}
+
+impl Item {
+    /// Its category's name, or OTHER where the registry doesn't say yet.
+    pub fn kind_name(&self) -> &'static str {
+        self.category.map_or("OTHER", |c| c.name())
+    }
+}
+
+/// What a megawatt-hour of power costs (credits). Invented, the game's own.
+pub const POWER_PRICE: f64 = 40.0;
+/// What a maker asks over what went into a thing (its works, its people). Invented.
+const MARGIN: f64 = 1.25;
+/// What a tonne of anything is worth that nothing makes and `prices.ron`
+/// doesn't price (credits). Invented.
+const RAW_PRICE: f64 = 100.0;
+/// As stowed, where nothing says (t/m³).
+const STOWED: f64 = 1.0;
+
+/// The stock catalogue, from the registry and the game's prices (by key,
+/// credits a tonne; `ranges` a category's, per unit of its `mass`).
+pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<String, f64>, goods: &crate::content::Registry<GoodsKind>) -> Vec<Item> {
+    // Every recipe, by what it makes.
+    let mut recipes: HashMap<&str, Vec<&crate::registry::ModuleRecipe>> = HashMap::new();
+    for m in &reg.modules {
+        for r in &m.recipes {
+            recipes.entry(r.makes.as_str()).or_default().push(r);
+        }
+    }
+    let mut keys: Vec<String> = reg.goods.iter().map(|g| g.identity.key.clone()).chain(reg.stock.iter().map(|s| s.identity.key.clone())).collect();
+    let named = reg.modules.iter().flat_map(|m| m.recipes.iter().flat_map(|r| r.inputs.iter().chain(&r.outputs).filter_map(|a| a.item.clone()).chain([r.makes.clone()])).chain(m.generation.iter().flat_map(|g| g.burns.iter().map(|b| b.item.clone()))));
+    keys.extend(named.filter(|k| k.starts_with("element.") || k.starts_with("material.") || k.starts_with("good.") || k.starts_with("stock.")));
+    keys.sort();
+    keys.dedup();
+    let category = |key: &str| reg.traded_as(key).and_then(|k| goods.find(&k));
+    // Its price: priced, or what goes into making it, or raw.
+    fn price<'a>(key: &'a str, recipes: &HashMap<&str, Vec<&'a crate::registry::ModuleRecipe>>, priced: &HashMap<String, f64>, fallback: &dyn Fn(&str) -> f64, done: &mut HashMap<String, Option<f64>>) -> Option<f64> {
+        if let Some(p) = priced.get(key) {
+            return Some(*p);
+        }
+        if let Some(p) = done.get(key) {
+            return *p;
+        }
+        done.insert(key.to_string(), None);
+        let made = recipes.get(key).into_iter().flatten().filter_map(|r| {
+            let mut cost = 0.0;
+            for a in &r.inputs {
+                let (Some(item), Some(q)) = (a.item.as_deref(), a.quantity) else { continue };
+                cost += q * price(item, recipes, priced, fallback, done)?;
+            }
+            // (Power: J a kg, so MWh a tonne.)
+            let power = match (r.power, r.rate) {
+                (Some(w), Some(rate)) if rate > 0.0 => w / rate * 1000.0 / 3.6e9 * POWER_PRICE,
+                _ => 0.0,
+            };
+            Some((cost + power) * MARGIN)
+        });
+        let p = made.fold(None, |a: Option<f64>, b| Some(a.map_or(b, |a| a.min(b)))).unwrap_or_else(|| fallback(key));
+        done.insert(key.to_string(), Some(p));
+        Some(p)
+    }
+    let fallback = |_: &str| RAW_PRICE;
+    let mut done = HashMap::new();
+    keys.iter()
+        .enumerate()
+        .map(|(id, key)| {
+            let physical = reg.goods.iter().find(|g| &g.identity.key == key).map(|g| &g.physical).or_else(|| reg.stock.iter().find(|s| &s.identity.key == key).map(|s| &s.physical));
+            let c = category(key);
+            let bulk = physical
+                .and_then(|p| p.bulk_density.or_else(|| Some(p.mass? / p.volume?)))
+                .map(|d| d / 1000.0)
+                .or_else(|| c.map(|c| goods.get(c).bulk_density))
+                .filter(|d| *d > 0.0)
+                .unwrap_or(STOWED);
+            let p = price(key, &recipes, priced, &fallback, &mut done).unwrap_or(RAW_PRICE);
+            Item { id, key: key.clone(), name: reg.name(key).unwrap_or(key).to_string(), category: c, price: (p * 10.0).round() / 10.0, mass: TONNE, bulk_density: bulk }
+        })
+        .collect()
+}
+
+/// The stock catalogue.
+pub fn catalog() -> Vec<Item> {
+    content().stock.clone()
+}
+
+/// The stock item with this key.
+pub fn item(key: &str) -> Option<usize> {
+    content().stock_index.get(key).copied()
 }
 
 /// Raw materials dug out of asteroids (see `mining`): what an excavator
@@ -216,51 +211,16 @@ impl Ore {
 
     /// As stowed, broken, in a hold (t/m³).
     pub fn bulk_density(self) -> f64 {
-        let c = content();
-        c.get(c.handle::<OreEntry>(self.key()).expect("every ore is in the content (checked at load)")).bulk_density
+        content().stock[self.item()].bulk_density
     }
 
-    /// Its goods item: after the generated goods, in `Ore::ALL`'s order.
+    /// Its stock item.
     pub fn item(self) -> usize {
-        let h: Handle<OreEntry> = content().handle(self.key()).expect("every ore is in the content (checked at load)");
-        catalog_size() + h.index()
+        item(self.key()).expect("every ore is in the registry (checked at load)")
+    }
+
+    /// The ore stock item `id` is, if one.
+    pub fn of_item(id: usize) -> Option<Ore> {
+        Ore::ALL.into_iter().find(|o| o.item() == id)
     }
 }
-
-/// The catalog of goods for a galaxy `seed`: `PER_KIND` of each kind of
-/// goods, with distinct names; then the ores. (A kind's goods are drawn by
-/// its key.)
-pub fn catalog(seed: u64) -> Vec<Item> {
-    let per = PER_KIND;
-    let mut items = Vec::with_capacity(catalog_size() + content().ores.len());
-    for (category, kind) in content().goods.iter() {
-        // (Drawn by its key, not its place: a category added changes no other's goods.)
-        let mut rng = Rng::new(mix(seed, kind.key.bytes().fold(0x6000_d500u64, |h, b| (h ^ b as u64).wrapping_mul(0x100_0000_01b3))));
-        // Every adjective–noun pair, shuffled; the first `per` of them.
-        let mut names: Vec<(usize, usize)> = (0..kind.adjectives.len()).flat_map(|a| (0..kind.nouns.len()).map(move |n| (a, n))).collect();
-        for i in (1..names.len()).rev() {
-            let j = rng.range(0.0, (i + 1) as f64) as usize;
-            names.swap(i, j.min(i));
-        }
-        for (number, (a, n)) in names.into_iter().take(per).enumerate() {
-            let (lo, hi) = kind.price;
-            // Prices spread log-uniformly across the category's range.
-            let price = (lo.ln() + rng.range(0.0, 1.0) * (hi.ln() - lo.ln())).exp();
-            let mass = kind.mass * rng.range(0.6, 1.4);
-            items.push(Item {
-                id: items.len(),
-                key: format!("{}/{number}", kind.key),
-                name: format!("{} {}", kind.adjectives[a], kind.nouns[n]),
-                category,
-                price: (price * 10.0).round() / 10.0,
-                mass: mass.round().max(1.0),
-                bulk_density: kind.bulk_density,
-            });
-        }
-    }
-    for (_, o) in content().ores.iter() {
-        items.push(Item { id: items.len(), key: o.key.clone(), name: o.name.clone(), category: o.kind, price: o.price, mass: TONNE, bulk_density: o.bulk_density });
-    }
-    items
-}
-

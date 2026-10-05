@@ -1,20 +1,18 @@
-//! The economy panel (5): an instrument for balance. Across the settled
-//! places — what's made, used and short a day, by kind — then every place
-//! (its kind, people, what it's shortest of), and the one under the cursor
-//! in full: each kind it trades, its stock and how many days that covers,
-//! its price against usual, what it makes, uses and goes short of a day.
+//! The economy panel (5): an instrument for balance. Every settlement the
+//! registry describes, as its report reached us over the hypernet: how its
+//! works ran (each one's rate against flat out, and what held it back), and
+//! its market in full: the stock lying in its warehouse, what its works take
+//! of each a day, and the prices it asks and pays.
 
 use universe_engine::glam::Vec2;
 use universe_engine::{text_size, Color, Context, Frame, KeyCode};
-use universe_sim::services::economy::{lines, Place, COVER_DAYS};
-use universe_sim::world::goods::Category;
+use universe_sim::services::economy::Place;
 
 use crate::App;
 
 const TEXT: Color = Color::hex(0xdcebf2);
 const DIM: Color = Color::hex(0x7d93a0);
 const WARN: Color = Color::hex(0xffb030);
-const BAD: Color = Color::hex(0xff5040);
 
 /// The panel's cursor.
 #[derive(Default)]
@@ -23,18 +21,6 @@ pub struct EconomyPanel {
     held: f32,
     /// The zoning view of the selected place's ground, while open (Enter).
     pub zoning: Option<crate::zoning::Zoning>,
-}
-
-/// Days a place's stock of line `i` covers (what it uses, or for what it
-/// only makes, its output).
-fn cover(p: &Place, c: Category) -> f64 {
-    let rate = p.needs(c).max(p.makes(c));
-    if rate > 0.0 { p.stock_of(c) / rate } else { f64::INFINITY }
-}
-
-/// The kind a place is shortest of (days of cover), among what it uses.
-fn shortest(p: &Place) -> Option<(Category, f64)> {
-    Category::all().filter(|&c| p.needs(c) > 0.0).map(|c| (c, cover(p, c))).min_by(|a, b| a.1.total_cmp(&b.1))
 }
 
 /// Keys while open. False when it should close.
@@ -95,35 +81,22 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         })
         .collect();
     let places: Vec<&Place> = heard.iter().map(|h| h.0).collect();
+    let goods = &app.charts.goods;
     let mut y = 12.0;
-    let people: f64 = places.iter().map(|p| p.population).sum();
-    let short_places = places.iter().filter(|p| p.short.iter().any(|s| *s > 1e-6)).count();
+    let tonnes = |p: &Place| p.stock.total() / 1000.0;
     frame.text(
         Vec2::new(12.0, y),
-        &format!("ECONOMY - {} PLACES, {people:.0}K PEOPLE, {short_places} SHORT OF SOMETHING   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE, ENTER ITS GROUND)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
+        &format!("ECONOMY - {} SETTLEMENTS THE REGISTRY DESCRIBES   AS HEARD OVER THE HYPERNET   ({} CLOSES, UP/DOWN PLACE, ENTER ITS GROUND)", places.len(), crate::keys::key(crate::keys::Act::Economy)),
         TEXT,
     );
     y += line * 1.5;
-    // Across all places, per kind.
-    let mut totals = vec![(0.0f64, 0.0f64, 0.0f64); lines()];
-    for p in places.iter() {
-        for (i, t) in totals.iter_mut().enumerate() {
-            t.0 += p.made[i];
-            t.1 += p.used[i];
-            t.2 += p.short[i];
-        }
-    }
-    let (made, used, short): (f64, f64, f64) = totals.iter().fold((0.0, 0.0, 0.0), |a, t| (a.0 + t.0, a.1 + t.1, a.2 + t.2));
-    frame.text(Vec2::new(12.0, y), &format!("MADE {made:.0} T/DAY   USED {used:.0} T/DAY   SHORT {short:.1} T/DAY"), if short > 0.05 * used.max(1.0) { WARN } else { DIM });
-    y += line;
-    let shorts: Vec<String> = Category::all().filter(|&c| totals[c.index()].2 > 0.05).map(|c| format!("{} {:.0}", c.name(), totals[c.index()].2)).collect();
-    if !shorts.is_empty() {
-        frame.text(Vec2::new(12.0, y), &format!("SHORT: {}", shorts.join("  ")), WARN);
-    }
+    let made: f64 = places.iter().flat_map(|p| p.made.values()).sum::<f64>() / 1000.0;
+    let used: f64 = places.iter().flat_map(|p| p.used.values()).sum::<f64>() / 1000.0;
+    frame.text(Vec2::new(12.0, y), &format!("MADE {made:.0} T/DAY   USED {used:.0} T/DAY   IN WAREHOUSES {:.0} T", places.iter().map(|p| tonnes(p)).sum::<f64>()), DIM);
     y += line * 1.5;
 
     // The places, under their headers.
-    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<12} {:<7} {:>6} {:>4} {:>7}  {}", "SYSTEM", "PLACE", "KIND", "PEOPLE", "FED", "AGE", "SHORTEST"), DIM);
+    frame.text(Vec2::new(12.0, y), &format!(" {:<9} {:<14} {:>5} {:>9} {:>6} {:>4}", "SYSTEM", "PLACE", "WORKS", "WAREHOUSE", "AGE", "HELD"), DIM);
     y += line;
     let top = y;
     let shown = ((size.y - top - 20.0) / line) as usize;
@@ -133,34 +106,27 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         Some(a) => crate::fmt::lag(a),
         None => "NO WORD".to_string(),
     };
+    let ground = |p: &Place| match p.facility {
+        universe_sim::world::Facility::Spaceport(port) => app.v.land.ground(p.system, port),
+        _ => None,
+    };
     for (k, &p) in places.iter().enumerate().skip(first).take(shown) {
-        let worst = shortest(p);
-        let c = match worst {
-            Some((_, d)) if d < 1.0 => BAD,
-            Some((_, d)) if d < COVER_DAYS * 0.5 => WARN,
-            _ => DIM,
-        };
+        let works = ground(p).map_or(0, |g| g.works.iter().filter(|w| w.last.is_some()).count());
+        let held = ground(p).map_or(0, |g| g.works.iter().filter(|w| w.last.as_ref().is_some_and(|r| r.held_by.is_some())).count());
         let mark = if k == panel.selected { ">" } else { " " };
         let sys = app.charts.system(p.system);
-        let text = format!(
-            "{mark}{:<9} {:<12} {:<7} {:>5.1}K {:>3.0}% {:>7}  {}",
-            sys.name.to_uppercase().chars().take(9).collect::<String>(),
-            p.facility.name(&sys).to_uppercase().split(" (").next().unwrap_or("").chars().take(12).collect::<String>(),
-            p.kind.label().split(' ').next().unwrap_or(""),
-            p.population,
-            p.fed * 100.0,
-            age(heard[k].1),
-            worst.map_or(String::new(), |(c, d)| format!("{} {}", c.name(), days(d)))
-        );
-        frame.text(Vec2::new(12.0, y), &text, if k == panel.selected { TEXT } else { c });
+        // (+ 0.0: an empty warehouse shows 0, not -0.)
+        let store = if p.warehouse.is_some() { format!("{:.0} T", tonnes(p).max(0.0) + 0.0) } else { "NONE".into() };
+        let text = format!("{mark}{:<9} {:<14} {:>5} {:>9} {:>6} {:>4}", sys.name.to_uppercase().chars().take(9).collect::<String>(), p.name.to_uppercase().chars().take(14).collect::<String>(), works, store, age(heard[k].1), held);
+        frame.text(Vec2::new(12.0, y), &text, if k == panel.selected { TEXT } else if held > 0 { WARN } else { DIM });
         y += line;
     }
 
     // The place under the cursor, in full.
     let Some(&p) = places.get(panel.selected) else { return };
-    let x = (size.x * 0.54).floor();
+    let x = (size.x * 0.47).floor();
     let mut y = top;
-    frame.text(Vec2::new(x, y), &format!("{} ({}, {:.1}K PEOPLE)", place_name(app, p), p.kind.label(), p.population), TEXT);
+    frame.text(Vec2::new(x, y), &place_name(app, p), TEXT);
     y += line;
     let report = match heard[panel.selected].1 {
         Some(a) if a.is_infinite() => "ITS REPORT: LONG KNOWN".to_string(),
@@ -168,41 +134,47 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         None => "NO WORD OF IT REACHES US: WHAT'S LONG KNOWN".to_string(),
     };
     frame.text(Vec2::new(x, y), &report, DIM);
-    y += line;
-    let life = if p.deaths > 0.0 { format!("{:.2}K DYING A DAY", p.deaths) } else { format!("{:+.2}K A DAY", p.growth) };
-    frame.text(Vec2::new(x, y), &format!("FED {:.0}%   {:.1}K WAITING TO LEAVE   {life}", p.fed * 100.0, p.waiting), if p.fed < 0.5 { BAD } else if p.fed < 0.9 { WARN } else { DIM });
     y += line * 1.5;
-    frame.text(Vec2::new(x, y), &format!("{:<11} {:>5} {:>5} {:>5} {:>5} {:>6} {:>6} {:>5}", "KIND", "TRADE", "STOCK", "COVER", "PRICE", "MADE", "USED", "SHORT"), DIM);
+    // Its works.
+    frame.text(Vec2::new(x, y), &format!("{:<24} {:>5}  {}", "WORKS", "RATE", "HELD BY"), DIM);
     y += line;
-    for c in Category::all().filter(|&c| p.trades(c)) {
-        let i = c.index();
-        let d = cover(p, c);
-        let col = if p.short[i] > 1e-6 { BAD } else if d < COVER_DAYS * 0.5 && p.needs(c) > 0.0 { WARN } else { TEXT };
-        let text = format!(
-            "{:<11} {:>5} {:>5.0} {:>5} {:>4.2}x {:>6.1} {:>6.1} {:>5.1}",
-            c.name(),
-            if p.sells(c) { "SELL" } else { "BUY" },
-            p.stock_of(c),
-            days(d),
-            p.factor(c).unwrap_or(1.0),
-            // (+ 0.0: nothing made shows 0, not -0.)
-            p.made[i] + 0.0,
-            p.used[i] + 0.0,
-            p.short[i] + 0.0
-        );
-        frame.text(Vec2::new(x, y), &text, col);
+    for w in ground(p).map(|g| g.works.as_slice()).unwrap_or(&[]) {
+        // (Floored: a works held back never reads 100%.)
+        let (rate, why) = w.last.as_ref().map_or((String::from("-"), String::new()), |r| (format!("{:.0}%", (r.rate * 100.0).floor()), r.held_by.clone().unwrap_or_default()));
+        frame.text(Vec2::new(x, y), &format!("{:<24} {:>5}  {}", w.name.to_uppercase().chars().take(24).collect::<String>(), rate, why), if why.is_empty() { TEXT } else { WARN });
         y += line;
     }
-    let note = "STOCK T, COVER IN DAYS, PRICE AGAINST USUAL, MADE/USED/SHORT T A DAY. SHIPS CARRY EVERYTHING.";
-    frame.text(Vec2::new((size.x - text_size(note).x) / 2.0, size.y - 14.0), note, DIM);
-}
-
-fn days(d: f64) -> String {
-    if d.is_infinite() {
-        "-".into()
-    } else if d < 1.0 {
-        format!("{:.0}H", d * 24.0)
-    } else {
-        format!("{d:.0}D")
+    y += line * 0.5;
+    // Its market: what lies in the warehouse, and what its works take.
+    if p.warehouse.is_none() {
+        frame.text(Vec2::new(x, y), "NO WAREHOUSE: NO MARKET", DIM);
+        return;
     }
+    frame.text(Vec2::new(x, y), &format!("{:<18} {:>6} {:>6} {:>6} {:>6} {:>6} {:>6}", "STOCK", "HELD", "TAKES", "MADE", "USED", "ASK", "BID"), DIM);
+    y += line;
+    let mut items: Vec<usize> = p.stock.stock.keys().copied().chain(p.wants.iter().map(|(i, _)| *i)).chain(p.made.keys().copied()).collect();
+    items.sort_unstable();
+    items.dedup();
+    for i in items {
+        if y > size.y - 30.0 {
+            break;
+        }
+        let g = &goods[i];
+        let q = p.price(g);
+        let short = q.wanted && q.stock < p.need(i) / 1000.0;
+        let text = format!(
+            "{:<18} {:>6.0} {:>6.0} {:>6.0} {:>6.0} {:>6} {:>6.0}",
+            g.name.to_uppercase().chars().take(18).collect::<String>(),
+            q.stock,
+            p.need(i) / 1000.0,
+            p.made.get(&i).copied().unwrap_or(0.0) / 1000.0,
+            p.used.get(&i).copied().unwrap_or(0.0) / 1000.0,
+            q.ask.map_or("-".into(), |a| format!("{a:.0}")),
+            q.bid
+        );
+        frame.text(Vec2::new(x, y), &text, if short { WARN } else { TEXT });
+        y += line;
+    }
+    let note = "HELD: T IN THE WAREHOUSE. TAKES, MADE, USED: T A DAY. ASK, BID: CR A T. SHIPS CARRY EVERYTHING BETWEEN SETTLEMENTS.";
+    frame.text(Vec2::new((size.x - text_size(note).x) / 2.0, size.y - 14.0), note, DIM);
 }

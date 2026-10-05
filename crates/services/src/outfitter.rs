@@ -11,8 +11,7 @@
 //!   computing kind — by its mass: fitting one draws that from the station's
 //!   stock (none in stock, none to fit), and one taken out puts half back.
 
-use universe_world::goods::Category;
-use universe_world::modules::{Module, SlotKind};
+use universe_world::modules::Module;
 use universe_world::rng::{mix, Rng};
 use universe_world::Facility;
 
@@ -82,9 +81,4 @@ pub fn offer(seed: u64, links: &[(usize, usize)], system: usize, station: Facili
     Offer { carried: rng.range(0.0, 1.0) < chance, price: m.price * (1.0 + MARKUP_PER_HOP * hops as f64), hops }
 }
 
-/// What module `m` is made of: (kind of goods, tonnes).
-pub fn materials(m: &Module) -> (Category, f64) {
-    let electronic = matches!(m.does.slot(), SlotKind::Computer | SlotKind::Transponder | SlotKind::Sensors | SlotKind::Comm | SlotKind::Avionics);
-    let kind = if electronic { "market.electronics" } else { "market.machinery" };
-    (Category::of(kind).expect("machinery and electronics are kinds of goods"), m.mass / 1000.0)
-}
+

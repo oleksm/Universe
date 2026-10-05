@@ -7,7 +7,7 @@
 //! digs until the hold is full, lets go, and moves its route on; at the
 //! market it asks for quotes and sells its ore. Worked out rocks and anchors
 //! that didn't hold: it picks again. The world sees only its commands and
-//! requests.
+//! requests. Where no market buys ore in its home system, it has no route.
 
 use universe_avionics::follow::{Anchor, Manoeuvre};
 use universe_avionics::route::{Route, Stop, WORKING};
@@ -17,7 +17,7 @@ use universe_world::charts::Charts;
 use universe_world::goods::TONNE;
 use universe_world::mining::{self, ANCHOR_REACH, ANCHOR_SPEED};
 use universe_world::ship::{ShipCommands, SHIP_RADIUS};
-use universe_world::{Facility, ShipEvent, ShipState, StarSystem};
+use universe_world::{ShipEvent, ShipState, StarSystem};
 
 use crate::contract::MarketAnswer;
 use crate::rng::{mix, Rng};
@@ -44,7 +44,7 @@ fn worth(charts: &Charts, sys: &StarSystem, f: usize, i: usize) -> f64 {
 /// remnant), then the market it sells at. None where there are no fields.
 pub fn route(charts: &Charts, system: usize, seed: u64) -> Option<Vec<Stop>> {
     let sys = charts.system(system);
-    let market = sys.station().map(Facility::Station).or_else(|| (!sys.spaceports.is_empty()).then_some(Facility::Spaceport(0)))?;
+    let market = universe_world::traffic::facilities(&sys).into_iter().find(|&f| universe_world::settlements::has_market(&sys, f))?;
     let value: Vec<f64> = (0..sys.fields.len()).map(|f| worth(charts, &sys, f, sys.fields[f].body)).collect();
     let best = value.iter().copied().fold(0.0, f64::max);
     let good: Vec<usize> = (0..value.len()).filter(|&f| value[f] >= 0.5 * best && best > 0.0).collect();
@@ -143,7 +143,7 @@ fn order(a: &mut Avionics, bus: &mut impl Bus, events: &mut Vec<Event>, change: 
 /// will take of it).
 pub(crate) fn sell(ans: &MarketAnswer, requests: &mut Vec<Request>) {
     for (&(item, have), q) in ans.hold.iter().zip(&ans.here_held) {
-        let ore = item >= universe_world::goods::catalog_size();
+        let ore = universe_world::goods::Ore::of_item(item).is_some();
         let Some(q) = q.filter(|_| ore && have > 0) else { continue };
         let units = match q.offer.side {
             Side::Buys => have.min(q.level.floor().max(0.0) as u32),
