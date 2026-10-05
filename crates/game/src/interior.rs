@@ -63,26 +63,26 @@ fn sort_index(name: Option<&str>) -> usize {
 /// Points' kinds are 3.. in `SORTS`' order.
 const LAYERS: [(&str, Option<usize>, Option<Color>); 22] = [
     ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
-    ("GRID AND MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
+    ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
     ("POINTS", None, None),
-    ("ENTRY: HATCH, DOORS", Some(2), Some(SORTS[0].1)),
+    ("ENTRY", Some(2), Some(SORTS[0].1)),
     ("DASH", Some(2), Some(SORTS[1].1)),
-    ("WINDOW", Some(2), Some(SORTS[2].1)),
+    ("WINDOWS", Some(2), Some(SORTS[2].1)),
     ("SERVICE", Some(2), Some(SORTS[3].1)),
-    ("MINING OPENING", Some(2), Some(SORTS[4].1)),
-    ("MOUNTS, DOCKS, ENGINES", Some(2), Some(SORTS[5].1)),
+    ("MINING", Some(2), Some(SORTS[4].1)),
+    ("MOUNTS, ENGINES", Some(2), Some(SORTS[5].1)),
     ("LAID", Some(2), Some(SORTS[6].1)),
     ("NAMES", Some(2), None),
     ("ACCESS", None, None),
     ("LINES", Some(11), Some(PATH)),
-    ("ROOMS (OUTLINES)", Some(11), Some(Color([0.4, 1.0, 0.75, 0.45]))),
+    ("OUTLINES", Some(11), Some(Color([0.4, 1.0, 0.75, 0.45]))),
     ("WALLS", Some(11), Some(Color([0.75, 0.9, 1.0, 0.6]))),
     ("HATCHES", Some(11), Some(Color([1.0, 0.65, 0.2, 1.0]))),
     ("CLASHES", Some(11), Some(Color([1.0, 0.3, 0.25, 1.0]))),
-    ("DECKS (2D STUDIO)", None, None),
+    ("DECKS (2D)", None, None),
     ("FLOORS", Some(17), Some(Color([1.0, 0.8, 0.5, 0.6]))),
     ("WALLS", Some(17), Some(Color([1.0, 0.8, 0.5, 0.9]))),
-    ("HOLLOW MAP (PATH)", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
+    ("HOLLOW MAP", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
     ("REACH", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
 ];
 
@@ -152,8 +152,10 @@ pub struct Interior {
     snap_floor: bool,
     /// The hatch new doorways get (the DOOR tool's shape, size and slide).
     hatch: Hatch,
-    /// The layers hidden (by number in `LAYERS`).
+    /// The layers hidden (by number in `LAYERS`); the panel folded up; groups folded.
     hidden: [bool; LAYERS.len()],
+    layers_folded: bool,
+    group_folded: [bool; LAYERS.len()],
     /// The hull at the work plane's height: for which height, each metre cell's
     /// middle and what's there (hollow, solid); and being worked out, for which.
     hollow: Option<(f32, Arc<Vec<Cell>>)>,
@@ -1572,19 +1574,47 @@ fn plane_handle(cam: &Camera, h: &Hull, plane: f32) -> Vec3 {
 
 /// The legend, at the bottom right: where it is and its size.
 fn legend_rect(size: Vec2) -> (Vec2, Vec2) {
-    let height = LAYER_ROW * (LAYERS.len() + 1) as f32 + 10.0;
+    layers_rect(size, LAYERS.len())
+}
+
+/// The layers panel with `rows` rows under its header: where it is and its size.
+fn layers_rect(size: Vec2, rows: usize) -> (Vec2, Vec2) {
+    let height = LAYER_ROW * (rows + 1) as f32 + 8.0;
     (Vec2::new(size.x - LAYERS_WIDTH - 12.0, size.y - 26.0 - height), Vec2::new(LAYERS_WIDTH, height))
 }
 
 /// The layers panel: its width and a row's height (px).
-const LAYERS_WIDTH: f32 = 200.0;
-const LAYER_ROW: f32 = 12.5;
+const LAYERS_WIDTH: f32 = 140.0;
+const LAYER_ROW: f32 = 11.0;
 
-/// Layer row `k`'s place (under the panel's title).
-fn layer_row(size: Vec2, k: usize) -> (Vec2, Vec2) {
-    let (p, c) = legend_rect(size);
-    (Vec2::new(p.x + 4.0, p.y + 5.0 + LAYER_ROW * (k + 1) as f32), Vec2::new(c.x - 8.0, LAYER_ROW))
+/// The layers panel's rows shown: none folded up (the panel), a group's folded
+/// (its own row only).
+fn layer_rows(i: &Interior) -> Vec<usize> {
+    if i.layers_folded {
+        return Vec::new();
+    }
+    (0..LAYERS.len()).filter(|&k| LAYERS[k].1.is_none_or(|p| !i.group_folded[p])).collect()
 }
+
+/// The layers panel's header (a click folds it up, or out), and the place of the
+/// `n`th of `rows` rows under it.
+fn layers_header(size: Vec2, rows: usize) -> (Vec2, Vec2) {
+    let (p, c) = layers_rect(size, rows);
+    (Vec2::new(p.x + 2.0, p.y + 2.0), Vec2::new(c.x - 4.0, LAYER_ROW))
+}
+
+fn layer_row(size: Vec2, rows: usize, n: usize) -> (Vec2, Vec2) {
+    let (p, c) = layers_rect(size, rows);
+    (Vec2::new(p.x + 4.0, p.y + 4.0 + LAYER_ROW * (n + 1) as f32), Vec2::new(c.x - 8.0, LAYER_ROW))
+}
+
+/// The layers panel's own colours: slate, a muted amber edge and heading, soft ticks
+/// (apart from the blueprint, quiet).
+const LAYERS_BACK: Color = Color([0.06, 0.07, 0.09, 0.62]);
+const LAYERS_EDGE: Color = Color([0.85, 0.7, 0.45, 0.35]);
+const LAYERS_HEAD: Color = Color([0.9, 0.78, 0.55, 0.85]);
+const LAYERS_TEXT: Color = Color([0.82, 0.84, 0.86, 0.85]);
+const LAYERS_TICK: Color = Color([0.65, 0.9, 0.75, 0.9]);
 
 /// The globe at the top right: its middle and radius (px).
 fn globe(size: Vec2) -> (Vec2, f32) {
@@ -1815,13 +1845,26 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
     // A layer's row clicked: shown or hidden.
-    if pressed
-        && let Some(k) = (0..LAYERS.len()).find(|&k| inside(layer_row(size, k), cursor))
-    {
-        interior.hidden[k] = !interior.hidden[k];
+    // (The header: the panel folded up or out. A group's arrow: its rows folded; a
+    // row: shown or hidden.)
+    let rows = layer_rows(interior);
+    if pressed && inside(layers_header(size, rows.len()), cursor) {
+        interior.layers_folded = !interior.layers_folded;
         return true;
     }
-    if pressed && inside(legend_rect(size), cursor) {
+    if pressed
+        && let Some(n) = (0..rows.len()).find(|&n| inside(layer_row(size, rows.len(), n), cursor))
+    {
+        let k = rows[n];
+        let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
+        if group && cursor.x < layer_row(size, rows.len(), n).0.x + 10.0 {
+            interior.group_folded[k] = !interior.group_folded[k];
+        } else {
+            interior.hidden[k] = !interior.hidden[k];
+        }
+        return true;
+    }
+    if pressed && inside(layers_rect(size, rows.len()), cursor) {
         return true;
     }
     // The globe: an axis clicked undoes the view's turn about that axis only. X:
@@ -2574,28 +2617,41 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(at + Vec2::new(6.0, 5.0 + k as f32 * line), l, col, 0.7);
         }
     }
-    // The layers: each a row to show or hide it (its key's colour beside it; under
-    // another, set in; hidden, or under one hidden, dim).
+    // The layers: a header (folds the panel), then a row each: a group's arrow (folds
+    // its rows), a checkbox (ticked: shown), its key's colour, its name (under
+    // another, set in; not shown, dim).
     {
-        let (p, c) = legend_rect(size);
-        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.88]));
-        frame.hud_box(p, c, PLANE.scale(1.5));
-        frame.text_scaled(p + Vec2::new(6.0, 5.0), "LAYERS (CLICK: SHOW, HIDE)", LABEL, 0.7);
-        for (k, (name, parent, colour)) in LAYERS.iter().enumerate() {
-            let (q, _) = layer_row(size, k);
-            let x = q.x + if parent.is_some() { 12.0 } else { 0.0 };
+        let rows = layer_rows(interior);
+        let (p, c) = layers_rect(size, rows.len());
+        frame.hud_rect(p, c, LAYERS_BACK);
+        frame.hud_box(p, c, LAYERS_EDGE);
+        let (hp, hc) = layers_header(size, rows.len());
+        let fold = if interior.layers_folded { "+" } else { "-" };
+        let head = if inside((hp, hc), interior.cursor) { PICKED } else { LAYERS_HEAD };
+        frame.text_scaled(hp + Vec2::new(3.0, 1.5), &format!("{fold} LAYERS"), head, 0.62);
+        for (n, &k) in rows.iter().enumerate() {
+            let (name, parent, colour) = LAYERS[k];
+            let (q, qc) = layer_row(size, rows.len(), n);
+            let group = (k + 1 < LAYERS.len()) && LAYERS[k + 1].1 == Some(k);
             let on = interior.shown(k);
-            let tick = Vec2::new(x, q.y + 2.0);
+            let x = q.x + if parent.is_some() { 10.0 } else { 0.0 };
+            if group {
+                let arrow = if interior.group_folded[k] { ">" } else { "v" };
+                frame.text_scaled(Vec2::new(q.x - 1.0, q.y + 1.5), arrow, LAYERS_HEAD.scale(0.8), 0.55);
+            }
+            // (The checkbox: a box, ticked when it's on.)
+            let b = Vec2::new(x + 8.0, q.y + 2.0);
+            let box_col = if on { LAYERS_TICK } else { LAYERS_TEXT.scale(0.45) };
+            frame.hud_box(b, Vec2::splat(7.0), box_col);
             if !interior.hidden[k] {
-                frame.hud_rect(tick, Vec2::splat(7.0), if on { LABEL } else { LABEL.scale(0.4) });
-            } else {
-                frame.hud_box(tick, Vec2::splat(7.0), LABEL.scale(0.5));
+                frame.hud_line(b + Vec2::new(1.5, 3.5), b + Vec2::new(3.0, 5.5), box_col);
+                frame.hud_line(b + Vec2::new(3.0, 5.5), b + Vec2::new(6.0, 1.0), box_col);
             }
             if let Some(col) = colour {
-                frame.hud_rect(Vec2::new(x + 11.0, q.y + 4.5), Vec2::new(9.0, 2.5), if on { *col } else { col.scale(0.4) });
+                frame.hud_rect(Vec2::new(b.x + 10.0, q.y + 4.5), Vec2::new(6.0, 2.0), if on { col } else { col.scale(0.35) });
             }
-            let text = if on { LABEL } else { LABEL.scale(0.45) };
-            frame.text_scaled(Vec2::new(x + 24.0, q.y + 1.0), name, if inside(layer_row(size, k), interior.cursor) { PICKED } else { text }, 0.65);
+            let text = if inside((q, qc), interior.cursor) { PICKED } else if on { LAYERS_TEXT } else { LAYERS_TEXT.scale(0.4) };
+            frame.text_scaled(Vec2::new(b.x + 19.0, q.y + 1.5), name, text, 0.58);
         }
     }
     // The tool's panel: what it does and how, its actions, how much is drawn.
