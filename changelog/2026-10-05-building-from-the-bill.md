@@ -24,3 +24,11 @@
   there (its stock fit still brought in). Stations sell as before, brought in from outside.
 - **Stock is counted in units on the market:** tonnes of bulk stock, pieces of parts, products and
   hulls; one 144 kg part is on sale (it took a tonne before).
+- **Setting modules in the game:** the economy panel (5), Tab on a settlement: its works' modules,
+  each with what it's set to make; up and down a module, left and right through what it can make
+  (Shift: ten at a time). Sent as the owner's choice: refused unless the works stands on your lot
+  (YOURS marks one that does). The view carries the economy's works (`View::works`); the command
+  is `SetUp`.
+- Parts are named with their code (`MC07-01 NOSE CAP`): every product has a first wall.
+- Dev scenario `economymodules`: Trethi's modules, the yard's welding bays set (as its owner) to
+  the MC-07's nose cap.

@@ -166,7 +166,10 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
                 .filter(|d| *d > 0.0)
                 .unwrap_or(STOWED);
             let p = price(id, &keys, &masses, &making, priced, &mut done).unwrap_or(RAW_PRICE / TONNE) * masses[id];
-            Item { id, key: key.clone(), name: reg.name(key).unwrap_or(key).to_string(), category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
+            // (A part by its code too: every product has a first wall.)
+            let name = reg.name(key).unwrap_or(key).to_string();
+            let name = reg.parts.iter().find(|p| &p.identity.key == key).map_or(name.clone(), |p| format!("{} {name}", p.identity.code));
+            Item { id, key: key.clone(), name, category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
         })
         .collect();
     (items, recipes)

@@ -104,6 +104,9 @@ pub enum Command {
     ClaimLand { system: usize, port: usize, outline: Vec<(f64, f64)> },
     BuyParcel { system: usize, port: usize, number: u32 },
     Build { system: usize, port: usize, number: u32, blueprint: String },
+    /// Set module `setup` of the economy's works `works` to `recipe` (its
+    /// place in what the module can make; None: nothing). Its owner's to set.
+    SetUp { works: usize, setup: usize, recipe: Option<usize> },
     Trade { market: Facility, item: usize, units: i64 },
     /// Refit slot `slot` with module `module` (content key; None: empty it), docked at a station.
     Refit { slot: String, module: Option<String> },
@@ -200,6 +203,8 @@ pub struct View {
     /// The land at settlements: lots, owners, facilities (shared: copied only
     /// where it changed).
     pub land: universe_services::land::LandOffice,
+    /// The economy's works: each one's modules and what they're set to, its stock.
+    pub works: Arc<Vec<universe_services::economy::Works>>,
     /// What's been dug out of the rocks of our system: ((field, body), kg).
     pub mined: Vec<((usize, usize), f64)>,
     /// The market we're docked at; the markets of the system; the one watched.
@@ -329,6 +334,10 @@ impl Engine {
                 let r = u.build_facility(system, port, number, blueprint);
                 u.events.push(r.map_or_else(|reason| Event::Refused { reason }, |text| Event::Notice { text }));
             }
+            Command::SetUp { works, setup, recipe } => {
+                let r = u.set_up(works, setup, recipe);
+                u.events.push(r.map_or_else(|reason| Event::Refused { reason }, |text| Event::Notice { text }));
+            }
             Command::BuyHull { hull } => {
                 if let Some(h) = universe_world::content::content().handle(&hull) {
                     let _ = u.buy_hull(h);
@@ -434,6 +443,7 @@ impl Engine {
             economy: u.markets.economy.snapshot(),
             economy_heard: u.boards.heard_economy(system, u.ship.position, &u.ship.spec().comm, now),
             land: u.land.clone(),
+            works: u.markets.economy.works_snapshot(),
             mined: u.world.mined.iter().filter(|((s, _, _), _)| *s == system).map(|(&(_, f, b), &kg)| ((f, b), kg)).collect(),
             dug: match u.ship.state {
                 universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),

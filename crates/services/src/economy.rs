@@ -73,7 +73,9 @@ impl Pool {
 
     /// Take up to `kg`; what was taken.
     pub fn take(&mut self, item: usize, kg: f64) -> f64 {
-        let Some(have) = self.stock.get_mut(&item) else { return 0.0 };
+        let Some(have) = self.stock.get_mut(&item) else {
+            return 0.0;
+        };
         let t = kg.min(*have).max(0.0);
         *have -= t;
         if *have <= 1e-9 {
@@ -286,6 +288,7 @@ pub struct Economy {
     index: HashMap<(usize, Facility), usize>,
     pub stepped_to: f64,
     snapshot: Option<std::sync::Arc<Vec<Place>>>,
+    works_snap: Option<std::sync::Arc<Vec<Works>>>,
 }
 
 impl Economy {
@@ -350,6 +353,7 @@ impl Economy {
             }
         }
         self.snapshot = None;
+        self.works_snap = None;
     }
 
     /// Set module `setup` of works `works` to `recipe` (its place in
@@ -378,7 +382,13 @@ impl Economy {
 
     pub fn place_mut(&mut self, system: usize, f: Facility) -> Option<&mut Place> {
         self.snapshot = None;
+        self.works_snap = None;
         self.index.get(&(system, f)).map(|&i| &mut self.places[i])
+    }
+
+    /// The works as they stand (shared: copied when they've changed).
+    pub fn works_snapshot(&mut self) -> std::sync::Arc<Vec<Works>> {
+        self.works_snap.get_or_insert_with(|| std::sync::Arc::new(self.works.clone())).clone()
     }
 
     pub fn snapshot(&mut self) -> std::sync::Arc<Vec<Place>> {
@@ -390,12 +400,15 @@ impl Economy {
         let i = *self.index.get(&(system, f))?;
         let h = self.places[i].warehouse?;
         self.snapshot = None;
+        self.works_snap = None;
         Some((&mut self.places[i], &mut self.works[h].pool))
     }
 
     /// Put `kg` of `item` into the market at (`system`, `f`) (sold to it), as far as it has room; what went in.
     pub fn put(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> f64 {
-        let Some((p, pool)) = self.market_mut(system, f) else { return 0.0 };
+        let Some((p, pool)) = self.market_mut(system, f) else {
+            return 0.0;
+        };
         let t = kg.min(pool.free()).max(0.0);
         pool.put(item, t);
         p.stock = pool.clone();
@@ -404,7 +417,9 @@ impl Economy {
 
     /// Take up to `kg` of `item` out of the market at (`system`, `f`) (bought from it); what came out.
     pub fn take(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> f64 {
-        let Some((p, pool)) = self.market_mut(system, f) else { return 0.0 };
+        let Some((p, pool)) = self.market_mut(system, f) else {
+            return 0.0;
+        };
         let t = pool.take(item, kg);
         p.stock = pool.clone();
         t
@@ -427,6 +442,7 @@ impl Economy {
             }
         }
         self.snapshot = None;
+        self.works_snap = None;
     }
 
     fn run_place(&mut self, p: usize, at: f64, land: &mut LandOffice, ledger: &mut Ledger, goods: &[Item], tick: u64) {
@@ -559,7 +575,9 @@ impl Economy {
                     if t <= 0.0 {
                         continue;
                     }
-                    let Some(ask) = self.places[p].price(&goods[i]).ask else { continue };
+                    let Some(ask) = self.places[p].price(&goods[i]).ask else {
+                        continue;
+                    };
                     self.works[h].pool.take(i, t);
                     self.works[k].pool.put(i, t);
                     let cost = t / 1000.0 * ask;

@@ -315,7 +315,7 @@ pub fn apply(app: &mut App, name: &str) {
             }
             app.economy_panel = Some(panel);
         }
-        "economy" | "economyheard" => {
+        "economy" | "economyheard" | "economymodules" => {
             // (Heard: the world run a while first, reports put out and on their way.)
             app.mode = Mode::Pilot;
             if name == "economyheard" {
@@ -348,6 +348,26 @@ pub fn apply(app: &mut App, name: &str) {
             let at = app.v.economy.iter().position(|p| p.name == "Port Trethi").unwrap_or(0);
             let mut panel: crate::economy::EconomyPanel = Default::default();
             panel.selected = at;
+            if name == "economymodules" {
+                // (Its modules open, the yard's welding bay set to the MC-07's nose cap.)
+                let u = app.engine.universe();
+                let yard = u.markets.economy.works.iter().position(|w| w.name == "Trethi Yard");
+                let cap = universe_sim::world::goods::item("part.mc07-01");
+                if let (Some(k), Some(cap)) = (yard, cap) {
+                    let bay = u.markets.economy.works[k].setups.iter().position(|s| s.module.identity.key == "module.welding-bay").unwrap_or(0);
+                    // (As its owner sets it.)
+                    let w = &u.markets.economy.works[k];
+                    let g = &u.land.grounds[w.ground];
+                    let owner = g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel)).and_then(|l| u.land.party(&l.owner));
+                    if let (Some(r), Some(owner)) = (universe_sim::world::recipes::of("module.welding-bay").iter().position(|r| r.makes == cap), owner) {
+                        let _ = u.markets.economy.set_up(&u.land, k, bay, Some(r), owner);
+                    }
+                    let before = u.markets.economy.works.iter().enumerate().filter(|(j, w)| *j < k && Some(w.ground) == ground).map(|(_, w)| w.setups.len()).sum::<usize>();
+                    panel.module = Some(before + bay);
+                }
+                app.engine.refresh();
+                app.v = app.engine.view();
+            }
             app.economy_panel = Some(panel);
         }
         "navmap" | "netmap" | "navzoom" => {
