@@ -430,6 +430,42 @@ pub fn layers_corner(size: Vec2, studio: &Studio) -> Vec2 {
     plan_r.1 - Vec2::new(6.0, 6.0)
 }
 
+/// The modules placed, seen along one of the ship's axes: each its outline (a box's
+/// rectangle, a round one's ellipse) across `u` and `v` (the axes the view shows:
+/// 0 across, 1 up, 2 along), its name on it; bright where `here` says it is.
+fn modules_view(frame: &mut Frame, access: &crate::interior::Access, to: impl Fn(f64, f64) -> Vec2, (u, v): (usize, usize), here: impl Fn(universe_engine::glam::Vec3, universe_engine::glam::Vec3) -> bool) {
+    if !access.layers[layer::MODULES] {
+        return;
+    }
+    for (at, size, round, name) in &access.modules {
+        let col = Color([MODULE.0[0], MODULE.0[1], MODULE.0[2], if here(*at, *size) { 0.9 } else { 0.3 }]);
+        let (cu, cv, hu, hv) = (f64::from(at[u]), f64::from(at[v]), f64::from(size[u]) * 0.5, f64::from(size[v]) * 0.5);
+        let n = if *round { 32 } else { 4 };
+        let p: Vec<Vec2> = (0..n).map(|k| {
+            if *round {
+                let a = k as f64 / n as f64 * std::f64::consts::TAU;
+                to(cu + a.cos() * hu, cv + a.sin() * hv)
+            } else {
+                let (su, sv) = [(-1.0, -1.0), (1.0, -1.0), (1.0, 1.0), (-1.0, 1.0)][k];
+                to(cu + su * hu, cv + sv * hv)
+            }
+        }).collect();
+        for k in 0..n {
+            frame.hud_line(p[k], p[(k + 1) % n], col);
+        }
+        // (Named where the name fits in it.)
+        let mid = to(cu, cv);
+        let w = name.chars().count() as f32 * universe_engine::frame::GLYPH * 0.5;
+        let span = p.iter().fold((mid, mid), |(lo, hi), q| (lo.min(*q), hi.max(*q)));
+        if span.1.x - span.0.x > w + 4.0 && span.1.y - span.0.y > 10.0 {
+            frame.text_scaled(mid - Vec2::new(w / 2.0, 4.0), name, col, 0.5);
+        }
+    }
+}
+
+/// The modules' colour (as the 3D studio's).
+const MODULE: Color = Color([0.8, 0.6, 1.0, 1.0]);
+
 fn access_side(frame: &mut Frame, access: &crate::interior::Access, at: impl Fn(universe_engine::glam::Vec3) -> Vec2, k: f32) {
     let shown = |k: usize| access.layers[k];
     for &(a, b, room, walled) in &access.tunnels {
@@ -993,6 +1029,8 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
                     }
                 }
             }
+            // (The modules from above: bright where they're at this deck's height.)
+            modules_view(frame, access, |x, z| to(DVec2::new(x, z)), (0, 2), |at, size| at.y - size.y * 0.5 <= y1 && at.y + size.y * 0.5 >= y0);
             for &(p, c) in &access.points {
                 let here = p.y >= y0 - 0.5 && p.y <= y1 + 0.5;
                 let q = to(DVec2::new(f64::from(p.x), f64::from(p.z)));
@@ -1175,8 +1213,9 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         for [a, b] in h.profile.iter().filter(|_| shown(layer::HULL)) {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
-        // The 3D studio's access plan from the side.
+        // The 3D studio's access plan from the side, and its modules.
         access_side(frame, access, |p| Vec2::new(zs(f64::from(p.z)), sy(f64::from(p.y))), k as f32);
+        modules_view(frame, access, |z, y| Vec2::new(zs(z), sy(y)), (2, 1), |_, _| true);
         // Its length under it, its height beside it.
         let (z0, z1) = (zs(h.lo.z).min(zs(h.hi.z)), zs(h.lo.z).max(zs(h.hi.z)));
         if shown(layer::GRID) {
@@ -1251,6 +1290,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             None => spinner(frame, end_r),
         }
         access_side(frame, access, |p| Vec2::new(xs(f64::from(p.x)), ey(f64::from(p.y))), k as f32);
+        modules_view(frame, access, |x, y| Vec2::new(xs(x), ey(y)), (0, 1), |_, _| true);
         for (k, d) in decks.iter().enumerate() {
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
             frame.hud_line(Vec2::new(end_r.0.x, ey(d.floor)), Vec2::new(end_r.1.x, ey(d.floor)), col);
