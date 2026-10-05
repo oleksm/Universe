@@ -483,8 +483,8 @@ fn bodies(frame: &mut Frame, app: &App) {
     let t = app.now();
     let cam = frame.camera.position;
     for (i, b) in sys.bodies.iter().enumerate() {
-        // (Asteroids: see `rocks`.)
-        if b.kind == BodyKind::Asteroid {
+        // (Rocks: see `rocks`.)
+        if b.kind.is_rock() {
             continue;
         }
         let center = app.view.positions[i];
@@ -1781,8 +1781,10 @@ fn labels(frame: &mut Frame, app: &App) {
             BodyKind::Star => true,
             BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant => true,
             BodyKind::Moon | BodyKind::Station | BodyKind::Gate => near_parent,
-            // A field's remnant: from within a few million km.
-            BodyKind::Asteroid => app.view.positions[i].distance(cam) < 5.0e9,
+            BodyKind::DwarfPlanet => true,
+            BodyKind::CapturedMoon => near_parent,
+            // A rock (a field's remnant, a comet, a centaur...): from within a few million km.
+            BodyKind::Asteroid | BodyKind::CrossingAsteroid | BodyKind::Centaur | BodyKind::Comet => app.view.positions[i].distance(cam) < 5.0e9,
         };
         // Skip when the body fills the view; the label would sit on top of it.
         if wanted && frame.projected_radius(app.view.positions[i], b.rail.radius) < 60.0 {

@@ -755,3 +755,25 @@ method the game's build asks for. Mark an alternative `x-in-game: "not made"` (b
 constant) for one the game shouldn't have to handle yet: it then defaults to "not made", and the
 build passes. **`throat_coil` wants that mark**: the game handles it by hand as not made today.
 Let the lint allow `x-in-game` there.
+
+## Small bodies are made by the engine (2026-10-04)
+
+The engine now seeds every system's small bodies, by your `celestial_seed.py` rules (largest body,
+crossing asteroids, captured moons, centaurs, outer-belt dwarf planets, returning and far-cloud
+comets), on the game's own random numbers. **So they're other bodies than your 65 records:** same
+rules, different draws. To bring the records in step, as for every seeded body:
+1. **`celestial_export.py`:** write the bodies the export marks `"small": true` into
+   `systems/<system>/small-bodies/`, without `in_game` (made), with their `rock` class and density
+   from the export. Replace the seeded ones; leave curated ones alone. The export doesn't write the
+   `about` texts your seeder did: keep writing those in the export script if you want them.
+2. **`celestial_seed.py`:** stop seeding small bodies; seed only the regions (scattered disc, far
+   cloud, and a meteoroid stream for each returning comet now in the records).
+3. **The guard** then holds the small bodies to their records, as it does planets and fields.
+
+Also:
+- **The seeder's inline figures** (5 crossing asteroids, 2–4 captured moons a gas giant, the
+  ranges of size, eccentricity and tilt) are now in `crates/world/src/small_bodies.rs`. They belong
+  in a seeding record (`seeding.small-bodies`?) next to `seeding.asteroids`.
+- **`rock-class.primitive`, `basaltic`, `enstatite`, `stony-iron` have no `colour`** (and some no
+  `albedo`): the game won't make a body of a class it can't draw. Captured moons are made
+  carbonaceous until primitive has its colour.

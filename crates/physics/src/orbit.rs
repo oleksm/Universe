@@ -106,9 +106,11 @@ impl Orbit {
         if e == 0.0 {
             return m; // circular: nothing to solve
         }
-        // A good first guess means Newton usually converges in 2-3 steps.
-        let mut ea = if e < 0.8 { m + e * m.sin() * (1.0 + e * m.cos()) } else { std::f64::consts::PI };
-        for _ in 0..12 {
+        // A good first guess means Newton usually converges in 2-3 steps;
+        // near-parabolic (a comet's e of 0.99999) near its closest, Danby's
+        // start (M + 0.85 e, toward sin M) and more steps.
+        let mut ea = if e < 0.8 { m + e * m.sin() * (1.0 + e * m.cos()) } else { m + 0.85 * e * m.sin().signum() };
+        for _ in 0..60 {
             let delta = (ea - e * ea.sin() - m) / (1.0 - e * ea.cos());
             ea -= delta;
             if delta.abs() < 1e-12 {
@@ -164,6 +166,14 @@ mod tests {
         let (p0, p1) = (o.position(123.0), o.position(123.0 + o.period()));
         assert!(p0.distance(p1) < 1e-6 * o.semi_major_axis);
         assert!((p0.length() - o.periapsis()) >= -1e-6 && (p0.length() - o.apoapsis()) <= 1e-6);
+        // A comet's near-parabolic orbit (e 0.99999) solves all the way round, its closest pass too.
+        let c = Orbit::new(3.0e14, 0.99999, 0.3, 0.0, 0.0, 0.0, 1.3e20);
+        for k in 0..2000 {
+            let t = k as f64 / 2000.0 * TAU / c.mean_motion;
+            let (ea, m) = (c.eccentric_anomaly(t), (c.mean_anomaly_epoch + c.mean_motion * t).rem_euclid(TAU));
+            assert!((ea - c.eccentricity * ea.sin() - m).abs() < 1e-9, "t {t}: E {ea} doesn't solve M {m}");
+        }
     }
 
 }
+

@@ -106,6 +106,13 @@ impl RockClass {
         &letters[self.0 as usize]
     }
 
+    /// Whether its record has all the game needs to make one: its densities,
+    /// albedo and colour.
+    pub fn described(self) -> bool {
+        let p = &self.record().physical;
+        p.density_rubble.is_some() && p.density_monolith.is_some() && p.albedo.is_some() && p.colour.is_some()
+    }
+
     fn physical(self) -> &'static crate::registry::RockClassPhysical {
         &self.record().physical
     }
@@ -125,7 +132,7 @@ impl RockClass {
         self.physical().albedo.unwrap_or_else(|| panic!("{} has no albedo", self.key())) as f32
     }
 
-    fn color(self) -> [f32; 3] {
+    pub(crate) fn color(self) -> [f32; 3] {
         self.physical().colour.unwrap_or_else(|| panic!("{} has no colour", self.key())).map(|c| c as f32)
     }
 }
@@ -167,7 +174,7 @@ impl Composition {
     /// A body of `class`, its family's `grade` (0..1: lean to rich) varied by
     /// `rng`: each share from its class's range, lean to rich (platinum-group
     /// metals, trace amounts spread over a factor of several, by ratio).
-    fn of(class: RockClass, grade: f64, rng: &mut Rng) -> Self {
+    pub(crate) fn of(class: RockClass, grade: f64, rng: &mut Rng) -> Self {
         let g = (grade + rng.range(-0.15, 0.15)).clamp(0.0, 1.0);
         let c = &class.record().composition;
         let lerp = |r: Option<[f64; 2]>| r.map_or(0.0, |[lo, hi]| lo + (hi - lo) * g);
@@ -191,7 +198,7 @@ pub struct RockShape {
 }
 
 impl RockShape {
-    fn new(radius: f64, rng: &mut Rng) -> Self {
+    pub(crate) fn new(radius: f64, rng: &mut Rng) -> Self {
         // Elongated, as small bodies are (axis ratios of 0.5–0.9).
         let (b, c) = (rng.range(0.65, 0.95), rng.range(0.5, 0.85));
         let scale = (b * c).cbrt().recip();

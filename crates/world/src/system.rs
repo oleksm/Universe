@@ -21,6 +21,17 @@ pub enum BodyKind {
     Gate,
     /// An asteroid: a field's remnant, or a fragment of its swarm (see `belt`).
     Asteroid,
+    /// A world of rock or ice heavy enough to have pulled itself round, too
+    /// small to clear its orbit (see `small_bodies`).
+    DwarfPlanet,
+    /// A rock knocked out of the belt onto an orbit among the rocky planets.
+    CrossingAsteroid,
+    /// A body a giant has caught: far out, tilted, often going round backward.
+    CapturedMoon,
+    /// An ice body wandering among the giants.
+    Centaur,
+    /// An ice body on a long orbit that brings it in close to the star.
+    Comet,
 }
 
 impl BodyKind {
@@ -34,7 +45,18 @@ impl BodyKind {
             BodyKind::Station => "station",
             BodyKind::Gate => "gate",
             BodyKind::Asteroid => "asteroid",
+            BodyKind::DwarfPlanet => "dwarf planet",
+            BodyKind::CrossingAsteroid => "crossing asteroid",
+            BodyKind::CapturedMoon => "captured moon",
+            BodyKind::Centaur => "centaur",
+            BodyKind::Comet => "comet",
         }
+    }
+
+    /// A rock (its shape, class and make-up in `Body::rock`): an asteroid,
+    /// or a small body that hasn't pulled itself round.
+    pub fn is_rock(self) -> bool {
+        matches!(self, BodyKind::Asteroid | BodyKind::CrossingAsteroid | BodyKind::CapturedMoon | BodyKind::Centaur | BodyKind::Comet)
     }
 
     /// A planet (not a moon, a structure or an asteroid).
@@ -45,7 +67,7 @@ impl BodyKind {
     /// Can a ship touch down here (slowly) without being destroyed?
     /// (Stations are docked with through their slot instead; see `station`.)
     pub fn landable(self) -> bool {
-        matches!(self, BodyKind::Rocky | BodyKind::Moon)
+        matches!(self, BodyKind::Rocky | BodyKind::Moon | BodyKind::DwarfPlanet)
     }
 
     /// Does it pull on ships? (Stations and gates are too light to matter.)
@@ -150,6 +172,8 @@ pub struct StarSystem {
     pub spaceports: Vec<Spaceport>,
     /// Asteroid fields (see `belt`).
     pub fields: Vec<crate::belt::Field>,
+    /// Which of `bodies` are its small bodies (see `small_bodies`): the last ones made.
+    pub small: std::ops::Range<usize>,
 }
 
 const ROCKY_COLORS: [[f32; 3]; 4] = [[0.8, 0.5, 0.3], [0.65, 0.65, 0.65], [0.85, 0.75, 0.5], [0.75, 0.4, 0.35]];
@@ -338,7 +362,7 @@ impl StarSystem {
             a *= rng.range(1.5, 2.1);
         }
 
-        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new() };
+        let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new(), small: 0..0 };
         // (What the registry has curated or frozen stands in place of what the seed made: see `celestial`.)
         // (A body taken off the system's roster there takes the others' numbers with it.)
         if let Some(moved) = crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed) {
@@ -351,6 +375,7 @@ impl StarSystem {
         crate::celestial::apply(&mut system, crate::celestial::Stage::Surfaces, star.seed);
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
+        crate::small_bodies::add(&mut system, frost_line, star.seed);
         crate::celestial::apply(&mut system, crate::celestial::Stage::Rocks, star.seed);
         system.settle();
         system

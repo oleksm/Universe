@@ -62,7 +62,7 @@ impl Facility {
                 Some(spaceport::pad_position(sys, p, t, positions))
             }
             Facility::Gate(b) => (sys.bodies.get(b)?.kind == BodyKind::Gate).then(|| positions[b]),
-            Facility::Asteroid(b) => (sys.bodies.get(b)?.kind == BodyKind::Asteroid).then(|| positions[b]),
+            Facility::Asteroid(b) => sys.bodies.get(b)?.kind.is_rock().then(|| positions[b]),
         }
     }
 

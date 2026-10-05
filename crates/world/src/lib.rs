@@ -37,6 +37,7 @@ pub mod port;
 pub mod rng;
 pub mod shape;
 pub mod sheet;
+pub mod small_bodies;
 pub mod ship;
 pub mod celestial;
 pub mod settlements;

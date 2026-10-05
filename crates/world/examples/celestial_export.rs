@@ -39,6 +39,13 @@ fn main() {
         for (bi, b) in sys.bodies.iter().enumerate() {
             let r = &b.rail;
             let mut f = vec![format!("\"name\": {}", s(&b.name)), format!("\"kind\": {}", s(b.kind.label())), format!("\"mass\": {:e}", b.mass), format!("\"radius\": {}", r.radius)];
+            // (A small body: comets, centaurs, crossing asteroids, captured moons, dwarf planets, the belt's largest.)
+            if sys.small.contains(&bi) {
+                f.push("\"small\": true".into());
+                if let Some(rock) = &b.rock {
+                    f.push(format!("\"rock\": {{\"class\": {}, \"density\": {:.0}}}", s(rock.class.key()), rock.density));
+                }
+            }
             if let Some(p) = r.parent {
                 f.push(format!("\"parent\": {}", s(&sys.bodies[p].name)));
             }

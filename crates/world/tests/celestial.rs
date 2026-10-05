@@ -36,7 +36,9 @@ fn the_charted_world_is_as_the_registry_has_it() {
         assert_eq!(sys.name, rec.system, "the star numbered {} has another name", rec.index);
         assert_eq!(sys.class.letter().to_string(), rec.star.class);
         assert!(near(sys.luminosity, rec.star.luminosity), "{}: its star's luminosity", rec.system);
-        let natural = sys.bodies.iter().filter(|b| !b.kind.artificial() && b.rail.parent.is_some()).count();
+        // (Small bodies are held to their records once the records are the engine's: `in_game` made.)
+        let small_made = registry().bodies.iter().any(|b| b.identity.key.starts_with(&format!("body.{}.", rec.system.to_lowercase())) && matches!(b.identity.kind, universe_world::registry::BodyIdentityKind::Comet | universe_world::registry::BodyIdentityKind::Centaur | universe_world::registry::BodyIdentityKind::DwarfPlanet | universe_world::registry::BodyIdentityKind::CrossingAsteroid | universe_world::registry::BodyIdentityKind::CapturedMoon) && b.in_game != Some(universe_world::registry::InGame::NotMade));
+        let natural = sys.bodies.iter().enumerate().filter(|(i, b)| !b.kind.artificial() && b.rail.parent.is_some() && (small_made || !sys.small.contains(i))).count();
         assert_eq!(natural, rec.bodies.len(), "{}: the game has {natural} bodies, the registry {}", rec.system, rec.bodies.len());
         for r in &rec.bodies {
             let b = sys.bodies.iter().find(|b| b.name == r.name).unwrap_or_else(|| panic!("{}: the game has no {}", rec.system, r.name));

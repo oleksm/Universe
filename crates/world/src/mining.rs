@@ -29,7 +29,7 @@ use crate::damage;
 use crate::events::ShipEvent;
 use crate::goods::{Ore, TONNE};
 use crate::ship::{Ship, ShipState, SHIP_RADIUS};
-use crate::system::{Body, BodyKind, StarSystem};
+use crate::system::{Body, StarSystem};
 
 /// The excavator's power (W)...
 pub const EXCAVATOR_POWER: f64 = 300_000.0;
@@ -109,7 +109,7 @@ pub fn anchor(field: Option<(usize, std::sync::Arc<Vec<Body>>)>, ship: &mut Ship
     let mut positions = Vec::with_capacity(bodies.len());
     universe_physics::positions(&bodies[..], t, &mut positions);
     let nearest = (0..bodies.len())
-        .filter(|&i| bodies[i].kind == BodyKind::Asteroid && positions[i].distance(ship.position) < bodies[i].max_radius() + SHIP_RADIUS + ANCHOR_REACH)
+        .filter(|&i| bodies[i].kind.is_rock() && positions[i].distance(ship.position) < bodies[i].max_radius() + SHIP_RADIUS + ANCHOR_REACH)
         .map(|i| (i, clearance(&bodies, i, t, &positions, ship.position)))
         .min_by(|a, b| a.1.total_cmp(&b.1));
     let Some((i, _)) = nearest.filter(|(_, gap)| *gap < ANCHOR_REACH) else { return fail(events, "NOTHING IN REACH") };

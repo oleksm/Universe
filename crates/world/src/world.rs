@@ -675,7 +675,7 @@ impl World {
         let out = integrate(bodies, ephemeris.as_deref(), &mut positions, &mut rigid, span, &mut devices);
         ship.set_rigid(&rigid);
         *clock = out.time;
-        let rock = |f: &Fact| matches!(f, Fact::Contact(c) if bodies[c.body].kind == crate::system::BodyKind::Asteroid);
+        let rock = |f: &Fact| matches!(f, Fact::Contact(c) if bodies[c.body].kind.is_rock());
         if let Some(fact) = out.fact.filter(|f| !rock(f)) {
             // What it touched decides, by its owner's rule.
             crate::rules::apply(&rules, sys, system, ship, &fact, out.time, &positions, events);
@@ -861,7 +861,7 @@ impl Driver for Devices<'_> {
 
     fn respond(&mut self, fact: &Fact, _: &RigidBody) -> Response {
         match fact {
-            Fact::Contact(c) if self.bodies.get(c.body).is_some_and(|b| b.kind == crate::system::BodyKind::Asteroid) => {
+            Fact::Contact(c) if self.bodies.get(c.body).is_some_and(|b| b.kind.is_rock()) => {
                 if crate::mining::strike(self.ship, &self.bodies[c.body], c, self.events) {
                     Response::Bounce { restitution: crate::mining::RESTITUTION, separation: 0.1, push: 0.2 }
                 } else {
