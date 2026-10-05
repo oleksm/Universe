@@ -2,8 +2,8 @@
 //!
 //! An asteroid a kilometre across pulls with a ten-thousandth of a g; you
 //! can't land on it, you hold on. The anchor is a harpoon on a tether: it
-//! reaches `ANCHOR_REACH` from the hull, and it holds only if the ship is
-//! drifting with the rock's surface there (slower than `ANCHOR_SPEED`
+//! reaches its rig's `anchor_reach` from the hull, and it holds only if the ship is
+//! drifting with the rock's surface there (slower than its `anchor_speed`
 //! against it: a spinning rock's surface moves). Held, the ship rides the
 //! rock's orbit and spin, its devices idle, until the anchor lets go and
 //! leaves it drifting with that surface.
@@ -15,8 +15,8 @@
 //! The excavator digs while anchored, at the rate its power buys against the
 //! energy it takes to break a kilogram of that rock loose — scooping a rubble
 //! pile's gravel is cheap, cutting a stone harder, cutting metal hardest —
-//! and no faster than it can carry spoil (`EXCAVATOR_POWER`,
-//! `EXCAVATOR_THROUGHPUT`, `specific_energy`). What it digs is the rock's
+//! and no faster than it can carry spoil (its `Rig`'s `excavator_power` and
+//! `throughput`, `specific_energy`). What it digs is the rock's
 //! ore (`ore`), into the hopper, and a tonne at a time into the hold. A rock
 //! holds what its mass holds: the world remembers what's been dug out of
 //! each (`World::dug`), and a rock worked out stays worked out.
@@ -31,10 +31,46 @@ use crate::goods::{Ore, TONNE};
 use crate::ship::{Ship, ShipState, SHIP_RADIUS};
 use crate::system::{Body, StarSystem};
 
-/// The excavator's power (W)...
-pub const EXCAVATOR_POWER: f64 = 300_000.0;
-/// ...and the most spoil it can carry off (kg/s).
-pub const EXCAVATOR_THROUGHPUT: f64 = 10.0;
+/// A mining rig, as its product's record has it: the excavator's power (W)
+/// and the most spoil it can carry off (kg/s); how far its anchor reaches
+/// from the hull (m), and how slowly the ship must drift against the
+/// surface for it to hold (m/s).
+#[derive(Clone, Copy, Debug, PartialEq, serde::Deserialize)]
+pub struct Rig {
+    pub excavator_power: f64,
+    pub throughput: f64,
+    pub anchor_reach: f64,
+    pub anchor_speed: f64,
+}
+
+impl Rig {
+    /// The rig fitted to a ship of `spec`, if one is.
+    pub fn of(spec: &crate::ship::ClassSpec) -> Option<Rig> {
+        let c = crate::content::content();
+        spec.fit.iter().find_map(|(_, m)| match c.get(*m).does {
+            crate::modules::Does::MiningRig(r) => Some(r),
+            _ => None,
+        })
+    }
+
+    /// A rig as the shipyards sell them (the registry's first): for weighing
+    /// rocks up where no ship's own is at hand.
+    pub fn common() -> Rig {
+        crate::content::content()
+            .modules
+            .iter()
+            .find_map(|(_, m)| match m.does {
+                crate::modules::Does::MiningRig(r) => Some(r),
+                _ => None,
+            })
+            .expect("a mining rig among the products")
+    }
+
+    /// How fast it digs `rock` (kg/s).
+    pub fn dig_rate(&self, rock: &Rock) -> f64 {
+        (self.excavator_power / specific_energy(rock)).min(self.throughput)
+    }
+}
 /// A rubble pile, gravel held by its own weak gravity, scoops up at this
 /// (J/kg), whatever it's made of.
 const RUBBLE_ENERGY: f64 = 2_000.0;
@@ -49,10 +85,6 @@ pub fn specific_energy(rock: &Rock) -> f64 {
     }
 }
 
-/// How fast the excavator digs `rock` (kg/s).
-pub fn dig_rate(rock: &Rock) -> f64 {
-    (EXCAVATOR_POWER / specific_energy(rock)).min(EXCAVATOR_THROUGHPUT)
-}
 
 /// What digging `rock` yields: its class's rock (`yields`), or its rich rock
 /// (`rich_yields`) where it holds more platinum-group metals than
@@ -64,10 +96,6 @@ pub fn ore(rock: &Rock) -> Ore {
     Ore::from_key(good).unwrap_or_else(|| panic!("{good} is no ore the game's excavators dig"))
 }
 
-/// The anchor reaches this far from the hull (m)...
-pub const ANCHOR_REACH: f64 = 30.0;
-/// ...and holds if the ship drifts slower than this against the surface (m/s).
-pub const ANCHOR_SPEED: f64 = 0.5;
 /// Closing on a rock to anchor, a ship holds this far off its surface (m).
 pub const CLOSE_STANDOFF: f64 = 12.0;
 /// Share of the closing speed kept in a bounce off a rock.
@@ -105,18 +133,19 @@ pub fn anchor(field: Option<(usize, std::sync::Arc<Vec<Body>>)>, ship: &mut Ship
     if !matches!(ship.state, ShipState::Flying) || ship.hyperdrive {
         return fail(events, "NOT IN FREE FLIGHT");
     }
+    let Some(rig) = Rig::of(ship.spec()) else { return fail(events, "NO MINING RIG FITTED") };
     let Some((f, bodies)) = field else { return fail(events, "NOTHING IN REACH") };
     let mut positions = Vec::with_capacity(bodies.len());
     universe_physics::positions(&bodies[..], t, &mut positions);
     let nearest = (0..bodies.len())
-        .filter(|&i| bodies[i].kind.is_rock() && positions[i].distance(ship.position) < bodies[i].max_radius() + SHIP_RADIUS + ANCHOR_REACH)
+        .filter(|&i| bodies[i].kind.is_rock() && positions[i].distance(ship.position) < bodies[i].max_radius() + SHIP_RADIUS + rig.anchor_reach)
         .map(|i| (i, clearance(&bodies, i, t, &positions, ship.position)))
         .min_by(|a, b| a.1.total_cmp(&b.1));
-    let Some((i, _)) = nearest.filter(|(_, gap)| *gap < ANCHOR_REACH) else { return fail(events, "NOTHING IN REACH") };
+    let Some((i, _)) = nearest.filter(|(_, gap)| *gap < rig.anchor_reach) else { return fail(events, "NOTHING IN REACH") };
     let b = &bodies[i];
     let surface = universe_physics::velocity(&bodies[..], i, t) + b.angular_velocity().cross(ship.position - positions[i]);
     let drift = (ship.velocity - surface).length();
-    if drift > ANCHOR_SPEED {
+    if drift > rig.anchor_speed {
         return fail(events, &format!("DRIFTING {drift:.1} M/S"));
     }
     let weld = Weld::capture(&bodies[..], i, t, &positions, &ship.rigid());
@@ -147,6 +176,7 @@ pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &m
     let bodies = sys.field_bodies(field);
     let b = &bodies[body];
     let Some(rock) = b.rock.as_ref() else { return };
+    let Some(rig) = Rig::of(ship.spec()) else { return };
     let mut stop = |ship: &mut Ship, why: &str| {
         ship.excavator = false;
         events.push(ShipEvent::ExcavatorStopped { why: why.to_string() });
@@ -161,7 +191,7 @@ pub fn excavate(sys: &StarSystem, ship: &mut Ship, dug: f64, dt: f64, events: &m
     if left < 1.0 {
         return stop(ship, "ROCK WORKED OUT");
     }
-    ship.hopper += (dig_rate(rock) * dt).min(room).min(left);
+    ship.hopper += (rig.dig_rate(rock) * dt).min(room).min(left);
     let item = ore(rock).item();
     while ship.hopper >= TONNE - 1e-9 {
         ship.hopper = (ship.hopper - TONNE).max(0.0);
@@ -268,7 +298,7 @@ mod tests {
         let sys = p.sys();
         let bodies = sys.field_bodies(0);
         let rock = bodies[i].rock.clone().unwrap();
-        let rate = dig_rate(&rock);
+        let rate = Rig::of(p.ship.spec()).expect("a rig fitted").dig_rate(&rock);
         let mass = p.ship.mass();
         let secs = 2500.0 / rate;
         for _ in 0..(secs * 60.0).round() as usize {
@@ -304,7 +334,7 @@ mod tests {
         let t = p.world.time;
         let main = sys.belts.iter().find(|b| b.kind == crate::belts::BeltKind::Main).expect("a main belt");
         let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
-        let found = crate::belts::survey(&sys, from, t);
+        let found = crate::belts::survey(&sys, from, t, crate::belts::Survey::radar());
         let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight");
         let bodies = sys.field_bodies(f.field);
         let mut pos = Vec::new();

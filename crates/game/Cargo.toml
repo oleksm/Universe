@@ -17,3 +17,6 @@ env_logger.workspace = true
 universe-sim = { path = "../sim" }
 serde.workspace = true
 serde_json.workspace = true
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "0.2"

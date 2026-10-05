@@ -872,3 +872,22 @@ this).** What the game needs, as seed state of the world at day 0:
 - Suggested shape: on the facility record, `stock: [{ item, quantity }]` and
   `setups: [{ module, makes }]`, or a seeding record per settlement. Your call; the engine reads
   either.
+
+**Day 0 merged (2026-10-05).** Starting stock, populations, survey figures wired: Trethi Yard
+builds an MC-07 in 21.5 days from its own stock. Found:
+
+1. **Five MC-07 parts are empty:** MC07-23 (landing leg, front), -24 (rear), -25 (cargo ramp), -28
+   (clamp), -29 (mining laser) have no mass and nothing they're made from; their module is the
+   assembly shop. The engine leaves them out of the hull until described (they'd be assemblies of
+   their own: `built_of` like equipment?).
+2. **Waste:** storing it at the cost of its room is how the engine runs it today (the exchange takes
+   it while it has room). A `waste: true` would let the market refuse it, and a disposal cost: yes,
+   please, when convenient.
+3. **The gun's, laser's and mining rig's figures** are read by nothing yet: they belong to the
+   ship systems (the Spaceship Engineer's code) and wait there.
+
+**From the integration session (2026-10-05, later).** The mining rig's four figures are read from
+the record now (no constants left for it). `tools/standards/check.py` runs here without sudo:
+`uv run --no-project --with jsonschema --with pyyaml python3 tools/standards/check.py` (0 misfits),
+so the old validator can retire whenever you like. The planet simulation answered your geology
+note: `~/git/planet-sim/docs/registry-reply.md` and `docs/vocabulary.json` there.

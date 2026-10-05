@@ -20,6 +20,7 @@
 //! more), CTRL+DELETE removes it. Wheel zooms, right drag
 //! pans, HOME fits. Points snap to a quarter metre (ALT: free).
 
+use crate::interior::layer;
 use universe_engine::glam::{DVec2, Vec2};
 use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
 use universe_sim::world::deckplan::{self, Deck, DeckPlan, Door, Sides, Wall};
@@ -182,7 +183,7 @@ fn panel_list(studio: &Studio, deck: &Deck, sides: Option<&Sides>, holes: &[Vec<
         }).collect(),
         Tool::Wall | Tool::Door => deck.walls.iter().enumerate().map(|(k, w)| {
             let doors = match w.doors.len() { 0 => String::new(), 1 => "  1 DOOR".into(), n => format!("  {n} DOORS") };
-            (Pick::Wall(k), format!("WALL {}  {:.1} M{doors}", k + 1, w.length()))
+            (Pick::Wall(k), format!("{} {}  {:.1} M{doors}", if w.rail { "RAILING" } else { "WALL" }, k + 1, w.length()))
         }).collect(),
         Tool::Ladder => deck.ladders.iter().enumerate().map(|(k, _)| (Pick::Ladder(k), format!("LADDER {}", k + 1))).collect(),
         Tool::Stair => deck.stairs.iter().enumerate().map(|(k, st)| (Pick::Stair(k), format!("STAIR {}  {:.1} M RUN", k + 1, (st.to - st.from).length()))).collect(),
@@ -198,6 +199,8 @@ const HULL: Color = Color([0.75, 0.88, 1.0, 0.8]);
 const INK: Color = Color([0.95, 0.98, 1.0, 1.0]);
 const FLOOR: Color = Color([0.55, 0.78, 1.0, 0.22]);
 const PICKED: Color = Color([1.0, 0.85, 0.35, 1.0]);
+/// The 3D studio's tunnels, shown here.
+const TUNNEL: Color = Color([0.4, 1.0, 0.75, 0.95]);
 const OUT: Color = Color([1.0, 0.45, 0.4, 0.55]);
 const LABEL: Color = Color([0.7, 0.85, 1.0, 1.0]);
 
@@ -244,7 +247,7 @@ impl Studio {
         if self.elev.as_ref().is_none_or(|(k, _)| k != hull_key) && self.elev_job.as_ref().is_none_or(|(k, _)| k != hull_key) {
             let (tx, rx) = std::sync::mpsc::channel();
             let (mesh, nose) = (mesh.clone(), nose_of(shape));
-            std::thread::spawn(move || {
+            crate::interior::job("studio-elev", move || {
                 let e = Elevations { side: [mesh.elevation(0, -1.0), mesh.elevation(0, 1.0)], end: [mesh.elevation(2, nose), mesh.elevation(2, -nose)] };
                 tx.send(e).ok();
             });
@@ -332,7 +335,7 @@ fn button(size: Vec2, k: usize) -> (Vec2, Vec2) {
 /// What the tool does and how it's used (the tools' column, under them).
 fn tool_help(tool: Tool) -> &'static str {
     match tool {
-        Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. DEL REMOVES WHAT'S PICKED.",
+        Tool::Select => "PICK SOMETHING TO CHANGE OR REMOVE. CLICK A WALL, A FLOOR, A LADDER OR A STAIR. A PICKED WALL SHOWS ITS POINTS (SQUARES: DRAG TO MOVE) AND THE MIDDLE OF EACH SEGMENT (RINGS: DRAG SIDEWAYS TO BEND IT INTO AN ARC). A PICKED FLOOR SHOWS ITS CORNERS. R MAKES A PICKED WALL A RAILING (1.1 M HIGH) OR BACK. DEL REMOVES WHAT'S PICKED.",
         Tool::Plane => "A FLOOR ON THIS DECK. CLICK ITS CORNERS ONE BY ONE; CLICK THE FIRST AGAIN, OR ENTER, TO CLOSE IT. IT'S TRIMMED TO THE HULL: DRAW IT LARGE AND ONLY WHAT'S INSIDE IS FLOOR. BACKSPACE TAKES THE LAST CORNER BACK. FILL: A FLOOR OVER THE WHOLE DECK AT ONCE, FOLLOWING THE HULL (ONE FOR EACH PART OF IT AT THIS HEIGHT).",
         Tool::Wall => "A WALL ON THIS DECK, AS TALL AS THE DECK. CLICK ITS POINTS ONE BY ONE; ENTER ENDS IT. IT STOPS WHERE IT MEETS THE HULL (BEYOND, FAINT RED). TO CURVE A SEGMENT, PICK THE WALL WITH SELECT AND DRAG THE RING AT ITS MIDDLE. BACKSPACE TAKES THE LAST POINT BACK.",
         Tool::Door => "A DOORWAY IN A WALL, 0.9 M WIDE AND 2.1 M TALL. CLICK ON A WALL WHERE IT GOES; CLICK AN EXISTING DOOR TO REMOVE IT.",
@@ -416,6 +419,38 @@ fn end_view(h: &Hull, r: (Vec2, Vec2), pan: Vec2) -> (f64, Vec2) {
 fn side_y(h: &Hull, r: (Vec2, Vec2), pan: Vec2, y: f32) -> f64 {
     let (k, mid) = side_view(h, r, pan);
     (h.lo.y + h.hi.y) / 2.0 - (y - mid.y) as f64 / k
+}
+
+/// The 3D studio's tunnels and points in a side or end view (`at`: where a point
+/// is on screen; `k`: pixels a metre): each tunnel's line and the band of its room
+/// round it, each point.
+/// Where the layers panel's bottom right corner is here: the plan's (px).
+pub fn layers_corner(size: Vec2, studio: &Studio) -> Vec2 {
+    let (plan_r, _) = regions(size, panel_open(studio));
+    plan_r.1 - Vec2::new(6.0, 6.0)
+}
+
+fn access_side(frame: &mut Frame, access: &crate::interior::Access, at: impl Fn(universe_engine::glam::Vec3) -> Vec2, k: f32) {
+    let shown = |k: usize| access.layers[k];
+    for &(a, b, room, walled) in &access.tunnels {
+        let (pa, pb) = (at(a), at(b));
+        if shown(layer::LINES) {
+            frame.hud_line(pa, pb, TUNNEL);
+        }
+        if let Some((w, h)) = room.filter(|_| shown(layer::ROOMS)) {
+            let along = (pb - pa).normalize_or_zero();
+            // (Across the line on screen: its height if it runs level, its width if
+            // it climbs.)
+            let level = (b - a).y.abs() < universe_engine::glam::Vec2::new((b - a).x, (b - a).z).length();
+            let side = Vec2::new(-along.y, along.x) * if level { h } else { w } * 0.5 * k;
+            let edge = Color([TUNNEL.0[0], TUNNEL.0[1], TUNNEL.0[2], if walled { 0.8 } else { 0.4 }]);
+            frame.hud_line(pa + side, pb + side, edge);
+            frame.hud_line(pa - side, pb - side, edge);
+        }
+    }
+    for &(p, c) in &access.points {
+        frame.hud_rect(at(p) - Vec2::splat(2.0), Vec2::splat(4.0), c);
+    }
 }
 
 /// A dimension: a line from `a` to `b` with ticks across its ends, and its
@@ -716,7 +751,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 } else if studio.tool == Tool::Wall && studio.drawing.len() >= 2 {
                     let points = std::mem::take(&mut studio.drawing);
                     let bulges = vec![0.0; points.len() - 1];
-                    deck.walls.push(Wall { points, bulges, doors: Vec::new() });
+                    deck.walls.push(Wall { points, bulges, doors: Vec::new(), rail: false });
                 }
             }
         }
@@ -832,6 +867,13 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             studio.pick = Some(*pick);
         }
     }
+    // R: a picked wall made a railing (RAIL high, not to the ceiling), or back.
+    if input.pressed(KeyCode::KeyR)
+        && let Some(Pick::Wall(k)) = studio.pick
+        && let Some(w) = deck.walls.get_mut(k)
+    {
+        w.rail = !w.rail;
+    }
     // What's picked removed (with any tool).
     if remove {
         match studio.pick.take() {
@@ -873,7 +915,7 @@ fn inside(poly: &[DVec2], p: DVec2) -> bool {
 }
 
 /// The studio drawn (the shipyard's layout page).
-pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio) {
+pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name: &str, studio: &Studio, access: &crate::interior::Access) {
     let size = frame.size();
     let (plan_r, low_r) = regions(size, panel_open(studio));
     let (side_r, end_r) = split_views(low_r);
@@ -898,12 +940,13 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
     let plan = Studio::plan_of(app, hull_key);
     let decks: &[Deck] = plan.map_or(&[], |p| &p.decks);
     let deck = decks.get(studio.deck);
+    let shown = |k: usize| access.layers[k];
     let px = studio.view.map_or(10.0, |v| v.1);
     let to = |p: DVec2| studio.to_screen(plan_r, p);
     frame.hud_clipped(plan_r.0, plan_r.1, |frame| {
         // The grid: a metre, every fifth brighter.
         let (lo, hi) = (studio.to_plan(plan_r, Vec2::new(plan_r.0.x, plan_r.1.y)), studio.to_plan(plan_r, Vec2::new(plan_r.1.x, plan_r.0.y)));
-        if px > 4.0 {
+        if px > 4.0 && shown(layer::GRID) {
             for z in (lo.y.floor() as i64)..=(hi.y.ceil() as i64) {
                 let x = to(DVec2::new(0.0, z as f64)).x;
                 frame.hud_line(Vec2::new(x, plan_r.0.y), Vec2::new(x, plan_r.1.y), if z % 5 == 0 { GRID5 } else { GRID });
@@ -914,11 +957,50 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             }
         }
         // The hull, cut at this deck.
-        for [a, b] in &h.section {
+        for [a, b] in h.section.iter().filter(|_| shown(layer::HULL)) {
             frame.hud_line_smooth(to(*a), to(*b), HULL);
         }
+        // The 3D studio's access plan, seen from above: each tunnel's line and its
+        // sides (its width), each point; bright where it passes this deck, faint
+        // elsewhere.
+        if let Some(d) = deck {
+            let (y0, y1) = (d.floor as f32, (d.floor + d.headroom) as f32);
+            for &(a, b, room, walled) in &access.tunnels {
+                let half = room.map_or(0.0, |r| r.1 * 0.5);
+                let here = a.y.min(b.y) - half <= y1 && a.y.max(b.y) + half >= y0;
+                let col = Color([TUNNEL.0[0], TUNNEL.0[1], TUNNEL.0[2], if here { 0.95 } else { 0.25 }]);
+                let flat = |p: universe_engine::glam::Vec3| to(DVec2::new(f64::from(p.x), f64::from(p.z)));
+                let (pa, pb) = (flat(a), flat(b));
+                if shown(layer::LINES) {
+                    frame.hud_line(pa, pb, col);
+                }
+                if let Some((w, _)) = room.filter(|_| shown(layer::ROOMS)) {
+                    let along = DVec2::new(f64::from(b.x - a.x), f64::from(b.z - a.z));
+                    if along.length() > 0.2 {
+                        let side = DVec2::new(-along.y, along.x).normalize() * f64::from(w) * 0.5;
+                        let (a2, b2) = (DVec2::new(f64::from(a.x), f64::from(a.z)), DVec2::new(f64::from(b.x), f64::from(b.z)));
+                        let edge = Color([col.0[0], col.0[1], col.0[2], col.0[3] * if walled { 0.9 } else { 0.5 }]);
+                        frame.hud_line(to(a2 + side), to(b2 + side), edge);
+                        frame.hud_line(to(a2 - side), to(b2 - side), edge);
+                    } else {
+                        // (Upright: a shaft, its square seen from above.)
+                        let r = f64::from(w) * 0.5;
+                        let c = DVec2::new(f64::from(a.x), f64::from(a.z));
+                        let q = [c + DVec2::new(-r, -r), c + DVec2::new(r, -r), c + DVec2::new(r, r), c + DVec2::new(-r, r)].map(to);
+                        for k in 0..4 {
+                            frame.hud_line(q[k], q[(k + 1) % 4], col);
+                        }
+                    }
+                }
+            }
+            for &(p, c) in &access.points {
+                let here = p.y >= y0 - 0.5 && p.y <= y1 + 0.5;
+                let q = to(DVec2::new(f64::from(p.x), f64::from(p.z)));
+                frame.hud_rect(q - Vec2::splat(2.5), Vec2::splat(5.0), Color([c.0[0], c.0[1], c.0[2], if here { 1.0 } else { 0.3 }]));
+            }
+        }
         // Its length along its foot, its beam beside it (the whole hull's).
-        {
+        if shown(layer::GRID) {
             let corners = [to(DVec2::new(h.lo.x, h.lo.z)), to(DVec2::new(h.hi.x, h.hi.z))];
             let (lo, hi) = (corners[0].min(corners[1]), corners[0].max(corners[1]));
             dimension(frame, Vec2::new(lo.x, hi.y - 6.0), Vec2::new(hi.x, hi.y - 6.0), h.hi.z - h.lo.z);
@@ -927,12 +1009,13 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         let Some(deck) = deck else { return };
         // Floors: trimmed to the hull (filled), the openings from the deck below cut out, their outlines as drawn.
         let holes = plan.map(|p| deckplan::openings(p, studio.deck)).unwrap_or_default();
-        for hole in &holes {
+        let floors = shown(layer::DECK_FLOORS);
+        for hole in holes.iter().filter(|_| floors) {
             for i in 0..hole.len() {
                 dashed(frame, to(hole[i]), to(hole[(i + 1) % hole.len()]), LABEL);
             }
         }
-        for (k, poly) in deck.planes.iter().enumerate() {
+        for (k, poly) in deck.planes.iter().enumerate().filter(|_| floors) {
             for q in deckplan::floor_pieces(poly, &h.sides, &holes) {
                 let q = q.map(to);
                 frame.hud_triangle_colored([q[0], q[1], q[2]], [FLOOR; 3]);
@@ -949,7 +1032,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             }
         }
         // Walls: where they're inside the hull in ink (thick), beyond it faint red; doors as gaps with a swing.
-        for (k, w) in deck.walls.iter().enumerate() {
+        for (k, w) in deck.walls.iter().enumerate().filter(|_| shown(layer::DECK_WALLS)) {
             let picked = studio.pick == Some(Pick::Wall(k));
             let path = w.path();
             for s in path.windows(2) {
@@ -1001,7 +1084,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
         }
         // Ladders and stairs, up to the deck above (none there: in red, going nowhere).
         let up = decks.get(studio.deck + 1).is_some();
-        for (k, l) in deck.ladders.iter().enumerate() {
+        for (k, l) in deck.ladders.iter().enumerate().filter(|_| floors) {
             let col = if studio.pick == Some(Pick::Ladder(k)) { PICKED } else if up { INK } else { OUT };
             let o = l.outline();
             for i in 0..4 {
@@ -1016,7 +1099,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
                 frame.text(to(o[2]) + Vec2::new(4.0, -6.0), "NO DECK ABOVE", OUT);
             }
         }
-        for (k, st) in deck.stairs.iter().enumerate() {
+        for (k, st) in deck.stairs.iter().enumerate().filter(|_| floors) {
             let col = if studio.pick == Some(Pick::Stair(k)) { PICKED } else if up { INK } else { OUT };
             let o = st.outline();
             for i in 0..4 {
@@ -1077,23 +1160,29 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let (a, b) = (span(side_r.0.x, mid.x).0 * sdir + zc, span(side_r.1.x, mid.x).0 * sdir + zc);
             let top = yc + (mid.y - side_r.0.y) as f64 / k - h.keel;
             let bottom = yc - (side_r.1.y - mid.y) as f64 / k - h.keel;
-            view_grid(frame, side_r, k, zs, |v| sy(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+            if shown(layer::GRID) {
+                view_grid(frame, side_r, k, zs, |v| sy(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+            }
         }
         match &elev {
             Some(e) => {
-                for [a, b] in &e.side[studio.side_flip as usize] {
+                for [a, b] in e.side[studio.side_flip as usize].iter().filter(|_| shown(layer::HULL)) {
                     frame.hud_line(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.35));
                 }
             }
             None => spinner(frame, side_r),
         }
-        for [a, b] in &h.profile {
+        for [a, b] in h.profile.iter().filter(|_| shown(layer::HULL)) {
             frame.hud_line_smooth(Vec2::new(zs(a.x), sy(a.y)), Vec2::new(zs(b.x), sy(b.y)), HULL.scale(0.8));
         }
+        // The 3D studio's access plan from the side.
+        access_side(frame, access, |p| Vec2::new(zs(f64::from(p.z)), sy(f64::from(p.y))), k as f32);
         // Its length under it, its height beside it.
         let (z0, z1) = (zs(h.lo.z).min(zs(h.hi.z)), zs(h.lo.z).max(zs(h.hi.z)));
-        dimension(frame, Vec2::new(z0, sy(h.lo.y) + 10.0), Vec2::new(z1, sy(h.lo.y) + 10.0), h.hi.z - h.lo.z);
-        dimension(frame, Vec2::new(z1 + 12.0, sy(h.lo.y)), Vec2::new(z1 + 12.0, sy(h.hi.y)), h.hi.y - h.lo.y);
+        if shown(layer::GRID) {
+            dimension(frame, Vec2::new(z0, sy(h.lo.y) + 10.0), Vec2::new(z1, sy(h.lo.y) + 10.0), h.hi.z - h.lo.z);
+            dimension(frame, Vec2::new(z1 + 12.0, sy(h.lo.y)), Vec2::new(z1 + 12.0, sy(h.hi.y)), h.hi.y - h.lo.y);
+        }
         // The hull's sheet: its measures and its mass.
         let sheet = format!("{}   L {:.1} M   B {:.1} M   H {:.1} M   DRY MASS {:.1} T", h.name, h.hi.z - h.lo.z, h.hi.x - h.lo.x, h.hi.y - h.lo.y, h.dry_mass / 1000.0);
         frame.text_scaled(Vec2::new(side_r.0.x + 6.0, side_r.0.y + 8.0), &sheet, INK.scale(0.8), SCALE);
@@ -1146,19 +1235,22 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, hull_key: &str, hull_name
             let (a, b) = (span(end_r.0.x, emid.x).0 * edir + xc, span(end_r.1.x, emid.x).0 * edir + xc);
             let top = yc + (emid.y - end_r.0.y) as f64 / k - h.keel;
             let bottom = yc - (end_r.1.y - emid.y) as f64 / k - h.keel;
-            view_grid(frame, end_r, k, xs, |v| ey(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
-            let (x0, x1) = (xs(h.lo.x).min(xs(h.hi.x)), xs(h.lo.x).max(xs(h.hi.x)));
-            dimension(frame, Vec2::new(x0, ey(h.lo.y) + 10.0), Vec2::new(x1, ey(h.lo.y) + 10.0), h.hi.x - h.lo.x);
-            dimension(frame, Vec2::new(x1 + 12.0, ey(h.lo.y)), Vec2::new(x1 + 12.0, ey(h.hi.y)), h.hi.y - h.lo.y);
+            if shown(layer::GRID) {
+                view_grid(frame, end_r, k, xs, |v| ey(v + h.keel), (a.min(b), a.max(b)), (bottom, top));
+                let (x0, x1) = (xs(h.lo.x).min(xs(h.hi.x)), xs(h.lo.x).max(xs(h.hi.x)));
+                dimension(frame, Vec2::new(x0, ey(h.lo.y) + 10.0), Vec2::new(x1, ey(h.lo.y) + 10.0), h.hi.x - h.lo.x);
+                dimension(frame, Vec2::new(x1 + 12.0, ey(h.lo.y)), Vec2::new(x1 + 12.0, ey(h.hi.y)), h.hi.y - h.lo.y);
+            }
         }
         match &elev {
             Some(e) => {
-                for [a, b] in &e.end[studio.end_flip as usize] {
+                for [a, b] in e.end[studio.end_flip as usize].iter().filter(|_| shown(layer::HULL)) {
                     frame.hud_line(Vec2::new(xs(a.x), ey(a.y)), Vec2::new(xs(b.x), ey(b.y)), HULL.scale(0.5));
                 }
             }
             None => spinner(frame, end_r),
         }
+        access_side(frame, access, |p| Vec2::new(xs(f64::from(p.x)), ey(f64::from(p.y))), k as f32);
         for (k, d) in decks.iter().enumerate() {
             let col = if k == studio.deck { PICKED } else { INK.scale(0.6) };
             frame.hud_line(Vec2::new(end_r.0.x, ey(d.floor)), Vec2::new(end_r.1.x, ey(d.floor)), col);

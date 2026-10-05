@@ -69,7 +69,9 @@ pub(crate) fn build(reg: &Registry, index: &HashMap<String, usize>, mass: &dyn F
     for (key, module) in products {
         let (Some(makes), Some((module, t))) = (id(key), shop(module)) else { continue };
         let each = mass(makes);
-        let parts = reg.built_of(key);
+        // (A part the registry hasn't described yet, with no mass and nothing it's made of,
+        // isn't built into it: there's nothing to build it from.)
+        let parts: Vec<_> = reg.built_of(key).into_iter().filter(|(p, _)| p.physical.mass.is_some() || !p.made_from.is_empty()).collect();
         let inputs: Vec<(usize, f64)> = parts.iter().filter_map(|(p, n)| Some((id(&p.identity.key)?, mass(id(&p.identity.key)?) * *n as f64 / each))).collect();
         if each <= 0.0 || inputs.is_empty() || inputs.len() < parts.len() {
             continue;

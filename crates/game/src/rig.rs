@@ -135,8 +135,9 @@ fn rig(frame: &mut Frame, sys: &StarSystem, ship: &Ship, pos: DVec3, turned: DQu
     let beam = Color::hex(0xff5040);
     let flicker = 0.75 + 0.25 * ((t * 37.0).sin() * (t * 23.0).cos()) as f32;
     let into = world(DVec3::new(0.0, HATCH_Y, (HATCH_FORE + HATCH_AFT) / 2.0));
-    let rate = mining::dig_rate(rock);
-    let n = ((rate / mining::EXCAVATOR_THROUGHPUT) * 14.0).round().max(3.0) as usize;
+    let rig = mining::Rig::of(ship.spec()).unwrap_or_else(mining::Rig::common);
+    let rate = rig.dig_rate(rock);
+    let n = ((rate / rig.throughput) * 14.0).round().max(3.0) as usize;
     for (s, tip) in tips.iter().enumerate() {
         let dir = (*tip - center).normalize_or(DVec3::Y);
         let spot = center + dir * b.surface_radius_at(center, *tip, t);

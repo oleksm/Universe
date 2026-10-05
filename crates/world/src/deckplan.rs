@@ -102,7 +102,13 @@ pub struct Wall {
     pub points: Vec<DVec2>,
     pub bulges: Vec<f64>,
     pub doors: Vec<Door>,
+    /// A railing: `RAIL` high, not to the ceiling (a gallery's edge, over a drop).
+    #[serde(default)]
+    pub rail: bool,
 }
+
+/// A railing's height (m).
+pub const RAIL: f64 = 1.1;
 
 /// A doorway `at` metres along its wall (its middle), `width` across, `height` tall.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
@@ -825,6 +831,7 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
             }
         }
         for wall in &deck.walls {
+            let top = if wall.rail { RAIL.min(deck.headroom) } else { deck.headroom };
             for run in wall_runs(wall, sd) {
                 // Its pieces (a doorway: the wall only above it), those running on
                 // straight and alike as one.
@@ -832,7 +839,7 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
                 for w in run.windows(2) {
                     let ((a, sa), (c, sc)) = (w[0], w[1]);
                     let mid = (sa + sc) / 2.0;
-                    let bottom = wall.doors.iter().find(|dr| (mid - dr.at).abs() <= dr.width / 2.0).map_or(0.0, |dr| dr.height.min(deck.headroom));
+                    let bottom = wall.doors.iter().find(|dr| (mid - dr.at).abs() <= dr.width / 2.0).map_or(0.0, |dr| dr.height.min(top));
                     if let Some(last) = pieces.last_mut()
                         && last.2 == bottom
                         && (last.1 - last.0).normalize_or_zero().dot((c - a).normalize_or_zero()) > 0.99995
@@ -843,11 +850,15 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
                     pieces.push((a, c, bottom));
                 }
                 for (a, c, bottom) in pieces {
+                    // (A doorway in a railing: a gap.)
+                    if bottom >= top {
+                        continue;
+                    }
                     let dir = (c - a).normalize_or_zero();
                     let off = DVec2::new(-dir.y, dir.x) * (WALL / 2.0);
                     for side in [off, -off] {
                         let (p, q) = (a + side, c + side);
-                        b.panels.push(([DVec3::new(p.x, y + bottom, p.y), DVec3::new(q.x, y + bottom, q.y), DVec3::new(q.x, y + deck.headroom, q.y), DVec3::new(p.x, y + deck.headroom, p.y)], false));
+                        b.panels.push(([DVec3::new(p.x, y + bottom, p.y), DVec3::new(q.x, y + bottom, q.y), DVec3::new(q.x, y + top, q.y), DVec3::new(p.x, y + top, p.y)], false));
                     }
                 }
             }

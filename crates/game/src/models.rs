@@ -77,6 +77,48 @@ pub fn walls(faces: &[crate::interior::WallFace]) -> Option<Mesh> {
     Some(mesh)
 }
 
+/// Hatch leaves as meshes, one each, closed (the hull's frame): a steel slab 8 cm
+/// thick, its window glass set in each face, its outline drawn. Made again when they
+/// change.
+pub fn hatches(leaves: &[crate::interior::Leaf]) -> Vec<Mesh> {
+    use std::sync::Mutex;
+    type Key = Vec<(Vec<Vec3>, Vec<Vec3>)>;
+    static BUILT: Mutex<Option<(Key, Vec<Mesh>)>> = Mutex::new(None);
+    let key: Key = leaves.iter().map(|l| (l.outline.clone(), l.window.clone())).collect();
+    let mut built = BUILT.lock().unwrap_or_else(|e| e.into_inner());
+    if let Some((k, m)) = built.as_ref()
+        && *k == key
+    {
+        return m.clone();
+    }
+    let meshes: Vec<Mesh> = leaves.iter().map(|l| {
+        let mut m = WireModel::default();
+        let o = &l.outline;
+        let n = (o[1] - o[0]).cross(o[2] - o[0]).normalize_or_zero();
+        let mut fan = |pts: &[Vec3], off: f32, c: [f32; 4], edges: bool| {
+            let base = m.positions.len() as u32;
+            m.positions.extend(pts.iter().map(|p| *p + n * off));
+            m.colors.extend(std::iter::repeat_n(c, pts.len()));
+            for k in 1..pts.len().saturating_sub(1) as u32 {
+                m.faces.push([base, base + k, base + k + 1]);
+            }
+            if edges {
+                for k in 0..pts.len() as u32 {
+                    m.edges.push([base + k, base + (k + 1) % pts.len() as u32]);
+                }
+            }
+        };
+        let (steel, glass) = ([0.46, 0.48, 0.52, 1.0], [0.12, 0.22, 0.32, 1.0]);
+        for side in [0.04, -0.04] {
+            fan(o, side, steel, true);
+            fan(&l.window, side * 1.15, glass, true);
+        }
+        Mesh::new(m)
+    }).collect();
+    *built = Some((key, meshes.clone()));
+    meshes
+}
+
 pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_sim::world::shape::Shape) -> Option<Mesh> {
     use std::sync::Mutex;
     use universe_sim::world::deckplan;
@@ -91,11 +133,20 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
     let sides: Vec<_> = plan.decks.iter().map(|d| deckplan::deck_sides(walk, d.floor)).collect();
     let b = deckplan::build(plan, &sides);
     let mut m = WireModel::default();
+    // (As the interior studio's tunnels: floors a dark deck shade in plates 1.2 m
+    // along, every other a shade apart; walls grey-blue, those across the ship a
+    // shade lighter so the room reads; the slabs' undersides the ceiling below.)
     for (quad, floor) in &b.panels {
-        // (Walls across the ship a shade lighter than those along it: the room reads.)
         let across = (quad[1] - quad[0]).cross(quad[2] - quad[0]).normalize_or_zero().z.abs() > 0.5;
-        let shade = if *floor { 0.44 } else if across { 0.34 } else { 0.28 };
-        let c = [shade * 0.95, shade, shade * 1.08, 1.0];
+        let c = if *floor {
+            let z = (quad[0].z + quad[2].z) * 0.5;
+            let k = if ((z / 1.2).floor() as i64).rem_euclid(2) == 1 { -0.025 } else { 0.0 };
+            [0.17 + k, 0.16 + k, 0.14 + k, 1.0]
+        } else if across {
+            [0.40, 0.44, 0.50, 1.0]
+        } else {
+            [0.36, 0.40, 0.46, 1.0]
+        };
         let base = m.positions.len() as u32;
         m.positions.extend(quad.iter().map(|p| p.as_vec3()));
         m.colors.extend([c; 4]);
@@ -110,7 +161,8 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
     }
     // The floors' slabs: their undersides and edges, a shade under the floor, unlined.
     for quad in &b.slabs {
-        let c = [0.36 * 0.95, 0.36, 0.36 * 1.08, 1.0];
+        let under = (quad[1] - quad[0]).cross(quad[2] - quad[0]).normalize_or_zero().y.abs() > 0.5;
+        let c = if under { [0.58, 0.60, 0.62, 1.0] } else { [0.30, 0.31, 0.32, 1.0] };
         let base = m.positions.len() as u32;
         m.positions.extend(quad.iter().map(|p| p.as_vec3()));
         m.colors.extend([c; 4]);

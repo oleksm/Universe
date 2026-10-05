@@ -836,6 +836,17 @@ impl Drop for EngineHandle {
     }
 }
 
+/// The most cores the game uses while the shipyard studio is open
+/// (UNIVERSE_CORES: another number).
+pub const CORES: usize = 5;
+
+/// The cores the game may use in the shipyard studio: its budget, or fewer if
+/// the machine has fewer.
+pub fn cores() -> usize {
+    let budget = std::env::var("UNIVERSE_CORES").ok().and_then(|n| n.parse().ok()).filter(|&n: &usize| n > 0).unwrap_or(CORES);
+    std::thread::available_parallelism().map_or(4, |n| n.get()).min(budget)
+}
+
 /// How the cores are shared: (the crowd's step, the pilots' thinking).
 /// Three are left to the main, render and world threads (else, with every
 /// core busy stepping crafts and thinking, they're starved now and then: the

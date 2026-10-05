@@ -199,6 +199,8 @@ pub struct App {
     pub market: Option<market::MarketView>,
     /// The ship planner (the shipyard, docked at a station), while open.
     pub shipyard: Option<shipyard::Shipyard>,
+    /// The game held to the shipyard studio's budget of cores (see `hold_to_cores`).
+    held_to_cores: bool,
     /// At a vending machine, its panel open: the item picked.
     pub vending: Option<usize>,
     /// Ship plans kept (in the save).
@@ -206,7 +208,7 @@ pub struct App {
     /// session only (not saved); a layout we're happy with is made content.
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
-    pub layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
+    layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
     /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
     pub preview: Option<shipyard::Shipyard>,
     /// The hull being designed, and those commissioned (in the save).
@@ -291,6 +293,17 @@ pub struct App {
 }
 
 impl App {
+    /// Our hull's inside as laid out, to the world engine if it's changed since it
+    /// was last sent (to walk in).
+    pub fn send_layout(&mut self) {
+        let key = &self.ship.spec().key;
+        let plan = self.deckplans.iter().find(|p| &p.hull == key).cloned().unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: key.clone(), decks: Vec::new() });
+        if self.layout_sent.as_ref() != Some(&plan) {
+            self.engine.send(Command::Layout(plan.clone()));
+            self.layout_sent = Some(plan);
+        }
+    }
+
     fn new() -> Self {
         let mut u = Universe::new(seed());
         // UNIVERSE_RECORD=path: record the session from its start, saved there
@@ -364,6 +377,7 @@ impl App {
             explored: Default::default(),
             market: None,
             shipyard: None,
+            held_to_cores: false,
             deckplans: Vec::new(),
             layout_sent: None,
             preview: None,
@@ -1208,6 +1222,11 @@ impl App {
 impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
         let dt = ctx.dt as f64;
+        // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
+        if self.shipyard.is_some() != self.held_to_cores {
+            self.held_to_cores = self.shipyard.is_some();
+            hold_to_cores(self.held_to_cores.then(universe_sim::engine::cores));
+        }
         // The observer: the live port's questions answered; a recording's frame kept.
         observe::answer(self, ctx);
         observe::frame(self, ctx);
@@ -1225,12 +1244,10 @@ impl Game for App {
         // Keys go to the top layer only (see `Layer`): what's open over the world
         // takes them, and nothing under it sees them; the system's keys work in any.
         self.system_keys(ctx);
-        // Our hull's inside as laid out, to the world engine when it changes (to walk in).
-        let key = &self.ship.spec().key;
-        let plan = self.deckplans.iter().find(|p| &p.hull == key).cloned().unwrap_or_else(|| universe_sim::world::deckplan::DeckPlan { hull: key.clone(), decks: Vec::new() });
-        if self.layout_sent.as_ref() != Some(&plan) {
-            self.engine.send(Command::Layout(plan.clone()));
-            self.layout_sent = Some(plan);
+        // Our hull's inside as laid out, to the world engine when it changes (to walk
+        // in); not while it's being designed in the shipyard (a walk-through sends it).
+        if self.shipyard.is_none() {
+            self.send_layout();
         }
         // Where we are is explored.
         self.explored.insert(self.v.ship_system);
@@ -1241,7 +1258,7 @@ impl Game for App {
                 if ctx.cursor_grabbed() {
                     ctx.grab_cursor(false);
                 }
-                if !shipyard::input(self, ctx) {
+                if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
                     self.shipyard = None;
                 }
             }
@@ -1475,11 +1492,54 @@ pub fn ship_visible(app: &App) -> bool {
 /// The galaxy's stars seen from a system: the system, and each star's direction and colour.
 pub type SkyCache = (usize, Vec<(universe_engine::glam::Vec3, universe_engine::Color)>);
 
+/// The game kept to `n` cores while the shipyard studio is open (Linux: its
+/// threads, now and later, may run on those only), or (None) let go to every
+/// core it was allowed at the start. Elsewhere, nothing.
+fn hold_to_cores(n: Option<usize>) {
+    #[cfg(target_os = "linux")]
+    // SAFETY: cpu_set_t values made empty, filled with CPUs we're allowed, and handed
+    // to the kernel for this process's threads; nothing else touches them.
+    unsafe {
+        static ALLOWED: std::sync::OnceLock<libc::cpu_set_t> = std::sync::OnceLock::new();
+        let allowed = *ALLOWED.get_or_init(|| {
+            let mut allowed: libc::cpu_set_t = std::mem::zeroed();
+            libc::sched_getaffinity(0, std::mem::size_of::<libc::cpu_set_t>(), &mut allowed);
+            allowed
+        });
+        let set = match n {
+            Some(n) => {
+                let mut set: libc::cpu_set_t = std::mem::zeroed();
+                let mut taken = 0;
+                for cpu in 0..libc::CPU_SETSIZE as usize {
+                    if taken < n && libc::CPU_ISSET(cpu, &allowed) {
+                        libc::CPU_SET(cpu, &mut set);
+                        taken += 1;
+                    }
+                }
+                set
+            }
+            None => allowed,
+        };
+        // (Every thread: rayon's and the engine's, one by one.)
+        if let Ok(tasks) = std::fs::read_dir("/proc/self/task") {
+            for t in tasks.flatten() {
+                if let Ok(tid) = t.file_name().to_string_lossy().parse::<libc::pid_t>() {
+                    libc::sched_setaffinity(tid, std::mem::size_of::<libc::cpu_set_t>(), &set);
+                }
+            }
+        }
+    }
+    #[cfg(not(target_os = "linux"))]
+    let _ = n;
+}
+
 fn main() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
         .init();
-    // (The cores shared out before anything starts using them: see `thread_budget`.)
+    // (The cores shared out before anything starts using them: see `thread_budget`;
+    // what the game may use at all, noted before the shipyard holds it to fewer.)
     universe_sim::engine::size_thread_pools();
+    hold_to_cores(None);
     // (Slow frames written down beside the quicksave: hitches.log.)
     let hitch_log = Some(save::data_dir().join("freefall").join("hitches.log"));
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {

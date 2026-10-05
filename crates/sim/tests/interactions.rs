@@ -570,33 +570,11 @@ fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
 
 #[test]
 fn a_yard_builds_an_mc07_from_its_stock() {
-    use universe_sim::world::recipes;
     let mut u = bench(0);
-    let e = &mut u.markets.economy;
-    let yard = e.works.iter().position(|w| w.name == "Trethi Yard").expect("Trethi Yard");
-    let station = e.works.iter().position(|w| w.name == "Trethi Power Station").expect("its power station");
-    // What it takes that it doesn't make itself, from the hull and its fit down: two hulls' worth.
+    // From the registry's stock at day 0 (the yard's: the bills of two MC-07s), nothing added.
+    let yard = u.markets.economy.works.iter().position(|w| w.name == "Trethi Yard").expect("Trethi Yard");
     let goods = u.world.goods.clone();
     let hull = universe_sim::world::goods::item("hull.mc-07").unwrap();
-    let shop: Vec<&str> = e.works[yard].setups.iter().map(|s| s.module.identity.key.as_str()).collect();
-    let made_by = |i: usize| shop.iter().find_map(|m| recipes::of(m).iter().find(|r| r.makes == i));
-    let reg = universe_sim::world::registry::registry();
-    let fit: Vec<usize> = reg.hulls.iter().find(|h| h.identity.key == "hull.mc-07").unwrap().fit.iter().filter_map(|f| universe_sim::world::goods::item(&f.item)).collect();
-    let mut need: Vec<(usize, f64)> = std::iter::once(hull).chain(fit).map(|i| (i, goods[i].mass)).collect();
-    let mut raw: std::collections::BTreeMap<usize, f64> = Default::default();
-    while let Some((i, kg)) = need.pop() {
-        match made_by(i) {
-            Some(r) => need.extend(r.inputs.iter().map(|&(x, q)| (x, q * kg))),
-            None => *raw.entry(i).or_default() += kg,
-        }
-    }
-    e.works[yard].pool.room = f64::INFINITY;
-    for (&i, &kg) in &raw {
-        e.works[yard].pool.put(i, 2.0 * kg);
-    }
-    let fuel = universe_sim::world::goods::item("stock.deuterium-liq").unwrap();
-    e.works[station].pool.room = f64::INFINITY;
-    e.works[station].pool.put(fuel, 1.0e6);
     // Its company sees to it: a month, step by step of the economy.
     let step = universe_sim::services::economy::STEP;
     let mut t = u.world.time;
