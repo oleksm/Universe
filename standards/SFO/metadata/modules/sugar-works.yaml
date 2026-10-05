@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.sugar-works
+  name: "Sugar works"
+  step: "Refine sugar"
+  description: "Slices or crushes the crop, takes the sugar out in hot water, boils it down and dries the crystals."
+physical:
+  length: 150
+  width: 80
+  height: 30
+recipes:
+  - makes: good.sugar
+    does: "A tonne of sugar from six and a half of beet."
+    inputs:
+      - { item: good.sugar-beet, quantity: 6.5 }
+    outputs:
+      - { item: good.beet-pulp, quantity: 5.5 }
+    rate: 2.778
+    power: 2000000
+  - makes: good.sugar
+    does: "A tonne of sugar from nine of cane."
+    inputs:
+      - { item: good.sugarcane, quantity: 9.0 }
+    outputs:
+      - { item: good.bagasse, quantity: 8.0 }
+    rate: 2.778
+    power: 2000000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

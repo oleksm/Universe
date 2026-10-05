@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.soybeans
+  name: "Soybeans"
+  kind: product
+  description: "Protein and oil: pressed for oil, the rest fed to animals."
+physical:
+  bulk_density: 750
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

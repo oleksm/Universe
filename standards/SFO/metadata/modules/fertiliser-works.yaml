@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.fertiliser-works
+  name: "Fertiliser works"
+  step: "Fix nitrogen"
+  description: "Joins nitrogen from the air to hydrogen, as ammonia, under heat and pressure."
+physical:
+  length: 150
+  width: 100
+  height: 40
+recipes:
+  - makes: good.fertiliser
+    does: "Fourteen parts of nitrogen to three of hydrogen."
+    inputs:
+      - { item: element.n, quantity: 0.82 }
+      - { item: element.h, quantity: 0.18 }
+    rate: 5.556
+    power: 12000000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

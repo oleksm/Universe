@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.fertiliser
+  name: "Fertiliser"
+  kind: consumable
+  description: "Fixed nitrogen (as ammonia) for the ground: what a crop takes from the soil and must be given back."
+physical:
+  bulk_density: 680
+game:
+  goods: goods.chemicals
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

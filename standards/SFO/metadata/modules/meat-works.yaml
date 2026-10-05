@@ -1,0 +1,50 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.meat-works
+  name: "Meat works"
+  step: "Slaughter and cut"
+  description: "Where animals are killed, cut and chilled."
+physical:
+  length: 100
+  width: 50
+  height: 12
+recipes:
+  - makes: good.beef
+    does: "A little over two fifths of the animal is meat off the bone."
+    inputs:
+      - { item: good.live-cattle, quantity: 2.4 }
+    outputs:
+      - { item: good.offal, quantity: 1.4 }
+    rate: 1.389
+    power: 500000
+  - makes: good.pork
+    inputs:
+      - { item: good.live-pigs, quantity: 1.75 }
+    outputs:
+      - { item: good.offal, quantity: 0.75 }
+    rate: 1.389
+    power: 500000
+  - makes: good.mutton
+    inputs:
+      - { item: good.live-sheep, quantity: 2.2 }
+    outputs:
+      - { item: good.offal, quantity: 1.2 }
+    rate: 0.5556
+    power: 500000
+  - makes: good.chicken
+    inputs:
+      - { item: good.live-chickens, quantity: 1.5 }
+    outputs:
+      - { item: good.offal, quantity: 0.5 }
+    rate: 1.389
+    power: 500000
+  - makes: good.fish
+    does: "Half the fish is fillet."
+    inputs:
+      - { item: good.live-fish, quantity: 2.0 }
+    outputs:
+      - { item: good.offal, quantity: 1.0 }
+    rate: 0.5556
+    power: 500000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

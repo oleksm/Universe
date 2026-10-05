@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.animal-feed
+  name: "Animal feed"
+  kind: intermediate
+  description: "Grain, oilseed meal and bran milled together: what pigs, poultry, fish and (with hay) cattle are fed."
+physical:
+  bulk_density: 600
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

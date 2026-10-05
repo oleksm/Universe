@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.bread
+  name: "Bread"
+  kind: product
+  description: "Baked from flour and water."
+physical:
+  bulk_density: 250
+  storage_max_temperature: 293
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

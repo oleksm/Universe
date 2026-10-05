@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.coffee
+  name: "Coffee"
+  kind: product
+  description: "Green beans, dried, not yet roasted."
+physical:
+  bulk_density: 700
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

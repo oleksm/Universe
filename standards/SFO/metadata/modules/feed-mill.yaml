@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.feed-mill
+  name: "Feed mill"
+  step: "Mill feed"
+  description: "Grinds and mixes grain, oilseed meal and bran into feed for animals."
+physical:
+  length: 60
+  width: 30
+  height: 25
+recipes:
+  - makes: good.animal-feed
+    does: "Ground and mixed."
+    inputs:
+      - { item: good.maize, quantity: 0.55 }
+      - { item: good.oilseed-meal, quantity: 0.25 }
+      - { item: good.bran, quantity: 0.1 }
+      - { item: good.barley, quantity: 0.1 }
+    rate: 2.778
+    power: 300000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.manure
+  name: "Manure"
+  kind: by-product
+  description: "Dung, urine and bedding from animals, wet. It goes back on the ground."
+physical:
+  bulk_density: 900
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

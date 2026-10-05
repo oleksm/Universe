@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.halloran-mills
+  name: "Halloran Mills"
+kind: company
+ticker: HLM
+address: { at: settlement.treistun.port-eikir }
+note: "Flour, sugar, oil and feed"
+who: "A milling company: it buys what the farms grow and turns it into what keeps and ships."
+what: "Runs flour mills, sugar works, oil presses and feed mills, and the silos that hold the crop."

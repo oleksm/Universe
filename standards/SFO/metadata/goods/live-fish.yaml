@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.live-fish
+  name: "Fish"
+  kind: intermediate
+  description: "Farmed fish, live, by weight."
+physical:
+  bulk_density: 500
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

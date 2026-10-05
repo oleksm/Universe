@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.cold-store
+  name: "Cold store"
+  step: "Store cold"
+  description: "An insulated, chilled warehouse for what spoils: meat, milk, fruit and vegetables."
+physical:
+  length: 100
+  width: 60
+  height: 12
+capacity:
+  holds: 5000000
+needs:
+  power: 500000
+basis:
+  - { of: [physical, capacity, needs], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

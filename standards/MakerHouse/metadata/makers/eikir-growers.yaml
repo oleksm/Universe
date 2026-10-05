@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.eikir-growers
+  name: "Eikir Growers"
+kind: company
+ticker: EKG
+address: { at: settlement.treistun.port-eikir }
+note: "Field crops from the hot country"
+who: "A co-operative of the farms round Port Eikir on Treistun d: grain, pulses, oilseeds, sugarcane and the roots that stand heat."
+what: "Grows field crops under d's strong light, and sells them by the shipload."
+story:
+  - "Eikir was put far north to be out of the worst of d's heat, and the first fields were cut there for the same reason. The farms joined up when they found that one elevator at the port served them all better than twelve."

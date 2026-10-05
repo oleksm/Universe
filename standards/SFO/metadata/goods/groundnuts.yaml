@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.groundnuts
+  name: "Groundnuts"
+  kind: product
+  description: "Peanuts, in the shell."
+physical:
+  bulk_density: 270
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

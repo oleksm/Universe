@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.spinach
+  name: "Spinach"
+  kind: product
+  description: "A vegetable of the market garden."
+physical:
+  bulk_density: 200
+  storage_max_temperature: 277
+game:
+  goods: goods.food
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

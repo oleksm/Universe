@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.verdance
+  name: "Verdance Orchards"
+kind: company
+ticker: VRD
+address: { at: settlement.treistun.port-eikir }
+note: "Fruit, nuts, olives, coffee, tea and cocoa"
+who: "An orchard company. Its trees take years to bear, so it plants where it means to stay."
+what: "Plants and keeps orchards, vineyards and plantations, and market gardens beside them."

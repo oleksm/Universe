@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.winery
+  name: "Winery"
+  step: "Make wine"
+  description: "Crushes grapes, ferments the juice and keeps the wine."
+physical:
+  length: 60
+  width: 40
+  height: 10
+recipes:
+  - makes: good.wine
+    inputs:
+      - { item: good.grapes, quantity: 1.4 }
+    outputs:
+      - { item: good.pomace, quantity: 0.4 }
+    rate: 0.2778
+    power: 100000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

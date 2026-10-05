@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.hay
+  name: "Hay"
+  kind: intermediate
+  description: "Grass cut and dried, for animals."
+physical:
+  bulk_density: 150
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

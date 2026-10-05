@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.grow-hall
+  name: "Grow hall"
+  step: "Grow under lamps"
+  description: "A sealed hall with a hectare of growing beds in tiers under lamps, for where there is no sky to farm under. Everything a crop is made of has to be brought to it: carbon dioxide, water, nutrients, and above all light."
+physical:
+  length: 100
+  width: 50
+  height: 20
+recipes:
+  - makes: good.lettuce
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.07959 }
+      - { item: good.water, quantity: 0.983 }
+      - { item: good.fertiliser, quantity: 0.0011 }
+    outputs:
+      - { item: element.o, quantity: 0.05869 }
+      - { item: good.crop-residue, quantity: 0.005 }
+    rate: 0.01584
+    power: 3000000
+  - makes: good.tomatoes
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.1302 }
+      - { item: good.water, quantity: 0.994 }
+      - { item: good.fertiliser, quantity: 0.0018 }
+    outputs:
+      - { item: element.o, quantity: 0.09603 }
+      - { item: good.crop-residue, quantity: 0.03 }
+    rate: 0.01584
+    power: 3000000
+  - makes: good.potatoes
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.3798 }
+      - { item: good.water, quantity: 0.9475 }
+      - { item: good.fertiliser, quantity: 0.00525 }
+    outputs:
+      - { item: element.o, quantity: 0.2801 }
+      - { item: good.crop-residue, quantity: 0.0525 }
+    rate: 0.01584
+    power: 3000000
+  - makes: good.wheat
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 2.895 }
+      - { item: good.water, quantity: 1.331 }
+      - { item: good.fertiliser, quantity: 0.04002 }
+    outputs:
+      - { item: element.o, quantity: 2.135 }
+      - { item: good.crop-residue, quantity: 1.131 }
+    rate: 0.003169
+    power: 3000000
+  - makes: good.soybeans
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 3.22 }
+      - { item: good.water, quantity: 1.445 }
+      - { item: good.fertiliser, quantity: 0.0445 }
+    outputs:
+      - { item: element.o, quantity: 2.374 }
+      - { item: good.crop-residue, quantity: 1.335 }
+    rate: 0.0006338
+    power: 3000000
+  - makes: good.strawberries
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.1693 }
+      - { item: good.water, quantity: 0.9802 }
+      - { item: good.fertiliser, quantity: 0.00234 }
+    outputs:
+      - { item: element.o, quantity: 0.1248 }
+      - { item: good.crop-residue, quantity: 0.027 }
+    rate: 0.001901
+    power: 3000000
+  - makes: good.spinach
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.1273 }
+      - { item: good.water, quantity: 0.9728 }
+      - { item: good.fertiliser, quantity: 0.00176 }
+    outputs:
+      - { item: element.o, quantity: 0.0939 }
+      - { item: good.crop-residue, quantity: 0.008 }
+    rate: 0.009506
+    power: 3000000
+  - makes: good.peppers
+    does: "Grown in tiers under lamps, sealed from outside."
+    inputs:
+      - { item: good.carbon-dioxide, quantity: 0.1852 }
+      - { item: good.water, quantity: 0.9968 }
+      - { item: good.fertiliser, quantity: 0.00256 }
+    outputs:
+      - { item: element.o, quantity: 0.1366 }
+      - { item: good.crop-residue, quantity: 0.048 }
+    rate: 0.007922
+    power: 3000000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A guess, to be reviewed: yields of the order reported for crops grown under lamps (several times a field's for leaf and root crops, about thirty times for wheat), and 300 W of lamp for each m2 of bed. From memory; no source was looked up." }

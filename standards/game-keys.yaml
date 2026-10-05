@@ -61,94 +61,109 @@
 - { key: body.treistun.truhora, game: "Truhora", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.tukau, game: "Tukau", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.ugaula, game: "Ugaula", in: "by name: celestial.ron, the seed" }
-- { key: equipment.cabin.s1, game: "cabin.s1", in: "modules.ron" }
-- { key: equipment.cabin.s2, game: "cabin.s2", in: "modules.ron" }
-- { key: equipment.cabin.s3, game: "cabin.s3", in: "modules.ron" }
-- { key: equipment.cabin.s4, game: "cabin.s4", in: "modules.ron" }
-- { key: equipment.capacitor.s1, game: "capacitor.s1", in: "modules.ron" }
-- { key: equipment.capacitor.s2, game: "capacitor.s2", in: "modules.ron" }
-- { key: equipment.capacitor.s3, game: "capacitor.s3", in: "modules.ron" }
-- { key: equipment.comm.basic.s1, game: "comm.basic.s1", in: "modules.ron" }
-- { key: equipment.comm.long.s1, game: "comm.long.s1", in: "modules.ron" }
-- { key: equipment.computer.fbw.fast, game: "computer.fbw.fast", in: "modules.ron" }
-- { key: equipment.computer.fbw.s1, game: "computer.fbw.s1", in: "modules.ron" }
-- { key: equipment.drive.kestrel.k2, game: "drive.kestrel.k2", in: "modules.ron" }
-- { key: equipment.drive.torch.s1, game: "drive.torch.s1", in: "modules.ron" }
-- { key: equipment.drive.torch.s2, game: "drive.torch.s2", in: "modules.ron" }
-- { key: equipment.drive.torch.s3, game: "drive.torch.s3", in: "modules.ron" }
-- { key: equipment.gun.mass-driver.s1, game: "gun.mass_driver.s1", in: "modules.ron" }
-- { key: equipment.hyperdrive.halcyon.s1, game: "hyperdrive.halcyon.s1", in: "modules.ron" }
-- { key: equipment.hyperdrive.halcyon.s2, game: "hyperdrive.halcyon.s2", in: "modules.ron" }
-- { key: equipment.hyperdrive.halcyon.s3, game: "hyperdrive.halcyon.s3", in: "modules.ron" }
-- { key: equipment.hyperdrive.s1, game: "hyperdrive.s1", in: "modules.ron" }
-- { key: equipment.hyperdrive.s2, game: "hyperdrive.s2", in: "modules.ron" }
-- { key: equipment.hyperdrive.s3, game: "hyperdrive.s3", in: "modules.ron" }
-- { key: equipment.laser.pulse.s1, game: "laser.pulse.s1", in: "modules.ron" }
-- { key: equipment.life.s1, game: "life.s1", in: "modules.ron" }
-- { key: equipment.life.s2, game: "life.s2", in: "modules.ron" }
-- { key: equipment.lift.belly.s1, game: "lift.belly.s1", in: "modules.ron" }
-- { key: equipment.lift.belly.s2, game: "lift.belly.s2", in: "modules.ron" }
-- { key: equipment.lift.belly.s3, game: "lift.belly.s3", in: "modules.ron" }
-- { key: equipment.mining.rig.s2, game: "mining.rig.s2", in: "modules.ron" }
-- { key: equipment.nav.basic.s1, game: "nav.basic.s1", in: "modules.ron" }
-- { key: equipment.nav.full.s1, game: "nav.full.s1", in: "modules.ron" }
-- { key: equipment.power.aurel.s1, game: "power.aurel.s1", in: "modules.ron" }
-- { key: equipment.power.aurel.s2, game: "power.aurel.s2", in: "modules.ron" }
-- { key: equipment.power.aurel.s3, game: "power.aurel.s3", in: "modules.ron" }
-- { key: equipment.power.fusion.s1, game: "power.fusion.s1", in: "modules.ron" }
-- { key: equipment.power.fusion.s2, game: "power.fusion.s2", in: "modules.ron" }
-- { key: equipment.power.fusion.s3, game: "power.fusion.s3", in: "modules.ron" }
-- { key: equipment.rack.s1, game: "rack.s1", in: "modules.ron" }
-- { key: equipment.rack.s2, game: "rack.s2", in: "modules.ron" }
-- { key: equipment.rack.s3, game: "rack.s3", in: "modules.ron" }
-- { key: equipment.rack.s4, game: "rack.s4", in: "modules.ron" }
-- { key: equipment.relay.gate, game: "relay.gate", in: "modules.ron" }
-- { key: equipment.relay.hyper, game: "relay.hyper", in: "modules.ron" }
-- { key: equipment.sensors.radar.s1, game: "sensors.radar.s1", in: "modules.ron" }
-- { key: equipment.tank.s0, game: "tank.s0", in: "modules.ron" }
-- { key: equipment.tank.s1, game: "tank.s1", in: "modules.ron" }
-- { key: equipment.tank.s2, game: "tank.s2", in: "modules.ron" }
-- { key: equipment.tank.s3, game: "tank.s3", in: "modules.ron" }
-- { key: equipment.tank.s4, game: "tank.s4", in: "modules.ron" }
-- { key: equipment.terminal.ground, game: "terminal.ground", in: "modules.ron" }
-- { key: equipment.thrusters.quad.s1, game: "thrusters.quad.s1", in: "modules.ron" }
-- { key: equipment.thrusters.quad.s2, game: "thrusters.quad.s2", in: "modules.ron" }
-- { key: equipment.thrusters.quad.s3, game: "thrusters.quad.s3", in: "modules.ron" }
-- { key: equipment.transceiver.beacon, game: "transceiver.beacon", in: "modules.ron" }
-- { key: equipment.transceiver.station, game: "transceiver.station", in: "modules.ron" }
-- { key: equipment.transponder.s1, game: "transponder.s1", in: "modules.ron" }
-- { key: gate.ring.i, game: "structure.ring.i", in: "structures.ron" }
-- { key: gate.ring.ii, game: "structure.ring.ii", in: "structures.ron" }
-- { key: gate.ring.iii, game: "structure.ring.iii", in: "structures.ron" }
+- { key: good.almonds, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.apples, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.asteroid-water-ice, game: "goods.water, ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.bananas, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.barley, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.bauxite, game: "goods.ores", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.beans, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.beef, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.beer, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.bread, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.butter, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.cabbage, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.carbonaceous-ore, game: "goods.ores, ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.carrots, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.cassava, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.cheese, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.chicken, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.chickpeas, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.cocoa, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.coffee, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.cucumbers, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.eggs, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.fertiliser, game: "goods.chemicals", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.fish, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.flour, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.garlic, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.grapes, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.groundnuts, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.iron-ore, game: "goods.ores", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.lemons, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.lentils, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.lettuce, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.maize, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.mangoes, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.milk, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.mutton, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.nickel-iron-ore, game: "goods.ores, ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.oats, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.olive-oil, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.olives, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.onions, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.oranges, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.peas, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.peppers, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.pgm-rich-ore, game: "goods.ores, ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.pork, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.potatoes, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.pumpkins, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.rapeseed, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.rice, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.soybeans, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.spinach, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.stony-ore, game: "goods.ores, ore.stony", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.strawberries, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.sugar, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.sugar-beet, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.sugarcane, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.sunflower-seed, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.sweet-potatoes, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.tea, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.tomatoes, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.vegetable-oil, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.water, game: "goods.water", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.watermelons, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.wheat, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
+- { key: good.wine, game: "goods.food", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: module.alumina-refinery, game: "alumina-refinery", in: "industry.ron, settlements.ron" }
 - { key: module.arc-furnace, game: "arc-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.arc-furnace-metal, game: "arc-furnace-metal", in: "industry.ron, settlements.ron" }
 - { key: module.assembly-jig, game: "assembly-jig", in: "industry.ron, settlements.ron" }
 - { key: module.assembly-shop, game: "assembly-shop", in: "industry.ron, settlements.ron" }
+- { key: module.bakery, game: "bakery", in: "industry.ron, settlements.ron" }
 - { key: module.bar-mill, game: "bar-mill", in: "industry.ron, settlements.ron" }
+- { key: module.brewery, game: "brewery", in: "industry.ron, settlements.ron" }
 - { key: module.building-dock, game: "building-dock", in: "industry.ron, settlements.ron" }
 - { key: module.casthouse, game: "casthouse", in: "industry.ron, settlements.ron" }
 - { key: module.casting-bay, game: "casting-bay", in: "industry.ron, settlements.ron" }
 - { key: module.cold-rolling-mill, game: "cold-rolling-mill", in: "industry.ron, settlements.ron" }
+- { key: module.cold-store, game: "cold-store", in: "industry.ron, settlements.ron" }
 - { key: module.cutting-table, game: "cutting-table", in: "industry.ron, settlements.ron" }
+- { key: module.dairy, game: "dairy", in: "industry.ron, settlements.ron" }
+- { key: module.feed-mill, game: "feed-mill", in: "industry.ron, settlements.ron" }
+- { key: module.fertiliser-works, game: "fertiliser-works", in: "industry.ron, settlements.ron" }
+- { key: module.field, game: "field", in: "industry.ron, settlements.ron" }
 - { key: module.finishing-line, game: "finishing-line", in: "industry.ron, settlements.ron" }
+- { key: module.fish-farm, game: "fish-farm", in: "industry.ron, settlements.ron" }
+- { key: module.flour-mill, game: "flour-mill", in: "industry.ron, settlements.ron" }
 - { key: module.forging-press, game: "forging-press", in: "industry.ron, settlements.ron" }
 - { key: module.fusion-power-station, game: "fusion-power-station", in: "industry.ron, settlements.ron" }
 - { key: module.general-warehouse, game: "general-warehouse", in: "industry.ron, settlements.ron" }
+- { key: module.grain-silo, game: "grain-silo", in: "industry.ron, settlements.ron" }
+- { key: module.grow-hall, game: "grow-hall", in: "industry.ron, settlements.ron" }
 - { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "industry.ron, settlements.ron" }
 - { key: module.hydrogen-plant, game: "hydrogen-plant", in: "industry.ron, settlements.ron" }
 - { key: module.ingot-yard, game: "ingot-yard", in: "industry.ron, settlements.ron" }
 - { key: module.ladle-station, game: "ladle-station", in: "industry.ron, settlements.ron" }
+- { key: module.livestock-barn, game: "livestock-barn", in: "industry.ron, settlements.ron" }
 - { key: module.loading-dock, game: "loading-dock", in: "industry.ron, settlements.ron" }
 - { key: module.machining-centre, game: "machining-centre", in: "industry.ron, settlements.ron" }
+- { key: module.market-garden, game: "market-garden", in: "industry.ron, settlements.ron" }
+- { key: module.meat-works, game: "meat-works", in: "industry.ron, settlements.ron" }
+- { key: module.oil-press, game: "oil-press", in: "industry.ron, settlements.ron" }
+- { key: module.orchard, game: "orchard", in: "industry.ron, settlements.ron" }
 - { key: module.ore-yard, game: "ore-yard", in: "industry.ron, settlements.ron" }
 - { key: module.panel-former, game: "panel-former", in: "industry.ron, settlements.ron" }
 - { key: module.panel-line, game: "panel-line", in: "industry.ron, settlements.ron" }
@@ -158,22 +173,33 @@
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.shaft-furnace, game: "shaft-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.stock-yard, game: "stock-yard", in: "industry.ron, settlements.ron" }
+- { key: module.sugar-works, game: "sugar-works", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
+- { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
 - { key: org.aurel, game: "brand.aurel", in: "brands.ron" }
+- { key: org.brightwater-dairy, game: "brand.brightwater_dairy", in: "brands.ron" }
 - { key: org.castellan, game: "brand.castellan", in: "brands.ron" }
+- { key: org.cellar-and-vat, game: "brand.cellar_and_vat", in: "brands.ron" }
 - { key: org.cormorant, game: "brand.cormorant", in: "brands.ron" }
+- { key: org.eikir-growers, game: "brand.eikir_growers", in: "brands.ron" }
 - { key: org.garrick, game: "brand.garrick", in: "brands.ron" }
+- { key: org.greenfall, game: "brand.greenfall", in: "brands.ron" }
 - { key: org.hadley, game: "brand.hadley", in: "brands.ron" }
 - { key: org.halcyon, game: "brand.halcyon", in: "brands.ron" }
+- { key: org.halloran-mills, game: "brand.halloran_mills", in: "brands.ron" }
 - { key: org.halvard, game: "brand.halvard", in: "brands.ron" }
 - { key: org.kestrel, game: "brand.kestrel", in: "brands.ron" }
+- { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
+- { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }
 - { key: org.meridian, game: "brand.meridian", in: "brands.ron" }
+- { key: org.nacaubun-farms, game: "brand.nacaubun_farms", in: "brands.ron" }
 - { key: org.orbital, game: "brand.orbital", in: "brands.ron" }
 - { key: org.sfo, game: "body.sfo", in: "bodies.ron" }
 - { key: org.tallis, game: "brand.tallis", in: "brands.ron" }
 - { key: org.tolland, game: "brand.tolland", in: "brands.ron" }
 - { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "brands.ron" }
+- { key: org.verdance, game: "brand.verdance", in: "brands.ron" }
 - { key: org.vireo, game: "brand.vireo", in: "brands.ron" }
 - { key: population.biraidim.shikra-family, game: "Shikra family", in: "by name: celestial.ron, the seed" }
 - { key: population.biraidim.taumeibru-family, game: "Taumeibru family", in: "by name: celestial.ron, the seed" }

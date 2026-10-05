@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.dairy
+  name: "Dairy"
+  step: "Make cheese and butter"
+  description: "Takes in milk and makes what keeps: cheese and butter."
+physical:
+  length: 60
+  width: 40
+  height: 10
+recipes:
+  - makes: good.cheese
+    does: "Ten of milk to one of cheese."
+    inputs:
+      - { item: good.milk, quantity: 10.0 }
+    outputs:
+      - { item: good.whey, quantity: 9.0 }
+    rate: 0.2778
+    power: 300000
+  - makes: good.butter
+    does: "Twenty-two of milk to one of butter."
+    inputs:
+      - { item: good.milk, quantity: 22.0 }
+    outputs:
+      - { item: good.whey, quantity: 21.0 }
+    rate: 0.1389
+    power: 300000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "A typical figure of Earth's farming, from memory: no source was looked up. To be reviewed." }

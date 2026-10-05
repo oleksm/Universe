@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.marrow-and-pike
+  name: "Marrow & Pike"
+kind: company
+ticker: MPK
+address: { at: settlement.treistun.port-nacaubun }
+note: "Meat and fish"
+who: "Stockmen and fish farmers who also run the meat works."
+what: "Raises cattle, pigs, sheep, poultry and fish, slaughters, cuts and chills."

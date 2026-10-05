@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented: a company of the food trade, made up with its trade (2026-10-04).
+identity:
+  key: org.brightwater-dairy
+  name: "Brightwater Dairy"
+kind: company
+ticker: BWD
+address: { at: settlement.treistun.port-nacaubun }
+note: "Milk, cheese, butter and eggs"
+who: "A dairy company on Treistun e. Milk does not travel, so it makes what does."
+what: "Collects milk, makes cheese and butter, and keeps laying flocks."
