@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Market category
 x-kind: [market]
-description: "One of the categories the markets trade in: food, fuel, ores, metals, machinery... Anything physical can be traded; what it is traded as is one of these, named by the thing itself (`identity.traded_as`). No price: prices are the game's state."
+description: "One of the categories the markets trade in: food, fuel, ores, metals, machinery... Anything physical can be traded; what it is traded as is one of these, named by the thing itself (`identity.traded_as`)."
 type: object
 additionalProperties: false
 required: [identity]
