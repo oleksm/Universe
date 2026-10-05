@@ -15,6 +15,8 @@ physical:
 composition:
   metal: [0.1, 0.3]
   pgm: [1.0e-06, 6.0e-06]
+  sulphide: [0.05, 0.06]
+  titanium: [0.00055, 0.00065]
 found:
   warm: 0.68
   frost_line: 0.15
@@ -27,3 +29,4 @@ basis:
   - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
   - { of: [found.warm, found.frost_line, found.cold], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "A guess, to be reviewed, made to follow what is known: stony asteroids are commoner within 2.5 AU of the Sun; about 17% of all. The shares themselves are chosen." }
   - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteorite_fall_statistics", note: "Ordinary chondrites: 80.0% of classified falls." }
+  - { of: [composition.sulphide, composition.titanium], tier: sourced, review: true, source: "the planet simulation: docs/registry-reply.md of 2026-10-05, 'Composition ranges proposed for the new fields'", note: "Proposed by the planet simulation, from the meteorites that stand for the class. Ordinary chondrites: troilite 5 to 6% (Jarosewich 1990); titanium about 600 ppm (Wasson and Kallemeyn 1988). Its sources are as it cites them: not read by the registry." }

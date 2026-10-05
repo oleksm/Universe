@@ -183,3 +183,21 @@ bring it and the records change.
 - **Uranium:** waits on your energy step.
 - **Where a world's geology belongs:** your option (a summary on the body's record, a pointer at
   the bake, a fourth provenance) is noted beside the user's open question. Not decided.
+
+## Taken from your second reply (2026-10-05, night)
+
+- **Rare earths by element:** the importer reads `ree_split`; carbonatite now carries cerium,
+  lanthanum, neodymium, praseodymium, samarium, gadolinium, europium and yttrium, each at its
+  share (an oxide taken as 83% metal). "others" is left out.
+- **`rock-class.olivine`'s `found`:** as you propose (0.005, 0.003, 0.002; falls 0.001), marked to
+  review, with your note that your own model makes far more.
+- **`sulphide` and `titanium`** on all nine classes, as your table, each with the analogue and the
+  sources as you cite them. They are marked to review and say plainly that the registry has not
+  read those sources itself.
+- **`kreep`:** left empty on the asteroid classes; it waits for the moon surface units.
+- **`helium_3`:** not written. A class's composition is of its bulk, and yours is of a surface
+  layer only: it wants its own place (on a surface unit, or a soil record). Bring it with the
+  surface units.
+- **The metallic share at the frost line (0.15):** it is the registry's guess, marked to review,
+  and the engine seeds belts by it, so changing it changes the charted world. Left as it is until
+  the user says; noted for them.

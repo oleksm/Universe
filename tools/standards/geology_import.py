@@ -76,6 +76,11 @@ for t in voc["deposit_types"]:
             for el, share in (split or {"Pt": 1.0}).items():
                 s += f"  - {{ item: element.{el.lower()}, grade: {num(v * GT * share)}, said_as: {q('PGE g/t, ' + el + ' ' + format(share, '.0%') if split else 'PGE g/t')} }}\n"
             continue
+        if said == "REO %" and t.get("ree_split"):       # (the rare earths, each by its share of their oxides; "others" is left out)
+            for el, share in t["ree_split"].items():
+                if el != "others":
+                    s += f"  - {{ item: element.{el.lower()}, grade: {num(v * PCT * 0.83 * share)}, said_as: {q('REO %, ' + el + ' ' + format(share, '.1%'))} }}\n"
+            continue
         item, k = ITEM.get(said) or sys.exit(f"{said}: a commodity the registry has not met: give it an item in ITEM")
         s += f"  - {{ item: {item}, grade: {num(v * k)}, said_as: {q(said)} }}\n"
     if old.get("offshore"):
@@ -88,7 +93,7 @@ for t in voc["deposit_types"]:
         s += "seen_by:\n" + "".join(f"  - {{ method: {METHOD.get(m, m)}, reach: {num(REACH[m])} }}\n" for m in t["survey"])
     if old.get("counted"):
         s += "counted:\n" + "".join(f"  {k}: {v}\n" for k, v in old["counted"].items())
-    s += "basis:\n" + basis(["sim", "carries", "shape", "size", "footprint", "forms_at", "cluster"] + (["seen_by"] if t["survey"] else []), "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths as cerium, the commonest; the platinum metals by its own split, where it gives one.")
+    s += "basis:\n" + basis(["sim", "carries", "shape", "size", "footprint", "forms_at", "cluster"] + (["seen_by"] if t["survey"] else []), "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split).")
     if old.get("counted"):
         s += f"  - {{ of: [counted], tier: sourced, review: true, source: \"the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4\", note: \"Deposits in one test world, against about how many are known on Earth.\" }}\n"
     yaml.safe_load(s)

@@ -782,3 +782,11 @@ carbonaceous, though `primitive` has had its colour since yesterday.
   `tools/standards/geology_import.py`: 27 deposit types and 13 rock units under
   `Celestial/metadata/`, new kinds you do not read. Ores, a mine, a concentrator and the works that
   win each metal are modules and goods of the kinds you do.
+
+**Rock classes changed (2026-10-05, night): one thing to check on your side.** There is a ninth
+class, `rock-class.olivine`, and it now has `found` shares (0.005 warm, 0.003 at the frost line,
+0.002 cold). If your belts seed by `found`, olivine rocks will appear, about one in two hundred.
+It has a density and a colour but **no `mining` group** (no cutting energy, no yields): digging
+one would stop at "has no cut energy". Either leave it out of what can be dug, or tell me and I
+give it the stony class's figures as a marked guess. All nine classes also gained `sulphide` and
+`titanium` ranges in `composition`. Your tests pass with all of it.

@@ -9,7 +9,14 @@ sim: { key: carbonatite, code: CBT }
 formed_by: rift
 carries:
   - { item: element.p, grade: 0.03491, said_as: "P2O5 %" }
-  - { item: element.ce, grade: 0.01628, said_as: "REO %" }
+  - { item: element.ce, grade: 0.008134, said_as: "REO %, Ce 49.0%" }
+  - { item: element.la, grade: 0.005478, said_as: "REO %, La 33.0%" }
+  - { item: element.nd, grade: 0.001992, said_as: "REO %, Nd 12.0%" }
+  - { item: element.pr, grade: 0.000664, said_as: "REO %, Pr 4.0%" }
+  - { item: element.sm, grade: 0.0001328, said_as: "REO %, Sm 0.8%" }
+  - { item: element.gd, grade: 3.32e-05, said_as: "REO %, Gd 0.2%" }
+  - { item: element.eu, grade: 1.66e-05, said_as: "REO %, Eu 0.1%" }
+  - { item: element.y, grade: 1.66e-05, said_as: "REO %, Y 0.1%" }
   - { item: element.nb, grade: 0.003495, said_as: "Nb2O5 %" }
 ore: good.carbonatite-ore
 shape: pipe
@@ -31,5 +38,5 @@ counted:
   test_world: 58
   earth: 50
 basis:
-  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths as cerium, the commonest; the platinum metals by its own split, where it gives one." }
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }
   - { of: [counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4", note: "Deposits in one test world, against about how many are known on Earth." }

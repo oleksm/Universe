@@ -11,6 +11,16 @@ physical:
   density_monolith: 3300
   albedo: 0.2
   colour: [0.55, 0.6, 0.42]
+composition:
+  sulphide: [0.005, 0.03]
+  titanium: [5.0e-05, 0.0002]
+found:
+  warm: 0.005
+  frost_line: 0.003
+  cold: 0.002
+  falls: 0.001
 basis:
   - { of: [physical.density_monolith], tier: invented, review: true, note: "Olivine rich in magnesium is about 3,300 kg/m3: from memory, no source was looked up." }
   - { of: [physical.density_rubble, physical.albedo, physical.colour], tier: invented, review: true, note: "Chosen: rubble at about two thirds of the solid, as the stony class's; olive green, of middling brightness. To be reviewed." }
+  - { of: [composition.sulphide, composition.titanium], tier: sourced, review: true, source: "the planet simulation: docs/registry-reply.md of 2026-10-05, 'Composition ranges proposed for the new fields'", note: "Proposed by the planet simulation, from the meteorites that stand for the class. Brachinites: troilite a few per cent; titanium low (Keil 2014). Its sources are as it cites them: not read by the registry." }
+  - { of: [found], tier: sourced, review: true, source: "the planet simulation: docs/registry-reply.md of 2026-10-05", note: "Olivine asteroids are under 1% of the main belt, spread across it (DeMeo et al. 2019, as the simulation cites it); how that splits between zones is chosen. Among falls, olivine-rich meteorites are a tiny share (Weisberg, McCoy and Krot 2006). The simulation's own model makes far more (8% in the inner zone): the missing mantle puzzle, unsolved there too." }
