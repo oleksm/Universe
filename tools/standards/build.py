@@ -1861,9 +1861,9 @@ for ad in administrations:
 # 1b. Equipment: what each hull is fitted with, each against the game's module, and whether it is
 # said what it is made of.
 eq_by = {e["slug"]: e for e in equipment}
-_mods = open(os.path.join(ROOT, "content", "base", "modules.ron"), encoding="utf-8").read()
+# (The game reads equipment, hulls, structures and gate rings from these records now: there is no
+# second copy of the game's to hold them to.)
 game_key = lambda key: (key or "").partition(".")[2]           # (equipment.drive.torch.s1 is the game's drive.torch.s1)
-GAME_MODULES = {k.replace("_", "-"): float(m) for k, m in re.findall(r'\(key: "([^"]+)",.*?mass: ([0-9.e+]+)', _mods)}
 rows = []
 for hl in hulls:
     fitted = 0.0
@@ -1875,24 +1875,20 @@ for hl in hulls:
         fitted += (e.get("physical") or {}).get("mass", 0)
     hl["fitted_mass"] = fitted
 for e in equipment:
-    mass, game = (e.get("physical") or {}).get("mass"), GAME_MODULES.get(game_key(e["identity"].get("key")))
+    mass = (e.get("physical") or {}).get("mass")
     on = [hl["identity"]["name"] for hl in hulls + gates if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
-    same = game is not None and mass is not None and abs(game - mass) < 0.5
-    rows.append(row("gap" if game is not None and not same else "note", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", ("the same in the game" if same else f"the game says {tonnes(game)}") if game is not None else "not in the game", "not yet said"))
-report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, its mass against the game's module of the same key, and whether it is said what it is made of. A gap is one that differs from the game. None says yet what it is made of: that waits for more hulls.", ["Equipment", "Fitted to", "Mass", "Against the game", "Made of"], rows)
+    rows.append(row("note", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", (e.get("performance") or {}).get("kind", ""), "not yet said"))
+report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, what it weighs and what kind of device it is. The game reads these records. None says yet what it is made of: that waits for more hulls.", ["Equipment", "Fitted to", "Mass", "Kind", "Made of"], rows)
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
 # same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
 LAW = {l["identity"]["label"]: l["value"] for s_ in dogma for l in s_["laws"]}
-_structs = open(os.path.join(ROOT, "content", "base", "structures.ron"), encoding="utf-8").read()
-GAME_RINGS = {k: float(v) for k, v in re.findall(r'key: "([^"]+)",[^\n]*?span_ly: ([0-9.]+)', _structs)}
 tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * LY * m ** LAW["TUBE_GAMMA"]      # (the law is for each metre)
 tube_energy = lambda m, span_ly: LAW["TUBE_EPS"] * m * span_ly * LY * math.e      # (at its natural time)
 station = next((m for m in modules if (m.get("rate") or {}).get("power")), None)
 rows = []
 for g in gates:
     d, span = (g.get("size") or {}).get("opening"), (g.get("performance") or {}).get("span")
-    game = GAME_RINGS.get("structure." + game_key(g["identity"]["key"]))
     if d and span and all(k in LAW for k in ("TUBE_T_LY", "TUBE_GAMMA", "TUBE_EPS", "TUBE_RHO", "TUBE_K", "TUBE_HOLD")):
         mu = LAW["TUBE_RHO"] * d ** LAW["TUBE_K"]
         opening = tube_energy(mu, span)
@@ -1905,7 +1901,7 @@ for g in gates:
         hold = f"{g['worked']['hold_power'] / 1e9:,.0f} GW to hold at its full span"
     else:
         hold = "not worked out: its opening, its span or a law is missing"
-    rows.append(row("ok" if game == span else "gap", link(g["identity"]["name"], "gate:" + g["slug"]), f"{span:g} ly" if span else "", (f"the same in the game" if game == span else f"the game says {game:g} ly") if game is not None else "not in the game", hold))
+    rows.append(row("ok" if span else "gap", link(g["identity"]["name"], "gate:" + g["slug"]), f"{span:g} ly" if span else "", "read by the game", hold))
     st = next((x for x in structures if g["slug"] in x["gates"]), None)
     if st and "worked" in g:
         mine = [pt for pt in parts if pt["hull"] == st["slug"]]
@@ -2701,8 +2697,6 @@ for _rel in _unheld:
 def write_game_keys():
     """standards/game-keys.yaml: for every record the game knows today by another key or by its name, the
     two side by side. Data for the game to rename by; it goes when the game loads by the registry's keys."""
-    game_mods = {k for k in re.findall(r'\(key: "([^"]+)"', _mods)}
-    game_hulls = set(re.findall(r'key: "(hull\.[a-z_0-9.-]+)"', open(os.path.join(CONTENT, "hulls.ron"), encoding="utf-8").read()))
     rows = []
     for key, (rel, rec) in sorted(REGISTRY.items()):
         kind, _, rest = key.partition(".")
@@ -2710,12 +2704,6 @@ def write_game_keys():
         was, where = None, None
         if kind == "org" and rec.get("kind") in OLD_KEY:
             was, where = OLD_KEY[rec["kind"]] + "." + rest.replace("-", "_"), "brands.ron" if rec["kind"] == "company" else "bodies.ron"
-        elif kind == "equipment" and rest.replace("-", "_") in game_mods:
-            was, where = rest.replace("-", "_"), "modules.ron"
-        elif kind == "gate":
-            was, where = "structure." + rest, "structures.ron"
-        elif kind == "hull" and key.replace("-", "_") in game_hulls:
-            was, where = key.replace("-", "_"), "hulls.ron"
         elif kind == "module":
             was, where = rest, "industry.ron, settlements.ron"
         elif kind in ("rock-class", "law") and idn.get("label"):
