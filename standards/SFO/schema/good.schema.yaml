@@ -5,6 +5,9 @@ description: Something that moves in bulk through industry and is neither an ele
 type: object
 additionalProperties: false
 required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [bulk_density] } } }
 properties:
   identity:
     type: object

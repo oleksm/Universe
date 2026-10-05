@@ -58,7 +58,7 @@ for _dp, _dns, _fns in os.walk(TREE):
     _dns[:] = [d for d in _dns if d not in ("schema", "sources", "logos", "icons")]
     for _fn in _fns:
         _rel = os.path.relpath(os.path.join(_dp, _fn), TREE)
-        if _fn.endswith(".yaml") and os.sep in _rel and V.schema_of(_rel):
+        if _fn.endswith(".yaml") and not _fn.endswith(".schema.yaml") and os.sep in _rel and V.schema_named(os.path.join(_dp, _fn)):
             try:
                 _rec = yaml.safe_load(open(os.path.join(_dp, _fn), encoding="utf-8")) or {}
             except yaml.YAMLError:
@@ -259,7 +259,7 @@ def old_groups(rec, rel):
 
 def old_names(rec, path):
     rel = os.path.relpath(os.path.abspath(path), TREE)
-    sp = V.schema_of(rel) if os.sep in rel else None
+    sp = V.schema_named(os.path.abspath(path)) if os.sep in rel and os.path.exists(path) else None
     if sp and isinstance(rec, dict) and os.path.relpath(sp, TREE) in READING:
         for k, x in reading(rec, "", READING[os.path.relpath(sp, TREE)]).items():
             rec[k] = x
@@ -484,6 +484,7 @@ SUN_KG, SUN_W = _law["sun-mass"], _law["sun-luminosity"]
 
 HOUSE = "MakerHouse"
 house = load(os.path.join(TREE, HOUSE, "metadata", HOUSE + ".yaml"))
+house = {**{k: v for k, v in house.items() if k != "identity"}, "name": (house.get("identity") or {}).get("name", house.get("name"))}      # (the page reads its name plainly)
 makers = []
 makers_dir = os.path.join(TREE, HOUSE, "metadata", "makers")
 for name in sorted(os.listdir(makers_dir)):
@@ -593,6 +594,7 @@ def within(c, o):
     return inside
 
 local = load(os.path.join(TREE, LOCAL, "metadata", LOCAL + ".yaml"))
+local = {**{k: v for k, v in local.items() if k != "identity"}, "name": (local.get("identity") or {}).get("name", local.get("name"))}      # (the page reads its name plainly)
 administrations = []
 adm_dir = os.path.join(TREE, LOCAL, "metadata", "administrations")
 for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:

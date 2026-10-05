@@ -6,3 +6,7 @@ identity:
   class: fluid
   form:
   - fluid
+mass:
+  density: 1000
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "From memory of phosphate ester fluids: no source was looked up." }

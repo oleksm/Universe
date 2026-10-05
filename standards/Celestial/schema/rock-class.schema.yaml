@@ -5,6 +5,9 @@ description: 'standards/Celestial/metadata/rock-classes/<name>.yaml: one kind of
 type: object
 additionalProperties: false
 required: [identity]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [density_rubble, density_monolith] } } }
 properties:
   identity:
     type: object

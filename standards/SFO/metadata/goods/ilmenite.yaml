@@ -5,6 +5,8 @@ identity:
   traded_as: market.ores
   kind: rock
   description: "Black sand and rock of iron-titanium oxide: half of it is titanium dioxide. The ore of titanium."
+physical:
+  bulk_density: 2400
 source:
   occurs: rocky planets and moons
   note: "Common in the dark lavas of airless moons, and in beach sands. Not yet among the planet simulation's deposit types: asked for (docs/geology-registry-note.md). The game has no ore for it yet."
@@ -14,3 +16,4 @@ composition:
   - { part: element.o, share: 0.316 }
 basis:
   - { of: [composition], tier: derived, source: "standards/sources/research_ore_processing.json", note: "Pure ilmenite, FeTiO3. Concentrates run 40 to 65% titanium dioxide; the pure mineral is 52.7%." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

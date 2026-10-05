@@ -4,3 +4,7 @@ identity:
   name: "Waste rock"
   kind: by-product
   description: "The barren rock moved to reach ore."
+physical:
+  bulk_density: 1700
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

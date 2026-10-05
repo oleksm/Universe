@@ -4,3 +4,7 @@ identity:
   name: Dross
   kind: by-product
   description: "The skin of oxide skimmed off molten aluminium."
+physical:
+  bulk_density: 1200
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

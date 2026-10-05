@@ -5,3 +5,7 @@ identity:
   traded_as: market.ores
   kind: intermediate
   description: "Ore washed until it is two thirds cassiterite, 51% tin."
+physical:
+  bulk_density: 3200
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

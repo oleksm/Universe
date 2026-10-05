@@ -5,6 +5,8 @@ identity:
   traded_as: market.ores
   kind: rock
   description: "Deep tropical soil that has kept its nickel."
+physical:
+  bulk_density: 1300
 source:
   occurs: temperate planets
   note: "Where the planet simulation's worlds have it (deposit-type.laterite-nickel). The game has no ore for it yet."
@@ -13,3 +15,4 @@ composition:
   - { part: element.co, share: 0.0008 }
 basis:
   - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/laterite-nickel.yaml", note: "The typical grade of its deposit type, from the planet simulation's brief of 2026-10-05; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

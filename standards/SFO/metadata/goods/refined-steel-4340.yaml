@@ -4,3 +4,7 @@ identity:
   name: "Refined steel, 4340"
   kind: intermediate
   description: "Molten steel brought to the 4340 grade and degassed, ready to cast."
+physical:
+  bulk_density: 7000
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

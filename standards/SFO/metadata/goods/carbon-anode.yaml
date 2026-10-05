@@ -4,3 +4,7 @@ identity:
   name: Carbon anode
   kind: consumable
   description: "Blocks of baked carbon that carry the current into a smelting pot. They burn away as the metal is made."
+physical:
+  bulk_density: 1550
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

@@ -6,3 +6,7 @@ identity:
   class: composite
   form:
   - film
+mass:
+  density: 50
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "Chosen: a loose blanket of thin films. It varies with how it is packed." }

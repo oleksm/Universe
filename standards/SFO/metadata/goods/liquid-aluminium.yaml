@@ -4,3 +4,7 @@ identity:
   name: Liquid aluminium
   kind: intermediate
   description: "Molten aluminium tapped from the pots, not yet alloyed."
+physical:
+  bulk_density: 2375
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "Molten aluminium, from memory. To be reviewed." }

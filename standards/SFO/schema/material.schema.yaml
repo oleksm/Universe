@@ -5,6 +5,8 @@ description: One material (what things are made of) and its properties. Any one 
 type: object
 additionalProperties: false
 required: [identity]
+allOf:
+  - { required: [mass], properties: { mass: { required: [density] } } }
 definitions:
   number_or_null:
     description: A number, or null where the material has none (or it isn't known).

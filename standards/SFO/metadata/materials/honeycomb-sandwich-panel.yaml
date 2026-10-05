@@ -6,3 +6,7 @@ identity:
   class: composite
   form:
   - plate
+mass:
+  density: 150
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "Chosen: thin skins on a light core. It varies widely with the panel." }

@@ -5,6 +5,9 @@ description: "One piece of equipment a hull or a structure is fitted with. A mak
 type: object
 additionalProperties: false
 required: [identity, function, physical]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [mass, volume] } } }
 properties:
   identity:
     type: object

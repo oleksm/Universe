@@ -5,6 +5,9 @@ description: One standard piece of industrial plant. It performs one step of a p
 type: object
 additionalProperties: false
 required: [identity, physical]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [length, width] } } }
 definitions:
   amounts:
     type: array

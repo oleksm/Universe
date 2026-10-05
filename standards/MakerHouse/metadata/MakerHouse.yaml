@@ -1,1 +1,4 @@
-name: Maker House
+# yaml-language-server: $schema=../../root.schema.yaml
+identity:
+  key: root.maker-house
+  name: Maker House

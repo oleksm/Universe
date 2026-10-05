@@ -311,7 +311,7 @@
 - { record: equipment.tank.s3, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "f4939b3aa1ae6854" }
 - { record: equipment.tank.s4, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "c3da1b535439f6c2" }
 - { record: equipment.terminal.ground, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "61460c2e00e1f773" }
-- { record: equipment.throat-coil, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "c281adfd4044f33d" }
+- { record: equipment.throat-coil, at: "2026-10-05T18:39:28Z", status: draft, summary: "changed: physical, basis", sha: "8effad52bc19d281" }
 - { record: equipment.thrusters.quad.s1, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "5453a9d8d66d8095" }
 - { record: equipment.thrusters.quad.s2, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "e9da2a0c2a657ae3" }
 - { record: equipment.thrusters.quad.s3, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "f16cbd4ba6adfc7a" }
@@ -347,14 +347,14 @@
 - { record: gate.ring.iii, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "084debfe9c5ac98b" }
 - { record: good.aggregate, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9acc1bd52c82de6c" }
 - { record: good.almonds, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "34badc8648558db5" }
-- { record: good.alumina, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cec282013767a142" }
+- { record: good.alumina, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "a32993344e5da6a6" }
 - { record: good.animal-feed, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a212e44eaefdb6f9" }
 - { record: good.apples, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "969afcb88d39ea84" }
 - { record: good.asteroid-water-ice, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cd7689026419a404" }
 - { record: good.bagasse, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "108115eb79de24f3" }
 - { record: good.bananas, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "29dd159b03cb60fe" }
 - { record: good.barley, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9386d76275ec2309" }
-- { record: good.bauxite, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "60556b7404097475" }
+- { record: good.bauxite, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "d0fe2b4946a0c8bc" }
 - { record: good.beans, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "92c5fdd3576e9d9d" }
 - { record: good.beef, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "60fc5c9b0333868d" }
 - { record: good.beer, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9e6299c914a62a5b" }
@@ -365,41 +365,41 @@
 - { record: good.butter, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "fe41c04c50bc6d85" }
 - { record: good.cabbage, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1f3cf27948966df4" }
 - { record: good.carbon, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "406288a1aa210e39" }
-- { record: good.carbon-anode, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f7f6b3f8f3445082" }
-- { record: good.carbon-dioxide, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d0a8b491325e103a" }
+- { record: good.carbon-anode, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "fa38e70fd45936c1" }
+- { record: good.carbon-dioxide, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "96a32b4b44a143b3" }
 - { record: good.carbonaceous-ore, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "546e989976a6fb3e" }
-- { record: good.carbonate-zinc-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "4c06dae1c21f322c" }
+- { record: good.carbonate-zinc-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "2f1c09d11017851c" }
 - { record: good.carrots, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b76cfed83d9d21c5" }
 - { record: good.cassava, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a1f81c48a4ca413f" }
-- { record: good.caustic-soda, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "785edf671042b3fa" }
+- { record: good.caustic-soda, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "7f31a29d459c52d9" }
 - { record: good.cement, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "eb41913003482df3" }
 - { record: good.cheese, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2de6111ad425d5a5" }
 - { record: good.chemical-waste, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "4b9d4251fefb9a4e" }
 - { record: good.chicken, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3b348e185802c73f" }
 - { record: good.chickpeas, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6ea9d6a8e26ae88b" }
 - { record: good.chips, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9a4aa7481688b11e" }
-- { record: good.chromite-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "e23114f3b2b15dc6" }
+- { record: good.chromite-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "cb255c52910007ca" }
 - { record: good.circuit-boards, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "03be3dc371cb8fe9" }
 - { record: good.clay, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3efcb820331e4d75" }
 - { record: good.clothes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9fbc9e9424ebc2ee" }
 - { record: good.cocoa, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9352d423324f6f37" }
 - { record: good.coffee, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1af6c359e1be4916" }
-- { record: good.cold-rolled-strip-6061, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "25c72878f93c60cc" }
+- { record: good.cold-rolled-strip-6061, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "a93edaaac889283e" }
 - { record: good.compost, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "239dd0890884e224" }
 - { record: good.computers, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "decc5e7f030a5589" }
 - { record: good.concrete, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c8d12dcb02b8f8be" }
-- { record: good.copper-concentrate, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "107592e3f86c7374" }
+- { record: good.copper-concentrate, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "422dae45caf77349" }
 - { record: good.cotton-cloth, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "fe19c6443a260358" }
 - { record: good.cottonseed, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "31f71b7c098a63ac" }
 - { record: good.crop-residue, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b596bf8995f29363" }
 - { record: good.cucumbers, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "7fb5a7f41c5159ae" }
-- { record: good.diamonds, at: "2026-10-05T17:26:29Z", status: review, summary: "changed: source", sha: "dded2d03383771a4" }
-- { record: good.dross, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ef4d05e5045e1899" }
-- { record: good.dust, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ca7d39ecf967819d" }
+- { record: good.diamonds, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "e191f4c3eac8a176" }
+- { record: good.dross, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "ea1d1945e917a469" }
+- { record: good.dust, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "3b90fa028067f285" }
 - { record: good.eggs, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a25d014b15ac8f09" }
 - { record: good.electric-motors, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0021b9cde05d1887" }
 - { record: good.electronics, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "420e007b28f02619" }
-- { record: good.epithermal-gold-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "d3edc8580bfa7ca0" }
+- { record: good.epithermal-gold-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "b8dfdfcf2ab206a8" }
 - { record: good.fertiliser, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "669dd1d1b03f6e7f" }
 - { record: good.fish, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "639dd6f1d91a4d59" }
 - { record: good.flax, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "aaf24820a86755d1" }
@@ -408,32 +408,32 @@
 - { record: good.glass, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "dbd7adf92ae6ef0e" }
 - { record: good.glycerine, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e942de06a8f7909c" }
 - { record: good.grapes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6de943b55e6fc36d" }
-- { record: good.graphite-electrode, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "257efd649cfa4028" }
+- { record: good.graphite-electrode, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "e19e2c07e778052c" }
 - { record: good.groundnuts, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1bcf30c187697002" }
 - { record: good.growing-medium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b4e0e7b08a225ca1" }
 - { record: good.hay, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "26cdd02a480d9299" }
 - { record: good.heat-pumps, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6e959f956f3d1f16" }
-- { record: good.hot-ingot-304, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b0e36bfa6ef1965e" }
-- { record: good.hot-ingot-4340, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "516f611985be62a7" }
-- { record: good.hot-ingot-6061, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "61713db7dd613e6a" }
-- { record: good.hot-ingot-a36, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1d914a8a4b905898" }
-- { record: good.hot-ingot-ti64, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "26378b2fc9790b4b" }
-- { record: good.hot-rolled-strip-6061, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a21535d44cb1e70f" }
-- { record: good.ilmenite, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "39b6e7e0d296de15" }
-- { record: good.iron-ore, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "55dd7d575bbb60a2" }
-- { record: good.iron-ore-pellets, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5316dee721fadd16" }
-- { record: good.kimberlite, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "166ed2b0f25a0a25" }
+- { record: good.hot-ingot-304, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "3703b4dc0ca933c4" }
+- { record: good.hot-ingot-4340, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "df332e73ca366e4b" }
+- { record: good.hot-ingot-6061, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "3a171b836828d3ad" }
+- { record: good.hot-ingot-a36, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "f0616b0c3d4c3aab" }
+- { record: good.hot-ingot-ti64, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "f1cddf3549b0f869" }
+- { record: good.hot-rolled-strip-6061, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "855e582251d61349" }
+- { record: good.ilmenite, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "dff05cbb4a53240a" }
+- { record: good.iron-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "8b20bf67ebfe2a5c" }
+- { record: good.iron-ore-pellets, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "b3f07353872b1bb7" }
+- { record: good.kimberlite, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "019f86594c17a268" }
 - { record: good.lamps, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "01ca998635898adf" }
-- { record: good.laterite-nickel-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "e16dde1668b70520" }
+- { record: good.laterite-nickel-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "bd2987f961e7ca6a" }
 - { record: good.lemons, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0fb4351aebbe17e1" }
 - { record: good.lentils, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ab69c9d2e5042588" }
 - { record: good.lettuce, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "83b449f5e0001ea6" }
-- { record: good.lime, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b2323983a9de7b30" }
+- { record: good.lime, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "8b1d9f0e92a20a02" }
 - { record: good.limestone, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1335cb6d5768526a" }
 - { record: good.linen-cloth, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b3e247336acc03ee" }
 - { record: good.linens, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9237cf8ef720a328" }
-- { record: good.liquid-aluminium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "7af850406b0e44dc" }
-- { record: good.liquid-steel, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e4d2248ce1a5b4d9" }
+- { record: good.liquid-aluminium, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "2ee82e9f7545d243" }
+- { record: good.liquid-steel, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "e825dac2be385d63" }
 - { record: good.live-cattle, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "47cdce4e5c34772d" }
 - { record: good.live-chickens, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3bec6765ad2497c3" }
 - { record: good.live-fish, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "32a3832da5463402" }
@@ -443,17 +443,17 @@
 - { record: good.maize, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e6ab28815c0f77e2" }
 - { record: good.mangoes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "21625626fbbce957" }
 - { record: good.manure, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2b7b58f766ce2edc" }
-- { record: good.massive-sulphide-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "d938580566c94f97" }
+- { record: good.massive-sulphide-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "57a1a758c768679e" }
 - { record: good.meat-and-bone-meal, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "17606a038600a3f9" }
 - { record: good.medicines, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "944aba3afb4f2fac" }
-- { record: good.meteoritic-iron, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "903abc35a5276dd9" }
+- { record: good.meteoritic-iron, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "a578bd3f7af32ec4" }
 - { record: good.methane, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a7c2be15ed965364" }
 - { record: good.methanol, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "326c56762a94f360" }
 - { record: good.milk, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e56917c30649c7e5" }
 - { record: good.mutton, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ea63322ec34c2f5f" }
-- { record: good.nickel-concentrate, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "049a68abc219fbca" }
+- { record: good.nickel-concentrate, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "0f3f94169b662923" }
 - { record: good.nickel-iron-ore, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0e63d132e793ac52" }
-- { record: good.nickel-sulphide-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "18f7e0bbd29deb0d" }
+- { record: good.nickel-sulphide-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "605ab8f610173fa4" }
 - { record: good.nitric-acid, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f9fea24bd98cba08" }
 - { record: good.oats, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cbc9705abde0be59" }
 - { record: good.offal, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "84039a0712f1be19" }
@@ -462,7 +462,7 @@
 - { record: good.olives, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6da38efd95b85d13" }
 - { record: good.onions, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "bf413bd41f7a8714" }
 - { record: good.oranges, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "11cf5966b4957b85" }
-- { record: good.orogenic-gold-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "c952d590521953d7" }
+- { record: good.orogenic-gold-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "34725edaf5068df7" }
 - { record: good.peas, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "64befbde8ce4fd9f" }
 - { record: good.peppers, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d79d6a1a962deb5b" }
 - { record: good.pgm-rich-ore, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "8d49fdbe848b9cbd" }
@@ -470,25 +470,25 @@
 - { record: good.polysilicon, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "50dbfea0c030da30" }
 - { record: good.pomace, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c7b16decd9043186" }
 - { record: good.pork, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f882551f9c45922f" }
-- { record: good.porphyry-copper-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "0d48fc7dd336de01" }
+- { record: good.porphyry-copper-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "ccb2ff75af81330b" }
 - { record: good.potatoes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "576feb693c40b280" }
 - { record: good.pumpkins, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "dd0074a2f2fa34e7" }
 - { record: good.pumps, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "baa1aaaba3efc8e9" }
 - { record: good.pvc, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "fd0f1be369ebd855" }
 - { record: good.rapeseed, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0bb6bdd72866f9da" }
-- { record: good.red-mud, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9ee67fc898aecff1" }
-- { record: good.refined-steel-304, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "8f2c5e324a8aea52" }
-- { record: good.refined-steel-4340, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "af1ee4cbc2647820" }
-- { record: good.refined-steel-a36, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a2f1bb925f6865f8" }
+- { record: good.red-mud, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "782eba032ab232f3" }
+- { record: good.refined-steel-304, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "3a4534f6e68b473d" }
+- { record: good.refined-steel-4340, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "6d9454e46fbccbc8" }
+- { record: good.refined-steel-a36, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "4da8091bdc87670b" }
 - { record: good.rice, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "086ad6c342148f60" }
 - { record: good.salt, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "4e0052eb2e0f275d" }
-- { record: good.sediment-copper-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "0bfa90f2e89e120a" }
+- { record: good.sediment-copper-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "eec12d8a90a291a9" }
 - { record: good.seed-cotton, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3b4aa51744ccc893" }
 - { record: good.sewage-sludge, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "feec59eb115e38ad" }
-- { record: good.shale-zinc-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "ba3f6c96298f03da" }
+- { record: good.shale-zinc-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "d119c5be31c10934" }
 - { record: good.silica-sand, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "7a9b7a3f2adee050" }
 - { record: good.silicon, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0d297dce174ffbfe" }
-- { record: good.slag, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c63aa5e4af5ed991" }
+- { record: good.slag, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "3b9d9106947f7554" }
 - { record: good.soap, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5ad4dc14ef17524c" }
 - { record: good.soda-ash, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6041861f5d74b83b" }
 - { record: good.solvay-waste, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "7275f7d42cd181a7" }
@@ -496,7 +496,7 @@
 - { record: good.spent-grain, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e0eb1b8e7b2be35f" }
 - { record: good.spent-medium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1de099085bbdaa87" }
 - { record: good.spinach, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a414943dbc8c000f" }
-- { record: good.sponge-iron, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a86ceb0c3034678e" }
+- { record: good.sponge-iron, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "419ac8a5524a4598" }
 - { record: good.stony-ore, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "191d83b08a2974a9" }
 - { record: good.strawberries, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "aa6261660d687ac0" }
 - { record: good.sugar, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2d08c6972b7fec42" }
@@ -505,19 +505,19 @@
 - { record: good.sulphuric-acid, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a26d3d8e581fd51f" }
 - { record: good.sunflower-seed, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0f72ffcfd96b78cc" }
 - { record: good.sweet-potatoes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "185dd529a3053b16" }
-- { record: good.tailings, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "8e5d3e9054ce8f01" }
+- { record: good.tailings, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "ab51282678158824" }
 - { record: good.tallow, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ee96a6cc0ed7748a" }
 - { record: good.tea, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3ea4ec268db00d44" }
 - { record: good.textile-waste, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e63bcde8aff45235" }
-- { record: good.tin-concentrate, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "c9d36a41e4aac315" }
-- { record: good.tin-tungsten-ore, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "de5d70a1ec206d70" }
+- { record: good.tin-concentrate, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "cb9f77581bfe76f9" }
+- { record: good.tin-tungsten-ore, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "988171c992b37343" }
 - { record: good.tomatoes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "75675465e53ecdda" }
 - { record: good.tools, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "dcaa62947c3b718c" }
 - { record: good.vegetable-oil, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "92695105cca8b5ff" }
 - { record: good.wafers, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d4cce2ff37be4d52" }
-- { record: good.waste-rock, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "1479221bf6de9f66" }
+- { record: good.waste-rock, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "49de197f6d61e624" }
 - { record: good.waste-water, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f6c2ce69ecb82c9d" }
-- { record: good.water, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ff27eff86532c968" }
+- { record: good.water, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "a8fad296509f798c" }
 - { record: good.watermelons, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e6da698c593a6605" }
 - { record: good.wheat, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f8c42a752974fa1d" }
 - { record: good.whey, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9e933268adaaaa3c" }
@@ -526,7 +526,7 @@
 - { record: good.wool-scourings, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2449e5a7dec2f818" }
 - { record: good.woollen-cloth, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "7e937e84af61d229" }
 - { record: good.woollens, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "eff199c836c029bc" }
-- { record: good.zinc-concentrate, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "2f852c658d50692a" }
+- { record: good.zinc-concentrate, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "4c52cda971f36189" }
 - { record: hull.drover, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "40183594605f7555" }
 - { record: hull.hauler, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "ae598a3b14eb6674" }
 - { record: hull.interceptor, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "a2483b54edae422a" }
@@ -587,8 +587,8 @@
 - { record: material.aluminium-1350, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3849137c8c3e42db" }
 - { record: material.aluminium-alloy-6061, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a839c9f198b77669" }
 - { record: material.aramid-fibre, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "edd4e78a1893ac8b" }
-- { record: material.bearing-bronze-c93200, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "55cffcadb96f20ab" }
-- { record: material.carbon-fibre-composite, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "32dec46cd3236b84" }
+- { record: material.bearing-bronze-c93200, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "cd06f6c2869ff80f" }
+- { record: material.carbon-fibre-composite, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "8155f70e20c54ab3" }
 - { record: material.copper, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c3da811366345a02" }
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
@@ -597,15 +597,15 @@
 - { record: material.gold, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0cb636c1c7278c1a" }
 - { record: material.helium-3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "566c90a94918ede3" }
 - { record: material.high-strength-steel-4340, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "07f7a8e314f48d64" }
-- { record: material.honeycomb-sandwich-panel, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b9210b8acb56d6d9" }
-- { record: material.hydraulic-fluid, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d54ad2b71ac8302c" }
+- { record: material.honeycomb-sandwich-panel, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "db01d170b0d9dd8a" }
+- { record: material.hydraulic-fluid, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "ae7b1aab51943404" }
 - { record: material.hydrogen, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "de2bc465a53b03ce" }
 - { record: material.hydrolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "339cb991d2da1524" }
 - { record: material.kerolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a89067f18adc3c4e" }
 - { record: material.lead, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c3815327208e04eb" }
 - { record: material.methalox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "4d09f4f4df93af14" }
 - { record: material.molybdenum-disulphide, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e74a609da45aad41" }
-- { record: material.multi-layer-insulation, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5a7c6f3263fd61d2" }
+- { record: material.multi-layer-insulation, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "4eb924c5d35488a9" }
 - { record: material.polyethylene-uhmw, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cb1a757d642b4de5" }
 - { record: material.polyimide-film, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "4a29f27cc33f7d62" }
 - { record: material.ptfe, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5c03248f063584fc" }
@@ -1504,6 +1504,8 @@
 - { record: rock-unit.rift-basalt, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "5207212f224c002f" }
 - { record: rock-unit.sandstone-shale, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, basis", sha: "b9ac80af597f689d" }
 - { record: rock-unit.schist, at: "2026-10-05T17:30:42Z", status: draft, summary: "changed: yields, also, basis", sha: "8abd22c1fc3016fb" }
+- { record: root.local-administration, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "44ac9a3a3dfb6d34" }
+- { record: root.maker-house, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "99987243a02e746e" }
 - { record: seeding.asteroids, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8a7b9174fcf77850" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "20a73d10ecbf84f6" }

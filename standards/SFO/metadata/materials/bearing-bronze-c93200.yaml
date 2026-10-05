@@ -16,3 +16,7 @@ identity:
   form:
   - casting
   - bar
+mass:
+  density: 8930
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "From memory of the alloy: no source was looked up." }

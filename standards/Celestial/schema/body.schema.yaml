@@ -5,6 +5,9 @@ description: 'One natural body of a system: its star, a planet, a moon, an aster
 type: object
 additionalProperties: false
 required: [identity, provenance]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [mass, radius] } } }
 properties:
   provenance: { $ref: "../../common.schema.yaml#/definitions/provenance" }
   in_game: { $ref: "../../common.schema.yaml#/definitions/in_game" }

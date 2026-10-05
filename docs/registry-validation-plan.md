@@ -53,3 +53,32 @@ another. It stays as a second, small pass with no knowledge of any kind.
 ## To decide when it starts
 
 - The per-kind sets of required figures: a table for the user to correct.
+
+## Done (2026-10-05)
+
+| Step | State |
+|---|---|
+| 1. Each record names its schema | Done. Every record's first line names it; the two root descriptors gained a schema (`root.schema.yaml`). A record that names none fails. The table from place to schema is gone from `validate.py` |
+| 2. A standard library | Done, beside the old one. `tools/standards/check.py` is the walk with `jsonschema` (35 lines, 3 seconds); it passes the whole registry. It needs `pip install -r tools/standards/requirements.txt`, which this machine's own Python lacks, so the build still runs `validate.py`, taught `allOf` and `exclusiveMinimum` so the two agree |
+| 3. Rules into schemas | Partly. A key's form by kind is still checked in `validate.py` (a `pattern` beside a `$ref` needs `allOf` on a string, which the engine's generator has not been tried on) |
+| 4. `physical_object` | Done. Kinds derive from it with `allOf`; the engine's generator ignores `allOf`, so the game's types did not change and nothing on its side had to move |
+| 5. Fill what fails | Done: 48 goods' bulk densities, 5 materials' densities, the throat coil's volume. Guesses, marked |
+| 6. As a test | Not yet: `check.py` can be one once the library is installed where tests run |
+
+**What each kind must have** (to be corrected by the user):
+
+| Kind | Must have, above nothing |
+|---|---|
+| Part | a `physical` group (a part made of parts takes its weight from them) |
+| Equipment | mass, volume |
+| Module | length, width (a field has no height) |
+| Hull | volume (its mass is its parts') |
+| Building | mass, length, width, height |
+| Good | bulk density |
+| Material | density |
+| Body | mass, radius |
+| Rock class | density as rubble and as one piece |
+| Stock, gate, structure, element | nothing yet: stock's gauge depends on its form |
+| Organisation, law, need, trade, zone, standard | not physical things: they do not derive from it |
+
+Mass, length, width, height, volume and bulk density must be above nothing wherever they appear.

@@ -4,3 +4,7 @@ identity:
   name: "Hot ingot, 304 stainless"
   kind: intermediate
   description: "An ingot of 304 stainless steel heated through to the temperature it is worked at."
+physical:
+  bulk_density: 5500
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

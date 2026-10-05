@@ -5,6 +5,9 @@ description: 'One hull. What it is made of: its parts, in parts/<its file name>/
 type: object
 additionalProperties: false
 required: [identity, slots, thrusters, flight]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [volume] } } }
 properties:
   identity:
     type: object

@@ -5,6 +5,10 @@ identity:
   traded_as: market.water
   kind: raw
   description: "Water, as ice or liquid."
+physical:
+  bulk_density: 1000
 source:
   won_from: good.asteroid-water-ice
   note: "Melted and filtered."
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "Water. To be reviewed." }

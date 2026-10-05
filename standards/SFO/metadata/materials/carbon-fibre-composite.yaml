@@ -8,5 +8,9 @@ identity:
   - sheet
   - tube
   - plate
+mass:
+  density: 1580
 environment:
   corrosion_resistance: excellent
+basis:
+  - { of: [mass.density], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "An aerospace carbon and epoxy laminate (Hexcel 8552 with AS4 fibre)." }

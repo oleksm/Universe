@@ -5,6 +5,10 @@ identity:
   traded_as: market.ores
   kind: rock
   description: "The ore of aluminium: rock rich in aluminium oxide, left where warm rain has leached the ground for a very long time."
+physical:
+  bulk_density: 1300
 source:
   occurs: temperate planets
   note: "It forms only where there is air, warmth and liquid water. The game has no ore for it yet."
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

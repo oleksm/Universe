@@ -6,6 +6,7 @@ identity:
   slot: gate
   description: "What holds the tube. One stands in each segment of a ring; together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
 physical:
+  volume: 60
   mass: 150000
 built_of:
   parts: throat-coil
@@ -16,3 +17,4 @@ function:
 basis:
   - { of: [physical], tier: invented, review: true, note: "A guess, to be reviewed: nothing says what holds a tube or what it weighs. Not in the game yet." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: one great coil of a gate ring, in its case, with its cold plant. ITER's eighteen coils weigh 330 t each; this is 150 t." }
+  - { of: [physical.volume], tier: invented, review: true, note: "Chosen: about twice the room its 150 t of metal takes." }
