@@ -123,7 +123,6 @@
 - { key: good.asteroid-water-ice, game: "goods.water, ore.water_ice", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.bauxite, game: "goods.ores", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.carbonaceous-ore, game: "goods.ores, ore.carbonaceous", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: good.deuterium, game: "goods.fuel", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.iron-ore, game: "goods.ores", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.nickel-iron-ore, game: "goods.ores, ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.pgm-rich-ore, game: "goods.ores, ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }

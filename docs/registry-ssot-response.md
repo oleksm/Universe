@@ -369,8 +369,16 @@ fission, chemical, none) and `energy` (J/kg; left out where it gives none). Its 
 is `mass.density`. The game's figures, marked to review. A material now takes `basis` and a
 description.
 
-`good.deuterium` is still there beside `material.deuterium`: it is what the fusion power station
-burns and what a market trades. One of them should name the other; that belongs with your item 5.
+**Deuterium is one record** (the user: "that is the same thing, should collapse").
+`good.deuterium` is gone. `material.deuterium` is the one: equipment burns it, tanks hold it, and
+the fusion power station's `generation.burns` names it. What it trades as is on it:
+`game.goods: goods.fuel` (a material takes a `game` group now).
+
+**This needs one change on your side, or power stations stop buying fuel.** `settlements.rs:261`
+finds a flow's market kind with `reg.good(item)`, which is `None` for `material.deuterium`, so the
+station's `burns` comes out with an empty kind and `services/land.rs:365` has nothing to buy.
+The tests pass, so nothing catches it. Read `game.goods` from the material when the item is one
+(you do not read materials yet), or tell me the shape you would rather have.
 
 ## Hulls (2026-10-04)
 

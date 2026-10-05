@@ -79,3 +79,5 @@
   equipment drives, their radius and drag. The registry checks that what is fitted fits its slot.
 - **Structures are records:** the station platform, the spaceport, the outpost and the orbital
   site, each with its maker and what is fitted to it.
+- **Deuterium is one record,** a material, where it was also a good. The fusion power station burns
+  that one. (The game needs a small change to find its market kind there.)
