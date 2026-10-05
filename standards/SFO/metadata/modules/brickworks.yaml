@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.brickworks
+  name: "Brickworks"
+  step: "Fire brick"
+  description: "Clay is pressed into bricks, dried and fired in a tunnel kiln."
+physical:
+  length: 150
+  width: 40
+  height: 10
+recipes:
+  - makes: good.brick
+    does: "Clay is shaped, dried and fired at 1,000 C."
+    inputs:
+      - { item: good.clay, quantity: 1.15 }
+    outputs:
+      - { item: good.water, quantity: 0.15 }
+    rate: 5.0
+    power: 11100000
+basis:
+  - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_plant.json", note: "2.22 MJ for each kg of fired brick: the world's average." }
+  - { of: [physical, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Chosen; the water clay loses in drying is a guess. To be reviewed." }

@@ -232,3 +232,17 @@ pomace and others) are the recycling work of part 3.
   wear, part 3.
 - **Homes in vacuum.** A building does not say whether it holds air.
 - **A building's draw on a hot or cold world:** as the hall's, asked of the engine.
+
+**3. Making, first step: building materials and scrap (2026-10-04).**
+
+| What | Records |
+|---|---|
+| Rock | Limestone, clay and silica sand: found only on worlds that have had liquid water (as bauxite). Aggregate is crushed from asteroid rock or from furnace slag |
+| Works | Crushing plant, lime kiln (lime had no maker), cement works, concrete plant, glassworks, brickworks |
+| Buildings | Each now says what it is built of: 1,040 kg of concrete and 58 kg of steel for each m2 of floor |
+| Scrap | Steel scrap goes back into the arc furnace, aluminium scrap into the casthouse (5% of the energy of new metal) |
+
+Takers: 14 of 30 now have one. **What this shows:** cement, glass and brick need rock that only
+a wet world has. A station or an airless port must ship them in, or build of something else
+(steel, or rock melted or sintered, which is not described). Soda ash for glass has no maker yet:
+chemicals, next.

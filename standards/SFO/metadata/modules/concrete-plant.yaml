@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.concrete-plant
+  name: "Concrete plant"
+  step: "Mix concrete"
+  description: "Bins, a weigher and a mixer: cement, aggregate and water in, concrete out, to be poured within the hour."
+physical:
+  length: 40
+  width: 30
+  height: 20
+recipes:
+  - makes: good.concrete
+    does: "One part cement, five of sand and stone, half a part of water."
+    inputs:
+      - { item: good.cement, quantity: 0.1538 }
+      - { item: good.aggregate, quantity: 0.7692 }
+      - { item: good.water, quantity: 0.07692 }
+    rate: 30.0
+    power: 300000
+basis:
+  - { of: [recipes.inputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "The usual batch by weight: cement 1, sand 2, stone 3, water 0.5." }
+  - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }

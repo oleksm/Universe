@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.crushing-plant
+  name: "Crushing plant"
+  step: "Crush rock"
+  description: "Jaws, cones and screens that break rock down and sort it by size. Any hard rock will do, and asteroid rock is hard."
+physical:
+  length: 80
+  width: 40
+  height: 20
+recipes:
+  - makes: good.aggregate
+    does: "Rock is crushed and screened; the fines are thrown out."
+    inputs:
+      - { item: good.stony-ore, quantity: 1.02 }
+    outputs:
+      - { item: good.tailings, quantity: 0.02 }
+    rate: 50.0
+    power: 540000
+  - makes: good.aggregate
+    does: "Furnace slag, cooled, is crushed and screened like rock."
+    inputs:
+      - { item: good.slag, quantity: 1.0 }
+    rate: 50.0
+    power: 540000
+basis:
+  - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "Chosen: 3 kWh a tonne and 2% lost as fines are guesses. To be reviewed." }

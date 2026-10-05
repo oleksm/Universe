@@ -38,5 +38,15 @@ properties:
       properties:
         profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
         count: { type: number, x-unit: "1", description: "how many of that trade" }
+  built_of:
+    description: "What it is built of, as far as is known."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [item, quantity]
+      properties:
+        item: { type: string, x-ref: [good, stock, material], description: "What goes into it, by its key." }
+        quantity: { type: number, x-unit: "kg", description: "kg of it in the whole building" }
   life: { type: number, x-unit: "s", description: "s it is built to stand before it must be rebuilt" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

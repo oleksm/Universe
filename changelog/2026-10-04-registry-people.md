@@ -23,3 +23,11 @@
 - **Clothes:** cotton, flax and wool; a textile mill and a clothing works.
 - **Waste:** a compost works and a rendering works.
 - **A new report, Takers:** of 30 things given off, 20 have nothing to take them yet.
+
+## Building materials
+
+- **Cement, concrete, glass and brick** can be made: six new works, and the rock they start from.
+  Limestone, clay and glass sand are found only on worlds with liquid water.
+- **Buildings say what they are built of:** concrete and steel, by floor area.
+- **Scrap is melted again:** steel in the arc furnace, aluminium in the casthouse. Slag is crushed
+  for aggregate.
