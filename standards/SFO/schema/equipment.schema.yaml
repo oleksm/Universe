@@ -25,6 +25,13 @@ properties:
     additionalProperties: false
     properties:
       power: { type: number, x-unit: "W", description: "W it draws, working" }
+  built_of:
+    description: "What it is built of."
+    type: object
+    additionalProperties: false
+    properties:
+      parts: { type: string, description: "The folder of parts (SFO 12) it is built of: SFO/metadata/parts/<folder>." }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
   function:
     description: "What it does: one kind of device, with that kind's figures. All in SI."
     oneOf:
