@@ -64,11 +64,11 @@ impl Picker {
     }
 }
 
-/// How far the sensors see a body of `radius` (m): a ship's size at
-/// `RADAR_RANGE`, farther for bigger ones — as the fourth root of its
-/// cross-section, as the radar equation has it.
-pub fn reach(radius: f64) -> f64 {
-    universe_sim::world::RADAR_RANGE * (radius / universe_sim::world::ship::SHIP_RADIUS).max(1.0).powf(0.25)
+/// How far sensors that see a ship at `range` (m) see a body of `radius`:
+/// farther for bigger ones, as the fourth root of its cross-section, as the
+/// radar equation has it.
+pub fn reach(range: f64, radius: f64) -> f64 {
+    range * (radius / universe_sim::world::ship::SHIP_RADIUS).max(1.0).powf(0.25)
 }
 
 /// What T can lock now, nearest first.
@@ -99,7 +99,7 @@ pub fn candidates(app: &App) -> Vec<Candidate> {
         let t = app.now();
         let mut place = |target: universe_sim::NavTarget, what: &str, at: DVec3, radius: f64| {
             let d = at.distance(ship);
-            if d < reach(radius) {
+            if d < reach(universe_sim::world::radar::range(app.ship.spec()), radius) {
                 list.push(Candidate { pick: Pick::Place(target), name: target.name(sys).to_uppercase(), detail: what.to_string(), distance: d, at });
             }
         };
@@ -117,7 +117,7 @@ pub fn candidates(app: &App) -> Vec<Candidate> {
         }
         // Asteroids: the remnants, and the swarms of fields in reach.
         for (f, field) in sys.fields.iter().enumerate() {
-            if app.view.positions[field.body].distance(ship) > field.extent + reach(sys.bodies[field.body].rail.radius) {
+            if app.view.positions[field.body].distance(ship) > field.extent + reach(universe_sim::world::radar::range(app.ship.spec()), sys.bodies[field.body].rail.radius) {
                 continue;
             }
             let bodies = sys.field_bodies(f);
@@ -125,7 +125,7 @@ pub fn candidates(app: &App) -> Vec<Candidate> {
                 let (at, _) = sys.field_body_state(f, i, t);
                 let b = &bodies[i];
                 let d = at.distance(ship) - b.rail.radius;
-                if d < reach(b.rail.radius)
+                if d < reach(universe_sim::world::radar::range(app.ship.spec()), b.rail.radius)
                     && let Some(r) = &b.rock
                 {
                     let what = format!("ASTEROID {} {}", r.class.letter(), crate::fmt::distance(b.rail.radius * 2.0));

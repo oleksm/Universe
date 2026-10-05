@@ -83,7 +83,7 @@ impl BodyKind {
     fn collider(self) -> Collider {
         match self {
             BodyKind::Station => Collider::Blocks(crate::station::hull()),
-            BodyKind::Gate => Collider::Ring(crate::gate::RING),
+            BodyKind::Gate => Collider::Ring(crate::gate::ring()),
             _ => Collider::Surface,
         }
     }
@@ -518,7 +518,7 @@ impl StarSystem {
             while let Some(&(_, hi)) = taken.iter().find(|&&(lo, hi)| a > lo && a < hi) {
                 a = hi + GATE_CLEARANCE;
             }
-            let ring = crate::gate::GATE_RADIUS + crate::gate::RING_TUBE;
+            let ring = crate::gate::gate_radius() + crate::gate::ring_tube();
             taken.push((a - ring - GATE_CLEARANCE, a + ring + GATE_CLEARANCE));
             let orbit = Orbit::new(a, 0.0, rng.range(0.0, 0.1), rng.range(0.0, TAU), 0.0, rng.range(0.0, TAU), p_mu);
             // Inertially fixed ring, facing its destination.
@@ -536,7 +536,7 @@ impl StarSystem {
                     orbit: Some(orbit),
                     mu: G * 1.0e10,
                     attracts: BodyKind::Gate.massive(),
-                    radius: crate::gate::GATE_RADIUS + crate::gate::RING_TUBE,
+                    radius: crate::gate::gate_radius() + crate::gate::ring_tube(),
                     day: 1.0e15,
                     tilt,
                     collider: BodyKind::Gate.collider(),

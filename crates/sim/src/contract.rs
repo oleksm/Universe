@@ -90,6 +90,8 @@ pub struct PilotView {
     /// per system with crafts in it.
     pub rails: HashMap<usize, Arc<Vec<DVec3>>>,
     pub turrets: HashMap<usize, Guns>,
+    /// Each pilot's credits (a gate's crossing is paid from them).
+    pub credits: HashMap<usize, f64>,
 }
 
 /// What a pilot posts after thinking.

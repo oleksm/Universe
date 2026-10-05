@@ -8,8 +8,18 @@ use glam::DVec3;
 
 use crate::ship::{Ship, ShipState};
 
-/// How far the radar sees (m).
-pub const RADAR_RANGE: f64 = 500_000.0;
+/// How far a ship of `spec`'s sensors see a ship (m): its fitted sensor's
+/// `range`, as its product's record has it (none fitted: nothing).
+pub fn range(spec: &crate::ship::ClassSpec) -> f64 {
+    let c = crate::content::content();
+    spec.fit
+        .iter()
+        .filter_map(|(_, m)| match c.get(*m).does {
+            crate::modules::Does::Sensors { range, .. } => Some(range),
+            _ => None,
+        })
+        .fold(0.0, f64::max)
+}
 
 /// One ship the radar sees.
 #[derive(Clone, Copy, Debug, PartialEq)]
@@ -47,7 +57,7 @@ pub fn sweep<'a>(own: &Ship, system: usize, others: impl IntoIterator<Item = (us
         .into_iter()
         .filter(|(_, s, ship)| *s == system && visible(ship))
         .map(|(id, _, ship)| Blip { id, position: ship.position, velocity: ship.velocity, distance: ship.position.distance(own.position) })
-        .filter(|b| b.distance <= RADAR_RANGE)
+        .filter(|b| b.distance <= range(own.spec()))
         .collect();
     blips.sort_by(|a, b| a.distance.total_cmp(&b.distance).then(a.id.cmp(&b.id)));
     blips

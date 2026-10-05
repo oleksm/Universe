@@ -79,6 +79,8 @@ pub struct Item {
     pub mass: f64,
     /// As stowed in a hold (t/m³).
     pub bulk_density: f64,
+    /// The hardest jolt it takes while it's carried (m/s²; None: the registry doesn't say).
+    pub shock_limit: Option<f64>,
 }
 
 impl Item {
@@ -174,7 +176,8 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
             // (A part by its code too: every product has a first wall.)
             let name = reg.name(key).unwrap_or(key).to_string();
             let name = reg.parts.iter().find(|p| &p.identity.key == key).map_or(name.clone(), |p| format!("{} {name}", p.identity.code));
-            Item { id, key: key.clone(), name, category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
+            let shock_limit = physical.and_then(|p| p.shock_limit).or_else(|| reg.parts.iter().find(|p| &p.identity.key == key).and_then(|p| p.physical.shock_limit));
+            Item { shock_limit, id, key: key.clone(), name, category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
         })
         .collect();
     (items, recipes)

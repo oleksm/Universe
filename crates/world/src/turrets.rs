@@ -8,7 +8,7 @@
 
 use glam::{DQuat, DVec3};
 
-use crate::gate::{GATE_RADIUS, RING_TUBE};
+use crate::gate::{gate_radius, ring_tube};
 use crate::rng::{mix, Rng};
 use crate::station::STATION_SIZE;
 use crate::system::{BodyKind, StarSystem};
@@ -84,7 +84,7 @@ pub fn turrets(seed: u64, system: usize, sys: &StarSystem) -> Vec<Turret> {
             }
             BodyKind::Gate if rng.range(0.0, 1.0) < 0.5 => {
                 let n = 2 + rng.range(0.0, 2.0) as usize;
-                out.extend(ring(DVec3::Y, GATE_RADIUS + RING_TUBE * 2.0, n, rng.range(0.0, 1.0)).map(|p| Turret { facility: Facility::Gate(i), body: i, local: p }));
+                out.extend(ring(DVec3::Y, gate_radius() + ring_tube() * 2.0, n, rng.range(0.0, 1.0)).map(|p| Turret { facility: Facility::Gate(i), body: i, local: p }));
             }
             _ => {}
         }

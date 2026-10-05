@@ -3,9 +3,8 @@
 //! giants have caught, centaurs among the giants, the outer belt's dwarf
 //! planets, and comets (returning ones thrown in by the giants, and one from
 //! the far cloud). Each follows what is known of the Sun's (the registry's
-//! vocabulary); the figures the registry holds are read from its seeding
-//! records (`seeding.asteroids`), the rest are the seeder's own, written here
-//! (to move to a seeding record).
+//! vocabulary); every figure is the registry's, from its seeding records
+//! (`seeding.asteroids` for the belts, `seeding.small-bodies` for these).
 //!
 //! Made after a system's planets, moons and fields; appended to its bodies,
 //! so nothing made before them moves.
@@ -20,7 +19,7 @@ use crate::belt::{Rock, RockClass, RockShape, Structure};
 use crate::rng::{mix, Rng};
 use crate::system::{Body, BodyKind, StarSystem};
 use crate::terrain::{Terrain, TerrainKind};
-use crate::units::{AU, G, HOUR, SUN_MASS};
+use crate::units::{AU, G, SUN_MASS};
 
 /// A resonance `p:q` with a planet: where the period is p/q of the planet's,
 /// as a share of its orbit.
@@ -40,6 +39,13 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
     let reg = crate::registry::registry();
     let Some(laws) = reg.seeding.iter().find(|s| s.identity.key == "seeding.asteroids") else { return };
     let (mb, ob, sizes, zones) = (&laws.main_belt, &laws.outer_belt, &laws.sizes, &laws.zones);
+    let sb = crate::belts::small_bodies_record();
+    let one = |v: Option<f64>, what: &str| v.unwrap_or_else(|| panic!("seeding.small-bodies: no {what}"));
+    let two = |v: Option<[f64; 2]>, what: &str| v.unwrap_or_else(|| panic!("seeding.small-bodies: no {what}"));
+    // (A size or a span drawn evenly in its logarithm, between least and most.)
+    let log = |r: &mut Rng, [lo, hi]: [f64; 2]| r.range(lo.ln(), hi.ln()).exp();
+    let even = |r: &mut Rng, [lo, hi]: [f64; 2]| r.range(lo, hi);
+    let tilt = |r: &mut Rng, [lo, hi]: [f64; 2]| r.range(lo, hi).to_radians();
     let star_mass = sys.bodies[0].mass;
     let mu = G * star_mass;
     let warm = sys.luminosity.sqrt();
@@ -88,7 +94,7 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
     let share = ring(belt.0, belt.1) / ring(sun_belt.0, sun_belt.1);
     let mut made: Vec<Body> = Vec::new();
 
-    // The main belt's largest body: 39% of the belt's mass (the Sun's largest is), by the belt's own mix.
+    // The main belt's largest body: a share of the belt's mass (the Sun's largest has 39%), by the belt's own mix.
     {
         let mut r = rng(1);
         let (wt, ft) = (zones.warm_to.unwrap_or(0.93), zones.frost_to.unwrap_or(1.04));
@@ -100,27 +106,30 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
         let c = pick(&mut r, zone);
         let d = c.density(Structure::Monolith);
         let belt_mass = mb.mass.unwrap_or(2.39e21) * share;
-        let radius = (3.0 * 0.39 * belt_mass / (4.0 * PI * d)).cbrt();
-        let a = r.range(belt.0 + 0.25 * (belt.1 - belt.0), belt.1 - 0.25 * (belt.1 - belt.0));
-        let (e, i) = (r.range(0.03, 0.12), r.range(1.0, 11.0).to_radians());
+        let lb = &sb.largest_body;
+        let radius = (3.0 * one(lb.share, "largest_body.share") * belt_mass / (4.0 * PI * d)).cbrt();
+        let at = one(lb.position, "largest_body.position");
+        let a = r.range(belt.0 + at * (belt.1 - belt.0), belt.1 - at * (belt.1 - belt.0));
+        let (e, i) = (even(&mut r, two(lb.eccentricity, "largest_body.eccentricity")), tilt(&mut r, two(lb.tilt, "largest_body.tilt")));
         let n = name(&mut r);
-        made.push(if radius >= 400_000.0 { round(n, BodyKind::DwarfPlanet, c, radius, d, a * AU, e, i, 0, mu, &mut r) } else { rock(n, BodyKind::Asteroid, c, radius, Some(d), a * AU, e, i, 0, mu, &mut r) });
+        made.push(if radius >= one(lb.round_above, "largest_body.round_above") { round(n, BodyKind::DwarfPlanet, c, radius, d, a * AU, e, i, 0, mu, &mut r) } else { rock(n, BodyKind::Asteroid, c, radius, Some(d), a * AU, e, i, 0, mu, &mut r) });
     }
 
     // Crossing asteroids: knocked out of the belt onto orbits that come in among the rocky planets.
     {
         let mut r = rng(2);
         let inner: Vec<usize> = rocky.iter().copied().filter(|&p| au(p) < belt.1).collect();
-        for _ in 0..if inner.is_empty() { 0 } else { 5 } {
+        let cr = &sb.crossing;
+        for _ in 0..if inner.is_empty() { 0 } else { one(cr.count, "crossing.count") as usize } {
             let target = *r.pick(&inner);
-            let q = au(target) * r.range(0.6, 1.25);
+            let q = au(target) * even(&mut r, two(cr.nearest, "crossing.nearest"));
             let mut far = r.range(belt.0, belt.1);
             if far <= q {
-                far = q * r.range(1.3, 2.2);
+                far = q * even(&mut r, two(cr.farthest_if_inside, "crossing.farthest_if_inside"));
             }
             let (a, e) = ((q + far) / 2.0, (far - q) / (far + q));
-            let i = r.range(1.0, 25.0).to_radians();
-            let radius = r.range(0.1f64.ln(), 1.5f64.ln()).exp() * 1000.0;
+            let i = tilt(&mut r, two(cr.tilt, "crossing.tilt"));
+            let radius = log(&mut r, two(cr.radius, "crossing.radius"));
             let c = pick(&mut r, "warm");
             let n = name(&mut r);
             made.push(rock(n, BodyKind::CrossingAsteroid, c, radius, None, a * AU, e, i, 0, mu, &mut r));
@@ -134,20 +143,23 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
         let reach = au(g) * AU * (gb.mass / (3.0 * star_mass)).cbrt();
         // (Outside its own moons: no closer than half again the farthest of them.)
         let farthest = sys.bodies.iter().filter(|m| m.rail.parent == Some(g) && m.kind == BodyKind::Moon).filter_map(|m| m.rail.orbit.as_ref()).map(|o| o.semi_major_axis).fold(0.0, f64::max);
-        let least = (0.05 * reach).max(1.5 * farthest);
-        let count = if gb.kind == BodyKind::GasGiant { r.int(2, 4) } else { r.int(1, 2) };
+        let cp = &sb.captured;
+        let least = (one(cp.nearest, "captured.nearest") * reach).max(one(cp.beyond_moons, "captured.beyond_moons") * farthest);
+        let [lo, hi] = two(if gb.kind == BodyKind::GasGiant { cp.count_gas_giant } else { cp.count_other }, "captured.count");
+        let count = r.int(lo as u32, hi as u32);
+        let most = one(cp.farthest, "captured.farthest");
         for _ in 0..count {
-            let (back, e) = (r.chance(0.6), r.range(0.1, 0.5));
+            let (back, e) = (r.chance(one(cp.backward, "captured.backward")), even(&mut r, two(cp.eccentricity, "captured.eccentricity")));
             let near = least / (1.0 - e);
-            if near >= 0.47 * reach {
+            if near >= most * reach {
                 continue;
             }
-            let a = r.range(near, 0.47 * reach);
-            let i = if back { r.range(140.0, 175.0) } else { r.range(25.0, 55.0) }.to_radians();
-            let radius = r.range(1.0f64.ln(), 60.0f64.ln()).exp() * 1000.0;
+            let a = r.range(near, most * reach);
+            let i = if back { tilt(&mut r, two(cp.tilt_backward, "captured.tilt_backward")) } else { tilt(&mut r, two(cp.tilt_forward, "captured.tilt_forward")) };
+            let radius = log(&mut r, two(cp.radius, "captured.radius"));
             // (Mostly primitive, D-type, as the Sun's are; carbonaceous where the record can't be made yet.)
             let primitive = class("rock-class.primitive");
-            let c = if r.chance(0.7) && primitive.described() { primitive } else { class("rock-class.carbonaceous") };
+            let c = if r.chance(one(cp.primitive, "captured.primitive")) && primitive.described() { primitive } else { class("rock-class.carbonaceous") };
             let n = name(&mut r);
             made.push(rock(n, BodyKind::CapturedMoon, c, radius, None, a, e, i, g, G * gb.mass, &mut r));
         }
@@ -156,26 +168,28 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
     // Centaurs: ice bodies wandering among the giants.
     if giants.len() >= 2 {
         let mut r = rng(4);
-        for _ in 0..3 {
-            let a = r.range(au(giants[0]) * 1.15, au(*giants.last().unwrap()) * 0.9);
-            let (e, i) = (r.range(0.1, 0.5), r.range(2.0, 25.0).to_radians());
-            let radius = r.range(10.0f64.ln(), 120.0f64.ln()).exp() * 1000.0;
+        let ce = &sb.centaurs;
+        for _ in 0..one(ce.count, "centaurs.count") as usize {
+            let a = r.range(au(giants[0]) * one(ce.inner, "centaurs.inner"), au(*giants.last().unwrap()) * one(ce.outer, "centaurs.outer"));
+            let (e, i) = (even(&mut r, two(ce.eccentricity, "centaurs.eccentricity")), tilt(&mut r, two(ce.tilt, "centaurs.tilt")));
+            let radius = log(&mut r, two(ce.radius, "centaurs.radius"));
             let n = name(&mut r);
             made.push(rock(n, BodyKind::Centaur, class("rock-class.icy"), radius, None, a * AU, e, i, 0, mu, &mut r));
         }
     }
 
-    // Dwarf planets of the outer belt: the Sun's has perhaps 200; this one's by the ground it covers.
+    // Dwarf planets of the outer belt: the Sun's has perhaps so many; this one's by the ground it covers.
     if let Some(&last) = giants.last() {
         let res = (ob.inner_resonance.clone().unwrap_or("3:2".into()), ob.outer_resonance.clone().unwrap_or("2:1".into()));
         let (lo, hi) = (au(last) / resonance(&res.0), au(last) / resonance(&res.1));
         let sun_outer = (ob.inner_edge.unwrap_or(5.9e12) / AU, ob.outer_edge.unwrap_or(7.18e12) / AU);
-        let expect = 200.0 * ring(lo, hi) / ring(sun_outer.0, sun_outer.1);
+        let od = &sb.outer_dwarfs;
+        let expect = one(od.sun, "outer_dwarfs.sun") * ring(lo, hi) / ring(sun_outer.0, sun_outer.1);
         let mut r = rng(5);
-        for _ in 0..(expect.round() as usize).min(3) {
+        for _ in 0..(expect.round() as usize).min(one(od.most, "outer_dwarfs.most") as usize) {
             let a = r.range(lo, hi);
-            let (e, i) = (r.range(0.03, 0.25), r.range(1.0, 28.0).to_radians());
-            let radius = r.range(450.0, 1200.0) * 1000.0;
+            let (e, i) = (even(&mut r, two(od.eccentricity, "outer_dwarfs.eccentricity")), tilt(&mut r, two(od.tilt, "outer_dwarfs.tilt")));
+            let radius = even(&mut r, two(od.radius, "outer_dwarfs.radius"));
             let icy = class("rock-class.icy");
             let n = name(&mut r);
             made.push(round(n, BodyKind::DwarfPlanet, icy, radius, icy.density(Structure::Monolith), a * AU, e, i, 0, mu, &mut r));
@@ -187,21 +201,24 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
         let mut r = rng(6);
         let comet_density = sizes.comet_density.unwrap_or(600.0);
         let icy = class("rock-class.icy");
+        let (rc, cc) = (&sb.returning_comets, &sb.cloud_comet);
         if let Some(&last) = giants.last() {
-            for _ in 0..4 {
-                let q = warm * r.range(0.3, 2.5);
-                let far = r.range(au(last) * 0.9, au(last) * 2.2);
+            for _ in 0..one(rc.count, "returning_comets.count") as usize {
+                let q = warm * even(&mut r, two(rc.nearest, "returning_comets.nearest"));
+                let [flo, fhi] = two(rc.farthest, "returning_comets.farthest");
+                let far = r.range(au(last) * flo, au(last) * fhi);
                 let (a, e) = ((q + far) / 2.0, (far - q) / (far + q));
-                let i = r.range(2.0, 35.0).to_radians();
-                let radius = r.range(0.75, 2.5) * 1000.0;
+                let i = tilt(&mut r, two(rc.tilt, "returning_comets.tilt"));
+                let radius = even(&mut r, two(rc.radius, "returning_comets.radius"));
                 let n = name(&mut r);
                 made.push(rock(n, BodyKind::Comet, icy, radius, Some(comet_density), a * AU, e, i, 0, mu, &mut r));
             }
         }
-        let q = warm * r.range(0.3, 2.5);
-        let a = r.range(2000.0, 20000.0) * (star_mass / SUN_MASS).cbrt();
-        let i = r.range(0.0, 180.0).to_radians();
-        let radius = r.range(2.0, 10.0) * 1000.0;
+        let q = warm * even(&mut r, two(cc.nearest, "cloud_comet.nearest"));
+        let [olo, ohi] = two(cc.orbit, "cloud_comet.orbit");
+        let a = r.range(olo / AU, ohi / AU) * (star_mass / SUN_MASS).cbrt();
+        let i = tilt(&mut r, two(cc.tilt, "cloud_comet.tilt"));
+        let radius = even(&mut r, two(cc.radius, "cloud_comet.radius"));
         let n = name(&mut r);
         made.push(rock(n, BodyKind::Comet, icy, radius, Some(comet_density), a * AU, 1.0 - q / a, i, 0, mu, &mut r));
     }
@@ -220,12 +237,13 @@ fn orbit(a: f64, e: f64, i: f64, mu: f64, r: &mut Rng) -> Orbit {
 /// its class's as a rubble pile and as one piece (or `density`).
 #[allow(clippy::too_many_arguments)]
 fn rock(name: String, kind: BodyKind, class: RockClass, radius: f64, density: Option<f64>, a: f64, e: f64, i: f64, parent: usize, mu: f64, r: &mut Rng) -> Body {
-    let structure = if radius < 100.0 { Structure::Monolith } else { Structure::Rubble };
+    let structure = if radius < crate::belts::rocks().rubble_above { Structure::Monolith } else { Structure::Rubble };
     let density = density.unwrap_or_else(|| if radius >= 200_000.0 { class.density(Structure::Monolith) } else { r.range(class.density(Structure::Rubble), class.density(Structure::Monolith)) });
     let shape = RockShape::new(radius, r);
     let composition = crate::belt::Composition::of(class, r.f64(), r);
     let mass = density * shape.volume();
-    let day = r.range(2.3f64.ln(), 30.0f64.ln()).exp() * HOUR;
+    let [lo, hi] = crate::belts::small_bodies_record().spin.rock.expect("seeding.small-bodies: no spin.rock");
+    let day = r.range(lo.ln(), hi.ln()).exp();
     let orbit = orbit(a, e, i, mu + G * mass, r);
     let tilt = DQuat::from_rotation_arc(DVec3::Y, r.unit_vector());
     let mut b = crate::system::natural(name, kind, mass, shape.radius, day, class.color(), None, parent, orbit, tilt);
@@ -237,7 +255,8 @@ fn rock(name: String, kind: BodyKind, class: RockClass, radius: f64, density: Op
 #[allow(clippy::too_many_arguments)]
 fn round(name: String, kind: BodyKind, class: RockClass, radius: f64, density: f64, a: f64, e: f64, i: f64, parent: usize, mu: f64, r: &mut Rng) -> Body {
     let mass = density * 4.0 / 3.0 * PI * radius.powi(3);
-    let day = r.range(5.0, 30.0) * HOUR;
+    let [lo, hi] = crate::belts::small_bodies_record().spin.round.expect("seeding.small-bodies: no spin.round");
+    let day = r.range(lo, hi);
     let orbit = orbit(a, e, i, mu + G * mass, r);
     let tilt = DQuat::from_rotation_arc(DVec3::Y, r.unit_vector());
     let mut b = crate::system::natural(name, kind, mass, radius, day, class.color(), None, parent, orbit, tilt);

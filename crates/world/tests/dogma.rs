@@ -74,7 +74,7 @@ fn gates_are_justified_and_limited() {
     // Holding a gate is the economic choice: opening a one-ship tube for one pass costs
     // thousands of passes; a held gate pays at a handful of ships a day; opening it is a
     // faction's year.
-    let gate = 2.0 * GATE_RADIUS;
+    let gate = 2.0 * universe_world::gate::gate_radius();
     let own = tube_open_energy(100.0, s5);
     assert!(own > 1e3 * at(ship), "own tube {own:e} against a pass {:e}", at(ship));
     let day = tube_hold_power(gate, s5) * DAY;

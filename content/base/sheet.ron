@@ -18,8 +18,6 @@
         name: "Gates",
         note: "The world's gate rings.",
         entries: [
-            (name: "GATE_RADIUS", value: 1500.0, unit: "m", kind: Tuning, note: "A ring's centreline radius; its opening is a little smaller."),
-            (name: "RING_TUBE", value: 60.0, unit: "m", kind: Tuning, note: "Half the ring structure's thickness."),
             (name: "RELAY_TUBE", value: 0.01, unit: "m", kind: Tuning, note: "A hyper relay's tube: capsules only, no ship fits (a gate's is its ring's opening)."),
             (name: "GATE_CAPSULE", value: 1.0, unit: "kg", kind: Tuning, note: "A gate's data capsule: a casing and hardened storage (target: the 200 ms per ly is a 1 kg capsule's)."),
             (name: "RELAY_CAPSULE", value: 0.01, unit: "kg", kind: Tuning, note: "A relay's data capsule, small enough for its tube."),
