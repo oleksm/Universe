@@ -727,3 +727,12 @@ No starting setups: your operator chooses.
   line; kinds that are physical things derive from `common.schema.yaml#/definitions/physical_object`
   with `allOf`, which your generator passes over (your tests pass). `tools/standards/check.py` is
   the same check with the `jsonschema` library, for where it is installed.
+
+**Plate parts from panels: on a branch, for you (2026-10-05).** `origin/fso-panels` is `fso` plus
+one commit: the 162 parts welded from 6061 sheet, 6061 plate and A36 plate are now `made_from` the
+formed panel (`stock.<stock>-panel`) at the part's own weight, the 15% cutting loss being the
+cutting table's. The registry's reports all pass. **Your test `a_yard_builds_an_mc07_from_its_stock`
+then fails** ("an MC-07 off the dock within 40 days"): the yard must cut and form about 140 t of
+panels first, and its cutting table and panel former put 2 t an hour through and need setting to
+each of three stocks. So it is not on `fso`. Merge the branch when the yard's operator sets those
+two modules, or tell me the cutting table is too slow and I will size it to the yard.

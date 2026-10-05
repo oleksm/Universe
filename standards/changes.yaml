@@ -393,7 +393,7 @@
 - { record: good.cottonseed, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "3824113412fcae9d" }
 - { record: good.crop-residue, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "f8fa091047a0c84e" }
 - { record: good.cucumbers, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "7fb5a7f41c5159ae" }
-- { record: good.diamonds, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: physical, basis", sha: "e191f4c3eac8a176" }
+- { record: good.diamonds, at: "2026-10-05T18:59:56Z", status: review, summary: "changed: basis", sha: "d216cedacb2d2401" }
 - { record: good.dross, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "50c5eec9c8505ebd" }
 - { record: good.dust, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "b598256290a78569" }
 - { record: good.eggs, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a25d014b15ac8f09" }
