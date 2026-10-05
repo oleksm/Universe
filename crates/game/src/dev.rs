@@ -1353,6 +1353,10 @@ pub fn apply(app: &mut App, name: &str) {
                 let spec = app.ship.spec();
                 y.interior_mut().sample_modules(spec);
             }
+            // (UNIVERSE_FRAME: the FRAME tool in hand.)
+            if std::env::var_os("UNIVERSE_FRAME").is_some() {
+                y.interior_mut().frame_tool();
+            }
             // (UNIVERSE_DECKS: the deck studio open instead.)
             if std::env::var_os("UNIVERSE_DECKS").is_some() {
                 y.open_decks();

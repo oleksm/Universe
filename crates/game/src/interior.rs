@@ -61,7 +61,7 @@ fn sort_index(name: Option<&str>) -> usize {
 
 /// The layers, each shown or hidden: (name, the layer it's under, its colour).
 /// Points' kinds are 3.. in `SORTS`' order.
-const LAYERS: [(&str, Option<usize>, Option<Color>); 23] = [
+const LAYERS: [(&str, Option<usize>, Option<Color>); 24] = [
     ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
     ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
     ("POINTS", None, None),
@@ -85,6 +85,7 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 23] = [
     ("HOLLOW MAP", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
     ("REACH", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
     ("MODULES", None, Some(MODULE)),
+    ("FRAME", None, Some(Color([0.4, 1.0, 0.5, 1.0]))),
 ];
 
 /// Modules placed: their colour.
@@ -105,6 +106,7 @@ pub mod layer {
     pub const HOLLOW: usize = 20;
     pub const REACH: usize = 21;
     pub const MODULES: usize = 22;
+    pub const FRAME: usize = 23;
 }
 
 /// The camera's field of view up and down (rad).
@@ -164,6 +166,17 @@ pub struct Interior {
     module: Option<usize>,
     module_hover: Option<usize>,
     block_clash: Option<(Vec<Block>, Vec<bool>)>,
+    /// FRAME: the stock new members are cut from (its number in `stocks()`), the load
+    /// case shown (none: each member's worst), the member under the cursor and the
+    /// one picked, where the member being laid starts; what the frame bears, as last
+    /// worked out (for which plan), and being worked out (on a thread of its own).
+    stock: usize,
+    case: Option<usize>,
+    beam_hover: Option<usize>,
+    beam_pick: Option<usize>,
+    beam_from: Option<Vec3>,
+    bearing: Option<(Plan, Arc<Bearing>)>,
+    bearing_job: Option<(Plan, mpsc::Receiver<Bearing>)>,
     /// The layers hidden (by number in `LAYERS`); the panel folded up; groups folded.
     hidden: [bool; LAYERS.len()],
     layers_folded: bool,
@@ -305,6 +318,201 @@ struct Plan {
     /// The ship's modules (and its hold) placed in it.
     #[serde(default)]
     blocks: Vec<Block>,
+    /// Its frame: the members that bear its loads.
+    #[serde(default)]
+    beams: Vec<Beam>,
+}
+
+/// A member of the frame: its two ends, and what it's cut from (mill stock, by its
+/// key in the registry).
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct Beam {
+    a: Vec3,
+    b: Vec3,
+    stock: String,
+}
+
+/// Mill stock a member can be cut from: a tube or a bar the registry has, its
+/// section and its material's figures, and its mass a metre (kg).
+#[derive(Clone)]
+pub struct Stock {
+    key: String,
+    name: String,
+    section: universe_sim::world::frame::Section,
+    material: universe_sim::world::frame::Material,
+    per_metre: f64,
+}
+
+/// Every tube and bar in the registry whose material says how it bears (its
+/// stiffness, yield and tensile strength, density), lightest a metre first.
+fn stocks() -> &'static [Stock] {
+    static STOCKS: std::sync::OnceLock<Vec<Stock>> = std::sync::OnceLock::new();
+    STOCKS.get_or_init(|| {
+        use universe_sim::world::frame::{Material, Section};
+        let reg = universe_sim::world::registry::registry();
+        let mut out: Vec<Stock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "tube" | "bar")).filter_map(|s| {
+            let d = s.size.diameter?;
+            let section = Section { diameter: d, wall: s.size.wall.unwrap_or(d * 0.5).min(d * 0.5) };
+            let of = &s.made_from.first()?.item;
+            let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
+            let k = &m.mechanical;
+            let (e, y, t, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
+            let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
+            let material = Material { stiffness: e, shear, yield_strength: y, tensile_strength: t, density: rho };
+            Some(Stock { key: s.identity.key.clone(), name: s.identity.name.to_uppercase(), per_metre: section.area() * rho, section, material })
+        }).collect();
+        out.sort_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+        out
+    })
+}
+
+/// The gravity the frame is worked out under, standing (m/s²: a standard g; each
+/// port's own is to come).
+const STANDARD_G: f64 = 9.80665;
+
+/// The load cases, by name: standing after a landing (the jolt of the hull's design
+/// landing on top of the weight), at full main thrust, hovering at full lift.
+const CASES: [&str; 3] = ["LANDING", "THRUST", "LIFT"];
+
+/// What the frame bears and how: its joints (its members' ends, those within 5 cm
+/// one), its members' mass (kg), and for each load case either how each member
+/// does, or why it couldn't be worked out; what isn't carried (a module with no
+/// joint in it, a nozzle or a pad with none at it).
+#[derive(Clone, Default)]
+pub struct Bearing {
+    joints: Vec<Vec3>,
+    mass: f64,
+    cases: Vec<(String, Result<universe_sim::world::frame::Collapse, String>)>,
+    loose: Vec<String>,
+    /// Each case's acceleration (m/s², what everything aboard feels).
+    felt: Vec<f64>,
+}
+
+/// What the plan's frame bears, under each case, for a hull `spec` (gravity `g`).
+fn bearing(plan: &Plan, fit: &[Fitted], spec: &universe_sim::world::ship::ClassSpec, g: f64) -> Bearing {
+    use universe_engine::glam::DVec3;
+    use universe_sim::world::frame::{collapse, Case, Frame, Member};
+    use universe_sim::world::ship::ThrusterRole;
+    use universe_sim::world::shape::Role;
+    let shape = spec.shape();
+    let reg = universe_sim::world::registry::registry();
+    let record = spec.visual.as_deref().and_then(|v| reg.hulls.iter().find(|h| h.model.as_deref() == Some(v)));
+    let sf = record.and_then(|h| h.design.safety_factor).unwrap_or(1.5);
+    let mut out = Bearing::default();
+    // Its joints, and its members (of stock the registry has).
+    let joint = |p: Vec3, joints: &mut Vec<Vec3>| joints.iter().position(|q| q.distance(p) < 0.05).unwrap_or_else(|| {
+        joints.push(p);
+        joints.len() - 1
+    });
+    let mut frame = Frame::default();
+    let mut joints = Vec::new();
+    let mut weight = Vec::new();
+    for b in &plan.beams {
+        let Some(s) = stocks().iter().find(|s| s.key == b.stock) else { continue };
+        let (ja, jb) = (joint(b.a, &mut joints), joint(b.b, &mut joints));
+        if ja == jb {
+            continue;
+        }
+        let m = Member { a: ja, b: jb, section: s.section, material: s.material };
+        let mass = m.mass(b.a.as_dvec3(), b.b.as_dvec3());
+        out.mass += mass;
+        // (A member's own weight: half at each end.)
+        weight.extend([(ja, mass * 0.5), (jb, mass * 0.5)]);
+        frame.members.push(m);
+    }
+    frame.joints = joints.iter().map(|p| p.as_dvec3()).collect();
+    out.joints = joints.clone();
+    let near = |at: Vec3, r: f32| -> Vec<usize> { joints.iter().enumerate().filter(|(_, q)| q.distance(at) <= r).map(|(k, _)| k).collect() };
+    // The masses it carries: each module's (the ore bay: its hold full), shared
+    // between the joints in it.
+    let full = record.and_then(|h| h.capacity.hold).unwrap_or(0.0);
+    let mut masses: Vec<(Vec<usize>, f64)> = weight.iter().map(|&(j, m)| (vec![j], m)).collect();
+    for blk in &plan.blocks {
+        let Some(f) = fit.iter().find(|f| f.id == blk.id) else { continue };
+        let (lo, hi) = blk.bounds();
+        let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+        let m = if blk.id == HOLD { full } else { f.mass };
+        if at.is_empty() {
+            out.loose.push(format!("{} IS NOT MOUNTED", f.name));
+        } else {
+            masses.push((at, m));
+        }
+    }
+    let carried: f64 = masses.iter().map(|m| m.1).sum();
+    let ship = spec.dry_mass + spec.fuel_capacity + full;
+    let share = (carried / ship).min(1.0);
+    let anchor = {
+        let c = masses.iter().fold(DVec3::ZERO, |s, (js, m)| s + js.iter().map(|&j| frame.joints[j]).sum::<DVec3>() / js.len() as f64 * *m) / carried.max(1e-9);
+        (0..frame.joints.len()).min_by(|&a, &b| frame.joints[a].distance(c).total_cmp(&frame.joints[b].distance(c)))
+    };
+    // (Loads: each mass's, `acc` its acceleration less gravity's pull; and the
+    // pushes that carry the frame, at the joints by them.)
+    let loads = |acc: DVec3| -> Vec<(usize, DVec3)> {
+        masses.iter().flat_map(|(js, m)| js.iter().map(move |&j| (j, (DVec3::new(0.0, -g, 0.0) - acc) * *m / js.len() as f64))).collect()
+    };
+    let pushes = |role: ThrusterRole, out: &mut Bearing, what: &str| -> (Vec<(usize, DVec3)>, DVec3) {
+        let mut pushes = Vec::new();
+        let mut total = DVec3::ZERO;
+        let mut missed = false;
+        for t in spec.thrusters.iter().filter(|t| t.role == role) {
+            let force = t.push * t.thrust;
+            total += force;
+            let at = near(t.at.as_vec3(), 1.0);
+            if at.is_empty() {
+                missed = true;
+                continue;
+            }
+            for &j in &at {
+                pushes.push((j, force * share / at.len() as f64));
+            }
+        }
+        if missed {
+            out.loose.push(format!("{what} PUSHES ON NOTHING"));
+        }
+        (pushes, total)
+    };
+    // Landing: weight and the jolt of the design landing (its legs' stroke, as the
+    // registry works it out), held at the landing pads.
+    let stroke = shape.pieces.iter().filter(|(n, _, _)| n.starts_with("Gear_") && n.ends_with("_Strut")).map(|(_, lo, hi)| (*hi - *lo).max_element()).fold(f64::INFINITY, f64::min);
+    let (v, eta) = (record.and_then(|h| h.design.landing_speed).unwrap_or(3.05), record.and_then(|h| h.design.strut_efficiency).unwrap_or(0.85));
+    let jolt = if stroke.is_finite() { v * v / (2.0 * stroke * eta) } else { 0.0 };
+    let pads: Vec<usize> = shape.nodes(Role::Gear).flat_map(|n| near(n.at.as_vec3(), 1.0)).collect();
+    let landing = if pads.is_empty() {
+        out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
+        Err("NOTHING ON THE PADS".to_string())
+    } else {
+        Ok(Case { loads: loads(DVec3::new(0.0, jolt, 0.0)), held: pads, anchor: None })
+    };
+    out.felt.push(g + jolt);
+    // Full main thrust, and hovering on full lift: the pushes balanced by every
+    // mass's inertia, held only to keep it from drifting.
+    let (main, total) = pushes(ThrusterRole::Main, &mut out, "THE DRIVE");
+    let acc = total / ship;
+    // (In flight, far from anything: no weight; only its acceleration.)
+    let mut thrust = Case { loads: masses.iter().flat_map(|(js, m)| js.iter().map(move |&j| (j, -acc * *m / js.len() as f64))).collect(), held: Vec::new(), anchor };
+    thrust.loads.extend(main.iter().copied());
+    out.felt.push(acc.length());
+    let (lift, total) = pushes(ThrusterRole::Lift, &mut out, "THE LIFT");
+    let acc = total / ship + DVec3::new(0.0, -g, 0.0);
+    let mut hover = Case { loads: loads(acc), held: Vec::new(), anchor };
+    hover.loads.extend(lift.iter().copied());
+    out.felt.push(acc.length());
+    let run = |case: Result<Case, String>, ok: bool| -> Result<universe_sim::world::frame::Collapse, String> {
+        let case = case?;
+        if !ok {
+            return Err("NOTHING PUSHES THE FRAME".into());
+        }
+        if frame.members.is_empty() {
+            return Err("NO MEMBERS".into());
+        }
+        collapse(&frame, &case, sf).map_err(|_| "NOT HELD TOGETHER: SOME OF IT MOVES FREELY".to_string())
+    };
+    out.cases = vec![
+        (CASES[0].into(), run(landing, true)),
+        (CASES[1].into(), run(Ok(thrust), !main.is_empty())),
+        (CASES[2].into(), run(Ok(hover), !lift.is_empty())),
+    ];
+    out
 }
 
 /// A module of the ship's fit (or its hold) placed in it: which (its slot; the hold:
@@ -1081,6 +1289,10 @@ enum Tool {
     /// The ship's modules: one picked from its fit, a click on the work plane puts
     /// it there (or moves it), standing on the plane.
     Modules,
+    /// The frame: members laid joint to joint (from landing pads, nozzles, modules'
+    /// corners, other joints, or the work plane), of the stock picked; each load
+    /// case's forces through it, what's over its limit and what breaks.
+    Frame,
 }
 
 #[derive(Clone, Copy, PartialEq)]
@@ -1409,6 +1621,11 @@ impl Interior {
         self.fit = fit_of(spec);
     }
 
+    /// The FRAME tool in hand (dev scenarios).
+    pub fn frame_tool(&mut self) {
+        self.tool = Tool::Frame;
+    }
+
     /// Layer `k` hidden (dev scenarios).
     pub fn hide(&mut self, k: usize) {
         if let Some(h) = self.hidden.get_mut(k) {
@@ -1520,7 +1737,7 @@ impl Interior {
         for (k, at) in panes("DashScreen").into_iter().map(|(lo, hi)| (lo + hi) * 0.5).enumerate() {
             points.push(Point { at, name: Some(format!("DASH {}", k + 1)) });
         }
-        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new() };
+        self.plan = Plan { hull: key.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new() };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
@@ -1580,11 +1797,11 @@ impl Camera {
 }
 
 /// The toolbar: the tools (key, name).
-const TOOLBAR: [(&str, &str, Tool); 4] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door), ("M", "MODULES", Tool::Modules)];
+const TOOLBAR: [(&str, &str, Tool); 5] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door), ("M", "MODULES", Tool::Modules), ("R", "FRAME", Tool::Frame)];
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
-    (Vec2::new(12.0 + k as f32 * 94.0, 30.0), Vec2::new(90.0, 16.0))
+    (Vec2::new(12.0 + k as f32 * 85.0, 30.0), Vec2::new(82.0, 16.0))
 }
 
 fn button_at(q: Vec2) -> Option<Tool> {
@@ -1748,6 +1965,8 @@ enum Action {
     Slide(Slide),
     /// The picked module turned a quarter (its width and length swapped).
     Turn,
+    /// The load case shown on the frame (none: each member's worst).
+    Case(Option<usize>),
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -1765,6 +1984,55 @@ fn sliders(tool: Tool) -> [(Vec2, Vec2); 2] {
 /// A slider's range (m): a room's, or a module's (a hold is broad).
 fn slider_range(tool: Tool) -> (f32, f32) {
     if tool == Tool::Modules { (0.3, 16.0) } else { (ROOM_MIN, ROOM_MAX) }
+}
+
+/// The FRAME panel's stock list: row `k`'s place.
+fn stock_row(k: usize) -> (Vec2, Vec2) {
+    let (p, c) = PANEL;
+    (Vec2::new(p.x + 6.0, p.y + 82.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
+}
+
+/// Where a frame's members can start or end besides its own joints: the landing
+/// pads, the main and lift nozzles, each placed module's corners and middle (and
+/// its faces' middles).
+fn bearers(i: &Interior, spec: &universe_sim::world::ship::ClassSpec) -> Vec<Vec3> {
+    use universe_sim::world::shape::Role;
+    use universe_sim::world::ship::ThrusterRole;
+    let mut out: Vec<Vec3> = spec.shape().nodes(Role::Gear).map(|n| n.at.as_vec3()).collect();
+    out.extend(spec.thrusters.iter().filter(|t| matches!(t.role, ThrusterRole::Main | ThrusterRole::Lift)).map(|t| t.at.as_vec3()));
+    for b in &i.plan.blocks {
+        let h = b.size * 0.5;
+        for x in [-1.0f32, 0.0, 1.0] {
+            for y in [-1.0f32, 0.0, 1.0] {
+                for z in [-1.0f32, 0.0, 1.0] {
+                    // (Corners, the middle and the faces' middles: not the edges'.)
+                    let zeros = [x, y, z].iter().filter(|v| **v == 0.0).count();
+                    if zeros != 1 {
+                        out.push(b.at + Vec3::new(x, y, z) * h);
+                    }
+                }
+            }
+        }
+    }
+    out
+}
+
+/// What a click at `q` would join a member to: a joint of the frame, or a bearer,
+/// within 10 px of it on screen.
+fn frame_snap(i: &Interior, cam: &Camera, q: Vec2, spec: &universe_sim::world::ship::ClassSpec) -> Option<Vec3> {
+    let mut at: Vec<Vec3> = i.plan.beams.iter().flat_map(|b| [b.a, b.b]).collect();
+    at.extend(bearers(i, spec));
+    at.into_iter().filter_map(|p| cam.project(p).map(|(s, _)| (p, s.distance(q)))).filter(|(_, d)| *d < 10.0).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(p, _)| p)
+}
+
+/// The member under the cursor (within 6 px of its line on screen), if any.
+fn beam_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<usize> {
+    i.plan.beams.iter().enumerate().filter_map(|(k, b)| {
+        let (sa, sb) = (cam.project(b.a)?.0, cam.project(b.b)?.0);
+        let ab = sb - sa;
+        let t = ((q - sa).dot(ab) / ab.length_squared().max(1e-6)).clamp(0.0, 1.0);
+        Some((k, (sa + ab * t).distance(q)))
+    }).filter(|(_, d)| *d < 6.0).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(k, _)| k)
 }
 
 /// The MODULES panel's list: row `k`'s place (the fit, one a row).
@@ -1791,6 +2059,12 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     }).collect();
     let shapes = shapes.into_iter();
     match tool {
+        Tool::Frame => {
+            let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            let w4 = (c.x - 16.0 - 18.0) / 4.0;
+            let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(332.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
+        }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             vec![(at(310.0, 0.0, w), "TURN", Action::Turn), (at(310.0, w + 6.0, w), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(332.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]
@@ -2172,6 +2446,23 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     {
         interior.checked = Some((interior.plan.clone(), clashes(mesh, &interior.plan)));
     }
+    // What the frame bears, worked out again (on a thread) when the plan's changed.
+    if let Some((plan, rx)) = &interior.bearing_job
+        && let Ok(found) = rx.try_recv()
+    {
+        interior.bearing = Some((plan.clone(), Arc::new(found)));
+        interior.bearing_job = None;
+    }
+    let stale = interior.bearing.as_ref().is_none_or(|(p, _)| *p != interior.plan);
+    if stale && interior.bearing_job.as_ref().is_none_or(|(p, _)| *p != interior.plan) && !interior.plan.beams.is_empty() {
+        let (plan, fit, spec) = (interior.plan.clone(), interior.fit.clone(), app.ship.spec());
+        let (tx, rx) = mpsc::channel();
+        let snapshot = plan.clone();
+        job("studio-frame", move || {
+            tx.send(bearing(&plan, &fit, spec, STANDARD_G)).ok();
+        });
+        interior.bearing_job = Some((snapshot, rx));
+    }
     // The modules checked too: none in the hull's own material, out of it, or in a
     // tube's room.
     if interior.block_clash.as_ref().is_none_or(|(b, _)| *b != interior.plan.blocks)
@@ -2215,7 +2506,7 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The tools (toolbar or key); the panel's actions.
     let tool = if pressed { button_at(cursor) } else { None };
-    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path), (KeyCode::KeyD, Tool::Door), (KeyCode::KeyM, Tool::Modules)] {
+    for (key, t) in [(KeyCode::KeyV, Tool::Look), (KeyCode::KeyP, Tool::Path), (KeyCode::KeyD, Tool::Door), (KeyCode::KeyM, Tool::Modules), (KeyCode::KeyR, Tool::Frame)] {
         if input.pressed(key) || tool == Some(t) {
             interior.tool = t;
             interior.from = None;
@@ -2279,6 +2570,26 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             (h.width, h.height) = (p.width, p.height);
             if let Some(Action::Slide(slide)) = action {
                 h.slide = slide;
+            }
+        }
+        // (FRAME: the stock new members are cut from, a row of its list (the picked
+        // member's too); the case shown; the picked member taken out.)
+        Tool::Frame => {
+            if pressed && let Some(k) = (0..stocks().len()).find(|&k| inside(stock_row(k), cursor)) {
+                interior.stock = k;
+                if let Some(b) = interior.beam_pick.and_then(|j| interior.plan.beams.get_mut(j)) {
+                    b.stock = stocks()[k].key.clone();
+                }
+                return true;
+            }
+            if let Some(Action::Case(c)) = action {
+                interior.case = c;
+            }
+            if action == Some(Action::Remove)
+                && let Some(k) = interior.beam_pick.take()
+                && k < interior.plan.beams.len()
+            {
+                interior.plan.beams.remove(k);
             }
         }
         // (The module picked: a row of the list; its width or height stretched, its
@@ -2348,7 +2659,8 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     if interior.slider.is_some() {
         return true;
     }
-    interior.hover = if interior.tool == Tool::Modules { None } else { hover_at(interior, &cam, cursor) };
+    interior.hover = if matches!(interior.tool, Tool::Modules | Tool::Frame) { None } else { hover_at(interior, &cam, cursor) };
+    interior.beam_hover = if interior.tool == Tool::Frame && interior.shown(layer::FRAME) && !inside(PANEL, cursor) { beam_at(interior, &cam, cursor) } else { None };
     // (MODULES: the nearest placed one under the cursor.)
     interior.module_hover = None;
     if interior.tool == Tool::Modules && interior.shown(layer::MODULES) && !inside(PANEL, cursor) {
@@ -2376,6 +2688,14 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             interior.walk_armed = false;
             return true;
         }
+    }
+    // (FRAME: DEL takes out the member under the cursor.)
+    if input.pressed(KeyCode::Delete)
+        && let Some(k) = interior.beam_hover.take()
+    {
+        interior.plan.beams.remove(k);
+        interior.beam_pick = None;
+        return true;
     }
     // Removed: what's under the cursor (DEL), or what's picked (REMOVE); the hull's
     // own points stay; a point takes its lines with it.
@@ -2408,6 +2728,10 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         return true;
     }
     // The right button: stops a path being laid (and only that, this press).
+    if input.button_pressed(MouseButton::Right) && interior.beam_from.is_some() {
+        interior.beam_from = None;
+        interior.stopped = true;
+    }
     if input.button_pressed(MouseButton::Right) && interior.from.is_some() {
         interior.from = None;
         interior.stopped = true;
@@ -2417,10 +2741,10 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // The plane's handle (laying paths): held, it goes up and down with the mouse.
     let plane = plane_of(interior, &h);
-    if matches!(interior.tool, Tool::Path | Tool::Modules) {
+    if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) {
         interior.map_hollow(plane);
     }
-    if pressed && matches!(interior.tool, Tool::Path | Tool::Modules) && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
+    if pressed && matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) && cam.project(plane_handle(&cam, &h, plane)).is_some_and(|(q, _)| q.distance(cursor) < 10.0) {
         interior.lifting = true;
     }
     if interior.lifting {
@@ -2461,6 +2785,27 @@ fn input_plan(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         && !dragged
     {
         match interior.tool {
+            // FRAME: a click at a joint or a bearer (else on the work plane) ends the
+            // member being laid there and starts the next from it; not laying one, a
+            // click on a member picks it, else starts one.
+            Tool::Frame => {
+                let snap = frame_snap(interior, &cam, cursor, spec);
+                if interior.beam_from.is_none() && snap.is_none() && interior.beam_hover.is_some() {
+                    interior.beam_pick = interior.beam_hover;
+                    if let Some(k) = interior.beam_pick.and_then(|k| stocks().iter().position(|s| s.key == interior.plan.beams[k].stock)) {
+                        interior.stock = k;
+                    }
+                } else if let Some(to) = snap.or_else(|| on_plane(interior, &cam, plane, cursor, false)) {
+                    if let Some(from) = interior.beam_from
+                        && from.distance(to) > 0.05
+                        && let Some(stock) = stocks().get(interior.stock)
+                    {
+                        interior.plan.beams.push(Beam { a: from, b: to, stock: stock.key.clone() });
+                    }
+                    interior.beam_from = Some(to);
+                    interior.beam_pick = None;
+                }
+            }
             // A module under the cursor: picked. Else the one picked put where the
             // cursor is on the work plane, standing on it (if it's there already:
             // moved).
@@ -2624,7 +2969,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         {
             let (p, c) = walk_button();
             let lamp = if interior.walk_armed || inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
-            draw_cell(frame, p, c, "F", "WALK HERE", lamp);
+            draw_cell(frame, p, c, "F", "WALK", lamp);
         }
         {
             let (p, c) = reach_button();
@@ -2752,7 +3097,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
     }
     // The work plane (placing points): its outline over the hull, at its height.
     let plane = plane_of(interior, &h);
-    if matches!(interior.tool, Tool::Path | Tool::Modules) {
+    if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) {
         let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
         // The hull at this height: hollow cells green, solid red (where there's room).
         if let Some((at, cells)) = interior.hollow.as_ref().filter(|_| interior.shown(layer::HOLLOW)) {
@@ -2826,6 +3171,21 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
                 }
             }
             Some(Hover::Point(_)) => {}
+            // (FRAME: where a click would join, and the member being laid to it.)
+            None if interior.tool == Tool::Frame => {
+                let spec = app.ship.spec();
+                let snap = frame_snap(interior, &cam, interior.cursor, spec);
+                let to = snap.or_else(|| on_plane(interior, &cam, plane, interior.cursor, false));
+                if let Some(to) = to
+                    && let Some((q, _)) = cam.project(to)
+                {
+                    frame.hud_box(q - Vec2::splat(4.0), Vec2::splat(8.0), if snap.is_some() { PICKED } else { PICKED.scale(0.5) });
+                    if let Some(from) = interior.beam_from {
+                        seg(frame, from, to, PICKED.scale(0.7));
+                        frame.text_scaled(q + Vec2::new(10.0, 6.0), &format!("{:.1} M", from.distance(to)), PICKED, 0.7);
+                    }
+                }
+            }
             // (MODULES: the picked one where a click would put it, faint.)
             None if interior.tool == Tool::Modules => {
                 if interior.module_hover.is_none()
@@ -2918,6 +3278,82 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
         if let Some((q, _)) = cam.project(b.at + Vec3::Y * b.size.y * 0.5) {
             let w = f.name.chars().count() as f32 * universe_engine::frame::GLYPH * 0.6;
             frame.text_scaled(q + Vec2::new(-w / 2.0, -12.0), &f.name, col, 0.6);
+        }
+    }
+    // The frame: each member coloured by how hard it's worked (the case shown, or
+    // its worst): green easy, amber near its limit, red past it; broken, red and
+    // crossed. Its load points: the landing pads and nozzles (lit if a joint's at
+    // them).
+    if interior.shown(layer::FRAME) {
+        let bearing = interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan).map(|(_, b)| b.clone());
+        let outcome = |k: usize| -> Option<(f64, bool)> {
+            let b = bearing.as_ref()?;
+            let pick: Vec<&Result<universe_sim::world::frame::Collapse, String>> = match interior.case {
+                Some(c) => b.cases.get(c).map(|c| &c.1).into_iter().collect(),
+                None => b.cases.iter().map(|c| &c.1).collect(),
+            };
+            let os: Vec<_> = pick.into_iter().filter_map(|r| r.as_ref().ok()).filter_map(|c| c.members.get(k)).collect();
+            (!os.is_empty()).then(|| (os.iter().map(|o| o.work.design).fold(0.0, f64::max), os.iter().any(|o| o.broken.is_some())))
+        };
+        for (k, b) in plan.beams.iter().enumerate() {
+            let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k);
+            let (col, broken) = match outcome(k) {
+                _ if lit => (PICKED, false),
+                Some((_, true)) => (CLASH, true),
+                Some((u, _)) if u >= 1.0 => (Color([1.0, 0.3, 0.25, 1.0]), false),
+                Some((u, _)) if u >= 0.5 => (Color([1.0, 0.7, 0.2, 1.0]), false),
+                Some(_) => (Color([0.4, 1.0, 0.5, 1.0]), false),
+                None => (Color([0.75, 0.8, 0.85, 1.0]), false),
+            };
+            if let (Some((pa, _)), Some((pb, _))) = (cam.project(b.a), cam.project(b.b)) {
+                if broken {
+                    // (Dashed, and crossed at its middle.)
+                    let n = ((pb - pa).length() / 6.0).max(1.0) as usize;
+                    for i in (0..n).step_by(2) {
+                        frame.hud_line(pa.lerp(pb, i as f32 / n as f32), pa.lerp(pb, ((i + 1) as f32 / n as f32).min(1.0)), col);
+                    }
+                    let m = (pa + pb) * 0.5;
+                    frame.hud_line(m - Vec2::splat(4.0), m + Vec2::splat(4.0), col);
+                    frame.hud_line(m + Vec2::new(-4.0, 4.0), m + Vec2::new(4.0, -4.0), col);
+                } else {
+                    // (A bit heavier than a line: two side by side.)
+                    let across = (pb - pa).perp().normalize_or_zero() * 0.6;
+                    frame.hud_line(pa + across, pb + across, col);
+                    frame.hud_line(pa - across, pb - across, col);
+                }
+            }
+        }
+        for b in &plan.beams {
+            for p in [b.a, b.b] {
+                if let Some((q, _)) = cam.project(p) {
+                    frame.hud_rect(q - Vec2::splat(1.5), Vec2::splat(3.0), Color([0.9, 0.95, 1.0, 0.9]));
+                }
+            }
+        }
+        if interior.tool == Tool::Frame {
+            use universe_sim::world::shape::Role;
+            use universe_sim::world::ship::ThrusterRole;
+            let spec = app.ship.spec();
+            let joined = |p: Vec3| plan.beams.iter().any(|b| b.a.distance(p) <= 1.0 || b.b.distance(p) <= 1.0);
+            for n in spec.shape().nodes(Role::Gear) {
+                let p = n.at.as_vec3();
+                if let Some((q, _)) = cam.project(p) {
+                    let col = if joined(p) { Color([0.4, 0.9, 1.0, 1.0]) } else { Color([0.4, 0.9, 1.0, 0.45]) };
+                    let d = [Vec2::new(0.0, -6.0), Vec2::new(6.0, 0.0), Vec2::new(0.0, 6.0), Vec2::new(-6.0, 0.0)];
+                    for i in 0..4 {
+                        frame.hud_line(q + d[i], q + d[(i + 1) % 4], col);
+                    }
+                    frame.text_scaled(q + Vec2::new(8.0, 2.0), "PAD", col, 0.55);
+                }
+            }
+            for t in spec.thrusters.iter().filter(|t| matches!(t.role, ThrusterRole::Main | ThrusterRole::Lift)) {
+                let p = t.at.as_vec3();
+                let col = if joined(p) { Color([1.0, 0.65, 0.2, 1.0]) } else { Color([1.0, 0.65, 0.2, 0.45]) };
+                seg(frame, p, p + t.push.as_vec3() * 2.0, col);
+                if let Some((q, _)) = cam.project(p) {
+                    frame.hud_box(q - Vec2::splat(3.0), Vec2::splat(6.0), col);
+                }
+            }
         }
     }
     for (k, &(a, b, profile)) in plan.lines.iter().enumerate() {
@@ -3049,12 +3485,74 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
             Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME."),
+            Tool::Frame => ("FRAME", "CLICK JOINT TO JOINT (PADS, NOZZLES, MODULES, THE PLANE). RIGHT-CLICK STOPS. CLICK ONE TO PICK IT."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
         for line in crate::fmt::wrap(help, ((c.x - 16.0) / 8.0 * 1.25) as usize) {
             frame.text_scaled(Vec2::new(p.x + 8.0, y), &line, LABEL.scale(0.85), 0.8);
             y += 12.0;
+        }
+        // FRAME: the stock (lit: what new members, or the picked one, are cut from),
+        // the case shown, how each case goes, what isn't carried, its members' mass.
+        if interior.tool == Tool::Frame {
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), "STOCK                     KG/M  YIELD", LABEL.scale(0.7), 0.6);
+            for (k, st) in stocks().iter().enumerate() {
+                let (q, qc) = stock_row(k);
+                let lit = interior.stock == k;
+                if lit {
+                    frame.hud_rect(q, qc, PICKED.scale(0.18));
+                }
+                let col = if lit || inside((q, qc), interior.cursor) { PICKED } else { LABEL.scale(0.75) };
+                let name: String = st.name.chars().take(24).collect();
+                frame.text_scaled(Vec2::new(q.x + 4.0, q.y + 2.0), &name, col, 0.6);
+                let figures = format!("{:>5.1} {:>5.0} MPA", st.per_metre, st.material.yield_strength / 1e6);
+                frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
+            }
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 146.0), "LOAD CASE SHOWN", LABEL.scale(0.7), 0.6);
+            for (r, name, a) in panel_buttons(Tool::Frame) {
+                let lamp = if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) { Lamp::On } else { Lamp::Off };
+                let off = a == Action::Remove && interior.beam_pick.is_none();
+                draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
+            }
+            let bearing = interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan).map(|(_, b)| b.clone());
+            let mut y = p.y + 180.0;
+            match &bearing {
+                _ if plan.beams.is_empty() => {
+                    frame.text_scaled(Vec2::new(p.x + 8.0, y), "NO MEMBERS YET", LABEL.scale(0.7), 0.65);
+                }
+                None => {
+                    frame.text_scaled(Vec2::new(p.x + 8.0, y), "WORKING IT OUT...", PICKED, 0.65);
+                }
+                Some(b) => {
+                    for (k, (name, result)) in b.cases.iter().enumerate() {
+                        let felt = b.felt.get(k).copied().unwrap_or(0.0) / STANDARD_G;
+                        let (text, col) = match result {
+                            Ok(c) => {
+                                let o = &c.members;
+                                let worst = o.iter().map(|o| o.work.design).fold(0.0, f64::max);
+                                let broken = o.iter().filter(|o| o.broken.is_some()).count();
+                                let col = if broken > 0 { CLASH } else if worst > 1.0 { Color([1.0, 0.65, 0.2, 1.0]) } else { Color([0.4, 1.0, 0.5, 1.0]) };
+                                let what = match (broken, c.falls_apart) {
+                                    (_, true) => format!("{broken} BREAK, IT FALLS APART"),
+                                    (0, _) => format!("WORST AT {:.0}% OF ITS LIMIT", worst * 100.0),
+                                    _ => format!("{broken} BREAK"),
+                                };
+                                (format!("{name} {felt:.1} G: {what}"), col)
+                            }
+                            Err(e) => (format!("{name}: {e}"), CLASH),
+                        };
+                        frame.text_scaled(Vec2::new(p.x + 8.0, y), &text, col, 0.6);
+                        y += 11.0;
+                    }
+                    y += 3.0;
+                    for l in b.loose.iter().take(5) {
+                        frame.text_scaled(Vec2::new(p.x + 8.0, y), l, CLASH.scale(0.9), 0.6);
+                        y += 11.0;
+                    }
+                    frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 294.0), &format!("{} MEMBERS, {} JOINTS, {:.2} T", plan.beams.len(), b.joints.len(), b.mass / 1000.0), Color([0.4, 1.0, 0.5, 1.0]), 0.65);
+                }
+            }
         }
         // MODULES: the fit, a row each (placed: a mark; red: it clashes), what's
         // placed of it, the picked one's size.
@@ -3111,7 +3609,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             }
         }
         // (Else: the picked line, the cross-section, the tool's actions.)
-        if interior.tool != Tool::Modules {
+        if !matches!(interior.tool, Tool::Modules | Tool::Frame) {
             let pick = match interior.pick {
                 Some(Hover::Point(k)) => match &plan.points[k].name {
                     Some(n) => format!("PICKED: {n} (THE HULL'S: STAYS)"),
@@ -3153,7 +3651,7 @@ pub fn draw(frame: &mut Frame, app: &App, place: &str, interior: &Interior) {
             let what = match interior.tool {
                 Tool::Look => "THE PICKED LINE'S CROSS-SECTION",
                 Tool::Door => "NEW HATCHES: SHAPE, SIZE, SLIDE",
-                Tool::Path | Tool::Modules => "NEW LINES' CROSS-SECTION",
+                Tool::Path | Tool::Modules | Tool::Frame => "NEW LINES' CROSS-SECTION",
             };
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 162.0), what, LABEL.scale(0.8), 0.7);
             if interior.tool == Tool::Path {
