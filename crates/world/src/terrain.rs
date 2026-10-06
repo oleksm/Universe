@@ -120,6 +120,15 @@ impl Terrain {
         self.baked.as_ref()?.image(name)
     }
 
+    /// Have the bake's fine tile under `dir` read in the background, if it isn't yet: for a ship
+    /// coming low over it, so the physics finds it ready (the physics reads a tile it lacks on
+    /// the spot, and waits for it).
+    pub fn prefetch(&self, dir: DVec3) {
+        if let Some(h) = &self.baked {
+            let _ = h.at_detail(dir, crate::worlds::Detail::Loaded);
+        }
+    }
+
     /// Is the ground the planet simulation's?
     pub fn baked(&self) -> bool {
         self.baked.is_some()

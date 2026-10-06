@@ -463,6 +463,23 @@ pub fn apply(app: &mut App, name: &str) {
                 }
             }
         }
+        "worlds" => {
+            // The planet studio, gone to UNIVERSE_WORLD (a world id: TRD1 Harvest by default), in
+            // UNIVERSE_LOOK (colour, geology, energy).
+            let mut studio = crate::planet_studio::PlanetStudio::open();
+            let want = std::env::var("UNIVERSE_WORLD").unwrap_or_else(|_| "TRD1".into());
+            studio.selected = studio.list.iter().position(|r| r.world_id == want).unwrap_or(0);
+            app.world_look = match std::env::var("UNIVERSE_LOOK").as_deref() {
+                Ok("geology") => crate::planet_studio::Look::Geology,
+                Ok("energy") => crate::planet_studio::Look::Energy,
+                _ => crate::planet_studio::Look::Colour,
+            };
+            if let Some(r) = studio.list.get(studio.selected).cloned() {
+                let _ = crate::planet_studio::go_to(app, &r);
+            }
+            app.observer.yaw = 2.2;
+            app.planet_studio = Some(studio);
+        }
         "rig" => {
             // Hadley Orbital Works, a rig with no model: its box, from a little way off.
             if let Some(rig) = sys.bodies.iter().position(|b| b.kind == BodyKind::Rig) {
