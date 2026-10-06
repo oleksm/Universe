@@ -374,6 +374,17 @@ impl Bake {
         })
     }
 
+    /// A released world's surface package, as the store's index names it and checked against
+    /// the index's hash: for a world that isn't one of the game's (the planet studio). None: it
+    /// has no surface.
+    pub fn release(r: &Release) -> Option<Result<Bake, String>> {
+        let (folder, sha) = r.surface_package.as_ref()?;
+        Some(match store() {
+            None => Err("no worlds store (set UNIVERSE_WORLDS)".into()),
+            Some(store) => Package::open(store.join("worlds").join(folder), sha).map(|package| Bake { package }),
+        })
+    }
+
     /// File `name` of the bake, checked.
     pub fn read(&self, name: &str) -> Result<Vec<u8>, String> {
         self.package.read(name)
@@ -544,11 +555,21 @@ impl Heights {
     /// Body `key`'s heights, read once per run and shared (None: no bake, or none to be had:
     /// no store here, or not the bake the record names; said once on stderr).
     pub fn of(key: &str) -> Option<std::sync::Arc<Heights>> {
+        Self::shared(key, || Bake::open(key))
+    }
+
+    /// A released world's heights from its surface package (see `Bake::release`), read once per
+    /// run and shared.
+    pub fn of_release(r: &Release) -> Option<std::sync::Arc<Heights>> {
+        Self::shared(&format!("release {} v{}", r.world_id, r.surface.unwrap_or(0)), || Bake::release(r))
+    }
+
+    fn shared(key: &str, open: impl FnOnce() -> Option<Result<Bake, String>>) -> Option<std::sync::Arc<Heights>> {
         static LOADED: std::sync::OnceLock<std::sync::Mutex<HashMap<String, Option<std::sync::Arc<Heights>>>>> = std::sync::OnceLock::new();
         let mut loaded = LOADED.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
         loaded
             .entry(key.to_string())
-            .or_insert_with(|| match Bake::open(key)?.and_then(Heights::read) {
+            .or_insert_with(|| match open()?.and_then(Heights::read) {
                 Ok(h) => Some(std::sync::Arc::new(h)),
                 Err(e) => {
                     eprintln!("{key}: its bake can't be read ({e}); its ground is the seed's");
@@ -893,6 +914,11 @@ pub struct Release {
     pub districts: u64,
     /// Its surface version, if it has one.
     pub surface: Option<u32>,
+    /// Its surface package: the folder under the store's `worlds/` and its manifest's hash.
+    pub surface_package: Option<(String, String)>,
+    /// Its day (s) and its axis's tilt (degrees), where its bake's `world.json` gives them.
+    pub day: Option<f64>,
+    pub tilt: Option<f64>,
 }
 
 /// The worlds in the store (none without a store), current first.
@@ -926,6 +952,9 @@ pub fn releases() -> Vec<Release> {
                         deposits: num(&summary, "deposits") as u64,
                         districts: num(&summary, "districts") as u64,
                         surface: surface.as_ref().and_then(|s| s.get("version")).and_then(|v| v.as_u64()).map(|v| v as u32),
+                        surface_package: surface.as_ref().and_then(|s| Some((folder(s)?, s.get("manifest_sha256")?.as_str()?.to_string()))),
+                        day: world.as_ref().and_then(|w| w.get("day_hours")).and_then(|d| d.as_f64()).map(|h| h * 3600.0),
+                        tilt: world.as_ref().and_then(|w| w.get("tilt_deg")).and_then(|d| d.as_f64()),
                         world_id: id,
                     })
                 })

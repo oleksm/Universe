@@ -221,7 +221,7 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     frame.clear = Color([c(0), c(1), c(2), 1.0]);
     // (A world grown with its own air: its sky is the air's light itself, drawn behind everything
     // (`fs_air_sky`), on black.)
-    if app.world_maps.get(&(app.view.origin, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
+    if app.world_maps.get(&(app.view.cache, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
     {
         frame.clear = Color::BLACK;
     }
@@ -492,12 +492,12 @@ fn bodies(frame: &mut Frame, app: &App) {
     let near = app
         .world_maps
         .iter()
-        .filter(|((o, _), _)| *o == app.view.origin)
+        .filter(|((o, _), _)| *o == app.view.cache)
         .filter_map(|((_, i), m)| Some((*i, m.lock().ok()?.clone()?)))
         .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
         .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
     if let Some((i, maps)) = near
-        && let Some((_, _, map)) = app.globes.get(&(app.view.origin, i))
+        && let Some((_, _, map)) = app.globes.get(&(app.view.cache, i))
     {
         if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
             frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
@@ -553,7 +553,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some((full, coarse, map)) = app.globes.get(&(app.view.origin, i)) {
+        if let Some((full, coarse, map)) = app.globes.get(&(app.view.cache, i)) {
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: from afar its globe; near, its ground as patches
@@ -561,7 +561,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             if near {
                 universe_prof::time("draw/scene/bodies/ground", || {
-                    app.terrain_lod.borrow_mut().draw(frame, app.view.origin, &app.view.system, i, map, center, b.rotation(t), cam, c);
+                    app.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
                 });
             } else {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;

@@ -1,6 +1,9 @@
 //! The planet studio (WORLDS): every world the planet simulation has released (the worlds store's
 //! index), the game's or not, and one looked at in the observer's orbit with its ground, air and
-//! clouds as the game draws them (`docs/planet-studio-plan.md`). Up and down pick a world, ENTER
+//! clouds as the game draws them (`docs/planet-studio-plan.md`). A world that isn't one of the
+//! game's is shown alone: a system of its own for the view (the sim never sees it), the system's
+//! star and the world, its radius, day and tilt as the store gives them, its ground from its
+//! release, the rest (its air) as the world it is shaped from. Up and down pick a world, ENTER
 //! goes to it, L changes the look (its true colour, its rock, its oil and gas), ESC closes. The
 //! wheel and a drag turn and zoom as in the observer.
 
@@ -64,14 +67,71 @@ impl PlanetStudio {
     }
 }
 
-/// Go to world `r`: the observer round its body (the game's), at a few of its radii.
+/// Go to world `r`: the observer round its body (the game's, or one of its own: see `alone`),
+/// at a few of its radii.
 pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
-    let key = r.body.as_deref().ok_or("NOT ONE OF THE GAME'S WORLDS (YET)")?;
+    app.studio_world = None;
+    let Some(key) = r.body.as_deref() else {
+        let sys = alone(app, r)?;
+        let radius = sys.bodies[1].rail.radius;
+        app.studio_world = Some(std::sync::Arc::new(sys));
+        app.mode = crate::Mode::Observer;
+        app.observer.focus = crate::observer::Focus::Body { system: app.view.origin, body: 1 };
+        app.observer.distance = radius * 3.0;
+        return Ok(());
+    };
     let body = app.view.system.bodies.iter().position(|b| b.key == key).ok_or("NOT IN THE SYSTEM IN VIEW")?;
     app.mode = crate::Mode::Observer;
     app.observer.focus = crate::observer::Focus::Body { system: app.view.origin, body };
     app.observer.distance = app.view.system.bodies[body].rail.radius * 3.0;
     Ok(())
+}
+
+/// A system for the view alone: the star of the system in view and world `r` round it, shaped
+/// from the system's first baked world with air (its orbit, its air), its ground `r`'s release.
+fn alone(app: &App, r: &Release) -> Result<universe_sim::world::system::StarSystem, String> {
+    use universe_sim::world::system::StarSystem;
+    use universe_sim::world::terrain::{Terrain, TerrainKind};
+    let home = app.charts.system(app.view.origin);
+    let like = home.bodies.iter().find(|b| b.terrain.as_ref().is_some_and(|t| t.baked()) && b.rail.atmosphere.is_some()).ok_or("NO BAKED WORLD HERE TO SHAPE IT FROM")?;
+    let heights = universe_sim::world::worlds::Heights::of_release(r).ok_or("ITS SURFACE CAN'T BE READ")?;
+    let mut world = like.clone();
+    world.key = format!("studio.{}", r.world_id);
+    world.name = r.name.clone();
+    if r.radius > 0.0 {
+        // (Its mass as the shaping world's density gives it: for the view, nothing pulls.)
+        let k = (r.radius / like.rail.radius).powi(3);
+        world.rail.radius = r.radius;
+        world.rail.mu *= k;
+        world.mass *= k;
+    }
+    world.rail.parent = Some(0);
+    world.rail.pulled_by.clear();
+    if let Some(day) = r.day {
+        world.rail.day = day;
+    }
+    if let Some(tilt) = r.tilt {
+        world.rail.tilt = universe_engine::glam::DQuat::from_rotation_z(tilt.to_radians());
+    }
+    let mut ground = Terrain::new(TerrainKind::Terran, world.rail.radius, 0);
+    ground.bake(heights);
+    world.terrain = Some(ground);
+    // (The star without its own planets' pull on it.)
+    let mut star = home.bodies[0].clone();
+    star.rail.pulled_by.clear();
+    Ok(StarSystem {
+        index: home.index,
+        name: home.name.clone(),
+        class: home.class,
+        luminosity: home.luminosity,
+        bodies: vec![star, world],
+        spaceports: Vec::new(),
+        fields: Vec::new(),
+        small: 0..0,
+        belts: Vec::new(),
+        belt_seed: 0,
+        patches: Default::default(),
+    })
 }
 
 /// Keys while open. False when it should close.
