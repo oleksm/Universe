@@ -67,6 +67,10 @@ struct Globals {
 @group(2) @binding(13) var world_ce: texture_2d<f32>;
 @group(2) @binding(14) var world_ca: texture_2d<f32>;
 @group(2) @binding(15) var<uniform> world_clouds: Clouds;
+// Its clouds cached (see cloudcache.rs): the levels' frames and fades, the copy now and the one before.
+@group(2) @binding(16) var<uniform> world_cc: CloudCache;
+@group(2) @binding(17) var world_cct: texture_2d_array<f32>;
+@group(2) @binding(18) var world_cct_old: texture_2d_array<f32>;
 
 fn world_turn() -> mat3x3<f32> {
     return mat3x3<f32>(g.world_to_body[0].xyz, g.world_to_body[1].xyz, g.world_to_body[2].xyz);
@@ -77,7 +81,7 @@ fn world_clouds_over(c: vec3<f32>, d: vec3<f32>, t_end: f32, sun_dir: vec3<f32>,
     if (world_air.on < 0.5 || world_clouds.on < 0.5) {
         return c;
     }
-    return clouds_over(c, vec3<f32>(0.0), d, t_end, g.world_at.xyz, world_turn(), sun_dir, sun, g.view.x, world_clouds, world_air, world_cm, world_ce, world_ca, world_air_t, world_air_ms, world_air_smp);
+    return clouds_over_cached(c, vec3<f32>(0.0), d, t_end, g.world_at.xyz, world_turn(), sun_dir, sun, g.view.x, world_clouds, world_air, world_cm, world_ce, world_ca, world_air_t, world_air_ms, world_air_smp, world_cc, world_cct, world_cct_old, world_air_smp);
 }
 
 // The bound world's air on the ground and its sky: by its tables where it has them.
@@ -640,7 +644,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         sun = max(dot(n, in.sun_dir), 0.0) * in.sun_light;
         // (The bound world's clouds shading its ground.)
         if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5 && world_clouds.on > 0.5) {
-            sun *= clouds_shadow(in.at, g.world_at.xyz, world_turn(), in.sun_dir, pixel * 0.001, world_clouds, world_air, world_cm, world_ce, world_ca);
+            sun *= clouds_shadow_cached(in.at, g.world_at.xyz, world_turn(), in.sun_dir, pixel * 0.001, world_clouds, world_air, world_cm, world_ce, world_ca, world_cc, world_cct, world_cct_old, world_air_smp);
         }
     }
     let light = min(sun * seen + in.fill, vec3<f32>(4.0));

@@ -9,10 +9,12 @@
 @group(0) @binding(3) var cc_cm: texture_2d<f32>;
 @group(0) @binding(4) var cc_ce: texture_2d<f32>;
 @group(0) @binding(5) var cc_ca: texture_2d<f32>;
+// The first layer this dispatch fills (x): the engine fills a few layers a frame.
+@group(0) @binding(6) var<uniform> cc_layer0: vec4<u32>;
 
 @compute @workgroup_size(8, 8, 1)
 fn cloud_cache_fill(@builtin(global_invocation_id) id: vec3<u32>) {
-    let layer = i32(id.z);
+    let layer = i32(id.z + cc_layer0.x);
     let level = layer / 3;
     let shell = layer % 3;
     if (i32(id.x) >= CC_N || i32(id.y) >= CC_N || level >= CC_LEVELS) {
