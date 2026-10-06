@@ -4,6 +4,7 @@ identity:
   name: "Chemical waste"
   kind: by-product
   description: "Spent solvents, salts and broth: what fine chemistry leaves, many times the weight of what it makes."
+waste: true
 physical:
   bulk_density: 1100
 basis:

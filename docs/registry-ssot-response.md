@@ -988,3 +988,20 @@ need, how long all its people live on it, where it lies with shares). Treistun: 
 90 of medicine for all 220,000, half at Eikir and half at Nacaubun. **For the game:** the reserve is
 law like zoning: breakable, a breach recorded, released by the administration; the resupply
 interval is what a port's contracts should be sized to; air and water are outside it (made locally).
+
+**Your open asks (2026-10-06).**
+
+1. **The MC-07's five empty parts** are no longer parts: they are the MC-07's own products, fitted
+   to its slots, built of the parts you measured from the model (moved whole, re-coded MGF/MGR/MCR/
+   MAC/MML): `equipment.gear.mc07.front` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
+   where its 150 × 10 strut buckles), `equipment.access.mc07.cargo.ramp`, `equipment.access.mc07.anchor.clamp`
+   (two access slots), `equipment.laser.mc07.mining` (both hardpoints; the pulse laser's beam
+   figures as a stand-in, priced the same in prices.ron as a placeholder). `world::legs::reckon` now
+   also takes fitted landing gear (`EquipmentFunction::LandingGear`) beside hull parts, so the
+   MC-07's legs reckon as before.
+2. **`waste: true`** on 13 goods (slag, red mud, dross, dust, tailings, waste rock, waste water,
+   sewage sludge, chemical, Solvay and textile waste, wool scourings, carbon dioxide). The market
+   may refuse them and a place charge to take them; what takes them in is a taker.
+3. `built_of.parts` on hulls already exists (the MC-07 names its folder).
+4. Setups: left to the yard's operator, as you allowed.
+5. The gate's holding power: still the user's.

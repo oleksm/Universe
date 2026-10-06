@@ -4,6 +4,7 @@ identity:
   name: "Wool scourings"
   kind: by-product
   description: "What is washed out of raw wool: grease and dirt."
+waste: true
 physical:
   bulk_density: 900
 basis:

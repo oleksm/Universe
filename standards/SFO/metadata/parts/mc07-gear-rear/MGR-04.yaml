@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
+# it is cut from.
+identity:
+  key: part.mgr-04
+  code: MGR-04
+  name: "Actuator body"
+  revision: draft
+  drawing: "assets/models/mc07.glb: Gear_RL_ActBody"
+physical:
+  mass: 127
+  length: 1.85
+  width: 0.52
+  height: 1.4
+  shock_limit: 490.3325
+shape:
+  surface_area: 4.5
+made_from:
+  - item: stock.st4340-tb-200x15
+    quantity: 151.9271851
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
+  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

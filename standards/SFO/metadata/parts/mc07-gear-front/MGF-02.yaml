@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
+# it is cut from.
+identity:
+  key: part.mgf-02
+  code: MGF-02
+  name: "Piston"
+  revision: draft
+  drawing: "assets/models/mc07.glb: Gear_FL_Piston"
+physical:
+  mass: 93
+  length: 0.7
+  width: 0.7
+  height: 3.42
+  shock_limit: 490.3325
+shape:
+  surface_area: 9.7
+made_from:
+  - item: stock.st4340-tb-120x10
+    quantity: 111.2233755
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+limits:
+  load_case: landing
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
+  - { of: [made_from], tier: derived, note: "Its tube sized for the landing (see the structure report). The fifth more that is machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
