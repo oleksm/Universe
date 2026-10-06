@@ -20,7 +20,8 @@ pub enum Slot {
     Climate,
     /// Its rock map (each texel a rock unit's number, read exactly).
     Rock,
-    /// The sea's calmness (the bake's globe_spec: 1 − wind / 9 m/s, 0.35..1).
+    /// The sea's calmness (the bake's globe_spec: 1 − wind / 9 m/s, 0.35..1, on open water;
+    /// 0 on land and on sea ice).
     Spec,
 }
 

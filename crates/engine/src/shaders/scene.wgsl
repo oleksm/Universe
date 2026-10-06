@@ -636,7 +636,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // in with the maps.
     if (in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5 && land < 0.5) {
         let calm = textureSampleLevel(world_spec, world_soft, world_uv(dir), world_lod(textureDimensions(world_spec).x, footprint));
-        if (calm.a > 0.5) {
+        // (Open water only: the map is 0 on land and on sea ice, and 0.35..1 on open water. A
+        // one-channel map reads alpha 1 everywhere, so not that.)
+        if (calm.r > 0.1) {
             let up = normalize(in.up);
             var si: SeaIn;
             si.depth_m = max(-ground.r * in.globe.z, 0.5);
