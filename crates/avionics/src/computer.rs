@@ -61,7 +61,7 @@ pub fn autopilot(input: &AutopilotInput) -> Command {
             gate::autopilot(&frame, ship, phase, may_enter, h)
         }
         // (No clearance there, so no autopilot: hands off.)
-        NavTarget::Asteroid(_) => Command { controls: Default::default(), throttle: 0.0, rcs: DVec3::ZERO, phase, attitude: ship.orientation },
+        NavTarget::Asteroid(_) | NavTarget::Rig(_) => Command { controls: Default::default(), throttle: 0.0, rcs: DVec3::ZERO, phase, attitude: ship.orientation },
     }
 }
 
@@ -81,7 +81,7 @@ fn hold_for_corridor(sys: &StarSystem, ship: &Ship, target: NavTarget, slot: usi
             let (side, _) = f.side(ship.position);
             (f.center, f.axis() * side, f.velocity, gate::APPROACH_DISTANCE)
         }
-        NavTarget::Station(_) | NavTarget::Spaceport(_) | NavTarget::Asteroid(_) => return None,
+        NavTarget::Station(_) | NavTarget::Spaceport(_) | NavTarget::Asteroid(_) | NavTarget::Rig(_) => return None,
     };
     let across = axis.any_orthonormal_vector();
     // Two rings of twelve, the outer one a little further out.

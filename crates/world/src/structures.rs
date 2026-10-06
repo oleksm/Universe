@@ -39,6 +39,23 @@ pub fn rules(galaxy: &Galaxy, sys: &StarSystem) -> Rules {
                 // Lift off the deck along its normal.
                 r.set_release(i, Release::LiftOff { speed: 3.0, lift: 2.0, up: Some(DVec3::Y), says: ShipEvent::Launched { station: name.clone() } });
             }
+            BodyKind::Rig => {
+                // (Alongside: on its top, slowly; its sides bounce a ship off.)
+                let top = crate::rigs::half(b).map_or(0.0, |h| h.y);
+                r.set(
+                    i,
+                    Part::Deck,
+                    Rule::Lock {
+                        name: format!("{name} top"),
+                        max_speed: DECK_SPEED,
+                        pose: Pose::Top(top),
+                        says: Says::Always(ShipEvent::Landed { body: name.clone(), station: true }),
+                        otherwise: name.clone(),
+                    },
+                );
+                r.set(i, Part::Hull, Rule::Bounce { name: format!("{name} hull"), max_speed: BUMP_SPEED, otherwise: name.clone() });
+                r.set_release(i, Release::LiftOff { speed: 3.0, lift: 2.0, up: Some(DVec3::Y), says: ShipEvent::Launched { station: name.clone() } });
+            }
             BodyKind::Gate => {
                 let to = b.link.unwrap_or(sys.index);
                 let says = ShipEvent::GateEntered { to: star_name(galaxy.stars[to].seed) };

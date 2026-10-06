@@ -65,6 +65,9 @@ pub enum Rule {
 pub enum Pose {
     /// Where it touched a structure's deck, belly down, heading as it was.
     Deck,
+    /// Where it touched the top of a box `top` m above its centre (a rig's),
+    /// belly down, heading as it was.
+    Top(f64),
     /// Where it touched the ground, belly down.
     Ground,
 }
@@ -153,6 +156,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             }
             let held = match *pose {
                 Pose::Deck => (speed < *max_speed).then(|| (crate::station::rest(c.local, ship.rest_height()), upright(rot * DVec3::Y, ship.forward()))),
+                Pose::Top(top) => (speed < *max_speed).then(|| (DVec3::new(c.local.x, top + ship.rest_height(), c.local.z), upright(rot * DVec3::Y, ship.forward()))),
                 Pose::Ground => (speed < *max_speed).then(|| (c.local * (b.surface_radius(c.local) + ship.rest_height()), upright(c.normal, ship.forward()))),
             };
             match held {

@@ -45,7 +45,7 @@ pub(crate) fn activity(craft: &Craft) -> &'static str {
             Some(NavTarget::Station(_)) => "DOCKING",
             Some(NavTarget::Spaceport(_)) => "LANDING",
             Some(NavTarget::Gate(_)) => "GATE RUN",
-            Some(NavTarget::Asteroid(_)) => "UNDERWAY",
+            Some(NavTarget::Asteroid(_)) | Some(NavTarget::Rig(_)) => "UNDERWAY",
             None => "UNDERWAY",
         },
     }

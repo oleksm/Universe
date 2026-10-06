@@ -75,7 +75,7 @@ pub fn offer(seed: u64, links: &[(usize, usize)], system: usize, station: Facili
     let hops = if m.brand.is_empty() { 0 } else { brand_home(&m.brand).and_then(|home| hops(links, home, system)).unwrap_or(12) };
     let chance = if hops == 0 { 1.0 } else { CARRIED_PER_HOP.powi(hops as i32).max(CARRIED_FAR) };
     let key = match station {
-        Facility::Station(i) | Facility::Spaceport(i) | Facility::Gate(i) | Facility::Asteroid(i) => i as u64,
+        Facility::Station(i) | Facility::Spaceport(i) | Facility::Gate(i) | Facility::Asteroid(i) | Facility::Rig(i) => i as u64,
     };
     let mut rng = Rng::new(mix(mix(seed, 0x0f17_7e45 + system as u64), key ^ hash(&m.key)));
     Offer { carried: rng.range(0.0, 1.0) < chance, price: m.price * (1.0 + MARKUP_PER_HOP * hops as f64), hops }

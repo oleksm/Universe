@@ -46,7 +46,7 @@ const LOCAL_FRAME_RADII: f64 = 10.0;
 /// What a hyperdrive arrival at `target` is announced as.
 fn arrival_name(sys: &StarSystem, target: NavTarget) -> String {
     match target {
-        NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies[b].name.clone(),
+        NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Rig(b) => sys.bodies[b].name.clone(),
         NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
         NavTarget::Asteroid(_) => target.name(sys),
     }
@@ -55,8 +55,8 @@ fn arrival_name(sys: &StarSystem, target: NavTarget) -> String {
 /// Hyperdrive destination for the nav target, if it's in this system (ship at `ship_pos`, bodies at `positions` at `t`).
 pub fn aim(sys: &StarSystem, target: NavTarget, t: f64, positions: &[DVec3], ship_pos: DVec3) -> Option<HyperAim> {
     match target {
-        NavTarget::Station(b) => {
-            let body = sys.bodies.get(b).filter(|body| body.kind == BodyKind::Station)?;
+        NavTarget::Station(b) | NavTarget::Rig(b) => {
+            let body = sys.bodies.get(b).filter(|body| matches!(body.kind, BodyKind::Station | BodyKind::Rig))?;
             let at = positions[b];
             Some(HyperAim {
                 target: at,

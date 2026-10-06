@@ -30,6 +30,9 @@ pub enum Facility {
     /// Index into the system's bodies (an asteroid field's remnant): no one
     /// controls traffic there.
     Asteroid(usize),
+    /// Index into the system's bodies (a rig, see `rigs`): no traffic control;
+    /// a ship comes alongside by hand.
+    Rig(usize),
 }
 
 impl Facility {
@@ -39,7 +42,7 @@ impl Facility {
             Facility::Station(_) => Some(ClearanceKind::Dock),
             Facility::Spaceport(_) => Some(ClearanceKind::Land),
             Facility::Gate(_) => Some(ClearanceKind::Transit),
-            Facility::Asteroid(_) => None,
+            Facility::Asteroid(_) | Facility::Rig(_) => None,
         }
     }
 
@@ -50,6 +53,7 @@ impl Facility {
             Facility::Spaceport(p) => sys.spaceports.get(p).map_or_else(String::new, |p| format!("{} ({})", p.name, sys.bodies[p.body].name)),
             Facility::Gate(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
             Facility::Asteroid(b) => sys.fields.iter().find(|f| f.body == b).map_or_else(String::new, |f| f.name.clone()),
+            Facility::Rig(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
         }
     }
 
@@ -63,6 +67,7 @@ impl Facility {
             }
             Facility::Gate(b) => (sys.bodies.get(b)?.kind == BodyKind::Gate).then(|| positions[b]),
             Facility::Asteroid(b) => sys.bodies.get(b)?.kind.is_rock().then(|| positions[b]),
+            Facility::Rig(b) => (sys.bodies.get(b)?.kind == BodyKind::Rig).then(|| positions[b]),
         }
     }
 
@@ -72,7 +77,7 @@ impl Facility {
             Facility::Station(_) => DOCK_RANGE,
             Facility::Spaceport(p) => sys.bodies[sys.spaceports[p].body].rail.radius * LAND_RANGE_RADII,
             Facility::Gate(_) => TRANSIT_RANGE,
-            Facility::Asteroid(_) => 0.0,
+            Facility::Asteroid(_) | Facility::Rig(_) => 0.0,
         }
     }
 }
@@ -84,11 +89,15 @@ pub fn docked_at(sys: &StarSystem, ship: &Ship) -> Option<Facility> {
     if sys.bodies[body].kind == BodyKind::Station {
         return Some(Facility::Station(body));
     }
+    if sys.bodies[body].kind == BodyKind::Rig {
+        return Some(Facility::Rig(body));
+    }
     sys.port_at(body, local_position.normalize()).map(Facility::Spaceport)
 }
 
 /// Every market place in a star system: its stations and spaceports.
 pub fn facilities(sys: &StarSystem) -> Vec<Facility> {
     let stations = sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == BodyKind::Station).map(|(i, _)| Facility::Station(i));
-    stations.chain((0..sys.spaceports.len()).map(Facility::Spaceport)).collect()
+    let rigs = sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == BodyKind::Rig).map(|(i, _)| Facility::Rig(i));
+    stations.chain((0..sys.spaceports.len()).map(Facility::Spaceport)).chain(rigs).collect()
 }

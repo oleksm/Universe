@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-pub const SCENARIOS: &str = "system showcase watch rawland inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam beltpick beltrock beltmining";
+pub const SCENARIOS: &str = "system showcase watch rawland inner planet giant rings galaxy neighbours cockpit hyper landed cleared approach offcourse autodock docked lost navmap landing padview autoland holding touchdown gate gateauto transit gatearrive network lowflight moon routemap route traffic follow radar contacts gunnery aboard outside collision pirates market navzoom economyheard enemy newsdesk newsticker marketnear marketfar netmap trades noon dusk night sun sam beltpick beltrock beltmining rig";
 
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
@@ -462,6 +462,12 @@ pub fn apply(app: &mut App, name: &str) {
                 for _ in 0..60 * 60 {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }
+            }
+        }
+        "rig" => {
+            // Hadley Orbital Works, a rig with no model: its box, from a little way off.
+            if let Some(rig) = sys.bodies.iter().position(|b| b.kind == BodyKind::Rig) {
+                observe(app, rig, 1400.0, 0.35);
             }
         }
         "beltpick" | "beltrock" | "beltmining" => {
