@@ -123,6 +123,8 @@ The last installed index is remembered in `standards/Celestial/surveys/.installe
 | `districts.json` | each district: ID, kind, its deposits, extent | the map's district layer; the land register's unit for a mining licence |
 | `energy/fields.geojson`, `basins.json`, `coalfields.json` | fields (oil or gas, in-place amounts, depth, trap, water depth), basins, coalfields (rank, area) | a well or a coal mine sits on a field's or coalfield's `id`; a map layer |
 | the surface bake (`bake.path` in the worlds store) | 5 km and 600 m height tiles, rivers, textures, geology and energy layers, peaks, the world's report | the ground to fly over and land on; the globe; the map layers |
+| the bake's `fz.json` (the 600 m tiles' index), field `bounds` | `{"<face>/<x>/<y>": [min_m, max_m]}` for every tile in `tiles`: the absolute heights (m above the sea) of the ground as the client rebuilds it (the 5 km map read bilinearly plus the tile's 16-bit difference, half-metre steps), min floored and max ceiled to whole metres; the highest bound equals the world's highest peak (Harvest 8,920 m). In the lab's bakes from 2026-10-06 on; absent in surface v1 of TRD1 and TRB1, and absent means unknown | culling: skip a tile whose bounds lie out of view or below the sea |
+| coming: sparse ~150 m tiles (cube level 6, the same naming and encoding, each a difference from the 600 m ground) | | a third height level, when the game reads one |
 
 Coordinates: longitude, latitude in degrees on the body's sphere; the rock map's x is longitude
 −180 → 180 left to right, y is latitude 90 → −90 top to bottom.
