@@ -298,6 +298,104 @@ fn cl_sphere(o: vec3<f32>, d: vec3<f32>, rs: f32) -> vec2<f32> {
     return vec2<f32>(-b - s, -b + s);
 }
 
+// --- The low clouds as volumes, near the eye ------------------------------------------------------
+// Within VOL_RANGE of the eye, while it is within VOL_NEAR of their layer, the low clouds are
+// marched as volumes (Schneider 2015's way, on the same fields): where the coverage says cloud, a
+// column from the condensation level up to its top (cumulus 0.5–1.5 km deep where the cover is
+// low, stratocumulus 0.3–0.4 km where high; its thickness the column's), flat-based, round-topped,
+// its edges eroded by 3D noise into billows; extinction so the column's optical depth is the
+// sheet's. Light: the sun through the cloud above each point (Beer), with a few octaves of
+// multiple scattering (Wrenninge 2013: each fainter, wider, less forward), a two-lobed phase
+// (forward 0.8, back −0.3), and the sky's light, dimmer toward the base. Beyond, the sheet, the two
+// crossfaded over the range's last 40%.
+const VOL_RANGE_M: f32 = 30000.0;
+const VOL_NEAR_M: f32 = 6000.0;
+const VOL_STEPS: i32 = 48;
+
+fn cl_hg(c: f32, g: f32) -> f32 {
+    return (1.0 - g * g) / (4.0 * 3.1415927 * pow(max(1.0 + g * g - 2.0 * g * c, 1e-4), 1.5));
+}
+
+// A low cloud's depth (m) by its cover: cumulus deep, stratocumulus thin.
+fn cl_depth_m(frac_low: f32) -> f32 {
+    return mix(1500.0, 400.0, clamp((frac_low - 0.35) / 0.3, 0.0, 1.0));
+}
+
+// The volume's light (premultiplied rgb) and opacity along o + t·d, s0 ≤ t ≤ s1 (o from the world's
+// centre, m), the fields `f` (read once: they vary over ~100 km), faded out toward VOL_RANGE_M.
+fn cl_volume(o: vec3<f32>, d: vec3<f32>, s0: f32, s1: f32, f: CloudField, to_body: mat3x3<f32>, R: f32, t: f32,
+             sun_dir: vec3<f32>, sun: vec3<f32>, sky: vec3<f32>, pixel_angle: f32) -> vec4<f32> {
+    let depth = cl_depth_m(f.frac.x);
+    let base = f.lcl_m;
+    let cos_phase = dot(d, sun_dir);
+    let phase = mix(cl_hg(cos_phase, -0.3), cl_hg(cos_phase, 0.8), 0.7);
+    var acc = vec3<f32>(0.0);
+    var tr = 1.0;
+    // (Steps closer together near the eye; jittered per pixel against banding.)
+    let jit = cl_hash(d * 913.7 + vec3<f32>(t * 0.001));
+    var prev = s0;
+    for (var i = 0; i < VOL_STEPS; i++) {
+        let x = (f32(i) + jit) / f32(VOL_STEPS);
+        let tt = s0 + (s1 - s0) * x * x;
+        let ds = max(tt - prev, 1.0);
+        prev = tt;
+        let p = o + d * tt;
+        let r = length(p);
+        let h = r - R - base;
+        if (h < 0.0 || h > depth) {
+            continue;
+        }
+        let up = p / r;
+        let dir_b = to_body * up;
+        // The column: its cover and thickness from the low shape at this step's own scale.
+        let pix_km = max(tt * pixel_angle, ds) * 0.001;
+        let col = cloud_columns(dir_b, f, R * 0.001, t, pix_km, 1).low;
+        if (col.x <= 0.01) {
+            continue;
+        }
+        let th = clamp(col.y / (2.0 * TAU_LOW), 0.05, 1.0);
+        let top = depth * (0.35 + 0.65 * th);
+        let hr = h / top;
+        if (hr > 1.0) {
+            continue;
+        }
+        // Flat base, round top; billows from 3D noise (~250 m and ~80 m), faded below a pixel.
+        var dens = col.x * smoothstep(0.0, 0.08, hr) * (1.0 - smoothstep(0.55, 1.0, hr));
+        let q = dir_b * (R + h + base) * 0.001;
+        let b1 = cl_value(q / 0.25) * clamp(250.0 / (pix_km * 1500.0) - 1.0, 0.0, 1.0);
+        let b2 = cl_value(q / 0.08 + vec3<f32>(7.1)) * clamp(80.0 / (pix_km * 1500.0) - 1.0, 0.0, 1.0);
+        dens = clamp(dens - (0.45 * b1 + 0.2 * b2) * (1.0 - dens * 0.6), 0.0, 1.0);
+        if (dens <= 0.0) {
+            continue;
+        }
+        // Extinction: the column's optical depth spread over its height.
+        let sigma = dens * 2.0 * TAU_LOW * th / top;
+        let fade = 1.0 - smoothstep(0.6 * VOL_RANGE_M, VOL_RANGE_M, tt);
+        let sg = sigma * fade;
+        // The sun through the cloud above, toward it.
+        let mu_s = dot(up, sun_dir);
+        let tau_s = sigma * (top - h) / max(mu_s, 0.1);
+        var ms = 0.0;
+        var a_ = 1.0;
+        var b_ = 1.0;
+        var c_ = 1.0;
+        for (var k = 0; k < 3; k++) {
+            ms += a_ * exp(-b_ * tau_s) * mix(cl_hg(cos_phase, -0.3 * c_), cl_hg(cos_phase, 0.8 * c_), 0.7);
+            a_ *= 0.5;
+            b_ *= 0.4;
+            c_ *= 0.5;
+        }
+        let lit = sun * (ms * 3.1415927) * step(0.0, mu_s) + sky * (0.35 + 0.65 * hr);
+        let st = exp(-sg * ds);
+        acc += tr * lit * (1.0 - st);
+        tr *= st;
+        if (tr < 0.01) {
+            break;
+        }
+    }
+    return vec4<f32>(acc, 1.0 - tr);
+}
+
 // The light along the ray eye + t·d (world frame, m) as far as t_end, with the clouds in front
 // composited over `c`, the light at t_end. `center`: the world's centre (world frame, m);
 // `to_body`: world frame to the world's body-fixed one (its maps'); `sun_dir`, `sun`: as the air's;
@@ -321,9 +419,39 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
     let f0 = cloud_field(to_body * probe, cl, cm, ce, ca);
     var radii = array<f32, 3>(R + f0.lcl_m, R + MID_SHELL_M, R + max(f0.trop_m - 2000.0, 5000.0));
     // Every hit in front of t_end: up to two a shell, sorted near to far.
-    var ts = array<f32, 6>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
-    var ks = array<i32, 6>(0, 0, 0, 0, 0, 0);
+    var ts = array<f32, 8>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    var ks = array<i32, 8>(0, 0, 0, 0, 0, 0, 0, 0);
     var n = 0;
+    // The low layer as a volume near the eye (kind 3: one event at its entry, s0 … s1).
+    let eye_h = length(o) - R;
+    let vol = cl.on > 0.5 && abs(eye_h - f0.lcl_m) < VOL_NEAR_M + cl_depth_m(f0.frac.x) && f0.frac.x > 0.01;
+    var s0 = 0.0;
+    var s1 = 0.0;
+    if (vol) {
+        let lo = cl_sphere(o, d, R + f0.lcl_m);
+        let hi = cl_sphere(o, d, R + f0.lcl_m + cl_depth_m(f0.frac.x));
+        let lim = min(t_end, VOL_RANGE_M);
+        // (The ray's stretch inside the slab between the two spheres, from the eye, as far as lim.)
+        if (eye_h > f0.lcl_m + cl_depth_m(f0.frac.x)) {
+            s0 = max(hi.x, 0.0);
+            s1 = select(hi.y, lo.x, lo.x > 0.0);
+        } else if (eye_h < f0.lcl_m) {
+            s0 = max(lo.y, 0.0);
+            s1 = hi.y;
+        } else {
+            s0 = 0.0;
+            s1 = select(hi.y, lo.x, lo.x > 0.0);
+        }
+        s1 = min(s1, lim);
+        if (hi.x < 0.0 && hi.y < 0.0) {
+            s1 = s0;
+        }
+        if (s1 > s0) {
+            ts[n] = s0;
+            ks[n] = 3;
+            n++;
+        }
+    }
     for (var k = 0; k < 3; k++) {
         let h = cl_sphere(o, d, radii[k]);
         if (h.x > 0.0 && h.x < t_end) {
@@ -363,6 +491,30 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         let mu_v = dot(up, -d);
         let pix_km = max(ts[i] * pixel_angle / max(abs(mu_v), 0.05), 0.001) * 0.001;
         let k = ks[i];
+        if (k == 3) {
+            // The volume, carried to the eye through the air as a whole (at its middle): its light
+            // dimmed by the air's transmission, the air's own light in front of it by its opacity.
+            let v = cl_volume(o, d, s0, s1, f, to_body, R, t, sun_dir, sun, sky_up, pixel_angle);
+            if (v.w > 0.001) {
+                let pm = o + d * (0.5 * (s0 + s1)) + center;
+                let air_in = air_ground_lut(vec3<f32>(0.0), pm, center, sun_dir, sun, a, tl, ml, smp);
+                let air_tr = air_ground_lut(vec3<f32>(1.0), pm, center, sun_dir, sun, a, tl, ml, smp) - air_in;
+                acc += trans * (v.rgb * air_tr + v.w * air_in);
+                trans *= 1.0 - v.w;
+                if (trans < 0.01) {
+                    break;
+                }
+            }
+            continue;
+        }
+        // (The low sheet gives way to the volume over the volume's range.)
+        var keep = 1.0;
+        if (k == 0 && vol) {
+            keep = smoothstep(0.6 * VOL_RANGE_M, VOL_RANGE_M, ts[i]);
+            if (keep <= 0.0) {
+                continue;
+            }
+        }
         let cols = cloud_columns(dir_b, f, R * 0.001, t, pix_km, k + 1);
         var dt = cols.low;
         if (k == 1) {
@@ -376,7 +528,7 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         let mu_s = dot(up, sun_dir);
         let sunside = (mu_v > 0.0) == (mu_s > 0.0);
         let sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
-        let alpha = sheet.w * dt.x;
+        let alpha = sheet.w * dt.x * keep;
         // (The air between the eye and the cloud: its light dimmed and hazed as the ground's.)
         let seen = air_ground_lut(sheet.rgb, p + center, center, sun_dir, sun, a, tl, ml, smp);
         acc += trans * alpha * seen;
