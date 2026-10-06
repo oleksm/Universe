@@ -58,12 +58,12 @@ energy:
   coal_in_place: 2.739e+16
 bake:
   format: "planet-sim-surface/1"
-  version: 4
-  path: "worlds/TRD1/surface/v4"
-  manifest_sha256: "d446d9d9e0d3227257d748058d3a6ee0e0aa83a1dd0db2b09b916292217ba97e"
-  files: 1336
-  bytes: 712848510
-  note: "v4: clouds (clouds.json, clouds_month/enso/air.png: four kinds a month from the world's climate, El Nino index and response; planet-sim stages/clouds.py)"
+  version: 5
+  path: "worlds/TRD1/surface/v5"
+  manifest_sha256: "988a6d20a9cac945b5940605519251ac8ac95f8442bdb79a1247176f98baefca"
+  files: 1337
+  bytes: 783618969
+  note: "v5: mountains: the 600 m tiles eroded under their belt's uplift to steady state, rock-strength slope limits, summits capped by crustal strength (slope median 17 deg, 9% past 30 deg across the highest tiles; v4: 11-12, 0%); the 5 km slope limiter isotropic; clouds format 2 (thin in cold air); world.json radius/day/tilt"
 identity:
   key: body.treistun.treistun-d
   name: Heath D
@@ -78,7 +78,7 @@ identity:
 orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
-  highest: 8920
+  highest: 10378
   rain: 0.676
   temperature_high: 314.2
   temperature_low: 253.4

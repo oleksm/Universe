@@ -88,7 +88,7 @@
 - { record: body.treistun.treistun-b-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "9cbec78a7bdb5783" }
 - { record: body.treistun.treistun-c, at: "2026-10-06T19:16:16Z", status: "", summary: "changed", sha: "8b8e6999223d825b" }
 - { record: body.treistun.treistun-c-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "0eaffd000e8204b5" }
-- { record: body.treistun.treistun-d, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "9da68ddfae8c8fe1" }
+- { record: body.treistun.treistun-d, at: "2026-10-06T19:47:40Z", status: "", summary: "changed: bake, surface", sha: "4001049a009dd488" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "ec03710d2e3a78ae" }
 - { record: body.treistun.treistun-e, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "f6346cfb237c8376" }
 - { record: body.treistun.treistun-f, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "04c06b5d963033fb" }
@@ -1968,7 +1968,7 @@
 - { record: settlement.treistun.treistun-e-station, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "0e8a9155834b61db" }
 - { record: sight.cinder-great-basin, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "ced295b3ce1e6fcd" }
 - { record: sight.drum-rings, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "11166c53e865086e" }
-- { record: sight.heath-spire, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "473da7c4735ecd87" }
+- { record: sight.heath-spire, at: "2026-10-06T19:48:07Z", status: draft, summary: "changed: identity, height, basis", sha: "a8256b0db7284a52" }
 - { record: sight.hoar-horn, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "9d6ff36e2b46dccc" }
 - { record: sight.hoar-ice, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "e0653aceab939943" }
 - { record: standard.sfo.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7b0c226f205b56ac" }
