@@ -308,9 +308,12 @@ fn cl_sphere(o: vec3<f32>, d: vec3<f32>, rs: f32) -> vec2<f32> {
 // multiple scattering (Wrenninge 2013: each fainter, wider, less forward), a two-lobed phase
 // (forward 0.8, back −0.3), and the sky's light, dimmer toward the base. Beyond, the sheet, the two
 // crossfaded over the range's last 40%.
-const VOL_RANGE_M: f32 = 15000.0;
+const VOL_RANGE_M: f32 = 10000.0;
 const VOL_NEAR_M: f32 = 6000.0;
 const VOL_STEPS: i32 = 64;
+// (Off until its shapes pass on screen: bases still ragged, far steps blocky. The sheets draw
+// the low clouds meanwhile.)
+const VOL_ON: bool = false;
 
 fn cl_hg(c: f32, g: f32) -> f32 {
     return (1.0 - g * g) / (4.0 * 3.1415927 * pow(max(1.0 + g * g - 2.0 * g * c, 1e-4), 1.5));
@@ -354,17 +357,21 @@ fn cl_volume(o: vec3<f32>, d: vec3<f32>, s0: f32, s1: f32, f: CloudField, to_bod
             continue;
         }
         let th = clamp(col.y / (2.0 * TAU_LOW), 0.05, 1.0);
-        let top = depth * (0.35 + 0.65 * th);
+        // (Domes: the column as tall as it is thick, low at a cloud's edge, its full depth at the
+        // core; extruded to a fixed height it stood in walls.)
+        let top = depth * clamp(pow(th * 1.4, 0.8), 0.04, 1.0);
         let hr = h / top;
         if (hr > 1.0) {
             continue;
         }
         // Flat base, round top; billows from 3D noise (~250 m and ~80 m), faded below a pixel.
-        var dens = col.x * smoothstep(0.0, 0.08, hr) * (1.0 - smoothstep(0.55, 1.0, hr));
+        var dens = col.x * smoothstep(0.0, 0.03, hr) * (1.0 - smoothstep(0.55, 1.0, hr));
         let q = dir_b * (R + h + base) * 0.001;
         let b1 = cl_value(q / 0.25) * clamp(250.0 / (pix_km * 1500.0) - 1.0, 0.0, 1.0);
         let b2 = cl_value(q / 0.08 + vec3<f32>(7.1)) * clamp(80.0 / (pix_km * 1500.0) - 1.0, 0.0, 1.0);
-        dens = clamp(dens - (0.45 * b1 + 0.2 * b2) * (1.0 - dens * 0.6), 0.0, 1.0);
+        // (Bases flat and sharp at the condensation level, as cumulus are: the billows eat the
+        // sides and tops only.)
+        dens = clamp(dens - (0.45 * b1 + 0.2 * b2) * (1.0 - dens * 0.6) * smoothstep(0.1, 0.4, hr), 0.0, 1.0);
         if (dens <= 0.0) {
             continue;
         }
@@ -428,7 +435,7 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
     var n = 0;
     // The low layer as a volume near the eye (kind 3: one event at its entry, s0 … s1).
     let eye_h = length(o) - R;
-    let vol = cl.on > 0.5 && abs(eye_h - f0.lcl_m) < VOL_NEAR_M + cl_depth_m(f0.frac.x) && f0.frac.x > 0.01;
+    let vol = VOL_ON && cl.on > 0.5 && abs(eye_h - f0.lcl_m) < VOL_NEAR_M + cl_depth_m(f0.frac.x) && f0.frac.x > 0.01;
     var s0 = 0.0;
     var s1 = 0.0;
     if (vol) {
