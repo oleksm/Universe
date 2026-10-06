@@ -22,7 +22,7 @@ struct Globals {
     env_mode: vec4<f32>,
     env_sky: vec4<f32>,
     // x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
-    // are faded in (0..1).
+    // are faded in (0..1); z: 1 where its air's tables are bound.
     view: vec4<f32>,
     // Clip → camera-relative world.
     inv_view_proj: mat4x4<f32>,
@@ -52,6 +52,25 @@ struct Globals {
 @group(2) @binding(7) var<uniform> world_air: Air;
 // The sea's calmness (globe_spec: 1 − wind / 9 m/s).
 @group(2) @binding(8) var world_spec: texture_2d<f32>;
+// Its air's tables (the lab's, air.wgsl's `_lut` entries), where g.view.z is 1, and their sampler.
+@group(2) @binding(9) var world_air_t: texture_2d<f32>;
+@group(2) @binding(10) var world_air_ms: texture_2d<f32>;
+@group(2) @binding(11) var world_air_smp: sampler;
+
+// The bound world's air on the ground and its sky: by its tables where it has them.
+fn world_air_ground(c: vec3<f32>, p: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>) -> vec3<f32> {
+    if (g.view.z > 0.5) {
+        return air_ground_lut(c, p, g.world_at.xyz, sun_dir, sun, world_air, world_air_t, world_air_ms, world_air_smp);
+    }
+    return air_ground(c, p, g.world_at.xyz, sun_dir, sun, world_air);
+}
+
+fn world_air_sky(d: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>) -> vec3<f32> {
+    if (g.view.z > 0.5) {
+        return air_sky_lut(d, g.world_at.xyz, sun_dir, sun, world_air, world_air_t, world_air_ms, world_air_smp);
+    }
+    return air_sky(d, g.world_at.xyz, sun_dir, sun, world_air);
+}
 
 // Where on a world's maps the direction `dir` (its own frame) falls.
 fn world_uv(dir: vec3<f32>) -> vec2<f32> {
@@ -590,8 +609,8 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             si.sun = in.sun_light * seen;
             // (The sky's light along the reflected ray and straight up, as seen from the eye: near
             // the sea, near enough; the lab's tables will look from the water itself.)
-            si.sky = air_sky(reflect(-si.to_eye, up), g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
-            si.down = si.sun * max(dot(up, in.sun_dir), 0.0) + air_sky(up, g.world_at.xyz, in.sun_dir, in.sun_light, world_air) * 1.5707963;
+            si.sky = world_air_sky(reflect(-si.to_eye, up), in.sun_dir, in.sun_light);
+            si.down = si.sun * max(dot(up, in.sun_dir), 0.0) + world_air_sky(up, in.sun_dir, in.sun_light) * 1.5707963;
             si.q = in.micro;
             si.pixel_m = pixel;
             c = mix(c, sea_material(si), g.view.y);
@@ -601,7 +620,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         // The world whose maps are bound, through its own air (the lab's scattering); others
         // through the plain haze.
         if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5) {
-            c = air_ground(c, in.at, g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
+            c = world_air_ground(c, in.at, in.sun_dir, in.sun_light);
         } else {
             c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
         }
@@ -630,7 +649,7 @@ fn fs_air_sky(in: SkyOut) -> @location(0) vec4<f32> {
     let q = g.inv_view_proj * vec4<f32>(in.ndc, 0.5, 1.0);
     let d = normalize(q.xyz / q.w);
     let sun_dir = normalize(g.env_sun.xyz);
-    return vec4<f32>(air_sky(d, g.world_at.xyz, sun_dir, vec3<f32>(g.env_sun.w), world_air), 1.0);
+    return vec4<f32>(world_air_sky(d, sun_dir, vec3<f32>(g.env_sun.w)), 1.0);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {

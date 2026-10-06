@@ -47,7 +47,7 @@ struct Globals {
     env_mode: [f32; 4],
     env_sky: [f32; 4],
     /// x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
-    /// are faded in (0..1).
+    /// are faded in (0..1); z: 1 where its air's tables are bound.
     view: [f32; 4],
     /// Clip → camera-relative world (for a full-screen pass's view directions).
     inv_view_proj: [[f32; 4]; 4],
@@ -163,7 +163,7 @@ impl Globes {
 
 /// A float as a half (IEEE binary16), for globe maps (small values; no
 /// subnormals: those go to zero).
-fn half(x: f32) -> u16 {
+pub(crate) fn half(x: f32) -> u16 {
     let b = x.to_bits();
     let sign = ((b >> 16) & 0x8000) as u16;
     let e = ((b >> 23) & 0xff) as i32 - 127 + 15;
@@ -1086,12 +1086,12 @@ impl Renderer {
             let d = (*c - frame.camera.position).as_vec3();
             [d.x, d.y, d.z, *r as f32]
         });
-        let (world_layer, world_fade) = match &frame.world_maps {
+        let (world_layer, world_fade, world_luts) = match &frame.world_maps {
             Some((maps, globe, _, _)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
-                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade())
+                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
-            None => (0.0, 0.0),
+            None => (0.0, 0.0, 0.0),
         };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
@@ -1116,7 +1116,7 @@ impl Renderer {
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
-            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, 0.0, 0.0],
+            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, world_luts, 0.0],
             inv_view_proj: frame.camera.view_proj(size.x / size.y).inverse().to_cols_array_2d(),
             world_at,
         };

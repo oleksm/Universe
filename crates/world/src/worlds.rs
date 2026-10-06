@@ -382,6 +382,12 @@ pub fn direction(p: LonLat) -> glam::DVec3 {
     glam::DVec3::new(lat.cos() * lon.cos(), lat.sin(), -lat.cos() * lon.sin())
 }
 
+/// The air's tables (see `Heights::air_luts`): (width, height, RGBA floats) each.
+pub struct AirLuts {
+    pub transmittance: (u32, u32, Vec<f32>),
+    pub multiscatter: (u32, u32, Vec<f32>),
+}
+
 /// An equirectangular RGB image (row 0 north, column 0 at −180°), sRGB.
 pub struct Equirect {
     pub width: usize,
@@ -624,6 +630,28 @@ impl Heights {
             oz[0], oz[1], oz[2], f(&["ozone", "peak_m"]).unwrap_or(0.0),
             f(&["ozone", "half_width_m"]).unwrap_or(1.0), f(&["top_m"])?, f(&["planet_radius_m"])?, 1.0,
         ])
+    }
+
+    /// The air's tables from the bake (`air_luts.json`: the lab's, Hillaire 2020): the sun's
+    /// transmittance (256 × 64) and the light of scattering's higher orders (32 × 32, scaled to
+    /// its true size here), RGBA floats row by row. None: none baked. (`UNIVERSE_AIR_LUTS`: a
+    /// folder of them to use instead, to try a world's before its bake has them.)
+    pub fn air_luts(&self) -> Option<AirLuts> {
+        let read = |name: &str| -> Option<Vec<u8>> {
+            match std::env::var_os("UNIVERSE_AIR_LUTS") {
+                Some(dir) => std::fs::read(Path::new(&dir).join(name)).ok(),
+                None => self.bake.read(name).ok(),
+            }
+        };
+        let info: serde_json::Value = serde_json::from_slice(&read("air_luts.json")?).ok()?;
+        let floats = |b: Vec<u8>| -> Vec<f32> { b.chunks_exact(4).map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect() };
+        let dims = |k: &str, rows: &str, cols: &str| Some((info.get(k)?.get(cols)?.as_u64()? as u32, info.get(k)?.get(rows)?.as_u64()? as u32));
+        let (tw, th) = dims("transmittance", "rows_height", "cols_mu")?;
+        let (mw, mh) = dims("multiscatter", "rows_height", "cols_mu_sun")?;
+        let scale = info.get("multiscatter")?.get("scale").and_then(serde_json::Value::as_f64).unwrap_or(1.0) as f32;
+        let transmittance = floats(read("air_transmittance.rgba32f")?);
+        let multiscatter: Vec<f32> = floats(read("air_multiscatter.rgba32f")?).into_iter().map(|v| v * scale).collect();
+        (transmittance.len() == (tw * th * 4) as usize && multiscatter.len() == (mw * mh * 4) as usize).then_some(AirLuts { transmittance: (tw, th, transmittance), multiscatter: (mw, mh, multiscatter) })
     }
 
     /// The world's true colour from its bake (`globe_color.jpg`: equirectangular, as the 5 km

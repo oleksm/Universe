@@ -1123,7 +1123,8 @@ impl App {
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     let img = |name: &str| t.bake_image(name).map(|(w, h, rgba)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba });
-                    let maps = universe_engine::WorldMaps::new([img("globe_color.jpg"), img("globe_ground.jpg"), img("globe_normal.jpg"), img("climate.png"), img("rockid.png"), img("globe_spec.png")], t.bake_air());
+                    let maps = universe_engine::WorldMaps::new([img("globe_color.jpg"), img("globe_ground.jpg"), img("globe_normal.jpg"), img("climate.png"), img("rockid.png"), img("globe_spec.png")], t.bake_air())
+                        .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
                     log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
                     if let Ok(mut s) = slot.lock() {
                         *s = Some(std::sync::Arc::new(maps));
