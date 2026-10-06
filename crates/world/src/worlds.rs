@@ -193,7 +193,7 @@ impl RockMap {
 }
 
 /// A world's survey and energy packages, read.
-pub struct World {
+pub struct Survey {
     pub id: String,
     /// Its body's key.
     pub body: String,
@@ -258,14 +258,14 @@ fn text(v: &serde_json::Value, k: &str) -> String {
     v.get(k).and_then(serde_json::Value::as_str).unwrap_or_default().to_string()
 }
 
-impl World {
+impl Survey {
     /// The body `key`'s survey and energy packages, checked and read (None: it has no survey).
-    pub fn load(key: &str) -> Option<Result<World, String>> {
+    pub fn load(key: &str) -> Option<Result<Survey, String>> {
         let body = registry().bodies.iter().find(|b| b.identity.key == key)?;
         Some(Self::read(body))
     }
 
-    fn read(body: &Body) -> Result<World, String> {
+    fn read(body: &Body) -> Result<Survey, String> {
         let s = body.survey.as_ref().ok_or("no survey")?;
         let survey = Package::open(root().join(&s.folder), &s.manifest_sha256)?;
         let summary: Summary = survey.json("summary.json")?;
@@ -335,7 +335,7 @@ impl World {
                 .map(|c| Coalfield { id: text(c, "id"), at: LonLat { lon: num(c, "lon"), lat: num(c, "lat") }, coal: num(c, "coal_mt") * 1e9, rank: text(c, "rank"), area_km2: num(c, "area_km2") })
                 .collect();
         }
-        Ok(World { id: s.world_id.clone(), body: body.identity.key.clone(), radius: summary.radius_m, rocks, deposits, districts, bulk_rock, fields, basins, coalfields })
+        Ok(Survey { id: s.world_id.clone(), body: body.identity.key.clone(), radius: summary.radius_m, rocks, deposits, districts, bulk_rock, fields, basins, coalfields })
     }
 }
 
@@ -863,7 +863,7 @@ mod tests {
     #[test]
     fn harvest_reads_from_its_packages() {
         let key = "body.treistun.treistun-d";
-        let w = World::load(key).expect("a survey").expect("read");
+        let w = Survey::load(key).expect("a survey").expect("read");
         let record = registry().bodies.iter().find(|b| b.identity.key == key).unwrap();
         assert_eq!(w.deposits.len() as i64, 3756);
         assert!(w.districts.len() > 900 && !w.bulk_rock.is_empty());
