@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the claim: the shaft, the concentrator and the dumps.
+identity:
+  key: parcel.treistun.ashfall-camp.1
+number: 1
+owner: org.cormorant
+address: { street: street.treistun.ashfall-camp.shaft-road, number: 1 }
+outline: [[50, -1400], [3950, -1400], [3950, 1400], [50, 1400]]

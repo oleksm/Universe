@@ -16,3 +16,5 @@ lines:
 modules:
   - { module: module.ore-yard, count: 1 }
   - { module: module.stock-yard, count: 1 }
+  - { module: module.tailings-dam, count: 1 }
+  - { module: module.waste-dump, count: 1 }

@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
+# Invented: the licence area over the melt sheet, east of the road.
+identity:
+  key: zone.treistun.ashfall-camp.mining
+  name: Mining
+use: mining
+outline: [[0, -1500], [4000, -1500], [4000, 1500], [0, 1500]]

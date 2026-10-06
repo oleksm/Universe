@@ -213,12 +213,14 @@
 - { key: module.sugar-works, game: "sugar-works", in: "industry.ron, settlements.ron" }
 - { key: module.sulphur-works, game: "sulphur-works", in: "industry.ron, settlements.ron" }
 - { key: module.synthesis-plant, game: "synthesis-plant", in: "industry.ron, settlements.ron" }
+- { key: module.tailings-dam, game: "tailings-dam", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
 - { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }
 - { key: module.tin-smelter, game: "tin-smelter", in: "industry.ron, settlements.ron" }
 - { key: module.titanium-works, game: "titanium-works", in: "industry.ron, settlements.ron" }
 - { key: module.tungsten-works, game: "tungsten-works", in: "industry.ron, settlements.ron" }
 - { key: module.vacuum-furnace, game: "vacuum-furnace", in: "industry.ron, settlements.ron" }
+- { key: module.waste-dump, game: "waste-dump", in: "industry.ron, settlements.ron" }
 - { key: module.water-works, game: "water-works", in: "industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
 - { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
@@ -241,6 +243,7 @@
 - { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
 - { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }
 - { key: org.meridian, game: "brand.meridian", in: "brands.ron" }
+- { key: org.nacaubun-savings, game: "brand.nacaubun_savings", in: "brands.ron" }
 - { key: org.orbital, game: "brand.orbital", in: "brands.ron" }
 - { key: org.sfo, game: "body.sfo", in: "bodies.ron" }
 - { key: org.shikra-hold, game: "brand.shikra_hold", in: "bodies.ron" }
@@ -282,6 +285,7 @@
 - { key: rock-class.icy, game: "ICY", in: "belt.rs" }
 - { key: rock-class.metallic, game: "M-TYPE METALLIC", in: "belt.rs" }
 - { key: rock-class.stony, game: "S-TYPE STONY", in: "belt.rs" }
+- { key: settlement.treistun.ashfall-camp, game: "Ashfall Camp", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.gate-to-biraidim, game: "Gate to Biraidim", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.gate-to-driumum, game: "Gate to Driumum", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.gate-to-liham, game: "Gate to Liham", in: "by name: settlements.ron, places.ron" }

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station to the life support; a fifth over its draw flat out.
+identity:
+  key: power-line.treistun.ashfall-camp.power-line-2
+  name: Power line 2
+from: facility.treistun.ashfall-camp.ashfall-power-station
+to: facility.treistun.ashfall-camp.ashfall-life-support
+capacity: 20000000
+line: [[-500, -1000], [-500, -1100]]

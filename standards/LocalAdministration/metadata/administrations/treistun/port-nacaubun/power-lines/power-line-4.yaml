@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station to the life-support plant on the same lot; a fifth over its draw flat out.
+identity:
+  key: power-line.treistun.port-nacaubun.power-line-4
+  name: Power line 4
+from: facility.treistun.port-nacaubun.nacaubun-power-station
+to: facility.treistun.port-nacaubun.nacaubun-life-support
+capacity: 25000000
+line: [[1275, -200], [1275, 200]]

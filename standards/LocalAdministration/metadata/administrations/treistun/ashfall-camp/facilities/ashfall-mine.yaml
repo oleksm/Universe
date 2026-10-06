@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented (2026-10-06): the shaft and the concentrator on TRB1-INI-000256A-06, Cormorant's under Treistun's licence.
+identity:
+  key: facility.treistun.ashfall-camp.ashfall-mine
+  name: Ashfall Mine
+kind: mine
+parcel: parcel.treistun.ashfall-camp.1
+claim: { deposit: TRB1-INI-000256A-06, holder: org.cormorant, licence: org.treistun }
+lines:
+  - makes: good.nickel-concentrate
+    modules:
+      - { module: module.mine, count: 1 }
+      - { module: module.concentrator, count: 1 }
+modules:
+  - { module: module.ore-yard, count: 1 }
+  - { module: module.stock-yard, count: 1 }
+  - { module: module.tailings-dam, count: 1 }
+  - { module: module.waste-dump, count: 1 }

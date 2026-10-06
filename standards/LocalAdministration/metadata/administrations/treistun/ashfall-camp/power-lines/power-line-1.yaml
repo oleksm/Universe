@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station to the mine; a fifth over its draw flat out.
+identity:
+  key: power-line.treistun.ashfall-camp.power-line-1
+  name: Power line 1
+from: facility.treistun.ashfall-camp.ashfall-power-station
+to: facility.treistun.ashfall-camp.ashfall-mine
+capacity: 200000000
+line: [[-100, -1000], [50, -1000]]

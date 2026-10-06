@@ -8,3 +8,9 @@ business: exchange
 note: "The market: where goods in store change hands"
 who: "The company that runs the market. It owns no goods and no warehouses: it sets the rules of trade and keeps the record of who owns what lies in the warehouses it has approved."
 what: "Runs trading in goods held at approved warehouses."
+# Its rules (2026-10-06): only stock is sold; a sale settles in the warehouse's record; a half percent to the exchange, chosen.
+exchange:
+  lists: "Stock items (stock.*), and parts, equipment and hulls kept by count, lying in a warehouse the exchange has approved; never a good, a material or a promise."
+  settles: "At the fall of the deal the stock's owner changes in the warehouse's record; the buyer collects at the dock or has it hauled. No credit: the exchange holds the price until the stock is handed over."
+  fee: 0.005
+  approves: "A dock, a store with room, and a keeper who records what lies there and whose it is."

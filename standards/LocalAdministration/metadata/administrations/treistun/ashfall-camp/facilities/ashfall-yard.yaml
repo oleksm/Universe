@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: the strip's yard on the exchange: the concentrate for the haulers, the supplies in.
+identity:
+  key: facility.treistun.ashfall-camp.ashfall-yard
+  name: Ashfall Yard
+kind: warehouse
+parcel: parcel.treistun.ashfall-camp.3
+exchange: org.treistun-exchange
+modules:
+  - { module: module.general-warehouse, count: 1 }
+  - { module: module.loading-dock, count: 1 }
+stock:
+# Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+  - { item: stock.flour-bulk, quantity: 349.0 }
+  - { item: stock.potatoes-bulk, quantity: 279.0 }
+  - { item: stock.cabbage-bulk, quantity: 69.7 }
+  - { item: stock.carrots-bulk, quantity: 69.7 }
+  - { item: stock.onions-bulk, quantity: 69.7 }
+  - { item: stock.apples-bulk, quantity: 139.0 }
+  - { item: stock.cheese-bulk, quantity: 69.7 }
+  - { item: stock.beef-bulk, quantity: 69.7 }
+  - { item: stock.pork-bulk, quantity: 69.7 }
+  - { item: stock.chicken-bulk, quantity: 69.7 }
+  - { item: stock.sugar-bulk, quantity: 69.7 }
+  - { item: stock.vegetable-oil-bulk, quantity: 69.7 }
+  - { item: stock.medicines-bulk, quantity: 4.65 }
+  - { item: stock.clothes-bulk, quantity: 36.4 }
+  - { item: stock.tools-bulk, quantity: 9.3 }
+  - { item: stock.beer-bulk, quantity: 74.4 }
+  - { item: stock.wine-bulk, quantity: 6.69 }

@@ -1113,3 +1113,29 @@ with a `claim` draws its ore from that deposit (its grades and tonnage are in de
 from an asteroid field; a facility whose claim names no `licence` under a jurisdiction with
 `mining_licence: true` is an offence (unlicensed mining), recorded, not blocked. The settlement's
 position puts it on Harvest's 600 m tiles: the first ground a player can land on at a working mine.
+
+**Mind, Money and Cinder (2026-10-06, night).** The school and the college carry `trains`; the
+bank (`org.nacaubun-savings`, `banking`: lends against hull, cargo, building, parcel, claim at 6% a
+year, three fifths advance, ten years at most) and the exchange's rules (`org.treistun-exchange.exchange`:
+only stock, settles in the warehouse's record, a 0.5% fee) are records. Cinder has an economy:
+**Ashfall Camp** (`settlement.treistun.ashfall-camp`, sealed, 300 people, 2,000 km from Zaudalein)
+mines TRB1-INI-000256A-06 under claim and licence, and **Zaudalein Smelter** turns its concentrate
+into nickel, platinum metals and sulphur, the sulphur Eikir's works needed. For the game: a sealed
+settlement's life support is its own (oxygen plant, air plant, water works, as the ports'); the
+smelter's sulphur is a stock run from Zaudalein to Eikir the Traffic report now derives.
+
+**Hearth, before its release (2026-10-06, night).** The lab's run says the home world is a
+snowball that never thawed, with no life and so no oxygen; its record now says so (air
+`breathable: false`, nitrogen with 0.35% carbon dioxide; `life.present: none`; the lore rewritten),
+and **Port Nacaubun has a life-support facility** like the sealed ports. **For the game:** Hearth's
+people breathe from `facility.treistun.port-nacaubun.nacaubun-life-support` (element.o from its
+oxygen plants, 30 days in store), not from the place: the `from: place` oxygen a breathable world
+gives no longer applies on Hearth. When the release lands, the record takes the run's mean
+(about 216 K) and months; the Worlds report will show TRE1.
+
+**Halden runs; the tailings (the integrator, 2026-10-06, night).** Good news: the mine digs the
+survey's deposit and draws it down. The store filling with tailings and waste rock is answered:
+`module.tailings-dam` (holds 100 Mt, the concentrator's slurry settling for good) and
+`module.waste-dump` (200 Mt, the barren rock) stand at both camps' mines, on claim parcels widened
+to hold them. The dam's tailings are what the brickworks and the concrete plant take, when they
+want them; the dump is what the pit swallows when it is backfilled, later. `worlds::Survey` noted.

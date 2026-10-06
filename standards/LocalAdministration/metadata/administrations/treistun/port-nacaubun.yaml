@@ -34,17 +34,17 @@ buildings:
   - { building: building.gaol, count: 1 }
 # census: its 60,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.clerk, count: 6400 }
+  - { profession: profession.clerk, count: 6402 }
   - { profession: profession.nurse, count: 3572 }
   - { profession: profession.builder, count: 1400 }
   - { profession: profession.driver, count: 1370 }
   - { profession: profession.food-worker, count: 1350 }
-  - { profession: profession.technician, count: 1013 }
+  - { profession: profession.technician, count: 1025 }
   - { profession: profession.merchant, count: 978 }
   - { profession: profession.teacher, count: 896 }
   - { profession: profession.doctor, count: 808 }
   - { profession: profession.administrator, count: 600 }
-  - { profession: profession.docker, count: 450 }
+  - { profession: profession.docker, count: 456 }
   - { profession: profession.engineer, count: 402 }
   - { profession: profession.scholar, count: 400 }
   - { profession: profession.fitter, count: 390 }
@@ -53,22 +53,22 @@ census:
   - { profession: profession.lawyer, count: 270 }
   - { profession: profession.machinist, count: 240 }
   - { profession: profession.constable, count: 200 }
+  - { profession: profession.plant-operator, count: 60 }
   - { profession: profession.banker, count: 60 }
   - { profession: profession.performer, count: 60 }
   - { profession: profession.artist, count: 60 }
+  - { profession: profession.chemist, count: 26 }
   - { profession: profession.reporter, count: 20 }
-  - { profession: profession.plant-operator, count: 12 }
   - { profession: profession.pilot, count: 12 }
   - { profession: profession.farmer, count: 10 }
   - { profession: profession.judge, count: 10 }
-  - { profession: profession.chemist, count: 2 }
-  - { profession: profession.dependant, count: 38413 }
-# independents: owner-operators based here, its share by population of the 792 that fill the system's 1000 (seeding.traffic) beside the fleets
+  - { profession: profession.dependant, count: 38321 }
+# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
-  - { hull: hull.drover, count: 86 }
-  - { hull: hull.sprint, count: 65 }
-  - { hull: hull.prospector, count: 43 }
-  - { hull: hull.hauler, count: 22 }
+  - { hull: hull.drover, count: 84 }
+  - { hull: hull.sprint, count: 63 }
+  - { hull: hull.prospector, count: 42 }
+  - { hull: hull.hauler, count: 21 }
 about: "The port on Hearth, the home world, at 24° north. Gravity 0.98 g, with air, and cold."
 story:
   - "The first port in the system. It was built where the first ship came down, and nobody saw a reason to move it. The station overhead took most of its trade; Nacaubun keeps the ground traffic."
