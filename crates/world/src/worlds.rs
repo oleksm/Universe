@@ -351,6 +351,8 @@ impl Survey {
 /// against the bake's manifest (itself checked against the record).
 pub struct Bake {
     package: Package,
+    /// Its world's id (`TRD1`): the runtime detail's seed.
+    world: String,
 }
 
 impl Bake {
@@ -365,12 +367,13 @@ impl Bake {
             && let Some(folder) = std::env::var_os(format!("UNIVERSE_BAKE_{id}"))
         {
             eprintln!("PREVIEW: {key}'s ground from {} (UNIVERSE_BAKE_{id}), not the bake its record names", PathBuf::from(&folder).display());
-            return Some(Package::open_checked(PathBuf::from(folder), None).map(|package| Bake { package }));
+            return Some(Package::open_checked(PathBuf::from(folder), None).map(|package| Bake { package, world: id }));
         }
         let b = body.bake.as_ref()?;
+        let world = body.survey.as_ref().map_or_else(|| key.to_string(), |s| s.world_id.clone());
         Some(match store() {
             None => Err("no worlds store (set UNIVERSE_WORLDS)".into()),
-            Some(store) => Package::open(store.join(&b.path), &b.manifest_sha256).map(|package| Bake { package }),
+            Some(store) => Package::open(store.join(&b.path), &b.manifest_sha256).map(|package| Bake { package, world }),
         })
     }
 
@@ -381,7 +384,7 @@ impl Bake {
         let (folder, sha) = r.surface_package.as_ref()?;
         Some(match store() {
             None => Err("no worlds store (set UNIVERSE_WORLDS)".into()),
-            Some(store) => Package::open(store.join("worlds").join(folder), sha).map(|package| Bake { package }),
+            Some(store) => Package::open(store.join("worlds").join(folder), sha).map(|package| Bake { package, world: r.world_id.clone() }),
         })
     }
 
@@ -497,6 +500,9 @@ pub struct Heights {
     /// the bake has them: their level and samples a side (`n + 1`); their slots follow the 600 m
     /// tiles' and the river tiles'.
     level150: Option<(u32, usize)>,
+    /// The 5 km rock map (`rockid.png`: a rock unit's number a texel, equirectangular), read the
+    /// first time the runtime detail wants it.
+    rocks: std::sync::OnceLock<Option<(usize, usize, Vec<u8>)>>,
     /// Tiles asked for in the background.
     asked: Vec<std::sync::atomic::AtomicBool>,
     /// The highest the ground stands (m).
@@ -508,6 +514,8 @@ pub struct Heights {
 enum Tile {
     Heights(Vec<u16>),
     Surface(Vec<[u8; 3]>),
+    /// A ~150 m tile's fields (`fd150`: flow, drainage, threshold slope, ice), RGBA.
+    Fields(Vec<[u8; 4]>),
 }
 
 impl Tile {
@@ -515,6 +523,7 @@ impl Tile {
         match self {
             Tile::Heights(h) => h.len() * 2,
             Tile::Surface(s) => s.len() * 3,
+            Tile::Fields(f) => f.len() * 4,
         }
     }
 }
@@ -623,7 +632,8 @@ impl Heights {
             fine: Default::default(),
             clock: Default::default(),
             level150,
-            asked: (0..2 * tiles + tiles150).map(|_| Default::default()).collect(),
+            rocks: std::sync::OnceLock::new(),
+            asked: (0..2 * tiles + 2 * tiles150).map(|_| Default::default()).collect(),
             max: top + 500.0,
         })
     }
@@ -898,6 +908,70 @@ impl Heights {
     /// in full.
     pub fn at(self: &std::sync::Arc<Self>, dir: glam::DVec3) -> f64 {
         self.at_detail(dir, Detail::Full).0
+    }
+
+    /// The runtime detail at body direction `dir` (m, over the ~150 m ground; see `detail`), to the
+    /// band `cell` (m), on a world of `radius` (m); and whether it's the whole of it. 0 where
+    /// there's no ~150 m tile, or the generator isn't in yet (`detail::ACTIVE`).
+    pub fn detail_at(self: &std::sync::Arc<Self>, dir: glam::DVec3, detail: Detail, cell: f64, radius: f64) -> (f64, bool) {
+        let Some((level, n)) = self.level150.filter(|_| crate::detail::ACTIVE && detail != Detail::Coarse) else { return (0.0, true) };
+        let (face, x, y, _, fu, fv) = locate(dir.normalize(), level);
+        let k = 1usize << level;
+        let tiles150 = 6 * k * k;
+        let base = 2 * 6 * (1usize << self.level).pow(2);
+        let whole = std::cell::Cell::new(true);
+        // (Its tile and the neighbours on its face, read to `detail`, for the halo; past a face's
+        // edge the nearest sample of its own.)
+        let neighbour = |dx: i64, dy: i64, fields: bool| -> Option<std::sync::Arc<Tile>> {
+            let (tx, ty) = (x as i64 + dx, y as i64 + dy);
+            if tx < 0 || ty < 0 || tx >= k as i64 || ty >= k as i64 {
+                return None;
+            }
+            let slot = (face * k + tx as usize) * k + ty as usize;
+            let (t, w) = if fields {
+                self.tile(base + tiles150 + slot, format!("fd150_{face}_{tx}_{ty}.png"), detail, |b, _| decode("fd150.png", b).map(|(_, _, px)| Tile::Fields(px.chunks(4).map(|c| [c[0], c[1], c[2], c[3]]).collect())))
+            } else {
+                self.tile(base + slot, format!("fz150_{face}_{tx}_{ty}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)))
+            };
+            whole.set(whole.get() && w);
+            t
+        };
+        if neighbour(0, 0, false).is_none() {
+            return (0.0, whole.get());
+        }
+        let sample = |i: i64, j: i64, m: usize, fields: bool| -> Option<(std::sync::Arc<Tile>, usize)> {
+            let (dx, dy) = (i.div_euclid(m as i64), j.div_euclid(m as i64));
+            let (t, (i, j)) = match neighbour(dx.clamp(-1, 1), dy.clamp(-1, 1), fields) {
+                Some(t) => (t, (i - dx * m as i64, j - dy * m as i64)),
+                None => (neighbour(0, 0, fields)?, (i.clamp(0, m as i64), j.clamp(0, m as i64))),
+            };
+            Some((t, j as usize * (m + 1) + i as usize))
+        };
+        let height = |i: i64, j: i64| match sample(i, j, n, false) {
+            Some((t, at)) => match &*t {
+                Tile::Heights(h) => h.get(at).map_or(0.0, |&r| (r as f64 - 32_768.0) / 4.0),
+                _ => 0.0,
+            },
+            None => 0.0,
+        };
+        let fields = |i: i64, j: i64| match sample(i, j, n / 2, true) {
+            Some((t, at)) => match &*t {
+                Tile::Fields(f) => f.get(at).map_or([0.0; 4], |c| c.map(|v| v as f64)),
+                _ => [0.0; 4],
+            },
+            None => [0.0; 4],
+        };
+        let spacing = std::f64::consts::FRAC_PI_2 / k as f64 / n as f64 * radius;
+        let site = crate::detail::Site { at: [fu * n as f64 * spacing, fv * n as f64 * spacing], spacing, height: &height, fields: &fields, rock: self.rock_at(lon_lat(dir)), seed: crate::detail::seed(&self.bake.world), cell };
+        (crate::detail::offset(&site), whole.get())
+    }
+
+    /// The rock unit under `p` (the 5 km rock map's number, nearest texel; 0 without one).
+    fn rock_at(&self, p: LonLat) -> u32 {
+        let Some((w, h, px)) = self.rocks.get_or_init(|| self.image("rockid.png")) else { return 0 };
+        let row = (((90.0 - p.lat) / 180.0 * *h as f64) as usize).min(h - 1);
+        let col = (((p.lon + 180.0) / 360.0 * *w as f64) as usize).min(w - 1);
+        px[(row * w + col) * 4] as u32
     }
 
     /// The ground's height at `dir` to `detail`, and whether it's the whole of it.
