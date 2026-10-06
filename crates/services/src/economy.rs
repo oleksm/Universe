@@ -14,8 +14,14 @@
 //! reference price (see `goods`), moved by how the warehouse's stock of it
 //! stands against what the settlement's works take of it over `COVER_DAYS`.
 //!
-//! A settlement's people: as many as the registry says live there. What they
-//! eat and use (their needs are `need.*`) isn't run yet.
+//! A settlement's people: as many as the registry says live there, living by
+//! their needs (`need.*`): what each person takes a second, from its
+//! warehouse (a whole market category, such as food, as any stock of it), and
+//! gives back (waste water, breath). Where a world's air is breathable they
+//! breathe it free. A need unmet long enough (its record's `lasts`) kills: past
+//! it, people die at the rate it goes unmet. Hungry, thirsty or short of
+//! air, some queue to leave. Needs that take no stock (a home, safety, news)
+//! aren't run here.
 
 use std::collections::{BTreeMap, HashMap};
 
@@ -252,6 +258,13 @@ pub struct Place {
     /// Over the last step, per day (kg): made and used by its works.
     pub made: BTreeMap<usize, f64>,
     pub used: BTreeMap<usize, f64>,
+    /// Its world's air is breathable: it breathes it free.
+    pub breathes: bool,
+    /// Each need it lives by, by key: how far it was met over the last step
+    /// (0..1), and how long it has gone short (s, as if wholly unmet).
+    pub needs: BTreeMap<String, (f64, f64)>,
+    /// Over the last step, per day: people died (thousands).
+    pub deaths: f64,
 }
 
 /// One item as a market stands on it.
@@ -323,7 +336,10 @@ impl Economy {
             let facility = Facility::Spaceport(g.port);
             e.index.insert((g.system, facility), e.places.len());
             // (Its people, as the registry has them: thousands.)
-            let people = universe_world::registry::registry().settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&g.recorded.name)).and_then(|s| s.population).map_or(0.0, |n| n as f64 / 1000.0);
+            let reg = universe_world::registry::registry();
+            let record = reg.settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&g.recorded.name));
+            let people = record.and_then(|s| s.population).map_or(0.0, |n| n as f64 / 1000.0);
+            let breathes = record.and_then(|s| reg.bodies.iter().find(|b| Some(&b.identity.key) == s.at.as_ref())).is_some_and(|b| b.atmosphere.breathable == Some(true));
             e.places.push(Place {
                 system: g.system,
                 facility,
@@ -338,6 +354,9 @@ impl Economy {
                 waiting: 0.0,
                 made: BTreeMap::new(),
                 used: BTreeMap::new(),
+                breathes,
+                needs: BTreeMap::new(),
+                deaths: 0.0,
             });
         }
         e.sync(land);
@@ -380,6 +399,91 @@ impl Economy {
         }
         self.snapshot = None;
         self.works_snap = None;
+    }
+
+    /// A step of place `p`'s people: each need's takes from its warehouse (into
+    /// `used`), its gives back into it, how far each was met; then deaths
+    /// where a need has gone short past what it lasts, and the queue to leave.
+    fn live(&mut self, p: usize, used: &mut BTreeMap<usize, f64>, goods: &[Item]) {
+        let dt = STEP;
+        let people = self.places[p].population * 1000.0;
+        if people <= 0.0 {
+            return;
+        }
+        let Some(h) = self.places[p].warehouse else { return };
+        let ground = self.places[p].ground;
+        // (Its stores: its works', the life support and the water works first, the warehouse last.)
+        let mut stores: Vec<usize> = (0..self.works.len()).filter(|&k| self.works[k].ground == ground && k != h).collect();
+        stores.push(h);
+        let reg = universe_world::registry::registry();
+        let mut dying: f64 = 0.0;
+        let mut worst: f64 = 1.0;
+        for need in reg.needs.iter().filter(|n| !n.takes.is_empty()) {
+            let key = &need.identity.key;
+            let mut met: f64 = 1.0;
+            for t in &need.takes {
+                // (Air, where the world's is breathable: breathed free.)
+                if self.places[p].breathes && key == "need.air" {
+                    continue;
+                }
+                let want = t.rate * people * dt;
+                let mut got = 0.0;
+                let category = t.item.strip_prefix("market.").and_then(|_| universe_world::goods::Category::of(&t.item));
+                let one = universe_world::goods::item(&t.item);
+                for &k in &stores {
+                    if got >= want {
+                        break;
+                    }
+                    let pool = &mut self.works[k].pool;
+                    // (A market category: any stock of it, what there's most of first.)
+                    let mut of: Vec<(usize, f64)> = match category {
+                        Some(c) => pool.stock.iter().filter(|(i, _)| goods[**i].category == Some(c)).map(|(i, kg)| (*i, *kg)).collect(),
+                        None => one.map(|i| (i, pool.of(i))).into_iter().collect(),
+                    };
+                    of.sort_by(|a, b| b.1.total_cmp(&a.1));
+                    for (i, _) in of {
+                        if got >= want {
+                            break;
+                        }
+                        let took = pool.take(i, want - got);
+                        *used.entry(i).or_default() += took;
+                        got += took;
+                    }
+                }
+                met = met.min(if want > 0.0 { got / want } else { 1.0 });
+            }
+            // What it gives back, as far as it was met: to a works that takes it (the water
+            // works, used water), else the warehouse, as far as there's room.
+            for g in &need.gives {
+                if let Some(i) = universe_world::goods::item(&g.item) {
+                    let k = stores.iter().copied().find(|&k| self.works[k].takes().iter().any(|t| t.0 == i)).unwrap_or(h);
+                    let pool = &mut self.works[k].pool;
+                    let kg = (g.rate * people * dt * met).min(pool.free());
+                    pool.put(i, kg);
+                }
+            }
+            let lasts = need.lasts.unwrap_or(f64::INFINITY);
+            let short = self.places[p].needs.get(key).map_or(0.0, |s| s.1);
+            // (Short: the time it went unmet adds up; met, it heals as fast.)
+            let short = (short + dt * (1.0 - met) - dt * met).clamp(0.0, lasts.min(1e12));
+            self.places[p].needs.insert(key.clone(), (met, short));
+            let alive = need.identity.rung.as_str() == "alive";
+            if alive {
+                worst = worst.min(met);
+                if short >= lasts {
+                    // Past what it lasts: they die as fast as it goes unmet.
+                    dying = dying.max((1.0 - met) * dt / lasts);
+                }
+            }
+        }
+        let place = &mut self.places[p];
+        let died = place.population * dying.min(1.0);
+        place.population -= died;
+        place.deaths = died / (dt / DAY);
+        place.fed = worst;
+        // (Short of what keeps them alive, some want to leave: up to a third.)
+        place.waiting = (place.population * (1.0 - worst) / 3.0).max(place.waiting.min(place.population));
+        place.stock = self.works[h].pool.clone();
     }
 
     /// Set module `setup` of works `works` to `recipe` (its place in
@@ -613,6 +717,7 @@ impl Economy {
                 }
             }
         }
+        self.live(p, &mut used, goods);
         let days = STEP / DAY;
         let place = &mut self.places[p];
         place.made = made.into_iter().map(|(i, kg)| (i, kg / days)).collect();
@@ -681,6 +786,14 @@ mod tests {
         let room = e.places[trethi].stock.free();
         e.put(w.home_system, Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == "Port Trethi").unwrap()), ore, room * 0.9);
         assert!(e.places[trethi].price(&goods[ore]).bid < before.bid * 0.2, "a full warehouse pays little");
+
+        // Its people live by their needs, from its stores: air from its life support (its world's
+        // isn't breathable), water, food from the warehouse.
+        let trethi_place = &e.places[trethi];
+        assert!(trethi_place.population > 19.0 && !trethi_place.breathes, "{} thousand", trethi_place.population);
+        for need in ["need.air", "need.water", "need.food"] {
+            assert!(trethi_place.needs.get(need).is_some_and(|(met, _)| *met > 0.99), "{need} met: {:?}", trethi_place.needs.get(need));
+        }
 
         // Its owner sets the yard's welding bays to the MC-07's nose cap (a recipe from
         // the bill: the part, from the sheet it's cut from); given sheet, it welds them.
