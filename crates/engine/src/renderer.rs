@@ -268,6 +268,8 @@ struct MeshVertex {
     pos: [f32; 3],
     normal: [f32; 3],
     color: [f32; 4],
+    /// The model's per-vertex data (`WireModel::data`; zero where it has none).
+    data: [f32; 4],
 }
 
 /// A mesh on the GPU: its faces (three vertices each) and edges (two each),
@@ -284,6 +286,7 @@ impl GpuMesh {
     fn new(device: &wgpu::Device, mesh: &Mesh) -> Self {
         use wgpu::util::DeviceExt;
         let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
+        let data = |i: u32| mesh.data.get(i as usize).copied().unwrap_or([0.0; 4]);
         let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
         // (Smooth: each corner's normal the faces' meeting there, weighted by their size.)
         let corner_normals: Vec<Vec3> = if mesh.smooth {
@@ -306,7 +309,7 @@ impl GpuMesh {
             let n = (b - a).cross(c - a).normalize_or_zero();
             for &i in f {
                 let n = corner_normals.get(i as usize).copied().unwrap_or(n);
-                faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i) });
+                faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i), data: data(i) });
             }
         }
         let mut edges = Vec::with_capacity(mesh.edges.len() * 2);
@@ -314,7 +317,7 @@ impl GpuMesh {
         for (e, n) in mesh.edges.iter().zip(normals) {
             for &i in e {
                 let p = mesh.positions[i as usize];
-                edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i) });
+                edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i), data: data(i) });
             }
         }
         let buffer = |label, data: &[MeshVertex]| {
@@ -551,7 +554,7 @@ impl Renderer {
             Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<MeshVertex>() as u64,
                 step_mode: wgpu::VertexStepMode::Vertex,
-                attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x3, 2 => Float32x4],
+                attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x3, 2 => Float32x4, 16 => Float32x4],
             }),
             Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<Instance>() as u64,

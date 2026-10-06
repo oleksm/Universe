@@ -188,6 +188,21 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         colors.push(morph(i, j));
     }
     m.colors = colors;
+    // Each vertex's surface fields from a baked world's river tiles (wetness, scree, bare rock,
+    // and 1 where they're read), for the ground's material.
+    let fields = |d: DVec3| -> [f32; 4] {
+        let Some(t) = body.terrain.as_ref() else { return [0.0; 4] };
+        let (f, w) = t.surface_fields_view(d);
+        whole.set(whole.get() && w);
+        f.map_or([0.0; 4], |f| [f[0], f[1], f[2], 1.0])
+    };
+    let mut data: Vec<[f32; 4]> = dirs.iter().map(|&d| fields(d)).collect();
+    for &(i, j) in &edge {
+        let f = data[j * g + i];
+        data.push(f);
+        data.push(f);
+    }
+    m.data = data;
     (m, origin, !whole.get())
 }
 

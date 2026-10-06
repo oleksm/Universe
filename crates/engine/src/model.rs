@@ -115,6 +115,9 @@ pub struct WireModel {
     pub faces: Vec<[u32; 3]>,
     /// Optional per-vertex colors (RGBA). Empty means use the colors given when drawing.
     pub colors: Vec<[f32; 4]>,
+    /// Optional per-vertex data for the shaders (none: zero). The near ground's: its surface
+    /// fields (wet, scree, bare rock, and 1 where they're read).
+    pub data: Vec<[f32; 4]>,
     /// Shaded smooth (a curved surface: each corner's normal the average of
     /// the faces meeting there), not face by face.
     pub smooth: bool,
