@@ -16,13 +16,17 @@ pub const PHYSICS_CELL_M: f64 = 0.5;
 
 /// Where the detail is wanted, and what it's grown from.
 pub struct Site<'a> {
-    /// The place within its ~150 m tile (m from the tile's origin, along its u and v): the twin
-    /// works in the same, so f32 keeps it to millimetres.
+    /// The tile's corner on its cube face in whole metres (`floor((u + 1) / 2 · the face's width
+    /// in m)`, each way): what the noise's lattices are anchored to, so tiles meet without seams.
+    pub origin: [i64; 2],
+    /// The place, in metres from `origin` along the face's u and v: the cell is `origin +
+    /// floor(at)`, the fraction `fract(at)` (the twin the same, in i32 and f32).
     pub at: [f64; 2],
     /// The tile's sample spacing there (m).
     pub spacing: f64,
-    /// The ~150 m tile's differences by sample (m, over the 600 m ground read bilinearly), indices
-    /// running two samples past the tile's edges into its neighbours (the halo).
+    /// The ground's height by sample of the ~150 m tile (m: the 5 km, 600 m and ~150 m levels
+    /// together), indices running two samples past the tile's edges into its neighbours (the
+    /// halo).
     pub height: &'a dyn Fn(i64, i64) -> f64,
     /// The fields by their own samples (`fd150`, half as many a side), raw 0..255: flow
     /// direction, drainage area, the rock's threshold slope, ice; with the same halo.

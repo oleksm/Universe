@@ -754,6 +754,21 @@ impl Heights {
     }
 }
 
+/// The body direction at `u`, `v` (−1..1 each, equal-angle) on cube face `face`: `locate`'s
+/// inverse.
+pub fn cube_dir(face: usize, u: f64, v: f64) -> glam::DVec3 {
+    let (tu, tv) = ((u * std::f64::consts::FRAC_PI_4).tan(), (v * std::f64::consts::FRAC_PI_4).tan());
+    match face {
+        0 => glam::DVec3::new(1.0, -tv, -tu),
+        1 => glam::DVec3::new(-1.0, -tv, tu),
+        2 => glam::DVec3::new(tu, 1.0, tv),
+        3 => glam::DVec3::new(tu, -1.0, -tv),
+        4 => glam::DVec3::new(tu, -tv, 1.0),
+        _ => glam::DVec3::new(-tu, -tv, -1.0),
+    }
+    .normalize()
+}
+
 /// Where body direction `d` falls on cube tiles at `level`: (face, x, y, its slot, and the place
 /// within the tile, 0..1 each way).
 fn locate(d: glam::DVec3, level: u32) -> (usize, usize, usize, usize, f64, f64) {
@@ -947,12 +962,11 @@ impl Heights {
             };
             Some((t, j as usize * (m + 1) + i as usize))
         };
-        let height = |i: i64, j: i64| match sample(i, j, n, false) {
-            Some((t, at)) => match &*t {
-                Tile::Heights(h) => h.get(at).map_or(0.0, |&r| (r as f64 - 32_768.0) / 4.0),
-                _ => 0.0,
-            },
-            None => 0.0,
+        // (The ground's whole height at a sample of the tile: the 5 km, 600 m and ~150 m levels,
+        // as the ground reads them there.)
+        let height = |i: i64, j: i64| {
+            let to = |c: usize, s: i64| (c as f64 + s as f64 / n as f64) / k as f64 * 2.0 - 1.0;
+            self.at_detail(cube_dir(face, to(x, i), to(y, j)), detail).0
         };
         let fields = |i: i64, j: i64| match sample(i, j, n / 2, true) {
             Some((t, at)) => match &*t {
@@ -961,8 +975,14 @@ impl Heights {
             },
             None => [0.0; 4],
         };
-        let spacing = std::f64::consts::FRAC_PI_2 / k as f64 / n as f64 * radius;
-        let site = crate::detail::Site { at: [fu * n as f64 * spacing, fv * n as f64 * spacing], spacing, height: &height, fields: &fields, rock: self.rock_at(lon_lat(dir)), seed: crate::detail::seed(&self.bake.world), cell };
+        // (On the face in metres: its width a quarter turn of the world; the tile's corner floored
+        // to a whole metre, the place from there.)
+        let face_m = std::f64::consts::FRAC_PI_2 * radius;
+        let tile_m = face_m / k as f64;
+        let spacing = tile_m / n as f64;
+        let corner = [x as f64 * tile_m, y as f64 * tile_m];
+        let origin = corner.map(|c| c.floor() as i64);
+        let site = crate::detail::Site { origin, at: [corner[0] - origin[0] as f64 + fu * tile_m, corner[1] - origin[1] as f64 + fv * tile_m], spacing, height: &height, fields: &fields, rock: self.rock_at(lon_lat(dir)), seed: crate::detail::seed(&self.bake.world), cell };
         (crate::detail::offset(&site), whole.get())
     }
 
@@ -1127,6 +1147,19 @@ pub fn releases() -> Vec<Release> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A cube face's place and its body direction go there and back (`cube_dir`, `locate`).
+    #[test]
+    fn cube_faces_there_and_back() {
+        for face in 0..6 {
+            for (u, v) in [(-0.9, 0.3), (0.0, 0.0), (0.7, -0.6), (0.99, 0.99)] {
+                let (f, x, y, _, fu, fv) = locate(cube_dir(face, u, v), 10);
+                let back = |c: usize, fr: f64| (c as f64 + fr) / 1024.0 * 2.0 - 1.0;
+                assert_eq!(f, face);
+                assert!((back(x, fu) - u).abs() < 1e-9 && (back(y, fv) - v).abs() < 1e-9, "face {face} at {u}, {v}");
+            }
+        }
+    }
 
     /// Heath's survey and energy packages read, checked against their records; a few
     /// figures held to the record's; its bake found in the store and a file read, if a store is

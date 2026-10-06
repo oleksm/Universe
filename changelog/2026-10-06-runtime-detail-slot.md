@@ -16,3 +16,7 @@
   tile's own nearest sample.
 - The shape agreed with the lab (its answers: band limit, tile-relative coordinates for f32, a
   two-cell halo, boulders on an integer-hashed 4 m lattice).
+- For the lab's generator (its asks): `Site::origin`, the tile's corner on its cube face in whole
+  metres, `at` measured from it (the noise's lattices anchored on the face: no seams at tile
+  edges; the twin the same in i32 and f32); `height` the ground's whole height (5 km, 600 m and
+  ~150 m) at the tile's samples. `worlds::cube_dir`, `locate`'s inverse, with a test there and back.

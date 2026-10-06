@@ -36,7 +36,9 @@ fn detail_on_the_gpu_agrees_with_the_truth() {
     let (seed, rock, cell) = (detail::seed("TRD1"), 3u32, detail::PHYSICS_CELL_M);
     // The places tried, spread over the tile and up to its edges.
     let at: Vec<[f64; 2]> = (0..POINTS * POINTS).map(|k| [((k % POINTS) as f64 + 0.37) / POINTS as f64 * N as f64 * SPACING, ((k / POINTS) as f64 + 0.61) / POINTS as f64 * N as f64 * SPACING]).collect();
-    let want: Vec<f64> = at.iter().map(|&at| detail::offset(&detail::Site { at, spacing: SPACING, height: &height, fields: &fields, rock, seed, cell })).collect();
+    // (A tile far out on its face, as Heath's are: millions of metres from the face's corner.)
+    let origin = [4_123_456i64, 1_234_567i64];
+    let want: Vec<f64> = at.iter().map(|&at| detail::offset(&detail::Site { origin, at, spacing: SPACING, height: &height, fields: &fields, rock, seed, cell })).collect();
 
     // The tile with its halo, row by row from (-HALO, -HALO): heights, and fields at half as many.
     let side = N + 1 + 2 * HALO;
@@ -48,7 +50,7 @@ fn detail_on_the_gpu_agrees_with_the_truth() {
         "{}\n{}",
         include_str!("../src/shaders/detail.wgsl"),
         r#"
-struct Params { spacing: f32, cell: f32, rock: u32, side: i32, fside: i32, halo: i32, seed: vec2<u32> };
+struct Params { spacing: f32, cell: f32, rock: u32, side: i32, fside: i32, halo: i32, seed: vec2<u32>, origin: vec2<i32> };
 @group(0) @binding(0) var<uniform> p: Params;
 @group(0) @binding(1) var<storage, read> heights: array<f32>;
 @group(0) @binding(2) var<storage, read> fieldv: array<vec4<f32>>;
@@ -59,7 +61,7 @@ fn detail_fields(i: i32, j: i32) -> vec4<f32> { return fieldv[(j + p.halo) * p.f
 @compute @workgroup_size(64)
 fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     if (id.x >= arrayLength(&places)) { return; }
-    out[id.x] = detail(places[id.x], p.spacing, p.rock, p.seed, p.cell);
+    out[id.x] = detail(p.origin, places[id.x], p.spacing, p.rock, p.seed, p.cell);
 }
 "#
     );
@@ -78,6 +80,10 @@ fn main(@builtin(global_invocation_id) id: vec3<u32>) {
     params.extend_from_slice(&(HALO as i32).to_le_bytes());
     params.extend_from_slice(&(seed as u32).to_le_bytes());
     params.extend_from_slice(&((seed >> 32) as u32).to_le_bytes());
+    params.extend_from_slice(&(origin[0] as i32).to_le_bytes());
+    params.extend_from_slice(&(origin[1] as i32).to_le_bytes());
+    // (A uniform struct rounds up to 16 bytes.)
+    params.resize(params.len().next_multiple_of(16), 0);
     let storage = wgpu::BufferUsages::STORAGE;
     let p = buffer(&params, wgpu::BufferUsages::UNIFORM);
     let h = buffer(bytemuck::cast_slice(&heights), storage);
