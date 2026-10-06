@@ -20,3 +20,6 @@
   metres, `at` measured from it (the noise's lattices anchored on the face: no seams at tile
   edges; the twin the same in i32 and f32); `height` the ground's whole height (5 km, 600 m and
   ~150 m) at the tile's samples. `worlds::cube_dir`, `locate`'s inverse, with a test there and back.
+- The rock unit under a place is the rock map's value over 8 (the map holds a unit's number
+  times 8, as the scene's shader reads it): it was the raw byte, which the lab's layering table
+  by unit would have missed.

@@ -986,12 +986,13 @@ impl Heights {
         (crate::detail::offset(&site), whole.get())
     }
 
-    /// The rock unit under `p` (the 5 km rock map's number, nearest texel; 0 without one).
+    /// The rock unit under `p` (the 5 km rock map's number, nearest texel; 0 without one). The
+    /// map holds a unit's number times 8.
     fn rock_at(&self, p: LonLat) -> u32 {
         let Some((w, h, px)) = self.rocks.get_or_init(|| self.image("rockid.png")) else { return 0 };
         let row = (((90.0 - p.lat) / 180.0 * *h as f64) as usize).min(h - 1);
         let col = (((p.lon + 180.0) / 360.0 * *w as f64) as usize).min(w - 1);
-        px[(row * w + col) * 4] as u32
+        (px[(row * w + col) * 4] as u32 + 4) / 8
     }
 
     /// The ground's height at `dir` to `detail`, and whether it's the whole of it.
