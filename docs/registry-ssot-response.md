@@ -1102,3 +1102,14 @@ first (a shared static), and with the registry's fit (radiators, loops, cabin, s
 the user's ruling) the MC-07 at 1.32 MN of lift cannot hover empty at 1 g. Both halves are true:
 the order dependence is a test bug; the hover failure is the physics the user wants met from the
 flying side, so the imported MC-07 should be reported, not asserted, there.
+
+**The first mine on a baked deposit (2026-10-06, night).** Halden Camp
+(`settlement.treistun.halden-camp`, on Harvest at 54.81 N 164.44 E, 1,070 km north of Port Eikir):
+Cormorant's pit and concentrator on the survey's porphyry copper body **TRD1-PCU-007264A-01**
+(`facility.treistun.halden-camp.halden-mine`, `claim: {deposit, holder: org.cormorant, licence:
+org.treistun}`), a power station, a yard on the exchange, 400 people, supplied from Eikir by a
+suborbital hop. The build checks a claim's id against the body's survey. **For the game:** a mine
+with a `claim` draws its ore from that deposit (its grades and tonnage are in deposits.geojson), not
+from an asteroid field; a facility whose claim names no `licence` under a jurisdiction with
+`mining_licence: true` is an offence (unlicensed mining), recorded, not blocked. The settlement's
+position puts it on Harvest's 600 m tiles: the first ground a player can land on at a working mine.

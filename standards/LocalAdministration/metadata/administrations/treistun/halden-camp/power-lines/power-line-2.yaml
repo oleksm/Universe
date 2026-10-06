@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station south to the yard.
+identity:
+  key: power-line.treistun.halden-camp.power-line-2
+  name: Power line 2
+from: facility.treistun.halden-camp.halden-power-station
+to: facility.treistun.halden-camp.halden-yard
+capacity: 2000000
+line: [[-300, -1400], [-300, -2200], [50, -2200]]

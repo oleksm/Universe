@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: the strip's yard, where the concentrate lies for the haulers and the camp's supplies come in; on the exchange, so
+# that what the mine makes is on the market here.
+identity:
+  key: facility.treistun.halden-camp.halden-yard
+  name: Halden Yard
+kind: warehouse
+parcel: parcel.treistun.halden-camp.3
+exchange: org.treistun-exchange
+modules:
+  - { module: module.general-warehouse, count: 1 }
+  - { module: module.loading-dock, count: 1 }
+stock:
+# Distribution stock: 1.5 resupply cycles (2.04788 days) of what its 400 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (2.04788 days) of what its 400 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+  - { item: stock.flour-bulk, quantity: 461.0 }
+  - { item: stock.potatoes-bulk, quantity: 369.0 }
+  - { item: stock.cabbage-bulk, quantity: 92.1 }
+  - { item: stock.carrots-bulk, quantity: 92.1 }
+  - { item: stock.onions-bulk, quantity: 92.1 }
+  - { item: stock.apples-bulk, quantity: 184.0 }
+  - { item: stock.cheese-bulk, quantity: 92.1 }
+  - { item: stock.beef-bulk, quantity: 92.1 }
+  - { item: stock.pork-bulk, quantity: 92.1 }
+  - { item: stock.chicken-bulk, quantity: 92.1 }
+  - { item: stock.sugar-bulk, quantity: 92.1 }
+  - { item: stock.vegetable-oil-bulk, quantity: 92.1 }
+  - { item: stock.medicines-bulk, quantity: 6.14 }
+  - { item: stock.clothes-bulk, quantity: 48.1 }
+  - { item: stock.tools-bulk, quantity: 12.3 }
+  - { item: stock.beer-bulk, quantity: 98.3 }
+  - { item: stock.wine-bulk, quantity: 8.85 }

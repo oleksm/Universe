@@ -127,14 +127,18 @@ The last installed index is remembered in `standards/Celestial/surveys/.installe
 | `climate` in the survey's `summary.json` (new surveys), or `surface/v<N>/summary.json` (older worlds, from their next bake) | `mean_surface_temp_c`, `mean_land_temp_c`, `rain_land_m`, and `bands` (0–10, 10–25, 25–35, 35–50, 50–70, 70–90°: `temp_c`, `land_temp_c`, `land_coldest_month_c`, `land_warmest_month_c`, `land_rain_m`, null on dry worlds); `highest_point_plate_stage_m` (the plate stage's ~80 km figure, not the summit). The bake's summary also carries `highest_peak` `{h, prom, lat, lon, res_m}`, the refined summit. One shared function (`planet_sim.climate_summary`), the same figures as the world report's weather table | the installer writes `surface.mean_temperature`, `temperature_low` and `temperature_high` (the coldest and warmest land months across the bands, in K), `rain` (m a year) and `highest` (the refined peak) onto the record; the game's climate and the planet's card read them |
 | airless worlds (no sea) | heights and `bounds` are relative to the **mean radius**, not a sea (Cinder: −5,435 to +4,880 m); `highest_peak` comes from the 5 km peak list, while the 600 m tiles carry crater relief above it, so the bounds' max may exceed `highest_peak` (Cinder 4,880 against 4,713 m); on worlds with plates they agree (Harvest 8,920 = 8,920) | the datum for landing and the map's heights; the installer takes `highest_peak` for `surface.highest` |
 | the bake's air (surface v3 on): `atmosphere.json` beside `air_luts.json`, `air_transmittance.rgba32f`, `air_multiscatter.rgba32f` | the world's air for rendering: its scattering constants, and the precomputed tables (transmittance and multiple scattering, 32-bit float RGBA) the sky and aerial perspective are drawn from; the aerosol Earth's mean until a world's own is simulated | the game's air (worlds::Heights::air_luts); absent before v3 |
+| the bake's clouds (surface v4 on, format planet-sim-clouds/1): `clouds.json` beside `clouds_month.png`, `clouds_enso.png`, `clouds_air.png` (and `globe_clouds.*` for people) | twelve monthly tiles (4 across × 3 down, 360 × 180 each, equirectangular, the world's own months) of sky fraction by kind in RGBA (low, deep convection, frontal, cirrus; v/255); the change per unit of its El Niño index; the air (cloud base 16·v m, tropopause 80·v m, 700 hPa and jet eastward winds); `kinds` gives each cloud's optical depth, base and top rules | the game's cloud layer and its weather by month (`clouds.json` says how to read every channel); absent before v4 |
 | coming: sparse ~150 m tiles (cube level 6, the same naming and encoding, each a difference from the 600 m ground) | | a third height level, when the game reads one |
 
 Coordinates: longitude, latitude in degrees on the body's sphere; the rock map's x is longitude
 −180 → 180 left to right, y is latitude 90 → −90 top to bottom.
 
-**Claims and mines** (`LocalAdministration`): a claim's `deposit` is a deposit `id`; its `world_id`
-is the first segment of the ID. A claim's deposit must exist in the body's survey, and the body
-must be baked: the validator checks both once claims are records.
+**Claims and mines** (`LocalAdministration`): a mine or well facility carries `claim: {deposit, holder, licence}`; the
+deposit is the survey's or the energy package's permanent id (`TRD1-PCU-007264A-01`), the holder an organisation, the
+licence the administration's (its `law.policies.mining_licence`; without one the mine is unlicensed, a recorded breach).
+The build checks the id against the survey of the body the settlement is at, and that the body is baked. The first:
+**Halden Camp** on Harvest (`settlement.treistun.halden-camp`), Cormorant's pit and concentrator on a 1,230 Mt porphyry
+copper body 1,070 km north of Port Eikir, its concentrate on the exchange at its strip's yard.
 
 **The render bake** (landscape, 600 m tiles, rivers) is the game's and the lab's, outside this
 contract: it reads the world and changes nothing in the survey. The registry only needs to know

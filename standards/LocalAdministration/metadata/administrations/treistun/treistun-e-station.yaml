@@ -58,7 +58,7 @@ census:
   - { profession: profession.reporter, count: 10 }
   - { profession: profession.judge, count: 5 }
   - { profession: profession.dependant, count: 17515 }
-# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+# independents: owner-operators based here, its share by population of the 792 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 36 }
   - { hull: hull.sprint, count: 27 }

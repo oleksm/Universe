@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
+# Invented: the licence area round the pit, 2 by 3 km east of the road, as the deposit's footprint and its waste dumps need.
+identity:
+  key: zone.treistun.halden-camp.mining
+  name: Mining
+use: mining
+outline: [[0, -1500], [2000, -1500], [2000, 1500], [0, 1500]]

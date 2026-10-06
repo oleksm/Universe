@@ -86,7 +86,7 @@ for f in glob.glob(LA + "*.yaml"):
 total = sum(d["population"] for d in setts.values())
 WORKING = 7 * DAY   # the granary's own warehouse: a store's week
 for key, d in setts.items():
-    slug = key.split(".")[-1]; wh = glob.glob(LA + f"{slug}/facilities/*warehouse*.yaml")
+    slug = key.split(".")[-1]; wh = [f_ for f_ in glob.glob(LA + f"{slug}/facilities/*.yaml") if (yaml.safe_load(open(f_)) or {}).get("kind") == "warehouse"]
     if not wh: print("no warehouse:", slug); continue
     pop = d["population"]; interval = (d.get("resupply") or {}).get("interval", WORKING)
     stock = {}

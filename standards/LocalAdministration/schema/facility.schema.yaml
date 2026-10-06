@@ -15,12 +15,21 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-  kind: { enum: [foundry, mill, yard, power, warehouse, farm, food works, store, utility] }
+  kind: { enum: [foundry, mill, yard, power, warehouse, farm, food works, store, utility, mine] }
   parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
   processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   stock: { $ref: "installation.schema.yaml#/definitions/stock" }
+  claim:
+    description: "For a mine or a well: the deposit it works, by the planet simulation's permanent id in the body's survey (deposits.geojson) or energy package (fields, coalfields), and under whose licence. The id is checked against the survey of the body the settlement is at. Mining under an administration's jurisdiction needs its licence (law.policies.mining_licence); without one, the breach is recorded (offence: unlicensed mining), never blocked."
+    type: object
+    additionalProperties: false
+    required: [deposit, holder]
+    properties:
+      deposit: { type: string, description: "The deposit's, field's or coalfield's id: <world>-<code>-...; permanent." }
+      holder: { type: string, x-ref: [org], description: "Whose claim it is." }
+      licence: { type: string, x-ref: [org], description: "The administration that licensed it; left out, the mine is unlicensed." }
   exchange: { type: string, x-ref: [org], description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'

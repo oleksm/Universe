@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the power station's lot, Aurel's, west of the road.
+identity:
+  key: parcel.treistun.halden-camp.2
+number: 2
+owner: org.aurel
+address: { street: street.treistun.halden-camp.pit-road, number: 2 }
+outline: [[-600, -1400], [-50, -1400], [-50, -900], [-600, -900]]

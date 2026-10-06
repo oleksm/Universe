@@ -172,5 +172,5 @@ properties:
       additionalProperties: false
       required: [use, permits]
       properties:
-        use: { enum: [port, industrial, commercial, civic, residential, agricultural] }
+        use: { enum: [port, industrial, commercial, civic, residential, agricultural, mining] }
         permits: { type: string }

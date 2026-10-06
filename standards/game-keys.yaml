@@ -285,6 +285,7 @@
 - { key: settlement.treistun.gate-to-biraidim, game: "Gate to Biraidim", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.gate-to-driumum, game: "Gate to Driumum", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.gate-to-liham, game: "Gate to Liham", in: "by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.halden-camp, game: "Halden Camp", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.port-aipika, game: "Port Aipika", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.port-eikir, game: "Port Eikir", in: "by name: settlements.ron, places.ron" }
 - { key: settlement.treistun.port-fabindum, game: "Port Fabindum", in: "by name: settlements.ron, places.ron" }

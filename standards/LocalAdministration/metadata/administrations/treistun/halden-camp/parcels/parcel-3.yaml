@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the strip's yard, Castellan's: where the concentrate waits for the haulers.
+identity:
+  key: parcel.treistun.halden-camp.3
+number: 3
+owner: org.castellan
+address: { street: street.treistun.halden-camp.pit-road, number: 3 }
+outline: [[50, -2700], [550, -2700], [550, -1700], [50, -1700]]

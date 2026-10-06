@@ -62,6 +62,15 @@ def star_orbit(key):
     return (b.get("orbit") or {}).get("semi_major_axis"), b
 
 
+def hop(a, b):
+    """s between two settlements on the same body: a suborbital hop at CRUISE over the great circle between them."""
+    R = bodies[a["at"]]["physical"]["radius"]
+    pa, pb = a.get("position") or {}, b.get("position") or {}
+    la1, lo1, la2, lo2 = (math.radians(x) for x in (pa.get("latitude", 0), pa.get("longitude", 0), pb.get("latitude", 0), pb.get("longitude", 0)))
+    d = R * math.acos(max(-1.0, min(1.0, math.sin(la1) * math.sin(la2) + math.cos(la1) * math.cos(la2) * math.cos(lo2 - lo1))))
+    return 2.0 * math.sqrt(max(d, 1000.0) / CRUISE)
+
+
 def flight(a, b):
     """s one way between bodies a and b: a torchship's brachistochrone at CRUISE over their typical separation."""
     ra, pa = star_orbit(a); rb, pb = star_orbit(b)
@@ -104,7 +113,7 @@ def derive():
             continue
         frm = setts[rs["from"]][1]
         tonnes = d["population"] * sum(t["rate"] for n in STOCKED for t in needs[n].get("takes", [])) * DAY
-        one_way = flight(d["at"], frm["at"])
+        one_way = hop(d, frm) if d["at"] == frm["at"] else flight(d["at"], frm["at"])
         round_trip = 2 * one_way + 2 * TURNAROUND
         hold = hulls[HAULER]["identity"].get("hold") or 150000
         ships = max(1, math.ceil(tonnes * (round_trip / DAY) / hold))
@@ -144,7 +153,7 @@ def derive():
             continue
         d = setts[dst][1]
         from_body = setts[src][1]["at"] if src != "gate" else gate_body
-        one_way = flight(d["at"], from_body) if from_body != d["at"] else DAY / 4
+        one_way = hop(d, setts[src][1]) if (src != "gate" and from_body == d["at"]) else (flight(d["at"], from_body) if from_body != d["at"] else DAY / 4)
         round_trip = 2 * one_way + 2 * TURNAROUND
         hold = hulls[HAULER]["identity"].get("hold") or 150000
         ships = max(1, math.ceil(t * (round_trip / DAY) / hold))
