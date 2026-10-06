@@ -2369,11 +2369,12 @@ report("mounts", "Mounts: does each piece of equipment fit the mount it is built
 
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
+_fitted = lambda e_: any(str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])
 rows = []
 for kind_, recs_ in (("Hulls", hulls), ("Equipment", equipment), ("Parts", parts)):
-    owed = [e_ for e_ in recs_ if _stand_in(e_)]
-    rows.append(row("gap" if owed else "ok", kind_, len(recs_), len(recs_) - len(owed), len(owed), ", ".join((e_.get("identity") or {}).get("name", e_.get("slug", "")) for e_ in owed[:8]) + (f" and {len(owed) - 8} more" if len(owed) > 8 else "")))
-report("dimensions", "Dimensions: sized, or only standing in", "Every hull, piece of equipment and part must say its length, width and height. Where nobody has worked a size out, a cube of its volume stands in, marked: those are owed a real size.", ["Kind", "Records", "Sized", "Standing in", "Owed"], rows)
+    owed = [e_ for e_ in recs_ if _stand_in(e_)]; fitted = [e_ for e_ in recs_ if _fitted(e_)]
+    rows.append(row("gap" if owed else "ok", kind_, len(recs_), len(recs_) - len(owed) - len(fitted), len(fitted), len(owed), ", ".join((e_.get("identity") or {}).get("name", e_.get("slug", "")) for e_ in owed[:8]) + (f" and {len(owed) - 8} more" if len(owed) > 8 else "")))
+report("dimensions", "Dimensions: sized, fitted, or only standing in", "Every hull, piece of equipment and part must say its length, width and height. Sized: measured, or worked out from what it does or from a real one. Fitted: a part given its share of its product's room, so that the parts fit the whole, its own shape not drawn. Standing in: a shape to its volume, owed a real size.", ["Kind", "Records", "Sized", "Fitted", "Standing in", "Owed"], rows)
 
 # 3d. The dictionary: the registry's shared words, and what each value means (standards/dictionary.schema.yaml).
 _dict = load(os.path.join(TREE, "dictionary.schema.yaml")).get("definitions") or {}

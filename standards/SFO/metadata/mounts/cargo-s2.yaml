@@ -7,9 +7,9 @@ identity:
   size_class: 2
   description: "What a class 2 cargo slot offers, and what fits it."
 envelope:
-  length: 5.42
-  width: 2.72
-  height: 1.64
+  length: 4.74
+  width: 2.37
+  height: 2.37
 bears:
   mass: 2500.0
 feeds:

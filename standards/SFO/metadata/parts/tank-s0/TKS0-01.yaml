@@ -7,9 +7,9 @@ identity:
   description: "The pressure wall: 41 m2 of 2 mm sheet is 221 kg; the rest is frames and domes."
 physical:
   mass: 280
-  length: 0.47
-  width: 0.47
-  height: 0.47
+  length: 3.94
+  width: 3.94
+  height: 3.94
 made_from:
   - item: stock.al6061-sh-2-panel
     quantity: 280.0
@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen to sum to the product's weight. Discovery II's tank is 73% structure, 9% fluid and electrical gear, 9% mountings (and its own thrusters, left out here)." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Fuel tank 4 t: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

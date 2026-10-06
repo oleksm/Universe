@@ -7,9 +7,9 @@ identity:
   description: "Stills, beds and tanks that turn waste water to drinking water."
 physical:
   mass: 240
-  length: 0.312
-  width: 0.312
-  height: 0.312
+  length: 1.41
+  width: 1.34
+  height: 0.569
 made_from:
   - item: stock.st304-pl-3
     quantity: 276.0
@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Life support S1: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

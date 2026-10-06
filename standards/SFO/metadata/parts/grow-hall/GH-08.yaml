@@ -7,11 +7,11 @@ identity:
   description: "Pumps, valves, sensors and the computer that doses the water."
 physical:
   mass: 20000
-  length: 3.42
-  width: 3.42
-  height: 3.42
+  length: 18.6
+  width: 9.28
+  height: 3.71
 fit:
   count: 1
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed. A guess. What they are made of is not described." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room it would take at 500 kg for each m3, as the equipment list has it: what it is made of is not said. A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the hydroponic hall: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

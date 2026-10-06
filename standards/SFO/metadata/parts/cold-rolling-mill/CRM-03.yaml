@@ -7,11 +7,11 @@ identity:
   description: "One to each stand."
 physical:
   mass: 60000
-  length: 4.93
-  width: 4.93
-  height: 4.93
+  length: 41.2
+  width: 11.0
+  height: 4.12
 fit:
   count: 5
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room it would take at 500 kg for each m3, as the equipment list has it: what it is made of is not said. A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the cold rolling mill: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

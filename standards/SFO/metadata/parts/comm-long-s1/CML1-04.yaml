@@ -7,9 +7,9 @@ identity:
   description: ""
 physical:
   mass: 26
-  length: 0.143
-  width: 0.143
-  height: 0.143
+  length: 1.33
+  width: 1.33
+  height: 0.266
 made_from:
   - item: stock.cu-wire-2
     quantity: 29.9
@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Long-range comm: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

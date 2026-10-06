@@ -7,9 +7,9 @@ identity:
   size_class: 2
   description: "What a class 2 power plant slot offers, and what fits it."
 envelope:
-  length: 3.17
-  width: 1.58
-  height: 1.58
+  length: 26.5
+  width: 13.3
+  height: 2.2
 bears:
   mass: 3750.0
 feeds:

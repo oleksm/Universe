@@ -10,10 +10,10 @@ size_class: 1
 fits: mount.life-support-s1
 physical:
   mass: 800
-  volume: 4
-  length: 2.52
-  width: 1.26
-  height: 1.26
+  volume: 3.57
+  length: 2.1
+  width: 2.0
+  height: 0.85
 needs:
   power: 100000
 built_of:
@@ -25,4 +25,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, by the space station's plant: it cleans water, makes oxygen from it, scrubs the air and carries heat away. By the station's weights (231 kg of water plant and 62 kg of oxygen plant a head) 800 kg keeps about three people." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: racks in a row, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "2 racks of the space station's size (a rack is 1.57 m3: about 2.0 by 1.05 by 0.85 m), side by side: the station's water and oxygen plant is 2,061 kg in three racks, this 800 kg is 2. The rack's shape is from memory." }

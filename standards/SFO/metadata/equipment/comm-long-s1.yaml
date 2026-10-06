@@ -9,10 +9,10 @@ size_class: 1
 fits: mount.comm-s1
 physical:
   mass: 300
-  volume: 0.8
-  length: 1.47
-  width: 1.47
-  height: 0.368
+  volume: 5.4
+  length: 3.0
+  width: 3.0
+  height: 0.6
 needs:
   power: 200000
 built_of:
@@ -28,4 +28,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a dish and its gear, wide and shallow, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A 3 m dish, as the basic comm's: its hundredfold power, not a bigger dish, gives its tenfold reach (range goes with the square root of power). The rest of its 300 kg is amplifiers." }

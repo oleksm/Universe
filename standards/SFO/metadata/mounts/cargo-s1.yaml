@@ -7,9 +7,9 @@ identity:
   size_class: 1
   description: "What a class 1 cargo slot offers, and what fits it."
 envelope:
-  length: 3.99
-  width: 2.0
-  height: 1.21
+  length: 3.49
+  width: 2.04
+  height: 2.2
 bears:
   mass: 1120.0
 feeds:

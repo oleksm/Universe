@@ -7,9 +7,9 @@ identity:
   size_class: 1
   description: "What a class 1 life support slot offers, and what fits it."
 envelope:
-  length: 2.77
-  width: 1.39
-  height: 1.39
+  length: 2.31
+  width: 2.2
+  height: 0.935
 bears:
   mass: 1000.0
 feeds:
