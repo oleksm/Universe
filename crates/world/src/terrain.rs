@@ -100,6 +100,11 @@ impl Terrain {
         self.baked.as_ref()?.colour()
     }
 
+    /// The clouds from the world's bake (see `worlds::Heights::clouds`).
+    pub fn bake_clouds(&self) -> Option<crate::worlds::CloudsBake> {
+        self.baked.as_ref()?.clouds()
+    }
+
     /// The air's tables from the world's bake (see `worlds::Heights::air_luts`).
     pub fn bake_air_luts(&self) -> Option<crate::worlds::AirLuts> {
         self.baked.as_ref()?.air_luts()

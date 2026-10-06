@@ -53,6 +53,8 @@ struct Globals {
     inv_view_proj: [[f32; 4]; 4],
     /// The world whose maps are bound: its centre from the eye (m) and radius (m; 0: none).
     world_at: [f32; 4],
+    /// The scene's frame to the bound world's own (its turn undone), for its clouds.
+    world_to_body: [[f32; 4]; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -485,7 +487,7 @@ impl Renderer {
         // (The ground's material, the lab's, beside the scene shader that calls it.)
         let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("scene"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/clouds.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
         });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
@@ -1092,6 +1094,8 @@ impl Renderer {
         let (world_layer, world_fade, world_luts) = match &frame.world_maps {
             Some((maps, globe, _, _)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
+                let clouds = if maps.has_clouds() { frame.world_clouds } else { [0.0; 4] };
+                gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
                 (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
             None => (0.0, 0.0, 0.0),
@@ -1122,6 +1126,7 @@ impl Renderer {
             view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, world_luts, 0.0],
             inv_view_proj: frame.camera.view_proj(size.x / size.y).inverse().to_cols_array_2d(),
             world_at,
+            world_to_body: glam::Mat4::from_quat(frame.world_turn.inverse().as_quat()).to_cols_array_2d(),
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));

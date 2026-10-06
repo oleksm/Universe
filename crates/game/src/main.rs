@@ -1145,6 +1145,13 @@ impl App {
                     });
                     let maps = universe_engine::WorldMaps::encoded(encoded, t.bake_air())
                         .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
+                    let mut maps = maps;
+                    if let Some(c) = t.bake_clouds() {
+                        let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
+                        let [a, b, c3] = c.maps;
+                        maps.clouds_year = Some((c.year_days, c.enso));
+                        maps = maps.with_clouds(Some([img(a), img(b), img(c3)]));
+                    }
                     log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
                     if let Ok(mut s) = slot.lock() {
                         *s = Some(std::sync::Arc::new(maps));

@@ -28,6 +28,8 @@ struct Globals {
     inv_view_proj: mat4x4<f32>,
     // The world whose maps are bound: its centre from the eye (m), its radius (m; 0: none).
     world_at: vec4<f32>,
+    // The scene's frame to that world's own (its turn undone), for its clouds.
+    world_to_body: mat4x4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -56,6 +58,24 @@ struct Globals {
 @group(2) @binding(9) var world_air_t: texture_2d<f32>;
 @group(2) @binding(10) var world_air_ms: texture_2d<f32>;
 @group(2) @binding(11) var world_air_smp: sampler;
+// Its clouds (the lab's, clouds.wgsl): the maps by month, El Niño's change, the air they sit in,
+// read exactly; and the clouds now (`on` 0: none).
+@group(2) @binding(12) var world_cm: texture_2d<f32>;
+@group(2) @binding(13) var world_ce: texture_2d<f32>;
+@group(2) @binding(14) var world_ca: texture_2d<f32>;
+@group(2) @binding(15) var<uniform> world_clouds: Clouds;
+
+fn world_turn() -> mat3x3<f32> {
+    return mat3x3<f32>(g.world_to_body[0].xyz, g.world_to_body[1].xyz, g.world_to_body[2].xyz);
+}
+
+// The bound world's clouds over colour `c` along view direction `d` (from the eye), to `t_end` (m).
+fn world_clouds_over(c: vec3<f32>, d: vec3<f32>, t_end: f32, sun_dir: vec3<f32>, sun: vec3<f32>) -> vec3<f32> {
+    if (world_air.on < 0.5 || world_clouds.on < 0.5) {
+        return c;
+    }
+    return clouds_over(c, vec3<f32>(0.0), d, t_end, g.world_at.xyz, world_turn(), sun_dir, sun, g.view.x, world_clouds, world_air, world_cm, world_ce, world_ca, world_air_t, world_air_ms, world_air_smp);
+}
 
 // The bound world's air on the ground and its sky: by its tables where it has them.
 fn world_air_ground(c: vec3<f32>, p: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>) -> vec3<f32> {
@@ -590,6 +610,10 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     var sun = in.sun;
     if (in.globe.x > 0.5) {
         sun = max(dot(n, in.sun_dir), 0.0) * in.sun_light;
+        // (The bound world's clouds shading its ground.)
+        if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5 && world_clouds.on > 0.5) {
+            sun *= clouds_shadow(in.at, g.world_at.xyz, world_turn(), in.sun_dir, pixel * 0.001, world_clouds, world_air, world_cm, world_ce, world_ca);
+        }
     }
     let light = min(sun * seen + in.fill, vec3<f32>(4.0));
     if (g.shadow.w > 0.0 && seen < 0.5 && max(in.sun.r, max(in.sun.g, in.sun.b)) > 0.0) {
@@ -631,6 +655,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         // through the plain haze.
         if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5) {
             c = world_air_ground(c, in.at, in.sun_dir, in.sun_light);
+            c = world_clouds_over(c, normalize(in.at), length(in.at), in.sun_dir, in.sun_light);
         } else {
             c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
         }
@@ -659,7 +684,8 @@ fn fs_air_sky(in: SkyOut) -> @location(0) vec4<f32> {
     let q = g.inv_view_proj * vec4<f32>(in.ndc, 0.5, 1.0);
     let d = normalize(q.xyz / q.w);
     let sun_dir = normalize(g.env_sun.xyz);
-    return vec4<f32>(world_air_sky(d, sun_dir, vec3<f32>(g.env_sun.w)), 1.0);
+    let sky = world_air_sky(d, sun_dir, vec3<f32>(g.env_sun.w));
+    return vec4<f32>(world_clouds_over(sky, d, 1e30, sun_dir, vec3<f32>(g.env_sun.w)), 1.0);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {

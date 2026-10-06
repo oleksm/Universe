@@ -382,6 +382,24 @@ pub fn direction(p: LonLat) -> glam::DVec3 {
     glam::DVec3::new(lat.cos() * lon.cos(), lat.sin(), -lat.cos() * lon.sin())
 }
 
+/// A world's clouds as baked (see `Heights::clouds`): its three maps (width, height, RGBA8), its
+/// year (days) and its El Niño's series (days a world month, the index month by month), if any.
+pub struct CloudsBake {
+    pub maps: [(usize, usize, Vec<u8>); 3],
+    pub year_days: f64,
+    pub enso: Option<(f64, Vec<f32>)>,
+}
+
+/// A world's clouds at world time `t` (s, one epoch for every player), its year `year_days` and
+/// its El Niño's series (days a month, the index a month): the year's phase in its months
+/// (0..12), and El Niño's index then.
+pub fn clouds_at(t: f64, year_days: f64, enso: Option<&(f64, Vec<f32>)>) -> (f32, f32) {
+    let days = t / 86_400.0;
+    let month = ((days / year_days).rem_euclid(1.0) * 12.0) as f32;
+    let index = enso.filter(|(_, s)| !s.is_empty()).map_or(0.0, |(m, s)| s[((days / m).floor().max(0.0) as usize) % s.len()]);
+    (month, index)
+}
+
 /// The air's tables (see `Heights::air_luts`): (width, height, RGBA floats) each.
 pub struct AirLuts {
     pub transmittance: (u32, u32, Vec<f32>),
@@ -797,6 +815,18 @@ impl Heights {
         let (tw, th, transmittance) = table("transmittance")?;
         let (mw, mh, multiscatter) = table("multiscatter")?;
         (transmittance.len() == (tw * th * 4) as usize && multiscatter.len() == (mw * mh * 4) as usize).then_some(AirLuts { transmittance: (tw, th, transmittance), multiscatter: (mw, mh, multiscatter) })
+    }
+
+    /// The world's clouds from its bake (`clouds.json` and its three maps: by month, El Niño's
+    /// change, the air they sit in; each RGBA8), with its year (days) and its El Niño's series
+    /// (days a world month, the index a month). None: none baked.
+    pub fn clouds(&self) -> Option<CloudsBake> {
+        let info: serde_json::Value = serde_json::from_slice(&self.bake.read("clouds.json").ok()?).ok()?;
+        let map = |name: &str| self.image(name);
+        let maps = [map("clouds_month.png")?, map("clouds_enso.png")?, map("clouds_air.png")?];
+        let year_days = info.get("year_days")?.as_f64()?;
+        let enso = info.get("enso").filter(|e| !e.is_null()).and_then(|e| Some((e.get("month_days")?.as_f64()?, e.get("index")?.as_array()?.iter().filter_map(|v| v.as_f64().map(|x| x as f32)).collect::<Vec<f32>>())));
+        Some(CloudsBake { maps, year_days, enso })
     }
 
     /// The world's true colour from its bake (`globe_color.jpg`: equirectangular, as the 5 km

@@ -42,6 +42,8 @@ impl Gpu {
             required_limits: wgpu::Limits {
                 max_vertex_attributes: adapter.limits().max_vertex_attributes.min(32),
                 max_inter_stage_shader_variables: adapter.limits().max_inter_stage_shader_variables.min(32),
+                // (A world's maps, tables and clouds beside the shadows and globes: past 16.)
+                max_sampled_textures_per_shader_stage: adapter.limits().max_sampled_textures_per_shader_stage.min(32),
                 ..wgpu::Limits::default()
             },
             experimental_features: wgpu::ExperimentalFeatures::disabled(),
