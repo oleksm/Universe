@@ -15,22 +15,22 @@ modules:
 # What lies in its store at day 0 (seed state: what happens to it after is the economy's). 100 t of deuterium, for the ships that call: twenty-five fills of a 4 t tank. Chosen.
 stock:
   - { item: stock.deuterium-liq, quantity: 100000.0 }
-# Thirty days of food for its people at 1.5 kg a head a day, in a plain basket of what keeps and what the temperate farms grow. Chosen.
-  - { item: stock.flour-bulk, quantity: 675000.0 }
-  - { item: stock.potatoes-bulk, quantity: 540000.0 }
-  - { item: stock.cabbage-bulk, quantity: 135000.0 }
-  - { item: stock.carrots-bulk, quantity: 135000.0 }
-  - { item: stock.onions-bulk, quantity: 135000.0 }
-  - { item: stock.apples-bulk, quantity: 270000.0 }
-  - { item: stock.cheese-bulk, quantity: 135000.0 }
-  - { item: stock.beef-bulk, quantity: 135000.0 }
-  - { item: stock.pork-bulk, quantity: 135000.0 }
-  - { item: stock.chicken-bulk, quantity: 135000.0 }
-  - { item: stock.sugar-bulk, quantity: 135000.0 }
-  - { item: stock.vegetable-oil-bulk, quantity: 135000.0 }
-# Ninety days of medicine and thirty of clothes, tools, beer and wine for its 60,000 people (seed state).
-  - { item: stock.medicines-bulk, quantity: 27000.0 }
-  - { item: stock.clothes-bulk, quantity: 70500.0 }
-  - { item: stock.tools-bulk, quantity: 18000.0 }
-  - { item: stock.beer-bulk, quantity: 144000.0 }
-  - { item: stock.wine-bulk, quantity: 13000.0 }
+# Distribution stock: 1.5 resupply cycles (7 days) of what its 60,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine. Plus the administration's compulsory reserve of food and medicine for all 220,000 people of Treistun, its share (org.treistun compulsory_stock).
+# Distribution stock: 1.5 resupply cycles (7 days) of what its 60,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine. Plus the administration's compulsory reserve of food and medicine for all 220,000 people of Treistun, its share (org.treistun compulsory_stock).
+  - { item: stock.flour-bulk, quantity: 5190000.0 }
+  - { item: stock.potatoes-bulk, quantity: 4150000.0 }
+  - { item: stock.cabbage-bulk, quantity: 1040000.0 }
+  - { item: stock.carrots-bulk, quantity: 1040000.0 }
+  - { item: stock.onions-bulk, quantity: 1040000.0 }
+  - { item: stock.apples-bulk, quantity: 2070000.0 }
+  - { item: stock.cheese-bulk, quantity: 1040000.0 }
+  - { item: stock.beef-bulk, quantity: 1040000.0 }
+  - { item: stock.pork-bulk, quantity: 1040000.0 }
+  - { item: stock.chicken-bulk, quantity: 1040000.0 }
+  - { item: stock.sugar-bulk, quantity: 1040000.0 }
+  - { item: stock.vegetable-oil-bulk, quantity: 1040000.0 }
+  - { item: stock.medicines-bulk, quantity: 52600.0 }
+  - { item: stock.clothes-bulk, quantity: 24700.0 }
+  - { item: stock.tools-bulk, quantity: 6300.0 }
+  - { item: stock.beer-bulk, quantity: 50400.0 }
+  - { item: stock.wine-bulk, quantity: 4540.0 }

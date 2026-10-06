@@ -979,3 +979,12 @@ and its hold's volume the sum of their volumes, mass-limited (`fill_density`).
 
 The Trethi mill's parcel 1 was deepened north to 850 m for its new lines; Eikir's industrial zone
 widened to 2,950 m for parcel 5.
+
+**Stocking rules (the user, 2026-10-06).** Day-0 stock is derived, not typed: `docs/registry-stocking.md`.
+Three layers: working stock (a works three days of inputs, a store a week), distribution stock
+(`settlement.resupply {from, interval}` × the administration's `compulsory_stock.warehouse_cover`,
+1.5), and the **compulsory reserve**, a law on the administration (`org.treistun.compulsory_stock.reserves`:
+need, how long all its people live on it, where it lies with shares). Treistun: 120 days of food and
+90 of medicine for all 220,000, half at Eikir and half at Nacaubun. **For the game:** the reserve is
+law like zoning: breakable, a breach recorded, released by the administration; the resupply
+interval is what a port's contracts should be sized to; air and water are outside it (made locally).

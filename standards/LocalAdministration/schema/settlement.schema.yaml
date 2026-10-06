@@ -43,6 +43,14 @@ properties:
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   structure: { type: string, x-ref: [structure], description: "The built thing it is, by its key: a spaceport, an outpost, a platform." }
+  resupply:
+    description: "How it is kept supplied with what it does not make: where its ships come from and how often. Sets its warehouse's distribution stock (the administration's compulsory_stock.warehouse_cover)."
+    type: object
+    additionalProperties: false
+    required: [from, interval]
+    properties:
+      from: { type: string, x-ref: [settlement], description: "The settlement its supplies are hauled from, by its key." }
+      interval: { type: number, x-unit: "s", description: "s between deliveries, on the usual run" }
   population: { type: integer, minimum: 0, description: "How many people live there at day 0: seed state of the world. What becomes of them after is the game's." }
   about: { type: string, description: What it is. }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
