@@ -200,20 +200,15 @@ pub fn work(m: &Member, f: Forces, length: f64, sf: f64) -> Work {
 /// The forces in each member of `frame` under `case` (none for a member left out
 /// by `gone`).
 pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<Forces>>, Loose> {
-    // (Only the joints members reach: six ways each.)
+    // (Only the joints members reach: six ways each; numbered so joints a member
+    // joins are near each other (reverse Cuthill-McKee), its stiffness a narrow
+    // band about its diagonal.)
     let live: Vec<usize> = (0..frame.members.len()).filter(|&k| !gone.get(k).copied().unwrap_or(false)).collect();
-    let mut index = vec![usize::MAX; frame.joints.len()];
-    let mut n = 0;
-    for &k in &live {
-        for j in [frame.members[k].a, frame.members[k].b] {
-            if index[j] == usize::MAX {
-                index[j] = n;
-                n += 1;
-            }
-        }
-    }
+    let index = numbering(frame, &live);
+    let n = index.iter().filter(|&&i| i != usize::MAX).count();
     let dof = n * 6;
-    let mut k_all = vec![0.0f64; dof * dof];
+    let half = live.iter().map(|&k| index[frame.members[k].a].abs_diff(index[frame.members[k].b])).max().unwrap_or(0) * 6 + 5;
+    let mut k_all = Band::new(dof, half);
     let mut locals = Vec::with_capacity(live.len());
     for &k in &live {
         let m = &frame.members[k];
@@ -224,7 +219,9 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         for r in 0..12 {
             for c in 0..12 {
                 let (gr, gc) = (at[r / 6] + r % 6, at[c / 6] + c % 6);
-                k_all[gr * dof + gc] += kg[r][c];
+                if gc <= gr {
+                    *k_all.at(gr, gc) += kg[r][c];
+                }
             }
         }
         locals.push((k, kl, t, at));
@@ -238,8 +235,11 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         }
     }
     // (Held: those ways fixed, by a stiff spring there; the rest free.)
-    let big = k_all.iter().fold(0.0f64, |a, v| a.max(v.abs())).max(1.0) * 1e8;
-    let mut fix = |dof_at: usize| k_all[dof_at * dof + dof_at] += big;
+    // (The frame's own stiffest way, before the holds: what "next to nothing" is
+    // measured against, not the holds' springs.)
+    let stiffest = (0..dof).map(|r| k_all.get(r, r).abs()).fold(0.0f64, f64::max);
+    let big = k_all.v.iter().fold(0.0f64, |a, v| a.max(v.abs())).max(1.0) * 1e8;
+    let mut fix = |dof_at: usize| *k_all.at(dof_at, dof_at) += big;
     for &j in &case.held {
         if index[j] != usize::MAX {
             for d in 0..3 {
@@ -252,7 +252,7 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
             fix(index[j] * 6 + d);
         }
     }
-    let u = gauss(k_all, f, dof)?;
+    let u = k_all.solve(f, stiffest * 1e-16)?;
     let mut out = vec![None; frame.members.len()];
     for (k, kl, t, at) in locals {
         let mut ug = [0.0; 12];
@@ -392,40 +392,113 @@ fn to_global(kl: &[[f64; 12]; 12], t: &[[f64; 3]; 3]) -> [[f64; 12]; 12] {
     std::array::from_fn(|r| std::array::from_fn(|c| (0..12).map(|m| tt(m, r) * kt[m][c]).sum()))
 }
 
-/// `a x = b` for x (`a` n by n), by elimination with the largest pivot; a pivot
-/// next to nothing beside its way's own stiffness (its diagonal before: what holds
-/// that joint that way) means it moves freely.
-fn gauss(mut a: Vec<f64>, mut b: Vec<f64>, n: usize) -> Result<Vec<f64>, Loose> {
-    let diag: Vec<f64> = (0..n).map(|k| a[k * n + k].abs()).collect();
-    let floor = diag.iter().fold(0.0f64, |m, v| m.max(*v)) * 1e-16;
-    for col in 0..n {
-        let p = (col..n).max_by(|&r, &s| a[r * n + col].abs().total_cmp(&a[s * n + col].abs())).unwrap_or(col);
-        if a[p * n + col].abs() <= (diag[col] * 1e-9).max(floor) {
-            return Err(Loose);
+/// The joints `live` members reach, numbered (reverse Cuthill-McKee: breadth
+/// first from the least joined, each joint's neighbours fewest-joined first, the
+/// order reversed); `usize::MAX` for the rest.
+fn numbering(frame: &Frame, live: &[usize]) -> Vec<usize> {
+    let mut next: Vec<Vec<usize>> = vec![Vec::new(); frame.joints.len()];
+    for &k in live {
+        let m = &frame.members[k];
+        if m.a != m.b {
+            next[m.a].push(m.b);
+            next[m.b].push(m.a);
+        } else {
+            next[m.a].push(m.a);
         }
-        if p != col {
-            for c in 0..n {
-                a.swap(p * n + c, col * n + c);
-            }
-            b.swap(p, col);
+    }
+    for v in &mut next {
+        v.sort_unstable();
+        v.dedup();
+    }
+    let used: Vec<usize> = (0..frame.joints.len()).filter(|&j| !next[j].is_empty()).collect();
+    let mut seen = vec![false; frame.joints.len()];
+    let mut order = Vec::with_capacity(used.len());
+    let mut starts = used.clone();
+    starts.sort_by_key(|&j| next[j].len());
+    for s in starts {
+        if seen[s] {
+            continue;
         }
-        let piv = a[col * n + col];
-        for r in col + 1..n {
-            let f = a[r * n + col] / piv;
-            if f != 0.0 {
-                for c in col..n {
-                    a[r * n + c] -= f * a[col * n + c];
-                }
-                b[r] -= f * b[col];
+        seen[s] = true;
+        let mut at = order.len();
+        order.push(s);
+        while at < order.len() {
+            let j = order[at];
+            at += 1;
+            let mut ns: Vec<usize> = next[j].iter().copied().filter(|&q| !seen[q]).collect();
+            ns.sort_by_key(|&q| next[q].len());
+            for q in ns {
+                seen[q] = true;
+                order.push(q);
             }
         }
     }
-    let mut x = vec![0.0; n];
-    for r in (0..n).rev() {
-        let s: f64 = (r + 1..n).map(|c| a[r * n + c] * x[c]).sum();
-        x[r] = (b[r] - s) / a[r * n + r];
+    let mut index = vec![usize::MAX; frame.joints.len()];
+    for (i, &j) in order.iter().rev().enumerate() {
+        index[j] = i;
     }
-    Ok(x)
+    index
+}
+
+/// A symmetric matrix kept as its lower band: row i's entries from `half` left of
+/// its diagonal to it.
+struct Band {
+    n: usize,
+    half: usize,
+    v: Vec<f64>,
+}
+
+impl Band {
+    fn new(n: usize, half: usize) -> Self {
+        let half = half.min(n.saturating_sub(1));
+        Band { n, half, v: vec![0.0; n * (half + 1)] }
+    }
+
+    /// Entry (r, c), c <= r and within the band.
+    fn at(&mut self, r: usize, c: usize) -> &mut f64 {
+        &mut self.v[r * (self.half + 1) + (c + self.half - r)]
+    }
+
+    fn get(&self, r: usize, c: usize) -> f64 {
+        if c + self.half < r { 0.0 } else { self.v[r * (self.half + 1) + (c + self.half - r)] }
+    }
+
+    /// `self x = b` for x, by L D L^T within the band; a pivot next to nothing beside
+    /// its way's own stiffness (its diagonal before: what holds that joint that way),
+    /// or below `floor`, means it moves freely.
+    fn solve(mut self, mut b: Vec<f64>, floor: f64) -> Result<Vec<f64>, Loose> {
+        let (n, h) = (self.n, self.half);
+        let diag: Vec<f64> = (0..n).map(|k| self.get(k, k).abs()).collect();
+        let mut d = vec![0.0; n];
+        for j in 0..n {
+            // (Row j of L, and its pivot.)
+            let lo = j.saturating_sub(h);
+            for c in lo..j {
+                let lo2 = c.saturating_sub(h).max(lo);
+                let s: f64 = (lo2..c).map(|k| self.get(j, k) * self.get(c, k) * d[k]).sum();
+                let v = (self.get(j, c) - s) / d[c];
+                *self.at(j, c) = v;
+            }
+            let s: f64 = (lo..j).map(|k| self.get(j, k) * self.get(j, k) * d[k]).sum();
+            d[j] = self.get(j, j) - s;
+            if d[j] <= (diag[j] * 1e-9).max(floor) {
+                return Err(Loose);
+            }
+        }
+        // (L y = b, D z = y, L^T x = z.)
+        for r in 0..n {
+            let s: f64 = (r.saturating_sub(h)..r).map(|c| self.get(r, c) * b[c]).sum();
+            b[r] -= s;
+        }
+        for r in 0..n {
+            b[r] /= d[r];
+        }
+        for r in (0..n).rev() {
+            let s: f64 = (r + 1..(r + h + 1).min(n)).map(|c| self.get(c, r) * b[c]).sum();
+            b[r] -= s;
+        }
+        Ok(b)
+    }
 }
 
 #[cfg(test)]

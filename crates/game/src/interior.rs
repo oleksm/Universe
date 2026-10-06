@@ -702,7 +702,6 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             if joints.iter().chain(&held).any(|q| q.distance(node) <= 0.6) {
                 continue;
             }
-            held.push(node);
             // (Lying on a member, part way along it: a joint made there, the member
             // in two; it bears the deck there.)
             if let Some(k) = beams.iter().position(|b| {
@@ -713,12 +712,14 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
                 let b = beams.remove(k);
                 beams.push(Beam { a: b.a, b: node, stock: b.stock.clone() });
                 beams.push(Beam { a: node, b: b.b, stock: b.stock });
+                held.push(node);
                 continue;
             }
             let ok = |q: &&Vec3| q.distance(node) <= 8.0 && !through_room(plan, node, **q);
             let below = joints.iter().filter(ok).filter(|q| q.y < node.y - 0.5).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)));
             if let Some(&q) = below.or_else(|| joints.iter().filter(ok).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)))) {
                 out.push(Beam { a: node, b: q, stock: stock.to_string() });
+                held.push(node);
             }
         }
     }
@@ -3352,6 +3353,14 @@ fn pressure(i: &Interior) -> Pressure {
                 continue;
             }
             let (at, out) = if e == 0 { (a, -d) } else { (b, d) };
+            // (A door where it joins another walkway: into that walkway.)
+            if !plan.free_end(k, point)
+                && let Some(&j) = walled.iter().find(|&&j| j != k && (plan.lines[j].0 == point || plan.lines[j].1 == point))
+            {
+                join(&mut root, k, j);
+                openings.push((at, Opening::Inner));
+                continue;
+            }
             match plan.end_of(k, e) {
                 End::Closed => {}
                 End::Open => holes.push((at, out, k, false)),
@@ -5805,6 +5814,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
 
 
 
