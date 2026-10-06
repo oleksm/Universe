@@ -459,7 +459,7 @@
 - { record: facility.treistun.port-sirnendis.sirnendis-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "a94145de3e666bd0" }
 - { record: facility.treistun.port-sirnendis.sirnendis-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "3882cae39230d2f9" }
 - { record: facility.treistun.port-sirnendis.sirnendis-warehouse, at: "2026-10-06T18:38:56Z", status: "", summary: "changed", sha: "965cd49d4f72303b" }
-- { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "be5d8fd20283e85f" }
+- { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-06T18:50:34Z", status: "", summary: "changed: processes", sha: "25e9773f7e633394" }
 - { record: facility.treistun.port-trethi.trethi-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "457659c2302eeaef" }
 - { record: facility.treistun.port-trethi.trethi-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "20bc6eb10d26153f" }
 - { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-06T03:21:25Z", status: "", summary: "changed: lines", sha: "28f66f5ab5418f29" }
@@ -754,11 +754,11 @@
 - { record: market.water, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e0d3e9ef9e878e35" }
 - { record: market.weapons, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f995204e1964886f" }
 - { record: material.aluminium-1350, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3849137c8c3e42db" }
-- { record: material.aluminium-alloy-6061, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a839c9f198b77669" }
+- { record: material.aluminium-alloy-6061, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "f6a4dbb16f5cdab1" }
 - { record: material.aramid-fibre, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "edd4e78a1893ac8b" }
-- { record: material.bearing-bronze-c93200, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "cd06f6c2869ff80f" }
-- { record: material.carbon-fibre-composite, at: "2026-10-06T02:07:30Z", status: review, summary: "changed: mechanical, basis", sha: "43a3773fbcda83c2" }
-- { record: material.copper, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c3da811366345a02" }
+- { record: material.bearing-bronze-c93200, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity, basis", sha: "173ec820caaeaab9" }
+- { record: material.carbon-fibre-composite, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity, basis", sha: "1595082b6805b17c" }
+- { record: material.copper, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "4f49fb5d47775d83" }
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
 - { record: material.deuterium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c18843da0cb0ca3d" }
@@ -780,11 +780,11 @@
 - { record: material.ptfe, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5c03248f063584fc" }
 - { record: material.silica-aerogel, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ab70fc0e01cb582b" }
 - { record: material.silica-tile-li-900, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "560da1661005f902" }
-- { record: material.silicon-carbide, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95696114b1248841" }
+- { record: material.silicon-carbide, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "ce704c88879358d7" }
 - { record: material.silicone-rubber, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cbba71bf2ab09542" }
-- { record: material.stainless-steel-304, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1365a0647b65ecb6" }
-- { record: material.structural-steel-a36, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "32e50442159e3038" }
-- { record: material.titanium-alloy-ti-6al-4v, at: "2026-10-06T02:03:46Z", status: review, summary: "changed: identity", sha: "14ec9720e933e5c2" }
+- { record: material.stainless-steel-304, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "dcc7c00c7de38cca" }
+- { record: material.structural-steel-a36, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "f5bc613714cf1f95" }
+- { record: material.titanium-alloy-ti-6al-4v, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "32502ff73cecd13d" }
 - { record: material.uranium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b2cda0dc5b4d88a2" }
 - { record: module.acid-plant, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "e296c26f5ae66dee" }
 - { record: module.air-plant, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "2814d779821d8819" }
@@ -1866,32 +1866,6 @@
 - { record: power-line.treistun.port-zaudalein.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "0d22d1f11938651c" }
 - { record: power-line.treistun.port-zaudalein.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "de292ec6696eae47" }
 - { record: power-line.treistun.port-zaudalein.power-line-4, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "af53be45eac86083" }
-- { record: process.aerogel-making, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c136475d7a73d8a1" }
-- { record: process.alloying-304, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "93db219f1892e46d" }
-- { record: process.alloying-bronze, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9fccdfd612f16944" }
-- { record: process.alloying-ti-6al-4v, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "01c4632970a2cc9d" }
-- { record: process.annealing, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e348ff24ef38a216" }
-- { record: process.aramid-synthesis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a0d9c3d75df7c652" }
-- { record: process.carbide-synthesis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "01e8350a87bc2f8c" }
-- { record: process.carbonising, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "37f867a47e44b260" }
-- { record: process.curing, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2485dcc98216f1bc" }
-- { record: process.extruding, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e1d43aeb6cdea7e3" }
-- { record: process.fibre-spinning, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "0949e2a258a17794" }
-- { record: process.film-casting, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "364981d157ef47d9" }
-- { record: process.fluoropolymer-synthesis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1567c2e647787264" }
-- { record: process.forging, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1a62be479a284004" }
-- { record: process.glass-melting, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4804b0c87b5f7de3" }
-- { record: process.ingot-casting, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3375e805413393fb" }
-- { record: process.plating, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b0de89343e0878b2" }
-- { record: process.polymerisation-polyethylene, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "42b102e0550b475d" }
-- { record: process.quenching-and-tempering, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d98303fb174805a5" }
-- { record: process.silicone-synthesis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3b629500fd808ecf" }
-- { record: process.sintering, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "23773463872affaf" }
-- { record: process.solution-treating-and-ageing, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "81e4769267bc9d07" }
-- { record: process.sulphide-synthesis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd05487b3e0bff94" }
-- { record: process.tile-firing, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f913dc01faec0b69" }
-- { record: process.weaving, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ea31bf06d0ca5a01" }
-- { record: process.wire-drawing, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2f85f17efdb19e4a" }
 - { record: profession.administrator, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "db481fb486d8f502" }
 - { record: profession.artist, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "e55a43fbafadacf4" }
 - { record: profession.banker, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "a51d60f122de9dc6" }
@@ -2001,7 +1975,7 @@
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }
 - { record: standard.sfo.5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29a1398afa92253f" }
 - { record: standard.sfo.6, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "61cb629323a85da0" }
-- { record: standard.sfo.7, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1750078ac04e5297" }
+- { record: standard.sfo.7, at: "2026-10-06T18:52:56Z", status: "", summary: "changed: details, status", sha: "0c757480202f70a8" }
 - { record: standard.sfo.8, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b897cb4f10b13b65" }
 - { record: standard.sfo.9, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: details", sha: "e31876a680902c8e" }
 - { record: stock.aggregate-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "7874317cc9bd2613" }

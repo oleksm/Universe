@@ -989,7 +989,7 @@ for s in standards:
     kind = str(s["records"])
     prefix = s["id"].split(" ")[0]
     folder = os.path.join(TREE, prefix, "metadata", kind)
-    if kind in NESTED:
+    if kind in NESTED or s.get("status") in ("superseded", "withdrawn"):      # (a superseded standard's records are gone: its text stays)
         continue
     if kind not in KINDS:
         problem(os.path.join(TREE, s["file"]), f"records: one of {', '.join(KINDS)}")
@@ -2543,30 +2543,20 @@ for m, rc in [(m, rc) for m in modules for rc in m.get("recipes") or []]:
     rows.append(row("ok" if abs(d) <= 0.02 * ins else "gap", link(m["identity"]["name"] + (f": {item_name(rc['product'])}" if len(m["recipes"]) > 1 else ""), "mod:" + m["slug"]), f"{ins:.4g} t", f"{1 + outs:.4g} t", f"{d:+.3g} t ({100 * d / ins:+.1f}%)", "balanced" if abs(d) <= 0.02 * ins else ("more goes in than comes out" if d > 0 else "more comes out than goes in")))
 report("modules", "Balance: what goes into a module against what comes out", "For each tonne of a module's product: everything that goes in, against the product and everything else that comes out. Matter is not made or lost, so they should match. A gap is a difference of more than 2%.", ["Module", "Goes in", "Comes out", "Difference", ""], rows)
 
-# 5. Each material, in each form it comes in: does a process make it?
+# 5. Each material, in each form it is said to come in: does a module's recipe make a stock of it in that form?
 rows = []
-makes = {}
-for pr in processes + routes:
-    for o in (pr.get("outputs") or {}).get("products") or []:
-        if o.get("item") and o.get("form"):
-            makes.setdefault((o["item"], o["form"]), []).append(pr.get("slug"))
+_made = {}
+for md in modules:
+    for rc in md.get("recipes") or []:
+        for k_ in [rc.get("product")] + [x.get("item") for x in rc.get("outputs") or []]:
+            ms_ = stock_of.get(k_)
+            if ms_:
+                _made.setdefault(((ms_.get("made_from") or {}).get("material"), (ms_.get("made_from") or {}).get("form")), []).append(md["identity"]["name"])
 for m in materials:
     for form in (m.get("identity") or {}).get("form") or []:
-        by = makes.get((m["slug"], form), [])
-        # (Or it comes out of a recipe beside what the recipe makes: scrap.)
-        aside = [md for ms_ in mill_stock if (ms_.get("made_from") or {}).get("material") == m["slug"] and (ms_.get("made_from") or {}).get("form") == form
-                 for md in modules if any(rc.get("product") == ms_["slug"] or any(x.get("item") == ms_["slug"] for x in rc.get("outputs") or []) for rc in md.get("recipes") or [])]
-        rows.append(row("ok" if by or aside else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else link("comes out of the " + aside[0]["identity"]["name"].lower(), "mod:" + aside[0]["slug"]) if aside else "no process makes it"))
-report("stock", "Materials: is every form made by a process", "Each material in each form it is said to come in, and the process that makes it in that form.", ["Material", "Form", "Made by"], rows)
-
-# 6. Each process: has it real steps, and is it run anywhere?
-rows = []
-for pr in processes:
-    steps = bool((pr.get("equipment") or {}).get("steps"))
-    at = run_at.get(pr["slug"], [])
-    state = "ok" if steps and pr["slug"] in lined else "gap"
-    rows.append(row(state, link(pr["identity"]["name"], "proc:" + pr["slug"]), "yes" if steps else "no steps", ", ".join(f["name"] for f in at) or "nowhere", "yes" if pr["slug"] in lined else "no line built for it"))
-report("processes", "Processes: steps, and somewhere they are run", "Each process: whether it is broken into steps with their modules, which facilities list it, and whether any of them has a line built for it.", ["Process", "Steps", "Listed by", "A line built"], rows)
+        by = sorted(set(_made.get((m["slug"], form), [])))
+        rows.append(row("ok" if by else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, ", ".join(by) or "nothing makes it: no stock of it in this form, or no recipe for that stock"))
+report("stock", "Materials: is every form made", "Each material in each form it is said to come in, and the module whose recipe makes a stock of it in that form. A gap is a form named on the material with no stock, or stock with no recipe: either a works to describe, or a form to strike.", ["Material", "Form", "Made by"], rows)
 
 for gd in goods:
     where = os.path.join(TREE, gd["file"])

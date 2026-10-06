@@ -20,11 +20,7 @@ identity:
   form:
   - ingot
   - scrap
-  - sheet
   - plate
-  - bar
-  - tube
-  - wire
   grade: annealed
 mass:
   density: 7916.0

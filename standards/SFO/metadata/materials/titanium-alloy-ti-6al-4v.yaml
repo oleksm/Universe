@@ -15,10 +15,7 @@ identity:
   form:
   - ingot
   - scrap
-  - sheet
   - plate
-  - bar
-  - forging
   - tube
 mass:
   density: 4470.0

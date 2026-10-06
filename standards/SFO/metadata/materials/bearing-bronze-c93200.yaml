@@ -14,9 +14,9 @@ identity:
   - part: element.zn
     share: 0.03
   form:
-  - casting
   - bar
 mass:
   density: 8930
 basis:
   - { of: [mass.density], tier: invented, review: true, note: "From memory of the alloy: no source was looked up." }
+  - { of: [identity.form], tier: derived, note: "Forms struck 2026-10-06 that no stock comes in (casting): a form is said only where a stock record and its recipe exist." }
