@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented outline, deepened south to 650 m so the foundry's modules stand in rows (2026-10-03).
+# Invented outline, deepened south to 650 m so the foundry's modules stand in rows (2026-10-03), and north to 850 m for the mill's extrusion press, filament winder and machine works (2026-10-06).
 identity:
   key: parcel.treistun.port-trethi.1
 number: 1
 owner: org.hadley
 address: { street: street.treistun.port-trethi.east-road, number: 1 }
-outline: [[600, -400], [1100, -400], [1100, 250], [600, 250]]
+outline: [[600, -600], [1100, -600], [1100, 250], [600, 250]]

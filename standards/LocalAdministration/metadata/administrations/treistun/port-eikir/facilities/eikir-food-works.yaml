@@ -42,3 +42,17 @@ lines:
 modules:
   - { module: module.grain-silo, count: 1 }
   - { module: module.cold-store, count: 2 }
+stock:
+# Thirty days of what its lines take in at full rate (seed state; after that the economy's): so the chain starts before the first harvest or delivery.
+  - { item: good.wheat, quantity: 10000000.0 }
+  - { item: good.flour, quantity: 961000.0 }
+  - { item: good.maize, quantity: 3960000.0 }
+  - { item: good.oilseed-meal, quantity: 1800000.0 }
+  - { item: good.bran, quantity: 720000.0 }
+  - { item: good.barley, quantity: 1220000.0 }
+  - { item: good.rapeseed, quantity: 9000000.0 }
+  - { item: good.sugar-beet, quantity: 48000000.0 }
+  - { item: good.milk, quantity: 10400000.0 }
+  - { item: good.live-cattle, quantity: 9000000.0 }
+  - { item: good.water, quantity: 3600000.0 }
+  - { item: good.grapes, quantity: 1010000.0 }

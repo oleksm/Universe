@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
+# Its animals breathe the air and drink the water of the place it stands in: from: place. Sealed, it would take both from stores.
 identity:
   key: module.livestock-barn
   name: "Livestock barn"
@@ -13,8 +14,8 @@ recipes:
     does: "About 5,000 pigs a year raised to 125 kg, on 3 kg of feed for each kg they gain by the time they are killed, and 9 litres of water a day each."
     inputs:
       - { item: good.animal-feed, quantity: 3.0 }
-      - { item: good.water, quantity: 8.0 }
-      - { item: element.o, quantity: 1.2 }
+      - { item: good.water, quantity: 8.0, from: place }
+      - { item: element.o, quantity: 1.2, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 1.65 }
       - { item: good.manure, quantity: 9.55 }
@@ -24,8 +25,8 @@ recipes:
     does: "About 30,000 birds at a time, raised to 3 kg in 47 days, six and a half flocks a year, on 1.7 kg of feed for each kg."
     inputs:
       - { item: good.animal-feed, quantity: 1.7 }
-      - { item: good.water, quantity: 4.4 }
-      - { item: element.o, quantity: 0.68 }
+      - { item: good.water, quantity: 4.4, from: place }
+      - { item: element.o, quantity: 0.68, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 0.935 }
       - { item: good.manure, quantity: 4.845 }
@@ -35,8 +36,8 @@ recipes:
     does: "About 30,000 laying hens, 330 eggs a year each (18.7 kg at 57 g an egg), on 2 kg of feed for each kg of eggs."
     inputs:
       - { item: good.animal-feed, quantity: 2.0 }
-      - { item: good.water, quantity: 4.9 }
-      - { item: element.o, quantity: 0.8 }
+      - { item: good.water, quantity: 4.9, from: place }
+      - { item: element.o, quantity: 0.8, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 1.1 }
       - { item: good.manure, quantity: 5.6 }
@@ -47,8 +48,8 @@ recipes:
     inputs:
       - { item: good.hay, quantity: 0.45 }
       - { item: good.animal-feed, quantity: 0.35 }
-      - { item: good.water, quantity: 4.2 }
-      - { item: element.o, quantity: 0.32 }
+      - { item: good.water, quantity: 4.2, from: place }
+      - { item: element.o, quantity: 0.32, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 0.44 }
       - { item: good.manure, quantity: 3.88 }
@@ -59,8 +60,8 @@ recipes:
     inputs:
       - { item: good.hay, quantity: 4.5 }
       - { item: good.animal-feed, quantity: 2.0 }
-      - { item: good.water, quantity: 29.0 }
-      - { item: element.o, quantity: 2.6 }
+      - { item: good.water, quantity: 29.0, from: place }
+      - { item: element.o, quantity: 2.6, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 3.575 }
       - { item: good.manure, quantity: 33.52 }
@@ -71,8 +72,8 @@ recipes:
     inputs:
       - { item: good.hay, quantity: 4.5 }
       - { item: good.animal-feed, quantity: 1.0 }
-      - { item: good.water, quantity: 15.0 }
-      - { item: element.o, quantity: 2.2 }
+      - { item: good.water, quantity: 15.0, from: place }
+      - { item: element.o, quantity: 2.2, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 3.025 }
       - { item: good.manure, quantity: 18.68 }
@@ -82,8 +83,8 @@ recipes:
     does: "About 2,000 sheep kept for their fleece: 4.5 kg of greasy wool a head a year (3 to 6 for a Merino), on about 1.2 kg of hay a day each. The hay and water are guesses."
     inputs:
       - { item: good.hay, quantity: 100.0 }
-      - { item: good.water, quantity: 320.0 }
-      - { item: element.o, quantity: 40.0 }
+      - { item: good.water, quantity: 320.0, from: place }
+      - { item: element.o, quantity: 40.0, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 55.0 }
       - { item: good.manure, quantity: 404.0 }
