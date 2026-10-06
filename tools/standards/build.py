@@ -2411,6 +2411,34 @@ try:
 except Exception as _e:    # (the census tool is beside this build; without it the page lacks two reports, no more)
     print("traffic/census report:", _e)
 
+# 3f. Worlds (docs/survey-contract.md): every body grown by the planet simulation, its packages, and what the store holds besides.
+_store = os.environ.get("UNIVERSE_WORLDS") or os.path.expanduser("~/git/planet-sim/out/worlds")
+_index = {}
+try:
+    _rel = json.load(open(os.path.join(_store, "releases.json"), encoding="utf-8"))
+    _index = {w_["world_id"]: w_ for w_ in _rel.get("worlds", [])}
+except Exception:
+    pass
+rows = []
+_baked = set()
+import glob as _glob
+for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _glob.glob(os.path.join(TREE, "Celestial", "metadata", "systems", "*", "bodies", "*.yaml"))), key=lambda b_: (b_.get("identity") or {}).get("key", "")):
+    sv = b_.get("survey")
+    if not sv:
+        continue
+    _baked.add(sv["world_id"])
+    en, bk = b_.get("energy"), b_.get("bake")
+    w_ = _index.get(sv["world_id"], {})
+    energy_s = (f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
+    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else "none"
+    rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s, ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
+for wid, w_ in sorted(_index.items()):
+    if wid in _baked:
+        continue
+    why = "superseded by " + w_["superseded_by"] if w_.get("status") == "superseded" else ("no body: grown from no record of ours" if not w_.get("body") else "not installed: run tools/standards/world_install.py --store")
+    rows.append(row("note", w_.get("body") or "(none)", wid, "", "", "", "in the store, not installed", why))
+report("worlds", "Worlds: bodies grown by the planet simulation", f"Every body with provenance baked: its world, what its survey found, its energy package (none by design where a world never had life), its surface bake (versioned, kept in the worlds store, not here), and which survey files stay in the store for size. Below, what the store ({_store}) lists that is not installed, and why. Install: tools/standards/world_install.py --store <root>.", ["Body", "World", "Survey", "Energy", "Surface", "In the store", "Index says"], rows)
+
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
 _fitted = lambda e_: any(str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])

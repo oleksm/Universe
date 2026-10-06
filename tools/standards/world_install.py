@@ -157,6 +157,12 @@ def install_store(root, replace):
             main(["world_install.py", w] + (["--replace"] if replace else []))
             done += 1
     print(f"{done} world(s) installed from {root}")
+    # what the registry holds now, at a glance
+    for f in sorted(glob.glob(os.path.join(ROOT, "standards", "Celestial", "metadata", "systems", "*", "bodies", "*.yaml"))):
+        b = yaml.safe_load(open(f, encoding="utf-8")) or {}
+        if b.get("survey"):
+            sv, en, bk = b["survey"], b.get("energy"), b.get("bake")
+            print(f"  {b['identity']['name']:<10} {sv['world_id']:<6} {sv.get('deposits', 0):>6,} deposits  energy: {'yes' if en else 'none'}  surface: {'v' + str(bk['version']) if bk else 'none'}  in store: {', '.join(sv.get('in_store') or []) or '-'}")
 
 
 def main(argv):
