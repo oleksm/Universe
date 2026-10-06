@@ -135,7 +135,9 @@ impl Markets {
         }
         let q = self.quote(o.system, o.market, o.item).ok_or("NO MARKET HERE")?;
         let item = self.goods[o.item].clone();
-        let (who, me) = (Party::Pilot(o.pilot), Party::Market(o.system, o.market));
+        // (The exchange's market, or at a rig's dock its owner.)
+        let me = self.economy.place(o.system, o.market).map_or(Party::Market(o.system, o.market), |p| p.trader);
+        let who = Party::Pilot(o.pilot);
         let n = o.units.unsigned_abs() as f64;
         let kg = item.mass * n;
         if o.units > 0 {
@@ -200,7 +202,8 @@ impl Markets {
             return Err("NOT ENOUGH CREDITS".into());
         }
         let cost = t * price;
-        ledger.transfer(who, Party::Market(system, market), Asset::Credits, cost, tick, cause)?;
+        let seller = self.economy.place(system, market).map_or(Party::Market(system, market), |p| p.trader);
+        ledger.transfer(who, seller, Asset::Credits, cost, tick, cause)?;
         if let Some((item, _)) = stocked {
             self.economy.take(system, market, item, t * 1000.0);
         }

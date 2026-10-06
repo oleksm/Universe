@@ -36,9 +36,8 @@ pub fn run(u: &mut Universe) {
     let goods = u.world.goods.clone();
     let mass = |i: usize| goods[i].mass;
     for k in 0..u.markets.economy.works.len() {
+        let Some(owner @ Party::Company(_)) = u.markets.economy.owner(&u.land, k) else { continue };
         let w = &u.markets.economy.works[k];
-        let g = &u.land.grounds[w.ground];
-        let Some(owner @ Party::Company(_)) = g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel)).and_then(|l| u.land.party(&l.owner)) else { continue };
         // (A works with a building dock is a yard: each of its modules that can be set to
         // anything is set to what the build needs, the cutting table and panel former too.)
         if !w.setups.iter().any(|s| s.module.identity.key == "module.building-dock") {
