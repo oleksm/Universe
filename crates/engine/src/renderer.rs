@@ -66,6 +66,8 @@ const GLOBE_MIPS: u32 = 10;
 /// was last drawn (the oldest gives way to a new one).
 struct Globes {
     texture: wgpu::Texture,
+    /// Their own colours (sRGB; alpha 0 where a world has none), layer for layer.
+    colors: wgpu::Texture,
     layers: Vec<Option<(u64, u64)>>,
 }
 
@@ -115,6 +117,35 @@ impl Globes {
                         let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
                         let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
                         [(a[0] + b[0] + c[0] + d[0]) / 4.0, (a[1] + b[1] + c[1] + d[1]) / 4.0]
+                    })
+                    .collect();
+                side = half_side;
+            }
+        }
+        // Its own colours, or none (cleared: the layer may have held another world's).
+        for face in 0..6 {
+            let mut level: Vec<[u8; 4]> = match &map.colors {
+                Some(c) => c[face * n * n..(face + 1) * n * n].to_vec(),
+                None => vec![[0; 4]; n * n],
+            };
+            let mut side = n;
+            for mip in 0..GLOBE_MIPS {
+                gpu.queue.write_texture(
+                    wgpu::TexelCopyTextureInfo { texture: &self.colors, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
+                    bytemuck::cast_slice(&level),
+                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
+                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
+                );
+                if side == 1 {
+                    break;
+                }
+                let half_side = side / 2;
+                level = (0..half_side * half_side)
+                    .map(|i| {
+                        let (x, y) = (i % half_side * 2, i / half_side * 2);
+                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
+                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
+                        std::array::from_fn(|k| ((a[k] as u32 + b[k] as u32 + c[k] as u32 + d[k] as u32 + 2) / 4) as u8)
                     })
                     .collect();
                 side = half_side;
@@ -570,6 +601,13 @@ impl Renderer {
                     ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
                     count: None,
                 },
+                // Worlds' own colours, beside their maps (see `GlobeMap::colors`).
+                wgpu::BindGroupLayoutEntry {
+                    binding: 6,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::CubeArray, multisampled: false },
+                    count: None,
+                },
             ],
         });
         let env = crate::env::Env::new(device, &globals_layout);
@@ -586,6 +624,17 @@ impl Renderer {
             view_formats: &[],
         });
         let globe_view = globe_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
+        let globe_colors = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("globe colours"),
+            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
+            mip_level_count: GLOBE_MIPS,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let globe_colors_view = globe_colors.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
         let globe_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("globe maps"),
             mag_filter: wgpu::FilterMode::Linear,
@@ -603,9 +652,10 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&globe_sampler) },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&env.spec) },
                 wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&env.diff) },
+                wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&globe_colors_view) },
             ],
         });
-        let globes = Globes { texture: globe_texture, layers: vec![None; GLOBE_LAYERS as usize] };
+        let globes = Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] };
         let light_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("shadow light"),
             entries: &[wgpu::BindGroupLayoutEntry {

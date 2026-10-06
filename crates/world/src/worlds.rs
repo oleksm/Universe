@@ -382,6 +382,31 @@ pub fn direction(p: LonLat) -> glam::DVec3 {
     glam::DVec3::new(lat.cos() * lon.cos(), lat.sin(), -lat.cos() * lon.sin())
 }
 
+/// An equirectangular RGB image (row 0 north, column 0 at −180°), sRGB.
+pub struct Equirect {
+    pub width: usize,
+    pub height: usize,
+    rgb: Vec<u8>,
+}
+
+impl Equirect {
+    /// Its colour at body direction `dir` (sRGB bytes), bilinear.
+    pub fn at(&self, dir: glam::DVec3) -> [u8; 3] {
+        let p = lon_lat(dir);
+        let (w, h) = (self.width as f64, self.height as f64);
+        let row = ((90.0 - p.lat) / 180.0 * h - 0.5).clamp(0.0, h - 1.0);
+        let col = (p.lon + 180.0) / 360.0 * w - 0.5;
+        let (r0, c0) = (row.floor(), col.floor());
+        let (fr, fc) = (row - r0, col - c0);
+        let px = |r: f64, c: f64, k: usize| {
+            let r = (r as usize).min(self.height - 1);
+            let c = (c as isize).rem_euclid(self.width as isize) as usize;
+            self.rgb[(r * self.width + c) * 3 + k] as f64
+        };
+        std::array::from_fn(|k| (px(r0, c0, k) * (1.0 - fr) * (1.0 - fc) + px(r0, c0 + 1.0, k) * (1.0 - fr) * fc + px(r0 + 1.0, c0, k) * fr * (1.0 - fc) + px(r0 + 1.0, c0 + 1.0, k) * fr * fc).round() as u8)
+    }
+}
+
 /// How fine a height is wanted (see `Heights::at_detail`).
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 pub enum Detail {
@@ -547,6 +572,16 @@ impl Heights {
         let at = |i: usize, j: usize| t[j * (n + 1) + i] as f64;
         let raw = at(i0, j0) * (1.0 - fi) * (1.0 - fj) + at(i0 + 1, j0) * fi * (1.0 - fj) + at(i0, j0 + 1) * (1.0 - fi) * fj + at(i0 + 1, j0 + 1) * fi * fj;
         ((raw - 32_768.0) / 2.0, true)
+    }
+
+    /// The world's true colour from its bake (`globe_color.jpg`: equirectangular, as the 5 km
+    /// heights), read now (not kept: a globe's map is made from it once). None: none baked.
+    pub fn colour(&self) -> Option<Equirect> {
+        let bytes = self.bake.read("globe_color.jpg").ok()?;
+        let mut d = zune_jpeg::JpegDecoder::new(&bytes);
+        let rgb = d.decode().ok()?;
+        let (width, height) = d.dimensions()?;
+        (rgb.len() == width * height * 3).then_some(Equirect { width, height, rgb })
     }
 
     /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`,

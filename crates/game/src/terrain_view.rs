@@ -54,7 +54,24 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
             });
         }
     });
-    Some(universe_engine::GlobeMap::new(MAP_SIZE, texels))
+    let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
+    // A world grown by the planet simulation: its own colour, texel by texel.
+    let Some(image) = terrain.colour() else { return Some(map) };
+    let mut colors = vec![[0u8; 4]; 6 * n * n];
+    std::thread::scope(|s| {
+        for (k, chunk) in colors.chunks_mut(rows * n).enumerate() {
+            let image = &image;
+            s.spawn(move || {
+                for (i, c) in chunk.iter_mut().enumerate() {
+                    let row = k * rows + i / n;
+                    let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
+                    let [r, g, b] = image.at(universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y));
+                    *c = [r, g, b, 255];
+                }
+            });
+        }
+    });
+    Some(map.with_colors(colors))
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).

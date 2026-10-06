@@ -23,6 +23,8 @@ struct Globals {
 // Worlds' surfaces (see `GlobeMap`): height (in relief units) and crater-ness.
 @group(1) @binding(2) var globe_maps: texture_cube_array<f32>;
 @group(1) @binding(3) var globe_soft: sampler;
+// Their own colours where they have them (alpha 0: none; the palette instead).
+@group(1) @binding(6) var globe_colors: texture_cube_array<f32>;
 
 struct VertexIn {
     @location(0) pos: vec3<f32>,
@@ -239,6 +241,9 @@ fn vnoise(p: vec3<f32>) -> f32 {
     return mix(mix(a, b, s.y), mix(c, d, s.y), s.z);
 }
 
+// A world's own colour against the palette's brightness (the palette's colours are dim).
+const OWN_COLOR: f32 = 1.0;
+
 // Fine detail on a globe, octaves of noise down to about the pixel, each
 // fading in as it grows to a few pixels across (no shimmer): x a colour
 // detail (-1..1), y a height detail (in radii: the same slope at every
@@ -375,6 +380,11 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             n = normalize(abs(det) * n - grad);
         }
         albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
+        // A world's own colour, where it has one (grown, not painted).
+        let own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
+        if (own.a > 0.5) {
+            albedo = vec4<f32>(own.rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * in.globe.w * OWN_COLOR, in.color.a);
+        }
     }
     let seen = sunlit(in.at, n);
     // (A globe lit per pixel: its slopes, its terminator.)
