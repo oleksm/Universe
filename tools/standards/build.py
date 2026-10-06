@@ -135,7 +135,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "revision", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "life", "revision", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -636,7 +636,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census", "independents"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census", "independents", "buildings"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -1066,7 +1066,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision", "fits") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits", "life") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -2406,8 +2406,8 @@ try:
             continue
         _c = {c_["profession"].split(".")[-1]: c_["count"] for c_ in _d["census"]}
         _dep = _c.pop("dependant", 0); _work = sum(_c.values())
-        _rows.append(row("gap" if _work > _d["population"] or _work < 0.3 * _d["population"] else "ok", _d["identity"]["name"], f"{_d['population']:,}", f"{_work:,}", f"{_dep:,}", f"{_work / _d['population']:.0%}", ", ".join(f"{k_} {v_}" for k_, v_ in sorted(_c.items(), key=lambda kv: -kv[1])[:6])))
-    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under three tenths here is a settlement whose works and services, as described, give most of its people nothing to do (a gap: the rest of the civilization is not yet described), over all of them one over-built. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
+        _rows.append(row("gap" if _work > _d["population"] or _work < 0.25 * _d["population"] else "ok", _d["identity"]["name"], f"{_d['population']:,}", f"{_work:,}", f"{_dep:,}", f"{_work / _d['population']:.0%}", ", ".join(f"{k_} {v_}" for k_, v_ in sorted(_c.items(), key=lambda kv: -kv[1])[:6])))
+    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under a quarter here is a settlement whose works and services, as described, give most of its people nothing to do; over all of them, one over-built. Treistun's ports read 30 to 37%: the service trades are described (shops, yards, offices, depots, taverns, clinics, schools); what is still thin against a real economy is manufacturing for people at every port (works making consumer goods), health and schooling. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
 except Exception as _e:    # (the census tool is beside this build; without it the page lacks two reports, no more)
     print("traffic/census report:", _e)
 

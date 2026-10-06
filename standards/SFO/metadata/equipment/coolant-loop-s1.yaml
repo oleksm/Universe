@@ -22,6 +22,8 @@ function:
   kind: "coolant_loop"
   carries: 5000000.0
   flow: 12.0
+life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 5 MW at 12 kg/s of water-glycol over a 100 K rise. Chosen." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

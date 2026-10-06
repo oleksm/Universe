@@ -25,7 +25,9 @@ function:
   lag: 1
   capacity: 13.8888888889
   cadence: 3
+life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a hyperdrive's coils turned to carrying messages, with the computers that sort them." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a rack, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.incinerator
+  name: "Incinerator"
+  step: "Burn waste"
+  description: "A high-temperature furnace with a scrubber: what no works can take back is burned to gas and ash, the gas scrubbed before it goes out."
+physical:
+  length: 40
+  width: 25
+  height: 20
+staff:
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
+recipes:
+  - makes: good.carbon-dioxide
+    does: "Chemical waste burned at 1,100 K with air; the acid gases scrubbed to the tailings."
+    inputs:
+      - { item: good.chemical-waste, quantity: 1.0 }
+      - { item: element.o, quantity: 1.2 }
+    outputs:
+      - { item: good.water, quantity: 0.4 }
+      - { item: good.tailings, quantity: 0.8 }
+    rate: 1.0
+    power: 1500000
+life: 788940000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A hazardous-waste incinerator of about 30,000 t a year with its scrubber; the burn balances by mass, the scrubber's salts going to the tailings. Chosen, 2026-10-06, so chemical waste has a taker." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

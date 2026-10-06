@@ -16,7 +16,9 @@ staff:
   - { profession: profession.fitter, count: 8 }
   - { profession: profession.welder, count: 4 }
   - { profession: profession.engineer, count: 2 }
+life: 788940000
 basis:
   - { of: [throughput.rate], tier: derived, source: "https://www.informs-sim.org/wsc02papers/139.pdf", note: "From an airliner of about this weight: a Boeing 747-400 (183.5 t empty) spent 24 days in final assembly, which is 0.32 t an hour through one position. Other airliners give 0.16 (737, A380)." }
   - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
   - { of: [staff], tier: invented, review: true, note: "A dock's crew: shipwrights, fitters, welders, two engineers. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

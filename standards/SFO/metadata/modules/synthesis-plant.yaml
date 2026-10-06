@@ -41,8 +41,20 @@ recipes:
       - { item: good.water, quantity: 0.7206 }
     rate: 3.0
     power: 21600000
+  - makes: good.methanol
+    does: "Glycerine reformed to gas and the gas to methanol."
+    inputs:
+      - { item: good.glycerine, quantity: 1.4 }
+      - { item: element.h, quantity: 0.05 }
+    outputs:
+      - { item: good.water, quantity: 0.45 }
+    rate: 1.0
+    power: 4000000
+life: 788940000
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_chemicals.json", note: "From the chemistry (a plant in China takes 1.5 t of carbon dioxide and 0.2 t of hydrogen a tonne of methanol, a little over it). 2.28 t of methanol a tonne of ethylene is the chemistry's least; plants take more, and what they lose is taken here as 1.8% to gas, the polymer makers' loss alone. PVC is 57% chlorine." }
   - { of: [recipes.power], tier: invented, review: true, source: "standards/sources/research_chemicals.json", note: "1 kWh a kg of methanol and 2 a kg of plastic: guesses. Joining ethylene takes 1,075 kWh a tonne and vinyl chloride about 3.4 GJ; what turning methanol to ethylene takes was not found. To be reviewed." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "The soap works' glycerine is a feedstock, reformed. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

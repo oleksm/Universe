@@ -21,9 +21,11 @@ recipes:
       - { item: stock.st4340-scrap, quantity: 0.1 }
     rate: 13.8888888888889
     power: 5600000.0
+life: 788940000
 basis:
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Bar mills average 39 t/h, medium section mills 53." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "7 to 15% is lost as scrap in hot rolling; 10 taken." }
   - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2015/08/f26/iron_and_steel_bandwidth_report_0.pdf", note: "111 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

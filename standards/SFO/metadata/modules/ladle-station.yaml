@@ -50,6 +50,7 @@ recipes:
     rate: 41.6666666666667
     batch: 80000
     power: 7500000.0
+life: 788940000
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, batch, power), used for each grade it makes: a guess, to be reviewed. Each grade has its own." }
   - { of: [recipes.inputs], tier: derived, note: "The liquid metal and what is added to it, in the shares of the grade it makes (its material's composition); the loss is the module's." }
@@ -57,3 +58,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf", note: "65 kWh for each tonne for ladle refining and gas cleaning together; 50 taken for the ladle alone." }
   - { of: [recipes.makes, recipes.rate, recipes.batch, physical], tier: invented, review: true, note: "Its rate and footprint were not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

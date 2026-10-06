@@ -4,7 +4,7 @@ x-kind: [building]
 description: "standards/SFO/metadata/buildings/<name>.yaml: a building people live in or are served in, and not a works: a dwelling block, a clinic, a school. What it is, how much floor it gives, which needs of how many people it meets, and who works in it. What it is built of is its weight for now; where one stands is a settlement's to say."
 type: object
 additionalProperties: false
-required: [identity, floor, meets]
+required: [identity, floor, per_people]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
   - { properties: { physical: { required: [mass, length, width, height] } } }
@@ -20,8 +20,9 @@ properties:
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   floor: { type: number, x-unit: "m2", description: "m2 of floor, all storeys together" }
   storeys: { type: number, x-unit: "1", description: "how many floors" }
+  per_people: { type: integer, minimum: 1, description: "One of it to this many people of a settlement: a settlement's buildings follow from its population by this (tools/standards/census.py), and its census from their staff. A settlement with fewer than a quarter of this many people has none." }
   meets:
-    description: "The needs it meets, and of how many people at once."
+    description: "The needs it meets, and of how many people at once. Left out where it meets no one need: a shop, an office, a yard are where people work and buy."
     type: array
     minItems: 1
     items:

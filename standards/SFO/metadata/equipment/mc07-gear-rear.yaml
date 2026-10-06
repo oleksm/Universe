@@ -27,7 +27,9 @@ function:
   efficiency: 0.8
   sink_rate: 3.05
   extended: 7.58
+life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
   - { of: [function, size_class], tier: invented, review: true, note: "Holds 1.2 MN: the same strut, shorter (its Euler load rises as the square of the shortening). Stroke chosen; sink rate the hull's." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

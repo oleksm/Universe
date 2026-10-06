@@ -24,8 +24,10 @@ recipes:
       - { item: good.tailings, quantity: 0.427 }
     rate: 0.5
     power: 33300000
+life: 788940000
 basis:
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "18 to 19 kWh a kg of magnesium in the cells (as from sea-water chloride)." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, note: "By the ore's grade (45% magnesia, as the simulation has it), nine tenths won: the carbon dioxide of the carbonate and the oxygen of the magnesia leave; the rest is tailings." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

@@ -24,8 +24,10 @@ function:
   kind: life_support
   water_recovery: 0.9
   air_recovery: 0.5
+life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, by the space station's plant. By the station's weights (293 kg a head for water and oxygen) 1,500 kg keeps about five people." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "3 racks of the space station's size (a rack is 1.57 m3: about 2.0 by 1.05 by 0.85 m), side by side: the station's water and oxygen plant is 2,061 kg in three racks, this 1,500 kg is 3. The rack's shape is from memory." }
   - { of: [function.water_recovery, function.air_recovery], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "The space station's figures: about 90% of water recovered, about half the oxygen from carbon dioxide (its Sabatier reactor), from memory of its ECLSS reports; the rest is made up from the tanks." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

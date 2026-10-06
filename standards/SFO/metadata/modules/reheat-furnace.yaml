@@ -44,9 +44,11 @@ recipes:
       - { item: stock.ti64-ingot, quantity: 1.0 }
     rate: 33.3333333333333
     power: 45000000
+life: 788940000
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, power, what is lost), used for each metal it works: a guess, to be reviewed. Each metal has its own." }
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "100 to 420 t/h for one furnace." }
   - { of: [recipes.power], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "1,200 to 1,500 MJ of heat for each tonne at best practice; 1,350 taken. Heat is counted as power: there is no fuel to burn." }
   - { of: [recipes.inputs, physical], tier: invented, review: true, note: "No loss in heating is counted. Its footprint was not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

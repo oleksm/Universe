@@ -28,6 +28,21 @@ needs = {d["identity"]["key"]: d for d in map(load, glob.glob(os.path.join(ROOT,
 hulls = {d["identity"]["key"]: d for d in map(load, glob.glob(os.path.join(SFO, "hulls", "*.yaml")))}
 bodies = {d["identity"]["key"]: d for d in map(load, glob.glob(os.path.join(CEL, "*", "bodies", "*.yaml")))}
 STOCKED = ("need.food", "need.medicine", "need.clothes", "need.tools", "need.company")
+buildings = {d["identity"]["key"]: d for d in map(load, glob.glob(os.path.join(SFO, "buildings", "*.yaml")))}
+
+
+def buildings_of(pop):
+    """A settlement's buildings by its people: one of each to its per_people, none where the settlement is under a quarter of
+    that; dwelling blocks for 2,000 and more, bunkhouses below."""
+    out = {}
+    for key, b in buildings.items():
+        per = b.get("per_people")
+        if not per or pop < per / 4:
+            continue
+        if key == "building.bunkhouse" and pop >= 2000 or key == "building.dwelling-block" and pop < 2000:
+            continue
+        out[key] = math.ceil(pop / per)
+    return out
 
 
 def write_block(text, name, lines, comment=""):
@@ -74,11 +89,12 @@ def derive():
             for mk, n in mods:
                 for st in modules.get(mk, {}).get("staff", []):
                     count[st["profession"]] = count.get(st["profession"], 0) + st["count"] * n
-        for nd in needs.values():
-            for sv in nd.get("served_by", []):
-                if sv["profession"] == "profession.pilot":
-                    continue                                   # pilots come from the fleets
-                count[sv["profession"]] = count.get(sv["profession"], 0) + math.ceil(pop / sv["serves"])
+        # the buildings where the service trades work, by the population: their staff (the needs' service ratios are theirs)
+        blds = buildings_of(pop)
+        for bk, n in blds.items():
+            for st in buildings[bk].get("staff", []):
+                count[st["profession"]] = count.get(st["profession"], 0) + st["count"] * n
+        d["_buildings"] = blds
         d["_works"] = sum(count.values()); d["_census"] = count
     # ---- traffic: routes to each supplied settlement
     routes = []
@@ -159,7 +175,9 @@ def main():
         works = sum(count.values()); dependants = pop - works
         lines = "".join(f"  - {{ profession: {k}, count: {v} }}\n" for k, v in sorted(count.items(), key=lambda kv: -kv[1]))
         lines += f"  - {{ profession: profession.dependant, count: {max(dependants, 0)} }}\n"
-        s = write_block(s, "census", lines, f"its {pop:,} people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)" + ("; MORE PEOPLE WORK HERE THAN LIVE HERE" if dependants < 0 else ""))
+        blines = "".join(f"  - {{ building: {k}, count: {v} }}\n" for k, v in sorted(d["_buildings"].items(), key=lambda kv: -kv[1]))
+        s = write_block(s, "buildings", blines, f"what stands here for its {pop:,} people: one of each building to its per_people") if blines else s
+        s = write_block(s, "census", lines, f"its {pop:,} people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)" + ("; MORE PEOPLE WORK HERE THAN LIVE HERE" if dependants < 0 else ""))
         yaml.safe_load(s); open(f, "w", encoding="utf-8").write(s)
         if dependants < 0:
             print(f"{key}: {works:,} at work for {pop:,} people")

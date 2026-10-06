@@ -19,5 +19,7 @@ recipes:
       - { item: good.natural-gas, quantity: 1.0, from: place }
     rate: 3.0
     power: 1500000
+life: 788940000
 basis:
   - { of: [physical, staff, recipes], tier: invented, review: true, note: "A well of about 10 million cubic feet a day (3 kg/s) with 1.5 MW of compression: typical figures from memory. Not sourced." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

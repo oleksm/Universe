@@ -9,27 +9,60 @@ structure: structure.spaceport
 population: 60000
 # Supplied from Port Eikir: 98.5 t a day of what its people take; 8.2 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 13 hauler(s) on the run, so a delivery every 1.4 days (tools/standards/census.py).
 resupply: { from: settlement.treistun.port-eikir, interval: 122655 }
-# census: its 60,000 people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)
+# buildings: what stands here for its 60,000 people: one of each building to its per_people
+buildings:
+  - { building: building.shop, count: 858 }
+  - { building: building.tavern, count: 120 }
+  - { building: building.offices, count: 60 }
+  - { building: building.clinic, count: 52 }
+  - { building: building.builders-yard, count: 40 }
+  - { building: building.dwelling-block, count: 30 }
+  - { building: building.school, count: 30 }
+  - { building: building.repair-shop, count: 30 }
+  - { building: building.depot, count: 30 }
+  - { building: building.care-home, count: 30 }
+  - { building: building.market-hall, count: 12 }
+  - { building: building.inn, count: 12 }
+  - { building: building.watch-house, count: 6 }
+  - { building: building.bank, count: 6 }
+  - { building: building.flight-school, count: 3 }
+  - { building: building.theatre, count: 3 }
+  - { building: building.courthouse, count: 2 }
+  - { building: building.press, count: 2 }
+  - { building: building.college, count: 2 }
+  - { building: building.hospital, count: 1 }
+  - { building: building.gaol, count: 1 }
+# census: its 60,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.teacher, count: 653 }
-  - { profession: profession.nurse, count: 567 }
-  - { profession: profession.innkeeper, count: 240 }
-  - { profession: profession.doctor, count: 207 }
-  - { profession: profession.constable, count: 181 }
-  - { profession: profession.artist, count: 60 }
+  - { profession: profession.clerk, count: 6400 }
+  - { profession: profession.nurse, count: 3572 }
+  - { profession: profession.builder, count: 1400 }
+  - { profession: profession.driver, count: 1370 }
+  - { profession: profession.food-worker, count: 1350 }
+  - { profession: profession.technician, count: 1013 }
+  - { profession: profession.merchant, count: 978 }
+  - { profession: profession.teacher, count: 896 }
+  - { profession: profession.doctor, count: 808 }
+  - { profession: profession.administrator, count: 600 }
+  - { profession: profession.docker, count: 450 }
+  - { profession: profession.engineer, count: 402 }
+  - { profession: profession.scholar, count: 400 }
+  - { profession: profession.fitter, count: 390 }
+  - { profession: profession.electrician, count: 302 }
+  - { profession: profession.innkeeper, count: 300 }
+  - { profession: profession.lawyer, count: 270 }
+  - { profession: profession.machinist, count: 240 }
+  - { profession: profession.constable, count: 200 }
+  - { profession: profession.banker, count: 60 }
   - { profession: profession.performer, count: 60 }
-  - { profession: profession.docker, count: 30 }
+  - { profession: profession.artist, count: 60 }
+  - { profession: profession.reporter, count: 20 }
   - { profession: profession.plant-operator, count: 12 }
-  - { profession: profession.reporter, count: 12 }
   - { profession: profession.pilot, count: 12 }
-  - { profession: profession.clerk, count: 10 }
   - { profession: profession.farmer, count: 10 }
-  - { profession: profession.judge, count: 6 }
-  - { profession: profession.engineer, count: 2 }
-  - { profession: profession.electrician, count: 2 }
+  - { profession: profession.judge, count: 10 }
   - { profession: profession.chemist, count: 2 }
-  - { profession: profession.technician, count: 1 }
-  - { profession: profession.dependant, count: 57933 }
+  - { profession: profession.dependant, count: 38413 }
 # independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 86 }

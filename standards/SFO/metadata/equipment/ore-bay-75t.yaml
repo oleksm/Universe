@@ -23,7 +23,9 @@ function:
   capacity: 75000
   volume: 37.5
   fill_density: 2000
+life: 473364000
 basis:
   - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
   - { of: [physical.mass], tier: invented, review: true, note: "A tenth of its capacity: a haul truck's body is about 11% of its payload (a 363 t truck's 40 t body, from memory). Not sourced." }
   - { of: [physical.length, physical.width, physical.height, physical.volume, size_class], tier: invented, review: true, note: "A hopper twice as long as wide and as deep as wide, to its heaped volume; its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

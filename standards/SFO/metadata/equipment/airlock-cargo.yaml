@@ -24,6 +24,8 @@ function:
   cycle: 600
   passage: 2.4
   air_lost: 15.0
+life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A lock a pallet or six suited people go through: 54 m3, 6 t, about the ISS Quest airlock whole (9.9 t with its tanks). From memory. Not sourced." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

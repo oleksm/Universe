@@ -56,6 +56,7 @@
     (key: "hot-rolling-mill", name: "Hot rolling mill", length: 300.0, width: 40.0, height: 20.0, needs: 26.5, supplies: 0.0, holds: 0.0),
     (key: "hydrogen-plant", name: "Hydrogen plant", length: 150.0, width: 100.0, height: 20.0, needs: 100.0, supplies: 0.0, holds: 0.0),
     (key: "ice-melter", name: "Ice melter", length: 40.0, width: 30.0, height: 15.0, needs: 7.8, supplies: 0.0, holds: 0.0),
+    (key: "incinerator", name: "Incinerator", length: 40.0, width: 25.0, height: 20.0, needs: 1.5, supplies: 0.0, holds: 0.0),
     (key: "ingot-yard", name: "Ingot yard", length: 150.0, width: 100.0, height: 15.0, needs: 0.5, supplies: 0.0, holds: 50000.0),
     (key: "ladle-station", name: "Ladle station", length: 40.0, width: 30.0, height: 35.0, needs: 7.5, supplies: 0.0, holds: 0.0),
     (key: "lead-smelter", name: "Lead smelter", length: 200.0, width: 100.0, height: 30.0, needs: 17.6, supplies: 0.0, holds: 0.0),

@@ -21,6 +21,28 @@ recipes:
       - { item: good.barley, quantity: 0.1 }
     rate: 2.778
     power: 300000
+  - makes: good.animal-feed
+    does: "Spent grain, pulp, pomace, whey and seed cake dried and milled into feed."
+    inputs:
+      - { item: good.spent-grain, quantity: 0.5 }
+      - { item: good.beet-pulp, quantity: 0.3 }
+      - { item: good.pomace, quantity: 0.2 }
+      - { item: good.whey, quantity: 0.5 }
+    outputs:
+      - { item: good.water, quantity: 0.5 }
+    rate: 2.778
+    power: 400000
+  - makes: good.animal-feed
+    does: "Bagasse and cottonseed with meat and bone meal, milled into feed."
+    inputs:
+      - { item: good.bagasse, quantity: 0.5 }
+      - { item: good.cottonseed, quantity: 0.35 }
+      - { item: good.meat-and-bone-meal, quantity: 0.15 }
+    rate: 2.778
+    power: 300000
+life: 788940000
 basis:
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.power], tier: invented, review: true, note: "A mix chosen, not a ration anyone has worked out. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "The by-products of sugar, brewing, wine, dairy, oil and textiles, and the rendering works' meal, are feed, as on Earth. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

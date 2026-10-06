@@ -21,8 +21,10 @@ recipes:
       - { item: element.h, quantity: 0.18 }
     rate: 5.556
     power: 15800000
+life: 788940000
 basis:
   - { of: [recipes.inputs], tier: derived, note: "Ammonia is 14 parts nitrogen to 3 of hydrogen by weight." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_chemicals.json", note: "Making ammonia from power takes 38 GJ a tonne in all, of which the hydrogen is 90 to 95%; the rest, 7.5% taken, is this works' share: joining them and taking the nitrogen from the air." }
   - { of: [physical, recipes, recipes.rate], tier: invented, review: true, note: "Its size and rate are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

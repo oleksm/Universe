@@ -175,6 +175,7 @@
 - { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "industry.ron, settlements.ron" }
 - { key: module.hydrogen-plant, game: "hydrogen-plant", in: "industry.ron, settlements.ron" }
 - { key: module.ice-melter, game: "ice-melter", in: "industry.ron, settlements.ron" }
+- { key: module.incinerator, game: "incinerator", in: "industry.ron, settlements.ron" }
 - { key: module.ingot-yard, game: "ingot-yard", in: "industry.ron, settlements.ron" }
 - { key: module.ladle-station, game: "ladle-station", in: "industry.ron, settlements.ron" }
 - { key: module.lead-smelter, game: "lead-smelter", in: "industry.ron, settlements.ron" }

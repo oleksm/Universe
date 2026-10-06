@@ -25,8 +25,10 @@ recipes:
       - { item: good.slag, quantity: 0.7864 }
     rate: 0.5
     power: 5000000
+life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "From the chemistry, with half as much carbon again as it needs and 95% of the tin won: guesses. The concentrate's grade is sourced." }
   - { of: [recipes.power], tier: invented, review: true, note: "10 MJ a kg: no figure was found. To be reviewed." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

@@ -22,6 +22,8 @@ function:
   kind: "cargo_lift"
   load: 20000
   travel: 8.0
+life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A 3 by 3 m platform lifting 20 t through 8 m: a heavy goods lift's figures. Chosen." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

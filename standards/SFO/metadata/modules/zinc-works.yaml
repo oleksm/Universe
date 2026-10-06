@@ -24,8 +24,21 @@ recipes:
       - { item: good.tailings, quantity: 0.3717 }
     rate: 5.0
     power: 81500000
+  - makes: element.zn
+    does: "Furnace dust, a fifth zinc, roasted in a rotary kiln: the zinc fumed off and caught."
+    inputs:
+      - { item: good.dust, quantity: 5.0 }
+      - { item: good.carbon, quantity: 0.5 }
+    outputs:
+      - { item: good.tailings, quantity: 4.3 }
+      - { item: good.carbon-dioxide, quantity: 1.2 }
+    rate: 2.0
+    power: 20000000
+life: 788940000
 basis:
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "3,850 to 4,905 kWh a tonne of zinc, and 0.48 GJ besides." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "Concentrate of 54% zinc and 32% sulphur; 96% of the zinc won. The iron residue (0.3 to 0.8 t a tonne of zinc) is put with tailings. The lead and cadmium in it are not counted." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "Electric arc furnace dust is a zinc ore on Earth (the Waelz kiln); here too. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

@@ -1090,11 +1090,15 @@ Point `UNIVERSE_WORLDS` at that root; relative paths, so the folder can move or 
 new deposit types and seven airless rock units came with the lab's vocabulary (the rock map's
 `rock_units.index` on Cinder uses them).
 
-**The matter loop (2026-10-06, night).** Every by-product has a taker now (the Takers report reads
-0 gaps): new recipes on the feed mill, furnaces, casthouse, brickworks, concrete plant, zinc works,
-synthesis plant, cement works, compost works and soap works, and an incinerator for chemical waste.
-Added recipes sit last in each module's list, so a line's `makes` still resolves to its first.
-**Wear:** `life` (s) on every piece of equipment (15 years), module (25) and hull (40), beside the
-goods' and buildings'. **For the game, when you want it:** a thing in service past its life is
-worn out: replaced from the market (its demand), and its stock returns as scrap (the furnaces take
-it). That is the loop that keeps demand steady after day 0.
+**Commerce and construction (2026-10-06, evening).** Fourteen buildings where the service trades
+work (shop, market hall, builders' yard, repair shop, offices, bank, depot, tavern, inn, theatre,
+press, care home, college), `per_people` on every building, `settlement.buildings` by population,
+the census from their staff: Treistun's ports read 30–37% at work, from 3–6%. The buildings are
+not sited on parcels (no outlines); when the game wants to draw them, say and I give each a
+footprint. **A flaky test, yours:** `ship::classes::every_hull_is_balanced_and_sized_for_its_job`
+failed once in a full run with `hull.import.mc07: can't hover at 1 g with an empty hold` and passed
+on the next: the imported hull is in the classes only when a test that imports mc07.glb has run
+first (a shared static), and with the registry's fit (radiators, loops, cabin, stores: 18.7 t more,
+the user's ruling) the MC-07 at 1.32 MN of lift cannot hover empty at 1 g. Both halves are true:
+the order dependence is a test bug; the hover failure is the physics the user wants met from the
+flying side, so the imported MC-07 should be reported, not asserted, there.
