@@ -69,9 +69,10 @@ impl Default for Design {
     fn default() -> Self {
         Design {
             name: "DESIGN".into(),
-            length: 40.0,
-            width: 16.0,
-            height: 9.0,
+            // (The MC-07's size: room for equipment at its real size, a drive of 387 m³.)
+            length: 66.0,
+            width: 31.0,
+            height: 19.0,
             nose: 0.35,
             tail: 0.85,
             wing_span: 8.0,
@@ -530,16 +531,18 @@ mod tests {
         ship.throttle = 1.0;
         ship.drive(None, 1.0 / 60.0, true);
         assert!(ship.applied.0.z < -0.9 * content().get(h).main_thrust * 0.5, "{:?}", ship.applied);
-        // A hull modelled in Blender (tools/blender/test_hull.py), imported the same way: it flies too.
-        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/test_hull.glb");
-        let h = crate::import::commission(&std::fs::read(path).unwrap(), path).unwrap();
+        // A hull modelled in Blender, imported the same way: it flies too. (The MC-07's model: the
+        // little test hull of tools/blender/test_hull.py has no room for equipment at real size.)
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb");
+        let visual = "assets/models/mc07.glb";
+        let h = crate::import::commission(&std::fs::read(path).unwrap(), visual).unwrap();
         let s = content().get(h);
         let a = s.authority(s.fuel_capacity, 0.0);
         eprintln!("{}: frame {:.1} t, dry {:.1} t, main {:.1} m/s², lift {:.1} m/s², {} nozzles", s.name, s.frame.frame_mass / 1e3, s.dry_mass / 1e3, s.main_thrust / (s.dry_mass + s.fuel_capacity), s.lift_thrust / (s.dry_mass + s.fuel_capacity), s.thrusters.len());
-        assert_eq!(s.name, "TEST MINER");
+        assert_eq!(s.name, "MC-07");
         assert!(s.main_thrust > 0.0 && s.lift_thrust > 0.0 && s.rcs_thrust > 0.0 && a.lift > 0.0, "{a:?}");
-        assert_eq!(s.visual.as_deref(), Some(path));
-        assert_eq!(crate::import::commission(&std::fs::read(path).unwrap(), path).unwrap(), h, "the same file, the same hull");
+        assert_eq!(s.visual.as_deref(), Some(visual));
+        assert_eq!(crate::import::commission(&std::fs::read(path).unwrap(), visual).unwrap(), h, "the same file, the same hull");
     }
 
 }

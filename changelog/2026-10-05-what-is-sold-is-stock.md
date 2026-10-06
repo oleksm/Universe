@@ -16,3 +16,7 @@
 - Tests moved with it: ore saved as its stock, the refit test's mass against itself (the avionics
   weigh their real weights now), the room test past the outdated hulls.
 - Mounts (SFO 19) are in the registry; the game fits by slot kind and size as before.
+- **Real equipment sizes** (merged the same night): the torch drive is 387 m³, the belly lift 552.
+  The MC-07 holds them. The ship designer's default design is now the MC-07's size (66 × 31 × 19 m)
+  so it holds them too; the little Blender test hull can't, and the import test uses the MC-07's
+  model. The balance tests pass over the outdated stock hulls, which fly crowded.
