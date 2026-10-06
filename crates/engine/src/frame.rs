@@ -115,6 +115,8 @@ pub struct Frame {
     /// What's drawn of what can be (see `Graphics`).
     pub graphics: Graphics,
     casts: bool,
+    /// Meshes drawn now are ground (see `ground_shadow`).
+    ground: bool,
     /// The surface meshes are drawn with now (see `Instance::material`, `with_surface`).
     surface: [f32; 4],
     /// Low-res scene resolution.
@@ -165,6 +167,8 @@ pub(crate) struct MeshDraw {
     /// origin (metres, scaled).
     pub casts: bool,
     pub reach: f32,
+    /// It is ground: it casts into the ground's own cascade, not the others.
+    pub ground: bool,
 }
 
 /// A textured model to draw: the model, and its instance (placed and lit
@@ -338,6 +342,7 @@ impl Frame {
             shadow_reach: 0.0,
             graphics: Graphics::default(),
             casts: true,
+            ground: false,
             surface: [0.0, 16.0, 0.0, 0.0],
             scene_size,
             size: hud_size,
@@ -519,6 +524,16 @@ impl Frame {
         self.casts = before;
     }
 
+    /// Meshes drawn in `f` are ground: they cast only into the ground's own
+    /// shadow cascade (kilometres across, coarse texels), so a mountain
+    /// shades the valley beyond it without the ground shading itself up
+    /// close in the fine cascades.
+    pub fn ground_shadow(&mut self, f: impl FnOnce(&mut Frame)) {
+        let before = (std::mem::replace(&mut self.casts, false), std::mem::replace(&mut self.ground, true));
+        f(self);
+        (self.casts, self.ground) = before;
+    }
+
     /// How much of the light's disc is in sight from `at` (world), 0..1:
     /// what the eclipsers leave of it. (A sphere holding `at` doesn't count:
     /// its own night is its shading.)
@@ -654,7 +669,7 @@ impl Frame {
     /// light on it here, for the GPU to transform and light.
     fn mesh(&mut self, mesh: &Mesh, t: &Transform, line: [f32; 4], fill: [f32; 4], edges: bool, lit: bool) {
         let inst = self.instance(t, line, fill, lit);
-        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32 };
+        let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32, ground: self.ground };
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
 

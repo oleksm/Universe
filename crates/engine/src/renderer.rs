@@ -55,6 +55,9 @@ struct Globals {
     world_at: [f32; 4],
     /// The scene's frame to the bound world's own (its turn undone), for its clouds.
     world_to_body: [[f32; 4]; 4],
+    /// The ground cascade (see `GROUND_HALF`): camera-relative world → it; its
+    /// texel and in use are `shadow2`'s z and w.
+    shadow_ground: [[f32; 4]; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -62,10 +65,17 @@ const SHADOW_SIZE: u32 = 4096; // (the shaders' SHADOW_TEXEL: keep them together
 /// How far toward the light (and away) a shadow box reaches from the eye
 /// (m): what casts from up to this far sunward of it.
 const SHADOW_DEPTH: f64 = 8_000.0;
+/// The ground cascade: a box this far each way across the light round the
+/// eye (m), and `GROUND_DEPTH` along it, drawn from the ground's patches
+/// only: a mountain's shadow tens of kilometres long, on the ground and on
+/// what stands on it. (Its texel: 15 m.)
+const GROUND_HALF: f64 = 30_000.0;
+const GROUND_DEPTH: f64 = 80_000.0;
 
-/// The light's view of what's near the eye, for shadows: three cascades (far,
-/// near: a twenty-fourth of it; tight: round what's looked at, centimetres a
-/// texel), each an orthographic box along the light, depth only.
+/// The light's view of what's near the eye, for shadows: four cascades (near:
+/// a twenty-fourth of far; far; tight: round what's looked at, centimetres a
+/// texel; the ground's: see `GROUND_HALF`), each an orthographic box along
+/// the light, depth only.
 /// Globe maps' texels a face side, layers (worlds at once), mip levels.
 const GLOBE_SIZE: u32 = 512;
 const GLOBE_LAYERS: u32 = 16;
@@ -181,22 +191,26 @@ pub(crate) fn half(x: f32) -> u16 {
 
 struct Shadows {
     /// Each cascade's layer of the map, to draw into.
-    layers: [wgpu::TextureView; 3],
+    layers: [wgpu::TextureView; 4],
     /// Each cascade's matrix (uniform), for the pass drawing it.
-    lights: [wgpu::Buffer; 3],
-    light_binds: [wgpu::BindGroup; 3],
+    lights: [wgpu::Buffer; 4],
+    light_binds: [wgpu::BindGroup; 4],
     /// The map and its comparing sampler, for the mesh shaders.
     bind: wgpu::BindGroup,
     pipe: wgpu::RenderPipeline,
+    /// The ground cascade's (no depth bias).
+    ground_pipe: wgpu::RenderPipeline,
     /// The casters this frame: (mesh, first instance, count).
     runs: Vec<(u64, u32, u32)>,
+    /// The ground's patches, casting into the ground cascade (layer 3).
+    ground_runs: Vec<(u64, u32, u32)>,
 }
 
 /// Camera-relative world → a shadow cascade's clip space: a box `half`
-/// metres each way across the light and `SHADOW_DEPTH` along it, round the
+/// metres each way across the light and `depth` along it, round the
 /// eye at `eye` (world), its centre held to whole texels (so edges don't
 /// crawl as the eye moves); depth 0 at the sunward end.
-fn shadow_matrix(eye: glam::DVec3, sun: glam::DVec3, half: f64) -> glam::Mat4 {
+fn shadow_matrix(eye: glam::DVec3, sun: glam::DVec3, half: f64, depth: f64) -> glam::Mat4 {
     use glam::{DVec3, DVec4};
     let w = sun;
     let u = w.cross(if w.y.abs() < 0.9 { DVec3::Y } else { DVec3::X }).normalize();
@@ -204,7 +218,7 @@ fn shadow_matrix(eye: glam::DVec3, sun: glam::DVec3, half: f64) -> glam::Mat4 {
     let texel = 2.0 * half / SHADOW_SIZE as f64;
     let snap = |a: f64| (a / texel).round() * texel - a;
     let c = u * snap(eye.dot(u)) + v * snap(eye.dot(v));
-    let d = SHADOW_DEPTH;
+    let d = depth;
     let rows = [
         DVec4::new(u.x / half, u.y / half, u.z / half, -c.dot(u) / half),
         DVec4::new(v.x / half, v.y / half, v.z / half, -c.dot(v) / half),
@@ -572,7 +586,7 @@ impl Renderer {
         // shaders' view of it, and the pass that draws it.
         let shadow_texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("shadow map"),
-            size: wgpu::Extent3d { width: SHADOW_SIZE, height: SHADOW_SIZE, depth_or_array_layers: 3 },
+            size: wgpu::Extent3d { width: SHADOW_SIZE, height: SHADOW_SIZE, depth_or_array_layers: 4 },
             mip_level_count: 1,
             sample_count: 1,
             dimension: wgpu::TextureDimension::D2,
@@ -686,12 +700,12 @@ impl Renderer {
             }],
         });
         let light_buffer = || device.create_buffer(&wgpu::BufferDescriptor { label: Some("shadow light"), size: 64, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
-        let lights = [light_buffer(), light_buffer(), light_buffer()];
+        let lights = [light_buffer(), light_buffer(), light_buffer(), light_buffer()];
         let light_bind = |b: &wgpu::Buffer| device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("shadow light"), layout: &light_layout, entries: &[wgpu::BindGroupEntry { binding: 0, resource: b.as_entire_binding() }] });
-        let light_binds = [light_bind(&lights[0]), light_bind(&lights[1]), light_bind(&lights[2])];
+        let light_binds = [light_bind(&lights[0]), light_bind(&lights[1]), light_bind(&lights[2]), light_bind(&lights[3])];
         let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/shadow.wgsl"));
-        let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("shadow casters"),
+        let shadow_pipe_biased = |label: &str, bias: wgpu::DepthBiasState| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some(label),
             layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("shadow"), bind_group_layouts: &[Some(&light_layout)], immediate_size: 0 })),
             vertex: wgpu::VertexState { module: &shadow_shader, entry_point: Some("vs_shadow"), compilation_options: Default::default(), buffers: &mesh_layouts },
             primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
@@ -700,15 +714,20 @@ impl Renderer {
                 depth_write_enabled: Some(true),
                 depth_compare: Some(wgpu::CompareFunction::LessEqual),
                 stencil: Default::default(),
-                // (Pushed back a little, more on slopes: no speckle on lit faces.)
-                bias: wgpu::DepthBiasState { constant: 2, slope_scale: 2.0, clamp: 0.0 },
+                bias,
             }),
             multisample: Default::default(),
             fragment: None,
             multiview_mask: None,
             cache: None,
         });
-        let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1), shadow_layer(2)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, runs: Vec::new() };
+        // (Pushed back a little, more on slopes: no speckle on lit faces.)
+        let shadow_pipe = shadow_pipe_biased("shadow casters", wgpu::DepthBiasState { constant: 2, slope_scale: 2.0, clamp: 0.0 });
+        // (The ground's: none. Its texels are 15 m and the sun may graze it, where a slope's bias
+        // would be hundreds of metres, more than its hills; its receivers step off along their
+        // normals instead.)
+        let ground_pipe = shadow_pipe_biased("ground shadow casters", wgpu::DepthBiasState::default());
+        let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1), shadow_layer(2), shadow_layer(3)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, ground_pipe, runs: Vec::new(), ground_runs: Vec::new() };
         let world_bind = crate::worldmaps::WorldBind::new(device, &gpu.queue);
         let mesh_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("meshes"),
@@ -1077,7 +1096,9 @@ impl Renderer {
         let sun = frame.light.filter(|_| frame.shadow_reach > 0.0 && frame.graphics.shadows).and_then(|l| (l.position - frame.camera.position).try_normalize());
         // (The near cascade tight round the eye: a ship close by gets a few cm a texel.)
         let (near, far) = (frame.shadow_reach / 24.0, frame.shadow_reach);
-        let cascade = |half: f64| sun.map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, half));
+        let cascade = |half: f64| sun.map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, half, SHADOW_DEPTH));
+        let ground_on = sun.is_some() && frame.meshes.iter().any(|d| d.ground);
+        let shadow_ground = sun.filter(|_| ground_on).map_or(glam::Mat4::IDENTITY, |s| shadow_matrix(frame.camera.position, s, GROUND_HALF, GROUND_DEPTH));
         let (shadow_near, shadow_far) = (cascade(near), cascade(far));
         // (Round what's looked at, if the game says how far off it is: a ship a few
         // metres from the eye gets millimetres a texel, not the near cascade's centimetres.)
@@ -1106,7 +1127,8 @@ impl Renderer {
             shadow_near: shadow_near.to_cols_array_2d(),
             shadow_far: shadow_far.to_cols_array_2d(),
             shadow_tight: shadow_tight.to_cols_array_2d(),
-            shadow2: [tight.map_or(0.0, texel), if tight.is_some() && sun.is_some() { 1.0 } else { 0.0 }, 0.0, 0.0],
+            shadow2: [tight.map_or(0.0, texel), if tight.is_some() && sun.is_some() { 1.0 } else { 0.0 }, texel(GROUND_HALF), if ground_on { 1.0 } else { 0.0 }],
+            shadow_ground: shadow_ground.to_cols_array_2d(),
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
@@ -1131,6 +1153,7 @@ impl Renderer {
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[2], 0, bytemuck::cast_slice(&shadow_tight.to_cols_array()));
+        gpu.queue.write_buffer(&self.shadows.lights[3], 0, bytemuck::cast_slice(&shadow_ground.to_cols_array()));
         let upload = universe_prof::scope("render/upload vertices");
         gpu.queue.write_buffer(&self.globals, 0, bytemuck::bytes_of(&globals));
         self.sky.upload(gpu, &frame.sky);
@@ -1163,7 +1186,7 @@ impl Renderer {
         // The environment as light, for this frame.
         self.env.render(&mut encoder, &self.globals_bind);
         // The shadow map: each cascade, the casters seen from the light.
-        for k in 0..3 {
+        for k in 0..4 {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("shadow map"),
                 color_attachments: &[],
@@ -1178,6 +1201,11 @@ impl Renderer {
             });
             if sun.is_some() {
                 pass.set_bind_group(0, &self.shadows.light_binds[k], &[]);
+                // (The ground's own cascade: the ground's patches alone.)
+                if k == 3 {
+                    self.draw_meshes(&mut pass, &self.shadows.ground_runs, &self.shadows.ground_pipe, |m| (&m.faces, m.face_vertices));
+                    continue;
+                }
                 self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
                 self.pbr.draw_shadows(&mut pass);
             }
@@ -1352,6 +1380,8 @@ impl Renderer {
         let reach = frame.shadow_reach as f32 * 1.5;
         let casting: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().chain(&frame.front).filter(|d| d.casts && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < reach).collect();
         self.shadows.runs = casters(&casting, &mut data);
+        let ground: Vec<&crate::frame::MeshDraw> = frame.meshes.iter().filter(|d| d.ground && glam::Vec3::from_slice(&d.instance.t[..3]).length() - d.reach < (GROUND_HALF * 1.5) as f32).collect();
+        self.shadows.ground_runs = casters(&ground, &mut data);
         self.instances.upload_bytes(gpu, bytemuck::cast_slice(&data), data.len() as u32);
     }
 
