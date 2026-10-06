@@ -96,3 +96,16 @@ fn reckon(reg: &Registry, key: &str) -> Option<Legs> {
     }
     (count > 0 && most.is_finite() && stroke.is_finite()).then_some(Legs { force: most * count as f64, stroke, efficiency, designed })
 }
+
+/// How a ship of `spec`, `mass` kg, stands to land on ground of gravity `g`
+/// (m/s²): its lift against its weight there, and the hardest landing its
+/// legs take (None: no legs in its record).
+pub fn ground_check(spec: &crate::ship::ClassSpec, mass: f64, g: f64) -> (f64, Option<f64>) {
+    let lift = if g > 0.0 { spec.lift_thrust / (mass * g) } else { f64::INFINITY };
+    (lift, of_spec(spec).map(|l| l.hardest(mass, g)))
+}
+
+/// A body's surface gravity (m/s²).
+pub fn surface_gravity(body: &crate::system::Body) -> f64 {
+    crate::units::G * body.mass / body.rail.radius.max(1.0).powi(2)
+}

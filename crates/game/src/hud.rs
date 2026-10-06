@@ -798,6 +798,12 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
         _ => String::new(),
     };
     lines.push((format!("LAND {name}{pad}  {}", mode_label(st.autopilot, st.phase)), HUD));
+    // What this ground asks of the ship as it is: its lift against its weight here, what its legs take.
+    let g = universe_sim::world::legs::surface_gravity(&sys.bodies[p.body]);
+    let (lift, legs) = universe_sim::world::legs::ground_check(app.ship.spec(), app.ship.mass(), g);
+    let legs = legs.map_or(String::new(), |v| if v > 0.0 { format!("  LEGS TAKE {}", fmt::speed(v)) } else { "  ITS LEGS CAN'T STAND ITS WEIGHT HERE".into() });
+    let hover = if lift < 1.0 { "  CAN'T HOVER" } else { "" };
+    lines.push((format!("GROUND {g:.1} M/S2  LIFT {lift:.2}x WEIGHT{hover}{legs}"), if lift < 1.0 || legs.contains("CAN'T") { RED } else { DIM }));
 
     let descent = st.guidance.final_run;
     let sink_target = -st.guidance.desired_velocity.dot(st.pad.up);

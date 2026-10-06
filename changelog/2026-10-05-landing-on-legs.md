@@ -26,3 +26,16 @@ The registry's design (SFO 15, the MC-07's `design`): legs built for a 3.05 m/s 
   what's left, and the pilot is told (BROKEN IN THE JOLT: 2 OF ...). NPC ships alike.
 - Even the hardest landing an MC-07's legs survive puts about 2 g aboard, and the lowest limit is
   10 g: the legs keep the cargo whole. Harder jolts (a collision's) are next.
+
+## Knowing before trying
+
+- **The landing readout says what the ground asks:** its gravity, the ship's lift against its
+  weight there (red under 1: CAN'T HOVER), and the hardest landing its legs take there, or that
+  they can't stand its weight.
+- **No clearance to land where the ship can't:** traffic control refuses a ship whose lift holds
+  less than its weight on that world, or whose legs can't stand it ("REFUSED - ITS LIFT HOLDS 0.81
+  OF ITS WEIGHT ON TREISTUN E"). So NPCs and the landing autopilot don't fly into the ground; a
+  pilot may still try by hand.
+- **The MC-07's home planet is one of these:** it starts docked at Treistun e Station, and Port
+  Nacaubun below is out of its reach (0.81). The dev landing scenarios, aimed there, now meet the
+  refusal; Port Trethi is the nearest it can land at.

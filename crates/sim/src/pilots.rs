@@ -194,6 +194,19 @@ impl Bus for PoolLink<'_> {
         if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
             return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
         }
+        // A port on ground its lift can't hold it over (or its legs can't stand on): no clearance.
+        if let Some(NavTarget::Spaceport(p)) = target
+            && let Some(sp) = self.sys.spaceports.get(p)
+        {
+            let g = universe_world::legs::surface_gravity(&self.sys.bodies[sp.body]);
+            let (lift, legs) = universe_world::legs::ground_check(self.ship.spec(), self.ship.mass(), g);
+            if lift < 1.0 {
+                return Err(format!("REFUSED - ITS LIFT HOLDS {lift:.2} OF ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
+            }
+            if legs.is_some_and(|v| v <= 0.0) {
+                return Err(format!("REFUSED - ITS LEGS CAN'T STAND ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
+            }
+        }
         // A gate: its crossing paid for, or no clearance.
         if let Some(NavTarget::Gate(g)) = target
             && let Some(to) = self.sys.bodies.get(g).and_then(|b| b.link)
