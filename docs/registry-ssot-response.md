@@ -476,8 +476,8 @@ tests pass. This is your item 6 for food, done as modules with recipes, not copi
 `recipes.ron`.
 
 **Sourced since, and one finding for you** (`docs/registry-food.md`, "What Treistun's two worlds
-with air do to a crop"): by `climate.rs` as it stands, Treistun e's warmest ground averages -10 C
-and Port Nacaubun -19 C, so nothing grows in the open there; Treistun d farms between 25 and 50
+with air do to a crop"): by `climate.rs` as it stands, Hearth's warmest ground averages -10 C
+and Port Nacaubun -19 C, so nothing grows in the open there; Harvest farms between 25 and 50
 degrees of latitude and is too hot at its equator. The user has decided: **the story follows the physics.** e is not a farm world;
 d feeds the system. Your `PlaceKind::Farm` still makes e one (it has Terran terrain), with farms
 and a food surplus: that rule needs the world's warmth in it.
@@ -575,7 +575,7 @@ Your items 5 to 8 each need something agreed before records are written:
 
 | You asked | Done |
 |---|---|
-| Six moon descriptions | Treistun h I 112 K, i I 94 K, j I and j II 84 K. h II and i II say no temperature in words, so nothing to change there |
+| Six moon descriptions | Pale I 112 K, i I 94 K, j I and j II 84 K. h II and i II say no temperature in words, so nothing to change there |
 | `throat_coil` marked not made | `x-in-game: "not made"` beside its `kind` constant; the lint lets it through |
 | `good.identity.traded_as` | In the schema; all 103 goods that had `game.goods` carry it now (`market.*`) |
 | A law of kind `reference` | In the schema; the ten Measures have it |
@@ -836,7 +836,7 @@ only (power, layout, zoning: all pass).
 
 **1. Air.**
 
-- **Breathable where it is:** `atmosphere.breathable: true` on Treistun d and e (new, on the body
+- **Breathable where it is:** `atmosphere.breathable: true` on Harvest and e (new, on the body
   record; both are now `curated`). People at Port Eikir and Port Nacaubun take their air from the
   place. It is a marked guess: the game has always settled both as worlds with air; what their air
   is made of is not on record.
@@ -908,6 +908,6 @@ record becomes `provenance: baked` with a `survey` section pointing at
 `standards/Celestial/surveys/<world_id>/`. **The game reads the survey's files from there, by
 reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospecting reveals by
 `seen_by` method), the districts, the rock units' yields. The whole contract, with each file and
-what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Treistun d; then
+what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Harvest; then
 the body schema's new optional `survey` object reaches your generated types, and the loader for the
 files is yours. Claims and mines will point at deposit IDs.

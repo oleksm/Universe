@@ -18,6 +18,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
+      also: { type: string, description: "What else it is called: a named world keeps the surveyors' letter (Harvest)." }
       kind: { enum: [star, rocky planet, gas giant, ice giant, moon, asteroid, dwarf planet, comet, centaur, crossing asteroid, captured moon] }
       parent: { type: string, x-ref: [body], description: "What it goes round, by its key: the star, a planet, or (a captured moon) a giant. A star has none." }
       about: { type: string }
@@ -75,6 +76,7 @@ properties:
       mantle_made_of: { type: string }
       crust_thickness: { type: number, x-unit: "m", description: "m, on average" }
       heat_flow: { type: number, x-unit: "W/m2", description: "W for each m2 of its surface, from its inside (Earth: 0.09)" }
+      radiogenic: { type: number, x-unit: "1", description: "its mantle's radioactive heat as a multiple of Earth's (K, Th and U at Earth's abundances = 1); an input to the planet simulation" }
       heat_from: { type: array, items: { enum: [formation, radioactivity, tides, settling] }, description: "Where that heat comes from." }
   magnetic:
     type: object
@@ -103,6 +105,7 @@ properties:
       ice_cover: { type: number, x-unit: "1", description: "the share of its surface under ice" }
       polar_ice: { type: boolean, description: "For an airless world: ice in the craters at its poles that never see the sun." }
       buried_sea: { type: boolean, description: "A sea under its crust, kept liquid by heat from inside." }
+      mass_share: { type: number, x-unit: "1", description: "water at the surface (seas and ice) as a share of the body's mass (Earth: 2.3e-4); the planet simulation's lever for how much of it is sea" }
       salinity: { type: number, x-unit: "1", description: "the share of its sea water that is salt, by mass (Earth: 0.035)" }
   surface:
     type: object

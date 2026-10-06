@@ -84,30 +84,30 @@
 - { record: body.treistun.tisisekar, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "7643d68b0d7648e9" }
 - { record: body.treistun.tomiria, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "be5fe70737d1eb6f" }
 - { record: body.treistun.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "081e42b1d2c22e2e" }
-- { record: body.treistun.treistun-b, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "01729f5e0bc5f0e4" }
-- { record: body.treistun.treistun-b-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dc10a02d7b6a9d7c" }
-- { record: body.treistun.treistun-c, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8aca743293380697" }
-- { record: body.treistun.treistun-c-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8649784f3a822498" }
-- { record: body.treistun.treistun-d, at: "2026-10-06T00:58:58Z", status: "", summary: "changed: provenance, survey", sha: "73e043763100ec71" }
-- { record: body.treistun.treistun-d-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "068e295ea6b5bf5a" }
-- { record: body.treistun.treistun-e, at: "2026-10-05T22:01:13Z", status: "", summary: "changed: provenance, atmosphere", sha: "5fc9c58192576e29" }
-- { record: body.treistun.treistun-f, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "95c0135bd17f51fe" }
-- { record: body.treistun.treistun-g, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e2c2e01762ca08c2" }
-- { record: body.treistun.treistun-g-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b8c7e7aa8d58fb0c" }
-- { record: body.treistun.treistun-g-ii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ee3d4fb19034ad8a" }
-- { record: body.treistun.treistun-g-iii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "511900f01408e8c0" }
-- { record: body.treistun.treistun-h, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "72047e7f624c083b" }
-- { record: body.treistun.treistun-h-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7801842cad76f612" }
-- { record: body.treistun.treistun-h-ii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "26129d95235a7ccc" }
-- { record: body.treistun.treistun-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b4968e9b320c51c8" }
-- { record: body.treistun.treistun-i-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1aa032df3aeb37bc" }
-- { record: body.treistun.treistun-i-ii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "143df1b611e37a10" }
-- { record: body.treistun.treistun-i-iii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c08a390a2e78c749" }
-- { record: body.treistun.treistun-j, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "acb5d469a7a1340a" }
-- { record: body.treistun.treistun-j-i, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7c4b73c3dce226a5" }
-- { record: body.treistun.treistun-j-ii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1cf7e5a986aa48ec" }
-- { record: body.treistun.treistun-j-iii, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b3d368f52cba7751" }
-- { record: body.treistun.treistun-j-iv, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9e0da04d2877c7af" }
+- { record: body.treistun.treistun-b, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "c062993e8aac4557" }
+- { record: body.treistun.treistun-b-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "9f3646c1849079c8" }
+- { record: body.treistun.treistun-c, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "5a6347a49bd1d00b" }
+- { record: body.treistun.treistun-c-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "84c4e6657e8aadd0" }
+- { record: body.treistun.treistun-d, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "eaf3363872c5d16e" }
+- { record: body.treistun.treistun-d-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "b1f966f3046370d1" }
+- { record: body.treistun.treistun-e, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "81dd61d30dda61e8" }
+- { record: body.treistun.treistun-f, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "48c927dae04cfadc" }
+- { record: body.treistun.treistun-g, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "39a5997cb91fff90" }
+- { record: body.treistun.treistun-g-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "0c85f8dcc887e049" }
+- { record: body.treistun.treistun-g-ii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "d63c3a6936c2efa2" }
+- { record: body.treistun.treistun-g-iii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "e5ed617e6e7f9731" }
+- { record: body.treistun.treistun-h, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "2d2b7d6290e1b5aa" }
+- { record: body.treistun.treistun-h-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "4987c5e9a773a3a4" }
+- { record: body.treistun.treistun-h-ii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "15e51fbca36a0149" }
+- { record: body.treistun.treistun-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "cd47128fbedeefe0" }
+- { record: body.treistun.treistun-i-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "6e86f071828855a7" }
+- { record: body.treistun.treistun-i-ii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "61dca708f0738af7" }
+- { record: body.treistun.treistun-i-iii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "cdfbdef4b2590b46" }
+- { record: body.treistun.treistun-j, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "5bda5108d463ae85" }
+- { record: body.treistun.treistun-j-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "0775c53b19b9cdcf" }
+- { record: body.treistun.treistun-j-ii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "1cd35178bbbc8dcf" }
+- { record: body.treistun.treistun-j-iii, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "490de14b08e50d3f" }
+- { record: body.treistun.treistun-j-iv, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "7f1e768f6522768d" }
 - { record: body.treistun.trezil, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "9171983ecf75857d" }
 - { record: body.treistun.truhora, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e93f075a8ef1ff20" }
 - { record: body.treistun.tukau, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d4261112904c182d" }
@@ -824,11 +824,11 @@
 - { record: need.water, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "8a4b43776dcac335" }
 - { record: need.work, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "06a36caf0bcca6aa" }
 - { record: org.aurel, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "5db1e9c379e88152" }
-- { record: org.brightwater-dairy, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "83e4442366ec28a4" }
+- { record: org.brightwater-dairy, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: who", sha: "75563017689ef7d5" }
 - { record: org.castellan, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d6d659020f59b4cc" }
 - { record: org.cellar-and-vat, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d6d3820d3d2ca511" }
 - { record: org.cormorant, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "51cc314836e03085" }
-- { record: org.eikir-growers, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1be213268d092dd8" }
+- { record: org.eikir-growers, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: who", sha: "3cf6f32ab21d86bc" }
 - { record: org.garrick, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ced3bf43e961adaa" }
 - { record: org.greenfall, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c14324355d401c15" }
 - { record: org.hadley, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "ce596fe78ab178cf" }
@@ -841,10 +841,10 @@
 - { record: org.meridian, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "473575ea23eae4dc" }
 - { record: org.orbital, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "210ed2f6abd9c7fb" }
 - { record: org.sfo, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d0b92024d04a3d3e" }
-- { record: org.sunward-planters, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8c232de8076bf637" }
+- { record: org.sunward-planters, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: who", sha: "51e303fdcba97507" }
 - { record: org.tallis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "334d70d5a7ad241b" }
 - { record: org.tolland, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "606b88aa03fbd49b" }
-- { record: org.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c02fa2862e30ea2d" }
+- { record: org.treistun, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: story", sha: "270f9c7f04738c12" }
 - { record: org.treistun-exchange, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9688a593a35c0eb3" }
 - { record: org.verdance, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "bbe18fd6a56af8b2" }
 - { record: org.vireo, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f2ca3f6a59fa774a" }
@@ -1493,19 +1493,19 @@
 - { record: population.moryemzai.nikreira-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "57e0bb0896b65e7d" }
 - { record: population.moryemzai.vobeilum-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a9d11363e5b1842a" }
 - { record: population.treistun.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f3d97342c9fbfbc5" }
-- { record: population.treistun.hogimo-group-treistun-g-l5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c277715e7db66d8a" }
+- { record: population.treistun.hogimo-group-treistun-g-l5, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "61d9015121ed3def" }
 - { record: population.treistun.osonhau-stream, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "867e3d9e1734539a" }
-- { record: population.treistun.paiteishe-group-treistun-h-l4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8ba3c0bc766d57a2" }
+- { record: population.treistun.paiteishe-group-treistun-h-l4, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "ba565c332aff1cf9" }
 - { record: population.treistun.pofier-stream, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "49aa6627e7f845ea" }
 - { record: population.treistun.scattered-disc, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "719c758f12749fce" }
-- { record: population.treistun.shembinum-group-treistun-j-l4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "fac398357e392b6c" }
-- { record: population.treistun.shirornis-group-treistun-j-l5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4653978e4a65bdb7" }
+- { record: population.treistun.shembinum-group-treistun-j-l4, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "e8fcbd50c62789b5" }
+- { record: population.treistun.shirornis-group-treistun-j-l5, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "d2910cc15ed1e43e" }
 - { record: population.treistun.tautreris-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7471433a76f4925c" }
 - { record: population.treistun.tesar-stream, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "c32e3d0a786583e1" }
 - { record: population.treistun.tisisekar-stream, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "af47a53346b705ff" }
 - { record: population.treistun.truhora-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "12cc3ed901e5d9eb" }
 - { record: population.treistun.tukau-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c5d4e30bf2ae5b89" }
-- { record: population.treistun.ugaula-group-treistun-i-l5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c5dccf8aa5e0766d" }
+- { record: population.treistun.ugaula-group-treistun-i-l5, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: identity", sha: "d3c6ee5eb4efacbb" }
 - { record: power-line.treistun.port-aipika.power-line-1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9e9bf4b47fa9c783" }
 - { record: power-line.treistun.port-aipika.power-line-2, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "652346af1d759ce1" }
 - { record: power-line.treistun.port-aipika.power-line-3, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "e9fed84a4260c3b5" }
@@ -1603,7 +1603,7 @@
 - { record: profession.teacher, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "ae547e882c6ea6ce" }
 - { record: profession.technician, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "12a993e9f9a58173" }
 - { record: profession.welder, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "f63dd4b76d90f5fa" }
-- { record: rig.treistun.hadley-orbital-works, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "0a1a502fd117f790" }
+- { record: rig.treistun.hadley-orbital-works, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "af416db507c212ae" }
 - { record: rock-class.basaltic, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "c01d4654b7759d41" }
 - { record: rock-class.carbonaceous, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "56a086e366bec47d" }
 - { record: rock-class.enstatite, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "829ba2f8cecdc5e4" }
@@ -1636,17 +1636,17 @@
 - { record: settlement.treistun.gate-to-biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "577a6808373c3163" }
 - { record: settlement.treistun.gate-to-driumum, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "88681fd9cc3042b8" }
 - { record: settlement.treistun.gate-to-liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c2241b8dea04cd02" }
-- { record: settlement.treistun.port-aipika, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "05b6c8730385b579" }
-- { record: settlement.treistun.port-eikir, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "d602463ec02be351" }
-- { record: settlement.treistun.port-fabindum, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "c2a8fd95e3f3276d" }
-- { record: settlement.treistun.port-lisaur, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "44b8fe538de42dd6" }
-- { record: settlement.treistun.port-nacaubun, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "88251cd118552f25" }
-- { record: settlement.treistun.port-seiwiti, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "df2d18ca52d864a3" }
-- { record: settlement.treistun.port-sirnendis, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "116e23b8ad4b7aa4" }
-- { record: settlement.treistun.port-trethi, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "4b6d6afa504a9ea8" }
-- { record: settlement.treistun.port-weisonum, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "428bb4af4f934352" }
-- { record: settlement.treistun.port-zaudalein, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "e47322df1973e342" }
-- { record: settlement.treistun.treistun-e-station, at: "2026-10-05T19:03:11Z", status: "", summary: "changed: structure", sha: "d06e930eb9e7f5d0" }
+- { record: settlement.treistun.port-aipika, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "9a43708f558d07c1" }
+- { record: settlement.treistun.port-eikir, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "12fafc90a9c75b9d" }
+- { record: settlement.treistun.port-fabindum, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "963ecc548b823e5e" }
+- { record: settlement.treistun.port-lisaur, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "932010ff4574dc37" }
+- { record: settlement.treistun.port-nacaubun, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about, story", sha: "9283fc0950aaf255" }
+- { record: settlement.treistun.port-seiwiti, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "046680b0f6b0bcbd" }
+- { record: settlement.treistun.port-sirnendis, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "7f040ffb8f4758a7" }
+- { record: settlement.treistun.port-trethi, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "2441ea21f95e4d7d" }
+- { record: settlement.treistun.port-weisonum, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "c891f76c993222bc" }
+- { record: settlement.treistun.port-zaudalein, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "32a4854c5badfd62" }
+- { record: settlement.treistun.treistun-e-station, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "2f6c4dfac9dec252" }
 - { record: standard.sfo.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7b0c226f205b56ac" }
 - { record: standard.sfo.10, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1f4b586c49cef4ea" }
 - { record: standard.sfo.11, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "91aaefa222c3a756" }
@@ -1665,7 +1665,7 @@
 - { record: standard.sfo.6, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "61cb629323a85da0" }
 - { record: standard.sfo.7, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1750078ac04e5297" }
 - { record: standard.sfo.8, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b897cb4f10b13b65" }
-- { record: standard.sfo.9, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b9e3c1c8852b60cb" }
+- { record: standard.sfo.9, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: details", sha: "e31876a680902c8e" }
 - { record: stock.aggregate-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "7874317cc9bd2613" }
 - { record: stock.al6061-ingot, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "ca00cef449458770" }
 - { record: stock.al6061-pl-5, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "0afeb19b3d6505b3" }

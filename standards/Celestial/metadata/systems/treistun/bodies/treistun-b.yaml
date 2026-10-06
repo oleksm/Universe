@@ -1,9 +1,11 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: named by its people; the seed calls it Treistun b. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-b
-  name: Treistun b
+  name: Cinder
+  also: Treistun b
   kind: rocky planet
   parent: body.treistun.treistun
   about: 'The innermost planet, 0.13 AU from the star. Rocky, 6,194 km in radius, with a surface gravity of 0.96 g and no

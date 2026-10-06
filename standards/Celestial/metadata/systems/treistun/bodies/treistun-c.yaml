@@ -1,9 +1,11 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: named by its people; the seed calls it Treistun c. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-c
-  name: Treistun c
+  name: Anvil
+  also: Treistun c
   kind: rocky planet
   parent: body.treistun.treistun
   about: 'The second planet, 0.22 AU out, and the largest rocky world in the system: 8,815 km in radius, 1.67 g at the surface,

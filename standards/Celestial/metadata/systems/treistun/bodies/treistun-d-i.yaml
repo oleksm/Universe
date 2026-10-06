@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: named by its people; the seed calls it Treistun d I. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-d-i
-  name: Treistun d I
+  name: Harvest I
+  also: Treistun d I
   kind: moon
   parent: body.treistun.treistun-d
-  about: A moon of Treistun d. 1,527 km in radius, 0.13 g at the surface, no air, about 306 K on average. Its day lasts 12
+  about: A moon of Harvest. 1,527 km in radius, 0.13 g at the surface, no air, about 306 K on average. Its day lasts 12
     hours.
   story: ['Airless and a little cooler than d below it. It was settled as d''s yard: a place to keep ships without bringing
       them down through the air.']

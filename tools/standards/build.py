@@ -2894,7 +2894,7 @@ def write_game_keys():
                 continue                    # (the engine makes its constant under the law's label: nothing to rename)
             was, where = idn["label"], "belt.rs"
         elif kind in ("system", "body", "population") and rec.get("in_game") != "not made":
-            was, where = idn.get("name"), "by name: celestial.ron, the seed"
+            was, where = idn.get("also") or idn.get("name"), "by name: celestial.ron, the seed" + ("; the record's name is its people's, `also` is the seed's" if idn.get("also") else "")
         elif kind == "settlement":
             was, where = idn.get("name"), "by name: settlements.ron, places.ron"
         elif kind == "standard":

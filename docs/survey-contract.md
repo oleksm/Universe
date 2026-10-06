@@ -27,7 +27,7 @@ The body's record gives the run its inputs. Everything in these sections is the 
 
 The run writes `body: <key>` into `summary.json`, and the survey's `radius_m` must be the record's
 `physical.radius` (within 1%); the import refuses a world not grown from the record. Our test:
-world E4 is Earth-sized, Treistun d is 6,654 km; the import refuses to join them, as it should.
+world E4 is Earth-sized, Harvest is 6,654 km; the import refuses to join them, as it should.
 
 The vocabulary the run uses for deposit kinds, rock units and survey methods is the registry's,
 through `docs/vocabulary.json` → `tools/standards/geology_import.py` → `Celestial/metadata/deposit-types/`,
@@ -98,7 +98,7 @@ where each lives).
 
 ## Open
 
-- The run of Treistun d (then e, f): the first real test of 1 and 2.
+- The run of Harvest (then e, f): the first real test of 1 and 2.
 - The derived figures the record drops once a survey exists (temperature, terrain, relief, ocean
   cover): the tool's next step, written against the first real run.
 - Size: a survey is about 3 MB (E4; the GeoJSON is 2.6 MB of it). Three or four worlds in git is
