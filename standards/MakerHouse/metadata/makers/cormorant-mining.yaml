@@ -14,4 +14,4 @@ story:
   - "Miners trust Cormorant because it is one of them, and because it will tell a buyer when a cheaper tool would do."
 # fleet: two prospectors to a field (chosen)
 fleet:
-  - { hull: hull.prospector, count: 16, home: settlement.treistun.port-trethi, does: "mining Treistun's 8 asteroid fields for the mill: two prospectors to a field, chosen" }
+  - { hull: hull.prospector, count: 16, home: settlement.treistun.port-trethi, work: mining, does: "mining Treistun's 8 asteroid fields for the mill: two prospectors to a field, chosen" }

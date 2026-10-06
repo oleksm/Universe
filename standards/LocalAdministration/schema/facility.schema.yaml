@@ -20,17 +20,7 @@ properties:
   processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
-  stock:
-    description: "What lies in its store at day 0: seed state of the world. What becomes of it after is the economy's."
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [item]
-      properties:
-        item: { type: string, x-ref: [element, material, good, stock, part, equipment, hull], description: "What lies there, by its key." }
-        quantity: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of it, for what is kept in bulk" }
-        pieces: { type: integer, minimum: 1, description: "how many, for what is kept by the piece: parts, equipment, hulls" }
+  stock: { $ref: "installation.schema.yaml#/definitions/stock" }
   exchange: { type: string, x-ref: [org], description: 'For a warehouse: the exchange that has approved it, so that goods lying in it can be traded there.' }
   parts:
     description: 'Its site plan: what stands where on the parcel. No two overlap, and each lies inside the parcel.'

@@ -42,6 +42,7 @@ properties:
   processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
+  stock: { $ref: "installation.schema.yaml#/definitions/stock", description: "For a rig: what lies in its store at day 0; its owner trades it at its dock." }
   structure: { type: string, x-ref: [structure], description: "The built thing it is, by its key: a spaceport, an outpost, a platform." }
   resupply:
     description: "How it is kept supplied with what it does not make: where its ships come from and how often. Sets its warehouse's distribution stock (the administration's compulsory_stock.warehouse_cover)."

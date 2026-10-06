@@ -12,4 +12,4 @@ what: "Piracy on the Treistun run; fencing what it takes."
 address: { at: rig.biraidim.shikra-hold, tower: The Hold, deck: 1, section: A, unit: 1 }
 # fleet: a dozen armed craft, as the hold's story says
 fleet:
-  - { hull: hull.interceptor, count: 12, home: rig.biraidim.shikra-hold, does: "raiding the Treistun run: sorties from the hold to the gate approach, cargo first, home when a patrol comes out" }
+  - { hull: hull.interceptor, count: 12, home: rig.biraidim.shikra-hold, work: raiding, does: "raiding the Treistun run: sorties from the hold to the gate approach, cargo first, home when a patrol comes out" }

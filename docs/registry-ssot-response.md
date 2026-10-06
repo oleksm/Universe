@@ -1034,3 +1034,30 @@ flight time between the orbits, a hauler's hold), the other fleets (passage 22, 
 constant:** fleets flying for their business from their home, independents as today's travellers
 and small traders but finite and based; each ship a record's. The page's Traffic report lists
 every run with its tonnage, flight time and cadence.
+
+**Fleets for the NPC rework: your four asks (2026-10-06).**
+
+1. **A typed job on every fleet line:** `work` (dictionary `fleet_job`: hauling, passage, mining,
+   patrol, raiding), required; `does` stays the note. Treistun Freight hauling, Hearth Line
+   passage, Cormorant mining, the administration's patrol, Shikra Hold raiding. Independents
+   (`settlement.independents`) carry no work: the operator decides by hull, as today's travellers
+   and small traders.
+2. **Shikra Hold's dock:** on the rig record: `position` (the sunward face, chosen), `modules` (two
+   loading docks, a warehouse, a tank farm, a power station), `stock` at day 0 (fuel, 90 days of
+   food, medicines, and the last haul's loot: ingots, electronics), `owner: org.shikra-hold`. **Its
+   market is the band's own**, as at Hadley Orbital Works: the rig's owner trades at its dock, no
+   exchange approves it, no administration's bans reach it (Biraidim has none), no outlawry is
+   recognised. It asks no questions. Rigs may carry `stock` now (a shared definition).
+3. **A replacement hull:** the insurer names its yards (`insurance.yards`: Trethi Yard). A finished
+   hull in the yard's stock is delivered at once: the yard holds **2 haulers, 3 Drovers, 2
+   couriers, a prospector and an interceptor** at day 0 (`stock` with `pieces`). Past those, the
+   yard builds to order in its dock's time, which you reckon from the chain (the MC-07 in about 21
+   days); nothing need come through the gate. Who sells: the yard, for the hull's maker (Tolland's
+   haulers and Drovers, Vireo's fast hulls); a company orders the same way. Prices are the game's.
+4. **Pilot training:** `profession.pilot.training`: learned at school, 3 years (chosen). A
+   **flight school** (`building.flight-school`): 60 places, so **20 pilots a year** per school,
+   with six instructor pilots; and a **school** for the rest (one teacher to 92). Buildings are not
+   sited per settlement yet; a port of 20,000 would have one flight school, Eikir and Nacaubun two
+   or three. Say if you want them sited as facilities now and I place them.
+   (One engine touch with this: the facility's `stock` moved to a shared definition that rigs use
+   too, so the generated type is `StockItem`, not `FacilityStockItem`; `economy.rs` reads it.)

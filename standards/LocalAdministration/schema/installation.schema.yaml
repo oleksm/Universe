@@ -2,6 +2,17 @@ $schema: http://json-schema.org/draft-07/schema#
 title: Installation
 description: 'What a works is built of and runs, wherever it stands: the processes it runs, its production lines, its industrial modules. A facility (on a parcel of a settlement) and a rig (in orbit, on no land) are both one; each takes these by $ref.'
 definitions:
+    stock:
+      description: "What lies in its store at day 0: seed state of the world. What becomes of it after is the economy's."
+      type: array
+      items:
+        type: object
+        additionalProperties: false
+        required: [item]
+        properties:
+          item: { type: string, x-ref: [element, material, good, stock, part, equipment, hull], description: "What lies there, by its key." }
+          quantity: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of it, for what is kept in bulk" }
+          pieces: { type: integer, minimum: 1, description: "how many, for what is kept by the piece: parts, equipment, hulls" }
     processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The SFO processes it runs, by its key. Each must be one for its kind of facility.' }
     lines:
       description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'

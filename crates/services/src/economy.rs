@@ -149,7 +149,7 @@ impl Works {
         Some(w)
     }
 
-    fn built(site: Site, works: usize, name: &str, lines: &[universe_world::registry::Line], modules: &[universe_world::registry::ModuleEntry], stock: &[universe_world::registry::FacilityStockItem], exchange: bool) -> Option<Self> {
+    fn built(site: Site, works: usize, name: &str, lines: &[universe_world::registry::Line], modules: &[universe_world::registry::ModuleEntry], stock: &[universe_world::registry::StockItem], exchange: bool) -> Option<Self> {
         let reg = universe_world::registry::registry();
         let module = |k: &str| reg.module(k);
         let mut setups = Vec::new();

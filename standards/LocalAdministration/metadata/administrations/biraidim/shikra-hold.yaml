@@ -5,7 +5,28 @@ identity:
   name: "Shikra Hold"
 kind: rig
 at: body.biraidim.shikra
+owner: org.shikra-hold
 population: 300
+# The dock: cut into the rock on the asteroid's sunward face, with the hold's stores behind it. Its market is the band's own
+# (the rig's owner trades, as at Hadley Orbital Works): no exchange approves it, no administration's bans reach it, no
+# outlawry is recognised. It asks no questions. Position chosen; the asteroid is 1.6 km across.
+position: { latitude: 0.0, longitude: 0.0 }
+modules:
+  - { module: module.loading-dock, count: 2 }
+  - { module: module.general-warehouse, count: 1 }
+  - { module: module.tank-farm, count: 1 }
+  - { module: module.fusion-power-station, count: 1 }
+# What lies in the hold at day 0: fuel for its craft, food for its people (90 days: raiders stock deep), and the last
+# haul's loot, which is what it sells.
+stock:
+  - { item: stock.deuterium-liq, quantity: 20000.0 }
+  - { item: stock.flour-bulk, quantity: 10000.0 }
+  - { item: stock.beef-bulk, quantity: 4000.0 }
+  - { item: stock.potatoes-bulk, quantity: 8000.0 }
+  - { item: stock.medicines-bulk, quantity: 200.0 }
+  - { item: stock.al6061-ingot, quantity: 150000.0 }
+  - { item: stock.cu-ingot, quantity: 40000.0 }
+  - { item: stock.electronics-bulk, quantity: 5000.0 }
 # census: its 300 people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)
 census:
   - { profession: profession.pilot, count: 24 }

@@ -130,3 +130,12 @@ definitions:
     x-values:
       system: "Everywhere in its star system: its patrols go where its ships go."
       settlements: "Its settlements and their approaches only; the rest of the system is nobody's."
+  fleet_job:
+    description: "What an organisation's fleet does, for the operator that flies it."
+    enum: [hauling, passage, mining, patrol, raiding]
+    x-values:
+      hauling: "Freight on the runs between settlements: the supply runs and the works' inputs."
+      passage: "People on a timetable, and anyone who books."
+      mining: "Prospecting and digging the fields, selling at the home port."
+      patrol: "The law's craft: answering breaches in the approaches, escorting when asked."
+      raiding: "Sorties from a hold against lone, laden prey; home when a patrol comes out."
