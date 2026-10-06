@@ -985,7 +985,11 @@ impl App {
                 Event::Vended { what, credits, note } => format!("{what} - {credits:.0} CR. {note}"),
                 Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
                 Event::BoughtShip { name, credits } => format!("NEW SHIP: {name} - {} {:.0} CR WITH YOUR OLD ONE TRADED IN", if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
-                Event::Charged { offence, system } => format!("CHARGED UNDER {}'S LAW: {}", system.to_uppercase(), offence.to_uppercase()),
+                Event::Charged { offence, system, penalties } => {
+                    let then = if penalties.is_empty() { String::new() } else { format!(" - {penalties}") };
+                    format!("CHARGED UNDER {}'S LAW: {}{then}", system.to_uppercase(), offence.to_uppercase())
+                }
+                Event::Bounty { credits, on } => format!("BOUNTY: {credits:.0} CR FOR {on}"),
                 Event::Insured { excess, refused, at } => {
                     let at = if at.is_empty() { String::new() } else { format!(", PARKED AT {}", at.to_uppercase()) };
                     match (excess, refused) {

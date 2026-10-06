@@ -125,6 +125,7 @@ impl Universe {
     /// or why not.
     pub(crate) fn pilot_trade(&mut self, pilot: usize, f: Facility, item: usize, units: i64) -> Result<f64, String> {
         let (system, ship) = if pilot == crate::combat::PLAYER { (self.ship_system, &self.ship) } else { (self.crafts[pilot - 1].system, &self.crafts[pilot - 1].ship) };
+        self.barred(pilot, system)?;
         let sys = self.world.system(system);
         let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), room: ship.hold_room(), space: ship.hold_space(), item, units };
         self.messages += 1;
@@ -198,6 +199,7 @@ impl Universe {
     /// it can (the ledger books it), and the core's tank takes it.
     pub(crate) fn refuel(&mut self, id: usize, market: Facility) -> Result<(f64, f64), String> {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        self.barred(id, system)?;
         let want = ship.spec().fuel_capacity - ship.fuel;
         if want < 0.01 {
             return Err("TANK FULL".into());
@@ -411,6 +413,7 @@ impl crate::universe::Universe {
     pub fn refit_as(&mut self, id: usize, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
         use universe_services::{Asset, Party};
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        self.barred(id, system)?;
         let sys = self.world.system(system);
         let here = match universe_world::traffic::docked_at(&sys, ship) {
             Some(f @ Facility::Station(_)) => f,
@@ -528,6 +531,7 @@ impl crate::universe::Universe {
         use universe_services::{Asset, Party};
         let (price, trade_in) = self.hull_offer(id, hull)?;
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        self.barred(id, system)?;
         if ship.class == hull && ship.fit.is_none() {
             return Err("THAT'S THE SHIP YOU HAVE".into());
         }
@@ -599,6 +603,7 @@ impl crate::universe::Universe {
     pub fn repair(&mut self, id: usize) -> Result<(f64, f64), String> {
         use universe_services::{Asset, Party};
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
+        self.barred(id, system)?;
         let sys = self.world.system(system);
         let Some(here @ Facility::Station(_)) = universe_world::traffic::docked_at(&sys, ship) else { return Err("REPAIRS DOCKED AT A STATION".into()) };
         let missing = 1.0 - ship.hull;

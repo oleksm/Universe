@@ -236,6 +236,23 @@ mod tests {
         let charged: Vec<_> = u.law.charges_of(crate::combat::PLAYER as _).map(|c| c.offence).collect();
         use universe_world::registry::Offence;
         assert!(charged.contains(&Offence::Piracy) && charged.contains(&Offence::Murder), "{charged:?}");
+        use crate::combat::{craft_id, PLAYER};
+        use universe_world::ShipEvent;
+        // What the law gives: thirty years outside it, a bounty on our head, no one here dealing with us.
+        let (me, sys, now) = (PLAYER as universe_protocol::BodyId, u.ship_system, u.world.time);
+        assert!(u.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
+        let worth = Universe::ship_value(&u.ship);
+        assert!((u.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");
+        assert!(u.barred(PLAYER, sys).is_err());
+        // Brought down by a craft: the bounty is its, from the administration.
+        let hunter = craft_id(0);
+        let before = u.ledger.credits(universe_services::Party::Pilot(hunter));
+        u.log.clear();
+        u.log.push((PLAYER, ShipEvent::Hit { by: hunter, damage: 1.0, hull: 0.0, weapon: true }));
+        u.log.push((PLAYER, ShipEvent::Crashed { body: "GUN".into() }));
+        u.judge(now);
+        assert!((u.ledger.credits(universe_services::Party::Pilot(hunter)) - before - 1.5 * worth).abs() < 1.0, "the bounty paid");
+        assert!(u.law.bounties.is_empty());
     }
 
 }

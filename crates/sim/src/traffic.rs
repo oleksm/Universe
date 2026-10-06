@@ -48,6 +48,8 @@ pub(crate) struct Snap {
     pub aggressed: bool,
     /// Hostile to whoever holds the space it's in (by its standing there).
     pub hostile: bool,
+    /// Outside the law of the system it's in: its docks closed to it.
+    pub outlaw: bool,
 }
 
 impl Snap {
@@ -56,7 +58,7 @@ impl Snap {
         self.aggressed || self.hostile
     }
 
-    fn of(system: usize, ship: &Ship, aggressed: bool, hostile: bool) -> Self {
+    fn of(system: usize, ship: &Ship, aggressed: bool, hostile: bool, outlaw: bool) -> Self {
         Snap {
             system,
             position: ship.position,
@@ -69,6 +71,7 @@ impl Snap {
             hull: ship.hull,
             aggressed,
             hostile,
+            outlaw,
         }
     }
 }
@@ -349,9 +352,9 @@ impl Universe {
         // (Hostile to the system's authority: its standing there at or under its line.)
         let hostile = |id: usize, system: usize| standings.of(id, system) <= crate::standing::HOSTILE;
         let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
-        snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system)));
+        snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system), law.outlawed(crate::combat::PLAYER as _, self.ship_system, now)));
         use rayon::prelude::*;
-        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, law.aggressed(crate::combat::craft_id(i), now), hostile(crate::combat::craft_id(i), c.system))).collect();
+        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, law.aggressed(crate::combat::craft_id(i), now), hostile(crate::combat::craft_id(i), c.system), law.outlawed(crate::combat::craft_id(i) as _, c.system, now))).collect();
         snaps.extend(crafts);
         self.snaps = Arc::new(snaps);
         self.snap_time = now;

@@ -58,6 +58,10 @@ pub struct Law {
     pub charges: Vec<Charge>,
     /// When each ship's record was last wiped (a new ship): its charges since are its own.
     cleared: HashMap<BodyId, f64>,
+    /// Who is outside the law in which system, until when (outlawry is the pilot's, not the ship's).
+    outlaws: HashMap<(BodyId, usize), f64>,
+    /// The bounties on heads, by system: credits to whoever brings the ship down.
+    pub bounties: HashMap<(BodyId, usize), f64>,
 }
 
 /// Rulings kept on record.
@@ -105,6 +109,28 @@ impl Law {
     pub fn forget(&mut self, ship: BodyId, now: f64) {
         self.standing.remove(&ship);
         self.cleared.insert(ship, now);
+    }
+
+    /// Put `ship` outside the law of `system` until `until` (the later, if it already is).
+    pub fn outlaw(&mut self, ship: BodyId, system: usize, until: f64) {
+        let e = self.outlaws.entry((ship, system)).or_insert(until);
+        *e = e.max(until);
+    }
+
+    /// Is `ship` outside the law of `system` at `now`?
+    pub fn outlawed(&self, ship: BodyId, system: usize, now: f64) -> bool {
+        self.outlaws.get(&(ship, system)).is_some_and(|&u| now < u)
+    }
+
+    /// Add `credits` to the bounty `system` has on `ship`.
+    pub fn post_bounty(&mut self, ship: BodyId, system: usize, credits: f64) {
+        *self.bounties.entry((ship, system)).or_default() += credits;
+    }
+
+    /// `ship` brought down: the bounties on it, taken off the books (system, credits).
+    pub fn claim_bounties(&mut self, ship: BodyId) -> Vec<(usize, f64)> {
+        let mine: Vec<(BodyId, usize)> = self.bounties.keys().filter(|k| k.0 == ship).copied().collect();
+        mine.into_iter().filter_map(|k| self.bounties.remove(&k).map(|c| (k.1, c))).collect()
     }
 
     /// Charge a ship with an offence.
