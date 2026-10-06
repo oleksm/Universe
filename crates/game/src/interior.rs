@@ -521,17 +521,20 @@ fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
 }
 
 /// Members mounting each placed module the frame doesn't hold yet (no joint in
-/// it): joints along its foot (one each `spacing` m), each strutted to the nearest
-/// joints of the frame outside it (two; over a tonne, four), not through a room
-/// and not further than 15 m; and each landing pad with nothing at it, on four legs
-/// to the nearest joints; of `stock`.
-fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
+/// it): joints along its foot (one each `spacing` m; over a tonne full, at its
+/// foot's corners, each braced to the nearest joint below as well), each strutted
+/// to the nearest two joints of the frame outside it; a landing leg by its top, to
+/// four; never through a room or further than 15 m; and each landing pad with
+/// nothing at it, on four legs to the nearest joints; of `stock`.
+fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>, usize) {
     let joints: Vec<Vec3> = plan.beams.iter().flat_map(|b| [b.a, b.b]).fold(Vec::new(), |mut v, p| {
         if !v.iter().any(|q: &Vec3| q.distance(p) < 0.05) {
             v.push(p);
         }
         v
     });
+    // (The frame as it is, its members split where a mount point lands on one.)
+    let mut beams = plan.beams.clone();
     let mut out = Vec::new();
     for blk in &plan.blocks {
         let (lo, hi) = blk.bounds();
@@ -539,14 +542,48 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
         if joints.iter().any(|&q| inside(q)) {
             continue;
         }
-        let heavy = fit.iter().find(|f| f.id == kind(&blk.id)).is_some_and(|f| f.mass > 1000.0);
-        let foot = blk.at.y - blk.size.y * 0.5;
+        let f = fit.iter().find(|f| f.id == kind(&blk.id));
+        let heavy = f.is_some_and(|f| f.mass + f.load > 1000.0);
+        // (A landing leg is mounted by its top; the rest by their foot.)
+        let leg = f.is_some_and(|f| f.gear.is_some());
+        let foot = if leg { blk.at.y + blk.size.y * 0.5 } else { blk.at.y - blk.size.y * 0.5 };
         let n = ((blk.size.z / spacing.max(0.5)).ceil() as usize).max(1);
-        for k in 0..n {
-            let m = Vec3::new(blk.at.x, foot, blk.at.z - blk.size.z * 0.5 + blk.size.z * (k as f32 + 0.5) / n as f32);
-            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q)).collect();
+        // (Its mount points: along its foot's middle; a heavy one (over a tonne,
+        // full) at its foot's corners, as its mount's attachment has them, each
+        // braced to the nearest joint below too, so its weight runs down a triangle
+        // rather than bending a strut.)
+        let (hx, hz) = (blk.size.x * 0.5, blk.size.z * 0.5);
+        let points: Vec<Vec3> = if heavy && !leg {
+            (0..=n).flat_map(|k| {
+                let z = blk.at.z - hz + blk.size.z * k as f32 / n as f32;
+                [Vec3::new(blk.at.x - hx, foot, z), Vec3::new(blk.at.x + hx, foot, z)]
+            }).collect()
+        } else {
+            (0..n).map(|k| Vec3::new(blk.at.x, foot, blk.at.z - hz + blk.size.z * (k as f32 + 0.5) / n as f32)).collect()
+        };
+        for m in points {
+            // (On a member, part way along it: a joint made there, the member in two;
+            // its ends then not strutted to, they'd lie along it.)
+            let mut along = Vec::new();
+            if let Some(k) = beams.iter().position(|b| {
+                let d = b.b - b.a;
+                let t = (m - b.a).dot(d) / d.length_squared().max(1e-6);
+                t > 0.02 && t < 0.98 && (b.a + d * t).distance(m) < 0.05
+            }) {
+                let b = beams.remove(k);
+                along = vec![b.a, b.b];
+                beams.push(Beam { a: b.a, b: m, stock: b.stock.clone() });
+                beams.push(Beam { a: m, b: b.b, stock: b.stock });
+            }
+            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q) && !along.contains(&q)).collect();
             near.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
-            for q in near.into_iter().take(if heavy { 4 } else { 2 }) {
+            let below = near.iter().copied().find(|q| q.y < m.y - 1.0);
+            let take = if leg { 4 } else { 2 };
+            let mut chosen: Vec<Vec3> = near.into_iter().take(take).collect();
+            if let Some(q) = below.filter(|q| heavy && !leg && !chosen.contains(q)) {
+                chosen.push(q);
+            }
+            for q in chosen {
                 out.push(Beam { a: m, b: q, stock: stock.to_string() });
             }
         }
@@ -561,7 +598,9 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
             out.push(Beam { a: pad, b: q, stock: stock.to_string() });
         }
     }
-    out
+    let added = out.len();
+    beams.extend(out);
+    (beams, added)
 }
 
 /// The members as AUTO-SIZE leaves them, the rounds it took, and how many need more
@@ -691,7 +730,8 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         let Some(f) = fit.iter().find(|f| f.id == kind(&blk.id)) else { continue };
         let (lo, hi) = blk.bounds();
         let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
-        let m = if blk.id == HOLD { full } else { f.mass };
+        // (Full: its ore, cargo or fuel too.)
+        let m = if blk.id == HOLD { full } else { f.mass + f.load };
         if at.is_empty() {
             out.loose.push(format!("{} IS NOT MOUNTED", f.name));
         } else {
@@ -745,11 +785,35 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // Landing: weight and the jolt of the design landing, as its legs give it
     // (world::legs: their stroke and efficiency, the sink they're designed for),
     // held at the landing pads.
+    // (Landing legs placed as modules: each one's record.)
+    let legs_placed: Vec<(&Block, (f64, f64, f64, f64), String)> = plan.blocks.iter().filter_map(|b| fit.iter().find(|f| f.id == kind(&b.id)).and_then(|f| f.gear.map(|g| (b, g, f.name.clone())))).collect();
     let legs = spec.and_then(universe_sim::world::legs::of_spec);
-    // (No hull, no legs: the registry's design landing, 3.05 m/s, stopped over a
-    // stroke of 1 m at 0.85: an assumption until pads have legs of their own.)
-    let jolt = legs.map_or(3.05f64.powi(2) / (2.0 * 1.0 * 0.85), |l| l.jolt(l.designed) * STANDARD_G);
-    let pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).map(|n| n.at.as_vec3()).chain(plan.pads.iter().copied()).flat_map(|p| near(p, 1.0)).collect();
+    // (Landing legs placed: their design sink over the shortest stroke. Else the
+    // hull's legs; else the registry's design landing, 3.05 m/s over an assumed
+    // 1 m stroke at 0.85.)
+    let placed = legs_placed.iter().map(|(_, g, _)| *g).min_by(|a, b| a.1.total_cmp(&b.1));
+    let jolt = match (placed, legs) {
+        (Some((_, stroke, eff, sink)), _) => sink * sink / (2.0 * stroke * eff),
+        (None, Some(l)) => l.jolt(l.designed) * STANDARD_G,
+        (None, None) => 3.05f64.powi(2) / (2.0 * 1.0 * 0.85),
+    };
+    if !legs_placed.is_empty() {
+        let each = carried * (g + jolt) / legs_placed.len() as f64;
+        for (_, (holds, ..), name) in legs_placed.iter().filter(|(_, (holds, ..), _)| each > *holds) {
+            out.loose.push(format!("{name} OVERLOADED LANDING: {:.0} OF {:.0} KN", each / 1000.0, holds / 1000.0));
+        }
+    }
+    let mut pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).map(|n| n.at.as_vec3()).chain(plan.pads.iter().copied()).flat_map(|p| near(p, 1.0)).collect();
+    // (Landing legs placed: the frame stands on each one's top, at the joints in
+    // it; each takes its share of the landing, against what it holds.)
+    for (b, _, name) in &legs_placed {
+        let (lo, hi) = b.bounds();
+        let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+        if at.is_empty() {
+            out.loose.push(format!("{name} HOLDS UP NOTHING"));
+        }
+        pads.extend(at);
+    }
     let landing = if pads.is_empty() {
         out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
         Err("NOTHING ON THE PADS".to_string())
@@ -817,6 +881,11 @@ pub struct Fitted {
     /// A drive's or a lift's push: which way it pushes the ship (a drive forward,
     /// to -z; a lift up), and how hard (N, its record's thrust).
     push: Option<(Vec3, f64)>,
+    /// What it carries full (kg): an ore bay's ore, a rack's cargo, a tank's fuel.
+    load: f64,
+    /// A landing leg's: what it holds (N), its stroke (m), its efficiency, the sink
+    /// it's designed for (m/s).
+    gear: Option<(f64, f64, f64, f64)>,
 }
 
 /// The ore bay's id among the placed blocks.
@@ -834,7 +903,7 @@ fn fit_of(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
     // (Its ore bay: its hold; broad and low, under doors.)
     if let Some(volume) = hull.capacity.hold_volume.filter(|v| *v > 0.0).map(|v| v as f32) {
         let a = Vec3::new(1.2, 0.8, 1.0);
-        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None });
+        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None, load: 0.0, gear: None });
     }
     out
 }
@@ -881,7 +950,17 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
             EquipmentFunction::Lift(l) => Some((Vec3::Y, l.thrust)),
             _ => None,
         };
-        Some(Fitted { id: id.to_string(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push })
+        let load = match &e.function {
+            EquipmentFunction::OreBay(b) => b.capacity,
+            EquipmentFunction::Rack(r) => r.capacity,
+            EquipmentFunction::Tank(t) => t.capacity,
+            _ => 0.0,
+        };
+        let gear = match &e.function {
+            EquipmentFunction::LandingGear(g) => Some((g.holds, g.stroke, g.efficiency, g.sink_rate)),
+            _ => None,
+        };
+        Some(Fitted { id: id.to_string(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push, load, gear })
     }
 }
 
@@ -895,7 +974,7 @@ fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
         let volume = m.volume as f32;
         let round = m.does.slot() == SlotKind::Tank;
         let size = if round { Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt()) } else { m.dims().as_vec3() };
-        Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None }
+        Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None, load: 0.0, gear: None }
     }).collect()
 }
 
@@ -1716,7 +1795,7 @@ impl Interior {
 
     /// Turned to look from `yaw`, `pitch` (rad; dev scenarios).
     pub fn turned(yaw: f32, pitch: f32) -> Self {
-        Interior { yaw, pitch, ..Default::default() }
+        Interior { yaw, pitch, ..Self::new() }
     }
 
     /// The hull's lines, asked for once a hull and picked up when they're done.
@@ -3125,9 +3204,9 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             }
             if action == Some(Action::MountAll) {
                 let stock = stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone());
-                let added = mounts(&interior.plan, &interior.fit, interior.spacing.max(1.0), &stock);
-                interior.message = Some((if added.is_empty() { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{} MOUNTING MEMBERS ADDED", added.len()) }, 4.0));
-                interior.plan.beams.extend(added);
+                let (beams, added) = mounts(&interior.plan, &interior.fit, interior.spacing.max(1.0), &stock);
+                interior.message = Some((if added == 0 { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{added} MOUNTING MEMBERS ADDED") }, 4.0));
+                interior.plan.beams = beams;
             }
             if action == Some(Action::AutoSize) && interior.sizing.is_none() && !interior.plan.beams.is_empty() {
                 let (plan, fit, spec) = (interior.plan.clone(), interior.fit.clone(), interior.spec());
