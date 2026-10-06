@@ -140,6 +140,17 @@ impl Terrain {
         }
     }
 
+    /// The surface height (as `surface`) from a bake's 5 km heights alone (a whole globe's).
+    pub fn surface_coarse(&self, dir: DVec3) -> f64 {
+        match &self.baked {
+            Some(h) => {
+                let v = self.baked_height(h, dir, crate::worlds::Detail::Coarse).0;
+                if self.kind == TerrainKind::Terran { v.max(0.0) } else { v }
+            }
+            None => self.surface(dir),
+        }
+    }
+
     /// `height_and_crater` for a whole globe's map: a bake's 5 km heights alone.
     pub fn height_and_crater_coarse(&self, dir: DVec3) -> (f64, f64) {
         match &self.baked {

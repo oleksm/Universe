@@ -21,7 +21,8 @@ struct Globals {
     env_world_color: vec4<f32>,
     env_mode: vec4<f32>,
     env_sky: vec4<f32>,
-    // x: the angle a pixel spans (radians) at the screen's middle.
+    // x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
+    // are faded in (0..1).
     view: vec4<f32>,
 };
 
@@ -491,14 +492,16 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         let uv = world_uv(dir);
         if (mapped) {
             let full = textureSampleLevel(world_color, world_soft, uv, world_lod(textureDimensions(world_color).x, footprint));
-            if (full.a > 0.5) {
+            if (full.a > 0.5 && own.a > 0.5) {
+                own = vec4<f32>(mix(own.rgb, full.rgb, g.view.y), 1.0);
+            } else if (full.a > 0.5) {
                 own = full;
             }
         }
         if (own.a > 0.5) {
             var rgb = own.rgb;
             // (Close up, over land: the ground's material, faded in as a pixel comes under 2.5 km.)
-            let near = smoothstep(2500.0, 1250.0, pixel);
+            let near = smoothstep(2500.0, 1250.0, pixel) * g.view.y;
             if (mapped && land > 0.5 && near > 0.0) {
                 let gw = textureDimensions(world_ground).x;
                 let lod = world_lod(gw, footprint);
@@ -567,13 +570,28 @@ fn air_center(v: MeshIn) -> vec4<f32> {
     return vec4<f32>(v.t.xyz - off / w, length(v.c0.xyz) / w);
 }
 
+// A patch splits when the eye is nearer than this many times its size (terrain_lod's SPLIT:
+// keep them together).
+const GEOMORPH_SPLIT: f32 = 2.4;
+
 @vertex
-fn vs_mesh(v: MeshIn) -> MeshOut {
+fn vs_mesh(v_in: MeshIn) -> MeshOut {
+    var v = v_in;
+    var tint = v.color * v.fill_tint;
+    // A patch of ground (its vertices in metres): its vertex colour is its way to its parent's
+    // shape (rgb, m) and its size (alpha, m). Blended toward it as the eye nears the distance
+    // its parent stands in from, so the swap finds the same shape (geomorphing).
+    if (v.globe_at.w < 0.5) {
+        let far = GEOMORPH_SPLIT * 2.0 * v.color.w * 0.95;
+        let m = smoothstep(far * 0.6, far, length(place(v)));
+        v.pos = v.pos + v.color.xyz * m;
+        tint = v.fill_tint;
+    }
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
     let local = v.pos * v.globe_at.w + v.globe_at.xyz;
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), air_center(v), vec2<f32>(v.t.w, v.material.w), turn(v, local));
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), air_center(v), vec2<f32>(v.t.w, v.material.w), turn(v, local));
 }
 
 @vertex

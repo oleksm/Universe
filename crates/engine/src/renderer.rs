@@ -46,7 +46,8 @@ struct Globals {
     env_world_color: [f32; 4],
     env_mode: [f32; 4],
     env_sky: [f32; 4],
-    /// x: the angle a pixel spans (radians) at the screen's middle.
+    /// x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
+    /// are faded in (0..1).
     view: [f32; 4],
 }
 
@@ -1058,12 +1059,12 @@ impl Renderer {
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
         // this frame: its globe map isn't up yet).
-        let world_layer = match &frame.world_maps {
+        let (world_layer, world_fade) = match &frame.world_maps {
             Some((maps, globe)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
-                self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0)
+                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade())
             }
-            None => 0.0,
+            None => (0.0, 0.0),
         };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
@@ -1088,7 +1089,7 @@ impl Renderer {
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
-            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, 0.0, 0.0, 0.0],
+            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, 0.0, 0.0],
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));

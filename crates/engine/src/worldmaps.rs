@@ -24,6 +24,9 @@ pub enum Slot {
 
 pub const SLOTS: usize = 5;
 
+/// Frames a world's maps take to fade in once bound.
+const FADE_FRAMES: f32 = 60.0;
+
 /// One map, encoded for the GPU: its format and each mip level's bytes.
 pub struct Encoded {
     pub width: u32,
@@ -88,8 +91,9 @@ pub(crate) struct WorldBind {
     pub bind: wgpu::BindGroup,
     linear: wgpu::Sampler,
     nearest: wgpu::Sampler,
-    /// The maps bound now (their id), if any.
+    /// The maps bound now (their id), if any, and when (frames counted by `fade`).
     pub current: Option<u64>,
+    since: u32,
 }
 
 impl WorldBind {
@@ -117,7 +121,7 @@ impl WorldBind {
         let blank = Self::blank(device, queue);
         let views: Vec<wgpu::TextureView> = (0..SLOTS).map(|_| blank.clone()).collect();
         let bind = Self::group(device, &layout, &views, &linear, &nearest);
-        WorldBind { layout, bind, linear, nearest, current: None }
+        WorldBind { layout, bind, linear, nearest, current: None, since: 0 }
     }
 
     /// A texel of nothing (alpha 0: no map).
@@ -148,11 +152,19 @@ impl WorldBind {
         device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("world maps"), layout, entries: &entries })
     }
 
+    /// How far the maps bound now are faded in (0..1, over a second's frames from binding: the
+    /// look they bring comes in gently, not in one frame). Counts the frame.
+    pub fn fade(&mut self) -> f32 {
+        self.since = self.since.saturating_add(1);
+        (self.since as f32 / FADE_FRAMES).min(1.0)
+    }
+
     /// Bind `maps` (uploading them, if they aren't bound already).
     pub fn bind(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, maps: &WorldMaps) {
         if self.current == Some(maps.id) {
             return;
         }
+        self.since = 0;
         let bc = device.features().contains(wgpu::Features::TEXTURE_COMPRESSION_BC);
         let views: Vec<wgpu::TextureView> = maps
             .maps
