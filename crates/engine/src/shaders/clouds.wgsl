@@ -442,7 +442,14 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         probe = normalize(o + d * g.x);
     }
     let f0 = cloud_field(to_body * probe, cl, cm, ce, ca);
-    var radii = array<f32, 3>(R + f0.lcl_m, R + MID_SHELL_M, R + max(f0.trop_m - 2000.0, 5000.0));
+    // (The cloud base is the condensation level over the ground under the clouds, not over the
+    // sea: where the ground drawn here stands higher, the low shell stands that much higher, or
+    // it ran under the terrain and was cut along its triangles.)
+    var ground_h = 0.0;
+    if (t_end < 1e29) {
+        ground_h = max(length(o + d * t_end) - R, 0.0);
+    }
+    var radii = array<f32, 3>(R + ground_h + f0.lcl_m, R + max(MID_SHELL_M, ground_h + 1500.0), R + max(f0.trop_m - 2000.0, max(5000.0, ground_h + 3000.0)));
     // Every hit in front of t_end: up to two a shell, sorted near to far.
     var ts = array<f32, 8>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
     var ks = array<i32, 8>(0, 0, 0, 0, 0, 0, 0, 0);
@@ -573,7 +580,10 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
             let rel = clamp((dt.y - d2.y) / max(dt.y + d2.y, 1.0), -1.0, 1.0);
             sheet = vec4<f32>(sheet.rgb * clamp(1.0 + 0.6 * rel, 0.55, 1.3), sheet.w);
         }
-        let alpha = sheet.w * dt.x * keep;
+        // (A hit just in front of the ground fades in: a shell grazing the terrain blends, never
+        // cuts it at its triangles' edges.)
+        let near_ground = select(1.0, clamp((t_end - ts[i]) / 300.0, 0.0, 1.0), t_end < 1e29);
+        let alpha = sheet.w * dt.x * keep * near_ground;
         // (A cloud passes about 1 − R of the light behind it, diffusely (non-absorbing: two-stream):
         // over bright ground — ice, snow, deserts — the ground's light shows through and the cloud
         // reads as bright as it or brighter, as from orbit, not as a grey sheet over it.)
