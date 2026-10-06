@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: "Points the dish."
 physical:
-  mass: 18
-  length: 0.193
-  width: 0.193
-  height: 0.193
+  mass: 40.5
+  length: 0.433
+  width: 0.433
+  height: 0.433
 made_from:
   - item: good.electric-motors
-    quantity: 18
+    quantity: 40.5
 making:
   module: module.assembly-shop
 fit:

@@ -31,4 +31,4 @@ revision:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a ball of thin aluminium under a blanket of insulation, with what feeds and gauges it. Discovery II's hydrogen tank is 10% of its fuel's weight and a Centaur stage 11%; this is 9%." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }

@@ -10,9 +10,9 @@ size_class: 1
 physical:
   mass: 1100
   volume: 2.5
-  length: 1.36
-  width: 1.36
-  height: 1.36
+  length: 2.82
+  width: 0.941
+  height: 0.941
 needs:
   power: 150000
 built_of:
@@ -28,4 +28,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a belly lift (a torch of the same kind, firing down): the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: long along its thrust, firing down, to its volume. A stand-in until it is sized from what it must do." }

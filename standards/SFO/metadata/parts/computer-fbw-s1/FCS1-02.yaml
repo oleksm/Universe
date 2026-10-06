@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: "Feel the ship's turning and see where it points."
 physical:
-  mass: 30
-  length: 0.422
-  width: 0.422
-  height: 0.422
+  mass: 4.5
+  length: 0.208
+  width: 0.208
+  height: 0.208
 made_from:
   - item: good.electronics
-    quantity: 30
+    quantity: 4.5
 making:
   module: module.assembly-shop
 fit:

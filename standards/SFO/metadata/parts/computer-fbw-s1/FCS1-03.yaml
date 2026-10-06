@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: "Switch the thrusters."
 physical:
-  mass: 50
-  length: 0.5
-  width: 0.5
-  height: 0.5
+  mass: 7.5
+  length: 0.247
+  width: 0.247
+  height: 0.247
 made_from:
   - item: good.electronics
-    quantity: 50
+    quantity: 7.5
 making:
   module: module.assembly-shop
 fit:

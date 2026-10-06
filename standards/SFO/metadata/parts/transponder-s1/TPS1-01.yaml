@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: "Answers when asked who the ship is."
 physical:
-  mass: 35
-  length: 0.444
-  width: 0.444
-  height: 0.444
+  mass: 2.1
+  length: 0.161
+  width: 0.161
+  height: 0.161
 made_from:
   - item: good.electronics
-    quantity: 35
+    quantity: 2.1
 making:
   module: module.assembly-shop
 fit:

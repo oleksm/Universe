@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: "Runs the autopilots."
 physical:
-  mass: 83
-  length: 0.652
-  width: 0.652
-  height: 0.652
+  mass: 11.1
+  length: 0.281
+  width: 0.281
+  height: 0.281
 made_from:
   - item: good.computers
-    quantity: 83
+    quantity: 11.1
 making:
   module: module.assembly-shop
 fit:

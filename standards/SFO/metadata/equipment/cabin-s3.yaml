@@ -9,9 +9,9 @@ size_class: 3
 physical:
   mass: 4200
   volume: 30
-  length: 3.11
-  width: 3.11
-  height: 3.11
+  length: 5.65
+  width: 2.82
+  height: 1.88
 needs:
   power: 60000
 built_of:
@@ -24,4 +24,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: rows of seats, long and low, to its volume. A stand-in until it is sized from what it must do." }

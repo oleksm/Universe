@@ -10,9 +10,9 @@ size_class: 1
 physical:
   mass: 1200
   volume: 2
-  length: 1.26
-  width: 1.26
-  height: 1.26
+  length: 2.0
+  width: 1.0
+  height: 1.0
 needs:
   power: 2500000
 built_of:
@@ -30,4 +30,4 @@ basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: banks of laser modules, a mirror to point the beam, and above all cooling. Real ones turn a quarter to a third of their power into light and aim for 5 kg for each kW of beam; this is 0.6 kg a kW at four fifths." }
   - { of: [function.beam_power, function.focus, function.range, function.burn, function.cool], tier: sourced, review: true, source: "the game: crates/world/src/weapons.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: modules and a mirror, to its volume. A stand-in until it is sized from what it must do." }

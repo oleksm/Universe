@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: "The wiring to every nozzle."
 physical:
-  mass: 23
-  length: 0.137
-  width: 0.137
-  height: 0.137
+  mass: 4.14
+  length: 0.202
+  width: 0.202
+  height: 0.202
 made_from:
   - item: stock.cu-wire-2
-    quantity: 26.4
+    quantity: 4.75
 making:
   module: module.machining-centre
 fit:

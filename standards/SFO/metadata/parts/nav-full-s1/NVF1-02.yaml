@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: ""
 physical:
-  mass: 45
-  length: 0.483
-  width: 0.483
-  height: 0.483
+  mass: 6.0
+  length: 0.229
+  width: 0.229
+  height: 0.229
 made_from:
   - item: good.electronics
-    quantity: 45
+    quantity: 6.0
 making:
   module: module.assembly-shop
 fit:

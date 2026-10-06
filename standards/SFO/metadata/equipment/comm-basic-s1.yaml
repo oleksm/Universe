@@ -8,13 +8,13 @@ identity:
   description: "The ship's radio."
 size_class: 1
 physical:
-  mass: 40
-  volume: 0.1
-  length: 0.464
-  width: 0.464
-  height: 0.464
+  mass: 90.0
+  volume: 5.4
+  length: 3.0
+  width: 3.0
+  height: 0.6
 needs:
-  power: 2000
+  power: 360.0
 built_of:
   parts: comm-basic-s1
 making:
@@ -28,4 +28,5 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }
+  - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "The Mars Reconnaissance Orbiter's radio: a 3 m dish on its gimbal and the boxes behind it, 94 kg, 360 W. Its size is the dish's, stowed. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
+  - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }

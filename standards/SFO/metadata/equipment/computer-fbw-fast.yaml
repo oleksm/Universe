@@ -8,13 +8,13 @@ identity:
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
 size_class: 1
 physical:
-  mass: 250
-  volume: 0.5
-  length: 0.794
-  width: 0.794
-  height: 0.794
+  mass: 45.0
+  volume: 0.07
+  length: 0.6
+  width: 0.4
+  height: 0.3
 needs:
-  power: 80000
+  power: 300.0
 built_of:
   parts: computer-fbw-fast
 making:
@@ -26,4 +26,5 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: as the standard flight computer, with heavier thruster drivers." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }
+  - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the standard flight computer, with heavier thruster drivers: half as much again. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
+  - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }

@@ -9,9 +9,9 @@ size_class: 2
 physical:
   mass: 2400
   volume: 5
-  length: 1.71
-  width: 1.71
-  height: 1.71
+  length: 2.71
+  width: 1.36
+  height: 1.36
 built_of:
   parts: power-aurel-s2
 making:
@@ -24,4 +24,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of its volume. A placeholder until it is sized: a radar is an array, a comm a dish, a drive long (docs/ships/mc-07-equipment-dimensions.md)." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a reactor and its turbine set in a row, twice as long as wide, to its volume. A stand-in until it is sized from what it must do." }

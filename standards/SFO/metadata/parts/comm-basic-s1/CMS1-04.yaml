@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: ""
 physical:
-  mass: 4
-  length: 0.0765
-  width: 0.0765
-  height: 0.0765
+  mass: 9.0
+  length: 0.262
+  width: 0.262
+  height: 0.262
 made_from:
   - item: stock.cu-wire-2
-    quantity: 4.6
+    quantity: 10.3
 making:
   module: module.machining-centre
 fit:

@@ -6,13 +6,13 @@ identity:
   revision: draft
   description: ""
 physical:
-  mass: 15
-  length: 0.177
-  width: 0.177
-  height: 0.177
+  mass: 0.9
+  length: 0.122
+  width: 0.122
+  height: 0.122
 made_from:
   - item: stock.al6061-sh-2-panel
-    quantity: 15
+    quantity: 0.9
 making:
   module: module.welding-bay
 fit:
