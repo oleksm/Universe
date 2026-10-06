@@ -1,0 +1,148 @@
+{
+ "format": "planet-sim-survey/1",
+ "world_id": "TRF1",
+ "body": "body.treistun.treistun-f",
+ "radius_m": 3634000.0,
+ "rock_units": {
+  "file": "rock_units.png",
+  "index": [
+   "morb",
+   "arc_volcanic",
+   "arc_plutonic",
+   "basement",
+   "greenstone",
+   "schist",
+   "granite",
+   "flood_basalt",
+   "carbonate",
+   "clastic",
+   "ophiolite",
+   "rift",
+   "iron_formation",
+   "primary_crust",
+   "intercrater_plains",
+   "high_ti_basalt",
+   "impact_melt",
+   "impact_breccia",
+   "anorthosite",
+   "kreep"
+  ],
+  "sea": 255
+ },
+ "land_pct": 100.0,
+ "deposits": 85,
+ "blind_deposits": 85,
+ "districts": 6,
+ "belts": 0,
+ "contained": {
+  "S": {
+   "amount": 992100000.0,
+   "unit": "t"
+  },
+  "Ni": {
+   "amount": 118300000.0,
+   "unit": "t"
+  },
+  "Cu": {
+   "amount": 90070000.0,
+   "unit": "t"
+  },
+  "Co": {
+   "amount": 3368000.0,
+   "unit": "t"
+  },
+  "PGE": {
+   "amount": 12530.0,
+   "unit": "t"
+  }
+ },
+ "by_kind": {
+  "impact_melt_nickel": {
+   "count": 85,
+   "tonnage_mt": 7936.0
+  }
+ },
+ "land_share_by_unit_pct": {
+  "primary_crust": 40.8,
+  "flood_basalt": 34.17,
+  "intercrater_plains": 24.38,
+  "high_ti_basalt": 0.65
+ },
+ "bulk_makeup_by_rock_class": {
+  "zone": "warm",
+  "basis": "origin model: the zone's primitive material (stages/bodies.py)",
+  "shares": {
+   "carbonaceous": 0.1412,
+   "enstatite": 0.0588,
+   "stony": 0.8
+  }
+ },
+ "climate": {
+  "mean_surface_temp_c": -113.2,
+  "mean_land_temp_c": -113.2,
+  "rain_land_m": null,
+  "bands": [
+   {
+    "lat_from": 0,
+    "lat_to": 10,
+    "name": "Equator, 0\u201310\u00b0",
+    "temp_c": -101.53,
+    "land_temp_c": -101.53,
+    "land_coldest_month_c": -101.53,
+    "land_warmest_month_c": -101.53,
+    "land_rain_m": null
+   },
+   {
+    "lat_from": 10,
+    "lat_to": 25,
+    "name": "Tropics, 10\u201325\u00b0",
+    "temp_c": -103.32,
+    "land_temp_c": -103.32,
+    "land_coldest_month_c": -103.32,
+    "land_warmest_month_c": -103.32,
+    "land_rain_m": null
+   },
+   {
+    "lat_from": 25,
+    "lat_to": 35,
+    "name": "25\u201335\u00b0",
+    "temp_c": -107.01,
+    "land_temp_c": -107.01,
+    "land_coldest_month_c": -107.01,
+    "land_warmest_month_c": -107.01,
+    "land_rain_m": null
+   },
+   {
+    "lat_from": 35,
+    "lat_to": 50,
+    "name": "35\u201350\u00b0",
+    "temp_c": -113.61,
+    "land_temp_c": -113.61,
+    "land_coldest_month_c": -113.61,
+    "land_warmest_month_c": -113.61,
+    "land_rain_m": null
+   },
+   {
+    "lat_from": 50,
+    "lat_to": 70,
+    "name": "50\u201370\u00b0",
+    "temp_c": -128.15,
+    "land_temp_c": -128.15,
+    "land_coldest_month_c": -128.15,
+    "land_warmest_month_c": -128.15,
+    "land_rain_m": null
+   },
+   {
+    "lat_from": 70,
+    "lat_to": 90,
+    "name": "Poles, 70\u201390\u00b0",
+    "temp_c": -156.2,
+    "land_temp_c": -156.2,
+    "land_coldest_month_c": -156.2,
+    "land_warmest_month_c": -156.2,
+    "land_rain_m": null
+   }
+  ]
+ },
+ "highest_point_plate_stage_m": 3011
+}

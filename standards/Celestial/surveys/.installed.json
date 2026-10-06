@@ -1,5 +1,5 @@
 {
- "updated": "2026-10-06T19:47:03+00:00",
+ "updated": "2026-10-06T20:00:23+00:00",
  "worlds": {
   "TRB1": {
    "survey": "816ccee5a699281082c6b82341b884df38b87646bc3090674b52243aa1a74f21",
@@ -18,6 +18,12 @@
    "energy": "08431725024c7603435059602d9e338e5a110f82232244658e27729fc7b4f4fa",
    "surface": "396826a1b2e6772691d2fb87422cbabf2448cf7c17b77db082268894543d0669",
    "history": "e091475f96e669c519b5e43c87cfc14f0e3ba6b11ba15e836294ea0b6cd8df16"
+  },
+  "TRF1": {
+   "survey": "96e7e397bbbcc1f94e903018f379418eaa92f3d1fc89df551663ed377bf1b6d4",
+   "energy": null,
+   "surface": "308ae893b1d6ceedb712bda78e3a5a9c785fe5ecc9cd37d6b8a4dbe13239be96",
+   "history": null
   }
  }
 }

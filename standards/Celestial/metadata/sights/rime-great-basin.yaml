@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/sight.schema.yaml
+identity:
+  key: sight.rime-great-basin
+  name: "The Great Basin of Rime"
+  about: "The largest impact basin on Rime, 1,417 km across and 3.1 km deep under a grey sky of stars: a stagnant-lid world with no plates to erase it, so the basin and the hundred thousand rayed craters round it stand as they fell."
+at: body.treistun.treistun-f
+kind: basin
+position: { latitude: 62.86, longitude: 44.21 }
+diameter: 1416940
+depth: 3084
+source: W-BAS-001
+basis:
+  - { of: [kind, position, diameter, depth, source], tier: sourced, source: "the planet simulation's packages in the worlds store", note: "Rime's survey (TRF1, impacts.json): basin W-BAS-001, 1,417 km, depth 3,084 m, rim 1,151 m, 4,308 Myr." }
+  - { of: [identity.name], tier: invented, note: "The name is the registry's." }

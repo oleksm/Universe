@@ -91,7 +91,7 @@
 - { record: body.treistun.treistun-d, at: "2026-10-06T19:47:40Z", status: "", summary: "changed: bake, surface", sha: "4001049a009dd488" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "ec03710d2e3a78ae" }
 - { record: body.treistun.treistun-e, at: "2026-10-06T19:51:35Z", status: "", summary: "changed: identity", sha: "5cde2189940446f2" }
-- { record: body.treistun.treistun-f, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "04c06b5d963033fb" }
+- { record: body.treistun.treistun-f, at: "2026-10-06T20:01:57Z", status: "", summary: "changed: provenance, survey, bake, surface", sha: "00883e89e8764acc" }
 - { record: body.treistun.treistun-g, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "447e29d178391820" }
 - { record: body.treistun.treistun-g-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "afe538e160eeb704" }
 - { record: body.treistun.treistun-g-ii, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "670355b4ca37f8da" }
@@ -1971,6 +1971,7 @@
 - { record: sight.heath-spire, at: "2026-10-06T19:48:07Z", status: draft, summary: "changed: identity, height, basis", sha: "a8256b0db7284a52" }
 - { record: sight.hoar-horn, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "9d6ff36e2b46dccc" }
 - { record: sight.hoar-ice, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "e0653aceab939943" }
+- { record: sight.rime-great-basin, at: "2026-10-06T20:01:57Z", status: draft, summary: "first tracked", sha: "ffac9ff3c6da9b0f" }
 - { record: standard.sfo.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7b0c226f205b56ac" }
 - { record: standard.sfo.10, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1f4b586c49cef4ea" }
 - { record: standard.sfo.11, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "91aaefa222c3a756" }
