@@ -576,6 +576,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                     gi.bare = in.data.z;
                     gi.surface_on = in.data.w;
                     gi.q = in.micro;
+                    gi.qw = dir * world_air.radius_m;
                     gi.pixel_m = pixel;
                     rgb = mix(rgb, ground_material(gi), near);
                 }

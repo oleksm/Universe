@@ -50,6 +50,10 @@ struct GroundIn {
     // engine's wrapped `micro`: its period is far above the noise's longest wavelength, 2 km),
     // and the size of a pixel there (m), to fade out noise finer than a pixel.
     q: vec3<f32>,
+    // Where on the world, absolute (m, body-fixed: the unit direction × the radius): for the
+    // octaves of 64 m and up, which must not repeat (q's 4 km period showed as a grid of blotches
+    // from high up); f32 keeps them to a few mm there.
+    qw: vec3<f32>,
     pixel_m: f32,
     // The rock's colour here, blended over the rock map's four nearest texels by their bilinear
     // weights (ground_rock_blend): the map is read nearest for its units, and unblended, each
@@ -123,6 +127,15 @@ fn gm_pnoise(q: vec3<f32>, lam: f32, seed: f32) -> f32 {
     return gm_pnoise_w(q, lam, seed, vec3<f32>(1.0));
 }
 
+// An octave of wavelength lam at this point of the ground: the absolute position (no repeat) for
+// lam ≥ 64 m, the wrapped one (exact close up) below.
+fn gm_at(i: GroundIn, lam: f32, seed: f32) -> f32 {
+    if (lam >= 64.0) {
+        return gm_pnoise_w(i.qw, lam, seed, vec3<f32>(0.0));
+    }
+    return gm_pnoise(i.q, lam, seed);
+}
+
 // Noise kept to what a pixel can show: an octave of wavelength `lam` fades out below ~3 pixels.
 fn gm_fade(lam: f32, pixel_m: f32, pixels: f32) -> f32 {
     return clamp(lam / (pixel_m * pixels) - 1.0, 0.0, 1.0);
@@ -137,7 +150,7 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     var a = 0.5;
     var lam = 2048.0;
     for (var o = 0; o < 8; o++) {
-        n1 += a * gm_fade(lam, i.pixel_m, 3.0) * gm_pnoise(i.q, lam, f32(o) * 5.7);
+        n1 += a * gm_fade(lam, i.pixel_m, 3.0) * gm_at(i, lam, f32(o) * 5.7);
         lam *= 0.5;
         a *= 0.6;
     }
@@ -159,7 +172,7 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
         var pl = 2048.0;
         var pw = 0.0;
         for (var o = 0; o < 6; o++) {
-            pn += pa * gm_fade(pl, i.pixel_m, 2.0) * gm_pnoise(i.q, pl, 3.1 + f32(o) * 1.7);
+            pn += pa * gm_fade(pl, i.pixel_m, 2.0) * gm_at(i, pl, 3.1 + f32(o) * 1.7);
             pw += pa;
             pl *= 0.5;
             pa *= 0.62;
@@ -179,7 +192,7 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     var rock_w = clamp(clamp((h - 1800.0) / 1500.0, 0.0, 1.0) * 0.6 + clamp((i.slope - 0.15) / 0.35, 0.0, 1.0) * 0.7 + 0.35 * n1, 0.0, 1.0);
     rock_w = max(rock_w, i.bare * i.surface_on * 0.95);
     // (Strata: by height (not wrapped), varying along the ground over ~2 km.)
-    let band = gm_pnoise_w(vec3<f32>(h * 2048.0 / 60.0, i.q.x, i.q.z), 2048.0, 9.0, vec3<f32>(0.0, 1.0, 1.0));
+    let band = gm_pnoise_w(vec3<f32>(h * 2048.0 / 60.0, i.qw.x, i.qw.z), 2048.0, 9.0, vec3<f32>(0.0));
     var col = mix(gcol, rock_c * 0.62 * (1.0 + 0.18 * band + 0.25 * n1), rock_w * land);
     // Scree: lighter broken rock below the steep ground, grained.
     let grain = gm_pnoise(i.q, 32.0, 1.0) * gm_fade(32.0, i.pixel_m, 3.0);
@@ -188,7 +201,10 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     let sand = (1.0 - smoothstep(3.0, 25.0 + 20.0 * n1, h)) * step(0.5, h) * clamp(1.0 - i.slope / 0.04, 0.0, 1.0) * clamp(t_year / 4.0, 0.0, 1.0);
     col = mix(col, SAND, 0.75 * sand);
     // Snow where the year is cold at this height, off the steepest ground.
-    let snow = clamp((-t_year - 2.0) / 4.0 + 0.6 * n1, 0.0, 1.0) * clamp((0.9 - i.slope) / 0.4, 0.0, 1.0) * land;
+    // (Snow slides off rock too steep to hold it: the bake's bare-rock field (its 600 m slopes)
+    // shows dark faces through a snowfield, as real ranges do.)
+    let snow = clamp((-t_year - 2.0) / 4.0 + 0.6 * n1, 0.0, 1.0) * clamp((0.9 - i.slope) / 0.4, 0.0, 1.0)
+        * (1.0 - 0.85 * clamp(i.bare * i.surface_on * 1.5, 0.0, 1.0)) * land;
     col = mix(col, SNOW, snow);
     return col;
 }
