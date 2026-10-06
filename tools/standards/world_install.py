@@ -1,6 +1,7 @@
 """Install a planet simulation's world (its survey, energy and surface packages) into the registry (docs/survey-contract.md).
 
     python3 tools/standards/world_install.py <world folder or its survey folder> [<body key>] [--replace]
+    python3 tools/standards/world_install.py --store <worlds store>        # every world in it whose survey names a body
 
 The body key is read from the survey's summary.json when it names one. One command, idempotent: run it again on the same
 world and nothing changes; run it on a new version of the surface bake and only the pointer moves. Then build.py.
@@ -16,7 +17,7 @@ the seed's guesses for them. The body becomes provenance `baked`. A body already
 unless --replace is given: a new run is a new world, and claims and mines point at the old one's IDs.
 Then run build.py so the page and the tracker see it. Run from the repository root.
 """
-import hashlib, json, os, shutil, stat, sys, re
+import glob, hashlib, json, os, shutil, stat, sys, re
 import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -126,9 +127,26 @@ def packages(text, folder, dest, world_id):
     return head + "\n" + blocks + "identity:\n" + rest
 
 
+def install_store(root, replace):
+    """Every world in a worlds store (worlds/<id>/survey/ naming a body, or the store's releases.json): installed in turn."""
+    index = os.path.join(root, "releases.json")
+    worlds = [os.path.join(root, r["world_id"]) for r in json.load(open(index, encoding="utf-8"))] if os.path.isfile(index) else sorted(d for d in glob.glob(os.path.join(root, "*")) if os.path.isfile(os.path.join(d, "survey", "summary.json")))
+    done = 0
+    for w in worlds:
+        body = json.load(open(os.path.join(w, "survey", "summary.json"), encoding="utf-8")).get("body")
+        if not body:
+            print(f"{os.path.basename(w)}: names no body; skipped")
+            continue
+        main(["world_install.py", w] + (["--replace"] if replace else []))
+        done += 1
+    print(f"{done} world(s) installed from {root}")
+
+
 def main(argv):
     if len(argv) < 2:
         sys.exit(__doc__)
+    if "--store" in argv:
+        return install_store(argv[argv.index("--store") + 1], "--replace" in argv)
     args = [a for a in argv[1:] if not a.startswith("--")]
     folder = args[0]
     if os.path.isdir(os.path.join(folder, "survey")):      # the world's folder: its survey is inside
