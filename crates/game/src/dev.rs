@@ -1353,6 +1353,9 @@ pub fn apply(app: &mut App, name: &str) {
             if let Ok(h) = std::env::var("UNIVERSE_NEW") {
                 y.interior_mut().start_new((h != "none").then_some(h.as_str()));
             }
+            if let Ok(id) = std::env::var("UNIVERSE_OPEN") {
+                y.interior_mut().open_saved(&id);
+            }
             if let Ok(d) = std::env::var("UNIVERSE_DIALOG") {
                 y.interior_mut().show_dialog(d == "open");
             }

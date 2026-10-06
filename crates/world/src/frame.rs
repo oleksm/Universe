@@ -321,12 +321,14 @@ fn to_global(kl: &[[f64; 12]; 12], t: &[[f64; 3]; 3]) -> [[f64; 12]; 12] {
 }
 
 /// `a x = b` for x (`a` n by n), by elimination with the largest pivot; a pivot
-/// next to nothing (beside the matrix's biggest) means something moves freely.
+/// next to nothing beside its way's own stiffness (its diagonal before: what holds
+/// that joint that way) means it moves freely.
 fn gauss(mut a: Vec<f64>, mut b: Vec<f64>, n: usize) -> Result<Vec<f64>, Loose> {
-    let scale = a.iter().fold(0.0f64, |m, v| m.max(v.abs())).max(1e-30);
+    let diag: Vec<f64> = (0..n).map(|k| a[k * n + k].abs()).collect();
+    let floor = diag.iter().fold(0.0f64, |m, v| m.max(*v)) * 1e-16;
     for col in 0..n {
         let p = (col..n).max_by(|&r, &s| a[r * n + col].abs().total_cmp(&a[s * n + col].abs())).unwrap_or(col);
-        if a[p * n + col].abs() < scale * 1e-13 {
+        if a[p * n + col].abs() <= (diag[col] * 1e-9).max(floor) {
             return Err(Loose);
         }
         if p != col {

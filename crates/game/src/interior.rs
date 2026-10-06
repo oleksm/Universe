@@ -182,6 +182,7 @@ pub struct Interior {
     beam_hover: Option<usize>,
     beam_pick: Option<usize>,
     beam_from: Option<Vec3>,
+    pads_mode: bool,
     bearing: Option<(Plan, Arc<Bearing>)>,
     bearing_job: Option<(Plan, mpsc::Receiver<Bearing>)>,
     /// The layers hidden (by number in `LAYERS`); the panel folded up; groups folded.
@@ -279,7 +280,7 @@ fn clashes(mesh: &universe_sim::world::walk::WalkMesh, plan: &Plan) -> Vec<Vec<V
 
 /// Which of its placed modules clash: some of it (a few points through it) in the
 /// hull's material or outside it, or a tube's room in it.
-fn block_clashes(mesh: &universe_sim::world::walk::WalkMesh, i: &Interior) -> Vec<bool> {
+fn block_clashes(mesh: Option<&universe_sim::world::walk::WalkMesh>, i: &Interior) -> Vec<bool> {
     use universe_engine::glam::DVec2;
     use universe_sim::world::deckplan::{enclosed, in_material};
     let rooms: Vec<Vec3> = (0..i.plan.lines.len()).flat_map(|k| {
@@ -290,14 +291,15 @@ fn block_clashes(mesh: &universe_sim::world::walk::WalkMesh, i: &Interior) -> Ve
         let round = i.round(&b.id);
         let h = b.size * 0.5 * if round { 0.55 } else { 0.85 };
         let marks = [-1.0f32, 0.0, 1.0];
-        let hull = marks.into_iter().flat_map(|x| marks.into_iter().flat_map(move |y| marks.into_iter().map(move |z| Vec3::new(x, y, z)))).any(|m| {
+        // (No hull: nothing to be in or out of.)
+        let hull = mesh.is_some_and(|mesh| marks.into_iter().flat_map(|x| marks.into_iter().flat_map(move |y| marks.into_iter().map(move |z| Vec3::new(x, y, z)))).any(|m| {
             // (A hair off the hull's middle line: rays straight down it slip through the
             // seam between its mirrored halves.)
             let p = b.at + m * h + Vec3::new(0.0137, 0.0, 0.0071);
             let flat = DVec2::new(f64::from(p.x), f64::from(p.z));
             // (Outside: not closed in by the hull's skin all round, any face of it.)
             in_material(mesh, flat, f64::from(p.y)) || !enclosed(mesh, flat, f64::from(p.y), 0.0, true)
-        });
+        }));
         hull || rooms.iter().any(|p| b.holds(*p, round))
     }).collect()
 }
@@ -332,6 +334,10 @@ struct Plan {
     /// said (older plans): the hull its name is.
     #[serde(default)]
     on: Option<String>,
+    /// Landing pads laid in the plan (where it stands on the ground), beside any its
+    /// hull has.
+    #[serde(default)]
+    pads: Vec<Vec3>,
 }
 
 /// The hull plan `plan` is designed in, if any.
@@ -440,6 +446,31 @@ pub struct Bearing {
     felt: Vec<f64>,
 }
 
+/// Loads in balance, free in flight: the `external` forces at joints, and each
+/// point mass's inertia as the whole speeds up and turns under them (inertia
+/// relief): -m (a + α × r) about the centre of mass, a the forces over the mass,
+/// α their moment through the masses' inertia. Nothing left over for whatever
+/// holds it.
+fn balanced(external: Vec<(usize, universe_engine::glam::DVec3)>, points: &[(usize, f64)], joints: &[universe_engine::glam::DVec3]) -> Vec<(usize, universe_engine::glam::DVec3)> {
+    use universe_engine::glam::{DMat3, DVec3};
+    let total: f64 = points.iter().map(|p| p.1).sum();
+    if total <= 0.0 {
+        return external;
+    }
+    let c = points.iter().fold(DVec3::ZERO, |s, &(j, m)| s + joints[j] * m) / total;
+    let force: DVec3 = external.iter().map(|e| e.1).sum();
+    let torque: DVec3 = external.iter().map(|&(j, f)| (joints[j] - c).cross(f)).sum();
+    let inertia = points.iter().fold(DMat3::ZERO, |i, &(j, m)| {
+        let d = joints[j] - c;
+        i + (DMat3::IDENTITY * d.length_squared() - DMat3::from_cols(d * d.x, d * d.y, d * d.z)) * m
+    });
+    let a = force / total;
+    let alpha = if inertia.determinant().abs() > 1e-9 { inertia.inverse() * torque } else { DVec3::ZERO };
+    let mut out = external;
+    out.extend(points.iter().map(|&(j, m)| (j, -(a + alpha.cross(joints[j] - c)) * m)));
+    out
+}
+
 /// What the plan's frame bears, under each case, for a hull `spec` (gravity `g`).
 fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, g: f64) -> Bearing {
     use universe_engine::glam::DVec3;
@@ -503,20 +534,30 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     let loads = |acc: DVec3| -> Vec<(usize, DVec3)> {
         masses.iter().flat_map(|(js, m)| js.iter().map(move |&j| (j, (DVec3::new(0.0, -g, 0.0) - acc) * *m / js.len() as f64))).collect()
     };
+    // (What pushes: the hull's nozzles, at the joints by them; with no hull, each
+    // drive and lift placed, through the joints in it.)
+    let mut pushers: Vec<(ThrusterRole, DVec3, Vec<usize>)> = thrusters.iter().filter(|t| matches!(t.role, ThrusterRole::Main | ThrusterRole::Lift)).map(|t| (t.role, t.push * t.thrust, near(t.at.as_vec3(), 1.0))).collect();
+    if spec.is_none() {
+        for blk in &plan.blocks {
+            let Some((dir, thrust)) = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| f.push) else { continue };
+            let (lo, hi) = blk.bounds();
+            let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+            let role = if dir.y > 0.5 { ThrusterRole::Lift } else { ThrusterRole::Main };
+            pushers.push((role, dir.as_dvec3() * thrust, at));
+        }
+    }
     let pushes = |role: ThrusterRole, out: &mut Bearing, what: &str| -> (Vec<(usize, DVec3)>, DVec3) {
         let mut pushes = Vec::new();
         let mut total = DVec3::ZERO;
         let mut missed = false;
-        for t in thrusters.iter().filter(|t| t.role == role) {
-            let force = t.push * t.thrust;
-            total += force;
-            let at = near(t.at.as_vec3(), 1.0);
+        for (_, force, at) in pushers.iter().filter(|p| p.0 == role) {
+            total += *force;
             if at.is_empty() {
                 missed = true;
                 continue;
             }
-            for &j in &at {
-                pushes.push((j, force * share / at.len() as f64));
+            for &j in at {
+                pushes.push((j, *force * share / at.len() as f64));
             }
         }
         if missed {
@@ -528,8 +569,10 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // (world::legs: their stroke and efficiency, the sink they're designed for),
     // held at the landing pads.
     let legs = spec.and_then(universe_sim::world::legs::of_spec);
-    let jolt = legs.map_or(0.0, |l| l.jolt(l.designed) * STANDARD_G);
-    let pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).flat_map(|n| near(n.at.as_vec3(), 1.0)).collect();
+    // (No hull, no legs: the registry's design landing, 3.05 m/s, stopped over a
+    // stroke of 1 m at 0.85: an assumption until pads have legs of their own.)
+    let jolt = legs.map_or(3.05f64.powi(2) / (2.0 * 1.0 * 0.85), |l| l.jolt(l.designed) * STANDARD_G);
+    let pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).map(|n| n.at.as_vec3()).chain(plan.pads.iter().copied()).flat_map(|p| near(p, 1.0)).collect();
     let landing = if pads.is_empty() {
         out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
         Err("NOTHING ON THE PADS".to_string())
@@ -541,14 +584,18 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // mass's inertia, held only to keep it from drifting.
     let (main, total) = pushes(ThrusterRole::Main, &mut out, "THE DRIVE");
     let acc = total / ship;
-    // (In flight, far from anything: no weight; only its acceleration.)
-    let mut thrust = Case { loads: masses.iter().flat_map(|(js, m)| js.iter().map(move |&j| (j, -acc * *m / js.len() as f64))).collect(), held: Vec::new(), anchor };
-    thrust.loads.extend(main.iter().copied());
+    // (In flight, far from anything: no weight; the pushes, and every mass's inertia
+    // as the ship speeds up and turns under them.)
+    let points: Vec<(usize, f64)> = masses.iter().flat_map(|(js, m)| js.iter().map(move |&j| (j, *m / js.len() as f64))).collect();
+    let thrust = Case { loads: balanced(main.clone(), &points, &frame.joints), held: Vec::new(), anchor };
     out.felt.push(acc.length());
     let (lift, total) = pushes(ThrusterRole::Lift, &mut out, "THE LIFT");
     let acc = total / ship + DVec3::new(0.0, -g, 0.0);
-    let mut hover = Case { loads: loads(acc), held: Vec::new(), anchor };
-    hover.loads.extend(lift.iter().copied());
+    // (Hovering: its weight too.)
+    let mut external = lift.clone();
+    external.extend(points.iter().map(|&(j, m)| (j, DVec3::new(0.0, -g * m, 0.0))));
+    let hover = Case { loads: balanced(external, &points, &frame.joints), held: Vec::new(), anchor };
+    let _ = loads;
     out.felt.push(acc.length());
     let run = |case: Result<Case, String>, ok: bool| -> Result<universe_sim::world::frame::Collapse, String> {
         let case = case?;
@@ -590,6 +637,9 @@ pub struct Fitted {
     volume: f32,
     round: bool,
     size: Vec3,
+    /// A drive's or a lift's push: which way it pushes the ship (a drive forward,
+    /// to -z; a lift up), and how hard (N, its record's thrust).
+    push: Option<(Vec3, f64)>,
 }
 
 /// The ore bay's id among the placed blocks.
@@ -607,7 +657,7 @@ fn fit_of(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
     // (Its ore bay: its hold; broad and low, under doors.)
     if let Some(volume) = hull.capacity.hold_volume.filter(|v| *v > 0.0).map(|v| v as f32) {
         let a = Vec3::new(1.2, 0.8, 1.0);
-        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt() });
+        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None });
     }
     out
 }
@@ -649,7 +699,12 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
             }
         };
         let volume = p.volume.map_or(size.x * size.y * size.z, |v| v as f32);
-        Some(Fitted { id: id.to_string(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size })
+        let push = match &e.function {
+            EquipmentFunction::Drive(d) => Some((Vec3::NEG_Z, d.thrust)),
+            EquipmentFunction::Lift(l) => Some((Vec3::Y, l.thrust)),
+            _ => None,
+        };
+        Some(Fitted { id: id.to_string(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push })
     }
 }
 
@@ -663,7 +718,7 @@ fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
         let volume = m.volume as f32;
         let round = m.does.slot() == SlotKind::Tank;
         let size = if round { Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt()) } else { m.dims().as_vec3() };
-        Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size }
+        Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None }
     }).collect()
 }
 
@@ -1726,6 +1781,11 @@ impl Interior {
         self.dialog = Some(if open { Dialog::Open(Self::designs()) } else { Dialog::New });
     }
 
+    /// Saved design `id` opened (dev scenarios).
+    pub fn open_saved(&mut self, id: &str) {
+        self.open_design(id);
+    }
+
     /// A new design (dev scenarios): in the hull keyed `hull`, or none.
     pub fn start_new(&mut self, hull: Option<&str>) {
         let spec = hull.and_then(|k| hulls().into_iter().find(|h| h.key == k));
@@ -1863,7 +1923,7 @@ impl Interior {
             }
             None => Vec::new(),
         };
-        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on };
+        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new() };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
@@ -2176,6 +2236,8 @@ enum Action {
     Turn,
     /// The load case shown on the frame (none: each member's worst).
     Case(Option<usize>),
+    /// Laying landing pads (a click on the plane: one there; on one: gone), or not.
+    Pads,
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -2207,7 +2269,7 @@ fn stock_row(k: usize) -> (Vec2, Vec2) {
 fn bearers(i: &Interior) -> Vec<Vec3> {
     use universe_sim::world::shape::Role;
     use universe_sim::world::ship::ThrusterRole;
-    let mut out: Vec<Vec3> = Vec::new();
+    let mut out: Vec<Vec3> = i.plan.pads.clone();
     if let Some(spec) = i.spec() {
         out.extend(spec.shape().nodes(Role::Gear).map(|n| n.at.as_vec3()));
         out.extend(spec.thrusters.iter().filter(|t| matches!(t.role, ThrusterRole::Main | ThrusterRole::Lift)).map(|t| t.at.as_vec3()));
@@ -2278,7 +2340,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             let w4 = (c.x - 16.0 - 18.0) / 4.0;
             let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(332.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w), "REMOVE", Action::Remove), (at(310.0, w + 6.0, w), "PADS", Action::Pads), (at(332.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(332.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -2716,10 +2778,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     // tube's room.
     if interior.block_clash.as_ref().is_none_or(|(b, _)| *b != interior.plan.blocks)
     {
-        let found = match interior.spec().and_then(|s| s.shape().walk.as_ref()) {
-            Some(mesh) => block_clashes(mesh, interior),
-            None => vec![false; interior.plan.blocks.len()],
-        };
+        let found = block_clashes(interior.spec().and_then(|s| s.shape().walk.as_deref()), interior);
         interior.block_clash = Some((interior.plan.blocks.clone(), found));
     }
     stay
@@ -2834,6 +2893,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             }
             if let Some(Action::Case(c)) = action {
                 interior.case = c;
+            }
+            if action == Some(Action::Pads) {
+                interior.pads_mode = !interior.pads_mode;
+                interior.beam_from = None;
             }
             if action == Some(Action::Remove)
                 && let Some(k) = interior.beam_pick.take()
@@ -3044,6 +3107,20 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             // FRAME: a click at a joint or a bearer (else on the work plane) ends the
             // member being laid there and starts the next from it; not laying one, a
             // click on a member picks it, else starts one.
+            // (PADS: a pad laid where the click is on the plane, or the one clicked taken up.)
+            Tool::Frame if interior.pads_mode => {
+                let near = interior.plan.pads.iter().position(|p| cam.project(*p).is_some_and(|(q, _)| q.distance(cursor) < 10.0));
+                match near {
+                    Some(k) => {
+                        interior.plan.pads.remove(k);
+                    }
+                    None => {
+                        if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
+                            interior.plan.pads.push(at);
+                        }
+                    }
+                }
+            }
             Tool::Frame => {
                 let snap = frame_snap(interior, &cam, cursor);
                 if interior.beam_from.is_none() && snap.is_none() && interior.beam_hover.is_some() {
@@ -3611,8 +3688,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             use universe_sim::world::ship::ThrusterRole;
             let joined = |p: Vec3| plan.beams.iter().any(|b| b.a.distance(p) <= 1.0 || b.b.distance(p) <= 1.0);
             let none: &[universe_sim::world::ship::Thruster] = &[];
-            for n in spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)) {
-                let p = n.at.as_vec3();
+            for p in spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).map(|n| n.at.as_vec3()).chain(plan.pads.iter().copied()) {
                 if let Some((q, _)) = cam.project(p) {
                     let col = if joined(p) { Color([0.4, 0.9, 1.0, 1.0]) } else { Color([0.4, 0.9, 1.0, 0.45]) };
                     let d = [Vec2::new(0.0, -6.0), Vec2::new(6.0, 0.0), Vec2::new(0.0, 6.0), Vec2::new(-6.0, 0.0)];
@@ -3787,7 +3863,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             }
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 146.0), "LOAD CASE SHOWN", LABEL.scale(0.7), 0.6);
             for (r, name, a) in panel_buttons(Tool::Frame) {
-                let lamp = if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) { Lamp::On } else { Lamp::Off };
+                let lamp = if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) || (a == Action::Pads && interior.pads_mode) { Lamp::On } else { Lamp::Off };
                 let off = a == Action::Remove && interior.beam_pick.is_none();
                 draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
             }
