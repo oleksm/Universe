@@ -49,6 +49,8 @@ impl Key {
 
 struct Patch {
     mesh: Mesh,
+    /// Made before all its ground was read: made again once it is.
+    partial: bool,
     /// Its origin (body frame, m).
     origin: DVec3,
     used: u64,
@@ -76,22 +78,29 @@ fn face_dir(face: u8, u: f64, v: f64) -> DVec3 {
     d.normalize()
 }
 
-/// The ground's height at `dir` (m; the sea's surface over an Earth-like world's deeps).
-fn ground(body: &Body, dir: DVec3) -> f64 {
-    body.terrain.as_ref().map_or(0.0, |t| t.surface(dir))
+/// The ground's height at `dir` (m; the sea's surface over an Earth-like world's deeps), as far
+/// as it's read (a world's bake reads in the background), and whether that's all of it.
+fn ground(body: &Body, dir: DVec3) -> (f64, bool) {
+    body.terrain.as_ref().map_or((0.0, true), |t| t.surface_view(dir))
 }
 
 /// A patch's mesh: its grid on the ground (round its origin), and skirts.
-fn make(body: &Body, key: Key) -> (WireModel, DVec3) {
+fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     let r = body.rail.radius;
     let n = (1u32 << key.level) as f64;
     let (mid, size) = key.shape();
-    let origin = mid * (r + ground(body, mid));
+    let whole = std::cell::Cell::new(true);
+    let at = |d: DVec3| {
+        let (h, w) = ground(body, d);
+        whole.set(whole.get() && w);
+        h
+    };
+    let origin = mid * (r + at(mid));
     let g = GRID as usize + 1;
     let place = |i: usize, j: usize, drop: f64| {
         let (u, v) = ((key.x as f64 + i as f64 / GRID as f64) / n * 2.0 - 1.0, (key.y as f64 + j as f64 / GRID as f64) / n * 2.0 - 1.0);
         let d = face_dir(key.face, u, v);
-        ((d * (r + ground(body, d) - drop) - origin).as_vec3(), d)
+        ((d * (r + at(d) - drop) - origin).as_vec3(), d)
     };
     let mut m = WireModel { smooth: true, ..WireModel::default() };
     let mut dirs = Vec::with_capacity(g * g);
@@ -134,7 +143,7 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3) {
         m.faces.extend([[a, b, d], [a, d, c], [a, d, b], [a, c, d]]);
     }
     m.colors = vec![[1.0; 4]; m.positions.len()];
-    (m, origin)
+    (m, origin, !whole.get())
 }
 
 impl Lod {
@@ -188,18 +197,20 @@ impl Lod {
             }
             draw.push(key);
         }
-        // Make what's missing (what must be drawn now, and the next finer), on all cores.
+        // Make what's missing (what must be drawn now, and the next finer), on all cores; and
+        // made again, a few a frame, what was made before all its ground was read.
         let mut todo: Vec<Key> = draw.iter().copied().filter(|k| !self.patches.contains_key(k)).collect();
         todo.extend(want);
-        let made: Vec<(Key, WireModel, DVec3)> = std::thread::scope(|s| {
+        todo.extend(draw.iter().copied().filter(|k| self.patches.get(k).is_some_and(|p| p.partial)).take(BUDGET));
+        let made: Vec<(Key, WireModel, DVec3, bool)> = std::thread::scope(|s| {
             let jobs: Vec<_> = todo.iter().map(|&k| s.spawn(move || {
-                let (m, o) = make(body, k);
-                (k, m, o)
+                let (m, o, partial) = make(body, k);
+                (k, m, o, partial)
             })).collect();
             jobs.into_iter().filter_map(|j| j.join().ok()).collect()
         });
-        for (k, m, origin) in made {
-            self.patches.insert(k, Patch { mesh: m.into(), origin, used: now });
+        for (k, m, origin, partial) in made {
+            self.patches.insert(k, Patch { mesh: m.into(), origin, used: now, partial });
         }
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;

@@ -382,6 +382,18 @@ pub fn direction(p: LonLat) -> glam::DVec3 {
     glam::DVec3::new(lat.cos() * lon.cos(), lat.sin(), -lat.cos() * lon.sin())
 }
 
+/// How fine a height is wanted (see `Heights::at_detail`).
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub enum Detail {
+    /// The 600 m tiles, waited for if they aren't read yet: what the physics stands on.
+    Full,
+    /// The 600 m tiles read so far; any missing is read in the background meanwhile (for
+    /// drawing, which can't wait).
+    Loaded,
+    /// The 5 km heights alone (a whole globe's map).
+    Coarse,
+}
+
 /// A world's ground from its bake (`planet-sim-surface/1`): the 5 km heights over the whole
 /// sphere, and the 600 m tiles (where there is land) as the difference from them, each read
 /// from the store the first time it's wanted and kept. Metres from the sea.
@@ -395,6 +407,8 @@ pub struct Heights {
     level: u32,
     n: usize,
     fine: Vec<std::sync::OnceLock<Option<Vec<u16>>>>,
+    /// Tiles asked for in the background.
+    asked: Vec<std::sync::atomic::AtomicBool>,
     /// The highest the ground stands (m).
     pub max: f64,
 }
@@ -463,7 +477,7 @@ impl Heights {
         let tiles = 6 * (1usize << fine.level).pow(2);
         // (The highest of the 5 km heights, and room for the 600 m's peaks over them.)
         let top = coarse.iter().copied().max().unwrap_or(0) as f64 / 2.0 - 12_000.0;
-        Ok(Heights { bake, coarse, width, height, level: fine.level, n: fine.n, fine: (0..tiles).map(|_| std::sync::OnceLock::new()).collect(), max: top + 2_000.0 })
+        Ok(Heights { bake, coarse, width, height, level: fine.level, n: fine.n, fine: (0..tiles).map(|_| std::sync::OnceLock::new()).collect(), asked: (0..tiles).map(|_| Default::default()).collect(), max: top + 2_000.0 })
     }
 
     /// The 5 km height at `p` (m), bilinear.
@@ -482,8 +496,17 @@ impl Heights {
         v / 2.0 - 12_000.0
     }
 
-    /// The 600 m difference at body direction `d` (m), bilinear; 0 where there's no tile.
-    fn fine_at(&self, d: glam::DVec3) -> f64 {
+    /// Tile `name` (in `slot`), read.
+    fn load(&self, name: &str) -> Option<Vec<u16>> {
+        self.bake.has(name).then(|| self.bake.read(name).and_then(|b| png_rg(&b)).map(|t| t.2).ok()).flatten()
+    }
+
+    /// The 600 m difference at body direction `d` (m), bilinear; 0 where there's no tile. And
+    /// whether it's the whole of it (false: a tile not read yet, at `Detail::Loaded`).
+    fn fine_at(self: &std::sync::Arc<Self>, d: glam::DVec3, detail: Detail) -> (f64, bool) {
+        if detail == Detail::Coarse {
+            return (0.0, true);
+        }
         // (The tiles' cube is in the body's own frame: face by the largest axis, equal-angle u, v.)
         let a = d.abs();
         let (face, tu, tv) = if a.x >= a.y && a.x >= a.z {
@@ -501,21 +524,42 @@ impl Heights {
         let (x, y) = (u.floor() as usize, v.floor() as usize);
         let slot = (face * k + x) * k + y;
         let name = format!("fz_{face}_{x}_{y}.png");
-        let tile = self.fine[slot].get_or_init(|| self.bake.has(&name).then(|| self.bake.read(&name).and_then(|b| png_rg(&b)).map(|t| t.2).ok()).flatten());
-        let Some(t) = tile else { return 0.0 };
+        let tile = match detail {
+            Detail::Full => self.fine[slot].get_or_init(|| self.load(&name)),
+            _ => match self.fine[slot].get() {
+                Some(t) => t,
+                None => {
+                    if !self.asked[slot].swap(true, std::sync::atomic::Ordering::Relaxed) {
+                        let me = self.clone();
+                        rayon::spawn(move || {
+                            let _ = me.fine[slot].get_or_init(|| me.load(&name));
+                        });
+                    }
+                    return (0.0, false);
+                }
+            },
+        };
+        let Some(t) = tile else { return (0.0, true) };
         let n = self.n;
         let (su, sv) = ((u - x as f64) * n as f64, (v - y as f64) * n as f64);
         let (i0, j0) = ((su.floor() as usize).min(n - 1), (sv.floor() as usize).min(n - 1));
         let (fi, fj) = (su - i0 as f64, sv - j0 as f64);
         let at = |i: usize, j: usize| t[j * (n + 1) + i] as f64;
         let raw = at(i0, j0) * (1.0 - fi) * (1.0 - fj) + at(i0 + 1, j0) * fi * (1.0 - fj) + at(i0, j0 + 1) * (1.0 - fi) * fj + at(i0 + 1, j0 + 1) * fi * fj;
-        (raw - 32_768.0) / 2.0
+        ((raw - 32_768.0) / 2.0, true)
     }
 
-    /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`.
-    pub fn at(&self, dir: glam::DVec3) -> f64 {
+    /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`,
+    /// in full.
+    pub fn at(self: &std::sync::Arc<Self>, dir: glam::DVec3) -> f64 {
+        self.at_detail(dir, Detail::Full).0
+    }
+
+    /// The ground's height at `dir` to `detail`, and whether it's the whole of it.
+    pub fn at_detail(self: &std::sync::Arc<Self>, dir: glam::DVec3, detail: Detail) -> (f64, bool) {
         let d = dir.normalize();
-        self.coarse_at(lon_lat(d)) + self.fine_at(d)
+        let (fine, whole) = self.fine_at(d, detail);
+        (self.coarse_at(lon_lat(d)) + fine, whole)
     }
 }
 

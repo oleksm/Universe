@@ -102,18 +102,40 @@ impl Terrain {
 
     /// The bake's height at `dir`, a port's plain levelled to the ground at the port (or the
     /// sea, where the ground is under it) and blending back by `PAD_FLAT_OUTER`.
-    fn baked_height(&self, h: &crate::worlds::Heights, dir: DVec3) -> f64 {
-        let mut out = h.at(dir);
+    fn baked_height(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail) -> (f64, bool) {
+        let (mut out, mut whole) = h.at_detail(dir, detail);
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
             if t < 1.0 {
                 let w = t * t * (3.0 - 2.0 * t);
-                let at = h.at(*p).max(0.0);
+                let (at, w2) = h.at_detail(*p, detail);
+                let at = at.max(0.0);
+                whole &= w2;
                 out = at + (out - at) * w;
             }
         }
-        out
+        (out, whole)
+    }
+
+    /// The surface height (as `surface`) for drawing: the bake's fine tiles as far as they're
+    /// read, the rest asked for in the background; and whether it's the whole of it.
+    pub fn surface_view(&self, dir: DVec3) -> (f64, bool) {
+        match &self.baked {
+            Some(h) => {
+                let (v, whole) = self.baked_height(h, dir, crate::worlds::Detail::Loaded);
+                (if self.kind == TerrainKind::Terran { v.max(0.0) } else { v }, whole)
+            }
+            None => (self.surface(dir), true),
+        }
+    }
+
+    /// `height_and_crater` for a whole globe's map: a bake's 5 km heights alone.
+    pub fn height_and_crater_coarse(&self, dir: DVec3) -> (f64, f64) {
+        match &self.baked {
+            Some(h) => (self.baked_height(h, dir, crate::worlds::Detail::Coarse).0, 0.0),
+            None => self.height_and_crater(dir),
+        }
     }
 
     /// Craters as (center direction, rim radius as a chord on the unit sphere).
@@ -217,7 +239,7 @@ impl Terrain {
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
         if let Some(h) = &self.baked {
-            return self.baked_height(h, dir);
+            return self.baked_height(h, dir, crate::worlds::Detail::Full).0;
         }
         self.natural(dir).0 * self.pad_flat(dir)
     }
@@ -225,7 +247,7 @@ impl Terrain {
     /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
     pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
         if let Some(h) = &self.baked {
-            return (self.baked_height(h, dir), 0.0);
+            return (self.baked_height(h, dir, crate::worlds::Detail::Full).0, 0.0);
         }
         let (h, inside) = self.natural(dir);
         (h * self.pad_flat(dir), inside)

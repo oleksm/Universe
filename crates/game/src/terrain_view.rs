@@ -46,7 +46,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
                     let row = k * rows + i / n;
                     let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
                     let dir = universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y);
-                    let (h, inside) = terrain.height_and_crater(dir);
+                    let (h, inside) = terrain.height_and_crater_coarse(dir);
                     // (A port's plain marked in place of crater-ness, below zero.)
                     let plain = terrain.port_plain(dir);
                     *t = [(h / amp) as f32, if plain > 0.01 { -plain as f32 } else { inside as f32 }];
