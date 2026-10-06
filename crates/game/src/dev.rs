@@ -336,7 +336,7 @@ pub fn apply(app: &mut App, name: &str) {
             // to their works each step.
             let days: f64 = std::env::var("UNIVERSE_DAYS").ok().and_then(|d| d.parse().ok()).unwrap_or(22.0);
             let u = app.engine.universe();
-            let step = universe_sim::services::economy::STEP;
+            let step = universe_sim::services::economy::step();
             let end = u.world.time + days * 86_400.0;
             let mut t = u.markets.economy.stepped_to;
             while t + step <= end {

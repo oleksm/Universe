@@ -7,6 +7,7 @@
 //! Deterministic and headless; knows nothing about rendering. (The physics
 //! itself is Dogma, `universe-physics`.)
 
+pub mod clocks;
 mod combat;
 mod commerce;
 pub mod company;

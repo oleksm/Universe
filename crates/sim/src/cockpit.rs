@@ -615,7 +615,7 @@ impl crate::universe::Universe {
 
     /// The cockpit, looking at the world as it is now (to act at once).
     pub fn cockpit_now(&mut self) -> &mut Cockpit {
-        let world = Arc::new(self.pilot_view(crate::universe::TICK));
+        let world = Arc::new(self.pilot_view(crate::universe::tick()));
         let view = Arc::new(self.cockpit_view(world));
         let c = self.cockpit();
         c.look(view);

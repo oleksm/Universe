@@ -519,7 +519,7 @@ impl App {
         if span <= 0.0 {
             return 1.0;
         }
-        let behind = std::time::Instant::now() - std::time::Duration::from_secs_f64(1.0 / universe_sim::engine::TICK_HZ);
+        let behind = std::time::Instant::now() - std::time::Duration::from_secs_f64(1.0 / universe_sim::engine::tick_hz());
         let into = behind.saturating_duration_since(self.prev.made).as_secs_f64();
         (into / span).clamp(0.0, 1.0)
     }

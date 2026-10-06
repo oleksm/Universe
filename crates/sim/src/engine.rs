@@ -247,7 +247,10 @@ pub struct Engine {
 }
 
 /// World ticks per second when the engine runs on its own.
-pub const TICK_HZ: f64 = 60.0;
+/// Ticks a second: the realtime clock's (`clock.realtime`).
+pub fn tick_hz() -> f64 {
+    1.0 / crate::clocks::tick()
+}
 
 impl Engine {
     pub fn new(mut universe: Universe) -> Self {
@@ -545,7 +548,7 @@ fn post(mailbox: &std::sync::Mutex<Mailbox>, mut view: View) {
 
 /// The client's handle on the world engine: send commands, read the latest
 /// view. It starts out holding the engine (to set the world up: scenarios,
-/// tests); `start` moves it to its own thread, ticking at `TICK_HZ`.
+/// tests); `start` moves it to its own thread, ticking at `tick_hz()`.
 pub struct EngineHandle {
     local: Option<Engine>,
     /// The player's cockpit, on the client's side once the engine runs on
@@ -617,7 +620,7 @@ impl EngineHandle {
         let thread = std::thread::Builder::new()
             .name("world engine".into())
             .spawn(move || {
-                let step = std::time::Duration::from_secs_f64(1.0 / TICK_HZ);
+                let step = std::time::Duration::from_secs_f64(1.0 / tick_hz());
                 let mut next = std::time::Instant::now();
                 loop {
                     while let Ok(m) = rx.try_recv() {
@@ -638,7 +641,7 @@ impl EngineHandle {
                         }
                     }
                     let (warp, stick) = (engine.warp, engine.stick);
-                    engine.tick(1.0 / TICK_HZ, warp, &stick);
+                    engine.tick(1.0 / tick_hz(), warp, &stick);
                     if let Some(out) = engine.universe.cockpit_out.take() {
                         let _ = to_link.send(out);
                     }
