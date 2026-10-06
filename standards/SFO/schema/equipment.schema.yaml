@@ -58,6 +58,7 @@ properties:
           exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
           efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power (half the thrust times the exhaust speed) that reaches the hull as heat and must be radiated: a product figure. A deuterium torch burning D-D puts a third of its energy into neutrons, which no hull survives at terawatts; so the drives of this world burn aneutronic or carry their reaction far behind a magnetic nozzle, and makers compete on this share. Today's value, a millionth, is the registry's first guess (docs/ships/equipment-review.md)." }
       - description: "Translation and attitude thrusters."
         type: object
         additionalProperties: false
@@ -68,6 +69,7 @@ properties:
           exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
           efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power (half the thrust times the exhaust speed) that reaches the hull as heat and must be radiated: a product figure. A deuterium torch burning D-D puts a third of its energy into neutrons, which no hull survives at terawatts; so the drives of this world burn aneutronic or carry their reaction far behind a magnetic nozzle, and makers compete on this share. Today's value, a millionth, is the registry's first guess (docs/ships/equipment-review.md)." }
       - description: "The belly lift."
         type: object
         additionalProperties: false
@@ -78,6 +80,7 @@ properties:
           exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
           efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
           burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
+          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power (half the thrust times the exhaust speed) that reaches the hull as heat and must be radiated: a product figure. A deuterium torch burning D-D puts a third of its energy into neutrons, which no hull survives at terawatts; so the drives of this world burn aneutronic or carry their reaction far behind a magnetic nozzle, and makers compete on this share. Today's value, a millionth, is the registry's first guess (docs/ships/equipment-review.md)." }
       - description: "Holds fuel."
         type: object
         additionalProperties: false

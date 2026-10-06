@@ -58,12 +58,12 @@ energy:
   coal_in_place: 2.739e+16
 bake:
   format: "planet-sim-surface/1"
-  version: 1
-  path: "worlds/TRD1/surface/v1"
-  manifest_sha256: "bce36dfaad24f436372ad9703b46dd1ab3982049414f8023e6733eccebc27f8e"
-  files: 1328
-  bytes: 711882830
-  note: "600 m bake with hollows filled (no dammed-valley lakes); rivers, peaks"
+  version: 2
+  path: "worlds/TRD1/surface/v2"
+  manifest_sha256: "acce6534973226b7d028cd87cb1da555ef9c48949ee521d7be2b0aa0830e5497"
+  files: 1329
+  bytes: 711856713
+  note: "v2: fz.json carries each tile's height bounds; summary.json (highest peak, climate) for records"
 identity:
   key: body.treistun.treistun-d
   name: Harvest
@@ -79,6 +79,10 @@ orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
   highest: 8920
+  rain: 0.676
+  temperature_high: 314.2
+  temperature_low: 253.4
+  mean_temperature: 298.3
   terrain: terran
   relief: 4658
   colour: [0.3, 0.85, 0.45]

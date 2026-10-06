@@ -119,3 +119,20 @@ these panels are fitted.
 The engine treats every new kind as not made yet (the fittings' functions answer `None`; the three
 new slot kinds have no game slot). The studio reads all of it. The viewport's pane stock is a
 stand-in (no glass stock yet); say if you want glass as stock.
+
+## 9. Heat to the hull, and budgets (2026-10-06, evening)
+
+- **`function.heat_to_hull`** on every drive, lift and thruster block: the share of the jet's power
+  (half the thrust times the exhaust speed) that reaches the hull as heat. Today a millionth, the
+  review's guess, and now a **product figure** makers compete on: the physics says a D–D torch puts
+  a third of its energy into neutrons, which no hull survives at terawatts, so the drives of this
+  world burn aneutronic or carry the reaction far behind a magnetic nozzle, and each maker's record
+  says how much still comes aboard. Read it instead of a constant.
+- **The Budgets report** on the page, one row per hull as fitted: power made against drawn; heat
+  aboard (the plants' waste plus the jets' share at full burn) against radiators and coolant loops
+  fitted; air and water days for the cabins' seats from the stores fitted. Today every hull reads
+  **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
+  and six lift nozzles) and nothing to throw it off, so it wants two S3 panels (294 m² each) or a
+  smaller set at idle. No hull fits a cabin, so no hull has a crew figure for air and water: fit
+  one and the days appear. The studio's checks should read the same records, so the two never
+  disagree.

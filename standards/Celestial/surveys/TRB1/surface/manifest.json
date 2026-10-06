@@ -1,13 +1,14 @@
 {
  "format": "planet-sim-surface/1",
  "world_id": "TRB1",
- "version": 1,
- "created": "2026-10-06T13:59:54+00:00",
+ "body": "body.treistun.treistun-b",
+ "version": 2,
+ "created": "2026-10-06T17:00:08+00:00",
  "immutable": true,
  "simulator": {
-  "commit": "8365ad1364e5c933a609207524dd51eecf32d1e3"
+  "commit": "b81b3fda188f54c357f9ceb82b8e92bc5c0248de"
  },
- "note": "airless crust (stages/lid.py), 600 m craters exact from the catalogue",
+ "note": "v2: fz.json carries each tile's height bounds; summary.json (highest peak, climate) for records",
  "survey": {
   "file": "worlds/TRB1/survey/manifest.json",
   "sha256": "816ccee5a699281082c6b82341b884df38b87646bc3090674b52243aa1a74f21"
@@ -52,9 +53,10 @@
   "layers": 3,
   "places": 1,
   "world": 2,
-  "report": 4
+  "report": 4,
+  "summary": 1
  },
- "bytes": 1019036537,
+ "bytes": 1019081627,
  "files": {
   "hz.json": {
    "sha256": "d72a2f917ba52480d5e720b26c521ba8a7afdff1f5ecebb2ca9c7359053a5850",
@@ -189,8 +191,8 @@
    "bytes": 206388
   },
   "fz.json": {
-   "sha256": "0e6f20ce2252085968c5b4ec7d53455491e1b739af0129a954221b6f85bc8b7b",
-   "bytes": 27215
+   "sha256": "a4f76735da9ef1f20449ceb470b22d275ffbdbdb300acc745c20d75d62318522",
+   "bytes": 70689
   },
   "fz_0_0_0.png": {
    "sha256": "e9abf0e491ccb289668bf06858d4826057567ec309f9ce462db4b5031bb18c83",
@@ -6415,6 +6417,10 @@
   "report/map_today.jpg": {
    "sha256": "eb9d2bc813385c64bfed748790c71cd78d27f53a4a27e78da0dfe09c81f1f8db",
    "bytes": 1773457
+  },
+  "summary.json": {
+   "sha256": "f0182937d6369bd5299dfb24e838264491c745e2519a218f16aa09896862aff9",
+   "bytes": 1616
   }
  }
 }

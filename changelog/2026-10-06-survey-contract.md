@@ -52,3 +52,7 @@
   not installed and why. The installer ends a `--store` run with the same table.
 - **`watch_worlds.py`**: watches the store's index; installs, validates, builds, logs the release to
   `docs/worlds-releases.md`, stages for review; commits only with `--commit`, never pushes.
+- **Surface v2 installed for Harvest and Cinder** by the watcher: `bounds` in fz.json and the
+  climate block; the records take the run's mean temperature, coldest and warmest months, rain and
+  refined peak (Harvest 298 K, 0.68 m of rain, 8,920 m; Cinder 474 K, 4,713 m). Airless worlds'
+  heights are relative to the mean radius; noted in the contract.
