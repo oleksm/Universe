@@ -397,7 +397,10 @@ const MESH_KEEP: u64 = 600;
 /// Offscreen targets: the low-res scene, the HUD layer at `hud_scale` times that
 /// resolution, and a composite of both (used for screenshots).
 struct Target {
+    /// The scene's pixels (the screen's times the render scale: see `render_scale`), and the
+    /// screen's (the HUD's layer and the composite are drawn at it, the scene upscaled to it).
     size: UVec2,
+    out: UVec2,
     hud_size: UVec2,
     /// The scene drawn (antialiased: `SAMPLES` a pixel), and resolved.
     color_msaa: wgpu::TextureView,
@@ -415,6 +418,8 @@ pub(crate) struct Renderer {
     /// The environment as light, drawn each frame (see `env.rs`).
     env: crate::env::Env,
     sunprobe: crate::sunprobe::SunProbe,
+    /// Each pass's GPU time, where the GPU can stamp it.
+    gputime: Option<crate::gputime::GpuTime>,
     /// How long the last `render` waited for the next surface texture (vsync).
     pub(crate) wait: std::time::Duration,
     low_height: u32,
@@ -646,6 +651,7 @@ impl Renderer {
         });
         let env = crate::env::Env::new(device, &globals_layout);
         let sunprobe = crate::sunprobe::SunProbe::new(device);
+        let gputime = crate::gputime::GpuTime::new(device, &gpu.queue);
         // Globe maps: a cube array, a layer per world in view (see `GlobeMap`).
         let globe_texture = device.create_texture(&wgpu::TextureDescriptor {
             label: Some("globe maps"),
@@ -937,6 +943,7 @@ impl Renderer {
         Self {
             env,
             sunprobe,
+            gputime,
             pbr,
             wait: std::time::Duration::ZERO,
             low_height,
@@ -990,6 +997,16 @@ impl Renderer {
     }
 
     /// The scene's size: the window's, full resolution (a screenshot run: `SHOT`).
+    /// How much of the screen's resolution the scene is drawn at (the HUD always at the full):
+    /// `UNIVERSE_RENDER_SCALE` (0.25–1), else as much as keeps it to 1440 lines. (A 4K screen
+    /// at full resolution shades 8.3 million pixels of air, clouds and sea a frame.)
+    fn render_scale(out: UVec2) -> f32 {
+        match std::env::var("UNIVERSE_RENDER_SCALE").ok().and_then(|v| v.parse::<f32>().ok()) {
+            Some(k) => k.clamp(0.25, 1.0),
+            None => (1440.0 / out.y.max(1) as f32).min(1.0),
+        }
+    }
+
     fn scene_size(gpu: &Gpu, forced_aspect: Option<f32>) -> UVec2 {
         if forced_aspect.is_some() { SHOT } else { UVec2::new(gpu.config.width.max(1), gpu.config.height.max(1)) }
     }
@@ -1005,7 +1022,9 @@ impl Renderer {
         linear: &wgpu::Sampler,
         globals: &wgpu::Buffer,
     ) -> Target {
-        let size = Self::scene_size(gpu, forced_aspect);
+        let out = Self::scene_size(gpu, forced_aspect);
+        let k = Self::render_scale(out);
+        let size = (out.as_vec2() * k).round().as_uvec2().max(UVec2::ONE);
         let hud_size = Self::low_res_size(gpu, low_height, forced_aspect) * hud_scale;
         let texture_n = |label, size: UVec2, format, usage, samples: u32| {
             gpu.device
@@ -1028,10 +1047,10 @@ impl Renderer {
         // (Read after the scene, for the sun probe.)
         let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING, SAMPLES);
         // (The HUD's layout is `hud_size` pixels; drawn at the screen's full resolution.)
-        let hud = texture("hud", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        let hud = texture("hud", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let front = texture("front", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
-        let composite = texture("composite", size, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
+        let composite = texture("composite", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
         let blit = gpu.device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("blit"),
             layout,
@@ -1044,11 +1063,11 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 5, resource: globals.as_entire_binding() },
             ],
         });
-        Target { size, hud_size, color_msaa, color, depth, hud, front_msaa, front, composite, blit }
+        Target { size, out, hud_size, color_msaa, color, depth, hud, front_msaa, front, composite, blit }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
-        if Self::scene_size(gpu, self.forced_aspect) != self.target.size {
+        if Self::scene_size(gpu, self.forced_aspect) != self.target.out {
             self.target =
                 Self::create_target(gpu, self.low_height, self.hud_scale, self.forced_aspect, &self.blit_layout, &self.sampler, &self.linear, &self.globals);
         }
@@ -1080,6 +1099,9 @@ impl Renderer {
         // The sun probe's answers since (see `sunprobe`), and where it looks this frame.
         let _ = gpu.device.poll(wgpu::PollType::Poll);
         self.sunprobe.collect();
+        if let Some(t) = self.gputime.as_mut() {
+            t.collect();
+        }
         let probe = frame.sun_probe.and_then(|(at, radius)| {
             let clip = frame.camera.view_proj(size.x / size.y) * (at - frame.camera.position).as_vec3().extend(1.0);
             (clip.w > 0.0).then(|| {
@@ -1201,7 +1223,7 @@ impl Renderer {
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: None,
+                timestamp_writes: self.gputime.as_ref().map(|t| t.shadow(k as u32)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1237,7 +1259,7 @@ impl Renderer {
                     }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: None,
+                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(1)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1276,7 +1298,7 @@ impl Renderer {
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: if probe.is_some() { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard } }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: None,
+                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(2)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1302,7 +1324,7 @@ impl Renderer {
                     ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
                 })],
                 depth_stencil_attachment: None,
-                timestamp_writes: None,
+                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(3)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1328,7 +1350,7 @@ impl Renderer {
                     },
                 })],
                 depth_stencil_attachment: None,
-                timestamp_writes: None,
+                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(4)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1336,8 +1358,14 @@ impl Renderer {
             pass.set_bind_group(0, &self.target.blit, &[]);
             pass.draw(0..3, 0..1);
         }
+        if let Some(t) = self.gputime.as_mut() {
+            t.copy_out(&mut encoder);
+        }
         gpu.queue.submit([encoder.finish()]);
         self.sunprobe.submitted();
+        if let Some(t) = self.gputime.as_mut() {
+            t.submitted();
+        }
         if let Some(t) = surface_texture {
             gpu.queue.present(t);
         }
@@ -1431,7 +1459,7 @@ impl Renderer {
     }
 
     fn copy_to_buffer(&self, gpu: &Gpu, encoder: &mut wgpu::CommandEncoder) -> (wgpu::Buffer, u32) {
-        let size = self.target.size;
+        let size = self.target.out;
         let padded_row = (size.x * 4).next_multiple_of(wgpu::COPY_BYTES_PER_ROW_ALIGNMENT);
         let buffer = gpu.device.create_buffer(&wgpu::BufferDescriptor {
             label: Some("screenshot"),
@@ -1460,7 +1488,7 @@ impl Renderer {
     }
 
     fn save_png(&self, gpu: &Gpu, buffer: &wgpu::Buffer, padded_row: u32, path: &Path) -> Result<(), String> {
-        let size = self.target.size;
+        let size = self.target.out;
         buffer.slice(..).map_async(wgpu::MapMode::Read, |_| {});
         gpu.device.poll(wgpu::PollType::wait_indefinitely()).map_err(|e| e.to_string())?;
         let mapped = buffer.slice(..).get_mapped_range().map_err(|e| e.to_string())?;

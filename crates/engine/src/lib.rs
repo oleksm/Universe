@@ -17,6 +17,7 @@ pub mod pbr;
 mod render_thread;
 mod renderer;
 mod sunprobe;
+pub mod gputime;
 pub mod worldmaps;
 
 pub use app::{run, Config, Context, Game, Perf, Resources, HISTORY, HITCH};

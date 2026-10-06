@@ -1962,6 +1962,13 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
         lines.push((format!("COLLIDE {:.1} MS EVERY 0.2 S", app.collision_cost * 1000.0), DIM));
     }
     lines.push((format!("UPD {:.1} DRAW {:.1} GPU {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
+    // (The GPU's own time a pass, where it stamps them: what the wait for the screen sums.)
+    let passes = universe_engine::gputime::times();
+    if !passes.is_empty() {
+        let total: f32 = passes.iter().map(|(_, ms)| ms).sum();
+        let each: Vec<String> = passes.iter().map(|(n, ms)| format!("{} {ms:.1}", n.to_uppercase())).collect();
+        lines.push((format!("GPU {total:.1}: {}", each.join(" ")), DIM));
+    }
     let worst = p.history.iter().copied().fold(0.0, f32::max);
     lines.push((format!("WORST {worst:.0} MS OF {}  HITCHES {}", p.history.len(), p.hitches), if p.hitches > 0 { AMBER } else { DIM }));
     lines.push((format!("{} LINES {} TRIS {} PTS", k(p.lines), k(p.triangles), k(p.points)), DIM));

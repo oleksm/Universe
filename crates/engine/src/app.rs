@@ -307,6 +307,10 @@ impl<G: Game> Runner<G> {
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
+            let passes = crate::gputime::times();
+            if !passes.is_empty() {
+                log::info!("GPU a pass (ms): {}", passes.iter().map(|(n, ms)| format!("{n} {ms:.2}")).collect::<Vec<_>>().join(", "));
+            }
             if universe_prof::enabled() {
                 log::info!("profile (last {} frames):\n{}", universe_prof::WINDOW, universe_prof::report_text());
             }

@@ -6,7 +6,7 @@
 //! stand-in that adds nothing (`ACTIVE` false: the ground patches go no finer than before).
 
 /// The generator is in (the patches go to its finest levels, the physics reads it).
-pub const ACTIVE: bool = true;
+pub const ACTIVE: bool = false;
 
 /// The most the WGSL twin may differ from this (m).
 pub const AGREE_M: f64 = 0.05;
