@@ -143,7 +143,7 @@ pub struct Frame {
     /// Globe maps drawn this frame (instances name them by place here + 1).
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
     /// A world's full-resolution maps, and the globe map (its id) of the world they're for.
-    pub(crate) world_maps: Option<(std::sync::Arc<crate::worldmaps::WorldMaps>, u64)>,
+    pub(crate) world_maps: Option<(std::sync::Arc<crate::worldmaps::WorldMaps>, u64, glam::DVec3, f64)>,
     globe: [f32; 4],
     globe_at: [f32; 4],
     globe_micro: [f32; 4],
@@ -462,8 +462,9 @@ impl Frame {
     /// `micro`: a patch's origin (m, the world's frame) for its fine grain (none: zero).
     /// The world whose globe map is `globe` is drawn with its full-resolution `maps` (one
     /// world at a time: the one near the eye; the others with their globe maps alone).
-    pub fn world_maps(&mut self, maps: &std::sync::Arc<crate::worldmaps::WorldMaps>, globe: &std::sync::Arc<crate::model::GlobeMap>) {
-        self.world_maps = Some((maps.clone(), globe.id()));
+    /// `center` and `radius`: where the world is and how big (m), for its air and sky.
+    pub fn world_maps(&mut self, maps: &std::sync::Arc<crate::worldmaps::WorldMaps>, globe: &std::sync::Arc<crate::model::GlobeMap>, center: glam::DVec3, radius: f64) {
+        self.world_maps = Some((maps.clone(), globe.id(), center, radius));
     }
 
     #[allow(clippy::too_many_arguments)]

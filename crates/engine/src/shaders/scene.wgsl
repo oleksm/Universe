@@ -24,6 +24,10 @@ struct Globals {
     // x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
     // are faded in (0..1).
     view: vec4<f32>,
+    // Clip → camera-relative world.
+    inv_view_proj: mat4x4<f32>,
+    // The world whose maps are bound: its centre from the eye (m), its radius (m; 0: none).
+    world_at: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -44,6 +48,8 @@ struct Globals {
 @group(2) @binding(4) var world_rock: texture_2d<f32>;
 @group(2) @binding(5) var world_soft: sampler;
 @group(2) @binding(6) var world_exact: sampler;
+// Its air (the lab's `Air`, air.wgsl; `on` 0: none).
+@group(2) @binding(7) var<uniform> world_air: Air;
 
 // Where on a world's maps the direction `dir` (its own frame) falls.
 fn world_uv(dir: vec3<f32>) -> vec2<f32> {
@@ -548,9 +554,39 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // What glows of itself (windows, lamps, hot metal).
     c += albedo.rgb * in.material.z;
     if (in.globe.x > 0.5) {
-        c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
+        // The world whose maps are bound, through its own air (the lab's scattering); others
+        // through the plain haze.
+        if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5) {
+            c = air_ground(c, in.at, g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
+        } else {
+            c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
+        }
     }
     return vec4<f32>(c, albedo.a);
+}
+
+// The air's light from beyond everything drawn, the world in view's (the lab's `air_sky`): a
+// triangle over the whole screen, at the far plane (reversed: 0), added to what's behind.
+struct SkyOut {
+    @builtin(position) clip: vec4<f32>,
+    @location(0) ndc: vec2<f32>,
+};
+
+@vertex
+fn vs_air_sky(@builtin(vertex_index) i: u32) -> SkyOut {
+    let p = vec2<f32>(f32((i << 1u) & 2u), f32(i & 2u)) * 2.0 - 1.0;
+    return SkyOut(vec4<f32>(p, 0.0, 1.0), p);
+}
+
+@fragment
+fn fs_air_sky(in: SkyOut) -> @location(0) vec4<f32> {
+    if (world_air.on < 0.5 || g.world_at.w <= 0.0) {
+        discard;
+    }
+    let q = g.inv_view_proj * vec4<f32>(in.ndc, 0.5, 1.0);
+    let d = normalize(q.xyz / q.w);
+    let sun_dir = normalize(g.env_sun.xyz);
+    return vec4<f32>(air_sky(d, g.world_at.xyz, sun_dir, vec3<f32>(g.env_sun.w), world_air), 1.0);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {

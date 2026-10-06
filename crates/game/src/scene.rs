@@ -205,9 +205,9 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
         let terran = b.terrain.as_ref().is_some_and(|tr| tr.kind == universe_sim::TerrainKind::Terran);
         let center = app.view.positions[i];
         let altitude = cam.distance(center) - b.surface_radius_at(center, cam, t);
-        (terran && altitude < ATMOSPHERE).then_some((center, altitude))
+        (terran && altitude < ATMOSPHERE).then_some((i, center, altitude))
     });
-    let Some((center, altitude)) = air else { return 1.0 };
+    let Some((world, center, altitude)) = air else { return 1.0 };
     let up = (cam - center).normalize();
     let elevation = up.dot((sun - cam).normalize()) as f32; // sine of the sun's height
     let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
@@ -219,6 +219,12 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let dusk = [0.85, 0.38, 0.16];
     let c = |j: usize| (blue[j] * day * bright * (0.6 + 0.4 * tint[j]) + dusk[j] * twilight * 0.35 * tint[j]) * thick;
     frame.clear = Color([c(0), c(1), c(2), 1.0]);
+    // (A world grown with its own air: its sky is the air's light itself, drawn behind everything
+    // (`fs_air_sky`), on black.)
+    if app.world_maps.get(&(app.view.origin, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
+    {
+        frame.clear = Color::BLACK;
+    }
     1.0 - 0.97 * day * thick
 }
 
@@ -494,7 +500,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         && let Some((_, _, map)) = app.globes.get(&(app.view.origin, i))
     {
         if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
-            frame.world_maps(&maps, map);
+            frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
         }
     }
     for (i, b) in sys.bodies.iter().enumerate() {

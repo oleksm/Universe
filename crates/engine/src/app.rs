@@ -251,11 +251,14 @@ impl<G: Game> Runner<G> {
         s.frame_count += 1;
         // UNIVERSE_SCREENSHOT_FRAMES=n: also the n frames after it (name_1.png…),
         // to compare frame to frame.
+        // (UNIVERSE_SCREENSHOT_AT=n: the first at frame n, not 120: a later moment without every
+        // frame before it written down.)
         let extra: u64 = std::env::var("UNIVERSE_SCREENSHOT_FRAMES").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
-        let shot = s.frame_count >= 120 && s.frame_count <= 120 + extra && s.auto_screenshot.is_some();
-        let auto_capture = s.frame_count == 120 + extra && s.auto_screenshot.is_some();
+        let first: u64 = std::env::var("UNIVERSE_SCREENSHOT_AT").ok().and_then(|v| v.parse().ok()).unwrap_or(120);
+        let shot = s.frame_count >= first && s.frame_count <= first + extra && s.auto_screenshot.is_some();
+        let auto_capture = s.frame_count == first + extra && s.auto_screenshot.is_some();
         if shot {
-            let k = s.frame_count - 120;
+            let k = s.frame_count - first;
             s.ctx.screenshot = s.auto_screenshot.clone().map(|p| {
                 if k == 0 {
                     p

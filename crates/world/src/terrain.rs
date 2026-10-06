@@ -100,6 +100,11 @@ impl Terrain {
         self.baked.as_ref()?.colour()
     }
 
+    /// The world's air from its bake, packed for the engine (see `worlds::Heights::air`).
+    pub fn bake_air(&self) -> Option<[f32; 16]> {
+        self.baked.as_ref()?.air()
+    }
+
     /// Image `name` of the world's bake, as RGBA8 (see `worlds::Heights::image`).
     pub fn bake_image(&self, name: &str) -> Option<(usize, usize, Vec<u8>)> {
         self.baked.as_ref()?.image(name)

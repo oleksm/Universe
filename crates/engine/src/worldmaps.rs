@@ -40,13 +40,15 @@ pub struct Encoded {
 pub struct WorldMaps {
     id: u64,
     pub maps: [Option<Encoded>; SLOTS],
+    /// Its air, as the shaders' `Air` (16 floats; the last 1 if it has air, 0 if none).
+    pub air: [f32; 16],
 }
 
 impl WorldMaps {
     /// Encode `maps` (RGBA8 images, by `Slot`; any may be missing): colour, ground and normals
     /// block-compressed with their mips, the climate as it is, the rock map one byte a texel
     /// (its red), no mips (read exactly).
-    pub fn new(maps: [Option<Image>; SLOTS]) -> Self {
+    pub fn new(maps: [Option<Image>; SLOTS], air: Option<[f32; 16]>) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         let mut out: [Option<Encoded>; SLOTS] = Default::default();
         for (k, img) in maps.into_iter().enumerate() {
@@ -77,7 +79,7 @@ impl WorldMaps {
                 }
             });
         }
-        WorldMaps { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), maps: out }
+        WorldMaps { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), maps: out, air: air.unwrap_or([0.0; 16]) }
     }
 
     pub fn id(&self) -> u64 {
@@ -91,6 +93,8 @@ pub(crate) struct WorldBind {
     pub bind: wgpu::BindGroup,
     linear: wgpu::Sampler,
     nearest: wgpu::Sampler,
+    /// The bound world's air (binding 7: the shaders' `Air`).
+    air: wgpu::Buffer,
     /// The maps bound now (their id), if any, and when (frames counted by `fade`).
     pub current: Option<u64>,
     since: u32,
@@ -105,7 +109,9 @@ impl WorldBind {
             count: None,
         };
         let samp = |binding: u32| wgpu::BindGroupLayoutEntry { binding, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None };
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6)] });
+        let air_entry = wgpu::BindGroupLayoutEntry { binding: 7, visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX, ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None }, count: None };
+        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry] });
+        let air = device.create_buffer(&wgpu::BufferDescriptor { label: Some("world air"), size: 64, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
         // (Round the world in longitude; clamped at the poles.)
         let linear = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("world maps"),
@@ -120,8 +126,8 @@ impl WorldBind {
         let nearest = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("world maps, exact"), address_mode_u: wgpu::AddressMode::Repeat, address_mode_v: wgpu::AddressMode::ClampToEdge, ..Default::default() });
         let blank = Self::blank(device, queue);
         let views: Vec<wgpu::TextureView> = (0..SLOTS).map(|_| blank.clone()).collect();
-        let bind = Self::group(device, &layout, &views, &linear, &nearest);
-        WorldBind { layout, bind, linear, nearest, current: None, since: 0 }
+        let bind = Self::group(device, &layout, &views, &linear, &nearest, &air);
+        WorldBind { layout, bind, linear, nearest, air, current: None, since: 0 }
     }
 
     /// A texel of nothing (alpha 0: no map).
@@ -145,10 +151,11 @@ impl WorldBind {
         t.create_view(&Default::default())
     }
 
-    fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler) -> wgpu::BindGroup {
+    fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler, air: &wgpu::Buffer) -> wgpu::BindGroup {
         let mut entries: Vec<wgpu::BindGroupEntry> = views.iter().enumerate().map(|(k, v)| wgpu::BindGroupEntry { binding: k as u32, resource: wgpu::BindingResource::TextureView(v) }).collect();
         entries.push(wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(linear) });
         entries.push(wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::Sampler(nearest) });
+        entries.push(wgpu::BindGroupEntry { binding: 7, resource: air.as_entire_binding() });
         device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("world maps"), layout, entries: &entries })
     }
 
@@ -196,7 +203,8 @@ impl WorldBind {
                 _ => Self::blank(device, queue),
             })
             .collect();
-        self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest);
+        queue.write_buffer(&self.air, 0, bytemuck::cast_slice(&maps.air));
+        self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air);
         self.current = Some(maps.id);
     }
 }

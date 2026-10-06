@@ -49,6 +49,10 @@ struct Globals {
     /// x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
     /// are faded in (0..1).
     view: [f32; 4],
+    /// Clip → camera-relative world (for a full-screen pass's view directions).
+    inv_view_proj: [[f32; 4]; 4],
+    /// The world whose maps are bound: its centre from the eye (m) and radius (m; 0: none).
+    world_at: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -415,6 +419,8 @@ pub(crate) struct Renderer {
     capture_pipe: wgpu::RenderPipeline,
     sky: DynBuffer,
     mesh_pipe: wgpu::RenderPipeline,
+    /// The air's light behind everything (a full-screen pass: `air_sky`).
+    air_sky_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
     shadows: Shadows,
     globes: Globes,
@@ -476,7 +482,7 @@ impl Renderer {
         // (The ground's material, the lab's, beside the scene shader that calls it.)
         let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("scene"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
         });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
@@ -729,6 +735,22 @@ impl Renderer {
             })
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        let air_sky_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("air sky"),
+            layout: Some(&mesh_layout),
+            vertex: wgpu::VertexState { module: &scene, entry_point: Some("vs_air_sky"), compilation_options: Default::default(), buffers: &[] },
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(false), depth_compare: Some(wgpu::CompareFunction::Always), stencil: Default::default(), bias: Default::default() }),
+            multisample: wgpu::MultisampleState { count: SAMPLES, ..Default::default() },
+            fragment: Some(wgpu::FragmentState {
+                module: &scene,
+                entry_point: Some("fs_air_sky"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(additive), write_mask: wgpu::ColorWrites::ALL })],
+            }),
+            multiview_mask: None,
+            cache: None,
+        });
         let mesh_line_pipe = mesh_pipeline("mesh edges", "vs_mesh_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
         let world = (SCENE_FORMAT, SAMPLES);
         let sky_pipe = scene_pipeline("sky", "vs_sky", Topo::PointList, Some((false, Cmp::Always)), additive, world);
@@ -912,6 +934,7 @@ impl Renderer {
             capture_pipe,
             sky: DynBuffer::new(device, "sky"),
             mesh_pipe,
+            air_sky_pipe,
             mesh_line_pipe,
             meshes: HashMap::new(),
             instances: DynBuffer::new(device, "mesh instances"),
@@ -1059,8 +1082,12 @@ impl Renderer {
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
         // this frame: its globe map isn't up yet).
+        let world_at = frame.world_maps.as_ref().map_or([0.0; 4], |(_, _, c, r)| {
+            let d = (*c - frame.camera.position).as_vec3();
+            [d.x, d.y, d.z, *r as f32]
+        });
         let (world_layer, world_fade) = match &frame.world_maps {
-            Some((maps, globe)) => {
+            Some((maps, globe, _, _)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
                 (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade())
             }
@@ -1090,6 +1117,8 @@ impl Renderer {
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
             view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, 0.0, 0.0],
+            inv_view_proj: frame.camera.view_proj(size.x / size.y).inverse().to_cols_array_2d(),
+            world_at,
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
@@ -1174,6 +1203,9 @@ impl Renderer {
             pass.set_bind_group(1, &self.shadows.bind, &[]);
             pass.set_bind_group(2, &self.world.bind, &[]);
             self.sky.draw(&mut pass, &self.sky_pipe);
+            // The air's light, a world's in view (nothing where none is bound, or it's airless).
+            pass.set_pipeline(&self.air_sky_pipe);
+            pass.draw(0..3, 0..1);
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.pbr.draw(&mut pass);

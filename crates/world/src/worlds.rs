@@ -605,6 +605,27 @@ impl Heights {
         Some((w, h, px))
     }
 
+    /// The world's air from its bake (`atmosphere.json`, SI), packed as the engine's `Air` takes
+    /// it (16 floats): Rayleigh's β (rgb, per m) and scale height (m); Mie's scattering and
+    /// extinction (per m), scale height (m) and g; ozone's absorption at its peak (rgb, per m), its
+    /// peak's height and half-width (m); the air's top (m) and the world's radius (m); 1 (it has
+    /// air). None: none baked.
+    pub fn air(&self) -> Option<[f32; 16]> {
+        let v: serde_json::Value = serde_json::from_slice(&self.bake.read("atmosphere.json").ok()?).ok()?;
+        let f = |p: &[&str]| p.iter().try_fold(&v, |v, k| v.get(k)).and_then(serde_json::Value::as_f64).map(|x| x as f32);
+        let rgb = |p: &[&str]| -> Option<[f32; 3]> {
+            let a = p.iter().try_fold(&v, |v, k| v.get(k))?.as_array()?;
+            Some([a.first()?.as_f64()? as f32, a.get(1)?.as_f64()? as f32, a.get(2)?.as_f64()? as f32])
+        };
+        let (br, oz) = (rgb(&["rayleigh", "beta_per_m"])?, rgb(&["ozone", "absorb_per_m"]).unwrap_or([0.0; 3]));
+        Some([
+            br[0], br[1], br[2], f(&["rayleigh", "scale_height_m"])?,
+            f(&["mie", "scatter_per_m"]).unwrap_or(0.0), f(&["mie", "extinct_per_m"]).unwrap_or(0.0), f(&["mie", "scale_height_m"]).unwrap_or(1.0), f(&["mie", "g"]).unwrap_or(0.0),
+            oz[0], oz[1], oz[2], f(&["ozone", "peak_m"]).unwrap_or(0.0),
+            f(&["ozone", "half_width_m"]).unwrap_or(1.0), f(&["top_m"])?, f(&["planet_radius_m"])?, 1.0,
+        ])
+    }
+
     /// The world's true colour from its bake (`globe_color.jpg`: equirectangular, as the 5 km
     /// heights), read now (not kept: a globe's map is made from it once). None: none baked.
     pub fn colour(&self) -> Option<Equirect> {
