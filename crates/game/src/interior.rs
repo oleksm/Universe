@@ -503,11 +503,11 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         }
         (pushes, total)
     };
-    // Landing: weight and the jolt of the design landing (its legs' stroke, as the
-    // registry works it out), held at the landing pads.
-    let stroke = spec.map_or(&[][..], |s| s.shape().pieces.as_slice()).iter().filter(|(n, _, _)| n.starts_with("Gear_") && n.ends_with("_Strut")).map(|(_, lo, hi)| (*hi - *lo).max_element()).fold(f64::INFINITY, f64::min);
-    let (v, eta) = (record.and_then(|h| h.design.landing_speed).unwrap_or(3.05), record.and_then(|h| h.design.strut_efficiency).unwrap_or(0.85));
-    let jolt = if stroke.is_finite() { v * v / (2.0 * stroke * eta) } else { 0.0 };
+    // Landing: weight and the jolt of the design landing, as its legs give it
+    // (world::legs: their stroke and efficiency, the sink they're designed for),
+    // held at the landing pads.
+    let legs = spec.and_then(universe_sim::world::legs::of_spec);
+    let jolt = legs.map_or(0.0, |l| l.jolt(l.designed) * STANDARD_G);
     let pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).flat_map(|n| near(n.at.as_vec3(), 1.0)).collect();
     let landing = if pads.is_empty() {
         out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
