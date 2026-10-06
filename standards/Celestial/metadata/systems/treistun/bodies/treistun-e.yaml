@@ -74,13 +74,13 @@ identity:
   also: Treistun e
   kind: rocky planet
   parent: body.treistun.treistun
-  about: 'Hoar, the fourth planet, 0.66 AU out, and the home world; the surveyors'' Treistun e. 6,281 km in radius, 0.98 g, with
+  about: 'Hoar, the fourth planet, 0.66 AU out, the first world settled and the seat of the system''s administration; the surveyors'' Treistun e. 6,281 km in radius, 0.98 g, with
   air that nobody can breathe: nitrogen and a third of a percent of carbon dioxide, and no oxygen, since nothing ever lived
   here. A snowball: about 220 K on average, the land under ice from pole to pole. Its day lasts under 19 hours. It has no
   moon; the station orbits it.'
   story:
-    - 'Where Treistun began. The first landing, the first port and the first station were all here, and the system''s administration still sits in orbit above it. Its people call it Hoar: the fire everyone
-  came home to, and the irony is theirs.'
+    - 'Where Treistun began. The first landing, the first port and the first station were all here, and the system''s administration still sits in orbit above it. Its people named it Hoar, for the frost that is all its
+  ground; the home world is Heath now, where most of the system lives, but the station and the administration never moved.'
     - 'Nothing has ever grown on Hoar, and nothing breathes its air. It was settled for its ice and its water, for its gravity, and for being the first world with ground to stand on under a sky. Port Nacaubun
   is a sealed city of sixty thousand on the ice, breathing from its plants and fed from Heath; its people grow what they can under lamps.'
 
