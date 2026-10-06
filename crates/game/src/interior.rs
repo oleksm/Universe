@@ -78,7 +78,7 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 26] = [
     ("OUTLINES", Some(11), Some(Color([0.4, 1.0, 0.75, 0.45]))),
     ("WALLS", Some(11), Some(Color([0.75, 0.9, 1.0, 0.6]))),
     ("HATCHES", Some(11), Some(Color([1.0, 0.65, 0.2, 1.0]))),
-    ("CLASHES", Some(11), Some(Color([1.0, 0.3, 0.25, 1.0]))),
+    ("CLASHES", None, Some(Color([1.0, 0.3, 0.25, 1.0]))),
     ("DECKS (2D)", None, None),
     ("FLOORS", Some(17), Some(Color([1.0, 0.8, 0.5, 0.6]))),
     ("WALLS", Some(17), Some(Color([1.0, 0.8, 0.5, 0.9]))),
@@ -6141,7 +6141,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
         let f = &interior.fit[k];
         let lit = (interior.tool == Tool::Modules && (interior.block == Some(n) || interior.block_hover == Some(n))) || [interior.pick, interior.hover].contains(&Some(Hover::Module(n)));
-        let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) { CLASH } else { MODULE };
+        let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES) { CLASH } else { MODULE };
         for (t, _) in b.faces(f.round) {
             if let [Some((p, _)), Some((q, _)), Some((r, _))] = t.map(|p| cam.project(p)) {
                 frame.hud_triangle_colored([p, q, r], [Color([col.0[0], col.0[1], col.0[2], if f.round { 0.025 } else { 0.07 }]); 3]);
