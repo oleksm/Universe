@@ -2509,6 +2509,11 @@ enum Tool {
 enum Hover {
     Point(usize),
     Line(usize),
+    /// SELECT: a module placed, a frame member, a deck, a node (at its joint).
+    Module(usize),
+    Member(usize),
+    Deck(usize),
+    Node(Vec3),
 }
 
 /// The hull as the studio draws it: its lines and its bounds (its frame, m).
@@ -2881,6 +2886,22 @@ impl Interior {
     /// The FRAME tool in hand (dev scenarios).
     pub fn frame_tool(&mut self) {
         self.tool = Tool::Frame;
+    }
+
+    /// SELECT with `what` picked (dev scenarios): member:N, module:N, deck:N, room:N
+    /// (a line), node (the first joint of member 0).
+    pub fn select(&mut self, what: &str) {
+        self.tool = Tool::Look;
+        let (kind, n) = what.split_once(':').unwrap_or((what, "0"));
+        let n: usize = n.parse().unwrap_or(0);
+        self.pick = match kind {
+            "member" => Some(Hover::Member(n)),
+            "module" => Some(Hover::Module(n)),
+            "deck" => Some(Hover::Deck(n)),
+            "room" => Some(Hover::Line(n)),
+            "node" => self.plan.beams.get(n).map(|b| Hover::Node(b.a)),
+            _ => None,
+        };
     }
 
     /// The FRAME tool in DECK mode, laying decks (dev scenarios).
@@ -3483,7 +3504,7 @@ impl Camera {
 }
 
 /// The toolbar: the tools (key, name).
-const TOOLBAR: [(&str, &str, Tool); 5] = [("V", "LOOK", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door), ("M", "MODULES", Tool::Modules), ("R", "FRAME", Tool::Frame)];
+const TOOLBAR: [(&str, &str, Tool); 5] = [("V", "SELECT", Tool::Look), ("P", "PATH", Tool::Path), ("D", "DOOR", Tool::Door), ("M", "MODULES", Tool::Modules), ("R", "FRAME", Tool::Frame)];
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
@@ -4103,6 +4124,163 @@ fn si(v: f64, unit: &str) -> String {
 /// A module's sheet, beside the panel: its name, maker, kind and mount; its shape,
 /// turning; its size, mass, volume and the power it draws; its record's figures;
 /// its description. Placed and stretched (`block`): the size it's placed at too.
+/// A sheet beside the panel: a title, a line under it, and rows of text, each in its
+/// colour (the module sheet's place and look).
+fn draw_rows(frame: &mut Frame, down: f32, title: &str, under: &str, colour: Color, rows: &[(String, Color)]) {
+    let (pp, pc) = PANEL;
+    let (p, c) = (Vec2::new(pp.x + pc.x + 8.0, pp.y + down), Vec2::new(340.0, 40.0 + rows.len() as f32 * 11.0));
+    frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
+    frame.hud_box(p, c, colour.scale(0.7));
+    frame.text_scaled(p + Vec2::new(8.0, 6.0), &title.chars().take(40).collect::<String>(), colour, 0.8);
+    frame.text_scaled(p + Vec2::new(8.0, 19.0), &under.chars().take(60).collect::<String>(), LABEL.scale(0.7), 0.55);
+    for (k, (text, col)) in rows.iter().enumerate() {
+        frame.text_scaled(p + Vec2::new(8.0, 34.0 + k as f32 * 11.0), &text.chars().take(60).collect::<String>(), *col, 0.58);
+    }
+}
+
+/// A force in kN, a moment in kN m.
+fn kn(f: f64) -> String {
+    format!("{:.1}", f / 1000.0)
+}
+
+/// SELECT: what's picked, on a sheet: what it is (its stock or product, size, mass)
+/// and what it carries (each load case: its forces, how hard it's worked, whether
+/// it breaks).
+fn draw_selected(frame: &mut Frame, interior: &Interior) {
+    let plan = &interior.plan;
+    let reg = universe_sim::world::registry::registry();
+    let name = |key: &str| reg.names.get(key).map_or(key.trim_start_matches("material.").replace('-', " ").to_uppercase(), |n| n.to_uppercase());
+    let bearing = interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan).map(|(_, b)| b.clone());
+    let pct = |w: f64| format!("{:.0}%", w * 100.0);
+    let hue = |w: f64, broken: bool| if broken || w > 1.0 { CLASH } else if w >= 0.5 { Color([1.0, 0.7, 0.2, 1.0]) } else { Color([0.4, 1.0, 0.5, 1.0]) };
+    let cases = |b: &Bearing, of: &dyn Fn(&universe_sim::world::frame::Collapse) -> Option<(String, f64, bool)>| -> Vec<(String, Color)> {
+        b.cases.iter().map(|(n, r)| match r {
+            Ok(c) => match of(c) {
+                Some((text, w, broken)) => (format!("{n}: {text}"), hue(w, broken)),
+                None => (format!("{n}: -"), LABEL.scale(0.7)),
+            },
+            Err(e) => (format!("{n}: {e}"), CLASH),
+        }).collect()
+    };
+    match interior.pick {
+        Some(Hover::Module(n)) => {
+            let Some(b) = plan.blocks.get(n) else { return };
+            if let Some(f) = interior.fit.iter().find(|f| f.id == kind(&b.id)) {
+                draw_sheet(frame, interior, f, Some(b));
+                // (Under it, what the frame takes from it: its weight full, as each
+                // case presses it, and where it's held.)
+                let full = f.mass + f.load;
+                let mut rows = vec![(format!("{} FULL ({} EMPTY)", si(full, "KG"), si(f.mass, "KG")), LABEL)];
+                if let Some(bb) = &bearing {
+                    for ((n, r), felt) in bb.cases.iter().zip(&bb.felt) {
+                        rows.push(match r {
+                            Ok(_) => (format!("{n}: {:.2} G, {} KN ON THE FRAME", felt / STANDARD_G, kn(full * felt)), LABEL),
+                            Err(e) => (format!("{n}: {e}"), CLASH),
+                        });
+                    }
+                    if bb.loose.iter().any(|l| l.starts_with(&f.name.to_uppercase()) && l.contains("NOT MOUNTED")) {
+                        rows.push(("NOT MOUNTED: NOTHING HOLDS IT".into(), CLASH));
+                    }
+                }
+                draw_rows(frame, 308.0, "ON THE FRAME", "WHAT IT PRESSES ON WHAT HOLDS IT", MODULE, &rows);
+            }
+        }
+        Some(Hover::Member(k)) => {
+            let Some(m) = plan.beams.get(k) else { return };
+            let Some(st) = stocks().iter().find(|s| s.key == m.stock) else { return };
+            let len = m.a.distance(m.b);
+            let mut rows = vec![
+                (format!("TUBE {:.0} X {:.0} MM, {:.2} M LONG", st.section.diameter * 1000.0, st.section.wall * 1000.0, len), LABEL),
+                (format!("MASS {:.1} KG ({:.2} KG/M)", st.per_metre * f64::from(len), st.per_metre), LABEL),
+                (format!("YIELDS {:.0} MPA, BREAKS {:.0} MPA, E {:.0} GPA", st.material.yield_strength / 1e6, st.material.tensile_strength / 1e6, st.material.stiffness / 1e9), LABEL),
+                (format!("FROM {:.2},{:.2},{:.2} TO {:.2},{:.2},{:.2}", m.a.x, m.a.y, m.a.z, m.b.x, m.b.y, m.b.z), LABEL.scale(0.75)),
+            ];
+            let clash = interior.member_clash.as_ref().filter(|(p, _)| *p == interior.plan).and_then(|(_, c)| c.get(k).copied().flatten());
+            rows.push(match clash {
+                Some(w) => (format!("PASSES INTO {}", match w { Passes::Module => "A MODULE", Passes::Room => "A ROOM", Passes::Deck => "A DECK", Passes::Member => "ANOTHER MEMBER" }), CLASH),
+                None => ("CLEAR OF EVERYTHING".into(), LABEL.scale(0.75)),
+            });
+            rows.push(("CARRIES (CASE: PULL+ / PUSH-, BENDING, % OF LIMIT)".into(), LABEL.scale(0.75)));
+            if let Some(b) = &bearing {
+                let idx = b.index.get(k).copied().flatten();
+                rows.extend(cases(b, &|c| {
+                    let o = c.members.get(idx?)?;
+                    let f = o.work.forces;
+                    let text = format!("{} KN, {} KN M, {}{}{}", kn(f.axial), kn(f.bending), pct(o.work.design), if o.work.buckles { " BUCKLES" } else { "" }, if o.broken.is_some() { " BREAKS" } else { "" });
+                    Some((text, o.work.design, o.broken.is_some()))
+                }));
+            }
+            draw_rows(frame, 0.0, &st.name, &format!("FRAME MEMBER - {}", name(&st.of)), Color([0.4, 1.0, 0.5, 1.0]), &rows);
+        }
+        Some(Hover::Deck(n)) => {
+            let Some(pl) = plan.plates.get(n) else { return };
+            let Some(ps) = plate_stocks().iter().find(|s| s.key == pl.stock) else { return };
+            let (w, d) = ((pl.hi.x - pl.lo.x).abs(), (pl.hi.y - pl.lo.y).abs());
+            let area = f64::from(w * d);
+            let mut rows = vec![
+                (match ps.core {
+                    Some(c) => format!("PANEL {:.1} MM: FACES {:.1} MM, CORE {:.1} MM", ps.depth * 1000.0, ps.thickness * 1000.0, c.depth * 1000.0),
+                    None => format!("PLATE {:.1} MM", ps.depth * 1000.0),
+                }, LABEL),
+                (format!("{w:.1} X {d:.1} M = {area:.0} M2, TOP AT {:.2} M", pl.y), LABEL),
+                (format!("MASS {:.0} KG ({:.1} KG/M2)", area * ps.per_square_metre, ps.per_square_metre), LABEL),
+                (format!("FLOOR LOAD {DECK_LOAD:.0} KG/M2; YIELDS {:.0} MPA", ps.material.yield_strength / 1e6), LABEL),
+                ("CARRIES (CASE: ITS HARDEST WORKED STRIP)".into(), LABEL.scale(0.75)),
+            ];
+            if let Some(b) = &bearing {
+                let strips: Vec<usize> = b.strips.iter().filter(|s| s.0 == n).map(|s| s.4).collect();
+                rows.extend(cases(b, &|c| {
+                    let worst = strips.iter().filter_map(|&m| c.members.get(m)).max_by(|a, b| a.work.design.total_cmp(&b.work.design))?;
+                    let broken = strips.iter().filter_map(|&m| c.members.get(m)).filter(|o| o.broken.is_some()).count();
+                    Some((format!("{} OF {} STRIPS{}", pct(worst.work.design), strips.len(), if broken > 0 { format!(", {broken} BREAK") } else { String::new() }), worst.work.design, broken > 0))
+                }));
+            }
+            draw_rows(frame, 0.0, &ps.name.to_uppercase(), &format!("DECK {} - {}", n + 1, name(&ps.of)), DECK, &rows);
+        }
+        Some(Hover::Node(at)) => {
+            let Some((_, ns)) = interior.node_cache.as_ref().filter(|(p, _)| *p == interior.plan) else { return };
+            let Some(&(_, widest, node)) = ns.iter().find(|n| n.0.distance(at) < 0.05) else { return };
+            let meeting: Vec<usize> = (0..plan.beams.len()).filter(|&k| plan.beams[k].a.distance(at) < 0.05 || plan.beams[k].b.distance(at) < 0.05).collect();
+            let mut rows = vec![
+                (match node {
+                    Some(nd) => format!("{:.0} MM {}, {:.1} KG", nd.diameter * 1000.0, if nd.hollow { "HOLLOW SHELL" } else { "SOLID FORGING" }, nd.mass),
+                    None => format!("NONE IN STOCK {:.0} MM WIDE", widest * NODE_RATIO * 1000.0),
+                }, if node.is_some() { LABEL } else { CLASH }),
+                (format!("WIDEST TUBE {:.0} MM (A NODE {NODE_RATIO:.1} TIMES IT)", widest * 1000.0), LABEL),
+                (format!("{} MEMBERS MEET HERE", meeting.len()), LABEL),
+                (format!("AT {:.2},{:.2},{:.2}", at.x, at.y, at.z), LABEL.scale(0.75)),
+                ("CARRIES (CASE: ITS HARDEST WORKED MEMBER)".into(), LABEL.scale(0.75)),
+            ];
+            if let Some(b) = &bearing {
+                rows.extend(cases(b, &|c| {
+                    let worst = meeting.iter().filter_map(|&k| b.index.get(k).copied().flatten()).filter_map(|m| c.members.get(m)).max_by(|a, b| a.work.design.total_cmp(&b.work.design))?;
+                    Some((pct(worst.work.design), worst.work.design, worst.broken.is_some()))
+                }));
+            }
+            draw_rows(frame, 0.0, "NODE", "4340 STEEL, WHERE MEMBERS MEET", Color([0.9, 0.95, 1.0, 1.0]), &rows);
+        }
+        Some(Hover::Line(k)) => {
+            // (A walled room: its size, its air, its walls against the cabin pressure.)
+            let Some(&(a, b, pr)) = plan.lines.get(k) else { return };
+            if pr.section == Section::Line || !plan.group_of(k).is_some_and(|g| plan.groups[g].walled) {
+                return;
+            }
+            let len = plan.points[a].at.distance(plan.points[b].at);
+            let mut rows = vec![
+                (format!("{} {:.1} X {:.1} M, {len:.1} M LONG", pr.section.name(), pr.width, pr.height), LABEL),
+                (format!("AIR {:.0} M3", section_area(pr) * len), LABEL),
+            ];
+            if let Some((_, area, ws, w)) = walls(plan).into_iter().find(|w| w.0 == k) {
+                rows.push((format!("WALLS {}", ws.name.to_uppercase()), LABEL));
+                rows.push((format!("{area:.0} M2, {:.0} KG, {:.1} MM THICK", area * ws.per_square_metre, ws.depth * 1000.0), LABEL));
+                rows.push((format!("AT {:.0} KPA: {} OF ITS LIMIT", cabin_pressure() / 1000.0, pct(w)), hue(w, false)));
+            }
+            draw_rows(frame, 0.0, "ROOM", "A WALLED TUBE", Color([0.75, 0.9, 1.0, 1.0]), &rows);
+        }
+        _ => {}
+    }
+}
+
 fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<&Block>) {
     let reg = universe_sim::world::registry::registry();
     let e = reg.equipment.iter().find(|e| e.identity.key == f.key);
@@ -4188,7 +4366,14 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
             let shown = match v {
                 serde_json::Value::Number(n) => {
                     let x = n.as_f64().unwrap_or(0.0);
-                    if field == "efficiency" { format!("{:.0}%", x * 100.0) } else { si(x, unit(field)) }
+                    // (A share as a percent, or as a power of ten when tiny; a speed in
+                    // km/s; the rest with its unit's prefix.)
+                    match (field.as_str(), unit(field)) {
+                        ("efficiency", _) => format!("{:.0}%", x * 100.0),
+                        (_, "M/S") if x >= 1e4 => format!("{:.0} KM/S", x / 1000.0),
+                        (_, "") if x != 0.0 && x.abs() < 0.01 => format!("{x:.0E}"),
+                        (_, u) => si(x, u),
+                    }
                 }
                 serde_json::Value::String(t) => name(t),
                 serde_json::Value::Bool(b) => if *b { "YES".into() } else { "NO".into() },
@@ -4578,16 +4763,40 @@ fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
     if let Some((k, _)) = near {
         return Some(Hover::Point(k));
     }
-    if !(i.shown(layer::LINES) || i.shown(layer::ROOMS) || i.shown(layer::WALLS)) {
-        return None;
+    let select = i.tool == Tool::Look;
+    // (SELECT: a node, as wide as it's drawn.)
+    if select && i.shown(layer::FRAME)
+        && let Some((_, ns)) = i.node_cache.as_ref().filter(|(p, _)| *p == i.plan)
+        && let Some(n) = ns.iter().filter_map(|n| {
+            let (s, z) = cam.project(n.0)?;
+            let w = (n.2.map_or(n.1, |x| x.diameter) * cam.focal / z).max(6.0) * 0.5;
+            (s.distance(q) < w).then_some((n.0, s.distance(q)))
+        }).min_by(|a, b| a.1.total_cmp(&b.1))
+    {
+        return Some(Hover::Node(n.0));
     }
-    i.plan.lines.iter().enumerate().filter_map(|(k, &(a, b, _))| {
+    let line = (i.shown(layer::LINES) || i.shown(layer::ROOMS) || i.shown(layer::WALLS)).then(|| i.plan.lines.iter().enumerate().filter_map(|(k, &(a, b, _))| {
         let (pa, pb) = (screen[a]?, screen[b]?);
         let ab = pb - pa;
         let t = ((q - pa).dot(ab) / ab.length_squared().max(1e-6)).clamp(0.0, 1.0);
         let d = (pa + ab * t).distance(q);
         (d < 5.0).then_some((k, d))
-    }).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(k, _)| Hover::Line(k))
+    }).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(k, _)| Hover::Line(k))).flatten();
+    if line.is_some() || !select {
+        return line;
+    }
+    // (SELECT: a member; else the nearest module or deck along the ray.)
+    if i.shown(layer::FRAME) && let Some(k) = beam_at(i, cam, q) {
+        return Some(Hover::Member(k));
+    }
+    let ray = cam.ray(q);
+    let module = i.plan.blocks.iter().enumerate().filter(|_| i.shown(layer::MODULES)).filter_map(|(n, b)| b.hit(cam.eye, ray).map(|t| (Hover::Module(n), t)));
+    let deck = i.plan.plates.iter().enumerate().filter(|_| i.shown(layer::DECKS)).filter_map(|(n, p)| {
+        let t = (p.y - cam.eye.y) / ray.y;
+        let at = cam.eye + ray * t;
+        (t > 0.0 && at.x >= p.lo.x.min(p.hi.x) && at.x <= p.lo.x.max(p.hi.x) && at.z >= p.lo.y.min(p.hi.y) && at.z <= p.lo.y.max(p.hi.y)).then_some((Hover::Deck(n), t))
+    });
+    module.chain(deck).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(h, _)| h)
 }
 
 /// This frame's input. False: close it. (A change to the plan is kept for UNDO.)
@@ -5079,7 +5288,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                 Some(interior.feet(interior.plan.points[k].at, line))
             }
             Some(Hover::Line(k)) => on_line(interior, &cam, cursor, k).map(|(at, _)| interior.feet(at, Some(k))),
-            None => None,
+            _ => None,
         };
         if let Some(at) = spot {
             interior.walk = Some(at);
@@ -5301,7 +5510,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                         }
                         n
                     }),
-                    None => on_plane(interior, &cam, plane, cursor, interior.shift).map(|at| {
+                    _ => on_plane(interior, &cam, plane, cursor, interior.shift).map(|at| {
                         interior.plan.points.push(Point { at, name: None });
                         interior.plan.points.len() - 1
                     }),
@@ -5649,7 +5858,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                     frame.hud_box(q - Vec2::splat(4.0), Vec2::splat(8.0), PICKED);
                 }
             }
-            Some(Hover::Point(_)) => {}
+            Some(Hover::Point(_) | Hover::Module(_) | Hover::Member(_) | Hover::Deck(_) | Hover::Node(_)) => {}
             // (FRAME: where a click would join, and the member being laid to it.)
             // (DECK: from its first corner to the cursor, its plate.)
             None if interior.tool == Tool::Frame && interior.deck_mode => {
@@ -5795,7 +6004,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     for (n, b) in plan.blocks.iter().enumerate().filter(|_| interior.shown(layer::MODULES)) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
         let f = &interior.fit[k];
-        let lit = interior.tool == Tool::Modules && (interior.block == Some(n) || interior.block_hover == Some(n));
+        let lit = (interior.tool == Tool::Modules && (interior.block == Some(n) || interior.block_hover == Some(n))) || [interior.pick, interior.hover].contains(&Some(Hover::Module(n)));
         let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) { CLASH } else { MODULE };
         for (t, _) in b.faces(f.round) {
             if let [Some((p, _)), Some((q, _)), Some((r, _))] = t.map(|p| cam.project(p)) {
@@ -5811,7 +6020,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
     // The decks: each plate filled and outlined (its own layer, frame shown or not).
-    for plate in plan.plates.iter().filter(|_| interior.shown(layer::DECKS)) {
+    for (n, plate) in plan.plates.iter().enumerate().filter(|_| interior.shown(layer::DECKS)) {
+        let deck_col = if [interior.pick, interior.hover].contains(&Some(Hover::Deck(n))) { PICKED } else { DECK };
         let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
         if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
             let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
@@ -5821,9 +6031,9 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         // (Its underside too: it is as thick as its stock.)
         let under = c.map(|p| p - Vec3::Y * deck_depth(plate));
         for k in 0..4 {
-            seg(frame, c[k], c[(k + 1) % 4], DECK);
-            seg(frame, under[k], under[(k + 1) % 4], DECK.scale(0.6));
-            seg(frame, c[k], under[k], DECK.scale(0.6));
+            seg(frame, c[k], c[(k + 1) % 4], deck_col);
+            seg(frame, under[k], under[(k + 1) % 4], deck_col.scale(0.6));
+            seg(frame, c[k], under[k], deck_col.scale(0.6));
         }
     }
     // The frame: each member coloured by how hard it's worked (the case shown, or
@@ -5844,7 +6054,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             (!os.is_empty()).then(|| (os.iter().map(|o| o.work.design).fold(0.0, f64::max), os.iter().any(|o| o.broken.is_some())))
         };
         for (k, b) in plan.beams.iter().enumerate() {
-            let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k);
+            let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k) || [interior.pick, interior.hover].contains(&Some(Hover::Member(k)));
             let (col, broken) = match outcome(k) {
                 _ if lit => (PICKED, false),
                 Some((_, true)) => (CLASH, true),
@@ -5887,7 +6097,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 if let Some((q, z)) = cam.project(*at) {
                     let d = node.map_or(*widest, |n| n.diameter);
                     let w = (d * cam.focal / z).max(3.0);
-                    frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if node.is_some() { Color([0.9, 0.95, 1.0, 0.9]) } else { CLASH });
+                    let lit = [interior.pick, interior.hover].contains(&Some(Hover::Node(*at)));
+                    frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if lit { PICKED } else if node.is_some() { Color([0.9, 0.95, 1.0, 0.9]) } else { CLASH });
                 }
             }
         }
@@ -5956,7 +6167,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         let to = match interior.hover {
             Some(Hover::Point(k)) => Some(plan.points[k].at),
             Some(Hover::Line(k)) => on_line(interior, &cam, interior.cursor, k).map(|s| s.0),
-            None => on_plane(interior, &cam, plane, interior.cursor, interior.shift),
+            _ => on_plane(interior, &cam, plane, interior.cursor, interior.shift),
         };
         let end = to.and_then(|p| cam.project(p)).map_or(interior.cursor, |(q, _)| q);
         frame.hud_line(pa, end, PICKED.scale(0.6));
@@ -6054,7 +6265,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
         frame.hud_box(p, c, PLANE.scale(1.5));
         let (title, help) = match interior.tool {
-            Tool::Look => ("LOOK", "DRAG TO TURN IT, RIGHT-DRAG TO MOVE IT. CLICK A POINT OR A TUBE TO PICK IT (A TUBE IN A GROUP: THE GROUP); SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
+            Tool::Look => ("SELECT", "CLICK ANYTHING TO SEE WHAT IT IS AND WHAT IT CARRIES: A MODULE, A MEMBER, A NODE, A DECK, A ROOM. A TUBE IN A GROUP PICKS THE GROUP; SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DRAG TO TURN, RIGHT-DRAG TO MOVE. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
             Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME."),
@@ -6062,6 +6273,10 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
+        // (SELECT: what's picked, on a sheet beside the panel.)
+        if interior.tool == Tool::Look {
+            draw_selected(frame, interior);
+        }
         // (MODULES: its hint on the hint line, the panel for the list and the sheet.)
         let help = if interior.tool == Tool::Modules { "" } else { help };
         for line in crate::fmt::wrap(help, ((c.x - 16.0) / 8.0 * 1.25) as usize) {
@@ -6270,6 +6485,10 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                     let slope = slope_of(plan.points[a].at, plan.points[b].at).1;
                     format!("A LINE {len:.1} M {slope:.0}°{}{}", if slope > 50.0 { " TOO STEEP" } else { "" }, if hits > 0 { "  CLASHES" } else { "" }) + &if profile.section == Section::Line { String::new() } else { format!("  {} {:.1}X{:.1}", profile.section.name(), profile.width, profile.height) }
                 }
+                Some(Hover::Module(n)) => format!("PICKED: {}", interior.fit.iter().find(|f| plan.blocks.get(n).is_some_and(|b| f.id == kind(&b.id))).map_or("A MODULE".into(), |f| f.name.clone())),
+                Some(Hover::Member(_)) => "PICKED: A FRAME MEMBER".into(),
+                Some(Hover::Deck(n)) => format!("PICKED: DECK {}", n + 1),
+                Some(Hover::Node(_)) => "PICKED: A NODE".into(),
                 None => {
                     let len: f32 = plan.lines.iter().map(|&(a, b, _)| plan.points[a].at.distance(plan.points[b].at)).sum();
                     let bad = clash.iter().filter(|c| !c.is_empty()).count();

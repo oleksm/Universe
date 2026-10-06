@@ -1414,6 +1414,10 @@ pub fn apply(app: &mut App, name: &str) {
             if std::env::var_os("UNIVERSE_FRAME").is_some() {
                 y.interior_mut().frame_tool();
             }
+            // (UNIVERSE_PICK=member:N|module:N|deck:N|room:N|node:N: SELECT, that picked.)
+            if let Ok(w) = std::env::var("UNIVERSE_PICK") {
+                y.interior_mut().select(&w);
+            }
             // (UNIVERSE_DECKMODE: the FRAME tool in DECK mode.)
             if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
                 y.interior_mut().deck_tool();
