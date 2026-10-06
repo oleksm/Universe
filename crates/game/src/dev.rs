@@ -1393,6 +1393,10 @@ pub fn apply(app: &mut App, name: &str) {
             if std::env::var_os("UNIVERSE_FRAME").is_some() {
                 y.interior_mut().frame_tool();
             }
+            // (UNIVERSE_DECKMODE: the FRAME tool in DECK mode.)
+            if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
+                y.interior_mut().deck_tool();
+            }
             // (UNIVERSE_DECKS: the deck studio open instead.)
             if std::env::var_os("UNIVERSE_DECKS").is_some() {
                 y.open_decks();

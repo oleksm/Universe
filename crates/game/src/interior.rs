@@ -199,6 +199,10 @@ pub struct Interior {
     /// DECK: laying decks (their first corner, once clicked).
     deck_mode: bool,
     deck_from: Option<Vec3>,
+    /// DECK: the stock new decks are cut from (its key; none: the lightest 6061
+    /// plate), and the deck picked (its stock is changed by picking a row).
+    deck_stock: Option<String>,
+    deck_pick: Option<usize>,
     depth: f32,
     spacing: f32,
     sizing: Option<(Plan, mpsc::Receiver<Sized>)>,
@@ -390,6 +394,7 @@ struct Plate {
 #[derive(Clone)]
 pub struct PlateStock {
     key: String,
+    name: String,
     of: String,
     /// A plate's thickness; a sandwich panel's each face's.
     thickness: f64,
@@ -422,11 +427,17 @@ fn plate_stocks() -> &'static [PlateStock] {
             let k = &m.mechanical;
             let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
-            Some(PlateStock { key: s.identity.key.clone(), of: of.clone(), thickness: t, core: None, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
+            Some(PlateStock { key: s.identity.key.clone(), name: s.identity.name.clone(), of: of.clone(), thickness: t, core: None, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
         }).collect();
         out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_square_metre.total_cmp(&b.per_square_metre)));
         out
     })
+}
+
+/// The stock a new deck is cut from unless another is picked: the lightest 6061
+/// plate, else the first there is.
+fn default_deck_stock() -> String {
+    plate_stocks().iter().find(|s| s.key.contains("al6061-pl")).or(plate_stocks().first()).map_or(String::new(), |s| s.key.clone())
 }
 
 /// A deck's grid: its points, about 2 m apart each way (`nx` + 1 along x by `nz` + 1
@@ -2440,6 +2451,11 @@ impl Interior {
         self.tool = Tool::Frame;
     }
 
+    /// The FRAME tool in DECK mode, laying decks (dev scenarios).
+    pub fn deck_tool(&mut self) {
+        (self.tool, self.deck_mode) = (Tool::Frame, true);
+    }
+
     /// Layer `k` hidden (dev scenarios).
     pub fn hide(&mut self, k: usize) {
         if let Some(h) = self.hidden.get_mut(k) {
@@ -2630,7 +2646,7 @@ impl Interior {
     fn cancel(&mut self) -> bool {
         let any = self.in_progress();
         (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
-        (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from) = (false, false, false, None);
+        (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from, self.deck_pick) = (false, false, false, None, None);
         any
     }
 
@@ -4398,7 +4414,19 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         // (FRAME: the stock new members are cut from, a row of its list (the picked
         // member's too); the case shown; the picked member taken out.)
         Tool::Frame => {
-            if pressed && let Some(k) = (0..STOCK_ROWS).find(|&n| interior.stock_top + n < stocks().len() && inside(stock_row(n), cursor)).map(|n| interior.stock_top + n) {
+            // (DECK: a row of deck stock: what new decks, or the picked one, are cut from.)
+            if interior.deck_mode
+                && pressed
+                && let Some(k) = (0..STOCK_ROWS).find(|&n| interior.stock_top + n < plate_stocks().len() && inside(stock_row(n), cursor)).map(|n| interior.stock_top + n)
+            {
+                let key = plate_stocks()[k].key.clone();
+                if let Some(p) = interior.deck_pick.and_then(|j| interior.plan.plates.get_mut(j)) {
+                    p.stock = key.clone();
+                }
+                interior.deck_stock = Some(key);
+                return true;
+            }
+            if pressed && !interior.deck_mode && let Some(k) = (0..STOCK_ROWS).find(|&n| interior.stock_top + n < stocks().len() && inside(stock_row(n), cursor)).map(|n| interior.stock_top + n) {
                 interior.stock = k;
                 if let Some(b) = interior.beam_pick.and_then(|j| interior.plan.beams.get_mut(j)) {
                     b.stock = stocks()[k].key.clone();
@@ -4417,6 +4445,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             }
             if action == Some(Action::Deck) {
                 interior.deck_mode = !interior.deck_mode;
+                (interior.stock_top, interior.deck_pick) = (0, None);
                 (interior.truss_mode, interior.beam_from, interior.truss_from, interior.deck_from) = (false, None, None, None);
             }
             if let Some(a @ (Action::GravityDown | Action::GravityUp)) = action {
@@ -4701,12 +4730,18 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                 if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
                     let on = interior.plan.plates.iter().position(|p| (p.y - at.y).abs() < 0.3 && at.x >= p.lo.x.min(p.hi.x) && at.x <= p.lo.x.max(p.hi.x) && at.z >= p.lo.y.min(p.hi.y) && at.z <= p.lo.y.max(p.hi.y));
                     match (on, interior.deck_from.take()) {
-                        (Some(k), None) => {
+                        // (A deck: picked; picked already: taken up.)
+                        (Some(k), None) if interior.deck_pick == Some(k) => {
                             interior.plan.plates.remove(k);
+                            interior.deck_pick = None;
                         }
-                        (_, None) => interior.deck_from = Some(at),
+                        (Some(k), None) => interior.deck_pick = Some(k),
+                        (_, None) => {
+                            interior.deck_pick = None;
+                            interior.deck_from = Some(at);
+                        }
                         (_, Some(from)) => {
-                            let stock = plate_stocks().iter().find(|s| s.key.contains("al6061-pl")).or(plate_stocks().first()).map_or(String::new(), |s| s.key.clone());
+                            let stock = interior.deck_stock.clone().unwrap_or_else(default_deck_stock);
                             interior.plan.plates.push(Plate { lo: Vec2::new(from.x, from.z), hi: Vec2::new(at.x, at.z), y: from.y, stock });
                         }
                     }
@@ -4900,7 +4935,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             interior.fit_top = (interior.fit_top as f32 - input.scroll.signum() * 3.0).clamp(0.0, most as f32) as usize;
         }
         if interior.tool == Tool::Frame {
-            let most = stocks().len().saturating_sub(STOCK_ROWS);
+            let most = if interior.deck_mode { plate_stocks().len() } else { stocks().len() }.saturating_sub(STOCK_ROWS);
             interior.stock_top = (interior.stock_top as f32 - input.scroll.signum() * 2.0).clamp(0.0, most as f32) as usize;
         }
     } else if input.scroll != 0.0 {
@@ -5546,6 +5581,28 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         // FRAME: the stock (lit: what new members, or the picked one, are cut from),
         // the case shown, how each case goes, what isn't carried, its members' mass.
         if interior.tool == Tool::Frame {
+            if interior.deck_mode {
+                // (DECK: the deck stock, plates and panels; lit: what new decks, or the
+                // picked one, are cut from.)
+                frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), "DECK STOCK               KG/M2  YIELD", LABEL.scale(0.7), 0.6);
+                if plate_stocks().len() > STOCK_ROWS {
+                    let shown = format!("{}-{} OF {} (WHEEL)", interior.stock_top + 1, (interior.stock_top + STOCK_ROWS).min(plate_stocks().len()), plate_stocks().len());
+                    frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 62.0), &shown, LABEL.scale(0.6), 0.6);
+                }
+                let now = interior.deck_pick.and_then(|j| plan.plates.get(j)).map(|p| p.stock.clone()).or_else(|| interior.deck_stock.clone()).unwrap_or_else(default_deck_stock);
+                for (n, st) in plate_stocks().iter().skip(interior.stock_top).take(STOCK_ROWS).enumerate() {
+                    let (q, qc) = stock_row(n);
+                    let lit = st.key == now;
+                    if lit {
+                        frame.hud_rect(q, qc, PICKED.scale(0.18));
+                    }
+                    let col = if lit || inside((q, qc), interior.cursor) { PICKED } else { LABEL.scale(0.75) };
+                    let name: String = st.name.to_uppercase().chars().take(24).collect();
+                    frame.text_scaled(Vec2::new(q.x + 4.0, q.y + 2.0), &name, col, 0.6);
+                    let figures = format!("{:>5.1} {:>5.0} MPA", st.per_square_metre, st.material.yield_strength / 1e6);
+                    frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
+                }
+            } else {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), "STOCK                     KG/M  YIELD", LABEL.scale(0.7), 0.6);
             if stocks().len() > STOCK_ROWS {
                 let shown = format!("{}-{} OF {} (WHEEL)", interior.stock_top + 1, (interior.stock_top + STOCK_ROWS).min(stocks().len()), stocks().len());
@@ -5562,6 +5619,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 frame.text_scaled(Vec2::new(q.x + 4.0, q.y + 2.0), &name, col, 0.6);
                 let figures = format!("{:>5.1} {:>5.0} MPA", st.per_metre, st.material.yield_strength / 1e6);
                 frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
+            }
             }
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 146.0), "LOAD CASE SHOWN", LABEL.scale(0.7), 0.6);
             for (r, name, a) in panel_buttons(Tool::Frame) {
