@@ -183,7 +183,8 @@ pub struct Interior {
     beam_hover: Option<usize>,
     beam_pick: Option<usize>,
     beam_from: Option<Vec3>,
-    pads_mode: bool,
+    /// AUTO-SIZE free to pick any material.
+    mix: bool,
     /// TRUSS: laying a truss (its first corner, once clicked); its depth and its
     /// stations' spacing (m); AUTO-SIZE being worked out (for which plan).
     truss_mode: bool,
@@ -456,6 +457,17 @@ pub struct Bearing {
     loose: Vec<String>,
     /// Each case's acceleration (m/s², what everything aboard feels).
     felt: Vec<f64>,
+    /// Which of the frame's members each of the plan's is (none: left out, its stock
+    /// unknown or its ends one joint).
+    index: Vec<Option<usize>>,
+}
+
+impl Bearing {
+    /// How the plan's member `k` does in each case it could be worked out in.
+    fn outcomes(&self, k: usize) -> Vec<&universe_sim::world::frame::Outcome> {
+        let Some(Some(m)) = self.index.get(k) else { return Vec::new() };
+        self.cases.iter().filter_map(|(_, r)| r.as_ref().ok()).filter_map(|c| c.members.get(*m)).collect()
+    }
 }
 
 /// A box truss filling the footprint between `a` and `b` (on the work plane, its
@@ -613,31 +625,31 @@ type Sized = (Vec<Beam>, usize, usize);
 /// would); again, as the forces shift with the members' stiffness, until nothing
 /// changes (or `ROUNDS`; after the sixth, only bigger). The members, and the
 /// rounds it took.
-fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>) -> Sized {
+fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, mix: bool) -> Sized {
     use universe_sim::world::frame::{work, Member};
     let sf = 1.5;
-    // (Each material's tubes its own ladder.)
+    // (Each material's tubes its own ladder; MIX: every tube, any material.)
     let ladder_of = |key: &str| -> Vec<&'static Stock> {
         let of = stocks().iter().find(|s| s.key == key).map(|s| s.of.as_str()).unwrap_or("");
-        stocks().iter().filter(|s| s.of == of && s.section.wall < s.section.diameter * 0.5).collect()
+        let mut l: Vec<&'static Stock> = stocks().iter().filter(|s| (mix || s.of == of) && s.section.wall < s.section.diameter * 0.5).collect();
+        l.sort_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+        l
     };
     let mut plan = plan.clone();
     for round in 1..=ROUNDS {
         let b = bearing(&plan, fit, spec, STANDARD_G);
-        let cases: Vec<&universe_sim::world::frame::Collapse> = b.cases.iter().filter_map(|(_, r)| r.as_ref().ok()).collect();
-        if cases.is_empty() {
+        if !b.cases.iter().any(|(_, r)| r.is_ok()) {
             return (plan.beams, round, 0);
         }
         let mut changed = false;
         let mut maxed = 0;
-        // (Members the frame was built from, in order: those of stock it knows.)
-        let mut k = 0;
-        for beam in plan.beams.iter_mut() {
+        for (k, beam) in plan.beams.iter_mut().enumerate() {
             let Some(now) = stocks().iter().find(|s| s.key == beam.stock) else { continue };
-            let n = k;
-            k += 1;
             let length = f64::from(beam.a.distance(beam.b));
-            let forces: Vec<universe_sim::world::frame::Forces> = cases.iter().filter_map(|c| c.members.get(n)).map(|o| o.work.forces).collect();
+            let forces: Vec<universe_sim::world::frame::Forces> = b.outcomes(k).iter().map(|o| o.work.forces).collect();
+            if forces.is_empty() {
+                continue;
+            }
             let needed = |s: &Stock| forces.iter().map(|f| work(&Member { a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
             let ladder = ladder_of(&beam.stock);
             let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
@@ -661,6 +673,28 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
 
 /// The most rounds AUTO-SIZE takes.
 const ROUNDS: usize = 16;
+
+/// The plan's members braced where `b` finds them past their limit in any case:
+/// each split at its middle, the middle tied to the nearest other joint (not
+/// through a room), of its own stock. The members, and how many were braced.
+fn brace(plan: &Plan, b: &Bearing) -> (Vec<Beam>, usize) {
+    let over: Vec<usize> = (0..plan.beams.len()).filter(|&k| b.outcomes(k).iter().any(|o| o.work.design > 1.0 || o.broken.is_some())).collect();
+    let joints: Vec<Vec3> = plan.beams.iter().flat_map(|x| [x.a, x.b]).collect();
+    let mut beams = plan.beams.clone();
+    let mut extra = Vec::new();
+    for &k in over.iter().rev() {
+        let m = beams.remove(k);
+        let mid = m.a.lerp(m.b, 0.5);
+        let tie = joints.iter().copied().filter(|q| q.distance(m.a) > 0.1 && q.distance(m.b) > 0.1 && !through_room(plan, mid, *q)).min_by(|x, y| x.distance(mid).total_cmp(&y.distance(mid)));
+        extra.push(Beam { a: m.a, b: mid, stock: m.stock.clone() });
+        extra.push(Beam { a: mid, b: m.b, stock: m.stock.clone() });
+        if let Some(q) = tie {
+            extra.push(Beam { a: mid, b: q, stock: m.stock });
+        }
+    }
+    beams.extend(extra);
+    (beams, over.len())
+}
 
 /// Loads in balance, free in flight: the `external` forces at joints, and each
 /// point mass's inertia as the whole speeds up and turns under them (inertia
@@ -707,11 +741,16 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     let mut joints = Vec::new();
     let mut weight = Vec::new();
     for b in &plan.beams {
-        let Some(s) = stocks().iter().find(|s| s.key == b.stock) else { continue };
+        let Some(s) = stocks().iter().find(|s| s.key == b.stock) else {
+            out.index.push(None);
+            continue;
+        };
         let (ja, jb) = (joint(b.a, &mut joints), joint(b.b, &mut joints));
         if ja == jb {
+            out.index.push(None);
             continue;
         }
+        out.index.push(Some(frame.members.len()));
         let m = Member { a: ja, b: jb, section: s.section, material: s.material };
         let mass = m.mass(b.a.as_dvec3(), b.b.as_dvec3());
         out.mass += mass;
@@ -1715,7 +1754,7 @@ impl Interior {
     }
 
     pub fn new() -> Self {
-        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, depth: 6.0, spacing: 6.0, ..Default::default() }
+        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, depth: 6.0, spacing: 6.0, mix: true, ..Default::default() }
     }
 
     /// A sample plan for a look (dev scenarios): from the hatch, a run of points on
@@ -2496,8 +2535,11 @@ enum Action {
     Turn,
     /// The load case shown on the frame (none: each member's worst).
     Case(Option<usize>),
-    /// Laying landing pads (a click on the plane: one there; on one: gone), or not.
-    Pads,
+    /// Every member past its limit braced (split at its middle, tied to the nearest
+    /// joint).
+    Brace,
+    /// AUTO-SIZE free to pick any material (or each member's own).
+    Mix,
     /// Laying a truss (two clicks: its corners on the plane), or not.
     Truss,
     /// Every placed module the frame doesn't hold mounted to it.
@@ -2619,7 +2661,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             let w4 = (c.x - 16.0 - 18.0) / 4.0;
             let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "PADS", Action::Pads), (at(310.0, 2.0 * (w3 + 6.0), w3), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -3191,13 +3233,23 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             if let Some(Action::Case(c)) = action {
                 interior.case = c;
             }
-            if action == Some(Action::Pads) {
-                interior.pads_mode = !interior.pads_mode;
-                (interior.truss_mode, interior.beam_from, interior.truss_from) = (false, None, None);
-            }
             if action == Some(Action::Truss) {
                 interior.truss_mode = !interior.truss_mode;
-                (interior.pads_mode, interior.beam_from, interior.truss_from) = (false, None, None);
+                (interior.beam_from, interior.truss_from) = (None, None);
+            }
+            if action == Some(Action::Mix) {
+                interior.mix = !interior.mix;
+            }
+            // (BRACE: what's past its limit as last worked out, braced.)
+            if action == Some(Action::Brace) {
+                match interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan) {
+                    Some((_, b)) => {
+                        let (beams, n) = brace(&interior.plan, b);
+                        interior.message = Some((if n == 0 { "NOTHING PAST ITS LIMIT TO BRACE".to_string() } else { format!("{n} MEMBERS BRACED: AUTO-SIZE THEM") }, 5.0));
+                        interior.plan.beams = beams;
+                    }
+                    None => interior.message = Some(("STILL WORKING THE FRAME OUT: A MOMENT".into(), 3.0)),
+                }
             }
             // (DEPTH and SPACING: the next truss's.)
             if let Some(k) = interior.slider {
@@ -3213,11 +3265,11 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                 interior.plan.beams = beams;
             }
             if action == Some(Action::AutoSize) && interior.sizing.is_none() && !interior.plan.beams.is_empty() {
-                let (plan, fit, spec) = (interior.plan.clone(), interior.fit.clone(), interior.spec());
+                let (plan, fit, spec, mix) = (interior.plan.clone(), interior.fit.clone(), interior.spec(), interior.mix);
                 let (tx, rx) = mpsc::channel();
                 let snapshot = plan.clone();
                 job("studio-size", move || {
-                    tx.send(auto_size(&plan, &fit, spec)).ok();
+                    tx.send(auto_size(&plan, &fit, spec, mix)).ok();
                 });
                 interior.sizing = Some((snapshot, rx));
             }
@@ -3444,20 +3496,6 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                             let fresh: Vec<Beam> = truss(from, Vec3::new(at.x, from.y, at.z), interior.depth, interior.spacing, &stock).into_iter().filter(|n| !interior.plan.beams.iter().any(|b| (b.a == n.a && b.b == n.b) || (b.a == n.b && b.b == n.a))).collect();
                             interior.message = Some((format!("A TRUSS OF {} MEMBERS LAID", fresh.len()), 4.0));
                             interior.plan.beams.extend(fresh);
-                        }
-                    }
-                }
-            }
-            // (PADS: a pad laid where the click is on the plane, or the one clicked taken up.)
-            Tool::Frame if interior.pads_mode => {
-                let near = interior.plan.pads.iter().position(|p| cam.project(*p).is_some_and(|(q, _)| q.distance(cursor) < 10.0));
-                match near {
-                    Some(k) => {
-                        interior.plan.pads.remove(k);
-                    }
-                    None => {
-                        if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
-                            interior.plan.pads.push(at);
                         }
                     }
                 }
@@ -4005,7 +4043,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 Some(c) => b.cases.get(c).map(|c| &c.1).into_iter().collect(),
                 None => b.cases.iter().map(|c| &c.1).collect(),
             };
-            let os: Vec<_> = pick.into_iter().filter_map(|r| r.as_ref().ok()).filter_map(|c| c.members.get(k)).collect();
+            let m = (*b.index.get(k)?)?;
+            let os: Vec<_> = pick.into_iter().filter_map(|r| r.as_ref().ok()).filter_map(|c| c.members.get(m)).collect();
             (!os.is_empty()).then(|| (os.iter().map(|o| o.work.design).fold(0.0, f64::max), os.iter().any(|o| o.broken.is_some())))
         };
         for (k, b) in plan.beams.iter().enumerate() {
@@ -4197,7 +4236,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
             Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME."),
-            Tool::Frame => ("FRAME", "JOINT TO JOINT, OR TRUSS: TWO CORNERS. MOUNT ALL TIES IN MODULES AND PADS. AUTO-SIZE FITS TUBES."),
+            Tool::Frame => ("FRAME", "JOINT TO JOINT, OR TRUSS: TWO CORNERS. MOUNT ALL, AUTO-SIZE (MIX: ANY MATERIAL), BRACE WHAT'S OVER."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
@@ -4229,7 +4268,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             for (r, name, a) in panel_buttons(Tool::Frame) {
                 let lamp = if a == Action::AutoSize && interior.sizing.is_some() {
                     Lamp::Busy
-                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) || (a == Action::Pads && interior.pads_mode) || (a == Action::Truss && interior.truss_mode) {
+                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::Mix && interior.mix) || (a == Action::Truss && interior.truss_mode) {
                     Lamp::On
                 } else {
                     Lamp::Off
