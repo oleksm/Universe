@@ -534,7 +534,8 @@ fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
 
 /// Members mounting each placed module the frame doesn't hold yet (no joint in
 /// it): joints along its foot (one each `spacing` m; over a tonne full, at its
-/// foot's corners, each braced to the nearest joint below as well), each strutted
+/// foot's corners, each braced to the nearest joint below as well, or hung from
+/// the nearest above if there's none below), each strutted
 /// to the nearest two joints of the frame outside it; a landing leg by its top, to
 /// four; never through a room or further than 15 m; and each landing pad with
 /// nothing at it, on four legs to the nearest joints; of `stock`.
@@ -589,7 +590,9 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             }
             let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q) && !along.contains(&q)).collect();
             near.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
-            let below = near.iter().copied().find(|q| q.y < m.y - 1.0);
+            // (Braced to the nearest joint below; nothing below, hung from the nearest
+            // above.)
+            let below = near.iter().copied().find(|q| q.y < m.y - 1.0).or_else(|| near.iter().copied().find(|q| q.y > m.y + 1.0));
             let take = if leg { 4 } else { 2 };
             let mut chosen: Vec<Vec3> = near.into_iter().take(take).collect();
             if let Some(q) = below.filter(|q| heavy && !leg && !chosen.contains(q)) {
@@ -674,11 +677,12 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
 /// The most rounds AUTO-SIZE takes.
 const ROUNDS: usize = 16;
 
-/// The plan's members braced where `b` finds them past their limit in any case:
-/// each split at its middle, the middle tied to the nearest other joint (not
+/// The plan's members braced where `b` finds them past their limit in any case
+/// (those 2 m long or more): each split at its middle, the middle tied to the nearest other joint (not
 /// through a room), of its own stock. The members, and how many were braced.
 fn brace(plan: &Plan, b: &Bearing) -> (Vec<Beam>, usize) {
-    let over: Vec<usize> = (0..plan.beams.len()).filter(|&k| b.outcomes(k).iter().any(|o| o.work.design > 1.0 || o.broken.is_some())).collect();
+    // (Long ones only: a member under 2 m isn't helped by halving.)
+    let over: Vec<usize> = (0..plan.beams.len()).filter(|&k| plan.beams[k].a.distance(plan.beams[k].b) >= 2.0 && b.outcomes(k).iter().any(|o| o.work.design > 1.0 || o.broken.is_some())).collect();
     let joints: Vec<Vec3> = plan.beams.iter().flat_map(|x| [x.a, x.b]).collect();
     let mut beams = plan.beams.clone();
     let mut extra = Vec::new();
@@ -2690,15 +2694,20 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         }
     }
     if let Some(rig) = of("mining_rig").next() {
-        let scoop = of("handling").filter(|p| p.1.name.contains("SCOOP")).map(|p| p.0.at).min_by(|a, b| a.distance(rig.0.at).total_cmp(&b.distance(rig.0.at)));
+        // (By the rig: within 2 m of it, its nearest side.)
+        let (rlo, rhi) = rig.0.bounds();
+        let off = |q: Vec3| (q.clamp(rlo, rhi) - q).length();
+        let scoop = of("handling").filter(|p| p.1.name.contains("SCOOP")).map(|p| p.0).min_by(|a, b| off(a.at).total_cmp(&off(b.at))).map(|b| (b.at, { let (lo, hi) = b.bounds(); let c = rig.0.at.clamp(lo, hi); off(c) }));
         let bay = of("ore_bay").map(|p| p.0.at).chain(i.plan.blocks.iter().filter(|b| b.id == HOLD).map(|b| b.at)).next();
         match (scoop, bay) {
             (None, _) => faults.push("ORE: NO SCOOP BY THE RIG".into()),
             (_, None) => faults.push("ORE: NOWHERE TO PUT IT (NO ORE BAY)".into()),
-            (Some(s), Some(b)) => {
+            (Some((s, near)), Some(b)) => {
                 let reach: f64 = of("handling").filter(|p| p.1.name.contains("CONVEYOR")).map(|p| num(&p.3, "reach")).sum();
                 let gap = f64::from(s.distance(b));
-                if s.distance(rig.0.at) > 4.0 || reach + 2.0 < gap {
+                if near > 2.0 {
+                    faults.push(format!("ORE: THE SCOOP IS {near:.0} M FROM THE RIG"));
+                } else if reach + 2.0 < gap {
                     faults.push(format!("ORE: SCOOP TO BAY {gap:.0} M, CONVEYORS REACH {reach:.0} M"));
                 }
             }
