@@ -21,8 +21,8 @@ pub struct Site<'a> {
     pub at: [f64; 2],
     /// The tile's sample spacing there (m).
     pub spacing: f64,
-    /// The ~150 m heights by sample (m, as the ground reads them), indices running two samples
-    /// past the tile's edges into its neighbours (the halo).
+    /// The ~150 m tile's differences by sample (m, over the 600 m ground read bilinearly), indices
+    /// running two samples past the tile's edges into its neighbours (the halo).
     pub height: &'a dyn Fn(i64, i64) -> f64,
     /// The fields by their own samples (`fd150`, half as many a side), raw 0..255: flow
     /// direction, drainage area, the rock's threshold slope, ice; with the same halo.
