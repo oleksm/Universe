@@ -21,6 +21,18 @@ arriving armed, forever.
 | `org.shikra-hold` (a **band**) and `rig.biraidim.shikra-hold` | 300 people in an asteroid in Biraidim, a system with **no administration and so no law**, one jump from Treistun's traffic; they take cargo first and go home when a patrol comes out | piracy has a home, a reason (traffic high, law absent), a finite population and a place to retreat to |
 | `dictionary`: offence, penalty, jurisdiction | the shared words | one vocabulary for the law, the game's events and the UI |
 
+## The ways back (`law.redress`, 2026-10-06)
+
+A law with no way back is a ban. Treistun's: **appeal** within 30 days (the record struck and the
+fine returned if upheld); **restitution first** where there is a victim (an insurer that paid stands
+in the victim's place); **settlement** of everything but murder by paying the fine and forfeit;
+**surrender** before the bounty is collected halves a term; **service** under the administration
+(patrol escort, hauling the reserve, salvage: a letter of marque) works off two days of outlawry a
+day; warnings and fines **lapse** after a year; the administration may **pardon**. It **recognises**
+no other administration's outlawry yet, so an outlaw of Treistun lives where its law does not reach:
+the pirates' economy. The bounty hunter delivers to the court, not to the grave: the code has no
+capital penalty. A hold's people have a road home, one by one: surrender, restitution, service.
+
 ## The rules a mind should follow from this
 
 1. **People are finite.** A settlement's `population` and, next, its census by profession are the

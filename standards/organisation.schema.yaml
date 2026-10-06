@@ -101,6 +101,19 @@ properties:
                 hull: { type: string, x-ref: [hull] }
                 per_people: { type: integer, description: "one craft to this many people, at least one where there is a port" }
           response: { type: number, x-unit: "s", description: "s from a breach seen to a patrol under way, in its approaches" }
+      redress:
+        description: "The ways back from a breach: a law with no way back is a ban. Appeal, restitution, settlement and service are the game's procedures reading these figures; a pardon is the administration's to give."
+        type: object
+        additionalProperties: false
+        properties:
+          appeal_within: { type: number, x-unit: "s", description: "s after a breach is recorded in which it may be appealed to the court; upheld, the record is struck and any fine returned" }
+          restitution_first: { type: boolean, description: "whether a case with a victim (theft, piracy) can settle only once the victim is made whole; an insurer that paid stands in the victim's place" }
+          settles: { type: array, items: { $ref: "dictionary.schema.yaml#/definitions/offence" }, description: "Offences that close on paying the fine and the forfeiture." }
+          surrender_share: { type: number, x-unit: "1", description: "the share of a term left after surrendering before the bounty is collected" }
+          service_rate: { type: number, x-unit: "1", description: "s of outlawry worked off for each s served under the administration (patrol escort, hauling the reserve, salvage: a letter of marque)" }
+          expires_after: { type: number, x-unit: "s", description: "s after which an unpaid, unprosecuted warning or fine lapses; forfeiture and outlawry do not" }
+          pardon: { type: boolean, description: "whether the administration may pardon at its discretion" }
+      recognises: { type: array, items: { type: string, x-ref: [org] }, description: "Other administrations whose outlawry this one honours at its ports. Empty: an outlaw elsewhere is nobody here." }
       policies:
         description: "What it levies and licenses: rates are shares, never sums."
         type: object

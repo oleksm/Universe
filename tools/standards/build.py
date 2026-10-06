@@ -870,7 +870,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law"}:
+        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law", "recognises"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:

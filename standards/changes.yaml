@@ -920,7 +920,7 @@
 - { record: org.sunward-planters, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: who", sha: "51e303fdcba97507" }
 - { record: org.tallis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "334d70d5a7ad241b" }
 - { record: org.tolland, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "606b88aa03fbd49b" }
-- { record: org.treistun, at: "2026-10-06T03:09:17Z", status: "", summary: "changed: law", sha: "748c18c77dab565f" }
+- { record: org.treistun, at: "2026-10-06T13:05:38Z", status: "", summary: "changed: law", sha: "daf48d03145add8c" }
 - { record: org.treistun-exchange, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9688a593a35c0eb3" }
 - { record: org.treistun-mutual, at: "2026-10-06T03:09:17Z", status: "", summary: "first tracked", sha: "9554d73a8f6ab423" }
 - { record: org.verdance, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "bbe18fd6a56af8b2" }

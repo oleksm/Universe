@@ -1005,3 +1005,12 @@ interval is what a port's contracts should be sized to; air and water are outsid
 3. `built_of.parts` on hulls already exists (the MC-07 names its folder).
 4. Setups: left to the yard's operator, as you allowed.
 5. The gate's holding power: still the user's.
+
+**Law, and the ways back (2026-10-06).** `org.treistun.law` (offences, penalties, enforcement,
+policies) and now `law.redress`: appeal window, restitution first, which offences settle, the
+surrender share, the service rate, expiry, pardon; and `recognises` (whose outlawry a port honours:
+none yet). **For the game:** a breach is recorded, never blocked; the penalties follow after
+`enforcement.response`; appeal, settlement and service are procedures reading these figures; an
+outlaw is refused at the ports of administrations that recognise the outlawry, and nowhere else.
+The insurer (`org.treistun-mutual.insurance`) replaces a lost hull at a yard, parked, after the
+excess, and refuses the losses its list names: the respawn, by a rule. `docs/registry-order.md`.

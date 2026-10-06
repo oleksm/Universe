@@ -31,6 +31,18 @@ law:
     patrol:
       - { hull: hull.interceptor, per_people: 10000 }
     response: 600
+  # The ways back (2026-10-06): appeal within 30 days; the victim made whole first; all but murder settle; surrender halves
+  # a term; two days of outlawry worked off for each day served; small matters lapse in a year; the administration may pardon.
+  # It honours no other administration's outlawry yet: an outlaw of Treistun lives where Treistun's law does not reach.
+  redress:
+    appeal_within: 2592000
+    restitution_first: true
+    settles: [piracy, theft, smuggling, zoning breach, unlicensed mining, reckless flying, fraud, evasion]
+    surrender_share: 0.5
+    service_rate: 2.0
+    expires_after: 31557600
+    pardon: true
+  recognises: []
   policies:
     duty: 0.02
     land_rate: 3.17e-10
