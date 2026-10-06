@@ -6,5 +6,5 @@
   its ground was all read is made again once it is (`terrain_lod`); a whole globe's map reads the 5
   km heights alone (`height_and_crater_coarse`), where it used to read all 635 tiles (1.3 GB).
 - Low over Harvest: 144 frames a second, the worst of 300 at 10 ms, no hitches.
-- (Yesterday's note of the first frames waiting on tiles: that was the globe's map reading every
+- (The earlier note of the first frames waiting on tiles: that was the globe's map reading every
   tile; the bar at the top left is the hypernet's lag, not the frame time.)
