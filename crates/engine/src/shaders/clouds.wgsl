@@ -52,7 +52,7 @@ const CLOUD_CELL_MEAN: f32 = 0.482;
 const TAU_LOW: f32 = 10.0;
 const TAU_DEEP: f32 = 40.0;
 const TAU_FRONTAL: f32 = 20.0;
-const TAU_CIRRUS: f32 = 1.0;
+const TAU_CIRRUS: f32 = 0.4;
 const MID_SHELL_M: f32 = 4000.0;
 
 struct CloudField {
@@ -213,7 +213,10 @@ fn cl_cover(z: f32, frac: f32, soft: f32) -> vec2<f32> {
     let core = clamp((z - z_thr) / 1.5, 0.0, 1.0);
     // (And ±35% with the noise itself: under an overcast every point is a core, and a real
     // deck's base is mottled, its depth varying two- to threefold from cell to cell.)
-    return vec2<f32>(d, (0.2 + 0.8 * core) * (0.65 + 0.35 * clamp(z / 1.5, -1.0, 1.0)));
+    // (Thickness falls to nothing at a cloud's edge, and its core is thick: edges translucent wisps,
+    // cores bright, as real clouds' optical depth runs from ~0 at their edges to tens inside; a
+    // floor there drew every edge as an opaque cut-out.)
+    return vec2<f32>(d, max(pow(core, 1.2), 0.02) * 1.5 * (0.65 + 0.35 * clamp(z / 1.5, -1.0, 1.0)));
 }
 
 // Each shell's (density, optical depth) at body-fixed direction dir: [low, mid, high].
@@ -505,6 +508,11 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
     let t = cl.time_s;
     let cos_phase = dot(d, sun_dir);
     let sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+    // (The air between the eye and the clouds, marched once at the first cloud met and used for
+    // all: the shells lie a few km apart, the air's march was the costliest part, once a hit.)
+    var air_ready = false;
+    var air_in = vec3<f32>(0.0);
+    var air_tr = vec3<f32>(1.0);
     for (var i = 0; i < n; i++) {
         let p = o + d * ts[i];
         let up = normalize(p);
@@ -549,7 +557,22 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         }
         let mu_s = dot(up, sun_dir);
         let sunside = (mu_v > 0.0) == (mu_s > 0.0);
-        let sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
+        var sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
+        // Relief: the cloud a little toward the sun (its height's worth): thicker there, this point
+        // is on its shaded flank; thinner, a sunlit face. Bright tops, shaded sides, as cumulus
+        // and frontal towers look from above (low and frontal shells; none from far orbit, where
+        // the relief is under a pixel).
+        if (k <= 1 && sunside && pix_km < 3.0 && dt.x > 0.05) {
+            let sh = normalize(sun_dir - up * mu_s);
+            let qn = normalize(up + sh * (1500.0 / R));
+            let cols2 = cloud_columns(to_body * qn, f, R * 0.001, t, pix_km * 1.5, k + 1);
+            var d2 = cols2.low;
+            if (k == 1) {
+                d2 = cols2.mid;
+            }
+            let rel = clamp((dt.y - d2.y) / max(dt.y + d2.y, 1.0), -1.0, 1.0);
+            sheet = vec4<f32>(sheet.rgb * clamp(1.0 + 0.6 * rel, 0.55, 1.3), sheet.w);
+        }
         let alpha = sheet.w * dt.x * keep;
         // (A cloud passes about 1 − R of the light behind it, diffusely (non-absorbing: two-stream):
         // over bright ground — ice, snow, deserts — the ground's light shows through and the cloud
@@ -557,7 +580,12 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         let tt_ = (1.0 - CLOUD_G) * dt.y;
         let t_dif = 1.0 - tt_ / (2.0 + tt_);
         // (The air between the eye and the cloud: its light dimmed and hazed as the ground's.)
-        let seen = air_ground_lut(sheet.rgb, p + center, center, sun_dir, sun, a, tl, ml, smp);
+        if (!air_ready) {
+            air_in = air_ground_lut(vec3<f32>(0.0), p + center, center, sun_dir, sun, a, tl, ml, smp);
+            air_tr = air_ground_lut(vec3<f32>(1.0), p + center, center, sun_dir, sun, a, tl, ml, smp) - air_in;
+            air_ready = true;
+        }
+        let seen = sheet.rgb * air_tr + air_in;
         acc += trans * alpha * seen;
         trans *= 1.0 - alpha * (1.0 - t_dif);
         if (trans < 0.01) {
@@ -585,7 +613,8 @@ fn clouds_shadow(p: vec3<f32>, center: vec3<f32>, to_body: mat3x3<f32>, sun_dir:
     let f0 = cloud_field(to_body * up, cl, cm, ce, ca);
     var radii = array<f32, 3>(R + f0.lcl_m, R + MID_SHELL_M, R + max(f0.trop_m - 2000.0, 5000.0));
     var shade = 1.0;
-    for (var k = 0; k < 3; k++) {
+    // (The low and frontal shells: cirrus casts next to nothing.)
+    for (var k = 0; k < 2; k++) {
         let h = cl_sphere(o, sun_dir, radii[k]);
         if (h.y <= 0.0) {
             continue;
@@ -593,8 +622,9 @@ fn clouds_shadow(p: vec3<f32>, center: vec3<f32>, to_body: mat3x3<f32>, sun_dir:
         let q = normalize(o + sun_dir * h.y);
         let dir_b = to_body * q;
         let f = cloud_field(dir_b, cl, cm, ce, ca);
-        // (Shadows need no detail finer than their own blur: ~0.3 km at least.)
-        let cols = cloud_columns(dir_b, f, R * 0.001, cl.time_s, max(pix_km, 0.3), k + 1);
+        // (Shadows need no detail finer than ~1 km: cheaper, and a pixel's size taken per triangle
+        // of the ground no longer shows in them as facets.)
+        let cols = cloud_columns(dir_b, f, R * 0.001, cl.time_s, max(pix_km, 1.0), k + 1);
         var dt = cols.low;
         if (k == 1) {
             dt = cols.mid;
