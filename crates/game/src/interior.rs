@@ -3752,6 +3752,11 @@ fn a_day(needs: &[&str], item: &str) -> f64 {
     reg.needs.iter().filter(|n| needs.contains(&n.identity.key.as_str())).flat_map(|n| n.takes.iter()).filter(|t| t.item == item).map(|t| t.rate).sum::<f64>() * 86_400.0
 }
 
+/// How often each airlock cycles a day (a figure chosen: a working ship's crew in
+/// and out once), and the share of air's mass that is oxygen.
+const AIRLOCK_CYCLES: f64 = 1.0;
+const OXYGEN_IN_AIR: f64 = 0.232;
+
 /// The share of a jet's power that comes aboard as heat, where its record doesn't
 /// say (`function.heat_to_hull`, a product figure; the registry's first guess).
 const HEAT_TO_HULL: f64 = 1e-6;
@@ -4016,9 +4021,16 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let recovers = |k: &str| of("life_support").map(|p| num(&p.3, k)).fold(0.0, f64::max).min(0.999);
         let oxygen = a_day(&["need.air"], "element.o") * (1.0 - recovers("air_recovery"));
         let drunk = a_day(&["need.water", "need.washing"], "good.water") * (1.0 - recovers("water_recovery"));
-        let (ad, wd) = (air / (oxygen * crew), water / (drunk * crew));
+        // (Air lost through the airlocks: each one's record's air lost a cycle, at
+        // AIRLOCK_CYCLES a day; its oxygen made up from the store.)
+        let vented = of("airlock").map(|p| num(&p.3, "air_lost")).sum::<f64>() * AIRLOCK_CYCLES * OXYGEN_IN_AIR;
+        let (ad, wd) = (air / (oxygen * crew + vented), water / (drunk * crew));
+        // (Food: the stores that hold it against the need's rate.)
+        let food: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| h.contains("food"))).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let fd = food / (a_day(&["need.food"], "market.food") * crew).max(1e-9);
         let life = of("life_support").count();
-        lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS STORED{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && life > 0));
+        let food_text = if food > 0.0 { format!(", FOOD {fd:.0} DAYS") } else { ", NO FOOD STORED".into() };
+        lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS{food_text}{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && fd >= 1.0 && life > 0));
     }
     // Checks: sealed spaces, the way in, the way down, the ore's path.
     let mut faults = Vec::new();
@@ -6622,6 +6634,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
 
