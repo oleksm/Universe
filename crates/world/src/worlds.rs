@@ -493,6 +493,10 @@ pub struct Heights {
     n: usize,
     fine: std::sync::RwLock<HashMap<usize, (std::sync::Arc<Tile>, std::sync::atomic::AtomicU64)>>,
     clock: std::sync::atomic::AtomicU64,
+    /// The ~150 m tiles over mountains (layer B: `fz150.json`, `fz150_<face>_<x>_<y>.png`), where
+    /// the bake has them: their level and samples a side (`n + 1`); their slots follow the 600 m
+    /// tiles' and the river tiles'.
+    level150: Option<(u32, usize)>,
     /// Tiles asked for in the background.
     asked: Vec<std::sync::atomic::AtomicBool>,
     /// The highest the ground stands (m).
@@ -598,6 +602,9 @@ impl Heights {
         // (The highest ground from the tiles' bounds, where the bake has them.)
         let bound = fz.get("bounds").and_then(|b| b.as_object()).and_then(|b| b.values().filter_map(|v| v.get(1)?.as_f64()).reduce(f64::max));
         let tiles = 6 * (1usize << fine.level).pow(2);
+        // (The ~150 m level, if baked: as fz.json, its own level and size.)
+        let level150 = bake.has("fz150.json").then(|| bake.read("fz150.json")).transpose()?.map(|b| serde_json::from_slice::<Fine>(&b)).transpose().map_err(|e| e.to_string())?.map(|f| (f.level, f.n));
+        let tiles150 = level150.map_or(0, |(l, _)| 6 * (1usize << l).pow(2));
         // (The highest ground from the bake's peaks, with room: the heights themselves aren't read
         // till one's wanted.)
         #[derive(Deserialize)]
@@ -615,7 +622,8 @@ impl Heights {
             n: fine.n,
             fine: Default::default(),
             clock: Default::default(),
-            asked: (0..2 * tiles).map(|_| Default::default()).collect(),
+            level150,
+            asked: (0..2 * tiles + tiles150).map(|_| Default::default()).collect(),
             max: top + 500.0,
         })
     }
@@ -710,24 +718,54 @@ impl Heights {
     /// Where body direction `d` falls on the fine tiles: (face, x, y, its slot, and the place
     /// within the tile, 0..1 each way).
     fn locate(&self, d: glam::DVec3) -> (usize, usize, usize, usize, f64, f64) {
-        // (The tiles' cube is in the body's own frame: face by the largest axis, equal-angle u, v.)
-        let a = d.abs();
-        let (face, tu, tv) = if a.x >= a.y && a.x >= a.z {
-            if d.x > 0.0 { (0, -d.z / d.x, -d.y / d.x) } else { (1, d.z / -d.x, -d.y / -d.x) }
-        } else if a.y >= a.z {
-            if d.y > 0.0 { (2, d.x / d.y, d.z / d.y) } else { (3, d.x / -d.y, -d.z / -d.y) }
-        } else if d.z > 0.0 {
-            (4, d.x / d.z, -d.y / d.z)
-        } else {
-            (5, -d.x / -d.z, -d.y / -d.z)
-        };
-        let k = 1usize << self.level;
-        let to = |t: f64| ((t.atan() * 4.0 / std::f64::consts::PI + 1.0) / 2.0 * k as f64).clamp(0.0, k as f64 - 1e-9);
-        let (u, v) = (to(tu), to(tv));
-        let (x, y) = (u.floor() as usize, v.floor() as usize);
-        (face, x, y, (face * k + x) * k + y, u - x as f64, v - y as f64)
+        locate(d, self.level)
     }
 
+    /// The ~150 m difference at body direction `d` (m: from the 600 m heights, read bilinearly),
+    /// bilinear; 0 where there's no tile (all but mountains). And whether it's the whole of it.
+    fn fine150_at(self: &std::sync::Arc<Self>, d: glam::DVec3, detail: Detail) -> (f64, bool) {
+        let Some((level, n)) = self.level150.filter(|_| detail != Detail::Coarse) else { return (0.0, true) };
+        let (face, x, y, slot, fu, fv) = locate(d, level);
+        // (Its slots after the 600 m tiles' and the river tiles'.)
+        let base = 2 * 6 * (1usize << self.level).pow(2);
+        let (t, whole) = self.tile(base + slot, format!("fz150_{face}_{x}_{y}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)));
+        let Some(t) = t else { return (0.0, whole) };
+        let Tile::Heights(t) = &*t else { return (0.0, true) };
+        if t.len() < (n + 1) * (n + 1) {
+            return (0.0, true);
+        }
+        let (su, sv) = (fu * n as f64, fv * n as f64);
+        let (i0, j0) = ((su.floor() as usize).min(n - 1), (sv.floor() as usize).min(n - 1));
+        let (fi, fj) = (su - i0 as f64, sv - j0 as f64);
+        let at = |i: usize, j: usize| t[j * (n + 1) + i] as f64;
+        let raw = at(i0, j0) * (1.0 - fi) * (1.0 - fj) + at(i0 + 1, j0) * fi * (1.0 - fj) + at(i0, j0 + 1) * (1.0 - fi) * fj + at(i0 + 1, j0 + 1) * fi * fj;
+        // (Quarter-metres: the differences are small.)
+        ((raw - 32_768.0) / 4.0, whole)
+    }
+}
+
+/// Where body direction `d` falls on cube tiles at `level`: (face, x, y, its slot, and the place
+/// within the tile, 0..1 each way).
+fn locate(d: glam::DVec3, level: u32) -> (usize, usize, usize, usize, f64, f64) {
+    // (The tiles' cube is in the body's own frame: face by the largest axis, equal-angle u, v.)
+    let a = d.abs();
+    let (face, tu, tv) = if a.x >= a.y && a.x >= a.z {
+        if d.x > 0.0 { (0, -d.z / d.x, -d.y / d.x) } else { (1, d.z / -d.x, -d.y / -d.x) }
+    } else if a.y >= a.z {
+        if d.y > 0.0 { (2, d.x / d.y, d.z / d.y) } else { (3, d.x / -d.y, -d.z / -d.y) }
+    } else if d.z > 0.0 {
+        (4, d.x / d.z, -d.y / d.z)
+    } else {
+        (5, -d.x / -d.z, -d.y / -d.z)
+    };
+    let k = 1usize << level;
+    let to = |t: f64| ((t.atan() * 4.0 / std::f64::consts::PI + 1.0) / 2.0 * k as f64).clamp(0.0, k as f64 - 1e-9);
+    let (u, v) = (to(tu), to(tv));
+    let (x, y) = (u.floor() as usize, v.floor() as usize);
+    (face, x, y, (face * k + x) * k + y, u - x as f64, v - y as f64)
+}
+
+impl Heights {
     /// Tile `slot` (its file `name`) to `detail`: kept, read now (`Full`), or asked for in the
     /// background (`Loaded`: None and false meanwhile). Some(None): the bake has no such tile.
     fn tile(self: &std::sync::Arc<Self>, slot: usize, name: String, detail: Detail, read: fn(&[u8], usize) -> Option<Tile>) -> (Option<std::sync::Arc<Tile>>, bool) {
@@ -866,7 +904,8 @@ impl Heights {
     pub fn at_detail(self: &std::sync::Arc<Self>, dir: glam::DVec3, detail: Detail) -> (f64, bool) {
         let d = dir.normalize();
         let (fine, whole) = self.fine_at(d, detail);
-        (self.coarse_at(lon_lat(d)) + fine, whole)
+        let (fine150, whole150) = self.fine150_at(d, detail);
+        (self.coarse_at(lon_lat(d)) + fine + fine150, whole && whole150)
     }
 }
 
