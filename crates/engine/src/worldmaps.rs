@@ -70,38 +70,50 @@ impl WorldMaps {
     /// block-compressed with their mips, the climate as it is, the rock map one byte a texel
     /// (its red), no mips (read exactly).
     pub fn new(maps: [Option<Image>; SLOTS], air: Option<[f32; 16]>) -> Self {
-        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-        let mut out: [Option<Encoded>; SLOTS] = Default::default();
-        for (k, img) in maps.into_iter().enumerate() {
-            let Some(img) = img else { continue };
-            out[k] = Some(match k {
-                0..=2 | 5 if img.width % 4 == 0 && img.height % 4 == 0 => {
-                    let srgb = k < 2;
-                    let levels = crate::pbr::mips(&img, srgb);
-                    let params = texpresso::Params { algorithm: texpresso::Algorithm::RangeFit, ..Default::default() };
-                    let levels = levels
-                        .into_iter()
-                        .map(|(w, h, px)| {
-                            let mut c = vec![0u8; texpresso::Format::Bc1.compressed_size(w as usize, h as usize)];
-                            texpresso::Format::Bc1.compress(&px, w as usize, h as usize, params, &mut c);
-                            (w, h, c, w.div_ceil(4) * 8, h.div_ceil(4))
-                        })
-                        .collect();
-                    Encoded { width: img.width, height: img.height, format: if srgb { wgpu::TextureFormat::Bc1RgbaUnormSrgb } else { wgpu::TextureFormat::Bc1RgbaUnorm }, levels }
-                }
-                4 => {
-                    let px: Vec<u8> = img.rgba.chunks(4).map(|c| c[0]).collect();
-                    Encoded { width: img.width, height: img.height, format: wgpu::TextureFormat::R8Unorm, levels: vec![(img.width, img.height, px, img.width, img.height)] }
-                }
-                _ => {
-                    let srgb = k < 2;
-                    let levels = crate::pbr::mips(&img, srgb).into_iter().map(|(w, h, px)| (w, h, px, w * 4, h)).collect();
-                    Encoded { width: img.width, height: img.height, format: if srgb { wgpu::TextureFormat::Rgba8UnormSrgb } else { wgpu::TextureFormat::Rgba8Unorm }, levels }
-                }
-            });
-        }
-        WorldMaps { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), maps: out, air: air.unwrap_or([0.0; 16]), air_luts: None }
+        let mut k = 0;
+        Self::encoded(maps.map(|img| {
+            let e = img.and_then(|img| Self::encode(k, img));
+            k += 1;
+            e
+        }), air)
     }
+
+    /// Already encoded (`encode` each as it's read: one image held at a time, not all).
+    pub fn encoded(maps: [Option<Encoded>; SLOTS], air: Option<[f32; 16]>) -> Self {
+        static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
+        WorldMaps { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), maps, air: air.unwrap_or([0.0; 16]), air_luts: None }
+    }
+
+    /// Map `k` (a `Slot`) encoded for the GPU, as `new` encodes it.
+    pub fn encode(k: usize, img: Image) -> Option<Encoded> {
+        Some(match k {
+            0..=2 | 5 if img.width % 4 == 0 && img.height % 4 == 0 => {
+                let srgb = k < 2;
+                let levels = crate::pbr::mips(&img, srgb);
+                let params = texpresso::Params { algorithm: texpresso::Algorithm::RangeFit, ..Default::default() };
+                let levels = levels
+                    .into_iter()
+                    .map(|(w, h, px)| {
+                        let mut c = vec![0u8; texpresso::Format::Bc1.compressed_size(w as usize, h as usize)];
+                        texpresso::Format::Bc1.compress(&px, w as usize, h as usize, params, &mut c);
+                        (w, h, c, w.div_ceil(4) * 8, h.div_ceil(4))
+                    })
+                    .collect();
+                Encoded { width: img.width, height: img.height, format: if srgb { wgpu::TextureFormat::Bc1RgbaUnormSrgb } else { wgpu::TextureFormat::Bc1RgbaUnorm }, levels }
+            }
+            4 => {
+                let px: Vec<u8> = img.rgba.chunks(4).map(|c| c[0]).collect();
+                Encoded { width: img.width, height: img.height, format: wgpu::TextureFormat::R8Unorm, levels: vec![(img.width, img.height, px, img.width, img.height)] }
+            }
+            k if k < SLOTS => {
+                let srgb = k < 2;
+                let levels = crate::pbr::mips(&img, srgb).into_iter().map(|(w, h, px)| (w, h, px, w * 4, h)).collect();
+                Encoded { width: img.width, height: img.height, format: if srgb { wgpu::TextureFormat::Rgba8UnormSrgb } else { wgpu::TextureFormat::Rgba8Unorm }, levels }
+            }
+            _ => return None,
+        })
+    }
+
 
     pub fn id(&self) -> u64 {
         self.id

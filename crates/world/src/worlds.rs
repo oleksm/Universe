@@ -426,22 +426,34 @@ pub enum Detail {
 }
 
 /// A world's ground from its bake (`planet-sim-surface/1`): the 5 km heights over the whole
-/// sphere, and the 600 m tiles (where there is land) as the difference from them, each read
-/// from the store the first time it's wanted and kept. Metres from the sea.
+/// sphere, read the first time a height is wanted, and the 600 m tiles (where there is land) as
+/// the difference from them, read as they're wanted and kept while there's room (`TILE_BUDGET`):
+/// the least lately used go first, and are read again if wanted again (the same files: the same
+/// heights). Metres from the sea.
 pub struct Heights {
     bake: Bake,
-    /// The 5 km heights, raw (R·256 + G): equirectangular, row 0 north, column 0 at −180°.
-    coarse: Vec<u16>,
+    /// The 5 km heights' layout (rows, columns of tiles; a tile's size) and the heights, raw
+    /// (R·256 + G): equirectangular, row 0 north, column 0 at −180°.
+    index: (usize, usize, usize, usize),
+    coarse: std::sync::OnceLock<Vec<u16>>,
     width: usize,
     height: usize,
-    /// The 600 m tiles: (face, x, y) at `level`, each `n + 1` samples a side, raw (R·256 + G).
+    /// The 600 m tiles: (face, x, y) at `level`, each `n + 1` samples a side, raw (R·256 + G);
+    /// those read, by slot, with when each was last used.
     level: u32,
     n: usize,
-    fine: Vec<std::sync::OnceLock<Option<Vec<u16>>>>,
+    fine: std::sync::RwLock<HashMap<usize, (std::sync::Arc<Vec<u16>>, std::sync::atomic::AtomicU64)>>,
+    clock: std::sync::atomic::AtomicU64,
     /// Tiles asked for in the background.
     asked: Vec<std::sync::atomic::AtomicBool>,
     /// The highest the ground stands (m).
     pub max: f64,
+}
+
+/// The fine tiles kept, at most (bytes; `UNIVERSE_TILE_MB` to set it): a tile is about 2.1 MB.
+fn tile_budget() -> usize {
+    static BUDGET: std::sync::OnceLock<usize> = std::sync::OnceLock::new();
+    *BUDGET.get_or_init(|| std::env::var("UNIVERSE_TILE_MB").ok().and_then(|v| v.parse::<usize>().ok()).unwrap_or(384) << 20)
 }
 
 impl std::fmt::Debug for Heights {
@@ -494,21 +506,73 @@ impl Heights {
         }
         let ix: Index = serde_json::from_slice(&bake.read("hz.json")?).map_err(|e| e.to_string())?;
         let (tw, th) = (ix.tile[0], ix.tile[1]);
-        let (width, height) = (ix.cols * tw, ix.rows * th);
-        let mut coarse = vec![0u16; width * height];
-        for r in 0..ix.rows {
-            for c in 0..ix.cols {
-                let (w, h, px) = png_rg(&bake.read(&format!("hz_{r}_{c}.png"))?)?;
-                for y in 0..h.min(th) {
-                    coarse[(r * th + y) * width + c * tw..(r * th + y) * width + c * tw + w.min(tw)].copy_from_slice(&px[y * w..y * w + w.min(tw)]);
-                }
-            }
-        }
         let fine: Fine = serde_json::from_slice(&bake.read("fz.json")?).map_err(|e| e.to_string())?;
         let tiles = 6 * (1usize << fine.level).pow(2);
-        // (The highest of the 5 km heights, and room for the 600 m's peaks over them.)
-        let top = coarse.iter().copied().max().unwrap_or(0) as f64 / 2.0 - 12_000.0;
-        Ok(Heights { bake, coarse, width, height, level: fine.level, n: fine.n, fine: (0..tiles).map(|_| std::sync::OnceLock::new()).collect(), asked: (0..tiles).map(|_| Default::default()).collect(), max: top + 2_000.0 })
+        // (The highest ground from the bake's peaks, with room: the heights themselves aren't read
+        // till one's wanted.)
+        #[derive(Deserialize)]
+        struct Peak {
+            h: f64,
+        }
+        let top = bake.read("peaks.json").ok().and_then(|b| serde_json::from_slice::<Vec<Peak>>(&b).ok()).and_then(|p| p.iter().map(|p| p.h).reduce(f64::max)).unwrap_or(9_000.0);
+        Ok(Heights {
+            bake,
+            index: (ix.rows, ix.cols, tw, th),
+            coarse: std::sync::OnceLock::new(),
+            width: ix.cols * tw,
+            height: ix.rows * th,
+            level: fine.level,
+            n: fine.n,
+            fine: Default::default(),
+            clock: Default::default(),
+            asked: (0..tiles).map(|_| Default::default()).collect(),
+            max: top + 500.0,
+        })
+    }
+
+    /// The 5 km heights, read the first time they're wanted.
+    fn coarse(&self) -> &[u16] {
+        self.coarse.get_or_init(|| {
+            let (rows, cols, tw, th) = self.index;
+            let mut coarse = vec![0u16; self.width * self.height];
+            for r in 0..rows {
+                for c in 0..cols {
+                    let Ok((w, h, px)) = self.bake.read(&format!("hz_{r}_{c}.png")).and_then(|b| png_rg(&b)) else { continue };
+                    for y in 0..h.min(th) {
+                        let at = (r * th + y) * self.width + c * tw;
+                        coarse[at..at + w.min(tw)].copy_from_slice(&px[y * w..y * w + w.min(tw)]);
+                    }
+                }
+            }
+            coarse
+        })
+    }
+
+    /// Fine tile `slot` if it's kept (marked used now).
+    fn kept(&self, slot: usize) -> Option<std::sync::Arc<Vec<u16>>> {
+        let fine = self.fine.read().unwrap_or_else(|e| e.into_inner());
+        let (t, used) = fine.get(&slot)?;
+        used.store(self.clock.fetch_add(1, std::sync::atomic::Ordering::Relaxed), std::sync::atomic::Ordering::Relaxed);
+        Some(t.clone())
+    }
+
+    /// Keep fine tile `slot`, the least lately used let go past the budget.
+    fn keep(&self, slot: usize, tile: std::sync::Arc<Vec<u16>>) {
+        let mut fine = self.fine.write().unwrap_or_else(|e| e.into_inner());
+        let now = self.clock.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        fine.insert(slot, (tile, std::sync::atomic::AtomicU64::new(now)));
+        let bytes = |f: &HashMap<usize, (std::sync::Arc<Vec<u16>>, std::sync::atomic::AtomicU64)>| f.values().map(|(t, _)| t.len() * 2).sum::<usize>();
+        while bytes(&fine) > tile_budget() && fine.len() > 1 {
+            let Some(oldest) = fine.iter().filter(|(k, _)| **k != slot).min_by_key(|(_, (_, u))| u.load(std::sync::atomic::Ordering::Relaxed)).map(|(k, _)| *k) else { break };
+            fine.remove(&oldest);
+            self.asked[oldest].store(false, std::sync::atomic::Ordering::Relaxed);
+        }
+    }
+
+    /// How many fine tiles are kept, and their bytes.
+    pub fn kept_tiles(&self) -> (usize, usize) {
+        let fine = self.fine.read().unwrap_or_else(|e| e.into_inner());
+        (fine.len(), fine.values().map(|(t, _)| t.len() * 2).sum())
     }
 
     /// The 5 km height at `p` (m), bilinear.
@@ -518,10 +582,11 @@ impl Heights {
         let col = (p.lon + 180.0) / 360.0 * w - 0.5;
         let (r0, c0) = (row.floor(), col.floor());
         let (fr, fc) = (row - r0, col - c0);
+        let coarse = self.coarse();
         let at = |r: f64, c: f64| {
             let r = (r as usize).min(self.height - 1);
             let c = (c as isize).rem_euclid(self.width as isize) as usize;
-            self.coarse[r * self.width + c] as f64
+            coarse[r * self.width + c] as f64
         };
         let v = at(r0, c0) * (1.0 - fr) * (1.0 - fc) + at(r0, c0 + 1.0) * (1.0 - fr) * fc + at(r0 + 1.0, c0) * fr * (1.0 - fc) + at(r0 + 1.0, c0 + 1.0) * fr * fc;
         v / 2.0 - 12_000.0
@@ -554,23 +619,33 @@ impl Heights {
         let (u, v) = (to(tu), to(tv));
         let (x, y) = (u.floor() as usize, v.floor() as usize);
         let slot = (face * k + x) * k + y;
-        let name = format!("fz_{face}_{x}_{y}.png");
-        let tile = match detail {
-            Detail::Full => self.fine[slot].get_or_init(|| self.load(&name)),
-            _ => match self.fine[slot].get() {
-                Some(t) => t,
-                None => {
+        let name = || format!("fz_{face}_{x}_{y}.png");
+        // (Where the bake has no tile (the sea's), the 5 km heights alone.)
+        let t = match self.kept(slot) {
+            Some(t) => t,
+            None if !self.bake.has(&name()) => return (0.0, true),
+            None => match detail {
+                Detail::Full => match self.load(&name()) {
+                    Some(t) => {
+                        let t = std::sync::Arc::new(t);
+                        self.keep(slot, t.clone());
+                        t
+                    }
+                    None => return (0.0, true),
+                },
+                _ => {
                     if !self.asked[slot].swap(true, std::sync::atomic::Ordering::Relaxed) {
-                        let me = self.clone();
+                        let (me, name) = (self.clone(), name());
                         rayon::spawn(move || {
-                            let _ = me.fine[slot].get_or_init(|| me.load(&name));
+                            if let Some(t) = me.load(&name) {
+                                me.keep(slot, std::sync::Arc::new(t));
+                            }
                         });
                     }
                     return (0.0, false);
                 }
             },
         };
-        let Some(t) = tile else { return (0.0, true) };
         let n = self.n;
         let (su, sv) = ((u - x as f64) * n as f64, (v - y as f64) * n as f64);
         let (i0, j0) = ((su.floor() as usize).min(n - 1), (sv.floor() as usize).min(n - 1));

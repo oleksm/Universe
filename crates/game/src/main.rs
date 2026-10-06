@@ -113,6 +113,11 @@ pub enum Layer {
     Passengers,
 }
 
+/// A baked world's full maps are read once the eye is within this many of its radii, and let go
+/// past `WORLD_MAPS_FAR` (they're drawn within six).
+const WORLD_MAPS_NEAR: f64 = 8.0;
+const WORLD_MAPS_FAR: f64 = 16.0;
+
 pub struct App {
     /// The world engine (the client sends it commands), its latest view of
     /// the world, and the galaxy's charts.
@@ -1104,7 +1109,8 @@ impl App {
         }
     }
 
-    /// Terrain globes for the system in view (built once, on first sight).
+    /// Terrain globes for the system in view (built once, on first sight), and the full maps of
+    /// a baked world near the eye.
     fn build_globes(&mut self) {
         let origin = self.view.origin;
         for (i, b) in self.view.system.bodies.iter().enumerate() {
@@ -1113,8 +1119,15 @@ impl App {
             {
                 self.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
             }
-            // A world with a bake: its full-resolution maps, read and encoded on a thread of their own.
+            // A world with a bake: its full-resolution maps, read and encoded on a thread of their
+            // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
+            // (a few hundred megabytes each while held).
+            let away = self.view.positions.get(i).map_or(f64::INFINITY, |c| c.distance(self.camera.position)) / b.rail.radius;
+            if away > WORLD_MAPS_FAR {
+                self.world_maps.remove(&(origin, i));
+            }
             if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
+                && away < WORLD_MAPS_NEAR
                 && !self.world_maps.contains_key(&(origin, i))
             {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
@@ -1122,8 +1135,15 @@ impl App {
                 let t = t.clone();
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
-                    let img = |name: &str| t.bake_image(name).map(|(w, h, rgba)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba });
-                    let maps = universe_engine::WorldMaps::new([img("globe_color.jpg"), img("globe_ground.jpg"), img("globe_normal.jpg"), img("climate.png"), img("rockid.png"), img("globe_spec.png")], t.bake_air())
+                    // (Each read and encoded before the next is read: one image held at a time.)
+                    let names = ["globe_color.jpg", "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
+                    let mut k = 0;
+                    let encoded = names.map(|name| {
+                        let e = t.bake_image(name).and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
+                        k += 1;
+                        e
+                    });
+                    let maps = universe_engine::WorldMaps::encoded(encoded, t.bake_air())
                         .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
                     log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
                     if let Ok(mut s) = slot.lock() {
