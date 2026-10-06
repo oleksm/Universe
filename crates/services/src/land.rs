@@ -114,7 +114,12 @@ pub struct LandOffice {
     pub companies: Vec<(String, String)>,
     /// World time its facilities have run to (s).
     pub ran_to: f64,
+    /// World time the land rate has been levied to (s).
+    pub levied_to: f64,
 }
+
+/// How often the land rate is levied (s): daily.
+const LEVY_EVERY: f64 = 86_400.0;
 
 impl LandOffice {
     /// Seeded from the registry: each settlement at its system and port,
@@ -140,7 +145,28 @@ impl LandOffice {
                 companies.push((key.clone(), name.clone()));
             }
         }
-        LandOffice { grounds, companies, ran_to: 0.0 }
+        LandOffice { grounds, companies, ran_to: 0.0, levied_to: 0.0 }
+    }
+
+    /// The land rate, levied up to `now` a day at a time: each owned lot's
+    /// owner pays its system's law's rate on the lot's worth (its area at
+    /// the office's price) to the administration. (Where there's no law,
+    /// none.)
+    pub fn levy(&mut self, ledger: &mut crate::ledger::Ledger, now: f64, tick: universe_protocol::Tick) {
+        if self.levied_to == 0.0 {
+            self.levied_to = now;
+        }
+        while self.levied_to + LEVY_EVERY <= now {
+            self.levied_to += LEVY_EVERY;
+            for g in &self.grounds {
+                let Some(rate) = universe_world::order::law(&g.recorded.system).and_then(|l| l.policies.land_rate) else { continue };
+                for l in &g.lots {
+                    let Some(owner) = self.party(&l.owner) else { continue };
+                    let due = area(&l.outline) * LAND_PRICE * rate * LEVY_EVERY;
+                    let _ = ledger.transfer(owner, Party::Administration(g.system), crate::ledger::Asset::Credits, due, tick, universe_protocol::Cause::Rules);
+                }
+            }
+        }
     }
 
     /// The company `key` as a ledger party, made one of the office's

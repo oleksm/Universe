@@ -178,7 +178,7 @@ impl Universe {
         // The rigs (see `world::rigs`): each its own market, its owner's.
         for (i, sys) in &systems {
             for (b, body) in sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Rig) {
-                u.markets.economy.add_rig(&mut u.land, *i, b, &body.key);
+                u.markets.economy.add_rig(&mut u.land, *i, &sys.name, b, &body.key);
             }
         }
         u.start_docked();
@@ -360,6 +360,7 @@ impl Universe {
         universe_prof::time("sim/recorder", || self.record());
         let stepped = self.markets.economy.stepped_to;
         universe_prof::time("sim/economy", || self.markets.step(self.world.time, &mut self.land, &mut self.ledger, self.tick));
+        self.land.levy(&mut self.ledger, self.world.time, self.tick);
         // (The companies see to their works once a step of the economy.)
         if self.markets.economy.stepped_to > stepped {
             universe_prof::time("sim/companies", || crate::company::run(self));

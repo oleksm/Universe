@@ -137,6 +137,7 @@ impl Markets {
         let item = self.goods[o.item].clone();
         // (The exchange's market, or at a rig's dock its owner.)
         let me = self.economy.place(o.system, o.market).map_or(Party::Market(o.system, o.market), |p| p.trader);
+        let duty = self.economy.place(o.system, o.market).map_or(0.0, |p| p.duty);
         let who = Party::Pilot(o.pilot);
         let n = o.units.unsigned_abs() as f64;
         let kg = item.mass * n;
@@ -157,6 +158,8 @@ impl Markets {
             }
             ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
             ledger.transfer(me, who, Asset::Goods(item.id), n, tick, cause)?;
+            // (The seller owes the administration its duty on the sale.)
+            ledger.transfer(me, Party::Administration(o.system), Asset::Credits, cost * duty, tick, cause)?;
             self.economy.take(o.system, o.market, item.id, kg);
             Ok(cost)
         } else {
@@ -173,8 +176,9 @@ impl Markets {
             let paid = q.sell * n;
             ledger.transfer(who, me, Asset::Goods(item.id), n, tick, cause)?;
             ledger.transfer(me, who, Asset::Credits, paid, tick, cause)?;
+            ledger.transfer(who, Party::Administration(o.system), Asset::Credits, paid * duty, tick, cause)?;
             self.economy.put(o.system, o.market, item.id, kg);
-            Ok(-paid)
+            Ok(-paid * (1.0 - duty))
         }
     }
 
@@ -204,6 +208,8 @@ impl Markets {
         let cost = t * price;
         let seller = self.economy.place(system, market).map_or(Party::Market(system, market), |p| p.trader);
         ledger.transfer(who, seller, Asset::Credits, cost, tick, cause)?;
+        let duty = self.economy.place(system, market).map_or(0.0, |p| p.duty);
+        ledger.transfer(seller, Party::Administration(system), Asset::Credits, cost * duty, tick, cause)?;
         if let Some((item, _)) = stocked {
             self.economy.take(system, market, item, t * 1000.0);
         }

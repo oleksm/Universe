@@ -162,11 +162,18 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!((u.credits() - (before - paid)).abs() < 1e-6);
     assert_eq!(u.hold(), vec![(item, 3)]);
     assert!((u.ship.cargo - 3.0 * u.world.goods[item].mass).abs() < 1e-6, "the core's mass follows the hold");
-    // Both legs journalled, caused by our request.
-    let legs: Vec<_> = u.ledger.journal.iter().rev().take(2).collect();
+    // Both legs journalled, and the seller's duty to the administration (Treistun's law: 2%), caused by our request.
+    let legs: Vec<_> = u.ledger.journal.iter().rev().take(3).collect();
     assert!(legs.iter().all(|e| matches!(e.cause, universe_sim::protocol::Cause::Message { sender: 0, .. })), "{legs:?}");
     assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(0)));
     assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(0)));
+    assert!(legs.iter().any(|e| e.to == Party::Administration(home) && (e.amount - 0.02 * paid).abs() < 1e-6), "the duty: {legs:?}");
+    // The land rate: a day's levy on every owned lot, to the administration.
+    let before = u.ledger.credits(Party::Administration(home));
+    let now = u.world.time;
+    u.land.levy(&mut u.ledger, now, u.tick);
+    u.land.levy(&mut u.ledger, now + 86_400.0, u.tick);
+    assert!(u.ledger.credits(Party::Administration(home)) > before, "the land rate levied");
     assert!(u.ledger.balanced(), "nothing made or lost");
     // A jolt harder than a part takes (SFO 15) breaks it in the hold; ore takes any jolt.
     let part = u.world.goods.iter().find(|g| g.shock_limit.is_some_and(|l| l < 15.0 * 9.80665)).map(|g| g.id).expect("a part that takes under 15 g");
