@@ -308,9 +308,9 @@ fn cl_sphere(o: vec3<f32>, d: vec3<f32>, rs: f32) -> vec2<f32> {
 // multiple scattering (Wrenninge 2013: each fainter, wider, less forward), a two-lobed phase
 // (forward 0.8, back −0.3), and the sky's light, dimmer toward the base. Beyond, the sheet, the two
 // crossfaded over the range's last 40%.
-const VOL_RANGE_M: f32 = 30000.0;
+const VOL_RANGE_M: f32 = 15000.0;
 const VOL_NEAR_M: f32 = 6000.0;
-const VOL_STEPS: i32 = 48;
+const VOL_STEPS: i32 = 64;
 
 fn cl_hg(c: f32, g: f32) -> f32 {
     return (1.0 - g * g) / (4.0 * 3.1415927 * pow(max(1.0 + g * g - 2.0 * g * c, 1e-4), 1.5));
@@ -385,7 +385,11 @@ fn cl_volume(o: vec3<f32>, d: vec3<f32>, s0: f32, s1: f32, f: CloudField, to_bod
             b_ *= 0.4;
             c_ *= 0.5;
         }
-        let lit = sun * (ms * 3.1415927) * step(0.0, mu_s) + sky * (0.35 + 0.65 * hr);
+        // (A cloud's body is bright all through: light scattered many times inside it, ~its
+        // albedo of the sun near the top, less toward the base, the steps too coarse to find the
+        // thin lit skin themselves.)
+        let body = max(mu_s, 0.0) * 0.55 * (0.3 + 0.7 * hr);
+        let lit = sun * (ms * 3.1415927 + body) * step(0.0, mu_s) + sky * (0.35 + 0.65 * hr);
         let st = exp(-sg * ds);
         acc += tr * lit * (1.0 - st);
         tr *= st;
