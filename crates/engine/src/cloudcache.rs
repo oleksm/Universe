@@ -1,17 +1,17 @@
 //! The bound world's clouds, cached (the lab's design: clouds.wgsl, "The cloud cache"): each
-//! shell's cover and optical depth over three nested levels round the point under the eye (4,000,
-//! 400 and 40 km across each way), 512² texels a level, so a pixel's clouds are a few texture
+//! shell's smooth noise over four nested levels round the point under the eye (8,000, 800, 80 and
+//! 8 km across), 512² texels a level, so a pixel's clouds are a few texture
 //! reads, not the noise. Filled by a compute pass a few layers a frame; refreshed round-robin (the
-//! clouds move slowly); re-centred when the eye has moved an eighth of the inner level; each change
+//! clouds move slowly); re-centred when the eye has moved an eighth of the inner level (1 km); each change
 //! eased in from the copy before it over `FADE_S`, never at once.
 
 use glam::DVec3;
 
 /// Texels a side, layers (three levels, three shells each).
 const N: u32 = 512;
-const LAYERS: u32 = 9;
-/// Each level's half-width (m): outer, middle, inner.
-const HALF: [f64; 3] = [4.0e6, 4.0e5, 4.0e4];
+const LAYERS: u32 = 12;
+/// Each level's half-width (m), outer to inner.
+const HALF: [f64; 4] = [4.0e6, 4.0e5, 4.0e4, 4.0e3];
 /// Layers filled a frame.
 const PER_FRAME: u32 = 2;
 /// How long a change takes to come in (s).
@@ -68,7 +68,7 @@ pub(crate) struct CloudCache {
     radius: f64,
     frame: Option<Frame3>,
     old: Option<Frame3>,
-    fade: [f32; 3],
+    fade: [f32; 4],
     job: Option<Job>,
     /// The level refreshed next (round-robin).
     turn: usize,
@@ -104,7 +104,7 @@ impl CloudCache {
         });
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("cloud cache fill"), bind_group_layouts: &[Some(&layout)], immediate_size: 0 });
         let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("cloud cache fill"), layout: Some(&pl), module: &module, entry_point: Some("cloud_cache_fill"), compilation_options: Default::default(), cache: None });
-        CloudCache { new, before, new_view, old_view, store_view, uniform, pipe, layout, world: None, radius: 1.0, frame: None, old: None, fade: [1.0; 3], job: None, turn: 0, last: std::time::Instant::now() }
+        CloudCache { new, before, new_view, old_view, store_view, uniform, pipe, layout, world: None, radius: 1.0, frame: None, old: None, fade: [1.0; 4], job: None, turn: 0, last: std::time::Instant::now() }
     }
 
     /// This frame's part: the world bound (its maps' id, radius, the clouds' uniform and maps), the
@@ -122,7 +122,7 @@ impl CloudCache {
             return;
         };
         if self.world != Some(id) {
-            (self.world, self.radius, self.frame, self.old, self.fade, self.job, self.turn) = (Some(id), radius, None, None, [1.0; 3], None, 0);
+            (self.world, self.radius, self.frame, self.old, self.fade, self.job, self.turn) = (Some(id), radius, None, None, [1.0; 4], None, 0);
         }
         // (A change being eased in.)
         let filling: Vec<usize> = self.job.as_ref().map_or(Vec::new(), |j| j.levels.clone());
@@ -135,10 +135,10 @@ impl CloudCache {
         // gone far enough; else the next level round.)
         if self.job.is_none() && self.fade.iter().all(|f| *f >= 1.0) {
             let off = self.frame.map(|f| (under - f.c * under.dot(f.c)).length() * self.radius);
-            let recentre = off.is_none_or(|o| o > RECENTRE * 2.0 * HALF[2]);
-            let levels = if recentre { vec![0, 1, 2] } else { vec![self.turn] };
+            let recentre = off.is_none_or(|o| o > RECENTRE * 2.0 * HALF[3]);
+            let levels = if recentre { vec![0, 1, 2, 3] } else { vec![self.turn] };
             if !recentre {
-                self.turn = (self.turn + 1) % 3;
+                self.turn = (self.turn + 1) % HALF.len();
             }
             // (What's there now kept as the copy before, with its frame; the new frame set.)
             encoder.copy_texture_to_texture(self.new.as_image_copy(), self.before.as_image_copy(), wgpu::Extent3d { width: N, height: N, depth_or_array_layers: LAYERS });
@@ -183,7 +183,7 @@ impl CloudCache {
             if job.next >= layers.len() {
                 // (The first fill has nothing before it to ease from.)
                 if self.old.is_none() {
-                    self.fade = [1.0; 3];
+                    self.fade = [1.0; 4];
                 }
                 self.job = None;
             }
@@ -199,8 +199,8 @@ impl CloudCache {
             center: v(frame.c, self.radius as f32),
             e1: v(frame.e1, has),
             e2: v(frame.e2, 0.0),
-            half_m: [HALF[0] as f32, HALF[1] as f32, HALF[2] as f32, 0.0],
-            fade: [self.fade[0], self.fade[1], self.fade[2], 0.0],
+            half_m: HALF.map(|h| h as f32),
+            fade: self.fade,
             old_center: v(old.c, self.radius as f32),
             old_e1: v(old.e1, 1.0),
             old_e2: v(old.e2, 0.0),

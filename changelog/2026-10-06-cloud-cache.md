@@ -10,3 +10,12 @@
   back to the noise where no level holds a place. A new world bound: the cache starts again.
 - Measured at 1080p, full scale, over Heath: from 77 km the scene 9.2 → 2.9 ms; from 30 km
   11.6 → 4.9; from 14 km over the sea 11.0 → 3.9; at 3 km/s from 14 km 3.1, no errors.
+- A fourth, finest level (8 km across, ~16 m texels; 12 layers), and the lab's cache holding the
+  clouds' smooth noise (cut to cover after it's read: no square blobs) with the fallback to the
+  noise only where even the finest level is 8 times coarser than a pixel. Re-centred each
+  kilometre the eye moves.
+- `tools/render/gpu_budget.sh` at 4K on a quiet GPU: from 77 km 7.2 ms, 30 km 8.8, the sea from
+  14 km 5.4 (was 16.7), the range from 3 km 7.0 (was 11.9): all within the scene's 10 ms.
+- `fso` and `planet` merged: the crewing records (command slots, nine equipment kinds, all not
+  made) and SFO 21 Marking (serials and lots: the stamping is queued); the lab's clustered
+  clouds at 60% cover.
