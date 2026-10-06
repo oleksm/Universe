@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.studio
+  name: "Studios"
+  description: "Workrooms with north light: where painters, makers and writers work and show, and anyone may come and look."
+physical:
+  length: 30
+  width: 15
+  height: 8
+  mass: 992700
+per_people: 10000
+floor: 900
+storeys: 2
+meets:
+  - { need: need.art, people: 10000 }
+staff:
+  - { profession: profession.artist, count: 10 }
+  - { profession: profession.clerk, count: 1 }
+built_of:
+  - { item: good.concrete, quantity: 936000 }
+  - { item: material.structural-steel-a36, quantity: 52200 }
+life: 1577880000
+basis:
+  - { of: [per_people, staff, meets], tier: invented, review: true, note: "One to 10,000 people with ten artists, the need's one to 1,000; the theatre has as many more." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

@@ -207,7 +207,7 @@ def key_of(rel, rec):
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
-        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount."}[kind] + low
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount.", "sights": "sight."}[kind] + low
     if root == "MakerHouse":
         return "org."
     if root == "People":
@@ -219,8 +219,8 @@ def key_of(rel, rec):
             return "seeding." + low
         if len(p) == 3:
             return "seeding." + low
-        if p[2] in ("rock-classes", "vocabulary", "rock-units", "deposit-types"):
-            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary.", "rock-units": "rock-unit.", "deposit-types": "deposit-type."}[p[2]] + low
+        if p[2] in ("rock-classes", "vocabulary", "rock-units", "deposit-types", "sights"):
+            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary.", "rock-units": "rock-unit.", "deposit-types": "deposit-type.", "sights": "sight."}[p[2]] + low
         if len(p) == 4:
             return "system." + low
         return {"bodies": "body.", "fields": "population.", "small-bodies": "body.", "regions": "population."}[p[4]] + p[3] + "." + low

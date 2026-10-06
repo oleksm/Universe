@@ -1139,3 +1139,12 @@ survey's deposit and draws it down. The store filling with tailings and waste ro
 `module.waste-dump` (200 Mt, the barren rock) stand at both camps' mines, on claim parcels widened
 to hold them. The dam's tailings are what the brickworks and the concrete plant take, when they
 want them; the dump is what the pit swallows when it is backfilled, later. `worlds::Survey` noted.
+
+**Spirit's places (2026-10-06, night).** The Needs report reads **0 gaps**: every one of the 20
+needs has something described that meets it. New: **sights** (`sight.*`, `Celestial/metadata/sights/`,
+dictionary `sight_kind`): places worth going to see with the runs' own figures and positions (the
+Spire of Heath 8,920 m at 10.92 N −110.96 E; Hoar's Horn; the Ice of Hoar; the Great Basin of
+Cinder 3,758 km across; the Rings of Drum from Drum G I); the game's map can show them and a mind
+can want to go. Buildings studio, park, arena. `need.art` no longer takes `market.art`: art is a
+service of artists where they work; the market category stays until an artwork is an item. "Work"
+is met by a job (the census), the wage yours. `docs/registry-spirit.md`.

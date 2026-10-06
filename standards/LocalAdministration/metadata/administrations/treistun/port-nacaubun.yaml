@@ -23,10 +23,13 @@ buildings:
   - { building: building.care-home, count: 30 }
   - { building: building.market-hall, count: 12 }
   - { building: building.inn, count: 12 }
+  - { building: building.park, count: 12 }
   - { building: building.watch-house, count: 6 }
   - { building: building.bank, count: 6 }
+  - { building: building.studio, count: 6 }
   - { building: building.flight-school, count: 3 }
   - { building: building.theatre, count: 3 }
+  - { building: building.arena, count: 3 }
   - { building: building.courthouse, count: 2 }
   - { building: building.press, count: 2 }
   - { building: building.college, count: 2 }
@@ -34,12 +37,12 @@ buildings:
   - { building: building.gaol, count: 1 }
 # census: its 60,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.clerk, count: 6402 }
+  - { profession: profession.clerk, count: 6423 }
   - { profession: profession.nurse, count: 3572 }
-  - { profession: profession.builder, count: 1400 }
+  - { profession: profession.builder, count: 1412 }
   - { profession: profession.driver, count: 1370 }
   - { profession: profession.food-worker, count: 1350 }
-  - { profession: profession.technician, count: 1025 }
+  - { profession: profession.technician, count: 1034 }
   - { profession: profession.merchant, count: 978 }
   - { profession: profession.teacher, count: 896 }
   - { profession: profession.doctor, count: 808 }
@@ -53,16 +56,16 @@ census:
   - { profession: profession.lawyer, count: 270 }
   - { profession: profession.machinist, count: 240 }
   - { profession: profession.constable, count: 200 }
+  - { profession: profession.artist, count: 120 }
+  - { profession: profession.performer, count: 75 }
   - { profession: profession.plant-operator, count: 60 }
   - { profession: profession.banker, count: 60 }
-  - { profession: profession.performer, count: 60 }
-  - { profession: profession.artist, count: 60 }
+  - { profession: profession.farmer, count: 58 }
   - { profession: profession.chemist, count: 26 }
   - { profession: profession.reporter, count: 20 }
   - { profession: profession.pilot, count: 12 }
-  - { profession: profession.farmer, count: 10 }
   - { profession: profession.judge, count: 10 }
-  - { profession: profession.dependant, count: 38321 }
+  - { profession: profession.dependant, count: 38156 }
 # independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 72 }

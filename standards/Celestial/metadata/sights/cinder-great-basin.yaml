@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/sight.schema.yaml
+identity:
+  key: sight.cinder-great-basin
+  name: "The Great Basin of Cinder"
+  about: "The largest impact basin on Cinder, 3,760 km across and 2.3 km deep, its rim a kilometre high, 4.3 billion years old: the floor is the melt that pooled when it was struck, and the horizon from its centre is the rim."
+at: body.treistun.treistun-b
+kind: basin
+position: { latitude: -51.11, longitude: -71.39 }
+diameter: 3758290
+depth: 2298
+source: TRB1-BAS-001
+basis:
+  - { of: [kind, position, height, diameter, depth, source], tier: sourced, source: "the planet simulation's packages in the worlds store", note: "Cinder's survey (TRB1, impacts.json): basin TRB1-BAS-001, 3,758 km, depth 2,298 m, rim 1,028 m, 4,344 Myr." }
+  - { of: [identity.name], tier: invented, note: "The name is the registry's." }
