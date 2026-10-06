@@ -10,8 +10,6 @@ identity:
     share: 0.467
   - part: element.o
     share: 0.533
-  form:
-  - foam
 mass:
   density: 100.0
 mechanical:

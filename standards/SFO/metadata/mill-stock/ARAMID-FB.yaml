@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.aramid-fb
+  code: ARAMID-FB
+  name: "Aramid fibre, on bobbins"
+  traded_as: market.textiles
+  form: fibre
+made_from:
+  - item: material.aramid-fibre
+basis:
+  - { of: [identity], tier: invented, review: true, note: "Aramid fibre as it is sold: spun and wound. The honeycomb works takes it for the aramid core. Added 2026-10-06." }

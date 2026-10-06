@@ -4,9 +4,8 @@ identity:
   key: material.hydraulic-fluid
   name: Hydraulic fluid (phosphate ester)
   class: fluid
-  form:
-  - fluid
 mass:
   density: 1000
 basis:
   - { of: [mass.density], tier: invented, review: true, note: "From memory of phosphate ester fluids: no source was looked up." }
+  - { of: [identity.form], tier: derived, note: "Forms struck 2026-10-06 that no stock comes in and nothing in the registry uses (fluid): a form is said only where a stock record and its recipe exist. The material stays described; stock comes when something needs it." }

@@ -9,9 +9,6 @@ identity:
     share: 0.599
   - part: element.s
     share: 0.401
-  form:
-  - powder
-  - film
 mass:
   density: 5060.0
 mechanical:

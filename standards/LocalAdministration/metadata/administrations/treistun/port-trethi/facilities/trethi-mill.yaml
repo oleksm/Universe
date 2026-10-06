@@ -70,6 +70,7 @@ lines:
     modules:
       - { module: module.cold-rolling-mill, count: 1 }
   - makes: stock.cfc-sh-0p5
+    also: [stock.aramid-fb]
     modules:
       - { module: module.composites-works, count: 1 }
 # Where its stock is kept.

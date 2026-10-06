@@ -6,7 +6,6 @@ identity:
   class: polymer
   form:
   - fibre
-  - fabric
 mass:
   density: 1440.0
 mechanical:

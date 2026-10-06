@@ -39,21 +39,21 @@ recipes:
   - makes: stock.hc-ar-12p7
     does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
-      - { item: material.aramid-fibre, quantity: 0.75 }
+      - { item: stock.aramid-fb, quantity: 0.75 }
       - { item: good.polyethylene, quantity: 0.35 }
     rate: 0.3
     power: 400000
   - makes: stock.hc-ar-25p4
     does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
-      - { item: material.aramid-fibre, quantity: 0.75 }
+      - { item: stock.aramid-fb, quantity: 0.75 }
       - { item: good.polyethylene, quantity: 0.35 }
     rate: 0.3
     power: 400000
   - makes: stock.hc-ar-50p8
     does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
     inputs:
-      - { item: material.aramid-fibre, quantity: 0.75 }
+      - { item: stock.aramid-fb, quantity: 0.75 }
       - { item: good.polyethylene, quantity: 0.35 }
     rate: 0.3
     power: 400000

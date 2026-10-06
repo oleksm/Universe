@@ -462,7 +462,7 @@
 - { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-06T18:50:34Z", status: "", summary: "changed: processes", sha: "25e9773f7e633394" }
 - { record: facility.treistun.port-trethi.trethi-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "457659c2302eeaef" }
 - { record: facility.treistun.port-trethi.trethi-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "20bc6eb10d26153f" }
-- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-06T19:01:21Z", status: "", summary: "changed: lines", sha: "33b82230bf0af7c4" }
+- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-06T19:17:39Z", status: "", summary: "changed: lines", sha: "3841e867797a752f" }
 - { record: facility.treistun.port-trethi.trethi-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "b02941881f765a35" }
 - { record: facility.treistun.port-trethi.trethi-smelter, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "24ef6e22e88cb38b" }
 - { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-06T19:01:21Z", status: "", summary: "changed", sha: "381e42b8006514ee" }
@@ -753,10 +753,10 @@
 - { record: market.tools, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "293492d28d12fdbf" }
 - { record: market.water, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e0d3e9ef9e878e35" }
 - { record: market.weapons, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f995204e1964886f" }
-- { record: material.aluminium-1350, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3849137c8c3e42db" }
+- { record: material.aluminium-1350, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "ef2cd8e22f0dcf22" }
 - { record: material.aluminium-alloy-6061, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "f6a4dbb16f5cdab1" }
 - { record: material.aluminium-honeycomb, at: "2026-10-06T19:01:21Z", status: review, summary: "first tracked", sha: "59ce024cb83d1b91" }
-- { record: material.aramid-fibre, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "edd4e78a1893ac8b" }
+- { record: material.aramid-fibre, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "227e3abb55679db0" }
 - { record: material.aramid-honeycomb, at: "2026-10-06T19:01:21Z", status: review, summary: "first tracked", sha: "7b084cefd4f1eeb0" }
 - { record: material.bearing-bronze-c93200, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity, basis", sha: "173ec820caaeaab9" }
 - { record: material.carbon-fibre-composite, at: "2026-10-06T19:02:12Z", status: review, summary: "changed: identity", sha: "f42a1535f8e70864" }
@@ -764,26 +764,26 @@
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
 - { record: material.deuterium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c18843da0cb0ca3d" }
-- { record: material.fused-silica, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c6639c73186a85e9" }
-- { record: material.gold, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "0cb636c1c7278c1a" }
+- { record: material.fused-silica, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "51744f8a80a6dc50" }
+- { record: material.gold, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "e066e4b18ad2df65" }
 - { record: material.helium-3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "566c90a94918ede3" }
 - { record: material.high-strength-steel-4340, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "07f7a8e314f48d64" }
 - { record: material.honeycomb-sandwich-panel, at: "2026-10-06T19:02:12Z", status: review, summary: "changed: identity", sha: "19b1f9bf5d3a9206" }
-- { record: material.hydraulic-fluid, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "ae7b1aab51943404" }
+- { record: material.hydraulic-fluid, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity, basis", sha: "6fac818a88a1348a" }
 - { record: material.hydrogen, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "de2bc465a53b03ce" }
 - { record: material.hydrolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "339cb991d2da1524" }
 - { record: material.kerolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a89067f18adc3c4e" }
-- { record: material.lead, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c3815327208e04eb" }
+- { record: material.lead, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "7c000bf7e6d32043" }
 - { record: material.methalox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "4d09f4f4df93af14" }
-- { record: material.molybdenum-disulphide, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "e74a609da45aad41" }
+- { record: material.molybdenum-disulphide, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "73f997d94032fa1e" }
 - { record: material.multi-layer-insulation, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "4eb924c5d35488a9" }
-- { record: material.polyethylene-uhmw, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cb1a757d642b4de5" }
-- { record: material.polyimide-film, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "4a29f27cc33f7d62" }
-- { record: material.ptfe, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5c03248f063584fc" }
-- { record: material.silica-aerogel, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ab70fc0e01cb582b" }
-- { record: material.silica-tile-li-900, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "560da1661005f902" }
+- { record: material.polyethylene-uhmw, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "26af8bdb2f507c81" }
+- { record: material.polyimide-film, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "287b8c5cff16eee0" }
+- { record: material.ptfe, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "11facd796d3868ff" }
+- { record: material.silica-aerogel, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "b11e134209b0af63" }
+- { record: material.silica-tile-li-900, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "f42183a9650011b5" }
 - { record: material.silicon-carbide, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "ce704c88879358d7" }
-- { record: material.silicone-rubber, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cbba71bf2ab09542" }
+- { record: material.silicone-rubber, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "7db825244b00a914" }
 - { record: material.stainless-steel-304, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "dcc7c00c7de38cca" }
 - { record: material.structural-steel-a36, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "f5bc613714cf1f95" }
 - { record: material.titanium-alloy-ti-6al-4v, at: "2026-10-06T19:02:12Z", status: review, summary: "changed: identity", sha: "3486b027e3048f5e" }
@@ -812,7 +812,7 @@
 - { record: module.coal-mine, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "788444b6fc65f996" }
 - { record: module.cold-rolling-mill, at: "2026-10-06T19:01:21Z", status: review, summary: "changed: recipes", sha: "b09af83104ee7b81" }
 - { record: module.cold-store, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "5e6f4e11b9b272de" }
-- { record: module.composites-works, at: "2026-10-06T19:01:21Z", status: review, summary: "changed: recipes", sha: "8f985926d9723f01" }
+- { record: module.composites-works, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: recipes", sha: "cb0116e0ba5d304d" }
 - { record: module.compost-works, at: "2026-10-06T18:10:29Z", status: review, summary: "changed: recipes, life, basis", sha: "8bc669752dfab0d2" }
 - { record: module.concentrator, at: "2026-10-06T18:25:49Z", status: review, summary: "changed: recipes, basis", sha: "bbd30751165bcf94" }
 - { record: module.concrete-plant, at: "2026-10-06T18:10:29Z", status: review, summary: "changed: recipes, life, basis", sha: "cd556992e7df6882" }
@@ -841,7 +841,7 @@
 - { record: module.gold-works, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "254bff6dee33eaa6" }
 - { record: module.grain-silo, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "138b84f09864b905" }
 - { record: module.grow-hall, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "e920751ff80bd843" }
-- { record: module.honeycomb-works, at: "2026-10-06T19:01:21Z", status: review, summary: "first tracked", sha: "cc26a30e9a2bb805" }
+- { record: module.honeycomb-works, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: recipes", sha: "106356f2726727f3" }
 - { record: module.hot-rolling-mill, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "38dc4f0cef8b12a8" }
 - { record: module.hydrogen-plant, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "0a5191b80388897e" }
 - { record: module.ice-melter, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "e5e26953a1440c85" }
@@ -2016,6 +2016,7 @@
 - { record: stock.alumina-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "11b7875554bba99d" }
 - { record: stock.animal-feed-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "b2784debdbcb22ca" }
 - { record: stock.apples-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "4fec18192cdbd56c" }
+- { record: stock.aramid-fb, at: "2026-10-06T19:17:39Z", status: review, summary: "first tracked", sha: "7c0d802710c791b9" }
 - { record: stock.asteroid-water-ice-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "86aa82eca0df2503" }
 - { record: stock.bagasse-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "aaf6aadbfd70e538" }
 - { record: stock.bananas-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "117a0557fca56703" }

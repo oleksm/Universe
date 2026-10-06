@@ -4,8 +4,6 @@ identity:
   key: material.polyimide-film
   name: Polyimide film (Kapton)
   class: polymer
-  form:
-  - film
   grade: HN, 25 um
 mass:
   density: 1420.0
