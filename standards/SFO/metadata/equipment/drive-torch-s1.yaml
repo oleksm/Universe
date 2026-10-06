@@ -7,6 +7,7 @@ identity:
   slot: drive
   description: "The main drive: a fusion torch."
 size_class: 1
+fits: mount.drive-s1
 physical:
   mass: 3500
   volume: 8

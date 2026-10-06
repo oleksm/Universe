@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: tank
 size_class: 2
+fits: mount.tank-s2
 physical:
   mass: 1100
   volume: 150

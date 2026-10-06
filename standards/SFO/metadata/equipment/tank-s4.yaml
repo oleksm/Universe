@@ -7,6 +7,7 @@ identity:
   slot: tank
   description: "A fuel tank."
 size_class: 4
+fits: mount.tank-s4
 physical:
   mass: 5000
   volume: 800

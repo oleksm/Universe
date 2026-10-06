@@ -7,6 +7,7 @@ identity:
   slot: gate
   description: "Links the gate to the system's other sites through hyperspace, so news crosses the system in seconds."
 size_class: 4
+fits: mount.gate-s4
 physical:
   mass: 15000
   volume: 40

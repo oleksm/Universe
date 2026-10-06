@@ -20,22 +20,22 @@ capacity:
   hold: 4000
 shape: shape.interceptor
 slots:
-  - { name: power, kind: power, size: 2 }
-  - { name: drive, kind: drive, size: 2 }
-  - { name: thrusters, kind: thrusters, size: 2 }
-  - { name: lift, kind: lift, size: 1 }
-  - { name: tank, kind: tank, size: 1 }
-  - { name: cargo, kind: cargo, size: 1 }
-  - { name: hyperdrive, kind: hyperdrive, size: 1 }
-  - { name: capacitor, kind: capacitor, size: 1 }
-  - { name: computer, kind: computer, size: 1 }
-  - { name: transponder, kind: transponder, size: 1 }
-  - { name: sensors, kind: sensors, size: 1 }
-  - { name: comm, kind: comm, size: 1 }
-  - { name: life, kind: life_support, size: 1 }
-  - { name: hardpoint_1, kind: hardpoint, size: 1 }
-  - { name: hardpoint_2, kind: hardpoint, size: 1 }
-  - { name: avionics, kind: avionics, size: 1 }
+  - { name: power, kind: power, size: 2, mount: mount.power-s2 }
+  - { name: drive, kind: drive, size: 2, mount: mount.drive-s2 }
+  - { name: thrusters, kind: thrusters, size: 2, mount: mount.thrusters-s2 }
+  - { name: lift, kind: lift, size: 1, mount: mount.lift-s1 }
+  - { name: tank, kind: tank, size: 1, mount: mount.tank-s1 }
+  - { name: cargo, kind: cargo, size: 1, mount: mount.cargo-s1 }
+  - { name: hyperdrive, kind: hyperdrive, size: 1, mount: mount.hyperdrive-s1 }
+  - { name: capacitor, kind: capacitor, size: 1, mount: mount.capacitor-s1 }
+  - { name: computer, kind: computer, size: 1, mount: mount.computer-s1 }
+  - { name: transponder, kind: transponder, size: 1, mount: mount.transponder-s1 }
+  - { name: sensors, kind: sensors, size: 1, mount: mount.sensors-s1 }
+  - { name: comm, kind: comm, size: 1, mount: mount.comm-s1 }
+  - { name: life, kind: life_support, size: 1, mount: mount.life-support-s1 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1, mount: mount.hardpoint-s1 }
+  - { name: hardpoint_2, kind: hardpoint, size: 1, mount: mount.hardpoint-s1 }
+  - { name: avionics, kind: avionics, size: 1, mount: mount.avionics-s1 }
 thrusters:
   - { nozzle: nozzle_main_0, slot: drive, share: 1 }
   - { nozzle: nozzle_main_1, slot: drive, share: 1 }

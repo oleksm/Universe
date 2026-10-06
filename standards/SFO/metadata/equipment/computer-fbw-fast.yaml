@@ -7,6 +7,7 @@ identity:
   slot: computer
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
 size_class: 1
+fits: mount.computer-s1
 physical:
   mass: 45.0
   volume: 0.07

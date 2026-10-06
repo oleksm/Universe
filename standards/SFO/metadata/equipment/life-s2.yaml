@@ -7,6 +7,7 @@ identity:
   slot: life_support
   description: "Air, water and warmth for the crew."
 size_class: 2
+fits: mount.life-support-s2
 physical:
   mass: 1500
   volume: 8

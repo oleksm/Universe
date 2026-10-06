@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: gate
 size_class: 4
+fits: mount.gate-s4
 physical:
   mass: 20000
   volume: 60

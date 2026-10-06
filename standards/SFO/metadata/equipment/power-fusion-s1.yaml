@@ -7,6 +7,7 @@ identity:
   slot: power
   description: "The ship's power plant."
 size_class: 1
+fits: mount.power-s1
 physical:
   mass: 1800
   volume: 3.5

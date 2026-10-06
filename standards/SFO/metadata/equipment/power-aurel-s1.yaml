@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: power
 size_class: 1
+fits: mount.power-s1
 physical:
   mass: 1400
   volume: 3

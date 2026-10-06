@@ -7,6 +7,7 @@ identity:
   slot: gate
   description: "Throws and catches data capsules through the gate's tube, linking two systems' networks."
 size_class: 4
+fits: mount.gate-s4
 physical:
   mass: 40000
   volume: 100

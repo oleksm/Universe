@@ -881,3 +881,23 @@ needs its own answer (the structure's decks as its land?), which is the user's.
 **The gate's holding power: the user's to say.** Both figures are Dogma's and invented: `tube-hold`
 (the opening over 200 months) gives 3.65 GW for 3 light years; a gate names one 400 MW station. I
 have put the question to the user and changed neither.
+
+**Equipment shapes, and mounts (the user, 2026-10-05, night).**
+
+- **Seven pieces of equipment have real figures now** (the audit, `docs/ships/mc-07-equipment-dimensions.md`):
+  the radar is an 8 m2 array 10 cm thick; the comm is a 3 m dish, 90 kg, 360 W; the two flight
+  computers, the two nav computers and the transponder are at real avionics weights, sizes and
+  draws (30 kg and 200 W for the flight computer, 3 kg and 20 W for the transponder). Their parts
+  are scaled to match. The other 45 are shaped by what they are (a drive three times as long as
+  wide, a cabin long and low, a gun a barrel) at the volume they had: still stand-ins for a size.
+- **Mounts: SFO 19.** A new kind, `mount` (`SFO/metadata/mounts/<slot>-s<class>.yaml`, 37 of
+  them): the standard between a hull's slot and what is fitted to it. Each says the most the hull
+  gives and bears there: an envelope (length, width, height), the weight borne, the thrust one
+  nozzle may put through it and the nozzle opening, a weapon's recoil, and what the hull feeds
+  (power, cooling, fuel). **Equipment says `fits: mount.<slot>-s<class>`; a hull's slot says
+  `mount:`.** Any equipment within a mount's figures fits any hull that offers it: a maker builds
+  to the mount. The first mounts are set round today's equipment with a margin (a tenth more room,
+  a quarter more weight, power and thrust), so everything fits; they describe what is. The page's
+  report "Mounts" checks each piece against its mount: 56 of 56 within.
+- **For the game, when you want it:** fit by `mount`, not by size class alone; a slot's mount is
+  what a refit may take; a hull's lines and openings at a slot are the mount's figures.

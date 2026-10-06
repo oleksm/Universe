@@ -7,6 +7,7 @@ identity:
   slot: cargo
   description: "Racks that hold cargo in the hold."
 size_class: 3
+fits: mount.cargo-s3
 physical:
   mass: 1500
   volume: 30

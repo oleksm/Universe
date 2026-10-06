@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
+identity:
+  key: mount.hyperdrive-s1
+  name: "Hyperdrive mount, class 1"
+  slot: hyperdrive
+  size_class: 1
+  description: "What a class 1 hyperdrive slot offers, and what fits it."
+envelope:
+  length: 2.62
+  width: 1.75
+  height: 1.75
+bears:
+  mass: 3250.0
+feeds:
+  power: 1120000.0
+basis:
+  - { of: [envelope, bears, feeds], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give." }

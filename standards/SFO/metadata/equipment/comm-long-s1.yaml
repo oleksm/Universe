@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: comm
 size_class: 1
+fits: mount.comm-s1
 physical:
   mass: 300
   volume: 0.8

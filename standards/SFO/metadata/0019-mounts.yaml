@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.19
+title: Mounts
+parent: standard.sfo.16
+records: mounts
+purpose: A mount is the agreement between a hull and what is fitted to it. A hull's slot offers a mount; a piece of equipment is built to one. The mount says the most the hull gives and bears there, so that any equipment within its figures fits any hull that offers it, and a maker builds to the mount and sells to every ship that has one, not to one hull.
+details:
+  text:
+    - "What a mount says: the room (an envelope, length by width by height), the weight the structure bears, the thrust one nozzle may put through it and the opening it fires through, the recoil a weapon may kick against it, and what the hull brings to it: electric power, cooling, fuel."
+    - "Each mount is of one kind of slot (SFO 16) and one size class, 1 to 4. A slot takes equipment of its class or any smaller: the smaller mounts of a kind are within the larger."
+    - "A piece of equipment names the mount it fits (fits). Its own figures must lie within the mount's: its size within the envelope, its weight within what is borne, its draw within the power fed, its nozzles' thrust within the thrust borne."
+    - "A hull names the mount each of its slots offers (slots[].mount). The hull's structure, lines and openings there are built to the mount's figures, whatever is fitted."
+    - "The first mounts are set round the equipment of today, with a margin: a tenth more room, a quarter more weight, power and thrust. They describe what is. As hulls are sized from what they must do, the mounts are to follow, and equipment to be built to them."
+status: draft

@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
+identity:
+  key: mount.power-s2
+  name: "Power plant mount, class 2"
+  slot: power
+  size_class: 2
+  description: "What a class 2 power plant slot offers, and what fits it."
+envelope:
+  length: 3.17
+  width: 1.58
+  height: 1.58
+bears:
+  mass: 3750.0
+feeds:
+  cooling: 18600000.0
+  fuel: 8.28e-08
+basis:
+  - { of: [envelope, bears, feeds], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give." }

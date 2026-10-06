@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: power
 size_class: 3
+fits: mount.power-s3
 physical:
   mass: 4000
   volume: 8.5

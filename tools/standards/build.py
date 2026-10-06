@@ -135,7 +135,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "revision", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "revision", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -973,7 +973,7 @@ for name in sorted(os.listdir(TREE)):
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
-NESTED = {"parts"}
+NESTED = {"parts", "mounts"}      # (folders whose records the page lists elsewhere, or not yet)
 SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
@@ -1060,7 +1060,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -2339,6 +2339,33 @@ for it in sorted(_outs, key=lambda i: item_name(i).lower()):
     takers = list(dict.fromkeys(_ins.get(it) or []))
     rows.append(row("ok" if takers else "gap", item_name(it), ", ".join(list(dict.fromkeys(_outs[it]))[:6]) + (" and others" if len(set(_outs[it])) > 6 else ""), ", ".join(takers[:6]) + (" and others" if len(takers) > 6 else "") or "nothing takes it"))
 report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed. Elements are left out: a metal won beside the main one is a product.", ["Given off", "By", "Taken by"], rows)
+
+# 3d''. Mounts (SFO 19): does each piece of equipment lie within the mount it says it fits?
+_mdir = os.path.join(TREE, "SFO", "metadata", "mounts")
+MOUNTS = {}
+for _f in sorted(os.listdir(_mdir)) if os.path.isdir(_mdir) else []:
+    _m = yaml.safe_load(open(os.path.join(_mdir, _f), encoding="utf-8")) or {}
+    MOUNTS[_m["identity"]["key"]] = _m
+rows = []
+for e_ in equipment:
+    raw = yaml.safe_load(open(os.path.join(TREE, e_["file"]), encoding="utf-8")) or {}
+    mk = raw.get("fits")
+    if not mk:
+        continue
+    mt = MOUNTS.get(mk)
+    if not mt:
+        rows.append(row("gap", e_["identity"]["name"], mk, "no such mount")); continue
+    ph, env, bears, feeds = raw.get("physical") or {}, mt["envelope"], mt["bears"], mt.get("feeds") or {}
+    over = []
+    dims = sorted([ph.get("length", 0), ph.get("width", 0), ph.get("height", 0)], reverse=True); room = sorted([env["length"], env["width"], env["height"]], reverse=True)
+    if any(d_ > r_ * 1.0001 for d_, r_ in zip(dims, room)): over.append(f"size {dims[0]:g} x {dims[1]:g} x {dims[2]:g} m in {room[0]:g} x {room[1]:g} x {room[2]:g}")
+    if ph.get("mass", 0) > bears["mass"]: over.append(f"weight {ph['mass']:,.0f} kg over {bears['mass']:,.0f}")
+    draw = (raw.get("needs") or {}).get("power", 0)
+    if feeds.get("power") and draw > feeds["power"]: over.append(f"draws {draw / 1e6:g} MW over {feeds['power'] / 1e6:g}")
+    th = (raw.get("function") or {}).get("thrust", 0)
+    if bears.get("thrust") and th > bears["thrust"]: over.append(f"thrust {th / 1e6:g} MN over {bears['thrust'] / 1e6:g}")
+    rows.append(row("gap" if over else "ok", e_["identity"]["name"], mk, "; ".join(over) or "within it"))
+report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
 
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])

@@ -7,6 +7,7 @@ identity:
   slot: transponder
   description: "Says who the ship is."
 size_class: 1
+fits: mount.transponder-s1
 physical:
   mass: 3.0
   volume: 0.005

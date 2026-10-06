@@ -1,0 +1,54 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Mount
+x-kind: [mount]
+description: "standards/SFO/metadata/mounts/<slot>-s<class>.yaml: one mount, a standard between a hull and what is fitted to it (SFO 19). A hull's slot offers a mount; a piece of equipment fits one. The mount says the most the hull gives and bears there: the room, the weight, the thrust, the power and the cooling, the fuel, a nozzle's opening. Any equipment within those figures fits any hull that offers the mount: a maker builds to the mount, not to a hull."
+type: object
+additionalProperties: false
+required: [identity, envelope, bears]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, slot, size_class]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      slot: { $ref: "../../common.schema.yaml#/definitions/slot_kind" }
+      size_class: { type: integer, minimum: 1, maximum: 4, description: "Its size class, 1 to 4. A slot takes equipment of its class or smaller." }
+      description: { type: string }
+  envelope:
+    description: "The most room a piece of equipment may take in it."
+    type: object
+    additionalProperties: false
+    required: [length, width, height]
+    properties:
+      length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, along the ship" }
+      width: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, across" }
+      height: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, up" }
+  bears:
+    description: "The most the hull's structure takes at it."
+    type: object
+    additionalProperties: false
+    required: [mass]
+    properties:
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg, the heaviest equipment it carries" }
+      thrust: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most push one nozzle may put through it (a drive, thrusters or lift)" }
+      recoil: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a weapon may kick against it" }
+  feeds:
+    description: "What the hull brings to it, at most."
+    type: object
+    additionalProperties: false
+    properties:
+      power: { type: number, exclusiveMinimum: 0, x-unit: "W", description: "W of electric power its line carries" }
+      cooling: { type: number, exclusiveMinimum: 0, x-unit: "W", description: "W of heat the hull's loop carries away from it" }
+      fuel: { type: number, exclusiveMinimum: 0, x-unit: "kg/s", description: "kg/s its fuel line carries" }
+  nozzle:
+    description: "For a drive, thrusters or lift: the opening in the hull a nozzle fires through."
+    type: object
+    additionalProperties: false
+    properties:
+      diameter: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m across, the most" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A first standard, set so that today's equipment fits with a margin. Sized from the equipment list, not from a hull or a need.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

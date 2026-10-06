@@ -7,6 +7,7 @@ identity:
   slot: hyperdrive
   description: "The drive that crosses between stars."
 size_class: 3
+fits: mount.hyperdrive-s3
 physical:
   mass: 9000
   volume: 22

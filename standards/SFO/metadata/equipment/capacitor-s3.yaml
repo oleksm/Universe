@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: capacitor
 size_class: 3
+fits: mount.capacitor-s3
 physical:
   mass: 4000
   volume: 10

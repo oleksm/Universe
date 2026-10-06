@@ -7,6 +7,7 @@ identity:
   slot: hyperdrive
   description: "The drive that crosses between stars."
 size_class: 2
+fits: mount.hyperdrive-s2
 physical:
   mass: 4000
   volume: 10

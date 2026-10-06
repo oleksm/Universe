@@ -7,6 +7,7 @@ identity:
   slot: thrusters
   description: "Manoeuvring thrusters, in clusters at nose and tail."
 size_class: 2
+fits: mount.thrusters-s2
 physical:
   mass: 1500
   volume: 3

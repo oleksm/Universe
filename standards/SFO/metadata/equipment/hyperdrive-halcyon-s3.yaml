@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: hyperdrive
 size_class: 3
+fits: mount.hyperdrive-s3
 physical:
   mass: 9400
   volume: 22

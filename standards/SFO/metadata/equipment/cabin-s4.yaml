@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: cargo
 size_class: 4
+fits: mount.cargo-s4
 physical:
   mass: 26000
   volume: 220

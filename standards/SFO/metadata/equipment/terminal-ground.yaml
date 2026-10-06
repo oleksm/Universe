@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: gate
 size_class: 3
+fits: mount.gate-s3
 physical:
   mass: 3000
   volume: 10

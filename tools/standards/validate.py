@@ -207,7 +207,7 @@ def key_of(rel, rec):
             return "element." + str((rec.get("identity") or {}).get("symbol", "")).lower()
         if kind in ("equipment", "gates"):
             return {"equipment": "equipment.", "gates": "gate."}[kind]
-        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building."}[kind] + low
+        return {"materials": "material.", "processes": "process.", "modules": "module.", "goods": "good.", "hulls": "hull.", "mill-stock": "stock.", "stock": "stock.", "parts": "part.", "structures": "structure.", "markets": "market.", "buildings": "building.", "mounts": "mount."}[kind] + low
     if root == "MakerHouse":
         return "org."
     if root == "People":

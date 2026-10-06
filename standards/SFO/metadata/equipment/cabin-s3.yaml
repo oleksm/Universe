@@ -6,6 +6,7 @@ identity:
   revision: outdated
   slot: cargo
 size_class: 3
+fits: mount.cargo-s3
 physical:
   mass: 4200
   volume: 30

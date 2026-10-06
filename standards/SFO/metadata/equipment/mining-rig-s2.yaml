@@ -7,6 +7,7 @@ identity:
   slot: utility
   description: "A mining rig: digs an asteroid it is anchored to."
 size_class: 2
+fits: mount.utility-s2
 physical:
   mass: 2500
   volume: 6
