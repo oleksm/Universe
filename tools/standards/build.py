@@ -2546,8 +2546,9 @@ if os.path.isdir(CEL):
                         problem(full, f"{g}: unknown property '{q}'")
         if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen", "baked"):
             problem(full, "provenance: one of seeded, curated, frozen, baked")
-        if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
-            problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
+        idn_ = rec.get("identity") or {}
+        if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str(idn_.get("also") or idn_.get("name", "")).lower()).strip("-"):
+            problem(full, "a celestial record's file is named after it as the seed first called it (lower case, words joined by -); a renamed body keeps the seed's name in identity.also")
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
