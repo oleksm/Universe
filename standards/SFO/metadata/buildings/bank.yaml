@@ -1,27 +1,25 @@
 # yaml-language-server: $schema=../../schema/building.schema.yaml
 identity:
-  key: building.watch-house
-  name: "Watch house"
-  description: "A constabulary's station: a front desk, a few cells for the night, a yard for its craft's crews."
+  key: building.bank
+  name: "Bank"
+  description: "A banking hall and its vault: accounts, lending, the insurer's counter."
 physical:
   length: 30
   width: 20
-  height: 4
-  mass: 661800
+  height: 8
+  mass: 1323600
 per_people: 10000
-floor: 600
-storeys: 1
-meets:
-  - { need: need.safety, people: 10000 }
+floor: 1200
+storeys: 2
 staff:
-  - { profession: profession.constable, count: 30 }
-  - { profession: profession.clerk, count: 3 }
+  - { profession: profession.banker, count: 10 }
+  - { profession: profession.clerk, count: 15 }
 built_of:
-  - { item: good.concrete, quantity: 624000 }
-  - { item: material.structural-steel-a36, quantity: 34800 }
+  - { item: good.concrete, quantity: 1248000 }
+  - { item: material.structural-steel-a36, quantity: 69600 }
 life: 1577880000
 basis:
-  - { of: [meets, staff], tier: derived, source: "standards/sources/research_people_needs.json", note: "Thirty constables at one to 333 people (the world's median, need.safety): a station to 10,000." }
+  - { of: [per_people, staff], tier: invented, review: true, note: "One to 10,000 people. The share of a people this gives work to is set so that a settlement's trades together come to about what a rich country's do (about half its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review." }
   - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
   - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }

@@ -8,6 +8,7 @@ physical:
   width: 40
   height: 10
   mass: 7059200
+per_people: 20000
 floor: 6400
 storeys: 2
 meets:

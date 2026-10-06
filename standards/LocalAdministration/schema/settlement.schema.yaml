@@ -52,6 +52,16 @@ properties:
     properties:
       from: { type: string, x-ref: [settlement], description: "The settlement its supplies are hauled from, by its key." }
       interval: { type: number, x-unit: "s", description: "s between deliveries, on the usual run" }
+  buildings:
+    description: "What stands in it at day 0 for its people to live in, buy from, be served in and work at: each building and how many, by its per_people and the population (tools/standards/census.py)."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [building, count]
+      properties:
+        building: { type: string, x-ref: [building] }
+        count: { type: integer, minimum: 1 }
   census:
     description: "Its people by trade at day 0, summed by tools/standards/census.py from its works' staff and the trades its needs are served by; the rest dependants. What the operator hires from: finite."
     type: array

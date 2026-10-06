@@ -118,15 +118,28 @@
 - { record: body.treistun.wudi, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "453c5dcb10344954" }
 - { record: body.treistun.zautro, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "0c9caba5d6b29ad9" }
 - { record: body.treistun.zitondar, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "29366ebf4990a0a6" }
-- { record: building.bunkhouse, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "64d5ef2c877a3a61" }
-- { record: building.clinic, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "5b1bb3ec6ed8d417" }
-- { record: building.courthouse, at: "2026-10-06T03:09:17Z", status: draft, summary: "first tracked", sha: "f2bb6106fe2456d5" }
-- { record: building.dwelling-block, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "6aef3e59a069202c" }
-- { record: building.flight-school, at: "2026-10-06T14:13:11Z", status: draft, summary: "first tracked", sha: "97437cea080806d5" }
-- { record: building.gaol, at: "2026-10-06T03:09:17Z", status: draft, summary: "first tracked", sha: "5c10fd6c66056a15" }
-- { record: building.hospital, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "569e446705c23d36" }
-- { record: building.school, at: "2026-10-06T14:13:11Z", status: draft, summary: "first tracked", sha: "c3031fbebcc86ffc" }
-- { record: building.watch-house, at: "2026-10-06T03:09:17Z", status: draft, summary: "first tracked", sha: "d346c852c6e0ad26" }
+- { record: building.bank, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "b9c998cab1434b22" }
+- { record: building.builders-yard, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "ad2d5953f3e60bd8" }
+- { record: building.bunkhouse, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "eef7cdb5c8254654" }
+- { record: building.care-home, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "4131c75e67d5cb31" }
+- { record: building.clinic, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "c6908ad02f50d2d4" }
+- { record: building.college, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "6e361e4d06ea3d4a" }
+- { record: building.courthouse, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "fb392c2c0fc6f1da" }
+- { record: building.depot, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "6c1e2f7c3f906679" }
+- { record: building.dwelling-block, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "051170e0e9aa5116" }
+- { record: building.flight-school, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "50c772bbd2350422" }
+- { record: building.gaol, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "bbb1e513d7edbb55" }
+- { record: building.hospital, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "3871a5a4f84a8df9" }
+- { record: building.inn, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "b4d2b919397534c5" }
+- { record: building.market-hall, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "a410b5c9ce8b8c3e" }
+- { record: building.offices, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "fb64076975e65e5e" }
+- { record: building.press, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "083210284a1db649" }
+- { record: building.repair-shop, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "3174cd401c0c3440" }
+- { record: building.school, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "6251635a8ee87d3c" }
+- { record: building.shop, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "1d787e24563bd7da" }
+- { record: building.tavern, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "282560f15925cd84" }
+- { record: building.theatre, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "243c58535d37bce0" }
+- { record: building.watch-house, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "bf926b6a1e4a58e2" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
@@ -1889,7 +1902,7 @@
 - { record: profession.teacher, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "ae547e882c6ea6ce" }
 - { record: profession.technician, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "12a993e9f9a58173" }
 - { record: profession.welder, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "f63dd4b76d90f5fa" }
-- { record: rig.biraidim.shikra-hold, at: "2026-10-06T14:13:11Z", status: "", summary: "changed: owner, position, modules, stock", sha: "ae05632b512ee146" }
+- { record: rig.biraidim.shikra-hold, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "69403224b842722e" }
 - { record: rig.treistun.hadley-orbital-works, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "af416db507c212ae" }
 - { record: rock-class.basaltic, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "c01d4654b7759d41" }
 - { record: rock-class.carbonaceous, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "56a086e366bec47d" }
@@ -1931,17 +1944,17 @@
 - { record: settlement.treistun.gate-to-biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "577a6808373c3163" }
 - { record: settlement.treistun.gate-to-driumum, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "88681fd9cc3042b8" }
 - { record: settlement.treistun.gate-to-liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c2241b8dea04cd02" }
-- { record: settlement.treistun.port-aipika, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "7c5d266a920cd6e0" }
-- { record: settlement.treistun.port-eikir, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "b5a114fe194e63b4" }
-- { record: settlement.treistun.port-fabindum, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "887f04aaf92e1f74" }
-- { record: settlement.treistun.port-lisaur, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "807622c88b964aff" }
-- { record: settlement.treistun.port-nacaubun, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "21a8373ec6001bab" }
-- { record: settlement.treistun.port-seiwiti, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "56ca2d40b853694d" }
-- { record: settlement.treistun.port-sirnendis, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "dd46fa6e5b96278a" }
-- { record: settlement.treistun.port-trethi, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "61926378ecc61083" }
-- { record: settlement.treistun.port-weisonum, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "71a0bc3dce201695" }
-- { record: settlement.treistun.port-zaudalein, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "b7732fc2d269238b" }
-- { record: settlement.treistun.treistun-e-station, at: "2026-10-06T13:52:23Z", status: "", summary: "changed: independents", sha: "6538fab35f60886c" }
+- { record: settlement.treistun.port-aipika, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "b5b2e3a0e95945d6" }
+- { record: settlement.treistun.port-eikir, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "4d6fee4d4dd006b6" }
+- { record: settlement.treistun.port-fabindum, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "8472063869b3682f" }
+- { record: settlement.treistun.port-lisaur, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "39011527e829a6aa" }
+- { record: settlement.treistun.port-nacaubun, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "0bc38e6e022bb968" }
+- { record: settlement.treistun.port-seiwiti, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "46061e84f3d4bcf2" }
+- { record: settlement.treistun.port-sirnendis, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "e483105e8ff650b9" }
+- { record: settlement.treistun.port-trethi, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "9462f540235edd27" }
+- { record: settlement.treistun.port-weisonum, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "9f40d1296bbada5c" }
+- { record: settlement.treistun.port-zaudalein, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "0fd6ce4c3daee2f8" }
+- { record: settlement.treistun.treistun-e-station, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "f5950d836278d6eb" }
 - { record: standard.sfo.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7b0c226f205b56ac" }
 - { record: standard.sfo.10, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1f4b586c49cef4ea" }
 - { record: standard.sfo.11, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "91aaefa222c3a756" }

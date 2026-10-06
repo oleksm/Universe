@@ -9,27 +9,49 @@ structure: structure.outpost
 population: 3000
 # Supplied from Port Eikir: 4.9 t a day of what its people take; 16.6 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 2 hauler(s) on the run, so a delivery every 17.6 days (tools/standards/census.py).
 resupply: { from: settlement.treistun.port-eikir, interval: 1522112 }
-# census: its 3,000 people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)
+# buildings: what stands here for its 3,000 people: one of each building to its per_people
+buildings:
+  - { building: building.shop, count: 43 }
+  - { building: building.tavern, count: 6 }
+  - { building: building.clinic, count: 3 }
+  - { building: building.offices, count: 3 }
+  - { building: building.dwelling-block, count: 2 }
+  - { building: building.school, count: 2 }
+  - { building: building.builders-yard, count: 2 }
+  - { building: building.repair-shop, count: 2 }
+  - { building: building.depot, count: 2 }
+  - { building: building.care-home, count: 2 }
+  - { building: building.watch-house, count: 1 }
+  - { building: building.market-hall, count: 1 }
+  - { building: building.bank, count: 1 }
+  - { building: building.inn, count: 1 }
+# census: its 3,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.teacher, count: 33 }
-  - { profession: profession.docker, count: 30 }
-  - { profession: profession.nurse, count: 29 }
+  - { profession: profession.clerk, count: 314 }
+  - { profession: profession.driver, count: 86 }
+  - { profession: profession.food-worker, count: 78 }
+  - { profession: profession.nurse, count: 73 }
+  - { profession: profession.builder, count: 70 }
+  - { profession: profession.docker, count: 60 }
+  - { profession: profession.merchant, count: 53 }
+  - { profession: profession.teacher, count: 44 }
+  - { profession: profession.constable, count: 30 }
+  - { profession: profession.administrator, count: 30 }
+  - { profession: profession.technician, count: 27 }
+  - { profession: profession.fitter, count: 26 }
+  - { profession: profession.engineer, count: 22 }
   - { profession: profession.plant-operator, count: 20 }
-  - { profession: profession.innkeeper, count: 12 }
-  - { profession: profession.doctor, count: 11 }
-  - { profession: profession.clerk, count: 10 }
-  - { profession: profession.constable, count: 10 }
+  - { profession: profession.electrician, count: 20 }
+  - { profession: profession.innkeeper, count: 17 }
+  - { profession: profession.scholar, count: 15 }
+  - { profession: profession.machinist, count: 14 }
+  - { profession: profession.doctor, count: 12 }
+  - { profession: profession.lawyer, count: 12 }
+  - { profession: profession.banker, count: 10 }
   - { profession: profession.chemist, count: 6 }
-  - { profession: profession.technician, count: 3 }
-  - { profession: profession.artist, count: 3 }
-  - { profession: profession.performer, count: 3 }
-  - { profession: profession.engineer, count: 2 }
-  - { profession: profession.electrician, count: 2 }
   - { profession: profession.farmer, count: 2 }
   - { profession: profession.pilot, count: 2 }
-  - { profession: profession.reporter, count: 1 }
-  - { profession: profession.judge, count: 1 }
-  - { profession: profession.dependant, count: 2820 }
+  - { profession: profession.dependant, count: 1957 }
 # independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 4 }
