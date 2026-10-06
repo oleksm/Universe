@@ -7,6 +7,8 @@ at: body.treistun.treistun-d-i
 position: { latitude: -32.137, longitude: -88.842 }
 structure: structure.outpost
 population: 3000
+# Supplied from Port Eikir every 3 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 259200 }
 about: "The port on Harvest I, the moon of d, at 32° south. Gravity 0.13 g, no air."
 story:
   - "Eikir's yard. Ships that have no business in d's air wait here, and those that do make the short drop from it."

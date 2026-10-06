@@ -7,6 +7,8 @@ at: body.treistun.treistun-i-ii
 position: { latitude: -21.118, longitude: 142.499 }
 structure: structure.outpost
 population: 3000
+# Supplied from Port Eikir every 60 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 5.184e+06 }
 about: "The port on Hush II, a moon of the ice giant i, at 21° south. Gravity 0.11 g, no air, and about 80 K. At 6.2 AU it is the farthest port from the star."
 story:
   - "The end of the line. From Aipika the star is only the brightest point in the sky, and the next port in any direction is a long way back."

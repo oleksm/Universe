@@ -45,6 +45,33 @@ properties:
       properties:
         market: { type: string, x-ref: [market], description: "The market category it bans, by its key." }
         note: { type: string }
+  compulsory_stock:
+    description: "Its law on reserves: for each need people die without, how long the whole administration's people must be able to live on what is held in store, and where that reserve lies. Like zoning, it can be broken; the record of a breach is the administration's. Beside it, the registry's convention for the other two layers: a works keeps three days of its inputs, a store a week, a farm a season; a settlement's warehouse keeps `warehouse_cover` resupply cycles of what its people take."
+    type: object
+    additionalProperties: false
+    required: [reserves]
+    properties:
+      warehouse_cover: { type: number, x-unit: "1", description: "how many of its resupply cycles (settlement.resupply.interval) a settlement's warehouse holds of what its people take: one delivery late must not empty it", default: 1.5 }
+      reserves:
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [need, lasts, held_at]
+          properties:
+            need: { type: string, x-ref: [need], description: "The need the reserve is for, by its key." }
+            lasts: { type: number, x-unit: "s", description: "s the whole administration's people could live on the reserve alone" }
+            held_at:
+              description: "Where it lies, and each place's share; the shares add to 1."
+              type: array
+              items:
+                type: object
+                additionalProperties: false
+                required: [settlement, share]
+                properties:
+                  settlement: { type: string, x-ref: [settlement] }
+                  share: { type: number, x-unit: "1" }
+            note: { type: string }
   zoning:
     description: Its zoning code, what each kind of zone permits.
     type: array

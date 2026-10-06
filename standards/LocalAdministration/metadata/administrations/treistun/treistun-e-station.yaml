@@ -6,6 +6,8 @@ kind: settlement
 at: body.treistun.treistun-e
 structure: structure.platform
 population: 25000
+# Supplied from Port Eikir every 7 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 604800 }
 about: "The system's station, in orbit round Hearth. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."
 story:
   - "Raised above Nacaubun when the port ran out of room. The yards, the makers' offices, the Standards Foundry Office and the administration all followed the ships up, and it has been the centre of the system since."

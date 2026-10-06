@@ -7,6 +7,8 @@ at: body.treistun.treistun-b-i
 position: { latitude: -27.005, longitude: -104.409 }
 structure: structure.outpost
 population: 3000
+# Supplied from Port Eikir every 20 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 1.728e+06 }
 about: "The port on Cinder I, the moon of the innermost planet, at 27° south. Gravity 0.14 g, no air."
 story:
   - "Built so that most ships never have to land on b. Loads come up from Zaudalein and change hands here, where lifting off costs almost nothing."
