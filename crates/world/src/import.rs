@@ -101,7 +101,9 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let drag = flight.and_then(|f| f.drag_area).unwrap_or(size.x * size.y * 0.6);
     let strength = flight.and_then(|f| f.hull_strength).unwrap_or(STRENGTH_PER_KG * frame_mass);
     let name = read.name.unwrap_or_else(|| stem.to_uppercase());
-    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, strength).with_bay(bay.0, bay.1);
+    // (The mount each slot offers, where its record says.)
+    let mounts = record.map_or_else(Vec::new, |h| h.slots.iter().filter_map(|s| s.mount.clone().map(|m| (s.name.clone(), m))).collect());
+    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, strength).with_bay(bay.0, bay.1).with_mounts(mounts);
     let shape: &'static crate::shape::Shape = Box::leak(Box::new(shape));
     let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
     let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));

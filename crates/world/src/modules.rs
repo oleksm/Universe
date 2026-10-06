@@ -238,6 +238,12 @@ pub struct Module {
     pub power: f64,
     /// Price (credits).
     pub price: f64,
+    /// The mount it's built to (SFO 19), by key; its own size (m: length, width,
+    /// height), where its record says.
+    #[serde(default)]
+    pub fits: Option<String>,
+    #[serde(default)]
+    pub dims: Option<[f64; 3]>,
 }
 
 impl Module {
@@ -308,6 +314,11 @@ impl Module {
             volume: e.physical.volume.unwrap_or(0.0),
             power: e.needs.power.unwrap_or(0.0),
             price,
+            fits: e.fits.clone(),
+            dims: match (e.physical.length, e.physical.width, e.physical.height) {
+                (Some(l), Some(w), Some(h)) => Some([l, w, h]),
+                _ => None,
+            },
         })
     }
 }

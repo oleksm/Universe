@@ -177,6 +177,9 @@ pub(crate) struct HullDef {
     /// A hold built into the frame (kg, m³): an ore bay, beside any racks.
     #[serde(default)]
     bay: (f64, f64),
+    /// The mount each slot offers (SFO 19: slot, mount key), where its record says.
+    #[serde(default)]
+    mounts: Vec<(String, String)>,
 }
 
 #[derive(Debug, PartialEq, Deserialize)]
@@ -193,6 +196,53 @@ pub struct Slot {
     pub name: String,
     pub kind: crate::modules::SlotKind,
     pub size: u8,
+    /// The mount it offers (SFO 19), by key: what's fitted must be built to it, or
+    /// to a smaller one of its kind, and lie within its figures. None: by size class.
+    pub mount: Option<String>,
+}
+
+/// Is hull `key` one the registry marks outdated (a rough early guess, never sized
+/// for real equipment)?
+fn outdated_hull(key: &str) -> bool {
+    crate::registry::registry().hulls.iter().any(|h| h.identity.key == key && h.identity.revision == Some(crate::registry::DesignStage::Outdated))
+}
+
+/// Does module `m` fit `slot`'s mount? Its own mount (`fits`) of the slot's kind
+/// and no bigger a class; its size within the mount's room, its mass within what
+/// it bears, its draw within the power it feeds, a nozzle's thrust and a gun's
+/// recoil within what it bears. A slot with no mount: by size class. Why not,
+/// if it doesn't.
+pub fn mount_fit(slot: &Slot, m: &crate::modules::Module) -> Result<(), String> {
+    use crate::modules::Does;
+    let Some(sm) = slot.mount.as_deref() else {
+        return if m.size > slot.size { Err(format!("{} (size {}) is too big for slot '{}' (size {})", m.key, m.size, slot.name, slot.size)) } else { Ok(()) };
+    };
+    let reg = crate::registry::registry();
+    let mount = |key: &str| reg.mounts.iter().find(|x| x.identity.key == key);
+    let s = mount(sm).ok_or_else(|| format!("slot '{}': no mount '{sm}'", slot.name))?;
+    let fm = m.fits.as_deref().ok_or_else(|| format!("{} names no mount (slot '{}' offers {sm})", m.key, slot.name))?;
+    let f = mount(fm).ok_or_else(|| format!("{}: no mount '{fm}'", m.key))?;
+    if f.identity.slot != s.identity.slot || f.identity.size_class > s.identity.size_class {
+        return Err(format!("{} is built to {fm}; slot '{}' offers {sm}", m.key, slot.name));
+    }
+    let over = |what: &str, v: f64, most: f64| if v > most * 1.0001 { Err(format!("{}: {what} {v:.3e} past its mount's {most:.3e} ({sm})", m.key)) } else { Ok(()) };
+    let e = &s.envelope;
+    if let Some([l, w, h]) = m.dims {
+        over("length", l, e.length)?;
+        over("width", w, e.width)?;
+        over("height", h, e.height)?;
+    }
+    over("mass", m.mass, s.bears.mass)?;
+    if let (Some(fed), false) = (s.feeds.power, matches!(m.does, Does::PowerPlant { .. })) {
+        over("power drawn", m.power, fed)?;
+    }
+    if let (Some(most), Some((thrust, ..))) = (s.bears.thrust, m.does.engine()) {
+        over("thrust a nozzle", thrust, most)?;
+    }
+    if let (Some(most), Does::Gun(g)) = (s.bears.recoil, &m.does) {
+        over("recoil", g.slug_mass * g.muzzle * g.rate, most)?;
+    }
+    Ok(())
 }
 
 impl HullDef {
@@ -200,10 +250,16 @@ impl HullDef {
     #[allow(clippy::too_many_arguments)]
     pub(crate) fn made(key: String, name: String, shape: String, frame_mass: f64, price: f64, slots: Vec<(String, crate::modules::SlotKind, u8)>, fit: Vec<(String, String)>, thrusters: Vec<(String, String, f64)>, radius: f64, drag_area: f64, hull_strength: f64) -> Self {
         let thrusters = thrusters.into_iter().map(|(nozzle, slot, share)| ThrusterDef { nozzle, slot, share }).collect();
-        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength, bay: (0.0, 0.0) }
+        HullDef { key, name, brand: String::new(), shape, frame_mass, price, slots, fit, thrusters, radius, drag_area, hull_strength, bay: (0.0, 0.0), mounts: Vec::new() }
     }
 
     /// With a hold of its own built into the frame (kg, m³).
+    /// The mount each slot offers (slot, mount key).
+    pub(crate) fn with_mounts(mut self, mounts: Vec<(String, String)>) -> Self {
+        self.mounts = mounts;
+        self
+    }
+
     pub(crate) fn with_bay(mut self, kg: f64, m3: f64) -> Self {
         self.bay = (kg, m3);
         self
@@ -254,6 +310,7 @@ impl HullDef {
             drag_area: flight.drag_area.unwrap_or(0.0),
             hull_strength: flight.hull_strength.unwrap_or(0.0),
             bay: (0.0, 0.0),
+            mounts: h.slots.iter().filter_map(|s| s.mount.clone().map(|m| (s.name.clone(), m))).collect(),
         })
     }
 
@@ -277,7 +334,8 @@ impl HullDef {
         if !(self.frame_mass.is_finite() && self.frame_mass > 0.0) {
             return Err(format!("frame_mass must be positive ({})", self.frame_mass));
         }
-        let slots: Vec<Slot> = self.slots.into_iter().map(|(name, kind, size)| Slot { name, kind, size }).collect();
+        let mounts = self.mounts;
+        let slots: Vec<Slot> = self.slots.into_iter().map(|(name, kind, size)| Slot { mount: mounts.iter().find(|m| m.0 == name).map(|m| m.1.clone()), name, kind, size }).collect();
         let mut nozzles = Vec::new();
         for t in self.thrusters {
             let n = shape.node(&t.nozzle).filter(|n| n.role == crate::shape::Role::Nozzle).ok_or_else(|| format!("no nozzle '{}' on {}", t.nozzle, shape.key))?;
@@ -484,14 +542,20 @@ impl ClassSpec {
     ) -> Result<ClassSpec, String> {
         use crate::modules::{Does, SlotKind, BASE_BLOCKS};
         let mut fitted: Vec<(&Slot, &crate::modules::Module)> = Vec::new();
+        let mut misfits = Vec::new();
         for (slot_name, h) in &fit {
             let slot = frame.slots.iter().find(|s| &s.name == slot_name).ok_or_else(|| format!("fit: no slot '{slot_name}'"))?;
             let m = get(*h);
             if m.does.slot() != slot.kind {
                 return Err(format!("fit: {} ({:?}) doesn't go in slot '{}' ({:?})", m.key, m.does.slot(), slot.name, slot.kind));
             }
-            if m.size > slot.size {
-                return Err(format!("fit: {} (size {}) is too big for slot '{}' (size {})", m.key, m.size, slot.name, slot.size));
+            // (By its mount: a hull the registry marks outdated, a rough early guess,
+            // flies with a misfit listed, as its crowding is.)
+            if let Err(why) = mount_fit(slot, m) {
+                if !outdated_hull(&key) {
+                    return Err(format!("fit: {why}"));
+                }
+                misfits.push(format!("MISFIT: {why}").to_uppercase());
             }
             if fitted.iter().any(|(s, _)| &s.name == slot_name) {
                 return Err(format!("fit: slot '{slot_name}' twice"));
@@ -565,10 +629,12 @@ impl ClassSpec {
         // (A module with no room anywhere in the hull: it won't go together. Unless the hull is
         // one the registry marks outdated, a rough early guess never sized for real equipment: it
         // flies as it is, its crowding said.)
-        let outdated = crate::registry::registry().hulls.iter().any(|h| h.identity.key == key && h.identity.revision == Some(crate::registry::DesignStage::Outdated));
+        let outdated = outdated_hull(&key);
         if !crowded.is_empty() && !outdated {
             return Err(crowded.join(", "));
         }
+        let mut crowded = crowded;
+        crowded.extend(misfits);
         let mount = |slot: &str| placed.iter().find(|p| p.slot == slot).map_or(shape.solid.centroid, |p| p.at);
         let parts: Vec<(f64, DVec3)> = std::iter::once((frame.frame_mass, shape.solid.centroid)).chain(fitted.iter().map(|(s, m)| (m.mass, mount(&s.name)))).collect();
         let dry_com = parts.iter().map(|(m, at)| *at * *m).sum::<DVec3>() / dry_mass;
