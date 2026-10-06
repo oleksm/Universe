@@ -183,6 +183,8 @@ pub struct Interior {
     /// Each frame member's clash, as a solid tube (what it passes into, if anything),
     /// for which plan.
     member_clash: Option<(Plan, Vec<Option<Passes>>)>,
+    /// Its nodes (each joint, its widest tube, its node), for which plan.
+    node_cache: Option<(Plan, Vec<Node>)>,
     /// FRAME: the stock new members are cut from (its number in `stocks()`), the load
     /// case shown (none: each member's worst), the member under the cursor and the
     /// one picked, where the member being laid starts; what the frame bears, as last
@@ -567,15 +569,34 @@ fn deck_depth(p: &Plate) -> f32 {
     plate_stocks().iter().find(|s| s.key == p.stock).map_or(0.01, |s| s.depth as f32)
 }
 
-/// A deck's grid: its points, about 2 m apart each way (`nx` + 1 along x by `nz` + 1
-/// along z, row by row along x), and the spacing each way.
-fn plate_grid(p: &Plate) -> (Vec<Vec3>, usize, usize, f32, f32) {
-    let (w, d) = ((p.hi.x - p.lo.x).abs().max(0.1), (p.hi.y - p.lo.y).abs().max(0.1));
-    let (nx, nz) = (((w / 2.0).ceil() as usize).max(1), ((d / 2.0).ceil() as usize).max(1));
-    let (dx, dz) = (w / nx as f32, d / nz as f32);
-    let (x0, z0) = (p.lo.x.min(p.hi.x), p.lo.y.min(p.hi.y));
-    let nodes = (0..=nz).flat_map(|j| (0..=nx).map(move |i| Vec3::new(x0 + i as f32 * dx, p.y, z0 + j as f32 * dz))).collect();
-    (nodes, nx, nz, dx, dz)
+/// Lines across `a`..`b` on the ship's 2 m lattice: its two ends, and every even
+/// metre between (none within half a metre of an end), so decks and frames laid on
+/// the same lattice meet on the same lines.
+fn lattice(a: f32, b: f32) -> Vec<f32> {
+    let (lo, hi) = (a.min(b), a.max(b).max(a.min(b) + 0.1));
+    let mut out = vec![lo];
+    let mut k = (lo / 2.0).floor() + 1.0;
+    while k * 2.0 < hi - 0.5 {
+        if k * 2.0 > lo + 0.5 {
+            out.push(k * 2.0);
+        }
+        k += 1.0;
+    }
+    out.push(hi);
+    out
+}
+
+/// A deck's grid: its lines along x and along z (the 2 m lattice), and its points,
+/// row by row (a row each z, along x).
+fn plate_grid(p: &Plate) -> (Vec<Vec3>, Vec<f32>, Vec<f32>) {
+    let (xs, zs) = (lattice(p.lo.x, p.hi.x), lattice(p.lo.y, p.hi.y));
+    let nodes = zs.iter().flat_map(|&z| xs.iter().map(move |&x| Vec3::new(x, p.y, z))).collect();
+    (nodes, xs, zs)
+}
+
+/// The width each of `lines` stands for: half the gap to each neighbour.
+fn shares(lines: &[f32]) -> Vec<f32> {
+    (0..lines.len()).map(|k| (lines[(k + 1).min(lines.len() - 1)] - lines[k.saturating_sub(1)]) * 0.5).collect()
 }
 
 /// The load a deck is designed to carry on top of its own weight (kg a square
@@ -668,6 +689,109 @@ fn stocks() -> &'static [Stock] {
         out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_metre.total_cmp(&b.per_metre)));
         out
     })
+}
+
+/// A node fitting, where a frame's members meet: one of the registry's forgings.
+pub struct NodeStock {
+    /// Across (m), and what it weighs (kg: a solid ball of its material).
+    diameter: f32,
+    mass: f64,
+}
+
+/// The registry's node forgings, smallest first.
+fn node_stocks() -> &'static [NodeStock] {
+    static NODES: std::sync::OnceLock<Vec<NodeStock>> = std::sync::OnceLock::new();
+    NODES.get_or_init(|| {
+        let reg = universe_sim::world::registry::registry();
+        let mut out: Vec<NodeStock> = reg.stock.iter().filter(|s| s.identity.form == "forging" && s.identity.code.contains("NODE")).filter_map(|s| {
+            let d = s.size.diameter?;
+            let of = &s.made_from.first()?.item;
+            let rho = reg.materials.iter().find(|m| m.identity.key == *of)?.mass.density?;
+            Some(NodeStock { diameter: d as f32, mass: std::f64::consts::PI / 6.0 * d.powi(3) * rho })
+        }).collect();
+        out.sort_by(|a, b| a.diameter.total_cmp(&b.diameter));
+        out
+    })
+}
+
+/// A joint of a frame, the widest tube meeting there (m across), and its node.
+type Node = (Vec3, f32, Option<&'static NodeStock>);
+
+/// Each joint of a frame (its members' ends as they meet), the widest tube meeting
+/// there (m across), and its node: the smallest that's at least as wide (none: no
+/// node in stock is).
+fn nodes(beams: &[Beam]) -> Vec<Node> {
+    let mut out: Vec<(Vec3, f32)> = Vec::new();
+    for b in beams {
+        let d = tube_radius(&b.stock) * 2.0;
+        for p in [b.a, b.b] {
+            match out.iter_mut().find(|j| j.0.distance(p) < 0.05) {
+                Some(j) => j.1 = j.1.max(d),
+                None => out.push((p, d)),
+            }
+        }
+    }
+    out.into_iter().map(|(p, d)| (p, d, node_stocks().iter().find(|n| n.diameter >= d - 1e-4))).collect()
+}
+
+/// The frame knit together at its nodes: joints nearer each other than a node
+/// across (or 0.3 m) made one; a member passing through a node it doesn't end at jointed there
+/// (as a space frame is built). The members, and how many joinings it made.
+fn knit(mut beams: Vec<Beam>) -> (Vec<Beam>, usize) {
+    let mut made = 0;
+    for _ in 0..6 {
+        let js = nodes(&beams);
+        let reach = |n: &Node| n.2.map_or(n.1, |s| s.diameter) * 0.5;
+        let mut changed = false;
+        // (Joints within a node of each other: the later moved onto the earlier.)
+        for a in 0..js.len() {
+            for b in a + 1..js.len() {
+                let (pa, pb) = (js[a].0, js[b].0);
+                let d = pa.distance(pb);
+                // (Nearer than a node across, or than the seat tolerance decks are laid
+                // to: one node.)
+                if d >= 0.05 && d < (2.0 * reach(&js[a]).max(reach(&js[b]))).max(0.3) {
+                    for m in beams.iter_mut() {
+                        if m.a.distance(pb) < 0.05 {
+                            m.a = pa;
+                        }
+                        if m.b.distance(pb) < 0.05 {
+                            m.b = pa;
+                        }
+                    }
+                    changed = true;
+                    made += 1;
+                }
+            }
+        }
+        beams.retain(|m| m.a.distance(m.b) > 0.05);
+        let mut seen: Vec<(Vec3, Vec3)> = Vec::new();
+        beams.retain(|m| {
+            let dup = seen.iter().any(|&(a, b)| (a.distance(m.a) < 0.05 && b.distance(m.b) < 0.05) || (a.distance(m.b) < 0.05 && b.distance(m.a) < 0.05));
+            seen.push((m.a, m.b));
+            !dup
+        });
+        // (A member through a node it doesn't end at: jointed there.)
+        let js = nodes(&beams);
+        for j in &js {
+            let r = reach(j);
+            if let Some(k) = beams.iter().position(|m| {
+                let d = m.b - m.a;
+                let t = (j.0 - m.a).dot(d) / d.length_squared().max(1e-6);
+                m.a.distance(j.0) > 0.05 && m.b.distance(j.0) > 0.05 && t > 0.0 && t < 1.0 && (m.a + d * t).distance(j.0) < r
+            }) {
+                let m = beams.remove(k);
+                beams.push(Beam { a: m.a, b: j.0, stock: m.stock.clone() });
+                beams.push(Beam { a: j.0, b: m.b, stock: m.stock });
+                changed = true;
+                made += 1;
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
+    (beams, made)
 }
 
 /// The gravity the frame is worked out under, standing (m/s²: a standard g; each
@@ -788,8 +912,7 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     // crossed member jointed there): what its points rest on between the frame's
     // own lines.)
     for plate in &plan.plates {
-        let (nodes, nx, _, _, _) = plate_grid(plate);
-        let rows: Vec<f32> = nodes.iter().step_by(nx + 1).map(|n| n.z).collect();
+        let rows = plate_grid(plate).2;
         let (x0, x1) = (plate.lo.x.min(plate.hi.x), plate.lo.x.max(plate.hi.x));
         for z in rows {
             // (Where members under the deck, a seat's height at most, cross the row.)
@@ -934,7 +1057,9 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     }
     let added = out.len();
     beams.extend(out);
-    (beams, added)
+    // (Knit at its nodes.)
+    let (beams, joined) = knit(beams);
+    (beams, added + joined)
 }
 
 /// The members and decks as AUTO-SIZE leaves them, the rounds it took, and how many
@@ -1109,6 +1234,13 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         weight.extend([(ja, mass * 0.5), (jb, mass * 0.5)]);
         frame.members.push(m);
     }
+    // Its nodes: each joint's forging, its weight there.
+    for (at, _, node) in nodes(&plan.beams) {
+        if let (Some(n), Some(j)) = (node, joints.iter().position(|q| q.distance(at) < 0.05)) {
+            weight.push((j, n.mass));
+            out.mass += n.mass;
+        }
+    }
     // Its decks: each a grid of strips of its plate, both ways, carrying its own
     // weight and its design load at its grid's points; each point tied to a joint
     // of the frame within half a metre of it (by a fitting: the stoutest steel tube).
@@ -1120,7 +1252,9 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     let fitting = stocks().iter().filter(|s| s.of.contains("4340") && s.section.wall < s.section.diameter * 0.5).max_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
     for (n, plate) in plan.plates.iter().enumerate() {
         let Some(ps) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
-        let (nodes, nx, nz, dx, dz) = plate_grid(plate);
+        let (nodes, xs, zs) = plate_grid(plate);
+        let (nx, nz) = (xs.len() - 1, zs.len() - 1);
+        let (wx, wz) = (shares(&xs), shares(&zs));
         // (A point within 0.3 m of a joint already there, another deck's or the
         // frame's, is that joint: decks meeting share their edge.)
         let at: Vec<usize> = nodes
@@ -1135,27 +1269,26 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
             out.strips.push((n, joints[a], joints[b], width, frame.members.len()));
             frame.members.push(Member { a, b, section: ps.section(width), material: ps.material, pinned: [false; 2] });
         };
-        for j in 0..=nz {
+        // (Strips along each line, as wide as the deck the line stands for.)
+        for (j, &w) in wz.iter().enumerate() {
             for i in 0..nx {
-                strip(node(i, j), node(i + 1, j), dz, &mut frame, &mut out);
+                strip(node(i, j), node(i + 1, j), w, &mut frame, &mut out);
             }
         }
-        for i in 0..=nx {
+        for (i, &w) in wx.iter().enumerate() {
             for j in 0..nz {
-                strip(node(i, j), node(i, j + 1), dx, &mut frame, &mut out);
+                strip(node(i, j), node(i, j + 1), w, &mut frame, &mut out);
             }
         }
-        // (Each point's share of the deck: a quarter at a corner, a half on an edge.)
-        let area = f64::from(dx * dz);
+        // (Each point's share of the deck: the area its lines stand for.)
         let mut touched = false;
-        for j in 0..=nz {
-            for i in 0..=nx {
-                let edge = |k: usize, n: usize| if k == 0 || k == n { 0.5 } else { 1.0 };
-                let share = area * edge(i, nx) * edge(j, nz);
+        for (j, &dz) in wz.iter().enumerate() {
+            for (i, &dx) in wx.iter().enumerate() {
+                let share = f64::from(dx * dz);
                 let p = node(i, j);
                 weight.push((p, share * ps.per_square_metre));
                 floor.push((p, share * DECK_LOAD));
-                out.mass += area * edge(i, nx) * edge(j, nz) * ps.per_square_metre;
+                out.mass += share * ps.per_square_metre;
                 if let Some(q) = (0..frame_joints).filter(|&q| q != p && joints[q].distance(joints[p]) <= 0.6).min_by(|&a, &b| joints[a].distance(joints[p]).total_cmp(&joints[b].distance(joints[p]))) {
                     if let Some(f) = fitting {
                         frame.members.push(Member { a: p, b: q, section: f.section, material: f.material, pinned: [false; 2] });
@@ -3780,6 +3913,14 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
             faults.push(format!("MEMBERS CLASH: {}", parts.join(", ")));
         }
     }
+    // (Joints with no node in stock wide enough for their widest tube.)
+    if let Some((_, ns)) = i.node_cache.as_ref().filter(|(p, _)| *p == i.plan) {
+        let short = ns.iter().filter(|n| n.2.is_none()).count();
+        if short > 0 {
+            let most = node_stocks().last().map_or(0.0, |n| n.diameter);
+            faults.push(format!("{short} JOINT{} NEED A NODE WIDER THAN {:.0} MM: NONE IN STOCK", if short == 1 { "" } else { "S" }, most * 1000.0));
+        }
+    }
     let ground = of("landing_gear").map(|p| p.0.at.y - p.0.size.y * 0.5).fold(f32::INFINITY, f32::min);
     for p in placed.iter().filter(|p| p.2 == "ramp" || p.2 == "cargo_lift") {
         let foot = p.0.at.y - p.0.size.y * 0.5;
@@ -4519,6 +4660,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     // (And the frame's members, as the solid tubes they are.)
     if interior.member_clash.as_ref().is_none_or(|(p, _)| *p != interior.plan) {
         interior.member_clash = Some((interior.plan.clone(), member_clashes(&interior.plan)));
+        interior.node_cache = Some((interior.plan.clone(), nodes(&interior.plan.beams)));
     }
     stay
 }
@@ -5618,10 +5760,13 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 }
             }
         }
-        for b in &plan.beams {
-            for p in [b.a, b.b] {
-                if let Some((q, _)) = cam.project(p) {
-                    frame.hud_rect(q - Vec2::splat(1.5), Vec2::splat(3.0), Color([0.9, 0.95, 1.0, 0.9]));
+        // (Its nodes, as wide as they are; red where none in stock is wide enough.)
+        if let Some((_, ns)) = interior.node_cache.as_ref().filter(|(p, _)| *p == interior.plan) {
+            for (at, widest, node) in ns {
+                if let Some((q, z)) = cam.project(*at) {
+                    let d = node.map_or(*widest, |n| n.diameter);
+                    let w = (d * cam.focal / z).max(3.0);
+                    frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if node.is_some() { Color([0.9, 0.95, 1.0, 0.9]) } else { CLASH });
                 }
             }
         }
@@ -6133,6 +6278,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
 
 
 
