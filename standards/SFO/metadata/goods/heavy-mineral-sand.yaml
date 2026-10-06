@@ -2,7 +2,6 @@
 identity:
   key: good.heavy-mineral-sand
   name: "Heavy-mineral sand"
-  traded_as: market.ores
   kind: rock
   description: "Beach sand with bands of ilmenite, rutile and zircon."
 physical:

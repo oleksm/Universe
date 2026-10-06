@@ -2,7 +2,6 @@
 identity:
   key: good.fish
   name: "Fish fillets"
-  traded_as: market.food
   kind: product
 physical:
   bulk_density: 1000

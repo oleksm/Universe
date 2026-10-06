@@ -2,7 +2,6 @@
 identity:
   key: good.heat-pumps
   name: "Heat pumps"
-  traded_as: market.machinery
   kind: product
   description: "Machines that move heat from where it is not wanted to where it can be shed: chillers, coolers, climate plant."
 physical:

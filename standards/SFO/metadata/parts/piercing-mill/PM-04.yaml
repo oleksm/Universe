@@ -7,7 +7,11 @@ identity:
   description: "Drive the rolls."
 physical:
   mass: 40000
+  length: 4.31
+  width: 4.31
+  height: 4.31
 fit:
   count: 6
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room it would take at 500 kg for each m3, as the equipment list has it: what it is made of is not said. A placeholder until it is sized." }

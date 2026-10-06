@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is linens as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.linens-bulk
+  traded_as: market.textiles
+  code: LINENS-BULK
+  name: "Linens, in bulk"
+  form: bulk
+made_from:
+  - item: good.linens

@@ -69,6 +69,7 @@
     (key: "oil-press", name: "Oil press", length: 60.0, width: 40.0, height: 15.0, needs: 0.4, supplies: 0.0, holds: 0.0),
     (key: "orchard", name: "Orchard", length: 1000.0, width: 1000.0, height: 0.0, needs: 0.01, supplies: 0.0, holds: 0.0),
     (key: "ore-yard", name: "Ore yard", length: 200.0, width: 100.0, height: 15.0, needs: 0.5, supplies: 0.0, holds: 150000.0),
+    (key: "oxygen-plant", name: "Oxygen plant", length: 30.0, width: 20.0, height: 10.0, needs: 6.01, supplies: 0.0, holds: 0.0),
     (key: "panel-former", name: "Panel former", length: 30.0, width: 15.0, height: 8.0, needs: 0.3, supplies: 0.0, holds: 0.0),
     (key: "panel-line", name: "Panel line", length: 300.0, width: 40.0, height: 15.0, needs: 2.0, supplies: 0.0, holds: 0.0),
     (key: "pellet-plant", name: "Pellet plant", length: 250.0, width: 100.0, height: 40.0, needs: 23.0, supplies: 0.0, holds: 0.0),

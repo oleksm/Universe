@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the whole of the farmland as one holding, and Eikir Growers as its owner.
+identity:
+  key: parcel.treistun.port-eikir.3
+number: 3
+owner: org.eikir-growers
+address: { street: street.treistun.port-eikir.farm-road, number: 1 }
+outline: [[3000, -8500], [17000, -8500], [17000, 8500], [3000, 8500]]

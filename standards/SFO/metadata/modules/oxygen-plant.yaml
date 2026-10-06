@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.oxygen-plant
+  name: "Oxygen plant"
+  step: "Make oxygen"
+  description: "Splits water by current for the oxygen a sealed settlement breathes. The hydrogen left goes to the air plant, which uses it to take the carbon dioxide out of the air."
+physical:
+  length: 30
+  width: 20
+  height: 10
+recipes:
+  - makes: element.o
+    does: "Water is split: eight parts of oxygen to one of hydrogen."
+    inputs:
+      - { item: good.water, quantity: 1.126 }
+    outputs:
+      - { item: element.h, quantity: 0.126 }
+    rate: 0.25
+    power: 6010000
+basis:
+  - { of: [recipes.inputs, recipes.outputs], tier: derived, note: "From the chemistry: 9 kg of water gives 8 of oxygen and 1 of hydrogen." }
+  - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "53 kWh for each kg of hydrogen (commercial electrolysers, 2022), so 6.7 kWh for each kg of oxygen." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Sized for a settlement: a quarter of a kg of oxygen a second is what 24,000 people breathe. Its footprint is chosen." }

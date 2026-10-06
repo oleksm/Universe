@@ -2,7 +2,6 @@
 identity:
   key: good.chicken
   name: "Chicken"
-  traded_as: market.food
   kind: product
   description: "Dressed birds."
 physical:

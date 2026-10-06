@@ -7,6 +7,9 @@ identity:
   description: "The frame that holds the rolls."
 physical:
   mass: 30000
+  length: 1.56
+  width: 1.56
+  height: 1.56
 made_from:
   - item: stock.st4340-fg
     quantity: 45000.0
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

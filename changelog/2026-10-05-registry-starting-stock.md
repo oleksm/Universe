@@ -9,3 +9,13 @@
 - **Every good and stock item says what it is traded as.**
 - The deuterium plant takes its water where it stands. The gun, laser, mining rig and radar carry
   the figures the game's code held.
+
+## Air, water and food
+
+- **Air:** Treistun d and e are said to have air people can breathe. Each sealed port has a life
+  support works (an oxygen plant, air plants, a water works) and thirty days of oxygen.
+- **Water:** a water works at every port and a week of water.
+- **Food:** Port Eikir has its farms and food works (the temperate band); the other ports have
+  hydroponic halls for salad; every warehouse holds thirty days of food. The hot band's crops,
+  about a third of the food, have no ground yet.
+- Treistun e Station has no land on record and is not supplied.

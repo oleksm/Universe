@@ -2,7 +2,6 @@
 identity:
   key: good.concrete
   name: "Concrete"
-  traded_as: market.minerals
   kind: product
   description: "Cement, water and aggregate, mixed: poured wet, it sets to stone. What most things that stand are made of."
 physical:

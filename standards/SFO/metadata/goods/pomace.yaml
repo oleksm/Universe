@@ -2,7 +2,6 @@
 identity:
   key: good.pomace
   name: "Pomace"
-  traded_as: market.biologics
   kind: by-product
   description: "Skins, stones and pulp left from pressing olives or grapes."
 physical:

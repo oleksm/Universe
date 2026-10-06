@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is oilseed meal as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.oilseed-meal-bulk
+  traded_as: market.biologics
+  code: OILSEED-MEAL-BULK
+  name: "Oilseed meal, in bulk"
+  form: bulk
+made_from:
+  - item: good.oilseed-meal

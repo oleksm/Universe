@@ -6,9 +6,13 @@ identity:
   revision: outdated
   slot: power
 size_class: 1
+fits: mount.power-s1
 physical:
   mass: 1400
   volume: 3
+  length: 2.29
+  width: 1.14
+  height: 1.14
 built_of:
   parts: power-aurel-s1
 making:
@@ -21,3 +25,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a reactor and its turbine set in a row, twice as long as wide, to its volume. A stand-in until it is sized from what it must do." }

@@ -7,6 +7,7 @@ additionalProperties: false
 required: [identity]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [length, width, height] } } }
 properties:
   identity:
     type: object

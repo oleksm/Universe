@@ -2,7 +2,6 @@
 identity:
   key: good.sugar-beet
   name: "Sugar beet"
-  traded_as: market.food
   kind: product
   description: "A root grown for its sugar, in cool ground."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.milk
   name: "Milk"
-  traded_as: market.food
   kind: product
   description: "Fresh milk."
 physical:

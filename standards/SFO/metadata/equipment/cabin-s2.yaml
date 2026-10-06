@@ -6,9 +6,13 @@ identity:
   revision: outdated
   slot: cargo
 size_class: 2
+fits: mount.cargo-s2
 physical:
   mass: 2000
   volume: 15
+  length: 4.48
+  width: 2.24
+  height: 1.49
 needs:
   power: 28000
 built_of:
@@ -21,3 +25,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: rows of seats, long and low, to its volume. A stand-in until it is sized from what it must do." }

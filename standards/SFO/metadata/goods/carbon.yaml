@@ -2,7 +2,6 @@
 identity:
   key: good.carbon
   name: "Carbon"
-  traded_as: market.chemicals
   kind: intermediate
   description: "Solid carbon, as a black powder or coke: what electrodes are baked from."
 physical:

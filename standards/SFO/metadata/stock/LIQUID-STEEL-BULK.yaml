@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is liquid steel as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.liquid-steel-bulk
+  traded_as: market.metals
+  code: LIQUID-STEEL-BULK
+  name: "Liquid steel, in bulk"
+  form: bulk
+made_from:
+  - item: good.liquid-steel

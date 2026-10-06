@@ -6,10 +6,13 @@ identity:
   revision: draft
   description: "Feel the ship's turning and see where it points."
 physical:
-  mass: 34
+  mass: 6.12
+  length: 0.23
+  width: 0.23
+  height: 0.23
 made_from:
   - item: good.electronics
-    quantity: 34
+    quantity: 6.12
 making:
   module: module.assembly-shop
 fit:
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

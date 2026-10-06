@@ -2,7 +2,6 @@
 identity:
   key: good.fertiliser
   name: "Fertiliser"
-  traded_as: market.chemicals
   kind: consumable
   description: "Fixed nitrogen (as ammonia) for the ground: what a crop takes from the soil and must be given back."
 physical:

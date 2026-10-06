@@ -2,7 +2,6 @@
 identity:
   key: good.shale-zinc-ore
   name: "Shale zinc-lead ore"
-  traded_as: market.ores
   kind: rock
   description: "Shale layered with sphalerite and galena."
 physical:

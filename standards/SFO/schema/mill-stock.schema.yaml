@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Mill stock
 x-kind: [stock]
-description: 'standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. What a unit of it weighs is worked out from its material''s density.'
+description: 'Stock: what lies in a store and is sold. Only stock, and the made things kept by the piece (parts, equipment, hulls), names a market category: a material or a good does not. standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. standards/SFO/metadata/stock/<code>.yaml: a good in the form it is stocked and sold in. What a unit of it weighs is worked out from its material''s density.'
 type: object
 additionalProperties: false
 required: [identity, made_from]
@@ -15,7 +15,7 @@ properties:
       traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
       code: { type: string, pattern: '^[A-Z0-9]+(-[A-Z0-9]+)+$', description: "Its code. No two alike." }
       name: { type: string }
-      form: { type: string, description: "The form it comes in: one of its material's." }
+      form: { type: string, description: "The form it comes in: one of its material's; for a good, how it is stocked (bulk)." }
       temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
   made_from: { $ref: "../../common.schema.yaml#/definitions/made_from" }
   size:

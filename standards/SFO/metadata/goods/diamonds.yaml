@@ -2,7 +2,6 @@
 identity:
   key: good.diamonds
   name: "Diamonds"
-  traded_as: market.minerals
   kind: raw
   description: "Rough diamonds, as sorted from the rock: the hardest thing there is, for cutting and for show."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.growing-medium
   name: "Growing medium"
-  traded_as: market.biologics
   kind: consumable
   description: "What roots are held in where there is no soil: spun rock, fired clay or coir, in slabs and pellets. It clogs and is changed."
 physical:

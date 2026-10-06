@@ -2,7 +2,6 @@
 identity:
   key: good.polysilicon
   name: "Polysilicon"
-  traded_as: market.metals
   kind: intermediate
   description: "Silicon purified to parts in a billion, in grey rods."
 physical:

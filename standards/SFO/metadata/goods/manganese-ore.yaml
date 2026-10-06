@@ -2,7 +2,6 @@
 identity:
   key: good.manganese-ore
   name: "Manganese ore"
-  traded_as: market.ores
   kind: rock
   description: "Black oxide of manganese, from old sea beds."
 physical:

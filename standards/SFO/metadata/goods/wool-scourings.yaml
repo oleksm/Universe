@@ -2,7 +2,6 @@
 identity:
   key: good.wool-scourings
   name: "Wool scourings"
-  traded_as: market.chemicals
   kind: by-product
   description: "What is washed out of raw wool: grease and dirt."
 physical:

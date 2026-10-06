@@ -2,7 +2,6 @@
 identity:
   key: good.nickel-sulphide-ore
   name: "Nickel sulphide ore"
-  traded_as: market.ores
   kind: rock
   description: "Sulphide of nickel, copper and iron settled out of basalt."
 physical:

@@ -803,3 +803,101 @@ moves:**
   cut and form them first.
 
 The user decides when you merge. Also the user's: the metallic share at the frost line stays 0.15.
+
+**Dimensions required (the user, 2026-10-05).** Equipment, parts and hulls must now say a length,
+width and height (the schemas' `allOf`, which your generator passes over: no type changed). 599
+records that had none carry a marked stand-in (a cube of their volume): do not place or collide by
+them yet. The page's report "Dimensions" says which are real: the MC-07 and its 58 measured parts,
+and the five tanks.
+
+**What is sold is stock: a correction, and your build fails on it (the user, 2026-10-05).** The
+user's rule from the deuterium work was "we sell stock". When you asked for `traded_as` on every
+good I put it there, and that broke the rule: goods became sellable. The user has had it undone,
+"ruthlessly":
+
+- **`good.identity.traded_as` is gone** from the schema, and `material.identity.traded_as` with
+  it. A good or a material that names a market category does not validate.
+- **Every good that was traded has a stock item:** `SFO/metadata/stock/<GOOD>-BULK.yaml`, key
+  `stock.<good>-bulk`, form `bulk`, `made_from` the good, carrying the market category the good
+  had. 200 of them. They are of kind `stock`, by the same schema as mill stock.
+- **Your build fails, by one line:** `crates/registry/src/lib.rs:192`,
+  `Some("good") => self.good(item)?.identity.traded_as.clone()`. A good is now sold as a material
+  is: as the stock made from it, the line you already have for `Some("material")`.
+- What lies in a store or goes through a recipe is still the good (`good.wheat`); what is listed,
+  priced and sold is its stock (`stock.wheat-bulk`). Packed forms (sacks, cases, pallets) can be
+  further stock items of the same good, later.
+
+## Supply for people's needs (registry session, 2026-10-05, night)
+
+In answer to "people's needs are blocked on supply". All of it is seed state and what things are;
+who buys from whom is the economy's. **I could not run your tests on it:** the build stops at the
+one line of `traded_as` above, so this is checked by the registry's validators and its own reports
+only (power, layout, zoning: all pass).
+
+**1. Air.**
+
+- **Breathable where it is:** `atmosphere.breathable: true` on Treistun d and e (new, on the body
+  record; both are now `curated`). People at Port Eikir and Port Nacaubun take their air from the
+  place. It is a marked guess: the game has always settled both as worlds with air; what their air
+  is made of is not on record.
+- **Made where it is not:** a new module, `module.oxygen-plant` (water split by current: 0.25 kg of
+  oxygen a second, what 24,000 people breathe, 6 MW), and the `air-plant` there was. Each of the
+  eight sealed ports has a facility `<port>-life-support` (kind `utility`, new) with an oxygen
+  plant, one to three air plants (they take back 56% of the carbon dioxide breathed out, with the
+  hydrogen left from the oxygen), a water works and a tank farm.
+- **In store at day 0:** thirty days of oxygen (`element.o`) for its people.
+
+**2. Water.** A water works at every port (it cleans used water back to drinking water; people
+give back as much as they take). At Port Eikir it can also draw from the place (a second recipe of
+the water works, `from: place`). **In store at day 0:** a week of water at 50 kg a head a day.
+
+**3. Food.**
+
+- **Port Eikir farms the temperate band:** zone `agricultural` (238 km2), `eikir-farms` (170
+  fields, 40 market gardens, 8 orchards, 57 barns, 13 fish farms) and `eikir-food-works` (flour
+  mill, bakery, feed mill, oil press, sugar works, dairy, meat works, brewery, winery, and a
+  fertiliser works with its hydrogen plant). The port's power station carries it: 124 MW of 400.
+- **Halls elsewhere,** for the leaf and salad that do not ship: `<port>-halls` with 1 hydroponic
+  hall at each moon outpost, 2 at Zaudalein, Lisaur and Trethi, 5 at Nacaubun.
+- **Not placed: the hot band** (rice, maize, soybeans, citrus and the rest: about a third of the
+  food). It wants ground 1,500 km south of Port Eikir, a settlement the registry does not have.
+  So Treistun is short of food as placed, until the user gives the hot band a home or the halls
+  grow more.
+
+**4. Each settlement's share.** Nothing says who feeds whom. **In every port's warehouse at day 0:
+thirty days of food** for its people at 1.5 kg a head a day, as stock (`stock.flour-bulk`,
+`stock.potatoes-bulk`... twelve items, a plain basket of what keeps): 2,700 t at the two large
+ports, 900 t at the three middling ones, 135 t at each outpost. Each warehouse gained a cold store.
+
+**5. The needs that take or give stock,** and so can run: air, water, washing, food, medicine,
+clothes, tools, art, company (beer and wine). **Those that do not** (they are met by floor, by
+power or by someone's work): warmth and power (W), shelter and home (m2), safety, work, news,
+schooling, travel, play, wandering.
+
+**Not supplied: Treistun e Station.** It has 25,000 people and no land on record: no parcel, no
+power station, no warehouse. A station has no ground to put a facility on as the records stand. It
+needs its own answer (the structure's decks as its land?), which is the user's.
+
+**The gate's holding power: the user's to say.** Both figures are Dogma's and invented: `tube-hold`
+(the opening over 200 months) gives 3.65 GW for 3 light years; a gate names one 400 MW station. I
+have put the question to the user and changed neither.
+
+**Equipment shapes, and mounts (the user, 2026-10-05, night).**
+
+- **Seven pieces of equipment have real figures now** (the audit, `docs/ships/mc-07-equipment-dimensions.md`):
+  the radar is an 8 m2 array 10 cm thick; the comm is a 3 m dish, 90 kg, 360 W; the two flight
+  computers, the two nav computers and the transponder are at real avionics weights, sizes and
+  draws (30 kg and 200 W for the flight computer, 3 kg and 20 W for the transponder). Their parts
+  are scaled to match. The other 45 are shaped by what they are (a drive three times as long as
+  wide, a cabin long and low, a gun a barrel) at the volume they had: still stand-ins for a size.
+- **Mounts: SFO 19.** A new kind, `mount` (`SFO/metadata/mounts/<slot>-s<class>.yaml`, 37 of
+  them): the standard between a hull's slot and what is fitted to it. Each says the most the hull
+  gives and bears there: an envelope (length, width, height), the weight borne, the thrust one
+  nozzle may put through it and the nozzle opening, a weapon's recoil, and what the hull feeds
+  (power, cooling, fuel). **Equipment says `fits: mount.<slot>-s<class>`; a hull's slot says
+  `mount:`.** Any equipment within a mount's figures fits any hull that offers it: a maker builds
+  to the mount. The first mounts are set round today's equipment with a margin (a tenth more room,
+  a quarter more weight, power and thrust), so everything fits; they describe what is. The page's
+  report "Mounts" checks each piece against its mount: 56 of 56 within.
+- **For the game, when you want it:** fit by `mount`, not by size class alone; a slot's mount is
+  what a refit may take; a hull's lines and openings at a slot are the mount's figures.

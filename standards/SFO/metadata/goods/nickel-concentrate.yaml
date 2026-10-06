@@ -2,7 +2,6 @@
 identity:
   key: good.nickel-concentrate
   name: "Nickel concentrate"
-  traded_as: market.ores
   kind: intermediate
   description: "Ground ore floated until it is 16% nickel."
 physical:

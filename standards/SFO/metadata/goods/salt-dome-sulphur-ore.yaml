@@ -2,7 +2,6 @@
 identity:
   key: good.salt-dome-sulphur-ore
   name: "Salt-dome sulphur ore"
-  traded_as: market.ores
   kind: rock
   description: "Limestone cap rock filled with native sulphur."
 physical:

@@ -7,6 +7,9 @@ identity:
   description: "The way in and out, for people and for the crop, without letting the air out."
 physical:
   mass: 40000
+  length: 1.72
+  width: 1.72
+  height: 1.72
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 40000.0
@@ -16,3 +19,4 @@ fit:
   count: 2
 basis:
   - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. A guess. Taken as cut from plate with 15% lost; a real one is of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

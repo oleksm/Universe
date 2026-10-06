@@ -188,6 +188,7 @@
 - { key: module.oil-press, game: "oil-press", in: "industry.ron, settlements.ron" }
 - { key: module.orchard, game: "orchard", in: "industry.ron, settlements.ron" }
 - { key: module.ore-yard, game: "ore-yard", in: "industry.ron, settlements.ron" }
+- { key: module.oxygen-plant, game: "oxygen-plant", in: "industry.ron, settlements.ron" }
 - { key: module.panel-former, game: "panel-former", in: "industry.ron, settlements.ron" }
 - { key: module.panel-line, game: "panel-line", in: "industry.ron, settlements.ron" }
 - { key: module.pellet-plant, game: "pellet-plant", in: "industry.ron, settlements.ron" }
@@ -295,6 +296,7 @@
 - { key: standard.sfo.16, game: "SFO 16", in: "standards.ron" }
 - { key: standard.sfo.17, game: "SFO 17", in: "standards.ron" }
 - { key: standard.sfo.18, game: "SFO 18", in: "standards.ron" }
+- { key: standard.sfo.19, game: "SFO 19", in: "standards.ron" }
 - { key: standard.sfo.2, game: "SFO 2", in: "standards.ron" }
 - { key: standard.sfo.3, game: "SFO 3", in: "standards.ron" }
 - { key: standard.sfo.4, game: "SFO 4", in: "standards.ron" }

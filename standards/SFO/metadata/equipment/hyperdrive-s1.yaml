@@ -7,9 +7,13 @@ identity:
   slot: hyperdrive
   description: "The drive that crosses between stars."
 size_class: 1
+fits: mount.hyperdrive-s1
 physical:
   mass: 2500
   volume: 6
+  length: 2.38
+  width: 1.59
+  height: 1.59
 needs:
   power: 900000
 built_of:
@@ -23,3 +27,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and all invented: nothing real holds a hyper-field. Taken as coils in strong cases, the power gear that feeds them, and cooling." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: coils in a rack, to its volume. A stand-in until it is sized from what it must do." }

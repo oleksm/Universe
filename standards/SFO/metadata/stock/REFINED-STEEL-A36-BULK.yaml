@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is refined steel, a36 as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.refined-steel-a36-bulk
+  traded_as: market.metals
+  code: REFINED-STEEL-A36-BULK
+  name: "Refined steel, A36, in bulk"
+  form: bulk
+made_from:
+  - item: good.refined-steel-a36

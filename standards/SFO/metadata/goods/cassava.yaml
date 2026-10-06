@@ -2,7 +2,6 @@
 identity:
   key: good.cassava
   name: "Cassava"
-  traded_as: market.food
   kind: product
   description: "A starchy root that stands heat and poor soil."
 physical:

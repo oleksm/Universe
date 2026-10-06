@@ -7,9 +7,13 @@ identity:
   slot: thrusters
   description: "Manoeuvring thrusters, in clusters at nose and tail."
 size_class: 2
+fits: mount.thrusters-s2
 physical:
   mass: 1500
   volume: 3
+  length: 1.44
+  width: 1.44
+  height: 1.44
 needs:
   power: 200000
 built_of:
@@ -25,3 +29,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a thruster block (a small torch of the same kind): the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a block of nozzles facing out, a cube, to its volume. A stand-in until it is sized from what it must do." }

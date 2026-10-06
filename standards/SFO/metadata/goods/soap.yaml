@@ -2,7 +2,6 @@
 identity:
   key: good.soap
   name: "Soap"
-  traded_as: market.chemicals
   kind: product
   description: "Fat boiled with caustic soda."
 physical:

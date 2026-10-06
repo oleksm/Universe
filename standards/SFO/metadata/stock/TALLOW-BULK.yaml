@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is tallow as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.tallow-bulk
+  traded_as: market.chemicals
+  code: TALLOW-BULK
+  name: "Tallow, in bulk"
+  form: bulk
+made_from:
+  - item: good.tallow

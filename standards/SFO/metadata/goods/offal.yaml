@@ -2,7 +2,6 @@
 identity:
   key: good.offal
   name: "Offal and hides"
-  traded_as: market.biologics
   kind: by-product
   description: "What is left of an animal when the meat is cut: hides, bones, blood and offal."
 physical:

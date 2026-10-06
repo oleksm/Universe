@@ -2,7 +2,6 @@
 identity:
   key: good.wheat
   name: "Wheat"
-  traded_as: market.food
   kind: product
   description: "The bread grain."
 physical:

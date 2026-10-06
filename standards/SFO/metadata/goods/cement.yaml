@@ -2,7 +2,6 @@
 identity:
   key: good.cement
   name: "Cement"
-  traded_as: market.minerals
   kind: intermediate
   description: "Limestone and clay burnt together and ground: a grey powder that sets hard with water."
 physical:

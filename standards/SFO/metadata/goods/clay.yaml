@@ -2,7 +2,6 @@
 identity:
   key: good.clay
   name: "Clay"
-  traded_as: market.minerals
   kind: rock
   description: "Fine, sticky earth, made where water has worn rock down: the stuff of brick, and a part of cement."
 physical:

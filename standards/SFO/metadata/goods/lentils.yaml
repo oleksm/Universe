@@ -2,7 +2,6 @@
 identity:
   key: good.lentils
   name: "Lentils"
-  traded_as: market.food
   kind: product
   description: "A pulse for dry ground."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.linen-cloth
   name: "Linen cloth"
-  traded_as: market.textiles
   kind: intermediate
   description: "Cloth woven of flax, on the roll."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.almonds
   name: "Almonds"
-  traded_as: market.food
   kind: product
   description: "In the shell."
 physical:

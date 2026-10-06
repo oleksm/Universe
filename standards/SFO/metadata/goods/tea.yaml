@@ -2,7 +2,6 @@
 identity:
   key: good.tea
   name: "Tea"
-  traded_as: market.food
   kind: product
   description: "Leaves, withered and dried."
 physical:

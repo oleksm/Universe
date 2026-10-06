@@ -2,7 +2,6 @@
 identity:
   key: good.hay
   name: "Hay"
-  traded_as: market.biologics
   kind: intermediate
   description: "Grass cut and dried, for animals."
 physical:

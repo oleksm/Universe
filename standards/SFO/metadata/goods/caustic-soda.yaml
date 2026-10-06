@@ -2,7 +2,6 @@
 identity:
   key: good.caustic-soda
   name: Caustic soda
-  traded_as: market.chemicals
   kind: consumable
   description: "Sodium hydroxide. It dissolves the aluminium oxide out of bauxite and leaves the rest behind."
 physical:

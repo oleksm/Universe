@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is massive sulphide ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.massive-sulphide-ore-bulk
+  traded_as: market.ores
+  code: MASSIVE-SULPHIDE-ORE-BULK
+  name: "Massive sulphide ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.massive-sulphide-ore

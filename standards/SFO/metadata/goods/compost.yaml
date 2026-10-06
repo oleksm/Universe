@@ -2,7 +2,6 @@
 identity:
   key: good.compost
   name: "Compost"
-  traded_as: market.chemicals
   kind: product
   description: "Dung and stalks rotted down: dark, crumbly, and good for ground."
 physical:

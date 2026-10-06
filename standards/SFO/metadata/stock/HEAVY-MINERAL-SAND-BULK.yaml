@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is heavy-mineral sand as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.heavy-mineral-sand-bulk
+  traded_as: market.ores
+  code: HEAVY-MINERAL-SAND-BULK
+  name: "Heavy-mineral sand, in bulk"
+  form: bulk
+made_from:
+  - item: good.heavy-mineral-sand

@@ -2,7 +2,6 @@
 identity:
   key: good.orogenic-gold-ore
   name: "Orogenic gold ore"
-  traded_as: market.ores
   kind: rock
   description: "Vein quartz with gold."
 physical:

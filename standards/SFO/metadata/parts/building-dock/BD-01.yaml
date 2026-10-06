@@ -7,6 +7,9 @@ identity:
   description: "The steel frame of the dock, long, wide and high enough for a hull."
 physical:
   mass: 1580000
+  length: 5.87
+  width: 5.87
+  height: 5.87
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 1580000
@@ -18,3 +21,4 @@ basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://de.wikipedia.org/wiki/Cargolifter-Werfthalle", note: "A very high, wide-span hall: the CargoLifter airship hangar has 14,500 t of steel over 66,000 m2, 220 kg for each m2: over this dock's 7,200 m2." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

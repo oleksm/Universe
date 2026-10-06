@@ -2,7 +2,6 @@
 identity:
   key: good.laterite-nickel-ore
   name: "Laterite nickel ore"
-  traded_as: market.ores
   kind: rock
   description: "Deep tropical soil that has kept its nickel."
 physical:

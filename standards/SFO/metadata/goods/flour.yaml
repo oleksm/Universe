@@ -2,7 +2,6 @@
 identity:
   key: good.flour
   name: "Flour"
-  traded_as: market.food
   kind: product
   description: "Wheat milled fine, the bran taken off."
 physical:

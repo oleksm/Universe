@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is pgm-rich ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.pgm-rich-ore-bulk
+  traded_as: market.ores
+  code: PGM-RICH-ORE-BULK
+  name: "PGM-Rich Ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.pgm-rich-ore

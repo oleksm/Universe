@@ -2,7 +2,6 @@
 identity:
   key: good.gypsum
   name: "Gypsum"
-  traded_as: market.minerals
   kind: by-product
   description: "Calcium sulphate left when phosphate rock is treated with acid: four and a half times the weight of the phosphate made."
 physical:

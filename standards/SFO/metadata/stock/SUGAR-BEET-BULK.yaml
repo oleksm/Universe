@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is sugar beet as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.sugar-beet-bulk
+  traded_as: market.food
+  code: SUGAR-BEET-BULK
+  name: "Sugar beet, in bulk"
+  form: bulk
+made_from:
+  - item: good.sugar-beet

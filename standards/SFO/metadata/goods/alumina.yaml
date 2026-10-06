@@ -2,7 +2,6 @@
 identity:
   key: good.alumina
   name: Alumina
-  traded_as: market.minerals
   kind: intermediate
   description: "Aluminium oxide, a white powder: bauxite with everything else taken out."
 physical:

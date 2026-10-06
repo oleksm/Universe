@@ -2,7 +2,6 @@
 identity:
   key: good.bauxite
   name: Bauxite
-  traded_as: market.ores
   kind: rock
   description: "The ore of aluminium: rock rich in aluminium oxide, left where warm rain has leached the ground for a very long time."
 physical:

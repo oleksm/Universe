@@ -7,6 +7,9 @@ identity:
   description: "Brings the plasma to burning."
 physical:
   mass: 25
+  length: 0.397
+  width: 0.397
+  height: 0.397
 made_from:
   - item: good.electronics
     quantity: 25
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of reactor and power conversion, as in NASA's Discovery II (2005), brought to this product's weight." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

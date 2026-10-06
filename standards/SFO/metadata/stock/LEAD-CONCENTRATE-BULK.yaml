@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is lead concentrate as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.lead-concentrate-bulk
+  traded_as: market.ores
+  code: LEAD-CONCENTRATE-BULK
+  name: "Lead concentrate, in bulk"
+  form: bulk
+made_from:
+  - item: good.lead-concentrate

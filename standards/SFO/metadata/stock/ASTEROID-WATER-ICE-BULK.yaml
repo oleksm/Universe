@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is asteroid water ice as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.asteroid-water-ice-bulk
+  traded_as: market.water
+  code: ASTEROID-WATER-ICE-BULK
+  name: "Asteroid Water Ice, in bulk"
+  form: bulk
+made_from:
+  - item: good.asteroid-water-ice

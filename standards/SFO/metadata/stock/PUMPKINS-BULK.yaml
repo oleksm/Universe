@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is pumpkins as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.pumpkins-bulk
+  traded_as: market.food
+  code: PUMPKINS-BULK
+  name: "Pumpkins, in bulk"
+  form: bulk
+made_from:
+  - item: good.pumpkins

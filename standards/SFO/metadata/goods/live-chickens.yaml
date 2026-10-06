@@ -2,7 +2,6 @@
 identity:
   key: good.live-chickens
   name: "Chickens"
-  traded_as: market.biologics
   kind: intermediate
   description: "Meat birds, live, by weight."
 physical:

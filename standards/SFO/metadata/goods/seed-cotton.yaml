@@ -2,7 +2,6 @@
 identity:
   key: good.seed-cotton
   name: "Seed cotton"
-  traded_as: market.biologics
   kind: intermediate
   description: "Cotton as picked: the lint still on the seed. A third of its weight is lint."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.refined-steel-a36
   name: "Refined steel, A36"
-  traded_as: market.metals
   kind: intermediate
   description: "Molten steel trimmed to the A36 grade and degassed, ready to cast."
 physical:

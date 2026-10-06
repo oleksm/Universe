@@ -2,7 +2,6 @@
 identity:
   key: good.sediment-copper-ore
   name: "Sediment copper ore"
-  traded_as: market.ores
   kind: rock
   description: "Shale and sandstone with copper sulphides."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.titanomagnetite-ore
   name: "Titanomagnetite ore"
-  traded_as: market.ores
   kind: rock
   description: "Magnetite carrying titanium and vanadium."
 physical:

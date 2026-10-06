@@ -2,7 +2,6 @@
 identity:
   key: good.chips
   name: "Chips"
-  traded_as: market.electronics
   kind: intermediate
   description: "Integrated circuits, cut from the wafer and packaged."
 physical:

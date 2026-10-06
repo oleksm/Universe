@@ -6,9 +6,13 @@ identity:
   revision: outdated
   slot: gate
 size_class: 3
+fits: mount.gate-s3
 physical:
   mass: 3000
   volume: 10
+  length: 3.42
+  width: 3.42
+  height: 0.855
 needs:
   power: 100000
 built_of:
@@ -24,3 +28,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a dish and its gear, wide and shallow, to its volume. A stand-in until it is sized from what it must do." }

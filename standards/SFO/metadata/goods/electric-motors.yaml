@@ -2,7 +2,6 @@
 identity:
   key: good.electric-motors
   name: "Electric motors"
-  traded_as: market.machinery
   kind: product
   description: "Induction motors: a steel core, copper windings, a frame."
 physical:

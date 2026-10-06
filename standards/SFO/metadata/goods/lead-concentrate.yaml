@@ -2,7 +2,6 @@
 identity:
   key: good.lead-concentrate
   name: "Lead concentrate"
-  traded_as: market.ores
   kind: intermediate
   description: "Ground ore floated until it is 60% lead: mostly galena."
 physical:

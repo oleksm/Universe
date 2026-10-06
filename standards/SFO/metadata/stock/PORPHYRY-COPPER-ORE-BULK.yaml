@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is porphyry copper ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.porphyry-copper-ore-bulk
+  traded_as: market.ores
+  code: PORPHYRY-COPPER-ORE-BULK
+  name: "Porphyry copper ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.porphyry-copper-ore

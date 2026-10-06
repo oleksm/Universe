@@ -7,9 +7,13 @@ identity:
   slot: life_support
   description: "Air, water and warmth for the crew."
 size_class: 2
+fits: mount.life-support-s2
 physical:
   mass: 1500
   volume: 8
+  length: 3.17
+  width: 1.59
+  height: 1.59
 needs:
   power: 200000
 built_of:
@@ -21,3 +25,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, by the space station's plant. By the station's weights (293 kg a head for water and oxygen) 1,500 kg keeps about five people." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: racks in a row, to its volume. A stand-in until it is sized from what it must do." }

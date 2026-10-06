@@ -6,10 +6,13 @@ identity:
   revision: draft
   description: "Switch the thrusters, faster and harder."
 physical:
-  mass: 80
+  mass: 14.4
+  length: 0.307
+  width: 0.307
+  height: 0.307
 made_from:
   - item: good.electronics
-    quantity: 80
+    quantity: 14.4
 making:
   module: module.assembly-shop
 fit:
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

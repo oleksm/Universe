@@ -2,7 +2,6 @@
 identity:
   key: good.carbonatite-ore
   name: "Carbonatite ore"
-  traded_as: market.ores
   kind: rock
   description: "Carbonate rock with phosphate, rare earths and niobium."
 physical:

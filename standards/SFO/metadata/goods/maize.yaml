@@ -2,7 +2,6 @@
 identity:
   key: good.maize
   name: "Maize"
-  traded_as: market.food
   kind: product
   description: "Corn: food for people and the main grain for animals."
 physical:

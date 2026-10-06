@@ -7,9 +7,13 @@ identity:
   slot: cargo
   description: "Racks that hold cargo in the hold."
 size_class: 1
+fits: mount.cargo-s1
 physical:
   mass: 350
   volume: 6
+  length: 3.63
+  width: 1.82
+  height: 0.909
 built_of:
   parts: rack-s1
 making:
@@ -20,3 +24,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: shelving along a hold, to its volume. A stand-in until it is sized from what it must do." }

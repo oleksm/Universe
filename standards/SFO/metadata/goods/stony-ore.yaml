@@ -3,7 +3,6 @@
 identity:
   key: good.stony-ore
   name: Stony Ore
-  traded_as: market.ores
   kind: rock
   description: "Common asteroid rock: silicates holding iron, magnesium and calcium as oxides."
 physical:

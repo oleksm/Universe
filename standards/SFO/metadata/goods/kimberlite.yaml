@@ -2,7 +2,6 @@
 identity:
   key: good.kimberlite
   name: "Kimberlite"
-  traded_as: market.ores
   kind: rock
   description: "The blue ground of a diamond pipe."
 physical:

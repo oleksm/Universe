@@ -7,7 +7,11 @@ identity:
   description: "The lamps over every tier, and their drivers."
 physical:
   mass: 50000
+  length: 4.64
+  width: 4.64
+  height: 4.64
 fit:
   count: 1
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed. 5 kg of lamp for each m2 of bed: a guess. What a lamp is made of is not described." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room it would take at 500 kg for each m3, as the equipment list has it: what it is made of is not said. A placeholder until it is sized." }

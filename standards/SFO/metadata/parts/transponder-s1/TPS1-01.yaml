@@ -6,10 +6,13 @@ identity:
   revision: draft
   description: "Answers when asked who the ship is."
 physical:
-  mass: 35
+  mass: 2.1
+  length: 0.161
+  width: 0.161
+  height: 0.161
 made_from:
   - item: good.electronics
-    quantity: 35
+    quantity: 2.1
 making:
   module: module.assembly-shop
 fit:
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A deep-space transponder weighs 3 kg; this is allowed far more." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

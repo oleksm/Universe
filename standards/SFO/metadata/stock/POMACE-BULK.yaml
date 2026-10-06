@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is pomace as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.pomace-bulk
+  traded_as: market.biologics
+  code: POMACE-BULK
+  name: "Pomace, in bulk"
+  form: bulk
+made_from:
+  - item: good.pomace

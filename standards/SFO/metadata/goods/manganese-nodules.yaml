@@ -2,7 +2,6 @@
 identity:
   key: good.manganese-nodules
   name: "Manganese nodules"
-  traded_as: market.ores
   kind: rock
   description: "Nodules dredged from the deep sea floor: manganese with nickel, copper and cobalt."
 physical:

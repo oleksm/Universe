@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is sponge iron as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.sponge-iron-bulk
+  traded_as: market.metals
+  code: SPONGE-IRON-BULK
+  name: "Sponge iron, in bulk"
+  form: bulk
+made_from:
+  - item: good.sponge-iron

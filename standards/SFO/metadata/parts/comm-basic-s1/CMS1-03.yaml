@@ -6,10 +6,13 @@ identity:
   revision: draft
   description: "Points the dish."
 physical:
-  mass: 18
+  mass: 40.5
+  length: 0.433
+  width: 0.433
+  height: 0.433
 made_from:
   - item: good.electric-motors
-    quantity: 18
+    quantity: 40.5
 making:
   module: module.assembly-shop
 fit:
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

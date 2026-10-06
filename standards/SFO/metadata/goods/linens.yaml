@@ -2,7 +2,6 @@
 identity:
   key: good.linens
   name: "Linens"
-  traded_as: market.textiles
   kind: product
   description: "Sheets, towels, table cloths, and clothes for hot places: of linen."
 physical:

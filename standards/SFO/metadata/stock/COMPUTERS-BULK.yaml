@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is computers as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.computers-bulk
+  traded_as: market.computers
+  code: COMPUTERS-BULK
+  name: "Computers, in bulk"
+  form: bulk
+made_from:
+  - item: good.computers

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is reef chromite ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.reef-chromite-ore-bulk
+  traded_as: market.ores
+  code: REEF-CHROMITE-ORE-BULK
+  name: "Reef chromite ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.reef-chromite-ore

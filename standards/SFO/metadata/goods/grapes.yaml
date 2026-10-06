@@ -2,7 +2,6 @@
 identity:
   key: good.grapes
   name: "Grapes"
-  traded_as: market.food
   kind: product
   description: "For the table and for wine."
 physical:

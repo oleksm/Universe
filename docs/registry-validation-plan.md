@@ -82,3 +82,27 @@ another. It stays as a second, small pass with no knowledge of any kind.
 | Organisation, law, need, trade, zone, standard | not physical things: they do not derive from it |
 
 Mass, length, width, height, volume and bulk density must be above nothing wherever they appear.
+
+## Dimensions are required (the user, 2026-10-05)
+
+"Make dimensions to physical items required." So a length, a width and a height, each above
+nothing, are now required of:
+
+| Kind | Must have |
+|---|---|
+| Equipment | mass, volume, length, width, height |
+| Part | length, width, height (its mass too, unless it is made of parts) |
+| Hull | volume, length, width, height |
+| Building | mass, length, width, height (as before) |
+| Module | length, width (a field has no height) |
+
+Goods, materials and stock are bulk: they have a density or a gauge, not a size.
+
+**599 records had none, and now carry a stand-in:** a cube of the volume on record (equipment), of
+the room its own material takes (a part: its weight over its material's density), or a box by the
+radius the game flies it at (the five old hulls). Each says so in its basis ("Not worked out..."),
+marked to review. A tank is the one exception: a ball of its volume, which is worked out.
+
+A new report on the page, **Dimensions**, counts them: 1 of 6 hulls, 5 of 57 pieces of equipment
+and 58 of 595 parts are sized; the rest are owed a real size. The gate now refuses a physical thing
+with no size; the report says which sizes are real.

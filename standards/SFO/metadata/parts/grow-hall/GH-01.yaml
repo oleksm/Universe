@@ -7,6 +7,9 @@ identity:
   description: "The airtight skin of the hall: it holds a full atmosphere against whatever is outside, down to none."
 physical:
   mass: 2500000
+  length: 6.84
+  width: 6.84
+  height: 6.84
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 2500000.0
@@ -16,3 +19,4 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass, fit, made_from], tier: invented, review: true, note: "A guess, to be reviewed. 16,000 m2 of wall, roof and floor in 20 mm plate. Taken as cut from plate with 15% lost; a real one is of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }

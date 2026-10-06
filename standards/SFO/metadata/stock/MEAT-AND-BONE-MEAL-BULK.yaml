@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is meat and bone meal as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.meat-and-bone-meal-bulk
+  traded_as: market.biologics
+  code: MEAT-AND-BONE-MEAL-BULK
+  name: "Meat and bone meal, in bulk"
+  form: bulk
+made_from:
+  - item: good.meat-and-bone-meal

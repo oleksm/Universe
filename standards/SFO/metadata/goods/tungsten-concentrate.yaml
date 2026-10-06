@@ -2,7 +2,6 @@
 identity:
   key: good.tungsten-concentrate
   name: "Tungsten concentrate"
-  traded_as: market.ores
   kind: intermediate
   description: "Scheelite and wolframite washed to 65% tungsten oxide."
 physical:

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is hot ingot, a36 steel as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.hot-ingot-a36-bulk
+  traded_as: market.metals
+  code: HOT-INGOT-A36-BULK
+  name: "Hot ingot, A36 steel, in bulk"
+  form: bulk
+made_from:
+  - item: good.hot-ingot-a36

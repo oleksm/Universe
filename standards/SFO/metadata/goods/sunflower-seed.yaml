@@ -2,7 +2,6 @@
 identity:
   key: good.sunflower-seed
   name: "Sunflower seed"
-  traded_as: market.food
   kind: product
   description: "An oilseed for warm ground."
 physical:

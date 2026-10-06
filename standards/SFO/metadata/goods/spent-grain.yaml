@@ -2,7 +2,6 @@
 identity:
   key: good.spent-grain
   name: "Spent grain"
-  traded_as: market.biologics
   kind: by-product
   description: "Barley after brewing, wet: fed to animals."
 physical:

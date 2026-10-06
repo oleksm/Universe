@@ -2,7 +2,6 @@
 identity:
   key: good.aggregate
   name: "Aggregate"
-  traded_as: market.minerals
   kind: intermediate
   description: "Crushed rock and sand, graded by size: the bulk of concrete, and what roads are laid on."
 physical:
