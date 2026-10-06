@@ -1688,6 +1688,27 @@ impl Interior {
             Some(spec) => fit_of(spec),
             None => catalogue().to_vec(),
         };
+        // (A placed module whose record's size has changed since: made that size,
+        // standing where it stood.)
+        let mut resized = 0;
+        for b in self.plan.blocks.iter_mut() {
+            let Some(f) = self.fit.iter().find(|f| f.id == kind(&b.id)) else { continue };
+            let shape = if f.round { std::f32::consts::PI / 6.0 } else { 1.0 };
+            // (Its volume, or its size's: stretched, it keeps the first; made, it has
+            // the second; neither, it's out of date.)
+            let volume = b.size.x * b.size.y * b.size.z * shape;
+            let made = f.size.x * f.size.y * f.size.z * shape;
+            let off = |v: f32| (volume - v).abs() > v.max(0.01) * 0.02;
+            if off(f.volume) && off(made) {
+                let foot = b.at.y - b.size.y * 0.5;
+                b.size = f.size;
+                b.at.y = foot + b.size.y * 0.5;
+                resized += 1;
+            }
+        }
+        if resized > 0 {
+            self.message = Some((format!("{resized} MODULES MADE THE SIZE THE REGISTRY NOW GIVES THEM"), 6.0));
+        }
     }
 
     /// A dialog open (dev scenarios): NEW, or OPEN.
