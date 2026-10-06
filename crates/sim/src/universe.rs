@@ -171,7 +171,7 @@ impl Universe {
         // The land office, from the registry: each settlement recorded, at its system and port.
         let content = universe_world::content::content();
         u.land = universe_services::land::LandOffice::seed(systems.iter().flat_map(|(i, sys)| {
-            sys.spaceports.iter().enumerate().filter_map(move |(p, sp)| content.settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name).map(|s| (*i, p, s)))
+            sys.spaceports.iter().enumerate().filter_map(move |(p, sp)| content.settlement(&sys.name, &sys.bodies[sp.body].key, &sp.name).map(|s| (*i, p, s)))
         }));
         // The settlements' economy: their facilities and markets, on the land office's ground.
         u.markets.economy = universe_services::economy::Economy::new(&u.land, u.world.time);

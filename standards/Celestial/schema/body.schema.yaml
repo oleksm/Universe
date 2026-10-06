@@ -16,7 +16,7 @@ properties:
     additionalProperties: false
     required: [key, name, kind]
     properties:
-      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      key: { $ref: "../../common.schema.yaml#/definitions/key", description: "The body's ID: body.<system>.<its name as the seed first gave it, slugged>. Given once when the record is written out and never changed; the game matches the seed's body to its record by it, so the name is free to change (identity.also keeps the seed's). Claims, settlements and surveys point at it." }
       name: { type: string }
       also: { type: string, description: "What else it is called: a named world keeps the surveyors' letter (Harvest)." }
       kind: { enum: [star, rocky planet, gas giant, ice giant, moon, asteroid, dwarf planet, comet, centaur, crossing asteroid, captured moon] }

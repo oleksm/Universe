@@ -51,10 +51,13 @@ pub struct Star {
 /// One natural body as its record says (kg, m, s, rad).
 #[derive(Clone, Debug)]
 pub struct Body {
+    /// The registry's key: what the seed's body is matched by (`system::Body::key`).
+    pub key: String,
+    /// What its people call it: the seed's body takes this name.
     pub name: String,
     pub status: Provenance,
     pub kind: BodyKind,
-    /// What it goes round, by name.
+    /// What it goes round, by key.
     pub parent: String,
     pub mass: f64,
     pub radius: f64,
@@ -122,7 +125,6 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
     let bodies: Vec<&RegBody> = reg.bodies.iter().filter(|b| in_system(&b.identity.key, "body", name) && made(b.in_game)).collect();
     let need = |what: &str, key: &str, v: Option<f64>| v.unwrap_or_else(|| panic!("{key}: no {what}"));
     let star = bodies.iter().find(|b| b.identity.kind == RegKind::Star).unwrap_or_else(|| panic!("{}: no star", s.identity.key));
-    let named = |key: &str| reg.bodies.iter().find(|b| b.identity.key == key).map_or_else(|| panic!("no {key}"), |b| b.identity.name.clone());
     System {
         system: s.identity.name.clone(),
         index: s.identity.index.unwrap_or_else(|| panic!("{}: no index among the seed's stars", s.identity.key)) as usize,
@@ -154,10 +156,11 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
                 let (o, p, f) = (&b.orbit, &b.physical, &b.surface);
                 let colour = f.colour.unwrap_or([0.5; 3]);
                 Body {
+                    key: b.identity.key.clone(),
                     name: b.identity.name.clone(),
                     status: b.provenance,
                     kind,
-                    parent: named(b.identity.parent.as_deref().unwrap_or_else(|| panic!("{key}: goes round nothing"))),
+                    parent: b.identity.parent.clone().unwrap_or_else(|| panic!("{key}: goes round nothing")),
                     mass: need("mass", key, p.mass),
                     radius: need("radius", key, p.radius),
                     day: need("day", key, p.day),
@@ -253,8 +256,8 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
         sys.luminosity = rec.star.luminosity;
         repull(sys, 0, rec.star.mass * SUN_MASS);
         // The roster: planets and moons the registry doesn't have are not there (nor their moons).
-        let written = |name: &str| rec.bodies.iter().any(|r| r.name == name);
-        let mut keep: Vec<bool> = sys.bodies.iter().map(|b| !matches!(b.kind, BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon) || written(&b.name)).collect();
+        let written = |key: &str| rec.bodies.iter().any(|r| r.key == key);
+        let mut keep: Vec<bool> = sys.bodies.iter().map(|b| !matches!(b.kind, BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant | BodyKind::Moon) || written(&b.key)).collect();
         for i in 0..sys.bodies.len() {
             if sys.bodies[i].rail.parent.is_some_and(|p| !keep[p]) {
                 keep[i] = false;
@@ -274,17 +277,19 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
         loop {
             let Some((r, parent, kind)) = rec.bodies.iter().find_map(|r| {
                 let kind = Some(r.kind).filter(|k| *k != BodyKind::Asteroid)?;
-                if sys.bodies.iter().any(|b| b.name == r.name) {
+                if sys.bodies.iter().any(|b| b.key == r.key) {
                     return None;
                 }
-                Some((r, sys.bodies.iter().position(|b| b.name == r.parent)?, kind))
+                Some((r, sys.bodies.iter().position(|b| b.key == r.parent)?, kind))
             }) else { break };
             let orbit = Orbit::new(r.semi_major_axis.unwrap_or(1.0), r.eccentricity.unwrap_or(0.0), r.inclination.unwrap_or(0.0), 0.0, 0.0, 0.0, sys.bodies[parent].rail.mu + G * r.mass);
             sys.bodies.push(crate::system::natural(r.name.clone(), kind, r.mass, r.radius, r.day, [r.colour.0, r.colour.1, r.colour.2], r.rings, parent, orbit, leaning(DQuat::IDENTITY, r.tilt)));
+            sys.bodies.last_mut().expect("just pushed").key = r.key.clone();
         }
     }
     for r in rec.bodies.iter().filter(|r| r.overrides()) {
-        let Some(i) = sys.bodies.iter().position(|b| b.name == r.name) else { continue };
+        let Some(i) = sys.bodies.iter().position(|b| b.key == r.key) else { continue };
+        sys.bodies[i].name = r.name.clone();
         let rock = sys.bodies[i].kind == BodyKind::Asteroid;
         match stage {
             Stage::Bodies | Stage::Rocks if (stage == Stage::Rocks) == rock => {
@@ -323,4 +328,42 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
         }
     }
     moved
+}
+
+#[cfg(test)]
+mod rematch {
+    /// Every body the registry writes matches a body of the seed by key (or is added by the
+    /// record, which gives it the key), whatever the record calls it; and a matched body carries
+    /// the record's name. Treistun d is Harvest.
+    #[test]
+    fn every_record_matched_by_key() {
+        let galaxy = crate::galaxy::Galaxy::generate(1984);
+        let (mut unmatched, mut renamed, mut matched) = (Vec::new(), 0, 0);
+        for rec in super::systems() {
+            let sys = crate::system::StarSystem::generate(rec.index, &galaxy.stars[rec.index]);
+            assert_eq!(sys.name, rec.system, "system {} by index", rec.index);
+            for r in &rec.bodies {
+                match sys.bodies.iter().find(|b| b.key == r.key) {
+                    Some(b) => {
+                        assert_eq!(b.name, r.name, "{}: the record's name", r.key);
+                        matched += 1;
+                        if r.key != crate::system::body_key(&sys.name, &r.name) {
+                            renamed += 1;
+                        }
+                    }
+                    None => unmatched.push(r.key.clone()),
+                }
+            }
+            for b in &sys.bodies {
+                assert!(!b.key.is_empty(), "{}: {} has no key", sys.name, b.name);
+            }
+            if sys.name == "Treistun" {
+                let d = sys.bodies.iter().find(|b| b.key == "body.treistun.treistun-d").expect("Treistun d by key");
+                assert_eq!(d.name, "Harvest");
+            }
+        }
+        assert!(unmatched.is_empty(), "records matching no body: {unmatched:?}");
+        eprintln!("rematch: {matched} records matched by key, {renamed} of them renamed");
+        assert!(renamed >= 9, "{renamed} renamed");
+    }
 }
