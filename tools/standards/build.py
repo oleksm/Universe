@@ -191,7 +191,7 @@ EQUIPMENT_READS = {
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
-    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at",
+    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again",
 }
 
 
@@ -634,7 +634,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -868,7 +868,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story", "zoning"}:
+        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:

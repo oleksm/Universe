@@ -7,6 +7,8 @@ at: body.treistun.treistun-c
 position: { latitude: -6.649, longitude: -44.994 }
 structure: structure.spaceport
 population: 20000
+# Supplied from Port Eikir every 20 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 1.728e+06 }
 about: "The port on Anvil, close to the equator at 7° south. Gravity 1.67 g, the highest of any port, and no air."
 story:
   - "Pilots treat Lisaur as a test. A ship that can lift loaded from here can lift from anywhere in the system, and a ship that can't finds out on the pad."

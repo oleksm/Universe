@@ -7,6 +7,8 @@ at: body.treistun.treistun-e
 position: { latitude: 23.813, longitude: -79.362 }
 structure: structure.spaceport
 population: 60000
+# Supplied from Port Eikir every 7 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 604800 }
 about: "The port on Hearth, the home world, at 24° north. Gravity 0.98 g, with air, and cold."
 story:
   - "The first port in the system. It was built where the first ship came down, and nobody saw a reason to move it. The station overhead took most of its trade; Nacaubun keeps the ground traffic."

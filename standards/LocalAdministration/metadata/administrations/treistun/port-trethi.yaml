@@ -7,6 +7,8 @@ at: body.treistun.treistun-f
 position: { latitude: 6.331, longitude: 52.014 }
 structure: structure.spaceport
 population: 20000
+# Supplied from Port Eikir every 30 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 2.592e+06 }
 about: "The port on Rime, near the equator at 6° north. Gravity 0.41 g, no air, and about 190 K."
 story:
   - "The last port on solid ground before the giants. Outbound ships top up here because it is the cheapest lift-off of any planet in the system."

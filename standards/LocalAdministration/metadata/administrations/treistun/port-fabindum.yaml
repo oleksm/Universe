@@ -7,6 +7,8 @@ at: body.treistun.treistun-c-i
 position: { latitude: -43.742, longitude: -87.965 }
 structure: structure.outpost
 population: 3000
+# Supplied from Port Eikir every 20 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
+resupply: { from: settlement.treistun.port-eikir, interval: 1.728e+06 }
 about: "The port on Anvil I, the moon of c, at 44° south. Gravity 0.11 g, no air."
 story:
   - "The answer to Lisaur. Heavy lifters bring cargo up from c and ordinary ships collect it here, so that only the ships built for 1.67 g ever have to face it."

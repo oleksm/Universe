@@ -10,6 +10,13 @@ about:
 story:
   - "Treistun was settled from its fourth planet outward. The first port was Nacaubun on Hearth, and the station was raised above it once there were more ships than one field could take."
   - "From there the ports went both ways: inward to the hot, heavy worlds, and outward to the moons of the giants. The administration grew out of the port office at Nacaubun and moved up to the station with everything else."
+# The reserve law (2026-10-06): the needs people die without, as a cautious state keeps them. Four months of food and three of
+# medicine are Switzerland's compulsory stocks (from memory; review); held at the two big ports under open sky, half each.
+compulsory_stock:
+  warehouse_cover: 1.5
+  reserves:
+    - { need: need.food, lasts: 10368000, held_at: [{ settlement: settlement.treistun.port-eikir, share: 0.5 }, { settlement: settlement.treistun.port-nacaubun, share: 0.5 }], note: "120 days of food for everyone in Treistun." }
+    - { need: need.medicine, lasts: 7776000, held_at: [{ settlement: settlement.treistun.port-eikir, share: 0.5 }, { settlement: settlement.treistun.port-nacaubun, share: 0.5 }], note: "90 days of medicine for everyone in Treistun." }
 zoning:
   - { use: port, permits: "Landing pads, hangars, fuel, warehouses and the port's own buildings." }
   - { use: industrial, permits: "Foundries, mills, workshops and yards." }
