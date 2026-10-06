@@ -218,13 +218,24 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         colors.push(morph(i, j));
     }
     m.colors = colors;
-    // Each vertex's surface fields from a baked world's river tiles (wetness, scree, bare rock,
-    // and 1 where they're read), for the ground's material.
+    // Each vertex's surface fields from a baked world's river tiles (wetness, scree, bare rock),
+    // and its slope (rise over run) from the heights 600 m either side of it each way (central
+    // differences: smooth from vertex to vertex, where a triangle's own normal steps at its edges),
+    // for the ground's material: w = ±(1 + slope), + where the fields are read.
+    let step = 600.0 / r;
     let fields = |d: DVec3| -> [f32; 4] {
         let Some(t) = body.terrain.as_ref() else { return [0.0; 4] };
         let (f, w) = t.surface_fields_view(d);
         whole.set(whole.get() && w);
-        f.map_or([0.0; 4], |f| [f[0], f[1], f[2], 1.0])
+        let e1 = d.any_orthonormal_vector();
+        let e2 = d.cross(e1);
+        let h = |v: DVec3| ground(body, (d + v * step).normalize()).0;
+        let (gx, gy) = ((h(e1) - h(-e1)) / 1200.0, (h(e2) - h(-e2)) / 1200.0);
+        let slope = (gx * gx + gy * gy).sqrt() as f32;
+        match f {
+            Some(f) => [f[0], f[1], f[2], 1.0 + slope],
+            None => [0.0, 0.0, 0.0, -(1.0 + slope)],
+        }
     };
     let mut data: Vec<[f32; 4]> = dirs.iter().map(|&d| fields(d)).collect();
     for &(i, j) in &edge {

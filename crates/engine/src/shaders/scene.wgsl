@@ -590,11 +590,15 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                     gi.rock_c = ground_rock_blend(ri.x, ri.y, ri.z, ri.w, fract(rp));
                     gi.h_m = h * in.globe.z;
                     gi.slope = sqrt(1.0 - c * c) / c;
+                    // (The slope at the 600 m heights, per vertex: smooth, and true at that scale.)
+                    if (abs(in.data.w) >= 1.0) {
+                        gi.slope = abs(in.data.w) - 1.0;
+                    }
                     // (The 600 m surface fields from the river tiles, per vertex on the patch.)
                     gi.wet = in.data.x;
                     gi.scree = in.data.y;
                     gi.bare = in.data.z;
-                    gi.surface_on = in.data.w;
+                    gi.surface_on = select(0.0, 1.0, in.data.w > 0.5);
                     gi.q = in.micro;
                     gi.qw = dir * world_air.radius_m;
                     gi.pixel_m = pixel;
