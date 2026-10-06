@@ -215,14 +215,17 @@ impl Lod {
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();
+        let (depth, shell) = crate::terrain_view::air(body).unwrap_or_default();
         for key in draw {
             let Some(p) = self.patches.get_mut(&key) else { continue };
             p.used = now;
             let at = [(p.origin.x / r) as f32, (p.origin.y / r) as f32, (p.origin.z / r) as f32, (1.0 / r) as f32];
             let t = Transform { position: center + rotation * p.origin, rotation: turn, scale: 1.0 };
             frame.no_shadow(|frame| {
-                frame.with_globe(map, kind, relief, crate::terrain_view::FILL * 2.5, at, p.origin, |frame| {
-                    frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
+                frame.with_air(depth, shell, |frame| {
+                    frame.with_globe(map, kind, relief, crate::terrain_view::FILL * 2.5, at, p.origin, |frame| {
+                        frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
+                    })
                 })
             });
         }

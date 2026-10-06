@@ -552,9 +552,12 @@ fn bodies(frame: &mut Frame, app: &App) {
             } else {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
                 universe_prof::time("draw/scene/bodies/globe mesh", || {
+                    let (depth, shell) = terrain_view::air(b).unwrap_or_default();
                     frame.no_shadow(|frame| {
-                        frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], DVec3::ZERO, |frame| {
-                            frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
+                        frame.with_air(depth, shell, |frame| {
+                            frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], DVec3::ZERO, |frame| {
+                                frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
+                            })
                         })
                     })
                 });
@@ -674,14 +677,7 @@ fn atmosphere(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
     let limb_r = r * (1.0 - (r * r) / (d * d)).sqrt();
     let thick = 1.0 + 0.035_f64.max(100_000.0 / r);
     let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
-    // (Earth-like: sky blue; others their own colour, paler.)
-    let sky = match b.terrain.as_ref().map(|t| t.kind) {
-        Some(universe_sim::TerrainKind::Terran) => [0.35, 0.6, 1.0],
-        _ => {
-            let [cr, cg, cb] = b.color;
-            [0.4 + 0.6 * cr, 0.4 + 0.6 * cg, 0.4 + 0.6 * cb]
-        }
-    };
+    let sky = terrain_view::sky_color(b);
     let n = 96;
     let point = |k: usize, s: f64| {
         let a = k as f64 / n as f64 * std::f64::consts::TAU;

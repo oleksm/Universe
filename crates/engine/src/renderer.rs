@@ -46,6 +46,8 @@ struct Globals {
     env_world_color: [f32; 4],
     env_mode: [f32; 4],
     env_sky: [f32; 4],
+    /// x: the angle a pixel spans (radians) at the screen's middle.
+    view: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -1086,6 +1088,7 @@ impl Renderer {
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
+            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, 0.0, 0.0, 0.0],
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
@@ -1173,6 +1176,8 @@ impl Renderer {
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.pbr.draw(&mut pass);
+            // (The textured models take group 2 for their materials: the world's maps back.)
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.points.draw(&mut pass, &self.point_pipe);
