@@ -2467,6 +2467,50 @@ impl Interior {
     }
 }
 
+/// Where a walker clicked at would stand on the stand: the floor of the first room
+/// the ray from `eye` along `dir` passes into; else the first floor it meets (a
+/// side met: what's under that spot, backed off it a little); none if it meets
+/// nothing.
+fn stand_spot(s: &Stand, eye: Vec3, dir: Vec3) -> Option<universe_engine::glam::DVec3> {
+    use universe_engine::glam::DVec3;
+    let d = dir.as_dvec3();
+    let mut from = eye.as_dvec3();
+    // (Along the ray, surface after surface: the first room's floor it passes over,
+    // or else the first floor it meets; a side met, what's under that spot.)
+    let mut first: Option<DVec3> = None;
+    for _ in 0..16 {
+        let Some((t, n)) = s.mesh.ray(from, d, 2000.0) else { break };
+        let hit = from + d * t;
+        let level = n.y.abs() > 0.6;
+        let spot = if level && d.y < 0.0 {
+            Some(hit + DVec3::Y * 0.05)
+        } else if !level {
+            let back = hit - d * 0.4;
+            s.mesh.ray(back, DVec3::NEG_Y, 2000.0).map(|(down, _)| back - DVec3::Y * (down - 0.05))
+        } else {
+            None
+        };
+        if let Some(p) = spot {
+            if in_rooms(s, (p + DVec3::Y * 0.9).as_vec3()) {
+                return Some(p);
+            }
+            first = first.or(Some(p));
+        }
+        from = hit + d * 0.05;
+    }
+    first
+}
+
+/// Is `p` inside one of the stand's rooms (or airlocks)?
+fn in_rooms(s: &Stand, p: Vec3) -> bool {
+    s.rooms.iter().any(|&(a, b, hw, hh)| {
+        let d = b - a;
+        let t = ((p - a).dot(d) / d.length_squared().max(1e-6)).clamp(0.0, 1.0);
+        let off = p - (a + d * t);
+        if d.normalize_or_zero().y.abs() > 0.9 { Vec2::new(off.x, off.z).length() < hw } else { off.y.abs() < hh && Vec3::new(off.x, 0.0, off.z).length() < hw }
+    })
+}
+
 /// The test stand walked for a frame: WASD, the arrows or a drag to look, SPACE to
 /// jump, SHIFT to run (up a shaft: forward climbs, looking down goes down); ESC
 /// back to the studio.
@@ -4113,11 +4157,25 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     }
     interior.module_hover = interior.block_hover.and_then(|n| interior.fit.iter().position(|f| f.id == kind(&interior.plan.blocks[n].id)));
     // A walk-through: F over a point or a tube, there; WALK HERE, then a click on one.
-    // (No hull: WALK, or F, stands the design on the test stand.)
-    if interior.spec().is_none() && ((pressed && inside(walk_button(), cursor)) || input.pressed(KeyCode::KeyF)) {
-        interior.refit();
-        interior.stand = Some(interior.stand_up());
-        return true;
+    // (No hull: the test stand. WALK arms it, and a click puts the walker where it
+    // lands on the ship or the ground; F there at once. Nothing under the cursor:
+    // the ramp's foot.)
+    if interior.spec().is_none() {
+        if pressed && inside(walk_button(), cursor) {
+            interior.walk_armed = !interior.walk_armed;
+            return true;
+        }
+        if input.pressed(KeyCode::KeyF) || (interior.walk_armed && pressed && !inside(PANEL, cursor)) {
+            interior.refit();
+            let mut s = interior.stand_up();
+            if let Some(feet) = stand_spot(&s, cam.eye, cam.ray(cursor)) {
+                s.feet = feet;
+                s.yaw = f64::from((-cam.forward.x).atan2(-cam.forward.z));
+            }
+            interior.stand = Some(s);
+            interior.walk_armed = false;
+            return true;
+        }
     }
     if pressed && inside(walk_button(), cursor) {
         interior.walk_armed = !interior.walk_armed;
@@ -4461,6 +4519,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     let on = spec.map_or("NO HULL".to_string(), |s| s.name.to_uppercase());
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {} ({on})", interior.plan.hull.to_uppercase()), LABEL);
     let hint = match interior.tool {
+        _ if interior.walk_armed && interior.spec().is_none() => "CLICK WHERE TO START WALKING (A ROOM: ON ITS FLOOR) - RIGHT-CLICK OR ESC CANCELS",
         Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
         _ => "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES",
     };
