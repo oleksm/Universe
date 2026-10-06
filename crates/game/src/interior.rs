@@ -3232,10 +3232,13 @@ fn slider_range(tool: Tool) -> (f32, f32) {
     }
 }
 
-/// What a person aboard uses a day (kg): oxygen breathed, and water drunk, eaten
-/// with and washed in (NASA's BVAD, in standards/sources/research_people_needs.json).
-const OXYGEN_A_DAY: f64 = 0.895;
-const WATER_A_DAY: f64 = 2.5 + 0.7;
+/// What a person aboard uses a day (kg) of `item`, by the registry's needs that
+/// take it (`needs`: their keys): oxygen breathed (need.air); water drunk and
+/// washed in (need.water, need.washing).
+fn a_day(needs: &[&str], item: &str) -> f64 {
+    let reg = universe_sim::world::registry::registry();
+    reg.needs.iter().filter(|n| needs.contains(&n.identity.key.as_str())).flat_map(|n| n.takes.iter()).filter(|t| t.item == item).map(|t| t.rate).sum::<f64>() * 86_400.0
+}
 
 /// The share of a jet's power that comes aboard as heat, where its record doesn't
 /// say (`function.heat_to_hull`, a product figure; the registry's first guess).
@@ -3469,7 +3472,12 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         // (An empty sum is -0: plus 0, it's 0.)
         let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
         let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
-        let (ad, wd) = (air / (OXYGEN_A_DAY * crew), water / (WATER_A_DAY * crew));
+        // (What the stores make up: what the crew use less what the life support
+        // recovers, its record's air_recovery and water_recovery, the best fitted.)
+        let recovers = |k: &str| of("life_support").map(|p| num(&p.3, k)).fold(0.0, f64::max).min(0.999);
+        let oxygen = a_day(&["need.air"], "element.o") * (1.0 - recovers("air_recovery"));
+        let drunk = a_day(&["need.water", "need.washing"], "good.water") * (1.0 - recovers("water_recovery"));
+        let (ad, wd) = (air / (oxygen * crew), water / (drunk * crew));
         let life = of("life_support").count();
         lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS STORED{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && life > 0));
     }
@@ -5788,5 +5796,6 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
