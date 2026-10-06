@@ -104,7 +104,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let Some(y) = app.shipyard.as_mut() else { return false };
     // (The interior studio kept in step either way: its plan, the decks, saving.)
     y.interior.sync(&spec.key, spec.shape(), &mut app.deckplans, ctx.dt);
-    y.interior.refit(spec);
+    y.interior.refit();
     // CTRL+S in the deck studio: saved with the interior's plan.
     let ctrl = ctx.input.down(universe_engine::KeyCode::ControlLeft) || ctx.input.down(universe_engine::KeyCode::ControlRight);
     if y.page == Page::Layout && ctrl && ctx.input.pressed(universe_engine::KeyCode::KeyS) {
@@ -129,8 +129,13 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         let mut interior = std::mem::take(&mut y.interior);
         let stay = crate::interior::input(app, ctx, &mut interior);
         // A walk-through: its walled tubes the hull's walls, the shipyard put by, the
-        // pilot on foot there, first person.
+        // pilot on foot there, first person (in the ship flown: a design in it only).
+        if interior.walk.is_some() && !walkable(app, &interior) {
+            interior.walk = None;
+            interior.note("A WALK-THROUGH IS IN THE SHIP YOU FLY: THIS DESIGN ISN'T IN IT");
+        }
         if let Some(at) = interior.walk.take() {
+            decks_aboard(app, interior.id());
             app.send_layout();
             app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls: interior.walls() });
             app.engine.send(universe_sim::Command::Preview(Some(at)));
@@ -153,12 +158,26 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     {
         return true;
     }
+    // (A design with no hull: no decks to lay out.)
+    let Some(hull) = y.interior.spec() else {
+        return !input.pressed(universe_engine::KeyCode::Escape) || !y.may_close();
+    };
+    let id = y.interior.id().to_string();
     let mut studio = std::mem::take(&mut y.studio);
-    let stay = crate::studio::input(app, ctx, &spec.key, spec.shape(), &mut studio);
+    let stay = crate::studio::input(app, ctx, &id, hull.shape(), &mut studio);
+    if studio.walk.is_some() && app.shipyard.as_ref().is_some_and(|y| !walkable(app, &y.interior)) {
+        studio.walk = None;
+        if let Some(y) = app.shipyard.as_mut() {
+            y.interior.note("A WALK-THROUGH IS IN THE SHIP YOU FLY: THIS DESIGN ISN'T IN IT");
+        }
+    }
     // A walk-through: the studio put by, the pilot on foot there, first person.
     if let Some(at) = studio.walk.take() {
         // (The interior studio's walled tubes walked in too.)
         let walls = app.shipyard.as_ref().map(|y| y.interior.walls()).unwrap_or_default();
+        if let Some(id) = app.shipyard.as_ref().map(|y| y.interior.id().to_string()) {
+            decks_aboard(app, &id);
+        }
         app.send_layout();
         app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls });
         app.engine.send(universe_sim::Command::Preview(Some(at)));
@@ -176,6 +195,26 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     stay || y.may_close()
 }
 
+/// Can design `interior` be walked through: is it in the ship flown?
+fn walkable(app: &App, interior: &crate::interior::Interior) -> bool {
+    interior.spec().is_some_and(|s| s.key == app.ship.spec().key)
+}
+
+/// The design's decks put aboard the ship flown (to walk on), if it isn't the
+/// design saved by the ship's own name.
+fn decks_aboard(app: &mut App, id: &str) {
+    let ship = app.ship.spec().key.clone();
+    if id == ship {
+        return;
+    }
+    let decks = app.deckplans.iter().find(|p| p.hull == id).cloned().map(|mut d| {
+        d.hull = ship.clone();
+        d
+    });
+    app.deckplans.retain(|p| p.hull != ship);
+    app.deckplans.extend(decks);
+}
+
 /// The studios' tabs at the top right: the 3D interior (0), the 2D decks (1).
 fn tab_rect(size: Vec2, k: usize) -> (Vec2, Vec2) {
     let w = 120.0;
@@ -189,16 +228,24 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
-    let spec = app.ship.spec();
     let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
     match y.page {
         Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
-        Page::Layout => crate::studio::draw(frame, app, &place, &spec.key, &spec.name, &y.studio, &y.interior.access()),
+        Page::Layout => match y.interior.spec() {
+            Some(hull) => crate::studio::draw(frame, app, &place, y.interior.id(), &hull.name, &y.studio, &y.interior.access()),
+            None => {
+                let text = "THE DECK STUDIO LAYS DECKS OUT IN A HULL: THIS DESIGN HAS NONE (TAB: BACK TO 3D)";
+                let w = text.chars().count() as f32 * universe_engine::frame::GLYPH;
+                frame.text(Vec2::new((size.x - w) * 0.5, size.y * 0.5), text, Color([1.0, 0.85, 0.35, 1.0]));
+            }
+        },
     }
     // In the deck studio: how it's saved (with the 3D plan), what was said; the
     // layers (the 3D studio's).
     if y.page == Page::Layout {
-        crate::interior::draw_layers(frame, &y.interior, crate::studio::layers_corner(size, &y.studio), y.studio.cursor);
+        if y.interior.spec().is_some() {
+            crate::interior::draw_layers(frame, &y.interior, crate::studio::layers_corner(size, &y.studio), y.studio.cursor);
+        }
         let note = y.interior.message().map_or_else(|| format!("CTRL+S SAVES{}", if y.interior.unsaved() { " *" } else { "" }), str::to_string);
         let w = note.chars().count() as f32 * universe_engine::frame::GLYPH * 0.7;
         frame.text_scaled(Vec2::new(tab_rect(size, 0).0.x - w - 12.0, 10.0), &note, Color([1.0, 0.85, 0.35, 1.0]), 0.7);
