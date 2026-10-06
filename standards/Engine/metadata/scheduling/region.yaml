@@ -19,6 +19,7 @@ runs:
 - hypernet routing and delivery; regional price boards
 - fleets' orders of replacements
 - supernovae and their effects on systems
+- news digests over the hypernet (the newsroom's); a client's own refresh of what it shows is the client's, not a clock
 posts:
 - clock.system
 rule: Transit takes seconds to minutes of game time, so the wire's latency is invisible here.

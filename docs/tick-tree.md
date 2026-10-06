@@ -77,6 +77,7 @@ Galaxy ····························· 1 day   star c
    └─ Star system (group) ··········         one node owns whole systems; never split
       ├─ Celestial ················· 60 s    body positions published; bodies stay formulas
       │   └─ Planetary (per body) ·· 60 s    weather and air where a history is needed; geology an empty step
+      │       ├─ Administration (per settlement) 1 day   levy, zoning records, stock checks, insurers, census
       │       └─ Economy (per settlement) 10 s   production, consumption, construction, wear, mines
       │           └─ Market ········ 1 s     boards and matching; a trade is an event
       ├─ Machinery (per craft) ····· 1 s     power, fuel, heat, life support; schedules its cut-offs onto realtime

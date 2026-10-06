@@ -39,14 +39,17 @@ impl ClockHandler for Binding {
     fn planetary(&mut self) -> &'static str {
         "climate and clouds as functions of time (generators); no stepped state yet"
     }
+    fn administration(&mut self) -> &'static str {
+        "services::land: the land levy at its period (`land::levy_every`); zoning, census, insurers to come"
+    }
     fn economy(&mut self) -> &'static str {
         "services::economy, stepped at its period (`economy::step`: recipes, people, wear, mines)"
     }
     fn market(&mut self) -> &'static str {
-        "commerce: price boards published at its period (`commerce::board_every`)"
+        "commerce: price boards published, and standings from law's events, at its period"
     }
     fn machinery(&mut self) -> &'static str {
-        "power, fuel and heat: still inside each craft's realtime step"
+        "the dead-man rule checked at its period; power, fuel and heat still inside each craft's realtime step"
     }
     fn rails(&mut self) -> &'static str {
         "not yet: coasting crafts still step every tick (long substeps from their orbit)"

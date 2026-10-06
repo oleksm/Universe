@@ -15,6 +15,7 @@ runs:
 - body positions for the bodies the bubble is near, evaluated from their formula at this tick
 - bubbles found by a spatial hash sized to a tick's motion plus reach, anchored to the nearest body's frame near bodies and
   the star's frame in deep space; results applied in a fixed order; bubbles merge or split only at tick boundaries
+- 'the flight recorder (a dev tool): a slice of the bubble''s ships each tick so each is sampled every 50 ticks'
 reads:
 - clock.celestial
 - clock.machinery

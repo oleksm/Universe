@@ -381,8 +381,9 @@ impl Universe {
         }
         self.publish_boards();
         self.update_standings();
-        // (The dead-man rule counts in seconds: a look once a second.)
-        if self.tick.is_multiple_of(60) {
+        // (The dead-man rule: a look each step of the machinery's clock.)
+        let machinery = (crate::clocks::period(universe_world::registry::ClockKey::Machinery) / crate::clocks::tick()).round().max(1.0) as u64;
+        if self.tick.is_multiple_of(machinery) {
             universe_prof::time("sim/dead man", || self.dead_man());
         }
         // The pilots get the world as it now is (replaying, what they did is logged).
