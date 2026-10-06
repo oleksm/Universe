@@ -61,7 +61,7 @@ fn sort_index(name: Option<&str>) -> usize {
 
 /// The layers, each shown or hidden: (name, the layer it's under, its colour).
 /// Points' kinds are 3.. in `SORTS`' order.
-const LAYERS: [(&str, Option<usize>, Option<Color>); 25] = [
+const LAYERS: [(&str, Option<usize>, Option<Color>); 26] = [
     ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
     ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
     ("POINTS", None, None),
@@ -87,6 +87,7 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 25] = [
     ("MODULES", None, Some(MODULE)),
     ("FRAME", None, Some(Color([0.4, 1.0, 0.5, 1.0]))),
     ("PRESSURE", None, Some(Color([1.0, 0.3, 0.25, 1.0]))),
+    ("DECKS", None, Some(DECK)),
 ];
 
 /// Modules placed: their colour.
@@ -109,7 +110,11 @@ pub mod layer {
     pub const MODULES: usize = 22;
     pub const FRAME: usize = 23;
     pub const PRESSURE: usize = 24;
+    pub const DECKS: usize = 25;
 }
+
+/// A deck's colour (its plate, filled and outlined).
+const DECK: Color = Color([0.85, 0.75, 0.5, 1.0]);
 
 /// The camera's field of view up and down (rad).
 const FOV: f32 = 0.85;
@@ -5252,6 +5257,18 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(q + Vec2::new(-w / 2.0, -12.0), &f.name, col, 0.6);
         }
     }
+    // The decks: each plate filled and outlined (its own layer, frame shown or not).
+    for plate in plan.plates.iter().filter(|_| interior.shown(layer::DECKS)) {
+        let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
+        if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
+            let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
+            frame.hud_triangle_colored([a, b, cc], fill);
+            frame.hud_triangle_colored([a, cc, d], fill);
+        }
+        for k in 0..4 {
+            seg(frame, c[k], c[(k + 1) % 4], DECK);
+        }
+    }
     // The frame: each member coloured by how hard it's worked (the case shown, or
     // its worst): green easy, amber near its limit, red past it; broken, red and
     // crossed. Its load points: the landing pads and nozzles (lit if a joint's at
@@ -5303,18 +5320,10 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 }
             }
         }
-        // (The decks: each plate faint, its strips coloured as members are.)
-        for plate in &plan.plates {
-            let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
-            if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
-                let fill = [Color([0.85, 0.75, 0.5, 0.28]); 3];
-                frame.hud_triangle_colored([a, b, cc], fill);
-                frame.hud_triangle_colored([a, cc, d], fill);
-            }
-        }
+        // (The decks' strips coloured as members are.)
         if let Some(b) = &bearing {
             for &(_, sa, sb, _, m) in &b.strips {
-                let os: Vec<_> = b.of_member(m).into_iter().filter(|_| true).collect();
+                let os = b.of_member(m);
                 let pick: Vec<_> = match interior.case {
                     Some(c) => b.cases.get(c).and_then(|c| c.1.as_ref().ok()).and_then(|c| c.members.get(m)).into_iter().collect(),
                     None => os,
