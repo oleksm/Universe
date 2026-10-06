@@ -81,30 +81,30 @@
 - { key: body.treistun.tisisekar, game: "Tisisekar", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.tomiria, game: "Tomiria", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.treistun, game: "Treistun", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-b, game: "Treistun b", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-b-i, game: "Treistun b I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-c, game: "Treistun c", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-c-i, game: "Treistun c I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-d, game: "Treistun d", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-d-i, game: "Treistun d I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-e, game: "Treistun e", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-f, game: "Treistun f", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-g, game: "Treistun g", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-g-i, game: "Treistun g I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-g-ii, game: "Treistun g II", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-g-iii, game: "Treistun g III", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-h, game: "Treistun h", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-h-i, game: "Treistun h I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-h-ii, game: "Treistun h II", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-i, game: "Treistun i", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-i-i, game: "Treistun i I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-i-ii, game: "Treistun i II", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-i-iii, game: "Treistun i III", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-j, game: "Treistun j", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-j-i, game: "Treistun j I", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-j-ii, game: "Treistun j II", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-j-iii, game: "Treistun j III", in: "by name: celestial.ron, the seed" }
-- { key: body.treistun.treistun-j-iv, game: "Treistun j IV", in: "by name: celestial.ron, the seed" }
+- { key: body.treistun.treistun-b, game: "Treistun b", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-b-i, game: "Treistun b I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-c, game: "Treistun c", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-c-i, game: "Treistun c I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-d, game: "Treistun d", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-d-i, game: "Treistun d I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-e, game: "Treistun e", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-f, game: "Treistun f", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-g, game: "Treistun g", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-g-i, game: "Treistun g I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-g-ii, game: "Treistun g II", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-g-iii, game: "Treistun g III", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-h, game: "Treistun h", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-h-i, game: "Treistun h I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-h-ii, game: "Treistun h II", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-i, game: "Treistun i", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-i-i, game: "Treistun i I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-i-ii, game: "Treistun i II", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-i-iii, game: "Treistun i III", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-j, game: "Treistun j", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-j-i, game: "Treistun j I", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-j-ii, game: "Treistun j II", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-j-iii, game: "Treistun j III", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
+- { key: body.treistun.treistun-j-iv, game: "Treistun j IV", in: "by name: celestial.ron, the seed; the record's name is its people's, `also` is the seed's" }
 - { key: body.treistun.trezil, game: "Trezil", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.truhora, game: "Truhora", in: "by name: celestial.ron, the seed" }
 - { key: body.treistun.tukau, game: "Tukau", in: "by name: celestial.ron, the seed" }

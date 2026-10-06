@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../../../schema/population.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 provenance: seeded
-identity: {key: population.treistun.ugaula-group-treistun-i-l5, name: Ugaula group (Hush L5), kind: trojan, anchor: body.treistun.ugaula}
+identity: {key: population.treistun.ugaula-group-treistun-i-l5, name: Ugaula group (Treistun i L5), kind: trojan, anchor: body.treistun.ugaula}
 rocks: {class: rock-class.carbonaceous, count: 208, extent: 60000.0}
