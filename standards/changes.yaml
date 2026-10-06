@@ -351,8 +351,8 @@
 - { record: equipment.hyperdrive.s3, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: fits", sha: "c872f4eb67c86385" }
 - { record: equipment.laser.mc07.mining, at: "2026-10-06T05:01:16Z", status: draft, summary: "first tracked", sha: "5f2ecb8af1788d83" }
 - { record: equipment.laser.pulse.s1, at: "2026-10-06T02:40:59Z", status: draft, summary: "changed: function, basis", sha: "ffdb64e4c631f6cc" }
-- { record: equipment.life.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "5bb07b187aad450b" }
-- { record: equipment.life.s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "ad5bd56c6e049b44" }
+- { record: equipment.life.s1, at: "2026-10-06T17:20:05Z", status: draft, summary: "changed: function, basis", sha: "373a0ca80a8421bc" }
+- { record: equipment.life.s2, at: "2026-10-06T17:20:05Z", status: draft, summary: "changed: function, basis", sha: "78f2ac1973bd7c83" }
 - { record: equipment.lift.belly.s1, at: "2026-10-06T17:00:16Z", status: draft, summary: "changed: function, basis", sha: "8a5a6d88f9eaac90" }
 - { record: equipment.lift.belly.s2, at: "2026-10-06T17:00:16Z", status: draft, summary: "changed: function, basis", sha: "33df3052539252ab" }
 - { record: equipment.lift.belly.s3, at: "2026-10-06T17:00:16Z", status: draft, summary: "changed: function, basis", sha: "e965cfb30df84b43" }
@@ -677,7 +677,7 @@
 - { record: hull.drover, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "97084da0023ccdd1" }
 - { record: hull.hauler, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "30ff6a9af58f31a1" }
 - { record: hull.interceptor, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "6384aa335a2c724e" }
-- { record: hull.mc-07, at: "2026-10-06T05:01:16Z", status: draft, summary: "changed: slots, fit", sha: "6c221e9fc5a8d6ed" }
+- { record: hull.mc-07, at: "2026-10-06T17:18:59Z", status: draft, summary: "changed: slots, fit", sha: "9421c04a54581340" }
 - { record: hull.prospector, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "abb3204d6d1ce258" }
 - { record: hull.sprint, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "aef23b2be23eb8d7" }
 - { record: law.air-heat-capacity, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "76b6ebdfb0ab99b4" }

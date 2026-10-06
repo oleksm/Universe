@@ -24,6 +24,17 @@ slots:
   - { name: gear_3, kind: gear, size: 3, mount: mount.gear-s3 }
   - { name: cargo_ramp, kind: access, size: 3, mount: mount.access-s3 }
   - { name: clamp_fwd, kind: access, size: 2, mount: mount.access-s2 }
+  - { name: radiator_1, kind: thermal, size: 3, mount: mount.thermal-s3 }
+  - { name: radiator_2, kind: thermal, size: 2, mount: mount.thermal-s2 }
+  - { name: radiator_3, kind: thermal, size: 2, mount: mount.thermal-s2 }
+  - { name: radiator_4, kind: thermal, size: 2, mount: mount.thermal-s2 }
+  - { name: loop_1, kind: thermal, size: 2, mount: mount.thermal-s2 }
+  - { name: loop_2, kind: thermal, size: 2, mount: mount.thermal-s2 }
+  - { name: loop_3, kind: thermal, size: 1, mount: mount.thermal-s1 }
+  - { name: loop_4, kind: thermal, size: 1, mount: mount.thermal-s1 }
+  - { name: cabin, kind: cargo, size: 1, mount: mount.cargo-s1 }
+  - { name: air, kind: tank, size: 1, mount: mount.tank-s1 }
+  - { name: water, kind: tank, size: 1, mount: mount.tank-s1 }
   - { name: clamp_aft, kind: access, size: 2, mount: mount.access-s2 }
   - { name: power, kind: power, size: 3, mount: mount.power-s3 }
   - { name: drive, kind: drive, size: 3, mount: mount.drive-s3 }
@@ -101,6 +112,20 @@ fit:
   - { slot: clamp_aft, item: equipment.access.mc07.anchor.clamp }
   - { slot: hardpoint_1, item: equipment.laser.mc07.mining }
   - { slot: hardpoint_2, item: equipment.laser.mc07.mining }
+  # Heat, people, air and water (the ships session's request, docs/ships/mc07-heat-cabin-request.md on branch ships, 2026-10-06):
+  # 47.4 MW aboard at full burn (the plant's loss, everything drawn, the jets' share) wants 54 MW of radiator and 50 MW of loops;
+  # six seats; air and water for them. The mass is the mass: 18.7 t more, and the figures say what the MC-07 is.
+  - { slot: radiator_1, item: equipment.thermal.radiator.s3 }
+  - { slot: radiator_2, item: equipment.thermal.radiator.s2 }
+  - { slot: radiator_3, item: equipment.thermal.radiator.s2 }
+  - { slot: radiator_4, item: equipment.thermal.radiator.s2 }
+  - { slot: loop_1, item: equipment.thermal.coolant.loop.s2 }
+  - { slot: loop_2, item: equipment.thermal.coolant.loop.s2 }
+  - { slot: loop_3, item: equipment.thermal.coolant.loop.s1 }
+  - { slot: loop_4, item: equipment.thermal.coolant.loop.s1 }
+  - { slot: cabin, item: equipment.cabin.s1 }
+  - { slot: air, item: equipment.tank.air.store }
+  - { slot: water, item: equipment.tank.water.tank.s1 }
 making:
   module: module.building-dock
   fitting_out: module.building-dock

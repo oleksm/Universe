@@ -191,7 +191,7 @@ EQUIPMENT_READS = {
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
-    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat",
+    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
     "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
@@ -2424,7 +2424,7 @@ for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yam
     _fit = _hull.get("fit") or []
     if not _fit:
         continue
-    _out = _draw = _waste = _jet = _reject = _carry = 0.0; _seats = 0; _air = _water = 0.0; _missing = []
+    _out = _draw = _waste = _jet = _reject = _carry = 0.0; _seats = 0; _air = _water = 0.0; _wrec = _arec = 0.0; _missing = []
     for _fi in _fit:
         _e = _eq_raw.get(_fi["item"])
         if not _e:
@@ -2445,17 +2445,19 @@ for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yam
         elif _k == "store":
             if _fn.get("holds") == "good.water": _water += _fn["capacity"]
             if _fn.get("holds") == "element.o": _air += _fn["capacity"]
-    _heat_in = _waste + _jet
+        elif _k == "life_support":
+            _wrec = max(_wrec, _fn.get("water_recovery", 0.0)); _arec = max(_arec, _fn.get("air_recovery", 0.0))
+    _heat_in = _waste + _draw + _jet      # (power used inside ends as heat inside, bar what leaves as a beam: the studio's rule too)
     _power = f"{_out / 1e6:.1f} MW made, {_draw / 1e6:.2f} MW drawn" + ("" if _out >= _draw else ": SHORT")
-    _heat = f"{_heat_in / 1e6:.1f} MW aboard ({_waste / 1e6:.1f} plant, {_jet / 1e6:.1f} from the jets at full burn); radiators {_reject / 1e6:.0f} MW, loops {_carry / 1e6:.0f} MW" + (": NO RADIATORS" if _heat_in > 0 and _reject == 0 else ("" if _reject >= _heat_in else ": SHORT"))
+    _heat = f"{_heat_in / 1e6:.1f} MW aboard ({_waste / 1e6:.1f} plant loss, {_draw / 1e6:.1f} drawn and spent inside, {_jet / 1e6:.1f} from the jets at full burn); radiators {_reject / 1e6:.0f} MW, loops {_carry / 1e6:.0f} MW" + (": NO RADIATORS" if _heat_in > 0 and _reject == 0 else ("" if _reject >= _heat_in else ": SHORT"))
     if _seats:
         _days = lambda cap, rate: f"{cap / (rate * _seats * 86400):.0f} days" if cap else "no store"
-        _life = f"{_seats} seats: air {_days(_air, _air_rate)}, water {_days(_water, _water_rate)}"
+        _life = f"{_seats} seats: air {_days(_air, _air_rate * (1 - _arec))}, water {_days(_water, _water_rate * (1 - _wrec))}" + (f" (life support recovers {_wrec:.0%} of water, {_arec:.0%} of air)" if _wrec or _arec else "")
     else:
         _life = "no cabin fitted: no crew figure (air and water days need seats)"
     _state = "gap" if (_out < _draw or _reject < _heat_in or _missing) else "ok"
     rows.append(row(_state, _hull["identity"]["name"], _power, _heat, _life, ", ".join(_missing) or ""))
-report("budgets", "Budgets: each hull as fitted", "For every hull with a fit: power (its plants' output against everything's draw), heat (the plants' waste heat plus the share of the jets' power that reaches the hull, function.heat_to_hull, at full burn, against the radiators and coolant loops fitted), and air and water (days the fitted stores last the cabins' seats, at the needs' rates). The studio's checks should read the same records.", ["Hull", "Power", "Heat", "Air and water", "Unknown equipment"], rows)
+report("budgets", "Budgets: each hull as fitted", "For every hull with a fit: power (its plants' output against everything's draw), heat (the plants' waste heat, everything drawn, since power spent inside ends as heat inside, and the share of the jets' power that reaches the hull, function.heat_to_hull, at full burn, against the radiators and coolant loops fitted), and air and water (days the fitted stores last the cabins' seats, at the needs' rates less what the life support recovers). The studio's checks should read the same records.", ["Hull", "Power", "Heat", "Air and water", "Unknown equipment"], rows)
 
 # 3f. Worlds (docs/survey-contract.md): every body grown by the planet simulation, its packages, and what the store holds besides.
 _store = os.environ.get("UNIVERSE_WORLDS") or os.path.expanduser("~/git/planet-sim/out/worlds")
