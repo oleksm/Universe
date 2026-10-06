@@ -183,6 +183,13 @@ pub struct Interior {
     beam_pick: Option<usize>,
     beam_from: Option<Vec3>,
     pads_mode: bool,
+    /// TRUSS: laying a truss (its first corner, once clicked); its depth and its
+    /// stations' spacing (m); AUTO-SIZE being worked out (for which plan).
+    truss_mode: bool,
+    truss_from: Option<Vec3>,
+    depth: f32,
+    spacing: f32,
+    sizing: Option<(Plan, mpsc::Receiver<Sized>)>,
     bearing: Option<(Plan, Arc<Bearing>)>,
     bearing_job: Option<(Plan, mpsc::Receiver<Bearing>)>,
     /// The layers hidden (by number in `LAYERS`); the panel folded up; groups folded.
@@ -444,6 +451,155 @@ pub struct Bearing {
     loose: Vec<String>,
     /// Each case's acceleration (m/s², what everything aboard feels).
     felt: Vec<f64>,
+}
+
+/// A box truss filling the footprint between `a` and `b` (on the work plane, its
+/// bottom) up `depth` m: a chord along each side on the bottom and the top (and a
+/// keel down the middle, bottom and top, each 10 m of width), stations every
+/// `spacing` m or so (evenly) with their uprights and cross members, every bay
+/// braced across on its sides, bottom and top; of `stock`.
+fn truss(a: Vec3, b: Vec3, depth: f32, spacing: f32, stock: &str) -> Vec<Beam> {
+    let (lo, hi) = (a.min(b), a.max(b));
+    let along = (hi.z - lo.z).max(0.5);
+    let n = ((along / spacing.max(0.5)).round() as usize).max(1);
+    let zs: Vec<f32> = (0..=n).map(|k| lo.z + along * k as f32 / n as f32).collect();
+    let lines = ((hi.x - lo.x) / 10.0).ceil().max(1.0) as usize;
+    let xs: Vec<f32> = (0..=lines).map(|k| lo.x + (hi.x - lo.x) * k as f32 / lines as f32).collect();
+    let ys = [lo.y, lo.y + depth];
+    let mut out: Vec<Beam> = Vec::new();
+    let mut add = |p: Vec3, q: Vec3| {
+        if p.distance(q) > 0.05 && !out.iter().any(|x| (x.a == p && x.b == q) || (x.a == q && x.b == p)) {
+            out.push(Beam { a: p, b: q, stock: stock.to_string() });
+        }
+    };
+    let at = |x: f32, y: f32, z: f32| Vec3::new(x, y, z);
+    for w in zs.windows(2) {
+        for &x in &xs {
+            for &y in &ys {
+                add(at(x, y, w[0]), at(x, y, w[1]));
+            }
+            // (Each line's bay braced up its side.)
+            add(at(x, ys[0], w[0]), at(x, ys[1], w[1]));
+        }
+        for xw in xs.windows(2) {
+            for &y in &ys {
+                add(at(xw[0], y, w[0]), at(xw[1], y, w[1]));
+            }
+        }
+    }
+    for &z in &zs {
+        for &x in &xs {
+            add(at(x, ys[0], z), at(x, ys[1], z));
+        }
+        for xw in xs.windows(2) {
+            for &y in &ys {
+                add(at(xw[0], y, z), at(xw[1], y, z));
+            }
+        }
+    }
+    out
+}
+
+/// Does a member from `a` to `b` pass through one of the plan's walled rooms (its
+/// floor and walls aside)?
+fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
+    let rooms: Vec<(Vec3, Vec3, Profile)> = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled)).map(|k| {
+        let (p, q) = plan.axis(k);
+        (p, q, plan.lines[k].2)
+    }).collect();
+    (1..10).map(|k| a.lerp(b, k as f32 / 10.0)).any(|q| rooms.iter().any(|&(p, e, pr)| {
+        let d = e - p;
+        let t = (q - p).dot(d) / d.length_squared().max(1e-6);
+        let off = q - (p + d * t.clamp(0.0, 1.0));
+        t > 0.0 && t < 1.0 && off.y.abs() < pr.height * 0.5 - 0.15 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5 - 0.1
+    }))
+}
+
+/// Members mounting each placed module the frame doesn't hold yet (no joint in
+/// it): joints along its foot (one each `spacing` m), each strutted to the nearest
+/// joints of the frame outside it (two; over a tonne, four), not through a room
+/// and not further than 15 m; and each landing pad with nothing at it, on four legs
+/// to the nearest joints; of `stock`.
+fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
+    let joints: Vec<Vec3> = plan.beams.iter().flat_map(|b| [b.a, b.b]).fold(Vec::new(), |mut v, p| {
+        if !v.iter().any(|q: &Vec3| q.distance(p) < 0.05) {
+            v.push(p);
+        }
+        v
+    });
+    let mut out = Vec::new();
+    for blk in &plan.blocks {
+        let (lo, hi) = blk.bounds();
+        let inside = |q: Vec3| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all();
+        if joints.iter().any(|&q| inside(q)) {
+            continue;
+        }
+        let heavy = fit.iter().find(|f| f.id == kind(&blk.id)).is_some_and(|f| f.mass > 1000.0);
+        let foot = blk.at.y - blk.size.y * 0.5;
+        let n = ((blk.size.z / spacing.max(0.5)).ceil() as usize).max(1);
+        for k in 0..n {
+            let m = Vec3::new(blk.at.x, foot, blk.at.z - blk.size.z * 0.5 + blk.size.z * (k as f32 + 0.5) / n as f32);
+            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q)).collect();
+            near.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
+            for q in near.into_iter().take(if heavy { 4 } else { 2 }) {
+                out.push(Beam { a: m, b: q, stock: stock.to_string() });
+            }
+        }
+    }
+    for &pad in &plan.pads {
+        if joints.iter().any(|q| q.distance(pad) <= 1.0) {
+            continue;
+        }
+        let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| q.distance(pad) <= 15.0 && !through_room(plan, pad, q)).collect();
+        near.sort_by(|a, b| a.distance(pad).total_cmp(&b.distance(pad)));
+        for q in near.into_iter().take(4) {
+            out.push(Beam { a: pad, b: q, stock: stock.to_string() });
+        }
+    }
+    out
+}
+
+/// The members as AUTO-SIZE leaves them, and the rounds it took.
+type Sized = (Vec<Beam>, usize);
+
+/// The plan's members sized: each round every load case worked out, each member
+/// past nine tenths of its design limit (or broken) cut from the next stock up,
+/// each under a third of it from the next down; until none is past it (or eight
+/// rounds); the last rounds only up. The members, and how many rounds it took.
+fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>) -> Sized {
+    let ladder: Vec<&str> = stocks().iter().filter(|s| s.section.wall < s.section.diameter * 0.5).map(|s| s.key.as_str()).collect();
+    let mut plan = plan.clone();
+    for round in 1..=8 {
+        let b = bearing(&plan, fit, spec, STANDARD_G);
+        let mut worst = vec![0.0f64; plan.beams.len()];
+        let mut any = false;
+        for (_, r) in &b.cases {
+            if let Ok(c) = r {
+                any = true;
+                for (k, o) in c.members.iter().enumerate() {
+                    worst[k] = worst[k].max(if o.broken.is_some() { 9.0 } else { o.work.design });
+                }
+            }
+        }
+        if !any {
+            return (plan.beams, round);
+        }
+        let mut changed = false;
+        for (k, beam) in plan.beams.iter_mut().enumerate() {
+            let Some(g) = ladder.iter().position(|s| *s == beam.stock) else { continue };
+            if worst[k] > 0.9 && g + 1 < ladder.len() {
+                beam.stock = ladder[g + 1].to_string();
+                changed = true;
+            } else if worst[k] < 0.33 && g > 0 && round <= 5 {
+                beam.stock = ladder[g - 1].to_string();
+                changed = true;
+            }
+        }
+        if !changed {
+            return (plan.beams, round);
+        }
+    }
+    (plan.beams, 8)
 }
 
 /// Loads in balance, free in flight: the `external` forces at joints, and each
@@ -1455,7 +1611,7 @@ impl Interior {
     }
 
     pub fn new() -> Self {
-        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, ..Default::default() }
+        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, depth: 6.0, spacing: 6.0, ..Default::default() }
     }
 
     /// A sample plan for a look (dev scenarios): from the hatch, a run of points on
@@ -2238,6 +2394,12 @@ enum Action {
     Case(Option<usize>),
     /// Laying landing pads (a click on the plane: one there; on one: gone), or not.
     Pads,
+    /// Laying a truss (two clicks: its corners on the plane), or not.
+    Truss,
+    /// Every placed module the frame doesn't hold mounted to it.
+    MountAll,
+    /// The members sized to their loads.
+    AutoSize,
     /// The picked lines made a group; their groups broken up; walled off (or open).
     Group,
     Ungroup,
@@ -2248,13 +2410,22 @@ enum Action {
 /// lower down, under its list), each its track (where, its size).
 fn sliders(tool: Tool) -> [(Vec2, Vec2); 2] {
     let (p, c) = PANEL;
-    let top = if tool == Tool::Modules { 264.0 } else { 202.0 };
+    let top = match tool {
+        Tool::Modules => 264.0,
+        Tool::Frame => 262.0,
+        _ => 202.0,
+    };
     [0.0, 22.0].map(|dy| (Vec2::new(p.x + 92.0, p.y + top + dy), Vec2::new(c.x - 100.0, 10.0)))
 }
 
 /// A slider's range (m): a room's, or a module's (a hold is broad).
 fn slider_range(tool: Tool) -> (f32, f32) {
-    if tool == Tool::Modules { (0.3, 16.0) } else { (ROOM_MIN, ROOM_MAX) }
+    match tool {
+        Tool::Modules => (0.3, 16.0),
+        // (A truss's depth and its stations' spacing.)
+        Tool::Frame => (1.0, 12.0),
+        _ => (ROOM_MIN, ROOM_MAX),
+    }
 }
 
 /// The FRAME panel's stock list: row `k`'s place.
@@ -2340,7 +2511,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             let w4 = (c.x - 16.0 - 18.0) / 4.0;
             let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w), "REMOVE", Action::Remove), (at(310.0, w + 6.0, w), "PADS", Action::Pads), (at(332.0, 0.0, w3), "PLANE -", Action::PlaneDown), (at(332.0, w3 + 6.0, w3), "PLANE +", Action::PlaneUp), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "PADS", Action::Pads), (at(310.0, 2.0 * (w3 + 6.0), w3), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -2757,6 +2928,23 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         };
         interior.checked = Some((interior.plan.clone(), found));
     }
+    // AUTO-SIZE done: its members put in (an undo step), if the plan's as it was.
+    if let Some((plan, rx)) = &interior.sizing
+        && let Ok((beams, rounds)) = rx.try_recv()
+    {
+        if *plan == interior.plan {
+            let before = interior.plan.clone();
+            let mass = |bs: &[Beam]| bs.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>();
+            let (was, now) = (mass(&before.beams), mass(&beams));
+            interior.plan.beams = beams;
+            interior.undo.push(before);
+            interior.redo.clear();
+            interior.message = Some((format!("SIZED IN {rounds} ROUNDS: FRAME {:.1} T (WAS {:.1} T)", now / 1000.0, was / 1000.0), 6.0));
+        } else {
+            interior.message = Some(("AUTO-SIZE DROPPED: THE PLAN CHANGED MEANWHILE".into(), 4.0));
+        }
+        interior.sizing = None;
+    }
     // What the frame bears, worked out again (on a thread) when the plan's changed.
     if let Some((plan, rx)) = &interior.bearing_job
         && let Ok(found) = rx.try_recv()
@@ -2896,7 +3084,33 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             }
             if action == Some(Action::Pads) {
                 interior.pads_mode = !interior.pads_mode;
-                interior.beam_from = None;
+                (interior.truss_mode, interior.beam_from, interior.truss_from) = (false, None, None);
+            }
+            if action == Some(Action::Truss) {
+                interior.truss_mode = !interior.truss_mode;
+                (interior.pads_mode, interior.beam_from, interior.truss_from) = (false, None, None);
+            }
+            // (DEPTH and SPACING: the next truss's.)
+            if let Some(k) = interior.slider {
+                let (at, len) = sliders(Tool::Frame)[k];
+                let (lo, hi) = slider_range(Tool::Frame);
+                let v = ((lo + ((cursor.x - at.x) / len.x).clamp(0.0, 1.0) * (hi - lo)) * 2.0).round() / 2.0;
+                if k == 0 { interior.depth = v } else { interior.spacing = v }
+            }
+            if action == Some(Action::MountAll) {
+                let stock = stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone());
+                let added = mounts(&interior.plan, &interior.fit, interior.spacing.max(1.0), &stock);
+                interior.message = Some((if added.is_empty() { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{} MOUNTING MEMBERS ADDED", added.len()) }, 4.0));
+                interior.plan.beams.extend(added);
+            }
+            if action == Some(Action::AutoSize) && interior.sizing.is_none() && !interior.plan.beams.is_empty() {
+                let (plan, fit, spec) = (interior.plan.clone(), interior.fit.clone(), interior.spec());
+                let (tx, rx) = mpsc::channel();
+                let snapshot = plan.clone();
+                job("studio-size", move || {
+                    tx.send(auto_size(&plan, &fit, spec)).ok();
+                });
+                interior.sizing = Some((snapshot, rx));
             }
             if action == Some(Action::Remove)
                 && let Some(k) = interior.beam_pick.take()
@@ -3047,6 +3261,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         return true;
     }
     // The right button: stops a path being laid (and only that, this press).
+    if input.button_pressed(MouseButton::Right) && interior.truss_from.is_some() {
+        interior.truss_from = None;
+        interior.stopped = true;
+    }
     if input.button_pressed(MouseButton::Right) && interior.beam_from.is_some() {
         interior.beam_from = None;
         interior.stopped = true;
@@ -3107,6 +3325,20 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             // FRAME: a click at a joint or a bearer (else on the work plane) ends the
             // member being laid there and starts the next from it; not laying one, a
             // click on a member picks it, else starts one.
+            // (TRUSS: its first corner, then its second: the truss laid between.)
+            Tool::Frame if interior.truss_mode => {
+                if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
+                    match interior.truss_from.take() {
+                        None => interior.truss_from = Some(at),
+                        Some(from) => {
+                            let stock = stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone());
+                            let fresh: Vec<Beam> = truss(from, Vec3::new(at.x, from.y, at.z), interior.depth, interior.spacing, &stock).into_iter().filter(|n| !interior.plan.beams.iter().any(|b| (b.a == n.a && b.b == n.b) || (b.a == n.b && b.b == n.a))).collect();
+                            interior.message = Some((format!("A TRUSS OF {} MEMBERS LAID", fresh.len()), 4.0));
+                            interior.plan.beams.extend(fresh);
+                        }
+                    }
+                }
+            }
             // (PADS: a pad laid where the click is on the plane, or the one clicked taken up.)
             Tool::Frame if interior.pads_mode => {
                 let near = interior.plan.pads.iter().position(|p| cam.project(*p).is_some_and(|(q, _)| q.distance(cursor) < 10.0));
@@ -3525,6 +3757,21 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             }
             Some(Hover::Point(_)) => {}
             // (FRAME: where a click would join, and the member being laid to it.)
+            // (TRUSS: from its first corner to the cursor, its box.)
+            None if interior.tool == Tool::Frame && interior.truss_mode => {
+                if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
+                    let from = interior.truss_from.unwrap_or(to);
+                    let (lo, hi) = (from.min(Vec3::new(to.x, from.y, to.z)), from.max(Vec3::new(to.x, from.y, to.z)) + Vec3::Y * interior.depth);
+                    let ghost = Block { id: String::new(), at: (lo + hi) * 0.5, size: hi - lo };
+                    for [a, b] in ghost.edges(false) {
+                        seg(frame, a, b, PICKED.scale(0.6));
+                    }
+                    if let Some((q, _)) = cam.project(to) {
+                        let text = if interior.truss_from.is_some() { format!("{:.1} X {:.1} X {:.1} M", hi.x - lo.x, hi.z - lo.z, interior.depth) } else { "FIRST CORNER".to_string() };
+                        frame.text_scaled(q + Vec2::new(10.0, 6.0), &text, PICKED, 0.7);
+                    }
+                }
+            }
             None if interior.tool == Tool::Frame => {
                 let snap = frame_snap(interior, &cam, interior.cursor);
                 let to = snap.or_else(|| on_plane(interior, &cam, plane, interior.cursor, false));
@@ -3837,7 +4084,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
             Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME."),
-            Tool::Frame => ("FRAME", "CLICK JOINT TO JOINT (PADS, NOZZLES, MODULES, THE PLANE). RIGHT-CLICK STOPS. CLICK ONE TO PICK IT."),
+            Tool::Frame => ("FRAME", "JOINT TO JOINT, OR TRUSS: TWO CORNERS. MOUNT ALL TIES IN MODULES AND PADS. AUTO-SIZE FITS TUBES."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
@@ -3863,9 +4110,26 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             }
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 146.0), "LOAD CASE SHOWN", LABEL.scale(0.7), 0.6);
             for (r, name, a) in panel_buttons(Tool::Frame) {
-                let lamp = if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) || (a == Action::Pads && interior.pads_mode) { Lamp::On } else { Lamp::Off };
-                let off = a == Action::Remove && interior.beam_pick.is_none();
+                let lamp = if a == Action::AutoSize && interior.sizing.is_some() {
+                    Lamp::Busy
+                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) || (a == Action::Pads && interior.pads_mode) || (a == Action::Truss && interior.truss_mode) {
+                    Lamp::On
+                } else {
+                    Lamp::Off
+                };
+                let off = (a == Action::Remove && interior.beam_pick.is_none()) || (a == Action::AutoSize && plan.beams.is_empty());
+                let name = if a == Action::AutoSize && interior.sizing.is_some() { "SIZING..." } else { name };
                 draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
+            }
+            // (The next truss's depth and its stations' spacing: a slider each.)
+            for (k, (at, len)) in sliders(Tool::Frame).into_iter().enumerate() {
+                let (name, v) = if k == 0 { ("TRUSS DEPTH", interior.depth) } else { ("SPACING", interior.spacing) };
+                let col = if interior.slider == Some(k) { PICKED } else { LABEL };
+                frame.text_scaled(Vec2::new(p.x + 8.0, at.y), &format!("{name} {v:.1}"), col, 0.6);
+                frame.hud_line(at + Vec2::new(0.0, len.y * 0.5), at + Vec2::new(len.x, len.y * 0.5), col.scale(0.6));
+                let (lo, hi) = slider_range(Tool::Frame);
+                let x = at.x + (v - lo) / (hi - lo) * len.x;
+                frame.hud_rect(Vec2::new(x - 3.0, at.y - 2.0), Vec2::new(6.0, len.y + 4.0), col);
             }
             let bearing = interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan).map(|(_, b)| b.clone());
             let mut y = p.y + 180.0;
@@ -3898,11 +4162,11 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                         y += 11.0;
                     }
                     y += 3.0;
-                    for l in b.loose.iter().take(5) {
+                    for l in b.loose.iter().take(3) {
                         frame.text_scaled(Vec2::new(p.x + 8.0, y), l, CLASH.scale(0.9), 0.6);
                         y += 11.0;
                     }
-                    frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 294.0), &format!("{} MEMBERS, {} JOINTS, {:.2} T", plan.beams.len(), b.joints.len(), b.mass / 1000.0), Color([0.4, 1.0, 0.5, 1.0]), 0.65);
+                    frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 250.0), &format!("{} MEMBERS, {} JOINTS, {:.2} T", plan.beams.len(), b.joints.len(), b.mass / 1000.0), Color([0.4, 1.0, 0.5, 1.0]), 0.65);
                 }
             }
         }
