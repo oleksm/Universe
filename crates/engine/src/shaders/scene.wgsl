@@ -427,7 +427,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                     let climate = textureSampleLevel(world_climate, world_soft, uv, 0.0);
                     let unit = u32(round(textureSampleLevel(world_rock, world_exact, uv, 0.0).r * 255.0 / 8.0));
                     let up = normalize(in.up);
-                    let c = clamp(dot(n, up), 0.05, 1.0);
+                    // (The slope from the mesh's own smooth normal: the shaded `n` carries the
+                    // heights' screen derivatives, which jump at every triangle edge.)
+                    let c = clamp(dot(normalize(in.normal), up), 0.05, 1.0);
                     var gi: GroundIn;
                     gi.ground = ground.rgb;
                     gi.ground_soft = textureSampleLevel(world_ground, world_soft, uv, lod + 2.5).rgb;

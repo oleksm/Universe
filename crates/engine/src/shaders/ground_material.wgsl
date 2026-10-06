@@ -124,7 +124,9 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
             pa *= 0.62;
         }
         pn = pn / pw * 2.2 - 0.35 * clamp(i.rel, -1.0, 1.0) + (forest - 0.5) * 1.4 * cover;
-        let ew = max(fwidth(pn) * 1.5, 0.05);
+        // (The woodland edge's softness from the pixel's size, not fwidth: this runs inside the
+        // caller's branch, where derivatives are undefined in WGSL.)
+        let ew = clamp(0.05 + i.pixel_m / 120.0, 0.05, 1.0);
         let wood = smoothstep(-ew, ew, pn);
         let crown = gm_noise(i.q / 25.0) * gm_fade(25.0, i.pixel_m, 3.0);
         let open_c = gcol * (1.0 + 0.3 * amt);
