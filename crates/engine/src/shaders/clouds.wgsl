@@ -86,7 +86,11 @@ fn cl_tile(t: texture_2d<f32>, m: i32, ll: vec2<f32>) -> vec4<f32> {
 }
 
 fn cloud_field(dir: vec3<f32>, cl: Clouds, cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>) -> CloudField {
-    let ll = cl_latlon(dir);
+    // (The lookup jittered by ~1.5° of smooth noise: read straight, the 1° cells' bilinear
+    // contours drew stepped edges from afar, where the fine noise has faded.)
+    let wq = dir * 24.0;
+    let jit = vec2<f32>(cl_value(wq) - 0.5, cl_value(wq + vec3<f32>(41.0, 17.0, 5.0)) - 0.5) * 0.052;
+    let ll = cl_latlon(dir) + vec2<f32>(jit.x, jit.y / max(cos(asin(clamp(dir.y, -1.0, 1.0))), 0.2));
     let m0 = i32(floor(cl.month)) % 12;
     let m1 = (m0 + 1) % 12;
     let f = fract(cl.month);
@@ -196,7 +200,9 @@ fn cl_cover(z: f32, frac: f32, soft: f32) -> vec2<f32> {
     let d = clamp((u - (1.0 - frac) + soft) / (2.0 * soft), 0.0, 1.0);
     let z_thr = log(max(1.0 - frac, 1e-4) / max(frac, 1e-4)) / 1.702;
     let core = clamp((z - z_thr) / 1.5, 0.0, 1.0);
-    return vec2<f32>(d, 0.2 + 0.8 * core);
+    // (And ±35% with the noise itself: under an overcast every point is a core, and a real
+    // deck's base is mottled, its depth varying two- to threefold from cell to cell.)
+    return vec2<f32>(d, (0.2 + 0.8 * core) * (0.65 + 0.35 * clamp(z / 1.5, -1.0, 1.0)));
 }
 
 // Each shell's (density, optical depth) at body-fixed direction dir: [low, mid, high].
