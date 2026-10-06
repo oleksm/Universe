@@ -1148,3 +1148,15 @@ Cinder 3,758 km across; the Rings of Drum from Drum G I); the game's map can sho
 can want to go. Buildings studio, park, arena. `need.art` no longer takes `market.art`: art is a
 service of artists where they work; the market category stays until an artwork is an item. "Work"
 is met by a job (the census), the wage yours. `docs/registry-spirit.md`.
+
+**The Engine root: clocks (2026-10-06, night).** The tick tree settled with the user is now
+records: `standards/Engine/metadata/scheduling/*.yaml` (11 clocks), schema
+`Engine/schema/clock.schema.yaml`, generated as `Clock` (with `ClockScope`, `Coupling`,
+`ClockTrigger`) and read into `reg.clocks`. The ask: bind a handler to every clock key
+exhaustively (a new clock fails the build until handled, as with equipment kinds), and make
+`TICK_HZ`, `TICK`, `TICK_BUDGET`, the economy `STEP`, `BOARD_EVERY`, standings' `EVERY`,
+dead-man's period and the land levy reads of `trigger.every` on the matching clock
+(`clock.realtime` 0.005, `clock.economy` 10, `clock.market` 1, `clock.machinery` 1,
+`clock.celestial` 60, `clock.galaxy` 86400). Periods are configuration owned by the user; tune
+with a reason on the record. The tree, the lean rule and the placement rule: `docs/tick-tree.md`
+§3 and §6; the Clocks report on the page.

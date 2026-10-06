@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.npc-lane
+  name: NPC lane
+  about: 'Ships no player can see, acting on each other: resolved coarse.'
+parent: clock.system
+scope: bubble
+coupling: fast_loose
+trigger:
+  kind: period
+  every: 1.0
+runs:
+- 'unwatched NPC against NPC: approach, fire, outcomes at the coarse step'
+- promotion to the realtime lane the moment a player's view reaches it
+reads:
+- clock.celestial
+- clock.rails
+posts:
+- clock.realtime
+rule: 'Realtime cost scales with players, not ships: nothing unwatched runs at the fast tick.'
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

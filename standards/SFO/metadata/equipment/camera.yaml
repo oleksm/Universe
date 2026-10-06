@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.sensors.camera.s1
+  name: "Camera"
+  maker: org.hadley
+  revision: draft
+  slot: sensors
+  description: "A camera the pilot sees by where there is no window: 90 degrees across, under the ship for the pads or aft for docking. Fit one for each view the pilot needs."
+size_class: 1
+fits: mount.sensors-s1
+physical:
+  mass: 2
+  volume: 0.0015
+  length: 0.1
+  width: 0.1
+  height: 0.15
+needs:
+  power: 10
+built_of:
+  parts: camera
+making:
+  module: module.assembly-shop
+function:
+  kind: camera
+  field_of_view: 1.571
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A ruggedised camera head of 2 kg with a heater, 90 degrees across, 10 W. From memory; chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

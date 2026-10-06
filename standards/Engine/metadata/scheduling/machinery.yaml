@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.machinery
+  name: Machinery
+  about: 'What a ship, rig or station''s hardware does that nobody sees happen: power, fuel, heat, life support.'
+parent: clock.system
+scope: craft
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 1.0
+runs:
+- power draw and generation, batteries
+- fuel and reaction mass by the engines' rates; the mass change posted
+- 'heat: plant loss, draw, jets to hull, radiators; air and water stores against recovery'
+- predict the exact tick of every cut-off (fuel out, power out, overheat) and post it to the realtime lane stamped
+- 'the dead-man rule: a timeout, not a period; checked here each step (30 s without input from a ship''s binding cuts its
+  main engine and thrusters and makes weapons safe)'
+reads:
+- clock.celestial
+posts:
+- clock.realtime
+rule: Anything a player sees happen to their ship arrives on the realtime lane by a stamped post; anything they read as a
+  gauge may lag a second. Tune finer where accuracy shows.
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

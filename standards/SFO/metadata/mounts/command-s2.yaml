@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
+identity:
+  key: mount.command-s2
+  name: "Command mount, class 2"
+  slot: command
+  size_class: 2
+  description: "What a class 2 command slot offers, and what fits it."
+envelope:
+  length: 2.42
+  width: 1.32
+  height: 1.65
+bears:
+  mass: 425.0
+attachment:
+  points: 4
+  pattern: corners
+  each:
+    tension: 3130.0
+    compression: 3130.0
+    shear: 1560.0
+feeds:
+  power: 3120.0
+basis:
+  - { of: [envelope, bears, attachment, feeds], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give. The attachment: its pattern by kind; each point takes the mount's weight at 3 g (a design acceleration, chosen) plus its thrust, landing or recoil load, with the margin; the same in tension for a reversal; shear half." }

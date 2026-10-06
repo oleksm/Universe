@@ -1,9 +1,9 @@
 # The tick tree: governing time as the engine grows
 
-A proposal, 2026-10-06, for the integrator to build and the user to decide; reviewed by the integrator against the code the same day, their seven points taken in. It reviews how time
+A proposal, 2026-10-06, reviewed by the integrator against the code the same day (their seven points taken in), then settled with the user into the tree of §3, which the registry now holds as records under `standards/Engine` for the engine to read. It reviews how time
 advances today (read from the code, file and line given), then proposes a tree of clocks:
-universe, region, star system, and within a system the layers from contact physics at 60 Hz down
-to civilization at days. The rule that places every piece of work on a thread, a process or a
+galaxy, region, star system, and within a system the clocks from realtime contact at 5 ms up to
+the star chart at a day. The rule that places every piece of work on a thread, a process or a
 machine is the user's: **where the exchange is slow, scale out to machines; where the data
 exchange is critical, isolate and compute as close as possible, same thread, same process.**
 Coupling decides placement; the tree is the map of couplings.
@@ -63,158 +63,98 @@ cut between two nodes; two players in one fight are on one thread), and slow wor
 on a fast clock (a market does not tick at 60 Hz because a ship does). Everything in between is
 a snapshot read plus a due-stamped post, the contract that exists.
 
-## 3. The tree
+## 3. The tree, as the registry holds it
+
+The user's design (2026-10-06) after the review of §1 and §2, and now **data**: one record per
+clock in `standards/Engine/metadata/scheduling/` (schema `Engine/schema/clock.schema.yaml`;
+words `clock_scope`, `coupling`, `trigger_kind` in the dictionary). The engine reads the periods
+there and nowhere else; the build's **Clocks** report draws the tree and checks that every period
+is a whole number of the realtime tick.
 
 ```
-Universe        the calendar; standards and registry releases; galaxy-wide records     days
-└─ Region       200 ly: hypernet routing, boards, transit timetable, fleets' orders    1–60 s
-   └─ Star system   the unit of ownership: one node owns whole systems
-      ├─ L0 contact        bubbles: ships, projectiles, pads, walkers        60 Hz, fixed
-      ├─ L1 flight         coasting ships on rails with a scheduled wake    on event / 1 Hz
-      ├─ L2 system services  ATC, sensors, standings, dead-man, recorder    1–10 Hz
-      ├─ L3 settlement      economy: recipes, stock, markets, construction  600 s (as today)
-      ├─ L4 planetary       weather, tides, air state, seasons              1 h game time
-      └─ L5 civilization    census, people, administration, levies, law     1 day
+Galaxy ····························· 1 day   star chart publish; the calendar; galaxy-wide records
+└─ Region ·························· events  transit timetable, hand-overs, hypernet, supernovae
+   └─ Star system (group) ··········         one node owns whole systems; never split
+      ├─ Celestial ················· 60 s    body positions published; bodies stay formulas
+      │   └─ Planetary (per body) ·· 60 s    weather and air where a history is needed; geology an empty step
+      │       ├─ Administration (per settlement) 1 day   levy, zoning records, stock checks, insurers, census
+      │       └─ Economy (per settlement) 10 s   production, consumption, construction, wear, mines
+      │           └─ Market ········ 1 s     boards and matching; a trade is an event
+      ├─ Machinery (per craft) ····· 1 s     power, fuel, heat, life support; schedules its cut-offs onto realtime
+      ├─ Rails (per craft) ········· event   coasting and FTL cruise as functions of time, physics wakes
+      ├─ NPC lane (per bubble) ····· 1 s     unwatched NPC vs NPC, coarse; promoted when a player can see
+      └─ Realtime (per bubble) ····· 5 ms    the critical lane: only seamless cross-player physics, only where seen
 ```
 
-Each node of the tree has its own `stepped_to` and steps when due, exactly as the economy does
-today; the parent passing a due time is what makes a child step. Faster layers read the slower
-layer's last published state (the hour's weather field, the step's market board); slower layers
-read a snapshot of the faster ones and post operations due at a tick. **No layer ever waits on a
-slower one, and no participant runs inside another's step.** All periods are whole multiples of
-the tick (60 Hz; 1 s = 60; 600 s; 3,600 s; 86,400 s), so every layer's inputs are stamped by the
-same tick numbers and replay works per layer.
+**No other record names a clock.** The hierarchy derives it: a clock's `scope` says what kind of
+thing it belongs to, and the engine builds its lists at runtime from the world it has (every
+settlement an economy and a market clock, every body a planetary one, every craft its machinery
+and rails, every bubble its realtime step). Nothing in the registry is tagged with a cadence, and
+nothing should be.
 
-### 3.1 Universe
+Each clock record says: its `parent` (whose due time makes it step), `scope` (one per galaxy,
+region, system, body, settlement, craft or bubble), `coupling` (tight, fast-loose, slow-loose:
+which decides thread, process or machine), `trigger` (a period in seconds, an event list, or a
+group), `runs` (the work bound to it, one line each: the engine binds a handler per clock key),
+`reads` and `posts` (which clocks' published state it reads, which it posts stamped operations
+to), and `rule` (what keeps it lean). Each step, a clock reads the slower layers' last published
+state and posts to the faster ones with a tick stamp; **no clock waits on a slower one, and no
+participant runs inside another's step.** All periods are whole multiples of the 5 ms tick
+(1 s = 200; 10 s = 2,000; 60 s = 12,000; a day = 17,280,000), so every input is stamped by the same
+tick numbers and replay works per clock.
 
-One clock, the slowest. It owns the **calendar** (world time's authority, the fixed 1× time
-scale), the registry's releases (standards, products, prices boards' categories), galaxy-wide
-records (law records that follow a ship across regions, the census of fleets, insurers' books).
-It ticks in days and talks only in messages. It is never on the path of anything a player feels.
+### 3.1 The guidance
 
-### 3.2 Region
+Keep the realtime lane lean: only physics that requires seamless cross-player interaction, and
+only where a player can see. Non-visible effects are cleaned off it: power, fuel, heat and life
+support to **Machinery** (which predicts the exact tick of every cut-off and posts it stamped, so
+what a player sees happen arrives on time while a gauge may lag a second); coasting ships and FTL
+cruise to **Rails** (a straight line or an orbit as a function of time with a scheduled exit, so
+in-system FTL that crosses 0.1 AU in seconds is never stepped and never regrouped); unwatched
+NPC action to the **NPC lane**, promoted the moment a player's view reaches it. Realtime cost
+scales with players, not ships.
 
-The charted 200 ly region, and later more regions over more nodes. It owns what crosses systems:
-**hypernet** routing and delivery (news, boards, requests), the **transit timetable** (a ship
-between systems is a line in a table: departed at *t*, arrives at *t′*; nothing integrates in a
-gate tube), fleets' ordering of replacements, regional price boards (the 120 s spread today).
-Period 1–60 s *(proposal)*. Hand-over of a ship between systems is a region message carrying the
-ship's full state and the tick it left at; the receiving system stamps it into its own tick.
-Transit takes seconds to minutes of game time, so the wire's latency is invisible.
+### 3.2 Bubbles
 
-### 3.3 Star system: the unit of ownership
+A bubble is everything transitively within reach of each other, found by a spatial hash sized to
+a tick's motion plus reach, anchored to the nearest body's frame near bodies and the star's frame
+in deep space (a fixed 0.1 AU cell would drift against the planets and be crossed by FTL every
+tick). One bubble is one thread's work for one tick; results are applied in a fixed order (lowest
+craft id); bubbles merge or split only at tick boundaries. The realtime lane evaluates the bodies'
+formulas itself for the bodies a bubble is near (an equator moves at 460 m/s; a minute-old pad is
+28 km away); the Celestial clock is the cache for everyone else. A rails ship is promoted into a
+bubble a few ticks before it can touch anything: wakes are re-checked whenever a bubble's powered
+set or bounds change, with horizon reach + v·T + a_max·T²/2, and come from physics or an arriving
+command only (a pilot's next think is the client's; the core holds no intentions).
 
-One process owns whole systems; a node owns as many systems as fit its 60 Hz budget. Nothing
-inside a system is shared with another node except through the region. The system's own clock is
-authoritative for its contents. Game time is exact ticks everywhere, the fixed 1/60 s, and a
-hand-over is stamped in ticks; what drifts between nodes is **wall clock only** (one node's tick
-N happens a little before another's), reconciled at the region step by pacing, never by stalling
-a tick or stretching game time, or replay would break. A system nobody is in
-and nothing is happening in runs L0 empty, L1 by events, and the slow layers on schedule: its cost
-is its economy's step every 600 s and nothing else.
+### 3.3 Bodies as the unit of CPU scaling
 
-### 3.4 L0: contact, 60 Hz, bubbles
+The economy sits under its body (Celestial → Planetary → Economy → Market) because it is local:
+what crosses bodies is hauled stock (a ship, on rails or realtime) or a message (a board over the
+hypernet). So a body's branch is one unit of work with slow edges to everything else: bodies fan
+out across cores inside a node, systems across nodes, and the realtime lane stays as small as the
+players make it.
 
-The microcosm. A **bubble** is a cluster of cells (a cell sized to a tick's motion plus reach,
-rearchitecture §4.1) that holds everything within reach of each other: ships, pads, projectiles,
-walkers, the rails bodies they're near. One bubble is one thread's work for one tick; bubbles in a
-system are independent within a tick (nothing in one can touch another until next tick, by
-construction of the cell size), so they run side by side on cores, and the parallel unit becomes
-the bubble, not the ship. The per-system freeze stays as the lock-free world the bubbles read.
-Determinism is kept the way it is kept today (each craft reads the frozen world, results applied
-in craft order): bubbles' results are applied in a fixed order (by their lowest craft id), and
-bubbles merge or split only at tick boundaries.
+### 3.4 The network, tied to the tick
 
-What's in L0: any ship powered (thrust, RCS firing) or within reach of a collider (30 km today, a
-tick's motion plus reach tomorrow); a ship on a pad, taxiing, in a hangar; projectiles; **walkers**
-(moved here from the client frame: a walker is a core body stepping at 60 Hz in its ship's bubble,
-replayable; rearchitecture §10 item 5, the proposed answer; the decks become core data and the
-player's walking input a stamped command like flight). Collision is swept per tick as now.
-
-The player is always in L0: their ship, its bubble, its interior. Several players in one bubble
-are on one thread on one node: the only true synchronisation point in the design, and the one
-the input deadline *k* exists for.
-
-### 3.5 L1: flight on rails, by event
-
-The macrocosm's ships. First a measurement: a coasting ship outside 30 km already integrates from
-its orbit in long substeps, so its physics is cheap; its cost may mostly be the freeze, the
-lookups and the in-order after-step. Step 2 of §6 starts by splitting ms per tick by powered /
-near / coasting, and L1 is built only if coasting ships are where the time goes.
-
-The design, if so. A coasting ship (no thrust, nothing within reach) is **a rails body with a
-scheduled wake**: its state is an orbit (or a straight line in deep space) valid from tick *t*;
-its position at any time is a pure function, like a planet's. It is integrated only when
-something changes: a command arrives for it (it wakes into L0 if powered), or the wake it
-scheduled arrives. Wakes come from physics only: closest approach to any collider or bubble
-within the prediction horizon, atmosphere entry, a region hand-over. A pilot's next think is the
-client's business and never a core wake (the rule in stone: the core holds no intentions); the
-pilot thinks on its own rate and posts, and the post is what wakes the ship. With no event, an L1
-ship costs nothing a tick.
-
-The promotion guarantee needs the horizon to cover what a powered ship can do, not what a
-coasting one does: horizon = reach + v·T + a_max·T²/2 for the re-check interval T, and the wakes
-of L1 ships are re-checked **whenever a bubble's powered set or bounds change**, not on a timer
-(a ship at 30 m/s² closes 15 m in a second and leaves it at 30 m/s; a 1 Hz sweep would be late).
-
-This is the pilots' think-rate idea applied to the physics: cost follows activity. Of the census's
-~1,000 ships in Treistun, the share in L0 at any moment is the share docking, fighting, launching
-or near a port: measure it; the pilots' own states (busy / coasting / parked) already say.
-
-### 3.6 L2: system services, 1–10 Hz
-
-ATC presence (6 ticks today, keep), sensor publishing for NPC pilots (decision 4 in the
-rearchitecture, open: *proposal* 10 Hz for pilots, 60 Hz for the player's cockpit; a pilot in a
-docking run can ask for the tick rate), standings (5 s), dead-man (1 s), the flight recorder's
-slices, ground-ahead. These read the system snapshot and post; none is in the tick.
-
-### 3.7 L3: settlement, the economy, 600 s
-
-As today, and today's design is the pattern: `stepped_to`, step when due, each settlement a
-place with its recipes, people's aims, stock, market, construction. What changes: it runs as an
-actor per settlement (rearchitecture §4.4) in its own thread pool or process, reading the
-system snapshot (who is docked, what was unloaded) and posting operations (a trade settles through
-the ledger as a message; a built hull appears in a yard's stock at the step). A **trade is an
-event, not a tick**: the market answers a request when it arrives, stamped; the 600 s step is for
-production, wear (`life`), consumption and the people's aims. Wear, takers, construction, mines
-drawing down a claimed deposit: all here. The registry's rates are kg/s, so the step integrates
-rate × 600 and nothing in the registry depends on the period.
-
-### 3.8 L4: planetary, hourly
-
-Nothing of a body's motion ticks: orbits, rotation, tilt, tides' geometry are pure functions of
-time and stay so. So are today's clouds (the lab's `clouds_at`, one epoch for every player) and
-`climate`: stateless, free to replay, identical for everyone. **Prefer generators of time** for
-everything planetary (temperature by latitude and hour, tides, seasons, wind and cloud fields
-from the lab's climate and air tables as functions of the date), and add stepped **state** only
-where something needs a history: a storm track, a flood, snow that fell. Where state is needed it
-steps hourly in game time *(proposal)*, and a ship in air reads the hour's state as a constant
-between hours. Geology **never ticks in game time**: it is the lab's history package; deposits
-change only by mining events (L3).
-
-### 3.9 L5: civilization, daily
-
-Census (who lives where, who works, births, deaths, moves between settlements), the land levy
-(86,400 s today, here), administration (zoning breaches recorded, policies, elections when they
-come), insurers' premiums, compulsory-stock checks, law's slow side (records aging, appeals
-heard, the statute's periods), fleets' replacements ordered, the hypernet's digests. All in
-messages; a day of game time is 24 hours of wall time at 1×, so this layer is nearly free and can
-run anywhere.
+The input deadline *k* is in ticks: at 5 ms, k = 2 means a player within 10 ms of the node that
+owns their system. A player further away gets a larger k (round trip ÷ 5 ms), per player, stamped
+the same way; nobody should expect 10 ms across an ocean.
 
 ## 4. The player's point of view
 
 The player sees one place in full and the rest as information. In the tree that is: their bubble
-at 60 Hz on one thread (ship, contacts, interior, crew walking); their system's L1 ships as rails
+at 5 ms on one thread (ship, contacts, interior, crew walking); their system's rails ships as
 contacts on radar, promoted into their bubble before they can touch it (the prediction horizon
 guarantees a promotion at least a few ticks before contact: a ship can never appear inside reach
 unintegrated); the system's L2 services as the cockpit's picture; the economy as boards and
-yards' stock that change on the 600 s step; the planets as pure functions with an hourly weather;
+yards' stock that change on the 10 s step; the planets as pure functions with an hourly weather;
 the civilization as news and records. Leaving a system is a hand-over message; arriving, the
 new system's node owns them. **A player never notices a layer boundary except as a cadence of
 information**: a board updated at the step, the weather turning on the hour.
 
-Warp (single-player, a dev tool) becomes cheap: only watched bubbles run L0 at warp; L1 ships are
-functions of time; the slow layers catch up by their steps as the economy already does.
+Warp (single-player, a dev tool) becomes cheap: only watched bubbles run realtime at warp; rails
+ships are functions of time; the slow layers catch up by their steps as the economy already does.
 
 ## 5. Determinism, replay, checkpoints
 
@@ -222,7 +162,7 @@ Every layer's inputs are stamped with the tick they're due at; a layer's state a
 is a function of its state at the last boundary and the stamped inputs between. So replay works
 per layer, and the **checkpoint problem of R9** (the seed plus the whole input log, replayed from
 tick 0, grows without bound) has its answer: checkpoint each slow layer at its own boundary (the
-economy at a step, the civilization at a day) and replay only L0/L1 since the last checkpoint. A
+economy at a step, the civilization at a day) and replay only the realtime and rails lanes since the last checkpoint. A
 save is: seed, the slow layers' states at their last boundaries, the input log since. The
 `state_hash` audit stays, per layer.
 
@@ -232,10 +172,10 @@ The user's rule, applied to the tree:
 
 | Work | Exchange | Runs on | Why |
 |---|---|---|---|
-| A bubble (L0) | tight | one thread, one tick | contact needs exact order; a message boundary inside a bubble is a wrong answer |
+| A bubble (realtime) | tight | one thread, one tick | contact needs exact order; a message boundary inside a bubble is a wrong answer |
 | Bubbles of one system | independent within a tick | the system's cores, side by side | nothing crosses between bubbles inside a tick |
 | Pilots, cockpit, L2 | fast-loose | other threads, same process | snapshot read, post due at N+k; stale by a known age |
-| L3–L5 of a system | slow-loose | actors on a pool; another process or machine when wanted | 600 s to a day between exchanges: wire latency invisible |
+| Economy, Market, Planetary, Machinery of a system | slow-loose | actors on a pool; another process or machine when wanted | a second to a day between exchanges: wire latency invisible |
 | Systems | slow-loose through the region | **one node owns whole systems**; many systems a node | the only cross-system exchange is a hand-over, which rides a transit that takes seconds to minutes |
 | Region, universe | slow-loose | their own services, any machine | messages at seconds to days |
 
@@ -248,7 +188,7 @@ as today). Everything else is a snapshot or a message, and tolerates the wire.
 
 **Where management overhead comes from, and the answer.** A scheduler that coordinates nodes each
 tick is the trap: it puts a network round trip inside the 16 ms. The tree has none. Each node runs
-its own 60 Hz loop for its own systems; nodes agree only at the region step (seconds) and on
+its own 200 Hz loop for its own systems; nodes agree only at the region step (seconds) and on
 hand-overs. Clocks are reconciled by bounded drift, not by lockstep. Within a node, the work
 queue per tick is the list of bubbles, scheduled on the node's cores by a work-stealing pool
 (rayon, as now); no per-ship scheduling.
@@ -259,9 +199,9 @@ queue per tick is the list of bubbles, scheduled on the node's cores by a work-s
 1. **Now**: one process, one machine, one tick for all (R8: 100k ships ≈ 25 ms).
 2. **Measure, then layers and bubbles in one process**: first ms per tick split by powered /
    near / coasting ships; then bubbles as the parallel unit, slow layers as actors on a pool, and
-   L1 rails with wakes if coasting is where the time goes. The cost moves from ships to activity.
-   L0 ms per tick per system is the one number that sizes everything after.
-3. **Systems as process-local shards**: each system group on its own thread with its own 60 Hz
+   rails with wakes if coasting is where the time goes. The cost moves from ships to activity.
+   Realtime ms per tick per system is the one number that sizes everything after.
+3. **Systems as process-local shards**: each system group on its own thread with its own 200 Hz
    loop, hand-overs as in-process messages. Tests the contract with no network.
 4. **Systems as processes on one machine**: the same messages over a socket; proves isolation.
 5. **Systems on machines**: the same again over a network; the region and universe services on
@@ -269,12 +209,12 @@ queue per tick is the list of bubbles, scheduled on the node's cores by a work-s
 
 Nothing is rewritten between steps; each one changes the transport under the same interface.
 
-**Sizing, to be measured, not assumed.** The machine in use has 32 threads and 60 GB. If L0
-holds only active ships, a system's L0 is tens of bubbles, not thousands of ships, and one node
+**Sizing, to be measured, not assumed.** The machine in use has 32 threads and 60 GB. If the realtime lane
+holds only watched ships, a system's realtime work is tens of bubbles, not thousands of ships, and one node
 holds many systems; the budget split (cores − 3, halved between crowd and pilots, `engine.rs:854`)
 becomes per node: cores for bubbles, cores for pilots, a few for services. Memory: a system's
 snapshot and rails cache (small), the planets' bakes read-only and shared across processes on a
-machine (mapped, not copied). A node's capacity is the number of systems whose L0 fits 16 ms with
+machine (mapped, not copied). A node's capacity is the number of systems whose realtime lane fits 5 ms with
 headroom for a fight; **a system is never split across nodes, and a bubble never across threads.**
 A system too big for a node (a capital system in a battle) is the only case that forces a
 decision, and the answer there is a bigger node, not a cut bubble.
@@ -288,22 +228,20 @@ body an hour, or a generator the game runs from the climate tables; the lab's ch
 census's periods (a day) are stated in `docs/registry-people.md`. Nothing in the registry names a
 tick rate, and nothing should.
 
-## 8. Decisions for the user
+## 8. Decided (2026-10-06)
 
-1. L0 stays 60 Hz, and sensor publishing for NPC pilots goes to 10 Hz (rearchitecture decision 4).
-2. Walking crew into the core tick (decision 5), as the bubble's bodies.
-3. The economy step stays 600 s; trades are events.
-4. Weather as a function of time from the lab's tables (as the clouds are today); hourly state
-   only where something needs a history.
-5. Systems placed by players (the node that owns a system is the one nearest its players), and
-   the capital-system rule: a system never splits; a node grows.
-6. Checkpoints per layer at their boundaries, replacing seed-plus-whole-log.
+The periods in §3 are the user's and are configuration in the registry; each may be tuned with a
+reason on its record. Still the user's to confirm as the build meets them: walking crew into the
+realtime lane as the bubble's bodies (decks as core data); checkpoints per clock at their
+boundaries in place of seed-plus-whole-log; whether the NPC lane resolves fights or only movement.
 
 ## 9. What breaks, and who does what
 
-The integrator's build: steps 2 and 3 of §6 are engine work in `crates/sim` and `crates/world`
-(rails with wakes, bubbles, actors for L3–L5, walking into the tick); nothing of the registry's
-schemas changes. The lab's: a weather field format if decision 4 is yes. Mine: the survey
+The integrator's build: the engine reads `reg.clocks` and binds a handler to every clock key
+(exhaustively, so a new clock fails the build until it is handled); `TICK_HZ`, `TICK`, the
+economy's `STEP`, `BOARD_EVERY` and the rest become reads of the records; then steps 2 and 3 of §6
+in `crates/sim` and `crates/world` (bubbles, rails with wakes, actors per body, walking into the
+tick). The schema and the records are on fso. The lab's: a weather field format if decision 4 is yes. Mine: the survey
 contract's weather package, the census periods, and the review of what each registry rate implies
 at each step (a mine's kg/s at 600 s; a levy at a day). The ships session: nothing; a ship's
 devices are read the same at any layer.

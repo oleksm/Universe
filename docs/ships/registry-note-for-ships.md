@@ -201,3 +201,39 @@ Solid for the heavily loaded joints (landing gear roots, engine frames), hollow 
 matters; your choice per joint. Figures from memory of MERO KK balls (solid to ~350 mm) and the
 welded hollow spherical joints of large space frames (300–900 mm, walls 8–40 mm); all marked
 review.
+
+## 13. Crewing (2026-10-06, your request docs/ships/crew-request.md)
+
+In your order. All figures from memory of the space station's and airliners' practice, marked
+review; made by `tools/standards/crew.py`, parts and chains closed, mounts regenerated.
+
+1. **Life support capacity:** `function.persons` and `function.cooling` (W of cabin heat it carries
+   away and dries) on `equipment.life.s1` (3 people, 1,500 W) and `.s2` (persons by its mass at
+   270 kg a head, 500 W a head). Check: units × persons ≥ crew.
+2. **Command station:** slot kind **`command`** (new; mounts `mount.command-s1/2/3`), kind
+   `command_station` with `persons`, `g_rating` (m/s², the seats' rating) and `facing`
+   (thrust / forward / any). `equipment.command.s1` pilot's station (1, 88 m/s² = 9 g, 180 kg,
+   1.2 × 1.0 × 1.5 m, 1.5 kW); `.s2` pilot and co-pilot (2, 9 g, 340 kg, 2.2 × 1.2 × 1.5, 2.5 kW);
+   `.s3` bridge of four (4, 6 g, 900 kg, 3.5 × 3.0 × 2.2, 6 kW). All `facing: thrust`.
+3. **Quarters:** kind `berths {persons}` in a cargo slot: `equipment.berths.2 / .4 / .6` (260 /
+   520 / 780 kg; 2 × 1 × 2, 2 × 2 × 2, 3 × 2 × 2 m; 50 W a head). Kind `galley {persons}`:
+   `equipment.galley.s1` (6, 250 kg, 1.5 × 0.9 × 2.0, 3 kW). Kind `head {persons}`:
+   `equipment.head.s1` (6, 200 kg, 1.2 × 1.0 × 2.0, 500 W; its water is `need.washing`). Food:
+   `equipment.store.food.s1`, kind `store`, `holds: market.food` (a store may now hold a market
+   category), `capacity: 1000` kg (667 person-days at `need.food` 1.5 kg/day), 150 kg,
+   1.5 × 1.2 × 2.0. Medical bay: later, as you said.
+4. **Leaks and heat:** `hull.leak_rate` (kg/s per m³ of pressurised volume; the station's 0.27 kg
+   a day over 916 m³ = 3.4e-9, from memory, review): yours to set on each hull. People's heat is on
+   **`need.food.heat`: 137 W** a head (NASA BVAD 11.82 MJ/day): the food eaten leaves as heat.
+   Cabin cooling and drying is life support's `cooling`. Airlock `air_lost` as is.
+5. **Landing aids:** kind `altimeter {range, accuracy}`: `equipment.sensors.altimeter.s1` (5,000 m,
+   0.1 m, 8 kg, 0.3 × 0.2 × 0.15, 40 W; a lidar). Kind `camera {field_of_view}`:
+   `equipment.sensors.camera.s1` (1.571 rad = 90°, 2 kg, 0.1 × 0.1 × 0.15, 10 W); fit one per view.
+6. **Safety:** kind `fire_unit {protects}`: `equipment.utility.fire.s1` (50 m³, 25 kg); one per
+   pressurised room. Kind `pressure_door {passage, pressure}`: `equipment.access.door.s1` (0.8 m,
+   101,325 Pa either way, 90 kg, 1.0 × 0.1 × 1.9). Kind `suit_locker {persons, hours}`:
+   `equipment.utility.suits.s1` (2 suits, 28,800 s = 8 h each, 160 kg, 1.0 × 0.6 × 2.0). Radiation
+   shielding later; for sizing when you get there (from memory, review): a storm shelter of 20 to
+   40 g/cm² of water or polyethylene round the crew; NASA's short-term limit 250 mSv in 30 days.
+
+Engine: handlers stubbed (`None`) for the nine kinds and the `command` slot, as for the fittings.

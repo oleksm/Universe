@@ -10,6 +10,7 @@ it (`docs/standards.md` for what a standard is).
 
 ```
 standards/
+  Engine/                       how the engine governs itself: schema/clock.schema.yaml, metadata/scheduling/<clock>.yaml
   SFO/                          a body: its folder named after its prefix
     schema/                     the schemas for the editor
     icons/                      <a record's file name>.svg: its icon (24 x 24 line art, stroke currentColor)

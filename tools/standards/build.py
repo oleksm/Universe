@@ -194,6 +194,7 @@ EQUIPMENT_READS = {
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
     "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
+    "g_rating": "m/s2 its seats are rated to", "facing": "which way the seats face", "cooling": "W of cabin heat it carries away", "protects": "m3 of room one unit covers", "accuracy": "m, how closely it reads", "field_of_view": "rad across its picture", "hours": "s of air a suit carries",
     "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
 
@@ -924,7 +925,7 @@ for ad in administrations:
 bodies, standards = [], []
 for name in sorted(os.listdir(TREE)):
     folder = os.path.join(TREE, name)
-    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People"):
+    if not os.path.isdir(folder) or name in ("schema", "sources", HOUSE, LOCAL, "Celestial", "Dogma", "People", "Engine"):
         continue
     # (The body's own file: named after its folder, SFO/metadata/SFO.yaml.)
     meta_path = os.path.join(folder, "metadata", name + ".yaml")
@@ -2400,6 +2401,34 @@ for e_ in equipment:
     th = (raw.get("function") or {}).get("thrust", 0)
     if bears.get("thrust") and th > bears["thrust"]: over.append(f"thrust {th / 1e6:g} MN over {bears['thrust'] / 1e6:g}")
     rows.append(row("gap" if over else "ok", e_["identity"]["name"], mk, "; ".join(over) or "within it"))
+# 3c. Engine: the tree of clocks (standards/Engine/metadata/scheduling): each period a whole number of the realtime tick, every parent a clock.
+_clocks = {}
+for f__ in sorted(glob.glob(os.path.join(TREE, "Engine", "metadata", "scheduling", "*.yaml"))):
+    c__ = yaml.safe_load(open(f__, encoding="utf-8")) or {}
+    _clocks[c__["identity"]["key"]] = c__
+_base = min((c__["trigger"]["every"] for c__ in _clocks.values() if c__["trigger"].get("every")), default=None)
+def _clock_rows(parent, depth, rows):
+    for k__, c__ in _clocks.items():
+        if c__.get("parent") != parent:
+            continue
+        tr = c__["trigger"]; bad = []
+        if tr["kind"] == "period" and not tr.get("every"): bad.append("a period with no `every`")
+        if tr.get("every") and _base:
+            n__ = tr["every"] / _base
+            if abs(n__ - round(n__)) > 1e-6: bad.append(f"{tr['every']:g} s is not a whole number of the {_base:g} s tick")
+        if c__.get("parent") and c__["parent"] not in _clocks: bad.append(f"parent {c__['parent']} is not a clock")
+        for r__ in (c__.get("reads") or []) + (c__.get("posts") or []):
+            if r__ not in _clocks: bad.append(f"{r__} is not a clock")
+        when = f"every {tr['every']:g} s ({tr['every'] / _base:,.0f} ticks)" if tr.get("every") else ("on event" if tr["kind"] == "event" else "group")
+        rows.append(row("gap" if bad else "ok", ("\u2007\u2007" * depth) + ("\u2514 " if depth else "") + c__["identity"]["name"], c__["scope"], c__["coupling"].replace("_", "-"), when, "; ".join(bad) or (c__.get("rule") or "")[:140]))
+        _clock_rows(k__, depth + 1, rows)
+rows = []
+_clock_rows(None, 0, rows)
+for k__, c__ in _clocks.items():
+    if c__.get("parent") and c__["parent"] not in _clocks:
+        rows.append(row("gap", c__["identity"]["name"], c__["scope"], c__["coupling"], "", f"parent {c__['parent']} is not a clock"))
+if rows:
+    report("clocks", "Clocks: the engine's tree of time", "standards/Engine: each clock, under the clock whose due time makes it step, with how many of it there are (scope), how tightly it exchanges data (coupling, which decides the thread, process or machine it runs on) and when it steps. Every period must be a whole number of the realtime tick, so every input is stamped by the same tick numbers and replay works per layer.", ["Clock", "One per", "Coupling", "Steps", "Rule, or what is wrong"], rows)
 report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
 
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
