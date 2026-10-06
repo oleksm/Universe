@@ -58,12 +58,12 @@ energy:
   coal_in_place: 2.739e+16
 bake:
   format: "planet-sim-surface/1"
-  version: 3
-  path: "worlds/TRD1/surface/v3"
-  manifest_sha256: "c446849c67841c4a82a79e999e1042f8ffbcd50cbc103a0401800b7208a30609"
-  files: 1332
-  bytes: 712135827
-  note: "v3: the air for the renderer: Earth-mean aerosol (optical depth 0.12) in atmosphere.json, and its transmittance and multiple-scattering tables (air_luts.json, air_*.rgba32f; Hillaire 2020)"
+  version: 4
+  path: "worlds/TRD1/surface/v4"
+  manifest_sha256: "d446d9d9e0d3227257d748058d3a6ee0e0aa83a1dd0db2b09b916292217ba97e"
+  files: 1336
+  bytes: 712848510
+  note: "v4: clouds (clouds.json, clouds_month/enso/air.png: four kinds a month from the world's climate, El Nino index and response; planet-sim stages/clouds.py)"
 identity:
   key: body.treistun.treistun-d
   name: Harvest

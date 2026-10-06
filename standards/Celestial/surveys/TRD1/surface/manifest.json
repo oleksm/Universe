@@ -2,13 +2,13 @@
  "format": "planet-sim-surface/1",
  "world_id": "TRD1",
  "body": "body.treistun.treistun-d",
- "version": 3,
- "created": "2026-10-06T17:48:55+00:00",
+ "version": 4,
+ "created": "2026-10-06T18:12:42+00:00",
  "immutable": true,
  "simulator": {
-  "commit": "d2312347e916fc73bdd2a8fec22ea6cccc6445af"
+  "commit": "529cdb60a85c690944a5f7b38cc85cfad3e4f796"
  },
- "note": "v3: the air for the renderer: Earth-mean aerosol (optical depth 0.12) in atmosphere.json, and its transmittance and multiple-scattering tables (air_luts.json, air_*.rgba32f; Hillaire 2020)",
+ "note": "v4: clouds (clouds.json, clouds_month/enso/air.png: four kinds a month from the world's climate, El Nino index and response; planet-sim stages/clouds.py)",
  "survey": {
   "file": "worlds/TRD1/survey/manifest.json",
   "sha256": "c913d6e4e6c847c8b44cf1be83d9f8baece329ed38fe8faae1c6a644bae99d23"
@@ -51,11 +51,12 @@
   "globe": 11,
   "layers": 4,
   "places": 1,
+  "clouds": 4,
   "world": 5,
   "report": 5,
   "summary": 1
  },
- "bytes": 712135827,
+ "bytes": 712848510,
  "files": {
   "hz.json": {
    "sha256": "4f6af0a6069a5213fb02c4c918e50dc217799b8055334963f80d64890b9ca6c4",
@@ -5340,6 +5341,22 @@
   "peaks.json": {
    "sha256": "c64d5638a9f52c7ea701d9e956fb8d8d93f57851d7ccb16a87d0f944f62b69a2",
    "bytes": 255666
+  },
+  "clouds.json": {
+   "sha256": "19f74a58cbc692ac17ee1dfb66b2ce979844cec983d1e1ffef38bed7da4df22d",
+   "bytes": 55174
+  },
+  "clouds_air.png": {
+   "sha256": "26b37eceb04b9fc5accb2af5305bf98e555b15bd1ea252fdefd0d39b7652e52a",
+   "bytes": 203105
+  },
+  "clouds_enso.png": {
+   "sha256": "45b7dfe2a4f22f83cd07aa9a68f0d0ea3397ae76640dce84c62459320511ddda",
+   "bytes": 17599
+  },
+  "clouds_month.png": {
+   "sha256": "4c9c2960efc7e3e57eed0056ec2349df39faf97ccacab4f0a3da862eb6e6e5a3",
+   "bytes": 436805
   },
   "air_luts.json": {
    "sha256": "2ede82cd0d1cb033c72e907dbd52e0c89b580a20cf6c9cb1b5ccac87db78bb3b",
