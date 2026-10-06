@@ -47,10 +47,29 @@ stock:
   - { item: stock.st4340-tb-150x10, quantity: 1380.0 }
   - { item: stock.st4340-tb-200x15, quantity: 7460.0 }
   - { item: stock.ti64-pl-5, quantity: 12600.0 }
-# Finished hulls in the yard at day 0 (seed state): what a company or the insurer takes delivery of at once; past these,
+# Finished hulls in the yard at day 0 (seed state), each with its mark (SFO 21: the yard's serial, the design, the yard, finished a month apart before day 0): what a company or the insurer takes delivery of at once; past these,
 # a hull is built to order in the dock's time (the game reckons it from the chain: the MC-07 in about 21 days).
-  - { item: hull.hauler, pieces: 2 }
-  - { item: hull.drover, pieces: 3 }
-  - { item: hull.sprint, pieces: 2 }
-  - { item: hull.prospector, pieces: 1 }
-  - { item: hull.interceptor, pieces: 1 }
+  - item: hull.hauler
+    pieces: 2
+    serials:
+      - { serial: TOL-HAULER-000001, design: hull.hauler, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -2592000 }
+      - { serial: TOL-HAULER-000002, design: hull.hauler, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -5184000 }
+  - item: hull.drover
+    pieces: 3
+    serials:
+      - { serial: TOL-DROVER-000001, design: hull.drover, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -2592000 }
+      - { serial: TOL-DROVER-000002, design: hull.drover, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -5184000 }
+      - { serial: TOL-DROVER-000003, design: hull.drover, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -7776000 }
+  - item: hull.sprint
+    pieces: 2
+    serials:
+      - { serial: TOL-SPRINT-000001, design: hull.sprint, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -2592000 }
+      - { serial: TOL-SPRINT-000002, design: hull.sprint, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -5184000 }
+  - item: hull.prospector
+    pieces: 1
+    serials:
+      - { serial: TOL-PROSPECTOR-000001, design: hull.prospector, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -2592000 }
+  - item: hull.interceptor
+    pieces: 1
+    serials:
+      - { serial: TOL-INTERCEPTOR-000001, design: hull.interceptor, maker: org.tolland, made_at: facility.treistun.port-trethi.trethi-yard, made_on: -2592000 }

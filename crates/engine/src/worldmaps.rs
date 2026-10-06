@@ -154,6 +154,10 @@ pub(crate) struct WorldBind {
     pub clouds: wgpu::Buffer,
     /// The maps bound now (their id), if any, and when (frames counted by `fade`).
     pub current: Option<u64>,
+    /// The bound world's cloud maps, for the cloud cache's fill (None: no clouds).
+    pub cloud_maps: Option<[wgpu::TextureView; 3]>,
+    /// The cloud cache (bindings 16 to 18: its uniform, its new and old copies).
+    pub cache: crate::cloudcache::CloudCache,
     since: u32,
 }
 
@@ -168,7 +172,15 @@ impl WorldBind {
         let samp = |binding: u32| wgpu::BindGroupLayoutEntry { binding, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None };
         let air_entry = wgpu::BindGroupLayoutEntry { binding: 7, visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX, ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None }, count: None };
         let clouds_entry = wgpu::BindGroupLayoutEntry { binding: 15, ..air_entry };
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry, tex(8), tex(9), tex(10), samp(11), tex(12), tex(13), tex(14), clouds_entry] });
+        let cache_entry = wgpu::BindGroupLayoutEntry { binding: 16, visibility: wgpu::ShaderStages::FRAGMENT, ..air_entry };
+        let array = |binding: u32| wgpu::BindGroupLayoutEntry {
+            binding,
+            visibility: wgpu::ShaderStages::FRAGMENT,
+            ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2Array, multisampled: false },
+            count: None,
+        };
+        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry, tex(8), tex(9), tex(10), samp(11), tex(12), tex(13), tex(14), clouds_entry, cache_entry, array(17), array(18)] });
+        let cache = crate::cloudcache::CloudCache::new(device);
         let clouds = device.create_buffer(&wgpu::BufferDescriptor { label: Some("world clouds"), size: 16, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
         let clamped = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("world air tables"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
         let air = device.create_buffer(&wgpu::BufferDescriptor { label: Some("world air"), size: 64, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
@@ -186,8 +198,8 @@ impl WorldBind {
         let nearest = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("world maps, exact"), address_mode_u: wgpu::AddressMode::Repeat, address_mode_v: wgpu::AddressMode::ClampToEdge, ..Default::default() });
         let blank = Self::blank(device, queue);
         let views: Vec<wgpu::TextureView> = (0..SLOTS + 5).map(|_| blank.clone()).collect();
-        let bind = Self::group(device, &layout, &views, &linear, &nearest, &air, &clamped, &clouds);
-        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, since: 0 }
+        let bind = Self::group(device, &layout, &views, &linear, &nearest, &air, &clamped, &clouds, &cache);
+        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0 }
     }
 
     /// A texel of nothing (alpha 0: no map).
@@ -214,7 +226,7 @@ impl WorldBind {
     /// `views`: the maps by slot, then the air's two tables (bindings 9 and 10), then the
     /// clouds' three maps (12 to 14).
     #[allow(clippy::too_many_arguments)]
-    fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler, air: &wgpu::Buffer, clamped: &wgpu::Sampler, clouds: &wgpu::Buffer) -> wgpu::BindGroup {
+    fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler, air: &wgpu::Buffer, clamped: &wgpu::Sampler, clouds: &wgpu::Buffer, cache: &crate::cloudcache::CloudCache) -> wgpu::BindGroup {
         let binding = |k: usize| match k {
             k if k < SLOTS => BINDINGS[k],
             k if k < SLOTS + 2 => 9 + (k - SLOTS) as u32,
@@ -226,6 +238,9 @@ impl WorldBind {
         entries.push(wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(linear) });
         entries.push(wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::Sampler(nearest) });
         entries.push(wgpu::BindGroupEntry { binding: 7, resource: air.as_entire_binding() });
+        entries.push(wgpu::BindGroupEntry { binding: 16, resource: cache.uniform.as_entire_binding() });
+        entries.push(wgpu::BindGroupEntry { binding: 17, resource: wgpu::BindingResource::TextureView(&cache.new_view) });
+        entries.push(wgpu::BindGroupEntry { binding: 18, resource: wgpu::BindingResource::TextureView(&cache.old_view) });
         device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("world maps"), layout, entries: &entries })
     }
 
@@ -328,7 +343,8 @@ impl WorldBind {
                 None => Self::blank(device, queue),
             });
         }
-        self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds);
+        self.cloud_maps = maps.clouds.as_ref().map(|_| [views[SLOTS + 2].clone(), views[SLOTS + 3].clone(), views[SLOTS + 4].clone()]);
+        self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds, &self.cache);
         self.current = Some(maps.id);
     }
 }

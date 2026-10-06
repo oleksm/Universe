@@ -26,8 +26,9 @@ pub struct Config {
     /// The HUD is drawn at this multiple of the scene resolution (smaller, crisper text).
     pub hud_scale: u32,
     pub vsync: bool,
-    /// The most frames a second (0: as many as the display takes);
-    /// `UNIVERSE_MAX_FPS` overrides it.
+    /// The most frames a second (0: as many as the display takes); `UNIVERSE_MAX_FPS`
+    /// overrides it. 120 by default: smooth, and on a faster screen the GPU rests between frames
+    /// rather than running flat out for frames nobody would notice.
     pub max_fps: f32,
     /// Where slow frames are written down (see `HITCH`): the frame, its
     /// parts, and with the profiler on, every scope's time in it. None: the log only.
@@ -36,7 +37,7 @@ pub struct Config {
 
 impl Default for Config {
     fn default() -> Self {
-        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 240.0, hitch_log: None }
+        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 120.0, hitch_log: None }
     }
 }
 
@@ -192,7 +193,14 @@ pub fn run<G: Game>(config: Config, game: G) {
     event_loop.set_control_flow(ControlFlow::Poll);
     let mut runner = Runner { config, game, state: None, start: Instant::now() };
     event_loop.run_app(&mut runner).expect("event loop error");
+    if OVER_BUDGET.load(std::sync::atomic::Ordering::Relaxed) {
+        crate::renderer::wait_for_writes();
+        std::process::exit(3);
+    }
 }
+
+/// A screenshot run's pass went over its GPU budget (`UNIVERSE_GPU_BUDGET`): the run exits 3.
+static OVER_BUDGET: std::sync::atomic::AtomicBool = std::sync::atomic::AtomicBool::new(false);
 
 impl<G: Game> Runner<G> {
     fn frame(&mut self, event_loop: &ActiveEventLoop) {
@@ -307,6 +315,23 @@ impl<G: Game> Runner<G> {
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
+            let passes = crate::gputime::times();
+            if !passes.is_empty() {
+                log::info!("GPU a pass (ms): {}", passes.iter().map(|(n, ms)| format!("{n} {ms:.2}")).collect::<Vec<_>>().join(", "));
+            }
+            // (UNIVERSE_GPU_BUDGET="scene=10,shadows=1": a pass over its budget (ms) fails the run.)
+            if let Ok(budget) = std::env::var("UNIVERSE_GPU_BUDGET") {
+                for (pass, most) in budget.split(',').filter_map(|b| b.split_once('=')).filter_map(|(p, ms)| Some((p.trim(), ms.trim().parse::<f32>().ok()?))) {
+                    match passes.iter().find(|(n, _)| *n == pass) {
+                        Some((_, ms)) if *ms > most => {
+                            log::error!("GPU budget: {pass} {ms:.2} ms, over its {most} ms");
+                            OVER_BUDGET.store(true, std::sync::atomic::Ordering::Relaxed);
+                        }
+                        None => log::warn!("GPU budget: no pass {pass} timed"),
+                        _ => {}
+                    }
+                }
+            }
             if universe_prof::enabled() {
                 log::info!("profile (last {} frames):\n{}", universe_prof::WINDOW, universe_prof::report_text());
             }

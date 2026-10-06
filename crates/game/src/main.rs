@@ -83,7 +83,13 @@ pub struct View {
     pub ship_pos: DVec3,
     /// Dominant body near the ship, if the ship is in this system.
     pub reference: Option<usize>,
+    /// What the system's globes, maps and ground patches are kept under: `origin`, or
+    /// `STUDIO_CACHE` for the planet studio's world alone.
+    pub cache: usize,
 }
+
+/// The planet studio's own system's cache key (see `View::cache`).
+pub const STUDIO_CACHE: usize = usize::MAX;
 
 /// Whose motion to draw: ours, or craft `i`'s.
 #[derive(Clone, Copy, Debug)]
@@ -203,6 +209,11 @@ pub struct App {
     pub economy_panel: Option<economy::EconomyPanel>,
     /// The planet studio (WORLDS), while open; and how a baked world's ground is coloured.
     pub planet_studio: Option<planet_studio::PlanetStudio>,
+    /// The planet studio's world shown alone, in a system of its own (see `planet_studio`).
+    pub studio_world: Option<Arc<StarSystem>>,
+    /// A frame of the shown world's history drawn in place of its colour today (the studio's
+    /// timeline).
+    pub world_frame: Option<planet_studio::WorldFrame>,
     pub world_look: planet_studio::Look,
     /// The galaxy map, when open (U from the navigation map).
     pub galaxy_map: Option<galaxymap::GalaxyMap>,
@@ -357,7 +368,7 @@ impl App {
             muted: false,
             music_off: false,
             messages: Vec::new(),
-            view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None },
+            view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None, cache: origin },
             approach: None,
             plan: None,
             plan_age: 0.0,
@@ -389,6 +400,8 @@ impl App {
             galaxy_map: None,
             economy_panel: None,
             planet_studio: None,
+            studio_world: None,
+            world_frame: None,
             world_look: Default::default(),
             explored: Default::default(),
             market: None,
@@ -506,7 +519,7 @@ impl App {
         if span <= 0.0 {
             return 1.0;
         }
-        let behind = std::time::Instant::now() - std::time::Duration::from_secs_f64(1.0 / universe_sim::engine::TICK_HZ);
+        let behind = std::time::Instant::now() - std::time::Duration::from_secs_f64(1.0 / universe_sim::engine::tick_hz());
         let into = behind.saturating_duration_since(self.prev.made).as_secs_f64();
         (into / span).clamp(0.0, 1.0)
     }
@@ -1125,7 +1138,7 @@ impl App {
     /// Terrain globes for the system in view (built once, on first sight), and the full maps of
     /// a baked world near the eye.
     fn build_globes(&mut self) {
-        let origin = self.view.origin;
+        let origin = self.view.cache;
         for (i, b) in self.view.system.bodies.iter().enumerate() {
             if !self.globes.contains_key(&(origin, i))
                 && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
@@ -1146,20 +1159,28 @@ impl App {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
                 self.world_maps.insert((origin, i), slot.clone());
                 let (t, look) = (t.clone(), self.world_look);
+                // (A frame of its history in place of today's colour: its sea and clouds then
+                // aren't today's, so none.)
+                let then = self.world_frame.clone().filter(|f| f.key == b.key);
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
                     let names = [look.file(), "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
                     let mut k = 0;
                     let encoded = names.map(|name| {
-                        let e = t.bake_image(name).and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
+                        let image = match &then {
+                            Some(f) if k == 0 => f.history.image(f.frame),
+                            Some(_) if name == "globe_spec.png" => None,
+                            _ => t.bake_image(name),
+                        };
+                        let e = image.and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
                         k += 1;
                         e
                     });
                     let maps = universe_engine::WorldMaps::encoded(encoded, t.bake_air())
                         .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
                     let mut maps = maps;
-                    if let Some(c) = t.bake_clouds() {
+                    if let Some(c) = t.bake_clouds().filter(|_| then.is_none()) {
                         let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
                         let [a, b, c3] = c.maps;
                         maps.clouds_year = Some((c.year_days, c.enso));
@@ -1212,7 +1233,10 @@ impl App {
             Mode::Pilot => self.v.ship_system,
             Mode::Observer => self.observer.origin(&self.v),
         };
-        let system = self.charts.system(origin);
+        // (The planet studio's world alone: its own system in the view.)
+        let studio = self.studio_world.clone().filter(|_| self.mode == Mode::Observer);
+        let cache = if studio.is_some() { STUDIO_CACHE } else { origin };
+        let system = studio.unwrap_or_else(|| self.charts.system(origin));
         let mut positions = std::mem::take(&mut self.view.positions);
         system.positions(self.now(), &mut positions);
         let ship_pos = self.place(Who::Me).0 + self.charts.galaxy.offset(origin, self.v.ship_system);
@@ -1223,7 +1247,7 @@ impl App {
         if origin != self.view.origin {
             self.engine.send(universe_sim::Command::LookAt(Some(origin)));
         }
-        self.view = View { origin, system, positions, ship_pos, reference };
+        self.view = View { origin, system, positions, ship_pos, reference, cache };
     }
 
     fn focus_position(&self) -> DVec3 {
@@ -1351,6 +1375,13 @@ impl Game for App {
             Layer::Worlds => {
                 if !planet_studio::input(self, ctx) {
                     self.planet_studio = None;
+                    // (Its world alone goes with it: back to the system's star.)
+                    if self.world_frame.take().is_some() {
+                        self.world_maps.clear();
+                    }
+                    if self.studio_world.take().is_some() {
+                        self.observer.focus = observer::Focus::Body { system: self.view.origin, body: 0 };
+                    }
                 }
             }
             Layer::News => self.news_panel = newspanel::input(self, ctx),

@@ -119,7 +119,10 @@ pub struct LandOffice {
 }
 
 /// How often the land rate is levied (s): daily.
-const LEVY_EVERY: f64 = 86_400.0;
+/// How often the land levy falls due (s): the administration's clock (`clock.administration`).
+fn levy_every() -> f64 {
+    universe_world::registry::clock_every(universe_world::registry::ClockKey::Administration).expect("clock.administration has a period")
+}
 
 impl LandOffice {
     /// Seeded from the registry: each settlement at its system and port,
@@ -156,13 +159,13 @@ impl LandOffice {
         if self.levied_to == 0.0 {
             self.levied_to = now;
         }
-        while self.levied_to + LEVY_EVERY <= now {
-            self.levied_to += LEVY_EVERY;
+        while self.levied_to + levy_every() <= now {
+            self.levied_to += levy_every();
             for g in &self.grounds {
                 let Some(rate) = universe_world::order::law(&g.recorded.system).and_then(|l| l.policies.land_rate) else { continue };
                 for l in &g.lots {
                     let Some(owner) = self.party(&l.owner) else { continue };
-                    let due = area(&l.outline) * LAND_PRICE * rate * LEVY_EVERY;
+                    let due = area(&l.outline) * LAND_PRICE * rate * levy_every();
                     let _ = ledger.transfer(owner, Party::Administration(g.system), crate::ledger::Asset::Credits, due, tick, universe_protocol::Cause::Rules);
                 }
             }

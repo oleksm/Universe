@@ -10,7 +10,7 @@
 //! stock while its warehouse has room. Nothing moves between settlements but
 //! by ship.
 //!
-//! Every `STEP` the facilities run. Prices are the game's own: an item's
+//! Every `step()` the facilities run. Prices are the game's own: an item's
 //! reference price (see `goods`), moved by how the warehouse's stock of it
 //! stands against what the settlement's works take of it over `COVER_DAYS`.
 //!
@@ -35,7 +35,11 @@ use crate::land::{LandOffice, Run};
 use crate::ledger::{Asset, Ledger, Party};
 
 /// The economy steps this often (game s).
-pub const STEP: f64 = 600.0;
+/// The economy's step (s): its clock's period (`clock.economy`).
+pub fn step() -> f64 {
+    static STEP: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    *STEP.get_or_init(|| universe_world::registry::clock_every(universe_world::registry::ClockKey::Economy).expect("clock.economy has a period"))
+}
 /// A works keeps this many days of what it takes; a market prices against as much.
 pub const COVER_DAYS: f64 = 10.0;
 /// A settlement welcomes newcomers up to this many times its founding size.
@@ -555,7 +559,7 @@ impl Economy {
     /// `used`), its gives back into it, how far each was met; then deaths
     /// where a need has gone short past what it lasts, and the queue to leave.
     fn live(&mut self, p: usize, used: &mut BTreeMap<usize, f64>, goods: &[Item]) {
-        let dt = STEP;
+        let dt = step();
         let people = self.places[p].population * 1000.0;
         if people <= 0.0 {
             return;
@@ -724,17 +728,17 @@ impl Economy {
         t
     }
 
-    /// Run every facility up to world time `now`, a `STEP` at a time: each
+    /// Run every facility up to world time `now`, a `step()` at a time: each
     /// settlement's power shared out among what draws it, each module as far
     /// as its inputs, power and room let it; then each owner trading with the
     /// settlement's market. How each ran goes to its land office works.
     pub fn step_to(&mut self, now: f64, land: &mut LandOffice, ledger: &mut Ledger, goods: &[Item], tick: u64) {
-        if self.stepped_to + STEP > now {
+        if self.stepped_to + step() > now {
             return;
         }
         self.sync(land);
-        while self.stepped_to + STEP <= now {
-            self.stepped_to += STEP;
+        while self.stepped_to + step() <= now {
+            self.stepped_to += step();
             let at = self.stepped_to;
             self.people_aims();
             for p in 0..self.places.len() {
@@ -746,7 +750,7 @@ impl Economy {
     }
 
     fn run_place(&mut self, p: usize, at: f64, land: &mut LandOffice, ledger: &mut Ledger, goods: &[Item], tick: u64) {
-        let dt = STEP;
+        let dt = step();
         let (site, system, duty) = (self.places[p].site, self.places[p].system, self.places[p].duty);
         let market = self.places[p].trader;
         let cause = universe_protocol::Cause::Rules;
@@ -903,7 +907,7 @@ impl Economy {
             }
         }
         self.live(p, &mut used, goods);
-        let days = STEP / DAY;
+        let days = step() / DAY;
         let place = &mut self.places[p];
         place.made = made.into_iter().map(|(i, kg)| (i, kg / days)).collect();
         place.used = used.into_iter().map(|(i, kg)| (i, kg / days)).collect();
@@ -945,7 +949,7 @@ mod tests {
         let goods = universe_world::goods::catalog();
         assert!(p.price(&goods[deuterium]).bid > 0.0, "and bids for it");
         let mut ledger = Ledger::default();
-        e.step_to(STEP, &mut land, &mut ledger, &goods, 0);
+        e.step_to(step(), &mut land, &mut ledger, &goods, 0);
         assert!(e.works[0].last.as_ref().is_some_and(|r| r.rate == 0.0), "nothing to run on");
     }
 
@@ -965,7 +969,7 @@ mod tests {
         let goods = universe_world::goods::catalog();
 
         // Nothing to take, nothing made.
-        e.step_to(STEP, &mut land, &mut ledger, &goods, 0);
+        e.step_to(step(), &mut land, &mut ledger, &goods, 0);
         assert_eq!(e.works[smelter].pool.of(ingot), 0.0);
         let site = e.places[trethi].site;
         assert!(e.works.iter().filter(|w| w.site == site).any(|w| w.last.as_ref().is_some_and(|r| r.rate < 1.0 && r.held_by.is_some())), "held back by what it lacks");
@@ -980,7 +984,14 @@ mod tests {
                 }
             }
         }
-        e.step_to(2.0 * STEP, &mut land, &mut ledger, &goods, 1);
+        // (Stepped at the economy's period till a whole ingot lies in the warehouse to ask for: the
+        // works here that take it draw it out a whole ingot at a time. An hour at most.)
+        for k in 1..=(3600.0 / step()) as usize {
+            e.step_to(step() * (1 + k) as f64, &mut land, &mut ledger, &goods, 1);
+            if e.places[trethi].price(&goods[ingot]).ask.is_some() {
+                break;
+            }
+        }
         let place = &e.places[trethi];
         assert!(place.made.get(&ingot).copied().unwrap_or(0.0) > 0.0, "it makes ingot");
         assert!(place.stock.of(ingot) > 0.0, "sold into the warehouse");
@@ -1026,8 +1037,8 @@ mod tests {
         e.set_up(&land, yard, bay, Some(recipe), owner).unwrap();
         let sheet = universe_world::goods::item("stock.al6061-sh-2").unwrap();
         e.works[yard].pool.put(sheet, 20_000.0);
-        e.step_to(4.0 * STEP, &mut land, &mut ledger, &goods, 2);
-        let made = e.places[trethi].made.get(&cap).copied().unwrap_or(0.0) * STEP / DAY;
+        e.step_to(e.stepped_to + step(), &mut land, &mut ledger, &goods, 2);
+        let made = e.places[trethi].made.get(&cap).copied().unwrap_or(0.0) * step() / DAY;
         assert!(made > 0.0 && made <= 20_000.0 / 1710.72 * goods[cap].mass + 1.0, "nose caps welded from the sheet: {made} kg");
         assert!(e.works[yard].pool.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) + e.places[trethi].stock.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) > 0.0, "and the offcuts, scrap");
 
@@ -1037,7 +1048,7 @@ mod tests {
         let (id, before) = e.works[mine].deposit.clone().expect("its claim's deposit");
         assert_eq!(id, "TRD1-PCU-007264A-01");
         assert!((before / 1e9 - 1230.33).abs() < 0.01, "1,230 Mt as surveyed: {before:e}");
-        e.step_to(5.0 * STEP, &mut land, &mut ledger, &goods, 3);
+        e.step_to(e.stepped_to + step(), &mut land, &mut ledger, &goods, 3);
         let after = e.works[mine].deposit.as_ref().unwrap().1;
         assert!(after < before, "dug: {} t", (before - after) / 1000.0);
     }

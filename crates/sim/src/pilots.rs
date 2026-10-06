@@ -716,7 +716,7 @@ impl crate::universe::Universe {
     /// the controls would): what it posts goes in at once.
     pub(crate) fn craft_run<R>(&mut self, i: usize, f: impl FnOnce(&mut Avionics, &mut crate::pilots::PoolLink, &mut Vec<Event>) -> R) -> R {
         self.crafts[i].asleep_until = 0;
-        let view = self.pilot_view(crate::universe::TICK);
+        let view = self.pilot_view(crate::universe::tick());
         let (r, posting) = self.pool().run(i, &view, f);
         self.post_now(vec![posting]);
         r

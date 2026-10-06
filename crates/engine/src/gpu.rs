@@ -36,7 +36,8 @@ impl Gpu {
             label: Some("device"),
             // (Block-compressed textures where the GPU has them: a model's maps at an
             // eighth to a quarter of the memory.)
-            required_features: adapter.features() & wgpu::Features::TEXTURE_COMPRESSION_BC,
+            // (And the GPU's own clock at each pass, where it has one: see `gputime`.)
+            required_features: adapter.features() & (wgpu::Features::TEXTURE_COMPRESSION_BC | wgpu::Features::TIMESTAMP_QUERY),
             // (One vertex input and one value between the stages past the defaults' 16: the near
             // ground's surface fields. Every desktop GPU has 28 or more of each.)
             required_limits: wgpu::Limits {

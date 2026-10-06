@@ -71,8 +71,52 @@ fn main() {
         writeln!(out, "        for r in &self.{} {{\n            let key = r.identity.key.as_str();\n            r.refs(&mut |to, kinds| f(key, to, kinds));\n        }}", plural(&snake(&kinds[0]))).unwrap();
     }
     out.push_str("    }\n}\n");
+    out.push_str(&clock_keys(root));
     let dest = Path::new(&std::env::var("OUT_DIR").unwrap()).join("generated.rs");
     std::fs::write(dest, out).unwrap();
+}
+
+/// The engine's clocks by key, from their records (`Engine/metadata/scheduling/*.yaml`): an enum a
+/// clock and a handler trait with one method a clock, so a clock added to the registry fails the
+/// engine's build until it has its handler, and one taken away the same.
+fn clock_keys(root: &Path) -> String {
+    let dir = root.join("Engine/metadata/scheduling");
+    println!("cargo:rerun-if-changed={}", dir.display());
+    let mut keys: Vec<String> = std::fs::read_dir(&dir)
+        .map(|d| {
+            d.flatten()
+                .filter(|e| e.path().extension().is_some_and(|x| x == "yaml"))
+                .filter_map(|e| {
+                    println!("cargo:rerun-if-changed={}", e.path().display());
+                    let v: Value = serde_norway::from_str(&std::fs::read_to_string(e.path()).ok()?).ok()?;
+                    Some(v.get("identity")?.get("key")?.as_str()?.to_string())
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    keys.sort();
+    let name = |k: &str| camel(&k["clock.".len()..].replace('-', "_"));
+    let method = |k: &str| k["clock.".len()..].replace('-', "_");
+    let mut t = String::from("\n/// The engine's clocks, one a record (`Engine/metadata/scheduling`).\n#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]\npub enum ClockKey {\n");
+    for k in &keys {
+        writeln!(t, "    /// `{k}`.\n    {},", name(k)).unwrap();
+    }
+    t.push_str("}\n\nimpl ClockKey {\n    /// Every clock.\n    pub const ALL: &'static [ClockKey] = &[");
+    t.push_str(&keys.iter().map(|k| format!("ClockKey::{}", name(k))).collect::<Vec<_>>().join(", "));
+    t.push_str("];\n\n    /// Its record's key.\n    pub fn key(self) -> &'static str {\n        match self {\n");
+    for k in &keys {
+        writeln!(t, "            ClockKey::{} => {k:?},", name(k)).unwrap();
+    }
+    t.push_str("        }\n    }\n\n    /// The clock with record key `key`.\n    pub fn of(key: &str) -> Option<ClockKey> {\n        ClockKey::ALL.iter().copied().find(|c| c.key() == key)\n    }\n\n    /// Hands it to `h`.\n    pub fn handle<H: ClockHandler>(self, h: &mut H) -> H::Out {\n        match self {\n");
+    for k in &keys {
+        writeln!(t, "            ClockKey::{} => h.{}(),", name(k), method(k)).unwrap();
+    }
+    t.push_str("        }\n    }\n}\n\n/// What the engine runs on each clock: one method a clock, so every clock has its work bound.\npub trait ClockHandler {\n    type Out;\n");
+    for k in &keys {
+        writeln!(t, "    fn {}(&mut self) -> Self::Out;", method(k)).unwrap();
+    }
+    t.push_str("}\n");
+    t
 }
 
 /// Every schema file under `dir`.

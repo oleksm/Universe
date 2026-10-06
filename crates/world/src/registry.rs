@@ -13,3 +13,9 @@ pub fn registry() -> &'static Registry {
     static REGISTRY: OnceLock<Registry> = OnceLock::new();
     REGISTRY.get_or_init(|| Registry::decode(ENCODED))
 }
+
+/// Clock `k`'s period (s of game time) as its record gives it (`Engine/metadata/scheduling`):
+/// the one place the engine's periods come from. None: it steps on events, or is a group.
+pub fn clock_every(k: ClockKey) -> Option<f64> {
+    registry().clocks.iter().find(|c| c.identity.key == k.key()).and_then(|c| c.trigger.every)
+}

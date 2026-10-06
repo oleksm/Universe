@@ -137,7 +137,15 @@ impl Terrain {
     /// The bake's height at `dir`, a port's plain levelled to the ground at the port (or the
     /// sea, where the ground is under it) and blending back by `PAD_FLAT_OUTER`.
     fn baked_height(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail) -> (f64, bool) {
+        self.baked_height_to(h, dir, detail, crate::detail::PHYSICS_CELL_M)
+    }
+
+    /// As `baked_height`, with the runtime detail to the band `cell` (m; see `detail`).
+    fn baked_height_to(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail, cell: f64) -> (f64, bool) {
         let (mut out, mut whole) = h.at_detail(dir, detail);
+        let (fine, w) = h.detail_at(dir, detail, cell, self.body_radius);
+        out += fine;
+        whole &= w;
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
@@ -155,9 +163,14 @@ impl Terrain {
     /// The surface height (as `surface`) for drawing: the bake's fine tiles as far as they're
     /// read, the rest asked for in the background; and whether it's the whole of it.
     pub fn surface_view(&self, dir: DVec3) -> (f64, bool) {
+        self.surface_view_to(dir, crate::detail::PHYSICS_CELL_M)
+    }
+
+    /// As `surface_view`, the runtime detail to the band `cell` (m): a patch's cells.
+    pub fn surface_view_to(&self, dir: DVec3, cell: f64) -> (f64, bool) {
         match &self.baked {
             Some(h) => {
-                let (v, whole) = self.baked_height(h, dir, crate::worlds::Detail::Loaded);
+                let (v, whole) = self.baked_height_to(h, dir, crate::worlds::Detail::Loaded, cell);
                 (if self.kind == TerrainKind::Terran { v.max(0.0) } else { v }, whole)
             }
             None => (self.surface(dir), true),

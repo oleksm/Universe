@@ -12,8 +12,11 @@ use universe_world::{Controls, Facility, Person, Place, Ship, ShipCommands, Ship
 
 use crate::traffic::{CrashReport, Craft};
 
-/// The longest tick (game seconds): pilots act once a tick.
-pub const TICK: f64 = 1.0 / 60.0 + 1e-9;
+/// The longest tick (game seconds): pilots act once a tick. The realtime clock's period
+/// (`clock.realtime`), a hair over so a step of exactly it is one tick.
+pub fn tick() -> f64 {
+    crate::clocks::tick() + 1e-9
+}
 /// The most ticks a step may take (beyond it, under heavy warp, ticks stretch).
 pub const TICK_BUDGET: usize = 8;
 
@@ -310,7 +313,7 @@ impl Universe {
     /// control rate stays in game time whatever the warp), up to
     /// `TICK_BUDGET` ticks; past that, ticks stretch and the step says so.
     pub fn step_world(&mut self, real_dt: f64, warp: f64, controls: &Controls) -> StepResult {
-        let wanted = (real_dt * warp / TICK).ceil().max(1.0);
+        let wanted = (real_dt * warp / tick()).ceil().max(1.0);
         let n = wanted.min(TICK_BUDGET as f64) as usize;
         let mut result = StepResult::default();
         for _ in 0..n {
@@ -378,8 +381,9 @@ impl Universe {
         }
         self.publish_boards();
         self.update_standings();
-        // (The dead-man rule counts in seconds: a look once a second.)
-        if self.tick.is_multiple_of(60) {
+        // (The dead-man rule: a look each step of the machinery's clock.)
+        let machinery = (crate::clocks::period(universe_world::registry::ClockKey::Machinery) / crate::clocks::tick()).round().max(1.0) as u64;
+        if self.tick.is_multiple_of(machinery) {
             universe_prof::time("sim/dead man", || self.dead_man());
         }
         // The pilots get the world as it now is (replaying, what they did is logged).
@@ -409,7 +413,7 @@ impl Universe {
     /// every ship is sampled every `recorder::EVERY` (not all at once).
     fn record(&mut self) {
         let now = self.world.time;
-        let slices = ((crate::recorder::EVERY / TICK).round() as u64).max(1);
+        let slices = ((crate::recorder::EVERY / tick()).round() as u64).max(1);
         let k = self.tick % slices;
         if k == 0 {
             self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));

@@ -16,7 +16,10 @@ use universe_services::records::{Deal, TradeRecord};
 pub const SETTLER_CREDITS: f64 = 3000.0;
 
 /// Markets put out their price boards this often (s), over the hypernet.
-pub const BOARD_EVERY: f64 = 120.0;
+/// How often a market publishes its board (s): its clock's period (`clock.market`).
+pub fn board_every() -> f64 {
+    crate::clocks::period(universe_world::registry::ClockKey::Market)
+}
 /// Boards kept this long (s): past the slowest way round a system's net.
 const BOARD_KEPT: f64 = 3.0 * 3600.0;
 
@@ -25,7 +28,7 @@ const BOARD_KEPT: f64 = 3.0 * 3600.0;
 pub type Board = (f64, Vec<Option<Quote>>);
 
 /// What markets know of each other (`docs/hypernet.md`, step 5): each puts
-/// out its board every `BOARD_EVERY`; another market has it once it's come
+/// out its board every `board_every()`; another market has it once it's come
 /// over the net (the board's market's lag from the backbone, and its own).
 /// A market off the net puts out nothing that's heard, and hears nothing.
 /// The world's first boards are long known everywhere.
@@ -300,7 +303,7 @@ impl Universe {
             return;
         }
         let first = self.boards.boards.is_empty();
-        self.boards.next = now + BOARD_EVERY;
+        self.boards.next = now + board_every();
         let mut systems: Vec<usize> = self.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).chain(self.markets.economy.places.iter().map(|p| p.system)).collect();
         systems.sort();
         systems.dedup();

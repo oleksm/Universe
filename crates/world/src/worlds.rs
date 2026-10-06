@@ -351,6 +351,8 @@ impl Survey {
 /// against the bake's manifest (itself checked against the record).
 pub struct Bake {
     package: Package,
+    /// Its world's id (`TRD1`): the runtime detail's seed.
+    world: String,
 }
 
 impl Bake {
@@ -365,12 +367,24 @@ impl Bake {
             && let Some(folder) = std::env::var_os(format!("UNIVERSE_BAKE_{id}"))
         {
             eprintln!("PREVIEW: {key}'s ground from {} (UNIVERSE_BAKE_{id}), not the bake its record names", PathBuf::from(&folder).display());
-            return Some(Package::open_checked(PathBuf::from(folder), None).map(|package| Bake { package }));
+            return Some(Package::open_checked(PathBuf::from(folder), None).map(|package| Bake { package, world: id }));
         }
         let b = body.bake.as_ref()?;
+        let world = body.survey.as_ref().map_or_else(|| key.to_string(), |s| s.world_id.clone());
         Some(match store() {
             None => Err("no worlds store (set UNIVERSE_WORLDS)".into()),
-            Some(store) => Package::open(store.join(&b.path), &b.manifest_sha256).map(|package| Bake { package }),
+            Some(store) => Package::open(store.join(&b.path), &b.manifest_sha256).map(|package| Bake { package, world }),
+        })
+    }
+
+    /// A released world's surface package, as the store's index names it and checked against
+    /// the index's hash: for a world that isn't one of the game's (the planet studio). None: it
+    /// has no surface.
+    pub fn release(r: &Release) -> Option<Result<Bake, String>> {
+        let (folder, sha) = r.surface_package.as_ref()?;
+        Some(match store() {
+            None => Err("no worlds store (set UNIVERSE_WORLDS)".into()),
+            Some(store) => Package::open(store.join("worlds").join(folder), sha).map(|package| Bake { package, world: r.world_id.clone() }),
         })
     }
 
@@ -482,6 +496,13 @@ pub struct Heights {
     n: usize,
     fine: std::sync::RwLock<HashMap<usize, (std::sync::Arc<Tile>, std::sync::atomic::AtomicU64)>>,
     clock: std::sync::atomic::AtomicU64,
+    /// The ~150 m tiles over mountains (layer B: `fz150.json`, `fz150_<face>_<x>_<y>.png`), where
+    /// the bake has them: their level and samples a side (`n + 1`); their slots follow the 600 m
+    /// tiles' and the river tiles'.
+    level150: Option<(u32, usize)>,
+    /// The 5 km rock map (`rockid.png`: a rock unit's number a texel, equirectangular), read the
+    /// first time the runtime detail wants it.
+    rocks: std::sync::OnceLock<Option<(usize, usize, Vec<u8>)>>,
     /// Tiles asked for in the background.
     asked: Vec<std::sync::atomic::AtomicBool>,
     /// The highest the ground stands (m).
@@ -493,6 +514,8 @@ pub struct Heights {
 enum Tile {
     Heights(Vec<u16>),
     Surface(Vec<[u8; 3]>),
+    /// A ~150 m tile's fields (`fd150`: flow, drainage, threshold slope, ice), RGBA.
+    Fields(Vec<[u8; 4]>),
 }
 
 impl Tile {
@@ -500,6 +523,7 @@ impl Tile {
         match self {
             Tile::Heights(h) => h.len() * 2,
             Tile::Surface(s) => s.len() * 3,
+            Tile::Fields(f) => f.len() * 4,
         }
     }
 }
@@ -544,11 +568,21 @@ impl Heights {
     /// Body `key`'s heights, read once per run and shared (None: no bake, or none to be had:
     /// no store here, or not the bake the record names; said once on stderr).
     pub fn of(key: &str) -> Option<std::sync::Arc<Heights>> {
+        Self::shared(key, || Bake::open(key))
+    }
+
+    /// A released world's heights from its surface package (see `Bake::release`), read once per
+    /// run and shared.
+    pub fn of_release(r: &Release) -> Option<std::sync::Arc<Heights>> {
+        Self::shared(&format!("release {} v{}", r.world_id, r.surface.unwrap_or(0)), || Bake::release(r))
+    }
+
+    fn shared(key: &str, open: impl FnOnce() -> Option<Result<Bake, String>>) -> Option<std::sync::Arc<Heights>> {
         static LOADED: std::sync::OnceLock<std::sync::Mutex<HashMap<String, Option<std::sync::Arc<Heights>>>>> = std::sync::OnceLock::new();
         let mut loaded = LOADED.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
         loaded
             .entry(key.to_string())
-            .or_insert_with(|| match Bake::open(key)?.and_then(Heights::read) {
+            .or_insert_with(|| match open()?.and_then(Heights::read) {
                 Ok(h) => Some(std::sync::Arc::new(h)),
                 Err(e) => {
                     eprintln!("{key}: its bake can't be read ({e}); its ground is the seed's");
@@ -577,6 +611,9 @@ impl Heights {
         // (The highest ground from the tiles' bounds, where the bake has them.)
         let bound = fz.get("bounds").and_then(|b| b.as_object()).and_then(|b| b.values().filter_map(|v| v.get(1)?.as_f64()).reduce(f64::max));
         let tiles = 6 * (1usize << fine.level).pow(2);
+        // (The ~150 m level, if baked: as fz.json, its own level and size.)
+        let level150 = bake.has("fz150.json").then(|| bake.read("fz150.json")).transpose()?.map(|b| serde_json::from_slice::<Fine>(&b)).transpose().map_err(|e| e.to_string())?.map(|f| (f.level, f.n));
+        let tiles150 = level150.map_or(0, |(l, _)| 6 * (1usize << l).pow(2));
         // (The highest ground from the bake's peaks, with room: the heights themselves aren't read
         // till one's wanted.)
         #[derive(Deserialize)]
@@ -594,7 +631,9 @@ impl Heights {
             n: fine.n,
             fine: Default::default(),
             clock: Default::default(),
-            asked: (0..2 * tiles).map(|_| Default::default()).collect(),
+            level150,
+            rocks: std::sync::OnceLock::new(),
+            asked: (0..2 * tiles + 2 * tiles150).map(|_| Default::default()).collect(),
             max: top + 500.0,
         })
     }
@@ -689,24 +728,69 @@ impl Heights {
     /// Where body direction `d` falls on the fine tiles: (face, x, y, its slot, and the place
     /// within the tile, 0..1 each way).
     fn locate(&self, d: glam::DVec3) -> (usize, usize, usize, usize, f64, f64) {
-        // (The tiles' cube is in the body's own frame: face by the largest axis, equal-angle u, v.)
-        let a = d.abs();
-        let (face, tu, tv) = if a.x >= a.y && a.x >= a.z {
-            if d.x > 0.0 { (0, -d.z / d.x, -d.y / d.x) } else { (1, d.z / -d.x, -d.y / -d.x) }
-        } else if a.y >= a.z {
-            if d.y > 0.0 { (2, d.x / d.y, d.z / d.y) } else { (3, d.x / -d.y, -d.z / -d.y) }
-        } else if d.z > 0.0 {
-            (4, d.x / d.z, -d.y / d.z)
-        } else {
-            (5, -d.x / -d.z, -d.y / -d.z)
-        };
-        let k = 1usize << self.level;
-        let to = |t: f64| ((t.atan() * 4.0 / std::f64::consts::PI + 1.0) / 2.0 * k as f64).clamp(0.0, k as f64 - 1e-9);
-        let (u, v) = (to(tu), to(tv));
-        let (x, y) = (u.floor() as usize, v.floor() as usize);
-        (face, x, y, (face * k + x) * k + y, u - x as f64, v - y as f64)
+        locate(d, self.level)
     }
 
+    /// The ~150 m difference at body direction `d` (m: from the 600 m heights, read bilinearly),
+    /// bilinear; 0 where there's no tile (all but mountains). And whether it's the whole of it.
+    fn fine150_at(self: &std::sync::Arc<Self>, d: glam::DVec3, detail: Detail) -> (f64, bool) {
+        let Some((level, n)) = self.level150.filter(|_| detail != Detail::Coarse) else { return (0.0, true) };
+        let (face, x, y, slot, fu, fv) = locate(d, level);
+        // (Its slots after the 600 m tiles' and the river tiles'.)
+        let base = 2 * 6 * (1usize << self.level).pow(2);
+        let (t, whole) = self.tile(base + slot, format!("fz150_{face}_{x}_{y}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)));
+        let Some(t) = t else { return (0.0, whole) };
+        let Tile::Heights(t) = &*t else { return (0.0, true) };
+        if t.len() < (n + 1) * (n + 1) {
+            return (0.0, true);
+        }
+        let (su, sv) = (fu * n as f64, fv * n as f64);
+        let (i0, j0) = ((su.floor() as usize).min(n - 1), (sv.floor() as usize).min(n - 1));
+        let (fi, fj) = (su - i0 as f64, sv - j0 as f64);
+        let at = |i: usize, j: usize| t[j * (n + 1) + i] as f64;
+        let raw = at(i0, j0) * (1.0 - fi) * (1.0 - fj) + at(i0 + 1, j0) * fi * (1.0 - fj) + at(i0, j0 + 1) * (1.0 - fi) * fj + at(i0 + 1, j0 + 1) * fi * fj;
+        // (Quarter-metres: the differences are small.)
+        ((raw - 32_768.0) / 4.0, whole)
+    }
+}
+
+/// The body direction at `u`, `v` (−1..1 each, equal-angle) on cube face `face`: `locate`'s
+/// inverse.
+pub fn cube_dir(face: usize, u: f64, v: f64) -> glam::DVec3 {
+    let (tu, tv) = ((u * std::f64::consts::FRAC_PI_4).tan(), (v * std::f64::consts::FRAC_PI_4).tan());
+    match face {
+        0 => glam::DVec3::new(1.0, -tv, -tu),
+        1 => glam::DVec3::new(-1.0, -tv, tu),
+        2 => glam::DVec3::new(tu, 1.0, tv),
+        3 => glam::DVec3::new(tu, -1.0, -tv),
+        4 => glam::DVec3::new(tu, -tv, 1.0),
+        _ => glam::DVec3::new(-tu, -tv, -1.0),
+    }
+    .normalize()
+}
+
+/// Where body direction `d` falls on cube tiles at `level`: (face, x, y, its slot, and the place
+/// within the tile, 0..1 each way).
+fn locate(d: glam::DVec3, level: u32) -> (usize, usize, usize, usize, f64, f64) {
+    // (The tiles' cube is in the body's own frame: face by the largest axis, equal-angle u, v.)
+    let a = d.abs();
+    let (face, tu, tv) = if a.x >= a.y && a.x >= a.z {
+        if d.x > 0.0 { (0, -d.z / d.x, -d.y / d.x) } else { (1, d.z / -d.x, -d.y / -d.x) }
+    } else if a.y >= a.z {
+        if d.y > 0.0 { (2, d.x / d.y, d.z / d.y) } else { (3, d.x / -d.y, -d.z / -d.y) }
+    } else if d.z > 0.0 {
+        (4, d.x / d.z, -d.y / d.z)
+    } else {
+        (5, -d.x / -d.z, -d.y / -d.z)
+    };
+    let k = 1usize << level;
+    let to = |t: f64| ((t.atan() * 4.0 / std::f64::consts::PI + 1.0) / 2.0 * k as f64).clamp(0.0, k as f64 - 1e-9);
+    let (u, v) = (to(tu), to(tv));
+    let (x, y) = (u.floor() as usize, v.floor() as usize);
+    (face, x, y, (face * k + x) * k + y, u - x as f64, v - y as f64)
+}
+
+impl Heights {
     /// Tile `slot` (its file `name`) to `detail`: kept, read now (`Full`), or asked for in the
     /// background (`Loaded`: None and false meanwhile). Some(None): the bake has no such tile.
     fn tile(self: &std::sync::Arc<Self>, slot: usize, name: String, detail: Detail, read: fn(&[u8], usize) -> Option<Tile>) -> (Option<std::sync::Arc<Tile>>, bool) {
@@ -764,32 +848,7 @@ impl Heights {
     /// Image `name` of the bake (a JPEG or PNG), as RGBA8: its width, height and pixels. None:
     /// not in the bake, or unreadable.
     pub fn image(&self, name: &str) -> Option<(usize, usize, Vec<u8>)> {
-        let bytes = self.bake.read(name).ok()?;
-        if name.ends_with(".jpg") {
-            let mut d = zune_jpeg::JpegDecoder::new(&bytes);
-            let rgb = d.decode().ok()?;
-            let (w, h) = d.dimensions()?;
-            return (rgb.len() == w * h * 3).then(|| (w, h, rgb.chunks(3).flat_map(|c| [c[0], c[1], c[2], 255]).collect()));
-        }
-        let mut d = png::Decoder::new(std::io::Cursor::new(&bytes));
-        d.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
-        let mut r = d.read_info().ok()?;
-        let mut buf = vec![0; r.output_buffer_size()?];
-        let info = r.next_frame(&mut buf).ok()?;
-        let (w, h) = (info.width as usize, info.height as usize);
-        let per = info.line_size / w.max(1);
-        let px = (0..h * w)
-            .flat_map(|i| {
-                let o = (i / w) * info.line_size + (i % w) * per;
-                match per {
-                    1 => [buf[o], buf[o], buf[o], 255],
-                    2 => [buf[o], buf[o], buf[o], buf[o + 1]],
-                    3 => [buf[o], buf[o + 1], buf[o + 2], 255],
-                    _ => [buf[o], buf[o + 1], buf[o + 2], buf[o + 3]],
-                }
-            })
-            .collect();
-        Some((w, h, px))
+        decode(name, &self.bake.read(name).ok()?)
     }
 
     /// The world's air from its bake (`atmosphere.json`, SI), packed as the engine's `Air` takes
@@ -866,11 +925,82 @@ impl Heights {
         self.at_detail(dir, Detail::Full).0
     }
 
+    /// The runtime detail at body direction `dir` (m, over the ~150 m ground; see `detail`), to the
+    /// band `cell` (m), on a world of `radius` (m); and whether it's the whole of it. 0 where
+    /// there's no ~150 m tile, or the generator isn't in yet (`detail::ACTIVE`).
+    pub fn detail_at(self: &std::sync::Arc<Self>, dir: glam::DVec3, detail: Detail, cell: f64, radius: f64) -> (f64, bool) {
+        let Some((level, n)) = self.level150.filter(|_| crate::detail::ACTIVE && detail != Detail::Coarse) else { return (0.0, true) };
+        let (face, x, y, _, fu, fv) = locate(dir.normalize(), level);
+        let k = 1usize << level;
+        let tiles150 = 6 * k * k;
+        let base = 2 * 6 * (1usize << self.level).pow(2);
+        let whole = std::cell::Cell::new(true);
+        // (Its tile and the neighbours on its face, read to `detail`, for the halo; past a face's
+        // edge the nearest sample of its own.)
+        let neighbour = |dx: i64, dy: i64, fields: bool| -> Option<std::sync::Arc<Tile>> {
+            let (tx, ty) = (x as i64 + dx, y as i64 + dy);
+            if tx < 0 || ty < 0 || tx >= k as i64 || ty >= k as i64 {
+                return None;
+            }
+            let slot = (face * k + tx as usize) * k + ty as usize;
+            let (t, w) = if fields {
+                self.tile(base + tiles150 + slot, format!("fd150_{face}_{tx}_{ty}.png"), detail, |b, _| decode("fd150.png", b).map(|(_, _, px)| Tile::Fields(px.chunks(4).map(|c| [c[0], c[1], c[2], c[3]]).collect())))
+            } else {
+                self.tile(base + slot, format!("fz150_{face}_{tx}_{ty}.png"), detail, |b, _| png_rg(b).ok().map(|t| Tile::Heights(t.2)))
+            };
+            whole.set(whole.get() && w);
+            t
+        };
+        if neighbour(0, 0, false).is_none() {
+            return (0.0, whole.get());
+        }
+        let sample = |i: i64, j: i64, m: usize, fields: bool| -> Option<(std::sync::Arc<Tile>, usize)> {
+            let (dx, dy) = (i.div_euclid(m as i64), j.div_euclid(m as i64));
+            let (t, (i, j)) = match neighbour(dx.clamp(-1, 1), dy.clamp(-1, 1), fields) {
+                Some(t) => (t, (i - dx * m as i64, j - dy * m as i64)),
+                None => (neighbour(0, 0, fields)?, (i.clamp(0, m as i64), j.clamp(0, m as i64))),
+            };
+            Some((t, j as usize * (m + 1) + i as usize))
+        };
+        // (The ground's whole height at a sample of the tile: the 5 km, 600 m and ~150 m levels,
+        // as the ground reads them there.)
+        let height = |i: i64, j: i64| {
+            let to = |c: usize, s: i64| (c as f64 + s as f64 / n as f64) / k as f64 * 2.0 - 1.0;
+            self.at_detail(cube_dir(face, to(x, i), to(y, j)), detail).0
+        };
+        let fields = |i: i64, j: i64| match sample(i, j, n / 2, true) {
+            Some((t, at)) => match &*t {
+                Tile::Fields(f) => f.get(at).map_or([0.0; 4], |c| c.map(|v| v as f64)),
+                _ => [0.0; 4],
+            },
+            None => [0.0; 4],
+        };
+        // (On the face in metres: its width a quarter turn of the world; the tile's corner floored
+        // to a whole metre, the place from there.)
+        let face_m = std::f64::consts::FRAC_PI_2 * radius;
+        let tile_m = face_m / k as f64;
+        let spacing = tile_m / n as f64;
+        let corner = [x as f64 * tile_m, y as f64 * tile_m];
+        let origin = corner.map(|c| c.floor() as i64);
+        let site = crate::detail::Site { origin, at: [corner[0] - origin[0] as f64 + fu * tile_m, corner[1] - origin[1] as f64 + fv * tile_m], spacing, height: &height, fields: &fields, rock: self.rock_at(lon_lat(dir)), seed: crate::detail::seed(&self.bake.world), cell };
+        (crate::detail::offset(&site), whole.get())
+    }
+
+    /// The rock unit under `p` (the 5 km rock map's number, nearest texel; 0 without one). The
+    /// map holds a unit's number times 8.
+    fn rock_at(&self, p: LonLat) -> u32 {
+        let Some((w, h, px)) = self.rocks.get_or_init(|| self.image("rockid.png")) else { return 0 };
+        let row = (((90.0 - p.lat) / 180.0 * *h as f64) as usize).min(h - 1);
+        let col = (((p.lon + 180.0) / 360.0 * *w as f64) as usize).min(w - 1);
+        (px[(row * w + col) * 4] as u32 + 4) / 8
+    }
+
     /// The ground's height at `dir` to `detail`, and whether it's the whole of it.
     pub fn at_detail(self: &std::sync::Arc<Self>, dir: glam::DVec3, detail: Detail) -> (f64, bool) {
         let d = dir.normalize();
         let (fine, whole) = self.fine_at(d, detail);
-        (self.coarse_at(lon_lat(d)) + fine, whole)
+        let (fine150, whole150) = self.fine150_at(d, detail);
+        (self.coarse_at(lon_lat(d)) + fine + fine150, whole && whole150)
     }
 }
 
@@ -893,6 +1023,81 @@ pub struct Release {
     pub districts: u64,
     /// Its surface version, if it has one.
     pub surface: Option<u32>,
+    /// Its surface package: the folder under the store's `worlds/` and its manifest's hash.
+    pub surface_package: Option<(String, String)>,
+    /// Its history package: the folder under the store's `worlds/` and its manifest's hash.
+    pub history_package: Option<(String, String)>,
+    /// Its day (s) and its axis's tilt (degrees), where its bake's `world.json` gives them.
+    pub day: Option<f64>,
+    pub tilt: Option<f64>,
+}
+
+
+/// A world's growth as its run saw it (the store's history package, `planet-sim-history/1`):
+/// globes in time order, each with its figures then.
+pub struct History {
+    package: Package,
+    pub frames: Vec<HistoryFrame>,
+}
+
+/// One of a history's globes: its file (equirectangular, as `globe_color`), when (Gyr since the
+/// world began, and before today), and the world then.
+#[derive(Clone, Debug, Deserialize)]
+pub struct HistoryFrame {
+    pub file: String,
+    pub time_gyr: f64,
+    pub ago_gyr: f64,
+    pub land_pct: f64,
+    pub plates: u32,
+    pub highest_m: f64,
+    pub deepest_m: f64,
+}
+
+impl History {
+    /// Released world `r`'s history, checked against the store's index (None: it has none).
+    pub fn release(r: &Release) -> Option<Result<History, String>> {
+        let (folder, sha) = r.history_package.as_ref()?;
+        let store = store()?;
+        Some(Package::open(store.join("worlds").join(folder), sha).and_then(|package| {
+            let frames = serde_json::from_slice(&package.read("frames.json")?).map_err(|e| e.to_string())?;
+            Ok(History { package, frames })
+        }))
+    }
+
+    /// Frame `i`'s globe, as RGBA8 (see `Heights::image`).
+    pub fn image(&self, i: usize) -> Option<(usize, usize, Vec<u8>)> {
+        let name = &self.frames.get(i)?.file;
+        decode(name, &self.package.read(name).ok()?)
+    }
+}
+
+/// Image file `name`'s bytes (a JPEG or PNG) as RGBA8: its width, height and pixels.
+fn decode(name: &str, bytes: &[u8]) -> Option<(usize, usize, Vec<u8>)> {
+    if name.ends_with(".jpg") {
+        let mut d = zune_jpeg::JpegDecoder::new(bytes);
+        let rgb = d.decode().ok()?;
+        let (w, h) = d.dimensions()?;
+        return (rgb.len() == w * h * 3).then(|| (w, h, rgb.chunks(3).flat_map(|c| [c[0], c[1], c[2], 255]).collect()));
+    }
+    let mut d = png::Decoder::new(std::io::Cursor::new(bytes));
+    d.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
+    let mut r = d.read_info().ok()?;
+    let mut buf = vec![0; r.output_buffer_size()?];
+    let info = r.next_frame(&mut buf).ok()?;
+    let (w, h) = (info.width as usize, info.height as usize);
+    let per = info.line_size / w.max(1);
+    let px = (0..h * w)
+        .flat_map(|i| {
+            let o = (i / w) * info.line_size + (i % w) * per;
+            match per {
+                1 => [buf[o], buf[o], buf[o], 255],
+                2 => [buf[o], buf[o], buf[o], buf[o + 1]],
+                3 => [buf[o], buf[o + 1], buf[o + 2], 255],
+                _ => [buf[o], buf[o + 1], buf[o + 2], buf[o + 3]],
+            }
+        })
+        .collect();
+    Some((w, h, px))
 }
 
 /// The worlds in the store (none without a store), current first.
@@ -926,6 +1131,10 @@ pub fn releases() -> Vec<Release> {
                         deposits: num(&summary, "deposits") as u64,
                         districts: num(&summary, "districts") as u64,
                         surface: surface.as_ref().and_then(|s| s.get("version")).and_then(|v| v.as_u64()).map(|v| v as u32),
+                        surface_package: surface.as_ref().and_then(|s| Some((folder(s)?, s.get("manifest_sha256")?.as_str()?.to_string()))),
+                        history_package: pkg("history").and_then(|s| Some((folder(&s)?, s.get("manifest_sha256")?.as_str()?.to_string()))),
+                        day: world.as_ref().and_then(|w| w.get("day_hours")).and_then(|d| d.as_f64()).map(|h| h * 3600.0),
+                        tilt: world.as_ref().and_then(|w| w.get("tilt_deg")).and_then(|d| d.as_f64()),
                         world_id: id,
                     })
                 })
@@ -939,6 +1148,19 @@ pub fn releases() -> Vec<Release> {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    /// A cube face's place and its body direction go there and back (`cube_dir`, `locate`).
+    #[test]
+    fn cube_faces_there_and_back() {
+        for face in 0..6 {
+            for (u, v) in [(-0.9, 0.3), (0.0, 0.0), (0.7, -0.6), (0.99, 0.99)] {
+                let (f, x, y, _, fu, fv) = locate(cube_dir(face, u, v), 10);
+                let back = |c: usize, fr: f64| (c as f64 + fr) / 1024.0 * 2.0 - 1.0;
+                assert_eq!(f, face);
+                assert!((back(x, fu) - u).abs() < 1e-9 && (back(y, fv) - v).abs() < 1e-9, "face {face} at {u}, {v}");
+            }
+        }
+    }
 
     /// Heath's survey and energy packages read, checked against their records; a few
     /// figures held to the record's; its bake found in the store and a file read, if a store is

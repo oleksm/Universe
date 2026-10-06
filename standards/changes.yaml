@@ -495,7 +495,7 @@
 - { record: facility.treistun.port-trethi.trethi-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "b02941881f765a35" }
 - { record: facility.treistun.port-trethi.trethi-smelter, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "24ef6e22e88cb38b" }
 - { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-06T23:18:14Z", status: "", summary: "changed", sha: "576b5430b909d64c" }
-- { record: facility.treistun.port-trethi.trethi-yard, at: "2026-10-06T14:13:11Z", status: "", summary: "changed: stock", sha: "ee9433015681b6b2" }
+- { record: facility.treistun.port-trethi.trethi-yard, at: "2026-10-06T23:31:03Z", status: "", summary: "changed: stock", sha: "49bf997df8c7410f" }
 - { record: facility.treistun.port-weisonum.weisonum-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "ba4e9b3eaf1e30a2" }
 - { record: facility.treistun.port-weisonum.weisonum-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "25cd4bdb39b962ab" }
 - { record: facility.treistun.port-weisonum.weisonum-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "dc80b4bc42b9bdf3" }
@@ -2056,6 +2056,7 @@
 - { record: standard.sfo.19, at: "2026-10-06T02:13:55Z", status: "", summary: "changed: details", sha: "4f2eaf652c1e8331" }
 - { record: standard.sfo.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9b755040fb6e59af" }
 - { record: standard.sfo.20, at: "2026-10-06T03:21:25Z", status: "", summary: "first tracked", sha: "142173ff68c7c9cf" }
+- { record: standard.sfo.21, at: "2026-10-06T23:31:03Z", status: "", summary: "first tracked", sha: "ca2ee50ba2ef1b3e" }
 - { record: standard.sfo.3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "104975206a1bfa51" }
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }
 - { record: standard.sfo.5, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29a1398afa92253f" }

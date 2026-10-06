@@ -628,7 +628,7 @@ fn a_yard_builds_an_mc07_from_its_stock() {
     let goods = u.world.goods.clone();
     let hull = universe_sim::world::goods::item("hull.mc-07").unwrap();
     // Its company sees to it: a month, step by step of the economy.
-    let step = universe_sim::services::economy::STEP;
+    let step = universe_sim::services::economy::step();
     let mut t = u.world.time;
     let mut built = None;
     for n in 0..(40.0 * 86_400.0 / step) as usize {

@@ -2555,6 +2555,7 @@ dependencies = [
  "serde",
  "texpresso",
  "universe-prof",
+ "universe-world",
  "wgpu",
  "winit",
 ]

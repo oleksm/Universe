@@ -36,8 +36,6 @@ pub const HOSTILE: f64 = -50.0;
 /// The law, in every settled system (one with a station or a port): one who
 /// opens fire on the innocent there stays fair game this long (s).
 pub const FAIR_GAME: f64 = 600.0;
-/// How often the authorities take in what they've heard (s).
-const EVERY: f64 = 5.0;
 
 /// What a standing means, in words.
 pub fn label(s: f64) -> &'static str {
@@ -118,7 +116,7 @@ impl Universe {
         if now < self.standings.next {
             return;
         }
-        self.standings.next = now + EVERY;
+        self.standings.next = now + crate::clocks::period(universe_world::registry::ClockKey::Market);
         let charts = self.charts();
         if self.standings.desks.is_empty() {
             self.standings.desks = Standings::open(&charts);
