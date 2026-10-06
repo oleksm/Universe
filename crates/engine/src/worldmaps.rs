@@ -20,9 +20,14 @@ pub enum Slot {
     Climate,
     /// Its rock map (each texel a rock unit's number, read exactly).
     Rock,
+    /// The sea's calmness (the bake's globe_spec: 1 − wind / 9 m/s, 0.35..1).
+    Spec,
 }
 
-pub const SLOTS: usize = 5;
+pub const SLOTS: usize = 6;
+
+/// Each slot's binding in group 2 (the samplers at 5 and 6, the air at 7 came before the sea's map).
+const BINDINGS: [u32; SLOTS] = [0, 1, 2, 3, 4, 8];
 
 /// Frames a world's maps take to fade in once bound.
 const FADE_FRAMES: f32 = 60.0;
@@ -54,7 +59,7 @@ impl WorldMaps {
         for (k, img) in maps.into_iter().enumerate() {
             let Some(img) = img else { continue };
             out[k] = Some(match k {
-                0..=2 if img.width % 4 == 0 && img.height % 4 == 0 => {
+                0..=2 | 5 if img.width % 4 == 0 && img.height % 4 == 0 => {
                     let srgb = k < 2;
                     let levels = crate::pbr::mips(&img, srgb);
                     let params = texpresso::Params { algorithm: texpresso::Algorithm::RangeFit, ..Default::default() };
@@ -110,7 +115,7 @@ impl WorldBind {
         };
         let samp = |binding: u32| wgpu::BindGroupLayoutEntry { binding, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None };
         let air_entry = wgpu::BindGroupLayoutEntry { binding: 7, visibility: wgpu::ShaderStages::FRAGMENT | wgpu::ShaderStages::VERTEX, ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None }, count: None };
-        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry] });
+        let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("world maps"), entries: &[tex(0), tex(1), tex(2), tex(3), tex(4), samp(5), samp(6), air_entry, tex(8)] });
         let air = device.create_buffer(&wgpu::BufferDescriptor { label: Some("world air"), size: 64, usage: wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST, mapped_at_creation: false });
         // (Round the world in longitude; clamped at the poles.)
         let linear = device.create_sampler(&wgpu::SamplerDescriptor {
@@ -152,7 +157,7 @@ impl WorldBind {
     }
 
     fn group(device: &wgpu::Device, layout: &wgpu::BindGroupLayout, views: &[wgpu::TextureView], linear: &wgpu::Sampler, nearest: &wgpu::Sampler, air: &wgpu::Buffer) -> wgpu::BindGroup {
-        let mut entries: Vec<wgpu::BindGroupEntry> = views.iter().enumerate().map(|(k, v)| wgpu::BindGroupEntry { binding: k as u32, resource: wgpu::BindingResource::TextureView(v) }).collect();
+        let mut entries: Vec<wgpu::BindGroupEntry> = views.iter().enumerate().map(|(k, v)| wgpu::BindGroupEntry { binding: BINDINGS[k], resource: wgpu::BindingResource::TextureView(v) }).collect();
         entries.push(wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::Sampler(linear) });
         entries.push(wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::Sampler(nearest) });
         entries.push(wgpu::BindGroupEntry { binding: 7, resource: air.as_entire_binding() });

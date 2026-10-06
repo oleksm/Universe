@@ -50,6 +50,8 @@ struct Globals {
 @group(2) @binding(6) var world_exact: sampler;
 // Its air (the lab's `Air`, air.wgsl; `on` 0: none).
 @group(2) @binding(7) var<uniform> world_air: Air;
+// The sea's calmness (globe_spec: 1 − wind / 9 m/s).
+@group(2) @binding(8) var world_spec: texture_2d<f32>;
 
 // Where on a world's maps the direction `dir` (its own frame) falls.
 fn world_uv(dir: vec3<f32>) -> vec2<f32> {
@@ -553,6 +555,29 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     }
     // What glows of itself (windows, lamps, hot metal).
     c += albedo.rgb * in.material.z;
+    // The sea of the world whose maps and air are bound: the lab's (sea.wgsl), its water by depth,
+    // the sky reflected, the sun's glint by the wind; in place of the sea's albedo and glint, faded
+    // in with the maps.
+    if (in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5 && land < 0.5) {
+        let calm = textureSampleLevel(world_spec, world_soft, world_uv(dir), world_lod(textureDimensions(world_spec).x, footprint));
+        if (calm.a > 0.5) {
+            let up = normalize(in.up);
+            var si: SeaIn;
+            si.depth_m = max(-ground.r * in.globe.z, 0.5);
+            si.wind_ms = 9.0 * (1.0 - clamp(calm.r, 0.35, 1.0));
+            si.to_eye = normalize(-in.at);
+            si.up = up;
+            si.sun_dir = in.sun_dir;
+            si.sun = in.sun_light * seen;
+            // (The sky's light along the reflected ray and straight up, as seen from the eye: near
+            // the sea, near enough; the lab's tables will look from the water itself.)
+            si.sky = air_sky(reflect(-si.to_eye, up), g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
+            si.down = si.sun * max(dot(up, in.sun_dir), 0.0) + air_sky(up, g.world_at.xyz, in.sun_dir, in.sun_light, world_air) * 1.5707963;
+            si.q = in.micro;
+            si.pixel_m = pixel;
+            c = mix(c, sea_material(si), g.view.y);
+        }
+    }
     if (in.globe.x > 0.5) {
         // The world whose maps are bound, through its own air (the lab's scattering); others
         // through the plain haze.
