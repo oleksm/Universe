@@ -59,19 +59,20 @@ fn sea_noise(x: vec3<f32>) -> f32 {
                    mix(sea_hash(i + vec3<f32>(0.0, 1.0, 1.0)), sea_hash(i + vec3<f32>(1.0, 1.0, 1.0)), f.x), f.y), f.z);
 }
 
-// The waves' tilt of the normal close up: noise slopes over ~60 m to ~1 m, their spread the
+// The waves' tilt of the normal close up: noise slopes over 64 m to 2 m (powers of two: `q` wraps
+// every 4096 m, see gm_pnoise), their spread the
 // wind's, each faded as it falls below a few pixels.
 fn sea_wave_normal(i: SeaIn, sigma: f32) -> vec3<f32> {
     var g = vec2<f32>(0.0);
-    var lam = 60.0;
+    var lam = 64.0;
     var amp = 1.0;
     var norm = 0.0;
     for (var o = 0; o < 6; o++) {
         let fade = clamp(lam / (i.pixel_m * 3.0) - 1.0, 0.0, 1.0);
-        let p = i.q / lam + vec3<f32>(f32(o) * 3.7);
-        let e = 0.15;
-        let n0 = sea_noise(p);
-        g += amp * fade * vec2<f32>(sea_noise(p + vec3<f32>(e, 0.0, 0.0)) - n0, sea_noise(p + vec3<f32>(0.0, 0.0, e)) - n0) / e;
+        let e = 0.15 * lam;
+        let sd = 20.0 + f32(o) * 3.7;
+        let n0 = gm_pnoise(i.q, lam, sd);
+        g += amp * fade * vec2<f32>(gm_pnoise(i.q + vec3<f32>(e, 0.0, 0.0), lam, sd) - n0, gm_pnoise(i.q + vec3<f32>(0.0, 0.0, e), lam, sd) - n0) / 0.15;
         norm += amp;
         lam *= 0.5;
         amp *= 0.7;

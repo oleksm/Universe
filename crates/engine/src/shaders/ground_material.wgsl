@@ -51,7 +51,20 @@ struct GroundIn {
     // and the size of a pixel there (m), to fade out noise finer than a pixel.
     q: vec3<f32>,
     pixel_m: f32,
+    // The rock's colour here, blended over the rock map's four nearest texels by their bilinear
+    // weights (ground_rock_blend): the map is read nearest for its units, and unblended, each
+    // unit's colour would show as a square texel (~10 km) wherever rock shows at all. Left zero,
+    // the unit's own colour is used.
+    rock_c: vec3<f32>,
 };
+
+// The rock colour over the rock map's four nearest texels (units u00 u10 u01 u11 at the texel
+// corners about the point, f the point's fraction between them): for GroundIn.rock_c.
+fn ground_rock_blend(u00: u32, u10: u32, u01: u32, u11: u32, f: vec2<f32>) -> vec3<f32> {
+    let c0 = mix(ROCK[min(u00, 19u)], ROCK[min(u10, 19u)], f.x);
+    let c1 = mix(ROCK[min(u01, 19u)], ROCK[min(u11, 19u)], f.x);
+    return mix(c0, c1, f.y);
+}
 
 // Bare rock's colour by unit (linear light, geology.UNITS order: planet-sim look.TRUE).
 const ROCK: array<vec3<f32>, 20> = array<vec3<f32>, 20>(
@@ -82,6 +95,34 @@ fn gm_noise(x: vec3<f32>) -> f32 {
                    mix(gm_hash(i + vec3<f32>(0.0, 1.0, 1.0)), gm_hash(i + vec3<f32>(1.0, 1.0, 1.0)), f.x), f.y), f.z);
 }
 
+// Noise that repeats with the ground's coordinate: `q` (the caller's `micro`) wraps every
+// GM_PERIOD m (the engine's MICRO_PERIOD), so an octave of wavelength `lam` (a power of two, at
+// most GM_PERIOD) has its lattice wrapped to GM_PERIOD / lam cells, or it jumps on the wrap's
+// planes (which drew ~4 km squares). `seed` picks an independent pattern (in the hash, not the
+// position). `wrap`: which axes wrap (1) or not (0).
+const GM_PERIOD: f32 = 4096.0;
+
+fn gm_cell(i: vec3<f32>, per: vec3<f32>, wrap: vec3<f32>, seed: f32) -> f32 {
+    let w = select(i, i - per * floor(i / per), wrap > vec3<f32>(0.5));
+    return gm_hash(w + vec3<f32>(seed * 13.1, seed * 7.3, seed * 3.7));
+}
+
+fn gm_pnoise_w(q: vec3<f32>, lam: f32, seed: f32, wrap: vec3<f32>) -> f32 {
+    let x = q / lam;
+    let per = vec3<f32>(round(GM_PERIOD / lam));
+    let i = floor(x);
+    var f = fract(x);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(mix(gm_cell(i, per, wrap, seed), gm_cell(i + vec3<f32>(1.0, 0.0, 0.0), per, wrap, seed), f.x),
+                   mix(gm_cell(i + vec3<f32>(0.0, 1.0, 0.0), per, wrap, seed), gm_cell(i + vec3<f32>(1.0, 1.0, 0.0), per, wrap, seed), f.x), f.y),
+               mix(mix(gm_cell(i + vec3<f32>(0.0, 0.0, 1.0), per, wrap, seed), gm_cell(i + vec3<f32>(1.0, 0.0, 1.0), per, wrap, seed), f.x),
+                   mix(gm_cell(i + vec3<f32>(0.0, 1.0, 1.0), per, wrap, seed), gm_cell(i + vec3<f32>(1.0, 1.0, 1.0), per, wrap, seed), f.x), f.y), f.z);
+}
+
+fn gm_pnoise(q: vec3<f32>, lam: f32, seed: f32) -> f32 {
+    return gm_pnoise_w(q, lam, seed, vec3<f32>(1.0));
+}
+
 // Noise kept to what a pixel can show: an octave of wavelength `lam` fades out below ~3 pixels.
 fn gm_fade(lam: f32, pixel_m: f32, pixels: f32) -> f32 {
     return clamp(lam / (pixel_m * pixels) - 1.0, 0.0, 1.0);
@@ -94,9 +135,9 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     // (Edges broken by noise from ~2 km to ~16 m, so the rules don't draw contour lines.)
     var n1 = 0.0;
     var a = 0.5;
-    var lam = 2000.0;
+    var lam = 2048.0;
     for (var o = 0; o < 8; o++) {
-        n1 += a * gm_fade(lam, i.pixel_m, 3.0) * gm_noise(i.q / lam + vec3<f32>(f32(o) * 5.7));
+        n1 += a * gm_fade(lam, i.pixel_m, 3.0) * gm_pnoise(i.q, lam, f32(o) * 5.7);
         lam *= 0.5;
         a *= 0.6;
     }
@@ -115,12 +156,12 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
         let amt = cover * (0.5 + forest * (1.0 - forest) * 2.0) + (1.0 - cover) * 0.3;
         var pn = 0.0;
         var pa = 0.5;
-        var pl = 1800.0;
+        var pl = 2048.0;
         var pw = 0.0;
         for (var o = 0; o < 6; o++) {
-            pn += pa * gm_fade(pl, i.pixel_m, 2.0) * gm_noise(i.q / pl + vec3<f32>(3.1 + f32(o) * 1.7));
+            pn += pa * gm_fade(pl, i.pixel_m, 2.0) * gm_pnoise(i.q, pl, 3.1 + f32(o) * 1.7);
             pw += pa;
-            pl *= 0.45;
+            pl *= 0.5;
             pa *= 0.62;
         }
         pn = pn / pw * 2.2 - 0.35 * clamp(i.rel, -1.0, 1.0) + (forest - 0.5) * 1.4 * cover;
@@ -128,19 +169,20 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
         // caller's branch, where derivatives are undefined in WGSL.)
         let ew = clamp(0.05 + i.pixel_m / 120.0, 0.05, 1.0);
         let wood = smoothstep(-ew, ew, pn);
-        let crown = gm_noise(i.q / 25.0) * gm_fade(25.0, i.pixel_m, 3.0);
+        let crown = gm_pnoise(i.q, 32.0, 0.0) * gm_fade(32.0, i.pixel_m, 3.0);
         let open_c = gcol * (1.0 + 0.3 * amt);
         let wood_c = gcol * (1.0 - 0.32 * amt) * mix(vec3<f32>(1.0), vec3<f32>(0.9, 1.03, 0.88), cover) * (1.0 + 0.2 * crown * cover);
         gcol = mix(open_c, wood_c, wood);
     }
     // Rock on steep and high ground, in its unit's colour, banded faintly by its beds.
-    let rock_c = ROCK[min(i.unit, 19u)];
+    let rock_c = select(ROCK[min(i.unit, 19u)], i.rock_c, dot(i.rock_c, vec3<f32>(1.0)) > 0.0);
     var rock_w = clamp(clamp((h - 1800.0) / 1500.0, 0.0, 1.0) * 0.6 + clamp((i.slope - 0.15) / 0.35, 0.0, 1.0) * 0.7 + 0.35 * n1, 0.0, 1.0);
     rock_w = max(rock_w, i.bare * i.surface_on * 0.95);
-    let band = gm_noise(vec3<f32>(h / 60.0, i.q.x / 4000.0, i.q.z / 4000.0));
+    // (Strata: by height (not wrapped), varying along the ground over ~2 km.)
+    let band = gm_pnoise_w(vec3<f32>(h * 2048.0 / 60.0, i.q.x, i.q.z), 2048.0, 9.0, vec3<f32>(0.0, 1.0, 1.0));
     var col = mix(gcol, rock_c * 0.62 * (1.0 + 0.18 * band + 0.25 * n1), rock_w * land);
     // Scree: lighter broken rock below the steep ground, grained.
-    let grain = gm_noise(i.q / 40.0) * gm_fade(40.0, i.pixel_m, 3.0);
+    let grain = gm_pnoise(i.q, 32.0, 1.0) * gm_fade(32.0, i.pixel_m, 3.0);
     col = mix(col, rock_c * 0.8 * (1.0 + 0.3 * grain + 0.2 * n1), i.scree * i.surface_on * 0.75 * land);
     // Sand on low, gentle coasts, where it isn't frozen.
     let sand = (1.0 - smoothstep(3.0, 25.0 + 20.0 * n1, h)) * step(0.5, h) * clamp(1.0 - i.slope / 0.04, 0.0, 1.0) * clamp(t_year / 4.0, 0.0, 1.0);

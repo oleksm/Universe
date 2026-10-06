@@ -427,7 +427,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // the ground is seen: smooth from triangle to triangle. The screen's derivatives are one value
     // a triangle: a map's level chosen by them steps at every edge, and the slopes shaded from it
     // drew each edge as a dark dash.)
-    let oblique = 1.0 / max(abs(dot(normalize(in.normal), normalize(-in.at))), 0.25);
+    // (How obliquely from the world's smooth up, not the triangle's flat normal: that stepped the
+    // pixel's size, the maps' level and the material's noise at every triangle edge.)
+    let oblique = 1.0 / max(abs(dot(normalize(in.up), normalize(-in.at))), 0.25);
     let span = 2.0 * length(in.at) * g.view.x * oblique;
     let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
     // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
@@ -517,16 +519,32 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                 if (ground.a > 0.5) {
                     let climate = textureSampleLevel(world_climate, world_soft, uv, 0.0);
                     let unit = u32(round(textureSampleLevel(world_rock, world_exact, uv, 0.0).r * 255.0 / 8.0));
-                    // (The slope from the ground as the mesh stands: the shaded normal's slopes
-                    // step at its triangles' edges.)
-                    let up = normalize(in.up);
-                    let c = clamp(dot(normalize(in.normal), up), 0.05, 1.0);
+                    // (The slope from the bake's normal map, read bilinearly: the mesh's normal is
+                    // flat over each triangle, and the rock its slope uncovers drew each triangle
+                    // pair as a square. The map's slopes are steepened RELIEF_SHADE = 8 times
+                    // (planet-sim tools/globe_look.py): undone here.)
+                    let nm = textureSampleLevel(world_normal, world_soft, uv, lod).rgb * 2.0 - vec3<f32>(1.0);
+                    let tan_s = length(nm.xy) / max(nm.z, 0.05) / 8.0;
+                    let c = 1.0 / sqrt(1.0 + tan_s * tan_s);
                     var gi: GroundIn;
                     gi.ground = ground.rgb;
                     gi.ground_soft = textureSampleLevel(world_ground, world_soft, uv, lod + 2.5).rgb;
                     gi.t_sea_c = climate.r * 100.0 - 50.0;
                     gi.rain_m = climate.g * 4.0;
                     gi.unit = unit;
+                    // (The rock's colour blended over its four nearest texels: read nearest, each
+                    // unit would show as a ~10 km square.)
+                    let rd = vec2<i32>(textureDimensions(world_rock));
+                    let rp = uv * vec2<f32>(rd) - vec2<f32>(0.5);
+                    let r0 = vec2<i32>(floor(rp));
+                    let rx0 = (r0.x % rd.x + rd.x) % rd.x;
+                    let rx1 = (rx0 + 1) % rd.x;
+                    let ry0 = clamp(r0.y, 0, rd.y - 1);
+                    let ry1 = clamp(r0.y + 1, 0, rd.y - 1);
+                    let ru = vec4<f32>(textureLoad(world_rock, vec2<i32>(rx0, ry0), 0).r, textureLoad(world_rock, vec2<i32>(rx1, ry0), 0).r,
+                                       textureLoad(world_rock, vec2<i32>(rx0, ry1), 0).r, textureLoad(world_rock, vec2<i32>(rx1, ry1), 0).r);
+                    let ri = vec4<u32>(round(ru * 255.0 / 8.0));
+                    gi.rock_c = ground_rock_blend(ri.x, ri.y, ri.z, ri.w, fract(rp));
                     gi.h_m = h * in.globe.z;
                     gi.slope = sqrt(1.0 - c * c) / c;
                     gi.q = in.micro;
