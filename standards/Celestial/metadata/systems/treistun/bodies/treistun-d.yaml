@@ -1,21 +1,67 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# Curated: its air is said to be breathable, which the seed does not say. The rest is as the seed made it.
-provenance: curated
+# and its orbit moved out from 0.408 to 0.525 AU (2026-10-06, with the planet lab): at 0.408 AU it would take in 422 W/m2, half again over
+# the runaway-greenhouse limit of about 282, and could keep no sea; at 0.525 AU it takes 254 and keeps them. Story follows physics.
+# Its mean temperature is the run's to give, not written here. The water share and the radioactive heat are the lab's defaults, chosen.
+# Baked: grown by the planet simulation (world TRD1, simulator 523b820fd74d). The survey it points at owns what the run derived; this record owns the inputs.
+provenance: baked
+survey:
+  format: "planet-sim-survey/1"
+  world_id: "TRD1"
+  folder: "standards/Celestial/surveys/TRD1"
+  manifest_sha256: "c913d6e4e6c847c8b44cf1be83d9f8baece329ed38fe8faae1c6a644bae99d23"
+  simulator_commit: "523b820fd74dc490af4a5853f28c19bbdcad253a"
+  created: "2026-10-06T01:35:24Z"
+  land_share: 0.2659
+  deposits: 3756
+  districts: 908
+  belts: 471
+  contained:
+    - {"commodity": "NaCl", "mass": 164600000000000.0}
+    - {"commodity": "Fe", "mass": 22070000000000.0}
+    - {"commodity": "P2O5", "mass": 9546000000000.0}
+    - {"commodity": "Cr2O3", "mass": 6800000000000.0}
+    - {"commodity": "S", "mass": 5978000000000.0}
+    - {"commodity": "TiO2", "mass": 3855000000000.0}
+    - {"commodity": "diamond", "mass": 531000.0}
+    - {"commodity": "Cu", "mass": 1204000000000.0}
+    - {"commodity": "K2O", "mass": 1045000000000.0}
+    - {"commodity": "Al2O3", "mass": 1044000000000.0}
+    - {"commodity": "MgO", "mass": 1020000000000.0}
+    - {"commodity": "Mn", "mass": 697900000000.0}
+    - {"commodity": "V2O5", "mass": 452900000000.0}
+    - {"commodity": "K", "mass": 419200000000.0}
+    - {"commodity": "Zn", "mass": 340100000000.0}
+    - {"commodity": "Mg", "mass": 206900000000.0}
+    - {"commodity": "Pb", "mass": 119400000000.0}
+    - {"commodity": "REO", "mass": 82440000000.0}
+    - {"commodity": "ZrO2", "mass": 78660000000.0}
+    - {"commodity": "Mo", "mass": 41100000000.0}
+    - {"commodity": "Ni", "mass": 34390000000.0}
+    - {"commodity": "Li", "mass": 21050000000.0}
+    - {"commodity": "Sn", "mass": 19120000000.0}
+    - {"commodity": "Nb2O5", "mass": 18050000000.0}
+    - {"commodity": "W", "mass": 6343000000.0}
+    - {"commodity": "Co", "mass": 732000000.0}
+    - {"commodity": "Ag", "mass": 403400000.0}
+    - {"commodity": "PGE", "mass": 87490000.0}
+    - {"commodity": "Au", "mass": 32750000.0}
 identity:
   key: body.treistun.treistun-d
-  name: Treistun d
+  name: Harvest
+  also: Treistun d
   kind: rocky planet
   parent: body.treistun.treistun
-  about: 'The third planet, 0.41 AU out. 6,654 km in radius, 1.07 g, with air as dense as e''s. It is warm: about 320 K on
-    average. Its day lasts 20 hours. One moon.'
-  story: ['The warm world, and the second with air. It was settled after e, by people who wanted open sky and were willing
-      to take the heat that came with it.', 'Its equator is too hot for any crop and its poles are frozen. Between them lie
-      the only fields in the system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.']
-orbit: {semi_major_axis: 61008400000.0, eccentricity: 0.04874, period: 9785923.2, inclination: 2.183}
+  about: 'Harvest, the third planet, 0.53 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hearth''s.
+  It is warm: about 297 K on average, a little warmer than old Earth. Its year is 165 days, its day 20 hours. One moon.'
+  story:
+    - 'The warm world, and the second with air. It was settled after Hearth, by people who wanted open sky and were willing to take the heat that came with it. They named it for what it does.'
+    - 'Its equator is too hot for any crop and its poles are frozen. Between them lie the only fields in the system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.'
+orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
   terrain: terran
   relief: 4658
-  mean_temperature: 321.6
   colour: [0.3, 0.85, 0.45]
+interior: {radiogenic: 1.0}
+water: {mass_share: 0.00023}
 atmosphere: {surface_density: 1.225, scale_height: 7928.0, top: 111000.0, breathable: true}

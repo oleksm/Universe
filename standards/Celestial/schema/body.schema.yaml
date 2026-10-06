@@ -16,8 +16,9 @@ properties:
     additionalProperties: false
     required: [key, name, kind]
     properties:
-      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      key: { $ref: "../../common.schema.yaml#/definitions/key", description: "The body's ID: body.<system>.<its name as the seed first gave it, slugged>. Given once when the record is written out and never changed; the game matches the seed's body to its record by it, so the name is free to change (identity.also keeps the seed's). Claims, settlements and surveys point at it." }
       name: { type: string }
+      also: { type: string, description: "What else it is called: a named world keeps the surveyors' letter (Harvest)." }
       kind: { enum: [star, rocky planet, gas giant, ice giant, moon, asteroid, dwarf planet, comet, centaur, crossing asteroid, captured moon] }
       parent: { type: string, x-ref: [body], description: "What it goes round, by its key: the star, a planet, or (a captured moon) a giant. A star has none." }
       about: { type: string }
@@ -75,6 +76,7 @@ properties:
       mantle_made_of: { type: string }
       crust_thickness: { type: number, x-unit: "m", description: "m, on average" }
       heat_flow: { type: number, x-unit: "W/m2", description: "W for each m2 of its surface, from its inside (Earth: 0.09)" }
+      radiogenic: { type: number, x-unit: "1", description: "its mantle's radioactive heat as a multiple of Earth's (K, Th and U at Earth's abundances = 1); an input to the planet simulation" }
       heat_from: { type: array, items: { enum: [formation, radioactivity, tides, settling] }, description: "Where that heat comes from." }
   magnetic:
     type: object
@@ -103,6 +105,7 @@ properties:
       ice_cover: { type: number, x-unit: "1", description: "the share of its surface under ice" }
       polar_ice: { type: boolean, description: "For an airless world: ice in the craters at its poles that never see the sun." }
       buried_sea: { type: boolean, description: "A sea under its crust, kept liquid by heat from inside." }
+      mass_share: { type: number, x-unit: "1", description: "water at the surface (seas and ice) as a share of the body's mass (Earth: 2.3e-4); the planet simulation's lever for how much of it is sea" }
       salinity: { type: number, x-unit: "1", description: "the share of its sea water that is salt, by mass (Earth: 0.035)" }
   surface:
     type: object
@@ -130,6 +133,23 @@ properties:
       greenhouse: { type: number, x-unit: "K", description: "K its air warms its surface by" }
       clouds: { type: number, x-unit: "1", description: "the share of its sky under cloud" }
       wind: { type: number, x-unit: "m/s", description: "m/s, typical at its surface" }
+  survey:
+    description: "For a baked body: the planet simulation's survey of it (format planet-sim-survey/1, docs/survey-contract.md), written once at the end of the run and never changed. The record owns the inputs the run was seeded from; the survey owns what the run derived. The game reads the survey's files from the folder, by its path; the hash says which survey."
+    type: object
+    additionalProperties: false
+    required: [world_id, folder, manifest_sha256, format]
+    properties:
+      format: { const: "planet-sim-survey/1" }
+      world_id: { type: string, description: "The simulation's world ID: a new run is a new world." }
+      folder: { type: string, description: "Where the survey's files are, relative to the repository root (standards/Celestial/surveys/<world_id>/). The game reads manifest.json, summary.json, deposits.geojson, districts.json, bulk_rock.json and geology.png from it." }
+      manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "SHA-256 of manifest.json: names the one survey this record is built on." }
+      simulator_commit: { type: string, description: "The simulator's commit that grew the world." }
+      created: { type: string, description: "When the survey was written (ISO 8601)." }
+      land_share: { type: number, x-unit: "1", description: "the share of its surface above the sea, as the run made it" }
+      deposits: { type: integer, description: "how many deposits the run grew" }
+      districts: { type: integer }
+      belts: { type: integer }
+      contained: { type: array, description: "What the run put in its crust, from summary.json: the whole body's endowment, found or not.", items: { type: object, additionalProperties: false, required: [commodity, mass], properties: { commodity: { type: string, description: "an element or compound as the simulation names it (Cu, Cr2O3, diamond)" }, mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg; the survey's tonnes and carats (0.2 g) converted" } } } }
   life:
     type: object
     additionalProperties: false

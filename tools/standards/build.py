@@ -190,6 +190,8 @@ EQUIPMENT_READS = {
     "resolves": "a survey makes out a rock at this many times its size", "survey_range": "m, the farthest a survey reaches",
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
+    "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
+    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at",
 }
 
 
@@ -2367,6 +2369,26 @@ for e_ in equipment:
     rows.append(row("gap" if over else "ok", e_["identity"]["name"], mk, "; ".join(over) or "within it"))
 report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
 
+# 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
+# at which each yields (with the safety factor 1.5), and the pinned length at which it buckles under 50 and 200 kN (Euler).
+rows = []
+for ms in sorted(mill_stock, key=lambda m_: ((m_.get("made_from") or {}).get("material", ""), (m_.get("size") or {}).get("diameter", 0), (m_.get("size") or {}).get("wall", 0))):
+    size_ = ms.get("size") or {}
+    if (ms.get("made_from") or {}).get("form") != "tube" or not size_.get("diameter") or not size_.get("wall"):
+        continue
+    mat = next((m for m in materials if m.get("slug") == ms["made_from"].get("material")), None) or {}
+    mech = mat.get("mechanical") or {}
+    d_, w_ = size_["diameter"], size_["wall"]
+    d_m, w_m = (d_, w_) if d_ < 1 else (d_ / 1000, w_ / 1000)      # (the view keeps sizes in mm)
+    area = math.pi * (d_m ** 2 - (d_m - 2 * w_m) ** 2) / 4
+    inertia = math.pi * (d_m ** 4 - (d_m - 2 * w_m) ** 4) / 64
+    E_, sy = mech.get("youngs_modulus"), mech.get("yield_strength")      # (the view keeps GPa and MPa)
+    E_, sy = (E_ * 1e9 if E_ else E_), (sy * 1e6 if sy else sy)
+    yields = f"{area * sy / 1.5 / 1e3:,.0f} kN" if sy else "no yield strength on record"
+    euler = lambda P: f"{math.pi * math.sqrt(E_ * inertia / P):.1f} m" if E_ else "no modulus on record"
+    rows.append(row("ok" if E_ and sy else "note", (ms.get("identity") or {}).get("name", ms["slug"]), f"{d_m * 1000:g} x {w_m * 1000:g}", f"{ms.get('weight', 0):.2f}", yields, euler(50e3), euler(200e3), f"{sy / (mat.get('mass') or {}).get('density', 1) / 1e3:.0f}" if sy else ""))
+report("members", "Members: the tubes a frame is cut from", "SFO 13: every round tube in stock, read as an engineer sizes a frame. Yields: the axial load at which it yields with the safety factor 1.5. Buckles: the pinned length at which Euler buckling takes it under 50 kN and under 200 kN; a longer member needs a bigger tube or a brace. Specific strength: yield strength over density, kN m per kg.", ["Tube", "mm", "kg/m", "Yields at", "Buckles at 50 kN", "Buckles at 200 kN", "kN m/kg"], rows)
+
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
 _fitted = lambda e_: any(str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])
@@ -2544,10 +2566,11 @@ if os.path.isdir(CEL):
                 for q in props or {}:
                     if q not in known[g]["properties"]:
                         problem(full, f"{g}: unknown property '{q}'")
-        if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen"):
-            problem(full, "provenance: one of seeded, curated, frozen")
-        if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
-            problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
+        if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen", "baked"):
+            problem(full, "provenance: one of seeded, curated, frozen, baked")
+        idn_ = rec.get("identity") or {}
+        if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str(idn_.get("also") or idn_.get("name", "")).lower()).strip("-"):
+            problem(full, "a celestial record's file is named after it as the seed first called it (lower case, words joined by -); a renamed body keeps the seed's name in identity.also")
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)
         return rec
 
@@ -2894,7 +2917,7 @@ def write_game_keys():
                 continue                    # (the engine makes its constant under the law's label: nothing to rename)
             was, where = idn["label"], "belt.rs"
         elif kind in ("system", "body", "population") and rec.get("in_game") != "not made":
-            was, where = idn.get("name"), "by name: celestial.ron, the seed"
+            was, where = idn.get("also") or idn.get("name"), "by name: celestial.ron, the seed" + ("; the record's name is its people's, `also` is the seed's" if idn.get("also") else "")
         elif kind == "settlement":
             was, where = idn.get("name"), "by name: settlements.ron, places.ron"
         elif kind == "standard":

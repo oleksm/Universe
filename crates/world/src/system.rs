@@ -96,6 +96,10 @@ impl BodyKind {
 
 #[derive(Clone, Debug)]
 pub struct Body {
+    /// Its key in the registry (`body.<system>.<name as the seed first gave it>`): fixed when the
+    /// seed makes it, kept whatever it is later called. What a record is matched by. Empty until
+    /// `StarSystem::key_bodies`; made things (stations, gates) carry one too, by the same rule.
+    pub key: String,
     pub name: String,
     pub kind: BodyKind,
     pub mass: f64,
@@ -124,6 +128,25 @@ impl OnRails for Body {
             _ => None,
         }
     }
+}
+
+/// The registry's slug of a name: lower case, runs of anything else one hyphen (as
+/// tools/standards/celestial_export.py slugs it: "Treistun b I" -> "treistun-b-i").
+pub fn slug(name: &str) -> String {
+    let mut out = String::new();
+    for c in name.chars() {
+        if c.is_ascii_alphanumeric() {
+            out.push(c.to_ascii_lowercase());
+        } else if !out.is_empty() && !out.ends_with('-') {
+            out.push('-');
+        }
+    }
+    out.trim_end_matches('-').to_string()
+}
+
+/// A body's registry key from its system's name and its own, as the seed first gave them.
+pub fn body_key(system: &str, name: &str) -> String {
+    format!("body.{}.{}", slug(system), slug(name))
 }
 
 impl Body {
@@ -193,6 +216,7 @@ const MOON_COLORS: [[f32; 3]; 3] = [[0.7, 0.7, 0.7], [0.6, 0.58, 0.55], [0.75, 0
 pub(crate) fn natural(name: String, kind: BodyKind, mass: f64, radius: f64, day: f64, color: [f32; 3], rings: Option<(f64, f64)>, parent: usize, orbit: Orbit, tilt: DQuat) -> Body {
     Body {
         name,
+        key: String::new(),
         kind,
         mass,
         color,
@@ -213,6 +237,15 @@ fn random_tilt(rng: &mut Rng, max_degrees: f64) -> DQuat {
 pub const GATE_CLEARANCE: f64 = 100_000.0;
 
 impl StarSystem {
+    /// Every body without a key gets one from its name as it stands: the seed's name, since a
+    /// record renames a body only after it is keyed. Keys never change after.
+    pub fn key_bodies(&mut self) {
+        let system = self.name.clone();
+        for b in self.bodies.iter_mut().filter(|b| b.key.is_empty()) {
+            b.key = body_key(&system, &b.name);
+        }
+    }
+
     pub fn generate(index: usize, star: &GalaxyStar) -> Self {
         let mut rng = Rng::new(star.seed);
         let name = names::star_name(star.seed);
@@ -224,6 +257,7 @@ impl StarSystem {
         let star_mu = G * star_mass;
         let mut bodies = vec![Body {
             name: name.clone(),
+            key: String::new(),
             kind: BodyKind::Star,
             mass: star_mass,
             color: class.color(),
@@ -286,6 +320,7 @@ impl StarSystem {
             let planet = bodies.len();
             bodies.push(Body {
                 name: planet_name.clone(),
+                key: String::new(),
                 kind,
                 mass,
                 color,
@@ -332,6 +367,7 @@ impl StarSystem {
                 let orbit = Orbit::new(moon_a, e, inclination, node, periapsis, m0, G * (mass + moon_mass));
                 bodies.push(Body {
                     name: format!("{planet_name} {}", names::roman(m)),
+                    key: String::new(),
                     kind: BodyKind::Moon,
                     mass: moon_mass,
                     color: *rng.pick(&MOON_COLORS),
@@ -366,6 +402,7 @@ impl StarSystem {
         let mut system = Self { index, name, class, luminosity: lum, bodies, spaceports: Vec::new(), fields: Vec::new(), small: 0..0, belts: Vec::new(), belt_seed: mix(star.seed, 0xbe175), patches: Default::default() };
         // (What the registry has curated or frozen stands in place of what the seed made: see `celestial`.)
         // (A body taken off the system's roster there takes the others' numbers with it.)
+        system.key_bodies();
         if let Some(moved) = crate::celestial::apply(&mut system, crate::celestial::Stage::Bodies, star.seed) {
             station_parent = station_parent.and_then(|(p, c)| moved[p].map(|n| (n, c)));
         }
@@ -373,13 +410,17 @@ impl StarSystem {
             system.add_station(planet, &mut rng);
         }
         system.add_terrain(star.seed);
+        system.key_bodies();
         crate::celestial::apply(&mut system, crate::celestial::Stage::Surfaces, star.seed);
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
         crate::small_bodies::add(&mut system, frost_line, star.seed);
         system.belts = crate::belts::belts(&system, frost_line);
+        system.key_bodies();
         crate::celestial::apply(&mut system, crate::celestial::Stage::Rocks, star.seed);
         system.settle();
+        system.key_bodies();
+        crate::celestial::rename(&mut system);
         system
     }
 
@@ -446,6 +487,7 @@ impl StarSystem {
         let (day, tilt) = (orbit.period(), DQuat::from_rotation_arc(DVec3::Y, orbit.normal()));
         let station = Body {
             name: format!("{} Station", p.name),
+            key: String::new(),
             kind: BodyKind::Station,
             mass: 1.0e9,
             color: [1.0, 1.0, 1.0],
@@ -525,6 +567,7 @@ impl StarSystem {
             let tilt = DQuat::from_rotation_arc(DVec3::Y, toward.normalize());
             self.bodies.push(Body {
                 name: format!("Gate to {dest_name}"),
+                key: String::new(),
                 kind: BodyKind::Gate,
                 mass: 1.0e10,
                 color: [1.0, 0.75, 0.3],

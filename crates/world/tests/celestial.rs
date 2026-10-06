@@ -41,7 +41,8 @@ fn the_charted_world_is_as_the_registry_has_it() {
         let natural = sys.bodies.iter().enumerate().filter(|(i, b)| !b.kind.artificial() && b.rail.parent.is_some() && (small_made || !sys.small.contains(i))).count();
         assert_eq!(natural, rec.bodies.len(), "{}: the game has {natural} bodies, the registry {}", rec.system, rec.bodies.len());
         for r in &rec.bodies {
-            let b = sys.bodies.iter().find(|b| b.name == r.name).unwrap_or_else(|| panic!("{}: the game has no {}", rec.system, r.name));
+            let b = sys.bodies.iter().find(|b| b.key == r.key).unwrap_or_else(|| panic!("{}: the game has no {}", rec.system, r.key));
+            assert_eq!(b.name, r.name, "{}: called as the record calls it", r.key);
             let o = b.rail.orbit.as_ref();
             for (what, made, written) in [("mass", b.mass, r.mass), ("radius", b.rail.radius, r.radius), ("day", b.rail.day, r.day), ("orbit", o.map_or(0.0, |o| o.semi_major_axis), r.semi_major_axis.unwrap_or(0.0)), ("eccentricity", o.map_or(0.0, |o| o.eccentricity), r.eccentricity.unwrap_or(0.0))] {
                 assert!(near(made, written), "{} ({:?}): its {what} is {made} in the game and {written} in the registry", r.name, r.status);
@@ -59,8 +60,8 @@ fn the_charted_world_is_as_the_registry_has_it() {
     let fresh = || StarSystem::generate(rec.index, &w.galaxy.stars[rec.index]);
     let mut sys = fresh();
     let mut mine = rec.clone();
-    let p = mine.bodies.iter().position(|b| b.kind == BodyKind::Rocky && rec.bodies.iter().any(|m| m.parent == b.name)).unwrap();
-    let i = sys.bodies.iter().position(|b| b.name == mine.bodies[p].name).unwrap();
+    let p = mine.bodies.iter().position(|b| b.kind == BodyKind::Rocky && rec.bodies.iter().any(|m| m.parent == b.key)).unwrap();
+    let i = sys.bodies.iter().position(|b| b.key == mine.bodies[p].key).unwrap();
     let (mu, before): (f64, Vec<(String, f64)>) = (sys.bodies[i].rail.mu, sys.bodies.iter().filter(|m| m.rail.parent == Some(i)).map(|m| (m.name.clone(), m.rail.orbit.as_ref().unwrap().mu)).collect());
     mine.bodies[p].status = Provenance::Curated;
     mine.bodies[p].mass *= 2.0;
@@ -79,17 +80,18 @@ fn the_charted_world_is_as_the_registry_has_it() {
     let mut mine = rec.clone();
     mine.status = Provenance::Curated;
     mine.star.mass *= 1.1;
-    let gone = mine.bodies[p].name.clone();
+    let gone = mine.bodies[p].key.clone();
     let mut added = mine.bodies[p].clone();
     added.name = "New World".into();
+    added.key = "body.test.new-world".into();
     added.semi_major_axis = added.semi_major_axis.map(|a| a * 1.01);
-    mine.bodies.retain(|b| b.name != gone && b.parent != gone);
+    mine.bodies.retain(|b| b.key != gone && b.parent != gone);
     mine.bodies.push(added);
     let count = sys.bodies.len();
     let moved = apply_records(&mut sys, &mine, Stage::Bodies, 0).expect("bodies were taken off");
     assert_eq!(moved.len(), count);
-    assert!(sys.bodies.iter().all(|b| b.name != gone && b.rail.parent.is_none_or(|q| q < sys.bodies.len())));
-    assert!(sys.bodies.iter().any(|b| b.name == "New World" && b.rail.parent == Some(0)));
+    assert!(sys.bodies.iter().all(|b| b.key != gone && b.rail.parent.is_none_or(|q| q < sys.bodies.len())));
+    assert!(sys.bodies.iter().any(|b| b.key == "body.test.new-world" && b.name == "New World" && b.rail.parent == Some(0)));
     assert!(near(sys.bodies[0].mass, mine.star.mass * universe_world::units::SUN_MASS));
     // A field: its count, spread and class as written.
     let mut sys = fresh();

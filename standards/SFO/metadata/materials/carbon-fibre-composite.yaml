@@ -10,7 +10,13 @@ identity:
   - plate
 mass:
   density: 1580
+mechanical:
+  youngs_modulus: 55000000000.0
+  poissons_ratio: 0.3
+  yield_strength: 700000000.0
+  tensile_strength: 700000000.0
 environment:
   corrosion_resistance: excellent
 basis:
   - { of: [mass.density], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "An aerospace carbon and epoxy laminate (Hexcel 8552 with AS4 fibre)." }
+  - { of: [mechanical], tier: invented, review: true, note: "A quasi-isotropic AS4/8552 laminate, about a third of the fibre direction's 141 GPa and 2,200 MPa, from memory of the Hexcel data sheet: 55 GPa and 700 MPa. A composite has no yield: the figure is its strength to first failure, which is what a frame member is checked against. Not sourced; review." }

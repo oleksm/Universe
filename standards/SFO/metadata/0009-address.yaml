@@ -16,7 +16,7 @@ details:
       - [Number, "On the ground: its number along its street.", "1"]
       - [Street, "On the ground: a named street of the settlement.", "East Road"]
       - [Settlement, "The station, port or outpost.", "Treistun e Station"]
-      - [Body, "The planet or moon the settlement is at. On a surface, with latitude and longitude.", "Treistun e"]
+      - [Body, "The planet or moon the settlement is at. On a surface, with latitude and longitude.", "Hearth"]
       - [System, "The star system.", "Treistun"]
 sections:
   - title: Rules

@@ -4,7 +4,7 @@ x-kind: [mount]
 description: "standards/SFO/metadata/mounts/<slot>-s<class>.yaml: one mount, a standard between a hull and what is fitted to it (SFO 19). A hull's slot offers a mount; a piece of equipment fits one. The mount says the most the hull gives and bears there: the room, the weight, the thrust, the power and the cooling, the fuel, a nozzle's opening. Any equipment within those figures fits any hull that offers the mount: a maker builds to the mount, not to a hull."
 type: object
 additionalProperties: false
-required: [identity, envelope, bears]
+required: [identity, envelope, bears, attachment]
 properties:
   identity:
     type: object
@@ -34,6 +34,24 @@ properties:
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg, the heaviest equipment it carries" }
       thrust: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most push one nozzle may put through it (a drive, thrusters or lift)" }
       recoil: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a weapon may kick against it" }
+      landing: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a landing leg may put into it" }
+  attachment:
+    description: "How what is fitted fastens to the hull: the points the load goes through, so that a frame can be built to the socket and a module strutted to it without a hull."
+    type: object
+    additionalProperties: false
+    required: [points, pattern, each]
+    properties:
+      points: { type: integer, minimum: 1, description: "how many attachment points" }
+      pattern: { enum: [corners, ring, saddles, trunnion], description: "corners: at the envelope's corners (8) or a face's (4). ring: evenly round the nozzle face. saddles: two bands round a tank, at the ends. trunnion: two bearings and a brace, a leg's." }
+      each:
+        description: "What one point takes, at most, with the mount's margin."
+        type: object
+        additionalProperties: false
+        required: [tension, compression, shear]
+        properties:
+          tension: { type: number, exclusiveMinimum: 0, x-unit: "N" }
+          compression: { type: number, exclusiveMinimum: 0, x-unit: "N" }
+          shear: { type: number, exclusiveMinimum: 0, x-unit: "N" }
   feeds:
     description: "What the hull brings to it, at most."
     type: object

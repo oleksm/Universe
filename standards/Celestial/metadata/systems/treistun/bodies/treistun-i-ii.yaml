@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: named by its people; the seed calls it Treistun i II. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-i-ii
-  name: Treistun i II
+  name: Hush II
+  also: Treistun i II
   kind: moon
   parent: body.treistun.treistun-i
-  about: A moon of the ice giant Treistun i, 6.2 AU from the star. 1,307 km in radius, 0.11 g at the surface, no air, about
+  about: A moon of the ice giant Hush, 6.2 AU from the star. 1,307 km in radius, 0.11 g at the surface, no air, about
     80 K on average. Its day lasts 32 hours.
   story: ['Far out and very cold. For a long time it was only a name on a chart, until someone needed a port that far from
       the star.']

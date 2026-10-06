@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.bay.hopper.75t
+  name: "Ore bay 75 t"
+  maker: org.hadley
+  revision: draft
+  slot: cargo
+  description: "A hopper for 75 t of loose ore under top doors, with a discharge gate: one of ten sizes, so a hull takes the bay that fits."
+size_class: 3
+fits: mount.cargo-s3
+physical:
+  mass: 7500
+  volume: 37.6
+  length: 5.32
+  width: 2.66
+  height: 2.66
+built_of:
+  parts: ore-bay-75t
+making:
+  module: module.assembly-shop
+function:
+  kind: ore_bay
+  capacity: 75000
+  volume: 37.5
+  fill_density: 2000
+basis:
+  - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
+  - { of: [physical.mass], tier: invented, review: true, note: "A tenth of its capacity: a haul truck's body is about 11% of its payload (a 363 t truck's 40 t body, from memory). Not sourced." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, size_class], tier: invented, review: true, note: "A hopper twice as long as wide and as deep as wide, to its heaped volume; its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }

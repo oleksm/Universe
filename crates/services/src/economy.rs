@@ -745,7 +745,7 @@ mod tests {
         let w = universe_world::World::new(1984);
         let content = universe_world::content::content();
         let sys = w.system(w.home_system);
-        let mut land = LandOffice::seed(sys.spaceports.iter().enumerate().filter_map(|(p, sp)| content.settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name).map(|s| (w.home_system, p, s))));
+        let mut land = LandOffice::seed(sys.spaceports.iter().enumerate().filter_map(|(p, sp)| content.settlement(&sys.name, &sys.bodies[sp.body].key, &sp.name).map(|s| (w.home_system, p, s))));
         let mut e = Economy::new(&land, 0.0);
         let trethi = e.places.iter().position(|p| p.name == "Port Trethi").expect("Port Trethi");
         let smelter = e.works.iter().position(|x| x.name == "Trethi Smelter").expect("its smelter");
