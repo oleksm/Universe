@@ -42,12 +42,31 @@ pub fn albedo(sys: &StarSystem, i: usize) -> f64 {
     }
 }
 
-/// A world's mean surface temperature (K): its equilibrium with its star
-/// (spread over its whole surface: it turns), plus its air's greenhouse.
+/// A world's mean surface temperature (K): its record's, where the planet simulation's run gives
+/// it; else its equilibrium with its star (spread over its whole surface: it turns), plus its
+/// air's greenhouse.
 pub fn mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 {
+    recorded_mean(sys, i).unwrap_or_else(|| reckoned_mean(sys, i, positions))
+}
+
+/// The formula's mean (see `mean_temperature`).
+fn reckoned_mean(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 {
     let s = flux(sys, positions, positions[i]);
     let equilibrium = (s * (1.0 - albedo(sys, i)) / (4.0 * SIGMA)).powf(0.25);
     kneaded(sys, i, equilibrium + greenhouse(sys, i))
+}
+
+/// The world's mean surface temperature on its record (`surface.mean_temperature`: a grown world's,
+/// from its run), if it has one.
+fn recorded_mean(sys: &StarSystem, i: usize) -> Option<f64> {
+    let key = &sys.bodies[i].key;
+    crate::registry::registry().bodies.iter().find(|b| &b.identity.key == key)?.surface.mean_temperature
+}
+
+/// How far the record's mean is from the formula's (K; 0 without a record): the formula's shape
+/// (latitude, day and night) kept, about the record's mean.
+fn recorded_offset(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 {
+    recorded_mean(sys, i).map_or(0.0, |m| m - reckoned_mean(sys, i, positions))
 }
 
 /// A temperature `t` (K) of world `i` with the heat its planet's kneading
@@ -74,7 +93,7 @@ pub fn site_mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], la
     kneaded(sys, i, match sys.bodies[i].rail.atmosphere {
         Some(_) => mean * (1.0 - 0.25 * lat * lat) + greenhouse(sys, i),
         None => mean * (1.0 - 0.25 * lat * lat),
-    })
+    }) + recorded_offset(sys, i, positions)
 }
 
 /// A world's surface temperature (K) at `dir` (unit, from its centre, in the
@@ -104,7 +123,7 @@ pub fn surface_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], t: f
             by_latitude + greenhouse(sys, i) + swing * mu
         }
     };
-    kneaded(sys, i, t)
+    kneaded(sys, i, t) + recorded_offset(sys, i, positions)
 }
 
 /// The air's temperature at `p` over world `i` (K): its surface's under it,
