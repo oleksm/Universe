@@ -362,10 +362,12 @@ fn passes(plan: &Plan, b: &Beam, others: &[Beam]) -> Option<Passes> {
         let (p, e) = plan.axis(k);
         let pr = plan.lines[k].2;
         let d = e - p;
+        // (Its walls' thickness round it; its floor the deck it stands on.)
+        let wall = wall_of(pr).map_or(0.0, |w| w.0.depth as f32);
         pts.iter().any(|&q| {
             let t = (q - p).dot(d) / d.length_squared().max(1e-6);
             let off = q - (p + d * t.clamp(0.0, 1.0));
-            (0.0..=1.0).contains(&t) && off.y.abs() < pr.height * 0.5 + r - TOUCH && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5 + r - TOUCH
+            (0.0..=1.0).contains(&t) && off.y > -(pr.height * 0.5) - r + TOUCH && off.y < pr.height * 0.5 + wall + r - TOUCH && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5 + wall + r - TOUCH
         })
     });
     if room {
@@ -567,6 +569,74 @@ fn default_deck_stock() -> String {
 /// floor walked on; it runs down from there.
 fn deck_depth(p: &Plate) -> f32 {
     plate_stocks().iter().find(|s| s.key == p.stock).map_or(0.01, |s| s.depth as f32)
+}
+
+/// The pressure a ship's rooms hold (Pa): the registry's hulls' design cabin
+/// pressure (sea-level air, chosen there), 101.3 kPa if none says.
+fn cabin_pressure() -> f64 {
+    universe_sim::world::registry::registry().hulls.iter().find_map(|h| h.design.cabin_pressure).unwrap_or(101_300.0)
+}
+
+/// How hard a wall of `ps` is worked holding pressure `p` round a room of profile
+/// `pr` (1: at its design limit, safety factor 1.5): a round room in hoop tension
+/// (p r / t); a many-sided one so, and each flat side bent between its corners; a
+/// square one its flat sides bent, continuous round its corners (p L^2 / 12 a metre
+/// of wall); a sandwich's faces carrying the bending as a couple, its core the
+/// shear (p L / 2).
+fn wall_work(ps: &PlateStock, pr: Profile, p: f64) -> f64 {
+    const SF: f64 = 1.5;
+    let limit = ps.material.yield_strength / SF;
+    // (What carries tension: a plate its thickness, a sandwich its two faces.)
+    let skin = ps.thickness * if ps.core.is_some() { 2.0 } else { 1.0 };
+    let r = f64::from(pr.width.max(pr.height)) * 0.5;
+    let hoop = p * r / skin / limit;
+    let corners = pr.corners();
+    let side = (0..corners.len()).map(|k| f64::from(corners[k].distance(corners[(k + 1) % corners.len()]))).fold(0.0, f64::max);
+    let bend = |l: f64| -> f64 {
+        let m = p * l * l / 12.0;
+        let v = p * l / 2.0;
+        match ps.core {
+            Some(c) => {
+                let d = c.depth + ps.thickness;
+                (m / (ps.thickness * d) / limit).max(v / d * SF / c.shear_strength.max(1.0))
+            }
+            None => m * 6.0 / (ps.thickness * ps.thickness) / limit,
+        }
+    };
+    match pr.section {
+        Section::Round => hoop,
+        Section::Square => bend(side),
+        Section::Hex | Section::Oct => hoop.max(bend(side)),
+        Section::Line => 0.0,
+    }
+}
+
+/// A walled room's wall: the lightest stock (plate or panel) that holds the cabin
+/// pressure round it, and how hard it's worked; none holds: the strongest, worked
+/// past its limit.
+fn wall_of(pr: Profile) -> Option<(&'static PlateStock, f64)> {
+    let p = cabin_pressure();
+    let mut all: Vec<(&PlateStock, f64)> = plate_stocks().iter().map(|s| (s, wall_work(s, pr, p))).collect();
+    all.sort_by(|a, b| a.0.per_square_metre.total_cmp(&b.0.per_square_metre));
+    all.iter().find(|w| w.1 <= 1.0).copied().or_else(|| all.iter().min_by(|a, b| a.1.total_cmp(&b.1)).copied())
+}
+
+/// Each walled room's wall: its line, its area (m²: round it, and across its walled
+/// ends), its stock and how hard that's worked.
+fn walls(plan: &Plan) -> Vec<(usize, f64, &'static PlateStock, f64)> {
+    (0..plan.lines.len())
+        .filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line)
+        .filter_map(|k| {
+            let pr = plan.lines[k].2;
+            let (a, b) = plan.axis(k);
+            let c = pr.corners();
+            let round: f32 = (0..c.len()).map(|j| c[j].distance(c[(j + 1) % c.len()])).sum();
+            let ends = [plan.lines[k].0, plan.lines[k].1].iter().enumerate().filter(|&(e, &pt)| plan.walled_end(k, pt, e)).count();
+            let area = f64::from(round * a.distance(b) + section_area(pr) * ends as f32);
+            let (s, w) = wall_of(pr)?;
+            Some((k, area, s, w))
+        })
+        .collect()
 }
 
 /// Lines across `a`..`b` on the ship's 2 m lattice: its two ends, and every even
@@ -1359,6 +1429,16 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
             out.loose.push(format!("{} IS NOT MOUNTED", f.name));
         } else {
             masses.push((at, m));
+        }
+    }
+    // (Each walled room's walls, on what's under and in it.)
+    for (k, area, ws, _) in walls(plan) {
+        let (a, b) = plan.axis(k);
+        let pr = plan.lines[k].2;
+        let half = Vec3::new(pr.width.max(pr.height) * 0.5, pr.height * 0.5, pr.width.max(pr.height) * 0.5);
+        let at = mounted(a.min(b) - half, a.max(b) + half);
+        if !at.is_empty() {
+            masses.push((at, area * ws.per_square_metre));
         }
     }
     let carried: f64 = masses.iter().map(|m| m.1).sum();
@@ -3828,11 +3908,30 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         }
     }
     let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
-    let dry: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum::<f64>() + frame_mass;
+    // (The rooms' walls, each the lightest stock that holds the cabin pressure.)
+    let ws = walls(&i.plan);
+    let wall_mass: f64 = ws.iter().map(|w| w.1 * w.2.per_square_metre).sum();
+    let dry: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum::<f64>() + frame_mass + wall_mass;
     let full = dry + i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.load).sum::<f64>();
     let mut lines = Vec::new();
     let t = |kg: f64| format!("{:.1} T", kg / 1000.0);
     lines.push((format!("MASS  DRY {}  FULL {}  (FRAME {})", t(dry), t(full), t(frame_mass)), true));
+    if !ws.is_empty() {
+        // (The walls: their area and mass, the stock most of it is, and whether every
+        // room's holds the cabin pressure.)
+        let area: f64 = ws.iter().map(|w| w.1).sum();
+        let worst = ws.iter().map(|w| w.3).fold(0.0, f64::max);
+        let mut by: Vec<(&str, f64)> = Vec::new();
+        for w in &ws {
+            match by.iter_mut().find(|b| b.0 == w.2.name.as_str()) {
+                Some(b) => b.1 += w.1,
+                None => by.push((w.2.name.as_str(), w.1)),
+            }
+        }
+        by.sort_by(|a, b| b.1.total_cmp(&a.1));
+        let most = by.first().map_or(String::new(), |b| b.0.to_uppercase());
+        lines.push((format!("WALLS {area:.0} M2, {} AT {:.0} KPA: MOSTLY {most}; WORST AT {:.0}% OF ITS LIMIT", t(wall_mass), cabin_pressure() / 1000.0, worst * 100.0), worst <= 1.0));
+    }
     let lift: f64 = of("lift").map(|p| num(&p.3, "thrust")).sum();
     // (Against its weight in the gravity it's designed for; and the strongest
     // gravity it can lift itself in, full.)
@@ -6278,6 +6377,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
 
