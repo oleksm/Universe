@@ -142,10 +142,9 @@ stand-in (no glass stock yet); say if you want glass as stock.
 Fitted as you asked, with one more of each: four radiators (an S3 and three S2: 54 MW) and four
 loops (two S2, two S1: 50 MW) against **45.5 MW aboard** at full burn by the rule the registry
 takes, which is yours: **the plant's loss, plus everything drawn (power spent inside ends as heat
-inside), plus the jets' share.** The Budgets report reads that now. Our figures differ on the
-draw: the report counts what the fit actually draws (2.1 MW), not the plant's full 4 MW, since a
-fusion plant throttles to its load; if the studio counts the plant's output, it will read 47.4 MW
-where the report reads 45.5. Also a six-seat cabin in its own class-1 cargo slot (the ore bay
+inside), plus the jets' share.** The Budgets report reads that now. **Studio and report agree** (the ships
+session, 2026-10-06): both count what the fit actually draws (2.1 MW), not the plant's full 4 MW,
+since a fusion plant throttles to its load; the 47.4 in the request was a hand figure. Also a six-seat cabin in its own class-1 cargo slot (the ore bay
 keeps the class-4 one), an air store and a water tank. **Water read 17 days, not 260:** washing
 is 47.5 kg a head a day against 2.5 to drink, so the tank goes in 17 days unless the life support
 recovers it. It does now: `function.water_recovery: 0.9` and `air_recovery: 0.5` on the life
