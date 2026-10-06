@@ -57,6 +57,15 @@ const MID_SHELL_M: f32 = 4000.0;
 // How much of the climate's cloud is drawn (the fractions × it): the game's taste, not the
 // climate's (it keeps its own figures); a uniform later.
 const CLOUD_AMOUNT: f32 = 0.75;
+// Quality knobs (planet-sim tools/worth_it.py sweeps them: cost against perceptual difference):
+// CLOUD_BAND: octaves finer than this many pixels are left out (higher: cheaper, softer);
+// CLOUD_RELIEF: the sunlit/shaded relief sample (0: off).
+const CLOUD_BAND: f32 = 1.5;
+const CLOUD_RELIEF: f32 = 1.0;
+// Debug: 1 draws the clouds' cost (noise evaluations a pixel) as a heatmap instead of the image:
+// blue none … green ~16 … yellow ~64 … red 256+ (log scale).
+const CLOUD_HEATMAP: f32 = 0.0;
+var<private> cl_cost: f32 = 0.0;
 
 struct CloudField {
     frac: vec4<f32>,  // low, deep, frontal, cirrus
@@ -183,7 +192,7 @@ fn cl_shape(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_
     var n = 0.0;
     var v2 = 0.0;
     for (var o = 0; o < sp.octaves; o++) {
-        let f = clamp(lam / (1.5 * pix_km) - 1.0, 0.0, 1.0);
+        let f = clamp(lam / (CLOUD_BAND * pix_km) - 1.0, 0.0, 1.0);
         if (f <= 0.0) {
             break;
         }
@@ -214,6 +223,7 @@ fn cl_shape(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_
             // with its axes, the clouds' square bias.)
             let z = cl_turn(o) * (x / lam) + vec3<f32>(renew, renew * 0.61, renew * 1.37);
             var v: f32;
+            cl_cost += select(1.0, 27.0 / 8.0, is_cell);
             if (is_cell) {
                 v = cl_cells(z) - CLOUD_CELL_MEAN;
             } else {
@@ -599,7 +609,7 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         // the relief is under a pixel).
         // (Faded in as the pixel shrinks past 3 km → 1.5 km: switched on at once, it popped.)
         let relief_w = smoothstep(3.0, 1.5, pix_km);
-        if (k == 0 && sunside && relief_w > 0.0 && dt.x > 0.05) {
+        if (CLOUD_RELIEF > 0.5 && k == 0 && sunside && relief_w > 0.0 && dt.x > 0.05) {
             let sh = normalize(sun_dir - up * mu_s);
             let qn = normalize(up + sh * (1500.0 / R));
             // (At a quarter of the detail: the relief's shading needs only the cloud's bulk.)
@@ -632,6 +642,11 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         if (trans < 0.01) {
             break;
         }
+    }
+    if (CLOUD_HEATMAP > 0.5) {
+        // (Log scale: blue 0, green ~16, yellow ~64, red 256+ evaluations.)
+        let x = clamp(log2(1.0 + cl_cost) / 8.0, 0.0, 1.0);
+        return vec3<f32>(smoothstep(0.4, 0.9, x), smoothstep(0.0, 0.4, x) * (1.0 - smoothstep(0.7, 1.0, x)), 1.0 - smoothstep(0.0, 0.35, x)) * 2.0;
     }
     return acc + trans * c;
 }
@@ -945,7 +960,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
         // the relief is under a pixel).
         // (Faded in as the pixel shrinks past 3 km → 1.5 km: switched on at once, it popped.)
         let relief_w = smoothstep(3.0, 1.5, pix_km);
-        if (k == 0 && sunside && relief_w > 0.0 && dt.x > 0.05) {
+        if (CLOUD_RELIEF > 0.5 && k == 0 && sunside && relief_w > 0.0 && dt.x > 0.05) {
             let sh = normalize(sun_dir - up * mu_s);
             let qn = normalize(up + sh * (1500.0 / R));
             // (At a quarter of the detail: the relief's shading needs only the cloud's bulk.)
@@ -981,6 +996,11 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
         if (trans < 0.01) {
             break;
         }
+    }
+    if (CLOUD_HEATMAP > 0.5) {
+        // (Log scale: blue 0, green ~16, yellow ~64, red 256+ evaluations.)
+        let x = clamp(log2(1.0 + cl_cost) / 8.0, 0.0, 1.0);
+        return vec3<f32>(smoothstep(0.4, 0.9, x), smoothstep(0.0, 0.4, x) * (1.0 - smoothstep(0.7, 1.0, x)), 1.0 - smoothstep(0.0, 0.35, x)) * 2.0;
     }
     return acc + trans * c;
 }
