@@ -1090,15 +1090,11 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         Ok(Case { loads: loads(DVec3::new(0.0, jolt, 0.0)), held: pads.clone(), anchor: None })
     };
     out.felt.push(g + jolt);
-    // Floor: standing on its pads at its design gravity, every deck under its
-    // design floor load (a crowd, stores stacked) besides its own weight.
-    let floored = if pads.is_empty() {
-        Err("NOTHING ON THE PADS".to_string())
-    } else {
-        let mut l = loads(DVec3::ZERO);
-        l.extend(floor.iter().map(|&(j, m)| (j, DVec3::new(0.0, -g * m, 0.0))));
-        Ok(Case { loads: l, held: pads, anchor: None })
-    };
+    // Floor: standing on its pads at its design gravity, full (what it really
+    // carries). The design floor load (a crowd, stores stacked) is local: a floor
+    // must hold it anywhere, but the whole ship is never a crowd; it's added below
+    // to each deck panel and to what holds each deck point up.
+    let floored = if pads.is_empty() { Err("NOTHING ON THE PADS".to_string()) } else { Ok(Case { loads: loads(DVec3::ZERO), held: pads, anchor: None }) };
     // Full main thrust, and hovering on full lift: the pushes balanced by every
     // mass's inertia, held only to keep it from drifting.
     let (main, total) = pushes(ThrusterRole::Main, &mut out, "THE DRIVE");
@@ -1135,6 +1131,31 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     if !floor.is_empty() {
         out.felt.push(g);
         out.cases.push((CASES[3].into(), run(floored, true)));
+    }
+    // (Standing, each deck point's floor load pushes on what holds it there: its
+    // posts and fittings, shared.)
+    let mut holders = vec![0usize; frame.joints.len()];
+    for m in frame.members.iter().filter(|m| m.section.flat.is_none()) {
+        holders[m.a] += 1;
+        holders[m.b] += 1;
+    }
+    let mut floor_at = vec![0.0f64; frame.joints.len()];
+    for &(j, m) in &floor {
+        floor_at[j] += m * g;
+    }
+    if let Some((_, Ok(col))) = out.cases.iter_mut().find(|c| c.0 == CASES[3]) {
+        for (k, m) in frame.members.iter().enumerate().filter(|(_, m)| m.section.flat.is_none()) {
+            let push: f64 = [m.a, m.b].iter().filter(|&&j| floor_at[j] > 0.0).map(|&j| floor_at[j] / holders[j].max(1) as f64).sum();
+            if push > 0.0 {
+                let o = &mut col.members[k];
+                let mut f = o.work.forces;
+                f.axial -= push;
+                o.work = universe_sim::world::frame::work(m, f, frame.joints[m.a].distance(frame.joints[m.b]), sf);
+                if o.work.breaking >= 1.0 && o.broken.is_none() {
+                    o.broken = Some(0);
+                }
+            }
+        }
     }
     // (Each deck strip's own bending between its ends: its share of the deck's load
     // (half each way), simply supported, q L^2 / 8; the deck's own weight as it is
@@ -5814,6 +5835,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
 
