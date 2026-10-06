@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
+# Its nitrogen is drawn from the air of the place it stands in (four fifths of any Earth-like air is nitrogen): from: place.
 identity:
   key: module.fertiliser-works
   name: "Fertiliser works"
@@ -12,7 +13,7 @@ recipes:
   - makes: good.fertiliser
     does: "Fourteen parts of nitrogen to three of hydrogen."
     inputs:
-      - { item: element.n, quantity: 0.82 }
+      - { item: element.n, quantity: 0.82, from: place }
       - { item: element.h, quantity: 0.18 }
     rate: 5.556
     power: 15800000

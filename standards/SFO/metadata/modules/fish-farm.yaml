@@ -1,4 +1,5 @@
 # yaml-language-server: $schema=../../schema/module.schema.yaml
+# Its animals breathe the air and drink the water of the place it stands in: from: place. Sealed, it would take both from stores.
 identity:
   key: module.fish-farm
   name: "Fish farm"
@@ -13,7 +14,7 @@ recipes:
     does: "Fish raised on 1.3 kg of feed for each kg they gain. The water they live in is kept, not used up."
     inputs:
       - { item: good.animal-feed, quantity: 1.3 }
-      - { item: element.o, quantity: 0.52 }
+      - { item: element.o, quantity: 0.52, from: place }
     outputs:
       - { item: good.carbon-dioxide, quantity: 0.715 }
       - { item: good.manure, quantity: 0.105 }

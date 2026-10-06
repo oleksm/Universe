@@ -955,3 +955,27 @@ solver can cut it. The "upgrade over 90%" loop has rungs to climb now.
 that fits. The engine answers `ore_bay` with `None` for now: the game's bay is still `HullDef::bay`
 from the hull. When you read fitted bays, a ship's ore capacity is the sum of its bays' capacities
 and its hold's volume the sum of their volumes, mass-limited (`fill_density`).
+
+**Needs, round two (the integrator, 2026-10-06: Treistun starves from day 50).**
+
+1. **Fertiliser.** `module.fertiliser-works` draws its nitrogen from the air: `element.n` is
+   `from: place` (four fifths of Earth-like air). Barns and fish farms likewise breathe and drink
+   from the place (`livestock-barn` water and oxygen, `fish-farm` oxygen). **Day-0 stock** at
+   `eikir-farms` (30 days of fertiliser, hay and feed: 123 t, 4,190 t, 3,680 t) and at
+   `eikir-food-works` (30 days of each line's inputs that the line does not make itself: wheat
+   10,000 t, sugar beet 48,000 t, milk 10,400 t, and so on), so the chain runs before the first
+   harvest. Seed is not an input anywhere; if you want sowing, say so and I add it to the field.
+2. **The hot band** is the user's decision, still open.
+3. **Medicine.** A new `eikir-chemical-works` (parcel 5, Verdance; power line 5): hydrogen plant,
+   synthesis plant, acid plant, chlor-alkali plant, pharma works; 30 days of sugar and **a year of
+   sulphur and salt as stock**, because nothing in Treistun mines either yet (Harvest's survey
+   has 6.9 Gt of S and 218 Gt of NaCl; a mine is the economy's or mine to place; tell me which you
+   prefer). Every warehouse holds **90 days of medicines** for its people.
+4. **Clothes, tools, drink.** The chemical works also runs a textile mill and clothing works
+   (wool, flax and cotton from the farms). `trethi-mill` gained a machine-works line (tools,
+   motors, pumps, machine tools) from its own steel. Every warehouse holds 30 days of clothes,
+   tools, beer and wine.
+5. **Treistun e Station**: the user's.
+
+The Trethi mill's parcel 1 was deepened north to 850 m for its new lines; Eikir's industrial zone
+widened to 2,950 m for parcel 5.

@@ -27,3 +27,8 @@ lines:
       - { module: module.fish-farm, count: 13 }
 modules:
   - { module: module.grain-silo, count: 2 }
+stock:
+# Thirty days of what its lines take in at full rate (seed state; after that the economy's): so the chain starts before the first harvest or delivery.
+  - { item: good.fertiliser, quantity: 123000.0 }
+  - { item: good.hay, quantity: 4190000.0 }
+  - { item: good.animal-feed, quantity: 3680000.0 }
