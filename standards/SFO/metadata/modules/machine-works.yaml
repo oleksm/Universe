@@ -61,9 +61,11 @@ recipes:
       - { item: stock.st4340-scrap, quantity: 0.25 }
     rate: 1.0
     power: 6600000
+life: 788940000
 basis:
   - { of: [recipes, recipes.inputs], tier: derived, review: true, source: "standards/sources/research_machines.json", note: "Shares by weight of real machines: an 11 kW motor is 5.85 kg of steel and iron, 0.9 of aluminium and about 0.65 of copper for each kW; a pump is 14 parts cast iron to 1 of stainless; a 10 kW heat pump is 129 kg of steel, 47 of aluminium, 39 of copper. All iron and steel is taken as structural plate, copper as wire. Machine tools and tools are guesses." }
   - { of: [recipes.outputs], tier: invented, review: true, note: "5% lost as scrap (tools: 20%), all of it counted as steel: a guess. To be reviewed." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_machines.json", note: "6.6 MJ a kg: a car plant takes 2.77 MWh to assemble a car, taken as 1.5 t. Standing in for all machines." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

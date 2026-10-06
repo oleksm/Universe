@@ -135,7 +135,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "revision", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "life", "revision", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -1066,7 +1066,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision", "fits") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits", "life") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue

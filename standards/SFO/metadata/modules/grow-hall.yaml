@@ -403,9 +403,11 @@ recipes:
       - { item: good.spent-medium, quantity: 0.02032 }
     rate: 0.01559
     power: 2860000.0
+life: 788940000
 basis:
   - { of: [recipes, recipes.rate, recipes.power], tier: derived, review: true, source: "standards/sources/research_food_light.json", note: "Yields as measured under lamps or in high glasshouses where they were, and worked out from the light where they were not (each recipe says which); spinach is taken as lettuce. Power: the light each crop was grown under, at 2.8 umol a joule (LED fixtures reach 2.5 to 3.0), and half as much again for cooling and pumps, which is a guess. To be reviewed." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_food_crops.json", note: "As a field's, from what a plant is made of; all its nutrients are brought (3% of the dry plant, a guess), and 10 t of growing medium a hectare a year, which is a guess too." }
   - { of: [physical], tier: invented, review: true, note: "Chosen: a hectare of beds in tiers." }
   - { of: [climate], tier: invented, review: true, note: "22 C inside, chosen. Heat pumps at half of Carnot's limit: a guess; good chillers reach a coefficient of 4." }
   - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

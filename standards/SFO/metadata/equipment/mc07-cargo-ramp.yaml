@@ -25,7 +25,9 @@ function:
   load: 40000
   width: 7.5
   reach: 7.78
+life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
   - { of: [function, size_class], tier: invented, review: true, note: "The model's ramp, 7.5 m wide, let down 7.8 m from the bay sill to the ground by two rams; 40 t on it is chosen: two loaded ore carts." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

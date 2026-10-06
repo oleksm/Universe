@@ -21,6 +21,8 @@ making:
 function:
   kind: "heat_sink"
   stores: 1000000000.0
+life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Five tonnes of salt (1.0 kJ/kg K from memory... taken as 2 kJ/kg K over a 100 K rise) stores 1 GJ: a burst of 10 MW for 100 s. The salt's heat capacity is a guess; review." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

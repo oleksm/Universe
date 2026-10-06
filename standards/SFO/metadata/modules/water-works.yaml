@@ -27,9 +27,11 @@ recipes:
       - { item: good.water, quantity: 1.0, from: place }
     rate: 100.0
     power: 72000
+life: 788940000
 basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_needs.json", note: "2.1 kWh for each m3: the top of what plants that turn waste water back into drinking water use (1.2 to 2.1)." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_people_plant.json", note: "A kilogram of wet sludge from each m3: sewage gives 0.11 to 0.17 kg of dry solids a m3 at the first settling, taken as a fifth of the wet sludge's weight (that fifth is a guess)." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. Blue Plains in Washington cleans 16,800 kg a second on 62 hectares; this is that, scaled down. To be reviewed." }
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "Drawing fresh water where a world has it: 0.2 kWh for each m3, or less. It is taken from the place the works stands; a world with none cannot give it." }
   - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

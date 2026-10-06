@@ -147,6 +147,7 @@ revision:
   fixed: [slots, thrusters, model]
   because: "Deferred by the user (2026-10-05) until the ship is fitted and flown: its hold, tank and lift are to be reworked from what flying it shows, not on paper. What paper says so far: docs/ships/mc-07-sizing.md. Its slots and nozzles are its model's."
   ask: docs/registry-ssot-request.md
+life: 1262304000
 basis:
   - { of: [slots, thrusters], tier: sourced, source: "the game: the MC-07 as it imports its model (crates/world/src/import.rs)", note: "Its slots are the standard set for a class 3 hull with two hardpoints; its nozzles are the model's, each at full share." }
   - { of: [flight.radius, flight.drag_area], tier: derived, source: "the game: crates/world/src/import.rs", note: "Worked out by the engine from the model's size: 0.3 of half its longest side and 6 m; 0.6 of its width by its height. Rough rules, the engine's." }
@@ -162,6 +163,7 @@ basis:
   - { of: [design.strut_efficiency], tier: sourced, source: "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf", note: "An oleo strut does work over 0.8 to 0.9 of its stroke." }
   - { of: [design.cabin_pressure], tier: invented, note: "Sea-level air, chosen. Airliners hold 54 to 65 kPa above the outside." }
   - { of: [design.minimum_gauge], tier: invented, note: "Chosen. Airliner skin is about 1 mm." }
+  - { of: [life], tier: invented, review: true, note: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life." }
 open_questions:
   - "Who makes it: it has no maker."
   - "How strong it is: the game takes 600 J for each kg of an 88 t frame. Its frame is 6061 aluminium; what wrecks it is to be worked out from its parts."

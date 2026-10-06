@@ -21,7 +21,9 @@ recipes:
       - { item: good.spent-grain, quantity: 0.14 }
     rate: 1.389
     power: 400000
+life: 788940000
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "11.3 kg of malt a hectolitre; the barley to make the malt is a guess. What is left over is by balance." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

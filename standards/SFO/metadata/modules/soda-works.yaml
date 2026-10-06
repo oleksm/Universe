@@ -23,8 +23,10 @@ recipes:
       - { item: good.carbon-dioxide, quantity: 0.2004 }
     rate: 5.0
     power: 58000000
+life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.power], tier: sourced, source: "standards/sources/research_chemicals.json", note: "1.66 t of salt and 1.4 t of limestone a tonne (a 500,000 t a year plant; Europe's range is 1.53 to 1.8 and 1.05 to 1.6). 11.6 GJ a tonne: 7.5 to 10.8 for the works and 2.2 to 2.8 for its lime kiln, taken in the middle and as electric." }
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance: the carbon dioxide of the limestone that is more than the reaction needs; all the rest is waste. The water the waste runs off in is not counted." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

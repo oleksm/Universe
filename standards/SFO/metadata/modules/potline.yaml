@@ -24,6 +24,7 @@ recipes:
       - { item: good.carbon-dioxide, quantity: 1.52 }
     rate: 10.2777777777778
     power: 536000000
+life: 788940000
 basis:
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_Bahrain", note: "323,000 t a year for one line of 336 pots." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1.93 t of alumina and 0.45 t of carbon anode for each tonne, giving 1.52 t of carbon dioxide. Part of the anode burns in air: that oxygen is set to balance." }
@@ -31,3 +32,4 @@ basis:
   - { of: [physical.length], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "A potroom 1,150 m long." }
   - { of: [physical], tier: invented, review: true, note: "Its width and height were not found in a source." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

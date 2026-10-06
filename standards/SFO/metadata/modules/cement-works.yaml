@@ -24,7 +24,21 @@ recipes:
       - { item: good.water, quantity: 0.19 }
     rate: 10.0
     power: 55200000
+  - makes: good.cement
+    does: "Clinker ground with the phosphate works' gypsum, which sets its time."
+    inputs:
+      - { item: good.limestone, quantity: 1.45 }
+      - { item: good.clay, quantity: 0.2 }
+      - { item: good.gypsum, quantity: 0.05 }
+    outputs:
+      - { item: good.carbon-dioxide, quantity: 0.51 }
+      - { item: good.water, quantity: 0.19 }
+    rate: 10.0
+    power: 55200000
+life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "1.7 t of rock for each tonne of clinker, 1.5 of it limestone; 0.51 t of carbon dioxide driven out of the stone; 5.0 GJ of heat and 144 kWh of power a tonne (United States averages). The heat is taken as electric, so no fuel is burnt; what else is lost is taken as water; the gypsum ground in at the end is left out." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "Gypsum is a few percent of cement; the phosphate works' is as good as quarried. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

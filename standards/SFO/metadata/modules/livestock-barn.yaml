@@ -92,8 +92,10 @@ recipes:
       - { item: good.manure, quantity: 404.0 }
     rate: 0.0002852
     power: 50000
+life: 788940000
 basis:
   - { of: [recipes, recipes.rate, recipes.inputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Feed for each kg, water a head, eggs a hen, milk a cow, weights at slaughter: the file named. The herd and flock sizes, and so the barn's rate, are chosen. Sheep's water for each kg gained is worked out from a guess at how fast they gain." }
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance: what goes in and does not leave as the animal or its breath is manure. Breath is taken as 0.55 kg of carbon dioxide for each kg of feed, a guess." }
   - { of: [physical, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

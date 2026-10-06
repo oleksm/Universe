@@ -30,7 +30,9 @@ recipes:
       - { item: good.tailings, quantity: 3.444 }
     rate: 5.0
     power: 5000000
+life: 788940000
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "By the ores' grades, nine tenths won; 1 MJ a kg is a guess. No figures were found. To be reviewed." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

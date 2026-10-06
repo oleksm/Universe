@@ -21,4 +21,7 @@ surface:
   relief: 4397
   mean_temperature: 263.6
   colour: [0.3, 0.6, 1.0]
+# The planet lab's defaults for its run (2026-10-06, as Harvest's): Earth's water share, Earth's radioactive heat; chosen.
+interior: {radiogenic: 1.0}
+water: {mass_share: 0.00023}
 atmosphere: {surface_density: 1.225, scale_height: 8680.0, top: 121500.0, breathable: true}

@@ -22,5 +22,7 @@ recipes:
       - { item: good.natural-gas, quantity: 0.15 }
     rate: 2.0
     power: 500000
+life: 788940000
 basis:
   - { of: [physical, staff, recipes], tier: invented, review: true, note: "A producing well of about 1,100 barrels a day (2 kg/s), with 150 kg of associated gas a tonne of oil and half a megawatt for its pump and separator: typical figures from memory. Not sourced." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

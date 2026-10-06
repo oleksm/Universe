@@ -23,5 +23,7 @@ recipes:
       - { item: good.waste-rock, quantity: 1.5 }
     rate: 100.0
     power: 20000000
+life: 788940000
 basis:
   - { of: [physical, staff, recipes], tier: invented, review: true, note: "A mine of about 3 million tonnes a year (100 kg/s), 1.5 t of rock moved for each tonne of coal, 20 MW: typical figures from memory. Not sourced." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

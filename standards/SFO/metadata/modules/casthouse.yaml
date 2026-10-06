@@ -35,6 +35,16 @@ recipes:
       - { item: good.dross, quantity: 0.03 }
     rate: 11.1111111111111
     power: 30700000
+  - makes: stock.al6061-ingot
+    does: "Dross stirred under salt flux: its metal drained off, the oxide to the tailings."
+    inputs:
+      - { item: good.dross, quantity: 2.5 }
+      - { item: good.salt, quantity: 0.1 }
+    outputs:
+      - { item: good.tailings, quantity: 1.6 }
+    rate: 2.0
+    power: 8000000
+life: 788940000
 basis:
   - { of: [recipes.inputs], tier: derived, note: "The liquid metal and what is added to it, in the shares of the grade it makes (its material's composition); the loss is the module's." }
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "About 73 t/h serves a smelter of two potlines; 40 for one." }
@@ -43,3 +53,5 @@ basis:
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Melting scrap again: 5% of the 15.37 kWh a kg that making aluminium from ore takes. The 3% lost as dross is a guess." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "Dross is about four tenths metal; the rest is oxide, which goes to the tailings pile and from there into bricks and concrete. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

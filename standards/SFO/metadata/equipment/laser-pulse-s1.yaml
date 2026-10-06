@@ -28,9 +28,11 @@ function:
   burn: 8
   cool: 4
   reset: 0.3
+life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: banks of laser modules, a mirror to point the beam, and above all cooling. Real ones turn a quarter to a third of their power into light and aim for 5 kg for each kW of beam; this is 0.6 kg a kW at four fifths." }
   - { of: [function.beam_power, function.focus, function.range, function.burn, function.cool], tier: sourced, review: true, source: "the game: crates/world/src/weapons.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "By HELLADS: 150 kW of beam in 3 m3, so 2 MW in 40 m3. Its weight (1.2 t) is far under what that volume of laser would weigh: the invented part." }
   - { of: [function.reset], tier: invented, review: true, note: "The game's figure (weapons.rs LASER_RESET), brought onto the record so no constant is left in the code: locked out after overheating until it has cooled to three tenths." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

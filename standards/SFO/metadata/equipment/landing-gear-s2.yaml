@@ -25,8 +25,10 @@ function:
   efficiency: 0.8
   sink_rate: 3.05
   extended: 4.0
+life: 473364000
 basis:
   - { of: [function.holds, size_class], tier: invented, review: true, note: "Sized for a 120 t ship on four legs: the MC-07 empty: the ship's weight at 1.5 g on its legs, the airliner rule (14 CFR 25.473), with the lightest ship of the class on four legs." }
   - { of: [physical.mass], tier: derived, review: true, note: "1.2 kg a kN of leg load: an A320's main leg, about 700 kg for 574 kN (78 t at 1.5 g on two legs), from memory. Not sourced." }
   - { of: [function.stroke, function.efficiency, function.sink_rate], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.473", note: "The sink rate is the airliner design case, 10 ft/s; the oleo's efficiency 0.8 (the hull's design.strut_efficiency); the stroke chosen longer with size." }
   - { of: [physical.length, physical.width, physical.height, physical.volume, function.extended], tier: invented, review: true, note: "A leg about a third as wide as it is long, gear down; the MC-07's front leg stands 9 m (its model), between S2 and S3." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
