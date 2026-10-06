@@ -26,6 +26,7 @@ pub mod galaxy;
 pub mod goods;
 pub mod recipes;
 pub mod gate;
+pub mod ground_detail;
 pub mod heat;
 pub mod hyperdrive;
 pub mod hypernet;
