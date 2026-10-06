@@ -398,4 +398,8 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn throat_coil(&mut self, _: &r::EquipmentFunctionThroatCoil) -> Self::Out {
         None
     }
+    /// A landing leg as a product: not made yet (`x-in-game: not made`); legs are reckoned from a hull's parts (`world::legs`).
+    fn landing_gear(&mut self, _: &r::EquipmentFunctionLandingGear) -> Self::Out {
+        None
+    }
 }

@@ -925,3 +925,16 @@ other side. The gate test hit it exactly (500 m at 500 m/s is 60 steps). Now a s
 1 mm of the plane crosses it, and the next does not. Also: **bodies match records by key, not
 name** (`system::Body::key`, `celestial::rename` last); settlements by body key; the planets of
 Treistun are named (Harvest, Hearth...). The seed's names stay in `identity.also`.
+
+**Sockets (the user, 2026-10-06; for the ships session through you).** Every mount now says its
+**attachment**: points, pattern (corners / ring / saddles / trunnion) and what each point takes in
+tension, compression and shear. That is what "mount this module" struts to, and what a hull-less
+design starts from: sockets, then frame, then fit. **Landing gear is equipment** (`gear` slot kind;
+`equipment.gear.strut.s1..s3`, function `landing_gear`: holds, stroke, efficiency, sink rate,
+extended length; parts and chains complete; mounts `gear-s1..3`). The MC-07 has four gear slots.
+**What I changed in the engine so `fso` builds:** `ship.rs` drops a gear slot from the game's
+`HullDef` (no game slot kind for it yet), and `modules.rs` answers `landing_gear` with `None`, as
+the throat coil: `x-in-game: not made`. When the game fits legs from gear instead of reckoning
+them from hull parts (`world::legs`), both become real. The ships session should get the mounts,
+the attachments and the gear before building the frame generator; the registry page's "Mounts"
+report lists them.

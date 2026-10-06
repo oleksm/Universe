@@ -288,6 +288,9 @@
 - { record: equipment.drive.torch.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "4e757d3f34cc916f" }
 - { record: equipment.drive.torch.s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "d5b3358c20627f43" }
 - { record: equipment.drive.torch.s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "0720386a5469a79c" }
+- { record: equipment.gear.strut.s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "73a4acc3094b775d" }
+- { record: equipment.gear.strut.s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "32e9dfc11c4a028b" }
+- { record: equipment.gear.strut.s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "984d342e641ba481" }
 - { record: equipment.gun.mass-driver.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "e5e90d7a7f0748a1" }
 - { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: fits", sha: "18c27feadb856cfc" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: fits", sha: "7412ee05a5d77202" }
@@ -581,7 +584,7 @@
 - { record: hull.drover, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "97084da0023ccdd1" }
 - { record: hull.hauler, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "30ff6a9af58f31a1" }
 - { record: hull.interceptor, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "6384aa335a2c724e" }
-- { record: hull.mc-07, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "37244c55a37d1227" }
+- { record: hull.mc-07, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: slots", sha: "50693641d1064e4a" }
 - { record: hull.prospector, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "abb3204d6d1ce258" }
 - { record: hull.sprint, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: slots", sha: "aef23b2be23eb8d7" }
 - { record: law.air-heat-capacity, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "76b6ebdfb0ab99b4" }
@@ -766,43 +769,46 @@
 - { record: module.winery, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "2edf2e70f40e0472" }
 - { record: module.wire-mill, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "6294a04a59450cbe" }
 - { record: module.zinc-works, at: "2026-10-05T17:25:37Z", status: review, summary: "first tracked", sha: "61b99e48069f31bf" }
-- { record: mount.avionics-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "c74588ffba2ef5e2" }
-- { record: mount.capacitor-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "48eab18b01452c0f" }
-- { record: mount.capacitor-s2, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "d3b99eefa1012fb0" }
-- { record: mount.capacitor-s3, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "6cfb8a3c75ed7fb8" }
-- { record: mount.cargo-s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "d472730cfc0aa639" }
-- { record: mount.cargo-s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "faff1e1991a27ba1" }
-- { record: mount.cargo-s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "b2b9367cac55e699" }
-- { record: mount.cargo-s4, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "e3881618bcac8e0c" }
-- { record: mount.comm-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "a317087fd096f868" }
-- { record: mount.computer-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "8d55586a1cfc89b1" }
-- { record: mount.drive-s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope, nozzle", sha: "e711d66f4ae1ebbe" }
-- { record: mount.drive-s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope, nozzle", sha: "a452fd2b3e00d8a2" }
-- { record: mount.drive-s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope, nozzle", sha: "0e40c48580e5b452" }
-- { record: mount.gate-s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "caf5689b1766b51e" }
-- { record: mount.gate-s4, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "4ba592e8c0dab82a" }
-- { record: mount.hardpoint-s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "83f9e49a20c14633" }
-- { record: mount.hyperdrive-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "406b0661103454e7" }
-- { record: mount.hyperdrive-s2, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "03fd6febe103746e" }
-- { record: mount.hyperdrive-s3, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "7324adfb2ff57247" }
-- { record: mount.life-support-s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "c1b2aa7fba72e4a8" }
-- { record: mount.life-support-s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "66ad07b87b07aa7c" }
-- { record: mount.lift-s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope, nozzle", sha: "da3f9d1c17833dba" }
-- { record: mount.lift-s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope, nozzle", sha: "41729fb0c8ff6e3b" }
-- { record: mount.lift-s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope, nozzle", sha: "e0b9f05e4f1c62f8" }
-- { record: mount.power-s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "27f52eef07681585" }
-- { record: mount.power-s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "93d77bb3f92a5098" }
-- { record: mount.power-s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "ae0b2e502e472de4" }
-- { record: mount.sensors-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "08babffb7970e0db" }
-- { record: mount.tank-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "fe455d7b3d586f95" }
-- { record: mount.tank-s2, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "725efa3af59860d4" }
-- { record: mount.tank-s3, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "5c09cc82824031b5" }
-- { record: mount.tank-s4, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "2c756279196d361b" }
-- { record: mount.thrusters-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "77e99eaf138c0650" }
-- { record: mount.thrusters-s2, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "886d64a41729f1cf" }
-- { record: mount.thrusters-s3, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "37bf2559c5609803" }
-- { record: mount.transponder-s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "first tracked", sha: "f12dfefb8ec2a6c3" }
-- { record: mount.utility-s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: envelope", sha: "9be8423091466cf3" }
+- { record: mount.avionics-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "4eec279865a8973e" }
+- { record: mount.capacitor-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "9dc2450187a367de" }
+- { record: mount.capacitor-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "cb9853df133d6503" }
+- { record: mount.capacitor-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "f619bd6eab1d58aa" }
+- { record: mount.cargo-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "bf79c46bc4f69623" }
+- { record: mount.cargo-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "a2fbc357472a8b52" }
+- { record: mount.cargo-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "7dfd66a1daa476cf" }
+- { record: mount.cargo-s4, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "1dd7ed13fb382224" }
+- { record: mount.comm-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "8036e32f03dc6f28" }
+- { record: mount.computer-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "c4166f1c838601ff" }
+- { record: mount.drive-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "a1bc3d73f62f6152" }
+- { record: mount.drive-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "d1cb2d0d01b28d2a" }
+- { record: mount.drive-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "f5b33407812b4b3a" }
+- { record: mount.gate-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "46ad6cca404eaf96" }
+- { record: mount.gate-s4, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "b902fcb07016eac0" }
+- { record: mount.gear-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "48f17a2798fe5b8b" }
+- { record: mount.gear-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "069a1e63f004e977" }
+- { record: mount.gear-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "dbb94c7bf2a9f762" }
+- { record: mount.hardpoint-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "173ba635891e6494" }
+- { record: mount.hyperdrive-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "94ba74164c2e6a58" }
+- { record: mount.hyperdrive-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "ce0c021d179d1735" }
+- { record: mount.hyperdrive-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "f3e617fc42ca0704" }
+- { record: mount.life-support-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "79d7490f60447f01" }
+- { record: mount.life-support-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "0c45967abb2ef80a" }
+- { record: mount.lift-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "95295cf842730b4c" }
+- { record: mount.lift-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "c81323c180339e85" }
+- { record: mount.lift-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "02998edcbe4505fc" }
+- { record: mount.power-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "09c6853b85e00211" }
+- { record: mount.power-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "c240fa1d211f99bd" }
+- { record: mount.power-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "3a3b1ff48b05a5ef" }
+- { record: mount.sensors-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "383588739b504d61" }
+- { record: mount.tank-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "95f743a7f71ef575" }
+- { record: mount.tank-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "e51a226449014e94" }
+- { record: mount.tank-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "d4c33ae95218a2a1" }
+- { record: mount.tank-s4, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "167fcf13d08f4837" }
+- { record: mount.thrusters-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "7b7b5e2096ee6402" }
+- { record: mount.thrusters-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "924c0b62a4f38081" }
+- { record: mount.thrusters-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "283c3af0981e4909" }
+- { record: mount.transponder-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "09a73c7405b8aa97" }
+- { record: mount.utility-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "ba48c50e5b4284d9" }
 - { record: need.air, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9702da822b638b10" }
 - { record: need.art, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "00940c521fe63921" }
 - { record: need.clothes, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9e8d227d324cc7b7" }
@@ -1135,6 +1141,18 @@
 - { record: part.ld-01, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "3a66688f0503433e" }
 - { record: part.ld-02, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "470b2a3867eacc81" }
 - { record: part.ld-03, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "126cb99a889100f3" }
+- { record: part.lgs1-01, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "66854897ab8ff899" }
+- { record: part.lgs1-02, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "79a92ea0600f7cbd" }
+- { record: part.lgs1-03, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "908b9e32b5e98b54" }
+- { record: part.lgs1-04, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "d9448854769ca97a" }
+- { record: part.lgs2-01, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "46c1c4b8419ab0d0" }
+- { record: part.lgs2-02, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "dd73cd79027fe416" }
+- { record: part.lgs2-03, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "622938fa6905aca0" }
+- { record: part.lgs2-04, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "9c088140bd39d5f7" }
+- { record: part.lgs3-01, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "c01e5164cb40e865" }
+- { record: part.lgs3-02, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "56a58f368bcf1064" }
+- { record: part.lgs3-03, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "2c1e406ad9892667" }
+- { record: part.lgs3-04, at: "2026-10-06T01:57:19Z", status: draft, summary: "first tracked", sha: "454cb95283b40f66" }
 - { record: part.ls-01, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "a6ee404c9db6e29e" }
 - { record: part.ls-02, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "021ee740a6587ebd" }
 - { record: part.ls-03, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "66d402e3d9941705" }
