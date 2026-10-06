@@ -429,9 +429,15 @@ fn block_clashes(mesh: Option<&universe_sim::world::walk::WalkMesh>, i: &Interio
             // (Outside: not closed in by the hull's skin all round, any face of it.)
             in_material(mesh, flat, f64::from(p.y)) || !enclosed(mesh, flat, f64::from(p.y), 0.0, true)
         }));
-        hull || rooms.iter().any(|p| b.holds(*p, round))
+        // (Fit-out stands inside a room: no clash there.)
+        let inside = i.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).is_some_and(|(k, ..)| INSIDE.contains(&k.as_str()));
+        hull || (!inside && rooms.iter().any(|p| b.holds(*p, round)))
     }).collect()
 }
+
+/// The kinds of module that stand inside a pressurised room: what the crew sit,
+/// sleep, eat and wash at, and what keeps them safe there.
+const INSIDE: [&str; 6] = ["command_station", "berths", "galley", "head", "fire_unit", "suit_locker"];
 
 /// Points and the lines between them: where access must reach, and the ways it
 /// goes, first as lines (their room comes later).
@@ -1444,7 +1450,23 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     for blk in &plan.blocks {
         let Some(f) = fit.iter().find(|f| f.id == kind(&blk.id)) else { continue };
         let (lo, hi) = blk.bounds();
-        let at: Vec<usize> = mounted(lo, hi);
+        let mut at: Vec<usize> = mounted(lo, hi);
+        // (Nothing at it, but in a walled room: the room carries it, on its floor.)
+        if at.is_empty()
+            && let Some(k) = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line).find(|&k| {
+                let (p, e) = plan.axis(k);
+                let pr = plan.lines[k].2;
+                let d = e - p;
+                let t = (blk.at - p).dot(d) / d.length_squared().max(1e-6);
+                let off = blk.at - (p + d * t.clamp(0.0, 1.0));
+                (0.0..=1.0).contains(&t) && off.y.abs() < pr.height * 0.5 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
+            })
+        {
+            let (a, b) = plan.axis(k);
+            let pr = plan.lines[k].2;
+            let half = Vec3::new(pr.width.max(pr.height) * 0.5, pr.height * 0.5, pr.width.max(pr.height) * 0.5);
+            at = mounted(a.min(b) - half, a.max(b) + half);
+        }
         // (Full: its ore, cargo or fuel too.)
         let m = if blk.id == HOLD { full } else { f.mass + f.load };
         if at.is_empty() {
@@ -4007,11 +4029,17 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
             0.5 * num(&p.3, "thrust") * num(&p.3, "exhaust") * nozzles * share
         })
         .sum();
-    let heat = plants + burn + draw;
+    // (And the people aboard: the heat their food leaves as.)
+    let people = of("command_station").map(|p| num(&p.3, "persons")).sum::<f64>() + of("cabin").map(|p| num(&p.3, "seats")).sum::<f64>();
+    let heat = plants + burn + draw + universe_sim::world::registry::registry().needs.iter().filter_map(|n| n.heat).sum::<f64>() * people;
     let shed: f64 = of("radiator").map(|p| num(&p.3, "rejects")).sum();
     let loops: f64 = of("coolant_loop").map(|p| num(&p.3, "carries")).sum();
     lines.push((format!("HEAT  {} TO SHED: RADIATORS {}, LOOPS {}", si(heat, "W"), si(shed, "W"), si(loops, "W")), shed >= heat && loops >= heat));
-    let crew: f64 = of("cabin").map(|p| num(&p.3, "seats")).sum();
+    // (Who's aboard: the crew, the command stations' seats; the passengers, the
+    // cabins'.)
+    let crew_seats: f64 = of("command_station").map(|p| num(&p.3, "persons")).sum::<f64>() + 0.0;
+    let passengers: f64 = of("cabin").map(|p| num(&p.3, "seats")).sum::<f64>() + 0.0;
+    let crew = crew_seats + passengers;
     if crew > 0.0 {
         // (An empty sum is -0: plus 0, it's 0.)
         let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
@@ -4024,13 +4052,23 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         // (Air lost through the airlocks: each one's record's air lost a cycle, at
         // AIRLOCK_CYCLES a day; its oxygen made up from the store.)
         let vented = of("airlock").map(|p| num(&p.3, "air_lost")).sum::<f64>() * AIRLOCK_CYCLES * OXYGEN_IN_AIR;
-        let (ad, wd) = (air / (oxygen * crew + vented), water / (drunk * crew));
+        // (And what the hull leaks: its leak rate (the registry's hulls', a station's
+        // figure if none says) over the sealed volume, its oxygen made up.)
+        let sealed: f64 = pressure(i).spaces.iter().map(|s| s.0).sum();
+        let leak = universe_sim::world::registry::registry().hulls.iter().find_map(|h| h.design.leak_rate).unwrap_or(3.4e-9) * sealed * 86_400.0 * OXYGEN_IN_AIR;
+        let (ad, wd) = (air / (oxygen * crew + vented + leak), water / (drunk * crew));
         // (Food: the stores that hold it against the need's rate.)
         let food: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| h.contains("food"))).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
         let fd = food / (a_day(&["need.food"], "market.food") * crew).max(1e-9);
         let life = of("life_support").count();
         let food_text = if food > 0.0 { format!(", FOOD {fd:.0} DAYS") } else { ", NO FOOD STORED".into() };
-        lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS{food_text}{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && fd >= 1.0 && life > 0));
+        lines.push((format!("ABOARD {crew:.0} ({crew_seats:.0} CREW): AIR {ad:.0} DAYS, WATER {wd:.0} DAYS{food_text}{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && fd >= 1.0 && life > 0));
+        // (Life support: the people it keeps, and the heat it carries out of the
+        // cabin: theirs, by the need that gives it.)
+        let keeps: f64 = of("life_support").map(|p| num(&p.3, "persons")).sum();
+        let cools: f64 = of("life_support").map(|p| num(&p.3, "cooling")).sum();
+        let body: f64 = universe_sim::world::registry::registry().needs.iter().filter_map(|n| n.heat).sum::<f64>() * crew;
+        lines.push((format!("LIFE  KEEPS {keeps:.0} OF {crew:.0}; COOLS {} OF THEIR {}", si(cools, "W"), si(body, "W")), keeps >= crew && cools >= body));
     }
     // Checks: sealed spaces, the way in, the way down, the ore's path.
     let mut faults = Vec::new();
@@ -4065,6 +4103,56 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let parts: Vec<String> = [(Passes::Module, "THROUGH MODULES"), (Passes::Room, "INTO ROOMS"), (Passes::Deck, "THROUGH DECKS"), (Passes::Member, "INTO OTHER MEMBERS")].iter().filter(|(w, _)| count(*w) > 0).map(|(w, say)| format!("{} {say}", count(*w))).collect();
         if !parts.is_empty() {
             faults.push(format!("MEMBERS CLASH: {}", parts.join(", ")));
+        }
+    }
+    // (Crewing: someone to fly it, seated for its jolts, inside; berths for the crew;
+    // galley and head for all aboard; fire units for the air; suits for the crew;
+    // a ship that lands, something to land by.)
+    {
+        let persons = |k: &'static str| of(k).map(|p| num(&p.3, "persons")).sum::<f64>();
+        let crew = persons("command_station");
+        let aboard = crew + of("cabin").map(|p| num(&p.3, "seats")).sum::<f64>();
+        let in_room = |b: &Block| (0..i.plan.lines.len()).filter(|&k| i.plan.group_of(k).is_some_and(|g| i.plan.groups[g].walled) && i.plan.lines[k].2.section != Section::Line).any(|k| {
+            let (p, e) = i.plan.axis(k);
+            let pr = i.plan.lines[k].2;
+            let d = e - p;
+            let t = (b.at - p).dot(d) / d.length_squared().max(1e-6);
+            let off = b.at - (p + d * t.clamp(0.0, 1.0));
+            (0.0..=1.0).contains(&t) && off.y.abs() < pr.height * 0.5 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
+        });
+        if aboard > 0.0 && crew == 0.0 {
+            faults.push("NO COMMAND STATION: NOBODY TO FLY IT".into());
+        }
+        for p in placed.iter().filter(|p| INSIDE.contains(&p.2.as_str()) && !in_room(p.0)) {
+            faults.push(format!("{} IS OUTSIDE THE PRESSURISED ROOMS", p.1.name));
+        }
+        if let Some(b) = i.bearing.as_ref().filter(|(p, _)| *p == i.plan) {
+            let worst = b.1.felt.iter().copied().fold(0.0, f64::max);
+            for p in of("command_station").filter(|p| num(&p.3, "g_rating") < worst) {
+                faults.push(format!("{}'S SEATS ARE RATED {:.1} G; IT FEELS {:.1} G", p.1.name, num(&p.3, "g_rating") / STANDARD_G, worst / STANDARD_G));
+            }
+        }
+        let berths = persons("berths");
+        if crew > berths {
+            faults.push(format!("CREW {crew:.0}, BERTHS FOR {berths:.0}"));
+        }
+        for (k, what) in [("galley", "GALLEY"), ("head", "HEAD")] {
+            let n = persons(k);
+            if aboard > n {
+                faults.push(format!("{aboard:.0} ABOARD, {what} FOR {n:.0}"));
+            }
+        }
+        let protected: f64 = of("fire_unit").map(|p| num(&p.3, "protects")).sum();
+        let sealed: f64 = pr.spaces.iter().map(|s| s.0).sum();
+        if sealed > protected {
+            faults.push(format!("FIRE UNITS COVER {protected:.0} OF {sealed:.0} M3"));
+        }
+        let suits = persons("suit_locker");
+        if crew > suits {
+            faults.push(format!("CREW {crew:.0}, SUITS FOR {suits:.0}"));
+        }
+        if of("landing_gear").count() > 0 && of("altimeter").count() == 0 {
+            faults.push("IT LANDS BLIND: NO ALTIMETER".into());
         }
     }
     // (Joints with no node in stock wide enough for their widest tube.)
@@ -6634,6 +6722,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
 
 
 
