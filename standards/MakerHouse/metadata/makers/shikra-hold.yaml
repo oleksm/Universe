@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented (2026-10-06): piracy with a home and a reason. Biraidim has no administration, so no law reaches it; the hold sits in
+# the rock of a small asteroid a gate's jump from Treistun's traffic. Its people are finite: what the census says, no more.
+identity:
+  key: org.shikra-hold
+  name: Shikra Hold
+ticker: SHK
+kind: band
+note: "The pirates of Biraidim"
+who: "A few hundred people who dug into the asteroid Shikra and live by taking what passes the Treistun gate: cargo first, ships when they can. They sell at ports that do not ask, and they go home when a patrol comes out."
+what: "Piracy on the Treistun run; fencing what it takes."
+address: { at: rig.biraidim.shikra-hold, tower: The Hold, deck: 1, section: A, unit: 1 }

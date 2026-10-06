@@ -120,8 +120,11 @@
 - { record: body.treistun.zitondar, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "29366ebf4990a0a6" }
 - { record: building.bunkhouse, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "64d5ef2c877a3a61" }
 - { record: building.clinic, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "5b1bb3ec6ed8d417" }
+- { record: building.courthouse, at: "2026-10-06T03:09:17Z", status: draft, summary: "first tracked", sha: "f2bb6106fe2456d5" }
 - { record: building.dwelling-block, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "6aef3e59a069202c" }
+- { record: building.gaol, at: "2026-10-06T03:09:17Z", status: draft, summary: "first tracked", sha: "5c10fd6c66056a15" }
 - { record: building.hospital, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "569e446705c23d36" }
+- { record: building.watch-house, at: "2026-10-06T03:09:17Z", status: draft, summary: "first tracked", sha: "d346c852c6e0ad26" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
@@ -860,11 +863,13 @@
 - { record: org.meridian, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "473575ea23eae4dc" }
 - { record: org.orbital, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "210ed2f6abd9c7fb" }
 - { record: org.sfo, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d0b92024d04a3d3e" }
+- { record: org.shikra-hold, at: "2026-10-06T03:09:17Z", status: "", summary: "first tracked", sha: "bf797f0b5d26c95f" }
 - { record: org.sunward-planters, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: who", sha: "51e303fdcba97507" }
 - { record: org.tallis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "334d70d5a7ad241b" }
 - { record: org.tolland, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "606b88aa03fbd49b" }
-- { record: org.treistun, at: "2026-10-06T02:35:39Z", status: "", summary: "changed: compulsory_stock", sha: "c7014b39cd036416" }
+- { record: org.treistun, at: "2026-10-06T03:09:17Z", status: "", summary: "changed: law", sha: "748c18c77dab565f" }
 - { record: org.treistun-exchange, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9688a593a35c0eb3" }
+- { record: org.treistun-mutual, at: "2026-10-06T03:09:17Z", status: "", summary: "first tracked", sha: "9554d73a8f6ab423" }
 - { record: org.verdance, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "bbe18fd6a56af8b2" }
 - { record: org.vireo, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f2ca3f6a59fa774a" }
 - { record: parcel.treistun.port-aipika.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96cde9582c6ade27" }
@@ -1686,6 +1691,7 @@
 - { record: profession.teacher, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "ae547e882c6ea6ce" }
 - { record: profession.technician, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "12a993e9f9a58173" }
 - { record: profession.welder, at: "2026-10-05T16:52:43Z", status: draft, summary: "first tracked", sha: "f63dd4b76d90f5fa" }
+- { record: rig.biraidim.shikra-hold, at: "2026-10-06T03:09:17Z", status: "", summary: "first tracked", sha: "7894c787e62a3552" }
 - { record: rig.treistun.hadley-orbital-works, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "af416db507c212ae" }
 - { record: rock-class.basaltic, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "c01d4654b7759d41" }
 - { record: rock-class.carbonaceous, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "56a086e366bec47d" }

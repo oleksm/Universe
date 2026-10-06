@@ -98,3 +98,32 @@ definitions:
       strata: "A layer among layers."
       pipe: "A steep chimney."
       blanket: "A flat sheet at or near the surface."
+  offence:
+    description: "What an administration's law forbids. A breach is recorded against the person and the ship, never hard-blocked: the game lets it happen and the law answers."
+    enum: [piracy, murder, theft, smuggling, zoning breach, unlicensed mining, reckless flying, fraud, evasion]
+    x-values:
+      piracy: "Attacking a ship, or taking its cargo by force."
+      murder: "Killing people, aboard a ship or on the ground."
+      theft: "Taking goods, a ship or a claim that is another's."
+      smuggling: "Trading in its markets what its trade bans forbid."
+      zoning breach: "Building or working on a parcel what its zone does not permit."
+      unlicensed mining: "Digging a deposit in its jurisdiction without its licence."
+      reckless flying: "Endangering a port or a gate: too fast through its approaches, a collision at its pads."
+      fraud: "Selling what one does not own, or not what one says."
+      evasion: "Not paying what it levies."
+  penalty:
+    description: "What the law does about a breach. Fines and bounties are shares of what was at stake, never a sum: the registry holds no prices."
+    enum: [warning, fine, forfeiture, gaol, outlawry, bounty]
+    x-values:
+      warning: "Recorded; nothing taken."
+      fine: "A share of the goods or the value at stake, paid to the administration."
+      forfeiture: "The goods, the ship or the claim taken."
+      gaol: "Held, for a term."
+      outlawry: "Loses the protection of the law and the right to dock wherever the administration reaches, until pardoned."
+      bounty: "A reward for whoever brings the offender or the offender's ship in: a share of that ship's worth."
+  jurisdiction:
+    description: "How far an administration's law reaches."
+    enum: [system, settlements]
+    x-values:
+      system: "Everywhere in its star system: its patrols go where its ships go."
+      settlements: "Its settlements and their approaches only; the rest of the system is nobody's."

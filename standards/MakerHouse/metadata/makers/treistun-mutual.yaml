@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented (2026-10-06): the system's insurer, so that a lost ship comes back by a rule and not from nowhere. Its rates are
+# shares and chosen: 3% of the insured worth a year, a tenth of the loss as excess; marine hull cover runs about 1 to 3% a year.
+identity:
+  key: org.treistun-mutual
+  name: Treistun Mutual
+ticker: TMU
+kind: company
+business: insurance
+note: "Hull and cargo cover for the ships of Treistun"
+who: "A mutual owned by the ships it insures, run from the station. It pays for lost hulls and cargoes, and it does not pay for what the insured brought on themselves: a pirate's losses are his own."
+what: "Insures hulls, their fit and their cargoes; replaces a lost hull at a yard once the excess is paid."
+address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck: 2, section: B, unit: 4 }
+insurance:
+  covers: [hull, fit, cargo]
+  premium: 9.51e-10
+  excess: 0.1
+  delivered_at: yard
+  refuses: [piracy, murder, smuggling, reckless flying]

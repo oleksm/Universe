@@ -238,10 +238,12 @@
 - { key: org.meridian, game: "brand.meridian", in: "brands.ron" }
 - { key: org.orbital, game: "brand.orbital", in: "brands.ron" }
 - { key: org.sfo, game: "body.sfo", in: "bodies.ron" }
+- { key: org.shikra-hold, game: "brand.shikra_hold", in: "bodies.ron" }
 - { key: org.sunward-planters, game: "brand.sunward_planters", in: "brands.ron" }
 - { key: org.tallis, game: "brand.tallis", in: "brands.ron" }
 - { key: org.tolland, game: "brand.tolland", in: "brands.ron" }
 - { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "brands.ron" }
+- { key: org.treistun-mutual, game: "brand.treistun_mutual", in: "brands.ron" }
 - { key: org.verdance, game: "brand.verdance", in: "brands.ron" }
 - { key: org.vireo, game: "brand.vireo", in: "brands.ron" }
 - { key: population.biraidim.shikra-family, game: "Shikra family", in: "by name: celestial.ron, the seed" }
