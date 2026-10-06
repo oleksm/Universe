@@ -132,9 +132,12 @@ The last installed index is remembered in `standards/Celestial/surveys/.installe
 Coordinates: longitude, latitude in degrees on the body's sphere; the rock map's x is longitude
 −180 → 180 left to right, y is latitude 90 → −90 top to bottom.
 
-**Claims and mines** (`LocalAdministration`): a claim's `deposit` is a deposit `id`; its `world_id`
-is the first segment of the ID. A claim's deposit must exist in the body's survey, and the body
-must be baked: the validator checks both once claims are records.
+**Claims and mines** (`LocalAdministration`): a mine or well facility carries `claim: {deposit, holder, licence}`; the
+deposit is the survey's or the energy package's permanent id (`TRD1-PCU-007264A-01`), the holder an organisation, the
+licence the administration's (its `law.policies.mining_licence`; without one the mine is unlicensed, a recorded breach).
+The build checks the id against the survey of the body the settlement is at, and that the body is baked. The first:
+**Halden Camp** on Harvest (`settlement.treistun.halden-camp`), Cormorant's pit and concentrator on a 1,230 Mt porphyry
+copper body 1,070 km north of Port Eikir, its concentrate on the exchange at its strip's yard.
 
 **The render bake** (landscape, 600 m tiles, rivers) is the game's and the lab's, outside this
 contract: it reads the world and changes nothing in the survey. The registry only needs to know

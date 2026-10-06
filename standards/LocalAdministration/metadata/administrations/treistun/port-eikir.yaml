@@ -52,7 +52,7 @@ census:
   - { profession: profession.lawyer, count: 270 }
   - { profession: profession.machinist, count: 240 }
   - { profession: profession.constable, count: 200 }
-  - { profession: profession.pilot, count: 90 }
+  - { profession: profession.pilot, count: 92 }
   - { profession: profession.banker, count: 60 }
   - { profession: profession.performer, count: 60 }
   - { profession: profession.artist, count: 60 }
@@ -61,8 +61,8 @@ census:
   - { profession: profession.chemist, count: 16 }
   - { profession: profession.clothier, count: 16 }
   - { profession: profession.judge, count: 10 }
-  - { profession: profession.dependant, count: 37619 }
-# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+  - { profession: profession.dependant, count: 37617 }
+# independents: owner-operators based here, its share by population of the 792 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 86 }
   - { hull: hull.sprint, count: 65 }

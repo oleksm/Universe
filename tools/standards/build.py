@@ -17,6 +17,7 @@ Exits non-zero with every problem listed if anything's wrong (the page still sho
 See docs/standards.md.
 """
 import html
+import glob
 import json
 import math
 import os
@@ -522,9 +523,9 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 # Local Administration: each settled system's, one file each
 # (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
 LOCAL = "LocalAdministration"
-ZONE_USES = ["port", "industrial", "commercial", "civic", "residential", "agricultural"]
+ZONE_USES = ["port", "industrial", "commercial", "civic", "residential", "agricultural", "mining"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port", "farm": "agricultural", "food works": "industrial", "store": "port", "utility": "industrial"}
+FACILITY_ZONE = {"foundry": "industrial", "mine": "mining", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port", "farm": "agricultural", "food works": "industrial", "store": "port", "utility": "industrial"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -737,7 +738,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange", "stock"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange", "stock", "claim"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -1403,6 +1404,28 @@ for ad in administrations:
                 out = sum(ln["most"]["output"] + sum(i["rate"] for i in ln["most"]["by_products"]) for ln in fc.get("lines") or [] if "most" in ln)
                 if room and out:
                     fc["fills"] = {"holds": room, "rate": out, "days": room / out / 24}
+            if "claim" in fc:
+                # (The deposit is the survey's, or the energy package's, of the body the settlement is at: a permanent id.)
+                _dep = str(fc["claim"].get("deposit", ""))
+                _body_key = x.get("at_key") or (yaml.safe_load(open(os.path.join(TREE, "LocalAdministration", "metadata", "administrations", ad["slug"], x["slug"] + ".yaml"), encoding="utf-8")) or {}).get("at")
+                _brec = next((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in glob.glob(os.path.join(TREE, "Celestial", "metadata", "systems", "*", "bodies", "*.yaml")) if (yaml.safe_load(open(f__, encoding="utf-8")) or {}).get("identity", {}).get("key") == _body_key), {})
+                _ids = set()
+                if _brec.get("survey"):
+                    _sd = os.path.join(TREE, "..", _brec["survey"]["folder"])
+                    for _fn, _k in (("deposits.geojson", "features"),):
+                        _pth = os.path.join(_sd, _fn)
+                        if os.path.isfile(_pth):
+                            _ids |= {f_["properties"]["id"] for f_ in json.load(open(_pth, encoding="utf-8"))[_k]}
+                    if _brec.get("energy"):
+                        _ed = os.path.join(TREE, "..", _brec["energy"]["folder"])
+                        if os.path.isfile(os.path.join(_ed, "fields.geojson")):
+                            _ids |= {f_["properties"]["id"] for f_ in json.load(open(os.path.join(_ed, "fields.geojson"), encoding="utf-8"))["features"]}
+                        if os.path.isfile(os.path.join(_ed, "coalfields.json")):
+                            _ids |= {c_["id"] for c_ in json.load(open(os.path.join(_ed, "coalfields.json"), encoding="utf-8"))}
+                    if _dep not in _ids:
+                        problem(where, f"claim.deposit: no deposit, field or coalfield '{_dep}' in the survey of {_body_key}")
+                else:
+                    problem(where, f"claim: {_body_key or 'its body'} is not baked: no survey to claim a deposit in")
             if "exchange" in fc and (fc["exchange"] not in BRANDS or next((m for m in makers if m["key"] == fc["exchange"]), {}).get("business") != "exchange"):
                 problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):

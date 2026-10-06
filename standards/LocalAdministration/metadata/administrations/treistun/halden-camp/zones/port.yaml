@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../../../../schema/zone.schema.yaml
+# Invented: the strip and its yard south of the pit.
+identity:
+  key: zone.treistun.halden-camp.port
+  name: Strip
+use: port
+outline: [[-600, -2800], [600, -2800], [600, -1600], [-600, -1600]]
