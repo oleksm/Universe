@@ -25,15 +25,39 @@
 
 use glam::DVec3;
 
-/// A member's cross-section: a round tube or bar.
+/// A member's cross-section: a round tube or bar; or a flat strip (of a plate: its
+/// width and its thickness, bending across its thickness).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Section {
     /// Its outer diameter and wall (m; a bar: its wall half its diameter).
     pub diameter: f64,
     pub wall: f64,
+    /// A flat strip's width and thickness (m), in place of the round's.
+    pub flat: Option<(f64, f64)>,
 }
 
 impl Section {
+    /// A round tube (a bar: its wall half its diameter).
+    pub fn round(diameter: f64, wall: f64) -> Self {
+        Section { diameter, wall, flat: None }
+    }
+
+    /// A flat strip `width` wide, `thickness` thick.
+    pub fn strip(width: f64, thickness: f64) -> Self {
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, thickness)) }
+    }
+
+    /// How far its surface is from its middle, bending (m).
+    pub fn reach(&self) -> f64 {
+        self.flat.map_or(self.diameter * 0.5, |(_, t)| t * 0.5)
+    }
+
+    /// Its torsion constant (m⁴): a round's twice its second moment; a thin
+    /// strip's a third of its width by its thickness cubed.
+    pub fn torsion(&self) -> f64 {
+        self.flat.map_or_else(|| 2.0 * self.inertia(), |(b, t)| b * t.powi(3) / 3.0)
+    }
+
     fn radii(&self) -> (f64, f64) {
         let ro = self.diameter * 0.5;
         (ro, (ro - self.wall).max(0.0))
@@ -41,13 +65,19 @@ impl Section {
 
     /// Its area (m²).
     pub fn area(&self) -> f64 {
+        if let Some((b, t)) = self.flat {
+            return b * t;
+        }
         let (ro, ri) = self.radii();
         std::f64::consts::PI * (ro * ro - ri * ri)
     }
 
-    /// Its second moment of area about a line across it (m⁴); twice that is its
-    /// torsion constant, a round section's.
+    /// Its second moment of area about a line across it (m⁴; a strip's, bending
+    /// across its thickness, the weak way: taken for both).
     pub fn inertia(&self) -> f64 {
+        if let Some((b, t)) = self.flat {
+            return b * t.powi(3) / 12.0;
+        }
         let (ro, ri) = self.radii();
         std::f64::consts::PI / 4.0 * (ro.powi(4) - ri.powi(4))
     }
@@ -136,7 +166,7 @@ pub struct Loose;
 /// Its stress at the surface (Pa): its pull or push over its area, and its
 /// bending at its outer edge.
 fn stress(f: &Forces, s: &Section) -> f64 {
-    f.axial.abs() / s.area() + f.bending * s.diameter * 0.5 / s.inertia()
+    f.axial.abs() / s.area() + f.bending * s.reach() / s.inertia()
 }
 
 /// How hard member `m` is worked by `f`, `length` long, with safety factor `sf`.
@@ -280,7 +310,7 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
     let t = [x.to_array(), y.to_array(), z.to_array()];
     let (e, g) = (m.material.stiffness, m.material.shear);
     let (a, i) = (m.section.area(), m.section.inertia());
-    let j = 2.0 * i;
+    let j = m.section.torsion();
     let mut k = [[0.0; 12]; 12];
     let mut set = |r: usize, c: usize, v: f64| {
         k[r][c] += v;
@@ -361,7 +391,7 @@ mod tests {
     use super::*;
 
     const STEEL: Material = Material { stiffness: 200e9, shear: 77e9, yield_strength: 1300e6, tensile_strength: 1420e6, density: 7850.0 };
-    const TUBE: Section = Section { diameter: 0.15, wall: 0.01 };
+    const TUBE: Section = Section { diameter: 0.15, wall: 0.01, flat: None };
 
     /// A cantilever bends as the textbook has it (tip load P, length L: the
     /// moment at its root P L), a column pulled carries its load, and one past

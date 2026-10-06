@@ -191,6 +191,9 @@ pub struct Interior {
     /// stations' spacing (m); AUTO-SIZE being worked out (for which plan).
     truss_mode: bool,
     truss_from: Option<Vec3>,
+    /// DECK: laying decks (their first corner, once clicked).
+    deck_mode: bool,
+    deck_from: Option<Vec3>,
     depth: f32,
     spacing: f32,
     sizing: Option<(Plan, mpsc::Receiver<Sized>)>,
@@ -351,7 +354,76 @@ struct Plan {
     /// hull has.
     #[serde(default)]
     pads: Vec<Vec3>,
+    /// Its decks: plates laid level, borne by the frame they touch.
+    #[serde(default)]
+    plates: Vec<Plate>,
+    /// The gravity it's designed to land in (m/s²; not said: a standard g).
+    #[serde(default)]
+    gravity: Option<f64>,
 }
+
+impl Plan {
+    /// The gravity it's designed to land in (m/s²).
+    fn gravity(&self) -> f64 {
+        self.gravity.unwrap_or(STANDARD_G)
+    }
+}
+
+/// A deck: a plate laid level at height `y` from `lo` to `hi` (x, z), cut from plate
+/// stock (by its key in the registry).
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct Plate {
+    lo: Vec2,
+    hi: Vec2,
+    y: f32,
+    stock: String,
+}
+
+/// Plate stock a deck can be cut from: the registry's plates and sheets whose
+/// material says how it bears; its thickness (m), what it's made of, its mass a
+/// square metre (kg).
+#[derive(Clone)]
+pub struct PlateStock {
+    key: String,
+    of: String,
+    thickness: f64,
+    material: universe_sim::world::frame::Material,
+    per_square_metre: f64,
+}
+
+fn plate_stocks() -> &'static [PlateStock] {
+    static PLATES: std::sync::OnceLock<Vec<PlateStock>> = std::sync::OnceLock::new();
+    PLATES.get_or_init(|| {
+        use universe_sim::world::frame::Material;
+        let reg = universe_sim::world::registry::registry();
+        let mut out: Vec<PlateStock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "plate" | "sheet") && !s.identity.code.ends_with("BLANK") && !s.identity.code.ends_with("PANEL")).filter_map(|s| {
+            let t = s.size.thickness?;
+            let of = &s.made_from.first()?.item;
+            let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
+            let k = &m.mechanical;
+            let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
+            let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
+            Some(PlateStock { key: s.identity.key.clone(), of: of.clone(), thickness: t, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
+        }).collect();
+        out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_square_metre.total_cmp(&b.per_square_metre)));
+        out
+    })
+}
+
+/// A deck's grid: its points, about 2 m apart each way (`nx` + 1 along x by `nz` + 1
+/// along z, row by row along x), and the spacing each way.
+fn plate_grid(p: &Plate) -> (Vec<Vec3>, usize, usize, f32, f32) {
+    let (w, d) = ((p.hi.x - p.lo.x).abs().max(0.1), (p.hi.y - p.lo.y).abs().max(0.1));
+    let (nx, nz) = (((w / 2.0).ceil() as usize).max(1), ((d / 2.0).ceil() as usize).max(1));
+    let (dx, dz) = (w / nx as f32, d / nz as f32);
+    let (x0, z0) = (p.lo.x.min(p.hi.x), p.lo.y.min(p.hi.y));
+    let nodes = (0..=nz).flat_map(|j| (0..=nx).map(move |i| Vec3::new(x0 + i as f32 * dx, p.y, z0 + j as f32 * dz))).collect();
+    (nodes, nx, nz, dx, dz)
+}
+
+/// The load a deck is designed to carry on top of its own weight (kg a square
+/// metre: a crowd, or stores stacked; a figure chosen).
+const DECK_LOAD: f64 = 500.0;
 
 /// The hull plan `plan` is designed in, if any.
 fn hull_of(plan: &Plan) -> Option<&'static universe_sim::world::ship::ClassSpec> {
@@ -426,7 +498,7 @@ fn stocks() -> &'static [Stock] {
         let reg = universe_sim::world::registry::registry();
         let mut out: Vec<Stock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "tube" | "bar")).filter_map(|s| {
             let d = s.size.diameter?;
-            let section = Section { diameter: d, wall: s.size.wall.unwrap_or(d * 0.5).min(d * 0.5) };
+            let section = Section::round(d, s.size.wall.unwrap_or(d * 0.5).min(d * 0.5));
             let of = &s.made_from.first()?.item;
             let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
             let k = &m.mechanical;
@@ -464,9 +536,17 @@ pub struct Bearing {
     /// Which of the frame's members each of the plan's is (none: left out, its stock
     /// unknown or its ends one joint).
     index: Vec<Option<usize>>,
+    /// Each deck's strips: its deck, its ends, its width (m), which of the frame's
+    /// members it is.
+    strips: Vec<(usize, Vec3, Vec3, f32, usize)>,
 }
 
 impl Bearing {
+    /// How the frame's member `m` does in each case.
+    fn of_member(&self, m: usize) -> Vec<&universe_sim::world::frame::Outcome> {
+        self.cases.iter().filter_map(|(_, r)| r.as_ref().ok()).filter_map(|c| c.members.get(m)).collect()
+    }
+
     /// How the plan's member `k` does in each case it could be worked out in.
     fn outcomes(&self, k: usize) -> Vec<&universe_sim::world::frame::Outcome> {
         let Some(Some(m)) = self.index.get(k) else { return Vec::new() };
@@ -622,9 +702,9 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     (beams, added)
 }
 
-/// The members as AUTO-SIZE leaves them, the rounds it took, and how many need more
-/// than the biggest tube their material comes in.
-type Sized = (Vec<Beam>, usize, usize);
+/// The members and decks as AUTO-SIZE leaves them, the rounds it took, and how many
+/// need more than the biggest tube (or plate) their material comes in.
+type Sized = (Vec<Beam>, Vec<Plate>, usize, usize);
 
 /// The plan's members sized: each round every load case worked out, and each
 /// member cut from the lightest tube of its material that would carry the forces
@@ -633,6 +713,7 @@ type Sized = (Vec<Beam>, usize, usize);
 /// changes (or `ROUNDS`; after the sixth, only bigger). The members, and the
 /// rounds it took.
 fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, mix: bool) -> Sized {
+    // (Its decks' plates sized too: they come back with the plan's members.)
     use universe_sim::world::frame::{work, Member};
     let sf = 1.5;
     // (Each material's tubes its own ladder; MIX: every tube, any material.)
@@ -644,9 +725,9 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
     };
     let mut plan = plan.clone();
     for round in 1..=ROUNDS {
-        let b = bearing(&plan, fit, spec, STANDARD_G);
+        let b = bearing(&plan, fit, spec, plan.gravity());
         if !b.cases.iter().any(|(_, r)| r.is_ok()) {
-            return (plan.beams, round, 0);
+            return (plan.beams, plan.plates, round, 0);
         }
         let mut changed = false;
         let mut maxed = 0;
@@ -671,11 +752,27 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
                 changed = true;
             }
         }
+        // (Each deck: the lightest plate of its material whose strips carry their
+        // forces at four fifths of their limit; none, the thickest.)
+        for (n, plate) in plan.plates.iter_mut().enumerate() {
+            let Some(now) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
+            let strips: Vec<_> = b.strips.iter().filter(|s| s.0 == n).collect();
+            let needed = |ps: &PlateStock| strips.iter().flat_map(|&&(_, a, e, w, m)| b.of_member(m).into_iter().map(move |o| work(&Member { a: 0, b: 1, section: universe_sim::world::frame::Section::strip(f64::from(w), ps.thickness), material: ps.material }, o.work.forces, f64::from(a.distance(e)), sf).design)).fold(0.0, f64::max);
+            let ladder: Vec<&PlateStock> = plate_stocks().iter().filter(|s| s.of == now.of).collect();
+            let pick = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
+                maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
+                ladder.last().copied()
+            });
+            if let Some(pick) = pick.filter(|p| p.key != plate.stock && (round <= 6 || p.per_square_metre > now.per_square_metre)) {
+                plate.stock = pick.key.clone();
+                changed = true;
+            }
+        }
         if !changed || round == ROUNDS {
-            return (plan.beams, round, maxed);
+            return (plan.beams, plan.plates, round, maxed);
         }
     }
-    (plan.beams, ROUNDS, 0)
+    (plan.beams, plan.plates, ROUNDS, 0)
 }
 
 /// The most rounds AUTO-SIZE takes.
@@ -765,6 +862,54 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         // (A member's own weight: half at each end.)
         weight.extend([(ja, mass * 0.5), (jb, mass * 0.5)]);
         frame.members.push(m);
+    }
+    // Its decks: each a grid of strips of its plate, both ways, carrying its own
+    // weight and its design load at its grid's points; each point tied to a joint
+    // of the frame within half a metre of it (by a fitting: the stoutest steel tube).
+    let frame_joints = joints.len();
+    let fitting = stocks().iter().filter(|s| s.of.contains("4340") && s.section.wall < s.section.diameter * 0.5).max_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+    for (n, plate) in plan.plates.iter().enumerate() {
+        let Some(ps) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
+        let (nodes, nx, nz, dx, dz) = plate_grid(plate);
+        let at: Vec<usize> = nodes.iter().map(|&q| joint(q, &mut joints)).collect();
+        let node = |i: usize, j: usize| at[j * (nx + 1) + i];
+        let strip = |a: usize, b: usize, width: f32, frame: &mut Frame, out: &mut Bearing| {
+            out.strips.push((n, joints[a], joints[b], width, frame.members.len()));
+            frame.members.push(Member { a, b, section: universe_sim::world::frame::Section::strip(f64::from(width), ps.thickness), material: ps.material });
+        };
+        for j in 0..=nz {
+            for i in 0..nx {
+                strip(node(i, j), node(i + 1, j), dz, &mut frame, &mut out);
+            }
+        }
+        for i in 0..=nx {
+            for j in 0..nz {
+                strip(node(i, j), node(i, j + 1), dx, &mut frame, &mut out);
+            }
+        }
+        // (Each point's share of the deck: a quarter at a corner, a half on an edge.)
+        let area = f64::from(dx * dz);
+        let mut touched = false;
+        for j in 0..=nz {
+            for i in 0..=nx {
+                let edge = |k: usize, n: usize| if k == 0 || k == n { 0.5 } else { 1.0 };
+                let m = area * edge(i, nx) * edge(j, nz) * (ps.per_square_metre + DECK_LOAD);
+                let p = node(i, j);
+                weight.push((p, m));
+                out.mass += area * edge(i, nx) * edge(j, nz) * ps.per_square_metre;
+                if let Some(q) = (0..frame_joints).filter(|&q| q != p && joints[q].distance(joints[p]) <= 0.6).min_by(|&a, &b| joints[a].distance(joints[p]).total_cmp(&joints[b].distance(joints[p]))) {
+                    if let Some(f) = fitting {
+                        frame.members.push(Member { a: p, b: q, section: f.section, material: f.material });
+                    }
+                    touched = true;
+                } else if p < frame_joints {
+                    touched = true;
+                }
+            }
+        }
+        if !touched {
+            out.loose.push(format!("DECK {} TOUCHES NO STRUCTURE", n + 1));
+        }
     }
     frame.joints = joints.iter().map(|p| p.as_dvec3()).collect();
     out.joints = joints.clone();
@@ -2245,7 +2390,7 @@ impl Interior {
             }
             None => Vec::new(),
         };
-        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new() };
+        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new(), plates: Vec::new(), gravity: None };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
@@ -2302,14 +2447,14 @@ impl Interior {
     /// Is something in progress (to cancel): a module picked, a path, member or truss
     /// being laid, TRUSS waiting for its corners, a member picked, WALK HERE armed?
     fn in_progress(&self) -> bool {
-        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.beam_pick.is_some() || self.walk_armed
+        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.deck_mode || self.beam_pick.is_some() || self.walk_armed
     }
 
     /// What's in progress cancelled; was anything?
     fn cancel(&mut self) -> bool {
         let any = self.in_progress();
         (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
-        (self.truss_mode, self.walk_armed) = (false, false);
+        (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from) = (false, false, false, None);
         any
     }
 
@@ -2392,6 +2537,13 @@ impl Interior {
             for k in 1..q.len().saturating_sub(1) {
                 faces.push(([q[0], q[k], q[k + 1]], Color(c)));
             }
+        }
+        // Its decks: floors.
+        for plate in &self.plan.plates {
+            let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
+            let colour = Color([0.6, 0.55, 0.45, 1.0]);
+            faces.push(([c[0], c[1], c[2]], colour));
+            faces.push(([c[0], c[2], c[3]], colour));
         }
         // Its modules: solid, but an airlock a passage and a ramp a slope.
         let airlocks: Vec<&Block> = self.plan.blocks.iter().filter(|b| kind_of(b) == "airlock").collect();
@@ -2514,7 +2666,7 @@ fn in_rooms(s: &Stand, p: Vec3) -> bool {
 /// The test stand walked for a frame: WASD, the arrows or a drag to look, SPACE to
 /// jump, SHIFT to run (up a shaft: forward climbs, looking down goes down); ESC
 /// back to the studio.
-fn stand_input(ctx: &Context, s: &mut Stand) {
+fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
     use universe_engine::glam::DVec3;
     use universe_sim::world::walk::{Collider, Stride, Walker};
     let input = &ctx.input;
@@ -2546,7 +2698,7 @@ fn stand_input(ctx: &Context, s: &mut Stand) {
     });
     let colliders = [Collider::Mesh { mesh: &s.mesh, at: DVec3::ZERO, rot: universe_engine::glam::DQuat::IDENTITY }];
     let mut w = Walker { feet: s.feet, velocity: s.velocity };
-    w.step(&colliders, &|_| DVec3::Y, STANDARD_G, &climbable, &Stride { wish, jump, climb }, dt);
+    w.step(&colliders, &|_| DVec3::Y, g, &climbable, &Stride { wish, jump, climb }, dt);
     s.feet = w.feet;
     s.velocity = w.velocity;
 }
@@ -2898,6 +3050,11 @@ enum Action {
     Brace,
     /// AUTO-SIZE free to pick any material (or each member's own).
     Mix,
+    /// Laying decks (two corners on the plane; a click on one: gone), or not.
+    Deck,
+    /// The design's gravity down or up a tenth of a g.
+    GravityDown,
+    GravityUp,
     /// Laying a truss (two clicks: its corners on the plane), or not.
     Truss,
     /// Every placed module the frame doesn't hold mounted to it.
@@ -3134,9 +3291,13 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     let t = |kg: f64| format!("{:.1} T", kg / 1000.0);
     lines.push((format!("MASS  DRY {}  FULL {}  (FRAME {})", t(dry), t(full), t(frame_mass)), true));
     let lift: f64 = of("lift").map(|p| num(&p.3, "thrust")).sum();
+    // (Against its weight in the gravity it's designed for; and the strongest
+    // gravity it can lift itself in, full.)
+    let design = i.plan.gravity();
     if lift > 0.0 {
-        let g = lift / (full * STANDARD_G);
-        lines.push((format!("LIFT  {}: {g:.2} OF ITS FULL WEIGHT AT 1 G", si(lift, "N")), g > 1.0));
+        let g = lift / (full * design);
+        let most = lift / (full * STANDARD_G);
+        lines.push((format!("LIFT  {}: {g:.2} OF ITS FULL WEIGHT AT {:.2} G; HOVERS FULL UP TO {most:.2} G", si(lift, "N"), design / STANDARD_G), g > 1.0));
     }
     let supply: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
     let draw: f64 = placed.iter().map(|p| p.4).sum();
@@ -3396,6 +3557,8 @@ fn bearers(i: &Interior) -> Vec<Vec3> {
 /// within 10 px of it on screen.
 fn frame_snap(i: &Interior, cam: &Camera, q: Vec2) -> Option<Vec3> {
     let mut at: Vec<Vec3> = i.plan.beams.iter().flat_map(|b| [b.a, b.b]).collect();
+    // (A deck's grid points: to hold it up from.)
+    at.extend(i.plan.plates.iter().flat_map(|p| plate_grid(p).0));
     at.extend(bearers(i));
     at.into_iter().filter_map(|p| cam.project(p).map(|(s, _)| (p, s.distance(q)))).filter(|(_, d)| *d < 10.0).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(p, _)| p)
 }
@@ -3441,7 +3604,9 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             let w4 = (c.x - 16.0 - 18.0) / 4.0;
             let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix)]).collect()
+            // (DESIGN GRAVITY's - and +: small, at the end of its row.)
+            let small = |x: f32| (Vec2::new(p.x + c.x - 8.0 - x, p.y + 294.0), Vec2::new(20.0, 13.0));
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "DECK", Action::Deck), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -3745,7 +3910,8 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         if input.pressed(KeyCode::Escape) {
             interior.stand = None;
         } else {
-            stand_input(ctx, s);
+            let g = interior.plan.gravity();
+            stand_input(ctx, s, g);
         }
         return true;
     }
@@ -3875,13 +4041,14 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // AUTO-SIZE done: its members put in (an undo step), if the plan's as it was.
     if let Some((plan, rx)) = &interior.sizing
-        && let Ok((beams, rounds, maxed)) = rx.try_recv()
+        && let Ok((beams, plates, rounds, maxed)) = rx.try_recv()
     {
         if *plan == interior.plan {
             let before = interior.plan.clone();
             let mass = |bs: &[Beam]| bs.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>();
             let (was, now) = (mass(&before.beams), mass(&beams));
             interior.plan.beams = beams;
+            interior.plan.plates = plates;
             interior.undo.push(before);
             interior.redo.clear();
             let short = if maxed > 0 { format!("; {maxed} NEED MORE THAN THEIR MATERIAL'S BIGGEST TUBE: TRY ANOTHER") } else { String::new() };
@@ -3904,7 +4071,8 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         let (tx, rx) = mpsc::channel();
         let snapshot = plan.clone();
         job("studio-frame", move || {
-            tx.send(bearing(&plan, &fit, spec, STANDARD_G)).ok();
+            let g = plan.gravity();
+            tx.send(bearing(&plan, &fit, spec, g)).ok();
         });
         interior.bearing_job = Some((snapshot, rx));
     }
@@ -4030,10 +4198,18 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             }
             if action == Some(Action::Truss) {
                 interior.truss_mode = !interior.truss_mode;
-                (interior.beam_from, interior.truss_from) = (None, None);
+                (interior.deck_mode, interior.beam_from, interior.truss_from, interior.deck_from) = (false, None, None, None);
             }
             if action == Some(Action::Mix) {
                 interior.mix = !interior.mix;
+            }
+            if action == Some(Action::Deck) {
+                interior.deck_mode = !interior.deck_mode;
+                (interior.truss_mode, interior.beam_from, interior.truss_from, interior.deck_from) = (false, None, None, None);
+            }
+            if let Some(a @ (Action::GravityDown | Action::GravityUp)) = action {
+                let g = interior.plan.gravity() / STANDARD_G + if a == Action::GravityUp { 0.1 } else { -0.1 };
+                interior.plan.gravity = Some((g * 10.0).round().clamp(1.0, 30.0) / 10.0 * STANDARD_G);
             }
             // (BRACE: what's past its limit as last worked out, braced.)
             if action == Some(Action::Brace) {
@@ -4307,6 +4483,23 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             // FRAME: a click at a joint or a bearer (else on the work plane) ends the
             // member being laid there and starts the next from it; not laying one, a
             // click on a member picks it, else starts one.
+            // (DECK: on a deck at the plane's height, it's taken up; else its first
+            // corner, then its second: the deck laid between, of the lightest plate.)
+            Tool::Frame if interior.deck_mode => {
+                if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
+                    let on = interior.plan.plates.iter().position(|p| (p.y - at.y).abs() < 0.3 && at.x >= p.lo.x.min(p.hi.x) && at.x <= p.lo.x.max(p.hi.x) && at.z >= p.lo.y.min(p.hi.y) && at.z <= p.lo.y.max(p.hi.y));
+                    match (on, interior.deck_from.take()) {
+                        (Some(k), None) => {
+                            interior.plan.plates.remove(k);
+                        }
+                        (_, None) => interior.deck_from = Some(at),
+                        (_, Some(from)) => {
+                            let stock = plate_stocks().iter().find(|s| s.key.contains("al6061-pl")).or(plate_stocks().first()).map_or(String::new(), |s| s.key.clone());
+                            interior.plan.plates.push(Plate { lo: Vec2::new(from.x, from.z), hi: Vec2::new(at.x, at.z), y: from.y, stock });
+                        }
+                    }
+                }
+            }
             // (TRUSS: its first corner, then its second: the truss laid between.)
             Tool::Frame if interior.truss_mode => {
                 if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
@@ -4738,6 +4931,20 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             }
             Some(Hover::Point(_)) => {}
             // (FRAME: where a click would join, and the member being laid to it.)
+            // (DECK: from its first corner to the cursor, its plate.)
+            None if interior.tool == Tool::Frame && interior.deck_mode => {
+                if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
+                    let from = interior.deck_from.unwrap_or(to);
+                    let c = [Vec3::new(from.x, from.y, from.z), Vec3::new(to.x, from.y, from.z), Vec3::new(to.x, from.y, to.z), Vec3::new(from.x, from.y, to.z)];
+                    for k in 0..4 {
+                        seg(frame, c[k], c[(k + 1) % 4], PICKED.scale(0.7));
+                    }
+                    if let Some((q, _)) = cam.project(to) {
+                        let text = if interior.deck_from.is_some() { format!("DECK {:.1} X {:.1} M", (to.x - from.x).abs(), (to.z - from.z).abs()) } else { "FIRST CORNER (ON A DECK: TAKE IT UP)".to_string() };
+                        frame.text_scaled(q + Vec2::new(10.0, 6.0), &text, PICKED, 0.7);
+                    }
+                }
+            }
             // (TRUSS: from its first corner to the cursor, its box.)
             None if interior.tool == Tool::Frame && interior.truss_mode => {
                 if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
@@ -4934,6 +5141,27 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 }
             }
         }
+        // (The decks: each plate faint, its strips coloured as members are.)
+        for plate in &plan.plates {
+            let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
+            if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
+                let fill = [Color([0.85, 0.75, 0.5, 0.12]); 3];
+                frame.hud_triangle_colored([a, b, cc], fill);
+                frame.hud_triangle_colored([a, cc, d], fill);
+            }
+        }
+        if let Some(b) = &bearing {
+            for &(_, sa, sb, _, m) in &b.strips {
+                let os: Vec<_> = b.of_member(m).into_iter().filter(|_| true).collect();
+                let pick: Vec<_> = match interior.case {
+                    Some(c) => b.cases.get(c).and_then(|c| c.1.as_ref().ok()).and_then(|c| c.members.get(m)).into_iter().collect(),
+                    None => os,
+                };
+                let (u, broken) = (pick.iter().map(|o| o.work.design).fold(0.0, f64::max), pick.iter().any(|o| o.broken.is_some()));
+                let col = if broken { CLASH } else if u >= 1.0 { Color([1.0, 0.3, 0.25, 1.0]) } else if u >= 0.5 { Color([1.0, 0.7, 0.2, 1.0]) } else { Color([0.4, 1.0, 0.5, 0.8]) };
+                seg(frame, sa, sb, col);
+            }
+        }
         if interior.tool == Tool::Frame {
             use universe_sim::world::shape::Role;
             use universe_sim::world::ship::ThrusterRole;
@@ -5122,7 +5350,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             for (r, name, a) in panel_buttons(Tool::Frame) {
                 let lamp = if a == Action::AutoSize && interior.sizing.is_some() {
                     Lamp::Busy
-                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::Mix && interior.mix) || (a == Action::Truss && interior.truss_mode) {
+                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::Mix && interior.mix) || (a == Action::Truss && interior.truss_mode) || (a == Action::Deck && interior.deck_mode) {
                     Lamp::On
                 } else {
                     Lamp::Off
@@ -5131,6 +5359,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 let name = if a == Action::AutoSize && interior.sizing.is_some() { "SIZING..." } else { name };
                 draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
             }
+            // (The gravity it's designed to land in.)
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 296.0), &format!("DESIGN GRAVITY {:.1} G", interior.plan.gravity() / STANDARD_G), LABEL, 0.6);
             // (The next truss's depth and its stations' spacing: a slider each.)
             for (k, (at, len)) in sliders(Tool::Frame).into_iter().enumerate() {
                 let (name, v) = if k == 0 { ("TRUSS DEPTH", interior.depth) } else { ("SPACING", interior.spacing) };
@@ -5345,7 +5575,9 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     // The budgets (MODULES, FRAME): under the panel, each met in green, short in
     // amber; what fails, in red.
     if matches!(interior.tool, Tool::Modules | Tool::Frame | Tool::Door) && (!plan.blocks.is_empty() || !plan.groups.is_empty()) {
-        let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum();
+        // (The frame's mass: its members and its decks' plates.)
+        let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>()
+            + plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum::<f64>();
         let b = budget(interior, frame_mass);
         let (pp, pc) = PANEL;
         let rows = b.lines.len() + b.faults.len().min(4);
