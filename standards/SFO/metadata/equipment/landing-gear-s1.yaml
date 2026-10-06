@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.gear.strut.s1
+  name: "Landing gear S1"
+  maker: org.kestrel
+  revision: draft
+  slot: gear
+  description: "One landing leg, an oleo strut on a pad: a 40 t ship on four legs."
+size_class: 1
+fits: mount.gear-s1
+physical:
+  mass: 480
+  volume: 1.94
+  length: 0.88
+  width: 0.88
+  height: 2.5
+built_of:
+  parts: landing-gear-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: landing_gear
+  holds: 400000
+  stroke: 0.6
+  efficiency: 0.8
+  sink_rate: 3.05
+  extended: 2.5
+basis:
+  - { of: [function.holds, size_class], tier: invented, review: true, note: "Sized for a 40 t ship on four legs: the ship's weight at 1.5 g on its legs, the airliner rule (14 CFR 25.473), with the lightest ship of the class on four legs." }
+  - { of: [physical.mass], tier: derived, review: true, note: "1.2 kg a kN of leg load: an A320's main leg, about 700 kg for 574 kN (78 t at 1.5 g on two legs), from memory. Not sourced." }
+  - { of: [function.stroke, function.efficiency, function.sink_rate], tier: sourced, source: "https://www.ecfr.gov/current/title-14/section-25.473", note: "The sink rate is the airliner design case, 10 ft/s; the oleo's efficiency 0.8 (the hull's design.strut_efficiency); the stroke chosen longer with size." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, function.extended], tier: invented, review: true, note: "A leg about a third as wide as it is long, gear down; the MC-07's front leg stands 9 m (its model), between S2 and S3." }

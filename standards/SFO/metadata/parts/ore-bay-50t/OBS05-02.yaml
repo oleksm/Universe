@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.obs05-02
+  code: OBS05-02
+  name: "Wear liners"
+  revision: draft
+  description: "Hard plates bolted inside where the rock lands and slides."
+physical:
+  mass: 1000
+  length: 2.713
+  width: 1.357
+  height: 1.357
+made_from:
+  - item: stock.st4340-pl-3
+    quantity: 1150.0
+making:
+  module: module.cutting-table
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the bay (20%): shell, liners, doors, gate and frame, as a haul truck's body divides, from memory. Not sourced." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Ore bay 50 t: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

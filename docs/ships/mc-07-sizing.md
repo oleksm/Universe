@@ -7,7 +7,7 @@ settle (it changes how the ship flies).*
 ## What a mining ship must do
 
 Leave a port, reach the belt, fill its hold, come back, and set the ore down. For the MC-07 of
-Port Trethi (on Treistun f, 1.13 AU from the star, no air, 4.06 m/s2 at the ground), with the main
+Port Trethi (on Rime, 1.13 AU from the star, no air, 4.06 m/s2 at the ground), with the main
 belt 0.8 AU from the star: the belt is 0.35 AU away at the nearest and about 2 AU on the far side.
 
 The ship by its record: 154 t of structure and equipment, a hold of 1,200 t of ore, a tank of 4 t
@@ -23,16 +23,16 @@ as much again.
 | Where | Pull at the ground | Lift needed, empty | Lift needed, hold full |
 |---|---|---|---|
 | The moons with ports (Aipika, Fabindum, Seiwiti, Sirnendis, Weisonum) | 1.1 to 2.2 m/s2 | 0.5 MN | 4.4 MN |
-| Port Trethi (Treistun f) | 4.06 | 1.0 MN | 8.3 MN |
+| Port Trethi (Rime) | 4.06 | 1.0 MN | 8.3 MN |
 | Port Zaudalein, Port Nacaubun, Port Eikir (b, e, d) | 9.4 to 10.5 | 2.2 to 2.5 MN | 19 to 21 MN |
-| Port Lisaur (Treistun c) | 16.4 | 3.9 MN | 33 MN |
+| Port Lisaur (Anvil) | 16.4 | 3.9 MN | 33 MN |
 
 **Fitted: 1.32 MN** (six nozzles of 220 kN). It lifts the empty ship from the moons and, barely,
 from Port Trethi. It cannot bring a full hold down anywhere but a small moon, nor land empty on
 any of the four large worlds.
 
 The size 3 lift its slot takes gives 9.6 MN: a full hold onto Port Trethi and every moon, and the
-empty ship onto any world but Treistun c.
+empty ship onto any world but Anvil.
 
 ## 2. The tank: a full hold goes nowhere
 

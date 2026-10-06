@@ -463,8 +463,9 @@ let c = Content { shapes, materials, brands, structures, modules, hulls, goods, 
     }
 
     /// The ground recorded for the settlement `name` on `body` in `system`, if any.
+    /// A settlement by its system's name, its body's key and its own name.
     pub fn settlement(&self, system: &str, body: &str, name: &str) -> Option<&crate::settlements::Settlement> {
-        self.settlements.iter().find(|s| s.system.eq_ignore_ascii_case(system) && s.body.eq_ignore_ascii_case(body) && s.name.eq_ignore_ascii_case(name))
+        self.settlements.iter().find(|s| s.system.eq_ignore_ascii_case(system) && s.body == body && s.name.eq_ignore_ascii_case(name))
     }
 
     /// The entries in one file across the packs, in order.

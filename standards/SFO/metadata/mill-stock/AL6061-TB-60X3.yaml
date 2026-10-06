@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-tb-60x3
+  code: AL6061-TB-60X3
+  name: "6061 tube 60 x 3 mm"
+  traded_as: market.metals
+  form: tube
+  temper: "T6"
+made_from:
+  - item: material.aluminium-alloy-6061
+size:
+  diameter: 0.06
+  wall: 0.003
+basis:
+  - { of: [size], tier: invented, review: true, note: "A rung of the member ladder (SFO 13): round tubes a spaceframe is cut from, 1.45 kg a metre. Thin walls for struts, thick for chords and legs; a designer's sizing loop climbs it." }

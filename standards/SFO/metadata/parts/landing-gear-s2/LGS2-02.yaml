@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.lgs2-02
+  code: LGS2-02
+  name: "Outer tube"
+  revision: draft
+  description: "The column that carries the leg load into the hull."
+physical:
+  mass: 432
+  length: 0.937
+  width: 0.937
+  height: 2.678
+made_from:
+  - item: stock.st4340-tb-200x15
+    quantity: 496.8
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+limits:
+  load_case: landing
+  design_load: 1.2e+06
+  safety_factor: 1.5
+  failure: critical
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (30%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Landing gear S2: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

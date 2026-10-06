@@ -18,6 +18,10 @@ capacity:
   hold: 1200000
 model: assets/models/mc07.glb
 slots:
+  - { name: gear_0, kind: gear, size: 2, mount: mount.gear-s2 }
+  - { name: gear_1, kind: gear, size: 2, mount: mount.gear-s2 }
+  - { name: gear_2, kind: gear, size: 2, mount: mount.gear-s2 }
+  - { name: gear_3, kind: gear, size: 2, mount: mount.gear-s2 }
   - { name: power, kind: power, size: 3, mount: mount.power-s3 }
   - { name: drive, kind: drive, size: 3, mount: mount.drive-s3 }
   - { name: thrusters, kind: thrusters, size: 3, mount: mount.thrusters-s3 }

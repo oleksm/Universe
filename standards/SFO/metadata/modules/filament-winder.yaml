@@ -1,0 +1,133 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.filament-winder
+  name: Filament winder
+  step: Wind carbon tube
+  description: "Lays resin-wet carbon tow round a turning mandrel at set angles, then cures the tube in an oven and draws the mandrel."
+physical:
+  length: 30
+  width: 8
+  height: 5
+recipes:
+  - makes: stock.cfc-tb-60x2
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-60x3
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-80x2
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-80x3
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-100x2
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-100x3
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-100x5
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-120x3
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-120x5
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-160x3
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-160x5
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-200x5
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-200x8
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-250x5
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+  - makes: stock.cfc-tb-250x8
+    does: "Carbon tow wound wet round a mandrel and cured."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.02
+    power: 2000000
+basis:
+  - { of: [physical, recipes], tier: invented, review: true, note: "Winds 72 kg an hour at 2 MW. Its inputs follow the composites works' route (fibre from polyethylene through carbonising, methane given off), so that the chain closes with what the registry has; a real tube is carbon tow and epoxy." }

@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: named by its people; the seed calls it Treistun h II. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-h-ii
-  name: Treistun h II
+  name: Pale II
+  also: Treistun h II
   kind: moon
   parent: body.treistun.treistun-h
-  about: A moon of the ice giant Treistun h, 3.4 AU from the star. 2,597 km in radius, 0.22 g at the surface, no air, about
+  about: A moon of the ice giant Pale, 3.4 AU from the star. 2,597 km in radius, 0.22 g at the surface, no air, about
     106 K on average. Its day lasts 45 hours.
   story: ['The largest moon of the ice giants, and the first port anyone built beyond the gas giant g.']
 orbit: {semi_major_axis: 171174000.0, eccentricity: 0.002392, period: 163564.704, inclination: 4.65}

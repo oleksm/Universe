@@ -14,6 +14,7 @@ use glam::DVec3;
 #[derive(Clone, Debug)]
 pub struct Settlement {
     pub system: String,
+    /// The body it is at, by key (`system::Body::key`).
     pub body: String,
     pub name: String,
     pub zones: Vec<Zone>,
@@ -311,7 +312,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
             .collect();
         out.push(Settlement {
             system,
-            body: name(at),
+            body: at.to_string(),
             name: s.identity.name.clone(),
             zones: zones.iter().map(|z| Zone { name: z.identity.name.clone(), use_: z.use_.as_str().to_string(), outline: z.outline.iter().map(pt).collect() }).collect(),
             parcels: parcels
@@ -504,5 +505,5 @@ fn footprint(m: &crate::registry::Module) -> f64 {
 pub fn has_market(sys: &crate::system::StarSystem, f: crate::traffic::Facility) -> bool {
     let crate::traffic::Facility::Spaceport(p) = f else { return false };
     let Some(sp) = sys.spaceports.get(p) else { return false };
-    crate::content::content().settlement(&sys.name, &sys.bodies[sp.body].name, &sp.name).is_some_and(|s| s.facilities.iter().any(|f| f.exchange))
+    crate::content::content().settlement(&sys.name, &sys.bodies[sp.body].key, &sp.name).is_some_and(|s| s.facilities.iter().any(|f| f.exchange))
 }

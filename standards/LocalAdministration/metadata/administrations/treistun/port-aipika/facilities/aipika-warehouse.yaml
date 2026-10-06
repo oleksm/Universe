@@ -28,3 +28,9 @@ stock:
   - { item: stock.chicken-bulk, quantity: 6750.0 }
   - { item: stock.sugar-bulk, quantity: 6750.0 }
   - { item: stock.vegetable-oil-bulk, quantity: 6750.0 }
+# Ninety days of medicine and thirty of clothes, tools, beer and wine for its 3,000 people (seed state).
+  - { item: stock.medicines-bulk, quantity: 1350.0 }
+  - { item: stock.clothes-bulk, quantity: 3520.0 }
+  - { item: stock.tools-bulk, quantity: 900.0 }
+  - { item: stock.beer-bulk, quantity: 7200.0 }
+  - { item: stock.wine-bulk, quantity: 648.0 }

@@ -60,7 +60,7 @@ variant into the engine. Proposal: one `standards/common.schema.yaml` that every
 | Definition | Today | Proposal |
 |---|---|---|
 | **identity** | `identity.name` (what `build.py` keys on), file name (what references use), game key (`drive.torch.s1` vs file `drive-torch-s1`), codes (parts, mill stock), symbols (elements), top-level `key` (company, SFO body). LocalAdministration records have no `identity`. Celestial uses `about` where SFO uses `description`. | Every record has one `identity.key`, which is also the game's key. `name`, `description` and `story` are display text only. |
-| **ref** | By file name (`fit.item`, `making.process`, `steps.module`, `made_from.material`, `yields`, `gate.ring`), by code (`made_from.item`, `thrust_path`), by brand key (`maker`, `owner`), by game key (`rate.stores: goods.food`, `game.goods`), by display name (Celestial `parent`/`anchor`, `at: "Treistun f"`, `gate.to: Liham`, `galaxy.home`, composition `part: "Fused silica"`), by path (`address.at`) | One form, a typed key such as `good.stony-ore` or `{kind, key}`, checked against an index of every record |
+| **ref** | By file name (`fit.item`, `making.process`, `steps.module`, `made_from.material`, `yields`, `gate.ring`), by code (`made_from.item`, `thrust_path`), by brand key (`maker`, `owner`), by game key (`rate.stores: goods.food`, `game.goods`), by display name (Celestial `parent`/`anchor`, `at: "Rime"`, `gate.to: Liham`, `galaxy.home`, composition `part: "Fused silica"`), by path (`address.at`) | One form, a typed key such as `good.stony-ore` or `{kind, key}`, checked against an index of every record |
 | **basis** | Pasted into 13 schemas. Missing from element, material and process: their sources are YAML comments the game never sees (`materials/aluminium-alloy-6061.yaml`) | One definition, allowed on every record and on any single value. The game uses it to show `review` in the dev overlay |
 | **lifecycle** | Six vocabularies: Celestial `status` seeded/curated/frozen; part `identity.status` draft/released/superseded; hull `identity.standing` current/outdated; standard `status`; vocabulary `game` made/partly/not made; `basis.review` | `provenance` (seeded/curated/frozen), `revision` (draft/released/superseded/outdated), `in_game` (made/partly/not made) |
 | **physical** | Spread across `size`, `physical` and `mass`, in mixed units | One group for every physical thing: mass, length/width/height (or envelope), storage and operating temperature range, impact resistance, shock limit, bulk density where it is bulk |
@@ -286,7 +286,7 @@ them they can't be made).
 
 ## 7. Errors found in the spec
 
-- **Tidal heat.** Recomputed from the records: Treistun j I 531 W/m², i I 1,860, h I 45, i II 44 (Io
+- **Tidal heat.** Recomputed from the records: Verge I 531 W/m², i I 1,860, h I 45, i II 44 (Io
   is about 2). Two causes: the seed puts first moons 1.5–2.2 Roche radii out on undamped random
   eccentricities (`system.rs:288,301`), and Io's k2/Q of 0.015 is applied to every moon. The seed
   is moving to the registry (5b), so fix it there. The charted world will change.
@@ -713,7 +713,7 @@ standards:
 
 The game reads whatever you write; these just make the generated types plain.
 
-**Treistun e:** the game's rule is ready. A spaceport is a farm place only where its ground
+**Hearth:** the game's rule is ready. A spaceport is a farm place only where its ground
 averages 5 °C or more through the day (the climate model's figure at the port's latitude). By that,
 Port Nacaubun on e is −19 °C and Port Eikir on d (45.6° N) is 11.6 °C: d farms, e doesn't, as you
 found. It isn't on main yet: with e's farms gone, the settled systems' food comes out a little
@@ -781,7 +781,7 @@ Also:
 **Tidal heat and radiation are the engine's (2026-10-04).** `conditions.rs` works both out from
 `seeding.conditions` with your formulas, and the climate model warms moons by their tidal heat.
 `registry-figures` writes each moon's figures under `moons` (by body key), so your page can read
-them and drop its copy. They agree with yours (Treistun i I 1,866 W/m², j I 531, h I 45, i II 44).
+them and drop its copy. They agree with yours (Hush I 1,866 W/m², j I 531, h I 45, i II 44).
 The four impossible moons are now hot in the game. The fix is the seed's moon orbits (first moon
 3–6 planet radii, eccentricity up to 0.02, never damped); it changes the charted world, so it waits
 on the user.
@@ -789,7 +789,7 @@ on the user.
 **Moons on orbits that last (user, 2026-10-04).** The seed now holds a moon's eccentricity to what
 heats it no more than 2 W/m² (twice your volcanic threshold, about Io's). Treistun's five worst are
 Io-like and volcanic now, not impossible. I ran `celestial_export.py`: 12 moons' records were
-rewritten (eccentricity, mean temperature). Descriptions to update by hand (their tidal heat warms them now): **Treistun h I and h II say
+rewritten (eccentricity, mean temperature). Descriptions to update by hand (their tidal heat warms them now): **Pale I and h II say
 "about 106 K", now about 112 K; i I and i II say "about 80 K", now 93.5 K; j I and j II say "about
 60 K", now 83.5 K.** Also, one line in
 `celestial_export.py`: it skips bodies the export marks `small` (else the belt's largest body, an

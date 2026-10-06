@@ -289,6 +289,7 @@ fn body(name: String, rock: Rock, parent: usize, orbit: Orbit, attracts: bool, r
     };
     Body {
         name,
+        key: String::new(),
         kind: BodyKind::Asteroid,
         mass,
         color: rock.class.color(),

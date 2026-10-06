@@ -1,12 +1,14 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: named by its people; the seed calls it Treistun c I. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-c-i
-  name: Treistun c I
+  name: Anvil I
+  also: Treistun c I
   kind: moon
   parent: body.treistun.treistun-c
-  about: A moon of Treistun c. 1,328 km in radius, 0.11 g at the surface, no air, about 425 K on average. Its day lasts 15
+  about: A moon of Anvil. 1,328 km in radius, 0.11 g at the surface, no air, about 425 K on average. Its day lasts 15
     hours.
   story: ['Small, hot and light. It matters because of what it orbits: it is the nearest place to c where a ship can land
       and lift cheaply.']

@@ -476,8 +476,8 @@ tests pass. This is your item 6 for food, done as modules with recipes, not copi
 `recipes.ron`.
 
 **Sourced since, and one finding for you** (`docs/registry-food.md`, "What Treistun's two worlds
-with air do to a crop"): by `climate.rs` as it stands, Treistun e's warmest ground averages -10 C
-and Port Nacaubun -19 C, so nothing grows in the open there; Treistun d farms between 25 and 50
+with air do to a crop"): by `climate.rs` as it stands, Hearth's warmest ground averages -10 C
+and Port Nacaubun -19 C, so nothing grows in the open there; Harvest farms between 25 and 50
 degrees of latitude and is too hot at its equator. The user has decided: **the story follows the physics.** e is not a farm world;
 d feeds the system. Your `PlaceKind::Farm` still makes e one (it has Terran terrain), with farms
 and a food surplus: that rule needs the world's warmth in it.
@@ -575,7 +575,7 @@ Your items 5 to 8 each need something agreed before records are written:
 
 | You asked | Done |
 |---|---|
-| Six moon descriptions | Treistun h I 112 K, i I 94 K, j I and j II 84 K. h II and i II say no temperature in words, so nothing to change there |
+| Six moon descriptions | Pale I 112 K, i I 94 K, j I and j II 84 K. h II and i II say no temperature in words, so nothing to change there |
 | `throat_coil` marked not made | `x-in-game: "not made"` beside its `kind` constant; the lint lets it through |
 | `good.identity.traded_as` | In the schema; all 103 goods that had `game.goods` carry it now (`market.*`) |
 | A law of kind `reference` | In the schema; the ten Measures have it |
@@ -836,7 +836,7 @@ only (power, layout, zoning: all pass).
 
 **1. Air.**
 
-- **Breathable where it is:** `atmosphere.breathable: true` on Treistun d and e (new, on the body
+- **Breathable where it is:** `atmosphere.breathable: true` on Harvest and e (new, on the body
   record; both are now `curated`). People at Port Eikir and Port Nacaubun take their air from the
   place. It is a marked guess: the game has always settled both as worlds with air; what their air
   is made of is not on record.
@@ -901,3 +901,81 @@ have put the question to the user and changed neither.
   report "Mounts" checks each piece against its mount: 56 of 56 within.
 - **For the game, when you want it:** fit by `mount`, not by size class alone; a slot's mount is
   what a refit may take; a hull's lines and openings at a slot are the mount's figures.
+
+**Baked worlds (the user, 2026-10-06).** The planet simulation grows a world once and writes a
+read-only survey; the registry imports it (`tools/standards/survey_import.py`) and the body's
+record becomes `provenance: baked` with a `survey` section pointing at
+`standards/Celestial/surveys/<world_id>/`. **The game reads the survey's files from there, by
+reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospecting reveals by
+`seen_by` method), the districts, the rock units' yields. The whole contract, with each file and
+what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Harvest; then
+the body schema's new optional `survey` object reaches your generated types, and the loader for the
+files is yours. Claims and mines will point at deposit IDs.
+
+**Harvest is baked (2026-10-06).** `body.treistun.treistun-d` is `provenance: baked` from world
+**TRD1**: `standards/Celestial/surveys/TRD1/` holds its survey (3,756 deposits in 908 districts
+and 471 belts; 26.6% land, 10 plates; Cu 1.2 Gt, Fe 22 Gt, Au 33 kt). Its orbit moved to 0.525 AU
+first (at 0.408 AU it could keep no sea); your code already reads the curated orbit. **Yours when
+you want it:** read the survey files by `survey.folder` (`docs/survey-contract.md` §3: the rock map
+to look up is `rock_units.png`, each pixel a unit's number, 255 sea; deposits are GeoJSON points
+with grades and `seen_by`). **One physics fix I made because the planet's move exposed it:**
+`collide.rs` `Ring::crossing` missed a crossing when a step ended within the ring's acceleration
+over the step (tens of microns) of the plane: the start, carried by velocity alone, landed on the
+other side. The gate test hit it exactly (500 m at 500 m/s is 60 steps). Now a step ending within
+1 mm of the plane crosses it, and the next does not. Also: **bodies match records by key, not
+name** (`system::Body::key`, `celestial::rename` last); settlements by body key; the planets of
+Treistun are named (Harvest, Hearth...). The seed's names stay in `identity.also`.
+
+**Sockets (the user, 2026-10-06; for the ships session through you).** Every mount now says its
+**attachment**: points, pattern (corners / ring / saddles / trunnion) and what each point takes in
+tension, compression and shear. That is what "mount this module" struts to, and what a hull-less
+design starts from: sockets, then frame, then fit. **Landing gear is equipment** (`gear` slot kind;
+`equipment.gear.strut.s1..s3`, function `landing_gear`: holds, stroke, efficiency, sink rate,
+extended length; parts and chains complete; mounts `gear-s1..3`). The MC-07 has four gear slots.
+**What I changed in the engine so `fso` builds:** `ship.rs` drops a gear slot from the game's
+`HullDef` (no game slot kind for it yet), and `modules.rs` answers `landing_gear` with `None`, as
+the throat coil: `x-in-game: not made`. When the game fits legs from gear instead of reckoning
+them from hull parts (`world::legs`), both become real. The ships session should get the mounts,
+the attachments and the gear before building the frame generator; the registry page's "Mounts"
+report lists them.
+
+**Members (for the ships session, 2026-10-06).** The frame stock was three 4340 tubes at 10–15 mm
+wall (27–68 kg/m) and a bar: a bridge's members, which is why a frame came to three times its
+payload. Now **65 round tubes in four materials**, a ladder of diameters (60–300 mm) and walls
+(1.5–10 mm): 4340 steel (piercing mill, cold-drawn thin), 6061 aluminium and Ti-6-4 (a new
+extrusion press), carbon composite (a new filament winder), all made at the Trethi mill, chains
+closed. Lightest 0.98 kg/m (6061 60 × 2), carbon 100 × 3 at 1.44 kg/m takes 427 kN. The page's
+**"Members" report** reads each as an engineer sizes: kg/m, the load it yields at (safety 1.5),
+the pinned length it buckles at under 50 and 200 kN, specific strength. Carbon composite now has a
+modulus and a strength on record (quasi-isotropic AS4/8552, from memory, marked review): the frame
+solver can cut it. The "upgrade over 90%" loop has rungs to climb now.
+
+**Ore bays (2026-10-06).** Ten sizes, 5 to 300 t (`equipment.bay.hopper.<n>t`, function
+`ore_bay`: capacity, heaped volume, fill density), in cargo slots by class, so a hull takes the bay
+that fits. The engine answers `ore_bay` with `None` for now: the game's bay is still `HullDef::bay`
+from the hull. When you read fitted bays, a ship's ore capacity is the sum of its bays' capacities
+and its hold's volume the sum of their volumes, mass-limited (`fill_density`).
+
+**Needs, round two (the integrator, 2026-10-06: Treistun starves from day 50).**
+
+1. **Fertiliser.** `module.fertiliser-works` draws its nitrogen from the air: `element.n` is
+   `from: place` (four fifths of Earth-like air). Barns and fish farms likewise breathe and drink
+   from the place (`livestock-barn` water and oxygen, `fish-farm` oxygen). **Day-0 stock** at
+   `eikir-farms` (30 days of fertiliser, hay and feed: 123 t, 4,190 t, 3,680 t) and at
+   `eikir-food-works` (30 days of each line's inputs that the line does not make itself: wheat
+   10,000 t, sugar beet 48,000 t, milk 10,400 t, and so on), so the chain runs before the first
+   harvest. Seed is not an input anywhere; if you want sowing, say so and I add it to the field.
+2. **The hot band** is the user's decision, still open.
+3. **Medicine.** A new `eikir-chemical-works` (parcel 5, Verdance; power line 5): hydrogen plant,
+   synthesis plant, acid plant, chlor-alkali plant, pharma works; 30 days of sugar and **a year of
+   sulphur and salt as stock**, because nothing in Treistun mines either yet (Harvest's survey
+   has 6.9 Gt of S and 218 Gt of NaCl; a mine is the economy's or mine to place; tell me which you
+   prefer). Every warehouse holds **90 days of medicines** for its people.
+4. **Clothes, tools, drink.** The chemical works also runs a textile mill and clothing works
+   (wool, flax and cotton from the farms). `trethi-mill` gained a machine-works line (tools,
+   motors, pumps, machine tools) from its own steel. Every warehouse holds 30 days of clothes,
+   tools, beer and wine.
+5. **Treistun e Station**: the user's.
+
+The Trethi mill's parcel 1 was deepened north to 850 m for its new lines; Eikir's industrial zone
+widened to 2,950 m for parcel 5.

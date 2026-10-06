@@ -19,6 +19,7 @@ identity:
   - plate
   - bar
   - forging
+  - tube
 mass:
   density: 4470.0
 mechanical:

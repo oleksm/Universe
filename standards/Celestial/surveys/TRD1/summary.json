@@ -1,0 +1,280 @@
+{
+ "format": "planet-sim-survey/1",
+ "world_id": "TRD1",
+ "body": "body.treistun.treistun-d",
+ "radius_m": 6654110.0,
+ "rock_units": {
+  "file": "rock_units.png",
+  "index": [
+   "morb",
+   "arc_volcanic",
+   "arc_plutonic",
+   "basement",
+   "greenstone",
+   "schist",
+   "granite",
+   "flood_basalt",
+   "carbonate",
+   "clastic",
+   "ophiolite",
+   "rift",
+   "iron_formation"
+  ],
+  "sea": 255
+ },
+ "land_pct": 26.59,
+ "deposits": 3756,
+ "blind_deposits": 1747,
+ "districts": 908,
+ "belts": 471,
+ "contained": {
+  "NaCl": {
+   "amount": 164600000000.0,
+   "unit": "t"
+  },
+  "Fe": {
+   "amount": 22070000000.0,
+   "unit": "t"
+  },
+  "P2O5": {
+   "amount": 9546000000.0,
+   "unit": "t"
+  },
+  "Cr2O3": {
+   "amount": 6800000000.0,
+   "unit": "t"
+  },
+  "S": {
+   "amount": 5978000000.0,
+   "unit": "t"
+  },
+  "TiO2": {
+   "amount": 3855000000.0,
+   "unit": "t"
+  },
+  "diamond": {
+   "amount": 2655000000.0,
+   "unit": "ct"
+  },
+  "Cu": {
+   "amount": 1204000000.0,
+   "unit": "t"
+  },
+  "K2O": {
+   "amount": 1045000000.0,
+   "unit": "t"
+  },
+  "Al2O3": {
+   "amount": 1044000000.0,
+   "unit": "t"
+  },
+  "MgO": {
+   "amount": 1020000000.0,
+   "unit": "t"
+  },
+  "Mn": {
+   "amount": 697900000.0,
+   "unit": "t"
+  },
+  "V2O5": {
+   "amount": 452900000.0,
+   "unit": "t"
+  },
+  "K": {
+   "amount": 419200000.0,
+   "unit": "t"
+  },
+  "Zn": {
+   "amount": 340100000.0,
+   "unit": "t"
+  },
+  "Mg": {
+   "amount": 206900000.0,
+   "unit": "t"
+  },
+  "Pb": {
+   "amount": 119400000.0,
+   "unit": "t"
+  },
+  "REO": {
+   "amount": 82440000.0,
+   "unit": "t"
+  },
+  "ZrO2": {
+   "amount": 78660000.0,
+   "unit": "t"
+  },
+  "Mo": {
+   "amount": 41100000.0,
+   "unit": "t"
+  },
+  "Ni": {
+   "amount": 34390000.0,
+   "unit": "t"
+  },
+  "Li": {
+   "amount": 21050000.0,
+   "unit": "t"
+  },
+  "Sn": {
+   "amount": 19120000.0,
+   "unit": "t"
+  },
+  "Nb2O5": {
+   "amount": 18050000.0,
+   "unit": "t"
+  },
+  "W": {
+   "amount": 6343000.0,
+   "unit": "t"
+  },
+  "Co": {
+   "amount": 732000.0,
+   "unit": "t"
+  },
+  "Ag": {
+   "amount": 403400.0,
+   "unit": "t"
+  },
+  "PGE": {
+   "amount": 87490.0,
+   "unit": "t"
+  },
+  "Au": {
+   "amount": 32750.0,
+   "unit": "t"
+  }
+ },
+ "by_kind": {
+  "vms": {
+   "count": 706,
+   "tonnage_mt": 4410.0
+  },
+  "tin_tungsten": {
+   "count": 386,
+   "tonnage_mt": 6145.0
+  },
+  "orogenic_gold": {
+   "count": 384,
+   "tonnage_mt": 187.4
+  },
+  "porphyry": {
+   "count": 370,
+   "tonnage_mt": 224300.0
+  },
+  "chromite": {
+   "count": 354,
+   "tonnage_mt": 10.16
+  },
+  "epithermal": {
+   "count": 225,
+   "tonnage_mt": 755.0
+  },
+  "mvt": {
+   "count": 181,
+   "tonnage_mt": 2957.0
+  },
+  "heavy_mineral_sands": {
+   "count": 173,
+   "tonnage_mt": 21370.0
+  },
+  "magnesite": {
+   "count": 147,
+   "tonnage_mt": 1617.0
+  },
+  "halite": {
+   "count": 105,
+   "tonnage_mt": 160000.0
+  },
+  "bauxite": {
+   "count": 77,
+   "tonnage_mt": 1791.0
+  },
+  "nickel_sulphide": {
+   "count": 75,
+   "tonnage_mt": 301.9
+  },
+  "diamond": {
+   "count": 62,
+   "tonnage_mt": 4781.0
+  },
+  "layered_vti": {
+   "count": 58,
+   "tonnage_mt": 25860.0
+  },
+  "iron_formation": {
+   "count": 57,
+   "tonnage_mt": 11720.0
+  },
+  "phosphorite": {
+   "count": 56,
+   "tonnage_mt": 36340.0
+  },
+  "sedex": {
+   "count": 55,
+   "tonnage_mt": 2353.0
+  },
+  "lithium_brine": {
+   "count": 53,
+   "tonnage_mt": 23500.0
+  },
+  "sediment_copper": {
+   "count": 46,
+   "tonnage_mt": 3317.0
+  },
+  "carbonatite": {
+   "count": 45,
+   "tonnage_mt": 3331.0
+  },
+  "evaporite_sulphur": {
+   "count": 38,
+   "tonnage_mt": 699.8
+  },
+  "volcanic_sulphur": {
+   "count": 35,
+   "tonnage_mt": 72.74
+  },
+  "sed_manganese": {
+   "count": 22,
+   "tonnage_mt": 1614.0
+  },
+  "layered_cr_pge": {
+   "count": 20,
+   "tonnage_mt": 16050.0
+  },
+  "potash": {
+   "count": 16,
+   "tonnage_mt": 6086.0
+  },
+  "mn_nodules": {
+   "count": 7,
+   "tonnage_mt": 355.9
+  },
+  "laterite_nickel": {
+   "count": 3,
+   "tonnage_mt": 127.2
+  }
+ },
+ "land_share_by_unit_pct": {
+  "granite": 17.75,
+  "carbonate": 17.68,
+  "clastic": 16.65,
+  "basement": 16.07,
+  "arc_plutonic": 15.85,
+  "arc_volcanic": 11.31,
+  "flood_basalt": 2.26,
+  "schist": 2.1,
+  "ophiolite": 0.3,
+  "rift": 0.01,
+  "morb": 0.0
+ },
+ "bulk_makeup_by_rock_class": {
+  "zone": "warm",
+  "basis": "origin model: the zone's primitive material (stages/bodies.py)",
+  "shares": {
+   "carbonaceous": 0.1412,
+   "enstatite": 0.0588,
+   "stony": 0.8
+  }
+ }
+}

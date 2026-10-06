@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: a lot in the industrial zone east of the food works, and Verdance as its owner.
+identity:
+  key: parcel.treistun.port-eikir.5
+number: 5
+owner: org.verdance
+address: { street: street.treistun.port-eikir.east-road, number: 5 }
+outline: [[2450, -900], [2900, -900], [2900, 200], [2450, 200]]

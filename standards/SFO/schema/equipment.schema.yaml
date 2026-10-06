@@ -101,6 +101,15 @@ properties:
         properties:
           kind: { const: rack }
           capacity: { type: number, x-unit: "kg", description: "kg it holds" }
+      - description: "A hopper for loose rock: dug ore falls in through its top doors and is let out through its gate. It goes in a cargo slot. The game's ore bay is still the hull's own (hull.hold); from fitted bays once it reads this."
+        type: object
+        additionalProperties: false
+        required: [kind, capacity, volume, fill_density]
+        properties:
+          kind: { const: ore_bay, x-in-game: "not made" }
+          capacity: { type: number, x-unit: "kg", description: "kg of ore it is built to carry" }
+          volume: { type: number, x-unit: "m3", description: "m3 it holds, heaped" }
+          fill_density: { type: number, x-unit: "kg/m3", description: "kg/m3 of broken rock its capacity is reckoned at: fuller with denser ore, it is the mass that limits" }
       - description: "Seats for passengers, with their life support. It goes in a cargo slot."
         type: object
         additionalProperties: false
@@ -213,6 +222,17 @@ properties:
           throughput: { type: number, x-unit: "kg/s", description: "kg/s of spoil it can carry off, at most" }
           anchor_reach: { type: number, x-unit: "m", description: "m its anchor reaches from the hull" }
           anchor_speed: { type: number, x-unit: "m/s", description: "m/s: it holds if the ship drifts slower than this against the surface" }
+      - description: "One landing leg: a strut that stops the ship over its stroke and holds it on the ground (SFO 15, Shock). A hull fits several, one to a gear slot. The game reckons legs from a hull's parts today (world::legs); from fitted gear once it reads this."
+        type: object
+        additionalProperties: false
+        required: [kind, holds, stroke, efficiency, sink_rate]
+        properties:
+          kind: { const: landing_gear, x-in-game: "not made" }
+          holds: { type: number, x-unit: "N", description: "N, the most one leg takes before it yields or buckles" }
+          stroke: { type: number, x-unit: "m", description: "m its strut compresses over, stopping the ship" }
+          efficiency: { type: number, x-unit: "1", description: "the share of the stroke that does work (an oleo strut: about 0.8)" }
+          sink_rate: { type: number, x-unit: "m/s", description: "m/s, the touchdown it is designed for, at its design load" }
+          extended: { type: number, x-unit: "m", description: "m from its mount to its pad, gear down" }
       - description: "Holds a gate's tube: one to a segment of a ring. Not in the game yet."
         type: object
         additionalProperties: false
