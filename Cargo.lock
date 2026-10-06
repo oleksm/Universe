@@ -2518,6 +2518,7 @@ dependencies = [
  "glam",
  "libc",
  "log",
+ "rayon",
  "serde",
  "serde_json",
  "universe-engine",

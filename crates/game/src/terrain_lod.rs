@@ -1,8 +1,9 @@
 //! The ground near a world: its terrain as a cube-sphere quadtree of
 //! patches, each a grid of the very height the physics lands on, finer the
-//! nearer the eye (down to tens of metres underfoot). Patches are made a
-//! few a frame (on all cores) and kept a while; until a finer one is ready
-//! its parent stands in. Each has its own origin, so nothing shakes up
+//! nearer the eye (down to tens of metres underfoot). Patches are made on a
+//! pool of their own, nearest first, and taken in a few a frame as they're
+//! done: no frame waits on one. Until a patch is ready the nearest made above
+//! it stands in, and they're kept a while. Each has its own origin, so nothing shakes up
 //! close; skirts hang from their edges to hide the seams between sizes.
 
 use std::collections::HashMap;
@@ -18,8 +19,12 @@ const GRID: u32 = 16;
 const MAX_LEVEL: u8 = 15;
 /// A patch splits when the eye is nearer than this many times its size.
 const SPLIT: f64 = 2.4;
-/// Patches made a frame, at most.
+/// Patches wanted a frame (the next finer), at most.
 const BUDGET: usize = 12;
+/// Patches being made at once, at most.
+const IN_FLIGHT: usize = 48;
+/// Patches taken in a frame, at most (each an upload).
+const TAKE: usize = 24;
 /// Frames an unused patch is kept.
 const KEEP: u64 = 600;
 
@@ -57,10 +62,23 @@ struct Patch {
 }
 
 /// The patches made so far, for every world in view.
+/// A patch made: its key, mesh, origin, and whether its ground was all read.
+type Made = (Key, Mesh, DVec3, bool);
+
 #[derive(Default)]
 pub struct Lod {
     patches: HashMap<Key, Patch>,
     frame: u64,
+    /// Made on the pool (two cores left to the rest), and those being made.
+    pool: Option<rayon::ThreadPool>,
+    pending: std::collections::HashSet<Key>,
+    done: Arc<std::sync::Mutex<Vec<Made>>>,
+}
+
+impl Key {
+    fn parent(self) -> Option<Key> {
+        (self.level > 0).then(|| Key { level: self.level - 1, x: self.x / 2, y: self.y / 2, ..self })
+    }
 }
 
 /// A direction on the world from a cube face and a place on it (-1..1 each
@@ -155,9 +173,19 @@ impl Lod {
     /// Draw world `body` (of system `system`, its middle at `center`,
     /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
     #[allow(clippy::too_many_arguments)]
-    pub fn draw(&mut self, frame: &mut Frame, system: usize, body_index: usize, body: &Body, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) {
+    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) {
+        let body = &sys.bodies[body_index];
         self.frame += 1;
         let now = self.frame;
+        // Take in what the pool has made (a few a frame: each is an upload).
+        let made: Vec<Made> = self.done.lock().map(|mut d| {
+            let n = d.len().min(TAKE);
+            d.drain(..n).collect()
+        }).unwrap_or_default();
+        for (k, mesh, origin, partial) in made {
+            self.pending.remove(&k);
+            self.patches.insert(k, Patch { mesh, origin, used: now, partial });
+        }
         let r = body.rail.radius;
         let eye_local = rotation.inverse() * (eye - center);
         let eye_dist = eye_local.length();
@@ -197,21 +225,53 @@ impl Lod {
             }
             draw.push(key);
         }
-        // Make what's missing (what must be drawn now, and the next finer), on all cores; and
-        // made again, a few a frame, what was made before all its ground was read.
+        // The whole faces made now if they're missing (nothing stands in for them).
+        for key in draw.iter().copied().filter(|k| k.level == 0 && !self.patches.contains_key(k)).collect::<Vec<_>>() {
+            let (m, origin, partial) = make(body, key);
+            self.pending.remove(&key);
+            self.patches.insert(key, Patch { mesh: m.into(), origin, used: now, partial });
+        }
+        // The rest made on the pool, nearest first (in its own sizes): what must be drawn now,
+        // the next finer, and made again what was made before all its ground was read.
         let mut todo: Vec<Key> = draw.iter().copied().filter(|k| !self.patches.contains_key(k)).collect();
         todo.extend(want);
-        todo.extend(draw.iter().copied().filter(|k| self.patches.get(k).is_some_and(|p| p.partial)).take(BUDGET));
-        let made: Vec<(Key, WireModel, DVec3, bool)> = std::thread::scope(|s| {
-            let jobs: Vec<_> = todo.iter().map(|&k| s.spawn(move || {
-                let (m, o, partial) = make(body, k);
-                (k, m, o, partial)
-            })).collect();
-            jobs.into_iter().filter_map(|j| j.join().ok()).collect()
+        todo.extend(draw.iter().copied().filter(|k| self.patches.get(k).is_some_and(|p| p.partial)));
+        todo.retain(|k| !self.pending.contains(k));
+        let near = |k: &Key| {
+            let (mid, size) = k.shape();
+            (mid * r).distance(eye_local) / (size * r)
+        };
+        todo.sort_by(|a, b| near(a).total_cmp(&near(b)));
+        todo.dedup();
+        let pool = self.pool.get_or_insert_with(|| {
+            let cores = std::thread::available_parallelism().map_or(4, |c| c.get());
+            rayon::ThreadPoolBuilder::new().num_threads(cores.saturating_sub(2).max(1)).thread_name(|i| format!("ground {i}")).build().expect("the ground's pool")
         });
-        for (k, m, origin, partial) in made {
-            self.patches.insert(k, Patch { mesh: m.into(), origin, used: now, partial });
+        for k in todo.into_iter().take(IN_FLIGHT.saturating_sub(self.pending.len())) {
+            self.pending.insert(k);
+            let (sys, done) = (sys.clone(), self.done.clone());
+            pool.spawn(move || {
+                let (m, origin, partial) = make(&sys.bodies[body_index], k);
+                if let Ok(mut d) = done.lock() {
+                    d.push((k, m.into(), origin, partial));
+                }
+            });
         }
+        // What's not made yet: the nearest made above it stands in (each once).
+        let mut shown: Vec<Key> = Vec::with_capacity(draw.len());
+        for mut key in draw {
+            while !self.patches.contains_key(&key) {
+                match key.parent() {
+                    Some(p) => key = p,
+                    None => break,
+                }
+            }
+            if !shown.contains(&key) {
+                shown.push(key);
+            }
+        }
+        // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
+        let draw = shown;
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();

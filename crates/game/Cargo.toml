@@ -9,6 +9,7 @@ name = "freefall"
 path = "src/main.rs"
 
 [dependencies]
+rayon.workspace = true
 universe-prof = { path = "../prof" }
 universe-engine = { path = "../engine" }
 glam.workspace = true
