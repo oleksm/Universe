@@ -349,6 +349,27 @@ fn hulls() -> Vec<&'static universe_sim::world::ship::ClassSpec> {
 /// A design with no hull: the room it's laid out in (m, its corners).
 const NO_HULL: (Vec3, Vec3) = (Vec3::new(-20.0, -10.0, -40.0), Vec3::new(20.0, 15.0, 40.0));
 
+/// Placed modules whose record's size has changed since (neither their volume nor
+/// their size's matches it: a stretched one keeps the first, one made the second)
+/// made that size, each standing where it stood; how many.
+fn resize(blocks: &mut [Block], fit: &[Fitted]) -> usize {
+    let mut resized = 0;
+    for b in blocks.iter_mut() {
+        let Some(f) = fit.iter().find(|f| f.id == kind(&b.id)) else { continue };
+        let shape = if f.round { std::f32::consts::PI / 6.0 } else { 1.0 };
+        let volume = b.size.x * b.size.y * b.size.z * shape;
+        let made = f.size.x * f.size.y * f.size.z * shape;
+        let off = |v: f32| (volume - v).abs() > v.max(0.01) * 0.02;
+        if off(f.volume) && off(made) {
+            let foot = b.at.y - b.size.y * 0.5;
+            b.size = f.size;
+            b.at.y = foot + b.size.y * 0.5;
+            resized += 1;
+        }
+    }
+    resized
+}
+
 /// A placed module's kind: its id less any copy number (`#n`).
 fn kind(id: &str) -> &str {
     id.split('#').next().unwrap_or(id)
@@ -1689,22 +1710,11 @@ impl Interior {
             None => catalogue().to_vec(),
         };
         // (A placed module whose record's size has changed since: made that size,
-        // standing where it stood.)
-        let mut resized = 0;
-        for b in self.plan.blocks.iter_mut() {
-            let Some(f) = self.fit.iter().find(|f| f.id == kind(&b.id)) else { continue };
-            let shape = if f.round { std::f32::consts::PI / 6.0 } else { 1.0 };
-            // (Its volume, or its size's: stretched, it keeps the first; made, it has
-            // the second; neither, it's out of date.)
-            let volume = b.size.x * b.size.y * b.size.z * shape;
-            let made = f.size.x * f.size.y * f.size.z * shape;
-            let off = |v: f32| (volume - v).abs() > v.max(0.01) * 0.02;
-            if off(f.volume) && off(made) {
-                let foot = b.at.y - b.size.y * 0.5;
-                b.size = f.size;
-                b.at.y = foot + b.size.y * 0.5;
-                resized += 1;
-            }
+        // standing where it stood; in the saved plan too: it's the registry's change,
+        // not the designer's, so nothing's unsaved by it.)
+        let resized = resize(&mut self.plan.blocks, &self.fit);
+        if let Some(saved) = self.saved.as_mut() {
+            resize(&mut saved.blocks, &self.fit);
         }
         if resized > 0 {
             self.message = Some((format!("{resized} MODULES MADE THE SIZE THE REGISTRY NOW GIVES THEM"), 6.0));
