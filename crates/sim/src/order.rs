@@ -3,7 +3,10 @@
 //! law (`world::order::law`), charged against whoever did it, and the pilot
 //! told. Firing on the innocent is piracy (charged where the law rules on the
 //! hit, `combat`); an innocent brought down by one who was fair game,
-//! murder; a ship wrecked with nobody firing on it, reckless flying.
+//! murder; a ship wrecked with nobody firing on it where others are put at
+//! risk (into another ship, or within `RECKLESS_REACH` of a structure or a
+//! port's pads), reckless flying. A wreck out on a world or among the rocks
+//! harms only its pilot: no offence.
 
 use universe_protocol::Cause;
 use universe_services::law::Charge;
@@ -12,6 +15,10 @@ use universe_world::ShipEvent;
 
 use crate::universe::Universe;
 use crate::Event;
+
+/// How near a structure (station, gate, rig) or a port's pads a wreck puts
+/// others at risk (m). Invented.
+pub const RECKLESS_REACH: f64 = 5_000.0;
 
 impl Universe {
     /// Is there a law in `system`?
@@ -24,8 +31,9 @@ impl Universe {
         let mut charges: Vec<Charge> = Vec::new();
         let mut bounties: Vec<(usize, usize)> = Vec::new();
         for (index, (id, e)) in self.log.iter().enumerate() {
-            let ShipEvent::Crashed { .. } = e else { continue };
-            let Some(system) = self.ship_by_id(*id).map(|s| s.1) else { continue };
+            let ShipEvent::Crashed { body } = e else { continue };
+            let Some((_, system, ship)) = self.ship_by_id(*id) else { continue };
+            let at = ship.position;
             if !self.has_law(system) {
                 continue;
             }
@@ -43,7 +51,8 @@ impl Universe {
             match killer {
                 Some(k) if universe_world::turrets::turret_of(k).is_none() && self.law.aggressed(k as _, now) && !self.law.aggressed(*id as _, now) => charges.push(charge(k as _, Offence::Murder, Some(*id as _))),
                 Some(_) => {}
-                None => charges.push(charge(*id as _, Offence::RecklessFlying, None)),
+                None if body == "COLLISION" || self.near_others(system, at, now) => charges.push(charge(*id as _, Offence::RecklessFlying, None)),
+                None => {}
             }
         }
         for c in charges {
@@ -62,6 +71,14 @@ impl Universe {
                 }
             }
         }
+    }
+
+    /// Is `at` (in `system`, at `now`) within `RECKLESS_REACH` of a structure or a port's pads?
+    fn near_others(&self, system: usize, at: glam::DVec3, now: f64) -> bool {
+        let sys = self.world.system(system);
+        let positions = self.world.rails_at(system, now);
+        let structure = sys.bodies.iter().enumerate().any(|(i, b)| b.kind.artificial() && positions[i].distance(at) < RECKLESS_REACH + b.rail.radius);
+        structure || (0..sys.spaceports.len()).any(|p| universe_world::spaceport::pad_position(&sys, p, now, &positions).distance(at) < RECKLESS_REACH)
     }
 
     /// Outside the law where ship `id` is: no one there deals with it.

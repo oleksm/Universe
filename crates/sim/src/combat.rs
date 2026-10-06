@@ -253,6 +253,16 @@ mod tests {
         u.judge(now);
         assert!((u.ledger.credits(universe_services::Party::Pilot(hunter)) - before - 1.5 * worth).abs() < 1.0, "the bounty paid");
         assert!(u.law.bounties.is_empty());
+        // Wrecked alone 1,500 km out: no offence. By the station: reckless flying.
+        let reckless = |u: &Universe| u.law.charges_of(me).filter(|c| c.offence == Offence::RecklessFlying).count();
+        u.log.clear();
+        u.log.push((PLAYER, ShipEvent::Crashed { body: "TREISTUN E".into() }));
+        u.judge(now);
+        assert_eq!(reckless(&u), 0, "harming only its pilot");
+        let (sys, positions) = (u.ship_system(), u.world.rails_at(u.ship_system, now));
+        u.ship.position = positions[sys.station().unwrap()] + DVec3::new(0.0, 2_000.0, 0.0);
+        u.judge(now);
+        assert_eq!(reckless(&u), 1, "by the station");
     }
 
 }
