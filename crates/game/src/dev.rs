@@ -1393,6 +1393,11 @@ pub fn apply(app: &mut App, name: &str) {
             if let Ok(id) = std::env::var("UNIVERSE_OPEN") {
                 y.interior_mut().open_saved(&id);
             }
+            // (UNIVERSE_STAND=x,y,z,yaw, or 1: the design on its test stand.)
+            if let Ok(v) = std::env::var("UNIVERSE_STAND") {
+                let n: Vec<f64> = v.split(',').filter_map(|x| x.trim().parse().ok()).collect();
+                y.interior_mut().stand_test(<[f64; 4]>::try_from(n).ok());
+            }
             if let Ok(d) = std::env::var("UNIVERSE_DIALOG") {
                 y.interior_mut().show_dialog(d == "open");
             }
@@ -1404,6 +1409,10 @@ pub fn apply(app: &mut App, name: &str) {
             // (UNIVERSE_FRAME: the FRAME tool in hand.)
             if std::env::var_os("UNIVERSE_FRAME").is_some() {
                 y.interior_mut().frame_tool();
+            }
+            // (UNIVERSE_DECKMODE: the FRAME tool in DECK mode.)
+            if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
+                y.interior_mut().deck_tool();
             }
             // (UNIVERSE_DECKS: the deck studio open instead.)
             if std::env::var_os("UNIVERSE_DECKS").is_some() {

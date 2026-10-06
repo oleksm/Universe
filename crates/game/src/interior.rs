@@ -61,7 +61,7 @@ fn sort_index(name: Option<&str>) -> usize {
 
 /// The layers, each shown or hidden: (name, the layer it's under, its colour).
 /// Points' kinds are 3.. in `SORTS`' order.
-const LAYERS: [(&str, Option<usize>, Option<Color>); 24] = [
+const LAYERS: [(&str, Option<usize>, Option<Color>); 26] = [
     ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
     ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
     ("POINTS", None, None),
@@ -86,6 +86,8 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 24] = [
     ("REACH", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
     ("MODULES", None, Some(MODULE)),
     ("FRAME", None, Some(Color([0.4, 1.0, 0.5, 1.0]))),
+    ("PRESSURE", None, Some(Color([1.0, 0.3, 0.25, 1.0]))),
+    ("DECKS", None, Some(DECK)),
 ];
 
 /// Modules placed: their colour.
@@ -107,7 +109,12 @@ pub mod layer {
     pub const REACH: usize = 21;
     pub const MODULES: usize = 22;
     pub const FRAME: usize = 23;
+    pub const PRESSURE: usize = 24;
+    pub const DECKS: usize = 25;
 }
+
+/// A deck's colour (its plate, filled and outlined).
+const DECK: Color = Color([0.85, 0.75, 0.5, 1.0]);
 
 /// The camera's field of view up and down (rad).
 const FOV: f32 = 0.85;
@@ -178,15 +185,24 @@ pub struct Interior {
     /// one picked, where the member being laid starts; what the frame bears, as last
     /// worked out (for which plan), and being worked out (on a thread of its own).
     stock: usize,
+    stock_top: usize,
     case: Option<usize>,
     beam_hover: Option<usize>,
     beam_pick: Option<usize>,
     beam_from: Option<Vec3>,
-    pads_mode: bool,
+    /// AUTO-SIZE free to pick any material.
+    mix: bool,
     /// TRUSS: laying a truss (its first corner, once clicked); its depth and its
     /// stations' spacing (m); AUTO-SIZE being worked out (for which plan).
     truss_mode: bool,
     truss_from: Option<Vec3>,
+    /// DECK: laying decks (their first corner, once clicked).
+    deck_mode: bool,
+    deck_from: Option<Vec3>,
+    /// DECK: the stock new decks are cut from (its key; none: the lightest 6061
+    /// plate), and the deck picked (its stock is changed by picking a row).
+    deck_stock: Option<String>,
+    deck_pick: Option<usize>,
     depth: f32,
     spacing: f32,
     sizing: Option<(Plan, mpsc::Receiver<Sized>)>,
@@ -207,6 +223,8 @@ pub struct Interior {
     /// asked for: feet (the hull's frame) and facing (see `shipyard`).
     walk_armed: bool,
     pub walk: Option<(universe_engine::glam::DVec3, f64)>,
+    /// The test stand: a design with no hull walked in the studio itself.
+    stand: Option<Stand>,
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
@@ -345,7 +363,97 @@ struct Plan {
     /// hull has.
     #[serde(default)]
     pads: Vec<Vec3>,
+    /// Its decks: plates laid level, borne by the frame they touch.
+    #[serde(default)]
+    plates: Vec<Plate>,
+    /// The gravity it's designed to land in (m/s²; not said: a standard g).
+    #[serde(default)]
+    gravity: Option<f64>,
 }
+
+impl Plan {
+    /// The gravity it's designed to land in (m/s²).
+    fn gravity(&self) -> f64 {
+        self.gravity.unwrap_or(STANDARD_G)
+    }
+}
+
+/// A deck: a plate laid level at height `y` from `lo` to `hi` (x, z), cut from plate
+/// stock (by its key in the registry).
+#[derive(Clone, Debug, PartialEq, serde::Serialize, serde::Deserialize)]
+struct Plate {
+    lo: Vec2,
+    hi: Vec2,
+    y: f32,
+    stock: String,
+}
+
+/// Plate stock a deck can be cut from: the registry's plates and sheets whose
+/// material says how it bears; its thickness (m), what it's made of, its mass a
+/// square metre (kg).
+#[derive(Clone)]
+pub struct PlateStock {
+    key: String,
+    name: String,
+    of: String,
+    /// A plate's thickness; a sandwich panel's each face's.
+    thickness: f64,
+    /// A sandwich panel's core (none: a solid plate).
+    core: Option<universe_sim::world::frame::Core>,
+    material: universe_sim::world::frame::Material,
+    per_square_metre: f64,
+}
+
+impl PlateStock {
+    /// A strip of it `width` wide, as the frame bears it.
+    fn section(&self, width: f32) -> universe_sim::world::frame::Section {
+        use universe_sim::world::frame::Section;
+        match self.core {
+            Some(c) => Section::panel(f64::from(width), self.thickness, c),
+            None => Section::strip(f64::from(width), self.thickness),
+        }
+    }
+}
+
+fn plate_stocks() -> &'static [PlateStock] {
+    static PLATES: std::sync::OnceLock<Vec<PlateStock>> = std::sync::OnceLock::new();
+    PLATES.get_or_init(|| {
+        use universe_sim::world::frame::Material;
+        let reg = universe_sim::world::registry::registry();
+        let mut out: Vec<PlateStock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "plate" | "sheet") && !s.identity.code.ends_with("BLANK") && !s.identity.code.ends_with("PANEL")).filter_map(|s| {
+            let t = s.size.thickness?;
+            let of = &s.made_from.first()?.item;
+            let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
+            let k = &m.mechanical;
+            let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
+            let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
+            Some(PlateStock { key: s.identity.key.clone(), name: s.identity.name.clone(), of: of.clone(), thickness: t, core: None, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
+        }).collect();
+        out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_square_metre.total_cmp(&b.per_square_metre)));
+        out
+    })
+}
+
+/// The stock a new deck is cut from unless another is picked: the lightest 6061
+/// plate, else the first there is.
+fn default_deck_stock() -> String {
+    plate_stocks().iter().find(|s| s.key.contains("al6061-pl")).or(plate_stocks().first()).map_or(String::new(), |s| s.key.clone())
+}
+
+/// A deck's grid: its points, about 2 m apart each way (`nx` + 1 along x by `nz` + 1
+/// along z, row by row along x), and the spacing each way.
+fn plate_grid(p: &Plate) -> (Vec<Vec3>, usize, usize, f32, f32) {
+    let (w, d) = ((p.hi.x - p.lo.x).abs().max(0.1), (p.hi.y - p.lo.y).abs().max(0.1));
+    let (nx, nz) = (((w / 2.0).ceil() as usize).max(1), ((d / 2.0).ceil() as usize).max(1));
+    let (dx, dz) = (w / nx as f32, d / nz as f32);
+    let (x0, z0) = (p.lo.x.min(p.hi.x), p.lo.y.min(p.hi.y));
+    let nodes = (0..=nz).flat_map(|j| (0..=nx).map(move |i| Vec3::new(x0 + i as f32 * dx, p.y, z0 + j as f32 * dz))).collect();
+    (nodes, nx, nz, dx, dz)
+}
+
+/// The load a deck is designed to carry on top of its own weight (kg a square
+/// metre: a crowd, or stores stacked; a figure chosen).
+const DECK_LOAD: f64 = 500.0;
 
 /// The hull plan `plan` is designed in, if any.
 fn hull_of(plan: &Plan) -> Option<&'static universe_sim::world::ship::ClassSpec> {
@@ -403,13 +511,16 @@ struct Beam {
 pub struct Stock {
     key: String,
     name: String,
+    /// What it's made of (the material's key): AUTO-SIZE keeps to it.
+    of: String,
     section: universe_sim::world::frame::Section,
     material: universe_sim::world::frame::Material,
     per_metre: f64,
 }
 
 /// Every tube and bar in the registry whose material says how it bears (its
-/// stiffness, yield and tensile strength, density), lightest a metre first.
+/// stiffness, yield and tensile strength, density), by material, lightest a
+/// metre first.
 fn stocks() -> &'static [Stock] {
     static STOCKS: std::sync::OnceLock<Vec<Stock>> = std::sync::OnceLock::new();
     STOCKS.get_or_init(|| {
@@ -417,16 +528,17 @@ fn stocks() -> &'static [Stock] {
         let reg = universe_sim::world::registry::registry();
         let mut out: Vec<Stock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "tube" | "bar")).filter_map(|s| {
             let d = s.size.diameter?;
-            let section = Section { diameter: d, wall: s.size.wall.unwrap_or(d * 0.5).min(d * 0.5) };
+            let section = Section::round(d, s.size.wall.unwrap_or(d * 0.5).min(d * 0.5));
             let of = &s.made_from.first()?.item;
             let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
             let k = &m.mechanical;
             let (e, y, t, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
             let material = Material { stiffness: e, shear, yield_strength: y, tensile_strength: t, density: rho };
-            Some(Stock { key: s.identity.key.clone(), name: s.identity.name.to_uppercase(), per_metre: section.area() * rho, section, material })
+            Some(Stock { key: s.identity.key.clone(), name: s.identity.name.to_uppercase(), of: of.clone(), per_metre: section.area() * rho, section, material })
         }).collect();
-        out.sort_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+        // (By material, lightest a metre first in each.)
+        out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_metre.total_cmp(&b.per_metre)));
         out
     })
 }
@@ -437,7 +549,7 @@ const STANDARD_G: f64 = 9.80665;
 
 /// The load cases, by name: standing after a landing (the jolt of the hull's design
 /// landing on top of the weight), at full main thrust, hovering at full lift.
-const CASES: [&str; 3] = ["LANDING", "THRUST", "LIFT"];
+const CASES: [&str; 4] = ["LANDING", "THRUST", "LIFT", "FLOOR"];
 
 /// What the frame bears and how: its joints (its members' ends, those within 5 cm
 /// one), its members' mass (kg), and for each load case either how each member
@@ -451,6 +563,25 @@ pub struct Bearing {
     loose: Vec<String>,
     /// Each case's acceleration (m/s², what everything aboard feels).
     felt: Vec<f64>,
+    /// Which of the frame's members each of the plan's is (none: left out, its stock
+    /// unknown or its ends one joint).
+    index: Vec<Option<usize>>,
+    /// Each deck's strips: its deck, its ends, its width (m), which of the frame's
+    /// members it is.
+    strips: Vec<(usize, Vec3, Vec3, f32, usize)>,
+}
+
+impl Bearing {
+    /// How the frame's member `m` does in each case.
+    fn of_member(&self, m: usize) -> Vec<&universe_sim::world::frame::Outcome> {
+        self.cases.iter().filter_map(|(_, r)| r.as_ref().ok()).filter_map(|c| c.members.get(m)).collect()
+    }
+
+    /// How the plan's member `k` does in each case it could be worked out in.
+    fn outcomes(&self, k: usize) -> Vec<&universe_sim::world::frame::Outcome> {
+        let Some(Some(m)) = self.index.get(k) else { return Vec::new() };
+        self.cases.iter().filter_map(|(_, r)| r.as_ref().ok()).filter_map(|c| c.members.get(*m)).collect()
+    }
 }
 
 /// A box truss filling the footprint between `a` and `b` (on the work plane, its
@@ -516,17 +647,22 @@ fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
 }
 
 /// Members mounting each placed module the frame doesn't hold yet (no joint in
-/// it): joints along its foot (one each `spacing` m), each strutted to the nearest
-/// joints of the frame outside it (two; over a tonne, four), not through a room
-/// and not further than 15 m; and each landing pad with nothing at it, on four legs
-/// to the nearest joints; of `stock`.
-fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
+/// it): joints along its foot (one each `spacing` m; over a tonne full, at its
+/// foot's corners, each braced to the nearest joint below as well, or hung from
+/// the nearest above if there's none below), each strutted
+/// to the nearest two joints of the frame outside it; a landing leg by its top, to
+/// four; never through a room or further than 15 m; and each landing pad with
+/// nothing at it, on four legs to the nearest joints; each deck's grid point with
+/// nothing at it, a post to the nearest joint below; of `stock`.
+fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>, usize) {
     let joints: Vec<Vec3> = plan.beams.iter().flat_map(|b| [b.a, b.b]).fold(Vec::new(), |mut v, p| {
         if !v.iter().any(|q: &Vec3| q.distance(p) < 0.05) {
             v.push(p);
         }
         v
     });
+    // (The frame as it is, its members split where a mount point lands on one.)
+    let mut beams = plan.beams.clone();
     let mut out = Vec::new();
     for blk in &plan.blocks {
         let (lo, hi) = blk.bounds();
@@ -534,15 +670,81 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
         if joints.iter().any(|&q| inside(q)) {
             continue;
         }
-        let heavy = fit.iter().find(|f| f.id == kind(&blk.id)).is_some_and(|f| f.mass > 1000.0);
-        let foot = blk.at.y - blk.size.y * 0.5;
+        let f = fit.iter().find(|f| f.id == kind(&blk.id));
+        let heavy = f.is_some_and(|f| f.mass + f.load > 1000.0);
+        // (A landing leg is mounted by its top; the rest by their foot.)
+        let leg = f.is_some_and(|f| f.gear.is_some());
+        let foot = if leg { blk.at.y + blk.size.y * 0.5 } else { blk.at.y - blk.size.y * 0.5 };
         let n = ((blk.size.z / spacing.max(0.5)).ceil() as usize).max(1);
-        for k in 0..n {
-            let m = Vec3::new(blk.at.x, foot, blk.at.z - blk.size.z * 0.5 + blk.size.z * (k as f32 + 0.5) / n as f32);
-            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q)).collect();
+        // (Its mount points: along its foot's middle; a heavy one (over a tonne,
+        // full) at its foot's corners, as its mount's attachment has them, each
+        // braced to the nearest joint below too, so its weight runs down a triangle
+        // rather than bending a strut.)
+        let (hx, hz) = (blk.size.x * 0.5, blk.size.z * 0.5);
+        let points: Vec<Vec3> = if heavy && !leg {
+            (0..=n).flat_map(|k| {
+                let z = blk.at.z - hz + blk.size.z * k as f32 / n as f32;
+                [Vec3::new(blk.at.x - hx, foot, z), Vec3::new(blk.at.x + hx, foot, z)]
+            }).collect()
+        } else {
+            (0..n).map(|k| Vec3::new(blk.at.x, foot, blk.at.z - hz + blk.size.z * (k as f32 + 0.5) / n as f32)).collect()
+        };
+        for m in points {
+            // (On a member, part way along it: a joint made there, the member in two;
+            // its ends then not strutted to, they'd lie along it.)
+            let mut along = Vec::new();
+            if let Some(k) = beams.iter().position(|b| {
+                let d = b.b - b.a;
+                let t = (m - b.a).dot(d) / d.length_squared().max(1e-6);
+                t > 0.02 && t < 0.98 && (b.a + d * t).distance(m) < 0.05
+            }) {
+                let b = beams.remove(k);
+                along = vec![b.a, b.b];
+                beams.push(Beam { a: b.a, b: m, stock: b.stock.clone() });
+                beams.push(Beam { a: m, b: b.b, stock: b.stock });
+            }
+            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q) && !along.contains(&q)).collect();
             near.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
-            for q in near.into_iter().take(if heavy { 4 } else { 2 }) {
+            // (Braced to the nearest joint below; nothing below, hung from the nearest
+            // above.)
+            let below = near.iter().copied().find(|q| q.y < m.y - 1.0).or_else(|| near.iter().copied().find(|q| q.y > m.y + 1.0));
+            let take = if leg { 4 } else { 2 };
+            let mut chosen: Vec<Vec3> = near.into_iter().take(take).collect();
+            if let Some(q) = below.filter(|q| heavy && !leg && !chosen.contains(q)) {
+                chosen.push(q);
+            }
+            for q in chosen {
                 out.push(Beam { a: m, b: q, stock: stock.to_string() });
+            }
+        }
+    }
+    // (Each deck's grid point with nothing at it: a post down to the nearest joint
+    // below it, within 8 m and not through a room; none below, the nearest at all.)
+    // (A point near one already held, another deck's, is held by it.)
+    let mut held: Vec<Vec3> = Vec::new();
+    for plate in &plan.plates {
+        for node in plate_grid(plate).0 {
+            if joints.iter().chain(&held).any(|q| q.distance(node) <= 0.6) {
+                continue;
+            }
+            // (Lying on a member, part way along it: a joint made there, the member
+            // in two; it bears the deck there.)
+            if let Some(k) = beams.iter().position(|b| {
+                let d = b.b - b.a;
+                let t = (node - b.a).dot(d) / d.length_squared().max(1e-6);
+                t > 0.02 && t < 0.98 && (b.a + d * t).distance(node) < 0.05
+            }) {
+                let b = beams.remove(k);
+                beams.push(Beam { a: b.a, b: node, stock: b.stock.clone() });
+                beams.push(Beam { a: node, b: b.b, stock: b.stock });
+                held.push(node);
+                continue;
+            }
+            let ok = |q: &&Vec3| q.distance(node) <= 8.0 && !through_room(plan, node, **q);
+            let below = joints.iter().filter(ok).filter(|q| q.y < node.y - 0.5).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)));
+            if let Some(&q) = below.or_else(|| joints.iter().filter(ok).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)))) {
+                out.push(Beam { a: node, b: q, stock: stock.to_string() });
+                held.push(node);
             }
         }
     }
@@ -556,50 +758,117 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
             out.push(Beam { a: pad, b: q, stock: stock.to_string() });
         }
     }
-    out
+    let added = out.len();
+    beams.extend(out);
+    (beams, added)
 }
 
-/// The members as AUTO-SIZE leaves them, and the rounds it took.
-type Sized = (Vec<Beam>, usize);
+/// The members and decks as AUTO-SIZE leaves them, the rounds it took, and how many
+/// need more than the biggest tube (or plate) their material comes in.
+type Sized = (Vec<Beam>, Vec<Plate>, usize, usize);
 
-/// The plan's members sized: each round every load case worked out, each member
-/// past nine tenths of its design limit (or broken) cut from the next stock up,
-/// each under a third of it from the next down; until none is past it (or eight
-/// rounds); the last rounds only up. The members, and how many rounds it took.
-fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>) -> Sized {
-    let ladder: Vec<&str> = stocks().iter().filter(|s| s.section.wall < s.section.diameter * 0.5).map(|s| s.key.as_str()).collect();
+/// The plan's members sized: each round every load case worked out, and each
+/// member cut from the lightest tube of its material that would carry the forces
+/// it carries in each case at four fifths of its design limit (the biggest if none
+/// would); again, as the forces shift with the members' stiffness, until nothing
+/// changes (or `ROUNDS`; after the sixth, only bigger). The members, and the
+/// rounds it took.
+fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, mix: bool) -> Sized {
+    // (Its decks' plates sized too: they come back with the plan's members.)
+    use universe_sim::world::frame::{work, Member};
+    let sf = 1.5;
+    // (Each material's tubes its own ladder; MIX: every tube, any material.)
+    let ladder_of = |key: &str| -> Vec<&'static Stock> {
+        let of = stocks().iter().find(|s| s.key == key).map(|s| s.of.as_str()).unwrap_or("");
+        let mut l: Vec<&'static Stock> = stocks().iter().filter(|s| (mix || s.of == of) && s.section.wall < s.section.diameter * 0.5).collect();
+        l.sort_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+        l
+    };
     let mut plan = plan.clone();
-    for round in 1..=8 {
-        let b = bearing(&plan, fit, spec, STANDARD_G);
-        let mut worst = vec![0.0f64; plan.beams.len()];
-        let mut any = false;
-        for (_, r) in &b.cases {
-            if let Ok(c) = r {
-                any = true;
-                for (k, o) in c.members.iter().enumerate() {
-                    worst[k] = worst[k].max(if o.broken.is_some() { 9.0 } else { o.work.design });
-                }
-            }
-        }
-        if !any {
-            return (plan.beams, round);
+    for round in 1..=ROUNDS {
+        let b = bearing(&plan, fit, spec, plan.gravity());
+        if !b.cases.iter().any(|(_, r)| r.is_ok()) {
+            return (plan.beams, plan.plates, round, 0);
         }
         let mut changed = false;
+        let mut maxed = 0;
+        // (A deck's supports no less stiff than its plate: a bendy joist under a stiff
+        // plate sags within its own limits and bends the plate far past its.)
+        let floor_stiffness = |p: Vec3| -> f64 {
+            plan.plates.iter().filter(|pl| plate_grid(pl).0.iter().any(|q| q.distance(p) < 0.05)).filter_map(|pl| plate_stocks().iter().find(|s| s.key == pl.stock)).map(|s| s.material.stiffness).fold(0.0, f64::max)
+        };
+        let decks_on: Vec<f64> = plan.beams.iter().map(|b| floor_stiffness(b.a).max(floor_stiffness(b.b))).collect();
         for (k, beam) in plan.beams.iter_mut().enumerate() {
-            let Some(g) = ladder.iter().position(|s| *s == beam.stock) else { continue };
-            if worst[k] > 0.9 && g + 1 < ladder.len() {
-                beam.stock = ladder[g + 1].to_string();
-                changed = true;
-            } else if worst[k] < 0.33 && g > 0 && round <= 5 {
-                beam.stock = ladder[g - 1].to_string();
+            let Some(now) = stocks().iter().find(|s| s.key == beam.stock) else { continue };
+            let length = f64::from(beam.a.distance(beam.b));
+            let forces: Vec<universe_sim::world::frame::Forces> = b.outcomes(k).iter().map(|o| o.work.forces).collect();
+            if forces.is_empty() {
+                continue;
+            }
+            let needed = |s: &Stock| forces.iter().map(|f| work(&Member { pinned: [false; 2], a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
+            let ladder: Vec<&Stock> = ladder_of(&beam.stock).into_iter().filter(|s| s.material.stiffness >= decks_on[k] * 0.9).collect();
+            let ladder = if ladder.is_empty() { ladder_of(&beam.stock) } else { ladder };
+            let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
+                maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
+                ladder.last().copied()
+            });
+            if let Some(pick) = fits
+                && pick.key != beam.stock
+                && (round <= 6 || pick.per_metre > now.per_metre)
+            {
+                beam.stock = pick.key.clone();
                 changed = true;
             }
         }
-        if !changed {
-            return (plan.beams, round);
+        // (Each deck: the lightest plate of its material (MIX: of any) whose strips
+        // carry their forces at four fifths of their limit; none, the heaviest.)
+        for (n, plate) in plan.plates.iter_mut().enumerate() {
+            let Some(now) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
+            let strips: Vec<_> = b.strips.iter().filter(|s| s.0 == n).collect();
+            let needed = |ps: &PlateStock| strips.iter().flat_map(|&&(_, a, e, w, m)| b.of_member(m).into_iter().map(move |o| work(&Member { pinned: [false; 2], a: 0, b: 1, section: ps.section(w), material: ps.material }, o.work.forces, f64::from(a.distance(e)), sf).design)).fold(0.0, f64::max);
+            // (MIX: any plate, lightest first; else its own material's.)
+            let mut ladder: Vec<&PlateStock> = plate_stocks().iter().filter(|s| mix || s.of == now.of).collect();
+            ladder.sort_by(|a, b| a.per_square_metre.total_cmp(&b.per_square_metre));
+            let pick = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
+                maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
+                ladder.last().copied()
+            });
+            if let Some(pick) = pick.filter(|p| p.key != plate.stock && (round <= 6 || p.per_square_metre > now.per_square_metre)) {
+                plate.stock = pick.key.clone();
+                changed = true;
+            }
+        }
+        if !changed || round == ROUNDS {
+            return (plan.beams, plan.plates, round, maxed);
         }
     }
-    (plan.beams, 8)
+    (plan.beams, plan.plates, ROUNDS, 0)
+}
+
+/// The most rounds AUTO-SIZE takes.
+const ROUNDS: usize = 16;
+
+/// The plan's members braced where `b` finds them past their limit in any case
+/// (those 2 m long or more): each split at its middle, the middle tied to the nearest other joint (not
+/// through a room), of its own stock. The members, and how many were braced.
+fn brace(plan: &Plan, b: &Bearing) -> (Vec<Beam>, usize) {
+    // (Long ones only: a member under 2 m isn't helped by halving.)
+    let over: Vec<usize> = (0..plan.beams.len()).filter(|&k| plan.beams[k].a.distance(plan.beams[k].b) >= 2.0 && b.outcomes(k).iter().any(|o| o.work.design > 1.0 || o.broken.is_some())).collect();
+    let joints: Vec<Vec3> = plan.beams.iter().flat_map(|x| [x.a, x.b]).collect();
+    let mut beams = plan.beams.clone();
+    let mut extra = Vec::new();
+    for &k in over.iter().rev() {
+        let m = beams.remove(k);
+        let mid = m.a.lerp(m.b, 0.5);
+        let tie = joints.iter().copied().filter(|q| q.distance(m.a) > 0.1 && q.distance(m.b) > 0.1 && !through_room(plan, mid, *q)).min_by(|x, y| x.distance(mid).total_cmp(&y.distance(mid)));
+        extra.push(Beam { a: m.a, b: mid, stock: m.stock.clone() });
+        extra.push(Beam { a: mid, b: m.b, stock: m.stock.clone() });
+        if let Some(q) = tie {
+            extra.push(Beam { a: mid, b: q, stock: m.stock });
+        }
+    }
+    beams.extend(extra);
+    (beams, over.len())
 }
 
 /// Loads in balance, free in flight: the `external` forces at joints, and each
@@ -647,21 +916,106 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     let mut joints = Vec::new();
     let mut weight = Vec::new();
     for b in &plan.beams {
-        let Some(s) = stocks().iter().find(|s| s.key == b.stock) else { continue };
+        let Some(s) = stocks().iter().find(|s| s.key == b.stock) else {
+            out.index.push(None);
+            continue;
+        };
         let (ja, jb) = (joint(b.a, &mut joints), joint(b.b, &mut joints));
         if ja == jb {
+            out.index.push(None);
             continue;
         }
-        let m = Member { a: ja, b: jb, section: s.section, material: s.material };
+        out.index.push(Some(frame.members.len()));
+        let m = Member { a: ja, b: jb, section: s.section, material: s.material, pinned: [false; 2] };
         let mass = m.mass(b.a.as_dvec3(), b.b.as_dvec3());
         out.mass += mass;
         // (A member's own weight: half at each end.)
         weight.extend([(ja, mass * 0.5), (jb, mass * 0.5)]);
         frame.members.push(m);
     }
+    // Its decks: each a grid of strips of its plate, both ways, carrying its own
+    // weight and its design load at its grid's points; each point tied to a joint
+    // of the frame within half a metre of it (by a fitting: the stoutest steel tube).
+    let frame_joints = joints.len();
+    // (Each deck point's share of the design floor load: the FLOOR case's, not the
+    // flight's; what is aboard is in its modules.)
+    let mut floor: Vec<(usize, f64)> = Vec::new();
+    let mut deck_points: Vec<usize> = Vec::new();
+    let fitting = stocks().iter().filter(|s| s.of.contains("4340") && s.section.wall < s.section.diameter * 0.5).max_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+    for (n, plate) in plan.plates.iter().enumerate() {
+        let Some(ps) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
+        let (nodes, nx, nz, dx, dz) = plate_grid(plate);
+        // (A point within 0.3 m of a joint already there, another deck's or the
+        // frame's, is that joint: decks meeting share their edge.)
+        let at: Vec<usize> = nodes
+            .iter()
+            .map(|&q| {
+                let near = joints.iter().enumerate().filter(|(_, p)| p.distance(q) < 0.3).min_by(|a, b| a.1.distance(q).total_cmp(&b.1.distance(q))).map(|(k, _)| k);
+                near.unwrap_or_else(|| joint(q, &mut joints))
+            })
+            .collect();
+        let node = |i: usize, j: usize| at[j * (nx + 1) + i];
+        let strip = |a: usize, b: usize, width: f32, frame: &mut Frame, out: &mut Bearing| {
+            out.strips.push((n, joints[a], joints[b], width, frame.members.len()));
+            frame.members.push(Member { a, b, section: ps.section(width), material: ps.material, pinned: [false; 2] });
+        };
+        for j in 0..=nz {
+            for i in 0..nx {
+                strip(node(i, j), node(i + 1, j), dz, &mut frame, &mut out);
+            }
+        }
+        for i in 0..=nx {
+            for j in 0..nz {
+                strip(node(i, j), node(i, j + 1), dx, &mut frame, &mut out);
+            }
+        }
+        // (Each point's share of the deck: a quarter at a corner, a half on an edge.)
+        let area = f64::from(dx * dz);
+        let mut touched = false;
+        for j in 0..=nz {
+            for i in 0..=nx {
+                let edge = |k: usize, n: usize| if k == 0 || k == n { 0.5 } else { 1.0 };
+                let share = area * edge(i, nx) * edge(j, nz);
+                let p = node(i, j);
+                weight.push((p, share * ps.per_square_metre));
+                floor.push((p, share * DECK_LOAD));
+                out.mass += area * edge(i, nx) * edge(j, nz) * ps.per_square_metre;
+                if let Some(q) = (0..frame_joints).filter(|&q| q != p && joints[q].distance(joints[p]) <= 0.6).min_by(|&a, &b| joints[a].distance(joints[p]).total_cmp(&joints[b].distance(joints[p]))) {
+                    if let Some(f) = fitting {
+                        frame.members.push(Member { a: p, b: q, section: f.section, material: f.material, pinned: [false; 2] });
+                    }
+                    touched = true;
+                } else if p < frame_joints {
+                    touched = true;
+                }
+            }
+        }
+        if !touched {
+            out.loose.push(format!("DECK {} TOUCHES NO STRUCTURE", n + 1));
+        }
+        deck_points.extend(at);
+    }
+    // (A deck rests on what holds it: a strip between two points that both rest on
+    // something is pinned at both, free to turn on them (it can't be bent by what
+    // it rests on moving); a strip reaching out over nothing stays continuous.)
+    let mut rests = vec![false; joints.len()];
+    for m in frame.members.iter().filter(|m| m.section.flat.is_none()) {
+        rests[m.a] = true;
+        rests[m.b] = true;
+    }
+    for m in frame.members.iter_mut().filter(|m| m.section.flat.is_some()) {
+        let both = rests[m.a] && rests[m.b];
+        m.pinned = [both, both];
+    }
     frame.joints = joints.iter().map(|p| p.as_dvec3()).collect();
     out.joints = joints.clone();
     let near = |at: Vec3, r: f32| -> Vec<usize> { joints.iter().enumerate().filter(|(_, q)| q.distance(at) <= r).map(|(k, _)| k).collect() };
+    // (The joints a module is held at: those in it, or by it; a deck's points only
+    // under its foot, where it stands on the deck.)
+    let on_deck: Vec<bool> = (0..joints.len()).map(|j| deck_points.contains(&j)).collect();
+    let mounted = |lo: Vec3, hi: Vec3| -> Vec<usize> {
+        joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!on_deck[k] || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect()
+    };
     // The masses it carries: each module's (the ore bay: its hold full), shared
     // between the joints in it.
     let full = record.and_then(|h| h.capacity.hold).unwrap_or(0.0);
@@ -669,8 +1023,9 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     for blk in &plan.blocks {
         let Some(f) = fit.iter().find(|f| f.id == kind(&blk.id)) else { continue };
         let (lo, hi) = blk.bounds();
-        let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
-        let m = if blk.id == HOLD { full } else { f.mass };
+        let at: Vec<usize> = mounted(lo, hi);
+        // (Full: its ore, cargo or fuel too.)
+        let m = if blk.id == HOLD { full } else { f.mass + f.load };
         if at.is_empty() {
             out.loose.push(format!("{} IS NOT MOUNTED", f.name));
         } else {
@@ -697,7 +1052,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         for blk in &plan.blocks {
             let Some((dir, thrust)) = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| f.push) else { continue };
             let (lo, hi) = blk.bounds();
-            let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+            let at: Vec<usize> = mounted(lo, hi);
             let role = if dir.y > 0.5 { ThrusterRole::Lift } else { ThrusterRole::Main };
             pushers.push((role, dir.as_dvec3() * thrust, at));
         }
@@ -724,18 +1079,47 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // Landing: weight and the jolt of the design landing, as its legs give it
     // (world::legs: their stroke and efficiency, the sink they're designed for),
     // held at the landing pads.
+    // (Landing legs placed as modules: each one's record.)
+    let legs_placed: Vec<(&Block, Leg, String)> = plan.blocks.iter().filter_map(|b| fit.iter().find(|f| f.id == kind(&b.id)).and_then(|f| f.gear.map(|g| (b, g, f.name.clone())))).collect();
     let legs = spec.and_then(universe_sim::world::legs::of_spec);
-    // (No hull, no legs: the registry's design landing, 3.05 m/s, stopped over a
-    // stroke of 1 m at 0.85: an assumption until pads have legs of their own.)
-    let jolt = legs.map_or(3.05f64.powi(2) / (2.0 * 1.0 * 0.85), |l| l.jolt(l.designed) * STANDARD_G);
-    let pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).map(|n| n.at.as_vec3()).chain(plan.pads.iter().copied()).flat_map(|p| near(p, 1.0)).collect();
+    // (Landing legs placed: their design sink over the shortest stroke. Else the
+    // hull's legs; else the registry's design landing, 3.05 m/s over an assumed
+    // 1 m stroke at 0.85.)
+    let placed = legs_placed.iter().map(|(_, g, _)| *g).min_by(|a, b| a.1.total_cmp(&b.1));
+    let jolt = match (placed, legs) {
+        (Some((_, stroke, eff, sink)), _) => sink * sink / (2.0 * stroke * eff),
+        (None, Some(l)) => l.jolt(l.designed) * STANDARD_G,
+        (None, None) => 3.05f64.powi(2) / (2.0 * 1.0 * 0.85),
+    };
+    if !legs_placed.is_empty() {
+        let each = carried * (g + jolt) / legs_placed.len() as f64;
+        for (_, (holds, ..), name) in legs_placed.iter().filter(|(_, (holds, ..), _)| each > *holds) {
+            out.loose.push(format!("{name} OVERLOADED LANDING: {:.0} OF {:.0} KN", each / 1000.0, holds / 1000.0));
+        }
+    }
+    let mut pads: Vec<usize> = spec.into_iter().flat_map(|s| s.shape().nodes(Role::Gear)).map(|n| n.at.as_vec3()).chain(plan.pads.iter().copied()).flat_map(|p| near(p, 1.0)).collect();
+    // (Landing legs placed: the frame stands on each one's top, at the joints in
+    // it; each takes its share of the landing, against what it holds.)
+    for (b, _, name) in &legs_placed {
+        let (lo, hi) = b.bounds();
+        let at: Vec<usize> = mounted(lo, hi);
+        if at.is_empty() {
+            out.loose.push(format!("{name} HOLDS UP NOTHING"));
+        }
+        pads.extend(at);
+    }
     let landing = if pads.is_empty() {
         out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
         Err("NOTHING ON THE PADS".to_string())
     } else {
-        Ok(Case { loads: loads(DVec3::new(0.0, jolt, 0.0)), held: pads, anchor: None })
+        Ok(Case { loads: loads(DVec3::new(0.0, jolt, 0.0)), held: pads.clone(), anchor: None })
     };
     out.felt.push(g + jolt);
+    // Floor: standing on its pads at its design gravity, full (what it really
+    // carries). The design floor load (a crowd, stores stacked) is local: a floor
+    // must hold it anywhere, but the whole ship is never a crowd; it's added below
+    // to each deck panel and to what holds each deck point up.
+    let floored = if pads.is_empty() { Err("NOTHING ON THE PADS".to_string()) } else { Ok(Case { loads: loads(DVec3::ZERO), held: pads, anchor: None }) };
     // Full main thrust, and hovering on full lift: the pushes balanced by every
     // mass's inertia, held only to keep it from drifting.
     let (main, total) = pushes(ThrusterRole::Main, &mut out, "THE DRIVE");
@@ -768,6 +1152,58 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         (CASES[1].into(), run(Ok(thrust), !main.is_empty())),
         (CASES[2].into(), run(Ok(hover), !lift.is_empty())),
     ];
+    // (No decks: no floor to check.)
+    if !floor.is_empty() {
+        out.felt.push(g);
+        out.cases.push((CASES[3].into(), run(floored, true)));
+    }
+    // (Standing, each deck point's floor load pushes on what holds it there: its
+    // posts and fittings, shared.)
+    let mut holders = vec![0usize; frame.joints.len()];
+    for m in frame.members.iter().filter(|m| m.section.flat.is_none()) {
+        holders[m.a] += 1;
+        holders[m.b] += 1;
+    }
+    let mut floor_at = vec![0.0f64; frame.joints.len()];
+    for &(j, m) in &floor {
+        floor_at[j] += m * g;
+    }
+    if let Some((_, Ok(col))) = out.cases.iter_mut().find(|c| c.0 == CASES[3]) {
+        for (k, m) in frame.members.iter().enumerate().filter(|(_, m)| m.section.flat.is_none()) {
+            let push: f64 = [m.a, m.b].iter().filter(|&&j| floor_at[j] > 0.0).map(|&j| floor_at[j] / holders[j].max(1) as f64).sum();
+            if push > 0.0 {
+                let o = &mut col.members[k];
+                let mut f = o.work.forces;
+                f.axial -= push;
+                o.work = universe_sim::world::frame::work(m, f, frame.joints[m.a].distance(frame.joints[m.b]), sf);
+                if o.work.breaking >= 1.0 && o.broken.is_none() {
+                    o.broken = Some(0);
+                }
+            }
+        }
+    }
+    // (Each deck strip's own bending between its ends: its share of the deck's load
+    // (half each way), simply supported, q L^2 / 8, and its shear q L / 2; the deck's own weight as it is
+    // pushed in flight, its weight and floor load standing.)
+    for (k, (name, result)) in out.cases.iter_mut().enumerate() {
+        let Ok(col) = result else { continue };
+        let felt = out.felt.get(k).copied().unwrap_or(g);
+        for &(n, a, b, width, m) in &out.strips {
+            let Some(ps) = plan.plates.get(n).and_then(|p| plate_stocks().iter().find(|s| s.key == p.stock)) else { continue };
+            let per_area = if name.as_str() == CASES[3] { (ps.per_square_metre + DECK_LOAD) * g } else { ps.per_square_metre * felt };
+            let l = f64::from(a.distance(b));
+            let local = per_area * 0.5 * f64::from(width) * l * l / 8.0;
+            let o = &mut col.members[m];
+            let mut f = o.work.forces;
+            f.across += local;
+            // (And its shear at its ends, q L / 2: what a sandwich's core takes.)
+            f.shear += per_area * 0.5 * f64::from(width) * l / 2.0;
+            o.work = universe_sim::world::frame::work(&frame.members[m], f, l, sf);
+            if o.work.breaking >= 1.0 && o.broken.is_none() {
+                o.broken = Some(0);
+            }
+        }
+    }
     out
 }
 
@@ -788,6 +1224,8 @@ struct Block {
 #[derive(Clone)]
 pub struct Fitted {
     id: String,
+    /// Its equipment record's key (the ore bay: none).
+    key: String,
     name: String,
     mass: f64,
     volume: f32,
@@ -796,7 +1234,16 @@ pub struct Fitted {
     /// A drive's or a lift's push: which way it pushes the ship (a drive forward,
     /// to -z; a lift up), and how hard (N, its record's thrust).
     push: Option<(Vec3, f64)>,
+    /// What it carries full (kg): an ore bay's ore, a rack's cargo, a tank's fuel.
+    load: f64,
+    /// A landing leg's: what it holds (N), its stroke (m), its efficiency, the sink
+    /// it's designed for (m/s).
+    gear: Option<Leg>,
 }
+
+/// A landing leg's figures: what it holds (N), its stroke (m), its efficiency, the
+/// sink it's designed for (m/s).
+type Leg = (f64, f64, f64, f64);
 
 /// The ore bay's id among the placed blocks.
 const HOLD: &str = "HOLD";
@@ -813,7 +1260,7 @@ fn fit_of(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
     // (Its ore bay: its hold; broad and low, under doors.)
     if let Some(volume) = hull.capacity.hold_volume.filter(|v| *v > 0.0).map(|v| v as f32) {
         let a = Vec3::new(1.2, 0.8, 1.0);
-        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None });
+        out.push(Fitted { id: HOLD.into(), key: String::new(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None, load: 0.0, gear: None });
     }
     out
 }
@@ -838,7 +1285,8 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
     let content = universe_sim::world::content::content();
     {
         let p = &e.physical;
-        let round = matches!(e.function, EquipmentFunction::Tank(_));
+        // (Tanks and stores of liquid or gas: balls.)
+        let round = matches!(e.function, EquipmentFunction::Tank(_) | EquipmentFunction::Store(_));
         let size = match (p.width, p.height, p.length) {
             // (Its own size, where its record says it: across, up, along.)
             (Some(w), Some(h), Some(l)) => Vec3::new(w as f32, h as f32, l as f32),
@@ -860,7 +1308,18 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
             EquipmentFunction::Lift(l) => Some((Vec3::Y, l.thrust)),
             _ => None,
         };
-        Some(Fitted { id: id.to_string(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push })
+        let load = match &e.function {
+            EquipmentFunction::OreBay(b) => b.capacity,
+            EquipmentFunction::Rack(r) => r.capacity,
+            EquipmentFunction::Tank(t) => t.capacity,
+            EquipmentFunction::Store(t) => t.capacity.unwrap_or(0.0),
+            _ => 0.0,
+        };
+        let gear = match &e.function {
+            EquipmentFunction::LandingGear(g) => Some((g.holds, g.stroke, g.efficiency, g.sink_rate)),
+            _ => None,
+        };
+        Some(Fitted { id: id.to_string(), key: e.identity.key.clone(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push, load, gear })
     }
 }
 
@@ -874,7 +1333,7 @@ fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
         let volume = m.volume as f32;
         let round = m.does.slot() == SlotKind::Tank;
         let size = if round { Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt()) } else { m.dims().as_vec3() };
-        Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None }
+        Fitted { id: slot.clone(), key: m.key.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None, load: 0.0, gear: None }
     }).collect()
 }
 
@@ -1171,9 +1630,17 @@ struct Tube {
     line: usize,
     ends: [Option<End>; 2],
     hatches: [Hatch; 2],
+    /// How far in from each end its end wall stands (a door where it meets a tube
+    /// across it: at that tube's side, not in its middle).
+    caps: [f32; 2],
 }
 
 impl Tube {
+    /// Where along it its end `e`'s wall stands.
+    fn cap(&self, e: usize) -> f32 {
+        if e == 0 { self.caps[0] } else { self.len - self.caps[1] }
+    }
+
     fn at(&self, s: f32, c: Vec2) -> Vec3 {
         self.a + self.d * s + self.u * c.x + self.v * c.y
     }
@@ -1315,9 +1782,18 @@ impl Plan {
                 let n = (into + on).try_normalize()?;
                 (n.dot(into) < 0.999).then_some(n)
             };
+            // (A door where it joins another tube: its wall across it, at the side of a
+            // tube that crosses it there, square.)
+            let junction = |p: usize, e: usize| !self.free_end(k, p) && self.walled_end(k, p, e);
+            let cap = |p: usize, e: usize| {
+                if !junction(p, e) {
+                    return 0.0;
+                }
+                walled.iter().copied().filter(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p)).filter(|&j| out_of(j, p).dot(d).abs() < 0.7).map(|j| self.lines[j].2.width * 0.5).fold(0.0, f32::max)
+            };
             let mitres = [mitre(a, -d).map(|n| -n), mitre(b, d)];
-            let ends = [self.free_end(k, a).then(|| self.end_of(k, 0)), self.free_end(k, b).then(|| self.end_of(k, 1))];
-            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends, hatches: [self.end_hatch(k, 0), self.end_hatch(k, 1)] }
+            let ends = [self.walled_end(k, a, 0).then(|| self.end_of(k, 0)), self.walled_end(k, b, 1).then(|| self.end_of(k, 1))];
+            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends, hatches: [self.end_hatch(k, 0), self.end_hatch(k, 1)], caps: [cap(a, 0), cap(b, 1)] }
         }).collect()
     }
 
@@ -1339,7 +1815,7 @@ impl Plan {
             }
             for (e, how) in t.ends.iter().enumerate() {
                 if *how == Some(End::Door) {
-                    doorways.push(t.door_cut(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                    doorways.push(t.door_cut(t.cap(e), None, &t.hatches[e]));
                 }
             }
         }
@@ -1383,15 +1859,20 @@ impl Plan {
                 if !matches!(how, Some(End::Closed | End::Door)) {
                     continue;
                 }
-                let s = if e == 0 { 0.0 } else { t.len };
+                let s = t.cap(e);
                 let mut cap: Vec<Vec3> = t.corners.iter().map(|c| t.at(s, *c)).collect();
                 if e == 1 {
                     cap.reverse();
                 }
                 let mut pieces = vec![cap];
-                for (o, room) in rooms.iter().enumerate() {
-                    if o != i {
-                        pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                // (A door where it joins another tube: the wall stands across the way
+                // through, only its doorway cut.)
+                let point = if e == 0 { self.lines[t.line].0 } else { self.lines[t.line].1 };
+                if self.free_end(t.line, point) {
+                    for (o, room) in rooms.iter().enumerate() {
+                        if o != i {
+                            pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                        }
                     }
                 }
                 for door in &doorways {
@@ -1446,7 +1927,7 @@ impl Plan {
             }
             for (e, how) in t.ends.iter().enumerate() {
                 if *how == Some(End::Door) {
-                    out.extend(t.leaf(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                    out.extend(t.leaf(t.cap(e), None, &t.hatches[e]));
                 }
             }
         }
@@ -1461,6 +1942,12 @@ impl Plan {
     /// Is point `p` an end of walled line `k` that no other walled line shares?
     fn free_end(&self, k: usize, p: usize) -> bool {
         !self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).any(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p))
+    }
+
+    /// Whether line `k`'s end `e` (at point `p`) is walled across: a free end, or
+    /// one where it joins another tube that's set a door (a door between the two).
+    fn walled_end(&self, k: usize, p: usize, e: usize) -> bool {
+        self.free_end(k, p) || self.ends.iter().any(|&EndSet(j, f, how, _)| j == k && f == e && how == End::Door)
     }
 
     /// Line `k`'s axis, its ends: its points, or (standing on its line) half its
@@ -1611,7 +2098,7 @@ impl Interior {
     }
 
     pub fn new() -> Self {
-        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, depth: 6.0, spacing: 6.0, ..Default::default() }
+        Interior { yaw: 0.9, pitch: 0.35, snap_floor: true, depth: 6.0, spacing: 6.0, mix: true, ..Default::default() }
     }
 
     /// A sample plan for a look (dev scenarios): from the hatch, a run of points on
@@ -1695,7 +2182,7 @@ impl Interior {
 
     /// Turned to look from `yaw`, `pitch` (rad; dev scenarios).
     pub fn turned(yaw: f32, pitch: f32) -> Self {
-        Interior { yaw, pitch, ..Default::default() }
+        Interior { yaw, pitch, ..Self::new() }
     }
 
     /// The hull's lines, asked for once a hull and picked up when they're done.
@@ -1932,6 +2419,17 @@ impl Interior {
         }
     }
 
+    /// The test stand (dev scenarios): stood up, the walker at `at` (x, y, z, yaw)
+    /// or at the ramp's foot.
+    pub fn stand_test(&mut self, at: Option<[f64; 4]>) {
+        self.refit();
+        let mut s = self.stand_up();
+        if let Some([x, y, z, yaw]) = at {
+            (s.feet, s.yaw) = (universe_engine::glam::DVec3::new(x, y, z), yaw);
+        }
+        self.stand = Some(s);
+    }
+
     /// A dialog open (dev scenarios): NEW, or OPEN.
     pub fn show_dialog(&mut self, open: bool) {
         self.dialog = Some(if open { Dialog::Open(Self::designs()) } else { Dialog::New });
@@ -1951,6 +2449,11 @@ impl Interior {
     /// The FRAME tool in hand (dev scenarios).
     pub fn frame_tool(&mut self) {
         self.tool = Tool::Frame;
+    }
+
+    /// The FRAME tool in DECK mode, laying decks (dev scenarios).
+    pub fn deck_tool(&mut self) {
+        (self.tool, self.deck_mode) = (Tool::Frame, true);
     }
 
     /// Layer `k` hidden (dev scenarios).
@@ -2079,7 +2582,7 @@ impl Interior {
             }
             None => Vec::new(),
         };
-        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new() };
+        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new(), plates: Vec::new(), gravity: None };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
@@ -2133,6 +2636,20 @@ impl Interior {
         self.message = Some((format!("OPENED {}", id.to_uppercase()), 4.0));
     }
 
+    /// Is something in progress (to cancel): a module picked, a path, member or truss
+    /// being laid, TRUSS waiting for its corners, a member picked, WALK HERE armed?
+    fn in_progress(&self) -> bool {
+        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.deck_mode || self.beam_pick.is_some() || self.walk_armed
+    }
+
+    /// What's in progress cancelled; was anything?
+    fn cancel(&mut self) -> bool {
+        let any = self.in_progress();
+        (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
+        (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from, self.deck_pick) = (false, false, false, None, None);
+        any
+    }
+
     /// The design's name (what it's saved as).
     pub fn id(&self) -> &str {
         &self.plan.hull
@@ -2152,6 +2669,344 @@ impl Interior {
     fn hull(&self) -> Option<Arc<Hull>> {
         self.lines.as_ref().filter(|(k, _)| *k == self.plan.hull).map(|(_, h)| h.clone())
     }
+}
+
+/// The test stand: a design with no hull stood on the ground (its landing legs'
+/// feet) and walked, first person, in the studio. What's solid: its rooms' walls and
+/// floors, its modules, the ground; a ramp a slope from the ground up to the
+/// airlock it serves; an airlock a passage (floor, walls, roof, open at its ends);
+/// a vertical room a shaft climbed as a ladder. The walk is the game's own walker.
+struct Stand {
+    mesh: universe_sim::world::walk::WalkMesh,
+    /// What's drawn: each face and its colour (the first two the ground, beneath
+    /// all); the frame's members as lines; the rooms (axis ends, half width,
+    /// half height), to know when the walker's inside.
+    faces: Vec<([Vec3; 3], Color)>,
+    rooms: Vec<(Vec3, Vec3, f32, f32)>,
+    members: Vec<[Vec3; 2]>,
+    /// The shafts climbed: each one's axis and radius.
+    shafts: Vec<(Vec3, Vec3, f32)>,
+    feet: universe_engine::glam::DVec3,
+    velocity: universe_engine::glam::DVec3,
+    yaw: f64,
+    pitch: f64,
+}
+
+/// A box's faces (`lo` to `hi`), less those `skip` says (0..6: -y, +y, -z, +z,
+/// -x, +x).
+fn box_faces(lo: Vec3, hi: Vec3, skip: &[usize]) -> Vec<[Vec3; 3]> {
+    let c = |x: f32, y: f32, z: f32| Vec3::new(if x < 0.5 { lo.x } else { hi.x }, if y < 0.5 { lo.y } else { hi.y }, if z < 0.5 { lo.z } else { hi.z });
+    let quads = [
+        [c(0., 0., 0.), c(1., 0., 0.), c(1., 0., 1.), c(0., 0., 1.)],
+        [c(0., 1., 0.), c(0., 1., 1.), c(1., 1., 1.), c(1., 1., 0.)],
+        [c(0., 0., 0.), c(0., 1., 0.), c(1., 1., 0.), c(1., 0., 0.)],
+        [c(0., 0., 1.), c(1., 0., 1.), c(1., 1., 1.), c(0., 1., 1.)],
+        [c(0., 0., 0.), c(0., 0., 1.), c(0., 1., 1.), c(0., 1., 0.)],
+        [c(1., 0., 0.), c(1., 1., 0.), c(1., 1., 1.), c(1., 0., 1.)],
+    ];
+    quads.iter().enumerate().filter(|(k, _)| !skip.contains(k)).flat_map(|(_, q)| [[q[0], q[1], q[2]], [q[0], q[2], q[3]]]).collect()
+}
+
+impl Interior {
+    /// The design stood on its test stand, ready to walk from the foot of its
+    /// boarding ramp (or, with none, on the ground before it).
+    fn stand_up(&self) -> Stand {
+        use universe_engine::glam::DVec3;
+        let kind_of = |b: &Block| self.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).map(|(k, ..)| k).unwrap_or_default();
+        let ground = self.plan.blocks.iter().filter(|b| kind_of(b) == "landing_gear").map(|b| b.at.y - b.size.y * 0.5).fold(f32::INFINITY, f32::min);
+        let ground = if ground.is_finite() { ground } else { self.plan.blocks.iter().map(|b| b.at.y - b.size.y * 0.5).fold(0.0, f32::min) };
+        // The ground: wide, flat, at the legs' feet (drawn first: beneath all).
+        let g = 300.0;
+        let ground_colour = Color([0.24, 0.27, 0.22, 1.0]);
+        let mut faces: Vec<([Vec3; 3], Color)> = vec![
+            ([Vec3::new(-g, ground, -g), Vec3::new(g, ground, -g), Vec3::new(g, ground, g)], ground_colour),
+            ([Vec3::new(-g, ground, -g), Vec3::new(g, ground, g), Vec3::new(-g, ground, g)], ground_colour),
+        ];
+        // Its rooms' walls and floors.
+        for p in self.panels().iter() {
+            let q = &p.outline;
+            let c = p.colour();
+            for k in 1..q.len().saturating_sub(1) {
+                faces.push(([q[0], q[k], q[k + 1]], Color(c)));
+            }
+        }
+        // Its decks: floors (but one under a walkway: its floor is drawn with it).
+        let under_walkway = |plate: &Plate| {
+            let m = Vec3::new((plate.lo.x + plate.hi.x) * 0.5, plate.y, (plate.lo.y + plate.hi.y) * 0.5);
+            self.plan.lines.iter().enumerate().any(|(k, &(a, b, pr))| {
+                let (pa, pb) = (self.plan.points[a].at, self.plan.points[b].at);
+                let d = pb - pa;
+                let t = (m - pa).dot(d) / d.length_squared().max(1e-6);
+                let off = m - (pa + d * t.clamp(0.0, 1.0));
+                pr.stand && self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled) && (0.0..=1.0).contains(&t) && off.y.abs() < 0.3 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
+            })
+        };
+        for plate in self.plan.plates.iter().filter(|p| !under_walkway(p)) {
+            let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
+            let colour = Color([0.6, 0.55, 0.45, 1.0]);
+            faces.push(([c[0], c[1], c[2]], colour));
+            faces.push(([c[0], c[2], c[3]], colour));
+        }
+        // Its modules: solid, but an airlock a passage and a ramp a slope.
+        let airlocks: Vec<&Block> = self.plan.blocks.iter().filter(|b| kind_of(b) == "airlock").collect();
+        let mut start = None;
+        for b in &self.plan.blocks {
+            let (lo, hi) = b.bounds();
+            let k = kind_of(b);
+            let along_z = b.size.z >= b.size.x;
+            match k.as_str() {
+                "airlock" => {
+                    // (Open at its ends, along its length.)
+                    let open = if along_z { [2, 3] } else { [4, 5] };
+                    for t in box_faces(lo, hi, &open) {
+                        faces.push((t, Color([0.62, 0.66, 0.7, 1.0])));
+                    }
+                }
+                "ramp" => {
+                    // (From the end nearest an airlock, at that airlock's floor, down
+                    // to the ground at the far end.)
+                    let lock = airlocks.iter().min_by(|a, c| a.at.distance(b.at).total_cmp(&c.at.distance(b.at)));
+                    let top = lock.map_or(hi.y, |l| l.at.y - l.size.y * 0.5);
+                    let (near, far, half) = if along_z {
+                        let to = lock.map_or(1.0, |l| (l.at.z - b.at.z).signum());
+                        (Vec3::new(b.at.x, top, b.at.z + to * b.size.z * 0.5), Vec3::new(b.at.x, ground, b.at.z - to * b.size.z * 0.5), Vec3::X * b.size.x * 0.5)
+                    } else {
+                        let to = lock.map_or(1.0, |l| (l.at.x - b.at.x).signum());
+                        (Vec3::new(b.at.x + to * b.size.x * 0.5, top, b.at.z), Vec3::new(b.at.x - to * b.size.x * 0.5, ground, b.at.z), Vec3::Z * b.size.z * 0.5)
+                    };
+                    let (a, c, d, e) = (near - half, near + half, far + half, far - half);
+                    let colour = Color([0.85, 0.7, 0.35, 1.0]);
+                    faces.push(([a, c, d], colour));
+                    faces.push(([a, d, e], colour));
+                    // (Walked up from its foot, facing up it.)
+                    let up = near - far;
+                    start = Some((far + (far - near).normalize_or_zero() * 1.5, f64::from((-up.x).atan2(-up.z))));
+                }
+                _ => {
+                    let round = self.round(&b.id);
+                    let colour = if k == "landing_gear" { Color([0.4, 0.42, 0.46, 1.0]) } else { Color([0.55, 0.5, 0.62, 1.0]) };
+                    for (t, _) in b.faces(round) {
+                        faces.push((t, colour));
+                    }
+                }
+            }
+        }
+        let tris: Vec<[DVec3; 3]> = faces.iter().map(|(t, _)| t.map(|p| p.as_dvec3())).collect();
+        let mesh = universe_sim::world::walk::WalkMesh::new(&tris);
+        // The shafts: walled rooms standing upright.
+        let shafts = (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).filter_map(|k| {
+            let (a, b) = self.plan.axis(k);
+            ((b - a).normalize_or_zero().y.abs() > 0.9).then_some((a.min(b), a.max(b), self.plan.lines[k].2.width * 0.5))
+        }).collect();
+        let (feet, yaw) = start.unwrap_or_else(|| (Vec3::new(0.0, ground, -40.0), 0.0));
+        Stand {
+            mesh,
+            faces,
+            members: self.plan.beams.iter().map(|b| [b.a, b.b]).collect(),
+            // (And each airlock, a room too: along its length.)
+            rooms: (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).map(|k| {
+                let (a, b) = self.plan.axis(k);
+                let p = self.plan.lines[k].2;
+                (a, b, p.width * 0.5, p.height * 0.5)
+            }).chain(airlocks.iter().map(|b| {
+                let along = if b.size.z >= b.size.x { Vec3::Z * b.size.z * 0.5 } else { Vec3::X * b.size.x * 0.5 };
+                (b.at - along, b.at + along, b.size.x.min(b.size.z) * 0.5, b.size.y * 0.5)
+            })).collect(),
+            shafts,
+            feet: DVec3::new(f64::from(feet.x), f64::from(ground) + 0.05, f64::from(feet.z)),
+            velocity: DVec3::ZERO,
+            yaw,
+            pitch: 0.0,
+        }
+    }
+}
+
+/// Where a walker clicked at would stand on the stand: the floor of the first room
+/// the ray from `eye` along `dir` passes into; else the first floor it meets (a
+/// side met: what's under that spot, backed off it a little); none if it meets
+/// nothing.
+fn stand_spot(s: &Stand, eye: Vec3, dir: Vec3) -> Option<universe_engine::glam::DVec3> {
+    use universe_engine::glam::DVec3;
+    let d = dir.as_dvec3();
+    let mut from = eye.as_dvec3();
+    // (Along the ray, surface after surface: the first room's floor it passes over,
+    // or else the first floor it meets; a side met, what's under that spot.)
+    let mut first: Option<DVec3> = None;
+    for _ in 0..16 {
+        let Some((t, n)) = s.mesh.ray(from, d, 2000.0) else { break };
+        let hit = from + d * t;
+        let level = n.y.abs() > 0.6;
+        let spot = if level && d.y < 0.0 {
+            Some(hit + DVec3::Y * 0.05)
+        } else if !level {
+            let back = hit - d * 0.4;
+            s.mesh.ray(back, DVec3::NEG_Y, 2000.0).map(|(down, _)| back - DVec3::Y * (down - 0.05))
+        } else {
+            None
+        };
+        if let Some(p) = spot {
+            if in_rooms(s, (p + DVec3::Y * 0.9).as_vec3()) {
+                return Some(p);
+            }
+            first = first.or(Some(p));
+        }
+        from = hit + d * 0.05;
+    }
+    first
+}
+
+/// Is `p` inside one of the stand's rooms (or airlocks)?
+fn in_rooms(s: &Stand, p: Vec3) -> bool {
+    s.rooms.iter().any(|&(a, b, hw, hh)| {
+        let d = b - a;
+        let t = ((p - a).dot(d) / d.length_squared().max(1e-6)).clamp(0.0, 1.0);
+        let off = p - (a + d * t);
+        if d.normalize_or_zero().y.abs() > 0.9 { Vec2::new(off.x, off.z).length() < hw } else { off.y.abs() < hh && Vec3::new(off.x, 0.0, off.z).length() < hw }
+    })
+}
+
+/// The test stand walked for a frame: WASD, the arrows or a drag to look, SPACE to
+/// jump, SHIFT to run (up a shaft: forward climbs, looking down goes down); ESC
+/// back to the studio.
+fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
+    use universe_engine::glam::DVec3;
+    use universe_sim::world::walk::{Collider, Stride, Walker};
+    let input = &ctx.input;
+    let dt = f64::from(ctx.dt).min(0.05);
+    let key = |k: KeyCode| if input.down(k) { 1.0 } else { 0.0 };
+    let turn = key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft);
+    let tilt = key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown);
+    s.yaw -= turn * 1.8 * dt;
+    s.pitch = (s.pitch + tilt * 1.2 * dt).clamp(-1.4, 1.4);
+    if input.button_down(MouseButton::Left) {
+        s.yaw -= f64::from(input.mouse_delta.x) * 0.006;
+        s.pitch = (s.pitch - f64::from(input.mouse_delta.y) * 0.006).clamp(-1.4, 1.4);
+    }
+    let forward = key(KeyCode::KeyW) - key(KeyCode::KeyS);
+    let right = key(KeyCode::KeyD) - key(KeyCode::KeyA);
+    let run = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+    let (sn, co) = s.yaw.sin_cos();
+    let (fwd, side) = (DVec3::new(-sn, 0.0, -co), DVec3::new(co, 0.0, -sn));
+    let speed = if run { universe_sim::world::crew::RUN } else { universe_sim::world::crew::WALK };
+    let wish = (fwd * forward + side * right).clamp_length_max(1.0) * speed;
+    let jump = if input.pressed(KeyCode::Space) { universe_sim::world::crew::JUMP } else { 0.0 };
+    let climb = forward * universe_sim::world::crew::CLIMB * if s.pitch < -0.5 { -1.0 } else { 1.0 };
+    // (A shaft's ladder runs a metre past its top, so the climber's feet come level
+    // with the floor there to step off.)
+    let shafts = s.shafts.clone();
+    let climbable = move |p: DVec3| shafts.iter().any(|&(lo, hi, r)| {
+        let q = p.as_vec3();
+        q.y >= lo.y - 0.3 && q.y <= hi.y + 1.0 && Vec2::new(q.x - lo.x, q.z - lo.z).length() < r
+    });
+    let colliders = [Collider::Mesh { mesh: &s.mesh, at: DVec3::ZERO, rot: universe_engine::glam::DQuat::IDENTITY }];
+    let mut w = Walker { feet: s.feet, velocity: s.velocity };
+    w.step(&colliders, &|_| DVec3::Y, g, &climbable, &Stride { wish, jump, climb }, dt);
+    s.feet = w.feet;
+    s.velocity = w.velocity;
+}
+
+/// The test stand seen first person: every face shaded and drawn far to near (the
+/// near ones over the far), cut where it passes behind the eye; the frame's
+/// members as lines among them; a cross at the middle; how to walk.
+fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
+    let size = frame.size();
+    frame.hud_rect(Vec2::ZERO, size, Color([0.02, 0.03, 0.06, 1.0]));
+    let eye = (s.feet + universe_engine::glam::DVec3::Y * 1.65).as_vec3();
+    let (sy, cy) = (s.yaw as f32).sin_cos();
+    let (sp, cp) = (s.pitch as f32).sin_cos();
+    let forward = Vec3::new(-sy * cp, sp, -cy * cp);
+    let right = Vec3::new(cy, 0.0, -sy);
+    let up = right.cross(forward);
+    let focal = size.y * 0.5 / (FOV * 0.5).tan();
+    let near = 0.08;
+    let view = |p: Vec3| {
+        let d = p - eye;
+        Vec3::new(d.dot(right), d.dot(up), d.dot(forward))
+    };
+    let screen = |v: Vec3| size * 0.5 + Vec2::new(v.x, -v.y) * (focal / v.z);
+    // (A polygon in view space cut at the near plane.)
+    let clip = |poly: &[Vec3]| -> Vec<Vec3> {
+        let mut out = Vec::new();
+        for k in 0..poly.len() {
+            let (a, b) = (poly[k], poly[(k + 1) % poly.len()]);
+            if a.z >= near {
+                out.push(a);
+            }
+            if (a.z >= near) != (b.z >= near) {
+                let t = (near - a.z) / (b.z - a.z);
+                out.push(a.lerp(b, t));
+            }
+        }
+        out
+    };
+    let light = Vec3::new(0.4, 0.8, 0.45).normalize();
+    // (Everything to draw, with its distance: faces, then the members.)
+    enum Item {
+        Face(Vec<Vec3>, Color),
+        Member(Vec3, Vec3),
+    }
+    let mut items: Vec<(f32, Item)> = Vec::new();
+    // (The ground first, beneath all; then the rest far to near.)
+    let mut ground = Vec::new();
+    for (k, (t, colour)) in s.faces.iter().enumerate() {
+        let v = t.map(view);
+        if v.iter().all(|p| p.z < near) {
+            continue;
+        }
+        let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+        let shade = 0.45 + 0.55 * n.dot(light).abs();
+        let c = Color([colour.0[0] * shade, colour.0[1] * shade, colour.0[2] * shade, 1.0]);
+        let poly = clip(&v);
+        if poly.len() >= 3 {
+            if k < 2 {
+                ground.push((poly, c));
+                continue;
+            }
+            let depth = poly.iter().map(|p| p.z).sum::<f32>() / poly.len() as f32;
+            items.push((depth, Item::Face(poly, c)));
+        }
+    }
+    // (Inside a room, its walls hide the frame round it: no members.)
+    let head = eye;
+    let inside_room = s.rooms.iter().any(|&(a, b, hw, hh)| {
+        let d = b - a;
+        let t = ((head - a).dot(d) / d.length_squared().max(1e-6)).clamp(0.0, 1.0);
+        let off = head - (a + d * t);
+        if d.normalize_or_zero().y.abs() > 0.9 { Vec2::new(off.x, off.z).length() < hw } else { off.y.abs() < hh + 0.3 && Vec3::new(off.x, 0.0, off.z).length() < hw }
+    });
+    for [a, b] in s.members.iter().filter(|_| !inside_room) {
+        let (va, vb) = (view(*a), view(*b));
+        if va.z < near && vb.z < near {
+            continue;
+        }
+        let poly = clip(&[va, vb]);
+        if let [p, q, ..] = poly[..] {
+            items.push(((p.z + q.z) * 0.5, Item::Member(p, q)));
+        }
+    }
+    items.sort_by(|a, b| b.0.total_cmp(&a.0));
+    for (poly, c) in ground {
+        let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
+        for k in 1..q.len() - 1 {
+            frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+        }
+    }
+    for (_, item) in items {
+        match item {
+            Item::Face(poly, c) => {
+                let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
+                for k in 1..q.len() - 1 {
+                    frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+                }
+            }
+            Item::Member(p, q) => frame.hud_line(screen(p), screen(q), Color([0.4, 0.95, 0.55, 0.9])),
+        }
+    }
+    let c = size * 0.5;
+    frame.hud_line(c - Vec2::new(6.0, 0.0), c + Vec2::new(6.0, 0.0), LABEL);
+    frame.hud_line(c - Vec2::new(0.0, 6.0), c + Vec2::new(0.0, 6.0), LABEL);
+    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   TEST STAND"), LABEL);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "WASD WALK - DRAG OR ARROWS LOOK - SPACE JUMP - SHIFT RUN - UP A SHAFT: FORWARD CLIMBS, LOOK DOWN TO GO DOWN - ESC BACK TO THE STUDIO", LABEL.scale(0.7), 0.7);
 }
 
 /// The camera, for the hull drawn in a `size` screen: where it is, its axes
@@ -2392,8 +3247,16 @@ enum Action {
     Turn,
     /// The load case shown on the frame (none: each member's worst).
     Case(Option<usize>),
-    /// Laying landing pads (a click on the plane: one there; on one: gone), or not.
-    Pads,
+    /// Every member past its limit braced (split at its middle, tied to the nearest
+    /// joint).
+    Brace,
+    /// AUTO-SIZE free to pick any material (or each member's own).
+    Mix,
+    /// Laying decks (two corners on the plane; a click on one: gone), or not.
+    Deck,
+    /// The design's gravity down or up a tenth of a g.
+    GravityDown,
+    GravityUp,
     /// Laying a truss (two clicks: its corners on the plane), or not.
     Truss,
     /// Every placed module the frame doesn't hold mounted to it.
@@ -2428,11 +3291,467 @@ fn slider_range(tool: Tool) -> (f32, f32) {
     }
 }
 
+/// What a person aboard uses a day (kg) of `item`, by the registry's needs that
+/// take it (`needs`: their keys): oxygen breathed (need.air); water drunk and
+/// washed in (need.water, need.washing).
+fn a_day(needs: &[&str], item: &str) -> f64 {
+    let reg = universe_sim::world::registry::registry();
+    reg.needs.iter().filter(|n| needs.contains(&n.identity.key.as_str())).flat_map(|n| n.takes.iter()).filter(|t| t.item == item).map(|t| t.rate).sum::<f64>() * 86_400.0
+}
+
+/// The share of a jet's power that comes aboard as heat, where its record doesn't
+/// say (`function.heat_to_hull`, a product figure; the registry's first guess).
+const HEAT_TO_HULL: f64 = 1e-6;
+
+/// The design's budgets and what doesn't work: its mass (dry, full, the frame's),
+/// lift against its full weight, power drawn against supplied, heat to shed
+/// against radiators and coolant loops, crew and their days of air and water; and
+/// each check that fails (a ramp or lift that doesn't reach the ground, an airlock
+/// on no room, no way in, an ore path with a gap).
+struct Budget {
+    lines: Vec<(String, bool)>,
+    faults: Vec<String>,
+}
+
+/// What a walled room's opening leads to: space through nothing (an open end: a
+/// leak), space through a hatch alone (opening it vents the room), space through
+/// an airlock (the way in), or another room.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Opening {
+    Leak,
+    ToSpace,
+    Airlock,
+    Inner,
+}
+
+/// The plan's pressure: its sealed spaces (walled rooms joined end to end or
+/// through a hatch: each one's volume, m³, and whether an airlock leads into it),
+/// and each opening of a room to space or another room (where, what it leads to).
+struct Pressure {
+    spaces: Vec<(f64, bool)>,
+    openings: Vec<(Vec3, Opening)>,
+}
+
+/// A cross-section's area (m²): its shape at its width and height.
+fn section_area(p: Profile) -> f32 {
+    let wh = p.width * p.height;
+    match p.section {
+        Section::Line => 0.0,
+        Section::Round => std::f32::consts::PI / 4.0 * wh,
+        Section::Square => wh,
+        Section::Hex => 0.75 * wh,
+        Section::Oct => 0.83 * wh,
+    }
+}
+
+fn pressure(i: &Interior) -> Pressure {
+    let plan = &i.plan;
+    let walled: Vec<usize> = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line).collect();
+    // (Which walled room a point is in, other than `not`.)
+    let room_at = |q: Vec3, not: usize| walled.iter().copied().find(|&k| {
+        if k == not {
+            return false;
+        }
+        let (a, b) = plan.axis(k);
+        let pr = plan.lines[k].2;
+        let d = b - a;
+        let t = (q - a).dot(d) / d.length_squared().max(1e-6);
+        let off = q - (a + d * t.clamp(0.0, 1.0));
+        (-0.05..=1.05).contains(&t) && off.y.abs() < pr.height * 0.5 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
+    });
+    let airlocks: Vec<&Block> = plan.blocks.iter().filter(|b| i.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).is_some_and(|(k, ..)| k == "airlock")).collect();
+    // (A way in: an airlock placed at it, or the hull's own hatch or door.)
+    let entries: Vec<Vec3> = plan.points.iter().filter(|q| q.name.as_deref().is_some_and(|n| n == "HATCH" || n.starts_with("DOOR"))).map(|q| q.at).collect();
+    let at_airlock = |q: Vec3| airlocks.iter().any(|b| {
+        let (lo, hi) = b.bounds();
+        q.cmpge(lo - 1.2).all() && q.cmple(hi + 1.2).all()
+    }) || entries.iter().any(|e| e.distance(q) < 2.5);
+    // (A cabin is pressurised itself: a hatch onto one opens into it.)
+    let cabins: Vec<&Block> = plan.blocks.iter().filter(|b| i.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).is_some_and(|(k, ..)| k == "cabin")).collect();
+    let in_cabin = |q: Vec3| cabins.iter().any(|b| {
+        let (lo, hi) = b.bounds();
+        q.cmpge(lo - 0.5).all() && q.cmple(hi + 0.5).all()
+    });
+    // (Spaces: rooms sharing a point, or a hatch between them.)
+    let mut root: Vec<usize> = (0..plan.lines.len()).collect();
+    fn find(root: &mut [usize], k: usize) -> usize {
+        if root[k] != k {
+            let r = find(root, root[k]);
+            root[k] = r;
+        }
+        root[k]
+    }
+    let join = |root: &mut Vec<usize>, a: usize, b: usize| {
+        let (x, y) = (find(root, a), find(root, b));
+        root[x] = y;
+    };
+    for (n, &a) in walled.iter().enumerate() {
+        for &b in &walled[n + 1..] {
+            let (la, lb) = (plan.lines[a], plan.lines[b]);
+            if la.0 == lb.0 || la.0 == lb.1 || la.1 == lb.0 || la.1 == lb.1 {
+                join(&mut root, a, b);
+            }
+        }
+    }
+    let mut openings = Vec::new();
+    let mut ways_in: Vec<usize> = Vec::new();
+    // (Each opening: where it is, which way is out of its room, its line, a hatch?)
+    let mut holes: Vec<(Vec3, Vec3, usize, bool)> = Vec::new();
+    for &k in &walled {
+        let (a, b) = plan.axis(k);
+        let d = (b - a).normalize_or_zero();
+        for e in 0..2 {
+            let point = if e == 0 { plan.lines[k].0 } else { plan.lines[k].1 };
+            if !plan.walled_end(k, point, e) {
+                continue;
+            }
+            let (at, out) = if e == 0 { (a, -d) } else { (b, d) };
+            // (A door where it joins another walkway: into that walkway.)
+            if !plan.free_end(k, point)
+                && let Some(&j) = walled.iter().find(|&&j| j != k && (plan.lines[j].0 == point || plan.lines[j].1 == point))
+            {
+                join(&mut root, k, j);
+                openings.push((at, Opening::Inner));
+                continue;
+            }
+            match plan.end_of(k, e) {
+                End::Closed => {}
+                End::Open => holes.push((at, out, k, false)),
+                End::Door => holes.push((at, out, k, true)),
+            }
+        }
+    }
+    for &SideDoor(k, t, right, _) in &plan.doors {
+        if !walled.contains(&k) {
+            continue;
+        }
+        let (a, b) = plan.axis(k);
+        let d = (b - a).normalize_or_zero();
+        let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+        let side = if right { u } else { -u };
+        let w = plan.lines[k].2.width * 0.5;
+        holes.push((a.lerp(b, t) + side * w, side, k, true));
+    }
+    for (at, out, k, hatch) in holes {
+        let beyond = at + out * 0.8;
+        let what = match room_at(beyond, k) {
+            Some(other) => {
+                join(&mut root, k, other);
+                Opening::Inner
+            }
+            None if hatch && in_cabin(beyond) => Opening::Inner,
+            None if !hatch && at_airlock(beyond) => {
+                ways_in.push(k);
+                Opening::Airlock
+            }
+            None if !hatch => Opening::Leak,
+            None if at_airlock(beyond) => {
+                ways_in.push(k);
+                Opening::Airlock
+            }
+            None => Opening::ToSpace,
+        };
+        openings.push((at, what));
+    }
+    // (Each space's volume, and whether a way in leads to it.)
+    let mut spaces: Vec<(usize, f64, bool)> = Vec::new();
+    for &k in &walled {
+        let r = find(&mut root, k);
+        let (a, b) = plan.axis(k);
+        let v = f64::from(section_area(plan.lines[k].2) * a.distance(b));
+        let way = ways_in.iter().any(|&w| find(&mut root, w) == r);
+        match spaces.iter_mut().find(|s| s.0 == r) {
+            Some(s) => {
+                s.1 += v;
+                s.2 |= way;
+            }
+            None => spaces.push((r, v, way)),
+        }
+    }
+    Pressure { spaces: spaces.into_iter().map(|s| (s.1, s.2)).collect(), openings }
+}
+
+/// The oxygen in a cubic metre of air at a ship's pressure (kg: 21 kPa of it).
+const OXYGEN_A_CUBIC_METRE: f64 = 0.28;
+
+/// A record's function's fields, by name.
+type Fields = serde_json::Map<String, serde_json::Value>;
+
+/// A placed module's record's figures: its function's kind and fields, and the
+/// power it draws (W).
+fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
+    let reg = universe_sim::world::registry::registry();
+    let e = reg.equipment.iter().find(|e| e.identity.key == f.key)?;
+    let serde_json::Value::Object(map) = serde_json::to_value(&e.function).ok()? else { return None };
+    let kind = map.get("kind").and_then(|v| v.as_str()).unwrap_or("").to_string();
+    Some((kind, map, e.needs.power.unwrap_or(0.0)))
+}
+
+fn budget(i: &Interior, frame_mass: f64) -> Budget {
+    let num = |m: &serde_json::Map<String, serde_json::Value>, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
+    let mut placed: Vec<(&Block, &Fitted, String, Fields, f64)> = Vec::new();
+    for b in &i.plan.blocks {
+        if let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id))
+            && let Some((k, m, draw)) = figures(f)
+        {
+            placed.push((b, f, k, m, draw));
+        }
+    }
+    let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
+    let dry: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum::<f64>() + frame_mass;
+    let full = dry + i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.load).sum::<f64>();
+    let mut lines = Vec::new();
+    let t = |kg: f64| format!("{:.1} T", kg / 1000.0);
+    lines.push((format!("MASS  DRY {}  FULL {}  (FRAME {})", t(dry), t(full), t(frame_mass)), true));
+    let lift: f64 = of("lift").map(|p| num(&p.3, "thrust")).sum();
+    // (Against its weight in the gravity it's designed for; and the strongest
+    // gravity it can lift itself in, full.)
+    let design = i.plan.gravity();
+    if lift > 0.0 {
+        let g = lift / (full * design);
+        let most = lift / (full * STANDARD_G);
+        lines.push((format!("LIFT  {}: {g:.2} OF ITS FULL WEIGHT AT {:.2} G; HOVERS FULL UP TO {most:.2} G", si(lift, "N"), design / STANDARD_G), g > 1.0));
+    }
+    let supply: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
+    let draw: f64 = placed.iter().map(|p| p.4).sum();
+    let gear: f64 = of("switchgear").map(|p| num(&p.3, "carries")).sum();
+    lines.push((format!("POWER {} DRAWN OF {}{}", si(draw, "W"), si(supply, "W"), if gear > 0.0 { format!(", SWITCHGEAR {}", si(gear, "W")) } else { String::new() }), draw <= supply && (gear == 0.0 || gear >= supply)));
+    // (Heat, as the registry's Budgets reckon it: a plant's loss; each drive's,
+    // lift's and thrusters' jet power (half its thrust times its exhaust speed, a
+    // thruster block four nozzles) at full burn, times the share its record says
+    // reaches the hull; and every watt drawn, which ends as heat aboard.)
+    let plants: f64 = of("power_plant").map(|p| { let e = num(&p.3, "efficiency").max(0.01); num(&p.3, "output") * (1.0 / e - 1.0) }).sum();
+    let burn: f64 = placed
+        .iter()
+        .filter(|p| matches!(p.2.as_str(), "drive" | "lift" | "thrusters"))
+        .map(|p| {
+            let nozzles = if p.2 == "thrusters" { 4.0 } else { 1.0 };
+            let share = p.3.get("heat_to_hull").and_then(|v| v.as_f64()).unwrap_or(HEAT_TO_HULL);
+            0.5 * num(&p.3, "thrust") * num(&p.3, "exhaust") * nozzles * share
+        })
+        .sum();
+    let heat = plants + burn + draw;
+    let shed: f64 = of("radiator").map(|p| num(&p.3, "rejects")).sum();
+    let loops: f64 = of("coolant_loop").map(|p| num(&p.3, "carries")).sum();
+    lines.push((format!("HEAT  {} TO SHED: RADIATORS {}, LOOPS {}", si(heat, "W"), si(shed, "W"), si(loops, "W")), shed >= heat && loops >= heat));
+    let crew: f64 = of("cabin").map(|p| num(&p.3, "seats")).sum();
+    if crew > 0.0 {
+        // (An empty sum is -0: plus 0, it's 0.)
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        // (What the stores make up: what the crew use less what the life support
+        // recovers, its record's air_recovery and water_recovery, the best fitted.)
+        let recovers = |k: &str| of("life_support").map(|p| num(&p.3, k)).fold(0.0, f64::max).min(0.999);
+        let oxygen = a_day(&["need.air"], "element.o") * (1.0 - recovers("air_recovery"));
+        let drunk = a_day(&["need.water", "need.washing"], "good.water") * (1.0 - recovers("water_recovery"));
+        let (ad, wd) = (air / (oxygen * crew), water / (drunk * crew));
+        let life = of("life_support").count();
+        lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS STORED{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && life > 0));
+    }
+    // Checks: sealed spaces, the way in, the way down, the ore's path.
+    let mut faults = Vec::new();
+    let pr = pressure(i);
+    // (In a hull, its rooms open into it: the hull holds the air, not checked here.)
+    if !pr.spaces.is_empty() && i.spec().is_some() {
+        let volume: f64 = pr.spaces.iter().map(|s| s.0).sum();
+        lines.push((format!("ROOMS {} SPACE{}, {volume:.0} M3, IN THE HULL", pr.spaces.len(), if pr.spaces.len() == 1 { "" } else { "S" }), true));
+    } else if !pr.spaces.is_empty() {
+        let volume: f64 = pr.spaces.iter().map(|s| s.0).sum();
+        let leaks = pr.openings.iter().filter(|o| o.1 == Opening::Leak).count();
+        let locks = pr.openings.iter().filter(|o| o.1 == Opening::Airlock).count();
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let fills = air / (volume * OXYGEN_A_CUBIC_METRE).max(1e-9);
+        let sealed = leaks == 0 && pr.spaces.iter().all(|s| s.1);
+        lines.push((format!("SEALED {} SPACE{}, {volume:.0} M3, {locks} AIRLOCK DOOR{}; AIR FILLS IT {fills:.1} TIMES", pr.spaces.len(), if pr.spaces.len() == 1 { "" } else { "S" }, if locks == 1 { "" } else { "S" }), sealed && fills >= 1.0));
+        if leaks > 0 {
+            faults.push(format!("{leaks} OPEN END{} TO SPACE: IT LEAKS", if leaks == 1 { "" } else { "S" }));
+        }
+        let vents = pr.openings.iter().filter(|o| o.1 == Opening::ToSpace).count();
+        if vents > 0 {
+            faults.push(format!("{vents} HATCH{} TO SPACE WITH NO AIRLOCK: OPENING IT VENTS THE ROOM", if vents == 1 { "" } else { "ES" }));
+        }
+        let shut = pr.spaces.iter().filter(|s| !s.1).count();
+        if shut > 0 {
+            faults.push(format!("{shut} SEALED SPACE{} NO AIRLOCK LEADS INTO", if shut == 1 { "" } else { "S" }));
+        }
+    }
+    let ground = of("landing_gear").map(|p| p.0.at.y - p.0.size.y * 0.5).fold(f32::INFINITY, f32::min);
+    for p in placed.iter().filter(|p| p.2 == "ramp" || p.2 == "cargo_lift") {
+        let foot = p.0.at.y - p.0.size.y * 0.5;
+        let reach = num(&p.3, if p.2 == "ramp" { "reach" } else { "travel" }) as f32;
+        if ground.is_finite() && foot - ground > reach + 0.05 {
+            faults.push(format!("{} REACHES {reach:.1} M; ITS FOOT IS {:.1} M UP", p.1.name, foot - ground));
+        }
+    }
+    let rooms: Vec<Vec3> = (0..i.plan.lines.len()).filter(|&k| i.plan.group_of(k).is_some_and(|g| i.plan.groups[g].walled)).flat_map(|k| {
+        let (a, b) = i.plan.axis(k);
+        room(a, b, i.plan.lines[k].2).1
+    }).collect();
+    let locks: Vec<_> = of("airlock").collect();
+    if crew > 0.0 && locks.is_empty() {
+        faults.push("NO WAY IN: NO AIRLOCK".into());
+    }
+    for p in &locks {
+        let (lo, hi) = p.0.bounds();
+        if !rooms.iter().any(|q| q.cmpge(lo - 1.0).all() && q.cmple(hi + 1.0).all()) {
+            faults.push(format!("{} OPENS ON NO ROOM", p.1.name));
+        }
+    }
+    if let Some(rig) = of("mining_rig").next() {
+        // (By the rig: within 2 m of it, its nearest side.)
+        let (rlo, rhi) = rig.0.bounds();
+        let off = |q: Vec3| (q.clamp(rlo, rhi) - q).length();
+        let scoop = of("handling").filter(|p| p.1.name.contains("SCOOP")).map(|p| p.0).min_by(|a, b| off(a.at).total_cmp(&off(b.at))).map(|b| (b.at, { let (lo, hi) = b.bounds(); let c = rig.0.at.clamp(lo, hi); off(c) }));
+        let bay = of("ore_bay").map(|p| p.0.at).chain(i.plan.blocks.iter().filter(|b| b.id == HOLD).map(|b| b.at)).next();
+        match (scoop, bay) {
+            (None, _) => faults.push("ORE: NO SCOOP BY THE RIG".into()),
+            (_, None) => faults.push("ORE: NOWHERE TO PUT IT (NO ORE BAY)".into()),
+            (Some((s, near)), Some(b)) => {
+                let reach: f64 = of("handling").filter(|p| p.1.name.contains("CONVEYOR")).map(|p| num(&p.3, "reach")).sum();
+                let gap = f64::from(s.distance(b));
+                if near > 2.0 {
+                    faults.push(format!("ORE: THE SCOOP IS {near:.0} M FROM THE RIG"));
+                } else if reach + 2.0 < gap {
+                    faults.push(format!("ORE: SCOOP TO BAY {gap:.0} M, CONVEYORS REACH {reach:.0} M"));
+                }
+            }
+        }
+    }
+    Budget { lines, faults }
+}
+
+/// A figure with its unit, at a readable size: 900000 N as 900 KN, 1e7 m/s as
+/// 10000 KM/S.
+fn si(v: f64, unit: &str) -> String {
+    if v == 0.0 {
+        return format!("0 {unit}");
+    }
+    let a = v.abs();
+    let (scale, prefix) = if a >= 1e12 { (1e12, "T") } else if a >= 1e9 { (1e9, "G") } else if a >= 1e6 { (1e6, "M") } else if a >= 1e3 && unit != "KG" { (1e3, "K") } else { (1.0, "") };
+    let n = v / scale;
+    let digits = if n.abs() >= 100.0 || n.fract() == 0.0 { 0 } else if n.abs() >= 10.0 { 1 } else { 2 };
+    format!("{n:.digits$} {prefix}{unit}")
+}
+
+/// A module's sheet, beside the panel: its name, maker, kind and mount; its shape,
+/// turning; its size, mass, volume and the power it draws; its record's figures;
+/// its description. Placed and stretched (`block`): the size it's placed at too.
+fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<&Block>) {
+    let reg = universe_sim::world::registry::registry();
+    let e = reg.equipment.iter().find(|e| e.identity.key == f.key);
+    let (pp, pc) = PANEL;
+    let (p, c) = (Vec2::new(pp.x + pc.x + 8.0, pp.y), Vec2::new(236.0, 300.0));
+    frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
+    frame.hud_box(p, c, MODULE.scale(0.7));
+    frame.text_scaled(p + Vec2::new(8.0, 6.0), &f.name, MODULE, 0.8);
+    let name = |key: &str| reg.names.get(key).map_or(key.to_string(), |n| n.to_uppercase());
+    let line = match e {
+        Some(e) => {
+            let fits = reg.equipment.iter().find(|x| x.identity.key == f.key).and_then(|x| x.fits.clone()).map_or(String::new(), |m| format!(" - FITS {}", name(&m)));
+            format!("{}{}", name(&e.identity.maker), fits)
+        }
+        None => "THE HULL'S OWN".to_string(),
+    };
+    frame.text_scaled(p + Vec2::new(8.0, 19.0), &line.chars().take(44).collect::<String>(), LABEL.scale(0.7), 0.55);
+    // Its shape, turning (a box, or a tank's ball or egg), in a window of its own.
+    let (wp, wc) = (p + Vec2::new(8.0, 32.0), Vec2::new(c.x - 16.0, 84.0));
+    frame.hud_box(wp, wc, LABEL.scale(0.25));
+    let size = block.map_or(f.size, |b| b.size);
+    let shape = Block { id: String::new(), at: Vec3::ZERO, size };
+    let (yaw, tilt) = (interior.spin * 0.5, 0.45f32);
+    let turn = |q: Vec3| {
+        let (sy, cy) = yaw.sin_cos();
+        let r = Vec3::new(q.x * cy + q.z * sy, q.y, -q.x * sy + q.z * cy);
+        let (st, ct) = tilt.sin_cos();
+        Vec2::new(r.x, -(r.y * ct - r.z * st))
+    };
+    let k = (wc.y * 0.85) / size.length().max(1e-3);
+    let mid = wp + wc * 0.5;
+    for [a, b] in shape.edges(f.round) {
+        frame.hud_line(mid + turn(a) * k, mid + turn(b) * k, MODULE);
+    }
+    // Its size, mass, volume, what it draws.
+    let mut y = p.y + 122.0;
+    let dims = format!("L {:.2} X W {:.2} X H {:.2} M", f.size.z, f.size.x, f.size.y);
+    frame.text_scaled(Vec2::new(p.x + 8.0, y), &dims, LABEL, 0.6);
+    y += 11.0;
+    if let Some(b) = block.filter(|b| (b.size - f.size).length() > 0.01) {
+        frame.text_scaled(Vec2::new(p.x + 8.0, y), &format!("PLACED AS {:.2} X {:.2} X {:.2} M", b.size.z, b.size.x, b.size.y), PICKED.scale(0.9), 0.6);
+        y += 11.0;
+    }
+    let draws = e.and_then(|e| e.needs.power).filter(|w| *w > 0.0).map_or(String::new(), |w| format!("   DRAWS {}", si(w, "W")));
+    frame.text_scaled(Vec2::new(p.x + 8.0, y), &format!("MASS {}   VOLUME {:.1} M3{draws}", si(f.mass, "KG"), f.volume), LABEL, 0.6);
+    y += 15.0;
+    // Its record's figures (what it does), each with its unit.
+    if let Some(serde_json::Value::Object(fields)) = e.and_then(|e| serde_json::to_value(&e.function).ok()) {
+        let kind = fields.get("kind").and_then(|v| v.as_str()).unwrap_or("").replace('_', " ").to_uppercase();
+        frame.text_scaled(Vec2::new(p.x + 8.0, y), &kind, MODULE.scale(0.9), 0.6);
+        y += 11.0;
+        let unit = |field: &str| match field {
+            "thrust" | "torque" if field == "thrust" => "N",
+            "torque" => "N M",
+            "momentum" => "N M S",
+            "holds" if fields.get("stroke").is_some() || kind == "DOCKING" => "N",
+            "output" | "power" | "beam_power" | "rejects" | "transfers" | "carries" | "rate" if field != "rate" || kind == "BATTERY" => "W",
+            "stores" => "J",
+            "exhaust" | "sink_rate" | "muzzle_speed" => "M/S",
+            "stroke" | "extended" | "range" | "focus" | "resolves" | "survey_range" | "anchor_reach" | "capture" | "link" | "passage" | "reach" | "travel" | "width" | "height" => "M",
+            "area" => "M2",
+            "temperature" => "K",
+            "pressure" | "head" => "PA",
+            "persons" => "PEOPLE",
+            "cycle" | "opens_in" => "S",
+            "air_lost" | "load" => "KG",
+            "flow" if kind == "COMPRESSOR" => "M3/S",
+            "flow" => "KG/S",
+            "volume" => "M3",
+            "fill_density" => "KG/M3",
+            "slug_mass" => "KG",
+            "capacity" if kind == "CAPACITOR" => "J",
+            "capacity" if kind == "COMM" || kind == "HYPER RELAY" || kind == "GATE RELAY" => "/S",
+            "capacity" => "KG",
+            "burn" | "cool" | "lag" | "cadence" => "S",
+            "rate" => "/S",
+            "throughput" => "KG/S",
+            "excavator_power" => "W",
+            "anchor_speed" => "M/S",
+            _ => "",
+        };
+        for (field, v) in fields.iter().filter(|(k, _)| *k != "kind").take(7) {
+            let shown = match v {
+                serde_json::Value::Number(n) => {
+                    let x = n.as_f64().unwrap_or(0.0);
+                    if field == "efficiency" { format!("{:.0}%", x * 100.0) } else { si(x, unit(field)) }
+                }
+                serde_json::Value::String(t) => name(t),
+                serde_json::Value::Bool(b) => if *b { "YES".into() } else { "NO".into() },
+                serde_json::Value::Array(a) => format!("{} OF THEM", a.len()),
+                _ => continue,
+            };
+            let label = field.replace('_', " ").to_uppercase();
+            frame.text_scaled(Vec2::new(p.x + 12.0, y), &format!("{label}: {shown}").chars().take(42).collect::<String>(), LABEL.scale(0.85), 0.55);
+            y += 10.0;
+        }
+    }
+    // Its description.
+    if let Some(d) = e.and_then(|e| e.identity.description.as_deref()) {
+        y += 4.0;
+        for l in crate::fmt::wrap(&d.to_uppercase(), 42).into_iter().take(((p.y + c.y - 6.0 - y) / 10.0).max(0.0) as usize) {
+            frame.text_scaled(Vec2::new(p.x + 8.0, y), &l, LABEL.scale(0.7), 0.55);
+            y += 10.0;
+        }
+    }
+}
+
 /// The FRAME panel's stock list: row `k`'s place.
 fn stock_row(k: usize) -> (Vec2, Vec2) {
     let (p, c) = PANEL;
     (Vec2::new(p.x + 6.0, p.y + 82.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
 }
+
+/// The FRAME panel's stock list: how many rows show (the rest scrolled to with the
+/// wheel).
+const STOCK_ROWS: usize = 5;
 
 /// Where a frame's members can start or end besides its own joints: the landing
 /// pads, the main and lift nozzles, each placed module's corners and middle (and
@@ -2466,6 +3785,8 @@ fn bearers(i: &Interior) -> Vec<Vec3> {
 /// within 10 px of it on screen.
 fn frame_snap(i: &Interior, cam: &Camera, q: Vec2) -> Option<Vec3> {
     let mut at: Vec<Vec3> = i.plan.beams.iter().flat_map(|b| [b.a, b.b]).collect();
+    // (A deck's grid points: to hold it up from.)
+    at.extend(i.plan.plates.iter().flat_map(|p| plate_grid(p).0));
     at.extend(bearers(i));
     at.into_iter().filter_map(|p| cam.project(p).map(|(s, _)| (p, s.distance(q)))).filter(|(_, d)| *d < 10.0).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(p, _)| p)
 }
@@ -2481,12 +3802,12 @@ fn beam_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<usize> {
 }
 
 /// The MODULES panel's list: how many rows show (the rest scrolled to with the wheel).
-const FIT_ROWS: usize = 15;
+const FIT_ROWS: usize = 19;
 
 /// The MODULES panel's list: row `k`'s place (the fit, one a row).
 fn module_row(k: usize) -> (Vec2, Vec2) {
     let (p, c) = PANEL;
-    (Vec2::new(p.x + 6.0, p.y + 82.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
+    (Vec2::new(p.x + 6.0, p.y + 40.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
 }
 
 /// The panel's buttons for the tool in hand (where, its label, what it does).
@@ -2509,9 +3830,11 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     match tool {
         Tool::Frame => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
-            let w4 = (c.x - 16.0 - 18.0) / 4.0;
-            let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "PADS", Action::Pads), (at(310.0, 2.0 * (w3 + 6.0), w3), "REMOVE", Action::Remove), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "SNAP FLOOR", Action::SnapFloor)]).collect()
+            let w5 = (c.x - 16.0 - 24.0) / 5.0;
+            let cases = [("WORST", Action::Case(None)), ("LAND", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2))), ("FLOOR", Action::Case(Some(3)))];
+            // (DESIGN GRAVITY's - and +: small, at the end of its row.)
+            let small = |x: f32| (Vec2::new(p.x + c.x - 8.0 - x, p.y + 294.0), Vec2::new(20.0, 13.0));
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w5 + 6.0), w5), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "DECK", Action::Deck), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -2810,6 +4133,16 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.spin += ctx.dt;
     interior.sync(&spec.key, spec.shape(), &mut app.deckplans, 0.0);
     interior.refresh();
+    // On the test stand: walked; ESC back to the studio.
+    if let Some(s) = interior.stand.as_mut() {
+        if input.pressed(KeyCode::Escape) {
+            interior.stand = None;
+        } else {
+            let g = interior.plan.gravity();
+            stand_input(ctx, s, g);
+        }
+        return true;
+    }
     // Closing with unsaved changes: SAVE AND CLOSE (S, ENTER), DISCARD (D), or keep
     // working (ESC); nothing else meanwhile.
     if interior.confirm {
@@ -2848,7 +4181,13 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         interior.cursor = input.cursor;
         return true;
     }
+    // ESC: what's in progress cancelled (a module picked, a path, member or truss
+    // being laid, TRUSS waiting, WALK HERE armed); nothing in progress, the studio
+    // closed.
     if input.pressed(KeyCode::Escape) {
+        if interior.cancel() {
+            return true;
+        }
         return !interior.close();
     }
     // SAVE (CTRL+S) and OPEN (CTRL+O).
@@ -2930,16 +4269,18 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // AUTO-SIZE done: its members put in (an undo step), if the plan's as it was.
     if let Some((plan, rx)) = &interior.sizing
-        && let Ok((beams, rounds)) = rx.try_recv()
+        && let Ok((beams, plates, rounds, maxed)) = rx.try_recv()
     {
         if *plan == interior.plan {
             let before = interior.plan.clone();
             let mass = |bs: &[Beam]| bs.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>();
             let (was, now) = (mass(&before.beams), mass(&beams));
             interior.plan.beams = beams;
+            interior.plan.plates = plates;
             interior.undo.push(before);
             interior.redo.clear();
-            interior.message = Some((format!("SIZED IN {rounds} ROUNDS: FRAME {:.1} T (WAS {:.1} T)", now / 1000.0, was / 1000.0), 6.0));
+            let short = if maxed > 0 { format!("; {maxed} NEED MORE THAN THEIR MATERIAL'S BIGGEST TUBE: TRY ANOTHER") } else { String::new() };
+            interior.message = Some((format!("SIZED IN {rounds} ROUNDS: FRAME {:.1} T (WAS {:.1} T){short}", now / 1000.0, was / 1000.0), 8.0));
         } else {
             interior.message = Some(("AUTO-SIZE DROPPED: THE PLAN CHANGED MEANWHILE".into(), 4.0));
         }
@@ -2958,7 +4299,8 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         let (tx, rx) = mpsc::channel();
         let snapshot = plan.clone();
         job("studio-frame", move || {
-            tx.send(bearing(&plan, &fit, spec, STANDARD_G)).ok();
+            let g = plan.gravity();
+            tx.send(bearing(&plan, &fit, spec, g)).ok();
         });
         interior.bearing_job = Some((snapshot, rx));
     }
@@ -3072,7 +4414,19 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         // (FRAME: the stock new members are cut from, a row of its list (the picked
         // member's too); the case shown; the picked member taken out.)
         Tool::Frame => {
-            if pressed && let Some(k) = (0..stocks().len()).find(|&k| inside(stock_row(k), cursor)) {
+            // (DECK: a row of deck stock: what new decks, or the picked one, are cut from.)
+            if interior.deck_mode
+                && pressed
+                && let Some(k) = (0..STOCK_ROWS).find(|&n| interior.stock_top + n < plate_stocks().len() && inside(stock_row(n), cursor)).map(|n| interior.stock_top + n)
+            {
+                let key = plate_stocks()[k].key.clone();
+                if let Some(p) = interior.deck_pick.and_then(|j| interior.plan.plates.get_mut(j)) {
+                    p.stock = key.clone();
+                }
+                interior.deck_stock = Some(key);
+                return true;
+            }
+            if pressed && !interior.deck_mode && let Some(k) = (0..STOCK_ROWS).find(|&n| interior.stock_top + n < stocks().len() && inside(stock_row(n), cursor)).map(|n| interior.stock_top + n) {
                 interior.stock = k;
                 if let Some(b) = interior.beam_pick.and_then(|j| interior.plan.beams.get_mut(j)) {
                     b.stock = stocks()[k].key.clone();
@@ -3082,13 +4436,32 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             if let Some(Action::Case(c)) = action {
                 interior.case = c;
             }
-            if action == Some(Action::Pads) {
-                interior.pads_mode = !interior.pads_mode;
-                (interior.truss_mode, interior.beam_from, interior.truss_from) = (false, None, None);
-            }
             if action == Some(Action::Truss) {
                 interior.truss_mode = !interior.truss_mode;
-                (interior.pads_mode, interior.beam_from, interior.truss_from) = (false, None, None);
+                (interior.deck_mode, interior.beam_from, interior.truss_from, interior.deck_from) = (false, None, None, None);
+            }
+            if action == Some(Action::Mix) {
+                interior.mix = !interior.mix;
+            }
+            if action == Some(Action::Deck) {
+                interior.deck_mode = !interior.deck_mode;
+                (interior.stock_top, interior.deck_pick) = (0, None);
+                (interior.truss_mode, interior.beam_from, interior.truss_from, interior.deck_from) = (false, None, None, None);
+            }
+            if let Some(a @ (Action::GravityDown | Action::GravityUp)) = action {
+                let g = interior.plan.gravity() / STANDARD_G + if a == Action::GravityUp { 0.1 } else { -0.1 };
+                interior.plan.gravity = Some((g * 10.0).round().clamp(1.0, 30.0) / 10.0 * STANDARD_G);
+            }
+            // (BRACE: what's past its limit as last worked out, braced.)
+            if action == Some(Action::Brace) {
+                match interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan) {
+                    Some((_, b)) => {
+                        let (beams, n) = brace(&interior.plan, b);
+                        interior.message = Some((if n == 0 { "NOTHING PAST ITS LIMIT TO BRACE".to_string() } else { format!("{n} MEMBERS BRACED: AUTO-SIZE THEM") }, 5.0));
+                        interior.plan.beams = beams;
+                    }
+                    None => interior.message = Some(("STILL WORKING THE FRAME OUT: A MOMENT".into(), 3.0)),
+                }
             }
             // (DEPTH and SPACING: the next truss's.)
             if let Some(k) = interior.slider {
@@ -3099,16 +4472,16 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             }
             if action == Some(Action::MountAll) {
                 let stock = stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone());
-                let added = mounts(&interior.plan, &interior.fit, interior.spacing.max(1.0), &stock);
-                interior.message = Some((if added.is_empty() { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{} MOUNTING MEMBERS ADDED", added.len()) }, 4.0));
-                interior.plan.beams.extend(added);
+                let (beams, added) = mounts(&interior.plan, &interior.fit, interior.spacing.max(1.0), &stock);
+                interior.message = Some((if added == 0 { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{added} MOUNTING MEMBERS ADDED") }, 4.0));
+                interior.plan.beams = beams;
             }
             if action == Some(Action::AutoSize) && interior.sizing.is_none() && !interior.plan.beams.is_empty() {
-                let (plan, fit, spec) = (interior.plan.clone(), interior.fit.clone(), interior.spec());
+                let (plan, fit, spec, mix) = (interior.plan.clone(), interior.fit.clone(), interior.spec(), interior.mix);
                 let (tx, rx) = mpsc::channel();
                 let snapshot = plan.clone();
                 job("studio-size", move || {
-                    tx.send(auto_size(&plan, &fit, spec)).ok();
+                    tx.send(auto_size(&plan, &fit, spec, mix)).ok();
                 });
                 interior.sizing = Some((snapshot, rx));
             }
@@ -3201,6 +4574,26 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     }
     interior.module_hover = interior.block_hover.and_then(|n| interior.fit.iter().position(|f| f.id == kind(&interior.plan.blocks[n].id)));
     // A walk-through: F over a point or a tube, there; WALK HERE, then a click on one.
+    // (No hull: the test stand. WALK arms it, and a click puts the walker where it
+    // lands on the ship or the ground; F there at once. Nothing under the cursor:
+    // the ramp's foot.)
+    if interior.spec().is_none() {
+        if pressed && inside(walk_button(), cursor) {
+            interior.walk_armed = !interior.walk_armed;
+            return true;
+        }
+        if input.pressed(KeyCode::KeyF) || (interior.walk_armed && pressed && !inside(PANEL, cursor)) {
+            interior.refit();
+            let mut s = interior.stand_up();
+            if let Some(feet) = stand_spot(&s, cam.eye, cam.ray(cursor)) {
+                s.feet = feet;
+                s.yaw = f64::from((-cam.forward.x).atan2(-cam.forward.z));
+            }
+            interior.stand = Some(s);
+            interior.walk_armed = false;
+            return true;
+        }
+    }
     if pressed && inside(walk_button(), cursor) {
         interior.walk_armed = !interior.walk_armed;
         return true;
@@ -3261,6 +4654,12 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         return true;
     }
     // The right button: stops a path being laid (and only that, this press).
+    // (The right button, pressed and not dragged: what's in progress cancelled, as
+    // ESC does.)
+    if input.button_pressed(MouseButton::Right) && interior.in_progress() {
+        interior.cancel();
+        interior.stopped = true;
+    }
     if input.button_pressed(MouseButton::Right) && interior.truss_from.is_some() {
         interior.truss_from = None;
         interior.stopped = true;
@@ -3325,6 +4724,29 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             // FRAME: a click at a joint or a bearer (else on the work plane) ends the
             // member being laid there and starts the next from it; not laying one, a
             // click on a member picks it, else starts one.
+            // (DECK: on a deck at the plane's height, it's taken up; else its first
+            // corner, then its second: the deck laid between, of the lightest plate.)
+            Tool::Frame if interior.deck_mode => {
+                if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
+                    let on = interior.plan.plates.iter().position(|p| (p.y - at.y).abs() < 0.3 && at.x >= p.lo.x.min(p.hi.x) && at.x <= p.lo.x.max(p.hi.x) && at.z >= p.lo.y.min(p.hi.y) && at.z <= p.lo.y.max(p.hi.y));
+                    match (on, interior.deck_from.take()) {
+                        // (A deck: picked; picked already: taken up.)
+                        (Some(k), None) if interior.deck_pick == Some(k) => {
+                            interior.plan.plates.remove(k);
+                            interior.deck_pick = None;
+                        }
+                        (Some(k), None) => interior.deck_pick = Some(k),
+                        (_, None) => {
+                            interior.deck_pick = None;
+                            interior.deck_from = Some(at);
+                        }
+                        (_, Some(from)) => {
+                            let stock = interior.deck_stock.clone().unwrap_or_else(default_deck_stock);
+                            interior.plan.plates.push(Plate { lo: Vec2::new(from.x, from.z), hi: Vec2::new(at.x, at.z), y: from.y, stock });
+                        }
+                    }
+                }
+            }
             // (TRUSS: its first corner, then its second: the truss laid between.)
             Tool::Frame if interior.truss_mode => {
                 if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
@@ -3335,20 +4757,6 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                             let fresh: Vec<Beam> = truss(from, Vec3::new(at.x, from.y, at.z), interior.depth, interior.spacing, &stock).into_iter().filter(|n| !interior.plan.beams.iter().any(|b| (b.a == n.a && b.b == n.b) || (b.a == n.b && b.b == n.a))).collect();
                             interior.message = Some((format!("A TRUSS OF {} MEMBERS LAID", fresh.len()), 4.0));
                             interior.plan.beams.extend(fresh);
-                        }
-                    }
-                }
-            }
-            // (PADS: a pad laid where the click is on the plane, or the one clicked taken up.)
-            Tool::Frame if interior.pads_mode => {
-                let near = interior.plan.pads.iter().position(|p| cam.project(*p).is_some_and(|(q, _)| q.distance(cursor) < 10.0));
-                match near {
-                    Some(k) => {
-                        interior.plan.pads.remove(k);
-                    }
-                    None => {
-                        if let Some(at) = on_plane(interior, &cam, plane, cursor, false) {
-                            interior.plan.pads.push(at);
                         }
                     }
                 }
@@ -3469,7 +4877,8 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                             interior.plan.ends.retain(|&EndSet(j, f, _, _)| !(j == k && f == e));
                             interior.plan.ends.push(EndSet(k, e, next, interior.hatch));
                             if !interior.plan.free_end(k, [a, b][e]) {
-                                interior.message = Some(("THAT END JOINS ANOTHER TUBE: IT'S A WAY THROUGH ALREADY".into(), 3.0));
+                                let say = if next == End::Door { "A DOOR WHERE IT JOINS THE NEXT TUBE" } else { "THAT END JOINS ANOTHER TUBE: A WAY THROUGH" };
+                                interior.message = Some((say.into(), 3.0));
                             }
                         }
                         None => {
@@ -3525,6 +4934,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             let most = interior.fit.len().saturating_sub(FIT_ROWS);
             interior.fit_top = (interior.fit_top as f32 - input.scroll.signum() * 3.0).clamp(0.0, most as f32) as usize;
         }
+        if interior.tool == Tool::Frame {
+            let most = if interior.deck_mode { plate_stocks().len() } else { stocks().len() }.saturating_sub(STOCK_ROWS);
+            interior.stock_top = (interior.stock_top as f32 - input.scroll.signum() * 2.0).clamp(0.0, most as f32) as usize;
+        }
     } else if input.scroll != 0.0 {
         interior.distance = Some((distance * 0.88f32.powf(input.scroll)).clamp(radius * 0.05, radius * 8.0));
     }
@@ -3537,12 +4950,21 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
+    if let Some(s) = &interior.stand {
+        draw_stand(frame, s, place);
+        return;
+    }
     let size = frame.size();
     let spec = interior.spec();
     frame.hud_rect(Vec2::ZERO, size, PAPER);
     let on = spec.map_or("NO HULL".to_string(), |s| s.name.to_uppercase());
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {} ({on})", interior.plan.hull.to_uppercase()), LABEL);
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES", LABEL.scale(0.6), 0.7);
+    let hint = match interior.tool {
+        _ if interior.walk_armed && interior.spec().is_none() => "CLICK WHERE TO START WALKING (A ROOM: ON ITS FLOOR) - RIGHT-CLICK OR ESC CANCELS",
+        Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
+        _ => "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES",
+    };
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), hint, LABEL.scale(0.6), 0.7);
     // The toolbar: the tool in hand lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -3757,6 +5179,20 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             }
             Some(Hover::Point(_)) => {}
             // (FRAME: where a click would join, and the member being laid to it.)
+            // (DECK: from its first corner to the cursor, its plate.)
+            None if interior.tool == Tool::Frame && interior.deck_mode => {
+                if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
+                    let from = interior.deck_from.unwrap_or(to);
+                    let c = [Vec3::new(from.x, from.y, from.z), Vec3::new(to.x, from.y, from.z), Vec3::new(to.x, from.y, to.z), Vec3::new(from.x, from.y, to.z)];
+                    for k in 0..4 {
+                        seg(frame, c[k], c[(k + 1) % 4], PICKED.scale(0.7));
+                    }
+                    if let Some((q, _)) = cam.project(to) {
+                        let text = if interior.deck_from.is_some() { format!("DECK {:.1} X {:.1} M", (to.x - from.x).abs(), (to.z - from.z).abs()) } else { "FIRST CORNER (ON A DECK: TAKE IT UP)".to_string() };
+                        frame.text_scaled(q + Vec2::new(10.0, 6.0), &text, PICKED, 0.7);
+                    }
+                }
+            }
             // (TRUSS: from its first corner to the cursor, its box.)
             None if interior.tool == Tool::Frame && interior.truss_mode => {
                 if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
@@ -3845,6 +5281,28 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     }
     // Hatches, closed: each leaf filled, its outline and its window (an open
     // doorway: just the hole).
+    // The rooms' openings (PRESSURE): a leak to space red and crossed, a hatch to
+    // space with no airlock amber, an airlock's door green.
+    if interior.shown(layer::PRESSURE) && interior.spec().is_none() {
+        for (at, what) in pressure(interior).openings {
+            let Some((q, _)) = cam.project(at) else { continue };
+            let col = match what {
+                Opening::Leak => CLASH,
+                Opening::ToSpace => Color([1.0, 0.7, 0.2, 1.0]),
+                Opening::Airlock => Color([0.4, 1.0, 0.5, 1.0]),
+                Opening::Inner => continue,
+            };
+            let n = 16;
+            for k in 0..n {
+                let (a, b) = (k as f32 / n as f32 * std::f32::consts::TAU, (k + 1) as f32 / n as f32 * std::f32::consts::TAU);
+                frame.hud_line(q + Vec2::new(a.cos(), a.sin()) * 7.0, q + Vec2::new(b.cos(), b.sin()) * 7.0, col);
+            }
+            if what == Opening::Leak {
+                frame.hud_line(q - Vec2::splat(5.0), q + Vec2::splat(5.0), col);
+                frame.hud_line(q + Vec2::new(-5.0, 5.0), q + Vec2::new(5.0, -5.0), col);
+            }
+        }
+    }
     for leaf in plan.leaves().into_iter().filter(|_| interior.shown(layer::HATCHES)) {
         let on: Option<Vec<Vec2>> = leaf.outline.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
         let glass: Option<Vec<Vec2>> = leaf.window.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
@@ -3880,6 +5338,18 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             frame.text_scaled(q + Vec2::new(-w / 2.0, -12.0), &f.name, col, 0.6);
         }
     }
+    // The decks: each plate filled and outlined (its own layer, frame shown or not).
+    for plate in plan.plates.iter().filter(|_| interior.shown(layer::DECKS)) {
+        let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
+        if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
+            let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
+            frame.hud_triangle_colored([a, b, cc], fill);
+            frame.hud_triangle_colored([a, cc, d], fill);
+        }
+        for k in 0..4 {
+            seg(frame, c[k], c[(k + 1) % 4], DECK);
+        }
+    }
     // The frame: each member coloured by how hard it's worked (the case shown, or
     // its worst): green easy, amber near its limit, red past it; broken, red and
     // crossed. Its load points: the landing pads and nozzles (lit if a joint's at
@@ -3892,7 +5362,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 Some(c) => b.cases.get(c).map(|c| &c.1).into_iter().collect(),
                 None => b.cases.iter().map(|c| &c.1).collect(),
             };
-            let os: Vec<_> = pick.into_iter().filter_map(|r| r.as_ref().ok()).filter_map(|c| c.members.get(k)).collect();
+            let m = (*b.index.get(k)?)?;
+            let os: Vec<_> = pick.into_iter().filter_map(|r| r.as_ref().ok()).filter_map(|c| c.members.get(m)).collect();
             (!os.is_empty()).then(|| (os.iter().map(|o| o.work.design).fold(0.0, f64::max), os.iter().any(|o| o.broken.is_some())))
         };
         for (k, b) in plan.beams.iter().enumerate() {
@@ -3928,6 +5399,19 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 if let Some((q, _)) = cam.project(p) {
                     frame.hud_rect(q - Vec2::splat(1.5), Vec2::splat(3.0), Color([0.9, 0.95, 1.0, 0.9]));
                 }
+            }
+        }
+        // (The decks' strips coloured as members are.)
+        if let Some(b) = &bearing {
+            for &(_, sa, sb, _, m) in &b.strips {
+                let os = b.of_member(m);
+                let pick: Vec<_> = match interior.case {
+                    Some(c) => b.cases.get(c).and_then(|c| c.1.as_ref().ok()).and_then(|c| c.members.get(m)).into_iter().collect(),
+                    None => os,
+                };
+                let (u, broken) = (pick.iter().map(|o| o.work.design).fold(0.0, f64::max), pick.iter().any(|o| o.broken.is_some()));
+                let col = if broken { CLASH } else if u >= 1.0 { Color([1.0, 0.3, 0.25, 1.0]) } else if u >= 0.5 { Color([1.0, 0.7, 0.2, 1.0]) } else { Color([0.4, 1.0, 0.5, 0.8]) };
+                seg(frame, sa, sb, col);
             }
         }
         if interior.tool == Tool::Frame {
@@ -4084,10 +5568,12 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
             Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME."),
-            Tool::Frame => ("FRAME", "JOINT TO JOINT, OR TRUSS: TWO CORNERS. MOUNT ALL TIES IN MODULES AND PADS. AUTO-SIZE FITS TUBES."),
+            Tool::Frame => ("FRAME", "JOINT TO JOINT, OR TRUSS: TWO CORNERS. MOUNT ALL, AUTO-SIZE (MIX: ANY MATERIAL), BRACE WHAT'S OVER."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
+        // (MODULES: its hint on the hint line, the panel for the list and the sheet.)
+        let help = if interior.tool == Tool::Modules { "" } else { help };
         for line in crate::fmt::wrap(help, ((c.x - 16.0) / 8.0 * 1.25) as usize) {
             frame.text_scaled(Vec2::new(p.x + 8.0, y), &line, LABEL.scale(0.85), 0.8);
             y += 12.0;
@@ -4095,9 +5581,35 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         // FRAME: the stock (lit: what new members, or the picked one, are cut from),
         // the case shown, how each case goes, what isn't carried, its members' mass.
         if interior.tool == Tool::Frame {
+            if interior.deck_mode {
+                // (DECK: the deck stock, plates and panels; lit: what new decks, or the
+                // picked one, are cut from.)
+                frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), "DECK STOCK               KG/M2  YIELD", LABEL.scale(0.7), 0.6);
+                if plate_stocks().len() > STOCK_ROWS {
+                    let shown = format!("{}-{} OF {} (WHEEL)", interior.stock_top + 1, (interior.stock_top + STOCK_ROWS).min(plate_stocks().len()), plate_stocks().len());
+                    frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 62.0), &shown, LABEL.scale(0.6), 0.6);
+                }
+                let now = interior.deck_pick.and_then(|j| plan.plates.get(j)).map(|p| p.stock.clone()).or_else(|| interior.deck_stock.clone()).unwrap_or_else(default_deck_stock);
+                for (n, st) in plate_stocks().iter().skip(interior.stock_top).take(STOCK_ROWS).enumerate() {
+                    let (q, qc) = stock_row(n);
+                    let lit = st.key == now;
+                    if lit {
+                        frame.hud_rect(q, qc, PICKED.scale(0.18));
+                    }
+                    let col = if lit || inside((q, qc), interior.cursor) { PICKED } else { LABEL.scale(0.75) };
+                    let name: String = st.name.to_uppercase().chars().take(24).collect();
+                    frame.text_scaled(Vec2::new(q.x + 4.0, q.y + 2.0), &name, col, 0.6);
+                    let figures = format!("{:>5.1} {:>5.0} MPA", st.per_square_metre, st.material.yield_strength / 1e6);
+                    frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
+                }
+            } else {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), "STOCK                     KG/M  YIELD", LABEL.scale(0.7), 0.6);
-            for (k, st) in stocks().iter().enumerate() {
-                let (q, qc) = stock_row(k);
+            if stocks().len() > STOCK_ROWS {
+                let shown = format!("{}-{} OF {} (WHEEL)", interior.stock_top + 1, (interior.stock_top + STOCK_ROWS).min(stocks().len()), stocks().len());
+                frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 62.0), &shown, LABEL.scale(0.6), 0.6);
+            }
+            for (n, (k, st)) in stocks().iter().enumerate().skip(interior.stock_top).take(STOCK_ROWS).enumerate() {
+                let (q, qc) = stock_row(n);
                 let lit = interior.stock == k;
                 if lit {
                     frame.hud_rect(q, qc, PICKED.scale(0.18));
@@ -4108,11 +5620,12 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 let figures = format!("{:>5.1} {:>5.0} MPA", st.per_metre, st.material.yield_strength / 1e6);
                 frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
             }
+            }
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 146.0), "LOAD CASE SHOWN", LABEL.scale(0.7), 0.6);
             for (r, name, a) in panel_buttons(Tool::Frame) {
                 let lamp = if a == Action::AutoSize && interior.sizing.is_some() {
                     Lamp::Busy
-                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::SnapFloor && interior.snap_floor) || (a == Action::Pads && interior.pads_mode) || (a == Action::Truss && interior.truss_mode) {
+                } else if inside(r, interior.cursor) || matches!(a, Action::Case(c) if c == interior.case) || (a == Action::Mix && interior.mix) || (a == Action::Truss && interior.truss_mode) || (a == Action::Deck && interior.deck_mode) {
                     Lamp::On
                 } else {
                     Lamp::Off
@@ -4121,6 +5634,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 let name = if a == Action::AutoSize && interior.sizing.is_some() { "SIZING..." } else { name };
                 draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
             }
+            // (The gravity it's designed to land in.)
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 296.0), &format!("DESIGN GRAVITY {:.1} G", interior.plan.gravity() / STANDARD_G), LABEL, 0.6);
             // (The next truss's depth and its stations' spacing: a slider each.)
             for (k, (at, len)) in sliders(Tool::Frame).into_iter().enumerate() {
                 let (name, v) = if k == 0 { ("TRUSS DEPTH", interior.depth) } else { ("SPACING", interior.spacing) };
@@ -4176,7 +5691,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             let clash_of = |id: &str| interior.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks).and_then(|(b, c)| b.iter().position(|x| x.id == id).map(|k| c[k])).unwrap_or(false);
             let hull = interior.spec().is_some();
             let head = if hull { "THE SHIP'S FIT              MASS   VOLUME" } else { "ALL EQUIPMENT (ANY NUMBER) MASS   VOLUME" };
-            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), head, LABEL.scale(0.7), 0.6);
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 29.0), head, LABEL.scale(0.7), 0.6);
             // (What's placed, of everything: its mass and volume.)
             let fitted_of = |b: &Block| interior.fit.iter().find(|f| f.id == kind(&b.id));
             let (mass, volume) = plan.blocks.iter().filter_map(fitted_of).fold((0.0, 0.0), |(m, v), f| (m + f.mass, v + f.volume));
@@ -4200,6 +5715,13 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 let figures = if f.volume < 10.0 { format!("{:>5.2} T {:>5.1} M3", f.mass / 1000.0, f.volume) } else { format!("{:>5.2} T {:>5.0} M3", f.mass / 1000.0, f.volume) };
                 frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
             }
+            // (The sheet: the row under the cursor, else the module under it in the
+            // view, else the one picked.)
+            let row = (0..FIT_ROWS).find(|&n| interior.fit_top + n < interior.fit.len() && inside(module_row(n), interior.cursor)).map(|n| interior.fit_top + n);
+            if let Some(f) = row.or(interior.module_hover).or(interior.module).and_then(|k| interior.fit.get(k)) {
+                let block = interior.block.and_then(|n| plan.blocks.get(n)).filter(|b| kind(&b.id) == f.id);
+                draw_sheet(frame, interior, f, block);
+            }
             let text = if hull {
                 let total: f32 = interior.fit.iter().map(|f| f.volume).sum();
                 format!("PLACED {placed} OF {}: {volume:.0} OF {total:.0} M3, {:.1} T", interior.fit.len(), mass / 1000.0)
@@ -4210,7 +5732,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             // (Scrolled: where in the list it is.)
             if interior.fit.len() > FIT_ROWS {
                 let shown = format!("{}-{} OF {} (WHEEL)", interior.fit_top + 1, (interior.fit_top + FIT_ROWS).min(interior.fit.len()), interior.fit.len());
-                frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 72.0 - 10.0), &shown, LABEL.scale(0.6), 0.6);
+                frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 10.0), &shown, LABEL.scale(0.6), 0.6);
             }
             let picked_block = interior.block.and_then(|n| plan.blocks.get(n));
             for (k, (at, len)) in sliders(Tool::Modules).into_iter().enumerate() {
@@ -4325,6 +5847,30 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             }
         }
     }
+    // The budgets (MODULES, FRAME): under the panel, each met in green, short in
+    // amber; what fails, in red.
+    if matches!(interior.tool, Tool::Modules | Tool::Frame | Tool::Door) && (!plan.blocks.is_empty() || !plan.groups.is_empty()) {
+        // (The frame's mass: its members and its decks' plates.)
+        let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>()
+            + plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum::<f64>();
+        let b = budget(interior, frame_mass);
+        let (pp, pc) = PANEL;
+        let rows = b.lines.len() + b.faults.len().min(4);
+        let (p, c) = (Vec2::new(pp.x, pp.y + pc.y + 6.0), Vec2::new(pc.x + 120.0, 18.0 + rows as f32 * 10.0));
+        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.88]));
+        frame.hud_box(p, c, PLANE.scale(1.2));
+        frame.text_scaled(p + Vec2::new(6.0, 4.0), "BUDGETS AND CHECKS", LABEL.scale(0.8), 0.6);
+        let mut y = p.y + 15.0;
+        for (text, ok) in &b.lines {
+            let col = if *ok { Color([0.4, 1.0, 0.5, 0.95]) } else { Color([1.0, 0.7, 0.2, 1.0]) };
+            frame.text_scaled(Vec2::new(p.x + 6.0, y), text, col, 0.55);
+            y += 10.0;
+        }
+        for f in b.faults.iter().take(4) {
+            frame.text_scaled(Vec2::new(p.x + 6.0, y), f, CLASH, 0.55);
+            y += 10.0;
+        }
+    }
     // A message for a while (saved, opened), under the toolbar.
     if let Some((text, _)) = &interior.message {
         frame.text_scaled(Vec2::new(button(2).0.x, 52.0), text, PICKED, 0.7);
@@ -4363,3 +5909,9 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
+
+
+
+
