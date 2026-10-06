@@ -28,6 +28,7 @@ stock:
 # Distribution stock: 1.5 resupply cycles (7 days) of what its 60,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine. Plus the administration's compulsory reserve of food and medicine for all 220,700 people of Treistun, its share (org.treistun compulsory_stock).
 # Distribution stock: 1.5 resupply cycles (7 days) of what its 60,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine. Plus the administration's compulsory reserve of food and medicine for all 220,700 people of Treistun, its share (org.treistun compulsory_stock).
 # Distribution stock: 1.5 resupply cycles (7 days) of what its 60,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine. Plus the administration's compulsory reserve of food and medicine for all 220,700 people of Treistun, its share (org.treistun compulsory_stock).
+# Distribution stock: 1.5 resupply cycles (7 days) of what its 60,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine. Plus the administration's compulsory reserve of food and medicine for all 220,700 people of Treistun, its share (org.treistun compulsory_stock).
   - { item: stock.flour-bulk, quantity: 5200000.0 }
   - { item: stock.potatoes-bulk, quantity: 4160000.0 }
   - { item: stock.cabbage-bulk, quantity: 1040000.0 }

@@ -58,27 +58,27 @@ energy:
   coal_in_place: 2.739e+16
 bake:
   format: "planet-sim-surface/1"
-  version: 4
-  path: "worlds/TRD1/surface/v4"
-  manifest_sha256: "d446d9d9e0d3227257d748058d3a6ee0e0aa83a1dd0db2b09b916292217ba97e"
-  files: 1336
-  bytes: 712848510
-  note: "v4: clouds (clouds.json, clouds_month/enso/air.png: four kinds a month from the world's climate, El Nino index and response; planet-sim stages/clouds.py)"
+  version: 5
+  path: "worlds/TRD1/surface/v5"
+  manifest_sha256: "988a6d20a9cac945b5940605519251ac8ac95f8442bdb79a1247176f98baefca"
+  files: 1337
+  bytes: 783618969
+  note: "v5: mountains: the 600 m tiles eroded under their belt's uplift to steady state, rock-strength slope limits, summits capped by crustal strength (slope median 17 deg, 9% past 30 deg across the highest tiles; v4: 11-12, 0%); the 5 km slope limiter isotropic; clouds format 2 (thin in cold air); world.json radius/day/tilt"
 identity:
   key: body.treistun.treistun-d
-  name: Harvest
+  name: Heath D
   also: Treistun d
   kind: rocky planet
   parent: body.treistun.treistun
-  about: 'Harvest, the third planet, 0.53 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hearth''s.
+  about: 'Heath, the third planet, 0.53 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hoar''s.
   It is warm: about 297 K on average, a little warmer than old Earth. Its year is 165 days, its day 20 hours. One moon.'
   story:
-    - 'The warm world, and the second with air. It was settled after Hearth, by people who wanted open sky and were willing to take the heat that came with it. They named it for what it does.'
+    - 'The warm world, the only one with air to breathe, and the home world: settled after Hoar by people who wanted open sky and were willing to take the heat that came with it. They named it for its open country, and everyone who followed came here.'
     - 'Its equator is too hot for any crop and its poles are frozen. Between them lie the only fields in the system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.'
 orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
-  highest: 8920
+  highest: 10378
   rain: 0.676
   temperature_high: 314.2
   temperature_low: 253.4

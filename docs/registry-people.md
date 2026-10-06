@@ -22,7 +22,7 @@ to ten). They are reckoned in three parts:
 1. **Runs for people** (`settlement.resupply`): what a port's people take a day of stocked goods
    (about 1.6 kg a head), the flight one way at a torchship's cruise (1 m/s², a tenth of a g, fuel
    in mind; chosen) over the two orbits' typical separation, a hauler's 150 t hold, a day's
-   turnaround each end. Harvest to Hearth is 8 days each way; to the giants' moons 17 to 22.
+   turnaround each end. Heath to Hoar is 8 days each way; to the giants' moons 17 to 22.
 2. **Runs for works:** what a port's facilities take in a day that the port does not make, from the
    nearest port that makes it or, made nowhere in the system, from the gate: Trethi's mill and yard
    draw 380 t a day of ores and stock through the gate, Eikir's works 216 t. The lines are taken at
@@ -34,7 +34,7 @@ to ten). They are reckoned in three parts:
 | Who | Ships | Based |
 |---|---|---|
 | Treistun Freight (the runs, 1 and 2) | 132 haulers | Port Eikir |
-| Hearth Line (passage, one shuttle to 10,000) | 22 Drovers | the station |
+| Hoar Line (passage, one shuttle to 10,000) | 22 Drovers | the station |
 | Cormorant (two prospectors to a field) | 10 | Port Trethi |
 | the administration's patrol (the code's one to 10,000, one at every port) | 23 interceptors | every port |
 | Shikra Hold (raiders) | 12 interceptors | Biraidim |

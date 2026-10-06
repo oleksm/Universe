@@ -4,9 +4,6 @@ identity:
   key: material.silicone-rubber
   name: Silicone rubber
   class: polymer
-  form:
-  - sheet
-  - tube
 mass:
   density: 1075.0
 mechanical:

@@ -1032,7 +1032,7 @@ mod tests {
         assert!(e.works[yard].pool.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) + e.places[trethi].stock.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) > 0.0, "and the offcuts, scrap");
 
         // Halden Mine (a camp the seed has no port for: placed where its record says) digs its
-        // claimed deposit (Harvest's survey's), and what it digs is gone from it.
+        // claimed deposit (Heath's survey's), and what it digs is gone from it.
         let mine = e.works.iter().position(|x| x.name == "Halden Mine").expect("Halden Camp's mine");
         let (id, before) = e.works[mine].deposit.clone().expect("its claim's deposit");
         assert_eq!(id, "TRD1-PCU-007264A-01");

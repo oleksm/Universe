@@ -24,7 +24,7 @@ lines:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 1 }
   - makes: stock.st4340-fg
-    also: [stock.st4340-node-120, stock.st4340-node-160, stock.st4340-node-200]
+    also: [stock.st4340-node-120, stock.st4340-node-160, stock.st4340-node-200, stock.st4340-node-250, stock.st4340-node-300, stock.st4340-node-350, stock.st4340-node-300h, stock.st4340-node-400h, stock.st4340-node-500h]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.forging-press, count: 1 }
@@ -70,6 +70,7 @@ lines:
     modules:
       - { module: module.cold-rolling-mill, count: 1 }
   - makes: stock.cfc-sh-0p5
+    also: [stock.aramid-fb]
     modules:
       - { module: module.composites-works, count: 1 }
 # Where its stock is kept.

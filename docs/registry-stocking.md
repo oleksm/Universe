@@ -13,8 +13,8 @@ Eikir and half at Port Nacaubun (the two big ports under open sky). These are Sw
 compulsory stocks (about four months of staples, about three of critical medicines; from memory,
 marked review). Like zoning, the law can be broken; a breach is the administration's to record.
 
-Resupply intervals are chosen by distance and owed a reckoning from the orbits: Harvest's moon 3
-days, Hearth 7, the inner worlds 20, Rime 30, the giants' moons 60.
+Resupply intervals are chosen by distance and owed a reckoning from the orbits: Heath's moon 3
+days, Hoar 7, the inner worlds 20, Rime 30, the giants' moons 60.
 
 What this gives at day 0: Port Eikir's warehouse holds 5,190 t of flour (its own week plus half the
 system's four months); Port Aipika, 60 days out among the giants' moons, holds 90 days of its own

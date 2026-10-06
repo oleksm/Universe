@@ -142,3 +142,17 @@ definitions:
       mining: "Prospecting and digging the fields, selling at the home port."
       patrol: "The law's craft: answering breaches in the approaches, escorting when asked."
       raiding: "Sorties from a hold against lone, laden prey; home when a patrol comes out."
+  sight_kind:
+    description: "What kind of thing is worth going to see."
+    enum: [peak, basin, crater, canyon, ice, rings, storm, sea, falls, aurora]
+    x-values:
+      peak: "A mountain, by its height."
+      basin: "A great impact basin, by its width and depth."
+      crater: "A crater, by its width."
+      canyon: "A gorge or rift."
+      ice: "An ice sheet or a glacier."
+      rings: "A planet's rings, from a moon or an orbit."
+      storm: "A storm in a giant's air."
+      sea: "A sea, a lake or an ocean shore."
+      falls: "Falling water."
+      aurora: "Light in the air at the poles."

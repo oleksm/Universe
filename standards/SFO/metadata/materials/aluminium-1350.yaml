@@ -8,8 +8,6 @@ identity:
   composition:
   - part: element.al
     share: 0.995
-  form:
-  - wire
 mass:
   density: 2700.0
 mechanical:

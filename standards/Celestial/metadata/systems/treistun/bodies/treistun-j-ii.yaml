@@ -2,7 +2,7 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 # Curated: named by its people; the seed calls it Treistun j II. The rest is as the seed made it.
 provenance: curated
-identity: {key: body.treistun.treistun-j-ii, name: Verge II, also: Treistun j II, kind: moon, parent: body.treistun.treistun-j, about: 'A
+identity: {key: body.treistun.treistun-j-ii, name: Verge J II, also: Treistun j II, kind: moon, parent: body.treistun.treistun-j, about: 'A
     moon of the gas giant Verge, 10.5 AU from the star, the outermost planet. 720 km in radius, 0.06 g at the surface,
     no air, about 84 K on average. Its day lasts 38 hours.'}
 orbit: {semi_major_axis: 563890000.0, eccentricity: 0.0121, period: 138102.624, inclination: 4.072}

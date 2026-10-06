@@ -30,7 +30,7 @@ bake:
   note: "v2: fz.json carries each tile's height bounds; summary.json (highest peak, climate) for records"
 identity:
   key: body.treistun.treistun-b
-  name: Cinder
+  name: Cinder B
   also: Treistun b
   kind: rocky planet
   parent: body.treistun.treistun

@@ -7,8 +7,6 @@ identity:
   composition:
   - part: material.fused-silica
     share: 1.0
-  form:
-  - tile
 mass:
   density: 144.0
 mechanical:

@@ -1,0 +1,129 @@
+{
+ "format": "planet-sim-survey/1",
+ "world_id": "TRF1",
+ "body": "body.treistun.treistun-f",
+ "created": "2026-10-06T19:50:27Z",
+ "immutable": true,
+ "simulator": {
+  "commit": "fb414b42059ab59d0575bd98917a21c6bc130b57",
+  "dirty": true
+ },
+ "inputs": {
+  "world": {
+   "file": "world.npz",
+   "sha256": "a280872ac00c4b12c9645c2313f12ce2b2969ae9be5684b5d60163cb2b5621ab"
+  },
+  "climate": {
+   "file": "world_climate.npz",
+   "sha256": "4567dc3a429083a17c8ceece0d4c45fb149f7aca2fc4331f5ccefde5fefbbc79"
+  }
+ },
+ "vocabulary": {
+  "file": "docs/vocabulary.json",
+  "sha256": "73da6d8858d74809c3364c3051de1c592c084448d6fbcb6ca847527688c106ea"
+ },
+ "record": {
+  "key": "body.treistun.treistun-f",
+  "file": "standards/Celestial/metadata/systems/treistun/bodies/treistun-f.yaml",
+  "sha256": "04c06b5d963033fb1675632199a4a3267037291ddd835d8f21e7da2088f2892b",
+  "star_key": "body.treistun.treistun",
+  "star_file": "standards/Celestial/metadata/systems/treistun/bodies/treistun.yaml",
+  "star_sha256": "8c21d190c5b9519479e7b71e87c953532f45a2fc12035d2f803630acb8596ecd",
+  "registry_commit": "110f980cc5f611109205ba6f57ce4d8b585ceeec",
+  "registry_branch": "fso"
+ },
+ "spec": {
+  "star": {
+   "mass_suns": 0.7053161475908614,
+   "age_gyr": 4.569422262782974,
+   "metallicity": 0.0,
+   "luminosity_suns": 0.2944
+  },
+  "planet": {
+   "name": "Rime F",
+   "mass_earths": 0.1346438498375808,
+   "radius_earths": 0.5703971119133574,
+   "semi_major_au": 1.1338730906147851,
+   "eccentricity": 0.04618,
+   "obliquity_deg": 1.51,
+   "rotation_hours": 10.562,
+   "radiogenic": 1.0,
+   "surface_temp_k": 189.2,
+   "regime": "stagnant_lid",
+   "core_mass_fraction": 0.325,
+   "core_radius_earths": null,
+   "core_light": 0.08,
+   "core_stratified": false,
+   "water_mass_fraction": 0.0,
+   "impact_flux": 1.0,
+   "air_column": 0.0
+  },
+  "notes": [
+   "seeded from registry record body.treistun.treistun-f"
+  ]
+ },
+ "assumed": {
+  "star.metallicity": {
+   "value": 0.0,
+   "why": "the Sun's [Fe/H]"
+  },
+  "planet.radiogenic": {
+   "value": 1.0,
+   "why": "Earth's mantle heat production"
+  },
+  "planet.regime": {
+   "value": "stagnant_lid",
+   "why": "given for this run"
+  },
+  "planet.core_mass_fraction": {
+   "value": 0.325,
+   "why": "Earth's"
+  },
+  "planet.core_light": {
+   "value": 0.08,
+   "why": "Earth's core light-element share (Hirose et al. 2013)"
+  },
+  "planet.impact_flux": {
+   "value": 1.0,
+   "why": "the inner Solar System's impact history (Neukum et al. 2001)"
+  },
+  "planet.water_mass_fraction": {
+   "value": 0.0,
+   "why": "given for this run"
+  },
+  "atmosphere": {
+   "value": null,
+   "why": "the record's air (surface density, breathability) as given: the air is not simulated yet; the climate stage assumes Earth's (pressure, greenhouse from CO2 at 280 ppm)"
+  }
+ },
+ "files": {
+  "bulk_rock.json": {
+   "sha256": "d7407a1044088f6998b38cd9d3ae341f68b3a7941e7275749effc924a064de97",
+   "bytes": 1894
+  },
+  "deposits.geojson": {
+   "sha256": "f36cb2962d9661f7033027e4708f2f2712e6e846ec74c0ea292561240e6f96f9",
+   "bytes": 60038
+  },
+  "districts.json": {
+   "sha256": "b2a496c45e299730e0004cc6992b7b3894cb5a6802155798b0be9feea43282b9",
+   "bytes": 3691
+  },
+  "geology.png": {
+   "sha256": "125d2078d1186f014520b14881db03f50e42be0332f93d32acd34f19565f5336",
+   "bytes": 108662
+  },
+  "impacts.json": {
+   "sha256": "435f6082522dc7c0319448426b05d1bae8cdbd3bb84878ccee96854e01dc1cd6",
+   "bytes": 48071741
+  },
+  "rock_units.png": {
+   "sha256": "b10ed8a67cf134e917433531023d5d09c0137d84113ee5d4381534cf7edae12f",
+   "bytes": 48845
+  },
+  "summary.json": {
+   "sha256": "abb0db84faf0b30ee3972276d8bdda6597f70996e780c0341e41010b1d9ffa38",
+   "bytes": 2919
+  }
+ }
+}

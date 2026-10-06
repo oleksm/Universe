@@ -36,6 +36,8 @@ struct Clouds {
     enso: f32,
     // Seconds of world time, wrapped by the caller every CLOUD_WRAP_S (f32 keeps ~1 s there).
     time_s: f32,
+    // 0: off; else the clouds.json format's version (1: the air map's A is the jet's wind; 2: the
+    // water the clouds can hold).
     on: f32,
 };
 
@@ -59,6 +61,8 @@ struct CloudField {
     trop_m: f32,
     u700: f32,
     ujet: f32,
+    // The water the clouds can hold (0–1): the kinds' optical depths × it (format 2; 1 before).
+    water: f32,
 };
 
 // --- The bake's maps --------------------------------------------------------------------------
@@ -102,7 +106,14 @@ fn cloud_field(dir: vec3<f32>, cl: Clouds, cm: texture_2d<f32>, ce: texture_2d<f
     out.lcl_m = air.r * 16.0;
     out.trop_m = air.g * 80.0;
     out.u700 = (air.b - 128.0) * 0.5;
-    out.ujet = air.a - 128.0;
+    if (cl.on > 1.5) {
+        // (Format 2: the jet ~2.5× the 700 hPa wind: the thermal wind grows with height.)
+        out.ujet = 2.5 * out.u700;
+        out.water = clamp(air.a / 255.0, 0.02, 1.0);
+    } else {
+        out.ujet = air.a - 128.0;
+        out.water = 1.0;
+    }
     return out;
 }
 
@@ -247,12 +258,12 @@ fn cloud_columns(dir: vec3<f32>, f: CloudField, radius_km: f32, t: f32, pix_km: 
             low = cl_cover(z / sqrt(max(sd, 1e-6)), f.frac.x, 0.04);
         }
         // (Under the towers: the convection's own dark base.)
-        out.low = vec2<f32>(max(low.x, d_deep.x), low.x * low.y * 2.0 * TAU_LOW + d_deep.x * TAU_DEEP * 0.5);
+        out.low = vec2<f32>(max(low.x, d_deep.x), (low.x * low.y * 2.0 * TAU_LOW + d_deep.x * TAU_DEEP * 0.5) * f.water);
     }
     if ((which == 0 || which == 2) && f.frac.z > 0.002) {
         let s = cl_shape(Spectrum(2000.0, 8, 0.7, 3.0, 0.0), q, east, f.u700, t, pix_km, 4.0);
         let c = cl_cover(s.x / s.y, f.frac.z, 0.08);
-        out.mid = vec2<f32>(c.x, c.x * c.y * 2.0 * TAU_FRONTAL);
+        out.mid = vec2<f32>(c.x, c.x * c.y * 2.0 * TAU_FRONTAL * f.water);
     }
     if (which == 0 || which == 3) {
         var ci = vec2<f32>(0.0);
@@ -261,7 +272,7 @@ fn cloud_columns(dir: vec3<f32>, f: CloudField, radius_km: f32, t: f32, pix_km: 
             ci = cl_cover(s.x / s.y, f.frac.w, 0.12);
         }
         out.high = vec2<f32>(1.0 - (1.0 - d_deep.x) * (1.0 - ci.x),
-                             d_deep.x * d_deep.y * 2.0 * TAU_DEEP + ci.x * ci.y * 2.0 * TAU_CIRRUS);
+                             (d_deep.x * d_deep.y * 2.0 * TAU_DEEP + ci.x * ci.y * 2.0 * TAU_CIRRUS) * f.water);
     }
     return out;
 }
@@ -540,10 +551,15 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         let sunside = (mu_v > 0.0) == (mu_s > 0.0);
         let sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
         let alpha = sheet.w * dt.x * keep;
+        // (A cloud passes about 1 − R of the light behind it, diffusely (non-absorbing: two-stream):
+        // over bright ground — ice, snow, deserts — the ground's light shows through and the cloud
+        // reads as bright as it or brighter, as from orbit, not as a grey sheet over it.)
+        let tt_ = (1.0 - CLOUD_G) * dt.y;
+        let t_dif = 1.0 - tt_ / (2.0 + tt_);
         // (The air between the eye and the cloud: its light dimmed and hazed as the ground's.)
         let seen = air_ground_lut(sheet.rgb, p + center, center, sun_dir, sun, a, tl, ml, smp);
         acc += trans * alpha * seen;
-        trans *= 1.0 - alpha;
+        trans *= 1.0 - alpha * (1.0 - t_dif);
         if (trans < 0.01) {
             break;
         }

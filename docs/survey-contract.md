@@ -27,7 +27,7 @@ The body's record gives the run its inputs. Everything in these sections is the 
 
 The run writes `body: <key>` into `summary.json`, and the survey's `radius_m` must be the record's
 `physical.radius` (within 1%); the import refuses a world not grown from the record. Our test:
-world E4 is Earth-sized, Harvest is 6,654 km; the import refuses to join them, as it should.
+world E4 is Earth-sized, Heath is 6,654 km; the import refuses to join them, as it should.
 
 The vocabulary the run uses for deposit kinds, rock units and survey methods is the registry's,
 through `docs/vocabulary.json` → `tools/standards/geology_import.py` → `Celestial/metadata/deposit-types/`,
@@ -77,6 +77,14 @@ Deposit types for the energy kinds: `deposit-type.oil-field`, `.gas-field`, `.co
 (formed by burial); goods crude oil, natural gas, coal and their bulk stock; modules `oil-well`,
 `gas-well`, `coal-mine` drawing from the place.
 
+A fourth package, **`history/`** (planet-sim-history/1), is how the world grew, for the game's
+studio: `frames.json` and the globe frames over time (`t<NNNN>.jpg`, `today.jpg`), `params.json`
+(the run's given, derived and assumed parameters), `history.json` (interior and plates every
+10 Myr), `paleo.json` (climate every ~100 Myr: CO₂, temperature, ice, burial), `life.json`
+(life's milestones). Written once per world; `releases.json` lists it under `packages.history`.
+The registry keeps nothing of it (the installer needs nothing from it); the game's studio reads it
+from the store; the Worlds report says whether a world has one.
+
 ## 2b. Installing without anyone: the watcher
 
 `tools/standards/watch_worlds.py` watches the store's `releases.json`. When it has changed since
@@ -123,9 +131,9 @@ The last installed index is remembered in `standards/Celestial/surveys/.installe
 | `districts.json` | each district: ID, kind, its deposits, extent | the map's district layer; the land register's unit for a mining licence |
 | `energy/fields.geojson`, `basins.json`, `coalfields.json` | fields (oil or gas, in-place amounts, depth, trap, water depth), basins, coalfields (rank, area) | a well or a coal mine sits on a field's or coalfield's `id`; a map layer |
 | the surface bake (`bake.path` in the worlds store) | 5 km and 600 m height tiles, rivers, textures, geology and energy layers, peaks, the world's report | the ground to fly over and land on; the globe; the map layers |
-| the bake's `fz.json` (the 600 m tiles' index), field `bounds` | `{"<face>/<x>/<y>": [min_m, max_m]}` for every tile in `tiles`: the absolute heights (m above the sea) of the ground as the client rebuilds it (the 5 km map read bilinearly plus the tile's 16-bit difference, half-metre steps), min floored and max ceiled to whole metres; the highest bound equals the world's highest peak (Harvest 8,920 m). In the lab's bakes from 2026-10-06 on; absent in surface v1 of TRD1 and TRB1, and absent means unknown | culling: skip a tile whose bounds lie out of view or below the sea |
+| the bake's `fz.json` (the 600 m tiles' index), field `bounds` | `{"<face>/<x>/<y>": [min_m, max_m]}` for every tile in `tiles`: the absolute heights (m above the sea) of the ground as the client rebuilds it (the 5 km map read bilinearly plus the tile's 16-bit difference, half-metre steps), min floored and max ceiled to whole metres; the highest bound equals the world's highest peak (Heath 8,920 m). In the lab's bakes from 2026-10-06 on; absent in surface v1 of TRD1 and TRB1, and absent means unknown | culling: skip a tile whose bounds lie out of view or below the sea |
 | `climate` in the survey's `summary.json` (new surveys), or `surface/v<N>/summary.json` (older worlds, from their next bake) | `mean_surface_temp_c`, `mean_land_temp_c`, `rain_land_m`, and `bands` (0–10, 10–25, 25–35, 35–50, 50–70, 70–90°: `temp_c`, `land_temp_c`, `land_coldest_month_c`, `land_warmest_month_c`, `land_rain_m`, null on dry worlds); `highest_point_plate_stage_m` (the plate stage's ~80 km figure, not the summit). The bake's summary also carries `highest_peak` `{h, prom, lat, lon, res_m}`, the refined summit. One shared function (`planet_sim.climate_summary`), the same figures as the world report's weather table | the installer writes `surface.mean_temperature`, `temperature_low` and `temperature_high` (the coldest and warmest land months across the bands, in K), `rain` (m a year) and `highest` (the refined peak) onto the record; the game's climate and the planet's card read them |
-| airless worlds (no sea) | heights and `bounds` are relative to the **mean radius**, not a sea (Cinder: −5,435 to +4,880 m); `highest_peak` comes from the 5 km peak list, while the 600 m tiles carry crater relief above it, so the bounds' max may exceed `highest_peak` (Cinder 4,880 against 4,713 m); on worlds with plates they agree (Harvest 8,920 = 8,920) | the datum for landing and the map's heights; the installer takes `highest_peak` for `surface.highest` |
+| airless worlds (no sea) | heights and `bounds` are relative to the **mean radius**, not a sea (Cinder: −5,435 to +4,880 m); `highest_peak` comes from the 5 km peak list, while the 600 m tiles carry crater relief above it, so the bounds' max may exceed `highest_peak` (Cinder 4,880 against 4,713 m); on worlds with plates they agree (Heath 8,920 = 8,920) | the datum for landing and the map's heights; the installer takes `highest_peak` for `surface.highest` |
 | the bake's air (surface v3 on): `atmosphere.json` beside `air_luts.json`, `air_transmittance.rgba32f`, `air_multiscatter.rgba32f` | the world's air for rendering: its scattering constants, and the precomputed tables (transmittance and multiple scattering, 32-bit float RGBA) the sky and aerial perspective are drawn from; the aerosol Earth's mean until a world's own is simulated | the game's air (worlds::Heights::air_luts); absent before v3 |
 | the bake's clouds (surface v4 on, format planet-sim-clouds/1): `clouds.json` beside `clouds_month.png`, `clouds_enso.png`, `clouds_air.png` (and `globe_clouds.*` for people) | twelve monthly tiles (4 across × 3 down, 360 × 180 each, equirectangular, the world's own months) of sky fraction by kind in RGBA (low, deep convection, frontal, cirrus; v/255); the change per unit of its El Niño index; the air (cloud base 16·v m, tropopause 80·v m, 700 hPa and jet eastward winds); `kinds` gives each cloud's optical depth, base and top rules | the game's cloud layer and its weather by month (`clouds.json` says how to read every channel); absent before v4 |
 | coming: sparse ~150 m tiles (cube level 6, the same naming and encoding, each a difference from the 600 m ground) | | a third height level, when the game reads one |
@@ -137,7 +145,7 @@ Coordinates: longitude, latitude in degrees on the body's sphere; the rock map's
 deposit is the survey's or the energy package's permanent id (`TRD1-PCU-007264A-01`), the holder an organisation, the
 licence the administration's (its `law.policies.mining_licence`; without one the mine is unlicensed, a recorded breach).
 The build checks the id against the survey of the body the settlement is at, and that the body is baked. The first:
-**Halden Camp** on Harvest (`settlement.treistun.halden-camp`), Cormorant's pit and concentrator on a 1,230 Mt porphyry
+**Halden Camp** on Heath (`settlement.treistun.halden-camp`), Cormorant's pit and concentrator on a 1,230 Mt porphyry
 copper body 1,070 km north of Port Eikir, its concentrate on the exchange at its strip's yard.
 
 **The render bake** (landscape, 600 m tiles, rivers) is the game's and the lab's, outside this
@@ -159,13 +167,13 @@ where each lives).
 
 The deposits' random draws are seeded from the world ID, so the ID is part of the world and can
 never change after the run. Scheme: three letters of the system, the body's seed letter, the run
-number: **TRD1** is Treistun d's first run (deposit IDs `TRD1-PCU-…`), TRE1 Hearth's, TRF1 Rime's.
+number: **TRD1** is Treistun d's first run (deposit IDs `TRD1-PCU-…`), TRE1 Hoar's, TRF1 Rime's.
 A moon takes its planet's letter and its numeral: TRDI1 for Treistun d I. A second run
 of the same body is a new world, TRD2.
 
 ## Open
 
-- The run of Harvest (then e, f): the first real test of 1 and 2.
+- The run of Heath (then e, f): the first real test of 1 and 2.
 - The derived figures the record drops once a survey exists (temperature, terrain, relief, ocean
   cover): the tool's next step, written against the first real run.
 - Size: a survey is about 3 MB (E4; the GeoJSON is 2.6 MB of it). Three or four worlds in git is

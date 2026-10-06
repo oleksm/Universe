@@ -100,13 +100,13 @@ K-star's light grew as under the Sun's.
 
 | | Sunlight at its orbit | Light plants can use, against Earth's |
 |---|---|---|
-| Harvest | 2,410 W/m2 (1.77 of Earth's) | 1.43 |
-| Hearth | 916 W/m2 (0.67) | 0.54 |
+| Heath | 2,410 W/m2 (1.77 of Earth's) | 1.43 |
+| Hoar | 916 W/m2 (0.67) | 0.54 |
 
 **Warmth.** By the game's own climate rule (`climate.rs`: warm at the equator, a quarter cooler in
 absolute temperature at the poles, 33 K added by Earth-like air), the year's mean by latitude:
 
-| Latitude | Harvest | Hearth |
+| Latitude | Heath | Hoar |
 |---|---|---|
 | Equator | 48 C | -10 C |
 | 25 | 36 C | -20 C |
@@ -119,12 +119,12 @@ absolute temperature at the poles, 33 K added by Earth-like air), the year's mea
 
 (Port Nacaubun, at 24 north on e, is at -19 C.)
 
-- **Harvest farms in two bands.** From 38 to 50 degrees it is Earth's temperate country: wheat,
+- **Heath farms in two bands.** From 38 to 50 degrees it is Earth's temperate country: wheat,
   barley, potatoes, beet, apples (wheat grows from 5 C and likes 15 to 20). From 25 to 35 it is
   hot country: rice, maize, sugarcane, bananas (maize likes 30 to 37 and stops at 45). Nearer the
   equator it is too hot for any of them; past 55 it is frozen. Port Eikir sits in the temperate
   band, which is what its story says it was put there for.
-- **Hearth does not farm in the open at all.** Its warmest ground averages -10 C. Each degree
+- **Hoar does not farm in the open at all.** Its warmest ground averages -10 C. Each degree
   over a crop's best costs 3 to 7% of its yield; e is 25 degrees under the least wheat will grow
   at. The rule has no seasons, and e's axis leans 17 degrees, so a summer may thaw its equator:
   that is the engine's to say. Under glass it would need as much heat as a grow hall needs light.
@@ -144,7 +144,7 @@ A starting state, not a plan anyone is held to.
 of the settlement it stands at; the other settlements buy what ships bring. Nothing in the registry
 says who feeds whom.
 
-**Harvest grows it all**, round Port Eikir and south of it:
+**Heath grows it all**, round Port Eikir and south of it:
 
 | Band | Latitude | Grows | Fields | Orchards | Market gardens |
 |---|---|---|---|---|---|
@@ -164,9 +164,9 @@ peppers, which do not ship) and buys the rest:
 | A moon outpost (3,000) | 1 (it needs a quarter of one) | under 1 MW |
 | An airless planet's port (20,000) | 2 | 3 MW |
 | The station (25,000) | 3 | 4 MW |
-| Port Nacaubun on Hearth (60,000) | 5 | 9 MW |
+| Port Nacaubun on Hoar (60,000) | 5 | 9 MW |
 
-Port Nacaubun's 60,000 people are fed from Harvest like everyone else. **The story follows the
+Port Nacaubun's 60,000 people are fed from Heath like everyone else. **The story follows the
 physics** (the user, 2026-10-04: "what is possible is possible"): e is a cold world with air, ice
 and water, settled first and never able to farm; d's fields feed the system. The records say so
 now (the two worlds' stories, the two ports', the food companies').
@@ -214,7 +214,7 @@ say so.
 | With them | 2,030 | 6.4 GW | 92 m2, 29 kW |
 
 That is eight fusion power stations for the plain diet and sixteen with animals, against 12 MW for
-the same food from Harvest's fields. NASA's own reckoning for a crew is 20 to 50 m2 a person:
+the same food from Heath's fields. NASA's own reckoning for a crew is 20 to 50 m2 a person:
 the plain diet lands inside it.
 
 **The heat.** Every watt the lamps draw ends as heat in the hall, and has to be got out. Where it
@@ -224,9 +224,9 @@ by itself and fans are all it takes; where outside is hotter, it has to be pumpe
 | Where it stands | Outside | Power to shed the heat, on top of the lamps' |
 |---|---|---|
 | Port Trethi (Rime), Port Nacaubun (e), the cold moons, orbit | 80 to 254 K | about 2% |
-| Port Eikir (Harvest, 46 north) | 285 K | about 2% |
+| Port Eikir (Heath, 46 north) | 285 K | about 2% |
 | Port Sirnendis (d's moon) | 306 K | 7% |
-| Harvest's equator | 322 K | 18% |
+| Heath's equator | 322 K | 18% |
 | Port Lisaur (Anvil) | 421 K | 85% |
 | Port Zaudalein (Cinder) | 562 K | 180% |
 

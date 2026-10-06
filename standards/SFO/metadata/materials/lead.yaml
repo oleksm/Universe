@@ -7,8 +7,6 @@ identity:
   composition:
   - part: element.pb
     share: 1.0
-  form:
-  - sheet
 mass:
   density: 11340.0
 mechanical:

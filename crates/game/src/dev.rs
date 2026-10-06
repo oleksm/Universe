@@ -16,6 +16,10 @@ pub fn apply(app: &mut App, name: &str) {
     if matches!(app.engine.universe().ship.state, ShipState::Landed { .. }) && app.engine.universe().world.time < 1.0 {
         app.engine.universe().start_in_flight();
     }
+    // (UNIVERSE_HOURS: the scenario that many hours on, for the sun somewhere else.)
+    if let Some(h) = std::env::var("UNIVERSE_HOURS").ok().and_then(|h| h.parse::<f64>().ok()) {
+        app.engine.universe().world.time += h * 3600.0;
+    }
     let home = app.engine.universe().world.home_system;
     let sys = app.engine.universe().system(home);
     let t = app.engine.universe().world.time;

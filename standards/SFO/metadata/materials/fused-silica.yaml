@@ -10,10 +10,6 @@ identity:
     share: 0.467
   - part: element.o
     share: 0.533
-  form:
-  - sheet
-  - fibre
-  - tube
 mass:
   density: 2203.0
 mechanical:

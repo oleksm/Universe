@@ -21,10 +21,13 @@ buildings:
   - { building: building.care-home, count: 30 }
   - { building: building.market-hall, count: 12 }
   - { building: building.inn, count: 12 }
+  - { building: building.park, count: 12 }
   - { building: building.watch-house, count: 6 }
   - { building: building.bank, count: 6 }
+  - { building: building.studio, count: 6 }
   - { building: building.flight-school, count: 3 }
   - { building: building.theatre, count: 3 }
+  - { building: building.arena, count: 3 }
   - { building: building.courthouse, count: 2 }
   - { building: building.press, count: 2 }
   - { building: building.college, count: 2 }
@@ -32,17 +35,17 @@ buildings:
   - { building: building.gaol, count: 1 }
 # census: its 60,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.clerk, count: 6405 }
+  - { profession: profession.clerk, count: 6426 }
   - { profession: profession.nurse, count: 3572 }
+  - { profession: profession.builder, count: 1412 }
   - { profession: profession.food-worker, count: 1404 }
-  - { profession: profession.builder, count: 1400 }
   - { profession: profession.driver, count: 1370 }
-  - { profession: profession.technician, count: 1022 }
+  - { profession: profession.technician, count: 1031 }
   - { profession: profession.merchant, count: 978 }
   - { profession: profession.teacher, count: 896 }
   - { profession: profession.doctor, count: 808 }
+  - { profession: profession.farmer, count: 624 }
   - { profession: profession.administrator, count: 600 }
-  - { profession: profession.farmer, count: 576 }
   - { profession: profession.docker, count: 465 }
   - { profession: profession.engineer, count: 402 }
   - { profession: profession.scholar, count: 400 }
@@ -52,23 +55,23 @@ census:
   - { profession: profession.lawyer, count: 270 }
   - { profession: profession.machinist, count: 240 }
   - { profession: profession.constable, count: 200 }
+  - { profession: profession.artist, count: 120 }
   - { profession: profession.pilot, count: 92 }
+  - { profession: profession.performer, count: 75 }
   - { profession: profession.banker, count: 60 }
-  - { profession: profession.performer, count: 60 }
-  - { profession: profession.artist, count: 60 }
   - { profession: profession.plant-operator, count: 49 }
   - { profession: profession.reporter, count: 20 }
   - { profession: profession.chemist, count: 16 }
   - { profession: profession.clothier, count: 16 }
   - { profession: profession.judge, count: 10 }
-  - { profession: profession.dependant, count: 37617 }
+  - { profession: profession.dependant, count: 37452 }
 # independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 72 }
   - { hull: hull.sprint, count: 54 }
   - { hull: hull.prospector, count: 36 }
   - { hull: hull.hauler, count: 19 }
-about: "The port on Harvest, at 46° north. Gravity 1.07 g, with air, and warm."
+about: "The port on Heath, at 46° north. Gravity 1.07 g, with air, and warm."
 story:
-  - "Put far to the north on purpose, out of the worst of d's heat. It is the one port besides Nacaubun where people can stand outside under a sky."
+  - "Put far to the north on purpose, out of the worst of d's heat. It is the one port in the system where people can stand outside under a sky and breathe."
   - "At 46 degrees north the year's mean is 12 degrees: Earth's temperate country. The fields round it, and the hot country far to its south, feed the whole system."

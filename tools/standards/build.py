@@ -2327,7 +2327,13 @@ for nd in sorted(needs, key=lambda n: (RUNGS.index(n["identity"]["rung"]), n["id
         if not any(tail(x_["profession"]) == tail(s_["profession"]) for b_ in buildings for x_ in b_.get("staff") or []):
             lacks.append(f"nowhere is described for a {tail(s_['profession'])} to work")
     if not how:
-        lacks.append("nothing says yet what meets it")
+        _sights = [yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in glob.glob(os.path.join(TREE, "Celestial", "metadata", "sights", "*.yaml"))]
+        if (nd.get("identity") or {}).get("key") == "need.wandering" and _sights:
+            how.append(f"{len(_sights)} sights worth going to see: " + ", ".join(s__["identity"]["name"] for s__ in _sights))
+        elif (nd.get("identity") or {}).get("key") == "need.work":
+            how.append("a job: the census counts who has one; the game pays the wage")
+        else:
+            lacks.append("nothing says yet what meets it")
     rows.append(row("gap" if lacks else "ok", nd["identity"]["name"], nd["identity"]["rung"], "; ".join(how), "; ".join(dict.fromkeys(lacks)) or "met by what is described" + (": " + ", ".join(b_["identity"]["name"].lower() for b_ in housed) if housed else "")))
 report("needs", "Needs: what a person needs, and whether it is described", "The ladder: each thing a person needs, what meets it for one person, and whether the registry describes something that makes or gives it. A gap is a need nothing described can meet yet.", ["Need", "Rung", "What meets it, for one person", "State"], rows)
 rows = []
@@ -2502,7 +2508,8 @@ for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _
     w_ = _index.get(sv["world_id"], {})
     energy_s = ("empty: no life, so no oil, gas or coal" if en and not (en.get("oil_fields") or en.get("gas_fields") or en.get("coalfields")) else f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
     surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else "none"
-    rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s, ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
+    hist = "history" if (w_.get("packages") or {}).get("history") else ""
+    rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s + (f"; {hist} in the store" if hist else ""), ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
 for wid, w_ in sorted(_index.items()):
     if wid in _baked:
         continue

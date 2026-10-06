@@ -405,6 +405,9 @@ pub struct CloudsBake {
     pub maps: [(usize, usize, Vec<u8>); 3],
     pub year_days: f64,
     pub enso: Option<(f64, Vec<f32>)>,
+    /// Its format's version (`planet-sim-clouds/N`; 1 when unsaid): 2's air map holds the water
+    /// the air can carry in its A channel, where 1's held the jet's wind.
+    pub format: u32,
 }
 
 /// A world's clouds at world time `t` (s, one epoch for every player), its year `year_days` and
@@ -843,7 +846,8 @@ impl Heights {
         let maps = [map("clouds_month.png")?, map("clouds_enso.png")?, map("clouds_air.png")?];
         let year_days = info.get("year_days")?.as_f64()?;
         let enso = info.get("enso").filter(|e| !e.is_null()).and_then(|e| Some((e.get("month_days")?.as_f64()?, e.get("index")?.as_array()?.iter().filter_map(|v| v.as_f64().map(|x| x as f32)).collect::<Vec<f32>>())));
-        Some(CloudsBake { maps, year_days, enso })
+        let format = info.get("format").and_then(|f| f.as_str()).and_then(|f| f.strip_prefix("planet-sim-clouds/")).and_then(|v| v.parse().ok()).unwrap_or(1);
+        Some(CloudsBake { maps, year_days, enso, format })
     }
 
     /// The world's true colour from its bake (`globe_color.jpg`: equirectangular, as the 5 km
@@ -936,7 +940,7 @@ pub fn releases() -> Vec<Release> {
 mod tests {
     use super::*;
 
-    /// Harvest's survey and energy packages read, checked against their records; a few
+    /// Heath's survey and energy packages read, checked against their records; a few
     /// figures held to the record's; its bake found in the store and a file read, if a store is
     /// here (the store is outside the tree).
     #[test]

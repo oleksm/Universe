@@ -70,19 +70,19 @@ bake:
   bytes: 699407813
 identity:
   key: body.treistun.treistun-e
-  name: Hearth
+  name: Hoar E
   also: Treistun e
   kind: rocky planet
   parent: body.treistun.treistun
-  about: 'Hearth, the fourth planet, 0.66 AU out, and the home world; the surveyors'' Treistun e. 6,281 km in radius, 0.98 g, with
+  about: 'Hoar, the fourth planet, 0.66 AU out, the first world settled and the seat of the system''s administration; the surveyors'' Treistun e. 6,281 km in radius, 0.98 g, with
   air that nobody can breathe: nitrogen and a third of a percent of carbon dioxide, and no oxygen, since nothing ever lived
   here. A snowball: about 220 K on average, the land under ice from pole to pole. Its day lasts under 19 hours. It has no
   moon; the station orbits it.'
   story:
-    - 'Where Treistun began. The first landing, the first port and the first station were all here, and the system''s administration still sits in orbit above it. Its people call it Hearth: the fire everyone
-  came home to, and the irony is theirs.'
-    - 'Nothing has ever grown on Hearth, and nothing breathes its air. It was settled for its ice and its water, for its gravity, and for being the first world with ground to stand on under a sky. Port Nacaubun
-  is a sealed city of sixty thousand on the ice, breathing from its plants and fed from Harvest; its people grow what they can under lamps.'
+    - 'Where Treistun began. The first landing, the first port and the first station were all here, and the system''s administration still sits in orbit above it. Its people named it Hoar, for the frost that is all its
+  ground; the home world is Heath now, where most of the system lives, but the station and the administration never moved.'
+    - 'Nothing has ever grown on Hoar, and nothing breathes its air. It was settled for its ice and its water, for its gravity, and for being the first world with ground to stand on under a sky. Port Nacaubun
+  is a sealed city of sixty thousand on the ice, breathing from its plants and fed from Heath; its people grow what they can under lamps.'
 
 orbit: {semi_major_axis: 98949200000.0, eccentricity: 0.005887, period: 20213280.0, inclination: 0.18}
 physical: {mass: 5.6773e+24, radius: 6281370.0, gravity: 9.604, day: 67006.8, tilt: 17.3, albedo: 0.3}
@@ -95,7 +95,7 @@ surface:
   terrain: terran
   relief: 4397
   colour: [0.3, 0.6, 1.0]
-# The planet lab's defaults for its run (2026-10-06, as Harvest's): Earth's water share, Earth's radioactive heat; chosen.
+# The planet lab's defaults for its run (2026-10-06, as Heath's): Earth's water share, Earth's radioactive heat; chosen.
 interior: {radiogenic: 1.0}
 water: {mass_share: 0.00023}
 atmosphere:

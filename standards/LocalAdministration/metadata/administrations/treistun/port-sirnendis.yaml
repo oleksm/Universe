@@ -25,13 +25,15 @@ buildings:
   - { building: building.market-hall, count: 1 }
   - { building: building.bank, count: 1 }
   - { building: building.inn, count: 1 }
+  - { building: building.studio, count: 1 }
+  - { building: building.park, count: 1 }
 # census: its 3,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.clerk, count: 314 }
+  - { profession: profession.clerk, count: 315 }
   - { profession: profession.driver, count: 86 }
   - { profession: profession.food-worker, count: 78 }
   - { profession: profession.nurse, count: 73 }
-  - { profession: profession.builder, count: 70 }
+  - { profession: profession.builder, count: 71 }
   - { profession: profession.docker, count: 60 }
   - { profession: profession.merchant, count: 53 }
   - { profession: profession.teacher, count: 44 }
@@ -48,15 +50,16 @@ census:
   - { profession: profession.doctor, count: 12 }
   - { profession: profession.lawyer, count: 12 }
   - { profession: profession.banker, count: 10 }
+  - { profession: profession.artist, count: 10 }
   - { profession: profession.chemist, count: 6 }
-  - { profession: profession.farmer, count: 2 }
+  - { profession: profession.farmer, count: 6 }
   - { profession: profession.pilot, count: 2 }
-  - { profession: profession.dependant, count: 1957 }
+  - { profession: profession.dependant, count: 1941 }
 # independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 4 }
   - { hull: hull.sprint, count: 3 }
   - { hull: hull.prospector, count: 2 }
-about: "The port on Harvest I, the moon of d, at 32° south. Gravity 0.13 g, no air."
+about: "The port on Heath I, the moon of d, at 32° south. Gravity 0.13 g, no air."
 story:
   - "Eikir's yard. Ships that have no business in d's air wait here, and those that do make the short drop from it."

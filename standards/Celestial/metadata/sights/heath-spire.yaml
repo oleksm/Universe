@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/sight.schema.yaml
+identity:
+  key: sight.heath-spire
+  name: "The Spire of Heath"
+  about: "The highest mountain on Heath, 10,378 m above the sea at 11° north, in the dry country of the great belt: a wall of rock that stands over the plains and takes the first and last light."
+at: body.treistun.treistun-d
+kind: peak
+position: { latitude: 10.92, longitude: -110.96 }
+height: 10378
+source: pk00001
+basis:
+  - { of: [kind, position, height, diameter, depth, source], tier: sourced, source: "the planet simulation's packages in the worlds store", note: "Heath's bake (TRD1 surface v5, summary.json's refined peaks): 10,378 m at 10.9 N 110.9 W, up from v4's 8,920 m once the mountains erode to steady state under their belt's uplift with crustal strength capping the summits." }
+  - { of: [identity.name], tier: invented, note: "The name is the registry's." }

@@ -7,8 +7,6 @@ identity:
   composition:
   - part: element.au
     share: 1.0
-  form:
-  - film
 mass:
   density: 19280.0
 mechanical:

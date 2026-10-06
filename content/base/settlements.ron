@@ -5,7 +5,7 @@
 [
     (
         system: "Treistun",
-        body: "Cinder",
+        body: "Cinder B",
         name: "Ashfall Camp",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(-900.0, -1500.0), (-50.0, -1500.0), (-50.0, 0.0), (-900.0, 0.0)]),
@@ -67,7 +67,7 @@
     ),
     (
         system: "Treistun",
-        body: "Harvest",
+        body: "Heath D",
         name: "Halden Camp",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(-700.0, -1500.0), (-50.0, -1500.0), (-50.0, -800.0), (-700.0, -800.0)]),
@@ -118,7 +118,7 @@
     ),
     (
         system: "Treistun",
-        body: "Hush II",
+        body: "Hush I II",
         name: "Port Aipika",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -181,7 +181,7 @@
     ),
     (
         system: "Treistun",
-        body: "Harvest",
+        body: "Heath D",
         name: "Port Eikir",
         zones: [
             (name: "Farmland", use: "agricultural", outline: [(3000.0, -8500.0), (17000.0, -8500.0), (17000.0, 8500.0), (3000.0, 8500.0)]),
@@ -571,7 +571,7 @@
     ),
     (
         system: "Treistun",
-        body: "Anvil I",
+        body: "Anvil C I",
         name: "Port Fabindum",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -634,7 +634,7 @@
     ),
     (
         system: "Treistun",
-        body: "Anvil",
+        body: "Anvil C",
         name: "Port Lisaur",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -700,7 +700,7 @@
     ),
     (
         system: "Treistun",
-        body: "Hearth",
+        body: "Hoar E",
         name: "Port Nacaubun",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -786,7 +786,7 @@
     ),
     (
         system: "Treistun",
-        body: "Cinder I",
+        body: "Cinder B I",
         name: "Port Seiwiti",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -849,7 +849,7 @@
     ),
     (
         system: "Treistun",
-        body: "Harvest I",
+        body: "Heath D I",
         name: "Port Sirnendis",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -912,7 +912,7 @@
     ),
     (
         system: "Treistun",
-        body: "Rime",
+        body: "Rime F",
         name: "Port Trethi",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -1068,7 +1068,7 @@
     ),
     (
         system: "Treistun",
-        body: "Pale II",
+        body: "Pale H II",
         name: "Port Weisonum",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),
@@ -1131,7 +1131,7 @@
     ),
     (
         system: "Treistun",
-        body: "Cinder",
+        body: "Cinder B",
         name: "Port Zaudalein",
         zones: [
             (name: "Industrial", use: "industrial", outline: [(500.0, -1000.0), (2500.0, -1000.0), (2500.0, 1000.0), (500.0, 1000.0)]),

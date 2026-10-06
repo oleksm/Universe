@@ -22,25 +22,28 @@ buildings:
   - { building: building.care-home, count: 13 }
   - { building: building.market-hall, count: 5 }
   - { building: building.inn, count: 5 }
+  - { building: building.park, count: 5 }
   - { building: building.watch-house, count: 3 }
   - { building: building.bank, count: 3 }
+  - { building: building.studio, count: 3 }
   - { building: building.flight-school, count: 2 }
   - { building: building.theatre, count: 2 }
+  - { building: building.arena, count: 2 }
   - { building: building.courthouse, count: 1 }
   - { building: building.gaol, count: 1 }
   - { building: building.press, count: 1 }
   - { building: building.college, count: 1 }
 # census: its 25,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.clerk, count: 2441 }
-  - { profession: profession.builder, count: 595 }
+  - { profession: profession.clerk, count: 2454 }
+  - { profession: profession.builder, count: 600 }
   - { profession: profession.driver, count: 591 }
   - { profession: profession.food-worker, count: 565 }
   - { profession: profession.nurse, count: 502 }
   - { profession: profession.teacher, count: 410 }
   - { profession: profession.merchant, count: 408 }
   - { profession: profession.administrator, count: 250 }
-  - { profession: profession.technician, count: 189 }
+  - { profession: profession.technician, count: 195 }
   - { profession: profession.docker, count: 180 }
   - { profession: profession.scholar, count: 175 }
   - { profession: profession.fitter, count: 169 }
@@ -51,19 +54,20 @@ census:
   - { profession: profession.constable, count: 110 }
   - { profession: profession.machinist, count: 103 }
   - { profession: profession.doctor, count: 88 }
+  - { profession: profession.artist, count: 70 }
+  - { profession: profession.performer, count: 50 }
   - { profession: profession.pilot, count: 48 }
-  - { profession: profession.performer, count: 40 }
-  - { profession: profession.artist, count: 40 }
   - { profession: profession.banker, count: 30 }
+  - { profession: profession.farmer, count: 20 }
   - { profession: profession.reporter, count: 10 }
   - { profession: profession.judge, count: 5 }
-  - { profession: profession.dependant, count: 17515 }
+  - { profession: profession.dependant, count: 17431 }
 # independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 30 }
   - { hull: hull.sprint, count: 22 }
   - { hull: hull.prospector, count: 15 }
   - { hull: hull.hauler, count: 8 }
-about: "The system's station, in orbit round Hearth. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."
+about: "The system's station, in orbit round Hoar. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."
 story:
   - "Raised above Nacaubun when the port ran out of room. The yards, the makers' offices, the Standards Foundry Office and the administration all followed the ships up, and it has been the centre of the system since."
