@@ -116,8 +116,10 @@ pub fn globe(body: &Body, detail: u32) -> Option<WireModel> {
     // (White: its colour comes from its surface map, per pixel.)
     m.colors = vec![[1.0; 4]; m.positions.len()];
     let r = body.rail.radius;
+    // (A whole globe from the coarse heights: its vertices are hundreds of km apart, and the fine
+    // tiles under them all (every one of a world's: gigabytes) would be read for nothing.)
     for p in &mut m.positions {
-        let h = terrain.surface(p.as_dvec3());
+        let h = terrain.surface_coarse(p.as_dvec3());
         *p *= (1.0 + h / r) as f32;
     }
     Some(m)
