@@ -1,6 +1,6 @@
 {
  "world_id": "TRD1",
- "version": 2,
- "path": "v2",
- "manifest_sha256": "acce6534973226b7d028cd87cb1da555ef9c48949ee521d7be2b0aa0830e5497"
+ "version": 3,
+ "path": "v3",
+ "manifest_sha256": "c446849c67841c4a82a79e999e1042f8ffbcd50cbc103a0401800b7208a30609"
 }

@@ -2,13 +2,13 @@
  "format": "planet-sim-surface/1",
  "world_id": "TRD1",
  "body": "body.treistun.treistun-d",
- "version": 2,
- "created": "2026-10-06T17:00:07+00:00",
+ "version": 3,
+ "created": "2026-10-06T17:48:55+00:00",
  "immutable": true,
  "simulator": {
-  "commit": "b81b3fda188f54c357f9ceb82b8e92bc5c0248de"
+  "commit": "d2312347e916fc73bdd2a8fec22ea6cccc6445af"
  },
- "note": "v2: fz.json carries each tile's height bounds; summary.json (highest peak, climate) for records",
+ "note": "v3: the air for the renderer: Earth-mean aerosol (optical depth 0.12) in atmosphere.json, and its transmittance and multiple-scattering tables (air_luts.json, air_*.rgba32f; Hillaire 2020)",
  "survey": {
   "file": "worlds/TRD1/survey/manifest.json",
   "sha256": "c913d6e4e6c847c8b44cf1be83d9f8baece329ed38fe8faae1c6a644bae99d23"
@@ -51,11 +51,11 @@
   "globe": 11,
   "layers": 4,
   "places": 1,
-  "world": 2,
+  "world": 5,
   "report": 5,
   "summary": 1
  },
- "bytes": 711856713,
+ "bytes": 712135827,
  "files": {
   "hz.json": {
    "sha256": "4f6af0a6069a5213fb02c4c918e50dc217799b8055334963f80d64890b9ca6c4",
@@ -5341,9 +5341,21 @@
    "sha256": "c64d5638a9f52c7ea701d9e956fb8d8d93f57851d7ccb16a87d0f944f62b69a2",
    "bytes": 255666
   },
+  "air_luts.json": {
+   "sha256": "2ede82cd0d1cb033c72e907dbd52e0c89b580a20cf6c9cb1b5ccac87db78bb3b",
+   "bytes": 587
+  },
+  "air_multiscatter.rgba32f": {
+   "sha256": "12a9eabd98e8df46848e1cb0df400ab41717e210284d522c5fdc536503f717d4",
+   "bytes": 16384
+  },
+  "air_transmittance.rgba32f": {
+   "sha256": "05455950218880946622512d180f9541e36efa34a0e8436c7718041ee26bdbec",
+   "bytes": 262144
+  },
   "atmosphere.json": {
-   "sha256": "7899ed238ed6aeff5e01b52c006c3f62b3bd330300801c4292a27027a7147bd6",
-   "bytes": 539
+   "sha256": "eee7991ba90b95970e85a7e067fb77a685d7dc93f5d15eed6b4b3388415e7dac",
+   "bytes": 538
   },
   "world.json": {
    "sha256": "0273754d08877d74428012b38bd418b9dbcd074f7e2443f40b796b9d4dedcca7",

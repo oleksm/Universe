@@ -58,12 +58,12 @@ energy:
   coal_in_place: 2.739e+16
 bake:
   format: "planet-sim-surface/1"
-  version: 2
-  path: "worlds/TRD1/surface/v2"
-  manifest_sha256: "acce6534973226b7d028cd87cb1da555ef9c48949ee521d7be2b0aa0830e5497"
-  files: 1329
-  bytes: 711856713
-  note: "v2: fz.json carries each tile's height bounds; summary.json (highest peak, climate) for records"
+  version: 3
+  path: "worlds/TRD1/surface/v3"
+  manifest_sha256: "c446849c67841c4a82a79e999e1042f8ffbcd50cbc103a0401800b7208a30609"
+  files: 1332
+  bytes: 712135827
+  note: "v3: the air for the renderer: Earth-mean aerosol (optical depth 0.12) in atmosphere.json, and its transmittance and multiple-scattering tables (air_luts.json, air_*.rgba32f; Hillaire 2020)"
 identity:
   key: body.treistun.treistun-d
   name: Harvest

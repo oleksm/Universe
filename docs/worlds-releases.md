@@ -9,3 +9,6 @@ Appended by tools/standards/watch_worlds.py on every install, for review: which 
 ## 2026-10-06 12:01 — store index of 2026-10-06T17:00:10+00:00
 - **TRB1** → `body.treistun.treistun-b`: survey 816ccee5a699, surface 07ce67dbd7c7 v2; released 2026-10-06T17:00:08+00:00
 - **TRD1** → `body.treistun.treistun-d`: survey c913d6e4e6c8, energy dcd350361372, surface acce65349732 v2; released 2026-10-06T17:00:07+00:00
+
+## 2026-10-06 12:53 — store index of 2026-10-06T17:48:57+00:00
+- **TRD1** → `body.treistun.treistun-d`: survey c913d6e4e6c8, energy dcd350361372, surface c446849c6784 v3; released 2026-10-06T17:48:55+00:00
