@@ -20,3 +20,8 @@
   key. A rematch test over the charted region: 109 records matched by key, 24 of them renamed.
 - **Seedable inputs** a planet run wants, on the body schema: `interior.radiogenic`,
   `water.mass_share` (and `physical.age` on the star, which existed).
+- **Harvest moved out:** 0.408 → 0.525 AU (year 165 days), with the planet lab: at 0.408 AU it took in
+  422 W/m2 against a runaway limit of about 282 and could keep no sea. Its mean temperature is the
+  run's to give and is off the record. Star's age, water share and radioactive heat written as the
+  lab's defaults, chosen. World IDs: TRD1 scheme. The contract looks the rock map up in
+  `rock_units.png`.

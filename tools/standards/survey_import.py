@@ -14,7 +14,7 @@ import yaml
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 SURVEYS = os.path.join(ROOT, "standards", "Celestial", "surveys")
-FILES = ("manifest.json", "summary.json", "deposits.geojson", "districts.json", "bulk_rock.json", "geology.png")
+FILES = ("manifest.json", "summary.json", "deposits.geojson", "districts.json", "bulk_rock.json", "geology.png", "rock_units.png")
 FORMAT = "planet-sim-survey/1"
 
 

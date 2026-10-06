@@ -69,7 +69,8 @@ holds no YAML, so neither walker reads it as records.
 |---|---|---|
 | `manifest.json` | hashes | check `survey.manifest_sha256` at load; refuse a mismatch |
 | `summary.json` | the body's figures | the planet's information card: land share, endowment |
-| `geology.png` | surface rock unit, equirectangular 2048 × 1024, one colour per rock unit | the ground's colour and material by place (rock unit → `Celestial/metadata/rock-units/<unit>.yaml`: density, strength, what it yields); a map layer |
+| `rock_units.png` | the rock map programs look up: equirectangular 2048 × 1024, each pixel the rock unit's number (`summary.rock_units` says which), 255 for sea | the ground's material by place (rock unit → `Celestial/metadata/rock-units/<unit>.yaml`: density, strength, what it yields) |
+| `geology.png` | the same map coloured for people, sea blended | the map layer; never looked up |
 | `bulk_rock.json` | each rock unit's land area and what it yields (aggregate, dimension stone, lime, clay) | what a quarry anywhere on that unit produces |
 | `deposits.geojson` | one Point per deposit: `id`, `district_id`, `belt_id`, `kind` (→ `deposit-types/`, by `sim.key`), `tonnage_mt`, `grades` (per commodity, in the survey's units), `depth_m`, `blind`, `strike_deg`, `dip_deg`, `length_m`, `width_m`, `shape`, `host` (rock unit), `chance`, `seen_by` (survey method → whether that method finds it from above), `water_depth_m` (under the sea) | mining: a mine is placed on a deposit `id`; what it yields is the deposit's grades times what the `mine` module's recipe draws; prospecting: a ship's instrument of kind M reveals deposits whose `seen_by[M]` is true within its range; a map layer per method |
 | `districts.json` | each district: ID, kind, its deposits, extent | the map's district layer; the land register's unit for a mining licence |
@@ -95,6 +96,14 @@ in the game: **air** (gases and pressure, replacing the hand-set `breathable`), 
 (wind, rain and seasons by region, replacing the game's one climate formula), **foliage** (a biome
 map and a `biome` vocabulary; farm yields tied to ground), **animals** (a species vocabulary and
 where each lives).
+
+## World IDs
+
+The deposits' random draws are seeded from the world ID, so the ID is part of the world and can
+never change after the run. Scheme: three letters of the system, the body's seed letter, the run
+number: **TRD1** is Treistun d's first run (deposit IDs `TRD1-PCU-…`), TRE1 Hearth's, TRF1 Rime's.
+A moon takes its planet's letter and its numeral: TRDI1 for Treistun d I. A second run
+of the same body is a new world, TRD2.
 
 ## Open
 

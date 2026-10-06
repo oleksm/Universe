@@ -1,5 +1,8 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# Curated: named Harvest by its people (the seed calls it Treistun d), and its air is said to be breathable, which the seed does not say. The rest is as the seed made it.
+# Curated: named Harvest by its people (the seed calls it Treistun d); its air is said to be breathable, which the seed does not say;
+# and its orbit moved out from 0.408 to 0.525 AU (2026-10-06, with the planet lab): at 0.408 AU it would take in 422 W/m2, half again over
+# the runaway-greenhouse limit of about 282, and could keep no sea; at 0.525 AU it takes 254 and keeps them. Story follows physics.
+# Its mean temperature is the run's to give, not written here. The water share and the radioactive heat are the lab's defaults, chosen.
 provenance: curated
 identity:
   key: body.treistun.treistun-d
@@ -7,16 +10,17 @@ identity:
   also: Treistun d
   kind: rocky planet
   parent: body.treistun.treistun
-  about: 'Harvest, the third planet, 0.41 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hearth''s.
-  It is warm: about 320 K on average. Its day lasts 20 hours. One moon.'
+  about: 'Harvest, the third planet, 0.53 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hearth''s.
+  It is warm: about 297 K on average, a little warmer than old Earth. Its year is 165 days, its day 20 hours. One moon.'
   story:
     - 'The warm world, and the second with air. It was settled after Hearth, by people who wanted open sky and were willing to take the heat that came with it. They named it for what it does.'
     - 'Its equator is too hot for any crop and its poles are frozen. Between them lie the only fields in the system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.'
-orbit: {semi_major_axis: 61008400000.0, eccentricity: 0.04874, period: 9785923.2, inclination: 2.183}
+orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
   terrain: terran
   relief: 4658
-  mean_temperature: 321.6
   colour: [0.3, 0.85, 0.45]
+interior: {radiogenic: 1.0}
+water: {mass_share: 0.00023}
 atmosphere: {surface_density: 1.225, scale_height: 7928.0, top: 111000.0, breathable: true}
