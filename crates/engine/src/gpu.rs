@@ -37,7 +37,13 @@ impl Gpu {
             // (Block-compressed textures where the GPU has them: a model's maps at an
             // eighth to a quarter of the memory.)
             required_features: adapter.features() & wgpu::Features::TEXTURE_COMPRESSION_BC,
-            required_limits: wgpu::Limits::default(),
+            // (One vertex input and one value between the stages past the defaults' 16: the near
+            // ground's surface fields. Every desktop GPU has 28 or more of each.)
+            required_limits: wgpu::Limits {
+                max_vertex_attributes: adapter.limits().max_vertex_attributes.min(32),
+                max_inter_stage_shader_variables: adapter.limits().max_inter_stage_shader_variables.min(32),
+                ..wgpu::Limits::default()
+            },
             experimental_features: wgpu::ExperimentalFeatures::disabled(),
             memory_hints: wgpu::MemoryHints::Performance,
             trace: wgpu::Trace::Off,

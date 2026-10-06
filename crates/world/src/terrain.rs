@@ -161,6 +161,16 @@ impl Terrain {
         }
     }
 
+    /// The bake's surface fields at `dir` for drawing (wetness, scree, bare rock: see
+    /// `worlds::Heights::surface_at`), as far as they're read; and whether that's all of it.
+    /// None: no bake, or none there (the sea).
+    pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
+        match &self.baked {
+            Some(h) => h.surface_at(dir, crate::worlds::Detail::Loaded),
+            None => (None, true),
+        }
+    }
+
     /// `height_and_crater` for a whole globe's map: a bake's 5 km heights alone.
     pub fn height_and_crater_coarse(&self, dir: DVec3) -> (f64, f64) {
         match &self.baked {

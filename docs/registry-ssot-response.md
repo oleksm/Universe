@@ -1089,3 +1089,12 @@ surface v1 in the store, its 113 MB `impacts.json` left in the store and listed 
 Point `UNIVERSE_WORLDS` at that root; relative paths, so the folder can move or be synced. Fourteen
 new deposit types and seven airless rock units came with the lab's vocabulary (the rock map's
 `rock_units.index` on Cinder uses them).
+
+**The matter loop (2026-10-06, night).** Every by-product has a taker now (the Takers report reads
+0 gaps): new recipes on the feed mill, furnaces, casthouse, brickworks, concrete plant, zinc works,
+synthesis plant, cement works, compost works and soap works, and an incinerator for chemical waste.
+Added recipes sit last in each module's list, so a line's `makes` still resolves to its first.
+**Wear:** `life` (s) on every piece of equipment (15 years), module (25) and hull (40), beside the
+goods' and buildings'. **For the game, when you want it:** a thing in service past its life is
+worn out: replaced from the market (its demand), and its stock returns as scrap (the furnaces take
+it). That is the loop that keeps demand steady after day 0.

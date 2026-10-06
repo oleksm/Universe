@@ -152,6 +152,8 @@ struct MeshIn {
     @location(14) globe: vec4<f32>,
     // Where its vertices are on the world, in radii: pos * w + xyz.
     @location(15) globe_at: vec4<f32>,
+    // The model's per-vertex data (the near ground's surface fields: wet, scree, bare, read).
+    @location(16) data: vec4<f32>,
 };
 // (A patch's origin wrapped to the fine grain's period (m) rides in c0.w, c1.w, c2.w.)
 
@@ -240,6 +242,8 @@ struct MeshOut {
     @location(14) @interpolate(flat) air: vec2<f32>,
     // Straight up from the world where this is (as drawn: the eye's frame).
     @location(15) up: vec3<f32>,
+    // The vertex's data, as the model gives it (the near ground's surface fields).
+    @location(16) data: vec4<f32>,
 };
 
 // The fine grain repeats every this many metres (see `MICRO_PERIOD`).
@@ -566,6 +570,11 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                     gi.rock_c = ground_rock_blend(ri.x, ri.y, ri.z, ri.w, fract(rp));
                     gi.h_m = h * in.globe.z;
                     gi.slope = sqrt(1.0 - c * c) / c;
+                    // (The 600 m surface fields from the river tiles, per vertex on the patch.)
+                    gi.wet = in.data.x;
+                    gi.scree = in.data.y;
+                    gi.bare = in.data.z;
+                    gi.surface_on = in.data.w;
                     gi.q = in.micro;
                     gi.pixel_m = pixel;
                     rgb = mix(rgb, ground_material(gi), near);
@@ -690,7 +699,7 @@ fn vs_mesh(v_in: MeshIn) -> MeshOut {
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
     let local = v.pos * v.globe_at.w + v.globe_at.xyz;
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), air_center(v), vec2<f32>(v.t.w, v.material.w), turn(v, local));
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), air_center(v), vec2<f32>(v.t.w, v.material.w), turn(v, local), v.data);
 }
 
 @vertex
@@ -701,5 +710,5 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), vec4<f32>(0.0), vec2<f32>(0.0), n);
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), vec4<f32>(0.0), vec2<f32>(0.0), n, vec4<f32>(0.0));
 }
