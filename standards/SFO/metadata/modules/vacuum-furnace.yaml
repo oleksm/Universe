@@ -8,6 +8,11 @@ physical:
   length: 40
   width: 30
   height: 25
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: stock.ti64-ingot
     does: "Titanium, aluminium and vanadium are pressed into an electrode and melted by arc in vacuum, twice."
@@ -30,3 +35,4 @@ recipes:
 basis:
   - { of: [recipes, recipes.inputs], tier: derived, review: true, note: "The metals in the shares of the grade: 90 titanium, 6 aluminium, 4 vanadium. The 3% lost is a guess." }
   - { of: [physical, recipes.rate, recipes.outputs, recipes.power], tier: invented, review: true, note: "1 kWh a kg, from memory. No figure for vacuum arc melting alone was found: making titanium bar from its chloride takes 70 MWh a tonne in all, 21.5 of it for the sponge. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

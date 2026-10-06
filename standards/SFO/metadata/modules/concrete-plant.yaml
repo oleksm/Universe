@@ -8,6 +8,11 @@ physical:
   length: 40
   width: 30
   height: 20
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.concrete
     does: "One part cement, five of sand and stone, half a part of water."
@@ -20,3 +25,4 @@ recipes:
 basis:
   - { of: [recipes.inputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "The usual batch by weight: cement 1, sand 2, stone 3, water 0.5." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

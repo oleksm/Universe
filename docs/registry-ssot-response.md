@@ -988,3 +988,49 @@ need, how long all its people live on it, where it lies with shares). Treistun: 
 90 of medicine for all 220,000, half at Eikir and half at Nacaubun. **For the game:** the reserve is
 law like zoning: breakable, a breach recorded, released by the administration; the resupply
 interval is what a port's contracts should be sized to; air and water are outside it (made locally).
+
+**Your open asks (2026-10-06).**
+
+1. **The MC-07's five empty parts** are no longer parts: they are the MC-07's own products, fitted
+   to its slots, built of the parts you measured from the model (moved whole, re-coded MGF/MGR/MCR/
+   MAC/MML): `equipment.gear.mc07.front` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
+   where its 150 × 10 strut buckles), `equipment.access.mc07.cargo.ramp`, `equipment.access.mc07.anchor.clamp`
+   (two access slots), `equipment.laser.mc07.mining` (both hardpoints; the pulse laser's beam
+   figures as a stand-in, priced the same in prices.ron as a placeholder). `world::legs::reckon` now
+   also takes fitted landing gear (`EquipmentFunction::LandingGear`) beside hull parts, so the
+   MC-07's legs reckon as before.
+2. **`waste: true`** on 13 goods (slag, red mud, dross, dust, tailings, waste rock, waste water,
+   sewage sludge, chemical, Solvay and textile waste, wool scourings, carbon dioxide). The market
+   may refuse them and a place charge to take them; what takes them in is a taker.
+3. `built_of.parts` on hulls already exists (the MC-07 names its folder).
+4. Setups: left to the yard's operator, as you allowed.
+5. The gate's holding power: still the user's.
+
+**Law, and the ways back (2026-10-06).** `org.treistun.law` (offences, penalties, enforcement,
+policies) and now `law.redress`: appeal window, restitution first, which offences settle, the
+surrender share, the service rate, expiry, pardon; and `recognises` (whose outlawry a port honours:
+none yet). **For the game:** a breach is recorded, never blocked; the penalties follow after
+`enforcement.response`; appeal, settlement and service are procedures reading these figures; an
+outlaw is refused at the ports of administrations that recognise the outlawry, and nowhere else.
+The insurer (`org.treistun-mutual.insurance`) replaces a lost hull at a yard, parked, after the
+excess, and refuses the losses its list names: the respawn, by a rule. `docs/registry-order.md`.
+
+**Managing the NPCs (the user, 2026-10-06): records for the operator.** `docs/registry-people.md`.
+Every settlement has a **census** by trade (finite people); every organisation that flies has a
+**fleet** (hull, count, home, what for): Treistun Freight's 39 haulers on the supply runs (derived
+from tonnes a day and flight time between the orbits), Hearth Line's shuttles, Cormorant's
+prospectors, the administration's 23 patrol interceptors, Shikra Hold's 12 raiders: about a hundred
+ships, not a thousand settlers. `settlement.resupply.interval` is now the fleet's cadence from the
+orbits. **What ends the vortex, yours:** spawn fleets from these records, crewed from the census;
+no NPC respawn (one fewer, the company orders a hull); the player's return as the insurer's delivery
+at a yard; far ships on the ledger. The census also says only 3–6% of people have described work:
+the commerce and construction parts come next on my side.
+
+**A thousand ships (the user, 2026-10-06).** `seeding.traffic.ships: 1000`, and how they are made
+up: Treistun Freight's 132 haulers on the runs for people and for works (derived: tonnes a day,
+flight time between the orbits, a hauler's hold), the other fleets (passage 22, miners 10, patrol
+23, raiders 12), and **793 independents** based at the ports by population
+(`settlement.independents`: Drovers, couriers, prospectors, a few haulers). **Spawn these, not a
+constant:** fleets flying for their business from their home, independents as today's travellers
+and small traders but finite and based; each ship a record's. The page's Traffic report lists
+every run with its tonnage, flight time and cadence.

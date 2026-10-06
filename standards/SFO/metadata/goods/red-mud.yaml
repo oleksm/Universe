@@ -4,6 +4,7 @@ identity:
   name: Red mud
   kind: by-product
   description: "The iron-rich residue left when alumina is taken out of bauxite."
+waste: true
 physical:
   bulk_density: 1600
 basis:

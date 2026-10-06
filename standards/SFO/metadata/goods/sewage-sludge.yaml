@@ -4,6 +4,7 @@ identity:
   name: "Sewage sludge"
   kind: by-product
   description: "What is taken out of waste water: wet solids."
+waste: true
 physical:
   bulk_density: 1100
 basis:

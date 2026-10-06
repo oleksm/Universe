@@ -4,6 +4,7 @@ identity:
   name: "Textile waste"
   kind: by-product
   description: "Short fibre, dust and offcuts from spinning, weaving and cutting."
+waste: true
 physical:
   bulk_density: 150
 basis:

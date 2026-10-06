@@ -10,6 +10,10 @@ physical:
   height: 10
 capacity:
   handling: 138.888888888889
+staff:
+  - { profession: profession.docker, count: 3 }
+  - { profession: profession.clerk, count: 1 }
 basis:
   - { of: [capacity], tier: sourced, source: "https://en.wikipedia.org/wiki/Bulk_carrier", note: "Conveyor loading runs 100 to 700 t/h; a dedicated bulk berth 1,000 to 2,000." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [staff], tier: invented, review: true, note: "Three dockers and a clerk. Coarse: by the kind of plant, not this one; to be reviewed." }

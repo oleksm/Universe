@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut. Its mass is its surface in the stock it is cut
+# from; it is welded from panels cut and formed of that stock (the cutting table loses 15%, an invented allowance).
+identity:
+  key: part.mcr-01
+  code: MCR-01
+  name: "Ramp"
+  revision: draft
+  drawing: "assets/models/mc07.glb: CargoRamp"
+physical:
+  mass: 2850
+  length: 8.49
+  width: 7.5
+  height: 4.55
+  shock_limit: 196.133
+shape:
+  surface_area: 211.1
+made_from:
+  - item: stock.al6061-pl-5-panel
+    quantity: 2850.2609
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
+  - { of: [made_from], tier: invented, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

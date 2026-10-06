@@ -8,6 +8,10 @@ physical:
   length: 30
   width: 8
   height: 5
+staff:
+  - { profession: profession.machinist, count: 4 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: stock.cfc-tb-60x2
     does: "Carbon tow wound wet round a mandrel and cured."
@@ -131,3 +135,4 @@ recipes:
     power: 2000000
 basis:
   - { of: [physical, recipes], tier: invented, review: true, note: "Winds 72 kg an hour at 2 MW. Its inputs follow the composites works' route (fibre from polyethylene through carbonising, methane given off), so that the chain closes with what the registry has; a real tube is carbon tow and epoxy." }
+  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }

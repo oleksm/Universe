@@ -4,6 +4,7 @@ identity:
   name: "Waste rock"
   kind: by-product
   description: "The barren rock moved to reach ore."
+waste: true
 physical:
   bulk_density: 1700
 basis:

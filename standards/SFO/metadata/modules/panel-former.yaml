@@ -8,6 +8,8 @@ physical:
   length: 30
   width: 15
   height: 8
+staff:
+  - { profession: profession.metalworker, count: 3 }
 recipes:
   - makes: stock.al6061-sh-2-panel
     does: "Each cut blank is pressed or rolled to its curve."
@@ -30,3 +32,4 @@ recipes:
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each stock it forms: a guess, to be reviewed." }
   - { of: [recipes.inputs, physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [staff], tier: invented, review: true, note: "Three metalworkers. Coarse: by the kind of plant, not this one; to be reviewed." }

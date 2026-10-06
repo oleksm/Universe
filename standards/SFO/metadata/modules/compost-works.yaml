@@ -8,6 +8,9 @@ physical:
   length: 200
   width: 100
   height: 5
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.compost
     does: "Heaped, turned and left ten to fourteen weeks. About half the weight goes: some rots away to carbon dioxide and water, more dries off."
@@ -38,3 +41,4 @@ recipes:
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Compost: 48% of what goes in is lost (22 to 70%), in 10 to 14 weeks. How that loss is split between rotting and drying is a guess, as is everything about the growing medium." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

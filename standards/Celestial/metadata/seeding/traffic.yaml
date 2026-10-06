@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/seeding.schema.yaml
+# How many ships Treistun's sky holds at day 0 (the user, 2026-10-06: about a thousand). The fleets with a job are derived
+# from the records; the independents fill the target: the owner-operators every frontier has, and what a player is.
+identity:
+  key: seeding.traffic
+  name: How traffic is seeded
+  about: "A settled system's ships at day 0: the organisations' fleets as the records derive them, and independents to a target."
+traffic:
+  ships: 1000
+  independents:
+    - { hull: hull.drover, share: 0.40 }
+    - { hull: hull.sprint, share: 0.30 }
+    - { hull: hull.prospector, share: 0.20 }
+    - { hull: hull.hauler, share: 0.10 }
+basis:
+  - { of: [traffic.ships], tier: invented, note: "A thousand: the user's figure for a busy sky, one ship to about 220 people. Earth's merchant fleet is one to 80,000, a maritime frontier's boats about one to ten: this lies between." }
+  - { of: [traffic.independents], tier: invented, review: true, note: "Chosen: most independents fly a Drover or a courier; a fifth prospect; a tenth own a hauler." }

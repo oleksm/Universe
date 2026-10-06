@@ -1,0 +1,7 @@
+# yaml-language-server: $schema=../../schema/profession.schema.yaml
+identity:
+  key: profession.dependant
+  name: "Dependant"
+  about: "Not at work: a child, the old, the sick, or someone between trades. The census's remainder."
+basis:
+  - { of: [identity], tier: invented, note: "The remainder of a settlement's people once its works and services are staffed. In the rich countries about half the people are at work; what the census finds here is checked against that in docs/registry-people.md." }

@@ -8,6 +8,8 @@ physical:
   length: 1000
   width: 1000
 site: open sky
+staff:
+  - { profession: profession.farmer, count: 2 }
 recipes:
   - makes: good.wheat
     does: "Grown under the open sky: on a world with air and rain, the carbon dioxide and most of the water are the world's own."
@@ -243,3 +245,4 @@ basis:
   - { of: [recipes, recipes.rate], tier: sourced, source: "standards/sources/research_food_crops.json", note: "World-average yields for 2024 (FAOSTAT), over the module's 100 ha; seed cotton is the world's for 2024 (FAO, by Our World in Data: standards/sources/research_people_plant.json), its dry share and stalks guesses; flax is the fibre only, at a historical French figure (600 kg a hectare), and its straw a guess; hay is the United States' (there is no world figure). Each figure and its page: the file named." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_food_crops.json", note: "Worked out, not measured: a plant is made of carbon dioxide and water and gives off oxygen (1.47 kg and 0.6 kg in, 1.07 kg out, for each kg of dry plant), with the water the crop holds. Each crop's dry share is sourced. How much of the plant is crop, and so how much straw is left, is sourced for some and a guess for cassava, sugarcane, hay, seed cotton, flax. Fertiliser is the world's average, 67.7 kg of nitrogen a hectare a year, as ammonia." }
   - { of: [physical, recipes.power], tier: invented, review: true, note: "Its size is chosen; what its machines draw is a guess. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }

@@ -4,6 +4,7 @@ identity:
   name: "Soda works waste"
   kind: by-product
   description: "What a soda works runs off: calcium chloride, salt that did not react, and spent lime, in water."
+waste: true
 physical:
   bulk_density: 1300
 basis:

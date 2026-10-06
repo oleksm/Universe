@@ -8,6 +8,11 @@ physical:
   length: 1150
   width: 60
   height: 15
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.liquid-aluminium
     does: "Electric current takes the oxygen from the molten alumina, leaving liquid aluminium."
@@ -25,3 +30,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Aluminium_smelting", note: "13 to 16 MWh for each tonne; 14.5 taken." }
   - { of: [physical.length], tier: sourced, source: "https://en.wikipedia.org/wiki/Qatalum", note: "A potroom 1,150 m long." }
   - { of: [physical], tier: invented, review: true, note: "Its width and height were not found in a source." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

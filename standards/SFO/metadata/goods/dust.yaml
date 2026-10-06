@@ -4,6 +4,7 @@ identity:
   name: Furnace dust
   kind: by-product
   description: "Fine metal oxides carried off in a furnace's fumes and caught in its filters."
+waste: true
 physical:
   bulk_density: 1000
 basis:

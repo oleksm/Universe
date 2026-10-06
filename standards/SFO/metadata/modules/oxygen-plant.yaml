@@ -8,6 +8,10 @@ physical:
   length: 30
   width: 20
   height: 10
+staff:
+  - { profession: profession.chemist, count: 2 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: element.o
     does: "Water is split: eight parts of oxygen to one of hydrogen."
@@ -21,3 +25,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, note: "From the chemistry: 9 kg of water gives 8 of oxygen and 1 of hydrogen." }
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "53 kWh for each kg of hydrogen (commercial electrolysers, 2022), so 6.7 kWh for each kg of oxygen." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Sized for a settlement: a quarter of a kg of oxygen a second is what 24,000 people breathe. Its footprint is chosen." }
+  - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

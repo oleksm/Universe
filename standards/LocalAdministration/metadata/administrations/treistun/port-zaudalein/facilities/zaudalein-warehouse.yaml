@@ -17,20 +17,23 @@ stock:
   - { item: stock.deuterium-liq, quantity: 100000.0 }
 # Distribution stock: 1.5 resupply cycles (20 days) of what its 20,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
 # Distribution stock: 1.5 resupply cycles (20 days) of what its 20,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
-  - { item: stock.flour-bulk, quantity: 225000.0 }
-  - { item: stock.potatoes-bulk, quantity: 180000.0 }
-  - { item: stock.cabbage-bulk, quantity: 45000.0 }
-  - { item: stock.carrots-bulk, quantity: 45000.0 }
-  - { item: stock.onions-bulk, quantity: 45000.0 }
-  - { item: stock.apples-bulk, quantity: 90000.0 }
-  - { item: stock.cheese-bulk, quantity: 45000.0 }
-  - { item: stock.beef-bulk, quantity: 45000.0 }
-  - { item: stock.pork-bulk, quantity: 45000.0 }
-  - { item: stock.chicken-bulk, quantity: 45000.0 }
-  - { item: stock.sugar-bulk, quantity: 45000.0 }
-  - { item: stock.vegetable-oil-bulk, quantity: 45000.0 }
-  - { item: stock.medicines-bulk, quantity: 3000.0 }
-  - { item: stock.clothes-bulk, quantity: 23500.0 }
-  - { item: stock.tools-bulk, quantity: 6000.0 }
-  - { item: stock.beer-bulk, quantity: 48000.0 }
-  - { item: stock.wine-bulk, quantity: 4320.0 }
+# Distribution stock: 1.5 resupply cycles (3.7916 days) of what its 20,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (3.7916 days) of what its 20,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (3.7916 days) of what its 20,000 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+  - { item: stock.flour-bulk, quantity: 42700.0 }
+  - { item: stock.potatoes-bulk, quantity: 34100.0 }
+  - { item: stock.cabbage-bulk, quantity: 8530.0 }
+  - { item: stock.carrots-bulk, quantity: 8530.0 }
+  - { item: stock.onions-bulk, quantity: 8530.0 }
+  - { item: stock.apples-bulk, quantity: 17100.0 }
+  - { item: stock.cheese-bulk, quantity: 8530.0 }
+  - { item: stock.beef-bulk, quantity: 8530.0 }
+  - { item: stock.pork-bulk, quantity: 8530.0 }
+  - { item: stock.chicken-bulk, quantity: 8530.0 }
+  - { item: stock.sugar-bulk, quantity: 8530.0 }
+  - { item: stock.vegetable-oil-bulk, quantity: 8530.0 }
+  - { item: stock.medicines-bulk, quantity: 569.0 }
+  - { item: stock.clothes-bulk, quantity: 4450.0 }
+  - { item: stock.tools-bulk, quantity: 1140.0 }
+  - { item: stock.beer-bulk, quantity: 9100.0 }
+  - { item: stock.wine-bulk, quantity: 819.0 }
