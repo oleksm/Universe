@@ -1,5 +1,9 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# Curated: named Hearth by its people (the seed calls it Treistun e), and its air is said to be breathable, which the seed does not say. The rest is as the seed made it.
+# Curated: named Hearth by its people (the seed calls it Treistun e); its orbit and body as the seed made them. Its climate and air
+# are the planet lab's (2026-10-06): a snowball at 0.67 of Earth's sunlight, the ice-albedo runaway taking it, never thawed in
+# 4.5 Gyr (the CO2 thermostat held about 3,500 ppm at the end, and the land stayed under ice at every step); no life ever began,
+# so no oxygen: the air is nitrogen with its carbon dioxide, not breathable. The seed's 264 K and 'breathable' were guesses and
+# are gone. The world's survey carries the run's figures; this header says why the lore reads as it does.
 provenance: curated
 identity:
   key: body.treistun.treistun-e
@@ -8,12 +12,15 @@ identity:
   kind: rocky planet
   parent: body.treistun.treistun
   about: 'Hearth, the fourth planet, 0.66 AU out, and the home world; the surveyors'' Treistun e. 6,281 km in radius, 0.98 g, with
-  air. It is cold: about 264 K on average. Its day lasts under 19 hours. It has no moon; the station orbits it.'
+  air that nobody can breathe: nitrogen and a third of a percent of carbon dioxide, and no oxygen, since nothing ever lived
+  here. A snowball: about 220 K on average, the land under ice from pole to pole. Its day lasts under 19 hours. It has no
+  moon; the station orbits it.'
   story:
     - 'Where Treistun began. The first landing, the first port and the first station were all here, and the system''s administration still sits in orbit above it. Its people call it Hearth: the fire everyone
-  came home to.'
-    - 'Nothing grows in the open on Hearth: its warmest ground stays below freezing the year round. It was settled for its air, its ice and its water. Its people grow what they can under lamps and are fed from
-  Harvest.'
+  came home to, and the irony is theirs.'
+    - 'Nothing has ever grown on Hearth, and nothing breathes its air. It was settled for its ice and its water, for its gravity, and for being the first world with ground to stand on under a sky. Port Nacaubun
+  is a sealed city of sixty thousand on the ice, breathing from its plants and fed from Harvest; its people grow what they can under lamps.'
+
 orbit: {semi_major_axis: 98949200000.0, eccentricity: 0.005887, period: 20213280.0, inclination: 0.18}
 physical: {mass: 5.6773e+24, radius: 6281370.0, gravity: 9.604, day: 67006.8, tilt: 17.3, albedo: 0.3}
 surface:
@@ -24,4 +31,15 @@ surface:
 # The planet lab's defaults for its run (2026-10-06, as Harvest's): Earth's water share, Earth's radioactive heat; chosen.
 interior: {radiogenic: 1.0}
 water: {mass_share: 0.00023}
-atmosphere: {surface_density: 1.225, scale_height: 8680.0, top: 121500.0, breathable: true}
+atmosphere:
+  surface_density: 1.225
+  scale_height: 8680.0
+  top: 121500.0
+  breathable: false
+  made_of:
+    - { gas: element.n, share: 0.9965 }
+    - { gas: good.carbon-dioxide, share: 0.0035 }
+  greenhouse: 29.0
+life:
+  present: none
+  soil: none

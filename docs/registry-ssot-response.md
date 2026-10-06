@@ -1123,3 +1123,12 @@ mines TRB1-INI-000256A-06 under claim and licence, and **Zaudalein Smelter** tur
 into nickel, platinum metals and sulphur, the sulphur Eikir's works needed. For the game: a sealed
 settlement's life support is its own (oxygen plant, air plant, water works, as the ports'); the
 smelter's sulphur is a stock run from Zaudalein to Eikir the Traffic report now derives.
+
+**Hearth, before its release (2026-10-06, night).** The lab's run says the home world is a
+snowball that never thawed, with no life and so no oxygen; its record now says so (air
+`breathable: false`, nitrogen with 0.35% carbon dioxide; `life.present: none`; the lore rewritten),
+and **Port Nacaubun has a life-support facility** like the sealed ports. **For the game:** Hearth's
+people breathe from `facility.treistun.port-nacaubun.nacaubun-life-support` (element.o from its
+oxygen plants, 30 days in store), not from the place: the `from: place` oxygen a breathable world
+gives no longer applies on Hearth. When the release lands, the record takes the run's mean
+(about 216 K) and months; the Worlds report will show TRE1.
