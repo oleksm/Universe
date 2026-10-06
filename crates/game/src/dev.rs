@@ -1348,6 +1348,14 @@ pub fn apply(app: &mut App, name: &str) {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
             };
+            // (UNIVERSE_NEW=none|<hull key>: a new design; UNIVERSE_DIALOG=new|open: that
+            // dialog open.)
+            if let Ok(h) = std::env::var("UNIVERSE_NEW") {
+                y.interior_mut().start_new((h != "none").then_some(h.as_str()));
+            }
+            if let Ok(d) = std::env::var("UNIVERSE_DIALOG") {
+                y.interior_mut().show_dialog(d == "open");
+            }
             // (UNIVERSE_MODULES: the ship's fit laid out, the MODULES tool in hand.)
             if std::env::var_os("UNIVERSE_MODULES").is_some() {
                 let spec = app.ship.spec();
