@@ -101,6 +101,15 @@ properties:
         properties:
           kind: { const: rack }
           capacity: { type: number, x-unit: "kg", description: "kg it holds" }
+      - description: "A hopper for loose rock: dug ore falls in through its top doors and is let out through its gate. It goes in a cargo slot. The game's ore bay is still the hull's own (hull.hold); from fitted bays once it reads this."
+        type: object
+        additionalProperties: false
+        required: [kind, capacity, volume, fill_density]
+        properties:
+          kind: { const: ore_bay, x-in-game: "not made" }
+          capacity: { type: number, x-unit: "kg", description: "kg of ore it is built to carry" }
+          volume: { type: number, x-unit: "m3", description: "m3 it holds, heaped" }
+          fill_density: { type: number, x-unit: "kg/m3", description: "kg/m3 of broken rock its capacity is reckoned at: fuller with denser ore, it is the mass that limits" }
       - description: "Seats for passengers, with their life support. It goes in a cargo slot."
         type: object
         additionalProperties: false

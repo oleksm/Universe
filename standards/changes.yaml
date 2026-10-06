@@ -273,6 +273,16 @@
 - { record: element.yb, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c9fcbbd837d20c33" }
 - { record: element.zn, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "cde096ae4adf03ef" }
 - { record: element.zr, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "02328c370caf8440" }
+- { record: equipment.bay.hopper.100t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "41982af01c22671f" }
+- { record: equipment.bay.hopper.10t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "49e7a079d687341f" }
+- { record: equipment.bay.hopper.150t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "795aed4647ce0196" }
+- { record: equipment.bay.hopper.200t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "4f0e2976e659efbf" }
+- { record: equipment.bay.hopper.20t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "9411fe6825a9e808" }
+- { record: equipment.bay.hopper.300t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "aef29876f5af9c62" }
+- { record: equipment.bay.hopper.35t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "32be76dbb1bb4d25" }
+- { record: equipment.bay.hopper.50t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "941657514da3c5cb" }
+- { record: equipment.bay.hopper.5t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "3e6d9234366a09a9" }
+- { record: equipment.bay.hopper.75t, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "3e98306375b515b0" }
 - { record: equipment.cabin.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "1ba7fbc8eccdd4d9" }
 - { record: equipment.cabin.s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "1a1463bc77510a80" }
 - { record: equipment.cabin.s3, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "74859d49dddfd83b" }
@@ -775,10 +785,10 @@
 - { record: mount.capacitor-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "9dc2450187a367de" }
 - { record: mount.capacitor-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "cb9853df133d6503" }
 - { record: mount.capacitor-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "f619bd6eab1d58aa" }
-- { record: mount.cargo-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "bf79c46bc4f69623" }
-- { record: mount.cargo-s2, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "a2fbc357472a8b52" }
-- { record: mount.cargo-s3, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "7dfd66a1daa476cf" }
-- { record: mount.cargo-s4, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "1dd7ed13fb382224" }
+- { record: mount.cargo-s1, at: "2026-10-06T02:13:55Z", status: draft, summary: "changed: bears, attachment", sha: "a8cf90e33023f477" }
+- { record: mount.cargo-s2, at: "2026-10-06T02:13:55Z", status: draft, summary: "changed: bears, attachment", sha: "1106c5b2d137ab30" }
+- { record: mount.cargo-s3, at: "2026-10-06T02:13:55Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "798a4ca078a2208c" }
+- { record: mount.cargo-s4, at: "2026-10-06T02:13:55Z", status: draft, summary: "changed: bears, attachment", sha: "4c14da2b028aeebf" }
 - { record: mount.comm-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "8036e32f03dc6f28" }
 - { record: mount.computer-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "c4166f1c838601ff" }
 - { record: mount.drive-s1, at: "2026-10-06T01:57:19Z", status: draft, summary: "changed: attachment, basis", sha: "a1bc3d73f62f6152" }
@@ -1254,6 +1264,56 @@
 - { record: part.nvs1-01, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "fb0cb714620064a6" }
 - { record: part.nvs1-02, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "cf807e966e45cb08" }
 - { record: part.nvs1-03, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "255e3ff6df9a311b" }
+- { record: part.obs01-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "be10abeb370b0a9b" }
+- { record: part.obs01-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "f8dde27dfbb5002f" }
+- { record: part.obs01-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "7e010f2fe17d41d8" }
+- { record: part.obs01-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "ce7d678ad3f7925f" }
+- { record: part.obs01-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "2356a959b1b4fd22" }
+- { record: part.obs02-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "2b3142f3c7223e25" }
+- { record: part.obs02-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "7c37d4ed6cc36cc7" }
+- { record: part.obs02-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "eac4aaa06c0549cb" }
+- { record: part.obs02-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "c258315993221887" }
+- { record: part.obs02-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "278ac713995312e8" }
+- { record: part.obs03-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "2ea2837db546c898" }
+- { record: part.obs03-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "451e5cfb05b9db95" }
+- { record: part.obs03-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "dbbd7d7d8e62666c" }
+- { record: part.obs03-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "d003048d0fb0d263" }
+- { record: part.obs03-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "8b467e859b8a85e1" }
+- { record: part.obs04-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "148e84286f8a87d0" }
+- { record: part.obs04-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "0dc79693970dd59b" }
+- { record: part.obs04-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "c3af1dc077a78094" }
+- { record: part.obs04-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "ad6a154d9fad5380" }
+- { record: part.obs04-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "be9fc892af0dce3f" }
+- { record: part.obs05-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "319d26cd7219eca0" }
+- { record: part.obs05-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "fc5d43bc35ccaf31" }
+- { record: part.obs05-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "55e3843f9dda915f" }
+- { record: part.obs05-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "8713e7d7fc007529" }
+- { record: part.obs05-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "90060cdd2407e81c" }
+- { record: part.obs06-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "217da91de7d35636" }
+- { record: part.obs06-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "aa2069fffa7c0a0f" }
+- { record: part.obs06-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "626691542bde557e" }
+- { record: part.obs06-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "68b0c48c4f4d9fa7" }
+- { record: part.obs06-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "15a40c0457a2f02c" }
+- { record: part.obs07-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "b493235538ab6b63" }
+- { record: part.obs07-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "7f976278fc6f0170" }
+- { record: part.obs07-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "229b01cd7dc8a909" }
+- { record: part.obs07-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "ec0a26ee6e7a02d9" }
+- { record: part.obs07-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "edab9f590522aab3" }
+- { record: part.obs08-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "1707bbd1639d484e" }
+- { record: part.obs08-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "d72db38fb695d07c" }
+- { record: part.obs08-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "51976d8c3748cbfc" }
+- { record: part.obs08-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "7843531eea3c8ca9" }
+- { record: part.obs08-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "580731d3dd7f5a81" }
+- { record: part.obs09-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "1c567d7425aec394" }
+- { record: part.obs09-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "083a19f3f77b4525" }
+- { record: part.obs09-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "2e1f05b055f63c18" }
+- { record: part.obs09-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "9e8f977f73655f04" }
+- { record: part.obs09-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "1374f81e8780e307" }
+- { record: part.obs10-01, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "3dffd17f5c21a71d" }
+- { record: part.obs10-02, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "af78b323ff385001" }
+- { record: part.obs10-03, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "e23b16f5d257e89c" }
+- { record: part.obs10-04, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "e1e8b84b21b9957d" }
+- { record: part.obs10-05, at: "2026-10-06T02:13:55Z", status: draft, summary: "first tracked", sha: "b6246920739ae848" }
 - { record: part.oy-01, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "80de061a4edf562e" }
 - { record: part.oy-02, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "f2553a7832cdb0a5" }
 - { record: part.pas1-01, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "f91899fd3e32f706" }
@@ -1677,7 +1737,7 @@
 - { record: standard.sfo.16, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9577624686904cfd" }
 - { record: standard.sfo.17, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d5515015ce481594" }
 - { record: standard.sfo.18, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e42e9e4812b9120b" }
-- { record: standard.sfo.19, at: "2026-10-06T02:03:46Z", status: "", summary: "changed", sha: "b357c121f7f77eb9" }
+- { record: standard.sfo.19, at: "2026-10-06T02:13:55Z", status: "", summary: "changed: details", sha: "4f2eaf652c1e8331" }
 - { record: standard.sfo.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9b755040fb6e59af" }
 - { record: standard.sfo.3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "104975206a1bfa51" }
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }

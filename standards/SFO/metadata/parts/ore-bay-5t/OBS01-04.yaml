@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.obs01-04
+  code: OBS01-04
+  name: "Discharge gate"
+  revision: draft
+  description: "The slide at the bottom, and its drive, that lets the ore out at the dock."
+physical:
+  mass: 50
+  length: 1.003
+  width: 0.501
+  height: 0.501
+made_from:
+  - item: stock.st4340-bar-120
+    quantity: 57.5
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the bay (10%): shell, liners, doors, gate and frame, as a haul truck's body divides, from memory. Not sourced." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Ore bay 5 t: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

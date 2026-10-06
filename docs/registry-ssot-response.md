@@ -949,3 +949,9 @@ closed. Lightest 0.98 kg/m (6061 60 × 2), carbon 100 × 3 at 1.44 kg/m takes 42
 the pinned length it buckles at under 50 and 200 kN, specific strength. Carbon composite now has a
 modulus and a strength on record (quasi-isotropic AS4/8552, from memory, marked review): the frame
 solver can cut it. The "upgrade over 90%" loop has rungs to climb now.
+
+**Ore bays (2026-10-06).** Ten sizes, 5 to 300 t (`equipment.bay.hopper.<n>t`, function
+`ore_bay`: capacity, heaped volume, fill density), in cargo slots by class, so a hull takes the bay
+that fits. The engine answers `ore_bay` with `None` for now: the game's bay is still `HullDef::bay`
+from the hull. When you read fitted bays, a ship's ore capacity is the sum of its bays' capacities
+and its hold's volume the sum of their volumes, mass-limited (`fill_density`).

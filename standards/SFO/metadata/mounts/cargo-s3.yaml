@@ -8,17 +8,17 @@ identity:
   description: "What a class 3 cargo slot offers, and what fits it."
 envelope:
   length: 8.69
-  width: 2.98
-  height: 2.98
+  width: 3.21
+  height: 3.21
 bears:
-  mass: 5250.0
+  mass: 12500.0
 attachment:
   points: 8
   pattern: corners
   each:
-    tension: 19300.0
-    compression: 19300.0
-    shear: 9650.0
+    tension: 46000.0
+    compression: 46000.0
+    shear: 23000.0
 feeds:
   power: 75000.0
 basis:

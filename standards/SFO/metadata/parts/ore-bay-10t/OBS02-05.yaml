@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.obs02-05
+  code: OBS02-05
+  name: "Frame"
+  revision: draft
+  description: "Tube chords and uprights that carry the hopper to its mount."
+physical:
+  mass: 150
+  length: 1.445
+  width: 0.723
+  height: 0.723
+made_from:
+  - item: stock.st4340-tb-160x5
+    quantity: 172.5
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the bay (15%): shell, liners, doors, gate and frame, as a haul truck's body divides, from memory. Not sourced." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Ore bay 10 t: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

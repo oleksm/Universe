@@ -11,7 +11,5 @@ details:
     - "Each mount is of one kind of slot (SFO 16) and one size class, 1 to 4. A slot takes equipment of its class or any smaller: the smaller mounts of a kind are within the larger."
     - "A piece of equipment names the mount it fits (fits). Its own figures must lie within the mount's: its size within the envelope, its weight within what is borne, its draw within the power fed, its nozzles' thrust within the thrust borne."
     - "A hull names the mount each of its slots offers (slots[].mount). The hull's structure, lines and openings there are built to the mount's figures, whatever is fitted."
-    - "Each mount says how what is fitted fastens (attachment): how many points, in what pattern (the corners of a box, a ring round a nozzle face, saddles round a tank, a leg's trunnion), and what each point takes in tension, compression and shear. A frame is built to those points; a module is strutted to them. Without a hull, a design is sockets first: the mounts placed, then the frame between them, then what fits."
-    - "A landing leg is equipment (gear): one leg to a gear slot, a hull fits several. Its mount bears the landing load."
     - "The first mounts are set round the equipment of today, with a margin: a tenth more room, a quarter more weight, power and thrust. They describe what is. As hulls are sized from what they must do, the mounts are to follow, and equipment to be built to them."
 status: draft
