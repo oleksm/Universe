@@ -1,0 +1,35 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Sight
+x-kind: [sight]
+description: "standards/Celestial/metadata/sights/<name>.yaml: a place worth going to see, for its own sake (need.wandering): a peak, a basin, a world's ice, a giant's rings. Its figures are the runs' (a peak from the bake's peaks.json, a basin from the survey's impacts.json) or the body's record; where it is, so a ship can go there."
+type: object
+additionalProperties: false
+required: [identity, at, kind]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What one sees there." }
+  at: { type: string, x-ref: [body], description: "The body it is on or of, by its key." }
+  kind: { $ref: "../../dictionary.schema.yaml#/definitions/sight_kind" }
+  position:
+    description: "Where on the body, in degrees; left out for a sight that is the whole body or its rings."
+    type: object
+    additionalProperties: false
+    required: [latitude, longitude]
+    properties:
+      latitude: { type: number, x-unit: "deg" }
+      longitude: { type: number, x-unit: "deg" }
+  seen_from: { type: string, x-ref: [body, settlement], description: "Where it is best seen from, where that is not the place itself: a moon for a giant's rings." }
+  height: { type: number, x-unit: "m", description: "m above the datum, for a peak" }
+  diameter: { type: number, x-unit: "m", description: "m across, for a basin or crater" }
+  depth: { type: number, x-unit: "m", description: "m deep, for a basin or crater" }
+  source: { type: string, description: "The run's id for it (a peak's or a crater's), where it has one." }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "Named by the registry from the runs' figures; the names are invented, the figures are the simulation's.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

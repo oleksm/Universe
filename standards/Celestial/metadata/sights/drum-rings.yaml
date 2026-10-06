@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/sight.schema.yaml
+identity:
+  key: sight.drum-rings
+  name: "The Rings of Drum"
+  about: "Drum's rings, from 96,000 to 173,000 km out: seen edge-on from Drum G I as a line across the sky, and from above the pole as a disc."
+at: body.treistun.treistun-g
+kind: rings
+seen_from: body.treistun.treistun-g-i
+basis:
+  - { of: [kind, position, height, diameter, depth, source], tier: derived, source: "standards/Celestial/metadata/systems/treistun/bodies/treistun-g.yaml", note: "Drum's record: rings from 96,297 km to 172,974 km (the seed)." }
+  - { of: [identity.name], tier: invented, note: "The name is the registry's." }

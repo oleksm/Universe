@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.arena
+  name: "Arena"
+  description: "A hall with tiers round a floor: games, matches, races on the track outside."
+physical:
+  length: 80
+  width: 60
+  height: 20
+  mass: 5294400
+per_people: 20000
+floor: 4800
+storeys: 1
+meets:
+  - { need: need.play, people: 20000 }
+staff:
+  - { profession: profession.performer, count: 5 }
+  - { profession: profession.clerk, count: 5 }
+  - { profession: profession.technician, count: 3 }
+built_of:
+  - { item: good.concrete, quantity: 4992000 }
+  - { item: material.structural-steel-a36, quantity: 278400 }
+life: 1577880000
+basis:
+  - { of: [per_people, staff, meets], tier: invented, review: true, note: "One to 20,000 people, as the theatre." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }
