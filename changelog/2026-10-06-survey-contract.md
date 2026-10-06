@@ -50,3 +50,5 @@
 - **A Worlds report** on the page: every baked body with its packages (energy "none" where a world
   never had life), its surface bake and what stays in the store; below, what the store lists that is
   not installed and why. The installer ends a `--store` run with the same table.
+- **`watch_worlds.py`**: watches the store's index; installs, validates, builds, logs the release to
+  `docs/worlds-releases.md`, stages for review; commits only with `--commit`, never pushes.

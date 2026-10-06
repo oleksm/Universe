@@ -77,6 +77,36 @@ Deposit types for the energy kinds: `deposit-type.oil-field`, `.gas-field`, `.co
 (formed by burial); goods crude oil, natural gas, coal and their bulk stock; modules `oil-well`,
 `gas-well`, `coal-mine` drawing from the place.
 
+## 2b. Installing without anyone: the watcher
+
+`tools/standards/watch_worlds.py` watches the store's `releases.json`. When it has changed since
+the last install it runs `world_install.py --store`, both validators and `build.py`, appends the
+release to `docs/worlds-releases.md` (which world, for which body, its packages' hashes), stages
+everything, prints the Worlds table and `git diff --cached --stat`, and sends a desktop notice.
+**Nothing is committed unless `--commit`, and nothing is ever pushed**: the review is a person's.
+
+    python3 tools/standards/watch_worlds.py --once            # check now
+    python3 tools/standards/watch_worlds.py                   # every five minutes
+    python3 tools/standards/watch_worlds.py --once --commit   # commit on the current branch, unpushed
+
+To run it in the background on this machine (a user timer; the store is the lab's folder):
+
+    # ~/.config/systemd/user/freefall-worlds.service
+    [Service]
+    Type=oneshot
+    WorkingDirectory=%h/git/universe-fso
+    ExecStart=/usr/bin/python3 tools/standards/watch_worlds.py --once
+    # ~/.config/systemd/user/freefall-worlds.timer
+    [Timer]
+    OnBootSec=2min
+    OnUnitActiveSec=10min
+    [Install]
+    WantedBy=timers.target
+    # systemctl --user enable --now freefall-worlds.timer
+
+The last installed index is remembered in `standards/Celestial/surveys/.installed.json`
+(committed, so the review shows what the installer thought it had).
+
 ## 3. What the game reads (the integrator)
 
 **By reference.** The registry is the only copy the game loads; a baked body's record carries
