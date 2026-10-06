@@ -476,8 +476,8 @@ tests pass. This is your item 6 for food, done as modules with recipes, not copi
 `recipes.ron`.
 
 **Sourced since, and one finding for you** (`docs/registry-food.md`, "What Treistun's two worlds
-with air do to a crop"): by `climate.rs` as it stands, Hearth's warmest ground averages -10 C
-and Port Nacaubun -19 C, so nothing grows in the open there; Harvest farms between 25 and 50
+with air do to a crop"): by `climate.rs` as it stands, Hoar's warmest ground averages -10 C
+and Port Nacaubun -19 C, so nothing grows in the open there; Heath farms between 25 and 50
 degrees of latitude and is too hot at its equator. The user has decided: **the story follows the physics.** e is not a farm world;
 d feeds the system. Your `PlaceKind::Farm` still makes e one (it has Terran terrain), with farms
 and a food surplus: that rule needs the world's warmth in it.
@@ -836,7 +836,7 @@ only (power, layout, zoning: all pass).
 
 **1. Air.**
 
-- **Breathable where it is:** `atmosphere.breathable: true` on Harvest and e (new, on the body
+- **Breathable where it is:** `atmosphere.breathable: true` on Heath and e (new, on the body
   record; both are now `curated`). People at Port Eikir and Port Nacaubun take their air from the
   place. It is a marked guess: the game has always settled both as worlds with air; what their air
   is made of is not on record.
@@ -908,11 +908,11 @@ record becomes `provenance: baked` with a `survey` section pointing at
 `standards/Celestial/surveys/<world_id>/`. **The game reads the survey's files from there, by
 reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospecting reveals by
 `seen_by` method), the districts, the rock units' yields. The whole contract, with each file and
-what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Harvest; then
+what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Heath; then
 the body schema's new optional `survey` object reaches your generated types, and the loader for the
 files is yours. Claims and mines will point at deposit IDs.
 
-**Harvest is baked (2026-10-06).** `body.treistun.treistun-d` is `provenance: baked` from world
+**Heath is baked (2026-10-06).** `body.treistun.treistun-d` is `provenance: baked` from world
 **TRD1**: `standards/Celestial/surveys/TRD1/` holds its survey (3,756 deposits in 908 districts
 and 471 belts; 26.6% land, 10 plates; Cu 1.2 Gt, Fe 22 Gt, Au 33 kt). Its orbit moved to 0.525 AU
 first (at 0.408 AU it could keep no sea); your code already reads the curated orbit. **Yours when
@@ -924,7 +924,7 @@ over the step (tens of microns) of the plane: the start, carried by velocity alo
 other side. The gate test hit it exactly (500 m at 500 m/s is 60 steps). Now a step ending within
 1 mm of the plane crosses it, and the next does not. Also: **bodies match records by key, not
 name** (`system::Body::key`, `celestial::rename` last); settlements by body key; the planets of
-Treistun are named (Harvest, Hearth...). The seed's names stay in `identity.also`.
+Treistun are named (Heath, Hoar...). The seed's names stay in `identity.also`.
 
 **Sockets (the user, 2026-10-06; for the ships session through you).** Every mount now says its
 **attachment**: points, pattern (corners / ring / saddles / trunnion) and what each point takes in
@@ -968,7 +968,7 @@ and its hold's volume the sum of their volumes, mass-limited (`fill_density`).
 2. **The hot band** is the user's decision, still open.
 3. **Medicine.** A new `eikir-chemical-works` (parcel 5, Verdance; power line 5): hydrogen plant,
    synthesis plant, acid plant, chlor-alkali plant, pharma works; 30 days of sugar and **a year of
-   sulphur and salt as stock**, because nothing in Treistun mines either yet (Harvest's survey
+   sulphur and salt as stock**, because nothing in Treistun mines either yet (Heath's survey
    has 6.9 Gt of S and 218 Gt of NaCl; a mine is the economy's or mine to place; tell me which you
    prefer). Every warehouse holds **90 days of medicines** for its people.
 4. **Clothes, tools, drink.** The chemical works also runs a textile mill and clothing works
@@ -1018,7 +1018,7 @@ excess, and refuses the losses its list names: the respawn, by a rule. `docs/reg
 **Managing the NPCs (the user, 2026-10-06): records for the operator.** `docs/registry-people.md`.
 Every settlement has a **census** by trade (finite people); every organisation that flies has a
 **fleet** (hull, count, home, what for): Treistun Freight's 39 haulers on the supply runs (derived
-from tonnes a day and flight time between the orbits), Hearth Line's shuttles, Cormorant's
+from tonnes a day and flight time between the orbits), Hoar Line's shuttles, Cormorant's
 prospectors, the administration's 23 patrol interceptors, Shikra Hold's 12 raiders: about a hundred
 ships, not a thousand settlers. `settlement.resupply.interval` is now the fleet's cadence from the
 orbits. **What ends the vortex, yours:** spawn fleets from these records, crewed from the census;
@@ -1038,7 +1038,7 @@ every run with its tonnage, flight time and cadence.
 **Fleets for the NPC rework: your four asks (2026-10-06).**
 
 1. **A typed job on every fleet line:** `work` (dictionary `fleet_job`: hauling, passage, mining,
-   patrol, raiding), required; `does` stays the note. Treistun Freight hauling, Hearth Line
+   patrol, raiding), required; `does` stays the note. Treistun Freight hauling, Hoar Line
    passage, Cormorant mining, the administration's patrol, Shikra Hold raiding. Independents
    (`settlement.independents`) carry no work: the operator decides by hull, as today's travellers
    and small traders.
@@ -1062,7 +1062,7 @@ every run with its tonnage, flight time and cadence.
    (One engine touch with this: the facility's `stock` moved to a shared definition that rigs use
    too, so the generated type is `StockItem`, not `FacilityStockItem`; `economy.rs` reads it.)
 
-**Harvest's three packages (2026-10-06).** `tools/standards/world_install.py <world folder>` now
+**Heath's three packages (2026-10-06).** `tools/standards/world_install.py <world folder>` now
 installs a world whole: the survey and the **energy package** (copied to
 `standards/Celestial/surveys/TRD1/energy/`: 282 petroleum basins, 46,672 oil and 20,477 gas fields,
 89 coalfields; `energy` on the record with in-place amounts in SI) and the **surface bake**
@@ -1071,7 +1071,7 @@ with the manifest's hash; the manifest and latest.json lie beside the survey). *
 worlds-store root to configure (today the lab's `~/git/planet-sim/out/`); fetch the bake's files by
 the manifest; wells and the coal mine sit on a field's or coalfield's permanent id. New: deposit
 types oil field, gas field, coalfield; goods crude oil, natural gas, coal (stock `*-bulk`,
-market.fuel); modules oil-well, gas-well, coal-mine (`from: place`). Harvest's record also carries
+market.fuel); modules oil-well, gas-well, coal-mine (`from: place`). Heath's record also carries
 its life timeline and highest peak (8,920 m).
 
 **Who does what for worlds (the user, 2026-10-06).** You can start now, without the lab: a
@@ -1104,7 +1104,7 @@ the order dependence is a test bug; the hover failure is the physics the user wa
 flying side, so the imported MC-07 should be reported, not asserted, there.
 
 **The first mine on a baked deposit (2026-10-06, night).** Halden Camp
-(`settlement.treistun.halden-camp`, on Harvest at 54.81 N 164.44 E, 1,070 km north of Port Eikir):
+(`settlement.treistun.halden-camp`, on Heath at 54.81 N 164.44 E, 1,070 km north of Port Eikir):
 Cormorant's pit and concentrator on the survey's porphyry copper body **TRD1-PCU-007264A-01**
 (`facility.treistun.halden-camp.halden-mine`, `claim: {deposit, holder: org.cormorant, licence:
 org.treistun}`), a power station, a yard on the exchange, 400 people, supplied from Eikir by a
@@ -1112,7 +1112,7 @@ suborbital hop. The build checks a claim's id against the body's survey. **For t
 with a `claim` draws its ore from that deposit (its grades and tonnage are in deposits.geojson), not
 from an asteroid field; a facility whose claim names no `licence` under a jurisdiction with
 `mining_licence: true` is an offence (unlicensed mining), recorded, not blocked. The settlement's
-position puts it on Harvest's 600 m tiles: the first ground a player can land on at a working mine.
+position puts it on Heath's 600 m tiles: the first ground a player can land on at a working mine.
 
 **Mind, Money and Cinder (2026-10-06, night).** The school and the college carry `trains`; the
 bank (`org.nacaubun-savings`, `banking`: lends against hull, cargo, building, parcel, claim at 6% a
@@ -1124,13 +1124,13 @@ into nickel, platinum metals and sulphur, the sulphur Eikir's works needed. For 
 settlement's life support is its own (oxygen plant, air plant, water works, as the ports'); the
 smelter's sulphur is a stock run from Zaudalein to Eikir the Traffic report now derives.
 
-**Hearth, before its release (2026-10-06, night).** The lab's run says the home world is a
+**Hoar, before its release (2026-10-06, night).** The lab's run says the home world is a
 snowball that never thawed, with no life and so no oxygen; its record now says so (air
 `breathable: false`, nitrogen with 0.35% carbon dioxide; `life.present: none`; the lore rewritten),
-and **Port Nacaubun has a life-support facility** like the sealed ports. **For the game:** Hearth's
+and **Port Nacaubun has a life-support facility** like the sealed ports. **For the game:** Hoar's
 people breathe from `facility.treistun.port-nacaubun.nacaubun-life-support` (element.o from its
 oxygen plants, 30 days in store), not from the place: the `from: place` oxygen a breathable world
-gives no longer applies on Hearth. When the release lands, the record takes the run's mean
+gives no longer applies on Hoar. When the release lands, the record takes the run's mean
 (about 216 K) and months; the Worlds report will show TRE1.
 
 **Halden runs; the tailings (the integrator, 2026-10-06, night).** Good news: the mine digs the

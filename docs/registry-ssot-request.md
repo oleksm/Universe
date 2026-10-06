@@ -713,7 +713,7 @@ standards:
 
 The game reads whatever you write; these just make the generated types plain.
 
-**Hearth:** the game's rule is ready. A spaceport is a farm place only where its ground
+**Hoar:** the game's rule is ready. A spaceport is a farm place only where its ground
 averages 5 °C or more through the day (the climate model's figure at the port's latitude). By that,
 Port Nacaubun on e is −19 °C and Port Eikir on d (45.6° N) is 11.6 °C: d farms, e doesn't, as you
 found. It isn't on main yet: with e's farms gone, the settled systems' food comes out a little
@@ -920,15 +920,15 @@ What the game needs:
 4. **Training.** "A school trains a pilot in `profession.training.time`": is there a school in the
    census, and how many pilots it turns out a year? Until then a pilot lost is simply one fewer.
 
-## Harvest's ground is in the game (2026-10-06)
+## Heath's ground is in the game (2026-10-06)
 
-The game reads Harvest's bake now (its heights for collision and drawing) and puts every port
+The game reads Heath's bake now (its heights for collision and drawing) and puts every port
 where its record's `position` says (latitude, longitude: north +Y, longitude `atan2(−z, x)`, the
 same coordinates as the survey; the bake's highest peak reads 8,920 m at its listed spot).
 
 1. **Port Eikir is at sea.** Its record position (45.649° N, 165.925° E) lies over 5,866 m of
-   water on the grown Harvest (the rock map says sea there too). Its position came from the old
-   seed's random spot. It wants a site on Harvest's land: a granary of 60,000 people, so temperate
+   water on the grown Heath (the rock map says sea there too). Its position came from the old
+   seed's random spot. It wants a site on Heath's land: a granary of 60,000 people, so temperate
    farmland near a coast. The game levels its plain to sea level until then.
-2. **For the lab:** Harvest's oil fields add up to 1.207e12 m³ in place; the basins' total (the
+2. **For the lab:** Heath's oil fields add up to 1.207e12 m³ in place; the basins' total (the
    figure on the record) is 1.187e12, 1.7% less.

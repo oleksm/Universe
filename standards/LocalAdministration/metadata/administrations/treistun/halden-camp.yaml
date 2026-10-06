@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../schema/settlement.schema.yaml
 # Invented (2026-10-06): the first mine on a baked deposit, to prove the chain from a survey id to ore on a market. The deposit
-# is Harvest's survey's TRD1-PCU-007264A-01: a porphyry copper body of 1,230 Mt at 0.41% copper, outcropping (depth 0), 1,070 km
+# is Heath's survey's TRD1-PCU-007264A-01: a porphyry copper body of 1,230 Mt at 0.41% copper, outcropping (depth 0), 1,070 km
 # north of Port Eikir at 54.81 N, 164.44 E, in the temperate band's dry country. Cormorant holds it under Treistun's licence.
 identity:
   key: settlement.treistun.halden-camp
@@ -42,7 +42,7 @@ census:
 # independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.hauler, count: 1 }
-about: "A mining camp on Harvest's northern plains: an open pit on a copper body, its concentrator, a power station and a strip for the haulers. 1,070 km north of Port Eikir."
+about: "A mining camp on Heath's northern plains: an open pit on a copper body, its concentrator, a power station and a strip for the haulers. 1,070 km north of Port Eikir."
 story:
   - "The survey crews found copper under the dry grass of the north and Cormorant bought the licence from the administration the same season. The camp is four hundred people, most of them miners and their families, in a row of blocks beside the pit; the concentrate goes south to Eikir's strip and on to the smelter at Trethi."
-  - "It is the first claim worked on Harvest's own ground. The deposit's number is the survey's: TRD1-PCU-007264A-01."
+  - "It is the first claim worked on Heath's own ground. The deposit's number is the survey's: TRD1-PCU-007264A-01."

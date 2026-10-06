@@ -2,7 +2,7 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 # Curated: named by its people; the seed calls it Treistun g III. The rest is as the seed made it.
 provenance: curated
-identity: {key: body.treistun.treistun-g-iii, name: Drum III, also: Treistun g III, kind: moon, parent: body.treistun.treistun-g, about: 'A
+identity: {key: body.treistun.treistun-g-iii, name: Drum G III, also: Treistun g III, kind: moon, parent: body.treistun.treistun-g, about: 'A
     moon of the gas giant Drum, 1.78 AU from the star. 836 km in radius, 0.07 g at the surface, no air, about 150 K
     on average. Its day lasts 374 hours.'}
 orbit: {semi_major_axis: 1061870000.0, eccentricity: 0.01894, period: 1347485.76, inclination: 0.521}

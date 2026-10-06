@@ -57,6 +57,6 @@ independents:
   - { hull: hull.drover, count: 4 }
   - { hull: hull.sprint, count: 3 }
   - { hull: hull.prospector, count: 2 }
-about: "The port on Harvest I, the moon of d, at 32° south. Gravity 0.13 g, no air."
+about: "The port on Heath I, the moon of d, at 32° south. Gravity 0.13 g, no air."
 story:
   - "Eikir's yard. Ships that have no business in d's air wait here, and those that do make the short drop from it."

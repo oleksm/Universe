@@ -7,7 +7,7 @@ identity:
 ticker: TFR
 kind: company
 business: hauling
-note: "Haulers on the supply runs from Harvest"
+note: "Haulers on the supply runs from Heath"
 who: "The carrier of Treistun's food, medicine and goods from Port Eikir to every other port, on contract to the administration's reserve and the ports' markets. Owned by the ports it serves."
 what: "Runs haulers on fixed routes; takes freight both ways."
 address: { at: settlement.treistun.port-eikir, tower: Freight House, deck: 1, section: A, unit: 1 }

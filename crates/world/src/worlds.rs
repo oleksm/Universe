@@ -857,7 +857,7 @@ impl Heights {
 mod tests {
     use super::*;
 
-    /// Harvest's survey and energy packages read, checked against their records; a few
+    /// Heath's survey and energy packages read, checked against their records; a few
     /// figures held to the record's; its bake found in the store and a file read, if a store is
     /// here (the store is outside the tree).
     #[test]

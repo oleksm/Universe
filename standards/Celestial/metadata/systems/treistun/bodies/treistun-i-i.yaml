@@ -2,7 +2,7 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 # Curated: named by its people; the seed calls it Treistun i I. The rest is as the seed made it.
 provenance: curated
-identity: {key: body.treistun.treistun-i-i, name: Hush I, also: Treistun i I, kind: moon, parent: body.treistun.treistun-i, about: 'A moon
+identity: {key: body.treistun.treistun-i-i, name: Hush I I, also: Treistun i I, kind: moon, parent: body.treistun.treistun-i, about: 'A moon
     of the ice giant Hush, 6.2 AU from the star. 1,157 km in radius, 0.10 g at the surface, no air, about 94 K on average.
     Its day lasts 14 hours.'}
 orbit: {semi_major_axis: 83670100.0, eccentricity: 0.0004654, period: 49874.5728, inclination: 4.221}
