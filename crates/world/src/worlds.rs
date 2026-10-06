@@ -574,6 +574,37 @@ impl Heights {
         ((raw - 32_768.0) / 2.0, true)
     }
 
+    /// Image `name` of the bake (a JPEG or PNG), as RGBA8: its width, height and pixels. None:
+    /// not in the bake, or unreadable.
+    pub fn image(&self, name: &str) -> Option<(usize, usize, Vec<u8>)> {
+        let bytes = self.bake.read(name).ok()?;
+        if name.ends_with(".jpg") {
+            let mut d = zune_jpeg::JpegDecoder::new(&bytes);
+            let rgb = d.decode().ok()?;
+            let (w, h) = d.dimensions()?;
+            return (rgb.len() == w * h * 3).then(|| (w, h, rgb.chunks(3).flat_map(|c| [c[0], c[1], c[2], 255]).collect()));
+        }
+        let mut d = png::Decoder::new(std::io::Cursor::new(&bytes));
+        d.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
+        let mut r = d.read_info().ok()?;
+        let mut buf = vec![0; r.output_buffer_size()?];
+        let info = r.next_frame(&mut buf).ok()?;
+        let (w, h) = (info.width as usize, info.height as usize);
+        let per = info.line_size / w.max(1);
+        let px = (0..h * w)
+            .flat_map(|i| {
+                let o = (i / w) * info.line_size + (i % w) * per;
+                match per {
+                    1 => [buf[o], buf[o], buf[o], 255],
+                    2 => [buf[o], buf[o], buf[o], buf[o + 1]],
+                    3 => [buf[o], buf[o + 1], buf[o + 2], 255],
+                    _ => [buf[o], buf[o + 1], buf[o + 2], buf[o + 3]],
+                }
+            })
+            .collect();
+        Some((w, h, px))
+    }
+
     /// The world's true colour from its bake (`globe_color.jpg`: equirectangular, as the 5 km
     /// heights), read now (not kept: a globe's map is made from it once). None: none baked.
     pub fn colour(&self) -> Option<Equirect> {

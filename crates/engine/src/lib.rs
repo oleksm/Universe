@@ -17,6 +17,7 @@ pub mod pbr;
 mod render_thread;
 mod renderer;
 mod sunprobe;
+pub mod worldmaps;
 
 pub use app::{run, Config, Context, Game, Perf, Resources, HISTORY, HITCH};
 pub use camera::Camera;
@@ -27,3 +28,4 @@ pub use input::{Input, KeyCode, MouseButton};
 pub use model::{GlobeMap, Mesh, Transform, WireModel};
 pub use pbr::PbrModel;
 pub use sunprobe::sun_seen;
+pub use worldmaps::WorldMaps;

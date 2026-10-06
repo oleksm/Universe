@@ -415,6 +415,8 @@ pub(crate) struct Renderer {
     mesh_line_pipe: wgpu::RenderPipeline,
     shadows: Shadows,
     globes: Globes,
+    /// The full-resolution maps of the world near the eye (group 2).
+    world: crate::worldmaps::WorldBind,
     meshes: HashMap<u64, GpuMesh>,
     /// This frame's mesh instances: faces, then edges; and the runs to draw
     /// (mesh, first instance, count) for each.
@@ -468,7 +470,11 @@ impl Renderer {
             entries: &[wgpu::BindGroupEntry { binding: 0, resource: globals.as_entire_binding() }],
         });
 
-        let scene = device.create_shader_module(wgpu::include_wgsl!("shaders/scene.wgsl"));
+        // (The ground's material, the lab's, beside the scene shader that calls it.)
+        let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("scene"),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
+        });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
             bind_group_layouts: &[Some(&globals_layout)],
@@ -689,9 +695,10 @@ impl Renderer {
             cache: None,
         });
         let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1), shadow_layer(2)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, runs: Vec::new() };
+        let world_bind = crate::worldmaps::WorldBind::new(device, &gpu.queue);
         let mesh_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("meshes"),
-            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout)],
+            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout), Some(&world_bind.layout)],
             immediate_size: 0,
         });
         let mesh_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
@@ -911,6 +918,7 @@ impl Renderer {
             front_edge_runs: Vec::new(),
             shadows,
             globes,
+            world: world_bind,
             frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
@@ -1046,6 +1054,15 @@ impl Renderer {
         let shadow_tight = tight.map_or(glam::Mat4::IDENTITY, cascade);
         let texel = |half: f64| (2.0 * half / SHADOW_SIZE as f64) as f32;
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
+        // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
+        // this frame: its globe map isn't up yet).
+        let world_layer = match &frame.world_maps {
+            Some((maps, globe)) => {
+                self.world.bind(&gpu.device, &gpu.queue, maps);
+                self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0)
+            }
+            None => 0.0,
+        };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
@@ -1056,7 +1073,7 @@ impl Renderer {
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
-            look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), 0.0],
+            look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), world_layer],
             env_sun: frame.light.map_or([0.0; 4], |l| {
                 let d = (l.position - frame.camera.position).normalize_or_zero().as_vec3();
                 [d.x, d.y, d.z, l.intensity_at(frame.camera.position) * frame.sun_visible(frame.camera.position) as f32]
@@ -1151,6 +1168,7 @@ impl Renderer {
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.shadows.bind, &[]);
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.sky.draw(&mut pass, &self.sky_pipe);
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
@@ -1184,6 +1202,7 @@ impl Renderer {
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.shadows.bind, &[]);
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.front_lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));

@@ -142,6 +142,8 @@ pub struct Frame {
     in_front: bool,
     /// Globe maps drawn this frame (instances name them by place here + 1).
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
+    /// A world's full-resolution maps, and the globe map (its id) of the world they're for.
+    pub(crate) world_maps: Option<(std::sync::Arc<crate::worldmaps::WorldMaps>, u64)>,
     globe: [f32; 4],
     globe_at: [f32; 4],
     globe_micro: [f32; 4],
@@ -349,6 +351,7 @@ impl Frame {
             front_glows: Vec::new(),
             in_front: false,
             globe_maps: Vec::new(),
+            world_maps: None,
             globe: [0.0; 4],
             globe_at: [0.0, 0.0, 0.0, 1.0],
             globe_micro: [0.0; 4],
@@ -452,6 +455,12 @@ impl Frame {
     /// vertex colours should be white).
     /// `at`: where its vertices are on the world (see `Instance::globe_at`).
     /// `micro`: a patch's origin (m, the world's frame) for its fine grain (none: zero).
+    /// The world whose globe map is `globe` is drawn with its full-resolution `maps` (one
+    /// world at a time: the one near the eye; the others with their globe maps alone).
+    pub fn world_maps(&mut self, maps: &std::sync::Arc<crate::worldmaps::WorldMaps>, globe: &std::sync::Arc<crate::model::GlobeMap>) {
+        self.world_maps = Some((maps.clone(), globe.id()));
+    }
+
     #[allow(clippy::too_many_arguments)]
     pub fn with_globe(&mut self, map: &std::sync::Arc<crate::model::GlobeMap>, kind: f32, relief: f32, bright: f32, at: [f32; 4], micro: glam::DVec3, f: impl FnOnce(&mut Frame)) {
         let k = match self.globe_maps.iter().position(|m| m.id() == map.id()) {

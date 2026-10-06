@@ -25,6 +25,28 @@ struct Globals {
 @group(1) @binding(3) var globe_soft: sampler;
 // Their own colours where they have them (alpha 0: none; the palette instead).
 @group(1) @binding(6) var globe_colors: texture_cube_array<f32>;
+// The full-resolution maps of the world near the eye (see `worldmaps.rs`): equirectangular,
+// row 0 north, column 0 at −180° of longitude atan2(−z, x) in the world's own frame. Bound for
+// the globe layer g.look2.w − 1; a texel of nothing (alpha 0) where a world lacks one.
+@group(2) @binding(0) var world_color: texture_2d<f32>;
+@group(2) @binding(1) var world_ground: texture_2d<f32>;
+@group(2) @binding(2) var world_normal: texture_2d<f32>;
+@group(2) @binding(3) var world_climate: texture_2d<f32>;
+@group(2) @binding(4) var world_rock: texture_2d<f32>;
+@group(2) @binding(5) var world_soft: sampler;
+@group(2) @binding(6) var world_exact: sampler;
+
+// Where on a world's maps the direction `dir` (its own frame) falls.
+fn world_uv(dir: vec3<f32>) -> vec2<f32> {
+    let lon = atan2(-dir.z, dir.x);
+    let lat = asin(clamp(dir.y, -1.0, 1.0));
+    return vec2<f32>(lon / 6.2831853 + 0.5, 0.5 - lat / 3.1415927);
+}
+
+// The mip level of a world map `width` texels round for a pixel spanning `footprint` radians.
+fn world_lod(width: u32, footprint: f32) -> f32 {
+    return max(log2(max(footprint * f32(width) / 6.2831853, 1e-6)), 0.0);
+}
 
 struct VertexIn {
     @location(0) pos: vec3<f32>,
@@ -176,6 +198,8 @@ struct MeshOut {
     @location(11) @interpolate(flat) patch_scale: f32,
     // Where on the ground for its fine grain (m, wrapped; exact).
     @location(12) micro: vec3<f32>,
+    // Straight up from the world where this is (as drawn: the eye's frame).
+    @location(13) up: vec3<f32>,
 };
 
 // The fine grain repeats every this many metres (see `MICRO_PERIOD`).
@@ -380,10 +404,44 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             n = normalize(abs(det) * n - grad);
         }
         albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
-        // A world's own colour, where it has one (grown, not painted).
-        let own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
+        // A world's own colour, where it has one (grown, not painted): its globe map's, or
+        // where its full-resolution maps are bound, theirs; and close up, its ground's material.
+        var own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
+        let mapped = in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5;
+        let uv = world_uv(dir);
+        if (mapped) {
+            let full = textureSampleLevel(world_color, world_soft, uv, world_lod(textureDimensions(world_color).x, footprint));
+            if (full.a > 0.5) {
+                own = full;
+            }
+        }
         if (own.a > 0.5) {
-            albedo = vec4<f32>(own.rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * in.globe.w * OWN_COLOR, in.color.a);
+            var rgb = own.rgb;
+            // (Close up, over land: the ground's material, faded in as a pixel comes under 2.5 km.)
+            let near = smoothstep(2500.0, 1250.0, pixel);
+            if (mapped && land > 0.5 && near > 0.0) {
+                let gw = textureDimensions(world_ground).x;
+                let lod = world_lod(gw, footprint);
+                let ground = textureSampleLevel(world_ground, world_soft, uv, lod);
+                if (ground.a > 0.5) {
+                    let climate = textureSampleLevel(world_climate, world_soft, uv, 0.0);
+                    let unit = u32(round(textureSampleLevel(world_rock, world_exact, uv, 0.0).r * 255.0 / 8.0));
+                    let up = normalize(in.up);
+                    let c = clamp(dot(n, up), 0.05, 1.0);
+                    var gi: GroundIn;
+                    gi.ground = ground.rgb;
+                    gi.ground_soft = textureSampleLevel(world_ground, world_soft, uv, lod + 2.5).rgb;
+                    gi.t_sea_c = climate.r * 100.0 - 50.0;
+                    gi.rain_m = climate.g * 4.0;
+                    gi.unit = unit;
+                    gi.h_m = h * in.globe.z;
+                    gi.slope = sqrt(1.0 - c * c) / c;
+                    gi.q = in.micro;
+                    gi.pixel_m = pixel;
+                    rgb = mix(rgb, ground_material(gi), near);
+                }
+            }
+            albedo = vec4<f32>(rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * in.globe.w * OWN_COLOR, in.color.a);
         }
     }
     let seen = sunlit(in.at, n);
@@ -420,7 +478,8 @@ fn vs_mesh(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, v.pos * v.globe_at.w + v.globe_at.xyz, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w));
+    let local = v.pos * v.globe_at.w + v.globe_at.xyz;
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), turn(v, local));
 }
 
 @vertex
@@ -431,5 +490,5 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0));
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), n);
 }

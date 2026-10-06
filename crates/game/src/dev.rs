@@ -1043,6 +1043,9 @@ pub fn apply(app: &mut App, name: &str) {
             let off = if at.is_some() { peak } else { (peak + peak.any_orthonormal_vector() * 0.02).normalize() };
             let up = rot * off;
             log::info!("lowflight: peak {:.0} m", best.0);
+            // (Where the sun stands overhead now, in the registry's latitude and longitude.)
+            let noon = universe_sim::world::worlds::lon_lat(rot.inverse() * (positions[0] - positions[planet]));
+            log::info!("lowflight: the sun overhead at {:.1}, {:.1}", noon.lat, noon.lon);
             // (UNIVERSE_ALT: the height instead, m; UNIVERSE_SPEED: the ground speed, m/s.)
             let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
             app.engine.universe().ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));

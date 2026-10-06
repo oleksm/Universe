@@ -482,6 +482,19 @@ fn bodies(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let t = app.now();
     let cam = frame.camera.position;
+    // The world nearest the eye with its full-resolution maps ready (within a few radii): drawn with them.
+    let near = app
+        .world_maps
+        .iter()
+        .filter(|((o, _), _)| *o == app.view.origin)
+        .filter_map(|((_, i), m)| Some((*i, m.lock().ok()?.clone()?)))
+        .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
+        .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
+    if let Some((i, maps)) = near
+        && let Some((_, _, map)) = app.globes.get(&(app.view.origin, i))
+    {
+        frame.world_maps(&maps, map);
+    }
     for (i, b) in sys.bodies.iter().enumerate() {
         // (Rocks: see `rocks`.)
         if b.kind.is_rock() {
