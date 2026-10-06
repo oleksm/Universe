@@ -552,7 +552,9 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
     var trans = 1.0;
     let t = cl.time_s;
     let cos_phase = dot(d, sun_dir);
-    let sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+    // (The sky's light on the clouds: marched only once a cloud is met.)
+    var sky_up = vec3<f32>(0.0);
+    var sky_ready = false;
     // (The air between the eye and the clouds, marched once at the first cloud met and used for
     // all: the shells lie a few km apart, the air's march was the costliest part, once a hit.)
     var air_ready = false;
@@ -569,6 +571,10 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         if (k == 3) {
             // The volume, carried to the eye through the air as a whole (at its middle): its light
             // dimmed by the air's transmission, the air's own light in front of it by its opacity.
+            if (!sky_ready) {
+                sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+                sky_ready = true;
+            }
             let v = cl_volume(o, d, s0, s1, f, to_body, R, t, sun_dir, sun, sky_up, pixel_angle);
             if (v.w > 0.001) {
                 let pm = o + d * (0.5 * (s0 + s1)) + center;
@@ -602,6 +608,10 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         }
         let mu_s = dot(up, sun_dir);
         let sunside = (mu_v > 0.0) == (mu_s > 0.0);
+        if (!sky_ready) {
+            sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+            sky_ready = true;
+        }
         var sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
         // Relief: the cloud a little toward the sun (its height's worth): thicker there, this point
         // is on its shaded flank; thinner, a sunlit face. Bright tops, shaded sides, as cumulus
@@ -899,7 +909,9 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
     var trans = 1.0;
     let t = cl.time_s;
     let cos_phase = dot(d, sun_dir);
-    let sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+    // (The sky's light on the clouds: marched only once a cloud is met.)
+    var sky_up = vec3<f32>(0.0);
+    var sky_ready = false;
     // (The air between the eye and the clouds, marched once at the first cloud met and used for
     // all: the shells lie a few km apart, the air's march was the costliest part, once a hit.)
     var air_ready = false;
@@ -916,6 +928,10 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
         if (k == 3) {
             // The volume, carried to the eye through the air as a whole (at its middle): its light
             // dimmed by the air's transmission, the air's own light in front of it by its opacity.
+            if (!sky_ready) {
+                sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+                sky_ready = true;
+            }
             let v = cl_volume(o, d, s0, s1, f, to_body, R, t, sun_dir, sun, sky_up, pixel_angle);
             if (v.w > 0.001) {
                 let pm = o + d * (0.5 * (s0 + s1)) + center;
@@ -953,6 +969,10 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
         }
         let mu_s = dot(up, sun_dir);
         let sunside = (mu_v > 0.0) == (mu_s > 0.0);
+        if (!sky_ready) {
+            sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+            sky_ready = true;
+        }
         var sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
         // Relief: the cloud a little toward the sun (its height's worth): thicker there, this point
         // is on its shaded flank; thinner, a sunlit face. Bright tops, shaded sides, as cumulus
