@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.administration
+  name: Administration
+  about: 'A settlement''s slow business: what its administration does once a day.'
+parent: clock.planetary
+scope: settlement
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 86400.0
+runs:
+- the land levy on every parcel
+- zoning breaches recorded against the day's building
+- compulsory-stock checks against the stocking law
+- insurers' premiums and the day's claims
+- 'law''s slow side: records aging, appeals heard, statutes'' periods'
+- 'the census: who lives and works here, births, deaths, moves; fleet replacements ordered'
+reads:
+- clock.economy
+- clock.market
+rule: 'A day of game time is a day of wall time at 1x: nearly free, runs anywhere. Nothing a player waits for is here; a fine
+  or a claim is answered as an event when it is made.'
+basis:
+- of:
+  - trigger
+  - runs
+  tier: invented
+  review: true
+  note: 'Added 2026-10-06 when the integrator found the land levy (86,400 s) with no clock to own it: the civilization layer
+    of the proposal, per settlement under its body. The registry''s addition to the user''s tree; the user confirms.'

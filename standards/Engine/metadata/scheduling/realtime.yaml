@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.realtime
+  name: Realtime
+  about: 'The critical lane: everything that must be seamless between players, and nothing else.'
+parent: clock.system
+scope: bubble
+coupling: tight
+trigger:
+  kind: period
+  every: 0.005
+runs:
+- 'flight: thrust, integration against Dogma, swept contact between ships, pads, hulls'
+- sensors, shooting, projectiles, docking, walking on decks
+- body positions for the bodies the bubble is near, evaluated from their formula at this tick
+- bubbles found by a spatial hash sized to a tick's motion plus reach, anchored to the nearest body's frame near bodies and
+  the star's frame in deep space; results applied in a fixed order; bubbles merge or split only at tick boundaries
+- 'the flight recorder (a dev tool): a slice of the bubble''s ships each tick so each is sampled every 50 ticks'
+reads:
+- clock.celestial
+- clock.machinery
+rule: 'Only physics that requires seamless cross-player interaction, and only where a player can see. Non-visible effects
+  are cleaned off this lane: power, fuel, heat and life support to machinery; coasting and FTL cruise to rails; unwatched
+  NPC action to the NPC lane. The input deadline k is in ticks (k = 2 is 10 ms here); a player further away gets a larger
+  k, per player.'
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: 'The user''s design, 2026-10-06: 5 ms, grouped by area, lean. 200 Hz is 3.3x the work of 60 Hz per body; the lean
+    rule pays for it. The period is configuration; every other period is a whole number of it.'

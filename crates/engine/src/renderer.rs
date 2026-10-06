@@ -1213,6 +1213,11 @@ impl Renderer {
         let mut encoder = gpu.device.create_command_encoder(&Default::default());
         // The environment as light, for this frame.
         self.env.render(&mut encoder, &self.globals_bind);
+        // The bound world's clouds cached: filled, refreshed, re-centred under the eye.
+        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| maps.has_clouds() && frame.world_clouds[3] > 0.0);
+        let under = clouded.map_or(glam::DVec3::Y, |(_, _, c, _)| frame.world_turn.inverse() * (frame.camera.position - *c).normalize_or(glam::DVec3::Y));
+        let world = clouded.and_then(|(maps, _, _, r)| Some((maps.id(), *r, &self.world.clouds, self.world.cloud_maps.as_ref()?)));
+        self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
         // The shadow map: each cascade, the casters seen from the light.
         for k in 0..4 {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {

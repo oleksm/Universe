@@ -4,7 +4,7 @@
 //     cargo run --release -p universe-sim --example needs_report
 fn main() {
     let mut u = universe_sim::Universe::new(1984);
-    let step = universe_sim::services::economy::STEP;
+    let step = universe_sim::services::economy::step();
     let mut t = u.world.time;
     for day in 1..=60 {
         let end = t + 86_400.0;

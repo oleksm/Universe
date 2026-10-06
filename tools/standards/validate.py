@@ -212,6 +212,8 @@ def key_of(rel, rec):
         return "org."
     if root == "People":
         return {"needs": "need.", "professions": "profession."}[p[2]] + low
+    if root == "Engine":
+        return {"scheduling": "clock."}[p[2]] + low
     if root == "Dogma":
         return ("dogma." if len(p) == 3 else "law.") + low
     if root == "Celestial":

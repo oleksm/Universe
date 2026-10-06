@@ -1,0 +1,5 @@
+# yaml-language-server: $schema=../../root.schema.yaml
+identity:
+  key: root.engine
+  name: "Engine"
+note: "How the engine governs itself: the tree of clocks that decides what steps when, at what coupling, and so where it runs. Not physics (that is Dogma) and not the world (that is the rest): the machinery of time. Records are the user's design; the engine reads them and binds a handler to every clock by key."
