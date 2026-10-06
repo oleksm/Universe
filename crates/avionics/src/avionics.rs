@@ -366,7 +366,7 @@ impl Avionics {
         let Some(c) = self.clearance else { return };
         if !c.autopilot {
             let needs = match c.target {
-                NavTarget::Station(_) | NavTarget::Asteroid(_) => Feature::Docking,
+                NavTarget::Station(_) | NavTarget::Asteroid(_) | NavTarget::Rig(_) => Feature::Docking,
                 NavTarget::Spaceport(_) => Feature::Landing,
                 NavTarget::Gate(_) => Feature::Gate,
             };
@@ -496,8 +496,8 @@ impl Avionics {
                 let frame = GateFrame::new(sys, g, t, positions);
                 Approach::Transit { gate: g, status: gate::status(&frame, ship, &c) }
             }
-            // (No one clears a ship for an asteroid.)
-            NavTarget::Asteroid(_) => return None,
+            // (No one clears a ship for an asteroid, or a rig: alongside by hand.)
+            NavTarget::Asteroid(_) | NavTarget::Rig(_) => return None,
         })
     }
 

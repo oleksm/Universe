@@ -34,9 +34,8 @@ fn main() {
 fn works_at(u: &universe_sim::Universe, place: &str) {
     let e = &u.markets.economy;
     let p = e.places.iter().find(|p| p.name == place).unwrap();
-    let g = &u.land.grounds[p.ground];
-    for w in e.works.iter().filter(|w| w.ground == p.ground) {
-        let run = &g.works[w.works].last;
+    for w in e.works.iter().filter(|w| w.site == p.site) {
+        let run = &w.last;
         let set: Vec<String> = w.setups.iter().filter_map(|s| s.recipe().map(|r| u.world.goods[r.makes].name.clone())).take(6).collect();
         println!("  {:<24} {:?}  makes {:?}", w.name, run.as_ref().map(|r| (format!("{:.0}%", r.rate * 100.0), r.held_by.clone())), set);
     }

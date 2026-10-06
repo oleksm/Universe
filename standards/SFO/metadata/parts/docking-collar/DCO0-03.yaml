@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.dco0-03
+  code: DCO0-03
+  name: "Soft-capture and controls"
+  revision: draft
+  description: "The guide petals that catch, and the controls."
+physical:
+  mass: 106
+  length: 0.936
+  width: 0.936
+  height: 0.351
+made_from:
+  - item: stock.cu-wire-2
+    quantity: 122.0
+making:
+  module: module.electronics-works
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Docking collar (20%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Docking collar: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

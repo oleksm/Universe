@@ -175,6 +175,12 @@ impl Universe {
         }));
         // The settlements' economy: their facilities and markets, on the land office's ground.
         u.markets.economy = universe_services::economy::Economy::new(&u.land, u.world.time);
+        // The rigs (see `world::rigs`): each its own market, its owner's.
+        for (i, sys) in &systems {
+            for (b, body) in sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Rig) {
+                u.markets.economy.add_rig(&mut u.land, *i, b, &body.key);
+            }
+        }
         u.start_docked();
         u.events.clear();
         u.player_feed.clear();

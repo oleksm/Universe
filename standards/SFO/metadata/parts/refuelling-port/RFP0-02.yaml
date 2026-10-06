@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.rfp0-02
+  code: RFP0-02
+  name: "Door and controls"
+  revision: draft
+  description: "The hull door over it and the controls."
+physical:
+  mass: 48
+  length: 0.442
+  width: 0.442
+  height: 0.295
+made_from:
+  - item: stock.al6061-pl-5
+    quantity: 55.2
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Refuelling port (40%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Refuelling port: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

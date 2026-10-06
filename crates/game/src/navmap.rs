@@ -473,7 +473,7 @@ const DARK: Color = Color::hex(0xff5050);
 fn place_on_net(n: &NetNow, target: NavTarget) -> (String, Color) {
     use universe_sim::world::hypernet::NodeAt;
     let node = match target {
-        NavTarget::Station(b) | NavTarget::Gate(b) => n.net.node(NodeAt::Body(b)),
+        NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Rig(b) => n.net.node(NodeAt::Body(b)),
         NavTarget::Spaceport(k) => n.net.node(NodeAt::Port(k)),
         // (A field isn't on the net: nobody lives there.)
         NavTarget::Asteroid(_) => return (String::new(), DIM),
@@ -591,13 +591,13 @@ fn chart(frame: &mut Frame, map: &NavMap, net: Option<&NetNow>, center: Vec2, ma
     // Targets: stations as squares, spaceports as triangles.
     for (i, e) in map.entries.iter().enumerate() {
         let (at, c) = match e.target {
-            NavTarget::Station(b) => (chart_pos(b), Color::WHITE),
+            NavTarget::Station(b) | NavTarget::Rig(b) => (chart_pos(b), Color::WHITE),
             NavTarget::Gate(b) => (chart_pos(b), Color::hex(0xffc040)),
             NavTarget::Asteroid(b) => (chart_pos(b), color(sys.bodies[b].color)),
             NavTarget::Spaceport(p) => (port_pos(p), Color::hex(0x60c0ff)),
         };
         match e.target {
-            NavTarget::Station(_) => frame.hud_box(at + Vec2::new(8.0, -3.0), Vec2::splat(6.0), c),
+            NavTarget::Station(_) | NavTarget::Rig(_) => frame.hud_box(at + Vec2::new(8.0, -3.0), Vec2::splat(6.0), c),
             NavTarget::Gate(_) => frame.hud_ellipse(at, Vec2::splat(5.0), 10, c),
             NavTarget::Asteroid(_) => frame.hud_ellipse(at, Vec2::splat(6.0), 6, c),
             NavTarget::Spaceport(_) => {
@@ -609,7 +609,7 @@ fn chart(frame: &mut Frame, map: &NavMap, net: Option<&NetNow>, center: Vec2, ma
         if i != map.selected {
             let name = match e.target {
                 NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
-                NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies[b].name.clone(),
+                NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Rig(b) => sys.bodies[b].name.clone(),
                 NavTarget::Asteroid(_) => e.name.clone(),
             };
             label(frame, at + Vec2::new(8.0, -10.0), &name, c);

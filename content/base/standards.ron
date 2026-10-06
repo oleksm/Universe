@@ -324,4 +324,21 @@
         licence: Open,
         published: 0.0,
     ),
+    (
+        key: "SFO 20",
+        body: "body.sfo",
+        branch: "all",
+        version: 1,
+        title: "SHIP FITTINGS",
+        scope: "",
+        status: Draft,
+        refs: [],
+        params: [
+        ],
+        requires: [
+        ],
+        text: "",
+        licence: Open,
+        published: 0.0,
+    ),
 ]

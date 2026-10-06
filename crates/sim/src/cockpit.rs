@@ -480,7 +480,7 @@ impl Cockpit {
         if let Some(target) = self.pilot.avionics.nav_target {
             let pos = target.position(&sys, t, &rails)?;
             let name = match target {
-                NavTarget::Station(_) | NavTarget::Gate(_) | NavTarget::Asteroid(_) => target.name(&sys),
+                NavTarget::Station(_) | NavTarget::Gate(_) | NavTarget::Asteroid(_) | NavTarget::Rig(_) => target.name(&sys),
                 NavTarget::Spaceport(p) => sys.spaceports[p].name.clone(),
             };
             return Some((name.to_uppercase(), pos));

@@ -108,7 +108,7 @@ pub fn min_range(sys: &StarSystem, anchor: Anchor) -> f64 {
         Anchor::Rock { .. } => 0.0,
         Anchor::Place(t) => {
             let size = match t {
-                NavTarget::Station(b) | NavTarget::Gate(b) => match &sys.bodies[b].rail.collider {
+                NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Rig(b) => match &sys.bodies[b].rail.collider {
                     Collider::Blocks(b) => b.bound,
                     Collider::Ring(r) => r.radius + r.tube,
                     _ => 0.0,
@@ -339,7 +339,7 @@ fn avoid_rocks(sys: &StarSystem, field: usize, target: usize, ship: &universe_wo
 /// The body of a station or gate.
 fn place_body(t: NavTarget) -> usize {
     match t {
-        NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Asteroid(b) => b,
+        NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Asteroid(b) | NavTarget::Rig(b) => b,
         NavTarget::Spaceport(_) => unreachable!("follow anchors are stations, gates and asteroids"),
     }
 }

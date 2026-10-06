@@ -58,7 +58,7 @@ fn standing(app: &App) -> Option<Standing> {
         Anchor::Place(target) => {
             let at = target.position(sys, t, &app.view.positions)?;
             let body = match target {
-                universe_sim::NavTarget::Station(b) | universe_sim::NavTarget::Gate(b) | universe_sim::NavTarget::Asteroid(b) => b,
+                universe_sim::NavTarget::Station(b) | universe_sim::NavTarget::Gate(b) | universe_sim::NavTarget::Asteroid(b) | universe_sim::NavTarget::Rig(b) => b,
                 universe_sim::NavTarget::Spaceport(p) => sys.spaceports.get(p)?.body,
             };
             (at, sys.velocity(body, t), target.name(sys).to_uppercase())

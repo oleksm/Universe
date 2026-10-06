@@ -16,6 +16,7 @@ pub fn body(sys: &StarSystem, port: Facility) -> Option<usize> {
     match port {
         Facility::Station(b) => sys.bodies.get(b).is_some_and(|b| b.kind == BodyKind::Station).then_some(b),
         Facility::Spaceport(p) => sys.spaceports.get(p).map(|sp| sp.body),
+        Facility::Rig(b) => sys.bodies.get(b).is_some_and(|b| b.kind == BodyKind::Rig).then_some(b),
         Facility::Gate(_) | Facility::Asteroid(_) => None,
     }
 }

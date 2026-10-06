@@ -223,6 +223,163 @@ properties:
           throughput: { type: number, x-unit: "kg/s", description: "kg/s of spoil it can carry off, at most" }
           anchor_reach: { type: number, x-unit: "m", description: "m its anchor reaches from the hull" }
           anchor_speed: { type: number, x-unit: "m/s", description: "m/s: it holds if the ship drifts slower than this against the surface" }
+      - description: "A way in and out through the hull, keeping the air in: two doors and a chamber between. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: airlock, x-in-game: "not made" }
+          persons: { type: integer, x-unit: "1", description: "how many it cycles at once" }
+          cycle: { type: number, x-unit: "s", description: "s for one cycle, in or out" }
+          passage: { type: number, x-unit: "m", description: "m, the clear width of its doors" }
+          air_lost: { type: number, x-unit: "kg", description: "kg of air lost to space each cycle, with its pumps run" }
+      - description: "A ramp lowered to the ground for people or cargo. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: ramp, x-in-game: "not made" }
+          load: { type: number, x-unit: "kg", description: "kg it bears" }
+          width: { type: number, x-unit: "m", description: "m, clear" }
+          reach: { type: number, x-unit: "m", description: "m it lets down to" }
+      - description: "A platform lift between a bay and the ground, or deck to deck. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: cargo_lift, x-in-game: "not made" }
+          load: { type: number, x-unit: "kg", description: "kg it lifts" }
+          travel: { type: number, x-unit: "m", description: "m it moves through" }
+      - description: "A door in the hull over a bay. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: bay_door, x-in-game: "not made" }
+          width: { type: number, x-unit: "m", description: "m, the opening" }
+          height: { type: number, x-unit: "m", description: "m" }
+          opens_in: { type: number, x-unit: "s", description: "s to open or shut" }
+      - description: "A docking collar or clamp: joins the ship to a station or another ship. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: docking, x-in-game: "not made" }
+          passage: { type: number, x-unit: "m", description: "m, the clear way through (a collar); none for a clamp" }
+          holds: { type: number, x-unit: "N", description: "N it takes along its axis before it lets go" }
+          standard: { type: string, description: "the docking standard it mates to" }
+      - description: "Moves bulk or cargo aboard: a scoop, a conveyor, an arm. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: handling, x-in-game: "not made" }
+          throughput: { type: number, x-unit: "kg/s", description: "kg/s it moves at most" }
+          reach: { type: number, x-unit: "m", description: "m, from its mount" }
+      - description: "Throws heat into space from a hot surface. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: radiator, x-in-game: "not made" }
+          rejects: { type: number, x-unit: "W", description: "W it throws off at its working temperature, both faces to deep space" }
+          temperature: { type: number, x-unit: "K", description: "K, its working surface" }
+          area: { type: number, x-unit: "m2", description: "m2 of panel, one face" }
+      - description: "Passes heat from one loop to another. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: heat_exchanger, x-in-game: "not made" }
+          transfers: { type: number, x-unit: "W", description: "W it passes at its design temperatures" }
+      - description: "Pumps and piping that carry heat from what makes it to what throws it off. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: coolant_loop, x-in-game: "not made" }
+          carries: { type: number, x-unit: "W", description: "W it carries" }
+          flow: { type: number, x-unit: "kg/s", description: "kg/s of coolant" }
+      - description: "Thermal mass that takes a burst of heat and gives it up slowly. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: heat_sink, x-in-game: "not made" }
+          stores: { type: number, x-unit: "J", description: "J it takes over its working rise" }
+      - description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air. (A fuel tank is `tank`, which the game runs.) Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: store, x-in-game: "not made" }
+          capacity: { type: number, x-unit: "kg", description: "kg it holds" }
+          holds: { type: string, description: "What it is built to hold, by its key (a good or an element); a cargo store takes any of its kind." }
+          pressure: { type: number, x-unit: "Pa", description: "Pa it holds its contents at; none for a low-pressure liquid" }
+      - description: "Moves liquid: fuel, water, coolant. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: pump, x-in-game: "not made" }
+          flow: { type: number, x-unit: "kg/s", description: "kg/s" }
+          head: { type: number, x-unit: "Pa", description: "Pa it pushes against" }
+      - description: "Compresses gas into a store or out of one. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: compressor, x-in-game: "not made" }
+          flow: { type: number, x-unit: "kg/s", description: "kg/s" }
+          pressure: { type: number, x-unit: "Pa", description: "Pa it delivers" }
+      - description: "A connection through the hull for taking fuel, water or air aboard, or giving it out. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: port, x-in-game: "not made" }
+          flow: { type: number, x-unit: "kg/s", description: "kg/s through it" }
+          reach: { type: number, x-unit: "m", description: "m a boom extends; none for a flush port" }
+      - description: "A viewport in a pressure hull. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: window, x-in-game: "not made" }
+          area: { type: number, x-unit: "m2", description: "m2 of glass" }
+          pressure: { type: number, x-unit: "Pa", description: "Pa it holds" }
+      - description: "Stores electric energy chemically: slower than a capacitor, far more of it. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: battery, x-in-game: "not made" }
+          stores: { type: number, x-unit: "J", description: "J" }
+          rate: { type: number, x-unit: "W", description: "W it gives or takes at most" }
+      - description: "Makes power from sunlight. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: solar_array, x-in-game: "not made" }
+          area: { type: number, x-unit: "m2", description: "m2 of cells" }
+          output: { type: number, x-unit: "W", description: "W at Earth's sunlight, face on" }
+          efficiency: { type: number, x-unit: "1", description: "the share of sunlight it turns to power" }
+      - description: "Distributes power from plant to loads, and breaks a fault. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: switchgear, x-in-game: "not made" }
+          carries: { type: number, x-unit: "W", description: "W through it" }
+      - description: "Turn the ship by spinning wheels, without fuel. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: reaction_wheels, x-in-game: "not made" }
+          torque: { type: number, x-unit: "N m", description: "N m it can apply" }
+          momentum: { type: number, x-unit: "N m s", description: "N m s it stores before it must unload" }
       - description: "One landing leg: a strut that stops the ship over its stroke and holds it on the ground (SFO 15, Shock). A hull fits several, one to a gear slot. The game reckons legs from a hull's parts today (world::legs); from fitted gear once it reads this."
         type: object
         additionalProperties: false

@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.sol0-01
+  code: SOL0-01
+  name: "Cells and blanket"
+  revision: draft
+physical:
+  mass: 300
+  length: 16.9
+  width: 4.22
+  height: 0.0843
+made_from:
+  - item: stock.al6061-sh-2
+    quantity: 345.0
+making:
+  module: module.electronics-works
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Solar array (60%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Solar array: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

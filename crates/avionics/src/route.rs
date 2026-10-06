@@ -69,7 +69,7 @@ impl Route {
 /// Name of a stop, with its system (`sys`, the stop's).
 pub fn stop_name(sys: &StarSystem, stop: Stop) -> String {
     let name = match stop.target {
-        NavTarget::Station(b) | NavTarget::Gate(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
+        NavTarget::Station(b) | NavTarget::Gate(b) | NavTarget::Rig(b) => sys.bodies.get(b).map_or_else(String::new, |b| b.name.clone()),
         NavTarget::Spaceport(p) => sys.spaceports.get(p).map_or_else(String::new, |p| p.name.clone()),
         NavTarget::Asteroid(_) => stop.target.name(sys),
     };
@@ -85,7 +85,7 @@ pub const WORKING: f64 = 1.0e18;
 pub(crate) fn hyperjump_limit(target: NavTarget) -> f64 {
     match target {
         NavTarget::Spaceport(_) => 200_000.0,
-        NavTarget::Station(_) => 30_000.0,
+        NavTarget::Station(_) | NavTarget::Rig(_) => 30_000.0,
         // (The hyperdrive drops out well back along a gate's entry side: see its aim.)
         NavTarget::Gate(_) => crate::hyperdrive::HYPER_ARRIVE_STATION + crate::gate::APPROACH_DISTANCE + 20_000.0,
         NavTarget::Asteroid(_) => 100_000.0,
@@ -95,7 +95,7 @@ pub(crate) fn hyperjump_limit(target: NavTarget) -> f64 {
 /// Is a ship landed on `body` at `local_position` (in `sys`) at this target?
 fn landed_at(sys: &StarSystem, target: NavTarget, body: usize, local_position: DVec3) -> bool {
     match target {
-        NavTarget::Station(s) => s == body,
+        NavTarget::Station(s) | NavTarget::Rig(s) => s == body,
         NavTarget::Spaceport(p) => sys.on_pad(p, body, local_position.normalize()),
         NavTarget::Gate(_) | NavTarget::Asteroid(_) => false,
     }

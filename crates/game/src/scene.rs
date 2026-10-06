@@ -503,6 +503,14 @@ fn bodies(frame: &mut Frame, app: &App) {
             }
             continue;
         }
+        if b.kind == BodyKind::Rig {
+            // No model yet: its box at its size, a faint fill, its edges, its name along them.
+            match universe_sim::world::rigs::half(b) {
+                Some(half) if px > 0.8 => rig_box(frame, center, b.rotation(t), half, &b.name),
+                _ => frame.point(center, c.scale(0.8)),
+            }
+            continue;
+        }
         if b.kind == BodyKind::Station {
             if px > 0.8 {
                 let t = Transform { position: center, rotation, scale: 1.0 };
@@ -1082,7 +1090,7 @@ pub fn action_color(a: Action) -> Color {
 pub fn plan_reference(app: &App) -> Option<DVec3> {
     let target = app.v.avionics.clearance?.target;
     let i = match target {
-        universe_sim::NavTarget::Station(s) | universe_sim::NavTarget::Gate(s) | universe_sim::NavTarget::Asteroid(s) => s,
+        universe_sim::NavTarget::Station(s) | universe_sim::NavTarget::Gate(s) | universe_sim::NavTarget::Asteroid(s) | universe_sim::NavTarget::Rig(s) => s,
         universe_sim::NavTarget::Spaceport(p) => app.view.system.spaceports.get(p)?.body,
     };
     app.view.positions.get(i).copied()
@@ -1796,7 +1804,7 @@ fn labels(frame: &mut Frame, app: &App) {
         let wanted = match b.kind {
             BodyKind::Star => true,
             BodyKind::Rocky | BodyKind::GasGiant | BodyKind::IceGiant => true,
-            BodyKind::Moon | BodyKind::Station | BodyKind::Gate => near_parent,
+            BodyKind::Moon | BodyKind::Station | BodyKind::Gate | BodyKind::Rig => near_parent,
             BodyKind::DwarfPlanet => true,
             BodyKind::CapturedMoon => near_parent,
             // A rock (a field's remnant, a comet, a centaur...): from within a few million km.
@@ -1816,5 +1824,30 @@ fn labels(frame: &mut Frame, app: &App) {
             let name = star_name(g.stars[n].seed).to_uppercase();
             labels.add(frame, at, &name, LABEL.scale(0.8));
         }
+    }
+}
+
+/// A structure with no model (the user's rule): a box of `half` extents at
+/// `center`, turned `rot`, drawn as a faint fill, its twelve edges, and its
+/// `name` along the edge of its top nearest the eye.
+fn rig_box(frame: &mut Frame, center: DVec3, rot: DQuat, half: DVec3, name: &str) {
+    let corner = |k: usize| center + rot * DVec3::new(if k & 1 == 0 { -half.x } else { half.x }, if k & 2 == 0 { -half.y } else { half.y }, if k & 4 == 0 { -half.z } else { half.z });
+    let edge = Color::hex(0x9fb4c8);
+    for (a, b) in [(0, 1), (2, 3), (4, 5), (6, 7), (0, 2), (1, 3), (4, 6), (5, 7), (0, 4), (1, 5), (2, 6), (3, 7)] {
+        frame.line(corner(a), corner(b), edge);
+    }
+    // (Its faces, faintly: light added, nothing hidden behind it.)
+    let fill = [0.025, 0.03, 0.04];
+    for [a, b, c, d] in [[0, 1, 3, 2], [4, 5, 7, 6], [0, 1, 5, 4], [2, 3, 7, 6], [0, 2, 6, 4], [1, 3, 7, 5]] {
+        frame.glow_triangle([corner(a), corner(b), corner(c)], [fill; 3]);
+        frame.glow_triangle([corner(a), corner(c), corner(d)], [fill; 3]);
+    }
+    // (Its name on the edge of its top nearest the eye.)
+    let label = name.to_uppercase();
+    let eye = frame.camera.position;
+    let nearest = [(2, 3), (6, 7), (2, 6), (3, 7)].into_iter().map(|(a, b)| (corner(a) + corner(b)) / 2.0).min_by(|p, q| p.distance(eye).total_cmp(&q.distance(eye)));
+    if let Some(at) = nearest.and_then(|p| frame.project(p)) {
+        let w = universe_engine::text_size(&label).x;
+        frame.text(at - Vec2::new(w / 2.0, 14.0), &label, edge);
     }
 }

@@ -32,6 +32,8 @@ pub enum BodyKind {
     Centaur,
     /// An ice body on a long orbit that brings it in close to the star.
     Comet,
+    /// A movable works in orbit, with no ground or administration (see `rigs`).
+    Rig,
 }
 
 impl BodyKind {
@@ -43,6 +45,7 @@ impl BodyKind {
             BodyKind::IceGiant => "ice giant",
             BodyKind::Moon => "moon",
             BodyKind::Station => "station",
+            BodyKind::Rig => "rig",
             BodyKind::Gate => "gate",
             BodyKind::Asteroid => "asteroid",
             BodyKind::DwarfPlanet => "dwarf planet",
@@ -90,7 +93,7 @@ impl BodyKind {
 
     /// Artificial structures: not obstacles for the hyperdrive's surface clearance.
     pub fn artificial(self) -> bool {
-        matches!(self, BodyKind::Station | BodyKind::Gate)
+        matches!(self, BodyKind::Station | BodyKind::Gate | BodyKind::Rig)
     }
 }
 
@@ -418,6 +421,7 @@ impl StarSystem {
         system.belts = crate::belts::belts(&system, frost_line);
         system.key_bodies();
         crate::celestial::apply(&mut system, crate::celestial::Stage::Rocks, star.seed);
+        crate::rigs::add(&mut system);
         system.settle();
         system.key_bodies();
         crate::celestial::rename(&mut system);

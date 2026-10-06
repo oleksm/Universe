@@ -10,6 +10,32 @@ about:
 story:
   - "Treistun was settled from its fourth planet outward. The first port was Nacaubun on Hearth, and the station was raised above it once there were more ships than one field could take."
   - "From there the ports went both ways: inward to the hot, heavy worlds, and outward to the moons of the giants. The administration grew out of the port office at Nacaubun and moved up to the station with everything else."
+# The code (2026-10-06): a frontier administration's, written plainly. Piracy and murder are what it fears most, so they carry
+# outlawry and a bounty; fines are shares, since the registry holds no prices. One constable to 333 and one judge to 11,000
+# are the world's medians (need.safety). One patrol craft to 10,000 people, and at least one at every port, is chosen.
+law:
+  jurisdiction: system
+  offences:
+    - { offence: piracy, penalties: [{ kind: outlawry, term: 315576000 }, { kind: forfeiture }, { kind: bounty, share: 0.5 }], note: "Ten years outside the law; the ship forfeit; half its worth to whoever brings it in." }
+    - { offence: murder, penalties: [{ kind: outlawry, term: 946728000 }, { kind: bounty, share: 1.0 }], note: "Thirty years; the whole ship's worth as bounty." }
+    - { offence: theft, penalties: [{ kind: forfeiture }, { kind: fine, share: 1.0 }], note: "What was taken is returned and as much again paid." }
+    - { offence: smuggling, penalties: [{ kind: forfeiture }, { kind: fine, share: 0.5 }] }
+    - { offence: zoning breach, penalties: [{ kind: warning }, { kind: fine, share: 0.1 }], note: "A warning first; then a tenth of the parcel's worth a year it stands." }
+    - { offence: unlicensed mining, penalties: [{ kind: forfeiture }, { kind: fine, share: 0.5 }], note: "The ore forfeit and half its worth again." }
+    - { offence: reckless flying, penalties: [{ kind: fine, share: 0.05 }], note: "A twentieth of the ship's worth; the damage done is the insurer's business." }
+    - { offence: fraud, penalties: [{ kind: fine, share: 1.0 }, { kind: gaol, term: 31557600 }] }
+    - { offence: evasion, penalties: [{ kind: fine, share: 0.2 }] }
+  enforcement:
+    constables_per: 333
+    judges_per: 11000
+    patrol:
+      - { hull: hull.interceptor, per_people: 10000 }
+    response: 600
+  policies:
+    duty: 0.02
+    land_rate: 3.17e-10
+    mining_licence: true
+    insurance_to_dock: false
 # The reserve law (2026-10-06): the needs people die without, as a cautious state keeps them. Four months of food and three of
 # medicine are Switzerland's compulsory stocks (from memory; review); held at the two big ports under open sky, half each.
 compulsory_stock:

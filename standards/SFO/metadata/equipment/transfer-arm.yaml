@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.handling.transfer.arm
+  name: "Bulk transfer arm"
+  maker: org.cormorant
+  revision: draft
+  slot: handling
+  description: "Moves bulk or cargo aboard: a scoop, a conveyor, an arm."
+size_class: 2
+fits: mount.handling-s2
+physical:
+  mass: 4000
+  volume: 33.8
+  length: 15.0
+  width: 1.5
+  height: 1.5
+built_of:
+  parts: transfer-arm
+making:
+  module: module.assembly-shop
+function:
+  kind: "handling"
+  throughput: 20
+  reach: 15.0
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 15 m boom that passes 20 kg/s of bulk to a dock or another ship: a ship-loader's arm, small. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

@@ -75,12 +75,12 @@ definitions:
         note: { type: string }
         review: { type: boolean, description: "A guess put in so the figure is there: to be reviewed." }
   address:
-    description: 'Where something is (SFO 9). at: the settlement, by its key; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
+    description: 'Where something is (SFO 9). at: the settlement or rig, by its key; then the tower, deck, section and unit inside the settlement (its own business, not checked).'
     type: object
     additionalProperties: false
     required: [at]
     properties:
-      at: { type: string, x-ref: [settlement] }
+      at: { type: string, x-ref: [settlement, rig] }
       tower: { type: string }
       deck: { type: integer, minimum: 1 }
       section: { type: string }

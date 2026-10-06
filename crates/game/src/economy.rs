@@ -27,7 +27,7 @@ pub struct EconomyPanel {
 
 /// The modules of place `p`'s works, in order: (works, its setup).
 fn modules(app: &App, p: &Place) -> Vec<(usize, usize)> {
-    app.v.works.iter().enumerate().filter(|(_, w)| w.ground == p.ground).flat_map(|(k, w)| (0..w.setups.len()).map(move |s| (k, s))).collect()
+    app.v.works.iter().enumerate().filter(|(_, w)| w.site == p.site).flat_map(|(k, w)| (0..w.setups.len()).map(move |s| (k, s))).collect()
 }
 
 /// Keys while open. False when it should close.
@@ -147,13 +147,14 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         Some(a) => crate::fmt::lag(a),
         None => "NO WORD".to_string(),
     };
-    let ground = |p: &Place| match p.facility {
-        universe_sim::world::Facility::Spaceport(port) => app.v.land.ground(p.system, port),
-        _ => None,
+    // (Its works, a ground's or a rig's, as they ran.)
+    let works_of = |p: &Place| {
+        let site = p.site;
+        app.v.works.iter().filter(move |w| w.site == site)
     };
     for (k, &p) in places.iter().enumerate().skip(first).take(shown) {
-        let works = ground(p).map_or(0, |g| g.works.iter().filter(|w| w.last.is_some()).count());
-        let held = ground(p).map_or(0, |g| g.works.iter().filter(|w| w.last.as_ref().is_some_and(|r| r.held_by.is_some())).count());
+        let works = works_of(p).filter(|w| w.last.is_some()).count();
+        let held = works_of(p).filter(|w| w.last.as_ref().is_some_and(|r| r.held_by.is_some())).count();
         let mark = if k == panel.selected { ">" } else { " " };
         let sys = app.charts.system(p.system);
         // (+ 0.0: an empty warehouse shows 0, not -0.)
@@ -179,7 +180,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
     // Its works.
     frame.text(Vec2::new(x, y), &format!("{:<24} {:>5}  {}", "WORKS", "RATE", "HELD BY"), DIM);
     y += line;
-    for w in ground(p).map(|g| g.works.as_slice()).unwrap_or(&[]) {
+    for w in works_of(p) {
         // (Floored: a works held back never reads 100%.)
         let (rate, why) = w.last.as_ref().map_or((String::from("-"), String::new()), |r| (format!("{:.0}%", (r.rate * 100.0).floor()), r.held_by.clone().unwrap_or_default()));
         frame.text(Vec2::new(x, y), &format!("{:<24} {:>5}  {}", w.name.to_uppercase().chars().take(24).collect::<String>(), rate, why), if why.is_empty() { TEXT } else { WARN });
@@ -203,7 +204,11 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
             }
             let w = &app.v.works[k];
             if k != last {
-                let theirs = ground(p).and_then(|g| g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel))).map(|l| l.owner.clone());
+                let ground = match w.site {
+                    universe_sim::services::economy::Site::Ground(g) => app.v.land.grounds.get(g),
+                    universe_sim::services::economy::Site::Rig(..) => None,
+                };
+                let theirs = ground.and_then(|g| g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel))).map(|l| l.owner.clone());
                 let yours = matches!(theirs, Some(universe_sim::services::land::Owner::Party(universe_sim::services::Party::Pilot(universe_sim::PLAYER))));
                 frame.text(Vec2::new(x, y), &format!(" {}{}", w.name.to_uppercase(), if yours { " (YOURS)" } else { "" }), DIM);
                 y += line;
