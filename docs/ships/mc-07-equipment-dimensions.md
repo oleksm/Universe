@@ -71,3 +71,28 @@ That would take about 300 kg and 62 kW off the ship, and add 2.4 t to the plant.
   equipment record uses them). And for what is not a box, what it is: an area, a dish's width.
 - **The user's word:** the MC-07 is deferred until it is flown, and these are its equipment.
   Nothing here is done until then.
+
+## Sized (2026-10-05, night; the user: "real sizes for equipment and parts")
+
+42 of 57 pieces of equipment now have a size that is measured, worked out, or a real one's:
+
+| From | Equipment |
+|---|---|
+| The MC-07's model | the main drive: its engine block, 18.1 by 8.05 by 2.66 m, nozzles under 3.5 m wide; the lift: spanning its six nozzles, 38.6 by 6.5 m; the larger drives and lifts scaled by the square root of their thrust |
+| Physics | the plants: their radiators (7.4 MW at 1,000 K wants 36 m2 of panel); the cargo racks: the room their load takes at 500 kg a m3; the tanks: balls of their fuel |
+| Real things | life support as space-station racks; cabins as airliner seat rows; the laser by HELLADS (2 MW in 40 m3); the radar as an 8 m2 array; the comms as dishes, the big transceivers 20 to 53 m across by their weight; the avionics at real weights |
+| Chosen, with a reason | the gun's 10 m barrel; the mining rig's 8 m arm |
+
+**Still standing in (15), because they are the invented technology and nothing real gives a
+size:** the capacitors, the hyperdrives, the two relays, the throat coil, and the thruster blocks
+(the model places their nozzles but draws none).
+
+**Every one of the 537 parts that had a cube is now fitted within its product:** its share of the
+product's room by weight, in the product's proportions, so the parts fit the whole. Their own
+shapes are not drawn: a coil case is a box the size of its share of the engine block.
+
+**The mounts (SFO 19) were re-set round the new sizes.** The drive mount of class 3 is now 29.6 by
+13.2 by 4.4 m: a hull that offers it has an engine block that size.
+
+What a size brings to light: the main drive's engine block is 387 m3 and weighs 3.5 t, 9 kg a m3.
+Its weight is the invented part; its size is the model's.

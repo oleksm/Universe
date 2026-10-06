@@ -7,9 +7,9 @@ identity:
   description: "Runs in the aisles, putting goods away and fetching them."
 physical:
   mass: 12000
-  length: 1.15
-  width: 1.15
-  height: 1.15
+  length: 27.5
+  width: 18.3
+  height: 2.2
 made_from:
   - item: stock.sta36-pl-20-panel
     quantity: 12005.217
@@ -21,4 +21,4 @@ basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.inform-international.com/100-original-asrs-warehouse-panther-series-stacker-crane-inform-product", note: "A pallet stacker crane 24 m high: 12 t." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the general warehouse: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

@@ -7,9 +7,9 @@ identity:
   description: "The wiring to every nozzle."
 physical:
   mass: 3.0
-  length: 0.182
-  width: 0.182
-  height: 0.182
+  length: 0.232
+  width: 0.186
+  height: 0.116
 made_from:
   - item: stock.cu-wire-2
     quantity: 3.45
@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Flight computer: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

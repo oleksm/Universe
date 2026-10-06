@@ -21,3 +21,5 @@
 - **Mounts (SFO 19):** the standard between a hull's slot and what fits it: room, weight, thrust,
   nozzle opening, recoil, power, cooling, fuel. 37 mounts; every piece of equipment names the one
   it fits, every hull's slot the one it offers.
+- **Real sizes:** 42 of 57 pieces of equipment are sized from the model, from physics or from a
+  real one; every part is fitted within its product; the mounts are re-set round them.

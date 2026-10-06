@@ -7,9 +7,9 @@ identity:
   description: "Sensors and their box: how much is left."
 physical:
   mass: 10
-  length: 0.292
-  width: 0.292
-  height: 0.292
+  length: 1.3
+  width: 1.3
+  height: 1.3
 made_from:
   - item: good.electronics
     quantity: 10
@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen to sum to the product's weight. Discovery II's tank is 73% structure, 9% fluid and electrical gear, 9% mountings (and its own thrusters, left out here)." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Fuel tank 4 t: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

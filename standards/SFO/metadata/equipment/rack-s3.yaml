@@ -10,10 +10,10 @@ size_class: 3
 fits: mount.cargo-s3
 physical:
   mass: 1500
-  volume: 30
-  length: 6.21
-  width: 3.11
-  height: 1.55
+  volume: 40.0
+  length: 5.43
+  width: 2.71
+  height: 2.71
 built_of:
   parts: rack-s3
 making:
@@ -24,4 +24,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: shelving along a hold, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 20,000 kg is 40 m3, twice as long as wide. The racks themselves are in it." }

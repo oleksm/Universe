@@ -7,9 +7,9 @@ identity:
   description: ""
 physical:
   mass: 0.9
-  length: 0.122
-  width: 0.122
-  height: 0.122
+  length: 0.134
+  width: 0.1
+  height: 0.114
 made_from:
   - item: stock.al6061-sh-2-panel
     quantity: 0.9
@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A deep-space transponder weighs 3 kg; this is allowed far more." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Transponder: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

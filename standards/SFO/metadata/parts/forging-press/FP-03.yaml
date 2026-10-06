@@ -7,9 +7,9 @@ identity:
   description: "The shaped tools the metal is pressed between."
 physical:
   mass: 45000
-  length: 1.79
-  width: 1.79
-  height: 1.79
+  length: 11.3
+  width: 7.55
+  height: 4.72
 made_from:
   - item: stock.st4340-fg
     quantity: 67500.0
@@ -21,4 +21,4 @@ basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/89-wyman-gordon-50000-ton-hydraulic-forging-press.pdf", note: "Dies for a 50,000-ton press weigh about 50 short tons a pair." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out: a cube of the room its own material takes (its weight over what its material weighs for each m3). A placeholder until it is sized." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the forging press: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

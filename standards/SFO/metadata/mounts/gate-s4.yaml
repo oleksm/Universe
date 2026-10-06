@@ -7,9 +7,9 @@ identity:
   size_class: 4
   description: "What a class 4 gate slot offers, and what fits it."
 envelope:
-  length: 6.83
-  width: 6.83
-  height: 4.46
+  length: 58.5
+  width: 58.5
+  height: 8.36
 bears:
   mass: 50000.0
 feeds:

@@ -7,9 +7,9 @@ identity:
   size_class: 3
   description: "What a class 3 gate slot offers, and what fits it."
 envelope:
-  length: 3.76
-  width: 3.76
-  height: 0.941
+  length: 22.7
+  width: 22.7
+  height: 3.23
 bears:
   mass: 3750.0
 feeds:

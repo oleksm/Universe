@@ -7,9 +7,9 @@ identity:
   size_class: 4
   description: "What a class 4 cargo slot offers, and what fits it."
 envelope:
-  length: 13.3
-  width: 6.64
-  height: 4.03
+  length: 29.6
+  width: 5.84
+  height: 5.84
 bears:
   mass: 32500.0
 feeds:

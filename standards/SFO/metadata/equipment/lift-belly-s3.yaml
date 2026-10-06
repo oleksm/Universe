@@ -10,10 +10,10 @@ size_class: 3
 fits: mount.lift-s3
 physical:
   mass: 7000
-  volume: 14
-  length: 5.01
-  width: 1.67
-  height: 1.67
+  volume: 4010.0
+  length: 38.6
+  width: 17.5
+  height: 5.93
 needs:
   power: 800000
 built_of:
@@ -29,4 +29,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a belly lift (a torch of the same kind, firing down): the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: long along its thrust, firing down, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "the game's model, assets/models/mc07.glb", note: "The S1 lift as the MC-07's model places it, its nozzles scaled by the square root of the thrust (2.70); the span is the hull's." }

@@ -7,9 +7,9 @@ identity:
   size_class: 3
   description: "What a class 3 cargo slot offers, and what fits it."
 envelope:
-  length: 6.83
-  width: 3.42
-  height: 2.07
+  length: 8.69
+  width: 2.98
+  height: 2.98
 bears:
   mass: 5250.0
 feeds:
