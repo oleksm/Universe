@@ -365,7 +365,7 @@
 - { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "be5d8fd20283e85f" }
 - { record: facility.treistun.port-trethi.trethi-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "457659c2302eeaef" }
 - { record: facility.treistun.port-trethi.trethi-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "20bc6eb10d26153f" }
-- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "3178cfd7b3327473" }
+- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-06T02:04:23Z", status: "", summary: "changed: lines", sha: "d35e6dd30cc98180" }
 - { record: facility.treistun.port-trethi.trethi-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "b02941881f765a35" }
 - { record: facility.treistun.port-trethi.trethi-smelter, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "24ef6e22e88cb38b" }
 - { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-05T22:01:57Z", status: "", summary: "changed: modules, stock", sha: "7be7638b4192e38f" }
@@ -642,7 +642,7 @@
 - { record: material.aluminium-alloy-6061, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a839c9f198b77669" }
 - { record: material.aramid-fibre, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "edd4e78a1893ac8b" }
 - { record: material.bearing-bronze-c93200, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "cd06f6c2869ff80f" }
-- { record: material.carbon-fibre-composite, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "8155f70e20c54ab3" }
+- { record: material.carbon-fibre-composite, at: "2026-10-06T02:07:30Z", status: review, summary: "changed: mechanical, basis", sha: "43a3773fbcda83c2" }
 - { record: material.copper, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c3da811366345a02" }
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
@@ -669,7 +669,7 @@
 - { record: material.silicone-rubber, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cbba71bf2ab09542" }
 - { record: material.stainless-steel-304, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "1365a0647b65ecb6" }
 - { record: material.structural-steel-a36, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "32e50442159e3038" }
-- { record: material.titanium-alloy-ti-6al-4v, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "ce6df4b6ab231cb4" }
+- { record: material.titanium-alloy-ti-6al-4v, at: "2026-10-06T02:03:46Z", status: review, summary: "changed: identity", sha: "14ec9720e933e5c2" }
 - { record: material.uranium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "b2cda0dc5b4d88a2" }
 - { record: module.acid-plant, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3401ee3102d009f4" }
 - { record: module.air-plant, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c4b8e7675951cf7e" }
@@ -703,10 +703,12 @@
 - { record: module.dairy, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "79b8e97c77695e47" }
 - { record: module.deuterium-plant, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: recipes", sha: "19a38a19c658177f" }
 - { record: module.electronics-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "12652c575c0ee9ac" }
+- { record: module.extrusion-press, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "bc10732ef5d4f332" }
 - { record: module.feed-mill, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "f4d7fd79ae4c5725" }
 - { record: module.ferroalloy-furnace, at: "2026-10-05T20:10:05Z", status: review, summary: "changed: recipes, basis", sha: "3fada73e4ddde153" }
 - { record: module.fertiliser-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "091e6df0626708e3" }
 - { record: module.field, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "d796edc8d32f30a5" }
+- { record: module.filament-winder, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "6e3cf453973a2b86" }
 - { record: module.film-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "42017090b5470338" }
 - { record: module.finishing-line, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "90939f08f9d568ac" }
 - { record: module.fish-farm, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "48e7dae93a3bf650" }
@@ -745,7 +747,7 @@
 - { record: module.pellet-plant, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "cc7c2441cd8e27ec" }
 - { record: module.pharma-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a4617df2c9ac7382" }
 - { record: module.phosphate-works, at: "2026-10-05T20:10:05Z", status: review, summary: "first tracked", sha: "7060500a464b71a5" }
-- { record: module.piercing-mill, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "70c6a22729e5d86a" }
+- { record: module.piercing-mill, at: "2026-10-06T02:03:46Z", status: review, summary: "changed: recipes", sha: "f09d3aea0e15afcf" }
 - { record: module.potline, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "5fd6312292559357" }
 - { record: module.reheat-furnace, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "9b23fe13a6b05e66" }
 - { record: module.rendering-works, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "400b8019c47ab7e0" }
@@ -1675,7 +1677,7 @@
 - { record: standard.sfo.16, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9577624686904cfd" }
 - { record: standard.sfo.17, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "d5515015ce481594" }
 - { record: standard.sfo.18, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "e42e9e4812b9120b" }
-- { record: standard.sfo.19, at: "2026-10-06T00:07:28Z", status: "", summary: "first tracked", sha: "4f2eaf652c1e8331" }
+- { record: standard.sfo.19, at: "2026-10-06T02:03:46Z", status: "", summary: "changed", sha: "b357c121f7f77eb9" }
 - { record: standard.sfo.2, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "9b755040fb6e59af" }
 - { record: standard.sfo.3, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "104975206a1bfa51" }
 - { record: standard.sfo.4, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "040dcede10426705" }
@@ -1693,6 +1695,25 @@
 - { record: stock.al6061-sh-2, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "9e9c1005fc94644c" }
 - { record: stock.al6061-sh-2-blank, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "32e4255f9570d624" }
 - { record: stock.al6061-sh-2-panel, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "6e947b573a2960d9" }
+- { record: stock.al6061-tb-100x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "5befe7f4d8cc7d43" }
+- { record: stock.al6061-tb-100x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "184d93032e38a8bd" }
+- { record: stock.al6061-tb-100x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "8a2abb912f6d3b6f" }
+- { record: stock.al6061-tb-120x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "258eed0ac86b39ce" }
+- { record: stock.al6061-tb-120x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "d79857cb70a50fc6" }
+- { record: stock.al6061-tb-160x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "5209ff478028e630" }
+- { record: stock.al6061-tb-160x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "f323d195505d3ef1" }
+- { record: stock.al6061-tb-160x8, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "de3d71ae14167861" }
+- { record: stock.al6061-tb-200x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "de371a04c2dda174" }
+- { record: stock.al6061-tb-200x8, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "a1dbf4f477909f78" }
+- { record: stock.al6061-tb-250x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "07af36f3f319ae8e" }
+- { record: stock.al6061-tb-250x8, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "3bb93b5c6aa0598d" }
+- { record: stock.al6061-tb-300x10, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "c1c68c200bc21701" }
+- { record: stock.al6061-tb-300x6, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "a8edae40db440c87" }
+- { record: stock.al6061-tb-60x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "94cd65fadc88d03c" }
+- { record: stock.al6061-tb-60x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "444df25a2037afd5" }
+- { record: stock.al6061-tb-80x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "635984cd3b35b75d" }
+- { record: stock.al6061-tb-80x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "c3ba04b996ae7e64" }
+- { record: stock.al6061-tb-80x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "4674f19c1e23714d" }
 - { record: stock.almonds-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "c551e4cd23a7e583" }
 - { record: stock.alumina-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "11b7875554bba99d" }
 - { record: stock.animal-feed-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "b2784debdbcb22ca" }
@@ -1723,6 +1744,21 @@
 - { record: stock.caustic-soda-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "51f0803a38743760" }
 - { record: stock.cement-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "da8209f333ee1dd7" }
 - { record: stock.cfc-pl-3, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "7522fc6ff49275db" }
+- { record: stock.cfc-tb-100x2, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "dfecedb9907389c3" }
+- { record: stock.cfc-tb-100x3, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "a7f1ed0be3229cb6" }
+- { record: stock.cfc-tb-100x5, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "bd4325d1e4feb08d" }
+- { record: stock.cfc-tb-120x3, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "998b2e8c47013e9d" }
+- { record: stock.cfc-tb-120x5, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "5c88e067284dce44" }
+- { record: stock.cfc-tb-160x3, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "a52a616ececedcef" }
+- { record: stock.cfc-tb-160x5, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "35d4c147b677d19d" }
+- { record: stock.cfc-tb-200x5, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "3daa5611cac67efa" }
+- { record: stock.cfc-tb-200x8, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "bb58d75555069679" }
+- { record: stock.cfc-tb-250x5, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "d10637b159f84145" }
+- { record: stock.cfc-tb-250x8, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "50026ca24cedf114" }
+- { record: stock.cfc-tb-60x2, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "5ee0848f4a7a5255" }
+- { record: stock.cfc-tb-60x3, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "d042ed34b8e47ef8" }
+- { record: stock.cfc-tb-80x2, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "670b6f18ece5a91f" }
+- { record: stock.cfc-tb-80x3, at: "2026-10-06T02:06:50Z", status: review, summary: "changed", sha: "88302e3f0aa35b66" }
 - { record: stock.cheese-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "91f0d360e0fd5f94" }
 - { record: stock.chemical-waste-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "f394927d04ffedfa" }
 - { record: stock.chicken-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "9849d976499ea8ab" }
@@ -1875,9 +1911,25 @@
 - { record: stock.st4340-ingot, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "d1ecbddce27b871b" }
 - { record: stock.st4340-pl-3, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "2da0c5b0c5301c30" }
 - { record: stock.st4340-scrap, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "50e3f9149b89d16d" }
+- { record: stock.st4340-tb-100x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "db2eaa0b41d4b261" }
+- { record: stock.st4340-tb-100x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "96aee784acc59f42" }
 - { record: stock.st4340-tb-120x10, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "35bf2e78caa7a136" }
+- { record: stock.st4340-tb-120x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "755c362afd7843f0" }
+- { record: stock.st4340-tb-120x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "d0299ea041b2283c" }
 - { record: stock.st4340-tb-150x10, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "df9bb26cbd80e41e" }
+- { record: stock.st4340-tb-160x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "f232281adfedfcf5" }
+- { record: stock.st4340-tb-160x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "860c8d3dd1eeb724" }
+- { record: stock.st4340-tb-160x8, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "0cd4f48dc91bfb43" }
 - { record: stock.st4340-tb-200x15, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "e51ea1ce94c26705" }
+- { record: stock.st4340-tb-200x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "11bd0da50c9eed8e" }
+- { record: stock.st4340-tb-200x8, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "1c00a49781628816" }
+- { record: stock.st4340-tb-250x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "1cdc5070b43eb196" }
+- { record: stock.st4340-tb-250x8, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "5f30853455648c05" }
+- { record: stock.st4340-tb-60x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "86488b554f1ba0a6" }
+- { record: stock.st4340-tb-60x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "ff5e1e7db1b4b09c" }
+- { record: stock.st4340-tb-80x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "64675baae39f2623" }
+- { record: stock.st4340-tb-80x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "cd8297bbd932511e" }
+- { record: stock.st4340-tb-80x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "4ae583814faa99ed" }
 - { record: stock.sta36-ingot, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "3635f35efe4d5426" }
 - { record: stock.sta36-pl-20, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "557516e0f32043d5" }
 - { record: stock.sta36-pl-20-blank, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "9c5562a4cf9819d5" }
@@ -1898,6 +1950,18 @@
 - { record: stock.ti64-ingot, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "65542f19f7f9157e" }
 - { record: stock.ti64-pl-5, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "2bf0b1c9d3e27524" }
 - { record: stock.ti64-scrap, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "b7848f90bcaea47d" }
+- { record: stock.ti64-tb-100x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "d634102f3e7db89e" }
+- { record: stock.ti64-tb-100x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "2b291dab5fa91e89" }
+- { record: stock.ti64-tb-120x2, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "0012d8e21d483c7b" }
+- { record: stock.ti64-tb-120x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "7dfd9278c877bb2e" }
+- { record: stock.ti64-tb-160x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "6614ba3812bbf66a" }
+- { record: stock.ti64-tb-160x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "79461e3a32e001c0" }
+- { record: stock.ti64-tb-200x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "0f1160bfae51c5f7" }
+- { record: stock.ti64-tb-200x5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "8b5947e12c82a499" }
+- { record: stock.ti64-tb-60x1p5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "0f5b2c2ba897aa58" }
+- { record: stock.ti64-tb-60x2p5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "52b942d0ba745bd2" }
+- { record: stock.ti64-tb-80x1p5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "9e1e9869e3b704f0" }
+- { record: stock.ti64-tb-80x2p5, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "6ff7a6e7a195041a" }
 - { record: stock.tin-concentrate-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "92736cd200f61770" }
 - { record: stock.tin-tungsten-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "510f9a0b216d19c3" }
 - { record: stock.titanomagnetite-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "00b8f78011463846" }

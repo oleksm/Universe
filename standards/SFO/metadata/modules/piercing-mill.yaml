@@ -9,6 +9,134 @@ physical:
   width: 30
   height: 15
 recipes:
+  - makes: stock.st4340-tb-60x2
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-60x3
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-80x2
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-80x3
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-80x5
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-100x3
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-100x5
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-120x3
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-120x5
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-160x3
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-160x5
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-160x8
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-200x5
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-200x8
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-250x5
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-250x8
+    does: "A hot round pierced to a tube, then cold-drawn to its wall."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
   - makes: stock.st4340-tb-120x10
     does: "A hot round driven over a point to open it into a tube."
     inputs:

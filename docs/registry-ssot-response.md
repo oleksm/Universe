@@ -938,3 +938,14 @@ the throat coil: `x-in-game: not made`. When the game fits legs from gear instea
 them from hull parts (`world::legs`), both become real. The ships session should get the mounts,
 the attachments and the gear before building the frame generator; the registry page's "Mounts"
 report lists them.
+
+**Members (for the ships session, 2026-10-06).** The frame stock was three 4340 tubes at 10–15 mm
+wall (27–68 kg/m) and a bar: a bridge's members, which is why a frame came to three times its
+payload. Now **65 round tubes in four materials**, a ladder of diameters (60–300 mm) and walls
+(1.5–10 mm): 4340 steel (piercing mill, cold-drawn thin), 6061 aluminium and Ti-6-4 (a new
+extrusion press), carbon composite (a new filament winder), all made at the Trethi mill, chains
+closed. Lightest 0.98 kg/m (6061 60 × 2), carbon 100 × 3 at 1.44 kg/m takes 427 kN. The page's
+**"Members" report** reads each as an engineer sizes: kg/m, the load it yields at (safety 1.5),
+the pinned length it buckles at under 50 and 200 kN, specific strength. Carbon composite now has a
+modulus and a strength on record (quasi-isotropic AS4/8552, from memory, marked review): the frame
+solver can cut it. The "upgrade over 90%" loop has rungs to climb now.

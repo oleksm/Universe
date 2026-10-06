@@ -19,7 +19,7 @@ lines:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.bar-mill, count: 1 }
   - makes: stock.st4340-tb-120x10
-    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15]
+    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15, stock.st4340-tb-100x3, stock.st4340-tb-100x5, stock.st4340-tb-120x3, stock.st4340-tb-120x5, stock.st4340-tb-160x3, stock.st4340-tb-160x5, stock.st4340-tb-160x8, stock.st4340-tb-200x5, stock.st4340-tb-200x8, stock.st4340-tb-250x5, stock.st4340-tb-250x8, stock.st4340-tb-60x2, stock.st4340-tb-60x3, stock.st4340-tb-80x2, stock.st4340-tb-80x3, stock.st4340-tb-80x5]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 1 }
@@ -41,6 +41,15 @@ lines:
   - makes: stock.cfc-pl-3
     modules:
       - { module: module.composites-works, count: 1 }
+  - makes: stock.al6061-tb-100x2
+    also: [stock.al6061-tb-100x3, stock.al6061-tb-100x5, stock.al6061-tb-120x3, stock.al6061-tb-120x5, stock.al6061-tb-160x3, stock.al6061-tb-160x5, stock.al6061-tb-160x8, stock.al6061-tb-200x5, stock.al6061-tb-200x8, stock.al6061-tb-250x5, stock.al6061-tb-250x8, stock.al6061-tb-300x10, stock.al6061-tb-300x6, stock.al6061-tb-60x2, stock.al6061-tb-60x3, stock.al6061-tb-80x2, stock.al6061-tb-80x3, stock.al6061-tb-80x5, stock.ti64-tb-100x2, stock.ti64-tb-100x3, stock.ti64-tb-120x2, stock.ti64-tb-120x3, stock.ti64-tb-160x3, stock.ti64-tb-160x5, stock.ti64-tb-200x3, stock.ti64-tb-200x5, stock.ti64-tb-60x1p5, stock.ti64-tb-60x2p5, stock.ti64-tb-80x1p5, stock.ti64-tb-80x2p5]
+    modules:
+      - { module: module.reheat-furnace, count: 1 }
+      - { module: module.extrusion-press, count: 1 }
+  - makes: stock.cfc-tb-100x2
+    also: [stock.cfc-tb-100x3, stock.cfc-tb-100x5, stock.cfc-tb-120x3, stock.cfc-tb-120x5, stock.cfc-tb-160x3, stock.cfc-tb-160x5, stock.cfc-tb-200x5, stock.cfc-tb-200x8, stock.cfc-tb-250x5, stock.cfc-tb-250x8, stock.cfc-tb-60x2, stock.cfc-tb-60x3, stock.cfc-tb-80x2, stock.cfc-tb-80x3]
+    modules:
+      - { module: module.filament-winder, count: 1 }
 # Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }

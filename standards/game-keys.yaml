@@ -152,10 +152,12 @@
 - { key: module.dairy, game: "dairy", in: "industry.ron, settlements.ron" }
 - { key: module.deuterium-plant, game: "deuterium-plant", in: "industry.ron, settlements.ron" }
 - { key: module.electronics-works, game: "electronics-works", in: "industry.ron, settlements.ron" }
+- { key: module.extrusion-press, game: "extrusion-press", in: "industry.ron, settlements.ron" }
 - { key: module.feed-mill, game: "feed-mill", in: "industry.ron, settlements.ron" }
 - { key: module.ferroalloy-furnace, game: "ferroalloy-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.fertiliser-works, game: "fertiliser-works", in: "industry.ron, settlements.ron" }
 - { key: module.field, game: "field", in: "industry.ron, settlements.ron" }
+- { key: module.filament-winder, game: "filament-winder", in: "industry.ron, settlements.ron" }
 - { key: module.film-works, game: "film-works", in: "industry.ron, settlements.ron" }
 - { key: module.finishing-line, game: "finishing-line", in: "industry.ron, settlements.ron" }
 - { key: module.fish-farm, game: "fish-farm", in: "industry.ron, settlements.ron" }

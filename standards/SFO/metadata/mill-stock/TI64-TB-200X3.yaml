@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.ti64-tb-200x3
+  code: TI64-TB-200X3
+  name: "Ti-6-4 tube 200 x 3 mm"
+  traded_as: market.metals
+  form: tube
+  temper: "annealed"
+made_from:
+  - item: material.titanium-alloy-ti-6al-4v
+size:
+  diameter: 0.2
+  wall: 0.003
+basis:
+  - { of: [size], tier: invented, review: true, note: "A rung of the member ladder (SFO 13): round tubes a spaceframe is cut from, 8.30 kg a metre. Thin walls for struts, thick for chords and legs; a designer's sizing loop climbs it." }

@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cfc-tb-100x2
+  code: CFC-TB-100X2
+  name: "carbon tube 100 x 2 mm"
+  traded_as: market.metals
+  form: tube
+  temper: "cured"
+made_from:
+  - item: material.carbon-fibre-composite
+size:
+  diameter: 0.1
+  wall: 0.002
+basis:
+  - { of: [size], tier: invented, review: true, note: "A rung of the member ladder (SFO 13): round tubes a spaceframe is cut from, 0.97 kg a metre. Thin walls for struts, thick for chords and legs; a designer's sizing loop climbs it." }

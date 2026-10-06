@@ -2368,6 +2368,26 @@ for e_ in equipment:
     rows.append(row("gap" if over else "ok", e_["identity"]["name"], mk, "; ".join(over) or "within it"))
 report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
 
+# 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
+# at which each yields (with the safety factor 1.5), and the pinned length at which it buckles under 50 and 200 kN (Euler).
+rows = []
+for ms in sorted(mill_stock, key=lambda m_: ((m_.get("made_from") or {}).get("material", ""), (m_.get("size") or {}).get("diameter", 0), (m_.get("size") or {}).get("wall", 0))):
+    size_ = ms.get("size") or {}
+    if (ms.get("made_from") or {}).get("form") != "tube" or not size_.get("diameter") or not size_.get("wall"):
+        continue
+    mat = next((m for m in materials if m.get("slug") == ms["made_from"].get("material")), None) or {}
+    mech = mat.get("mechanical") or {}
+    d_, w_ = size_["diameter"], size_["wall"]
+    d_m, w_m = (d_, w_) if d_ < 1 else (d_ / 1000, w_ / 1000)      # (the view keeps sizes in mm)
+    area = math.pi * (d_m ** 2 - (d_m - 2 * w_m) ** 2) / 4
+    inertia = math.pi * (d_m ** 4 - (d_m - 2 * w_m) ** 4) / 64
+    E_, sy = mech.get("youngs_modulus"), mech.get("yield_strength")      # (the view keeps GPa and MPa)
+    E_, sy = (E_ * 1e9 if E_ else E_), (sy * 1e6 if sy else sy)
+    yields = f"{area * sy / 1.5 / 1e3:,.0f} kN" if sy else "no yield strength on record"
+    euler = lambda P: f"{math.pi * math.sqrt(E_ * inertia / P):.1f} m" if E_ else "no modulus on record"
+    rows.append(row("ok" if E_ and sy else "note", (ms.get("identity") or {}).get("name", ms["slug"]), f"{d_m * 1000:g} x {w_m * 1000:g}", f"{ms.get('weight', 0):.2f}", yields, euler(50e3), euler(200e3), f"{sy / (mat.get('mass') or {}).get('density', 1) / 1e3:.0f}" if sy else ""))
+report("members", "Members: the tubes a frame is cut from", "SFO 13: every round tube in stock, read as an engineer sizes a frame. Yields: the axial load at which it yields with the safety factor 1.5. Buckles: the pinned length at which Euler buckling takes it under 50 kN and under 200 kN; a longer member needs a bigger tube or a brace. Specific strength: yield strength over density, kN m per kg.", ["Tube", "mm", "kg/m", "Yields at", "Buckles at 50 kN", "Buckles at 200 kN", "kN m/kg"], rows)
+
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
 _fitted = lambda e_: any(str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])
