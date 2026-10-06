@@ -853,6 +853,68 @@ impl Heights {
     }
 }
 
+/// A world in the store's index (`worlds/releases.json`: every world the planet simulation has
+/// released, a game body's or not).
+#[derive(Clone, Debug)]
+pub struct Release {
+    pub world_id: String,
+    /// Its body in the game (`body.<system>.<name>`), if it's one of the game's.
+    pub body: Option<String>,
+    /// "current" or "superseded".
+    pub status: String,
+    /// Its name and a line about it (the bake's `world.json`), where it has a surface.
+    pub name: String,
+    pub subtitle: String,
+    /// Its figures (the survey's summary): radius (m), land (%), deposits, districts.
+    pub radius: f64,
+    pub land_pct: f64,
+    pub deposits: u64,
+    pub districts: u64,
+    /// Its surface version, if it has one.
+    pub surface: Option<u32>,
+}
+
+/// The worlds in the store (none without a store), current first.
+pub fn releases() -> Vec<Release> {
+    let Some(store) = store() else { return Vec::new() };
+    let dir = store.join("worlds");
+    let Ok(bytes) = std::fs::read(dir.join("releases.json")) else { return Vec::new() };
+    let Ok(index) = serde_json::from_slice::<serde_json::Value>(&bytes) else { return Vec::new() };
+    let read = |rel: &str| -> Option<serde_json::Value> { serde_json::from_slice(&std::fs::read(dir.join(rel)).ok()?).ok() };
+    let mut out: Vec<Release> = index
+        .get("worlds")
+        .and_then(|w| w.as_array())
+        .map(|ws| {
+            ws.iter()
+                .filter_map(|w| {
+                    let id = w.get("world_id")?.as_str()?.to_string();
+                    let pkg = |k: &str| w.get("packages")?.get(k).filter(|p| !p.is_null()).cloned();
+                    let folder = |p: &serde_json::Value| p.get("manifest").and_then(|m| m.as_str()).and_then(|m| m.rsplit_once('/')).map(|(f, _)| f.to_string());
+                    let summary = pkg("survey").and_then(|p| folder(&p)).and_then(|f| read(&format!("{f}/summary.json")));
+                    let surface = pkg("surface");
+                    let world = surface.as_ref().and_then(folder).and_then(|f| read(&format!("{f}/world.json")));
+                    let num = |v: &Option<serde_json::Value>, k: &str| v.as_ref().and_then(|v| v.get(k)).and_then(|x| x.as_f64()).unwrap_or(0.0);
+                    let txt = |v: &Option<serde_json::Value>, k: &str| v.as_ref().and_then(|v| v.get(k)).and_then(|x| x.as_str()).unwrap_or_default().to_string();
+                    Some(Release {
+                        body: w.get("body").and_then(|b| b.as_str()).map(str::to_string),
+                        status: w.get("status").and_then(|s| s.as_str()).unwrap_or("current").to_string(),
+                        name: Some(txt(&world, "name")).filter(|n| !n.is_empty()).unwrap_or_else(|| id.clone()),
+                        subtitle: txt(&world, "subtitle"),
+                        radius: num(&summary, "radius_m"),
+                        land_pct: num(&summary, "land_pct"),
+                        deposits: num(&summary, "deposits") as u64,
+                        districts: num(&summary, "districts") as u64,
+                        surface: surface.as_ref().and_then(|s| s.get("version")).and_then(|v| v.as_u64()).map(|v| v as u32),
+                        world_id: id,
+                    })
+                })
+                .collect()
+        })
+        .unwrap_or_default();
+    out.sort_by_key(|r| (r.status != "current", r.world_id.clone()));
+    out
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
