@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.system
+  name: Star system
+  about: 'The unit of ownership: one node owns whole systems, as many as fit its realtime budget; a system is never split
+    across nodes.'
+parent: clock.region
+scope: system
+coupling: slow_loose
+trigger:
+  kind: group
+runs:
+- holds the system's clocks and owns their placement on the node
+- its game time is exact ticks; only wall clock drifts against other nodes, reconciled at the region step by pacing, never
+  by stretching a tick
+reads:
+- clock.region
+rule: An empty system costs its bodies' slow steps and nothing else.
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

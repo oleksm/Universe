@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.economy
+  name: Economy
+  about: A settlement's production and consumption; local to its body, so a body's branch is one unit of work.
+parent: clock.planetary
+scope: settlement
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 10.0
+runs:
+- recipes at their kg/s times the period; power shares
+- people's aims and consumption by the needs' rates
+- construction, wear by life, mines drawing down a claimed deposit
+- stock in and out of storage
+reads:
+- clock.planetary
+- clock.celestial
+posts:
+- clock.market
+rule: 'What crosses bodies is hauled stock (a ship, on rails or realtime) or a message (a board): nothing fast. A body per
+  CPU.'
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The registry's rates are per second and life in seconds, so the period is pure configuration; the user's choice of
+    10 s, 2026-10-06, replaces the engine's 600 s step.

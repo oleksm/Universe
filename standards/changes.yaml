@@ -143,6 +143,17 @@
 - { record: building.tavern, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "282560f15925cd84" }
 - { record: building.theatre, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "243c58535d37bce0" }
 - { record: building.watch-house, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "bf926b6a1e4a58e2" }
+- { record: clock.celestial, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "8df29c397e0e2f14" }
+- { record: clock.economy, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a74ea76e6a44b7e0" }
+- { record: clock.galaxy, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "ad0ef89e8c0227c5" }
+- { record: clock.machinery, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "ba03d5e134526572" }
+- { record: clock.market, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "ca939ab61534107d" }
+- { record: clock.npc-lane, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "1670b3460cff37a3" }
+- { record: clock.planetary, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "1252fde252f6ce2c" }
+- { record: clock.rails, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "86ca678e93b153c1" }
+- { record: clock.realtime, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "b56a1817c49400e6" }
+- { record: clock.region, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "aea4b21e2b51cd84" }
+- { record: clock.system, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a1ce985910bb5ae9" }
 - { record: deposit-type.bauxite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d94a18af510f0854" }
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
@@ -1942,6 +1953,7 @@
 - { record: rock-unit.rift-basalt, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, basis, also", sha: "262f865359e51ca3" }
 - { record: rock-unit.sandstone-shale, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, basis", sha: "9c7f1df47052a24c" }
 - { record: rock-unit.schist, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "1387ef14c0828807" }
+- { record: root.engine, at: "2026-10-06T22:07:52Z", status: "", summary: "first tracked", sha: "c924407d8278643f" }
 - { record: root.local-administration, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "44ac9a3a3dfb6d34" }
 - { record: root.maker-house, at: "2026-10-05T18:39:55Z", status: "", summary: "changed: identity, name", sha: "99987243a02e746e" }
 - { record: seeding.asteroids, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8a7b9174fcf77850" }

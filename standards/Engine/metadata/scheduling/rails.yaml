@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.rails
+  name: Rails
+  about: 'Ships that are functions of time: coasting, or in FTL cruise.'
+parent: clock.system
+scope: craft
+coupling: fast_loose
+trigger:
+  kind: event
+  fires_on:
+  - a command arrives for the ship
+  - 'a physics wake fires: closest approach to a collider or a bubble, atmosphere entry, a hand-over'
+  - 'an FTL cruise reaches its exit: arrival, or its line enters a body''s sphere or a bubble''s reach'
+runs:
+- a coasting ship as an orbit (or a line in deep space) valid from tick t; position a pure function
+- FTL cruise as a straight line of time with a scheduled exit; visible on every sensor as a function
+- wakes re-checked whenever a bubble's powered set or bounds change, with horizon reach + v*T + a_max*T^2/2
+reads:
+- clock.celestial
+posts:
+- clock.realtime
+rule: 'Wakes come from physics or an arriving command only; a pilot''s next think is the client''s and never a core wake (the
+  rule in stone: the core holds no intentions). Idle, a rails ship costs nothing a tick.'
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.galaxy
+  name: Galaxy
+  about: 'The slowest clock: the star chart and what is true of the whole galaxy.'
+scope: galaxy
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 86400.0
+runs:
+- publish the star chart (positions of all stars; proper motion when it exists, a function of time)
+- 'the calendar: world time''s authority at the fixed 1x scale'
+- 'registry releases: standards, products, categories'
+- 'galaxy-wide records: law that follows a ship, the census of fleets, insurers'' books'
+rule: Nothing a player feels is ever on this path.
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: 'Stars move about 20 km/s relative to each other: 1.7 million km a day, a hundred-millionth of a light year; a daily
+    chart is right and shows nothing for centuries at 1x. The user''s design, 2026-10-06.'
