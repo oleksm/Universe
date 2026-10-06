@@ -104,6 +104,7 @@ impl Universe {
         };
         let system_of = |u: &Self, id: usize| u.ship_by_id(id).map(|s| s.1);
         let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
+        let mut pirates: Vec<universe_services::law::Charge> = Vec::new();
         for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
             for e in events {
                 let index = self.log.len() as u32;
@@ -116,9 +117,16 @@ impl Universe {
                         && r.new
                     {
                         notices.push((r.ship, ShipEvent::Aggressed { until: r.until }));
+                        // (Where the system has a law: charged with piracy.)
+                        if let Some(system) = system_of(self, id).filter(|&s| self.has_law(s)) {
+                            pirates.push(universe_services::law::Charge { ship: r.ship, system, offence: universe_world::registry::Offence::Piracy, time: now, cause: r.cause, against: Some(id as _) });
+                        }
                     }
                 }
             }
+        }
+        for c in pirates {
+            self.charge(c);
         }
         for (ship, notice) in notices {
             match ship {
@@ -224,6 +232,10 @@ mod tests {
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
+        // Under Treistun's law: piracy for opening fire on it, murder for bringing it down.
+        let charged: Vec<_> = u.law.charges_of(crate::combat::PLAYER as _).map(|c| c.offence).collect();
+        use universe_world::registry::Offence;
+        assert!(charged.contains(&Offence::Piracy) && charged.contains(&Offence::Murder), "{charged:?}");
     }
 
 }

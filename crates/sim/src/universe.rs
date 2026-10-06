@@ -351,6 +351,7 @@ impl Universe {
         }
         self.world.time = t1;
         universe_prof::time("sim/combat", || self.combat(t1 - t0));
+        self.judge(t1);
         // Traffic control looks around ten times a second (pads freed when
         // their ships leave, corridors when they're through): plenty, at a
         // sixth of the cost.
@@ -437,7 +438,7 @@ impl Universe {
         // one went with it), because of the respawn, as logged.
         if let Some(cause) = self.logged(id, |e| matches!(e, ShipEvent::Respawned)) {
             let brought_on = self.brought_on(id);
-            self.law.forget(id);
+            self.law.forget(id as _, self.world.time);
             // Its debt with the system where it comes back paid by its loss:
             // no longer an enemy there (but no friend).
             if let Some(system) = self.ship_by_id(id).map(|s| s.1)
@@ -818,22 +819,16 @@ impl Universe {
         self.insure(brought_on, universe_protocol::Cause::Rules);
     }
 
-    /// The offence ship `id` brought its loss on by, if any: fair game for
-    /// firing on the innocent is piracy.
-    pub(crate) fn brought_on(&self, id: usize) -> Option<universe_world::registry::Offence> {
-        self.law.aggressed(id as universe_protocol::BodyId, self.world.time).then_some(universe_world::registry::Offence::Piracy)
-    }
-
     /// The player's ship lost and replaced by its insurer, on its terms
     /// (`world::order::insurer`): the excess paid, the same hull and fit
     /// delivered parked where it says (a yard). A loss it refuses (brought on
     /// by an offence it names), or an excess the pilot can't pay: the basic
     /// ship instead, delivered the same. (NPCs' operator stands its own losses.)
-    fn insure(&mut self, brought_on: Option<universe_world::registry::Offence>, cause: universe_protocol::Cause) {
+    fn insure(&mut self, brought_on: Vec<universe_world::registry::Offence>, cause: universe_protocol::Cause) {
         use universe_services::{Asset, Party};
         let me = Party::Pilot(crate::combat::PLAYER);
         let terms = universe_world::order::insurer();
-        let refused = brought_on.filter(|o| terms.is_some_and(|(_, t)| t.refuses.contains(o)));
+        let refused = brought_on.into_iter().find(|o| terms.is_some_and(|(_, t)| t.refuses.contains(o)));
         let excess = terms.map_or(0.0, |(_, t)| t.excess) * Universe::ship_value(&self.ship);
         let paid = match terms {
             Some((org, _)) if refused.is_none() => {

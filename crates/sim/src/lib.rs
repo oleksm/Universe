@@ -21,6 +21,7 @@ pub mod miner;
 pub mod news;
 pub mod newsroom;
 pub mod operator;
+mod order;
 pub mod pilots;
 pub mod setup;
 pub mod standing;

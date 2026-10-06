@@ -58,4 +58,6 @@ pub enum Event {
     /// basic ship); the offence it refused for; the port it was delivered to
     /// (empty: none, left by the home station).
     Insured { excess: Option<f64>, refused: Option<String>, at: String },
+    /// Charged with an offence under the law of the system named.
+    Charged { offence: String, system: String },
 }
