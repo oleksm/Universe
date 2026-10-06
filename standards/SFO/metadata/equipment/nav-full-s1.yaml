@@ -7,11 +7,15 @@ identity:
   slot: avionics
   description: "Navigation aids."
 size_class: 1
+fits: mount.avionics-s1
 physical:
-  mass: 150
-  volume: 0.3
+  mass: 20.0
+  volume: 0.04
+  length: 0.4
+  width: 0.3
+  height: 0.33
 needs:
-  power: 20000
+  power: 140.0
 built_of:
   parts: nav-full-s1
 making:
@@ -24,3 +28,5 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a computer, its sensors and a case." }
+  - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "One computer, its sensors, and more to run. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
+  - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }

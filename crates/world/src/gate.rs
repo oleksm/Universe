@@ -10,11 +10,39 @@ use universe_physics::{Frame, Relative, RigidBody, Ring};
 
 use crate::ship::SHIP_RADIUS;
 use crate::system::StarSystem;
-// (Its constants are the physics sheet's: the Dogma registry, standards/Dogma.)
-pub use crate::sheet::{GATE_RADIUS, RING_TUBE};
+/// A ring's size, as its records have it (every class alike): its
+/// centreline's radius (half `size.opening`), and its structure's half
+/// thickness (half `size.thickness`), m.
+fn size() -> (f64, f64) {
+    static SIZE: std::sync::OnceLock<(f64, f64)> = std::sync::OnceLock::new();
+    *SIZE.get_or_init(|| {
+        let g = crate::registry::registry().gates.first().expect("the registry has a gate ring");
+        (g.size.opening.expect("a ring's opening") / 2.0, g.size.thickness.expect("a ring's thickness") / 2.0)
+    })
+}
+
+/// What crossing a tube `span` m long costs a ship of `mass` kg at its
+/// natural pace (credits): the energy it takes (Dogma's Tube law), at the
+/// power price, paid to the gate's administration.
+pub fn crossing_toll(mass: f64, span: f64) -> f64 {
+    let energy = universe_physics::hyper::tube_crossing_energy(mass, span, universe_physics::hyper::tube_natural_time(mass, span));
+    energy / 3.6e9 * crate::goods::POWER_PRICE
+}
+
+/// A ring's centreline radius (m).
+pub fn gate_radius() -> f64 {
+    size().0
+}
+
+/// Half a ring's structure's thickness (m).
+pub fn ring_tube() -> f64 {
+    size().1
+}
 
 /// The ring's shape, for Dogma; its opening is the trigger.
-pub const RING: Ring = Ring { radius: GATE_RADIUS, tube: RING_TUBE };
+pub fn ring() -> Ring {
+    Ring { radius: gate_radius(), tube: ring_tube() }
+}
 
 /// A gate's pose and motion at one instant, in the system frame.
 #[derive(Clone, Copy, Debug)]
@@ -61,7 +89,7 @@ pub fn emerge(frame: &GateFrame, local_velocity: DVec3, local_offset: DVec3, loc
     let half = DQuat::from_rotation_x(std::f64::consts::PI);
     let (local_velocity, local_offset, local_orientation) = (half * local_velocity, half * local_offset, half * local_orientation);
     let out = if local_velocity.y >= 0.0 { 1.0 } else { -1.0 };
-    let clear = RING_TUBE + SHIP_RADIUS + 50.0;
+    let clear = ring_tube() + SHIP_RADIUS + 50.0;
     let arrival = Relative { position: local_offset + DVec3::Y * out * clear, velocity: local_velocity, orientation: local_orientation };
     arrival.place(&frame.frame(), rigid);
     rigid.angular_velocity = DVec3::ZERO;
@@ -74,7 +102,7 @@ mod tests {
 
     #[test]
     fn clipping_the_ring_or_going_too_fast_is_fatal() {
-        for (label, offset, speed) in [("ring", GATE_RADIUS, 50.0), ("fast", 0.0, 500.0)] {
+        for (label, offset, speed) in [("ring", gate_radius(), 50.0), ("fast", 0.0, 500.0)] {
             let mut p = Probe::new(1984);
             let home = p.world.home_system;
             let sys = p.sys();
@@ -135,6 +163,9 @@ mod tests {
         }
         let d = duration.unwrap_or_else(|| panic!("into the tube; events {:?}", p.events));
         assert!((d - expected).abs() < 1e-6 * expected, "{d} s against {expected} s");
+        // Its crossing asked for: the Tube law's energy for its mass and the span, at the power price.
+        let toll = crossing_toll(p.ship.mass(), span);
+        assert!(toll > 0.0 && p.events.iter().any(|e| matches!(e, crate::events::ShipEvent::TubeToll { credits } if (credits - toll).abs() < 1e-6 * toll)), "{toll} CR; events {:?}", p.events);
         for _ in 0..(d / (100.0 / 60.0)) as usize + 20 {
             p.step(1.0 / 60.0, 100.0);
         }

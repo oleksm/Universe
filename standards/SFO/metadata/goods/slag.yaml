@@ -2,7 +2,6 @@
 identity:
   key: good.slag
   name: Slag
-  traded_as: market.minerals
   kind: by-product
   description: "The glassy crust of lime and impurities skimmed off molten metal."
 physical:

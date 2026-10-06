@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is textile waste as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.textile-waste-bulk
+  traded_as: market.textiles
+  code: TEXTILE-WASTE-BULK
+  name: "Textile waste, in bulk"
+  form: bulk
+made_from:
+  - item: good.textile-waste

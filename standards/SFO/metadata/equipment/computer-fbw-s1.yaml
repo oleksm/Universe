@@ -7,11 +7,15 @@ identity:
   slot: computer
   description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
 size_class: 1
+fits: mount.computer-s1
 physical:
-  mass: 200
-  volume: 0.4
+  mass: 30.0
+  volume: 0.05
+  length: 0.5
+  width: 0.4
+  height: 0.25
 needs:
-  power: 50000
+  power: 200.0
 built_of:
   parts: computer-fbw-s1
 making:
@@ -23,3 +27,5 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: three computers that check each other, the instruments that tell them how the ship is turning, and the drivers that pass their word to the thrusters." }
+  - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "Three flight computers, three inertial units and three star trackers: a spacecraft's computer draws 10 W, a star tracker weighs 3 kg, an inertial unit 4 kg. Half a cubic metre of rack. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
+  - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }

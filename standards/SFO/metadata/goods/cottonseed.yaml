@@ -2,7 +2,6 @@
 identity:
   key: good.cottonseed
   name: "Cottonseed"
-  traded_as: market.biologics
   kind: by-product
   description: "The seed the lint is pulled off: two thirds of the crop."
 physical:

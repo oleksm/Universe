@@ -2,7 +2,6 @@
 identity:
   key: good.olive-oil
   name: "Olive oil"
-  traded_as: market.food
   kind: product
   description: "Oil pressed from olives."
 physical:

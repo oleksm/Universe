@@ -168,6 +168,13 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(0)));
     assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(0)));
     assert!(u.ledger.balanced(), "nothing made or lost");
+    // A jolt harder than a part takes (SFO 15) breaks it in the hold; ore takes any jolt.
+    let part = u.world.goods.iter().find(|g| g.shock_limit.is_some_and(|l| l < 15.0 * 9.80665)).map(|g| g.id).expect("a part that takes under 15 g");
+    u.ledger.settle(Party::Pilot(0), Asset::Goods(part), 2.0, u.tick, universe_sim::protocol::Cause::Rules);
+    let broken = u.book_jolts(0, &[universe_sim::Event::Ship(universe_sim::world::ShipEvent::HardLanding { sink: 9.0, jolt: 15.0 })]);
+    assert!(broken.iter().any(|e| matches!(e, universe_sim::world::ShipEvent::CargoBroken { item, units: 2 } if *item == part)), "{broken:?}");
+    assert!(u.hold().iter().all(|(i, _)| *i != part) && u.hold().iter().any(|(i, _)| *i == item), "the part broke, the plate held: {:?}", u.hold());
+    assert!(u.ledger.balanced());
     // Undocked, the market won't trade.
     let far = u.ship.position + DVec3::X * 50_000.0;
     place_player(&mut u, far);
@@ -331,11 +338,12 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
     let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.rack.s2")));
+    let before = u.ship.spec().dry_mass;
     let cost = u.refit("cargo", Some(m("equipment.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
-    assert_eq!(u.ship.spec().dry_mass, 61_540.0 - 1500.0 + 800.0, "(with its 1.5 t capacitor bank and 40 kg comm)");
+    assert!((u.ship.spec().dry_mass - (before - 1500.0 + 800.0)).abs() < 1e-6, "the 1.5 t racks out, the 0.8 t in");
     // At Port Trethi's market: a rack lying in its warehouse goes in, the one taken out goes
     // into the warehouse; a hull it hasn't got isn't sold.
     let trethi = Facility::Spaceport(u.ship_system().spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());

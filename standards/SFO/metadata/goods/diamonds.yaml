@@ -2,7 +2,6 @@
 identity:
   key: good.diamonds
   name: "Diamonds"
-  traded_as: market.minerals
   kind: raw
   description: "Rough diamonds, as sorted from the rock: the hardest thing there is, for cutting and for show."
 physical:
@@ -13,3 +12,4 @@ source:
   note: "Half a carat from each tonne of the pipe's rock."
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [source], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/kimberlite.yaml", note: "Half a carat a tonne: the planet simulation's typical grade for a kimberlite." }

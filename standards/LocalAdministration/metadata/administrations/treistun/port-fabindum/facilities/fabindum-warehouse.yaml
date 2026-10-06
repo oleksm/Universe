@@ -7,6 +7,7 @@ kind: warehouse
 parcel: parcel.treistun.port-fabindum.1
 exchange: org.treistun-exchange
 modules:
+  - { module: module.cold-store, count: 1 }
   - { module: module.general-warehouse, count: 2 }
   - { module: module.tank-farm, count: 2 }
   - { module: module.ore-yard, count: 1 }
@@ -14,3 +15,16 @@ modules:
 # What lies in its store at day 0 (seed state: what happens to it after is the economy's). 100 t of deuterium, for the ships that call: twenty-five fills of a 4 t tank. Chosen.
 stock:
   - { item: stock.deuterium-liq, quantity: 100000.0 }
+# Thirty days of food for its people at 1.5 kg a head a day, in a plain basket of what keeps and what the temperate farms grow. Chosen.
+  - { item: stock.flour-bulk, quantity: 33800.0 }
+  - { item: stock.potatoes-bulk, quantity: 27000.0 }
+  - { item: stock.cabbage-bulk, quantity: 6750.0 }
+  - { item: stock.carrots-bulk, quantity: 6750.0 }
+  - { item: stock.onions-bulk, quantity: 6750.0 }
+  - { item: stock.apples-bulk, quantity: 13500.0 }
+  - { item: stock.cheese-bulk, quantity: 6750.0 }
+  - { item: stock.beef-bulk, quantity: 6750.0 }
+  - { item: stock.pork-bulk, quantity: 6750.0 }
+  - { item: stock.chicken-bulk, quantity: 6750.0 }
+  - { item: stock.sugar-bulk, quantity: 6750.0 }
+  - { item: stock.vegetable-oil-bulk, quantity: 6750.0 }

@@ -18,21 +18,21 @@ capacity:
   hold: 1200000
 model: assets/models/mc07.glb
 slots:
-  - { name: power, kind: power, size: 3 }
-  - { name: drive, kind: drive, size: 3 }
-  - { name: thrusters, kind: thrusters, size: 3 }
-  - { name: lift, kind: lift, size: 3 }
-  - { name: tank, kind: tank, size: 4 }
-  - { name: hyperdrive, kind: hyperdrive, size: 3 }
-  - { name: computer, kind: computer, size: 1 }
-  - { name: transponder, kind: transponder, size: 1 }
-  - { name: sensors, kind: sensors, size: 1 }
-  - { name: comm, kind: comm, size: 1 }
-  - { name: life, kind: life_support, size: 2 }
-  - { name: avionics, kind: avionics, size: 1 }
-  - { name: cargo, kind: cargo, size: 4 }
-  - { name: hardpoint_1, kind: hardpoint, size: 1 }
-  - { name: hardpoint_2, kind: hardpoint, size: 1 }
+  - { name: power, kind: power, size: 3, mount: mount.power-s3 }
+  - { name: drive, kind: drive, size: 3, mount: mount.drive-s3 }
+  - { name: thrusters, kind: thrusters, size: 3, mount: mount.thrusters-s3 }
+  - { name: lift, kind: lift, size: 3, mount: mount.lift-s3 }
+  - { name: tank, kind: tank, size: 4, mount: mount.tank-s4 }
+  - { name: hyperdrive, kind: hyperdrive, size: 3, mount: mount.hyperdrive-s3 }
+  - { name: computer, kind: computer, size: 1, mount: mount.computer-s1 }
+  - { name: transponder, kind: transponder, size: 1, mount: mount.transponder-s1 }
+  - { name: sensors, kind: sensors, size: 1, mount: mount.sensors-s1 }
+  - { name: comm, kind: comm, size: 1, mount: mount.comm-s1 }
+  - { name: life, kind: life_support, size: 2, mount: mount.life-support-s2 }
+  - { name: avionics, kind: avionics, size: 1, mount: mount.avionics-s1 }
+  - { name: cargo, kind: cargo, size: 4, mount: mount.cargo-s4 }
+  - { name: hardpoint_1, kind: hardpoint, size: 1, mount: mount.hardpoint-s1 }
+  - { name: hardpoint_2, kind: hardpoint, size: 1, mount: mount.hardpoint-s1 }
 thrusters:
   - { nozzle: nozzle_lift_0, slot: lift, share: 1 }
   - { nozzle: nozzle_lift_1, slot: lift, share: 1 }

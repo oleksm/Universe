@@ -2,7 +2,6 @@
 identity:
   key: good.olives
   name: "Olives"
-  traded_as: market.food
   kind: product
   description: "For the table and for oil."
 physical:

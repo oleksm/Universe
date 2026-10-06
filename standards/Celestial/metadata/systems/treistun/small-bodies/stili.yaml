@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.treistun.stili, name: Stili, kind: captured moon, parent: body.treistun.treistun-h, about: 'A small body
+    its giant caught: far out, on a tilted and stretched orbit, going round backward.'}
+orbit: {semi_major_axis: 6419260000.0, eccentricity: 0.4569, period: 37600156.8, inclination: 171.233}
+physical: {mass: 30014000000000.0, radius: 1622.83, density: 1677, day: 20845.8}
+rock: {class: rock-class.carbonaceous, structure: rubble pile}

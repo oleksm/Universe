@@ -1,6 +1,6 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
-# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
-provenance: seeded
+# Curated: its air is said to be breathable, which the seed does not say. The rest is as the seed made it.
+provenance: curated
 identity:
   key: body.treistun.treistun-e
   name: Treistun e
@@ -19,4 +19,4 @@ surface:
   relief: 4397
   mean_temperature: 263.6
   colour: [0.3, 0.6, 1.0]
-atmosphere: {surface_density: 1.225, scale_height: 8680.0, top: 121500.0}
+atmosphere: {surface_density: 1.225, scale_height: 8680.0, top: 121500.0, breathable: true}

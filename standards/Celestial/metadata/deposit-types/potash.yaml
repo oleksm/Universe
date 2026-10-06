@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.potash
+  name: "Potash salts"
+  about: "The last salts to settle when a sea dries: rarer than rock salt, and above it."
+sim: { key: potash, code: POT }
+formed_by: sea
+carries:
+  - { item: element.k, grade: 0.1245, said_as: "K2O %" }
+  - { item: element.mg, grade: 0.01809, said_as: "MgO %" }
+ore: good.potash-ore
+shape: strata
+size:
+  median: 400000000000.0
+  spread: 1.4
+  cap: 10000000000000.0
+footprint: { length: 15000.0, width: 10000.0 }
+forms_at: 0.0
+cluster:
+  deposits: 3.0
+  along: 50000.0
+  across: 30000.0
+seen_by:
+  - { method: gravity, reach: 800.0 }
+  - { method: radiometrics, reach: 1.0 }
+counted:
+  test_world: 31
+  earth: 40
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }
+  - { of: [counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4", note: "Deposits in one test world, against about how many are known on Earth." }

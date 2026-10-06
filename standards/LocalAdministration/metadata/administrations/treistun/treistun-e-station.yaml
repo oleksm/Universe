@@ -4,6 +4,7 @@ identity:
   name: "Treistun e Station"
 kind: settlement
 at: body.treistun.treistun-e
+structure: structure.platform
 population: 25000
 about: "The system's station, in orbit round Treistun e. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."
 story:

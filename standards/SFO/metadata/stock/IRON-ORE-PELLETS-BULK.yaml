@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is iron ore pellets as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.iron-ore-pellets-bulk
+  traded_as: market.metals
+  code: IRON-ORE-PELLETS-BULK
+  name: "Iron ore pellets, in bulk"
+  form: bulk
+made_from:
+  - item: good.iron-ore-pellets

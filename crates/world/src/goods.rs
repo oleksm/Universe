@@ -79,6 +79,8 @@ pub struct Item {
     pub mass: f64,
     /// As stowed in a hold (t/m³).
     pub bulk_density: f64,
+    /// The hardest jolt it takes while it's carried (m/s²; None: the registry doesn't say).
+    pub shock_limit: Option<f64>,
 }
 
 impl Item {
@@ -101,23 +103,37 @@ const STOWED: f64 = 1.0;
 /// The stock catalogue, from the registry and the game's prices (by key, a
 /// unit's), and every module's recipes over it (see `recipes`). Bulk stock
 /// is counted by the tonne; parts, equipment and hulls by the piece.
-pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<String, f64>, goods: &crate::content::Registry<GoodsKind>) -> (Vec<Item>, HashMap<String, Vec<crate::recipes::Recipe>>) {
+pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<String, f64>, goods: &crate::content::Registry<GoodsKind>) -> (Vec<Item>, HashMap<String, Vec<crate::recipes::Recipe>>, HashMap<String, usize>) {
     let mut keys: Vec<String> = reg.goods.iter().map(|g| g.identity.key.clone()).chain(reg.stock.iter().map(|s| s.identity.key.clone())).collect();
     let named = reg.modules.iter().flat_map(|m| m.recipes.iter().flat_map(|r| r.inputs.iter().chain(&r.outputs).map(|a| a.item.clone()).chain([r.makes.clone()])).chain(m.generation.iter().flat_map(|g| g.burns.iter().map(|b| b.item.clone()))));
     keys.extend(named.filter(|k| k.starts_with("element.") || k.starts_with("material.") || k.starts_with("good.") || k.starts_with("stock.")));
     keys.extend(reg.parts.iter().map(|p| p.identity.key.clone()));
     keys.extend(reg.equipment.iter().map(|e| e.identity.key.clone()));
     keys.extend(reg.hulls.iter().map(|h| h.identity.key.clone()));
+    // (What is sold is stock: a good that has a stock of its own in bulk is that stock, wherever
+    // it lies, is made or is carried. One thing, not two.)
+    let bulk: HashMap<String, String> = reg.stock.iter().filter(|s| s.identity.form == "bulk").filter_map(|s| Some((s.made_from.first()?.item.clone(), s.identity.key.clone()))).filter(|(g, _)| g.starts_with("good.")).collect();
+    keys.retain(|k| !bulk.contains_key(k));
     keys.sort();
     keys.dedup();
-    let index: HashMap<String, usize> = keys.iter().enumerate().map(|(i, k)| (k.clone(), i)).collect();
+    let mut index: HashMap<String, usize> = keys.iter().enumerate().map(|(i, k)| (k.clone(), i)).collect();
+    for (good, stock) in &bulk {
+        if let Some(&i) = index.get(stock) {
+            index.insert(good.clone(), i);
+        }
+    }
     // A unit's mass (kg): a tonne of bulk stock; one part, product or hull (a hull: its parts').
+    // (A part made of parts weighs what they do: in its folder, by their counts.)
+    fn of_parts(reg: &crate::registry::Registry, key: &str) -> Option<f64> {
+        let m: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
+        (m > 0.0).then_some(m)
+    }
     let piece = |key: &str| -> Option<f64> {
-        let p = reg.parts.iter().find(|p| p.identity.key == key).map(|p| p.physical.mass);
+        let p = reg.parts.iter().find(|p| p.identity.key == key).map(|p| p.physical.mass.or_else(|| of_parts(reg, key)));
         let e = || reg.equipment.iter().find(|e| e.identity.key == key).map(|e| e.physical.mass);
         let h = || {
             let h = reg.hulls.iter().find(|h| h.identity.key == key)?;
-            let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass? * *n as f64)).sum();
+            let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
             Some(h.physical.mass.or((parts > 0.0).then_some(parts)))
         };
         p.or_else(e).or_else(h).flatten()
@@ -157,7 +173,9 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
         .iter()
         .enumerate()
         .map(|(id, key)| {
-            let physical = reg.goods.iter().find(|g| &g.identity.key == key).map(|g| &g.physical).or_else(|| reg.stock.iter().find(|s| &s.identity.key == key).map(|s| &s.physical));
+            // (A stock in bulk lies as its good does, where it doesn't say.)
+            let made_of = bulk.iter().find(|(_, s)| *s == key).and_then(|(g, _)| reg.goods.iter().find(|x| &x.identity.key == g)).map(|g| &g.physical);
+            let physical = reg.goods.iter().find(|g| &g.identity.key == key).map(|g| &g.physical).or_else(|| reg.stock.iter().find(|s| &s.identity.key == key).map(|s| &s.physical).filter(|p| p.bulk_density.is_some() || made_of.is_none())).or(made_of);
             let c = category(key);
             let bulk = physical
                 .and_then(|p| p.bulk_density.or_else(|| Some(p.mass? / p.volume?)))
@@ -169,10 +187,11 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
             // (A part by its code too: every product has a first wall.)
             let name = reg.name(key).unwrap_or(key).to_string();
             let name = reg.parts.iter().find(|p| &p.identity.key == key).map_or(name.clone(), |p| format!("{} {name}", p.identity.code));
-            Item { id, key: key.clone(), name, category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
+            let shock_limit = physical.and_then(|p| p.shock_limit).or_else(|| reg.parts.iter().find(|p| &p.identity.key == key).and_then(|p| p.physical.shock_limit));
+            Item { shock_limit, id, key: key.clone(), name, category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
         })
         .collect();
-    (items, recipes)
+    (items, recipes, index)
 }
 
 /// Is `a` drawn where the module stands (the world's air, rain or ground

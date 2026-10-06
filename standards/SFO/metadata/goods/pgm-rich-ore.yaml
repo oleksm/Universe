@@ -3,7 +3,6 @@
 identity:
   key: good.pgm-rich-ore
   name: PGM-Rich Ore
-  traded_as: market.ores
   kind: rock
   description: "Asteroid metal carrying platinum-group metals."
 physical:

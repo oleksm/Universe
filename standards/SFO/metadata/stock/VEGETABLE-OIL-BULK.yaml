@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is vegetable oil as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.vegetable-oil-bulk
+  traded_as: market.food
+  code: VEGETABLE-OIL-BULK
+  name: "Vegetable oil, in bulk"
+  form: bulk
+made_from:
+  - item: good.vegetable-oil

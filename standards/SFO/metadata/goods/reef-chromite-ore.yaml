@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.reef-chromite-ore
+  name: "Reef chromite ore"
+  kind: rock
+  description: "Chromite from the seams of a layered intrusion, with the platinum metals in it."
+physical:
+  bulk_density: 2600
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.layered-intrusion). The game has no ore for it yet."
+composition:
+  - { part: element.cr, share: 0.2874 }
+  - { part: element.pt, share: 5.0e-06 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/layered-intrusion.yaml", note: "The typical grade of its deposit type, from the planet simulation; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

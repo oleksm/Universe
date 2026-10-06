@@ -425,8 +425,8 @@ impl Content {
         )?;
         let kind = |key: &str, whose: &str| resolve(&goods, &aliases, key).ok_or_else(|| format!("{whose}: no kind of goods '{key}'"));
         // The stock catalogue: the registry's, at the game's prices.
-        let (stock, recipes) = crate::goods::build_catalog(reg, &prices, &goods);
-        let stock_index: HashMap<String, usize> = stock.iter().map(|i| (i.key.clone(), i.id)).collect();
+        // (Its index: each item's key, and a good's key for the stock it's sold as.)
+        let (stock, recipes, stock_index) = crate::goods::build_catalog(reg, &prices, &goods);
         // Ships' fuel, as traded: what the starting hull's tanks hold.
         let starter = resolve(&hulls, &aliases, crate::ship::STARTING_HULL).ok_or("no starting hull")?;
         let tank_fuel = &hulls.get(starter).fuel;

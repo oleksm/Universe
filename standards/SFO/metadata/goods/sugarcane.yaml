@@ -2,7 +2,6 @@
 identity:
   key: good.sugarcane
   name: "Sugarcane"
-  traded_as: market.food
   kind: product
   description: "A tall grass grown for its sugar, in hot ground."
 physical:

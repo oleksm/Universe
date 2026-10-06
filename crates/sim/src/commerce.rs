@@ -156,6 +156,38 @@ impl Universe {
         }
     }
 
+    /// Ship `id`'s tube crossings this tick, paid to the system's
+    /// administration (cleared only if it could pay; what it has, if less now).
+    pub(crate) fn book_tolls(&mut self, id: usize, events: &[crate::Event]) {
+        for e in events {
+            let crate::Event::Ship(universe_world::ShipEvent::TubeToll { credits }) = e else { continue };
+            let Some((_, system, _)) = self.ship_by_id(id) else { return };
+            let pay = credits.min(self.ledger.credits(Party::Pilot(id)).max(0.0));
+            let _ = self.ledger.transfer(Party::Pilot(id), Party::Administration(system), universe_services::ledger::Asset::Credits, pay, self.tick, universe_protocol::Cause::Rules);
+        }
+    }
+
+    /// Ship `id`'s hold after its jolts this tick (a hard landing's): what takes
+    /// less than the jolt breaks, and is written off (SFO 15).
+    pub fn book_jolts(&mut self, id: usize, events: &[crate::Event]) -> Vec<universe_world::ShipEvent> {
+        let jolts: Vec<f64> = events.iter().filter_map(|e| if let crate::Event::Ship(universe_world::ShipEvent::HardLanding { jolt, .. }) = e { Some(*jolt) } else { None }).collect();
+        let Some(jolt) = jolts.into_iter().reduce(f64::max) else { return Vec::new() };
+        let g = jolt * universe_physics::laws::STANDARD_GRAVITY;
+        let goods = self.world.goods.clone();
+        let broken: Vec<(usize, u32)> = self.ledger.hold(id).into_iter().filter(|(i, _)| goods[*i].shock_limit.is_some_and(|l| g > l)).collect();
+        for &(item, _) in &broken {
+            self.ledger.settle(Party::Pilot(id), universe_services::ledger::Asset::Goods(item), 0.0, self.tick, universe_protocol::Cause::Rules);
+        }
+        if !broken.is_empty() {
+            let hold = self.ledger.hold(id);
+            if let Some(ship) = self.ship_mut_by_id(id) {
+                ship.cargo = universe_services::market::cargo_mass(&goods, &hold);
+                ship.cargo_volume = universe_services::market::cargo_volume(&goods, &hold);
+            }
+        }
+        broken.into_iter().map(|(item, units)| universe_world::ShipEvent::CargoBroken { item, units }).collect()
+    }
+
     /// The `n`-th of ship `id`'s `Mined` events in this tick's log, as a cause.
     fn mined_cause(&self, id: usize, n: usize) -> Option<universe_protocol::Cause> {
         let index = self.log.iter().enumerate().filter(|(_, (s, e))| *s == id && matches!(e, universe_world::ShipEvent::Mined { .. })).nth(n - 1)?.0;

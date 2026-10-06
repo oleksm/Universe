@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is tailings as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.tailings-bulk
+  traded_as: market.minerals
+  code: TAILINGS-BULK
+  name: "Tailings, in bulk"
+  form: bulk
+made_from:
+  - item: good.tailings

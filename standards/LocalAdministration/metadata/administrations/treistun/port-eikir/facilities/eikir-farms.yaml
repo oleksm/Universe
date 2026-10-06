@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: the temperate band's farms round Port Eikir, as the starting state of docs/registry-food.md has them. What each field is set to is the farmer's. The hot band's crops (rice, maize, citrus and the rest) are not here: they want ground 1,500 km to the south.
+identity:
+  key: facility.treistun.port-eikir.eikir-farms
+  name: Eikir Farms
+kind: farm
+parcel: parcel.treistun.port-eikir.3
+lines:
+  - makes: good.wheat
+    also: [good.barley, good.oats, good.potatoes, good.rapeseed, good.sugar-beet, good.peas, good.beans, good.hay, good.flax]
+    modules:
+      - { module: module.field, count: 170 }
+  - makes: good.cabbage
+    also: [good.carrots, good.onions, good.garlic, good.lettuce, good.spinach, good.strawberries]
+    modules:
+      - { module: module.market-garden, count: 40 }
+  - makes: good.apples
+    also: [good.grapes]
+    modules:
+      - { module: module.orchard, count: 8 }
+  - makes: good.milk
+    also: [good.eggs, good.live-pigs, good.live-chickens, good.live-cattle, good.live-sheep, good.wool]
+    modules:
+      - { module: module.livestock-barn, count: 57 }
+  - makes: good.live-fish
+    modules:
+      - { module: module.fish-farm, count: 13 }
+modules:
+  - { module: module.grain-silo, count: 2 }

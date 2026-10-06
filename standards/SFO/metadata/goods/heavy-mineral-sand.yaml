@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.heavy-mineral-sand
+  name: "Heavy-mineral sand"
+  kind: rock
+  description: "Beach sand with bands of ilmenite, rutile and zircon."
+physical:
+  bulk_density: 1700
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.beach-sands). The game has no ore for it yet."
+composition:
+  - { part: element.ti, share: 0.009589 }
+  - { part: element.zr, share: 0.002591 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/beach-sands.yaml", note: "The typical grade of its deposit type, from the planet simulation; the rest is rock." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

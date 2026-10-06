@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is salt-dome sulphur ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.salt-dome-sulphur-ore-bulk
+  traded_as: market.ores
+  code: SALT-DOME-SULPHUR-ORE-BULK
+  name: "Salt-dome sulphur ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.salt-dome-sulphur-ore

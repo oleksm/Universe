@@ -2,7 +2,6 @@
 identity:
   key: good.tin-concentrate
   name: "Tin concentrate"
-  traded_as: market.ores
   kind: intermediate
   description: "Ore washed until it is two thirds cassiterite, 51% tin."
 physical:

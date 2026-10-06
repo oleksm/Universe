@@ -7,9 +7,12 @@ identity:
   description: "Carries the full ladle over the moulds."
 physical:
   mass: 300000
+  length: 61.5
+  width: 24.6
+  height: 21.5
 made_from:
-  - item: stock.sta36-pl-20
-    quantity: 344994.0
+  - item: stock.sta36-pl-20-panel
+    quantity: 300000
 making:
   module: module.welding-bay
 fit:
@@ -17,4 +20,5 @@ fit:
 basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://www.reyher.de/en/company/latest-news/detail/hv-bolts-for-a-crane-weighing-over-900-tonnes/", note: "A ladle crane that lifts 390 tonnes weighs over 900. This one lifts a heat of 80 t in its ladle, about 130 t: scaled by what it lifts." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
-  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }
+  - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the casting bay: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

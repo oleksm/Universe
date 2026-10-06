@@ -2,7 +2,6 @@
 identity:
   key: good.waste-rock
   name: "Waste rock"
-  traded_as: market.minerals
   kind: by-product
   description: "The barren rock moved to reach ore."
 physical:

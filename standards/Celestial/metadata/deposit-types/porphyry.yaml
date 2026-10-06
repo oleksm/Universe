@@ -1,26 +1,36 @@
 # yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
 identity:
   key: deposit-type.porphyry
   name: "Porphyry copper-molybdenum-gold"
   about: "A great low-grade body in the roots of an arc volcano: most of a world's copper."
+sim: { key: porphyry, code: PCU }
 formed_by: arc
 carries:
   - { item: element.cu, grade: 0.0044, said_as: "Cu %" }
   - { item: element.mo, grade: 0.00015, said_as: "Mo %" }
   - { item: element.au, grade: 1.0e-07, said_as: "Au g/t" }
+  - { item: element.s, grade: 0.015, said_as: "S %" }
 ore: good.porphyry-copper-ore
+shape: stock
 size:
-  median: 181600000000
+  median: 250000000000.0
+  spread: 1.4
+  cap: 20000000000000.0
+footprint: { length: 2500.0, width: 2000.0 }
+forms_at: 2500.0
 cluster:
-  deposits: 3
-  along: 20000
-  across: 8000
+  deposits: 3.0
+  along: 20000.0
+  across: 8000.0
 seen_by:
-  - { method: geochemistry, reach: 50 }
-  - { method: induced polarisation, reach: 500 }
-  - { method: magnetics, reach: 800 }
+  - { method: geochemistry, reach: 50.0 }
+  - { method: induced polarisation, reach: 500.0 }
+  - { method: magnetics, reach: 800.0 }
 counted:
-  test_world: 434
+  test_world: 496
   earth: 420
 basis:
-  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }
+  - { of: [counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4", note: "Deposits in one test world, against about how many are known on Earth." }

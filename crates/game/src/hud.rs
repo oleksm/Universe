@@ -1,6 +1,5 @@
 use universe_engine::glam::{DVec3, Vec2, Vec3Swizzles};
 use universe_engine::{text_size, Color, Context, Frame, GLYPH};
-use universe_sim::world::radar::RADAR_RANGE;
 use universe_sim::world::weapons::{gun_on, within_gimbal, GIMBAL_LIMIT};
 use universe_sim::world::station::DECK_SPEED;
 use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingStatus, ShipState};
@@ -292,7 +291,7 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
     rows.push(text_row("MASS", format!("{:.1} T  LOAD {:.1} T", ship.mass() / 1000.0, ship.cargo / 1000.0), DIM));
     rows.push(text_row("DRIVE", format!("{:.1} M/S2", ship.main_accel()), DIM));
     if !app.contacts.is_empty() {
-        rows.push(text_row("RADAR", format!("{} IN {}", app.contacts.len(), fmt::distance(RADAR_RANGE)), DIM));
+        rows.push(text_row("RADAR", format!("{} IN {}", app.contacts.len(), fmt::distance(universe_sim::world::radar::range(app.ship.spec()))), DIM));
     }
     let h = rows.len() as f32 * ROW + 8.0;
     frame.hud_rect(at, Vec2::new(W, h), SOFT_PANEL);
@@ -799,6 +798,12 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
         _ => String::new(),
     };
     lines.push((format!("LAND {name}{pad}  {}", mode_label(st.autopilot, st.phase)), HUD));
+    // What this ground asks of the ship as it is: its lift against its weight here, what its legs take.
+    let g = universe_sim::world::legs::surface_gravity(&sys.bodies[p.body]);
+    let (lift, legs) = universe_sim::world::legs::ground_check(app.ship.spec(), app.ship.mass(), g);
+    let legs = legs.map_or(String::new(), |v| if v > 0.0 { format!("  LEGS TAKE {}", fmt::speed(v)) } else { "  ITS LEGS CAN'T STAND ITS WEIGHT HERE".into() });
+    let hover = if lift < 1.0 { "  CAN'T HOVER" } else { "" };
+    lines.push((format!("GROUND {g:.1} M/S2  LIFT {lift:.2}x WEIGHT{hover}{legs}"), if lift < 1.0 || legs.contains("CAN'T") { RED } else { DIM }));
 
     let descent = st.guidance.final_run;
     let sink_target = -st.guidance.desired_velocity.dot(st.pad.up);

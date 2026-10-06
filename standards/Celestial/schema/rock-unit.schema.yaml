@@ -14,6 +14,12 @@ properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
       about: { type: string }
+  sim:
+    description: "The planet simulation's own word for it."
+    type: object
+    additionalProperties: false
+    properties:
+      key: { type: string, description: "Its key there." }
   made_by: { type: array, items: { $ref: "../../dictionary.schema.yaml#/definitions/geological_event" }, description: "The events that lay it down." }
   physical:
     type: object

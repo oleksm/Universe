@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../schema/body.schema.yaml
+# As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
+provenance: seeded
+identity: {key: body.moryemzai.reileicer, name: Reileicer, kind: asteroid, parent: body.moryemzai.moryemzai, about: The largest
+    body of the main belt.}
+orbit: {semi_major_axis: 57039400000.0, eccentricity: 0.08629, period: 12984019.2, inclination: 7.516}
+physical: {mass: 2.2205e+19, radius: 89077.0, density: 7500, day: 8433.36}
+rock: {class: rock-class.metallic, structure: rubble pile}

@@ -2,7 +2,6 @@
 identity:
   key: good.soybeans
   name: "Soybeans"
-  traded_as: market.food
   kind: product
   description: "Protein and oil: pressed for oil, the rest fed to animals."
 physical:

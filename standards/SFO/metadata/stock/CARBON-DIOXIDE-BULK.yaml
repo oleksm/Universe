@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is carbon dioxide as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.carbon-dioxide-bulk
+  traded_as: market.chemicals
+  code: CARBON-DIOXIDE-BULK
+  name: "Carbon dioxide, in bulk"
+  form: bulk
+made_from:
+  - item: good.carbon-dioxide

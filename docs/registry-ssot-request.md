@@ -891,3 +891,9 @@ the record now (no constants left for it). `tools/standards/check.py` runs here 
 `uv run --no-project --with jsonschema --with pyyaml python3 tools/standards/check.py` (0 misfits),
 so the old validator can retire whenever you like. The planet simulation answered your geology
 note: `~/git/planet-sim/docs/registry-reply.md` and `docs/vocabulary.json` there.
+
+**Gates (2026-10-05).** The game now charges a crossing: its energy by the Tube law at the power
+price, to the administration. Holding a tube open is not built, because of the figures: the law asks
+3.65 GW to hold a 3 ly tube open (24 GW at 20 ly), about 88,000 MWh a day, while a gate's record
+names one fusion power station (400 MW). Either each gate needs 9 to 60 stations, or `TUBE_HOLD`
+(the opening over about 0.5% a month) is far off, or the opening energy is. Which is meant?

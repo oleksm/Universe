@@ -1010,6 +1010,7 @@ impl App {
                     format!("TRANSIT GRANTED - {target}\nFLY THROUGH THE RING UNDER 300 M/S, OR {} FOR AUTOPILOT", crate::keys::key(crate::keys::Act::Autopilot))
                 }
                 Event::Ship(ShipEvent::GateEntered { to }) => format!("GATE TRANSIT TO {to}"),
+                Event::Ship(ShipEvent::TubeToll { credits }) => format!("THE CROSSING: {credits:.0} CR"),
                 Event::Ship(ShipEvent::GateArrived { system }) => format!("WELCOME TO THE {system} SYSTEM"),
                 Event::Ship(ShipEvent::GateTooFast { speed }) => format!("TOO FAST FOR THE GATE ({:.0} M/S)", speed),
                 Event::Traffic(TrafficEvent::ClearanceDenied { reason }) => format!("CLEARANCE DENIED - {reason}"),
@@ -1070,6 +1071,8 @@ impl App {
                     format!("+1 T {name} TO THE HOLD ({units} T IN ALL, HOLD {:.0}/{:.0} T)", self.v.ship.cargo / 1000.0, self.v.ship.spec().hold_capacity / 1000.0)
                 }
                 Event::Ship(ShipEvent::StruckRock { speed, .. }) => format!("ROCK STRIKE AT {speed:.1} M/S"),
+                Event::Ship(ShipEvent::HardLanding { sink, jolt }) => format!("HARD LANDING: {sink:.1} M/S DOWN, {jolt:.1} G ABOARD"),
+                Event::Ship(ShipEvent::CargoBroken { item, units }) => format!("BROKEN IN THE JOLT: {units} OF {}", self.charts.goods[item].name.to_uppercase()),
                 // Anything else says nothing (add a line here for a new event that should).
                 _ => continue,
             };

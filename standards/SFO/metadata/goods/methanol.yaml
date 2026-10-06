@@ -2,7 +2,6 @@
 identity:
   key: good.methanol
   name: "Methanol"
-  traded_as: market.chemicals
   kind: intermediate
   description: "The simplest alcohol: a solvent, a fuel, and the start of plastics where there is no oil."
 physical:

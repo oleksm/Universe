@@ -157,6 +157,8 @@ impl Universe {
         self.log_events(crate::combat::craft_id(i), &events);
         self.traffic_events(crate::combat::craft_id(i), &events);
         self.book_mined(crate::combat::craft_id(i), &events);
+        self.book_tolls(crate::combat::craft_id(i), &events);
+        let _ = self.book_jolts(crate::combat::craft_id(i), &events);
         let crashed = happened.iter().find_map(|e| match e {
             ShipEvent::Crashed { body } => Some(body.clone()),
             _ => None,
@@ -279,7 +281,7 @@ impl Universe {
         let now = self.world.time;
         let mut transponders = std::collections::HashMap::new();
         let (system, at) = (self.ship_system, self.ship.position);
-        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::RADAR_RANGE) {
+        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::range(self.ship.spec())) {
             let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
             transponders.insert(i, crate::contract::Transponder {
                 name: c.name.clone(),
@@ -336,6 +338,7 @@ impl Universe {
             board: self.atc.board(),
             rails,
             turrets,
+            credits: std::iter::once(crate::combat::PLAYER).chain((0..self.crafts.len()).map(crate::combat::craft_id)).map(|id| (id, self.ledger.credits(universe_services::Party::Pilot(id)))).collect(),
         }
     }
 

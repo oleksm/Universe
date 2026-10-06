@@ -35,6 +35,16 @@ properties:
       text: { type: array, items: { type: string } }
   founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
   # An administration.
+  trade_bans:
+    description: "What may not be traded in its markets: its law, and like its zoning it can be broken."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [market]
+      properties:
+        market: { type: string, x-ref: [market], description: "The market category it bans, by its key." }
+        note: { type: string }
   zoning:
     description: Its zoning code, what each kind of zone permits.
     type: array
@@ -43,5 +53,5 @@ properties:
       additionalProperties: false
       required: [use, permits]
       properties:
-        use: { enum: [port, industrial, commercial, civic, residential] }
+        use: { enum: [port, industrial, commercial, civic, residential, agricultural] }
         permits: { type: string }

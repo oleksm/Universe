@@ -7,8 +7,12 @@ identity:
   description: "The heavy aluminium conductor round each cell that carries the line's current on to the next."
 physical:
   mass: 47000
+  length: 130.0
+  width: 6.81
+  height: 1.7
 fit:
   count: 324
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.gulfconstructiononline.com/Article/381041", note: "The aluminium busbar round one cell, 47 tonnes (Alba line 6)." }
   - { of: [fit], tier: derived, review: true, note: "One to each cell." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the potline: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

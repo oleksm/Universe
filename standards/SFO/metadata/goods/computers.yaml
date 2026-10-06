@@ -2,7 +2,6 @@
 identity:
   key: good.computers
   name: "Computers"
-  traded_as: market.computers
   kind: product
   description: "Machines that compute, with their screens."
 physical:

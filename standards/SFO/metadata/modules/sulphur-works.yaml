@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.sulphur-works
+  name: "Sulphur works"
+  step: "Melt out sulphur"
+  description: "Autoclaves and wells of hot water: sulphur melts at 115 C and runs out of the rock that holds it."
+physical:
+  length: 80
+  width: 40
+  height: 20
+recipes:
+  - makes: element.s
+    does: "Volcanic sulphur ore is heated until the sulphur melts and runs out."
+    inputs:
+      - { item: good.volcanic-sulphur-ore, quantity: 3.704 }
+    outputs:
+      - { item: good.tailings, quantity: 2.704 }
+    rate: 5.0
+    power: 5000000
+  - makes: element.s
+    does: "Salt dome sulphur ore is heated until the sulphur melts and runs out."
+    inputs:
+      - { item: good.salt-dome-sulphur-ore, quantity: 4.444 }
+    outputs:
+      - { item: good.tailings, quantity: 3.444 }
+    rate: 5.0
+    power: 5000000
+basis:
+  - { of: [recipes, recipes.inputs, recipes.outputs, recipes.power], tier: invented, review: true, note: "By the ores' grades, nine tenths won; 1 MJ a kg is a guess. No figures were found. To be reviewed." }
+  - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }

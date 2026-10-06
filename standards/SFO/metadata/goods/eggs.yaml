@@ -2,7 +2,6 @@
 identity:
   key: good.eggs
   name: "Eggs"
-  traded_as: market.food
   kind: product
   description: "Hens' eggs."
 physical:

@@ -7,9 +7,12 @@ identity:
   description: "The vacuum vessel the burning plasma is held in."
 physical:
   mass: 5200000
+  length: 79.3
+  width: 52.8
+  height: 26.4
 made_from:
-  - item: stock.sta36-pl-20
-    quantity: 5979994.8
+  - item: stock.sta36-pl-20-panel
+    quantity: 5200000
 making:
   module: module.welding-bay
 fit:
@@ -17,4 +20,5 @@ fit:
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's vacuum vessel, 5,200 tonnes. ITER makes 500 MW of fusion power and no electricity; this station's size against it is not worked out." }
   - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
-  - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all structural steel plate, with 15% more lost in cutting. Real ones are of many materials." }
+  - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the fusion power station: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

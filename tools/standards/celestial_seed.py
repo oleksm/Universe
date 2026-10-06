@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Seeds what the game does not make yet into the celestial registry: comets, centaurs, crossing
-asteroids, captured moons, dwarf planets and each belt's largest body (small-bodies/), and the
-scattered disc, the far cloud and comets' meteoroid streams (regions/), for each system written out.
+"""Seeds what the game does not make yet into the celestial registry: the scattered disc, the far
+cloud and each returning comet's meteoroid stream (regions/), for each system written out. The small
+bodies themselves (comets, centaurs, crossing asteroids, captured moons, dwarf planets, each belt's
+largest) are the engine's: celestial_export.py writes them from its export.
 
 Made from the galaxy's seed and the system's own records, by the rules below (each follows what is
 known of the Sun's: see the vocabulary). The same seed gives the same bodies. A record that is
@@ -128,81 +129,21 @@ for fn in sorted(os.listdir(os.path.join(CEL, "systems"))):
     share = ring(*belt) / ring(mb["inner_edge"], mb["outer_edge"])
     pick = lambda r, zone: r.choices(list(classes), weights=[(c.get("found") or {}).get(zone, 0) for c in classes.values()])[0]
 
-    # The main belt's largest body: 39% of the belt's mass (the Sun's largest is), the belt's mass by the ground it covers.
-    r = rng("largest")
-    # (By the belt's own mix: the ground it has in each zone, as the build works it out.)
-    zn = laws.get("zones") or {}
-    cuts = [belt[0], min(max(zn.get("warm_to", 0.93) * frost, belt[0]), belt[1]), min(max(zn.get("frost_to", 1.04) * frost, belt[0]), belt[1]), belt[1]]
-    cls = pick(r, r.choices(["warm", "frost_line", "cold"], weights=[cuts[i + 1] ** 2 - cuts[i] ** 2 for i in range(3)])[0])
-    d = density(cls) or 2500
-    rad = (3 * 0.39 * mb["mass"] * share / (4 * math.pi * d)) ** (1 / 3) / 1000
-    a = r.uniform(belt[0] + 0.25 * (belt[1] - belt[0]), belt[1] - 0.25 * (belt[1] - belt[0]))
-    put(sysdir, "small-bodies", "body", body("dwarf planet" if rad >= 400 else "asteroid", name(r), sname, a * AU, r.uniform(0.03, 0.12), r.uniform(1, 11), rad, cls,
-        "The largest body of the main belt: over a third of all the belt's mass." + ("" if rad >= 400 else " Too small to have pulled itself round."), mu, d),
-        "a belt's largest body holds 39% of its mass; the belt's mass goes by the ground it covers.")
-
-    # Crossing asteroids: knocked out of the belt onto orbits that come in among the rocky planets.
-    r = rng("crossing")
-    inner = [p for p in rocky if au(p) < belt[1]]
-    for _ in range(5 if inner else 0):
-        target = r.choice(inner)
-        q, far = au(target) * r.uniform(0.6, 1.25), r.uniform(*belt)
-        if far <= q:
-            far = q * r.uniform(1.3, 2.2)
-        a, e = (q + far) / 2, (far - q) / (far + q)
-        put(sysdir, "small-bodies", "body", body("crossing asteroid", name(r), sname, a * AU, e, r.uniform(1, 25), math.exp(r.uniform(math.log(0.1), math.log(1.5))), pick(r, "warm"),
-            f"Knocked out of the belt. At its closest it comes in to {q:.2f} AU, near the orbit of {target['identity']['name']}.", mu),
-            "about one for every 1,200 of the belt's, on orbits from the belt in to a rocky planet's.")
-
-    # Captured moons: far out round each giant, tilted, stretched, most going round backward.
-    for g in giants:
-        r = rng("captured:" + g["identity"]["name"])
-        reach = g["orbit"]["semi_major_axis"] * (g["physical"]["mass"] / (3 * star["mass"] * SUN)) ** (1 / 3)
-        # (Outside its own moons: no closer than half again the farthest of them.)
-        least = max([0.05 * reach] + [1.5 * m["orbit"]["semi_major_axis"] for m in bodies if m["identity"]["parent"] == g["identity"]["key"]])
-        for _ in range(r.randint(2, 4) if g["identity"]["kind"] == "gas giant" else r.randint(1, 2)):
-            back, e = r.random() < 0.6, r.uniform(0.1, 0.5)
-            near = least / (1 - e)                       # (so that even at its closest it stays outside them)
-            if near >= 0.47 * reach:                     # (no room between its own moons and the limit of what it can hold)
-                continue
-            put(sysdir, "small-bodies", "body", body("captured moon", name(r), g["identity"]["name"], r.uniform(near, 0.47 * reach), e, r.uniform(140, 175) if back else r.uniform(25, 55),
-                math.exp(r.uniform(math.log(1), math.log(60))), r.choices(["primitive", "carbonaceous"], [0.7, 0.3])[0],
-                f"Once it went round the star; {g['identity']['name']} caught it. It goes round {'backward' if back else 'the same way as the planet turns'}, far out.", G * g["physical"]["mass"]),
-                "between 0.05 and 0.47 of the giant's reach, as the Sun's giants' are.")
-
-    # Centaurs: ice bodies wandering among the giants.
-    r = rng("centaurs")
-    for _ in range(3 if len(giants) >= 2 else 0):
-        a = r.uniform(au(giants[0]) * 1.15, au(giants[-1]) * 0.9)
-        put(sysdir, "small-bodies", "body", body("centaur", name(r), sname, a * AU, r.uniform(0.1, 0.5), r.uniform(2, 25), math.exp(r.uniform(math.log(10), math.log(120))), "icy",
-            "An ice body among the giants, on an orbit that will last a few million years. One day a giant will throw it inward as a comet, or out.", mu),
-            "between the first giant and the last.")
-
-    # Dwarf planets of the outer belt: the Sun's has perhaps 200; this one's by the ground it covers.
-    if giants:
-        lo, hi = au(giants[-1]) / res(ob["inner_resonance"]), au(giants[-1]) / res(ob["outer_resonance"])
-        expect = 200 * ring(lo, hi) / ring(ob["inner_edge"], ob["outer_edge"])
-        r = rng("dwarfs")
-        for _ in range(min(3, round(expect))):
-            put(sysdir, "small-bodies", "body", body("dwarf planet", name(r), sname, r.uniform(lo, hi) * AU, r.uniform(0.03, 0.25), r.uniform(1, 28), r.uniform(450, 1200), "icy",
-                f"A world of ice in the outer belt, heavy enough to have pulled itself round. One of perhaps {round(expect)}.", mu),
-                "the outer belt's largest: round above about 400 km in radius.")
-
-    # Comets: returning ones thrown in by the giants (under 200 years); and one from the far cloud.
-    r = rng("comets")
-    comets = []
-    for _ in range(4 if giants else 0):
-        q, far = warm * r.uniform(0.3, 2.5), r.uniform(au(giants[-1]) * 0.9, au(giants[-1]) * 2.2)
-        a, e = (q + far) / 2, (far - q) / (far + q)
-        nm = name(r)
-        comets.append((nm, q, far))
-        put(sysdir, "small-bodies", "body", body("comet", nm, sname, a * AU, e, r.uniform(2, 35), r.uniform(0.75, 2.5), "icy",
-            f"A returning comet. It comes in to {q:.2f} AU, where it boils and grows a tail, and goes out to {far:.1f} AU.", mu),
-            "returning comets come round in under 200 years, thrown in from the outer belt and scattered disc.")
-    q, a = warm * r.uniform(0.3, 2.5), r.uniform(2000, 20000) * (star["mass"]) ** (1 / 3)
-    put(sysdir, "small-bodies", "body", body("comet", name(r), sname, a * AU, 1 - q / a, r.uniform(0, 180), r.uniform(2, 10), "icy",
-        f"A comet from the far cloud. It comes in to {q:.2f} AU once in a very long time.", mu),
-        "the others come from the far cloud, once in thousands to millions of years.")
+    # (The small bodies themselves are the engine's now: celestial_export.py writes them from its export.
+    # Here, only the regions the game does not make. A returning comet is one of the records, on an orbit
+    # that does not reach the far cloud.)
+    small = os.path.join(sysdir, "small-bodies")
+    recs = [yaml.safe_load(open(os.path.join(small, f))) for f in sorted(os.listdir(small))] if os.path.isdir(small) else []
+    comets = [(c["identity"]["name"], c["orbit"]["semi_major_axis"] / 1000 / AU * (1 - c["orbit"]["eccentricity"]), c["orbit"]["semi_major_axis"] / 1000 / AU * (1 + c["orbit"]["eccentricity"]))
+              for c in recs if c["identity"]["kind"] == "comet" and c["orbit"]["semi_major_axis"] / 1000 / AU < 1000]
+    # (A stream whose comet is gone goes with it, unless a person has taken it over.)
+    regions = os.path.join(sysdir, "regions")
+    for f in sorted(os.listdir(regions)) if os.path.isdir(regions) else []:
+        was = yaml.safe_load(open(os.path.join(regions, f))) or {}
+        if was.get("identity", {}).get("kind") == "meteoroid stream" and was.get("provenance") == "seeded" and was["identity"].get("parent") not in {c["identity"]["key"] for c in recs}:
+            print(f"  gone: {f}")
+            if not dry:
+                os.remove(os.path.join(regions, f))
 
     # Regions.
     def region(kind, nm, lo, hi, about, why, parent=None):

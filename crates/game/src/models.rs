@@ -628,8 +628,8 @@ fn platform() -> WireModel {
 /// A ring gate, in meters: a square-section ring in the XZ plane (axis +Y),
 /// with struts every few segments.
 fn gate_ring() -> WireModel {
-    use universe_sim::world::gate::{GATE_RADIUS, RING_TUBE};
-    let (r, t) = (GATE_RADIUS as f32, RING_TUBE as f32);
+    use universe_sim::world::gate::{gate_radius, ring_tube};
+    let (r, t) = (gate_radius() as f32, ring_tube() as f32);
     let n = 48u32;
     let section = [(-t, -t), (t, -t), (t, t), (-t, t)]; // (radial, axial) corners
     let mut m = WireModel::default();

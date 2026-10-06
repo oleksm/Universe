@@ -32,7 +32,6 @@ use universe_avionics::hunter::{may_defend, wants_sightings, Sighting, DEFEND_RA
 use universe_avionics::route::Stop;
 use universe_avionics::{Avionics, Bus, Event, NavTarget};
 use universe_protocol::PadGrant;
-use universe_world::radar::RADAR_RANGE;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, ShipState, StarSystem};
 
 use crate::vessel::Request;
@@ -195,6 +194,30 @@ impl Bus for PoolLink<'_> {
         if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
             return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
         }
+        // A port on ground its lift can't hold it over (or its legs can't stand on): no clearance.
+        if let Some(NavTarget::Spaceport(p)) = target
+            && let Some(sp) = self.sys.spaceports.get(p)
+        {
+            let g = universe_world::legs::surface_gravity(&self.sys.bodies[sp.body]);
+            let (lift, legs) = universe_world::legs::ground_check(self.ship.spec(), self.ship.mass(), g);
+            if lift < 1.0 {
+                return Err(format!("REFUSED - ITS LIFT HOLDS {lift:.2} OF ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
+            }
+            if legs.is_some_and(|v| v <= 0.0) {
+                return Err(format!("REFUSED - ITS LEGS CAN'T STAND ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
+            }
+        }
+        // A gate: its crossing paid for, or no clearance.
+        if let Some(NavTarget::Gate(g)) = target
+            && let Some(to) = self.sys.bodies.get(g).and_then(|b| b.link)
+        {
+            let span = self.view.charts.distance_ly(self.system, to) * universe_physics::laws::LIGHT_YEAR;
+            let toll = universe_world::gate::crossing_toll(self.ship.mass(), span);
+            let credits = self.view.credits.get(&self.id).copied().unwrap_or(0.0);
+            if credits < toll {
+                return Err(format!("REFUSED - THE CROSSING COSTS {toll:.0} CR, YOU HAVE {credits:.0}"));
+            }
+        }
         universe_services::atc::request(&self.sys, &self.ship, target, self.view.time, &positions)
     }
 
@@ -272,12 +295,12 @@ fn flee(a: &mut Avionics, ship: &Ship, system: usize, guns: &[Gun], events: &mut
 
 /// What pilot `i` makes of the ships around it (radar, and the pirates'
 /// transponders): shelter is real (docked or landed, or under a turret's guns).
-fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, guns: &[Gun], crew: &Crew) -> Vec<Sighting> {
+fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, range: f64, guns: &[Gun], crew: &Crew) -> Vec<Sighting> {
     let sheltered = |s: &Snap| s.landed || guns.iter().any(|g| g.at.distance(s.position) < g.reach + universe_avionics::hunter::SHELTER_MARGIN);
     view.snaps
         .iter()
         .enumerate()
-        .filter(|&(id, s)| id != me && s.system == system && !s.transit && s.position.distance(pos) < RADAR_RANGE)
+        .filter(|&(id, s)| id != me && s.system == system && !s.transit && s.position.distance(pos) < range)
         .map(|(id, s)| Sighting {
             id,
             position: s.position,
@@ -339,7 +362,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     let pos = link.ship.position;
     let threat = human.is_none() && may_defend(a, &link.ship) && view.aggressors.iter().any(|&(s, p)| s == system && p.distance(pos) < DEFEND_RANGE);
     let guns = guns_of(view, system, &link.sys);
-    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) { sightings(view, id, system, pos, &guns, crew) } else { Vec::new() };
+    let sightings = if threat || (human.is_none() && wants_sightings(a, &link.ship, view.time)) { sightings(view, id, system, pos, universe_world::radar::range(link.ship.spec()), &guns, crew) } else { Vec::new() };
     // Fired on (and not a hunter itself, nor standing to fight with hull to
     // spare): run for the guns. (A human decides that for themselves.)
     use universe_avionics::hunter::FLEE_HULL;
@@ -348,7 +371,7 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
         flee(a, &link.ship, system, &guns, &mut events);
     }
     let mark = match a.following.map(|f| f.anchor) {
-        Some(universe_avionics::follow::Anchor::Ship(id)) => crate::follow::mark_in(&view.snaps, system, pos, id),
+        Some(universe_avionics::follow::Anchor::Ship(id)) => crate::follow::mark_in(&view.snaps, system, pos, universe_world::radar::range(link.ship.spec()), id),
         _ => None,
     };
     if human.is_none() && pilot.miner && a.hunting.is_none() {

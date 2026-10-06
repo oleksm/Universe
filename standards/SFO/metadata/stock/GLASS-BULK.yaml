@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is glass as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.glass-bulk
+  traded_as: market.minerals
+  code: GLASS-BULK
+  name: "Glass, in bulk"
+  form: bulk
+made_from:
+  - item: good.glass

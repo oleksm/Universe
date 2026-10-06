@@ -1,24 +1,34 @@
 # yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
 identity:
   key: deposit-type.carbonate-zinc-lead
   name: "Carbonate-hosted zinc-lead"
   about: "In limestone, from brines that moved through a basin."
+sim: { key: mvt, code: MVT }
 formed_by: sea
 carries:
   - { item: element.zn, grade: 0.035, said_as: "Zn %" }
   - { item: element.pb, grade: 0.012, said_as: "Pb %" }
+  - { item: element.s, grade: 0.05, said_as: "S %" }
 ore: good.carbonate-zinc-ore
+shape: strata
 size:
-  median: 7230000000
+  median: 7000000000.0
+  spread: 1.4
+  cap: 300000000000.0
+footprint: { length: 1500.0, width: 500.0 }
+forms_at: 500.0
 cluster:
-  deposits: 6
-  along: 20000
-  across: 10000
+  deposits: 6.0
+  along: 20000.0
+  across: 10000.0
 seen_by:
-  - { method: geochemistry, reach: 50 }
-  - { method: induced polarisation, reach: 500 }
+  - { method: geochemistry, reach: 50.0 }
+  - { method: induced polarisation, reach: 500.0 }
 counted:
-  test_world: 114
+  test_world: 137
   earth: 120
 basis:
-  - { of: [formed_by, carries, size, cluster, seen_by, counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology v0' of 2026-10-05 (planet-sim, docs/design.md, 'Geology and ore'); test world 4", note: "As the simulation has it: grades and sizes from its models of each type (the United States Geological Survey's), counts from one test world. Geochemistry is said to answer to almost every metal deposit near the surface: it is put on all, which may be one too many." }
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }
+  - { of: [counted], tier: sourced, review: true, source: "the planet simulation: brief 'World Geology' v0.3 of 2026-10-05; test world E4", note: "Deposits in one test world, against about how many are known on Earth." }

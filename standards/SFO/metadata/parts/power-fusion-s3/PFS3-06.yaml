@@ -7,6 +7,9 @@ identity:
   description: "The gas turbine that the reactor's heat drives."
 physical:
   mass: 56
+  length: 7.14
+  width: 3.58
+  height: 0.447
 made_from:
   - item: stock.ti64-pl-5
     quantity: 64.4
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of reactor and power conversion, as in NASA's Discovery II (2005), brought to this product's weight." }
   - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Fusion Plant S3: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

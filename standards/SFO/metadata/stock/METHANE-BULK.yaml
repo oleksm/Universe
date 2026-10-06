@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is methane as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.methane-bulk
+  traded_as: market.fuel
+  code: METHANE-BULK
+  name: "Methane, in bulk"
+  form: bulk
+made_from:
+  - item: good.methane

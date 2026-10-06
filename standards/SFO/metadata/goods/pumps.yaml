@@ -2,7 +2,6 @@
 identity:
   key: good.pumps
   name: "Pumps"
-  traded_as: market.machinery
   kind: product
   description: "Centrifugal pumps, without their motors."
 physical:

@@ -7,7 +7,11 @@ identity:
   description: "Turns the reactor's heat into electric power."
 physical:
   mass: 800000
+  length: 42.5
+  width: 28.3
+  height: 14.2
 fit:
   count: 2
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the fusion power station: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

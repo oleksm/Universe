@@ -19,7 +19,6 @@ use universe_avionics::follow::{self, Anchor, Manoeuvre};
 use universe_avionics::route::Stop;
 use universe_avionics::fire_control::lead;
 use universe_avionics::{Avionics, Bus, Clearance, Event, NavTarget, Plan, Solution, Track};
-use universe_world::radar::RADAR_RANGE;
 use universe_world::rules::Rules;
 use universe_world::weapons::{GUN_MUZZLE, SLUG_LIFETIME};
 use universe_world::{Controls, ShipCommands, StarSystem};
@@ -450,7 +449,7 @@ impl Cockpit {
     fn anchor_position(&self, anchor: Anchor, sys: &StarSystem, rails: &[DVec3]) -> Option<DVec3> {
         let w = self.world();
         match anchor {
-            Anchor::Ship(id) => crate::follow::mark_in(&w.snaps, w.ships[&PLAYER].0, self.ship().position, id).map(|m| m.0),
+            Anchor::Ship(id) => crate::follow::mark_in(&w.snaps, w.ships[&PLAYER].0, self.ship().position, universe_world::radar::range(self.ship().spec()), id).map(|m| m.0),
             Anchor::Place(t) => t.position(sys, w.time, rails),
             Anchor::Rock { field, body } => Some(sys.field_body_state(field, body, w.time).0),
         }
@@ -584,7 +583,7 @@ fn contacts(view: &CockpitView) -> Vec<Contact> {
         .filter(|(_, s)| s.system == system && (s.flying || s.landed))
         .filter_map(|(id, s)| {
             let distance = s.position.distance(ship.position);
-            if distance >= RADAR_RANGE {
+            if distance >= universe_world::radar::range(ship.spec()) {
                 return None;
             }
             let t = view.transponders.get(&(id - 1))?;

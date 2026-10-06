@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is straw and stalks as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.crop-residue-bulk
+  traded_as: market.biologics
+  code: CROP-RESIDUE-BULK
+  name: "Straw and stalks, in bulk"
+  form: bulk
+made_from:
+  - item: good.crop-residue

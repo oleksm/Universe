@@ -2,7 +2,6 @@
 identity:
   key: good.water
   name: Water
-  traded_as: market.water
   kind: raw
   description: "Water, as ice or liquid."
 physical:

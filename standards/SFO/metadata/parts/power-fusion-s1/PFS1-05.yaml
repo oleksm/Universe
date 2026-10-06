@@ -7,6 +7,9 @@ identity:
   description: "Carbon between the plasma and the coils."
 physical:
   mass: 453
+  length: 7.58
+  width: 3.79
+  height: 1.26
 made_from:
   - item: good.carbon
     quantity: 453
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of reactor and power conversion, as in NASA's Discovery II (2005), brought to this product's weight." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Fusion plant S1: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

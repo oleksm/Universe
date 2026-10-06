@@ -2,7 +2,6 @@
 identity:
   key: good.nitric-acid
   name: "Nitric acid"
-  traded_as: market.chemicals
   kind: product
   description: "The acid of fertilisers and explosives."
 physical:

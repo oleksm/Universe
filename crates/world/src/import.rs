@@ -95,10 +95,13 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
         _ => stock_fit(&slots)?,
     };
     let bay = record.filter(|h| !h.fit.iter().any(|f| f.slot == "cargo")).map_or((0.0, 0.0), |h| (h.capacity.hold.unwrap_or(0.0), h.capacity.hold_volume.unwrap_or(0.0)));
-    let radius = 0.3 * size.max_element() * 0.5 + 6.0;
-    let drag = size.x * size.y * 0.6;
+    // (Its flight figures its record's, where it has them; any other's, by its size.)
+    let flight = record.map(|h| &h.flight);
+    let radius = flight.and_then(|f| f.radius).unwrap_or(0.3 * size.max_element() * 0.5 + 6.0);
+    let drag = flight.and_then(|f| f.drag_area).unwrap_or(size.x * size.y * 0.6);
+    let strength = flight.and_then(|f| f.hull_strength).unwrap_or(STRENGTH_PER_KG * frame_mass);
     let name = read.name.unwrap_or_else(|| stem.to_uppercase());
-    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, STRENGTH_PER_KG * frame_mass).with_bay(bay.0, bay.1);
+    let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, strength).with_bay(bay.0, bay.1);
     let shape: &'static crate::shape::Shape = Box::leak(Box::new(shape));
     let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
     let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));

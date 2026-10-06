@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is beet pulp as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.beet-pulp-bulk
+  traded_as: market.biologics
+  code: BEET-PULP-BULK
+  name: "Beet pulp, in bulk"
+  form: bulk
+made_from:
+  - item: good.beet-pulp

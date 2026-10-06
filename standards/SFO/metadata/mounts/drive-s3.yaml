@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
+identity:
+  key: mount.drive-s3
+  name: "Main drive mount, class 3"
+  slot: drive
+  size_class: 3
+  description: "What a class 3 main drive slot offers, and what fits it."
+envelope:
+  length: 29.6
+  width: 13.2
+  height: 4.37
+bears:
+  mass: 17500.0
+  thrust: 2500000.0
+feeds:
+  power: 2500000.0
+  cooling: 29200000.0
+  fuel: 0.25
+nozzle:
+  diameter: 9.6
+basis:
+  - { of: [envelope, bears, feeds, nozzle], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give." }

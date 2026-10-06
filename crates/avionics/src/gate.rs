@@ -7,7 +7,7 @@
 //! empty ring (against its axis it takes no one anywhere).
 
 use glam::DVec3;
-use universe_world::gate::{GATE_RADIUS, RING_TUBE};
+use universe_world::gate::{gate_radius, ring_tube};
 use universe_world::ship::facing;
 use universe_world::{GateFrame, Ship};
 
@@ -23,7 +23,7 @@ pub const APPROACH_DISTANCE: f64 = 4000.0;
 pub fn in_final_zone(frame: &GateFrame, pos: DVec3) -> bool {
     let (side, h) = frame.side(pos);
     let lateral = ((pos - frame.center) - frame.axis() * (pos - frame.center).dot(frame.axis())).length();
-    side < 0.0 && h < APPROACH_DISTANCE + 500.0 && lateral < GATE_RADIUS * 0.5
+    side < 0.0 && h < APPROACH_DISTANCE + 500.0 && lateral < gate_radius() * 0.5
 }
 
 /// The side a run-in starts from: behind the ring, going along its axis.
@@ -53,7 +53,7 @@ pub fn guidance(frame: &GateFrame, pos: DVec3, final_run: bool, accel: f64) -> G
     // back through it) — out wide first, then past its plane, then in.
     let approach = if side != ENTRY {
         let out = lateral.try_normalize().unwrap_or_else(|| frame.rotation * DVec3::X);
-        let wide = GATE_RADIUS * 2.5;
+        let wide = gate_radius() * 2.5;
         if lateral.length() < wide * 0.9 {
             frame.center + out * wide + axis * h.max(1000.0)
         } else {
@@ -107,7 +107,7 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
         closing: v.dot(axis),
         speed: v.length(),
         relative_velocity: v,
-        in_corridor: offset < GATE_RADIUS - RING_TUBE - 200.0,
+        in_corridor: offset < gate_radius() - ring_tube() - 200.0,
         guidance: guidance(frame, ship.position, final_run, ship.side_accel()),
     }
 }

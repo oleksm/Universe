@@ -2,7 +2,6 @@
 identity:
   key: good.silicon
   name: "Silicon"
-  traded_as: market.metals
   kind: intermediate
   description: "Silicon metal as tapped from the furnace, about 99% pure: for alloys, and the start of chips."
 physical:

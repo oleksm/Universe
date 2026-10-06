@@ -2,7 +2,6 @@
 identity:
   key: good.cotton-cloth
   name: "Cotton cloth"
-  traded_as: market.textiles
   kind: intermediate
   description: "Cloth woven of cotton, on the roll."
 physical:

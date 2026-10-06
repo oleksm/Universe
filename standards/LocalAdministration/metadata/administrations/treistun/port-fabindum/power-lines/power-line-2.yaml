@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station to the works beside or beyond it. What it can carry is a fifth over what the works draws flat out.
+identity:
+  key: power-line.treistun.port-fabindum.power-line-2
+  name: Power line 2
+from: facility.treistun.port-fabindum.fabindum-power-station
+to: facility.treistun.port-fabindum.fabindum-life-support
+capacity: 8179200
+line: [[1275, 0], [1300, 100]]

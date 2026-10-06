@@ -7,9 +7,13 @@ identity:
   slot: drive
   description: "A main drive: a fusion torch."
 size_class: 2
+fits: mount.drive-s2
 physical:
   mass: 6000
-  volume: 14
+  volume: 710.0
+  length: 22.1
+  width: 9.86
+  height: 3.26
 needs:
   power: 1000000
 built_of:
@@ -25,3 +29,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a main drive: the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "the game's model, assets/models/mc07.glb", note: "The S1 drive's engine block, as the MC-07's model has it, scaled by the square root of the thrust (1.22): a nozzle's area goes with its thrust at the same pressure." }

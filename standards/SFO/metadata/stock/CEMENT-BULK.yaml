@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is cement as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.cement-bulk
+  traded_as: market.minerals
+  code: CEMENT-BULK
+  name: "Cement, in bulk"
+  form: bulk
+made_from:
+  - item: good.cement

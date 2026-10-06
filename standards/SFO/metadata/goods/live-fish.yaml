@@ -2,7 +2,6 @@
 identity:
   key: good.live-fish
   name: "Fish"
-  traded_as: market.biologics
   kind: intermediate
   description: "Farmed fish, live, by weight."
 physical:

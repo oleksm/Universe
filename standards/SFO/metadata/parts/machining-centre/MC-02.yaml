@@ -7,6 +7,9 @@ identity:
   description: "Turns the cutter."
 physical:
   mass: 5000
+  length: 9.28
+  width: 4.64
+  height: 2.78
 made_from:
   - item: stock.st4340-fg
     quantity: 7500.0
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
   - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the machining centre: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

@@ -2,7 +2,6 @@
 identity:
   key: good.oats
   name: "Oats"
-  traded_as: market.food
   kind: product
   description: "A grain for cold, wet ground."
 physical:

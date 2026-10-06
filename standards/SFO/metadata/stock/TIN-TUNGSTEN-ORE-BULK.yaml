@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is tin-tungsten ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.tin-tungsten-ore-bulk
+  traded_as: market.ores
+  code: TIN-TUNGSTEN-ORE-BULK
+  name: "Tin-tungsten ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.tin-tungsten-ore

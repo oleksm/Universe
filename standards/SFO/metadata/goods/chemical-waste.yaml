@@ -2,7 +2,6 @@
 identity:
   key: good.chemical-waste
   name: "Chemical waste"
-  traded_as: market.chemicals
   kind: by-product
   description: "Spent solvents, salts and broth: what fine chemistry leaves, many times the weight of what it makes."
 physical:

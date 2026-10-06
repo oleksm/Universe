@@ -2,7 +2,6 @@
 identity:
   key: good.wafers
   name: "Silicon wafers"
-  traded_as: market.electronics
   kind: intermediate
   description: "Thin polished discs sawn from a single crystal of silicon: what chips are made on."
 physical:

@@ -3,12 +3,12 @@
 //! (setting a module, `Economy::set_up`). The engine never chooses for it.
 //!
 //! A yard builds the hulls its building dock can make: the dock set to its
-//! hull; its assembly shop to whichever of that hull's fitted products (its
-//! drive, tank, plant...) its store has least of; each welding bay and
-//! machining centre to the part the hull and those products lack most. A
-//! module keeps to what it's making until its store has what's wanted of
-//! it; one whose line makes what none of that goes into stands idle (it
-//! would only use up the stock the rest needs).
+//! hull; every other module that can be set to anything (assembly shop,
+//! welding bays, machining centres, the cutting table and panel former) to
+//! what the hull and its fitted products (drive, tank, plant...) lack most,
+//! down the whole bill (a part's panels, a panel's blanks). A module keeps to
+//! what it's making until its store has what's wanted of it; one with
+//! nothing wanted to make stands idle (it would only use up stock).
 
 use std::collections::HashMap;
 
@@ -17,15 +17,15 @@ use universe_world::recipes::{self, Recipe};
 
 use crate::universe::Universe;
 
-/// What a works wants on hand of each thing it builds toward (kg): one of each.
+/// What a works wants on hand of each thing it builds toward (kg): one of
+/// each, and what goes into it, down the bill (a hull's parts, a leg's own).
 fn wanted(goals: &[usize], mass: &dyn Fn(usize) -> f64, made_by: &dyn Fn(usize) -> Option<&'static Recipe>) -> HashMap<usize, f64> {
     let mut want: HashMap<usize, f64> = HashMap::new();
-    for &g in goals {
-        *want.entry(g).or_default() += mass(g);
-        if let Some(r) = made_by(g) {
-            for &(i, q) in &r.inputs {
-                *want.entry(i).or_default() += q * mass(g);
-            }
+    let mut open: Vec<(usize, f64, usize)> = goals.iter().map(|&g| (g, mass(g), 0)).collect();
+    while let Some((i, kg, depth)) = open.pop() {
+        *want.entry(i).or_default() += kg;
+        if let Some(r) = made_by(i).filter(|_| depth < 8) {
+            open.extend(r.inputs.iter().map(|&(x, q)| (x, q * kg, depth + 1)));
         }
     }
     want
@@ -39,10 +39,12 @@ pub fn run(u: &mut Universe) {
         let w = &u.markets.economy.works[k];
         let g = &u.land.grounds[w.ground];
         let Some(owner @ Party::Company(_)) = g.works.get(w.works).and_then(|x| g.lots.iter().find(|l| l.number == x.parcel)).and_then(|l| u.land.party(&l.owner)) else { continue };
-        let shop: Vec<usize> = (0..w.setups.len()).filter(|&s| w.setups[s].module.throughput.is_some()).collect();
-        if shop.is_empty() {
+        // (A works with a building dock is a yard: each of its modules that can be set to
+        // anything is set to what the build needs, the cutting table and panel former too.)
+        if !w.setups.iter().any(|s| s.module.identity.key == "module.building-dock") {
             continue;
         }
+        let shop: Vec<usize> = (0..w.setups.len()).filter(|&s| !recipes::of(&w.setups[s].module.identity.key).is_empty()).collect();
         let module = |s: usize| w.setups[s].module.identity.key.as_str();
         // What it builds toward: the hull its dock makes, and that hull's fitted products.
         let reg = universe_world::registry::registry();

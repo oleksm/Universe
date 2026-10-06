@@ -7,7 +7,7 @@ additionalProperties: false
 required: [identity, slots, thrusters, flight]
 allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
-  - { properties: { physical: { required: [volume] } } }
+  - { properties: { physical: { required: [volume, length, width, height] } } }
 properties:
   identity:
     type: object
@@ -43,6 +43,7 @@ properties:
         name: { type: string, description: "The slot's name on this hull (hardpoint_1). A fit and a thruster name it." }
         kind: { $ref: "../../common.schema.yaml#/definitions/slot_kind" }
         size: { type: integer, minimum: 1, maximum: 4, description: "Its size class: it takes equipment of this class or smaller." }
+        mount: { type: string, x-ref: [mount], description: "The mount the slot offers (SFO 19), by its key: what fits it, fits here." }
   thrusters:
     description: "Its nozzles, each driven by the equipment in one of its slots at a share of that equipment's thrust."
     type: array

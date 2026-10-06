@@ -7,6 +7,9 @@ identity:
   description: "A drum set with carbide picks, which wear and are changed."
 physical:
   mass: 300
+  length: 3.95
+  width: 0.74
+  height: 0.74
 made_from:
   - item: good.tools
     quantity: 300
@@ -17,3 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }
   - { of: [made_from, making], tier: invented, review: true, note: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Mining Rig: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

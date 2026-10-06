@@ -10,6 +10,9 @@ physical:
   density_monolith: 4700
   albedo: 0.18
   colour: [0.66, 0.6, 0.55]
+composition:
+  sulphide: [0.005, 0.02]
+  titanium: [5.0e-05, 0.0002]
 found:
   warm: 0.02
   frost_line: 0.0
@@ -19,3 +22,4 @@ basis:
   - { of: [found.warm], tier: invented, review: true, note: "A guess, to be reviewed: as rare among asteroids as among falls." }
   - { of: [found.falls], tier: sourced, source: "https://en.wikipedia.org/wiki/Meteorite_fall_statistics", note: "Stony-iron meteorites: 1.0% of classified falls. How much of one is metal was not found in a source." }
   - { of: [physical.albedo, physical.colour], tier: invented, review: true, note: "Chosen, so the game can draw it: between stone and metal. Its brightness is from memory of such asteroids, not from a source. To be reviewed." }
+  - { of: [composition.sulphide, composition.titanium], tier: sourced, review: true, source: "the planet simulation: docs/registry-reply.md of 2026-10-05, 'Composition ranges proposed for the new fields'", note: "Proposed by the planet simulation, from the meteorites that stand for the class. Pallasites: troilite about 1%; titanium low, in the olivine (Buseck 1977). Its sources are as it cites them: not read by the registry." }

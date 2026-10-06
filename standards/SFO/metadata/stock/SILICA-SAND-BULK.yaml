@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is silica sand as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.silica-sand-bulk
+  traded_as: market.minerals
+  code: SILICA-SAND-BULK
+  name: "Silica sand, in bulk"
+  form: bulk
+made_from:
+  - item: good.silica-sand

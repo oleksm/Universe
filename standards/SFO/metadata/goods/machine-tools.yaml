@@ -2,7 +2,6 @@
 identity:
   key: good.machine-tools
   name: "Machine tools"
-  traded_as: market.machinery
   kind: product
   description: "Machining centres, lathes, presses: the machines that make machines."
 physical:

@@ -2,7 +2,6 @@
 identity:
   key: good.crop-residue
   name: "Straw and stalks"
-  traded_as: market.biologics
   kind: by-product
   description: "What is left of a crop in the field: straw, stalks, leaves, prunings."
 physical:

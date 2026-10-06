@@ -16,6 +16,8 @@ composition:
   water: [0.4, 0.7]
   organics: [0.03, 0.08]
   volatiles: [0.05, 0.15]
+  sulphide: [0.002, 0.02]
+  titanium: [1.0e-05, 0.0001]
 found:
   cold: 0.03
   trojans: 0.15
@@ -27,3 +29,4 @@ basis:
   - { of: [physical, composition, mining], tier: sourced, source: "the game: crates/world/src/belt.rs, mining.rs", note: "As the game has it. Its own figures were chosen." }
   - { of: [found.outer], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt", note: "Most objects of the outer belt are largely frozen volatiles: methane, ammonia and water." }
   - { of: [found.cold, found.trojans], tier: invented, review: true, note: "A guess, to be reviewed." }
+  - { of: [composition.sulphide, composition.titanium], tier: invented, review: true, source: "the planet simulation: docs/registry-reply.md of 2026-10-05, 'Composition ranges proposed for the new fields'", note: "Proposed by the planet simulation, from the meteorites that stand for the class. The dust in it, a few per cent to 30% of its mass, at a chondrite's levels: a guess. Its sources are as it cites them: not read by the registry." }

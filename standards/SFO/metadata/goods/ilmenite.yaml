@@ -2,7 +2,6 @@
 identity:
   key: good.ilmenite
   name: "Ilmenite"
-  traded_as: market.ores
   kind: rock
   description: "Black sand and rock of iron-titanium oxide: half of it is titanium dioxide. The ore of titanium."
 physical:

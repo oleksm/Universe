@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is dross as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.dross-bulk
+  traded_as: market.minerals
+  code: DROSS-BULK
+  name: "Dross, in bulk"
+  form: bulk
+made_from:
+  - item: good.dross

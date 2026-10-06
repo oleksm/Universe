@@ -137,6 +137,20 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             let Fact::Contact(c) = fact else { return };
             let b = &sys.bodies[body];
             let rot = b.rotation(t);
+            // On legs: what they take, for this ship as it is (cargo and all) on this ground.
+            if let Some(legs) = crate::legs::of_spec(ship.spec()) {
+                let sink = (-c.relative_velocity.dot(c.normal)).max(0.0);
+                let g = crate::units::G * b.mass / b.rail.radius.max(1.0).powi(2);
+                let hardest = legs.hardest(ship.mass(), g);
+                if sink > hardest {
+                    fired(events, name, "refused: a leg gave way");
+                    damage::destroy(ship, &format!("A LEG GAVE WAY AT {sink:.1} M/S (IT TAKES {hardest:.1})"), events);
+                    return;
+                }
+                if sink > legs.designed {
+                    events.push(ShipEvent::HardLanding { sink, jolt: legs.jolt(sink) });
+                }
+            }
             let held = match *pose {
                 Pose::Deck => (speed < *max_speed).then(|| (crate::station::rest(c.local, ship.rest_height()), upright(rot * DVec3::Y, ship.forward()))),
                 Pose::Ground => (speed < *max_speed).then(|| (c.local * (b.surface_radius(c.local) + ship.rest_height()), upright(c.normal, ship.forward()))),
@@ -180,8 +194,9 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             // Relative to the structure's pose and drift (it doesn't spin), kept for the other side.
             let frame = Frame { angular_velocity: DVec3::ZERO, ..Frame::of(&sys.bodies, body, t, positions) };
             let local = Relative::of(&frame, &ship.rigid());
-            // Through the tube at its natural pace for the ship's mass.
+            // Through the tube at its natural pace for the ship's mass, for its toll.
             let duration = universe_physics::hyper::tube_natural_time(ship.mass(), *span);
+            events.push(ShipEvent::TubeToll { credits: crate::gate::crossing_toll(ship.mass(), *span) });
             ship.state = ShipState::Transit {
                 to: *to,
                 from: system,

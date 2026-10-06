@@ -2,7 +2,6 @@
 identity:
   key: good.woollens
   name: "Woollens"
-  traded_as: market.textiles
   kind: product
   description: "Coats, jumpers, blankets: warm things, of wool."
 physical:

@@ -143,6 +143,12 @@ fn system(reg: &'static Registry, s: &'static crate::registry::System) -> System
                     RegKind::IceGiant => BodyKind::IceGiant,
                     RegKind::Moon => BodyKind::Moon,
                     RegKind::Asteroid => BodyKind::Asteroid,
+                    // (Small bodies: the engine seeds them; their records are its export.)
+                    RegKind::DwarfPlanet => BodyKind::DwarfPlanet,
+                    RegKind::Comet => BodyKind::Comet,
+                    RegKind::Centaur => BodyKind::Centaur,
+                    RegKind::CrossingAsteroid => BodyKind::CrossingAsteroid,
+                    RegKind::CapturedMoon => BodyKind::CapturedMoon,
                     k => panic!("{key}: the game makes no {k:?}"),
                 };
                 let (o, p, f) = (&b.orbit, &b.physical, &b.surface);

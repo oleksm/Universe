@@ -11,6 +11,9 @@ physical:
   density_monolith: 1700
   albedo: 0.056
   colour: [0.3, 0.24, 0.2]
+composition:
+  sulphide: [0.03, 0.1]
+  titanium: [0.0003, 0.0005]
 found:
   cold: 0.0
   trojans: 0.7
@@ -19,3 +22,4 @@ basis:
   - { of: [found.trojans], tier: invented, review: true, source: "https://en.wikipedia.org/wiki/Jupiter_trojan", note: "A guess, to be reviewed, made to follow what is known: the Jupiter trojans mostly are D-type asteroids. The share is chosen." }
   - { of: [physical.albedo], tier: sourced, source: "https://en.wikipedia.org/wiki/Jupiter_trojan", note: "The Jupiter trojans' average, for those over 57 km. Their densities run from 800 to 2,500 kg/m3." }
   - { of: [physical.colour], tier: invented, review: true, note: "Chosen, so the game can draw it: very dark and reddish. To be reviewed." }
+  - { of: [composition.sulphide, composition.titanium], tier: sourced, review: true, source: "the planet simulation: docs/registry-reply.md of 2026-10-05, 'Composition ranges proposed for the new fields'", note: "Proposed by the planet simulation, from the meteorites that stand for the class. Tagish Lake, linked to D-types: sulphur about 4% (Brown et al. 2000). One meteorite. Its sources are as it cites them: not read by the registry." }

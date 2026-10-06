@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: hydroponic halls for the leaf and salad that do not ship. The rest of what its people eat is brought.
+identity:
+  key: facility.treistun.port-fabindum.fabindum-halls
+  name: Fabindum Halls
+kind: food works
+parcel: parcel.treistun.port-fabindum.2
+lines:
+  - makes: good.lettuce
+    also: [good.spinach, good.tomatoes, good.peppers]
+    modules:
+      - { module: module.grow-hall, count: 1 }
+modules:
+  - { module: module.cold-store, count: 1 }

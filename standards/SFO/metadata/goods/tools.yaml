@@ -2,7 +2,6 @@
 identity:
   key: good.tools
   name: "Tools"
-  traded_as: market.tools
   kind: product
   description: "Hand tools and cutting tools."
 physical:

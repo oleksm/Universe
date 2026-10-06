@@ -2,13 +2,12 @@
 identity:
   key: good.clay
   name: "Clay"
-  traded_as: market.minerals
   kind: rock
   description: "Fine, sticky earth, made where water has worn rock down: the stuff of brick, and a part of cement."
 physical:
   bulk_density: 1700
 source:
   occurs: temperate planets
-  note: "It forms only where there has been liquid water for a very long time. The game has no ore for it yet."
+  note: "It forms only where there has been liquid water for a very long time. The game has no ore for it yet. The planet simulation adds: a world that was once wet has it too (Mars has clays from its early wet era)."
 basis:
   - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }

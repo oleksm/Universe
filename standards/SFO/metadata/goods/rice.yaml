@@ -2,7 +2,6 @@
 identity:
   key: good.rice
   name: "Rice"
-  traded_as: market.food
   kind: product
   description: "Grown in flooded fields; as harvested, in its husk."
 physical:

@@ -22,7 +22,34 @@ recipes:
       - { item: good.slag, quantity: 2.181 }
     rate: 1.0
     power: 24900000
+  - makes: element.ni
+    does: "Laterite ore is dried, part reduced in a kiln and smelted by arc; nickel and iron run off together as ferronickel."
+    inputs:
+      - { item: good.laterite-nickel-ore, quantity: 100.0 }
+      - { item: good.carbon, quantity: 20.0 }
+      - { item: element.o, quantity: 51.72 }
+    outputs:
+      - { item: element.fe, quantity: 3.0 }
+      - { item: good.carbon-dioxide, quantity: 73.28 }
+      - { item: good.slag, quantity: 94.44 }
+    rate: 0.25
+    power: 116750000
+  - makes: element.mn
+    does: "Manganese ore and carbon are smelted by arc; manganese and iron run off together as ferromanganese."
+    inputs:
+      - { item: good.manganese-ore, quantity: 2.688 }
+      - { item: good.carbon, quantity: 0.5687 }
+      - { item: good.graphite-electrode, quantity: 0.02375 }
+      - { item: element.o, quantity: 0.9244 }
+    outputs:
+      - { item: element.fe, quantity: 0.25 }
+      - { item: good.carbon-dioxide, quantity: 2.171 }
+      - { item: good.slag, quantity: 0.7834 }
+    rate: 1.0
+    power: 12150000
 basis:
   - { of: [recipes.inputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "For each tonne of ferrochrome (60% chromium taken; 50 to 70): 2.4 to 3.0 t of chromite, 550 to 700 kg of carbon, 8 to 25 kg of electrode, 3,800 to 4,500 kWh." }
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance. The chromium and the iron are counted apart, though they leave the furnace as one alloy, because recipes take them apart." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "Laterite nickel by kiln and electric furnace: 100 t of ore and 20 t of coal for each tonne of nickel in the ferronickel (a Greek plant), 467 GJ a tonne of nickel. The ferronickel is taken as a quarter nickel; its cobalt is lost to it." }
+  - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "Ferromanganese (80% manganese): 1.9 to 2.4 t of ore, 410 to 500 kg of coke, 8 to 30 kg of electrode and 2,200 to 3,200 kWh a tonne. The manganese and the iron are counted apart, as chromium's are." }

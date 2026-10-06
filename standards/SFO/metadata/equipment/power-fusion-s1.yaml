@@ -7,9 +7,13 @@ identity:
   slot: power
   description: "The ship's power plant."
 size_class: 1
+fits: mount.power-s1
 physical:
   mass: 1800
-  volume: 3.5
+  volume: 144.0
+  length: 12.0
+  width: 6.0
+  height: 2.0
 built_of:
   parts: power-fusion-s1
 making:
@@ -22,3 +26,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. Its registry cousin on the ground makes 22 W for each kg; this is asked for 2,200." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "Its radiator sets the size: 7.4 MW of waste heat at 1,000 K and an emissivity of 0.9 wants 72 m2 radiating both sides (Stefan-Boltzmann, 36 m2 of panel: 12 by 6 m, as the audit worked it); the reactor and turbine set are taken to sit within 2 m under it. The plant's weight is not sized: it is the invented part." }

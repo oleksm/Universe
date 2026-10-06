@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
+identity:
+  key: mount.lift-s3
+  name: "Lift mount, class 3"
+  slot: lift
+  size_class: 3
+  description: "What a class 3 lift slot offers, and what fits it."
+envelope:
+  length: 42.5
+  width: 19.2
+  height: 6.52
+bears:
+  mass: 8750.0
+  thrust: 2000000.0
+feeds:
+  power: 1000000.0
+  cooling: 23300000.0
+  fuel: 0.2
+nozzle:
+  diameter: 14.0
+basis:
+  - { of: [envelope, bears, feeds, nozzle], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give." }

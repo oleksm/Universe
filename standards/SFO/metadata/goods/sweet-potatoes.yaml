@@ -2,7 +2,6 @@
 identity:
   key: good.sweet-potatoes
   name: "Sweet potatoes"
-  traded_as: market.food
   kind: product
   description: "A root for warm ground."
 physical:

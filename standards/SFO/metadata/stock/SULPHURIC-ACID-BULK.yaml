@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is sulphuric acid as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.sulphuric-acid-bulk
+  traded_as: market.chemicals
+  code: SULPHURIC-ACID-BULK
+  name: "Sulphuric acid, in bulk"
+  form: bulk
+made_from:
+  - item: good.sulphuric-acid

@@ -2,7 +2,6 @@
 identity:
   key: good.peas
   name: "Peas"
-  traded_as: market.food
   kind: product
   description: "Dried peas."
 physical:

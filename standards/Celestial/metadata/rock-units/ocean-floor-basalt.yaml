@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
+identity:
+  key: rock-unit.ocean-floor-basalt
+  name: "Ocean-floor basalt"
+  about: "The floor of the oceans, made at the ridges."
+sim: { key: morb }
+made_by: [ridge]
+physical:
+  density: 2950.0
+  magnetic_susceptibility: 0.001
+  erodibility: 0.6
+basis:
+  - { of: [sim, physical], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }

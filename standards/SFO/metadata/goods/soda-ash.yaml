@@ -2,7 +2,6 @@
 identity:
   key: good.soda-ash
   name: "Soda ash"
-  traded_as: market.chemicals
   kind: consumable
   description: "Sodium carbonate: it lets sand melt at a heat a furnace can reach."
 physical:

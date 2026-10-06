@@ -2,7 +2,6 @@
 identity:
   key: good.rapeseed
   name: "Rapeseed"
-  traded_as: market.food
   kind: product
   description: "An oilseed for cool ground."
 physical:

@@ -6,9 +6,13 @@ identity:
   revision: outdated
   slot: hyperdrive
 size_class: 2
+fits: mount.hyperdrive-s2
 physical:
   mass: 4200
   volume: 10
+  length: 2.82
+  width: 1.88
+  height: 1.88
 needs:
   power: 1500000
 built_of:
@@ -22,3 +26,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and all invented: nothing real holds a hyper-field. Taken as coils in strong cases, the power gear that feeds them, and cooling." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: coils in a rack, to its volume. A stand-in until it is sized from what it must do." }

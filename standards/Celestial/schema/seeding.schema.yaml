@@ -105,4 +105,109 @@ properties:
       falls_as: { type: number, x-unit: "1", description: "the dose goes as the distance to minus this" }
       giant_mass: { type: number, x-unit: "kg", description: "kg, Jupiter's: the dose is taken to go with the giant's mass" }
       deadly_above: { type: number, x-unit: "Sv/s", description: "Sv/s above which a person unshielded dies within days" }
+  largest_body:
+    description: "A belt's largest body."
+    type: object
+    additionalProperties: false
+    properties:
+      share: { type: number, x-unit: "1", description: "the share of the belt's mass it holds" }
+      position: { type: number, x-unit: "1", description: "it lies no nearer either edge of the belt than this share of the belt's width" }
+      eccentricity: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "least and most" }
+      tilt: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most" }
+      round_above: { type: number, x-unit: "m", description: "m of radius above which it is round, a dwarf planet" }
+  crossing:
+    description: "Asteroids knocked out of the belt onto orbits that come in among the rocky planets."
+    type: object
+    additionalProperties: false
+    properties:
+      count: { type: number, x-unit: "1", description: "how many, where there is a rocky planet inside the belt" }
+      nearest: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "its nearest to the star, as a share of a rocky planet's orbit" }
+      farthest_if_inside: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "its farthest, as a multiple of its nearest, where the belt lies inside that" }
+      tilt: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most" }
+      radius: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "least and most, drawn evenly by its logarithm" }
+  captured:
+    description: "Moons caught by a giant: far out, tilted, stretched, most going round backward."
+    type: object
+    additionalProperties: false
+    properties:
+      count_gas_giant: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "least and most round a gas giant" }
+      count_other: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "least and most round another giant" }
+      backward: { type: number, x-unit: "1", description: "the chance one goes round backward" }
+      eccentricity: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "least and most" }
+      tilt_forward: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most, going forward" }
+      tilt_backward: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most, going backward" }
+      radius: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "least and most, drawn evenly by its logarithm" }
+      nearest: { type: number, x-unit: "1", description: "no nearer than this share of the giant's reach (its Hill radius)" }
+      beyond_moons: { type: number, x-unit: "1", description: "nor nearer than this many times its farthest own moon" }
+      farthest: { type: number, x-unit: "1", description: "no farther than this share of the giant's reach" }
+      primitive: { type: number, x-unit: "1", description: "the chance one is of the primitive class; the rest are carbonaceous" }
+  centaurs:
+    description: "Ice bodies wandering among the giants."
+    type: object
+    additionalProperties: false
+    properties:
+      count: { type: number, x-unit: "1", description: "how many, where there are two giants or more" }
+      inner: { type: number, x-unit: "1", description: "no nearer than this multiple of the first giant's orbit" }
+      outer: { type: number, x-unit: "1", description: "no farther than this multiple of the last giant's orbit" }
+      eccentricity: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "least and most" }
+      tilt: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most" }
+      radius: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "least and most, drawn evenly by its logarithm" }
+  outer_dwarfs:
+    description: "Dwarf planets of the outer belt."
+    type: object
+    additionalProperties: false
+    properties:
+      sun: { type: number, x-unit: "1", description: "how many the Sun's outer belt has; a system's by the ground its own covers" }
+      most: { type: number, x-unit: "1", description: "the most that are made" }
+      eccentricity: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "least and most" }
+      tilt: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most" }
+      radius: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "least and most" }
+  returning_comets:
+    description: "Comets thrown in by the giants, that come back."
+    type: object
+    additionalProperties: false
+    properties:
+      count: { type: number, x-unit: "1", description: "how many, where there is a giant" }
+      nearest: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "its nearest to the star, as a multiple of the warm zone's edge" }
+      farthest: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "its farthest, as a multiple of the last giant's orbit" }
+      tilt: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most" }
+      radius: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "least and most" }
+  cloud_comet:
+    description: "The one comet from the far cloud."
+    type: object
+    additionalProperties: false
+    properties:
+      nearest: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "1", description: "its nearest to the star, as a multiple of the warm zone's edge" }
+      orbit: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "its orbit's half-width for a star of the Sun's mass, least and most; it goes with the cube root of the star's mass" }
+      tilt: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "deg", description: "least and most: from any side" }
+      radius: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "least and most" }
+  spin:
+    description: "How long a small body's day is."
+    type: object
+    additionalProperties: false
+    properties:
+      rock: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "s", description: "least and most for a rock, drawn evenly by its logarithm" }
+      round: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "s", description: "least and most for a round one" }
+  belt_rocks:
+    description: "How the engine lays out a belt's rocks."
+    type: object
+    additionalProperties: false
+    properties:
+      main_tilt: { type: number, x-unit: "deg", description: "the main belt's rocks' typical tilt" }
+      trojan_tilt: { type: number, x-unit: "deg", description: "a trojan swarm's" }
+      trojan_width: { type: number, x-unit: "1", description: "a swarm's rings lie within this share of its giant's orbit" }
+      per_patch: { type: number, x-unit: "1", description: "about how many rocks a patch holds" }
+      largest: { type: number, x-unit: "m", description: "m across, the largest rock a belt's size classes run to" }
+      most_eccentric: { type: number, x-unit: "1", description: "the most any belt rock's orbit is stretched" }
+      rubble_above: { type: number, x-unit: "m", description: "m of radius above which a rock is a rubble pile, not one piece" }
+  trade_bans:
+    description: "For a seeded settlement's market: what it may refuse to trade, and how likely it is to. Rolled in this order."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [market, chance]
+      properties:
+        market: { type: string, x-ref: [market], description: "The market category, by its key." }
+        chance: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the chance a market bans it" }
   basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

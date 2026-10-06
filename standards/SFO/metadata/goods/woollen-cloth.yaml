@@ -2,7 +2,6 @@
 identity:
   key: good.woollen-cloth
   name: "Woollen cloth"
-  traded_as: market.textiles
   kind: intermediate
   description: "Cloth woven of wool, on the roll."
 physical:

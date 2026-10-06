@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.molybdenum-concentrate
+  name: "Molybdenum concentrate"
+  kind: intermediate
+  description: "Molybdenite floated off a copper ore: half molybdenum, a third sulphur."
+physical:
+  bulk_density: 1700
+basis:
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

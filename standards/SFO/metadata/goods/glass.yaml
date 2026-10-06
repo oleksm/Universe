@@ -2,7 +2,6 @@
 identity:
   key: good.glass
   name: "Glass"
-  traded_as: market.minerals
   kind: product
   description: "Flat glass, in sheets."
 physical:

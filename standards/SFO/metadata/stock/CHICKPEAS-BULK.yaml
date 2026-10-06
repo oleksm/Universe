@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is chickpeas as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.chickpeas-bulk
+  traded_as: market.food
+  code: CHICKPEAS-BULK
+  name: "Chickpeas, in bulk"
+  form: bulk
+made_from:
+  - item: good.chickpeas

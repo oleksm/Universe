@@ -2,7 +2,6 @@
 identity:
   key: good.beet-pulp
   name: "Beet pulp"
-  traded_as: market.biologics
   kind: by-product
   description: "What is left of sugar beet, with its water."
 physical:

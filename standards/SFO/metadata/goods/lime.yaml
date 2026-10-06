@@ -2,7 +2,6 @@
 identity:
   key: good.lime
   name: Lime
-  traded_as: market.minerals
   kind: consumable
   description: "Burnt limestone. In a furnace it forms the slag that takes up impurities."
 physical:

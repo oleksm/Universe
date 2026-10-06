@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is manganese ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.manganese-ore-bulk
+  traded_as: market.ores
+  code: MANGANESE-ORE-BULK
+  name: "Manganese ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.manganese-ore

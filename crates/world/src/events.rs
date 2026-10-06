@@ -9,6 +9,12 @@ use serde::{Deserialize, Serialize};
 pub enum ShipEvent {
     /// Came to rest on a body: docked in a station's slot (`station`), or on the ground.
     Landed { body: String, station: bool },
+    /// Set down harder than its legs are designed for (`sink`, m/s): the jolt
+    /// everything aboard took (g).
+    HardLanding { sink: f64, jolt: f64 },
+    /// What was in the hold of `item` (`units` of it) broke under a jolt
+    /// harder than it takes.
+    CargoBroken { item: usize, units: u32 },
     /// Came to rest on a spaceport's pad.
     LandedAtPort { port: String },
     /// Moved off the pad into the port's hangar, or out of it onto pad `pad`.
@@ -68,6 +74,8 @@ pub enum ShipEvent {
     HyperdriveDisengaged,
     /// Entered a gate, heading for another system.
     GateEntered { to: String },
+    /// Into a tube: what the crossing costs (credits; its energy, at the power price).
+    TubeToll { credits: f64 },
     /// Came out of the paired gate.
     GateArrived { system: String },
     /// Went through a gate faster than it can take.

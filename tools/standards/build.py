@@ -135,7 +135,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "revision", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "revision", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -518,9 +518,9 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 # Local Administration: each settled system's, one file each
 # (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
 LOCAL = "LocalAdministration"
-ZONE_USES = ["port", "industrial", "commercial", "civic", "residential"]
+ZONE_USES = ["port", "industrial", "commercial", "civic", "residential", "agricultural"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port"}
+FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port", "farm": "agricultural", "food works": "industrial", "store": "port", "utility": "industrial"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -536,6 +536,13 @@ PORT = {
 # (The game no longer has ores.ron or goods.ron: it reads the goods and the market's categories from
 # the registry. Both are taken from the records here, under the names the rest of this build uses.)
 _sfo_meta = os.path.join(TREE, "SFO", "metadata")
+# (What is sold is stock: a good's market category is its stock's.)
+SOLD_AS = {}
+_sdir = os.path.join(TREE, "SFO", "metadata", "stock")
+for _f in sorted(os.listdir(_sdir)) if os.path.isdir(_sdir) else []:
+    _s = yaml.safe_load(open(os.path.join(_sdir, _f), encoding="utf-8")) or {}
+    for _m in _s.get("made_from") or []:
+        SOLD_AS[str(_m.get("item", "")).split(".", 1)[-1]] = str((_s.get("identity") or {}).get("traded_as", ""))
 ORES = {m for f in sorted(os.listdir(os.path.join(_sfo_meta, "goods"))) for m in re.findall(r"^\s*ore: (ore\.[a-z_]+)", open(os.path.join(_sfo_meta, "goods", f), encoding="utf-8").read(), re.M)}
 GOODS_KINDS = {}
 for _mf in sorted(os.listdir(os.path.join(_sfo_meta, "markets"))):
@@ -625,7 +632,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -966,7 +973,7 @@ for name in sorted(os.listdir(TREE)):
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
 KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
-NESTED = {"parts"}
+NESTED = {"parts", "mounts"}      # (folders whose records the page lists elsewhere, or not yet)
 SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
 elements, materials, processes, modules, goods, hulls, mill_stock, equipment, gates = [], [], [], [], [], [], [], [], []
 for s in standards:
@@ -1053,7 +1060,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -1703,7 +1710,7 @@ def write_ron():
                 # goods it is, if it has one yet: none, and the game doesn't trade it.)
                 def flow(slug, rate):
                     rec = next((r for r in goods + materials if r.get("slug") == slug), None)
-                    as_ = ((rec or {}).get("identity") or {}).get("traded_as")          # (a market category, as the game keys it)
+                    as_ = (SOLD_AS.get(slug) or "").split(".")[-1] or None          # (the market category of the stock it is sold as)
                     kind = ((rec or {}).get("game") or {}).get("goods", "") or ("goods." + as_.replace("-", "_") if as_ else "")
                     return f"({ron_str(name_of(slug))}, {ron_str(kind)}, {float(rate)!r})"
                 takes = [flow(i["item"], i["rate"]) for ln in fc.get("lines") or [] if ln.get("most") for i in ln["most"]["supplies"]]
@@ -2266,7 +2273,7 @@ _pdir = os.path.join(TREE, "People", "metadata")
 needs = [dict(load(os.path.join(_pdir, "needs", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "needs")))] if os.path.isdir(_pdir) else []
 professions = [dict(load(os.path.join(_pdir, "professions", f)), slug=f[:-5]) for f in sorted(os.listdir(os.path.join(_pdir, "professions")))] if os.path.isdir(_pdir) else []
 _made = {rc.get("product") for m in modules for rc in m.get("recipes") or []} | {x.get("item") for m in modules for rc in m.get("recipes") or [] for x in rc.get("outputs") or []}
-_markets = {str((g.get("identity") or {}).get("traded_as", "")).split(".")[-1] for g in goods if any(g["slug"] == pr for pr in _made)}
+_markets = {SOLD_AS.get(g["slug"], "").split(".")[-1] for g in goods if any(g["slug"] == pr for pr in _made)}
 _bdir = os.path.join(TREE, "SFO", "metadata", "buildings")
 buildings = [dict(load(os.path.join(_bdir, f)), slug=f[:-5]) for f in sorted(os.listdir(_bdir))] if os.path.isdir(_bdir) else []
 tail = lambda k: str(k).split(".")[-1]
@@ -2325,10 +2332,49 @@ for nd in needs:
     for g_ in nd.get("gives") or []:
         _outs.setdefault(g_["item"], []).append("people")
 rows = []
+_elements = {(e_.get("identity") or {}).get("symbol") for e_ in elements}
 for it in sorted(_outs, key=lambda i: item_name(i).lower()):
+    if it in _elements:       # (a metal won beside the main one is a product, not a waste)
+        continue
     takers = list(dict.fromkeys(_ins.get(it) or []))
     rows.append(row("ok" if takers else "gap", item_name(it), ", ".join(list(dict.fromkeys(_outs[it]))[:6]) + (" and others" if len(set(_outs[it])) > 6 else ""), ", ".join(takers[:6]) + (" and others" if len(takers) > 6 else "") or "nothing takes it"))
-report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed.", ["Given off", "By", "Taken by"], rows)
+report("takers", "Takers: is each thing given off taken by something?", "Everything that comes out of a recipe beside its product, and everything people give off: what gives it, and what takes it in. A gap is a thing that piles up for ever, or is thrown away: a loop that is not closed. Elements are left out: a metal won beside the main one is a product.", ["Given off", "By", "Taken by"], rows)
+
+# 3d''. Mounts (SFO 19): does each piece of equipment lie within the mount it says it fits?
+_mdir = os.path.join(TREE, "SFO", "metadata", "mounts")
+MOUNTS = {}
+for _f in sorted(os.listdir(_mdir)) if os.path.isdir(_mdir) else []:
+    _m = yaml.safe_load(open(os.path.join(_mdir, _f), encoding="utf-8")) or {}
+    MOUNTS[_m["identity"]["key"]] = _m
+rows = []
+for e_ in equipment:
+    raw = yaml.safe_load(open(os.path.join(TREE, e_["file"]), encoding="utf-8")) or {}
+    mk = raw.get("fits")
+    if not mk:
+        continue
+    mt = MOUNTS.get(mk)
+    if not mt:
+        rows.append(row("gap", e_["identity"]["name"], mk, "no such mount")); continue
+    ph, env, bears, feeds = raw.get("physical") or {}, mt["envelope"], mt["bears"], mt.get("feeds") or {}
+    over = []
+    dims = sorted([ph.get("length", 0), ph.get("width", 0), ph.get("height", 0)], reverse=True); room = sorted([env["length"], env["width"], env["height"]], reverse=True)
+    if any(d_ > r_ * 1.0001 for d_, r_ in zip(dims, room)): over.append(f"size {dims[0]:g} x {dims[1]:g} x {dims[2]:g} m in {room[0]:g} x {room[1]:g} x {room[2]:g}")
+    if ph.get("mass", 0) > bears["mass"]: over.append(f"weight {ph['mass']:,.0f} kg over {bears['mass']:,.0f}")
+    draw = (raw.get("needs") or {}).get("power", 0)
+    if feeds.get("power") and draw > feeds["power"]: over.append(f"draws {draw / 1e6:g} MW over {feeds['power'] / 1e6:g}")
+    th = (raw.get("function") or {}).get("thrust", 0)
+    if bears.get("thrust") and th > bears["thrust"]: over.append(f"thrust {th / 1e6:g} MN over {bears['thrust'] / 1e6:g}")
+    rows.append(row("gap" if over else "ok", e_["identity"]["name"], mk, "; ".join(over) or "within it"))
+report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
+
+# 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
+_stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
+_fitted = lambda e_: any(str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])
+rows = []
+for kind_, recs_ in (("Hulls", hulls), ("Equipment", equipment), ("Parts", parts)):
+    owed = [e_ for e_ in recs_ if _stand_in(e_)]; fitted = [e_ for e_ in recs_ if _fitted(e_)]
+    rows.append(row("gap" if owed else "ok", kind_, len(recs_), len(recs_) - len(owed) - len(fitted), len(fitted), len(owed), ", ".join((e_.get("identity") or {}).get("name", e_.get("slug", "")) for e_ in owed[:8]) + (f" and {len(owed) - 8} more" if len(owed) > 8 else "")))
+report("dimensions", "Dimensions: sized, fitted, or only standing in", "Every hull, piece of equipment and part must say its length, width and height. Sized: measured, or worked out from what it does or from a real one. Fitted: a part given its share of its product's room, so that the parts fit the whole, its own shape not drawn. Standing in: a shape to its volume, owed a real size.", ["Kind", "Records", "Sized", "Fitted", "Standing in", "Owed"], rows)
 
 # 3d. The dictionary: the registry's shared words, and what each value means (standards/dictionary.schema.yaml).
 _dict = load(os.path.join(TREE, "dictionary.schema.yaml")).get("definitions") or {}

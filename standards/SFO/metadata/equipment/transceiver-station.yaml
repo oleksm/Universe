@@ -6,9 +6,13 @@ identity:
   revision: outdated
   slot: gate
 size_class: 4
+fits: mount.gate-s4
 physical:
   mass: 20000
-  volume: 60
+  volume: 21500.0
+  length: 53.2
+  width: 53.2
+  height: 7.6
 needs:
   power: 1000000
 built_of:
@@ -24,3 +28,4 @@ function:
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A dish: taking three tenths of its 20,000 kg as the reflector, at the Mars Reconnaissance Orbiter's 2.7 kg a m2 (19.1 kg for a 3 m dish), gives 2,222 m2: 53 m across, a seventh as deep." }

@@ -39,7 +39,7 @@ fn main() {
     let explorer = 0.9e5 * per_kg / universe_physics::hyper::field_cost(1e5, v_star, 0.75) / LIGHT_YEAR;
     md.push_str(&format!("| An explorer, nine tenths tank (0.75) | {explorer:.1} ly at 1,000 c, 5 ly in {:.1} days |\n", 5.0 * LIGHT_YEAR / v_star / DAY));
     use universe_physics::hyper::{tube_crossing_energy, tube_hold_power, tube_natural_time, tube_open_energy};
-    let gate = 2.0 * universe_world::sheet::GATE_RADIUS;
+    let gate = 2.0 * universe_world::gate::gate_radius();
     for span in [1.0, 5.0, 10.0, 40.0] {
         let s = span * LIGHT_YEAR;
         md.push_str(&format!("| A gate spanning {span} ly: opened at / held at | {:.1e} J / {} |\n", tube_open_energy(gate, s), watts(tube_hold_power(gate, s))));

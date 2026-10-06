@@ -5,6 +5,7 @@ identity:
 kind: settlement
 at: body.treistun.treistun-e
 position: { latitude: 23.813, longitude: -79.362 }
+structure: structure.spaceport
 population: 60000
 about: "The port on Treistun e, the home world, at 24° north. Gravity 0.98 g, with air, and cold."
 story:
