@@ -1132,3 +1132,10 @@ people breathe from `facility.treistun.port-nacaubun.nacaubun-life-support` (ele
 oxygen plants, 30 days in store), not from the place: the `from: place` oxygen a breathable world
 gives no longer applies on Hearth. When the release lands, the record takes the run's mean
 (about 216 K) and months; the Worlds report will show TRE1.
+
+**Halden runs; the tailings (the integrator, 2026-10-06, night).** Good news: the mine digs the
+survey's deposit and draws it down. The store filling with tailings and waste rock is answered:
+`module.tailings-dam` (holds 100 Mt, the concentrator's slurry settling for good) and
+`module.waste-dump` (200 Mt, the barren rock) stand at both camps' mines, on claim parcels widened
+to hold them. The dam's tailings are what the brickworks and the concrete plant take, when they
+want them; the dump is what the pit swallows when it is backfilled, later. `worlds::Survey` noted.

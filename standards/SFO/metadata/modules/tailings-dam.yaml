@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.tailings-dam
+  name: "Tailings dam"
+  step: "Hold tailings"
+  description: "A valley or a ring of embankment where the concentrator's tailings are pumped as slurry and settle for good; the water drawn off and sent back. It holds what no works takes, until bricks and concrete want it."
+physical:
+  length: 2000
+  width: 1000
+  height: 40
+site: open sky
+capacity:
+  holds: 100000000000
+  stores: [goods.minerals, goods.ores]
+needs:
+  power: 2000000.0
+staff:
+  - { profession: profession.plant-operator, count: 2 }
+  - { profession: profession.engineer, count: 1 }
+life: 1577880000
+basis:
+  - { of: [physical, capacity, needs, staff], tier: invented, review: true, note: "A dam of about 100 Mt: a mine's tailings for a few years at 36 kt a day, two kilometres by one, 40 m of embankment; the pumps 2 MW. Typical figures, from memory; added 2026-10-06 because the game's Halden Camp filled its store with tailings in three days and stopped." }
+  - { of: [life], tier: invented, review: true, note: "Fifty years, as a civil work; then raised or closed." }

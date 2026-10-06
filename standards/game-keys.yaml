@@ -213,12 +213,14 @@
 - { key: module.sugar-works, game: "sugar-works", in: "industry.ron, settlements.ron" }
 - { key: module.sulphur-works, game: "sulphur-works", in: "industry.ron, settlements.ron" }
 - { key: module.synthesis-plant, game: "synthesis-plant", in: "industry.ron, settlements.ron" }
+- { key: module.tailings-dam, game: "tailings-dam", in: "industry.ron, settlements.ron" }
 - { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
 - { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }
 - { key: module.tin-smelter, game: "tin-smelter", in: "industry.ron, settlements.ron" }
 - { key: module.titanium-works, game: "titanium-works", in: "industry.ron, settlements.ron" }
 - { key: module.tungsten-works, game: "tungsten-works", in: "industry.ron, settlements.ron" }
 - { key: module.vacuum-furnace, game: "vacuum-furnace", in: "industry.ron, settlements.ron" }
+- { key: module.waste-dump, game: "waste-dump", in: "industry.ron, settlements.ron" }
 - { key: module.water-works, game: "water-works", in: "industry.ron, settlements.ron" }
 - { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
 - { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }

@@ -23,22 +23,23 @@ buildings:
 census:
   - { profession: profession.clerk, count: 57 }
   - { profession: profession.pilot, count: 32 }
-  - { profession: profession.plant-operator, count: 26 }
+  - { profession: profession.plant-operator, count: 28 }
   - { profession: profession.docker, count: 15 }
   - { profession: profession.miner, count: 14 }
   - { profession: profession.nurse, count: 11 }
+  - { profession: profession.engineer, count: 10 }
   - { profession: profession.administrator, count: 10 }
-  - { profession: profession.engineer, count: 9 }
   - { profession: profession.food-worker, count: 8 }
   - { profession: profession.chemist, count: 6 }
   - { profession: profession.merchant, count: 5 }
   - { profession: profession.scholar, count: 5 }
+  - { profession: profession.driver, count: 4 }
   - { profession: profession.doctor, count: 4 }
   - { profession: profession.lawyer, count: 4 }
   - { profession: profession.technician, count: 3 }
   - { profession: profession.electrician, count: 2 }
   - { profession: profession.innkeeper, count: 2 }
-  - { profession: profession.dependant, count: 87 }
+  - { profession: profession.dependant, count: 80 }
 # independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.hauler, count: 1 }

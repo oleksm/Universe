@@ -7,3 +7,5 @@
   build checks the deposit id against the body's survey.
 - Traffic between two settlements on the same body is a suborbital hop over the great circle; the
   stocking tool finds a warehouse by kind.
+- **Tailings dam and waste dump** modules (100 and 200 Mt), at both camps' mines: the game's Halden
+  Camp filled its store with tailings in three days and stopped (the integrator, 2026-10-06).

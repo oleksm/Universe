@@ -13,6 +13,7 @@ stock:
 # Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
 # Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
 # Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
+# Distribution stock: 1.5 resupply cycles (2.06632 days) of what its 300 people take: food in a plain basket (flour .25, potatoes .20, apples .10, the rest .05 each), medicine, clothes, tools, beer and wine.
   - { item: stock.flour-bulk, quantity: 349.0 }
   - { item: stock.potatoes-bulk, quantity: 279.0 }
   - { item: stock.cabbage-bulk, quantity: 69.7 }
