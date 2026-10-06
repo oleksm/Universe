@@ -61,7 +61,7 @@ fn sort_index(name: Option<&str>) -> usize {
 
 /// The layers, each shown or hidden: (name, the layer it's under, its colour).
 /// Points' kinds are 3.. in `SORTS`' order.
-const LAYERS: [(&str, Option<usize>, Option<Color>); 24] = [
+const LAYERS: [(&str, Option<usize>, Option<Color>); 25] = [
     ("HULL", None, Some(Color([0.55, 0.8, 1.0, 0.8]))),
     ("GRID, MEASURES", None, Some(Color([0.75, 0.88, 1.0, 0.75]))),
     ("POINTS", None, None),
@@ -86,6 +86,7 @@ const LAYERS: [(&str, Option<usize>, Option<Color>); 24] = [
     ("REACH", None, Some(Color([0.4, 1.0, 0.55, 0.8]))),
     ("MODULES", None, Some(MODULE)),
     ("FRAME", None, Some(Color([0.4, 1.0, 0.5, 1.0]))),
+    ("PRESSURE", None, Some(Color([1.0, 0.3, 0.25, 1.0]))),
 ];
 
 /// Modules placed: their colour.
@@ -107,6 +108,7 @@ pub mod layer {
     pub const REACH: usize = 21;
     pub const MODULES: usize = 22;
     pub const FRAME: usize = 23;
+    pub const PRESSURE: usize = 24;
 }
 
 /// The camera's field of view up and down (rad).
@@ -2615,6 +2617,159 @@ struct Budget {
     faults: Vec<String>,
 }
 
+/// What a walled room's opening leads to: space through nothing (an open end: a
+/// leak), space through a hatch alone (opening it vents the room), space through
+/// an airlock (the way in), or another room.
+#[derive(Clone, Copy, Debug, PartialEq)]
+enum Opening {
+    Leak,
+    ToSpace,
+    Airlock,
+    Inner,
+}
+
+/// The plan's pressure: its sealed spaces (walled rooms joined end to end or
+/// through a hatch: each one's volume, m³, and whether an airlock leads into it),
+/// and each opening of a room to space or another room (where, what it leads to).
+struct Pressure {
+    spaces: Vec<(f64, bool)>,
+    openings: Vec<(Vec3, Opening)>,
+}
+
+/// A cross-section's area (m²): its shape at its width and height.
+fn section_area(p: Profile) -> f32 {
+    let wh = p.width * p.height;
+    match p.section {
+        Section::Line => 0.0,
+        Section::Round => std::f32::consts::PI / 4.0 * wh,
+        Section::Square => wh,
+        Section::Hex => 0.75 * wh,
+        Section::Oct => 0.83 * wh,
+    }
+}
+
+fn pressure(i: &Interior) -> Pressure {
+    let plan = &i.plan;
+    let walled: Vec<usize> = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line).collect();
+    // (Which walled room a point is in, other than `not`.)
+    let room_at = |q: Vec3, not: usize| walled.iter().copied().find(|&k| {
+        if k == not {
+            return false;
+        }
+        let (a, b) = plan.axis(k);
+        let pr = plan.lines[k].2;
+        let d = b - a;
+        let t = (q - a).dot(d) / d.length_squared().max(1e-6);
+        let off = q - (a + d * t.clamp(0.0, 1.0));
+        (-0.05..=1.05).contains(&t) && off.y.abs() < pr.height * 0.5 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
+    });
+    let airlocks: Vec<&Block> = plan.blocks.iter().filter(|b| i.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).is_some_and(|(k, ..)| k == "airlock")).collect();
+    // (A way in: an airlock placed at it, or the hull's own hatch or door.)
+    let entries: Vec<Vec3> = plan.points.iter().filter(|q| q.name.as_deref().is_some_and(|n| n == "HATCH" || n.starts_with("DOOR"))).map(|q| q.at).collect();
+    let at_airlock = |q: Vec3| airlocks.iter().any(|b| {
+        let (lo, hi) = b.bounds();
+        q.cmpge(lo - 1.2).all() && q.cmple(hi + 1.2).all()
+    }) || entries.iter().any(|e| e.distance(q) < 2.5);
+    // (A cabin is pressurised itself: a hatch onto one opens into it.)
+    let cabins: Vec<&Block> = plan.blocks.iter().filter(|b| i.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).is_some_and(|(k, ..)| k == "cabin")).collect();
+    let in_cabin = |q: Vec3| cabins.iter().any(|b| {
+        let (lo, hi) = b.bounds();
+        q.cmpge(lo - 0.5).all() && q.cmple(hi + 0.5).all()
+    });
+    // (Spaces: rooms sharing a point, or a hatch between them.)
+    let mut root: Vec<usize> = (0..plan.lines.len()).collect();
+    fn find(root: &mut [usize], k: usize) -> usize {
+        if root[k] != k {
+            let r = find(root, root[k]);
+            root[k] = r;
+        }
+        root[k]
+    }
+    let join = |root: &mut Vec<usize>, a: usize, b: usize| {
+        let (x, y) = (find(root, a), find(root, b));
+        root[x] = y;
+    };
+    for (n, &a) in walled.iter().enumerate() {
+        for &b in &walled[n + 1..] {
+            let (la, lb) = (plan.lines[a], plan.lines[b]);
+            if la.0 == lb.0 || la.0 == lb.1 || la.1 == lb.0 || la.1 == lb.1 {
+                join(&mut root, a, b);
+            }
+        }
+    }
+    let mut openings = Vec::new();
+    let mut ways_in: Vec<usize> = Vec::new();
+    // (Each opening: where it is, which way is out of its room, its line, a hatch?)
+    let mut holes: Vec<(Vec3, Vec3, usize, bool)> = Vec::new();
+    for &k in &walled {
+        let (a, b) = plan.axis(k);
+        let d = (b - a).normalize_or_zero();
+        for e in 0..2 {
+            let point = if e == 0 { plan.lines[k].0 } else { plan.lines[k].1 };
+            if !plan.free_end(k, point) {
+                continue;
+            }
+            let (at, out) = if e == 0 { (a, -d) } else { (b, d) };
+            match plan.end_of(k, e) {
+                End::Closed => {}
+                End::Open => holes.push((at, out, k, false)),
+                End::Door => holes.push((at, out, k, true)),
+            }
+        }
+    }
+    for &SideDoor(k, t, right, _) in &plan.doors {
+        if !walled.contains(&k) {
+            continue;
+        }
+        let (a, b) = plan.axis(k);
+        let d = (b - a).normalize_or_zero();
+        let u = d.cross(Vec3::Y).try_normalize().unwrap_or(Vec3::X);
+        let side = if right { u } else { -u };
+        let w = plan.lines[k].2.width * 0.5;
+        holes.push((a.lerp(b, t) + side * w, side, k, true));
+    }
+    for (at, out, k, hatch) in holes {
+        let beyond = at + out * 0.8;
+        let what = match room_at(beyond, k) {
+            Some(other) => {
+                join(&mut root, k, other);
+                Opening::Inner
+            }
+            None if hatch && in_cabin(beyond) => Opening::Inner,
+            None if !hatch && at_airlock(beyond) => {
+                ways_in.push(k);
+                Opening::Airlock
+            }
+            None if !hatch => Opening::Leak,
+            None if at_airlock(beyond) => {
+                ways_in.push(k);
+                Opening::Airlock
+            }
+            None => Opening::ToSpace,
+        };
+        openings.push((at, what));
+    }
+    // (Each space's volume, and whether a way in leads to it.)
+    let mut spaces: Vec<(usize, f64, bool)> = Vec::new();
+    for &k in &walled {
+        let r = find(&mut root, k);
+        let (a, b) = plan.axis(k);
+        let v = f64::from(section_area(plan.lines[k].2) * a.distance(b));
+        let way = ways_in.iter().any(|&w| find(&mut root, w) == r);
+        match spaces.iter_mut().find(|s| s.0 == r) {
+            Some(s) => {
+                s.1 += v;
+                s.2 |= way;
+            }
+            None => spaces.push((r, v, way)),
+        }
+    }
+    Pressure { spaces: spaces.into_iter().map(|s| (s.1, s.2)).collect(), openings }
+}
+
+/// The oxygen in a cubic metre of air at a ship's pressure (kg: 21 kPa of it).
+const OXYGEN_A_CUBIC_METRE: f64 = 0.28;
+
 /// A record's function's fields, by name.
 type Fields = serde_json::Map<String, serde_json::Value>;
 
@@ -2663,14 +2818,40 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     lines.push((format!("HEAT  {} TO SHED: RADIATORS {}, LOOPS {}", si(heat, "W"), si(shed, "W"), si(loops, "W")), shed >= heat && loops >= heat));
     let crew: f64 = of("cabin").map(|p| num(&p.3, "seats")).sum();
     if crew > 0.0 {
-        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum();
-        let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum();
+        // (An empty sum is -0: plus 0, it's 0.)
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
         let (ad, wd) = (air / (OXYGEN_A_DAY * crew), water / (WATER_A_DAY * crew));
         let life = of("life_support").count();
         lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS STORED{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && life > 0));
     }
-    // Checks: the way in, the way down, the ore's path.
+    // Checks: sealed spaces, the way in, the way down, the ore's path.
     let mut faults = Vec::new();
+    let pr = pressure(i);
+    // (In a hull, its rooms open into it: the hull holds the air, not checked here.)
+    if !pr.spaces.is_empty() && i.spec().is_some() {
+        let volume: f64 = pr.spaces.iter().map(|s| s.0).sum();
+        lines.push((format!("ROOMS {} SPACE{}, {volume:.0} M3, IN THE HULL", pr.spaces.len(), if pr.spaces.len() == 1 { "" } else { "S" }), true));
+    } else if !pr.spaces.is_empty() {
+        let volume: f64 = pr.spaces.iter().map(|s| s.0).sum();
+        let leaks = pr.openings.iter().filter(|o| o.1 == Opening::Leak).count();
+        let locks = pr.openings.iter().filter(|o| o.1 == Opening::Airlock).count();
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let fills = air / (volume * OXYGEN_A_CUBIC_METRE).max(1e-9);
+        let sealed = leaks == 0 && pr.spaces.iter().all(|s| s.1);
+        lines.push((format!("SEALED {} SPACE{}, {volume:.0} M3, {locks} AIRLOCK DOOR{}; AIR FILLS IT {fills:.1} TIMES", pr.spaces.len(), if pr.spaces.len() == 1 { "" } else { "S" }, if locks == 1 { "" } else { "S" }), sealed && fills >= 1.0));
+        if leaks > 0 {
+            faults.push(format!("{leaks} OPEN END{} TO SPACE: IT LEAKS", if leaks == 1 { "" } else { "S" }));
+        }
+        let vents = pr.openings.iter().filter(|o| o.1 == Opening::ToSpace).count();
+        if vents > 0 {
+            faults.push(format!("{vents} HATCH{} TO SPACE WITH NO AIRLOCK: OPENING IT VENTS THE ROOM", if vents == 1 { "" } else { "ES" }));
+        }
+        let shut = pr.spaces.iter().filter(|s| !s.1).count();
+        if shut > 0 {
+            faults.push(format!("{shut} SEALED SPACE{} NO AIRLOCK LEADS INTO", if shut == 1 { "" } else { "S" }));
+        }
+    }
     let ground = of("landing_gear").map(|p| p.0.at.y - p.0.size.y * 0.5).fold(f32::INFINITY, f32::min);
     for p in placed.iter().filter(|p| p.2 == "ramp" || p.2 == "cargo_lift") {
         let foot = p.0.at.y - p.0.size.y * 0.5;
@@ -4277,6 +4458,28 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     }
     // Hatches, closed: each leaf filled, its outline and its window (an open
     // doorway: just the hole).
+    // The rooms' openings (PRESSURE): a leak to space red and crossed, a hatch to
+    // space with no airlock amber, an airlock's door green.
+    if interior.shown(layer::PRESSURE) && interior.spec().is_none() {
+        for (at, what) in pressure(interior).openings {
+            let Some((q, _)) = cam.project(at) else { continue };
+            let col = match what {
+                Opening::Leak => CLASH,
+                Opening::ToSpace => Color([1.0, 0.7, 0.2, 1.0]),
+                Opening::Airlock => Color([0.4, 1.0, 0.5, 1.0]),
+                Opening::Inner => continue,
+            };
+            let n = 16;
+            for k in 0..n {
+                let (a, b) = (k as f32 / n as f32 * std::f32::consts::TAU, (k + 1) as f32 / n as f32 * std::f32::consts::TAU);
+                frame.hud_line(q + Vec2::new(a.cos(), a.sin()) * 7.0, q + Vec2::new(b.cos(), b.sin()) * 7.0, col);
+            }
+            if what == Opening::Leak {
+                frame.hud_line(q - Vec2::splat(5.0), q + Vec2::splat(5.0), col);
+                frame.hud_line(q + Vec2::new(-5.0, 5.0), q + Vec2::new(5.0, -5.0), col);
+            }
+        }
+    }
     for leaf in plan.leaves().into_iter().filter(|_| interior.shown(layer::HATCHES)) {
         let on: Option<Vec<Vec2>> = leaf.outline.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
         let glass: Option<Vec<Vec2>> = leaf.window.iter().map(|p| cam.project(*p).map(|q| q.0)).collect();
@@ -4773,7 +4976,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     }
     // The budgets (MODULES, FRAME): under the panel, each met in green, short in
     // amber; what fails, in red.
-    if matches!(interior.tool, Tool::Modules | Tool::Frame) && !plan.blocks.is_empty() {
+    if matches!(interior.tool, Tool::Modules | Tool::Frame | Tool::Door) && (!plan.blocks.is_empty() || !plan.groups.is_empty()) {
         let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum();
         let b = budget(interior, frame_mass);
         let (pp, pc) = PANEL;
