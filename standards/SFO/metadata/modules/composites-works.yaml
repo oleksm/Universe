@@ -21,6 +21,22 @@ recipes:
       - { item: good.methane, quantity: 0.6175 }
     rate: 0.05
     power: 5500000
+  - makes: stock.cfc-sh-0p5
+    does: "Four plies of carbon laid up and cured to a half-millimetre sheet."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.05
+    power: 5500000
+  - makes: stock.aramid-fb
+    does: "The aramid polymer spun from solution into fibre and wound: the carbon route's sister line."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.3 }
+    outputs:
+      - { item: good.methane, quantity: 0.3 }
+    rate: 0.05
+    power: 3000000
 life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "1.95 kg of fibre for each kg of carbon fibre; a laminate is 57% fibre by volume, 65% by weight, the rest resin (Hexcel's aerospace sheet). Real fibre is polyacrylonitrile and the resin epoxy, neither of which the registry can make yet: both are taken as its one plastic, and what bakes off as gas." }

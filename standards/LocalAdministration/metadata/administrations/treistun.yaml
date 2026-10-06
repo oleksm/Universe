@@ -8,7 +8,7 @@ address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck:
 about:
   - "Treistun is a K-type star, cooler than most and giving 0.29 of the Sun's light. It has nine planets: five rocky ones close in, then two gas giants and two ice giants, with fifteen moons between them. Two of the rocky worlds, d and e, have air. It is the only settled system so far: one station and ten ports, with gates to Liham, Driumum and Biraidim."
 story:
-  - "Treistun was settled from its fourth planet outward. The first port was Nacaubun on Hearth, and the station was raised above it once there were more ships than one field could take."
+  - "Treistun was settled from its fourth planet outward. The first port was Nacaubun on Hoar, and the station was raised above it once there were more ships than one field could take."
   - "From there the ports went both ways: inward to the hot, heavy worlds, and outward to the moons of the giants. The administration grew out of the port office at Nacaubun and moved up to the station with everything else."
 # The code (2026-10-06): a frontier administration's, written plainly. Piracy and murder are what it fears most, so they carry
 # outlawry and a bounty; fines are shares, since the registry holds no prices. One constable to 333 and one judge to 11,000
@@ -49,7 +49,7 @@ law:
     mining_licence: true
     insurance_to_dock: false
 # The reserve law (2026-10-06): the needs people die without, as a cautious state keeps them. Four months of food and three of
-# medicine are Switzerland's compulsory stocks (from memory; review); held at the two big ports under open sky, half each.
+# medicine are Switzerland's compulsory stocks (from memory; review); held at the two big ports, Eikir and Nacaubun, half each.
 compulsory_stock:
   warehouse_cover: 1.5
   reserves:

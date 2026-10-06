@@ -2,7 +2,7 @@
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 # Curated: named by its people; the seed calls it Treistun h I. The rest is as the seed made it.
 provenance: curated
-identity: {key: body.treistun.treistun-h-i, name: Pale I, also: Treistun h I, kind: moon, parent: body.treistun.treistun-h, about: 'A moon
+identity: {key: body.treistun.treistun-h-i, name: Pale H I, also: Treistun h I, kind: moon, parent: body.treistun.treistun-h, about: 'A moon
     of the ice giant Pale, 3.4 AU from the star. 837 km in radius, 0.07 g at the surface, no air, about 112 K on average.
     Its day lasts 23 hours.'}
 orbit: {semi_major_axis: 107461000.0, eccentricity: 0.002578, period: 81437.3568, inclination: 0.081}

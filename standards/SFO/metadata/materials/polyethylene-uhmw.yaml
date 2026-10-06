@@ -4,10 +4,6 @@ identity:
   key: material.polyethylene-uhmw
   name: Polyethylene (UHMW)
   class: polymer
-  form:
-  - sheet
-  - fibre
-  - bar
 mass:
   density: 935.0
 mechanical:

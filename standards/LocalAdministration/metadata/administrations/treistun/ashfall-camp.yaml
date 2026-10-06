@@ -40,7 +40,7 @@ census:
   - { profession: profession.electrician, count: 2 }
   - { profession: profession.innkeeper, count: 2 }
   - { profession: profession.dependant, count: 80 }
-# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.hauler, count: 1 }
 about: "A sealed mining camp on Cinder's crater plains: a shaft 2.5 km down to a nickel melt sheet, a concentrator, a power station, a life-support plant and a strip. 2,000 km from Port Zaudalein."

@@ -345,7 +345,7 @@ pub fn rename(sys: &mut StarSystem) {
 mod rematch {
     /// Every body the registry writes matches a body of the seed by key (or is added by the
     /// record, which gives it the key), whatever the record calls it; and a matched body carries
-    /// the record's name. Treistun d is Harvest.
+    /// the record's name. Treistun d is Heath D.
     #[test]
     fn every_record_matched_by_key() {
         let galaxy = crate::galaxy::Galaxy::generate(1984);
@@ -370,7 +370,7 @@ mod rematch {
             }
             if sys.name == "Treistun" {
                 let d = sys.bodies.iter().find(|b| b.key == "body.treistun.treistun-d").expect("Treistun d by key");
-                assert_eq!(d.name, "Harvest");
+                assert_eq!(d.name, "Heath D");
             }
         }
         assert!(unmatched.is_empty(), "records matching no body: {unmatched:?}");

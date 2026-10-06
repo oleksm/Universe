@@ -1,11 +1,12 @@
 # yaml-language-server: $schema=../../schema/material.schema.yaml
-# Data: Wikipedia: Honeycomb structure (no figures given there). A range there is given as its middle.
+# Data: Wikipedia: Honeycomb structure (no figures given there). A range there is given as its middle. Its stock (form sandwich)
+# carries each panel's own faces, core and figures (mill-stock.sandwich); this record's density is a middling panel's.
 identity:
   key: material.honeycomb-sandwich-panel
   name: Honeycomb sandwich panel
   class: composite
   form:
-  - plate
+  - sandwich
 mass:
   density: 150
 basis:

@@ -66,14 +66,14 @@ bake:
   note: "v4: clouds (clouds.json, clouds_month/enso/air.png: four kinds a month from the world's climate, El Nino index and response; planet-sim stages/clouds.py)"
 identity:
   key: body.treistun.treistun-d
-  name: Harvest
+  name: Heath D
   also: Treistun d
   kind: rocky planet
   parent: body.treistun.treistun
-  about: 'Harvest, the third planet, 0.53 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hearth''s.
+  about: 'Heath, the third planet, 0.53 AU out; the surveyors'' Treistun d. 6,654 km in radius, 1.07 g, with air as dense as Hoar''s.
   It is warm: about 297 K on average, a little warmer than old Earth. Its year is 165 days, its day 20 hours. One moon.'
   story:
-    - 'The warm world, and the second with air. It was settled after Hearth, by people who wanted open sky and were willing to take the heat that came with it. They named it for what it does.'
+    - 'The warm world, the only one with air to breathe, and the home world: settled after Hoar by people who wanted open sky and were willing to take the heat that came with it. They named it for its open country, and everyone who followed came here.'
     - 'Its equator is too hot for any crop and its poles are frozen. Between them lie the only fields in the system: hot country from 25 to 35 degrees, temperate from 38 to 50. They feed everyone.'
 orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}

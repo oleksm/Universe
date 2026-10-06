@@ -3,7 +3,7 @@ identity:
   key: module.molybdenum-works
   name: "Molybdenum works"
   step: "Win molybdenum"
-  description: "Hearth furnaces that roast the sulphur out of molybdenite, and furnaces where hydrogen takes the oxygen from what is left."
+  description: "Hoar furnaces that roast the sulphur out of molybdenite, and furnaces where hydrogen takes the oxygen from what is left."
 physical:
   length: 100
   width: 50

@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.hc-ti-50p8
+  code: HC-TI-50P8
+  name: "titanium honeycomb core 50.8 mm"
+  traded_as: market.metals
+  form: honeycomb
+made_from:
+  - item: material.titanium-honeycomb
+size:
+  thickness: 0.0508
+basis:
+  - { of: [size], tier: invented, review: true, note: "A core slab at the panel ladder's depth, to be bonded between faces. Chosen." }

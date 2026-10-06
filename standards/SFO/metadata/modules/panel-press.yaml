@@ -1,0 +1,96 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.panel-press
+  name: "Panel press"
+  step: "Bond sandwich panels"
+  description: "A heated platen press: faces, adhesive film and core laid up and cured flat into a sandwich panel, then trimmed."
+physical:
+  length: 30
+  width: 12
+  height: 6
+staff:
+  - { profession: profession.technician, count: 3 }
+  - { profession: profession.plant-operator, count: 2 }
+recipes:
+  - makes: stock.panel-alal-12p7
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.al6061-sh-0p5, quantity: 0.7799 }
+      - { item: stock.hc-al-12p7, quantity: 0.1834 }
+      - { item: good.polyethylene, quantity: 0.08253 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04587 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-alal-25p4
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.al6061-sh-0p5, quantity: 0.6639 }
+      - { item: stock.hc-al-25p4, quantity: 0.3123 }
+      - { item: good.polyethylene, quantity: 0.07026 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04649 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-alal-50p8
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.al6061-sh-0p5, quantity: 0.5117 }
+      - { item: stock.hc-al-50p8, quantity: 0.4814 }
+      - { item: good.polyethylene, quantity: 0.05415 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04729 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-cfar-12p7
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.cfc-sh-0p5, quantity: 0.6663 }
+      - { item: stock.hc-ar-12p7, quantity: 0.2571 }
+      - { item: good.polyethylene, quantity: 0.1205 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04397 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-cfar-25p4
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.cfc-sh-0p5, quantity: 0.5353 }
+      - { item: stock.hc-ar-25p4, quantity: 0.4131 }
+      - { item: good.polyethylene, quantity: 0.09681 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04516 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-cfar-50p8
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.cfc-sh-0p5, quantity: 0.3842 }
+      - { item: stock.hc-ar-50p8, quantity: 0.5929 }
+      - { item: good.polyethylene, quantity: 0.06948 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04653 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-titi-25p4
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.ti64-sh-0p4, quantity: 0.5852 }
+      - { item: stock.hc-ti-25p4, quantity: 0.4157 }
+      - { item: good.polyethylene, quantity: 0.04676 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04766 }
+    rate: 0.5
+    power: 600000
+  - makes: stock.panel-titi-50p8
+    does: "Faces laid on the core with adhesive film and cured flat under heat and pressure."
+    inputs:
+      - { item: stock.ti64-sh-0p4, quantity: 0.4192 }
+      - { item: stock.hc-ti-50p8, quantity: 0.5956 }
+      - { item: good.polyethylene, quantity: 0.0335 }
+    outputs:
+      - { item: good.textile-waste, quantity: 0.04832 }
+    rate: 0.5
+    power: 600000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A press bonding half a tonne of panel an hour at 600 kW; five percent trimmed as waste; the adhesive film's mass as polyethylene standing in for an epoxy film. Typical, from memory; added 2026-10-06 for the deck panels." }

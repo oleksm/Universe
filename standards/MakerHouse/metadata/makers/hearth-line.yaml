@@ -2,7 +2,7 @@
 # Invented (2026-10-06): the passage line. One shuttle to 10,000 people is chosen; the need for travel says one pilot to 2,000.
 identity:
   key: org.hearth-line
-  name: Hearth Line
+  name: Hoar Line
 ticker: HRL
 kind: company
 business: passage

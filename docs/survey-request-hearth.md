@@ -1,11 +1,11 @@
-# Request to the planet lab: run Hearth (Treistun e)
+# Request to the planet lab: run Hoar (Treistun e)
 
-From the world scientist, 2026-10-06, on the user's word: grow Hearth, the home world, and release
+From the world scientist, 2026-10-06, on the user's word: grow Hoar, the home world, and release
 it to the store; the watcher installs it. Record: `standards/Celestial/metadata/systems/treistun/bodies/treistun-e.yaml`
-(key `body.treistun.treistun-e`; the people's Hearth, the surveyors' Treistun e). World ID by the
+(key `body.treistun.treistun-e`; the people's Hoar, the surveyors' Treistun e). World ID by the
 scheme: **TRE1**.
 
-## The star: Treistun, as for Harvest
+## The star: Treistun, as for Heath
 
 0.705 suns, 0.294 suns of light (K class; use it, not mass⁴), age 4.57 Gyr (your default, on the
 record), [Fe/H] 0.
@@ -27,11 +27,11 @@ record), [Fe/H] 0.
 
 What the lore asks, so the run can say whether it holds: a cold world, its warmest ground below
 freezing the year round, so nothing grows in the open; settled for its air, its ice and its water;
-60,000 people at Port Nacaubun growing what they can under lamps, fed from Harvest; the station in
+60,000 people at Port Nacaubun growing what they can under lamps, fed from Heath; the station in
 orbit. If the run gives a warm band somewhere, the lore changes, not the run.
 
 ## What to write
 
 `worlds/TRE1/` with survey, energy (if it had life: say) and surface; `body: body.treistun.treistun-e`
 in the manifests; `releases.json` updated, as you do. The watcher takes it from there. After
-Hearth: Rime (TRF1), then Anvil (TRC1) and the moons as you reach them.
+Hoar: Rime (TRF1), then Anvil (TRC1) and the moons as you reach them.

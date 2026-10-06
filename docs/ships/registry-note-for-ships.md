@@ -150,3 +150,37 @@ is 47.5 kg a head a day against 2.5 to drink, so the tank goes in 17 days unless
 recovers it. It does now: `function.water_recovery: 0.9` and `air_recovery: 0.5` on the life
 support records (the ISS's figures), and the Budgets count only the make-up. Added mass 18.7 t.
 The mass is the mass.
+
+## 11. Deck panels: sandwich stock (2026-10-06, your ask)
+
+Eight panels as mill stock, form `sandwich`, each `made_from: material.honeycomb-sandwich-panel`,
+with the figures your solver wants on the record under **`sandwich`**:
+
+```
+sandwich:
+  faces: { material: material.aluminium-alloy-6061, thickness: 0.0005 }      # m, each face
+  core:  { material: material.aluminium-honeycomb, depth: 0.0254, density: 50,
+           shear_strength: 900000.0, shear_modulus: 152000000.0 }           # Pa, the weaker (W) direction
+  bond: 0.3                                                                   # kg/m2, both faces
+  mass_per_area: 4.27                                                         # kg/m2
+size: { thickness: 0.0264 }                                                   # m, the whole panel
+```
+
+| Key | Faces | Core | kg/m² |
+|---|---|---|---|
+| `stock.panel-alal-12p7` / `-25p4` / `-50p8` | 6061, 0.5 mm | aluminium honeycomb 50 kg/m³, 12.7 / 25.4 / 50.8 mm | 3.6 / 4.3 / 5.5 |
+| `stock.panel-cfar-12p7` / `-25p4` / `-50p8` | carbon composite, 0.5 mm | aramid honeycomb 48 kg/m³ | 2.5 / 3.1 / 4.3 |
+| `stock.panel-titi-25p4` / `-50p8` | Ti-6-4, 0.4 mm | titanium honeycomb 100 kg/m³ | 6.4 / 9.0 |
+
+The faces' stiffness and strength are their material's record (`mechanical.youngs_modulus`,
+`yield_strength`, `tensile_strength`); the core's shear figures are on its own material
+(`material.aluminium-honeycomb`, `.aramid-honeycomb`, `.titanium-honeycomb`: `mechanical.shear_strength`,
+`shear_modulus`) and repeated on the panel. The faces' centre spacing is `core.depth + faces.thickness`.
+Cores: Hexcel's 5052 3.1 pcf and Nomex HRH-10 figures from memory (the aluminium foil is 6061
+standing in for 5052), the titanium core by proportion; all marked review. No glass-faced floor
+board: the registry has no glass-fibre composite and I won't invent one without a source.
+
+Made: a **honeycomb works** expands the cores, a **panel press** bonds the faces on; thin face
+sheets (6061 0.5 mm, Ti-6-4 0.4 mm, carbon 0.5 mm) from the finishing line, the cold mill and the
+composites works; all at the Trethi mill, chains closed. design-2's 1,330 m² of deck at 4.3 kg/m²
+is 5.7 t instead of 29.

@@ -55,6 +55,24 @@ lines:
     also: [good.electric-motors, good.pumps, good.machine-tools]
     modules:
       - { module: module.machine-works, count: 1 }
+  - makes: stock.hc-al-12p7
+    also: [stock.hc-al-25p4, stock.hc-al-50p8, stock.hc-ar-12p7, stock.hc-ar-25p4, stock.hc-ar-50p8, stock.hc-ti-25p4, stock.hc-ti-50p8]
+    modules:
+      - { module: module.honeycomb-works, count: 1 }
+  - makes: stock.panel-alal-12p7
+    also: [stock.panel-alal-25p4, stock.panel-alal-50p8, stock.panel-cfar-12p7, stock.panel-cfar-25p4, stock.panel-cfar-50p8, stock.panel-titi-25p4, stock.panel-titi-50p8]
+    modules:
+      - { module: module.panel-press, count: 1 }
+  - makes: stock.al6061-sh-0p5
+    modules:
+      - { module: module.finishing-line, count: 1 }
+  - makes: stock.ti64-sh-0p4
+    modules:
+      - { module: module.cold-rolling-mill, count: 1 }
+  - makes: stock.cfc-sh-0p5
+    also: [stock.aramid-fb]
+    modules:
+      - { module: module.composites-works, count: 1 }
 # Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }

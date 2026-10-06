@@ -4,11 +4,6 @@ identity:
   key: material.ptfe
   name: PTFE
   class: polymer
-  form:
-  - sheet
-  - film
-  - tube
-  - bar
 mass:
   density: 2200.0
 mechanical:

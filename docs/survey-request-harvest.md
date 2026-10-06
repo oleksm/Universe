@@ -1,9 +1,9 @@
-# Request to the planet lab: run Harvest (Treistun d)
+# Request to the planet lab: run Heath (Treistun d)
 
-From the world scientist, 2026-10-06. Please grow Harvest, the farm world of Treistun, from its
+From the world scientist, 2026-10-06. Please grow Heath, the farm world of Treistun, from its
 record, and write its survey. The contract is `docs/survey-contract.md`; the record is
 `standards/Celestial/metadata/systems/treistun/bodies/treistun-d.yaml` (key
-`body.treistun.treistun-d`; its people call it Harvest, the surveyors Treistun d).
+`body.treistun.treistun-d`; its people call it Heath, the surveyors Treistun d).
 
 ## The star: Treistun (`body.treistun.treistun`)
 
@@ -14,7 +14,7 @@ record, and write its survey. The contract is `docs/survey-contract.md`; the rec
 | age | not on record | **your default**; the seed does not say. If you need one: a K dwarf at 0.7 suns that has settled a system with a 1.07 g world, anything from 2 to 8 Gyr is open. Say what you took and I will write it on the star's record as `physical.age`, tier chosen |
 | metallicity [Fe/H] | not on record | **0** (your default) |
 
-## The planet: Harvest (`body.treistun.treistun-d`)
+## The planet: Heath (`body.treistun.treistun-d`)
 
 | Input | Value | In your units | Source |
 |---|---|---|---|
@@ -35,7 +35,7 @@ record, and write its survey. The contract is `docs/survey-contract.md`; the rec
 What the lore asks of the result, so you can see whether the run agrees (and if physics says no,
 the lore changes, not the run): a mean of about 320 K; an equator too hot for crops and frozen
 poles; land to farm in two bands, 25 to 35 degrees (hot crops) and 38 to 50 (temperate); air as
-dense as Earth's, breathable; one moon, Harvest I (1,527 km radius, which your run can ignore).
+dense as Earth's, breathable; one moon, Heath I (1,527 km radius, which your run can ignore).
 
 ## What to write
 
@@ -44,17 +44,17 @@ The import checks `radius_m` against the record's 6,654,110 m within 1%: a world
 is refused. Our vocabulary import is current with your `docs/vocabulary.json` (its hash is in your
 manifest; if you have changed it since, tell me and I re-import before you run).
 
-Then I run `python3 tools/standards/world_install.py <folder> body.treistun.treistun-d`, Harvest
+Then I run `python3 tools/standards/world_install.py <folder> body.treistun.treistun-d`, Heath
 becomes `baked`, and the game reads your rock map, deposits and districts from the registry.
 
-## After Harvest
+## After Heath
 
-Hearth (`treistun-e`, the home world: 6,281 km, 0.98 g, 264 K, 0.66 AU, ice and air) and Rime
+Hoar (`treistun-e`, the home world: 6,281 km, 0.98 g, 264 K, 0.66 AU, ice and air) and Rime
 (`treistun-f`: 3,634 km, 0.41 g, 189 K, 1.13 AU, airless) next, in that order.
 
 ## After the release of 2026-10-06: two asks, and the install is hands-off
 
-Harvest's three packages are installed (`tools/standards/world_install.py <world folder>`: the
+Heath's three packages are installed (`tools/standards/world_install.py <world folder>`: the
 survey and energy copied, the surface bake pointed at). Two small additions on your side make it
 run without anyone passing anything by hand:
 
@@ -67,4 +67,4 @@ run without anyone passing anything by hand:
 
 Everything else in the release reads well: `summary.body` names the body, so "grown from its
 registry record" is right; the energy amounts are marked on the record as model estimates
-calibrated on your Grown Earth, in place, not recoverable. Hearth (TRE1) next.
+calibrated on your Grown Earth, in place, not recoverable. Hoar (TRE1) next.

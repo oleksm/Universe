@@ -25,6 +25,31 @@ properties:
       thickness: { type: number, x-unit: "m", description: "m, of sheet, plate or film" }
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
       wall: { type: number, x-unit: "m", description: "m, of a tube" }
+  sandwich:
+    description: "For a sandwich panel (form sandwich): two faces held apart by a core. The panel bends as a sandwich: stiffness from the faces apart (E_face * t_face * d^2 / 2 a metre of width, d the faces' centre spacing = core depth + face thickness), the face stress M / (t_face * d), the core in shear (V / (b * d) against its shear strength). Faces take their stiffness and strength from their material's record; the core's shear figures are on its own material record and repeated here, in the ribbon (weaker) direction. Mass a m2 = 2 faces + core + the bond."
+    type: object
+    additionalProperties: false
+    required: [faces, core, bond]
+    properties:
+      faces:
+        type: object
+        additionalProperties: false
+        required: [material, thickness]
+        properties:
+          material: { type: string, x-ref: [material], description: "The faces' material, by its key." }
+          thickness: { type: number, x-unit: "m", description: "m, each face" }
+      core:
+        type: object
+        additionalProperties: false
+        required: [material, depth, density, shear_strength, shear_modulus]
+        properties:
+          material: { type: string, x-ref: [material], description: "The core, by its key (a honeycomb material)." }
+          depth: { type: number, x-unit: "m", description: "m, the core's depth between the faces" }
+          density: { type: number, x-unit: "kg/m3", description: "kg/m3 of the core as a block" }
+          shear_strength: { type: number, x-unit: "Pa", description: "Pa, the core's shear strength in its weaker (W) direction" }
+          shear_modulus: { type: number, x-unit: "Pa", description: "Pa, the core's shear modulus in its weaker (W) direction" }
+      bond: { type: number, x-unit: "kg/m2", description: "kg/m2 of adhesive film, both faces" }
+      mass_per_area: { type: number, x-unit: "kg/m2", description: "kg/m2 of the whole panel: 2 * face density * face thickness + core density * depth + bond" }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

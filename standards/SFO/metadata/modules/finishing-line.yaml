@@ -29,6 +29,14 @@ recipes:
       - { item: stock.al6061-scrap, quantity: 0.05 }
     rate: 16.6666666666667
     power: 2000000
+  - makes: stock.al6061-sh-0p5
+    does: "Strip rolled down to half a millimetre, levelled and aged."
+    inputs:
+      - { item: good.cold-rolled-strip-6061, quantity: 1.05 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.05 }
+    rate: 8.0
+    power: 2000000
 life: 788940000
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each gauge: a guess, to be reviewed. A thinner or smaller one goes through slower." }

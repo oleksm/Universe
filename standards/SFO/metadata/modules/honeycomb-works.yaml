@@ -1,0 +1,77 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.honeycomb-works
+  name: "Honeycomb works"
+  step: "Expand honeycomb core"
+  description: "Rolls foil or dips aramid paper, prints the bond lines, stacks and bonds the sheets, pulls the block open into cells and slices it to depth: the core of a sandwich panel."
+physical:
+  length: 40
+  width: 15
+  height: 8
+staff:
+  - { profession: profession.technician, count: 4 }
+  - { profession: profession.plant-operator, count: 2 }
+recipes:
+  - makes: stock.hc-al-12p7
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.al6061-sh-2, quantity: 1.1 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.1 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-al-25p4
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.al6061-sh-2, quantity: 1.1 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.1 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-al-50p8
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.al6061-sh-2, quantity: 1.1 }
+    outputs:
+      - { item: stock.al6061-scrap, quantity: 0.1 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-ar-12p7
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.aramid-fb, quantity: 0.75 }
+      - { item: good.polyethylene, quantity: 0.35 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-ar-25p4
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.aramid-fb, quantity: 0.75 }
+      - { item: good.polyethylene, quantity: 0.35 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-ar-50p8
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.aramid-fb, quantity: 0.75 }
+      - { item: good.polyethylene, quantity: 0.35 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-ti-25p4
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.ti64-sh-0p4, quantity: 1.1 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.1 }
+    rate: 0.3
+    power: 400000
+  - makes: stock.hc-ti-50p8
+    does: "Foil or paper rolled thin, printed with bond lines, stacked, bonded and pulled open into cells, then sliced to depth."
+    inputs:
+      - { item: stock.ti64-sh-0p4, quantity: 1.1 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.1 }
+    rate: 0.3
+    power: 400000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A core works of about a tonne a shift (0.3 kg/s) at 400 kW: the aramid core takes the fibre as paper with a resin dip (polyethylene standing in for the phenolic), the aluminium core 6061 sheet rolled to foil here, with a tenth lost. Typical, from memory; added 2026-10-06 for the deck panels." }

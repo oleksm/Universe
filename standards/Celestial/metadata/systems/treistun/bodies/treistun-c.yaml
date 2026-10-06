@@ -1,10 +1,15 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 # Curated: named by its people; the seed calls it Treistun c. The rest is as the seed made it.
+# Airless, by the user's decision (2026-10-06) against the planet lab's check: at 17 km/s of escape speed and 6.2 times Earth's
+# sunlight Anvil sits on the keeps-air side of the cosmic shoreline (Zahnle & Catling 2017) by a factor of nine, so physics expects
+# a thick carbon dioxide air and a runaway greenhouse. The lore keeps it airless because its K star was young and active for
+# long: the early XUV stripped a close-in world's air before it could thicken. A defensible reading, not the expected one; it
+# keeps Port Lisaur on the ground. Its 421 K agrees with the lab's 422.
 provenance: curated
 identity:
   key: body.treistun.treistun-c
-  name: Anvil
+  name: Anvil C
   also: Treistun c
   kind: rocky planet
   parent: body.treistun.treistun

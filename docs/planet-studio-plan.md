@@ -12,7 +12,7 @@ viewer is retired into a planet studio inside the game. Studio first, the web bu
   extended with whatever the renderer reads. The lab bakes it, the registry records it, the engine
   reads it from the worlds store, each file checked by its hash (`world::worlds`). No other path.
 - **A planet studio in the game** (beside the shipyard and interior studios): any world in the
-  worlds store (Grown Earth, Cinder, Harvest, worlds not in the game), with the lab viewer's tools:
+  worlds store (Grown Earth, Cinder, Heath, worlds not in the game), with the lab viewer's tools:
   the timeline of the world's growth, the layers (geology, oil and gas, peaks, weather), the
   parameter panels. The lab works in it; the game flies over the same code.
 - **The web build, last:** the engine compiled to WebAssembly (WebGPU) inside the lab's page in
@@ -30,11 +30,11 @@ viewer is retired into a planet studio inside the game. Studio first, the web bu
 
 ## Order
 
-1. **Contract** (Scientist): the render files as Harvest's bake holds them today: `globe_color`,
+1. **Contract** (Scientist): the render files as Heath's bake holds them today: `globe_color`,
    `globe_normal`, `globe_spec`, `globe_clouds`, `climate`, `descent_color`, `atmosphere.json`,
    the `rv_*` river tiles, beside the heights already read (`hz_*`, `fz_*`).
 2. **Plumbing** (integrator): a texture path for large maps and tiles; slots in the planet
-   shaders. Proof: Harvest in its true colour, globe and near ground.
+   shaders. Proof: Heath in its true colour, globe and near ground.
 3. **Look** (lab): sea, air, clouds, rivers, fine relief, each checked against its own viewer at
    the same coordinates (both can be captured headless: the game with `UNIVERSE_SCREENSHOT`, the
    viewer with headless Chromium).
@@ -45,9 +45,9 @@ viewer is retired into a planet studio inside the game. Studio first, the web bu
 ## Already in the game (2026-10-06)
 
 - The worlds store and every package checked by its hash (`world::worlds`).
-- Harvest's heights (5 km map and 600 m tiles) as its ground, for physics and drawing; the fine
+- Heath's heights (5 km map and 600 m tiles) as its ground, for physics and drawing; the fine
   tiles streamed in the background for drawing (`worlds::Detail`).
 - A body direction is the registry's latitude and longitude (north +Y, longitude `atan2(−z, x)`);
   the bake's cube tiles are in the body's own frame.
-- Found: the viewer at `localhost:8080/harvest/` gives Harvest's highest point as 5,618 m; the
+- Found: the viewer at `localhost:8080/harvest/` gives Heath's highest point as 5,618 m; the
   bake installed in the registry gives 8,920 m. Which run does the viewer show?

@@ -17,6 +17,7 @@ identity:
   - scrap
   - plate
   - tube
+  - sheet
 mass:
   density: 4470.0
 mechanical:
