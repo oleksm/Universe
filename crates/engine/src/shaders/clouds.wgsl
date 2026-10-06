@@ -702,6 +702,13 @@ struct CloudCache {
     e2: vec4<f32>,
     // Each level's half-width (m, along the tangent plane: gnomonic), x: level 0 (outer) … z: 2.
     half_m: vec4<f32>,
+    // Each level's crossfade from its old copy (the second texture) to its new one (the first),
+    // 0 → 1 over ~1–2 s after a refresh or re-centring: changes come in gradually, never at once.
+    // (The levels' old centre and frame, for the old copy: below.)
+    fade: vec4<f32>,
+    old_center: vec4<f32>,
+    old_e1: vec4<f32>,
+    old_e2: vec4<f32>,
     // w of center: the world's radius (m); w of e1: 1 when the cache holds data.
 };
 
@@ -722,36 +729,63 @@ fn cc_unproject(xy: vec2<f32>, cc: CloudCache) -> vec3<f32> {
 // the finest level that holds the place at a texel no finer than the pixel (bilinear; blended
 // into the next level out over its last tenth); (−1, −1) where no level holds it (the caller
 // computes it directly then, at the pixel's band: from far away, a few octaves only).
-fn cloud_cache_read(dir: vec3<f32>, shell: i32, pix_km: f32, cc: CloudCache, tex: texture_2d_array<f32>, smp: sampler) -> vec2<f32> {
-    if (cc.e1.w < 0.5) {
-        return vec2<f32>(-1.0);
-    }
-    let xy = cc_project(dir, cc);
+fn cc_read_one(dir: vec3<f32>, shell: i32, pix_km: f32, frame: CloudCache, tex: texture_2d_array<f32>, smp: sampler, use_level: vec3<f32>) -> vec2<f32> {
+    let xy = cc_project(dir, frame);
     var out = vec2<f32>(-1.0);
     var used_km = 1e9;
     for (var level = 0; level < CC_LEVELS; level++) {
-        let half = cc.half_m[level];
+        let half = frame.half_m[level];
         let a = max(abs(xy.x), abs(xy.y)) / half;
         if (a >= 1.0) {
             continue;
         }
         let texel_km = 2.0 * half / f32(CC_N) * 0.001;
         if (texel_km < pix_km * 0.5 && out.x >= 0.0) {
-            // (Finer than the pixel can show, unfiltered: the coarser level read serves.)
             break;
         }
         used_km = texel_km;
         let uv = (xy / half) * 0.5 + 0.5;
         let v = textureSampleLevel(tex, smp, uv, level * 3 + shell, 0.0).xy;
-        // (Blended in over the level's outer tenth, so its edge never shows.)
         let w = clamp((1.0 - a) / 0.1, 0.0, 1.0);
         out = select(v, mix(out, v, w), out.x >= 0.0);
     }
-    // (Close to the clouds, finer than the inner level holds: computed directly by the caller.)
     if (out.x >= 0.0 && used_km > 2.0 * pix_km && pix_km < 0.08) {
         return vec2<f32>(-1.0);
     }
     return out;
+}
+
+// The shading's read: (cover, optical depth) of `shell` at `dir` for a pixel of `pix_km`, from
+// the finest level that holds the place at a texel no finer than the pixel needs (bilinear; blended
+// into the next level out over its last tenth), its new copy (`tex`) crossfaded from its old
+// (`tex_old`) by the levels' fade; (−1, −1) where no level holds it, or closer to the clouds than
+// the inner level's texel (the caller computes it directly then).
+fn cloud_cache_read(dir: vec3<f32>, shell: i32, pix_km: f32, cc: CloudCache, tex: texture_2d_array<f32>,
+                    tex_old: texture_2d_array<f32>, smp: sampler) -> vec2<f32> {
+    if (cc.e1.w < 0.5) {
+        return vec2<f32>(-1.0);
+    }
+    let now = cc_read_one(dir, shell, pix_km, cc, tex, smp, vec3<f32>(1.0));
+    // (The fade the place's level is in: the finest level holding it, as a scalar.)
+    let xy = cc_project(dir, cc);
+    var fade = 1.0;
+    for (var level = 0; level < CC_LEVELS; level++) {
+        if (max(abs(xy.x), abs(xy.y)) < cc.half_m[level]) {
+            fade = cc.fade[level];
+        }
+    }
+    if (fade >= 0.999 || now.x < 0.0) {
+        return now;
+    }
+    var old = cc;
+    old.center = cc.old_center;
+    old.e1 = vec4<f32>(cc.old_e1.xyz, 1.0);
+    old.e2 = cc.old_e2;
+    let before = cc_read_one(dir, shell, pix_km, old, tex_old, smp, vec3<f32>(1.0));
+    if (before.x < 0.0) {
+        return now;
+    }
+    return mix(before, now, smoothstep(0.0, 1.0, fade));
 }
 
 
@@ -761,7 +795,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
                sun_dir: vec3<f32>, sun: vec3<f32>, pixel_angle: f32, cl: Clouds, a: Air,
                cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>,
                tl: texture_2d<f32>, ml: texture_2d<f32>, smp: sampler,
-                      cc: CloudCache, cct: texture_2d_array<f32>, ccs: sampler) -> vec3<f32> {
+                      cc: CloudCache, cct: texture_2d_array<f32>, cct_old: texture_2d_array<f32>, ccs: sampler) -> vec3<f32> {
     if (cl.on < 0.5) {
         return c;
     }
@@ -886,7 +920,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
             }
         }
         // (From the cache where it holds the place; else computed here.)
-        var dt = cloud_cache_read(dir_b, k, pix_km, cc, cct, ccs);
+        var dt = cloud_cache_read(dir_b, k, pix_km, cc, cct, cct_old, ccs);
         if (dt.x < 0.0) {
             let cols = cloud_columns(dir_b, f, R * 0.001, t, pix_km, k + 1);
             dt = cols.low;
@@ -912,7 +946,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
             let sh = normalize(sun_dir - up * mu_s);
             let qn = normalize(up + sh * (1500.0 / R));
             // (At a quarter of the detail: the relief's shading needs only the cloud's bulk.)
-            var d2 = cloud_cache_read(to_body * qn, k, max(pix_km * 4.0, 0.5), cc, cct, ccs);
+            var d2 = cloud_cache_read(to_body * qn, k, max(pix_km * 4.0, 0.5), cc, cct, cct_old, ccs);
             if (d2.x < 0.0) {
                 let cols2 = cloud_columns(to_body * qn, f, R * 0.001, t, max(pix_km * 4.0, 0.5), k + 1);
                 d2 = cols2.low;
@@ -950,7 +984,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
 
 fn clouds_shadow_cached(p: vec3<f32>, center: vec3<f32>, to_body: mat3x3<f32>, sun_dir: vec3<f32>, pix_km: f32, cl: Clouds,
                  a: Air, cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>,
-                        cc: CloudCache, cct: texture_2d_array<f32>, ccs: sampler) -> f32 {
+                        cc: CloudCache, cct: texture_2d_array<f32>, cct_old: texture_2d_array<f32>, ccs: sampler) -> f32 {
     if (cl.on < 0.5) {
         return 1.0;
     }
@@ -975,7 +1009,7 @@ fn clouds_shadow_cached(p: vec3<f32>, center: vec3<f32>, to_body: mat3x3<f32>, s
         let f = cloud_field(dir_b, cl, cm, ce, ca);
         // (Shadows need no detail finer than ~1 km: cheaper, and a pixel's size taken per triangle
         // of the ground no longer shows in them as facets.)
-        var dt = cloud_cache_read(dir_b, k, max(pix_km, 2.0), cc, cct, ccs);
+        var dt = cloud_cache_read(dir_b, k, max(pix_km, 2.0), cc, cct, cct_old, ccs);
         if (dt.x < 0.0) {
             let cols = cloud_columns(dir_b, f, R * 0.001, cl.time_s, max(pix_km, 2.0), k + 1);
             dt = cols.low;
