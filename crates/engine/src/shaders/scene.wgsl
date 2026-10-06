@@ -534,7 +534,8 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                     rgb = mix(rgb, ground_material(gi), near);
                 }
             }
-            albedo = vec4<f32>(rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * in.globe.w * OWN_COLOR, in.color.a);
+            // (A world's own colour is its true albedo: no palette brightness factor (in.globe.w).)
+            albedo = vec4<f32>(rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * OWN_COLOR, in.color.a);
         }
     }
     let seen = sunlit(in.at, n);
