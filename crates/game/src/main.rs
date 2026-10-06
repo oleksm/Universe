@@ -1163,6 +1163,7 @@ impl App {
                         let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
                         let [a, b, c3] = c.maps;
                         maps.clouds_year = Some((c.year_days, c.enso));
+                        maps.clouds_format = c.format;
                         maps = maps.with_clouds(Some([img(a), img(b), img(c3)]));
                     }
                     log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());

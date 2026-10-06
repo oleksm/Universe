@@ -1115,7 +1115,8 @@ impl Renderer {
         let (world_layer, world_fade, world_luts) = match &frame.world_maps {
             Some((maps, globe, _, _)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
-                let clouds = if maps.has_clouds() { frame.world_clouds } else { [0.0; 4] };
+                // (`on`: their format's version, for the lab's shader to read their maps by.)
+                let clouds = if maps.has_clouds() && frame.world_clouds[3] > 0.0 { [frame.world_clouds[0], frame.world_clouds[1], frame.world_clouds[2], maps.clouds_format as f32] } else { [0.0; 4] };
                 gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
                 (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }

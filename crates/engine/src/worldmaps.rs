@@ -57,6 +57,8 @@ pub struct WorldMaps {
     /// Their year (days) and El Niño's series (days a month, the index), for the caller to give
     /// the clouds now (`Frame::world_clouds`).
     pub clouds_year: Option<(f64, Option<(f64, Vec<f32>)>)>,
+    /// Their format's version (the lab's `planet-sim-clouds/N`): the clouds shader's `on`.
+    pub clouds_format: u32,
 }
 
 impl WorldMaps {
@@ -99,7 +101,7 @@ impl WorldMaps {
     /// Already encoded (`encode` each as it's read: one image held at a time, not all).
     pub fn encoded(maps: [Option<Encoded>; SLOTS], air: Option<[f32; 16]>) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
-        WorldMaps { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), maps, air: air.unwrap_or([0.0; 16]), air_luts: None, clouds: None, clouds_year: None }
+        WorldMaps { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), maps, air: air.unwrap_or([0.0; 16]), air_luts: None, clouds: None, clouds_year: None, clouds_format: 1 }
     }
 
     /// Map `k` (a `Slot`) encoded for the GPU, as `new` encodes it.
