@@ -220,7 +220,7 @@ mod tests {
                 break;
             }
         }
-        let fired = universe_world::weapons::GUN_AMMO - u.ship.ammo;
+        let fired = u.ship.spec().gun.map_or(0, |g| g.magazine) - u.ship.ammo;
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");

@@ -54,8 +54,9 @@ pub enum Does {
     /// `capacity` messages a second, throwing a batch every `cadence` s.
     HyperRelay { lag: f64, capacity: f64, cadence: f64 },
     LifeSupport,
-    Gun,
-    Laser,
+    /// A gun, a laser (see `weapons::Gun`, `weapons::Laser`).
+    Gun(crate::weapons::Gun),
+    Laser(crate::weapons::Laser),
     /// The anchor and excavator (see `mining::Rig`).
     MiningRig(crate::mining::Rig),
     /// Runs these autopilots; and its hyperdrive interlock: never closer
@@ -123,8 +124,8 @@ impl Does {
     /// The gear it is, if anything checks for it.
     pub fn gear(&self) -> Option<Gear> {
         match self {
-            Does::Gun => Some(Gear::Gun),
-            Does::Laser => Some(Gear::Laser),
+            Does::Gun(_) => Some(Gear::Gun),
+            Does::Laser(_) => Some(Gear::Laser),
             Does::MiningRig(_) => Some(Gear::MiningRig),
             Does::Hyperdrive { .. } => Some(Gear::Hyperdrive),
             _ => None,
@@ -166,7 +167,7 @@ impl Does {
             Does::Comm { .. } => SlotKind::Comm,
             Does::GateRelay { .. } | Does::HyperRelay { .. } => SlotKind::Relay,
             Does::LifeSupport => SlotKind::LifeSupport,
-            Does::Gun | Does::Laser => SlotKind::Hardpoint,
+            Does::Gun(_) | Does::Laser(_) => SlotKind::Hardpoint,
             Does::MiningRig(_) => SlotKind::Utility,
             Does::NavComputer { .. } => SlotKind::Avionics,
         }
@@ -384,11 +385,13 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn life_support(&mut self, _: &r::EquipmentFunctionLifeSupport) -> Self::Out {
         Some(Does::LifeSupport)
     }
-    fn gun(&mut self, _: &r::EquipmentFunctionGun) -> Self::Out {
-        Some(Does::Gun)
+    fn gun(&mut self, it: &r::EquipmentFunctionGun) -> Self::Out {
+        let f = |v: Option<f64>| v.unwrap_or(0.0);
+        Some(Does::Gun(crate::weapons::Gun { muzzle: f(it.muzzle_speed), rate: f(it.rate), slug_mass: f(it.slug_mass), magazine: it.magazine.unwrap_or(0).max(0) as u32 }))
     }
-    fn laser(&mut self, _: &r::EquipmentFunctionLaser) -> Self::Out {
-        Some(Does::Laser)
+    fn laser(&mut self, it: &r::EquipmentFunctionLaser) -> Self::Out {
+        let f = |v: Option<f64>| v.unwrap_or(0.0);
+        Some(Does::Laser(crate::weapons::Laser { power: f(it.beam_power), focus: f(it.focus), range: f(it.range), burn: f(it.burn), cool: f(it.cool) }))
     }
     fn mining_rig(&mut self, it: &r::EquipmentFunctionMiningRig) -> Self::Out {
         let f = |v: Option<f64>| v.unwrap_or(0.0);

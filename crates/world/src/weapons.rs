@@ -6,11 +6,11 @@
 //! and a clearance lapses when the ship arms (see `traffic`).
 //!
 //! The gun fires real slugs (Dogma projectiles): they leave the muzzle at
-//! the ship's own velocity plus `GUN_MUZZLE` along the nose, fall under
+//! the ship's own velocity plus its gun's muzzle speed along the nose, fall under
 //! gravity, and hit with their kinetic energy relative to the target
 //! (½ m v²). Every shot pushes the ship back (momentum), and a hit pushes the
 //! target. The laser is a beam at light speed (instant at these ranges): it
-//! delivers `LASER_POWER`, spread thinner beyond `LASER_FOCUS`, heating the
+//! delivers its laser's power, spread thinner beyond its focus, heating the
 //! laser as it fires.
 
 use std::collections::HashMap;
@@ -23,14 +23,48 @@ use crate::events::ShipEvent;
 use crate::ship::{Ship, ShipState, Triggers, SHIP_RADIUS};
 use crate::world::World;
 
-/// Slug speed from the muzzle, relative to the ship (m/s).
-pub const GUN_MUZZLE: f64 = 3_000.0;
-/// Rounds per second while the trigger is held.
-pub const GUN_RATE: f64 = 10.0;
-/// Mass of one slug (kg).
-pub const SLUG_MASS: f64 = 0.5;
-/// Rounds in a full magazine.
-pub const GUN_AMMO: u32 = 500;
+/// A gun, as its product (its record in the registry) has it: its slug's speed
+/// from the muzzle, against the ship (m/s), rounds a second the trigger held,
+/// one slug's mass (kg), rounds in a full magazine.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Deserialize)]
+pub struct Gun {
+    pub muzzle: f64,
+    pub rate: f64,
+    pub slug_mass: f64,
+    pub magazine: u32,
+}
+
+/// A laser, as its product has it: its beam's power on the target within its
+/// focus (W), the focus (m; past it the power falls as the square of the
+/// distance), its farthest reach (m), and seconds of firing from cold to too hot,
+/// and back.
+#[derive(Clone, Copy, Debug, PartialEq, serde::Deserialize)]
+pub struct Laser {
+    pub power: f64,
+    pub focus: f64,
+    pub range: f64,
+    pub burn: f64,
+    pub cool: f64,
+}
+
+impl Laser {
+    /// Its beam's power on a target `range` away (W).
+    pub fn power_at(&self, range: f64) -> f64 {
+        if range <= self.focus { self.power } else { self.power * (self.focus / range).powi(2) }
+    }
+}
+
+/// The gun a station's turrets are, and a ship's fire control expects when it
+/// has none of its own: the registry's (its first gun).
+pub fn standard_gun() -> Gun {
+    use crate::modules::Does;
+    static GUN: std::sync::OnceLock<Gun> = std::sync::OnceLock::new();
+    *GUN.get_or_init(|| {
+        let c = crate::content::content();
+        c.modules.iter().find_map(|(_, m)| if let Does::Gun(g) = m.does { Some(g) } else { None }).expect("the registry has a gun")
+    })
+}
+
 /// Seconds a slug flies before it's no longer tracked (about 30 km).
 pub const SLUG_LIFETIME: f64 = 10.0;
 
@@ -50,16 +84,8 @@ fn could_meet(p: &Projectile, tg: &Target, dt: f64, bend: f64) -> bool {
     let at_start = tg.position - tg.velocity * dt;
     (p.position - at_start).length() <= tg.radius + (p.velocity - tg.velocity).length() * dt + bend
 }
-/// Beam power on target at up to `LASER_FOCUS` (W).
-pub const LASER_POWER: f64 = 2.0e6;
-/// Beyond this the beam spreads: power falls as (focus / range)^2 (m).
-pub const LASER_FOCUS: f64 = 2_000.0;
-/// Longest reach of the beam (m).
-pub const LASER_RANGE: f64 = 30_000.0;
-/// Seconds of continuous fire from cold to too hot, and back.
-pub const LASER_BURN: f64 = 8.0;
-pub const LASER_COOL: f64 = 4.0;
-/// After overheating, the laser is locked out until it has cooled to this.
+/// After overheating, a laser is locked out until it has cooled to this (of its
+/// heat).
 pub const LASER_RESET: f64 = 0.3;
 
 /// How far the gun's gimbal swings off the nose (rad): 4°.
@@ -135,6 +161,8 @@ pub struct Slug {
     pub projectile: Projectile,
     /// Seconds since it was fired.
     pub age: f64,
+    /// Its mass (kg: its gun's slug).
+    pub mass: f64,
 }
 
 /// A laser beam fired this frame, for drawing.
@@ -208,11 +236,6 @@ impl World {
     }
 }
 
-/// Beam power on target at `range` (W).
-pub fn laser_power(range: f64) -> f64 {
-    if range <= LASER_FOCUS { LASER_POWER } else { LASER_POWER * (LASER_FOCUS / range).powi(2) }
-}
-
 impl World {
     /// The combat phase for `dt` game seconds (the frame that just ran; ships
     /// are where it left them): guns fire, slugs fly, lasers cut, and hits
@@ -249,32 +272,37 @@ impl World {
             // The gun: rounds at its rate while the trigger is held, each
             // pushing the ship back.
             ship.gun_cooldown -= dt;
-            // (Each weapon fires only if it's fitted.)
-            let (gun, laser) = (ship.spec().has(crate::modules::Gear::Gun), ship.spec().has(crate::modules::Gear::Laser));
-            if !(armed && gun && ship.triggers.gun) {
+            // (Each weapon fires only if it's fitted, as its product does.)
+            let (gun, laser) = (ship.spec().gun, ship.spec().laser);
+            let triggered = armed && gun.is_some() && ship.triggers.gun;
+            if !triggered {
                 ship.gun_cooldown = ship.gun_cooldown.max(0.0);
             }
-            while armed && gun && ship.triggers.gun && ship.gun_cooldown <= 0.0 && ship.ammo > 0 {
+            while let Some(g) = gun.filter(|_| triggered && ship.gun_cooldown <= 0.0 && ship.ammo > 0) {
                 let nose = ship.gun_forward();
                 // Fired this long before the end of the frame: it has since
                 // gained that much on the ship (which is already at the end).
                 let late = -ship.gun_cooldown;
-                let velocity = ship.velocity + nose * GUN_MUZZLE;
-                let position = ship.position + nose * (SHIP_RADIUS + 2.0 + GUN_MUZZLE * late);
-                fired.push(Slug { system: a.system, owner: a.id, projectile: Projectile { position, velocity }, age: late });
-                ship.velocity -= nose * (SLUG_MASS * GUN_MUZZLE / ship.mass());
+                let velocity = ship.velocity + nose * g.muzzle;
+                let position = ship.position + nose * (SHIP_RADIUS + 2.0 + g.muzzle * late);
+                fired.push(Slug { system: a.system, owner: a.id, projectile: Projectile { position, velocity }, age: late, mass: g.slug_mass });
+                ship.velocity -= nose * (g.slug_mass * g.muzzle / ship.mass());
                 ship.ammo -= 1;
-                ship.gun_cooldown += 1.0 / GUN_RATE;
+                ship.gun_cooldown += 1.0 / g.rate;
             }
             // The laser heats while it fires and cools when it doesn't.
-            if armed && laser && ship.triggers.laser && !ship.laser_overheated {
-                ship.laser_heat = (ship.laser_heat + dt / LASER_BURN).min(1.0);
-                ship.laser_overheated = ship.laser_heat >= 1.0;
-                let dir = ship.gun_forward(); // on the gun's gimbal
-                lasers.push((a.id, a.system, ship.position + dir * (SHIP_RADIUS + 1.0), dir));
-            } else {
-                ship.laser_heat = (ship.laser_heat - dt / LASER_COOL).max(0.0);
-                ship.laser_overheated &= ship.laser_heat > LASER_RESET;
+            match laser {
+                Some(l) if armed && ship.triggers.laser && !ship.laser_overheated => {
+                    ship.laser_heat = (ship.laser_heat + dt / l.burn).min(1.0);
+                    ship.laser_overheated = ship.laser_heat >= 1.0;
+                    let dir = ship.gun_forward(); // on the gun's gimbal
+                    lasers.push((a.id, a.system, ship.position + dir * (SHIP_RADIUS + 1.0), dir, l));
+                }
+                _ => {
+                    let cool = laser.map_or(1.0, |l| l.cool);
+                    ship.laser_heat = (ship.laser_heat - dt / cool).max(0.0);
+                    ship.laser_overheated &= ship.laser_heat > LASER_RESET;
+                }
             }
         }
         // The missiles in the air fly the frame; then the defence turrets'
@@ -336,8 +364,8 @@ impl World {
         for (slug, outcome) in slugs.into_iter().zip(outcomes) {
             match outcome {
                 Some(Hit::Target { id, relative_velocity, point }) => {
-                    let joules = 0.5 * SLUG_MASS * relative_velocity.length_squared();
-                    hits.push((id, joules, relative_velocity * SLUG_MASS, slug.owner, "GUNFIRE"));
+                    let joules = 0.5 * slug.mass * relative_velocity.length_squared();
+                    hits.push((id, joules, relative_velocity * slug.mass, slug.owner, "GUNFIRE"));
                     self.impacts.push(Impact { system: slug.system, point, by: slug.owner, target: id, laser: false });
                 }
                 Some(Hit::Body { .. }) => {}
@@ -353,20 +381,20 @@ impl World {
         let mut positions = Vec::new();
         // Beams.
         let _p = universe_prof::scope("sim/combat/weapons/beams");
-        for (owner, system, from, dir) in lasers {
+        for (owner, system, from, dir, l) in lasers {
             let sys = self.system(system);
             sys.positions(t, &mut positions);
             let all = targets.get(&system).unwrap_or(&none);
             let here: Vec<Target> = all.iter().filter(|tg| tg.id != owner).copied().collect();
-            let found = ray(&sys.bodies, &positions, from, dir, LASER_RANGE, t, &here);
+            let found = ray(&sys.bodies, &positions, from, dir, l.range, t, &here);
             let (to, hit) = match found {
                 Some((Hit::Target { id, point, .. }, d)) => {
-                    hits.push((id, laser_power(d) * dt, DVec3::ZERO, owner, "LASER FIRE"));
+                    hits.push((id, l.power_at(d) * dt, DVec3::ZERO, owner, "LASER FIRE"));
                     self.impacts.push(Impact { system, point, by: owner, target: id, laser: true });
                     (from + dir * d, true)
                 }
                 Some((Hit::Body { .. }, d)) => (from + dir * d, true),
-                None => (from + dir * LASER_RANGE, false),
+                None => (from + dir * l.range, false),
             };
             self.beams.push(Beam { system, owner, from, to, hit });
         }

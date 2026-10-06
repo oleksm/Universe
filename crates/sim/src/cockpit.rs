@@ -20,7 +20,7 @@ use universe_avionics::route::Stop;
 use universe_avionics::fire_control::lead;
 use universe_avionics::{Avionics, Bus, Clearance, Event, NavTarget, Plan, Solution, Track};
 use universe_world::rules::Rules;
-use universe_world::weapons::{GUN_MUZZLE, SLUG_LIFETIME};
+use universe_world::weapons::{standard_gun, SLUG_LIFETIME};
 use universe_world::{Controls, ShipCommands, StarSystem};
 
 use crate::combat::{craft_id, PLAYER};
@@ -557,7 +557,7 @@ impl Cockpit {
         // Gravity pulls the round as it does the target: lead on the rest of its acceleration.
         let (_, sys, rails) = self.system();
         let accel = track.acceleration - sys.gravity(c.blip.position, &rails);
-        let solution = track.ready().then(|| lead(ship.position, ship.velocity, c.blip.position, c.blip.velocity, accel, GUN_MUZZLE, SLUG_LIFETIME)).flatten();
+        let solution = track.ready().then(|| lead(ship.position, ship.velocity, c.blip.position, c.blip.velocity, accel, ship.spec().gun.unwrap_or_else(standard_gun).muzzle, SLUG_LIFETIME)).flatten();
         let lay = solution.filter(|_| ship.armed).map(|s| s.aim);
         if lay != ship.gun_target {
             self.command(&ShipCommands { gun_target: Some(lay), ..ship.holding() });

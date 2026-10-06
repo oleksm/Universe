@@ -15,7 +15,7 @@ use crate::system::{BodyKind, StarSystem};
 use crate::traffic::Facility;
 use universe_protocol::TurretCommand;
 
-use crate::weapons::{Slug, GUN_MUZZLE};
+use crate::weapons::{standard_gun, Slug};
 
 /// How far a turret reaches (m): twice a ship's gun range.
 pub const TURRET_RANGE: f64 = 6_000.0;
@@ -195,8 +195,8 @@ impl crate::world::World {
             let Some(&(_, at, velocity)) = here.get(k) else { continue };
             let gun = self.turret_guns.get_mut(&id).expect("listed");
             while gun.cooldown <= 0.0 {
-                let projectile = universe_physics::Projectile { position: at + aim * 8.0, velocity: velocity + aim * GUN_MUZZLE };
-                fired.push(Slug { system, owner: id, projectile, age: 0.0 });
+                let projectile = universe_physics::Projectile { position: at + aim * 8.0, velocity: velocity + aim * standard_gun().muzzle };
+                fired.push(Slug { system, owner: id, projectile, age: 0.0, mass: standard_gun().slug_mass });
                 gun.cooldown += 1.0 / TURRET_RATE;
             }
         }

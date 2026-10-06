@@ -9,7 +9,7 @@
 
 use glam::DVec3;
 use universe_protocol::TurretCommand;
-use universe_world::weapons::{GUN_MUZZLE, SLUG_LIFETIME};
+use universe_world::weapons::{standard_gun, SLUG_LIFETIME};
 
 use crate::fire_control::{lead, Track};
 
@@ -64,7 +64,7 @@ impl Gunner {
         let ahead = |p: DVec3, v: DVec3, a: DVec3| (p + v * latency + a * (0.5 * latency * latency), v + a * latency);
         let (tp, tv) = ahead(q.position, q.velocity, track.acceleration);
         let (mp, _) = ahead(at, velocity, DVec3::ZERO);
-        let Some(s) = lead(mp, velocity, tp, tv, accel, GUN_MUZZLE, SLUG_LIFETIME) else {
+        let Some(s) = lead(mp, velocity, tp, tv, accel, standard_gun().muzzle, SLUG_LIFETIME) else {
             return TurretCommand { aim: Some((q.position - at).normalize()), fire: false, launch: None };
         };
         TurretCommand { aim: Some(s.aim), fire: gun.angle_between(s.aim) < ON_TARGET, launch: None }

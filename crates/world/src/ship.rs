@@ -58,6 +58,9 @@ pub struct ClassSpec {
     /// Its capacitor banks: what they store (J), and how fast they take it
     /// in or give it out, all together (W).
     pub capacitor_capacity: f64,
+    /// Its gun and its laser, if fitted (their products' figures).
+    pub gun: Option<crate::weapons::Gun>,
+    pub laser: Option<crate::weapons::Laser>,
     pub capacitor_rate: f64,
     pub hold_capacity: f64,
     pub hold_volume: f64,
@@ -511,6 +514,8 @@ impl ClassSpec {
             return Err(format!("its tanks and plants must hold and burn one fuel ({fuel} and {other})"));
         }
         let hold_capacity: f64 = frame.bay.0 + modules().filter_map(|m| if let Does::Rack { capacity } = m.does { Some(capacity) } else { None }).sum::<f64>();
+        let gun = modules().find_map(|m| if let Does::Gun(g) = m.does { Some(g) } else { None });
+        let laser = modules().find_map(|m| if let Does::Laser(l) = m.does { Some(l) } else { None });
         let (capacitor_capacity, capacitor_rate) = modules().filter_map(|m| if let Does::Capacitor { capacity, rate } = m.does { Some((capacity, rate)) } else { None }).fold((0.0, 0.0), |(c, r), (a, b)| (c + a, r + b));
         let seats: u32 = modules().filter_map(|m| if let Does::Cabin { seats } = m.does { Some(seats) } else { None }).sum();
         let hold_volume: f64 = frame.bay.1 + modules().filter_map(|m| if let Does::Rack { .. } = m.does { Some(m.volume) } else { None }).sum::<f64>();
@@ -600,6 +605,8 @@ impl ClassSpec {
             governor: modules().filter_map(|m| if let Does::NavComputer { governor, .. } = m.does { (governor > 0.0).then_some(governor) } else { None }).reduce(f64::max),
             comm,
             capacitor_capacity,
+            gun,
+            laser,
             capacitor_rate,
             hold_capacity,
             hold_volume,
@@ -709,7 +716,7 @@ fn intact() -> f64 {
 }
 
 fn full_magazine() -> u32 {
-    crate::weapons::GUN_AMMO
+    crate::weapons::standard_gun().magazine
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
@@ -928,7 +935,7 @@ impl Ship {
             excavator: false,
             hopper: 0.0,
             hull: 1.0,
-            ammo: crate::weapons::GUN_AMMO,
+            ammo: crate::weapons::standard_gun().magazine,
             laser_heat: 0.0,
             laser_overheated: false,
             armed: false,

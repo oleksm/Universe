@@ -25,7 +25,7 @@ use glam::{DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_world::ship::{facing, Controls, Ship, ShipCommands, Triggers};
 use universe_world::StarSystem;
-use universe_world::weapons::{within_gimbal, GUN_MUZZLE, LASER_FOCUS, SLUG_LIFETIME};
+use universe_world::weapons::{standard_gun, within_gimbal, SLUG_LIFETIME};
 
 use crate::avionics::Avionics;
 use crate::bus::Bus;
@@ -383,7 +383,10 @@ impl Avionics {
 
         // Gravity pulls the round as it does the prey: lead on the rest of its acceleration.
         let accel_own = track.acceleration - sys.gravity(prey.position, &positions);
-        let solution = lead(ship.position, ship.velocity, prey.position, prey.velocity, accel_own, GUN_MUZZLE, SLUG_LIFETIME);
+        // (Its own gun's muzzle speed; its own laser's focus.)
+        let muzzle = ship.spec().gun.unwrap_or_else(standard_gun).muzzle;
+        let focus = ship.spec().laser.map_or(0.0, |l| l.focus);
+        let solution = lead(ship.position, ship.velocity, prey.position, prey.velocity, accel_own, muzzle, SLUG_LIFETIME);
         // Keeping clear comes first: then it flies with the engine, not the guns.
         let attacking = d < GUN_RANGE * 1.3 && evade.length() < 0.1 && accel.length() < 2.0 * ship.side_accel();
         let (throttle, rcs, nose) = if attacking {
@@ -396,7 +399,7 @@ impl Avionics {
 
         let hot = ship.weapons_hot();
         let in_gimbal = solution.is_some_and(|s| within_gimbal(ship, s.aim));
-        let triggers = Triggers { gun: hot && attacking && in_gimbal && d < GUN_RANGE, laser: hot && d < LASER_FOCUS && ship.forward().angle_between(dir) < 0.07 };
+        let triggers = Triggers { gun: hot && attacking && in_gimbal && d < GUN_RANGE, laser: hot && d < focus && ship.forward().angle_between(dir) < 0.07 };
         let c = ShipCommands {
             throttle,
             rcs,
