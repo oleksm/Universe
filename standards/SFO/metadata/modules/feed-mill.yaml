@@ -8,6 +8,9 @@ physical:
   length: 60
   width: 30
   height: 25
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.animal-feed
     does: "Ground and mixed."
@@ -20,3 +23,4 @@ recipes:
     power: 300000
 basis:
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.power], tier: invented, review: true, note: "A mix chosen, not a ration anyone has worked out. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

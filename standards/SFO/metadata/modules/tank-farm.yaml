@@ -11,5 +11,9 @@ physical:
 capacity:
   volume: 40000
   stores: [goods.water, goods.chemicals, goods.fuel]
+staff:
+  - { profession: profession.docker, count: 3 }
+  - { profession: profession.clerk, count: 1 }
 basis:
   - { of: [physical, capacity], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [staff], tier: invented, review: true, note: "Three dockers and a clerk. Coarse: by the kind of plant, not this one; to be reviewed." }

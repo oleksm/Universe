@@ -1014,3 +1014,14 @@ none yet). **For the game:** a breach is recorded, never blocked; the penalties 
 outlaw is refused at the ports of administrations that recognise the outlawry, and nowhere else.
 The insurer (`org.treistun-mutual.insurance`) replaces a lost hull at a yard, parked, after the
 excess, and refuses the losses its list names: the respawn, by a rule. `docs/registry-order.md`.
+
+**Managing the NPCs (the user, 2026-10-06): records for the operator.** `docs/registry-people.md`.
+Every settlement has a **census** by trade (finite people); every organisation that flies has a
+**fleet** (hull, count, home, what for): Treistun Freight's 39 haulers on the supply runs (derived
+from tonnes a day and flight time between the orbits), Hearth Line's shuttles, Cormorant's
+prospectors, the administration's 23 patrol interceptors, Shikra Hold's 12 raiders: about a hundred
+ships, not a thousand settlers. `settlement.resupply.interval` is now the fleet's cadence from the
+orbits. **What ends the vortex, yours:** spawn fleets from these records, crewed from the census;
+no NPC respawn (one fewer, the company orders a hull); the player's return as the insurer's delivery
+at a yard; far ships on the ledger. The census also says only 3–6% of people have described work:
+the commerce and construction parts come next on my side.

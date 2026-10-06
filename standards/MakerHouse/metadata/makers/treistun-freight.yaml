@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented (2026-10-06): the company that runs the supply runs the stocking law needs. Its fleet is what the runs take
+# (tools/standards/census.py): the tonnes a day each port's people take, the flight between the orbits, a hauler's hold.
+identity:
+  key: org.treistun-freight
+  name: Treistun Freight
+ticker: TFR
+kind: company
+business: hauling
+note: "Haulers on the supply runs from Harvest"
+who: "The carrier of Treistun's food, medicine and goods from Port Eikir to every other port, on contract to the administration's reserve and the ports' markets. Owned by the ports it serves."
+what: "Runs haulers on fixed routes; takes freight both ways."
+address: { at: settlement.treistun.port-eikir, tower: Freight House, deck: 1, section: A, unit: 1 }
+# fleet: what the supply runs take, by tools/standards/census.py
+fleet:
+  - { hull: hull.hauler, count: 39, home: settlement.treistun.port-eikir, does: "the supply runs from Port Eikir to every port: the tonnes their people take a day, at a torchship's cruise" }

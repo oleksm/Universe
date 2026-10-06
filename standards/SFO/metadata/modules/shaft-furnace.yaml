@@ -8,6 +8,11 @@ physical:
   length: 150
   width: 100
   height: 137
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.sponge-iron
     does: "Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron."
@@ -24,3 +29,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://www.midrex.com/tech-article/midrex-direct-reduction-plants-2021-operations-summary/", note: "82 to 135 kWh for each tonne; 110 taken. It leaves out heating the gas." }
   - { of: [physical.height], tier: sourced, source: "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa", note: "137 m for a plant of 2 Mt a year." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

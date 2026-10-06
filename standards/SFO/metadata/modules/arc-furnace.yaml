@@ -8,6 +8,11 @@ physical:
   length: 100
   width: 40
   height: 35
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.liquid-steel
     does: "The sponge iron is melted. Lime forms a slag that takes up the impurities."
@@ -27,3 +32,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "Inside the ranges the source gives for each tonne of steel: lime 25 to 140 kg, carbon 3 to 28, electrode 2 to 6, slag 60 to 270, dust 10 to 30. The sponge iron is set to balance." }
   - { of: [recipes.power], tier: sourced, source: "https://escholarship.org/content/qt77n9d4sp/qt77n9d4sp.pdf", note: "530 to 753 kWh for each tonne when charged with sponge iron; 750 taken for a full charge of it." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

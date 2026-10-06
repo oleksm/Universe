@@ -504,7 +504,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file", "insurance", "trade_bans"}:
+        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file", "insurance", "trade_bans", "fleet"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
@@ -636,7 +636,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -870,7 +870,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law", "recognises"}:
+        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law", "recognises", "fleet"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
@@ -2392,6 +2392,34 @@ for ms in sorted(mill_stock, key=lambda m_: ((m_.get("made_from") or {}).get("ma
     euler = lambda P: f"{math.pi * math.sqrt(E_ * inertia / P):.1f} m" if E_ else "no modulus on record"
     rows.append(row("ok" if E_ and sy else "note", (ms.get("identity") or {}).get("name", ms["slug"]), f"{d_m * 1000:g} x {w_m * 1000:g}", f"{ms.get('weight', 0):.2f}", yields, euler(50e3), euler(200e3), f"{sy / (mat.get('mass') or {}).get('density', 1) / 1e3:.0f}" if sy else ""))
 report("members", "Members: the tubes a frame is cut from", "SFO 13: every round tube in stock, read as an engineer sizes a frame. Yields: the axial load at which it yields with the safety factor 1.5. Buckles: the pinned length at which Euler buckling takes it under 50 kN and under 200 kN; a longer member needs a bigger tube or a brace. Specific strength: yield strength over density, kN m per kg.", ["Tube", "mm", "kg/m", "Yields at", "Buckles at 50 kN", "Buckles at 200 kN", "kN m/kg"], rows)
+
+# 3e. Traffic and census (docs/registry-people.md): the ships the supply runs take, and who lives where by trade.
+try:
+    import census as _census
+    import glob
+    _setts = {d_["identity"]["key"]: (f_, d_) for f_, d_ in ((f_, _census.load(f_)) for f_ in glob.glob(os.path.join(_census.LA, "*", "*.yaml"))) if d_.get("population")}
+    _routes = []
+    for _key, (_f, _d) in _setts.items():
+        _rs = _d.get("resupply")
+        if not _rs:
+            continue
+        _frm = _setts[_rs["from"]][1]
+        _t = _d["population"] * sum(t_["rate"] for n_ in _census.STOCKED for t_ in _census.needs[n_].get("takes", [])) * _census.DAY
+        _ow = _census.flight(_d["at"], _frm["at"]); _rt = 2 * _ow + 2 * _census.TURNAROUND
+        _hold = _census.hulls[_census.HAULER]["identity"].get("hold") or 150000
+        _ships = max(1, math.ceil(_t * (_rt / _census.DAY) / _hold))
+        _routes.append(row("ok", _frm["identity"]["name"], _d["identity"]["name"], f"{_t / 1000:.1f}", f"{_ow / _census.DAY:.1f}", _ships, f"{max(_census.DAY, _rt / _ships) / _census.DAY:.1f}"))
+    report("traffic", "Traffic: the ships the supply runs take", f"Each settlement supplied from another (settlement.resupply): what its people take a day of stocked goods (food, medicine, clothes, tools, drink), the flight one way at a torchship's cruise of {_census.CRUISE:g} m/s2 over the two orbits' typical separation, the haulers ({_census.HAULER}, {(_census.hulls[_census.HAULER]['identity'].get('hold') or 0) / 1000:.0f} t) that run needs, and so the delivery interval. The sum is the freight line's fleet (org.treistun-freight.fleet). Nothing else should fly for supply.", ["From", "To", "t a day", "Days one way", "Haulers", "Delivery every (days)"], _routes)
+    _rows = []
+    for _f, _d in sorted(_setts.values(), key=lambda fd: fd[1]["identity"]["name"]):
+        if not _d.get("census"):
+            continue
+        _c = {c_["profession"].split(".")[-1]: c_["count"] for c_ in _d["census"]}
+        _dep = _c.pop("dependant", 0); _work = sum(_c.values())
+        _rows.append(row("gap" if _work > _d["population"] or _work < 0.3 * _d["population"] else "ok", _d["identity"]["name"], f"{_d['population']:,}", f"{_work:,}", f"{_dep:,}", f"{_work / _d['population']:.0%}", ", ".join(f"{k_} {v_}" for k_, v_ in sorted(_c.items(), key=lambda kv: -kv[1])[:6])))
+    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under three tenths here is a settlement whose works and services, as described, give most of its people nothing to do (a gap: the rest of the civilization is not yet described), over all of them one over-built. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
+except Exception as _e:    # (the census tool is beside this build; without it the page lacks two reports, no more)
+    print("traffic/census report:", _e)
 
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])

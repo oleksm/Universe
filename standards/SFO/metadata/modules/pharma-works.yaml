@@ -8,6 +8,10 @@ physical:
   length: 100
   width: 60
   height: 15
+staff:
+  - { profession: profession.chemist, count: 2 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: good.medicines
     does: "Grown in broth or built up step by step in solvents, then purified again and again."
@@ -24,3 +28,4 @@ recipes:
 basis:
   - { of: [recipes.outputs], tier: sourced, source: "standards/sources/research_chemicals.json", note: "Making medicines leaves 25 to more than 100 kg of waste for each kg made (Sheldon's E-factor); 50 taken." }
   - { of: [physical, recipes, recipes.inputs, recipes.rate, recipes.power], tier: invented, review: true, note: "What the 51 kg going in are is a guess: sugar for the broth, a solvent, acid and alkali, water. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

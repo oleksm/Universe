@@ -7,8 +7,34 @@ at: body.treistun.treistun-f
 position: { latitude: 6.331, longitude: 52.014 }
 structure: structure.spaceport
 population: 20000
-# Supplied from Port Eikir every 30 days: chosen by how far it lies (the inner worlds three weeks, Rime a month, the giants' moons two); a haul reckoned from the orbits is owed.
-resupply: { from: settlement.treistun.port-eikir, interval: 2.592e+06 }
+# Supplied from Port Eikir: 32.8 t a day of what its people take; 10.0 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 5 hauler(s) on the run, so a delivery every 4.4 days (tools/standards/census.py).
+resupply: { from: settlement.treistun.port-eikir, interval: 380439 }
+# census: its 20,000 people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)
+census:
+  - { profession: profession.plant-operator, count: 218 }
+  - { profession: profession.teacher, count: 218 }
+  - { profession: profession.nurse, count: 189 }
+  - { profession: profession.innkeeper, count: 80 }
+  - { profession: profession.doctor, count: 69 }
+  - { profession: profession.constable, count: 61 }
+  - { profession: profession.machinist, count: 52 }
+  - { profession: profession.docker, count: 48 }
+  - { profession: profession.technician, count: 47 }
+  - { profession: profession.metalworker, count: 40 }
+  - { profession: profession.pilot, count: 36 }
+  - { profession: profession.engineer, count: 29 }
+  - { profession: profession.chemist, count: 20 }
+  - { profession: profession.artist, count: 20 }
+  - { profession: profession.performer, count: 20 }
+  - { profession: profession.clerk, count: 16 }
+  - { profession: profession.fitter, count: 16 }
+  - { profession: profession.welder, count: 12 }
+  - { profession: profession.electrician, count: 8 }
+  - { profession: profession.shipwright, count: 8 }
+  - { profession: profession.farmer, count: 4 }
+  - { profession: profession.reporter, count: 4 }
+  - { profession: profession.judge, count: 2 }
+  - { profession: profession.dependant, count: 18783 }
 about: "The port on Rime, near the equator at 6° north. Gravity 0.41 g, no air, and about 190 K."
 story:
   - "The last port on solid ground before the giants. Outbound ships top up here because it is the cheapest lift-off of any planet in the system."

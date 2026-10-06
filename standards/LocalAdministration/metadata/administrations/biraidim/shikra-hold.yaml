@@ -6,6 +6,19 @@ identity:
 kind: rig
 at: body.biraidim.shikra
 population: 300
+# census: its 300 people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)
+census:
+  - { profession: profession.pilot, count: 24 }
+  - { profession: profession.teacher, count: 4 }
+  - { profession: profession.nurse, count: 3 }
+  - { profession: profession.innkeeper, count: 2 }
+  - { profession: profession.doctor, count: 2 }
+  - { profession: profession.reporter, count: 1 }
+  - { profession: profession.artist, count: 1 }
+  - { profession: profession.performer, count: 1 }
+  - { profession: profession.constable, count: 1 }
+  - { profession: profession.judge, count: 1 }
+  - { profession: profession.dependant, count: 260 }
 about: "A pirates' hold dug into a 1.6 km asteroid in a system nobody administers, one jump from Treistun."
 story:
   - "Nobody built Shikra Hold; it was dug, by people who had lost ships or licences in Treistun and found that an asteroid nobody owned asked no questions. It has a dock cut into the rock, a few hundred people, and a dozen armed craft."

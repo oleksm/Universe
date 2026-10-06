@@ -12,6 +12,11 @@ generation:
   supplies: 400000000
   burns:
     - { item: material.deuterium, rate: 2.32222222222222e-06 }
+staff:
+  - { profession: profession.plant-operator, count: 8 }
+  - { profession: profession.engineer, count: 2 }
+  - { profession: profession.electrician, count: 2 }
 basis:
   - { of: [generation.burns], tier: derived, note: "From the game: deuterium gives 3.45e14 J/kg and the best fusion plants turn half of it into power." }
   - { of: [physical, generation.supplies], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [staff], tier: invented, review: true, note: "A power station's watch: operators, engineers, electricians. Coarse: by the kind of plant, not this one; to be reviewed." }

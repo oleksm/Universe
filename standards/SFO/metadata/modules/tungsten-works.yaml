@@ -8,6 +8,11 @@ physical:
   length: 100
   width: 50
   height: 20
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: element.w
     does: "Concentrate is dissolved in soda, purified and crystallised, then reduced with hydrogen to metal powder."
@@ -23,3 +28,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "Concentrate of 65% tungsten oxide (sourced), 95% won (a guess); the hydrogen and the water it makes are the chemistry's. The soda is not counted." }
   - { of: [recipes.power], tier: invented, review: true, note: "20 MJ a kg: no figure was found. To be reviewed." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

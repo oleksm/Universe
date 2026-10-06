@@ -61,3 +61,16 @@ zoning:
   - { use: commercial, permits: "Markets, shops and company offices." }
   - { use: civic, permits: "The administration and offices of record." }
   - { use: residential, permits: "Homes." }
+# fleet: the patrol the code's enforcement names (law.enforcement.patrol)
+fleet:
+  - { hull: hull.interceptor, count: 1, home: settlement.treistun.port-aipika, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 6, home: settlement.treistun.port-eikir, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 1, home: settlement.treistun.port-fabindum, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 2, home: settlement.treistun.port-lisaur, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 6, home: settlement.treistun.port-nacaubun, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 1, home: settlement.treistun.port-seiwiti, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 1, home: settlement.treistun.port-sirnendis, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 2, home: settlement.treistun.port-trethi, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 1, home: settlement.treistun.port-weisonum, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 2, home: settlement.treistun.port-zaudalein, does: "patrol: the law's one to 10,000 people, at least one at every port" }
+  - { hull: hull.interceptor, count: 2, home: settlement.treistun.treistun-e-station, does: "patrol: the law's one to 10,000 people, at least one at every port" }

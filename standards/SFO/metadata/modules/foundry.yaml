@@ -8,6 +8,11 @@ physical:
   length: 80
   width: 40
   height: 15
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: stock.cu-ingot
     does: "Copper is melted and cast into ingots."
@@ -40,3 +45,4 @@ basis:
   - { of: [recipes, recipes.inputs], tier: derived, review: true, note: "The metals in the shares of the grade (its material's composition), with 2% lost as dross, a guess." }
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "1.25 MJ a kg: electric crucible induction furnaces melting copper alloys take 900 to 1,600 MJ a tonne. (The heat itself is 0.62: 384 J/kg/K over 1,065 K, and 209 kJ/kg to melt.)" }
   - { of: [physical, recipes.rate, recipes.outputs], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

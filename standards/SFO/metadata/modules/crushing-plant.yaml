@@ -8,6 +8,9 @@ physical:
   length: 80
   width: 40
   height: 20
+staff:
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.miner, count: 2 }
 recipes:
   - makes: good.aggregate
     does: "Rock is crushed and screened; the fines are thrown out."
@@ -26,3 +29,4 @@ recipes:
 basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "1.95 kWh a tonne: a crushed-stone quarry takes 1.7 to 2.2 (US Department of Energy)." }
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Its size and rate are chosen; the 2% lost as fines is a guess. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Operators and a couple of miners. Coarse: by the kind of plant, not this one; to be reviewed." }

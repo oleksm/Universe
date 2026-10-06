@@ -8,6 +8,9 @@ physical:
   length: 60
   width: 40
   height: 15
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.tallow
     does: "Offal, bone and hide are minced and cooked; the fat is run off, the water boiled away and the solids ground to meal."
@@ -22,3 +25,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "Steer offal and bone: 30 to 35% tallow, 15 to 20% protein solids, the rest water (US EPA, AP-42)." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "To boil off the water: 2,257 kJ a kg, 1.5 kg of water for each kg of tallow, and something for heating. Rough." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

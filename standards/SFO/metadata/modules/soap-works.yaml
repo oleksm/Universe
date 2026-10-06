@@ -8,6 +8,9 @@ physical:
   length: 50
   width: 30
   height: 12
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.soap
     does: "Tallow and caustic soda are boiled together; the soap is salted out and the glycerine run off."
@@ -21,3 +24,4 @@ recipes:
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "standards/sources/research_chemicals.json", note: "From the chemistry, the fat taken as the commonest in tallow (tristearin): 135 g of caustic soda a kg of fat. Lard is reported to take 137 to 145." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

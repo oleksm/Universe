@@ -8,6 +8,11 @@ physical:
   length: 450
   width: 300
   height: 40
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.alumina
     does: "The aluminium oxide is dissolved out of the bauxite, the residue settled out, and the oxide baked to a dry powder."
@@ -22,3 +27,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://en.wikipedia.org/wiki/Red_mud", note: "Red mud 1.0 to 1.5 t for each tonne of alumina (1.23 on average) and caustic soda 100 kg; the bauxite is set to balance, inside the 1.9 to 3.6 t the source gives." }
   - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }
   - { of: [recipes.makes, recipes.rate, physical], tier: invented, note: "100 t/h is a small refinery (large ones make 4 Mt a year). Its footprint follows an unverified 20 hectares for each Mt a year." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

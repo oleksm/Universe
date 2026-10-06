@@ -8,6 +8,9 @@ physical:
   length: 80
   width: 40
   height: 8
+staff:
+  - { profession: profession.clothier, count: 8 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: good.clothes
     does: "Cotton cloth is cut and sewn into clothes."
@@ -36,3 +39,4 @@ recipes:
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "A tenth of the cloth is lost in cutting (a study of a cotton T-shirt); taken for all three." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Eight clothiers and a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

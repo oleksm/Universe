@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented (2026-10-06): the passage line. One shuttle to 10,000 people is chosen; the need for travel says one pilot to 2,000.
+identity:
+  key: org.hearth-line
+  name: Hearth Line
+ticker: HRL
+kind: company
+business: passage
+note: "Shuttles between the ports and the station"
+who: "Carries people between Treistun's ports and the station on a timetable, and anyone who books passage. Based at the station."
+what: "Runs Drovers on scheduled passage; sells seats."
+address: { at: settlement.treistun.treistun-e-station, tower: Civic Tower, deck: 3, section: C, unit: 2 }
+# fleet: one shuttle to 10,000 people (chosen)
+fleet:
+  - { hull: hull.drover, count: 22, home: settlement.treistun.treistun-e-station, does: "scheduled passage between the ports and the station: one shuttle to 10,000 people, chosen" }

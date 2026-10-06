@@ -9,6 +9,8 @@ physical:
   length: 200
   width: 50
   height: 8
+staff:
+  - { profession: profession.farmer, count: 2 }
 recipes:
   - makes: good.live-pigs
     does: "About 5,000 pigs a year raised to 125 kg, on 3 kg of feed for each kg they gain by the time they are killed, and 9 litres of water a day each."
@@ -94,3 +96,4 @@ basis:
   - { of: [recipes, recipes.rate, recipes.inputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Feed for each kg, water a head, eggs a hen, milk a cow, weights at slaughter: the file named. The herd and flock sizes, and so the barn's rate, are chosen. Sheep's water for each kg gained is worked out from a guess at how fast they gain." }
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance: what goes in and does not leave as the animal or its breath is manure. Breath is taken as 0.55 kg of carbon dioxide for each kg of feed, a guess." }
   - { of: [physical, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }

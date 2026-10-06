@@ -8,6 +8,9 @@ physical:
   length: 150
   width: 80
   height: 30
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.sugar
     does: "150 kg of sugar from a tonne of beet."
@@ -28,3 +31,4 @@ recipes:
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "150 kg of sugar a tonne of beet. A tonne of cane holds 135 kg of sucrose; 111 kg got out is a guess. What is left over is by balance." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

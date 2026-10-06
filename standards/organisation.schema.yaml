@@ -20,7 +20,7 @@ properties:
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   # A company.
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: "A company's short trading name; no two alike." }
-  business: { enum: [maker, warehousing, exchange, food, insurance, banking], description: "What kind of company it is. food: it grows or makes food. insurance: it covers hulls and cargoes. banking: it lends. Left out: a maker. Only makers go to the game's brands." }
+  business: { enum: [maker, warehousing, exchange, food, insurance, banking, hauling, passage], description: "What kind of company it is. food: it grows or makes food. insurance: it covers hulls and cargoes. banking: it lends. hauling: it carries freight. passage: it carries people. Left out: a maker. Only makers go to the game's brands." }
   who: { type: string, description: Who they are. }
   what: { type: string, description: What they do. }
   # A standards body.
@@ -35,6 +35,18 @@ properties:
       text: { type: array, items: { type: string } }
   founded_by: { type: array, items: { type: string, x-ref: [org] }, description: "The companies that founded it." }
   # An administration.
+  fleet:
+    description: "The ships it operates at day 0: hulls, how many, and the settlement they are based at. Finite: a ship lost is one fewer until a yard delivers another. The operator flies these, crewed from the base's census; nothing else flies."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [hull, count, home]
+      properties:
+        hull: { type: string, x-ref: [hull] }
+        count: { type: integer, minimum: 1 }
+        home: { type: string, x-ref: [settlement, rig] }
+        does: { type: string, description: "What they do: hauling the supply runs, mining a field, patrol, passage, raiding." }
   insurance:
     description: "For an insurer: what it covers and on what terms. Rates are shares. A lost hull is replaced at a yard, parked, once the excess is paid: nobody is put back into a fight."
     type: object

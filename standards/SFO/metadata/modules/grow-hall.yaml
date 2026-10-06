@@ -11,6 +11,8 @@ physical:
 climate:
   holds: 295
   efficiency: 0.5
+staff:
+  - { profession: profession.farmer, count: 2 }
 recipes:
   - makes: good.lettuce
     does: "Grown in tiers of troughs under lamps, in water and nutrients, sealed from outside. 80 to 120 kg a m2 a year in a vertical farm; the low end taken. 250 umol/m2/s for 16 hours."
@@ -406,3 +408,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_food_crops.json", note: "As a field's, from what a plant is made of; all its nutrients are brought (3% of the dry plant, a guess), and 10 t of growing medium a hectare a year, which is a guess too." }
   - { of: [physical], tier: invented, review: true, note: "Chosen: a hectare of beds in tiers." }
   - { of: [climate], tier: invented, review: true, note: "22 C inside, chosen. Heat pumps at half of Carnot's limit: a guess; good chillers reach a coefficient of 4." }
+  - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }
