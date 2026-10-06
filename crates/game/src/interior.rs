@@ -330,73 +330,79 @@ fn segment_gap(a: Vec3, b: Vec3, c: Vec3, d: Vec3) -> f32 {
     (a + u * s).distance(c + v * t)
 }
 
-/// Each member of the plan's frame as the solid tube it is (its stock's diameter):
-/// what it passes into, if anything: a module it doesn't mount (one with neither
-/// of its ends at it), a walled room, a deck it runs through (not one it ends at),
-/// or another member it isn't joined to (sharing no end).
-fn member_clashes(plan: &Plan) -> Vec<Option<Passes>> {
-    let radius = |b: &Beam| stocks().iter().find(|s| s.key == b.stock).map_or(0.03, |s| s.section.diameter as f32 * 0.5);
+/// The radius of a member of `stock` (m: half its tube's diameter).
+fn tube_radius(stock: &str) -> f32 {
+    stocks().iter().find(|s| s.key == stock).map_or(0.03, |s| s.section.diameter as f32 * 0.5)
+}
+
+/// What member `b`, the solid tube it is, passes into, if anything: a module it
+/// doesn't mount (one with neither of its ends at it), a walled room, a deck (a
+/// slab its depth down from its top) it doesn't end on, or one of `others` it
+/// shares no end with.
+fn passes(plan: &Plan, b: &Beam, others: &[Beam]) -> Option<Passes> {
     // (Clear of contact by a centimetre: touching isn't passing into.)
     const TOUCH: f32 = 0.01;
-    let rooms: Vec<(Vec3, Vec3, Profile)> = (0..plan.lines.len())
-        .filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line)
-        .map(|k| {
-            let (p, q) = plan.axis(k);
-            (p, q, plan.lines[k].2)
-        })
-        .collect();
-    let along = |b: &Beam, r: f32| -> Vec<Vec3> {
-        // (Points along it, clear of its ends by its radius and a little: its ends
-        // are joints, where it meets what it's joined to.)
-        let len = b.a.distance(b.b);
-        let n = ((len / 0.1).ceil() as usize).max(2);
-        (0..=n).map(|k| k as f32 / n as f32).filter(|t| t * len > r + 0.05 && (1.0 - t) * len > r + 0.05).map(|t| b.a.lerp(b.b, t)).collect()
-    };
-    let n = plan.beams.len();
-    let mut out = vec![None; n];
-    let boxes: Vec<(Vec3, Vec3)> = plan.beams.iter().map(|b| {
-        let r = Vec3::splat(radius(b));
-        (b.a.min(b.b) - r, b.a.max(b.b) + r)
-    }).collect();
-    for (k, b) in plan.beams.iter().enumerate() {
-        let r = radius(b);
-        let pts = along(b, r);
-        let module = plan.blocks.iter().any(|blk| {
-            let (lo, hi) = blk.bounds();
-            let near = |p: Vec3| p.cmpge(lo - 0.3).all() && p.cmple(hi + 0.3).all();
-            if near(b.a) || near(b.b) {
-                return false;
-            }
-            pts.iter().any(|&p| p.clamp(lo, hi).distance(p) < r - TOUCH)
-        });
-        let room = pts.iter().any(|&q| rooms.iter().any(|&(p, e, pr)| {
-            let d = e - p;
+    let r = tube_radius(&b.stock);
+    // (Points along it, clear of its ends by its radius and a little: its ends are
+    // joints, where it meets what it's joined to.)
+    let len = b.a.distance(b.b);
+    let n = ((len / 0.1).ceil() as usize).max(2);
+    let pts: Vec<Vec3> = (0..=n).map(|k| k as f32 / n as f32).filter(|t| t * len > r + 0.05 && (1.0 - t) * len > r + 0.05).map(|t| b.a.lerp(b.b, t)).collect();
+    let module = plan.blocks.iter().any(|blk| {
+        let (lo, hi) = blk.bounds();
+        let near = |p: Vec3| p.cmpge(lo - 0.3).all() && p.cmple(hi + 0.3).all();
+        !near(b.a) && !near(b.b) && pts.iter().any(|&p| p.clamp(lo, hi).distance(p) < r - TOUCH)
+    });
+    if module {
+        return Some(Passes::Module);
+    }
+    let room = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line).any(|k| {
+        let (p, e) = plan.axis(k);
+        let pr = plan.lines[k].2;
+        let d = e - p;
+        pts.iter().any(|&q| {
             let t = (q - p).dot(d) / d.length_squared().max(1e-6);
             let off = q - (p + d * t.clamp(0.0, 1.0));
             (0.0..=1.0).contains(&t) && off.y.abs() < pr.height * 0.5 + r - TOUCH && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5 + r - TOUCH
-        }));
-        let deck = plan.plates.iter().any(|pl| {
-            let (ya, yb) = (b.a.y - pl.y, b.b.y - pl.y);
-            if ya.abs() < 0.05 || yb.abs() < 0.05 || ya * yb > 0.0 {
-                return false;
-            }
-            let at = b.a.lerp(b.b, ya / (ya - yb));
-            at.x > pl.lo.x.min(pl.hi.x) && at.x < pl.lo.x.max(pl.hi.x) && at.z > pl.lo.y.min(pl.hi.y) && at.z < pl.lo.y.max(pl.hi.y)
-        });
-        let member = (0..n).any(|j| {
-            if j == k {
-                return false;
-            }
-            let o = &plan.beams[j];
-            let shares = [b.a, b.b].iter().any(|p| p.distance(o.a) < 0.05 || p.distance(o.b) < 0.05);
-            if shares || boxes[k].0.cmpgt(boxes[j].1).any() || boxes[j].0.cmpgt(boxes[k].1).any() {
-                return false;
-            }
-            segment_gap(b.a, b.b, o.a, o.b) < r + radius(o) - TOUCH
-        });
-        out[k] = if module { Some(Passes::Module) } else if room { Some(Passes::Room) } else if deck { Some(Passes::Deck) } else if member { Some(Passes::Member) } else { None };
+        })
+    });
+    if room {
+        return Some(Passes::Room);
     }
-    out
+    // (A deck is a slab from its top down its depth; a member that ends on it holds
+    // it up, joined there; one standing steeply through it is a pillar through a
+    // hole cut for it. One lying in it is in the way.)
+    let steep = (b.b - b.a).normalize_or_zero().y.abs() > 0.5;
+    let deck = !steep && plan.plates.iter().any(|pl| {
+        let (x0, x1, z0, z1) = (pl.lo.x.min(pl.hi.x), pl.lo.x.max(pl.hi.x), pl.lo.y.min(pl.hi.y), pl.lo.y.max(pl.hi.y));
+        let on = |p: Vec3| (p.y - pl.y).abs() < 0.05 && p.x >= x0 - 0.05 && p.x <= x1 + 0.05 && p.z >= z0 - 0.05 && p.z <= z1 + 0.05;
+        if on(b.a) || on(b.b) {
+            return false;
+        }
+        let depth = deck_depth(pl);
+        pts.iter().any(|p| p.x > x0 - r + TOUCH && p.x < x1 + r - TOUCH && p.z > z0 - r + TOUCH && p.z < z1 + r - TOUCH && p.y > pl.y - depth - r + TOUCH && p.y < pl.y + r - TOUCH)
+    });
+    if deck {
+        return Some(Passes::Deck);
+    }
+    let (lo, hi) = (b.a.min(b.b) - Vec3::splat(r), b.a.max(b.b) + Vec3::splat(r));
+    let member = others.iter().any(|o| {
+        if (o.a == b.a && o.b == b.b) || (o.a == b.b && o.b == b.a) {
+            return false;
+        }
+        let ro = tube_radius(&o.stock);
+        let shares = [b.a, b.b].iter().any(|p| p.distance(o.a) < 0.05 || p.distance(o.b) < 0.05);
+        if shares || (o.a.min(o.b) - Vec3::splat(ro)).cmpgt(hi).any() || lo.cmpgt(o.a.max(o.b) + Vec3::splat(ro)).any() {
+            return false;
+        }
+        segment_gap(b.a, b.b, o.a, o.b) < r + ro - TOUCH
+    });
+    member.then_some(Passes::Member)
+}
+
+/// Each member of the plan's frame as the solid tube it is: what it passes into.
+fn member_clashes(plan: &Plan) -> Vec<Option<Passes>> {
+    plan.beams.iter().map(|b| passes(plan, b, &plan.beams)).collect()
 }
 
 fn block_clashes(mesh: Option<&universe_sim::world::walk::WalkMesh>, i: &Interior) -> Vec<bool> {
@@ -494,6 +500,8 @@ pub struct PlateStock {
     thickness: f64,
     /// A sandwich panel's core (none: a solid plate).
     core: Option<universe_sim::world::frame::Core>,
+    /// How thick it is in all (m): a plate's thickness; a panel's core and faces.
+    depth: f64,
     material: universe_sim::world::frame::Material,
     per_square_metre: f64,
 }
@@ -521,7 +529,7 @@ fn plate_stocks() -> &'static [PlateStock] {
             let k = &m.mechanical;
             let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
-            Some(PlateStock { key: s.identity.key.clone(), name: s.identity.name.clone(), of: of.clone(), thickness: t, core: None, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
+            Some(PlateStock { key: s.identity.key.clone(), name: s.identity.name.clone(), of: of.clone(), thickness: t, core: None, depth: t, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
         }).collect();
         // (Sandwich panels: their faces' material bears, their core shears.)
         out.extend(reg.stock.iter().filter_map(|s| {
@@ -536,6 +544,7 @@ fn plate_stocks() -> &'static [PlateStock] {
                 name: s.identity.name.clone(),
                 of: format!("{} on {}", sw.faces.material, sw.core.material),
                 thickness: sw.faces.thickness,
+                depth: s.size.thickness.unwrap_or(sw.core.depth + 2.0 * sw.faces.thickness),
                 core: Some(universe_sim::world::frame::Core { depth: sw.core.depth, shear_strength: sw.core.shear_strength }),
                 material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho },
                 per_square_metre,
@@ -550,6 +559,12 @@ fn plate_stocks() -> &'static [PlateStock] {
 /// plate, else the first there is.
 fn default_deck_stock() -> String {
     plate_stocks().iter().find(|s| s.key.contains("al6061-pl")).or(plate_stocks().first()).map_or(String::new(), |s| s.key.clone())
+}
+
+/// How thick a deck is (m): its stock's whole thickness. Its `y` is its top, the
+/// floor walked on; it runs down from there.
+fn deck_depth(p: &Plate) -> f32 {
+    plate_stocks().iter().find(|s| s.key == p.stock).map_or(0.01, |s| s.depth as f32)
 }
 
 /// A deck's grid: its points, about 2 m apart each way (`nx` + 1 along x by `nz` + 1
@@ -743,21 +758,6 @@ fn truss(a: Vec3, b: Vec3, depth: f32, spacing: f32, stock: &str) -> Vec<Beam> {
     out
 }
 
-/// Does a member from `a` to `b` pass through one of the plan's walled rooms (its
-/// floor and walls aside)?
-fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
-    let rooms: Vec<(Vec3, Vec3, Profile)> = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled)).map(|k| {
-        let (p, q) = plan.axis(k);
-        (p, q, plan.lines[k].2)
-    }).collect();
-    (1..10).map(|k| a.lerp(b, k as f32 / 10.0)).any(|q| rooms.iter().any(|&(p, e, pr)| {
-        let d = e - p;
-        let t = (q - p).dot(d) / d.length_squared().max(1e-6);
-        let off = q - (p + d * t.clamp(0.0, 1.0));
-        t > 0.0 && t < 1.0 && off.y.abs() < pr.height * 0.5 - 0.15 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5 - 0.1
-    }))
-}
-
 /// Members mounting each placed module the frame doesn't hold yet (no joint in
 /// it): joints along its foot (one each `spacing` m; over a tonne full, at its
 /// foot's corners, each braced to the nearest joint below as well, or hung from
@@ -766,6 +766,13 @@ fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
 /// four; never through a room or further than 15 m; and each landing pad with
 /// nothing at it, on four legs to the nearest joints; each deck's grid point with
 /// nothing at it, a post to the nearest joint below; of `stock`.
+/// Can a member of `stock` run from `a` to `b` clear of everything (modules, rooms,
+/// decks, the members of `frame` and `added`)?
+fn clear(plan: &Plan, a: Vec3, b: Vec3, stock: &str, frame: &[Beam], added: &[Beam]) -> bool {
+    let m = Beam { a, b, stock: stock.to_string() };
+    passes(plan, &m, frame).is_none() && passes(&Plan { blocks: Vec::new(), lines: Vec::new(), plates: Vec::new(), ..Plan::default() }, &m, added).is_none()
+}
+
 fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>, usize) {
     let joints: Vec<Vec3> = plan.beams.iter().flat_map(|b| [b.a, b.b]).fold(Vec::new(), |mut v, p| {
         if !v.iter().any(|q: &Vec3| q.distance(p) < 0.05) {
@@ -776,10 +783,56 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     // (The frame as it is, its members split where a mount point lands on one.)
     let mut beams = plan.beams.clone();
     let mut out = Vec::new();
+    // (Each deck's joists: under each row of its grid not already over a member, a
+    // joist across it at the frame's level, from member to member it crosses (each
+    // crossed member jointed there): what its points rest on between the frame's
+    // own lines.)
+    for plate in &plan.plates {
+        let (nodes, nx, _, _, _) = plate_grid(plate);
+        let rows: Vec<f32> = nodes.iter().step_by(nx + 1).map(|n| n.z).collect();
+        let (x0, x1) = (plate.lo.x.min(plate.hi.x), plate.lo.x.max(plate.hi.x));
+        for z in rows {
+            // (Where members under the deck, a seat's height at most, cross the row.)
+            let mut cross: Vec<(f32, Vec3, usize)> = beams.iter().enumerate().filter_map(|(k, b)| {
+                let under = |p: Vec3| (-0.05..=0.3).contains(&(plate.y - p.y));
+                if !under(b.a) || !under(b.b) || (b.a.z - z) * (b.b.z - z) > 0.0 || (b.a.z - b.b.z).abs() < 1e-3 {
+                    return None;
+                }
+                let at = b.a.lerp(b.b, (z - b.a.z) / (b.b.z - b.a.z));
+                (at.x >= x0 - 0.05 && at.x <= x1 + 0.05).then_some((at.x, at, k))
+            }).collect();
+            cross.sort_by(|a, b| a.0.total_cmp(&b.0));
+            cross.dedup_by(|a, b| (a.0 - b.0).abs() < 0.05);
+            if cross.len() < 2 || beams.iter().any(|b| (b.a.z - z).abs() < 0.05 && (b.b.z - z).abs() < 0.05 && (plate.y - b.a.y) <= 0.3 && (plate.y - b.a.y) >= -0.05) {
+                continue;
+            }
+            // (Each crossed member jointed where the joist meets it.)
+            let ats: Vec<Vec3> = cross.iter().map(|c| c.1).collect();
+            for &at in &ats {
+                if let Some(k) = beams.iter().position(|b| {
+                    let d = b.b - b.a;
+                    let t = (at - b.a).dot(d) / d.length_squared().max(1e-6);
+                    t > 0.02 && t < 0.98 && (b.a + d * t).distance(at) < 0.05
+                }) {
+                    let b = beams.remove(k);
+                    beams.push(Beam { a: b.a, b: at, stock: b.stock.clone() });
+                    beams.push(Beam { a: at, b: b.b, stock: b.stock });
+                }
+            }
+            for w in ats.windows(2) {
+                beams.push(Beam { a: w[0], b: w[1], stock: stock.to_string() });
+            }
+        }
+    }
     for blk in &plan.blocks {
         let (lo, hi) = blk.bounds();
         let inside = |q: Vec3| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all();
         if joints.iter().any(|&q| inside(q)) {
+            continue;
+        }
+        // (Standing on a deck: the deck carries it, no struts.)
+        let on_deck = plan.plates.iter().any(|pl| (lo.y - pl.y).abs() < 0.1 && lo.x < pl.lo.x.max(pl.hi.x) && hi.x > pl.lo.x.min(pl.hi.x) && lo.z < pl.lo.y.max(pl.hi.y) && hi.z > pl.lo.y.min(pl.hi.y));
+        if on_deck {
             continue;
         }
         let f = fit.iter().find(|f| f.id == kind(&blk.id));
@@ -815,8 +868,10 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
                 beams.push(Beam { a: b.a, b: m, stock: b.stock.clone() });
                 beams.push(Beam { a: m, b: b.b, stock: b.stock });
             }
-            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !through_room(plan, m, q) && !along.contains(&q)).collect();
+            let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !along.contains(&q)).collect();
             near.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
+            // (Only where it can run clear: no module, room, deck or member in its way.)
+            let near: Vec<Vec3> = near.into_iter().filter(|&q| clear(plan, m, q, stock, &beams, &out)).take(8).collect();
             // (Braced to the nearest joint below; nothing below, hung from the nearest
             // above.)
             let below = near.iter().copied().find(|q| q.y < m.y - 1.0).or_else(|| near.iter().copied().find(|q| q.y > m.y + 1.0));
@@ -839,21 +894,27 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             if joints.iter().chain(&held).any(|q| q.distance(node) <= 0.6) {
                 continue;
             }
-            // (Lying on a member, part way along it: a joint made there, the member
-            // in two; it bears the deck there.)
-            if let Some(k) = beams.iter().position(|b| {
+            // (Resting on a member, part way along it (the member under it, its top
+            // at the deck's underside, a seat's height at most): a joint made there,
+            // the member in two; it bears the deck there.)
+            if let Some((k, under)) = beams.iter().enumerate().find_map(|(k, b)| {
                 let d = b.b - b.a;
-                let t = (node - b.a).dot(d) / d.length_squared().max(1e-6);
-                t > 0.02 && t < 0.98 && (b.a + d * t).distance(node) < 0.05
+                let flat = Vec3::new(d.x, 0.0, d.z);
+                let t = (Vec3::new(node.x - b.a.x, 0.0, node.z - b.a.z)).dot(flat) / flat.length_squared().max(1e-6);
+                let at = b.a + d * t;
+                let gap = node.y - at.y;
+                (t > 0.02 && t < 0.98 && Vec3::new(at.x - node.x, 0.0, at.z - node.z).length() < 0.05 && (-0.05..=0.3).contains(&gap)).then_some((k, at))
             }) {
                 let b = beams.remove(k);
-                beams.push(Beam { a: b.a, b: node, stock: b.stock.clone() });
-                beams.push(Beam { a: node, b: b.b, stock: b.stock });
+                beams.push(Beam { a: b.a, b: under, stock: b.stock.clone() });
+                beams.push(Beam { a: under, b: b.b, stock: b.stock });
                 held.push(node);
                 continue;
             }
-            let ok = |q: &&Vec3| q.distance(node) <= 8.0 && !through_room(plan, node, **q);
-            let below = joints.iter().filter(ok).filter(|q| q.y < node.y - 0.5).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)));
+            // (A post: steep, down if it can, up if not; never a strut lying under the
+            // floor across its joists. None: it's left for the checks to say.)
+            let ok = |q: &&Vec3| q.distance(node) <= 8.0 && ((**q - node).normalize_or_zero().y.abs() > 0.7) && clear(plan, node, **q, stock, &beams, &out);
+            let below = joints.iter().filter(ok).filter(|q| q.y < node.y).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)));
             if let Some(&q) = below.or_else(|| joints.iter().filter(ok).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)))) {
                 out.push(Beam { a: node, b: q, stock: stock.to_string() });
                 held.push(node);
@@ -864,8 +925,9 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
         if joints.iter().any(|q| q.distance(pad) <= 1.0) {
             continue;
         }
-        let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| q.distance(pad) <= 15.0 && !through_room(plan, pad, q)).collect();
+        let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| q.distance(pad) <= 15.0).collect();
         near.sort_by(|a, b| a.distance(pad).total_cmp(&b.distance(pad)));
+        let near: Vec<Vec3> = near.into_iter().filter(|&q| clear(plan, pad, q, stock, &beams, &out)).take(4).collect();
         for q in near.into_iter().take(4) {
             out.push(Beam { a: pad, b: q, stock: stock.to_string() });
         }
@@ -972,7 +1034,9 @@ fn brace(plan: &Plan, b: &Bearing) -> (Vec<Beam>, usize) {
     for &k in over.iter().rev() {
         let m = beams.remove(k);
         let mid = m.a.lerp(m.b, 0.5);
-        let tie = joints.iter().copied().filter(|q| q.distance(m.a) > 0.1 && q.distance(m.b) > 0.1 && !through_room(plan, mid, *q)).min_by(|x, y| x.distance(mid).total_cmp(&y.distance(mid)));
+        let mut ties: Vec<Vec3> = joints.iter().copied().filter(|q| q.distance(m.a) > 0.1 && q.distance(m.b) > 0.1).collect();
+        ties.sort_by(|x, y| x.distance(mid).total_cmp(&y.distance(mid)));
+        let tie = ties.into_iter().find(|&q| clear(plan, mid, q, &m.stock, &beams, &extra));
         extra.push(Beam { a: m.a, b: mid, stock: m.stock.clone() });
         extra.push(Beam { a: mid, b: m.b, stock: m.stock.clone() });
         if let Some(q) = tie {
@@ -1136,7 +1200,17 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     }
     let floor_only = |j: usize| on_deck[j] && !framed[j];
     let mounted = |lo: Vec3, hi: Vec3| -> Vec<usize> {
-        joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!on_deck[k] || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect()
+        let at: Vec<usize> = joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!on_deck[k] || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect();
+        if !at.is_empty() {
+            return at;
+        }
+        // (Smaller than the deck's grid, standing on it: on the deck's points round
+        // its foot, up to four, within 2 m.)
+        let foot = Vec3::new((lo.x + hi.x) * 0.5, lo.y, (lo.z + hi.z) * 0.5);
+        let mut near: Vec<usize> = (0..joints.len()).filter(|&k| on_deck[k] && (joints[k].y - foot.y).abs() < 0.35 && joints[k].distance(foot) < 2.0).collect();
+        near.sort_by(|&a, &b| joints[a].distance(foot).total_cmp(&joints[b].distance(foot)));
+        near.truncate(4);
+        near
     };
     // The masses it carries: each module's (the ore bay: its hold full), shared
     // between the joints in it.
@@ -5481,8 +5555,12 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             frame.hud_triangle_colored([a, b, cc], fill);
             frame.hud_triangle_colored([a, cc, d], fill);
         }
+        // (Its underside too: it is as thick as its stock.)
+        let under = c.map(|p| p - Vec3::Y * deck_depth(plate));
         for k in 0..4 {
             seg(frame, c[k], c[(k + 1) % 4], DECK);
+            seg(frame, under[k], under[(k + 1) % 4], DECK.scale(0.6));
+            seg(frame, c[k], under[k], DECK.scale(0.6));
         }
     }
     // The frame: each member coloured by how hard it's worked (the case shown, or
@@ -6055,6 +6133,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
 
