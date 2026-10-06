@@ -15,6 +15,14 @@ struct Globals {
     // The tight cascade round what's looked at; x: a texel of it (metres), y: in use.
     shadow_tight: mat4x4<f32>,
     shadow2: vec4<f32>,
+    // The environment (see renderer.rs: not used here).
+    env_sun: vec4<f32>,
+    env_world: vec4<f32>,
+    env_world_color: vec4<f32>,
+    env_mode: vec4<f32>,
+    env_sky: vec4<f32>,
+    // x: the angle a pixel spans (radians) at the screen's middle.
+    view: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -403,11 +411,24 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let ldx = select(dpdx(in.local), px * in.patch_scale, on_patch);
     let ldy = select(dpdy(in.local), py * in.patch_scale, on_patch);
     let layer = max(i32(in.globe.x) - 1, 0);
-    let ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
     // How much of the world a pixel spans (radians), from the eye's metres
     // (precise) on a patch; the radius as drawn (m).
     let radius = select(length(px) / max(length(ldx) / max(length(in.local), 1e-6), 1e-9), 1.0 / in.patch_scale, on_patch);
-    let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), (length(px) + length(py)) / radius, on_patch);
+    // (A pixel's size on a patch from the eye's distance, the angle a pixel spans and how obliquely
+    // the ground is seen: smooth from triangle to triangle. The screen's derivatives are one value
+    // a triangle: a map's level chosen by them steps at every edge, and the slopes shaded from it
+    // drew each edge as a dark dash.)
+    let oblique = 1.0 / max(abs(dot(normalize(in.normal), normalize(-in.at))), 0.25);
+    let span = 2.0 * length(in.at) * g.view.x * oblique;
+    let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
+    // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
+    let globe_lod = max(log2(footprint * 512.0 / 1.5707963), 0.0);
+    var ground: vec4<f32>;
+    if (on_patch) {
+        ground = textureSampleLevel(globe_maps, globe_soft, in.local, layer, globe_lod);
+    } else {
+        ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
+    }
     // (Fine detail, for a globe: in its colour, and in the heights its
     // slopes are shaded by — ridges and hollows at any zoom, drawing only.)
     var d = vec3<f32>(0.0);
@@ -434,14 +455,16 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // over whatever shape the mesh has — till a pixel is a few metres or
     // less: then where on the world is too coarse to take slopes from (they'd
     // speckle), and the mesh's own shape shades it.)
-    let pixel = length(px) + length(py);
+    let pixel = select(length(px) + length(py), span, on_patch);
     let slopes = select(1.0, smoothstep(2.0, 10.0, pixel), on_patch);
     // Up close on a patch, the fine grain instead (exact: it doesn't speckle).
     var grain = vec2<f32>(0.0);
     if (on_patch && in.globe.x > 0.5) {
         grain = micro_detail(in.micro, pixel) * (1.0 - slopes * 0.5);
     }
-    let lift = (ground.r * in.globe.z + land * d.y * 0.06 * radius) * slopes + land * grain.y;
+    // (The map's own slopes on a globe only: a patch stands on the true heights, finer than the
+    // map, whose filtering steps (a 20 km texel placed to 1/256) drew a grid of dashes there.)
+    let lift = (select(ground.r * in.globe.z, 0.0, on_patch) + land * d.y * 0.06 * radius) * slopes + land * grain.y;
     let hx = dpdx(lift);
     let hy = dpdy(lift);
     var n = normalize(in.normal);
@@ -458,7 +481,12 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
         // A world's own colour, where it has one (grown, not painted): its globe map's, or
         // where its full-resolution maps are bound, theirs; and close up, its ground's material.
-        var own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
+        var own: vec4<f32>;
+        if (on_patch) {
+            own = textureSampleLevel(globe_colors, globe_soft, in.local, layer, globe_lod);
+        } else {
+            own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
+        }
         let mapped = in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5;
         let uv = world_uv(dir);
         if (mapped) {
@@ -478,8 +506,10 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                 if (ground.a > 0.5) {
                     let climate = textureSampleLevel(world_climate, world_soft, uv, 0.0);
                     let unit = u32(round(textureSampleLevel(world_rock, world_exact, uv, 0.0).r * 255.0 / 8.0));
+                    // (The slope from the ground as the mesh stands: the shaded normal's slopes
+                    // step at its triangles' edges.)
                     let up = normalize(in.up);
-                    let c = clamp(dot(n, up), 0.05, 1.0);
+                    let c = clamp(dot(normalize(in.normal), up), 0.05, 1.0);
                     var gi: GroundIn;
                     gi.ground = ground.rgb;
                     gi.ground_soft = textureSampleLevel(world_ground, world_soft, uv, lod + 2.5).rgb;
