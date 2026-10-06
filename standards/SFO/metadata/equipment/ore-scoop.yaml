@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.handling.ore.scoop
+  name: "Ore scoop"
+  maker: org.cormorant
+  revision: draft
+  slot: handling
+  description: "Moves bulk or cargo aboard: a scoop, a conveyor, an arm."
+size_class: 1
+fits: mount.handling-s1
+physical:
+  mass: 1500
+  volume: 6.0
+  length: 2.0
+  width: 2.0
+  height: 1.5
+built_of:
+  parts: ore-scoop
+making:
+  module: module.assembly-shop
+function:
+  kind: "handling"
+  throughput: 10
+  reach: 2.0
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Takes 10 kg/s of loose rock from the excavator into a conveyor or bay. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

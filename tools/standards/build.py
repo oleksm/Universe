@@ -47,7 +47,7 @@ def problem(where, what):
 # key written at a record's top is taken off as it is read and kept here; a company's and the
 # standards body's stand as the game still has them (brand.x, body.x).
 REGISTRY_KEY = {}
-OLD_KEY = {"company": "brand", "standards_body": "body"}        # (an organisation's old key, by its kind)
+OLD_KEY = {"company": "brand", "band": "brand", "standards_body": "body"}        # (an organisation's old key, by its kind)
 
 # Records name each other by key (a property marked x-ref in its schema). This build still works by
 # what they named each other by before: a file name, a part's code, an element's symbol, a body's
@@ -88,7 +88,7 @@ def old_name(key, rel, at):
         return (idn.get("label") or stem).lower() if at == "rocks.class" or os.sep + "bodies" + os.sep in rel else stem   # (the game's own go by its label)
     if kind == "standard":
         return "SFO " + rest.split(".")[-1]
-    if kind == "settlement":
+    if kind in ("settlement", "rig"):
         return krel.split(os.sep)[3] + "/" + stem
     if kind == "parcel":
         return rec.get("number")
@@ -192,6 +192,8 @@ EQUIPMENT_READS = {
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
     "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again",
+    "persons": "how many it cycles at once", "cycle": "s a cycle", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
+    "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
 
 
@@ -502,7 +504,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file"}:
+        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file", "insurance", "trade_bans"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
@@ -868,7 +870,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
         if k not in ad:
             problem(full, f"no {k}")
     for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock"}:
+        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law"}:
             problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
@@ -895,7 +897,9 @@ def check_address(rec, where):
     sysm, _, at = str(a["at"]).partition("/")
     adm = next((x for x in administrations if x["slug"] == sysm), None)
     body = next((x for x in (adm or {}).get("bodies", []) if x["slug"] == at), None)
-    if body is None:
+    # (A rig in a system with no administration: a record, with no land round it.)
+    rig_file = os.path.join(TREE, "LocalAdministration", "metadata", "administrations", sysm, at + ".yaml")
+    if body is None and not (os.path.isfile(rig_file) and (yaml.safe_load(open(rig_file, encoding="utf-8")) or {}).get("kind") == "rig"):
         problem(where, f"address: no '{a['at']}' in Local Administration (<system>/<body>)")
         return
     for k in a:

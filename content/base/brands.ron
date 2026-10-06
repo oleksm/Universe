@@ -12,6 +12,7 @@
     (key: "brand.kestrel", name: "KESTREL DRIVEWORKS", note: "DRIVES AND THRUSTERS: LIGHT, STRONG, DEAR"),
     (key: "brand.meridian", name: "MERIDIAN POWER", note: "CAPACITOR BANKS AND POWER STORAGE"),
     (key: "brand.orbital", name: "ORBITAL SYSTEMS", note: "COMPUTERS, SENSORS, NAVIGATION"),
+    (key: "brand.shikra_hold", name: "SHIKRA HOLD", note: "THE PIRATES OF BIRAIDIM"),
     (key: "brand.tallis", name: "TALLIS SIGNAL WORKS", note: "COMMS AND RELAYS: FAR-REACHING, POWER-HUNGRY"),
     (key: "brand.tolland", name: "TOLLAND YARDS", note: "HULLS: WORKHORSES AND HAULERS"),
     (key: "brand.vireo", name: "VIREO SPACEWORKS", note: "HULLS: FAST AND LIGHT"),

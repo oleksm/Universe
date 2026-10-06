@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.dcl0-02
+  code: DCL0-02
+  name: "Rams"
+  revision: draft
+  description: "Hydraulic, with their pump."
+physical:
+  mass: 280
+  length: 0.846
+  width: 0.846
+  height: 0.705
+made_from:
+  - item: stock.st4340-bar-120
+    quantity: 322.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Docking clamp (35%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Docking clamp: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

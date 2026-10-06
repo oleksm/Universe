@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.pumps
+  name: "Pump set"
+  maker: org.hadley
+  revision: draft
+  slot: utility
+  description: "Moves liquid: fuel, water, coolant."
+size_class: 1
+fits: mount.utility-s1
+physical:
+  mass: 250
+  volume: 0.36
+  length: 1.0
+  width: 0.6
+  height: 0.6
+built_of:
+  parts: pumps
+making:
+  module: module.assembly-shop
+function:
+  kind: "pump"
+  flow: 20.0
+  head: 1000000.0
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Two pumps moving 20 kg/s against 1 MPa (10 bar). Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

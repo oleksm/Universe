@@ -1,0 +1,12 @@
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
+# Invented (2026-10-06). A rig, not a settlement: Biraidim has no administration, so there is no land, no register and no law here.
+identity:
+  key: rig.biraidim.shikra-hold
+  name: "Shikra Hold"
+kind: rig
+at: body.biraidim.shikra
+population: 300
+about: "A pirates' hold dug into a 1.6 km asteroid in a system nobody administers, one jump from Treistun."
+story:
+  - "Nobody built Shikra Hold; it was dug, by people who had lost ships or licences in Treistun and found that an asteroid nobody owned asked no questions. It has a dock cut into the rock, a few hundred people, and a dozen armed craft."
+  - "It lives on the Treistun run: haulers between the gate and the inner ports. It takes cargo when it can and ships when it must, sells at ports that do not ask, and goes home when a patrol comes out. If Treistun ever administers Biraidim, the hold is the first thing its law will reach."

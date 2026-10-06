@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.alc0-03
+  code: ALC0-03
+  name: "Pumps and valves"
+  revision: draft
+  description: "Draw the chamber down and let the air back."
+physical:
+  mass: 180
+  length: 1.33
+  width: 0.797
+  height: 1.17
+made_from:
+  - item: stock.st4340-bar-120
+    quantity: 207.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Crew airlock (15%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Crew airlock: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

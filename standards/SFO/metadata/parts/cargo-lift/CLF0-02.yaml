@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.clf0-02
+  code: CLF0-02
+  name: "Masts and rams"
+  revision: draft
+  description: "Four hydraulic columns."
+physical:
+  mass: 1200
+  length: 2.58
+  width: 2.58
+  height: 0.737
+made_from:
+  - item: stock.st4340-tb-120x3
+    quantity: 1380.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Cargo lift (40%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Cargo lift: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

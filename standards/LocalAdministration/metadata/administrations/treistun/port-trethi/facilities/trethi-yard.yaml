@@ -17,6 +17,8 @@ lines:
   - modules:
       - { module: module.machining-centre, count: 2 }
   - modules:
+      - { module: module.electronics-works, count: 1 }
+  - modules:
       - { module: module.assembly-shop, count: 1 }
   - modules:
       - { module: module.building-dock, count: 1 }
