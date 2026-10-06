@@ -32,7 +32,10 @@ pub struct Section {
     /// Its outer diameter and wall (m; a bar: its wall half its diameter).
     pub diameter: f64,
     pub wall: f64,
-    /// A flat strip's width and thickness (m), in place of the round's.
+    /// A flat strip's width and thickness (m), in place of the round's. A strip is
+    /// a deck's panel: it floats on what it rests on, bearing on it but carrying
+    /// none of the frame's own pull, push or shear in its plane (as a floor panel
+    /// is fastened: secondary structure); it bends across its thickness only.
     pub flat: Option<(f64, f64)>,
 }
 
@@ -135,6 +138,10 @@ pub struct Forces {
     pub axial: f64,
     pub bending: f64,
     pub torsion: f64,
+    /// Its bending turned the weak way (across a strip's thickness) and edgewise
+    /// (in a strip's own plane), each its biggest at either end (N m).
+    pub across: f64,
+    pub edgewise: f64,
 }
 
 /// How hard a member is worked: its stress over what it breaks at (its tensile
@@ -166,14 +173,18 @@ pub struct Loose;
 /// Its stress at the surface (Pa): its pull or push over its area, and its
 /// bending at its outer edge.
 fn stress(f: &Forces, s: &Section) -> f64 {
-    f.axial.abs() / s.area() + f.bending * s.reach() / s.inertia()
+    match s.flat {
+        // (A strip: bent across its thickness; it floats in its plane.)
+        Some((b, t)) => f.across * (t * 0.5) / (b * t.powi(3) / 12.0),
+        None => f.axial.abs() / s.area() + f.bending * s.reach() / s.inertia(),
+    }
 }
 
 /// How hard member `m` is worked by `f`, `length` long, with safety factor `sf`.
 pub fn work(m: &Member, f: Forces, length: f64, sf: f64) -> Work {
     let sigma = stress(&f, &m.section);
     let euler = std::f64::consts::PI.powi(2) * m.material.stiffness * m.section.inertia() / (length * length).max(1e-9);
-    let push = (-f.axial).max(0.0);
+    let push = if m.section.flat.is_some() { 0.0 } else { (-f.axial).max(0.0) };
     let (strength, buckling) = (sigma / m.material.tensile_strength, push / euler);
     Work {
         forces: f,
@@ -254,7 +265,7 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         }
         let fl: Vec<f64> = (0..12).map(|r| (0..12).map(|c| kl[r][c] * ul[c]).sum()).collect();
         let moment = |a: f64, b: f64| (a * a + b * b).sqrt();
-        out[k] = Some(Forces { axial: fl[6], bending: moment(fl[4], fl[5]).max(moment(fl[10], fl[11])), torsion: fl[3].abs() });
+        out[k] = Some(Forces { axial: fl[6], bending: moment(fl[4], fl[5]).max(moment(fl[10], fl[11])), torsion: fl[3].abs(), across: fl[5].abs().max(fl[11].abs()), edgewise: fl[4].abs().max(fl[10].abs()) });
     }
     Ok(out)
 }
@@ -318,16 +329,21 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
             k[c][r] += v;
         }
     };
-    let (ea, gj) = (e * a / l, g * j / l);
+    // (A strip floats in its plane: barely any stiffness along it or edgewise.)
+    let float = if m.section.flat.is_some() { 1e-4 } else { 1.0 };
+    let (ea, gj) = (e * a / l * float, g * j / l);
     set(0, 0, ea);
     set(6, 6, ea);
     set(0, 6, -ea);
     set(3, 3, gj);
     set(9, 9, gj);
     set(3, 9, -gj);
-    // (Bending in its two planes: across y (turning about z), across z (about y).)
-    let (k1, k2, k3, k4) = (12.0 * e * i / l.powi(3), 6.0 * e * i / (l * l), 4.0 * e * i / l, 2.0 * e * i / l);
-    for (v, w, s) in [(1usize, 5usize, 1.0f64), (2, 4, -1.0)] {
+    // (Bending in its two planes: across y (turning about z), across z (about y). A
+    // strip lies flat: across y it bends across its thickness (weak), across z
+    // edgewise (strong).)
+    let edgewise = m.section.flat.map_or(i, |(b, t)| t * b.powi(3) / 12.0 * float);
+    for (v, w, s, i) in [(1usize, 5usize, 1.0f64, i), (2, 4, -1.0, edgewise)] {
+        let (k1, k2, k3, k4) = (12.0 * e * i / l.powi(3), 6.0 * e * i / (l * l), 4.0 * e * i / l, 2.0 * e * i / l);
         set(v, v, k1);
         set(v + 6, v + 6, k1);
         set(v, v + 6, -k1);

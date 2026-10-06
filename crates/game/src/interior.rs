@@ -622,7 +622,8 @@ fn through_room(plan: &Plan, a: Vec3, b: Vec3) -> bool {
 /// the nearest above if there's none below), each strutted
 /// to the nearest two joints of the frame outside it; a landing leg by its top, to
 /// four; never through a room or further than 15 m; and each landing pad with
-/// nothing at it, on four legs to the nearest joints; of `stock`.
+/// nothing at it, on four legs to the nearest joints; each deck's grid point with
+/// nothing at it, a post to the nearest joint below; of `stock`.
 fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>, usize) {
     let joints: Vec<Vec3> = plan.beams.iter().flat_map(|b| [b.a, b.b]).fold(Vec::new(), |mut v, p| {
         if !v.iter().any(|q: &Vec3| q.distance(p) < 0.05) {
@@ -687,6 +688,32 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             }
         }
     }
+    // (Each deck's grid point with nothing at it: a post down to the nearest joint
+    // below it, within 8 m and not through a room; none below, the nearest at all.)
+    for plate in &plan.plates {
+        for node in plate_grid(plate).0 {
+            if joints.iter().any(|q| q.distance(node) <= 0.6) {
+                continue;
+            }
+            // (Lying on a member, part way along it: a joint made there, the member
+            // in two; it bears the deck there.)
+            if let Some(k) = beams.iter().position(|b| {
+                let d = b.b - b.a;
+                let t = (node - b.a).dot(d) / d.length_squared().max(1e-6);
+                t > 0.02 && t < 0.98 && (b.a + d * t).distance(node) < 0.05
+            }) {
+                let b = beams.remove(k);
+                beams.push(Beam { a: b.a, b: node, stock: b.stock.clone() });
+                beams.push(Beam { a: node, b: b.b, stock: b.stock });
+                continue;
+            }
+            let ok = |q: &&Vec3| q.distance(node) <= 8.0 && !through_room(plan, node, **q);
+            let below = joints.iter().filter(ok).filter(|q| q.y < node.y - 0.5).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)));
+            if let Some(&q) = below.or_else(|| joints.iter().filter(ok).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)))) {
+                out.push(Beam { a: node, b: q, stock: stock.to_string() });
+            }
+        }
+    }
     for &pad in &plan.pads {
         if joints.iter().any(|q| q.distance(pad) <= 1.0) {
             continue;
@@ -731,6 +758,12 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
         }
         let mut changed = false;
         let mut maxed = 0;
+        // (A deck's supports no less stiff than its plate: a bendy joist under a stiff
+        // plate sags within its own limits and bends the plate far past its.)
+        let floor_stiffness = |p: Vec3| -> f64 {
+            plan.plates.iter().filter(|pl| plate_grid(pl).0.iter().any(|q| q.distance(p) < 0.05)).filter_map(|pl| plate_stocks().iter().find(|s| s.key == pl.stock)).map(|s| s.material.stiffness).fold(0.0, f64::max)
+        };
+        let decks_on: Vec<f64> = plan.beams.iter().map(|b| floor_stiffness(b.a).max(floor_stiffness(b.b))).collect();
         for (k, beam) in plan.beams.iter_mut().enumerate() {
             let Some(now) = stocks().iter().find(|s| s.key == beam.stock) else { continue };
             let length = f64::from(beam.a.distance(beam.b));
@@ -739,7 +772,8 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
                 continue;
             }
             let needed = |s: &Stock| forces.iter().map(|f| work(&Member { a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
-            let ladder = ladder_of(&beam.stock);
+            let ladder: Vec<&Stock> = ladder_of(&beam.stock).into_iter().filter(|s| s.material.stiffness >= decks_on[k] * 0.9).collect();
+            let ladder = if ladder.is_empty() { ladder_of(&beam.stock) } else { ladder };
             let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
                 maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
                 ladder.last().copied()
@@ -5145,7 +5179,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         for plate in &plan.plates {
             let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
             if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
-                let fill = [Color([0.85, 0.75, 0.5, 0.12]); 3];
+                let fill = [Color([0.85, 0.75, 0.5, 0.28]); 3];
                 frame.hud_triangle_colored([a, b, cc], fill);
                 frame.hud_triangle_colored([a, cc, d], fill);
             }
