@@ -763,6 +763,8 @@ fn stocks() -> &'static [Stock] {
 
 /// A node fitting, where a frame's members meet: one of the registry's forgings.
 pub struct NodeStock {
+    /// Hollow (a shell, its wall on record), or a solid forging.
+    hollow: bool,
     /// Across (m), and what it weighs (kg: a solid ball of its material).
     diameter: f32,
     mass: f64,
@@ -777,20 +779,40 @@ fn node_stocks() -> &'static [NodeStock] {
             let d = s.size.diameter?;
             let of = &s.made_from.first()?.item;
             let rho = reg.materials.iter().find(|m| m.identity.key == *of)?.mass.density?;
-            Some(NodeStock { diameter: d as f32, mass: std::f64::consts::PI / 6.0 * d.powi(3) * rho })
+            // (Solid: a ball of its steel; hollow: a shell, 4 pi r^2 wall (1 - wall / d).)
+            let mass = match s.size.wall {
+                Some(w) => 4.0 * std::f64::consts::PI * (d * 0.5).powi(2) * w * rho * (1.0 - w / d),
+                None => std::f64::consts::PI / 6.0 * d.powi(3) * rho,
+            };
+            Some(NodeStock { hollow: s.size.wall.is_some(), diameter: d as f32, mass })
         }).collect();
-        out.sort_by(|a, b| a.diameter.total_cmp(&b.diameter));
+        out.sort_by(|a, b| a.mass.total_cmp(&b.mass));
         out
     })
+}
+
+/// How much wider a node is than the widest tube meeting at it (the registry's
+/// rule, the MERO ratio).
+const NODE_RATIO: f32 = 1.2;
+
+/// The node for a joint whose widest tube is `widest` across: the lightest at least
+/// `NODE_RATIO` as wide; at a root (a landing leg's mount) a solid one. None: none in stock is wide enough.
+fn node_for(widest: f32, root: bool) -> Option<&'static NodeStock> {
+    node_stocks().iter().filter(|n| !root || !n.hollow).find(|n| n.diameter >= widest * NODE_RATIO - 1e-4)
+}
+
+/// The boxes of a plan's roots: where a landing leg is held, its landing's jolt
+/// all in a few joints (an engine pushes through many: no root).
+fn roots(plan: &Plan, fit: &[Fitted]) -> Vec<(Vec3, Vec3)> {
+    plan.blocks.iter().filter(|b| fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.gear.is_some())).map(|b| b.bounds()).collect()
 }
 
 /// A joint of a frame, the widest tube meeting there (m across), and its node.
 type Node = (Vec3, f32, Option<&'static NodeStock>);
 
 /// Each joint of a frame (its members' ends as they meet), the widest tube meeting
-/// there (m across), and its node: the smallest that's at least as wide (none: no
-/// node in stock is).
-fn nodes(beams: &[Beam]) -> Vec<Node> {
+/// there (m across), and its node (`node_for`; a root: within `roots`' boxes).
+fn nodes(beams: &[Beam], roots: &[(Vec3, Vec3)]) -> Vec<Node> {
     let mut out: Vec<(Vec3, f32)> = Vec::new();
     for b in beams {
         let d = tube_radius(&b.stock) * 2.0;
@@ -801,7 +823,7 @@ fn nodes(beams: &[Beam]) -> Vec<Node> {
             }
         }
     }
-    out.into_iter().map(|(p, d)| (p, d, node_stocks().iter().find(|n| n.diameter >= d - 1e-4))).collect()
+    out.into_iter().map(|(p, d)| (p, d, node_for(d, roots.iter().any(|(lo, hi)| p.cmpge(*lo - 0.3).all() && p.cmple(*hi + 0.3).all())))).collect()
 }
 
 /// The frame knit together at its nodes: joints nearer each other than a node
@@ -810,8 +832,8 @@ fn nodes(beams: &[Beam]) -> Vec<Node> {
 fn knit(mut beams: Vec<Beam>) -> (Vec<Beam>, usize) {
     let mut made = 0;
     for _ in 0..6 {
-        let js = nodes(&beams);
-        let reach = |n: &Node| n.2.map_or(n.1, |s| s.diameter) * 0.5;
+        let js = nodes(&beams, &[]);
+        let reach = |n: &Node| n.2.map_or(n.1 * NODE_RATIO, |s| s.diameter) * 0.5;
         let mut changed = false;
         // (Joints within a node of each other: the later moved onto the earlier.)
         for a in 0..js.len() {
@@ -842,7 +864,7 @@ fn knit(mut beams: Vec<Beam>) -> (Vec<Beam>, usize) {
             !dup
         });
         // (A member through a node it doesn't end at: jointed there.)
-        let js = nodes(&beams);
+        let js = nodes(&beams, &[]);
         for j in &js {
             let r = reach(j);
             if let Some(k) = beams.iter().position(|m| {
@@ -1305,7 +1327,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         frame.members.push(m);
     }
     // Its nodes: each joint's forging, its weight there.
-    for (at, _, node) in nodes(&plan.beams) {
+    for (at, _, node) in nodes(&plan.beams, &roots(plan, fit)) {
         if let (Some(n), Some(j)) = (node, joints.iter().position(|q| q.distance(at) < 0.05)) {
             weight.push((j, n.mass));
             out.mass += n.mass;
@@ -4016,7 +4038,7 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     if let Some((_, ns)) = i.node_cache.as_ref().filter(|(p, _)| *p == i.plan) {
         let short = ns.iter().filter(|n| n.2.is_none()).count();
         if short > 0 {
-            let most = node_stocks().last().map_or(0.0, |n| n.diameter);
+            let most = node_stocks().iter().map(|n| n.diameter).fold(0.0, f32::max);
             faults.push(format!("{short} JOINT{} NEED A NODE WIDER THAN {:.0} MM: NONE IN STOCK", if short == 1 { "" } else { "S" }, most * 1000.0));
         }
     }
@@ -4759,7 +4781,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     // (And the frame's members, as the solid tubes they are.)
     if interior.member_clash.as_ref().is_none_or(|(p, _)| *p != interior.plan) {
         interior.member_clash = Some((interior.plan.clone(), member_clashes(&interior.plan)));
-        interior.node_cache = Some((interior.plan.clone(), nodes(&interior.plan.beams)));
+        interior.node_cache = Some((interior.plan.clone(), nodes(&interior.plan.beams, &roots(&interior.plan, &interior.fit))));
     }
     stay
 }
@@ -6377,6 +6399,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
 
 
 
