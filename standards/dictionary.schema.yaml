@@ -42,11 +42,12 @@ definitions:
       not made: "Described here, not yet in the game."
   provenance:
     description: "How a record of the charted world came to be."
-    enum: [seeded, curated, frozen]
+    enum: [seeded, curated, frozen, baked]
     x-values:
       seeded: "Made from the galaxy's seed, and may be made again."
       curated: "Changed by hand; the record is the truth."
       frozen: "Curated and not to be changed: other work is built on it."
+      baked: "Grown by the planet simulation from this record's inputs: the record owns its identity and inputs, the survey it points at owns what the run derived (temperature, land, terrain, deposits). Never re-seeded."
   tier:
     description: "Where a figure comes from."
     enum: [sourced, derived, invented]

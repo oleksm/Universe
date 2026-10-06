@@ -2544,8 +2544,8 @@ if os.path.isdir(CEL):
                 for q in props or {}:
                     if q not in known[g]["properties"]:
                         problem(full, f"{g}: unknown property '{q}'")
-        if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen"):
-            problem(full, "provenance: one of seeded, curated, frozen")
+        if kind != "rock-class" and rec.get("provenance") not in ("seeded", "curated", "frozen", "baked"):
+            problem(full, "provenance: one of seeded, curated, frozen, baked")
         if os.path.basename(full)[:-5] != re.sub(r"[^a-z0-9]+", "-", str((rec.get("identity") or {}).get("name", "")).lower()).strip("-"):
             problem(full, "a celestial record's file is named after it (lower case, words joined by -)")
         rec["slug"], rec["file"] = os.path.basename(full)[:-5], os.path.relpath(full, TREE)

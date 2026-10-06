@@ -901,3 +901,13 @@ have put the question to the user and changed neither.
   report "Mounts" checks each piece against its mount: 56 of 56 within.
 - **For the game, when you want it:** fit by `mount`, not by size class alone; a slot's mount is
   what a refit may take; a hull's lines and openings at a slot are the mount's figures.
+
+**Baked worlds (the user, 2026-10-06).** The planet simulation grows a world once and writes a
+read-only survey; the registry imports it (`tools/standards/survey_import.py`) and the body's
+record becomes `provenance: baked` with a `survey` section pointing at
+`standards/Celestial/surveys/<world_id>/`. **The game reads the survey's files from there, by
+reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospecting reveals by
+`seen_by` method), the districts, the rock units' yields. The whole contract, with each file and
+what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Treistun d; then
+the body schema's new optional `survey` object reaches your generated types, and the loader for the
+files is yours. Claims and mines will point at deposit IDs.

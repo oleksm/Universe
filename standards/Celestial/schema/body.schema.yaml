@@ -130,6 +130,23 @@ properties:
       greenhouse: { type: number, x-unit: "K", description: "K its air warms its surface by" }
       clouds: { type: number, x-unit: "1", description: "the share of its sky under cloud" }
       wind: { type: number, x-unit: "m/s", description: "m/s, typical at its surface" }
+  survey:
+    description: "For a baked body: the planet simulation's survey of it (format planet-sim-survey/1, docs/survey-contract.md), written once at the end of the run and never changed. The record owns the inputs the run was seeded from; the survey owns what the run derived. The game reads the survey's files from the folder, by its path; the hash says which survey."
+    type: object
+    additionalProperties: false
+    required: [world_id, folder, manifest_sha256, format]
+    properties:
+      format: { const: "planet-sim-survey/1" }
+      world_id: { type: string, description: "The simulation's world ID: a new run is a new world." }
+      folder: { type: string, description: "Where the survey's files are, relative to the repository root (standards/Celestial/surveys/<world_id>/). The game reads manifest.json, summary.json, deposits.geojson, districts.json, bulk_rock.json and geology.png from it." }
+      manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "SHA-256 of manifest.json: names the one survey this record is built on." }
+      simulator_commit: { type: string, description: "The simulator's commit that grew the world." }
+      created: { type: string, description: "When the survey was written (ISO 8601)." }
+      land_share: { type: number, x-unit: "1", description: "the share of its surface above the sea, as the run made it" }
+      deposits: { type: integer, description: "how many deposits the run grew" }
+      districts: { type: integer }
+      belts: { type: integer }
+      contained: { type: array, description: "What the run put in its crust, from summary.json: the whole body's endowment, found or not.", items: { type: object, additionalProperties: false, required: [commodity, mass], properties: { commodity: { type: string, description: "an element or compound as the simulation names it (Cu, Cr2O3, diamond)" }, mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg; the survey's tonnes and carats (0.2 g) converted" } } } }
   life:
     type: object
     additionalProperties: false
