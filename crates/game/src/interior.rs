@@ -3237,9 +3237,9 @@ fn slider_range(tool: Tool) -> (f32, f32) {
 const OXYGEN_A_DAY: f64 = 0.895;
 const WATER_A_DAY: f64 = 2.5 + 0.7;
 
-/// The share of a drive's or lift's loss that comes aboard as heat (the rest goes
-/// out with its plume: the registry's mounts reckon cooling this way).
-const PLUME_SHARE: f64 = 1e-6;
+/// The share of a jet's power that comes aboard as heat, where its record doesn't
+/// say (`function.heat_to_hull`, a product figure; the registry's first guess).
+const HEAT_TO_HULL: f64 = 1e-6;
 
 /// The design's budgets and what doesn't work: its mass (dry, full, the frame's),
 /// lift against its full weight, power drawn against supplied, heat to shed
@@ -3446,10 +3446,20 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     let draw: f64 = placed.iter().map(|p| p.4).sum();
     let gear: f64 = of("switchgear").map(|p| num(&p.3, "carries")).sum();
     lines.push((format!("POWER {} DRAWN OF {}{}", si(draw, "W"), si(supply, "W"), if gear > 0.0 { format!(", SWITCHGEAR {}", si(gear, "W")) } else { String::new() }), draw <= supply && (gear == 0.0 || gear >= supply)));
-    // (Heat: a plant's loss, a drive's and lift's share at full burn, and every
-    // watt drawn.)
+    // (Heat, as the registry's Budgets reckon it: a plant's loss; each drive's,
+    // lift's and thrusters' jet power (half its thrust times its exhaust speed, a
+    // thruster block four nozzles) at full burn, times the share its record says
+    // reaches the hull; and every watt drawn, which ends as heat aboard.)
     let plants: f64 = of("power_plant").map(|p| { let e = num(&p.3, "efficiency").max(0.01); num(&p.3, "output") * (1.0 / e - 1.0) }).sum();
-    let burn: f64 = placed.iter().filter(|p| p.2 == "drive" || p.2 == "lift").map(|p| { let e = num(&p.3, "efficiency").max(0.01); 0.5 * num(&p.3, "thrust") * num(&p.3, "exhaust") * (1.0 / e - 1.0) * PLUME_SHARE }).sum();
+    let burn: f64 = placed
+        .iter()
+        .filter(|p| matches!(p.2.as_str(), "drive" | "lift" | "thrusters"))
+        .map(|p| {
+            let nozzles = if p.2 == "thrusters" { 4.0 } else { 1.0 };
+            let share = p.3.get("heat_to_hull").and_then(|v| v.as_f64()).unwrap_or(HEAT_TO_HULL);
+            0.5 * num(&p.3, "thrust") * num(&p.3, "exhaust") * nozzles * share
+        })
+        .sum();
     let heat = plants + burn + draw;
     let shed: f64 = of("radiator").map(|p| num(&p.3, "rejects")).sum();
     let loops: f64 = of("coolant_loop").map(|p| num(&p.3, "carries")).sum();
@@ -5778,4 +5788,5 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
