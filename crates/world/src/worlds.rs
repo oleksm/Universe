@@ -61,10 +61,18 @@ struct Package {
 }
 
 impl Package {
+    /// The package in `folder`, its manifest's hash `want` (None: not checked against a record:
+    /// a preview, see `Bake::open`).
     fn open(folder: PathBuf, want: &str) -> Result<Self, String> {
+        Self::open_checked(folder, Some(want))
+    }
+
+    fn open_checked(folder: PathBuf, want: Option<&str>) -> Result<Self, String> {
         let bytes = std::fs::read(folder.join("manifest.json")).map_err(|e| format!("{}: {e}", folder.display()))?;
         let got = sha256(&bytes);
-        if got != want {
+        if let Some(want) = want
+            && got != want
+        {
             return Err(format!("{}: manifest is {got}, the record says {want}", folder.display()));
         }
         let m: Manifest = serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}", folder.display()))?;
@@ -350,6 +358,15 @@ impl Bake {
     /// bake the record names).
     pub fn open(key: &str) -> Option<Result<Bake, String>> {
         let body = registry().bodies.iter().find(|b| b.identity.key == key)?;
+        // (A preview, for the lab: `UNIVERSE_BAKE_<WORLD ID>=<folder>`, a surface package not yet
+        // released, read as the bake without the record's hash: each file still checked against
+        // its own manifest.)
+        if let Some(id) = body.survey.as_ref().map(|s| s.world_id.clone())
+            && let Some(folder) = std::env::var_os(format!("UNIVERSE_BAKE_{id}"))
+        {
+            eprintln!("PREVIEW: {key}'s ground from {} (UNIVERSE_BAKE_{id}), not the bake its record names", PathBuf::from(&folder).display());
+            return Some(Package::open_checked(PathBuf::from(folder), None).map(|package| Bake { package }));
+        }
         let b = body.bake.as_ref()?;
         Some(match store() {
             None => Err("no worlds store (set UNIVERSE_WORLDS)".into()),
