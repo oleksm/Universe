@@ -48,6 +48,27 @@ properties:
         home: { type: string, x-ref: [settlement, rig] }
         work: { $ref: "dictionary.schema.yaml#/definitions/fleet_job", description: "What the fleet does: the program the operator runs for it." }
         does: { type: string, description: "What they do: hauling the supply runs, mining a field, patrol, passage, raiding." }
+  banking:
+    description: "For a bank: what it lends against and on what terms. Rates are shares a second (a yearly rate over a year's seconds); no sum is ever here."
+    type: object
+    additionalProperties: false
+    required: [lends_against, interest, longest_term]
+    properties:
+      lends_against: { type: array, items: { enum: [hull, cargo, building, parcel, claim] }, description: "What it takes as security." }
+      interest: { type: number, x-unit: "1/s", description: "the share of the loan charged each second (a yearly rate over a year's seconds)" }
+      longest_term: { type: number, x-unit: "s", description: "s, the longest it lends for" }
+      advance: { type: number, x-unit: "1", description: "the share of the security's worth it will lend" }
+      reserve: { type: number, x-unit: "1", description: "the share of its deposits it keeps unlent" }
+  exchange:
+    description: "For an exchange: its rules of trade. Only stock is sold (the user's rule): what is listed is stock lying in a warehouse it has approved, and a sale settles by the stock changing hands there."
+    type: object
+    additionalProperties: false
+    required: [lists, settles, fee]
+    properties:
+      lists: { type: string, description: "What may be listed: stock items (stock.*, and pieces kept by count) lying in an approved warehouse; nothing else." }
+      settles: { type: string, description: "How a sale settles: the stock's ownership changes in the warehouse's record at once; the buyer collects or has it hauled." }
+      fee: { type: number, x-unit: "1", description: "the share of every sale the exchange takes" }
+      approves: { type: string, description: "What a warehouse must have to be approved: a dock, a store, a keeper who records what lies there." }
   insurance:
     description: "For an insurer: what it covers and on what terms. Rates are shares. A lost hull is replaced at a yard, parked, once the excess is paid: nobody is put back into a fight."
     type: object

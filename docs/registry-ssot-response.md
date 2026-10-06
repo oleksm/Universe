@@ -1113,3 +1113,13 @@ with a `claim` draws its ore from that deposit (its grades and tonnage are in de
 from an asteroid field; a facility whose claim names no `licence` under a jurisdiction with
 `mining_licence: true` is an offence (unlicensed mining), recorded, not blocked. The settlement's
 position puts it on Harvest's 600 m tiles: the first ground a player can land on at a working mine.
+
+**Mind, Money and Cinder (2026-10-06, night).** The school and the college carry `trains`; the
+bank (`org.nacaubun-savings`, `banking`: lends against hull, cargo, building, parcel, claim at 6% a
+year, three fifths advance, ten years at most) and the exchange's rules (`org.treistun-exchange.exchange`:
+only stock, settles in the warehouse's record, a 0.5% fee) are records. Cinder has an economy:
+**Ashfall Camp** (`settlement.treistun.ashfall-camp`, sealed, 300 people, 2,000 km from Zaudalein)
+mines TRB1-INI-000256A-06 under claim and licence, and **Zaudalein Smelter** turns its concentrate
+into nickel, platinum metals and sulphur, the sulphur Eikir's works needed. For the game: a sealed
+settlement's life support is its own (oxygen plant, air plant, water works, as the ports'); the
+smelter's sulphur is a stock run from Zaudalein to Eikir the Traffic report now derives.

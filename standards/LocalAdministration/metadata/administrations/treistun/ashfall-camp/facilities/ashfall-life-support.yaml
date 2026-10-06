@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented: what the sealed camp breathes and drinks by, as the sealed ports: an oxygen plant splitting water, an air plant,
+# a water works. Thirty days of oxygen and a week of water for 300 people in store; water comes in with the supplies.
+identity:
+  key: facility.treistun.ashfall-camp.ashfall-life-support
+  name: Ashfall Life Support
+kind: utility
+parcel: parcel.treistun.ashfall-camp.2
+lines:
+  - makes: element.o
+    modules:
+      - { module: module.oxygen-plant, count: 1 }
+  - makes: good.water
+    modules:
+      - { module: module.air-plant, count: 1 }
+  - makes: good.water
+    modules:
+      - { module: module.water-works, count: 1 }
+modules:
+  - { module: module.tank-farm, count: 1 }
+stock:
+  - { item: element.o, quantity: 8100.0 }
+  - { item: good.water, quantity: 105000.0 }

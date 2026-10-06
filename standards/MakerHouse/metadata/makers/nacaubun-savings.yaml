@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../organisation.schema.yaml
+# Invented (2026-10-06): the system's bank, so that lending is a described thing. Its rates are shares and chosen: 6% a year,
+# three fifths of the security's worth, ten years at most, a fifth of deposits kept. A frontier bank's, from memory; review.
+identity:
+  key: org.nacaubun-savings
+  name: Nacaubun Savings
+ticker: NSB
+kind: company
+business: banking
+note: "The bank: deposits, and loans against hulls, cargoes and land"
+who: "Founded at Port Nacaubun when the first ships were bought on credit. It takes deposits from anyone and lends against what can be seized: a hull, a cargo in a warehouse, a parcel, a claim. It does not lend against a promise."
+what: "Keeps accounts; lends against security; holds the insurer's and the exchange's reserves."
+address: { at: settlement.treistun.port-nacaubun, tower: Bank House, deck: 1, section: A, unit: 1 }
+banking:
+  lends_against: [hull, cargo, building, parcel, claim]
+  interest: 1.9e-09
+  longest_term: 315576000
+  advance: 0.6
+  reserve: 0.2

@@ -58,10 +58,10 @@ census:
   - { profession: profession.reporter, count: 10 }
   - { profession: profession.judge, count: 5 }
   - { profession: profession.dependant, count: 17515 }
-# independents: owner-operators based here, its share by population of the 792 that fill the system's 1000 (seeding.traffic) beside the fleets
+# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
-  - { hull: hull.drover, count: 36 }
-  - { hull: hull.sprint, count: 27 }
+  - { hull: hull.drover, count: 35 }
+  - { hull: hull.sprint, count: 26 }
   - { hull: hull.prospector, count: 18 }
   - { hull: hull.hauler, count: 9 }
 about: "The system's station, in orbit round Hearth. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."

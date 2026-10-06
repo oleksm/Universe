@@ -5,6 +5,66 @@
 [
     (
         system: "Treistun",
+        body: "Cinder",
+        name: "Ashfall Camp",
+        zones: [
+            (name: "Industrial", use: "industrial", outline: [(-900.0, -1500.0), (-50.0, -1500.0), (-50.0, 0.0), (-900.0, 0.0)]),
+            (name: "Mining", use: "mining", outline: [(0.0, -1500.0), (2000.0, -1500.0), (2000.0, 1500.0), (0.0, 1500.0)]),
+            (name: "Strip", use: "port", outline: [(-600.0, -2800.0), (600.0, -2800.0), (600.0, -1600.0), (-600.0, -1600.0)]),
+        ],
+        parcels: [
+            (number: 1, owner: "brand.cormorant", owner_name: "Cormorant Mining", outline: [(50.0, -1400.0), (1950.0, -1400.0), (1950.0, 1400.0), (50.0, 1400.0)]),
+            (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(-850.0, -1400.0), (-100.0, -1400.0), (-100.0, -700.0), (-850.0, -700.0)]),
+            (number: 3, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(50.0, -2700.0), (550.0, -2700.0), (550.0, -1700.0), (50.0, -1700.0)]),
+        ],
+        streets: [
+            (name: "Shaft Road", line: [(0.0, -2800.0), (0.0, 1500.0)]),
+        ],
+        power_lines: [
+            (name: "Power line 1", capacity: 200.0, line: [(-100.0, -1000.0), (50.0, -1000.0)]),
+            (name: "Power line 2", capacity: 20.0, line: [(-500.0, -1000.0), (-500.0, -1100.0)]),
+            (name: "Power line 3", capacity: 2.0, line: [(-500.0, -1400.0), (-500.0, -2200.0), (50.0, -2200.0)]),
+        ],
+        facilities: [
+            (name: "Ashfall Life Support", kind: "utility", parcel: 2,
+                makes: [("Oxygen", 0.9), ("Water", 0.18), ("Water", 360.0)], draws: 6.816, supplies: 0.0, holds: 0.0,
+                takes: [("Water", "goods.water", 1.0133999999999999), ("Carbon dioxide", "goods.chemicals", 0.21996), ("Hydrogen", "", 0.040284), ("Waste water", "goods.water", 360.35999999999996)], gives: [("Oxygen", "", 0.9), ("Water", "goods.water", 0.18), ("Water", "goods.water", 360.0), ("Hydrogen", "", 0.1134), ("Methane", "goods.fuel", 0.08015399999999999), ("Sewage sludge", "goods.biologics", 0.36)], burns: [],
+                modules: [("oxygen-plant", 1), ("air-plant", 1), ("water-works", 1), ("tank-farm", 1)],
+                blocks: [
+                (module: "oxygen-plant", centre: (-130.0, -1365.0), length: 30.0, width: 20.0, height: 10.0, heading: 90.0),
+                (module: "air-plant", centre: (-130.0, -1315.0), length: 30.0, width: 20.0, height: 10.0, heading: 90.0),
+                (module: "water-works", centre: (-145.0, -1240.0), length: 80.0, width: 50.0, height: 10.0, heading: 90.0),
+                (module: "tank-farm", centre: (-170.0, -1130.0), length: 100.0, width: 100.0, height: 20.0, heading: 90.0),
+            ]),
+            (name: "Ashfall Mine", kind: "mine", parcel: 1,
+                makes: [("Nickel concentrate", 78.74015748031496)], draws: 122.07963983935281, supplies: 0.0, holds: 200000.0,
+                takes: [("Nickel sulphide ore", "goods.ores", 1800.0)], gives: [("Nickel concentrate", "goods.ores", 78.74015748031496), ("Copper concentrate", "goods.ores", 28.11811023622047), ("Tailings", "goods.minerals", 1692.9133858267717)], burns: [],
+                modules: [("mine", 1), ("concentrator", 1), ("ore-yard", 1), ("stock-yard", 1)],
+                blocks: [
+                (module: "mine", centre: (570.0, -880.0), length: 1000.0, width: 1000.0, height: 200.0, heading: 90.0),
+                (module: "concentrator", centre: (145.0, -210.0), length: 300.0, width: 150.0, height: 30.0, heading: 90.0),
+                (module: "ore-yard", centre: (120.0, 60.0), length: 200.0, width: 100.0, height: 15.0, heading: 90.0),
+                (module: "stock-yard", centre: (120.0, 255.0), length: 150.0, width: 100.0, height: 15.0, heading: 90.0),
+            ]),
+            (name: "Ashfall Power Station", kind: "power", parcel: 2,
+                makes: [], draws: 0.0, supplies: 400.0, holds: 0.0,
+                takes: [], gives: [], burns: [("Deuterium", "", 8.36e-06)],
+                modules: [("fusion-power-station", 1)],
+                blocks: [
+                (module: "fusion-power-station", centre: (-160.0, -1320.0), length: 120.0, width: 80.0, height: 40.0, heading: 90.0),
+            ]),
+            (name: "Ashfall Yard", kind: "warehouse", parcel: 3,
+                makes: [], draws: 0.0, supplies: 0.0, holds: 0.0,
+                takes: [], gives: [], burns: [],
+                modules: [("general-warehouse", 1), ("loading-dock", 1)],
+                blocks: [
+                (module: "general-warehouse", centre: (120.0, -2605.0), length: 150.0, width: 100.0, height: 12.0, heading: 90.0),
+                (module: "loading-dock", centre: (85.0, -2460.0), length: 100.0, width: 30.0, height: 10.0, heading: 90.0),
+            ]),
+        ],
+    ),
+    (
+        system: "Treistun",
         body: "Harvest",
         name: "Halden Camp",
         zones: [
@@ -1050,6 +1110,7 @@
         parcels: [
             (number: 1, owner: "brand.castellan", owner_name: "Castellan Storage", outline: [(-300.0, -880.0), (400.0, -880.0), (400.0, -620.0), (-300.0, -620.0)]),
             (number: 2, owner: "brand.aurel", owner_name: "Aurel Fusion Works", outline: [(1150.0, -250.0), (1400.0, -250.0), (1400.0, 250.0), (1150.0, 250.0)]),
+            (number: 3, owner: "brand.hadley", owner_name: "Hadley Heavy Industries", outline: [(1500.0, -900.0), (2400.0, -900.0), (2400.0, 200.0), (1500.0, 200.0)]),
         ],
         streets: [
             (name: "Dock Road", line: [(450.0, 275.0), (450.0, -750.0)]),
@@ -1059,6 +1120,7 @@
             (name: "Power line 1", capacity: 1.0, line: [(1275.0, -250.0), (1275.0, -750.0), (390.0, -750.0)]),
             (name: "Power line 2", capacity: 8.2992, line: [(1275.0, 0.0), (1300.0, 100.0)]),
             (name: "Power line 3", capacity: 6.216, line: [(1275.0, 0.0), (1250.0, 100.0)]),
+            (name: "Power line 4", capacity: 152.0, line: [(1400.0, 0.0), (1500.0, 0.0)]),
         ],
         facilities: [
             (name: "Zaudalein Halls", kind: "food works", parcel: 2,
@@ -1088,6 +1150,14 @@
                 modules: [("fusion-power-station", 1)],
                 blocks: [
                 (module: "fusion-power-station", centre: (1230.0, 190.0), length: 120.0, width: 80.0, height: 40.0, heading: 0.0),
+            ]),
+            (name: "Zaudalein Smelter", kind: "foundry", parcel: 3,
+                makes: [("Nickel", 7.2)], draws: 127.0, supplies: 0.0, holds: 50000.0,
+                takes: [("Nickel concentrate", "goods.ores", 47.3688), ("Oxygen", "", 4.74984)], gives: [("Nickel", "", 7.2), ("Sulfur", "", 14.2128), ("Platinum", "", 0.00086616), ("Slag", "goods.minerals", 30.708)], burns: [],
+                modules: [("nickel-smelter", 1), ("stock-yard", 1)],
+                blocks: [
+                (module: "nickel-smelter", centre: (1720.0, 80.0), length: 400.0, width: 200.0, height: 40.0, heading: 0.0),
+                (module: "stock-yard", centre: (2015.0, 130.0), length: 150.0, width: 100.0, height: 15.0, heading: 0.0),
             ]),
             (name: "Zaudalein Warehouse", kind: "warehouse", parcel: 1,
                 makes: [], draws: 0.0, supplies: 0.0, holds: 155000.0,

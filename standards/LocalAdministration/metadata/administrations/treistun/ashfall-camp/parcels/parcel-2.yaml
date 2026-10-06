@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the power station's and the life-support plant's lot.
+identity:
+  key: parcel.treistun.ashfall-camp.2
+number: 2
+owner: org.aurel
+address: { street: street.treistun.ashfall-camp.shaft-road, number: 2 }
+outline: [[-850, -1400], [-100, -1400], [-100, -700], [-850, -700]]
