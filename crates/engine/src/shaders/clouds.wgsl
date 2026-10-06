@@ -54,6 +54,9 @@ const TAU_DEEP: f32 = 40.0;
 const TAU_FRONTAL: f32 = 20.0;
 const TAU_CIRRUS: f32 = 0.4;
 const MID_SHELL_M: f32 = 4000.0;
+// How much of the climate's cloud is drawn (the fractions × it): the game's taste, not the
+// climate's (it keeps its own figures); a uniform later.
+const CLOUD_AMOUNT: f32 = 0.75;
 
 struct CloudField {
     frac: vec4<f32>,  // low, deep, frontal, cirrus
@@ -102,7 +105,7 @@ fn cloud_field(dir: vec3<f32>, cl: Clouds, cm: texture_2d<f32>, ce: texture_2d<f
     let en = mix(cl_tile(ce, m0, ll), cl_tile(ce, m1, ll), f) - vec4<f32>(128.0 / 255.0);
     let air = mix(cl_tile(ca, m0, ll), cl_tile(ca, m1, ll), f) * 255.0;
     var out: CloudField;
-    out.frac = clamp(fr + cl.enso * en, vec4<f32>(0.0), vec4<f32>(1.0));
+    out.frac = clamp(fr + cl.enso * en, vec4<f32>(0.0), vec4<f32>(1.0)) * CLOUD_AMOUNT;
     out.lcl_m = air.r * 16.0;
     out.trop_m = air.g * 80.0;
     out.u700 = (air.b - 128.0) * 0.5;
@@ -151,6 +154,19 @@ fn cl_cells(x: vec3<f32>) -> f32 {
     return clamp(1.0 - best, 0.0, 1.0);
 }
 
+// A fixed rotation per octave (about a different axis each, by an irrational angle).
+fn cl_turn(o: i32) -> mat3x3<f32> {
+    let a = 0.9 + f32(o) * 2.39996;
+    let ax = normalize(vec3<f32>(sin(f32(o) * 1.7 + 0.3), cos(f32(o) * 2.3 + 1.1), sin(f32(o) * 0.7 + 2.0)));
+    let c = cos(a);
+    let s = sin(a);
+    let t = 1.0 - c;
+    return mat3x3<f32>(
+        vec3<f32>(t * ax.x * ax.x + c, t * ax.x * ax.y + s * ax.z, t * ax.x * ax.z - s * ax.y),
+        vec3<f32>(t * ax.x * ax.y - s * ax.z, t * ax.y * ax.y + c, t * ax.y * ax.z + s * ax.x),
+        vec3<f32>(t * ax.x * ax.z + s * ax.y, t * ax.y * ax.z - s * ax.x, t * ax.z * ax.z + c));
+}
+
 struct Spectrum {
     top_km: f32,
     octaves: i32,
@@ -191,7 +207,9 @@ fn cl_shape(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_
             if (lam > 100.0) {
                 x = vec3<f32>(x.x / sp.stretch, x.y, x.z / sp.stretch);
             }
-            let z = x / lam;
+            // (Each octave turned its own way: value noise and cells on one cubic lattice line up
+            // with its axes, the clouds' square bias.)
+            let z = cl_turn(o) * (x / lam);
             var v: f32;
             if (is_cell) {
                 v = cl_cells(z) - CLOUD_CELL_MEAN;
@@ -250,7 +268,9 @@ fn cloud_columns(dir: vec3<f32>, f: CloudField, radius_km: f32, t: f32, pix_km: 
         var low = vec2<f32>(0.0);
         if (f.frac.x > 0.002) {
             // Cumulus where the cover is low, stratocumulus where high.
-            let w = clamp((f.frac.x - 0.35) / 0.3, 0.0, 1.0);
+            // (Cumulus fields too take a share of the large structure (clusters, lines, clear
+            // gaps between, ~50–400 km), or from orbit they were an even sprinkle of flakes.)
+            let w = max(clamp((f.frac.x - 0.35) / 0.3, 0.0, 1.0), 0.45);
             var z = 0.0;
             var sd = 0.0;
             if (w < 1.0) {
@@ -574,7 +594,9 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
         // is on its shaded flank; thinner, a sunlit face. Bright tops, shaded sides, as cumulus
         // and frontal towers look from above (low and frontal shells; none from far orbit, where
         // the relief is under a pixel).
-        if (k == 0 && sunside && pix_km < 3.0 && dt.x > 0.05) {
+        // (Faded in as the pixel shrinks past 3 km → 1.5 km: switched on at once, it popped.)
+        let relief_w = smoothstep(3.0, 1.5, pix_km);
+        if (k == 0 && sunside && relief_w > 0.0 && dt.x > 0.05) {
             let sh = normalize(sun_dir - up * mu_s);
             let qn = normalize(up + sh * (1500.0 / R));
             // (At a quarter of the detail: the relief's shading needs only the cloud's bulk.)
@@ -584,7 +606,7 @@ fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: v
                 d2 = cols2.mid;
             }
             let rel = clamp((dt.y - d2.y) / max(dt.y + d2.y, 1.0), -1.0, 1.0);
-            sheet = vec4<f32>(sheet.rgb * clamp(1.0 + 0.6 * rel, 0.55, 1.3), sheet.w);
+            sheet = vec4<f32>(sheet.rgb * mix(1.0, clamp(1.0 + 0.6 * rel, 0.55, 1.3), relief_w), sheet.w);
         }
         // (A hit just in front of the ground fades in: a shell grazing the terrain blends, never
         // cuts it at its triangles' edges.)
@@ -884,7 +906,9 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
         // is on its shaded flank; thinner, a sunlit face. Bright tops, shaded sides, as cumulus
         // and frontal towers look from above (low and frontal shells; none from far orbit, where
         // the relief is under a pixel).
-        if (k == 0 && sunside && pix_km < 3.0 && dt.x > 0.05) {
+        // (Faded in as the pixel shrinks past 3 km → 1.5 km: switched on at once, it popped.)
+        let relief_w = smoothstep(3.0, 1.5, pix_km);
+        if (k == 0 && sunside && relief_w > 0.0 && dt.x > 0.05) {
             let sh = normalize(sun_dir - up * mu_s);
             let qn = normalize(up + sh * (1500.0 / R));
             // (At a quarter of the detail: the relief's shading needs only the cloud's bulk.)
@@ -897,7 +921,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
                 }
             }
             let rel = clamp((dt.y - d2.y) / max(dt.y + d2.y, 1.0), -1.0, 1.0);
-            sheet = vec4<f32>(sheet.rgb * clamp(1.0 + 0.6 * rel, 0.55, 1.3), sheet.w);
+            sheet = vec4<f32>(sheet.rgb * mix(1.0, clamp(1.0 + 0.6 * rel, 0.55, 1.3), relief_w), sheet.w);
         }
         // (A hit just in front of the ground fades in: a shell grazing the terrain blends, never
         // cuts it at its triangles' edges.)
