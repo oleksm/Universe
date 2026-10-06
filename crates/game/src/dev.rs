@@ -478,11 +478,19 @@ pub fn apply(app: &mut App, name: &str) {
                 Ok("energy") => crate::planet_studio::Look::Energy,
                 _ => crate::planet_studio::Look::Colour,
             };
-            if let Some(r) = studio.list.get(studio.selected).cloned() {
+            let r = studio.list.get(studio.selected).cloned();
+            app.planet_studio = Some(studio);
+            if let Some(r) = r {
                 let _ = crate::planet_studio::go_to(app, &r);
             }
+            // (UNIVERSE_FRAME: its history's frame n, counted from 0, in place of today.)
+            if let Some(n) = std::env::var("UNIVERSE_FRAME").ok().and_then(|n| n.parse::<usize>().ok())
+                && let Some((key, Some(history))) = app.planet_studio.as_ref().and_then(|s| s.shown.clone())
+                && n < history.frames.len()
+            {
+                app.world_frame = Some(crate::planet_studio::WorldFrame { key, history, frame: n });
+            }
             app.observer.yaw = 2.2;
-            app.planet_studio = Some(studio);
         }
         "rig" => {
             // Hadley Orbital Works, a rig with no model: its box, from a little way off.

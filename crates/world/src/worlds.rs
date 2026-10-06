@@ -785,32 +785,7 @@ impl Heights {
     /// Image `name` of the bake (a JPEG or PNG), as RGBA8: its width, height and pixels. None:
     /// not in the bake, or unreadable.
     pub fn image(&self, name: &str) -> Option<(usize, usize, Vec<u8>)> {
-        let bytes = self.bake.read(name).ok()?;
-        if name.ends_with(".jpg") {
-            let mut d = zune_jpeg::JpegDecoder::new(&bytes);
-            let rgb = d.decode().ok()?;
-            let (w, h) = d.dimensions()?;
-            return (rgb.len() == w * h * 3).then(|| (w, h, rgb.chunks(3).flat_map(|c| [c[0], c[1], c[2], 255]).collect()));
-        }
-        let mut d = png::Decoder::new(std::io::Cursor::new(&bytes));
-        d.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
-        let mut r = d.read_info().ok()?;
-        let mut buf = vec![0; r.output_buffer_size()?];
-        let info = r.next_frame(&mut buf).ok()?;
-        let (w, h) = (info.width as usize, info.height as usize);
-        let per = info.line_size / w.max(1);
-        let px = (0..h * w)
-            .flat_map(|i| {
-                let o = (i / w) * info.line_size + (i % w) * per;
-                match per {
-                    1 => [buf[o], buf[o], buf[o], 255],
-                    2 => [buf[o], buf[o], buf[o], buf[o + 1]],
-                    3 => [buf[o], buf[o + 1], buf[o + 2], 255],
-                    _ => [buf[o], buf[o + 1], buf[o + 2], buf[o + 3]],
-                }
-            })
-            .collect();
-        Some((w, h, px))
+        decode(name, &self.bake.read(name).ok()?)
     }
 
     /// The world's air from its bake (`atmosphere.json`, SI), packed as the engine's `Air` takes
@@ -916,9 +891,79 @@ pub struct Release {
     pub surface: Option<u32>,
     /// Its surface package: the folder under the store's `worlds/` and its manifest's hash.
     pub surface_package: Option<(String, String)>,
+    /// Its history package: the folder under the store's `worlds/` and its manifest's hash.
+    pub history_package: Option<(String, String)>,
     /// Its day (s) and its axis's tilt (degrees), where its bake's `world.json` gives them.
     pub day: Option<f64>,
     pub tilt: Option<f64>,
+}
+
+
+/// A world's growth as its run saw it (the store's history package, `planet-sim-history/1`):
+/// globes in time order, each with its figures then.
+pub struct History {
+    package: Package,
+    pub frames: Vec<HistoryFrame>,
+}
+
+/// One of a history's globes: its file (equirectangular, as `globe_color`), when (Gyr since the
+/// world began, and before today), and the world then.
+#[derive(Clone, Debug, Deserialize)]
+pub struct HistoryFrame {
+    pub file: String,
+    pub time_gyr: f64,
+    pub ago_gyr: f64,
+    pub land_pct: f64,
+    pub plates: u32,
+    pub highest_m: f64,
+    pub deepest_m: f64,
+}
+
+impl History {
+    /// Released world `r`'s history, checked against the store's index (None: it has none).
+    pub fn release(r: &Release) -> Option<Result<History, String>> {
+        let (folder, sha) = r.history_package.as_ref()?;
+        let store = store()?;
+        Some(Package::open(store.join("worlds").join(folder), sha).and_then(|package| {
+            let frames = serde_json::from_slice(&package.read("frames.json")?).map_err(|e| e.to_string())?;
+            Ok(History { package, frames })
+        }))
+    }
+
+    /// Frame `i`'s globe, as RGBA8 (see `Heights::image`).
+    pub fn image(&self, i: usize) -> Option<(usize, usize, Vec<u8>)> {
+        let name = &self.frames.get(i)?.file;
+        decode(name, &self.package.read(name).ok()?)
+    }
+}
+
+/// Image file `name`'s bytes (a JPEG or PNG) as RGBA8: its width, height and pixels.
+fn decode(name: &str, bytes: &[u8]) -> Option<(usize, usize, Vec<u8>)> {
+    if name.ends_with(".jpg") {
+        let mut d = zune_jpeg::JpegDecoder::new(bytes);
+        let rgb = d.decode().ok()?;
+        let (w, h) = d.dimensions()?;
+        return (rgb.len() == w * h * 3).then(|| (w, h, rgb.chunks(3).flat_map(|c| [c[0], c[1], c[2], 255]).collect()));
+    }
+    let mut d = png::Decoder::new(std::io::Cursor::new(bytes));
+    d.set_transformations(png::Transformations::EXPAND | png::Transformations::STRIP_16);
+    let mut r = d.read_info().ok()?;
+    let mut buf = vec![0; r.output_buffer_size()?];
+    let info = r.next_frame(&mut buf).ok()?;
+    let (w, h) = (info.width as usize, info.height as usize);
+    let per = info.line_size / w.max(1);
+    let px = (0..h * w)
+        .flat_map(|i| {
+            let o = (i / w) * info.line_size + (i % w) * per;
+            match per {
+                1 => [buf[o], buf[o], buf[o], 255],
+                2 => [buf[o], buf[o], buf[o], buf[o + 1]],
+                3 => [buf[o], buf[o + 1], buf[o + 2], 255],
+                _ => [buf[o], buf[o + 1], buf[o + 2], buf[o + 3]],
+            }
+        })
+        .collect();
+    Some((w, h, px))
 }
 
 /// The worlds in the store (none without a store), current first.
@@ -953,6 +998,7 @@ pub fn releases() -> Vec<Release> {
                         districts: num(&summary, "districts") as u64,
                         surface: surface.as_ref().and_then(|s| s.get("version")).and_then(|v| v.as_u64()).map(|v| v as u32),
                         surface_package: surface.as_ref().and_then(|s| Some((folder(s)?, s.get("manifest_sha256")?.as_str()?.to_string()))),
+                        history_package: pkg("history").and_then(|s| Some((folder(&s)?, s.get("manifest_sha256")?.as_str()?.to_string()))),
                         day: world.as_ref().and_then(|w| w.get("day_hours")).and_then(|d| d.as_f64()).map(|h| h * 3600.0),
                         tilt: world.as_ref().and_then(|w| w.get("tilt_deg")).and_then(|d| d.as_f64()),
                         world_id: id,

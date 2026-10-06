@@ -3,13 +3,15 @@
 //! clouds as the game draws them (`docs/planet-studio-plan.md`). A world that isn't one of the
 //! game's is shown alone: a system of its own for the view (the sim never sees it), the system's
 //! star and the world, its radius, day and tilt as the store gives them, its ground from its
-//! release, the rest (its air) as the world it is shaped from. Up and down pick a world, ENTER
-//! goes to it, L changes the look (its true colour, its rock, its oil and gas), ESC closes. The
-//! wheel and a drag turn and zoom as in the observer.
+//! release, the rest (its air) as the world it is shaped from. Its timeline: the store's history
+//! of it, globes in time order, PAGE UP back and PAGE DOWN on, its colour then on today's relief (its
+//! sea and clouds today's, so not drawn). Up and down pick a world, ENTER goes to it, L changes
+//! the look (its true colour, its rock, its oil and gas), ESC closes. The wheel and a drag turn
+//! and zoom as in the observer.
 
 use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode};
-use universe_sim::world::worlds::Release;
+use universe_sim::world::worlds::{History, Release};
 
 use crate::App;
 
@@ -59,11 +61,23 @@ pub struct PlanetStudio {
     pub selected: usize,
     /// What the last ENTER said, if it couldn't go there.
     note: String,
+    /// The world gone to: its body's key (the game's, or the studio's own) and its history, if
+    /// it has one (read on going).
+    pub shown: Option<(String, Option<std::sync::Arc<History>>)>,
+}
+
+/// A frame of a world's history drawn in place of today's colour: the world's body key, its
+/// history, the frame.
+#[derive(Clone)]
+pub struct WorldFrame {
+    pub key: String,
+    pub history: std::sync::Arc<History>,
+    pub frame: usize,
 }
 
 impl PlanetStudio {
     pub fn open() -> Self {
-        PlanetStudio { list: universe_sim::world::worlds::releases(), selected: 0, note: String::new() }
+        PlanetStudio { list: universe_sim::world::worlds::releases(), selected: 0, note: String::new(), shown: None }
     }
 }
 
@@ -71,6 +85,21 @@ impl PlanetStudio {
 /// at a few of its radii.
 pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
     app.studio_world = None;
+    if app.world_frame.take().is_some() {
+        app.world_maps.clear();
+    }
+    let history = match History::release(r) {
+        Some(Ok(h)) => Some(std::sync::Arc::new(h)),
+        Some(Err(e)) => {
+            eprintln!("{}: its history can't be read ({e})", r.world_id);
+            None
+        }
+        None => None,
+    };
+    let key = r.body.clone().unwrap_or_else(|| format!("studio.{}", r.world_id));
+    if let Some(s) = app.planet_studio.as_mut() {
+        s.shown = Some((key, history));
+    }
     let Some(key) = r.body.as_deref() else {
         let sys = alone(app, r)?;
         let radius = sys.bodies[1].rail.radius;
@@ -148,6 +177,29 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     if input.pressed(KeyCode::ArrowUp) {
         studio.selected = (studio.selected + n - 1) % n;
     }
+    // (The timeline: PAGE UP back in time from today, PAGE DOWN on to today. The arrows turn the
+    // observer.)
+    let step = match (input.pressed(KeyCode::PageUp), input.pressed(KeyCode::PageDown)) {
+        (true, false) => -1,
+        (false, true) => 1,
+        _ => 0,
+    };
+    if step != 0
+        && let Some((key, Some(history))) = app.planet_studio.as_ref().and_then(|s| s.shown.clone())
+    {
+        let last = history.frames.len().saturating_sub(1);
+        let now = app.world_frame.as_ref().map(|f| f.frame);
+        let next = match (now, step) {
+            (None, -1) => Some(last),
+            (None, _) => None,
+            (Some(i), -1) => Some(i.saturating_sub(1)),
+            (Some(i), _) => (i < last).then_some(i + 1),
+        };
+        if next != now {
+            app.world_frame = next.map(|frame| WorldFrame { key, history, frame });
+            app.world_maps.clear();
+        }
+    }
     if input.pressed(KeyCode::KeyL) {
         app.world_look = app.world_look.next();
         // (Its maps made again in the new look.)
@@ -171,7 +223,7 @@ pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
     let (x, mut y) = (12.0, 90.0);
     let w = 470.0;
     let rows = studio.list.len() as f32;
-    frame.hud_rect(Vec2::new(x - 6.0, y - 6.0), Vec2::new(w, line * (rows + 12.0)), PANEL);
+    frame.hud_rect(Vec2::new(x - 6.0, y - 6.0), Vec2::new(w, line * (rows + 16.0)), PANEL);
     frame.text(Vec2::new(x, y), &format!("WORLDS   LOOK: {}  (L)", app.world_look.name()), TEXT);
     y += line * 1.5;
     frame.text(Vec2::new(x, y), &format!(" {:<6} {:<14} {:>7} {:>6} {:>8} {:>7}", "WORLD", "NAME", "RADIUS", "LAND", "DEPOSITS", "SURFACE"), DIM);
@@ -185,6 +237,26 @@ pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
         y += line;
     }
     y += line * 0.5;
+    // The timeline of the world gone to: today, or one of its history's globes.
+    if let Some((_, history)) = &studio.shown {
+        match (history, &app.world_frame) {
+            (Some(h), Some(f)) => {
+                let fr = &h.frames[f.frame];
+                frame.text(Vec2::new(x, y), &format!("TIMELINE {}/{}  {:.2} GYR ({:.2} GYR AGO)", f.frame + 1, h.frames.len(), fr.time_gyr, fr.ago_gyr), TEXT);
+                y += line;
+                frame.text(Vec2::new(x, y), &format!("LAND {:.1}%  PLATES {}  HIGHEST {:.0} M  DEEPEST {:.0} M", fr.land_pct, fr.plates, fr.highest_m, fr.deepest_m), DIM);
+                y += line;
+                frame.text(Vec2::new(x, y), "ITS COLOUR THEN ON TODAY'S RELIEF", DIM);
+            }
+            (Some(h), None) => {
+                frame.text(Vec2::new(x, y), &format!("TIMELINE: TODAY  ({} GLOBES BEFORE: PAGE UP)", h.frames.len()), TEXT);
+            }
+            (None, _) => {
+                frame.text(Vec2::new(x, y), "TIMELINE: NONE IN THE STORE", DIM);
+            }
+        }
+        y += line * 1.5;
+    }
     if let Some(r) = studio.list.get(studio.selected) {
         frame.text(Vec2::new(x, y), &format!("{}  ({})", r.name.to_uppercase(), r.status.to_uppercase()), TEXT);
         y += line;
@@ -216,5 +288,5 @@ pub fn draw(frame: &mut Frame, app: &App, studio: &PlanetStudio) {
         frame.text(Vec2::new(x, y), &studio.note, Color::hex(0xffb030));
         y += line;
     }
-    frame.text(Vec2::new(x, y), "UP/DOWN PICK  ENTER GO  L LOOK  ESC CLOSE", DIM);
+    frame.text(Vec2::new(x, y), "UP/DOWN PICK  ENTER GO  PGUP/PGDN TIME  L LOOK  ESC CLOSE", DIM);
 }

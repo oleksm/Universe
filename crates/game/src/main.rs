@@ -211,6 +211,9 @@ pub struct App {
     pub planet_studio: Option<planet_studio::PlanetStudio>,
     /// The planet studio's world shown alone, in a system of its own (see `planet_studio`).
     pub studio_world: Option<Arc<StarSystem>>,
+    /// A frame of the shown world's history drawn in place of its colour today (the studio's
+    /// timeline).
+    pub world_frame: Option<planet_studio::WorldFrame>,
     pub world_look: planet_studio::Look,
     /// The galaxy map, when open (U from the navigation map).
     pub galaxy_map: Option<galaxymap::GalaxyMap>,
@@ -398,6 +401,7 @@ impl App {
             economy_panel: None,
             planet_studio: None,
             studio_world: None,
+            world_frame: None,
             world_look: Default::default(),
             explored: Default::default(),
             market: None,
@@ -1155,20 +1159,28 @@ impl App {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
                 self.world_maps.insert((origin, i), slot.clone());
                 let (t, look) = (t.clone(), self.world_look);
+                // (A frame of its history in place of today's colour: its sea and clouds then
+                // aren't today's, so none.)
+                let then = self.world_frame.clone().filter(|f| f.key == b.key);
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
                     let names = [look.file(), "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
                     let mut k = 0;
                     let encoded = names.map(|name| {
-                        let e = t.bake_image(name).and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
+                        let image = match &then {
+                            Some(f) if k == 0 => f.history.image(f.frame),
+                            Some(_) if name == "globe_spec.png" => None,
+                            _ => t.bake_image(name),
+                        };
+                        let e = image.and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
                         k += 1;
                         e
                     });
                     let maps = universe_engine::WorldMaps::encoded(encoded, t.bake_air())
                         .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
                     let mut maps = maps;
-                    if let Some(c) = t.bake_clouds() {
+                    if let Some(c) = t.bake_clouds().filter(|_| then.is_none()) {
                         let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
                         let [a, b, c3] = c.maps;
                         maps.clouds_year = Some((c.year_days, c.enso));
@@ -1364,6 +1376,9 @@ impl Game for App {
                 if !planet_studio::input(self, ctx) {
                     self.planet_studio = None;
                     // (Its world alone goes with it: back to the system's star.)
+                    if self.world_frame.take().is_some() {
+                        self.world_maps.clear();
+                    }
                     if self.studio_world.take().is_some() {
                         self.observer.focus = observer::Focus::Body { system: self.view.origin, body: 0 };
                     }
