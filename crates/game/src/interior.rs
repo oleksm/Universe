@@ -211,6 +211,8 @@ pub struct Interior {
     /// asked for: feet (the hull's frame) and facing (see `shipyard`).
     walk_armed: bool,
     pub walk: Option<(universe_engine::glam::DVec3, f64)>,
+    /// The test stand: a design with no hull walked in the studio itself.
+    stand: Option<Stand>,
     /// The plan as last checked against the hull, and each line's clashes: where
     /// its room cuts into the hull's walls, structure or machinery.
     checked: Option<(Plan, Vec<Vec<Vec3>>)>,
@@ -2085,6 +2087,17 @@ impl Interior {
         }
     }
 
+    /// The test stand (dev scenarios): stood up, the walker at `at` (x, y, z, yaw)
+    /// or at the ramp's foot.
+    pub fn stand_test(&mut self, at: Option<[f64; 4]>) {
+        self.refit();
+        let mut s = self.stand_up();
+        if let Some([x, y, z, yaw]) = at {
+            (s.feet, s.yaw) = (universe_engine::glam::DVec3::new(x, y, z), yaw);
+        }
+        self.stand = Some(s);
+    }
+
     /// A dialog open (dev scenarios): NEW, or OPEN.
     pub fn show_dialog(&mut self, open: bool) {
         self.dialog = Some(if open { Dialog::Open(Self::designs()) } else { Dialog::New });
@@ -2319,6 +2332,283 @@ impl Interior {
     fn hull(&self) -> Option<Arc<Hull>> {
         self.lines.as_ref().filter(|(k, _)| *k == self.plan.hull).map(|(_, h)| h.clone())
     }
+}
+
+/// The test stand: a design with no hull stood on the ground (its landing legs'
+/// feet) and walked, first person, in the studio. What's solid: its rooms' walls and
+/// floors, its modules, the ground; a ramp a slope from the ground up to the
+/// airlock it serves; an airlock a passage (floor, walls, roof, open at its ends);
+/// a vertical room a shaft climbed as a ladder. The walk is the game's own walker.
+struct Stand {
+    mesh: universe_sim::world::walk::WalkMesh,
+    /// What's drawn: each face and its colour (the first two the ground, beneath
+    /// all); the frame's members as lines; the rooms (axis ends, half width,
+    /// half height), to know when the walker's inside.
+    faces: Vec<([Vec3; 3], Color)>,
+    rooms: Vec<(Vec3, Vec3, f32, f32)>,
+    members: Vec<[Vec3; 2]>,
+    /// The shafts climbed: each one's axis and radius.
+    shafts: Vec<(Vec3, Vec3, f32)>,
+    feet: universe_engine::glam::DVec3,
+    velocity: universe_engine::glam::DVec3,
+    yaw: f64,
+    pitch: f64,
+}
+
+/// A box's faces (`lo` to `hi`), less those `skip` says (0..6: -y, +y, -z, +z,
+/// -x, +x).
+fn box_faces(lo: Vec3, hi: Vec3, skip: &[usize]) -> Vec<[Vec3; 3]> {
+    let c = |x: f32, y: f32, z: f32| Vec3::new(if x < 0.5 { lo.x } else { hi.x }, if y < 0.5 { lo.y } else { hi.y }, if z < 0.5 { lo.z } else { hi.z });
+    let quads = [
+        [c(0., 0., 0.), c(1., 0., 0.), c(1., 0., 1.), c(0., 0., 1.)],
+        [c(0., 1., 0.), c(0., 1., 1.), c(1., 1., 1.), c(1., 1., 0.)],
+        [c(0., 0., 0.), c(0., 1., 0.), c(1., 1., 0.), c(1., 0., 0.)],
+        [c(0., 0., 1.), c(1., 0., 1.), c(1., 1., 1.), c(0., 1., 1.)],
+        [c(0., 0., 0.), c(0., 0., 1.), c(0., 1., 1.), c(0., 1., 0.)],
+        [c(1., 0., 0.), c(1., 1., 0.), c(1., 1., 1.), c(1., 0., 1.)],
+    ];
+    quads.iter().enumerate().filter(|(k, _)| !skip.contains(k)).flat_map(|(_, q)| [[q[0], q[1], q[2]], [q[0], q[2], q[3]]]).collect()
+}
+
+impl Interior {
+    /// The design stood on its test stand, ready to walk from the foot of its
+    /// boarding ramp (or, with none, on the ground before it).
+    fn stand_up(&self) -> Stand {
+        use universe_engine::glam::DVec3;
+        let kind_of = |b: &Block| self.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).map(|(k, ..)| k).unwrap_or_default();
+        let ground = self.plan.blocks.iter().filter(|b| kind_of(b) == "landing_gear").map(|b| b.at.y - b.size.y * 0.5).fold(f32::INFINITY, f32::min);
+        let ground = if ground.is_finite() { ground } else { self.plan.blocks.iter().map(|b| b.at.y - b.size.y * 0.5).fold(0.0, f32::min) };
+        // The ground: wide, flat, at the legs' feet (drawn first: beneath all).
+        let g = 300.0;
+        let ground_colour = Color([0.24, 0.27, 0.22, 1.0]);
+        let mut faces: Vec<([Vec3; 3], Color)> = vec![
+            ([Vec3::new(-g, ground, -g), Vec3::new(g, ground, -g), Vec3::new(g, ground, g)], ground_colour),
+            ([Vec3::new(-g, ground, -g), Vec3::new(g, ground, g), Vec3::new(-g, ground, g)], ground_colour),
+        ];
+        // Its rooms' walls and floors.
+        for p in self.panels().iter() {
+            let q = &p.outline;
+            let c = p.colour();
+            for k in 1..q.len().saturating_sub(1) {
+                faces.push(([q[0], q[k], q[k + 1]], Color(c)));
+            }
+        }
+        // Its modules: solid, but an airlock a passage and a ramp a slope.
+        let airlocks: Vec<&Block> = self.plan.blocks.iter().filter(|b| kind_of(b) == "airlock").collect();
+        let mut start = None;
+        for b in &self.plan.blocks {
+            let (lo, hi) = b.bounds();
+            let k = kind_of(b);
+            let along_z = b.size.z >= b.size.x;
+            match k.as_str() {
+                "airlock" => {
+                    // (Open at its ends, along its length.)
+                    let open = if along_z { [2, 3] } else { [4, 5] };
+                    for t in box_faces(lo, hi, &open) {
+                        faces.push((t, Color([0.62, 0.66, 0.7, 1.0])));
+                    }
+                }
+                "ramp" => {
+                    // (From the end nearest an airlock, at that airlock's floor, down
+                    // to the ground at the far end.)
+                    let lock = airlocks.iter().min_by(|a, c| a.at.distance(b.at).total_cmp(&c.at.distance(b.at)));
+                    let top = lock.map_or(hi.y, |l| l.at.y - l.size.y * 0.5);
+                    let (near, far, half) = if along_z {
+                        let to = lock.map_or(1.0, |l| (l.at.z - b.at.z).signum());
+                        (Vec3::new(b.at.x, top, b.at.z + to * b.size.z * 0.5), Vec3::new(b.at.x, ground, b.at.z - to * b.size.z * 0.5), Vec3::X * b.size.x * 0.5)
+                    } else {
+                        let to = lock.map_or(1.0, |l| (l.at.x - b.at.x).signum());
+                        (Vec3::new(b.at.x + to * b.size.x * 0.5, top, b.at.z), Vec3::new(b.at.x - to * b.size.x * 0.5, ground, b.at.z), Vec3::Z * b.size.z * 0.5)
+                    };
+                    let (a, c, d, e) = (near - half, near + half, far + half, far - half);
+                    let colour = Color([0.85, 0.7, 0.35, 1.0]);
+                    faces.push(([a, c, d], colour));
+                    faces.push(([a, d, e], colour));
+                    // (Walked up from its foot, facing up it.)
+                    let up = near - far;
+                    start = Some((far + (far - near).normalize_or_zero() * 1.5, f64::from((-up.x).atan2(-up.z))));
+                }
+                _ => {
+                    let round = self.round(&b.id);
+                    let colour = if k == "landing_gear" { Color([0.4, 0.42, 0.46, 1.0]) } else { Color([0.55, 0.5, 0.62, 1.0]) };
+                    for (t, _) in b.faces(round) {
+                        faces.push((t, colour));
+                    }
+                }
+            }
+        }
+        let tris: Vec<[DVec3; 3]> = faces.iter().map(|(t, _)| t.map(|p| p.as_dvec3())).collect();
+        let mesh = universe_sim::world::walk::WalkMesh::new(&tris);
+        // The shafts: walled rooms standing upright.
+        let shafts = (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).filter_map(|k| {
+            let (a, b) = self.plan.axis(k);
+            ((b - a).normalize_or_zero().y.abs() > 0.9).then_some((a.min(b), a.max(b), self.plan.lines[k].2.width * 0.5))
+        }).collect();
+        let (feet, yaw) = start.unwrap_or_else(|| (Vec3::new(0.0, ground, -40.0), 0.0));
+        Stand {
+            mesh,
+            faces,
+            members: self.plan.beams.iter().map(|b| [b.a, b.b]).collect(),
+            // (And each airlock, a room too: along its length.)
+            rooms: (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).map(|k| {
+                let (a, b) = self.plan.axis(k);
+                let p = self.plan.lines[k].2;
+                (a, b, p.width * 0.5, p.height * 0.5)
+            }).chain(airlocks.iter().map(|b| {
+                let along = if b.size.z >= b.size.x { Vec3::Z * b.size.z * 0.5 } else { Vec3::X * b.size.x * 0.5 };
+                (b.at - along, b.at + along, b.size.x.min(b.size.z) * 0.5, b.size.y * 0.5)
+            })).collect(),
+            shafts,
+            feet: DVec3::new(f64::from(feet.x), f64::from(ground) + 0.05, f64::from(feet.z)),
+            velocity: DVec3::ZERO,
+            yaw,
+            pitch: 0.0,
+        }
+    }
+}
+
+/// The test stand walked for a frame: WASD, the arrows or a drag to look, SPACE to
+/// jump, SHIFT to run (up a shaft: forward climbs, looking down goes down); ESC
+/// back to the studio.
+fn stand_input(ctx: &Context, s: &mut Stand) {
+    use universe_engine::glam::DVec3;
+    use universe_sim::world::walk::{Collider, Stride, Walker};
+    let input = &ctx.input;
+    let dt = f64::from(ctx.dt).min(0.05);
+    let key = |k: KeyCode| if input.down(k) { 1.0 } else { 0.0 };
+    let turn = key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft);
+    let tilt = key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown);
+    s.yaw -= turn * 1.8 * dt;
+    s.pitch = (s.pitch + tilt * 1.2 * dt).clamp(-1.4, 1.4);
+    if input.button_down(MouseButton::Left) {
+        s.yaw -= f64::from(input.mouse_delta.x) * 0.006;
+        s.pitch = (s.pitch - f64::from(input.mouse_delta.y) * 0.006).clamp(-1.4, 1.4);
+    }
+    let forward = key(KeyCode::KeyW) - key(KeyCode::KeyS);
+    let right = key(KeyCode::KeyD) - key(KeyCode::KeyA);
+    let run = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
+    let (sn, co) = s.yaw.sin_cos();
+    let (fwd, side) = (DVec3::new(-sn, 0.0, -co), DVec3::new(co, 0.0, -sn));
+    let speed = if run { universe_sim::world::crew::RUN } else { universe_sim::world::crew::WALK };
+    let wish = (fwd * forward + side * right).clamp_length_max(1.0) * speed;
+    let jump = if input.pressed(KeyCode::Space) { universe_sim::world::crew::JUMP } else { 0.0 };
+    let climb = forward * universe_sim::world::crew::CLIMB * if s.pitch < -0.5 { -1.0 } else { 1.0 };
+    // (A shaft's ladder runs a metre past its top, so the climber's feet come level
+    // with the floor there to step off.)
+    let shafts = s.shafts.clone();
+    let climbable = move |p: DVec3| shafts.iter().any(|&(lo, hi, r)| {
+        let q = p.as_vec3();
+        q.y >= lo.y - 0.3 && q.y <= hi.y + 1.0 && Vec2::new(q.x - lo.x, q.z - lo.z).length() < r
+    });
+    let colliders = [Collider::Mesh { mesh: &s.mesh, at: DVec3::ZERO, rot: universe_engine::glam::DQuat::IDENTITY }];
+    let mut w = Walker { feet: s.feet, velocity: s.velocity };
+    w.step(&colliders, &|_| DVec3::Y, STANDARD_G, &climbable, &Stride { wish, jump, climb }, dt);
+    s.feet = w.feet;
+    s.velocity = w.velocity;
+}
+
+/// The test stand seen first person: every face shaded and drawn far to near (the
+/// near ones over the far), cut where it passes behind the eye; the frame's
+/// members as lines among them; a cross at the middle; how to walk.
+fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
+    let size = frame.size();
+    frame.hud_rect(Vec2::ZERO, size, Color([0.02, 0.03, 0.06, 1.0]));
+    let eye = (s.feet + universe_engine::glam::DVec3::Y * 1.65).as_vec3();
+    let (sy, cy) = (s.yaw as f32).sin_cos();
+    let (sp, cp) = (s.pitch as f32).sin_cos();
+    let forward = Vec3::new(-sy * cp, sp, -cy * cp);
+    let right = Vec3::new(cy, 0.0, -sy);
+    let up = right.cross(forward);
+    let focal = size.y * 0.5 / (FOV * 0.5).tan();
+    let near = 0.08;
+    let view = |p: Vec3| {
+        let d = p - eye;
+        Vec3::new(d.dot(right), d.dot(up), d.dot(forward))
+    };
+    let screen = |v: Vec3| size * 0.5 + Vec2::new(v.x, -v.y) * (focal / v.z);
+    // (A polygon in view space cut at the near plane.)
+    let clip = |poly: &[Vec3]| -> Vec<Vec3> {
+        let mut out = Vec::new();
+        for k in 0..poly.len() {
+            let (a, b) = (poly[k], poly[(k + 1) % poly.len()]);
+            if a.z >= near {
+                out.push(a);
+            }
+            if (a.z >= near) != (b.z >= near) {
+                let t = (near - a.z) / (b.z - a.z);
+                out.push(a.lerp(b, t));
+            }
+        }
+        out
+    };
+    let light = Vec3::new(0.4, 0.8, 0.45).normalize();
+    // (Everything to draw, with its distance: faces, then the members.)
+    enum Item {
+        Face(Vec<Vec3>, Color),
+        Member(Vec3, Vec3),
+    }
+    let mut items: Vec<(f32, Item)> = Vec::new();
+    // (The ground first, beneath all; then the rest far to near.)
+    let mut ground = Vec::new();
+    for (k, (t, colour)) in s.faces.iter().enumerate() {
+        let v = t.map(view);
+        if v.iter().all(|p| p.z < near) {
+            continue;
+        }
+        let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
+        let shade = 0.45 + 0.55 * n.dot(light).abs();
+        let c = Color([colour.0[0] * shade, colour.0[1] * shade, colour.0[2] * shade, 1.0]);
+        let poly = clip(&v);
+        if poly.len() >= 3 {
+            if k < 2 {
+                ground.push((poly, c));
+                continue;
+            }
+            let depth = poly.iter().map(|p| p.z).sum::<f32>() / poly.len() as f32;
+            items.push((depth, Item::Face(poly, c)));
+        }
+    }
+    // (Inside a room, its walls hide the frame round it: no members.)
+    let head = eye;
+    let inside_room = s.rooms.iter().any(|&(a, b, hw, hh)| {
+        let d = b - a;
+        let t = ((head - a).dot(d) / d.length_squared().max(1e-6)).clamp(0.0, 1.0);
+        let off = head - (a + d * t);
+        if d.normalize_or_zero().y.abs() > 0.9 { Vec2::new(off.x, off.z).length() < hw } else { off.y.abs() < hh + 0.3 && Vec3::new(off.x, 0.0, off.z).length() < hw }
+    });
+    for [a, b] in s.members.iter().filter(|_| !inside_room) {
+        let (va, vb) = (view(*a), view(*b));
+        if va.z < near && vb.z < near {
+            continue;
+        }
+        let poly = clip(&[va, vb]);
+        if let [p, q, ..] = poly[..] {
+            items.push(((p.z + q.z) * 0.5, Item::Member(p, q)));
+        }
+    }
+    items.sort_by(|a, b| b.0.total_cmp(&a.0));
+    for (poly, c) in ground {
+        let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
+        for k in 1..q.len() - 1 {
+            frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+        }
+    }
+    for (_, item) in items {
+        match item {
+            Item::Face(poly, c) => {
+                let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
+                for k in 1..q.len() - 1 {
+                    frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+                }
+            }
+            Item::Member(p, q) => frame.hud_line(screen(p), screen(q), Color([0.4, 0.95, 0.55, 0.9])),
+        }
+    }
+    let c = size * 0.5;
+    frame.hud_line(c - Vec2::new(6.0, 0.0), c + Vec2::new(6.0, 0.0), LABEL);
+    frame.hud_line(c - Vec2::new(0.0, 6.0), c + Vec2::new(0.0, 6.0), LABEL);
+    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   TEST STAND"), LABEL);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "WASD WALK - DRAG OR ARROWS LOOK - SPACE JUMP - SHIFT RUN - UP A SHAFT: FORWARD CLIMBS, LOOK DOWN TO GO DOWN - ESC BACK TO THE STUDIO", LABEL.scale(0.7), 0.7);
 }
 
 /// The camera, for the hull drawn in a `size` screen: where it is, its axes
@@ -3406,6 +3696,15 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     interior.spin += ctx.dt;
     interior.sync(&spec.key, spec.shape(), &mut app.deckplans, 0.0);
     interior.refresh();
+    // On the test stand: walked; ESC back to the studio.
+    if let Some(s) = interior.stand.as_mut() {
+        if input.pressed(KeyCode::Escape) {
+            interior.stand = None;
+        } else {
+            stand_input(ctx, s);
+        }
+        return true;
+    }
     // Closing with unsaved changes: SAVE AND CLOSE (S, ENTER), DISCARD (D), or keep
     // working (ESC); nothing else meanwhile.
     if interior.confirm {
@@ -3814,6 +4113,12 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     }
     interior.module_hover = interior.block_hover.and_then(|n| interior.fit.iter().position(|f| f.id == kind(&interior.plan.blocks[n].id)));
     // A walk-through: F over a point or a tube, there; WALK HERE, then a click on one.
+    // (No hull: WALK, or F, stands the design on the test stand.)
+    if interior.spec().is_none() && ((pressed && inside(walk_button(), cursor)) || input.pressed(KeyCode::KeyF)) {
+        interior.refit();
+        interior.stand = Some(interior.stand_up());
+        return true;
+    }
     if pressed && inside(walk_button(), cursor) {
         interior.walk_armed = !interior.walk_armed;
         return true;
@@ -4146,6 +4451,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
+    if let Some(s) = &interior.stand {
+        draw_stand(frame, s, place);
+        return;
+    }
     let size = frame.size();
     let spec = interior.spec();
     frame.hud_rect(Vec2::ZERO, size, PAPER);
