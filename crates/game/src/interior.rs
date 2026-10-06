@@ -973,7 +973,8 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
     let content = universe_sim::world::content::content();
     {
         let p = &e.physical;
-        let round = matches!(e.function, EquipmentFunction::Tank(_));
+        // (Tanks and stores of liquid or gas: balls.)
+        let round = matches!(e.function, EquipmentFunction::Tank(_) | EquipmentFunction::Store(_));
         let size = match (p.width, p.height, p.length) {
             // (Its own size, where its record says it: across, up, along.)
             (Some(w), Some(h), Some(l)) => Vec3::new(w as f32, h as f32, l as f32),
@@ -999,6 +1000,7 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
             EquipmentFunction::OreBay(b) => b.capacity,
             EquipmentFunction::Rack(r) => r.capacity,
             EquipmentFunction::Tank(t) => t.capacity,
+            EquipmentFunction::Store(t) => t.capacity.unwrap_or(0.0),
             _ => 0.0,
         };
         let gear = match &e.function {
@@ -2655,10 +2657,22 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
         frame.text_scaled(Vec2::new(p.x + 8.0, y), &kind, MODULE.scale(0.9), 0.6);
         y += 11.0;
         let unit = |field: &str| match field {
-            "thrust" | "holds" if fields.get("stroke").is_some() || field == "thrust" => "N",
-            "output" | "power" | "beam_power" => "W",
+            "thrust" | "torque" if field == "thrust" => "N",
+            "torque" => "N M",
+            "momentum" => "N M S",
+            "holds" if fields.get("stroke").is_some() || kind == "DOCKING" => "N",
+            "output" | "power" | "beam_power" | "rejects" | "transfers" | "carries" | "rate" if field != "rate" || kind == "BATTERY" => "W",
+            "stores" => "J",
             "exhaust" | "sink_rate" | "muzzle_speed" => "M/S",
-            "stroke" | "extended" | "range" | "focus" | "resolves" | "survey_range" | "anchor_reach" | "capture" | "link" => "M",
+            "stroke" | "extended" | "range" | "focus" | "resolves" | "survey_range" | "anchor_reach" | "capture" | "link" | "passage" | "reach" | "travel" | "width" | "height" => "M",
+            "area" => "M2",
+            "temperature" => "K",
+            "pressure" | "head" => "PA",
+            "persons" => "PEOPLE",
+            "cycle" | "opens_in" => "S",
+            "air_lost" | "load" => "KG",
+            "flow" if kind == "COMPRESSOR" => "M3/S",
+            "flow" => "KG/S",
             "volume" => "M3",
             "fill_density" => "KG/M3",
             "slug_mass" => "KG",
