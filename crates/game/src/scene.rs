@@ -547,7 +547,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             if near {
                 universe_prof::time("draw/scene/bodies/ground", || {
-                    app.terrain_lod.borrow_mut().draw(frame, app.view.origin, i, b, map, center, b.rotation(t), cam, c);
+                    app.terrain_lod.borrow_mut().draw(frame, app.view.origin, &app.view.system, i, map, center, b.rotation(t), cam, c);
                 });
             } else {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
