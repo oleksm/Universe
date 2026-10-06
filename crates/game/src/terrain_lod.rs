@@ -17,7 +17,8 @@ use universe_sim::Body;
 const GRID: u32 = 16;
 /// The finest patches (about 1/2^MAX_LEVEL of a cube face across).
 const MAX_LEVEL: u8 = 15;
-/// A patch splits when the eye is nearer than this many times its size.
+/// A patch splits when the eye is nearer than this many times its size. (The mesh shader's
+/// GEOMORPH_SPLIT: keep them together.)
 const SPLIT: f64 = 2.4;
 /// Patches wanted a frame (the next finer), at most.
 const BUDGET: usize = 12;
@@ -160,7 +161,31 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         let (a, b, c, d) = (base + w * 2, base + w * 2 + 2, base + w * 2 + 1, base + w * 2 + 3);
         m.faces.extend([[a, b, d], [a, d, c], [a, d, b], [a, c, d]]);
     }
-    m.colors = vec![[1.0; 4]; m.positions.len()];
+    // Each vertex's way to its parent's shape (the vertex colour's rgb, m) and the patch's size
+    // (its alpha, m), for the mesh shader to blend toward as the eye nears the distance where the
+    // parent takes its place (geomorphing: a swap doesn't pop). A vertex on the parent's grid (even
+    // both ways) is where it is; one between, the mean of the parent's two either side of it (the
+    // cell's diagonal, as its triangles are cut, where it's between both ways).
+    let size_m = (size * r) as f32;
+    let grid: Vec<universe_engine::glam::Vec3> = m.positions[..g * g].to_vec();
+    let at = |i: usize, j: usize| grid[j * g + i];
+    let morph = |i: usize, j: usize| -> [f32; 4] {
+        let own = at(i, j);
+        let target = match (i % 2, j % 2) {
+            (0, 0) => own,
+            (1, 0) => (at(i - 1, j) + at(i + 1, j)) * 0.5,
+            (0, 1) => (at(i, j - 1) + at(i, j + 1)) * 0.5,
+            _ => (at(i - 1, j - 1) + at(i + 1, j + 1)) * 0.5,
+        };
+        let d = target - own;
+        [d.x, d.y, d.z, size_m]
+    };
+    let mut colors: Vec<[f32; 4]> = (0..g * g).map(|k| morph(k % g, k / g)).collect();
+    for &(i, j) in &edge {
+        colors.push(morph(i, j));
+        colors.push(morph(i, j));
+    }
+    m.colors = colors;
     (m, origin, !whole.get())
 }
 

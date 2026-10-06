@@ -493,7 +493,9 @@ fn bodies(frame: &mut Frame, app: &App) {
     if let Some((i, maps)) = near
         && let Some((_, _, map)) = app.globes.get(&(app.view.origin, i))
     {
-        frame.world_maps(&maps, map);
+        if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
+            frame.world_maps(&maps, map);
+        }
     }
     for (i, b) in sys.bodies.iter().enumerate() {
         // (Rocks: see `rocks`.)
