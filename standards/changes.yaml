@@ -465,7 +465,7 @@
 - { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-06T18:50:34Z", status: "", summary: "changed: processes", sha: "25e9773f7e633394" }
 - { record: facility.treistun.port-trethi.trethi-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "457659c2302eeaef" }
 - { record: facility.treistun.port-trethi.trethi-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "20bc6eb10d26153f" }
-- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-06T19:17:39Z", status: "", summary: "changed: lines", sha: "3841e867797a752f" }
+- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-06T21:57:59Z", status: "", summary: "changed: lines", sha: "783df4c98331089d" }
 - { record: facility.treistun.port-trethi.trethi-power-station, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "b02941881f765a35" }
 - { record: facility.treistun.port-trethi.trethi-smelter, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "24ef6e22e88cb38b" }
 - { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-06T19:44:49Z", status: "", summary: "changed", sha: "87c81a442808daf1" }
@@ -835,7 +835,7 @@
 - { record: module.finishing-line, at: "2026-10-06T19:01:21Z", status: review, summary: "changed: recipes", sha: "6d8fdf2416ee148c" }
 - { record: module.fish-farm, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "b5ce918d85570dcb" }
 - { record: module.flour-mill, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "dbad9064167f8890" }
-- { record: module.forging-press, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "1f63f2aaf6c4c777" }
+- { record: module.forging-press, at: "2026-10-06T21:58:56Z", status: review, summary: "changed: recipes", sha: "6d779e485cd8d8c7" }
 - { record: module.foundry, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "af955ee1d5bb1571" }
 - { record: module.fusion-power-station, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "00cc4a31f69bebe1" }
 - { record: module.gas-well, at: "2026-10-06T18:08:26Z", status: review, summary: "changed: life, basis", sha: "a391ef648e98c08f" }
@@ -2253,6 +2253,12 @@
 - { record: stock.st4340-node-120, at: "2026-10-06T03:21:25Z", status: review, summary: "first tracked", sha: "5b1c75dc3d42e433" }
 - { record: stock.st4340-node-160, at: "2026-10-06T03:21:25Z", status: review, summary: "first tracked", sha: "16c5edaef393bb7d" }
 - { record: stock.st4340-node-200, at: "2026-10-06T03:21:25Z", status: review, summary: "first tracked", sha: "5de5afdda9458af3" }
+- { record: stock.st4340-node-250, at: "2026-10-06T21:57:59Z", status: review, summary: "first tracked", sha: "e308b4d107e8b8c3" }
+- { record: stock.st4340-node-300, at: "2026-10-06T21:57:59Z", status: review, summary: "first tracked", sha: "b014509740b210a6" }
+- { record: stock.st4340-node-300h, at: "2026-10-06T21:57:59Z", status: review, summary: "first tracked", sha: "94a033ba5a0f5031" }
+- { record: stock.st4340-node-350, at: "2026-10-06T21:57:59Z", status: review, summary: "first tracked", sha: "7c065df62163a10f" }
+- { record: stock.st4340-node-400h, at: "2026-10-06T21:57:59Z", status: review, summary: "first tracked", sha: "269bcc50789a9e86" }
+- { record: stock.st4340-node-500h, at: "2026-10-06T21:57:59Z", status: review, summary: "first tracked", sha: "d1b76cec9e781957" }
 - { record: stock.st4340-pl-3, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "2da0c5b0c5301c30" }
 - { record: stock.st4340-scrap, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "50e3f9149b89d16d" }
 - { record: stock.st4340-tb-100x3, at: "2026-10-06T02:03:46Z", status: review, summary: "first tracked", sha: "db2eaa0b41d4b261" }

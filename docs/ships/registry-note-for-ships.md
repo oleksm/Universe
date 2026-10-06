@@ -184,3 +184,20 @@ Made: a **honeycomb works** expands the cores, a **panel press** bonds the faces
 sheets (6061 0.5 mm, Ti-6-4 0.4 mm, carbon 0.5 mm) from the finishing line, the cold mill and the
 composites works; all at the Trethi mill, chains closed. design-2's 1,330 m² of deck at 4.3 kg/m²
 is 5.7 t instead of 29.
+
+## 12. Larger nodes (2026-10-06, your ask)
+
+Six more 4340 nodes, form `forging`, code `ST4340-NODE-*`, at the Trethi mill's forging press:
+
+| Key | Kind | Diameter | Wall | Mass |
+|---|---|---|---|---|
+| `stock.st4340-node-250` / `-300` / `-350` | solid forging (MERO-type ball) | 250 / 300 / 350 mm | none | 64 / 111 / 176 kg |
+| `stock.st4340-node-300h` / `-400h` / `-500h` | hollow sphere, two pressed hemispheres welded | 300 / 400 / 500 mm | 12 / 16 / 20 mm | 26 / 62 / 121 kg |
+
+**Rule:** a node is wider than its widest tube by **1.2×** (the MERO ratio, from memory; review), so
+250 mm tubes take the 300 solid or the 300h hollow. **Weighing:** no `size.wall` means solid
+(4340 density as a ball); `size.wall` present means a shell: 4π(d/2)²·wall·ρ·(1 − wall/d).
+Solid for the heavily loaded joints (landing gear roots, engine frames), hollow where mass
+matters; your choice per joint. Figures from memory of MERO KK balls (solid to ~350 mm) and the
+welded hollow spherical joints of large space frames (300–900 mm, walls 8–40 mm); all marked
+review.

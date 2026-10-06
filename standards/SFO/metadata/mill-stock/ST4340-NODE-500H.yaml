@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-node-500h
+  code: ST4340-NODE-500H
+  name: "4340 hollow node 500 mm, 20 mm wall"
+  traded_as: market.metals
+  form: forging
+  temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.5
+  wall: 0.02
+basis:
+  - { of: [size], tier: invented, review: true, note: "A hollow spherical node, two hot-pressed hemispheres welded, wall 20 mm, as the welded hollow spherical joints of large space frames (the Chinese JGJ 7 practice, from memory: spheres 300–900 mm, walls 8–40 mm): about 118 kg against 514 solid. Review." }
