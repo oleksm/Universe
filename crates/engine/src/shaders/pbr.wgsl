@@ -15,7 +15,20 @@ struct Globals {
     look2: vec4<f32>,
     // The tight cascade round what's looked at; x: a texel of it (metres), y: in use.
     shadow_tight: mat4x4<f32>,
+    // z: a texel of the ground cascade (metres), w: in use.
     shadow2: vec4<f32>,
+    // (Not used here; held to renderer.rs's layout.)
+    env_sun: vec4<f32>,
+    env_world: vec4<f32>,
+    env_world_color: vec4<f32>,
+    env_mode: vec4<f32>,
+    env_sky: vec4<f32>,
+    view: vec4<f32>,
+    inv_view_proj: mat4x4<f32>,
+    world_at: vec4<f32>,
+    world_to_body: mat4x4<f32>,
+    // The ground cascade: the ground's patches alone, tens of kilometres round the eye.
+    shadow_ground: mat4x4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -90,6 +103,27 @@ fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
     if (g.shadow.z == 0.0) {
         return 1.0;
     }
+    return sunlit_near(p, n) * sunlit_ground(p, n);
+}
+
+// What the ground cascade says: the shadows of mountains, kilometres long.
+// (Its texels are coarse: the ground offsets further along its normal.)
+fn sunlit_ground(p: vec3<f32>, n: vec3<f32>) -> f32 {
+    if (g.shadow2.w == 0.0) {
+        return 1.0;
+    }
+    let s = g.shadow_ground * vec4<f32>(p + n * g.shadow2.z * 2.5, 1.0);
+    let c = vec2<f32>(s.x * 0.5 + 0.5, 0.5 - s.y * 0.5);
+    if (all(c > vec2<f32>(0.0)) && all(c < vec2<f32>(1.0)) && s.z > 0.0 && s.z < 1.0) {
+        // (Faded out toward the box's edge, so its end isn't a line.)
+        let edge = min(min(c.x, 1.0 - c.x), min(c.y, 1.0 - c.y));
+        return mix(1.0, pcf(c, 3, s.z), smoothstep(0.0, 0.1, edge));
+    }
+    return 1.0;
+}
+
+// What the fine cascades say (what casts near the eye: ships, stations, rocks).
+fn sunlit_near(p: vec3<f32>, n: vec3<f32>) -> f32 {
     if (g.shadow2.y > 0.0) {
         let tight = g.shadow_tight * vec4<f32>(p + n * g.shadow2.x * 1.5, 1.0);
         let c = vec2<f32>(tight.x * 0.5 + 0.5, 0.5 - tight.y * 0.5);
