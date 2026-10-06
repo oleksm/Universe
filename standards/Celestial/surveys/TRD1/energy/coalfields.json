@@ -1,0 +1,803 @@
+[
+ {
+  "id": "TRD1-CF001",
+  "lon": 136.19756,
+  "lat": -35.68054,
+  "coal_mt": 4859946,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 438168
+ },
+ {
+  "id": "TRD1-CF002",
+  "lon": 94.29313,
+  "lat": -51.2521,
+  "coal_mt": 2766573,
+  "rank": "lignite",
+  "ro_pct": 0.36,
+  "area_km2": 139101
+ },
+ {
+  "id": "TRD1-CF003",
+  "lon": -107.46313,
+  "lat": 23.58396,
+  "coal_mt": 2152490,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 111281
+ },
+ {
+  "id": "TRD1-CF004",
+  "lon": -96.79452,
+  "lat": -5.20992,
+  "coal_mt": 1690032,
+  "rank": "lignite",
+  "ro_pct": 0.36,
+  "area_km2": 48685
+ },
+ {
+  "id": "TRD1-CF005",
+  "lon": 142.01188,
+  "lat": -29.80261,
+  "coal_mt": 986394,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.51,
+  "area_km2": 83461
+ },
+ {
+  "id": "TRD1-CF006",
+  "lon": -104.36898,
+  "lat": 13.90681,
+  "coal_mt": 900282,
+  "rank": "lignite",
+  "ro_pct": 0.35,
+  "area_km2": 55640
+ },
+ {
+  "id": "TRD1-CF007",
+  "lon": 83.93553,
+  "lat": -32.3012,
+  "coal_mt": 736752,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 62595
+ },
+ {
+  "id": "TRD1-CF008",
+  "lon": -106.21012,
+  "lat": 5.71391,
+  "coal_mt": 690540,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 55640
+ },
+ {
+  "id": "TRD1-CF009",
+  "lon": 88.9238,
+  "lat": 28.06455,
+  "coal_mt": 673173,
+  "rank": "lignite",
+  "ro_pct": 0.3,
+  "area_km2": 48685
+ },
+ {
+  "id": "TRD1-CF010",
+  "lon": -107.04759,
+  "lat": 17.28407,
+  "coal_mt": 642369,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF011",
+  "lon": 125.3964,
+  "lat": -35.39299,
+  "coal_mt": 590376,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 76505
+ },
+ {
+  "id": "TRD1-CF012",
+  "lon": 105.32519,
+  "lat": 13.52785,
+  "coal_mt": 520812,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 34775
+ },
+ {
+  "id": "TRD1-CF013",
+  "lon": -95.74415,
+  "lat": -44.93288,
+  "coal_mt": 498401,
+  "rank": "lignite",
+  "ro_pct": 0.27,
+  "area_km2": 48685
+ },
+ {
+  "id": "TRD1-CF014",
+  "lon": 47.75035,
+  "lat": 54.6532,
+  "coal_mt": 475142,
+  "rank": "bituminous",
+  "ro_pct": 0.94,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF015",
+  "lon": -118.25136,
+  "lat": 33.75817,
+  "coal_mt": 461597,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.43,
+  "area_km2": 34775
+ },
+ {
+  "id": "TRD1-CF016",
+  "lon": -104.87014,
+  "lat": 2.38849,
+  "coal_mt": 443223,
+  "rank": "lignite",
+  "ro_pct": 0.3,
+  "area_km2": 34775
+ },
+ {
+  "id": "TRD1-CF017",
+  "lon": 176.47286,
+  "lat": 29.93254,
+  "coal_mt": 403577,
+  "rank": "lignite",
+  "ro_pct": 0.28,
+  "area_km2": 20865
+ },
+ {
+  "id": "TRD1-CF018",
+  "lon": -101.23673,
+  "lat": 10.54333,
+  "coal_mt": 315345,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.53,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF019",
+  "lon": -102.11222,
+  "lat": -0.71448,
+  "coal_mt": 286547,
+  "rank": "lignite",
+  "ro_pct": 0.28,
+  "area_km2": 48685
+ },
+ {
+  "id": "TRD1-CF020",
+  "lon": 77.30263,
+  "lat": -36.53892,
+  "coal_mt": 274285,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.58,
+  "area_km2": 34775
+ },
+ {
+  "id": "TRD1-CF021",
+  "lon": 77.27229,
+  "lat": 10.59306,
+  "coal_mt": 247413,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 34775
+ },
+ {
+  "id": "TRD1-CF022",
+  "lon": 161.23075,
+  "lat": -43.99475,
+  "coal_mt": 241016,
+  "rank": "lignite",
+  "ro_pct": 0.3,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF023",
+  "lon": 137.73487,
+  "lat": -29.77232,
+  "coal_mt": 221380,
+  "rank": "lignite",
+  "ro_pct": 0.4,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF024",
+  "lon": 107.67693,
+  "lat": -32.2065,
+  "coal_mt": 216634,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF025",
+  "lon": -140.21478,
+  "lat": 35.21789,
+  "coal_mt": 205425,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF026",
+  "lon": -33.15195,
+  "lat": -12.8067,
+  "coal_mt": 198000,
+  "rank": "lignite",
+  "ro_pct": 0.34,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF027",
+  "lon": -13.47638,
+  "lat": 14.1343,
+  "coal_mt": 194700,
+  "rank": "lignite",
+  "ro_pct": 0.28,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF028",
+  "lon": -68.69477,
+  "lat": -47.95663,
+  "coal_mt": 173855,
+  "rank": "lignite",
+  "ro_pct": 0.36,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF029",
+  "lon": -67.74005,
+  "lat": -49.79268,
+  "coal_mt": 173855,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.47,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF030",
+  "lon": -13.67091,
+  "lat": 10.79015,
+  "coal_mt": 165263,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.41,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF031",
+  "lon": -71.01071,
+  "lat": -49.65521,
+  "coal_mt": 164151,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.55,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF032",
+  "lon": -163.4893,
+  "lat": 39.99042,
+  "coal_mt": 157571,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF033",
+  "lon": 97.96605,
+  "lat": 22.02263,
+  "coal_mt": 154643,
+  "rank": "lignite",
+  "ro_pct": 0.31,
+  "area_km2": 20865
+ },
+ {
+  "id": "TRD1-CF034",
+  "lon": 153.71476,
+  "lat": -23.37827,
+  "coal_mt": 147931,
+  "rank": "lignite",
+  "ro_pct": 0.27,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF035",
+  "lon": -107.00941,
+  "lat": 11.10237,
+  "coal_mt": 141387,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF036",
+  "lon": -22.35512,
+  "lat": 12.21543,
+  "coal_mt": 139007,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF037",
+  "lon": -57.15703,
+  "lat": -57.81996,
+  "coal_mt": 138480,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.44,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF038",
+  "lon": -153.68774,
+  "lat": -14.33184,
+  "coal_mt": 134898,
+  "rank": "lignite",
+  "ro_pct": 0.31,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF039",
+  "lon": 144.65786,
+  "lat": -28.04809,
+  "coal_mt": 132970,
+  "rank": "lignite",
+  "ro_pct": 0.27,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF040",
+  "lon": 98.53118,
+  "lat": -50.50567,
+  "coal_mt": 130322,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.42,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF041",
+  "lon": 84.28461,
+  "lat": -41.6526,
+  "coal_mt": 129094,
+  "rank": "semi-anthracite",
+  "ro_pct": 1.77,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF042",
+  "lon": -46.11027,
+  "lat": -12.89381,
+  "coal_mt": 128906,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.5,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF043",
+  "lon": -35.38429,
+  "lat": -35.95061,
+  "coal_mt": 125715,
+  "rank": "lignite",
+  "ro_pct": 0.34,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF044",
+  "lon": -91.74,
+  "lat": -35.97361,
+  "coal_mt": 120974,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF045",
+  "lon": -90.35805,
+  "lat": -36.80278,
+  "coal_mt": 120974,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF046",
+  "lon": 163.67897,
+  "lat": -43.05205,
+  "coal_mt": 120508,
+  "rank": "lignite",
+  "ro_pct": 0.3,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF047",
+  "lon": -63.18188,
+  "lat": -19.66302,
+  "coal_mt": 120405,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 27820
+ },
+ {
+  "id": "TRD1-CF048",
+  "lon": 95.04908,
+  "lat": 22.60349,
+  "coal_mt": 117689,
+  "rank": "lignite",
+  "ro_pct": 0.29,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF049",
+  "lon": -57.42126,
+  "lat": -56.2149,
+  "coal_mt": 114235,
+  "rank": "lignite",
+  "ro_pct": 0.35,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF050",
+  "lon": -138.50659,
+  "lat": 37.90743,
+  "coal_mt": 103454,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.41,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF051",
+  "lon": 136.66667,
+  "lat": -31.3399,
+  "coal_mt": 102989,
+  "rank": "lignite",
+  "ro_pct": 0.35,
+  "area_km2": 20865
+ },
+ {
+  "id": "TRD1-CF052",
+  "lon": -140.60332,
+  "lat": 27.56389,
+  "coal_mt": 101971,
+  "rank": "lignite",
+  "ro_pct": 0.37,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF053",
+  "lon": -95.87115,
+  "lat": -55.70144,
+  "coal_mt": 98901,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF054",
+  "lon": 91.36096,
+  "lat": 27.45246,
+  "coal_mt": 98768,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF055",
+  "lon": -118.18055,
+  "lat": 36.82246,
+  "coal_mt": 98188,
+  "rank": "lignite",
+  "ro_pct": 0.28,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF056",
+  "lon": -116.37155,
+  "lat": 36.66337,
+  "coal_mt": 98188,
+  "rank": "lignite",
+  "ro_pct": 0.27,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF057",
+  "lon": -13.44549,
+  "lat": 16.05068,
+  "coal_mt": 97350,
+  "rank": "lignite",
+  "ro_pct": 0.29,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF058",
+  "lon": -29.8749,
+  "lat": -0.10385,
+  "coal_mt": 97039,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF059",
+  "lon": -103.93397,
+  "lat": 29.4894,
+  "coal_mt": 95906,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF060",
+  "lon": -123.90998,
+  "lat": 46.5344,
+  "coal_mt": 91899,
+  "rank": "lignite",
+  "ro_pct": 0.34,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF061",
+  "lon": 89.9442,
+  "lat": 5.71468,
+  "coal_mt": 90694,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 20865
+ },
+ {
+  "id": "TRD1-CF062",
+  "lon": -107.46745,
+  "lat": 8.67575,
+  "coal_mt": 89938,
+  "rank": "lignite",
+  "ro_pct": 0.26,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF063",
+  "lon": -25.57876,
+  "lat": 1.30388,
+  "coal_mt": 83840,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 20865
+ },
+ {
+  "id": "TRD1-CF064",
+  "lon": 111.60652,
+  "lat": -30.27743,
+  "coal_mt": 83119,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF065",
+  "lon": 142.35951,
+  "lat": -32.82074,
+  "coal_mt": 79195,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.43,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF066",
+  "lon": -104.77336,
+  "lat": 11.52307,
+  "coal_mt": 70195,
+  "rank": "lignite",
+  "ro_pct": 0.34,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF067",
+  "lon": -62.57321,
+  "lat": -10.1094,
+  "coal_mt": 67454,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF068",
+  "lon": 100.34366,
+  "lat": 22.66159,
+  "coal_mt": 66361,
+  "rank": "lignite",
+  "ro_pct": 0.31,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF069",
+  "lon": 130.91535,
+  "lat": -34.24706,
+  "coal_mt": 63596,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF070",
+  "lon": 74.68703,
+  "lat": 8.378,
+  "coal_mt": 62269,
+  "rank": "lignite",
+  "ro_pct": 0.29,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF071",
+  "lon": -44.59611,
+  "lat": -14.02897,
+  "coal_mt": 58693,
+  "rank": "sub-bituminous",
+  "ro_pct": 0.51,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF072",
+  "lon": 161.3274,
+  "lat": -22.10391,
+  "coal_mt": 57349,
+  "rank": "semi-anthracite",
+  "ro_pct": 1.62,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF073",
+  "lon": -60.57467,
+  "lat": -20.00868,
+  "coal_mt": 43662,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF074",
+  "lon": -96.15241,
+  "lat": -10.31171,
+  "coal_mt": 43317,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 13910
+ },
+ {
+  "id": "TRD1-CF075",
+  "lon": 86.52413,
+  "lat": 30.11833,
+  "coal_mt": 39955,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF076",
+  "lon": -42.50848,
+  "lat": -32.24478,
+  "coal_mt": 37717,
+  "rank": "lignite",
+  "ro_pct": 0.34,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF077",
+  "lon": -133.51573,
+  "lat": 8.94652,
+  "coal_mt": 32442,
+  "rank": "lignite",
+  "ro_pct": 0.37,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF078",
+  "lon": -61.42877,
+  "lat": -21.16239,
+  "coal_mt": 32184,
+  "rank": "lignite",
+  "ro_pct": 0.35,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF079",
+  "lon": -59.61977,
+  "lat": -21.29916,
+  "coal_mt": 32150,
+  "rank": "lignite",
+  "ro_pct": 0.33,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF080",
+  "lon": -39.05359,
+  "lat": -34.24013,
+  "coal_mt": 27216,
+  "rank": "lignite",
+  "ro_pct": 0.35,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF081",
+  "lon": 125.52686,
+  "lat": -41.3466,
+  "coal_mt": 24956,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF082",
+  "lon": 125.26293,
+  "lat": -40.19286,
+  "coal_mt": 24047,
+  "rank": "lignite",
+  "ro_pct": 0.32,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF083",
+  "lon": -37.67164,
+  "lat": -35.0515,
+  "coal_mt": 23723,
+  "rank": "lignite",
+  "ro_pct": 0.36,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF084",
+  "lon": -101.91773,
+  "lat": -17.83263,
+  "coal_mt": 23591,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF085",
+  "lon": -101.06364,
+  "lat": -16.70161,
+  "coal_mt": 22392,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF086",
+  "lon": 146.99472,
+  "lat": -30.19453,
+  "coal_mt": 21225,
+  "rank": "lignite",
+  "ro_pct": 0.27,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF087",
+  "lon": -54.06816,
+  "lat": -13.9286,
+  "coal_mt": 20697,
+  "rank": "lignite",
+  "ro_pct": 0.31,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF088",
+  "lon": -96.03989,
+  "lat": -7.72176,
+  "coal_mt": 20077,
+  "rank": "lignite",
+  "ro_pct": 0.25,
+  "area_km2": 6955
+ },
+ {
+  "id": "TRD1-CF089",
+  "lon": -160.90556,
+  "lat": 40.30922,
+  "coal_mt": 19092,
+  "rank": "lignite",
+  "ro_pct": 0.31,
+  "area_km2": 6955
+ }
+]

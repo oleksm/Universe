@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is natural gas as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.natural-gas-bulk
+  traded_as: market.fuel
+  code: NATURAL-GAS-BULK
+  name: "Natural gas, in bulk"
+  form: bulk
+made_from:
+  - item: good.natural-gas

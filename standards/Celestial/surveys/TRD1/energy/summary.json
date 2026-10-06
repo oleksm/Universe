@@ -1,0 +1,23 @@
+{
+ "world_id": "TRD1",
+ "basins": 282,
+ "oil_fields": 46672,
+ "gas_fields": 20477,
+ "coalfields": 89,
+ "oil_in_place_mmbbl": 7466468,
+ "gas_in_place_bcf": 31814388,
+ "coal_mt": 27391059,
+ "units": {
+  "oil": "million barrels in place",
+  "gas": "billion cubic feet in place",
+  "coal": "million tonnes within 1,800 m"
+ },
+ "model": {
+  "accumulate": 0.0045,
+  "preserve_myr": 300.0,
+  "hi": [
+   0.45,
+   0.15
+  ]
+ }
+}

@@ -44,7 +44,7 @@ The import checks `radius_m` against the record's 6,654,110 m within 1%: a world
 is refused. Our vocabulary import is current with your `docs/vocabulary.json` (its hash is in your
 manifest; if you have changed it since, tell me and I re-import before you run).
 
-Then I run `python3 tools/standards/survey_import.py <folder> body.treistun.treistun-d`, Harvest
+Then I run `python3 tools/standards/world_install.py <folder> body.treistun.treistun-d`, Harvest
 becomes `baked`, and the game reads your rock map, deposits and districts from the registry.
 
 ## After Harvest

@@ -903,7 +903,7 @@ have put the question to the user and changed neither.
   what a refit may take; a hull's lines and openings at a slot are the mount's figures.
 
 **Baked worlds (the user, 2026-10-06).** The planet simulation grows a world once and writes a
-read-only survey; the registry imports it (`tools/standards/survey_import.py`) and the body's
+read-only survey; the registry imports it (`tools/standards/world_install.py`) and the body's
 record becomes `provenance: baked` with a `survey` section pointing at
 `standards/Celestial/surveys/<world_id>/`. **The game reads the survey's files from there, by
 reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospecting reveals by
@@ -1061,3 +1061,15 @@ every run with its tonnage, flight time and cadence.
    or three. Say if you want them sited as facilities now and I place them.
    (One engine touch with this: the facility's `stock` moved to a shared definition that rigs use
    too, so the generated type is `StockItem`, not `FacilityStockItem`; `economy.rs` reads it.)
+
+**Harvest's three packages (2026-10-06).** `tools/standards/world_install.py <world folder>` now
+installs a world whole: the survey and the **energy package** (copied to
+`standards/Celestial/surveys/TRD1/energy/`: 282 petroleum basins, 46,672 oil and 20,477 gas fields,
+89 coalfields; `energy` on the record with in-place amounts in SI) and the **surface bake**
+(0.71 GB, not copied: `bake` on the record points at `worlds/TRD1/surface/v1` in a worlds store,
+with the manifest's hash; the manifest and latest.json lie beside the survey). **For the game:** a
+worlds-store root to configure (today the lab's `~/git/planet-sim/out/`); fetch the bake's files by
+the manifest; wells and the coal mine sit on a field's or coalfield's permanent id. New: deposit
+types oil field, gas field, coalfield; goods crude oil, natural gas, coal (stock `*-bulk`,
+market.fuel); modules oil-well, gas-well, coal-mine (`from: place`). Harvest's record also carries
+its life timeline and highest peak (8,920 m).

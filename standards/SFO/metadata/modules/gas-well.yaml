@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.gas-well
+  name: "Gas well"
+  step: "Draw gas"
+  description: "A drilled hole to a gas field with its wellhead, dehydrator and compressor. It is set on a field (an energy-package id)."
+physical:
+  length: 40
+  width: 30
+  height: 20
+site: open sky
+staff:
+  - { profession: profession.plant-operator, count: 3 }
+  - { profession: profession.technician, count: 1 }
+recipes:
+  - makes: good.natural-gas
+    does: "Gas drawn from the reservoir, dried and compressed into the line."
+    inputs:
+      - { item: good.natural-gas, quantity: 1.0, from: place }
+    rate: 3.0
+    power: 1500000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A well of about 10 million cubic feet a day (3 kg/s) with 1.5 MW of compression: typical figures from memory. Not sourced." }

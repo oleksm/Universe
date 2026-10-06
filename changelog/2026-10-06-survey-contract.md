@@ -2,7 +2,7 @@
 
 - **A body can be baked:** `provenance: baked` (dictionary), a `survey` section on the body schema
   (world ID, folder, manifest hash, simulator commit, headline figures, the endowment in kg).
-- **`tools/standards/survey_import.py`:** checks a simulation's survey against its manifest, copies it
+- **`tools/standards/world_install.py`:** checks a simulation's survey against its manifest, copies it
   read-only to `standards/Celestial/surveys/<world_id>/`, points the body at it. Refuses a world not
   grown from the record (radius), a different survey under a known ID, or re-baking without
   `--replace`.
@@ -28,3 +28,12 @@
 - **Harvest baked:** world TRD1 imported; the record points at `standards/Celestial/surveys/TRD1/`.
 - **Ring crossing:** a step ending within 1 mm of a gate's plane crosses it (the ring's acceleration
   over a step put the carried start on the wrong side; the gate test hit it exactly).
+
+# 2026-10-06, later: the world's three packages
+
+- `world_install.py` (was `survey_import.py`) takes the world folder: survey and energy copied,
+  the surface bake pointed at in a worlds store (`bake` on the record). Harvest has its energy
+  package (46,672 oil and 20,477 gas fields in 282 basins, 89 coalfields) and its surface v1.
+- Deposit types oil field, gas field, coalfield (formed by burial); goods crude oil, natural gas,
+  coal with bulk stock; modules oil well, gas well, coal mine.
+- The body's life timeline (`life.began` and its steps) and `surface.highest` from the run.

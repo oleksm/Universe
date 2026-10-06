@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.coal-mine
+  name: "Coal mine"
+  step: "Dig coal"
+  description: "A strip pit on a shallow seam, or a shaft and longwall on a deep one: coal cut from the seam and brought up, the rock between left or moved. It is set on a coalfield (an energy-package id)."
+physical:
+  length: 2000
+  width: 1000
+  height: 100
+site: open sky
+staff:
+  - { profession: profession.miner, count: 16 }
+  - { profession: profession.plant-operator, count: 2 }
+  - { profession: profession.engineer, count: 1 }
+recipes:
+  - makes: good.coal
+    does: "Coal cut from the seam and hauled out; the rock over and between it moved aside."
+    inputs:
+      - { item: good.coal, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 1.5, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 1.5 }
+    rate: 100.0
+    power: 20000000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A mine of about 3 million tonnes a year (100 kg/s), 1.5 t of rock moved for each tonne of coal, 20 MW: typical figures from memory. Not sourced." }
