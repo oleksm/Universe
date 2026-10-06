@@ -95,6 +95,16 @@ impl Terrain {
         self.baked = Some(heights);
     }
 
+    /// The world's true colour, if its bake has one (read now; see `worlds::Heights::colour`).
+    pub fn colour(&self) -> Option<crate::worlds::Equirect> {
+        self.baked.as_ref()?.colour()
+    }
+
+    /// Image `name` of the world's bake, as RGBA8 (see `worlds::Heights::image`).
+    pub fn bake_image(&self, name: &str) -> Option<(usize, usize, Vec<u8>)> {
+        self.baked.as_ref()?.image(name)
+    }
+
     /// Is the ground the planet simulation's?
     pub fn baked(&self) -> bool {
         self.baked.is_some()

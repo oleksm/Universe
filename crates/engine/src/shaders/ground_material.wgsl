@@ -11,18 +11,19 @@
 // linear-light albedo for land (the sea is the engine's own).
 //
 // Map encodings (planet-sim-surface/1, docs/survey-format.md in planet-sim):
-//   globe_ground.jpg  sRGB; linearise before passing `ground` (pow 2.2 is what the viewer does)
+//   globe_ground.jpg  sRGB texture: sampled, it is linear already (the engine passes it so)
 //   climate.png       R: year-mean temperature at sea level, °C = R·100 − 50 (R in 0…1)
 //                     G: rain, m a year = G·4
 //   rockid.png        R: rock unit index × 8 (0…255, nearest-sampled: unit = round(R·255 / 8))
 //   rv_*.png          below the rivers (rows 1025–1537, cols 0–512, half resolution): wetness (R),
 //                     scree (G), bare rock (B), each 0…1
 //
-// Status: draft on `planet`, not yet bound; written against fs_mesh in scene.wgsl at 3a004ca2,
-// waiting on the integrator's slot (full-resolution maps bound to the ground shader).
+// Called by fs_mesh (scene.wgsl, which this file is prepended to) where a world's maps are bound,
+// over land, faded in under a pixel of ~2.5 km (the integrator's slot, 88d74e01).
 
 struct GroundIn {
-    // The world's ground colour here (linear light): plants and soil, no rock, no snow.
+    // The world's ground colour here (linear light, from its sRGB texture): plants and soil, no
+    // rock, no snow.
     ground: vec3<f32>,
     // The same read softened (a few texels' worth: a lower mip), for where the 600 m surface
     // fields take over the local pattern; pass `ground` again if there's no such read.
