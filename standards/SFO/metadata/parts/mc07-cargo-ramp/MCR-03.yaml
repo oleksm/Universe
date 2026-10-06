@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+# Measured from the model (assets/models/mc07.glb), as it stands there: gear down, ramp lowered,
+# clamps and lasers stowed, bay doors shut. Its mass is its length in the stock
+# it is cut from.
+identity:
+  key: part.mcr-03
+  code: MCR-03
+  name: "Ram rod"
+  revision: draft
+  drawing: "assets/models/mc07.glb: CargoRam_L_Rod, CargoRam_R_Rod"
+physical:
+  mass: 276
+  length: 1.02
+  width: 0.4
+  height: 3.11
+  shock_limit: 490.3325
+shape:
+  surface_area: 2.7
+made_from:
+  - item: stock.st4340-bar-120
+    quantity: 331.1546533
+making:
+  module: module.machining-centre
+fit:
+  count: 2
+basis:
+  - { of: [physical.length, physical.width, physical.height, shape, fit], tier: derived, note: "Measured from the model." }
+  - { of: [physical.mass], tier: derived, note: "Its length in the stock it is cut from." }
+  - { of: [made_from], tier: invented, note: "The allowance for what is cut or machined away was chosen." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

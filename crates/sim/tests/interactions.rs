@@ -12,7 +12,7 @@ use universe_sim::{Controls, NavTarget, ShipState, Universe};
 fn bench(n: usize) -> Universe {
     let mut u = Universe::new(1984);
     // (In flight, not parked on the home station's deck.)
-    u.respawn();
+    u.start_in_flight();
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     u.events.clear();
     u.spawn_settlers(n, 1);
@@ -162,11 +162,18 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!((u.credits() - (before - paid)).abs() < 1e-6);
     assert_eq!(u.hold(), vec![(item, 3)]);
     assert!((u.ship.cargo - 3.0 * u.world.goods[item].mass).abs() < 1e-6, "the core's mass follows the hold");
-    // Both legs journalled, caused by our request.
-    let legs: Vec<_> = u.ledger.journal.iter().rev().take(2).collect();
+    // Both legs journalled, and the seller's duty to the administration (Treistun's law: 2%), caused by our request.
+    let legs: Vec<_> = u.ledger.journal.iter().rev().take(3).collect();
     assert!(legs.iter().all(|e| matches!(e.cause, universe_sim::protocol::Cause::Message { sender: 0, .. })), "{legs:?}");
     assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(0)));
     assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(0)));
+    assert!(legs.iter().any(|e| e.to == Party::Administration(home) && (e.amount - 0.02 * paid).abs() < 1e-6), "the duty: {legs:?}");
+    // The land rate: a day's levy on every owned lot, to the administration.
+    let before = u.ledger.credits(Party::Administration(home));
+    let now = u.world.time;
+    u.land.levy(&mut u.ledger, now, u.tick);
+    u.land.levy(&mut u.ledger, now + 86_400.0, u.tick);
+    assert!(u.ledger.credits(Party::Administration(home)) > before, "the land rate levied");
     assert!(u.ledger.balanced(), "nothing made or lost");
     // A jolt harder than a part takes (SFO 15) breaks it in the hold; ore takes any jolt.
     let part = u.world.goods.iter().find(|g| g.shock_limit.is_some_and(|l| l < 15.0 * 9.80665)).map(|g| g.id).expect("a part that takes under 15 g");
@@ -214,6 +221,32 @@ fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
     // over the hypernet: not live.
     let v = u.market_view(Facility::Station(station));
     assert!(v.age.is_some_and(|a| a > 0.0), "{:?}", v.age);
+}
+
+/// An outlaw's route: refused at the station (outside Treistun's law), it gives that stop up and
+/// goes on to the next, not asking again and again.
+#[test]
+fn an_outlaw_gives_up_a_stop_that_refuses_it() {
+    let mut u = bench(1);
+    let (sys, pos) = positions(&mut u);
+    let home = u.ship_system;
+    let station = sys.station().unwrap();
+    let t = u.world.time;
+    let c = &mut u.crafts[0];
+    c.ship.state = ShipState::Flying;
+    c.ship.position = pos[station] + DVec3::new(0.0, 0.0, 10_000.0);
+    c.ship.velocity = sys.velocity(station, t);
+    let id = 1; // (craft 0)
+    u.law.outlaw(id as _, home, t + 1e9);
+    {
+        let mut pilots = u.pilots();
+        let r = &mut pilots[0].avionics.route;
+        r.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Station(station) }, universe_sim::Stop { system: home, target: NavTarget::Spaceport(0) }];
+        r.next = 0;
+        r.active = true;
+    }
+    run(&mut u, 2.0, |u| u.pilots()[0].avionics.route.next > 0);
+    assert_eq!(u.pilots()[0].avionics.route.next, 1, "on to the next stop");
 }
 
 /// One settler made a miner (its route: a field of the home system, then the
@@ -421,7 +454,7 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     // Rich: mended whole.
     u.ledger.settle(me, Asset::Credits, 1e6, u.tick, cause);
     assert_eq!(u.repair(universe_sim::PLAYER).unwrap().1, 1.0);
-    // An interceptor lost: the same again, for the excess.
+    // An interceptor lost: the same again, for the insurer's excess (a tenth), parked at the yard.
     let interceptor = content().handle("hull.interceptor").unwrap();
     u.ship.class = interceptor;
     let value = Universe::ship_value(&u.ship);
@@ -430,7 +463,18 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
     assert_eq!(u.ship.class, interceptor);
     assert!((u.credits() - (before - 0.1 * value)).abs() < 1.0, "paid the excess: {} of {before}", u.credits());
+    let at = u.docked_market().map(|f| f.name(&u.ship_system()));
+    assert!(at.as_deref().is_some_and(|n| n.starts_with("Port Trethi")), "delivered at the yard: {at:?}");
+    // Lost as a pirate (fair game for firing on the innocent): refused, a basic ship, nothing paid.
+    u.ship.class = interceptor;
+    let before = u.credits();
+    let now = u.world.time;
+    u.law.declare(universe_sim::PLAYER as _, now + 600.0, now, cause);
+    u.respawn();
+    assert_eq!(u.ship.class, universe_sim::world::ship::starting_hull());
+    assert_eq!(u.credits(), before, "the insurer won't pay a pirate's loss");
     // Broke, lost again: a basic ship.
+    u.ship.class = interceptor;
     u.ledger.settle(me, Asset::Credits, 0.0, u.tick, cause);
     u.respawn();
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);

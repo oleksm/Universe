@@ -104,6 +104,7 @@ impl Universe {
         };
         let system_of = |u: &Self, id: usize| u.ship_by_id(id).map(|s| s.1);
         let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
+        let mut pirates: Vec<universe_services::law::Charge> = Vec::new();
         for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
             for e in events {
                 let index = self.log.len() as u32;
@@ -116,9 +117,16 @@ impl Universe {
                         && r.new
                     {
                         notices.push((r.ship, ShipEvent::Aggressed { until: r.until }));
+                        // (Where the system has a law: charged with piracy.)
+                        if let Some(system) = system_of(self, id).filter(|&s| self.has_law(s)) {
+                            pirates.push(universe_services::law::Charge { ship: r.ship, system, offence: universe_world::registry::Offence::Piracy, time: now, cause: r.cause, against: Some(id as _) });
+                        }
                     }
                 }
             }
+        }
+        for c in pirates {
+            self.charge(c);
         }
         for (ship, notice) in notices {
             match ship {
@@ -187,7 +195,7 @@ mod tests {
         let mut u = Universe::new(1984);
         // (In flight by the home station, not parked on its deck; the respawn
         // settled, a step on, before the lock is taken.)
-        u.respawn();
+        u.start_in_flight();
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
         u.spawn_settlers(1, 1);
         // A settler 3 km ahead, crossing at 40 m/s; we're drifting with it.
@@ -224,6 +232,37 @@ mod tests {
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
+        // Under Treistun's law: piracy for opening fire on it, murder for bringing it down.
+        let charged: Vec<_> = u.law.charges_of(crate::combat::PLAYER as _).map(|c| c.offence).collect();
+        use universe_world::registry::Offence;
+        assert!(charged.contains(&Offence::Piracy) && charged.contains(&Offence::Murder), "{charged:?}");
+        use crate::combat::{craft_id, PLAYER};
+        use universe_world::ShipEvent;
+        // What the law gives: thirty years outside it, a bounty on our head, no one here dealing with us.
+        let (me, sys, now) = (PLAYER as universe_protocol::BodyId, u.ship_system, u.world.time);
+        assert!(u.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
+        let worth = Universe::ship_value(&u.ship);
+        assert!((u.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");
+        assert!(u.barred(PLAYER, sys).is_err());
+        // Brought down by a craft: the bounty is its, from the administration.
+        let hunter = craft_id(0);
+        let before = u.ledger.credits(universe_services::Party::Pilot(hunter));
+        u.log.clear();
+        u.log.push((PLAYER, ShipEvent::Hit { by: hunter, damage: 1.0, hull: 0.0, weapon: true }));
+        u.log.push((PLAYER, ShipEvent::Crashed { body: "GUN".into() }));
+        u.judge(now);
+        assert!((u.ledger.credits(universe_services::Party::Pilot(hunter)) - before - 1.5 * worth).abs() < 1.0, "the bounty paid");
+        assert!(u.law.bounties.is_empty());
+        // Wrecked alone 1,500 km out: no offence. By the station: reckless flying.
+        let reckless = |u: &Universe| u.law.charges_of(me).filter(|c| c.offence == Offence::RecklessFlying).count();
+        u.log.clear();
+        u.log.push((PLAYER, ShipEvent::Crashed { body: "TREISTUN E".into() }));
+        u.judge(now);
+        assert_eq!(reckless(&u), 0, "harming only its pilot");
+        let (sys, positions) = (u.ship_system(), u.world.rails_at(u.ship_system, now));
+        u.ship.position = positions[sys.station().unwrap()] + DVec3::new(0.0, 2_000.0, 0.0);
+        u.judge(now);
+        assert_eq!(reckless(&u), 1, "by the station");
     }
 
 }

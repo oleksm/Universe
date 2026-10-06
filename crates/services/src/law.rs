@@ -1,11 +1,15 @@
-//! The law: who is fair game. Opening fire on a ship that isn't makes the
-//! shooter fair game (aggressed) for `AGGRESSION` seconds; shooting the
-//! aggressed is no crime. The law rules on the core's hit events, in the
-//! order they were logged, and keeps the evidence with every ruling.
+//! The law: who is fair game, and who is charged with what. Opening fire on a
+//! ship that isn't makes the shooter fair game (aggressed) for `AGGRESSION`
+//! seconds; shooting the aggressed is no crime. The law rules on the core's
+//! hit events, in the order they were logged, and keeps the evidence with
+//! every ruling. Where a system's administration has a law
+//! (`world::order::law`), an offence it names is charged (`Charge`), with its
+//! evidence; what its penalties do is the sim's.
 
 use std::collections::HashMap;
 
 use universe_protocol::{BodyId, Cause};
+use universe_world::registry::Offence;
 
 /// How long a ship stays aggressed after hitting one that wasn't (s), where
 /// a holder's law doesn't say: 10 minutes.
@@ -32,12 +36,32 @@ pub struct Ruling {
     pub new: bool,
 }
 
-/// Who's aggressed, until when, and why.
+/// An offence charged against a ship under its system's law.
+#[derive(Clone, Debug, PartialEq)]
+pub struct Charge {
+    pub ship: BodyId,
+    pub system: usize,
+    pub offence: Offence,
+    pub time: f64,
+    /// What it came of (the event logged), and who suffered by it, if anyone.
+    pub cause: Cause,
+    pub against: Option<BodyId>,
+}
+
+/// Who's aggressed, until when, and why; who's charged with what.
 #[derive(Clone, Debug, Default)]
 pub struct Law {
     standing: HashMap<BodyId, Ruling>,
     /// Every ruling made, oldest first (the last `KEEP`).
     pub rulings: Vec<Ruling>,
+    /// Every charge made, oldest first (the last `KEEP`).
+    pub charges: Vec<Charge>,
+    /// When each ship's record was last wiped (a new ship): its charges since are its own.
+    cleared: HashMap<BodyId, f64>,
+    /// Who is outside the law in which system, until when (outlawry is the pilot's, not the ship's).
+    outlaws: HashMap<(BodyId, usize), f64>,
+    /// The bounties on heads, by system: credits to whoever brings the ship down.
+    pub bounties: HashMap<(BodyId, usize), f64>,
 }
 
 /// Rulings kept on record.
@@ -81,9 +105,45 @@ impl Law {
         self.record(Ruling { ship, until, cause, evidence, new: !self.aggressed(ship, now) });
     }
 
-    /// Wipe the record (a new ship, the old one gone).
-    pub fn forget(&mut self, ship: BodyId) {
+    /// Wipe the record (a new ship at `now`, the old one gone). The charges stay on the record.
+    pub fn forget(&mut self, ship: BodyId, now: f64) {
         self.standing.remove(&ship);
+        self.cleared.insert(ship, now);
+    }
+
+    /// Put `ship` outside the law of `system` until `until` (the later, if it already is).
+    pub fn outlaw(&mut self, ship: BodyId, system: usize, until: f64) {
+        let e = self.outlaws.entry((ship, system)).or_insert(until);
+        *e = e.max(until);
+    }
+
+    /// Is `ship` outside the law of `system` at `now`?
+    pub fn outlawed(&self, ship: BodyId, system: usize, now: f64) -> bool {
+        self.outlaws.get(&(ship, system)).is_some_and(|&u| now < u)
+    }
+
+    /// Add `credits` to the bounty `system` has on `ship`.
+    pub fn post_bounty(&mut self, ship: BodyId, system: usize, credits: f64) {
+        *self.bounties.entry((ship, system)).or_default() += credits;
+    }
+
+    /// `ship` brought down: the bounties on it, taken off the books (system, credits).
+    pub fn claim_bounties(&mut self, ship: BodyId) -> Vec<(usize, f64)> {
+        let mine: Vec<(BodyId, usize)> = self.bounties.keys().filter(|k| k.0 == ship).copied().collect();
+        mine.into_iter().filter_map(|k| self.bounties.remove(&k).map(|c| (k.1, c))).collect()
+    }
+
+    /// Charge a ship with an offence.
+    pub fn charge(&mut self, c: Charge) {
+        self.charges.push(c);
+        let excess = self.charges.len().saturating_sub(KEEP);
+        self.charges.drain(..excess);
+    }
+
+    /// The charges against `ship` as it is now (since its record was last wiped).
+    pub fn charges_of(&self, ship: BodyId) -> impl Iterator<Item = &Charge> {
+        let since = self.cleared.get(&ship).copied().unwrap_or(f64::NEG_INFINITY);
+        self.charges.iter().filter(move |c| c.ship == ship && c.time >= since)
     }
 
     fn record(&mut self, r: Ruling) {

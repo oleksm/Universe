@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.coal
+  name: "Coal"
+  kind: fuel
+  description: "Buried plant matter turned to rock: lignite to anthracite. Burned for heat, coked for iron."
+physical:
+  bulk_density: 850
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (the energy package: deposit-type.coalfield). Nothing in the game burns or refines it yet."
+composition:
+  - { part: element.c, share: 0.75 }
+  - { part: element.h, share: 0.05 }
+  - { part: element.o, share: 0.1 }
+  - { part: element.s, share: 0.01 }
+basis:
+  - { of: [composition, physical.bulk_density], tier: invented, review: true, note: "A bituminous coal, ash and water left out: three quarters carbon; stowed at about 850 kg/m3. From memory; review." }

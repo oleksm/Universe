@@ -4,6 +4,7 @@ identity:
   name: "Waste water"
   kind: by-product
   description: "Water that has been used: washed in, flushed, passed through a body. Nearly all of it is still water."
+waste: true
 physical:
   bulk_density: 1000
 basis:

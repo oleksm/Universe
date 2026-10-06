@@ -8,6 +8,10 @@ physical:
   length: 200
   width: 100
   height: 60
+staff:
+  - { profession: profession.chemist, count: 2 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: stock.deuterium-liq
     does: "Water runs down hot and cold towers against hydrogen sulphide, which carries the heavy hydrogen from one to the other; the heavy water gathered is split, and the deuterium chilled to a liquid."
@@ -21,3 +25,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_needs.json", note: "2.8 MWh for each kg of heavy water by exchange with hydrogen sulphide (a Soviet plant; other ways take 1 to 150), so 13.9 MWh for each kg of deuterium. Splitting the heavy water and chilling the gas are not counted." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "The water used up, not the water put through: 4.97 kg of heavy water hold 1 kg of deuterium and 3.97 of oxygen. 1.7 million kg of water pass through for each kg won (340,000 to one of heavy water, at Bruce in Canada) and go back a little lighter. That the same water could be sifted for ever is not held against it here: to be put right when water carries what it is made of." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. It feeds twenty 400 MW power stations. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

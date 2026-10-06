@@ -8,6 +8,10 @@ physical:
   length: 150
   width: 60
   height: 20
+staff:
+  - { profession: profession.chemist, count: 2 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: good.carbon
     does: "Methane is split in a plasma: the carbon falls out as powder, the hydrogen goes on."
@@ -37,3 +41,4 @@ basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_chemicals.json", note: "Methane is three parts carbon to one of hydrogen. Real anodes are 60 to 70% petroleum coke, 14 to 17% pitch and the rest old anodes, and electrodes are needle coke and pitch: with no oil, all of it is taken as this carbon, and the 5% lost in baking (5 to 10) as gas." }
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_chemicals.json", note: "25 kWh a kg of hydrogen to split methane in a plasma (10 to 30). Baking, up to 11 GJ a tonne; turning to graphite, 9 to 20 more." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

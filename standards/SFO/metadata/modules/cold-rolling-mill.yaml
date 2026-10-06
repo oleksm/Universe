@@ -8,6 +8,10 @@ physical:
   length: 150
   width: 40
   height: 15
+staff:
+  - { profession: profession.machinist, count: 4 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: good.cold-rolled-strip-6061
     does: "The strip is rolled again cold, to its final thickness."
@@ -21,3 +25,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }

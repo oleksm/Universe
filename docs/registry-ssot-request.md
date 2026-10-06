@@ -897,3 +897,38 @@ price, to the administration. Holding a tube open is not built, because of the f
 3.65 GW to hold a 3 ly tube open (24 GW at 20 ly), about 88,000 MWh a day, while a gate's record
 names one fusion power station (400 MW). Either each gate needs 9 to 60 stations, or `TUBE_HOLD`
 (the opening over about 0.5% a month) is far off, or the opening energy is. Which is meant?
+
+## Fleets for the NPC rework (2026-10-06)
+
+The game is replacing its role dice with your fleets (`org.*.fleet`, `settlement.independents`,
+the census). Decided with the user: no NPC respawns, a lost ship is ordered and brought in, pilots
+come out of the home's census; haulers trade for profit until ports have their own transport.
+What the game needs:
+
+1. **A typed job on each fleet line.** `does` is prose; the operator needs to know which program to
+   run. Asked shape: `work: hauling | passage | mining | patrol | raiding` (an enum in
+   `dictionary.schema.yaml`), `does` kept as the note. Today only the org's `kind`/`business`
+   could say it, and Cormorant (a maker) has neither for its prospectors.
+2. **Shikra Hold's dock.** Its raiders are based at `rig.biraidim.shikra-hold`, in the asteroid
+   `body.biraidim.shikra`. Where do ships come in (a dock cut into the rock: on its surface, at a
+   point the game can use?), and does it trade (a market that "does not ask": what it buys, and
+   from what stock)? With neither, the game docks its ships on the rock's surface and gives it no
+   market.
+3. **A replacement's price and delivery time.** "Ordered and brought in": the hull's price is on
+   its record; the time a hull takes to come through the gate is not. Asked: a figure on
+   `seeding.traffic` (or the hull) for how long an ordered hull takes to arrive, and who sells it.
+4. **Training.** "A school trains a pilot in `profession.training.time`": is there a school in the
+   census, and how many pilots it turns out a year? Until then a pilot lost is simply one fewer.
+
+## Harvest's ground is in the game (2026-10-06)
+
+The game reads Harvest's bake now (its heights for collision and drawing) and puts every port
+where its record's `position` says (latitude, longitude: north +Y, longitude `atan2(−z, x)`, the
+same coordinates as the survey; the bake's highest peak reads 8,920 m at its listed spot).
+
+1. **Port Eikir is at sea.** Its record position (45.649° N, 165.925° E) lies over 5,866 m of
+   water on the grown Harvest (the rock map says sea there too). Its position came from the old
+   seed's random spot. It wants a site on Harvest's land: a granary of 60,000 people, so temperate
+   farmland near a coast. The game levels its plain to sea level until then.
+2. **For the lab:** Harvest's oil fields add up to 1.207e12 m³ in place; the basins' total (the
+   figure on the record) is 1.187e12, 1.7% less.

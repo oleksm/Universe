@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
+identity:
+  key: rock-unit.high-titanium-basalt
+  name: "High-titanium basalt"
+  about: "Lava rich in ilmenite: titanium and iron, and oxygen to be had from it."
+sim: { key: high_ti_basalt }
+made_by: [plume]
+physical:
+  density: 3250.0
+  magnetic_susceptibility: 0.03
+  erodibility: 0.7
+also:
+  - "ilmenite for titanium, iron and oxygen (hydrogen reduction) (7 to 13 TiO2 %)"
+  - "regolith oxygen for oxygen by reduction (40 to 43 O %)"
+basis:
+  - { of: [sim, physical, also], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }

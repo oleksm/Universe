@@ -52,7 +52,7 @@ fn the_cockpit_flies_the_ship_from_the_client_side() {
     use universe_sim::engine::{Command, EngineHandle};
     let mut u = Universe::new(1984);
     // (In flight, not parked on the home station's deck; the respawn settled.)
-    u.respawn();
+    u.start_in_flight();
     tick(&mut u);
     u.ship.position += DVec3::new(0.0, 0.0, 1.0e6);
     let station = u.ship_system().station().unwrap();

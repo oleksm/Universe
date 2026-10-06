@@ -18,10 +18,13 @@ capacity:
   hold: 1200000
 model: assets/models/mc07.glb
 slots:
-  - { name: gear_0, kind: gear, size: 2, mount: mount.gear-s2 }
-  - { name: gear_1, kind: gear, size: 2, mount: mount.gear-s2 }
-  - { name: gear_2, kind: gear, size: 2, mount: mount.gear-s2 }
-  - { name: gear_3, kind: gear, size: 2, mount: mount.gear-s2 }
+  - { name: gear_0, kind: gear, size: 3, mount: mount.gear-s3 }
+  - { name: gear_1, kind: gear, size: 3, mount: mount.gear-s3 }
+  - { name: gear_2, kind: gear, size: 3, mount: mount.gear-s3 }
+  - { name: gear_3, kind: gear, size: 3, mount: mount.gear-s3 }
+  - { name: cargo_ramp, kind: access, size: 3, mount: mount.access-s3 }
+  - { name: clamp_fwd, kind: access, size: 2, mount: mount.access-s2 }
+  - { name: clamp_aft, kind: access, size: 2, mount: mount.access-s2 }
   - { name: power, kind: power, size: 3, mount: mount.power-s3 }
   - { name: drive, kind: drive, size: 3, mount: mount.drive-s3 }
   - { name: thrusters, kind: thrusters, size: 3, mount: mount.thrusters-s3 }
@@ -35,8 +38,8 @@ slots:
   - { name: life, kind: life_support, size: 2, mount: mount.life-support-s2 }
   - { name: avionics, kind: avionics, size: 1, mount: mount.avionics-s1 }
   - { name: cargo, kind: cargo, size: 4, mount: mount.cargo-s4 }
-  - { name: hardpoint_1, kind: hardpoint, size: 1, mount: mount.hardpoint-s1 }
-  - { name: hardpoint_2, kind: hardpoint, size: 1, mount: mount.hardpoint-s1 }
+  - { name: hardpoint_1, kind: hardpoint, size: 2, mount: mount.hardpoint-s2 }
+  - { name: hardpoint_2, kind: hardpoint, size: 2, mount: mount.hardpoint-s2 }
 thrusters:
   - { nozzle: nozzle_lift_0, slot: lift, share: 1 }
   - { nozzle: nozzle_lift_1, slot: lift, share: 1 }
@@ -89,6 +92,15 @@ fit:
   - { slot: life, item: equipment.life.s1 }
   - { slot: avionics, item: equipment.nav.basic.s1 }
   - { slot: power, item: equipment.power.fusion.s1 }
+  - { slot: gear_0, item: equipment.gear.mc07.front }
+  - { slot: gear_1, item: equipment.gear.mc07.front }
+  - { slot: gear_2, item: equipment.gear.mc07.rear }
+  - { slot: gear_3, item: equipment.gear.mc07.rear }
+  - { slot: cargo_ramp, item: equipment.access.mc07.cargo.ramp }
+  - { slot: clamp_fwd, item: equipment.access.mc07.anchor.clamp }
+  - { slot: clamp_aft, item: equipment.access.mc07.anchor.clamp }
+  - { slot: hardpoint_1, item: equipment.laser.mc07.mining }
+  - { slot: hardpoint_2, item: equipment.laser.mc07.mining }
 making:
   module: module.building-dock
   fitting_out: module.building-dock

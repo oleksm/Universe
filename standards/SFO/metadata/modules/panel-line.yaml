@@ -11,6 +11,9 @@ physical:
 throughput:
   rate: 5.55555555555556
   power: 2000000
+staff:
+  - { profession: profession.metalworker, count: 3 }
 basis:
   - { of: [throughput.rate], tier: invented, review: true, note: "A guess, to be reviewed: ten times a yard's plate work, for panels all alike. It sets how fast a gate ring's skin can be made." }
   - { of: [physical, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [staff], tier: invented, review: true, note: "Three metalworkers. Coarse: by the kind of plant, not this one; to be reviewed." }

@@ -10,7 +10,7 @@ use universe_sim::{Controls, NavTarget, Phase, ShipState, Universe};
 /// behind it on its orbit), not parked on its deck: where these flights start.
 fn flying(seed: u64) -> Universe {
     let mut u = Universe::new(seed);
-    u.respawn();
+    u.start_in_flight();
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     u.events.clear();
     u

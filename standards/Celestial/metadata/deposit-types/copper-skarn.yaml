@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.copper-skarn
+  name: "Copper skarn"
+  about: "Copper, gold and silver where granite baked a limestone."
+sim: { key: skarn_copper, code: SKC }
+formed_by: collision
+carries:
+  - { item: element.cu, grade: 0.017, said_as: "Cu %" }
+  - { item: element.au, grade: 5.0e-07, said_as: "Au g/t" }
+  - { item: element.ag, grade: 1.5e-05, said_as: "Ag g/t" }
+  - { item: element.s, grade: 0.04, said_as: "S %" }
+ore: good.skarn-copper-ore
+shape: lens
+size:
+  median: 560000000.0
+  spread: 2.0
+  cap: 300000000000.0
+footprint: { length: 800.0, width: 100.0 }
+forms_at: 0.0
+cluster:
+  deposits: 4.0
+  along: 15000.0
+  across: 5000.0
+seen_by:
+  - { method: magnetics, reach: 800.0 }
+  - { method: geochemistry, reach: 50.0 }
+  - { method: induced polarisation, reach: 500.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

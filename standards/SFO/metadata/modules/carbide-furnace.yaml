@@ -8,6 +8,11 @@ physical:
   length: 100
   width: 30
   height: 15
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: stock.sic-tl-10
     does: "Sand and carbon are baked at 2,400 C round a graphite core (the Acheson furnace); the carbide is ground and hot-pressed into tile."
@@ -24,3 +29,4 @@ basis:
   - { of: [recipes.inputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "2.8 to 2.9 kg of sand and coke for each kg of silicon carbide, and 6.2 to 8 MWh a tonne (Europe's furnaces). The split between sand and carbon is the chemistry's; what pressing the tile takes was not found and is not counted." }
   - { of: [recipes.outputs], tier: derived, note: "By balance: the carbon not held in the carbide burns to carbon dioxide; the sand left over is dust." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

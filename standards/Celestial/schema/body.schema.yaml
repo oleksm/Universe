@@ -149,13 +149,49 @@ properties:
       deposits: { type: integer, description: "how many deposits the run grew" }
       districts: { type: integer }
       belts: { type: integer }
+      in_store: { type: array, items: { type: string }, description: "Survey files too large for the registry (over 20 MB: an airless world's impacts.json), left in the worlds store; the manifest beside the survey carries their hashes." }
       contained: { type: array, description: "What the run put in its crust, from summary.json: the whole body's endowment, found or not.", items: { type: object, additionalProperties: false, required: [commodity, mass], properties: { commodity: { type: string, description: "an element or compound as the simulation names it (Cu, Cr2O3, diamond)" }, mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg; the survey's tonnes and carats (0.2 g) converted" } } } }
+  energy:
+    description: "For a baked body: the planet simulation's energy package (planet-sim-energy/1): its oil and gas fields and coalfields, written once beside the survey. In-place amounts, model estimates calibrated on the simulation's Grown Earth; not recoverable. Fields' and coalfields' IDs are permanent; claims point at them."
+    type: object
+    additionalProperties: false
+    required: [format, folder, manifest_sha256]
+    properties:
+      format: { const: "planet-sim-energy/1" }
+      folder: { type: string, description: "Where its files are, relative to the repository root (standards/Celestial/surveys/<world_id>/energy/): manifest.json, summary.json, fields.geojson, basins.json, coalfields.json." }
+      manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$" }
+      basins: { type: integer }
+      oil_fields: { type: integer }
+      gas_fields: { type: integer }
+      coalfields: { type: integer }
+      oil_in_place: { type: number, x-unit: "m3", description: "m3 of oil in the ground (the package's million barrels, at 158.987 m3 a thousand barrels)" }
+      gas_in_place: { type: number, x-unit: "m3", description: "m3 of gas at standard conditions (the package's billion cubic feet, at 28.317 million m3 a Bcf)" }
+      coal_in_place: { type: number, x-unit: "kg", description: "kg of coal within 1,800 m" }
+  bake:
+    description: "For a baked body: the flyable surface package (planet-sim-surface/1): a render bake of the world, versioned and written once; latest.json names the current one. It is large (hundreds of MB) and is not kept in the registry: only its pointer and manifest are. The game fetches the files by hash from a worlds store (a folder the game is configured with, holding worlds/<world_id>/surface/v<N>/)."
+    type: object
+    additionalProperties: false
+    required: [format, version, path, manifest_sha256]
+    properties:
+      format: { const: "planet-sim-surface/1" }
+      version: { type: integer, minimum: 1 }
+      path: { type: string, description: "The version's folder in the worlds store, relative to it: worlds/<world_id>/surface/v<N>." }
+      manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "Of the version's manifest.json; a copy of the manifest lies in the registry beside the survey (surveys/<world_id>/surface/manifest.json) so the files and their hashes are known." }
+      files: { type: integer }
+      bytes: { type: number, x-unit: "1", description: "bytes, all its files" }
+      note: { type: string, description: "The bake's own note." }
   life:
     type: object
     additionalProperties: false
     properties:
       present: { enum: [none, microbes, plants and animals], description: "What lives there that people did not bring." }
       soil: { enum: [none, barren, poor, fertile], description: "Whether its ground can grow crops as it is." }
+      began: { type: number, x-unit: "s", description: "s ago life began there" }
+      photosynthesis: { type: number, x-unit: "s", description: "s ago oxygenic photosynthesis began" }
+      oxidation: { type: number, x-unit: "s", description: "s ago its air filled with oxygen (its Great Oxidation)" }
+      complex: { type: number, x-unit: "s", description: "s ago complex (many-celled) life appeared" }
+      land_plants: { type: number, x-unit: "s", description: "s ago plants took the land" }
+      forests: { type: number, x-unit: "s", description: "s ago the first forests grew" }
   rock:
     description: For an asteroid.
     type: object

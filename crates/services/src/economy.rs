@@ -149,7 +149,7 @@ impl Works {
         Some(w)
     }
 
-    fn built(site: Site, works: usize, name: &str, lines: &[universe_world::registry::Line], modules: &[universe_world::registry::ModuleEntry], stock: &[universe_world::registry::FacilityStockItem], exchange: bool) -> Option<Self> {
+    fn built(site: Site, works: usize, name: &str, lines: &[universe_world::registry::Line], modules: &[universe_world::registry::ModuleEntry], stock: &[universe_world::registry::StockItem], exchange: bool) -> Option<Self> {
         let reg = universe_world::registry::registry();
         let module = |k: &str| reg.module(k);
         let mut setups = Vec::new();
@@ -270,6 +270,8 @@ pub struct Place {
     pub site: Site,
     /// Who trades at its market: the exchange (`Party::Market`), or a rig's owner at its dock.
     pub trader: Party,
+    /// The share of every sale there owed to the administration as duty (its system's law; 0: none).
+    pub duty: f64,
     /// The warehouse the exchange keeps its market in (its works), and that
     /// warehouse's stock as of the last step.
     pub warehouse: Option<usize>,
@@ -361,6 +363,11 @@ impl Place {
     }
 }
 
+/// The duty on sales in the system named `system`: its law's (0: no law, or none levied).
+fn duty_in(system: &str) -> f64 {
+    universe_world::order::law(system).and_then(|l| l.policies.duty).unwrap_or(0.0)
+}
+
 #[derive(Clone, Debug, Default)]
 pub struct Economy {
     pub places: Vec<Place>,
@@ -389,6 +396,7 @@ impl Economy {
                 name: g.recorded.name.clone(),
                 site: Site::Ground(k),
                 trader: Party::Market(g.system, facility),
+                duty: duty_in(&g.recorded.system),
                 warehouse: None,
                 stock: Pool::default(),
                 wants: Vec::new(),
@@ -411,19 +419,13 @@ impl Economy {
     /// The registry's rig `key`, body `body` of `system` (see `world::rigs`):
     /// a place with no people whose market is its own works, where its owner
     /// trades at its dock (its owner a company of the land office's from now).
-    pub fn add_rig(&mut self, land: &mut LandOffice, system: usize, body: usize, key: &str) {
+    pub fn add_rig(&mut self, land: &mut LandOffice, system: usize, system_name: &str, body: usize, key: &str) {
         let facility = Facility::Rig(body);
         if self.index.contains_key(&(system, facility)) {
             return;
         }
         let Some(w) = Works::rig(system, body, key) else { return };
-        let owner = w.owner.clone().unwrap_or_default();
-        let reg = universe_world::registry::registry();
-        if !owner.is_empty() && !land.companies.iter().any(|c| c.0 == owner) {
-            let name = reg.names.get(&owner).cloned().unwrap_or_else(|| owner.clone());
-            land.companies.push((owner.clone(), name));
-        }
-        let trader = land.companies.iter().position(|c| c.0 == owner).map_or(Party::Market(system, facility), |i| Party::Company(i as u32));
+        let trader = w.owner.as_deref().map_or(Party::Market(system, facility), |o| land.enlist(o));
         self.index.insert((system, facility), self.places.len());
         self.places.push(Place {
             system,
@@ -431,6 +433,7 @@ impl Economy {
             name: w.name.clone(),
             site: Site::Rig(system, body),
             trader,
+            duty: duty_in(system_name),
             warehouse: None,
             stock: Pool::default(),
             wants: Vec::new(),
@@ -726,7 +729,7 @@ impl Economy {
 
     fn run_place(&mut self, p: usize, at: f64, land: &mut LandOffice, ledger: &mut Ledger, goods: &[Item], tick: u64) {
         let dt = STEP;
-        let site = self.places[p].site;
+        let (site, system, duty) = (self.places[p].site, self.places[p].system, self.places[p].duty);
         let market = self.places[p].trader;
         let cause = universe_protocol::Cause::Rules;
         let here: Vec<usize> = (0..self.works.len()).filter(|&k| self.works[k].site == site && self.built(land, k, at)).collect();
@@ -843,6 +846,7 @@ impl Economy {
                     self.works[h].pool.put(i, t);
                     let paid = t / 1000.0 * price.bid;
                     let _ = ledger.transfer(market, owner, Asset::Credits, paid, tick, cause);
+                    let _ = ledger.transfer(owner, Party::Administration(system), Asset::Credits, paid * duty, tick, cause);
                     runs[n].earned += paid;
                     self.places[p].stock = self.works[h].pool.clone();
                 }
@@ -859,6 +863,7 @@ impl Economy {
                     self.works[k].pool.put(i, t);
                     let cost = t / 1000.0 * ask;
                     let _ = ledger.transfer(owner, market, Asset::Credits, cost, tick, cause);
+                    let _ = ledger.transfer(market, Party::Administration(system), Asset::Credits, cost * duty, tick, cause);
                     runs[n].earned -= cost;
                     self.places[p].stock = self.works[h].pool.clone();
                 }
@@ -896,7 +901,7 @@ mod tests {
     fn a_rig_is_its_owners_market() {
         let mut land = LandOffice::seed(std::iter::empty());
         let mut e = Economy::new(&land, 0.0);
-        e.add_rig(&mut land, 3, 7, "rig.treistun.hadley-orbital-works");
+        e.add_rig(&mut land, 3, "Treistun", 7, "rig.treistun.hadley-orbital-works");
         let p = e.place(3, Facility::Rig(7)).expect("a place at the rig");
         assert!(p.warehouse.is_some(), "its works are its market");
         let hadley = land.companies.iter().position(|c| c.0 == "org.hadley").expect("its owner a company");

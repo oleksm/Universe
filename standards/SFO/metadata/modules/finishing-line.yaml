@@ -8,6 +8,10 @@ physical:
   length: 120
   width: 30
   height: 10
+staff:
+  - { profession: profession.machinist, count: 4 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: stock.al6061-pl-5
     does: "It is levelled, brought to its temper and cut into sheets and plates."
@@ -29,3 +33,4 @@ basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each gauge: a guess, to be reviewed. A thinner or smaller one goes through slower." }
   - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }
   - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Typical of real plant of this kind: approximate, from memory, not taken from a source." }
+  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }

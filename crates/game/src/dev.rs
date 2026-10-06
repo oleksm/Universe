@@ -29,7 +29,8 @@ pub fn apply(app: &mut App, name: &str) {
     };
     let outer = sys.bodies.iter().filter_map(|b| b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(0) && b.kind.is_planet())).map(|o| o.apoapsis()).fold(0.0, f64::max);
     let station = sys.station().unwrap_or(0);
-    let planet = sys.bodies[station].rail.parent.unwrap_or(0);
+    // (UNIVERSE_BODY: another body, by its key.)
+    let planet = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).unwrap_or(sys.bodies[station].rail.parent.unwrap_or(0));
 
     match name {
         look if look.starts_with("look_") => {
@@ -768,7 +769,7 @@ pub fn apply(app: &mut App, name: &str) {
             // In flight by the home station, the hull critical and the tank nearly dry.
             app.mode = Mode::Pilot;
             let u = app.engine.universe();
-            u.respawn();
+            u.start_in_flight();
             u.ship.hull = 0.2;
             u.ship.fuel = 1_000.0;
         }
@@ -777,7 +778,7 @@ pub fn apply(app: &mut App, name: &str) {
             // in sunlight by the home station, seen from the side and above.
             let key = std::env::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
             let u = app.engine.universe();
-            u.respawn();
+            u.start_in_flight();
             if let Some(h) = universe_sim::world::content::content().handle(&key) {
                 u.ship.class = h;
                 u.ship.fit = None;
@@ -803,7 +804,7 @@ pub fn apply(app: &mut App, name: &str) {
             // thruster and the opposite tail one held (a yaw).
             app.mode = Mode::Pilot;
             let u = app.engine.universe();
-            u.respawn();
+            u.start_in_flight();
             let s = u.ship.spec();
             let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
             u.ship.manual = true;
@@ -1031,18 +1032,33 @@ pub fn apply(app: &mut App, name: &str) {
                     best = (h, d);
                 }
             }
-            // Stand off from the peak and look toward it.
+            // Stand off from the peak and look toward it. (UNIVERSE_LAT, UNIVERSE_LON: over that
+            // place instead, as the registry gives it, looking north.)
+            let at = std::env::var("UNIVERSE_LAT").ok().and_then(|a| a.parse().ok()).zip(std::env::var("UNIVERSE_LON").ok().and_then(|o| o.parse().ok()));
+            let best = match at {
+                Some((lat, lon)) => (0.0, universe_sim::world::worlds::direction(universe_sim::world::worlds::LonLat { lat, lon })),
+                None => best,
+            };
             let peak = best.1;
-            let off = (peak + peak.any_orthonormal_vector() * 0.02).normalize();
+            let off = if at.is_some() { peak } else { (peak + peak.any_orthonormal_vector() * 0.02).normalize() };
             let up = rot * off;
             log::info!("lowflight: peak {:.0} m", best.0);
+            // (Where the sun stands overhead now, in the registry's latitude and longitude.)
+            let noon = universe_sim::world::worlds::lon_lat(rot.inverse() * (positions[0] - positions[planet]));
+            log::info!("lowflight: the sun overhead at {:.1}, {:.1}", noon.lat, noon.lon);
             // (UNIVERSE_ALT: the height instead, m; UNIVERSE_SPEED: the ground speed, m/s.)
             let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
             app.engine.universe().ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));
             let to_peak = rot * peak - up;
-            let fwd = (to_peak - up * to_peak.dot(up)).normalize();
+            let fwd = if at.is_some() {
+                let north = rot * DVec3::Y;
+                (north - up * north.dot(up)).normalize()
+            } else {
+                (to_peak - up * to_peak.dot(up)).normalize()
+            };
             app.engine.universe().ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().ship.position - positions[planet]) + fwd * env("UNIVERSE_SPEED").unwrap_or(200.0);
-            app.engine.universe().ship.orientation = universe_sim::ship::facing(fwd - up * 0.15, up);
+            // (UNIVERSE_DOWN: how far down it looks, as a slope.)
+            app.engine.universe().ship.orientation = universe_sim::ship::facing(fwd - up * env("UNIVERSE_DOWN").unwrap_or(0.15), up);
             app.chase_cam = std::env::var_os("UNIVERSE_CHASE").is_some();
         }
         "moon" => {

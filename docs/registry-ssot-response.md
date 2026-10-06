@@ -903,7 +903,7 @@ have put the question to the user and changed neither.
   what a refit may take; a hull's lines and openings at a slot are the mount's figures.
 
 **Baked worlds (the user, 2026-10-06).** The planet simulation grows a world once and writes a
-read-only survey; the registry imports it (`tools/standards/survey_import.py`) and the body's
+read-only survey; the registry imports it (`tools/standards/world_install.py`) and the body's
 record becomes `provenance: baked` with a `survey` section pointing at
 `standards/Celestial/surveys/<world_id>/`. **The game reads the survey's files from there, by
 reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospecting reveals by
@@ -988,3 +988,104 @@ need, how long all its people live on it, where it lies with shares). Treistun: 
 90 of medicine for all 220,000, half at Eikir and half at Nacaubun. **For the game:** the reserve is
 law like zoning: breakable, a breach recorded, released by the administration; the resupply
 interval is what a port's contracts should be sized to; air and water are outside it (made locally).
+
+**Your open asks (2026-10-06).**
+
+1. **The MC-07's five empty parts** are no longer parts: they are the MC-07's own products, fitted
+   to its slots, built of the parts you measured from the model (moved whole, re-coded MGF/MGR/MCR/
+   MAC/MML): `equipment.gear.mc07.front` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
+   where its 150 × 10 strut buckles), `equipment.access.mc07.cargo.ramp`, `equipment.access.mc07.anchor.clamp`
+   (two access slots), `equipment.laser.mc07.mining` (both hardpoints; the pulse laser's beam
+   figures as a stand-in, priced the same in prices.ron as a placeholder). `world::legs::reckon` now
+   also takes fitted landing gear (`EquipmentFunction::LandingGear`) beside hull parts, so the
+   MC-07's legs reckon as before.
+2. **`waste: true`** on 13 goods (slag, red mud, dross, dust, tailings, waste rock, waste water,
+   sewage sludge, chemical, Solvay and textile waste, wool scourings, carbon dioxide). The market
+   may refuse them and a place charge to take them; what takes them in is a taker.
+3. `built_of.parts` on hulls already exists (the MC-07 names its folder).
+4. Setups: left to the yard's operator, as you allowed.
+5. The gate's holding power: still the user's.
+
+**Law, and the ways back (2026-10-06).** `org.treistun.law` (offences, penalties, enforcement,
+policies) and now `law.redress`: appeal window, restitution first, which offences settle, the
+surrender share, the service rate, expiry, pardon; and `recognises` (whose outlawry a port honours:
+none yet). **For the game:** a breach is recorded, never blocked; the penalties follow after
+`enforcement.response`; appeal, settlement and service are procedures reading these figures; an
+outlaw is refused at the ports of administrations that recognise the outlawry, and nowhere else.
+The insurer (`org.treistun-mutual.insurance`) replaces a lost hull at a yard, parked, after the
+excess, and refuses the losses its list names: the respawn, by a rule. `docs/registry-order.md`.
+
+**Managing the NPCs (the user, 2026-10-06): records for the operator.** `docs/registry-people.md`.
+Every settlement has a **census** by trade (finite people); every organisation that flies has a
+**fleet** (hull, count, home, what for): Treistun Freight's 39 haulers on the supply runs (derived
+from tonnes a day and flight time between the orbits), Hearth Line's shuttles, Cormorant's
+prospectors, the administration's 23 patrol interceptors, Shikra Hold's 12 raiders: about a hundred
+ships, not a thousand settlers. `settlement.resupply.interval` is now the fleet's cadence from the
+orbits. **What ends the vortex, yours:** spawn fleets from these records, crewed from the census;
+no NPC respawn (one fewer, the company orders a hull); the player's return as the insurer's delivery
+at a yard; far ships on the ledger. The census also says only 3–6% of people have described work:
+the commerce and construction parts come next on my side.
+
+**A thousand ships (the user, 2026-10-06).** `seeding.traffic.ships: 1000`, and how they are made
+up: Treistun Freight's 132 haulers on the runs for people and for works (derived: tonnes a day,
+flight time between the orbits, a hauler's hold), the other fleets (passage 22, miners 10, patrol
+23, raiders 12), and **793 independents** based at the ports by population
+(`settlement.independents`: Drovers, couriers, prospectors, a few haulers). **Spawn these, not a
+constant:** fleets flying for their business from their home, independents as today's travellers
+and small traders but finite and based; each ship a record's. The page's Traffic report lists
+every run with its tonnage, flight time and cadence.
+
+**Fleets for the NPC rework: your four asks (2026-10-06).**
+
+1. **A typed job on every fleet line:** `work` (dictionary `fleet_job`: hauling, passage, mining,
+   patrol, raiding), required; `does` stays the note. Treistun Freight hauling, Hearth Line
+   passage, Cormorant mining, the administration's patrol, Shikra Hold raiding. Independents
+   (`settlement.independents`) carry no work: the operator decides by hull, as today's travellers
+   and small traders.
+2. **Shikra Hold's dock:** on the rig record: `position` (the sunward face, chosen), `modules` (two
+   loading docks, a warehouse, a tank farm, a power station), `stock` at day 0 (fuel, 90 days of
+   food, medicines, and the last haul's loot: ingots, electronics), `owner: org.shikra-hold`. **Its
+   market is the band's own**, as at Hadley Orbital Works: the rig's owner trades at its dock, no
+   exchange approves it, no administration's bans reach it (Biraidim has none), no outlawry is
+   recognised. It asks no questions. Rigs may carry `stock` now (a shared definition).
+3. **A replacement hull:** the insurer names its yards (`insurance.yards`: Trethi Yard). A finished
+   hull in the yard's stock is delivered at once: the yard holds **2 haulers, 3 Drovers, 2
+   couriers, a prospector and an interceptor** at day 0 (`stock` with `pieces`). Past those, the
+   yard builds to order in its dock's time, which you reckon from the chain (the MC-07 in about 21
+   days); nothing need come through the gate. Who sells: the yard, for the hull's maker (Tolland's
+   haulers and Drovers, Vireo's fast hulls); a company orders the same way. Prices are the game's.
+4. **Pilot training:** `profession.pilot.training`: learned at school, 3 years (chosen). A
+   **flight school** (`building.flight-school`): 60 places, so **20 pilots a year** per school,
+   with six instructor pilots; and a **school** for the rest (one teacher to 92). Buildings are not
+   sited per settlement yet; a port of 20,000 would have one flight school, Eikir and Nacaubun two
+   or three. Say if you want them sited as facilities now and I place them.
+   (One engine touch with this: the facility's `stock` moved to a shared definition that rigs use
+   too, so the generated type is `StockItem`, not `FacilityStockItem`; `economy.rs` reads it.)
+
+**Harvest's three packages (2026-10-06).** `tools/standards/world_install.py <world folder>` now
+installs a world whole: the survey and the **energy package** (copied to
+`standards/Celestial/surveys/TRD1/energy/`: 282 petroleum basins, 46,672 oil and 20,477 gas fields,
+89 coalfields; `energy` on the record with in-place amounts in SI) and the **surface bake**
+(0.71 GB, not copied: `bake` on the record points at `worlds/TRD1/surface/v1` in a worlds store,
+with the manifest's hash; the manifest and latest.json lie beside the survey). **For the game:** a
+worlds-store root to configure (today the lab's `~/git/planet-sim/out/`); fetch the bake's files by
+the manifest; wells and the coal mine sit on a field's or coalfield's permanent id. New: deposit
+types oil field, gas field, coalfield; goods crude oil, natural gas, coal (stock `*-bulk`,
+market.fuel); modules oil-well, gas-well, coal-mine (`from: place`). Harvest's record also carries
+its life timeline and highest peak (8,920 m).
+
+**Who does what for worlds (the user, 2026-10-06).** You can start now, without the lab: a
+worlds-store root (`UNIVERSE_WORLDS`, today `~/git/planet-sim/out/`), fetching the bake's files by
+the hashes in `standards/Celestial/surveys/TRD1/surface/manifest.json`, and reading the three
+packages into the game. The lab's two additions (`body` in every manifest, a `releases.json`
+index, a `climate` block) only make the install hands-off; until then I run `world_install.py`
+per release. You may run it too: it is deterministic and the validator is the gate.
+
+**The worlds store (2026-10-06, evening).** The lab keeps `releases.json` at the store's root
+(`~/git/planet-sim/out/worlds/`, format planet-sim-releases/1: every world, its body, status,
+packages and hashes, rewritten on every release). `world_install.py --store <root>` installs all
+current worlds: **Cinder (Treistun b) is baked now too** (world TRB1: 180 blind deposits, a 1.0 GB
+surface v1 in the store, its 113 MB `impacts.json` left in the store and listed as `in_store`).
+Point `UNIVERSE_WORLDS` at that root; relative paths, so the folder can move or be synced. Fourteen
+new deposit types and seven airless rock units came with the lab's vocabulary (the rock map's
+`rock_units.index` on Cinder uses them).

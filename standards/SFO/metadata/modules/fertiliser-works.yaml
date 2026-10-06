@@ -9,6 +9,10 @@ physical:
   length: 150
   width: 100
   height: 40
+staff:
+  - { profession: profession.chemist, count: 2 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: good.fertiliser
     does: "Fourteen parts of nitrogen to three of hydrogen."
@@ -21,3 +25,4 @@ basis:
   - { of: [recipes.inputs], tier: derived, note: "Ammonia is 14 parts nitrogen to 3 of hydrogen by weight." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_chemicals.json", note: "Making ammonia from power takes 38 GJ a tonne in all, of which the hydrogen is 90 to 95%; the rest, 7.5% taken, is this works' share: joining them and taking the nitrogen from the air." }
   - { of: [physical, recipes, recipes.rate], tier: invented, review: true, note: "Its size and rate are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

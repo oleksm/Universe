@@ -9,7 +9,137 @@ physical:
   width: 1000
   height: 200
 site: open sky
+staff:
+  - { profession: profession.miner, count: 12 }
+  - { profession: profession.plant-operator, count: 2 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
+  - makes: good.skarn-copper-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.skarn-copper-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.skarn-tungsten-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.skarn-tungsten-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.lithium-pegmatite-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.lithium-pegmatite-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.iocg-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.iocg-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.carlin-gold-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.carlin-gold-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.fossil-placer-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.fossil-placer-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.unconformity-uranium-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.unconformity-uranium-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.sandstone-uranium-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.sandstone-uranium-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.rare-earth-clay-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.rare-earth-clay-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.graphite-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.graphite-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.placer-gravel
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.placer-gravel, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.impact-melt-nickel-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.impact-melt-nickel-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.impact-diamond-rock
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.impact-diamond-rock, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
+  - makes: good.impact-vein-ore
+    does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
+    inputs:
+      - { item: good.impact-vein-ore, quantity: 1.0, from: place }
+      - { item: good.waste-rock, quantity: 0.83, from: place }
+    outputs:
+      - { item: good.waste-rock, quantity: 0.83 }
+    rate: 500.0
+    power: 64500000
   - makes: good.porphyry-copper-ore
     does: "Ore is drilled, blasted and hauled out; the barren rock over it is moved aside."
     inputs:
@@ -293,3 +423,4 @@ basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "What it takes, it takes from the place it stands: the ore, and 0.83 t of barren rock for each tonne of ore (the United States' copper mines; a gold pit moves 2.4)." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "129 MJ a tonne of ore: mining copper took 23.4 GJ for each tonne of metal at an ore of 0.55%. Diesel, taken as power." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A mine's crew. Coarse: by the kind of plant, not this one; to be reviewed." }

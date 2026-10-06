@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.rare-earth-clay
+  name: "Rare earth clay"
+  about: "Rare earths held on clay in deeply weathered granite."
+sim: { key: ree_ion_clay, code: REC }
+formed_by: weathering
+carries:
+  - { item: element.ce, grade: 0.0006512, said_as: "TREO %" }
+ore: good.rare-earth-clay-ore
+shape: blanket
+size:
+  median: 1000000000.0
+  spread: 1.2
+  cap: 50000000000.0
+footprint: { length: 2000.0, width: 1000.0 }
+forms_at: 0.0
+cluster:
+  deposits: 6.0
+  along: 30000.0
+  across: 30000.0
+seen_by:
+  - { method: radiometrics, reach: 1.0 }
+  - { method: geochemistry, reach: 50.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

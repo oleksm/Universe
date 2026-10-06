@@ -8,6 +8,11 @@ physical:
   length: 200
   width: 100
   height: 20
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: element.au
     does: "Epithermal gold ore is ground and leached; the gold is taken up on carbon and smelted to bars."
@@ -29,3 +34,4 @@ basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "From each ore's grade, with 90% of the gold won (easily leached ores give over 90%; heaps 60 to 70%). The cyanide is not counted, nor the silver of an epithermal ore." }
   - { of: [recipes.power], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "66 MJ a tonne of ore: the 12% of a gold mine's 549 MJ a tonne that is processing." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

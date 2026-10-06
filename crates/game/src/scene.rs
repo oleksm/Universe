@@ -205,9 +205,9 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
         let terran = b.terrain.as_ref().is_some_and(|tr| tr.kind == universe_sim::TerrainKind::Terran);
         let center = app.view.positions[i];
         let altitude = cam.distance(center) - b.surface_radius_at(center, cam, t);
-        (terran && altitude < ATMOSPHERE).then_some((center, altitude))
+        (terran && altitude < ATMOSPHERE).then_some((i, center, altitude))
     });
-    let Some((center, altitude)) = air else { return 1.0 };
+    let Some((world, center, altitude)) = air else { return 1.0 };
     let up = (cam - center).normalize();
     let elevation = up.dot((sun - cam).normalize()) as f32; // sine of the sun's height
     let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
@@ -219,6 +219,12 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let dusk = [0.85, 0.38, 0.16];
     let c = |j: usize| (blue[j] * day * bright * (0.6 + 0.4 * tint[j]) + dusk[j] * twilight * 0.35 * tint[j]) * thick;
     frame.clear = Color([c(0), c(1), c(2), 1.0]);
+    // (A world grown with its own air: its sky is the air's light itself, drawn behind everything
+    // (`fs_air_sky`), on black.)
+    if app.world_maps.get(&(app.view.origin, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
+    {
+        frame.clear = Color::BLACK;
+    }
     1.0 - 0.97 * day * thick
 }
 
@@ -482,6 +488,21 @@ fn bodies(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let t = app.now();
     let cam = frame.camera.position;
+    // The world nearest the eye with its full-resolution maps ready (within a few radii): drawn with them.
+    let near = app
+        .world_maps
+        .iter()
+        .filter(|((o, _), _)| *o == app.view.origin)
+        .filter_map(|((_, i), m)| Some((*i, m.lock().ok()?.clone()?)))
+        .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
+        .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
+    if let Some((i, maps)) = near
+        && let Some((_, _, map)) = app.globes.get(&(app.view.origin, i))
+    {
+        if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
+            frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
+        }
+    }
     for (i, b) in sys.bodies.iter().enumerate() {
         // (Rocks: see `rocks`.)
         if b.kind.is_rock() {
@@ -534,14 +555,17 @@ fn bodies(frame: &mut Frame, app: &App) {
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             if near {
                 universe_prof::time("draw/scene/bodies/ground", || {
-                    app.terrain_lod.borrow_mut().draw(frame, app.view.origin, i, b, map, center, b.rotation(t), cam, c);
+                    app.terrain_lod.borrow_mut().draw(frame, app.view.origin, &app.view.system, i, map, center, b.rotation(t), cam, c);
                 });
             } else {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
                 universe_prof::time("draw/scene/bodies/globe mesh", || {
+                    let (depth, shell) = terrain_view::air(b).unwrap_or_default();
                     frame.no_shadow(|frame| {
-                        frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], DVec3::ZERO, |frame| {
-                            frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
+                        frame.with_air(depth, shell, |frame| {
+                            frame.with_globe(map, terrain_view::globe_kind(b), relief, terrain_view::FILL * 2.5, [0.0, 0.0, 0.0, 1.0], DVec3::ZERO, |frame| {
+                                frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
+                            })
                         })
                     })
                 });
@@ -661,14 +685,7 @@ fn atmosphere(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
     let limb_r = r * (1.0 - (r * r) / (d * d)).sqrt();
     let thick = 1.0 + 0.035_f64.max(100_000.0 / r);
     let (u, v) = (dir.any_orthonormal_vector(), dir.cross(dir.any_orthonormal_vector()));
-    // (Earth-like: sky blue; others their own colour, paler.)
-    let sky = match b.terrain.as_ref().map(|t| t.kind) {
-        Some(universe_sim::TerrainKind::Terran) => [0.35, 0.6, 1.0],
-        _ => {
-            let [cr, cg, cb] = b.color;
-            [0.4 + 0.6 * cr, 0.4 + 0.6 * cg, 0.4 + 0.6 * cb]
-        }
-    };
+    let sky = terrain_view::sky_color(b);
     let n = 96;
     let point = |k: usize, s: f64| {
         let a = k as f64 / n as f64 * std::f64::consts::TAU;

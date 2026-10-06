@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is rare earth clay as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.rare-earth-clay-ore-bulk
+  traded_as: market.ores
+  code: RARE-EARTH-CLAY-ORE-BULK
+  name: "Rare earth clay, in bulk"
+  form: bulk
+made_from:
+  - item: good.rare-earth-clay-ore

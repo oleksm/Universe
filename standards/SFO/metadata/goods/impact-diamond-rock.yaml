@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.impact-diamond-rock
+  name: "Impact diamond rock"
+  kind: rock
+  description: "Crater melt rock with shock diamonds."
+physical:
+  bulk_density: 2700
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.impact-diamond). The game has no works for it yet."
+composition:
+  - { part: good.diamonds, share: 2.0e-06 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/impact-diamond.yaml", note: "The typical grade of its deposit type, from the planet simulation's vocabulary of 2026-10-06; its other metals are on the deposit type." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

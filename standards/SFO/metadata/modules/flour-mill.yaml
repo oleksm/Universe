@@ -8,6 +8,9 @@ physical:
   length: 60
   width: 30
   height: 30
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.flour
     does: "72% of the grain becomes white flour; the rest is bran."
@@ -20,3 +23,4 @@ recipes:
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "72% of wheat becomes white flour. What is left over is by balance." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

@@ -31,6 +31,16 @@ properties:
       properties:
         need: { type: string, x-ref: [need], description: "The need, by its key." }
         people: { type: number, x-unit: "1", description: "how many people's need it meets" }
+  trains:
+    description: "For a school or college: the trades it teaches and how many it has places for at once. Its output a year is places over the trade's training time (profession.training.time)."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [profession, places]
+      properties:
+        profession: { type: string, x-ref: [profession] }
+        places: { type: integer, minimum: 1 }
   staff:
     description: "Who works in it."
     type: array

@@ -10,3 +10,6 @@ note: "The pirates of Biraidim"
 who: "A few hundred people who dug into the asteroid Shikra and live by taking what passes the Treistun gate: cargo first, ships when they can. They sell at ports that do not ask, and they go home when a patrol comes out."
 what: "Piracy on the Treistun run; fencing what it takes."
 address: { at: rig.biraidim.shikra-hold, tower: The Hold, deck: 1, section: A, unit: 1 }
+# fleet: a dozen armed craft, as the hold's story says
+fleet:
+  - { hull: hull.interceptor, count: 12, home: rig.biraidim.shikra-hold, work: raiding, does: "raiding the Treistun run: sorties from the hold to the gate approach, cargo first, home when a patrol comes out" }

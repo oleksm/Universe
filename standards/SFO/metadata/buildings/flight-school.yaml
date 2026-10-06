@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.flight-school
+  name: "Flight school"
+  description: "Simulators, classrooms and a pad with two training hulls: where pilots are made, three years from first lesson to a licence."
+physical:
+  length: 80
+  width: 40
+  height: 10
+  mass: 7059200
+floor: 6400
+storeys: 2
+meets:
+  - { need: need.schooling, people: 500 }
+trains:
+  - { profession: profession.pilot, places: 60 }
+staff:
+  - { profession: profession.teacher, count: 12 }
+  - { profession: profession.pilot, count: 6 }
+  - { profession: profession.technician, count: 4 }
+built_of:
+  - { item: good.concrete, quantity: 6656000 }
+  - { item: material.structural-steel-a36, quantity: 371200 }
+life: 1577880000
+basis:
+  - { of: [meets, staff, trains], tier: derived, source: "standards/sources/research_people_needs.json", note: "Sixty places: at three years a pilot (profession.pilot.training.time) it turns out twenty a year, enough to replace a tenth of a two-hundred-pilot port's each year. Six instructor pilots to sixty students, chosen." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

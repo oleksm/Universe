@@ -46,6 +46,13 @@ struct Globals {
     env_world_color: [f32; 4],
     env_mode: [f32; 4],
     env_sky: [f32; 4],
+    /// x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
+    /// are faded in (0..1).
+    view: [f32; 4],
+    /// Clip → camera-relative world (for a full-screen pass's view directions).
+    inv_view_proj: [[f32; 4]; 4],
+    /// The world whose maps are bound: its centre from the eye (m) and radius (m; 0: none).
+    world_at: [f32; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -66,6 +73,8 @@ const GLOBE_MIPS: u32 = 10;
 /// was last drawn (the oldest gives way to a new one).
 struct Globes {
     texture: wgpu::Texture,
+    /// Their own colours (sRGB; alpha 0 where a world has none), layer for layer.
+    colors: wgpu::Texture,
     layers: Vec<Option<(u64, u64)>>,
 }
 
@@ -115,6 +124,35 @@ impl Globes {
                         let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
                         let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
                         [(a[0] + b[0] + c[0] + d[0]) / 4.0, (a[1] + b[1] + c[1] + d[1]) / 4.0]
+                    })
+                    .collect();
+                side = half_side;
+            }
+        }
+        // Its own colours, or none (cleared: the layer may have held another world's).
+        for face in 0..6 {
+            let mut level: Vec<[u8; 4]> = match &map.colors {
+                Some(c) => c[face * n * n..(face + 1) * n * n].to_vec(),
+                None => vec![[0; 4]; n * n],
+            };
+            let mut side = n;
+            for mip in 0..GLOBE_MIPS {
+                gpu.queue.write_texture(
+                    wgpu::TexelCopyTextureInfo { texture: &self.colors, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
+                    bytemuck::cast_slice(&level),
+                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
+                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
+                );
+                if side == 1 {
+                    break;
+                }
+                let half_side = side / 2;
+                level = (0..half_side * half_side)
+                    .map(|i| {
+                        let (x, y) = (i % half_side * 2, i / half_side * 2);
+                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
+                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
+                        std::array::from_fn(|k| ((a[k] as u32 + b[k] as u32 + c[k] as u32 + d[k] as u32 + 2) / 4) as u8)
                     })
                     .collect();
                 side = half_side;
@@ -381,9 +419,13 @@ pub(crate) struct Renderer {
     capture_pipe: wgpu::RenderPipeline,
     sky: DynBuffer,
     mesh_pipe: wgpu::RenderPipeline,
+    /// The air's light behind everything (a full-screen pass: `air_sky`).
+    air_sky_pipe: wgpu::RenderPipeline,
     mesh_line_pipe: wgpu::RenderPipeline,
     shadows: Shadows,
     globes: Globes,
+    /// The full-resolution maps of the world near the eye (group 2).
+    world: crate::worldmaps::WorldBind,
     meshes: HashMap<u64, GpuMesh>,
     /// This frame's mesh instances: faces, then edges; and the runs to draw
     /// (mesh, first instance, count) for each.
@@ -437,7 +479,11 @@ impl Renderer {
             entries: &[wgpu::BindGroupEntry { binding: 0, resource: globals.as_entire_binding() }],
         });
 
-        let scene = device.create_shader_module(wgpu::include_wgsl!("shaders/scene.wgsl"));
+        // (The ground's material, the lab's, beside the scene shader that calls it.)
+        let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
+            label: Some("scene"),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
+        });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
             bind_group_layouts: &[Some(&globals_layout)],
@@ -570,6 +616,13 @@ impl Renderer {
                     ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
                     count: None,
                 },
+                // Worlds' own colours, beside their maps (see `GlobeMap::colors`).
+                wgpu::BindGroupLayoutEntry {
+                    binding: 6,
+                    visibility: wgpu::ShaderStages::FRAGMENT,
+                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::CubeArray, multisampled: false },
+                    count: None,
+                },
             ],
         });
         let env = crate::env::Env::new(device, &globals_layout);
@@ -586,6 +639,17 @@ impl Renderer {
             view_formats: &[],
         });
         let globe_view = globe_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
+        let globe_colors = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("globe colours"),
+            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
+            mip_level_count: GLOBE_MIPS,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let globe_colors_view = globe_colors.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
         let globe_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("globe maps"),
             mag_filter: wgpu::FilterMode::Linear,
@@ -603,9 +667,10 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&globe_sampler) },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&env.spec) },
                 wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&env.diff) },
+                wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&globe_colors_view) },
             ],
         });
-        let globes = Globes { texture: globe_texture, layers: vec![None; GLOBE_LAYERS as usize] };
+        let globes = Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] };
         let light_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("shadow light"),
             entries: &[wgpu::BindGroupLayoutEntry {
@@ -639,9 +704,10 @@ impl Renderer {
             cache: None,
         });
         let shadows = Shadows { layers: [shadow_layer(0), shadow_layer(1), shadow_layer(2)], lights, light_binds, bind: shadow_bind, pipe: shadow_pipe, runs: Vec::new() };
+        let world_bind = crate::worldmaps::WorldBind::new(device, &gpu.queue);
         let mesh_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("meshes"),
-            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout)],
+            bind_group_layouts: &[Some(&globals_layout), Some(&shadow_layout), Some(&world_bind.layout)],
             immediate_size: 0,
         });
         let mesh_pipeline = |label: &str, vs: &str, topology: wgpu::PrimitiveTopology, write: bool, compare: wgpu::CompareFunction| {
@@ -669,6 +735,22 @@ impl Renderer {
             })
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
+        let air_sky_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some("air sky"),
+            layout: Some(&mesh_layout),
+            vertex: wgpu::VertexState { module: &scene, entry_point: Some("vs_air_sky"), compilation_options: Default::default(), buffers: &[] },
+            primitive: wgpu::PrimitiveState::default(),
+            depth_stencil: Some(wgpu::DepthStencilState { format: DEPTH_FORMAT, depth_write_enabled: Some(false), depth_compare: Some(wgpu::CompareFunction::Always), stencil: Default::default(), bias: Default::default() }),
+            multisample: wgpu::MultisampleState { count: SAMPLES, ..Default::default() },
+            fragment: Some(wgpu::FragmentState {
+                module: &scene,
+                entry_point: Some("fs_air_sky"),
+                compilation_options: Default::default(),
+                targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(additive), write_mask: wgpu::ColorWrites::ALL })],
+            }),
+            multiview_mask: None,
+            cache: None,
+        });
         let mesh_line_pipe = mesh_pipeline("mesh edges", "vs_mesh_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
         let world = (SCENE_FORMAT, SAMPLES);
         let sky_pipe = scene_pipeline("sky", "vs_sky", Topo::PointList, Some((false, Cmp::Always)), additive, world);
@@ -852,6 +934,7 @@ impl Renderer {
             capture_pipe,
             sky: DynBuffer::new(device, "sky"),
             mesh_pipe,
+            air_sky_pipe,
             mesh_line_pipe,
             meshes: HashMap::new(),
             instances: DynBuffer::new(device, "mesh instances"),
@@ -861,6 +944,7 @@ impl Renderer {
             front_edge_runs: Vec::new(),
             shadows,
             globes,
+            world: world_bind,
             frames: 0,
             solids: DynBuffer::new(device, "solids"),
             lines: DynBuffer::new(device, "lines"),
@@ -996,6 +1080,19 @@ impl Renderer {
         let shadow_tight = tight.map_or(glam::Mat4::IDENTITY, cascade);
         let texel = |half: f64| (2.0 * half / SHADOW_SIZE as f64) as f32;
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
+        // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
+        // this frame: its globe map isn't up yet).
+        let world_at = frame.world_maps.as_ref().map_or([0.0; 4], |(_, _, c, r)| {
+            let d = (*c - frame.camera.position).as_vec3();
+            [d.x, d.y, d.z, *r as f32]
+        });
+        let (world_layer, world_fade) = match &frame.world_maps {
+            Some((maps, globe, _, _)) => {
+                self.world.bind(&gpu.device, &gpu.queue, maps);
+                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade())
+            }
+            None => (0.0, 0.0),
+        };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
             hud_proj: orthographic(0.0, hud.x, hud.y, 0.0, -1.0, 1.0).to_cols_array_2d(),
@@ -1006,7 +1103,7 @@ impl Renderer {
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
             shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
-            look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), 0.0],
+            look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), world_layer],
             env_sun: frame.light.map_or([0.0; 4], |l| {
                 let d = (l.position - frame.camera.position).normalize_or_zero().as_vec3();
                 [d.x, d.y, d.z, l.intensity_at(frame.camera.position) * frame.sun_visible(frame.camera.position) as f32]
@@ -1019,6 +1116,9 @@ impl Renderer {
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
+            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, 0.0, 0.0],
+            inv_view_proj: frame.camera.view_proj(size.x / size.y).inverse().to_cols_array_2d(),
+            world_at,
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));
@@ -1101,10 +1201,16 @@ impl Renderer {
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.shadows.bind, &[]);
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.sky.draw(&mut pass, &self.sky_pipe);
+            // The air's light, a world's in view (nothing where none is bound, or it's airless).
+            pass.set_pipeline(&self.air_sky_pipe);
+            pass.draw(0..3, 0..1);
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.pbr.draw(&mut pass);
+            // (The textured models take group 2 for their materials: the world's maps back.)
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.points.draw(&mut pass, &self.point_pipe);
@@ -1134,6 +1240,7 @@ impl Renderer {
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.shadows.bind, &[]);
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.front_lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));

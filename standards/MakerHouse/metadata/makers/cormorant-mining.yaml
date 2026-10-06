@@ -12,3 +12,6 @@ story:
   - "Cormorant was a mining crew before it was a company. Working the belts with gear built for other jobs, they cut, welded and rebuilt it until it suited the rock, and other crews started asking to buy what they had made."
   - "It still runs its own mining ships, and every new tool goes out on them for a season before it is sold. The gear looks rough, and the manuals read like they were written by people with gloves on."
   - "Miners trust Cormorant because it is one of them, and because it will tell a buyer when a cheaper tool would do."
+# fleet: two prospectors to a field (chosen)
+fleet:
+  - { hull: hull.prospector, count: 16, home: settlement.treistun.port-trethi, work: mining, does: "mining Treistun's 8 asteroid fields for the mill: two prospectors to a field, chosen" }

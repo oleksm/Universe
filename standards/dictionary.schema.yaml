@@ -66,8 +66,11 @@ definitions:
       gate: "A gate ring's, not a hull's."
   geological_event:
     description: "What happens to a world's crust that lays down rock and ore, in the planet simulation."
-    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering, coast, salt flat, ocean floor]
+    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering, coast, salt flat, ocean floor, burial, impact, river]
     x-values:
+      impact: "A crater: its melt sheet, its breccia and ejecta, and the hot water that ran through it after."
+      river: "Rivers sorting what they carry by weight: placers, from gold country down."
+      burial: "Buried organic matter cooked by depth and time into oil, gas or coal (the energy package)."
       ridge: "A mid-ocean ridge: new ocean floor."
       arc: "A subduction arc: volcanoes over a sinking plate."
       collision: "Continents meeting: mountains, and granite where the crust thickens."
@@ -130,3 +133,12 @@ definitions:
     x-values:
       system: "Everywhere in its star system: its patrols go where its ships go."
       settlements: "Its settlements and their approaches only; the rest of the system is nobody's."
+  fleet_job:
+    description: "What an organisation's fleet does, for the operator that flies it."
+    enum: [hauling, passage, mining, patrol, raiding]
+    x-values:
+      hauling: "Freight on the runs between settlements: the supply runs and the works' inputs."
+      passage: "People on a timetable, and anyone who books."
+      mining: "Prospecting and digging the fields, selling at the home port."
+      patrol: "The law's craft: answering breaches in the approaches, escorting when asked."
+      raiding: "Sorties from a hold against lone, laden prey; home when a patrol comes out."

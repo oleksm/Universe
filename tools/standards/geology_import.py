@@ -32,12 +32,20 @@ TYPE = {"porphyry": "porphyry", "epithermal": "epithermal", "vms": "massive-sulp
         "chromite": "chromite", "iron_formation": "iron-formation", "mvt": "carbonate-zinc-lead", "sedex": "shale-zinc-lead", "sediment_copper": "sediment-copper", "diamond": "kimberlite",
         "layered_cr_pge": "layered-intrusion", "layered_vti": "magnetite-seams", "sed_manganese": "sedimentary-manganese", "magnesite": "magnesite", "volcanic_sulphur": "volcanic-sulphur",
         "halite": "rock-salt", "potash": "potash", "evaporite_sulphur": "salt-dome-sulphur", "phosphorite": "phosphorite", "carbonatite": "carbonatite", "laterite_nickel": "laterite-nickel",
-        "bauxite": "bauxite", "heavy_mineral_sands": "beach-sands", "lithium_brine": "salt-flat-brine", "mn_nodules": "manganese-nodules"}
+        "bauxite": "bauxite", "heavy_mineral_sands": "beach-sands", "lithium_brine": "salt-flat-brine", "mn_nodules": "manganese-nodules",
+        "skarn_copper": "copper-skarn", "skarn_tungsten": "tungsten-skarn", "lithium_pegmatite": "lithium-pegmatite", "iocg": "iron-oxide-copper-gold", "carlin_gold": "carlin-gold",
+        "paleoplacer_gold": "fossil-placer-gold", "uranium_unconformity": "unconformity-uranium", "uranium_sandstone": "sandstone-uranium", "ree_ion_clay": "rare-earth-clay", "graphite": "graphite",
+        "placer_gold": "placer-gold", "impact_melt_nickel": "impact-melt-nickel", "impact_diamond": "impact-diamond", "impact_hydrothermal": "impact-hydrothermal"}
 UNIT = {"basement": "gneiss-basement", "arc_plutonic": "granodiorite", "carbonate": "limestone", "arc_volcanic": "andesite", "granite": "granite", "clastic": "sandstone-shale", "flood_basalt": "flood-basalt",
-        "schist": "schist", "ophiolite": "ophiolite", "rift": "rift-basalt", "greenstone": "greenstone", "iron_formation": "iron-formation", "morb": "ocean-floor-basalt"}
+        "schist": "schist", "ophiolite": "ophiolite", "rift": "rift-basalt", "greenstone": "greenstone", "iron_formation": "iron-formation", "morb": "ocean-floor-basalt",
+        "primary_crust": "primary-crust", "intercrater_plains": "intercrater-plains", "high_ti_basalt": "high-titanium-basalt", "impact_melt": "impact-melt", "impact_breccia": "impact-breccia", "anorthosite": "anorthosite", "kreep": "kreep-basalt"}
 # A unit the registry had not met: what it is, and what lays it down.
 NEW_UNIT = {"greenstone": ("Old lavas of a young, hot mantle, squeezed and turned green.", ["arc"]), "iron-formation": ("Banded iron laid down in seas before the air held oxygen.", ["sea"]),
-            "ocean-floor-basalt": ("The floor of the oceans, made at the ridges.", ["ridge"])}
+            "ocean-floor-basalt": ("The floor of the oceans, made at the ridges.", ["ridge"]),
+            "primary-crust": ("The first crust an airless world froze, pocked by four billion years of craters.", ["craton", "impact"]), "intercrater-plains": ("Old lava that flooded between the craters, cratered again since.", ["plume", "impact"]),
+            "high-titanium-basalt": ("Lava rich in ilmenite: titanium and iron, and oxygen to be had from it.", ["plume"]), "impact-melt": ("Rock melted by a great impact and frozen in the crater's floor.", ["impact"]),
+            "impact-breccia": ("Broken rock thrown out of craters and fallen back, loose and jumbled.", ["impact"]), "anorthosite": ("The pale highlands: feldspar that floated to the top of a magma ocean.", ["craton"]),
+            "kreep-basalt": ("Lava rich in potassium, rare earths, phosphorus, thorium and uranium: the last of a magma ocean to freeze.", ["plume"])}
 # The simulation's commodity, as the registry has it: the item, and what to multiply its figure by to
 # get kg of that item in each kg of ore (an oxide's share that is the element; % and g/t to a share).
 PCT, GT = 1e-2, 1e-6
@@ -46,7 +54,9 @@ ITEM = {"Cu %": ("element.cu", PCT), "Mo %": ("element.mo", PCT), "Au g/t": ("el
         "S %": ("element.s", PCT), "Li %": ("element.li", PCT), "K %": ("element.k", PCT), "Mg %": ("element.mg", PCT),
         "Cr2O3 %": ("element.cr", PCT * 103.992 / 151.99), "TiO2 %": ("element.ti", PCT * 47.867 / 79.866), "V2O5 %": ("element.v", PCT * 101.883 / 181.88), "MgO %": ("element.mg", PCT * 24.305 / 40.304),
         "ZrO2 %": ("element.zr", PCT * 91.224 / 123.218), "K2O %": ("element.k", PCT * 78.197 / 94.196), "P2O5 %": ("element.p", PCT * 61.948 / 141.945), "Nb2O5 %": ("element.nb", PCT * 185.813 / 265.81),
-        "REO %": ("element.ce", PCT * 0.814), "Al2O3 %": ("good.alumina", PCT), "NaCl %": ("good.salt", PCT), "diamond ct/t": ("good.diamonds", 0.2e-6)}
+        "REO %": ("element.ce", PCT * 0.814), "Al2O3 %": ("good.alumina", PCT), "NaCl %": ("good.salt", PCT), "diamond ct/t": ("good.diamonds", 0.2e-6),
+        "Li2O %": ("element.li", PCT * 13.88 / 29.88), "Ta2O5 %": ("element.ta", PCT * 361.9 / 441.9), "U3O8 %": ("element.u", PCT * 714.1 / 842.1), "TREO %": ("element.ce", PCT * 0.814),
+        "graphite %": ("element.c", PCT), "As %": ("element.as", PCT), "PGE g/t": ("element.pt", GT), "WO3 %": ("element.w", PCT * 183.84 / 231.84)}
 METHOD = {"ip": "induced polarisation", "em": "electromagnetics"}
 REACH = {m["key"]: m["reach_m"] for m in voc["survey_methods"]}
 YIELD = {"aggregate": "good.aggregate", "limestone": "good.limestone", "quartz sand": "good.silica-sand", "clay": "good.clay"}

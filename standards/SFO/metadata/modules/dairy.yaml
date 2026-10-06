@@ -8,6 +8,9 @@ physical:
   length: 60
   width: 40
   height: 10
+staff:
+  - { profession: profession.food-worker, count: 6 }
+  - { profession: profession.plant-operator, count: 1 }
 recipes:
   - makes: good.cheese
     does: "14.4 kg of milk to one of a hard, long-kept cheese."
@@ -28,3 +31,4 @@ recipes:
 basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "14.4 kg of milk to a kg of hard cheese (Grana Padano); 23 kg to a kg of butter. What is left over is by balance." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Its size, how much it puts through and what it draws are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }

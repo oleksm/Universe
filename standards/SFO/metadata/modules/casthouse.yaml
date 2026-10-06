@@ -8,6 +8,11 @@ physical:
   length: 150
   width: 60
   height: 15
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: stock.al6061-ingot
     does: "Magnesium and silicon are added to the grade, the dross is skimmed and the metal is poured into ingots."
@@ -37,3 +42,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "1,010 kWh for each tonne of ingot, a fifth of it electricity. Heat is counted as power: there is no fuel to burn." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Melting scrap again: 5% of the 15.37 kWh a kg that making aluminium from ore takes. The 3% lost as dross is a guess." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

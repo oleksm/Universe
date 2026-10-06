@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.oil-well
+  name: "Oil well"
+  step: "Draw oil and gas"
+  description: "A drilled hole to a field's reservoir with its pump and separator: oil to the tank, the gas that comes with it to the line. It is set on a field (an energy-package id)."
+physical:
+  length: 60
+  width: 40
+  height: 30
+site: open sky
+staff:
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
+recipes:
+  - makes: good.crude-oil
+    does: "Oil lifted from the reservoir and separated from its gas and water."
+    inputs:
+      - { item: good.crude-oil, quantity: 1.0, from: place }
+      - { item: good.natural-gas, quantity: 0.15, from: place }
+    outputs:
+      - { item: good.natural-gas, quantity: 0.15 }
+    rate: 2.0
+    power: 500000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A producing well of about 1,100 barrels a day (2 kg/s), with 150 kg of associated gas a tonne of oil and half a megawatt for its pump and separator: typical figures from memory. Not sourced." }

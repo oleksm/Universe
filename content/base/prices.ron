@@ -22,6 +22,8 @@
         "equipment.hyperdrive.s2": 60000.0,
         "equipment.gun.mass-driver.s1": 8000.0,
         "equipment.laser.pulse.s1": 14000.0,
+        // The MC-07's mining laser carries the pulse laser's figures: the same price, a placeholder for the integrator.
+        "equipment.laser.mc07.mining": 14000.0,
         "equipment.mining.rig.s2": 12000.0,
         "equipment.power.fusion.s1": 9000.0,
         "equipment.thrusters.quad.s1": 4500.0,

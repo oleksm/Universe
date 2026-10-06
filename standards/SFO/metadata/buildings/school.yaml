@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.school
+  name: "School"
+  description: "Classrooms and a hall: where children learn, and the first years of every trade that is learned at school."
+physical:
+  length: 60
+  width: 20
+  height: 8
+  mass: 2647200
+floor: 2400
+storeys: 2
+meets:
+  - { need: need.schooling, people: 2000 }
+staff:
+  - { profession: profession.teacher, count: 22 }
+  - { profession: profession.clerk, count: 2 }
+built_of:
+  - { item: good.concrete, quantity: 2496000 }
+  - { item: material.structural-steel-a36, quantity: 139200 }
+life: 1577880000
+basis:
+  - { of: [meets, staff], tier: derived, source: "standards/sources/research_people_needs.json", note: "Twenty-two teachers at one to 92 people (need.schooling): a school to 2,000." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

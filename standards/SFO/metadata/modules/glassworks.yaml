@@ -8,6 +8,11 @@ physical:
   length: 400
   width: 60
   height: 15
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.glass
     does: "Sand, soda ash and limestone are melted at 1,500 C and floated out into a flat ribbon."
@@ -23,3 +28,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_people_plant.json", note: "Worked back from what flat glass is made of (71% silica, 14% soda, 13% lime and magnesia, the rest alumina) to the rock that gives each; the magnesia is taken as lime." }
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_plant.json", note: "10.2 GJ a tonne: the average of flat-glass furnaces in the United States (8.8 million Btu a short ton)." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.graphite
+  name: "Flake graphite"
+  about: "Graphite flakes in old metamorphic rock."
+sim: { key: graphite, code: GRA }
+formed_by: craton
+carries:
+  - { item: element.c, grade: 0.1, said_as: "graphite %" }
+ore: good.graphite-ore
+shape: strata
+size:
+  median: 5000000000.0
+  spread: 1.5
+  cap: 300000000000.0
+footprint: { length: 1500.0, width: 100.0 }
+forms_at: 0.0
+cluster:
+  deposits: 3.0
+  along: 20000.0
+  across: 10000.0
+seen_by:
+  - { method: electromagnetics, reach: 300.0 }
+  - { method: induced polarisation, reach: 500.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

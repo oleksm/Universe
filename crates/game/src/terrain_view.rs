@@ -26,6 +26,31 @@ pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
     }
 }
 
+/// The colour of a world's sky: an Earth-like one's blue, others' their own, paler.
+pub fn sky_color(body: &Body) -> [f32; 3] {
+    match body.terrain.as_ref().map(|t| t.kind) {
+        Some(TerrainKind::Terran) => [0.35, 0.6, 1.0],
+        _ => {
+            let [r, g, b] = body.color;
+            [0.4 + 0.6 * r, 0.4 + 0.6 * g, 0.4 + 0.6 * b]
+        }
+    }
+}
+
+/// A world's air as drawn over its ground (see `Frame::with_air`): the optical
+/// depth of its column straight up in red, green and blue, and the shell it's
+/// drawn as (m). Earth's column (1.225 kg/m³, 8.5 km scale height) is about
+/// 0.15, 0.23, 0.37: its sky's colour, scattered, over a little grey haze.
+/// More air (denser, or standing taller under weaker gravity), deeper.
+pub fn air(body: &Body) -> Option<([f32; 3], f32)> {
+    let a = body.rail.atmosphere.as_ref()?;
+    let column = (a.surface_density * a.scale_height / (1.225 * 8_500.0)) as f32;
+    let sky = sky_color(body);
+    let depth = sky.map(|c| (0.34 * c + 0.03) * column);
+    // (Even density two scale heights up: the same column, mountains inside it.)
+    Some((depth, (2.0 * a.scale_height) as f32))
+}
+
 /// Texels a side of each face of a world's surface map.
 pub const MAP_SIZE: u32 = 512;
 
@@ -46,7 +71,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
                     let row = k * rows + i / n;
                     let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
                     let dir = universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y);
-                    let (h, inside) = terrain.height_and_crater(dir);
+                    let (h, inside) = terrain.height_and_crater_coarse(dir);
                     // (A port's plain marked in place of crater-ness, below zero.)
                     let plain = terrain.port_plain(dir);
                     *t = [(h / amp) as f32, if plain > 0.01 { -plain as f32 } else { inside as f32 }];
@@ -54,7 +79,24 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
             });
         }
     });
-    Some(universe_engine::GlobeMap::new(MAP_SIZE, texels))
+    let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
+    // A world grown by the planet simulation: its own colour, texel by texel.
+    let Some(image) = terrain.colour() else { return Some(map) };
+    let mut colors = vec![[0u8; 4]; 6 * n * n];
+    std::thread::scope(|s| {
+        for (k, chunk) in colors.chunks_mut(rows * n).enumerate() {
+            let image = &image;
+            s.spawn(move || {
+                for (i, c) in chunk.iter_mut().enumerate() {
+                    let row = k * rows + i / n;
+                    let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
+                    let [r, g, b] = image.at(universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y));
+                    *c = [r, g, b, 255];
+                }
+            });
+        }
+    });
+    Some(map.with_colors(colors))
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).
@@ -74,8 +116,10 @@ pub fn globe(body: &Body, detail: u32) -> Option<WireModel> {
     // (White: its colour comes from its surface map, per pixel.)
     m.colors = vec![[1.0; 4]; m.positions.len()];
     let r = body.rail.radius;
+    // (A whole globe from the coarse heights: its vertices are hundreds of km apart, and the fine
+    // tiles under them all (every one of a world's: gigabytes) would be read for nothing.)
     for p in &mut m.positions {
-        let h = terrain.surface(p.as_dvec3());
+        let h = terrain.surface_coarse(p.as_dvec3());
         *p *= (1.0 + h / r) as f32;
     }
     Some(m)

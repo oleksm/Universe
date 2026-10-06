@@ -16,4 +16,5 @@ insurance:
   premium: 9.51e-10
   excess: 0.1
   delivered_at: yard
+  yards: [facility.treistun.port-trethi.trethi-yard]
   refuses: [piracy, murder, smuggling, reckless flying]

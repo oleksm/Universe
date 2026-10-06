@@ -11,5 +11,9 @@ physical:
 throughput:
   rate: 0.277777777777778
   power: 200000.0
+staff:
+  - { profession: profession.fitter, count: 6 }
+  - { profession: profession.technician, count: 1 }
 basis:
   - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [staff], tier: invented, review: true, note: "Six fitters and a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

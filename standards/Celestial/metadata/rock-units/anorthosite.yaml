@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
+identity:
+  key: rock-unit.anorthosite
+  name: "Anorthosite highlands"
+  about: "The pale highlands: feldspar that floated to the top of a magma ocean."
+sim: { key: anorthosite }
+made_by: [craton]
+physical:
+  density: 2750.0
+  magnetic_susceptibility: 0.0001
+  erodibility: 0.4
+also:
+  - "plagioclase for aluminium, glass (26 to 35 Al2O3 %)"
+  - "regolith oxygen for oxygen by reduction (44 to 46 O %)"
+basis:
+  - { of: [sim, physical, also], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.fossil-placer-ore
+  name: "Fossil placer ore"
+  kind: rock
+  description: "Quartz-pebble conglomerate with gold and uraninite."
+physical:
+  bulk_density: 2700
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.fossil-placer-gold). The game has no works for it yet."
+composition:
+  - { part: element.au, share: 8.0e-06 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/fossil-placer-gold.yaml", note: "The typical grade of its deposit type, from the planet simulation's vocabulary of 2026-10-06; its other metals are on the deposit type." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

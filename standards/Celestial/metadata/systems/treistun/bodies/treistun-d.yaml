@@ -45,6 +45,25 @@ survey:
     - {"commodity": "Ag", "mass": 403400000.0}
     - {"commodity": "PGE", "mass": 87490000.0}
     - {"commodity": "Au", "mass": 32750000.0}
+energy:
+  format: "planet-sim-energy/1"
+  folder: "standards/Celestial/surveys/TRD1/energy"
+  manifest_sha256: "dcd350361372f0ac273c51cec01ac47eb859cd37b85f6843c3f670c4962e48a1"
+  basins: 282
+  oil_fields: 46672
+  gas_fields: 20477
+  coalfields: 89
+  oil_in_place: 1187000000000.0
+  gas_in_place: 900900000000000.0
+  coal_in_place: 2.739e+16
+bake:
+  format: "planet-sim-surface/1"
+  version: 1
+  path: "worlds/TRD1/surface/v1"
+  manifest_sha256: "bce36dfaad24f436372ad9703b46dd1ab3982049414f8023e6733eccebc27f8e"
+  files: 1328
+  bytes: 711882830
+  note: "600 m bake with hollows filled (no dammed-valley lakes); rivers, peaks"
 identity:
   key: body.treistun.treistun-d
   name: Harvest
@@ -59,9 +78,20 @@ identity:
 orbit: {semi_major_axis: 78538880000.0, eccentricity: 0.04874, period: 14293927.2, inclination: 2.183}
 physical: {mass: 6.9752e+24, radius: 6654110.0, gravity: 10.514, day: 72612.0, tilt: 13.73, albedo: 0.3}
 surface:
+  highest: 8920
   terrain: terran
   relief: 4658
   colour: [0.3, 0.85, 0.45]
 interior: {radiogenic: 1.0}
 water: {mass_share: 0.00023}
 atmosphere: {surface_density: 1.225, scale_height: 7928.0, top: 111000.0, breathable: true}
+# Life, from the run (the lab's release note for TRD1, 2026-10-06): when it began and its great steps, as ages. Fertile soil follows from forests.
+life:
+  present: "plants and animals"
+  soil: "fertile"
+  began: 1.351e+17
+  photosynthesis: 1.193e+17
+  oxidation: 5.838e+16
+  complex: 2.177e+16
+  land_plants: 1.546e+16
+  forests: 9467000000000000.0

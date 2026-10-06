@@ -9,6 +9,8 @@ physical:
   length: 200
   width: 100
   height: 3
+staff:
+  - { profession: profession.farmer, count: 2 }
 recipes:
   - makes: good.live-fish
     does: "Fish raised on 1.3 kg of feed for each kg they gain. The water they live in is kept, not used up."
@@ -24,3 +26,4 @@ basis:
   - { of: [recipes, recipes.rate, recipes.inputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "1 to 1.5 kg of feed for each kg of fish, by its kind; 1.3 taken. The farm's size and rate are chosen." }
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance, as a barn's." }
   - { of: [physical, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }

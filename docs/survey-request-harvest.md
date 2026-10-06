@@ -44,10 +44,27 @@ The import checks `radius_m` against the record's 6,654,110 m within 1%: a world
 is refused. Our vocabulary import is current with your `docs/vocabulary.json` (its hash is in your
 manifest; if you have changed it since, tell me and I re-import before you run).
 
-Then I run `python3 tools/standards/survey_import.py <folder> body.treistun.treistun-d`, Harvest
+Then I run `python3 tools/standards/world_install.py <folder> body.treistun.treistun-d`, Harvest
 becomes `baked`, and the game reads your rock map, deposits and districts from the registry.
 
 ## After Harvest
 
 Hearth (`treistun-e`, the home world: 6,281 km, 0.98 g, 264 K, 0.66 AU, ice and air) and Rime
 (`treistun-f`: 3,634 km, 0.41 g, 189 K, 1.13 AU, airless) next, in that order.
+
+## After the release of 2026-10-06: two asks, and the install is hands-off
+
+Harvest's three packages are installed (`tools/standards/world_install.py <world folder>`: the
+survey and energy copied, the surface bake pointed at). Two small additions on your side make it
+run without anyone passing anything by hand:
+
+1. **`body` in every manifest** (survey, energy and each surface version), and a **`releases.json`**
+   at the store's root (`worlds/releases.json`): one line per world with its body, its packages'
+   manifest hashes and the date. The installer then takes the store and installs whatever is new.
+2. **A `climate` block in the survey's `summary.json`**: mean surface temperature, the bands you
+   reported (equator, 25–35°, 38–50°, poles: temperature and rain), highest point. Today these
+   figures reach the record only by hand from your note.
+
+Everything else in the release reads well: `summary.body` names the body, so "grown from its
+registry record" is right; the energy amounts are marked on the record as model estimates
+calibrated on your Grown Earth, in place, not recoverable. Hearth (TRE1) next.

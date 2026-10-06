@@ -11,6 +11,10 @@ physical:
 throughput:
   rate: 0.138888888888889
   power: 130000.0
+staff:
+  - { profession: profession.machinist, count: 4 }
+  - { profession: profession.technician, count: 1 }
 basis:
   - { of: [throughput.power], tier: sourced, source: "https://www.makino.com/en-us/machine-technology/machines/horizontal-5-axis/mag3", note: "A large five-axis machining centre has a 130 kW spindle. The spindle only." }
   - { of: [physical, throughput.rate, throughput.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [staff], tier: invented, review: true, note: "Four machinists and a technician. Coarse: by the kind of plant, not this one; to be reviewed." }

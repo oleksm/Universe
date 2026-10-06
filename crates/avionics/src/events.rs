@@ -20,6 +20,8 @@ pub enum Event {
     RouteComplete,
     /// A route stop can't be reached (no gate path, or it no longer exists).
     RouteBlocked { reason: String },
+    /// A route stop given up: refused clearance there.
+    RouteSkipped { name: String },
     Autopilot { on: bool },
     NavTargetSet { name: Option<String> },
     /// The follow program: now keeping at / orbiting at this range (m), or off.
@@ -54,6 +56,12 @@ pub enum Event {
     /// The hull mended at a station: what it cost, and how sound it is now (0..1).
     Repaired { credits: f64, hull: f64 },
     /// A ship lost, replaced by the insurer: what the excess cost (None: it
-    /// couldn't be paid, and the replacement is the basic ship).
-    Insured { excess: Option<f64> },
+    /// couldn't be paid, or the loss was refused, and the replacement is the
+    /// basic ship); the offence it refused for; the port it was delivered to
+    /// (empty: none, left by the home station).
+    Insured { excess: Option<f64>, refused: Option<String>, at: String },
+    /// Charged with an offence under the law of the system named, and what it gave for it.
+    Charged { offence: String, system: String, penalties: String },
+    /// A bounty paid us for bringing the ship named down.
+    Bounty { credits: f64, on: String },
 }

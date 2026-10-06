@@ -190,9 +190,12 @@ impl Bus for PoolLink<'_> {
     fn request_clearance(&mut self, target: Option<NavTarget>) -> Result<NavTarget, String> {
         let positions = self.rails();
         let target = target.or_else(|| universe_services::atc::nearest_station(&self.sys, self.ship.position, &positions));
-        // The system's docks refuse its enemies.
+        // The system's docks refuse its enemies, and those outside its law.
         if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
             return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
+        }
+        if self.view.snaps.get(self.id).is_some_and(|s| s.outlaw) {
+            return Err(format!("REFUSED - YOU ARE OUTSIDE {}'S LAW", self.sys.name.to_uppercase()));
         }
         // A port on ground its lift can't hold it over (or its legs can't stand on): no clearance.
         if let Some(NavTarget::Spaceport(p)) = target

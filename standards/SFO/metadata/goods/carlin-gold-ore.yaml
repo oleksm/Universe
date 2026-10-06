@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.carlin-gold-ore
+  name: "Carlin gold ore"
+  kind: rock
+  description: "Decalcified, silicified limestone with invisible gold."
+physical:
+  bulk_density: 2600
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.carlin-gold). The game has no works for it yet."
+composition:
+  - { part: element.au, share: 2.5e-06 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/carlin-gold.yaml", note: "The typical grade of its deposit type, from the planet simulation's vocabulary of 2026-10-06; its other metals are on the deposit type." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

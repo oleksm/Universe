@@ -8,6 +8,10 @@ physical:
   length: 60
   width: 12
   height: 8
+staff:
+  - { profession: profession.machinist, count: 4 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: stock.al6061-tb-60x2
     does: "A heated 6061 billet pressed through a die round a mandrel, stretched and aged to T6."
@@ -259,3 +263,4 @@ recipes:
     power: 3000000
 basis:
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "A mid-size extrusion press: 10 t an hour of aluminium tube, a fifth of that in titanium, at 3 MW, with 8% and 15% lost to the butt and the stretch. Sized from memory of a 5,000 t press line; not sourced." }
+  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }

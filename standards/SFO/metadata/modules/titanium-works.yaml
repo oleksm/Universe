@@ -8,6 +8,11 @@ physical:
   length: 300
   width: 150
   height: 30
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: element.ti
     does: "Ilmenite is smelted to iron and a titanium slag; the slag is chlorinated with carbon; the chloride is reduced with magnesium, which is won back and used again (the Kroll process)."
@@ -27,3 +32,4 @@ basis:
   - { of: [recipes.outputs], tier: derived, review: true, note: "By balance: the iron comes off as metal (smelting ilmenite gives pig iron), the oxygen as carbon dioxide, the chlorine and the titanium lost as waste." }
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_machines.json", note: "21.5 MWh a tonne of titanium sponge from its chloride, magnesium recovery and all. Smelting and chlorinating are not counted: no figure was found." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

@@ -1,8 +1,9 @@
 //! The ground near a world: its terrain as a cube-sphere quadtree of
 //! patches, each a grid of the very height the physics lands on, finer the
-//! nearer the eye (down to tens of metres underfoot). Patches are made a
-//! few a frame (on all cores) and kept a while; until a finer one is ready
-//! its parent stands in. Each has its own origin, so nothing shakes up
+//! nearer the eye (down to tens of metres underfoot). Patches are made on a
+//! pool of their own, nearest first, and taken in a few a frame as they're
+//! done: no frame waits on one. Until a patch is ready the nearest made above
+//! it stands in, and they're kept a while. Each has its own origin, so nothing shakes up
 //! close; skirts hang from their edges to hide the seams between sizes.
 
 use std::collections::HashMap;
@@ -16,10 +17,15 @@ use universe_sim::Body;
 const GRID: u32 = 16;
 /// The finest patches (about 1/2^MAX_LEVEL of a cube face across).
 const MAX_LEVEL: u8 = 15;
-/// A patch splits when the eye is nearer than this many times its size.
+/// A patch splits when the eye is nearer than this many times its size. (The mesh shader's
+/// GEOMORPH_SPLIT: keep them together.)
 const SPLIT: f64 = 2.4;
-/// Patches made a frame, at most.
+/// Patches wanted a frame (the next finer), at most.
 const BUDGET: usize = 12;
+/// Patches being made at once, at most.
+const IN_FLIGHT: usize = 48;
+/// Patches taken in a frame, at most (each an upload).
+const TAKE: usize = 24;
 /// Frames an unused patch is kept.
 const KEEP: u64 = 600;
 
@@ -49,16 +55,31 @@ impl Key {
 
 struct Patch {
     mesh: Mesh,
+    /// Made before all its ground was read: made again once it is.
+    partial: bool,
     /// Its origin (body frame, m).
     origin: DVec3,
     used: u64,
 }
 
 /// The patches made so far, for every world in view.
+/// A patch made: its key, mesh, origin, and whether its ground was all read.
+type Made = (Key, Mesh, DVec3, bool);
+
 #[derive(Default)]
 pub struct Lod {
     patches: HashMap<Key, Patch>,
     frame: u64,
+    /// Made on the pool (two cores left to the rest), and those being made.
+    pool: Option<rayon::ThreadPool>,
+    pending: std::collections::HashSet<Key>,
+    done: Arc<std::sync::Mutex<Vec<Made>>>,
+}
+
+impl Key {
+    fn parent(self) -> Option<Key> {
+        (self.level > 0).then(|| Key { level: self.level - 1, x: self.x / 2, y: self.y / 2, ..self })
+    }
 }
 
 /// A direction on the world from a cube face and a place on it (-1..1 each
@@ -76,22 +97,29 @@ fn face_dir(face: u8, u: f64, v: f64) -> DVec3 {
     d.normalize()
 }
 
-/// The ground's height at `dir` (m; the sea's surface over an Earth-like world's deeps).
-fn ground(body: &Body, dir: DVec3) -> f64 {
-    body.terrain.as_ref().map_or(0.0, |t| t.surface(dir))
+/// The ground's height at `dir` (m; the sea's surface over an Earth-like world's deeps), as far
+/// as it's read (a world's bake reads in the background), and whether that's all of it.
+fn ground(body: &Body, dir: DVec3) -> (f64, bool) {
+    body.terrain.as_ref().map_or((0.0, true), |t| t.surface_view(dir))
 }
 
 /// A patch's mesh: its grid on the ground (round its origin), and skirts.
-fn make(body: &Body, key: Key) -> (WireModel, DVec3) {
+fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     let r = body.rail.radius;
     let n = (1u32 << key.level) as f64;
     let (mid, size) = key.shape();
-    let origin = mid * (r + ground(body, mid));
+    let whole = std::cell::Cell::new(true);
+    let at = |d: DVec3| {
+        let (h, w) = ground(body, d);
+        whole.set(whole.get() && w);
+        h
+    };
+    let origin = mid * (r + at(mid));
     let g = GRID as usize + 1;
     let place = |i: usize, j: usize, drop: f64| {
         let (u, v) = ((key.x as f64 + i as f64 / GRID as f64) / n * 2.0 - 1.0, (key.y as f64 + j as f64 / GRID as f64) / n * 2.0 - 1.0);
         let d = face_dir(key.face, u, v);
-        ((d * (r + ground(body, d) - drop) - origin).as_vec3(), d)
+        ((d * (r + at(d) - drop) - origin).as_vec3(), d)
     };
     let mut m = WireModel { smooth: true, ..WireModel::default() };
     let mut dirs = Vec::with_capacity(g * g);
@@ -133,8 +161,32 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3) {
         let (a, b, c, d) = (base + w * 2, base + w * 2 + 2, base + w * 2 + 1, base + w * 2 + 3);
         m.faces.extend([[a, b, d], [a, d, c], [a, d, b], [a, c, d]]);
     }
-    m.colors = vec![[1.0; 4]; m.positions.len()];
-    (m, origin)
+    // Each vertex's way to its parent's shape (the vertex colour's rgb, m) and the patch's size
+    // (its alpha, m), for the mesh shader to blend toward as the eye nears the distance where the
+    // parent takes its place (geomorphing: a swap doesn't pop). A vertex on the parent's grid (even
+    // both ways) is where it is; one between, the mean of the parent's two either side of it (the
+    // cell's diagonal, as its triangles are cut, where it's between both ways).
+    let size_m = (size * r) as f32;
+    let grid: Vec<universe_engine::glam::Vec3> = m.positions[..g * g].to_vec();
+    let at = |i: usize, j: usize| grid[j * g + i];
+    let morph = |i: usize, j: usize| -> [f32; 4] {
+        let own = at(i, j);
+        let target = match (i % 2, j % 2) {
+            (0, 0) => own,
+            (1, 0) => (at(i - 1, j) + at(i + 1, j)) * 0.5,
+            (0, 1) => (at(i, j - 1) + at(i, j + 1)) * 0.5,
+            _ => (at(i - 1, j - 1) + at(i + 1, j + 1)) * 0.5,
+        };
+        let d = target - own;
+        [d.x, d.y, d.z, size_m]
+    };
+    let mut colors: Vec<[f32; 4]> = (0..g * g).map(|k| morph(k % g, k / g)).collect();
+    for &(i, j) in &edge {
+        colors.push(morph(i, j));
+        colors.push(morph(i, j));
+    }
+    m.colors = colors;
+    (m, origin, !whole.get())
 }
 
 impl Lod {
@@ -146,9 +198,19 @@ impl Lod {
     /// Draw world `body` (of system `system`, its middle at `center`,
     /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
     #[allow(clippy::too_many_arguments)]
-    pub fn draw(&mut self, frame: &mut Frame, system: usize, body_index: usize, body: &Body, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) {
+    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) {
+        let body = &sys.bodies[body_index];
         self.frame += 1;
         let now = self.frame;
+        // Take in what the pool has made (a few a frame: each is an upload).
+        let made: Vec<Made> = self.done.lock().map(|mut d| {
+            let n = d.len().min(TAKE);
+            d.drain(..n).collect()
+        }).unwrap_or_default();
+        for (k, mesh, origin, partial) in made {
+            self.pending.remove(&k);
+            self.patches.insert(k, Patch { mesh, origin, used: now, partial });
+        }
         let r = body.rail.radius;
         let eye_local = rotation.inverse() * (eye - center);
         let eye_dist = eye_local.length();
@@ -188,30 +250,67 @@ impl Lod {
             }
             draw.push(key);
         }
-        // Make what's missing (what must be drawn now, and the next finer), on all cores.
+        // The whole faces made now if they're missing (nothing stands in for them).
+        for key in draw.iter().copied().filter(|k| k.level == 0 && !self.patches.contains_key(k)).collect::<Vec<_>>() {
+            let (m, origin, partial) = make(body, key);
+            self.pending.remove(&key);
+            self.patches.insert(key, Patch { mesh: m.into(), origin, used: now, partial });
+        }
+        // The rest made on the pool, nearest first (in its own sizes): what must be drawn now,
+        // the next finer, and made again what was made before all its ground was read.
         let mut todo: Vec<Key> = draw.iter().copied().filter(|k| !self.patches.contains_key(k)).collect();
         todo.extend(want);
-        let made: Vec<(Key, WireModel, DVec3)> = std::thread::scope(|s| {
-            let jobs: Vec<_> = todo.iter().map(|&k| s.spawn(move || {
-                let (m, o) = make(body, k);
-                (k, m, o)
-            })).collect();
-            jobs.into_iter().filter_map(|j| j.join().ok()).collect()
+        todo.extend(draw.iter().copied().filter(|k| self.patches.get(k).is_some_and(|p| p.partial)));
+        todo.retain(|k| !self.pending.contains(k));
+        let near = |k: &Key| {
+            let (mid, size) = k.shape();
+            (mid * r).distance(eye_local) / (size * r)
+        };
+        todo.sort_by(|a, b| near(a).total_cmp(&near(b)));
+        todo.dedup();
+        let pool = self.pool.get_or_insert_with(|| {
+            let cores = std::thread::available_parallelism().map_or(4, |c| c.get());
+            rayon::ThreadPoolBuilder::new().num_threads(cores.saturating_sub(2).max(1)).thread_name(|i| format!("ground {i}")).build().expect("the ground's pool")
         });
-        for (k, m, origin) in made {
-            self.patches.insert(k, Patch { mesh: m.into(), origin, used: now });
+        for k in todo.into_iter().take(IN_FLIGHT.saturating_sub(self.pending.len())) {
+            self.pending.insert(k);
+            let (sys, done) = (sys.clone(), self.done.clone());
+            pool.spawn(move || {
+                let (m, origin, partial) = make(&sys.bodies[body_index], k);
+                if let Ok(mut d) = done.lock() {
+                    d.push((k, m.into(), origin, partial));
+                }
+            });
         }
+        // What's not made yet: the nearest made above it stands in (each once).
+        let mut shown: Vec<Key> = Vec::with_capacity(draw.len());
+        for mut key in draw {
+            while !self.patches.contains_key(&key) {
+                match key.parent() {
+                    Some(p) => key = p,
+                    None => break,
+                }
+            }
+            if !shown.contains(&key) {
+                shown.push(key);
+            }
+        }
+        // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
+        let draw = shown;
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();
+        let (depth, shell) = crate::terrain_view::air(body).unwrap_or_default();
         for key in draw {
             let Some(p) = self.patches.get_mut(&key) else { continue };
             p.used = now;
             let at = [(p.origin.x / r) as f32, (p.origin.y / r) as f32, (p.origin.z / r) as f32, (1.0 / r) as f32];
             let t = Transform { position: center + rotation * p.origin, rotation: turn, scale: 1.0 };
             frame.no_shadow(|frame| {
-                frame.with_globe(map, kind, relief, crate::terrain_view::FILL * 2.5, at, p.origin, |frame| {
-                    frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
+                frame.with_air(depth, shell, |frame| {
+                    frame.with_globe(map, kind, relief, crate::terrain_view::FILL * 2.5, at, p.origin, |frame| {
+                        frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
+                    })
                 })
             });
         }

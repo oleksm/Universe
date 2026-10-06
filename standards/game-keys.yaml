@@ -140,6 +140,7 @@
 - { key: module.chip-fab, game: "chip-fab", in: "industry.ron, settlements.ron" }
 - { key: module.chlor-alkali-plant, game: "chlor-alkali-plant", in: "industry.ron, settlements.ron" }
 - { key: module.clothing-works, game: "clothing-works", in: "industry.ron, settlements.ron" }
+- { key: module.coal-mine, game: "coal-mine", in: "industry.ron, settlements.ron" }
 - { key: module.cold-rolling-mill, game: "cold-rolling-mill", in: "industry.ron, settlements.ron" }
 - { key: module.cold-store, game: "cold-store", in: "industry.ron, settlements.ron" }
 - { key: module.composites-works, game: "composites-works", in: "industry.ron, settlements.ron" }
@@ -165,6 +166,7 @@
 - { key: module.forging-press, game: "forging-press", in: "industry.ron, settlements.ron" }
 - { key: module.foundry, game: "foundry", in: "industry.ron, settlements.ron" }
 - { key: module.fusion-power-station, game: "fusion-power-station", in: "industry.ron, settlements.ron" }
+- { key: module.gas-well, game: "gas-well", in: "industry.ron, settlements.ron" }
 - { key: module.general-warehouse, game: "general-warehouse", in: "industry.ron, settlements.ron" }
 - { key: module.glassworks, game: "glassworks", in: "industry.ron, settlements.ron" }
 - { key: module.gold-works, game: "gold-works", in: "industry.ron, settlements.ron" }
@@ -188,6 +190,7 @@
 - { key: module.molybdenum-works, game: "molybdenum-works", in: "industry.ron, settlements.ron" }
 - { key: module.nickel-smelter, game: "nickel-smelter", in: "industry.ron, settlements.ron" }
 - { key: module.oil-press, game: "oil-press", in: "industry.ron, settlements.ron" }
+- { key: module.oil-well, game: "oil-well", in: "industry.ron, settlements.ron" }
 - { key: module.orchard, game: "orchard", in: "industry.ron, settlements.ron" }
 - { key: module.ore-yard, game: "ore-yard", in: "industry.ron, settlements.ron" }
 - { key: module.oxygen-plant, game: "oxygen-plant", in: "industry.ron, settlements.ron" }
@@ -232,6 +235,7 @@
 - { key: org.halcyon, game: "brand.halcyon", in: "brands.ron" }
 - { key: org.halloran-mills, game: "brand.halloran_mills", in: "brands.ron" }
 - { key: org.halvard, game: "brand.halvard", in: "brands.ron" }
+- { key: org.hearth-line, game: "brand.hearth_line", in: "brands.ron" }
 - { key: org.kestrel, game: "brand.kestrel", in: "brands.ron" }
 - { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
 - { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }
@@ -243,6 +247,7 @@
 - { key: org.tallis, game: "brand.tallis", in: "brands.ron" }
 - { key: org.tolland, game: "brand.tolland", in: "brands.ron" }
 - { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "brands.ron" }
+- { key: org.treistun-freight, game: "brand.treistun_freight", in: "brands.ron" }
 - { key: org.treistun-mutual, game: "brand.treistun_mutual", in: "brands.ron" }
 - { key: org.verdance, game: "brand.verdance", in: "brands.ron" }
 - { key: org.vireo, game: "brand.vireo", in: "brands.ron" }

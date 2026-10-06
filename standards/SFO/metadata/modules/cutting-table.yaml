@@ -8,6 +8,8 @@ physical:
   length: 40
   width: 15
   height: 5
+staff:
+  - { profession: profession.metalworker, count: 3 }
 recipes:
   - makes: stock.al6061-sh-2-blank
     does: "6061 sheet 2 mm is cut to each panel's outline; what is left between the outlines is scrap."
@@ -38,3 +40,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://www.trumpf.com/en_INT/products/machines-systems/2d-laser-cutting-machines/trulaser-3030-fiber-3040-fiber-3060-fiber-3080-fiber/", note: "A laser cutting machine with a 24 kW laser draws 27 kW on average; its largest bed is 8 by 2.5 m." }
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
   - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
+  - { of: [staff], tier: invented, review: true, note: "Three metalworkers. Coarse: by the kind of plant, not this one; to be reviewed." }

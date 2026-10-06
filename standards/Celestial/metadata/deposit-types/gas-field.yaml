@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# The planet simulation's energy package (planet-sim-energy/1, docs/survey-format.md there): oil and gas fields in petroleum
+# basins, and coalfields. Their IDs are permanent (TRD1-PB001-F001, TRD1-CF001); claims point at them. Amounts in the package
+# are in place, not recoverable, and are model estimates calibrated on the simulation's Grown Earth.
+identity:
+  key: deposit-type.gas-field
+  name: "Gas field"
+  about: "Natural gas trapped in porous rock under a seal."
+sim: { key: gas_field, code: PB }
+formed_by: burial
+carries:
+  - { item: good.natural-gas, grade: 1.0, said_as: "gas_bcf (billion cubic feet in place)" }
+ore: good.natural-gas
+shape: lens
+seen_by:
+  - { method: gravity, reach: 2000.0 }
+basis:
+  - { of: [sim, carries, ore, shape], tier: sourced, review: true, source: "the planet simulation: docs/survey-format.md, the energy package of 2026-10-06", note: "As the oil field: the gas itself is what is won." }
+  - { of: [seen_by], tier: invented, review: true, note: "Basins and seams are found by gravity and seismic surveys at depth; a reach of 2 km is chosen, since the simulation's vocabulary has no entry for them yet." }

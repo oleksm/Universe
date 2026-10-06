@@ -1,0 +1,35 @@
+{
+ "format": "planet-sim-energy/1",
+ "world_id": "TRD1",
+ "created": "2026-10-06T12:59:46+00:00",
+ "immutable": true,
+ "simulator": {
+  "commit": "b2684f3a315099ab7890731f5425f80ab5fa065c"
+ },
+ "survey": {
+  "file": "worlds/TRD1/survey/manifest.json",
+  "sha256": "c913d6e4e6c847c8b44cf1be83d9f8baece329ed38fe8faae1c6a644bae99d23"
+ },
+ "inputs": {
+  "organics.npz": "a167c86b3fda131a4f3a6feb403ea10dcb2aaef7d82343d4bd10965721ae45fe",
+  "world.npz": "9d09421d42bd1d86e9c6f1eadec174850ffcb6d0de24614e6d795df49105089a"
+ },
+ "files": {
+  "basins.json": {
+   "sha256": "9c51e7abf1fabbfdee8ca6e796528ae79ef3d3c1bb1498c34526b914678be84b",
+   "bytes": 87455
+  },
+  "coalfields.json": {
+   "sha256": "9d54f7ebfd979755f1e28986fa69860a336982156f71b2cbaa54e4b2d14daa66",
+   "bytes": 13228
+  },
+  "fields.geojson": {
+   "sha256": "dde43df1e30a98368aeddaea0c4fd30de40a7da6af412548d15ccea5ee876a0d",
+   "bytes": 22196251
+  },
+  "summary.json": {
+   "sha256": "edb7a0dae71315cfae902dcc560c006be464757dad16ec5737f3398e4e9fa922",
+   "bytes": 418
+  }
+ }
+}

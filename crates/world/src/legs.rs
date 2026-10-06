@@ -81,10 +81,19 @@ fn reckon(reg: &Registry, key: &str) -> Option<Legs> {
         let l = longest(p);
         Some((sy * area).min(std::f64::consts::PI.powi(2) * e * inertia / (l * l)))
     };
-    // Each leg (a part made of parts, as many as it's fitted), its struts the parts with a landing load case.
+    // Each leg (a part made of parts, as many as it's fitted, or a landing-gear product fitted to a
+    // gear slot: `equipment.gear.*`, built of its parts), its struts the parts with a landing load case.
     let (mut count, mut most, mut stroke) = (0u32, f64::INFINITY, f64::INFINITY);
-    for (leg, n) in reg.built_of(key) {
-        let struts: Vec<&Part> = reg.built_of(&leg.identity.key).into_iter().map(|(p, _)| p).filter(|p| p.limits.load_case == Some(PartLimitsLoadCase::Landing)).collect();
+    let fitted_gear = h.fit.iter().filter(|f| reg.equipment.iter().any(|e| e.identity.key == f.item && matches!(e.function, crate::registry::EquipmentFunction::LandingGear(_)))).map(|f| f.item.clone());
+    let mut legs: Vec<(String, u32)> = reg.built_of(key).into_iter().map(|(p, n)| (p.identity.key.clone(), n)).collect();
+    for item in fitted_gear {
+        match legs.iter_mut().find(|(k, _)| *k == item) {
+            Some(l) => l.1 += 1,
+            None => legs.push((item, 1)),
+        }
+    }
+    for (leg, n) in legs {
+        let struts: Vec<&Part> = reg.built_of(&leg).into_iter().map(|(p, _)| p).filter(|p| p.limits.load_case == Some(PartLimitsLoadCase::Landing)).collect();
         if struts.is_empty() {
             continue;
         }

@@ -4,6 +4,7 @@ identity:
   name: Slag
   kind: by-product
   description: "The glassy crust of lime and impurities skimmed off molten metal."
+waste: true
 physical:
   bulk_density: 1500
 basis:

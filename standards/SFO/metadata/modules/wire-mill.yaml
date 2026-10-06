@@ -8,6 +8,10 @@ physical:
   length: 200
   width: 30
   height: 10
+staff:
+  - { profession: profession.machinist, count: 4 }
+  - { profession: profession.plant-operator, count: 4 }
+  - { profession: profession.technician, count: 1 }
 recipes:
   - makes: stock.cu-wire-2
     does: "A copper ingot is rolled to rod and drawn to wire."
@@ -20,3 +24,4 @@ recipes:
 basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "7.1 MJ a kg to turn copper into wire (Argonne's model of vehicle making)." }
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Its size and rate are chosen; the 2% lost is a guess. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }

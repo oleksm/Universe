@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.iron-oxide-copper-gold
+  name: "Iron oxide copper gold"
+  about: "Great bodies of iron oxide with copper, gold and a little uranium, in old crust."
+sim: { key: iocg, code: IOC }
+formed_by: craton
+carries:
+  - { item: element.cu, grade: 0.01, said_as: "Cu %" }
+  - { item: element.au, grade: 5.0e-07, said_as: "Au g/t" }
+  - { item: element.u, grade: 0.0001696, said_as: "U3O8 %" }
+  - { item: element.fe, grade: 0.3, said_as: "Fe %" }
+ore: good.iocg-ore
+shape: stock
+size:
+  median: 50000000000.0
+  spread: 2.0
+  cap: 10000000000000.0
+footprint: { length: 3000.0, width: 1000.0 }
+forms_at: 0.0
+cluster:
+  deposits: 3.0
+  along: 40000.0
+  across: 20000.0
+seen_by:
+  - { method: gravity, reach: 800.0 }
+  - { method: magnetics, reach: 800.0 }
+  - { method: radiometrics, reach: 1.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

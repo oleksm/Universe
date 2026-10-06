@@ -34,12 +34,12 @@ through `docs/vocabulary.json` → `tools/standards/geology_import.py` → `Cele
 `rock-units/`. The manifest hashes the vocabulary; a run on a vocabulary the registry has not imported
 is a run to redo.
 
-## 2. Importing a survey (the registry's tool)
+## 2. Installing a world (the registry's tool)
 
-    python3 tools/standards/survey_import.py <survey folder> <body key>
+    python3 tools/standards/world_install.py <world folder>        # worlds/<world_id>/, with survey/, energy/, surface/
     python3 tools/standards/build.py
 
-`tools/standards/survey_import.py`:
+`tools/standards/world_install.py`:
 
 1. **Checks** the survey: format `planet-sim-survey/1`, `immutable: true`, every file present and
    its SHA-256 as the manifest says, `summary.body` the body (or none), the radius the record's.
@@ -60,6 +60,23 @@ Validation: `survey` is on the body schema (required fields, SI units, closed ob
 in the dictionary; `build.py` accepts it and the tracker records the change. The survey folder
 holds no YAML, so neither walker reads it as records.
 
+## 2a. The world's three packages
+
+| Package | Written | Kept in the registry | On the body's record |
+|---|---|---|---|
+| `survey/` (planet-sim-survey/1) | once per run | copied whole (3 MB), files read-only | `survey` |
+| `energy/` (planet-sim-energy/1): petroleum basins, oil and gas fields, coalfields; IDs permanent | once per run | copied whole (22 MB) | `energy`: counts, in-place oil (m³), gas (m³), coal (kg); model estimates calibrated on the simulation's Grown Earth, not recoverable |
+| `surface/` (planet-sim-surface/1): the flyable bake, versioned; `latest.json` names the current | per bake, each version once | **not copied** (0.7 GB): `latest.json` and the version's `manifest.json` only | `bake`: version, path in the worlds store, manifest hash, files, bytes |
+
+The install takes the world folder, finds the three, checks every file against its manifest, and
+is idempotent. The surface's files live in a **worlds store**: a folder the game is configured with
+(`worlds/<world_id>/surface/v<N>/`), today the lab's `planet-sim/out/`; the game fetches by the
+manifest's hashes, so any copy of the store will do.
+
+Deposit types for the energy kinds: `deposit-type.oil-field`, `.gas-field`, `.coalfield`
+(formed by burial); goods crude oil, natural gas, coal and their bulk stock; modules `oil-well`,
+`gas-well`, `coal-mine` drawing from the place.
+
 ## 3. What the game reads (the integrator)
 
 **By reference.** The registry is the only copy the game loads; a baked body's record carries
@@ -74,6 +91,8 @@ holds no YAML, so neither walker reads it as records.
 | `bulk_rock.json` | each rock unit's land area and what it yields (aggregate, dimension stone, lime, clay) | what a quarry anywhere on that unit produces |
 | `deposits.geojson` | one Point per deposit: `id`, `district_id`, `belt_id`, `kind` (→ `deposit-types/`, by `sim.key`), `tonnage_mt`, `grades` (per commodity, in the survey's units), `depth_m`, `blind`, `strike_deg`, `dip_deg`, `length_m`, `width_m`, `shape`, `host` (rock unit), `chance`, `seen_by` (survey method → whether that method finds it from above), `water_depth_m` (under the sea) | mining: a mine is placed on a deposit `id`; what it yields is the deposit's grades times what the `mine` module's recipe draws; prospecting: a ship's instrument of kind M reveals deposits whose `seen_by[M]` is true within its range; a map layer per method |
 | `districts.json` | each district: ID, kind, its deposits, extent | the map's district layer; the land register's unit for a mining licence |
+| `energy/fields.geojson`, `basins.json`, `coalfields.json` | fields (oil or gas, in-place amounts, depth, trap, water depth), basins, coalfields (rank, area) | a well or a coal mine sits on a field's or coalfield's `id`; a map layer |
+| the surface bake (`bake.path` in the worlds store) | 5 km and 600 m height tiles, rivers, textures, geology and energy layers, peaks, the world's report | the ground to fly over and land on; the globe; the map layers |
 
 Coordinates: longitude, latitude in degrees on the body's sphere; the rock map's x is longitude
 −180 → 180 left to right, y is latitude 90 → −90 top to bottom.

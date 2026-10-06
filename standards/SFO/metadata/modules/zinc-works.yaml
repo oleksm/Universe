@@ -8,6 +8,11 @@ physical:
   length: 300
   width: 200
   height: 25
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: element.zn
     does: "Concentrate is roasted, leached in acid and the zinc laid down on cathodes by current."
@@ -23,3 +28,4 @@ basis:
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "3,850 to 4,905 kWh a tonne of zinc, and 0.48 GJ besides." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_ore_processing.json", note: "Concentrate of 54% zinc and 32% sulphur; 96% of the zinc won. The iron residue (0.3 to 0.8 t a tonne of zinc) is put with tailings. The lead and cadmium in it are not counted." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }

@@ -8,6 +8,11 @@ physical:
   length: 250
   width: 100
   height: 40
+staff:
+  - { profession: profession.plant-operator, count: 6 }
+  - { profession: profession.metalworker, count: 2 }
+  - { profession: profession.technician, count: 1 }
+  - { profession: profession.engineer, count: 1 }
 recipes:
   - makes: good.iron-ore-pellets
     does: "The ore is crushed, ground, cleaned of waste rock and formed into pellets."
@@ -21,3 +26,4 @@ basis:
   - { of: [recipes.inputs], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "935 to 965 kg of ore for each tonne of pellets; the rest is the oxygen the ore takes up as it is fired, set to balance." }
   - { of: [recipes.power], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2019-11/IS_Adopted_03_2012.pdf", note: "About 45 kWh of electricity and 0.5 GJ of heat for each tonne (ranges 15 to 50 kWh and 0.27 to 0.7 GJ). Heat is counted as power: there is no fuel to burn." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
+  - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
