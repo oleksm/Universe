@@ -9,8 +9,10 @@ takes:
 gives:
   - { item: good.waste-water, rate: 1.516e-05 }
 lasts: 1814400
+heat: 137
 unmet: "Hunger, then weakness, then death in weeks."
 basis:
   - { of: [takes], tier: sourced, source: "standards/sources/research_people_needs.json", note: "NASA feeds a crew member 1.56 kg a day as eaten (0.8 kg dry). 1.5 is taken, the game's figure." }
   - { of: [gives], tier: derived, note: "By balance: the food and the oxygen that do not leave as breath leave as waste." }
   - { of: [lasts], tier: sourced, source: "standards/sources/research_people_needs.json", note: "The rule of threes: three weeks without food. A rule of thumb, not a measurement." }
+  - { of: [heat], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "A crew member's metabolic heat: 11.82 MJ a day, 137 W, NASA's design figure (Baseline Values and Assumptions). The food eaten leaves as heat; a sealed place carries it away. From memory of the document the file quotes; the figure itself is not in the file: review." }

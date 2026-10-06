@@ -8,7 +8,7 @@ identity:
   description: "What a class 1 cargo slot offers, and what fits it."
 envelope:
   length: 3.49
-  width: 2.04
+  width: 2.2
   height: 2.2
 bears:
   mass: 1250.0

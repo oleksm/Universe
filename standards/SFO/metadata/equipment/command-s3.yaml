@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.command.s3
+  name: "Bridge of four"
+  maker: org.hadley
+  revision: draft
+  slot: command
+  description: "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space."
+size_class: 3
+fits: mount.command-s3
+physical:
+  mass: 900
+  volume: 23.1
+  length: 3.5
+  width: 3
+  height: 2.2
+needs:
+  power: 6000
+built_of:
+  parts: command-s3
+making:
+  module: module.assembly-shop
+function:
+  kind: command_station
+  persons: 4
+  g_rating: 58.8
+  facing: thrust
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Four stations in a room: pilot, co-pilot, engineer, navigator; seats rated to 6 g (a transport's, not a fighter's), consoles for each and a shared display wall. From memory; chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

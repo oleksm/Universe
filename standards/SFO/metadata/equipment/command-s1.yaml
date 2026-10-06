@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.command.s1
+  name: "Pilot's station"
+  maker: org.hadley
+  revision: draft
+  slot: command
+  description: "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space."
+size_class: 1
+fits: mount.command-s1
+physical:
+  mass: 180
+  volume: 1.8
+  length: 1.2
+  width: 1
+  height: 1.5
+needs:
+  power: 1500
+built_of:
+  parts: command-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: command_station
+  persons: 1
+  g_rating: 88.3
+  facing: thrust
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "One pilot: a seat rated to 9 g eyeballs-in (a fighter's seat and harness, 40 kg), a console of controls (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner's flight deck seat is about 35 kg. From memory; chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

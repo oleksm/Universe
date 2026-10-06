@@ -196,6 +196,8 @@ properties:
           kind: { const: life_support }
           water_recovery: { type: number, x-unit: "1", description: "the share of the water people give off (waste water, breath, wash water) it recovers as drinking and washing water again; the rest is made up from the tanks. The ISS recovers about 0.9." }
           air_recovery: { type: number, x-unit: "1", description: "the share of the oxygen people breathe out as carbon dioxide it wins back; the rest is made up from the air store. The ISS recovers about 0.5." }
+          persons: { type: integer, x-unit: "1", description: "how many people it keeps: air, water and warmth for this many" }
+          cooling: { type: number, x-unit: "W", description: "W of the cabin's heat it carries away to the ship's heat path: the people's (need.food.heat a head) and their equipment's; it also dries the air" }
       - description: "A gun: a mass driver. The game fires it as its record says."
         type: object
         additionalProperties: false
@@ -319,7 +321,7 @@ properties:
         properties:
           kind: { const: store, x-in-game: "not made" }
           capacity: { type: number, x-unit: "kg", description: "kg it holds" }
-          holds: { type: string, description: "What it is built to hold, by its key (a good or an element); a cargo store takes any of its kind." }
+          holds: { type: string, description: "What it is built to hold, by its key: a good, an element, or a market category (a food store holds market.food: any food stock)." }
           pressure: { type: number, x-unit: "Pa", description: "Pa it holds its contents at; none for a low-pressure liquid" }
       - description: "Moves liquid: fuel, water, coolant. Not in the game yet."
         type: object
@@ -402,6 +404,74 @@ properties:
         required: [kind]
         properties:
           kind: { const: throat_coil, x-in-game: "not made" }
+      - description: "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, persons, g_rating, facing]
+        properties:
+          kind: { const: command_station, x-in-game: "not made" }
+          persons: { type: integer, x-unit: "1", description: "how many it seats, at the controls" }
+          g_rating: { type: number, x-unit: "m/s2", description: "m/s2, the most acceleration its seats are rated to hold a person through" }
+          facing: { enum: [thrust, forward, any], description: "which way the seats face. thrust: backs to the main drive, so thrust pushes eyeballs-in (the usual). forward: along the ship's nose. any: they turn." }
+      - description: "Where the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, persons]
+        properties:
+          kind: { const: berths, x-in-game: "not made" }
+          persons: { type: integer, x-unit: "1", description: "how many it sleeps" }
+      - description: "Where food is kept cold, heated and eaten. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, persons]
+        properties:
+          kind: { const: galley, x-in-game: "not made" }
+          persons: { type: integer, x-unit: "1", description: "how many it feeds, in turns" }
+      - description: "Toilet and washing. Its water is the people's (need.washing); it sends the waste water to life support or the waste tank. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, persons]
+        properties:
+          kind: { const: head, x-in-game: "not made" }
+          persons: { type: integer, x-unit: "1", description: "how many it serves" }
+      - description: "Fire detection and suppression for a pressurised room: detectors and an agent bottle. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, protects]
+        properties:
+          kind: { const: fire_unit, x-in-game: "not made" }
+          protects: { type: number, x-unit: "m3", description: "m3 of room one unit covers" }
+      - description: "A hatch that holds cabin pressure across it, so a hole vents one compartment and not the ship. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, passage, pressure]
+        properties:
+          kind: { const: pressure_door, x-in-game: "not made" }
+          passage: { type: number, x-unit: "m", description: "m, the clear width of its opening" }
+          pressure: { type: number, x-unit: "Pa", description: "Pa it holds across it, either way" }
+      - description: "Pressure suits and the locker they hang in, with their air. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, persons, hours]
+        properties:
+          kind: { const: suit_locker, x-in-game: "not made" }
+          persons: { type: integer, x-unit: "1", description: "how many suits" }
+          hours: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
+      - description: "A landing sensor: it measures the distance to the ground below. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, range, accuracy]
+        properties:
+          kind: { const: altimeter, x-in-game: "not made" }
+          range: { type: number, x-unit: "m", description: "m, the farthest ground it reads" }
+          accuracy: { type: number, x-unit: "m", description: "m, how closely" }
+      - description: "A camera the pilot sees by where there is no window: under the ship for the pads, aft for docking. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, field_of_view]
+        properties:
+          kind: { const: camera, x-in-game: "not made" }
+          field_of_view: { type: number, x-unit: "rad", description: "rad across its picture" }
   life: { type: number, x-unit: "s", description: "s in service before it is worn out and replaced; what it is made of comes back as scrap. Everything made has a life (the user's rule): this is what makes demand steady." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

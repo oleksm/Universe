@@ -474,6 +474,33 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn reaction_wheels(&mut self, _: &r::EquipmentFunctionReactionWheels) -> Self::Out {
         None
     }
+    fn command_station(&mut self, _: &r::EquipmentFunctionCommandStation) -> Self::Out {
+        None
+    }
+    fn berths(&mut self, _: &r::EquipmentFunctionBerths) -> Self::Out {
+        None
+    }
+    fn galley(&mut self, _: &r::EquipmentFunctionGalley) -> Self::Out {
+        None
+    }
+    fn head(&mut self, _: &r::EquipmentFunctionHead) -> Self::Out {
+        None
+    }
+    fn fire_unit(&mut self, _: &r::EquipmentFunctionFireUnit) -> Self::Out {
+        None
+    }
+    fn pressure_door(&mut self, _: &r::EquipmentFunctionPressureDoor) -> Self::Out {
+        None
+    }
+    fn suit_locker(&mut self, _: &r::EquipmentFunctionSuitLocker) -> Self::Out {
+        None
+    }
+    fn altimeter(&mut self, _: &r::EquipmentFunctionAltimeter) -> Self::Out {
+        None
+    }
+    fn camera(&mut self, _: &r::EquipmentFunctionCamera) -> Self::Out {
+        None
+    }
     /// A landing leg as a product: not made yet (`x-in-game: not made`); legs are reckoned from a hull's parts (`world::legs`).
     fn landing_gear(&mut self, _: &r::EquipmentFunctionLandingGear) -> Self::Out {
         None

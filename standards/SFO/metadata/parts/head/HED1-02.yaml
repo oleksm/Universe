@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.hed1-02
+  code: HED1-02
+  name: "Toilet and basin"
+  revision: draft
+  description: "A space toilet with its fans and separator; a basin."
+physical:
+  mass: 80
+  length: 0.884
+  width: 0.737
+  height: 1.47
+made_from:
+  - item: good.pumps
+    quantity: 80
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Head (40%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Head: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.command.s2
+  name: "Pilot and co-pilot's station"
+  maker: org.hadley
+  revision: draft
+  slot: command
+  description: "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space."
+size_class: 2
+fits: mount.command-s2
+physical:
+  mass: 340
+  volume: 3.96
+  length: 2.2
+  width: 1.2
+  height: 1.5
+needs:
+  power: 2500
+built_of:
+  parts: command-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: command_station
+  persons: 2
+  g_rating: 88.3
+  facing: thrust
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two seats side by side, each as the pilot's station, with a shared console between (an airliner's pedestal). From memory; chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

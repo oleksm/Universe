@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.cmd1-01
+  code: CMD1-01
+  name: "Seats and harnesses"
+  revision: draft
+  description: "Rated to the station's g."
+physical:
+  mass: 40
+  length: 0.724
+  width: 0.604
+  height: 0.906
+made_from:
+  - item: stock.al6061-pl-5
+    quantity: 46
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Pilot's station (22%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Pilot's station: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
