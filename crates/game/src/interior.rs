@@ -4140,7 +4140,7 @@ fn draw_rows(frame: &mut Frame, down: f32, title: &str, under: &str, colour: Col
 
 /// A sheet's line for one load case: its text, how hard it's worked, whether it
 /// breaks (none: nothing to say in that case).
-type CaseLine = dyn Fn(&universe_sim::world::frame::Collapse) -> Option<(String, f64, bool)>;
+type CaseLine<'a> = dyn Fn(&universe_sim::world::frame::Collapse) -> Option<(String, f64, bool)> + 'a;
 
 /// A force in kN, a moment in kN m.
 fn kn(f: f64) -> String {
@@ -4157,7 +4157,7 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
     let bearing = interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan).map(|(_, b)| b.clone());
     let pct = |w: f64| format!("{:.0}%", w * 100.0);
     let hue = |w: f64, broken: bool| if broken || w > 1.0 { CLASH } else if w >= 0.5 { Color([1.0, 0.7, 0.2, 1.0]) } else { Color([0.4, 1.0, 0.5, 1.0]) };
-    let cases = |b: &Bearing, of: &CaseLine| -> Vec<(String, Color)> {
+    let cases = |b: &Bearing, of: &CaseLine<'_>| -> Vec<(String, Color)> {
         b.cases.iter().map(|(n, r)| match r {
             Ok(c) => match of(c) {
                 Some((text, w, broken)) => (format!("{n}: {text}"), hue(w, broken)),
