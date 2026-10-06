@@ -420,6 +420,7 @@ impl StarSystem {
         crate::celestial::apply(&mut system, crate::celestial::Stage::Rocks, star.seed);
         system.settle();
         system.key_bodies();
+        crate::celestial::rename(&mut system);
         system
     }
 

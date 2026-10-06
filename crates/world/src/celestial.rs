@@ -289,7 +289,6 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
     }
     for r in rec.bodies.iter().filter(|r| r.overrides()) {
         let Some(i) = sys.bodies.iter().position(|b| b.key == r.key) else { continue };
-        sys.bodies[i].name = r.name.clone();
         let rock = sys.bodies[i].kind == BodyKind::Asteroid;
         match stage {
             Stage::Bodies | Stage::Rocks if (stage == Stage::Rocks) == rock => {
@@ -328,6 +327,18 @@ pub fn apply_records(sys: &mut StarSystem, rec: &System, stage: Stage, seed: u64
         }
     }
     moved
+}
+
+/// Every body called as its record calls it, by key: last, once everything the seed names after
+/// its bodies (fields, stations, gates) is made with the seed's names, which the records keep in
+/// `identity.also`.
+pub fn rename(sys: &mut StarSystem) {
+    let Some(rec) = systems().iter().find(|s| s.index == sys.index) else { return };
+    for r in &rec.bodies {
+        if let Some(b) = sys.bodies.iter_mut().find(|b| b.key == r.key) {
+            b.name = r.name.clone();
+        }
+    }
 }
 
 #[cfg(test)]
