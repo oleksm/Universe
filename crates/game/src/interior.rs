@@ -180,6 +180,9 @@ pub struct Interior {
     /// A dialog open over the studio: NEW (which hull, or none) or OPEN (which design).
     dialog: Option<Dialog>,
     block_clash: Option<(Vec<Block>, Vec<bool>)>,
+    /// Each frame member's clash, as a solid tube (what it passes into, if anything),
+    /// for which plan.
+    member_clash: Option<(Plan, Vec<Option<Passes>>)>,
     /// FRAME: the stock new members are cut from (its number in `stocks()`), the load
     /// case shown (none: each member's worst), the member under the cursor and the
     /// one picked, where the member being laid starts; what the frame bears, as last
@@ -305,6 +308,97 @@ fn clashes(mesh: &universe_sim::world::walk::WalkMesh, plan: &Plan) -> Vec<Vec<V
 
 /// Which of its placed modules clash: some of it (a few points through it) in the
 /// hull's material or outside it, or a tube's room in it.
+/// What a frame member, a solid tube, passes into.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+enum Passes {
+    Module,
+    Room,
+    Deck,
+    Member,
+}
+
+/// The closest two points of segments `a`-`b` and `c`-`d` are this far apart.
+fn segment_gap(a: Vec3, b: Vec3, c: Vec3, d: Vec3) -> f32 {
+    let (u, v, w) = (b - a, d - c, a - c);
+    let (aa, bb, cc, dd, ee) = (u.dot(u), u.dot(v), v.dot(v), u.dot(w), v.dot(w));
+    let den = aa * cc - bb * bb;
+    let mut s = if den > 1e-9 { ((bb * ee - cc * dd) / den).clamp(0.0, 1.0) } else { 0.0 };
+    let t = if cc > 1e-9 { ((bb * s + ee) / cc).clamp(0.0, 1.0) } else { 0.0 };
+    if aa > 1e-9 {
+        s = ((bb * t - dd) / aa).clamp(0.0, 1.0);
+    }
+    (a + u * s).distance(c + v * t)
+}
+
+/// Each member of the plan's frame as the solid tube it is (its stock's diameter):
+/// what it passes into, if anything: a module it doesn't mount (one with neither
+/// of its ends at it), a walled room, a deck it runs through (not one it ends at),
+/// or another member it isn't joined to (sharing no end).
+fn member_clashes(plan: &Plan) -> Vec<Option<Passes>> {
+    let radius = |b: &Beam| stocks().iter().find(|s| s.key == b.stock).map_or(0.03, |s| s.section.diameter as f32 * 0.5);
+    // (Clear of contact by a centimetre: touching isn't passing into.)
+    const TOUCH: f32 = 0.01;
+    let rooms: Vec<(Vec3, Vec3, Profile)> = (0..plan.lines.len())
+        .filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line)
+        .map(|k| {
+            let (p, q) = plan.axis(k);
+            (p, q, plan.lines[k].2)
+        })
+        .collect();
+    let along = |b: &Beam, r: f32| -> Vec<Vec3> {
+        // (Points along it, clear of its ends by its radius and a little: its ends
+        // are joints, where it meets what it's joined to.)
+        let len = b.a.distance(b.b);
+        let n = ((len / 0.1).ceil() as usize).max(2);
+        (0..=n).map(|k| k as f32 / n as f32).filter(|t| t * len > r + 0.05 && (1.0 - t) * len > r + 0.05).map(|t| b.a.lerp(b.b, t)).collect()
+    };
+    let n = plan.beams.len();
+    let mut out = vec![None; n];
+    let boxes: Vec<(Vec3, Vec3)> = plan.beams.iter().map(|b| {
+        let r = Vec3::splat(radius(b));
+        (b.a.min(b.b) - r, b.a.max(b.b) + r)
+    }).collect();
+    for (k, b) in plan.beams.iter().enumerate() {
+        let r = radius(b);
+        let pts = along(b, r);
+        let module = plan.blocks.iter().any(|blk| {
+            let (lo, hi) = blk.bounds();
+            let near = |p: Vec3| p.cmpge(lo - 0.3).all() && p.cmple(hi + 0.3).all();
+            if near(b.a) || near(b.b) {
+                return false;
+            }
+            pts.iter().any(|&p| p.clamp(lo, hi).distance(p) < r - TOUCH)
+        });
+        let room = pts.iter().any(|&q| rooms.iter().any(|&(p, e, pr)| {
+            let d = e - p;
+            let t = (q - p).dot(d) / d.length_squared().max(1e-6);
+            let off = q - (p + d * t.clamp(0.0, 1.0));
+            (0.0..=1.0).contains(&t) && off.y.abs() < pr.height * 0.5 + r - TOUCH && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5 + r - TOUCH
+        }));
+        let deck = plan.plates.iter().any(|pl| {
+            let (ya, yb) = (b.a.y - pl.y, b.b.y - pl.y);
+            if ya.abs() < 0.05 || yb.abs() < 0.05 || ya * yb > 0.0 {
+                return false;
+            }
+            let at = b.a.lerp(b.b, ya / (ya - yb));
+            at.x > pl.lo.x.min(pl.hi.x) && at.x < pl.lo.x.max(pl.hi.x) && at.z > pl.lo.y.min(pl.hi.y) && at.z < pl.lo.y.max(pl.hi.y)
+        });
+        let member = (0..n).any(|j| {
+            if j == k {
+                return false;
+            }
+            let o = &plan.beams[j];
+            let shares = [b.a, b.b].iter().any(|p| p.distance(o.a) < 0.05 || p.distance(o.b) < 0.05);
+            if shares || boxes[k].0.cmpgt(boxes[j].1).any() || boxes[j].0.cmpgt(boxes[k].1).any() {
+                return false;
+            }
+            segment_gap(b.a, b.b, o.a, o.b) < r + radius(o) - TOUCH
+        });
+        out[k] = if module { Some(Passes::Module) } else if room { Some(Passes::Room) } else if deck { Some(Passes::Deck) } else if member { Some(Passes::Member) } else { None };
+    }
+    out
+}
+
 fn block_clashes(mesh: Option<&universe_sim::world::walk::WalkMesh>, i: &Interior) -> Vec<bool> {
     use universe_engine::glam::DVec2;
     use universe_sim::world::deckplan::{enclosed, in_material};
@@ -3604,6 +3698,14 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
             faults.push(format!("{shut} SEALED SPACE{} NO AIRLOCK LEADS INTO", if shut == 1 { "" } else { "S" }));
         }
     }
+    // (The frame's members, solid tubes, passing into what they mustn't.)
+    if let Some((_, clash)) = i.member_clash.as_ref().filter(|(p, _)| *p == i.plan) {
+        let count = |w: Passes| clash.iter().filter(|c| **c == Some(w)).count();
+        let parts: Vec<String> = [(Passes::Module, "THROUGH MODULES"), (Passes::Room, "INTO ROOMS"), (Passes::Deck, "THROUGH DECKS"), (Passes::Member, "INTO OTHER MEMBERS")].iter().filter(|(w, _)| count(*w) > 0).map(|(w, say)| format!("{} {say}", count(*w))).collect();
+        if !parts.is_empty() {
+            faults.push(format!("MEMBERS CLASH: {}", parts.join(", ")));
+        }
+    }
     let ground = of("landing_gear").map(|p| p.0.at.y - p.0.size.y * 0.5).fold(f32::INFINITY, f32::min);
     for p in placed.iter().filter(|p| p.2 == "ramp" || p.2 == "cargo_lift") {
         let foot = p.0.at.y - p.0.size.y * 0.5;
@@ -4339,6 +4441,10 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     {
         let found = block_clashes(interior.spec().and_then(|s| s.shape().walk.as_deref()), interior);
         interior.block_clash = Some((interior.plan.blocks.clone(), found));
+    }
+    // (And the frame's members, as the solid tubes they are.)
+    if interior.member_clash.as_ref().is_none_or(|(p, _)| *p != interior.plan) {
+        interior.member_clash = Some((interior.plan.clone(), member_clashes(&interior.plan)));
     }
     stay
 }
@@ -5385,6 +5491,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     // them).
     if interior.shown(layer::FRAME) {
         let bearing = interior.bearing.as_ref().filter(|(p, _)| *p == interior.plan).map(|(_, b)| b.clone());
+        let member_clash: &[Option<Passes>] = if interior.shown(layer::CLASHES) { interior.member_clash.as_ref().filter(|(p, _)| *p == interior.plan).map_or(&[], |(_, c)| c.as_slice()) } else { &[] };
         let outcome = |k: usize| -> Option<(f64, bool)> {
             let b = bearing.as_ref()?;
             let pick: Vec<&Result<universe_sim::world::frame::Collapse, String>> = match interior.case {
@@ -5416,10 +5523,20 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                     frame.hud_line(m - Vec2::splat(4.0), m + Vec2::splat(4.0), col);
                     frame.hud_line(m + Vec2::new(-4.0, 4.0), m + Vec2::new(4.0, -4.0), col);
                 } else {
-                    // (A bit heavier than a line: two side by side.)
-                    let across = (pb - pa).perp().normalize_or_zero() * 0.6;
-                    frame.hud_line(pa + across, pb + across, col);
-                    frame.hud_line(pa - across, pb - across, col);
+                    // (The solid tube it is: as wide as its diameter at each end, seen
+                    // from here; at least a line. Clashing (CLASHES shown): outlined red.)
+                    let r = stocks().iter().find(|s| s.key == b.stock).map_or(0.03, |s| s.section.diameter as f32 * 0.5);
+                    let (za, zb) = (cam.project(b.a).map_or(1.0, |p| p.1), cam.project(b.b).map_or(1.0, |p| p.1));
+                    let side = (pb - pa).perp().normalize_or_zero();
+                    let (wa, wb) = ((r * cam.focal / za).max(0.6), (r * cam.focal / zb).max(0.6));
+                    if member_clash.get(k).is_some_and(|c| c.is_some()) {
+                        let (oa, ob) = (side * (wa + 1.5), side * (wb + 1.5));
+                        frame.hud_triangle_colored([pa + oa, pb + ob, pb - ob], [CLASH; 3]);
+                        frame.hud_triangle_colored([pa + oa, pb - ob, pa - oa], [CLASH; 3]);
+                    }
+                    let (oa, ob) = (side * wa, side * wb);
+                    frame.hud_triangle_colored([pa + oa, pb + ob, pb - ob], [col; 3]);
+                    frame.hud_triangle_colored([pa + oa, pb - ob, pa - oa], [col; 3]);
                 }
             }
         }
@@ -5938,6 +6055,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
 
