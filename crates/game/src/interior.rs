@@ -2611,9 +2611,12 @@ struct Budget {
     faults: Vec<String>,
 }
 
+/// A record's function's fields, by name.
+type Fields = serde_json::Map<String, serde_json::Value>;
+
 /// A placed module's record's figures: its function's kind and fields, and the
 /// power it draws (W).
-fn figures(f: &Fitted) -> Option<(String, serde_json::Map<String, serde_json::Value>, f64)> {
+fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     let reg = universe_sim::world::registry::registry();
     let e = reg.equipment.iter().find(|e| e.identity.key == f.key)?;
     let serde_json::Value::Object(map) = serde_json::to_value(&e.function).ok()? else { return None };
@@ -2623,7 +2626,7 @@ fn figures(f: &Fitted) -> Option<(String, serde_json::Map<String, serde_json::Va
 
 fn budget(i: &Interior, frame_mass: f64) -> Budget {
     let num = |m: &serde_json::Map<String, serde_json::Value>, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
-    let mut placed: Vec<(&Block, &Fitted, String, serde_json::Map<String, serde_json::Value>, f64)> = Vec::new();
+    let mut placed: Vec<(&Block, &Fitted, String, Fields, f64)> = Vec::new();
     for b in &i.plan.blocks {
         if let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id))
             && let Some((k, m, draw)) = figures(f)
