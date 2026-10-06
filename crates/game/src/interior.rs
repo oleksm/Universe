@@ -786,7 +786,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // (world::legs: their stroke and efficiency, the sink they're designed for),
     // held at the landing pads.
     // (Landing legs placed as modules: each one's record.)
-    let legs_placed: Vec<(&Block, (f64, f64, f64, f64), String)> = plan.blocks.iter().filter_map(|b| fit.iter().find(|f| f.id == kind(&b.id)).and_then(|f| f.gear.map(|g| (b, g, f.name.clone())))).collect();
+    let legs_placed: Vec<(&Block, Leg, String)> = plan.blocks.iter().filter_map(|b| fit.iter().find(|f| f.id == kind(&b.id)).and_then(|f| f.gear.map(|g| (b, g, f.name.clone())))).collect();
     let legs = spec.and_then(universe_sim::world::legs::of_spec);
     // (Landing legs placed: their design sink over the shortest stroke. Else the
     // hull's legs; else the registry's design landing, 3.05 m/s over an assumed
@@ -885,8 +885,12 @@ pub struct Fitted {
     load: f64,
     /// A landing leg's: what it holds (N), its stroke (m), its efficiency, the sink
     /// it's designed for (m/s).
-    gear: Option<(f64, f64, f64, f64)>,
+    gear: Option<Leg>,
 }
+
+/// A landing leg's figures: what it holds (N), its stroke (m), its efficiency, the
+/// sink it's designed for (m/s).
+type Leg = (f64, f64, f64, f64);
 
 /// The ore bay's id among the placed blocks.
 const HOLD: &str = "HOLD";
