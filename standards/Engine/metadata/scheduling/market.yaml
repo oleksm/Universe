@@ -12,6 +12,8 @@ trigger:
 runs:
 - boards published; orders matched; prices from stock on hand
 - a trade is an event through the ledger, answered when it arrives, stamped; not a tick
+- 'standings published: a ship''s standing with the organisations here, from law''s events (a hit, a kill, a trade, a fine)
+  since the last step; the events themselves are not stepped'
 reads:
 - clock.economy
 rule: Trades are events; the step is for boards and matching only.

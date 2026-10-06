@@ -14,6 +14,8 @@ runs:
 - fuel and reaction mass by the engines' rates; the mass change posted
 - 'heat: plant loss, draw, jets to hull, radiators; air and water stores against recovery'
 - predict the exact tick of every cut-off (fuel out, power out, overheat) and post it to the realtime lane stamped
+- 'the dead-man rule: a timeout, not a period; checked here each step (30 s without input from a ship''s binding cuts its
+  main engine and thrusters and makes weapons safe)'
 reads:
 - clock.celestial
 posts:
