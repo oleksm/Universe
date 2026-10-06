@@ -368,6 +368,157 @@ impl Bake {
     }
 }
 
+/// A body direction (its own frame) as the registry's latitude and longitude (degrees): north
+/// is +Y, longitude `atan2(−z, x)`, east as the body turns. A settlement's `position` and a
+/// survey's coordinates are both in it.
+pub fn lon_lat(dir: glam::DVec3) -> LonLat {
+    let d = dir.normalize();
+    LonLat { lon: (-d.z).atan2(d.x).to_degrees(), lat: d.y.clamp(-1.0, 1.0).asin().to_degrees() }
+}
+
+/// The body direction at `p` (the inverse of `lon_lat`).
+pub fn direction(p: LonLat) -> glam::DVec3 {
+    let (lat, lon) = (p.lat.to_radians(), p.lon.to_radians());
+    glam::DVec3::new(lat.cos() * lon.cos(), lat.sin(), -lat.cos() * lon.sin())
+}
+
+/// A world's ground from its bake (`planet-sim-surface/1`): the 5 km heights over the whole
+/// sphere, and the 600 m tiles (where there is land) as the difference from them, each read
+/// from the store the first time it's wanted and kept. Metres from the sea.
+pub struct Heights {
+    bake: Bake,
+    /// The 5 km heights, raw (R·256 + G): equirectangular, row 0 north, column 0 at −180°.
+    coarse: Vec<u16>,
+    width: usize,
+    height: usize,
+    /// The 600 m tiles: (face, x, y) at `level`, each `n + 1` samples a side, raw (R·256 + G).
+    level: u32,
+    n: usize,
+    fine: Vec<std::sync::OnceLock<Option<Vec<u16>>>>,
+    /// The highest the ground stands (m).
+    pub max: f64,
+}
+
+impl std::fmt::Debug for Heights {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Heights({}×{}, max {:.0} m)", self.width, self.height, self.max)
+    }
+}
+
+/// An 8-bit RGB PNG's (R·256 + G) per pixel, and its size.
+fn png_rg(bytes: &[u8]) -> Result<(usize, usize, Vec<u16>), String> {
+    let mut d = png::Decoder::new(std::io::Cursor::new(bytes));
+    d.set_transformations(png::Transformations::IDENTITY);
+    let mut r = d.read_info().map_err(|e| e.to_string())?;
+    let mut buf = vec![0; r.output_buffer_size().ok_or("too big")?];
+    let info = r.next_frame(&mut buf).map_err(|e| e.to_string())?;
+    let (w, h) = (info.width as usize, info.height as usize);
+    let per = info.line_size / w.max(1);
+    Ok((w, h, (0..h * w).map(|i| (i / w, i % w)).map(|(y, x)| buf[y * info.line_size + x * per] as u16 * 256 + buf[y * info.line_size + x * per + 1] as u16).collect()))
+}
+
+impl Heights {
+    /// Body `key`'s heights, read once per run and shared (None: no bake, or none to be had:
+    /// no store here, or not the bake the record names; said once on stderr).
+    pub fn of(key: &str) -> Option<std::sync::Arc<Heights>> {
+        static LOADED: std::sync::OnceLock<std::sync::Mutex<HashMap<String, Option<std::sync::Arc<Heights>>>>> = std::sync::OnceLock::new();
+        let mut loaded = LOADED.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
+        loaded
+            .entry(key.to_string())
+            .or_insert_with(|| match Bake::open(key)?.and_then(Heights::read) {
+                Ok(h) => Some(std::sync::Arc::new(h)),
+                Err(e) => {
+                    eprintln!("{key}: its bake can't be read ({e}); its ground is the seed's");
+                    None
+                }
+            })
+            .clone()
+    }
+
+    fn read(bake: Bake) -> Result<Heights, String> {
+        #[derive(Deserialize)]
+        struct Index {
+            rows: usize,
+            cols: usize,
+            tile: [usize; 2],
+        }
+        #[derive(Deserialize)]
+        struct Fine {
+            level: u32,
+            n: usize,
+        }
+        let ix: Index = serde_json::from_slice(&bake.read("hz.json")?).map_err(|e| e.to_string())?;
+        let (tw, th) = (ix.tile[0], ix.tile[1]);
+        let (width, height) = (ix.cols * tw, ix.rows * th);
+        let mut coarse = vec![0u16; width * height];
+        for r in 0..ix.rows {
+            for c in 0..ix.cols {
+                let (w, h, px) = png_rg(&bake.read(&format!("hz_{r}_{c}.png"))?)?;
+                for y in 0..h.min(th) {
+                    coarse[(r * th + y) * width + c * tw..(r * th + y) * width + c * tw + w.min(tw)].copy_from_slice(&px[y * w..y * w + w.min(tw)]);
+                }
+            }
+        }
+        let fine: Fine = serde_json::from_slice(&bake.read("fz.json")?).map_err(|e| e.to_string())?;
+        let tiles = 6 * (1usize << fine.level).pow(2);
+        // (The highest of the 5 km heights, and room for the 600 m's peaks over them.)
+        let top = coarse.iter().copied().max().unwrap_or(0) as f64 / 2.0 - 12_000.0;
+        Ok(Heights { bake, coarse, width, height, level: fine.level, n: fine.n, fine: (0..tiles).map(|_| std::sync::OnceLock::new()).collect(), max: top + 2_000.0 })
+    }
+
+    /// The 5 km height at `p` (m), bilinear.
+    fn coarse_at(&self, p: LonLat) -> f64 {
+        let (w, h) = (self.width as f64, self.height as f64);
+        let row = ((90.0 - p.lat) / 180.0 * h - 0.5).clamp(0.0, h - 1.0);
+        let col = (p.lon + 180.0) / 360.0 * w - 0.5;
+        let (r0, c0) = (row.floor(), col.floor());
+        let (fr, fc) = (row - r0, col - c0);
+        let at = |r: f64, c: f64| {
+            let r = (r as usize).min(self.height - 1);
+            let c = (c as isize).rem_euclid(self.width as isize) as usize;
+            self.coarse[r * self.width + c] as f64
+        };
+        let v = at(r0, c0) * (1.0 - fr) * (1.0 - fc) + at(r0, c0 + 1.0) * (1.0 - fr) * fc + at(r0 + 1.0, c0) * fr * (1.0 - fc) + at(r0 + 1.0, c0 + 1.0) * fr * fc;
+        v / 2.0 - 12_000.0
+    }
+
+    /// The 600 m difference at body direction `d` (m), bilinear; 0 where there's no tile.
+    fn fine_at(&self, d: glam::DVec3) -> f64 {
+        // (The tiles' cube is in the body's own frame: face by the largest axis, equal-angle u, v.)
+        let a = d.abs();
+        let (face, tu, tv) = if a.x >= a.y && a.x >= a.z {
+            if d.x > 0.0 { (0, -d.z / d.x, -d.y / d.x) } else { (1, d.z / -d.x, -d.y / -d.x) }
+        } else if a.y >= a.z {
+            if d.y > 0.0 { (2, d.x / d.y, d.z / d.y) } else { (3, d.x / -d.y, -d.z / -d.y) }
+        } else if d.z > 0.0 {
+            (4, d.x / d.z, -d.y / d.z)
+        } else {
+            (5, -d.x / -d.z, -d.y / -d.z)
+        };
+        let k = 1usize << self.level;
+        let to = |t: f64| ((t.atan() * 4.0 / std::f64::consts::PI + 1.0) / 2.0 * k as f64).clamp(0.0, k as f64 - 1e-9);
+        let (u, v) = (to(tu), to(tv));
+        let (x, y) = (u.floor() as usize, v.floor() as usize);
+        let slot = (face * k + x) * k + y;
+        let name = format!("fz_{face}_{x}_{y}.png");
+        let tile = self.fine[slot].get_or_init(|| self.bake.has(&name).then(|| self.bake.read(&name).and_then(|b| png_rg(&b)).map(|t| t.2).ok()).flatten());
+        let Some(t) = tile else { return 0.0 };
+        let n = self.n;
+        let (su, sv) = ((u - x as f64) * n as f64, (v - y as f64) * n as f64);
+        let (i0, j0) = ((su.floor() as usize).min(n - 1), (sv.floor() as usize).min(n - 1));
+        let (fi, fj) = (su - i0 as f64, sv - j0 as f64);
+        let at = |i: usize, j: usize| t[j * (n + 1) + i] as f64;
+        let raw = at(i0, j0) * (1.0 - fi) * (1.0 - fj) + at(i0 + 1, j0) * fi * (1.0 - fj) + at(i0, j0 + 1) * (1.0 - fi) * fj + at(i0 + 1, j0 + 1) * fi * fj;
+        (raw - 32_768.0) / 2.0
+    }
+
+    /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`.
+    pub fn at(&self, dir: glam::DVec3) -> f64 {
+        let d = dir.normalize();
+        self.coarse_at(lon_lat(d)) + self.fine_at(d)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -398,5 +549,9 @@ mod tests {
             let bake = Bake::open(key).unwrap().expect("its bake in the store");
             assert!(bake.read("world.json").is_ok());
         }
+        // A body direction and the registry's latitude and longitude, both ways.
+        let p = LonLat { lon: 165.925, lat: 45.649 };
+        let q = lon_lat(direction(p));
+        assert!((q.lon - p.lon).abs() < 1e-9 && (q.lat - p.lat).abs() < 1e-9);
     }
 }

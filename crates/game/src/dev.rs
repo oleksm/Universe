@@ -29,7 +29,8 @@ pub fn apply(app: &mut App, name: &str) {
     };
     let outer = sys.bodies.iter().filter_map(|b| b.rail.orbit.as_ref().filter(|_| b.rail.parent == Some(0) && b.kind.is_planet())).map(|o| o.apoapsis()).fold(0.0, f64::max);
     let station = sys.station().unwrap_or(0);
-    let planet = sys.bodies[station].rail.parent.unwrap_or(0);
+    // (UNIVERSE_BODY: another body, by its key.)
+    let planet = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)).unwrap_or(sys.bodies[station].rail.parent.unwrap_or(0));
 
     match name {
         look if look.starts_with("look_") => {

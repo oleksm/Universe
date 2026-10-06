@@ -65,6 +65,9 @@ pub struct Terrain {
     craters: Vec<Crater>,
     /// Spaceport directions (body frame), where the ground is flattened.
     pads: Vec<DVec3>,
+    /// The ground as the planet simulation grew it, where the body has a bake (`worlds`):
+    /// these heights in place of the seed's.
+    baked: Option<std::sync::Arc<crate::worlds::Heights>>,
 }
 
 impl Terrain {
@@ -82,7 +85,35 @@ impl Terrain {
                 Crater { dir: rng.unit_vector(), radius, depth: (radius * body_radius * 0.1).min(amplitude * 0.8) }
             })
             .collect();
-        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new() }
+        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None }
+    }
+
+    /// The ground is the bake's `heights` from now (its craters and noise gone).
+    pub fn bake(&mut self, heights: std::sync::Arc<crate::worlds::Heights>) {
+        self.amplitude = heights.max / 1.3;
+        self.craters.clear();
+        self.baked = Some(heights);
+    }
+
+    /// Is the ground the planet simulation's?
+    pub fn baked(&self) -> bool {
+        self.baked.is_some()
+    }
+
+    /// The bake's height at `dir`, a port's plain levelled to the ground at the port (or the
+    /// sea, where the ground is under it) and blending back by `PAD_FLAT_OUTER`.
+    fn baked_height(&self, h: &crate::worlds::Heights, dir: DVec3) -> f64 {
+        let mut out = h.at(dir);
+        for p in &self.pads {
+            let ground = dir.distance(*p) * self.body_radius;
+            let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
+            if t < 1.0 {
+                let w = t * t * (3.0 - 2.0 * t);
+                let at = h.at(*p).max(0.0);
+                out = at + (out - at) * w;
+            }
+        }
+        out
     }
 
     /// Craters as (center direction, rim radius as a chord on the unit sphere).
@@ -96,7 +127,10 @@ impl Terrain {
 
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
-        self.amplitude * 1.3 + self.relief_max()
+        match &self.baked {
+            Some(h) => h.max,
+            None => self.amplitude * 1.3 + self.relief_max(),
+        }
     }
 
     /// The small-scale relief's amplitude (m) at octave `o` (see `relief`):
@@ -182,11 +216,17 @@ impl Terrain {
 
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
+        if let Some(h) = &self.baked {
+            return self.baked_height(h, dir);
+        }
         self.natural(dir).0 * self.pad_flat(dir)
     }
 
     /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
     pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
+        if let Some(h) = &self.baked {
+            return (self.baked_height(h, dir), 0.0);
+        }
         let (h, inside) = self.natural(dir);
         (h * self.pad_flat(dir), inside)
     }
@@ -228,7 +268,7 @@ impl Terrain {
         if self.kind == TerrainKind::Terran && h < 0.0 {
             return (Ground::Ocean, 0.0);
         }
-        let (_, inside) = self.natural(dir);
+        let inside = if self.baked.is_some() { 0.0 } else { self.natural(dir).1 };
         let kind = if inside > 0.25 {
             Ground::Crater
         } else if h > 0.7 * self.amplitude {
