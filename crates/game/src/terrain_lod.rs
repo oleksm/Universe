@@ -76,6 +76,36 @@ pub struct Lod {
     pool: Option<rayon::ThreadPool>,
     pending: std::collections::HashSet<Key>,
     done: Arc<std::sync::Mutex<Vec<Made>>>,
+    /// Where the eye was last frame (the world's frame) and when: its way ahead, for the look-ahead.
+    last_eye: Option<(DVec3, std::time::Instant)>,
+}
+
+/// How far ahead the look-ahead looks (s): the patches the eye will want then are made after those
+/// it wants now, so they're ready a second or more before they're first drawn (the lab's R3).
+const AHEAD: [f64; 3] = [1.0, 2.0, 4.0];
+/// Patches the look-ahead asks for in a frame, at most.
+const AHEAD_BUDGET: usize = 8;
+
+/// The patches an eye at `eye` (the world's frame, m) would draw, made or not: the leaves of the
+/// split as far as it goes, behind the horizon left out (the lowest ground `low` from the centre).
+fn ideal(system: usize, body: usize, r: f64, low: f64, eye: DVec3) -> Vec<Key> {
+    let eye_dist = eye.length();
+    let eye_dir = eye / eye_dist.max(1.0);
+    let horizon = (low / eye_dist).clamp(-1.0, 1.0).acos();
+    let mut out = Vec::new();
+    let mut stack: Vec<Key> = (0..6).map(|face| Key { system, body, face, level: 0, x: 0, y: 0 }).collect();
+    while let Some(key) = stack.pop() {
+        let (mid, size) = key.shape();
+        if mid.angle_between(eye_dir) > horizon + size * 0.75 + 0.02 {
+            continue;
+        }
+        if key.level < MAX_LEVEL && (mid * r).distance(eye) < SPLIT * size * r {
+            stack.extend(key.children());
+        } else {
+            out.push(key);
+        }
+    }
+    out
 }
 
 impl Key {
@@ -273,8 +303,26 @@ impl Lod {
             self.pending.remove(&key);
             self.patches.insert(key, Patch { mesh: m.into(), origin, used: now, partial });
         }
+        // Where the eye is heading: the patches it will want in a second, two, four.
+        let clock = std::time::Instant::now();
+        let velocity = self.last_eye.map_or(DVec3::ZERO, |(e, t)| (eye_local - e) / clock.duration_since(t).as_secs_f64().max(1e-3));
+        self.last_eye = Some((eye_local, clock));
+        let mut ahead: Vec<Key> = Vec::new();
+        if velocity.length() > 1.0 {
+            for t in AHEAD {
+                for k in ideal(system, body_index, r, low, eye_local + velocity * t) {
+                    if !self.patches.contains_key(&k) && !self.pending.contains(&k) && !ahead.contains(&k) {
+                        ahead.push(k);
+                    }
+                }
+            }
+            // (Coarse first: what stands in for the rest.)
+            ahead.sort_by_key(|k| k.level);
+            ahead.truncate(AHEAD_BUDGET);
+        }
         // The rest made on the pool, nearest first (in its own sizes): what must be drawn now,
-        // the next finer, and made again what was made before all its ground was read.
+        // the next finer, and made again what was made before all its ground was read; then the
+        // look-ahead's.
         let mut todo: Vec<Key> = draw.iter().copied().filter(|k| !self.patches.contains_key(k)).collect();
         todo.extend(want);
         todo.extend(draw.iter().copied().filter(|k| self.patches.get(k).is_some_and(|p| p.partial)));
@@ -285,6 +333,8 @@ impl Lod {
         };
         todo.sort_by(|a, b| near(a).total_cmp(&near(b)));
         todo.dedup();
+        let ahead: Vec<Key> = ahead.into_iter().filter(|k| !todo.contains(k)).collect();
+        todo.extend(ahead);
         let pool = self.pool.get_or_insert_with(|| {
             let cores = std::thread::available_parallelism().map_or(4, |c| c.get());
             rayon::ThreadPoolBuilder::new().num_threads(cores.saturating_sub(2).max(1)).thread_name(|i| format!("ground {i}")).build().expect("the ground's pool")
