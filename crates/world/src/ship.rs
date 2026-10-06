@@ -280,7 +280,8 @@ impl HullDef {
         // (A gear slot is a landing leg's: the game reckons legs from the hull's parts (world::legs), not from fitted gear, so it has no slot for one yet.)
         let kind = |k: R| match k {
             // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
-            R::Gear | R::Access | R::Handling | R::Thermal => None,
+            // (The command station's slot (SFO 20, crewing): where the ship is flown from. No game slot kind for it yet: not made.)
+            R::Gear | R::Access | R::Handling | R::Thermal | R::Command => None,
             R::Power => Some(G::Power),
             R::Drive => Some(G::Drive),
             R::Thrusters => Some(G::Thrusters),

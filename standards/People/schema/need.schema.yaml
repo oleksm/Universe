@@ -37,6 +37,7 @@ properties:
         rate: { type: number, x-unit: "kg/s", description: "kg of it a person gives off each second" }
   space: { type: number, x-unit: "m2", description: "m2 of floor a person needs for it" }
   power: { type: number, x-unit: "W", description: "W a person draws for it, on average" }
+  heat: { type: number, x-unit: "W", description: "W a person gives off in meeting it: the food eaten leaves as heat. What a sealed place must carry away for each person." }
   served_by:
     description: "Whose work meets it, where it is met by people and not by things."
     type: array

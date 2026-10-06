@@ -101,6 +101,29 @@ definitions:
       fixed: { type: array, items: { type: string }, description: "The groups or figures that will not change, where the rest may." }
       because: { type: string, description: "Why it stands where it does: what it rests on, or what waits on it." }
       ask: { type: string, description: "Where a proposal to change it goes: a file of the repository." }
+  mark:
+    description: "A made thing's mark (SFO 21): given once where it is made and never changed. What carries one: hulls, equipment, industrial modules, structures, parts (one serial a unit). Ownership and registration are separate records that point at the serial. The game stamps every unit it produces; the registry carries marks only on day-0 stock."
+    type: object
+    additionalProperties: false
+    required: [serial, design, maker, made_at, made_on]
+    properties:
+      serial: { type: string, pattern: '^[A-Z]{2,4}-[A-Z0-9]+(-[A-Z0-9]+)*-[0-9]{6}$', description: "The maker's ticker, the product's code and a six-figure sequence the maker gives, one series a product: HHI-LIFE-S1-000123. Unique for all time." }
+      design: { type: string, x-ref: [hull, equipment, module, structure, part], description: "What it is, by the design's key: the record that says its figures." }
+      revision: { type: string, description: "The design's revision it was built to, where the design has had more than one." }
+      maker: { type: string, x-ref: [org], description: "Who built it: the organisation whose works it came from. The design's maker where they built it themselves; a yard building another's design is the yard." }
+      made_at: { type: string, x-ref: [facility, rig], description: "The works it came from, by its key." }
+      made_on: { type: number, x-unit: "s", description: "s of world time when it was finished: when its life (the design's `life`) began." }
+      parts: { type: array, items: { type: string }, description: "The serials of the marked parts built into it, for tracing a failure to its part and its part to its batch." }
+  batch:
+    description: "A lot's mark (SFO 21), for what is kept in bulk: stock, goods. One batch number a lot, from the works that made it; mill stock carries the heat (the melt) it was rolled from, as a mill certificate does."
+    type: object
+    additionalProperties: false
+    required: [lot, made_at, made_on]
+    properties:
+      lot: { type: string, pattern: '^[A-Z]{2,4}-[0-9]{6}$', description: "The maker's ticker and a six-figure sequence the works gives: HHI-004471." }
+      heat: { type: string, description: "For mill stock: the melt it came from, the melter's lot number." }
+      made_at: { type: string, x-ref: [facility, rig], description: "The works, by its key." }
+      made_on: { type: number, x-unit: "s", description: "s of world time when the lot was finished." }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."
     required: [physical]

@@ -94,6 +94,7 @@ properties:
       thrust_path: { type: array, items: { type: string, x-ref: [part] }, description: "The parts its main drive's push passes through, from the engine forward, by key. Each is checked against it." }
       landing_speed: { type: number, x-unit: "m/s", description: "m/s, the touchdown its legs are designed for. What they take at most is worked out." }
       cabin_pressure: { type: number, x-unit: "Pa", description: "Pa, of the air its pressurised parts hold against vacuum" }
+      leak_rate: { type: number, x-unit: "kg/s/m3", description: "kg/s of air lost for each m3 of pressurised volume, through seals and the wall, by design. The space station leaks about 0.27 kg a day over its 916 m3: 3.4e-9 kg/s/m3 (from memory of NASA's figures; its 2019 onward Zvezda leak was several times that). Review." }
       safety_factor: { type: number, x-unit: "1", description: "how many times its load a part must take before it yields" }
       pressure_factor: { type: number, x-unit: "1", description: "a further factor on cabin pressure" }
       strut_efficiency: { type: number, x-unit: "1", description: "the share of a landing leg's stroke that does work" }

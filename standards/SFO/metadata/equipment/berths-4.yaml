@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.berths.4
+  name: "Crew berths 4"
+  maker: org.hadley
+  revision: draft
+  slot: cargo
+  description: "Where 4 of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is."
+size_class: 1
+fits: mount.cargo-s1
+physical:
+  mass: 520
+  volume: 8
+  length: 2
+  width: 2
+  height: 2
+needs:
+  power: 200
+built_of:
+  parts: berths-4
+making:
+  module: module.assembly-shop
+function:
+  kind: berths
+  persons: 4
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

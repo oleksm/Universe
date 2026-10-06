@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.21
+title: Marking
+parent: standard.sfo.8
+purpose: Every made thing carries a mark saying what it is, who made it, where and when. A unit (a hull, a piece of equipment, an industrial module, a structure, a part) carries a serial, given once at the works and never changed; a lot of what is kept in bulk (stock, goods) carries a batch number, and mill stock the melt it was rolled from. The mark is what wear counts from, what a maker's name stands on, what the law and the insurer identify a thing by, and what traces a failure to the batch of steel it began in. Ownership and registration are records that point at the serial; the mark itself is the thing's.
+details:
+  text:
+    - "A serial is the maker's ticker, the product's code and a six-figure sequence the maker gives, one series a product: HHI-LIFE-S1-000123. The maker is who built it, not who designed it: a yard building another's design is the maker, and the mark names the design by its key so the two are told apart. A manufacturer's serial number, not a registration: it never changes hands."
+    - "A mark also names the works it came from (its facility or rig) and the world time it was finished, when its life began. A thing built of marked parts lists their serials, so a failure traces to its part and the part to its batch."
+    - "A batch is the works' ticker and a six-figure sequence: HHI-004471, with the heat for mill stock. Raw ore, water, air and fuel carry no mark beyond the batch of the vessel they are in."
+    - "The registry defines the mark and carries marks only on day-0 stock (seed state). The game stamps every unit at the step that finishes it, with its works and the time, and trades marked units; a price may then differ by maker and age, which is the economy's business. Common schema: mark, batch."
+    - "What follows without more design: second-hand markets, recalls on a batch, a forged mark as an offence, a yard's standing by its serials' failures, insurance by serial, finding the ship that carries a serial."
+status: draft

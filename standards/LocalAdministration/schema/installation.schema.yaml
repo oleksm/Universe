@@ -13,6 +13,8 @@ definitions:
           item: { type: string, x-ref: [element, material, good, stock, part, equipment, hull], description: "What lies there, by its key." }
           quantity: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of it, for what is kept in bulk" }
           pieces: { type: integer, minimum: 1, description: "how many, for what is kept by the piece: parts, equipment, hulls" }
+          serials: { type: array, items: { $ref: "../../common.schema.yaml#/definitions/mark" }, description: "The marks of the pieces (SFO 21), one each, where they are given at day 0." }
+          batch: { $ref: "../../common.schema.yaml#/definitions/batch", description: "The lot's mark (SFO 21), for what is kept in bulk." }
     processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The SFO processes it runs, by its key. Each must be one for its kind of facility.' }
     lines:
       description: 'Its production lines: for each, the process it runs and the industrial modules (SFO 10) it is built of. What the line can make at most, and what it then takes in, gives off, draws and covers, are worked out from them. What it does make is the economy''s business, not recorded here.'
