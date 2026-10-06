@@ -8,7 +8,7 @@ identity:
   description: "What a class 2 utility slot offers, and what fits it."
 envelope:
   length: 8.8
-  width: 1.65
+  width: 1.76
   height: 1.65
 bears:
   mass: 3120.0

@@ -416,6 +416,64 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn ore_bay(&mut self, _: &r::EquipmentFunctionOreBay) -> Self::Out {
         None
     }
+    // Ship fittings (SFO 20): not made yet (`x-in-game: not made`); the studio fits them, the game does not yet run them.
+    fn airlock(&mut self, _: &r::EquipmentFunctionAirlock) -> Self::Out {
+        None
+    }
+    fn ramp(&mut self, _: &r::EquipmentFunctionRamp) -> Self::Out {
+        None
+    }
+    fn cargo_lift(&mut self, _: &r::EquipmentFunctionCargoLift) -> Self::Out {
+        None
+    }
+    fn bay_door(&mut self, _: &r::EquipmentFunctionBayDoor) -> Self::Out {
+        None
+    }
+    fn docking(&mut self, _: &r::EquipmentFunctionDocking) -> Self::Out {
+        None
+    }
+    fn handling(&mut self, _: &r::EquipmentFunctionHandling) -> Self::Out {
+        None
+    }
+    fn radiator(&mut self, _: &r::EquipmentFunctionRadiator) -> Self::Out {
+        None
+    }
+    fn heat_exchanger(&mut self, _: &r::EquipmentFunctionHeatExchanger) -> Self::Out {
+        None
+    }
+    fn coolant_loop(&mut self, _: &r::EquipmentFunctionCoolantLoop) -> Self::Out {
+        None
+    }
+    fn heat_sink(&mut self, _: &r::EquipmentFunctionHeatSink) -> Self::Out {
+        None
+    }
+    fn store(&mut self, _: &r::EquipmentFunctionStore) -> Self::Out {
+        None
+    }
+    fn pump(&mut self, _: &r::EquipmentFunctionPump) -> Self::Out {
+        None
+    }
+    fn compressor(&mut self, _: &r::EquipmentFunctionCompressor) -> Self::Out {
+        None
+    }
+    fn port(&mut self, _: &r::EquipmentFunctionPort) -> Self::Out {
+        None
+    }
+    fn window(&mut self, _: &r::EquipmentFunctionWindow) -> Self::Out {
+        None
+    }
+    fn battery(&mut self, _: &r::EquipmentFunctionBattery) -> Self::Out {
+        None
+    }
+    fn solar_array(&mut self, _: &r::EquipmentFunctionSolarArray) -> Self::Out {
+        None
+    }
+    fn switchgear(&mut self, _: &r::EquipmentFunctionSwitchgear) -> Self::Out {
+        None
+    }
+    fn reaction_wheels(&mut self, _: &r::EquipmentFunctionReactionWheels) -> Self::Out {
+        None
+    }
     /// A landing leg as a product: not made yet (`x-in-game: not made`); legs are reckoned from a hull's parts (`world::legs`).
     fn landing_gear(&mut self, _: &r::EquipmentFunctionLandingGear) -> Self::Out {
         None

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.dco0-02
+  code: DCO0-02
+  name: "Latches and seals"
+  revision: draft
+  description: "Twelve hooks and the seal they close on."
+physical:
+  mass: 159
+  length: 1.07
+  width: 1.07
+  height: 0.402
+made_from:
+  - item: stock.st4340-bar-120
+    quantity: 183.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Docking collar (30%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Docking collar: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

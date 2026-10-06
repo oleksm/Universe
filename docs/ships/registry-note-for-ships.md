@@ -90,3 +90,32 @@ when the integrator fits them from equipment. Your studio can read all of it fro
   the size and material, and it becomes a record with a chain.
 
 Reply through the user or in `docs/registry-ssot-request.md`.
+
+## 8. Ship fittings (SFO 20), 2026-10-06: your hundred, sorted and the first 38 written
+
+Your superset, sorted by what kind of thing each is: **equipment** (a maker's product with a mount,
+parts and a chain), **stock** (frame and skin, cut to length), **the hull's own parts**, and
+**drawn in the studio** (ladders, doors between rooms, galleys, consoles: fit-out inside a cabin's
+envelope, no record). Cut for now: anything that refines aboard (a rig's work), escape pods, storm
+shelters, vehicle bays, atmosphere scoops; a gimbal is a mount's property, not a product.
+
+Written, each with a mount (`fits`), four or five parts and a complete chain, under
+`standards/SFO/metadata/0020-ship-fittings.yaml`:
+
+| Group | Slot kind | Equipment |
+|---|---|---|
+| Access | `access` (new) | crew airlock (2 people, 0.8 m door, 1.2 t); cargo airlock (2.4 m doors, 6 t); boarding ramp; cargo ramp S1 (3 m, 20 t) and S2 (5 m, 60 t); cargo lift (3 × 3 m, 20 t through 8 m); bay doors S1 4 × 3, S2 8 × 5, S3 12 × 8 m; docking collar (IDSS, 0.8 m passage, 530 kg); docking clamp (2 MN) |
+| Bulk path | `handling` (new) | ore scoop (10 kg/s); conveyor S1 (8 m, 10 kg/s) and S2 (12 m, 50 kg/s); bulk transfer arm (15 m, 20 kg/s) |
+| Heat | `thermal` (new) | radiator panels S1 2 MW (20 m²), S2 8 MW (78 m²), S3 30 MW (294 m²), at 1,000 K both faces, 12 kg/m²; heat exchanger (5 MW); coolant loops S1 5 MW, S2 20 MW; heat sink (1 GJ, 5 t of salt) |
+| Liquids and gases | `tank`, `utility` | water tanks 5 and 50 m³, liquid cargo tank 100 m³, waste tank 10 m³ (balls, a twentieth of contents in aluminium); gas cargo tank 20 m³ and air store 2 m³ at 30 MPa (steel, four times their contents); pump set (20 kg/s at 10 bar); compressor; refuelling port; fuel transfer boom (8 m) |
+| Hull and energy | stock; `utility`, `power` | 4340 node forgings 120 / 160 / 200 mm (the frame's joints; Trethi's forging press); viewports 0.5 and 2 m²; battery (1 GJ, 1 MW); solar array (100 m², 30 kW at Earth's sunlight); switchgear (15 MW); reaction wheels (2 kN m) |
+
+Figures: real where a real thing gives one (Quest airlock, IDSS and the IDA, a C-130's ramp, the
+ISS cupola's windows, lithium packs at 150 Wh/kg, Stefan-Boltzmann for the radiators), from memory
+and marked; the rest chosen and marked. **Heat is the one that changes your ships:** the S1 plant
+alone wants the 8 MW panel (78 m²); a drive at full burn far more. The mounts' cooling feeds assume
+these panels are fitted.
+
+The engine treats every new kind as not made yet (the fittings' functions answer `None`; the three
+new slot kinds have no game slot). The studio reads all of it. The viewport's pane stock is a
+stand-in (no glass stock yet); say if you want glass as stock.

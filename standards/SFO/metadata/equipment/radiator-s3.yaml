@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.radiator.s3
+  name: "Radiator panel S3"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Throws heat into space from a hot surface."
+size_class: 3
+fits: mount.thermal-s3
+physical:
+  mass: 3530
+  volume: 23.4
+  length: 24.2
+  width: 12.1
+  height: 0.08
+built_of:
+  parts: radiator-s3
+making:
+  module: module.assembly-shop
+function:
+  kind: "radiator"
+  rejects: 30000000.0
+  temperature: 1000
+  area: 294.0
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Throws off 30 MW at 1,000 K from 294 m2, both faces to deep space (Stefan-Boltzmann, emissivity 0.9): twice as long as wide. 12 kg/m2 chosen for a titanium panel with its headers." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.crm1-02
+  code: CRM1-02
+  name: "Hinge and actuators"
+  revision: draft
+  description: "Hydraulic rams that let it down and draw it up."
+physical:
+  mass: 1200
+  length: 5.36
+  width: 2.01
+  height: 0.402
+made_from:
+  - item: stock.st4340-bar-120
+    quantity: 1380.0
+making:
+  module: module.machining-centre
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Cargo ramp S1 (30%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Cargo ramp S1: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

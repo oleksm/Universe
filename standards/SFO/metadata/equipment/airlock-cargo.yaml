@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.airlock.cargo
+  name: "Cargo airlock"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A way in and out through the hull, keeping the air in: two doors and a chamber between."
+size_class: 2
+fits: mount.access-s2
+physical:
+  mass: 6000
+  volume: 54.0
+  length: 6.0
+  width: 3.0
+  height: 3.0
+built_of:
+  parts: airlock-cargo
+making:
+  module: module.assembly-shop
+function:
+  kind: "airlock"
+  persons: 6
+  cycle: 600
+  passage: 2.4
+  air_lost: 15.0
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A lock a pallet or six suited people go through: 54 m3, 6 t, about the ISS Quest airlock whole (9.9 t with its tanks). From memory. Not sourced." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

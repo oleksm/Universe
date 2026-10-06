@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.swg0-01
+  code: SWG0-01
+  name: "Busbars and breakers"
+  revision: draft
+physical:
+  mass: 420
+  length: 1.27
+  width: 0.675
+  height: 1.69
+made_from:
+  - item: stock.cu-wire-2
+    quantity: 483.0
+making:
+  module: module.electronics-works
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Switchgear (60%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Switchgear: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.20
+title: Ship fittings
+parent: standard.sfo.16
+records: equipment
+purpose: "What lets people and cargo in and out of a ship, moves bulk aboard, keeps the ship cool, holds its liquids and gases, and closes its hull: the equipment a ship needs besides what makes it fly, fight and think. Each is a maker's product that fits a mount (SFO 19), so a hull takes what fits."
+details:
+  text:
+    - "Access (slot kind access): airlocks for crew and cargo, a boarding ramp, cargo ramps, a cargo lift, bay doors in three sizes, a docking collar to the International Docking System Standard, a docking clamp."
+    - "The bulk path (handling): an ore scoop, conveyors, a bulk transfer arm: ore flows from the rig through the scoop and a conveyor into an ore bay, and out by the bay's gate or the arm."
+    - "Heat (thermal): radiator panels sized by Stefan-Boltzmann at 1,000 K (9.8 m2 a megawatt, both faces), a heat exchanger, coolant loops, a heat sink. A plant or a drive is not fitted without the radiators to carry its waste heat; the mounts' cooling feeds assume them."
+    - "Liquids and gases (tank, utility): water, waste and liquid cargo tanks as balls of their volume; gas stores at 30 MPa, heavier than what they hold; pumps, a compressor, a refuelling port, a transfer boom."
+    - "Hull and energy: node fittings as forged stock (SFO 13) the frame's tubes meet at; viewports; a battery, a solar array, switchgear; reaction wheels."
+    - "Left to the interior studio: ladders, doors between rooms, galleys, washrooms, bridge consoles: fit-out inside a cabin's envelope, not products. Left for later: escape pods, storm shelters, vehicle bays, atmosphere scoops, and anything that refines aboard (a rig's work)."
+status: draft

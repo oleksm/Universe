@@ -11,14 +11,14 @@ envelope:
   width: 6.89
   height: 2.2
 bears:
-  mass: 2250.0
+  mass: 2380.0
 attachment:
   points: 4
   pattern: corners
   each:
-    tension: 16500.0
-    compression: 16500.0
-    shear: 8270.0
+    tension: 17500.0
+    compression: 17500.0
+    shear: 8730.0
 feeds:
   cooling: 9290000.0
   fuel: 4.14e-08

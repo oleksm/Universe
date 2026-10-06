@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.coolant.loop.s2
+  name: "Coolant loop S2"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Pumps and piping that carry heat from what makes it to what throws it off."
+size_class: 2
+fits: mount.thermal-s2
+physical:
+  mass: 3000
+  volume: 6.75
+  length: 3.0
+  width: 1.5
+  height: 1.5
+built_of:
+  parts: coolant-loop-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: "coolant_loop"
+  carries: 20000000.0
+  flow: 50.0
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 20 MW at 50 kg/s. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

@@ -1,0 +1,27 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.water.tank.s2
+  name: "Water tank S2"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+size_class: 3
+fits: mount.tank-s3
+physical:
+  mass: 2500
+  volume: 95.4
+  length: 4.57
+  width: 4.57
+  height: 4.57
+built_of:
+  parts: water-tank-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: "store"
+  capacity: 50000
+  holds: "good.water"
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "50 m3 as a ball 4.57 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }

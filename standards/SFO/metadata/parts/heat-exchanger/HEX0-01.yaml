@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.hex0-01
+  code: HEX0-01
+  name: "Shell"
+  revision: draft
+  description: "The pressure shell."
+physical:
+  mass: 280
+  length: 1.06
+  width: 0.705
+  height: 0.705
+made_from:
+  - item: stock.st304-pl-3
+    quantity: 322.0
+making:
+  module: module.welding-bay
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Heat exchanger (35%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Heat exchanger: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

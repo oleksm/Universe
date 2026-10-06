@@ -57,8 +57,11 @@ definitions:
       invented: "Chosen."
   slot_kind:
     description: "A kind of slot a hull has, and so the kind of equipment that fits it."
-    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, gear, gate]
+    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, access, handling, thermal, gear, gate]
     x-values:
+      access: "A way in or out: an airlock, a ramp, a lift, a bay door, a docking collar or clamp."
+      handling: "Moves bulk or cargo aboard: a scoop, a conveyor, a crane, a transfer arm."
+      thermal: "Takes heat away: a radiator, an exchanger, a coolant loop, a heat sink."
       gear: "A landing leg's: one leg to a slot, a hull has several."
       gate: "A gate ring's, not a hull's."
   geological_event:

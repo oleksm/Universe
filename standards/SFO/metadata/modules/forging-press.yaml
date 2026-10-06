@@ -9,6 +9,30 @@ physical:
   width: 40
   height: 25
 recipes:
+  - makes: stock.st4340-node-120
+    does: "Hot steel pressed between dies into a node, then machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-160
+    does: "Hot steel pressed between dies into a node, then machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-200
+    does: "Hot steel pressed between dies into a node, then machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
   - makes: stock.st4340-fg
     does: "Hot steel pressed between dies into a rough shape, lining up its grain for strength."
     inputs:
