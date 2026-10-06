@@ -56,3 +56,6 @@
   climate block; the records take the run's mean temperature, coldest and warmest months, rain and
   refined peak (Harvest 298 K, 0.68 m of rain, 8,920 m; Cinder 474 K, 4,713 m). Airless worlds'
   heights are relative to the mean radius; noted in the contract.
+- The lab's **history package** (planet-sim-history/1: globe frames over time, parameters,
+  interior and plates, past climates, life) named in the contract; the registry keeps nothing of
+  it, the game's studio reads it; the Worlds report notes which worlds have one.

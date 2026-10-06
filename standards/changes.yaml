@@ -86,7 +86,7 @@
 - { record: body.treistun.treistun, at: "2026-10-06T01:29:20Z", status: "", summary: "changed: provenance, physical", sha: "8c21d190c5b95194" }
 - { record: body.treistun.treistun-b, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "e1fb3781d9fa652c" }
 - { record: body.treistun.treistun-b-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "9cbec78a7bdb5783" }
-- { record: body.treistun.treistun-c, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "a0edf0a641741945" }
+- { record: body.treistun.treistun-c, at: "2026-10-06T19:16:16Z", status: "", summary: "changed", sha: "8b8e6999223d825b" }
 - { record: body.treistun.treistun-c-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "0eaffd000e8204b5" }
 - { record: body.treistun.treistun-d, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "9da68ddfae8c8fe1" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "ec03710d2e3a78ae" }

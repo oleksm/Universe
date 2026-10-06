@@ -77,6 +77,14 @@ Deposit types for the energy kinds: `deposit-type.oil-field`, `.gas-field`, `.co
 (formed by burial); goods crude oil, natural gas, coal and their bulk stock; modules `oil-well`,
 `gas-well`, `coal-mine` drawing from the place.
 
+A fourth package, **`history/`** (planet-sim-history/1), is how the world grew, for the game's
+studio: `frames.json` and the globe frames over time (`t<NNNN>.jpg`, `today.jpg`), `params.json`
+(the run's given, derived and assumed parameters), `history.json` (interior and plates every
+10 Myr), `paleo.json` (climate every ~100 Myr: CO₂, temperature, ice, burial), `life.json`
+(life's milestones). Written once per world; `releases.json` lists it under `packages.history`.
+The registry keeps nothing of it (the installer needs nothing from it); the game's studio reads it
+from the store; the Worlds report says whether a world has one.
+
 ## 2b. Installing without anyone: the watcher
 
 `tools/standards/watch_worlds.py` watches the store's `releases.json`. When it has changed since
