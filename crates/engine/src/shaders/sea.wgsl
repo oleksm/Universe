@@ -96,7 +96,9 @@ fn sea_material(i: SeaIn) -> vec3<f32> {
     // (The column's reflectance R ≈ 0.33·b_b/(a + b_b): Gordon et al. 1975; clear open ocean ~0.05
     // in blue, ~0.005 in red.)
     let body = 0.33 * SEA_BACK / k * (vec3<f32>(1.0) - through) + SEA_BED * through;
-    let water = body * i.down * (1.0 - fres) / 3.14159265;
+    // (In the engine's units a white Lambert surface lit by `down` shows `down` (no 1/π): the
+    // water's body, a reflectance, the same.)
+    let water = body * i.down * (1.0 - fres);
     // The sky reflected.
     let refl = i.sky * fres;
     // The sun's glint: facets tilted to send the sun to the eye (half vector), their slope's
@@ -107,6 +109,7 @@ fn sea_material(i: SeaIn) -> vec3<f32> {
     let p_slope = exp(-tan2 / sigma2) / (3.14159265 * sigma2 * pow(cos_h, 4.0));
     let cos_s = max(dot(i.up, i.sun_dir), 0.0);
     let fres_h = SEA_F0 + (1.0 - SEA_F0) * pow(1.0 - clamp(dot(hv, i.to_eye), 0.0, 1.0), 5.0);
-    let glint = i.sun * fres_h * p_slope / (4.0 * max(dot(i.up, i.to_eye), 0.05)) * step(0.0, cos_s) * cos_s / max(cos_s, 1e-3);
+    // (A BRDF times irradiance: `sun` is irradiance / π in the engine's units, hence × π.)
+    let glint = 3.14159265 * i.sun * fres_h * p_slope / (4.0 * max(dot(i.up, i.to_eye), 0.05)) * step(0.0, cos_s);
     return water + refl + glint;
 }

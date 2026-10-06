@@ -6,7 +6,7 @@
 // ozone-less one each look as they should; no air at all, nothing drawn.
 //
 // Two entries, both in light units the caller's sun gives (`sun`: the sun's light, rgb, as the
-// scene's lighting takes it):
+// scene's lighting takes it: a white surface lit straight on, Lambert without the 1/π):
 //   air_ground(c, p, center, sun_dir, sun, a) -> vec3   the ground's colour `c` at `p` seen through
 //                                                        the air between it and the eye
 //   air_sky(d, center, sun_dir, sun, a) -> vec3          the light the air sends along the view
@@ -38,6 +38,10 @@ struct Air {
 };
 
 const AIR_PI: f32 = 3.14159265;
+// (The engine's light units: `sun` is the brightness of a white surface lit straight on, its
+// Lambert term without the 1/π: irradiance / π. The march gives radiance per unit of irradiance,
+// so its light is × π in those units.)
+const AIR_UNITS: f32 = 3.14159265;
 const AIR_STEPS: i32 = 32;
 const AIR_SUN_STEPS: i32 = 8;
 
@@ -142,7 +146,7 @@ fn air_ground(c: vec3<f32>, p: vec3<f32>, center: vec3<f32>, sun_dir: vec3<f32>,
     // (The point a hair inside the ground, so the march reaches it.)
     let t = air_span(a, eye, d, len * 1.0001);
     let path = air_march(a, eye, d, t.x, min(t.y, len), sun_dir);
-    return c * path.transmit + path.inscatter * sun;
+    return c * path.transmit + path.inscatter * sun * AIR_UNITS;
 }
 
 fn air_sky(d: vec3<f32>, center: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>, a: Air) -> vec3<f32> {
@@ -152,5 +156,5 @@ fn air_sky(d: vec3<f32>, center: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>, 
     let eye = -center / a.radius_m;
     let t = air_span(a, eye, d, 1e9);
     let path = air_march(a, eye, d, t.x, t.y, sun_dir);
-    return path.inscatter * sun;
+    return path.inscatter * sun * AIR_UNITS;
 }
