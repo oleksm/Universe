@@ -105,6 +105,9 @@ pub struct Member {
     pub b: usize,
     pub section: Section,
     pub material: Material,
+    /// Pinned at its end at `a`, at `b`: free to turn there (no bending carried
+    /// through; it still pushes, pulls and twists), as a post a floor rests on.
+    pub pinned: [bool; 2],
 }
 
 impl Member {
@@ -355,6 +358,29 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
         set(w + 6, w + 6, k3);
         set(w, w + 6, k4);
     }
+    // (A pinned end: its two bending turns condensed out, one at a time; it carries
+    // no moment there.)
+    for (end, pinned) in m.pinned.into_iter().enumerate() {
+        if !pinned {
+            continue;
+        }
+        for r in [4 + 6 * end, 5 + 6 * end] {
+            let krr = k[r][r];
+            if krr.abs() < 1e-30 {
+                continue;
+            }
+            let row = k[r];
+            for i in 0..12 {
+                for j in 0..12 {
+                    k[i][j] -= row[i] * row[j] / krr;
+                }
+            }
+            k[r] = [0.0; 12];
+            for row in &mut k {
+                row[r] = 0.0;
+            }
+        }
+    }
     (k, t)
 }
 
@@ -414,7 +440,7 @@ mod tests {
     /// its strength breaks; one held at nothing is loose.
     #[test]
     fn beams_bear_and_break() {
-        let frame = Frame { joints: vec![DVec3::ZERO, DVec3::new(2.0, 0.0, 0.0)], members: vec![Member { a: 0, b: 1, section: TUBE, material: STEEL }] };
+        let frame = Frame { joints: vec![DVec3::ZERO, DVec3::new(2.0, 0.0, 0.0)], members: vec![Member { pinned: [false; 2], a: 0, b: 1, section: TUBE, material: STEEL }] };
         let p = 1000.0;
         let case = Case { loads: vec![(1, DVec3::new(0.0, -p, 0.0))], anchor: Some(0), ..Default::default() };
         let f = solve(&frame, &case, &[]).unwrap()[0].unwrap();

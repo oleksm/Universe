@@ -519,7 +519,7 @@ const STANDARD_G: f64 = 9.80665;
 
 /// The load cases, by name: standing after a landing (the jolt of the hull's design
 /// landing on top of the weight), at full main thrust, hovering at full lift.
-const CASES: [&str; 3] = ["LANDING", "THRUST", "LIFT"];
+const CASES: [&str; 4] = ["LANDING", "THRUST", "LIFT", "FLOOR"];
 
 /// What the frame bears and how: its joints (its members' ends, those within 5 cm
 /// one), its members' mass (kg), and for each load case either how each member
@@ -690,11 +690,14 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     }
     // (Each deck's grid point with nothing at it: a post down to the nearest joint
     // below it, within 8 m and not through a room; none below, the nearest at all.)
+    // (A point near one already held, another deck's, is held by it.)
+    let mut held: Vec<Vec3> = Vec::new();
     for plate in &plan.plates {
         for node in plate_grid(plate).0 {
-            if joints.iter().any(|q| q.distance(node) <= 0.6) {
+            if joints.iter().chain(&held).any(|q| q.distance(node) <= 0.6) {
                 continue;
             }
+            held.push(node);
             // (Lying on a member, part way along it: a joint made there, the member
             // in two; it bears the deck there.)
             if let Some(k) = beams.iter().position(|b| {
@@ -771,7 +774,7 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
             if forces.is_empty() {
                 continue;
             }
-            let needed = |s: &Stock| forces.iter().map(|f| work(&Member { a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
+            let needed = |s: &Stock| forces.iter().map(|f| work(&Member { pinned: [false; 2], a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
             let ladder: Vec<&Stock> = ladder_of(&beam.stock).into_iter().filter(|s| s.material.stiffness >= decks_on[k] * 0.9).collect();
             let ladder = if ladder.is_empty() { ladder_of(&beam.stock) } else { ladder };
             let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
@@ -786,13 +789,15 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
                 changed = true;
             }
         }
-        // (Each deck: the lightest plate of its material whose strips carry their
-        // forces at four fifths of their limit; none, the thickest.)
+        // (Each deck: the lightest plate of its material (MIX: of any) whose strips
+        // carry their forces at four fifths of their limit; none, the heaviest.)
         for (n, plate) in plan.plates.iter_mut().enumerate() {
             let Some(now) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
             let strips: Vec<_> = b.strips.iter().filter(|s| s.0 == n).collect();
-            let needed = |ps: &PlateStock| strips.iter().flat_map(|&&(_, a, e, w, m)| b.of_member(m).into_iter().map(move |o| work(&Member { a: 0, b: 1, section: universe_sim::world::frame::Section::strip(f64::from(w), ps.thickness), material: ps.material }, o.work.forces, f64::from(a.distance(e)), sf).design)).fold(0.0, f64::max);
-            let ladder: Vec<&PlateStock> = plate_stocks().iter().filter(|s| s.of == now.of).collect();
+            let needed = |ps: &PlateStock| strips.iter().flat_map(|&&(_, a, e, w, m)| b.of_member(m).into_iter().map(move |o| work(&Member { pinned: [false; 2], a: 0, b: 1, section: universe_sim::world::frame::Section::strip(f64::from(w), ps.thickness), material: ps.material }, o.work.forces, f64::from(a.distance(e)), sf).design)).fold(0.0, f64::max);
+            // (MIX: any plate, lightest first; else its own material's.)
+            let mut ladder: Vec<&PlateStock> = plate_stocks().iter().filter(|s| mix || s.of == now.of).collect();
+            ladder.sort_by(|a, b| a.per_square_metre.total_cmp(&b.per_square_metre));
             let pick = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
                 maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
                 ladder.last().copied()
@@ -890,7 +895,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
             continue;
         }
         out.index.push(Some(frame.members.len()));
-        let m = Member { a: ja, b: jb, section: s.section, material: s.material };
+        let m = Member { a: ja, b: jb, section: s.section, material: s.material, pinned: [false; 2] };
         let mass = m.mass(b.a.as_dvec3(), b.b.as_dvec3());
         out.mass += mass;
         // (A member's own weight: half at each end.)
@@ -901,15 +906,27 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // weight and its design load at its grid's points; each point tied to a joint
     // of the frame within half a metre of it (by a fitting: the stoutest steel tube).
     let frame_joints = joints.len();
+    // (Each deck point's share of the design floor load: the FLOOR case's, not the
+    // flight's; what is aboard is in its modules.)
+    let mut floor: Vec<(usize, f64)> = Vec::new();
+    let mut deck_points: Vec<usize> = Vec::new();
     let fitting = stocks().iter().filter(|s| s.of.contains("4340") && s.section.wall < s.section.diameter * 0.5).max_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
     for (n, plate) in plan.plates.iter().enumerate() {
         let Some(ps) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
         let (nodes, nx, nz, dx, dz) = plate_grid(plate);
-        let at: Vec<usize> = nodes.iter().map(|&q| joint(q, &mut joints)).collect();
+        // (A point within 0.3 m of a joint already there, another deck's or the
+        // frame's, is that joint: decks meeting share their edge.)
+        let at: Vec<usize> = nodes
+            .iter()
+            .map(|&q| {
+                let near = joints.iter().enumerate().filter(|(_, p)| p.distance(q) < 0.3).min_by(|a, b| a.1.distance(q).total_cmp(&b.1.distance(q))).map(|(k, _)| k);
+                near.unwrap_or_else(|| joint(q, &mut joints))
+            })
+            .collect();
         let node = |i: usize, j: usize| at[j * (nx + 1) + i];
         let strip = |a: usize, b: usize, width: f32, frame: &mut Frame, out: &mut Bearing| {
             out.strips.push((n, joints[a], joints[b], width, frame.members.len()));
-            frame.members.push(Member { a, b, section: universe_sim::world::frame::Section::strip(f64::from(width), ps.thickness), material: ps.material });
+            frame.members.push(Member { a, b, section: universe_sim::world::frame::Section::strip(f64::from(width), ps.thickness), material: ps.material, pinned: [false; 2] });
         };
         for j in 0..=nz {
             for i in 0..nx {
@@ -927,13 +944,14 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         for j in 0..=nz {
             for i in 0..=nx {
                 let edge = |k: usize, n: usize| if k == 0 || k == n { 0.5 } else { 1.0 };
-                let m = area * edge(i, nx) * edge(j, nz) * (ps.per_square_metre + DECK_LOAD);
+                let share = area * edge(i, nx) * edge(j, nz);
                 let p = node(i, j);
-                weight.push((p, m));
+                weight.push((p, share * ps.per_square_metre));
+                floor.push((p, share * DECK_LOAD));
                 out.mass += area * edge(i, nx) * edge(j, nz) * ps.per_square_metre;
                 if let Some(q) = (0..frame_joints).filter(|&q| q != p && joints[q].distance(joints[p]) <= 0.6).min_by(|&a, &b| joints[a].distance(joints[p]).total_cmp(&joints[b].distance(joints[p]))) {
                     if let Some(f) = fitting {
-                        frame.members.push(Member { a: p, b: q, section: f.section, material: f.material });
+                        frame.members.push(Member { a: p, b: q, section: f.section, material: f.material, pinned: [false; 2] });
                     }
                     touched = true;
                 } else if p < frame_joints {
@@ -944,10 +962,29 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         if !touched {
             out.loose.push(format!("DECK {} TOUCHES NO STRUCTURE", n + 1));
         }
+        deck_points.extend(at);
+    }
+    // (A deck rests on what holds it: a strip between two points that both rest on
+    // something is pinned at both, free to turn on them (it can't be bent by what
+    // it rests on moving); a strip reaching out over nothing stays continuous.)
+    let mut rests = vec![false; joints.len()];
+    for m in frame.members.iter().filter(|m| m.section.flat.is_none()) {
+        rests[m.a] = true;
+        rests[m.b] = true;
+    }
+    for m in frame.members.iter_mut().filter(|m| m.section.flat.is_some()) {
+        let both = rests[m.a] && rests[m.b];
+        m.pinned = [both, both];
     }
     frame.joints = joints.iter().map(|p| p.as_dvec3()).collect();
     out.joints = joints.clone();
     let near = |at: Vec3, r: f32| -> Vec<usize> { joints.iter().enumerate().filter(|(_, q)| q.distance(at) <= r).map(|(k, _)| k).collect() };
+    // (The joints a module is held at: those in it, or by it; a deck's points only
+    // under its foot, where it stands on the deck.)
+    let on_deck: Vec<bool> = (0..joints.len()).map(|j| deck_points.contains(&j)).collect();
+    let mounted = |lo: Vec3, hi: Vec3| -> Vec<usize> {
+        joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!on_deck[k] || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect()
+    };
     // The masses it carries: each module's (the ore bay: its hold full), shared
     // between the joints in it.
     let full = record.and_then(|h| h.capacity.hold).unwrap_or(0.0);
@@ -955,7 +992,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     for blk in &plan.blocks {
         let Some(f) = fit.iter().find(|f| f.id == kind(&blk.id)) else { continue };
         let (lo, hi) = blk.bounds();
-        let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+        let at: Vec<usize> = mounted(lo, hi);
         // (Full: its ore, cargo or fuel too.)
         let m = if blk.id == HOLD { full } else { f.mass + f.load };
         if at.is_empty() {
@@ -984,7 +1021,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         for blk in &plan.blocks {
             let Some((dir, thrust)) = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| f.push) else { continue };
             let (lo, hi) = blk.bounds();
-            let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+            let at: Vec<usize> = mounted(lo, hi);
             let role = if dir.y > 0.5 { ThrusterRole::Lift } else { ThrusterRole::Main };
             pushers.push((role, dir.as_dvec3() * thrust, at));
         }
@@ -1034,7 +1071,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // it; each takes its share of the landing, against what it holds.)
     for (b, _, name) in &legs_placed {
         let (lo, hi) = b.bounds();
-        let at: Vec<usize> = joints.iter().enumerate().filter(|(_, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all()).map(|(k, _)| k).collect();
+        let at: Vec<usize> = mounted(lo, hi);
         if at.is_empty() {
             out.loose.push(format!("{name} HOLDS UP NOTHING"));
         }
@@ -1044,9 +1081,18 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
         Err("NOTHING ON THE PADS".to_string())
     } else {
-        Ok(Case { loads: loads(DVec3::new(0.0, jolt, 0.0)), held: pads, anchor: None })
+        Ok(Case { loads: loads(DVec3::new(0.0, jolt, 0.0)), held: pads.clone(), anchor: None })
     };
     out.felt.push(g + jolt);
+    // Floor: standing on its pads at its design gravity, every deck under its
+    // design floor load (a crowd, stores stacked) besides its own weight.
+    let floored = if pads.is_empty() {
+        Err("NOTHING ON THE PADS".to_string())
+    } else {
+        let mut l = loads(DVec3::ZERO);
+        l.extend(floor.iter().map(|&(j, m)| (j, DVec3::new(0.0, -g * m, 0.0))));
+        Ok(Case { loads: l, held: pads, anchor: None })
+    };
     // Full main thrust, and hovering on full lift: the pushes balanced by every
     // mass's inertia, held only to keep it from drifting.
     let (main, total) = pushes(ThrusterRole::Main, &mut out, "THE DRIVE");
@@ -1079,6 +1125,31 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         (CASES[1].into(), run(Ok(thrust), !main.is_empty())),
         (CASES[2].into(), run(Ok(hover), !lift.is_empty())),
     ];
+    // (No decks: no floor to check.)
+    if !floor.is_empty() {
+        out.felt.push(g);
+        out.cases.push((CASES[3].into(), run(floored, true)));
+    }
+    // (Each deck strip's own bending between its ends: its share of the deck's load
+    // (half each way), simply supported, q L^2 / 8; the deck's own weight as it is
+    // pushed in flight, its weight and floor load standing.)
+    for (k, (name, result)) in out.cases.iter_mut().enumerate() {
+        let Ok(col) = result else { continue };
+        let felt = out.felt.get(k).copied().unwrap_or(g);
+        for &(n, a, b, width, m) in &out.strips {
+            let Some(ps) = plan.plates.get(n).and_then(|p| plate_stocks().iter().find(|s| s.key == p.stock)) else { continue };
+            let per_area = if name.as_str() == CASES[3] { (ps.per_square_metre + DECK_LOAD) * g } else { ps.per_square_metre * felt };
+            let l = f64::from(a.distance(b));
+            let local = per_area * 0.5 * f64::from(width) * l * l / 8.0;
+            let o = &mut col.members[m];
+            let mut f = o.work.forces;
+            f.across += local;
+            o.work = universe_sim::world::frame::work(&frame.members[m], f, l, sf);
+            if o.work.breaking >= 1.0 && o.broken.is_none() {
+                o.broken = Some(0);
+            }
+        }
+    }
     out
 }
 
@@ -1505,9 +1576,17 @@ struct Tube {
     line: usize,
     ends: [Option<End>; 2],
     hatches: [Hatch; 2],
+    /// How far in from each end its end wall stands (a door where it meets a tube
+    /// across it: at that tube's side, not in its middle).
+    caps: [f32; 2],
 }
 
 impl Tube {
+    /// Where along it its end `e`'s wall stands.
+    fn cap(&self, e: usize) -> f32 {
+        if e == 0 { self.caps[0] } else { self.len - self.caps[1] }
+    }
+
     fn at(&self, s: f32, c: Vec2) -> Vec3 {
         self.a + self.d * s + self.u * c.x + self.v * c.y
     }
@@ -1649,9 +1728,18 @@ impl Plan {
                 let n = (into + on).try_normalize()?;
                 (n.dot(into) < 0.999).then_some(n)
             };
+            // (A door where it joins another tube: its wall across it, at the side of a
+            // tube that crosses it there, square.)
+            let junction = |p: usize, e: usize| !self.free_end(k, p) && self.walled_end(k, p, e);
+            let cap = |p: usize, e: usize| {
+                if !junction(p, e) {
+                    return 0.0;
+                }
+                walled.iter().copied().filter(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p)).filter(|&j| out_of(j, p).dot(d).abs() < 0.7).map(|j| self.lines[j].2.width * 0.5).fold(0.0, f32::max)
+            };
             let mitres = [mitre(a, -d).map(|n| -n), mitre(b, d)];
-            let ends = [self.free_end(k, a).then(|| self.end_of(k, 0)), self.free_end(k, b).then(|| self.end_of(k, 1))];
-            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends, hatches: [self.end_hatch(k, 0), self.end_hatch(k, 1)] }
+            let ends = [self.walled_end(k, a, 0).then(|| self.end_of(k, 0)), self.walled_end(k, b, 1).then(|| self.end_of(k, 1))];
+            Tube { a: pa, d, len, u, v: u.cross(d), corners: profile.corners(), mitres, line: k, ends, hatches: [self.end_hatch(k, 0), self.end_hatch(k, 1)], caps: [cap(a, 0), cap(b, 1)] }
         }).collect()
     }
 
@@ -1673,7 +1761,7 @@ impl Plan {
             }
             for (e, how) in t.ends.iter().enumerate() {
                 if *how == Some(End::Door) {
-                    doorways.push(t.door_cut(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                    doorways.push(t.door_cut(t.cap(e), None, &t.hatches[e]));
                 }
             }
         }
@@ -1717,15 +1805,20 @@ impl Plan {
                 if !matches!(how, Some(End::Closed | End::Door)) {
                     continue;
                 }
-                let s = if e == 0 { 0.0 } else { t.len };
+                let s = t.cap(e);
                 let mut cap: Vec<Vec3> = t.corners.iter().map(|c| t.at(s, *c)).collect();
                 if e == 1 {
                     cap.reverse();
                 }
                 let mut pieces = vec![cap];
-                for (o, room) in rooms.iter().enumerate() {
-                    if o != i {
-                        pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                // (A door where it joins another tube: the wall stands across the way
+                // through, only its doorway cut.)
+                let point = if e == 0 { self.lines[t.line].0 } else { self.lines[t.line].1 };
+                if self.free_end(t.line, point) {
+                    for (o, room) in rooms.iter().enumerate() {
+                        if o != i {
+                            pieces = pieces.into_iter().flat_map(|p| outside(p, room)).collect();
+                        }
                     }
                 }
                 for door in &doorways {
@@ -1780,7 +1873,7 @@ impl Plan {
             }
             for (e, how) in t.ends.iter().enumerate() {
                 if *how == Some(End::Door) {
-                    out.extend(t.leaf(if e == 0 { 0.0 } else { t.len }, None, &t.hatches[e]));
+                    out.extend(t.leaf(t.cap(e), None, &t.hatches[e]));
                 }
             }
         }
@@ -1795,6 +1888,12 @@ impl Plan {
     /// Is point `p` an end of walled line `k` that no other walled line shares?
     fn free_end(&self, k: usize, p: usize) -> bool {
         !self.groups.iter().filter(|g| g.walled).flat_map(|g| g.lines.iter()).any(|&j| j != k && (self.lines[j].0 == p || self.lines[j].1 == p))
+    }
+
+    /// Whether line `k`'s end `e` (at point `p`) is walled across: a free end, or
+    /// one where it joins another tube that's set a door (a door between the two).
+    fn walled_end(&self, k: usize, p: usize, e: usize) -> bool {
+        self.free_end(k, p) || self.ends.iter().any(|&EndSet(j, f, how, _)| j == k && f == e && how == End::Door)
     }
 
     /// Line `k`'s axis, its ends: its points, or (standing on its line) half its
@@ -2572,8 +2671,18 @@ impl Interior {
                 faces.push(([q[0], q[k], q[k + 1]], Color(c)));
             }
         }
-        // Its decks: floors.
-        for plate in &self.plan.plates {
+        // Its decks: floors (but one under a walkway: its floor is drawn with it).
+        let under_walkway = |plate: &Plate| {
+            let m = Vec3::new((plate.lo.x + plate.hi.x) * 0.5, plate.y, (plate.lo.y + plate.hi.y) * 0.5);
+            self.plan.lines.iter().enumerate().any(|(k, &(a, b, pr))| {
+                let (pa, pb) = (self.plan.points[a].at, self.plan.points[b].at);
+                let d = pb - pa;
+                let t = (m - pa).dot(d) / d.length_squared().max(1e-6);
+                let off = m - (pa + d * t.clamp(0.0, 1.0));
+                pr.stand && self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled) && (0.0..=1.0).contains(&t) && off.y.abs() < 0.3 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
+            })
+        };
+        for plate in self.plan.plates.iter().filter(|p| !under_walkway(p)) {
             let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
             let colour = Color([0.6, 0.55, 0.45, 1.0]);
             faces.push(([c[0], c[1], c[2]], colour));
@@ -3231,7 +3340,7 @@ fn pressure(i: &Interior) -> Pressure {
         let d = (b - a).normalize_or_zero();
         for e in 0..2 {
             let point = if e == 0 { plan.lines[k].0 } else { plan.lines[k].1 };
-            if !plan.free_end(k, point) {
+            if !plan.walled_end(k, point, e) {
                 continue;
             }
             let (at, out) = if e == 0 { (a, -d) } else { (b, d) };
@@ -3636,11 +3745,11 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     match tool {
         Tool::Frame => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
-            let w4 = (c.x - 16.0 - 18.0) / 4.0;
-            let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2)))];
+            let w5 = (c.x - 16.0 - 24.0) / 5.0;
+            let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2))), ("FLOOR", Action::Case(Some(3)))];
             // (DESIGN GRAVITY's - and +: small, at the end of its row.)
             let small = |x: f32| (Vec2::new(p.x + c.x - 8.0 - x, p.y + 294.0), Vec2::new(20.0, 13.0));
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w4 + 6.0), w4), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "DECK", Action::Deck), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w5 + 6.0), w5), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "DECK", Action::Deck), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -4664,7 +4773,8 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                             interior.plan.ends.retain(|&EndSet(j, f, _, _)| !(j == k && f == e));
                             interior.plan.ends.push(EndSet(k, e, next, interior.hatch));
                             if !interior.plan.free_end(k, [a, b][e]) {
-                                interior.message = Some(("THAT END JOINS ANOTHER TUBE: IT'S A WAY THROUGH ALREADY".into(), 3.0));
+                                let say = if next == End::Door { "A DOOR WHERE IT JOINS THE NEXT TUBE" } else { "THAT END JOINS ANOTHER TUBE: A WAY THROUGH" };
+                                interior.message = Some((say.into(), 3.0));
                             }
                         }
                         None => {
@@ -5668,3 +5778,4 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
