@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# A honeycomb core: thin walls of its sheet, bonded and expanded into cells; its figures are the block's, not the wall's.
+identity:
+  key: material.titanium-honeycomb
+  name: "Titanium honeycomb core"
+  class: composite
+  form:
+  - honeycomb
+mass:
+  density: 100
+mechanical:
+  shear_strength: 1800000.0
+  shear_modulus: 300000000.0
+basis:
+  - { of: [mass.density, mechanical], tier: invented, review: true, note: "A titanium-alloy honeycomb at 100 kg/m3: about twice the aluminium core's strength and stiffness at twice its density; good to 600 K. Chosen by proportion; no data sheet was looked up. Review." }

@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.panel-titi-50p8
+  code: PANEL-TITI-50P8
+  name: "Ti-6-4-faced titanium sandwich panel 50.8 mm"
+  traded_as: market.metals
+  form: sandwich
+made_from:
+  - item: material.honeycomb-sandwich-panel
+size:
+  thickness: 0.0516
+sandwich:
+  faces: { material: material.titanium-alloy-ti-6al-4v, thickness: 0.0004 }
+  core: { material: material.titanium-honeycomb, depth: 0.0508, density: 100, shear_strength: 1800000.0, shear_modulus: 300000000.0 }
+  bond: 0.3
+  mass_per_area: 8.956
+basis:
+  - { of: [size, sandwich], tier: derived, review: true, note: "Two Ti-6-4 faces of 0.4 mm on a 50.8 mm titanium honeycomb core: 8.956 kg/m2 (faces 2 x 4470 x 0.0004, core 100 x 0.0508, bond 0.3). The faces' stiffness and strength are their material's; the core's shear figures are its material's, repeated here. The ladder is the ships session's ask (2026-10-06): a floor that holds 500 kg/m2 over 2 m at a quarter of solid plate's weight." }

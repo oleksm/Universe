@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# A honeycomb core: thin walls of its sheet, bonded and expanded into cells; its figures are the block's, not the wall's.
+identity:
+  key: material.aramid-honeycomb
+  name: "Aramid honeycomb core"
+  class: composite
+  form:
+  - honeycomb
+mass:
+  density: 48
+mechanical:
+  shear_strength: 690000.0
+  shear_modulus: 25000000.0
+basis:
+  - { of: [mass.density, mechanical], tier: invented, review: true, note: "A 3.0 pcf (48 kg/m3) aramid-paper honeycomb (Nomex HRH-10 type): shear strength 1.21 MPa along, 0.69 across; modulus 40 and 25 MPa; the across figures given. From memory of the data sheet. Review." }

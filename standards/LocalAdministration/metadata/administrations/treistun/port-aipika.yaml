@@ -52,12 +52,11 @@ census:
   - { profession: profession.farmer, count: 2 }
   - { profession: profession.pilot, count: 2 }
   - { profession: profession.dependant, count: 1957 }
-# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 4 }
   - { hull: hull.sprint, count: 3 }
   - { hull: hull.prospector, count: 2 }
-  - { hull: hull.hauler, count: 2 }
 about: "The port on Hush II, a moon of the ice giant i, at 21° south. Gravity 0.11 g, no air, and about 80 K. At 6.2 AU it is the farthest port from the star."
 story:
   - "The end of the line. From Aipika the star is only the brightest point in the sky, and the next port in any direction is a long way back."

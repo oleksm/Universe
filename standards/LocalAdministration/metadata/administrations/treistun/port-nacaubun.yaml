@@ -63,12 +63,12 @@ census:
   - { profession: profession.farmer, count: 10 }
   - { profession: profession.judge, count: 10 }
   - { profession: profession.dependant, count: 38321 }
-# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
-  - { hull: hull.drover, count: 84 }
-  - { hull: hull.sprint, count: 63 }
-  - { hull: hull.prospector, count: 42 }
-  - { hull: hull.hauler, count: 21 }
+  - { hull: hull.drover, count: 72 }
+  - { hull: hull.sprint, count: 54 }
+  - { hull: hull.prospector, count: 36 }
+  - { hull: hull.hauler, count: 19 }
 about: "The port on Hearth, the home world, at 24° north. Gravity 0.98 g, with air, and cold."
 story:
   - "The first port in the system. It was built where the first ship came down, and nobody saw a reason to move it. The station overhead took most of its trade; Nacaubun keeps the ground traffic."

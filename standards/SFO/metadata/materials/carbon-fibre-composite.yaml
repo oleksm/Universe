@@ -7,6 +7,7 @@ identity:
   form:
   - tube
   - plate
+  - sheet
 mass:
   density: 1580
 mechanical:

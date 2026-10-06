@@ -39,14 +39,14 @@ census:
   - { profession: profession.nurse, count: 398 }
   - { profession: profession.teacher, count: 332 }
   - { profession: profession.merchant, count: 326 }
-  - { profession: profession.plant-operator, count: 218 }
+  - { profession: profession.plant-operator, count: 234 }
   - { profession: profession.administrator, count: 200 }
+  - { profession: profession.technician, count: 196 }
   - { profession: profession.docker, count: 188 }
-  - { profession: profession.technician, count: 186 }
   - { profession: profession.engineer, count: 163 }
   - { profession: profession.scholar, count: 150 }
   - { profession: profession.fitter, count: 146 }
-  - { profession: profession.machinist, count: 134 }
+  - { profession: profession.machinist, count: 142 }
   - { profession: profession.electrician, count: 110 }
   - { profession: profession.innkeeper, count: 100 }
   - { profession: profession.lawyer, count: 95 }
@@ -54,7 +54,7 @@ census:
   - { profession: profession.constable, count: 60 }
   - { profession: profession.metalworker, count: 40 }
   - { profession: profession.pilot, count: 36 }
-  - { profession: profession.chemist, count: 20 }
+  - { profession: profession.chemist, count: 22 }
   - { profession: profession.banker, count: 20 }
   - { profession: profession.performer, count: 20 }
   - { profession: profession.artist, count: 20 }
@@ -63,13 +63,13 @@ census:
   - { profession: profession.shipwright, count: 8 }
   - { profession: profession.judge, count: 5 }
   - { profession: profession.farmer, count: 4 }
-  - { profession: profession.dependant, count: 13566 }
-# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
+  - { profession: profession.dependant, count: 13530 }
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
-  - { hull: hull.drover, count: 28 }
-  - { hull: hull.sprint, count: 21 }
-  - { hull: hull.prospector, count: 14 }
-  - { hull: hull.hauler, count: 7 }
+  - { hull: hull.drover, count: 24 }
+  - { hull: hull.sprint, count: 18 }
+  - { hull: hull.prospector, count: 12 }
+  - { hull: hull.hauler, count: 6 }
 about: "The port on Rime, near the equator at 6° north. Gravity 0.41 g, no air, and about 190 K."
 story:
   - "The last port on solid ground before the giants. Outbound ships top up here because it is the cheapest lift-off of any planet in the system."

@@ -61,12 +61,12 @@ census:
   - { profession: profession.farmer, count: 4 }
   - { profession: profession.pilot, count: 4 }
   - { profession: profession.dependant, count: 14025 }
-# independents: owner-operators based here, its share by population of the 774 that fill the system's 1000 (seeding.traffic) beside the fleets
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
-  - { hull: hull.drover, count: 28 }
-  - { hull: hull.sprint, count: 21 }
-  - { hull: hull.prospector, count: 14 }
-  - { hull: hull.hauler, count: 7 }
+  - { hull: hull.drover, count: 24 }
+  - { hull: hull.sprint, count: 18 }
+  - { hull: hull.prospector, count: 12 }
+  - { hull: hull.hauler, count: 6 }
 about: "The port on Anvil, close to the equator at 7° south. Gravity 1.67 g, the highest of any port, and no air."
 story:
   - "Pilots treat Lisaur as a test. A ship that can lift loaded from here can lift from anywhere in the system, and a ship that can't finds out on the pad."
