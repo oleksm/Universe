@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Hearth's air has no oxygen (the planet lab's run, 2026-10-06: no life ever began there), so the home port breathes from its
+# plants like the sealed ports do: oxygen plants splitting water, air plants taking the carbon dioxide back; the water works
+# beside them melts the ice. Thirty days of oxygen for 60,000 in store. Sized as Zaudalein's for 20,000, three times.
+identity:
+  key: facility.treistun.port-nacaubun.nacaubun-life-support
+  name: Nacaubun Life Support
+kind: utility
+parcel: parcel.treistun.port-nacaubun.2
+lines:
+  - makes: element.o
+    modules:
+      - { module: module.oxygen-plant, count: 3 }
+  - makes: good.water
+    modules:
+      - { module: module.air-plant, count: 9 }
+modules:
+  - { module: module.tank-farm, count: 2 }
+stock:
+  - { item: element.o, quantity: 1611000.0 }

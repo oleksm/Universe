@@ -117,6 +117,7 @@ properties:
       temperature_low: { type: number, x-unit: "K", description: "K, its coldest place and time" }
       temperature_high: { type: number, x-unit: "K", description: "K, its hottest" }
       highest: { type: number, x-unit: "m", description: "m above its mean level, its highest ground" }
+      rain: { type: number, x-unit: "m", description: "m of rain a year over its land, on average" }
       lowest: { type: number, x-unit: "m", description: "m below its mean level, its lowest" }
       colour: { type: array, items: { type: number }, x-unit: "1", minItems: 3, maxItems: 3, description: "red, green, blue, each 0 to 1" }
       landscape: { type: string, description: "For a frozen body: the file its made landscape is kept in." }

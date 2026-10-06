@@ -17,6 +17,7 @@ Exits non-zero with every problem listed if anything's wrong (the page still sho
 See docs/standards.md.
 """
 import html
+import glob
 import json
 import math
 import os
@@ -135,7 +136,7 @@ def read_schema(path):
         for g in ("function", "needs", "size_class"):
             props.pop(g, None)
         props["performance"] = {"type": "object", "additionalProperties": False, "properties": {k: {"description": v} for k, v in EQUIPMENT_READS.items()}}
-        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "revision", "basis") if k in props}
+        sch["properties"] = props = {k: props[k] for k in ("identity", "physical", "performance", "built_of", "making", "fits", "life", "revision", "basis") if k in props}
     # (This build and the page still take what a thing is made from as one entry, a mill stock's form and
     # temper with it, and one `process` where there is one.)
     if "made_from" in props and kind in ("part", "mill-stock"):
@@ -191,7 +192,7 @@ EQUIPMENT_READS = {
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
-    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again",
+    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
     "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
@@ -504,7 +505,7 @@ for name in sorted(os.listdir(makers_dir)):
         if k not in m:
             problem(full, f"no {k}")
     for k in m:
-        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file", "insurance", "trade_bans", "fleet"}:
+        if k not in {"key", "name", "ticker", "business", "address", "note", "who", "what", "story", "slug", "file", "insurance", "trade_bans", "fleet", "banking", "exchange"}:
             problem(full, f"unknown field '{k}'")
     if not re.fullmatch(r"[A-Z]{2,4}", str(m.get("ticker", ""))):
         problem(full, "ticker: 2 to 4 capital letters")
@@ -522,9 +523,9 @@ BRANDS = {m.get("key"): m.get("name") for m in makers}
 # Local Administration: each settled system's, one file each
 # (LocalAdministration/metadata/administrations/<name>.yaml), to its administration.schema.yaml.
 LOCAL = "LocalAdministration"
-ZONE_USES = ["port", "industrial", "commercial", "civic", "residential", "agricultural"]
+ZONE_USES = ["port", "industrial", "commercial", "civic", "residential", "agricultural", "mining"]
 # What zone each kind of facility needs.
-FACILITY_ZONE = {"foundry": "industrial", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port", "farm": "agricultural", "food works": "industrial", "store": "port", "utility": "industrial"}
+FACILITY_ZONE = {"foundry": "industrial", "mine": "mining", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port", "farm": "agricultural", "food works": "industrial", "store": "port", "utility": "industrial"}
 # The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
 _port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
@@ -636,7 +637,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census", "independents"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census", "independents", "buildings"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -737,7 +738,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange", "stock"}:
+                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange", "stock", "claim"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -988,7 +989,7 @@ for s in standards:
     kind = str(s["records"])
     prefix = s["id"].split(" ")[0]
     folder = os.path.join(TREE, prefix, "metadata", kind)
-    if kind in NESTED:
+    if kind in NESTED or s.get("status") in ("superseded", "withdrawn"):      # (a superseded standard's records are gone: its text stays)
         continue
     if kind not in KINDS:
         problem(os.path.join(TREE, s["file"]), f"records: one of {', '.join(KINDS)}")
@@ -1066,7 +1067,7 @@ for s in standards:
         seen[key] = name
         check_basis(e, full)
         for group, props in e.items():
-            if group in ("slug", "basis", "revision", "fits") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
+            if group in ("slug", "basis", "revision", "fits", "life") or (kind == "modules" and group == "recipes"):   # (a revision is held to its schema by validate.py)
                 continue
             if kind == "hulls" and group == "open_questions":
                 continue
@@ -1403,6 +1404,28 @@ for ad in administrations:
                 out = sum(ln["most"]["output"] + sum(i["rate"] for i in ln["most"]["by_products"]) for ln in fc.get("lines") or [] if "most" in ln)
                 if room and out:
                     fc["fills"] = {"holds": room, "rate": out, "days": room / out / 24}
+            if "claim" in fc:
+                # (The deposit is the survey's, or the energy package's, of the body the settlement is at: a permanent id.)
+                _dep = str(fc["claim"].get("deposit", ""))
+                _body_key = x.get("at_key") or (yaml.safe_load(open(os.path.join(TREE, "LocalAdministration", "metadata", "administrations", ad["slug"], x["slug"] + ".yaml"), encoding="utf-8")) or {}).get("at")
+                _brec = next((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in glob.glob(os.path.join(TREE, "Celestial", "metadata", "systems", "*", "bodies", "*.yaml")) if (yaml.safe_load(open(f__, encoding="utf-8")) or {}).get("identity", {}).get("key") == _body_key), {})
+                _ids = set()
+                if _brec.get("survey"):
+                    _sd = os.path.join(TREE, "..", _brec["survey"]["folder"])
+                    for _fn, _k in (("deposits.geojson", "features"),):
+                        _pth = os.path.join(_sd, _fn)
+                        if os.path.isfile(_pth):
+                            _ids |= {f_["properties"]["id"] for f_ in json.load(open(_pth, encoding="utf-8"))[_k]}
+                    if _brec.get("energy"):
+                        _ed = os.path.join(TREE, "..", _brec["energy"]["folder"])
+                        if os.path.isfile(os.path.join(_ed, "fields.geojson")):
+                            _ids |= {f_["properties"]["id"] for f_ in json.load(open(os.path.join(_ed, "fields.geojson"), encoding="utf-8"))["features"]}
+                        if os.path.isfile(os.path.join(_ed, "coalfields.json")):
+                            _ids |= {c_["id"] for c_ in json.load(open(os.path.join(_ed, "coalfields.json"), encoding="utf-8"))}
+                    if _dep not in _ids:
+                        problem(where, f"claim.deposit: no deposit, field or coalfield '{_dep}' in the survey of {_body_key}")
+                else:
+                    problem(where, f"claim: {_body_key or 'its body'} is not baked: no survey to claim a deposit in")
             if "exchange" in fc and (fc["exchange"] not in BRANDS or next((m for m in makers if m["key"] == fc["exchange"]), {}).get("business") != "exchange"):
                 problem(where, f"exchange: no exchange '{fc['exchange']}' in Maker House")
             if plot is not None and covered > plot.get("area", 0):
@@ -2406,10 +2429,86 @@ try:
             continue
         _c = {c_["profession"].split(".")[-1]: c_["count"] for c_ in _d["census"]}
         _dep = _c.pop("dependant", 0); _work = sum(_c.values())
-        _rows.append(row("gap" if _work > _d["population"] or _work < 0.3 * _d["population"] else "ok", _d["identity"]["name"], f"{_d['population']:,}", f"{_work:,}", f"{_dep:,}", f"{_work / _d['population']:.0%}", ", ".join(f"{k_} {v_}" for k_, v_ in sorted(_c.items(), key=lambda kv: -kv[1])[:6])))
-    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under three tenths here is a settlement whose works and services, as described, give most of its people nothing to do (a gap: the rest of the civilization is not yet described), over all of them one over-built. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
+        _rows.append(row("gap" if _work > _d["population"] or _work < 0.25 * _d["population"] else "ok", _d["identity"]["name"], f"{_d['population']:,}", f"{_work:,}", f"{_dep:,}", f"{_work / _d['population']:.0%}", ", ".join(f"{k_} {v_}" for k_, v_ in sorted(_c.items(), key=lambda kv: -kv[1])[:6])))
+    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under a quarter here is a settlement whose works and services, as described, give most of its people nothing to do; over all of them, one over-built. Treistun's ports read 30 to 37%: the service trades are described (shops, yards, offices, depots, taverns, clinics, schools); what is still thin against a real economy is manufacturing for people at every port (works making consumer goods), health and schooling. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
 except Exception as _e:    # (the census tool is beside this build; without it the page lacks two reports, no more)
     print("traffic/census report:", _e)
+
+# 3g. Budgets (the ships session's ask): for each hull as fitted, power, heat, and air and water for its people.
+_eq_raw = {}
+for _f in glob.glob(os.path.join(TREE, "SFO", "metadata", "equipment", "*.yaml")):
+    _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
+    _eq_raw[_r["identity"]["key"]] = _r
+_air_rate = next((t_["rate"] for n_ in _census.needs.values() for t_ in n_.get("takes", []) if n_["identity"]["key"] == "need.air" and t_["item"] == "element.o"), 1.036e-5)
+_water_rate = sum(t_["rate"] for n_ in _census.needs.values() if n_["identity"]["key"] in ("need.water", "need.washing") for t_ in n_.get("takes", []) if t_["item"] == "good.water")
+rows = []
+for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yaml"))):
+    _hull = yaml.safe_load(open(_h, encoding="utf-8")) or {}
+    _fit = _hull.get("fit") or []
+    if not _fit:
+        continue
+    _out = _draw = _waste = _jet = _reject = _carry = 0.0; _seats = 0; _air = _water = 0.0; _wrec = _arec = 0.0; _missing = []
+    for _fi in _fit:
+        _e = _eq_raw.get(_fi["item"])
+        if not _e:
+            _missing.append(_fi["item"]); continue
+        _fn = _e.get("function") or {}; _k = _fn.get("kind")
+        _draw += (_e.get("needs") or {}).get("power", 0)
+        if _k == "power_plant":
+            _out += _fn["output"]; _waste += _fn["output"] * (1 / _fn["efficiency"] - 1)
+        elif _k in ("drive", "lift", "thrusters"):
+            _n = _fi.get("nozzles", 1 if _k != "thrusters" else 4)
+            _jet += 0.5 * _fn["thrust"] * _fn["exhaust"] * _n * _fn.get("heat_to_hull", 1e-6)
+        elif _k == "radiator":
+            _reject += _fn["rejects"]
+        elif _k == "coolant_loop":
+            _carry += _fn["carries"]
+        elif _k == "cabin":
+            _seats += _fn.get("seats", 0)
+        elif _k == "store":
+            if _fn.get("holds") == "good.water": _water += _fn["capacity"]
+            if _fn.get("holds") == "element.o": _air += _fn["capacity"]
+        elif _k == "life_support":
+            _wrec = max(_wrec, _fn.get("water_recovery", 0.0)); _arec = max(_arec, _fn.get("air_recovery", 0.0))
+    _heat_in = _waste + _draw + _jet      # (power used inside ends as heat inside, bar what leaves as a beam: the studio's rule too)
+    _power = f"{_out / 1e6:.1f} MW made, {_draw / 1e6:.2f} MW drawn" + ("" if _out >= _draw else ": SHORT")
+    _heat = f"{_heat_in / 1e6:.1f} MW aboard ({_waste / 1e6:.1f} plant loss, {_draw / 1e6:.1f} drawn and spent inside, {_jet / 1e6:.1f} from the jets at full burn); radiators {_reject / 1e6:.0f} MW, loops {_carry / 1e6:.0f} MW" + (": NO RADIATORS" if _heat_in > 0 and _reject == 0 else ("" if _reject >= _heat_in else ": SHORT"))
+    if _seats:
+        _days = lambda cap, rate: f"{cap / (rate * _seats * 86400):.0f} days" if cap else "no store"
+        _life = f"{_seats} seats: air {_days(_air, _air_rate * (1 - _arec))}, water {_days(_water, _water_rate * (1 - _wrec))}" + (f" (life support recovers {_wrec:.0%} of water, {_arec:.0%} of air)" if _wrec or _arec else "")
+    else:
+        _life = "no cabin fitted: no crew figure (air and water days need seats)"
+    _state = "gap" if (_out < _draw or _reject < _heat_in or _missing) else "ok"
+    rows.append(row(_state, _hull["identity"]["name"], _power, _heat, _life, ", ".join(_missing) or ""))
+report("budgets", "Budgets: each hull as fitted", "For every hull with a fit: power (its plants' output against everything's draw), heat (the plants' waste heat, everything drawn, since power spent inside ends as heat inside, and the share of the jets' power that reaches the hull, function.heat_to_hull, at full burn, against the radiators and coolant loops fitted), and air and water (days the fitted stores last the cabins' seats, at the needs' rates less what the life support recovers). The studio's checks should read the same records.", ["Hull", "Power", "Heat", "Air and water", "Unknown equipment"], rows)
+
+# 3f. Worlds (docs/survey-contract.md): every body grown by the planet simulation, its packages, and what the store holds besides.
+_store = os.environ.get("UNIVERSE_WORLDS") or os.path.expanduser("~/git/planet-sim/out/worlds")
+_index = {}
+try:
+    _rel = json.load(open(os.path.join(_store, "releases.json"), encoding="utf-8"))
+    _index = {w_["world_id"]: w_ for w_ in _rel.get("worlds", [])}
+except Exception:
+    pass
+rows = []
+_baked = set()
+import glob as _glob
+for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _glob.glob(os.path.join(TREE, "Celestial", "metadata", "systems", "*", "bodies", "*.yaml"))), key=lambda b_: (b_.get("identity") or {}).get("key", "")):
+    sv = b_.get("survey")
+    if not sv:
+        continue
+    _baked.add(sv["world_id"])
+    en, bk = b_.get("energy"), b_.get("bake")
+    w_ = _index.get(sv["world_id"], {})
+    energy_s = ("empty: no life, so no oil, gas or coal" if en and not (en.get("oil_fields") or en.get("gas_fields") or en.get("coalfields")) else f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
+    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else "none"
+    rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s, ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
+for wid, w_ in sorted(_index.items()):
+    if wid in _baked:
+        continue
+    why = "superseded by " + w_["superseded_by"] if w_.get("status") == "superseded" else ("no body: grown from no record of ours" if not w_.get("body") else "not installed: run tools/standards/world_install.py --store")
+    rows.append(row("note", w_.get("body") or "(none)", wid, "", "", "", "in the store, not installed", why))
+report("worlds", "Worlds: bodies grown by the planet simulation", f"Every body with provenance baked: its world, what its survey found, its energy package (none by design where a world never had life), its surface bake (versioned, kept in the worlds store, not here), and which survey files stay in the store for size. Below, what the store ({_store}) lists that is not installed, and why. Install: tools/standards/world_install.py --store <root>.", ["Body", "World", "Survey", "Energy", "Surface", "In the store", "Index says"], rows)
 
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
@@ -2444,30 +2543,20 @@ for m, rc in [(m, rc) for m in modules for rc in m.get("recipes") or []]:
     rows.append(row("ok" if abs(d) <= 0.02 * ins else "gap", link(m["identity"]["name"] + (f": {item_name(rc['product'])}" if len(m["recipes"]) > 1 else ""), "mod:" + m["slug"]), f"{ins:.4g} t", f"{1 + outs:.4g} t", f"{d:+.3g} t ({100 * d / ins:+.1f}%)", "balanced" if abs(d) <= 0.02 * ins else ("more goes in than comes out" if d > 0 else "more comes out than goes in")))
 report("modules", "Balance: what goes into a module against what comes out", "For each tonne of a module's product: everything that goes in, against the product and everything else that comes out. Matter is not made or lost, so they should match. A gap is a difference of more than 2%.", ["Module", "Goes in", "Comes out", "Difference", ""], rows)
 
-# 5. Each material, in each form it comes in: does a process make it?
+# 5. Each material, in each form it is said to come in: does a module's recipe make a stock of it in that form?
 rows = []
-makes = {}
-for pr in processes + routes:
-    for o in (pr.get("outputs") or {}).get("products") or []:
-        if o.get("item") and o.get("form"):
-            makes.setdefault((o["item"], o["form"]), []).append(pr.get("slug"))
+_made = {}
+for md in modules:
+    for rc in md.get("recipes") or []:
+        for k_ in [rc.get("product")] + [x.get("item") for x in rc.get("outputs") or []]:
+            ms_ = stock_of.get(k_)
+            if ms_:
+                _made.setdefault(((ms_.get("made_from") or {}).get("material"), (ms_.get("made_from") or {}).get("form")), []).append(md["identity"]["name"])
 for m in materials:
     for form in (m.get("identity") or {}).get("form") or []:
-        by = makes.get((m["slug"], form), [])
-        # (Or it comes out of a recipe beside what the recipe makes: scrap.)
-        aside = [md for ms_ in mill_stock if (ms_.get("made_from") or {}).get("material") == m["slug"] and (ms_.get("made_from") or {}).get("form") == form
-                 for md in modules if any(rc.get("product") == ms_["slug"] or any(x.get("item") == ms_["slug"] for x in rc.get("outputs") or []) for rc in md.get("recipes") or [])]
-        rows.append(row("ok" if by or aside else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, link(by_process[by[0]]["identity"]["name"], "proc:" + by[0]) if by else link("comes out of the " + aside[0]["identity"]["name"].lower(), "mod:" + aside[0]["slug"]) if aside else "no process makes it"))
-report("stock", "Materials: is every form made by a process", "Each material in each form it is said to come in, and the process that makes it in that form.", ["Material", "Form", "Made by"], rows)
-
-# 6. Each process: has it real steps, and is it run anywhere?
-rows = []
-for pr in processes:
-    steps = bool((pr.get("equipment") or {}).get("steps"))
-    at = run_at.get(pr["slug"], [])
-    state = "ok" if steps and pr["slug"] in lined else "gap"
-    rows.append(row(state, link(pr["identity"]["name"], "proc:" + pr["slug"]), "yes" if steps else "no steps", ", ".join(f["name"] for f in at) or "nowhere", "yes" if pr["slug"] in lined else "no line built for it"))
-report("processes", "Processes: steps, and somewhere they are run", "Each process: whether it is broken into steps with their modules, which facilities list it, and whether any of them has a line built for it.", ["Process", "Steps", "Listed by", "A line built"], rows)
+        by = sorted(set(_made.get((m["slug"], form), [])))
+        rows.append(row("ok" if by else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, ", ".join(by) or "nothing makes it: no stock of it in this form, or no recipe for that stock"))
+report("stock", "Materials: is every form made", "Each material in each form it is said to come in, and the module whose recipe makes a stock of it in that form. A gap is a form named on the material with no stock, or stock with no recipe: either a works to describe, or a form to strike.", ["Material", "Form", "Made by"], rows)
 
 for gd in goods:
     where = os.path.join(TREE, gd["file"])

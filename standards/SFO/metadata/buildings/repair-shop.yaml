@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.repair-shop
+  name: "Repair shop"
+  description: "Benches, a hoist and spares: where machines, vehicles and the things of the home are mended."
+physical:
+  length: 30
+  width: 20
+  height: 6
+  mass: 661800
+per_people: 2000
+floor: 600
+storeys: 1
+meets:
+  - { need: need.tools, people: 2000 }
+staff:
+  - { profession: profession.technician, count: 12 }
+  - { profession: profession.fitter, count: 8 }
+  - { profession: profession.electrician, count: 6 }
+  - { profession: profession.machinist, count: 4 }
+built_of:
+  - { item: good.concrete, quantity: 624000 }
+  - { item: material.structural-steel-a36, quantity: 34800 }
+life: 1577880000
+basis:
+  - { of: [per_people, staff], tier: invented, review: true, note: "One of thirty to 2,000 people. The share of a people this gives work to is set so that a settlement's trades together come to about what a rich country's do (about half its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }

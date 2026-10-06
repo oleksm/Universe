@@ -82,6 +82,8 @@ design:
   loaded_mass: 111540.0
   main_thrust: 2700000.0
   lift_thrust: 2250000.0
+life: 1262304000
 basis:
   - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design, slots, thrusters, flight], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not measured: as long as twice the radius the game flies it at, and square in section to give its volume. An early hull, outdated: a placeholder." }
+  - { of: [life], tier: invented, review: true, note: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life." }

@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented (2026-10-06): the smelter's lot in the industrial zone, Hadley's.
+identity:
+  key: parcel.treistun.port-zaudalein.3
+number: 3
+owner: org.hadley
+address: { street: street.treistun.port-zaudalein.east-road, number: 3 }
+outline: [[1500, -900], [2400, -900], [2400, 200], [1500, 200]]

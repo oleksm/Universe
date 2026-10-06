@@ -121,6 +121,21 @@ pub struct Works {
     pub owner: Option<String>,
     /// How it ran over the last step.
     pub last: Option<Run>,
+    /// The deposit it holds a claim to (its id in the body's survey) and the ore left in it (kg):
+    /// what its mine digs, until it's worked out.
+    pub deposit: Option<(String, f64)>,
+}
+
+/// The ore in deposit `id` (kg), from the survey of the body whose world it names (its first
+/// segment: `TRD1-...`). Surveys read once.
+fn deposit_ore(id: &str) -> Option<f64> {
+    static SURVEYS: std::sync::OnceLock<std::sync::Mutex<HashMap<String, Option<std::sync::Arc<universe_world::worlds::Survey>>>>> = std::sync::OnceLock::new();
+    let world_id = id.split('-').next()?;
+    let reg = universe_world::registry::registry();
+    let body = reg.bodies.iter().find(|b| b.survey.as_ref().is_some_and(|s| s.world_id == world_id))?;
+    let mut surveys = SURVEYS.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
+    let w = surveys.entry(body.identity.key.clone()).or_insert_with(|| universe_world::worlds::Survey::load(&body.identity.key)?.ok().map(std::sync::Arc::new)).clone()?;
+    w.deposits.iter().find(|d| d.id == id).map(|d| d.ore)
 }
 
 /// Where works stand: a land office's ground, or a rig (its system and its
@@ -137,7 +152,10 @@ impl Works {
     fn new(ground: usize, works: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
         let f = reg.facilities.iter().find(|f| f.identity.key == key)?;
-        Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())
+        let mut w = Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())?;
+        // (A mine's claim: the deposit it digs, its ore as the survey has it.)
+        w.deposit = f.claim.as_ref().and_then(|c| Some((c.deposit.clone(), deposit_ore(&c.deposit)?)));
+        Some(w)
     }
 
     /// Built as the registry's rig `key`, body `body` of `system`: its own warehouse, its owner's.
@@ -166,7 +184,7 @@ impl Works {
             setups.push(Setup { module: module(&m.module)?, count: m.count, recipe: None });
         }
         let holds: f64 = setups.iter().map(|s| s.module.capacity.holds.unwrap_or(0.0) * s.count as f64).sum();
-        let mut w = Works { site, works, name: name.to_string(), setups, pool: Pool::default(), exchange, owner: None, last: None };
+        let mut w = Works { site, works, name: name.to_string(), setups, pool: Pool::default(), exchange, owner: None, last: None, deposit: None };
         w.pool.room = if holds > 0.0 { holds } else { w.takes().iter().map(|(_, r)| r * UNSTORED).sum() };
         // (What lies in it at day 0: the registry's seed state.)
         let goods = &universe_world::content::content().stock;
@@ -775,7 +793,22 @@ impl Economy {
                         why = Some("STORE FULL".into());
                     }
                 }
+                // (A claimed deposit's ore: dug till it's worked out.)
+                if r.from_ground > 0.0
+                    && let Some((_, left)) = &w.deposit
+                {
+                    let can = left / (r.from_ground * full).max(1e-12);
+                    if can < k {
+                        k = can;
+                        why = Some("DEPOSIT WORKED OUT".into());
+                    }
+                }
                 let k = k.clamp(0.0, 1.0);
+                if r.from_ground > 0.0
+                    && let Some((_, left)) = &mut w.deposit
+                {
+                    *left = (*left - r.from_ground * full * k).max(0.0);
+                }
                 for &(i, q) in &r.inputs {
                     let t = w.pool.take(i, q * full * k);
                     *used.entry(i).or_default() += t;
@@ -997,5 +1030,15 @@ mod tests {
         let made = e.places[trethi].made.get(&cap).copied().unwrap_or(0.0) * STEP / DAY;
         assert!(made > 0.0 && made <= 20_000.0 / 1710.72 * goods[cap].mass + 1.0, "nose caps welded from the sheet: {made} kg");
         assert!(e.works[yard].pool.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) + e.places[trethi].stock.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) > 0.0, "and the offcuts, scrap");
+
+        // Halden Mine (a camp the seed has no port for: placed where its record says) digs its
+        // claimed deposit (Harvest's survey's), and what it digs is gone from it.
+        let mine = e.works.iter().position(|x| x.name == "Halden Mine").expect("Halden Camp's mine");
+        let (id, before) = e.works[mine].deposit.clone().expect("its claim's deposit");
+        assert_eq!(id, "TRD1-PCU-007264A-01");
+        assert!((before / 1e9 - 1230.33).abs() < 0.01, "1,230 Mt as surveyed: {before:e}");
+        e.step_to(5.0 * STEP, &mut land, &mut ledger, &goods, 3);
+        let after = e.works[mine].deposit.as_ref().unwrap().1;
+        assert!(after < before, "dug: {} t", (before - after) / 1000.0);
     }
 }

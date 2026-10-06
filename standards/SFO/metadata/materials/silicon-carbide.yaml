@@ -11,7 +11,6 @@ identity:
   - part: element.c
     share: 0.3
   form:
-  - plate
   - tile
 mass:
   density: 3210.0

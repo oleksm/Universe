@@ -110,7 +110,7 @@
         version: 1,
         title: "MATERIAL PROCESSING",
         scope: "",
-        status: Draft,
+        status: Superseded,
         refs: [],
         params: [
         ],

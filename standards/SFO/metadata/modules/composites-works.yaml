@@ -21,8 +21,18 @@ recipes:
       - { item: good.methane, quantity: 0.6175 }
     rate: 0.05
     power: 5500000
+  - makes: stock.cfc-sh-0p5
+    does: "Four plies of carbon laid up and cured to a half-millimetre sheet."
+    inputs:
+      - { item: good.polyethylene, quantity: 1.617 }
+    outputs:
+      - { item: good.methane, quantity: 0.6175 }
+    rate: 0.05
+    power: 5500000
+life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "1.95 kg of fibre for each kg of carbon fibre; a laminate is 57% fibre by volume, 65% by weight, the rest resin (Hexcel's aerospace sheet). Real fibre is polyacrylonitrile and the resin epoxy, neither of which the registry can make yet: both are taken as its one plastic, and what bakes off as gas." }
   - { of: [recipes.power], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "170 MJ for each kg of carbon fibre, so 110 for each kg of sheet. Curing is not counted: no figure was found." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

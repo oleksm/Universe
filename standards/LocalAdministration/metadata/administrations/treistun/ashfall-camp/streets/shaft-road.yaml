@@ -1,0 +1,6 @@
+# yaml-language-server: $schema=../../../../../schema/street.schema.yaml
+# Invented: from the strip north past the plant to the shaft.
+identity:
+  key: street.treistun.ashfall-camp.shaft-road
+  name: Shaft Road
+line: [[0, -2800], [0, 1500]]

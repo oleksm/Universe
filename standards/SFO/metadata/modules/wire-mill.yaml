@@ -21,7 +21,9 @@ recipes:
       - { item: stock.cu-scrap, quantity: 0.02 }
     rate: 2.0
     power: 14200000
+life: 788940000
 basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "7.1 MJ a kg to turn copper into wire (Argonne's model of vehicle making)." }
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Its size and rate are chosen; the 2% lost is a guess. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

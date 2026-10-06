@@ -26,8 +26,10 @@ function:
   throughput: 10
   anchor_reach: 30
   anchor_speed: 0.5
+life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a cutting head of picks on an arm, a motor to turn it, an anchor and winch to hold the ship to the rock, and a conveyor to the hold. A roadheader with a 300 kW head weighs 130 t on Earth, because its weight is what holds it to the face; here the anchor does that, and the rig is 2.5 t." }
   - { of: [function.excavator_power, function.throughput, function.anchor_reach, function.anchor_speed], tier: sourced, review: true, source: "the game: crates/world/src/mining.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: invented, review: true, note: "An arm of 8 m with its cutting head: long enough to reach the rock from the hull's side, a quarter of the anchor's 30 m reach. A real roadheader's boom is 5 to 10 m; 8 chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../../../../schema/power-line.schema.yaml
+# Invented: from the power station east to the smelter; a fifth over what it draws flat out (127 MW).
+identity:
+  key: power-line.treistun.port-zaudalein.power-line-4
+  name: Power line 4
+from: facility.treistun.port-zaudalein.zaudalein-power-station
+to: facility.treistun.port-zaudalein.zaudalein-smelter
+capacity: 152000000
+line: [[1400, 0], [1500, 0]]

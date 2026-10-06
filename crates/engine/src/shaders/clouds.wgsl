@@ -1,0 +1,426 @@
+// A world's clouds (the planet lab's): where they are, of which kind, as its climate has them
+// month by month (planet-sim stages/clouds.py, baked by tools/clouds_bake.py), with its El Niño,
+// moving with its winds, lit by its sun, seen through its air. The reference these rules follow,
+// and the look they were worked out on: planet-sim tools/cloud_reference.py.
+//
+// - Three shells: low at the cloud base (the condensation level, ~0.4 km over the sea, up to ~3 km
+//   over deserts), frontal at 4 km, high (anvils, cirrus) 2 km under the tropopause. Each holds its
+//   kinds' sky fractions for the month, blended between months by the year's phase, plus El
+//   Niño's response × the world's index.
+// - Shapes by kind; coverage so the clouded area equals the fraction at every zoom (the noise
+//   equalised by its spread; octaves under 1.5 pixels fade out and the spread is renormalised):
+//   low as cumulus (~3 km clouds, even at large scales) where the cover is low, stratocumulus
+//   (~40 km cells in mesoscale patterns) where high; deep convection in ~25 km cells clustered
+//   at ~600 km; fronts in bands drawn out along the wind; cirrus streaked along the jet.
+// - Moving with the wind (700 hPa; the jet for the high shell), each octave renewed over its
+//   lifetime ∝ its size^⅔ (Kolmogorov: a 1,000 km system ~3 days, a 1 km cumulus ~30 min), the
+//   noise of two phases crossfaded (never the clouds: their edges stay crisp as they change).
+// - Light: optical depth by kind × thickness (thin at the edges, ~1.5 spreads in at full); a
+//   plane-parallel cloud's reflectance R = (1−g)τ / (2 + (1−g)τ), g = 0.85 (two-stream), its
+//   diffuse transmission 1 − R: bright tops, dark bases under thick cloud; thin edges scatter
+//   forward toward the sun (silver linings); the sky's light on the bases; shadows on the ground.
+// - Seen through the air: each cloud's light carried to the eye by the air's march (the bake's
+//   tables), so far clouds haze and redden as the ground does.
+//
+// Entries (the caller binds the bake's three textures and passes the world's frame):
+// - clouds_over(c, eye, d, t_end, ...) -> vec3: the light c seen along the ray eye + t·d at t_end
+//   (the ground, or 1e30 for the sky) with the clouds in front of it composited over it.
+// - clouds_shadow(p, ...) -> f32: the share of the sun's direct light reaching the ground at p.
+//
+// Status: draft on `planet`, validated with naga; the plumbing is the integrator's.
+
+struct Clouds {
+    // The year's phase in months, 0 ≤ month < 12 (the world's own months: its year / 12).
+    month: f32,
+    // El Niño's index now (clouds.json "enso": the series, a value a world month; 0 without one).
+    enso: f32,
+    // Seconds of world time, wrapped by the caller every CLOUD_WRAP_S (f32 keeps ~1 s there).
+    time_s: f32,
+    on: f32,
+};
+
+const CLOUD_WRAP_S: f32 = 1048576.0;
+const CLOUD_G: f32 = 0.85;
+const CLOUD_LIFE_1000KM: f32 = 259200.0;
+const CLOUD_TILE: vec2<i32> = vec2<i32>(360, 180);
+const CLOUD_VALUE_SD: f32 = 0.185;
+const CLOUD_CELL_SD: f32 = 0.17;
+const CLOUD_CELL_MEAN: f32 = 0.482;
+// The kinds' optical depths (clouds.json "kinds").
+const TAU_LOW: f32 = 10.0;
+const TAU_DEEP: f32 = 40.0;
+const TAU_FRONTAL: f32 = 20.0;
+const TAU_CIRRUS: f32 = 1.0;
+const MID_SHELL_M: f32 = 4000.0;
+
+struct CloudField {
+    frac: vec4<f32>,  // low, deep, frontal, cirrus
+    lcl_m: f32,
+    trop_m: f32,
+    u700: f32,
+    ujet: f32,
+};
+
+// --- The bake's maps --------------------------------------------------------------------------
+
+fn cl_latlon(dir: vec3<f32>) -> vec2<f32> {
+    // (The world maps' own convention: world_uv.)
+    return vec2<f32>(asin(clamp(dir.y, -1.0, 1.0)), atan2(-dir.z, dir.x));
+}
+
+// One month's tile read bilinearly at (lat, lon) radians, wrapping in longitude inside the tile.
+fn cl_tile(t: texture_2d<f32>, m: i32, ll: vec2<f32>) -> vec4<f32> {
+    let o = vec2<i32>((m % 4) * CLOUD_TILE.x, (m / 4) * CLOUD_TILE.y);
+    let x = (ll.y / 6.2831853 + 0.5) * f32(CLOUD_TILE.x) - 0.5;
+    let y = clamp((0.5 - ll.x / 3.1415927) * f32(CLOUD_TILE.y) - 0.5, 0.0, f32(CLOUD_TILE.y - 1));
+    let x0 = i32(floor(x));
+    let y0 = i32(floor(y));
+    let fx = x - floor(x);
+    let fy = y - floor(y);
+    let xa = ((x0 % CLOUD_TILE.x) + CLOUD_TILE.x) % CLOUD_TILE.x;
+    let xb = (xa + 1) % CLOUD_TILE.x;
+    let yb = min(y0 + 1, CLOUD_TILE.y - 1);
+    let a = mix(textureLoad(t, o + vec2<i32>(xa, y0), 0), textureLoad(t, o + vec2<i32>(xb, y0), 0), fx);
+    let b = mix(textureLoad(t, o + vec2<i32>(xa, yb), 0), textureLoad(t, o + vec2<i32>(xb, yb), 0), fx);
+    return mix(a, b, fy);
+}
+
+fn cloud_field(dir: vec3<f32>, cl: Clouds, cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>) -> CloudField {
+    let ll = cl_latlon(dir);
+    let m0 = i32(floor(cl.month)) % 12;
+    let m1 = (m0 + 1) % 12;
+    let f = fract(cl.month);
+    let fr = mix(cl_tile(cm, m0, ll), cl_tile(cm, m1, ll), f);
+    let en = mix(cl_tile(ce, m0, ll), cl_tile(ce, m1, ll), f) - vec4<f32>(128.0 / 255.0);
+    let air = mix(cl_tile(ca, m0, ll), cl_tile(ca, m1, ll), f) * 255.0;
+    var out: CloudField;
+    out.frac = clamp(fr + cl.enso * en, vec4<f32>(0.0), vec4<f32>(1.0));
+    out.lcl_m = air.r * 16.0;
+    out.trop_m = air.g * 80.0;
+    out.u700 = (air.b - 128.0) * 0.5;
+    out.ujet = air.a - 128.0;
+    return out;
+}
+
+// --- Noise ------------------------------------------------------------------------------------
+
+fn cl_hash(p: vec3<f32>) -> f32 {
+    var q = fract(p * vec3<f32>(0.1031, 0.1030, 0.0973));
+    q += dot(q, q.yxz + 33.33);
+    return fract((q.x + q.y) * q.z);
+}
+
+fn cl_value(x: vec3<f32>) -> f32 {
+    let i = floor(x);
+    var f = fract(x);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(mix(cl_hash(i), cl_hash(i + vec3<f32>(1.0, 0.0, 0.0)), f.x),
+                   mix(cl_hash(i + vec3<f32>(0.0, 1.0, 0.0)), cl_hash(i + vec3<f32>(1.0, 1.0, 0.0)), f.x), f.y),
+               mix(mix(cl_hash(i + vec3<f32>(0.0, 0.0, 1.0)), cl_hash(i + vec3<f32>(1.0, 0.0, 1.0)), f.x),
+                   mix(cl_hash(i + vec3<f32>(0.0, 1.0, 1.0)), cl_hash(i + vec3<f32>(1.0, 1.0, 1.0)), f.x), f.y), f.z);
+}
+
+// Worley: 1 − the distance to the nearest feature point (bright cell centres).
+fn cl_cells(x: vec3<f32>) -> f32 {
+    let i = floor(x);
+    var best = 9.0;
+    for (var dz = -1; dz <= 1; dz++) {
+        for (var dy = -1; dy <= 1; dy++) {
+            for (var dx = -1; dx <= 1; dx++) {
+                let c = i + vec3<f32>(f32(dx), f32(dy), f32(dz));
+                let fp = c + vec3<f32>(cl_hash(c), cl_hash(c + vec3<f32>(17.1, 0.0, 0.0)), cl_hash(c + vec3<f32>(0.0, 31.7, 0.0)));
+                best = min(best, length(x - fp));
+            }
+        }
+    }
+    return clamp(1.0 - best, 0.0, 1.0);
+}
+
+struct Spectrum {
+    top_km: f32,
+    octaves: i32,
+    gain: f32,
+    stretch: f32,
+    cell_km: f32,  // the one octave drawn as cells (0: none)
+};
+
+// A kind's noise at q (km, body-fixed), centred, over (x) and its spread (y) over the octaves a
+// pixel of `pix_km` shows; each octave carried east by `wind` (m/s) and renewed over its lifetime.
+fn cl_shape(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_km: f32, seed: f32) -> vec2<f32> {
+    var lam = sp.top_km;
+    var a = 1.0;
+    var n = 0.0;
+    var v2 = 0.0;
+    for (var o = 0; o < sp.octaves; o++) {
+        let f = clamp(lam / (1.5 * pix_km) - 1.0, 0.0, 1.0);
+        if (f <= 0.0) {
+            break;
+        }
+        let is_cell = sp.cell_km > 0.0 && abs(log2(lam / sp.cell_km)) < 0.5;
+        let life = CLOUD_LIFE_1000KM * pow(lam / 1000.0, 2.0 / 3.0);
+        let ph = t / life;
+        var acc = 0.0;
+        var w2 = 0.0;
+        for (var k = 0; k < 2; k++) {
+            let kk = f32(k) * 0.5;
+            let fr = fract(ph + kk);
+            let w = 1.0 - abs(2.0 * fr - 1.0);
+            // (Each renewal and each phase a fresh pattern; offsets kept bounded for f32.)
+            let renew = (floor(ph + kk) % 61.0) * 977.0 + kk * 1234.5 + seed * 101.0 + f32(o) * 57.0;
+            var x = q - east * (wind * fr * life * 0.001) + vec3<f32>(renew);
+            if (lam > 100.0) {
+                x = vec3<f32>(x.x / sp.stretch, x.y, x.z / sp.stretch);
+            }
+            let z = x / lam;
+            var v: f32;
+            if (is_cell) {
+                v = cl_cells(z) - CLOUD_CELL_MEAN;
+            } else {
+                v = cl_value(z) - 0.5;
+            }
+            acc += w * v;
+            w2 += w * w;
+        }
+        let sd = select(CLOUD_VALUE_SD, CLOUD_CELL_SD, is_cell);
+        n += a * f * acc / sqrt(max(w2, 1e-6));
+        v2 += (a * f * sd) * (a * f * sd);
+        lam *= 0.5;
+        a *= sp.gain;
+    }
+    return vec2<f32>(n, sqrt(max(v2, 1e-12)));
+}
+
+// (density, thickness) where the equalised noise z = n/sd beats the fraction's threshold.
+fn cl_cover(z: f32, frac: f32, soft: f32) -> vec2<f32> {
+    let u = 1.0 / (1.0 + exp(-1.702 * z));
+    let d = clamp((u - (1.0 - frac) + soft) / (2.0 * soft), 0.0, 1.0);
+    let z_thr = log(max(1.0 - frac, 1e-4) / max(frac, 1e-4)) / 1.702;
+    let core = clamp((z - z_thr) / 1.5, 0.0, 1.0);
+    return vec2<f32>(d, 0.2 + 0.8 * core);
+}
+
+// Each shell's (density, optical depth) at body-fixed direction dir: [low, mid, high].
+struct CloudCols {
+    low: vec2<f32>,
+    mid: vec2<f32>,
+    high: vec2<f32>,
+};
+
+fn cl_east(dir: vec3<f32>) -> vec3<f32> {
+    let e = vec3<f32>(dir.z, 0.0, -dir.x);
+    return e / max(length(e), 1e-6);
+}
+
+fn cloud_columns(dir: vec3<f32>, f: CloudField, radius_km: f32, t: f32, pix_km: f32, which: i32) -> CloudCols {
+    let q = dir * radius_km;
+    let east = cl_east(dir);
+    var out = CloudCols(vec2<f32>(0.0), vec2<f32>(0.0), vec2<f32>(0.0));
+    // (which: 0 all, 1 low, 2 mid, 3 high: a shell's own hit needs only its own.)
+    var d_deep = vec2<f32>(0.0);
+    if (f.frac.y > 0.002 && (which == 0 || which == 1 || which == 3)) {
+        let s = cl_shape(Spectrum(600.0, 8, 0.75, 1.0, 25.0), q, east, f.u700, t, pix_km, 3.0);
+        d_deep = cl_cover(s.x / s.y, f.frac.y, 0.04);
+    }
+    if (which == 0 || which == 1) {
+        var low = vec2<f32>(0.0);
+        if (f.frac.x > 0.002) {
+            // Cumulus where the cover is low, stratocumulus where high.
+            let w = clamp((f.frac.x - 0.35) / 0.3, 0.0, 1.0);
+            var z = 0.0;
+            var sd = 0.0;
+            if (w < 1.0) {
+                let c = cl_shape(Spectrum(12.0, 6, 0.8, 1.0, 3.0), q, east, f.u700, t, pix_km, 2.0);
+                z += (1.0 - w) * c.x / c.y;
+                sd += (1.0 - w) * (1.0 - w);
+            }
+            if (w > 0.0) {
+                let s = cl_shape(Spectrum(400.0, 9, 0.78, 1.0, 40.0), q, east, f.u700, t, pix_km, 9.0);
+                z += w * s.x / s.y;
+                sd += w * w;
+            }
+            low = cl_cover(z / sqrt(max(sd, 1e-6)), f.frac.x, 0.04);
+        }
+        // (Under the towers: the convection's own dark base.)
+        out.low = vec2<f32>(max(low.x, d_deep.x), low.x * low.y * 2.0 * TAU_LOW + d_deep.x * TAU_DEEP * 0.5);
+    }
+    if ((which == 0 || which == 2) && f.frac.z > 0.002) {
+        let s = cl_shape(Spectrum(2000.0, 8, 0.7, 3.0, 0.0), q, east, f.u700, t, pix_km, 4.0);
+        let c = cl_cover(s.x / s.y, f.frac.z, 0.08);
+        out.mid = vec2<f32>(c.x, c.x * c.y * 2.0 * TAU_FRONTAL);
+    }
+    if (which == 0 || which == 3) {
+        var ci = vec2<f32>(0.0);
+        if (f.frac.w > 0.002) {
+            let s = cl_shape(Spectrum(1000.0, 8, 0.75, 8.0, 0.0), q, east, f.ujet, t, pix_km, 5.0);
+            ci = cl_cover(s.x / s.y, f.frac.w, 0.12);
+        }
+        out.high = vec2<f32>(1.0 - (1.0 - d_deep.x) * (1.0 - ci.x),
+                             d_deep.x * d_deep.y * 2.0 * TAU_DEEP + ci.x * ci.y * 2.0 * TAU_CIRRUS);
+    }
+    return out;
+}
+
+// --- Light ------------------------------------------------------------------------------------
+
+// A cloud sheet's light toward the eye per unit sun (rgb `sun`, the engine's units), and its
+// opacity: `sunside` when the eye is on the sheet's sunlit side.
+fn cl_sheet(tau: f32, mu_sun: f32, mu_view: f32, sunside: bool, cos_phase: f32, sun: vec3<f32>, sky: vec3<f32>) -> vec4<f32> {
+    let t = (1.0 - CLOUD_G) * tau;
+    let r = t / (2.0 + t);
+    let lit = max(mu_sun, 0.0);
+    var l = select(1.0 - r, r, sunside) * lit;
+    // Thin edges scatter forward toward the sun (single scattering, Henyey–Greenstein g 0.6).
+    let g2 = 0.6;
+    let hg = (1.0 - g2 * g2) / (4.0 * 3.1415927 * pow(1.0 + g2 * g2 - 2.0 * g2 * cos_phase, 1.5));
+    let single = (1.0 - exp(-tau / max(abs(mu_view), 0.05))) * exp(-tau / max(lit, 0.05)) * hg * 3.1415927 * lit;
+    let opacity = clamp(1.0 - exp(-0.5 * tau / max(abs(mu_view), 0.08)), 0.0, 1.0);
+    // (The sky lights the cloud too: its base never black.)
+    let skyl = sky * (0.5 + 0.5 * r);
+    return vec4<f32>(sun * (l + 0.6 * single) + skyl, opacity);
+}
+
+// The ray's hits on a sphere of radius rs about the origin, from o along d: (near, far), negative
+// where none.
+fn cl_sphere(o: vec3<f32>, d: vec3<f32>, rs: f32) -> vec2<f32> {
+    let b = dot(o, d);
+    let c = dot(o, o) - rs * rs;
+    let h = b * b - c;
+    if (h < 0.0) {
+        return vec2<f32>(-1.0);
+    }
+    let s = sqrt(h);
+    return vec2<f32>(-b - s, -b + s);
+}
+
+// The light along the ray eye + t·d (world frame, m) as far as t_end, with the clouds in front
+// composited over `c`, the light at t_end. `center`: the world's centre (world frame, m);
+// `to_body`: world frame to the world's body-fixed one (its maps'); `sun_dir`, `sun`: as the air's;
+// `pixel_angle`: a pixel's angular size (rad); a: the world's air; tl, ml, smp: its tables.
+fn clouds_over(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: vec3<f32>, to_body: mat3x3<f32>,
+               sun_dir: vec3<f32>, sun: vec3<f32>, pixel_angle: f32, cl: Clouds, a: Air,
+               cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>,
+               tl: texture_2d<f32>, ml: texture_2d<f32>, smp: sampler) -> vec3<f32> {
+    if (cl.on < 0.5) {
+        return c;
+    }
+    let R = a.radius_m;
+    let o = eye - center;
+    // The shells' heights: the fields under the eye, or where the ray meets the ground (from
+    // orbit), one refinement (a shell is a sphere; its height varies only slowly).
+    var probe = normalize(o);
+    let g = cl_sphere(o, d, R);
+    if (g.x > 0.0) {
+        probe = normalize(o + d * g.x);
+    }
+    let f0 = cloud_field(to_body * probe, cl, cm, ce, ca);
+    var radii = array<f32, 3>(R + f0.lcl_m, R + MID_SHELL_M, R + max(f0.trop_m - 2000.0, 5000.0));
+    // Every hit in front of t_end: up to two a shell, sorted near to far.
+    var ts = array<f32, 6>(0.0, 0.0, 0.0, 0.0, 0.0, 0.0);
+    var ks = array<i32, 6>(0, 0, 0, 0, 0, 0);
+    var n = 0;
+    for (var k = 0; k < 3; k++) {
+        let h = cl_sphere(o, d, radii[k]);
+        if (h.x > 0.0 && h.x < t_end) {
+            ts[n] = h.x;
+            ks[n] = k;
+            n++;
+        }
+        if (h.y > 0.0 && h.y < t_end) {
+            ts[n] = h.y;
+            ks[n] = k;
+            n++;
+        }
+    }
+    for (var i = 1; i < n; i++) {
+        var j = i;
+        while (j > 0 && ts[j - 1] > ts[j]) {
+            let tt = ts[j];
+            ts[j] = ts[j - 1];
+            ts[j - 1] = tt;
+            let kk = ks[j];
+            ks[j] = ks[j - 1];
+            ks[j - 1] = kk;
+            j--;
+        }
+    }
+    // Front to back: the clouds' light, each carried to the eye through the air between.
+    var acc = vec3<f32>(0.0);
+    var trans = 1.0;
+    let t = cl.time_s;
+    let cos_phase = dot(d, sun_dir);
+    let sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
+    for (var i = 0; i < n; i++) {
+        let p = o + d * ts[i];
+        let up = normalize(p);
+        let dir_b = to_body * up;
+        let f = cloud_field(dir_b, cl, cm, ce, ca);
+        let mu_v = dot(up, -d);
+        let pix_km = max(ts[i] * pixel_angle / max(abs(mu_v), 0.05), 0.001) * 0.001;
+        let k = ks[i];
+        let cols = cloud_columns(dir_b, f, R * 0.001, t, pix_km, k + 1);
+        var dt = cols.low;
+        if (k == 1) {
+            dt = cols.mid;
+        } else if (k == 2) {
+            dt = cols.high;
+        }
+        if (dt.x <= 0.001) {
+            continue;
+        }
+        let mu_s = dot(up, sun_dir);
+        let sunside = (mu_v > 0.0) == (mu_s > 0.0);
+        let sheet = cl_sheet(dt.y, mu_s, mu_v, sunside, cos_phase, sun, sky_up);
+        let alpha = sheet.w * dt.x;
+        // (The air between the eye and the cloud: its light dimmed and hazed as the ground's.)
+        let seen = air_ground_lut(sheet.rgb, p + center, center, sun_dir, sun, a, tl, ml, smp);
+        acc += trans * alpha * seen;
+        trans *= 1.0 - alpha;
+        if (trans < 0.01) {
+            break;
+        }
+    }
+    return acc + trans * c;
+}
+
+// The share of the sun's direct light reaching the ground at p (world frame, m): its path to the
+// sun through each shell, the clouds' direct transmission (exp(−τ/μ)) plus part of their diffuse
+// light (a cloud dims the ground under it, it doesn't black it out).
+fn clouds_shadow(p: vec3<f32>, center: vec3<f32>, to_body: mat3x3<f32>, sun_dir: vec3<f32>, pix_km: f32, cl: Clouds,
+                 a: Air, cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>) -> f32 {
+    if (cl.on < 0.5) {
+        return 1.0;
+    }
+    let R = a.radius_m;
+    let o = p - center;
+    let up = normalize(o);
+    let mu = dot(up, sun_dir);
+    if (mu <= 0.0) {
+        return 1.0;
+    }
+    let f0 = cloud_field(to_body * up, cl, cm, ce, ca);
+    var radii = array<f32, 3>(R + f0.lcl_m, R + MID_SHELL_M, R + max(f0.trop_m - 2000.0, 5000.0));
+    var shade = 1.0;
+    for (var k = 0; k < 3; k++) {
+        let h = cl_sphere(o, sun_dir, radii[k]);
+        if (h.y <= 0.0) {
+            continue;
+        }
+        let q = normalize(o + sun_dir * h.y);
+        let dir_b = to_body * q;
+        let f = cloud_field(dir_b, cl, cm, ce, ca);
+        // (Shadows need no detail finer than their own blur: ~0.3 km at least.)
+        let cols = cloud_columns(dir_b, f, R * 0.001, cl.time_s, max(pix_km, 0.3), k + 1);
+        var dt = cols.low;
+        if (k == 1) {
+            dt = cols.mid;
+        } else if (k == 2) {
+            dt = cols.high;
+        }
+        let tau = dt.y;
+        let direct = exp(-tau / max(mu, 0.1));
+        let tt = (1.0 - CLOUD_G) * tau;
+        let diffuse = 1.0 - tt / (2.0 + tt);
+        shade *= mix(1.0, direct + 0.7 * (diffuse - direct), dt.x);
+    }
+    return shade;
+}

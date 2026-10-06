@@ -6,6 +6,7 @@ records: processes
 purpose: Material Processing is the first stage of making materials (turning raw matter into materials and stock that things can be built from). It takes elements in and gives out named, graded materials in usable forms like sheet, bar and wire.
 details:
   text:
+    - "Superseded by SFO 10 (2026-10-06): a process is a recipe, and a recipe belongs to the module that runs it (SFO 10). The 26 process records of this standard's first writing were removed; what they described is the modules' recipes, and the page's chain reports read those. This standard keeps its purpose as the account of why materials are processed."
     - "Why a civilisation needs it:"
     - "- Elements aren't buildable: almost nothing is made from a raw element. Iron becomes useful as steel, and silicon and oxygen as glass. Processing is where matter gets the properties a builder needs."
     - "- Properties are made, not found: the same composition can be weak or strong depending on how it was treated. Heat treatment and forming set a material's strength, hardness and toughness."
@@ -13,3 +14,4 @@ details:
     - "- Consistency: a grade made to a standard is the same from every producer, so a part designed on one world can be built from stock made on another."
     - "- Value: each step adds worth. Stock sells for more than ingot, and ingot for more than elements. That margin is what pays for the industry, and gives miners a market."
     - "It sits between mining and refining below it, and fabrication of parts above it."
+status: superseded

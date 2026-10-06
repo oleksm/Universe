@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# A honeycomb core: thin walls of its sheet, bonded and expanded into cells; its figures are the block's, not the wall's.
+identity:
+  key: material.aluminium-honeycomb
+  name: "Aluminium honeycomb core"
+  class: composite
+  form:
+  - honeycomb
+mass:
+  density: 50
+mechanical:
+  shear_strength: 900000.0
+  shear_modulus: 152000000.0
+basis:
+  - { of: [mass.density, mechanical], tier: invented, review: true, note: "A 3.1 pcf (50 kg/m3) 1/8-inch-cell aluminium honeycomb, as Hexcel's 5052 core: shear strength 1.59 MPa along the ribbon and 0.90 across, shear modulus 310 and 152 MPa; the across (W) figures given, the weaker. From memory of the data sheet; the foil here is 6061, standing in for 5052. Review." }

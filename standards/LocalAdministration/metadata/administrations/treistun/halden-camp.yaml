@@ -1,0 +1,48 @@
+# yaml-language-server: $schema=../../../schema/settlement.schema.yaml
+# Invented (2026-10-06): the first mine on a baked deposit, to prove the chain from a survey id to ore on a market. The deposit
+# is Harvest's survey's TRD1-PCU-007264A-01: a porphyry copper body of 1,230 Mt at 0.41% copper, outcropping (depth 0), 1,070 km
+# north of Port Eikir at 54.81 N, 164.44 E, in the temperate band's dry country. Cormorant holds it under Treistun's licence.
+identity:
+  key: settlement.treistun.halden-camp
+  name: "Halden Camp"
+kind: settlement
+at: body.treistun.treistun-d
+position: { latitude: 54.81, longitude: 164.44 }
+structure: structure.outpost
+population: 400
+resupply: { from: settlement.treistun.port-eikir, interval: 176937 }
+# buildings: what stands here for its 400 people: one of each building to its per_people
+buildings:
+  - { building: building.shop, count: 6 }
+  - { building: building.bunkhouse, count: 2 }
+  - { building: building.clinic, count: 1 }
+  - { building: building.builders-yard, count: 1 }
+  - { building: building.offices, count: 1 }
+  - { building: building.tavern, count: 1 }
+# census: its 400 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
+census:
+  - { profession: profession.clerk, count: 60 }
+  - { profession: profession.builder, count: 35 }
+  - { profession: profession.plant-operator, count: 16 }
+  - { profession: profession.miner, count: 14 }
+  - { profession: profession.docker, count: 12 }
+  - { profession: profession.driver, count: 12 }
+  - { profession: profession.engineer, count: 11 }
+  - { profession: profession.nurse, count: 11 }
+  - { profession: profession.administrator, count: 10 }
+  - { profession: profession.food-worker, count: 8 }
+  - { profession: profession.merchant, count: 6 }
+  - { profession: profession.electrician, count: 5 }
+  - { profession: profession.scholar, count: 5 }
+  - { profession: profession.doctor, count: 4 }
+  - { profession: profession.lawyer, count: 4 }
+  - { profession: profession.machinist, count: 3 }
+  - { profession: profession.innkeeper, count: 2 }
+  - { profession: profession.dependant, count: 182 }
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
+independents:
+  - { hull: hull.hauler, count: 1 }
+about: "A mining camp on Harvest's northern plains: an open pit on a copper body, its concentrator, a power station and a strip for the haulers. 1,070 km north of Port Eikir."
+story:
+  - "The survey crews found copper under the dry grass of the north and Cormorant bought the licence from the administration the same season. The camp is four hundred people, most of them miners and their families, in a row of blocks beside the pit; the concentrate goes south to Eikir's strip and on to the smelter at Trethi."
+  - "It is the first claim worked on Harvest's own ground. The deposit's number is the survey's: TRD1-PCU-007264A-01."

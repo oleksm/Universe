@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.panel-alal-12p7
+  code: PANEL-ALAL-12P7
+  name: "6061-faced aluminium sandwich panel 12.7 mm"
+  traded_as: market.metals
+  form: sandwich
+made_from:
+  - item: material.honeycomb-sandwich-panel
+size:
+  thickness: 0.0137
+sandwich:
+  faces: { material: material.aluminium-alloy-6061, thickness: 0.0005 }
+  core: { material: material.aluminium-honeycomb, depth: 0.0127, density: 50, shear_strength: 900000.0, shear_modulus: 152000000.0 }
+  bond: 0.3
+  mass_per_area: 3.635
+basis:
+  - { of: [size, sandwich], tier: derived, review: true, note: "Two 6061 faces of 0.5 mm on a 12.7 mm aluminium honeycomb core: 3.635 kg/m2 (faces 2 x 2700 x 0.0005, core 50 x 0.0127, bond 0.3). The faces' stiffness and strength are their material's; the core's shear figures are its material's, repeated here. The ladder is the ships session's ask (2026-10-06): a floor that holds 500 kg/m2 over 2 m at a quarter of solid plate's weight." }

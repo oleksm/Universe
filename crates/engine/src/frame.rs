@@ -144,6 +144,10 @@ pub struct Frame {
     pub(crate) globe_maps: Vec<std::sync::Arc<crate::model::GlobeMap>>,
     /// A world's full-resolution maps, and the globe map (its id) of the world they're for.
     pub(crate) world_maps: Option<(std::sync::Arc<crate::worldmaps::WorldMaps>, u64, glam::DVec3, f64)>,
+    /// That world's turn (its frame to the scene's) and its clouds now: month, El Niño, seconds
+    /// (wrapped), 1 (see `world_clouds`).
+    pub(crate) world_turn: glam::DQuat,
+    pub(crate) world_clouds: [f32; 4],
     globe: [f32; 4],
     globe_at: [f32; 4],
     globe_micro: [f32; 4],
@@ -356,6 +360,8 @@ impl Frame {
             in_front: false,
             globe_maps: Vec::new(),
             world_maps: None,
+            world_turn: glam::DQuat::IDENTITY,
+            world_clouds: [0.0; 4],
             globe: [0.0; 4],
             globe_at: [0.0, 0.0, 0.0, 1.0],
             globe_micro: [0.0; 4],
@@ -465,6 +471,13 @@ impl Frame {
     /// `center` and `radius`: where the world is and how big (m), for its air and sky.
     pub fn world_maps(&mut self, maps: &std::sync::Arc<crate::worldmaps::WorldMaps>, globe: &std::sync::Arc<crate::model::GlobeMap>, center: glam::DVec3, radius: f64) {
         self.world_maps = Some((maps.clone(), globe.id(), center, radius));
+    }
+
+    /// The bound world's turn now (its own frame to the scene's) and its clouds: the year's phase
+    /// in its months (0..12), El Niño's index, world seconds (wrapped by the caller).
+    pub fn world_clouds(&mut self, turn: glam::DQuat, month: f32, enso: f32, time_s: f32) {
+        self.world_turn = turn;
+        self.world_clouds = [month, enso, time_s, 1.0];
     }
 
     #[allow(clippy::too_many_arguments)]

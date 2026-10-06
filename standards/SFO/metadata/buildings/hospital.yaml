@@ -8,6 +8,7 @@ physical:
   width: 100
   height: 20
   mass: 165450000
+per_people: 169500
 floor: 150000
 storeys: 5
 meets:

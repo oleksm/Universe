@@ -100,6 +100,16 @@ impl Terrain {
         self.baked.as_ref()?.colour()
     }
 
+    /// The clouds from the world's bake (see `worlds::Heights::clouds`).
+    pub fn bake_clouds(&self) -> Option<crate::worlds::CloudsBake> {
+        self.baked.as_ref()?.clouds()
+    }
+
+    /// The air's tables from the world's bake (see `worlds::Heights::air_luts`).
+    pub fn bake_air_luts(&self) -> Option<crate::worlds::AirLuts> {
+        self.baked.as_ref()?.air_luts()
+    }
+
     /// The world's air from its bake, packed for the engine (see `worlds::Heights::air`).
     pub fn bake_air(&self) -> Option<[f32; 16]> {
         self.baked.as_ref()?.air()
@@ -153,6 +163,16 @@ impl Terrain {
                 if self.kind == TerrainKind::Terran { v.max(0.0) } else { v }
             }
             None => self.surface(dir),
+        }
+    }
+
+    /// The bake's surface fields at `dir` for drawing (wetness, scree, bare rock: see
+    /// `worlds::Heights::surface_at`), as far as they're read; and whether that's all of it.
+    /// None: no bake, or none there (the sea).
+    pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
+        match &self.baked {
+            Some(h) => h.surface_at(dir, crate::worlds::Detail::Loaded),
+            None => (None, true),
         }
     }
 

@@ -21,6 +21,9 @@ pub struct Recipe {
     pub inputs: Vec<(usize, f64)>,
     /// What else comes out.
     pub outputs: Vec<(usize, f64)>,
+    /// What each kg made draws of itself from the ground where the module stands (a mine's ore
+    /// in place: a claimed deposit's, worked out in the end); 0: none.
+    pub from_ground: f64,
     /// kg/s of what it makes, at full rate; W drawn.
     pub rate: f64,
     pub power: f64,
@@ -38,7 +41,8 @@ pub(crate) fn build(reg: &Registry, index: &HashMap<String, usize>, mass: &dyn F
         for (k, r) in m.recipes.iter().enumerate() {
             let Some(makes) = id(&r.makes) else { continue };
             let amounts = |a: &[crate::registry::Amount], stock_only: bool| a.iter().filter(|x| !(stock_only && crate::goods::from_place(x))).filter_map(|x| Some((id(&x.item)?, x.quantity))).collect::<Vec<_>>();
-            list.push(Recipe { makes, inputs: amounts(&r.inputs, true), outputs: amounts(&r.outputs, false), rate: r.rate, power: r.power, index: Some(k) });
+            let from_ground = r.inputs.iter().filter(|x| crate::goods::from_place(x) && x.item == r.makes).map(|x| x.quantity).sum();
+            list.push(Recipe { makes, inputs: amounts(&r.inputs, true), outputs: amounts(&r.outputs, false), from_ground, rate: r.rate, power: r.power, index: Some(k) });
         }
     }
     // The scrap of a stock item's metal: the stock of form scrap made from the same material.
@@ -62,7 +66,7 @@ pub(crate) fn build(reg: &Registry, index: &HashMap<String, usize>, mass: &dyn F
         }
         let cut: f64 = inputs.iter().map(|i| i.1).sum::<f64>() - 1.0;
         let outputs = p.made_from.iter().find_map(|x| scrap_of(&x.item)).filter(|_| cut > 1e-9).map(|s| vec![(s, cut)]).unwrap_or_default();
-        out.entry(module).or_default().push(Recipe { makes, inputs, outputs, rate: t.rate, power: t.power.unwrap_or(0.0), index: None });
+        out.entry(module).or_default().push(Recipe { makes, inputs, outputs, from_ground: 0.0, rate: t.rate, power: t.power.unwrap_or(0.0), index: None });
     }
     // Equipment, hulls and parts made of parts: from their parts.
     let assemblies = reg.parts.iter().filter(|p| p.made_from.is_empty()).map(|p| (&p.identity.key, &p.making.module));
@@ -77,7 +81,7 @@ pub(crate) fn build(reg: &Registry, index: &HashMap<String, usize>, mass: &dyn F
         if each <= 0.0 || inputs.is_empty() || inputs.len() < parts.len() {
             continue;
         }
-        out.entry(module).or_default().push(Recipe { makes, inputs, outputs: Vec::new(), rate: t.rate, power: t.power.unwrap_or(0.0), index: None });
+        out.entry(module).or_default().push(Recipe { makes, inputs, outputs: Vec::new(), from_ground: 0.0, rate: t.rate, power: t.power.unwrap_or(0.0), index: None });
     }
     out
 }

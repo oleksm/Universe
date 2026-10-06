@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
+# Invented: the claim itself, Cormorant's under licence: the pit, the concentrator and the dumps.
+identity:
+  key: parcel.treistun.halden-camp.1
+number: 1
+owner: org.cormorant
+address: { street: street.treistun.halden-camp.pit-road, number: 1 }
+outline: [[50, -1400], [3950, -1400], [3950, 1400], [50, 1400]]

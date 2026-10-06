@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented (2026-10-06): the pit and the concentrator on TRD1-PCU-007264A-01, Cormorant's under Treistun's licence. The mine
+# is set to porphyry copper ore, the concentrator to copper concentrate; the molybdenum concentrate with it and the tailings
+# (to the dumps, and from there bricks and concrete) are what the chain gives off.
+identity:
+  key: facility.treistun.halden-camp.halden-mine
+  name: Halden Mine
+kind: mine
+parcel: parcel.treistun.halden-camp.1
+claim: { deposit: TRD1-PCU-007264A-01, holder: org.cormorant, licence: org.treistun }
+lines:
+  - makes: good.copper-concentrate
+    modules:
+      - { module: module.mine, count: 1 }
+      - { module: module.concentrator, count: 1 }
+modules:
+  - { module: module.ore-yard, count: 1 }
+  - { module: module.stock-yard, count: 1 }
+  - { module: module.tailings-dam, count: 1 }
+  - { module: module.waste-dump, count: 1 }

@@ -21,8 +21,18 @@ recipes:
       - { item: stock.al6061-scrap, quantity: 0.19 }
     rate: 16.6666666666667
     power: 38000000
+  - makes: stock.ti64-sh-0p4
+    does: "Titanium plate cold rolled to 0.4 mm sheet with anneals between passes."
+    inputs:
+      - { item: stock.ti64-pl-5, quantity: 1.08 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.08 }
+    rate: 2.0
+    power: 8000000
+life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 640 kWh for each tonne and an 84% yield. Heat is counted as power: there is no fuel to burn." }
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://bureau-industrial-transformation.jrc.ec.europa.eu/sites/default/files/2022-12/FMP%20BREF_Final%20Version.pdf", note: "Tandem mills average 126 t/h and reversing mills 13; 60 lies between." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

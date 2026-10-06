@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-sh-0p5
+  code: AL6061-SH-0P5
+  name: "6061 sheet 0.5 mm"
+  traded_as: market.metals
+  form: sheet
+made_from:
+  - item: material.aluminium-alloy-6061
+size:
+  thickness: 0.0005
+basis:
+  - { of: [size], tier: invented, review: true, note: "A gauge the deck panels want. Chosen." }

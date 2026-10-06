@@ -119,3 +119,68 @@ these panels are fitted.
 The engine treats every new kind as not made yet (the fittings' functions answer `None`; the three
 new slot kinds have no game slot). The studio reads all of it. The viewport's pane stock is a
 stand-in (no glass stock yet); say if you want glass as stock.
+
+## 9. Heat to the hull, and budgets (2026-10-06, evening)
+
+- **`function.heat_to_hull`** on every drive, lift and thruster block: the share of the jet's power
+  (half the thrust times the exhaust speed) that reaches the hull as heat. Today a millionth, the
+  review's guess, and now a **product figure** makers compete on: the physics says a D–D torch puts
+  a third of its energy into neutrons, which no hull survives at terawatts, so the drives of this
+  world burn aneutronic or carry the reaction far behind a magnetic nozzle, and each maker's record
+  says how much still comes aboard. Read it instead of a constant.
+- **The Budgets report** on the page, one row per hull as fitted: power made against drawn; heat
+  aboard (the plants' waste plus the jets' share at full burn) against radiators and coolant loops
+  fitted; air and water days for the cabins' seats from the stores fitted. Today every hull reads
+  **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
+  and six lift nozzles) and nothing to throw it off, so it wants two S3 panels (294 m² each) or a
+  smaller set at idle. No hull fits a cabin, so no hull has a crew figure for air and water: fit
+  one and the days appear. The studio's checks should read the same records, so the two never
+  disagree.
+
+## 10. The MC-07 fitted for heat and people (2026-10-06, your request)
+
+Fitted as you asked, with one more of each: four radiators (an S3 and three S2: 54 MW) and four
+loops (two S2, two S1: 50 MW) against **45.5 MW aboard** at full burn by the rule the registry
+takes, which is yours: **the plant's loss, plus everything drawn (power spent inside ends as heat
+inside), plus the jets' share.** The Budgets report reads that now. **Studio and report agree** (the ships
+session, 2026-10-06): both count what the fit actually draws (2.1 MW), not the plant's full 4 MW,
+since a fusion plant throttles to its load; the 47.4 in the request was a hand figure. Also a six-seat cabin in its own class-1 cargo slot (the ore bay
+keeps the class-4 one), an air store and a water tank. **Water read 17 days, not 260:** washing
+is 47.5 kg a head a day against 2.5 to drink, so the tank goes in 17 days unless the life support
+recovers it. It does now: `function.water_recovery: 0.9` and `air_recovery: 0.5` on the life
+support records (the ISS's figures), and the Budgets count only the make-up. Added mass 18.7 t.
+The mass is the mass.
+
+## 11. Deck panels: sandwich stock (2026-10-06, your ask)
+
+Eight panels as mill stock, form `sandwich`, each `made_from: material.honeycomb-sandwich-panel`,
+with the figures your solver wants on the record under **`sandwich`**:
+
+```
+sandwich:
+  faces: { material: material.aluminium-alloy-6061, thickness: 0.0005 }      # m, each face
+  core:  { material: material.aluminium-honeycomb, depth: 0.0254, density: 50,
+           shear_strength: 900000.0, shear_modulus: 152000000.0 }           # Pa, the weaker (W) direction
+  bond: 0.3                                                                   # kg/m2, both faces
+  mass_per_area: 4.27                                                         # kg/m2
+size: { thickness: 0.0264 }                                                   # m, the whole panel
+```
+
+| Key | Faces | Core | kg/m² |
+|---|---|---|---|
+| `stock.panel-alal-12p7` / `-25p4` / `-50p8` | 6061, 0.5 mm | aluminium honeycomb 50 kg/m³, 12.7 / 25.4 / 50.8 mm | 3.6 / 4.3 / 5.5 |
+| `stock.panel-cfar-12p7` / `-25p4` / `-50p8` | carbon composite, 0.5 mm | aramid honeycomb 48 kg/m³ | 2.5 / 3.1 / 4.3 |
+| `stock.panel-titi-25p4` / `-50p8` | Ti-6-4, 0.4 mm | titanium honeycomb 100 kg/m³ | 6.4 / 9.0 |
+
+The faces' stiffness and strength are their material's record (`mechanical.youngs_modulus`,
+`yield_strength`, `tensile_strength`); the core's shear figures are on its own material
+(`material.aluminium-honeycomb`, `.aramid-honeycomb`, `.titanium-honeycomb`: `mechanical.shear_strength`,
+`shear_modulus`) and repeated on the panel. The faces' centre spacing is `core.depth + faces.thickness`.
+Cores: Hexcel's 5052 3.1 pcf and Nomex HRH-10 figures from memory (the aluminium foil is 6061
+standing in for 5052), the titanium core by proportion; all marked review. No glass-faced floor
+board: the registry has no glass-fibre composite and I won't invent one without a source.
+
+Made: a **honeycomb works** expands the cores, a **panel press** bonds the faces on; thin face
+sheets (6061 0.5 mm, Ti-6-4 0.4 mm, carbon 0.5 mm) from the finishing line, the cold mill and the
+composites works; all at the Trethi mill, chains closed. design-2's 1,330 m² of deck at 4.3 kg/m²
+is 5.7 t instead of 29.

@@ -23,6 +23,8 @@ function:
   passage: 0.8
   holds: 200000
   standard: "IDSS"
+life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "The International Docking System Standard: an 0.8 m passage in a 1.4 m ring; NASA's IDA weighs 526 kg. From memory of the IDSS and the IDA. Not sourced." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

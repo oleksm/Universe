@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../../../../schema/facility.schema.yaml
+# Invented (2026-10-06): the nickel smelter at Cinder's port, fed by Ashfall Camp's concentrate 2,000 km away: nickel, the
+# platinum metals from the residue, and sulphur, which Eikir's chemical works has been short of. Airless Cinder suits a
+# smelter: the heat goes to the sky and the sulphur is caught, not breathed.
+identity:
+  key: facility.treistun.port-zaudalein.zaudalein-smelter
+  name: Zaudalein Smelter
+kind: foundry
+parcel: parcel.treistun.port-zaudalein.3
+lines:
+  - makes: element.ni
+    modules:
+      - { module: module.nickel-smelter, count: 1 }
+modules:
+  - { module: module.stock-yard, count: 1 }
+# Three days of concentrate and oxygen at full rate (seed state), as the mill's.
+stock:
+  - { item: good.nickel-concentrate, quantity: 3410000.0 }
+  - { item: element.o, quantity: 342000.0 }

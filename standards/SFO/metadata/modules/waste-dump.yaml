@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.waste-dump
+  name: "Waste dump"
+  step: "Hold waste rock"
+  description: "The heap beside the pit where the barren rock over the ore is trucked and tipped: a hill the mine makes, which the pit swallows again when it is backfilled."
+physical:
+  length: 1500
+  width: 1000
+  height: 60
+site: open sky
+capacity:
+  holds: 200000000000
+  stores: [goods.minerals, goods.ores]
+needs:
+  power: 100000.0
+staff:
+  - { profession: profession.driver, count: 4 }
+life: 1577880000
+basis:
+  - { of: [physical, capacity, needs, staff], tier: invented, review: true, note: "A dump of about 200 Mt, 60 m high: a mine's waste rock for a decade at 30 kt a day; the lights and the trucks' yard 100 kW. Typical, from memory; added 2026-10-06 with the tailings dam." }
+  - { of: [life], tier: invented, review: true, note: "Fifty years; then the pit takes it back." }

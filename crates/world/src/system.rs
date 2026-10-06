@@ -485,6 +485,18 @@ impl StarSystem {
             let direction = recorded.map_or(direction, |p| crate::worlds::direction(crate::worlds::LonLat { lat: p.latitude.0, lon: p.longitude.0 }));
             self.spaceports.push(Spaceport { name, body: i, direction });
         }
+        // The registry's settlements on this system's ground that the seed has no port for (a
+        // camp at a mine: Halden Camp), each where its record puts it.
+        let reg = crate::registry::registry();
+        for st in reg.settlements.iter().filter(|s| s.kind == crate::registry::SettlementKind::Settlement) {
+            let (Some(at), Some(p)) = (st.at.as_deref(), st.position.as_ref()) else { continue };
+            let Some(i) = self.bodies.iter().position(|b| b.key == at && b.terrain.is_some()) else { continue };
+            if self.spaceports.iter().any(|sp| sp.body == i && sp.name.eq_ignore_ascii_case(&st.identity.name)) {
+                continue;
+            }
+            let direction = crate::worlds::direction(crate::worlds::LonLat { lat: p.latitude.0, lon: p.longitude.0 });
+            self.spaceports.push(Spaceport { name: st.identity.name.clone(), body: i, direction });
+        }
         // Level the ground around each port.
         for sp in self.spaceports.clone() {
             if let Some(t) = &mut self.bodies[sp.body].terrain {

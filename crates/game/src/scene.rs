@@ -501,6 +501,12 @@ fn bodies(frame: &mut Frame, app: &App) {
     {
         if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
             frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
+            // Its clouds now: the year's phase and El Niño's index at world time (one epoch for
+            // every player), the time wrapped as the clouds' shader wants it.
+            if let Some((year_days, enso)) = &maps.clouds_year {
+                let (month, index) = universe_sim::world::worlds::clouds_at(t, *year_days, enso.as_ref());
+                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(1_048_576.0) as f32);
+            }
         }
     }
     for (i, b) in sys.bodies.iter().enumerate() {

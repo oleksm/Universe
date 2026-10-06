@@ -22,7 +22,27 @@ recipes:
       - { item: good.water, quantity: 0.07692 }
     rate: 30.0
     power: 300000
+  - makes: good.concrete
+    does: "Tailings crushed and graded as the aggregate."
+    inputs:
+      - { item: good.cement, quantity: 0.1538 }
+      - { item: good.tailings, quantity: 0.7692 }
+      - { item: good.water, quantity: 0.07692 }
+    rate: 30.0
+    power: 300000
+  - makes: good.concrete
+    does: "Concrete with the soda works' calcium chloride as its setting accelerator."
+    inputs:
+      - { item: good.cement, quantity: 0.1538 }
+      - { item: good.aggregate, quantity: 0.75 }
+      - { item: good.solvay-waste, quantity: 0.0192 }
+      - { item: good.water, quantity: 0.07692 }
+    rate: 30.0
+    power: 300000
+life: 788940000
 basis:
   - { of: [recipes.inputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "The usual batch by weight: cement 1, sand 2, stone 3, water 0.5." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "Tailings as aggregate; the soda works' calcium chloride as an accelerator, a few percent. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

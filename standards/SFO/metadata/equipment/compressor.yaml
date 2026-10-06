@@ -22,6 +22,8 @@ function:
   kind: "compressor"
   flow: 0.1
   pressure: 30000000.0
+life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Fills a 30 MPa store at 0.1 kg/s. Chosen." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

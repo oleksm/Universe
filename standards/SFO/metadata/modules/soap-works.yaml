@@ -21,7 +21,20 @@ recipes:
       - { item: good.glycerine, quantity: 0.1002 }
     rate: 0.5
     power: 500000
+  - makes: good.soap
+    does: "Wool grease from the scourings, saponified."
+    inputs:
+      - { item: good.wool-scourings, quantity: 2.0 }
+      - { item: good.caustic-soda, quantity: 0.13 }
+    outputs:
+      - { item: good.glycerine, quantity: 0.1 }
+      - { item: good.tailings, quantity: 0.9 }
+    rate: 0.3
+    power: 400000
+life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "standards/sources/research_chemicals.json", note: "From the chemistry, the fat taken as the commonest in tallow (tristearin): 135 g of caustic soda a kg of fat. Lard is reported to take 137 to 145." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "Scourings are half lanolin; the dirt goes out as tailings. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

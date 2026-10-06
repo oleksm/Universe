@@ -26,7 +26,11 @@ function:
   exhaust: 10000000
   efficiency: 0.3
   burns: material.deuterium
+  heat_to_hull: 1.0e-06
+life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a belly lift (a torch of the same kind, firing down): the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "the game's model, assets/models/mc07.glb", note: "Spans the six lift nozzles as the MC-07's model places them: 37 m fore to aft, 5 m apart, under the keel; as deep as the main nozzles' metal (2.2 m). The nozzles themselves are not drawn in the model." }
+  - { of: [function.heat_to_hull], tier: invented, review: true, note: "A millionth of the jet's power comes aboard as heat: the share chosen in the equipment review so that a torch does not cook its ship. The physics behind it (an aneutronic burn, or the reaction far behind a magnetic nozzle) is the maker's claim, and a figure makers compete on." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

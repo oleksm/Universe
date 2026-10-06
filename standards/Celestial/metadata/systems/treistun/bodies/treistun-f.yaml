@@ -1,6 +1,9 @@
 # yaml-language-server: $schema=../../../../schema/body.schema.yaml
 # As the seed makes it. Change its provenance to curated to take it over: it is then never written again.
 # Curated: named by its people; the seed calls it Treistun f. The rest is as the seed made it.
+# Airless, by the planet lab's check (2026-10-06): at 5.4 km/s of escape speed and 0.23 of Earth's sunlight Rime sits on the keeps-air
+# side of the cosmic shoreline (Zahnle & Catling 2017) by a factor of 2.6, as Mars does; no air is defensible, a thin Mars-like
+# carbon dioxide veil as plausible. The lore keeps it airless. Its 189 K agrees with the lab's 185.
 provenance: curated
 identity:
   key: body.treistun.treistun-f

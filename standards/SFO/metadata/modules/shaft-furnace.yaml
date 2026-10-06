@@ -23,6 +23,7 @@ recipes:
       - { item: good.water, quantity: 0.484 }
     rate: 55.5555555555556
     power: 22000000
+life: 788940000
 basis:
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "200 t/h for a module of 1.6 Mt a year." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "https://www.energy.gov/sites/prod/files/2018/08/f54/fcto-h2-scale-kickoff-2018-8-chevrier.pdf", note: "From the chemistry (iron oxide and hydrogen to iron and water), taking the pellets as pure iron oxide. The source gives the same 54 kg of hydrogen for each tonne." }
@@ -30,3 +31,4 @@ basis:
   - { of: [physical.height], tier: sourced, source: "https://www.primetals.com/en/metals-magazine/voestalpine-taking-a-large-step-into-the-usa", note: "137 m for a plant of 2 Mt a year." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

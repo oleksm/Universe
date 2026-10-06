@@ -8,25 +8,62 @@ structure: structure.platform
 population: 25000
 # Supplied from Port Eikir: 41.0 t a day of what its people take; 8.2 days each way at a torchship's cruise (1 m/s2) over the two orbits' typical separation; 6 hauler(s) on the run, so a delivery every 3.1 days (tools/standards/census.py).
 resupply: { from: settlement.treistun.port-eikir, interval: 265753 }
-# census: its 25,000 people by trade: the staff of its works (module.staff) and the trades its needs are served by (need.served_by), the rest dependants (children, the old, the unassigned)
+# buildings: what stands here for its 25,000 people: one of each building to its per_people
+buildings:
+  - { building: building.shop, count: 358 }
+  - { building: building.tavern, count: 50 }
+  - { building: building.offices, count: 25 }
+  - { building: building.clinic, count: 22 }
+  - { building: building.builders-yard, count: 17 }
+  - { building: building.dwelling-block, count: 13 }
+  - { building: building.school, count: 13 }
+  - { building: building.repair-shop, count: 13 }
+  - { building: building.depot, count: 13 }
+  - { building: building.care-home, count: 13 }
+  - { building: building.market-hall, count: 5 }
+  - { building: building.inn, count: 5 }
+  - { building: building.watch-house, count: 3 }
+  - { building: building.bank, count: 3 }
+  - { building: building.flight-school, count: 2 }
+  - { building: building.theatre, count: 2 }
+  - { building: building.courthouse, count: 1 }
+  - { building: building.gaol, count: 1 }
+  - { building: building.press, count: 1 }
+  - { building: building.college, count: 1 }
+# census: its 25,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.teacher, count: 272 }
-  - { profession: profession.nurse, count: 236 }
-  - { profession: profession.innkeeper, count: 100 }
-  - { profession: profession.doctor, count: 87 }
-  - { profession: profession.constable, count: 76 }
+  - { profession: profession.clerk, count: 2441 }
+  - { profession: profession.builder, count: 595 }
+  - { profession: profession.driver, count: 591 }
+  - { profession: profession.food-worker, count: 565 }
+  - { profession: profession.nurse, count: 502 }
+  - { profession: profession.teacher, count: 410 }
+  - { profession: profession.merchant, count: 408 }
+  - { profession: profession.administrator, count: 250 }
+  - { profession: profession.technician, count: 189 }
+  - { profession: profession.docker, count: 180 }
+  - { profession: profession.scholar, count: 175 }
+  - { profession: profession.fitter, count: 169 }
+  - { profession: profession.engineer, count: 167 }
+  - { profession: profession.electrician, count: 129 }
+  - { profession: profession.innkeeper, count: 125 }
+  - { profession: profession.lawyer, count: 115 }
+  - { profession: profession.constable, count: 110 }
+  - { profession: profession.machinist, count: 103 }
+  - { profession: profession.doctor, count: 88 }
   - { profession: profession.pilot, count: 48 }
-  - { profession: profession.artist, count: 25 }
-  - { profession: profession.performer, count: 25 }
-  - { profession: profession.reporter, count: 5 }
-  - { profession: profession.judge, count: 3 }
-  - { profession: profession.dependant, count: 24123 }
-# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+  - { profession: profession.performer, count: 40 }
+  - { profession: profession.artist, count: 40 }
+  - { profession: profession.banker, count: 30 }
+  - { profession: profession.reporter, count: 10 }
+  - { profession: profession.judge, count: 5 }
+  - { profession: profession.dependant, count: 17515 }
+# independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
-  - { hull: hull.drover, count: 36 }
-  - { hull: hull.sprint, count: 27 }
-  - { hull: hull.prospector, count: 18 }
-  - { hull: hull.hauler, count: 9 }
+  - { hull: hull.drover, count: 30 }
+  - { hull: hull.sprint, count: 22 }
+  - { hull: hull.prospector, count: 15 }
+  - { hull: hull.hauler, count: 8 }
 about: "The system's station, in orbit round Hearth. It is a landing deck of 16 pads with the main structure standing along one edge and a hangar inside. It turns once an orbit, keeping the same side to the planet."
 story:
   - "Raised above Nacaubun when the port ran out of room. The yards, the makers' offices, the Standards Foundry Office and the administration all followed the ships up, and it has been the centre of the system since."

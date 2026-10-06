@@ -47,12 +47,14 @@ struct Globals {
     env_mode: [f32; 4],
     env_sky: [f32; 4],
     /// x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
-    /// are faded in (0..1).
+    /// are faded in (0..1); z: 1 where its air's tables are bound.
     view: [f32; 4],
     /// Clip → camera-relative world (for a full-screen pass's view directions).
     inv_view_proj: [[f32; 4]; 4],
     /// The world whose maps are bound: its centre from the eye (m) and radius (m; 0: none).
     world_at: [f32; 4],
+    /// The scene's frame to the bound world's own (its turn undone), for its clouds.
+    world_to_body: [[f32; 4]; 4],
 }
 
 /// The shadow map's side (texels), each of its two cascades.
@@ -163,7 +165,7 @@ impl Globes {
 
 /// A float as a half (IEEE binary16), for globe maps (small values; no
 /// subnormals: those go to zero).
-fn half(x: f32) -> u16 {
+pub(crate) fn half(x: f32) -> u16 {
     let b = x.to_bits();
     let sign = ((b >> 16) & 0x8000) as u16;
     let e = ((b >> 23) & 0xff) as i32 - 127 + 15;
@@ -268,6 +270,8 @@ struct MeshVertex {
     pos: [f32; 3],
     normal: [f32; 3],
     color: [f32; 4],
+    /// The model's per-vertex data (`WireModel::data`; zero where it has none).
+    data: [f32; 4],
 }
 
 /// A mesh on the GPU: its faces (three vertices each) and edges (two each),
@@ -284,6 +288,7 @@ impl GpuMesh {
     fn new(device: &wgpu::Device, mesh: &Mesh) -> Self {
         use wgpu::util::DeviceExt;
         let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
+        let data = |i: u32| mesh.data.get(i as usize).copied().unwrap_or([0.0; 4]);
         let mut faces = Vec::with_capacity(mesh.faces.len() * 3);
         // (Smooth: each corner's normal the faces' meeting there, weighted by their size.)
         let corner_normals: Vec<Vec3> = if mesh.smooth {
@@ -306,7 +311,7 @@ impl GpuMesh {
             let n = (b - a).cross(c - a).normalize_or_zero();
             for &i in f {
                 let n = corner_normals.get(i as usize).copied().unwrap_or(n);
-                faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i) });
+                faces.push(MeshVertex { pos: mesh.positions[i as usize].to_array(), normal: n.to_array(), color: color(i), data: data(i) });
             }
         }
         let mut edges = Vec::with_capacity(mesh.edges.len() * 2);
@@ -314,7 +319,7 @@ impl GpuMesh {
         for (e, n) in mesh.edges.iter().zip(normals) {
             for &i in e {
                 let p = mesh.positions[i as usize];
-                edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i) });
+                edges.push(MeshVertex { pos: p.to_array(), normal: n.to_array(), color: color(i), data: data(i) });
             }
         }
         let buffer = |label, data: &[MeshVertex]| {
@@ -482,7 +487,7 @@ impl Renderer {
         // (The ground's material, the lab's, beside the scene shader that calls it.)
         let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("scene"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/clouds.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
         });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
@@ -551,7 +556,7 @@ impl Renderer {
             Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<MeshVertex>() as u64,
                 step_mode: wgpu::VertexStepMode::Vertex,
-                attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x3, 2 => Float32x4],
+                attributes: &wgpu::vertex_attr_array![0 => Float32x3, 1 => Float32x3, 2 => Float32x4, 16 => Float32x4],
             }),
             Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<Instance>() as u64,
@@ -1086,12 +1091,14 @@ impl Renderer {
             let d = (*c - frame.camera.position).as_vec3();
             [d.x, d.y, d.z, *r as f32]
         });
-        let (world_layer, world_fade) = match &frame.world_maps {
+        let (world_layer, world_fade, world_luts) = match &frame.world_maps {
             Some((maps, globe, _, _)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
-                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade())
+                let clouds = if maps.has_clouds() { frame.world_clouds } else { [0.0; 4] };
+                gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
+                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
-            None => (0.0, 0.0),
+            None => (0.0, 0.0, 0.0),
         };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
@@ -1116,9 +1123,10 @@ impl Renderer {
             // (The sky's own glow: the floor the meshes take, so ships and stations agree.)
             env_mode: [if frame.studio { 1.0 } else { 0.0 }, crate::frame::SHADE_AMBIENT, 0.0, 0.0],
             env_sky: frame.clear.0,
-            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, 0.0, 0.0],
+            view: [2.0 * (frame.camera.fov_y * 0.5).tan() / self.target.size.y as f32, world_fade, world_luts, 0.0],
             inv_view_proj: frame.camera.view_proj(size.x / size.y).inverse().to_cols_array_2d(),
             world_at,
+            world_to_body: glam::Mat4::from_quat(frame.world_turn.inverse().as_quat()).to_cols_array_2d(),
         };
         gpu.queue.write_buffer(&self.shadows.lights[0], 0, bytemuck::cast_slice(&shadow_near.to_cols_array()));
         gpu.queue.write_buffer(&self.shadows.lights[1], 0, bytemuck::cast_slice(&shadow_far.to_cols_array()));

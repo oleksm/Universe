@@ -55,12 +55,24 @@ distribution stock.
 4. Raiders sortie from the hold to the gate approach, take cargo from weak, lone prey, go home;
    the patrol answers in `law.enforcement.response`; bounties make hunters; surrender is a way home.
 
-## The finding
+## The finding, and the answer so far
 
-The census says **3 to 6% of people are at work**; in the rich countries about half are. The
-works and services described so far (farms, mills, yards, plants, clinics, schools, watch houses,
-inns) give Treistun's 220,000 people about 10,000 jobs. The other 40% of a real economy, which is
-shops and trades, building and repair, transport on the ground, offices and administration, the
-services people sell each other, is not described, and so neither is most of what people do all
-day. That is the next part of the civilization plan (commerce and construction), and it is why
-"Work" is a gap in the Needs report. Until then, the census marks every settlement a gap.
+The first census said **3 to 6% of people at work**; in the rich countries about half are. The
+answer (2026-10-06, evening) is the buildings of commerce and construction: every building says
+**one to how many people** (`per_people`) and **who runs it** (`staff`); a settlement's buildings
+follow from its population (`settlement.buildings`), and the census sums their staff beside the
+works' and the fleets'. Fourteen new buildings: shop (one to 70, five working), market hall,
+builders' yard (one of fifty to 1,500: construction), repair shop, offices (one block of fifty-five
+to 1,000: administration and business services), bank, depot (ground transport), tavern and inn,
+theatre, press, care home, college; the clinic, hospital, school, flight school, watch house,
+courthouse, gaol and dwellings have their ratios too. Port Eikir has 858 shops, 120 taverns, 60
+office blocks, 52 clinics, 40 builders' yards, 30 dwelling blocks.
+
+The census now reads **30 to 37% at work** across Treistun's ports (Shikra Hold 44%). The shares
+behind it are a rich country's by sector, from memory and marked review: retail 7%, offices 6%,
+construction 3–4%, transport 2–3%, hospitality 3%, repair 1–2%, health and care about 7%,
+schooling about 2%. What is still thin against the real half: **manufacturing for people** at every
+port (works making the consumer goods the shops sell, today only Eikir's food and chemical
+works and Trethi's mill), **health** (a real economy's 13%) and **schooling** (9%). Those come
+with the next parts: wear and consumer goods, Mind. The "Work" need stays unmet in the report
+until the game pays wages: what meets it is a job, which the census now counts.

@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/building.schema.yaml
+identity:
+  key: building.college
+  name: "College"
+  description: "Lecture halls, laboratories and a library: where the trades learned at college are taught, and where scholars work."
+physical:
+  length: 100
+  width: 40
+  height: 16
+  mass: 17648000
+per_people: 50000
+floor: 16000
+storeys: 4
+meets:
+  - { need: need.schooling, people: 50000 }
+trains:
+  - { profession: profession.chemist, places: 30 }
+  - { profession: profession.engineer, places: 30 }
+  - { profession: profession.doctor, places: 30 }
+  - { profession: profession.teacher, places: 30 }
+  - { profession: profession.scholar, places: 30 }
+  - { profession: profession.administrator, places: 30 }
+  - { profession: profession.lawyer, places: 30 }
+  - { profession: profession.judge, places: 30 }
+  - { profession: profession.banker, places: 30 }
+staff:
+  - { profession: profession.teacher, count: 100 }
+  - { profession: profession.scholar, count: 50 }
+  - { profession: profession.clerk, count: 20 }
+built_of:
+  - { item: good.concrete, quantity: 16640000 }
+  - { item: material.structural-steel-a36, quantity: 928000 }
+life: 1577880000
+basis:
+  - { of: [per_people, staff], tier: invented, review: true, note: "One to 50,000 people. The share of a people this gives work to is set so that a settlement's trades together come to about what a rich country's do (about half its people at work; from memory of employment by sector: retail 7%, construction 3-4%, offices and business services 6%, transport 2-3%, hospitality 3%, repair 1-2%). Review." }
+  - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
+  - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
+  - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
+  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }
+  - { of: [trains], tier: invented, review: true, note: "Every trade whose profession.training.learned is college; 30 places each at once, so its output a year in each is 30 over the trade's training time. Pilots are the flight school's. Apprenticeship and on-the-job trades are learned in the works that employ them. Chosen." }

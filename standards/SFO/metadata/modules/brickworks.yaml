@@ -22,7 +22,28 @@ recipes:
       - { item: good.water, quantity: 0.15 }
     rate: 5.0
     power: 11100000
+  - makes: good.brick
+    does: "Red mud and clay pressed and fired: the alumina refinery's mud is most of the brick."
+    inputs:
+      - { item: good.red-mud, quantity: 0.7 }
+      - { item: good.clay, quantity: 0.45 }
+    outputs:
+      - { item: good.water, quantity: 0.15 }
+    rate: 5.0
+    power: 11100000
+  - makes: good.brick
+    does: "Tailings sand and clay pressed and fired."
+    inputs:
+      - { item: good.tailings, quantity: 0.7 }
+      - { item: good.clay, quantity: 0.45 }
+    outputs:
+      - { item: good.water, quantity: 0.15 }
+    rate: 5.0
+    power: 11100000
+life: 788940000
 basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_plant.json", note: "2.22 MJ for each kg of fired brick: the world's average." }
   - { of: [physical, recipes.rate, recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Chosen; the water clay loses in drying is a guess. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "Red mud and mine tailings make bricks, as they do on Earth where someone bothers. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
+  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }

@@ -11,8 +11,6 @@ identity:
   - ingot
   - scrap
   - wire
-  - sheet
-  - tube
 mass:
   density: 8933.0
 mechanical:

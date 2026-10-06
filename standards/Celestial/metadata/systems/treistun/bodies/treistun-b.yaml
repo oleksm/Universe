@@ -22,12 +22,12 @@ survey:
     - {"commodity": "PGE", "mass": 29440000.0}
 bake:
   format: "planet-sim-surface/1"
-  version: 1
-  path: "worlds/TRB1/surface/v1"
-  manifest_sha256: "67a4591558ab06bcf42d5d6afadfbab41407e0820cf968a896c3acaf92575bf8"
-  files: 1590
-  bytes: 1019036537
-  note: "airless crust (stages/lid.py), 600 m craters exact from the catalogue"
+  version: 2
+  path: "worlds/TRB1/surface/v2"
+  manifest_sha256: "07ce67dbd7c780973ae0b7e1d226640946e11699b929f103bdca7cf359c1f969"
+  files: 1591
+  bytes: 1019081627
+  note: "v2: fz.json carries each tile's height bounds; summary.json (highest peak, climate) for records"
 identity:
   key: body.treistun.treistun-b
   name: Cinder
@@ -35,13 +35,16 @@ identity:
   kind: rocky planet
   parent: body.treistun.treistun
   about: 'The innermost planet, 0.13 AU from the star. Rocky, 6,194 km in radius, with a surface gravity of 0.96 g and no
-    air. It is hot: about 560 K on average. Its day lasts 32 hours. One moon.'
+    air. It is hot: about 474 K on average by the run, 509 K in the warmest month. Its day lasts 32 hours. One moon.'
   story: ['Nobody settled b for comfort. Port Zaudalein is there because someone decided the ground was worth the heat, and
       it has stayed a place people work at rather than live in.']
 orbit: {semi_major_axis: 19319100000.0, eccentricity: 0.05498, period: 1743802.56, inclination: 0.002}
 physical: {mass: 5.4016e+24, radius: 6194410.0, gravity: 9.396, day: 114325.2, tilt: 12.85, albedo: 0.15}
 surface:
+  highest: 4713
+  temperature_high: 508.5
+  temperature_low: 346.5
+  mean_temperature: 473.9
   terrain: dry
   relief: 4336
-  mean_temperature: 561.6
   colour: [0.75, 0.4, 0.35]

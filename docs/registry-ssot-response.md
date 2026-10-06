@@ -1089,3 +1089,53 @@ surface v1 in the store, its 113 MB `impacts.json` left in the store and listed 
 Point `UNIVERSE_WORLDS` at that root; relative paths, so the folder can move or be synced. Fourteen
 new deposit types and seven airless rock units came with the lab's vocabulary (the rock map's
 `rock_units.index` on Cinder uses them).
+
+**Commerce and construction (2026-10-06, evening).** Fourteen buildings where the service trades
+work (shop, market hall, builders' yard, repair shop, offices, bank, depot, tavern, inn, theatre,
+press, care home, college), `per_people` on every building, `settlement.buildings` by population,
+the census from their staff: Treistun's ports read 30–37% at work, from 3–6%. The buildings are
+not sited on parcels (no outlines); when the game wants to draw them, say and I give each a
+footprint. **A flaky test, yours:** `ship::classes::every_hull_is_balanced_and_sized_for_its_job`
+failed once in a full run with `hull.import.mc07: can't hover at 1 g with an empty hold` and passed
+on the next: the imported hull is in the classes only when a test that imports mc07.glb has run
+first (a shared static), and with the registry's fit (radiators, loops, cabin, stores: 18.7 t more,
+the user's ruling) the MC-07 at 1.32 MN of lift cannot hover empty at 1 g. Both halves are true:
+the order dependence is a test bug; the hover failure is the physics the user wants met from the
+flying side, so the imported MC-07 should be reported, not asserted, there.
+
+**The first mine on a baked deposit (2026-10-06, night).** Halden Camp
+(`settlement.treistun.halden-camp`, on Harvest at 54.81 N 164.44 E, 1,070 km north of Port Eikir):
+Cormorant's pit and concentrator on the survey's porphyry copper body **TRD1-PCU-007264A-01**
+(`facility.treistun.halden-camp.halden-mine`, `claim: {deposit, holder: org.cormorant, licence:
+org.treistun}`), a power station, a yard on the exchange, 400 people, supplied from Eikir by a
+suborbital hop. The build checks a claim's id against the body's survey. **For the game:** a mine
+with a `claim` draws its ore from that deposit (its grades and tonnage are in deposits.geojson), not
+from an asteroid field; a facility whose claim names no `licence` under a jurisdiction with
+`mining_licence: true` is an offence (unlicensed mining), recorded, not blocked. The settlement's
+position puts it on Harvest's 600 m tiles: the first ground a player can land on at a working mine.
+
+**Mind, Money and Cinder (2026-10-06, night).** The school and the college carry `trains`; the
+bank (`org.nacaubun-savings`, `banking`: lends against hull, cargo, building, parcel, claim at 6% a
+year, three fifths advance, ten years at most) and the exchange's rules (`org.treistun-exchange.exchange`:
+only stock, settles in the warehouse's record, a 0.5% fee) are records. Cinder has an economy:
+**Ashfall Camp** (`settlement.treistun.ashfall-camp`, sealed, 300 people, 2,000 km from Zaudalein)
+mines TRB1-INI-000256A-06 under claim and licence, and **Zaudalein Smelter** turns its concentrate
+into nickel, platinum metals and sulphur, the sulphur Eikir's works needed. For the game: a sealed
+settlement's life support is its own (oxygen plant, air plant, water works, as the ports'); the
+smelter's sulphur is a stock run from Zaudalein to Eikir the Traffic report now derives.
+
+**Hearth, before its release (2026-10-06, night).** The lab's run says the home world is a
+snowball that never thawed, with no life and so no oxygen; its record now says so (air
+`breathable: false`, nitrogen with 0.35% carbon dioxide; `life.present: none`; the lore rewritten),
+and **Port Nacaubun has a life-support facility** like the sealed ports. **For the game:** Hearth's
+people breathe from `facility.treistun.port-nacaubun.nacaubun-life-support` (element.o from its
+oxygen plants, 30 days in store), not from the place: the `from: place` oxygen a breathable world
+gives no longer applies on Hearth. When the release lands, the record takes the run's mean
+(about 216 K) and months; the Worlds report will show TRE1.
+
+**Halden runs; the tailings (the integrator, 2026-10-06, night).** Good news: the mine digs the
+survey's deposit and draws it down. The store filling with tailings and waste rock is answered:
+`module.tailings-dam` (holds 100 Mt, the concentrator's slurry settling for good) and
+`module.waste-dump` (200 Mt, the barren rock) stand at both camps' mines, on claim parcels widened
+to hold them. The dam's tailings are what the brickworks and the concrete plant take, when they
+want them; the dump is what the pit swallows when it is backfilled, later. `worlds::Survey` noted.
