@@ -117,9 +117,15 @@ impl Ring {
         if tube(l1) < reach {
             return RingCrossing::Hit;
         }
-        if l0.y.signum() == l1.y.signum() || l0.y == l1.y {
+        // A step that ends on the plane crosses it; the next, starting there, does not. The
+        // start is carried by the ring's velocity alone, so it is off by the ring's acceleration
+        // over the step (tens of microns): within that, a point is on the plane.
+        const ON_PLANE: f64 = 1e-3;
+        let (y0, y1) = (if l0.y.abs() < ON_PLANE { 0.0 } else { l0.y }, if l1.y.abs() < ON_PLANE { 0.0 } else { l1.y });
+        if (y0 < 0.0) == (y1 < 0.0) {
             return RingCrossing::None;
         }
+        let (l0, l1) = (DVec3::new(l0.x, y0, l0.z), DVec3::new(l1.x, y1, l1.z));
         let u = l0.y / (l0.y - l1.y);
         let r = radial(l0.lerp(l1, u));
         if r < self.radius - reach {

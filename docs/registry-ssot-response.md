@@ -911,3 +911,17 @@ reference:** the rock map, the deposits (a mine sits on a deposit `id`; prospect
 what it is for, is `docs/survey-contract.md`. Nothing to do until the lab runs Harvest; then
 the body schema's new optional `survey` object reaches your generated types, and the loader for the
 files is yours. Claims and mines will point at deposit IDs.
+
+**Harvest is baked (2026-10-06).** `body.treistun.treistun-d` is `provenance: baked` from world
+**TRD1**: `standards/Celestial/surveys/TRD1/` holds its survey (3,756 deposits in 908 districts
+and 471 belts; 26.6% land, 10 plates; Cu 1.2 Gt, Fe 22 Gt, Au 33 kt). Its orbit moved to 0.525 AU
+first (at 0.408 AU it could keep no sea); your code already reads the curated orbit. **Yours when
+you want it:** read the survey files by `survey.folder` (`docs/survey-contract.md` §3: the rock map
+to look up is `rock_units.png`, each pixel a unit's number, 255 sea; deposits are GeoJSON points
+with grades and `seen_by`). **One physics fix I made because the planet's move exposed it:**
+`collide.rs` `Ring::crossing` missed a crossing when a step ended within the ring's acceleration
+over the step (tens of microns) of the plane: the start, carried by velocity alone, landed on the
+other side. The gate test hit it exactly (500 m at 500 m/s is 60 steps). Now a step ending within
+1 mm of the plane crosses it, and the next does not. Also: **bodies match records by key, not
+name** (`system::Body::key`, `celestial::rename` last); settlements by body key; the planets of
+Treistun are named (Harvest, Hearth...). The seed's names stay in `identity.also`.

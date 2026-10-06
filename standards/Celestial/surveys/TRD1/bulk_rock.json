@@ -1,0 +1,272 @@
+{
+ "world": "TRD1",
+ "units": [
+  {
+   "unit": "granite",
+   "name": "S-type granite",
+   "land_km2": 26269198,
+   "pct_of_land": 17.75,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      150,
+      250
+     ]
+    },
+    {
+     "material": "dimension stone",
+     "use": "building stone",
+     "measure": "block m",
+     "range": [
+      1,
+      4
+     ]
+    },
+    {
+     "material": "feldspar",
+     "use": "glass and ceramics",
+     "measure": "K2O+Na2O %",
+     "range": [
+      8,
+      14
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "carbonate",
+   "name": "limestone and dolomite",
+   "land_km2": 26164872,
+   "pct_of_land": 17.68,
+   "yields": [
+    {
+     "material": "limestone",
+     "use": "cement and lime",
+     "measure": "CaCO3 %",
+     "range": [
+      75,
+      98
+     ]
+    },
+    {
+     "material": "dolomite",
+     "use": "refractory, flux, magnesium",
+     "measure": "MgCO3 %",
+     "range": [
+      20,
+      45
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "clastic",
+   "name": "sandstone and shale",
+   "land_km2": 24641718,
+   "pct_of_land": 16.65,
+   "yields": [
+    {
+     "material": "quartz sand",
+     "use": "glass, foundry, silicon",
+     "measure": "SiO2 %",
+     "range": [
+      85,
+      99.5
+     ]
+    },
+    {
+     "material": "clay",
+     "use": "brick, ceramics, cement blend",
+     "measure": "Al2O3 %",
+     "range": [
+      15,
+      35
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "basement",
+   "name": "gneiss basement",
+   "land_km2": 23779293,
+   "pct_of_land": 16.07,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      120,
+      220
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "arc_plutonic",
+   "name": "granodiorite batholith",
+   "land_km2": 23452406,
+   "pct_of_land": 15.85,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      130,
+      220
+     ]
+    },
+    {
+     "material": "dimension stone",
+     "use": "building stone",
+     "measure": "block m",
+     "range": [
+      1,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "arc_volcanic",
+   "name": "andesite volcanics",
+   "land_km2": 16733834,
+   "pct_of_land": 11.31,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "road stone, lightweight aggregate",
+     "measure": "strength MPa",
+     "range": [
+      80,
+      200
+     ]
+    },
+    {
+     "material": "pozzolan",
+     "use": "cement additive",
+     "measure": "reactive SiO2 %",
+     "range": [
+      25,
+      45
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "flood_basalt",
+   "name": "flood basalt",
+   "land_km2": 3345376,
+   "pct_of_land": 2.26,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      150,
+      300
+     ]
+    },
+    {
+     "material": "basalt fibre stock",
+     "use": "mineral fibre",
+     "measure": "SiO2 %",
+     "range": [
+      45,
+      52
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "schist",
+   "name": "schist and gneiss",
+   "land_km2": 3108904,
+   "pct_of_land": 2.1,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "fill and road base",
+     "measure": "strength MPa",
+     "range": [
+      60,
+      150
+     ]
+    },
+    {
+     "material": "slate",
+     "use": "roofing and flooring",
+     "measure": "block m",
+     "range": [
+      0.5,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "ophiolite",
+   "name": "ophiolite (peridotite, gabbro)",
+   "land_km2": 445123,
+   "pct_of_land": 0.3,
+   "yields": [
+    {
+     "material": "olivine",
+     "use": "refractory, slag conditioner",
+     "measure": "MgO %",
+     "range": [
+      40,
+      49
+     ]
+    },
+    {
+     "material": "serpentine",
+     "use": "magnesium source",
+     "measure": "MgO %",
+     "range": [
+      34,
+      40
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "rift",
+   "name": "rift basalt and red beds",
+   "land_km2": 20865,
+   "pct_of_land": 0.01,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "fill",
+     "measure": "strength MPa",
+     "range": [
+      50,
+      150
+     ]
+    },
+    {
+     "material": "clay",
+     "use": "brick",
+     "measure": "Al2O3 %",
+     "range": [
+      12,
+      25
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "morb",
+   "name": "ocean-floor basalt",
+   "land_km2": 6955,
+   "pct_of_land": 0.0,
+   "yields": []
+  }
+ ]
+}

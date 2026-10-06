@@ -25,3 +25,6 @@
   run's to give and is off the record. Star's age, water share and radioactive heat written as the
   lab's defaults, chosen. World IDs: TRD1 scheme. The contract looks the rock map up in
   `rock_units.png`.
+- **Harvest baked:** world TRD1 imported; the record points at `standards/Celestial/surveys/TRD1/`.
+- **Ring crossing:** a step ending within 1 mm of a gate's plane crosses it (the ring's acceleration
+  over a step put the carried start on the wrong side; the gate test hit it exactly).
