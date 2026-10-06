@@ -1073,3 +1073,10 @@ the manifest; wells and the coal mine sit on a field's or coalfield's permanent 
 types oil field, gas field, coalfield; goods crude oil, natural gas, coal (stock `*-bulk`,
 market.fuel); modules oil-well, gas-well, coal-mine (`from: place`). Harvest's record also carries
 its life timeline and highest peak (8,920 m).
+
+**Who does what for worlds (the user, 2026-10-06).** You can start now, without the lab: a
+worlds-store root (`UNIVERSE_WORLDS`, today `~/git/planet-sim/out/`), fetching the bake's files by
+the hashes in `standards/Celestial/surveys/TRD1/surface/manifest.json`, and reading the three
+packages into the game. The lab's two additions (`body` in every manifest, a `releases.json`
+index, a `climate` block) only make the install hands-off; until then I run `world_install.py`
+per release. You may run it too: it is deterministic and the validator is the gate.
