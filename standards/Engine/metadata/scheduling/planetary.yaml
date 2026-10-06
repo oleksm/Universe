@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.planetary
+  name: Planetary
+  about: 'A body''s own effects: its air, its weather, what its surface does.'
+parent: clock.celestial
+scope: body
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 60.0
+runs:
+- weather and air state where a history is needed (a storm track, snow that fell); otherwise generators of time from the lab's
+  climate and air tables
+- tides as a scalar, the season as a date
+- 'geology: an empty step by design; deposits change only by mining events'
+reads:
+- clock.celestial
+rule: 'Prefer functions of time (as clouds are today: one epoch, every player the same, free to replay); add stepped state
+  only where something needs a history.'
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

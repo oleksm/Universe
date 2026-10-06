@@ -1,0 +1,109 @@
+{
+ "world": "TRF1",
+ "units": [
+  {
+   "unit": "primary_crust",
+   "name": "primary crust (ancient, cratered)",
+   "land_km2": 67716280,
+   "pct_of_land": 40.8,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "regolith fill, sintered blocks",
+     "measure": "strength MPa",
+     "range": [
+      50,
+      150
+     ]
+    },
+    {
+     "material": "regolith oxygen",
+     "use": "oxygen by reduction",
+     "measure": "O %",
+     "range": [
+      40,
+      44
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "flood_basalt",
+   "name": "flood basalt",
+   "land_km2": 56699212,
+   "pct_of_land": 34.17,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      150,
+      300
+     ]
+    },
+    {
+     "material": "basalt fibre stock",
+     "use": "mineral fibre",
+     "measure": "SiO2 %",
+     "range": [
+      45,
+      52
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "intercrater_plains",
+   "name": "intercrater plains (old lava, cratered)",
+   "land_km2": 40456764,
+   "pct_of_land": 24.38,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "regolith fill, sintered blocks",
+     "measure": "strength MPa",
+     "range": [
+      50,
+      150
+     ]
+    },
+    {
+     "material": "regolith oxygen",
+     "use": "oxygen by reduction",
+     "measure": "O %",
+     "range": [
+      40,
+      44
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "high_ti_basalt",
+   "name": "high-titanium basalt (ilmenite-rich)",
+   "land_km2": 1078681,
+   "pct_of_land": 0.65,
+   "yields": [
+    {
+     "material": "ilmenite",
+     "use": "titanium, iron and oxygen (hydrogen reduction)",
+     "measure": "TiO2 %",
+     "range": [
+      7,
+      13
+     ]
+    },
+    {
+     "material": "regolith oxygen",
+     "use": "oxygen by reduction",
+     "measure": "O %",
+     "range": [
+      40,
+      43
+     ]
+    }
+   ]
+  }
+ ]
+}

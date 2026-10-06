@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.market
+  name: Market
+  about: 'A settlement''s market: boards and matching.'
+parent: clock.economy
+scope: settlement
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 1.0
+runs:
+- boards published; orders matched; prices from stock on hand
+- a trade is an event through the ledger, answered when it arrives, stamped; not a tick
+reads:
+- clock.economy
+rule: Trades are events; the step is for boards and matching only.
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

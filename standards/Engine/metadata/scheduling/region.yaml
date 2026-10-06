@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.region
+  name: Region
+  about: What crosses star systems in a charted region.
+parent: clock.galaxy
+scope: region
+coupling: slow_loose
+trigger:
+  kind: event
+  fires_on:
+  - a ship departs or arrives through a gate (the transit timetable)
+  - a hand-over of a ship between systems
+  - a hypernet message or board
+  - 'a rare celestial event: a supernova, a flare'
+runs:
+- 'the transit timetable: a ship in a gate tube is a row (left at t, arrives at t''); nothing integrates'
+- hand-overs between systems, stamped in ticks
+- hypernet routing and delivery; regional price boards
+- fleets' orders of replacements
+- supernovae and their effects on systems
+posts:
+- clock.system
+rule: Transit takes seconds to minutes of game time, so the wire's latency is invisible here.
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

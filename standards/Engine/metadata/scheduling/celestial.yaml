@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/clock.schema.yaml
+identity:
+  key: clock.celestial
+  name: Celestial
+  about: Publishes where the bodies are for the slow layers; the bodies themselves stay formulas.
+parent: clock.system
+scope: system
+coupling: slow_loose
+trigger:
+  kind: period
+  every: 60.0
+runs:
+- publish body positions, rotations and the ephemeris the slow layers read
+- 'nothing is integrated: orbits, rotation and tilt are pure functions of time, evaluated by any clock that needs them at
+  its own tick'
+rule: The realtime lane evaluates the formula itself for the bodies it is near (a pad moves 460 m/s at an equator); this clock
+  is the cache for everyone else.
+basis:
+- of:
+  - trigger
+  - coupling
+  - runs
+  tier: invented
+  review: true
+  note: The user's design of the tick tree, 2026-10-06 (docs/tick-tree.md); the period is a starting point to measure.

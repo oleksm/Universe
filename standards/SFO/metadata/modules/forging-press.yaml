@@ -45,6 +45,54 @@ recipes:
       - { item: stock.st4340-scrap, quantity: 0.15 }
     rate: 2.77777777777778
     power: 6000000
+  - makes: stock.st4340-node-250
+    does: "Hot steel pressed between dies into a node, then machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-300
+    does: "Hot steel pressed between dies into a node, then machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-350
+    does: "Hot steel pressed between dies into a node, then machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-300h
+    does: "Two hemispheres hot pressed from the ingot, welded at the equator and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.15 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.15 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-400h
+    does: "Two hemispheres hot pressed from the ingot, welded at the equator and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.15 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.15 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-500h
+    does: "Two hemispheres hot pressed from the ingot, welded at the equator and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.15 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.15 }
+    rate: 1.38888888888889
+    power: 6000000
 life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }
