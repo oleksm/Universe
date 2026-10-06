@@ -429,6 +429,24 @@ fn plate_stocks() -> &'static [PlateStock] {
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
             Some(PlateStock { key: s.identity.key.clone(), name: s.identity.name.clone(), of: of.clone(), thickness: t, core: None, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
         }).collect();
+        // (Sandwich panels: their faces' material bears, their core shears.)
+        out.extend(reg.stock.iter().filter_map(|s| {
+            let sw = s.sandwich.as_ref()?;
+            let m = reg.materials.iter().find(|m| m.identity.key == sw.faces.material)?;
+            let k = &m.mechanical;
+            let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
+            let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
+            let per_square_metre = sw.mass_per_area.unwrap_or(2.0 * sw.faces.thickness * rho + sw.core.depth * sw.core.density + sw.bond);
+            Some(PlateStock {
+                key: s.identity.key.clone(),
+                name: s.identity.name.clone(),
+                of: format!("{} on {}", sw.faces.material, sw.core.material),
+                thickness: sw.faces.thickness,
+                core: Some(universe_sim::world::frame::Core { depth: sw.core.depth, shear_strength: sw.core.shear_strength }),
+                material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho },
+                per_square_metre,
+            })
+        }));
         out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_square_metre.total_cmp(&b.per_square_metre)));
         out
     })
@@ -1011,8 +1029,18 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     out.joints = joints.clone();
     let near = |at: Vec3, r: f32| -> Vec<usize> { joints.iter().enumerate().filter(|(_, q)| q.distance(at) <= r).map(|(k, _)| k).collect() };
     // (The joints a module is held at: those in it, or by it; a deck's points only
-    // under its foot, where it stands on the deck.)
+    // under its foot, where it stands on the deck. A deck point held up by nothing
+    // but posts is floor, not frame: no engine pushes on it.)
     let on_deck: Vec<bool> = (0..joints.len()).map(|j| deck_points.contains(&j)).collect();
+    let mut framed = vec![false; joints.len()];
+    for m in frame.members.iter().filter(|m| m.section.flat.is_none()) {
+        let d = (joints[m.b] - joints[m.a]).normalize_or_zero();
+        if d.y.abs() < 0.9 {
+            framed[m.a] = true;
+            framed[m.b] = true;
+        }
+    }
+    let floor_only = |j: usize| on_deck[j] && !framed[j];
     let mounted = |lo: Vec3, hi: Vec3| -> Vec<usize> {
         joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!on_deck[k] || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect()
     };
@@ -1052,7 +1080,8 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         for blk in &plan.blocks {
             let Some((dir, thrust)) = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| f.push) else { continue };
             let (lo, hi) = blk.bounds();
-            let at: Vec<usize> = mounted(lo, hi);
+            // (Its push goes through its mount into the frame, never a deck.)
+            let at: Vec<usize> = mounted(lo, hi).into_iter().filter(|&j| !floor_only(j)).collect();
             let role = if dir.y > 0.5 { ThrusterRole::Lift } else { ThrusterRole::Main };
             pushers.push((role, dir.as_dvec3() * thrust, at));
         }
@@ -5909,6 +5938,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
 
 
 
