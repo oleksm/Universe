@@ -321,11 +321,15 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             return;
         }
         let (w, h) = self.config.window_size;
+        // (A test or dev run, UNIVERSE_TEST or UNIVERSE_SCREENSHOT set: titled "<title> test", so
+        // the window manager can put it out of the way: workspace 8, by the user's rule.)
+        let test = std::env::var_os("UNIVERSE_TEST").is_some() || std::env::var_os("UNIVERSE_SCREENSHOT").is_some();
+        let title = if test { format!("{} test", self.config.title) } else { self.config.title.clone() };
         let window = Arc::new(
             event_loop
                 .create_window(
                     Window::default_attributes()
-                        .with_title(&self.config.title)
+                        .with_title(&title)
                         .with_inner_size(LogicalSize::new(w, h)),
                 )
                 .expect("failed to create window"),
