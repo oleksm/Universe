@@ -124,6 +124,7 @@ pub enum Act {
     Passengers,
     Network,
     Standards,
+    Worlds,
 }
 
 /// The table, in the order letters are given out (what's used most first,
@@ -170,6 +171,7 @@ const TABLE: &[(Act, Scope, &str)] = &[
     (Act::Passengers, Scope::Docked, "PASSENGERS"),
     (Act::Network, Scope::Map, "NETWORK"),
     (Act::Standards, Scope::Docked, "STANDARDS"),
+    (Act::Worlds, Scope::Observer, "WORLDS"),
 ];
 
 /// Actions whose key is set, not taken from the name (given out first).

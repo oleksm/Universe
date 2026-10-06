@@ -25,15 +25,81 @@
 
 use glam::DVec3;
 
-/// A member's cross-section: a round tube or bar.
+/// A member's cross-section: a round tube or bar; or a flat strip (of a plate: its
+/// width and its thickness, bending across its thickness).
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Section {
     /// Its outer diameter and wall (m; a bar: its wall half its diameter).
     pub diameter: f64,
     pub wall: f64,
+    /// A flat strip's width and thickness (m), in place of the round's. A strip is
+    /// a deck's panel: it floats on what it rests on, bearing on it but carrying
+    /// none of the frame's own pull, push or shear in its plane (as a floor panel
+    /// is fastened: secondary structure); it bends across its thickness only.
+    pub flat: Option<(f64, f64)>,
+    /// A sandwich panel's core, if a strip is one: its thickness then each face's,
+    /// the two faces held this far apart by the core.
+    pub core: Option<Core>,
+}
+
+/// A sandwich panel's core (honeycomb or foam between two faces): how deep it is
+/// (m), and the shear it takes before it fails (Pa), its weaker way.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Core {
+    pub depth: f64,
+    pub shear_strength: f64,
 }
 
 impl Section {
+    /// A round tube (a bar: its wall half its diameter).
+    pub fn round(diameter: f64, wall: f64) -> Self {
+        Section { diameter, wall, flat: None, core: None }
+    }
+
+    /// A flat strip `width` wide, `thickness` thick.
+    pub fn strip(width: f64, thickness: f64) -> Self {
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, thickness)), core: None }
+    }
+
+    /// A sandwich panel strip `width` wide: two faces `face` thick either side of
+    /// `core`.
+    pub fn panel(width: f64, face: f64, core: Core) -> Self {
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, face)), core: Some(core) }
+    }
+
+    /// A sandwich's faces' spacing, middle to middle (m).
+    fn spacing(&self) -> Option<f64> {
+        Some(self.core?.depth + self.flat?.1)
+    }
+
+    /// How far its surface is from its middle, bending (m).
+    pub fn reach(&self) -> f64 {
+        match (self.flat, self.core) {
+            (Some((_, t)), Some(c)) => c.depth * 0.5 + t,
+            (Some((_, t)), None) => t * 0.5,
+            _ => self.diameter * 0.5,
+        }
+    }
+
+    /// Its torsion constant (m⁴): a round's twice its second moment; a thin
+    /// strip's a third of its width by its thickness cubed.
+    pub fn torsion(&self) -> f64 {
+        match (self.flat, self.spacing()) {
+            // (A sandwich twists as its faces shear against each other: b t d².)
+            (Some((b, t)), Some(d)) => b * t * d * d,
+            (Some((b, t)), None) => b * t.powi(3) / 3.0,
+            _ => 2.0 * self.inertia(),
+        }
+    }
+
+    /// Its second moment of area edgewise (m⁴: a strip bent in its own plane).
+    pub fn edgewise(&self) -> f64 {
+        match self.flat {
+            Some((b, t)) => t * b.powi(3) / 12.0 * if self.core.is_some() { 2.0 } else { 1.0 },
+            None => self.inertia(),
+        }
+    }
+
     fn radii(&self) -> (f64, f64) {
         let ro = self.diameter * 0.5;
         (ro, (ro - self.wall).max(0.0))
@@ -41,13 +107,23 @@ impl Section {
 
     /// Its area (m²).
     pub fn area(&self) -> f64 {
+        if let Some((b, t)) = self.flat {
+            return b * t * if self.core.is_some() { 2.0 } else { 1.0 };
+        }
         let (ro, ri) = self.radii();
         std::f64::consts::PI * (ro * ro - ri * ri)
     }
 
-    /// Its second moment of area about a line across it (m⁴); twice that is its
-    /// torsion constant, a round section's.
+    /// Its second moment of area about a line across it (m⁴; a strip's, bending
+    /// across its thickness, the weak way: taken for both).
     pub fn inertia(&self) -> f64 {
+        if let Some((b, t)) = self.flat {
+            // (A sandwich: its two faces this far apart, and their own.)
+            return match self.spacing() {
+                Some(d) => b * t * d * d / 2.0 + b * t.powi(3) / 6.0,
+                None => b * t.powi(3) / 12.0,
+            };
+        }
         let (ro, ri) = self.radii();
         std::f64::consts::PI / 4.0 * (ro.powi(4) - ri.powi(4))
     }
@@ -72,6 +148,9 @@ pub struct Member {
     pub b: usize,
     pub section: Section,
     pub material: Material,
+    /// Pinned at its end at `a`, at `b`: free to turn there (no bending carried
+    /// through; it still pushes, pulls and twists), as a post a floor rests on.
+    pub pinned: [bool; 2],
 }
 
 impl Member {
@@ -105,6 +184,13 @@ pub struct Forces {
     pub axial: f64,
     pub bending: f64,
     pub torsion: f64,
+    /// Its bending turned the weak way (across a strip's thickness) and edgewise
+    /// (in a strip's own plane), each its biggest at either end (N m).
+    pub across: f64,
+    pub edgewise: f64,
+    /// Its shear across it the weak way (across a strip's thickness), its biggest
+    /// at either end (N).
+    pub shear: f64,
 }
 
 /// How hard a member is worked: its stress over what it breaks at (its tensile
@@ -136,19 +222,29 @@ pub struct Loose;
 /// Its stress at the surface (Pa): its pull or push over its area, and its
 /// bending at its outer edge.
 fn stress(f: &Forces, s: &Section) -> f64 {
-    f.axial.abs() / s.area() + f.bending * s.diameter * 0.5 / s.inertia()
+    match s.flat {
+        // (A strip: bent across its thickness; it floats in its plane.)
+        Some(_) => f.across * s.reach() / s.inertia(),
+        None => f.axial.abs() / s.area() + f.bending * s.reach() / s.inertia(),
+    }
 }
 
 /// How hard member `m` is worked by `f`, `length` long, with safety factor `sf`.
 pub fn work(m: &Member, f: Forces, length: f64, sf: f64) -> Work {
     let sigma = stress(&f, &m.section);
     let euler = std::f64::consts::PI.powi(2) * m.material.stiffness * m.section.inertia() / (length * length).max(1e-9);
-    let push = (-f.axial).max(0.0);
+    let push = if m.section.flat.is_some() { 0.0 } else { (-f.axial).max(0.0) };
     let (strength, buckling) = (sigma / m.material.tensile_strength, push / euler);
+    // (A sandwich's core sheared: its shear over the width by the faces' spacing,
+    // against what the core takes.)
+    let core = match (m.section.core, m.section.flat, m.section.spacing()) {
+        (Some(c), Some((b, _)), Some(d)) => f.shear / (b * d) / c.shear_strength.max(1.0),
+        _ => 0.0,
+    };
     Work {
         forces: f,
-        breaking: strength.max(buckling),
-        design: (sigma * sf / m.material.yield_strength).max(push * sf / euler),
+        breaking: strength.max(buckling).max(core),
+        design: (sigma * sf / m.material.yield_strength).max(push * sf / euler).max(core * sf),
         buckles: buckling > strength,
     }
 }
@@ -156,20 +252,15 @@ pub fn work(m: &Member, f: Forces, length: f64, sf: f64) -> Work {
 /// The forces in each member of `frame` under `case` (none for a member left out
 /// by `gone`).
 pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<Forces>>, Loose> {
-    // (Only the joints members reach: six ways each.)
+    // (Only the joints members reach: six ways each; numbered so joints a member
+    // joins are near each other (reverse Cuthill-McKee), its stiffness a narrow
+    // band about its diagonal.)
     let live: Vec<usize> = (0..frame.members.len()).filter(|&k| !gone.get(k).copied().unwrap_or(false)).collect();
-    let mut index = vec![usize::MAX; frame.joints.len()];
-    let mut n = 0;
-    for &k in &live {
-        for j in [frame.members[k].a, frame.members[k].b] {
-            if index[j] == usize::MAX {
-                index[j] = n;
-                n += 1;
-            }
-        }
-    }
+    let index = numbering(frame, &live);
+    let n = index.iter().filter(|&&i| i != usize::MAX).count();
     let dof = n * 6;
-    let mut k_all = vec![0.0f64; dof * dof];
+    let half = live.iter().map(|&k| index[frame.members[k].a].abs_diff(index[frame.members[k].b])).max().unwrap_or(0) * 6 + 5;
+    let mut k_all = Band::new(dof, half);
     let mut locals = Vec::with_capacity(live.len());
     for &k in &live {
         let m = &frame.members[k];
@@ -180,7 +271,9 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         for r in 0..12 {
             for c in 0..12 {
                 let (gr, gc) = (at[r / 6] + r % 6, at[c / 6] + c % 6);
-                k_all[gr * dof + gc] += kg[r][c];
+                if gc <= gr {
+                    *k_all.at(gr, gc) += kg[r][c];
+                }
             }
         }
         locals.push((k, kl, t, at));
@@ -194,8 +287,11 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         }
     }
     // (Held: those ways fixed, by a stiff spring there; the rest free.)
-    let big = k_all.iter().fold(0.0f64, |a, v| a.max(v.abs())).max(1.0) * 1e8;
-    let mut fix = |dof_at: usize| k_all[dof_at * dof + dof_at] += big;
+    // (The frame's own stiffest way, before the holds: what "next to nothing" is
+    // measured against, not the holds' springs.)
+    let stiffest = (0..dof).map(|r| k_all.get(r, r).abs()).fold(0.0f64, f64::max);
+    let big = k_all.v.iter().fold(0.0f64, |a, v| a.max(v.abs())).max(1.0) * 1e8;
+    let mut fix = |dof_at: usize| *k_all.at(dof_at, dof_at) += big;
     for &j in &case.held {
         if index[j] != usize::MAX {
             for d in 0..3 {
@@ -208,7 +304,7 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
             fix(index[j] * 6 + d);
         }
     }
-    let u = gauss(k_all, f, dof)?;
+    let u = k_all.solve(f, stiffest * 1e-16)?;
     let mut out = vec![None; frame.members.len()];
     for (k, kl, t, at) in locals {
         let mut ug = [0.0; 12];
@@ -224,7 +320,7 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         }
         let fl: Vec<f64> = (0..12).map(|r| (0..12).map(|c| kl[r][c] * ul[c]).sum()).collect();
         let moment = |a: f64, b: f64| (a * a + b * b).sqrt();
-        out[k] = Some(Forces { axial: fl[6], bending: moment(fl[4], fl[5]).max(moment(fl[10], fl[11])), torsion: fl[3].abs() });
+        out[k] = Some(Forces { axial: fl[6], bending: moment(fl[4], fl[5]).max(moment(fl[10], fl[11])), torsion: fl[3].abs(), across: fl[5].abs().max(fl[11].abs()), edgewise: fl[4].abs().max(fl[10].abs()), shear: fl[1].abs().max(fl[7].abs()) });
     }
     Ok(out)
 }
@@ -280,7 +376,7 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
     let t = [x.to_array(), y.to_array(), z.to_array()];
     let (e, g) = (m.material.stiffness, m.material.shear);
     let (a, i) = (m.section.area(), m.section.inertia());
-    let j = 2.0 * i;
+    let j = m.section.torsion();
     let mut k = [[0.0; 12]; 12];
     let mut set = |r: usize, c: usize, v: f64| {
         k[r][c] += v;
@@ -288,16 +384,21 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
             k[c][r] += v;
         }
     };
-    let (ea, gj) = (e * a / l, g * j / l);
+    // (A strip floats in its plane: barely any stiffness along it or edgewise.)
+    let float = if m.section.flat.is_some() { 1e-4 } else { 1.0 };
+    let (ea, gj) = (e * a / l * float, g * j / l);
     set(0, 0, ea);
     set(6, 6, ea);
     set(0, 6, -ea);
     set(3, 3, gj);
     set(9, 9, gj);
     set(3, 9, -gj);
-    // (Bending in its two planes: across y (turning about z), across z (about y).)
-    let (k1, k2, k3, k4) = (12.0 * e * i / l.powi(3), 6.0 * e * i / (l * l), 4.0 * e * i / l, 2.0 * e * i / l);
-    for (v, w, s) in [(1usize, 5usize, 1.0f64), (2, 4, -1.0)] {
+    // (Bending in its two planes: across y (turning about z), across z (about y). A
+    // strip lies flat: across y it bends across its thickness (weak), across z
+    // edgewise (strong).)
+    let edgewise = if m.section.flat.is_some() { m.section.edgewise() * float } else { i };
+    for (v, w, s, i) in [(1usize, 5usize, 1.0f64, i), (2, 4, -1.0, edgewise)] {
+        let (k1, k2, k3, k4) = (12.0 * e * i / l.powi(3), 6.0 * e * i / (l * l), 4.0 * e * i / l, 2.0 * e * i / l);
         set(v, v, k1);
         set(v + 6, v + 6, k1);
         set(v, v + 6, -k1);
@@ -308,6 +409,29 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
         set(w, w, k3);
         set(w + 6, w + 6, k3);
         set(w, w + 6, k4);
+    }
+    // (A pinned end: its two bending turns condensed out, one at a time; it carries
+    // no moment there.)
+    for (end, pinned) in m.pinned.into_iter().enumerate() {
+        if !pinned {
+            continue;
+        }
+        for r in [4 + 6 * end, 5 + 6 * end] {
+            let krr = k[r][r];
+            if krr.abs() < 1e-30 {
+                continue;
+            }
+            let row = k[r];
+            for i in 0..12 {
+                for j in 0..12 {
+                    k[i][j] -= row[i] * row[j] / krr;
+                }
+            }
+            k[r] = [0.0; 12];
+            for row in &mut k {
+                row[r] = 0.0;
+            }
+        }
     }
     (k, t)
 }
@@ -320,40 +444,113 @@ fn to_global(kl: &[[f64; 12]; 12], t: &[[f64; 3]; 3]) -> [[f64; 12]; 12] {
     std::array::from_fn(|r| std::array::from_fn(|c| (0..12).map(|m| tt(m, r) * kt[m][c]).sum()))
 }
 
-/// `a x = b` for x (`a` n by n), by elimination with the largest pivot; a pivot
-/// next to nothing beside its way's own stiffness (its diagonal before: what holds
-/// that joint that way) means it moves freely.
-fn gauss(mut a: Vec<f64>, mut b: Vec<f64>, n: usize) -> Result<Vec<f64>, Loose> {
-    let diag: Vec<f64> = (0..n).map(|k| a[k * n + k].abs()).collect();
-    let floor = diag.iter().fold(0.0f64, |m, v| m.max(*v)) * 1e-16;
-    for col in 0..n {
-        let p = (col..n).max_by(|&r, &s| a[r * n + col].abs().total_cmp(&a[s * n + col].abs())).unwrap_or(col);
-        if a[p * n + col].abs() <= (diag[col] * 1e-9).max(floor) {
-            return Err(Loose);
+/// The joints `live` members reach, numbered (reverse Cuthill-McKee: breadth
+/// first from the least joined, each joint's neighbours fewest-joined first, the
+/// order reversed); `usize::MAX` for the rest.
+fn numbering(frame: &Frame, live: &[usize]) -> Vec<usize> {
+    let mut next: Vec<Vec<usize>> = vec![Vec::new(); frame.joints.len()];
+    for &k in live {
+        let m = &frame.members[k];
+        if m.a != m.b {
+            next[m.a].push(m.b);
+            next[m.b].push(m.a);
+        } else {
+            next[m.a].push(m.a);
         }
-        if p != col {
-            for c in 0..n {
-                a.swap(p * n + c, col * n + c);
-            }
-            b.swap(p, col);
+    }
+    for v in &mut next {
+        v.sort_unstable();
+        v.dedup();
+    }
+    let used: Vec<usize> = (0..frame.joints.len()).filter(|&j| !next[j].is_empty()).collect();
+    let mut seen = vec![false; frame.joints.len()];
+    let mut order = Vec::with_capacity(used.len());
+    let mut starts = used.clone();
+    starts.sort_by_key(|&j| next[j].len());
+    for s in starts {
+        if seen[s] {
+            continue;
         }
-        let piv = a[col * n + col];
-        for r in col + 1..n {
-            let f = a[r * n + col] / piv;
-            if f != 0.0 {
-                for c in col..n {
-                    a[r * n + c] -= f * a[col * n + c];
-                }
-                b[r] -= f * b[col];
+        seen[s] = true;
+        let mut at = order.len();
+        order.push(s);
+        while at < order.len() {
+            let j = order[at];
+            at += 1;
+            let mut ns: Vec<usize> = next[j].iter().copied().filter(|&q| !seen[q]).collect();
+            ns.sort_by_key(|&q| next[q].len());
+            for q in ns {
+                seen[q] = true;
+                order.push(q);
             }
         }
     }
-    let mut x = vec![0.0; n];
-    for r in (0..n).rev() {
-        let s: f64 = (r + 1..n).map(|c| a[r * n + c] * x[c]).sum();
-        x[r] = (b[r] - s) / a[r * n + r];
+    let mut index = vec![usize::MAX; frame.joints.len()];
+    for (i, &j) in order.iter().rev().enumerate() {
+        index[j] = i;
     }
-    Ok(x)
+    index
+}
+
+/// A symmetric matrix kept as its lower band: row i's entries from `half` left of
+/// its diagonal to it.
+struct Band {
+    n: usize,
+    half: usize,
+    v: Vec<f64>,
+}
+
+impl Band {
+    fn new(n: usize, half: usize) -> Self {
+        let half = half.min(n.saturating_sub(1));
+        Band { n, half, v: vec![0.0; n * (half + 1)] }
+    }
+
+    /// Entry (r, c), c <= r and within the band.
+    fn at(&mut self, r: usize, c: usize) -> &mut f64 {
+        &mut self.v[r * (self.half + 1) + (c + self.half - r)]
+    }
+
+    fn get(&self, r: usize, c: usize) -> f64 {
+        if c + self.half < r { 0.0 } else { self.v[r * (self.half + 1) + (c + self.half - r)] }
+    }
+
+    /// `self x = b` for x, by L D L^T within the band; a pivot next to nothing beside
+    /// its way's own stiffness (its diagonal before: what holds that joint that way),
+    /// or below `floor`, means it moves freely.
+    fn solve(mut self, mut b: Vec<f64>, floor: f64) -> Result<Vec<f64>, Loose> {
+        let (n, h) = (self.n, self.half);
+        let diag: Vec<f64> = (0..n).map(|k| self.get(k, k).abs()).collect();
+        let mut d = vec![0.0; n];
+        for j in 0..n {
+            // (Row j of L, and its pivot.)
+            let lo = j.saturating_sub(h);
+            for c in lo..j {
+                let lo2 = c.saturating_sub(h).max(lo);
+                let s: f64 = (lo2..c).map(|k| self.get(j, k) * self.get(c, k) * d[k]).sum();
+                let v = (self.get(j, c) - s) / d[c];
+                *self.at(j, c) = v;
+            }
+            let s: f64 = (lo..j).map(|k| self.get(j, k) * self.get(j, k) * d[k]).sum();
+            d[j] = self.get(j, j) - s;
+            if d[j] <= (diag[j] * 1e-9).max(floor) {
+                return Err(Loose);
+            }
+        }
+        // (L y = b, D z = y, L^T x = z.)
+        for r in 0..n {
+            let s: f64 = (r.saturating_sub(h)..r).map(|c| self.get(r, c) * b[c]).sum();
+            b[r] -= s;
+        }
+        for r in 0..n {
+            b[r] /= d[r];
+        }
+        for r in (0..n).rev() {
+            let s: f64 = (r + 1..(r + h + 1).min(n)).map(|c| self.get(c, r) * b[c]).sum();
+            b[r] -= s;
+        }
+        Ok(b)
+    }
 }
 
 #[cfg(test)]
@@ -361,14 +558,14 @@ mod tests {
     use super::*;
 
     const STEEL: Material = Material { stiffness: 200e9, shear: 77e9, yield_strength: 1300e6, tensile_strength: 1420e6, density: 7850.0 };
-    const TUBE: Section = Section { diameter: 0.15, wall: 0.01 };
+    const TUBE: Section = Section { diameter: 0.15, wall: 0.01, flat: None, core: None };
 
     /// A cantilever bends as the textbook has it (tip load P, length L: the
     /// moment at its root P L), a column pulled carries its load, and one past
     /// its strength breaks; one held at nothing is loose.
     #[test]
     fn beams_bear_and_break() {
-        let frame = Frame { joints: vec![DVec3::ZERO, DVec3::new(2.0, 0.0, 0.0)], members: vec![Member { a: 0, b: 1, section: TUBE, material: STEEL }] };
+        let frame = Frame { joints: vec![DVec3::ZERO, DVec3::new(2.0, 0.0, 0.0)], members: vec![Member { pinned: [false; 2], a: 0, b: 1, section: TUBE, material: STEEL }] };
         let p = 1000.0;
         let case = Case { loads: vec![(1, DVec3::new(0.0, -p, 0.0))], anchor: Some(0), ..Default::default() };
         let f = solve(&frame, &case, &[]).unwrap()[0].unwrap();
@@ -378,5 +575,18 @@ mod tests {
         let hard = Case { loads: vec![(1, DVec3::new(TUBE.area() * 1500e6, 0.0, 0.0))], anchor: Some(0), ..Default::default() };
         assert_eq!(collapse(&frame, &hard, 1.5).ok().map(|o| o.members[0].broken), Some(Some(1)));
         assert_eq!(solve(&frame, &Case { loads: vec![(1, DVec3::Y)], ..Default::default() }, &[]), Err(Loose));
+        // (A sandwich panel strip, 1 m wide, 0.5 mm faces either side of a 25 mm
+        // core: its faces carry the moment as a couple, P L / (b t d); its core the
+        // shear, P / (b d).)
+        let core = Core { depth: 0.025, shear_strength: 1.0e6 };
+        let panel = Section::panel(1.0, 0.0005, core);
+        let deck = Frame { members: vec![Member { section: panel, ..frame.members[0] }], ..frame.clone() };
+        let f = solve(&deck, &case, &[]).unwrap()[0].unwrap();
+        let d = 0.0255;
+        let w = work(&deck.members[0], f, 2.0, 1.0);
+        let face = p * 2.0 / (1.0 * 0.0005 * d);
+        assert!((w.breaking * STEEL.tensile_strength / face - 1.0).abs() < 0.03, "{w:?} {face}");
+        let sheared = work(&deck.members[0], Forces { shear: 0.5 * core.shear_strength * d, ..Forces::default() }, 2.0, 1.0);
+        assert!((sheared.breaking - 0.5).abs() < 1e-9, "{sheared:?}");
     }
 }

@@ -30,6 +30,9 @@ struct Globals {
     world_at: vec4<f32>,
     // The scene's frame to that world's own (its turn undone), for its clouds.
     world_to_body: mat4x4<f32>,
+    // The ground cascade (the ground's patches alone, tens of kilometres round the eye);
+    // shadow2.z: a texel of it (metres), shadow2.w: in use.
+    shadow_ground: mat4x4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -201,6 +204,27 @@ fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
     if (g.shadow.z == 0.0) {
         return 1.0;
     }
+    return sunlit_near(p, n) * sunlit_ground(p, n);
+}
+
+// What the ground cascade says: the shadows of mountains, kilometres long.
+// (Its texels are coarse: the ground offsets further along its normal.)
+fn sunlit_ground(p: vec3<f32>, n: vec3<f32>) -> f32 {
+    if (g.shadow2.w == 0.0) {
+        return 1.0;
+    }
+    let s = g.shadow_ground * vec4<f32>(p + n * g.shadow2.z * 2.5, 1.0);
+    let c = vec2<f32>(s.x * 0.5 + 0.5, 0.5 - s.y * 0.5);
+    if (all(c > vec2<f32>(0.0)) && all(c < vec2<f32>(1.0)) && s.z > 0.0 && s.z < 1.0) {
+        // (Faded out toward the box's edge, so its end isn't a line.)
+        let edge = min(min(c.x, 1.0 - c.x), min(c.y, 1.0 - c.y));
+        return mix(1.0, pcf(c, 3, s.z), smoothstep(0.0, 0.1, edge));
+    }
+    return 1.0;
+}
+
+// What the fine cascades say (what casts near the eye: ships, stations, rocks).
+fn sunlit_near(p: vec3<f32>, n: vec3<f32>) -> f32 {
     if (g.shadow2.y > 0.0) {
         let tight = g.shadow_tight * vec4<f32>(p + n * g.shadow2.x * 1.5, 1.0);
         let c = vec2<f32>(tight.x * 0.5 + 0.5, 0.5 - tight.y * 0.5);
@@ -620,7 +644,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         }
     }
     let light = min(sun * seen + in.fill, vec3<f32>(4.0));
-    if (g.shadow.w > 0.0 && seen < 0.5 && max(in.sun.r, max(in.sun.g, in.sun.b)) > 0.0) {
+    if (g.shadow.w > 0.0 && seen < 0.5 && max(sun.r, max(sun.g, sun.b)) > 0.0) {
         return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
     }
     var c = albedo.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
@@ -636,7 +660,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // in with the maps.
     if (in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5 && land < 0.5) {
         let calm = textureSampleLevel(world_spec, world_soft, world_uv(dir), world_lod(textureDimensions(world_spec).x, footprint));
-        if (calm.a > 0.5) {
+        // (Open water only: the map is 0 on land and on sea ice, and 0.35..1 on open water. A
+        // one-channel map reads alpha 1 everywhere, so not that.)
+        if (calm.r > 0.1) {
             let up = normalize(in.up);
             var si: SeaIn;
             si.depth_m = max(-ground.r * in.globe.z, 0.5);

@@ -19,6 +19,11 @@ pub const TICK_BUDGET: usize = 8;
 
 /// Traffic control's look at who's where, every this many ticks.
 const PRESENCE_EVERY: u64 = 6;
+/// Ticks between reading the ground ahead of ships low over a baked world (see `ground_ahead`).
+const GROUND_AHEAD_EVERY: u64 = 30;
+/// How low over its ground a ship has its ground read ahead (m), and how far ahead (s).
+const GROUND_AHEAD_BELOW: f64 = 30_000.0;
+const GROUND_AHEAD_SECONDS: [f64; 3] = [0.0, 3.0, 8.0];
 
 /// A ship on its final run this close to the station or gate lets the next one start (m).
 const CORRIDOR_RELEASE: f64 = 1_500.0;
@@ -355,6 +360,11 @@ impl Universe {
         // Traffic control looks around ten times a second (pads freed when
         // their ships leave, corridors when they're through): plenty, at a
         // sixth of the cost.
+        // The ground under ships low over a baked world, and where they'll be in a few seconds,
+        // read ahead of the physics (twice a second).
+        if self.tick.is_multiple_of(GROUND_AHEAD_EVERY) {
+            universe_prof::time("sim/ground ahead", || self.ground_ahead());
+        }
         if self.tick.is_multiple_of(PRESENCE_EVERY) {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
@@ -804,6 +814,29 @@ impl Universe {
         self.atc.release(crate::combat::PLAYER);
         let mut events = Vec::new();
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
+    }
+
+    /// Every ship low over a baked world: the fine tiles under it now and where it's heading,
+    /// read in the background (see `Terrain::prefetch`), so the physics doesn't wait on them.
+    fn ground_ahead(&mut self) {
+        let t = self.world.time;
+        let ships: Vec<(usize, DVec3, DVec3)> = std::iter::once((self.ship_system, self.ship.position, self.ship.velocity)).chain(self.crafts.iter().map(|c| (c.system, c.ship.position, c.ship.velocity))).collect();
+        let mut systems: std::collections::HashMap<usize, (Arc<StarSystem>, Arc<Vec<DVec3>>)> = Default::default();
+        for (system, p, v) in ships {
+            let (sys, positions) = systems.entry(system).or_insert_with(|| (self.world.system(system), self.world.rails_at(system, t)));
+            let i = sys.dominant(p, positions);
+            let b = &sys.bodies[i];
+            let Some(ground) = b.terrain.as_ref().filter(|g| g.baked()) else { continue };
+            let c = positions[i];
+            if (p - c).length() - b.rail.radius > GROUND_AHEAD_BELOW {
+                continue;
+            }
+            let rel = v - sys.velocity(i, t);
+            let turn = b.rotation(t).inverse();
+            for dt in GROUND_AHEAD_SECONDS {
+                ground.prefetch(turn * (p + rel * dt - c).normalize());
+            }
+        }
     }
 
     /// Give the ship up: a new one from the insurer (see `insure`).

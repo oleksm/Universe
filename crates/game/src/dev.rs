@@ -16,6 +16,10 @@ pub fn apply(app: &mut App, name: &str) {
     if matches!(app.engine.universe().ship.state, ShipState::Landed { .. }) && app.engine.universe().world.time < 1.0 {
         app.engine.universe().start_in_flight();
     }
+    // (UNIVERSE_HOURS: the scenario that many hours on, for the sun somewhere else.)
+    if let Some(h) = std::env::var("UNIVERSE_HOURS").ok().and_then(|h| h.parse::<f64>().ok()) {
+        app.engine.universe().world.time += h * 3600.0;
+    }
     let home = app.engine.universe().world.home_system;
     let sys = app.engine.universe().system(home);
     let t = app.engine.universe().world.time;
@@ -462,6 +466,23 @@ pub fn apply(app: &mut App, name: &str) {
                     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
                 }
             }
+        }
+        "worlds" => {
+            // The planet studio, gone to UNIVERSE_WORLD (a world id: TRD1 Harvest by default), in
+            // UNIVERSE_LOOK (colour, geology, energy).
+            let mut studio = crate::planet_studio::PlanetStudio::open();
+            let want = std::env::var("UNIVERSE_WORLD").unwrap_or_else(|_| "TRD1".into());
+            studio.selected = studio.list.iter().position(|r| r.world_id == want).unwrap_or(0);
+            app.world_look = match std::env::var("UNIVERSE_LOOK").as_deref() {
+                Ok("geology") => crate::planet_studio::Look::Geology,
+                Ok("energy") => crate::planet_studio::Look::Energy,
+                _ => crate::planet_studio::Look::Colour,
+            };
+            if let Some(r) = studio.list.get(studio.selected).cloned() {
+                let _ = crate::planet_studio::go_to(app, &r);
+            }
+            app.observer.yaw = 2.2;
+            app.planet_studio = Some(studio);
         }
         "rig" => {
             // Hadley Orbital Works, a rig with no model: its box, from a little way off.
@@ -1376,6 +1397,11 @@ pub fn apply(app: &mut App, name: &str) {
             if let Ok(id) = std::env::var("UNIVERSE_OPEN") {
                 y.interior_mut().open_saved(&id);
             }
+            // (UNIVERSE_STAND=x,y,z,yaw, or 1: the design on its test stand.)
+            if let Ok(v) = std::env::var("UNIVERSE_STAND") {
+                let n: Vec<f64> = v.split(',').filter_map(|x| x.trim().parse().ok()).collect();
+                y.interior_mut().stand_test(<[f64; 4]>::try_from(n).ok());
+            }
             if let Ok(d) = std::env::var("UNIVERSE_DIALOG") {
                 y.interior_mut().show_dialog(d == "open");
             }
@@ -1387,6 +1413,10 @@ pub fn apply(app: &mut App, name: &str) {
             // (UNIVERSE_FRAME: the FRAME tool in hand.)
             if std::env::var_os("UNIVERSE_FRAME").is_some() {
                 y.interior_mut().frame_tool();
+            }
+            // (UNIVERSE_DECKMODE: the FRAME tool in DECK mode.)
+            if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
+                y.interior_mut().deck_tool();
             }
             // (UNIVERSE_DECKS: the deck studio open instead.)
             if std::env::var_os("UNIVERSE_DECKS").is_some() {

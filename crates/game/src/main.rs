@@ -24,6 +24,7 @@ mod scene;
 mod interior;
 mod shipyard;
 mod studio;
+mod planet_studio;
 mod standards;
 mod sound;
 mod terrain_lod;
@@ -106,6 +107,7 @@ pub enum Layer {
     GalaxyMap,
     Market,
     Economy,
+    Worlds,
     News,
     Shipyard,
     Graphics,
@@ -199,6 +201,9 @@ pub struct App {
     pub nav_map: Option<navmap::NavMap>,
     /// The economy panel, when open (5).
     pub economy_panel: Option<economy::EconomyPanel>,
+    /// The planet studio (WORLDS), while open; and how a baked world's ground is coloured.
+    pub planet_studio: Option<planet_studio::PlanetStudio>,
+    pub world_look: planet_studio::Look,
     /// The galaxy map, when open (U from the navigation map).
     pub galaxy_map: Option<galaxymap::GalaxyMap>,
     /// The star systems we've been to (kept in the save).
@@ -383,6 +388,8 @@ impl App {
             nav_map: None,
             galaxy_map: None,
             economy_panel: None,
+            planet_studio: None,
+            world_look: Default::default(),
             explored: Default::default(),
             market: None,
             shipyard: None,
@@ -599,6 +606,8 @@ impl App {
             Layer::Market
         } else if self.economy_panel.is_some() {
             Layer::Economy
+        } else if self.planet_studio.is_some() {
+            Layer::Worlds
         } else if self.news_panel {
             Layer::News
         } else if self.galaxy_map.is_some() {
@@ -632,6 +641,10 @@ impl App {
         let seated_pilot = self.mode == Mode::Pilot && self.v.crew.seated();
         if keys::pressed(input, keys::Act::Economy) {
             self.economy_panel = Some(Default::default());
+            return;
+        }
+        if self.mode == Mode::Observer && keys::pressed(input, keys::Act::Worlds) {
+            self.planet_studio = Some(planet_studio::PlanetStudio::open());
             return;
         }
         if input.pressed(KeyCode::F11) {
@@ -1132,11 +1145,11 @@ impl App {
             {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
                 self.world_maps.insert((origin, i), slot.clone());
-                let t = t.clone();
+                let (t, look) = (t.clone(), self.world_look);
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
-                    let names = ["globe_color.jpg", "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
+                    let names = [look.file(), "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
                     let mut k = 0;
                     let encoded = names.map(|name| {
                         let e = t.bake_image(name).and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
@@ -1150,6 +1163,7 @@ impl App {
                         let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
                         let [a, b, c3] = c.maps;
                         maps.clouds_year = Some((c.year_days, c.enso));
+                        maps.clouds_format = c.format;
                         maps = maps.with_clouds(Some([img(a), img(b), img(c3)]));
                     }
                     log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
@@ -1332,6 +1346,11 @@ impl Game for App {
             Layer::Economy => {
                 if !economy::input(self, ctx) {
                     self.economy_panel = None;
+                }
+            }
+            Layer::Worlds => {
+                if !planet_studio::input(self, ctx) {
+                    self.planet_studio = None;
                 }
             }
             Layer::News => self.news_panel = newspanel::input(self, ctx),
