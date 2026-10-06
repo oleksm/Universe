@@ -223,6 +223,32 @@ fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
     assert!(v.age.is_some_and(|a| a > 0.0), "{:?}", v.age);
 }
 
+/// An outlaw's route: refused at the station (outside Treistun's law), it gives that stop up and
+/// goes on to the next, not asking again and again.
+#[test]
+fn an_outlaw_gives_up_a_stop_that_refuses_it() {
+    let mut u = bench(1);
+    let (sys, pos) = positions(&mut u);
+    let home = u.ship_system;
+    let station = sys.station().unwrap();
+    let t = u.world.time;
+    let c = &mut u.crafts[0];
+    c.ship.state = ShipState::Flying;
+    c.ship.position = pos[station] + DVec3::new(0.0, 0.0, 10_000.0);
+    c.ship.velocity = sys.velocity(station, t);
+    let id = 1; // (craft 0)
+    u.law.outlaw(id as _, home, t + 1e9);
+    {
+        let mut pilots = u.pilots();
+        let r = &mut pilots[0].avionics.route;
+        r.stops = vec![universe_sim::Stop { system: home, target: NavTarget::Station(station) }, universe_sim::Stop { system: home, target: NavTarget::Spaceport(0) }];
+        r.next = 0;
+        r.active = true;
+    }
+    run(&mut u, 2.0, |u| u.pilots()[0].avionics.route.next > 0);
+    assert_eq!(u.pilots()[0].avionics.route.next, 1, "on to the next stop");
+}
+
 /// One settler made a miner (its route: a field of the home system, then the
 /// station), flying among the field, 15 km from its remnant.
 fn miner_by_its_field() -> Universe {

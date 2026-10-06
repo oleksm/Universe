@@ -20,6 +20,8 @@ pub enum Event {
     RouteComplete,
     /// A route stop can't be reached (no gate path, or it no longer exists).
     RouteBlocked { reason: String },
+    /// A route stop given up: refused clearance there.
+    RouteSkipped { name: String },
     Autopilot { on: bool },
     NavTargetSet { name: Option<String> },
     /// The follow program: now keeping at / orbiting at this range (m), or off.

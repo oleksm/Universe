@@ -286,6 +286,17 @@ impl Avionics {
             None => {
                 if self.request_clearance(bus, events) {
                     self.toggle_autopilot(bus, events);
+                } else {
+                    // Refused (outside its law, its enemy, too heavy for its ground, the
+                    // crossing unpaid): that stop is given up, and the route goes on.
+                    let sys = bus.star_system();
+                    events.push(Event::RouteSkipped { name: stop_name(&sys, stop) });
+                    self.nav_target = None;
+                    self.route.next += 1;
+                    if self.route.next >= self.route.stops.len() {
+                        self.route.active = false;
+                        events.push(Event::RouteComplete);
+                    }
                 }
             }
         }

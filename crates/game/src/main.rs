@@ -1044,6 +1044,7 @@ impl App {
                 Event::RouteStop { number, name } => format!("ROUTE STOP {number} - {name}"),
                 Event::RouteComplete => "ROUTE COMPLETE".into(),
                 Event::RouteBlocked { reason } => format!("ROUTE STOPPED - {reason}"),
+                Event::RouteSkipped { name } => format!("ROUTE: {} REFUSED US - ON TO THE NEXT STOP", name.to_uppercase()),
                 Event::Ship(ShipEvent::Bumped) => "HULL CONTACT!".into(),
                 Event::Ship(ShipEvent::Launched { station }) => format!("LAUNCHED FROM {station}"),
                 Event::Ship(ShipEvent::Collided { with, speed }) => format!("COLLISION WITH {} AT {speed:.1} M/S", self.ship_name(with)),
