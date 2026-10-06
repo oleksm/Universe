@@ -178,6 +178,7 @@ pub struct Interior {
     /// one picked, where the member being laid starts; what the frame bears, as last
     /// worked out (for which plan), and being worked out (on a thread of its own).
     stock: usize,
+    stock_top: usize,
     case: Option<usize>,
     beam_hover: Option<usize>,
     beam_pick: Option<usize>,
@@ -403,13 +404,16 @@ struct Beam {
 pub struct Stock {
     key: String,
     name: String,
+    /// What it's made of (the material's key): AUTO-SIZE keeps to it.
+    of: String,
     section: universe_sim::world::frame::Section,
     material: universe_sim::world::frame::Material,
     per_metre: f64,
 }
 
 /// Every tube and bar in the registry whose material says how it bears (its
-/// stiffness, yield and tensile strength, density), lightest a metre first.
+/// stiffness, yield and tensile strength, density), by material, lightest a
+/// metre first.
 fn stocks() -> &'static [Stock] {
     static STOCKS: std::sync::OnceLock<Vec<Stock>> = std::sync::OnceLock::new();
     STOCKS.get_or_init(|| {
@@ -424,9 +428,10 @@ fn stocks() -> &'static [Stock] {
             let (e, y, t, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
             let material = Material { stiffness: e, shear, yield_strength: y, tensile_strength: t, density: rho };
-            Some(Stock { key: s.identity.key.clone(), name: s.identity.name.to_uppercase(), per_metre: section.area() * rho, section, material })
+            Some(Stock { key: s.identity.key.clone(), name: s.identity.name.to_uppercase(), of: of.clone(), per_metre: section.area() * rho, section, material })
         }).collect();
-        out.sort_by(|a, b| a.per_metre.total_cmp(&b.per_metre));
+        // (By material, lightest a metre first in each.)
+        out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_metre.total_cmp(&b.per_metre)));
         out
     })
 }
@@ -559,48 +564,64 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> Vec<Beam> {
     out
 }
 
-/// The members as AUTO-SIZE leaves them, and the rounds it took.
-type Sized = (Vec<Beam>, usize);
+/// The members as AUTO-SIZE leaves them, the rounds it took, and how many need more
+/// than the biggest tube their material comes in.
+type Sized = (Vec<Beam>, usize, usize);
 
-/// The plan's members sized: each round every load case worked out, each member
-/// past nine tenths of its design limit (or broken) cut from the next stock up,
-/// each under a third of it from the next down; until none is past it (or eight
-/// rounds); the last rounds only up. The members, and how many rounds it took.
+/// The plan's members sized: each round every load case worked out, and each
+/// member cut from the lightest tube of its material that would carry the forces
+/// it carries in each case at four fifths of its design limit (the biggest if none
+/// would); again, as the forces shift with the members' stiffness, until nothing
+/// changes (or `ROUNDS`; after the sixth, only bigger). The members, and the
+/// rounds it took.
 fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>) -> Sized {
-    let ladder: Vec<&str> = stocks().iter().filter(|s| s.section.wall < s.section.diameter * 0.5).map(|s| s.key.as_str()).collect();
+    use universe_sim::world::frame::{work, Member};
+    let sf = 1.5;
+    // (Each material's tubes its own ladder.)
+    let ladder_of = |key: &str| -> Vec<&'static Stock> {
+        let of = stocks().iter().find(|s| s.key == key).map(|s| s.of.as_str()).unwrap_or("");
+        stocks().iter().filter(|s| s.of == of && s.section.wall < s.section.diameter * 0.5).collect()
+    };
     let mut plan = plan.clone();
-    for round in 1..=8 {
+    for round in 1..=ROUNDS {
         let b = bearing(&plan, fit, spec, STANDARD_G);
-        let mut worst = vec![0.0f64; plan.beams.len()];
-        let mut any = false;
-        for (_, r) in &b.cases {
-            if let Ok(c) = r {
-                any = true;
-                for (k, o) in c.members.iter().enumerate() {
-                    worst[k] = worst[k].max(if o.broken.is_some() { 9.0 } else { o.work.design });
-                }
-            }
-        }
-        if !any {
-            return (plan.beams, round);
+        let cases: Vec<&universe_sim::world::frame::Collapse> = b.cases.iter().filter_map(|(_, r)| r.as_ref().ok()).collect();
+        if cases.is_empty() {
+            return (plan.beams, round, 0);
         }
         let mut changed = false;
-        for (k, beam) in plan.beams.iter_mut().enumerate() {
-            let Some(g) = ladder.iter().position(|s| *s == beam.stock) else { continue };
-            if worst[k] > 0.9 && g + 1 < ladder.len() {
-                beam.stock = ladder[g + 1].to_string();
-                changed = true;
-            } else if worst[k] < 0.33 && g > 0 && round <= 5 {
-                beam.stock = ladder[g - 1].to_string();
+        let mut maxed = 0;
+        // (Members the frame was built from, in order: those of stock it knows.)
+        let mut k = 0;
+        for beam in plan.beams.iter_mut() {
+            let Some(now) = stocks().iter().find(|s| s.key == beam.stock) else { continue };
+            let n = k;
+            k += 1;
+            let length = f64::from(beam.a.distance(beam.b));
+            let forces: Vec<universe_sim::world::frame::Forces> = cases.iter().filter_map(|c| c.members.get(n)).map(|o| o.work.forces).collect();
+            let needed = |s: &Stock| forces.iter().map(|f| work(&Member { a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
+            let ladder = ladder_of(&beam.stock);
+            let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
+                maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
+                ladder.last().copied()
+            });
+            if let Some(pick) = fits
+                && pick.key != beam.stock
+                && (round <= 6 || pick.per_metre > now.per_metre)
+            {
+                beam.stock = pick.key.clone();
                 changed = true;
             }
         }
-        if !changed {
-            return (plan.beams, round);
+        if !changed || round == ROUNDS {
+            return (plan.beams, round, maxed);
         }
     }
-    (plan.beams, 8)
+    (plan.beams, ROUNDS, 0)
 }
+
+/// The most rounds AUTO-SIZE takes.
+const ROUNDS: usize = 16;
 
 /// Loads in balance, free in flight: the `external` forces at joints, and each
 /// point mass's inertia as the whole speeds up and turns under them (inertia
@@ -2434,6 +2455,10 @@ fn stock_row(k: usize) -> (Vec2, Vec2) {
     (Vec2::new(p.x + 6.0, p.y + 82.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
 }
 
+/// The FRAME panel's stock list: how many rows show (the rest scrolled to with the
+/// wheel).
+const STOCK_ROWS: usize = 5;
+
 /// Where a frame's members can start or end besides its own joints: the landing
 /// pads, the main and lift nozzles, each placed module's corners and middle (and
 /// its faces' middles).
@@ -2930,7 +2955,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
     }
     // AUTO-SIZE done: its members put in (an undo step), if the plan's as it was.
     if let Some((plan, rx)) = &interior.sizing
-        && let Ok((beams, rounds)) = rx.try_recv()
+        && let Ok((beams, rounds, maxed)) = rx.try_recv()
     {
         if *plan == interior.plan {
             let before = interior.plan.clone();
@@ -2939,7 +2964,8 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
             interior.plan.beams = beams;
             interior.undo.push(before);
             interior.redo.clear();
-            interior.message = Some((format!("SIZED IN {rounds} ROUNDS: FRAME {:.1} T (WAS {:.1} T)", now / 1000.0, was / 1000.0), 6.0));
+            let short = if maxed > 0 { format!("; {maxed} NEED MORE THAN THEIR MATERIAL'S BIGGEST TUBE: TRY ANOTHER") } else { String::new() };
+            interior.message = Some((format!("SIZED IN {rounds} ROUNDS: FRAME {:.1} T (WAS {:.1} T){short}", now / 1000.0, was / 1000.0), 8.0));
         } else {
             interior.message = Some(("AUTO-SIZE DROPPED: THE PLAN CHANGED MEANWHILE".into(), 4.0));
         }
@@ -3072,7 +3098,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         // (FRAME: the stock new members are cut from, a row of its list (the picked
         // member's too); the case shown; the picked member taken out.)
         Tool::Frame => {
-            if pressed && let Some(k) = (0..stocks().len()).find(|&k| inside(stock_row(k), cursor)) {
+            if pressed && let Some(k) = (0..STOCK_ROWS).find(|&n| interior.stock_top + n < stocks().len() && inside(stock_row(n), cursor)).map(|n| interior.stock_top + n) {
                 interior.stock = k;
                 if let Some(b) = interior.beam_pick.and_then(|j| interior.plan.beams.get_mut(j)) {
                     b.stock = stocks()[k].key.clone();
@@ -3524,6 +3550,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         if interior.tool == Tool::Modules {
             let most = interior.fit.len().saturating_sub(FIT_ROWS);
             interior.fit_top = (interior.fit_top as f32 - input.scroll.signum() * 3.0).clamp(0.0, most as f32) as usize;
+        }
+        if interior.tool == Tool::Frame {
+            let most = stocks().len().saturating_sub(STOCK_ROWS);
+            interior.stock_top = (interior.stock_top as f32 - input.scroll.signum() * 2.0).clamp(0.0, most as f32) as usize;
         }
     } else if input.scroll != 0.0 {
         interior.distance = Some((distance * 0.88f32.powf(input.scroll)).clamp(radius * 0.05, radius * 8.0));
@@ -4096,8 +4126,12 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         // the case shown, how each case goes, what isn't carried, its members' mass.
         if interior.tool == Tool::Frame {
             frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), "STOCK                     KG/M  YIELD", LABEL.scale(0.7), 0.6);
-            for (k, st) in stocks().iter().enumerate() {
-                let (q, qc) = stock_row(k);
+            if stocks().len() > STOCK_ROWS {
+                let shown = format!("{}-{} OF {} (WHEEL)", interior.stock_top + 1, (interior.stock_top + STOCK_ROWS).min(stocks().len()), stocks().len());
+                frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 62.0), &shown, LABEL.scale(0.6), 0.6);
+            }
+            for (n, (k, st)) in stocks().iter().enumerate().skip(interior.stock_top).take(STOCK_ROWS).enumerate() {
+                let (q, qc) = stock_row(n);
                 let lit = interior.stock == k;
                 if lit {
                     frame.hud_rect(q, qc, PICKED.scale(0.18));
