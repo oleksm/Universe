@@ -991,7 +991,7 @@
 - { record: org.sunward-planters, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: who", sha: "0ad1aff13205f2db" }
 - { record: org.tallis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "334d70d5a7ad241b" }
 - { record: org.tolland, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "606b88aa03fbd49b" }
-- { record: org.treistun, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: story", sha: "e124235ed106c53e" }
+- { record: org.treistun, at: "2026-10-06T19:19:05Z", status: "", summary: "changed", sha: "e751696fc310545d" }
 - { record: org.treistun-exchange, at: "2026-10-06T18:25:49Z", status: "", summary: "changed: exchange", sha: "1bae48b326edf1f3" }
 - { record: org.treistun-freight, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: note", sha: "a8eeec6191b0aa55" }
 - { record: org.treistun-mutual, at: "2026-10-06T14:13:11Z", status: "", summary: "changed: insurance", sha: "573f66fec0f40ff5" }
@@ -1953,10 +1953,10 @@
 - { record: settlement.treistun.gate-to-liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c2241b8dea04cd02" }
 - { record: settlement.treistun.halden-camp, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: about, story", sha: "6168ae79ecfb971a" }
 - { record: settlement.treistun.port-aipika, at: "2026-10-06T19:01:21Z", status: "", summary: "changed: independents", sha: "68e91f2462811cf4" }
-- { record: settlement.treistun.port-eikir, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: about", sha: "3a084d02c6c95184" }
+- { record: settlement.treistun.port-eikir, at: "2026-10-06T19:19:05Z", status: "", summary: "changed: story", sha: "e34cb33619dc800a" }
 - { record: settlement.treistun.port-fabindum, at: "2026-10-06T19:01:21Z", status: "", summary: "changed: independents", sha: "ea4b1e8381e3914d" }
 - { record: settlement.treistun.port-lisaur, at: "2026-10-06T19:01:21Z", status: "", summary: "changed: independents", sha: "8e35b7a7735f59ca" }
-- { record: settlement.treistun.port-nacaubun, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: about, story", sha: "418c9b94f8a72aa8" }
+- { record: settlement.treistun.port-nacaubun, at: "2026-10-06T19:19:05Z", status: "", summary: "changed: about, story", sha: "bd74f32e9fd4c112" }
 - { record: settlement.treistun.port-seiwiti, at: "2026-10-06T19:01:21Z", status: "", summary: "changed: independents", sha: "631b5b788c77b5bf" }
 - { record: settlement.treistun.port-sirnendis, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: about", sha: "cd60c81ccb73b29d" }
 - { record: settlement.treistun.port-trethi, at: "2026-10-06T19:01:21Z", status: "", summary: "changed: census, independents", sha: "b095b3ffcf0d8926" }
