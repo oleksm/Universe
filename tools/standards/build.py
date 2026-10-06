@@ -2500,7 +2500,7 @@ for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _
     _baked.add(sv["world_id"])
     en, bk = b_.get("energy"), b_.get("bake")
     w_ = _index.get(sv["world_id"], {})
-    energy_s = (f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
+    energy_s = ("empty: no life, so no oil, gas or coal" if en and not (en.get("oil_fields") or en.get("gas_fields") or en.get("coalfields")) else f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
     surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else "none"
     rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s, ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
 for wid, w_ in sorted(_index.items()):

@@ -200,7 +200,7 @@ def install_store(root, replace):
         b = yaml.safe_load(open(f, encoding="utf-8")) or {}
         if b.get("survey"):
             sv, en, bk = b["survey"], b.get("energy"), b.get("bake")
-            print(f"  {b['identity']['name']:<10} {sv['world_id']:<6} {sv.get('deposits', 0):>6,} deposits  energy: {'yes' if en else 'none'}  surface: {'v' + str(bk['version']) if bk else 'none'}  in store: {', '.join(sv.get('in_store') or []) or '-'}")
+            print(f"  {b['identity']['name']:<10} {sv['world_id']:<6} {sv.get('deposits', 0):>6,} deposits  energy: {('yes' if (en.get('oil_fields') or en.get('gas_fields') or en.get('coalfields')) else 'empty') if en else 'none'}  surface: {'v' + str(bk['version']) if bk else 'none'}  in store: {', '.join(sv.get('in_store') or []) or '-'}")
 
 
 def main(argv):
