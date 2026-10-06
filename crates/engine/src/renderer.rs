@@ -1173,15 +1173,20 @@ impl Renderer {
         let acquire = std::time::Instant::now();
         let next = gpu.surface.get_current_texture();
         self.wait = acquire.elapsed();
+        // (No frame from the window (a screen asleep, a window hidden): nothing to show, but a
+        // capture asked for is still drawn and saved, from the offscreen composite.)
         let surface_texture = match next {
-            wgpu::CurrentSurfaceTexture::Success(t) | wgpu::CurrentSurfaceTexture::Suboptimal(t) => t,
+            wgpu::CurrentSurfaceTexture::Success(t) | wgpu::CurrentSurfaceTexture::Suboptimal(t) => Some(t),
             wgpu::CurrentSurfaceTexture::Outdated | wgpu::CurrentSurfaceTexture::Lost => {
                 gpu.surface.configure(&gpu.device, &gpu.config);
-                return;
+                None
             }
-            _ => return,
+            _ => None,
         };
-        let surface_view = surface_texture.texture.create_view(&Default::default());
+        if surface_texture.is_none() && capture.is_none() {
+            return;
+        }
+        let surface_view = surface_texture.as_ref().map(|t| t.texture.create_view(&Default::default()));
 
         let mut encoder = gpu.device.create_command_encoder(&Default::default());
         // The environment as light, for this frame.
@@ -1310,11 +1315,11 @@ impl Renderer {
             self.composite(&mut encoder, &self.target.composite, &self.capture_pipe);
             self.copy_to_buffer(gpu, &mut encoder)
         });
-        {
+        if let Some(surface_view) = &surface_view {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("upscale"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &surface_view,
+                    view: surface_view,
                     depth_slice: None,
                     resolve_target: None,
                     ops: wgpu::Operations {
@@ -1333,7 +1338,9 @@ impl Renderer {
         }
         gpu.queue.submit([encoder.finish()]);
         self.sunprobe.submitted();
-        gpu.queue.present(surface_texture);
+        if let Some(t) = surface_texture {
+            gpu.queue.present(t);
+        }
 
         if let (Some(path), Some((buffer, padded_row))) = (capture, readback) {
             match self.save_png(gpu, &buffer, padded_row, path) {
