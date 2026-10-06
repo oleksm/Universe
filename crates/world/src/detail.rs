@@ -6,7 +6,7 @@
 //! stand-in that adds nothing (`ACTIVE` false: the ground patches go no finer than before).
 
 /// The generator is in (the patches go to its finest levels, the physics reads it).
-pub const ACTIVE: bool = false;
+pub const ACTIVE: bool = true;
 
 /// The most the WGSL twin may differ from this (m).
 pub const AGREE_M: f64 = 0.05;
@@ -40,9 +40,68 @@ pub struct Site<'a> {
     pub cell: f64,
 }
 
-/// The height the detail adds at `site` (m) over the ~150 m ground read bilinearly.
-pub fn offset(_site: &Site) -> f64 {
-    0.0
+/// How layered each rock unit is (0–1), by the 5 km rock map's number (planet-sim geology.UNITS
+/// order): how strongly its bedding, flows or foliation weather into ledges. Bedded sediments and
+/// stacked lavas high (limestone and sandstone ledges, flood basalts' "trap" steps, banded iron),
+/// massive crystalline rock none (granite, anorthosite).
+pub const LAYERED: [f64; 20] = [
+    0.2, // morb
+    0.5, // arc_volcanic
+    0.0, // arc_plutonic
+    0.1, // basement
+    0.2, // greenstone
+    0.3, // schist
+    0.0, // granite
+    0.7, // flood_basalt
+    0.8, // carbonate
+    0.8, // clastic
+    0.1, // ophiolite
+    0.6, // rift
+    0.9, // iron_formation
+    0.1, // primary_crust
+    0.3, // intercrater_plains
+    0.6, // high_ti_basalt
+    0.1, // impact_melt
+    0.0, // impact_breccia
+    0.0, // anorthosite
+    0.3, // kreep
+];
+
+/// The world's seed folded to the generator's 32 bits (the twin: seed.x ^ seed.y).
+pub fn seed32(seed: u64) -> u32 {
+    (seed as u32) ^ ((seed >> 32) as u32)
+}
+
+/// The tile's samples read bilinearly at `x`, `y` (in samples).
+fn bilinear(f: &dyn Fn(i64, i64) -> f64, x: f64, y: f64) -> f64 {
+    let (i, j) = (x.floor(), y.floor());
+    let (fx, fy) = (x - i, y - j);
+    let (i, j) = (i as i64, j as i64);
+    let a = f(i, j) * (1.0 - fx) + f(i + 1, j) * fx;
+    let b = f(i, j + 1) * (1.0 - fx) + f(i + 1, j + 1) * fx;
+    a * (1.0 - fy) + b * fy
+}
+
+/// The height the detail adds at `site` (m) over the ~150 m ground read bilinearly: the lab's
+/// generator (`ground_detail`), fed the ground's gradient and height there, its drainage area and
+/// ice from the fields, the rock's layering.
+pub fn offset(site: &Site) -> f64 {
+    let (x, y) = (site.at[0] / site.spacing, site.at[1] / site.spacing);
+    let h = |x: f64, y: f64| bilinear(site.height, x, y);
+    let grad = [(h(x + 1.0, y) - h(x - 1.0, y)) / (2.0 * site.spacing), (h(x, y + 1.0) - h(x, y - 1.0)) / (2.0 * site.spacing)];
+    let fl = |k: usize| bilinear(&|i, j| (site.fields)(i, j)[k], x / 2.0, y / 2.0);
+    let fields = crate::ground_detail::Fields {
+        grad,
+        height: h(x, y),
+        log_area: fl(1) / 16.0,
+        ice: fl(3) / 255.0,
+        layered: LAYERED.get(site.rock as usize).copied().unwrap_or(0.3),
+    };
+    let at = crate::ground_detail::At {
+        cell: [site.origin[0] + site.at[0].floor() as i64, site.origin[1] + site.at[1].floor() as i64],
+        frac: [site.at[0] - site.at[0].floor(), site.at[1] - site.at[1].floor()],
+    };
+    crate::ground_detail::detail(at, &fields, seed32(site.seed), site.cell)
 }
 
 /// The world's seed from its id (`TRD1`): the same in every build (FNV-1a).
