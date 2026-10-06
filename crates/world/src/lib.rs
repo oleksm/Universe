@@ -18,6 +18,7 @@ pub mod conditions;
 pub mod content;
 pub mod crew;
 pub mod deckplan;
+pub mod detail;
 pub mod damage;
 pub mod design;
 pub mod events;

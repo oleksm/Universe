@@ -15,8 +15,10 @@ use universe_sim::Body;
 
 /// Cells a side of a patch.
 const GRID: u32 = 16;
-/// The finest patches (about 1/2^MAX_LEVEL of a cube face across).
-const MAX_LEVEL: u8 = 15;
+/// The finest patches (about 1/2^MAX_LEVEL of a cube face across: some 320 m on Heath, 20 m
+/// cells), and four levels finer (some 1.2 m cells) once the ground's runtime detail is in
+/// (`world::detail::ACTIVE`): within a few kilometres of the eye, as `SPLIT` has it.
+const MAX_LEVEL: u8 = if universe_sim::world::detail::ACTIVE { 19 } else { 15 };
 /// A patch splits when the eye is nearer than this many times its size. (The mesh shader's
 /// GEOMORPH_SPLIT: keep them together.)
 const SPLIT: f64 = 2.4;
@@ -131,8 +133,9 @@ fn face_dir(face: u8, u: f64, v: f64) -> DVec3 {
 
 /// The ground's height at `dir` (m; the sea's surface over an Earth-like world's deeps), as far
 /// as it's read (a world's bake reads in the background), and whether that's all of it.
-fn ground(body: &Body, dir: DVec3) -> (f64, bool) {
-    body.terrain.as_ref().map_or((0.0, true), |t| t.surface_view(dir))
+/// The runtime detail to the band `cell` (m): the patch's cells.
+fn ground(body: &Body, dir: DVec3, cell: f64) -> (f64, bool) {
+    body.terrain.as_ref().map_or((0.0, true), |t| t.surface_view_to(dir, cell))
 }
 
 /// A patch's mesh: its grid on the ground (round its origin), and skirts.
@@ -140,9 +143,10 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     let r = body.rail.radius;
     let n = (1u32 << key.level) as f64;
     let (mid, size) = key.shape();
+    let cell = size * r / GRID as f64;
     let whole = std::cell::Cell::new(true);
     let at = |d: DVec3| {
-        let (h, w) = ground(body, d);
+        let (h, w) = ground(body, d, cell);
         whole.set(whole.get() && w);
         h
     };
@@ -229,7 +233,7 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         whole.set(whole.get() && w);
         let e1 = d.any_orthonormal_vector();
         let e2 = d.cross(e1);
-        let h = |v: DVec3| ground(body, (d + v * step).normalize()).0;
+        let h = |v: DVec3| ground(body, (d + v * step).normalize(), 600.0).0;
         let (gx, gy) = ((h(e1) - h(-e1)) / 1200.0, (h(e2) - h(-e2)) / 1200.0);
         let slope = (gx * gx + gy * gy).sqrt() as f32;
         match f {
