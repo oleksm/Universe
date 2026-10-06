@@ -1,6 +1,6 @@
 # The tick tree: governing time as the engine grows
 
-A proposal, 2026-10-06, for the integrator to build and the user to decide. It reviews how time
+A proposal, 2026-10-06, for the integrator to build and the user to decide; reviewed by the integrator against the code the same day, their seven points taken in. It reviews how time
 advances today (read from the code, file and line given), then proposes a tree of clocks:
 universe, region, star system, and within a system the layers from contact physics at 60 Hz down
 to civilization at days. The rule that places every piece of work on a thread, a process or a
@@ -106,8 +106,10 @@ Transit takes seconds to minutes of game time, so the wire's latency is invisibl
 
 One process owns whole systems; a node owns as many systems as fit its 60 Hz budget. Nothing
 inside a system is shared with another node except through the region. The system's own clock is
-authoritative for its contents; it agrees with the calendar within one region tick (a bounded,
-known drift, reconciled at the region step, never by stalling the tick). A system nobody is in
+authoritative for its contents. Game time is exact ticks everywhere, the fixed 1/60 s, and a
+hand-over is stamped in ticks; what drifts between nodes is **wall clock only** (one node's tick
+N happens a little before another's), reconciled at the region step by pacing, never by stalling
+a tick or stretching game time, or replay would break. A system nobody is in
 and nothing is happening in runs L0 empty, L1 by events, and the slow layers on schedule: its cost
 is its economy's step every 600 s and nothing else.
 
@@ -119,11 +121,15 @@ walkers, the rails bodies they're near. One bubble is one thread's work for one 
 system are independent within a tick (nothing in one can touch another until next tick, by
 construction of the cell size), so they run side by side on cores, and the parallel unit becomes
 the bubble, not the ship. The per-system freeze stays as the lock-free world the bubbles read.
+Determinism is kept the way it is kept today (each craft reads the frozen world, results applied
+in craft order): bubbles' results are applied in a fixed order (by their lowest craft id), and
+bubbles merge or split only at tick boundaries.
 
 What's in L0: any ship powered (thrust, RCS firing) or within reach of a collider (30 km today, a
 tick's motion plus reach tomorrow); a ship on a pad, taxiing, in a hangar; projectiles; **walkers**
 (moved here from the client frame: a walker is a core body stepping at 60 Hz in its ship's bubble,
-replayable; rearchitecture §10 item 5, the proposed answer). Collision is swept per tick as now.
+replayable; rearchitecture §10 item 5, the proposed answer; the decks become core data and the
+player's walking input a stamped command like flight). Collision is swept per tick as now.
 
 The player is always in L0: their ship, its bubble, its interior. Several players in one bubble
 are on one thread on one node: the only true synchronisation point in the design, and the one
@@ -131,14 +137,25 @@ the input deadline *k* exists for.
 
 ### 3.5 L1: flight on rails, by event
 
-The macrocosm's ships. A coasting ship (no thrust, nothing within reach) is **a rails body with a
+The macrocosm's ships. First a measurement: a coasting ship outside 30 km already integrates from
+its orbit in long substeps, so its physics is cheap; its cost may mostly be the freeze, the
+lookups and the in-order after-step. Step 2 of §6 starts by splitting ms per tick by powered /
+near / coasting, and L1 is built only if coasting ships are where the time goes.
+
+The design, if so. A coasting ship (no thrust, nothing within reach) is **a rails body with a
 scheduled wake**: its state is an orbit (or a straight line in deep space) valid from tick *t*;
 its position at any time is a pure function, like a planet's. It is integrated only when
-something changes: its pilot posts a command (it wakes into L0 if powered), or the wake it
-scheduled arrives. The wake is the earliest of: closest approach to any collider or bubble within
-the prediction horizon (reach plus speed × a few ticks, computed when it goes on rails), the
-pilot's next think, atmosphere entry, a region hand-over. With no event, an L1 ship costs nothing
-a tick. A 1 Hz sweep *(proposal)* re-checks wakes against bubbles that moved.
+something changes: a command arrives for it (it wakes into L0 if powered), or the wake it
+scheduled arrives. Wakes come from physics only: closest approach to any collider or bubble
+within the prediction horizon, atmosphere entry, a region hand-over. A pilot's next think is the
+client's business and never a core wake (the rule in stone: the core holds no intentions); the
+pilot thinks on its own rate and posts, and the post is what wakes the ship. With no event, an L1
+ship costs nothing a tick.
+
+The promotion guarantee needs the horizon to cover what a powered ship can do, not what a
+coasting one does: horizon = reach + v·T + a_max·T²/2 for the re-check interval T, and the wakes
+of L1 ships are re-checked **whenever a bubble's powered set or bounds change**, not on a timer
+(a ship at 30 m/s² closes 15 m in a second and leaves it at 30 m/s; a 1 Hz sweep would be late).
 
 This is the pilots' think-rate idea applied to the physics: cost follows activity. Of the census's
 ~1,000 ships in Treistun, the share in L0 at any moment is the share docking, fighting, launching
@@ -166,12 +183,14 @@ rate × 600 and nothing in the registry depends on the period.
 ### 3.8 L4: planetary, hourly
 
 Nothing of a body's motion ticks: orbits, rotation, tilt, tides' geometry are pure functions of
-time and stay so. What L4 steps is **state**: weather (a field a body: pressure, wind, cloud,
-rain, from the lab's climate and air tables, advanced hourly in game time *(proposal)*),
-atmosphere state (temperature by latitude and hour; today's `climate` as a function stays the
-fallback), tides as a scalar, seasons (a date). A ship in air reads the hour's field; the heat
-step (every 0.1 s in air today) reads it as a constant between hours. Geology **never ticks in
-game time**: it is the lab's history package; deposits change only by mining events (L3).
+time and stay so. So are today's clouds (the lab's `clouds_at`, one epoch for every player) and
+`climate`: stateless, free to replay, identical for everyone. **Prefer generators of time** for
+everything planetary (temperature by latitude and hour, tides, seasons, wind and cloud fields
+from the lab's climate and air tables as functions of the date), and add stepped **state** only
+where something needs a history: a storm track, a flood, snow that fell. Where state is needed it
+steps hourly in game time *(proposal)*, and a ship in air reads the hour's state as a constant
+between hours. Geology **never ticks in game time**: it is the lab's history package; deposits
+change only by mining events (L3).
 
 ### 3.9 L5: civilization, daily
 
@@ -238,9 +257,10 @@ queue per tick is the list of bubbles, scheduled on the node's cores by a work-s
 §10 item 6, decided), so the steps are:
 
 1. **Now**: one process, one machine, one tick for all (R8: 100k ships ≈ 25 ms).
-2. **Layers and bubbles in one process**: L1 rails with wakes, bubbles as the parallel unit, slow
-   layers as actors on a pool. The cost moves from ships to activity. Measure L0 ms per tick per
-   system: the one number that sizes everything after.
+2. **Measure, then layers and bubbles in one process**: first ms per tick split by powered /
+   near / coasting ships; then bubbles as the parallel unit, slow layers as actors on a pool, and
+   L1 rails with wakes if coasting is where the time goes. The cost moves from ships to activity.
+   L0 ms per tick per system is the one number that sizes everything after.
 3. **Systems as process-local shards**: each system group on its own thread with its own 60 Hz
    loop, hand-overs as in-process messages. Tests the contract with no network.
 4. **Systems as processes on one machine**: the same messages over a socket; proves isolation.
@@ -273,7 +293,8 @@ tick rate, and nothing should.
 1. L0 stays 60 Hz, and sensor publishing for NPC pilots goes to 10 Hz (rearchitecture decision 4).
 2. Walking crew into the core tick (decision 5), as the bubble's bodies.
 3. The economy step stays 600 s; trades are events.
-4. Weather as hourly state from the lab's climate (L4), or none until later.
+4. Weather as a function of time from the lab's tables (as the clouds are today); hourly state
+   only where something needs a history.
 5. Systems placed by players (the node that owns a system is the one nearest its players), and
    the capital-system rule: a system never splits; a node grows.
 6. Checkpoints per layer at their boundaries, replacing seed-plus-whole-log.
