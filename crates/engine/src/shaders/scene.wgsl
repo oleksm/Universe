@@ -22,7 +22,7 @@ struct Globals {
     env_mode: vec4<f32>,
     env_sky: vec4<f32>,
     // x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
-    // are faded in (0..1).
+    // are faded in (0..1); z: 1 where its air's tables are bound.
     view: vec4<f32>,
     // Clip → camera-relative world.
     inv_view_proj: mat4x4<f32>,
@@ -52,6 +52,25 @@ struct Globals {
 @group(2) @binding(7) var<uniform> world_air: Air;
 // The sea's calmness (globe_spec: 1 − wind / 9 m/s).
 @group(2) @binding(8) var world_spec: texture_2d<f32>;
+// Its air's tables (the lab's, air.wgsl's `_lut` entries), where g.view.z is 1, and their sampler.
+@group(2) @binding(9) var world_air_t: texture_2d<f32>;
+@group(2) @binding(10) var world_air_ms: texture_2d<f32>;
+@group(2) @binding(11) var world_air_smp: sampler;
+
+// The bound world's air on the ground and its sky: by its tables where it has them.
+fn world_air_ground(c: vec3<f32>, p: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>) -> vec3<f32> {
+    if (g.view.z > 0.5) {
+        return air_ground_lut(c, p, g.world_at.xyz, sun_dir, sun, world_air, world_air_t, world_air_ms, world_air_smp);
+    }
+    return air_ground(c, p, g.world_at.xyz, sun_dir, sun, world_air);
+}
+
+fn world_air_sky(d: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>) -> vec3<f32> {
+    if (g.view.z > 0.5) {
+        return air_sky_lut(d, g.world_at.xyz, sun_dir, sun, world_air, world_air_t, world_air_ms, world_air_smp);
+    }
+    return air_sky(d, g.world_at.xyz, sun_dir, sun, world_air);
+}
 
 // Where on a world's maps the direction `dir` (its own frame) falls.
 fn world_uv(dir: vec3<f32>) -> vec2<f32> {
@@ -427,7 +446,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // the ground is seen: smooth from triangle to triangle. The screen's derivatives are one value
     // a triangle: a map's level chosen by them steps at every edge, and the slopes shaded from it
     // drew each edge as a dark dash.)
-    let oblique = 1.0 / max(abs(dot(normalize(in.normal), normalize(-in.at))), 0.25);
+    // (How obliquely from the world's smooth up, not the triangle's flat normal: that stepped the
+    // pixel's size, the maps' level and the material's noise at every triangle edge.)
+    let oblique = 1.0 / max(abs(dot(normalize(in.up), normalize(-in.at))), 0.25);
     let span = 2.0 * length(in.at) * g.view.x * oblique;
     let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
     // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
@@ -517,16 +538,32 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                 if (ground.a > 0.5) {
                     let climate = textureSampleLevel(world_climate, world_soft, uv, 0.0);
                     let unit = u32(round(textureSampleLevel(world_rock, world_exact, uv, 0.0).r * 255.0 / 8.0));
-                    // (The slope from the ground as the mesh stands: the shaded normal's slopes
-                    // step at its triangles' edges.)
-                    let up = normalize(in.up);
-                    let c = clamp(dot(normalize(in.normal), up), 0.05, 1.0);
+                    // (The slope from the bake's normal map, read bilinearly: the mesh's normal is
+                    // flat over each triangle, and the rock its slope uncovers drew each triangle
+                    // pair as a square. The map's slopes are steepened RELIEF_SHADE = 8 times
+                    // (planet-sim tools/globe_look.py): undone here.)
+                    let nm = textureSampleLevel(world_normal, world_soft, uv, lod).rgb * 2.0 - vec3<f32>(1.0);
+                    let tan_s = length(nm.xy) / max(nm.z, 0.05) / 8.0;
+                    let c = 1.0 / sqrt(1.0 + tan_s * tan_s);
                     var gi: GroundIn;
                     gi.ground = ground.rgb;
                     gi.ground_soft = textureSampleLevel(world_ground, world_soft, uv, lod + 2.5).rgb;
                     gi.t_sea_c = climate.r * 100.0 - 50.0;
                     gi.rain_m = climate.g * 4.0;
                     gi.unit = unit;
+                    // (The rock's colour blended over its four nearest texels: read nearest, each
+                    // unit would show as a ~10 km square.)
+                    let rd = vec2<i32>(textureDimensions(world_rock));
+                    let rp = uv * vec2<f32>(rd) - vec2<f32>(0.5);
+                    let r0 = vec2<i32>(floor(rp));
+                    let rx0 = (r0.x % rd.x + rd.x) % rd.x;
+                    let rx1 = (rx0 + 1) % rd.x;
+                    let ry0 = clamp(r0.y, 0, rd.y - 1);
+                    let ry1 = clamp(r0.y + 1, 0, rd.y - 1);
+                    let ru = vec4<f32>(textureLoad(world_rock, vec2<i32>(rx0, ry0), 0).r, textureLoad(world_rock, vec2<i32>(rx1, ry0), 0).r,
+                                       textureLoad(world_rock, vec2<i32>(rx0, ry1), 0).r, textureLoad(world_rock, vec2<i32>(rx1, ry1), 0).r);
+                    let ri = vec4<u32>(round(ru * 255.0 / 8.0));
+                    gi.rock_c = ground_rock_blend(ri.x, ri.y, ri.z, ri.w, fract(rp));
                     gi.h_m = h * in.globe.z;
                     gi.slope = sqrt(1.0 - c * c) / c;
                     gi.q = in.micro;
@@ -572,8 +609,8 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             si.sun = in.sun_light * seen;
             // (The sky's light along the reflected ray and straight up, as seen from the eye: near
             // the sea, near enough; the lab's tables will look from the water itself.)
-            si.sky = air_sky(reflect(-si.to_eye, up), g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
-            si.down = si.sun * max(dot(up, in.sun_dir), 0.0) + air_sky(up, g.world_at.xyz, in.sun_dir, in.sun_light, world_air) * 1.5707963;
+            si.sky = world_air_sky(reflect(-si.to_eye, up), in.sun_dir, in.sun_light);
+            si.down = si.sun * max(dot(up, in.sun_dir), 0.0) + world_air_sky(up, in.sun_dir, in.sun_light) * 1.5707963;
             si.q = in.micro;
             si.pixel_m = pixel;
             c = mix(c, sea_material(si), g.view.y);
@@ -583,7 +620,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         // The world whose maps are bound, through its own air (the lab's scattering); others
         // through the plain haze.
         if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5) {
-            c = air_ground(c, in.at, g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
+            c = world_air_ground(c, in.at, in.sun_dir, in.sun_light);
         } else {
             c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
         }
@@ -612,7 +649,7 @@ fn fs_air_sky(in: SkyOut) -> @location(0) vec4<f32> {
     let q = g.inv_view_proj * vec4<f32>(in.ndc, 0.5, 1.0);
     let d = normalize(q.xyz / q.w);
     let sun_dir = normalize(g.env_sun.xyz);
-    return vec4<f32>(air_sky(d, g.world_at.xyz, sun_dir, vec3<f32>(g.env_sun.w), world_air), 1.0);
+    return vec4<f32>(world_air_sky(d, sun_dir, vec3<f32>(g.env_sun.w)), 1.0);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {

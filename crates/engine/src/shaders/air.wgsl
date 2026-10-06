@@ -158,3 +158,77 @@ fn air_sky(d: vec3<f32>, center: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>, 
     let path = air_march(a, eye, d, t.x, t.y, sun_dir);
     return path.inscatter * sun * AIR_UNITS;
 }
+
+// --- With the bake's tables (planet-sim tools/air_luts.py: Hillaire 2020) -----------------------
+// The sun's transmittance read from a table instead of marched, and the light of all scattering
+// orders past the first (Ψ_ms) added at each step: the sky ~1.5–2× brighter than single
+// scattering alone, most toward the horizon, as measured skies are. The tables come with the bake
+// (air_transmittance.rgba32f 256 × 64, air_multiscatter.rgba32f 32 × 32; air_luts.json): bind
+// them as rgba32float textures with a linear, clamp-to-edge sampler, and call the `_lut` entries.
+
+fn air_t_lut(tl: texture_2d<f32>, smp: sampler, a: Air, r: f32, mu: f32) -> vec3<f32> {
+    let w = f32(textureDimensions(tl).x);
+    let v = sqrt(clamp((r - 1.0) * a.radius_m / a.top_m, 0.0, 1.0));
+    let u = (clamp(mu, -1.0, 1.0) + 1.0) * 0.5 * (w - 1.0) / w + 0.5 / w;
+    return textureSampleLevel(tl, smp, vec2<f32>(u, v), 0.0).rgb;
+}
+
+fn air_ms_lut(ml: texture_2d<f32>, smp: sampler, a: Air, r: f32, mu_s: f32) -> vec3<f32> {
+    let v = clamp((r - 1.0) * a.radius_m / a.top_m, 0.0, 1.0);
+    let u = (clamp(mu_s, -1.0, 1.0) + 1.0) * 0.5;
+    return textureSampleLevel(ml, smp, vec2<f32>(u, v), 0.0).rgb;
+}
+
+fn air_march_lut(a: Air, o: vec3<f32>, d: vec3<f32>, t0: f32, t1: f32, sun_dir: vec3<f32>,
+                 tl: texture_2d<f32>, ml: texture_2d<f32>, smp: sampler) -> AirPath {
+    var out = AirPath(vec3<f32>(1.0), vec3<f32>(0.0));
+    if (t1 <= t0) {
+        return out;
+    }
+    let ds = (t1 - t0) / f32(AIR_STEPS);
+    let mu = dot(d, sun_dir);
+    let pr = 3.0 / (16.0 * AIR_PI) * (1.0 + mu * mu);
+    let g2 = a.g * a.g;
+    let pm = 3.0 / (8.0 * AIR_PI) * (1.0 - g2) * (1.0 + mu * mu) / ((2.0 + g2) * pow(1.0 + g2 - 2.0 * a.g * mu, 1.5));
+    for (var i = 0; i < AIR_STEPS; i++) {
+        let p = o + d * (t0 + ds * (f32(i) + 0.5));
+        let r = length(p);
+        let dn = air_density(a, r - 1.0);
+        let ext = air_extinction(a, dn);
+        let scat1 = (a.beta_r * dn.x * pr + vec3<f32>(a.mie_s) * dn.y * pm) * a.radius_m;
+        let scat_all = (a.beta_r * dn.x + vec3<f32>(a.mie_s) * dn.y) * a.radius_m;
+        let mu_s = dot(p / r, sun_dir);
+        let ts = exp(-ext * ds);
+        let light = air_t_lut(tl, smp, a, r, mu_s) * scat1 + air_ms_lut(ml, smp, a, r, mu_s) * scat_all;
+        out.inscatter += out.transmit * light * (vec3<f32>(1.0) - ts) / max(ext, vec3<f32>(1e-9));
+        out.transmit *= ts;
+    }
+    return out;
+}
+
+fn air_ground_lut(c: vec3<f32>, p: vec3<f32>, center: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>, a: Air,
+                  tl: texture_2d<f32>, ml: texture_2d<f32>, smp: sampler) -> vec3<f32> {
+    if (a.on < 0.5) {
+        return c;
+    }
+    let eye = -center / a.radius_m;
+    let span = (p - center) / a.radius_m - eye;
+    let len = length(span);
+    if (len < 1e-9) {
+        return c;
+    }
+    let d = span / len;
+    let t = air_span(a, eye, d, len * 1.0001);
+    let path = air_march_lut(a, eye, d, t.x, min(t.y, len), sun_dir, tl, ml, smp);
+    return c * path.transmit + path.inscatter * sun * AIR_UNITS;
+}
+
+fn air_sky_lut(d: vec3<f32>, center: vec3<f32>, sun_dir: vec3<f32>, sun: vec3<f32>, a: Air,
+               tl: texture_2d<f32>, ml: texture_2d<f32>, smp: sampler) -> vec3<f32> {
+    if (a.on < 0.5) {
+        return vec3<f32>(0.0);
+    }
+    let eye = -center / a.radius_m;
+    let t = air_span(a, eye, d, 1e9);
+    return air_march_lut(a, eye, d, t.x, t.y, sun_dir, tl, ml, smp).inscatter * sun * AIR_UNITS;
+}

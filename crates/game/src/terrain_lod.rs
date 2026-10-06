@@ -28,6 +28,8 @@ const IN_FLIGHT: usize = 48;
 const TAKE: usize = 24;
 /// Frames an unused patch is kept.
 const KEEP: u64 = 600;
+/// Patches kept at most (each about 40 kB, here and on the GPU): past it the least lately used go.
+const MAX_PATCHES: usize = 3000;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
 struct Key {
@@ -315,5 +317,12 @@ impl Lod {
             });
         }
         self.patches.retain(|_, p| now - p.used < KEEP);
+        if self.patches.len() > MAX_PATCHES {
+            let mut by_use: Vec<(u64, Key)> = self.patches.iter().map(|(k, p)| (p.used, *k)).collect();
+            by_use.sort_unstable_by_key(|(u, _)| *u);
+            for (_, k) in by_use.into_iter().take(self.patches.len() - MAX_PATCHES) {
+                self.patches.remove(&k);
+            }
+        }
     }
 }
