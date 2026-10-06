@@ -308,7 +308,7 @@
 - { record: equipment.hyperdrive.s1, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: fits", sha: "42cc383419655e9a" }
 - { record: equipment.hyperdrive.s2, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: fits", sha: "3169e7f36200f0d9" }
 - { record: equipment.hyperdrive.s3, at: "2026-10-06T00:07:28Z", status: draft, summary: "changed: fits", sha: "c872f4eb67c86385" }
-- { record: equipment.laser.pulse.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "aad23bcf9516da52" }
+- { record: equipment.laser.pulse.s1, at: "2026-10-06T02:40:59Z", status: draft, summary: "changed: function, basis", sha: "ffdb64e4c631f6cc" }
 - { record: equipment.life.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "5bb07b187aad450b" }
 - { record: equipment.life.s2, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "ad5bd56c6e049b44" }
 - { record: equipment.lift.belly.s1, at: "2026-10-06T00:21:00Z", status: draft, summary: "changed: physical, basis", sha: "d0e625053d18aeeb" }

@@ -191,7 +191,7 @@ properties:
         required: [kind]
         properties:
           kind: { const: life_support }
-      - description: "A gun. Its figures are still in the engine's code."
+      - description: "A gun: a mass driver. The game fires it as its record says."
         type: object
         additionalProperties: false
         required: [kind]
@@ -201,7 +201,7 @@ properties:
           rate: { type: number, x-unit: "1/s", description: "rounds a second, the trigger held" }
           slug_mass: { type: number, x-unit: "kg", description: "kg, one slug" }
           magazine: { type: integer, description: "rounds in a full magazine" }
-      - description: "A laser. Its figures are still in the engine's code."
+      - description: "A laser. The game fires it as its record says: it heats while it fires, cools when it does not, and once too hot is locked out until it has cooled to its reset."
         type: object
         additionalProperties: false
         required: [kind]
@@ -212,6 +212,7 @@ properties:
           range: { type: number, x-unit: "m", description: "m, the farthest it reaches" }
           burn: { type: number, x-unit: "s", description: "s of firing from cold to too hot" }
           cool: { type: number, x-unit: "s", description: "s to cool again" }
+          reset: { type: number, x-unit: "1", description: "the share of too hot it must cool to, after overheating, before it fires again" }
       - description: "The anchor and excavator. Their figures are still in the engine's code."
         type: object
         additionalProperties: false
