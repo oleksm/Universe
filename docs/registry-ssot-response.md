@@ -1025,3 +1025,12 @@ orbits. **What ends the vortex, yours:** spawn fleets from these records, crewed
 no NPC respawn (one fewer, the company orders a hull); the player's return as the insurer's delivery
 at a yard; far ships on the ledger. The census also says only 3–6% of people have described work:
 the commerce and construction parts come next on my side.
+
+**A thousand ships (the user, 2026-10-06).** `seeding.traffic.ships: 1000`, and how they are made
+up: Treistun Freight's 132 haulers on the runs for people and for works (derived: tonnes a day,
+flight time between the orbits, a hauler's hold), the other fleets (passage 22, miners 10, patrol
+23, raiders 12), and **793 independents** based at the ports by population
+(`settlement.independents`: Drovers, couriers, prospectors, a few haulers). **Spawn these, not a
+constant:** fleets flying for their business from their home, independents as today's travellers
+and small traders but finite and based; each ship a record's. The page's Traffic report lists
+every run with its tonnage, flight time and cadence.

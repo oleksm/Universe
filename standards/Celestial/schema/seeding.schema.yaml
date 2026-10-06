@@ -200,6 +200,23 @@ properties:
       largest: { type: number, x-unit: "m", description: "m across, the largest rock a belt's size classes run to" }
       most_eccentric: { type: number, x-unit: "1", description: "the most any belt rock's orbit is stretched" }
       rubble_above: { type: number, x-unit: "m", description: "m of radius above which a rock is a rubble pile, not one piece" }
+  traffic:
+    description: "How many ships fly in a settled system at day 0, and whose. The supply and industrial runs, the passage line, the miners, the patrol and the raiders are derived from the records (tools/standards/census.py); the rest of the target are independents, owner-operators based at the ports by population: couriers, small traders, prospectors."
+    type: object
+    additionalProperties: false
+    required: [ships, independents]
+    properties:
+      ships: { type: integer, minimum: 1, description: "the total the system is seeded with, fleets and independents together" }
+      independents:
+        description: "The hull mix of the independents, shares adding to 1."
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [hull, share]
+          properties:
+            hull: { type: string, x-ref: [hull] }
+            share: { type: number, x-unit: "1" }
   trade_bans:
     description: "For a seeded settlement's market: what it may refuse to trade, and how likely it is to. Rolled in this order."
     type: array

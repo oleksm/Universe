@@ -636,7 +636,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             if k not in x:
                 problem(bfull, f"no {k}")
         for k in x:
-            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
+            if k not in {"name", "kind", "at", "gravity", "position", "about", "story", "zones", "parcels", "facilities", "streets", "power_lines", "gate", "population", "structure", "resupply", "census", "independents"} | ({"owner", "processes", "lines", "modules", "spin"} if x.get("kind") == "rig" else set()):
                 problem(bfull, f"unknown field '{k}'")
         x["slug"] = bn[:-5]
         x["file"] = os.path.relpath(bfull, TREE)
@@ -2397,19 +2397,9 @@ report("members", "Members: the tubes a frame is cut from", "SFO 13: every round
 try:
     import census as _census
     import glob
-    _setts = {d_["identity"]["key"]: (f_, d_) for f_, d_ in ((f_, _census.load(f_)) for f_ in glob.glob(os.path.join(_census.LA, "*", "*.yaml"))) if d_.get("population")}
-    _routes = []
-    for _key, (_f, _d) in _setts.items():
-        _rs = _d.get("resupply")
-        if not _rs:
-            continue
-        _frm = _setts[_rs["from"]][1]
-        _t = _d["population"] * sum(t_["rate"] for n_ in _census.STOCKED for t_ in _census.needs[n_].get("takes", [])) * _census.DAY
-        _ow = _census.flight(_d["at"], _frm["at"]); _rt = 2 * _ow + 2 * _census.TURNAROUND
-        _hold = _census.hulls[_census.HAULER]["identity"].get("hold") or 150000
-        _ships = max(1, math.ceil(_t * (_rt / _census.DAY) / _hold))
-        _routes.append(row("ok", _frm["identity"]["name"], _d["identity"]["name"], f"{_t / 1000:.1f}", f"{_ow / _census.DAY:.1f}", _ships, f"{max(_census.DAY, _rt / _ships) / _census.DAY:.1f}"))
-    report("traffic", "Traffic: the ships the supply runs take", f"Each settlement supplied from another (settlement.resupply): what its people take a day of stocked goods (food, medicine, clothes, tools, drink), the flight one way at a torchship's cruise of {_census.CRUISE:g} m/s2 over the two orbits' typical separation, the haulers ({_census.HAULER}, {(_census.hulls[_census.HAULER]['identity'].get('hold') or 0) / 1000:.0f} t) that run needs, and so the delivery interval. The sum is the freight line's fleet (org.treistun-freight.fleet). Nothing else should fly for supply.", ["From", "To", "t a day", "Days one way", "Haulers", "Delivery every (days)"], _routes)
+    _setts, _rts = _census.derive()
+    _routes = [row("ok", "the gate" if r_["from"] == "gate" else _setts[r_["from"]][1]["identity"]["name"], _setts[r_["to"]][1]["identity"]["name"], "works" if r_.get("industrial") else "people", f"{r_['tonnes_day'] / 1000:.1f}", f"{r_['one_way'] / _census.DAY:.1f}", r_["ships"], f"{r_['interval'] / _census.DAY:.1f}") for r_ in sorted(_rts, key=lambda r_: -r_["tonnes_day"])]
+    report("traffic", "Traffic: the ships the runs take", f"Every run between settlements: for people, what a port's people take a day of stocked goods (settlement.resupply); for works, what a port's facilities take in a day that the port does not make, from the nearest port that makes it or, made nowhere in the system, from the gate. The flight one way at a torchship's cruise of {_census.CRUISE:g} m/s2 over the two orbits' typical separation; the haulers ({_census.HAULER}, {(_census.hulls[_census.HAULER]['identity'].get('hold') or 0) / 1000:.0f} t, a day's turnaround each end) that run needs; so the delivery interval. The sum is the freight line's fleet (org.treistun-freight.fleet); the rest of seeding.traffic's target are independents.", ["From", "To", "For", "t a day", "Days one way", "Haulers", "Every (days)"], _routes)
     _rows = []
     for _f, _d in sorted(_setts.values(), key=lambda fd: fd[1]["identity"]["name"]):
         if not _d.get("census"):

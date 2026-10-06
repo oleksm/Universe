@@ -30,6 +30,12 @@ census:
   - { profession: profession.reporter, count: 1 }
   - { profession: profession.judge, count: 1 }
   - { profession: profession.dependant, count: 2820 }
+# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+independents:
+  - { hull: hull.drover, count: 4 }
+  - { hull: hull.sprint, count: 3 }
+  - { hull: hull.prospector, count: 2 }
+  - { hull: hull.hauler, count: 2 }
 about: "The port on Pale II, a moon of the ice giant h, at 34° north. Gravity 0.22 g, no air, and about 106 K. It is 3.4 AU from the star."
 story:
   - "The first port of the outer system. It began as a single pad and a shelter, and grew because every ship going further out passes it."

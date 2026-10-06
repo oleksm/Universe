@@ -30,6 +30,12 @@ census:
   - { profession: profession.reporter, count: 1 }
   - { profession: profession.judge, count: 1 }
   - { profession: profession.dependant, count: 2820 }
+# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+independents:
+  - { hull: hull.drover, count: 4 }
+  - { hull: hull.sprint, count: 3 }
+  - { hull: hull.prospector, count: 2 }
+  - { hull: hull.hauler, count: 2 }
 about: "The port on Anvil I, the moon of c, at 44° south. Gravity 0.11 g, no air."
 story:
   - "The answer to Lisaur. Heavy lifters bring cargo up from c and ordinary ships collect it here, so that only the ships built for 1.67 g ever have to face it."

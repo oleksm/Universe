@@ -13,4 +13,4 @@ what: "Runs haulers on fixed routes; takes freight both ways."
 address: { at: settlement.treistun.port-eikir, tower: Freight House, deck: 1, section: A, unit: 1 }
 # fleet: what the supply runs take, by tools/standards/census.py
 fleet:
-  - { hull: hull.hauler, count: 39, home: settlement.treistun.port-eikir, does: "the supply runs from Port Eikir to every port: the tonnes their people take a day, at a torchship's cruise" }
+  - { hull: hull.hauler, count: 132, home: settlement.treistun.port-eikir, does: "the supply runs from Port Eikir to every port: the tonnes their people take a day, at a torchship's cruise" }

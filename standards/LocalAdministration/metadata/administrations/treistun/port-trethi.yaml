@@ -35,6 +35,12 @@ census:
   - { profession: profession.reporter, count: 4 }
   - { profession: profession.judge, count: 2 }
   - { profession: profession.dependant, count: 18783 }
+# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+independents:
+  - { hull: hull.drover, count: 29 }
+  - { hull: hull.sprint, count: 22 }
+  - { hull: hull.prospector, count: 14 }
+  - { hull: hull.hauler, count: 7 }
 about: "The port on Rime, near the equator at 6° north. Gravity 0.41 g, no air, and about 190 K."
 story:
   - "The last port on solid ground before the giants. Outbound ships top up here because it is the cheapest lift-off of any planet in the system."

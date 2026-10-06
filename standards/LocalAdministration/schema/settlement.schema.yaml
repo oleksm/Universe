@@ -61,6 +61,16 @@ properties:
       properties:
         profession: { type: string, x-ref: [profession] }
         count: { type: integer, minimum: 0 }
+  independents:
+    description: "Owner-operators based here at day 0: hull and count (seeding.traffic fills the system's target by population; tools/standards/census.py). Finite, like the fleets."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [hull, count]
+      properties:
+        hull: { type: string, x-ref: [hull] }
+        count: { type: integer, minimum: 1 }
   population: { type: integer, minimum: 0, description: "How many people live there at day 0: seed state of the world. What becomes of them after is the game's." }
   about: { type: string, description: What it is. }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }

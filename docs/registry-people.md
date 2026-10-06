@@ -13,20 +13,36 @@ the operator (a client) reads these and runs organisations, not loose ships.
 | `org.*.fleet` | the ships an organisation operates at day 0: hull, count, home, what they do | `census.py` for the freight line; hand for the rest |
 | the page's **Traffic** and **Census** reports | the same, read | `build.py` |
 
-## Traffic, derived
+## Traffic, derived, to a thousand
 
-For each settlement supplied from another: what its people take a day of stocked goods (the
-needs' rates: about 1.6 kg a head), the flight one way at a torchship's cruise (1 m/s², a tenth of
-a g, fuel in mind; chosen) over the two orbits' typical separation, a hauler's 150 t hold, a day's
-turnaround each end. Harvest to Hearth is 8 days each way; to the giants' moons 17 to 22. The
-runs take **39 haulers** in all: that is the freight line's fleet, and the delivery interval on
-each run is the fleet's cadence, which the stocking law reads for the distribution stock.
+The user wants about a thousand ships in Treistun's sky (`seeding.traffic.ships`: one ship to
+220 people, between Earth's merchant fleet at one to 80,000 and a maritime frontier's boats at one
+to ten). They are reckoned in three parts:
 
-Fleets at day 0: Treistun Freight 39 haulers at Port Eikir; Hearth Line 22 Drovers at the station
-(one to 10,000 people, chosen); Cormorant 10 prospectors at Trethi (two to a field); the
-administration's patrol, 23 interceptors across the ports (the code's one to 10,000, at least one
-at every port); Shikra Hold's 12 interceptors in Biraidim. **About a hundred ships in a system of
-220,000 people**, against the thousand the game spawns today by a constant.
+1. **Runs for people** (`settlement.resupply`): what a port's people take a day of stocked goods
+   (about 1.6 kg a head), the flight one way at a torchship's cruise (1 m/s², a tenth of a g, fuel
+   in mind; chosen) over the two orbits' typical separation, a hauler's 150 t hold, a day's
+   turnaround each end. Harvest to Hearth is 8 days each way; to the giants' moons 17 to 22.
+2. **Runs for works:** what a port's facilities take in a day that the port does not make, from the
+   nearest port that makes it or, made nowhere in the system, from the gate: Trethi's mill and yard
+   draw 380 t a day of ores and stock through the gate, Eikir's works 216 t. The lines are taken at
+   full rate (a capacity, as the page's other measures).
+3. **Independents**, owner-operators based at the ports by population, fill the rest of the
+   target: Drovers, couriers, prospectors, a few haulers (`settlement.independents`). What a
+   player is.
+
+| Who | Ships | Based |
+|---|---|---|
+| Treistun Freight (the runs, 1 and 2) | 132 haulers | Port Eikir |
+| Hearth Line (passage, one shuttle to 10,000) | 22 Drovers | the station |
+| Cormorant (two prospectors to a field) | 10 | Port Trethi |
+| the administration's patrol (the code's one to 10,000, one at every port) | 23 interceptors | every port |
+| Shikra Hold (raiders) | 12 interceptors | Biraidim |
+| independents | 793 | the ports, by population |
+| **all** | **1,000** | |
+
+The delivery interval on each run is its haulers' cadence, which the stocking law reads for the
+distribution stock.
 
 ## What the operator should do with it
 

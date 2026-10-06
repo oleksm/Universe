@@ -30,6 +30,12 @@ census:
   - { profession: profession.electrician, count: 2 }
   - { profession: profession.judge, count: 2 }
   - { profession: profession.dependant, count: 19242 }
+# independents: owner-operators based here, its share by population of the 793 that fill the system's 1000 (seeding.traffic) beside the fleets
+independents:
+  - { hull: hull.drover, count: 29 }
+  - { hull: hull.sprint, count: 22 }
+  - { hull: hull.prospector, count: 14 }
+  - { hull: hull.hauler, count: 7 }
 about: "The port on Cinder, the innermost planet, at 9° south. Gravity 0.96 g, no air, and about 560 K."
 story:
   - "The hottest port in the system. Its crews keep to b's long night and go under cover for the day. Few stay longer than a contract."
