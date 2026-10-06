@@ -1008,7 +1008,9 @@ impl Renderer {
     }
 
     fn scene_size(gpu: &Gpu, forced_aspect: Option<f32>) -> UVec2 {
-        if forced_aspect.is_some() { SHOT } else { UVec2::new(gpu.config.width.max(1), gpu.config.height.max(1)) }
+        // (A screenshot run's size: 1920×1080, or `UNIVERSE_SHOT_SIZE` (e.g. 3840x2160).)
+        let shot = || std::env::var("UNIVERSE_SHOT_SIZE").ok().and_then(|v| v.split_once('x').and_then(|(w, h)| Some(UVec2::new(w.parse().ok()?, h.parse().ok()?)))).unwrap_or(SHOT);
+        if forced_aspect.is_some() { shot() } else { UVec2::new(gpu.config.width.max(1), gpu.config.height.max(1)) }
     }
 
     #[allow(clippy::too_many_arguments)]
