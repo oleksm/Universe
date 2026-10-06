@@ -45,6 +45,8 @@ pub struct Laser {
     pub range: f64,
     pub burn: f64,
     pub cool: f64,
+    /// After overheating, it's locked out until it has cooled to this share of its heat.
+    pub reset: f64,
 }
 
 impl Laser {
@@ -84,9 +86,6 @@ fn could_meet(p: &Projectile, tg: &Target, dt: f64, bend: f64) -> bool {
     let at_start = tg.position - tg.velocity * dt;
     (p.position - at_start).length() <= tg.radius + (p.velocity - tg.velocity).length() * dt + bend
 }
-/// After overheating, a laser is locked out until it has cooled to this (of its
-/// heat).
-pub const LASER_RESET: f64 = 0.3;
 
 /// How far the gun's gimbal swings off the nose (rad): 4°.
 pub const GIMBAL_LIMIT: f64 = 4.0 * std::f64::consts::PI / 180.0;
@@ -299,9 +298,9 @@ impl World {
                     lasers.push((a.id, a.system, ship.position + dir * (SHIP_RADIUS + 1.0), dir, l));
                 }
                 _ => {
-                    let cool = laser.map_or(1.0, |l| l.cool);
+                    let (cool, reset) = laser.map_or((1.0, 0.0), |l| (l.cool, l.reset));
                     ship.laser_heat = (ship.laser_heat - dt / cool).max(0.0);
-                    ship.laser_overheated &= ship.laser_heat > LASER_RESET;
+                    ship.laser_overheated &= ship.laser_heat > reset;
                 }
             }
         }
@@ -447,7 +446,7 @@ mod tests {
         }
         // 20 MJ of hull at 2 MW: 10 s, but the laser overheats after 8 s.
         // It overheats at 8 s (16 MJ in), is locked out while it cools from 1
-        // to LASER_RESET (2.8 s), then finishes the job.
+        // to its reset share (2.8 s), then finishes the job.
         assert!(matches!(b.state, ShipState::Destroyed { .. }));
         assert!((t - 12.8).abs() < 0.25, "destroyed at {t:.1} s");
         assert!(eb.iter().any(|e| matches!(e, ShipEvent::Crashed { body } if body == "LASER FIRE")));

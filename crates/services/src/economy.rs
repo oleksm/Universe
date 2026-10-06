@@ -265,6 +265,11 @@ pub struct Place {
     pub needs: BTreeMap<String, (f64, f64)>,
     /// Over the last step, per day: people died (thousands).
     pub deaths: f64,
+    /// What its market aims to hold for its people, by the administration's
+    /// stocking law: for each need's take, a stock item or a market category
+    /// (None: an item, `.1`), and the kg it aims at: its warehouse's cover of
+    /// resupply cycles, and its share of the law's reserve.
+    pub people_wants: Vec<(Option<universe_world::goods::Category>, usize, f64)>,
 }
 
 /// One item as a market stands on it.
@@ -289,9 +294,19 @@ impl Place {
 
     /// How the market stands on `item` (of the catalogue `goods`).
     pub fn price(&self, item: &Item) -> Price {
-        let have = self.stock.of(item.id);
-        let want = self.need(item.id) * COVER_DAYS;
-        let (stock, room) = (have / item.mass, self.stock.free() / item.mass);
+        // (What its people's stocking law aims at for it, against what it holds of that: a whole
+        // category's stock where the aim is a category's.)
+        let people = self.people_wants.iter().find(|(c, i, _)| match c {
+            Some(c) => item.category == Some(*c),
+            None => *i == item.id,
+        });
+        let (have, want) = match people {
+            Some((Some(c), _, aim)) => (self.stock.stock.iter().filter(|(i, _)| universe_world::content::content().stock[**i].category == Some(*c)).map(|(_, kg)| kg).sum::<f64>(), *aim + self.need(item.id) * COVER_DAYS),
+            Some((None, _, aim)) => (self.stock.of(item.id), *aim + self.need(item.id) * COVER_DAYS),
+            None => (self.stock.of(item.id), self.need(item.id) * COVER_DAYS),
+        };
+        let have_it = self.stock.of(item.id);
+        let (stock, room) = (have_it / item.mass, self.stock.free() / item.mass);
         if want > 0.0 {
             let factor = (want / have.max(want * 0.05)).powf(0.6).clamp(0.4, 3.0);
             let p = item.price * factor;
@@ -357,6 +372,7 @@ impl Economy {
                 breathes,
                 needs: BTreeMap::new(),
                 deaths: 0.0,
+                people_wants: Vec::new(),
             });
         }
         e.sync(land);
@@ -399,6 +415,49 @@ impl Economy {
         }
         self.snapshot = None;
         self.works_snap = None;
+    }
+
+    /// What each market aims to hold for its people (`Place::people_wants`), by
+    /// its administration's stocking law (`compulsory_stock`): for each need
+    /// people take stock for, `warehouse_cover` of its resupply interval
+    /// (`settlement.resupply`; `COVER_DAYS` where none is said) of what its
+    /// people take, and, where the law holds a reserve of that need, its share
+    /// of what all the system's people would take over the reserve's time.
+    fn people_aims(&mut self) {
+        let reg = universe_world::registry::registry();
+        let needs: Vec<&universe_world::registry::Need> = reg.needs.iter().filter(|n| !n.takes.is_empty()).collect();
+        // (Each system's people, for its reserves.)
+        let mut people: HashMap<usize, f64> = HashMap::new();
+        for p in &self.places {
+            *people.entry(p.system).or_default() += p.population * 1000.0;
+        }
+        for k in 0..self.places.len() {
+            let p = &self.places[k];
+            let record = reg.settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&p.name));
+            let law = record.and_then(|s| s.identity.key.split('.').nth(1)).and_then(|system| reg.orgs.iter().find(|o| o.compulsory_stock.is_some() && o.identity.key.split('.').nth(1) == Some(system))).and_then(|o| o.compulsory_stock.as_ref());
+            let cover = law.and_then(|l| l.warehouse_cover).unwrap_or(1.5) * record.and_then(|s| s.resupply.as_ref()).map_or(COVER_DAYS * DAY, |r| r.interval);
+            let mut wants = Vec::new();
+            for need in &needs {
+                if p.breathes && need.identity.key == "need.air" {
+                    continue;
+                }
+                let reserve = law.and_then(|l| l.reserves.iter().find(|r| r.need == need.identity.key)).and_then(|r| Some((r.lasts, r.held_at.iter().find(|h| Some(&h.settlement) == record.map(|s| &s.identity.key))?.share)));
+                for t in &need.takes {
+                    let mine = t.rate * p.population * 1000.0 * cover;
+                    let held = reserve.map_or(0.0, |(lasts, share)| t.rate * people.get(&p.system).copied().unwrap_or(0.0) * lasts * share);
+                    let aim = mine + held;
+                    match t.item.strip_prefix("market.").and_then(|_| universe_world::goods::Category::of(&t.item)) {
+                        Some(c) => wants.push((Some(c), usize::MAX, aim)),
+                        None => {
+                            if let Some(i) = universe_world::goods::item(&t.item) {
+                                wants.push((None, i, aim));
+                            }
+                        }
+                    }
+                }
+            }
+            self.places[k].people_wants = wants;
+        }
     }
 
     /// A step of place `p`'s people: each need's takes from its warehouse (into
@@ -567,6 +626,7 @@ impl Economy {
         while self.stepped_to + STEP <= now {
             self.stepped_to += STEP;
             let at = self.stepped_to;
+            self.people_aims();
             for p in 0..self.places.len() {
                 self.run_place(p, at, land, ledger, goods, tick);
             }
@@ -794,6 +854,17 @@ mod tests {
         for need in ["need.air", "need.water", "need.food"] {
             assert!(trethi_place.needs.get(need).is_some_and(|(met, _)| *met > 0.99), "{need} met: {:?}", trethi_place.needs.get(need));
         }
+
+        // The stocking law: Port Eikir holds half the system's food reserve beside its own cover;
+        // a market below its aim bids more for food than one above it.
+        let food = universe_world::goods::Category::of("market.food").unwrap();
+        let aim = |name: &str| e.places.iter().find(|p| p.name == name).and_then(|p| p.people_wants.iter().find(|w| w.0 == Some(food)).map(|w| w.2)).unwrap_or(0.0);
+        let per_head = |name: &str| aim(name) / e.places.iter().find(|p| p.name == name).map_or(1.0, |p| p.population * 1000.0);
+        assert!(per_head("Port Eikir") > 3.0 * per_head("Port Sirnendis"), "the reserve: {} against {} kg a head", per_head("Port Eikir"), per_head("Port Sirnendis"));
+        let flour = universe_world::goods::item("stock.flour-bulk").unwrap();
+        let bid = |name: &str| e.places.iter().find(|p| p.name == name).unwrap().price(&goods[flour]).bid;
+        let (rich, poor) = if e.places.iter().find(|p| p.name == "Port Eikir").unwrap().stock.of(flour) > 0.0 { ("Port Eikir", "Port Sirnendis") } else { ("Port Sirnendis", "Port Eikir") };
+        assert!(bid(poor) >= bid(rich), "short, dearer: {poor} {} against {rich} {}", bid(poor), bid(rich));
 
         // Its owner sets the yard's welding bays to the MC-07's nose cap (a recipe from
         // the bill: the part, from the sheet it's cut from); given sheet, it welds them.

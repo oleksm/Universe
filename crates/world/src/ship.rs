@@ -908,7 +908,7 @@ pub struct Ship {
     /// Laser heat, 0 (cold) .. 1 (too hot to fire).
     #[serde(default)]
     pub laser_heat: f64,
-    /// The laser overheated and is locked out until it has cooled (see `weapons::LASER_RESET`).
+    /// The laser overheated and is locked out until it has cooled (to its laser's `reset` share).
     #[serde(default)]
     pub laser_overheated: bool,
     /// Combat mode: the master arm is on (see `weapons`). The weapons are

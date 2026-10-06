@@ -13,8 +13,12 @@ fn main() {
             u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
             universe_sim::company::run(&mut u);
         }
-        if day == 2 {
-            works_at(&u, "Port Eikir");
+        if day == 2 || day == 20 || day == 40 {
+            // What a trader sees: flour's ask where it's made, and its bid where people need it.
+            let flour = universe_sim::world::goods::item("stock.flour-bulk").unwrap();
+            let g = &u.world.goods[flour];
+            let line: Vec<String> = u.markets.economy.places.iter().map(|p| { let q = p.price(g); format!("{} ask {} bid {:.0}", p.name.trim_start_matches("Port "), q.ask.map_or("-".into(), |a| format!("{a:.0}")), q.bid) }).collect();
+            println!("  flour day {day}: {}", line.join(" | "));
         }
         if day % 10 == 0 || day == 1 || day == 3 {
             println!("--- day {day}");

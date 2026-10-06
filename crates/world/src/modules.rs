@@ -402,7 +402,7 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     }
     fn laser(&mut self, it: &r::EquipmentFunctionLaser) -> Self::Out {
         let f = |v: Option<f64>| v.unwrap_or(0.0);
-        Some(Does::Laser(crate::weapons::Laser { power: f(it.beam_power), focus: f(it.focus), range: f(it.range), burn: f(it.burn), cool: f(it.cool) }))
+        Some(Does::Laser(crate::weapons::Laser { power: f(it.beam_power), focus: f(it.focus), range: f(it.range), burn: f(it.burn), cool: f(it.cool), reset: f(it.reset) }))
     }
     fn mining_rig(&mut self, it: &r::EquipmentFunctionMiningRig) -> Self::Out {
         let f = |v: Option<f64>| v.unwrap_or(0.0);
