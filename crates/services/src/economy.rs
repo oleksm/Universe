@@ -417,13 +417,7 @@ impl Economy {
             return;
         }
         let Some(w) = Works::rig(system, body, key) else { return };
-        let owner = w.owner.clone().unwrap_or_default();
-        let reg = universe_world::registry::registry();
-        if !owner.is_empty() && !land.companies.iter().any(|c| c.0 == owner) {
-            let name = reg.names.get(&owner).cloned().unwrap_or_else(|| owner.clone());
-            land.companies.push((owner.clone(), name));
-        }
-        let trader = land.companies.iter().position(|c| c.0 == owner).map_or(Party::Market(system, facility), |i| Party::Company(i as u32));
+        let trader = w.owner.as_deref().map_or(Party::Market(system, facility), |o| land.enlist(o));
         self.index.insert((system, facility), self.places.len());
         self.places.push(Place {
             system,

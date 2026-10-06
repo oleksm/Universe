@@ -143,6 +143,20 @@ impl LandOffice {
         LandOffice { grounds, companies, ran_to: 0.0 }
     }
 
+    /// The company `key` as a ledger party, made one of the office's
+    /// companies if it isn't yet (named as the registry names it).
+    pub fn enlist(&mut self, key: &str) -> Party {
+        let i = match self.companies.iter().position(|c| c.0 == key) {
+            Some(i) => i,
+            None => {
+                let name = universe_world::registry::registry().names.get(key).cloned().unwrap_or_else(|| key.to_string());
+                self.companies.push((key.to_string(), name));
+                self.companies.len() - 1
+            }
+        };
+        Party::Company(i as u32)
+    }
+
     /// Who an owner is to the ledger.
     pub fn party(&self, o: &Owner) -> Option<Party> {
         match o {

@@ -435,6 +435,7 @@ impl Universe {
         // A new ship: a clean record, and an empty hold (what was in the old
         // one went with it), because of the respawn, as logged.
         if let Some(cause) = self.logged(id, |e| matches!(e, ShipEvent::Respawned)) {
+            let brought_on = self.brought_on(id);
             self.law.forget(id);
             // Its debt with the system where it comes back paid by its loss:
             // no longer an enemy there (but no friend).
@@ -445,7 +446,7 @@ impl Universe {
             }
             self.ledger.write_off(id, self.tick, cause);
             if id == crate::combat::PLAYER {
-                self.insure(cause);
+                self.insure(brought_on, cause);
             }
         }
     }
@@ -784,7 +785,7 @@ impl Universe {
     fn start_docked(&mut self) {
         let home = self.world.home_system;
         let sys = self.world.system(home);
-        let Some(station) = sys.station() else { return self.respawn() };
+        let Some(station) = sys.station() else { return self.start_in_flight() };
         let port = universe_world::Facility::Station(station);
         let pad = match self.atc.request_pad(home, port, crate::combat::PLAYER, self.world.time) {
             universe_services::PadGrant::Pad(k) => k,
@@ -803,30 +804,93 @@ impl Universe {
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
     }
 
-    /// Put a new ship next to the home station, matching its orbit.
+    /// Give the ship up: a new one from the insurer (see `insure`).
     pub fn respawn(&mut self) {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Respawn));
+        let brought_on = self.brought_on(crate::combat::PLAYER);
         let mut events = Vec::new();
         // (A new ship somewhere else: whatever traffic control held for the old one goes.)
         self.atc.because(self.tick, universe_protocol::Cause::Rules);
         self.atc.release(crate::combat::PLAYER);
         self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
         self.player_events(events);
-        self.insure(universe_protocol::Cause::Rules);
+        self.insure(brought_on, universe_protocol::Cause::Rules);
     }
 
-    /// The player's ship lost and replaced: the excess paid on the same hull
-    /// and fit, or, unable to pay, the basic ship instead. (NPCs' operator
-    /// stands its own losses.)
-    fn insure(&mut self, cause: universe_protocol::Cause) {
+    /// The offence ship `id` brought its loss on by, if any: fair game for
+    /// firing on the innocent is piracy.
+    pub(crate) fn brought_on(&self, id: usize) -> Option<universe_world::registry::Offence> {
+        self.law.aggressed(id as universe_protocol::BodyId, self.world.time).then_some(universe_world::registry::Offence::Piracy)
+    }
+
+    /// The player's ship lost and replaced by its insurer, on its terms
+    /// (`world::order::insurer`): the excess paid, the same hull and fit
+    /// delivered parked where it says (a yard). A loss it refuses (brought on
+    /// by an offence it names), or an excess the pilot can't pay: the basic
+    /// ship instead, delivered the same. (NPCs' operator stands its own losses.)
+    fn insure(&mut self, brought_on: Option<universe_world::registry::Offence>, cause: universe_protocol::Cause) {
         use universe_services::{Asset, Party};
-        let excess = crate::commerce::INSURANCE_EXCESS * Universe::ship_value(&self.ship);
-        let paid = self.ledger.transfer(Party::Pilot(crate::combat::PLAYER), Party::World, Asset::Credits, excess, self.tick, cause).is_ok();
+        let me = Party::Pilot(crate::combat::PLAYER);
+        let terms = universe_world::order::insurer();
+        let refused = brought_on.filter(|o| terms.is_some_and(|(_, t)| t.refuses.contains(o)));
+        let excess = terms.map_or(0.0, |(_, t)| t.excess) * Universe::ship_value(&self.ship);
+        let paid = match terms {
+            Some((org, _)) if refused.is_none() => {
+                let insurer = self.land.enlist(&org.identity.key);
+                self.ledger.transfer(me, insurer, Asset::Credits, excess, self.tick, cause).is_ok()
+            }
+            _ => false,
+        };
         if !paid {
             self.ship.class = universe_world::ship::starting_hull();
             self.ship.refresh_stock();
         }
-        self.events.push(Event::Insured { excess: paid.then_some(excess) });
+        let yard = terms.filter(|(_, t)| t.delivered_at == universe_world::registry::OrgInsuranceDeliveredAt::Yard).and_then(|_| self.yard());
+        let at = match yard {
+            Some((system, port)) => {
+                self.deliver(system, port);
+                let sys = self.world.system(system);
+                sys.spaceports[port].name.clone()
+            }
+            None => String::new(),
+        };
+        self.events.push(Event::Insured { excess: paid.then_some(excess), refused: refused.map(universe_world::order::offence_name), at });
+    }
+
+    /// A yard (a works with a building dock), the home system's first: its system and port.
+    fn yard(&self) -> Option<(usize, usize)> {
+        let e = &self.markets.economy;
+        let mut yards: Vec<(usize, usize)> = e
+            .works
+            .iter()
+            .filter(|w| w.setups.iter().any(|s| s.module.identity.key == "module.building-dock"))
+            .filter_map(|w| match w.site {
+                universe_services::economy::Site::Ground(g) => self.land.grounds.get(g).map(|g| (g.system, g.port)),
+                universe_services::economy::Site::Rig(..) => None,
+            })
+            .collect();
+        yards.sort_by_key(|&(s, _)| s != self.world.home_system);
+        yards.first().copied()
+    }
+
+    /// The player's ship, as it is, set down parked on a pad of port `port` in `system`.
+    fn deliver(&mut self, system: usize, port: usize) {
+        let at = universe_world::Facility::Spaceport(port);
+        let pad = match self.atc.request_pad(system, at, crate::combat::PLAYER, self.world.time) {
+            universe_services::PadGrant::Pad(k) => k,
+            universe_services::PadGrant::Queued(_) => universe_world::spaceport::CENTER_PAD,
+        };
+        let old = self.ship.clone();
+        self.ship = self.world.ship_on(system, at, pad);
+        self.ship.class = old.class;
+        self.ship.trim = old.trim.clone();
+        if let Some(fit) = old.fit {
+            let _ = self.ship.refit((*fit).clone());
+        }
+        self.ship.refresh_stock();
+        self.ship.fuel = self.ship.spec().fuel_capacity;
+        self.ship.energy = self.ship.spec().capacitor_capacity;
+        self.ship_system = system;
     }
 
     // What the avionics show the pilot.

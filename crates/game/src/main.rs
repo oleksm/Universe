@@ -985,13 +985,19 @@ impl App {
                 Event::Vended { what, credits, note } => format!("{what} - {credits:.0} CR. {note}"),
                 Event::Refitted { slot, module, credits } => format!("{} FITTED IN {} - {} {:.0} CR", module.unwrap_or_else(|| "NOTHING".into()), slot.to_uppercase(), if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
                 Event::BoughtShip { name, credits } => format!("NEW SHIP: {name} - {} {:.0} CR WITH YOUR OLD ONE TRADED IN", if credits >= 0.0 { "COST" } else { "PAID" }, credits.abs()),
-                Event::Insured { excess: Some(x) } => format!("INSURED: THE SAME SHIP AGAIN, FOR AN EXCESS OF {x:.0} CR"),
-                Event::Insured { excess: None } => "INSURED: COULDN'T PAY THE EXCESS - A BASIC SHIP INSTEAD".into(),
+                Event::Insured { excess, refused, at } => {
+                    let at = if at.is_empty() { String::new() } else { format!(", PARKED AT {}", at.to_uppercase()) };
+                    match (excess, refused) {
+                        (Some(x), _) => format!("INSURED: THE SAME SHIP AGAIN, FOR AN EXCESS OF {x:.0} CR{at}"),
+                        (None, Some(o)) => format!("THE INSURER WON'T PAY A LOSS BROUGHT ON BY {} - A BASIC SHIP{at}", o.to_uppercase()),
+                        (None, None) => format!("INSURED: COULDN'T PAY THE EXCESS - A BASIC SHIP{at}"),
+                    }
+                }
                 Event::Ship(ShipEvent::OutOfFuel) => "OUT OF FUEL - NO THRUST, NO HYPERDRIVE".into(),
                 Event::Ship(ShipEvent::Landed { body, station: false }) => format!("LANDED ON {body}"),
                 Event::Ship(ShipEvent::TookOff) => "LIFT OFF".into(),
                 Event::Ship(ShipEvent::Crashed { body }) => format!("SHIP DESTROYED - {body}"),
-                Event::Ship(ShipEvent::Respawned) => "NEW SHIP DELIVERED TO HOME STATION".into(),
+                Event::Ship(ShipEvent::Respawned) => "SHIP LOST".into(),
                 Event::Ship(ShipEvent::EnteredSystem { name }) => format!("ENTERING {name} SYSTEM"),
                 Event::Ship(ShipEvent::HyperdriveEngaged) => "HYPERDRIVE ENGAGED".into(),
                 Event::Ship(ShipEvent::SystemsOn) => "FLIGHT SYSTEMS ON".into(),

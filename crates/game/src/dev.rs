@@ -768,7 +768,7 @@ pub fn apply(app: &mut App, name: &str) {
             // In flight by the home station, the hull critical and the tank nearly dry.
             app.mode = Mode::Pilot;
             let u = app.engine.universe();
-            u.respawn();
+            u.start_in_flight();
             u.ship.hull = 0.2;
             u.ship.fuel = 1_000.0;
         }
@@ -777,7 +777,7 @@ pub fn apply(app: &mut App, name: &str) {
             // in sunlight by the home station, seen from the side and above.
             let key = std::env::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
             let u = app.engine.universe();
-            u.respawn();
+            u.start_in_flight();
             if let Some(h) = universe_sim::world::content::content().handle(&key) {
                 u.ship.class = h;
                 u.ship.fit = None;
@@ -803,7 +803,7 @@ pub fn apply(app: &mut App, name: &str) {
             // thruster and the opposite tail one held (a yaw).
             app.mode = Mode::Pilot;
             let u = app.engine.universe();
-            u.respawn();
+            u.start_in_flight();
             let s = u.ship.spec();
             let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
             u.ship.manual = true;

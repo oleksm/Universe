@@ -12,7 +12,7 @@ use universe_sim::{Controls, NavTarget, ShipState, Universe};
 fn bench(n: usize) -> Universe {
     let mut u = Universe::new(1984);
     // (In flight, not parked on the home station's deck.)
-    u.respawn();
+    u.start_in_flight();
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     u.events.clear();
     u.spawn_settlers(n, 1);
@@ -421,7 +421,7 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     // Rich: mended whole.
     u.ledger.settle(me, Asset::Credits, 1e6, u.tick, cause);
     assert_eq!(u.repair(universe_sim::PLAYER).unwrap().1, 1.0);
-    // An interceptor lost: the same again, for the excess.
+    // An interceptor lost: the same again, for the insurer's excess (a tenth), parked at the yard.
     let interceptor = content().handle("hull.interceptor").unwrap();
     u.ship.class = interceptor;
     let value = Universe::ship_value(&u.ship);
@@ -430,7 +430,18 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
     assert_eq!(u.ship.class, interceptor);
     assert!((u.credits() - (before - 0.1 * value)).abs() < 1.0, "paid the excess: {} of {before}", u.credits());
+    let at = u.docked_market().map(|f| f.name(&u.ship_system()));
+    assert!(at.as_deref().is_some_and(|n| n.starts_with("Port Trethi")), "delivered at the yard: {at:?}");
+    // Lost as a pirate (fair game for firing on the innocent): refused, a basic ship, nothing paid.
+    u.ship.class = interceptor;
+    let before = u.credits();
+    let now = u.world.time;
+    u.law.declare(universe_sim::PLAYER as _, now + 600.0, now, cause);
+    u.respawn();
+    assert_eq!(u.ship.class, universe_sim::world::ship::starting_hull());
+    assert_eq!(u.credits(), before, "the insurer won't pay a pirate's loss");
     // Broke, lost again: a basic ship.
+    u.ship.class = interceptor;
     u.ledger.settle(me, Asset::Credits, 0.0, u.tick, cause);
     u.respawn();
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);

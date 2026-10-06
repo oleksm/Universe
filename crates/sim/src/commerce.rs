@@ -591,8 +591,6 @@ impl crate::universe::Universe {
 
 /// A whole hull's repair costs this share of its frame's price.
 pub const REPAIR_PRICE: f64 = 0.3;
-/// A ship lost is replaced, the same hull and fit, for this share of its value.
-pub const INSURANCE_EXCESS: f64 = 0.1;
 
 impl crate::universe::Universe {
     /// Pilot `id`'s hull mended at the station it's docked at, as far as its

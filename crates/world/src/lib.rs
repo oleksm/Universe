@@ -39,6 +39,7 @@ pub mod names;
 pub mod radar;
 pub mod network;
 pub mod port;
+pub mod order;
 pub mod rigs;
 pub mod rng;
 pub mod shape;

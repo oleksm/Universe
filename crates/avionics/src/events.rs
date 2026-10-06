@@ -54,6 +54,8 @@ pub enum Event {
     /// The hull mended at a station: what it cost, and how sound it is now (0..1).
     Repaired { credits: f64, hull: f64 },
     /// A ship lost, replaced by the insurer: what the excess cost (None: it
-    /// couldn't be paid, and the replacement is the basic ship).
-    Insured { excess: Option<f64> },
+    /// couldn't be paid, or the loss was refused, and the replacement is the
+    /// basic ship); the offence it refused for; the port it was delivered to
+    /// (empty: none, left by the home station).
+    Insured { excess: Option<f64>, refused: Option<String>, at: String },
 }

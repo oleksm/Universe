@@ -187,7 +187,7 @@ mod tests {
         let mut u = Universe::new(1984);
         // (In flight by the home station, not parked on its deck; the respawn
         // settled, a step on, before the lock is taken.)
-        u.respawn();
+        u.start_in_flight();
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
         u.spawn_settlers(1, 1);
         // A settler 3 km ahead, crossing at 40 m/s; we're drifting with it.
