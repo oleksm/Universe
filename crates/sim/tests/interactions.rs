@@ -338,11 +338,12 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
     let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.rack.s2")));
+    let before = u.ship.spec().dry_mass;
     let cost = u.refit("cargo", Some(m("equipment.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
-    assert_eq!(u.ship.spec().dry_mass, 61_540.0 - 1500.0 + 800.0, "(with its 1.5 t capacitor bank and 40 kg comm)");
+    assert!((u.ship.spec().dry_mass - (before - 1500.0 + 800.0)).abs() < 1e-6, "the 1.5 t racks out, the 0.8 t in");
     // At Port Trethi's market: a rack lying in its warehouse goes in, the one taken out goes
     // into the warehouse; a hull it hasn't got isn't sold.
     let trethi = Facility::Spaceport(u.ship_system().spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());

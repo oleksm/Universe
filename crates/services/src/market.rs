@@ -1,5 +1,7 @@
 //! Markets: where a settlement has a warehouse the exchange has approved,
-//! what lies in it is on the market (see `economy`). It sells what it holds
+//! what lies in it is on the market (see `economy`), as stock (a good in bulk
+//! is its stock) and what's made of it (parts, equipment, hulls): no bare
+//! good, element or material is sold. It sells what it holds
 //! and buys any stock while it has room: what the settlement's works take,
 //! at prices that follow its stock of it; anything else, for less as the
 //! warehouse fills. Every trade moves the stock in or out of the warehouse,
@@ -97,6 +99,10 @@ impl Markets {
     fn quote(&self, system: usize, f: Facility, item: usize) -> Option<Quote> {
         let place = self.economy.place(system, f).filter(|p| p.warehouse.is_some())?;
         let it = &self.goods[item];
+        // (What is sold is stock, and what's made of it: no bare good, element or material.)
+        if !["stock.", "part.", "equipment.", "hull."].iter().any(|k| it.key.starts_with(k)) {
+            return None;
+        }
         let p = place.price(it);
         let side = if p.ask.is_some() { Side::Sells } else { Side::Buys };
         let usual = if p.wanted { place.need(item) * crate::economy::COVER_DAYS / it.mass } else { p.stock };

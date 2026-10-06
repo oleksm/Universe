@@ -557,8 +557,11 @@ impl ClassSpec {
             .filter_map(|(slot, h)| fitted.iter().find(|(s, _)| &s.name == slot).map(|(s, m)| (slot.clone(), *h, *m, shape.node(&format!("mount_{}", s.name)).map_or(shape.solid.centroid, |n| n.at))))
             .collect();
         let (placed, crowded) = place(shape, &wants);
-        // (A module with no room anywhere in the hull: it won't go together.)
-        if !crowded.is_empty() {
+        // (A module with no room anywhere in the hull: it won't go together. Unless the hull is
+        // one the registry marks outdated, a rough early guess never sized for real equipment: it
+        // flies as it is, its crowding said.)
+        let outdated = crate::registry::registry().hulls.iter().any(|h| h.identity.key == key && h.identity.revision == Some(crate::registry::DesignStage::Outdated));
+        if !crowded.is_empty() && !outdated {
             return Err(crowded.join(", "));
         }
         let mount = |slot: &str| placed.iter().find(|p| p.slot == slot).map_or(shape.solid.centroid, |p| p.at);

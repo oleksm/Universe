@@ -189,7 +189,8 @@ impl Registry {
     /// of it.
     pub fn traded_as(&self, item: &str) -> Option<String> {
         match item.split('.').next() {
-            Some("good") => self.good(item)?.identity.traded_as.clone(),
+            // (A good is sold as its stock: the stock made from it.)
+            Some("good") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
             Some("stock") => self.stock.iter().find(|s| s.identity.key == item)?.identity.traded_as.clone(),
             Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
             _ => None,
