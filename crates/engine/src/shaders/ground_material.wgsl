@@ -1,0 +1,149 @@
+// The ground's look close up (the planet lab's rules, ported from its viewer's ground shader in
+// planet-sim's demo/index.html): what the ground is made of at each pixel, from the world's own
+// maps, not a texture painted on it. Plants and soil from the world's ground map (its biomes,
+// without rock and snow); woodland and open ground as a mosaic; wet valley floors greener; rock
+// showing on steep and high ground in its unit's own colour, banded by its beds; scree below the
+// steep ground; sand on low, gentle coasts where it isn't frozen; snow where the year is cold at
+// that height.
+//
+// The engine samples the maps (equirectangular, per world) and works out the geometry; this file
+// only turns them into a colour. Its one entry: `ground_material(GroundIn) -> vec3<f32>`, a
+// linear-light albedo for land (the sea is the engine's own).
+//
+// Map encodings (planet-sim-surface/1, docs/survey-format.md in planet-sim):
+//   globe_ground.jpg  sRGB; linearise before passing `ground` (pow 2.2 is what the viewer does)
+//   climate.png       R: year-mean temperature at sea level, °C = R·100 − 50 (R in 0…1)
+//                     G: rain, m a year = G·4
+//   rockid.png        R: rock unit index × 8 (0…255, nearest-sampled: unit = round(R·255 / 8))
+//   rv_*.png          below the rivers (rows 1025–1537, cols 0–512, half resolution): wetness (R),
+//                     scree (G), bare rock (B), each 0…1
+//
+// Status: draft on `planet`, not yet bound; written against fs_mesh in scene.wgsl at 3a004ca2,
+// waiting on the integrator's slot (full-resolution maps bound to the ground shader).
+
+struct GroundIn {
+    // The world's ground colour here (linear light): plants and soil, no rock, no snow.
+    ground: vec3<f32>,
+    // The same read softened (a few texels' worth: a lower mip), for where the 600 m surface
+    // fields take over the local pattern; pass `ground` again if there's no such read.
+    ground_soft: vec3<f32>,
+    // Year-mean temperature at sea level (°C) and rain (m a year), from climate.png.
+    t_sea_c: f32,
+    rain_m: f32,
+    // The rock unit here (rockid.png's index: geology.UNITS order in planet-sim).
+    unit: u32,
+    // The 600 m surface fields (rv tiles), each 0…1, and 1 where they are present (else 0: the
+    // rules then lean on slope and height alone).
+    wet: f32,
+    scree: f32,
+    bare: f32,
+    surface_on: f32,
+    // Height above the sea (m), and the ground's true slope (rise over run, the relief's
+    // exaggeration taken out).
+    h_m: f32,
+    slope: f32,
+    // How far the ground stands above (+) or below (−) its surroundings at ~8 km, about −1…1
+    // (ridges and hollows: woodland favours hollows); 0 if unknown.
+    rel: f32,
+    // Where on the ground (m), for the rules' noise (any frame steady on the ground, e.g. the
+    // engine's wrapped `micro`: its period is far above the noise's longest wavelength, 2 km),
+    // and the size of a pixel there (m), to fade out noise finer than a pixel.
+    q: vec3<f32>,
+    pixel_m: f32,
+};
+
+// Bare rock's colour by unit (linear light, geology.UNITS order: planet-sim look.TRUE).
+const ROCK: array<vec3<f32>, 20> = array<vec3<f32>, 20>(
+    vec3<f32>(0.102, 0.089, 0.076), vec3<f32>(0.195, 0.138, 0.112), vec3<f32>(0.434, 0.352, 0.287), vec3<f32>(0.392, 0.305, 0.231),
+    vec3<f32>(0.150, 0.156, 0.107), vec3<f32>(0.305, 0.262, 0.223), vec3<f32>(0.527, 0.413, 0.352), vec3<f32>(0.076, 0.058, 0.045),
+    vec3<f32>(0.672, 0.604, 0.468), vec3<f32>(0.617, 0.413, 0.195), vec3<f32>(0.122, 0.112, 0.080), vec3<f32>(0.413, 0.122, 0.065),
+    vec3<f32>(0.262, 0.065, 0.034), vec3<f32>(0.305, 0.262, 0.223), vec3<f32>(0.238, 0.205, 0.171), vec3<f32>(0.058, 0.061, 0.076),
+    vec3<f32>(0.133, 0.114, 0.102), vec3<f32>(0.468, 0.423, 0.361), vec3<f32>(0.552, 0.539, 0.503), vec3<f32>(0.195, 0.150, 0.112));
+
+const SAND: vec3<f32> = vec3<f32>(0.56, 0.48, 0.34);
+const SNOW: vec3<f32> = vec3<f32>(0.85, 0.89, 0.94);
+const LAPSE: f32 = 0.0065;   // K a metre
+
+// Value noise, −1…1 (the viewer's dnoise: smooth, on the integer lattice).
+fn gm_hash(p: vec3<f32>) -> f32 {
+    var q = fract(p * 0.3183099 + vec3<f32>(0.1, 0.1, 0.1));
+    q = q * 17.0;
+    return fract(q.x * q.y * q.z * (q.x + q.y + q.z)) * 2.0 - 1.0;
+}
+
+fn gm_noise(x: vec3<f32>) -> f32 {
+    let i = floor(x);
+    var f = fract(x);
+    f = f * f * (3.0 - 2.0 * f);
+    return mix(mix(mix(gm_hash(i), gm_hash(i + vec3<f32>(1.0, 0.0, 0.0)), f.x),
+                   mix(gm_hash(i + vec3<f32>(0.0, 1.0, 0.0)), gm_hash(i + vec3<f32>(1.0, 1.0, 0.0)), f.x), f.y),
+               mix(mix(gm_hash(i + vec3<f32>(0.0, 0.0, 1.0)), gm_hash(i + vec3<f32>(1.0, 0.0, 1.0)), f.x),
+                   mix(gm_hash(i + vec3<f32>(0.0, 1.0, 1.0)), gm_hash(i + vec3<f32>(1.0, 1.0, 1.0)), f.x), f.y), f.z);
+}
+
+// Noise kept to what a pixel can show: an octave of wavelength `lam` fades out below ~3 pixels.
+fn gm_fade(lam: f32, pixel_m: f32, pixels: f32) -> f32 {
+    return clamp(lam / (pixel_m * pixels) - 1.0, 0.0, 1.0);
+}
+
+fn ground_material(i: GroundIn) -> vec3<f32> {
+    let h = i.h_m;
+    let land = step(0.0, h);
+    var gcol = select(i.ground, i.ground_soft, i.surface_on > 0.5);
+    // (Edges broken by noise from ~2 km to ~16 m, so the rules don't draw contour lines.)
+    var n1 = 0.0;
+    var a = 0.5;
+    var lam = 2000.0;
+    for (var o = 0; o < 8; o++) {
+        n1 += a * gm_fade(lam, i.pixel_m, 3.0) * gm_noise(i.q / lam + vec3<f32>(f32(o) * 5.7));
+        lam *= 0.5;
+        a *= 0.6;
+    }
+    let t_year = i.t_sea_c - LAPSE * max(h, 0.0);
+    let wet = i.wet * i.surface_on;
+    // Plants as a mosaic, not a wash: woodland and open ground in patches from ~2 km to ~100 m,
+    // woodland favouring hollows and wet ground, in the proportion the climate gives; crowns at
+    // ~25 m. Wet valley floors greener, even in dry country.
+    {
+        let warm = clamp((t_year + 2.0) / 6.0, 0.0, 1.0);
+        var cover = clamp((i.rain_m - 0.2) / 0.8, 0.0, 1.0) * clamp((t_year + 4.0) / 10.0, 0.0, 1.0);
+        cover = cover + (1.0 - cover) * wet * 0.7 * warm;
+        var forest = clamp((i.rain_m - 0.7) / 0.7, 0.0, 1.0) * clamp((t_year + 2.0) / 8.0, 0.0, 1.0);
+        forest = clamp(forest + (wet - 0.3) * 0.6 * i.surface_on * warm, 0.0, 1.0);
+        gcol = mix(gcol, gcol * vec3<f32>(0.72, 0.9, 0.66), wet * 0.55 * warm);
+        let amt = cover * (0.5 + forest * (1.0 - forest) * 2.0) + (1.0 - cover) * 0.3;
+        var pn = 0.0;
+        var pa = 0.5;
+        var pl = 1800.0;
+        var pw = 0.0;
+        for (var o = 0; o < 6; o++) {
+            pn += pa * gm_fade(pl, i.pixel_m, 2.0) * gm_noise(i.q / pl + vec3<f32>(3.1 + f32(o) * 1.7));
+            pw += pa;
+            pl *= 0.45;
+            pa *= 0.62;
+        }
+        pn = pn / pw * 2.2 - 0.35 * clamp(i.rel, -1.0, 1.0) + (forest - 0.5) * 1.4 * cover;
+        let ew = max(fwidth(pn) * 1.5, 0.05);
+        let wood = smoothstep(-ew, ew, pn);
+        let crown = gm_noise(i.q / 25.0) * gm_fade(25.0, i.pixel_m, 3.0);
+        let open_c = gcol * (1.0 + 0.3 * amt);
+        let wood_c = gcol * (1.0 - 0.32 * amt) * mix(vec3<f32>(1.0), vec3<f32>(0.9, 1.03, 0.88), cover) * (1.0 + 0.2 * crown * cover);
+        gcol = mix(open_c, wood_c, wood);
+    }
+    // Rock on steep and high ground, in its unit's colour, banded faintly by its beds.
+    let rock_c = ROCK[min(i.unit, 19u)];
+    var rock_w = clamp(clamp((h - 1800.0) / 1500.0, 0.0, 1.0) * 0.6 + clamp((i.slope - 0.15) / 0.35, 0.0, 1.0) * 0.7 + 0.35 * n1, 0.0, 1.0);
+    rock_w = max(rock_w, i.bare * i.surface_on * 0.95);
+    let band = gm_noise(vec3<f32>(h / 60.0, i.q.x / 4000.0, i.q.z / 4000.0));
+    var col = mix(gcol, rock_c * 0.62 * (1.0 + 0.18 * band + 0.25 * n1), rock_w * land);
+    // Scree: lighter broken rock below the steep ground, grained.
+    let grain = gm_noise(i.q / 40.0) * gm_fade(40.0, i.pixel_m, 3.0);
+    col = mix(col, rock_c * 0.8 * (1.0 + 0.3 * grain + 0.2 * n1), i.scree * i.surface_on * 0.75 * land);
+    // Sand on low, gentle coasts, where it isn't frozen.
+    let sand = (1.0 - smoothstep(3.0, 25.0 + 20.0 * n1, h)) * step(0.5, h) * clamp(1.0 - i.slope / 0.04, 0.0, 1.0) * clamp(t_year / 4.0, 0.0, 1.0);
+    col = mix(col, SAND, 0.75 * sand);
+    // Snow where the year is cold at this height, off the steepest ground.
+    let snow = clamp((-t_year - 2.0) / 4.0 + 0.6 * n1, 0.0, 1.0) * clamp((0.9 - i.slope) / 0.4, 0.0, 1.0) * land;
+    col = mix(col, SNOW, snow);
+    return col;
+}
