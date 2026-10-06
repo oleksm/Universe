@@ -85,6 +85,12 @@ Galaxy ····························· 1 day   star c
       └─ Realtime (per bubble) ····· 5 ms    the critical lane: only seamless cross-player physics, only where seen
 ```
 
+**No other record names a clock.** The hierarchy derives it: a clock's `scope` says what kind of
+thing it belongs to, and the engine builds its lists at runtime from the world it has (every
+settlement an economy and a market clock, every body a planetary one, every craft its machinery
+and rails, every bubble its realtime step). Nothing in the registry is tagged with a cadence, and
+nothing should be.
+
 Each clock record says: its `parent` (whose due time makes it step), `scope` (one per galaxy,
 region, system, body, settlement, craft or bubble), `coupling` (tight, fast-loose, slow-loose:
 which decides thread, process or machine), `trigger` (a period in seconds, an event list, or a
