@@ -769,21 +769,22 @@ fn clouds_shadow(p: vec3<f32>, center: vec3<f32>, to_body: mat3x3<f32>, sun_dir:
 // near the ground. Layout: a 2D array texture, layer = level · 3 + shell (shells: 0 low, 1 frontal,
 // 2 high), rgba16float: R cover (0–1), G optical depth.
 //
-// The plumbing (the integrator's): the texture (512² × 9, storage-write for the pass, sampled
+// The plumbing (the integrator's): the texture (512² × 12 (4 levels × 3 shells), storage-write for the pass, sampled
 // with a linear clamping sampler for the shading), the CloudCache uniform, and the pass:
 // cloud_cache_fill over (512/8, 512/8, layers to refresh) — every layer a few frames apart is
 // plenty (the clouds move ~10 m/s: the inner level's texel in ~15 s); a level re-centred (its
 // center, e1, e2 rebuilt) when the camera has moved an eighth of its width from it.
 
 const CC_N: i32 = 512;
-const CC_LEVELS: i32 = 3;
+const CC_LEVELS: i32 = 4;
 
 struct CloudCache {
     // The levels' common centre (body-fixed unit direction) and its tangent frame.
     center: vec4<f32>,
     e1: vec4<f32>,
     e2: vec4<f32>,
-    // Each level's half-width (m, along the tangent plane: gnomonic), x: level 0 (outer) … z: 2.
+    // Each level's half-width (m, along the tangent plane: gnomonic), x: level 0 (outer) … w: 3
+    // (4e6, 4e5, 4e4, 4e3: texels ~15.6 km, 1.56 km, 156 m, 15.6 m).
     half_m: vec4<f32>,
     // Each level's crossfade from its old copy (the second texture) to its new one (the first),
     // 0 → 1 over ~1–2 s after a refresh or re-centring: changes come in gradually, never at once.
@@ -838,8 +839,9 @@ fn cc_read_one(dir: vec3<f32>, shell: i32, pix_km: f32, frame: CloudCache, tex: 
         let w = clamp((1.0 - a) / 0.1, 0.0, 1.0);
         out = CcRead(select(v, mix(out.z, v, w), out.ok), true);
     }
-    // (Close to the clouds, finer than the inner level holds: computed directly by the caller.)
-    if (out.ok && used_km > 2.0 * pix_km && pix_km < 0.08) {
+    // (Only far finer than the finest level holds: computed directly by the caller. The cache
+    // holds smooth noise, so a texel somewhat coarser than the pixel only softens fine detail.)
+    if (out.ok && used_km > 8.0 * pix_km) {
         out.ok = false;
     }
     return out;
