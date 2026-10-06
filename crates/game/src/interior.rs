@@ -2592,9 +2592,124 @@ fn slider_range(tool: Tool) -> (f32, f32) {
     }
 }
 
+/// What a person aboard uses a day (kg): oxygen breathed, and water drunk, eaten
+/// with and washed in (NASA's BVAD, in standards/sources/research_people_needs.json).
+const OXYGEN_A_DAY: f64 = 0.895;
+const WATER_A_DAY: f64 = 2.5 + 0.7;
+
+/// The share of a drive's or lift's loss that comes aboard as heat (the rest goes
+/// out with its plume: the registry's mounts reckon cooling this way).
+const PLUME_SHARE: f64 = 1e-6;
+
+/// The design's budgets and what doesn't work: its mass (dry, full, the frame's),
+/// lift against its full weight, power drawn against supplied, heat to shed
+/// against radiators and coolant loops, crew and their days of air and water; and
+/// each check that fails (a ramp or lift that doesn't reach the ground, an airlock
+/// on no room, no way in, an ore path with a gap).
+struct Budget {
+    lines: Vec<(String, bool)>,
+    faults: Vec<String>,
+}
+
+/// A placed module's record's figures: its function's kind and fields, and the
+/// power it draws (W).
+fn figures(f: &Fitted) -> Option<(String, serde_json::Map<String, serde_json::Value>, f64)> {
+    let reg = universe_sim::world::registry::registry();
+    let e = reg.equipment.iter().find(|e| e.identity.key == f.key)?;
+    let serde_json::Value::Object(map) = serde_json::to_value(&e.function).ok()? else { return None };
+    let kind = map.get("kind").and_then(|v| v.as_str()).unwrap_or("").to_string();
+    Some((kind, map, e.needs.power.unwrap_or(0.0)))
+}
+
+fn budget(i: &Interior, frame_mass: f64) -> Budget {
+    let num = |m: &serde_json::Map<String, serde_json::Value>, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
+    let mut placed: Vec<(&Block, &Fitted, String, serde_json::Map<String, serde_json::Value>, f64)> = Vec::new();
+    for b in &i.plan.blocks {
+        if let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id))
+            && let Some((k, m, draw)) = figures(f)
+        {
+            placed.push((b, f, k, m, draw));
+        }
+    }
+    let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
+    let dry: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum::<f64>() + frame_mass;
+    let full = dry + i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.load).sum::<f64>();
+    let mut lines = Vec::new();
+    let t = |kg: f64| format!("{:.1} T", kg / 1000.0);
+    lines.push((format!("MASS  DRY {}  FULL {}  (FRAME {})", t(dry), t(full), t(frame_mass)), true));
+    let lift: f64 = of("lift").map(|p| num(&p.3, "thrust")).sum();
+    if lift > 0.0 {
+        let g = lift / (full * STANDARD_G);
+        lines.push((format!("LIFT  {}: {g:.2} OF ITS FULL WEIGHT AT 1 G", si(lift, "N")), g > 1.0));
+    }
+    let supply: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
+    let draw: f64 = placed.iter().map(|p| p.4).sum();
+    let gear: f64 = of("switchgear").map(|p| num(&p.3, "carries")).sum();
+    lines.push((format!("POWER {} DRAWN OF {}{}", si(draw, "W"), si(supply, "W"), if gear > 0.0 { format!(", SWITCHGEAR {}", si(gear, "W")) } else { String::new() }), draw <= supply && (gear == 0.0 || gear >= supply)));
+    // (Heat: a plant's loss, a drive's and lift's share at full burn, and every
+    // watt drawn.)
+    let plants: f64 = of("power_plant").map(|p| { let e = num(&p.3, "efficiency").max(0.01); num(&p.3, "output") * (1.0 / e - 1.0) }).sum();
+    let burn: f64 = placed.iter().filter(|p| p.2 == "drive" || p.2 == "lift").map(|p| { let e = num(&p.3, "efficiency").max(0.01); 0.5 * num(&p.3, "thrust") * num(&p.3, "exhaust") * (1.0 / e - 1.0) * PLUME_SHARE }).sum();
+    let heat = plants + burn + draw;
+    let shed: f64 = of("radiator").map(|p| num(&p.3, "rejects")).sum();
+    let loops: f64 = of("coolant_loop").map(|p| num(&p.3, "carries")).sum();
+    lines.push((format!("HEAT  {} TO SHED: RADIATORS {}, LOOPS {}", si(heat, "W"), si(shed, "W"), si(loops, "W")), shed >= heat && loops >= heat));
+    let crew: f64 = of("cabin").map(|p| num(&p.3, "seats")).sum();
+    if crew > 0.0 {
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum();
+        let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum();
+        let (ad, wd) = (air / (OXYGEN_A_DAY * crew), water / (WATER_A_DAY * crew));
+        let life = of("life_support").count();
+        lines.push((format!("CREW  {crew:.0}: AIR {ad:.0} DAYS, WATER {wd:.0} DAYS STORED{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && life > 0));
+    }
+    // Checks: the way in, the way down, the ore's path.
+    let mut faults = Vec::new();
+    let ground = of("landing_gear").map(|p| p.0.at.y - p.0.size.y * 0.5).fold(f32::INFINITY, f32::min);
+    for p in placed.iter().filter(|p| p.2 == "ramp" || p.2 == "cargo_lift") {
+        let foot = p.0.at.y - p.0.size.y * 0.5;
+        let reach = num(&p.3, if p.2 == "ramp" { "reach" } else { "travel" }) as f32;
+        if ground.is_finite() && foot - ground > reach + 0.05 {
+            faults.push(format!("{} REACHES {reach:.1} M; ITS FOOT IS {:.1} M UP", p.1.name, foot - ground));
+        }
+    }
+    let rooms: Vec<Vec3> = (0..i.plan.lines.len()).filter(|&k| i.plan.group_of(k).is_some_and(|g| i.plan.groups[g].walled)).flat_map(|k| {
+        let (a, b) = i.plan.axis(k);
+        room(a, b, i.plan.lines[k].2).1
+    }).collect();
+    let locks: Vec<_> = of("airlock").collect();
+    if crew > 0.0 && locks.is_empty() {
+        faults.push("NO WAY IN: NO AIRLOCK".into());
+    }
+    for p in &locks {
+        let (lo, hi) = p.0.bounds();
+        if !rooms.iter().any(|q| q.cmpge(lo - 1.0).all() && q.cmple(hi + 1.0).all()) {
+            faults.push(format!("{} OPENS ON NO ROOM", p.1.name));
+        }
+    }
+    if let Some(rig) = of("mining_rig").next() {
+        let scoop = of("handling").filter(|p| p.1.name.contains("SCOOP")).map(|p| p.0.at).min_by(|a, b| a.distance(rig.0.at).total_cmp(&b.distance(rig.0.at)));
+        let bay = of("ore_bay").map(|p| p.0.at).chain(i.plan.blocks.iter().filter(|b| b.id == HOLD).map(|b| b.at)).next();
+        match (scoop, bay) {
+            (None, _) => faults.push("ORE: NO SCOOP BY THE RIG".into()),
+            (_, None) => faults.push("ORE: NOWHERE TO PUT IT (NO ORE BAY)".into()),
+            (Some(s), Some(b)) => {
+                let reach: f64 = of("handling").filter(|p| p.1.name.contains("CONVEYOR")).map(|p| num(&p.3, "reach")).sum();
+                let gap = f64::from(s.distance(b));
+                if s.distance(rig.0.at) > 4.0 || reach + 2.0 < gap {
+                    faults.push(format!("ORE: SCOOP TO BAY {gap:.0} M, CONVEYORS REACH {reach:.0} M"));
+                }
+            }
+        }
+    }
+    Budget { lines, faults }
+}
+
 /// A figure with its unit, at a readable size: 900000 N as 900 KN, 1e7 m/s as
 /// 10000 KM/S.
 fn si(v: f64, unit: &str) -> String {
+    if v == 0.0 {
+        return format!("0 {unit}");
+    }
     let a = v.abs();
     let (scale, prefix) = if a >= 1e12 { (1e12, "T") } else if a >= 1e9 { (1e9, "G") } else if a >= 1e6 { (1e6, "M") } else if a >= 1e3 && unit != "KG" { (1e3, "K") } else { (1.0, "") };
     let n = v / scale;
@@ -4642,6 +4757,28 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 let name = if a == Action::Stand { if now.is_some_and(|p| !p.stand) { "AXIS ON LINE" } else { "FLOOR ON LINE" } } else { name };
                 draw_cell(frame, r.0, r.1, "", name, if off { Lamp::Unavailable } else { lamp });
             }
+        }
+    }
+    // The budgets (MODULES, FRAME): under the panel, each met in green, short in
+    // amber; what fails, in red.
+    if matches!(interior.tool, Tool::Modules | Tool::Frame) && !plan.blocks.is_empty() {
+        let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum();
+        let b = budget(interior, frame_mass);
+        let (pp, pc) = PANEL;
+        let rows = b.lines.len() + b.faults.len().min(4);
+        let (p, c) = (Vec2::new(pp.x, pp.y + pc.y + 6.0), Vec2::new(pc.x + 120.0, 18.0 + rows as f32 * 10.0));
+        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.88]));
+        frame.hud_box(p, c, PLANE.scale(1.2));
+        frame.text_scaled(p + Vec2::new(6.0, 4.0), "BUDGETS AND CHECKS", LABEL.scale(0.8), 0.6);
+        let mut y = p.y + 15.0;
+        for (text, ok) in &b.lines {
+            let col = if *ok { Color([0.4, 1.0, 0.5, 0.95]) } else { Color([1.0, 0.7, 0.2, 1.0]) };
+            frame.text_scaled(Vec2::new(p.x + 6.0, y), text, col, 0.55);
+            y += 10.0;
+        }
+        for f in b.faults.iter().take(4) {
+            frame.text_scaled(Vec2::new(p.x + 6.0, y), f, CLASH, 0.55);
+            y += 10.0;
         }
     }
     // A message for a while (saved, opened), under the toolbar.
