@@ -1,0 +1,23 @@
+{
+ "world_id": "TRE1",
+ "basins": 0,
+ "oil_fields": 0,
+ "gas_fields": 0,
+ "coalfields": 0,
+ "oil_in_place_mmbbl": 0,
+ "gas_in_place_bcf": 0,
+ "coal_mt": 0,
+ "units": {
+  "oil": "million barrels in place",
+  "gas": "billion cubic feet in place",
+  "coal": "million tonnes within 1,800 m"
+ },
+ "model": {
+  "accumulate": 0.0045,
+  "preserve_myr": 300.0,
+  "hi": [
+   0.45,
+   0.15
+  ]
+ }
+}

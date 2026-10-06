@@ -5,7 +5,6 @@ identity:
   name: Carbon fibre composite
   class: composite
   form:
-  - sheet
   - tube
   - plate
 mass:
@@ -20,3 +19,4 @@ environment:
 basis:
   - { of: [mass.density], tier: sourced, review: true, source: "standards/sources/research_ship_materials.json", note: "An aerospace carbon and epoxy laminate (Hexcel 8552 with AS4 fibre)." }
   - { of: [mechanical], tier: invented, review: true, note: "A quasi-isotropic AS4/8552 laminate, about a third of the fibre direction's 141 GPa and 2,200 MPa, from memory of the Hexcel data sheet: 55 GPa and 700 MPa. A composite has no yield: the figure is its strength to first failure, which is what a frame member is checked against. Not sourced; review." }
+  - { of: [identity.form], tier: derived, note: "Forms struck 2026-10-06 that no stock comes in (sheet): a form is said only where a stock record and its recipe exist." }

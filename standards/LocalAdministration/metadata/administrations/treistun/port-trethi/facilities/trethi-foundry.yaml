@@ -4,12 +4,6 @@ identity:
   name: Trethi Foundry
 kind: foundry
 parcel: parcel.treistun.port-trethi.1
-processes:
-  - process.alloying-304
-  - process.ingot-casting
-  - process.quenching-and-tempering
-  - process.annealing
-  - process.solution-treating-and-ageing
 # What it is built of. What it can make at most follows from this; what it does make is the
 # economy's business.
 lines:
