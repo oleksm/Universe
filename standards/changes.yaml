@@ -143,7 +143,7 @@
 - { record: building.tavern, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "282560f15925cd84" }
 - { record: building.theatre, at: "2026-10-06T17:56:25Z", status: draft, summary: "first tracked", sha: "243c58535d37bce0" }
 - { record: building.watch-house, at: "2026-10-06T17:56:25Z", status: draft, summary: "changed: per_people", sha: "bf926b6a1e4a58e2" }
-- { record: clock.administration, at: "2026-10-06T23:04:34Z", status: review, summary: "first tracked", sha: "642a36c88c713a22" }
+- { record: clock.administration, at: "2026-10-06T23:43:45Z", status: review, summary: "changed: identity, trigger, runs, rule, basis", sha: "1caebf34400532fc" }
 - { record: clock.celestial, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "8df29c397e0e2f14" }
 - { record: clock.economy, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "a74ea76e6a44b7e0" }
 - { record: clock.galaxy, at: "2026-10-06T22:07:52Z", status: review, summary: "first tracked", sha: "ad0ef89e8c0227c5" }
