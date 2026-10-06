@@ -708,8 +708,8 @@ impl Heights {
     }
 
     /// The air's tables from the bake (`air_luts.json`: the lab's, Hillaire 2020): the sun's
-    /// transmittance (256 × 64) and the light of scattering's higher orders (32 × 32, scaled to
-    /// its true size here), RGBA floats row by row. None: none baked. (`UNIVERSE_AIR_LUTS`: a
+    /// transmittance (256 × 64) and the light of scattering's higher orders (32 × 32), RGBA
+    /// floats row by row, as `air_luts.json` names their files and sizes. None: none baked. (`UNIVERSE_AIR_LUTS`: a
     /// folder of them to use instead, to try a world's before its bake has them.)
     pub fn air_luts(&self) -> Option<AirLuts> {
         let read = |name: &str| -> Option<Vec<u8>> {
@@ -720,12 +720,14 @@ impl Heights {
         };
         let info: serde_json::Value = serde_json::from_slice(&read("air_luts.json")?).ok()?;
         let floats = |b: Vec<u8>| -> Vec<f32> { b.chunks_exact(4).map(|c| f32::from_le_bytes([c[0], c[1], c[2], c[3]])).collect() };
-        let dims = |k: &str, rows: &str, cols: &str| Some((info.get(k)?.get(cols)?.as_u64()? as u32, info.get(k)?.get(rows)?.as_u64()? as u32));
-        let (tw, th) = dims("transmittance", "rows_height", "cols_mu")?;
-        let (mw, mh) = dims("multiscatter", "rows_height", "cols_mu_sun")?;
-        let scale = info.get("multiscatter")?.get("scale").and_then(serde_json::Value::as_f64).unwrap_or(1.0) as f32;
-        let transmittance = floats(read("air_transmittance.rgba32f")?);
-        let multiscatter: Vec<f32> = floats(read("air_multiscatter.rgba32f")?).into_iter().map(|v| v * scale).collect();
+        // (Each table: its file, width and height, as the contract names them.)
+        let table = |k: &str| -> Option<(u32, u32, Vec<f32>)> {
+            let t = info.get(k)?;
+            let (w, h) = (t.get("width")?.as_u64()? as u32, t.get("height")?.as_u64()? as u32);
+            Some((w, h, floats(read(t.get("file")?.as_str()?)?)))
+        };
+        let (tw, th, transmittance) = table("transmittance")?;
+        let (mw, mh, multiscatter) = table("multiscatter")?;
         (transmittance.len() == (tw * th * 4) as usize && multiscatter.len() == (mw * mh * 4) as usize).then_some(AirLuts { transmittance: (tw, th, transmittance), multiscatter: (mw, mh, multiscatter) })
     }
 
