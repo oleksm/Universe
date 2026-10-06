@@ -727,6 +727,14 @@ struct Beam {
     a: Vec3,
     b: Vec3,
     stock: String,
+    /// Pinned at its end at `a`, at `b` (free to turn there, carrying no bending
+    /// into what it meets: a strut's rod end).
+    #[serde(default, skip_serializing_if = "is_unpinned")]
+    pinned: [bool; 2],
+}
+
+fn is_unpinned(p: &[bool; 2]) -> bool {
+    !p[0] && !p[1]
 }
 
 /// Mill stock a member can be cut from: a tube or a bar the registry has, its
@@ -879,8 +887,8 @@ fn knit(mut beams: Vec<Beam>) -> (Vec<Beam>, usize) {
                 m.a.distance(j.0) > 0.05 && m.b.distance(j.0) > 0.05 && t > 0.0 && t < 1.0 && (m.a + d * t).distance(j.0) < r
             }) {
                 let m = beams.remove(k);
-                beams.push(Beam { a: m.a, b: j.0, stock: m.stock.clone() });
-                beams.push(Beam { a: j.0, b: m.b, stock: m.stock });
+                beams.push(Beam { a: m.a, b: j.0, stock: m.stock.clone(), pinned: [m.pinned[0], false] });
+                beams.push(Beam { a: j.0, b: m.b, stock: m.stock, pinned: [false, m.pinned[1]] });
                 changed = true;
                 made += 1;
             }
@@ -947,33 +955,36 @@ fn truss(a: Vec3, b: Vec3, depth: f32, spacing: f32, stock: &str) -> Vec<Beam> {
     let xs: Vec<f32> = (0..=lines).map(|k| lo.x + (hi.x - lo.x) * k as f32 / lines as f32).collect();
     let ys = [lo.y, lo.y + depth];
     let mut out: Vec<Beam> = Vec::new();
-    let mut add = |p: Vec3, q: Vec3| {
+    // (Every member welded at its joints: a welded tube frame is nearer rigid than
+    // pinned. Whether a member is a diagonal is kept for a pinned frame to come.)
+    let mut add = |p: Vec3, q: Vec3, diagonal: bool| {
         if p.distance(q) > 0.05 && !out.iter().any(|x| (x.a == p && x.b == q) || (x.a == q && x.b == p)) {
-            out.push(Beam { a: p, b: q, stock: stock.to_string() });
+            let _ = diagonal;
+            out.push(Beam { a: p, b: q, stock: stock.to_string(), pinned: [false; 2] });
         }
     };
     let at = |x: f32, y: f32, z: f32| Vec3::new(x, y, z);
     for w in zs.windows(2) {
         for &x in &xs {
             for &y in &ys {
-                add(at(x, y, w[0]), at(x, y, w[1]));
+                add(at(x, y, w[0]), at(x, y, w[1]), false);
             }
             // (Each line's bay braced up its side.)
-            add(at(x, ys[0], w[0]), at(x, ys[1], w[1]));
+            add(at(x, ys[0], w[0]), at(x, ys[1], w[1]), true);
         }
         for xw in xs.windows(2) {
             for &y in &ys {
-                add(at(xw[0], y, w[0]), at(xw[1], y, w[1]));
+                add(at(xw[0], y, w[0]), at(xw[1], y, w[1]), true);
             }
         }
     }
     for &z in &zs {
         for &x in &xs {
-            add(at(x, ys[0], z), at(x, ys[1], z));
+            add(at(x, ys[0], z), at(x, ys[1], z), false);
         }
         for xw in xs.windows(2) {
             for &y in &ys {
-                add(at(xw[0], y, z), at(xw[1], y, z));
+                add(at(xw[0], y, z), at(xw[1], y, z), false);
             }
         }
     }
@@ -991,7 +1002,7 @@ fn truss(a: Vec3, b: Vec3, depth: f32, spacing: f32, stock: &str) -> Vec<Beam> {
 /// Can a member of `stock` run from `a` to `b` clear of everything (modules, rooms,
 /// decks, the members of `frame` and `added`)?
 fn clear(plan: &Plan, a: Vec3, b: Vec3, stock: &str, frame: &[Beam], added: &[Beam]) -> bool {
-    let m = Beam { a, b, stock: stock.to_string() };
+    let m = Beam { a, b, stock: stock.to_string(), pinned: [false; 2] };
     passes(plan, &m, frame).is_none() && passes(&Plan { blocks: Vec::new(), lines: Vec::new(), plates: Vec::new(), ..Plan::default() }, &m, added).is_none()
 }
 
@@ -1036,12 +1047,12 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
                     t > 0.02 && t < 0.98 && (b.a + d * t).distance(at) < 0.05
                 }) {
                     let b = beams.remove(k);
-                    beams.push(Beam { a: b.a, b: at, stock: b.stock.clone() });
-                    beams.push(Beam { a: at, b: b.b, stock: b.stock });
+                    beams.push(Beam { a: b.a, b: at, stock: b.stock.clone(), pinned: [b.pinned[0], false] });
+                    beams.push(Beam { a: at, b: b.b, stock: b.stock, pinned: [false, b.pinned[1]] });
                 }
             }
             for w in ats.windows(2) {
-                beams.push(Beam { a: w[0], b: w[1], stock: stock.to_string() });
+                beams.push(Beam { a: w[0], b: w[1], stock: stock.to_string(), pinned: [false; 2] });
             }
         }
     }
@@ -1086,8 +1097,8 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             }) {
                 let b = beams.remove(k);
                 along = vec![b.a, b.b];
-                beams.push(Beam { a: b.a, b: m, stock: b.stock.clone() });
-                beams.push(Beam { a: m, b: b.b, stock: b.stock });
+                beams.push(Beam { a: b.a, b: m, stock: b.stock.clone(), pinned: [b.pinned[0], false] });
+                beams.push(Beam { a: m, b: b.b, stock: b.stock, pinned: [false, b.pinned[1]] });
             }
             let mut near: Vec<Vec3> = joints.iter().copied().filter(|&q| !inside(q) && q.distance(m) <= 15.0 && !along.contains(&q)).collect();
             near.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
@@ -1101,8 +1112,11 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             if let Some(q) = below.filter(|q| heavy && !leg && !chosen.contains(q)) {
                 chosen.push(q);
             }
+            // (Three struts or more: a tripod of rod ends, each pinned where it meets
+            // the frame, bringing it no bending; fewer stand by their stiffness.)
+            let pin = chosen.len() >= 3;
             for q in chosen {
-                out.push(Beam { a: m, b: q, stock: stock.to_string() });
+                out.push(Beam { a: m, b: q, stock: stock.to_string(), pinned: [false, pin] });
             }
         }
     }
@@ -1127,8 +1141,8 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
                 (t > 0.02 && t < 0.98 && Vec3::new(at.x - node.x, 0.0, at.z - node.z).length() < 0.05 && (-0.05..=0.3).contains(&gap)).then_some((k, at))
             }) {
                 let b = beams.remove(k);
-                beams.push(Beam { a: b.a, b: under, stock: b.stock.clone() });
-                beams.push(Beam { a: under, b: b.b, stock: b.stock });
+                beams.push(Beam { a: b.a, b: under, stock: b.stock.clone(), pinned: [b.pinned[0], false] });
+                beams.push(Beam { a: under, b: b.b, stock: b.stock, pinned: [false, b.pinned[1]] });
                 held.push(node);
                 continue;
             }
@@ -1137,7 +1151,7 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
             let ok = |q: &&Vec3| q.distance(node) <= 8.0 && ((**q - node).normalize_or_zero().y.abs() > 0.7) && clear(plan, node, **q, stock, &beams, &out);
             let below = joints.iter().filter(ok).filter(|q| q.y < node.y).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)));
             if let Some(&q) = below.or_else(|| joints.iter().filter(ok).min_by(|a, b| a.distance(node).total_cmp(&b.distance(node)))) {
-                out.push(Beam { a: node, b: q, stock: stock.to_string() });
+                out.push(Beam { a: node, b: q, stock: stock.to_string(), pinned: [false; 2] });
                 held.push(node);
             }
         }
@@ -1150,7 +1164,7 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
         near.sort_by(|a, b| a.distance(pad).total_cmp(&b.distance(pad)));
         let near: Vec<Vec3> = near.into_iter().filter(|&q| clear(plan, pad, q, stock, &beams, &out)).take(4).collect();
         for q in near.into_iter().take(4) {
-            out.push(Beam { a: pad, b: q, stock: stock.to_string() });
+            out.push(Beam { a: pad, b: q, stock: stock.to_string(), pinned: [false; 2] });
         }
     }
     let added = out.len();
@@ -1260,14 +1274,31 @@ fn brace(plan: &Plan, b: &Bearing) -> (Vec<Beam>, usize) {
         let mut ties: Vec<Vec3> = joints.iter().copied().filter(|q| q.distance(m.a) > 0.1 && q.distance(m.b) > 0.1).collect();
         ties.sort_by(|x, y| x.distance(mid).total_cmp(&y.distance(mid)));
         let tie = ties.into_iter().find(|&q| clear(plan, mid, q, &m.stock, &beams, &extra));
-        extra.push(Beam { a: m.a, b: mid, stock: m.stock.clone() });
-        extra.push(Beam { a: mid, b: m.b, stock: m.stock.clone() });
+        extra.push(Beam { a: m.a, b: mid, stock: m.stock.clone(), pinned: [m.pinned[0], false] });
+        extra.push(Beam { a: mid, b: m.b, stock: m.stock.clone(), pinned: [false, m.pinned[1]] });
         if let Some(q) = tie {
-            extra.push(Beam { a: mid, b: q, stock: m.stock });
+            extra.push(Beam { a: mid, b: q, stock: m.stock, pinned: [false; 2] });
+        }
+    }
+    // (A short one past its limit: halving it wouldn't help; its weaker end (the
+    // one fewer members meet at) tied to the nearest joint it isn't joined to that a
+    // tube reaches clear, one below first, to hold that end still.)
+    let short: Vec<usize> = (0..plan.beams.len()).filter(|&k| plan.beams[k].a.distance(plan.beams[k].b) < 2.0 && b.outcomes(k).iter().any(|o| o.work.design > 1.0 || o.broken.is_some())).collect();
+    let mut tied = 0;
+    for k in short {
+        let m = &plan.beams[k];
+        let meets = |p: Vec3| plan.beams.iter().filter(|x| x.a.distance(p) < 0.05 || x.b.distance(p) < 0.05).count();
+        let end = if meets(m.a) <= meets(m.b) { m.a } else { m.b };
+        let joined: Vec<Vec3> = plan.beams.iter().filter(|x| x.a.distance(end) < 0.05 || x.b.distance(end) < 0.05).map(|x| if x.a.distance(end) < 0.05 { x.b } else { x.a }).collect();
+        let mut ties: Vec<Vec3> = joints.iter().copied().filter(|q| q.distance(end) > 0.1 && q.distance(end) < 8.0 && !joined.iter().any(|j| j.distance(*q) < 0.05)).collect();
+        ties.sort_by(|x, y| (x.y >= end.y - 0.5).cmp(&(y.y >= end.y - 0.5)).then(x.distance(end).total_cmp(&y.distance(end))));
+        if let Some(q) = ties.into_iter().find(|&q| clear(plan, end, q, &m.stock, &beams, &extra)) {
+            extra.push(Beam { a: end, b: q, stock: m.stock.clone(), pinned: [false; 2] });
+            tied += 1;
         }
     }
     beams.extend(extra);
-    (beams, over.len())
+    (beams, over.len() + tied)
 }
 
 /// Loads in balance, free in flight: the `external` forces at joints, and each
@@ -1325,7 +1356,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
             continue;
         }
         out.index.push(Some(frame.members.len()));
-        let m = Member { a: ja, b: jb, section: s.section, material: s.material, pinned: [false; 2] };
+        let m = Member { a: ja, b: jb, section: s.section, material: s.material, pinned: b.pinned };
         let mass = m.mass(b.a.as_dvec3(), b.b.as_dvec3());
         out.mass += mass;
         // (A member's own weight: half at each end.)
@@ -4304,13 +4335,14 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
                 Some(w) => (format!("PASSES INTO {}", match w { Passes::Module => "A MODULE", Passes::Room => "A ROOM", Passes::Deck => "A DECK", Passes::Member => "ANOTHER MEMBER" }), CLASH),
                 None => ("CLEAR OF EVERYTHING".into(), LABEL.scale(0.75)),
             });
-            rows.push(("CARRIES (CASE: PULL+ / PUSH-, BENDING, % OF LIMIT)".into(), LABEL.scale(0.75)));
+            rows.push(("CASE: PULL+/PUSH- KN, BENDING KN M, % OF DESIGN LIMIT".into(), LABEL.scale(0.75)));
+            rows.push(("(YIELD WITH A 1.5 MARGIN), % OF BREAKING".into(), LABEL.scale(0.75)));
             if let Some(b) = &bearing {
                 let idx = b.index.get(k).copied().flatten();
                 rows.extend(cases(b, &|c| {
                     let o = c.members.get(idx?)?;
                     let f = o.work.forces;
-                    let text = format!("{} KN, {} KN M, {}{}{}", kn(f.axial), kn(f.bending), pct(o.work.design), if o.work.buckles { " BUCKLES" } else { "" }, if o.broken.is_some() { " BREAKS" } else { "" });
+                    let text = format!("{}, {}, {} ({} BREAK){}{}", kn(f.axial), kn(f.bending), pct(o.work.design), pct(o.work.breaking), if o.work.buckles { " BUCKLING" } else { "" }, if o.broken.is_some() { " BREAKS" } else { "" });
                     Some((text, o.work.design, o.broken.is_some()))
                 }));
             }
@@ -4329,14 +4361,14 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
                 (format!("{w:.1} X {d:.1} M = {area:.0} M2, TOP AT {:.2} M", pl.y), LABEL),
                 (format!("MASS {:.0} KG ({:.1} KG/M2)", area * ps.per_square_metre, ps.per_square_metre), LABEL),
                 (format!("FLOOR LOAD {DECK_LOAD:.0} KG/M2; YIELDS {:.0} MPA", ps.material.yield_strength / 1e6), LABEL),
-                ("CARRIES (CASE: ITS HARDEST WORKED STRIP)".into(), LABEL.scale(0.75)),
+                ("CASE: ITS HARDEST WORKED STRIP, % OF DESIGN LIMIT (OF BREAKING)".into(), LABEL.scale(0.75)),
             ];
             if let Some(b) = &bearing {
                 let strips: Vec<usize> = b.strips.iter().filter(|s| s.0 == n).map(|s| s.4).collect();
                 rows.extend(cases(b, &|c| {
                     let worst = strips.iter().filter_map(|&m| c.members.get(m)).max_by(|a, b| a.work.design.total_cmp(&b.work.design))?;
                     let broken = strips.iter().filter_map(|&m| c.members.get(m)).filter(|o| o.broken.is_some()).count();
-                    Some((format!("{} OF {} STRIPS{}", pct(worst.work.design), strips.len(), if broken > 0 { format!(", {broken} BREAK") } else { String::new() }), worst.work.design, broken > 0))
+                    Some((format!("{} ({}), {} STRIPS{}", pct(worst.work.design), pct(worst.work.breaking), strips.len(), if broken > 0 { format!(", {broken} BREAK") } else { String::new() }), worst.work.design, broken > 0))
                 }));
             }
             draw_rows(frame, 0.0, &ps.name.to_uppercase(), &format!("DECK {} - {}", n + 1, name(&ps.of)), DECK, &rows);
@@ -4353,12 +4385,12 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
                 (format!("WIDEST TUBE {:.0} MM (A NODE {NODE_RATIO:.1} TIMES IT)", widest * 1000.0), LABEL),
                 (format!("{} MEMBERS MEET HERE", meeting.len()), LABEL),
                 (format!("AT {:.2},{:.2},{:.2}", at.x, at.y, at.z), LABEL.scale(0.75)),
-                ("CARRIES (CASE: ITS HARDEST WORKED MEMBER)".into(), LABEL.scale(0.75)),
+                ("CASE: ITS HARDEST WORKED MEMBER, % OF DESIGN LIMIT (OF BREAKING)".into(), LABEL.scale(0.75)),
             ];
             if let Some(b) = &bearing {
                 rows.extend(cases(b, &|c| {
                     let worst = meeting.iter().filter_map(|&k| b.index.get(k).copied().flatten()).filter_map(|m| c.members.get(m)).max_by(|a, b| a.work.design.total_cmp(&b.work.design))?;
-                    Some((pct(worst.work.design), worst.work.design, worst.broken.is_some()))
+                    Some((format!("{} ({})", pct(worst.work.design), pct(worst.work.breaking)), worst.work.design, worst.broken.is_some()))
                 }));
             }
             draw_rows(frame, 0.0, "NODE", "4340 STEEL, WHERE MEMBERS MEET", Color([0.9, 0.95, 1.0, 1.0]), &rows);
@@ -5558,7 +5590,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                         && from.distance(to) > 0.05
                         && let Some(stock) = stocks().get(interior.stock)
                     {
-                        interior.plan.beams.push(Beam { a: from, b: to, stock: stock.key.clone() });
+                        interior.plan.beams.push(Beam { a: from, b: to, stock: stock.key.clone(), pinned: [false; 2] });
                     }
                     interior.beam_from = Some(to);
                     interior.beam_pick = None;
@@ -6471,11 +6503,14 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                             Ok(c) => {
                                 let o = &c.members;
                                 let worst = o.iter().map(|o| o.work.design).fold(0.0, f64::max);
+                                let nearest = o.iter().map(|o| o.work.breaking).fold(0.0, f64::max);
                                 let broken = o.iter().filter(|o| o.broken.is_some()).count();
-                                let col = if broken > 0 { CLASH } else if worst > 1.0 { Color([1.0, 0.65, 0.2, 1.0]) } else { Color([0.4, 1.0, 0.5, 1.0]) };
+                                // (Past its design limit (yield, with the safety margin) is to be
+                                // fixed: red, as breaking is.)
+                                let col = if broken > 0 || worst > 1.0 { CLASH } else { Color([0.4, 1.0, 0.5, 1.0]) };
                                 let what = match (broken, c.falls_apart) {
                                     (_, true) => format!("{broken} BREAK, IT FALLS APART"),
-                                    (0, _) => format!("WORST AT {:.0}% OF ITS LIMIT", worst * 100.0),
+                                    (0, _) => format!("WORST {:.0}% DESIGN, {:.0}% BREAK", worst * 100.0, nearest * 100.0),
                                     _ => format!("{broken} BREAK"),
                                 };
                                 (format!("{name} {felt:.1} G: {what}"), col)
@@ -6722,6 +6757,10 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
+
+
 
 
 
