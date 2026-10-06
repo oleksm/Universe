@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.fossil-placer-gold
+  name: "Fossil placer gold"
+  about: "Ancient river gravels cemented to rock, gold and uranium in them."
+sim: { key: paleoplacer_gold, code: PAU }
+formed_by: craton
+carries:
+  - { item: element.au, grade: 8.0e-06, said_as: "Au g/t" }
+  - { item: element.u, grade: 0.0002544, said_as: "U3O8 %" }
+ore: good.fossil-placer-ore
+shape: strata
+size:
+  median: 30000000000.0
+  spread: 1.5
+  cap: 5000000000000.0
+footprint: { length: 30000.0, width: 2.0 }
+forms_at: 0.0
+cluster:
+  deposits: 6.0
+  along: 80000.0
+  across: 30000.0
+seen_by:
+  - { method: radiometrics, reach: 1.0 }
+  - { method: geochemistry, reach: 50.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

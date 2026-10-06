@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/good.schema.yaml
+identity:
+  key: good.graphite-ore
+  name: "Graphite ore"
+  kind: rock
+  description: "Schist and gneiss with flake graphite."
+physical:
+  bulk_density: 2700
+source:
+  occurs: temperate planets
+  note: "Where the planet simulation's worlds have it (deposit-type.graphite). The game has no works for it yet."
+composition:
+  - { part: element.c, share: 0.1 }
+basis:
+  - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/graphite.yaml", note: "The typical grade of its deposit type, from the planet simulation's vocabulary of 2026-10-06; its other metals are on the deposit type." }
+  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }

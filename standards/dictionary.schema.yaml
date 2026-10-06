@@ -66,8 +66,10 @@ definitions:
       gate: "A gate ring's, not a hull's."
   geological_event:
     description: "What happens to a world's crust that lays down rock and ore, in the planet simulation."
-    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering, coast, salt flat, ocean floor, burial]
+    enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering, coast, salt flat, ocean floor, burial, impact, river]
     x-values:
+      impact: "A crater: its melt sheet, its breccia and ejecta, and the hot water that ran through it after."
+      river: "Rivers sorting what they carry by weight: placers, from gold country down."
       burial: "Buried organic matter cooked by depth and time into oil, gas or coal (the energy package)."
       ridge: "A mid-ocean ridge: new ocean floor."
       arc: "A subduction arc: volcanoes over a sinking plate."

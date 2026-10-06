@@ -24,6 +24,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 SURVEYS = os.path.join(ROOT, "standards", "Celestial", "surveys")
 FILES = ("manifest.json", "summary.json", "deposits.geojson", "districts.json", "bulk_rock.json", "geology.png", "rock_units.png")
 FORMAT = "planet-sim-survey/1"
+LARGE = 20 * 1024 * 1024    # bytes: a survey file over this is not copied into the registry; it stays in the worlds store
 
 
 def sha(path):
@@ -68,11 +69,15 @@ def place(folder, world_id):
         if sha(os.path.join(dest, "manifest.json")) == sha(os.path.join(folder, "manifest.json")):
             return dest
         sys.exit(f"a different survey already sits at {dest}: a new run is a new world id")
-    os.makedirs(SURVEYS, exist_ok=True)
-    shutil.copytree(folder, dest)
-    # (The files read-only, the folder not: the energy and surface packages are placed beside them.)
-    for f in os.listdir(dest):
-        os.chmod(os.path.join(dest, f), stat.S_IREAD | stat.S_IRGRP | stat.S_IROTH)
+    os.makedirs(dest, exist_ok=True)
+    # Files over LARGE stay in the worlds store (an airless world's impacts.json is over 100 MB): the manifest, copied,
+    # carries their hashes, and the record lists them as in the store. The files read-only, the folder not: the energy
+    # and surface packages are placed beside them.
+    for f in sorted(os.listdir(folder)):
+        src = os.path.join(folder, f)
+        if os.path.isfile(src) and os.path.getsize(src) <= LARGE:
+            shutil.copyfile(src, os.path.join(dest, f))
+            os.chmod(os.path.join(dest, f), stat.S_IREAD | stat.S_IRGRP | stat.S_IROTH)
     os.chmod(dest, stat.S_IRWXU | stat.S_IRGRP | stat.S_IXGRP | stat.S_IROTH | stat.S_IXOTH)
     return dest
 
@@ -130,15 +135,27 @@ def packages(text, folder, dest, world_id):
 def install_store(root, replace):
     """Every world in a worlds store (worlds/<id>/survey/ naming a body, or the store's releases.json): installed in turn."""
     index = os.path.join(root, "releases.json")
-    worlds = [os.path.join(root, r["world_id"]) for r in json.load(open(index, encoding="utf-8"))] if os.path.isfile(index) else sorted(d for d in glob.glob(os.path.join(root, "*")) if os.path.isfile(os.path.join(d, "survey", "summary.json")))
     done = 0
-    for w in worlds:
-        body = json.load(open(os.path.join(w, "survey", "summary.json"), encoding="utf-8")).get("body")
-        if not body:
-            print(f"{os.path.basename(w)}: names no body; skipped")
-            continue
-        main(["world_install.py", w] + (["--replace"] if replace else []))
-        done += 1
+    if os.path.isfile(index):
+        # (planet-sim-releases/1: every world with its body, status and packages; only current worlds with a body are installed,
+        # superseded ones stay history: their IDs were issued.)
+        rel = json.load(open(index, encoding="utf-8"))
+        if rel.get("format") != "planet-sim-releases/1":
+            sys.exit(f"releases.json: format {rel.get('format')!r}")
+        for w in rel["worlds"]:
+            if w.get("status") != "current" or not w.get("body"):
+                print(f"{w['world_id']}: {w.get('status')}{'' if w.get('body') else ', no body'}; skipped")
+                continue
+            main(["world_install.py", os.path.join(root, w["world_id"]), w["body"]] + (["--replace"] if replace else []))
+            done += 1
+    else:
+        for w in sorted(d for d in glob.glob(os.path.join(root, "*")) if os.path.isfile(os.path.join(d, "survey", "summary.json"))):
+            body = json.load(open(os.path.join(w, "survey", "summary.json"), encoding="utf-8")).get("body")
+            if not body:
+                print(f"{os.path.basename(w)}: names no body; skipped")
+                continue
+            main(["world_install.py", w] + (["--replace"] if replace else []))
+            done += 1
     print(f"{done} world(s) installed from {root}")
 
 
@@ -171,6 +188,9 @@ def main(argv):
               "manifest_sha256": sha(os.path.join(dest, "manifest.json")), "simulator_commit": m["simulator"]["commit"], "created": m["created"],
               "land_share": round(summary["land_pct"] / 100, 4), "deposits": summary["deposits"], "districts": summary["districts"], "belts": summary["belts"],
               "contained": [{"commodity": k, "mass": float(f"{v['amount'] * {'t': 1000.0, 'ct': 0.0002}[v['unit']]:.4g}")} for k, v in summary["contained"].items()]}
+    large = [f for f in sorted(m["files"]) if m["files"][f]["bytes"] > LARGE]
+    if large:
+        survey["in_store"] = large
     # The record: provenance, the survey block, and the seed's guesses for derived figures dropped.
     text = re.sub(r"^provenance: .*\n", "provenance: baked\n", text, count=1, flags=re.M)
     text = re.sub(r"^survey:\n(?:  .*\n)*", "", text, flags=re.M)
@@ -178,6 +198,7 @@ def main(argv):
     head, rest = text.split("\nprovenance: baked\n", 1)
     note = f"# Baked: grown by the planet simulation (world {m['world_id']}, simulator {m['simulator']['commit'][:12]}). The survey it points at owns what the run derived; this record owns the inputs."
     block = "survey:\n" + "".join(f"  {k}: {json.dumps(v)}\n" for k, v in survey.items() if k != "contained") + "  contained:\n" + "".join(f"    - {json.dumps(c)}\n" for c in survey["contained"])
+    head = re.sub(r"^# As the seed makes it\. Change its provenance to curated.*\n?", "", head, flags=re.M)
     text = head + "\n" + note + "\nprovenance: baked\n" + block + rest
     yaml.safe_load(text)
     open(path, "w", encoding="utf-8").write(text)

@@ -37,3 +37,13 @@
 - Deposit types oil field, gas field, coalfield (formed by burial); goods crude oil, natural gas,
   coal with bulk stock; modules oil well, gas well, coal mine.
 - The body's life timeline (`life.began` and its steps) and `surface.highest` from the run.
+- **The worlds store and its index** (`planet-sim-releases/1`): `world_install.py --store <root>`
+  installs every current world with a body; superseded worlds stay history. Files over 20 MB (an
+  airless world's `impacts.json`) stay in the store, listed as `in_store` on the record.
+- **Cinder (Treistun b) baked from world TRB1**: 180 deposits, all blind, 17 districts; its
+  surface v1 (1.0 GB) in the store.
+- The lab's vocabulary of 2026-10-06 imported: 14 new deposit types (skarns, lithium pegmatite,
+  IOCG, Carlin and placer golds, two uraniums, rare-earth clay, graphite, three impact kinds) with
+  ore goods, bulk stock and mine recipes; 7 new rock units (an airless world's: primary crust,
+  intercrater plains, high-titanium basalt, impact melt and breccia, anorthosite, KREEP basalt);
+  events `impact` and `river`.

@@ -84,7 +84,7 @@
 - { record: body.treistun.tisisekar, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "7643d68b0d7648e9" }
 - { record: body.treistun.tomiria, at: "2026-10-05T19:09:30Z", status: "", summary: "first tracked", sha: "be5fe70737d1eb6f" }
 - { record: body.treistun.treistun, at: "2026-10-06T01:29:20Z", status: "", summary: "changed: provenance, physical", sha: "8c21d190c5b95194" }
-- { record: body.treistun.treistun-b, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "c062993e8aac4557" }
+- { record: body.treistun.treistun-b, at: "2026-10-06T15:38:23Z", status: "", summary: "changed: provenance, survey, bake", sha: "ee75e8e0da3c257e" }
 - { record: body.treistun.treistun-b-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "9f3646c1849079c8" }
 - { record: body.treistun.treistun-c, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "5a6347a49bd1d00b" }
 - { record: body.treistun.treistun-c-i, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: provenance, identity", sha: "84c4e6657e8aadd0" }
@@ -131,14 +131,23 @@
 - { record: deposit-type.beach-sands, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "45c5674677db6276" }
 - { record: deposit-type.carbonate-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "96b202768287d1b7" }
 - { record: deposit-type.carbonatite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: carries, basis", sha: "0f52edc7ae9ed931" }
+- { record: deposit-type.carlin-gold, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "ca27bc14d81fafae" }
 - { record: deposit-type.chromite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "27411bf4a87e814e" }
 - { record: deposit-type.coalfield, at: "2026-10-06T15:24:14Z", status: draft, summary: "first tracked", sha: "ce0681bfec1d8f4c" }
+- { record: deposit-type.copper-skarn, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "69c328821e5e1c6e" }
 - { record: deposit-type.epithermal, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "c66a8832620a2a26" }
+- { record: deposit-type.fossil-placer-gold, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "3cdae6ff7d9da7ec" }
 - { record: deposit-type.gas-field, at: "2026-10-06T15:24:14Z", status: draft, summary: "first tracked", sha: "5f17fe7ca938e16e" }
+- { record: deposit-type.graphite, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "bbcd88bc0db11132" }
+- { record: deposit-type.impact-diamond, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "77294cc36e377907" }
+- { record: deposit-type.impact-hydrothermal, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "8364ff88034934f8" }
+- { record: deposit-type.impact-melt-nickel, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "6bf6208061b1231b" }
 - { record: deposit-type.iron-formation, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "052f015185f081f0" }
+- { record: deposit-type.iron-oxide-copper-gold, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "5ed7ec51189fc706" }
 - { record: deposit-type.kimberlite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "b938dec8b7e08837" }
 - { record: deposit-type.laterite-nickel, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "7f4465bef1f92804" }
 - { record: deposit-type.layered-intrusion, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "897463fc28ae612b" }
+- { record: deposit-type.lithium-pegmatite, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "4028e3334cfac2dd" }
 - { record: deposit-type.magnesite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "f8fb5ea89316ff50" }
 - { record: deposit-type.magnetite-seams, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "fd6c1ecc8405e25a" }
 - { record: deposit-type.manganese-nodules, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "880408b760148b3d" }
@@ -147,15 +156,20 @@
 - { record: deposit-type.oil-field, at: "2026-10-06T15:24:14Z", status: draft, summary: "first tracked", sha: "030968da99a52b13" }
 - { record: deposit-type.orogenic-gold, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "762ed8e507ef8c50" }
 - { record: deposit-type.phosphorite, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "dbbcd126d2c7cb6b" }
+- { record: deposit-type.placer-gold, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "375aafbdc882ec32" }
 - { record: deposit-type.porphyry, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "ccad6626e51add83" }
 - { record: deposit-type.potash, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "d6d5abecfa9e3d40" }
+- { record: deposit-type.rare-earth-clay, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "5aaefe794d855165" }
 - { record: deposit-type.rock-salt, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "0f9448533c828ce8" }
 - { record: deposit-type.salt-dome-sulphur, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "6b11dddf88292264" }
 - { record: deposit-type.salt-flat-brine, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "57ad1591c21c1c4b" }
+- { record: deposit-type.sandstone-uranium, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "8ba926a73f28816b" }
 - { record: deposit-type.sediment-copper, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "c46e834c4a350fa1" }
 - { record: deposit-type.sedimentary-manganese, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "caf823238641d9cc" }
 - { record: deposit-type.shale-zinc-lead, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "727b0af3c0252aad" }
 - { record: deposit-type.tin-tungsten, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "f10006cfeba88734" }
+- { record: deposit-type.tungsten-skarn, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "d0fe134496324493" }
+- { record: deposit-type.unconformity-uranium, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "f5f501ee62abdd1d" }
 - { record: deposit-type.volcanic-sulphur, at: "2026-10-05T20:20:57Z", status: draft, summary: "changed: basis", sha: "e508f5dc99dbe6ef" }
 - { record: dogma.air, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "b5d27529086ebefc" }
 - { record: dogma.climate, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "762d9412cc862e45" }
@@ -468,6 +482,7 @@
 - { record: good.carbonaceous-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "547377a08691f955" }
 - { record: good.carbonate-zinc-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "1480f78b9b5079cb" }
 - { record: good.carbonatite-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "bacccdff5e5cfa9b" }
+- { record: good.carlin-gold-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "7f7fecf52f3741a4" }
 - { record: good.carrots, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "e6f1dd6408c69895" }
 - { record: good.cassava, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "e8460559f0e232d0" }
 - { record: good.caustic-soda, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "7f31a29d459c52d9" }
@@ -505,11 +520,13 @@
 - { record: good.fish, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "0e4e0bfe9caadd55" }
 - { record: good.flax, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "aaf24820a86755d1" }
 - { record: good.flour, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "3ae697c2c3f0b585" }
+- { record: good.fossil-placer-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "eb2752145ee4c36a" }
 - { record: good.garlic, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "b0348999e8e3d2d6" }
 - { record: good.glass, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "04beeccc4f9f1cb0" }
 - { record: good.glycerine, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "e942de06a8f7909c" }
 - { record: good.grapes, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "b5a56a6dc36a263c" }
 - { record: good.graphite-electrode, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "e19e2c07e778052c" }
+- { record: good.graphite-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "541c990f0315353b" }
 - { record: good.groundnuts, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "0bda12e39938eed2" }
 - { record: good.growing-medium, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "b4e0e7b08a225ca1" }
 - { record: good.gypsum, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "1bcc97d671233255" }
@@ -523,6 +540,10 @@
 - { record: good.hot-ingot-ti64, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "f1cddf3549b0f869" }
 - { record: good.hot-rolled-strip-6061, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "855e582251d61349" }
 - { record: good.ilmenite, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "255f149c9ecd1e81" }
+- { record: good.impact-diamond-rock, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "3254814eb99052b0" }
+- { record: good.impact-melt-nickel-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "46ce33631750e8bf" }
+- { record: good.impact-vein-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "bc72475e70f23bbc" }
+- { record: good.iocg-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "5a542fca70d0e869" }
 - { record: good.iron-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "9953ec973ee81e1b" }
 - { record: good.iron-ore-pellets, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "b3f07353872b1bb7" }
 - { record: good.kimberlite, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "f5ae22bfc77aba5e" }
@@ -539,6 +560,7 @@
 - { record: good.liquid-aluminium, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "2ee82e9f7545d243" }
 - { record: good.liquid-steel, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "e825dac2be385d63" }
 - { record: good.lithium-brine, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "c68286932ed8952c" }
+- { record: good.lithium-pegmatite-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "54b09ae28cc7ef4b" }
 - { record: good.live-cattle, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "47cdce4e5c34772d" }
 - { record: good.live-chickens, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "3bec6765ad2497c3" }
 - { record: good.live-fish, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "32a3832da5463402" }
@@ -578,6 +600,7 @@
 - { record: good.pgm-rich-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "b8d6a6a5964b01b0" }
 - { record: good.phosphate-fertiliser, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "f72e9de2b2c676c4" }
 - { record: good.phosphate-rock, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "9609777ed216c8ac" }
+- { record: good.placer-gravel, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "5b700ff982104c59" }
 - { record: good.polyethylene, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "7a58abdf5c3f2e05" }
 - { record: good.polysilicon, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "50dbfea0c030da30" }
 - { record: good.pomace, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "c7b16decd9043186" }
@@ -590,6 +613,7 @@
 - { record: good.pumps, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "186df4738c77720f" }
 - { record: good.pvc, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "0699844703fdbcc0" }
 - { record: good.rapeseed, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "3634f7a4a3444254" }
+- { record: good.rare-earth-clay-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "687343d3e257f615" }
 - { record: good.red-mud, at: "2026-10-06T04:58:54Z", status: review, summary: "changed: waste", sha: "4a4e54036e9b81cd" }
 - { record: good.reef-chromite-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "bacedd7a5d15d1f7" }
 - { record: good.refined-steel-304, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "3a4534f6e68b473d" }
@@ -598,12 +622,15 @@
 - { record: good.rice, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "567cae80f4ed0bfd" }
 - { record: good.salt, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "8ed8a1fb035ab22d" }
 - { record: good.salt-dome-sulphur-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "d25b521c4a230f9c" }
+- { record: good.sandstone-uranium-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "7ef511bf8f2ff428" }
 - { record: good.sediment-copper-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "45831c734b54b3a7" }
 - { record: good.seed-cotton, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "3b4aa51744ccc893" }
 - { record: good.sewage-sludge, at: "2026-10-06T04:58:54Z", status: review, summary: "changed: waste", sha: "2fc2e6b6f8e619b1" }
 - { record: good.shale-zinc-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "70c2a07efc2999f6" }
 - { record: good.silica-sand, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "5429aad471fa284d" }
 - { record: good.silicon, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "052e14363f0fc21e" }
+- { record: good.skarn-copper-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "4e8c30568bbdcd6b" }
+- { record: good.skarn-tungsten-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "a983f7b27d73dbcb" }
 - { record: good.slag, at: "2026-10-06T04:58:54Z", status: review, summary: "changed: waste", sha: "ff5271c16392103d" }
 - { record: good.soap, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "a8da955a44c490f8" }
 - { record: good.soda-ash, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "fa0f3acfc05135c2" }
@@ -631,6 +658,7 @@
 - { record: good.tomatoes, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "5e76d56db73d8b12" }
 - { record: good.tools, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "e988bd718eebd794" }
 - { record: good.tungsten-concentrate, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "b63b8d176c40feb2" }
+- { record: good.unconformity-uranium-ore, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "bc88a6a32a8c530a" }
 - { record: good.vegetable-oil, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "54c16f3341474a33" }
 - { record: good.volcanic-sulphur-ore, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "6efb1c03d2de6b91" }
 - { record: good.wafers, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "dc5361a37dc7ff08" }
@@ -802,7 +830,7 @@
 - { record: module.magnesium-works, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "9a88b2cbe6c83f17" }
 - { record: module.market-garden, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "b0955f007775dae8" }
 - { record: module.meat-works, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "c7fecbcac1f60553" }
-- { record: module.mine, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "f70f20bc220e112d" }
+- { record: module.mine, at: "2026-10-06T15:35:52Z", status: review, summary: "changed: recipes", sha: "17e6ee373ff67687" }
 - { record: module.molybdenum-works, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "817422febe330d51" }
 - { record: module.nickel-smelter, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "279e7a8822988bc9" }
 - { record: module.oil-press, at: "2026-10-06T13:40:42Z", status: review, summary: "changed: staff, basis", sha: "273def9bc00e3a71" }
@@ -1873,15 +1901,22 @@
 - { record: rock-class.stony, at: "2026-10-05T20:20:57Z", status: "", summary: "changed: composition, basis", sha: "515719ecac4b5bcd" }
 - { record: rock-class.stony-iron, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "8cfb2c2f3a8f1e89" }
 - { record: rock-unit.andesite, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "3a1512c1f316b6d9" }
+- { record: rock-unit.anorthosite, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "b41c6fb8a44ff525" }
 - { record: rock-unit.flood-basalt, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "a366a8090b0a548f" }
 - { record: rock-unit.gneiss-basement, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, basis", sha: "16d1d6c80a23f04e" }
 - { record: rock-unit.granite, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "06190fe7f600afaa" }
 - { record: rock-unit.granodiorite, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "d60b67cb95d4ac44" }
 - { record: rock-unit.greenstone, at: "2026-10-05T20:16:37Z", status: draft, summary: "first tracked", sha: "b3cbd6f33fa09b20" }
+- { record: rock-unit.high-titanium-basalt, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "ccf8d3e5dc1e087d" }
+- { record: rock-unit.impact-breccia, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "e0282e069849844c" }
+- { record: rock-unit.impact-melt, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "7d171fb3c9d17968" }
+- { record: rock-unit.intercrater-plains, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "b3884e4c965572b5" }
 - { record: rock-unit.iron-formation, at: "2026-10-05T20:16:37Z", status: draft, summary: "first tracked", sha: "df76c9144704cbdf" }
+- { record: rock-unit.kreep-basalt, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "e8dd86dd6ebf5f0f" }
 - { record: rock-unit.limestone, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "5257c6dd6131d5ca" }
 - { record: rock-unit.ocean-floor-basalt, at: "2026-10-05T20:16:37Z", status: draft, summary: "first tracked", sha: "43db87349705aea2" }
 - { record: rock-unit.ophiolite, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, also, basis", sha: "94f461b3926d04ae" }
+- { record: rock-unit.primary-crust, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "e603131127f1989e" }
 - { record: rock-unit.rift-basalt, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, basis, also", sha: "262f865359e51ca3" }
 - { record: rock-unit.sandstone-shale, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, basis", sha: "9c7f1df47052a24c" }
 - { record: rock-unit.schist, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "1387ef14c0828807" }
@@ -1980,6 +2015,7 @@
 - { record: stock.carbonaceous-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "8231c7ecc8e84547" }
 - { record: stock.carbonate-zinc-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "22aa3a788fdec4d3" }
 - { record: stock.carbonatite-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "7cc37410578a1c63" }
+- { record: stock.carlin-gold-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "61516741844c1c75" }
 - { record: stock.carrots-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "c0a6d669435b605e" }
 - { record: stock.cassava-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "17e6d7fff830234d" }
 - { record: stock.caustic-soda-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "51f0803a38743760" }
@@ -2037,11 +2073,13 @@
 - { record: stock.fish-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "ec85c700bee15656" }
 - { record: stock.flax-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "77f638a43810bb46" }
 - { record: stock.flour-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "01cb8a927541f897" }
+- { record: stock.fossil-placer-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "3611b824b9824cd5" }
 - { record: stock.garlic-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "39f328ac5db7ee92" }
 - { record: stock.glass-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "5c9c1d36cdf2758d" }
 - { record: stock.glycerine-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "d63f355810bbba39" }
 - { record: stock.grapes-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "7684879452841480" }
 - { record: stock.graphite-electrode-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "b8f8d5d50b706abf" }
+- { record: stock.graphite-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "8074623d2f343b6e" }
 - { record: stock.groundnuts-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "5f43c4103e62dd1f" }
 - { record: stock.growing-medium-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "1997ac64a7d53168" }
 - { record: stock.gypsum-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "5d5455f4d03a05dd" }
@@ -2055,6 +2093,10 @@
 - { record: stock.hot-ingot-ti64-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "577ed416289fd027" }
 - { record: stock.hot-rolled-strip-6061-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "a09bcd94842e78e0" }
 - { record: stock.ilmenite-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "9b033bb4c845d9e4" }
+- { record: stock.impact-diamond-rock-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "06c1738a1e9a5f5a" }
+- { record: stock.impact-melt-nickel-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "958f1a1e66e61ca9" }
+- { record: stock.impact-vein-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "b3f0f22677df6c13" }
+- { record: stock.iocg-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "f2bfe0523adc0f4a" }
 - { record: stock.iron-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "3ff060d0aa2e23a7" }
 - { record: stock.iron-ore-pellets-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "3f1697c4dca8c712" }
 - { record: stock.kimberlite-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "c720e5ebd31ef77a" }
@@ -2071,6 +2113,7 @@
 - { record: stock.liquid-aluminium-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "b5df2eece7068304" }
 - { record: stock.liquid-steel-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "e28f3370409b535f" }
 - { record: stock.lithium-brine-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "7b314ea6f518813c" }
+- { record: stock.lithium-pegmatite-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "bacd8ae0bcaa9e77" }
 - { record: stock.live-cattle-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "39ab7a40d9511069" }
 - { record: stock.live-chickens-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "01418f5a9bb723f0" }
 - { record: stock.live-fish-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "af36585aa6ecbb24" }
@@ -2111,6 +2154,7 @@
 - { record: stock.pgm-rich-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "8b9a9f0bf334f7f5" }
 - { record: stock.phosphate-fertiliser-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "0bdea861d3f5a86d" }
 - { record: stock.phosphate-rock-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "873caa90e52c09e7" }
+- { record: stock.placer-gravel-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "e3ff49b58e00fcdf" }
 - { record: stock.polyethylene-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "524ee3b25f156b59" }
 - { record: stock.polysilicon-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "1ac3262772d0977f" }
 - { record: stock.pomace-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "92bb4f51d69a30e6" }
@@ -2123,6 +2167,7 @@
 - { record: stock.pumps-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "59ddfde855489f97" }
 - { record: stock.pvc-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "eb92d6df9bf9f8ce" }
 - { record: stock.rapeseed-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "f25e3ac5ffedef31" }
+- { record: stock.rare-earth-clay-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "0e66fdf95847fe11" }
 - { record: stock.red-mud-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "40bbc12a8b7df448" }
 - { record: stock.reef-chromite-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "2bf6c3c90fe9392b" }
 - { record: stock.refined-steel-304-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "c5d2a3643bb55226" }
@@ -2131,6 +2176,7 @@
 - { record: stock.rice-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "23fcc951fdf854b8" }
 - { record: stock.salt-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "27b8f4b56b386239" }
 - { record: stock.salt-dome-sulphur-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "2228a276202ca739" }
+- { record: stock.sandstone-uranium-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "07e3570f0325e387" }
 - { record: stock.sediment-copper-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "19dcb61160b932e5" }
 - { record: stock.seed-cotton-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "ced9e9ad06065ab5" }
 - { record: stock.sewage-sludge-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "aaa3cbd9b4f05d74" }
@@ -2138,6 +2184,8 @@
 - { record: stock.sic-tl-10, at: "2026-10-05T18:44:00Z", status: review, summary: "changed: identity", sha: "1465d24d2f72cada" }
 - { record: stock.silica-sand-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "10ae724ee9727eec" }
 - { record: stock.silicon-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "06253f4f47b4b312" }
+- { record: stock.skarn-copper-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "f2e4a761f765f822" }
+- { record: stock.skarn-tungsten-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "87a64ca59c50e095" }
 - { record: stock.slag-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "baa738f1e43532ac" }
 - { record: stock.soap-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "d3fada8a832fbb94" }
 - { record: stock.soda-ash-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "faa9680d60f69d0e" }
@@ -2215,6 +2263,7 @@
 - { record: stock.tomatoes-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "e006a158ab2dbf0f" }
 - { record: stock.tools-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "c76423bd27b75df2" }
 - { record: stock.tungsten-concentrate-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "fce70daef903755c" }
+- { record: stock.unconformity-uranium-ore-bulk, at: "2026-10-06T15:35:52Z", status: review, summary: "first tracked", sha: "28c6c54f866ef7c6" }
 - { record: stock.vegetable-oil-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "0e685863e4f5d870" }
 - { record: stock.volcanic-sulphur-ore-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "0fb598978291bca0" }
 - { record: stock.wafers-bulk, at: "2026-10-05T21:50:29Z", status: review, summary: "first tracked", sha: "65dc069db62ed1f0" }

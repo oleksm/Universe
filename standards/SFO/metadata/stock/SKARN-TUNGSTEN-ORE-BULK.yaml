@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is skarn tungsten ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.skarn-tungsten-ore-bulk
+  traded_as: market.ores
+  code: SKARN-TUNGSTEN-ORE-BULK
+  name: "Skarn tungsten ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.skarn-tungsten-ore

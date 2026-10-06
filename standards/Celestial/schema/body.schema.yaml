@@ -149,6 +149,7 @@ properties:
       deposits: { type: integer, description: "how many deposits the run grew" }
       districts: { type: integer }
       belts: { type: integer }
+      in_store: { type: array, items: { type: string }, description: "Survey files too large for the registry (over 20 MB: an airless world's impacts.json), left in the worlds store; the manifest beside the survey carries their hashes." }
       contained: { type: array, description: "What the run put in its crust, from summary.json: the whole body's endowment, found or not.", items: { type: object, additionalProperties: false, required: [commodity, mass], properties: { commodity: { type: string, description: "an element or compound as the simulation names it (Cu, Cr2O3, diamond)" }, mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg; the survey's tonnes and carats (0.2 g) converted" } } } }
   energy:
     description: "For a baked body: the planet simulation's energy package (planet-sim-energy/1): its oil and gas fields and coalfields, written once beside the survey. In-place amounts, model estimates calibrated on the simulation's Grown Earth; not recoverable. Fields' and coalfields' IDs are permanent; claims point at them."

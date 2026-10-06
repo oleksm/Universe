@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.impact-melt-nickel
+  name: "Impact melt nickel"
+  about: "Nickel, copper and platinum-group metals settled from a crater's melt sheet."
+sim: { key: impact_melt_nickel, code: INI }
+formed_by: impact
+carries:
+  - { item: element.ni, grade: 0.012, said_as: "Ni %" }
+  - { item: element.cu, grade: 0.011, said_as: "Cu %" }
+  - { item: element.co, grade: 0.0004, said_as: "Co %" }
+  - { item: element.pt, grade: 6.75e-07, said_as: "PGE g/t, Pt 45%" }
+  - { item: element.pd, grade: 6.0e-07, said_as: "PGE g/t, Pd 40%" }
+  - { item: element.ru, grade: 9.0e-08, said_as: "PGE g/t, Ru 6%" }
+  - { item: element.rh, grade: 7.5e-08, said_as: "PGE g/t, Rh 5%" }
+  - { item: element.ir, grade: 3.0e-08, said_as: "PGE g/t, Ir 2%" }
+  - { item: element.os, grade: 3.0e-08, said_as: "PGE g/t, Os 2%" }
+  - { item: element.s, grade: 0.12, said_as: "S %" }
+ore: good.impact-melt-nickel-ore
+shape: lens
+size:
+  median: 60000000000.0
+  spread: 1.2
+  cap: 600000000000.0
+footprint: { length: 3000.0, width: 200.0 }
+forms_at: 0.0
+cluster:
+  deposits: 12.0
+  along: 60000.0
+  across: 60000.0
+seen_by:
+  - { method: gravity, reach: 800.0 }
+  - { method: magnetics, reach: 800.0 }
+  - { method: electromagnetics, reach: 300.0 }
+  - { method: geochemistry, reach: 50.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

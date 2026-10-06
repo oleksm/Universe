@@ -1,0 +1,80 @@
+{
+ "format": "planet-sim-survey/1",
+ "world_id": "TRB1",
+ "body": "body.treistun.treistun-b",
+ "radius_m": 6194410.0,
+ "rock_units": {
+  "file": "rock_units.png",
+  "index": [
+   "morb",
+   "arc_volcanic",
+   "arc_plutonic",
+   "basement",
+   "greenstone",
+   "schist",
+   "granite",
+   "flood_basalt",
+   "carbonate",
+   "clastic",
+   "ophiolite",
+   "rift",
+   "iron_formation",
+   "primary_crust",
+   "intercrater_plains",
+   "high_ti_basalt",
+   "impact_melt",
+   "impact_breccia",
+   "anorthosite",
+   "kreep"
+  ],
+  "sea": 255
+ },
+ "land_pct": 100.0,
+ "deposits": 180,
+ "blind_deposits": 180,
+ "districts": 17,
+ "belts": 0,
+ "contained": {
+  "S": {
+   "amount": 2592000000.0,
+   "unit": "t"
+  },
+  "Ni": {
+   "amount": 274400000.0,
+   "unit": "t"
+  },
+  "Cu": {
+   "amount": 230300000.0,
+   "unit": "t"
+  },
+  "Co": {
+   "amount": 8427000.0,
+   "unit": "t"
+  },
+  "PGE": {
+   "amount": 29440.0,
+   "unit": "t"
+  }
+ },
+ "by_kind": {
+  "impact_melt_nickel": {
+   "count": 180,
+   "tonnage_mt": 20100.0
+  }
+ },
+ "land_share_by_unit_pct": {
+  "flood_basalt": 43.62,
+  "primary_crust": 30.46,
+  "intercrater_plains": 23.18,
+  "high_ti_basalt": 2.74
+ },
+ "bulk_makeup_by_rock_class": {
+  "zone": "warm",
+  "basis": "origin model: the zone's primitive material (stages/bodies.py)",
+  "shares": {
+   "carbonaceous": 0.1412,
+   "enstatite": 0.0588,
+   "stony": 0.8
+  }
+ }
+}

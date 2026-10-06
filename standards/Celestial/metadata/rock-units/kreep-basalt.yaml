@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
+identity:
+  key: rock-unit.kreep-basalt
+  name: "Kreep basalt"
+  about: "Lava rich in potassium, rare earths, phosphorus, thorium and uranium: the last of a magma ocean to freeze."
+sim: { key: kreep }
+made_by: [plume]
+physical:
+  density: 2950.0
+  magnetic_susceptibility: 0.001
+  erodibility: 0.6
+also:
+  - "KREEP for rare earths, thorium, phosphorus (5 to 20 Th ppm)"
+basis:
+  - { of: [sim, physical, also], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }

@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.impact-hydrothermal
+  name: "Impact hydrothermal"
+  about: "Zinc, lead and copper veins left by hot water in a cooling crater."
+sim: { key: impact_hydrothermal, code: IHY }
+formed_by: impact
+carries:
+  - { item: element.zn, grade: 0.04, said_as: "Zn %" }
+  - { item: element.pb, grade: 0.015, said_as: "Pb %" }
+  - { item: element.cu, grade: 0.005, said_as: "Cu %" }
+  - { item: element.s, grade: 0.06, said_as: "S %" }
+ore: good.impact-vein-ore
+shape: veins
+size:
+  median: 3000000000.0
+  spread: 1.3
+  cap: 60000000000.0
+footprint: { length: 1500.0, width: 300.0 }
+forms_at: 0.0
+cluster:
+  deposits: 3.0
+  along: 20000.0
+  across: 20000.0
+seen_by:
+  - { method: geochemistry, reach: 50.0 }
+  - { method: induced polarisation, reach: 500.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

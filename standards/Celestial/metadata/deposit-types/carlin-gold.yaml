@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.carlin-gold
+  name: "Carlin gold"
+  about: "Fine gold through altered limestone, with arsenic."
+sim: { key: carlin_gold, code: CAU }
+formed_by: collision
+carries:
+  - { item: element.au, grade: 2.5e-06, said_as: "Au g/t" }
+  - { item: element.as, grade: 0.003, said_as: "As %" }
+ore: good.carlin-gold-ore
+shape: strata
+size:
+  median: 5000000000.0
+  spread: 1.5
+  cap: 300000000000.0
+footprint: { length: 2000.0, width: 300.0 }
+forms_at: 0.0
+cluster:
+  deposits: 8.0
+  along: 40000.0
+  across: 10000.0
+seen_by:
+  - { method: geochemistry, reach: 50.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is fossil placer ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.fossil-placer-ore-bulk
+  traded_as: market.ores
+  code: FOSSIL-PLACER-ORE-BULK
+  name: "Fossil placer ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.fossil-placer-ore

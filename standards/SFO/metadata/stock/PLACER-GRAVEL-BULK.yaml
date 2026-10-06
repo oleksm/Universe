@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is gold placer gravel as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.placer-gravel-bulk
+  traded_as: market.ores
+  code: PLACER-GRAVEL-BULK
+  name: "Gold placer gravel, in bulk"
+  form: bulk
+made_from:
+  - item: good.placer-gravel

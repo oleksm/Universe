@@ -1,0 +1,10 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+# What is sold is stock. This is lithium pegmatite ore as it lies in a store and is sold: in bulk, by weight.
+identity:
+  key: stock.lithium-pegmatite-ore-bulk
+  traded_as: market.ores
+  code: LITHIUM-PEGMATITE-ORE-BULK
+  name: "Lithium pegmatite ore, in bulk"
+  form: bulk
+made_from:
+  - item: good.lithium-pegmatite-ore

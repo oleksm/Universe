@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/deposit-type.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary: change it there, or the
+# registry's own part (name, about, formed_by, ore, counted) here.
+identity:
+  key: deposit-type.unconformity-uranium
+  name: "Unconformity uranium"
+  about: "Rich uranium where an old basin's floor met the sandstone over it."
+sim: { key: uranium_unconformity, code: UUN }
+formed_by: craton
+carries:
+  - { item: element.u, grade: 0.01696, said_as: "U3O8 %" }
+  - { item: element.ni, grade: 0.003, said_as: "Ni %" }
+ore: good.unconformity-uranium-ore
+shape: lens
+size:
+  median: 500000000.0
+  spread: 1.6
+  cap: 50000000000.0
+footprint: { length: 1000.0, width: 100.0 }
+forms_at: 0.0
+cluster:
+  deposits: 4.0
+  along: 40000.0
+  across: 15000.0
+seen_by:
+  - { method: radiometrics, reach: 1.0 }
+  - { method: electromagnetics, reach: 300.0 }
+  - { method: gravity, reach: 800.0 }
+basis:
+  - { of: [sim, carries, shape, size, footprint, forms_at, cluster, seen_by], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it. A grade is its figure put as kg in each kg; an oxide's as the element's; the rare earths and the platinum metals each by the simulation's own split, where it gives one (a rare-earth oxide is taken as 83% metal; the rare earths as cerium where there is no split)." }

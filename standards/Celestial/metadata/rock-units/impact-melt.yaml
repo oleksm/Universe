@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/rock-unit.schema.yaml
+# Brought in by tools/standards/geology_import.py from the planet simulation's vocabulary.
+identity:
+  key: rock-unit.impact-melt
+  name: "Impact melt rock"
+  about: "Rock melted by a great impact and frozen in the crater's floor."
+sim: { key: impact_melt }
+made_by: [impact]
+physical:
+  density: 2800.0
+  magnetic_susceptibility: 0.005
+  erodibility: 0.5
+yields:
+  - { item: good.aggregate, quality: "100 to 250 strength MPa" }
+basis:
+  - { of: [sim, physical, yields], tier: sourced, review: true, source: "the planet simulation: docs/vocabulary.json of 2026-10-05 (planet-sim, tools/vocabulary.py)", note: "As the simulation has it." }

@@ -1080,3 +1080,12 @@ the hashes in `standards/Celestial/surveys/TRD1/surface/manifest.json`, and read
 packages into the game. The lab's two additions (`body` in every manifest, a `releases.json`
 index, a `climate` block) only make the install hands-off; until then I run `world_install.py`
 per release. You may run it too: it is deterministic and the validator is the gate.
+
+**The worlds store (2026-10-06, evening).** The lab keeps `releases.json` at the store's root
+(`~/git/planet-sim/out/worlds/`, format planet-sim-releases/1: every world, its body, status,
+packages and hashes, rewritten on every release). `world_install.py --store <root>` installs all
+current worlds: **Cinder (Treistun b) is baked now too** (world TRB1: 180 blind deposits, a 1.0 GB
+surface v1 in the store, its 113 MB `impacts.json` left in the store and listed as `in_store`).
+Point `UNIVERSE_WORLDS` at that root; relative paths, so the folder can move or be synced. Fourteen
+new deposit types and seven airless rock units came with the lab's vocabulary (the rock map's
+`rock_units.index` on Cinder uses them).
