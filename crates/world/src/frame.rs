@@ -37,28 +37,67 @@ pub struct Section {
     /// none of the frame's own pull, push or shear in its plane (as a floor panel
     /// is fastened: secondary structure); it bends across its thickness only.
     pub flat: Option<(f64, f64)>,
+    /// A sandwich panel's core, if a strip is one: its thickness then each face's,
+    /// the two faces held this far apart by the core.
+    pub core: Option<Core>,
+}
+
+/// A sandwich panel's core (honeycomb or foam between two faces): how deep it is
+/// (m), and the shear it takes before it fails (Pa), its weaker way.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct Core {
+    pub depth: f64,
+    pub shear_strength: f64,
 }
 
 impl Section {
     /// A round tube (a bar: its wall half its diameter).
     pub fn round(diameter: f64, wall: f64) -> Self {
-        Section { diameter, wall, flat: None }
+        Section { diameter, wall, flat: None, core: None }
     }
 
     /// A flat strip `width` wide, `thickness` thick.
     pub fn strip(width: f64, thickness: f64) -> Self {
-        Section { diameter: 0.0, wall: 0.0, flat: Some((width, thickness)) }
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, thickness)), core: None }
+    }
+
+    /// A sandwich panel strip `width` wide: two faces `face` thick either side of
+    /// `core`.
+    pub fn panel(width: f64, face: f64, core: Core) -> Self {
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, face)), core: Some(core) }
+    }
+
+    /// A sandwich's faces' spacing, middle to middle (m).
+    fn spacing(&self) -> Option<f64> {
+        Some(self.core?.depth + self.flat?.1)
     }
 
     /// How far its surface is from its middle, bending (m).
     pub fn reach(&self) -> f64 {
-        self.flat.map_or(self.diameter * 0.5, |(_, t)| t * 0.5)
+        match (self.flat, self.core) {
+            (Some((_, t)), Some(c)) => c.depth * 0.5 + t,
+            (Some((_, t)), None) => t * 0.5,
+            _ => self.diameter * 0.5,
+        }
     }
 
     /// Its torsion constant (m⁴): a round's twice its second moment; a thin
     /// strip's a third of its width by its thickness cubed.
     pub fn torsion(&self) -> f64 {
-        self.flat.map_or_else(|| 2.0 * self.inertia(), |(b, t)| b * t.powi(3) / 3.0)
+        match (self.flat, self.spacing()) {
+            // (A sandwich twists as its faces shear against each other: b t d².)
+            (Some((b, t)), Some(d)) => b * t * d * d,
+            (Some((b, t)), None) => b * t.powi(3) / 3.0,
+            _ => 2.0 * self.inertia(),
+        }
+    }
+
+    /// Its second moment of area edgewise (m⁴: a strip bent in its own plane).
+    pub fn edgewise(&self) -> f64 {
+        match self.flat {
+            Some((b, t)) => t * b.powi(3) / 12.0 * if self.core.is_some() { 2.0 } else { 1.0 },
+            None => self.inertia(),
+        }
     }
 
     fn radii(&self) -> (f64, f64) {
@@ -69,7 +108,7 @@ impl Section {
     /// Its area (m²).
     pub fn area(&self) -> f64 {
         if let Some((b, t)) = self.flat {
-            return b * t;
+            return b * t * if self.core.is_some() { 2.0 } else { 1.0 };
         }
         let (ro, ri) = self.radii();
         std::f64::consts::PI * (ro * ro - ri * ri)
@@ -79,7 +118,11 @@ impl Section {
     /// across its thickness, the weak way: taken for both).
     pub fn inertia(&self) -> f64 {
         if let Some((b, t)) = self.flat {
-            return b * t.powi(3) / 12.0;
+            // (A sandwich: its two faces this far apart, and their own.)
+            return match self.spacing() {
+                Some(d) => b * t * d * d / 2.0 + b * t.powi(3) / 6.0,
+                None => b * t.powi(3) / 12.0,
+            };
         }
         let (ro, ri) = self.radii();
         std::f64::consts::PI / 4.0 * (ro.powi(4) - ri.powi(4))
@@ -145,6 +188,9 @@ pub struct Forces {
     /// (in a strip's own plane), each its biggest at either end (N m).
     pub across: f64,
     pub edgewise: f64,
+    /// Its shear across it the weak way (across a strip's thickness), its biggest
+    /// at either end (N).
+    pub shear: f64,
 }
 
 /// How hard a member is worked: its stress over what it breaks at (its tensile
@@ -178,7 +224,7 @@ pub struct Loose;
 fn stress(f: &Forces, s: &Section) -> f64 {
     match s.flat {
         // (A strip: bent across its thickness; it floats in its plane.)
-        Some((b, t)) => f.across * (t * 0.5) / (b * t.powi(3) / 12.0),
+        Some(_) => f.across * s.reach() / s.inertia(),
         None => f.axial.abs() / s.area() + f.bending * s.reach() / s.inertia(),
     }
 }
@@ -189,10 +235,16 @@ pub fn work(m: &Member, f: Forces, length: f64, sf: f64) -> Work {
     let euler = std::f64::consts::PI.powi(2) * m.material.stiffness * m.section.inertia() / (length * length).max(1e-9);
     let push = if m.section.flat.is_some() { 0.0 } else { (-f.axial).max(0.0) };
     let (strength, buckling) = (sigma / m.material.tensile_strength, push / euler);
+    // (A sandwich's core sheared: its shear over the width by the faces' spacing,
+    // against what the core takes.)
+    let core = match (m.section.core, m.section.flat, m.section.spacing()) {
+        (Some(c), Some((b, _)), Some(d)) => f.shear / (b * d) / c.shear_strength.max(1.0),
+        _ => 0.0,
+    };
     Work {
         forces: f,
-        breaking: strength.max(buckling),
-        design: (sigma * sf / m.material.yield_strength).max(push * sf / euler),
+        breaking: strength.max(buckling).max(core),
+        design: (sigma * sf / m.material.yield_strength).max(push * sf / euler).max(core * sf),
         buckles: buckling > strength,
     }
 }
@@ -268,7 +320,7 @@ pub fn solve(frame: &Frame, case: &Case, gone: &[bool]) -> Result<Vec<Option<For
         }
         let fl: Vec<f64> = (0..12).map(|r| (0..12).map(|c| kl[r][c] * ul[c]).sum()).collect();
         let moment = |a: f64, b: f64| (a * a + b * b).sqrt();
-        out[k] = Some(Forces { axial: fl[6], bending: moment(fl[4], fl[5]).max(moment(fl[10], fl[11])), torsion: fl[3].abs(), across: fl[5].abs().max(fl[11].abs()), edgewise: fl[4].abs().max(fl[10].abs()) });
+        out[k] = Some(Forces { axial: fl[6], bending: moment(fl[4], fl[5]).max(moment(fl[10], fl[11])), torsion: fl[3].abs(), across: fl[5].abs().max(fl[11].abs()), edgewise: fl[4].abs().max(fl[10].abs()), shear: fl[1].abs().max(fl[7].abs()) });
     }
     Ok(out)
 }
@@ -344,7 +396,7 @@ fn element(m: &Member, pa: DVec3, pb: DVec3) -> ([[f64; 12]; 12], [[f64; 3]; 3])
     // (Bending in its two planes: across y (turning about z), across z (about y). A
     // strip lies flat: across y it bends across its thickness (weak), across z
     // edgewise (strong).)
-    let edgewise = m.section.flat.map_or(i, |(b, t)| t * b.powi(3) / 12.0 * float);
+    let edgewise = if m.section.flat.is_some() { m.section.edgewise() * float } else { i };
     for (v, w, s, i) in [(1usize, 5usize, 1.0f64, i), (2, 4, -1.0, edgewise)] {
         let (k1, k2, k3, k4) = (12.0 * e * i / l.powi(3), 6.0 * e * i / (l * l), 4.0 * e * i / l, 2.0 * e * i / l);
         set(v, v, k1);
@@ -506,7 +558,7 @@ mod tests {
     use super::*;
 
     const STEEL: Material = Material { stiffness: 200e9, shear: 77e9, yield_strength: 1300e6, tensile_strength: 1420e6, density: 7850.0 };
-    const TUBE: Section = Section { diameter: 0.15, wall: 0.01, flat: None };
+    const TUBE: Section = Section { diameter: 0.15, wall: 0.01, flat: None, core: None };
 
     /// A cantilever bends as the textbook has it (tip load P, length L: the
     /// moment at its root P L), a column pulled carries its load, and one past
@@ -523,5 +575,18 @@ mod tests {
         let hard = Case { loads: vec![(1, DVec3::new(TUBE.area() * 1500e6, 0.0, 0.0))], anchor: Some(0), ..Default::default() };
         assert_eq!(collapse(&frame, &hard, 1.5).ok().map(|o| o.members[0].broken), Some(Some(1)));
         assert_eq!(solve(&frame, &Case { loads: vec![(1, DVec3::Y)], ..Default::default() }, &[]), Err(Loose));
+        // (A sandwich panel strip, 1 m wide, 0.5 mm faces either side of a 25 mm
+        // core: its faces carry the moment as a couple, P L / (b t d); its core the
+        // shear, P / (b d).)
+        let core = Core { depth: 0.025, shear_strength: 1.0e6 };
+        let panel = Section::panel(1.0, 0.0005, core);
+        let deck = Frame { members: vec![Member { section: panel, ..frame.members[0] }], ..frame.clone() };
+        let f = solve(&deck, &case, &[]).unwrap()[0].unwrap();
+        let d = 0.0255;
+        let w = work(&deck.members[0], f, 2.0, 1.0);
+        let face = p * 2.0 / (1.0 * 0.0005 * d);
+        assert!((w.breaking * STEEL.tensile_strength / face - 1.0).abs() < 0.03, "{w:?} {face}");
+        let sheared = work(&deck.members[0], Forces { shear: 0.5 * core.shear_strength * d, ..Forces::default() }, 2.0, 1.0);
+        assert!((sheared.breaking - 0.5).abs() < 1e-9, "{sheared:?}");
     }
 }

@@ -391,9 +391,23 @@ struct Plate {
 pub struct PlateStock {
     key: String,
     of: String,
+    /// A plate's thickness; a sandwich panel's each face's.
     thickness: f64,
+    /// A sandwich panel's core (none: a solid plate).
+    core: Option<universe_sim::world::frame::Core>,
     material: universe_sim::world::frame::Material,
     per_square_metre: f64,
+}
+
+impl PlateStock {
+    /// A strip of it `width` wide, as the frame bears it.
+    fn section(&self, width: f32) -> universe_sim::world::frame::Section {
+        use universe_sim::world::frame::Section;
+        match self.core {
+            Some(c) => Section::panel(f64::from(width), self.thickness, c),
+            None => Section::strip(f64::from(width), self.thickness),
+        }
+    }
 }
 
 fn plate_stocks() -> &'static [PlateStock] {
@@ -408,7 +422,7 @@ fn plate_stocks() -> &'static [PlateStock] {
             let k = &m.mechanical;
             let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
-            Some(PlateStock { key: s.identity.key.clone(), of: of.clone(), thickness: t, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
+            Some(PlateStock { key: s.identity.key.clone(), of: of.clone(), thickness: t, core: None, material: Material { stiffness: e, shear, yield_strength: y, tensile_strength: ts, density: rho }, per_square_metre: t * rho })
         }).collect();
         out.sort_by(|a, b| a.of.cmp(&b.of).then(a.per_square_metre.total_cmp(&b.per_square_metre)));
         out
@@ -800,7 +814,7 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
         for (n, plate) in plan.plates.iter_mut().enumerate() {
             let Some(now) = plate_stocks().iter().find(|s| s.key == plate.stock) else { continue };
             let strips: Vec<_> = b.strips.iter().filter(|s| s.0 == n).collect();
-            let needed = |ps: &PlateStock| strips.iter().flat_map(|&&(_, a, e, w, m)| b.of_member(m).into_iter().map(move |o| work(&Member { pinned: [false; 2], a: 0, b: 1, section: universe_sim::world::frame::Section::strip(f64::from(w), ps.thickness), material: ps.material }, o.work.forces, f64::from(a.distance(e)), sf).design)).fold(0.0, f64::max);
+            let needed = |ps: &PlateStock| strips.iter().flat_map(|&&(_, a, e, w, m)| b.of_member(m).into_iter().map(move |o| work(&Member { pinned: [false; 2], a: 0, b: 1, section: ps.section(w), material: ps.material }, o.work.forces, f64::from(a.distance(e)), sf).design)).fold(0.0, f64::max);
             // (MIX: any plate, lightest first; else its own material's.)
             let mut ladder: Vec<&PlateStock> = plate_stocks().iter().filter(|s| mix || s.of == now.of).collect();
             ladder.sort_by(|a, b| a.per_square_metre.total_cmp(&b.per_square_metre));
@@ -932,7 +946,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         let node = |i: usize, j: usize| at[j * (nx + 1) + i];
         let strip = |a: usize, b: usize, width: f32, frame: &mut Frame, out: &mut Bearing| {
             out.strips.push((n, joints[a], joints[b], width, frame.members.len()));
-            frame.members.push(Member { a, b, section: universe_sim::world::frame::Section::strip(f64::from(width), ps.thickness), material: ps.material, pinned: [false; 2] });
+            frame.members.push(Member { a, b, section: ps.section(width), material: ps.material, pinned: [false; 2] });
         };
         for j in 0..=nz {
             for i in 0..nx {
@@ -1158,7 +1172,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         }
     }
     // (Each deck strip's own bending between its ends: its share of the deck's load
-    // (half each way), simply supported, q L^2 / 8; the deck's own weight as it is
+    // (half each way), simply supported, q L^2 / 8, and its shear q L / 2; the deck's own weight as it is
     // pushed in flight, its weight and floor load standing.)
     for (k, (name, result)) in out.cases.iter_mut().enumerate() {
         let Ok(col) = result else { continue };
@@ -1171,6 +1185,8 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
             let o = &mut col.members[m];
             let mut f = o.work.forces;
             f.across += local;
+            // (And its shear at its ends, q L / 2: what a sandwich's core takes.)
+            f.shear += per_area * 0.5 * f64::from(width) * l / 2.0;
             o.work = universe_sim::world::frame::work(&frame.members[m], f, l, sf);
             if o.work.breaking >= 1.0 && o.broken.is_none() {
                 o.broken = Some(0);
