@@ -26,6 +26,31 @@ pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
     }
 }
 
+/// The colour of a world's sky: an Earth-like one's blue, others' their own, paler.
+pub fn sky_color(body: &Body) -> [f32; 3] {
+    match body.terrain.as_ref().map(|t| t.kind) {
+        Some(TerrainKind::Terran) => [0.35, 0.6, 1.0],
+        _ => {
+            let [r, g, b] = body.color;
+            [0.4 + 0.6 * r, 0.4 + 0.6 * g, 0.4 + 0.6 * b]
+        }
+    }
+}
+
+/// A world's air as drawn over its ground (see `Frame::with_air`): the optical
+/// depth of its column straight up in red, green and blue, and the shell it's
+/// drawn as (m). Earth's column (1.225 kg/m³, 8.5 km scale height) is about
+/// 0.15, 0.23, 0.37: its sky's colour, scattered, over a little grey haze.
+/// More air (denser, or standing taller under weaker gravity), deeper.
+pub fn air(body: &Body) -> Option<([f32; 3], f32)> {
+    let a = body.rail.atmosphere.as_ref()?;
+    let column = (a.surface_density * a.scale_height / (1.225 * 8_500.0)) as f32;
+    let sky = sky_color(body);
+    let depth = sky.map(|c| (0.34 * c + 0.03) * column);
+    // (Even density two scale heights up: the same column, mountains inside it.)
+    Some((depth, (2.0 * a.scale_height) as f32))
+}
+
 /// Texels a side of each face of a world's surface map.
 pub const MAP_SIZE: u32 = 512;
 

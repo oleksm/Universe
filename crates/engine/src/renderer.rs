@@ -1173,6 +1173,8 @@ impl Renderer {
             self.solids.draw(&mut pass, &self.solid_pipe);
             self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
             self.pbr.draw(&mut pass);
+            // (The textured models take group 2 for their materials: the world's maps back.)
+            pass.set_bind_group(2, &self.world.bind, &[]);
             self.lines.draw(&mut pass, &self.line_pipe);
             self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
             self.points.draw(&mut pass, &self.point_pipe);

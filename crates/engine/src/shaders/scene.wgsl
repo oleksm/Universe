@@ -198,8 +198,12 @@ struct MeshOut {
     @location(11) @interpolate(flat) patch_scale: f32,
     // Where on the ground for its fine grain (m, wrapped; exact).
     @location(12) micro: vec3<f32>,
+    // A globe's air (see `Frame::with_air`): its world's center (camera-relative)
+    // and radius (m); its shell (m, 0 none) and its depths, packed.
+    @location(13) @interpolate(flat) air_center: vec4<f32>,
+    @location(14) @interpolate(flat) air: vec2<f32>,
     // Straight up from the world where this is (as drawn: the eye's frame).
-    @location(13) up: vec3<f32>,
+    @location(15) up: vec3<f32>,
 };
 
 // The fine grain repeats every this many metres (see `MICRO_PERIOD`).
@@ -337,6 +341,54 @@ fn globe_color(kind: f32, h: f32, inside: f32, base: vec3<f32>, dir: vec3<f32>, 
     return mix(c, vec3<f32>(0.92, 0.94, 0.97), ice);
 }
 
+// A column of air's optical depth straight up, in red, green and blue (packed
+// a hundredth each in 24 bits: see `Frame::with_air`).
+fn air_depth(packed: f32) -> vec3<f32> {
+    let q = u32(packed);
+    return vec3<f32>(f32(q >> 16u), f32((q >> 8u) & 255u), f32(q & 255u)) * 0.01;
+}
+
+// The ground at `p` (camera-relative) seen through its world's air: dimmed by
+// what of the air lies between it and the eye (none above the shell, the
+// eye's own share inside it), and lit by the sunlit air itself: blue straight
+// down, white along the horizon and at the limb; reddened sunlight on it near
+// the terminator, none at night. Colours at a globe's own brightness (`bright`).
+fn through_air(c: vec3<f32>, p: vec3<f32>, center: vec3<f32>, radius: f32, air: vec2<f32>, sun_dir: vec3<f32>, sun_light: vec3<f32>, bright: f32) -> vec3<f32> {
+    let shell = air.x;
+    if (shell <= 0.0) {
+        return c;
+    }
+    let beta = air_depth(air.y) / shell;
+    let len = length(p);
+    let d = p / max(len, 1e-6);
+    // Where the line of sight comes into the shell (0 when the eye is in it).
+    let top = radius + shell;
+    let oc = -center;
+    let b = dot(oc, d);
+    let cc = dot(oc, oc) - top * top;
+    var enter = 0.0;
+    if (cc > 0.0) {
+        let disc = b * b - cc;
+        if (disc <= 0.0) {
+            return c;
+        }
+        enter = max(-b - sqrt(disc), 0.0);
+    }
+    let path = max(len - enter, 0.0);
+    let through = exp(-beta * path);
+    // The sun on the air here: by its height in this sky, through the air's
+    // own slant (reddened low); a soft dusk past the terminator.
+    let up = normalize(p - center);
+    let mu = dot(up, sun_dir);
+    let lit = smoothstep(-0.12, 0.25, mu);
+    let reddened = exp(-beta * shell * 0.5 / max(mu + 0.12, 0.06));
+    let glow = (1.0 - through) * sun_light * reddened * lit * bright * AIR_GLOW;
+    return c * through + glow;
+}
+
+// How bright sunlit air is, against ground of the same brightness lit straight on.
+const AIR_GLOW: f32 = 0.55;
+
 @fragment
 fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // (Globe surfacing, sampled whatever the mesh: derivatives need it out
@@ -462,6 +514,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     }
     // What glows of itself (windows, lamps, hot metal).
     c += albedo.rgb * in.material.z;
+    if (in.globe.x > 0.5) {
+        c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
+    }
     return vec4<f32>(c, albedo.a);
 }
 
@@ -473,13 +528,22 @@ fn turn(v: MeshIn, d: vec3<f32>) -> vec3<f32> {
     return normalize(v.c0.xyz * d.x + v.c1.xyz * d.y + v.c2.xyz * d.z);
 }
 
+// A globe's center (camera-relative) and radius (m), from where its vertices
+// are on it (see `globe_at`): a whole globe's is its origin, a patch's its
+// origin less its place on the world.
+fn air_center(v: MeshIn) -> vec4<f32> {
+    let w = max(v.globe_at.w, 1e-12);
+    let off = v.c0.xyz * v.globe_at.x + v.c1.xyz * v.globe_at.y + v.c2.xyz * v.globe_at.z;
+    return vec4<f32>(v.t.xyz - off / w, length(v.c0.xyz) / w);
+}
+
 @vertex
 fn vs_mesh(v: MeshIn) -> MeshOut {
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
     let local = v.pos * v.globe_at.w + v.globe_at.xyz;
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), turn(v, local));
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), air_center(v), vec2<f32>(v.t.w, v.material.w), turn(v, local));
 }
 
 @vertex
@@ -490,5 +554,5 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), n);
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), vec4<f32>(0.0), vec2<f32>(0.0), n);
 }
