@@ -119,3 +119,34 @@ these panels are fitted.
 The engine treats every new kind as not made yet (the fittings' functions answer `None`; the three
 new slot kinds have no game slot). The studio reads all of it. The viewport's pane stock is a
 stand-in (no glass stock yet); say if you want glass as stock.
+
+## 9. Heat to the hull, and budgets (2026-10-06, evening)
+
+- **`function.heat_to_hull`** on every drive, lift and thruster block: the share of the jet's power
+  (half the thrust times the exhaust speed) that reaches the hull as heat. Today a millionth, the
+  review's guess, and now a **product figure** makers compete on: the physics says a D–D torch puts
+  a third of its energy into neutrons, which no hull survives at terawatts, so the drives of this
+  world burn aneutronic or carry the reaction far behind a magnetic nozzle, and each maker's record
+  says how much still comes aboard. Read it instead of a constant.
+- **The Budgets report** on the page, one row per hull as fitted: power made against drawn; heat
+  aboard (the plants' waste plus the jets' share at full burn) against radiators and coolant loops
+  fitted; air and water days for the cabins' seats from the stores fitted. Today every hull reads
+  **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
+  and six lift nozzles) and nothing to throw it off, so it wants two S3 panels (294 m² each) or a
+  smaller set at idle. No hull fits a cabin, so no hull has a crew figure for air and water: fit
+  one and the days appear. The studio's checks should read the same records, so the two never
+  disagree.
+
+## 10. The MC-07 fitted for heat and people (2026-10-06, your request)
+
+Fitted as you asked, with one more of each: four radiators (an S3 and three S2: 54 MW) and four
+loops (two S2, two S1: 50 MW) against **45.5 MW aboard** at full burn by the rule the registry
+takes, which is yours: **the plant's loss, plus everything drawn (power spent inside ends as heat
+inside), plus the jets' share.** The Budgets report reads that now. **Studio and report agree** (the ships
+session, 2026-10-06): both count what the fit actually draws (2.1 MW), not the plant's full 4 MW,
+since a fusion plant throttles to its load; the 47.4 in the request was a hand figure. Also a six-seat cabin in its own class-1 cargo slot (the ore bay
+keeps the class-4 one), an air store and a water tank. **Water read 17 days, not 260:** washing
+is 47.5 kg a head a day against 2.5 to drink, so the tank goes in 17 days unless the life support
+recovers it. It does now: `function.water_recovery: 0.9` and `air_recovery: 0.5` on the life
+support records (the ISS's figures), and the Budgets count only the make-up. Added mass 18.7 t.
+The mass is the mass.

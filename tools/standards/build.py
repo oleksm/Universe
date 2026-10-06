@@ -191,7 +191,7 @@ EQUIPMENT_READS = {
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
-    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again",
+    "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
     "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
@@ -2410,6 +2410,82 @@ try:
     report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under three tenths here is a settlement whose works and services, as described, give most of its people nothing to do (a gap: the rest of the civilization is not yet described), over all of them one over-built. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
 except Exception as _e:    # (the census tool is beside this build; without it the page lacks two reports, no more)
     print("traffic/census report:", _e)
+
+# 3g. Budgets (the ships session's ask): for each hull as fitted, power, heat, and air and water for its people.
+_eq_raw = {}
+for _f in glob.glob(os.path.join(TREE, "SFO", "metadata", "equipment", "*.yaml")):
+    _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
+    _eq_raw[_r["identity"]["key"]] = _r
+_air_rate = next((t_["rate"] for n_ in _census.needs.values() for t_ in n_.get("takes", []) if n_["identity"]["key"] == "need.air" and t_["item"] == "element.o"), 1.036e-5)
+_water_rate = sum(t_["rate"] for n_ in _census.needs.values() if n_["identity"]["key"] in ("need.water", "need.washing") for t_ in n_.get("takes", []) if t_["item"] == "good.water")
+rows = []
+for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yaml"))):
+    _hull = yaml.safe_load(open(_h, encoding="utf-8")) or {}
+    _fit = _hull.get("fit") or []
+    if not _fit:
+        continue
+    _out = _draw = _waste = _jet = _reject = _carry = 0.0; _seats = 0; _air = _water = 0.0; _wrec = _arec = 0.0; _missing = []
+    for _fi in _fit:
+        _e = _eq_raw.get(_fi["item"])
+        if not _e:
+            _missing.append(_fi["item"]); continue
+        _fn = _e.get("function") or {}; _k = _fn.get("kind")
+        _draw += (_e.get("needs") or {}).get("power", 0)
+        if _k == "power_plant":
+            _out += _fn["output"]; _waste += _fn["output"] * (1 / _fn["efficiency"] - 1)
+        elif _k in ("drive", "lift", "thrusters"):
+            _n = _fi.get("nozzles", 1 if _k != "thrusters" else 4)
+            _jet += 0.5 * _fn["thrust"] * _fn["exhaust"] * _n * _fn.get("heat_to_hull", 1e-6)
+        elif _k == "radiator":
+            _reject += _fn["rejects"]
+        elif _k == "coolant_loop":
+            _carry += _fn["carries"]
+        elif _k == "cabin":
+            _seats += _fn.get("seats", 0)
+        elif _k == "store":
+            if _fn.get("holds") == "good.water": _water += _fn["capacity"]
+            if _fn.get("holds") == "element.o": _air += _fn["capacity"]
+        elif _k == "life_support":
+            _wrec = max(_wrec, _fn.get("water_recovery", 0.0)); _arec = max(_arec, _fn.get("air_recovery", 0.0))
+    _heat_in = _waste + _draw + _jet      # (power used inside ends as heat inside, bar what leaves as a beam: the studio's rule too)
+    _power = f"{_out / 1e6:.1f} MW made, {_draw / 1e6:.2f} MW drawn" + ("" if _out >= _draw else ": SHORT")
+    _heat = f"{_heat_in / 1e6:.1f} MW aboard ({_waste / 1e6:.1f} plant loss, {_draw / 1e6:.1f} drawn and spent inside, {_jet / 1e6:.1f} from the jets at full burn); radiators {_reject / 1e6:.0f} MW, loops {_carry / 1e6:.0f} MW" + (": NO RADIATORS" if _heat_in > 0 and _reject == 0 else ("" if _reject >= _heat_in else ": SHORT"))
+    if _seats:
+        _days = lambda cap, rate: f"{cap / (rate * _seats * 86400):.0f} days" if cap else "no store"
+        _life = f"{_seats} seats: air {_days(_air, _air_rate * (1 - _arec))}, water {_days(_water, _water_rate * (1 - _wrec))}" + (f" (life support recovers {_wrec:.0%} of water, {_arec:.0%} of air)" if _wrec or _arec else "")
+    else:
+        _life = "no cabin fitted: no crew figure (air and water days need seats)"
+    _state = "gap" if (_out < _draw or _reject < _heat_in or _missing) else "ok"
+    rows.append(row(_state, _hull["identity"]["name"], _power, _heat, _life, ", ".join(_missing) or ""))
+report("budgets", "Budgets: each hull as fitted", "For every hull with a fit: power (its plants' output against everything's draw), heat (the plants' waste heat, everything drawn, since power spent inside ends as heat inside, and the share of the jets' power that reaches the hull, function.heat_to_hull, at full burn, against the radiators and coolant loops fitted), and air and water (days the fitted stores last the cabins' seats, at the needs' rates less what the life support recovers). The studio's checks should read the same records.", ["Hull", "Power", "Heat", "Air and water", "Unknown equipment"], rows)
+
+# 3f. Worlds (docs/survey-contract.md): every body grown by the planet simulation, its packages, and what the store holds besides.
+_store = os.environ.get("UNIVERSE_WORLDS") or os.path.expanduser("~/git/planet-sim/out/worlds")
+_index = {}
+try:
+    _rel = json.load(open(os.path.join(_store, "releases.json"), encoding="utf-8"))
+    _index = {w_["world_id"]: w_ for w_ in _rel.get("worlds", [])}
+except Exception:
+    pass
+rows = []
+_baked = set()
+import glob as _glob
+for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _glob.glob(os.path.join(TREE, "Celestial", "metadata", "systems", "*", "bodies", "*.yaml"))), key=lambda b_: (b_.get("identity") or {}).get("key", "")):
+    sv = b_.get("survey")
+    if not sv:
+        continue
+    _baked.add(sv["world_id"])
+    en, bk = b_.get("energy"), b_.get("bake")
+    w_ = _index.get(sv["world_id"], {})
+    energy_s = (f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
+    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else "none"
+    rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s, ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
+for wid, w_ in sorted(_index.items()):
+    if wid in _baked:
+        continue
+    why = "superseded by " + w_["superseded_by"] if w_.get("status") == "superseded" else ("no body: grown from no record of ours" if not w_.get("body") else "not installed: run tools/standards/world_install.py --store")
+    rows.append(row("note", w_.get("body") or "(none)", wid, "", "", "", "in the store, not installed", why))
+report("worlds", "Worlds: bodies grown by the planet simulation", f"Every body with provenance baked: its world, what its survey found, its energy package (none by design where a world never had life), its surface bake (versioned, kept in the worlds store, not here), and which survey files stay in the store for size. Below, what the store ({_store}) lists that is not installed, and why. Install: tools/standards/world_install.py --store <root>.", ["Body", "World", "Survey", "Energy", "Surface", "In the store", "Index says"], rows)
 
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])

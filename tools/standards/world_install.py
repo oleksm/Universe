@@ -126,10 +126,48 @@ def packages(text, folder, dest, world_id):
                    + (f"  bytes: {vm['bytes']}\n" if "bytes" in vm else "")
                    + (f"  note: {json.dumps(vm['note'])}\n" if vm.get("note") else ""))
         print(f"surface: v{latest['version']}, {vm.get('bytes', 0) / 1e9:.2f} GB in the worlds store; pointer and manifest kept")
+    text = climate(text, folder, sf if os.path.isfile(os.path.join(sf, "latest.json")) else None)
     if not blocks:
         return text
     head, rest = text.split("\nidentity:\n", 1)
     return head + "\n" + blocks + "identity:\n" + rest
+
+
+def climate(text, folder, sf):
+    """The run's climate onto the record's surface: from the survey's summary (new surveys) or the bake's summary.json
+    (surface/v<N>/summary.json, older worlds). The survey owns these figures: the seed's are dropped."""
+    summary = json.load(open(os.path.join(folder, "summary.json"), encoding="utf-8"))
+    cl, peak = summary.get("climate"), None
+    if sf:
+        latest = json.load(open(os.path.join(sf, "latest.json"), encoding="utf-8"))
+        bs = os.path.join(sf, latest["path"], "summary.json")
+        if os.path.isfile(bs):
+            b = json.load(open(bs, encoding="utf-8"))
+            cl = cl or b.get("climate"); peak = b.get("highest_peak")
+    if not cl and not peak:
+        return text
+    fields = {}
+    if cl:
+        if cl.get("mean_surface_temp_c") is not None:
+            fields["mean_temperature"] = round(cl["mean_surface_temp_c"] + 273.15, 1)
+        bands = [bd for bd in (cl.get("bands") or []) if bd.get("land_coldest_month_c") is not None]
+        if bands:
+            fields["temperature_low"] = round(min(bd["land_coldest_month_c"] for bd in bands) + 273.15, 1)
+            fields["temperature_high"] = round(max(bd["land_warmest_month_c"] for bd in bands) + 273.15, 1)
+        if cl.get("rain_land_m") is not None:
+            fields["rain"] = round(cl["rain_land_m"], 3)
+    if peak and peak.get("h") is not None:
+        fields["highest"] = peak["h"]
+    m_ = re.search(r"^surface:\n((?:  .*\n)*)", text, flags=re.M)
+    if not m_:
+        return text
+    body = m_.group(1)
+    for k, v in fields.items():
+        body = re.sub(rf"^  {k}: .*\n", "", body, flags=re.M)
+        body = f"  {k}: {v}\n" + body
+    text = text[:m_.start(1)] + body + text[m_.end(1):]
+    print("climate:", ", ".join(f"{k} {v}" for k, v in fields.items()))
+    return text
 
 
 def install_store(root, replace):
@@ -157,6 +195,12 @@ def install_store(root, replace):
             main(["world_install.py", w] + (["--replace"] if replace else []))
             done += 1
     print(f"{done} world(s) installed from {root}")
+    # what the registry holds now, at a glance
+    for f in sorted(glob.glob(os.path.join(ROOT, "standards", "Celestial", "metadata", "systems", "*", "bodies", "*.yaml"))):
+        b = yaml.safe_load(open(f, encoding="utf-8")) or {}
+        if b.get("survey"):
+            sv, en, bk = b["survey"], b.get("energy"), b.get("bake")
+            print(f"  {b['identity']['name']:<10} {sv['world_id']:<6} {sv.get('deposits', 0):>6,} deposits  energy: {'yes' if en else 'none'}  surface: {'v' + str(bk['version']) if bk else 'none'}  in store: {', '.join(sv.get('in_store') or []) or '-'}")
 
 
 def main(argv):
