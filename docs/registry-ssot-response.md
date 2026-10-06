@@ -1160,3 +1160,14 @@ dead-man's period and the land levy reads of `trigger.every` on the matching clo
 `clock.celestial` 60, `clock.galaxy` 86400). Periods are configuration owned by the user; tune
 with a reason on the record. The tree, the lean rule and the placement rule: `docs/tick-tree.md`
 §3 and §6; the Clocks report on the page.
+
+**Marking, SFO 21 (2026-10-06, night).** The user's ask: made things stamped with who, where,
+when. `common.schema.yaml` now defines `mark` (serial `TLY-HAULER-000001`, `design`, `maker` =
+who built it, `made_at` facility or rig, `made_on` world time, `parts` serials) and `batch` (`lot`,
+`heat`, `made_at`, `made_on`), generated as `Mark` and `Batch`. The registry carries marks only on
+day-0 stock (`stock[].serials`, `stock[].batch`: the Trethi yard's hulls have them, finished a month
+apart before day 0). The ask: stamp every unit the economy finishes (the factory's step: its
+facility, the tick's world time, the maker's next sequence for that product) and every lot of stock;
+carry the mark on the unit through storage, fitting and trade; count `life` from `made_on`. The
+seeding's traffic hulls want marks too (their yards and dates), as do fleets' ships. Nothing else
+changes until the economy prices by maker and age, which is its own business.
