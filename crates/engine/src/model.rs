@@ -12,13 +12,23 @@ pub struct GlobeMap {
     id: u64,
     pub size: u32,
     pub texels: Vec<[f32; 2]>,
+    /// The world's own colour (sRGB) texel by texel, where it has one (a world grown by the
+    /// planet simulation): drawn in place of the palette.
+    pub colors: Option<Vec<[u8; 4]>>,
 }
 
 impl GlobeMap {
     pub fn new(size: u32, texels: Vec<[f32; 2]>) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         assert_eq!(texels.len(), (6 * size * size) as usize);
-        GlobeMap { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), size, texels }
+        GlobeMap { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), size, texels, colors: None }
+    }
+
+    /// With its own colours (sRGB, as many as its texels).
+    pub fn with_colors(mut self, colors: Vec<[u8; 4]>) -> Self {
+        assert_eq!(colors.len(), self.texels.len());
+        self.colors = Some(colors);
+        self
     }
 
     pub fn id(&self) -> u64 {

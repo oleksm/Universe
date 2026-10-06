@@ -181,6 +181,9 @@ pub struct App {
     pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
     /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
+    /// Worlds grown by the planet simulation: their full-resolution maps, made in the
+    /// background (None till ready), by (system, body).
+    pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
     pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
     /// Mining rigs: how far each ship's gear is out (see `rig`).
@@ -359,6 +362,7 @@ impl App {
             sim_ms: 0.0,
             eta_shown: None,
             globes: std::collections::HashMap::new(),
+            world_maps: std::collections::HashMap::new(),
             terrain_lod: Default::default(),
             rocks: std::collections::HashMap::new(),
             rigs: Default::default(),
@@ -1108,6 +1112,23 @@ impl App {
                 && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
             {
                 self.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
+            }
+            // A world with a bake: its full-resolution maps, read and encoded on a thread of their own.
+            if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
+                && !self.world_maps.contains_key(&(origin, i))
+            {
+                let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
+                self.world_maps.insert((origin, i), slot.clone());
+                let t = t.clone();
+                std::thread::spawn(move || {
+                    let started = std::time::Instant::now();
+                    let img = |name: &str| t.bake_image(name).map(|(w, h, rgba)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba });
+                    let maps = universe_engine::WorldMaps::new([img("globe_color.jpg"), img("globe_ground.jpg"), img("globe_normal.jpg"), img("climate.png"), img("rockid.png"), img("globe_spec.png")], t.bake_air());
+                    log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
+                    if let Ok(mut s) = slot.lock() {
+                        *s = Some(std::sync::Arc::new(maps));
+                    }
+                });
             }
         }
     }

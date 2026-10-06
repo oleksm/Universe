@@ -226,7 +226,7 @@ fn to_rgba(img: &gltf::image::Data) -> Image {
 
 /// The mip chain of an RGBA8 image: each level half the last, box filtered
 /// (in linear light for colour textures: `srgb`).
-fn mips(img: &Image, srgb: bool) -> Vec<(u32, u32, Vec<u8>)> {
+pub(crate) fn mips(img: &Image, srgb: bool) -> Vec<(u32, u32, Vec<u8>)> {
     let to_lin = |c: u8| if srgb { (c as f32 / 255.0).powf(2.2) } else { c as f32 / 255.0 };
     let from_lin = |v: f32| ((if srgb { v.max(0.0).powf(1.0 / 2.2) } else { v }) * 255.0 + 0.5).clamp(0.0, 255.0) as u8;
     let mut out = vec![(img.width, img.height, img.rgba.clone())];

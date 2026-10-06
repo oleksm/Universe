@@ -415,6 +415,15 @@ impl StarSystem {
         system.add_terrain(star.seed);
         system.key_bodies();
         crate::celestial::apply(&mut system, crate::celestial::Stage::Surfaces, star.seed);
+        // Worlds the planet simulation grew: their ground from their bake.
+        for b in &mut system.bodies {
+            if b.terrain.is_some()
+                && let Some(h) = crate::worlds::Heights::of(&b.key)
+                && let Some(t) = b.terrain.as_mut()
+            {
+                t.bake(h);
+            }
+        }
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
         crate::small_bodies::add(&mut system, frost_line, star.seed);
@@ -471,6 +480,9 @@ impl StarSystem {
             let r = (1.0 - lat * lat * 0.64).sqrt();
             let direction = DVec3::new(r * lon.cos(), lat * 0.8, r * lon.sin()).normalize();
             let name = format!("Port {}", names::star_name(rng.next_u64()));
+            // (Where its record puts it, if it has one.)
+            let recorded = crate::registry::registry().settlements.iter().find(|s| s.identity.name == name && s.at.as_deref() == Some(b.key.as_str())).and_then(|s| s.position.as_ref());
+            let direction = recorded.map_or(direction, |p| crate::worlds::direction(crate::worlds::LonLat { lat: p.latitude.0, lon: p.longitude.0 }));
             self.spaceports.push(Spaceport { name, body: i, direction });
         }
         // Level the ground around each port.

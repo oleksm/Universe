@@ -15,6 +15,19 @@ struct Globals {
     // The tight cascade round what's looked at; x: a texel of it (metres), y: in use.
     shadow_tight: mat4x4<f32>,
     shadow2: vec4<f32>,
+    // The environment (see renderer.rs: not used here).
+    env_sun: vec4<f32>,
+    env_world: vec4<f32>,
+    env_world_color: vec4<f32>,
+    env_mode: vec4<f32>,
+    env_sky: vec4<f32>,
+    // x: the angle a pixel spans (radians) at the screen's middle; y: how far the world's maps
+    // are faded in (0..1).
+    view: vec4<f32>,
+    // Clip → camera-relative world.
+    inv_view_proj: mat4x4<f32>,
+    // The world whose maps are bound: its centre from the eye (m), its radius (m; 0: none).
+    world_at: vec4<f32>,
 };
 
 @group(0) @binding(0) var<uniform> g: Globals;
@@ -23,6 +36,34 @@ struct Globals {
 // Worlds' surfaces (see `GlobeMap`): height (in relief units) and crater-ness.
 @group(1) @binding(2) var globe_maps: texture_cube_array<f32>;
 @group(1) @binding(3) var globe_soft: sampler;
+// Their own colours where they have them (alpha 0: none; the palette instead).
+@group(1) @binding(6) var globe_colors: texture_cube_array<f32>;
+// The full-resolution maps of the world near the eye (see `worldmaps.rs`): equirectangular,
+// row 0 north, column 0 at −180° of longitude atan2(−z, x) in the world's own frame. Bound for
+// the globe layer g.look2.w − 1; a texel of nothing (alpha 0) where a world lacks one.
+@group(2) @binding(0) var world_color: texture_2d<f32>;
+@group(2) @binding(1) var world_ground: texture_2d<f32>;
+@group(2) @binding(2) var world_normal: texture_2d<f32>;
+@group(2) @binding(3) var world_climate: texture_2d<f32>;
+@group(2) @binding(4) var world_rock: texture_2d<f32>;
+@group(2) @binding(5) var world_soft: sampler;
+@group(2) @binding(6) var world_exact: sampler;
+// Its air (the lab's `Air`, air.wgsl; `on` 0: none).
+@group(2) @binding(7) var<uniform> world_air: Air;
+// The sea's calmness (globe_spec: 1 − wind / 9 m/s).
+@group(2) @binding(8) var world_spec: texture_2d<f32>;
+
+// Where on a world's maps the direction `dir` (its own frame) falls.
+fn world_uv(dir: vec3<f32>) -> vec2<f32> {
+    let lon = atan2(-dir.z, dir.x);
+    let lat = asin(clamp(dir.y, -1.0, 1.0));
+    return vec2<f32>(lon / 6.2831853 + 0.5, 0.5 - lat / 3.1415927);
+}
+
+// The mip level of a world map `width` texels round for a pixel spanning `footprint` radians.
+fn world_lod(width: u32, footprint: f32) -> f32 {
+    return max(log2(max(footprint * f32(width) / 6.2831853, 1e-6)), 0.0);
+}
 
 struct VertexIn {
     @location(0) pos: vec3<f32>,
@@ -174,6 +215,12 @@ struct MeshOut {
     @location(11) @interpolate(flat) patch_scale: f32,
     // Where on the ground for its fine grain (m, wrapped; exact).
     @location(12) micro: vec3<f32>,
+    // A globe's air (see `Frame::with_air`): its world's center (camera-relative)
+    // and radius (m); its shell (m, 0 none) and its depths, packed.
+    @location(13) @interpolate(flat) air_center: vec4<f32>,
+    @location(14) @interpolate(flat) air: vec2<f32>,
+    // Straight up from the world where this is (as drawn: the eye's frame).
+    @location(15) up: vec3<f32>,
 };
 
 // The fine grain repeats every this many metres (see `MICRO_PERIOD`).
@@ -238,6 +285,9 @@ fn vnoise(p: vec3<f32>) -> f32 {
     let d = mix(hash3(i + vec3<i32>(0, 1, 1)), hash3(i + vec3<i32>(1, 1, 1)), s.x);
     return mix(mix(a, b, s.y), mix(c, d, s.y), s.z);
 }
+
+// A world's own colour against the palette's brightness (the palette's colours are dim).
+const OWN_COLOR: f32 = 1.0;
 
 // Fine detail on a globe, octaves of noise down to about the pixel, each
 // fading in as it grows to a few pixels across (no shimmer): x a colour
@@ -308,6 +358,54 @@ fn globe_color(kind: f32, h: f32, inside: f32, base: vec3<f32>, dir: vec3<f32>, 
     return mix(c, vec3<f32>(0.92, 0.94, 0.97), ice);
 }
 
+// A column of air's optical depth straight up, in red, green and blue (packed
+// a hundredth each in 24 bits: see `Frame::with_air`).
+fn air_depth(packed: f32) -> vec3<f32> {
+    let q = u32(packed);
+    return vec3<f32>(f32(q >> 16u), f32((q >> 8u) & 255u), f32(q & 255u)) * 0.01;
+}
+
+// The ground at `p` (camera-relative) seen through its world's air: dimmed by
+// what of the air lies between it and the eye (none above the shell, the
+// eye's own share inside it), and lit by the sunlit air itself: blue straight
+// down, white along the horizon and at the limb; reddened sunlight on it near
+// the terminator, none at night. Colours at a globe's own brightness (`bright`).
+fn through_air(c: vec3<f32>, p: vec3<f32>, center: vec3<f32>, radius: f32, air: vec2<f32>, sun_dir: vec3<f32>, sun_light: vec3<f32>, bright: f32) -> vec3<f32> {
+    let shell = air.x;
+    if (shell <= 0.0) {
+        return c;
+    }
+    let beta = air_depth(air.y) / shell;
+    let len = length(p);
+    let d = p / max(len, 1e-6);
+    // Where the line of sight comes into the shell (0 when the eye is in it).
+    let top = radius + shell;
+    let oc = -center;
+    let b = dot(oc, d);
+    let cc = dot(oc, oc) - top * top;
+    var enter = 0.0;
+    if (cc > 0.0) {
+        let disc = b * b - cc;
+        if (disc <= 0.0) {
+            return c;
+        }
+        enter = max(-b - sqrt(disc), 0.0);
+    }
+    let path = max(len - enter, 0.0);
+    let through = exp(-beta * path);
+    // The sun on the air here: by its height in this sky, through the air's
+    // own slant (reddened low); a soft dusk past the terminator.
+    let up = normalize(p - center);
+    let mu = dot(up, sun_dir);
+    let lit = smoothstep(-0.12, 0.25, mu);
+    let reddened = exp(-beta * shell * 0.5 / max(mu + 0.12, 0.06));
+    let glow = (1.0 - through) * sun_light * reddened * lit * bright * AIR_GLOW;
+    return c * through + glow;
+}
+
+// How bright sunlit air is, against ground of the same brightness lit straight on.
+const AIR_GLOW: f32 = 0.55;
+
 @fragment
 fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // (Globe surfacing, sampled whatever the mesh: derivatives need it out
@@ -322,11 +420,24 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let ldx = select(dpdx(in.local), px * in.patch_scale, on_patch);
     let ldy = select(dpdy(in.local), py * in.patch_scale, on_patch);
     let layer = max(i32(in.globe.x) - 1, 0);
-    let ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
     // How much of the world a pixel spans (radians), from the eye's metres
     // (precise) on a patch; the radius as drawn (m).
     let radius = select(length(px) / max(length(ldx) / max(length(in.local), 1e-6), 1e-9), 1.0 / in.patch_scale, on_patch);
-    let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), (length(px) + length(py)) / radius, on_patch);
+    // (A pixel's size on a patch from the eye's distance, the angle a pixel spans and how obliquely
+    // the ground is seen: smooth from triangle to triangle. The screen's derivatives are one value
+    // a triangle: a map's level chosen by them steps at every edge, and the slopes shaded from it
+    // drew each edge as a dark dash.)
+    let oblique = 1.0 / max(abs(dot(normalize(in.normal), normalize(-in.at))), 0.25);
+    let span = 2.0 * length(in.at) * g.view.x * oblique;
+    let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
+    // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
+    let globe_lod = max(log2(footprint * 512.0 / 1.5707963), 0.0);
+    var ground: vec4<f32>;
+    if (on_patch) {
+        ground = textureSampleLevel(globe_maps, globe_soft, in.local, layer, globe_lod);
+    } else {
+        ground = textureSampleGrad(globe_maps, globe_soft, in.local, layer, ldx, ldy);
+    }
     // (Fine detail, for a globe: in its colour, and in the heights its
     // slopes are shaded by — ridges and hollows at any zoom, drawing only.)
     var d = vec3<f32>(0.0);
@@ -353,14 +464,16 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // over whatever shape the mesh has — till a pixel is a few metres or
     // less: then where on the world is too coarse to take slopes from (they'd
     // speckle), and the mesh's own shape shades it.)
-    let pixel = length(px) + length(py);
+    let pixel = select(length(px) + length(py), span, on_patch);
     let slopes = select(1.0, smoothstep(2.0, 10.0, pixel), on_patch);
     // Up close on a patch, the fine grain instead (exact: it doesn't speckle).
     var grain = vec2<f32>(0.0);
     if (on_patch && in.globe.x > 0.5) {
         grain = micro_detail(in.micro, pixel) * (1.0 - slopes * 0.5);
     }
-    let lift = (ground.r * in.globe.z + land * d.y * 0.06 * radius) * slopes + land * grain.y;
+    // (The map's own slopes on a globe only: a patch stands on the true heights, finer than the
+    // map, whose filtering steps (a 20 km texel placed to 1/256) drew a grid of dashes there.)
+    let lift = (select(ground.r * in.globe.z, 0.0, on_patch) + land * d.y * 0.06 * radius) * slopes + land * grain.y;
     let hx = dpdx(lift);
     let hy = dpdy(lift);
     var n = normalize(in.normal);
@@ -375,6 +488,55 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             n = normalize(abs(det) * n - grad);
         }
         albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
+        // A world's own colour, where it has one (grown, not painted): its globe map's, or
+        // where its full-resolution maps are bound, theirs; and close up, its ground's material.
+        var own: vec4<f32>;
+        if (on_patch) {
+            own = textureSampleLevel(globe_colors, globe_soft, in.local, layer, globe_lod);
+        } else {
+            own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
+        }
+        let mapped = in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5;
+        let uv = world_uv(dir);
+        if (mapped) {
+            let full = textureSampleLevel(world_color, world_soft, uv, world_lod(textureDimensions(world_color).x, footprint));
+            if (full.a > 0.5 && own.a > 0.5) {
+                own = vec4<f32>(mix(own.rgb, full.rgb, g.view.y), 1.0);
+            } else if (full.a > 0.5) {
+                own = full;
+            }
+        }
+        if (own.a > 0.5) {
+            var rgb = own.rgb;
+            // (Close up, over land: the ground's material, faded in as a pixel comes under 2.5 km.)
+            let near = smoothstep(2500.0, 1250.0, pixel) * g.view.y;
+            if (mapped && land > 0.5 && near > 0.0) {
+                let gw = textureDimensions(world_ground).x;
+                let lod = world_lod(gw, footprint);
+                let ground = textureSampleLevel(world_ground, world_soft, uv, lod);
+                if (ground.a > 0.5) {
+                    let climate = textureSampleLevel(world_climate, world_soft, uv, 0.0);
+                    let unit = u32(round(textureSampleLevel(world_rock, world_exact, uv, 0.0).r * 255.0 / 8.0));
+                    // (The slope from the ground as the mesh stands: the shaded normal's slopes
+                    // step at its triangles' edges.)
+                    let up = normalize(in.up);
+                    let c = clamp(dot(normalize(in.normal), up), 0.05, 1.0);
+                    var gi: GroundIn;
+                    gi.ground = ground.rgb;
+                    gi.ground_soft = textureSampleLevel(world_ground, world_soft, uv, lod + 2.5).rgb;
+                    gi.t_sea_c = climate.r * 100.0 - 50.0;
+                    gi.rain_m = climate.g * 4.0;
+                    gi.unit = unit;
+                    gi.h_m = h * in.globe.z;
+                    gi.slope = sqrt(1.0 - c * c) / c;
+                    gi.q = in.micro;
+                    gi.pixel_m = pixel;
+                    rgb = mix(rgb, ground_material(gi), near);
+                }
+            }
+            // (A world's own colour is its true albedo: no palette brightness factor (in.globe.w).)
+            albedo = vec4<f32>(rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * OWN_COLOR, in.color.a);
+        }
     }
     let seen = sunlit(in.at, n);
     // (A globe lit per pixel: its slopes, its terminator.)
@@ -394,7 +556,63 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     }
     // What glows of itself (windows, lamps, hot metal).
     c += albedo.rgb * in.material.z;
+    // The sea of the world whose maps and air are bound: the lab's (sea.wgsl), its water by depth,
+    // the sky reflected, the sun's glint by the wind; in place of the sea's albedo and glint, faded
+    // in with the maps.
+    if (in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5 && land < 0.5) {
+        let calm = textureSampleLevel(world_spec, world_soft, world_uv(dir), world_lod(textureDimensions(world_spec).x, footprint));
+        if (calm.a > 0.5) {
+            let up = normalize(in.up);
+            var si: SeaIn;
+            si.depth_m = max(-ground.r * in.globe.z, 0.5);
+            si.wind_ms = 9.0 * (1.0 - clamp(calm.r, 0.35, 1.0));
+            si.to_eye = normalize(-in.at);
+            si.up = up;
+            si.sun_dir = in.sun_dir;
+            si.sun = in.sun_light * seen;
+            // (The sky's light along the reflected ray and straight up, as seen from the eye: near
+            // the sea, near enough; the lab's tables will look from the water itself.)
+            si.sky = air_sky(reflect(-si.to_eye, up), g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
+            si.down = si.sun * max(dot(up, in.sun_dir), 0.0) + air_sky(up, g.world_at.xyz, in.sun_dir, in.sun_light, world_air) * 1.5707963;
+            si.q = in.micro;
+            si.pixel_m = pixel;
+            c = mix(c, sea_material(si), g.view.y);
+        }
+    }
+    if (in.globe.x > 0.5) {
+        // The world whose maps are bound, through its own air (the lab's scattering); others
+        // through the plain haze.
+        if (abs(in.globe.x - g.look2.w) < 0.5 && world_air.on > 0.5) {
+            c = air_ground(c, in.at, g.world_at.xyz, in.sun_dir, in.sun_light, world_air);
+        } else {
+            c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
+        }
+    }
     return vec4<f32>(c, albedo.a);
+}
+
+// The air's light from beyond everything drawn, the world in view's (the lab's `air_sky`): a
+// triangle over the whole screen, at the far plane (reversed: 0), added to what's behind.
+struct SkyOut {
+    @builtin(position) clip: vec4<f32>,
+    @location(0) ndc: vec2<f32>,
+};
+
+@vertex
+fn vs_air_sky(@builtin(vertex_index) i: u32) -> SkyOut {
+    let p = vec2<f32>(f32((i << 1u) & 2u), f32(i & 2u)) * 2.0 - 1.0;
+    return SkyOut(vec4<f32>(p, 0.0, 1.0), p);
+}
+
+@fragment
+fn fs_air_sky(in: SkyOut) -> @location(0) vec4<f32> {
+    if (world_air.on < 0.5 || g.world_at.w <= 0.0) {
+        discard;
+    }
+    let q = g.inv_view_proj * vec4<f32>(in.ndc, 0.5, 1.0);
+    let d = normalize(q.xyz / q.w);
+    let sun_dir = normalize(g.env_sun.xyz);
+    return vec4<f32>(air_sky(d, g.world_at.xyz, sun_dir, vec3<f32>(g.env_sun.w), world_air), 1.0);
 }
 
 fn place(v: MeshIn) -> vec3<f32> {
@@ -405,12 +623,37 @@ fn turn(v: MeshIn, d: vec3<f32>) -> vec3<f32> {
     return normalize(v.c0.xyz * d.x + v.c1.xyz * d.y + v.c2.xyz * d.z);
 }
 
+// A globe's center (camera-relative) and radius (m), from where its vertices
+// are on it (see `globe_at`): a whole globe's is its origin, a patch's its
+// origin less its place on the world.
+fn air_center(v: MeshIn) -> vec4<f32> {
+    let w = max(v.globe_at.w, 1e-12);
+    let off = v.c0.xyz * v.globe_at.x + v.c1.xyz * v.globe_at.y + v.c2.xyz * v.globe_at.z;
+    return vec4<f32>(v.t.xyz - off / w, length(v.c0.xyz) / w);
+}
+
+// A patch splits when the eye is nearer than this many times its size (terrain_lod's SPLIT:
+// keep them together).
+const GEOMORPH_SPLIT: f32 = 2.4;
+
 @vertex
-fn vs_mesh(v: MeshIn) -> MeshOut {
+fn vs_mesh(v_in: MeshIn) -> MeshOut {
+    var v = v_in;
+    var tint = v.color * v.fill_tint;
+    // A patch of ground (its vertices in metres): its vertex colour is its way to its parent's
+    // shape (rgb, m) and its size (alpha, m). Blended toward it as the eye nears the distance
+    // its parent stands in from, so the swap finds the same shape (geomorphing).
+    if (v.globe_at.w < 0.5) {
+        let far = GEOMORPH_SPLIT * 2.0 * v.color.w * 0.95;
+        let m = smoothstep(far * 0.6, far, length(place(v)));
+        v.pos = v.pos + v.color.xyz * m;
+        tint = v.fill_tint;
+    }
     let n = turn(v, v.normal);
     let k = max(dot(n, v.light_dir.xyz), 0.0);
     let p = place(v);
-    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), v.color * v.fill_tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, v.pos * v.globe_at.w + v.globe_at.xyz, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w));
+    let local = v.pos * v.globe_at.w + v.globe_at.xyz;
+    return MeshOut(g.view_proj * vec4<f32>(p, 1.0), tint, k * v.light_color.rgb, fill(v, n), v.light_dir.w, p, n, v.light_dir.xyz, v.light_color.rgb, v.material, local, v.globe, v.globe_at.w, v.pos + vec3<f32>(v.c0.w, v.c1.w, v.c2.w), air_center(v), vec2<f32>(v.t.w, v.material.w), turn(v, local));
 }
 
 @vertex
@@ -421,5 +664,5 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     var clip = g.view_proj * vec4<f32>(p, 1.0);
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
-    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0));
+    return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), vec4<f32>(0.0), vec2<f32>(0.0), n);
 }
