@@ -202,14 +202,17 @@ fn cl_shape(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_
                 continue;
             }
             // (Each renewal and each phase a fresh pattern; offsets kept bounded for f32.)
-            let renew = (floor(ph + kk) % 61.0) * 977.0 + kk * 1234.5 + seed * 101.0 + f32(o) * 57.0;
-            var x = q - east * (wind * fr * life * 0.001) + vec3<f32>(renew);
+            // (Each renewal, phase and octave a fresh pattern: an offset in the octave's own cells,
+            // small. Added in km before, up to ~60,000 km, it took the fine octaves' digits away in
+            // f32: they stepped, and the triangles showed it as facets.)
+            let renew = (floor(ph + kk) % 61.0) * 7.31 + kk * 13.7 + seed * 3.1 + f32(o) * 5.3;
+            var x = q - east * (wind * fr * life * 0.001);
             if (lam > 100.0) {
                 x = vec3<f32>(x.x / sp.stretch, x.y, x.z / sp.stretch);
             }
             // (Each octave turned its own way: value noise and cells on one cubic lattice line up
             // with its axes, the clouds' square bias.)
-            let z = cl_turn(o) * (x / lam);
+            let z = cl_turn(o) * (x / lam) + vec3<f32>(renew, renew * 0.61, renew * 1.37);
             var v: f32;
             if (is_cell) {
                 v = cl_cells(z) - CLOUD_CELL_MEAN;
