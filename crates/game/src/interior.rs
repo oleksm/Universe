@@ -3764,7 +3764,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
         Tool::Frame => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
             let w5 = (c.x - 16.0 - 24.0) / 5.0;
-            let cases = [("WORST", Action::Case(None)), ("LANDING", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2))), ("FLOOR", Action::Case(Some(3)))];
+            let cases = [("WORST", Action::Case(None)), ("LAND", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2))), ("FLOOR", Action::Case(Some(3)))];
             // (DESIGN GRAVITY's - and +: small, at the end of its row.)
             let small = |x: f32| (Vec2::new(p.x + c.x - 8.0 - x, p.y + 294.0), Vec2::new(20.0, 13.0));
             cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w5 + 6.0), w5), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "DECK", Action::Deck), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
