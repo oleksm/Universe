@@ -912,6 +912,8 @@ struct Block {
 #[derive(Clone)]
 pub struct Fitted {
     id: String,
+    /// Its equipment record's key (the ore bay: none).
+    key: String,
     name: String,
     mass: f64,
     volume: f32,
@@ -946,7 +948,7 @@ fn fit_of(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
     // (Its ore bay: its hold; broad and low, under doors.)
     if let Some(volume) = hull.capacity.hold_volume.filter(|v| *v > 0.0).map(|v| v as f32) {
         let a = Vec3::new(1.2, 0.8, 1.0);
-        out.push(Fitted { id: HOLD.into(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None, load: 0.0, gear: None });
+        out.push(Fitted { id: HOLD.into(), key: String::new(), name: "ORE BAY".into(), mass: 0.0, volume, round: false, size: a * (volume / (a.x * a.y * a.z)).cbrt(), push: None, load: 0.0, gear: None });
     }
     out
 }
@@ -1003,7 +1005,7 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
             EquipmentFunction::LandingGear(g) => Some((g.holds, g.stroke, g.efficiency, g.sink_rate)),
             _ => None,
         };
-        Some(Fitted { id: id.to_string(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push, load, gear })
+        Some(Fitted { id: id.to_string(), key: e.identity.key.clone(), name: e.identity.name.to_uppercase(), mass: p.mass.unwrap_or(0.0), volume, round, size, push, load, gear })
     }
 }
 
@@ -1017,7 +1019,7 @@ fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
         let volume = m.volume as f32;
         let round = m.does.slot() == SlotKind::Tank;
         let size = if round { Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt()) } else { m.dims().as_vec3() };
-        Fitted { id: slot.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None, load: 0.0, gear: None }
+        Fitted { id: slot.clone(), key: m.key.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None, load: 0.0, gear: None }
     }).collect()
 }
 
@@ -2276,6 +2278,20 @@ impl Interior {
         self.message = Some((format!("OPENED {}", id.to_uppercase()), 4.0));
     }
 
+    /// Is something in progress (to cancel): a module picked, a path, member or truss
+    /// being laid, TRUSS waiting for its corners, a member picked, WALK HERE armed?
+    fn in_progress(&self) -> bool {
+        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.beam_pick.is_some() || self.walk_armed
+    }
+
+    /// What's in progress cancelled; was anything?
+    fn cancel(&mut self) -> bool {
+        let any = self.in_progress();
+        (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
+        (self.truss_mode, self.walk_armed) = (false, false);
+        any
+    }
+
     /// The design's name (what it's saved as).
     pub fn id(&self) -> &str {
         &self.plan.hull
@@ -2574,6 +2590,114 @@ fn slider_range(tool: Tool) -> (f32, f32) {
     }
 }
 
+/// A figure with its unit, at a readable size: 900000 N as 900 KN, 1e7 m/s as
+/// 10000 KM/S.
+fn si(v: f64, unit: &str) -> String {
+    let a = v.abs();
+    let (scale, prefix) = if a >= 1e12 { (1e12, "T") } else if a >= 1e9 { (1e9, "G") } else if a >= 1e6 { (1e6, "M") } else if a >= 1e3 && unit != "KG" { (1e3, "K") } else { (1.0, "") };
+    let n = v / scale;
+    let digits = if n.abs() >= 100.0 || n.fract() == 0.0 { 0 } else if n.abs() >= 10.0 { 1 } else { 2 };
+    format!("{n:.digits$} {prefix}{unit}")
+}
+
+/// A module's sheet, beside the panel: its name, maker, kind and mount; its shape,
+/// turning; its size, mass, volume and the power it draws; its record's figures;
+/// its description. Placed and stretched (`block`): the size it's placed at too.
+fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<&Block>) {
+    let reg = universe_sim::world::registry::registry();
+    let e = reg.equipment.iter().find(|e| e.identity.key == f.key);
+    let (pp, pc) = PANEL;
+    let (p, c) = (Vec2::new(pp.x + pc.x + 8.0, pp.y), Vec2::new(236.0, 300.0));
+    frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
+    frame.hud_box(p, c, MODULE.scale(0.7));
+    frame.text_scaled(p + Vec2::new(8.0, 6.0), &f.name, MODULE, 0.8);
+    let name = |key: &str| reg.names.get(key).map_or(key.to_string(), |n| n.to_uppercase());
+    let line = match e {
+        Some(e) => {
+            let fits = reg.equipment.iter().find(|x| x.identity.key == f.key).and_then(|x| x.fits.clone()).map_or(String::new(), |m| format!(" - FITS {}", name(&m)));
+            format!("{}{}", name(&e.identity.maker), fits)
+        }
+        None => "THE HULL'S OWN".to_string(),
+    };
+    frame.text_scaled(p + Vec2::new(8.0, 19.0), &line.chars().take(44).collect::<String>(), LABEL.scale(0.7), 0.55);
+    // Its shape, turning (a box, or a tank's ball or egg), in a window of its own.
+    let (wp, wc) = (p + Vec2::new(8.0, 32.0), Vec2::new(c.x - 16.0, 84.0));
+    frame.hud_box(wp, wc, LABEL.scale(0.25));
+    let size = block.map_or(f.size, |b| b.size);
+    let shape = Block { id: String::new(), at: Vec3::ZERO, size };
+    let (yaw, tilt) = (interior.spin * 0.5, 0.45f32);
+    let turn = |q: Vec3| {
+        let (sy, cy) = yaw.sin_cos();
+        let r = Vec3::new(q.x * cy + q.z * sy, q.y, -q.x * sy + q.z * cy);
+        let (st, ct) = tilt.sin_cos();
+        Vec2::new(r.x, -(r.y * ct - r.z * st))
+    };
+    let k = (wc.y * 0.85) / size.length().max(1e-3);
+    let mid = wp + wc * 0.5;
+    for [a, b] in shape.edges(f.round) {
+        frame.hud_line(mid + turn(a) * k, mid + turn(b) * k, MODULE);
+    }
+    // Its size, mass, volume, what it draws.
+    let mut y = p.y + 122.0;
+    let dims = format!("L {:.2} X W {:.2} X H {:.2} M", f.size.z, f.size.x, f.size.y);
+    frame.text_scaled(Vec2::new(p.x + 8.0, y), &dims, LABEL, 0.6);
+    y += 11.0;
+    if let Some(b) = block.filter(|b| (b.size - f.size).length() > 0.01) {
+        frame.text_scaled(Vec2::new(p.x + 8.0, y), &format!("PLACED AS {:.2} X {:.2} X {:.2} M", b.size.z, b.size.x, b.size.y), PICKED.scale(0.9), 0.6);
+        y += 11.0;
+    }
+    let draws = e.and_then(|e| e.needs.power).filter(|w| *w > 0.0).map_or(String::new(), |w| format!("   DRAWS {}", si(w, "W")));
+    frame.text_scaled(Vec2::new(p.x + 8.0, y), &format!("MASS {}   VOLUME {:.1} M3{draws}", si(f.mass, "KG"), f.volume), LABEL, 0.6);
+    y += 15.0;
+    // Its record's figures (what it does), each with its unit.
+    if let Some(serde_json::Value::Object(fields)) = e.and_then(|e| serde_json::to_value(&e.function).ok()) {
+        let kind = fields.get("kind").and_then(|v| v.as_str()).unwrap_or("").replace('_', " ").to_uppercase();
+        frame.text_scaled(Vec2::new(p.x + 8.0, y), &kind, MODULE.scale(0.9), 0.6);
+        y += 11.0;
+        let unit = |field: &str| match field {
+            "thrust" | "holds" if fields.get("stroke").is_some() || field == "thrust" => "N",
+            "output" | "power" | "beam_power" => "W",
+            "exhaust" | "sink_rate" | "muzzle_speed" => "M/S",
+            "stroke" | "extended" | "range" | "focus" | "resolves" | "survey_range" | "anchor_reach" | "capture" | "link" => "M",
+            "volume" => "M3",
+            "fill_density" => "KG/M3",
+            "slug_mass" => "KG",
+            "capacity" if kind == "CAPACITOR" => "J",
+            "capacity" if kind == "COMM" || kind == "HYPER RELAY" || kind == "GATE RELAY" => "/S",
+            "capacity" => "KG",
+            "burn" | "cool" | "lag" | "cadence" => "S",
+            "rate" => "/S",
+            "throughput" => "KG/S",
+            "excavator_power" => "W",
+            "anchor_speed" => "M/S",
+            _ => "",
+        };
+        for (field, v) in fields.iter().filter(|(k, _)| *k != "kind").take(7) {
+            let shown = match v {
+                serde_json::Value::Number(n) => {
+                    let x = n.as_f64().unwrap_or(0.0);
+                    if field == "efficiency" { format!("{:.0}%", x * 100.0) } else { si(x, unit(field)) }
+                }
+                serde_json::Value::String(t) => name(t),
+                serde_json::Value::Bool(b) => if *b { "YES".into() } else { "NO".into() },
+                serde_json::Value::Array(a) => format!("{} OF THEM", a.len()),
+                _ => continue,
+            };
+            let label = field.replace('_', " ").to_uppercase();
+            frame.text_scaled(Vec2::new(p.x + 12.0, y), &format!("{label}: {shown}").chars().take(42).collect::<String>(), LABEL.scale(0.85), 0.55);
+            y += 10.0;
+        }
+    }
+    // Its description.
+    if let Some(d) = e.and_then(|e| e.identity.description.as_deref()) {
+        y += 4.0;
+        for l in crate::fmt::wrap(&d.to_uppercase(), 42).into_iter().take(((p.y + c.y - 6.0 - y) / 10.0).max(0.0) as usize) {
+            frame.text_scaled(Vec2::new(p.x + 8.0, y), &l, LABEL.scale(0.7), 0.55);
+            y += 10.0;
+        }
+    }
+}
+
 /// The FRAME panel's stock list: row `k`'s place.
 fn stock_row(k: usize) -> (Vec2, Vec2) {
     let (p, c) = PANEL;
@@ -2631,12 +2755,12 @@ fn beam_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<usize> {
 }
 
 /// The MODULES panel's list: how many rows show (the rest scrolled to with the wheel).
-const FIT_ROWS: usize = 15;
+const FIT_ROWS: usize = 19;
 
 /// The MODULES panel's list: row `k`'s place (the fit, one a row).
 fn module_row(k: usize) -> (Vec2, Vec2) {
     let (p, c) = PANEL;
-    (Vec2::new(p.x + 6.0, p.y + 82.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
+    (Vec2::new(p.x + 6.0, p.y + 40.0 + k as f32 * 10.5), Vec2::new(c.x - 12.0, 10.5))
 }
 
 /// The panel's buttons for the tool in hand (where, its label, what it does).
@@ -2998,7 +3122,13 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
         interior.cursor = input.cursor;
         return true;
     }
+    // ESC: what's in progress cancelled (a module picked, a path, member or truss
+    // being laid, TRUSS waiting, WALK HERE armed); nothing in progress, the studio
+    // closed.
     if input.pressed(KeyCode::Escape) {
+        if interior.cancel() {
+            return true;
+        }
         return !interior.close();
     }
     // SAVE (CTRL+S) and OPEN (CTRL+O).
@@ -3422,6 +3552,12 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         return true;
     }
     // The right button: stops a path being laid (and only that, this press).
+    // (The right button, pressed and not dragged: what's in progress cancelled, as
+    // ESC does.)
+    if input.button_pressed(MouseButton::Right) && interior.in_progress() {
+        interior.cancel();
+        interior.stopped = true;
+    }
     if input.button_pressed(MouseButton::Right) && interior.truss_from.is_some() {
         interior.truss_from = None;
         interior.stopped = true;
@@ -3693,7 +3829,11 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
     frame.hud_rect(Vec2::ZERO, size, PAPER);
     let on = spec.map_or("NO HULL".to_string(), |s| s.name.to_uppercase());
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {} ({on})", interior.plan.hull.to_uppercase()), LABEL);
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES", LABEL.scale(0.6), 0.7);
+    let hint = match interior.tool {
+        Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
+        _ => "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES",
+    };
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), hint, LABEL.scale(0.6), 0.7);
     // The toolbar: the tool in hand lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -4240,6 +4380,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
         let mut y = p.y + 28.0;
+        // (MODULES: its hint on the hint line, the panel for the list and the sheet.)
+        let help = if interior.tool == Tool::Modules { "" } else { help };
         for line in crate::fmt::wrap(help, ((c.x - 16.0) / 8.0 * 1.25) as usize) {
             frame.text_scaled(Vec2::new(p.x + 8.0, y), &line, LABEL.scale(0.85), 0.8);
             y += 12.0;
@@ -4332,7 +4474,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             let clash_of = |id: &str| interior.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks).and_then(|(b, c)| b.iter().position(|x| x.id == id).map(|k| c[k])).unwrap_or(false);
             let hull = interior.spec().is_some();
             let head = if hull { "THE SHIP'S FIT              MASS   VOLUME" } else { "ALL EQUIPMENT (ANY NUMBER) MASS   VOLUME" };
-            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 72.0), head, LABEL.scale(0.7), 0.6);
+            frame.text_scaled(Vec2::new(p.x + 8.0, p.y + 29.0), head, LABEL.scale(0.7), 0.6);
             // (What's placed, of everything: its mass and volume.)
             let fitted_of = |b: &Block| interior.fit.iter().find(|f| f.id == kind(&b.id));
             let (mass, volume) = plan.blocks.iter().filter_map(fitted_of).fold((0.0, 0.0), |(m, v), f| (m + f.mass, v + f.volume));
@@ -4356,6 +4498,13 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 let figures = if f.volume < 10.0 { format!("{:>5.2} T {:>5.1} M3", f.mass / 1000.0, f.volume) } else { format!("{:>5.2} T {:>5.0} M3", f.mass / 1000.0, f.volume) };
                 frame.text_scaled(Vec2::new(q.x + qc.x - figures.len() as f32 * 4.8, q.y + 2.0), &figures, col, 0.6);
             }
+            // (The sheet: the row under the cursor, else the module under it in the
+            // view, else the one picked.)
+            let row = (0..FIT_ROWS).find(|&n| interior.fit_top + n < interior.fit.len() && inside(module_row(n), interior.cursor)).map(|n| interior.fit_top + n);
+            if let Some(f) = row.or(interior.module_hover).or(interior.module).and_then(|k| interior.fit.get(k)) {
+                let block = interior.block.and_then(|n| plan.blocks.get(n)).filter(|b| kind(&b.id) == f.id);
+                draw_sheet(frame, interior, f, block);
+            }
             let text = if hull {
                 let total: f32 = interior.fit.iter().map(|f| f.volume).sum();
                 format!("PLACED {placed} OF {}: {volume:.0} OF {total:.0} M3, {:.1} T", interior.fit.len(), mass / 1000.0)
@@ -4366,7 +4515,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             // (Scrolled: where in the list it is.)
             if interior.fit.len() > FIT_ROWS {
                 let shown = format!("{}-{} OF {} (WHEEL)", interior.fit_top + 1, (interior.fit_top + FIT_ROWS).min(interior.fit.len()), interior.fit.len());
-                frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 72.0 - 10.0), &shown, LABEL.scale(0.6), 0.6);
+                frame.text_scaled(Vec2::new(p.x + c.x - 8.0 - shown.len() as f32 * 4.8, p.y + 10.0), &shown, LABEL.scale(0.6), 0.6);
             }
             let picked_block = interior.block.and_then(|n| plan.blocks.get(n));
             for (k, (at, len)) in sliders(Tool::Modules).into_iter().enumerate() {
