@@ -3155,7 +3155,7 @@ impl Interior {
 
     /// A new design, in hull `hull` (none: from nothing), named the first free name
     /// for it.
-    fn new_design(&mut self, hull: Option<&'static universe_sim::world::ship::ClassSpec>) {
+    pub(crate) fn new_design(&mut self, hull: Option<&'static universe_sim::world::ship::ClassSpec>) {
         let base = hull.map_or("design".to_string(), |h| h.key.clone());
         let id = (if hull.is_some() { 2 } else { 1 }..).map(|n| format!("{base}-{n}")).find(|id| !Self::file(id).exists()).unwrap_or(base);
         self.start(&id, hull.map(|h| h.shape()), Some(hull.map_or(String::new(), |h| h.key.clone())));
@@ -3180,7 +3180,7 @@ impl Interior {
     }
 
     /// Saved design `id` opened.
-    fn open_design(&mut self, id: &str) {
+    pub(crate) fn open_design(&mut self, id: &str) {
         let text = std::fs::read_to_string(Self::file(id)).unwrap_or_default();
         let on = serde_json::from_str::<Plan>(&text).ok().and_then(|p| p.on);
         let probe = Plan { hull: id.into(), on: on.clone(), ..Default::default() };
@@ -5141,13 +5141,19 @@ fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
 
 /// This frame's input. False: close it. (A change to the plan is kept for UNDO.)
 pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
+    let spec = app.ship.spec();
+    input_with(spec, &mut app.deckplans, ctx, interior)
+}
+
+/// This frame's input, given the ship's hull spec and the deck plans (what the game
+/// keeps; the studio alone keeps its own). False: close it.
+pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, ctx: &Context, interior: &mut Interior) -> bool {
     let input = &ctx.input;
     let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
     let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
     // (The hull's lines picked up, its plan seeded, whatever else is going on.)
-    let spec = app.ship.spec();
     interior.spin += ctx.dt;
-    interior.sync(&spec.key, spec.shape(), &mut app.deckplans, 0.0);
+    interior.sync(&spec.key, spec.shape(), deckplans, 0.0);
     interior.refresh();
     // On the test stand: walked; ESC back to the studio.
     if let Some(s) = interior.stand.as_mut() {
@@ -5983,7 +5989,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     true
 }
 
-pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
+pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     if let Some(s) = &interior.stand {
         draw_stand(frame, s, place);
         return;

@@ -24,6 +24,7 @@ mod scene;
 mod interior;
 mod shipyard;
 mod studio;
+mod studio_only;
 mod planet_studio;
 mod standards;
 mod sound;
@@ -1655,6 +1656,12 @@ fn main() {
     // (`--report <design>`: the interior studio's report on a design, as text; no
     // window. For checking a change without a game run.)
     let args: Vec<String> = std::env::args().collect();
+    // (`--studio [design]`: the interior studio alone, no universe loaded.)
+    if let Some(k) = args.iter().position(|a| a == "--studio") {
+        let design = args.get(k + 1).filter(|a| !a.starts_with("--")).map(String::as_str);
+        run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
+        return;
+    }
     if let Some(k) = args.iter().position(|a| a == "--report") {
         let name = args.get(k + 1).map_or("design-1", String::as_str);
         print!("{}", interior::report(name));
