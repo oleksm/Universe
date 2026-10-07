@@ -1390,8 +1390,12 @@ pub fn apply(app: &mut App, name: &str) {
         "interior" => {
             // The shipyard's interior studio on our hull (UNIVERSE_TURN=yaw,pitch: looked
             // at from there, rad).
-            apply(app, "docked");
+            // (Parked where a new game starts, at the station: no flight in first, the
+            // "docked" scenario's autopilot run took a minute and more each time.)
             mc07(app);
+            // (The world held still: the studio needs nothing of it running, and a
+            // check of it is a picture or a report, fastest with the world asleep.)
+            app.paused = true;
             let turn: Vec<f32> = std::env::var("UNIVERSE_TURN").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
             let mut y = match turn[..] {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
