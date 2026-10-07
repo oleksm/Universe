@@ -1502,14 +1502,23 @@ type Sized = (Vec<Beam>, Vec<Plate>, usize, usize);
 /// and the rounds it took).
 enum Fitting {
     Step(String),
-    Done(Option<Plan>, usize),
+    Done(Option<Box<Plan>>, usize),
+}
+
+/// How FIT FRAME mounts and sizes: the stock new mounts are cut from, their
+/// spacing (m), and whether sizing may pick any material (MIX).
+struct FitHow {
+    stock: String,
+    spacing: f32,
+    mix: bool,
 }
 
 /// The frame fitted in one go: joints knit, every module mounted (members of
 /// `stock`, `spacing` apart), then sized and braced in turn until bracing adds
 /// nothing (six rounds at most), and sized once more after the last brace. Each
 /// step said through `say`; `stop` set: given up (none).
-fn fit_frame(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, mix: bool, stock: &str, spacing: f32, stop: &std::sync::atomic::AtomicBool, say: &dyn Fn(Fitting)) -> Option<(Plan, usize)> {
+fn fit_frame(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, how: &FitHow, stop: &std::sync::atomic::AtomicBool, say: &dyn Fn(Fitting)) -> Option<(Plan, usize)> {
+    let (mix, stock, spacing) = (how.mix, how.stock.as_str(), how.spacing);
     use std::sync::atomic::Ordering;
     let mut plan = plan.clone();
     say(Fitting::Step("MOUNTING EVERY MODULE".into()));
@@ -1566,7 +1575,8 @@ pub fn fit_design(name: &str) -> String {
     let stock = stocks().first().map_or(String::new(), |s| s.key.clone());
     let stop = std::sync::atomic::AtomicBool::new(false);
     let was = frame_masses(&i);
-    let Some((plan, rounds)) = fit_frame(&i.plan, &i.fit, i.spec(), true, &stock, i.spacing.max(1.0), &stop, &say) else { return "stopped\n".into() };
+    let how = FitHow { stock, spacing: i.spacing.max(1.0), mix: true };
+    let Some((plan, rounds)) = fit_frame(&i.plan, &i.fit, i.spec(), &how, &stop, &say) else { return "stopped\n".into() };
     i.plan = plan;
     i.save();
     let now = frame_masses(&i);
@@ -5856,7 +5866,7 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
                 let before = mass(interior);
                 interior.undo.push(interior.plan.clone());
                 interior.redo.clear();
-                interior.plan = p;
+                interior.plan = *p;
                 interior.bulk = true;
                 interior.message = Some((format!("FRAME FITTED IN {rounds} ROUNDS: {:.1} T (WAS {before:.1} T); WHAT'S LEFT IS IN THE ISSUES", mass(interior)), 10.0));
             }
@@ -6089,9 +6099,8 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                 } else if interior.plan.blocks.is_empty() {
                     interior.message = Some(("NOTHING TO FIT A FRAME TO: PLACE MODULES FIRST".into(), 4.0));
                 } else {
-                    let (plan, fit, spec, mix) = (interior.plan.clone(), interior.fit.clone(), interior.spec(), interior.mix);
-                    let stock = stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone());
-                    let spacing = interior.spacing.max(1.0);
+                    let (plan, fit, spec) = (interior.plan.clone(), interior.fit.clone(), interior.spec());
+                    let how = FitHow { stock: stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone()), spacing: interior.spacing.max(1.0), mix: interior.mix };
                     let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
                     let (tx, rx) = mpsc::channel();
                     let (snapshot, halt) = (plan.clone(), stop.clone());
@@ -6099,9 +6108,9 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                         let say = |f: Fitting| {
                             tx.send(f).ok();
                         };
-                        let done = fit_frame(&plan, &fit, spec, mix, &stock, spacing, &halt, &say);
+                        let done = fit_frame(&plan, &fit, spec, &how, &halt, &say);
                         let rounds = done.as_ref().map_or(0, |d| d.1);
-                        tx.send(Fitting::Done(done.map(|d| d.0), rounds)).ok();
+                        tx.send(Fitting::Done(done.map(|d| Box::new(d.0)), rounds)).ok();
                     });
                     interior.fitting = Some((snapshot, rx, stop));
                     interior.message = Some(("FIT FRAME: STARTING (CLICK AGAIN TO STOP)".into(), 30.0));
