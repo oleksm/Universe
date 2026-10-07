@@ -23,11 +23,11 @@
 //! air, some queue to leave. Needs that take no stock (a home, safety, news)
 //! aren't run here.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, VecDeque};
 
 use universe_world::goods::{Item, POWER_PRICE};
 use universe_world::recipes::Recipe;
-use universe_world::registry::Module;
+use universe_world::registry::{Batch, Mark, Module};
 use universe_world::traffic::Facility;
 use universe_world::units::DAY;
 
@@ -50,15 +50,27 @@ const BID: f64 = 0.85;
 /// What the exchange pays for what no one here takes, against its
 /// reference price, with its warehouse empty (less as it fills). Invented.
 const SPECULATE: f64 = 0.5;
+/// A lot of bulk stock (SFO 21) is what a works makes of an item over this long (s).
+const LOT_SPAN: f64 = DAY;
 /// A works with no store keeps this long of what it takes (s).
 const UNSTORED: f64 = DAY;
 
-/// Stock lying in one place (kg, by item).
+/// Stock lying in one place (kg, by item), and what's marked of it (SFO 21): a product's units
+/// each by its mark, oldest first; bulk stock by its lots (and the kg of each still here).
 #[derive(Clone, Debug, Default)]
 pub struct Pool {
     pub stock: BTreeMap<usize, f64>,
     /// What it can hold (kg).
     pub room: f64,
+    pub marks: BTreeMap<usize, VecDeque<Mark>>,
+    pub lots: BTreeMap<usize, VecDeque<(Batch, f64)>>,
+}
+
+/// Is stock item `item` a made product (one serial a unit: a hull, equipment, an industrial module,
+/// a structure, a part), not bulk stock (by its lots)?
+pub fn is_product(item: usize) -> bool {
+    let key = &universe_world::content::content().stock[item].key;
+    ["hull.", "equipment.", "module.", "structure.", "part."].iter().any(|p| key.starts_with(p))
 }
 
 impl Pool {
@@ -81,17 +93,69 @@ impl Pool {
         }
     }
 
+    /// Put `kg` of `item` with the marks and lots that came with it.
+    pub fn put_with(&mut self, item: usize, kg: f64, marks: Vec<Mark>, lots: Vec<(Batch, f64)>) {
+        self.put(item, kg);
+        if !marks.is_empty() {
+            self.marks.entry(item).or_default().extend(marks);
+        }
+        // (A piece of a lot already here joins it.)
+        for (b, kg) in lots {
+            let l = self.lots.entry(item).or_default();
+            match l.iter_mut().find(|(x, _)| x.lot == b.lot) {
+                Some((_, have)) => *have += kg,
+                None => l.push_back((b, kg)),
+            }
+        }
+    }
+
     /// Take up to `kg`; what was taken.
     pub fn take(&mut self, item: usize, kg: f64) -> f64 {
+        self.take_with(item, kg).0
+    }
+
+    /// Take up to `kg`, and the marks of the whole units and the lots it was, oldest first.
+    pub fn take_with(&mut self, item: usize, kg: f64) -> (f64, Vec<Mark>, Vec<(Batch, f64)>) {
         let Some(have) = self.stock.get_mut(&item) else {
-            return 0.0;
+            return (0.0, Vec::new(), Vec::new());
         };
         let t = kg.min(*have).max(0.0);
         *have -= t;
+        let left = *have;
         if *have <= 1e-9 {
             self.stock.remove(&item);
         }
-        t
+        // (Marks: no more than the whole units left; those over, gone with what was taken.)
+        let mut marks = Vec::new();
+        if let Some(m) = self.marks.get_mut(&item) {
+            let mass = universe_world::content::content().stock[item].mass.max(1e-9);
+            let units = ((left + 1e-6) / mass).floor() as usize;
+            while m.len() > units {
+                marks.extend(m.pop_front());
+            }
+            if m.is_empty() {
+                self.marks.remove(&item);
+            }
+        }
+        // (Lots: the oldest first, as far as what was taken goes.)
+        let mut lots = Vec::new();
+        if let Some(l) = self.lots.get_mut(&item) {
+            let mut want = t;
+            while want > 1e-9 {
+                let Some((b, kg)) = l.front_mut() else { break };
+                let k = want.min(*kg);
+                *kg -= k;
+                want -= k;
+                lots.push((b.clone(), k));
+                if *kg <= 1e-9 {
+                    l.pop_front();
+                }
+            }
+            if l.is_empty() {
+                self.lots.remove(&item);
+            }
+        }
+        (t, marks, lots)
     }
 }
 
@@ -128,6 +192,14 @@ pub struct Works {
     /// The deposit it holds a claim to (its id in the body's survey) and the ore left in it (kg):
     /// what its mine digs, until it's worked out.
     pub deposit: Option<(String, f64)>,
+    /// Its record's key (a facility's or a rig's): where what it makes was made.
+    pub key: String,
+    /// What it has made of a product's next unit so far (kg), and the marks of the marked parts
+    /// that went into it (their serials, for the unit's mark).
+    pub progress: BTreeMap<usize, f64>,
+    pub parts_in: Vec<String>,
+    /// Each bulk item's lot it's making now (a day of it: `LOT_SPAN`), wherever what's made of it lies.
+    pub open_lots: BTreeMap<usize, Batch>,
 }
 
 /// The ore in deposit `id` (kg), from the survey of the body whose world it names (its first
@@ -157,6 +229,7 @@ impl Works {
         let reg = universe_world::registry::registry();
         let f = reg.facilities.iter().find(|f| f.identity.key == key)?;
         let mut w = Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())?;
+        w.key = key.to_string();
         // (A mine's claim: the deposit it digs, its ore as the survey has it.)
         w.deposit = f.claim.as_ref().and_then(|c| Some((c.deposit.clone(), deposit_ore(&c.deposit)?)));
         Some(w)
@@ -168,6 +241,7 @@ impl Works {
         let r = reg.settlements.iter().find(|s| s.identity.key == key)?;
         let mut w = Self::built(Site::Rig(system, body), 0, &r.identity.name, &r.lines, &r.modules, &[], true)?;
         w.owner = r.owner.clone();
+        w.key = key.to_string();
         Some(w)
     }
 
@@ -188,13 +262,14 @@ impl Works {
             setups.push(Setup { module: module(&m.module)?, count: m.count, recipe: None });
         }
         let holds: f64 = setups.iter().map(|s| s.module.capacity.holds.unwrap_or(0.0) * s.count as f64).sum();
-        let mut w = Works { site, works, name: name.to_string(), setups, pool: Pool::default(), exchange, owner: None, last: None, deposit: None };
+        let mut w = Works { site, works, name: name.to_string(), setups, pool: Pool::default(), exchange, owner: None, last: None, deposit: None, key: String::new(), progress: BTreeMap::new(), parts_in: Vec::new(), open_lots: BTreeMap::new() };
         w.pool.room = if holds > 0.0 { holds } else { w.takes().iter().map(|(_, r)| r * UNSTORED).sum() };
         // (What lies in it at day 0: the registry's seed state.)
         let goods = &universe_world::content::content().stock;
         for s in stock {
             if let Some(i) = universe_world::goods::item(&s.item) {
-                w.pool.put(i, s.quantity.unwrap_or(0.0) + s.pieces.map_or(0.0, |n| n as f64 * goods[i].mass));
+                let kg = s.quantity.unwrap_or(0.0) + s.pieces.map_or(0.0, |n| n as f64 * goods[i].mass);
+                w.pool.put_with(i, kg, s.serials.clone(), s.batch.clone().map(|b| (b, kg)).into_iter().collect());
             }
         }
         Some(w)
@@ -398,6 +473,9 @@ pub struct Economy {
     pub stepped_to: f64,
     snapshot: Option<std::sync::Arc<Vec<Place>>>,
     works_snap: Option<std::sync::Arc<Vec<Works>>>,
+    /// The last number given in each series (SFO 21): a serial's maker and product
+    /// (`TOL-HAULER`), a lot's maker (`TOL`).
+    pub sequences: BTreeMap<String, u32>,
 }
 
 impl Economy {
@@ -435,7 +513,36 @@ impl Economy {
             });
         }
         e.sync(land);
+        e.count_marks();
         e
+    }
+
+    /// Each series' last number, from the marks and lots already lying about (day 0's), so the
+    /// next made goes on from them.
+    fn count_marks(&mut self) {
+        let number = |s: &str| s.rsplit_once('-').and_then(|(series, n)| Some((series.to_string(), n.parse::<u32>().ok()?)));
+        let mut seen: Vec<(String, u32)> = Vec::new();
+        for w in &self.works {
+            seen.extend(w.pool.marks.values().flatten().filter_map(|m| number(&m.serial)));
+            seen.extend(w.pool.lots.values().flatten().filter_map(|(b, _)| number(&b.lot)));
+        }
+        for (series, n) in seen {
+            let last = self.sequences.entry(series).or_default();
+            *last = (*last).max(n);
+        }
+    }
+
+    /// The next number in `series` (SFO 21's six figures).
+    fn next_in(&mut self, series: &str) -> u32 {
+        let n = self.sequences.entry(series.to_string()).or_default();
+        *n += 1;
+        *n
+    }
+
+    /// Move `kg` of `item` from works `from` to works `to`, with its marks and lots.
+    fn shift(&mut self, from: usize, to: usize, item: usize, kg: f64) {
+        let (t, marks, lots) = self.works[from].pool.take_with(item, kg);
+        self.works[to].pool.put_with(item, t, marks, lots);
     }
 
     /// The registry's rig `key`, body `body` of `system` (see `world::rigs`):
@@ -756,6 +863,17 @@ impl Economy {
         let cause = universe_protocol::Cause::Rules;
         let here: Vec<usize> = (0..self.works.len()).filter(|&k| self.works[k].site == site && self.built(land, k, at)).collect();
         let owners: Vec<Option<Party>> = here.iter().map(|&k| self.owner(land, k)).collect();
+        // (Who makes what each works makes, for its marks: its owning company, by its record's key
+        // and ticker.)
+        let reg = universe_world::registry::registry();
+        let makers: Vec<Option<(String, String)>> = owners
+            .iter()
+            .map(|o| match o {
+                Some(Party::Company(i)) => land.companies.get(*i as usize).and_then(|c| Some((c.0.clone(), reg.orgs.iter().find(|r| r.identity.key == c.0)?.ticker.clone()?))),
+                _ => None,
+            })
+            .collect();
+        let mut stamps: Vec<(usize, usize, f64)> = Vec::new();
         // Power: what the stations can supply with the fuel they hold, shared out.
         let supply: f64 = here.iter().map(|&k| self.works[k].supplies() * self.works[k].fuelled(dt).min(1.0)).sum();
         let demand: f64 = here.iter().map(|&k| self.works[k].draws()).sum();
@@ -814,12 +932,15 @@ impl Economy {
                     *left = (*left - r.from_ground * full * k).max(0.0);
                 }
                 for &(i, q) in &r.inputs {
-                    let t = w.pool.take(i, q * full * k);
+                    let (t, marks, _) = w.pool.take_with(i, q * full * k);
                     *used.entry(i).or_default() += t;
+                    // (The marked parts that went in: on the mark of what they went into.)
+                    w.parts_in.extend(marks.into_iter().map(|m| m.serial));
                 }
                 for (i, q) in out {
                     w.pool.put(i, q * full * k);
                     *made.entry(i).or_default() += q * full * k;
+                    stamps.push((n, i, q * full * k));
                 }
                 drawn[n] += r.power * setup.count as f64 * k;
                 most += 1.0;
@@ -829,6 +950,45 @@ impl Economy {
                 }
             }
             runs[n] = Run { rate: if most > 0.0 { ran / most } else { 1.0 }, held_by: held, earned: 0.0 };
+        }
+        // What was made, marked (SFO 21): a product's every whole unit its serial (the maker's
+        // ticker, the product's code, the next number in that series), with the marked parts
+        // that went in; bulk stock a lot a step, the maker's series. (No maker: unmarked.)
+        for (n, item, kg) in stamps {
+            let (Some((maker, ticker)), true) = (makers[n].clone(), kg > 0.0) else { continue };
+            let k = here[n];
+            let key = goods[item].key.clone();
+            if is_product(item) {
+                let mass = goods[item].mass.max(1e-9);
+                let done = self.works[k].progress.entry(item).or_default();
+                *done += kg;
+                let mut units = 0;
+                while *done >= mass * (1.0 - 1e-9) {
+                    *done -= mass;
+                    units += 1;
+                }
+                for _ in 0..units {
+                    let code = key.split_once('.').map_or(key.as_str(), |(_, c)| c).replace(['.', '_'], "-").to_uppercase();
+                    let series = format!("{ticker}-{code}");
+                    let serial = format!("{series}-{:06}", self.next_in(&series));
+                    let parts = std::mem::take(&mut self.works[k].parts_in);
+                    let mark = Mark { serial, design: key.clone(), revision: None, maker: maker.clone(), made_at: self.works[k].key.clone(), made_on: at, parts };
+                    self.works[k].pool.marks.entry(item).or_default().push_back(mark);
+                }
+            } else {
+                // (A lot is a works' day of an item: what it makes within a day of a lot's start is
+                // that lot, wherever it's gone.)
+                let batch = match self.works[k].open_lots.get(&item).filter(|b| at - b.made_on < LOT_SPAN) {
+                    Some(b) => b.clone(),
+                    None => {
+                        let lot = format!("{ticker}-{:06}", self.next_in(&ticker));
+                        let b = Batch { lot, heat: None, made_at: self.works[k].key.clone(), made_on: at };
+                        self.works[k].open_lots.insert(item, b.clone());
+                        b
+                    }
+                };
+                self.works[k].pool.put_with(item, 0.0, Vec::new(), vec![(batch, kg)]);
+            }
         }
         // The stations burn for what was drawn, and are paid for it by what drew it.
         let used_w: f64 = drawn.iter().sum();
@@ -879,8 +1039,7 @@ impl Economy {
                     if t <= 0.0 || price.bid <= 0.0 {
                         continue;
                     }
-                    self.works[k].pool.take(i, t);
-                    self.works[h].pool.put(i, t);
+                    self.shift(k, h, i, t);
                     let paid = t / 1000.0 * price.bid;
                     let _ = ledger.transfer(market, owner, Asset::Credits, paid, tick, cause);
                     let _ = ledger.transfer(owner, Party::Administration(system), Asset::Credits, paid * duty, tick, cause);
@@ -896,8 +1055,7 @@ impl Economy {
                     let Some(ask) = self.places[p].price(&goods[i]).ask else {
                         continue;
                     };
-                    self.works[h].pool.take(i, t);
-                    self.works[k].pool.put(i, t);
+                    self.shift(h, k, i, t);
                     let cost = t / 1000.0 * ask;
                     let _ = ledger.transfer(owner, market, Asset::Credits, cost, tick, cause);
                     let _ = ledger.transfer(market, Party::Administration(system), Asset::Credits, cost * duty, tick, cause);
@@ -1037,10 +1195,24 @@ mod tests {
         e.set_up(&land, yard, bay, Some(recipe), owner).unwrap();
         let sheet = universe_world::goods::item("stock.al6061-sh-2").unwrap();
         e.works[yard].pool.put(sheet, 20_000.0);
+        // (A cap is 1.5 t, hours of welding: the yard begins this step a few kg short of one.)
+        e.works[yard].progress.insert(cap, goods[cap].mass - 1.0);
+        e.works[yard].pool.put(cap, goods[cap].mass - 1.0);
         e.step_to(e.stepped_to + step(), &mut land, &mut ledger, &goods, 2);
         let made = e.places[trethi].made.get(&cap).copied().unwrap_or(0.0) * step() / DAY;
         assert!(made > 0.0 && made <= 20_000.0 / 1710.72 * goods[cap].mass + 1.0, "nose caps welded from the sheet: {made} kg");
         assert!(e.works[yard].pool.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) + e.places[trethi].stock.of(universe_world::goods::item("stock.al6061-scrap").unwrap()) > 0.0, "and the offcuts, scrap");
+
+        // Each nose cap welded has its mark (SFO 21): the yard's owner's ticker, the part's code,
+        // the next number; made at the yard, now. The smelter's ingot came in lots.
+        let h = e.places[trethi].warehouse.unwrap();
+        let caps: Vec<&Mark> = [yard, h].iter().flat_map(|&k| e.works[k].pool.marks.get(&cap).into_iter().flatten()).collect();
+        assert!(!caps.is_empty(), "the caps are marked");
+        let c = caps[0];
+        assert!(c.serial.ends_with("-000001") && c.serial.contains("-MC07-01-") && c.made_at.ends_with("trethi-yard") && c.design == "part.mc07-01", "{c:?}");
+        let units = |k: usize| (e.works[k].pool.of(cap) / goods[cap].mass + 1e-6).floor() as usize;
+        assert_eq!(caps.len(), units(yard) + units(h), "a mark a whole cap");
+        assert!([smelter, h].iter().any(|&k| e.works[k].pool.lots.get(&ingot).is_some_and(|l| !l.is_empty())), "ingot by its lots");
 
         // Halden Mine (a camp the seed has no port for: placed where its record says) digs its
         // claimed deposit (Heath's survey's), and what it digs is gone from it.
