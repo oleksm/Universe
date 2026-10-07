@@ -193,3 +193,18 @@ definitions:
       nuclear_thermal: "A fission reactor heats hydrogen, about 9 km/s: hundreds of kilonewtons from tens of tonnes; gigawatt jets a pad must stand."
       chemical: "Fuel burnt with its oxidiser, 3.5 to 4.5 km/s: meganewtons from a tonne of engine; the lander's engine, paying in propellant (a tonne a second for a heavy ship)."
       cold_gas: "Stored gas let out, about 0.7 km/s: newtons to kilonewtons, no flame, no heat; for attitude and docking."
+  zone_use:
+    description: "What a zone of a settlement is for; a facility of a kind goes in a zone whose use allows it."
+    enum: [port, industrial, commercial, civic, residential, agricultural, mining]
+  joining:
+    description: "How a part or a material is joined to another."
+    enum: [welded, brazed, bonded, bolted, riveted, sewn]
+  reactivity:
+    description: "How a substance reacts with air, water or acids."
+    enum: [none, slow, fast, violent, null]
+  magnetic_ordering:
+    description: "A material's magnetic ordering."
+    enum: [ferromagnetic, antiferromagnetic, paramagnetic, diamagnetic, null]
+  level:
+    description: "A coarse level of a hazard or a property: none, low, medium, high."
+    enum: [none, low, medium, high, null]

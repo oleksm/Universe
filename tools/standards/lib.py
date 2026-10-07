@@ -36,5 +36,18 @@ def device_heat(fn, nozzles=1):
     return plant_waste(fn) + jet_heat(fn, nozzles)
 
 
+q = lambda s: '"' + s.replace('"', '\\"') + '"'   # a YAML double-quoted scalar
+
+
+def edit(path, fn):
+    """Rewrite `path` through `fn(text) -> text`; a YAML file is parsed before it is written back."""
+    import yaml
+    s = open(path, encoding="utf-8").read(); t = fn(s)
+    if t != s:
+        if path.endswith(".yaml"):
+            yaml.safe_load(t)
+        open(path, "w", encoding="utf-8").write(t)
+
+
 def sha(path):
     return hashlib.sha256(open(path, "rb").read()).hexdigest()

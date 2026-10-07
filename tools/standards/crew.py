@@ -9,19 +9,15 @@ persons and cooling on the life support units and the people's heat on need.food
 of the space station's and airliners' practice, marked review, with the source named where there is one. Run from the
 repository root.
 """
-import glob, os, re, subprocess
+import glob, os, sys, re, subprocess
 import yaml
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import q, edit
+
 S = "standards/SFO/"; E = S + "metadata/equipment/"; P = S + "metadata/parts/"
-q = lambda s: '"' + s.replace('"', '\\"') + '"'
 LIFE = 473364000
 LIFE_NOTE = "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life."
-
-
-def edit(path, fn):
-    s = open(path, encoding="utf-8").read(); t = fn(s)
-    if t != s:
-        yaml.safe_load(t); open(path, "w", encoding="utf-8").write(t)
 
 
 def schemas():

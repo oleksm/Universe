@@ -762,9 +762,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             for k in ["name", "kind", "parcel"]:
                 if k not in fc:
                     problem(ffull, f"no {k}")
-            for k in fc:
-                if k not in {"name", "kind", "parcel", "parts", "pipelines", "lines", "modules", "exchange", "stock", "claim"}:
-                    problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
             plot = next((r for r in plots if r.get("number") == fc.get("parcel")), None)
@@ -783,9 +780,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 names, housed = [], []
                 for pt in fc.get("parts") or []:
                     nm = pt.get("name")
-                    for k in pt:
-                        if k not in {"name", "kind", "does", "outline"}:
-                            problem(ffull, f"part {nm}: unknown field '{k}'")
                     if pt.get("kind") not in PART_KINDS:
                         problem(ffull, f"part {nm}: kind one of {', '.join(PART_KINDS)}")
                     if nm in names:
@@ -895,9 +889,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     for k in ["name"]:
         if k not in ad:
             problem(full, f"no {k}")
-    for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law", "recognises", "fleet", "ticker"}:
-            problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
         if x.get("kind") not in ("planet", "moon", "settlement", "rig"):
@@ -3040,7 +3031,8 @@ report("celestial", "Celestial: what is written out, and against Local Administr
 
 # ---------------------------------------------------------------- the page
 # ---------------------------------------------------------------- every record against its schema
-# Types, enums, required fields, patterns, and no field its schema does not name (see validate.py).
+# Types, enums, required fields, patterns, and no field its schema does not name: validate.py is the one gate for a record's shape
+# (additionalProperties: false in every schema); the build adds only what crosses records.
 # The game's loader is to be at least this strict.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 _misfits, _unheld = V.check_all()
