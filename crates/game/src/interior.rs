@@ -7040,9 +7040,9 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             }
         }
     }
-    // The budgets (MODULES, FRAME): under the panel, each met in green, short in
+    // The budgets, in every tool: under the panel, each met in green, short in
     // amber; what fails, in red.
-    if matches!(interior.tool, Tool::Modules | Tool::Frame | Tool::Door) && (!plan.blocks.is_empty() || !plan.groups.is_empty()) {
+    if !plan.blocks.is_empty() || !plan.groups.is_empty() {
         // (The frame's mass: its members and its decks' plates.)
         let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>()
             + plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum::<f64>();
