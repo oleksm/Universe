@@ -471,14 +471,21 @@ impl crate::universe::Universe {
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         let cause = universe_protocol::Cause::Rules;
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
+        // (The module fitted comes with its mark, onto the ship; one taken out goes back with its own.)
+        let mut marks: Vec<universe_world::registry::Mark> = refitted.marks.as_deref().cloned().unwrap_or_default();
         if stocked {
             if let Some(i) = module.and_then(item) {
-                self.markets.economy.take(system, here, i, self.world.goods[i].mass);
+                let (_, m, _) = self.markets.economy.take_marked(system, here, i, self.world.goods[i].mass);
+                marks.extend(m);
             }
             if let Some(i) = taken.and_then(item) {
-                self.markets.economy.put(system, here, i, self.world.goods[i].mass);
+                let key = &self.world.goods[i].key;
+                let back: Vec<_> = marks.iter().position(|m| &m.design == key).map(|k| marks.remove(k)).into_iter().collect();
+                self.markets.economy.put_marked(system, here, i, self.world.goods[i].mass, back, Vec::new());
             }
         }
+        let mut refitted = refitted;
+        refitted.marks = (!marks.is_empty()).then(|| std::sync::Arc::new(marks));
         match id {
             crate::combat::PLAYER => self.ship = refitted,
             _ => self.crafts[id - 1].ship = refitted,
@@ -549,14 +556,17 @@ impl crate::universe::Universe {
         let cost = price - trade_in;
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        // (The hull bought comes with its mark.)
+        let mut hull_marks = Vec::new();
         if let Some((item, _)) = self.frame_in_stock(system, here, hull) {
-            self.markets.economy.take(system, here, item, self.world.goods[item].mass);
+            hull_marks = self.markets.economy.take_marked(system, here, item, self.world.goods[item].mass).1;
         }
         // The new ship where the old one stood, with its cargo and fuel.
         let old = self.ship_by_id(id).expect("there").2.clone();
         let mut new = old.clone();
         new.class = hull;
         new.fit = None;
+        new.marks = (!hull_marks.is_empty()).then(|| std::sync::Arc::new(hull_marks));
         // (A new hull: untrimmed.)
         new.trim = Default::default();
         new.refresh();

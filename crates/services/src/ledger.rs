@@ -4,10 +4,11 @@
 //! sums to zero (the world's account is where starting funds come from).
 //! Pilots can't go below zero; markets (backed by their whole economy) can.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, VecDeque};
 
 use universe_protocol::{BodyId, Cause, Tick};
 use universe_world::Facility;
+use universe_world::registry::{Batch, Mark};
 
 /// Who holds things.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
@@ -49,6 +50,10 @@ pub struct Ledger {
     balances: HashMap<(Party, Asset), f64>,
     /// Every pilot's goods (for listing a hold), kept alongside.
     holds: HashMap<BodyId, BTreeMap<usize, f64>>,
+    /// The marks of the products in each pilot's hold, and the lots of its bulk (SFO 21), by good,
+    /// oldest first.
+    marks: HashMap<BodyId, BTreeMap<usize, VecDeque<Mark>>>,
+    lots: HashMap<BodyId, BTreeMap<usize, VecDeque<(Batch, f64)>>>,
     /// The latest transfers, oldest first (the last `KEEP`).
     pub journal: Vec<Entry>,
 }
@@ -101,8 +106,46 @@ impl Ledger {
         }
     }
 
+    /// Into pilot `pilot`'s hold with good `good`: its marks and lots.
+    pub fn load_marked(&mut self, pilot: BodyId, good: usize, marks: Vec<Mark>, lots: Vec<(Batch, f64)>) {
+        if !marks.is_empty() {
+            self.marks.entry(pilot).or_default().entry(good).or_default().extend(marks);
+        }
+        if !lots.is_empty() {
+            self.lots.entry(pilot).or_default().entry(good).or_default().extend(lots);
+        }
+    }
+
+    /// Out of pilot `pilot`'s hold: `units` of good `good` (`kg` of it), their marks and lots,
+    /// oldest first.
+    pub fn unload_marked(&mut self, pilot: BodyId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>) {
+        let marks = self.marks.get_mut(&pilot).and_then(|m| m.get_mut(&good)).map_or(Vec::new(), |m| m.drain(..units.min(m.len())).collect());
+        let mut lots = Vec::new();
+        if let Some(l) = self.lots.get_mut(&pilot).and_then(|l| l.get_mut(&good)) {
+            let mut want = kg;
+            while want > 1e-9 {
+                let Some((b, have)) = l.front_mut() else { break };
+                let k = want.min(*have);
+                *have -= k;
+                want -= k;
+                lots.push((b.clone(), k));
+                if *have <= 1e-9 {
+                    l.pop_front();
+                }
+            }
+        }
+        (marks, lots)
+    }
+
+    /// The marks of the products in pilot `pilot`'s hold, by good.
+    pub fn hold_marks(&self, pilot: BodyId) -> Option<&BTreeMap<usize, VecDeque<Mark>>> {
+        self.marks.get(&pilot)
+    }
+
     /// Everything a pilot holds goes back to the world (its ship is gone).
     pub fn write_off(&mut self, pilot: BodyId, tick: Tick, cause: Cause) {
+        self.marks.remove(&pilot);
+        self.lots.remove(&pilot);
         for (good, _) in self.hold(pilot) {
             self.settle(Party::Pilot(pilot), Asset::Goods(good), 0.0, tick, cause);
         }

@@ -832,10 +832,26 @@ impl Economy {
 
     /// Take up to `kg` of `item` out of the market at (`system`, `f`) (bought from it); what came out.
     pub fn take(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> f64 {
+        self.take_marked(system, f, item, kg).0
+    }
+
+    /// As `take`, with the marks and lots of what came out (SFO 21).
+    pub fn take_marked(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> (f64, Vec<Mark>, Vec<(Batch, f64)>) {
+        let Some((p, pool)) = self.market_mut(system, f) else {
+            return (0.0, Vec::new(), Vec::new());
+        };
+        let out = pool.take_with(item, kg);
+        p.stock = pool.clone();
+        out
+    }
+
+    /// As `put`, with the marks and lots of what's put (SFO 21).
+    pub fn put_marked(&mut self, system: usize, f: Facility, item: usize, kg: f64, marks: Vec<Mark>, lots: Vec<(Batch, f64)>) -> f64 {
         let Some((p, pool)) = self.market_mut(system, f) else {
             return 0.0;
         };
-        let t = pool.take(item, kg);
+        let t = kg.min(pool.free()).max(0.0);
+        pool.put_with(item, t, marks, lots);
         p.stock = pool.clone();
         t
     }

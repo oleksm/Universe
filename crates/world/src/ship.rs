@@ -872,6 +872,10 @@ pub struct Ship {
     /// Shared: a copy of the ship (every view of it) doesn't copy the list.
     #[serde(default)]
     pub fit: Option<std::sync::Arc<Fit>>,
+    /// The marks (SFO 21) of its hull and of what's fitted to it, as bought: who made each, where
+    /// and when. Shared as its fit is.
+    #[serde(default)]
+    pub marks: Option<std::sync::Arc<Vec<crate::registry::Mark>>>,
     /// Its numbers, hull and fit together (kept to hand; see `spec`).
     #[serde(skip)]
     spec_ref: Option<&'static ClassSpec>,
@@ -990,6 +994,7 @@ impl Ship {
             energy: starter().capacitor_capacity,
             class: starting_hull(),
             fit: None,
+            marks: None,
             spec_ref: None,
             hangar: None,
             powered: true,

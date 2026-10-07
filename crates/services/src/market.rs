@@ -160,7 +160,9 @@ impl Markets {
             ledger.transfer(me, who, Asset::Goods(item.id), n, tick, cause)?;
             // (The seller owes the administration its duty on the sale.)
             ledger.transfer(me, Party::Administration(o.system), Asset::Credits, cost * duty, tick, cause)?;
-            self.economy.take(o.system, o.market, item.id, kg);
+            // (What's bought goes into the hold with its marks and lots.)
+            let (_, marks, lots) = self.economy.take_marked(o.system, o.market, item.id, kg);
+            ledger.load_marked(o.pilot, item.id, marks, lots);
             Ok(cost)
         } else {
             if ledger.balance(who, Asset::Goods(item.id)) + 1e-6 < n {
@@ -177,7 +179,8 @@ impl Markets {
             ledger.transfer(who, me, Asset::Goods(item.id), n, tick, cause)?;
             ledger.transfer(me, who, Asset::Credits, paid, tick, cause)?;
             ledger.transfer(who, Party::Administration(o.system), Asset::Credits, paid * duty, tick, cause)?;
-            self.economy.put(o.system, o.market, item.id, kg);
+            let (marks, lots) = ledger.unload_marked(o.pilot, item.id, n as usize, kg);
+            self.economy.put_marked(o.system, o.market, item.id, kg, marks, lots);
             Ok(-paid * (1.0 - duty))
         }
     }
