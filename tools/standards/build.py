@@ -2402,6 +2402,7 @@ for e_ in equipment:
     th = (raw.get("function") or {}).get("thrust", 0)
     if bears.get("thrust") and th > bears["thrust"]: over.append(f"thrust {th / 1e6:g} MN over {bears['thrust'] / 1e6:g}")
     rows.append(row("gap" if over else "ok", e_["identity"]["name"], mk, "; ".join(over) or "within it"))
+report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
 # 3c. Engine: the tree of clocks (standards/Engine/metadata/scheduling): each period a whole number of the realtime tick, every parent a clock.
 _clocks = {}
 for f__ in sorted(glob.glob(os.path.join(TREE, "Engine", "metadata", "scheduling", "*.yaml"))):
@@ -2423,14 +2424,13 @@ def _clock_rows(parent, depth, rows):
         when = f"every {tr['every']:g} s ({tr['every'] / _base:,.0f} ticks)" if tr.get("every") else ("on event" if tr["kind"] == "event" else "group")
         rows.append(row("gap" if bad else "ok", ("\u2007\u2007" * depth) + ("\u2514 " if depth else "") + c__["identity"]["name"], c__["scope"], c__["coupling"].replace("_", "-"), when, "; ".join(bad) or (c__.get("rule") or "")[:140]))
         _clock_rows(k__, depth + 1, rows)
-rows = []
-_clock_rows(None, 0, rows)
+_crows = []
+_clock_rows(None, 0, _crows)
 for k__, c__ in _clocks.items():
     if c__.get("parent") and c__["parent"] not in _clocks:
-        rows.append(row("gap", c__["identity"]["name"], c__["scope"], c__["coupling"], "", f"parent {c__['parent']} is not a clock"))
-if rows:
-    report("clocks", "Clocks: the engine's tree of time", "standards/Engine: each clock, under the clock whose due time makes it step, with how many of it there are (scope), how tightly it exchanges data (coupling, which decides the thread, process or machine it runs on) and when it steps. Every period must be a whole number of the realtime tick, so every input is stamped by the same tick numbers and replay works per layer.", ["Clock", "One per", "Coupling", "Steps", "Rule, or what is wrong"], rows)
-report("mounts", "Mounts: does each piece of equipment fit the mount it is built to?", "SFO 19: a mount is what a hull's slot offers; equipment is built to one. Each piece against its mount: its size in the envelope, its weight, its draw and its thrust within what the mount bears and feeds.", ["Equipment", "Mount", "State"], rows)
+        _crows.append(row("gap", c__["identity"]["name"], c__["scope"], c__["coupling"], "", f"parent {c__['parent']} is not a clock"))
+if _crows:
+    report("clocks", "Clocks: the engine's tree of time", "standards/Engine: each clock, under the clock whose due time makes it step, with how many of it there are (scope), how tightly it exchanges data (coupling, which decides the thread, process or machine it runs on) and when it steps. Every period must be a whole number of the realtime tick, so every input is stamped by the same tick numbers and replay works per layer.", ["Clock", "One per", "Coupling", "Steps", "Rule, or what is wrong"], _crows)
 
 # 3d'''. Members (SFO 13): the tubes a frame is cut from, read as an engineer sizes: weight a metre, the load
 # at which each yields (with the safety factor 1.5), and the pinned length at which it buckles under 50 and 200 kN (Euler).
