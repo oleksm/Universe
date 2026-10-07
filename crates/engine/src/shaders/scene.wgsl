@@ -234,8 +234,7 @@ struct MeshOut {
     @location(16) data: vec4<f32>,
 };
 
-// The fine grain repeats every this many metres (see `MICRO_PERIOD`).
-const MICRO_PERIOD: f32 = 4096.0;
+// (The fine grain repeats every `MICRO_PERIOD` metres: written by shaders.rs, as frame.rs has it.)
 
 // The lattice's value at `q`, wrapped every `n` cells.
 fn whash(q: vec3<i32>, n: i32) -> f32 {
@@ -453,7 +452,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let span = 2.0 * length(in.at) * g.view.x * oblique;
     let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
     // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
-    let globe_lod = max(log2(footprint * 512.0 / 1.5707963), 0.0);
+    let globe_lod = max(log2(footprint * GLOBE_SIZE / 1.5707963), 0.0);
     var ground: vec4<f32>;
     if (on_patch) {
         ground = textureSampleLevel(globe_maps, globe_soft, in.local, layer, globe_lod);
@@ -596,7 +595,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             sun *= clouds_shadow_cached(in.at, g.world_at.xyz, world_turn(), in.sun_dir, pixel * 0.001, world_clouds, world_air, world_cm, world_ce, world_ca, world_cc, world_cct, world_cct_old, world_air_smp);
         }
     }
-    let light = min(sun * seen + in.fill, vec3<f32>(4.0));
+    let light = min(sun * seen + in.fill, vec3<f32>(MAX_LIGHT));
     if (g.shadow.w > 0.0 && seen < 0.5 && max(sun.r, max(sun.g, sun.b)) > 0.0) {
         return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
     }
@@ -688,9 +687,8 @@ fn air_center(v: MeshIn) -> vec4<f32> {
     return vec4<f32>(v.t.xyz - off / w, length(v.c0.xyz) / w);
 }
 
-// A patch splits when the eye is nearer than this many times its size (terrain_lod's SPLIT:
-// keep them together).
-const GEOMORPH_SPLIT: f32 = 2.4;
+// (A patch splits when the eye is nearer than `GEOMORPH_SPLIT` times its size: written by
+// shaders.rs, the terrain LOD's.)
 
 @vertex
 fn vs_mesh(v_in: MeshIn) -> MeshOut {

@@ -50,8 +50,7 @@ fn sunlit_near(p: vec3<f32>, n: vec3<f32>) -> f32 {
     return 1.0;
 }
 
-// A shadow map texel (its uv): 1 / SHADOW_SIZE (renderer.rs).
-const SHADOW_TEXEL: f32 = 1.0 / 4096.0;
+// (A shadow map texel, its uv: `SHADOW_TEXEL`, written by shaders.rs.)
 
 // 3x3 compared samples (each itself filtered 2x2): soft edges, no stair steps.
 fn pcf(uv: vec2<f32>, layer: i32, depth: f32) -> f32 {

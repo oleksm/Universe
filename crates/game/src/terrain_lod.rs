@@ -19,9 +19,9 @@ const GRID: u32 = 16;
 /// cells), and four levels finer (some 1.2 m cells) once the ground's runtime detail is in
 /// (`world::detail::ACTIVE`): within a few kilometres of the eye, as `SPLIT` has it.
 const MAX_LEVEL: u8 = if universe_sim::world::detail::ACTIVE { 19 } else { 15 };
-/// A patch splits when the eye is nearer than this many times its size. (The mesh shader's
-/// GEOMORPH_SPLIT: keep them together.)
-const SPLIT: f64 = 2.4;
+/// A patch splits when the eye is nearer than this many times its size (the engine's: its mesh
+/// shader geomorphs by the same).
+const SPLIT: f64 = universe_engine::shaders::GEOMORPH_SPLIT;
 /// Patches wanted a frame (the next finer), at most.
 const BUDGET: usize = 12;
 /// Patches being made at once, at most.

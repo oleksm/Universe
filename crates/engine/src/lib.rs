@@ -17,6 +17,7 @@ pub mod pbr;
 mod render_thread;
 mod renderer;
 mod sunprobe;
+pub mod shaders;
 mod cloudcache;
 pub mod gputime;
 pub mod worldmaps;

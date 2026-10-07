@@ -216,7 +216,7 @@ fn fs_pbr(in: Out, @builtin(front_facing) front: bool) -> @location(0) vec4<f32>
     // as blurred as it is rough (the split sum: Karis's fit of its reflectance):
     // polished metal shows the world below and the dark above, not black.
     let r = reflect(-v, n);
-    let mirrored = textureSampleLevel(env_spec, env_sampler, r, roughness * 7.0).rgb;
+    let mirrored = textureSampleLevel(env_spec, env_sampler, r, roughness * f32(SPEC_MIPS - 1u)).rgb;
     c += mirrored * env_brdf(f0, roughness, nv) * occ * g.look2.x;
     c += lamp(select(vec4<f32>(1.0), textureSample(emissive_tex, tex_sampler, in.uv), textured).rgb * mat.emissive.rgb) * g.look.w;
     return vec4<f32>(c, alpha);
