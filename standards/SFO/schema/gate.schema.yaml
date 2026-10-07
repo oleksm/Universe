@@ -9,14 +9,10 @@ properties:
   identity:
     type: object
     additionalProperties: false
-    required: [name, key]
+    allOf: [{ $ref: "../../common.schema.yaml#/definitions/product_identity" }]
+    required: [key, name]
     properties:
-      key: { $ref: "../../common.schema.yaml#/definitions/key" }
-      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
-      name: { type: string }
-      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
       class: { type: integer, description: "Its class: a higher one spans further." }
-      description: { type: string }
   size:
     type: object
     additionalProperties: false

@@ -125,6 +125,36 @@ definitions:
       heat: { type: string, description: "For mill stock: the melt it came from, the melter's lot number." }
       made_at: { type: string, x-ref: [facility, rig], description: "The works, by its key." }
       made_on: { type: number, x-unit: "s", description: "s of world time when the lot was finished." }
+  product_identity:
+    description: "What every made product's identity says (a shape: a kind's identity derives from it with allOf and adds its own words). Flattened by the generator and the validators."
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "#/definitions/key" }
+      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
+      name: { type: string }
+      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
+      revision: { $ref: "#/definitions/revision" }
+      description: { type: string }
+  surface_position:
+    description: "Where on a body's surface, in degrees: latitude from the equator, north positive; longitude from the body's zero meridian, east positive."
+    type: object
+    additionalProperties: false
+    required: [latitude, longitude]
+    properties:
+      latitude: { type: number, minimum: -90, maximum: 90, x-unit: "deg" }
+      longitude: { type: number, minimum: -180, maximum: 180, x-unit: "deg" }
+  staff:
+    description: "Who works somewhere: the trades and how many of each."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [profession, count]
+      properties:
+        profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
+        count: { type: integer, minimum: 0, description: "how many of them" }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."
     required: [physical]

@@ -355,6 +355,8 @@ impl Gen {
             };
             let (p2, r2) = self.flattened(&node, &at);
             for (k, pv) in p2 {
+                // (A property taken from a shape in another file: its `$ref`s made absolute, so they resolve from here.)
+                let pv = if at != file { rebase(&pv, &at) } else { pv };
                 // (A property the shape only tightens, like `physical: {required: [...]}` with no type of its own, adds nothing.)
                 if pv.get("type").is_none() && pv.get("$ref").is_none() && pv.get("oneOf").is_none() && pv.get("enum").is_none() && pv.get("properties").is_none() {
                     continue;
@@ -522,6 +524,29 @@ impl Gen {
 /// implements (a kind added in the registry is a method the engine must
 /// write, or the build stops); a kind marked `x-in-game: not made` defaults
 /// to `not_made`. And `kind()`, its registry name, and `handle`, to dispatch.
+/// A schema node taken from the file `path` and used elsewhere: its `$ref`s made absolute paths.
+fn rebase(v: &Value, path: &Path) -> Value {
+    match v {
+        Value::Mapping(m) => Value::Mapping(
+            m.iter()
+                .map(|(k, x)| {
+                    if k.as_str() == Some("$ref")
+                        && let Some(r) = x.as_str()
+                    {
+                        let (file, def) = r.split_once('#').unwrap_or((r, ""));
+                        let target = if file.is_empty() { path.to_path_buf() } else { path.parent().unwrap().join(file).canonicalize().unwrap_or_else(|e| panic!("{}: $ref {r}: {e}", path.display())) };
+                        (k.clone(), Value::String(format!("{}#{def}", target.display())))
+                    } else {
+                        (k.clone(), rebase(x, path))
+                    }
+                })
+                .collect(),
+        ),
+        Value::Sequence(s) => Value::Sequence(s.iter().map(|x| rebase(x, path)).collect()),
+        _ => v.clone(),
+    }
+}
+
 fn handler(name: &str, variants: &[(String, String, String, bool)]) -> String {
     let mut t = format!("/// What the engine does with each kind of [`{name}`]: one method a kind, given\n/// that kind's figures.\npub trait {name}Handler {{\n    type Out;\n");
     if variants.iter().any(|v| v.3) {

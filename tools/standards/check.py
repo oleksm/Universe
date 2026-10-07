@@ -23,6 +23,23 @@ def _resolve(ref, here):
     return node, str(path)
 
 
+def rebase(node, path):
+    """A node taken from the schema file `path` and inlined elsewhere: its `$ref`s made absolute so they still resolve."""
+    if isinstance(node, list):
+        return [rebase(x, path) for x in node]
+    if not isinstance(node, dict):
+        return node
+    out = {}
+    for k, v in node.items():
+        if k == "$ref" and isinstance(v, str):
+            file, _, pointer = v.partition("#")
+            target = pathlib.Path(path).parent.joinpath(file).resolve() if file else pathlib.Path(path).resolve()
+            out[k] = target.as_uri() + "#" + pointer
+        else:
+            out[k] = rebase(v, path)
+    return out
+
+
 def flatten(node, here):
     """The registry's `allOf` is derivation: a shape's properties and required fields become the object's own (so
     `additionalProperties: false` admits them), as the generator and validate.py read it. Done on the loaded schema before
@@ -39,6 +56,7 @@ def flatten(node, here):
             path = here
             if isinstance(shape, dict) and "$ref" in shape:
                 shape, path = _resolve(shape["$ref"], here)
+                shape = rebase(shape, path)
             shape = flatten(shape, path)
             for k, pv in (shape.get("properties") or {}).items():
                 if k in props:
