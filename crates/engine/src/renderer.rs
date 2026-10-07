@@ -506,7 +506,7 @@ impl Renderer {
         // (The ground's material, the lab's, beside the scene shader that calls it.)
         let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
             label: Some("scene"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/clouds.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
+            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/clouds.wgsl"), "\n", include_str!("shaders/light.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
         });
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),

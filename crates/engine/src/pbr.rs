@@ -318,7 +318,7 @@ impl PbrRenderer {
     }
 
     pub(crate) fn new(device: &wgpu::Device, globals: &wgpu::BindGroupLayout, shadows: &wgpu::BindGroupLayout, light: &wgpu::BindGroupLayout, scene_format: wgpu::TextureFormat, depth_format: wgpu::TextureFormat, samples: u32) -> Self {
-        let shader = device.create_shader_module(wgpu::include_wgsl!("shaders/pbr.wgsl"));
+        let shader = device.create_shader_module(wgpu::ShaderModuleDescriptor { label: Some("pbr"), source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/light.wgsl"), "\n", include_str!("shaders/pbr.wgsl")).into()) });
         let tex_entry = |binding| wgpu::BindGroupLayoutEntry {
             binding,
             visibility: wgpu::ShaderStages::FRAGMENT,
