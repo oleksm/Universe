@@ -5351,9 +5351,20 @@ fn budget(i: &Interior) -> Budget {
     // (And the people aboard: the heat their food leaves as.)
     let people = of("command_station").map(|p| num(&p.3, "persons")).sum::<f64>() + of("cabin").map(|p| num(&p.3, "seats")).sum::<f64>();
     let heat = plants + burn + draw + universe_sim::world::registry::registry().needs.iter().filter_map(|n| n.heat).sum::<f64>() * people;
+    // (In vacuum a radiator gives what its two faces radiate, when its record says
+    // its area and temperature (0.9 emissive); its rating is in air. In air, air
+    // coolers give theirs too. A craft lifted on fans flies in air: judged by that.)
     let shed: f64 = of("radiator").map(|p| num(&p.3, "rejects")).sum();
+    let vacuum: f64 = of("radiator").map(|p| match (p.3.get("area").and_then(|v| v.as_f64()), p.3.get("temperature").and_then(|v| v.as_f64())) {
+        (Some(a), Some(t)) => (2.0 * a * 0.9 * 5.670_374e-8 * t.powi(4)).min(num(&p.3, "rejects")),
+        _ => num(&p.3, "rejects"),
+    }).sum();
+    let air = shed + of("heat_exchanger").map(|p| num(&p.3, "transfers")).sum::<f64>();
+    let on_fans = placed.iter().any(|p| p.3.get("full_power").is_some());
     let loops: f64 = of("coolant_loop").map(|p| num(&p.3, "carries")).sum();
-    lines.push((format!("HEAT  {} TO SHED: RADIATORS {}, LOOPS {}", si(heat, "W"), si(shed, "W"), si(loops, "W")), shed >= heat && loops >= heat));
+    let rejected = if on_fans { air } else { vacuum };
+    let both = if (air - vacuum).abs() > 1.0 { format!("IN VACUUM {}, IN AIR {}", si(vacuum, "W"), si(air, "W")) } else { format!("RADIATORS {}", si(shed, "W")) };
+    lines.push((format!("HEAT  {} TO SHED: {both}, LOOPS {}", si(heat, "W"), si(loops, "W")), rejected >= heat && loops >= heat));
     // (Who's aboard: the crew, the command stations' seats; the passengers, the
     // cabins'.)
     let crew_seats: f64 = of("command_station").map(|p| num(&p.3, "persons")).sum::<f64>() + 0.0;
