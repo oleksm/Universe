@@ -9,4 +9,4 @@ physical:
   storage_max_temperature: 283
 basis:
   - { of: [physical.bulk_density], tier: sourced, source: "https://www.engineeringtoolbox.com/foods-materials-bulk-density-d_1819.html", note: "As stored or shipped in bulk." }
-  - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.storage_max_temperature], rule: rule.bulk-density-typical }

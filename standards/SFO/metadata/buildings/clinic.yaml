@@ -26,4 +26,4 @@ basis:
   - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China. Glass, brick, pipes and wire are not counted: no figures were found." }
   - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials: the average of 18 mid- and high-rise buildings, mostly in Toronto. Of a residential building's weight about 1,040 kg a m2 is concrete and 58 steel (538 buildings in China)." }
-  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }
+  - { of: [life], rule: rule.life-building }

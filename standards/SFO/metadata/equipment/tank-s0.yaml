@@ -31,8 +31,8 @@ revision:
   ask: docs/registry-ssot-request.md
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a ball of thin aluminium under a blanket of insulation, with what feeds and gauges it. Discovery II's hydrogen tank is 10% of its fuel's weight and a Centaur stage 11%; this is 9%." }
   - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }
   - { of: [physical.volume], tier: derived, note: "Length by width by height, as every other piece of equipment gives it (2026-10-07): it was the sphere's own volume before, the one record kind that read differently." }

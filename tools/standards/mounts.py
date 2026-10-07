@@ -75,7 +75,7 @@ def main():
         if fig["burn"]: feeds.append(f"  fuel: {r(fig['burn'] * M)!r}\n")
         if feeds: s += "feeds:\n" + "".join(feeds)
         if fig["thrust"]: s += f"nozzle:\n  diameter: {r(fig['W'] * 0.8)!r}\n"
-        s += ("basis:\n" + f"  - {{ of: [envelope, bears, attachment{', feeds' if feeds else ''}{', nozzle' if fig['thrust'] else ''}], tier: invented, review: true, note: \"{'The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust' if exact else 'Scaled from the nearest class that has equipment: twice the volume a class, so a quarter longer each way'}. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give. The attachment: its pattern by kind; each point takes the mount's weight at 3 g (a design acceleration, chosen) plus its thrust, landing or recoil load, with the margin; the same in tension for a reversal; shear half.\" }}\n")
+        s += "basis:\n" + f"  - {{ of: [envelope, bears, attachment{', feeds' if feeds else ''}{', nozzle' if fig['thrust'] else ''}], rule: rule.mounts-margin }}\n"   # (the rule, stated once)
         yaml.safe_load(s)
         open(MT + slug + ".yaml", "w").write(s); n += 1
     # equipment fits a mount; a hull's slots offer one

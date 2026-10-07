@@ -11,5 +11,5 @@ source:
   yield: 1.0e-07
   note: "Half a carat from each tonne of the pipe's rock."
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }
   - { of: [source], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/kimberlite.yaml", note: "Half a carat a tonne: the planet simulation's typical grade for a kimberlite." }

@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.plant-weights-from-memory
+  name: "Plant weights, from memory"
+  about: "Where the weight and count of an industrial module's parts come from."
+statement: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source. The measured masses of plant of these kinds are in research_plant_weights.json, research_yard.json and research_modules.json; the records are to be reconciled with them, kind by kind (the basis note names the file's entry where one matches)."
+tier: invented
+source: "standards/sources/research_plant_weights.json"
+review: true

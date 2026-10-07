@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.early-list
+  name: "The game's early equipment"
+  about: "Where the outdated equipment records' figures come from."
+statement: "The game's early list (content/base/modules.ron), a rough first guess: in service, not to be balanced against; a current design is to replace it (design stage outdated)."
+tier: invented
+review: true

@@ -13,5 +13,5 @@ physical:
 fit:
   count: 1
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the electric arc furnace, metal charge: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.mass, fit], rule: rule.plant-weights-from-memory, note: "research_plant_weights.json: 05_electric_arc_furnace" }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

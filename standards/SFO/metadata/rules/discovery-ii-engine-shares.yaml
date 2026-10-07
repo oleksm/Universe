@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.discovery-ii-engine-shares
+  name: "Fusion engine shares, Discovery II"
+  about: "How a fusion engine's weight is split into parts."
+statement: "Its share of the engine, as in NASA's Discovery II fusion engine (NASA/TM-2005-213559, 2005), brought to this product's weight."
+tier: derived
+source: "standards/sources/research_ship_equipment.json"
+review: true

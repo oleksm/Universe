@@ -27,8 +27,8 @@ function:
   survey_range: 20000000000
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a flat array of transmit-receive modules on an aluminium frame, as a radar satellite's. Sentinel-1's antenna is 880 of its instrument's 945 kg." }
   - { of: [function.resolves, function.survey_range], tier: sourced, review: true, source: "the game: crates/world/src/belts.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
   - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A flat array of 8 m2, a hand's breadth thick: a radar is an area, not a box (Sentinel-1's antenna is 12.3 m by 0.8 m). Its weight is kept." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

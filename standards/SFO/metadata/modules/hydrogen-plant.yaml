@@ -27,4 +27,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, source: "https://www.rmi.org/hydrogen-reality-check-distilling-green-hydrogens-water-consumption/", note: "From the chemistry: 9 kg of water gives 1 kg of hydrogen and 8 of oxygen. A real plant draws 20 to 30 with its cooling." }
   - { of: [physical], tier: sourced, source: "https://ispt.eu/news/gigawatt-large-potential-for-production-of-green-hydrogen-in-five-dutch-industrial-regions/", note: "0.8 to 1.7 hectares for each 100 MW." }
   - { of: [staff], tier: invented, review: true, note: "A chemical plant's watch: two chemists, four operators, a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

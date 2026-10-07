@@ -15,4 +15,4 @@ fit:
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://nelhydrogen.com/wp-content/uploads/2024/08/A-Series-Spec-Sheet\u2013DOC001974_03.pdf", note: "A Nel A485 alkaline stack module in operation: 71,440 kg, making 485 normal m3 of hydrogen an hour." }
   - { of: [fit], tier: derived, review: true, note: "This plant's 1.89 t of hydrogen an hour is 21,000 normal m3, at 485 a stack." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the hydrogen plant: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

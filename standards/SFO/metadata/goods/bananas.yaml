@@ -8,5 +8,5 @@ physical:
   bulk_density: 450
   storage_max_temperature: 286.6
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }
   - { of: [physical.storage_max_temperature], tier: sourced, source: "https://www.ars.usda.gov/arsuserfiles/oc/np/commercialstorage/commercialstorage.pdf", note: "The temperature it is stored at; kept at or below it." }

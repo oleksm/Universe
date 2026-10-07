@@ -126,7 +126,7 @@ were fixed the same night (§0). Everything else is a proposal until the user pi
    rule; the heat rule in one function used by mounts, Budgets and the studio, counting `engine`;
    D-He3 stock; "outdated" split into in-service / retired; the stale docs and report texts; the
    process remnants removed; the small renames.
-2. **Say it once** (a day): basis rules (`rule:`) for lives, cut loss, mounts margin, bulk
+2. **Say it once** (done 2026-10-07, changelog/2026-10-07-audit-step-2.md; the census stays in the records until the engine reads one generated file): basis rules (`rule:`) for lives, cut loss, mounts margin, bulk
    density, plant weights; cite the five uncited sources; census as a report; freeze the two logs.
 3. **Structure** (two to three days, the engine regenerates on each): parts as a rule (−840
    files); bulk stock derived (−217); shared definitions and dictionary enums; one validator;

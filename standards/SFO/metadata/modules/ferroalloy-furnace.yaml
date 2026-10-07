@@ -60,4 +60,4 @@ basis:
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "Laterite nickel by kiln and electric furnace: 100 t of ore and 20 t of coal for each tonne of nickel in the ferronickel (a Greek plant), 467 GJ a tonne of nickel. The ferronickel is taken as a quarter nickel; its cobalt is lost to it." }
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "Ferromanganese (80% manganese): 1.9 to 2.4 t of ore, 410 to 500 kg of coke, 8 to 30 kg of electrode and 2,200 to 3,200 kWh a tonne. The manganese and the iron are counted apart, as chromium's are." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

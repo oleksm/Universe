@@ -163,7 +163,7 @@ basis:
   - { of: [design.strut_efficiency], tier: sourced, source: "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf", note: "An oleo strut does work over 0.8 to 0.9 of its stroke." }
   - { of: [design.cabin_pressure], tier: invented, note: "Sea-level air, chosen. Airliners hold 54 to 65 kPa above the outside." }
   - { of: [design.minimum_gauge], tier: invented, note: "Chosen. Airliner skin is about 1 mm." }
-  - { of: [life], tier: invented, review: true, note: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-hull }
 open_questions:
   - "Who makes it: it has no maker."
   - "How strong it is: what wrecks it is to be worked out from its parts (SFO 15); the game breaks nothing yet."

@@ -8,5 +8,5 @@ physical:
   bulk_density: 1000
   storage_max_temperature: 275
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
-  - { of: [physical.storage_max_temperature], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }
+  - { of: [physical.storage_max_temperature], rule: rule.bulk-density-typical }

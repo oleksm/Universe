@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.life-ship-system
+  name: "Life of a ship's system"
+  about: "How long a piece of ship equipment serves before it is replaced."
+statement: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life."
+tier: invented
+review: true

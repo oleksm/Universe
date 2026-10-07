@@ -8,5 +8,5 @@ physical:
   bulk_density: 300
 life: 157788000
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }
   - { of: [life], tier: sourced, source: "standards/sources/research_machines.json", note: "5 years: a laptop's working life in Europe (a desktop's is 6)." }

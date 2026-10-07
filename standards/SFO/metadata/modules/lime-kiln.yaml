@@ -28,4 +28,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_machines.json", note: "3.7 GJ a tonne of lime: the best kilns take 3.2 to 4.2, of which 3.2 is what the reaction itself takes. Taken as electric." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

@@ -265,4 +265,4 @@ life: 788940000
 basis:
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "A mid-size extrusion press: 10 t an hour of aluminium tube, a fifth of that in titanium, at 3 MW, with 8% and 15% lost to the butt and the stretch. Sized from memory of a 5,000 t press line; not sourced." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

@@ -15,4 +15,4 @@ fit:
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.industrialinfo.com/news/article/abbs-rectiformers-achieve-18-increase-in-energy-efficiency-at-sohar-and-qatalum-aluminum-smelters--149361", note: "A rectifier and its transformer for a potline: 400 tons each." }
   - { of: [fit], tier: derived, review: true, note: "Five to a potline, at the same source." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the potline: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

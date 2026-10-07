@@ -10,4 +10,4 @@ source:
   occurs: rocky planets and moons
   note: "Ground rich in iron oxide, as rusted rock is. Not from asteroids: there the iron is metal grains and sulphide, and what oxide there is sits bound in the silicates."
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }

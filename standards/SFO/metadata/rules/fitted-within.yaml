@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.fitted-within
+  name: "A generated part's box"
+  about: "How a part written as a share of its whole gets its size."
+statement: "A part generated as a share of its whole is fitted within it: its box is the whole's, scaled by the cube root of its share of the weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn."
+tier: derived
+review: true

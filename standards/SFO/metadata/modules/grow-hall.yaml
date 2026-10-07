@@ -410,4 +410,4 @@ basis:
   - { of: [physical], tier: invented, review: true, note: "Chosen: a hectare of beds in tiers." }
   - { of: [climate], tier: invented, review: true, note: "22 C inside, chosen. Heat pumps at half of Carnot's limit: a guess; good chillers reach a coefficient of 4." }
   - { of: [staff], tier: invented, review: true, note: "Two farmers to a unit of ground or barn, the family farm's measure. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

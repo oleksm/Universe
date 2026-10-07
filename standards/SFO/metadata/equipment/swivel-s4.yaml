@@ -28,5 +28,5 @@ function:
 life: 473364000
 basis:
   - { of: [function, physical, needs], tier: invented, review: true, note: "A trunnion bearing and two actuators carrying the engine's thrust: about 0.7 kg a kilonewton plus a frame, turning a quarter turn in sixteen seconds. Chosen; no flown example at this scale. Review." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

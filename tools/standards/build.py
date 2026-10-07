@@ -564,6 +564,23 @@ for _mf in sorted(os.listdir(os.path.join(_sfo_meta, "markets"))):
 TIERS = ["sourced", "derived", "invented"]
 
 
+# (The rules many records rest on, stated once: a basis entry's `rule` gives its tier, source and review flag.)
+RULES = {}
+for _rf in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "rules", "*.yaml"))):
+    _r = yaml.safe_load(open(_rf, encoding="utf-8")) or {}
+    RULES[_r["identity"]["key"]] = _r
+    RULES[_r["identity"]["key"].split(".", 1)[1]] = _r   # (the old view reads references without their kind prefix)
+
+
+def basis_tier(en):
+    """A basis entry's tier: its own, or its rule's."""
+    return en.get("tier") or RULES.get(en.get("rule"), {}).get("tier")
+
+
+def basis_review(en):
+    return bool(en.get("review")) if "review" in en else bool(RULES.get(en.get("rule"), {}).get("review"))
+
+
 def check_basis(rec, where):
     """A record's `basis`: entries of what they cover, a tier, and for a sourced one its source."""
     bs = rec.get("basis")
@@ -573,11 +590,13 @@ def check_basis(rec, where):
         problem(where, "basis: a list of entries (of, tier, source, note)")
         return
     for en in bs:
-        if not isinstance(en, dict) or not isinstance(en.get("of"), list) or en.get("tier") not in TIERS:
-            problem(where, f"basis: each entry names what it is of and a tier ({', '.join(TIERS)})")
-        elif set(en) - {"of", "tier", "source", "note", "review"}:
+        if not isinstance(en, dict) or not isinstance(en.get("of"), list) or (en.get("rule") is None and en.get("tier") not in TIERS):
+            problem(where, f"basis: each entry names what it is of and a tier ({', '.join(TIERS)}) or a rule")
+        elif set(en) - {"of", "tier", "source", "note", "review", "rule"}:
             problem(where, "basis: unknown field")
-        elif en["tier"] == "sourced" and not en.get("source"):
+        elif en.get("rule") is not None and en["rule"] not in RULES:
+            problem(where, f"basis: no rule '{en['rule']}' (standards/SFO/metadata/rules)")
+        elif basis_tier(en) == "sourced" and not (en.get("source") or RULES.get(en.get("rule"), {}).get("source")):
             problem(where, "basis: a sourced entry names its source")
 
 
@@ -2536,7 +2555,7 @@ report("worlds", "Worlds: bodies grown by the planet simulation", f"Every body w
 
 # 3d'. Dimensions: every physical thing has a length, a width and a height. Which are worked out, and which only stand in?
 _stand_in = lambda e_: any(str(b_.get("note", "")).startswith(("Not worked out", "Not measured")) for b_ in e_.get("basis") or [])
-_fitted = lambda e_: any(str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])
+_fitted = lambda e_: any(b_.get("rule") == "rule.fitted-within" or str(b_.get("note", "")).startswith("Fitted within") for b_ in e_.get("basis") or [])
 rows = []
 for kind_, recs_ in (("Hulls", hulls), ("Equipment", equipment), ("Parts", parts)):
     owed = [e_ for e_ in recs_ if _stand_in(e_)]; fitted = [e_ for e_ in recs_ if _fitted(e_)]
@@ -2641,7 +2660,7 @@ def tier_of(kind, raw, group, prop, review=False):
     for exact in ((False,) if kind == "modules" and group == "recipes" else (True, False)):
         for en in raw.get("basis") or []:
             if (f"{group}.{prop}" in en["of"]) if exact else (group in en["of"]):
-                return bool(en.get("review")) if review else en["tier"]
+                return basis_review(en) if review else basis_tier(en)
     return False if review else DEFAULT_TIER.get(kind, "unsaid")
 
 

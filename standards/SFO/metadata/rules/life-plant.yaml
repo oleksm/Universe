@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.life-plant
+  name: "Life of industrial plant"
+  about: "How long an industrial module serves before it is rebuilt."
+statement: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life."
+tier: invented
+review: true

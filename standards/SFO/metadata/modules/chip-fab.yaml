@@ -31,4 +31,4 @@ basis:
   - { of: [recipes.inputs], tier: invented, review: true, note: "Which chemicals, and that a sixth of the wafer is lost: guesses. To be reviewed." }
   - { of: [physical, recipes.rate], tier: sourced, source: "standards/sources/research_machines.json", note: "GlobalFoundries' Fab 1 at Dresden: 80,000 wafers a month on 36 hectares." }
   - { of: [staff], tier: invented, review: true, note: "Six technicians and two engineers. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }
