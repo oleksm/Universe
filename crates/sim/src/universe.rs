@@ -360,12 +360,12 @@ impl Universe {
         self.judge(t1);
         // The ground under ships low over a baked world, and where they'll be in a few seconds,
         // read ahead of the physics (twice a second).
-        if self.tick.is_multiple_of(crate::clocks::ticks(GROUND_AHEAD_EVERY)) {
+        if crate::clocks::due(self.tick, GROUND_AHEAD_EVERY) {
             universe_prof::time("sim/ground ahead", || self.ground_ahead());
         }
         // Traffic control looks around ten times a second (pads freed when their ships leave,
         // corridors when they're through): plenty, and cheaper than every tick.
-        if self.tick.is_multiple_of(crate::clocks::ticks(PRESENCE_EVERY)) {
+        if crate::clocks::due(self.tick, PRESENCE_EVERY) {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
         universe_prof::time("sim/recorder", || self.record());
@@ -379,8 +379,7 @@ impl Universe {
         self.publish_boards();
         self.update_standings();
         // (The dead-man rule: a look each step of the machinery's clock.)
-        let machinery = (crate::clocks::period(universe_world::registry::ClockKey::Machinery) / crate::clocks::tick()).round().max(1.0) as u64;
-        if self.tick.is_multiple_of(machinery) {
+        if crate::clocks::due(self.tick, crate::clocks::period(universe_world::registry::ClockKey::Machinery)) {
             universe_prof::time("sim/dead man", || self.dead_man());
         }
         // The pilots get the world as it now is (replaying, what they did is logged).
@@ -410,7 +409,7 @@ impl Universe {
     /// every ship is sampled every `recorder::EVERY` (not all at once).
     fn record(&mut self) {
         let now = self.world.time;
-        let slices = ((crate::recorder::EVERY / tick()).round() as u64).max(1);
+        let slices = crate::clocks::ticks(crate::recorder::EVERY);
         let k = self.tick % slices;
         if k == 0 {
             self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));
