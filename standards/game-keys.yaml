@@ -120,145 +120,145 @@
 - { key: good.nickel-iron-ore, game: "ore.nickel_iron", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.pgm-rich-ore, game: "ore.pgm", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
 - { key: good.stony-ore, game: "ore.stony", in: "goods.ron, ores.ron (what it is traded and dug as; not the same thing)" }
-- { key: module.acid-plant, game: "acid-plant", in: "industry.ron, settlements.ron" }
-- { key: module.air-plant, game: "air-plant", in: "industry.ron, settlements.ron" }
-- { key: module.alumina-refinery, game: "alumina-refinery", in: "industry.ron, settlements.ron" }
-- { key: module.arc-furnace, game: "arc-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.arc-furnace-metal, game: "arc-furnace-metal", in: "industry.ron, settlements.ron" }
-- { key: module.assembly-jig, game: "assembly-jig", in: "industry.ron, settlements.ron" }
-- { key: module.assembly-shop, game: "assembly-shop", in: "industry.ron, settlements.ron" }
-- { key: module.bakery, game: "bakery", in: "industry.ron, settlements.ron" }
-- { key: module.bar-mill, game: "bar-mill", in: "industry.ron, settlements.ron" }
-- { key: module.brewery, game: "brewery", in: "industry.ron, settlements.ron" }
-- { key: module.brickworks, game: "brickworks", in: "industry.ron, settlements.ron" }
-- { key: module.building-dock, game: "building-dock", in: "industry.ron, settlements.ron" }
-- { key: module.carbide-furnace, game: "carbide-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.carbon-works, game: "carbon-works", in: "industry.ron, settlements.ron" }
-- { key: module.casthouse, game: "casthouse", in: "industry.ron, settlements.ron" }
-- { key: module.casting-bay, game: "casting-bay", in: "industry.ron, settlements.ron" }
-- { key: module.cement-works, game: "cement-works", in: "industry.ron, settlements.ron" }
-- { key: module.chip-fab, game: "chip-fab", in: "industry.ron, settlements.ron" }
-- { key: module.chlor-alkali-plant, game: "chlor-alkali-plant", in: "industry.ron, settlements.ron" }
-- { key: module.clothing-works, game: "clothing-works", in: "industry.ron, settlements.ron" }
-- { key: module.coal-mine, game: "coal-mine", in: "industry.ron, settlements.ron" }
-- { key: module.cold-rolling-mill, game: "cold-rolling-mill", in: "industry.ron, settlements.ron" }
-- { key: module.cold-store, game: "cold-store", in: "industry.ron, settlements.ron" }
-- { key: module.composites-works, game: "composites-works", in: "industry.ron, settlements.ron" }
-- { key: module.compost-works, game: "compost-works", in: "industry.ron, settlements.ron" }
-- { key: module.concentrator, game: "concentrator", in: "industry.ron, settlements.ron" }
-- { key: module.concrete-plant, game: "concrete-plant", in: "industry.ron, settlements.ron" }
-- { key: module.copper-smelter, game: "copper-smelter", in: "industry.ron, settlements.ron" }
-- { key: module.crushing-plant, game: "crushing-plant", in: "industry.ron, settlements.ron" }
-- { key: module.cutting-table, game: "cutting-table", in: "industry.ron, settlements.ron" }
-- { key: module.dairy, game: "dairy", in: "industry.ron, settlements.ron" }
-- { key: module.deuterium-plant, game: "deuterium-plant", in: "industry.ron, settlements.ron" }
-- { key: module.electronics-works, game: "electronics-works", in: "industry.ron, settlements.ron" }
-- { key: module.extrusion-press, game: "extrusion-press", in: "industry.ron, settlements.ron" }
-- { key: module.feed-mill, game: "feed-mill", in: "industry.ron, settlements.ron" }
-- { key: module.ferroalloy-furnace, game: "ferroalloy-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.fertiliser-works, game: "fertiliser-works", in: "industry.ron, settlements.ron" }
-- { key: module.field, game: "field", in: "industry.ron, settlements.ron" }
-- { key: module.filament-winder, game: "filament-winder", in: "industry.ron, settlements.ron" }
-- { key: module.film-works, game: "film-works", in: "industry.ron, settlements.ron" }
-- { key: module.finishing-line, game: "finishing-line", in: "industry.ron, settlements.ron" }
-- { key: module.fish-farm, game: "fish-farm", in: "industry.ron, settlements.ron" }
-- { key: module.flour-mill, game: "flour-mill", in: "industry.ron, settlements.ron" }
-- { key: module.forging-press, game: "forging-press", in: "industry.ron, settlements.ron" }
-- { key: module.foundry, game: "foundry", in: "industry.ron, settlements.ron" }
-- { key: module.fusion-power-station, game: "fusion-power-station", in: "industry.ron, settlements.ron" }
-- { key: module.gas-well, game: "gas-well", in: "industry.ron, settlements.ron" }
-- { key: module.general-warehouse, game: "general-warehouse", in: "industry.ron, settlements.ron" }
-- { key: module.glassworks, game: "glassworks", in: "industry.ron, settlements.ron" }
-- { key: module.gold-works, game: "gold-works", in: "industry.ron, settlements.ron" }
-- { key: module.grain-silo, game: "grain-silo", in: "industry.ron, settlements.ron" }
-- { key: module.grow-hall, game: "grow-hall", in: "industry.ron, settlements.ron" }
-- { key: module.honeycomb-works, game: "honeycomb-works", in: "industry.ron, settlements.ron" }
-- { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "industry.ron, settlements.ron" }
-- { key: module.hydrogen-plant, game: "hydrogen-plant", in: "industry.ron, settlements.ron" }
-- { key: module.ice-melter, game: "ice-melter", in: "industry.ron, settlements.ron" }
-- { key: module.incinerator, game: "incinerator", in: "industry.ron, settlements.ron" }
-- { key: module.ingot-yard, game: "ingot-yard", in: "industry.ron, settlements.ron" }
-- { key: module.ladle-station, game: "ladle-station", in: "industry.ron, settlements.ron" }
-- { key: module.lead-smelter, game: "lead-smelter", in: "industry.ron, settlements.ron" }
-- { key: module.lime-kiln, game: "lime-kiln", in: "industry.ron, settlements.ron" }
-- { key: module.livestock-barn, game: "livestock-barn", in: "industry.ron, settlements.ron" }
-- { key: module.loading-dock, game: "loading-dock", in: "industry.ron, settlements.ron" }
-- { key: module.machine-works, game: "machine-works", in: "industry.ron, settlements.ron" }
-- { key: module.machining-centre, game: "machining-centre", in: "industry.ron, settlements.ron" }
-- { key: module.magnesium-works, game: "magnesium-works", in: "industry.ron, settlements.ron" }
-- { key: module.market-garden, game: "market-garden", in: "industry.ron, settlements.ron" }
-- { key: module.meat-works, game: "meat-works", in: "industry.ron, settlements.ron" }
-- { key: module.mine, game: "mine", in: "industry.ron, settlements.ron" }
-- { key: module.molybdenum-works, game: "molybdenum-works", in: "industry.ron, settlements.ron" }
-- { key: module.nickel-smelter, game: "nickel-smelter", in: "industry.ron, settlements.ron" }
-- { key: module.oil-press, game: "oil-press", in: "industry.ron, settlements.ron" }
-- { key: module.oil-well, game: "oil-well", in: "industry.ron, settlements.ron" }
-- { key: module.orchard, game: "orchard", in: "industry.ron, settlements.ron" }
-- { key: module.ore-yard, game: "ore-yard", in: "industry.ron, settlements.ron" }
-- { key: module.oxygen-plant, game: "oxygen-plant", in: "industry.ron, settlements.ron" }
-- { key: module.panel-former, game: "panel-former", in: "industry.ron, settlements.ron" }
-- { key: module.panel-line, game: "panel-line", in: "industry.ron, settlements.ron" }
-- { key: module.panel-press, game: "panel-press", in: "industry.ron, settlements.ron" }
-- { key: module.pellet-plant, game: "pellet-plant", in: "industry.ron, settlements.ron" }
-- { key: module.pharma-works, game: "pharma-works", in: "industry.ron, settlements.ron" }
-- { key: module.phosphate-works, game: "phosphate-works", in: "industry.ron, settlements.ron" }
-- { key: module.piercing-mill, game: "piercing-mill", in: "industry.ron, settlements.ron" }
-- { key: module.potline, game: "potline", in: "industry.ron, settlements.ron" }
-- { key: module.propellant-plant, game: "propellant-plant", in: "industry.ron, settlements.ron" }
-- { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.rendering-works, game: "rendering-works", in: "industry.ron, settlements.ron" }
-- { key: module.section-line, game: "section-line", in: "industry.ron, settlements.ron" }
-- { key: module.shaft-furnace, game: "shaft-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.silicon-furnace, game: "silicon-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.silicon-refinery, game: "silicon-refinery", in: "industry.ron, settlements.ron" }
-- { key: module.soap-works, game: "soap-works", in: "industry.ron, settlements.ron" }
-- { key: module.soda-works, game: "soda-works", in: "industry.ron, settlements.ron" }
-- { key: module.stock-yard, game: "stock-yard", in: "industry.ron, settlements.ron" }
-- { key: module.sugar-works, game: "sugar-works", in: "industry.ron, settlements.ron" }
-- { key: module.sulphur-works, game: "sulphur-works", in: "industry.ron, settlements.ron" }
-- { key: module.synthesis-plant, game: "synthesis-plant", in: "industry.ron, settlements.ron" }
-- { key: module.tailings-dam, game: "tailings-dam", in: "industry.ron, settlements.ron" }
-- { key: module.tank-farm, game: "tank-farm", in: "industry.ron, settlements.ron" }
-- { key: module.textile-mill, game: "textile-mill", in: "industry.ron, settlements.ron" }
-- { key: module.tin-smelter, game: "tin-smelter", in: "industry.ron, settlements.ron" }
-- { key: module.titanium-works, game: "titanium-works", in: "industry.ron, settlements.ron" }
-- { key: module.tungsten-works, game: "tungsten-works", in: "industry.ron, settlements.ron" }
-- { key: module.vacuum-furnace, game: "vacuum-furnace", in: "industry.ron, settlements.ron" }
-- { key: module.waste-dump, game: "waste-dump", in: "industry.ron, settlements.ron" }
-- { key: module.water-works, game: "water-works", in: "industry.ron, settlements.ron" }
-- { key: module.welding-bay, game: "welding-bay", in: "industry.ron, settlements.ron" }
-- { key: module.winery, game: "winery", in: "industry.ron, settlements.ron" }
-- { key: module.wire-mill, game: "wire-mill", in: "industry.ron, settlements.ron" }
-- { key: module.zinc-works, game: "zinc-works", in: "industry.ron, settlements.ron" }
-- { key: org.aurel, game: "brand.aurel", in: "brands.ron" }
-- { key: org.brightwater-dairy, game: "brand.brightwater_dairy", in: "brands.ron" }
-- { key: org.castellan, game: "brand.castellan", in: "brands.ron" }
-- { key: org.cellar-and-vat, game: "brand.cellar_and_vat", in: "brands.ron" }
-- { key: org.cormorant, game: "brand.cormorant", in: "brands.ron" }
-- { key: org.eikir-growers, game: "brand.eikir_growers", in: "brands.ron" }
-- { key: org.garrick, game: "brand.garrick", in: "brands.ron" }
-- { key: org.greenfall, game: "brand.greenfall", in: "brands.ron" }
-- { key: org.hadley, game: "brand.hadley", in: "brands.ron" }
-- { key: org.halcyon, game: "brand.halcyon", in: "brands.ron" }
-- { key: org.halloran-mills, game: "brand.halloran_mills", in: "brands.ron" }
-- { key: org.halvard, game: "brand.halvard", in: "brands.ron" }
-- { key: org.hoar-line, game: "brand.hoar_line", in: "brands.ron" }
-- { key: org.kestrel, game: "brand.kestrel", in: "brands.ron" }
-- { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
-- { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }
-- { key: org.meridian, game: "brand.meridian", in: "brands.ron" }
-- { key: org.nacaubun-savings, game: "brand.nacaubun_savings", in: "brands.ron" }
-- { key: org.orbital, game: "brand.orbital", in: "brands.ron" }
-- { key: org.sfo, game: "body.sfo", in: "bodies.ron" }
-- { key: org.shikra-hold, game: "brand.shikra_hold", in: "bodies.ron" }
-- { key: org.sunward-planters, game: "brand.sunward_planters", in: "brands.ron" }
-- { key: org.tallis, game: "brand.tallis", in: "brands.ron" }
-- { key: org.tolland, game: "brand.tolland", in: "brands.ron" }
-- { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "brands.ron" }
-- { key: org.treistun-freight, game: "brand.treistun_freight", in: "brands.ron" }
-- { key: org.treistun-mutual, game: "brand.treistun_mutual", in: "brands.ron" }
-- { key: org.verdance, game: "brand.verdance", in: "brands.ron" }
-- { key: org.vireo, game: "brand.vireo", in: "brands.ron" }
+- { key: module.acid-plant, game: "acid-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.air-plant, game: "air-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.alumina-refinery, game: "alumina-refinery", in: "formerly industry.ron, settlements.ron" }
+- { key: module.arc-furnace, game: "arc-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.arc-furnace-metal, game: "arc-furnace-metal", in: "formerly industry.ron, settlements.ron" }
+- { key: module.assembly-jig, game: "assembly-jig", in: "formerly industry.ron, settlements.ron" }
+- { key: module.assembly-shop, game: "assembly-shop", in: "formerly industry.ron, settlements.ron" }
+- { key: module.bakery, game: "bakery", in: "formerly industry.ron, settlements.ron" }
+- { key: module.bar-mill, game: "bar-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.brewery, game: "brewery", in: "formerly industry.ron, settlements.ron" }
+- { key: module.brickworks, game: "brickworks", in: "formerly industry.ron, settlements.ron" }
+- { key: module.building-dock, game: "building-dock", in: "formerly industry.ron, settlements.ron" }
+- { key: module.carbide-furnace, game: "carbide-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.carbon-works, game: "carbon-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.casthouse, game: "casthouse", in: "formerly industry.ron, settlements.ron" }
+- { key: module.casting-bay, game: "casting-bay", in: "formerly industry.ron, settlements.ron" }
+- { key: module.cement-works, game: "cement-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.chip-fab, game: "chip-fab", in: "formerly industry.ron, settlements.ron" }
+- { key: module.chlor-alkali-plant, game: "chlor-alkali-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.clothing-works, game: "clothing-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.coal-mine, game: "coal-mine", in: "formerly industry.ron, settlements.ron" }
+- { key: module.cold-rolling-mill, game: "cold-rolling-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.cold-store, game: "cold-store", in: "formerly industry.ron, settlements.ron" }
+- { key: module.composites-works, game: "composites-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.compost-works, game: "compost-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.concentrator, game: "concentrator", in: "formerly industry.ron, settlements.ron" }
+- { key: module.concrete-plant, game: "concrete-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.copper-smelter, game: "copper-smelter", in: "formerly industry.ron, settlements.ron" }
+- { key: module.crushing-plant, game: "crushing-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.cutting-table, game: "cutting-table", in: "formerly industry.ron, settlements.ron" }
+- { key: module.dairy, game: "dairy", in: "formerly industry.ron, settlements.ron" }
+- { key: module.deuterium-plant, game: "deuterium-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.electronics-works, game: "electronics-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.extrusion-press, game: "extrusion-press", in: "formerly industry.ron, settlements.ron" }
+- { key: module.feed-mill, game: "feed-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.ferroalloy-furnace, game: "ferroalloy-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.fertiliser-works, game: "fertiliser-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.field, game: "field", in: "formerly industry.ron, settlements.ron" }
+- { key: module.filament-winder, game: "filament-winder", in: "formerly industry.ron, settlements.ron" }
+- { key: module.film-works, game: "film-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.finishing-line, game: "finishing-line", in: "formerly industry.ron, settlements.ron" }
+- { key: module.fish-farm, game: "fish-farm", in: "formerly industry.ron, settlements.ron" }
+- { key: module.flour-mill, game: "flour-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.forging-press, game: "forging-press", in: "formerly industry.ron, settlements.ron" }
+- { key: module.foundry, game: "foundry", in: "formerly industry.ron, settlements.ron" }
+- { key: module.fusion-power-station, game: "fusion-power-station", in: "formerly industry.ron, settlements.ron" }
+- { key: module.gas-well, game: "gas-well", in: "formerly industry.ron, settlements.ron" }
+- { key: module.general-warehouse, game: "general-warehouse", in: "formerly industry.ron, settlements.ron" }
+- { key: module.glassworks, game: "glassworks", in: "formerly industry.ron, settlements.ron" }
+- { key: module.gold-works, game: "gold-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.grain-silo, game: "grain-silo", in: "formerly industry.ron, settlements.ron" }
+- { key: module.grow-hall, game: "grow-hall", in: "formerly industry.ron, settlements.ron" }
+- { key: module.honeycomb-works, game: "honeycomb-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.hot-rolling-mill, game: "hot-rolling-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.hydrogen-plant, game: "hydrogen-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.ice-melter, game: "ice-melter", in: "formerly industry.ron, settlements.ron" }
+- { key: module.incinerator, game: "incinerator", in: "formerly industry.ron, settlements.ron" }
+- { key: module.ingot-yard, game: "ingot-yard", in: "formerly industry.ron, settlements.ron" }
+- { key: module.ladle-station, game: "ladle-station", in: "formerly industry.ron, settlements.ron" }
+- { key: module.lead-smelter, game: "lead-smelter", in: "formerly industry.ron, settlements.ron" }
+- { key: module.lime-kiln, game: "lime-kiln", in: "formerly industry.ron, settlements.ron" }
+- { key: module.livestock-barn, game: "livestock-barn", in: "formerly industry.ron, settlements.ron" }
+- { key: module.loading-dock, game: "loading-dock", in: "formerly industry.ron, settlements.ron" }
+- { key: module.machine-works, game: "machine-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.machining-centre, game: "machining-centre", in: "formerly industry.ron, settlements.ron" }
+- { key: module.magnesium-works, game: "magnesium-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.market-garden, game: "market-garden", in: "formerly industry.ron, settlements.ron" }
+- { key: module.meat-works, game: "meat-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.mine, game: "mine", in: "formerly industry.ron, settlements.ron" }
+- { key: module.molybdenum-works, game: "molybdenum-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.nickel-smelter, game: "nickel-smelter", in: "formerly industry.ron, settlements.ron" }
+- { key: module.oil-press, game: "oil-press", in: "formerly industry.ron, settlements.ron" }
+- { key: module.oil-well, game: "oil-well", in: "formerly industry.ron, settlements.ron" }
+- { key: module.orchard, game: "orchard", in: "formerly industry.ron, settlements.ron" }
+- { key: module.ore-yard, game: "ore-yard", in: "formerly industry.ron, settlements.ron" }
+- { key: module.oxygen-plant, game: "oxygen-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.panel-former, game: "panel-former", in: "formerly industry.ron, settlements.ron" }
+- { key: module.panel-line, game: "panel-line", in: "formerly industry.ron, settlements.ron" }
+- { key: module.panel-press, game: "panel-press", in: "formerly industry.ron, settlements.ron" }
+- { key: module.pellet-plant, game: "pellet-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.pharma-works, game: "pharma-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.phosphate-works, game: "phosphate-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.piercing-mill, game: "piercing-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.potline, game: "potline", in: "formerly industry.ron, settlements.ron" }
+- { key: module.propellant-plant, game: "propellant-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.reheat-furnace, game: "reheat-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.rendering-works, game: "rendering-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.section-line, game: "section-line", in: "formerly industry.ron, settlements.ron" }
+- { key: module.shaft-furnace, game: "shaft-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.silicon-furnace, game: "silicon-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.silicon-refinery, game: "silicon-refinery", in: "formerly industry.ron, settlements.ron" }
+- { key: module.soap-works, game: "soap-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.soda-works, game: "soda-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.stock-yard, game: "stock-yard", in: "formerly industry.ron, settlements.ron" }
+- { key: module.sugar-works, game: "sugar-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.sulphur-works, game: "sulphur-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.synthesis-plant, game: "synthesis-plant", in: "formerly industry.ron, settlements.ron" }
+- { key: module.tailings-dam, game: "tailings-dam", in: "formerly industry.ron, settlements.ron" }
+- { key: module.tank-farm, game: "tank-farm", in: "formerly industry.ron, settlements.ron" }
+- { key: module.textile-mill, game: "textile-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.tin-smelter, game: "tin-smelter", in: "formerly industry.ron, settlements.ron" }
+- { key: module.titanium-works, game: "titanium-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.tungsten-works, game: "tungsten-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.vacuum-furnace, game: "vacuum-furnace", in: "formerly industry.ron, settlements.ron" }
+- { key: module.waste-dump, game: "waste-dump", in: "formerly industry.ron, settlements.ron" }
+- { key: module.water-works, game: "water-works", in: "formerly industry.ron, settlements.ron" }
+- { key: module.welding-bay, game: "welding-bay", in: "formerly industry.ron, settlements.ron" }
+- { key: module.winery, game: "winery", in: "formerly industry.ron, settlements.ron" }
+- { key: module.wire-mill, game: "wire-mill", in: "formerly industry.ron, settlements.ron" }
+- { key: module.zinc-works, game: "zinc-works", in: "formerly industry.ron, settlements.ron" }
+- { key: org.aurel, game: "brand.aurel", in: "formerly brands.ron" }
+- { key: org.brightwater-dairy, game: "brand.brightwater_dairy", in: "formerly brands.ron" }
+- { key: org.castellan, game: "brand.castellan", in: "formerly brands.ron" }
+- { key: org.cellar-and-vat, game: "brand.cellar_and_vat", in: "formerly brands.ron" }
+- { key: org.cormorant, game: "brand.cormorant", in: "formerly brands.ron" }
+- { key: org.eikir-growers, game: "brand.eikir_growers", in: "formerly brands.ron" }
+- { key: org.garrick, game: "brand.garrick", in: "formerly brands.ron" }
+- { key: org.greenfall, game: "brand.greenfall", in: "formerly brands.ron" }
+- { key: org.hadley, game: "brand.hadley", in: "formerly brands.ron" }
+- { key: org.halcyon, game: "brand.halcyon", in: "formerly brands.ron" }
+- { key: org.halloran-mills, game: "brand.halloran_mills", in: "formerly brands.ron" }
+- { key: org.halvard, game: "brand.halvard", in: "formerly brands.ron" }
+- { key: org.hoar-line, game: "brand.hoar_line", in: "formerly brands.ron" }
+- { key: org.kestrel, game: "brand.kestrel", in: "formerly brands.ron" }
+- { key: org.lantern-halls, game: "brand.lantern_halls", in: "formerly brands.ron" }
+- { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "formerly brands.ron" }
+- { key: org.meridian, game: "brand.meridian", in: "formerly brands.ron" }
+- { key: org.nacaubun-savings, game: "brand.nacaubun_savings", in: "formerly brands.ron" }
+- { key: org.orbital, game: "brand.orbital", in: "formerly brands.ron" }
+- { key: org.sfo, game: "body.sfo", in: "formerly bodies.ron" }
+- { key: org.shikra-hold, game: "brand.shikra_hold", in: "formerly bodies.ron" }
+- { key: org.sunward-planters, game: "brand.sunward_planters", in: "formerly brands.ron" }
+- { key: org.tallis, game: "brand.tallis", in: "formerly brands.ron" }
+- { key: org.tolland, game: "brand.tolland", in: "formerly brands.ron" }
+- { key: org.treistun-exchange, game: "brand.treistun_exchange", in: "formerly brands.ron" }
+- { key: org.treistun-freight, game: "brand.treistun_freight", in: "formerly brands.ron" }
+- { key: org.treistun-mutual, game: "brand.treistun_mutual", in: "formerly brands.ron" }
+- { key: org.verdance, game: "brand.verdance", in: "formerly brands.ron" }
+- { key: org.vireo, game: "brand.vireo", in: "formerly brands.ron" }
 - { key: population.biraidim.shikra-family, game: "Shikra family", in: "by name: celestial.ron, the seed" }
 - { key: population.biraidim.taumeibru-family, game: "Taumeibru family", in: "by name: celestial.ron, the seed" }
 - { key: population.biraidim.trirnisum-family, game: "Trirnisum family", in: "by name: celestial.ron, the seed" }
@@ -289,45 +289,45 @@
 - { key: rock-class.icy, game: "ICY", in: "belt.rs" }
 - { key: rock-class.metallic, game: "M-TYPE METALLIC", in: "belt.rs" }
 - { key: rock-class.stony, game: "S-TYPE STONY", in: "belt.rs" }
-- { key: settlement.treistun.ashfall-camp, game: "Ashfall Camp", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.gate-to-biraidim, game: "Gate to Biraidim", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.gate-to-driumum, game: "Gate to Driumum", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.gate-to-liham, game: "Gate to Liham", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.halden-camp, game: "Halden Camp", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-aipika, game: "Port Aipika", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-eikir, game: "Port Eikir", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-fabindum, game: "Port Fabindum", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-lisaur, game: "Port Lisaur", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-nacaubun, game: "Port Nacaubun", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-seiwiti, game: "Port Seiwiti", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-sirnendis, game: "Port Sirnendis", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-trethi, game: "Port Trethi", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-weisonum, game: "Port Weisonum", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.port-zaudalein, game: "Port Zaudalein", in: "by name: settlements.ron, places.ron" }
-- { key: settlement.treistun.treistun-e-station, game: "Treistun e Station", in: "by name: settlements.ron, places.ron" }
-- { key: standard.sfo.1, game: "SFO 1", in: "standards.ron" }
-- { key: standard.sfo.10, game: "SFO 10", in: "standards.ron" }
-- { key: standard.sfo.11, game: "SFO 11", in: "standards.ron" }
-- { key: standard.sfo.12, game: "SFO 12", in: "standards.ron" }
-- { key: standard.sfo.13, game: "SFO 13", in: "standards.ron" }
-- { key: standard.sfo.14, game: "SFO 14", in: "standards.ron" }
-- { key: standard.sfo.15, game: "SFO 15", in: "standards.ron" }
-- { key: standard.sfo.16, game: "SFO 16", in: "standards.ron" }
-- { key: standard.sfo.17, game: "SFO 17", in: "standards.ron" }
-- { key: standard.sfo.18, game: "SFO 18", in: "standards.ron" }
-- { key: standard.sfo.19, game: "SFO 19", in: "standards.ron" }
-- { key: standard.sfo.2, game: "SFO 2", in: "standards.ron" }
-- { key: standard.sfo.20, game: "SFO 20", in: "standards.ron" }
-- { key: standard.sfo.21, game: "SFO 21", in: "standards.ron" }
-- { key: standard.sfo.22, game: "SFO 22", in: "standards.ron" }
-- { key: standard.sfo.23, game: "SFO 23", in: "standards.ron" }
-- { key: standard.sfo.3, game: "SFO 3", in: "standards.ron" }
-- { key: standard.sfo.4, game: "SFO 4", in: "standards.ron" }
-- { key: standard.sfo.5, game: "SFO 5", in: "standards.ron" }
-- { key: standard.sfo.6, game: "SFO 6", in: "standards.ron" }
-- { key: standard.sfo.7, game: "SFO 7", in: "standards.ron" }
-- { key: standard.sfo.8, game: "SFO 8", in: "standards.ron" }
-- { key: standard.sfo.9, game: "SFO 9", in: "standards.ron" }
+- { key: settlement.treistun.ashfall-camp, game: "Ashfall Camp", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.gate-to-biraidim, game: "Gate to Biraidim", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.gate-to-driumum, game: "Gate to Driumum", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.gate-to-liham, game: "Gate to Liham", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.halden-camp, game: "Halden Camp", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-aipika, game: "Port Aipika", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-eikir, game: "Port Eikir", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-fabindum, game: "Port Fabindum", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-lisaur, game: "Port Lisaur", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-nacaubun, game: "Port Nacaubun", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-seiwiti, game: "Port Seiwiti", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-sirnendis, game: "Port Sirnendis", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-trethi, game: "Port Trethi", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-weisonum, game: "Port Weisonum", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.port-zaudalein, game: "Port Zaudalein", in: "formerly by name: settlements.ron, places.ron" }
+- { key: settlement.treistun.treistun-e-station, game: "Treistun e Station", in: "formerly by name: settlements.ron, places.ron" }
+- { key: standard.sfo.1, game: "SFO 1", in: "formerly standards.ron" }
+- { key: standard.sfo.10, game: "SFO 10", in: "formerly standards.ron" }
+- { key: standard.sfo.11, game: "SFO 11", in: "formerly standards.ron" }
+- { key: standard.sfo.12, game: "SFO 12", in: "formerly standards.ron" }
+- { key: standard.sfo.13, game: "SFO 13", in: "formerly standards.ron" }
+- { key: standard.sfo.14, game: "SFO 14", in: "formerly standards.ron" }
+- { key: standard.sfo.15, game: "SFO 15", in: "formerly standards.ron" }
+- { key: standard.sfo.16, game: "SFO 16", in: "formerly standards.ron" }
+- { key: standard.sfo.17, game: "SFO 17", in: "formerly standards.ron" }
+- { key: standard.sfo.18, game: "SFO 18", in: "formerly standards.ron" }
+- { key: standard.sfo.19, game: "SFO 19", in: "formerly standards.ron" }
+- { key: standard.sfo.2, game: "SFO 2", in: "formerly standards.ron" }
+- { key: standard.sfo.20, game: "SFO 20", in: "formerly standards.ron" }
+- { key: standard.sfo.21, game: "SFO 21", in: "formerly standards.ron" }
+- { key: standard.sfo.22, game: "SFO 22", in: "formerly standards.ron" }
+- { key: standard.sfo.23, game: "SFO 23", in: "formerly standards.ron" }
+- { key: standard.sfo.3, game: "SFO 3", in: "formerly standards.ron" }
+- { key: standard.sfo.4, game: "SFO 4", in: "formerly standards.ron" }
+- { key: standard.sfo.5, game: "SFO 5", in: "formerly standards.ron" }
+- { key: standard.sfo.6, game: "SFO 6", in: "formerly standards.ron" }
+- { key: standard.sfo.7, game: "SFO 7", in: "formerly standards.ron" }
+- { key: standard.sfo.8, game: "SFO 8", in: "formerly standards.ron" }
+- { key: standard.sfo.9, game: "SFO 9", in: "formerly standards.ron" }
 - { key: system.biraidim, game: "Biraidim", in: "by name: celestial.ron, the seed" }
 - { key: system.driumum, game: "Driumum", in: "by name: celestial.ron, the seed" }
 - { key: system.liham, game: "Liham", in: "by name: celestial.ron, the seed" }
