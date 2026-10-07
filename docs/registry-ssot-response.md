@@ -1171,3 +1171,17 @@ facility, the tick's world time, the maker's next sequence for that product) and
 carry the mark on the unit through storage, fitting and trade; count `life` from `made_on`. The
 seeding's traffic hulls want marks too (their yards and dates), as do fleets' ships. Nothing else
 changes until the economy prices by maker and age, which is its own business.
+
+**Propulsion, SFO 22 and 23 (2026-10-06, night).** The ships session's audit (the user's ask) found
+the torch families unlandable (terawatts on a pad) and the heat budget hanging on an invented
+1e-6. New: kind `engine` in slot `engine` (fifteen units: fusion thermal, nuclear thermal,
+chemical, cold gas, small chemical), kind `swivel`, dictionary `engine_cycle`, propellant
+materials/stock/tanks, `module.propellant-plant`; heat aboard derived (`isotropic_loss`,
+`shield_pass`, `reaction_offset`, `heat_to_hull` at a 0.05 hull share). Not made: handlers stubbed
+for `engine` and `swivel`, `R::Engine` in the no-slot arm. Two game-side touches, stated plainly:
+the new tanks are live (kind tank), so `content/base/prices.ron` has placeholder prices for the
+seven, and `design.rs::stock_fit` now picks a tank that holds what the drive burns (the cheapest
+tank had become a nitrogen bottle; the default design's test caught it). The old drive, lift and
+thruster records stay as the game's stand-ins until the engine takes the new kind: when it does,
+a slot of kind `engine` with a placed nozzle per unit is the shape, and the hull's `thrusters`
+list already places nozzles by slot.

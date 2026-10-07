@@ -4,6 +4,8 @@ identity:
   key: material.methalox
   name: "Methalox"
   class: fluid
+  form:
+  - fluid
   description: "Methane and oxygen (exhaust 3.3–3.7 km/s): made from ice and CO₂ almost anywhere."
 fuel:
   release: chemical

@@ -237,3 +237,48 @@ review; made by `tools/standards/crew.py`, parts and chains closed, mounts regen
    40 g/cm² of water or polyethylene round the crew; NASA's short-term limit 250 mSv in 30 days.
 
 Engine: handlers stubbed (`None`) for the nine kinds and the `command` slot, as for the fittings.
+
+## 14. Propulsion: the audit answered, and the engine family (2026-10-06, your request docs/ships/propulsion-request.md)
+
+**The audit.** Your arithmetic is right, and the registry now says so. (1) A torch on a pad: a
+156 t ship hovering at 1 g on 347 km/s exhaust puts 265 GW on the ground, at 10,000 km/s 7.6 TW;
+nothing lands on fusion. Landers land on chemistry (2.8 GW, 425 kg/s, 25 t for a 60 s landing at
+3.6 km/s) or a fission core (6.9 GW, 170 kg/s). SFO 23 rates pads by the jet they stand (100 MW,
+1 GW, 10 GW); beyond that nothing lands. (2) Attitude thrusters are cold gas (0.7 km/s, 0.5 and
+5 kN blocks) or small chemical (3 km/s, 5 kN). (3) Heat aboard now has a basis on every engine:
+`isotropic_loss` (the share of released power leaving the reaction in every direction: neutrons,
+X-rays, gamma), `shield_pass` (what the engine's shadow shield lets through), `reaction_offset`,
+and `heat_to_hull = isotropic_loss / efficiency × hull share of the sphere × shield_pass + soak-back`;
+the record takes the hull share as 0.05, **your studio computes the design's own from the
+geometry and uses that.** For Discovery II's engine that is 2.1e-4 of the jet, 1 MW aboard; a
+chemical engine's isotropic loss is zero. (4) Deuterium: plain D-D gives 8.7e13 J/kg, catalysed
+3.5e14, D-He3 3.5e14: a products-only torch at 10,000 km/s and 30% needs the catalysed burn or
+D-He3, as you said; the old torch records keep their figures as the game's stand-ins, and the new
+family does not offer a products-only torch at ship scale at all (Daedalus-class stages run to a
+thousand tonnes). (5) Lift, drive and thrusters are roles: the family is one kind, `engine`, in
+one slot kind, `engine`, pointed where the design points it. (6) Each record is one engine at its
+own size. (7) A seat that turns: not added; design around it (a tail-sitter, a swivel, or seats
+on the deck across the thrust), or ask for a turning command station and I'll add the figure.
+
+**The family** (kind `engine`, slot `engine`, mounts `mount.engine-s1..s4`; fields `cycle`,
+`thrust`, `exhaust`, `efficiency`, `burns`, `propellant`, `throttle` (least share, 0 = pulsed),
+`gimbal` (rad either way), `isotropic_loss`, `shield_pass`, `reaction_offset`, `heat_to_hull`):
+
+| Key | Cycle | Thrust | Exhaust | Jet | Mass | Throttle / gimbal | Burns / throws |
+|---|---|---|---|---|---|---|---|
+| `equipment.engine.ft.s1 / s2 / s3` | fusion thermal | 1 / 5 / 27.8 kN | 347 km/s | 0.17 / 0.87 / 4.8 GW | 30 / 90 / 361 t | 0.2 / ±3° | D-He3 / hydrogen |
+| `equipment.engine.nt.s1 / s2 / s3` | nuclear thermal | 25 / 110 / 330 kN | 9 km/s | 0.11 / 0.5 / 1.5 GW | 3.5 / 9 / 18 t | 0.3 / ±6° | hydrogen |
+| `equipment.engine.ch.s1 / s2` | chemical, hydrolox | 25 / 110 kN | 4.4 km/s | 55 / 242 MW | 80 / 300 kg | 0.2 / ±4° | hydrolox |
+| `equipment.engine.ch.s3 / s4` | chemical, methalox | 500 / 2,300 kN | 3.6 km/s | 0.9 / 4.1 GW | 600 / 1,630 kg | 0.4 / ±15° | methalox |
+| `equipment.engine.cg.s1 / s2` | cold gas | 0.5 / 5 kN | 0.7 km/s | 0.2 / 1.75 MW | 15 / 80 kg | pulsed / fixed | nitrogen |
+| `equipment.engine.ca.s1` | small chemical | 5 kN | 3 km/s | 7.5 MW | 45 kg | pulsed / fixed | methalox |
+
+Sourced: the FT S3 is Discovery II (NASA/TM-2005-213559) and the CH S2 the RL10; the rest from
+memory of flown engines (NERVA, Raptor), marked review. **Swivels** (kind `swivel`, slot `engine`):
+`equipment.swivel.s1..s4` turn 90° and bear 30 / 120 / 500 / 2,500 kN at 70 / 160 / 450 / 1,800 kg,
+0.1 rad/s. **Propellants** as materials and stock with tanks: `stock.methalox-liq`, `.hydrolox-liq`,
+`.hydrogen-liq`, `.nitrogen-gas`; tanks `equipment.tank.methalox.s1/s2` (40 / 76 t),
+`.hydrolox.s1/s2` (15.7 / 29 t), `.hydrogen.s1/s2` (3.5 / 6.5 t), `.nitrogen.s1` (300 kg at
+300 bar); made by `module.propellant-plant` at the Trethi power station. Later, as you said:
+parachutes, heat shields, surface air density (the lab's air tables carry pressure and
+temperature per band; density follows), a turning seat.

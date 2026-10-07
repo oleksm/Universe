@@ -85,6 +85,7 @@
     (key: "phosphate-works", name: "Phosphate works", length: 200.0, width: 100.0, height: 25.0, needs: 5.0, supplies: 0.0, holds: 0.0),
     (key: "piercing-mill", name: "Piercing mill", length: 150.0, width: 30.0, height: 15.0, needs: 4.0, supplies: 0.0, holds: 0.0),
     (key: "potline", name: "Potline", length: 1150.0, width: 60.0, height: 15.0, needs: 536.0, supplies: 0.0, holds: 0.0),
+    (key: "propellant-plant", name: "Propellant plant", length: 80.0, width: 40.0, height: 20.0, needs: 2.0, supplies: 0.0, holds: 0.0),
     (key: "reheat-furnace", name: "Reheat furnace", length: 60.0, width: 20.0, height: 12.0, needs: 45.0, supplies: 0.0, holds: 0.0),
     (key: "rendering-works", name: "Rendering works", length: 60.0, width: 40.0, height: 15.0, needs: 2.0, supplies: 0.0, holds: 0.0),
     (key: "shaft-furnace", name: "Shaft furnace", length: 150.0, width: 100.0, height: 137.0, needs: 22.0, supplies: 0.0, holds: 0.0),

@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.ca.s1
+  name: "Attitude engine block, 5 kN (methalox)"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "Four small pressure-fed methalox thrusters, 5 kN in all at 3 km/s: ten times the impulse of cold gas for the same propellant, with a flame. Pulsed."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 45
+  volume: 0.216
+  length: 0.6
+  width: 0.6
+  height: 0.6
+needs:
+  power: 200
+built_of:
+  parts: engine-ca-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: chemical
+  thrust: 5000
+  exhaust: 3000
+  efficiency: 0.45
+  burns: material.methalox
+  throttle: 0
+  gimbal: 0
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 0
+  heat_to_hull: 0.0001
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "Small pressure-fed bipropellant thrusters, as a spacecraft's reaction control: about 3 km/s, kilonewtons, tens of kilograms. From memory; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.hydrogen-liq
+  traded_as: market.fuel
+  code: HYDROGEN-LIQ
+  name: "Hydrogen, liquid"
+  form: fluid
+made_from:
+  - item: material.hydrogen
+basis:
+  - { of: [identity], tier: invented, review: true, note: "Reaction mass for nuclear thermal and fusion thermal engines, at 20 K. Added 2026-10-06 for the engine family (SFO 22)." }

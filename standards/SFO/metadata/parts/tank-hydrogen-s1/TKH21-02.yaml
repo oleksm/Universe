@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.tkh21-02
+  code: TKH21-02
+  name: "Insulation"
+  revision: draft
+  description: ""
+physical:
+  mass: 280
+  length: 2.69
+  width: 2.69
+  height: 2.69
+made_from:
+  - item: stock.mli-fl
+    quantity: 280
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Hydrogen tank S1 (20%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Hydrogen tank S1: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

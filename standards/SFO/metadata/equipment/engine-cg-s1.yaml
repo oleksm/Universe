@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.cg.s1
+  name: "Cold gas block, 0.5 kN"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "Four cold nitrogen nozzles, 0.5 kN in all: attitude and docking with no flame and no heat, at 0.7 km/s. Pulsed, not throttled."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 15
+  volume: 0.064
+  length: 0.4
+  width: 0.4
+  height: 0.4
+needs:
+  power: 50
+built_of:
+  parts: engine-cg-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: cold_gas
+  thrust: 500
+  exhaust: 700
+  efficiency: 1
+  burns: material.nitrogen
+  throttle: 0
+  gimbal: 0
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 0
+  heat_to_hull: 0
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "A cold gas thruster block as flown on spacecraft: nitrogen at about 0.7 km/s, pulsed; 15 kg for half a kilonewton of nozzles and valves. From memory; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

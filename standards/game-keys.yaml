@@ -204,6 +204,7 @@
 - { key: module.phosphate-works, game: "phosphate-works", in: "industry.ron, settlements.ron" }
 - { key: module.piercing-mill, game: "piercing-mill", in: "industry.ron, settlements.ron" }
 - { key: module.potline, game: "potline", in: "industry.ron, settlements.ron" }
+- { key: module.propellant-plant, game: "propellant-plant", in: "industry.ron, settlements.ron" }
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.rendering-works, game: "rendering-works", in: "industry.ron, settlements.ron" }
 - { key: module.shaft-furnace, game: "shaft-furnace", in: "industry.ron, settlements.ron" }
@@ -317,6 +318,8 @@
 - { key: standard.sfo.2, game: "SFO 2", in: "standards.ron" }
 - { key: standard.sfo.20, game: "SFO 20", in: "standards.ron" }
 - { key: standard.sfo.21, game: "SFO 21", in: "standards.ron" }
+- { key: standard.sfo.22, game: "SFO 22", in: "standards.ron" }
+- { key: standard.sfo.23, game: "SFO 23", in: "standards.ron" }
 - { key: standard.sfo.3, game: "SFO 3", in: "standards.ron" }
 - { key: standard.sfo.4, game: "SFO 4", in: "standards.ron" }
 - { key: standard.sfo.5, game: "SFO 5", in: "standards.ron" }

@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.cae1-03
+  code: CAE1-03
+  name: "Controller"
+  revision: draft
+  description: ""
+physical:
+  mass: 4
+  length: 0.278
+  width: 0.278
+  height: 0.278
+made_from:
+  - item: good.electronics
+    quantity: 4
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Attitude engine block, 5 kN (methalox) (10%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Attitude engine block, 5 kN (methalox): its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

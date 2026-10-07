@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/mount.schema.yaml
+# SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
+identity:
+  key: mount.engine-s3
+  name: "Engine mount, class 3"
+  slot: engine
+  size_class: 3
+  description: "What a class 3 engine slot offers, and what fits it."
+envelope:
+  length: 26.4
+  width: 8.8
+  height: 8.8
+bears:
+  mass: 451000.0
+  thrust: 625000.0
+attachment:
+  points: 8
+  pattern: ring
+  each:
+    tension: 1740000.0
+    compression: 1740000.0
+    shear: 869000.0
+feeds:
+  power: 15000.0
+  cooling: 3850.0
+  fuel: 174.0
+nozzle:
+  diameter: 6.4
+basis:
+  - { of: [envelope, bears, attachment, feeds, nozzle], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give. The attachment: its pattern by kind; each point takes the mount's weight at 3 g (a design acceleration, chosen) plus its thrust, landing or recoil load, with the margin; the same in tension for a reversal; shear half." }

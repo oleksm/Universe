@@ -2,10 +2,10 @@
 # SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
 identity:
   key: mount.command-s1
-  name: "Command mount, class 1"
+  name: "Command station mount, class 1"
   slot: command
   size_class: 1
-  description: "What a class 1 command slot offers, and what fits it."
+  description: "What a class 1 command station slot offers, and what fits it."
 envelope:
   length: 1.32
   width: 1.1
