@@ -1373,7 +1373,7 @@ fn stocks() -> &'static [Stock] {
                 Section::round(d, s.size.wall.unwrap_or(d * 0.5).min(d * 0.5))
             };
             let of = &s.made_from.first()?.item;
-            let m = reg.material(&*of)?;
+            let m = reg.material(of)?;
             let k = &m.mechanical;
             let (e, y, t, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
