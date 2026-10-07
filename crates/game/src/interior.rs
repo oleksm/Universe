@@ -5396,10 +5396,11 @@ fn budget(i: &Interior) -> Budget {
         _ => num(&p.3, "rejects"),
     }).sum();
     let air = shed + of("heat_exchanger").map(|p| num(&p.3, "transfers")).sum::<f64>();
-    let on_fans = placed.iter().any(|p| p.3.get("full_power").is_some());
+    // (A craft that never leaves the air is judged in air; one that goes into
+    // space (a jump drive, a rocket), in vacuum.)
     let loops: f64 = of("coolant_loop").map(|p| num(&p.3, "carries")).sum();
-    let rejected = if on_fans { air } else { vacuum };
-    let both = if (air - vacuum).abs() > 1.0 { format!("IN VACUUM {}, IN AIR {}", si(vacuum, "W"), si(air, "W")) } else { format!("RADIATORS {}", si(shed, "W")) };
+    let rejected = if air_only(&placed) { air } else { vacuum };
+    let both = if (air - vacuum).abs() > 1.0 { format!("IN VACUUM {}, IN AIR {}{}", si(vacuum, "W"), si(air, "W"), if air_only(&placed) { " (IT STAYS IN AIR)" } else { " (IT GOES INTO SPACE: VACUUM COUNTS)" }) } else { format!("RADIATORS {}", si(shed, "W")) };
     lines.push((format!("HEAT  {} TO SHED: {both}, LOOPS {}", si(heat, "W"), si(loops, "W")), rejected >= heat && loops >= heat));
     // (Who's aboard: the crew, the command stations' seats; the passengers, the
     // cabins'.)
