@@ -246,7 +246,6 @@ pub struct Engine {
     warp: f64,
 }
 
-/// World ticks per second when the engine runs on its own.
 /// Ticks a second: the realtime clock's (`clock.realtime`).
 pub fn tick_hz() -> f64 {
     1.0 / crate::clocks::tick()

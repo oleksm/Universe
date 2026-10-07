@@ -1099,7 +1099,6 @@ impl Economy {
                 w.last = Some(runs[n].clone());
             }
         }
-        let _ = at;
     }
 }
 

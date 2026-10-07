@@ -247,8 +247,7 @@ pub struct App {
     pub hit_age: f32,
     /// On the hypernet: the lag from the backbone (s) and the node it's through.
     pub net: Option<(f64, String)>,
-    /// When it was last on the net (game time), and when the status was last worked out.
-    pub net_seen: Option<f64>,
+    /// When the status was last worked out (game time).
     pub net_at: f64,
     /// This system's relays (its index, and how many claims there were, with them).
     pub net_nodes: Option<((usize, usize), Vec<universe_sim::world::hypernet::Node>)>,
@@ -417,7 +416,6 @@ impl App {
             fire: None,
             hit_age: 99.0,
             net: None,
-            net_seen: None,
             net_at: f64::NEG_INFINITY,
             net_nodes: None,
             news: Default::default(),
@@ -557,9 +555,6 @@ impl App {
         let all = self.net_nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
         let net = Net::at(&sys, all, t, &self.view.positions);
         self.net = net.status(&sys, &self.view.positions, self.view.ship_pos, &self.ship.spec().comm).map(|s| (s.lag, net.nodes[s.via].name.clone()));
-        if self.net.is_some() {
-            self.net_seen = Some(t);
-        }
     }
 
     pub fn now(&self) -> f64 {

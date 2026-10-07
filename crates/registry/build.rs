@@ -67,8 +67,7 @@ fn main() {
         writeln!(out, "            {pat} => self.{}.push(serde_norway::from_str::<{name}>(text)?),", plural(&snake(&kinds[0]))).unwrap();
     }
     out.push_str("            _ => return Ok(false),\n        }\n        Ok(true)\n    }\n\n    /// Each record's references: (the record's key, what it names, the kinds that may be named).\n    pub fn refs(&self, f: &mut dyn FnMut(&str, &str, &'static [&'static str])) {\n");
-    for (name, kinds) in &records {
-        let _ = name;
+    for (_, kinds) in &records {
         writeln!(out, "        for r in &self.{} {{\n            let key = r.identity.key.as_str();\n            r.refs(&mut |to, kinds| f(key, to, kinds));\n        }}", plural(&snake(&kinds[0]))).unwrap();
     }
     out.push_str("    }\n}\n");

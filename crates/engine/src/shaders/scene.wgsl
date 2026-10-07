@@ -3,7 +3,7 @@ struct Globals {
     view_proj: mat4x4<f32>,
     // Low-res pixel coords -> clip.
     hud_proj: mat4x4<f32>,
-    // Camera-relative world -> the shadow map's two cascades (near, far).
+    // Camera-relative world -> the shadow map's near and far cascades (the tight and ground ones below).
     shadow_near: mat4x4<f32>,
     shadow_far: mat4x4<f32>,
     // x, y: a texel of each cascade (metres); z: shadows on (1) or not;

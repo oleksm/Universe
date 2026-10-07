@@ -476,7 +476,7 @@ pub fn survey(sys: &StarSystem, p: DVec3, t: f64, sensor: Survey) -> Vec<Found> 
 
 /// A belt rock as a body among the system's: its shape and make-up from its
 /// seed, its orbit round the star.
-pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> crate::system::Body {
+pub fn rock_body(sys: &StarSystem, patch: Patch, _k: usize, rock: &BeltRock) -> crate::system::Body {
     let mut rng = Rng::new(rock.seed);
     let structure = if rock.diameter < 2.0 * rocks().rubble_above { Structure::Monolith } else { Structure::Rubble };
     let shape = crate::belt::RockShape::new(rock.diameter / 2.0, &mut rng);
@@ -485,7 +485,6 @@ pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> c
     let mass = density * shape.volume();
     let day = (rng.range(2.3f64.ln(), 30.0f64.ln())).exp() * crate::units::HOUR;
     let tilt = glam::DQuat::from_rotation_arc(DVec3::Y, rng.unit_vector());
-    let _ = k;
     let name = format!("{} {}", belt_name(&sys.belts[patch.belt as usize]), designation(rock.seed));
     let mut b = crate::system::natural(name, BodyKind::Asteroid, mass, shape.radius, day, rock.class.color(), None, 0, rock.orbit.clone(), tilt);
     b.rail.attracts = false;

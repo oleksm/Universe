@@ -15,7 +15,6 @@ use universe_services::records::{Deal, TradeRecord};
 /// What a new settler starts with (credits).
 pub const SETTLER_CREDITS: f64 = 3000.0;
 
-/// Markets put out their price boards this often (s), over the hypernet.
 /// How often a market publishes its board (s): its clock's period (`clock.market`).
 pub fn board_every() -> f64 {
     crate::clocks::period(universe_world::registry::ClockKey::Market)
