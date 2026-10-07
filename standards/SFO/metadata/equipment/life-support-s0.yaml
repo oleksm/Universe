@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.life-support.s0
+  name: "Cabin air pack"
+  maker: org.hadley
+  revision: draft
+  slot: life_support
+  description: "Open-loop air for two for a day: an oxygen bottle, lithium hydroxide scrubber canisters, fans and a cabin cooler; nothing recovered. For a commuter or a lifeboat, not a voyage."
+size_class: 1
+fits: mount.life-support-s1
+physical:
+  mass: 150
+  volume: 0.29
+  length: 0.8
+  width: 0.6
+  height: 0.6
+needs:
+  power: 2000
+built_of:
+  parts: life-support-s0
+  list:
+    - { code: LSS0-01, name: "Oxygen bottle", description: "A composite bottle of 2.2 kg of oxygen at 300 bar: two people for a day.", mass: 45, length: 0.54, width: 0.4, height: 0.4, item: stock.cfc-pl-3, quantity: 51.75, module: module.machining-centre }
+    - { code: LSS0-02, name: "Scrubber canisters and fans", mass: 60, length: 0.59, width: 0.44, height: 0.44, item: good.pumps, quantity: 60, module: module.assembly-shop }
+    - { code: LSS0-03, name: "Cabin cooler", mass: 30, length: 0.47, width: 0.35, height: 0.35, item: good.heat-pumps, quantity: 30, module: module.assembly-shop }
+    - { code: LSS0-04, name: "Controller", mass: 15, length: 0.37, width: 0.28, height: 0.28, item: good.electronics, quantity: 15, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: life_support
+  water_recovery: 0.0
+  air_recovery: 0.0
+  persons: 2
+  cooling: 400
+  air_store: 2.2
+  water_store: 5
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two people breathe 1.8 kg of oxygen a day (need.air) and give off 2.2 kg of carbon dioxide, which 2.5 kg of lithium hydroxide takes up; the bottle, canisters, fans and a 400 W cooler (two people's 137 W each and their displays) come to 150 kg. A capsule's open-loop pack, from memory of Apollo's and the station's figures. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

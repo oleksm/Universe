@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.methalox.1t
+  name: "Methalox tank 1 t"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 1.2 m3 ball holding 1,000 kg of methalox: a small craft's propellant."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 80
+  volume: 2.86
+  length: 1.42
+  width: 1.42
+  height: 1.42
+built_of:
+  parts: tank-methalox-1t
+  list:
+    - { code: TKME1T-01, name: "Shell", mass: 56, length: 1.26, width: 1.26, height: 1.26, item: stock.al6061-pl-5, quantity: 64.4, module: module.welding-bay }
+    - { code: TKME1T-02, name: "Insulation", mass: 16, length: 0.83, width: 0.83, height: 0.83, item: stock.mli-fl, quantity: 16, module: module.assembly-shop }
+    - { code: TKME1T-03, name: "Fittings and gauging", mass: 8, length: 0.659, width: 0.659, height: 0.659, item: stock.st304-pl-3, quantity: 9.2, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 1000
+  holds: material.methalox
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "methalox at 830 kg/m3: 1.2 m3 as a ball 1.32 m across; the tank 8% of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

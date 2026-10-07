@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.life-support.cartridge
+  name: "Scrubber cartridge"
+  maker: org.hadley
+  revision: draft
+  slot: life_support
+  description: "A lithium hydroxide canister with a fan: takes up two people's carbon dioxide for twelve hours, then is swapped. No oxygen of its own: fit a bottle (tank.oxygen) for the air they breathe."
+size_class: 1
+fits: mount.life-support-s1
+physical:
+  mass: 20
+  volume: 0.036
+  length: 0.4
+  width: 0.3
+  height: 0.3
+needs:
+  power: 200
+built_of:
+  parts: life-support-cartridge
+  list:
+    - { code: LSC1-01, name: "Lithium hydroxide canister", mass: 12, length: 0.337, width: 0.253, height: 0.253, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
+    - { code: LSC1-02, name: "Fan and housing", mass: 8, length: 0.295, width: 0.221, height: 0.221, item: stock.al6061-pl-5, quantity: 9.2, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: life_support
+  water_recovery: 0
+  air_recovery: 0
+  persons: 2
+  cooling: 0
+life: 473364000
+basis:
+  - { of: [function, physical, needs], tier: invented, review: true, note: "Two people give off 2.2 kg of carbon dioxide a day (need.air); 1.3 kg of lithium hydroxide takes up twelve hours of it; with its canister and fan, 20 kg. Apollo's canisters, from memory. Review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.methalox.0p5t
+  name: "Methalox tank 0.5 t"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 0.6 m3 ball holding 500 kg of methalox: a small craft's propellant."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 40
+  volume: 1.52
+  length: 1.15
+  width: 1.15
+  height: 1.15
+built_of:
+  parts: tank-methalox-0p5t
+  list:
+    - { code: TKME0P5T-01, name: "Shell", mass: 28, length: 1.02, width: 1.02, height: 1.02, item: stock.al6061-pl-5, quantity: 32.2, module: module.welding-bay }
+    - { code: TKME0P5T-02, name: "Insulation", mass: 8, length: 0.673, width: 0.673, height: 0.673, item: stock.mli-fl, quantity: 8, module: module.assembly-shop }
+    - { code: TKME0P5T-03, name: "Fittings and gauging", mass: 4, length: 0.534, width: 0.534, height: 0.534, item: stock.st304-pl-3, quantity: 4.6, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 500
+  holds: material.methalox
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "methalox at 830 kg/m3: 0.6 m3 as a ball 1.05 m across; the tank 8% of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
