@@ -16,8 +16,7 @@ pub enum Process {
     None,
 }
 
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Material {
     pub key: String,
     pub name: String,
@@ -27,7 +26,6 @@ pub struct Material {
     pub energy: f64,
     pub process: Process,
     /// The kind of goods it trades as ("": not traded).
-    #[serde(default)]
     pub goods: String,
     pub note: String,
 }

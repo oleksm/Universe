@@ -14,3 +14,5 @@
   nothing reads. The world's seed is the registry's `seeding.galaxy`, required (no 1984 fallback).
 - Eight generated RON files nothing reads (bodies, brands, celestial, galaxy, industry,
   rock_classes, settlements, standards): the Scientist is asked to stop writing them.
+- RON-era serde derives dropped from types now built only from records (`Module`, `Does`,
+  `Material`, `GoodsKind`, `HullDef`, `ThrusterDef`): nothing deserializes them any more.

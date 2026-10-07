@@ -7,13 +7,11 @@
 
 use std::collections::HashMap;
 
-use serde::Deserialize;
 
 use crate::content::{content, Handle};
 
 /// A kind of goods: one of the registry's market categories.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct GoodsKind {
     pub key: String,
     pub name: String,

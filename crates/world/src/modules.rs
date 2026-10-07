@@ -11,7 +11,7 @@
 use serde::Deserialize;
 
 /// What a module does, with its numbers.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Does {
     /// Makes power (W) from the material it `burns`, at `efficiency` (the rest heat).
     PowerPlant { output: f64, efficiency: f64, burns: String },
@@ -63,11 +63,9 @@ pub enum Does {
     /// than `interlock` m to a body's highest ground (0: it has none).
     NavComputer {
         features: Vec<Feature>,
-        #[serde(default)]
         interlock: f64,
         /// Its hyperdrive governor (1/s): held to this times the distance to
         /// the nearest surface (slow close to bodies; 0: none).
-        #[serde(default)]
         governor: f64,
     },
 }
@@ -219,13 +217,11 @@ impl Brand {
 }
 
 /// A module of the loaded content.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Module {
     pub key: String,
     pub name: String,
     /// Who makes it (brands come later; empty: unbranded).
-    #[serde(default)]
     pub brand: String,
     pub does: Does,
     /// Its size class (1..4): it fits a slot at least as big.
@@ -234,15 +230,12 @@ pub struct Module {
     pub mass: f64,
     pub volume: f64,
     /// Power it draws while working (W); a power plant's is its output (`does`).
-    #[serde(default)]
     pub power: f64,
     /// Price (credits).
     pub price: f64,
     /// The mount it's built to (SFO 19), by key; its own size (m: length, width,
     /// height), where its record says.
-    #[serde(default)]
     pub fits: Option<String>,
-    #[serde(default)]
     pub dims: Option<[f64; 3]>,
 }
 

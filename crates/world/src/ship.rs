@@ -155,13 +155,11 @@ pub struct Thruster {
 }
 
 /// A hull as the registry has it: its thrusters by nozzle name.
-#[derive(Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct HullDef {
     key: String,
     name: String,
     /// Who builds it ("": a design of one's own).
-    #[serde(default)]
     brand: String,
     shape: String,
     /// The frame alone (kg), and its price (credits).
@@ -175,15 +173,12 @@ pub(crate) struct HullDef {
     drag_area: f64,
     hull_strength: f64,
     /// A hold built into the frame (kg, m³): an ore bay, beside any racks.
-    #[serde(default)]
     bay: (f64, f64),
     /// The mount each slot offers (SFO 19: slot, mount key), where its record says.
-    #[serde(default)]
     mounts: Vec<(String, String)>,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, PartialEq)]
 struct ThrusterDef {
     nozzle: String,
     slot: String,
