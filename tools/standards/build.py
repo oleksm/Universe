@@ -27,6 +27,7 @@ import sys
 
 import sys
 import yaml
+import copy
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lib import jet_heat, plant_waste, JET_KINDS
@@ -2578,6 +2579,54 @@ for gd in goods:
 report("goods", "Goods: where each comes from and goes", "Each good: where it comes from and where it goes. A rock is dug; a raw good is won from a rock; consumables and fuel come from outside; the rest come out of one module and go into another, or out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
 
 
+
+# ---------------------------------------------------------------- registers: a page for every kind
+# (Record kinds the page had no view for: shown as written, each group a table with its schema's descriptions.)
+REGISTERS, REGISTER_GROUPS, KEY_PAGES = [], {}, {}
+_REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "SFO/schema/mount.schema.yaml", "SFO 19"),
+        ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
+        ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),
+        ("structures", "Structures", "SFO", os.path.join("SFO", "metadata", "structures"), "SFO/schema/structure.schema.yaml", None),
+        ("rules", "Rules of the record", "SFO", os.path.join("SFO", "metadata", "rules"), "SFO/schema/rule.schema.yaml", None),
+        ("needs", "Needs", "People", os.path.join("People", "metadata", "needs"), "People/schema/need.schema.yaml", None),
+        ("professions", "Professions", "People", os.path.join("People", "metadata", "professions"), "People/schema/profession.schema.yaml", None),
+        ("clocks", "Clocks", "Engine", os.path.join("Engine", "metadata", "scheduling"), "Engine/schema/clock.schema.yaml", None),
+        ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None)]
+for _kind, _title, _root, _dir, _schema, _std in _REG:
+    _recs = []
+    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "*.yaml"))):
+        _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
+        _idn = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
+        _r["slug"], _r["key"], _r["name"], _r["file"] = os.path.basename(_f)[:-5], _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
+        _recs.append(_r)
+        if _r["key"]:
+            KEY_PAGES[_r["key"]] = f"x:{_kind}:{_r['slug']}"
+    _sch = flatten_schema(yaml.safe_load(open(os.path.join(TREE, _schema), encoding="utf-8")), os.path.join(TREE, _schema))
+    _groups = {}
+    for _g, _d in (_sch.get("properties") or {}).items():
+        if "$ref" in _d:
+            _d = flatten_schema(copy.deepcopy(V.resolve(_d["$ref"], os.path.join(TREE, _schema))[0]), os.path.join(TREE, _schema))
+        _props = _d.get("properties") or ((_d.get("items") or {}).get("properties") if isinstance(_d.get("items"), dict) else None) or {}
+        _groups[_g] = {"description": _d.get("description", ""), "props": {k_: (v_.get("description", "") + (f" ({v_['x-unit']})" if v_.get("x-unit") else "")) for k_, v_ in _props.items() if isinstance(v_, dict)}, "unit": _d.get("x-unit", "")}
+    REGISTER_GROUPS[_kind] = _groups
+    REGISTERS.append({"kind": _kind, "title": _title, "root": _root, "standard": _std, "records": _recs, "about": _sch.get("description", "")})
+# (Every record with a page already: its key to the page's key, so a register's reference becomes a link.)
+def _key_of_file(rel):
+    try:
+        _r = yaml.safe_load(open(os.path.join(TREE, rel), encoding="utf-8")) or {}
+    except Exception:
+        return ""
+    _i = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
+    return str(_i.get("key", "")) if isinstance(_i, dict) else ""
+for _lst, _pre in ((equipment, "eq:"), (modules, "mod:"), (goods, "good:"), (mill_stock, "stock:"), (hulls, "hull:"), (materials, "mat:")):
+    for _e in _lst:
+        _k = _key_of_file(_e["file"])
+        if _k:
+            KEY_PAGES[_k] = _pre + _e["slug"]
+for _el in elements: KEY_PAGES["element." + str((_el.get("identity") or {}).get("symbol", "")).lower()] = "el:" + str((_el.get("identity") or {}).get("symbol", ""))
+for _mk in makers: KEY_PAGES[str(_mk.get("key", ""))] = "mk:" + str(_mk.get("key", ""))
+KEY_PAGES.pop("", None)
+
 # 8. Confidence: where every number comes from.
 # (Elements and materials are from published sources, named in their files; a process's amounts are
 # its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
@@ -3074,6 +3123,9 @@ def write_html():
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
+        "registers": REGISTERS,
+        "register_groups": REGISTER_GROUPS,
+        "key_pages": KEY_PAGES,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,
