@@ -19,12 +19,14 @@ pub fn consts() -> String {
          const GEOMORPH_SPLIT: f32 = {};\n\
          const MICRO_PERIOD: f32 = {:.1};\n\
          const MAX_LIGHT: f32 = {:.1};\n\
+         const ADAPT: f32 = {};\n\
          const SPEC_MIPS: u32 = {}u;\n\n",
         1.0 / SHADOW_SIZE as f64,
         GLOBE_SIZE as f64,
         GEOMORPH_SPLIT,
         crate::frame::MICRO_PERIOD,
         crate::frame::MAX_LIGHT,
+        crate::frame::ADAPT,
         crate::env::SPEC_MIPS,
     )
 }

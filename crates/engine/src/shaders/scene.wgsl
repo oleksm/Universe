@@ -184,7 +184,8 @@ struct MeshIn {
 };
 // (A patch's origin wrapped to the fine grain's period (m) rides in c0.w, c1.w, c2.w.)
 
-const EXPOSURE: f32 = 0.3;
+// How the eye adapts to the planet's light on a face (the planet's own `ADAPT`).
+const FILL_ADAPT: f32 = 0.3;
 
 fn view_factor(cos_b: f32, s_in: f32) -> f32 {
     let s = min(s_in, 1.0);
@@ -196,7 +197,7 @@ fn view_factor(cos_b: f32, s_in: f32) -> f32 {
 fn fill(v: MeshIn, n: vec3<f32>) -> vec3<f32> {
     var k2 = 0.0;
     if (v.refl_dir.w > 0.0) {
-        k2 = max(pow(v.refl_color.w * view_factor(dot(n, v.refl_dir.xyz), v.refl_dir.w), EXPOSURE) - 0.12, 0.0) / 0.88;
+        k2 = max(pow(v.refl_color.w * view_factor(dot(n, v.refl_dir.xyz), v.refl_dir.w), FILL_ADAPT) - 0.12, 0.0) / 0.88;
     }
     return k2 * v.refl_color.rgb;
 }
