@@ -652,8 +652,8 @@ fn exact_of(i: &Interior) -> Option<(&'static str, String)> {
     let f = |v: &[f32]| v.iter().map(|x| format!("{x:.2}")).collect::<Vec<_>>().join(", ");
     if i.entry_targets {
         let t = i.plan.targets.clone().unwrap_or_default();
-        let v = [t.delta_v.map_or(0.0, |v| v / 1000.0), t.crew.unwrap_or(0.0), t.cargo.map_or(0.0, |v| v / 1000.0)];
-        return Some(("TARGETS: DELTA-V KM/S, CREW, CARGO T (0: NOT ASKED)", v.iter().map(|x| format!("{x}")).collect::<Vec<_>>().join(", ")));
+        let v = [t.delta_v.map_or(0.0, |v| v / 1000.0), t.crew.unwrap_or(0.0), t.cargo.map_or(0.0, |v| v / 1000.0), t.trip.unwrap_or(0.0)];
+        return Some(("TARGETS: DELTA-V KM/S, CREW, CARGO T, LONGEST TRIP H (0: NOT ASKED)", v.iter().map(|x| format!("{x}")).collect::<Vec<_>>().join(", ")));
     }
     match i.pick? {
         Hover::Module(n) => {
@@ -677,8 +677,8 @@ fn set_exact(i: &mut Interior, v: &[f32]) -> String {
     if i.entry_targets {
         i.entry_targets = false;
         let get = |k: usize, scale: f64| v.get(k).map(|&x| f64::from(x) * scale).filter(|&x| x > 0.0);
-        let t = Targets { delta_v: get(0, 1000.0), crew: get(1, 1.0), cargo: get(2, 1000.0) };
-        let any = t.delta_v.is_some() || t.crew.is_some() || t.cargo.is_some();
+        let t = Targets { delta_v: get(0, 1000.0), crew: get(1, 1.0), cargo: get(2, 1000.0), trip: get(3, 1.0) };
+        let any = t.delta_v.is_some() || t.crew.is_some() || t.cargo.is_some() || t.trip.is_some();
         i.plan.targets = any.then_some(t);
         return if any { "TARGETS SET: SEE THE BUDGETS".into() } else { "TARGETS CLEARED".into() };
     }
@@ -1059,7 +1059,17 @@ struct Targets {
     delta_v: Option<f64>,
     crew: Option<f64>,
     cargo: Option<f64>,
+    /// Its longest trip (h): a short hop needs no berths, galley or head.
+    #[serde(default)]
+    trip: Option<f64>,
 }
+
+/// The trip lengths (h) past which those aboard need a head, a galley, berths
+/// (invented thresholds, to review: an airliner's head, a working day's meals, a
+/// night's sleep).
+const NEEDS_HEAD: f64 = 2.0;
+const NEEDS_GALLEY: f64 = 8.0;
+const NEEDS_BERTHS: f64 = 16.0;
 
 impl Plan {
     /// The gravity it's designed to land in (m/s²).
@@ -4460,9 +4470,19 @@ struct Camera {
 
 impl Camera {
     fn of(i: &Interior, h: &Hull, size: Vec2) -> Self {
-        let middle = (h.lo + h.hi) * 0.5;
+        // (No hull: the design itself framed, once it has something in it; else the
+        // room the studio gives it.)
+        let (lo, hi) = match hull_of(&i.plan) {
+            None if !i.plan.blocks.is_empty() || !i.plan.beams.is_empty() => {
+                let a = Assembly { blocks: i.plan.blocks.clone(), beams: i.plan.beams.clone(), plates: i.plan.plates.clone() };
+                let (lo, hi) = a.bounds();
+                (lo - Vec3::splat(1.0), hi + Vec3::splat(1.0))
+            }
+            _ => (h.lo, h.hi),
+        };
+        let middle = (lo + hi) * 0.5;
         let target = i.target.unwrap_or(middle);
-        let radius = (h.hi - h.lo).length() * 0.5;
+        let radius = (hi - lo).length() * 0.5;
         // (A flat view: from far off with a long lens, so near enough flat.)
         let flat = if i.view > 0 { 25.0 } else { 1.0 };
         let focal = size.y * 0.5 / (FOV * 0.5).tan() * flat;
@@ -5012,6 +5032,10 @@ fn target_lines(t: &Targets, placed: &[(&Block, &Fitted, String, Fields, f64)], 
         let gap = if need.is_empty() { "MET".to_string() } else { need.join(", ") };
         out.push((format!("TARGET CREW {n:.0}: SEATS {seats:.0}, LIFE SUPPORT KEEPS {keeps:.0}; {gap}"), seats >= n && keeps >= n));
     }
+    if let Some(h) = t.trip {
+        let needs: Vec<&str> = [(NEEDS_HEAD, "A HEAD"), (NEEDS_GALLEY, "A GALLEY"), (NEEDS_BERTHS, "BERTHS")].iter().filter(|n| h > n.0).map(|n| n.1).collect();
+        out.push((format!("TARGET TRIP {h:.1} H: {}", if needs.is_empty() { "NO HEAD, GALLEY OR BERTHS NEEDED".to_string() } else { format!("NEEDS {}", needs.join(", ")) }), true));
+    }
     out
 }
 
@@ -5255,10 +5279,15 @@ fn budget(i: &Interior) -> Budget {
             lines.push((format!("BALANCE  ITS LIFT IS {off:.1} M OFF ITS MIDDLE OF MASS: IT TIPS"), false));
         }
     }
-    let supply: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
+    // (Batteries supply too, up to their rate, for as long as they hold: what they
+    // store over what's drawn, when nothing else supplies it.)
+    let plants: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
+    let (rate, stored): (f64, f64) = of("battery").fold((0.0, 0.0), |(r, s), p| (r + num(&p.3, "rate"), s + num(&p.3, "stores")));
+    let supply = plants + rate;
     let draw: f64 = placed.iter().map(|p| p.4).sum();
     let gear: f64 = of("switchgear").map(|p| num(&p.3, "carries")).sum();
-    lines.push((format!("POWER {} DRAWN OF {}{}", si(draw, "W"), si(supply, "W"), if gear > 0.0 { format!(", SWITCHGEAR {}", si(gear, "W")) } else { String::new() }), draw <= supply && (gear == 0.0 || gear >= supply)));
+    let lasts = if draw > plants && stored > 0.0 { format!(", BATTERIES LAST {:.1} H", stored / (draw - plants) / 3600.0) } else { String::new() };
+    lines.push((format!("POWER {} DRAWN OF {}{lasts}{}", si(draw, "W"), si(supply, "W"), if gear > 0.0 { format!(", SWITCHGEAR {}", si(gear, "W")) } else { String::new() }), draw <= supply && (gear == 0.0 || gear >= supply)));
     // (Heat, as the registry's Budgets reckon it: a plant's loss; each drive's,
     // lift's and thrusters' jet power (half its thrust times its exhaust speed, a
     // thruster block four nozzles) at full burn, times the share its record says
@@ -5385,13 +5414,15 @@ fn budget(i: &Interior) -> Budget {
                 faults.push(format!("{}'S SEATS ARE RATED {:.1} G; IT FEELS {:.1} G", p.1.name, num(&p.3, "g_rating") / STANDARD_G, worst / STANDARD_G));
             }
         }
-        let berths = persons("berths");
-        if crew > berths {
+        // (A trip said shorter than a need's threshold: that need not asked.)
+        let trip = i.plan.targets.as_ref().and_then(|t| t.trip).unwrap_or(f64::MAX);
+        let berths = persons("berths") + 0.0;
+        if crew > berths && trip > NEEDS_BERTHS {
             faults.push(format!("CREW {crew:.0}, BERTHS FOR {berths:.0}"));
         }
-        for (k, what) in [("galley", "GALLEY"), ("head", "HEAD")] {
-            let n = persons(k);
-            if aboard > n {
+        for (k, what, past) in [("galley", "GALLEY", NEEDS_GALLEY), ("head", "HEAD", NEEDS_HEAD)] {
+            let n = persons(k) + 0.0;
+            if aboard > n && trip > past {
                 faults.push(format!("{aboard:.0} ABOARD, {what} FOR {n:.0}"));
             }
         }
@@ -5402,7 +5433,7 @@ fn budget(i: &Interior) -> Budget {
         }
         let suits = persons("suit_locker");
         if crew > suits {
-            faults.push(format!("CREW {crew:.0}, SUITS FOR {suits:.0}"));
+            faults.push(format!("CREW {crew:.0}, SUITS FOR {:.0}", suits + 0.0));
         }
         if of("landing_gear").count() > 0 && of("altimeter").count() == 0 {
             faults.push("IT LANDS BLIND: NO ALTIMETER".into());
