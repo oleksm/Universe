@@ -2,8 +2,8 @@
 //! plan of one deck (the hull's cross-section at its height, a grid, the
 //! floors and walls), and below it the ship from the side with its decks.
 //! Floors and walls are trimmed to the hull, so they follow its curves; a
-//! wall's segments can be bent into arcs. Plans last the session (not saved),
-//! one per hull; see `world::deckplan`.
+//! wall's segments can be bent into arcs. Plans are kept with the hull's
+//! design (`interiors/<hull>.decks.json`), one per hull; see `world::deckplan`.
 //!
 //! Worked with the mouse: the toolbar along the top (each button's key too),
 //! drawing and picking on the plan.

@@ -34,7 +34,6 @@ use universe_world::units::DAY;
 use crate::land::{LandOffice, Run};
 use crate::ledger::{Asset, Ledger, Party};
 
-/// The economy steps this often (game s).
 /// The economy's step (s): its clock's period (`clock.economy`).
 pub fn step() -> f64 {
     static STEP: std::sync::OnceLock<f64> = std::sync::OnceLock::new();

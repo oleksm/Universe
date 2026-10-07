@@ -8,3 +8,9 @@
   set_layout), doubled ones merged, and counts that had gone stale corrected (four cascades,
   four cloud levels; `look2.w` is the world's globe layer).
 - With the lab: the dead cloud and noise functions in its shader files, on `planet`.
+- Stale docs corrected: deck plans are kept with the hull's design (they said "not saved");
+  `App` fields carried comments of fields long gone; content's module doc described the RON-pack
+  era (most content is the registry's records now); error messages named `standards.ron`, which
+  nothing reads. The world's seed is the registry's `seeding.galaxy`, required (no 1984 fallback).
+- Eight generated RON files nothing reads (bodies, brands, celestial, galaxy, industry,
+  rock_classes, settlements, standards): the Scientist is asked to stop writing them.

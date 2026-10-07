@@ -1,11 +1,10 @@
-//! Content: what the world is made of — hulls, kinds of goods, ores,
-//! recipes, kinds of place, how markets are made up; modules, brands and
-//! shapes as they move in — as data, not code (see `docs/content.md`).
-//!
-//! Content comes in **packs**: folders of RON files. The base pack
-//! (`content/base/`) is built into the binary; override packs, the folders
-//! named in `UNIVERSE_CONTENT` (`:`-separated, in order), add entries or
-//! replace them by key. It's loaded once, validated, and shared read-only:
+//! Content: what the world is made of — hulls, modules, the stock catalogue,
+//! recipes, shapes — as data, not code. Most of it is read from the registry's
+//! records (`registry`, generated types); what the registry doesn't hold yet
+//! comes in **packs**: folders of RON files (the base pack, `content/base/`:
+//! shapes, prices, aliases, the sheet), built into the binary; override packs,
+//! the folders named in `UNIVERSE_CONTENT` (`:`-separated, in order), add
+//! entries or replace them by key. It's loaded once, validated, and shared read-only:
 //! [`content()`]. Entries are reached by typed [`Handle`]s; what's stored and
 //! sent is their **key** (`hull.drover`), never a position in a list, and
 //! renamed keys resolve through the packs' aliases. The loaded content has
@@ -436,14 +435,14 @@ impl Content {
         let (bodies, standards): (Registry<crate::standards::Body>, Registry<crate::standards::Standard>) = (Registry::build(bodies)?, Registry::build(standards)?);
         for (_, s) in standards.iter() {
             let Some(b) = resolve(&bodies, &aliases, &s.body) else {
-                return Err(format!("standards.ron '{}': no body '{}'", s.key, s.body));
+                return Err(format!("standard '{}': no body '{}'", s.key, s.body));
             };
             if bodies.get(b).branch(&s.branch).is_none() {
-                return Err(format!("standards.ron '{}': its body has no branch {}", s.key, s.branch));
+                return Err(format!("standard '{}': its body has no branch {}", s.key, s.branch));
             }
             for r in &s.refs {
                 if resolve(&standards, &aliases, r).is_none() {
-                    return Err(format!("standards.ron '{}': refers to no standard '{r}'", s.key));
+                    return Err(format!("standard '{}': refers to no standard '{r}'", s.key));
                 }
             }
         }
