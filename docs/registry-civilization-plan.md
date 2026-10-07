@@ -91,7 +91,7 @@ This is the hinge. Until a module needs people, a population is only mouths.
 | Needs | Have | To describe |
 |---|---|---|
 | Digging | ores as goods, the game's mining ships | mines and quarries on the ground, an ice mine; what a mine leaves |
-| Metals | steel and aluminium, rock to plate | copper, titanium, the rest of the 24 materials: 26 processes are parked waiting for their machines |
+| Metals | steel and aluminium, rock to plate | copper, titanium, the rest of the 24 materials: their steps are module recipes where machines exist (processes retired) |
 | Chemicals | fertiliser | acids, alkalis, plastics, fuels: a chemical works and its recipes |
 | Building materials | nothing | concrete, glass, brick, timber or its stand-in |
 | Electronics and machines | market categories only | a fab, an electronics works, a machine works; the made things as items |
@@ -266,7 +266,7 @@ wet world's rock. The fertiliser works' power is now worked out (15.8 MW) and no
 
 **Left for later in Making:** the food by-products as feed (their protein is found; the feed
 mill's mix is still a guess); phosphate and potash fertiliser; paper; the other metals (the 26
-parked processes); electronics and machines; the works that build works; wear.
+retired processes' steps as module recipes); electronics and machines; the works that build works; wear.
 
 **3. Making, third step: four more metals (2026-10-04).**
 
@@ -280,7 +280,7 @@ parked processes); electronics and machines; the works that build works; wear.
 The metals come as elements, as the alloying additions always have: winning copper or titanium
 from ore waits on what the worlds are made of. Copper and titanium scrap are melted again;
 stainless scrap has no taker yet. Every figure for the three new works is a guess or worked out
-from memory, marked. The four parked processes these stand in for (three alloyings, wire drawing)
+from memory, marked. The four retired processes these stand in for (three alloyings, wire drawing)
 are still on file: a facility at Port Trethi names one, and facilities are the engine's to change.
 
 **3. Making, fourth step: electronics and machines (2026-10-04).** Figures: `standards/sources/research_machines.json`.
@@ -310,7 +310,7 @@ doctor, a lamp and a motor.
 **Not done, for a later batch:**
 
 - **People and work:** crews on modules (asked of the engine).
-- **Making:** the food by-products as feed; phosphate and potash; paper; the 26 parked processes
+- **Making:** the food by-products as feed; phosphate and potash; paper; the retired processes' steps
   not yet replaced; the works that build works; wear (a `life` on goods, parts and modules, asked
   of the engine); the hydroponic hall's lamps, climate plant and pumps as parts (a part cannot be
   made from a good; lamps, heat pumps and pumps are goods).

@@ -10,19 +10,26 @@ it (`docs/standards.md` for what a standard is).
 
 ```
 standards/
-  Engine/                       how the engine governs itself: schema/clock.schema.yaml, metadata/scheduling/<clock>.yaml
-  SFO/                          a body: its folder named after its prefix
-    schema/                     the schemas for the editor
+  common.schema.yaml            shared definitions: key, physical, made_from, basis, revision, mark, batch
+  dictionary.schema.yaml        the registry's shared words (enums with x-values)
+  organisation.schema.yaml      companies, standards bodies, administrations, bands
+  root.schema.yaml              a root's own record
+  changes.yaml                  the tracker: every change to a record (tools/standards/tracker.py)
+  game-keys.yaml                the registry's keys against the game's old names
+  sources/                      research_*.json: cited figures with their sources and quotes
+  SFO/                          the Standards Foundry Office: made things
+    schema/                     one schema per record kind (equipment, hull, part, module, good, mill-stock, mount, building, market, structure, gate, standard)
     icons/                      <a record's file name>.svg: its icon (24 x 24 line art, stroke currentColor)
     metadata/
       SFO.yaml                  who it is
-      0001-mining-ship.yaml     a record: NNNN-<slug>.yaml, its id "SFO 1"
-      elements/                 the chemical elements, under SFO 6 (its `records: elements`)
-        026-iron.yaml           NNN-<name>.yaml, its atomic number; to schema/element.schema.yaml
-      materials/                the materials, under SFO 5 (its `records: materials`)
-        fused-silica.yaml       <name>.yaml; to schema/material.schema.yaml
-      processes/                material processes, under SFO 7 (its `records: processes`)
-        rolling.yaml            <name>.yaml; to schema/process.schema.yaml
+      0001-mining-ship.yaml     a standard: NNNN-<slug>.yaml, its id "SFO 1"; a standard may own a records folder (`records: elements`)
+      elements/ materials/ goods/ stock/ mill-stock/ modules/ equipment/ mounts/ hulls/ parts/<hull or equipment>/ structures/ gates/ buildings/ markets/
+  MakerHouse/metadata/makers/   the companies (organisation.schema.yaml)
+  LocalAdministration/          administrations and their settlements: zones, parcels, streets, power lines, facilities (schema/, metadata/administrations/<system>/<settlement>/)
+  Celestial/                    the seeded sky: systems and bodies, small bodies, rock classes and units, deposit types, vocabulary, sights, seeding; surveys/ (installed worlds, tools/standards/world_install.py)
+  People/                       needs and professions
+  Dogma/                        the physical laws and measures the engine's constants are generated from
+  Engine/                       how the engine governs itself: metadata/scheduling/<clock>.yaml
 ```
 
 - **Numbers are permanent:** `SFO 1` stays `SFO 1` whatever it's later filed under (as ISO
@@ -44,9 +51,7 @@ standards/
 | `text` | why, for people |
 | `licence` | `open`, or `{fee: 500}` |
 
-Only `version`, `title`, `status`, `scope`, `text`, `licence` are needed; write what's
-known, leave the rest out. Ordinary case (the game shows capitals).
+`identity` (key) and `title` are required; `parent` files it under another standard; `records` names the folder of records it owns; write what's known, leave the rest out. Ordinary case (the game shows capitals).
 
 With a problem the build lists them all, the page shows them, and the game's content is left as
-it was. Generated, not to edit by hand: `standards/index.html`, `content/base/bodies.ron`,
-`content/base/standards.ron`.
+it was. Generated, not to edit by hand: `standards/index.html`, the eight `content/base/*.ron` files that start `// GENERATED` (bodies, brands, celestial, galaxy, industry, rock_classes, settlements, standards), and the engine's registry types and Dogma constants (crates/registry/build.rs, crates/physics/build.rs). Hand-kept beside them: aliases, prices, shapes, sheet.

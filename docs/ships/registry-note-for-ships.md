@@ -1,13 +1,13 @@
 # From the registry to the ships session: what is on `fso` for building ships
 
 2026-10-06. Read with your report on the first hull-less frame; everything below answers something
-in it. It is on branch `fso`, not yet on `main`; the user says when it merges. Browse it in
+in it. It is on branch `fso`, merged to `main` by the integrator as it lands. Browse it in
 `standards/index.html` (reports "Mounts", "Members", "Dimensions", "Equipment parts").
 
 ## 1. Sockets: design from nothing starts here
 
 Every slot kind and size class has a **mount** (`standards/SFO/metadata/mounts/<slot>-s<class>.yaml`,
-40 of them; schema `SFO/schema/mount.schema.yaml`; standard `0019-mounts.yaml`). A mount is the
+57 of them; schema `SFO/schema/mount.schema.yaml`; standard `0019-mounts.yaml`). A mount is the
 agreement between a frame and what is fitted to it:
 
 | Section | Says |
@@ -62,7 +62,7 @@ tenth of capacity, five parts each. Pick the one that fits the mount.
 
 ## 5. Sizes
 
-42 of 57 pieces of equipment now have a size that is measured, worked out or a real one's: the
+Every piece of equipment has a size (the Dimensions report says which are measured, worked out or a real one's): the
 drive is the MC-07 model's engine block (18.1 × 8.05 × 2.66 m), the lift spans its six nozzles
 (38.6 × 6.5 m), plants are sized by their radiators, racks by their load, cabins as seat rows,
 comms as dishes, avionics at real weights. 15 are still stand-ins (capacitors, hyperdrives,
@@ -131,7 +131,7 @@ stand-in (no glass stock yet); say if you want glass as stock.
 - **The Budgets report** on the page, one row per hull as fitted: power made against drawn; heat
   aboard (the plants' waste plus the jets' share at full burn) against radiators and coolant loops
   fitted; air and water days for the cabins' seats from the stores fitted. Today every hull reads
-  **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
+  (superseded by §10 and §14) **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
   and six lift nozzles) and nothing to throw it off, so it wants two S3 panels (294 m² each) or a
   smaller set at idle. No hull fits a cabin, so no hull has a crew figure for air and water: fit
   one and the days appear. The studio's checks should read the same records, so the two never

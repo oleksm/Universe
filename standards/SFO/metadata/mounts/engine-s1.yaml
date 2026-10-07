@@ -22,7 +22,7 @@ attachment:
     shear: 70900.0
 feeds:
   power: 2500.0
-  cooling: 139.0
+  cooling: 111000.0
   fuel: 8.93
 nozzle:
   diameter: 2.4

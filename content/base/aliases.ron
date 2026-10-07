@@ -1,3 +1,4 @@
 // Renamed entries: old key -> new key, so saves and peers using the old
-// name still resolve. (Nothing renamed yet.)
+// name still resolve. (Nothing renamed yet: org.hearth-line became org.hoar-line in the registry,
+// but the game had no brand entry for it.)
 {}

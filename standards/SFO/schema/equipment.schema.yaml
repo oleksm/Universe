@@ -479,11 +479,11 @@ properties:
       - description: "Pressure suits and the locker they hang in, with their air. Not in the game yet."
         type: object
         additionalProperties: false
-        required: [kind, persons, hours]
+        required: [kind, persons, endurance]
         properties:
           kind: { const: suit_locker, x-in-game: "not made" }
           persons: { type: integer, x-unit: "1", description: "how many suits" }
-          hours: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
+          endurance: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
       - description: "A landing sensor: it measures the distance to the ground below. Not in the game yet."
         type: object
         additionalProperties: false

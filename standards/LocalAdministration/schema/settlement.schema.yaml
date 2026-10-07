@@ -1,5 +1,5 @@
 $schema: http://json-schema.org/draft-07/schema#
-title: Body
+title: Settlement
 x-kind: [settlement, rig]
 description: 'standards/LocalAdministration/metadata/administrations/<system>/<name>.yaml: a settlement (a permanent place with people and an administration), or a rig (equipment stationed in the system, not a place). The planet or moon it is at is a celestial body, in standards/Celestial.'
 type: object
@@ -39,7 +39,6 @@ properties:
       radius: { type: number, x-unit: "m", description: "m, from its axis to its floor" }
       gravity: { type: number, x-unit: "m/s2", description: "m/s2 at its floor. How fast it turns is worked out." }
   owner: { type: string, x-ref: [org], description: "For a rig: the company whose it is." }
-  processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   stock: { $ref: "installation.schema.yaml#/definitions/stock", description: "For a rig: what lies in its store at day 0; its owner trades it at its dock." }

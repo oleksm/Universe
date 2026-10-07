@@ -9,7 +9,7 @@ size_class: 2
 fits: mount.tank-s2
 physical:
   mass: 1100
-  volume: 150
+  volume: 286.2
   length: 6.59
   width: 6.59
   height: 6.59
@@ -27,3 +27,4 @@ basis:
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: the 4 t tank's, larger. A real tank's wall grows with its surface and its fuel with its volume, so a larger one should be lighter for what it holds: these are, a little (7.5 to 6.3% of the fuel's weight)." }
   - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }
   - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [physical.volume], tier: derived, note: "Length by width by height, as every other piece of equipment gives it (2026-10-07): it was the sphere's own volume before, the one record kind that read differently." }

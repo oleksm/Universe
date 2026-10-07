@@ -6,7 +6,7 @@ seeds one, the **Standards Foundry Office (SFO)**, with the starting set. All th
 all the registers together are the tree that describes the civilisation: what its ships, ports,
 containers, sockets and signals have in common.
 
-Decided with the user, 2026-10-03. The roadmap's next big feature (`roadmap.md`, 3½).
+Decided with the user, 2026-10-03. The roadmap's next big feature (`docs/roadmap.md`, 3½).
 
 ## What a standard is not
 
@@ -22,7 +22,7 @@ Decided with the user, 2026-10-03. The roadmap's next big feature (`roadmap.md`,
 
 | Field | Holds |
 |---|---|
-| Id | body, path in the tree, number, version: `SFO/2.1/014 v3` |
+| Id | body and permanent number: `SFO 14` (filed under a parent, never renumbered) |
 | Title, scope | what it covers and what it doesn't |
 | Body | who publishes it |
 | Status | draft, published, superseded, withdrawn |
@@ -72,7 +72,7 @@ adoption decides.
   and keeps its own national standards body for its own codes. Rivals are other governments
   with other charters.
 - So two trees: the SFO register (technical, universal) and each government's charter and codes
-  (its way of life). Its own record (`standards/SFO/SFO.yaml`, `about`) says so in full.
+  (its way of life). Its own record (`standards/SFO/metadata/SFO.yaml`, `about`) says so in full.
 - **Adoption is a fact on products and places**, not on the standard: a product declares what
   it conforms to; a port, the pad and berth standards it offers; an authority, what it mandates.
 - **Certification** is a service: a record, signed by its certifier, that a product was

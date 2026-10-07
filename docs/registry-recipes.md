@@ -246,7 +246,7 @@ according to physics nothing appears from nothing."
 
 ## Next
 
-4. The 26 processes with no module: parked as they are until their machines are described.
+4. The 26 processes with no module: retired (SFO 7 superseded, 2026-10-06); their steps become module recipes as machines are described.
 5. What a shop takes in at most, for the game: today nothing says it, since it depends on the
    parts it is set to make.
 

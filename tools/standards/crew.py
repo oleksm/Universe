@@ -83,11 +83,11 @@ def schemas():
       - description: "Pressure suits and the locker they hang in, with their air. Not in the game yet."
         type: object
         additionalProperties: false
-        required: [kind, persons, hours]
+        required: [kind, persons, endurance]
         properties:
           kind: { const: suit_locker, x-in-game: "not made" }
           persons: { type: integer, x-unit: "1", description: "how many suits" }
-          hours: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
+          endurance: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
       - description: "A landing sensor: it measures the distance to the ground below. Not in the game yet."
         type: object
         additionalProperties: false
@@ -241,7 +241,7 @@ def records():
               [("Door leaf and frame", "", 0.7, AL, MC), ("Seal, latches and window", "", 0.3, ST, MC)], "PDR1",
               "A hatch that holds a cabin's pressure across it, either way, with a window: a hole vents one compartment, not the ship. The studio's doors between compartments are these.",
               "An 0.8 m clear opening in a 1.0 by 1.9 m leaf and frame, 90 kg: by the station's hatches (about 70 to 100 kg, from memory). It holds one atmosphere either way. Chosen.")
-    equipment("suit-locker", "equipment.utility.suits.s1", "Suit locker, two suits", "utility", 1, 160, 1.0, 0.6, 2.0, 100, {"kind": "suit_locker", "persons": 2, "hours": 28800},
+    equipment("suit-locker", "equipment.utility.suits.s1", "Suit locker, two suits", "utility", 1, 160, 1.0, 0.6, 2.0, 100, {"kind": "suit_locker", "persons": 2, "endurance": 28800},
               [("Two suits with their packs", "Pressure suits with 8 hours of air and power each.", 0.75, MLI, AS), ("Locker", "", 0.25, SH, WB)], "SUT1",
               "Two pressure suits with eight hours of air and power each, and the locker they hang in with their charging. Suits for every one of the crew.",
               "A light EVA suit with its pack at 60 kg (between a 10 kg flight suit and the station's 145 kg suit; from memory) and 8 hours of air (the station's suit's 8.5); the locker 40 kg. Chosen.")

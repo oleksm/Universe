@@ -166,12 +166,11 @@ basis:
   - { of: [life], tier: invented, review: true, note: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life." }
 open_questions:
   - "Who makes it: it has no maker."
-  - "How strong it is: the game takes 600 J for each kg of an 88 t frame. Its frame is 6061 aluminium; what wrecks it is to be worked out from its parts."
-  - "Its mass: its parts come to 154 t; the game flies it with an 88 t frame, worked out from its size. The spec's is what is meant; the game is to follow."
+  - "How strong it is: what wrecks it is to be worked out from its parts (SFO 15); the game breaks nothing yet."
   - "Its ore bay: its depth is a guess, and so what it carries. The model's inside needs measuring."
   - "Its skin under the main drive's push: 2 mm sheet buckles unless it is stiffened closely or made thicker (see the structure report). No frames or stringers are parts yet, so their weight is not counted."
   - "The landing the game allows (30 m/s) against the one its legs are built for (3 m/s, failing near 8)."
   - "The main drive's heat: 5.4 MN at its exhaust speed is about 27 TW in the exhaust, and more as waste heat. How much of that reaches the ship is not said."
   - "Its power plant's heat: about 7 MW to shed, and no radiator on the model."
   - "What the rest of its 23,000 m3 is for. Its equipment, tank and ore bay take about 3%."
-  - "Its equipment is the game's early list, chosen as the cheapest for each slot: not yet reviewed."
+  - "Its fit is the game's early list: twelve records marked outdated (in service, not to be balanced against), among them a life support that keeps three for its six seats and a torch drive whose jet no pad stands (SFO 22, 23). A fit from the current families is the ships session's to design."
