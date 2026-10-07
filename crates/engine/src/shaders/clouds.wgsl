@@ -271,6 +271,75 @@ fn cl_shape(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_
     return vec2<f32>(n, sqrt(max(v2, 1e-12)));
 }
 
+// The octaves a coarse evaluation (band `texel_km`) left out and a pixel of `pix_km` shows, of the
+// same noise as cl_shape's (same lattices, seeds, phases): (their sum, the coarse spread, the fine
+// spread), so the coarse z refines exactly: z_fine = (z·sd_coarse + n) / sd_fine.
+fn cl_shape_refine(sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_km: f32, texel_km: f32, seed: f32) -> vec3<f32> {
+    var lam = sp.top_km;
+    var a = 1.0;
+    var n = 0.0;
+    var vc = 0.0;
+    var vf = 0.0;
+    for (var o = 0; o < sp.octaves; o++) {
+        let fp = clamp(lam / (CLOUD_BAND * pix_km) - 1.0, 0.0, 1.0);
+        if (fp <= 0.0) {
+            break;
+        }
+        let fc = clamp(lam / (CLOUD_BAND * texel_km) - 1.0, 0.0, 1.0);
+        let is_cell = sp.cell_km > 0.0 && abs(log2(lam / sp.cell_km)) < 0.5;
+        let sd = select(CLOUD_VALUE_SD, CLOUD_CELL_SD, is_cell);
+        vc += (a * fc * sd) * (a * fc * sd);
+        vf += (a * fp * sd) * (a * fp * sd);
+        if (fp - fc > 0.001) {
+            let life = CLOUD_LIFE_1000KM * pow(lam / 1000.0, 2.0 / 3.0);
+            let ph = t / life;
+            var acc = 0.0;
+            var w2 = 0.0;
+            for (var k = 0; k < 2; k++) {
+                let kk = f32(k) * 0.5;
+                let fr = fract(ph + kk);
+                let w = 1.0 - abs(2.0 * fr - 1.0);
+                if (w < 0.12) {
+                    continue;
+                }
+                let renew = (floor(ph + kk) % 61.0) * 7.31 + kk * 13.7 + seed * 3.1 + f32(o) * 5.3;
+                var x = q - east * (wind * fr * life * 0.001);
+                if (lam > 100.0) {
+                    x = vec3<f32>(x.x / sp.stretch, x.y, x.z / sp.stretch);
+                }
+                let z = cl_turn(o) * (x / lam) + vec3<f32>(renew, renew * 0.61, renew * 1.37);
+                var v: f32;
+                if (is_cell) {
+                    v = cl_cells(z) - CLOUD_CELL_MEAN;
+                } else {
+                    v = cl_value(z) - 0.5;
+                }
+                acc += w * v;
+                w2 += w * w;
+            }
+            n += a * (fp - fc) * acc / sqrt(max(w2, 1e-6));
+        }
+        lam *= 0.5;
+        a *= sp.gain;
+    }
+    return vec3<f32>(n, sqrt(max(vc, 1e-12)), sqrt(max(vf, 1e-12)));
+}
+
+// The kinds' spectra (cloud_noise's), one place.
+const SP_DEEP: Spectrum = Spectrum(600.0, 8, 0.75, 1.0, 25.0);
+const SP_CU: Spectrum = Spectrum(12.0, 6, 0.8, 1.0, 3.0);
+const SP_ST: Spectrum = Spectrum(400.0, 9, 0.78, 1.0, 40.0);
+
+// The low clouds' mix: cumulus (0) … stratocumulus (1), by the cover and the region's pattern.
+fn cl_low_w(f: CloudField) -> f32 {
+    return clamp(max(clamp((f.frac.x - 0.35) / 0.3, 0.0, 1.0), smoothstep(0.35, 0.75, f.pattern)), 0.0, 1.0);
+}
+
+// The low clouds' z from its two kinds' (cumulus, stratocumulus), each unit spread.
+fn cl_low_z(z_cu: f32, z_st: f32, w: f32) -> f32 {
+    return ((1.0 - w) * z_cu + w * z_st) / sqrt(max((1.0 - w) * (1.0 - w) + w * w, 1e-6));
+}
+
 // (density, thickness) where the equalised noise z = n/sd beats the fraction's threshold.
 fn cl_cover(z: f32, frac: f32, soft: f32) -> vec2<f32> {
     let u = 1.0 / (1.0 + exp(-1.702 * z));
@@ -308,25 +377,30 @@ fn cloud_noise(dir: vec3<f32>, f: CloudField, radius_km: f32, t: f32, pix_km: f3
     let east = cl_east(dir);
     var z = vec4<f32>(0.0);
     if (f.frac.y > 0.002 && (which == 0 || which == 1 || which == 3)) {
-        let s = cl_shape(Spectrum(600.0, 8, 0.75, 1.0, 25.0), q, east, f.u700, t, pix_km, 3.0);
+        let s = cl_shape(SP_DEEP, q, east, f.u700, t, pix_km, 3.0);
         z.x = s.x / s.y;
     }
     if ((which == 0 || which == 1) && f.frac.x > 0.002) {
-        // Cumulus or stratocumulus by the cover and by the region's own pattern.
-        let w = clamp(max(clamp((f.frac.x - 0.35) / 0.3, 0.0, 1.0), smoothstep(0.35, 0.75, f.pattern)), 0.0, 1.0);
-        var zz = 0.0;
-        var sd = 0.0;
+        // Cumulus or stratocumulus by the cover and by the region's own pattern. (For the low
+        // shell alone (which 1: the cache's), the two kinds apart: y cumulus, z stratocumulus, so
+        // each refines exactly; combined by cl_low_z.)
+        let w = cl_low_w(f);
+        var zc = 0.0;
+        var zs = 0.0;
         if (w < 1.0) {
-            let c = cl_shape(Spectrum(12.0, 6, 0.8, 1.0, 3.0), q, east, f.u700, t, pix_km, 2.0);
-            zz += (1.0 - w) * c.x / c.y;
-            sd += (1.0 - w) * (1.0 - w);
+            let c = cl_shape(SP_CU, q, east, f.u700, t, pix_km, 2.0);
+            zc = c.x / c.y;
         }
         if (w > 0.0) {
-            let s2 = cl_shape(Spectrum(400.0, 9, 0.78, 1.0, 40.0), q, east, f.u700, t, pix_km, 9.0);
-            zz += w * s2.x / s2.y;
-            sd += w * w;
+            let s2 = cl_shape(SP_ST, q, east, f.u700, t, pix_km, 9.0);
+            zs = s2.x / s2.y;
         }
-        z.y = zz / sqrt(max(sd, 1e-6));
+        if (which == 1) {
+            z.y = zc;
+            z.z = zs;
+        } else {
+            z.y = cl_low_z(zc, zs, w);
+        }
     }
     if ((which == 0 || which == 2) && f.frac.z > 0.002) {
         let s = cl_shape(Spectrum(2000.0, 8, 0.7, 3.0, 0.0), q, east, f.u700, t, pix_km, 4.0);
@@ -349,7 +423,11 @@ fn cloud_from_noise(z: vec4<f32>, f: CloudField, which: i32) -> CloudCols {
     if (which == 0 || which == 1) {
         var low = vec2<f32>(0.0);
         if (f.frac.x > 0.002) {
-            low = cl_cover(z.y, f.frac.x, 0.04);
+            var zl = z.y;
+            if (which == 1) {
+                zl = cl_low_z(z.y, z.z, cl_low_w(f));
+            }
+            low = cl_cover(zl, f.frac.x, 0.04);
         }
         // (Under the towers: the convection's own dark base.)
         out.low = vec2<f32>(max(low.x, d_deep.x), (low.x * low.y * 2.0 * TAU_LOW + d_deep.x * TAU_DEEP * 0.5) * f.water);
@@ -882,6 +960,228 @@ fn cloud_cache_read(dir: vec3<f32>, shell: i32, pix_km: f32, cc: CloudCache, tex
 
 // --- The same, reading the cloud cache (switch to these once the cache pass runs) -------------
 
+// --- The low and convective clouds as a volume (from the cache) ---------------------------------
+// The low layer and the deep convection marched as one slab of columns over the cloud base (the
+// condensation level): each column as tall as its kind and thickness make it (cumulus 0.5–1.5 km,
+// decks 0.3–0.4 km, thunderstorms to ~1 km under the tropopause), flat-based, round-topped; the
+// columns' cover and thickness read from the cache at every step (a few texture taps), so this is
+// cheap enough at every distance. Light: the sun through the column above (Beer, with multiple
+// scattering's octaves and a two-lobed phase), the sky's light dimmer toward the base. Steps adapt
+// to how much slab the pixel crosses (a few from orbit, more in an oblique low view).
+const CLOUD_VOLUME: bool = true;
+const CV_STEPS_MAX: i32 = 24;
+const CV_PATH_MAX_M: f32 = 300000.0;
+// (How far along a ray the volume is marched (m); the sheets beyond.)
+const CV_SPAN_M: f32 = 40000.0;
+// (Deep convection's towers only where it covers this share or more: else the slab is the low
+// clouds' alone, ~1.5 km, not the tropopause's ~14.)
+const CV_DEEP_MIN: f32 = 0.04;
+
+// The cache's noise at dir (shell 0), from the finest level holding the place, however coarse
+// against the pixel; w of the result: that level's texel (km), 1e9 where none holds it.
+fn cv_read_coarse(dir_b: vec3<f32>, cc: CloudCache, tex: texture_2d_array<f32>, smp: sampler) -> vec4<f32> {
+    let xy = cc_project(dir_b, cc);
+    var z = vec4<f32>(0.0);
+    var used = 1e9;
+    for (var level = 0; level < CC_LEVELS; level++) {
+        let half = cc.half_m[level];
+        let a = max(abs(xy.x), abs(xy.y)) / half;
+        if (a >= 1.0) {
+            continue;
+        }
+        let uv = (xy / half) * 0.5 + 0.5;
+        let v = textureSampleLevel(tex, smp, uv, level * 3, 0.0);
+        let w = clamp((1.0 - a) / 0.1, 0.0, 1.0);
+        z = select(v, mix(z, v, w), used < 1e8);
+        // (The finer level's texel where two blend: its edge zone is a tenth of it.)
+        used = 2.0 * half / f32(CC_N) * 0.001;
+    }
+    return vec4<f32>(z.x, z.y, z.z, used);
+}
+
+// What the cache's texel can't hold, a few cheap octaves (as Nubis's detail noise): from half the
+// texel down to two pixels (at most 3), carried with the wind, the spread renormalised. z ~ unit.
+fn cv_refine(z_c: f32, sp: Spectrum, q: vec3<f32>, east: vec3<f32>, wind: f32, t: f32, pix_km: f32, texel_km: f32, seed: f32) -> f32 {
+    let r = cl_shape_refine(sp, q, east, wind, t, pix_km, texel_km, seed);
+    return (z_c * r.y + r.x) / r.z;
+}
+
+// A column's (density 0–1, height 0–1) from its noise: soft-edged (density rising over half a
+// spread past the threshold: wisps, not cut-outs), its height by how far past (two spreads: tall),
+// so even a full deck's tops rise and fall with the noise, cells, not a flat sheet.
+fn cv_cover(z: f32, frac: f32) -> vec2<f32> {
+    let z_thr = log(max(1.0 - frac, 1e-4) / max(frac, 1e-4)) / 1.702;
+    let e = z - z_thr;
+    return vec2<f32>(smoothstep(-0.15, 0.45, e), clamp(0.2 + 0.8 * pow(clamp(e / 2.0, 0.0, 1.0), 0.7), 0.0, 1.0));
+}
+
+struct CvCols {
+    low: vec2<f32>,
+    deep: vec2<f32>,
+};
+
+fn cv_cols(dir_b: vec3<f32>, f: CloudField, R: f32, t: f32, pix_km: f32, cc: CloudCache, cct: texture_2d_array<f32>,
+           cct_old: texture_2d_array<f32>, ccs: sampler) -> CvCols {
+    // (The cache's coarse shape plus cheap detail: the full noise at every step was the cost.)
+    // (The cache's coarse noise, refined by exactly the octaves its texel left out: the same
+    // clouds either side of a level's edge, no seam.)
+    let zc = cv_read_coarse(dir_b, cc, cct, ccs);
+    var z = vec4<f32>(0.0);
+    let w = cl_low_w(f);
+    if (zc.w < 1e8) {
+        let q = dir_b * (R * 0.001);
+        let east = cl_east(dir_b);
+        let tex = zc.w;
+        // (At most two octaves below the texel: finer isn't seen where a coarse level serves.)
+        let pk = clamp(pix_km, tex * 0.25, tex);
+        if (f.frac.y > 0.002) {
+            z.x = cv_refine(zc.x, SP_DEEP, q, east, f.u700, t, pk, tex, 3.0);
+        }
+        if (w < 1.0) {
+            z.y = cv_refine(zc.y, SP_CU, q, east, f.u700, t, pk, tex, 2.0);
+        }
+        if (w > 0.0) {
+            z.z = cv_refine(zc.z, SP_ST, q, east, f.u700, t, pk, tex, 9.0);
+        }
+    } else {
+        z = cloud_noise(dir_b, f, R * 0.001, t, max(pix_km, 2.0), 1);
+    }
+    var out = CvCols(vec2<f32>(0.0), vec2<f32>(0.0));
+    if (f.frac.x > 0.002) {
+        out.low = cv_cover(cl_low_z(z.y, z.z, w), f.frac.x);
+    }
+    if (f.frac.y > 0.002) {
+        out.deep = cv_cover(z.x, f.frac.y);
+    }
+    return out;
+}
+
+// A column's top (m over the base) by its thickness: domes, tall at the core.
+fn cv_top(depth: f32, th: f32) -> f32 {
+    return depth * clamp(th, 0.05, 1.0);
+}
+
+// Flat base, rounded top: the density's profile over the column's height fraction.
+fn cv_profile(hr: f32) -> f32 {
+    return smoothstep(0.0, 0.04, hr) * (1.0 - smoothstep(0.55, 1.0, hr));
+}
+
+fn cl_volume_cached(o: vec3<f32>, d: vec3<f32>, s0: f32, s1: f32, base_r: f32, low_d: f32, deep_d: f32, f: CloudField,
+                    to_body: mat3x3<f32>, R: f32, t: f32, sun_dir: vec3<f32>, sun: vec3<f32>, sky: vec3<f32>, pixel_angle: f32,
+                    cc: CloudCache, cct: texture_2d_array<f32>, cct_old: texture_2d_array<f32>, ccs: sampler) -> vec4<f32> {
+    let len = s1 - s0;
+    let pix0 = max(s0 * pixel_angle, 1.0);
+    let steps = clamp(i32(ceil(len / max(pix0 * 2.0, 150.0))), 6, CV_STEPS_MAX);
+    let cos_phase = dot(d, sun_dir);
+    // (Mid-step samples: a random offset a pixel reads as grain without temporal smoothing.)
+    let jit = 0.5;
+    let hmax = max(low_d, deep_d);
+    var acc = vec3<f32>(0.0);
+    var tr = 1.0;
+    for (var i = 0; i < steps; i++) {
+        // (Steps closer together near the start: t = s0 + len·x².)
+        let x = (f32(i) + jit) / f32(steps);
+        let tt = s0 + len * x * x;
+        let ds = len * 2.0 * x / f32(steps) + 1.0;
+        let p = o + d * tt;
+        let r = length(p);
+        let h = r - base_r;
+        if (h < 0.0 || h > hmax) {
+            continue;
+        }
+        let up = p / r;
+        let dir_b = to_body * up;
+        let pix_km = max(tt * pixel_angle, ds * 0.5) * 0.001;
+        let c = cv_cols(dir_b, f, R, t, pix_km, cc, cct, cct_old, ccs);
+        var sigma = 0.0;
+        var tau_up = 0.0;
+        var hr_l = 1.0;
+        if (c.low.x > 0.0) {
+            let top = cv_top(low_d, c.low.y);
+            let hr = h / top;
+            if (hr < 1.0) {
+                let sg = c.low.x * cv_profile(hr) * TAU_LOW * (0.5 + c.low.y) * f.water / top;
+                sigma += sg;
+                tau_up += sg * (top - h);
+                hr_l = hr;
+            }
+        }
+        if (c.deep.x > 0.0) {
+            let top = cv_top(deep_d, c.deep.y);
+            let hr = h / top;
+            if (hr < 1.0) {
+                let sg = c.deep.x * cv_profile(hr) * TAU_DEEP * (0.5 + c.deep.y) * f.water / top;
+                sigma += sg;
+                tau_up += sg * (top - h);
+                hr_l = min(hr_l, hr);
+            }
+        }
+        if (sigma <= 1e-7) {
+            continue;
+        }
+        let mu_s = dot(up, sun_dir);
+        // The sun's way out: up the column (its optical depth above), and sideways toward the
+        // sun (one coarse sample 600 m off: a flank turned away from the sun is in its own cloud's
+        // shade; the cache alone, no refinement: shading needs only the bulk).
+        var tau_s = tau_up / max(mu_s, 0.08);
+        let ps = p + sun_dir * 600.0;
+        let hs = length(ps) - base_r;
+        if (hs > 0.0 && hs < hmax) {
+            let zs = cv_read_coarse(to_body * normalize(ps), cc, cct, ccs);
+            if (zs.w < 1e8) {
+                let cl = cv_cover(cl_low_z(zs.y, zs.z, cl_low_w(f)), f.frac.x);
+                let tl = cv_top(low_d, cl.y);
+                if (f.frac.x > 0.002 && hs < tl) {
+                    tau_s += cl.x * TAU_LOW * (0.5 + cl.y) * f.water / tl * 600.0;
+                }
+            }
+        }
+        var ms = 0.0;
+        var a_ = 1.0;
+        var b_ = 1.0;
+        var c_ = 1.0;
+        for (var k = 0; k < 3; k++) {
+            ms += a_ * exp(-b_ * tau_s) * mix(cl_hg(cos_phase, -0.3 * c_), cl_hg(cos_phase, 0.8 * c_), 0.7);
+            a_ *= 0.5;
+            b_ *= 0.35;
+            c_ *= 0.5;
+        }
+        // (A thick cloud's light many times scattered: from above, ~its albedo (~0.75) of the sun
+        // at the top, falling deeper in (diffusion: slowly).)
+        let body = max(mu_s, 0.0) * 0.8 * exp(-0.025 * tau_s);
+        let lit = sun * (ms * 3.1415927 + body) * step(0.0, mu_s) + sky * (0.3 + 0.7 * hr_l);
+        let st = exp(-sigma * ds);
+        acc += tr * lit * (1.0 - st);
+        tr *= st;
+        if (tr < 0.01) {
+            break;
+        }
+    }
+    return vec4<f32>(acc, 1.0 - tr);
+}
+
+// The first stretch of the ray (from the eye, before t_end) inside the slab between radii rb and
+// rt: (s0, s1), s1 ≤ s0 where none.
+fn cv_segment(o: vec3<f32>, d: vec3<f32>, rb: f32, rt: f32, t_end: f32) -> vec2<f32> {
+    let top = cl_sphere(o, d, rt);
+    if (top.y <= 0.0) {
+        return vec2<f32>(0.0, -1.0);
+    }
+    let base = cl_sphere(o, d, rb);
+    var a = max(top.x, 0.0);
+    var b = top.y;
+    if (base.y > 0.0 && base.x < base.y) {
+        if (base.x > a) {
+            b = min(b, base.x);
+        } else {
+            a = max(a, base.y);
+        }
+    }
+    b = min(min(b, t_end), a + CV_PATH_MAX_M);
+    return vec2<f32>(a, b);
+}
+
+
 fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, center: vec3<f32>, to_body: mat3x3<f32>,
                sun_dir: vec3<f32>, sun: vec3<f32>, pixel_angle: f32, cl: Clouds, a: Air,
                cm: texture_2d<f32>, ce: texture_2d<f32>, ca: texture_2d<f32>,
@@ -913,36 +1213,33 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
     var ks = array<i32, 8>(0, 0, 0, 0, 0, 0, 0, 0);
     var n = 0;
     // The low layer as a volume near the eye (kind 3: one event at its entry, s0 … s1).
-    let eye_h = length(o) - R;
-    let vol = VOL_ON && cl.on > 0.5 && abs(eye_h - f0.lcl_m) < VOL_NEAR_M + cl_depth_m(f0.frac.x) && f0.frac.x > 0.01;
+    // The low and convective clouds as a volume: one slab from the cloud base up to the tallest
+    // tower here (kind 3: one event at its entry, s0 … s1); the low sheet's hits then skipped.
+    let low_d = cl_depth_m(f0.frac.x);
+    let deep_d = select(0.0, max(f0.trop_m - f0.lcl_m - ground_h - 1000.0, low_d), f0.frac.y > CV_DEEP_MIN);
+    let base_r = radii[0];
+    // (Marched only where it is resolved: a pixel at the slab under ~300 m; beyond ~600 m the
+    // shaded sheet, crossfaded between: from far, a cumulus is smaller than a pixel and a few
+    // samples hit or miss it, speckle.)
     var s0 = 0.0;
     var s1 = 0.0;
-    if (vol) {
-        let lo = cl_sphere(o, d, R + f0.lcl_m);
-        let hi = cl_sphere(o, d, R + f0.lcl_m + cl_depth_m(f0.frac.x));
-        let lim = min(t_end, VOL_RANGE_M);
-        // (The ray's stretch inside the slab between the two spheres, from the eye, as far as lim.)
-        if (eye_h > f0.lcl_m + cl_depth_m(f0.frac.x)) {
-            s0 = max(hi.x, 0.0);
-            s1 = select(hi.y, lo.x, lo.x > 0.0);
-        } else if (eye_h < f0.lcl_m) {
-            s0 = max(lo.y, 0.0);
-            s1 = hi.y;
-        } else {
-            s0 = 0.0;
-            s1 = select(hi.y, lo.x, lo.x > 0.0);
-        }
-        s1 = min(s1, lim);
-        if (hi.x < 0.0 && hi.y < 0.0) {
-            s1 = s0;
-        }
-        if (s1 > s0) {
+    var vol_w = 0.0;
+    if (CLOUD_VOLUME && (f0.frac.x > 0.005 || f0.frac.y > 0.005)) {
+        let seg = cv_segment(o, d, base_r, base_r + max(low_d, deep_d), t_end);
+        s0 = seg.x;
+        s1 = min(seg.y, seg.x + CV_SPAN_M);
+        vol_w = smoothstep(600.0, 300.0, max(s0, 1.0) * pixel_angle);
+        if (s1 > s0 && vol_w > 0.0) {
             ts[n] = s0;
             ks[n] = 3;
             n++;
         }
     }
+    let vol = vol_w > 0.999;
     for (var k = 0; k < 3; k++) {
+        if (k == 0 && vol) {
+            continue;
+        }
         let h = cl_sphere(o, d, radii[k]);
         if (h.x > 0.0 && h.x < t_end) {
             ts[n] = h.x;
@@ -995,7 +1292,7 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
                 sky_up = air_sky_lut(normalize(o), center, sun_dir, sun, a, tl, ml, smp);
                 sky_ready = true;
             }
-            let v = cl_volume(o, d, s0, s1, f, to_body, R, t, sun_dir, sun, sky_up, pixel_angle);
+            let v = cl_volume_cached(o, d, s0, s1, base_r, low_d, deep_d, f, to_body, R, t, sun_dir, sun, sky_up, pixel_angle, cc, cct, cct_old, ccs) * vol_w;
             if (v.w > 0.001) {
                 let pm = o + d * (0.5 * (s0 + s1)) + center;
                 let air_in = air_ground_lut(vec3<f32>(0.0), pm, center, sun_dir, sun, a, tl, ml, smp);
@@ -1009,9 +1306,10 @@ fn clouds_over_cached(c: vec3<f32>, eye: vec3<f32>, d: vec3<f32>, t_end: f32, ce
             continue;
         }
         // (The low sheet gives way to the volume over the volume's range.)
+        // (The low sheet gives way to the volume where the volume is resolved.)
         var keep = 1.0;
-        if (k == 0 && vol) {
-            keep = smoothstep(0.6 * VOL_RANGE_M, VOL_RANGE_M, ts[i]);
+        if (k == 0 && ts[i] < s1) {
+            keep = 1.0 - vol_w;
             if (keep <= 0.0) {
                 continue;
             }
