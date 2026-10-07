@@ -7,17 +7,13 @@ use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingS
 use crate::observer::Focus;
 use crate::scene::color;
 use crate::{fmt, App, Mode};
+use crate::palette::{AMBER, DIM, PANEL, RED, TEXT as HUD};
 
-const HUD: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
-const AMBER: Color = Color::hex(0xffc040);
 /// The key's letter, lit in an action's name.
 const HOT: Color = Color::hex(0xffffa0);
-const RED: Color = Color::hex(0xff4040);
 /// Colors shared with the 3D guidance: predicted path (cyan) and guidance path (magenta).
 const PREDICT: Color = Color::hex(0x40c0ff);
 const GUIDE_PATH: Color = Color::hex(0xff60ff);
-const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 /// A lighter backing for text over the world: readable on a bright sky, the view still through it.
 const SOFT_PANEL: Color = Color([0.01, 0.015, 0.022, 0.55]);
 const LINE: f32 = GLYPH + 2.0;
@@ -569,7 +565,7 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
     let size = frame.size();
     // (Left, under the status lines: the notices go across the middle.)
     let pos = Vec2::new(12.0, (size.y * 0.42).floor());
-    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, Color([0.012, 0.018, 0.026, 0.9]));
+    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, crate::palette::panel(0.9));
     frame.hud_box(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, HUD.scale(0.6));
     for (k, (text, c)) in lines.iter().enumerate() {
         frame.text(pos + Vec2::new(0.0, k as f32 * LINE), text, *c);
@@ -2034,7 +2030,7 @@ fn profile_panel(frame: &mut Frame, top: f32) -> f32 {
     let size = frame.size();
     let box_size = text_size(&text);
     let pos = Vec2::new(size.x - box_size.x - 8.0, top + 4.0).floor();
-    frame.hud_rect(pos - 4.0, box_size + 8.0, Color([0.012, 0.018, 0.026, 0.85]));
+    frame.hud_rect(pos - 4.0, box_size + 8.0, crate::palette::panel(0.85));
     frame.hud_box(pos - 4.0, box_size + 8.0, DIM);
     frame.text(pos, &text, HUD);
     pos.y + box_size.y + 4.0
@@ -2053,7 +2049,7 @@ fn help(frame: &mut Frame) {
     let box_size = Vec2::new(a.x + gap + b.x, a.y.max(b.y) + 2.0 * LINE);
     let size = frame.size();
     let pos = ((size - box_size) / 2.0).floor();
-    frame.hud_rect(pos - 6.0, box_size + 12.0, Color([0.012, 0.018, 0.026, 0.94]));
+    frame.hud_rect(pos - 6.0, box_size + 12.0, crate::palette::panel(0.94));
     frame.hud_box(pos - 6.0, box_size + 12.0, HUD);
     frame.text(pos, &left, HUD);
     frame.text(pos + Vec2::new(a.x + gap, 0.0), &right, HUD);

@@ -1,3 +1,4 @@
+mod palette;
 mod dev;
 mod economy;
 mod zoning;

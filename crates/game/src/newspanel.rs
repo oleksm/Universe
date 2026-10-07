@@ -6,12 +6,9 @@ use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, KeyCode, GLYPH};
 
 use crate::{fmt, App};
+use crate::palette::{AMBER, DIM, RED, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const HEAD: Color = Color::hex(0x60ffb0);
-const AMBER: Color = Color::hex(0xffb040);
-const RED: Color = Color::hex(0xff4040);
 
 /// Keys while open. False when it should close.
 pub fn input(_app: &mut App, ctx: &Context) -> bool {
@@ -21,7 +18,7 @@ pub fn input(_app: &mut App, ctx: &Context) -> bool {
 pub fn draw(frame: &mut Frame, app: &App) {
     use crate::hud::{news_items, News};
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = GLYPH + 4.0;
     let (x, mut y) = (16.0, 16.0);
     let now = app.v.time;

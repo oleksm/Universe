@@ -223,7 +223,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let width = list.iter().enumerate().skip(first).take(shown).map(|(k, c)| universe_engine::text_size(&row(k, c, " ")).x).fold(360.0, f32::max);
     let pos = Vec2::new(size.x - width - 12.0, 230.0);
     let rows = list.len().clamp(1, shown) as f32;
-    frame.hud_rect(pos - 6.0, Vec2::new(width, (rows + 2.0) * line) + 12.0, Color([0.012, 0.018, 0.026, 0.85]));
+    frame.hud_rect(pos - 6.0, Vec2::new(width, (rows + 2.0) * line) + 12.0, crate::palette::panel(0.85));
     frame.hud_box(pos - 6.0, Vec2::new(width, (rows + 2.0) * line) + 12.0, LIST.scale(0.6));
     let what = match crate::hud::active_mode(app) {
         crate::hud::ShipMode::Mining => "ROCKS",

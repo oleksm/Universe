@@ -14,10 +14,8 @@ use universe_engine::{Color, Context, Frame, KeyCode};
 use universe_sim::world::worlds::{History, Release};
 
 use crate::App;
+use crate::palette::{DIM, PANEL, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
-const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 
 /// How a baked world's ground is coloured close up: which of its bake's globe maps.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]

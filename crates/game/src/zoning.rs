@@ -19,12 +19,9 @@ use universe_sim::world::spaceport::{GRID, PAD_RADIUS, PAD_SPACING};
 use universe_sim::Command;
 
 use crate::App;
+use crate::palette::{AMBER, DIM, RED, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const CYAN: Color = Color::hex(0x60e0ff);
-const AMBER: Color = Color::hex(0xffb040);
-const RED: Color = Color::hex(0xff5040);
 
 /// The layers, their keys and names, in the order they're drawn.
 const LAYERS: [(KeyCode, &str); 5] = [(KeyCode::KeyZ, "ZONES"), (KeyCode::KeyP, "PARCELS"), (KeyCode::KeyS, "STREETS"), (KeyCode::KeyW, "POWER"), (KeyCode::KeyF, "FACILITIES")];
@@ -284,7 +281,7 @@ fn maxima(w: &Works) -> Vec<String> {
 
 pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let Some(g) = z.ground(app) else { return };
     let s = g.recorded;
     let now = app.now();

@@ -11,12 +11,10 @@ use universe_sim::avionics::follow::{Anchor, Follow, Manoeuvre};
 use universe_sim::world::ship::SHIP_RADIUS;
 
 use crate::{fmt, App};
+use crate::palette::{AMBER, DIM, PANEL};
 
 const PATH: Color = Color::hex(0xff60ff);
 const OK: Color = Color::hex(0xdcebf2);
-const AMBER: Color = Color::hex(0xffb030);
-const DIM: Color = Color::hex(0x7d93a0);
-const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 
 /// Where a follow program stands: what it follows, where it's taking us,
 /// and how we're doing.
