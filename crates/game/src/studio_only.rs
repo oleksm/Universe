@@ -31,6 +31,9 @@ impl StudioOnly {
         if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
             interior.use_tool(&t);
         }
+        if let Ok(c) = std::env::var("UNIVERSE_DRIVE") {
+            interior.test_drive(c.parse().ok());
+        }
         if let Ok(other) = std::env::var("UNIVERSE_COMPARE") {
             interior.compare_with(&other);
         }

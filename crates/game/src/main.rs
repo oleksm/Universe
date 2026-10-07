@@ -25,6 +25,7 @@ mod interior;
 mod shipyard;
 mod studio;
 mod studio_only;
+mod test_drive;
 mod planet_studio;
 mod standards;
 mod sound;

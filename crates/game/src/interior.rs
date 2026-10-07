@@ -284,6 +284,9 @@ pub struct Interior {
     /// The view: 0 as turned (in perspective); 1 front, 2 side, 3 top (flat, with
     /// the ship's sizes).
     view: u8,
+    /// TEST DRIVE under way (the design flown), and where its button was drawn.
+    drive: Option<crate::test_drive::Drive>,
+    drive_rect: std::cell::Cell<(Vec2, Vec2)>,
     /// FIT FRAME under way: for which plan, its news, and its stop.
     fitting: Option<(Plan, mpsc::Receiver<Fitting>, Arc<std::sync::atomic::AtomicBool>)>,
 }
@@ -4992,6 +4995,93 @@ const PACK_HEAT_CAPACITY: f64 = 1000.0;
 const PACK_WARMING: f64 = 40.0;
 const DOCK_TEMPERATURE: f64 = 293.0;
 
+/// The design as a craft to test drive: every part's mass where it sits (modules
+/// full, members, decks), its middle of mass and inertia from them (each module a
+/// solid box); each engine and fan pushing from where it is; each leg a spring at
+/// its foot; the batteries and plants; what the rest draws.
+fn craft(i: &Interior) -> crate::test_drive::Craft {
+    use crate::test_drive::{Actuator, Craft, Kind, Leg};
+    use universe_engine::glam::{DMat3, DVec3};
+    let num = |m: &Fields, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
+    let reg = universe_sim::world::registry::registry();
+    let mut placed: Vec<(&Block, &Fitted, String, Fields, f64)> = Vec::new();
+    for b in &i.plan.blocks {
+        if let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id))
+            && let Some((k, m, draw)) = figures(f)
+        {
+            placed.push((b, f, k, m, draw));
+        }
+    }
+    // (Each mass: where, how much, its box's size (none: a point).)
+    let mut masses: Vec<(DVec3, f64, DVec3)> = placed.iter().map(|p| (p.0.at.as_dvec3(), p.1.mass + p.1.load, p.0.size.as_dvec3())).collect();
+    masses.extend(i.plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| (((b.a + b.b) * 0.5).as_dvec3(), s.per_metre * f64::from(b.a.distance(b.b)), DVec3::ZERO))));
+    masses.extend(i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| (DVec3::new(f64::from(p.lo.x + p.hi.x) * 0.5, f64::from(p.y), f64::from(p.lo.y + p.hi.y) * 0.5), s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()), DVec3::new(f64::from(p.hi.x - p.lo.x).abs(), 0.02, f64::from(p.hi.y - p.lo.y).abs())))));
+    let (m_nodes, n_nodes) = { let ms = frame_masses(i); (ms.1, i.plan.beams.len().max(1)) };
+    let _ = n_nodes;
+    let total: f64 = masses.iter().map(|m| m.1).sum::<f64>() + m_nodes;
+    let middle = masses.iter().fold(DVec3::ZERO, |c, m| c + m.0 * m.1) / masses.iter().map(|m| m.1).sum::<f64>().max(1.0);
+    // (Inertia: each box's own, and its mass at its distance.)
+    let mut inertia = DMat3::ZERO;
+    for (at, m, s) in &masses {
+        let r = *at - middle;
+        let own = DMat3::from_diagonal(DVec3::new(s.y * s.y + s.z * s.z, s.x * s.x + s.z * s.z, s.x * s.x + s.y * s.y) * (m / 12.0));
+        let shift = (DMat3::IDENTITY * r.length_squared() - DMat3::from_cols(r * r.x, r * r.y, r * r.z)) * *m;
+        inertia += own + shift;
+    }
+    let mid32 = middle.as_vec3();
+    let actuators = placed.iter().filter_map(|p| {
+        let (dir, thrust) = push_of(p.0, p.1)?;
+        let kind = if p.3.get("full_power").is_some() { Kind::Fan { full_power: num(&p.3, "full_power"), min_density: num(&p.3, "min_density") } } else { Kind::Rocket { exhaust: num(&p.3, "exhaust").max(1.0) } };
+        Some(Actuator { at: (p.0.at - mid32).as_dvec3(), dir: dir.normalize_or_zero().as_dvec3(), thrust, kind })
+    }).collect();
+    let legs = placed.iter().filter_map(|p| {
+        let (holds, stroke, _, sink) = p.1.gear?;
+        let (lo, _) = p.0.bounds();
+        Some(Leg { foot: (Vec3::new(p.0.at.x, lo.y, p.0.at.z) - mid32).as_dvec3(), holds, stroke, sink })
+    }).collect();
+    let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
+    let rate: f64 = of("battery").map(|p| num(&p.3, "rate")).sum();
+    let efficiency = if rate > 0.0 { of("battery").map(|p| num(&p.3, "rate") * p.3.get("efficiency").and_then(|v| v.as_f64()).unwrap_or(1.0)).sum::<f64>() / rate } else { 1.0 };
+    let phys = |p: &&(&Block, &Fitted, String, Fields, f64)| reg.equipment(&p.1.key).map(|e| (e.physical.specific_heat, e.physical.operating_max_temperature));
+    let warming = of("battery").filter_map(|p| phys(&p).and_then(|x| x.1)).fold(f64::MAX, f64::min);
+    let rockets: Vec<String> = placed.iter().filter(|p| p.1.push.is_some() && p.3.get("full_power").is_none()).filter_map(|p| p.3.get("propellant").filter(|v| !v.is_null()).or(p.3.get("burns")).and_then(|v| v.as_str()).map(|s| bare(s).to_string())).collect();
+    let boxes: Vec<(Vec3, Vec3)> = i.plan.blocks.iter().map(|b| { let (lo, hi) = b.bounds(); (lo - mid32, hi - mid32) }).collect();
+    let (lo, hi) = boxes.iter().fold((Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)), |(a, z), b| (a.min(b.0), z.max(b.1)));
+    Craft {
+        name: i.plan.hull.clone(),
+        mass: total,
+        inertia,
+        actuators,
+        legs,
+        stored: of("battery").map(|p| num(&p.3, "stores")).sum(),
+        rate,
+        efficiency,
+        heat_capacity: of("battery").map(|p| p.1.mass * phys(&p).and_then(|x| x.0).unwrap_or(PACK_HEAT_CAPACITY)).sum(),
+        warming: if warming == f64::MAX { PACK_WARMING } else { warming - DOCK_TEMPERATURE },
+        plants: of("power_plant").map(|p| num(&p.3, "output")).sum(),
+        steady: placed.iter().map(|p| p.4).sum(),
+        propellant: of("tank").filter(|t| t.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| rockets.iter().any(|r| r == bare(h)))).map(|t| num(&t.3, "capacity")).sum(),
+        leg_boxes: i.plan.blocks.iter().map(|b| i.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.gear.is_some())).collect(),
+        boxes,
+        members: i.plan.beams.iter().map(|b| [b.a - mid32, b.b - mid32]).collect(),
+        gravity: i.plan.gravity(),
+        area: f64::from(((hi.x - lo.x) * (hi.z - lo.z)).max(1.0)),
+    }
+}
+
+impl Interior {
+    /// TEST DRIVE started (dev: `freefall --studio` with UNIVERSE_DRIVE: its
+    /// collective set there).
+    pub fn test_drive(&mut self, collective: Option<f64>) {
+        let mut d = crate::test_drive::Drive::new(craft(self));
+        if let Some(c) = collective {
+            d.set_collective(c);
+            d.set_assist(std::env::var_os("UNIVERSE_DRIVE_ASSIST").is_some());
+        }
+        self.drive = Some(d);
+    }
+}
+
 /// A craft that never leaves the air: lifted on fans, with no jump drive and no
 /// rocket (an engine throwing propellant faster than 500 m/s, over 10 kN). Its doors
 /// open to the air, not to space: no airlock needed.
@@ -6398,6 +6488,15 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     interior.spin += ctx.dt;
     interior.sync(&spec.key, spec.shape(), deckplans, 0.0);
     interior.refresh();
+    // TEST DRIVE: flown; ESC back to the studio.
+    if let Some(d) = interior.drive.as_mut() {
+        if input.pressed(KeyCode::Escape) {
+            interior.drive = None;
+        } else {
+            d.input(ctx);
+        }
+        return true;
+    }
     // On the test stand: walked; ESC back to the studio.
     if let Some(s) = interior.stand.as_mut() {
         if input.pressed(KeyCode::Escape) {
@@ -6492,6 +6591,11 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     }
     if new {
         interior.dialog = Some(Dialog::New);
+        return true;
+    }
+    // TEST DRIVE (on the budgets panel, or CTRL+T): the design flown.
+    if (input.button_pressed(MouseButton::Left) && inside(interior.drive_rect.get(), input.cursor)) || (ctrl && input.pressed(KeyCode::KeyT)) {
+        interior.test_drive(None);
         return true;
     }
     // SET TARGETS (on the budgets panel): the job typed in.
@@ -7510,6 +7614,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
+    if let Some(d) = &interior.drive {
+        crate::test_drive::draw(frame, d);
+        return;
+    }
     if let Some(s) = &interior.stand {
         draw_stand(frame, s, place);
         return;
@@ -8515,6 +8623,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     // amber; what fails, in red.
     interior.budget_rect.set((Vec2::ZERO, Vec2::ZERO));
     interior.targets_rect.set((Vec2::ZERO, Vec2::ZERO));
+    interior.drive_rect.set((Vec2::ZERO, Vec2::ZERO));
     if !plan.blocks.is_empty() || !plan.groups.is_empty() {
         let b = budget(interior);
         let list = issues(interior, &b.faults);
@@ -8523,6 +8632,12 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         frame.hud_box(p, c, PLANE.scale(1.2));
         frame.text_scaled(p + Vec2::new(6.0, 4.0), "BUDGETS AND CHECKS", LABEL.scale(0.8), 0.6);
         // (SET TARGETS: at the header's end.)
+        let db = (Vec2::new(p.x + c.x - 196.0, p.y + 2.0), Vec2::new(92.0, 11.0));
+        interior.drive_rect.set(db);
+        let lit = inside(db, interior.cursor);
+        frame.hud_rect(db.0, db.1, if lit { Color([0.15, 0.2, 0.35, 0.95]) } else { Color([0.05, 0.1, 0.2, 0.95]) });
+        frame.hud_box(db.0, db.1, PLANE.scale(1.2));
+        frame.text_scaled(db.0 + Vec2::new(5.0, 2.0), "TEST DRIVE ^T", LABEL, 0.55);
         let tb = (Vec2::new(p.x + c.x - 96.0, p.y + 2.0), Vec2::new(92.0, 11.0));
         interior.targets_rect.set(tb);
         let lit = inside(tb, interior.cursor);
