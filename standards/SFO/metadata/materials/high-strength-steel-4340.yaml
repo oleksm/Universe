@@ -27,6 +27,7 @@ identity:
   - forging
   - tube
   - scrap
+  - box
 mass:
   density: 7850.0
 mechanical:

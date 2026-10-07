@@ -4,6 +4,7 @@ identity:
   name: Welding bay
   step: Weld
   description: "A hall with jigs where formed panels are welded into one part of a hull. It is sized to hold the largest."
+cuts: true
 physical:
   length: 60
   width: 40

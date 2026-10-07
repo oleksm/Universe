@@ -39,6 +39,7 @@ properties:
       volume: { type: number, x-unit: "m3", description: "m3 it can store" }
       stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
       handling: { type: number, x-unit: "kg/s", description: "kg/s it can move in or out" }
+  cuts: { type: boolean, description: "true: it cuts parts from stock, so a part it makes carries the cutting loss (rule.cut-loss); a module that assembles or forms whole pieces does not. Read by the build and the registry reader when they derive parts." }
   staff:
     description: "Who runs one of it, round the clock: the trades and how many of each (a shift's worth, times the shifts). A settlement's census is summed from these."
     type: array

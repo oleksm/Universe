@@ -207,6 +207,7 @@
 - { key: module.propellant-plant, game: "propellant-plant", in: "industry.ron, settlements.ron" }
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.rendering-works, game: "rendering-works", in: "industry.ron, settlements.ron" }
+- { key: module.section-line, game: "section-line", in: "industry.ron, settlements.ron" }
 - { key: module.shaft-furnace, game: "shaft-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.silicon-furnace, game: "silicon-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.silicon-refinery, game: "silicon-refinery", in: "industry.ron, settlements.ron" }

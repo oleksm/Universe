@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-tb-300x30
+  code: ST4340-TB-300X30
+  name: "4340 tube 300 x 30 mm"
+  traded_as: market.metals
+  form: tube
+  temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.3
+  wall: 0.03
+basis:
+  - { of: [size], tier: invented, review: true, note: "A heavy rung of the member ladder (SFO 13) for primary structure at an engine mount: 199.8 kg a metre. Added 2026-10-07 at the ships session's finding that the 200 x 15 could not carry a 2.3 MN engine's thrust into a frame." }

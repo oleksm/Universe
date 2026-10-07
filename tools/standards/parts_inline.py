@@ -58,7 +58,8 @@ def folder_defaults(eq, files):
     shares = collections.Counter(b.get("rule") for pt in pts for b in pt.get("basis") or [] if b.get("of") == ["physical.mass", "fit"] and b.get("rule"))
     if shares and shares.most_common(1)[0][1] * 2 >= len(pts) and shares.most_common(1)[0][0] != (next((b.get("rule") for b in eq.get("basis") or [] if "built_of" in (b.get("of") or [])), None)):
         bo["shares"] = shares.most_common(1)[0][0]
-    cut = [pt for pt in pts if (pt.get("making") or {}).get("module") in ("module.welding-bay", "module.machining-centre", "module.cutting-table", "module.electronics-works") and str((pt.get("made_from") or [{}])[0].get("item", "")).startswith("stock.")]
+    from lib import cut_modules
+    cut = [pt for pt in pts if (pt.get("making") or {}).get("module") in cut_modules() and str((pt.get("made_from") or [{}])[0].get("item", "")).startswith("stock.")]
     whole = sum(1 for pt in cut for b in pt.get("basis") or [] if b.get("of") == ["made_from", "making"] and b.get("rule") == "rule.built-in-whole")
     if cut and whole * 2 > len(cut): bo["whole"] = True
     return eq

@@ -34,7 +34,7 @@ properties:
           properties:
             part: { type: string, x-ref: [element, material] }
             share: { type: number, x-unit: "1", minimum: 0, maximum: 1 }
-      form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel, honeycomb, sandwich] }, description: The forms it comes in. }
+      form: { type: array, items: { enum: [ingot, sheet, plate, bar, tube, wire, fibre, fabric, foam, film, tile, casting, forging, powder, fluid, scrap, blank, panel, honeycomb, sandwich, box] }, description: The forms it comes in. }
       grade: { type: [string, "null"], description: "Its grade or temper: how it was treated (annealed, hardened...)." }
 
   fuel:

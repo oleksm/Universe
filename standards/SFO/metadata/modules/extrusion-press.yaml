@@ -261,6 +261,22 @@ recipes:
       - { item: stock.ti64-scrap, quantity: 0.15 }
     rate: 0.555555555555556
     power: 3000000
+  - makes: stock.ti64-tb-250x15
+    does: "A heated Ti-6-4 billet pressed through a die round a mandrel, then annealed."
+    inputs:
+      - { item: good.hot-ingot-ti64, quantity: 1.15 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.15 }
+    rate: 0.555555555555556
+    power: 3000000
+  - makes: stock.ti64-tb-300x20
+    does: "A heated Ti-6-4 billet pressed through a die round a mandrel, then annealed."
+    inputs:
+      - { item: good.hot-ingot-ti64, quantity: 1.15 }
+    outputs:
+      - { item: stock.ti64-scrap, quantity: 0.15 }
+    rate: 0.555555555555556
+    power: 3000000
 life: 788940000
 basis:
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "A mid-size extrusion press: 10 t an hour of aluminium tube, a fifth of that in titanium, at 3 MW, with 8% and 15% lost to the butt and the stretch. Sized from memory of a 5,000 t press line; not sourced." }

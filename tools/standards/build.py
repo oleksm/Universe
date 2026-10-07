@@ -1540,8 +1540,14 @@ for ms in mill_stock:
         problem(where, f"made_from.form: {mf.get('material')} doesn't come as {mf.get('form')}")
     density = (mat.get("mass") or {}).get("density")
     t, d, w = size.get("thickness"), size.get("diameter"), size.get("wall")
+    bw, bh = size.get("width"), size.get("height")
     if density and t and not d:
         ms["unit"], ms["weight"] = "m2", density * t / 1000
+    elif density and bw and bh and w:
+        # (A box section: four walls. The view keeps a tube's sizes in mm; width and height stay in m: each by its value.)
+        _bm = lambda x: x if x < 1 else x / 1000
+        bw_, bh_, w_ = _bm(bw), _bm(bh), _bm(w)
+        ms["unit"], ms["weight"] = "m", density * (bw_ * bh_ - (bw_ - 2 * w_) * (bh_ - 2 * w_))
     elif density and d and w:
         ms["unit"], ms["weight"] = "m", density * math.pi * (d ** 2 - (d - 2 * w) ** 2) / 4e6
     elif density and d:
@@ -2478,20 +2484,30 @@ if _crows:
 rows = []
 for ms in sorted(mill_stock, key=lambda m_: ((m_.get("made_from") or {}).get("material", ""), (m_.get("size") or {}).get("diameter", 0), (m_.get("size") or {}).get("wall", 0))):
     size_ = ms.get("size") or {}
-    if (ms.get("made_from") or {}).get("form") != "tube" or not size_.get("diameter") or not size_.get("wall"):
+    form_ = (ms.get("made_from") or {}).get("form")
+    if form_ == "tube" and size_.get("diameter") and size_.get("wall"):
+        d_, w_ = size_["diameter"], size_["wall"]
+        d_m, w_m = (d_, w_) if d_ < 1 else (d_ / 1000, w_ / 1000)      # (the view keeps sizes in mm)
+        area = math.pi * (d_m ** 2 - (d_m - 2 * w_m) ** 2) / 4
+        inertia = math.pi * (d_m ** 4 - (d_m - 2 * w_m) ** 4) / 64
+        section = f"{d_m * 1000:g} x {w_m * 1000:g}"
+    elif form_ == "box" and size_.get("width") and size_.get("height") and size_.get("wall"):
+        # (A welded box: the same figures, for the engineer's own members at an engine mount.)
+        _m = lambda x: x if x < 1 else x / 1000      # (the view keeps a tube's sizes in mm; a box's width and height stay in m)
+        bw_m, bh_m, w_m = _m(size_["width"]), _m(size_["height"]), _m(size_["wall"])
+        area = bw_m * bh_m - (bw_m - 2 * w_m) * (bh_m - 2 * w_m)
+        inertia = (bw_m * bh_m ** 3 - (bw_m - 2 * w_m) * (bh_m - 2 * w_m) ** 3) / 12
+        section = f"box {bw_m * 1000:g} x {bh_m * 1000:g} x {w_m * 1000:g}"
+    else:
         continue
     mat = next((m for m in materials if m.get("slug") == ms["made_from"].get("material")), None) or {}
     mech = mat.get("mechanical") or {}
-    d_, w_ = size_["diameter"], size_["wall"]
-    d_m, w_m = (d_, w_) if d_ < 1 else (d_ / 1000, w_ / 1000)      # (the view keeps sizes in mm)
-    area = math.pi * (d_m ** 2 - (d_m - 2 * w_m) ** 2) / 4
-    inertia = math.pi * (d_m ** 4 - (d_m - 2 * w_m) ** 4) / 64
     E_, sy = mech.get("youngs_modulus"), mech.get("yield_strength")      # (the view keeps GPa and MPa)
     E_, sy = (E_ * 1e9 if E_ else E_), (sy * 1e6 if sy else sy)
     yields = f"{area * sy / 1.5 / 1e3:,.0f} kN" if sy else "no yield strength on record"
     euler = lambda P: f"{math.pi * math.sqrt(E_ * inertia / P):.1f} m" if E_ else "no modulus on record"
-    rows.append(row("ok" if E_ and sy else "note", (ms.get("identity") or {}).get("name", ms["slug"]), f"{d_m * 1000:g} x {w_m * 1000:g}", f"{ms.get('weight', 0):.2f}", yields, euler(50e3), euler(200e3), f"{sy / (mat.get('mass') or {}).get('density', 1) / 1e3:.0f}" if sy else ""))
-report("members", "Members: the tubes a frame is cut from", "SFO 13: every round tube in stock, read as an engineer sizes a frame. Yields: the axial load at which it yields with the safety factor 1.5. Buckles: the pinned length at which Euler buckling takes it under 50 kN and under 200 kN; a longer member needs a bigger tube or a brace. Specific strength: yield strength over density, kN m per kg.", ["Tube", "mm", "kg/m", "Yields at", "Buckles at 50 kN", "Buckles at 200 kN", "kN m/kg"], rows)
+    rows.append(row("ok" if E_ and sy else "note", (ms.get("identity") or {}).get("name", ms["slug"]), section, f"{ms.get('weight', 0):.2f}", yields, euler(50e3), euler(200e3), f"{sy / (mat.get('mass') or {}).get('density', 1) / 1e3:.0f}" if sy else ""))
+report("members", "Members: the tubes and box sections a frame is cut from", "SFO 13: every round tube and box section in stock, read as an engineer sizes a frame. Yields: the axial load at which it yields with the safety factor 1.5. Buckles: the pinned length at which Euler buckling takes it under 50 kN and under 200 kN; a longer member needs a bigger tube or a brace. Specific strength: yield strength over density, kN m per kg.", ["Tube", "mm", "kg/m", "Yields at", "Buckles at 50 kN", "Buckles at 200 kN", "kN m/kg"], rows)
 
 # 3e. Traffic and census (docs/registry-people.md): the ships the supply runs take, and who lives where by trade.
 try:

@@ -59,7 +59,18 @@ def _num(v):
     return repr(v) if isinstance(v, (int, float)) and not isinstance(v, bool) else str(v)
 
 
-CUT_MODULES = ("module.welding-bay", "module.machining-centre", "module.cutting-table", "module.electronics-works")
+def cut_modules():
+    """The modules that cut parts from stock: those whose record says `cuts: true` (data, not a list in code)."""
+    import glob, yaml
+    out = set()
+    for f in glob.glob(os.path.join(TREE, "SFO", "metadata", "modules", "*.yaml")):
+        d = yaml.safe_load(open(f, encoding="utf-8")) or {}
+        if d.get("cuts") is True:
+            out.add(d["identity"]["key"])
+    return out
+
+
+_CUT = None
 
 
 def _basis_flow(en):
@@ -91,7 +102,10 @@ def part_basis(eq, it):
         first = {"of": ["physical.mass", "fit"], "rule": "rule.shares-chosen"}
     out = [first]
     if it.get("item"):
-        if it.get("module") in CUT_MODULES and str(it["item"]).startswith("stock.") and not bo.get("whole"):
+        global _CUT
+        if _CUT is None:
+            _CUT = cut_modules()
+        if it.get("module") in _CUT and str(it["item"]).startswith("stock.") and not bo.get("whole"):
             out.append({"of": ["made_from", "making"], "rule": "rule.cut-loss"})
         else:
             out.append({"of": ["made_from", "making"], "rule": "rule.built-in-whole"})

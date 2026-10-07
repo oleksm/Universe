@@ -4,6 +4,7 @@ identity:
   name: Cutting table
   step: Cut to shape
   description: "A flat bed where sheet and plate are cut to each panel's outline. What is left between the outlines is scrap."
+cuts: true
 physical:
   length: 40
   width: 15

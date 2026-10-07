@@ -19,7 +19,7 @@ lines:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.bar-mill, count: 1 }
   - makes: stock.st4340-tb-120x10
-    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15, stock.st4340-tb-100x3, stock.st4340-tb-100x5, stock.st4340-tb-120x3, stock.st4340-tb-120x5, stock.st4340-tb-160x3, stock.st4340-tb-160x5, stock.st4340-tb-160x8, stock.st4340-tb-200x5, stock.st4340-tb-200x8, stock.st4340-tb-250x5, stock.st4340-tb-250x8, stock.st4340-tb-60x2, stock.st4340-tb-60x3, stock.st4340-tb-80x2, stock.st4340-tb-80x3, stock.st4340-tb-80x5]
+    also: [stock.st4340-tb-150x10, stock.st4340-tb-200x15, stock.st4340-tb-100x3, stock.st4340-tb-100x5, stock.st4340-tb-120x3, stock.st4340-tb-120x5, stock.st4340-tb-160x3, stock.st4340-tb-160x5, stock.st4340-tb-160x8, stock.st4340-tb-200x5, stock.st4340-tb-200x8, stock.st4340-tb-250x5, stock.st4340-tb-250x8, stock.st4340-tb-60x2, stock.st4340-tb-60x3, stock.st4340-tb-80x2, stock.st4340-tb-80x3, stock.st4340-tb-80x5, stock.st4340-tb-250x20, stock.st4340-tb-300x20, stock.st4340-tb-300x30, stock.st4340-tb-400x30]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.piercing-mill, count: 1 }
@@ -29,7 +29,7 @@ lines:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.forging-press, count: 1 }
   - makes: stock.st304-pl-3
-    also: [stock.ti64-pl-5]
+    also: [stock.ti64-pl-5, stock.st4340-pl-20, stock.st4340-pl-25]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.hot-rolling-mill, count: 1 }
@@ -43,7 +43,7 @@ lines:
     modules:
       - { module: module.composites-works, count: 1 }
   - makes: stock.al6061-tb-100x2
-    also: [stock.al6061-tb-100x3, stock.al6061-tb-100x5, stock.al6061-tb-120x3, stock.al6061-tb-120x5, stock.al6061-tb-160x3, stock.al6061-tb-160x5, stock.al6061-tb-160x8, stock.al6061-tb-200x5, stock.al6061-tb-200x8, stock.al6061-tb-250x5, stock.al6061-tb-250x8, stock.al6061-tb-300x10, stock.al6061-tb-300x6, stock.al6061-tb-60x2, stock.al6061-tb-60x3, stock.al6061-tb-80x2, stock.al6061-tb-80x3, stock.al6061-tb-80x5, stock.ti64-tb-100x2, stock.ti64-tb-100x3, stock.ti64-tb-120x2, stock.ti64-tb-120x3, stock.ti64-tb-160x3, stock.ti64-tb-160x5, stock.ti64-tb-200x3, stock.ti64-tb-200x5, stock.ti64-tb-60x1p5, stock.ti64-tb-60x2p5, stock.ti64-tb-80x1p5, stock.ti64-tb-80x2p5]
+    also: [stock.al6061-tb-100x3, stock.al6061-tb-100x5, stock.al6061-tb-120x3, stock.al6061-tb-120x5, stock.al6061-tb-160x3, stock.al6061-tb-160x5, stock.al6061-tb-160x8, stock.al6061-tb-200x5, stock.al6061-tb-200x8, stock.al6061-tb-250x5, stock.al6061-tb-250x8, stock.al6061-tb-300x10, stock.al6061-tb-300x6, stock.al6061-tb-60x2, stock.al6061-tb-60x3, stock.al6061-tb-80x2, stock.al6061-tb-80x3, stock.al6061-tb-80x5, stock.ti64-tb-100x2, stock.ti64-tb-100x3, stock.ti64-tb-120x2, stock.ti64-tb-120x3, stock.ti64-tb-160x3, stock.ti64-tb-160x5, stock.ti64-tb-200x3, stock.ti64-tb-200x5, stock.ti64-tb-60x1p5, stock.ti64-tb-60x2p5, stock.ti64-tb-80x1p5, stock.ti64-tb-80x2p5, stock.ti64-tb-250x15, stock.ti64-tb-300x20]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.extrusion-press, count: 1 }
@@ -73,6 +73,10 @@ lines:
     also: [stock.aramid-fb]
     modules:
       - { module: module.composites-works, count: 1 }
+  - makes: stock.st4340-box-300x300x20
+    also: [stock.st4340-box-400x400x25]
+    modules:
+      - { module: module.section-line, count: 1 }
 # Where its stock is kept.
 modules:
   - { module: module.stock-yard, count: 1 }

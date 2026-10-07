@@ -4,6 +4,7 @@ identity:
   name: "Electronics works"
   step: "Assemble electronics"
   description: "Lines that make boards, set parts on them, and build them into cases. Set to one product at a time."
+cuts: true
 physical:
   length: 200
   width: 100
