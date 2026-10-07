@@ -908,6 +908,17 @@ const STANDARD_G: f64 = 9.80665;
 /// landing on top of the weight), at full main thrust, hovering at full lift.
 const CASES: [&str; 4] = ["LANDING", "THRUST", "LIFT", "FLOOR"];
 
+/// A case a design isn't built for (no legs: it never lands or stands; no lift: it
+/// never hovers): said, not a fault.
+const NOT_LANDING: &str = "IT DOESN'T LAND";
+const NOT_STANDING: &str = "IT DOESN'T STAND";
+const NOT_HOVERING: &str = "IT DOESN'T HOVER";
+
+/// Is this case's error only that the design isn't built for it?
+fn not_built_for(e: &str) -> bool {
+    [NOT_LANDING, NOT_STANDING, NOT_HOVERING].contains(&e)
+}
+
 /// What the frame bears and how: its joints (its members' ends, those within 5 cm
 /// one), its members' mass (kg), and for each load case either how each member
 /// does, or why it couldn't be worked out; what isn't carried (a module with no
@@ -1597,7 +1608,11 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         }
         pads.extend(at);
     }
-    let landing = if pads.is_empty() {
+    // (No legs, no pads: it never lands; not a fault.)
+    let lands = !legs_placed.is_empty() || !plan.pads.is_empty() || spec.is_some();
+    let landing = if !lands {
+        Err(NOT_LANDING.to_string())
+    } else if pads.is_empty() {
         out.loose.push("NOTHING STANDS ON THE LANDING PADS".into());
         Err("NOTHING ON THE PADS".to_string())
     } else {
@@ -1608,10 +1623,14 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     // carries). The design floor load (a crowd, stores stacked) is local: a floor
     // must hold it anywhere, but the whole ship is never a crowd; it's added below
     // to each deck panel and to what holds each deck point up.
-    let floored = if pads.is_empty() { Err("NOTHING ON THE PADS".to_string()) } else { Ok(Case { loads: loads(DVec3::ZERO), held: pads, anchor: None }) };
+    let floored = if !lands { Err(NOT_STANDING.to_string()) } else if pads.is_empty() { Err("NOTHING ON THE PADS".to_string()) } else { Ok(Case { loads: loads(DVec3::ZERO), held: pads, anchor: None }) };
     // Full main thrust, and hovering on full lift: the pushes balanced by every
     // mass's inertia, held only to keep it from drifting.
-    let (main, total) = pushes(ThrusterRole::Main, &mut out, "THE DRIVE");
+    // (Nothing pushing it along but what lifts it (under a tenth of it: attitude
+    // thrusters): a tail-sitter, flying along the way it lands; its lift its drive.)
+    let along: f64 = pushers.iter().filter(|p| p.0 == ThrusterRole::Main).map(|p| p.1.length()).sum();
+    let up: f64 = pushers.iter().filter(|p| p.0 == ThrusterRole::Lift).map(|p| p.1.length()).sum();
+    let (main, total) = if along >= 0.1 * up { pushes(ThrusterRole::Main, &mut out, "THE DRIVE") } else { pushes(ThrusterRole::Lift, &mut out, "THE DRIVE") };
     let acc = total / ship;
     // (In flight, far from anything: no weight; the pushes, and every mass's inertia
     // as the ship speeds up and turns under them.)
@@ -1639,7 +1658,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     out.cases = vec![
         (CASES[0].into(), run(landing, true)),
         (CASES[1].into(), run(Ok(thrust), !main.is_empty())),
-        (CASES[2].into(), run(Ok(hover), !lift.is_empty())),
+        (CASES[2].into(), if lift.is_empty() { Err(NOT_HOVERING.to_string()) } else { run(Ok(hover), true) }),
     ];
     // (No decks: no floor to check.)
     if !floor.is_empty() {
@@ -3833,6 +3852,13 @@ fn a_day(needs: &[&str], item: &str) -> f64 {
     reg.needs.iter().filter(|n| needs.contains(&n.identity.key.as_str())).flat_map(|n| n.takes.iter()).filter(|t| t.item == item).map(|t| t.rate).sum::<f64>() * 86_400.0
 }
 
+/// A propellant's bare name, however a record names it (a material's key, a stock's:
+/// "material.methalox", "stock.methalox-liq" both "methalox").
+fn bare(key: &str) -> &str {
+    let name = key.rsplit('.').next().unwrap_or(key);
+    name.trim_end_matches("-liq").trim_end_matches("-gas")
+}
+
 /// How often each airlock cycles a day (a figure chosen: a working ship's crew in
 /// and out once), and the share of air's mass that is oxygen.
 const AIRLOCK_CYCLES: f64 = 1.0;
@@ -4061,6 +4087,34 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let most = by.first().map_or(String::new(), |b| b.0.to_uppercase());
         lines.push((format!("WALLS {area:.0} M2, {} AT {:.0} KPA: MOSTLY {most}; WORST AT {:.0}% OF ITS LIMIT", t(wall_mass), cabin_pressure() / 1000.0, worst * 100.0), worst <= 1.0));
     }
+    // (How far its propellant takes it: for each propellant aboard, the engines that
+    // throw it (their exhaust, thrust-weighted), the rocket equation over the whole
+    // ship full and without that propellant.)
+    {
+        let mut by: Vec<(String, f64)> = Vec::new();
+        for t in of("tank") {
+            let holds = t.3.get("holds").and_then(|v| v.as_str()).unwrap_or("").to_string();
+            match by.iter_mut().find(|b| b.0 == holds) {
+                Some(b) => b.1 += num(&t.3, "capacity"),
+                None => by.push((holds, num(&t.3, "capacity"))),
+            }
+        }
+        let mut parts = Vec::new();
+        for (holds, kg) in by {
+            let throws: Vec<_> = of("engine").filter(|e| [e.3.get("propellant"), e.3.get("burns")].iter().flatten().any(|v| v.as_str().is_some_and(|p| bare(p) == bare(&holds)))).collect();
+            let thrust: f64 = throws.iter().map(|e| num(&e.3, "thrust")).sum();
+            if thrust <= 0.0 || kg <= 0.0 {
+                continue;
+            }
+            let exhaust = throws.iter().map(|e| num(&e.3, "thrust") * num(&e.3, "exhaust")).sum::<f64>() / thrust;
+            let dv = exhaust * (full / (full - kg).max(1.0)).ln();
+            let shown = if dv < 100.0 { format!("{dv:.0} M/S") } else { format!("{:.2} KM/S", dv / 1000.0) };
+            parts.push(format!("{shown} ON {}", bare(&holds).to_uppercase()));
+        }
+        if !parts.is_empty() {
+            lines.push((format!("DELTA-V  {}", parts.join(", ")), true));
+        }
+    }
     // (What pushes it up: whatever is placed pushing up, or swivelled to turn up.)
     let lifting: Vec<&(&Block, &Fitted, String, Fields, f64)> = placed.iter().filter(|p| push_of(p.0, p.1).is_some_and(|(d, _)| d.y > 0.5) || (p.1.push.is_some() && swivelled(&i.plan, &i.fit, p.0))).collect();
     let lift: f64 = lifting.iter().filter_map(|p| p.1.push.map(|x| x.1)).sum();
@@ -4084,7 +4138,12 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let one_out = lift - strongest >= weight;
         let least: f64 = lifting.iter().map(|p| num(&p.3, "thrust") * p.3.get("throttle").and_then(|v| v.as_f64()).unwrap_or(0.0)).sum();
         let burned = if burn < 10.0 { format!("{burn:.2}") } else { format!("{burn:.0}") };
-        let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
+        // (And how long its landing propellant lets it hover: what its lifting
+        // engines throw, held in its tanks.)
+        let throws: Vec<String> = lifting.iter().filter_map(|p| p.3.get("propellant").filter(|v| !v.is_null()).or(p.3.get("burns")).and_then(|v| v.as_str()).map(String::from)).collect();
+        let held: f64 = of("tank").filter(|t| t.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| throws.iter().any(|p| bare(p) == bare(h)))).map(|t| num(&t.3, "capacity")).sum();
+        let hover_s = if held > 0.0 && burn > 0.0 { format!(" FOR {:.0} S", held / burn) } else { String::new() };
+        let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{hover_s}{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
         lines.push((text, g > 1.0 && class.is_some() && least <= weight));
         // (Balanced: its lift's middle under its weight's.)
         let mass_at = |p: &&(&Block, &Fitted, String, Fields, f64)| (p.0.at, p.1.mass + p.1.load);
@@ -4352,7 +4411,7 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
                 Some((text, w, broken)) => (format!("{n}: {text}"), hue(w, broken)),
                 None => (format!("{n}: -"), LABEL.scale(0.7)),
             },
-            Err(e) => (format!("{n}: {e}"), CLASH),
+            Err(e) => (format!("{n}: {e}"), if not_built_for(e) { LABEL.scale(0.7) } else { CLASH }),
         }).collect()
     };
     match interior.pick {
@@ -4368,7 +4427,7 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
                     for ((n, r), felt) in bb.cases.iter().zip(&bb.felt) {
                         rows.push(match r {
                             Ok(_) => (format!("{n}: {:.2} G, {} KN ON THE FRAME", felt / STANDARD_G, kn(full * felt)), LABEL),
-                            Err(e) => (format!("{n}: {e}"), CLASH),
+                            Err(e) => (format!("{n}: {e}"), if not_built_for(e) { LABEL.scale(0.7) } else { CLASH }),
                         });
                     }
                     if bb.loose.iter().any(|l| l.starts_with(&f.name.to_uppercase()) && l.contains("NOT MOUNTED")) {
@@ -6600,7 +6659,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                                 };
                                 (format!("{name} {felt:.1} G: {what}"), col)
                             }
-                            Err(e) => (format!("{name}: {e}"), CLASH),
+                            Err(e) => (format!("{name}: {e}"), if not_built_for(e) { LABEL.scale(0.7) } else { CLASH }),
                         };
                         frame.text_scaled(Vec2::new(p.x + 8.0, y), &text, col, 0.6);
                         y += 11.0;
@@ -6842,6 +6901,10 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
+
+
 
 
 
