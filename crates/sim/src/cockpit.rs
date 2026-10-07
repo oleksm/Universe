@@ -1,7 +1,7 @@
 //! The player's cockpit (re-architecture R7): the player's pilot and ship
 //! computers, a client like any NPC pilot. It reads a `CockpitView` (the
 //! pilots' view of the world, with the crafts' transponders) and flies the
-//! ship only by posting (`pilots::Posting`, due `COMMAND_DELAY` ticks after
+//! ship only by posting (`pilots::Posting`, due `command_delay()` ticks after
 //! the view it read): the human's stick and requests, and the programs
 //! (autopilots, follow, fire control laying the gun).
 //!
@@ -198,7 +198,7 @@ impl Cockpit {
             return None;
         }
         let world = self.world.take().unwrap_or_else(|| universe_world::World::new(w.charts.seed));
-        let last = w.tick + pilots::COMMAND_DELAY;
+        let last = w.tick + pilots::command_delay();
         let run = |world: &universe_world::World, with: bool| {
             let (mut ship, mut system, mut clock) = (ship.clone(), system, w.time);
             let mut events = Vec::new();

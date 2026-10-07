@@ -208,7 +208,7 @@ impl Universe {
         postings.sort_by_key(|p| (p.thought, p.id));
         for p in postings {
             let due = p.due();
-            if due + crate::contract::LATE_HORIZON < self.tick {
+            if due + crate::contract::late_horizon() < self.tick {
                 self.dropped += 1;
                 continue;
             }

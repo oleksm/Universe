@@ -1,7 +1,7 @@
 //! NPC pilots (re-architecture R6): programs that fly crafts the way any
 //! client does. A pilot reads the newest snapshot of the world (its ship as
 //! its sensors report it, the charts, traffic control's board) and posts its
-//! ship's commands, due `COMMAND_DELAY` ticks after the snapshot it read.
+//! ship's commands, due `command_delay()` ticks after the snapshot it read.
 //!
 //! Pilots run apart from the world, on a pool of their own threads, or in
 //! lockstep with it (tests, and `UNIVERSE_LOCKSTEP=1`). Either way the world
@@ -9,7 +9,7 @@
 //! - **On time** (it came by its due tick), a posting takes effect at exactly
 //!   that tick, so the world runs the same as in lockstep.
 //! - **Late**, it takes effect at once, counted (`Pool::late`).
-//! - **Stale** (more than `LATE_HORIZON` past due), it's dropped, counted
+//! - **Stale** (more than `late_horizon()` ticks past due), it's dropped, counted
 //!   (`Pool::dropped`).
 //!
 //! A pilot that falls silent leaves its ship holding its controls, until the
@@ -35,7 +35,7 @@ use universe_protocol::PadGrant;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, ShipState, StarSystem};
 
 use crate::vessel::Request;
-pub use crate::contract::{Gun, Guns, PilotView, Posting, Status, COMMAND_DELAY, DEAD_MAN, LATE_HORIZON};
+pub use crate::contract::{command_delay, late_horizon, Gun, Guns, PilotView, Posting, Status, DEAD_MAN};
 pub(crate) use crate::contract::{turret_motions, Msg};
 use crate::traffic::Snap;
 
@@ -178,7 +178,7 @@ impl Bus for PoolLink<'_> {
 
     fn actuate(&mut self, c: &ShipCommands) {
         self.devices.push(*c);
-        self.pending.push((self.view.tick + COMMAND_DELAY, *c));
+        self.pending.push((self.view.tick + command_delay(), *c));
         expect(&mut self.ship, c);
     }
 
@@ -465,7 +465,7 @@ fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, vie
     let mut systems: Vec<usize> = view.snaps.iter().filter(|s| s.wanted() && (s.flying || s.landed)).map(|s| s.system).collect();
     systems.sort_unstable();
     systems.dedup();
-    let latency = view.dt * (COMMAND_DELAY + 1) as f64;
+    let latency = view.dt * (command_delay() + 1) as f64;
     let order = |id: usize, c: TurretCommand| Posting { id, thought: view.tick, seen: view.time, devices: Vec::new(), turn: None, requests: Vec::new(), events: Vec::new(), status: Status::default(), gun: Some(c), sleep_until: None };
     let mut out = Vec::new();
     for &system in &systems {

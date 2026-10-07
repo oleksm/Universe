@@ -12,6 +12,11 @@ pub fn period(k: ClockKey) -> f64 {
     every(k).unwrap_or_else(|| panic!("{} has no period in its record", k.key()))
 }
 
+/// `seconds` of game time in realtime ticks (at least one).
+pub fn ticks(seconds: f64) -> u64 {
+    (seconds / tick()).round().max(1.0) as u64
+}
+
 /// The realtime tick (s): every other period is a whole number of it.
 pub fn tick() -> f64 {
     static TICK: std::sync::OnceLock<f64> = std::sync::OnceLock::new();

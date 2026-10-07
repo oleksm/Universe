@@ -20,10 +20,10 @@ pub fn tick() -> f64 {
 /// The most ticks a step may take (beyond it, under heavy warp, ticks stretch).
 pub const TICK_BUDGET: usize = 8;
 
-/// Traffic control's look at who's where, every this many ticks.
-const PRESENCE_EVERY: u64 = 6;
-/// Ticks between reading the ground ahead of ships low over a baked world (see `ground_ahead`).
-const GROUND_AHEAD_EVERY: u64 = 30;
+/// Traffic control's look at who's where, this often (s).
+const PRESENCE_EVERY: f64 = 0.1;
+/// How often the ground ahead of ships low over a baked world is read (s; see `ground_ahead`).
+const GROUND_AHEAD_EVERY: f64 = 0.5;
 /// How low over its ground a ship has its ground read ahead (m), and how far ahead (s).
 const GROUND_AHEAD_BELOW: f64 = 30_000.0;
 const GROUND_AHEAD_SECONDS: [f64; 3] = [0.0, 3.0, 8.0];
@@ -360,15 +360,14 @@ impl Universe {
         self.world.time = t1;
         universe_prof::time("sim/combat", || self.combat(t1 - t0));
         self.judge(t1);
-        // Traffic control looks around ten times a second (pads freed when
-        // their ships leave, corridors when they're through): plenty, at a
-        // sixth of the cost.
         // The ground under ships low over a baked world, and where they'll be in a few seconds,
         // read ahead of the physics (twice a second).
-        if self.tick.is_multiple_of(GROUND_AHEAD_EVERY) {
+        if self.tick.is_multiple_of(crate::clocks::ticks(GROUND_AHEAD_EVERY)) {
             universe_prof::time("sim/ground ahead", || self.ground_ahead());
         }
-        if self.tick.is_multiple_of(PRESENCE_EVERY) {
+        // Traffic control looks around ten times a second (pads freed when their ships leave,
+        // corridors when they're through): plenty, and cheaper than every tick.
+        if self.tick.is_multiple_of(crate::clocks::ticks(PRESENCE_EVERY)) {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
         universe_prof::time("sim/recorder", || self.record());

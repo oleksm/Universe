@@ -19,10 +19,16 @@ use universe_world::{Controls, Facility, Ship, ShipCommands, ShipEvent, StarSyst
 use crate::traffic::Snap;
 use crate::vessel::Request;
 
-/// Ticks from the snapshot a pilot read to its commands taking effect (k).
-pub const COMMAND_DELAY: u64 = 2;
-/// A posting this many ticks past due is dropped: too stale to act on.
-pub const LATE_HORIZON: u64 = 30;
+/// From the snapshot a pilot read to its commands taking effect (s), and in ticks (k).
+pub const COMMAND_DELAY_S: f64 = 2.0 / 60.0;
+pub fn command_delay() -> u64 {
+    crate::clocks::ticks(COMMAND_DELAY_S)
+}
+/// A posting this long past due is dropped: too stale to act on (s), and in ticks.
+pub const LATE_HORIZON_S: f64 = 0.5;
+pub fn late_horizon() -> u64 {
+    crate::clocks::ticks(LATE_HORIZON_S)
+}
 /// After this long with no posting from its pilot, a ship's engines are cut
 /// and its weapons made safe (s).
 pub const DEAD_MAN: f64 = 30.0;
@@ -99,7 +105,7 @@ pub struct PilotView {
 pub struct Posting {
     /// Whose: the ship's combat id (the player's 0, craft i: i + 1).
     pub id: usize,
-    /// The tick of the snapshot it read (due `COMMAND_DELAY` after), and its world time.
+    /// The tick of the snapshot it read (due `command_delay()` ticks after), and its world time.
     pub thought: u64,
     pub seen: f64,
     /// For its devices, in order, and its turn at the due tick (None: it
@@ -120,7 +126,7 @@ pub struct Posting {
 
 impl Posting {
     pub fn due(&self) -> u64 {
-        self.thought + COMMAND_DELAY
+        self.thought + command_delay()
     }
 }
 
