@@ -74,11 +74,14 @@ pub struct Graphics {
     pub planet_light: bool,
     /// The film curve (AgX): off, light straight to the screen, clipped.
     pub tone_map: bool,
+    /// A world's clouds (and their shadows, and their cache's work). Off by default for now (the
+    /// user's call, 2026-10-07: clouds aren't the priority yet).
+    pub clouds: bool,
 }
 
 impl Default for Graphics {
     fn default() -> Self {
-        Graphics { shadows: true, textures: true, normal_maps: true, occlusion: true, emission: true, specular: true, planet_light: true, tone_map: true }
+        Graphics { shadows: true, textures: true, normal_maps: true, occlusion: true, emission: true, specular: true, planet_light: true, tone_map: true, clouds: false }
     }
 }
 

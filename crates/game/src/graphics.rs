@@ -23,6 +23,7 @@ const ROWS: &[(&str, &str)] = &[
     ("specular", "GLOSSY HIGHLIGHTS"),
     ("planet_light", "PLANET LIGHT"),
     ("tone_map", "FILM CURVE (AGX)"),
+    ("clouds", "CLOUDS"),
 ];
 
 fn flag<'a>(g: &'a mut Graphics, name: &str) -> Option<&'a mut bool> {
@@ -35,6 +36,7 @@ fn flag<'a>(g: &'a mut Graphics, name: &str) -> Option<&'a mut bool> {
         "specular" => &mut g.specular,
         "planet_light" => &mut g.planet_light,
         "tone_map" => &mut g.tone_map,
+        "clouds" => &mut g.clouds,
         _ => return None,
     })
 }
