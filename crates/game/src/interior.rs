@@ -263,6 +263,11 @@ pub struct Interior {
     /// made by a generator (MOUNT ALL, BRACE, AUTO-SIZE), not mirrored.
     mirror: u8,
     bulk: bool,
+    /// SELECT: modules, members and decks picked with the one picked (SHIFT-click);
+    /// what was copied (CTRL+C), and stamping it (CTRL+V: a click puts it there).
+    set: Vec<Hover>,
+    clip: Option<Assembly>,
+    stamping: bool,
     /// FIT FRAME under way: for which plan, its news, and its stop.
     fitting: Option<(Plan, mpsc::Receiver<Fitting>, Arc<std::sync::atomic::AtomicBool>)>,
 }
@@ -299,7 +304,7 @@ fn image_dir(d: Vec3, mirror: u8, n: usize) -> Vec3 {
 fn mirror_edit(before: &Plan, plan: &mut Plan, mirror: u8) {
     let near = |a: Vec3, b: Vec3| a.distance(b) < 0.05;
     // (Modules, by their ids.)
-    if plan.on.is_none() && plan.blocks.iter().all(|b| b.id.contains('#')) {
+    if hull_of(plan).is_none() && plan.blocks.iter().all(|b| b.id.contains('#')) {
         let removed: Vec<Block> = before.blocks.iter().filter(|b| !plan.blocks.iter().any(|a| a.id == b.id)).cloned().collect();
         for r in &removed {
             for m in images(r.at, mirror) {
@@ -473,7 +478,172 @@ fn budget_panel(size: Vec2, lines: usize, issues: usize, top: usize) -> (Rect, R
     (budgets, list, boxes)
 }
 
+/// A piece of a design to stamp elsewhere (CTRL+C, CTRL+V; saved as an
+/// assembly): its modules, members and decks, placed round its foot (x and z its
+/// bounds' middle, y its lowest).
+#[derive(Clone, Default, serde::Serialize, serde::Deserialize)]
+struct Assembly {
+    blocks: Vec<Block>,
+    beams: Vec<Beam>,
+    plates: Vec<Plate>,
+}
+
+impl Assembly {
+    /// What `picks` names of `plan`, about its foot.
+    fn of(plan: &Plan, picks: &[Hover]) -> Assembly {
+        let a = Self::as_placed(plan, picks);
+        a.moved(-a.foot())
+    }
+
+    /// Its foot: x and z its bounds' middle, y its lowest.
+    fn foot(&self) -> Vec3 {
+        let (lo, hi) = self.bounds();
+        Vec3::new((lo.x + hi.x) * 0.5, lo.y, (lo.z + hi.z) * 0.5)
+    }
+
+    /// What `picks` names of `plan`, where it stands.
+    fn as_placed(plan: &Plan, picks: &[Hover]) -> Assembly {
+        let mut a = Assembly::default();
+        for h in picks {
+            match *h {
+                Hover::Module(n) => a.blocks.extend(plan.blocks.get(n).cloned()),
+                Hover::Member(k) => a.beams.extend(plan.beams.get(k).cloned()),
+                Hover::Deck(n) => a.plates.extend(plan.plates.get(n).cloned()),
+                _ => {}
+            }
+        }
+        a
+    }
+
+    fn bounds(&self) -> (Vec3, Vec3) {
+        let mut lo = Vec3::splat(f32::MAX);
+        let mut hi = Vec3::splat(f32::MIN);
+        for b in &self.blocks {
+            let (a, z) = b.bounds();
+            (lo, hi) = (lo.min(a), hi.max(z));
+        }
+        for b in &self.beams {
+            (lo, hi) = (lo.min(b.a).min(b.b), hi.max(b.a).max(b.b));
+        }
+        for p in &self.plates {
+            (lo, hi) = (lo.min(Vec3::new(p.lo.x, p.y, p.lo.y)), hi.max(Vec3::new(p.hi.x, p.y, p.hi.y)));
+        }
+        if lo.x > hi.x { (Vec3::ZERO, Vec3::ZERO) } else { (lo, hi) }
+    }
+
+    fn moved(&self, by: Vec3) -> Assembly {
+        Assembly {
+            blocks: self.blocks.iter().map(|b| Block { at: b.at + by, ..b.clone() }).collect(),
+            beams: self.beams.iter().map(|b| Beam { a: b.a + by, b: b.b + by, ..b.clone() }).collect(),
+            plates: self.plates.iter().map(|p| Plate { lo: p.lo + Vec2::new(by.x, by.z), hi: p.hi + Vec2::new(by.x, by.z), y: p.y + by.y, stock: p.stock.clone() }).collect(),
+        }
+    }
+
+    fn is_empty(&self) -> bool {
+        self.blocks.is_empty() && self.beams.is_empty() && self.plates.is_empty()
+    }
+
+    fn says(&self) -> String {
+        format!("{} MODULES, {} MEMBERS, {} DECKS", self.blocks.len(), self.beams.len(), self.plates.len())
+    }
+
+    /// Put in `plan` with its foot at `at`: modules numbered on (a design with a
+    /// hull takes no copies of its slots), members not already there, decks not
+    /// already there; joints knit to the frame's.
+    fn stamp(&self, plan: &mut Plan, at: Vec3) {
+        let here = self.moved(at);
+        if hull_of(plan).is_none() {
+            for b in here.blocks {
+                let k = (1..).find(|k| !plan.blocks.iter().any(|o| o.id == format!("{}#{k}", kind(&b.id)))).unwrap_or(1);
+                plan.blocks.push(Block { id: format!("{}#{k}", kind(&b.id)), ..b });
+            }
+        }
+        let near = |x: &Beam, b: &Beam| (x.a.distance(b.a) < 0.05 && x.b.distance(b.b) < 0.05) || (x.a.distance(b.b) < 0.05 && x.b.distance(b.a) < 0.05);
+        for b in here.beams {
+            if !plan.beams.iter().any(|x| near(x, &b)) {
+                plan.beams.push(b);
+            }
+        }
+        plan.beams = knit(std::mem::take(&mut plan.beams)).0;
+        for p in here.plates {
+            if !plan.plates.iter().any(|x| x.lo.distance(p.lo) < 0.05 && x.hi.distance(p.hi) < 0.05 && (x.y - p.y).abs() < 0.05) {
+                plan.plates.push(p);
+            }
+        }
+    }
+
+    fn folder() -> std::path::PathBuf {
+        crate::save::data_dir().join("freefall").join("interiors").join("assemblies")
+    }
+
+    /// Saved under the next free name (assembly-1, -2...): which.
+    fn save(&self) -> Option<String> {
+        let dir = Self::folder();
+        std::fs::create_dir_all(&dir).ok()?;
+        let name = (1..).map(|k| format!("assembly-{k}")).find(|n| !dir.join(format!("{n}.json")).exists())?;
+        std::fs::write(dir.join(format!("{name}.json")), serde_json::to_string_pretty(self).ok()?).ok()?;
+        Some(name)
+    }
+
+    fn load(name: &str) -> Option<Assembly> {
+        serde_json::from_str(&std::fs::read_to_string(Self::folder().join(format!("{name}.json"))).ok()?).ok()
+    }
+
+    /// The saved ones: each one's name and what's in it.
+    fn saved() -> Vec<(String, String)> {
+        let mut out: Vec<(String, String)> = std::fs::read_dir(Self::folder()).into_iter().flatten().flatten().filter_map(|e| {
+            let name = e.file_name().to_string_lossy().strip_suffix(".json")?.to_string();
+            let a = Self::load(&name)?;
+            Some((name, a.says()))
+        }).collect();
+        out.sort();
+        out
+    }
+}
+
+/// A deck's level: everything above it up to the next deck over it (that deck
+/// too, not this one): modules standing in it, members within it (not this deck's
+/// own joists), the deck over it. None: no deck over it.
+fn level(plan: &Plan, deck: usize) -> Option<(Vec<Hover>, f32)> {
+    let y0 = plan.plates.get(deck)?.y;
+    let y1 = plan.plates.iter().map(|p| p.y).filter(|&y| y > y0 + 0.5).fold(f32::MAX, f32::min);
+    if y1 == f32::MAX {
+        return None;
+    }
+    let mut out = Vec::new();
+    for (n, b) in plan.blocks.iter().enumerate() {
+        let foot = b.at.y - b.size.y * 0.5;
+        if foot >= y0 - 0.3 && foot < y1 - 0.3 {
+            out.push(Hover::Module(n));
+        }
+    }
+    for (k, b) in plan.beams.iter().enumerate() {
+        let (lo, hi) = (b.a.y.min(b.b.y), b.a.y.max(b.b.y));
+        if lo >= y0 - 0.5 && hi <= y1 + 0.5 && hi > y0 + 0.5 {
+            out.push(Hover::Member(k));
+        }
+    }
+    for (n, p) in plan.plates.iter().enumerate() {
+        if (p.y - y1).abs() < 0.05 {
+            out.push(Hover::Deck(n));
+        }
+    }
+    Some((out, y1 - y0))
+}
+
 impl Interior {
+    /// The modules, members and decks picked in SELECT (the one picked and the
+    /// rest picked with it).
+    fn picked_items(&self) -> Vec<Hover> {
+        let mut out: Vec<Hover> = self.pick.into_iter().filter(|h| matches!(h, Hover::Module(_) | Hover::Member(_) | Hover::Deck(_))).collect();
+        for &h in &self.set {
+            if !out.contains(&h) {
+                out.push(h);
+            }
+        }
+        out
+    }
+
     /// The tool in hand set by name (dev: `freefall --studio` with UNIVERSE_TOOL):
     /// select, path, door, modules, frame.
     pub fn use_tool(&mut self, name: &str) {
@@ -2997,6 +3167,8 @@ struct Point {
 enum Dialog {
     New,
     Open(Vec<(String, String)>),
+    /// The assemblies saved, to stamp one (its name, what's in it).
+    Stamp(Vec<(String, String)>),
 }
 
 #[derive(Clone, Copy, Default, PartialEq)]
@@ -3617,7 +3789,7 @@ impl Interior {
     /// Is something in progress (to cancel): a module picked, a path, member or truss
     /// being laid, TRUSS waiting for its corners, a member picked, WALK HERE armed?
     fn in_progress(&self) -> bool {
-        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.deck_mode || self.beam_pick.is_some() || self.walk_armed
+        self.module.is_some() || self.block.is_some() || self.from.is_some() || self.beam_from.is_some() || self.truss_from.is_some() || self.truss_mode || self.deck_mode || self.beam_pick.is_some() || self.walk_armed || self.stamping
     }
 
     /// What's in progress cancelled; was anything?
@@ -3625,6 +3797,8 @@ impl Interior {
         let any = self.in_progress();
         (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
         (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from, self.deck_pick) = (false, false, false, None, None);
+        let any = any || self.stamping;
+        self.stamping = false;
         any
     }
 
@@ -4120,7 +4294,7 @@ fn dialog_choices(d: &Dialog) -> Vec<String> {
             v.push("NO HULL: FROM NOTHING".into());
             v
         }
-        Dialog::Open(list) => list.iter().map(|(id, on)| format!("{}   ({on})", id.to_uppercase())).collect(),
+        Dialog::Open(list) | Dialog::Stamp(list) => list.iter().map(|(id, on)| format!("{}   ({on})", id.to_uppercase())).collect(),
     };
     out.push("CANCEL".into());
     out
@@ -4247,6 +4421,14 @@ const PRESETS: [(&str, Profile, bool); 5] = [
 #[derive(Clone, Copy, PartialEq)]
 enum Action {
     FitFrame,
+    /// SELECT: the picked deck's level picked; the picks copied; the copy stamped;
+    /// saved as an assembly; a saved one to stamp; the level copied on top.
+    Level,
+    Copy,
+    Paste,
+    SaveAssembly,
+    Assemblies,
+    LevelUp,
     PlaneDown,
     PlaneUp,
     Remove,
@@ -5366,7 +5548,7 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
         }
         Tool::Look => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
-            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand)]).collect()
+            shapes.chain([(at(246.0, 0.0, w3), "GROUP", Action::Group), (at(246.0, w3 + 6.0, w3), "UNGROUP", Action::Ungroup), (at(246.0, 2.0 * (w3 + 6.0), w3), "WALL OFF", Action::Wall), (at(270.0, 0.0, w), "REMOVE PICKED", Action::Remove), (at(270.0, w + 6.0, w), "ON LINE", Action::Stand), (at(294.0, 0.0, w3), "LEVEL", Action::Level), (at(294.0, w3 + 6.0, w3), "COPY", Action::Copy), (at(294.0, 2.0 * (w3 + 6.0), w3), "STAMP", Action::Paste), (at(316.0, 0.0, w3), "SAVE ASSY", Action::SaveAssembly), (at(316.0, w3 + 6.0, w3), "ASSEMBLIES", Action::Assemblies), (at(316.0, 2.0 * (w3 + 6.0), w3), "LEVEL UP", Action::LevelUp)]).collect()
         }
     }
 }
@@ -5717,6 +5899,13 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
             match d {
                 Dialog::New => interior.new_design(hulls().get(k).copied()),
                 Dialog::Open(list) => interior.open_design(&list[k].0),
+                Dialog::Stamp(list) => match Assembly::load(&list[k].0) {
+                    Some(a) => {
+                        interior.message = Some((format!("{}: CLICK WHERE ITS FOOT GOES ON THE PLANE; RIGHT-CLICK OR ESC STOPS", list[k].0.to_uppercase()), 8.0));
+                        (interior.clip, interior.stamping, interior.tool) = (Some(a), true, Tool::Look);
+                    }
+                    None => interior.message = Some(("THAT ASSEMBLY WOULDN'T OPEN".into(), 4.0)),
+                },
             }
         }
         interior.cursor = input.cursor;
@@ -5965,6 +6154,66 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         }
     }
     let action = if pressed { panel_button_at(interior.tool, cursor) } else { None };
+    // Assemblies: LEVEL (the picked deck's level picked), COPY (CTRL+C), STAMP
+    // (CTRL+V), SAVE ASSY, ASSEMBLIES (a saved one to stamp), LEVEL UP (the picked
+    // deck's level copied on top of the ship).
+    let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
+    let deck = match interior.pick {
+        Some(Hover::Deck(n)) => Some(n),
+        _ => None,
+    };
+    if action == Some(Action::Level) || action == Some(Action::LevelUp) {
+        match deck.and_then(|n| level(&interior.plan, n)) {
+            None => interior.message = Some(("PICK A DECK WITH ANOTHER DECK OVER IT: ITS LEVEL IS WHAT'S BETWEEN".into(), 5.0)),
+            Some((picks, height)) if action == Some(Action::LevelUp) => {
+                // (Its foot where it stands, raised so this deck's level sits on the
+                // top deck.)
+                let placed = Assembly::as_placed(&interior.plan, &picks);
+                let a = placed.moved(-placed.foot());
+                let y0 = interior.plan.plates[deck.unwrap_or(0)].y;
+                let top = interior.plan.plates.iter().map(|p| p.y).fold(f32::MIN, f32::max);
+                a.stamp(&mut interior.plan, placed.foot() + Vec3::Y * (top - y0));
+                interior.bulk = true;
+                interior.message = Some((format!("LEVEL COPIED ON TOP: {} ({height:.1} M HIGH)", a.says()), 5.0));
+            }
+            Some((picks, height)) => {
+                interior.pick = picks.first().copied();
+                interior.set = picks.into_iter().skip(1).collect();
+                interior.message = Some((format!("THE LEVEL PICKED: {} ITEMS, {height:.1} M HIGH; COPY OR LEVEL UP", interior.set.len() + 1), 5.0));
+            }
+        }
+        return true;
+    }
+    if action == Some(Action::Copy) || (ctrl && input.pressed(KeyCode::KeyC)) {
+        let a = Assembly::of(&interior.plan, &interior.picked_items());
+        interior.message = Some((if a.is_empty() { "PICK MODULES, MEMBERS OR DECKS FIRST (SHIFT-CLICK FOR MORE, OR LEVEL)".to_string() } else { format!("COPIED: {}", a.says()) }, 4.0));
+        if !a.is_empty() {
+            interior.clip = Some(a);
+        }
+        return true;
+    }
+    if action == Some(Action::Paste) || (ctrl && input.pressed(KeyCode::KeyV)) {
+        if interior.clip.is_some() {
+            interior.stamping = true;
+            interior.message = Some(("STAMP: CLICK WHERE ITS FOOT GOES ON THE WORK PLANE ([ AND ] MOVE IT); RIGHT-CLICK OR ESC STOPS".into(), 8.0));
+        } else {
+            interior.message = Some(("NOTHING COPIED YET".into(), 3.0));
+        }
+        return true;
+    }
+    if action == Some(Action::SaveAssembly) {
+        let a = interior.clip.clone().unwrap_or_else(|| Assembly::of(&interior.plan, &interior.picked_items()));
+        interior.message = Some((match (a.is_empty(), a.save()) {
+            (true, _) => "COPY OR PICK SOMETHING FIRST".to_string(),
+            (false, Some(name)) => format!("SAVED AS {}: {}", name.to_uppercase(), a.says()),
+            (false, None) => "COULDN'T SAVE IT".to_string(),
+        }, 5.0));
+        return true;
+    }
+    if action == Some(Action::Assemblies) {
+        interior.dialog = Some(Dialog::Stamp(Assembly::saved()));
+        return true;
+    }
     let lift = if input.pressed(KeyCode::BracketRight) || action == Some(Action::PlaneUp) {
         0.5
     } else if input.pressed(KeyCode::BracketLeft) || action == Some(Action::PlaneDown) {
@@ -6369,6 +6618,20 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         interior.yaw -= d.x * 0.008;
         interior.pitch = (interior.pitch + d.y * 0.008).clamp(-1.5, 1.5);
     }
+    // Stamping: a click puts the copy's foot there on the work plane (to the half
+    // metre); again and again till ESC or the right button.
+    if interior.stamping
+        && !input.button_down(MouseButton::Left)
+        && interior.press.is_some()
+        && !dragged
+        && let Some(at) = on_plane(interior, &cam, plane, cursor, false)
+        && let Some(clip) = interior.clip.clone()
+    {
+        interior.press = None;
+        let at = Vec3::new((at.x * 2.0).round() / 2.0, at.y, (at.z * 2.0).round() / 2.0);
+        clip.stamp(&mut interior.plan, at);
+        interior.message = Some((format!("STAMPED: {}", clip.says()), 4.0));
+    }
     if !input.button_down(MouseButton::Left)
         && interior.press.take().is_some()
         && !dragged
@@ -6568,9 +6831,23 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                     interior.pick = Some(Hover::Line(k));
                     interior.more = interior.plan.group_of(k).map_or_else(Vec::new, |g| interior.plan.groups[g].lines.iter().copied().filter(|&j| j != k).collect());
                 }
+                // (SHIFT: a module, member or deck picked with the rest, or put back.)
+                (Some(h @ (Hover::Module(_) | Hover::Member(_) | Hover::Deck(_))), true) => {
+                    if interior.pick == Some(h) {
+                        interior.pick = interior.set.pop();
+                    } else if let Some(at) = interior.set.iter().position(|&x| x == h) {
+                        interior.set.remove(at);
+                    } else if interior.pick.is_none() {
+                        interior.pick = Some(h);
+                    } else {
+                        interior.set.push(h);
+                    }
+                    interior.more.clear();
+                }
                 (other, _) => {
                     interior.pick = other;
                     interior.more.clear();
+                    interior.set.clear();
                 }
             },
         }
@@ -6823,6 +7100,28 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         // Where a click would put a point: over a line, its quarter marks (the one
         // it'd snap to lit); else on the plane (SHIFT: squared to the last point).
         // Not over a point: that joins to it.
+        // (Stamping: the copy where a click would put it, faint.)
+        if interior.stamping
+            && let Some(clip) = &interior.clip
+            && let Some(at) = on_plane(interior, &cam, plane, interior.cursor, false)
+        {
+            let ghost = clip.moved(Vec3::new((at.x * 2.0).round() / 2.0, at.y, (at.z * 2.0).round() / 2.0));
+            for b in &ghost.blocks {
+                let round = interior.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.round);
+                for [a, z] in b.edges(round) {
+                    seg(frame, a, z, MODULE.scale(0.45));
+                }
+            }
+            for b in &ghost.beams {
+                seg(frame, b.a, b.b, PICKED.scale(0.45));
+            }
+            for p in &ghost.plates {
+                let c = [Vec3::new(p.lo.x, p.y, p.lo.y), Vec3::new(p.hi.x, p.y, p.lo.y), Vec3::new(p.hi.x, p.y, p.hi.y), Vec3::new(p.lo.x, p.y, p.hi.y)];
+                for k in 0..4 {
+                    seg(frame, c[k], c[(k + 1) % 4], DECK.scale(0.45));
+                }
+            }
+        }
         match interior.hover {
             Some(Hover::Line(k)) => {
                 let (a, b, _) = interior.plan.lines[k];
@@ -6989,7 +7288,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     for (n, b) in plan.blocks.iter().enumerate().filter(|_| interior.shown(layer::MODULES)) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
         let f = &interior.fit[k];
-        let lit = (interior.tool == Tool::Modules && (interior.block == Some(n) || interior.block_hover == Some(n))) || [interior.pick, interior.hover].contains(&Some(Hover::Module(n)));
+        let lit = (interior.tool == Tool::Modules && (interior.block == Some(n) || interior.block_hover == Some(n))) || [interior.pick, interior.hover].contains(&Some(Hover::Module(n))) || interior.set.contains(&Hover::Module(n));
         // (An engine: an arrow from its middle, the way it pushes the ship; a second
         // up, if a swivel turns it to land.)
         if let Some((d, _)) = push_of(b, f) {
@@ -7020,7 +7319,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The decks: each plate filled and outlined (its own layer, frame shown or not).
     for (n, plate) in plan.plates.iter().enumerate().filter(|_| interior.shown(layer::DECKS)) {
-        let deck_col = if [interior.pick, interior.hover].contains(&Some(Hover::Deck(n))) { PICKED } else { DECK };
+        let deck_col = if [interior.pick, interior.hover].contains(&Some(Hover::Deck(n))) || interior.set.contains(&Hover::Deck(n)) { PICKED } else { DECK };
         let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
         if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
             let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
@@ -7053,7 +7352,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             (!os.is_empty()).then(|| (os.iter().map(|o| o.work.design).fold(0.0, f64::max), os.iter().any(|o| o.broken.is_some())))
         };
         for (k, b) in plan.beams.iter().enumerate() {
-            let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k) || [interior.pick, interior.hover].contains(&Some(Hover::Member(k)));
+            let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k) || [interior.pick, interior.hover].contains(&Some(Hover::Member(k))) || interior.set.contains(&Hover::Member(k));
             let (col, broken) = match outcome(k) {
                 _ if lit => (PICKED, false),
                 Some((_, true)) => (CLASH, true),
@@ -7607,6 +7906,8 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             Dialog::New => "NEW DESIGN: IN WHICH HULL?",
             Dialog::Open(list) if list.is_empty() => "NO SAVED DESIGNS YET",
             Dialog::Open(_) => "OPEN A SAVED DESIGN",
+            Dialog::Stamp(list) if list.is_empty() => "NO ASSEMBLIES SAVED YET: COPY SOMETHING, THEN SAVE ASSEMBLY",
+            Dialog::Stamp(_) => "STAMP WHICH ASSEMBLY?",
         };
         frame.text(p + Vec2::new(10.0, 10.0), title, PICKED);
         for (r, name) in rows.iter().zip(&choices) {
