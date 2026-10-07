@@ -128,7 +128,7 @@ were fixed the same night (§0). Everything else is a proposal until the user pi
    process remnants removed; the small renames.
 2. **Say it once** (done 2026-10-07, changelog/2026-10-07-audit-step-2.md; the census stays in the records until the engine reads one generated file): basis rules (`rule:`) for lives, cut loss, mounts margin, bulk
    density, plant weights; cite the five uncited sources; census as a report; freeze the two logs.
-3. **Structure** (3a done 2026-10-07: one shape gate, dictionary enums, lib.py; 3b: the equipment naming rule and parts as a rule done the same day with the registry reader deriving parts, bulk stock kept by the user's rule; `allOf` flattening in the generator still to do, with the integrator): parts as a rule (−840
+3. **Structure** (3a done 2026-10-07: one shape gate, dictionary enums, lib.py; 3b: the equipment naming rule and parts as a rule done the same day with the registry reader deriving parts, bulk stock kept by the user's rule; `allOf` is derivation in the generator and both validators, with `jet` as its first use; shared identity, position and staff definitions follow the same way): parts as a rule (−840
    files); bulk stock derived (−217); shared definitions and dictionary enums; one validator;
    the naming rule applied with a key-rename pass (keys are referenced; the rename is a script).
 4. **Page** (a day): merged reports, pages per kind, docs linked, `lib.py`.
