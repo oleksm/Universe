@@ -268,6 +268,8 @@ pub struct Interior {
     set: Vec<Hover>,
     clip: Option<Assembly>,
     stamping: bool,
+    /// COMPARE (C): the design compared with, and its figures.
+    compare: Option<(String, Vec<Figure>)>,
     /// Exact values being typed for what's picked (ENTER), or for the targets (SET
     /// TARGETS: those, then); where SET TARGETS was last drawn.
     entry: Option<String>,
@@ -766,6 +768,12 @@ impl Interior {
         (self.yaw, self.pitch, self.view) = (yaw, pitch, k.clamp(1, 3));
     }
 
+    /// Compared with saved design `name` (dev: `freefall --studio` with
+    /// UNIVERSE_COMPARE).
+    pub fn compare_with(&mut self, name: &str) {
+        self.compare = Some((name.to_string(), key_figures(&checked(name))));
+    }
+
     /// The tool in hand set by name (dev: `freefall --studio` with UNIVERSE_TOOL):
     /// select, path, door, modules, frame.
     pub fn use_tool(&mut self, name: &str) {
@@ -896,13 +904,14 @@ fn tube_radius(stock: &str) -> f32 {
     stocks().iter().find(|s| s.key == stock).map_or(0.03, |s| s.section.diameter as f32 * 0.5)
 }
 
+/// Clear of contact by a centimetre: touching isn't passing into (m).
+const TOUCH: f32 = 0.01;
+
 /// What member `b`, the solid tube it is, passes into, if anything: a module it
 /// doesn't mount (one with neither of its ends at it), a walled room, a deck (a
 /// slab its depth down from its top) it doesn't end on, or one of `others` it
 /// shares no end with.
 fn passes(plan: &Plan, b: &Beam, others: &[Beam]) -> Option<Passes> {
-    // (Clear of contact by a centimetre: touching isn't passing into.)
-    const TOUCH: f32 = 0.01;
     let r = tube_radius(&b.stock);
     // (Points along it, clear of its ends by its radius and a little: its ends are
     // joints, where it meets what it's joined to.)
@@ -1918,6 +1927,16 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
             plan.plates.iter().filter(|pl| plate_grid(pl).0.iter().any(|q| q.distance(p) < 0.05)).filter_map(|pl| plate_stocks().iter().find(|s| s.key == pl.stock)).map(|s| s.material.stiffness).fold(0.0, f64::max)
         };
         let decks_on: Vec<f64> = plan.beams.iter().map(|b| floor_stiffness(b.a).max(floor_stiffness(b.b))).collect();
+        // (A member lying under a deck: no fatter than the room between it and the
+        // deck's underside (the deck's depth below its top), or it runs into it.)
+        let under: Vec<Option<f64>> = plan.beams.iter().map(|b| {
+            let level = (b.b.y - b.a.y).abs() < 0.3;
+            let top = b.a.y.max(b.b.y);
+            plan.plates.iter().filter(|pl| {
+                let inside = |p: Vec3| p.x >= pl.lo.x.min(pl.hi.x) - 0.05 && p.x <= pl.lo.x.max(pl.hi.x) + 0.05 && p.z >= pl.lo.y.min(pl.hi.y) - 0.05 && p.z <= pl.lo.y.max(pl.hi.y) + 0.05;
+                level && top < pl.y - 0.02 && top > pl.y - 1.0 && inside((b.a + b.b) * 0.5)
+            }).map(|pl| f64::from(2.0 * (pl.y - deck_depth(pl) - top + TOUCH))).reduce(f64::min)
+        }).collect();
         for (k, beam) in plan.beams.iter_mut().enumerate() {
             let Some(now) = stocks().iter().find(|s| s.key == beam.stock) else { continue };
             let length = f64::from(beam.a.distance(beam.b));
@@ -1928,6 +1947,8 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
             let needed = |s: &Stock| forces.iter().map(|f| work(&Member { pinned: [false; 2], a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
             let ladder: Vec<&Stock> = ladder_of(&beam.stock).into_iter().filter(|s| s.material.stiffness >= decks_on[k] * 0.9).collect();
             let ladder = if ladder.is_empty() { ladder_of(&beam.stock) } else { ladder };
+            let fits: Vec<&Stock> = ladder.iter().copied().filter(|s| under[k].is_none_or(|room| s.section.diameter <= room)).collect();
+            let ladder = if fits.is_empty() { ladder } else { fits };
             let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
                 maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
                 ladder.last().copied()
@@ -3303,6 +3324,8 @@ enum Dialog {
     Open(Vec<(String, String)>),
     /// The assemblies saved, to stamp one (its name, what's in it).
     Stamp(Vec<(String, String)>),
+    /// The designs saved, to compare this one with.
+    Compare(Vec<(String, String)>),
 }
 
 #[derive(Clone, Copy, Default, PartialEq)]
@@ -4430,7 +4453,7 @@ fn dialog_choices(d: &Dialog) -> Vec<String> {
             v.push("NO HULL: FROM NOTHING".into());
             v
         }
-        Dialog::Open(list) | Dialog::Stamp(list) => list.iter().map(|(id, on)| format!("{}   ({on})", id.to_uppercase())).collect(),
+        Dialog::Open(list) | Dialog::Stamp(list) | Dialog::Compare(list) => list.iter().map(|(id, on)| format!("{}   ({on})", id.to_uppercase())).collect(),
     };
     out.push("CANCEL".into());
     out
@@ -4897,6 +4920,97 @@ fn target_lines(t: &Targets, placed: &[(&Block, &Fitted, String, Fields, f64)], 
         }
         let gap = if need.is_empty() { "MET".to_string() } else { need.join(", ") };
         out.push((format!("TARGET CREW {n:.0}: SEATS {seats:.0}, LIFE SUPPORT KEEPS {keeps:.0}; {gap}"), seats >= n && keeps >= n));
+    }
+    out
+}
+
+/// A design's figure to compare: its name, its value, its unit (as shown: T, M,
+/// KM/S...), and how many places to show.
+type Figure = (&'static str, f64, &'static str, usize);
+
+/// A design's key figures, to compare designs by: masses, size, thrust and T/W,
+/// delta-v on its main engines' propellant, lift, crew and life support, power and
+/// heat in hand, and how many issues it has (the checks as worked out here).
+fn key_figures(i: &Interior) -> Vec<Figure> {
+    let num = |m: &Fields, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
+    let mut placed: Vec<(&Block, &Fitted, String, Fields, f64)> = Vec::new();
+    for b in &i.plan.blocks {
+        if let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id))
+            && let Some((k, m, draw)) = figures(f)
+        {
+            placed.push((b, f, k, m, draw));
+        }
+    }
+    let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
+    let (members, nodes, decks) = frame_masses(i);
+    let frame = members + nodes + decks;
+    let walls: f64 = walls(&i.plan).iter().map(|w| w.1 * w.2.per_square_metre).sum();
+    let mods: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum();
+    let load: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.load).sum();
+    let (dry, full) = (mods + frame + walls, mods + frame + walls + load);
+    let a = Assembly { blocks: i.plan.blocks.clone(), beams: i.plan.beams.clone(), plates: i.plan.plates.clone() };
+    let (lo, hi) = a.bounds();
+    let g = i.plan.gravity();
+    let thrust: f64 = placed.iter().filter_map(|p| p.1.push.map(|x| x.1)).sum();
+    let lift: f64 = placed.iter().filter(|p| push_of(p.0, p.1).is_some_and(|(d, _)| d.y > 0.5) || (p.1.push.is_some() && swivelled(&i.plan, &i.fit, p.0))).filter_map(|p| p.1.push.map(|x| x.1)).sum();
+    // (Delta-v: what target_lines works out, with nothing asked.)
+    let dv = target_lines(&Targets { delta_v: Some(f64::MAX), ..Default::default() }, &placed, dry, full, g).first().and_then(|l| l.0.split("HAS ").nth(1)).and_then(|t| t.split(';').next()).and_then(|t| t.trim().parse::<f64>().ok()).unwrap_or(0.0);
+    let seats = of("command_station").map(|p| num(&p.3, "persons")).sum::<f64>() + of("cabin").map(|p| num(&p.3, "seats")).sum::<f64>();
+    let keeps: f64 = of("life_support").map(|p| num(&p.3, "persons")).sum();
+    let supply: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
+    let draw: f64 = placed.iter().map(|p| p.4).sum();
+    let shed: f64 = of("radiator").map(|p| num(&p.3, "rejects")).sum();
+    let b = budget(i);
+    let issues = issues(i, &b.faults).len() as f64;
+    vec![
+        ("DRY MASS", dry / 1000.0, "T", 1),
+        ("FULL MASS", full / 1000.0, "T", 1),
+        ("FRAME", frame / 1000.0, "T", 1),
+        ("WIDE", f64::from(hi.x - lo.x), "M", 1),
+        ("TALL", f64::from(hi.y - lo.y), "M", 1),
+        ("DEEP", f64::from(hi.z - lo.z), "M", 1),
+        ("THRUST", thrust / 1e6, "MN", 2),
+        ("T/W FULL", thrust / (full * g).max(1.0), "", 2),
+        ("T/W DRY", thrust / (dry * g).max(1.0), "", 2),
+        ("DELTA-V", dv, "KM/S", 2),
+        ("LIFT / WEIGHT", lift / (full * g).max(1.0), "", 2),
+        ("SEATS", seats, "", 0),
+        ("LIFE SUPPORT KEEPS", keeps, "", 0),
+        ("POWER SPARE", (supply - draw) / 1e6, "MW", 2),
+        ("RADIATORS", shed / 1e6, "MW", 1),
+        ("ISSUES", issues, "", 0),
+    ]
+}
+
+/// Two designs' figures as rows of a table: the figure, this one's, the other's,
+/// the difference (other less this).
+fn compare_rows(ours: &[Figure], theirs: &[Figure]) -> Vec<[String; 4]> {
+    ours.iter().zip(theirs).map(|(a, b)| {
+        let f = |v: f64| format!("{v:.p$} {}", a.2, p = a.3).trim().to_string();
+        let d = b.1 - a.1;
+        [a.0.to_string(), f(a.1), f(b.1), if d.abs() < 1e-9 { "=".into() } else { format!("{}{}", if d > 0.0 { "+" } else { "" }, f(d)) }]
+    }).collect()
+}
+
+/// A saved design opened and checked (its loads, clashes and nodes worked out, as
+/// the studio works them out in the background).
+fn checked(name: &str) -> Interior {
+    let mut i = Interior::new();
+    i.open_design(name);
+    i.refit();
+    i.node_cache = Some((i.plan.clone(), nodes(&i.plan.beams, &roots(&i.plan, &i.fit))));
+    i.member_clash = Some((i.plan.clone(), member_clashes(&i.plan)));
+    let b = bearing(&i.plan, &i.fit, i.spec(), i.plan.gravity());
+    i.bearing = Some((i.plan.clone(), Arc::new(b)));
+    i
+}
+
+/// Two saved designs compared, as text (`freefall --compare <a> <b>`).
+pub fn compare_designs(a: &str, b: &str) -> String {
+    let (x, y) = (checked(a), checked(b));
+    let mut out = format!("{:<20} {:>14} {:>14} {:>14}\n", "FIGURE", a.to_uppercase(), b.to_uppercase(), "DIFFERENCE");
+    for r in compare_rows(&key_figures(&x), &key_figures(&y)) {
+        out += &format!("{:<20} {:>14} {:>14} {:>14}\n", r[0], r[1], r[2], r[3]);
     }
     out
 }
@@ -6104,6 +6218,10 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
             match d {
                 Dialog::New => interior.new_design(hulls().get(k).copied()),
                 Dialog::Open(list) => interior.open_design(&list[k].0),
+                Dialog::Compare(list) => {
+                    let name = list[k].0.clone();
+                    interior.compare = Some((name.clone(), key_figures(&checked(&name))));
+                }
                 Dialog::Stamp(list) => match Assembly::load(&list[k].0) {
                     Some(a) => {
                         interior.message = Some((format!("{}: CLICK WHERE ITS FOOT GOES ON THE PLANE; RIGHT-CLICK OR ESC STOPS", list[k].0.to_uppercase()), 8.0));
@@ -6372,6 +6490,13 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             (interior.yaw, interior.pitch, interior.view) = (yaw, pitch, if k < 3 { k as u8 + 1 } else { 0 });
             interior.distance = None;
         }
+    }
+    // C: COMPARE with another saved design (C again: put away).
+    if input.pressed(KeyCode::KeyC) && !(input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight)) {
+        if interior.compare.take().is_none() {
+            interior.dialog = Some(Dialog::Compare(Interior::designs().into_iter().filter(|d| d.0 != interior.plan.hull).collect()));
+        }
+        return true;
     }
     // G: the grid the work plane snaps to (a quarter, half, one, two metres).
     if input.pressed(KeyCode::KeyG) {
@@ -8204,6 +8329,26 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             frame.text_scaled(Vec2::new(lp.x + 6.0, q.y + 1.0), &text, CLASH, 0.5);
         }
     }
+    // COMPARE: this design's figures against the other's, a table at the top right
+    // (left of the layers).
+    if let Some((name, theirs)) = &interior.compare {
+        let rows = compare_rows(&key_figures(interior), theirs);
+        let (p, c) = (Vec2::new(size.x - 175.0 - 380.0, 56.0), Vec2::new(380.0, 22.0 + (rows.len() + 1) as f32 * 10.0));
+        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.9]));
+        frame.hud_box(p, c, PLANE.scale(1.2));
+        frame.text_scaled(p + Vec2::new(6.0, 4.0), &format!("COMPARED WITH {} (C PUTS IT AWAY)", name.to_uppercase()), LABEL.scale(0.8), 0.6);
+        let cols = [6.0, 150.0, 230.0, 310.0];
+        let head = ["FIGURE", "THIS", "THAT", "DIFFERENCE"];
+        for (x, h) in cols.iter().zip(head) {
+            frame.text_scaled(p + Vec2::new(*x, 16.0), h, LABEL.scale(0.8), 0.55);
+        }
+        for (n, r) in rows.iter().enumerate() {
+            let y = p.y + 26.0 + n as f32 * 10.0;
+            for (x, cell) in cols.iter().zip(r) {
+                frame.text_scaled(Vec2::new(p.x + x, y), cell, Color([0.85, 0.9, 1.0, 0.95]), 0.55);
+            }
+        }
+    }
     // Typing exact values: what they are, as typed, under the toolbar.
     if let Some(text) = &interior.entry {
         let what = exact_of(interior).map_or("", |e| e.0);
@@ -8230,6 +8375,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             Dialog::Open(_) => "OPEN A SAVED DESIGN",
             Dialog::Stamp(list) if list.is_empty() => "NO ASSEMBLIES SAVED YET: COPY SOMETHING, THEN SAVE ASSEMBLY",
             Dialog::Stamp(_) => "STAMP WHICH ASSEMBLY?",
+            Dialog::Compare(_) => "COMPARE THIS DESIGN WITH WHICH?",
         };
         frame.text(p + Vec2::new(10.0, 10.0), title, PICKED);
         for (r, name) in rows.iter().zip(&choices) {

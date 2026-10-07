@@ -1669,6 +1669,12 @@ fn main() {
         print!("{}", interior::fit_design(name));
         return;
     }
+    // (`--compare <a> <b>`: two designs' key figures side by side.)
+    if let Some(k) = args.iter().position(|a| a == "--compare") {
+        let (a, b) = (args.get(k + 1).map_or("design-1", String::as_str), args.get(k + 2).map_or("design-2", String::as_str));
+        print!("{}", interior::compare_designs(a, b));
+        return;
+    }
     if let Some(k) = args.iter().position(|a| a == "--report") {
         let name = args.get(k + 1).map_or("design-1", String::as_str);
         print!("{}", interior::report(name));
