@@ -42,16 +42,7 @@ properties:
       properties:
         profession: { type: string, x-ref: [profession] }
         places: { type: integer, minimum: 1 }
-  staff:
-    description: "Who works in it."
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [profession, count]
-      properties:
-        profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
-        count: { type: number, x-unit: "1", description: "how many of that trade" }
+  staff: { $ref: "../../common.schema.yaml#/definitions/staff", description: "Who works in it." }
   built_of:
     description: "What it is built of, as far as is known."
     type: array

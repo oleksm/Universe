@@ -40,16 +40,7 @@ properties:
       stores: { type: array, items: { type: string }, description: "The kinds of goods it stores, by the game's keys (content/base/goods.ron)." }
       handling: { type: number, x-unit: "kg/s", description: "kg/s it can move in or out" }
   cuts: { type: boolean, description: "true: it cuts parts from stock, so a part it makes carries the cutting loss (rule.cut-loss); a module that assembles or forms whole pieces does not. Read by the build and the registry reader when they derive parts." }
-  staff:
-    description: "Who runs one of it, round the clock: the trades and how many of each (a shift's worth, times the shifts). A settlement's census is summed from these."
-    type: array
-    items:
-      type: object
-      additionalProperties: false
-      required: [profession, count]
-      properties:
-        profession: { type: string, x-ref: [profession] }
-        count: { type: integer, minimum: 1 }
+  staff: { $ref: "../../common.schema.yaml#/definitions/staff", description: "Who runs one of it, round the clock: the trades and how many of each (a shift's worth, times the shifts). A settlement's census is summed from these." }
   site: { enum: [enclosed, open sky], description: "Where it stands. enclosed (the default): under a roof, or sealed; it runs the same anywhere. open sky: on open ground, under a world's sun and weather, which it lives by." }
   climate:
     description: "For a sealed module that must hold its inside at a temperature: what that is. All the power its recipe draws ends as heat inside and has to be got out. Where outside is colder, the heat runs out by itself; where it is hotter, it is pumped uphill, and that takes power on top: heat x (outside - inside) / (inside x efficiency)."
