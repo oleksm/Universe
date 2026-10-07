@@ -4992,6 +4992,15 @@ const PACK_HEAT_CAPACITY: f64 = 1000.0;
 const PACK_WARMING: f64 = 40.0;
 const DOCK_TEMPERATURE: f64 = 293.0;
 
+/// A craft that never leaves the air: lifted on fans, with no jump drive and no
+/// rocket (an engine throwing propellant faster than 500 m/s, over 10 kN). Its doors
+/// open to the air, not to space: no airlock needed.
+fn air_only(placed: &[(&Block, &Fitted, String, Fields, f64)]) -> bool {
+    let num = |m: &Fields, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
+    let rocket = placed.iter().any(|p| p.1.push.is_some() && p.3.get("full_power").is_none() && num(&p.3, "exhaust") > 500.0 && num(&p.3, "thrust") > 10_000.0);
+    placed.iter().any(|p| p.3.get("full_power").is_some()) && !rocket && !placed.iter().any(|p| p.2 == "hyperdrive")
+}
+
 /// Days, to a tenth when under ten.
 fn short_days(d: f64) -> String {
     if d < 10.0 { format!("{d:.1}") } else { format!("{d:.0}") }
@@ -5453,17 +5462,20 @@ fn budget(i: &Interior) -> Budget {
         let locks = pr.openings.iter().filter(|o| o.1 == Opening::Airlock).count();
         let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + of("life_support").map(|p| num(&p.3, "air_store")).sum::<f64>() + 0.0;
         let fills = air / (volume * OXYGEN_A_CUBIC_METRE).max(1e-9);
-        let sealed = leaks == 0 && pr.spaces.iter().all(|s| s.1);
+        let air_only = air_only(&placed);
+        let sealed = leaks == 0 && (air_only || pr.spaces.iter().all(|s| s.1));
         lines.push((format!("SEALED {} SPACE{}, {volume:.0} M3, {locks} AIRLOCK DOOR{}; AIR FILLS IT {fills:.1} TIMES", pr.spaces.len(), if pr.spaces.len() == 1 { "" } else { "S" }, if locks == 1 { "" } else { "S" }), sealed && fills >= 1.0));
         if leaks > 0 {
             faults.push(format!("{leaks} OPEN END{} TO SPACE: IT LEAKS", if leaks == 1 { "" } else { "S" }));
         }
         let vents = pr.openings.iter().filter(|o| o.1 == Opening::ToSpace).count();
-        if vents > 0 {
+        if vents > 0 && air_only {
+            lines.push((format!("DOORS {vents} TO THE AIR: IT NEVER LEAVES THE AIR, SO NO AIRLOCK"), true));
+        } else if vents > 0 {
             faults.push(format!("{vents} HATCH{} TO SPACE WITH NO AIRLOCK: OPENING IT VENTS THE ROOM", if vents == 1 { "" } else { "ES" }));
         }
         let shut = pr.spaces.iter().filter(|s| !s.1).count();
-        if shut > 0 {
+        if shut > 0 && !(air_only && vents > 0) {
             faults.push(format!("{shut} SEALED SPACE{} NO AIRLOCK LEADS INTO", if shut == 1 { "" } else { "S" }));
         }
     }
@@ -5548,7 +5560,7 @@ fn budget(i: &Interior) -> Budget {
         room(a, b, i.plan.lines[k].2).1
     }).collect();
     let locks: Vec<_> = of("airlock").collect();
-    if crew > 0.0 && locks.is_empty() {
+    if crew > 0.0 && locks.is_empty() && !air_only(&placed) {
         faults.push("NO WAY IN: NO AIRLOCK".into());
     }
     for p in &locks {
