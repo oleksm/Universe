@@ -16,3 +16,5 @@
   rock_classes, settlements, standards): the Scientist is asked to stop writing them.
 - RON-era serde derives dropped from types now built only from records (`Module`, `Does`,
   `Material`, `GoodsKind`, `HullDef`, `ThrusterDef`): nothing deserializes them any more.
+- The eight unread RON files are gone (fso merged): content/base holds aliases, prices, shapes and
+  the sheet; the registry build writes only its page and trackers.
