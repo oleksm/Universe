@@ -4984,6 +4984,12 @@ fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     Some((kind, map, power))
 }
 
+/// A battery pack's heat capacity (J/kg K) and how far it may warm in a hover (K):
+/// assumed (lithium cells are about 1 kJ/kg K; cells kept below about 60 °C from
+/// about 20 °C), to review.
+const PACK_HEAT_CAPACITY: f64 = 1000.0;
+const PACK_WARMING: f64 = 40.0;
+
 /// Days, to a tenth when under ten.
 fn short_days(d: f64) -> String {
     if d < 10.0 { format!("{d:.1}") } else { format!("{d:.0}") }
@@ -5298,6 +5304,19 @@ fn budget(i: &Interior) -> Budget {
             let min_air = lifting.iter().map(|p| num(&p.3, "min_density")).fold(0.0, f64::max);
             let text = format!("LAND  ON FANS: HOVER DRAWS {} OF {} THE BATTERIES AND PLANTS GIVE{lasts}{}; IN AIR OF {min_air:.1} KG/M3 OR MORE", si(hover + steady, "W"), si(rate + plants, "W"), if lifting.len() > 1 { if out_one { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE FAN" });
             lines.push((text, g > 1.0 && hover + steady <= rate + plants && stored > 0.0));
+            // (Hovering's heat: the fans' share of their jet aboard (motor and inverter;
+            // jet goes as power, with thrust to the 1.5) and the packs' discharge losses;
+            // for as long as it hovers, the heat the packs take up, at an assumed
+            // 1 kJ/kg K, against an assumed 40 K they may warm.)
+            let share = (weight / lift).min(1.0).powf(1.5);
+            let fans_heat: f64 = lifting.iter().map(|p| 0.5 * num(&p.3, "thrust") * num(&p.3, "exhaust") * share * p.3.get("heat_to_hull").and_then(|v| v.as_f64()).unwrap_or(0.0)).sum();
+            let loss = if rate > 0.0 { of("battery").map(|p| num(&p.3, "rate") * (1.0 - p.3.get("efficiency").and_then(|v| v.as_f64()).unwrap_or(1.0))).sum::<f64>() / rate } else { 0.0 };
+            let heat = fans_heat + short * loss;
+            let seconds = if short > 0.0 { stored / short } else { 0.0 };
+            let packs: f64 = of("battery").map(|p| p.1.mass).sum();
+            // (The packs warm by their own losses; the fans' heat is in their motors.)
+            let warms = short * loss * seconds / (packs * PACK_HEAT_CAPACITY).max(1.0);
+            lines.push((format!("HOVER HEAT  {} WHILE IT HOVERS ({} IN THE PACKS, {} IN THE FAN MOTORS): {:.0} MJ OVER {seconds:.0} S; THE PACKS WARM {warms:.0} K (AT AN ASSUMED 1 KJ/KG K)", si(heat, "W"), si(short * loss, "W"), si(fans_heat, "W"), heat * seconds / 1e6), warms <= PACK_WARMING));
             let _ = (pad, class, burned, hover_s, least);
         } else {
         let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{hover_s}{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
@@ -5341,7 +5360,7 @@ fn budget(i: &Interior) -> Budget {
     let plants: f64 = of("power_plant").map(|p| { let e = num(&p.3, "efficiency").max(0.01); num(&p.3, "output") * (1.0 / e - 1.0) }).sum();
     let burn: f64 = placed
         .iter()
-        .filter(|p| matches!(p.2.as_str(), "drive" | "lift" | "thrusters" | "engine"))
+        .filter(|p| matches!(p.2.as_str(), "drive" | "lift" | "thrusters" | "engine") && p.3.get("full_power").is_none())
         .map(|p| {
             let nozzles = if p.2 == "thrusters" { 4.0 } else { 1.0 };
             let share = p.3.get("heat_to_hull").and_then(|v| v.as_f64()).unwrap_or(HEAT_TO_HULL);
