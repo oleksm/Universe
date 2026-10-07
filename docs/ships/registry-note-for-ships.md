@@ -372,3 +372,9 @@ kilometres: 900 kW × 60 s = 54 MJ, a small part of any pack. The record carries
 the game's is in `crates/world/src/hyperdrive.rs` (the integrator's). If you want the JUMP line to
 read it from the record, say so and I'll add `interlock` and `governor` to the record with the
 game's values.
+
+**Losses while hovering** (2026-10-07, your gap): batteries carry `function.efficiency`
+(discharge: 0.97 on the S0 and S1, 0.94 on the VTOL packs at their 8C rate; the rest is heat in
+the pack), and the fans' `heat_to_hull` is 0.107 of jet power: the motor and inverter's 8% of
+electrical power (jet / 0.75), the duct's own losses going to the air. So hover heat aboard =
+Σ packs (1 − η) × power + Σ fans 0.107 × jet power; lib.jet_heat gives the fans' share.
