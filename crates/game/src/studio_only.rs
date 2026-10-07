@@ -10,6 +10,8 @@ pub struct StudioOnly {
     interior: crate::interior::Interior,
     spec: &'static universe_sim::world::ship::ClassSpec,
     deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
+    /// Dev (UNIVERSE_ISSUE=n): the issue to go to, once the checks have it.
+    issue: Option<usize>,
 }
 
 impl StudioOnly {
@@ -26,7 +28,8 @@ impl StudioOnly {
         }
         // (Its modules matched to their records, as the shipyard does on opening it.)
         interior.refit();
-        StudioOnly { interior, spec, deckplans: Vec::new() }
+        let issue = std::env::var("UNIVERSE_ISSUE").ok().and_then(|v| v.parse().ok());
+        StudioOnly { interior, spec, deckplans: Vec::new(), issue }
     }
 }
 
@@ -35,6 +38,11 @@ impl Game for StudioOnly {
         let stay = crate::interior::input_with(self.spec, &mut self.deckplans, ctx, &mut self.interior);
         // (A walk through the ship flown: there's none here; the test stand walks.)
         self.interior.walk = None;
+        if let Some(n) = self.issue
+            && self.interior.go_to_issue(n)
+        {
+            self.issue = None;
+        }
         if !stay {
             ctx.exit();
         }

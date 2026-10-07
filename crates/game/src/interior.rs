@@ -252,6 +252,134 @@ pub struct Interior {
     saved: Option<Plan>,
     confirm: bool,
     message: Option<(String, f32)>,
+    /// The issue last gone to (its number in `issues`), and how far the issue list
+    /// is scrolled (rows).
+    issue: Option<usize>,
+    issue_top: usize,
+    /// Where the budgets panel was last drawn (clicks and the wheel there are its).
+    budget_rect: std::cell::Cell<(Vec2, Vec2)>,
+}
+
+/// Something wrong with the design, to go to: what it says, where it is (none: the
+/// whole ship), and what to pick there.
+struct Issue {
+    text: String,
+    at: Option<Vec3>,
+    pick: Option<Hover>,
+}
+
+/// Rows of the issue list shown at once.
+const ISSUE_ROWS: usize = 8;
+
+/// Everything wrong with the design, worst first, from the checks as last worked
+/// out (none of them worked out here): members and decks past their design limit
+/// (breaking first), clashes, the budgets' faults, what's loose.
+fn issues(i: &Interior, faults: &[String]) -> Vec<Issue> {
+    let mut out = Vec::new();
+    let plan = &i.plan;
+    if let Some((_, b)) = i.bearing.as_ref().filter(|(p, _)| *p == *plan) {
+        let mut over: Vec<(f64, bool, Issue)> = Vec::new();
+        for (k, m) in plan.beams.iter().enumerate() {
+            let os = b.outcomes(k);
+            if let Some((case, o)) = b.cases.iter().map(|c| c.0.as_str()).zip(os.iter()).filter(|(_, o)| o.work.design > 1.0).max_by(|x, y| x.1.work.design.total_cmp(&y.1.work.design)) {
+                let breaks = o.broken.is_some();
+                let text = format!("{} MEMBER {k} {}: {case} {:.0}%", if breaks { "BREAKS" } else { "OVER" }, m.stock.trim_start_matches("stock.").to_uppercase(), o.work.design * 100.0);
+                over.push((o.work.design, breaks, Issue { text, at: Some((m.a + m.b) * 0.5), pick: Some(Hover::Member(k)) }));
+            }
+        }
+        for (n, d) in plan.plates.iter().enumerate() {
+            let worst = b.strips.iter().filter(|s| s.0 == n).flat_map(|s| b.cases.iter().map(|c| c.0.as_str()).zip(b.of_member(s.4))).max_by(|x, y| x.1.work.design.total_cmp(&y.1.work.design));
+            if let Some((case, o)) = worst.filter(|w| w.1.work.design > 1.0) {
+                let at = Vec3::new((d.lo.x + d.hi.x) * 0.5, d.y, (d.lo.y + d.hi.y) * 0.5);
+                over.push((o.work.design, o.broken.is_some(), Issue { text: format!("OVER DECK {}: {case} {:.0}%", n + 1, o.work.design * 100.0), at: Some(at), pick: Some(Hover::Deck(n)) }));
+            }
+        }
+        over.sort_by(|x, y| y.1.cmp(&x.1).then(y.0.total_cmp(&x.0)));
+        out.extend(over.into_iter().map(|o| o.2));
+    }
+    if let Some((_, clash)) = i.member_clash.as_ref().filter(|(p, _)| *p == *plan) {
+        for (k, c) in clash.iter().enumerate() {
+            let say = match c {
+                Some(Passes::Module) => "THROUGH A MODULE",
+                Some(Passes::Room) => "INTO A ROOM",
+                Some(Passes::Deck) => "THROUGH A DECK",
+                Some(Passes::Member) => "INTO A MEMBER",
+                None => continue,
+            };
+            let m = &plan.beams[k];
+            out.push(Issue { text: format!("CLASH MEMBER {k} {say}"), at: Some((m.a + m.b) * 0.5), pick: Some(Hover::Member(k)) });
+        }
+    }
+    if let Some((_, clash)) = i.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks) {
+        for (k, _) in clash.iter().enumerate().filter(|(_, c)| **c) {
+            let name = i.fit.iter().find(|f| f.id == kind(&plan.blocks[k].id)).map_or(plan.blocks[k].id.to_uppercase(), |f| f.name.clone());
+            out.push(Issue { text: format!("CLASH {name}"), at: Some(plan.blocks[k].at), pick: Some(Hover::Module(k)) });
+        }
+    }
+    // (A fault or a loose module naming a module: at that module.)
+    let named = |text: &str| plan.blocks.iter().enumerate().find(|(_, b)| text.contains(&kind(&b.id).to_uppercase()) || i.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| text.starts_with(&f.name)));
+    for f in faults {
+        let at = named(f);
+        out.push(Issue { text: f.clone(), at: at.map(|(_, b)| b.at), pick: at.map(|(k, _)| Hover::Module(k)) });
+    }
+    if let Some((_, b)) = i.bearing.as_ref().filter(|(p, _)| *p == *plan) {
+        for l in &b.loose {
+            let at = named(l);
+            out.push(Issue { text: format!("LOOSE {l}"), at: at.map(|(_, b)| b.at), pick: at.map(|(k, _)| Hover::Module(k)) });
+        }
+    }
+    out
+}
+
+/// The budgets panel (along the bottom, right of the tool panel) and the issue
+/// panel (under the tool panel), on a screen `size`: each one's box, and each issue
+/// row shown (its number in the list, its box).
+fn budget_panel(size: Vec2, lines: usize, issues: usize, top: usize) -> ((Vec2, Vec2), (Vec2, Vec2), Vec<(usize, (Vec2, Vec2))>) {
+    let (pp, pc) = PANEL;
+    let height = 18.0 + lines as f32 * 10.0;
+    let x = pp.x + pc.x + 6.0;
+    let budgets = (Vec2::new(x, size.y - 22.0 - height), Vec2::new((size.x - 170.0 - x).max(380.0), height));
+    let shown = issues.saturating_sub(top).min(ISSUE_ROWS);
+    let list = (Vec2::new(pp.x, pp.y + pc.y + 6.0), Vec2::new(pc.x, 18.0 + ISSUE_ROWS as f32 * 10.0));
+    let first = list.0.y + 15.0;
+    let boxes = (0..shown).map(|n| (top + n, (Vec2::new(list.0.x + 2.0, first + n as f32 * 10.0 - 1.0), Vec2::new(list.1.x - 4.0, 10.0)))).collect();
+    (budgets, list, boxes)
+}
+
+impl Interior {
+    /// Go to issue `n` (dev: `freefall --studio` with UNIVERSE_ISSUE), once the
+    /// checks list that many and the frame's loads are worked out; gone to?
+    pub fn go_to_issue(&mut self, n: usize) -> bool {
+        if !self.bearing.as_ref().is_some_and(|(p, _)| *p == self.plan) {
+            return false;
+        }
+        let b = budget(self);
+        let list = issues(self, &b.faults);
+        if list.len() <= n {
+            return false;
+        }
+        self.go_to(&list, n);
+        true
+    }
+
+    /// Go to issue `n`: the view turned on where it is, close in, and what it's
+    /// about picked (in SELECT, to see it).
+    fn go_to(&mut self, list: &[Issue], n: usize) {
+        let Some(is) = list.get(n) else { return };
+        self.issue = Some(n);
+        self.issue_top = if n < self.issue_top { n } else if n >= self.issue_top + ISSUE_ROWS { n + 1 - ISSUE_ROWS } else { self.issue_top };
+        if let Some(at) = is.at {
+            self.target = Some(at);
+            self.distance = Some(14.0);
+        }
+        if let Some(h) = is.pick {
+            self.cancel();
+            self.tool = Tool::Look;
+            self.pick = Some(h);
+            self.more.clear();
+        }
+        self.message = Some((is.text.clone(), 6.0));
+    }
 }
 
 /// A line's room, its cross-section along it round it (the line its axis): the
@@ -5393,6 +5521,29 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
         interior.dialog = Some(Dialog::New);
         return true;
     }
+    // The issue list: PGDN / PGUP (next, back) anywhere; a row clicked, the wheel
+    // over the panel (and nothing else under it).
+    let over = inside(interior.budget_rect.get(), input.cursor);
+    let paged = input.pressed(KeyCode::PageDown) || input.pressed(KeyCode::PageUp);
+    if paged || (over && (input.button_pressed(MouseButton::Left) || input.scroll != 0.0)) {
+        let b = budget(interior);
+        let list = issues(interior, &b.faults);
+        let (_, _, boxes) = budget_panel(ctx.hud_size.as_vec2(), b.lines.len(), list.len(), interior.issue_top);
+        if paged && !list.is_empty() {
+            let n = match interior.issue {
+                Some(n) if input.pressed(KeyCode::PageUp) => (n + list.len() - 1) % list.len(),
+                Some(n) => (n + 1) % list.len(),
+                None => 0,
+            };
+            interior.go_to(&list, n);
+        } else if let Some((n, _)) = boxes.iter().find(|(_, r)| input.button_pressed(MouseButton::Left) && inside(*r, input.cursor)) {
+            interior.go_to(&list, *n);
+        } else if input.scroll != 0.0 {
+            interior.issue_top = (interior.issue_top as f32 - input.scroll.signum() * 2.0).clamp(0.0, list.len().saturating_sub(ISSUE_ROWS) as f32) as usize;
+        }
+        interior.cursor = input.cursor;
+        return true;
+    }
     // REACH: the check run (on a thread); its findings picked up when done.
     if let Some((plan, rx)) = &interior.reach_job
         && let Ok(found) = rx.try_recv()
@@ -7093,11 +7244,11 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The budgets, in every tool: under the panel, each met in green, short in
     // amber; what fails, in red.
+    interior.budget_rect.set((Vec2::ZERO, Vec2::ZERO));
     if !plan.blocks.is_empty() || !plan.groups.is_empty() {
         let b = budget(interior);
-        let (pp, pc) = PANEL;
-        let rows = b.lines.len() + b.faults.len().min(4);
-        let (p, c) = (Vec2::new(pp.x, pp.y + pc.y + 6.0), Vec2::new(pc.x + 120.0, 18.0 + rows as f32 * 10.0));
+        let list = issues(interior, &b.faults);
+        let ((p, c), (lp, lc), boxes) = budget_panel(size, b.lines.len(), list.len(), interior.issue_top.min(list.len().saturating_sub(1)));
         frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.88]));
         frame.hud_box(p, c, PLANE.scale(1.2));
         frame.text_scaled(p + Vec2::new(6.0, 4.0), "BUDGETS AND CHECKS", LABEL.scale(0.8), 0.6);
@@ -7107,9 +7258,21 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             frame.text_scaled(Vec2::new(p.x + 6.0, y), text, col, 0.55);
             y += 10.0;
         }
-        for f in b.faults.iter().take(4) {
-            frame.text_scaled(Vec2::new(p.x + 6.0, y), f, CLASH, 0.55);
-            y += 10.0;
+        // (The issues, under the tool panel: each one to go to, by a click or PGDN /
+        // PGUP; none: said so.)
+        interior.budget_rect.set((lp, lc));
+        frame.hud_rect(lp, lc, Color([0.02, 0.06, 0.13, 0.88]));
+        frame.hud_box(lp, lc, PLANE.scale(1.2));
+        let head = if list.is_empty() { "NO ISSUES".to_string() } else { format!("{} ISSUES: CLICK, OR PGDN / PGUP", list.len()) };
+        frame.text_scaled(lp + Vec2::new(6.0, 4.0), &head, LABEL.scale(0.8), 0.6);
+        for (n, (q, sz)) in &boxes {
+            if interior.issue == Some(*n) {
+                frame.hud_rect(*q, *sz, Color([0.3, 0.12, 0.08, 0.9]));
+            } else if inside((*q, *sz), interior.cursor) {
+                frame.hud_rect(*q, *sz, Color([0.12, 0.12, 0.2, 0.9]));
+            }
+            let text: String = format!("{:>3} {}", n + 1, list[*n].text).chars().take(46).collect();
+            frame.text_scaled(Vec2::new(lp.x + 6.0, q.y + 1.0), &text, CLASH, 0.5);
         }
     }
     // A message for a while (saved, opened), under the toolbar.
