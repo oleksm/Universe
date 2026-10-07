@@ -2,6 +2,17 @@ $schema: http://json-schema.org/draft-07/schema#
 title: Ship equipment
 x-kind: [equipment]
 description: "One piece of equipment a hull or a structure is fitted with. A maker's product. What it does is its `function`: the kind of device it is, and only that kind's figures."
+definitions:
+  jet:
+    description: "What every engine says of its jet (SFO 22): a drive, a lift, a thruster block or an engine unit derives from this (allOf) and adds its own figures. A shape, not a record: the validators and the generator flatten it into each kind."
+    type: object
+    additionalProperties: false
+    properties:
+      thrust: { type: number, x-unit: "N", description: "N at full throttle, of one nozzle at full share" }
+      exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast the jet leaves; propellant flow is thrust / exhaust, jet power half their product" }
+      efficiency: { type: number, x-unit: "1", description: "the share of the energy released (the fuel's) that goes into the jet; the rest leaves as heat and radiation" }
+      burns: { type: string, x-ref: [material], description: "What releases the energy, by its key: the fusion fuel, the fission fuel's stand-in, the chemical propellant blend, or the gas itself." }
+      heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power that comes aboard as heat and must be radiated (tools/standards/lib.py jet_heat, one rule for mounts, budgets and the studio). An engine record derives it from its isotropic loss, the hull's share of the sphere and its shadow shield (SFO 22); the old drive, lift and thruster records carry a first guess of 1e-6, a product figure to be replaced." }
 type: object
 additionalProperties: false
 required: [identity, function, physical]
@@ -73,36 +84,24 @@ properties:
       - description: "The main drive."
         type: object
         additionalProperties: false
+        allOf: [{ $ref: "#/definitions/jet" }]
         required: [kind, thrust, exhaust, efficiency, burns]
         properties:
           kind: { const: drive }
-          thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
-          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
-          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
-          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
-          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power (half the thrust times the exhaust speed) that reaches the hull as heat and must be radiated: a product figure. A deuterium torch burning D-D puts a third of its energy into neutrons, which no hull survives at terawatts; so the drives of this world burn aneutronic or carry their reaction far behind a magnetic nozzle, and makers compete on this share. Today's value, a millionth, is the registry's first guess (docs/ships/equipment-review.md)." }
       - description: "Translation and attitude thrusters."
         type: object
         additionalProperties: false
+        allOf: [{ $ref: "#/definitions/jet" }]
         required: [kind, thrust, exhaust, efficiency, burns]
         properties:
           kind: { const: thrusters }
-          thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
-          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
-          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
-          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
-          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power (half the thrust times the exhaust speed) that reaches the hull as heat and must be radiated: a product figure. A deuterium torch burning D-D puts a third of its energy into neutrons, which no hull survives at terawatts; so the drives of this world burn aneutronic or carry their reaction far behind a magnetic nozzle, and makers compete on this share. Today's value, a millionth, is the registry's first guess (docs/ships/equipment-review.md)." }
       - description: "The belly lift."
         type: object
         additionalProperties: false
+        allOf: [{ $ref: "#/definitions/jet" }]
         required: [kind, thrust, exhaust, efficiency, burns]
         properties:
           kind: { const: lift }
-          thrust: { type: number, x-unit: "N", description: "N, of one nozzle at full share" }
-          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast its exhaust leaves" }
-          efficiency: { type: number, x-unit: "1", description: "the share of its fuel's energy that goes into the exhaust; the rest is heat" }
-          burns: { type: string, x-ref: [material], description: "The fuel it burns, by its key." }
-          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power (half the thrust times the exhaust speed) that reaches the hull as heat and must be radiated: a product figure. A deuterium torch burning D-D puts a third of its energy into neutrons, which no hull survives at terawatts; so the drives of this world burn aneutronic or carry their reaction far behind a magnetic nozzle, and makers compete on this share. Today's value, a millionth, is the registry's first guess (docs/ships/equipment-review.md)." }
       - description: "Holds fuel."
         type: object
         additionalProperties: false
@@ -429,21 +428,17 @@ properties:
       - description: "One engine unit (SFO 22): a jet of a given cycle, pointed where the design points it. Replaces the drive, lift and thruster families as roles a design gives engines. Not in the game yet."
         type: object
         additionalProperties: false
+        allOf: [{ $ref: "#/definitions/jet" }]
         required: [kind, cycle, thrust, exhaust, efficiency, burns, throttle, gimbal, isotropic_loss, shield_pass, heat_to_hull]
         properties:
           kind: { const: engine, x-in-game: "not made" }
           cycle: { $ref: "../../dictionary.schema.yaml#/definitions/engine_cycle" }
-          thrust: { type: number, x-unit: "N", description: "N at full throttle" }
-          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast the jet leaves; propellant flow is thrust / exhaust, jet power half their product" }
-          efficiency: { type: number, x-unit: "1", description: "the share of the energy released (the fuel's) that goes into the jet; the rest leaves as heat and radiation" }
-          burns: { type: string, x-ref: [material], description: "What releases the energy, by its key: the fusion fuel, the fission fuel's stand-in, the chemical propellant blend, or the gas itself." }
           propellant: { type: string, x-ref: [material], description: "The reaction mass thrown, where it is not the fuel: hydrogen for a fusion thermal or nuclear thermal engine." }
           throttle: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the least thrust it holds steadily, as a share of full; 0: on or off only (pulsed)" }
           gimbal: { type: number, x-unit: "rad", description: "rad either way it can point its jet from its axis on its own gimbal; 0: fixed" }
           isotropic_loss: { type: number, x-unit: "1", description: "the share of the energy released that leaves the reaction in every direction (neutrons, X-rays, gamma), not with the jet: what a hull in its way takes" }
           shield_pass: { type: number, x-unit: "1", description: "the share of that loss its own shadow shield lets through toward the ship" }
           reaction_offset: { type: number, x-unit: "m", description: "m from the mount's face, aft, to where the loss originates; the hull's share of the sphere is reckoned from there" }
-          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power that comes aboard as heat, for the budgets: isotropic_loss / efficiency x the hull's share of the sphere x shield_pass, plus the engine's own soak-back. The record's figure takes the hull's share as 0.05 (a hull-mounted engine); a design computes its own from its geometry and uses that instead." }
       - description: "A swivel that turns an engine unit through a large angle (vectored thrust): aft in flight, down to land. Far heavier than a gimbal; that is the trade. Not in the game yet."
         type: object
         additionalProperties: false

@@ -77,14 +77,14 @@ def validate(v, sch, here, at=""):
             for i, x in enumerate(v):
                 out += validate(x, sch["items"], here, f"{at}[{i}]")
     if isinstance(v, dict):
-        props = sch.get("properties") or {}
-        for k in sch.get("required") or []:
+        props, required = flattened(sch, here)
+        for k in required:
             if k not in v:
                 out.append(f"{where}: no {k}")
         extra = sch.get("additionalProperties", True)
         for k, x in v.items():
             if k in props:
-                out += validate(x, props[k], here, f"{at}.{k}" if at else k)
+                out += validate(x, props[k][0], props[k][1], f"{at}.{k}" if at else k)
             elif extra is False:
                 out.append(f"{where}: unknown field '{k}'")
             elif isinstance(extra, dict):
@@ -92,9 +92,41 @@ def validate(v, sch, here, at=""):
     for key in ("anyOf", "oneOf"):
         if key in sch and not any(not validate(v, s, here, at) for s in sch[key]):
             out.append(f"{where}: fits none of its alternatives")
-    for s in sch.get("allOf") or []:        # (what it derives from: it must fit each)
-        out += validate(v, s, here, at)
+    if not isinstance(v, dict):
+        for s in sch.get("allOf") or []:        # (what it derives from: it must fit each)
+            out += validate(v, s, here, at)
     return out
+
+
+def flattened(sch, here):
+    """An object's properties (each with the schema file it is written in) and required fields, with those of every shape its
+    `allOf` derives from, flattened: one definition (common's physical_object, equipment's jet) serves many kinds without
+    nesting the YAML, and `additionalProperties: false` counts the derived fields as the object's own. The registry's generator
+    reads allOf the same way (crates/registry/build.rs, flattened)."""
+    props = {k: (p, here) for k, p in (sch.get("properties") or {}).items()}
+    required = list(sch.get("required") or [])
+    for shape in sch.get("allOf") or []:
+        path = here
+        if isinstance(shape, dict) and "$ref" in shape:
+            shape, path = resolve(shape["$ref"], here)
+        p2, r2 = flattened(shape, path)
+        for k, (pv, where) in p2.items():
+            if k in props:
+                # (A shape that tightens a property the object has: its required list applies to the nested object.)
+                if isinstance(pv, dict) and pv.get("required") and isinstance(props[k][0], dict) and not pv.get("type") and not pv.get("$ref"):
+                    base, bpath = props[k]
+                    if "$ref" in base:
+                        base, bpath = resolve(base["$ref"], bpath)
+                    merged = dict(base); merged["required"] = list(dict.fromkeys((base.get("required") or []) + pv["required"]))
+                    props[k] = (merged, bpath)
+                continue
+            if isinstance(pv, dict) and not any(x in pv for x in ("type", "$ref", "oneOf", "enum", "properties", "const")):
+                continue
+            props[k] = (pv, where)
+        for r in r2:
+            if r not in required and r in props:
+                required.append(r)
+    return props, required
 
 
 UNIT = re.compile(r"^(deg|[(/ ]*((kg|mol|rad|Pa|Sv|m|s|K|W|N|J|V|S|T|1)(\^0\.5|[0-9])?[()/ ]*)+)$")

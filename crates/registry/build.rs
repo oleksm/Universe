@@ -4,7 +4,8 @@
 //!
 //! - a schema with `x-kind` is a record: a struct named after its first kind,
 //!   and a list of them on `Registry`;
-//! - an object is a struct (unknown fields refused), its required properties
+//! - an object is a struct (unknown fields refused), with the properties of every shape its
+//!   `allOf` derives from flattened into it, its required properties
 //!   plain, the rest `Option` (a list: empty when left out);
 //! - an `enum` is a Rust enum (a `null` in it: the field is an `Option`);
 //! - a `oneOf` whose shapes each have a constant `kind` is an enum tagged by
@@ -287,11 +288,49 @@ impl Gen {
     }
 
     /// A struct for the object `v`; its name.
+
+    /// A node's properties and required fields, with those of every shape its `allOf` says it
+    /// derives from: a `$ref` to a definition (`common.schema.yaml#/definitions/physical_object`) or an
+    /// inline shape. Flattened, so one definition serves many kinds without nesting the YAML (a
+    /// `jet` for drive, lift, thrusters and engine). An inline shape that only tightens a nested
+    /// property's `required` (`{properties: {physical: {required: [...]}}}`) adds no field and is
+    /// left to the validator.
+    fn flattened(&self, v: &Value, file: &Path) -> (Mapping, Vec<String>) {
+        let mut props = v.get("properties").and_then(Value::as_mapping).cloned().unwrap_or_else(Mapping::new);
+        let mut required: Vec<String> = v.get("required").and_then(Value::as_sequence).map(|r| r.iter().filter_map(Value::as_str).map(str::to_string).collect()).unwrap_or_default();
+        for shape in v.get("allOf").and_then(Value::as_sequence).cloned().unwrap_or_default() {
+            let (node, at) = if let Some(r) = shape.get("$ref").and_then(Value::as_str) {
+                let (path, def) = r.split_once('#').unwrap_or((r, ""));
+                let target = if path.is_empty() { file.to_path_buf() } else { file.parent().unwrap().join(path).canonicalize().unwrap_or_else(|e| panic!("{}: $ref {r}: {e}", file.display())) };
+                let def = def.trim_start_matches("/definitions/");
+                let node = self.files.get(&target).unwrap_or_else(|| panic!("{}: $ref {r}: no such schema", file.display()))["definitions"][def].clone();
+                assert!(!node.is_null(), "{}: allOf $ref {r}: no such definition", file.display());
+                (node, target)
+            } else {
+                (shape.clone(), file.to_path_buf())
+            };
+            let (p2, r2) = self.flattened(&node, &at);
+            for (k, pv) in p2 {
+                // (A property the shape only tightens, like `physical: {required: [...]}` with no type of its own, adds nothing.)
+                if pv.get("type").is_none() && pv.get("$ref").is_none() && pv.get("oneOf").is_none() && pv.get("enum").is_none() && pv.get("properties").is_none() {
+                    continue;
+                }
+                props.entry(k).or_insert(pv);
+            }
+            for r in r2 {
+                if !required.contains(&r) && props.contains_key(Value::String(r.clone())) {
+                    required.push(r);
+                }
+            }
+        }
+        (props, required)
+    }
+
     fn object(&mut self, hint: &str, v: &Value, file: &Path) -> String {
         let at = format!("{} ({hint})", file.display());
         assert!(v.get("additionalProperties") == Some(&Value::Bool(false)), "{at}: an open object (additionalProperties must be false)");
-        let props = v.get("properties").and_then(Value::as_mapping).cloned().unwrap_or_else(Mapping::new);
-        let required: HashSet<&str> = v.get("required").and_then(Value::as_sequence).map(|r| r.iter().filter_map(Value::as_str).collect()).unwrap_or_default();
+        let (props, required_v) = self.flattened(v, file);
+        let required: HashSet<&str> = required_v.iter().map(String::as_str).collect();
         let name = self.emit_name(hint);
         let mut fields = String::new();
         let mut walks = String::new();
@@ -358,7 +397,8 @@ impl Gen {
                 assert!(a.get("additionalProperties") == Some(&Value::Bool(false)), "{at}: {kind}: an open object");
                 let variant = camel(kind);
                 let not_made = a.get("x-in-game").and_then(Value::as_str) == Some("not made");
-                let required: HashSet<&str> = a.get("required").and_then(Value::as_sequence).map(|r| r.iter().filter_map(Value::as_str).collect()).unwrap_or_default();
+                let (aprops, required_v) = self.flattened(a, file);
+                let required: HashSet<&str> = required_v.iter().map(String::as_str).collect();
                 // (Each kind its own struct, which the variant holds and its handler takes: a
                 // figure added to a kind changes no handler.)
                 let inner = self.emit_name(&format!("{name}{variant}"));
@@ -368,7 +408,7 @@ impl Gen {
                 st.push_str(&doc(a, ""));
                 writeln!(st, "#[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]\n#[serde(deny_unknown_fields)]\npub struct {inner} {{").unwrap();
                 let mut body = String::new();
-                for (k, pv) in a["properties"].as_mapping().unwrap() {
+                for (k, pv) in &aprops {
                     let k = k.as_str().unwrap();
                     if k == "kind" {
                         continue;
