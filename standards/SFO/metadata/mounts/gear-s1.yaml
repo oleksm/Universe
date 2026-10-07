@@ -21,6 +21,6 @@ attachment:
     compression: 173000.0
     shear: 86300.0
 feeds:
-  power: 625.0
+  power: 1000.0
 basis:
   - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

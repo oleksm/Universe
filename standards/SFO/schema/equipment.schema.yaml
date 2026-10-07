@@ -398,6 +398,7 @@ properties:
           kind: { const: battery }
           stores: { type: number, x-unit: "J", description: "J" }
           rate: { type: number, x-unit: "W", description: "W it gives or takes at most" }
+          cycles: { type: integer, description: "full charge-and-discharge cycles before it is worn to 80% of its store; a high-rate pack fewer than a long-duration one" }
       - description: "Makes power from sunlight. Not in the game yet."
         type: object
         x-in-game: "not made"
