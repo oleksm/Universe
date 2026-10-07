@@ -21,4 +21,4 @@ basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.gulfconstructiononline.com/Article/381041", note: "The steel potshell of one cell, 44 tonnes (Alba line 6). Its carbon lining's weight was not found and is not counted." }
   - { of: [fit], tier: derived, review: true, note: "360 pots make 360,000 t a year (Sohar): a thousand tonnes a pot, so 324 for this line's 37 t an hour." }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the potline: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

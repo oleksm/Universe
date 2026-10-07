@@ -18,6 +18,19 @@ needs:
   power: 200000
 built_of:
   parts: thrusters-quad-s2
+  shares: rule.discovery-ii-engine-shares
+  list:
+    - { code: TQS2-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 62, length: 0.498, width: 0.498, height: 0.498, item: stock.sic-tl-10, quantity: 71.3, module: module.machining-centre }
+    - { code: TQS2-02, name: "Field coil cases", description: "The beams and cases that hold the field coils against their own force: most of the engine's weight.", mass: 561, length: 1.04, width: 1.04, height: 1.04, item: stock.ti64-pl-5, quantity: 645.1, module: module.welding-bay }
+    - { code: TQS2-03, name: "Field coil windings", description: "The superconducting windings themselves: a few kilograms of tape, nearly all of it copper and steel around a film of superconductor.", mass: 7, length: 0.241, width: 0.241, height: 0.241, item: stock.cu-wire-2, quantity: 8.0, module: module.machining-centre }
+    - { code: TQS2-04, name: "Shaping coils and bracing", description: "The coils that shape and hold the plasma, and the bracing between them.", mass: 340, length: 0.878, width: 0.878, height: 0.878, item: stock.ti64-pl-5, quantity: 391.0, module: module.welding-bay }
+    - { code: TQS2-05, name: "Shield", description: "Half a metre of carbon between the plasma and the coils, to stop what would warm and spoil them.", mass: 396, length: 0.924, width: 0.924, height: 0.924, item: good.carbon, quantity: 396, module: module.assembly-shop }
+    - { code: TQS2-06, name: "Magnetic nozzle", description: "The coils that open the field astern and turn the plasma's heat into a jet.", mass: 27, length: 0.377, width: 0.377, height: 0.377, item: stock.ti64-pl-5, quantity: 31.0, module: module.welding-bay }
+    - { code: TQS2-07, name: "Fuel feed", description: "The injector and its lines from the tank.", mass: 27, length: 0.377, width: 0.377, height: 0.377, item: stock.st304-pl-3, quantity: 31.0, module: module.machining-centre }
+    - { code: TQS2-08, name: "Plasma heater", description: "The radio-frequency source that brings the plasma to burning.", mass: 22, length: 0.352, width: 0.352, height: 0.352, item: good.electronics, quantity: 22, module: module.assembly-shop }
+    - { code: TQS2-09, name: "Refrigerator", description: "Keeps the windings cold.", mass: 9, length: 0.262, width: 0.262, height: 0.262, item: good.heat-pumps, quantity: 9, module: module.assembly-shop }
+    - { code: TQS2-10, name: "Coolant pumps", description: "Drive the coolant through wall and shield.", mass: 17, length: 0.323, width: 0.323, height: 0.323, item: good.pumps, quantity: 17, module: module.assembly-shop }
+    - { code: TQS2-11, name: "Coolant lines", description: "Pipes and manifolds.", mass: 32, length: 0.399, width: 0.399, height: 0.399, item: stock.st304-pl-3, quantity: 36.8, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -29,8 +42,8 @@ function:
   heat_to_hull: 1.0e-06
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a thruster block (a small torch of the same kind): the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a block of nozzles facing out, a cube, to its volume. A stand-in until it is sized from what it must do." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A millionth of the jet's power comes aboard as heat: the share chosen in the equipment review so that a torch does not cook its ship. The physics behind it (an aneutronic burn, or the reaction far behind a magnetic nozzle) is the maker's claim, and a figure makers compete on." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

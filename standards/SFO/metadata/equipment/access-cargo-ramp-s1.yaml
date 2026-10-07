@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.cargo-ramp.s1
+  name: "Cargo ramp S1"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A ramp lowered to the ground for people or cargo."
+size_class: 2
+fits: mount.access-s2
+physical:
+  mass: 4000
+  volume: 14.4
+  length: 8.0
+  width: 3.0
+  height: 0.6
+built_of:
+  parts: access-cargo-ramp-s1
+  list:
+    - { code: CRM1-01, name: "Ramp", description: "The deck plate and its beams.", mass: 2400, length: 6.75, width: 2.53, height: 0.506, item: stock.sta36-pl-20, quantity: 2760.0, module: module.welding-bay }
+    - { code: CRM1-02, name: "Hinge and actuators", description: "Hydraulic rams that let it down and draw it up.", mass: 1200, length: 5.36, width: 2.01, height: 0.402, item: stock.st4340-bar-120, quantity: 1380.0, module: module.machining-centre }
+    - { code: CRM1-03, name: "Edge and locks", description: "The lip that meets the ground, the locks that hold it shut in flight.", mass: 400, length: 3.71, width: 1.39, height: 0.278, item: stock.sta36-pl-20, quantity: 460.0, module: module.cutting-table }
+making:
+  module: module.assembly-shop
+function:
+  kind: "ramp"
+  load: 20000
+  width: 3.0
+  reach: 4.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 3 m wide ramp for 20 t of wheeled cargo, about a C-130's rear ramp (a 20 t vehicle drives up it). From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

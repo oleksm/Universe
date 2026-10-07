@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.compressor.s1
+  name: "Compressor"
+  maker: org.hadley
+  revision: draft
+  slot: utility
+  description: "Compresses gas into a store or out of one."
+size_class: 1
+fits: mount.utility-s1
+physical:
+  mass: 600
+  volume: 1.2
+  length: 1.5
+  width: 0.8
+  height: 1.0
+built_of:
+  parts: utility-compressor-s1
+  list:
+    - { code: CMP0-01, name: "Stages", description: "Four piston stages with their coolers.", mass: 360, length: 1.27, width: 0.675, height: 0.843, item: stock.st4340-bar-120, quantity: 414.0, module: module.machining-centre }
+    - { code: CMP0-02, name: "Motor and controls", mass: 240, length: 1.11, width: 0.589, height: 0.737, item: stock.cu-wire-2, quantity: 276.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "compressor"
+  flow: 0.1
+  pressure: 30000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Fills a 30 MPa store at 0.1 kg/s. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.suits.s1
+  name: "Suit locker, two suits"
+  maker: org.hadley
+  revision: draft
+  slot: utility
+  description: "Two pressure suits with eight hours of air and power each, and the locker they hang in with their charging. Suits for every one of the crew."
+size_class: 1
+fits: mount.utility-s1
+physical:
+  mass: 160
+  volume: 1.2
+  length: 1
+  width: 0.6
+  height: 2
+needs:
+  power: 100
+built_of:
+  parts: utility-suits-s1
+  list:
+    - { code: SUT1-01, name: "Two suits with their packs", description: "Pressure suits with 8 hours of air and power each.", mass: 120, length: 0.909, width: 0.545, height: 1.82, item: stock.mli-fl, quantity: 120, module: module.assembly-shop }
+    - { code: SUT1-02, name: "Locker", mass: 40, length: 0.63, width: 0.378, height: 1.26, item: stock.al6061-sh-2-panel, quantity: 46, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: suit_locker
+  persons: 2
+  endurance: 28800
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A light EVA suit with its pack at 60 kg (between a 10 kg flight suit and the station's 145 kg suit; from memory) and 8 hours of air (the station's suit's 8.5); the locker 40 kg. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

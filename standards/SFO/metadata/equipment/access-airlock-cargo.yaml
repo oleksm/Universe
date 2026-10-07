@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.airlock.cargo
+  name: "Cargo airlock"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A way in and out through the hull, keeping the air in: two doors and a chamber between."
+size_class: 2
+fits: mount.access-s2
+physical:
+  mass: 6000
+  volume: 54.0
+  length: 6.0
+  width: 3.0
+  height: 3.0
+built_of:
+  parts: access-airlock-cargo
+  list:
+    - { code: ALK0-01, name: "Chamber", description: "The pressure shell between the doors.", mass: 3000, length: 4.76, width: 2.38, height: 2.38, item: stock.al6061-pl-5, quantity: 3450.0, module: module.welding-bay }
+    - { code: ALK0-02, name: "Doors", description: "A pair of 2.4 m doors each end.", mass: 1800, length: 4.02, width: 2.01, height: 2.01, item: stock.al6061-pl-5, quantity: 2070.0, module: module.machining-centre }
+    - { code: ALK0-03, name: "Pumps and valves", description: "Draw the chamber down and let the air back.", mass: 720, length: 2.96, width: 1.48, height: 1.48, item: stock.st4340-bar-120, quantity: 828.0, module: module.machining-centre }
+    - { code: ALK0-04, name: "Controls", description: "Panels and interlock.", mass: 480, length: 2.59, width: 1.29, height: 1.29, item: stock.cu-wire-2, quantity: 552.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "airlock"
+  persons: 6
+  cycle: 600
+  passage: 2.4
+  air_lost: 15.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A lock a pallet or six suited people go through: 54 m3, 6 t, about the ISS Quest airlock whole (9.9 t with its tanks). From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

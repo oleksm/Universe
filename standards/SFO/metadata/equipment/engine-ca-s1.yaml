@@ -18,6 +18,12 @@ needs:
   power: 200
 built_of:
   parts: engine-ca-s1
+  list:
+    - { code: CAE1-01, name: "Thrusters", description: "Four pressure-fed chambers facing out.", mass: 27, length: 0.506, width: 0.506, height: 0.506, item: stock.st304-pl-3, quantity: 31.05, module: module.machining-centre }
+    - { code: CAE1-02, name: "Valves and manifold", mass: 14, length: 0.402, width: 0.402, height: 0.402, item: stock.st304-pl-3, quantity: 16.1, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Attitude engine block, 5 kN (methalox) (30%), chosen." }] }
+    - { code: CAE1-03, name: "Controller", mass: 4, length: 0.278, width: 0.278, height: 0.278, item: good.electronics, quantity: 4, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Attitude engine block, 5 kN (methalox) (10%), chosen." }] }
 making:
   module: module.assembly-shop
 function:
@@ -36,5 +42,5 @@ function:
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "Small pressure-fed bipropellant thrusters, as a spacecraft's reaction control: about 3 km/s, kilonewtons, tens of kilograms. From memory; review." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

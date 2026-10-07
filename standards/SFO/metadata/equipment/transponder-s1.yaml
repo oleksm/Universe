@@ -18,14 +18,19 @@ needs:
   power: 20.0
 built_of:
   parts: transponder-s1
+  list:
+    - { code: TPS1-01, name: "Radio", description: "Answers when asked who the ship is.", mass: 2.1, length: 0.178, width: 0.133, height: 0.151, item: good.electronics, quantity: 2.1, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A deep-space transponder weighs 3 kg; this is allowed far more." }] }
+    - { code: TPS1-02, name: "Aerial and case", mass: 0.9, length: 0.134, width: 0.1, height: 0.114, item: stock.al6061-sh-2-panel, quantity: 0.9, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A deep-space transponder weighs 3 kg; this is allowed far more." }] }
 making:
   module: module.assembly-shop
 function:
   kind: transponder
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a radio in a box with its aerial." }
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "A deep-space transponder: 3 kg, 16 W. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

@@ -13,4 +13,4 @@ composition:
   - { part: element.s, share: 0.25 }
 basis:
   - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/salt-dome-sulphur.yaml", note: "The typical grade of its deposit type, from the planet simulation; the rest is rock." }
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }

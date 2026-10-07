@@ -13,7 +13,7 @@ properties:
     properties:
       key: { $ref: "../../common.schema.yaml#/definitions/key" }
       name: { type: string }
-  use: { enum: [port, industrial, commercial, civic, residential, agricultural, mining] }
+  use: { $ref: "../../dictionary.schema.yaml#/definitions/zone_use" }
   outline:
     description: "Its corners, in order: metres [east, north] of the settlement's position, on the ground."
     type: array

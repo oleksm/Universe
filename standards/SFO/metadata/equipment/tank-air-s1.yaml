@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.air.s1
+  name: "Air store"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 3150
+  volume: 3.8
+  length: 1.56
+  width: 1.56
+  height: 1.56
+built_of:
+  parts: tank-air-s1
+  list:
+    - { code: AIR0-01, name: "Shell", description: "Forged steel in two halves, welded.", mass: 2678, length: 1.48, width: 1.48, height: 1.48, item: stock.st4340-fg, quantity: 3080.0, module: module.machining-centre }
+    - { code: AIR0-02, name: "Fittings", description: "Valves, burst disc and gauge.", mass: 472, length: 0.829, width: 0.829, height: 0.829, item: stock.st304-pl-3, quantity: 543.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "store"
+  capacity: 788.0
+  holds: "element.o"
+  pressure: 30000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "2 m3 at 30 MPa holds 788 kg of oxygen (ideal gas at 293 K); the steel shell weighs four times its contents, as a high-pressure gas cylinder does (a 50 l cylinder: 60 kg for 10 kg of gas, from memory)." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.swivel.s2
+  name: "Engine swivel S2"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "A trunnion that turns an engine of up to 120 kN through 90 degrees in about 16 s: aft in flight, down to land. Vectored thrust; the price is 160 kg a unit against a gimbal's nothing."
+size_class: 2
+fits: mount.engine-s2
+physical:
+  mass: 160
+  volume: 0.72
+  length: 1.2
+  width: 1.2
+  height: 0.5
+needs:
+  power: 4000
+built_of:
+  parts: engine-swivel-s2
+  list:
+    - { code: SWV2-01, name: "Trunnion and bearing", mass: 80, length: 0.952, width: 0.952, height: 0.397, item: stock.ti64-pl-5, quantity: 92, module: module.machining-centre }
+    - { code: SWV2-02, name: "Actuators", mass: 48, length: 0.803, width: 0.803, height: 0.335, item: good.electric-motors, quantity: 48, module: module.assembly-shop }
+    - { code: SWV2-03, name: "Frame", mass: 32, length: 0.702, width: 0.702, height: 0.292, item: stock.al6061-pl-5, quantity: 36.8, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: swivel
+  turns: 1.571
+  bears: 120000
+  slew: 0.1
+life: 473364000
+basis:
+  - { of: [function, physical, needs], tier: invented, review: true, note: "A trunnion bearing and two actuators carrying the engine's thrust: about 0.7 kg a kilonewton plus a frame, turning a quarter turn in sixteen seconds. Chosen; no flown example at this scale. Review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

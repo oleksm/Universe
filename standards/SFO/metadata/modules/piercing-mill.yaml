@@ -165,6 +165,38 @@ recipes:
       - { item: stock.st4340-scrap, quantity: 0.085 }
     rate: 5.55555555555556
     power: 4000000
+  - makes: stock.st4340-tb-250x20
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-300x20
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-300x30
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
+  - makes: stock.st4340-tb-400x30
+    does: "A hot round driven over a point to open it into a tube."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.085 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.085 }
+    rate: 5.55555555555556
+    power: 4000000
 life: 788940000
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures, used for each size: a guess, to be reviewed. A thinner or smaller one goes through slower." }
@@ -173,4 +205,4 @@ basis:
   - { of: [recipes.makes, recipes.rate], tier: sourced, source: "https://steelonthenet.com/cost-seamless-tube.html", note: "A medium mill makes 100,000 to 200,000 t a year, 12 to 25 t/h. Read from a search excerpt, not the page itself." }
   - { of: [physical], tier: invented, review: true, note: "Its footprint was not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

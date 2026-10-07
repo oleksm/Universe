@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.heat.sink
+  name: "Heat sink"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Thermal mass that takes a burst of heat and gives it up slowly."
+size_class: 2
+fits: mount.thermal-s2
+physical:
+  mass: 5500
+  volume: 6.0
+  length: 2.0
+  width: 2.0
+  height: 1.5
+built_of:
+  parts: thermal-heat-sink
+  list:
+    - { code: HSK0-01, name: "Mass", description: "Five tonnes of salt in a steel case.", mass: 4950, length: 1.93, width: 1.93, height: 1.45, item: good.salt, quantity: 5690.0, module: module.cutting-table,
+        basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
+    - { code: HSK0-02, name: "Case and coils", description: "The case and the coolant coils through it.", mass: 550, length: 0.928, width: 0.928, height: 0.696, item: stock.st304-pl-3, quantity: 632.0, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: "heat_sink"
+  stores: 1000000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Five tonnes of salt (1.0 kJ/kg K from memory... taken as 2 kJ/kg K over a 100 K rise) stores 1 GJ: a burst of 10 MW for 100 s. The salt's heat capacity is a guess; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

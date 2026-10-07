@@ -32,4 +32,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs, recipes.power], tier: sourced, review: true, source: "standards/sources/research_ore_processing.json", note: "A direct smelter (QSL) takes 70 kWh, 110 kg of coal and 25 m3 of gas a tonne of lead: 4.4 GJ. It gives 0.56 t of slag and about 2 kg of silver a tonne of bullion. Concentrate taken as 60% lead (35 to 90) and 9% sulphur; 97% won, a guess." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

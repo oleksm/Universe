@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.docking.collar
+  name: "Docking collar"
+  maker: org.orbital
+  revision: draft
+  slot: access
+  description: "A docking collar or clamp: joins the ship to a station or another ship."
+size_class: 1
+fits: mount.access-s1
+physical:
+  mass: 530
+  volume: 1.54
+  length: 1.6
+  width: 1.6
+  height: 0.6
+built_of:
+  parts: access-docking-collar
+  list:
+    - { code: DCO0-01, name: "Ring and tunnel", description: "The mating ring and the passage through it.", mass: 265, length: 1.27, width: 1.27, height: 0.476, item: stock.al6061-pl-5, quantity: 305.0, module: module.machining-centre }
+    - { code: DCO0-02, name: "Latches and seals", description: "Twelve hooks and the seal they close on.", mass: 159, length: 1.07, width: 1.07, height: 0.402, item: stock.st4340-bar-120, quantity: 183.0, module: module.machining-centre }
+    - { code: DCO0-03, name: "Soft-capture and controls", description: "The guide petals that catch, and the controls.", mass: 106, length: 0.936, width: 0.936, height: 0.351, item: stock.cu-wire-2, quantity: 122.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "docking"
+  passage: 0.8
+  holds: 200000
+  standard: "IDSS"
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "The International Docking System Standard: an 0.8 m passage in a 1.4 m ring; NASA's IDA weighs 526 kg. From memory of the IDSS and the IDA. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

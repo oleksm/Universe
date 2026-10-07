@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.airlock.crew
+  name: "Crew airlock"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A way in and out through the hull, keeping the air in: two doors and a chamber between."
+size_class: 1
+fits: mount.access-s1
+physical:
+  mass: 1200
+  volume: 8.25
+  length: 2.5
+  width: 1.5
+  height: 2.2
+built_of:
+  parts: access-airlock-crew
+  list:
+    - { code: ALC0-01, name: "Chamber", description: "The pressure shell between the doors.", mass: 540, length: 1.92, width: 1.15, height: 1.69, item: stock.al6061-pl-5, quantity: 621.0, module: module.welding-bay }
+    - { code: ALC0-02, name: "Doors", description: "Inner and outer, with their seals and dogs.", mass: 360, length: 1.67, width: 1.0, height: 1.47, item: stock.al6061-pl-5, quantity: 414.0, module: module.machining-centre }
+    - { code: ALC0-03, name: "Pumps and valves", description: "Draw the chamber down and let the air back.", mass: 180, length: 1.33, width: 0.797, height: 1.17, item: stock.st4340-bar-120, quantity: 207.0, module: module.machining-centre }
+    - { code: ALC0-04, name: "Controls", description: "Panels inside and out; the interlock that keeps both doors from opening at once.", mass: 120, length: 1.16, width: 0.696, height: 1.02, item: stock.cu-wire-2, quantity: 138.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "airlock"
+  persons: 2
+  cycle: 300
+  passage: 0.8
+  air_lost: 1.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Two people a cycle through an 0.8 m door, as the ISS Quest lock's crew side (about 2 m across, 5 minutes a cycle, ~1 kg of air lost with its pumps run): from memory of Quest's figures. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

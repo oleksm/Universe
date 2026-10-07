@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.handling.conveyor.s2
+  name: "Conveyor S2"
+  maker: org.cormorant
+  revision: draft
+  slot: handling
+  description: "Moves bulk or cargo aboard: a scoop, a conveyor, an arm."
+size_class: 2
+fits: mount.handling-s2
+physical:
+  mass: 3000
+  volume: 11.5
+  length: 12.0
+  width: 1.2
+  height: 0.8
+built_of:
+  parts: handling-conveyor-s2
+  list:
+    - { code: CNV2-01, name: "Frame", description: "Tube stringers and cross members.", mass: 1200, length: 8.84, width: 0.884, height: 0.589, item: stock.al6061-tb-160x5, quantity: 1380.0, module: module.welding-bay }
+    - { code: CNV2-02, name: "Belt and rollers", description: "The belt, its idlers and the drums.", mass: 1200, length: 8.84, width: 0.884, height: 0.589, item: stock.st4340-bar-120, quantity: 1380.0, module: module.machining-centre }
+    - { code: CNV2-03, name: "Drive", description: "Motor, gearbox and controls.", mass: 600, length: 7.02, width: 0.702, height: 0.468, item: stock.st4340-bar-120, quantity: 690.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "handling"
+  throughput: 50
+  reach: 12.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Twelve metres of 1 m belt moving 50 kg/s. From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

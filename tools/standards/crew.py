@@ -9,19 +9,15 @@ persons and cooling on the life support units and the people's heat on need.food
 of the space station's and airliners' practice, marked review, with the source named where there is one. Run from the
 repository root.
 """
-import glob, os, re, subprocess
+import glob, os, sys, re, subprocess
 import yaml
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import q, edit
+
 S = "standards/SFO/"; E = S + "metadata/equipment/"; P = S + "metadata/parts/"
-q = lambda s: '"' + s.replace('"', '\\"') + '"'
 LIFE = 473364000
 LIFE_NOTE = "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life."
-
-
-def edit(path, fn):
-    s = open(path, encoding="utf-8").read(); t = fn(s)
-    if t != s:
-        yaml.safe_load(t); open(path, "w", encoding="utf-8").write(t)
 
 
 def schemas():
@@ -83,11 +79,11 @@ def schemas():
       - description: "Pressure suits and the locker they hang in, with their air. Not in the game yet."
         type: object
         additionalProperties: false
-        required: [kind, persons, hours]
+        required: [kind, persons, endurance]
         properties:
           kind: { const: suit_locker, x-in-game: "not made" }
           persons: { type: integer, x-unit: "1", description: "how many suits" }
-          hours: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
+          endurance: { type: number, x-unit: "s", description: "s of air and power a suit carries" }
       - description: "A landing sensor: it measures the distance to the ground below. Not in the game yet."
         type: object
         additionalProperties: false
@@ -148,8 +144,8 @@ fit:
   count: 1
 basis:
   - {{ of: [physical.mass, fit], tier: invented, review: true, note: {q(f"Its share of the {whole} ({share:.0%}), chosen.")} }}
-  - {{ of: [made_from, making], tier: invented, review: true, note: {q("Taken as cut from this stock with 15% lost." if cut > 1 else "Bought made, as the good; put together here.")} }}
-  - {{ of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: {q(f"Fitted within the {whole}: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn.")} }}
+  - {{ of: [made_from, making], rule: {"rule.cut-loss" if cut > 1 else "rule.built-in-whole"} }}
+  - {{ of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }}
 ''')
 
 
@@ -187,8 +183,8 @@ function:
 life: {LIFE}
 basis:
   - {{ of: [physical, needs, function, size_class], tier: invented, review: true, note: {q(note)} }}
-  - {{ of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }}
-  - {{ of: [life], tier: invented, review: true, note: {q(LIFE_NOTE)} }}
+  - {{ of: [built_of, making], rule: rule.first-design-parts }}
+  - {{ of: [life], rule: rule.life-ship-system }}
 ''')
 
 
@@ -212,14 +208,14 @@ def records():
                   [("Bunks and lockers", "A bunk, a locker and a reading light a head.", 0.45, AL, MC), ("Partition and door", "The wall round them.", 0.40, SH, WB), ("Linings, bedding, lights", "", 0.15, MLI, AS)], f"BRT{persons}",
                   f"Where {persons} of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is.",
                   f"130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen.")
-    equipment("galley", "equipment.galley.s1", "Galley", "cargo", 1, 250, 1.5, 0.9, 2.0, 3000, {"kind": "galley", "persons": 6},
+    equipment("galley", "equipment.cargo.galley.s1", "Galley", "cargo", 1, 250, 1.5, 0.9, 2.0, 3000, {"kind": "galley", "persons": 6},
               [("Cabinet and worktop", "", 0.40, AL, MC), ("Cold store and ovens", "A refrigerator and two heaters.", 0.45, HP, AS), ("Water fittings", "A tap, a drain to the waste water.", 0.15, ST, MC)], "GAL1",
               "Where food is kept cold, heated and eaten, for a crew of six in turns.", "An airliner's galley unit: about 250 kg fitted, 3 kW of ovens and a chiller (from memory of a galley insert's weights). Feeds six in turns; two for a larger crew. Chosen.")
-    equipment("head", "equipment.head.s1", "Head", "cargo", 1, 200, 1.2, 1.0, 2.0, 500, {"kind": "head", "persons": 6},
+    equipment("head", "equipment.cargo.head.s1", "Head", "cargo", 1, 200, 1.2, 1.0, 2.0, 500, {"kind": "head", "persons": 6},
               [("Compartment and door", "", 0.45, SH, WB), ("Toilet and basin", "A space toilet with its fans and separator; a basin.", 0.40, PU, AS), ("Fittings and linings", "", 0.15, ST, MC)], "HED1",
               "Toilet and washing for a crew of six. Its water is the people's need; its waste water goes to life support's recovery or the waste tank.",
               "A compartment of 1.2 by 1.0 m with a space toilet (the station's is about 100 kg with its fans and separator; from memory) and a basin; 500 W of fans and heating. Serves six; one more for every six. Chosen.")
-    equipment("food-store", "equipment.store.food.s1", "Food store", "cargo", 1, 150, 1.5, 1.2, 2.0, 200, {"kind": "store", "capacity": 1000, "holds": "market.food"},
+    equipment("food-store", "equipment.cargo.food-store.s1", "Food store", "cargo", 1, 150, 1.5, 1.2, 2.0, 200, {"kind": "store", "capacity": 1000, "holds": "market.food"},
               [("Racks and bins", "Shelving and sealed bins.", 0.6, AL, MC), ("Chilled section", "A chiller for what must be kept cold.", 0.3, HP, AS), ("Fittings", "", 0.1, ST, MC)], "FST1",
               "A larder: racks and sealed bins holding a tonne of food of any kind sold as food (market.food), part of it chilled. 1,000 kg is 667 person-days at need.food's 1.5 kg a day.",
               "A tonne of packed food at about 350 kg/m3 (from memory of packaged provisions) in 3.6 m3 of racks, a tenth of it chilled; the racks and bins 150 kg. Chosen.")
@@ -241,7 +237,7 @@ def records():
               [("Door leaf and frame", "", 0.7, AL, MC), ("Seal, latches and window", "", 0.3, ST, MC)], "PDR1",
               "A hatch that holds a cabin's pressure across it, either way, with a window: a hole vents one compartment, not the ship. The studio's doors between compartments are these.",
               "An 0.8 m clear opening in a 1.0 by 1.9 m leaf and frame, 90 kg: by the station's hatches (about 70 to 100 kg, from memory). It holds one atmosphere either way. Chosen.")
-    equipment("suit-locker", "equipment.utility.suits.s1", "Suit locker, two suits", "utility", 1, 160, 1.0, 0.6, 2.0, 100, {"kind": "suit_locker", "persons": 2, "hours": 28800},
+    equipment("suit-locker", "equipment.utility.suits.s1", "Suit locker, two suits", "utility", 1, 160, 1.0, 0.6, 2.0, 100, {"kind": "suit_locker", "persons": 2, "endurance": 28800},
               [("Two suits with their packs", "Pressure suits with 8 hours of air and power each.", 0.75, MLI, AS), ("Locker", "", 0.25, SH, WB)], "SUT1",
               "Two pressure suits with eight hours of air and power each, and the locker they hang in with their charging. Suits for every one of the crew.",
               "A light EVA suit with its pack at 60 kg (between a 10 kg flight suit and the station's 145 kg suit; from memory) and 8 hours of air (the station's suit's 8.5); the locker 40 kg. Chosen.")

@@ -14,5 +14,5 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://www.iter.org/machine/vacuum-vessel", note: "ITER's blanket and divertor: its vessel weighs 8,500 tonnes with them and 5,200 without." }
-  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the fusion power station: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [fit], rule: rule.plant-weights-from-memory, note: "research_plant_weights.json: 21_fusion_power_plant" }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

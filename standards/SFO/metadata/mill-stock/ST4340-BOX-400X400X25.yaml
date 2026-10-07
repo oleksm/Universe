@@ -1,0 +1,16 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-box-400x400x25
+  code: ST4340-BOX-400X400X25
+  name: "4340 box section 400 x 400 x 25 mm"
+  traded_as: market.metals
+  form: box
+  temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  width: 0.4
+  height: 0.4
+  wall: 0.025
+basis:
+  - { of: [size], tier: invented, review: true, note: "A welded box section for primary structure (a thrust structure, an engine frame): four plates of 25 mm welded at the corners, 294 kg a metre; what launch vehicles put round an engine mount in place of round tube. Added 2026-10-07 at the ships session's ask." }

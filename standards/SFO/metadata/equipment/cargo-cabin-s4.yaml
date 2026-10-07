@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.cabin.s4
+  name: "Passenger cabin 200"
+  maker: org.hadley
+  revision: outdated
+  slot: cargo
+size_class: 4
+fits: mount.cargo-s4
+physical:
+  mass: 26000
+  volume: 199.0
+  length: 26.9
+  width: 3.7
+  height: 2.0
+needs:
+  power: 400000
+built_of:
+  parts: cargo-cabin-s4
+  shares: rule.shares-chosen
+  list:
+    - { code: CBS4-01, name: "Shell", description: "The pressure wall, floor and door.", mass: 11700, length: 20.6, width: 2.84, height: 1.53, item: stock.al6061-sh-2-panel, quantity: 11700.0, module: module.welding-bay }
+    - { code: CBS4-02, name: "Seats", mass: 3120, length: 13.3, width: 1.82, height: 0.986, item: stock.al6061-pl-5, quantity: 3588.0, module: module.machining-centre }
+    - { code: CBS4-03, name: "Linings and insulation", mass: 2080, length: 11.6, width: 1.59, height: 0.862, item: stock.mli-fl, quantity: 2392.0, module: module.assembly-shop,
+        basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
+    - { code: CBS4-04, name: "Air plant", description: "Fans, scrubber and oxygen feed for those aboard.", mass: 3900, length: 14.3, width: 1.97, height: 1.06, item: good.electric-motors, quantity: 3900, module: module.assembly-shop }
+    - { code: CBS4-05, name: "Cooler", mass: 2600, length: 12.5, width: 1.72, height: 0.928, item: good.heat-pumps, quantity: 2600, module: module.assembly-shop }
+    - { code: CBS4-06, name: "Lights and controls", mass: 2600, length: 12.5, width: 1.72, height: 0.928, item: good.electronics, quantity: 2600, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: cabin
+  seats: 200
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "200 seats, 6 abreast with two aisles: 34 rows at an airliner's pitch of 0.79 m and seat width of 0.45 m (from memory), 2 m high." }
+  - { of: [life], rule: rule.life-ship-system }

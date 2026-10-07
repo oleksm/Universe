@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-pl-20
+  code: ST4340-PL-20
+  name: "4340 plate 20 mm"
+  traded_as: market.metals
+  form: plate
+  temper: "quenched and tempered"
+made_from:
+  - item: material.high-strength-steel-4340
+size:
+  thickness: 0.02
+basis:
+  - { of: [size], tier: invented, review: true, note: "Heavy plate, 157 kg a m2, for box sections and thrust structure. Added 2026-10-07." }

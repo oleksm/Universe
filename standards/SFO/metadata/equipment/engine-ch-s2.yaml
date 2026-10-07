@@ -16,6 +16,11 @@ physical:
   height: 1.5
 built_of:
   parts: engine-ch-s2
+  list:
+    - { code: CHE2-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 135, length: 1.76, width: 1.15, height: 1.15, item: stock.st304-pl-3, quantity: 155.2, module: module.welding-bay }
+    - { code: CHE2-02, name: "Turbopumps", mass: 90, length: 1.54, width: 1, height: 1, item: good.pumps, quantity: 90, module: module.assembly-shop }
+    - { code: CHE2-03, name: "Valves, lines and injector", mass: 45, length: 1.22, width: 0.797, height: 0.797, item: stock.st304-pl-3, quantity: 51.75, module: module.machining-centre }
+    - { code: CHE2-04, name: "Controller and gimbal actuators", mass: 30, length: 1.07, width: 0.696, height: 0.696, item: good.electric-motors, quantity: 30, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -36,5 +41,5 @@ basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "the RL10: about 110 kN, 300 kg, hydrogen and oxygen; its extendable nozzle is carbon-carbon" }
   - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (9.7 MJ/kg) over the blend's 13 MJ/kg: 0.74." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -22,9 +22,9 @@ attachment:
     shear: 188000.0
 feeds:
   power: 1000000.0
-  cooling: 23300000.0
+  cooling: 10000000.0
   fuel: 0.2
 nozzle:
   diameter: 14.0
 basis:
-  - { of: [envelope, bears, attachment, feeds, nozzle], tier: invented, review: true, note: "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give. The attachment: its pattern by kind; each point takes the mount's weight at 3 g (a design acceleration, chosen) plus its thrust, landing or recoil load, with the margin; the same in tension for a reversal; shear half." }
+  - { of: [envelope, bears, attachment, feeds, nozzle], rule: rule.mounts-margin }

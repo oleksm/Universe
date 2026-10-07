@@ -24,7 +24,9 @@ properties:
     properties:
       thickness: { type: number, x-unit: "m", description: "m, of sheet, plate or film" }
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
-      wall: { type: number, x-unit: "m", description: "m, of a tube" }
+      wall: { type: number, x-unit: "m", description: "m, of a tube or a box section" }
+      width: { type: number, x-unit: "m", description: "m, of a box section (outside)" }
+      height: { type: number, x-unit: "m", description: "m, of a box section (outside)" }
   sandwich:
     description: "For a sandwich panel (form sandwich): two faces held apart by a core. The panel bends as a sandwich: stiffness from the faces apart (E_face * t_face * d^2 / 2 a metre of width, d the faces' centre spacing = core depth + face thickness), the face stress M / (t_face * d), the core in shear (V / (b * d) against its shear strength). Faces take their stiffness and strength from their material's record; the core's shear figures are on its own material record and repeated here, in the ribbon (weaker) direction. Mass a m2 = 2 faces + core + the bond."
     type: object

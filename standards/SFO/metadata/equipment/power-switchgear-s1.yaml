@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.switchgear.s1
+  name: "Switchgear"
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: "Distributes power from plant to loads, and breaks a fault."
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 700
+  volume: 2.4
+  length: 1.5
+  width: 0.8
+  height: 2.0
+built_of:
+  parts: power-switchgear-s1
+  list:
+    - { code: SWG0-01, name: "Busbars and breakers", mass: 420, length: 1.27, width: 0.675, height: 1.69, item: stock.cu-wire-2, quantity: 483.0, module: module.electronics-works }
+    - { code: SWG0-02, name: "Cabinet", mass: 210, length: 1.0, width: 0.536, height: 1.34, item: stock.sta36-pl-20, quantity: 241.0, module: module.welding-bay }
+    - { code: SWG0-03, name: "Controls", mass: 70, length: 0.696, width: 0.371, height: 0.928, item: stock.cu-wire-2, quantity: 80.5, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "switchgear"
+  carries: 15000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 15 MW, the S3 plant's output, and breaks a fault. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

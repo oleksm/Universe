@@ -15,6 +15,23 @@ physical:
   height: 2.0
 built_of:
   parts: power-aurel-s3
+  shares: rule.discovery-ii-reactor-shares
+  list:
+    - { code: PAS3-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 157, length: 7.95, width: 3.98, height: 0.68, item: stock.sic-tl-10, quantity: 180.5, module: module.machining-centre }
+    - { code: PAS3-02, name: "Field coil cases", description: "Hold the field coils against their own force.", mass: 1421, length: 16.6, width: 8.29, height: 1.42, item: stock.ti64-pl-5, quantity: 1634.1, module: module.welding-bay }
+    - { code: PAS3-03, name: "Field coil windings", description: "The superconducting windings.", mass: 17, length: 3.79, width: 1.9, height: 0.324, item: stock.cu-wire-2, quantity: 19.5, module: module.machining-centre }
+    - { code: PAS3-04, name: "Shaping coils and bracing", description: "Shape and hold the plasma.", mass: 861, length: 14.0, width: 7.01, height: 1.2, item: stock.ti64-pl-5, quantity: 990.1, module: module.welding-bay }
+    - { code: PAS3-05, name: "Shield", description: "Carbon between the plasma and the coils.", mass: 1007, length: 14.8, width: 7.39, height: 1.26, item: good.carbon, quantity: 1007, module: module.assembly-shop }
+    - { code: PAS3-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 45, length: 5.24, width: 2.62, height: 0.448, item: stock.ti64-pl-5, quantity: 51.7, module: module.machining-centre }
+    - { code: PAS3-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 34, length: 4.78, width: 2.39, height: 0.408, item: good.electric-motors, quantity: 34, module: module.assembly-shop }
+    - { code: PAS3-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 67, length: 5.99, width: 2.99, height: 0.512, item: good.electronics, quantity: 67, module: module.assembly-shop }
+    - { code: PAS3-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 112, length: 7.11, width: 3.55, height: 0.607, item: stock.cfc-pl-3, quantity: 128.8, module: module.welding-bay }
+    - { code: PAS3-10, name: "Frame", description: "Carries the set.", mass: 22, length: 4.13, width: 2.07, height: 0.353, item: stock.al6061-pl-5-panel, quantity: 22.0, module: module.welding-bay }
+    - { code: PAS3-11, name: "Flywheel", description: "Evens the load.", mass: 56, length: 5.64, width: 2.82, height: 0.482, item: stock.st4340-bar-120, quantity: 64.4, module: module.machining-centre }
+    - { code: PAS3-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 45, length: 5.24, width: 2.62, height: 0.448, item: good.pumps, quantity: 45, module: module.assembly-shop }
+    - { code: PAS3-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 78, length: 6.3, width: 3.15, height: 0.538, item: stock.st304-pl-3, quantity: 89.7, module: module.welding-bay }
+    - { code: PAS3-14, name: "Refrigerator", description: "Keeps the windings cold.", mass: 22, length: 4.13, width: 2.07, height: 0.353, item: good.heat-pumps, quantity: 22, module: module.assembly-shop }
+    - { code: PAS3-15, name: "Plasma heater", description: "Brings the plasma to burning.", mass: 56, length: 5.64, width: 2.82, height: 0.482, item: good.electronics, quantity: 56, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -24,7 +41,7 @@ function:
   burns: material.deuterium
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 14.0 MW of waste heat at 1,000 K, 137 m2 of panel, with the plant beneath." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

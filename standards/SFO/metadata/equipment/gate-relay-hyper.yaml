@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.gate.relay.hyper
+  name: "Halcyon hyper relay"
+  maker: org.halcyon
+  revision: outdated
+  slot: gate
+  description: "Links the gate to the system's other sites through hyperspace, so news crosses the system in seconds."
+size_class: 4
+fits: mount.gate-s4
+physical:
+  mass: 15000
+  volume: 40
+  length: 4.48
+  width: 2.99
+  height: 2.99
+needs:
+  power: 1500000
+built_of:
+  parts: gate-relay-hyper
+  shares: rule.shares-chosen
+  list:
+    - { code: RLHY-01, name: "Field coil cases", description: "Hold the coils that open a thread through hyperspace.", mass: 5250, length: 3.16, width: 2.11, height: 2.11, item: stock.ti64-pl-5, quantity: 6037.5, module: module.welding-bay }
+    - { code: RLHY-02, name: "Field coil windings", description: "Superconducting windings.", mass: 300, length: 1.22, width: 0.812, height: 0.812, item: stock.cu-wire-2, quantity: 345.0, module: module.machining-centre }
+    - { code: RLHY-03, name: "Power conditioning", mass: 3000, length: 2.62, width: 1.75, height: 1.75, item: good.electronics, quantity: 3000, module: module.assembly-shop }
+    - { code: RLHY-04, name: "Refrigerator", description: "Keeps the windings cold.", mass: 900, length: 1.75, width: 1.17, height: 1.17, item: good.heat-pumps, quantity: 900, module: module.assembly-shop }
+    - { code: RLHY-05, name: "Switching computers", description: "Sort the messages and throw them in turn.", mass: 1800, length: 2.21, width: 1.47, height: 1.47, item: good.computers, quantity: 1800, module: module.assembly-shop }
+    - { code: RLHY-06, name: "Frame", mass: 3750, length: 2.82, width: 1.88, height: 1.88, item: stock.al6061-pl-5-panel, quantity: 3750.0, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: hyper_relay
+  lag: 0.1
+  capacity: 27.7777777778
+  cadence: 3
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a hyperdrive's coils turned to carrying messages, with the computers that sort them." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a rack, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [life], rule: rule.life-ship-system }

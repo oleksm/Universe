@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.heat.exchanger
+  name: "Heat exchanger"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Passes heat from one loop to another."
+size_class: 1
+fits: mount.thermal-s1
+physical:
+  mass: 800
+  volume: 1.5
+  length: 1.5
+  width: 1.0
+  height: 1.0
+built_of:
+  parts: thermal-heat-exchanger
+  list:
+    - { code: HEX0-01, name: "Shell", description: "The pressure shell.", mass: 280, length: 1.06, width: 0.705, height: 0.705, item: stock.st304-pl-3, quantity: 322.0, module: module.welding-bay }
+    - { code: HEX0-02, name: "Tube bundle", description: "Hundreds of thin tubes the hot side runs through.", mass: 400, length: 1.19, width: 0.794, height: 0.794, item: stock.st304-pl-3, quantity: 460.0, module: module.machining-centre }
+    - { code: HEX0-03, name: "Headers", description: "The ends that gather the flows.", mass: 120, length: 0.797, width: 0.531, height: 0.531, item: stock.st304-pl-3, quantity: 138.0, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: "heat_exchanger"
+  transfers: 5000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Passes 5 MW between two loops: a shell-and-tube exchanger of about this size. From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

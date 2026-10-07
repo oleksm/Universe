@@ -25,12 +25,12 @@ nozzles · `heat_to_hull`, plus the plant's loss):
 | radiator_1 | thermal | 3 | mount.thermal-s3 | equipment.thermal.radiator.s3 | rejects 30 MW | 3,530 kg |
 | radiator_2 | thermal | 2 | mount.thermal-s2 | equipment.thermal.radiator.s2 | rejects 8 MW | 940 kg |
 | radiator_3 | thermal | 2 | mount.thermal-s2 | equipment.thermal.radiator.s2 | rejects 8 MW | 940 kg |
-| loop_1 | thermal | 2 | mount.thermal-s2 | equipment.thermal.coolant.loop.s2 | carries 20 MW | 3,000 kg |
-| loop_2 | thermal | 2 | mount.thermal-s2 | equipment.thermal.coolant.loop.s2 | carries 20 MW | 3,000 kg |
-| loop_3 | thermal | 1 | mount.thermal-s1 | equipment.thermal.coolant.loop.s1 | carries 5 MW | 1,000 kg |
-| cabin | cargo | 1 | mount.cargo-s1 | equipment.cabin.s1 | 6 seats | 900 kg |
-| air | tank | 1 | mount.tank-s1 | equipment.tank.air.store | 788 kg of oxygen | 3,150 kg |
-| water | tank | 1 | mount.tank-s1 | equipment.tank.water.tank.s1 | 5,000 kg of water | 250 kg |
+| loop_1 | thermal | 2 | mount.thermal-s2 | equipment.thermal.coolant-loop.s2 | carries 20 MW | 3,000 kg |
+| loop_2 | thermal | 2 | mount.thermal-s2 | equipment.thermal.coolant-loop.s2 | carries 20 MW | 3,000 kg |
+| loop_3 | thermal | 1 | mount.thermal-s1 | equipment.thermal.coolant-loop.s1 | carries 5 MW | 1,000 kg |
+| cabin | cargo | 1 | mount.cargo-s1 | equipment.cargo.cabin.s1 | 6 seats | 900 kg |
+| air | tank | 1 | mount.tank-s1 | equipment.tank.air.s1 | 788 kg of oxygen | 3,150 kg |
+| water | tank | 1 | mount.tank-s1 | equipment.tank.water.s1 | 5,000 kg of water | 250 kg |
 
 Radiators 46 MW and loops 45 MW against 43.4 MW. Six seats are the crew size the studio's designs
 use (the record says no crew; change it if you have one). The cabin needs a slot of its own: the

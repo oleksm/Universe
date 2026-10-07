@@ -16,6 +16,11 @@ physical:
   height: 1.3
 built_of:
   parts: engine-ch-s4
+  list:
+    - { code: CHE4-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 734, length: 2.38, width: 0.996, height: 0.996, item: stock.st304-pl-3, quantity: 844.1, module: module.welding-bay }
+    - { code: CHE4-02, name: "Turbopumps", mass: 489, length: 2.08, width: 0.87, height: 0.87, item: good.pumps, quantity: 489, module: module.assembly-shop }
+    - { code: CHE4-03, name: "Valves, lines and injector", mass: 244, length: 1.65, width: 0.691, height: 0.691, item: stock.st304-pl-3, quantity: 280.6, module: module.machining-centre }
+    - { code: CHE4-04, name: "Controller and gimbal actuators", mass: 163, length: 1.44, width: 0.603, height: 0.603, item: good.electric-motors, quantity: 163, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -36,5 +41,5 @@ basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review" }
   - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (6.5 MJ/kg) over the blend's 10 MJ/kg: 0.65." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

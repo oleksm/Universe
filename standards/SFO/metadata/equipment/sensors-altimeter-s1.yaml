@@ -1,0 +1,37 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.sensors.altimeter.s1
+  name: "Landing altimeter"
+  maker: org.hadley
+  revision: draft
+  slot: sensors
+  description: "A laser rangefinder looking down: the ground's distance from 5 km to touchdown, to a tenth of a metre. What the pilot lands by in the last hundred metres; the radar's 500 km is not for that."
+size_class: 1
+fits: mount.sensors-s1
+physical:
+  mass: 8
+  volume: 0.009
+  length: 0.3
+  width: 0.2
+  height: 0.15
+needs:
+  power: 40
+built_of:
+  parts: sensors-altimeter-s1
+  list:
+    - { code: ALT1-01, name: "Laser head and optics", mass: 4, length: 0.238, width: 0.159, height: 0.119, item: good.electronics, quantity: 4, module: module.assembly-shop }
+    - { code: ALT1-02, name: "Housing", mass: 2, length: 0.201, width: 0.134, height: 0.1, item: stock.al6061-pl-5, quantity: 2.3, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Landing altimeter (30%), chosen." }] }
+    - { code: ALT1-03, name: "Electronics", mass: 2, length: 0.175, width: 0.117, height: 0.0877, item: good.electronics, quantity: 2, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Landing altimeter (20%), chosen." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: altimeter
+  range: 5000
+  accuracy: 0.1
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A lidar altimeter of a lander's class: 5 km range, 0.1 m accuracy, 8 kg, 40 W (from memory of planetary landers' lidars; a radar altimeter reads to about 0.5 m). Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

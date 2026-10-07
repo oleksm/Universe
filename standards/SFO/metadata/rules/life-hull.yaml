@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.life-hull
+  name: "Life of a hull"
+  about: "How long a ship's frame serves before it is scrapped."
+statement: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life."
+tier: invented
+review: true

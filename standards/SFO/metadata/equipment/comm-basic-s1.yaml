@@ -18,6 +18,15 @@ needs:
   power: 360.0
 built_of:
   parts: comm-basic-s1
+  list:
+    - { code: CMS1-01, name: "Transponder and amplifiers", mass: 18.0, length: 1.75, width: 1.75, height: 0.351, item: good.electronics, quantity: 18.0, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
+    - { code: CMS1-02, name: "Dish", mass: 22.5, length: 1.89, width: 1.89, height: 0.378, item: stock.al6061-sh-2-panel, quantity: 22.5, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
+    - { code: CMS1-03, name: "Gimbal", description: "Points the dish.", mass: 40.5, length: 2.3, width: 2.3, height: 0.46, item: good.electric-motors, quantity: 40.5, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
+    - { code: CMS1-04, name: "Waveguide", mass: 9.0, length: 1.39, width: 1.39, height: 0.278, item: stock.cu-wire-2, quantity: 10.3, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
 making:
   module: module.assembly-shop
 function:
@@ -28,8 +37,8 @@ function:
   capacity: 0.166666666667
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide." }
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "The Mars Reconnaissance Orbiter's radio: a 3 m dish on its gimbal and the boxes behind it, 94 kg, 360 W. Its size is the dish's, stowed. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

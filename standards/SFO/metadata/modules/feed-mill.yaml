@@ -45,4 +45,4 @@ basis:
   - { of: [physical, recipes, recipes.rate, recipes.inputs, recipes.power], tier: invented, review: true, note: "A mix chosen, not a ration anyone has worked out. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Six food workers and an operator. Coarse: by the kind of plant, not this one; to be reviewed." }
   - { of: [recipes], tier: invented, review: true, note: "The by-products of sugar, brewing, wine, dairy, oil and textiles, and the rendering works' meal, are feed, as on Earth. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.rack.s4
+  name: "Cargo Racks 150 T"
+  maker: org.hadley
+  revision: outdated
+  slot: cargo
+  description: "Racks that hold cargo in the hold."
+size_class: 4
+fits: mount.cargo-s4
+physical:
+  mass: 9000
+  volume: 300.0
+  length: 10.6
+  width: 5.31
+  height: 5.31
+built_of:
+  parts: cargo-rack-s4
+  shares: rule.shares-chosen
+  list:
+    - { code: RKS4-01, name: "Frame", description: "Tube uprights and beams.", mass: 4950, length: 8.68, width: 4.35, height: 4.35, item: stock.st4340-tb-120x10, quantity: 5692.5, module: module.welding-bay }
+    - { code: RKS4-02, name: "Decking and rails", mass: 3150, length: 7.47, width: 3.74, height: 3.74, item: stock.al6061-pl-5-panel, quantity: 3150.0, module: module.welding-bay }
+    - { code: RKS4-03, name: "Locks and drives", description: "Hold the load and move it to the door.", mass: 900, length: 4.92, width: 2.46, height: 2.46, item: good.electric-motors, quantity: 900, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: rack
+  capacity: 150000
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 150,000 kg is 300 m3, twice as long as wide. The racks themselves are in it." }
+  - { of: [life], rule: rule.life-ship-system }

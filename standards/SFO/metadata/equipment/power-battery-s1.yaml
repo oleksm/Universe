@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.battery.s1
+  name: "Battery bank"
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: "Stores electric energy chemically: slower than a capacitor, far more of it."
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 1900
+  volume: 2.4
+  length: 2.0
+  width: 1.0
+  height: 1.2
+built_of:
+  parts: power-battery-s1
+  list:
+    - { code: BAT0-01, name: "Cells", description: "Lithium cells in modules.", mass: 1425, length: 1.82, width: 0.909, height: 1.09, item: stock.al6061-sh-2, quantity: 1640.0, module: module.electronics-works }
+    - { code: BAT0-02, name: "Case and cooling", description: "The case and the cooling plates.", mass: 285, length: 1.06, width: 0.531, height: 0.638, item: stock.al6061-pl-5, quantity: 328.0, module: module.welding-bay }
+    - { code: BAT0-03, name: "Management", description: "Monitoring and balancing.", mass: 190, length: 0.928, width: 0.464, height: 0.557, item: stock.cu-wire-2, quantity: 218.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "battery"
+  stores: 1000000000.0
+  rate: 1000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "1 GJ (278 kWh) at 150 Wh/kg, the usual for lithium packs with their housing; 1 MW in or out. From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

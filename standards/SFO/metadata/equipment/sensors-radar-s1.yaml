@@ -18,6 +18,15 @@ needs:
   power: 100000
 built_of:
   parts: sensors-radar-s1
+  list:
+    - { code: RDS1-01, name: "Array frame", description: "The panels the modules sit on.", mass: 120, length: 2.95, width: 1.47, height: 0.0737, item: stock.al6061-sh-2-panel, quantity: 120.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
+    - { code: RDS1-02, name: "Transmit-receive modules", description: "Thousands of small transmitters and receivers that steer the beam between them.", mass: 135, length: 3.07, width: 1.53, height: 0.0766, item: good.electronics, quantity: 135, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
+    - { code: RDS1-03, name: "Signal processor", description: "Makes tracks of the echoes.", mass: 21, length: 1.65, width: 0.824, height: 0.0412, item: good.computers, quantity: 21, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
+    - { code: RDS1-04, name: "Cooler", description: "Takes the modules' heat away.", mass: 24, length: 1.72, width: 0.862, height: 0.0431, item: good.heat-pumps, quantity: 24, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
 making:
   module: module.assembly-shop
 function:
@@ -27,8 +36,8 @@ function:
   survey_range: 20000000000
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a flat array of transmit-receive modules on an aluminium frame, as a radar satellite's. Sentinel-1's antenna is 880 of its instrument's 945 kg." }
   - { of: [function.resolves, function.survey_range], tier: sourced, review: true, source: "the game: crates/world/src/belts.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
   - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A flat array of 8 m2, a hand's breadth thick: a radar is an area, not a box (Sentinel-1's antenna is 12.3 m by 0.8 m). Its weight is kept." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

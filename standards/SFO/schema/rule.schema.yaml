@@ -1,0 +1,23 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Rule
+x-kind: [rule]
+description: "standards/SFO/metadata/rules/<name>.yaml: a rule of the registry stated once, that many records' figures rest on: a service life, a cutting allowance, how a generated part is fitted, a margin. A record's basis entry names it (`rule:`) instead of repeating its text; the rule carries the tier, the source and the review flag for all of them. Change the rule and every record that rests on it has changed."
+type: object
+additionalProperties: false
+required: [identity, statement, tier]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, about]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string, description: "What it decides, in a sentence." }
+  statement: { type: string, description: "The rule itself, as the records' notes used to say it." }
+  tier: { $ref: "../../dictionary.schema.yaml#/definitions/tier" }
+  source: { type: string, description: "Where the figure comes from, for a sourced or derived rule; a file in standards/sources or a named document." }
+  review: { type: boolean, description: "Chosen, to be reviewed." }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: review, owner: registry, on_conflict: propose, because: "A rule many records rest on; change it with a reason and every record follows.", ask: docs/registry-ssot-request.md }

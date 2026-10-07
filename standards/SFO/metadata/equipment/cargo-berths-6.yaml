@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.berths.6
+  name: "Crew berths 6"
+  maker: org.hadley
+  revision: draft
+  slot: cargo
+  description: "Where 6 of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is."
+size_class: 2
+fits: mount.cargo-s2
+physical:
+  mass: 780
+  volume: 12
+  length: 3
+  width: 2
+  height: 2
+needs:
+  power: 300
+built_of:
+  parts: cargo-berths-6
+  list:
+    - { code: BRT6-01, name: "Bunks and lockers", description: "A bunk, a locker and a reading light a head.", mass: 351, length: 2.3, width: 1.53, height: 1.53, item: stock.al6061-pl-5, quantity: 403.6, module: module.machining-centre }
+    - { code: BRT6-02, name: "Partition and door", description: "The wall round them.", mass: 312, length: 2.21, width: 1.47, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 358.8, module: module.welding-bay }
+    - { code: BRT6-03, name: "Linings, bedding, lights", mass: 117, length: 1.59, width: 1.06, height: 1.06, item: stock.mli-fl, quantity: 117, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: berths
+  persons: 6
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

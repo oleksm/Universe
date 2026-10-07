@@ -406,7 +406,8 @@ function rows(q) {
     }
   }
   out.push({ k: "rp0", depth: 0, kind: "body", label: "Reports", title: `Reports: ${gapsAll} gaps`, n: gapsAll });
-  if (open.has("rp0") || q) for (const r of DATA.reports.filter(r => !q || q.split(/\s+/).every(w => r.title.toLowerCase().includes(w)))) out.push({ k: "rep:" + r.key, depth: 1, kind: "maker", label: r.title, ticker: r.gaps ? `${r.gaps} gaps` : "no gaps", leaf: true });
+  if (open.has("rp0") || q) for (const r of DATA.reports.filter(r => r.group !== "chains" && (!q || q.split(/\s+/).every(w => r.title.toLowerCase().includes(w))))) out.push({ k: "rep:" + r.key, depth: 1, kind: "maker", label: r.title, ticker: r.gaps ? `${r.gaps} gaps` : "no gaps", leaf: true });
+  if (open.has("rp0") && !q) { const ch = DATA.reports.filter(r => r.group === "chains"); if (ch.length) out.push({ k: "chains", depth: 1, kind: "maker", label: `Chains (${ch.length})`, ticker: ch.reduce((s, r) => s + r.gaps, 0) ? `${ch.reduce((s, r) => s + r.gaps, 0)} gaps` : "no gaps" }); }
   // The Production Register: no records of its own, a reference to what every facility can make at most.
   const lines = producing().filter(r => !q || q.split(/\s+/).every(w => `${r.f.name} ${r.pr.identity.name} ${r.makes}`.toLowerCase().includes(w)));
   out.push({ k: "pd", depth: 0, kind: "body", label: "Production Register", n: producing().length });
@@ -454,7 +455,7 @@ function reveal(k) {
   if (k.startsWith("mk:")) { open.add("mh"); keepOpen(); return; }
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
-  if (k.startsWith("rep:")) { open.add("rp0"); keepOpen(); return; }
+  if (k.startsWith("rep:") || k === "chains") { open.add("rp0"); keepOpen(); return; }
   if (k.startsWith("ds:")) { open.add("dg"); keepOpen(); return; }
   if (k.startsWith("dl:")) { open.add("dg"); const s = (DATA.dogma || []).find(s => s.laws.some(l => "dl:" + l.slug === k)); if (s) open.add("ds:" + s.slug); keepOpen(); return; }
   if (k.startsWith("cr:") || k === "cvoc") { open.add("cel"); keepOpen(); return; }
@@ -586,7 +587,23 @@ function detail(k) {
   };
   if (kind === "at" || kind === "ra") { const o = ORGS.find(x => x.key === rest.join(":")); return o ? detail(o.to) : ""; }
   if (kind === "pl") return detail("fc:" + rest.join(":"));
-  if (k === "rp0") return `<h2>Reports</h2><p>Where the registry does not yet join up. A gap is something to close, not a mistake: the build still passes.</p><table><tr><th>Report</th><th>Rows</th><th>Complete</th><th>Gaps</th></tr>` + DATA.reports.map(r => `<tr class="${r.gaps ? "gap" : "okr"}"><td><a data-k="${esc("rep:" + r.key)}">${esc(r.title)}</a></td><td>${r.rows.length}</td><td>${r.ok}</td><td>${r.gaps || ""}</td></tr>`).join("") + `<tr><th>Total</th><th>${DATA.reports.reduce((s, r) => s + r.rows.length, 0)}</th><th>${DATA.reports.reduce((s, r) => s + r.ok, 0)}</th><th>${DATA.reports.reduce((s, r) => s + r.gaps, 0)}</th></tr></table>`;
+  if (k === "rp0") {
+    const GROUPS = [["ships", "Ships"], ["industry", "Industry"], ["people", "People"], ["sky", "The sky"], ["engine", "The engine"], ["quality", "Quality of the record"], ["other", "Other"]];
+    const chains = DATA.reports.filter(r => r.group === "chains");
+    const row = (title, key, rows, ok, gaps) => `<tr class="${gaps ? "gap" : "okr"}"><td><a data-k="${esc(key)}">${esc(title)}</a></td><td>${rows}</td><td>${ok}</td><td>${gaps || ""}</td></tr>`;
+    let h = `<h2>Reports</h2><p>Where the registry does not yet join up. A gap is something to close, not a mistake: the build still passes. Each report names the docs that say its rules.</p>`;
+    for (const [g, name] of GROUPS) {
+      const mine = DATA.reports.filter(r => r.group === g); if (!mine.length && !(g === "ships" && chains.length)) continue;
+      h += `<h3>${name}</h3><table><tr><th>Report</th><th>Rows</th><th>Complete</th><th>Gaps</th></tr>` + mine.map(r => row(r.title, "rep:" + r.key, r.rows.length, r.ok, r.gaps)).join("");
+      if (g === "ships" && chains.length) h += row(`Chains: ${chains.length} things down to a factory`, "chains", chains.reduce((s, r) => s + r.rows.length, 0), chains.reduce((s, r) => s + r.ok, 0), chains.reduce((s, r) => s + r.gaps, 0));
+      h += `</table>`;
+    }
+    return h + `<p class="meta">In all: ${DATA.reports.reduce((s, r) => s + r.rows.length, 0)} rows, ${DATA.reports.reduce((s, r) => s + r.ok, 0)} complete, ${DATA.reports.reduce((s, r) => s + r.gaps, 0)} gaps.</p>`;
+  }
+  if (k === "chains") {
+    const chains = DATA.reports.filter(r => r.group === "chains").slice().sort((a, b) => b.gaps - a.gaps || a.title.localeCompare(b.title));
+    return `<h2>Chains: each thing down to a factory</h2><p>One report a thing (a hull, a gate ring, a piece of equipment): is it said how it is put together, and is somewhere built to make each part? Pick one.</p><table><tr><th>Thing</th><th>Rows</th><th>Complete</th><th>Gaps</th></tr>` + chains.map(r => `<tr class="${r.gaps ? "gap" : "okr"}"><td><a data-k="${esc("rep:" + r.key)}">${esc(r.title.replace(/^Chain: /, "").replace(/ down to a factory$/, ""))}</a></td><td>${r.rows.length}</td><td>${r.ok}</td><td>${r.gaps || ""}</td></tr>`).join("") + `</table>`;
+  }
   // The chain as a picture: from the hull down, each level a box with how many it holds, and between
   // two levels how many of the upper one's things reach the lower one. A broken link is the gap.
   const chainPicture = hull => {
@@ -610,10 +627,7 @@ function detail(k) {
       + node("Mill stock", DATA.mill_stock.length, "sheet, plate, bar, tube, wire in a size", "s:SFO 13", !DATA.mill_stock.length)
       + link(DATA.mill_stock.filter(s => procBySlug[(s.making || {}).process]).length, DATA.mill_stock.length, "stock items have a process that makes them")
       + `<div class="side">From the rock, up</div>`
-      + node("Processes", DATA.processes.length, `${made.length} of ${forms.length} material forms have one that makes them`, "s:SFO 7")
-      + link(stepped.length, DATA.processes.length, "processes are broken into steps with their modules")
       + node("Industrial modules", DATA.modules.length, "furnaces, plants, yards, each with a size, a rate and what goes in and out", "s:SFO 10")
-      + link(lined.size, DATA.processes.length, "processes have a line built for them at a facility")
       + node("Facilities", allFacilities().length, most ? `at most ${most}` : "none makes anything yet", "pd")
       + link(DATA.goods.filter(g => g.identity.kind === "raw" && (g.source || {}).won_from).length, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods are won from a rock")
       + node("Rock", DATA.goods.filter(g => g.identity.kind === "rock").length, [...new Set(DATA.goods.filter(g => g.identity.kind === "rock").map(g => (g.source || {}).occurs).filter(Boolean))].map(o => `dug on ${o}`).join("; "), "s:SFO 11", !DATA.goods.some(g => g.identity.kind === "rock"))
@@ -623,7 +637,7 @@ function detail(k) {
     const r = DATA.reports.find(y => y.key === rest.join(":")); if (!r) return "";
     const cell = c => c.k ? `<a data-k="${esc(c.k)}">${esc(c.t)}</a>` : esc(c.t);
     const order = { gap: 0, note: 1, ok: 2 };
-    return `<h2>${esc(r.title)}</h2><div class="meta">report · ${r.rows.length} rows · ${r.ok} complete · ${r.gaps} gaps</div><p>${esc(r.about)}</p>${r.key.startsWith("chain-") ? chainPicture(r.key.slice(6)) : ""}<table><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join("")}<th>State</th></tr>` + r.rows.slice().sort((p1, p2) => order[p1.state] - order[p2.state]).map(w => `<tr class="${w.state === "gap" ? "gap" : w.state === "ok" ? "okr" : ""}">${w.cells.map(c => `<td>${cell(c)}</td>`).join("")}<td>${w.state === "gap" ? "gap" : w.state === "ok" ? "ok" : "note"}</td></tr>`).join("") + `</table>`;
+    return `<h2>${esc(r.title)}</h2><div class="meta">report · ${r.rows.length} rows · ${r.ok} complete · ${r.gaps} gaps</div><p>${esc(r.about)}</p>${(r.docs || []).length ? `<p class="meta">Rules: ${r.docs.map(d => `<a href="../${esc(d)}">${esc(d.split("/").pop())}</a>`).join(" · ")}</p>` : ""}${r.key.startsWith("chain-") ? chainPicture(r.key.slice(6)) : ""}<table><tr>${r.columns.map(c => `<th>${esc(c)}</th>`).join("")}<th>State</th></tr>` + r.rows.slice().sort((p1, p2) => order[p1.state] - order[p2.state]).map(w => `<tr class="${w.state === "gap" ? "gap" : w.state === "ok" ? "okr" : ""}">${w.cells.map(c => `<td>${cell(c)}</td>`).join("")}<td>${w.state === "gap" ? "gap" : w.state === "ok" ? "ok" : "note"}</td></tr>`).join("") + `</table>`;
   }
   if (k === "pd") return `<h2>Production Register</h2><p>What every facility can make at most, from what it is built of. What it does make is the economy's business.</p>` + (producing().length ? `<table><tr><th>Facility</th><th>Owner</th><th>Where</th><th>Process</th><th>Makes</th><th>At most</th></tr>` + producing().map(r => `<tr><td><a data-k="${esc(facKey(r.a, r.x, r.f))}">${esc(r.f.name)}</a></td><td>${ownerLink(r.f.owner)}</td><td>${esc(r.x.name)}, ${esc(r.a.name)}</td><td><a data-k="${esc("proc:" + r.pr.slug)}">${esc(r.pr.identity.name)}</a></td><td>${esc(r.makes)}</td><td>${perDay(r.ln.most.output)} t/day</td></tr>`).join("") + `</table>` : `<p class="meta">Nothing yet.</p>`);
   if (k === "ar") return `<h2>Address Registry</h2><p>Everything that has an address, and who is there.</p>` + (addressed().length ? `<table><tr><th>Address</th><th>Who</th></tr>` + addressed().map(r => `<tr><td>${r.org ? addressHtml(r.org) : r.html}</td><td><a data-k="${esc(r.org ? r.to : r.whoTo)}">${esc(r.who)}</a></td></tr>`).join("") + `</table>` : `<p class="meta">Nothing has an address yet.</p>`);

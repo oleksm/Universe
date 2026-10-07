@@ -18,6 +18,11 @@ needs:
   power: 1500
 built_of:
   parts: command-s1
+  list:
+    - { code: CMD1-01, name: "Seats and harnesses", description: "Rated to the station's g.", mass: 40, length: 0.724, width: 0.604, height: 0.906, item: stock.al6061-pl-5, quantity: 46, module: module.machining-centre }
+    - { code: CMD1-02, name: "Consoles and frame", description: "Controls, pedestal and the structure they stand on.", mass: 59, length: 0.829, width: 0.691, height: 1.04, item: stock.al6061-pl-5, quantity: 67.85, module: module.machining-centre }
+    - { code: CMD1-03, name: "Displays and computers", mass: 63, length: 0.846, width: 0.705, height: 1.06, item: good.electronics, quantity: 63, module: module.assembly-shop }
+    - { code: CMD1-04, name: "Wiring and linings", mass: 18, length: 0.557, width: 0.464, height: 0.696, item: stock.mli-fl, quantity: 18, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -28,5 +33,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "One pilot: a seat rated to 9 g eyeballs-in (a fighter's seat and harness, 40 kg), a console of controls (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner's flight deck seat is about 35 kg. From memory; chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

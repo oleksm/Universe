@@ -41,4 +41,4 @@ basis:
   - { of: [recipes, recipes.inputs, recipes.outputs], tier: sourced, source: "standards/sources/research_people_plant.json", note: "A tenth of the cloth is lost in cutting (a study of a cotton T-shirt); taken for all three." }
   - { of: [physical, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "Eight clothiers and a technician. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

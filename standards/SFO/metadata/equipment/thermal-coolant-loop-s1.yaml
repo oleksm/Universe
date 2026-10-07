@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.coolant-loop.s1
+  name: "Coolant loop S1"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Pumps and piping that carry heat from what makes it to what throws it off."
+size_class: 1
+fits: mount.thermal-s1
+physical:
+  mass: 1000
+  volume: 2.0
+  length: 2.0
+  width: 1.0
+  height: 1.0
+built_of:
+  parts: thermal-coolant-loop-s1
+  list:
+    - { code: CLP1-01, name: "Pumps", description: "Two, one standing by.", mass: 350, length: 1.41, width: 0.705, height: 0.705, item: stock.st4340-bar-120, quantity: 402.0, module: module.machining-centre }
+    - { code: CLP1-02, name: "Piping", description: "Stainless runs with their bellows.", mass: 400, length: 1.47, width: 0.737, height: 0.737, item: stock.st304-pl-3, quantity: 460.0, module: module.welding-bay }
+    - { code: CLP1-03, name: "Reservoir and valves", description: "The accumulator, the fill and the isolation valves.", mass: 250, length: 1.26, width: 0.63, height: 0.63, item: stock.st304-pl-3, quantity: 288.0, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: "coolant_loop"
+  carries: 5000000.0
+  flow: 12.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 5 MW at 12 kg/s of water-glycol over a 100 K rise. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -207,6 +207,7 @@
 - { key: module.propellant-plant, game: "propellant-plant", in: "industry.ron, settlements.ron" }
 - { key: module.reheat-furnace, game: "reheat-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.rendering-works, game: "rendering-works", in: "industry.ron, settlements.ron" }
+- { key: module.section-line, game: "section-line", in: "industry.ron, settlements.ron" }
 - { key: module.shaft-furnace, game: "shaft-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.silicon-furnace, game: "silicon-furnace", in: "industry.ron, settlements.ron" }
 - { key: module.silicon-refinery, game: "silicon-refinery", in: "industry.ron, settlements.ron" }
@@ -241,7 +242,7 @@
 - { key: org.halcyon, game: "brand.halcyon", in: "brands.ron" }
 - { key: org.halloran-mills, game: "brand.halloran_mills", in: "brands.ron" }
 - { key: org.halvard, game: "brand.halvard", in: "brands.ron" }
-- { key: org.hearth-line, game: "brand.hearth_line", in: "brands.ron" }
+- { key: org.hoar-line, game: "brand.hoar_line", in: "brands.ron" }
 - { key: org.kestrel, game: "brand.kestrel", in: "brands.ron" }
 - { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
 - { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }

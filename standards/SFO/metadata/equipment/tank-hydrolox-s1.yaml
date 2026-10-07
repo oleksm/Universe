@@ -16,6 +16,10 @@ physical:
   height: 4.6
 built_of:
   parts: tank-hydrolox-s1
+  list:
+    - { code: TKHL1-01, name: "Shell", mass: 1316, length: 4.08, width: 4.08, height: 4.08, item: stock.al6061-pl-5, quantity: 1513, module: module.welding-bay }
+    - { code: TKHL1-02, name: "Insulation", mass: 376, length: 2.69, width: 2.69, height: 2.69, item: stock.mli-fl, quantity: 376, module: module.assembly-shop }
+    - { code: TKHL1-03, name: "Fittings and gauging", mass: 188, length: 2.14, width: 2.14, height: 2.14, item: stock.st304-pl-3, quantity: 216.2, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -25,5 +29,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S1's volume filled with hydrolox at 320 kg/m3; insulated for liquid hydrogen and oxygen, 12% of its contents. Chosen; review." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.avionics.nav-full.s1
+  name: "Nav Computer"
+  maker: org.orbital
+  revision: outdated
+  slot: avionics
+  description: "Navigation aids."
+size_class: 1
+fits: mount.avionics-s1
+physical:
+  mass: 20.0
+  volume: 0.04
+  length: 0.4
+  width: 0.3
+  height: 0.33
+needs:
+  power: 140.0
+built_of:
+  parts: avionics-nav-full-s1
+  shares: rule.shares-chosen
+  list:
+    - { code: NVF1-01, name: "Navigation computer", description: "Runs the autopilots.", mass: 11.1, length: 0.329, width: 0.246, height: 0.271, item: good.computers, quantity: 11.1, module: module.assembly-shop }
+    - { code: NVF1-02, name: "Approach and route sensors", mass: 6.0, length: 0.268, width: 0.201, height: 0.221, item: good.electronics, quantity: 6.0, module: module.assembly-shop }
+    - { code: NVF1-03, name: "Case", mass: 2.93, length: 0.211, width: 0.158, height: 0.174, item: stock.al6061-sh-2-panel, quantity: 2.93, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: nav_computer
+  features: [docking, landing, gate, follow, hyperdrive, route]
+  interlock: 1000
+  governor: 2
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a computer, its sensors and a case." }
+  - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "One computer, its sensors, and more to run. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
+  - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
+  - { of: [life], rule: rule.life-ship-system }

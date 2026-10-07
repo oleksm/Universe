@@ -4,10 +4,10 @@ identity:
   name: "Tallis orbital site"
   maker: org.tallis
   kind: orbital
-  revision: outdated
+  revision: retired
   description: "A transceiver and a hyper relay in orbit round a planet or moon (a few satellites: one is always in sight)."
 fit:
-  - { item: equipment.transceiver.beacon, count: 1 }
-  - { item: equipment.relay.hyper, count: 1 }
+  - { item: equipment.gate.transceiver.beacon, count: 1 }
+  - { item: equipment.gate.relay.hyper, count: 1 }
 basis:
   - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }

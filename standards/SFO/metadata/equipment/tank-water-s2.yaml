@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.water.s2
+  name: "Water tank S2"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+size_class: 3
+fits: mount.tank-s3
+physical:
+  mass: 2500
+  volume: 95.4
+  length: 4.57
+  width: 4.57
+  height: 4.57
+built_of:
+  parts: tank-water-s2
+  list:
+    - { code: WTK2-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 1750, length: 4.06, width: 4.06, height: 4.06, item: stock.al6061-pl-5, quantity: 2010.0, module: module.welding-bay }
+    - { code: WTK2-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 375, length: 2.43, width: 2.43, height: 2.43, item: stock.al6061-pl-5, quantity: 431.0, module: module.cutting-table }
+    - { code: WTK2-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 375, length: 2.43, width: 2.43, height: 2.43, item: stock.st304-pl-3, quantity: 431.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "store"
+  capacity: 50000
+  holds: "good.water"
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "50 m3 as a ball 4.57 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

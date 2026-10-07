@@ -10,21 +10,17 @@ mounts.py. Anchors are sourced where the registry has the source (Discovery II, 
 the rest is from memory of flown engines and marked review. The old drive, lift and thruster families stay as the game's
 stand-ins until the engine takes the new kind. Run from the repository root.
 """
-import glob, os, subprocess
+import glob, os, sys, subprocess
 import yaml
 
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import q, edit
+
 S = "standards/SFO/"; E = S + "metadata/equipment/"; P = S + "metadata/parts/"; MS = S + "metadata/mill-stock/"; MAT = S + "metadata/materials/"
-q = lambda s: '"' + s.replace('"', '\\"') + '"'
 LIFE = 473364000
 LIFE_NOTE = "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life."
 SRC = "standards/sources/research_ship_equipment.json"
 OMEGA = 0.05   # the hull's share of the sphere round the reaction, for the default heat_to_hull (a hull-mounted engine; the studio computes the design's own)
-
-
-def edit(path, fn):
-    s = open(path, encoding="utf-8").read(); t = fn(s)
-    if t != s:
-        yaml.safe_load(t); open(path, "w", encoding="utf-8").write(t)
 
 
 def schemas():
@@ -105,8 +101,8 @@ fit:
   count: 1
 basis:
   - {{ of: [physical.mass, fit], tier: invented, review: true, note: {q(f"Its share of the {whole} ({share:.0%}), chosen.")} }}
-  - {{ of: [made_from, making], tier: invented, review: true, note: {q("Taken as cut from this stock with 15% lost." if cut > 1 else "Bought made, as the good; put together here.")} }}
-  - {{ of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: {q(f"Fitted within the {whole}: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn.")} }}
+  - {{ of: [made_from, making], rule: {"rule.cut-loss" if cut > 1 else "rule.built-in-whole"} }}
+  - {{ of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }}
 ''')
 
 
@@ -147,8 +143,8 @@ function:
 life: {LIFE}
 basis:
 {basis}
-  - {{ of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }}
-  - {{ of: [life], tier: invented, review: true, note: {q(LIFE_NOTE)} }}
+  - {{ of: [built_of, making], rule: rule.first-design-parts }}
+  - {{ of: [life], rule: rule.life-ship-system }}
 ''')
 
 
@@ -168,7 +164,7 @@ def engines():
     for cls, thrust, mass, L, W, H, code, scale in FT:
         jet = 0.5 * thrust * 347000
         equipment(f"engine-ft-s{cls}", f"equipment.engine.ft.s{cls}", f"Fusion thermal engine S{cls}", "engine", cls, mass, L, W, H, 0,
-                  {"kind": "engine", "cycle": "fusion_thermal", "thrust": thrust, "exhaust": 347000, "efficiency": 0.61, "burns": "material.d-he3", "propellant": "material.hydrogen", "throttle": 0.2, "gimbal": 0.05, "isotropic_loss": 0.25, "shield_pass": 0.01, "reaction_offset": L * 0.3, "heat_to_hull": h2h(0.25, 0.61, 0.01)},
+                  {"kind": "engine", "cycle": "fusion_thermal", "thrust": thrust, "exhaust": 347000, "efficiency": 0.61, "burns": "material.deuterium", "propellant": "material.hydrogen", "throttle": 0.2, "gimbal": 0.05, "isotropic_loss": 0.5, "shield_pass": 0.01, "reaction_offset": L * 0.3, "heat_to_hull": h2h(0.5, 0.61, 0.01)},
                   [("Reactor coils and cases", "The toroidal and poloidal coils in their titanium strengtheners.", 0.55, TI, WB), ("Neutron and radiation shield", "Carbon-graphite round the coils.", 0.25, C, AS), ("First wall and nozzle", "Silicon carbide first wall; the magnetic nozzle.", 0.05, SIC, MC), ("Power conversion and heating", "", 0.09, EL, AS), ("Coolant and refrigeration", "", 0.04, PU, AS), ("Propellant feed", "", 0.02, ST, MC)], code,
                   f"A D-He3 fusion reactor heating hydrogen through a magnetic nozzle: {thrust / 1000:g} kN at 347 km/s, {jet / 1e9:.2g} GW of jet. A cruise engine: {thrust / 1000:g} kN moves a 156 t ship at {thrust / 156000:.2g} m/s2. Hydrogen is its propellant, D-He3 its fuel.",
                   [("[function.exhaust, function.efficiency, function.thrust]", "sourced", SRC, "Discovery II (NASA/TM-2005-213559): exhaust 347 km/s at the nozzle exit, 4.83 GW of jet from 7.9 GW of fusion (0.61), 6,250 lbf = 27.8 kN, 0.08 kg/s. The S3 is that engine; the others scale."),

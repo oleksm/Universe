@@ -29,4 +29,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://en.wikipedia.org/wiki/Bayer_process", note: "7 to 21 GJ for each tonne, mostly heat; 12 taken. Heat is counted as power: there is no fuel to burn." }
   - { of: [recipes.makes, recipes.rate, physical], tier: invented, note: "100 t/h is a small refinery (large ones make 4 Mt a year). Its footprint follows an unverified 20 hectares for each Mt a year." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

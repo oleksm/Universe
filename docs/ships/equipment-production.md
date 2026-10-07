@@ -48,7 +48,7 @@ The 36 that stop, stop at two places:
 
 So the next two pieces of work are plain: **place a titanium, stainless and copper works** (a
 facility record, on a parcel: the engine reads those), and **describe how the three materials are
-made** (three of the 26 parked processes: sintering, film casting with its metal coat, carbonising
+made** (three of the 26 retired processes: sintering, film casting with its metal coat, carbonising
 and curing).
 
 ## What the real things say about the products

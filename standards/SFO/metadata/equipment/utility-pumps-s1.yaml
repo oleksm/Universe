@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.pumps.s1
+  name: "Pump set"
+  maker: org.hadley
+  revision: draft
+  slot: utility
+  description: "Moves liquid: fuel, water, coolant."
+size_class: 1
+fits: mount.utility-s1
+physical:
+  mass: 250
+  volume: 0.36
+  length: 1.0
+  width: 0.6
+  height: 0.6
+built_of:
+  parts: utility-pumps-s1
+  list:
+    - { code: PMP0-01, name: "Pumps", description: "Two centrifugal pumps.", mass: 150, length: 0.843, width: 0.506, height: 0.506, item: stock.st4340-bar-120, quantity: 172.0, module: module.machining-centre }
+    - { code: PMP0-02, name: "Motors and controls", description: "Their motors and the controls.", mass: 100, length: 0.737, width: 0.442, height: 0.442, item: stock.cu-wire-2, quantity: 115.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "pump"
+  flow: 20.0
+  head: 1000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Two pumps moving 20 kg/s against 1 MPa (10 bar). Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

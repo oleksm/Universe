@@ -53,6 +53,22 @@ recipes:
       - { item: stock.ti64-scrap, quantity: 0.22 }
     rate: 27.7777777777778
     power: 26500000.0
+  - makes: stock.st4340-pl-20
+    does: "A hot steel ingot passed between rolls until it is plate of the thickness, then quenched and tempered."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.22 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
+  - makes: stock.st4340-pl-25
+    does: "A hot steel ingot passed between rolls until it is plate of the thickness, then quenched and tempered."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.22 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
 life: 788940000
 basis:
   - { of: [recipes], tier: invented, review: true, note: "One set of figures (rate, power, what is lost), used for each metal it works: a guess, to be reviewed. Each metal has its own." }
@@ -60,4 +76,4 @@ basis:
   - { of: [recipes.power], tier: sourced, source: "https://www.energy.gov/sites/prod/files/2013/11/f4/al_theoretical.pdf", note: "For aluminium: 265 kWh of electricity for each tonne (the heat is the reheat furnace's)." }
   - { of: [recipes.makes, recipes.rate, physical], tier: invented, review: true, note: "Steel strip mills average 306 t/h and run 700 m long for 5 Mt a year; a mill of this size for aluminium was not found in a source." }
   - { of: [staff], tier: invented, review: true, note: "Machinists and operators. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

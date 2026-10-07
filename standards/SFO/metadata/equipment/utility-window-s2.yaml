@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.window.s2
+  name: "Viewport S2"
+  maker: org.halvard
+  revision: draft
+  slot: utility
+  description: "A viewport in a pressure hull."
+size_class: 2
+fits: mount.utility-s2
+physical:
+  mass: 250
+  volume: 0.512
+  length: 1.6
+  width: 1.6
+  height: 0.2
+built_of:
+  parts: utility-window-s2
+  list:
+    - { code: WIN2-01, name: "Panes", description: "Three panes.", mass: 125, length: 1.27, width: 1.27, height: 0.159, item: stock.sic-tl-10, quantity: 144.0, module: module.cutting-table }
+    - { code: WIN2-02, name: "Frame", description: "Titanium.", mass: 125, length: 1.27, width: 1.27, height: 0.159, item: stock.ti64-pl-5, quantity: 144.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "window"
+  area: 2.0
+  pressure: 101300
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Two square metres: a bridge window. Chosen. The pane stock is a stand-in." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -1,0 +1,54 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.mining-rig.s2
+  name: "Mining Rig"
+  maker: org.cormorant
+  revision: outdated
+  slot: utility
+  description: "A mining rig: digs an asteroid it is anchored to."
+size_class: 2
+fits: mount.utility-s2
+physical:
+  mass: 2500
+  volume: 18.0
+  length: 8.0
+  width: 1.5
+  height: 1.5
+needs:
+  power: 500000
+built_of:
+  parts: utility-mining-rig-s2
+  list:
+    - { code: MRS2-01, name: "Cutter head and picks", description: "A drum set with carbide picks, which wear and are changed.", mass: 300, length: 3.95, width: 0.74, height: 0.74, item: good.tools, quantity: 300, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-02, name: "Cutter motor", description: "300 kW to the head.", mass: 1000, length: 5.89, width: 1.11, height: 1.11, item: good.electric-motors, quantity: 1000, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-03, name: "Arm", description: "Carries the head to the face and takes its push.", mass: 500, length: 4.68, width: 0.877, height: 0.877, item: stock.st4340-tb-200x15, quantity: 575.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-04, name: "Anchor", description: "Driven into the rock to hold the ship.", mass: 200, length: 3.45, width: 0.646, height: 0.646, item: stock.st4340-bar-120, quantity: 230.0, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-05, name: "Winch", description: "Draws the ship down on its anchor.", mass: 100, length: 2.74, width: 0.513, height: 0.513, item: good.electric-motors, quantity: 100, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-06, name: "Conveyor", description: "Carries the spoil to the hold.", mass: 250, length: 3.71, width: 0.696, height: 0.696, item: stock.al6061-pl-5-panel, quantity: 250.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-07, name: "Conveyor drive", mass: 50, length: 2.17, width: 0.407, height: 0.407, item: good.electric-motors, quantity: 50, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-08, name: "Hydraulic pumps", description: "Move the arm.", mass: 50, length: 2.17, width: 0.407, height: 0.407, item: good.pumps, quantity: 50, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+    - { code: MRS2-09, name: "Controls", mass: 50, length: 2.17, width: 0.407, height: 0.407, item: good.electronics, quantity: 50, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real 300 kW cutting machine is 433 kg for each kW of its head (Sandvik MT720); this is 8." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: mining_rig
+  excavator_power: 300000
+  throughput: 10
+  anchor_reach: 30
+  anchor_speed: 0.5
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a cutting head of picks on an arm, a motor to turn it, an anchor and winch to hold the ship to the rock, and a conveyor to the hold. A roadheader with a 300 kW head weighs 130 t on Earth, because its weight is what holds it to the face; here the anchor does that, and the rig is 2.5 t." }
+  - { of: [function.excavator_power, function.throughput, function.anchor_reach, function.anchor_speed], tier: sourced, review: true, source: "the game: crates/world/src/mining.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: invented, review: true, note: "An arm of 8 m with its cutting head: long enough to reach the rock from the hull's side, a quarter of the anchor's 30 m reach. A real roadheader's boom is 5 to 10 m; 8 chosen." }
+  - { of: [life], rule: rule.life-ship-system }

@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.waste.s2
+  name: "Waste tank"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+size_class: 2
+fits: mount.tank-s2
+physical:
+  mass: 500
+  volume: 19.0
+  length: 2.67
+  width: 2.67
+  height: 2.67
+built_of:
+  parts: tank-waste-s2
+  list:
+    - { code: WST0-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 350, length: 2.37, width: 2.37, height: 2.37, item: stock.al6061-pl-5, quantity: 402.0, module: module.welding-bay }
+    - { code: WST0-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.al6061-pl-5, quantity: 86.2, module: module.cutting-table }
+    - { code: WST0-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.st304-pl-3, quantity: 86.2, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "store"
+  capacity: 10000
+  holds: "good.waste-water"
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "10 m3 as a ball 2.67 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

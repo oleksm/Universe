@@ -70,4 +70,4 @@ basis:
   - { of: [recipes], tier: invented, review: true, note: "The two scrap charges: as the nickel-iron charge, with 5% of the scrap lost to slag as scale and dirt, a guess. The steel a scrap melts to is taken as one liquid steel, whatever grade it was. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
   - { of: [recipes], tier: invented, review: true, note: "Stainless scrap goes back to the furnace as the carbon steels do. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

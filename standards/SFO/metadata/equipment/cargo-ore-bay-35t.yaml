@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.ore-bay.35t
+  name: "Ore bay 35 t"
+  maker: org.hadley
+  revision: draft
+  slot: cargo
+  description: "A hopper for 35 t of loose ore under top doors, with a discharge gate: one of ten sizes, so a hull takes the bay that fits."
+size_class: 2
+fits: mount.cargo-s2
+physical:
+  mass: 3500
+  volume: 17.5
+  length: 4.12
+  width: 2.06
+  height: 2.06
+built_of:
+  parts: cargo-ore-bay-35t
+  shares: rule.haul-truck-shares
+  list:
+    - { code: OBS04-01, name: "Shell", description: "The hopper's plates, sloped to the gate.", mass: 1400, length: 3.036, width: 1.518, height: 1.518, item: stock.sta36-pl-20, quantity: 1610.0, module: module.welding-bay }
+    - { code: OBS04-02, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 700, length: 2.409, width: 1.205, height: 1.205, item: stock.st4340-pl-3, quantity: 805.0, module: module.cutting-table }
+    - { code: OBS04-03, name: "Top doors", description: "The pair that opens to the excavator and shuts for flight.", mass: 525, length: 2.189, width: 1.095, height: 1.095, item: stock.al6061-pl-5, quantity: 603.8, module: module.welding-bay }
+    - { code: OBS04-04, name: "Discharge gate", description: "The slide at the bottom, and its drive, that lets the ore out at the dock.", mass: 350, length: 1.912, width: 0.956, height: 0.956, item: stock.st4340-bar-120, quantity: 402.5, module: module.machining-centre }
+    - { code: OBS04-05, name: "Frame", description: "Tube chords and uprights that carry the hopper to its mount.", mass: 525, length: 2.189, width: 1.095, height: 1.095, item: stock.st4340-tb-160x5, quantity: 603.8, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: ore_bay
+  capacity: 35000
+  volume: 17.5
+  fill_density: 2000
+life: 473364000
+basis:
+  - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
+  - { of: [physical.mass], tier: invented, review: true, note: "A tenth of its capacity: a haul truck's body is about 11% of its payload (a 363 t truck's 40 t body, from memory). Not sourced." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, size_class], tier: invented, review: true, note: "A hopper twice as long as wide and as deep as wide, to its heaped volume; its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }
+  - { of: [life], rule: rule.life-ship-system }

@@ -18,6 +18,13 @@ needs:
   power: 300.0
 built_of:
   parts: computer-fbw-fast
+  shares: rule.shares-chosen
+  list:
+    - { code: FCFA-01, name: "Flight computers", description: "Three, voting.", mass: 12.2, length: 0.388, width: 0.259, height: 0.194, item: good.computers, quantity: 12.2, module: module.assembly-shop }
+    - { code: FCFA-02, name: "Inertial units and star trackers", description: "Feel the ship's turning and see where it points.", mass: 6.12, length: 0.309, width: 0.206, height: 0.154, item: good.electronics, quantity: 6.12, module: module.assembly-shop }
+    - { code: FCFA-03, name: "Thruster drivers", description: "Switch the thrusters, faster and harder.", mass: 14.4, length: 0.411, width: 0.274, height: 0.205, item: good.electronics, quantity: 14.4, module: module.assembly-shop }
+    - { code: FCFA-04, name: "Cabinet and cold plates", mass: 8.1, length: 0.339, width: 0.226, height: 0.169, item: stock.al6061-sh-2-panel, quantity: 8.1, module: module.welding-bay }
+    - { code: FCFA-05, name: "Harness", description: "The wiring to every nozzle.", mass: 4.14, length: 0.271, width: 0.181, height: 0.135, item: stock.cu-wire-2, quantity: 4.75, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -26,8 +33,8 @@ function:
   roll_rate: 3
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: as the standard flight computer, with heavier thruster drivers." }
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the standard flight computer, with heavier thruster drivers: half as much again. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

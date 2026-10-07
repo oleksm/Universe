@@ -17,6 +17,14 @@ needs:
   power: 1500000
 built_of:
   parts: hyperdrive-halcyon-s2
+  shares: rule.shares-chosen
+  list:
+    - { code: HHS2-01, name: "Field coil cases", description: "Hold the coils that make the field, against their own force.", mass: 1890, length: 2.16, width: 1.44, height: 1.44, item: stock.ti64-pl-5, quantity: 2173.5, module: module.welding-bay }
+    - { code: HHS2-02, name: "Field coil windings", description: "Superconducting windings.", mass: 126, length: 0.876, width: 0.584, height: 0.584, item: stock.cu-wire-2, quantity: 144.9, module: module.machining-centre }
+    - { code: HHS2-03, name: "Power conditioning", description: "Feeds the coils from the plant.", mass: 840, length: 1.65, width: 1.1, height: 1.1, item: good.electronics, quantity: 840, module: module.assembly-shop }
+    - { code: HHS2-04, name: "Refrigerator", description: "Keeps the windings cold.", mass: 294, length: 1.16, width: 0.775, height: 0.775, item: good.heat-pumps, quantity: 294, module: module.assembly-shop }
+    - { code: HHS2-05, name: "Frame", description: "Carries the set and ties it to the hull.", mass: 840, length: 1.65, width: 1.1, height: 1.1, item: stock.al6061-pl-5-panel, quantity: 840.0, module: module.welding-bay }
+    - { code: HHS2-06, name: "Field computer", description: "Holds the field's shape as the ship moves.", mass: 210, length: 1.04, width: 0.693, height: 0.693, item: good.computers, quantity: 210, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -25,7 +33,7 @@ function:
   top_speed: 1049273603000
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and all invented: nothing real holds a hyper-field. Taken as coils in strong cases, the power gear that feeds them, and cooling." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: coils in a rack, to its volume. A stand-in until it is sized from what it must do." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

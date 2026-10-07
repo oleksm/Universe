@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.gas-cargo.s3
+  name: "Gas cargo tank"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+size_class: 3
+fits: mount.tank-s3
+physical:
+  mass: 31500
+  volume: 38.3
+  length: 3.37
+  width: 3.37
+  height: 3.37
+built_of:
+  parts: tank-gas-cargo-s3
+  list:
+    - { code: GCT0-01, name: "Shell", description: "Forged steel in two halves, welded.", mass: 26775, length: 3.19, width: 3.19, height: 3.19, item: stock.st4340-fg, quantity: 30800.0, module: module.machining-centre }
+    - { code: GCT0-02, name: "Fittings", description: "Valves, burst disc and gauge.", mass: 4725, length: 1.79, width: 1.79, height: 1.79, item: stock.st304-pl-3, quantity: 5430.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "store"
+  capacity: 7880.0
+  holds: "element.o"
+  pressure: 30000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "20 m3 at 30 MPa holds 7,876 kg of oxygen (ideal gas at 293 K); the steel shell weighs four times its contents, as a high-pressure gas cylinder does (a 50 l cylinder: 60 kg for 10 kg of gas, from memory)." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

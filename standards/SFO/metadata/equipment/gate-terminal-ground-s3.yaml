@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.gate.terminal-ground.s3
+  name: "Tallis ground terminal"
+  maker: org.tallis
+  revision: outdated
+  slot: gate
+size_class: 3
+fits: mount.gate-s3
+physical:
+  mass: 3000
+  volume: 1250.0
+  length: 20.6
+  width: 20.6
+  height: 2.94
+needs:
+  power: 100000
+built_of:
+  parts: gate-terminal-ground-s3
+  list:
+    - { code: TRMG-01, name: "Transponder and amplifiers", mass: 588, length: 12.0, width: 12.0, height: 1.71, item: good.electronics, quantity: 588, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: TRMG-02, name: "Dish", mass: 718, length: 12.8, width: 12.8, height: 1.83, item: stock.al6061-sh-2-panel, quantity: 718.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: TRMG-03, name: "Gimbal", description: "Points the dish.", mass: 1430, length: 16.1, width: 16.1, height: 2.3, item: good.electric-motors, quantity: 1430, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: TRMG-04, name: "Waveguide", mass: 264, length: 9.16, width: 9.16, height: 1.31, item: stock.cu-wire-2, quantity: 303.6, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: comm
+  capture: 100000000
+  link: 1000000000
+  lag: 0.02
+  capacity: 13.8888888889
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A dish: taking three tenths of its 3,000 kg as the reflector, at the Mars Reconnaissance Orbiter's 2.7 kg a m2 (19.1 kg for a 3 m dish), gives 333 m2: 21 m across, a seventh as deep." }
+  - { of: [life], rule: rule.life-ship-system }

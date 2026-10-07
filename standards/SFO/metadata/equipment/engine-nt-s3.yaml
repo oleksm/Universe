@@ -16,6 +16,12 @@ physical:
   height: 2.5
 built_of:
   parts: engine-nt-s3
+  list:
+    - { code: NTE3-01, name: "Reactor core and vessel", description: "Fuel elements in their pressure vessel.", mass: 7200, length: 5.16, width: 1.84, height: 1.84, item: stock.ti64-pl-5, quantity: 8280, module: module.welding-bay }
+    - { code: NTE3-02, name: "Shadow shield", mass: 4500, length: 4.41, width: 1.57, height: 1.57, item: good.carbon, quantity: 4500, module: module.assembly-shop }
+    - { code: NTE3-03, name: "Nozzle", description: "Regeneratively cooled.", mass: 2700, length: 3.72, width: 1.33, height: 1.33, item: stock.st304-pl-3, quantity: 3105, module: module.welding-bay }
+    - { code: NTE3-04, name: "Turbopump and feed", mass: 2160, length: 3.45, width: 1.23, height: 1.23, item: good.pumps, quantity: 2160, module: module.assembly-shop }
+    - { code: NTE3-05, name: "Controls", mass: 1440, length: 3.02, width: 1.08, height: 1.08, item: good.electronics, quantity: 1440, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -37,5 +43,5 @@ basis:
   - { of: [function.exhaust, function.thrust, physical.mass], tier: invented, review: true, note: "NERVA-class, from memory: the NERVA XE gave about 250 kN at 7 km/s from about 18 t with its shield; 9 km/s is the advanced solid-core figure (Isp about 900 s). The classes scale by thrust. No source looked up. Review." }
   - { of: [function.isotropic_loss, function.shield_pass, function.heat_to_hull], tier: invented, review: true, note: "About a twentieth of the reactor's power leaks as neutrons and gamma in every direction; a shadow shield passes a hundredth toward the ship: 0.000126 of the jet aboard at a twentieth of the sphere. From memory; review." }
   - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "A solid core throttles to about a third; a gimballed nozzle gives about six degrees. Chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

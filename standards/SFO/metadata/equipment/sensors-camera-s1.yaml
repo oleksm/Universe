@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.sensors.camera.s1
+  name: "Camera"
+  maker: org.hadley
+  revision: draft
+  slot: sensors
+  description: "A camera the pilot sees by where there is no window: 90 degrees across, under the ship for the pads or aft for docking. Fit one for each view the pilot needs."
+size_class: 1
+fits: mount.sensors-s1
+physical:
+  mass: 2
+  volume: 0.0015
+  length: 0.1
+  width: 0.1
+  height: 0.15
+needs:
+  power: 10
+built_of:
+  parts: sensors-camera-s1
+  list:
+    - { code: CAM1-01, name: "Lens and sensor", mass: 1, length: 0.0843, width: 0.0843, height: 0.127, item: good.electronics, quantity: 1, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Camera (60%), chosen." }] }
+    - { code: CAM1-02, name: "Housing and heater", mass: 1, length: 0.0737, width: 0.0737, height: 0.111, item: stock.al6061-pl-5, quantity: 1.15, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Camera (40%), chosen." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: camera
+  field_of_view: 1.571
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A ruggedised camera head of 2 kg with a heater, 90 degrees across, 10 W. From memory; chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

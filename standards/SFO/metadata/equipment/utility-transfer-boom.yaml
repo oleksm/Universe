@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.transfer.boom
+  name: "Fuel transfer boom"
+  maker: org.hadley
+  revision: draft
+  slot: utility
+  description: "A connection through the hull for taking fuel, water or air aboard, or giving it out."
+size_class: 2
+fits: mount.utility-s2
+physical:
+  mass: 900
+  volume: 2.88
+  length: 8.0
+  width: 0.6
+  height: 0.6
+built_of:
+  parts: utility-transfer-boom
+  list:
+    - { code: TBM0-01, name: "Boom", description: "Telescoping tube.", mass: 450, length: 6.35, width: 0.476, height: 0.476, item: stock.al6061-tb-120x3, quantity: 518.0, module: module.welding-bay }
+    - { code: TBM0-02, name: "Hose and coupling", mass: 270, length: 5.36, width: 0.402, height: 0.402, item: stock.st304-pl-3, quantity: 310.0, module: module.machining-centre }
+    - { code: TBM0-03, name: "Rams and controls", mass: 180, length: 4.68, width: 0.351, height: 0.351, item: stock.st4340-bar-120, quantity: 207.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "port"
+  flow: 20.0
+  reach: 8.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "An 8 m boom giving 20 kg/s to another ship. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

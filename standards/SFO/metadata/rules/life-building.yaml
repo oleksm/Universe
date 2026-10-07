@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.life-building
+  name: "Life of a building"
+  about: "How long a building's structure is designed to stand."
+statement: "50 years: the working life building structures are designed for (EN 1990, category 4)."
+tier: sourced
+source: "standards/sources/research_people_plant.json"

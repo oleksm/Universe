@@ -17,7 +17,7 @@
 //! Units are SI, as the records hold them; an angle is [`Degrees`] (the one
 //! exception), with `.rad()` for the engine.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 use std::path::{Path, PathBuf};
 
@@ -119,6 +119,37 @@ impl Registry {
                 Err(e) => problems.push(Problem { file: file.clone(), what: format!("{key}: {e}") }),
             }
         }
+        // Parts as a rule (SFO 12): an equipment record's `built_of.list` derives its part records through the
+        // same text the build writes (tools/standards/lib.py, part_yaml), parsed with the generated Part type,
+        // so the game sees what it saw when each part was a file.
+        // (The modules that cut parts from stock say so in their records: `cuts: true`.)
+        let cuts: HashSet<String> = reg.records.modules.iter().filter(|m| m.cuts == Some(true)).map(|m| m.identity.key.clone()).collect();
+        let derived: Vec<(PathBuf, String, String, String, String)> = reg
+            .records
+            .equipment
+            .iter()
+            .flat_map(|e| {
+                let folder = e.built_of.parts.clone().unwrap_or_else(|| e.identity.key.trim_start_matches("equipment.").replace('.', "-"));
+                let file = keys.get(&e.identity.key).cloned().unwrap_or_default();
+                let cuts = &cuts;
+                e.built_of.list.iter().map(move |it| (file.clone(), folder.clone(), it.code.clone(), it.name.clone(), derived_part_yaml(e, it, cuts))).collect::<Vec<_>>()
+            })
+            .collect();
+        for (file, folder, code, name, text) in derived {
+            let key = format!("part.{}", code.to_lowercase());
+            if let Some(first) = keys.insert(key.clone(), file.clone()) {
+                problems.push(Problem { file: file.clone(), what: format!("{key} (derived) is also {}", first.display()) });
+                continue;
+            }
+            reg.names.insert(key.clone(), name);
+            reg.folders.insert(key.clone(), folder);
+            *reg.counts.entry("part".to_string()).or_default() += 1;
+            match reg.records.parse("part", &text) {
+                Ok(true) => {}
+                Ok(false) => problems.push(Problem { file: file.clone(), what: format!("{key}: no schema has the kind part") }),
+                Err(e) => problems.push(Problem { file: file.clone(), what: format!("{key} (derived): {e}") }),
+            }
+        }
         // Every reference names a record of a kind it may.
         reg.records.refs(&mut |from, to, kinds| {
             let kind = to.split('.').next().unwrap_or_default();
@@ -198,6 +229,95 @@ impl Registry {
     }
 }
 
+/// A YAML double-quoted scalar.
+fn yq(s: &str) -> String {
+    format!("\"{}\"", s.replace('"', "\\\""))
+}
+
+fn basis_flow(b: &Basis) -> String {
+    let mut parts = vec![format!("of: [{}]", b.of.join(", "))];
+    if let Some(r) = &b.rule {
+        parts.push(format!("rule: {r}"));
+    }
+    if let Some(t) = &b.tier {
+        parts.push(format!("tier: {}", match t { Tier::Sourced => "sourced", Tier::Derived => "derived", Tier::Invented => "invented" }));
+    }
+    if b.review == Some(true) && b.rule.is_none() {
+        parts.push("review: true".to_string());
+    }
+    if let Some(src) = &b.source {
+        parts.push(format!("source: {}", yq(src)));
+    }
+    if let Some(n) = &b.note {
+        parts.push(format!("note: {}", yq(n)));
+    }
+    format!("{{ {} }}", parts.join(", "))
+}
+
+/// The basis a derived part gets where its list item says none (lib.py, part_basis): its shares as the
+/// equipment's `built_of` says, its stock cut with the loss where a cutting module makes it, else built in
+/// whole; the box by rule. An item's own entry replaces the default of the same `of`.
+fn derived_basis(e: &Equipment, it: &EquipmentBuiltOfListItem, cuts: &HashSet<String>) -> Vec<Basis> {
+    let mass = e.physical.mass.unwrap_or(0.0);
+    let share = if mass > 0.0 { it.mass / mass } else { 0.0 };
+    let eq_rule = e.built_of.shares.clone().or_else(|| e.basis.iter().find(|b| b.of.iter().any(|o| o == "built_of")).and_then(|b| b.rule.clone()));
+    let entry = |of: &[&str], rule: Option<&str>, tier: Option<Tier>, note: Option<String>| Basis { of: of.iter().map(|s| s.to_string()).collect(), tier, rule: rule.map(str::to_string), source: None, note, review: if rule.is_none() { Some(true) } else { None } };
+    let first = match eq_rule.as_deref() {
+        Some(r) if r.starts_with("rule.") && r != "rule.first-design-parts" => entry(&["physical.mass", "fit"], Some(r), None, None),
+        Some("rule.first-design-parts") => entry(&["physical.mass", "fit"], None, Some(Tier::Invented), Some(format!("Its share of the {} ({:.0}%), chosen.", e.identity.name, share * 100.0))),
+        _ => entry(&["physical.mass", "fit"], Some("rule.shares-chosen"), None, None),
+    };
+    let mut out = vec![first];
+    if let Some(item) = &it.item {
+        let cut = it.module.as_deref().is_some_and(|m| cuts.contains(m)) && item.starts_with("stock.") && e.built_of.whole != Some(true);
+        out.push(entry(&["made_from", "making"], Some(if cut { "rule.cut-loss" } else { "rule.built-in-whole" }), None, None));
+    }
+    out.push(entry(&["physical.length", "physical.width", "physical.height"], Some("rule.fitted-within"), None, None));
+    let mut own: Vec<Basis> = it.basis.clone();
+    for d in out.iter_mut() {
+        if let Some(i) = own.iter().position(|b| b.of == d.of) {
+            *d = own.remove(i);
+        }
+    }
+    out.extend(own);
+    out
+}
+
+/// The YAML text of one derived part (lib.py, part_yaml): the build writes the same.
+fn derived_part_yaml(e: &Equipment, it: &EquipmentBuiltOfListItem, cuts: &HashSet<String>) -> String {
+    let mut lines = vec![
+        "identity:".to_string(),
+        format!("  key: part.{}", it.code.to_lowercase()),
+        format!("  code: {}", it.code),
+        format!("  name: {}", yq(&it.name)),
+        "  revision: draft".to_string(),
+        format!("  description: {}", yq(it.description.as_deref().unwrap_or(""))),
+        "physical:".to_string(),
+        format!("  mass: {}", it.mass),
+        format!("  length: {}", it.length),
+        format!("  width: {}", it.width),
+        format!("  height: {}", it.height),
+    ];
+    if let Some(item) = &it.item {
+        lines.push("made_from:".to_string());
+        lines.push(format!("  - item: {item}"));
+        if let Some(q) = it.quantity {
+            lines.push(format!("    quantity: {q}"));
+        }
+    }
+    if let Some(m) = &it.module {
+        lines.push("making:".to_string());
+        lines.push(format!("  module: {m}"));
+    }
+    lines.push("fit:".to_string());
+    lines.push(format!("  count: {}", it.count.unwrap_or(1)));
+    lines.push("basis:".to_string());
+    for b in derived_basis(e, it, cuts) {
+        lines.push(format!("  - {}", basis_flow(&b)));
+    }
+    lines.join("\n") + "\n"
+}
+
 /// Every `.yaml` under `dir`, depth first.
 fn yaml_files(dir: &Path, out: &mut Vec<PathBuf>) {
     let Ok(entries) = std::fs::read_dir(dir) else { return };
@@ -226,5 +346,9 @@ mod tests {
         assert_eq!(back.galaxy().map(|g| g.seed), reg.galaxy().map(|g| g.seed));
         assert_eq!((back.equipment.len(), back.bodies.len(), back.hulls.len()), (reg.equipment.len(), reg.bodies.len(), reg.hulls.len()));
         assert_eq!(back.hulls, reg.hulls);
+        // (Parts as a rule, SFO 12: the equipment records' lists derive their parts; with the filed ones, the registry holds them all.)
+        let derived: usize = reg.equipment.iter().map(|e| e.built_of.list.len()).sum();
+        assert!(derived > 600 && reg.parts.len() >= derived + 100, "{} parts, {derived} of them derived", reg.parts.len());
+        assert_eq!(back.parts.len(), reg.parts.len());
     }
 }

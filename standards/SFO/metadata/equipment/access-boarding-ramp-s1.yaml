@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.boarding-ramp.s1
+  name: "Boarding ramp"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A ramp lowered to the ground for people or cargo."
+size_class: 1
+fits: mount.access-s1
+physical:
+  mass: 800
+  volume: 2.88
+  length: 6.0
+  width: 1.2
+  height: 0.4
+built_of:
+  parts: access-boarding-ramp-s1
+  list:
+    - { code: BRM0-01, name: "Ramp", description: "The walkway, in two folding sections.", mass: 440, length: 4.92, width: 0.983, height: 0.328, item: stock.al6061-pl-5, quantity: 506.0, module: module.welding-bay }
+    - { code: BRM0-02, name: "Hinge and actuator", description: "Lets it down and draws it up.", mass: 240, length: 4.02, width: 0.803, height: 0.268, item: stock.st4340-bar-120, quantity: 276.0, module: module.machining-centre }
+    - { code: BRM0-03, name: "Rails", description: "Handrails and lights.", mass: 120, length: 3.19, width: 0.638, height: 0.213, item: stock.al6061-tb-120x3, quantity: 138.0, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: "ramp"
+  load: 1000
+  width: 1.2
+  reach: 5.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Six metres of folding walkway for people: a tonne on it, let down 5 m to the ground. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

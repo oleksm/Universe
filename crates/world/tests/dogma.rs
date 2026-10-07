@@ -50,7 +50,7 @@ fn hopping_round_a_system_costs_little() {
     let kg = universe_physics::hyper::field_cost(91_500.0, V_BEST_C / 3.0, 0.6) * 40.0 * AU / per_kg;
     assert!(kg < 30.0, "{kg:.1} kg for 40 AU");
     // Data across a relay's tube in a system (the relay's cadence its own): a second or two.
-    let cadence = universe_world::hypernet::relay_lag("equipment.relay.hyper").map(|r| r.1).unwrap();
+    let cadence = universe_world::hypernet::relay_lag("equipment.gate.relay.hyper").map(|r| r.1).unwrap();
     let hop = universe_world::hypernet::capsule_time(RELAY_CAPSULE, 2.0 * AU, cadence);
     assert!((1.0..2.5).contains(&hop), "a relay hop takes {hop} s");
 }

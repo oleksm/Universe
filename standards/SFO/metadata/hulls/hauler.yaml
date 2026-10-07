@@ -65,17 +65,17 @@ fit:
   - { slot: drive, item: equipment.drive.torch.s3 }
   - { slot: thrusters, item: equipment.thrusters.quad.s3 }
   - { slot: lift, item: equipment.lift.belly.s3 }
-  - { slot: tank, item: equipment.tank.s4 }
-  - { slot: cargo, item: equipment.rack.s4 }
+  - { slot: tank, item: equipment.tank.deuterium.s4 }
+  - { slot: cargo, item: equipment.cargo.rack.s4 }
   - { slot: hyperdrive, item: equipment.hyperdrive.s3 }
   - { slot: capacitor, item: equipment.capacitor.s2 }
   - { slot: computer, item: equipment.computer.fbw.s1 }
   - { slot: transponder, item: equipment.transponder.s1 }
   - { slot: sensors, item: equipment.sensors.radar.s1 }
   - { slot: comm, item: equipment.comm.basic.s1 }
-  - { slot: life, item: equipment.life.s2 }
-  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
-  - { slot: avionics, item: equipment.nav.full.s1 }
+  - { slot: life, item: equipment.life-support.s2 }
+  - { slot: hardpoint_1, item: equipment.hardpoint.mass-driver.s1 }
+  - { slot: avionics, item: equipment.avionics.nav-full.s1 }
 design:
   loaded_mass: 406040.0
   main_thrust: 8000000
@@ -84,4 +84,4 @@ life: 1262304000
 basis:
   - { of: [physical, physical.mass, capacity.hold, capacity.fuel, fit, design, slots, thrusters, flight], tier: sourced, source: "the game: content/base/hulls.ron, with its stock fit" }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not measured: as long as twice the radius the game flies it at, and square in section to give its volume. An early hull, outdated: a placeholder." }
-  - { of: [life], tier: invented, review: true, note: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-hull }

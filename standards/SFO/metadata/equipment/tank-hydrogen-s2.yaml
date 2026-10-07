@@ -16,6 +16,10 @@ physical:
   height: 5.6
 built_of:
   parts: tank-hydrogen-s2
+  list:
+    - { code: TKH22-01, name: "Shell", mass: 1820, length: 4.97, width: 4.97, height: 4.97, item: stock.al6061-pl-5, quantity: 2093, module: module.welding-bay }
+    - { code: TKH22-02, name: "Insulation", mass: 520, length: 3.27, width: 3.27, height: 3.27, item: stock.mli-fl, quantity: 520, module: module.assembly-shop }
+    - { code: TKH22-03, name: "Fittings and gauging", mass: 260, length: 2.6, width: 2.6, height: 2.6, item: stock.st304-pl-3, quantity: 299, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -25,5 +29,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S2's volume filled with hydrogen at 71 kg/m3; a cryogenic tank at 20 K with its insulation and boil-off plant: 40% of its light contents. Chosen; review." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

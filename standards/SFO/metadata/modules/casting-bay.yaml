@@ -47,4 +47,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.britannica.com/technology/steel/Casting-procedures", note: "About 86% of the liquid steel becomes sound ingot; the head of each ingot is cut off as scrap. Read from a search excerpt, not the page itself." }
   - { of: [recipes.makes, recipes.rate, recipes.batch, physical, recipes.power], tier: invented, review: true, note: "Not found in a source: approximate, from memory." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

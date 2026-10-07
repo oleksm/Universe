@@ -18,6 +18,11 @@ needs:
   power: 2500
 built_of:
   parts: command-s2
+  list:
+    - { code: CMD2-01, name: "Seats and harnesses", description: "Rated to the station's g.", mass: 75, length: 1.33, width: 0.724, height: 0.906, item: stock.al6061-pl-5, quantity: 86.25, module: module.machining-centre }
+    - { code: CMD2-02, name: "Consoles and frame", description: "Controls, pedestal and the structure they stand on.", mass: 112, length: 1.52, width: 0.829, height: 1.04, item: stock.al6061-pl-5, quantity: 128.8, module: module.machining-centre }
+    - { code: CMD2-03, name: "Displays and computers", mass: 119, length: 1.55, width: 0.846, height: 1.06, item: good.electronics, quantity: 119, module: module.assembly-shop }
+    - { code: CMD2-04, name: "Wiring and linings", mass: 34, length: 1.02, width: 0.557, height: 0.696, item: stock.mli-fl, quantity: 34, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -28,5 +33,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two seats side by side, each as the pilot's station, with a shared console between (an airliner's pedestal). From memory; chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

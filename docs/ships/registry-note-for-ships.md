@@ -1,13 +1,15 @@
 # From the registry to the ships session: what is on `fso` for building ships
 
+> **Keys, not figures** (2026-10-07). This note is the ships session's key list, section by section as things landed. Figures live in the records and in the page's reports (Mounts, Budgets, Dimensions, Equipment parts); where a section's figure and a record differ, the record is right.
+
 2026-10-06. Read with your report on the first hull-less frame; everything below answers something
-in it. It is on branch `fso`, not yet on `main`; the user says when it merges. Browse it in
+in it. It is on branch `fso`, merged to `main` by the integrator as it lands. Browse it in
 `standards/index.html` (reports "Mounts", "Members", "Dimensions", "Equipment parts").
 
 ## 1. Sockets: design from nothing starts here
 
 Every slot kind and size class has a **mount** (`standards/SFO/metadata/mounts/<slot>-s<class>.yaml`,
-40 of them; schema `SFO/schema/mount.schema.yaml`; standard `0019-mounts.yaml`). A mount is the
+57 of them; schema `SFO/schema/mount.schema.yaml`; standard `0019-mounts.yaml`). A mount is the
 agreement between a frame and what is fitted to it:
 
 | Section | Says |
@@ -56,13 +58,13 @@ mill, a new extrusion press, a new filament winder, all at the Trethi mill).
 
 ## 4. Ore bays in ten sizes
 
-`equipment.bay.hopper.5t` … `300t`: hoppers with top doors and a discharge gate, in cargo slots
+`equipment.cargo.ore-bay.5t` … `300t`: hoppers with top doors and a discharge gate, in cargo slots
 (class 1 to 10 t, 2 to 35 t, 3 to 100 t, 4 above), volume at 2,000 kg/m³ of broken rock, mass a
 tenth of capacity, five parts each. Pick the one that fits the mount.
 
 ## 5. Sizes
 
-42 of 57 pieces of equipment now have a size that is measured, worked out or a real one's: the
+Every piece of equipment has a size (the Dimensions report says which are measured, worked out or a real one's): the
 drive is the MC-07 model's engine block (18.1 × 8.05 × 2.66 m), the lift spans its six nozzles
 (38.6 × 6.5 m), plants are sized by their radiators, racks by their load, cabins as seat rows,
 comms as dishes, avionics at real weights. 15 are still stand-ins (capacitors, hyperdrives,
@@ -131,7 +133,7 @@ stand-in (no glass stock yet); say if you want glass as stock.
 - **The Budgets report** on the page, one row per hull as fitted: power made against drawn; heat
   aboard (the plants' waste plus the jets' share at full burn) against radiators and coolant loops
   fitted; air and water days for the cabins' seats from the stores fitted. Today every hull reads
-  **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
+  (superseded by §10 and §14) **NO RADIATORS**: the MC-07 has 43 MW aboard at full burn (7.4 from its plant, 36 from six main
   and six lift nozzles) and nothing to throw it off, so it wants two S3 panels (294 m² each) or a
   smaller set at idle. No hull fits a cabin, so no hull has a crew figure for air and water: fit
   one and the days appear. The studio's checks should read the same records, so the two never
@@ -208,18 +210,18 @@ In your order. All figures from memory of the space station's and airliners' pra
 review; made by `tools/standards/crew.py`, parts and chains closed, mounts regenerated.
 
 1. **Life support capacity:** `function.persons` and `function.cooling` (W of cabin heat it carries
-   away and dries) on `equipment.life.s1` (3 people, 1,500 W) and `.s2` (persons by its mass at
+   away and dries) on `equipment.life-support.s1` (3 people, 1,500 W) and `.s2` (persons by its mass at
    270 kg a head, 500 W a head). Check: units × persons ≥ crew.
 2. **Command station:** slot kind **`command`** (new; mounts `mount.command-s1/2/3`), kind
    `command_station` with `persons`, `g_rating` (m/s², the seats' rating) and `facing`
    (thrust / forward / any). `equipment.command.s1` pilot's station (1, 88 m/s² = 9 g, 180 kg,
    1.2 × 1.0 × 1.5 m, 1.5 kW); `.s2` pilot and co-pilot (2, 9 g, 340 kg, 2.2 × 1.2 × 1.5, 2.5 kW);
    `.s3` bridge of four (4, 6 g, 900 kg, 3.5 × 3.0 × 2.2, 6 kW). All `facing: thrust`.
-3. **Quarters:** kind `berths {persons}` in a cargo slot: `equipment.berths.2 / .4 / .6` (260 /
+3. **Quarters:** kind `berths {persons}` in a cargo slot: `equipment.cargo.berths.2 / .4 / .6` (260 /
    520 / 780 kg; 2 × 1 × 2, 2 × 2 × 2, 3 × 2 × 2 m; 50 W a head). Kind `galley {persons}`:
-   `equipment.galley.s1` (6, 250 kg, 1.5 × 0.9 × 2.0, 3 kW). Kind `head {persons}`:
-   `equipment.head.s1` (6, 200 kg, 1.2 × 1.0 × 2.0, 500 W; its water is `need.washing`). Food:
-   `equipment.store.food.s1`, kind `store`, `holds: market.food` (a store may now hold a market
+   `equipment.cargo.galley.s1` (6, 250 kg, 1.5 × 0.9 × 2.0, 3 kW). Kind `head {persons}`:
+   `equipment.cargo.head.s1` (6, 200 kg, 1.2 × 1.0 × 2.0, 500 W; its water is `need.washing`). Food:
+   `equipment.cargo.food-store.s1`, kind `store`, `holds: market.food` (a store may now hold a market
    category), `capacity: 1000` kg (667 person-days at `need.food` 1.5 kg/day), 150 kg,
    1.5 × 1.2 × 2.0. Medical bay: later, as you said.
 4. **Leaks and heat:** `hull.leak_rate` (kg/s per m³ of pressurised volume; the station's 0.27 kg
@@ -275,10 +277,20 @@ on the deck across the thrust), or ask for a turning command station and I'll ad
 
 Sourced: the FT S3 is Discovery II (NASA/TM-2005-213559) and the CH S2 the RL10; the rest from
 memory of flown engines (NERVA, Raptor), marked review. **Swivels** (kind `swivel`, slot `engine`):
-`equipment.swivel.s1..s4` turn 90° and bear 30 / 120 / 500 / 2,500 kN at 70 / 160 / 450 / 1,800 kg,
+`equipment.engine.swivel.s1..s4` turn 90° and bear 30 / 120 / 500 / 2,500 kN at 70 / 160 / 450 / 1,800 kg,
 0.1 rad/s. **Propellants** as materials and stock with tanks: `stock.methalox-liq`, `.hydrolox-liq`,
 `.hydrogen-liq`, `.nitrogen-gas`; tanks `equipment.tank.methalox.s1/s2` (40 / 76 t),
 `.hydrolox.s1/s2` (15.7 / 29 t), `.hydrogen.s1/s2` (3.5 / 6.5 t), `.nitrogen.s1` (300 kg at
 300 bar); made by `module.propellant-plant` at the Trethi power station. Later, as you said:
 parachutes, heat shields, surface air density (the lab's air tables carry pressure and
 temperature per band; density follows), a turning seat.
+
+## 15. Heavy members for an engine mount (2026-10-07, your finding on design-3)
+
+Round tubes: `stock.st4340-tb-250x20` (113 kg/m), `-300x20` (138), `-300x30` (200), `-400x30`
+(274); `stock.ti64-tb-250x15` (49), `-300x20` (79). Heavy plate `stock.st4340-pl-20`, `-25`.
+**Box sections**, form `box`, size `width`, `height`, `wall` (m): `stock.st4340-box-300x300x20`
+(176 kg/m), `stock.st4340-box-400x400x25` (294 kg/m), welded from the plate at a new section
+line (`module.section-line`) at the Trethi mill. The Members report lists them with area, yield
+and Euler lengths like the tubes (I = (w h³ − (w−2t)(h−2t)³)/12). No thrust ring as equipment:
+build it from the boxes and say if a product would serve better.

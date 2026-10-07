@@ -94,24 +94,24 @@ fit:
   - { slot: drive, item: equipment.drive.torch.s1, nozzles: 6 }
   - { slot: thrusters, item: equipment.thrusters.quad.s1 }
   - { slot: lift, item: equipment.lift.belly.s1, nozzles: 6 }
-  - { slot: tank, item: equipment.tank.s0 }
+  - { slot: tank, item: equipment.tank.deuterium.s0 }
   - { slot: hyperdrive, item: equipment.hyperdrive.s1 }
   - { slot: computer, item: equipment.computer.fbw.s1 }
   - { slot: transponder, item: equipment.transponder.s1 }
   - { slot: sensors, item: equipment.sensors.radar.s1 }
   - { slot: comm, item: equipment.comm.basic.s1 }
-  - { slot: life, item: equipment.life.s1 }
-  - { slot: avionics, item: equipment.nav.basic.s1 }
+  - { slot: life, item: equipment.life-support.s1 }
+  - { slot: avionics, item: equipment.avionics.nav-basic.s1 }
   - { slot: power, item: equipment.power.fusion.s1 }
-  - { slot: gear_0, item: equipment.gear.mc07.front }
-  - { slot: gear_1, item: equipment.gear.mc07.front }
-  - { slot: gear_2, item: equipment.gear.mc07.rear }
-  - { slot: gear_3, item: equipment.gear.mc07.rear }
-  - { slot: cargo_ramp, item: equipment.access.mc07.cargo.ramp }
-  - { slot: clamp_fwd, item: equipment.access.mc07.anchor.clamp }
-  - { slot: clamp_aft, item: equipment.access.mc07.anchor.clamp }
-  - { slot: hardpoint_1, item: equipment.laser.mc07.mining }
-  - { slot: hardpoint_2, item: equipment.laser.mc07.mining }
+  - { slot: gear_0, item: equipment.gear.front.mc07 }
+  - { slot: gear_1, item: equipment.gear.front.mc07 }
+  - { slot: gear_2, item: equipment.gear.rear.mc07 }
+  - { slot: gear_3, item: equipment.gear.rear.mc07 }
+  - { slot: cargo_ramp, item: equipment.access.cargo-ramp.mc07 }
+  - { slot: clamp_fwd, item: equipment.access.anchor-clamp.mc07 }
+  - { slot: clamp_aft, item: equipment.access.anchor-clamp.mc07 }
+  - { slot: hardpoint_1, item: equipment.hardpoint.mining-laser.mc07 }
+  - { slot: hardpoint_2, item: equipment.hardpoint.mining-laser.mc07 }
   # Heat, people, air and water (the ships session's request, docs/ships/mc07-heat-cabin-request.md on branch ships, 2026-10-06):
   # 47.4 MW aboard at full burn (the plant's loss, everything drawn, the jets' share) wants 54 MW of radiator and 50 MW of loops;
   # six seats; air and water for them. The mass is the mass: 18.7 t more, and the figures say what the MC-07 is.
@@ -119,13 +119,13 @@ fit:
   - { slot: radiator_2, item: equipment.thermal.radiator.s2 }
   - { slot: radiator_3, item: equipment.thermal.radiator.s2 }
   - { slot: radiator_4, item: equipment.thermal.radiator.s2 }
-  - { slot: loop_1, item: equipment.thermal.coolant.loop.s2 }
-  - { slot: loop_2, item: equipment.thermal.coolant.loop.s2 }
-  - { slot: loop_3, item: equipment.thermal.coolant.loop.s1 }
-  - { slot: loop_4, item: equipment.thermal.coolant.loop.s1 }
-  - { slot: cabin, item: equipment.cabin.s1 }
-  - { slot: air, item: equipment.tank.air.store }
-  - { slot: water, item: equipment.tank.water.tank.s1 }
+  - { slot: loop_1, item: equipment.thermal.coolant-loop.s2 }
+  - { slot: loop_2, item: equipment.thermal.coolant-loop.s2 }
+  - { slot: loop_3, item: equipment.thermal.coolant-loop.s1 }
+  - { slot: loop_4, item: equipment.thermal.coolant-loop.s1 }
+  - { slot: cabin, item: equipment.cargo.cabin.s1 }
+  - { slot: air, item: equipment.tank.air.s1 }
+  - { slot: water, item: equipment.tank.water.s1 }
 making:
   module: module.building-dock
   fitting_out: module.building-dock
@@ -163,15 +163,14 @@ basis:
   - { of: [design.strut_efficiency], tier: sourced, source: "https://archive.aoe.vt.edu/mason/Mason_f/M96SC05.pdf", note: "An oleo strut does work over 0.8 to 0.9 of its stroke." }
   - { of: [design.cabin_pressure], tier: invented, note: "Sea-level air, chosen. Airliners hold 54 to 65 kPa above the outside." }
   - { of: [design.minimum_gauge], tier: invented, note: "Chosen. Airliner skin is about 1 mm." }
-  - { of: [life], tier: invented, review: true, note: "Forty years for a hull, a ship's frame; then it is scrapped. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-hull }
 open_questions:
   - "Who makes it: it has no maker."
-  - "How strong it is: the game takes 600 J for each kg of an 88 t frame. Its frame is 6061 aluminium; what wrecks it is to be worked out from its parts."
-  - "Its mass: its parts come to 154 t; the game flies it with an 88 t frame, worked out from its size. The spec's is what is meant; the game is to follow."
+  - "How strong it is: what wrecks it is to be worked out from its parts (SFO 15); the game breaks nothing yet."
   - "Its ore bay: its depth is a guess, and so what it carries. The model's inside needs measuring."
   - "Its skin under the main drive's push: 2 mm sheet buckles unless it is stiffened closely or made thicker (see the structure report). No frames or stringers are parts yet, so their weight is not counted."
   - "The landing the game allows (30 m/s) against the one its legs are built for (3 m/s, failing near 8)."
   - "The main drive's heat: 5.4 MN at its exhaust speed is about 27 TW in the exhaust, and more as waste heat. How much of that reaches the ship is not said."
   - "Its power plant's heat: about 7 MW to shed, and no radiator on the model."
   - "What the rest of its 23,000 m3 is for. Its equipment, tank and ore bay take about 3%."
-  - "Its equipment is the game's early list, chosen as the cheapest for each slot: not yet reviewed."
+  - "Its fit is the game's early list: twelve records marked outdated (in service, not to be balanced against), among them a life support that keeps three for its six seats and a torch drive whose jet no pad stands (SFO 22, 23). A fit from the current families is the ships session's to design."

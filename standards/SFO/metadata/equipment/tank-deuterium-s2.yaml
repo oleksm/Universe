@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.deuterium.s2
+  name: "Fuel tank 15 T"
+  maker: org.hadley
+  revision: outdated
+  slot: tank
+size_class: 2
+fits: mount.tank-s2
+physical:
+  mass: 1100
+  volume: 286.2
+  length: 6.59
+  width: 6.59
+  height: 6.59
+built_of:
+  parts: tank-deuterium-s2
+  shares: rule.shares-chosen
+  list:
+    - { code: TKS2-01, name: "Shell", description: "The pressure wall and its frames.", mass: 880, length: 6.12, width: 6.12, height: 6.12, item: stock.al6061-sh-2-panel, quantity: 880.0, module: module.welding-bay }
+    - { code: TKS2-02, name: "Insulation", description: "A blanket of reflecting layers that keeps the star's heat out of fuel at 20 K.", mass: 63, length: 2.54, width: 2.54, height: 2.54, item: stock.mli-fl, quantity: 72.4, module: module.assembly-shop,
+        basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
+    - { code: TKS2-03, name: "Feed pump and valves", description: "Draw the fuel off to the engines.", mass: 63, length: 2.54, width: 2.54, height: 2.54, item: good.pumps, quantity: 63, module: module.assembly-shop }
+    - { code: TKS2-04, name: "Gauging", description: "Sensors and their box: how much is left.", mass: 31, length: 2.01, width: 2.01, height: 2.01, item: good.electronics, quantity: 31, module: module.assembly-shop }
+    - { code: TKS2-05, name: "Mountings", description: "The struts that hold it to the hull and let little heat through.", mass: 63, length: 2.54, width: 2.54, height: 2.54, item: stock.ti64-pl-5, quantity: 72.4, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 15000
+  holds: material.deuterium
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: the 4 t tank's, larger. A real tank's wall grows with its surface and its fuel with its volume, so a larger one should be lighter for what it holds: these are, a little (7.5 to 6.3% of the fuel's weight)." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }
+  - { of: [life], rule: rule.life-ship-system }
+  - { of: [physical.volume], tier: derived, note: "Length by width by height, as every other piece of equipment gives it (2026-10-07): it was the sphere's own volume before, the one record kind that read differently." }

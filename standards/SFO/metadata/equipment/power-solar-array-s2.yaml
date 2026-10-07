@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.solar-array.s2
+  name: "Solar array"
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: "Makes power from sunlight."
+size_class: 2
+fits: mount.power-s2
+physical:
+  mass: 500
+  volume: 10.0
+  length: 20.0
+  width: 5.0
+  height: 0.1
+built_of:
+  parts: power-solar-array-s2
+  list:
+    - { code: SOL0-01, name: "Cells and blanket", mass: 300, length: 16.9, width: 4.22, height: 0.0843, item: stock.al6061-sh-2, quantity: 345.0, module: module.electronics-works }
+    - { code: SOL0-02, name: "Booms and hinges", mass: 150, length: 13.4, width: 3.35, height: 0.0669, item: stock.al6061-tb-120x3, quantity: 172.0, module: module.welding-bay }
+    - { code: SOL0-03, name: "Harness", mass: 50, length: 9.28, width: 2.32, height: 0.0464, item: stock.cu-wire-2, quantity: 57.5, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "solar_array"
+  area: 100
+  output: 30000
+  efficiency: 0.3
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "100 m2 at 30% gives 30 kW face on at Earth's sunlight (1,361 W/m2), 5 kg/m2 with its booms: a deployable wing's figures (the ISS wings ~ 1.1 t for 400 m2 at 14%). From memory. At Treistun's worlds sunlight is 0.23 to 1.07 of Earth's." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

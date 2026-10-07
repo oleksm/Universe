@@ -1,6 +1,6 @@
 # Registry validation: trim and fit (scheduled)
 
-*Registry session, 2026-10-05. Asked for by the user; scheduled, not started. It follows the ship
+*Registry session, 2026-10-05. Asked for by the user; begun 2026-10-07 as step 4 of the registry audit (docs/registry-audit.md). It follows the ship
 equipment work in hand.*
 
 ## The aim (the user's)
@@ -14,7 +14,7 @@ equipment work in hand.*
 
 ## Where it stands today
 
-- `tools/standards/validate.py` is 328 lines: a table from a file's place to its schema, a
+- `tools/standards/validate.py` is about 300 lines: a table from a file's place to its schema, a
   hand-written validator for a subset of JSON Schema (no `allOf`, no `exclusiveMinimum`), and rules
   that are not about shape (keys, references, units).
 - 1,283 of 1,286 records already name their schema on their first line

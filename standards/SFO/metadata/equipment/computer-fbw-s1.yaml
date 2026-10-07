@@ -18,6 +18,17 @@ needs:
   power: 200.0
 built_of:
   parts: computer-fbw-s1
+  list:
+    - { code: FCS1-01, name: "Flight computers", description: "Three, voting.", mass: 9.0, length: 0.335, width: 0.268, height: 0.167, item: good.computers, quantity: 9.0, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-02, name: "Inertial units and star trackers", description: "Feel the ship's turning and see where it points.", mass: 4.5, length: 0.266, width: 0.213, height: 0.133, item: good.electronics, quantity: 4.5, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-03, name: "Thruster drivers", description: "Switch the thrusters.", mass: 7.5, length: 0.315, width: 0.252, height: 0.157, item: good.electronics, quantity: 7.5, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-04, name: "Cabinet and cold plates", mass: 6.0, length: 0.292, width: 0.234, height: 0.146, item: stock.al6061-sh-2-panel, quantity: 6.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-05, name: "Harness", description: "The wiring to every nozzle.", mass: 3.0, length: 0.232, width: 0.186, height: 0.116, item: stock.cu-wire-2, quantity: 3.45, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
 making:
   module: module.assembly-shop
 function:
@@ -26,8 +37,8 @@ function:
   roll_rate: 1.8
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: three computers that check each other, the instruments that tell them how the ship is turning, and the drivers that pass their word to the thrusters." }
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "Three flight computers, three inertial units and three star trackers: a spacecraft's computer draws 10 W, a star tracker weighs 3 kg, an inertial unit 4 kg. Half a cubic metre of rack. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

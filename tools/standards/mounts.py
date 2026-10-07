@@ -9,8 +9,11 @@ weight at 3 g plus the thrust or landing or recoil load, with the margin; shear 
 from the nearest, twice the volume a class. Writes standards/SFO/metadata/mounts/<slot>-s<class>.yaml, `fits` on each piece
 of equipment and `mount` on each hull slot. Idempotent: run it after adding or resizing equipment. Run from the repository root.
 """
-import glob, os, re
+import glob, os, re, sys
 import yaml
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import device_heat
 
 S = "standards/SFO/"; E = S + "metadata/equipment/"; MT = S + "metadata/mounts/"
 q = lambda s: '"' + s.replace('"', '\\"') + '"'
@@ -42,7 +45,7 @@ def main():
             return None, 1.0, None
         g = lambda fn: max(fn(d) for d in base)
         fnk = lambda d: d["function"]
-        heat = lambda d: (fnk(d)["output"] * (1 / fnk(d)["efficiency"] - 1)) if fnk(d)["kind"] == "power_plant" else (0.5 * fnk(d).get("thrust", 0) * fnk(d).get("exhaust", 0) * (1 / fnk(d)["efficiency"] - 1) * 1e-6 if "thrust" in fnk(d) else 0)
+        heat = lambda d: device_heat(fnk(d))   # (one rule: lib.device_heat, SFO 22)
         burn = lambda d: fnk(d)["output"] / fnk(d)["efficiency"] / 3.45e14 if fnk(d)["kind"] == "power_plant" else (fnk(d)["thrust"] / fnk(d)["exhaust"] if "thrust" in fnk(d) else 0)
         return {"L": g(lambda d: d["physical"]["length"]) * k ** (1 / 3), "W": g(lambda d: d["physical"]["width"]) * k ** (1 / 3), "H": g(lambda d: d["physical"]["height"]) * k ** (1 / 3),
                 "mass": g(lambda d: d["physical"]["mass"]) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,
@@ -72,7 +75,7 @@ def main():
         if fig["burn"]: feeds.append(f"  fuel: {r(fig['burn'] * M)!r}\n")
         if feeds: s += "feeds:\n" + "".join(feeds)
         if fig["thrust"]: s += f"nozzle:\n  diameter: {r(fig['W'] * 0.8)!r}\n"
-        s += ("basis:\n" + f"  - {{ of: [envelope, bears, attachment{', feeds' if feeds else ''}{', nozzle' if fig['thrust'] else ''}], tier: invented, review: true, note: \"{'The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust' if exact else 'Scaled from the nearest class that has equipment: twice the volume a class, so a quarter longer each way'}. The cooling a propulsion mount gives is a millionth of the jet's loss (the share a ship takes of its plume: docs/ships/equipment-review.md). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give. The attachment: its pattern by kind; each point takes the mount's weight at 3 g (a design acceleration, chosen) plus its thrust, landing or recoil load, with the margin; the same in tension for a reversal; shear half.\" }}\n")
+        s += "basis:\n" + f"  - {{ of: [envelope, bears, attachment{', feeds' if feeds else ''}{', nozzle' if fig['thrust'] else ''}], rule: rule.mounts-margin }}\n"   # (the rule, stated once)
         yaml.safe_load(s)
         open(MT + slug + ".yaml", "w").write(s); n += 1
     # equipment fits a mount; a hull's slots offer one

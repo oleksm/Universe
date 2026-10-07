@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.radiator.s3
+  name: "Radiator panel S3"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Throws heat into space from a hot surface."
+size_class: 3
+fits: mount.thermal-s3
+physical:
+  mass: 3530
+  volume: 23.4
+  length: 24.2
+  width: 12.1
+  height: 0.08
+built_of:
+  parts: thermal-radiator-s3
+  list:
+    - { code: RAD3-01, name: "Panel", description: "The face sheets and the fins between.", mass: 1942, length: 19.8, width: 9.91, height: 0.0655, item: stock.ti64-pl-5, quantity: 2230.0, module: module.welding-bay }
+    - { code: RAD3-02, name: "Headers and tubes", description: "The coolant passages.", mass: 1059, length: 16.2, width: 8.1, height: 0.0536, item: stock.ti64-tb-60x1p5, quantity: 1220.0, module: module.machining-centre }
+    - { code: RAD3-03, name: "Hinge and lines", description: "The root hinge and the flexible lines through it.", mass: 530, length: 12.9, width: 6.43, height: 0.0425, item: stock.st4340-bar-120, quantity: 610.0, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "radiator"
+  rejects: 30000000.0
+  temperature: 1000
+  area: 294.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Throws off 30 MW at 1,000 K from 294 m2, both faces to deep space (Stefan-Boltzmann, emissivity 0.9): twice as long as wide. 12 kg/m2 chosen for a titanium panel with its headers." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

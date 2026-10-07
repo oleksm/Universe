@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.docking.clamp
+  name: "Docking clamp"
+  maker: org.orbital
+  revision: draft
+  slot: access
+  description: "A docking collar or clamp: joins the ship to a station or another ship."
+size_class: 1
+fits: mount.access-s1
+physical:
+  mass: 800
+  volume: 1.44
+  length: 1.2
+  width: 1.2
+  height: 1.0
+built_of:
+  parts: access-docking-clamp
+  list:
+    - { code: DCL0-01, name: "Jaws", description: "The pair that close on a rail.", mass: 400, length: 0.952, width: 0.952, height: 0.794, item: stock.st4340-bar-120, quantity: 460.0, module: module.machining-centre }
+    - { code: DCL0-02, name: "Rams", description: "Hydraulic, with their pump.", mass: 280, length: 0.846, width: 0.846, height: 0.705, item: stock.st4340-bar-120, quantity: 322.0, module: module.machining-centre }
+    - { code: DCL0-03, name: "Controls", description: "Sensing and release.", mass: 120, length: 0.638, width: 0.638, height: 0.531, item: stock.cu-wire-2, quantity: 138.0, module: module.electronics-works }
+making:
+  module: module.assembly-shop
+function:
+  kind: "docking"
+  holds: 2000000
+  standard: "SFO 20 clamp"
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Holds the ship to a station's rail, or a ship to a ship, against 2 MN: a 200 t ship at 1 g. Chosen; the standard is this registry's." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

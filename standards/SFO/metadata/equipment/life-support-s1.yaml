@@ -1,0 +1,53 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.life-support.s1
+  name: "Life support S1"
+  maker: org.hadley
+  revision: outdated
+  slot: life_support
+  description: "Air, water and warmth for the crew."
+size_class: 1
+fits: mount.life-support-s1
+physical:
+  mass: 800
+  volume: 3.57
+  length: 2.1
+  width: 2.0
+  height: 0.85
+needs:
+  power: 100000
+built_of:
+  parts: life-support-s1
+  list:
+    - { code: LSS1-01, name: "Water processor vessels", description: "Stills, beds and tanks that turn waste water to drinking water.", mass: 240, length: 1.41, width: 1.34, height: 0.569, item: stock.st304-pl-3, quantity: 276.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-02, name: "Water pumps", mass: 120, length: 1.12, width: 1.06, height: 0.452, item: good.pumps, quantity: 120, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-03, name: "Water plant controls", mass: 80, length: 0.975, width: 0.928, height: 0.395, item: good.electronics, quantity: 80, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-04, name: "Electrolysis stack", description: "Splits water for the oxygen to breathe.", mass: 60, length: 0.886, width: 0.843, height: 0.358, item: stock.st304-pl-3, quantity: 69.0, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-05, name: "Oxygen plant controls", mass: 60, length: 0.886, width: 0.843, height: 0.358, item: good.electronics, quantity: 60, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-06, name: "Fans and blowers", description: "Move the air through the scrubber.", mass: 60, length: 0.886, width: 0.843, height: 0.358, item: good.electric-motors, quantity: 60, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-07, name: "Scrubber beds and ducts", description: "Take the carbon dioxide out.", mass: 60, length: 0.886, width: 0.843, height: 0.358, item: stock.al6061-sh-2-panel, quantity: 60.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+    - { code: LSS1-08, name: "Cabin cooler", description: "Carries the crew's and the equipment's heat to the hull.", mass: 120, length: 1.12, width: 1.06, height: 0.452, item: good.heat-pumps, quantity: 120, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems (1,385 kg for a crew of six; 676 kg for eleven at full rate)." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: life_support
+  water_recovery: 0.9
+  air_recovery: 0.5
+  persons: 3
+  cooling: 1500
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, by the space station's plant: it cleans water, makes oxygen from it, scrubs the air and carries heat away. By the station's weights (231 kg of water plant and 62 kg of oxygen plant a head) 800 kg keeps about three people." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "2 racks of the space station's size (a rack is 1.57 m3: about 2.0 by 1.05 by 0.85 m), side by side: the station's water and oxygen plant is 2,061 kg in three racks, this 800 kg is 2. The rack's shape is from memory." }
+  - { of: [function.water_recovery, function.air_recovery], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "The space station's figures: about 90% of water recovered, about half the oxygen from carbon dioxide (its Sabatier reactor), from memory of its ECLSS reports; the rest is made up from the tanks." }
+  - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.persons, function.cooling], tier: derived, review: true, note: "By the space station's weights (231 kg of water plant and 62 kg of oxygen plant a head) 800 kg keeps about three people; it carries their heat and their equipment's, 500 W a head (137 W of a person's heat plus displays, lights and fans), and dries the air." }

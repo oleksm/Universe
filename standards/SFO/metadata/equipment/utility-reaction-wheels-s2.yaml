@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.reaction-wheels.s2
+  name: "Reaction wheels"
+  maker: org.orbital
+  revision: draft
+  slot: utility
+  description: "Turn the ship by spinning wheels, without fuel."
+size_class: 2
+fits: mount.utility-s2
+physical:
+  mass: 1200
+  volume: 3.38
+  length: 1.5
+  width: 1.5
+  height: 1.5
+built_of:
+  parts: utility-reaction-wheels-s2
+  list:
+    - { code: RWH0-01, name: "Wheels", description: "Four, in a pyramid.", mass: 840, length: 1.33, width: 1.33, height: 1.33, item: stock.st4340-fg, quantity: 966.0, module: module.machining-centre }
+    - { code: RWH0-02, name: "Motors and bearings", mass: 240, length: 0.877, width: 0.877, height: 0.877, item: stock.cu-wire-2, quantity: 276.0, module: module.electronics-works }
+    - { code: RWH0-03, name: "Frame", mass: 120, length: 0.696, width: 0.696, height: 0.696, item: stock.st4340-tb-120x3, quantity: 138.0, module: module.welding-bay }
+making:
+  module: module.assembly-shop
+function:
+  kind: "reaction_wheels"
+  torque: 2000
+  momentum: 200000
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Four wheels giving 2 kN m of torque and storing 200 kN m s: enough to turn a 150 t ship 90 degrees in about a minute. Chosen (large spacecraft wheels give ~0.1 to 1 N m; these are a ship's)." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

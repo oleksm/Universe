@@ -16,6 +16,11 @@ physical:
   height: 0.6
 built_of:
   parts: engine-ch-s1
+  list:
+    - { code: CHE1-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 36, length: 0.92, width: 0.46, height: 0.46, item: stock.st304-pl-3, quantity: 41.4, module: module.welding-bay }
+    - { code: CHE1-02, name: "Turbopumps", mass: 24, length: 0.803, width: 0.402, height: 0.402, item: good.pumps, quantity: 24, module: module.assembly-shop }
+    - { code: CHE1-03, name: "Valves, lines and injector", mass: 12, length: 0.638, width: 0.319, height: 0.319, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
+    - { code: CHE1-04, name: "Controller and gimbal actuators", mass: 8, length: 0.557, width: 0.278, height: 0.278, item: good.electric-motors, quantity: 8, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -36,5 +41,5 @@ basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "scaled from the RL10 by thrust; review" }
   - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (9.7 MJ/kg) over the blend's 13 MJ/kg: 0.74." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

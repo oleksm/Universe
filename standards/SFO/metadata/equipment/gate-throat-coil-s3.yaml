@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.gate.throat-coil.s3
+  name: "Halcyon throat coil"
+  maker: org.halcyon
+  revision: draft
+  slot: gate
+  description: "What holds the tube. One stands in each segment of a ring; together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
+size_class: 3
+fits: mount.gate-s3
+physical:
+  volume: 60
+  mass: 150000
+  length: 9.86
+  width: 2.47
+  height: 2.47
+built_of:
+  parts: gate-throat-coil-s3
+  list:
+    - { code: THCL-01, name: "Coil case", description: "The ring of plate that holds the winding against its own force.", mass: 120000, length: 9.15, width: 2.29, height: 2.29, item: stock.ti64-pl-5, quantity: 138000.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
+    - { code: THCL-02, name: "Winding", description: "Superconducting cable.", mass: 6000, length: 3.37, width: 0.845, height: 0.845, item: stock.cu-wire-2, quantity: 6900.0, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
+    - { code: THCL-03, name: "Refrigerator", mass: 12000, length: 4.25, width: 1.06, height: 1.06, item: good.heat-pumps, quantity: 12000, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
+    - { code: THCL-04, name: "Current leads and switchgear", mass: 12000, length: 4.25, width: 1.06, height: 1.06, item: good.electronics, quantity: 12000, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
+making:
+  module: module.assembly-shop
+function:
+  kind: throat_coil
+life: 473364000
+basis:
+  - { of: [physical], tier: invented, review: true, note: "A guess, to be reviewed: nothing says what holds a tube or what it weighs. Not in the game yet." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: one great coil of a gate ring, in its case, with its cold plant. ITER's eighteen coils weigh 330 t each; this is 150 t." }
+  - { of: [physical.volume], tier: invented, review: true, note: "Chosen: about twice the room its 150 t of metal takes." }
+  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a segment of a ring: long and curved, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [life], rule: rule.life-ship-system }

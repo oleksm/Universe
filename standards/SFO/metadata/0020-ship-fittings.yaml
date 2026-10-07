@@ -3,7 +3,7 @@ identity:
   key: standard.sfo.20
 title: Ship fittings
 parent: standard.sfo.16
-records: equipment
+# (Its records are equipment, filed under SFO 16's folder: one folder is loaded once.)
 purpose: "What lets people and cargo in and out of a ship, moves bulk aboard, keeps the ship cool, holds its liquids and gases, and closes its hull: the equipment a ship needs besides what makes it fly, fight and think. Each is a maker's product that fits a mount (SFO 19), so a hull takes what fits."
 details:
   text:

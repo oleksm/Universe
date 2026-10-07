@@ -1,5 +1,7 @@
 # The registry's answer to the SSOT request
 
+> **Frozen 2026-10-07** (registry audit, step 2). This is history: the registry's notes to the integrator as they were written. Figures live in the records and the page's reports; rules in the topic docs (order, stocking, people, spirit, recipes, survey-contract, tick-tree); what changed in `changelog/`. New notes go there, not here.
+
 *From the registry session on `fso` to the integration session, 2026-10-04. Answers
 `docs/registry-ssot-request.md`. Kept current as each step lands: what is done, what is next, and
 where I'd do it differently.*
@@ -38,7 +40,7 @@ under `identity` when their schemas are consolidated. The build checks each key:
 | `material`, `process`, `module`, `good`, `hull` | SFO, same name | `material.aluminium-alloy-6061`, `hull.mc-07` |
 | `stock` | SFO mill-stock | `stock.al6061-pl-5` |
 | `part` | SFO part | `part.mc07-23-001` |
-| `equipment` | SFO equipment | `equipment.drive.torch.s1`, `equipment.gun.mass-driver.s1`, `equipment.throat-coil` |
+| `equipment` | SFO equipment | `equipment.drive.torch.s1`, `equipment.hardpoint.mass-driver.s1`, `equipment.gate.throat-coil.s3` |
 | `gate` | SFO gate | `gate.ring.i` |
 | `standard` | SFO standard | `standard.sfo.12` |
 | `standards-body` | SFO body | `standards-body.sfo` (to be `org.` with the organisation schema) |
@@ -53,7 +55,7 @@ under `identity` when their schemas are consolidated. The build checks each key:
 | `seeding` | Celestial galaxy, asteroids, conditions | `seeding.galaxy` |
 
 Three renames to know for your side: the game's `drive.torch.s1` is `equipment.drive.torch.s1`
-(underscores become `-`: `equipment.gun.mass-driver.s1`); `structure.ring.i` is `gate.ring.i`;
+(underscores become `-`: `equipment.hardpoint.mass-driver.s1`); `structure.ring.i` is `gate.ring.i`;
 `brand.hadley` is `company.hadley`. A rock class's game label (`S-TYPE STONY`) is now
 `identity.label`, and its key is `rock-class.stony`.
 
@@ -993,9 +995,9 @@ interval is what a port's contracts should be sized to; air and water are outsid
 
 1. **The MC-07's five empty parts** are no longer parts: they are the MC-07's own products, fitted
    to its slots, built of the parts you measured from the model (moved whole, re-coded MGF/MGR/MCR/
-   MAC/MML): `equipment.gear.mc07.front` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
-   where its 150 × 10 strut buckles), `equipment.access.mc07.cargo.ramp`, `equipment.access.mc07.anchor.clamp`
-   (two access slots), `equipment.laser.mc07.mining` (both hardpoints; the pulse laser's beam
+   MAC/MML): `equipment.gear.front.mc07` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
+   where its 150 × 10 strut buckles), `equipment.access.cargo-ramp.mc07`, `equipment.access.anchor-clamp.mc07`
+   (two access slots), `equipment.hardpoint.mining-laser.mc07` (both hardpoints; the pulse laser's beam
    figures as a stand-in, priced the same in prices.ron as a placeholder). `world::legs::reckon` now
    also takes fitted landing gear (`EquipmentFunction::LandingGear`) beside hull parts, so the
    MC-07's legs reckon as before.
@@ -1150,7 +1152,7 @@ service of artists where they work; the market category stays until an artwork i
 is met by a job (the census), the wage yours. `docs/registry-spirit.md`.
 
 **The Engine root: clocks (2026-10-06, night).** The tick tree settled with the user is now
-records: `standards/Engine/metadata/scheduling/*.yaml` (11 clocks), schema
+records: `standards/Engine/metadata/scheduling/*.yaml` (12 clocks, administration added), schema
 `Engine/schema/clock.schema.yaml`, generated as `Clock` (with `ClockScope`, `Coupling`,
 `ClockTrigger`) and read into `reg.clocks`. The ask: bind a handler to every clock key
 exhaustively (a new clock fails the build until handled, as with equipment kinds), and make

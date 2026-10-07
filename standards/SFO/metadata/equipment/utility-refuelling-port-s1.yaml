@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.utility.refuelling-port.s1
+  name: "Refuelling port"
+  maker: org.hadley
+  revision: draft
+  slot: utility
+  description: "A connection through the hull for taking fuel, water or air aboard, or giving it out."
+size_class: 1
+fits: mount.utility-s1
+physical:
+  mass: 120
+  volume: 0.144
+  length: 0.6
+  width: 0.6
+  height: 0.4
+built_of:
+  parts: utility-refuelling-port-s1
+  list:
+    - { code: RFP0-01, name: "Coupling", description: "The quick coupling and its valve.", mass: 72, length: 0.506, width: 0.506, height: 0.337, item: stock.st304-pl-3, quantity: 82.8, module: module.machining-centre }
+    - { code: RFP0-02, name: "Door and controls", description: "The hull door over it and the controls.", mass: 48, length: 0.442, width: 0.442, height: 0.295, item: stock.al6061-pl-5, quantity: 55.2, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: "port"
+  flow: 20.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Takes 20 kg/s through a flush coupling. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
