@@ -268,6 +268,17 @@ pub struct Interior {
     set: Vec<Hover>,
     clip: Option<Assembly>,
     stamping: bool,
+    /// Exact values being typed for what's picked (ENTER), and what they are.
+    entry: Option<String>,
+    /// The grid points on the work plane snap to (m; none set: a quarter metre).
+    snap: Option<f32>,
+    /// MEASURE (Q): measuring (its first point, once clicked), and the last measure.
+    measuring: bool,
+    measure_from: Option<Vec3>,
+    measured: Option<(Vec3, Vec3)>,
+    /// The view: 0 as turned (in perspective); 1 front, 2 side, 3 top (flat, with
+    /// the ship's sizes).
+    view: u8,
     /// FIT FRAME under way: for which plan, its news, and its stop.
     fitting: Option<(Plan, mpsc::Receiver<Fitting>, Arc<std::sync::atomic::AtomicBool>)>,
 }
@@ -631,6 +642,94 @@ fn level(plan: &Plan, deck: usize) -> Option<(Vec<Hover>, f32)> {
     Some((out, y1 - y0))
 }
 
+/// What's picked, as exact values to type over: what they are, and them now.
+fn exact_of(i: &Interior) -> Option<(&'static str, String)> {
+    let f = |v: &[f32]| v.iter().map(|x| format!("{x:.2}")).collect::<Vec<_>>().join(", ");
+    match i.pick? {
+        Hover::Module(n) => {
+            let b = i.plan.blocks.get(n)?;
+            Some(("MODULE: X, FOOT Y, Z", f(&[b.at.x, b.at.y - b.size.y * 0.5, b.at.z])))
+        }
+        Hover::Member(k) => {
+            let b = i.plan.beams.get(k)?;
+            Some(("MEMBER: FROM X, Y, Z TO X, Y, Z", f(&[b.a.x, b.a.y, b.a.z, b.b.x, b.b.y, b.b.z])))
+        }
+        Hover::Deck(n) => {
+            let p = i.plan.plates.get(n)?;
+            Some(("DECK: FROM X, Z TO X, Z, AT Y", f(&[p.lo.x, p.lo.y, p.hi.x, p.hi.y, p.y])))
+        }
+        _ => None,
+    }
+}
+
+/// The values typed set on what's picked; what happened.
+fn set_exact(i: &mut Interior, v: &[f32]) -> String {
+    match i.pick {
+        Some(Hover::Module(n)) if v.len() == 3 && n < i.plan.blocks.len() => {
+            let b = &mut i.plan.blocks[n];
+            b.at = Vec3::new(v[0], v[1] + b.size.y * 0.5, v[2]);
+            "MODULE MOVED".into()
+        }
+        Some(Hover::Member(k)) if v.len() == 6 && k < i.plan.beams.len() => {
+            let b = &mut i.plan.beams[k];
+            (b.a, b.b) = (Vec3::new(v[0], v[1], v[2]), Vec3::new(v[3], v[4], v[5]));
+            "MEMBER MOVED".into()
+        }
+        Some(Hover::Deck(n)) if v.len() == 5 && n < i.plan.plates.len() => {
+            let p = &mut i.plan.plates[n];
+            (p.lo, p.hi, p.y) = (Vec2::new(v[0].min(v[2]), v[1].min(v[3])), Vec2::new(v[0].max(v[2]), v[1].max(v[3])), v[4]);
+            "DECK MOVED".into()
+        }
+        _ => format!("NOT SET: {} VALUES TYPED, {} WANTED", v.len(), match i.pick {
+            Some(Hover::Module(_)) => 3,
+            Some(Hover::Member(_)) => 6,
+            Some(Hover::Deck(_)) => 5,
+            _ => 0,
+        }),
+    }
+}
+
+/// The ship's sizes in a flat view: across the bottom and up the side of all it
+/// is (modules, members, decks), each with its length.
+fn draw_sizes(frame: &mut Frame, i: &Interior, cam: &Camera) {
+    let a = Assembly { blocks: i.plan.blocks.clone(), beams: i.plan.beams.clone(), plates: i.plan.plates.clone() };
+    let (lo, hi) = a.bounds();
+    if lo == hi {
+        return;
+    }
+    // (Across: x, except side on (z); up: y, except from the top (z).)
+    let (across, up) = match i.view {
+        2 => (Vec3::Z, Vec3::Y),
+        3 => (Vec3::X, Vec3::NEG_Z),
+        _ => (Vec3::X, Vec3::Y),
+    };
+    let col = Color([1.0, 0.85, 0.4, 0.95]);
+    let size = hi - lo;
+    let pad = size.max_element() * 0.06;
+    let corner = |u: f32, v: f32| {
+        let base = Vec3::new(if across.x != 0.0 { u } else { (lo.x + hi.x) * 0.5 }, if up.y != 0.0 { v } else { (lo.y + hi.y) * 0.5 }, if across.z != 0.0 { u } else if up.z != 0.0 { -v } else { (lo.z + hi.z) * 0.5 });
+        cam.project(base).map(|p| p.0)
+    };
+    let (u0, u1) = if across.x != 0.0 { (lo.x, hi.x) } else { (lo.z, hi.z) };
+    let (v0, v1) = if up.y != 0.0 { (lo.y, hi.y) } else { (-hi.z, -lo.z) };
+    // (Each label outside its line: under the one across, left of the one up.)
+    let mut line = |a: Option<Vec2>, b: Option<Vec2>, text: String| {
+        if let (Some(a), Some(b)) = (a, b) {
+            frame.hud_line(a, b, col);
+            let n = (b - a).perp().normalize_or_zero() * 4.0;
+            frame.hud_line(a - n, a + n, col);
+            frame.hud_line(b - n, b + n, col);
+            let mid = (a + b) * 0.5;
+            let across = (b - a).x.abs() > (b - a).y.abs();
+            let off = if across { Vec2::new(-(text.len() as f32) * 3.5, 8.0) } else { Vec2::new(-(text.len() as f32) * 7.5 - 8.0, -4.0) };
+            frame.hud_rect(mid + off - Vec2::new(2.0, 2.0), Vec2::new(text.len() as f32 * 7.2 + 4.0, 13.0), Color([0.02, 0.04, 0.08, 0.9]));
+            frame.text_scaled(mid + off, &text, col, 0.85);
+        }
+    };
+    line(corner(u0, v0 - pad), corner(u1, v0 - pad), format!("{:.1} M", u1 - u0));
+    line(corner(u0 - pad, v0), corner(u0 - pad, v1), format!("{:.1} M", v1 - v0));
+}
+
 impl Interior {
     /// The modules, members and decks picked in SELECT (the one picked and the
     /// rest picked with it).
@@ -642,6 +741,13 @@ impl Interior {
             }
         }
         out
+    }
+
+    /// A flat view (dev: `freefall --studio` with UNIVERSE_VIEW): 1 front, 2 side,
+    /// 3 top.
+    pub fn flat_view(&mut self, k: u8) {
+        let (yaw, pitch) = [(0.0, 0.0), (std::f32::consts::FRAC_PI_2, 0.0), (0.0, 1.5695)][(k.clamp(1, 3) - 1) as usize];
+        (self.yaw, self.pitch, self.view) = (yaw, pitch, k.clamp(1, 3));
     }
 
     /// The tool in hand set by name (dev: `freefall --studio` with UNIVERSE_TOOL):
@@ -3797,8 +3903,8 @@ impl Interior {
         let any = self.in_progress();
         (self.module, self.block, self.from, self.beam_from, self.truss_from, self.beam_pick) = (None, None, None, None, None, None);
         (self.truss_mode, self.deck_mode, self.walk_armed, self.deck_from, self.deck_pick) = (false, false, false, None, None);
-        let any = any || self.stamping;
-        self.stamping = false;
+        let any = any || self.stamping || self.measuring;
+        (self.stamping, self.measuring, self.measure_from) = (false, false, None);
         any
     }
 
@@ -4215,9 +4321,11 @@ impl Camera {
         let middle = (h.lo + h.hi) * 0.5;
         let target = i.target.unwrap_or(middle);
         let radius = (h.hi - h.lo).length() * 0.5;
-        let focal = size.y * 0.5 / (FOV * 0.5).tan();
+        // (A flat view: from far off with a long lens, so near enough flat.)
+        let flat = if i.view > 0 { 25.0 } else { 1.0 };
+        let focal = size.y * 0.5 / (FOV * 0.5).tan() * flat;
         // (Far enough back that the whole hull fits, unless zoomed.)
-        let distance = i.distance.unwrap_or(radius / (FOV * 0.5).tan() * 0.8);
+        let distance = i.distance.unwrap_or(radius / (FOV * 0.5).tan() * 0.8) * flat;
         let back = Vec3::new(i.pitch.cos() * i.yaw.sin(), i.pitch.sin(), i.pitch.cos() * i.yaw.cos());
         let eye = target + back * distance;
         let forward = (target - eye).normalize();
@@ -5766,7 +5874,8 @@ fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Opt
         return None;
     }
     let at = cam.eye + ray * t;
-    let mut at = Vec3::new((at.x * 4.0).round() / 4.0, plane, (at.z * 4.0).round() / 4.0);
+    let step = i.snap.unwrap_or(0.25);
+    let mut at = Vec3::new((at.x / step).round() * step, plane, (at.z / step).round() * step);
     if shift && let Some(a) = i.from {
         let from = i.plan.points[a].at;
         if (at.x - from.x).abs() > (at.z - from.z).abs() {
@@ -5909,6 +6018,11 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
             }
         }
         interior.cursor = input.cursor;
+        return true;
+    }
+    // Typing exact values: ESC puts it away (not the studio).
+    if interior.entry.is_some() && input.pressed(KeyCode::Escape) {
+        interior.entry = None;
         return true;
     }
     // ESC: what's in progress cancelled (a module picked, a path, member or truss
@@ -6126,6 +6240,68 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     interior.shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
     let d = input.mouse_delta;
     let pressed = input.button_pressed(MouseButton::Left);
+    // Typing exact values for what's picked: digits, signs, points, commas and
+    // spaces; BACKSPACE; ENTER sets them (and nothing else meanwhile).
+    if let Some(text) = interior.entry.as_mut() {
+        text.extend(input.typed.chars().filter(|c| c.is_ascii_digit() || matches!(c, '-' | '.' | ',' | ' ')));
+        if input.pressed(KeyCode::Backspace) {
+            text.pop();
+        }
+        if input.pressed(KeyCode::Enter) || input.pressed(KeyCode::NumpadEnter) {
+            let values: Vec<f32> = text.split([',', ' ']).filter_map(|v| v.trim().parse().ok()).collect();
+            let said = set_exact(interior, &values);
+            interior.message = Some((said, 5.0));
+            interior.entry = None;
+        }
+        return true;
+    }
+    if input.pressed(KeyCode::Enter) {
+        match exact_of(interior) {
+            Some((_, now)) => interior.entry = Some(now),
+            None => interior.message = Some(("PICK A MODULE, A MEMBER OR A DECK (SELECT) TO TYPE WHERE IT IS".into(), 4.0)),
+        }
+        return true;
+    }
+    // Views: 1 front, 2 side, 3 top (flat, the ship's sizes shown), 4 as it was.
+    for (k, key) in [KeyCode::Digit1, KeyCode::Digit2, KeyCode::Digit3, KeyCode::Digit4].into_iter().enumerate() {
+        if input.pressed(key) {
+            let (yaw, pitch) = [(0.0, 0.0), (std::f32::consts::FRAC_PI_2, 0.0), (0.0, 1.5695), (0.7, 0.35)][k];
+            (interior.yaw, interior.pitch, interior.view) = (yaw, pitch, if k < 3 { k as u8 + 1 } else { 0 });
+            interior.distance = None;
+        }
+    }
+    // G: the grid the work plane snaps to (a quarter, half, one, two metres).
+    if input.pressed(KeyCode::KeyG) {
+        let next = match interior.snap.unwrap_or(0.25) {
+            s if s < 0.3 => 0.5,
+            s if s < 0.6 => 1.0,
+            s if s < 1.5 => 2.0,
+            _ => 0.25,
+        };
+        interior.snap = Some(next);
+        interior.message = Some((format!("THE PLANE SNAPS TO {next} M"), 3.0));
+    }
+    // Q: MEASURE: two clicks (at joints, else on the work plane), the distance
+    // between them; Q again: off.
+    if input.pressed(KeyCode::KeyQ) {
+        interior.measuring = !interior.measuring;
+        interior.measure_from = None;
+        interior.message = Some((if interior.measuring { "MEASURE: CLICK TWO POINTS (JOINTS SNAP); Q OR ESC STOPS" } else { "MEASURE OFF" }.into(), 4.0));
+    }
+    if interior.measuring && pressed && !inside(PANEL, cursor) && cursor.y > 50.0 {
+        let plane = plane_of(interior, &h);
+        if let Some(at) = frame_snap(interior, &cam, cursor).or_else(|| on_plane(interior, &cam, plane, cursor, false)) {
+            match interior.measure_from.take() {
+                None => interior.measure_from = Some(at),
+                Some(from) => {
+                    interior.measured = Some((from, at));
+                    let d = at - from;
+                    interior.message = Some((format!("{:.2} M (ACROSS {:.2}, UP {:.2}, ALONG {:.2})", d.length(), d.x.abs(), d.y.abs(), d.z.abs()), 10.0));
+                }
+            }
+        }
+        return true;
+    }
     // A layer's row clicked: shown or hidden.
     if pressed && layers_click(interior, layers_corner(size), cursor) {
         return true;
@@ -6616,6 +6792,9 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     let dragged = interior.press.is_some_and(|p| p.distance(cursor) > 4.0);
     if input.button_down(MouseButton::Left) && (dragged || interior.tool == Tool::Look) {
         interior.yaw -= d.x * 0.008;
+        if d != Vec2::ZERO {
+            interior.view = 0;
+        }
         interior.pitch = (interior.pitch + d.y * 0.008).clamp(-1.5, 1.5);
     }
     // Stamping: a click puts the copy's foot there on the work plane (to the half
@@ -6894,8 +7073,9 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
         _ => "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES",
     };
-    let mirror = ["X: MIRROR", "X: MIRROR (NOW LEFT-RIGHT)", "X: MIRROR (NOW FORE-AFT)", "X: MIRROR (NOW BOTH)"][interior.mirror as usize];
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), &format!("{hint} - {mirror}"), LABEL.scale(0.6), 0.7);
+    let mirror = ["X MIRROR", "X MIRROR (LEFT-RIGHT)", "X MIRROR (FORE-AFT)", "X MIRROR (BOTH)"][interior.mirror as usize];
+    let snap = interior.snap.unwrap_or(0.25);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), &format!("{hint} - {mirror} - G SNAP {snap} M - Q MEASURE - 1 2 3 FRONT SIDE TOP, 4 TURNED - ENTER TYPES WHERE"), LABEL.scale(0.6), 0.7);
     // The toolbar: the tool in hand lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -7047,6 +7227,51 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The work plane (placing points): its outline over the hull, at its height.
     let plane = plane_of(interior, &h);
+    // (Stamping: the copy where a click would put it, faint.)
+    if interior.stamping
+        && let Some(clip) = &interior.clip
+        && let Some(at) = on_plane(interior, &cam, plane, interior.cursor, false)
+    {
+        let ghost = clip.moved(Vec3::new((at.x * 2.0).round() / 2.0, at.y, (at.z * 2.0).round() / 2.0));
+        for b in &ghost.blocks {
+            let round = interior.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.round);
+            for [a, z] in b.edges(round) {
+                seg(frame, a, z, MODULE.scale(0.45));
+            }
+        }
+        for b in &ghost.beams {
+            seg(frame, b.a, b.b, PICKED.scale(0.45));
+        }
+        for p in &ghost.plates {
+            let c = [Vec3::new(p.lo.x, p.y, p.lo.y), Vec3::new(p.hi.x, p.y, p.lo.y), Vec3::new(p.hi.x, p.y, p.hi.y), Vec3::new(p.lo.x, p.y, p.hi.y)];
+            for k in 0..4 {
+                seg(frame, c[k], c[(k + 1) % 4], DECK.scale(0.45));
+            }
+        }
+    }
+    // (A flat view: the ship's sizes. MEASURE: the last measure, and from its first
+    // point to the cursor.)
+    if interior.view > 0 {
+        draw_sizes(frame, interior, &cam);
+    }
+    let ruler = Color([1.0, 0.85, 0.4, 0.95]);
+    let measure = |frame: &mut Frame, a: Vec3, b: Vec3| {
+        seg(frame, a, b, ruler);
+        if let (Some((pa, _)), Some((pb, _))) = (cam.project(a), cam.project(b)) {
+            frame.hud_box(pa - Vec2::splat(3.0), Vec2::splat(6.0), ruler);
+            frame.hud_box(pb - Vec2::splat(3.0), Vec2::splat(6.0), ruler);
+            frame.text_scaled((pa + pb) * 0.5 + Vec2::new(6.0, -10.0), &format!("{:.2} M", a.distance(b)), ruler, 0.75);
+        }
+    };
+    if let Some((a, b)) = interior.measured {
+        measure(frame, a, b);
+    }
+    if interior.measuring
+        && let Some(from) = interior.measure_from
+        && let Some(to) = frame_snap(interior, &cam, interior.cursor).or_else(|| on_plane(interior, &cam, plane, interior.cursor, false))
+    {
+        measure(frame, from, to);
+    }
     if matches!(interior.tool, Tool::Path | Tool::Modules | Tool::Frame) {
         let c = [Vec3::new(lo.x, plane, lo.z), Vec3::new(hi.x, plane, lo.z), Vec3::new(hi.x, plane, hi.z), Vec3::new(lo.x, plane, hi.z)];
         // The hull at this height: hollow cells green, solid red (where there's room).
@@ -7100,28 +7325,6 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         // Where a click would put a point: over a line, its quarter marks (the one
         // it'd snap to lit); else on the plane (SHIFT: squared to the last point).
         // Not over a point: that joins to it.
-        // (Stamping: the copy where a click would put it, faint.)
-        if interior.stamping
-            && let Some(clip) = &interior.clip
-            && let Some(at) = on_plane(interior, &cam, plane, interior.cursor, false)
-        {
-            let ghost = clip.moved(Vec3::new((at.x * 2.0).round() / 2.0, at.y, (at.z * 2.0).round() / 2.0));
-            for b in &ghost.blocks {
-                let round = interior.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.round);
-                for [a, z] in b.edges(round) {
-                    seg(frame, a, z, MODULE.scale(0.45));
-                }
-            }
-            for b in &ghost.beams {
-                seg(frame, b.a, b.b, PICKED.scale(0.45));
-            }
-            for p in &ghost.plates {
-                let c = [Vec3::new(p.lo.x, p.y, p.lo.y), Vec3::new(p.hi.x, p.y, p.lo.y), Vec3::new(p.hi.x, p.y, p.hi.y), Vec3::new(p.lo.x, p.y, p.hi.y)];
-                for k in 0..4 {
-                    seg(frame, c[k], c[(k + 1) % 4], DECK.scale(0.45));
-                }
-            }
-        }
         match interior.hover {
             Some(Hover::Line(k)) => {
                 let (a, b, _) = interior.plan.lines[k];
@@ -7889,6 +8092,14 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             let text: String = format!("{:>3} {}", n + 1, list[*n].text).chars().take(46).collect();
             frame.text_scaled(Vec2::new(lp.x + 6.0, q.y + 1.0), &text, CLASH, 0.5);
         }
+    }
+    // Typing exact values: what they are, as typed, under the toolbar.
+    if let Some(text) = &interior.entry {
+        let what = exact_of(interior).map_or("", |e| e.0);
+        let (p, c) = (Vec2::new(button(2).0.x, 66.0), Vec2::new(560.0, 20.0));
+        frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.95]));
+        frame.hud_box(p, c, PICKED);
+        frame.text_scaled(p + Vec2::new(6.0, 5.0), &format!("{what}: {text}_   ENTER SETS, ESC DROPS"), PICKED, 0.7);
     }
     // A message for a while (saved, opened), under the toolbar.
     if let Some((text, _)) = &interior.message {

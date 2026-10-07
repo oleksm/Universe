@@ -31,6 +31,9 @@ impl StudioOnly {
         if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
             interior.use_tool(&t);
         }
+        if let Some(k) = std::env::var("UNIVERSE_VIEW").ok().and_then(|v| v.parse().ok()) {
+            interior.flat_view(k);
+        }
         let issue = std::env::var("UNIVERSE_ISSUE").ok().and_then(|v| v.parse().ok());
         StudioOnly { interior, spec, deckplans: Vec::new(), issue }
     }
