@@ -16,6 +16,15 @@ physical:
   height: 1.0
 built_of:
   parts: capacitor-s1
+  list:
+    - { code: CPS1-01, name: "Coil case", description: "Holds the winding against the force of its own current.", mass: 300, length: 1.27, width: 0.843, height: 0.843, item: stock.ti64-pl-5, quantity: 345.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
+    - { code: CPS1-02, name: "Winding", description: "Superconducting cable.", mass: 40, length: 0.646, width: 0.431, height: 0.431, item: stock.cu-wire-2, quantity: 46.0, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
+    - { code: CPS1-03, name: "Refrigerator", mass: 60, length: 0.74, width: 0.493, height: 0.493, item: good.heat-pumps, quantity: 60, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
+    - { code: CPS1-04, name: "Switchgear", description: "Lets the current in and out, fast.", mass: 100, length: 0.877, width: 0.585, height: 0.585, item: good.electronics, quantity: 100, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
 making:
   module: module.assembly-shop
 function:

@@ -16,6 +16,10 @@ physical:
   height: 0.8
 built_of:
   parts: access-cargo-ramp-s2
+  list:
+    - { code: CRM2-01, name: "Ramp", description: "The deck plate and its beams.", mass: 6000, length: 10.1, width: 4.22, height: 0.675, item: stock.sta36-pl-20, quantity: 6900.0, module: module.welding-bay }
+    - { code: CRM2-02, name: "Hinge and actuators", description: "Hydraulic rams.", mass: 3000, length: 8.03, width: 3.35, height: 0.536, item: stock.st4340-bar-120, quantity: 3450.0, module: module.machining-centre }
+    - { code: CRM2-03, name: "Edge and locks", description: "The lip and the locks.", mass: 1000, length: 5.57, width: 2.32, height: 0.371, item: stock.sta36-pl-20, quantity: 1150.0, module: module.cutting-table }
 making:
   module: module.assembly-shop
 function:

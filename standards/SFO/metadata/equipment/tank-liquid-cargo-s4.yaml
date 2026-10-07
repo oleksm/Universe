@@ -16,6 +16,10 @@ physical:
   height: 5.76
 built_of:
   parts: tank-liquid-cargo-s4
+  list:
+    - { code: LCT0-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 3500, length: 5.11, width: 5.11, height: 5.11, item: stock.al6061-pl-5, quantity: 4020.0, module: module.welding-bay }
+    - { code: LCT0-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 750, length: 3.06, width: 3.06, height: 3.06, item: stock.al6061-pl-5, quantity: 862.0, module: module.cutting-table }
+    - { code: LCT0-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 750, length: 3.06, width: 3.06, height: 3.06, item: stock.st304-pl-3, quantity: 862.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

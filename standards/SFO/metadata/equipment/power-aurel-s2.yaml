@@ -15,6 +15,23 @@ physical:
   height: 2.0
 built_of:
   parts: power-aurel-s2
+  shares: rule.discovery-ii-reactor-shares
+  list:
+    - { code: PAS2-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 94, length: 6.01, width: 3.01, height: 0.679, item: stock.sic-tl-10, quantity: 108.1, module: module.machining-centre }
+    - { code: PAS2-02, name: "Field coil cases", description: "Hold the field coils against their own force.", mass: 853, length: 12.5, width: 6.27, height: 1.42, item: stock.ti64-pl-5, quantity: 980.9, module: module.welding-bay }
+    - { code: PAS2-03, name: "Field coil windings", description: "The superconducting windings.", mass: 10, length: 2.85, width: 1.42, height: 0.322, item: stock.cu-wire-2, quantity: 11.5, module: module.machining-centre }
+    - { code: PAS2-04, name: "Shaping coils and bracing", description: "Shape and hold the plasma.", mass: 517, length: 10.6, width: 5.31, height: 1.2, item: stock.ti64-pl-5, quantity: 594.5, module: module.welding-bay }
+    - { code: PAS2-05, name: "Shield", description: "Carbon between the plasma and the coils.", mass: 604, length: 11.2, width: 5.59, height: 1.26, item: good.carbon, quantity: 604, module: module.assembly-shop }
+    - { code: PAS2-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 27, length: 3.97, width: 1.98, height: 0.448, item: stock.ti64-pl-5, quantity: 31.0, module: module.machining-centre }
+    - { code: PAS2-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 20, length: 3.59, width: 1.79, height: 0.405, item: good.electric-motors, quantity: 20, module: module.assembly-shop }
+    - { code: PAS2-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 40, length: 4.52, width: 2.26, height: 0.511, item: good.electronics, quantity: 40, module: module.assembly-shop }
+    - { code: PAS2-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 67, length: 5.37, width: 2.68, height: 0.607, item: stock.cfc-pl-3, quantity: 77.0, module: module.welding-bay }
+    - { code: PAS2-10, name: "Frame", description: "Carries the set.", mass: 13, length: 3.11, width: 1.55, height: 0.351, item: stock.al6061-pl-5-panel, quantity: 13, module: module.welding-bay }
+    - { code: PAS2-11, name: "Flywheel", description: "Evens the load.", mass: 34, length: 4.28, width: 2.14, height: 0.484, item: stock.st4340-bar-120, quantity: 39.1, module: module.machining-centre }
+    - { code: PAS2-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 27, length: 3.97, width: 1.98, height: 0.448, item: good.pumps, quantity: 27, module: module.assembly-shop }
+    - { code: PAS2-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 47, length: 4.77, width: 2.39, height: 0.539, item: stock.st304-pl-3, quantity: 54.0, module: module.welding-bay }
+    - { code: PAS2-14, name: "Refrigerator", description: "Keeps the windings cold.", mass: 13, length: 3.11, width: 1.55, height: 0.351, item: good.heat-pumps, quantity: 13, module: module.assembly-shop }
+    - { code: PAS2-15, name: "Plasma heater", description: "Brings the plasma to burning.", mass: 34, length: 4.28, width: 2.14, height: 0.484, item: good.electronics, quantity: 34, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

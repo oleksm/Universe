@@ -16,6 +16,15 @@ physical:
   height: 6.0
 built_of:
   parts: gear-strut-s3
+  list:
+    - { code: LGS3-01, name: "Strut cylinder", description: "The oleo: the piston and cylinder that stop the ship over the stroke.", mass: 1470, length: 1.48, width: 1.48, height: 4.228, item: stock.st4340-bar-120, quantity: 1690.5, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (35%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
+    - { code: LGS3-02, name: "Outer tube", description: "The column that carries the leg load into the hull.", mass: 1260, length: 1.406, width: 1.406, height: 4.017, item: stock.st4340-tb-200x15, quantity: 1449.0, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (30%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
+    - { code: LGS3-03, name: "Pad", description: "The foot it stands on: a plate, spread for soft ground.", mass: 630, length: 1.116, width: 1.116, height: 3.188, item: stock.sta36-pl-20, quantity: 724.5, module: module.cutting-table,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (15%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
+    - { code: LGS3-04, name: "Retraction actuator", description: "Swings the leg up and down, and locks it.", mass: 840, length: 1.228, width: 1.228, height: 3.509, item: stock.st4340-bar-120, quantity: 966.0, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the leg (20%), as the parts of an airliner's main gear divide its weight, from memory: not sourced." }] }
 making:
   module: module.assembly-shop
 function:

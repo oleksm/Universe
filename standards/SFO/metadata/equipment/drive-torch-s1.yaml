@@ -18,6 +18,19 @@ needs:
   power: 700000
 built_of:
   parts: drive-torch-s1
+  shares: rule.discovery-ii-engine-shares
+  list:
+    - { code: DTS1-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 144, length: 6.25, width: 2.78, height: 0.918, item: stock.sic-tl-10, quantity: 165.6, module: module.machining-centre }
+    - { code: DTS1-02, name: "Field coil cases", description: "The beams and cases that hold the field coils against their own force: most of the engine's weight.", mass: 1310, length: 13.0, width: 5.8, height: 1.92, item: stock.ti64-pl-5, quantity: 1506.5, module: module.welding-bay }
+    - { code: DTS1-03, name: "Field coil windings", description: "The superconducting windings themselves: a few kilograms of tape, nearly all of it copper and steel around a film of superconductor.", mass: 15, length: 2.94, width: 1.31, height: 0.432, item: stock.cu-wire-2, quantity: 17.2, module: module.machining-centre }
+    - { code: DTS1-04, name: "Shaping coils and bracing", description: "The coils that shape and hold the plasma, and the bracing between them.", mass: 794, length: 11.0, width: 4.91, height: 1.62, item: stock.ti64-pl-5, quantity: 913.1, module: module.welding-bay }
+    - { code: DTS1-05, name: "Shield", description: "Half a metre of carbon between the plasma and the coils, to stop what would warm and spoil them.", mass: 927, length: 11.6, width: 5.17, height: 1.71, item: good.carbon, quantity: 927, module: module.assembly-shop }
+    - { code: DTS1-06, name: "Magnetic nozzle", description: "The coils that open the field astern and turn the plasma's heat into a jet.", mass: 62, length: 4.72, width: 2.1, height: 0.693, item: stock.ti64-pl-5, quantity: 71.3, module: module.welding-bay }
+    - { code: DTS1-07, name: "Fuel feed", description: "The injector and its lines from the tank.", mass: 62, length: 4.72, width: 2.1, height: 0.693, item: stock.st304-pl-3, quantity: 71.3, module: module.machining-centre }
+    - { code: DTS1-08, name: "Plasma heater", description: "The radio-frequency source that brings the plasma to burning.", mass: 52, length: 4.45, width: 1.98, height: 0.654, item: good.electronics, quantity: 52, module: module.assembly-shop }
+    - { code: DTS1-09, name: "Refrigerator", description: "Keeps the windings cold.", mass: 21, length: 3.29, width: 1.46, height: 0.483, item: good.heat-pumps, quantity: 21, module: module.assembly-shop }
+    - { code: DTS1-10, name: "Coolant pumps", description: "Drive the coolant through wall and shield.", mass: 40, length: 4.08, width: 1.81, height: 0.599, item: good.pumps, quantity: 40, module: module.assembly-shop }
+    - { code: DTS1-11, name: "Coolant lines", description: "Pipes and manifolds.", mass: 73, length: 4.98, width: 2.22, height: 0.732, item: stock.st304-pl-3, quantity: 83.9, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

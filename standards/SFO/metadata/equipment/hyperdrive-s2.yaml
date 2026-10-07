@@ -18,6 +18,14 @@ needs:
   power: 1500000
 built_of:
   parts: hyperdrive-s2
+  shares: rule.shares-chosen
+  list:
+    - { code: HDS2-01, name: "Field coil cases", description: "Hold the coils that make the field, against their own force.", mass: 1800, length: 2.16, width: 1.44, height: 1.44, item: stock.ti64-pl-5, quantity: 2070.0, module: module.welding-bay }
+    - { code: HDS2-02, name: "Field coil windings", description: "Superconducting windings.", mass: 120, length: 0.876, width: 0.584, height: 0.584, item: stock.cu-wire-2, quantity: 138.0, module: module.machining-centre }
+    - { code: HDS2-03, name: "Power conditioning", description: "Feeds the coils from the plant.", mass: 800, length: 1.65, width: 1.1, height: 1.1, item: good.electronics, quantity: 800, module: module.assembly-shop }
+    - { code: HDS2-04, name: "Refrigerator", description: "Keeps the windings cold.", mass: 280, length: 1.16, width: 0.775, height: 0.775, item: good.heat-pumps, quantity: 280, module: module.assembly-shop }
+    - { code: HDS2-05, name: "Frame", description: "Carries the set and ties it to the hull.", mass: 800, length: 1.65, width: 1.1, height: 1.1, item: stock.al6061-pl-5-panel, quantity: 800.0, module: module.welding-bay }
+    - { code: HDS2-06, name: "Field computer", description: "Holds the field's shape as the ship moves.", mass: 200, length: 1.04, width: 0.693, height: 0.693, item: good.computers, quantity: 200, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

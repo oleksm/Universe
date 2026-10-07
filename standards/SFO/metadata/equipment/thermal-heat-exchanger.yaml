@@ -16,6 +16,10 @@ physical:
   height: 1.0
 built_of:
   parts: thermal-heat-exchanger
+  list:
+    - { code: HEX0-01, name: "Shell", description: "The pressure shell.", mass: 280, length: 1.06, width: 0.705, height: 0.705, item: stock.st304-pl-3, quantity: 322.0, module: module.welding-bay }
+    - { code: HEX0-02, name: "Tube bundle", description: "Hundreds of thin tubes the hot side runs through.", mass: 400, length: 1.19, width: 0.794, height: 0.794, item: stock.st304-pl-3, quantity: 460.0, module: module.machining-centre }
+    - { code: HEX0-03, name: "Headers", description: "The ends that gather the flows.", mass: 120, length: 0.797, width: 0.531, height: 0.531, item: stock.st304-pl-3, quantity: 138.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

@@ -18,6 +18,12 @@ needs:
   power: 40
 built_of:
   parts: sensors-altimeter-s1
+  list:
+    - { code: ALT1-01, name: "Laser head and optics", mass: 4, length: 0.238, width: 0.159, height: 0.119, item: good.electronics, quantity: 4, module: module.assembly-shop }
+    - { code: ALT1-02, name: "Housing", mass: 2, length: 0.201, width: 0.134, height: 0.1, item: stock.al6061-pl-5, quantity: 2.3, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Landing altimeter (30%), chosen." }] }
+    - { code: ALT1-03, name: "Electronics", mass: 2, length: 0.175, width: 0.117, height: 0.0877, item: good.electronics, quantity: 2, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Landing altimeter (20%), chosen." }] }
 making:
   module: module.assembly-shop
 function:

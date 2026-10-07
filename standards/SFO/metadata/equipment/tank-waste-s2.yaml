@@ -16,6 +16,10 @@ physical:
   height: 2.67
 built_of:
   parts: tank-waste-s2
+  list:
+    - { code: WST0-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 350, length: 2.37, width: 2.37, height: 2.37, item: stock.al6061-pl-5, quantity: 402.0, module: module.welding-bay }
+    - { code: WST0-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.al6061-pl-5, quantity: 86.2, module: module.cutting-table }
+    - { code: WST0-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.st304-pl-3, quantity: 86.2, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

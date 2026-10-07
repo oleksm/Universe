@@ -16,6 +16,10 @@ physical:
   height: 5.6
 built_of:
   parts: tank-methalox-s2
+  list:
+    - { code: TKML2-01, name: "Shell", mass: 3206, length: 4.97, width: 4.97, height: 4.97, item: stock.al6061-pl-5, quantity: 3687, module: module.welding-bay }
+    - { code: TKML2-02, name: "Insulation", mass: 916, length: 3.27, width: 3.27, height: 3.27, item: stock.mli-fl, quantity: 916, module: module.assembly-shop }
+    - { code: TKML2-03, name: "Fittings and gauging", mass: 458, length: 2.6, width: 2.6, height: 2.6, item: stock.st304-pl-3, quantity: 526.7, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

@@ -16,6 +16,10 @@ physical:
   height: 0.08
 built_of:
   parts: thermal-radiator-s1
+  list:
+    - { code: RAD1-01, name: "Panel", description: "The face sheets and the fins between.", mass: 132, length: 5.13, width: 2.56, height: 0.0655, item: stock.ti64-pl-5, quantity: 152.0, module: module.welding-bay }
+    - { code: RAD1-02, name: "Headers and tubes", description: "The coolant passages.", mass: 72, length: 4.19, width: 2.1, height: 0.0536, item: stock.ti64-tb-60x1p5, quantity: 82.8, module: module.machining-centre }
+    - { code: RAD1-03, name: "Hinge and lines", description: "The root hinge and the flexible lines through it.", mass: 36, length: 3.33, width: 1.66, height: 0.0425, item: stock.st4340-bar-120, quantity: 41.4, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

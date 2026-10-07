@@ -17,6 +17,15 @@ needs:
   power: 200000
 built_of:
   parts: comm-long-s1
+  list:
+    - { code: CML1-01, name: "Transponder and amplifiers", mass: 59, length: 1.74, width: 1.74, height: 0.349, item: good.electronics, quantity: 59, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: CML1-02, name: "Dish", mass: 72, length: 1.86, width: 1.86, height: 0.373, item: stock.al6061-sh-2-panel, quantity: 72.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: CML1-03, name: "Gimbal", description: "Points the dish.", mass: 143, length: 2.34, width: 2.34, height: 0.469, item: good.electric-motors, quantity: 143, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: CML1-04, name: "Waveguide", mass: 26, length: 1.33, width: 1.33, height: 0.266, item: stock.cu-wire-2, quantity: 29.9, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
 making:
   module: module.assembly-shop
 function:

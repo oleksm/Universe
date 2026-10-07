@@ -16,6 +16,10 @@ physical:
   height: 0.6
 built_of:
   parts: utility-transfer-boom
+  list:
+    - { code: TBM0-01, name: "Boom", description: "Telescoping tube.", mass: 450, length: 6.35, width: 0.476, height: 0.476, item: stock.al6061-tb-120x3, quantity: 518.0, module: module.welding-bay }
+    - { code: TBM0-02, name: "Hose and coupling", mass: 270, length: 5.36, width: 0.402, height: 0.402, item: stock.st304-pl-3, quantity: 310.0, module: module.machining-centre }
+    - { code: TBM0-03, name: "Rams and controls", mass: 180, length: 4.68, width: 0.351, height: 0.351, item: stock.st4340-bar-120, quantity: 207.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

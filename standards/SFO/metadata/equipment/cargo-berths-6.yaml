@@ -18,6 +18,10 @@ needs:
   power: 300
 built_of:
   parts: cargo-berths-6
+  list:
+    - { code: BRT6-01, name: "Bunks and lockers", description: "A bunk, a locker and a reading light a head.", mass: 351, length: 2.3, width: 1.53, height: 1.53, item: stock.al6061-pl-5, quantity: 403.6, module: module.machining-centre }
+    - { code: BRT6-02, name: "Partition and door", description: "The wall round them.", mass: 312, length: 2.21, width: 1.47, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 358.8, module: module.welding-bay }
+    - { code: BRT6-03, name: "Linings, bedding, lights", mass: 117, length: 1.59, width: 1.06, height: 1.06, item: stock.mli-fl, quantity: 117, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

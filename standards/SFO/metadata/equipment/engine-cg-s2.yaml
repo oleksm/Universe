@@ -18,6 +18,10 @@ needs:
   power: 100
 built_of:
   parts: engine-cg-s2
+  list:
+    - { code: CGE2-01, name: "Nozzles and valves", mass: 48, length: 0.59, width: 0.59, height: 0.59, item: stock.st304-pl-3, quantity: 55.2, module: module.machining-centre }
+    - { code: CGE2-02, name: "Regulator and manifold", mass: 24, length: 0.469, width: 0.469, height: 0.469, item: stock.st304-pl-3, quantity: 27.6, module: module.machining-centre }
+    - { code: CGE2-03, name: "Controller", mass: 8, length: 0.325, width: 0.325, height: 0.325, item: good.electronics, quantity: 8, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

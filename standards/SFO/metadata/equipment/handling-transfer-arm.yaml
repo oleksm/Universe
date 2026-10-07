@@ -16,6 +16,10 @@ physical:
   height: 1.5
 built_of:
   parts: handling-transfer-arm
+  list:
+    - { code: TRA0-01, name: "Boom", description: "Telescoping tube sections.", mass: 1800, length: 11.5, width: 1.15, height: 1.15, item: stock.st4340-tb-200x5, quantity: 2070.0, module: module.welding-bay }
+    - { code: TRA0-02, name: "Conveyor", description: "The belt along the boom.", mass: 1200, length: 10.0, width: 1.0, height: 1.0, item: stock.st4340-bar-120, quantity: 1380.0, module: module.machining-centre }
+    - { code: TRA0-03, name: "Slew and luff", description: "The bearing and rams that aim it.", mass: 1000, length: 9.45, width: 0.945, height: 0.945, item: stock.st4340-bar-120, quantity: 1150.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

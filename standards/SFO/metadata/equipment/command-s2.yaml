@@ -18,6 +18,11 @@ needs:
   power: 2500
 built_of:
   parts: command-s2
+  list:
+    - { code: CMD2-01, name: "Seats and harnesses", description: "Rated to the station's g.", mass: 75, length: 1.33, width: 0.724, height: 0.906, item: stock.al6061-pl-5, quantity: 86.25, module: module.machining-centre }
+    - { code: CMD2-02, name: "Consoles and frame", description: "Controls, pedestal and the structure they stand on.", mass: 112, length: 1.52, width: 0.829, height: 1.04, item: stock.al6061-pl-5, quantity: 128.8, module: module.machining-centre }
+    - { code: CMD2-03, name: "Displays and computers", mass: 119, length: 1.55, width: 0.846, height: 1.06, item: good.electronics, quantity: 119, module: module.assembly-shop }
+    - { code: CMD2-04, name: "Wiring and linings", mass: 34, length: 1.02, width: 0.557, height: 0.696, item: stock.mli-fl, quantity: 34, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

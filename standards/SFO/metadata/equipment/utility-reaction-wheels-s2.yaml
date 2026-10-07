@@ -16,6 +16,10 @@ physical:
   height: 1.5
 built_of:
   parts: utility-reaction-wheels-s2
+  list:
+    - { code: RWH0-01, name: "Wheels", description: "Four, in a pyramid.", mass: 840, length: 1.33, width: 1.33, height: 1.33, item: stock.st4340-fg, quantity: 966.0, module: module.machining-centre }
+    - { code: RWH0-02, name: "Motors and bearings", mass: 240, length: 0.877, width: 0.877, height: 0.877, item: stock.cu-wire-2, quantity: 276.0, module: module.electronics-works }
+    - { code: RWH0-03, name: "Frame", mass: 120, length: 0.696, width: 0.696, height: 0.696, item: stock.st4340-tb-120x3, quantity: 138.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

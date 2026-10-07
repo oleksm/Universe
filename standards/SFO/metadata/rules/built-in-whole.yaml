@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.built-in-whole
+  name: "Built in whole, as bought"
+  about: "What a part that is not cut from stock is made of."
+statement: "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials."
+tier: invented
+review: true

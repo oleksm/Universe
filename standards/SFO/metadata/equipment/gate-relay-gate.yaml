@@ -18,6 +18,14 @@ needs:
   power: 2000000
 built_of:
   parts: gate-relay-gate
+  shares: rule.shares-chosen
+  list:
+    - { code: RLGT-01, name: "Field coil cases", description: "Hold the coils that open a thread through hyperspace.", mass: 14000, length: 4.28, width: 2.85, height: 2.85, item: stock.ti64-pl-5, quantity: 16100.0, module: module.welding-bay }
+    - { code: RLGT-02, name: "Field coil windings", description: "Superconducting windings.", mass: 800, length: 1.65, width: 1.1, height: 1.1, item: stock.cu-wire-2, quantity: 920.0, module: module.machining-centre }
+    - { code: RLGT-03, name: "Power conditioning", mass: 8000, length: 3.56, width: 2.37, height: 2.37, item: good.electronics, quantity: 8000, module: module.assembly-shop }
+    - { code: RLGT-04, name: "Refrigerator", description: "Keeps the windings cold.", mass: 2400, length: 2.38, width: 1.59, height: 1.59, item: good.heat-pumps, quantity: 2400, module: module.assembly-shop }
+    - { code: RLGT-05, name: "Switching computers", description: "Sort the messages and throw them in turn.", mass: 4800, length: 3.0, width: 2.0, height: 2.0, item: good.computers, quantity: 4800, module: module.assembly-shop }
+    - { code: RLGT-06, name: "Frame", mass: 10000, length: 3.83, width: 2.55, height: 2.55, item: stock.al6061-pl-5-panel, quantity: 10000.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

@@ -18,6 +18,10 @@ needs:
   power: 3000
 built_of:
   parts: cargo-galley-s1
+  list:
+    - { code: GAL1-01, name: "Cabinet and worktop", mass: 100, length: 1.11, width: 0.663, height: 1.47, item: stock.al6061-pl-5, quantity: 115, module: module.machining-centre }
+    - { code: GAL1-02, name: "Cold store and ovens", description: "A refrigerator and two heaters.", mass: 112, length: 1.15, width: 0.69, height: 1.53, item: good.heat-pumps, quantity: 112, module: module.assembly-shop }
+    - { code: GAL1-03, name: "Water fittings", description: "A tap, a drain to the waste water.", mass: 38, length: 0.797, width: 0.478, height: 1.06, item: stock.st304-pl-3, quantity: 43.7, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

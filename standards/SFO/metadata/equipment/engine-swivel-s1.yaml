@@ -18,6 +18,10 @@ needs:
   power: 2000
 built_of:
   parts: engine-swivel-s1
+  list:
+    - { code: SWV1-01, name: "Trunnion and bearing", mass: 35, length: 0.635, width: 0.635, height: 0.317, item: stock.ti64-pl-5, quantity: 40.25, module: module.machining-centre }
+    - { code: SWV1-02, name: "Actuators", mass: 21, length: 0.536, width: 0.536, height: 0.268, item: good.electric-motors, quantity: 21, module: module.assembly-shop }
+    - { code: SWV1-03, name: "Frame", mass: 14, length: 0.468, width: 0.468, height: 0.234, item: stock.al6061-pl-5, quantity: 16.1, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

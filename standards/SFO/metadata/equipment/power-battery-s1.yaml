@@ -16,6 +16,10 @@ physical:
   height: 1.2
 built_of:
   parts: power-battery-s1
+  list:
+    - { code: BAT0-01, name: "Cells", description: "Lithium cells in modules.", mass: 1425, length: 1.82, width: 0.909, height: 1.09, item: stock.al6061-sh-2, quantity: 1640.0, module: module.electronics-works }
+    - { code: BAT0-02, name: "Case and cooling", description: "The case and the cooling plates.", mass: 285, length: 1.06, width: 0.531, height: 0.638, item: stock.al6061-pl-5, quantity: 328.0, module: module.welding-bay }
+    - { code: BAT0-03, name: "Management", description: "Monitoring and balancing.", mass: 190, length: 0.928, width: 0.464, height: 0.557, item: stock.cu-wire-2, quantity: 218.0, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:

@@ -16,6 +16,23 @@ physical:
   height: 2.0
 built_of:
   parts: power-fusion-s1
+  shares: rule.discovery-ii-reactor-shares
+  list:
+    - { code: PFS1-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 70, length: 4.07, width: 2.03, height: 0.678, item: stock.sic-tl-10, quantity: 80.5, module: module.machining-centre }
+    - { code: PFS1-02, name: "Field coil cases", description: "Hold the field coils against their own force.", mass: 641, length: 8.51, width: 4.25, height: 1.42, item: stock.ti64-pl-5, quantity: 737.1, module: module.welding-bay }
+    - { code: PFS1-03, name: "Field coil windings", description: "The superconducting windings.", mass: 8, length: 1.97, width: 0.986, height: 0.329, item: stock.cu-wire-2, quantity: 9.2, module: module.machining-centre }
+    - { code: PFS1-04, name: "Shaping coils and bracing", description: "Shape and hold the plasma.", mass: 388, length: 7.2, width: 3.6, height: 1.2, item: stock.ti64-pl-5, quantity: 446.2, module: module.welding-bay }
+    - { code: PFS1-05, name: "Shield", description: "Carbon between the plasma and the coils.", mass: 453, length: 7.58, width: 3.79, height: 1.26, item: good.carbon, quantity: 453, module: module.assembly-shop }
+    - { code: PFS1-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 20, length: 2.68, width: 1.34, height: 0.446, item: stock.ti64-pl-5, quantity: 23.0, module: module.machining-centre }
+    - { code: PFS1-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 15, length: 2.43, width: 1.22, height: 0.405, item: good.electric-motors, quantity: 15, module: module.assembly-shop }
+    - { code: PFS1-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 30, length: 3.07, width: 1.53, height: 0.511, item: good.electronics, quantity: 30, module: module.assembly-shop }
+    - { code: PFS1-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 50, length: 3.63, width: 1.82, height: 0.606, item: stock.cfc-pl-3, quantity: 57.5, module: module.welding-bay }
+    - { code: PFS1-10, name: "Frame", description: "Carries the set.", mass: 10, length: 2.13, width: 1.06, height: 0.354, item: stock.al6061-pl-5-panel, quantity: 10.0, module: module.welding-bay }
+    - { code: PFS1-11, name: "Flywheel", description: "Evens the load.", mass: 25, length: 2.88, width: 1.44, height: 0.481, item: stock.st4340-bar-120, quantity: 28.7, module: module.machining-centre }
+    - { code: PFS1-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 20, length: 2.68, width: 1.34, height: 0.446, item: good.pumps, quantity: 20, module: module.assembly-shop }
+    - { code: PFS1-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 35, length: 3.23, width: 1.61, height: 0.538, item: stock.st304-pl-3, quantity: 40.2, module: module.welding-bay }
+    - { code: PFS1-14, name: "Refrigerator", description: "Keeps the windings cold.", mass: 10, length: 2.13, width: 1.06, height: 0.354, item: good.heat-pumps, quantity: 10, module: module.assembly-shop }
+    - { code: PFS1-15, name: "Plasma heater", description: "Brings the plasma to burning.", mass: 25, length: 2.88, width: 1.44, height: 0.481, item: good.electronics, quantity: 25, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

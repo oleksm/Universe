@@ -18,6 +18,17 @@ needs:
   power: 2500000
 built_of:
   parts: hardpoint-pulse-laser-s1
+  list:
+    - { code: LSP1-01, name: "Laser modules", mass: 420, length: 3.52, width: 2.82, height: 1.41, item: good.electronics, quantity: 420, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A fibre laser weapon is a quarter efficient, and its cooling load three times its beam." }] }
+    - { code: LSP1-02, name: "Beam director", description: "The mirror and its glass.", mass: 144, length: 2.47, width: 1.97, height: 0.986, item: good.glass, quantity: 144, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A fibre laser weapon is a quarter efficient, and its cooling load three times its beam." }] }
+    - { code: LSP1-03, name: "Pointing drives", mass: 120, length: 2.32, width: 1.86, height: 0.928, item: good.electric-motors, quantity: 120, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A fibre laser weapon is a quarter efficient, and its cooling load three times its beam." }] }
+    - { code: LSP1-04, name: "Cooler", description: "Takes away the heat that did not become light: the part that limits it.", mass: 360, length: 3.35, width: 2.68, height: 1.34, item: good.heat-pumps, quantity: 360, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A fibre laser weapon is a quarter efficient, and its cooling load three times its beam." }] }
+    - { code: LSP1-05, name: "Frame", mass: 156, length: 2.53, width: 2.03, height: 1.01, item: stock.al6061-pl-5-panel, quantity: 156.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A fibre laser weapon is a quarter efficient, and its cooling load three times its beam." }] }
 making:
   module: module.assembly-shop
 function:

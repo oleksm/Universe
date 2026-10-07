@@ -18,6 +18,10 @@ needs:
   power: 500
 built_of:
   parts: cargo-head-s1
+  list:
+    - { code: HED1-01, name: "Compartment and door", mass: 90, length: 0.92, width: 0.766, height: 1.53, item: stock.al6061-sh-2-panel, quantity: 103.5, module: module.welding-bay }
+    - { code: HED1-02, name: "Toilet and basin", description: "A space toilet with its fans and separator; a basin.", mass: 80, length: 0.884, width: 0.737, height: 1.47, item: good.pumps, quantity: 80, module: module.assembly-shop }
+    - { code: HED1-03, name: "Fittings and linings", mass: 30, length: 0.638, width: 0.531, height: 1.06, item: stock.st304-pl-3, quantity: 34.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

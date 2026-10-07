@@ -18,6 +18,15 @@ needs:
   power: 360.0
 built_of:
   parts: comm-basic-s1
+  list:
+    - { code: CMS1-01, name: "Transponder and amplifiers", mass: 18.0, length: 1.75, width: 1.75, height: 0.351, item: good.electronics, quantity: 18.0, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
+    - { code: CMS1-02, name: "Dish", mass: 22.5, length: 1.89, width: 1.89, height: 0.378, item: stock.al6061-sh-2-panel, quantity: 22.5, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
+    - { code: CMS1-03, name: "Gimbal", description: "Points the dish.", mass: 40.5, length: 2.3, width: 2.3, height: 0.46, item: good.electric-motors, quantity: 40.5, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
+    - { code: CMS1-04, name: "Waveguide", mass: 9.0, length: 1.39, width: 1.39, height: 0.278, item: stock.cu-wire-2, quantity: 10.3, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
 making:
   module: module.assembly-shop
 function:

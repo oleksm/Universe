@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.haul-truck-shares
+  name: "Ore bay shares, as a haul truck's body"
+  about: "How an ore bay's weight is split into parts."
+statement: "Its share of the bay: shell, liners, doors, gate and frame, as a haul truck's body divides (a 363 t truck's 40 t body), from memory. Not sourced."
+tier: invented
+review: true

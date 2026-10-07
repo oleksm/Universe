@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.shares-chosen
+  name: "Shares chosen, by a real device where one exists"
+  about: "How a first design's parts got their shares of its weight."
+statement: "Its share of the whole, chosen: where a real device of the kind has a published breakdown (research_ship_equipment.json) the shares follow it, brought to this product's weight; where none exists the shares are judged."
+tier: derived
+source: "standards/sources/research_ship_equipment.json"
+review: true

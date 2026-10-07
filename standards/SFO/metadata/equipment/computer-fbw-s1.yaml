@@ -18,6 +18,17 @@ needs:
   power: 200.0
 built_of:
   parts: computer-fbw-s1
+  list:
+    - { code: FCS1-01, name: "Flight computers", description: "Three, voting.", mass: 9.0, length: 0.335, width: 0.268, height: 0.167, item: good.computers, quantity: 9.0, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-02, name: "Inertial units and star trackers", description: "Feel the ship's turning and see where it points.", mass: 4.5, length: 0.266, width: 0.213, height: 0.133, item: good.electronics, quantity: 4.5, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-03, name: "Thruster drivers", description: "Switch the thrusters.", mass: 7.5, length: 0.315, width: 0.252, height: 0.157, item: good.electronics, quantity: 7.5, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-04, name: "Cabinet and cold plates", mass: 6.0, length: 0.292, width: 0.234, height: 0.146, item: stock.al6061-sh-2-panel, quantity: 6.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
+    - { code: FCS1-05, name: "Harness", description: "The wiring to every nozzle.", mass: 3.0, length: 0.232, width: 0.186, height: 0.116, item: stock.cu-wire-2, quantity: 3.45, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
 making:
   module: module.assembly-shop
 function:

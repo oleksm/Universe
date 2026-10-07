@@ -16,6 +16,14 @@ physical:
   height: 5.35
 built_of:
   parts: tank-deuterium-s1
+  shares: rule.shares-chosen
+  list:
+    - { code: TKS1-01, name: "Shell", description: "The pressure wall and its frames.", mass: 481, length: 4.97, width: 4.97, height: 4.97, item: stock.al6061-sh-2-panel, quantity: 481, module: module.welding-bay }
+    - { code: TKS1-02, name: "Insulation", description: "A blanket of reflecting layers that keeps the star's heat out of fuel at 20 K.", mass: 34, length: 2.05, width: 2.05, height: 2.05, item: stock.mli-fl, quantity: 39.1, module: module.assembly-shop,
+        basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
+    - { code: TKS1-03, name: "Feed pump and valves", description: "Draw the fuel off to the engines.", mass: 34, length: 2.05, width: 2.05, height: 2.05, item: good.pumps, quantity: 34, module: module.assembly-shop }
+    - { code: TKS1-04, name: "Gauging", description: "Sensors and their box: how much is left.", mass: 17, length: 1.63, width: 1.63, height: 1.63, item: good.electronics, quantity: 17, module: module.assembly-shop }
+    - { code: TKS1-05, name: "Mountings", description: "The struts that hold it to the hull and let little heat through.", mass: 34, length: 2.05, width: 2.05, height: 2.05, item: stock.ti64-pl-5, quantity: 39.1, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

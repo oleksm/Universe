@@ -17,6 +17,19 @@ needs:
   power: 1100000
 built_of:
   parts: drive-kestrel-k2
+  shares: rule.discovery-ii-engine-shares
+  list:
+    - { code: DKK2-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 198, length: 8.05, width: 3.59, height: 1.19, item: stock.sic-tl-10, quantity: 227.7, module: module.machining-centre }
+    - { code: DKK2-02, name: "Field coil cases", description: "The beams and cases that hold the field coils against their own force: most of the engine's weight.", mass: 1796, length: 16.8, width: 7.49, height: 2.47, item: stock.ti64-pl-5, quantity: 2065.4, module: module.welding-bay }
+    - { code: DKK2-03, name: "Field coil windings", description: "The superconducting windings themselves: a few kilograms of tape, nearly all of it copper and steel around a film of superconductor.", mass: 21, length: 3.81, width: 1.7, height: 0.561, item: stock.cu-wire-2, quantity: 24.1, module: module.machining-centre }
+    - { code: DKK2-04, name: "Shaping coils and bracing", description: "The coils that shape and hold the plasma, and the bracing between them.", mass: 1088, length: 14.2, width: 6.34, height: 2.09, item: stock.ti64-pl-5, quantity: 1251.2, module: module.welding-bay }
+    - { code: DKK2-05, name: "Shield", description: "Half a metre of carbon between the plasma and the coils, to stop what would warm and spoil them.", mass: 1273, length: 15.0, width: 6.68, height: 2.2, item: good.carbon, quantity: 1273, module: module.assembly-shop }
+    - { code: DKK2-06, name: "Magnetic nozzle", description: "The coils that open the field astern and turn the plasma's heat into a jet.", mass: 85, length: 6.07, width: 2.71, height: 0.894, item: stock.ti64-pl-5, quantity: 97.7, module: module.welding-bay }
+    - { code: DKK2-07, name: "Fuel feed", description: "The injector and its lines from the tank.", mass: 85, length: 6.07, width: 2.71, height: 0.894, item: stock.st304-pl-3, quantity: 97.7, module: module.machining-centre }
+    - { code: DKK2-08, name: "Plasma heater", description: "The radio-frequency source that brings the plasma to burning.", mass: 71, length: 5.72, width: 2.55, height: 0.842, item: good.electronics, quantity: 71, module: module.assembly-shop }
+    - { code: DKK2-09, name: "Refrigerator", description: "Keeps the windings cold.", mass: 28, length: 4.19, width: 1.87, height: 0.617, item: good.heat-pumps, quantity: 28, module: module.assembly-shop }
+    - { code: DKK2-10, name: "Coolant pumps", description: "Drive the coolant through wall and shield.", mass: 54, length: 5.22, width: 2.33, height: 0.769, item: good.pumps, quantity: 54, module: module.assembly-shop }
+    - { code: DKK2-11, name: "Coolant lines", description: "Pipes and manifolds.", mass: 101, length: 6.43, width: 2.87, height: 0.947, item: stock.st304-pl-3, quantity: 116.1, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

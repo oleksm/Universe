@@ -16,6 +16,9 @@ physical:
   height: 0.6
 built_of:
   parts: utility-pumps-s1
+  list:
+    - { code: PMP0-01, name: "Pumps", description: "Two centrifugal pumps.", mass: 150, length: 0.843, width: 0.506, height: 0.506, item: stock.st4340-bar-120, quantity: 172.0, module: module.machining-centre }
+    - { code: PMP0-02, name: "Motors and controls", description: "Their motors and the controls.", mass: 100, length: 0.737, width: 0.442, height: 0.442, item: stock.cu-wire-2, quantity: 115.0, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:

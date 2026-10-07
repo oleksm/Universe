@@ -16,6 +16,11 @@ physical:
   height: 1.5
 built_of:
   parts: engine-ch-s2
+  list:
+    - { code: CHE2-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 135, length: 1.76, width: 1.15, height: 1.15, item: stock.st304-pl-3, quantity: 155.2, module: module.welding-bay }
+    - { code: CHE2-02, name: "Turbopumps", mass: 90, length: 1.54, width: 1, height: 1, item: good.pumps, quantity: 90, module: module.assembly-shop }
+    - { code: CHE2-03, name: "Valves, lines and injector", mass: 45, length: 1.22, width: 0.797, height: 0.797, item: stock.st304-pl-3, quantity: 51.75, module: module.machining-centre }
+    - { code: CHE2-04, name: "Controller and gimbal actuators", mass: 30, length: 1.07, width: 0.696, height: 0.696, item: good.electric-motors, quantity: 30, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

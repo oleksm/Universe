@@ -144,7 +144,7 @@ fit:
   count: 1
 basis:
   - {{ of: [physical.mass, fit], tier: invented, review: true, note: {q(f"Its share of the {whole} ({share:.0%}), chosen.")} }}
-  - {{ of: [made_from, making], rule: rule.cut-loss }}
+  - {{ of: [made_from, making], rule: {"rule.cut-loss" if cut > 1 else "rule.built-in-whole"} }}
   - {{ of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }}
 ''')
 

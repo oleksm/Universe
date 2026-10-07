@@ -16,6 +16,10 @@ physical:
   height: 0.6
 built_of:
   parts: handling-conveyor-s1
+  list:
+    - { code: CNV1-01, name: "Frame", description: "Tube stringers and cross members.", mass: 480, length: 5.89, width: 0.589, height: 0.442, item: stock.al6061-tb-120x3, quantity: 552.0, module: module.welding-bay }
+    - { code: CNV1-02, name: "Belt and rollers", description: "The belt, its idlers and the drums.", mass: 480, length: 5.89, width: 0.589, height: 0.442, item: stock.st4340-bar-120, quantity: 552.0, module: module.machining-centre }
+    - { code: CNV1-03, name: "Drive", description: "Motor, gearbox and controls.", mass: 240, length: 4.68, width: 0.468, height: 0.351, item: stock.st4340-bar-120, quantity: 276.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

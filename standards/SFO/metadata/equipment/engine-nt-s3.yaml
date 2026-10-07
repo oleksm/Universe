@@ -16,6 +16,12 @@ physical:
   height: 2.5
 built_of:
   parts: engine-nt-s3
+  list:
+    - { code: NTE3-01, name: "Reactor core and vessel", description: "Fuel elements in their pressure vessel.", mass: 7200, length: 5.16, width: 1.84, height: 1.84, item: stock.ti64-pl-5, quantity: 8280, module: module.welding-bay }
+    - { code: NTE3-02, name: "Shadow shield", mass: 4500, length: 4.41, width: 1.57, height: 1.57, item: good.carbon, quantity: 4500, module: module.assembly-shop }
+    - { code: NTE3-03, name: "Nozzle", description: "Regeneratively cooled.", mass: 2700, length: 3.72, width: 1.33, height: 1.33, item: stock.st304-pl-3, quantity: 3105, module: module.welding-bay }
+    - { code: NTE3-04, name: "Turbopump and feed", mass: 2160, length: 3.45, width: 1.23, height: 1.23, item: good.pumps, quantity: 2160, module: module.assembly-shop }
+    - { code: NTE3-05, name: "Controls", mass: 1440, length: 3.02, width: 1.08, height: 1.08, item: good.electronics, quantity: 1440, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

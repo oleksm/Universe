@@ -16,6 +16,13 @@ physical:
   height: 1.08
 built_of:
   parts: cargo-ore-bay-5t
+  shares: rule.haul-truck-shares
+  list:
+    - { code: OBS01-01, name: "Shell", description: "The hopper's plates, sloped to the gate.", mass: 200, length: 1.592, width: 0.796, height: 0.796, item: stock.sta36-pl-20, quantity: 230.0, module: module.welding-bay }
+    - { code: OBS01-02, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 100, length: 1.263, width: 0.632, height: 0.632, item: stock.st4340-pl-3, quantity: 115.0, module: module.cutting-table }
+    - { code: OBS01-03, name: "Top doors", description: "The pair that opens to the excavator and shuts for flight.", mass: 75, length: 1.148, width: 0.574, height: 0.574, item: stock.al6061-pl-5, quantity: 86.2, module: module.welding-bay }
+    - { code: OBS01-04, name: "Discharge gate", description: "The slide at the bottom, and its drive, that lets the ore out at the dock.", mass: 50, length: 1.003, width: 0.501, height: 0.501, item: stock.st4340-bar-120, quantity: 57.5, module: module.machining-centre }
+    - { code: OBS01-05, name: "Frame", description: "Tube chords and uprights that carry the hopper to its mount.", mass: 75, length: 1.148, width: 0.574, height: 0.574, item: stock.st4340-tb-160x5, quantity: 86.2, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

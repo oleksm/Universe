@@ -16,6 +16,9 @@ physical:
   height: 1
 built_of:
   parts: tank-nitrogen-s1
+  list:
+    - { code: TKN1-01, name: "Composite pressure vessel", mass: 120, length: 1.11, width: 0.928, height: 0.928, item: stock.cfc-pl-3, quantity: 138, module: module.welding-bay }
+    - { code: TKN1-02, name: "Valves and regulator", mass: 30, length: 0.702, width: 0.585, height: 0.585, item: stock.st304-pl-3, quantity: 34.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
