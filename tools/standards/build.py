@@ -2465,7 +2465,7 @@ for _f in sorted(os.listdir(_mdir)) if os.path.isdir(_mdir) else []:
     MOUNTS[_m["identity"]["key"]] = _m
 rows = []
 for e_ in equipment:
-    raw = load_rec(e_)
+    raw = yaml.safe_load(open(os.path.join(TREE, e_["file"]), encoding="utf-8")) or {}   # (the record as written: keys, not the old view's names)
     mk = raw.get("fits")
     if not mk:
         continue
