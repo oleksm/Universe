@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.fte1-05
+  code: FTE1-05
+  name: "Coolant and refrigeration"
+  revision: draft
+  description: ""
+physical:
+  mass: 1200
+  length: 2.05
+  width: 1.03
+  height: 1.03
+made_from:
+  - item: good.pumps
+    quantity: 1200
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Fusion thermal engine S1 (4%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Fusion thermal engine S1: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

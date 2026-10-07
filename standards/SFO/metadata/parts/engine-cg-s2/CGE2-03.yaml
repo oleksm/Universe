@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.cge2-03
+  code: CGE2-03
+  name: "Controller"
+  revision: draft
+  description: ""
+physical:
+  mass: 8
+  length: 0.325
+  width: 0.325
+  height: 0.325
+made_from:
+  - item: good.electronics
+    quantity: 8
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Cold gas block, 5 kN (10%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Cold gas block, 5 kN: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

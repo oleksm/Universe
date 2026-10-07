@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.nitrogen.s1
+  name: "Nitrogen bottle S1"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A composite bottle holding 300 kg of nitrogen at 300 bar: ten minutes of a 0.5 kN block at full."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 150
+  volume: 1.2
+  length: 1.2
+  width: 1
+  height: 1
+built_of:
+  parts: tank-nitrogen-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 300
+  holds: material.nitrogen
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "A composite overwrapped pressure vessel at about half a kilogram a kilogram of gas. From memory; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

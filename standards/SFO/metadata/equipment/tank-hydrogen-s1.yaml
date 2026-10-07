@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.hydrogen.s1
+  name: "Hydrogen tank S1"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 49 m3 tank holding 3,500 kg of hydrogen."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 1400
+  volume: 97.3
+  length: 4.6
+  width: 4.6
+  height: 4.6
+built_of:
+  parts: tank-hydrogen-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 3500
+  holds: material.hydrogen
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S1's volume filled with hydrogen at 71 kg/m3; a cryogenic tank at 20 K with its insulation and boil-off plant: 40% of its light contents. Chosen; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

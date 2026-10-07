@@ -1,8 +1,8 @@
 # yaml-language-server: $schema=../../../../../schema/parcel.schema.yaml
-# Invented outline.
+# Invented outline, deepened south to 650 m for the propellant plant and tank farm (2026-10-06).
 identity:
   key: parcel.treistun.port-trethi.2
 number: 2
 owner: org.aurel
 address: { street: street.treistun.port-trethi.east-road, number: 2 }
-outline: [[1150, -250], [1400, -250], [1400, 250], [1150, 250]]
+outline: [[1150, -250], [1400, -250], [1400, 400], [1150, 400]]

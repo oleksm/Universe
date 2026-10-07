@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../../schema/part.schema.yaml
+identity:
+  key: part.swv4-02
+  code: SWV4-02
+  name: "Actuators"
+  revision: draft
+  description: ""
+physical:
+  mass: 540
+  length: 2.01
+  width: 2.01
+  height: 0.669
+made_from:
+  - item: good.electric-motors
+    quantity: 540
+making:
+  module: module.assembly-shop
+fit:
+  count: 1
+basis:
+  - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Engine swivel S4 (30%), chosen." }
+  - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Engine swivel S4: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }

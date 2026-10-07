@@ -17,8 +17,8 @@ q = lambda s: '"' + s.replace('"', '\\"') + '"'
 def r(v, n=3): return float(f"{v:.{n}g}")
 NAMES = {"power": "power plant", "drive": "main drive", "thrusters": "thruster", "lift": "lift", "tank": "tank", "cargo": "cargo", "hyperdrive": "hyperdrive", "capacitor": "capacitor",
          "computer": "flight computer", "transponder": "transponder", "sensors": "sensor", "comm": "comm", "life_support": "life support", "hardpoint": "hardpoint", "utility": "utility",
-         "avionics": "avionics", "gear": "landing gear", "access": "access", "handling": "handling", "thermal": "thermal"}
-PATTERN = {"drive": ("ring", 8), "thrusters": ("ring", 4), "lift": ("ring", 6), "tank": ("saddles", 4), "gear": ("trunnion", 3), "hardpoint": ("ring", 4), "access": ("ring", 8), "thermal": ("corners", 4)}
+         "avionics": "avionics", "gear": "landing gear", "access": "access", "handling": "handling", "thermal": "thermal", "command": "command station", "engine": "engine"}
+PATTERN = {"drive": ("ring", 8), "thrusters": ("ring", 4), "lift": ("ring", 6), "tank": ("saddles", 4), "gear": ("trunnion", 3), "hardpoint": ("ring", 4), "access": ("ring", 8), "thermal": ("corners", 4), "engine": ("ring", 8)}
 M, DESIGN_G = 1.25, 3 * 9.80665
 
 

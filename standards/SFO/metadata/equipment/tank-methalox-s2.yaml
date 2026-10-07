@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.methalox.s2
+  name: "Methalox tank S2"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 92 m3 tank holding 76,400 kg of methalox."
+size_class: 2
+fits: mount.tank-s2
+physical:
+  mass: 4580
+  volume: 176
+  length: 5.6
+  width: 5.6
+  height: 5.6
+built_of:
+  parts: tank-methalox-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 76400
+  holds: material.methalox
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S2's volume filled with methalox at 830 kg/m3; a low-pressure liquid tank at 6% of its contents. Chosen; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

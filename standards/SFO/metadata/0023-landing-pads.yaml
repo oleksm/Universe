@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../schema/standard.schema.yaml
+identity:
+  key: standard.sfo.23
+title: Landing pads
+parent: standard.sfo.3
+purpose: A pad is rated by the jet it stands. A ship may set down where the pad's class is at least its landing jet's power, and nowhere else without breaking the port's law. The classes let a port exist beside the ships that land at it, and tell a design what it may land on.
+details:
+  text:
+    - "Class 1, 100 MW: a camp's pad, bare ground or plates; cold gas and small chemical engines; a light lander on a low-gravity world."
+    - "Class 2, 1 GW: a port's pad, refractory concrete with a flame trench; a heavy lander on chemistry at a fraction of a g, or a light one at 1 g."
+    - "Class 3, 10 GW: a major port's pad, a water deluge and a trench the size of a launch pad's (a Saturn V's first stage put about 45 GW on its pad for a minute); heavy ships on chemistry or a fission core at 1 g."
+    - "Beyond class 3 nothing lands: a fusion jet at hundreds of gigawatts stays in orbit. A pad also says the stand-off round it, within which nothing else may be, by its class; and a nuclear thermal exhaust, slightly active, is for class 3 pads that take it, by the port's law."
+    - "The classes are chosen (2026-10-06) to give a design something to be sized against; the figures on each port's pads, and what the law does about a breach, are the administration's. Review."
+status: draft

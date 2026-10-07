@@ -501,6 +501,12 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     fn camera(&mut self, _: &r::EquipmentFunctionCamera) -> Self::Out {
         None
     }
+    fn engine(&mut self, _: &r::EquipmentFunctionEngine) -> Self::Out {
+        None
+    }
+    fn swivel(&mut self, _: &r::EquipmentFunctionSwivel) -> Self::Out {
+        None
+    }
     /// A landing leg as a product: not made yet (`x-in-game: not made`); legs are reckoned from a hull's parts (`world::legs`).
     fn landing_gear(&mut self, _: &r::EquipmentFunctionLandingGear) -> Self::Out {
         None

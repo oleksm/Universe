@@ -482,11 +482,25 @@ pub(crate) fn stock_fit(slots: &[(String, SlotKind, u8)]) -> Result<Vec<(String,
     let cheapest = |kind: SlotKind, size: u8| c.modules.iter().map(|(_, m)| m).filter(|m| m.does.slot() == kind && m.size <= size).min_by(|a, b| a.price.total_cmp(&b.price));
     let mut fit = Vec::new();
     let mut draw = 0.0;
+    // (The tank must hold what the drive burns: the registry has propellant tanks for other engines (SFO 22), and the cheapest tank is a nitrogen bottle.)
+    let mut fuel: Option<String> = None;
     for (name, kind, size) in slots {
         if matches!(kind, SlotKind::Power | SlotKind::Hardpoint | SlotKind::Utility) {
             continue;
         }
-        let m = cheapest(*kind, *size).ok_or_else(|| format!("no module fits its {} slot", name))?;
+        let m = match (kind, &fuel) {
+            (SlotKind::Tank, Some(f)) => c
+                .modules
+                .iter()
+                .map(|(_, m)| m)
+                .filter(|m| m.does.slot() == SlotKind::Tank && m.size <= *size && matches!(&m.does, Does::Tank { holds, .. } if holds == f))
+                .min_by(|a, b| a.price.total_cmp(&b.price)),
+            _ => cheapest(*kind, *size),
+        }
+        .ok_or_else(|| format!("no module fits its {} slot", name))?;
+        if let Does::Drive { burns, .. } = &m.does {
+            fuel = Some(burns.clone());
+        }
         draw += m.power;
         fit.push((name.clone(), m.key.clone()));
     }

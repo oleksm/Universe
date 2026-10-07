@@ -4,8 +4,14 @@ identity:
   name: Trethi Power Station
 kind: power
 parcel: parcel.treistun.port-trethi.2
+lines:
+  - makes: stock.hydrolox-liq
+    also: [stock.hydrogen-liq, stock.methalox-liq, stock.nitrogen-gas]
+    modules:
+      - { module: module.propellant-plant, count: 1 }
 modules:
   - { module: module.fusion-power-station, count: 4 }
+  - { module: module.tank-farm, count: 1 }
 # What lies in its store at day 0 (seed state: what happens to it after is the economy's). A year of deuterium at full output.
 stock:
   - { item: stock.deuterium-liq, quantity: 293.0 }
