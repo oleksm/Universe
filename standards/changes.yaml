@@ -1053,7 +1053,7 @@
 - { record: org.sunward-planters, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: who", sha: "0ad1aff13205f2db" }
 - { record: org.tallis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "334d70d5a7ad241b" }
 - { record: org.tolland, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "606b88aa03fbd49b" }
-- { record: org.treistun, at: "2026-10-06T19:19:05Z", status: "", summary: "changed", sha: "e751696fc310545d" }
+- { record: org.treistun, at: "2026-10-07T03:31:37Z", status: "", summary: "changed: ticker", sha: "0702678e5ecc37d0" }
 - { record: org.treistun-exchange, at: "2026-10-06T18:25:49Z", status: "", summary: "changed: exchange", sha: "1bae48b326edf1f3" }
 - { record: org.treistun-freight, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: note", sha: "a8eeec6191b0aa55" }
 - { record: org.treistun-mutual, at: "2026-10-06T14:13:11Z", status: "", summary: "changed: insurance", sha: "573f66fec0f40ff5" }
