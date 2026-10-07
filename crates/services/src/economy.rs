@@ -1061,7 +1061,8 @@ impl Economy {
                         continue;
                     }
                     self.shift(k, h, i, t);
-                    let paid = t / 1000.0 * price.bid;
+                    // (Priced a unit: a tonne of bulk, a piece of a product.)
+                    let paid = t / goods[i].mass * price.bid;
                     let _ = ledger.transfer(market, owner, Asset::Credits, paid, tick, cause);
                     let _ = ledger.transfer(owner, Party::Administration(system), Asset::Credits, paid * duty, tick, cause);
                     runs[n].earned += paid;
@@ -1077,7 +1078,7 @@ impl Economy {
                         continue;
                     };
                     self.shift(h, k, i, t);
-                    let cost = t / 1000.0 * ask;
+                    let cost = t / goods[i].mass * ask;
                     let _ = ledger.transfer(owner, market, Asset::Credits, cost, tick, cause);
                     let _ = ledger.transfer(market, Party::Administration(system), Asset::Credits, cost * duty, tick, cause);
                     runs[n].earned -= cost;

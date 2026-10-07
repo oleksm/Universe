@@ -157,7 +157,9 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     let q = quotes.iter().find(|q| q.offer.item == plate && q.buy.is_some()).expect("the plate on the market");
     assert_eq!(q.level, 10.0);
     let item = q.offer.item;
+    let trades = u.records.stats.trades;
     let paid = u.trade(f, item, 3).expect("bought");
+    assert_eq!(u.records.stats.trades, trades + 1, "counted as any pilot's trade");
     assert!((u.markets.economy.place(home, f).unwrap().stock.of(plate) - 7_000.0).abs() < 1e-6, "out of the warehouse");
     assert!((u.credits() - (before - paid)).abs() < 1e-6);
     assert_eq!(u.hold(), vec![(item, 3)]);

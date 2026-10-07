@@ -774,24 +774,10 @@ impl Universe {
     pub fn trade(&mut self, f: Facility, item: usize, units: i64) -> Result<f64, String> {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Trade { market: f, item, units }));
         let r = self.pilot_trade(crate::combat::PLAYER, f, item, units);
+        // (Booked as any pilot's trade: the log and the statistics.)
         if let Ok(amount) = r {
-            let sys = self.ship_system();
-            let record = universe_services::records::TradeRecord {
-                time: self.world.time,
-                system: self.ship_system,
-                market: f.name(&sys),
-                pilot: crate::combat::PLAYER,
-                place: Some(f),
-                trader: "YOU".into(),
-                deal: if units > 0 { universe_services::records::Deal::Bought } else { universe_services::records::Deal::Sold },
-                bought: units > 0,
-                item: self.world.goods[item].name.to_uppercase(),
-                units: units.unsigned_abs() as u32,
-                amount: amount.abs(),
-                cargo: self.ship.cargo,
-                credits: self.credits(),
-            };
-            self.log_trade(record);
+            let deal = if units > 0 { universe_services::records::Deal::Bought } else { universe_services::records::Deal::Sold };
+            self.record_trade(crate::combat::PLAYER, f, deal, Some(item), units.unsigned_abs() as u32, amount.abs());
         }
         r
     }

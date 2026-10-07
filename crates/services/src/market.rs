@@ -35,7 +35,7 @@ pub enum Side {
 pub struct Offer {
     pub item: usize,
     pub side: Side,
-    /// Its reference price (credits a tonne).
+    /// Its reference price (credits a unit: a tonne of bulk, a piece of a product).
     pub base: f64,
     /// The stock it aims to hold (t): what its works take over the cover; else what it has.
     pub usual: f64,
@@ -45,9 +45,9 @@ pub struct Offer {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Quote {
     pub offer: Offer,
-    /// In stock (selling) or room for (buying), tonnes.
+    /// In stock (selling) or room for (buying), units.
     pub level: f64,
-    /// Price a tonne if you buy from it, and what it pays you a tonne.
+    /// Price a unit if you buy from it, and what it pays you a unit.
     pub buy: Option<f64>,
     pub sell: f64,
 }
@@ -128,7 +128,7 @@ impl Markets {
         items.iter().map(|&i| self.quote(system, f, i)).collect()
     }
 
-    /// Trade `o.units` tonnes (bought if positive, sold if negative).
+    /// Trade `o.units` units (bought if positive, sold if negative).
     pub fn trade(&mut self, ledger: &mut Ledger, _sys: &StarSystem, o: Order, _now: f64, tick: Tick, cause: Cause) -> Result<f64, String> {
         if o.docked_at != Some(o.market) {
             return Err("DOCK OR LAND THERE TO TRADE".into());

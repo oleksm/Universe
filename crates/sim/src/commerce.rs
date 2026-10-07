@@ -368,7 +368,7 @@ impl Universe {
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.
-    fn record_trade(&mut self, id: usize, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
+    pub(crate) fn record_trade(&mut self, id: usize, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return };
         let cargo = ship.cargo;
         let trader = if id == crate::combat::PLAYER { "YOU".to_string() } else { self.crafts[id - 1].name.to_uppercase() };
