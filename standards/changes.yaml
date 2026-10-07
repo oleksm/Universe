@@ -2036,7 +2036,7 @@
 - { record: settlement.treistun.port-trethi, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "124ef7b525bbb2a5" }
 - { record: settlement.treistun.port-weisonum, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "16f62e0c26df0155" }
 - { record: settlement.treistun.port-zaudalein, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "c2664d01238ddfc6" }
-- { record: settlement.treistun.treistun-e-station, at: "2026-10-06T19:44:49Z", status: "", summary: "changed: buildings, census", sha: "0e8a9155834b61db" }
+- { record: settlement.treistun.treistun-e-station, at: "2026-10-07T01:41:38Z", status: "", summary: "changed", sha: "04ad7e61a074b351" }
 - { record: sight.cinder-great-basin, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "ced295b3ce1e6fcd" }
 - { record: sight.drum-rings, at: "2026-10-06T19:44:49Z", status: draft, summary: "first tracked", sha: "11166c53e865086e" }
 - { record: sight.heath-spire, at: "2026-10-06T19:48:07Z", status: draft, summary: "changed: identity, height, basis", sha: "a8256b0db7284a52" }
