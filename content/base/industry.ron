@@ -88,6 +88,7 @@
     (key: "propellant-plant", name: "Propellant plant", length: 80.0, width: 40.0, height: 20.0, needs: 2.0, supplies: 0.0, holds: 0.0),
     (key: "reheat-furnace", name: "Reheat furnace", length: 60.0, width: 20.0, height: 12.0, needs: 45.0, supplies: 0.0, holds: 0.0),
     (key: "rendering-works", name: "Rendering works", length: 60.0, width: 40.0, height: 15.0, needs: 2.0, supplies: 0.0, holds: 0.0),
+    (key: "section-line", name: "Section line", length: 60.0, width: 15.0, height: 8.0, needs: 0.5, supplies: 0.0, holds: 0.0),
     (key: "shaft-furnace", name: "Shaft furnace", length: 150.0, width: 100.0, height: 137.0, needs: 22.0, supplies: 0.0, holds: 0.0),
     (key: "silicon-furnace", name: "Silicon furnace", length: 100.0, width: 50.0, height: 30.0, needs: 41.0, supplies: 0.0, holds: 0.0),
     (key: "silicon-refinery", name: "Silicon refinery", length: 300.0, width: 150.0, height: 30.0, needs: 20.5, supplies: 0.0, holds: 0.0),

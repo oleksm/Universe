@@ -284,3 +284,13 @@ memory of flown engines (NERVA, Raptor), marked review. **Swivels** (kind `swive
 300 bar); made by `module.propellant-plant` at the Trethi power station. Later, as you said:
 parachutes, heat shields, surface air density (the lab's air tables carry pressure and
 temperature per band; density follows), a turning seat.
+
+## 15. Heavy members for an engine mount (2026-10-07, your finding on design-3)
+
+Round tubes: `stock.st4340-tb-250x20` (113 kg/m), `-300x20` (138), `-300x30` (200), `-400x30`
+(274); `stock.ti64-tb-250x15` (49), `-300x20` (79). Heavy plate `stock.st4340-pl-20`, `-25`.
+**Box sections**, form `box`, size `width`, `height`, `wall` (m): `stock.st4340-box-300x300x20`
+(176 kg/m), `stock.st4340-box-400x400x25` (294 kg/m), welded from the plate at a new section
+line (`module.section-line`) at the Trethi mill. The Members report lists them with area, yield
+and Euler lengths like the tubes (I = (w h³ − (w−2t)(h−2t)³)/12). No thrust ring as equipment:
+build it from the boxes and say if a product would serve better.

@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/module.schema.yaml
+identity:
+  key: module.section-line
+  name: "Section line"
+  step: "Weld box sections"
+  description: "Plate cut to width, tacked square round a mandrel and welded along four corners by gantry: a box section a primary frame is cut from."
+physical:
+  length: 60
+  width: 15
+  height: 8
+staff:
+  - { profession: profession.welder, count: 4 }
+  - { profession: profession.technician, count: 1 }
+recipes:
+  - makes: stock.st4340-box-300x300x20
+    does: "Four plates cut to width, tacked square and welded along the corners."
+    inputs:
+      - { item: stock.st4340-pl-20, quantity: 1.06 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.06 }
+    rate: 0.5
+    power: 500000
+  - makes: stock.st4340-box-400x400x25
+    does: "Four plates cut to width, tacked square and welded along the corners."
+    inputs:
+      - { item: stock.st4340-pl-25, quantity: 1.06 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.06 }
+    rate: 0.5
+    power: 500000
+life: 788940000
+basis:
+  - { of: [physical, staff, recipes], tier: invented, review: true, note: "A welding line of half a tonne an hour at 500 kW, six percent of the plate to trim: typical of a structural fabricator, from memory. Added 2026-10-07 for the box sections." }
+  - { of: [life], rule: rule.life-plant }

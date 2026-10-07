@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.ti64-tb-250x15
+  code: TI64-TB-250X15
+  name: "Ti-6-4 tube 250 x 15 mm"
+  traded_as: market.metals
+  form: tube
+  temper: "annealed"
+made_from:
+  - item: material.titanium-alloy-ti-6al-4v
+size:
+  diameter: 0.25
+  wall: 0.015
+basis:
+  - { of: [size], tier: invented, review: true, note: "A heavy rung of the member ladder (SFO 13) in titanium: 49.5 kg a metre, extruded over a mandrel (Ti-6-4 is extruded to about 300 mm; from memory). Added 2026-10-07." }
