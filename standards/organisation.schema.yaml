@@ -15,6 +15,7 @@ properties:
       name: { type: string }
   kind: { enum: [company, standards_body, administration, band], description: "company: it makes, stores or trades. standards_body: it publishes standards. administration: it manages the land of a settled system. band: an outfit outside the law, with a hold of its own." }
   address: { $ref: "common.schema.yaml#/definitions/address" }
+  administers: { type: string, x-ref: [system], description: "For an administration: the star system whose land it administers, by its key. The game finds a system's law, duty and land rate by this key, never by a name. Required of an administration (the build checks)." }
   note: { type: string, description: One line, as the game shows it. }
   about: { type: array, items: { type: string }, description: 'What it is, in paragraphs.' }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }

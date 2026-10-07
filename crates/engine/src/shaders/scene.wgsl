@@ -3,7 +3,7 @@ struct Globals {
     view_proj: mat4x4<f32>,
     // Low-res pixel coords -> clip.
     hud_proj: mat4x4<f32>,
-    // Camera-relative world -> the shadow map's two cascades (near, far).
+    // Camera-relative world -> the shadow map's near and far cascades (the tight and ground ones below).
     shadow_near: mat4x4<f32>,
     shadow_far: mat4x4<f32>,
     // x, y: a texel of each cascade (metres); z: shadows on (1) or not;
@@ -462,7 +462,16 @@ fn through_air(c: vec3<f32>, p: vec3<f32>, center: vec3<f32>, radius: f32, air: 
         }
         enter = max(-b - sqrt(disc), 0.0);
     }
-    let path = max(len - enter, 0.0);
+    // (To the world's sphere where the line of sight meets it, not the mesh: a far globe's flat
+    // triangles sag kilometres inside it at their middles, more air there than at their edges,
+    // and the edges drew as a grid of lines.)
+    var ground = len;
+    let cg = (length(oc) - radius) * (length(oc) + radius);
+    let hg = b * b - cg;
+    if (cg > 0.0 && hg > 0.0 && b < 0.0) {
+        ground = min(len, cg / (-b + sqrt(hg)));
+    }
+    let path = max(ground - enter, 0.0);
     let through = exp(-beta * path);
     // The sun on the air here: by its height in this sky, through the air's
     // own slant (reddened low); a soft dusk past the terminator.

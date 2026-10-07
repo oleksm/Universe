@@ -456,7 +456,6 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
     Some(Posting { id, thought: view.tick, seen: view.time, devices, turn: new_turn.then_some(turn), requests, events, status, gun: None, sleep_until: sleep })
 }
 
-/// Every pilot due thinks on `view`, side by side: their postings, in craft order.
 /// The defence service's gunners (clients, in the pool): in every system
 /// with someone fair game in it, each turret's gunner orders its gun (see
 /// `gunner`); where no one is any more, they stand down.
@@ -501,6 +500,7 @@ fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, vie
     out
 }
 
+/// Every pilot due thinks on `view`, side by side: their postings, in craft order.
 fn think_all(pilots: &mut [Pilot], view: &PilotView, tally: &Tally) -> Vec<Posting> {
     use rayon::prelude::*;
     // (The pirates' own network: who flies with them, as they know it.)

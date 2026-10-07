@@ -7,7 +7,7 @@
 
 use glam::DVec3;
 
-/// Texels a side, layers (three levels, three shells each).
+/// Texels a side, layers (four levels, three shells each).
 const N: u32 = 512;
 const LAYERS: u32 = 12;
 /// Each level's half-width (m), outer to inner.

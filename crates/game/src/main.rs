@@ -47,9 +47,9 @@ use universe_sim::{Approach, ClearanceKind, Command, Controls, EngineHandle, Eve
 use models::Models;
 use observer::{Focus, Observer};
 
-/// The world's seed: the celestial registry's (`content/base/galaxy.ron`).
+/// The world's seed: the registry's (`seeding.galaxy`, which the registry requires).
 fn seed() -> u64 {
-    universe_sim::world::registry::registry().galaxy().map_or(1984, |g| g.seed as u64)
+    universe_sim::world::registry::registry().galaxy().expect("seeding.galaxy").seed as u64
 }
 const WARPS: [f64; 8] = [1.0, 10.0, 100.0, 1e3, 1e4, 1e5, 1e6, 1e7];
 /// Where a hit landed, shown as a spark for a moment.
@@ -189,8 +189,6 @@ pub struct App {
     /// The ETA shown on the HUD (real seconds): counts down each frame and
     /// eases toward each new plan's prediction instead of jumping.
     pub eta_shown: Option<f64>,
-    /// Colored terrain globes, built once per (system, body): the full mesh,
-    /// and a coarse one for when it's small on screen.
     /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
     pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
     /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
@@ -228,15 +226,14 @@ pub struct App {
     held_to_cores: bool,
     /// At a vending machine, its panel open: the item picked.
     pub vending: Option<usize>,
-    /// Ship plans kept (in the save).
-    /// Ships' insides as laid out in the shipyard's studio, one per hull: for this
-    /// session only (not saved); a layout we're happy with is made content.
+    /// Ships' insides as laid out in the shipyard's studio, one per hull (kept with the
+    /// hull's design: see `studio`).
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
     layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
     /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
     pub preview: Option<shipyard::Shipyard>,
-    /// The hull being designed, and those commissioned (in the save).
+    /// Docked or landed where there's a market (as the world last said).
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
     pub nav_marker: Option<(String, DVec3)>,
@@ -248,8 +245,7 @@ pub struct App {
     pub hit_age: f32,
     /// On the hypernet: the lag from the backbone (s) and the node it's through.
     pub net: Option<(f64, String)>,
-    /// When it was last on the net (game time), and when the status was last worked out.
-    pub net_seen: Option<f64>,
+    /// When the status was last worked out (game time).
     pub net_at: f64,
     /// This system's relays (its index, and how many claims there were, with them).
     pub net_nodes: Option<((usize, usize), Vec<universe_sim::world::hypernet::Node>)>,
@@ -418,7 +414,6 @@ impl App {
             fire: None,
             hit_age: 99.0,
             net: None,
-            net_seen: None,
             net_at: f64::NEG_INFINITY,
             net_nodes: None,
             news: Default::default(),
@@ -558,9 +553,6 @@ impl App {
         let all = self.net_nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
         let net = Net::at(&sys, all, t, &self.view.positions);
         self.net = net.status(&sys, &self.view.positions, self.view.ship_pos, &self.ship.spec().comm).map(|s| (s.lag, net.nodes[s.via].name.clone()));
-        if self.net.is_some() {
-            self.net_seen = Some(t);
-        }
     }
 
     pub fn now(&self) -> f64 {

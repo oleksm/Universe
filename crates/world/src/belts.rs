@@ -66,7 +66,7 @@ pub fn rocks() -> &'static BeltRocks {
 
 /// The registry's record of how small bodies are seeded.
 pub fn small_bodies_record() -> &'static crate::registry::Seeding {
-    crate::registry::registry().seeding.iter().find(|s| s.identity.key == "seeding.small-bodies").expect("the registry has seeding.small-bodies")
+    crate::registry::registry().seeding("seeding.small-bodies").expect("the registry has seeding.small-bodies")
 }
 
 /// What kind of belt.
@@ -155,7 +155,7 @@ fn resonance(r: &str) -> f64 {
 /// record and the system's own giants.
 pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     let reg = crate::registry::registry();
-    let Some(laws) = reg.seeding.iter().find(|s| s.identity.key == "seeding.asteroids") else { return Vec::new() };
+    let Some(laws) = reg.seeding("seeding.asteroids") else { return Vec::new() };
     let (mb, tr, ob, sizes) = (&laws.main_belt, &laws.trojans, &laws.outer_belt, &laws.sizes);
     let slope = sizes.exponent.unwrap_or(1.89);
     let smallest = sizes.smallest.unwrap_or(15.0);
@@ -476,7 +476,7 @@ pub fn survey(sys: &StarSystem, p: DVec3, t: f64, sensor: Survey) -> Vec<Found> 
 
 /// A belt rock as a body among the system's: its shape and make-up from its
 /// seed, its orbit round the star.
-pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> crate::system::Body {
+pub fn rock_body(sys: &StarSystem, patch: Patch, _k: usize, rock: &BeltRock) -> crate::system::Body {
     let mut rng = Rng::new(rock.seed);
     let structure = if rock.diameter < 2.0 * rocks().rubble_above { Structure::Monolith } else { Structure::Rubble };
     let shape = crate::belt::RockShape::new(rock.diameter / 2.0, &mut rng);
@@ -485,7 +485,6 @@ pub fn rock_body(sys: &StarSystem, patch: Patch, k: usize, rock: &BeltRock) -> c
     let mass = density * shape.volume();
     let day = (rng.range(2.3f64.ln(), 30.0f64.ln())).exp() * crate::units::HOUR;
     let tilt = glam::DQuat::from_rotation_arc(DVec3::Y, rng.unit_vector());
-    let _ = k;
     let name = format!("{} {}", belt_name(&sys.belts[patch.belt as usize]), designation(rock.seed));
     let mut b = crate::system::natural(name, BodyKind::Asteroid, mass, shape.radius, day, rock.class.color(), None, 0, rock.orbit.clone(), tilt);
     b.rail.attracts = false;

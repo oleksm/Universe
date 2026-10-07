@@ -1115,7 +1115,7 @@ fn plate_stocks() -> &'static [PlateStock] {
         let mut out: Vec<PlateStock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "plate" | "sheet") && !s.identity.code.ends_with("BLANK") && !s.identity.code.ends_with("PANEL")).filter_map(|s| {
             let t = s.size.thickness?;
             let of = &s.made_from.first()?.item;
-            let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
+            let m = reg.material(&*of)?;
             let k = &m.mechanical;
             let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
@@ -1360,7 +1360,7 @@ fn stocks() -> &'static [Stock] {
             let d = s.size.diameter?;
             let section = Section::round(d, s.size.wall.unwrap_or(d * 0.5).min(d * 0.5));
             let of = &s.made_from.first()?.item;
-            let m = reg.materials.iter().find(|m| m.identity.key == *of)?;
+            let m = reg.material(&*of)?;
             let k = &m.mechanical;
             let (e, y, t, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
@@ -2507,7 +2507,7 @@ fn fit_of(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
     use universe_sim::world::registry::registry;
     let reg = registry();
     let Some(hull) = spec.visual.as_deref().and_then(|v| reg.hulls.iter().find(|h| h.model.as_deref() == Some(v))) else { return game_fit(spec) };
-    let mut out: Vec<Fitted> = hull.fit.iter().filter_map(|f| fitted(reg.equipment.iter().find(|e| e.identity.key == f.item)?, &f.slot)).collect();
+    let mut out: Vec<Fitted> = hull.fit.iter().filter_map(|f| fitted(reg.equipment(&f.item)?, &f.slot)).collect();
     // (Its ore bay: its hold; broad and low, under doors.)
     if let Some(volume) = hull.capacity.hold_volume.filter(|v| *v > 0.0).map(|v| v as f32) {
         let a = Vec3::new(1.2, 0.8, 1.0);
@@ -4855,7 +4855,7 @@ type Fields = serde_json::Map<String, serde_json::Value>;
 /// power it draws (W).
 fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     let reg = universe_sim::world::registry::registry();
-    let e = reg.equipment.iter().find(|e| e.identity.key == f.key)?;
+    let e = reg.equipment(&f.key)?;
     let serde_json::Value::Object(map) = serde_json::to_value(&e.function).ok()? else { return None };
     let kind = map.get("kind").and_then(|v| v.as_str()).unwrap_or("").to_string();
     Some((kind, map, e.needs.power.unwrap_or(0.0)))
@@ -5641,7 +5641,7 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
 
 fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<&Block>) {
     let reg = universe_sim::world::registry::registry();
-    let e = reg.equipment.iter().find(|e| e.identity.key == f.key);
+    let e = reg.equipment(&f.key);
     let (pp, pc) = PANEL;
     let (p, c) = (Vec2::new(pp.x + pc.x + 8.0, pp.y), Vec2::new(236.0, 300.0));
     frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.92]));
@@ -5650,7 +5650,7 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     let name = |key: &str| reg.names.get(key).map_or(key.to_string(), |n| n.to_uppercase());
     let line = match e {
         Some(e) => {
-            let fits = reg.equipment.iter().find(|x| x.identity.key == f.key).and_then(|x| x.fits.clone()).map_or(String::new(), |m| format!(" - FITS {}", name(&m)));
+            let fits = reg.equipment(&f.key).and_then(|x| x.fits.clone()).map_or(String::new(), |m| format!(" - FITS {}", name(&m)));
             format!("{}{}", name(&e.identity.maker), fits)
         }
         None => "THE HULL'S OWN".to_string(),

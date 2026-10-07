@@ -150,7 +150,7 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     var a = 0.5;
     var lam = 2048.0;
     for (var o = 0; o < 8; o++) {
-        n1 += a * gm_fade(lam, i.pixel_m, 3.0) * gm_at(i, lam, f32(o) * 5.7);
+        n1 += a * gm_fade(lam, i.pixel_m, 4.0) * gm_at(i, lam, f32(o) * 5.7);
         lam *= 0.5;
         a *= 0.6;
     }
@@ -172,7 +172,8 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
         var pl = 2048.0;
         var pw = 0.0;
         for (var o = 0; o < 6; o++) {
-            pn += pa * gm_fade(pl, i.pixel_m, 2.0) * gm_at(i, pl, 3.1 + f32(o) * 1.7);
+            // (Octaves fade below 4 pixels: under 2 they sparkled as the view moved.)
+            pn += pa * gm_fade(pl, i.pixel_m, 4.0) * gm_at(i, pl, 3.1 + f32(o) * 1.7);
             pw += pa;
             pl *= 0.5;
             pa *= 0.62;
@@ -180,7 +181,7 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
         pn = pn / pw * 2.2 - 0.35 * clamp(i.rel, -1.0, 1.0) + (forest - 0.5) * 1.4 * cover;
         // (The woodland edge's softness from the pixel's size, not fwidth: this runs inside the
         // caller's branch, where derivatives are undefined in WGSL.)
-        let ew = clamp(0.05 + i.pixel_m / 120.0, 0.05, 1.0);
+        let ew = clamp(0.08 + i.pixel_m / 60.0, 0.08, 1.0);
         let wood = smoothstep(-ew, ew, pn);
         let crown = gm_pnoise(i.q, 32.0, 0.0) * gm_fade(32.0, i.pixel_m, 3.0);
         let open_c = gcol * (1.0 + 0.3 * amt);
@@ -198,8 +199,14 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     let grain = gm_pnoise(i.q, 32.0, 1.0) * gm_fade(32.0, i.pixel_m, 3.0);
     col = mix(col, rock_c * 0.8 * (1.0 + 0.3 * grain + 0.2 * n1), i.scree * i.surface_on * 0.75 * land);
     // Sand on low, gentle coasts, where it isn't frozen.
-    let sand = (1.0 - smoothstep(3.0, 25.0 + 20.0 * n1, h)) * step(0.5, h) * clamp(1.0 - i.slope / 0.04, 0.0, 1.0) * clamp(t_year / 4.0, 0.0, 1.0);
-    col = mix(col, SAND, 0.75 * sand);
+    // (A beach is the strip the waves reach: a few metres above the sea, tens to a couple of
+    // hundred metres wide; its rule by height gave kilometres of tan on flat coasts. Seen from far,
+    // a pixel holds only its share of beach: faded by ~150 m against the pixel, so the strip
+    // neither swells to fill a pixel nor sparkles as the view moves.)
+    let beach_h = 2.5 + 1.5 * n1;
+    let sand = (1.0 - smoothstep(beach_h * 0.5, beach_h, h)) * smoothstep(0.0, 0.3, h) * clamp(1.0 - i.slope / 0.06, 0.0, 1.0)
+        * clamp(t_year / 4.0, 0.0, 1.0) * clamp(150.0 / max(i.pixel_m, 1.0), 0.0, 1.0);
+    col = mix(col, SAND, 0.7 * sand);
     // Snow where the year is cold at this height, off the steepest ground.
     // (Snow slides off rock too steep to hold it: the bake's bare-rock field (its 600 m slopes)
     // shows dark faces through a snowfield, as real ranges do.)

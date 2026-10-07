@@ -62,11 +62,16 @@ fn film(x: vec3<f32>) -> vec3<f32> {
     v = clamp(log2(v), vec3<f32>(min_ev), vec3<f32>(max_ev));
     v = (v - min_ev) / (max_ev - min_ev);
     v = agx_contrast(v);
+    // (A look on the curve, as Blender's "Punchy": more contrast and colour; plain AgX is flat,
+    // and the user's worlds read blurry and bleak without it.)
+    v = pow(max(v, vec3<f32>(0.0)), vec3<f32>(1.35));
+    let luma = dot(v, vec3<f32>(0.2126, 0.7152, 0.0722));
+    v = vec3<f32>(luma) + 1.4 * (v - vec3<f32>(luma));
     // (Already display-encoded: the screen's format isn't sRGB; no linearising.)
     return clamp(agx_inv * v, vec3<f32>(0.0), vec3<f32>(1.0));
 }
 
-const EXPOSURE: f32 = 0.5;
+const EXPOSURE: f32 = 0.9;
 
 @fragment
 fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {

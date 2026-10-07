@@ -123,18 +123,6 @@ const EXPOSURE: f32 = 0.45;
 fn fs_main(in: Out) -> @location(0) vec4<f32> {
     let n = direction(pass_.face, in.uv);
     let frame = basis(n);
-    if (pass_.kind == 1u) {
-        // Diffuse: the cosine-weighted mean round `n`.
-        var sum = vec3<f32>(0.0);
-        for (var i = 0u; i < pass_.samples; i++) {
-            let xi = hammersley(i, pass_.samples);
-            let phi = 2.0 * PI * xi.y;
-            let ct = sqrt(1.0 - xi.x);
-            let st = sqrt(xi.x);
-            sum += sky(frame * vec3<f32>(st * cos(phi), st * sin(phi), ct));
-        }
-        return vec4<f32>(sum / f32(pass_.samples), 1.0);
-    }
     if (pass_.roughness <= 0.0) {
         return vec4<f32>(sky(n), 1.0);
     }

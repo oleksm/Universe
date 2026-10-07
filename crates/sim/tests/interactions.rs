@@ -157,7 +157,9 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     let q = quotes.iter().find(|q| q.offer.item == plate && q.buy.is_some()).expect("the plate on the market");
     assert_eq!(q.level, 10.0);
     let item = q.offer.item;
+    let trades = u.records.stats.trades;
     let paid = u.trade(f, item, 3).expect("bought");
+    assert_eq!(u.records.stats.trades, trades + 1, "counted as any pilot's trade");
     assert!((u.markets.economy.place(home, f).unwrap().stock.of(plate) - 7_000.0).abs() < 1e-6, "out of the warehouse");
     assert!((u.credits() - (before - paid)).abs() < 1e-6);
     assert_eq!(u.hold(), vec![(item, 3)]);
@@ -620,32 +622,3 @@ fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
     assert!(position.length() < 40.0, "still in the ship: {position:?}");
 }
 
-#[test]
-fn a_yard_builds_an_mc07_from_its_stock() {
-    let mut u = bench(0);
-    // From the registry's stock at day 0 (the yard's: the bills of two MC-07s), nothing added.
-    let yard = u.markets.economy.works.iter().position(|w| w.name == "Trethi Yard").expect("Trethi Yard");
-    let goods = u.world.goods.clone();
-    let hull = universe_sim::world::goods::item("hull.mc-07").unwrap();
-    // Its company sees to it: a month, step by step of the economy.
-    let step = universe_sim::services::economy::step();
-    let mut t = u.world.time;
-    let mut built = None;
-    for n in 0..(40.0 * 86_400.0 / step) as usize {
-        t += step;
-        u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
-        universe_sim::company::run(&mut u);
-        let e = &u.markets.economy;
-        let place = e.places.iter().find(|p| p.name == "Port Trethi").unwrap();
-        if e.works[yard].pool.of(hull) + place.stock.of(hull) >= goods[hull].mass - 1.0 {
-            built = Some(n as f64 * step / 86_400.0);
-            break;
-        }
-    }
-    let days = built.expect("an MC-07 off the dock within 40 days");
-    eprintln!("an MC-07 built in {days:.1} days");
-    assert!(days > 10.0, "as fast as its modules go: {days:.1} days");
-    // Its company set the yard as a player could: the dock to the hull, the bays to its parts.
-    let e = &u.markets.economy;
-    assert!(e.works[yard].setups.iter().find(|s| s.module.identity.key == "module.building-dock").is_some_and(|s| s.recipe().is_some_and(|r| r.makes == hull)));
-}

@@ -30,7 +30,7 @@ struct Globals {
     shadow: [f32; 4],
     /// `Graphics`, 1 on, 0 off: textures, normal maps, occlusion, emission;
     look: [f32; 4],
-    /// specular, planet light, tone map, (unused).
+    /// specular, planet light, tone map; w: the bound world's globe layer + 1 (0: none).
     look2: [f32; 4],
     /// The tight cascade round what's looked at (see `Frame::shadow_focus`),
     /// and x: a texel of it (metres), y: in use (1) or not.
@@ -60,7 +60,7 @@ struct Globals {
     shadow_ground: [[f32; 4]; 4],
 }
 
-/// The shadow map's side (texels), each of its two cascades.
+/// The shadow map's side (texels), each of its four cascades (see `Shadows`).
 const SHADOW_SIZE: u32 = 4096; // (the shaders' SHADOW_TEXEL: keep them together)
 /// How far toward the light (and away) a shadow box reaches from the eye
 /// (m): what casts from up to this far sunward of it.
@@ -72,10 +72,6 @@ const SHADOW_DEPTH: f64 = 8_000.0;
 const GROUND_HALF: f64 = 30_000.0;
 const GROUND_DEPTH: f64 = 80_000.0;
 
-/// The light's view of what's near the eye, for shadows: four cascades (near:
-/// a twenty-fourth of far; far; tight: round what's looked at, centimetres a
-/// texel; the ground's: see `GROUND_HALF`), each an orthographic box along
-/// the light, depth only.
 /// Globe maps' texels a face side, layers (worlds at once), mip levels.
 const GLOBE_SIZE: u32 = 512;
 const GLOBE_LAYERS: u32 = 16;
@@ -189,6 +185,10 @@ pub(crate) fn half(x: f32) -> u16 {
     }
 }
 
+/// The light's view of what's near the eye, for shadows: four cascades (near:
+/// a twenty-fourth of far; far; tight: round what's looked at, centimetres a
+/// texel; the ground's: see `GROUND_HALF`), each an orthographic box along
+/// the light, depth only.
 struct Shadows {
     /// Each cascade's layer of the map, to draw into.
     layers: [wgpu::TextureView; 4],
@@ -627,15 +627,9 @@ impl Renderer {
                     count: None,
                 },
                 wgpu::BindGroupLayoutEntry { binding: 3, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
-                // The environment's specular and diffuse cubes (see `env.rs`).
+                // The environment's cube (see `env.rs`).
                 wgpu::BindGroupLayoutEntry {
                     binding: 4,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 5,
                     visibility: wgpu::ShaderStages::FRAGMENT,
                     ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
                     count: None,
@@ -691,7 +685,6 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(&globe_view) },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&globe_sampler) },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&env.spec) },
-                wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&env.diff) },
                 wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&globe_colors_view) },
             ],
         });
@@ -1083,7 +1076,6 @@ impl Renderer {
         self.target.hud_size
     }
 
-    /// Render `frame`; if `capture` is set, also save the composited image (at HUD resolution) as PNG.
     /// What it holds on the GPU now.
     pub fn resources(&self) -> crate::app::Resources {
         crate::app::Resources {
@@ -1095,6 +1087,7 @@ impl Renderer {
         }
     }
 
+    /// Render `frame`; if `capture` is set, also save the composited image (at HUD resolution) as PNG.
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
         let size = self.target.size.as_vec2();
         let hud = self.target.hud_size.as_vec2();
@@ -1140,7 +1133,7 @@ impl Renderer {
             Some((maps, globe, _, _)) => {
                 self.world.bind(&gpu.device, &gpu.queue, maps);
                 // (`on`: their format's version, for the lab's shader to read their maps by.)
-                let clouds = if maps.has_clouds() && frame.world_clouds[3] > 0.0 { [frame.world_clouds[0], frame.world_clouds[1], frame.world_clouds[2], maps.clouds_format as f32] } else { [0.0; 4] };
+                let clouds = if gr.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0 { [frame.world_clouds[0], frame.world_clouds[1], frame.world_clouds[2], maps.clouds_format as f32] } else { [0.0; 4] };
                 gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
                 (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
@@ -1216,7 +1209,7 @@ impl Renderer {
         // The environment as light, for this frame.
         self.env.render(&mut encoder, &self.globals_bind);
         // The bound world's clouds cached: filled, refreshed, re-centred under the eye.
-        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| maps.has_clouds() && frame.world_clouds[3] > 0.0);
+        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| frame.graphics.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0);
         let under = clouded.map_or(glam::DVec3::Y, |(_, _, c, _)| frame.world_turn.inverse() * (frame.camera.position - *c).normalize_or(glam::DVec3::Y));
         let world = clouded.and_then(|(maps, _, _, r)| Some((maps.id(), *r, &self.world.clouds, self.world.cloud_maps.as_ref()?)));
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);

@@ -37,7 +37,7 @@ fn ring(lo: f64, hi: f64) -> f64 {
 pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
     let frost = frost / AU;
     let reg = crate::registry::registry();
-    let Some(laws) = reg.seeding.iter().find(|s| s.identity.key == "seeding.asteroids") else { return };
+    let Some(laws) = reg.seeding("seeding.asteroids") else { return };
     let (mb, ob, sizes, zones) = (&laws.main_belt, &laws.outer_belt, &laws.sizes, &laws.zones);
     let sb = crate::belts::small_bodies_record();
     let one = |v: Option<f64>, what: &str| v.unwrap_or_else(|| panic!("seeding.small-bodies: no {what}"));

@@ -67,11 +67,27 @@ fn main() {
         writeln!(out, "            {pat} => self.{}.push(serde_norway::from_str::<{name}>(text)?),", plural(&snake(&kinds[0]))).unwrap();
     }
     out.push_str("            _ => return Ok(false),\n        }\n        Ok(true)\n    }\n\n    /// Each record's references: (the record's key, what it names, the kinds that may be named).\n    pub fn refs(&self, f: &mut dyn FnMut(&str, &str, &'static [&'static str])) {\n");
-    for (name, kinds) in &records {
-        let _ = name;
+    for (_, kinds) in &records {
         writeln!(out, "        for r in &self.{} {{\n            let key = r.identity.key.as_str();\n            r.refs(&mut |to, kinds| f(key, to, kinds));\n        }}", plural(&snake(&kinds[0]))).unwrap();
     }
     out.push_str("    }\n}\n");
+    // Each kind's records by key: an index built once (`Records::key_index`, kept on the
+    // registry), and a lookup a kind (`reg.hull(key)`), in place of a search of the list.
+    out.push_str("\n/// Each kind's records by key: the record's place in its list.\n#[derive(Clone, Debug, Default)]\npub struct KeyIndex {\n");
+    for (_, kinds) in &records {
+        writeln!(out, "    pub {}: std::collections::HashMap<String, usize>,", plural(&snake(&kinds[0]))).unwrap();
+    }
+    out.push_str("}\n\nimpl Records {\n    /// Every record's place in its list, by key.\n    pub fn key_index(&self) -> KeyIndex {\n        KeyIndex {\n");
+    for (_, kinds) in &records {
+        let f = plural(&snake(&kinds[0]));
+        writeln!(out, "            {f}: self.{f}.iter().enumerate().map(|(i, r)| (r.identity.key.clone(), i)).collect(),").unwrap();
+    }
+    out.push_str("        }\n    }\n}\n\nimpl crate::Registry {\n");
+    for (name, kinds) in &records {
+        let f = plural(&snake(&kinds[0]));
+        writeln!(out, "    /// The `{}` record with this key.\n    pub fn {}(&self, key: &str) -> Option<&{name}> {{\n        self.by_key.{f}.get(key).map(|&i| &self.records.{f}[i])\n    }}", kinds[0], snake(&kinds[0])).unwrap();
+    }
+    out.push_str("}\n");
     out.push_str(&clock_keys(root));
     let dest = Path::new(&std::env::var("OUT_DIR").unwrap()).join("generated.rs");
     std::fs::write(dest, out).unwrap();
@@ -355,6 +371,8 @@ impl Gen {
             };
             let (p2, r2) = self.flattened(&node, &at);
             for (k, pv) in p2 {
+                // (A property taken from a shape in another file: its `$ref`s made absolute, so they resolve from here.)
+                let pv = if at != file { rebase(&pv, &at) } else { pv };
                 // (A property the shape only tightens, like `physical: {required: [...]}` with no type of its own, adds nothing.)
                 if pv.get("type").is_none() && pv.get("$ref").is_none() && pv.get("oneOf").is_none() && pv.get("enum").is_none() && pv.get("properties").is_none() {
                     continue;
@@ -522,6 +540,29 @@ impl Gen {
 /// implements (a kind added in the registry is a method the engine must
 /// write, or the build stops); a kind marked `x-in-game: not made` defaults
 /// to `not_made`. And `kind()`, its registry name, and `handle`, to dispatch.
+/// A schema node taken from the file `path` and used elsewhere: its `$ref`s made absolute paths.
+fn rebase(v: &Value, path: &Path) -> Value {
+    match v {
+        Value::Mapping(m) => Value::Mapping(
+            m.iter()
+                .map(|(k, x)| {
+                    if k.as_str() == Some("$ref")
+                        && let Some(r) = x.as_str()
+                    {
+                        let (file, def) = r.split_once('#').unwrap_or((r, ""));
+                        let target = if file.is_empty() { path.to_path_buf() } else { path.parent().unwrap().join(file).canonicalize().unwrap_or_else(|e| panic!("{}: $ref {r}: {e}", path.display())) };
+                        (k.clone(), Value::String(format!("{}#{def}", target.display())))
+                    } else {
+                        (k.clone(), rebase(x, path))
+                    }
+                })
+                .collect(),
+        ),
+        Value::Sequence(s) => Value::Sequence(s.iter().map(|x| rebase(x, path)).collect()),
+        _ => v.clone(),
+    }
+}
+
 fn handler(name: &str, variants: &[(String, String, String, bool)]) -> String {
     let mut t = format!("/// What the engine does with each kind of [`{name}`]: one method a kind, given\n/// that kind's figures.\npub trait {name}Handler {{\n    type Out;\n");
     if variants.iter().any(|v| v.3) {

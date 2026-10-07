@@ -155,13 +155,11 @@ pub struct Thruster {
 }
 
 /// A hull as the registry has it: its thrusters by nozzle name.
-#[derive(Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, PartialEq)]
 pub(crate) struct HullDef {
     key: String,
     name: String,
     /// Who builds it ("": a design of one's own).
-    #[serde(default)]
     brand: String,
     shape: String,
     /// The frame alone (kg), and its price (credits).
@@ -175,15 +173,12 @@ pub(crate) struct HullDef {
     drag_area: f64,
     hull_strength: f64,
     /// A hold built into the frame (kg, m³): an ore bay, beside any racks.
-    #[serde(default)]
     bay: (f64, f64),
     /// The mount each slot offers (SFO 19: slot, mount key), where its record says.
-    #[serde(default)]
     mounts: Vec<(String, String)>,
 }
 
-#[derive(Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Debug, PartialEq)]
 struct ThrusterDef {
     nozzle: String,
     slot: String,
@@ -201,10 +196,17 @@ pub struct Slot {
     pub mount: Option<String>,
 }
 
+/// The registry's record of a game hull: by its key, else the one naming the model it was
+/// imported from.
+pub fn hull_record(spec: &ClassSpec) -> Option<&'static crate::registry::Hull> {
+    let reg = crate::registry::registry();
+    reg.hull(&spec.key).or_else(|| reg.hulls.iter().find(|h| h.model.is_some() && h.model == spec.visual))
+}
+
 /// Is hull `key` one the registry marks outdated (a rough early guess, never sized
 /// for real equipment)?
-fn outdated_hull(key: &str) -> bool {
-    crate::registry::registry().hulls.iter().any(|h| h.identity.key == key && h.identity.revision == Some(crate::registry::DesignStage::Outdated))
+pub(crate) fn outdated_hull(key: &str) -> bool {
+    crate::registry::registry().hull(key).is_some_and(|h| h.identity.revision == Some(crate::registry::DesignStage::Outdated))
 }
 
 /// Does module `m` fit `slot`'s mount? Its own mount (`fits`) of the slot's kind
@@ -218,7 +220,7 @@ pub fn mount_fit(slot: &Slot, m: &crate::modules::Module) -> Result<(), String> 
         return if m.size > slot.size { Err(format!("{} (size {}) is too big for slot '{}' (size {})", m.key, m.size, slot.name, slot.size)) } else { Ok(()) };
     };
     let reg = crate::registry::registry();
-    let mount = |key: &str| reg.mounts.iter().find(|x| x.identity.key == key);
+    let mount = |key: &str| reg.mount(&key);
     let s = mount(sm).ok_or_else(|| format!("slot '{}': no mount '{sm}'", slot.name))?;
     let fm = m.fits.as_deref().ok_or_else(|| format!("{} names no mount (slot '{}' offers {sm})", m.key, slot.name))?;
     let f = mount(fm).ok_or_else(|| format!("{}: no mount '{fm}'", m.key))?;
@@ -872,6 +874,10 @@ pub struct Ship {
     /// Shared: a copy of the ship (every view of it) doesn't copy the list.
     #[serde(default)]
     pub fit: Option<std::sync::Arc<Fit>>,
+    /// The marks (SFO 21) of its hull and of what's fitted to it, as bought: who made each, where
+    /// and when. Shared as its fit is.
+    #[serde(default)]
+    pub marks: Option<std::sync::Arc<Vec<crate::registry::Mark>>>,
     /// Its numbers, hull and fit together (kept to hand; see `spec`).
     #[serde(skip)]
     spec_ref: Option<&'static ClassSpec>,
@@ -990,6 +996,7 @@ impl Ship {
             energy: starter().capacitor_capacity,
             class: starting_hull(),
             fit: None,
+            marks: None,
             spec_ref: None,
             hangar: None,
             powered: true,
@@ -1433,8 +1440,7 @@ mod classes {
     fn every_hull_is_balanced_and_sized_for_its_job() {
         // (Not the hulls the registry marks outdated: rough early guesses, never sized for real
         // equipment, they fly as they are.)
-        let outdated = |k: &str| crate::registry::registry().hulls.iter().any(|h| h.identity.key == k && h.identity.revision == Some(crate::registry::DesignStage::Outdated));
-        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.") && !outdated(&h.key)) {
+        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.") && !outdated_hull(&h.key)) {
             let h: &'static ClassSpec = h;
             // Every way it pushes, nearly all of it without turning (at the
             // load it's balanced for: a full tank, the hold half full).
@@ -1461,8 +1467,7 @@ mod balance {
     fn loading_moves_the_centre_of_mass_and_off_balance_costs_authority() {
         // (Not the hulls the registry marks outdated: rough early guesses, never sized for real
         // equipment, they fly as they are.)
-        let outdated = |k: &str| crate::registry::registry().hulls.iter().any(|h| h.identity.key == k && h.identity.revision == Some(crate::registry::DesignStage::Outdated));
-        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.") && !outdated(&h.key)) {
+        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.") && !outdated_hull(&h.key)) {
             let h: &'static ClassSpec = h;
             // Built balanced about its usual load: empty to full, it keeps nearly all its push.
             let (empty, full) = (h.authority(h.fuel_capacity, 0.0), h.authority(h.fuel_capacity, h.hold_capacity));

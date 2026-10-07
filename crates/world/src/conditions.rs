@@ -8,7 +8,7 @@ use crate::system::{BodyKind, StarSystem};
 use crate::units::G;
 
 fn record() -> Option<&'static crate::registry::Seeding> {
-    crate::registry::registry().seeding.iter().find(|s| s.identity.key == "seeding.conditions")
+    crate::registry::registry().seeding("seeding.conditions")
 }
 
 /// The heat made inside body `i` (a moon) by its planet kneading it on its

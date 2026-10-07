@@ -11,7 +11,7 @@
 use serde::Deserialize;
 
 /// What a module does, with its numbers.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
+#[derive(Clone, Debug, PartialEq)]
 pub enum Does {
     /// Makes power (W) from the material it `burns`, at `efficiency` (the rest heat).
     PowerPlant { output: f64, efficiency: f64, burns: String },
@@ -63,11 +63,9 @@ pub enum Does {
     /// than `interlock` m to a body's highest ground (0: it has none).
     NavComputer {
         features: Vec<Feature>,
-        #[serde(default)]
         interlock: f64,
         /// Its hyperdrive governor (1/s): held to this times the distance to
         /// the nearest surface (slow close to bodies; 0: none).
-        #[serde(default)]
         governor: f64,
     },
 }
@@ -210,7 +208,7 @@ impl Brand {
     /// is (the settlement's body's system).
     pub fn from_record(reg: &crate::registry::Registry, o: &crate::registry::Org) -> Self {
         let home = o.address.as_ref().and_then(|a| {
-            let body = reg.settlements.iter().find(|s| s.identity.key == a.at)?.at.as_deref()?;
+            let body = reg.settlement(&a.at)?.at.as_deref()?;
             let system = body.split('.').nth(1)?;
             reg.system(&format!("system.{system}"))?.identity.index.map(|i| i as usize)
         });
@@ -219,13 +217,11 @@ impl Brand {
 }
 
 /// A module of the loaded content.
-#[derive(Clone, Debug, PartialEq, Deserialize)]
-#[serde(deny_unknown_fields)]
+#[derive(Clone, Debug, PartialEq)]
 pub struct Module {
     pub key: String,
     pub name: String,
     /// Who makes it (brands come later; empty: unbranded).
-    #[serde(default)]
     pub brand: String,
     pub does: Does,
     /// Its size class (1..4): it fits a slot at least as big.
@@ -234,15 +230,12 @@ pub struct Module {
     pub mass: f64,
     pub volume: f64,
     /// Power it draws while working (W); a power plant's is its output (`does`).
-    #[serde(default)]
     pub power: f64,
     /// Price (credits).
     pub price: f64,
     /// The mount it's built to (SFO 19), by key; its own size (m: length, width,
     /// height), where its record says.
-    #[serde(default)]
     pub fits: Option<String>,
-    #[serde(default)]
     pub dims: Option<[f64; 3]>,
 }
 
@@ -412,107 +405,8 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
         let f = |v: Option<f64>| v.unwrap_or(0.0);
         Some(Does::MiningRig(crate::mining::Rig { excavator_power: f(it.excavator_power), throughput: f(it.throughput), anchor_reach: f(it.anchor_reach), anchor_speed: f(it.anchor_speed) }))
     }
-    /// A gate's throat coil: not made yet (the schema is to say so: `x-in-game: not made`).
-    fn throat_coil(&mut self, _: &r::EquipmentFunctionThroatCoil) -> Self::Out {
-        None
-    }
-    /// An ore bay as a product: not made yet (`x-in-game: not made`); the game's bay is the hull's own (`HullDef::bay`).
-    fn ore_bay(&mut self, _: &r::EquipmentFunctionOreBay) -> Self::Out {
-        None
-    }
-    // Ship fittings (SFO 20): not made yet (`x-in-game: not made`); the studio fits them, the game does not yet run them.
-    fn airlock(&mut self, _: &r::EquipmentFunctionAirlock) -> Self::Out {
-        None
-    }
-    fn ramp(&mut self, _: &r::EquipmentFunctionRamp) -> Self::Out {
-        None
-    }
-    fn cargo_lift(&mut self, _: &r::EquipmentFunctionCargoLift) -> Self::Out {
-        None
-    }
-    fn bay_door(&mut self, _: &r::EquipmentFunctionBayDoor) -> Self::Out {
-        None
-    }
-    fn docking(&mut self, _: &r::EquipmentFunctionDocking) -> Self::Out {
-        None
-    }
-    fn handling(&mut self, _: &r::EquipmentFunctionHandling) -> Self::Out {
-        None
-    }
-    fn radiator(&mut self, _: &r::EquipmentFunctionRadiator) -> Self::Out {
-        None
-    }
-    fn heat_exchanger(&mut self, _: &r::EquipmentFunctionHeatExchanger) -> Self::Out {
-        None
-    }
-    fn coolant_loop(&mut self, _: &r::EquipmentFunctionCoolantLoop) -> Self::Out {
-        None
-    }
-    fn heat_sink(&mut self, _: &r::EquipmentFunctionHeatSink) -> Self::Out {
-        None
-    }
-    fn store(&mut self, _: &r::EquipmentFunctionStore) -> Self::Out {
-        None
-    }
-    fn pump(&mut self, _: &r::EquipmentFunctionPump) -> Self::Out {
-        None
-    }
-    fn compressor(&mut self, _: &r::EquipmentFunctionCompressor) -> Self::Out {
-        None
-    }
-    fn port(&mut self, _: &r::EquipmentFunctionPort) -> Self::Out {
-        None
-    }
-    fn window(&mut self, _: &r::EquipmentFunctionWindow) -> Self::Out {
-        None
-    }
-    fn battery(&mut self, _: &r::EquipmentFunctionBattery) -> Self::Out {
-        None
-    }
-    fn solar_array(&mut self, _: &r::EquipmentFunctionSolarArray) -> Self::Out {
-        None
-    }
-    fn switchgear(&mut self, _: &r::EquipmentFunctionSwitchgear) -> Self::Out {
-        None
-    }
-    fn reaction_wheels(&mut self, _: &r::EquipmentFunctionReactionWheels) -> Self::Out {
-        None
-    }
-    fn command_station(&mut self, _: &r::EquipmentFunctionCommandStation) -> Self::Out {
-        None
-    }
-    fn berths(&mut self, _: &r::EquipmentFunctionBerths) -> Self::Out {
-        None
-    }
-    fn galley(&mut self, _: &r::EquipmentFunctionGalley) -> Self::Out {
-        None
-    }
-    fn head(&mut self, _: &r::EquipmentFunctionHead) -> Self::Out {
-        None
-    }
-    fn fire_unit(&mut self, _: &r::EquipmentFunctionFireUnit) -> Self::Out {
-        None
-    }
-    fn pressure_door(&mut self, _: &r::EquipmentFunctionPressureDoor) -> Self::Out {
-        None
-    }
-    fn suit_locker(&mut self, _: &r::EquipmentFunctionSuitLocker) -> Self::Out {
-        None
-    }
-    fn altimeter(&mut self, _: &r::EquipmentFunctionAltimeter) -> Self::Out {
-        None
-    }
-    fn camera(&mut self, _: &r::EquipmentFunctionCamera) -> Self::Out {
-        None
-    }
-    fn engine(&mut self, _: &r::EquipmentFunctionEngine) -> Self::Out {
-        None
-    }
-    fn swivel(&mut self, _: &r::EquipmentFunctionSwivel) -> Self::Out {
-        None
-    }
-    /// A landing leg as a product: not made yet (`x-in-game: not made`); legs are reckoned from a hull's parts (`world::legs`).
-    fn landing_gear(&mut self, _: &r::EquipmentFunctionLandingGear) -> Self::Out {
-        None
-    }
+    // (The kinds the game doesn't make yet (`x-in-game: not made` in the schema: a gate's throat
+    // coil, an ore bay as a product, the ship fittings of SFO 20, the crewing equipment, the
+    // engines and swivels, a landing leg as a product) go to `not_made`: the generated trait's
+    // default for each.)
 }

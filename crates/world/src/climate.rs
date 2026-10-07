@@ -60,7 +60,7 @@ fn reckoned_mean(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 {
 /// from its run), if it has one.
 fn recorded_mean(sys: &StarSystem, i: usize) -> Option<f64> {
     let key = &sys.bodies[i].key;
-    crate::registry::registry().bodies.iter().find(|b| &b.identity.key == key)?.surface.mean_temperature
+    crate::registry::registry().body(key)?.surface.mean_temperature
 }
 
 /// How far the record's mean is from the formula's (K; 0 without a record): the formula's shape
@@ -99,7 +99,7 @@ pub fn site_mean_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], la
 /// A world's surface temperature (K) at `dir` (unit, from its centre, in the
 /// system frame) at `t`: warm under the sun, cold at night (an airless world
 /// to its bare extremes, air damping the swing), cooler toward its poles.
-pub fn surface_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], t: f64, dir: DVec3) -> f64 {
+pub fn surface_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], _t: f64, dir: DVec3) -> f64 {
     let b = &sys.bodies[i];
     let Some((_, sun)) = star(sys, positions) else { return 3.0 };
     let s = flux(sys, positions, positions[i]);
@@ -109,7 +109,6 @@ pub fn surface_temperature(sys: &StarSystem, i: usize, positions: &[DVec3], t: f
     let mu = dir.dot(to_sun);
     // Toward the poles (the spin axis), cooler.
     let axis = b.angular_velocity().try_normalize().unwrap_or(DVec3::Y);
-    let _ = t;
     let lat = dir.dot(axis).abs();
     let by_latitude = mean * (1.0 - 0.25 * lat * lat);
     // The bare day (facing the sun, re-radiating what it takes in) and night.

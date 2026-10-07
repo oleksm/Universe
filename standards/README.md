@@ -54,4 +54,4 @@ standards/
 `identity` (key) and `title` are required; `parent` files it under another standard; `records` names the folder of records it owns; write what's known, leave the rest out. Ordinary case (the game shows capitals).
 
 With a problem the build lists them all, the page shows them, and the game's content is left as
-it was. Generated, not to edit by hand: `standards/index.html`, the eight `content/base/*.ron` files that start `// GENERATED` (bodies, brands, celestial, galaxy, industry, rock_classes, settlements, standards), and the engine's registry types and Dogma constants (crates/registry/build.rs, crates/physics/build.rs). Hand-kept beside them: aliases, prices, shapes, sheet.
+it was. Generated, not to edit by hand: `standards/index.html`, `standards/changes.yaml`, `standards/game-keys.yaml`, and the engine's registry types and Dogma constants (crates/registry/build.rs, crates/physics/build.rs). The game reads the records themselves; `content/base` holds only its own hand-kept files: aliases, prices, shapes, sheet.

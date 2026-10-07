@@ -151,10 +151,10 @@ impl LandOffice {
         LandOffice { grounds, companies, ran_to: 0.0, levied_to: 0.0 }
     }
 
-    /// The land rate, levied up to `now` a day at a time: each owned lot's
-    /// owner pays its system's law's rate on the lot's worth (its area at
-    /// the office's price) to the administration. (Where there's no law,
-    /// none.)
+    /// The land rate, levied up to `now` a step of the administration's clock at a time, as it
+    /// accrues (its rate is a second's): each owned lot's owner pays its system's law's rate on
+    /// the lot's worth (its area at the office's price) to the administration. (Where there's
+    /// no law, none.)
     pub fn levy(&mut self, ledger: &mut crate::ledger::Ledger, now: f64, tick: universe_protocol::Tick) {
         if self.levied_to == 0.0 {
             self.levied_to = now;

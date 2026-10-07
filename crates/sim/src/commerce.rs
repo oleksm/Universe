@@ -15,7 +15,6 @@ use universe_services::records::{Deal, TradeRecord};
 /// What a new settler starts with (credits).
 pub const SETTLER_CREDITS: f64 = 3000.0;
 
-/// Markets put out their price boards this often (s), over the hypernet.
 /// How often a market publishes its board (s): its clock's period (`clock.market`).
 pub fn board_every() -> f64 {
     crate::clocks::period(universe_world::registry::ClockKey::Market)
@@ -220,6 +219,7 @@ impl Universe {
 
     /// The player fills the tank where docked or landed (as its pilot would on arrival).
     pub fn refuel_player(&mut self) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Refuel));
         let sys = self.world.system(self.ship_system);
         let Some(market) = docked_at(&sys, &self.ship) else {
             return self.events.push(universe_avionics::Event::Refused { reason: "REFUEL: NOT AT A PORT OR STATION".into() });
@@ -368,7 +368,7 @@ impl Universe {
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.
-    fn record_trade(&mut self, id: usize, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
+    pub(crate) fn record_trade(&mut self, id: usize, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return };
         let cargo = ship.cargo;
         let trader = if id == crate::combat::PLAYER { "YOU".to_string() } else { self.crafts[id - 1].name.to_uppercase() };
@@ -471,14 +471,21 @@ impl crate::universe::Universe {
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         let cause = universe_protocol::Cause::Rules;
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
+        // (The module fitted comes with its mark, onto the ship; one taken out goes back with its own.)
+        let mut marks: Vec<universe_world::registry::Mark> = refitted.marks.as_deref().cloned().unwrap_or_default();
         if stocked {
             if let Some(i) = module.and_then(item) {
-                self.markets.economy.take(system, here, i, self.world.goods[i].mass);
+                let (_, m, _) = self.markets.economy.take_marked(system, here, i, self.world.goods[i].mass);
+                marks.extend(m);
             }
             if let Some(i) = taken.and_then(item) {
-                self.markets.economy.put(system, here, i, self.world.goods[i].mass);
+                let key = &self.world.goods[i].key;
+                let back: Vec<_> = marks.iter().position(|m| &m.design == key).map(|k| marks.remove(k)).into_iter().collect();
+                self.markets.economy.put_marked(system, here, i, self.world.goods[i].mass, back, Vec::new());
             }
         }
+        let mut refitted = refitted;
+        refitted.marks = (!marks.is_empty()).then(|| std::sync::Arc::new(marks));
         match id {
             crate::combat::PLAYER => self.ship = refitted,
             _ => self.crafts[id - 1].ship = refitted,
@@ -488,6 +495,7 @@ impl crate::universe::Universe {
 
     /// The player refits slot `slot` (see `refit_as`); the cockpit is told.
     pub fn refit(&mut self, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Refit { slot: slot.to_string(), module }));
         let r = self.refit_as(crate::combat::PLAYER, slot, module);
         let c = universe_world::content::content();
         let e = match &r {
@@ -549,14 +557,17 @@ impl crate::universe::Universe {
         let cost = price - trade_in;
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        // (The hull bought comes with its mark.)
+        let mut hull_marks = Vec::new();
         if let Some((item, _)) = self.frame_in_stock(system, here, hull) {
-            self.markets.economy.take(system, here, item, self.world.goods[item].mass);
+            hull_marks = self.markets.economy.take_marked(system, here, item, self.world.goods[item].mass).1;
         }
         // The new ship where the old one stood, with its cargo and fuel.
         let old = self.ship_by_id(id).expect("there").2.clone();
         let mut new = old.clone();
         new.class = hull;
         new.fit = None;
+        new.marks = (!hull_marks.is_empty()).then(|| std::sync::Arc::new(hull_marks));
         // (A new hull: untrimmed.)
         new.trim = Default::default();
         new.refresh();
@@ -577,7 +588,7 @@ impl crate::universe::Universe {
     /// registry's that names its model.)
     fn frame_in_stock(&self, system: usize, here: Facility, hull: universe_world::ship::Hull) -> Option<(usize, f64)> {
         let spec = universe_world::content::content().get(hull);
-        let key = universe_world::registry::registry().hulls.iter().find(|h| h.identity.key == spec.key || h.model.as_deref().is_some_and(|m| spec.visual.as_deref() == Some(m))).map(|h| h.identity.key.clone())?;
+        let key = universe_world::ship::hull_record(spec)?.identity.key.clone();
         let item = universe_world::goods::item(&key)?;
         let place = self.markets.economy.place(system, here)?;
         let ask = place.price(&self.world.goods[item]).ask?;
@@ -586,6 +597,7 @@ impl crate::universe::Universe {
 
     /// The player buys a hull (see `buy_hull_as`); the cockpit is told.
     pub fn buy_hull(&mut self, hull: universe_world::ship::Hull) -> Result<f64, String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::BuyHull(hull)));
         let r = self.buy_hull_as(crate::combat::PLAYER, hull);
         let name = universe_world::content::content().get(hull).name.clone();
         self.events.push(match &r {
@@ -633,6 +645,7 @@ impl crate::universe::Universe {
 
     /// The player's hull mended (see `repair`); the cockpit is told.
     pub fn repair_player(&mut self) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Repair));
         let e = match self.repair(crate::combat::PLAYER) {
             Ok((credits, hull)) => universe_avionics::Event::Repaired { credits, hull },
             Err(reason) => universe_avionics::Event::Refused { reason: format!("REPAIR: {reason}") },
@@ -652,6 +665,7 @@ impl crate::universe::Universe {
     /// The player, on foot by a spaceport's vending machine, buys item
     /// `item` of it (`spaceport::VENDING`): paid to the port's market.
     pub fn vend(&mut self, item: usize) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Vend(item)));
         use universe_services::{Asset, Party};
         let e = match (self.pilot_reach(), universe_world::spaceport::VENDING.get(item)) {
             (Some(universe_world::crew::Reach::Vending(port)), Some(&(what, price, note))) => {
@@ -671,6 +685,7 @@ impl crate::universe::Universe {
     /// The player's ship trimmed (see `world::trim`): at a station's
     /// shipyard, where its fuel can be pumped and its drive set.
     pub fn set_trim(&mut self, trim: universe_world::trim::Trim) -> Result<(), String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Trim(trim.clone())));
         let sys = self.ship_system();
         let r = match universe_world::traffic::docked_at(&sys, &self.ship) {
             Some(Facility::Station(_)) => {
@@ -801,6 +816,7 @@ impl crate::universe::Universe {
     /// The player, docked: lands the passengers aboard where they're bound
     /// (if this is it), or boards those booked for `to`.
     pub fn passengers(&mut self, to: Option<(usize, Facility)>) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Passengers(to)));
         let sys = self.ship_system();
         let Some(market) = universe_world::traffic::docked_at(&sys, &self.ship) else {
             self.events.push(universe_avionics::Event::Refused { reason: "PASSENGERS DOCKED OR LANDED".into() });

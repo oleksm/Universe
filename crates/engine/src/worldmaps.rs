@@ -7,24 +7,11 @@
 
 use crate::pbr::Image;
 
-/// Which map (its binding in group 2, in this order).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Slot {
-    /// The world's true colour (sRGB).
-    Color,
-    /// Its plants and soil, without rock and snow (sRGB).
-    Ground,
-    /// Its normals (the relief's light and shade finer than the mesh).
-    Normal,
-    /// Its climate (the planet simulation's encoding).
-    Climate,
-    /// Its rock map (each texel a rock unit's number, read exactly).
-    Rock,
-    /// The sea's calmness (the bake's globe_spec: 1 − wind / 9 m/s, 0.35..1, on open water;
-    /// 0 on land and on sea ice).
-    Spec,
-}
-
+/// The maps, by slot (their bindings in group 2, in this order: `BINDINGS`): the world's true
+/// colour (sRGB); its plants and soil without rock and snow (sRGB); its normals (the relief's
+/// light and shade finer than the mesh); its climate (the planet simulation's encoding); its rock
+/// map (a rock unit's number a texel, read exactly); the sea's calmness (the bake's globe_spec:
+/// 1 − wind / 9 m/s, 0.35..1, on open water; 0 on land and on sea ice).
 pub const SLOTS: usize = 6;
 
 /// Each slot's binding in group 2 (the samplers at 5 and 6, the air at 7 came before the sea's map).

@@ -53,6 +53,15 @@ pub enum Op {
     Build { system: usize, port: usize, number: u32, blueprint: String },
     /// A works' module set to one of its recipes (or to nothing).
     SetUp { works: usize, setup: usize, recipe: Option<usize> },
+    /// The player's dealings docked: a full tank, a mended hull, a module fitted, a hull bought,
+    /// something from the vending machine, the drive's trim, passengers taken on.
+    Refuel,
+    Repair,
+    Refit { slot: String, module: Option<universe_world::content::Handle<universe_world::modules::Module>> },
+    BuyHull(universe_world::ship::Hull),
+    Vend(usize),
+    Trim(universe_world::trim::Trim),
+    Passengers(Option<(usize, Facility)>),
 }
 
 impl Universe {
@@ -90,6 +99,19 @@ impl Universe {
             Op::SetUp { works, setup, recipe } => {
                 let _ = self.pilot_set_up(crate::combat::PLAYER, works, setup, recipe);
             }
+            Op::Refuel => self.refuel_player(),
+            Op::Repair => self.repair_player(),
+            Op::Refit { slot, module } => {
+                let _ = self.refit(&slot, module);
+            }
+            Op::BuyHull(hull) => {
+                let _ = self.buy_hull(hull);
+            }
+            Op::Vend(item) => self.vend(item),
+            Op::Trim(t) => {
+                let _ = self.set_trim(t);
+            }
+            Op::Passengers(to) => self.passengers(to),
         }
     }
 
@@ -126,6 +148,9 @@ impl Universe {
             s.orientation.to_array().map(f64::to_bits).hash(&mut h);
             format!("{:?}", s.state).hash(&mut h);
             (s.hull.to_bits(), s.throttle.to_bits(), s.rcs.to_array().map(f64::to_bits), s.armed, s.hyperdrive, s.ammo).hash(&mut h);
+            // (What it is and carries: its hull, fit, fuel and cargo.)
+            (universe_world::content::content().get(s.class).key.as_str(), s.fuel.to_bits(), s.cargo.to_bits(), s.passengers).hash(&mut h);
+            format!("{:?}", s.fit).hash(&mut h);
         };
         ship(self.ship_system, &self.ship);
         for c in &self.crafts {

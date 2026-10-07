@@ -1,15 +1,12 @@
-//! The environment as light (image-based lighting): two cube maps drawn on
-//! the GPU each frame from what the frame knows (see `shaders/env.wgsl`):
-//! the specular one, its mip levels for rising roughness (a polished hull
-//! mirrors the world below, a rough one glows with it), and the diffuse one
-//! (the light a matte face takes in from the whole sky, by the way it faces).
-//! The model shader lights with them instead of an ambient constant.
+//! The environment as light (image-based lighting): a cube map drawn on the
+//! GPU each frame from what the frame knows (see `shaders/env.wgsl`), its mip
+//! levels for rising roughness (a polished hull mirrors the world below, a
+//! rough one glows with it). The model shader reflects it; its diffuse light
+//! is the scene's ambient.
 
 /// The specular cube's side (texels) and its mip levels (128 down to 1).
 pub const SPEC_SIZE: u32 = 128;
 pub const SPEC_MIPS: u32 = 8;
-/// The diffuse cube's side.
-pub const DIFF_SIZE: u32 = 16;
 const FORMAT: wgpu::TextureFormat = wgpu::TextureFormat::Rgba16Float;
 
 #[repr(C)]
@@ -23,7 +20,6 @@ struct Pass {
 
 pub(crate) struct Env {
     pub spec: wgpu::TextureView,
-    pub diff: wgpu::TextureView,
     pipe: wgpu::RenderPipeline,
     /// Each face and level to draw: its target and its pass's uniforms.
     passes: Vec<(wgpu::TextureView, wgpu::BindGroup)>,
@@ -44,7 +40,7 @@ impl Env {
                 view_formats: &[],
             })
         };
-        let (spec_tex, diff_tex) = (cube("environment (specular)", SPEC_SIZE, SPEC_MIPS), cube("environment (diffuse)", DIFF_SIZE, 1));
+        let spec_tex = cube("environment (specular)", SPEC_SIZE, SPEC_MIPS);
         let as_cube = |t: &wgpu::Texture| t.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::Cube), ..Default::default() });
         let face = |t: &wgpu::Texture, layer: u32, mip: u32| {
             t.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::D2), base_array_layer: layer, array_layer_count: Some(1), base_mip_level: mip, mip_level_count: Some(1), ..Default::default() })
@@ -70,7 +66,6 @@ impl Env {
                 let roughness = mip as f32 / (SPEC_MIPS - 1) as f32;
                 add(face(&spec_tex, f, mip), Pass { face: f, kind: 0, roughness, samples: if mip == 0 { 1 } else { 64 } });
             }
-            add(face(&diff_tex, f, 0), Pass { face: f, kind: 1, roughness: 1.0, samples: 256 });
         }
         let shader = device.create_shader_module(wgpu::include_wgsl!("shaders/env.wgsl"));
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("environment"), bind_group_layouts: &[Some(globals), Some(&pass_layout)], immediate_size: 0 });
@@ -85,7 +80,7 @@ impl Env {
             multiview_mask: None,
             cache: None,
         });
-        Env { spec: as_cube(&spec_tex), diff: as_cube(&diff_tex), pipe, passes }
+        Env { spec: as_cube(&spec_tex), pipe, passes }
     }
 
     /// Draw both cubes for this frame (the globals already written).

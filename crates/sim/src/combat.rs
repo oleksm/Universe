@@ -73,13 +73,8 @@ impl Universe {
         }
     }
 
-    /// The defence service's gunners, for the tick just run (`dt` game s):
-    /// in every system with someone fair game in it, each turret's gunner
-    /// looks (the frame's snapshot, the law's standings, its gun as its
-    /// sensors read it) and orders its gun. Orders reach the guns after the
-    /// command delay, like a pilot's; where no one's fair game any more, the
     /// Turret gunners' orders due now reach the guns (the gunners are
-    /// clients: see `pilots::aim_guns`).
+    /// clients: see `pilots::aim_guns`), after the command delay like a pilot's.
     fn gunners(&mut self, _dt: f64) {
         let mut due: Vec<(usize, universe_protocol::TurretCommand)> = Vec::new();
         self.turret_orders.make_contiguous().sort_by_key(|o| o.0);

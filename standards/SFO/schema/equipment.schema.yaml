@@ -23,15 +23,10 @@ properties:
   identity:
     type: object
     additionalProperties: false
+    allOf: [{ $ref: "../../common.schema.yaml#/definitions/product_identity" }]
     required: [key, name, maker]
     properties:
-      key: { $ref: "../../common.schema.yaml#/definitions/key" }
-      traded_as: { type: string, x-ref: [market], description: "The market category it is traded as, by its key. Anything physical can be traded." }
-      name: { type: string }
-      maker: { type: string, x-ref: [org], description: "The maker whose product it is, by its key." }
-      revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
       slot: { $ref: "../../common.schema.yaml#/definitions/slot_kind" }
-      description: { type: string }
   size_class: { type: integer, minimum: 1, maximum: 4, description: "Its size class, 1 to 4: it fits a slot at least as big." }
   fits: { type: string, x-ref: [mount], description: "The mount it is built to (SFO 19), by its key: any hull that offers it takes this." }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical" }

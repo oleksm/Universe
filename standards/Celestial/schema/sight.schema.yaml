@@ -16,14 +16,7 @@ properties:
       about: { type: string, description: "What one sees there." }
   at: { type: string, x-ref: [body], description: "The body it is on or of, by its key." }
   kind: { $ref: "../../dictionary.schema.yaml#/definitions/sight_kind" }
-  position:
-    description: "Where on the body, in degrees; left out for a sight that is the whole body or its rings."
-    type: object
-    additionalProperties: false
-    required: [latitude, longitude]
-    properties:
-      latitude: { type: number, x-unit: "deg" }
-      longitude: { type: number, x-unit: "deg" }
+  position: { $ref: "../../common.schema.yaml#/definitions/surface_position", description: "Where on the body, in degrees; left out for a sight that is the whole body or its rings." }
   seen_from: { type: string, x-ref: [body, settlement], description: "Where it is best seen from, where that is not the place itself: a moon for a giant's rings." }
   height: { type: number, x-unit: "m", description: "m above the datum, for a peak" }
   diameter: { type: number, x-unit: "m", description: "m across, for a basin or crater" }
