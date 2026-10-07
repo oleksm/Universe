@@ -1070,12 +1070,36 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     for blk in &plan.blocks {
         let (lo, hi) = blk.bounds();
         let inside = |q: Vec3| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all();
+        // (A big engine (over half a meganewton): a thrust structure, a cone of struts
+        // from the joints it pushes on to the four nearest joints the way it pushes,
+        // within 7 m (the frame as it stands, joists and all), so its push runs along
+        // them into the frame, as a rocket's thrust structure carries it.)
+        let push = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| push_of(blk, f));
+        if let Some((dir, thrust)) = push.filter(|p| p.1 > 5.0e5) {
+            let now: Vec<Vec3> = beams.iter().flat_map(|b| [b.a, b.b]).fold(Vec::new(), |mut v, p| {
+                if !v.iter().any(|q: &Vec3| q.distance(p) < 0.05) {
+                    v.push(p);
+                }
+                v
+            });
+            let _ = thrust;
+            for m in now.iter().copied().filter(|&q| inside(q)) {
+                let mut round: Vec<Vec3> = now.iter().copied().filter(|&q| !inside(q) && (q - m).dot(dir) > 1.0 && q.distance(m) <= 7.0).collect();
+                round.sort_by(|a, b| a.distance(m).total_cmp(&b.distance(m)));
+                let chosen: Vec<Vec3> = round.into_iter().filter(|&q| clear(plan, m, q, stock, &beams, &out)).filter(|&q| !beams.iter().chain(&out).any(|b| (b.a.distance(m) < 0.05 && b.b.distance(q) < 0.05) || (b.b.distance(m) < 0.05 && b.a.distance(q) < 0.05))).take(4).collect();
+                for q in chosen {
+                    out.push(Beam { a: m, b: q, stock: stock.to_string(), pinned: [false; 2] });
+                }
+            }
+        }
         if joints.iter().any(|&q| inside(q)) {
             continue;
         }
-        // (Standing on a deck: the deck carries it, no struts.)
+        // (Standing on a deck, light: the deck carries it, no struts. Heavy (over
+        // HEAVY full): mounted to the frame, as a big tank is strapped to it.)
+        let full_mass = fit.iter().find(|f| f.id == kind(&blk.id)).map_or(0.0, |f| f.mass + f.load);
         let on_deck = plan.plates.iter().any(|pl| (lo.y - pl.y).abs() < 0.1 && lo.x < pl.lo.x.max(pl.hi.x) && hi.x > pl.lo.x.min(pl.hi.x) && lo.z < pl.lo.y.max(pl.hi.y) && hi.z > pl.lo.y.min(pl.hi.y));
-        if on_deck {
+        if on_deck && full_mass <= HEAVY {
             continue;
         }
         let f = fit.iter().find(|f| f.id == kind(&blk.id));
@@ -1459,9 +1483,9 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     frame.joints = joints.iter().map(|p| p.as_dvec3()).collect();
     out.joints = joints.clone();
     let near = |at: Vec3, r: f32| -> Vec<usize> { joints.iter().enumerate().filter(|(_, q)| q.distance(at) <= r).map(|(k, _)| k).collect() };
-    // (The joints a module is held at: those in it, or by it; a deck's points only
-    // under its foot, where it stands on the deck. A deck point held up by nothing
-    // but posts is floor, not frame: no engine pushes on it.)
+    // (The joints a module is held at: those in it, or by it; a deck's floor points
+    // (held up by nothing but posts) only under its foot, where it stands on the
+    // deck: floor, not frame; no engine pushes on one.)
     let on_deck: Vec<bool> = (0..joints.len()).map(|j| deck_points.contains(&j)).collect();
     let mut framed = vec![false; joints.len()];
     for m in frame.members.iter().filter(|m| m.section.flat.is_none()) {
@@ -1473,7 +1497,7 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     }
     let floor_only = |j: usize| on_deck[j] && !framed[j];
     let mounted = |lo: Vec3, hi: Vec3| -> Vec<usize> {
-        let at: Vec<usize> = joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!on_deck[k] || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect();
+        let at: Vec<usize> = joints.iter().enumerate().filter(|&(k, q)| q.cmpge(lo - 0.3).all() && q.cmple(hi + 0.3).all() && (!floor_only(k) || q.y <= lo.y + 0.3)).map(|(k, _)| k).collect();
         if !at.is_empty() {
             return at;
         }
@@ -1509,8 +1533,22 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
             let half = Vec3::new(pr.width.max(pr.height) * 0.5, pr.height * 0.5, pr.width.max(pr.height) * 0.5);
             at = mounted(a.min(b) - half, a.max(b) + half);
         }
-        // (Full: its ore, cargo or fuel too.)
+        // (Its weight rests on its foot: the joints there, if it has any; else (hung)
+        // the joints round it.)
+        if f.gear.is_none() {
+            let foot: Vec<usize> = at.iter().copied().filter(|&j| joints[j].y <= lo.y + 0.3).collect();
+            if !foot.is_empty() {
+                at = foot;
+            }
+        }
+        // (Full: its ore, cargo or fuel too. Heavy: on the frame, not on floor.)
         let m = if blk.id == HOLD { full } else { f.mass + f.load };
+        if m > HEAVY {
+            let framed_at: Vec<usize> = at.iter().copied().filter(|&j| !floor_only(j)).collect();
+            if !framed_at.is_empty() {
+                at = framed_at;
+            }
+        }
         if at.is_empty() {
             out.loose.push(format!("{} IS NOT MOUNTED", f.name));
         } else {
@@ -3896,6 +3934,10 @@ fn bare(key: &str) -> &str {
     let name = key.rsplit('.').next().unwrap_or(key);
     name.trim_end_matches("-liq").trim_end_matches("-gas")
 }
+
+/// A module heavier than this full (kg) is mounted to the frame, never just stood on
+/// a deck: a deck's panels are floors, not foundations.
+const HEAVY: f64 = 2000.0;
 
 /// How often each airlock cycles a day (a figure chosen: a working ship's crew in
 /// and out once), and the share of air's mass that is oxygen.
@@ -7032,6 +7074,8 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         }
     }
 }
+
+
 
 
 
