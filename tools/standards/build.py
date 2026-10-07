@@ -118,9 +118,42 @@ def reading(v, path, tab):
     return v
 
 
+def flatten_schema(node, path):
+    """A schema with every object's `allOf` shapes flattened into its properties and required, as the validators and the
+    generator read them (a shape's own `$ref`s are left relative to its file; this build reads names and descriptions)."""
+    if isinstance(node, list):
+        return [flatten_schema(x, path) for x in node]
+    if not isinstance(node, dict):
+        return node
+    node = {k: flatten_schema(v, path) for k, v in node.items()}
+    shapes = node.pop("allOf", None)
+    if shapes and (node.get("type") == "object" or "properties" in node):
+        import copy
+        props = dict(node.get("properties") or {}); required = list(node.get("required") or [])
+        for shape in shapes:
+            spath = path
+            if isinstance(shape, dict) and "$ref" in shape:
+                shape, spath = V.resolve(shape["$ref"], path)
+                shape = copy.deepcopy(shape)
+            shape = flatten_schema(shape, spath)
+            for k, pv in (shape.get("properties") or {}).items():
+                if k in props or not isinstance(pv, dict) or not any(x in pv for x in ("type", "$ref", "oneOf", "enum", "properties", "const")):
+                    continue
+                props[k] = pv
+            for r in shape.get("required") or []:
+                if r not in required and r in props:
+                    required.append(r)
+        node["properties"] = props
+        if required:
+            node["required"] = required
+    elif shapes:
+        node["allOf"] = shapes
+    return node
+
+
 def read_schema(path):
     """A schema, its descriptions in the units the page reads."""
-    sch = yaml.safe_load(open(path, encoding="utf-8"))
+    sch = flatten_schema(yaml.safe_load(open(path, encoding="utf-8")), path)
     props = sch.get("properties") or {}
     import copy
     for g in ("physical", "made_from", "making"):

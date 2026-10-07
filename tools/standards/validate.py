@@ -198,12 +198,11 @@ def refs(v, sch, here, at=""):
             else:
                 yield from refs(x, sch["items"], here, f"{at}[{i}]")
     if isinstance(v, dict):
+        flat, _ = flattened(sch, here)      # (the properties with those of the shapes it derives from, each with its file)
         for k, x in v.items():
-            s = (sch.get("properties") or {}).get(k)
+            s, h = flat.get(k, (None, here))
             if isinstance(s, dict) and "$ref" in s:
-                s, h = resolve(s["$ref"], here)
-            else:
-                h = here
+                s, h = resolve(s["$ref"], h)
             if isinstance(s, dict) and "x-ref" in s:
                 yield v, k, s["x-ref"], f"{at}.{k}" if at else k
             elif s is not None:
