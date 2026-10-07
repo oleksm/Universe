@@ -258,6 +258,128 @@ pub struct Interior {
     issue_top: usize,
     /// Where the budgets panel was last drawn (clicks and the wheel there are its).
     budget_rect: std::cell::Cell<(Vec2, Vec2)>,
+    /// MIRROR (X): edits made across the ship's middle too (0 off; 1 across x = 0,
+    /// left and right; 2 across z = 0, fore and aft; 3 both); this frame's change
+    /// made by a generator (MOUNT ALL, BRACE, AUTO-SIZE), not mirrored.
+    mirror: u8,
+    bulk: bool,
+}
+
+/// The mirror images of `p` across the planes `mirror` names (none of them `p`).
+fn images(p: Vec3, mirror: u8) -> Vec<Vec3> {
+    let mut out = Vec::new();
+    if mirror & 1 != 0 {
+        out.push(Vec3::new(-p.x, p.y, p.z));
+    }
+    if mirror & 2 != 0 {
+        out.push(Vec3::new(p.x, p.y, -p.z));
+    }
+    if mirror == 3 {
+        out.push(Vec3::new(-p.x, p.y, -p.z));
+    }
+    out
+}
+
+/// The same mirror image of a direction, by image number (as `images` orders them).
+fn image_dir(d: Vec3, mirror: u8, n: usize) -> Vec3 {
+    let flip = match (mirror, n) {
+        (1, _) | (3, 0) => Vec3::new(-1.0, 1.0, 1.0),
+        (2, _) | (3, 1) => Vec3::new(1.0, 1.0, -1.0),
+        _ => Vec3::new(-1.0, 1.0, -1.0),
+    };
+    d * flip
+}
+
+/// An edit (`before` to `plan`) made across the mirror planes too: modules placed,
+/// moved, turned or taken out, members laid or taken out (or their stock changed),
+/// decks laid or taken out, each done to its twins as well. Modules mirror only in
+/// a design with no hull (a hull's slots hold one of each).
+fn mirror_edit(before: &Plan, plan: &mut Plan, mirror: u8) {
+    let near = |a: Vec3, b: Vec3| a.distance(b) < 0.05;
+    // (Modules, by their ids.)
+    if plan.on.is_none() && plan.blocks.iter().all(|b| b.id.contains('#')) {
+        let removed: Vec<Block> = before.blocks.iter().filter(|b| !plan.blocks.iter().any(|a| a.id == b.id)).cloned().collect();
+        for r in &removed {
+            for m in images(r.at, mirror) {
+                plan.blocks.retain(|b| !(kind(&b.id) == kind(&r.id) && near(b.at, m)));
+            }
+        }
+        let now = plan.blocks.clone();
+        for b in &now {
+            match before.blocks.iter().find(|o| o.id == b.id) {
+                // (Placed: its twins placed.)
+                None => {
+                    for (n, m) in images(b.at, mirror).into_iter().enumerate() {
+                        if near(m, b.at) || plan.blocks.iter().any(|o| kind(&o.id) == kind(&b.id) && near(o.at, m)) {
+                            continue;
+                        }
+                        let k = (1..).find(|k| !plan.blocks.iter().any(|o| o.id == format!("{}#{k}", kind(&b.id)))).unwrap_or(1);
+                        plan.blocks.push(Block { id: format!("{}#{k}", kind(&b.id)), at: m, size: b.size, push: b.push.map(|d| image_dir(d, mirror, n)) });
+                    }
+                }
+                // (Moved, resized or turned: its twins (where its images were) too.)
+                Some(o) if o != b => {
+                    for (n, (was, m)) in images(o.at, mirror).into_iter().zip(images(b.at, mirror)).enumerate() {
+                        if near(was, o.at) {
+                            continue;
+                        }
+                        if let Some(t) = plan.blocks.iter_mut().find(|t| t.id != b.id && kind(&t.id) == kind(&b.id) && near(t.at, was)) {
+                            (t.at, t.size, t.push) = (m, b.size, b.push.map(|d| image_dir(d, mirror, n)));
+                        }
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    // (Members, by their ends, either way round.)
+    let same = |x: &Beam, a: Vec3, b: Vec3| (near(x.a, a) && near(x.b, b)) || (near(x.a, b) && near(x.b, a));
+    let removed: Vec<Beam> = before.beams.iter().filter(|o| !plan.beams.iter().any(|b| b == *o)).cloned().collect();
+    let added: Vec<Beam> = plan.beams.iter().filter(|b| !before.beams.iter().any(|o| o == *b)).cloned().collect();
+    for r in &removed {
+        for (a, b) in images(r.a, mirror).into_iter().zip(images(r.b, mirror)) {
+            if !same(r, a, b) && !added.iter().any(|x| same(x, a, b)) {
+                plan.beams.retain(|x| !same(x, a, b));
+            }
+        }
+    }
+    for n in &added {
+        for (a, b) in images(n.a, mirror).into_iter().zip(images(n.b, mirror)) {
+            if same(n, a, b) {
+                continue;
+            }
+            plan.beams.retain(|x| !same(x, a, b) || x.stock == n.stock);
+            if !plan.beams.iter().any(|x| same(x, a, b)) {
+                plan.beams.push(Beam { a, b, stock: n.stock.clone(), pinned: n.pinned });
+            }
+        }
+    }
+    // (Decks, by their corners and level.)
+    let deck_image = |d: &Plate, m: Vec3| -> (Vec2, Vec2) {
+        let (x0, x1) = if m.x < 0.0 { (-d.hi.x, -d.lo.x) } else { (d.lo.x, d.hi.x) };
+        let (z0, z1) = if m.z < 0.0 { (-d.hi.y, -d.lo.y) } else { (d.lo.y, d.hi.y) };
+        (Vec2::new(x0, z0), Vec2::new(x1, z1))
+    };
+    let flips: Vec<Vec3> = images(Vec3::ONE, mirror);
+    let same_deck = |x: &Plate, lo: Vec2, hi: Vec2, y: f32| x.lo.distance(lo) < 0.05 && x.hi.distance(hi) < 0.05 && (x.y - y).abs() < 0.05;
+    let removed: Vec<Plate> = before.plates.iter().filter(|o| !plan.plates.iter().any(|p| p == *o)).cloned().collect();
+    let added: Vec<Plate> = plan.plates.iter().filter(|p| !before.plates.iter().any(|o| o == *p)).cloned().collect();
+    for r in &removed {
+        for &f in &flips {
+            let (lo, hi) = deck_image(r, f);
+            if !same_deck(r, lo, hi, r.y) {
+                plan.plates.retain(|x| !same_deck(x, lo, hi, r.y));
+            }
+        }
+    }
+    for d in &added {
+        for &f in &flips {
+            let (lo, hi) = deck_image(d, f);
+            if !same_deck(d, lo, hi, d.y) && !plan.plates.iter().any(|x| same_deck(x, lo, hi, d.y)) {
+                plan.plates.push(Plate { lo, hi, y: d.y, stock: d.stock.clone() });
+            }
+        }
+    }
 }
 
 /// Something wrong with the design, to go to: what it says, where it is (none: the
@@ -331,10 +453,13 @@ fn issues(i: &Interior, faults: &[String]) -> Vec<Issue> {
     out
 }
 
+/// A box on the screen: its corner and its size.
+type Rect = (Vec2, Vec2);
+
 /// The budgets panel (along the bottom, right of the tool panel) and the issue
 /// panel (under the tool panel), on a screen `size`: each one's box, and each issue
 /// row shown (its number in the list, its box).
-fn budget_panel(size: Vec2, lines: usize, issues: usize, top: usize) -> ((Vec2, Vec2), (Vec2, Vec2), Vec<(usize, (Vec2, Vec2))>) {
+fn budget_panel(size: Vec2, lines: usize, issues: usize, top: usize) -> (Rect, Rect, Vec<(usize, Rect)>) {
     let (pp, pc) = PANEL;
     let height = 18.0 + lines as f32 * 10.0;
     let x = pp.x + pc.x + 6.0;
@@ -5576,8 +5701,21 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
         }
         return true;
     }
+    // MIRROR (X): off, across x = 0, across z = 0, both.
+    if input.pressed(KeyCode::KeyX) && !ctrl {
+        interior.mirror = (interior.mirror + 1) % 4;
+        let say = ["MIRROR OFF", "MIRROR: LEFT AND RIGHT (ACROSS X = 0)", "MIRROR: FORE AND AFT (ACROSS Z = 0)", "MIRROR: BOTH WAYS"][interior.mirror as usize];
+        interior.message = Some((say.into(), 4.0));
+    }
     let before = interior.plan.clone();
+    interior.bulk = false;
     let stay = input_plan(ctx, interior);
+    // (An edit made across the mirror planes too, unless a generator made it.)
+    if interior.mirror > 0 && !interior.bulk && interior.plan != before && interior.plan.hull == before.hull {
+        let mut plan = interior.plan.clone();
+        mirror_edit(&before, &mut plan, interior.mirror);
+        interior.plan = plan;
+    }
     // (A slide is one step, however many frames it changes the plan.)
     let changed = interior.plan != before && interior.plan.hull == before.hull;
     if changed && !interior.sliding {
@@ -5609,6 +5747,7 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
             let (was, now) = (mass(&before.beams), mass(&beams));
             interior.plan.beams = beams;
             interior.plan.plates = plates;
+            interior.bulk = true;
             interior.undo.push(before);
             interior.redo.clear();
             let short = if maxed > 0 { format!("; {maxed} NEED MORE THAN THEIR MATERIAL'S BIGGEST TUBE: TRY ANOTHER") } else { String::new() };
@@ -5796,6 +5935,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                         let (beams, n) = brace(&interior.plan, b);
                         interior.message = Some((if n == 0 { "NOTHING PAST ITS LIMIT TO BRACE".to_string() } else { format!("{n} MEMBERS BRACED: AUTO-SIZE THEM") }, 5.0));
                         interior.plan.beams = beams;
+                        interior.bulk = true;
                     }
                     None => interior.message = Some(("STILL WORKING THE FRAME OUT: A MOMENT".into(), 3.0)),
                 }
@@ -5812,6 +5952,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                 let (beams, added) = mounts(&interior.plan, &interior.fit, interior.spacing.max(1.0), &stock);
                 interior.message = Some((if added == 0 { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{added} MOUNTING MEMBERS ADDED") }, 4.0));
                 interior.plan.beams = beams;
+                interior.bulk = true;
             }
             if action == Some(Action::AutoSize) && interior.sizing.is_none() && !interior.plan.beams.is_empty() {
                 let (plan, fit, spec, mix) = (interior.plan.clone(), interior.fit.clone(), interior.spec(), interior.mix);
@@ -6314,7 +6455,8 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
         _ => "LEFT-DRAG TURNS IT - RIGHT-DRAG MOVES IT - WHEEL: NEARER, FARTHER - HOME: AS IT WAS - ESC CLOSES",
     };
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), hint, LABEL.scale(0.6), 0.7);
+    let mirror = ["X: MIRROR", "X: MIRROR (NOW LEFT-RIGHT)", "X: MIRROR (NOW FORE-AFT)", "X: MIRROR (NOW BOTH)"][interior.mirror as usize];
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), &format!("{hint} - {mirror}"), LABEL.scale(0.6), 0.7);
     // The toolbar: the tool in hand lit, the button under the cursor brighter.
     {
         use crate::hud::{draw_cell, Lamp};
@@ -6393,6 +6535,18 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             frame.hud_line(pa, pb, c);
         }
     };
+    // (The mirror planes, MIRROR on: each outlined up to the grid's top, crossed.)
+    let plane_col = Color([1.0, 0.45, 0.85, 0.7]);
+    if interior.mirror & 1 != 0 {
+        for (a, b) in [((gz0, lo.y), (gz1, lo.y)), ((gz1, lo.y), (gz1, top)), ((gz1, top), (gz0, top)), ((gz0, top), (gz0, lo.y)), ((gz0, lo.y), (gz1, top))] {
+            seg(frame, Vec3::new(0.0, a.1, a.0), Vec3::new(0.0, b.1, b.0), plane_col);
+        }
+    }
+    if interior.mirror & 2 != 0 {
+        for (a, b) in [((gx0, lo.y), (gx1, lo.y)), ((gx1, lo.y), (gx1, top)), ((gx1, top), (gx0, top)), ((gx0, top), (gx0, lo.y)), ((gx0, lo.y), (gx1, top))] {
+            seg(frame, Vec3::new(a.0, a.1, 0.0), Vec3::new(b.0, b.1, 0.0), plane_col);
+        }
+    }
     let rows = if grid { ((top - lo.y) / step).round() as i32 } else { -1 };
     for k in 0..=rows {
         let y = lo.y + k as f32 * step;
