@@ -5,10 +5,20 @@
 
 use crate::registry::{registry, Org, OrgInsurance, OrgLaw};
 
-/// The law in the system named `system`: its administration's (an
-/// administration is named for the system it administers). None: no law there.
-pub fn law(system: &str) -> Option<&'static OrgLaw> {
-    registry().orgs.iter().find(|o| o.law.is_some() && o.identity.name.eq_ignore_ascii_case(system)).and_then(|o| o.law.as_ref())
+/// The law in system `system` (its galaxy index): the law of the administration that
+/// `administers` its record. None: no law there.
+pub fn law(system: usize) -> Option<&'static OrgLaw> {
+    static BY_SYSTEM: std::sync::OnceLock<std::collections::HashMap<usize, &'static OrgLaw>> = std::sync::OnceLock::new();
+    BY_SYSTEM
+        .get_or_init(|| {
+            let reg = registry();
+            reg.orgs
+                .iter()
+                .filter_map(|o| Some((reg.system(o.administers.as_deref()?)?.identity.index? as usize, o.law.as_ref()?)))
+                .collect()
+        })
+        .get(&system)
+        .copied()
 }
 
 /// An offence's name, as the registry writes it ("reckless flying").

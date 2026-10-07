@@ -21,3 +21,8 @@
   `Place` carry the settlement's key; a land office works resolves its blueprint to the facility's
   key once, when it's recorded. (A seeded port still finds its record by name and body: that's
   all a seeded port has. The law by its administration's name waits on a record field: asked.)
+- A system's law (its duty, land rate, offences) by key: the administration that `administers`
+  the system's record (fso: a new field, required of an administration), found by the system's
+  galaxy index. It matched the administration's name to the system's, so renaming either would
+  have dropped the law silently. `order::law` takes the system's index; the economy's rigs no
+  longer pass the system's name.

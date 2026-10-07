@@ -165,7 +165,7 @@ impl LandOffice {
         while self.levied_to + levy_every() <= now {
             self.levied_to += levy_every();
             for g in &self.grounds {
-                let Some(rate) = universe_world::order::law(&g.recorded.system).and_then(|l| l.policies.land_rate) else { continue };
+                let Some(rate) = universe_world::order::law(g.system).and_then(|l| l.policies.land_rate) else { continue };
                 for l in &g.lots {
                     let Some(owner) = self.party(&l.owner) else { continue };
                     let due = area(&l.outline) * LAND_PRICE * rate * levy_every();

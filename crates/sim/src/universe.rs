@@ -186,7 +186,7 @@ impl Universe {
         // The rigs (see `world::rigs`): each its own market, its owner's.
         for (i, sys) in &systems {
             for (b, body) in sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Rig) {
-                u.markets.economy.add_rig(&mut u.land, *i, &sys.name, b, &body.key);
+                u.markets.economy.add_rig(&mut u.land, *i, b, &body.key);
             }
         }
         u.start_docked();

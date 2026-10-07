@@ -23,7 +23,7 @@ pub const RECKLESS_REACH: f64 = 5_000.0;
 impl Universe {
     /// Is there a law in `system`?
     pub(crate) fn has_law(&self, system: usize) -> bool {
-        universe_world::order::law(&self.world.system(system).name).is_some()
+        universe_world::order::law(system).is_some()
     }
 
     /// The tick's wrecks, judged.
@@ -96,11 +96,10 @@ impl Universe {
     /// a warning have nothing to act on yet.)
     pub(crate) fn charge(&mut self, c: Charge) {
         use universe_world::registry::Penalty;
-        let sys_name = self.world.system(c.system).name.clone();
         let worth = self.ship_by_id(c.ship as usize).map_or(0.0, |(_, _, s)| Universe::ship_value(s));
         let me = universe_services::Party::Pilot(c.ship as usize);
         let admin = universe_services::Party::Administration(c.system);
-        let penalties = universe_world::order::law(&sys_name).and_then(|l| l.offences.iter().find(|o| o.offence == c.offence)).map(|o| o.penalties.clone()).unwrap_or_default();
+        let penalties = universe_world::order::law(c.system).and_then(|l| l.offences.iter().find(|o| o.offence == c.offence)).map(|o| o.penalties.clone()).unwrap_or_default();
         let mut said: Vec<String> = Vec::new();
         for p in &penalties {
             match p.kind {
@@ -123,7 +122,7 @@ impl Universe {
             }
         }
         if c.ship as usize == crate::combat::PLAYER {
-            self.events.push(Event::Charged { offence: universe_world::order::offence_name(c.offence), system: sys_name, penalties: said.join(", ") });
+            self.events.push(Event::Charged { offence: universe_world::order::offence_name(c.offence), system: self.world.system(c.system).name.clone(), penalties: said.join(", ") });
         }
         self.law.charge(c);
     }

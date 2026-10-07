@@ -466,8 +466,8 @@ impl Place {
     }
 }
 
-/// The duty on sales in the system named `system`: its law's (0: no law, or none levied).
-fn duty_in(system: &str) -> f64 {
+/// The duty on sales in system `system` (its galaxy index): its law's (0: no law, or none levied).
+fn duty_in(system: usize) -> f64 {
     universe_world::order::law(system).and_then(|l| l.policies.duty).unwrap_or(0.0)
 }
 
@@ -503,7 +503,7 @@ impl Economy {
                 record: Some(g.recorded.key.clone()),
                 site: Site::Ground(k),
                 trader: Party::Market(g.system, facility),
-                duty: duty_in(&g.recorded.system),
+                duty: duty_in(g.system),
                 warehouse: None,
                 stock: Pool::default(),
                 wants: Vec::new(),
@@ -555,7 +555,7 @@ impl Economy {
     /// The registry's rig `key`, body `body` of `system` (see `world::rigs`):
     /// a place with no people whose market is its own works, where its owner
     /// trades at its dock (its owner a company of the land office's from now).
-    pub fn add_rig(&mut self, land: &mut LandOffice, system: usize, system_name: &str, body: usize, key: &str) {
+    pub fn add_rig(&mut self, land: &mut LandOffice, system: usize, body: usize, key: &str) {
         let facility = Facility::Rig(body);
         if self.index.contains_key(&(system, facility)) {
             return;
@@ -570,7 +570,7 @@ impl Economy {
             record: None,
             site: Site::Rig(system, body),
             trader,
-            duty: duty_in(system_name),
+            duty: duty_in(system),
             warehouse: None,
             stock: Pool::default(),
             wants: Vec::new(),
@@ -1119,7 +1119,7 @@ mod tests {
     fn a_rig_is_its_owners_market() {
         let mut land = LandOffice::seed(std::iter::empty());
         let mut e = Economy::new(&land, 0.0);
-        e.add_rig(&mut land, 3, "Treistun", 7, "rig.treistun.hadley-orbital-works");
+        e.add_rig(&mut land, 3, 7, "rig.treistun.hadley-orbital-works");
         let p = e.place(3, Facility::Rig(7)).expect("a place at the rig");
         assert!(p.warehouse.is_some(), "its works are its market");
         let hadley = land.companies.iter().position(|c| c.0 == "org.hadley").expect("its owner a company");
