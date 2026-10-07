@@ -4984,11 +4984,13 @@ fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     Some((kind, map, power))
 }
 
-/// A battery pack's heat capacity (J/kg K) and how far it may warm in a hover (K):
-/// assumed (lithium cells are about 1 kJ/kg K; cells kept below about 60 °C from
-/// about 20 °C), to review.
+/// A battery pack's heat capacity (J/kg K) and how far it may warm in a hover (K),
+/// for a pack whose record doesn't say (its specific heat; its hottest): assumed,
+/// lithium cells' (about 1 kJ/kg K; kept below about 60 °C), to review. The dock's
+/// temperature (K), the packs' at the start.
 const PACK_HEAT_CAPACITY: f64 = 1000.0;
 const PACK_WARMING: f64 = 40.0;
+const DOCK_TEMPERATURE: f64 = 293.0;
 
 /// Days, to a tenth when under ten.
 fn short_days(d: f64) -> String {
@@ -5313,10 +5315,16 @@ fn budget(i: &Interior) -> Budget {
             let loss = if rate > 0.0 { of("battery").map(|p| num(&p.3, "rate") * (1.0 - p.3.get("efficiency").and_then(|v| v.as_f64()).unwrap_or(1.0))).sum::<f64>() / rate } else { 0.0 };
             let heat = fans_heat + short * loss;
             let seconds = if short > 0.0 { stored / short } else { 0.0 };
-            let packs: f64 = of("battery").map(|p| p.1.mass).sum();
-            // (The packs warm by their own losses; the fans' heat is in their motors.)
-            let warms = short * loss * seconds / (packs * PACK_HEAT_CAPACITY).max(1.0);
-            lines.push((format!("HOVER HEAT  {} WHILE IT HOVERS ({} IN THE PACKS, {} IN THE FAN MOTORS): {:.0} MJ OVER {seconds:.0} S; THE PACKS WARM {warms:.0} K (AT AN ASSUMED 1 KJ/KG K)", si(heat, "W"), si(short * loss, "W"), si(fans_heat, "W"), heat * seconds / 1e6), warms <= PACK_WARMING));
+            // (The packs warm by their own losses (the fans' heat is in their motors),
+            // taken up by their heat capacity (their records' specific heat, by mass);
+            // from the dock's temperature they may warm to their records' hottest.)
+            let reg = universe_sim::world::registry::registry();
+            let phys = |p: &&(&Block, &Fitted, String, Fields, f64)| reg.equipment(&p.1.key).map(|e| (e.physical.specific_heat, e.physical.operating_max_temperature));
+            let capacity: f64 = of("battery").map(|p| p.1.mass * phys(&p).and_then(|x| x.0).unwrap_or(PACK_HEAT_CAPACITY)).sum();
+            let room = of("battery").filter_map(|p| phys(&p).and_then(|x| x.1)).fold(f64::MAX, f64::min);
+            let room = if room == f64::MAX { PACK_WARMING } else { room - DOCK_TEMPERATURE };
+            let warms = short * loss * seconds / capacity.max(1.0);
+            lines.push((format!("HOVER HEAT  {} WHILE IT HOVERS ({} IN THE PACKS, {} IN THE FAN MOTORS): {:.0} MJ OVER {seconds:.0} S; THE PACKS WARM {warms:.0} OF THE {room:.0} K THEY MAY", si(heat, "W"), si(short * loss, "W"), si(fans_heat, "W"), heat * seconds / 1e6), warms <= room));
             let _ = (pad, class, burned, hover_s, least);
         } else {
         let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{hover_s}{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
