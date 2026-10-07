@@ -1534,11 +1534,15 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
     let mut pushers: Vec<(ThrusterRole, DVec3, Vec<usize>)> = thrusters.iter().filter(|t| matches!(t.role, ThrusterRole::Main | ThrusterRole::Lift)).map(|t| (t.role, t.push * t.thrust, near(t.at.as_vec3(), 1.0))).collect();
     if spec.is_none() {
         for blk in &plan.blocks {
-            let Some((dir, thrust)) = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| f.push) else { continue };
+            let Some((dir, thrust)) = fit.iter().find(|f| f.id == kind(&blk.id)).and_then(|f| push_of(blk, f)) else { continue };
             let (lo, hi) = blk.bounds();
             // (Its push goes through its mount into the frame, never a deck.)
             let at: Vec<usize> = mounted(lo, hi).into_iter().filter(|&j| !floor_only(j)).collect();
             let role = if dir.y > 0.5 { ThrusterRole::Lift } else { ThrusterRole::Main };
+            // (Swivelled, pushing some other way: it turns up to land too.)
+            if role == ThrusterRole::Main && swivelled(plan, fit, blk) {
+                pushers.push((ThrusterRole::Lift, DVec3::Y * thrust, at.clone()));
+            }
             pushers.push((role, dir.as_dvec3() * thrust, at));
         }
     }
@@ -1700,6 +1704,10 @@ struct Block {
     id: String,
     at: Vec3,
     size: Vec3,
+    /// An engine: which way it pushes the ship, as placed (none: its kind's way: a
+    /// drive forward, a lift up, an engine forward).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    push: Option<Vec3>,
 }
 
 /// What the ship is fitted with, to be placed: its slot (the hold: HOLD), its name,
@@ -1791,6 +1799,8 @@ fn fitted(e: &universe_sim::world::registry::Equipment, id: &str) -> Option<Fitt
         let push = match &e.function {
             EquipmentFunction::Drive(d) => Some((Vec3::NEG_Z, d.thrust)),
             EquipmentFunction::Lift(l) => Some((Vec3::Y, l.thrust)),
+            // (An engine: pointed where it's placed; forward till then.)
+            EquipmentFunction::Engine(g) => Some((Vec3::NEG_Z, g.thrust)),
             _ => None,
         };
         let load = match &e.function {
@@ -1820,6 +1830,24 @@ fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
         let size = if round { Vec3::splat((6.0 * volume / std::f32::consts::PI).cbrt()) } else { m.dims().as_vec3() };
         Fitted { id: slot.clone(), key: m.key.clone(), name: m.name.to_uppercase(), mass: m.mass, volume, round, size, push: None, load: 0.0, gear: None }
     }).collect()
+}
+
+/// Which way a placed module pushes the ship and how hard (N), if it does: as placed,
+/// else its kind's way.
+fn push_of(b: &Block, f: &Fitted) -> Option<(Vec3, f64)> {
+    f.push.map(|(d, t)| (b.push.unwrap_or(d), t))
+}
+
+/// Whether a placed engine has a swivel at it that bears its thrust: it can turn to
+/// push the ship up (to land), whichever way it's placed.
+fn swivelled(plan: &Plan, fit: &[Fitted], b: &Block) -> bool {
+    let thrust = fit.iter().find(|f| f.id == kind(&b.id)).and_then(|f| f.push).map_or(0.0, |p| p.1);
+    let (lo, hi) = b.bounds();
+    plan.blocks.iter().any(|s| {
+        let (slo, shi) = s.bounds();
+        let touch = slo.cmple(hi + 0.3).all() && shi.cmpge(lo - 0.3).all();
+        touch && fit.iter().find(|f| f.id == kind(&s.id)).and_then(figures).is_some_and(|(k, m, _)| k == "swivel" && m.get("bears").and_then(|v| v.as_f64()).unwrap_or(0.0) >= thrust)
+    })
 }
 
 impl Block {
@@ -2866,7 +2894,7 @@ impl Interior {
             let mut x = -12.0;
             for (n, f) in self.fit.iter().step_by(7).take(7).enumerate() {
                 for copy in 1..=if n == 0 { 2 } else { 1 } {
-                    self.plan.blocks.push(Block { id: format!("{}#{copy}", f.id), at: Vec3::new(x + f.size.x * 0.5, f.size.y * 0.5, 0.0), size: f.size });
+                    self.plan.blocks.push(Block { id: format!("{}#{copy}", f.id), at: Vec3::new(x + f.size.x * 0.5, f.size.y * 0.5, 0.0), size: f.size, push: None });
                     x += f.size.x + 1.0;
                 }
             }
@@ -2881,7 +2909,7 @@ impl Interior {
         let floor = lo.y + 8.5;
         let mut z = lo.z + 10.0;
         for f in &self.fit {
-            self.plan.blocks.push(Block { id: f.id.clone(), at: Vec3::new(0.0, floor + f.size.y * 0.5, z + f.size.z * 0.5), size: f.size });
+            self.plan.blocks.push(Block { id: f.id.clone(), at: Vec3::new(0.0, floor + f.size.y * 0.5, z + f.size.z * 0.5), size: f.size, push: None });
             z += f.size.z + 0.6;
             if z > hi.z - 4.0 {
                 break;
@@ -4033,7 +4061,9 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let most = by.first().map_or(String::new(), |b| b.0.to_uppercase());
         lines.push((format!("WALLS {area:.0} M2, {} AT {:.0} KPA: MOSTLY {most}; WORST AT {:.0}% OF ITS LIMIT", t(wall_mass), cabin_pressure() / 1000.0, worst * 100.0), worst <= 1.0));
     }
-    let lift: f64 = of("lift").map(|p| num(&p.3, "thrust")).sum();
+    // (What pushes it up: whatever is placed pushing up, or swivelled to turn up.)
+    let lifting: Vec<&(&Block, &Fitted, String, Fields, f64)> = placed.iter().filter(|p| push_of(p.0, p.1).is_some_and(|(d, _)| d.y > 0.5) || (p.1.push.is_some() && swivelled(&i.plan, &i.fit, p.0))).collect();
+    let lift: f64 = lifting.iter().filter_map(|p| p.1.push.map(|x| x.1)).sum();
     // (Against its weight in the gravity it's designed for; and the strongest
     // gravity it can lift itself in, full.)
     let design = i.plan.gravity();
@@ -4041,6 +4071,34 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let g = lift / (full * design);
         let most = lift / (full * STANDARD_G);
         lines.push((format!("LIFT  {}: {g:.2} OF ITS FULL WEIGHT AT {:.2} G; HOVERS FULL UP TO {most:.2} G", si(lift, "N"), design / STANDARD_G), g > 1.0));
+        // (Landing on them: hovering, their jet on the pad (half the thrust times the
+        // exhaust speed, thrust-weighted), and which pad takes it (SFO 23: 100 MW,
+        // 1 GW, 10 GW; nothing lands above); what hovering burns; whether it still
+        // hovers with its strongest one out; whether they throttle down to hover.)
+        let weight = full * design;
+        let exhaust = lifting.iter().map(|p| num(&p.3, "thrust") * num(&p.3, "exhaust")).sum::<f64>() / lift.max(1.0);
+        let pad = 0.5 * weight * exhaust;
+        let class = [(1e8, "A PAD OF 100 MW"), (1e9, "A PAD OF 1 GW"), (1e10, "A PAD OF 10 GW")].iter().find(|c| pad <= c.0).map(|c| c.1);
+        let burn = weight / exhaust.max(1.0);
+        let strongest = lifting.iter().map(|p| num(&p.3, "thrust")).fold(0.0, f64::max);
+        let one_out = lift - strongest >= weight;
+        let least: f64 = lifting.iter().map(|p| num(&p.3, "thrust") * p.3.get("throttle").and_then(|v| v.as_f64()).unwrap_or(0.0)).sum();
+        let burned = if burn < 10.0 { format!("{burn:.2}") } else { format!("{burn:.0}") };
+        let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
+        lines.push((text, g > 1.0 && class.is_some() && least <= weight));
+        // (Balanced: its lift's middle under its weight's.)
+        let mass_at = |p: &&(&Block, &Fitted, String, Fields, f64)| (p.0.at, p.1.mass + p.1.load);
+        // (Its frame and decks too: each member at its middle, each deck at its own.)
+        let mut all: Vec<(Vec3, f64)> = placed.iter().map(|p| mass_at(&p)).collect();
+        all.extend(i.plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| ((b.a + b.b) * 0.5, s.per_metre * f64::from(b.a.distance(b.b))))));
+        all.extend(i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| (Vec3::new((p.lo.x + p.hi.x) * 0.5, p.y, (p.lo.y + p.hi.y) * 0.5), s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs())))));
+        let total: f64 = all.iter().map(|a| a.1).sum::<f64>().max(1.0);
+        let centre = all.iter().fold(Vec3::ZERO, |c, a| c + a.0 * (a.1 / total) as f32);
+        let lifts = lifting.iter().fold(Vec3::ZERO, |c, p| c + p.0.at * (num(&p.3, "thrust") / lift.max(1.0)) as f32);
+        let off = Vec3::new(lifts.x - centre.x, 0.0, lifts.z - centre.z).length();
+        if off > 1.0 {
+            lines.push((format!("BALANCE  ITS LIFT IS {off:.1} M OFF ITS MIDDLE OF MASS: IT TIPS"), false));
+        }
     }
     let supply: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum::<f64>() + of("solar_array").map(|p| num(&p.3, "output")).sum::<f64>();
     let draw: f64 = placed.iter().map(|p| p.4).sum();
@@ -4053,7 +4111,7 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     let plants: f64 = of("power_plant").map(|p| { let e = num(&p.3, "efficiency").max(0.01); num(&p.3, "output") * (1.0 / e - 1.0) }).sum();
     let burn: f64 = placed
         .iter()
-        .filter(|p| matches!(p.2.as_str(), "drive" | "lift" | "thrusters"))
+        .filter(|p| matches!(p.2.as_str(), "drive" | "lift" | "thrusters" | "engine"))
         .map(|p| {
             let nozzles = if p.2 == "thrusters" { 4.0 } else { 1.0 };
             let share = p.3.get("heat_to_hull").and_then(|v| v.as_f64()).unwrap_or(HEAT_TO_HULL);
@@ -4438,7 +4496,7 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     let (wp, wc) = (p + Vec2::new(8.0, 32.0), Vec2::new(c.x - 16.0, 84.0));
     frame.hud_box(wp, wc, LABEL.scale(0.25));
     let size = block.map_or(f.size, |b| b.size);
-    let shape = Block { id: String::new(), at: Vec3::ZERO, size };
+    let shape = Block { id: String::new(), at: Vec3::ZERO, size, push: None };
     let (yaw, tilt) = (interior.spin * 0.5, 0.45f32);
     let turn = |q: Vec3| {
         let (sy, cy) = yaw.sin_cos();
@@ -5432,6 +5490,19 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
             return true;
         }
     }
+    // (MODULES: T turns the picked engine: which way it pushes the ship, forward, up
+    // (its jet down: to land), back, down, to starboard, to port.)
+    if interior.tool == Tool::Modules
+        && input.pressed(KeyCode::KeyT)
+        && let Some(n) = interior.block.filter(|&n| n < interior.plan.blocks.len())
+        && let Some(f) = interior.fit.iter().find(|f| f.id == kind(&interior.plan.blocks[n].id))
+        && let Some((now, _)) = push_of(&interior.plan.blocks[n], f)
+    {
+        const WAYS: [Vec3; 6] = [Vec3::NEG_Z, Vec3::Y, Vec3::Z, Vec3::NEG_Y, Vec3::X, Vec3::NEG_X];
+        let at = WAYS.iter().position(|w| w.distance(now) < 0.1).unwrap_or(0);
+        interior.plan.blocks[n].push = Some(WAYS[(at + 1) % WAYS.len()]);
+        return true;
+    }
     // (FRAME: DEL takes out the member under the cursor.)
     if input.pressed(KeyCode::Delete)
         && let Some(k) = interior.beam_hover.take()
@@ -5620,7 +5691,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                                     let n = (1..).find(|n| !interior.plan.blocks.iter().any(|b| b.id == format!("{}#{n}", f.id))).unwrap_or(1);
                                     format!("{}#{n}", f.id)
                                 };
-                                interior.plan.blocks.push(Block { id, at: at + Vec3::Y * f.size.y * 0.5, size: f.size });
+                                interior.plan.blocks.push(Block { id, at: at + Vec3::Y * f.size.y * 0.5, size: f.size, push: None });
                                 interior.block = Some(interior.plan.blocks.len() - 1);
                             }
                         }
@@ -6015,7 +6086,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                 if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
                     let from = interior.truss_from.unwrap_or(to);
                     let (lo, hi) = (from.min(Vec3::new(to.x, from.y, to.z)), from.max(Vec3::new(to.x, from.y, to.z)) + Vec3::Y * interior.depth);
-                    let ghost = Block { id: String::new(), at: (lo + hi) * 0.5, size: hi - lo };
+                    let ghost = Block { id: String::new(), at: (lo + hi) * 0.5, size: hi - lo, push: None };
                     for [a, b] in ghost.edges(false) {
                         seg(frame, a, b, PICKED.scale(0.6));
                     }
@@ -6046,7 +6117,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
                     && let Some(at) = on_plane(interior, &cam, plane, interior.cursor, false)
                 {
                     let size = picked.map_or(f.size, |b| b.size);
-                    let ghost = Block { id: f.id.clone(), at: at + Vec3::Y * size.y * 0.5, size };
+                    let ghost = Block { id: f.id.clone(), at: at + Vec3::Y * size.y * 0.5, size, push: None };
                     for [a, b] in ghost.edges(f.round) {
                         seg(frame, a, b, MODULE.scale(0.45));
                     }
@@ -6141,6 +6212,20 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
         let f = &interior.fit[k];
         let lit = (interior.tool == Tool::Modules && (interior.block == Some(n) || interior.block_hover == Some(n))) || [interior.pick, interior.hover].contains(&Some(Hover::Module(n)));
+        // (An engine: an arrow from its middle, the way it pushes the ship; a second
+        // up, if a swivel turns it to land.)
+        if let Some((d, _)) = push_of(b, f) {
+            let reach = b.size.max_element() * 0.6 + 1.0;
+            let tip = b.at + d * reach;
+            let col = Color([1.0, 0.85, 0.3, 1.0]);
+            seg(frame, b.at, tip, col);
+            let side = d.cross(if d.y.abs() > 0.9 { Vec3::X } else { Vec3::Y }).normalize_or_zero() * 0.4;
+            seg(frame, tip, tip - d * 0.6 + side, col);
+            seg(frame, tip, tip - d * 0.6 - side, col);
+            if d.y < 0.5 && swivelled(plan, &interior.fit, b) {
+                seg(frame, b.at, b.at + Vec3::Y * reach, col.scale(0.6));
+            }
+        }
         let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES) { CLASH } else { MODULE };
         for (t, _) in b.faces(f.round) {
             if let [Some((p, _)), Some((q, _)), Some((r, _))] = t.map(|p| cam.project(p)) {
@@ -6404,7 +6489,7 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
             Tool::Look => ("SELECT", "CLICK ANYTHING TO SEE WHAT IT IS AND WHAT IT CARRIES: A MODULE, A MEMBER, A NODE, A DECK, A ROOM. A TUBE IN A GROUP PICKS THE GROUP; SHIFT-CLICK TUBES TO PICK MORE. GROUP THEM, WALL THEM OFF. DRAG TO TURN, RIGHT-DRAG TO MOVE. DEL TAKES OUT WHAT'S UNDER THE CURSOR."),
             Tool::Path => ("PATH", "CLICK THE PLANE TO LAY A POINT, JOINED TO THE LAST ONE; CLICK A POINT TO START THERE, OR TO JOIN TO IT (THAT TUNNEL DONE AND PICKED). RIGHT-CLICK STOPS. DRAG THE PLANE'S GRIP (ITS NEAR RIGHT CORNER) UP OR DOWN."),
             Tool::Door => ("DOOR", "CLICK NEAR A WALLED TUBE'S END: CLOSED, A HATCH, OPEN, IN TURN. CLICK ALONG A TUBE: A HATCH IN THE WALL FACING YOU (AGAIN: GONE). HATCHES SLIDE OPEN AS YOU COME NEAR. SET THEIR SHAPE, SIZE AND SLIDE BELOW."),
-            Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME."),
+            Tool::Modules => ("MODULES", "PICK ONE, CLICK THE PLANE: IT STANDS THERE. CLICK ONE IN THE VIEW TO PICK IT. STRETCHED, IT KEEPS ITS VOLUME. T TURNS A PICKED ENGINE (ITS ARROW: WHICH WAY IT PUSHES)."),
             Tool::Frame => ("FRAME", "JOINT TO JOINT, OR TRUSS: TWO CORNERS. MOUNT ALL, AUTO-SIZE (MIX: ANY MATERIAL), BRACE WHAT'S OVER."),
         };
         frame.text(p + Vec2::new(8.0, 8.0), title, LABEL);
@@ -6757,6 +6842,8 @@ pub fn draw(frame: &mut Frame, _app: &App, place: &str, interior: &Interior) {
         }
     }
 }
+
+
 
 
 
