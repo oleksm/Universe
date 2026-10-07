@@ -1364,9 +1364,14 @@ fn stocks() -> &'static [Stock] {
     STOCKS.get_or_init(|| {
         use universe_sim::world::frame::{Material, Section};
         let reg = universe_sim::world::registry::registry();
-        let mut out: Vec<Stock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "tube" | "bar")).filter_map(|s| {
-            let d = s.size.diameter?;
-            let section = Section::round(d, s.size.wall.unwrap_or(d * 0.5).min(d * 0.5));
+        let mut out: Vec<Stock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "tube" | "bar" | "box")).filter_map(|s| {
+            // (A box section by its width, height and wall; a tube or bar by its diameter.)
+            let section = if s.identity.form == "box" {
+                Section::boxed(s.size.width?, s.size.height?, s.size.wall?)
+            } else {
+                let d = s.size.diameter?;
+                Section::round(d, s.size.wall.unwrap_or(d * 0.5).min(d * 0.5))
+            };
             let of = &s.made_from.first()?.item;
             let m = reg.material(&*of)?;
             let k = &m.mechanical;
