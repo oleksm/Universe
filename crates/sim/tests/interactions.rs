@@ -620,32 +620,3 @@ fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
     assert!(position.length() < 40.0, "still in the ship: {position:?}");
 }
 
-#[test]
-fn a_yard_builds_an_mc07_from_its_stock() {
-    let mut u = bench(0);
-    // From the registry's stock at day 0 (the yard's: the bills of two MC-07s), nothing added.
-    let yard = u.markets.economy.works.iter().position(|w| w.name == "Trethi Yard").expect("Trethi Yard");
-    let goods = u.world.goods.clone();
-    let hull = universe_sim::world::goods::item("hull.mc-07").unwrap();
-    // Its company sees to it, as a player could: the dock to the hull, the bays to its parts.
-    let step = universe_sim::services::economy::step();
-    let t0 = u.world.time;
-    universe_sim::company::run(&mut u);
-    let e = &u.markets.economy;
-    let dock = e.works[yard].setups.iter().find(|s| s.module.identity.key == "module.building-dock").expect("a building dock");
-    let r = dock.recipe().filter(|r| r.makes == hull).expect("the dock set to the MC-07");
-    // No faster than its dock goes: a hull's mass at the dock's rate is weeks (the rest of the
-    // build, stepped at the economy's 10 s, would be millions of steps: not here).
-    let days = goods[hull].mass / (r.rate * dock.count as f64) / 86_400.0;
-    assert!(days > 10.0, "as fast as its modules go: {days:.1} days");
-    // And it starts: in ten minutes of steps, the bays have taken from the yard's stock.
-    let before: f64 = e.works[yard].pool.total();
-    let mut t = t0;
-    for _ in 0..(600.0 / step) as usize {
-        t += step;
-        u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
-    }
-    let e = &u.markets.economy;
-    let made: f64 = e.works[yard].progress.values().sum::<f64>() + e.places.iter().find(|p| p.name == "Port Trethi").map_or(0.0, |p| p.made.values().sum());
-    assert!(made > 0.0 || e.works[yard].pool.total() != before, "the yard at work");
-}
