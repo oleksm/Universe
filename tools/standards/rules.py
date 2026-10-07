@@ -69,6 +69,9 @@ RULES = {
     "bulk-density-typical": ("Bulk density, typical", "Where a good's bulk density comes from when no source was looked up.", "A typical figure as stowed, from memory: no source was looked up. To be reviewed.", None, None, "invented", None, True),
     "plant-weights-from-memory": ("Plant weights, from memory", "Where the weight and count of an industrial module's parts come from.", "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source. The measured masses of plant of these kinds are in research_plant_weights.json, research_yard.json and research_modules.json; the records are to be reconciled with them, kind by kind (the basis note names the file's entry where one matches).", None, None, "invented", "standards/sources/research_plant_weights.json", True),
     "mounts-margin": ("Mount margins", "How the first mounts (SFO 19) were set round the equipment.", "The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight, power and thrust. The cooling a propulsion mount gives follows the heat rule (lib.jet_heat, SFO 22). The nozzle opening is four fifths of the mount's width. A first standard: it describes what is, not what a hull should give. The attachment: its pattern by kind; each point takes the mount's weight at 3 g (a design acceleration, chosen) plus its thrust, landing or recoil load, with the margin; the same in tension for a reversal; shear half.", None, None, "invented", None, True),
+    "shares-chosen": ("Shares chosen, by a real device where one exists", "How a first design's parts got their shares of its weight.", "Its share of the whole, chosen: where a real device of the kind has a published breakdown (research_ship_equipment.json) the shares follow it, brought to this product's weight; where none exists the shares are judged.", None, None, "derived", "standards/sources/research_ship_equipment.json", True),
+    "haul-truck-shares": ("Ore bay shares, as a haul truck's body", "How an ore bay's weight is split into parts.", "Its share of the bay: shell, liners, doors, gate and frame, as a haul truck's body divides (a 363 t truck's 40 t body), from memory. Not sourced.", None, None, "invented", None, True),
+    "built-in-whole": ("Built in whole, as bought", "What a part that is not cut from stock is made of.", "Built in whole, as bought. What it is made of is fitted to what the registry can describe: a real one is of more materials.", None, None, "invented", None, True),
     "early-list": ("The game's early equipment", "Where the outdated equipment records' figures come from.", "The game's early list (content/base/modules.ron), a rough first guess: in service, not to be balanced against; a current design is to replace it (design stage outdated).", None, None, "invented", None, True),
 }
 
@@ -92,6 +95,11 @@ MATCH = [
     (re.compile(r"^A typical figure( as stowed)?, from memory: no source was looked up\. To be reviewed\.$"), "bulk-density-typical", None),
     (re.compile(r"^A guess, to be reviewed: (its weight and )?how many, from memory of real plant of this kind, not from a source\.$"), "plant-weights-from-memory", lambda path, en: (lambda k: f"research_plant_weights.json: {k}" if k else None)(PLANT_KEYS.get(path.split(os.sep)[-2]))),
     (re.compile(r"^The most of each among the equipment of this slot and class today, with a tenth more room and a quarter more weight.*shear half\.$"), "mounts-margin", None),
+    (re.compile(r"^Chosen\.( There is no real device to take shares from\.)?$"), "shares-chosen", None),
+    (re.compile(r"^The 4 t tank's shares, brought to this product's weight\.$"), "shares-chosen", None),
+    (re.compile(r"^Its share of the .*: shell, liners, doors, gate and frame, as a haul truck's body divides, from memory\. Not sourced\.$"), "haul-truck-shares", None),
+    (re.compile(r"^Built in whole, as bought\. What it is made of is fitted to what the registry can describe: a real one is of more materials\.$"), "built-in-whole", None),
+    (re.compile(r"^Bought made, as the good; put together here\.$"), "built-in-whole", None),
     (re.compile(r"^The game's early list \(content/base/modules\.ron\), a rough first guess: to be reviewed and brought in properly\. Outdated, kept to be salvaged\.$"), "early-list", None),
 ]
 

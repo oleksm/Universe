@@ -17,6 +17,14 @@ needs:
   power: 3000000
 built_of:
   parts: hyperdrive-halcyon-s3
+  shares: rule.shares-chosen
+  list:
+    - { code: HHS3-01, name: "Field coil cases", description: "Hold the coils that make the field, against their own force.", mass: 4230, length: 2.81, width: 1.88, height: 1.88, item: stock.ti64-pl-5, quantity: 4864.5, module: module.welding-bay }
+    - { code: HHS3-02, name: "Field coil windings", description: "Superconducting windings.", mass: 282, length: 1.14, width: 0.761, height: 0.761, item: stock.cu-wire-2, quantity: 324.3, module: module.machining-centre }
+    - { code: HHS3-03, name: "Power conditioning", description: "Feeds the coils from the plant.", mass: 1880, length: 2.15, width: 1.43, height: 1.43, item: good.electronics, quantity: 1880, module: module.assembly-shop }
+    - { code: HHS3-04, name: "Refrigerator", description: "Keeps the windings cold.", mass: 658, length: 1.51, width: 1.01, height: 1.01, item: good.heat-pumps, quantity: 658, module: module.assembly-shop }
+    - { code: HHS3-05, name: "Frame", description: "Carries the set and ties it to the hull.", mass: 1880, length: 2.15, width: 1.43, height: 1.43, item: stock.al6061-pl-5-panel, quantity: 1880.0, module: module.welding-bay }
+    - { code: HHS3-06, name: "Field computer", description: "Holds the field's shape as the ship moves.", mass: 470, length: 1.35, width: 0.903, height: 0.903, item: good.computers, quantity: 470, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

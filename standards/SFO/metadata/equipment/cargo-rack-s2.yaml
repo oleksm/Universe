@@ -15,6 +15,11 @@ physical:
   height: 2.15
 built_of:
   parts: cargo-rack-s2
+  shares: rule.shares-chosen
+  list:
+    - { code: RKS2-01, name: "Frame", description: "Tube uprights and beams.", mass: 440, length: 3.53, width: 1.76, height: 1.76, item: stock.st4340-tb-120x10, quantity: 506.0, module: module.welding-bay }
+    - { code: RKS2-02, name: "Decking and rails", mass: 280, length: 3.04, width: 1.52, height: 1.52, item: stock.al6061-pl-5-panel, quantity: 280.0, module: module.welding-bay }
+    - { code: RKS2-03, name: "Locks and drives", description: "Hold the load and move it to the door.", mass: 80, length: 2.0, width: 0.998, height: 0.998, item: good.electric-motors, quantity: 80, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

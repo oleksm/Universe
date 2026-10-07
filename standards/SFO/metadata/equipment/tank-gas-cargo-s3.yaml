@@ -16,6 +16,9 @@ physical:
   height: 3.37
 built_of:
   parts: tank-gas-cargo-s3
+  list:
+    - { code: GCT0-01, name: "Shell", description: "Forged steel in two halves, welded.", mass: 26775, length: 3.19, width: 3.19, height: 3.19, item: stock.st4340-fg, quantity: 30800.0, module: module.machining-centre }
+    - { code: GCT0-02, name: "Fittings", description: "Valves, burst disc and gauge.", mass: 4725, length: 1.79, width: 1.79, height: 1.79, item: stock.st304-pl-3, quantity: 5430.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

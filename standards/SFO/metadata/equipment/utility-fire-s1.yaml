@@ -18,6 +18,9 @@ needs:
   power: 20
 built_of:
   parts: utility-fire-s1
+  list:
+    - { code: FIR1-01, name: "Agent bottle and nozzles", mass: 15, length: 0.422, width: 0.253, height: 0.253, item: stock.st304-pl-3, quantity: 17.25, module: module.machining-centre }
+    - { code: FIR1-02, name: "Detectors and controller", description: "Smoke and heat detectors, the valve's electronics.", mass: 10, length: 0.368, width: 0.221, height: 0.221, item: good.electronics, quantity: 10, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:

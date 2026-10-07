@@ -16,6 +16,10 @@ physical:
   height: 1.5
 built_of:
   parts: thermal-coolant-loop-s2
+  list:
+    - { code: CLP2-01, name: "Pumps", description: "Two, one standing by.", mass: 1050, length: 2.11, width: 1.06, height: 1.06, item: stock.st4340-bar-120, quantity: 1210.0, module: module.machining-centre }
+    - { code: CLP2-02, name: "Piping", description: "Stainless runs with their bellows.", mass: 1200, length: 2.21, width: 1.11, height: 1.11, item: stock.st304-pl-3, quantity: 1380.0, module: module.welding-bay }
+    - { code: CLP2-03, name: "Reservoir and valves", description: "The accumulator and valves.", mass: 750, length: 1.89, width: 0.945, height: 0.945, item: stock.st304-pl-3, quantity: 862.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

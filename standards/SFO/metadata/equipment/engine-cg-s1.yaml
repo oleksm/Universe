@@ -18,6 +18,12 @@ needs:
   power: 50
 built_of:
   parts: engine-cg-s1
+  list:
+    - { code: CGE1-01, name: "Nozzles and valves", description: "Four nozzles facing out, fast valves.", mass: 9, length: 0.337, width: 0.337, height: 0.337, item: stock.st304-pl-3, quantity: 10.35, module: module.machining-centre }
+    - { code: CGE1-02, name: "Regulator and manifold", mass: 4, length: 0.268, width: 0.268, height: 0.268, item: stock.st304-pl-3, quantity: 4.6, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Cold gas block, 0.5 kN (30%), chosen." }] }
+    - { code: CGE1-03, name: "Controller", mass: 2, length: 0.186, width: 0.186, height: 0.186, item: good.electronics, quantity: 2, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Cold gas block, 0.5 kN (10%), chosen." }] }
 making:
   module: module.assembly-shop
 function:

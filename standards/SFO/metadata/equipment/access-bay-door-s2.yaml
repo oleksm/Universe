@@ -16,6 +16,10 @@ physical:
   height: 0.3
 built_of:
   parts: access-bay-door-s2
+  list:
+    - { code: BDR2-01, name: "Leaves", description: "The door plates, in two leaves.", mass: 3000, length: 6.75, width: 4.22, height: 0.253, item: stock.al6061-pl-5, quantity: 3450.0, module: module.welding-bay }
+    - { code: BDR2-02, name: "Hinges and actuators", description: "Hinge line and the rams that swing it.", mass: 1500, length: 5.36, width: 3.35, height: 0.201, item: stock.st4340-bar-120, quantity: 1720.0, module: module.machining-centre }
+    - { code: BDR2-03, name: "Seals and locks", description: "The seal round the frame and the locks along the sill.", mass: 500, length: 3.71, width: 2.32, height: 0.139, item: stock.st304-pl-3, quantity: 575.0, module: module.cutting-table }
 making:
   module: module.assembly-shop
 function:

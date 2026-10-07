@@ -16,6 +16,9 @@ physical:
   height: 0.15
 built_of:
   parts: utility-window-s1
+  list:
+    - { code: WIN1-01, name: "Panes", description: "Three panes of fused silica.", mass: 30, length: 0.635, width: 0.635, height: 0.119, item: stock.sic-tl-10, quantity: 34.5, module: module.cutting-table }
+    - { code: WIN1-02, name: "Frame", description: "Titanium, bolted to the hull.", mass: 30, length: 0.635, width: 0.635, height: 0.119, item: stock.ti64-pl-5, quantity: 34.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

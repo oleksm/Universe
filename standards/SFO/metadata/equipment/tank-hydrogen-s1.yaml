@@ -16,6 +16,10 @@ physical:
   height: 4.6
 built_of:
   parts: tank-hydrogen-s1
+  list:
+    - { code: TKH21-01, name: "Shell", mass: 980, length: 4.08, width: 4.08, height: 4.08, item: stock.al6061-pl-5, quantity: 1127, module: module.welding-bay }
+    - { code: TKH21-02, name: "Insulation", mass: 280, length: 2.69, width: 2.69, height: 2.69, item: stock.mli-fl, quantity: 280, module: module.assembly-shop }
+    - { code: TKH21-03, name: "Fittings and gauging", mass: 140, length: 2.14, width: 2.14, height: 2.14, item: stock.st304-pl-3, quantity: 161, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

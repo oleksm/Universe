@@ -16,6 +16,10 @@ physical:
   height: 1.5
 built_of:
   parts: handling-ore-scoop-s1
+  list:
+    - { code: OSC0-01, name: "Mouth and chute", description: "The intake, hard-faced, and the chute behind it.", mass: 750, length: 1.59, width: 1.59, height: 1.19, item: stock.sta36-pl-20, quantity: 862.0, module: module.welding-bay }
+    - { code: OSC0-02, name: "Liners", description: "Wear plates where the rock strikes.", mass: 375, length: 1.26, width: 1.26, height: 0.945, item: stock.st4340-pl-3, quantity: 431.0, module: module.cutting-table }
+    - { code: OSC0-03, name: "Gate and drive", description: "The gate that shuts it and the motor.", mass: 375, length: 1.26, width: 1.26, height: 0.945, item: stock.st4340-bar-120, quantity: 431.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

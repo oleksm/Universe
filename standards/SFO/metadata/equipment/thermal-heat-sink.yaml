@@ -16,6 +16,10 @@ physical:
   height: 1.5
 built_of:
   parts: thermal-heat-sink
+  list:
+    - { code: HSK0-01, name: "Mass", description: "Five tonnes of salt in a steel case.", mass: 4950, length: 1.93, width: 1.93, height: 1.45, item: good.salt, quantity: 5690.0, module: module.cutting-table,
+        basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
+    - { code: HSK0-02, name: "Case and coils", description: "The case and the coolant coils through it.", mass: 550, length: 0.928, width: 0.928, height: 0.696, item: stock.st304-pl-3, quantity: 632.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

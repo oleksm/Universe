@@ -16,6 +16,10 @@ physical:
   height: 0.1
 built_of:
   parts: power-solar-array-s2
+  list:
+    - { code: SOL0-01, name: "Cells and blanket", mass: 300, length: 16.9, width: 4.22, height: 0.0843, item: stock.al6061-sh-2, quantity: 345.0, module: module.electronics-works }
+    - { code: SOL0-02, name: "Booms and hinges", mass: 150, length: 13.4, width: 3.35, height: 0.0669, item: stock.al6061-tb-120x3, quantity: 172.0, module: module.welding-bay }
+    - { code: SOL0-03, name: "Harness", mass: 50, length: 9.28, width: 2.32, height: 0.0464, item: stock.cu-wire-2, quantity: 57.5, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:

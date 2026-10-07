@@ -16,6 +16,10 @@ physical:
   height: 0.6
 built_of:
   parts: access-docking-collar
+  list:
+    - { code: DCO0-01, name: "Ring and tunnel", description: "The mating ring and the passage through it.", mass: 265, length: 1.27, width: 1.27, height: 0.476, item: stock.al6061-pl-5, quantity: 305.0, module: module.machining-centre }
+    - { code: DCO0-02, name: "Latches and seals", description: "Twelve hooks and the seal they close on.", mass: 159, length: 1.07, width: 1.07, height: 0.402, item: stock.st4340-bar-120, quantity: 183.0, module: module.machining-centre }
+    - { code: DCO0-03, name: "Soft-capture and controls", description: "The guide petals that catch, and the controls.", mass: 106, length: 0.936, width: 0.936, height: 0.351, item: stock.cu-wire-2, quantity: 122.0, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:

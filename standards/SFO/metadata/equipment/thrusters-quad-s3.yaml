@@ -18,6 +18,19 @@ needs:
   power: 500000
 built_of:
   parts: thrusters-quad-s3
+  shares: rule.discovery-ii-engine-shares
+  list:
+    - { code: TQS3-01, name: "First wall", description: "The lining that faces the burning plasma.", mass: 186, length: 0.719, width: 0.719, height: 0.719, item: stock.sic-tl-10, quantity: 213.9, module: module.machining-centre }
+    - { code: TQS3-02, name: "Field coil cases", description: "The beams and cases that hold the field coils against their own force: most of the engine's weight.", mass: 1684, length: 1.5, width: 1.5, height: 1.5, item: stock.ti64-pl-5, quantity: 1936.6, module: module.welding-bay }
+    - { code: TQS3-03, name: "Field coil windings", description: "The superconducting windings themselves: a few kilograms of tape, nearly all of it copper and steel around a film of superconductor.", mass: 20, length: 0.342, width: 0.342, height: 0.342, item: stock.cu-wire-2, quantity: 23.0, module: module.machining-centre }
+    - { code: TQS3-04, name: "Shaping coils and bracing", description: "The coils that shape and hold the plasma, and the bracing between them.", mass: 1020, length: 1.27, width: 1.27, height: 1.27, item: stock.ti64-pl-5, quantity: 1173.0, module: module.welding-bay }
+    - { code: TQS3-05, name: "Shield", description: "Half a metre of carbon between the plasma and the coils, to stop what would warm and spoil them.", mass: 1191, length: 1.34, width: 1.34, height: 1.34, item: good.carbon, quantity: 1191, module: module.assembly-shop }
+    - { code: TQS3-06, name: "Magnetic nozzle", description: "The coils that open the field astern and turn the plasma's heat into a jet.", mass: 80, length: 0.543, width: 0.543, height: 0.543, item: stock.ti64-pl-5, quantity: 92.0, module: module.welding-bay }
+    - { code: TQS3-07, name: "Fuel feed", description: "The injector and its lines from the tank.", mass: 80, length: 0.543, width: 0.543, height: 0.543, item: stock.st304-pl-3, quantity: 92.0, module: module.machining-centre }
+    - { code: TQS3-08, name: "Plasma heater", description: "The radio-frequency source that brings the plasma to burning.", mass: 66, length: 0.509, width: 0.509, height: 0.509, item: good.electronics, quantity: 66, module: module.assembly-shop }
+    - { code: TQS3-09, name: "Refrigerator", description: "Keeps the windings cold.", mass: 27, length: 0.378, width: 0.378, height: 0.378, item: good.heat-pumps, quantity: 27, module: module.assembly-shop }
+    - { code: TQS3-10, name: "Coolant pumps", description: "Drive the coolant through wall and shield.", mass: 51, length: 0.467, width: 0.467, height: 0.467, item: good.pumps, quantity: 51, module: module.assembly-shop }
+    - { code: TQS3-11, name: "Coolant lines", description: "Pipes and manifolds.", mass: 95, length: 0.575, width: 0.575, height: 0.575, item: stock.st304-pl-3, quantity: 109.2, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

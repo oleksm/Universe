@@ -16,6 +16,10 @@ physical:
   height: 4.57
 built_of:
   parts: tank-water-s2
+  list:
+    - { code: WTK2-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 1750, length: 4.06, width: 4.06, height: 4.06, item: stock.al6061-pl-5, quantity: 2010.0, module: module.welding-bay }
+    - { code: WTK2-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 375, length: 2.43, width: 2.43, height: 2.43, item: stock.al6061-pl-5, quantity: 431.0, module: module.cutting-table }
+    - { code: WTK2-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 375, length: 2.43, width: 2.43, height: 2.43, item: stock.st304-pl-3, quantity: 431.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

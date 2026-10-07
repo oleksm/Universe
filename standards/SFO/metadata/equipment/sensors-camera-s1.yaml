@@ -18,6 +18,11 @@ needs:
   power: 10
 built_of:
   parts: sensors-camera-s1
+  list:
+    - { code: CAM1-01, name: "Lens and sensor", mass: 1, length: 0.0843, width: 0.0843, height: 0.127, item: good.electronics, quantity: 1, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Camera (60%), chosen." }] }
+    - { code: CAM1-02, name: "Housing and heater", mass: 1, length: 0.0737, width: 0.0737, height: 0.111, item: stock.al6061-pl-5, quantity: 1.15, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Camera (40%), chosen." }] }
 making:
   module: module.assembly-shop
 function:

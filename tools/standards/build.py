@@ -271,9 +271,9 @@ def old_groups(rec, rel):
     return rec
 
 
-def old_names(rec, path):
+def old_names(rec, path, schema=None):
     rel = os.path.relpath(os.path.abspath(path), TREE)
-    sp = V.schema_named(os.path.abspath(path)) if os.sep in rel and os.path.exists(path) else None
+    sp = schema or (V.schema_named(os.path.abspath(path)) if os.sep in rel and os.path.exists(path) else None)
     if sp and isinstance(rec, dict) and os.path.relpath(sp, TREE) in READING:
         for k, x in reading(rec, "", READING[os.path.relpath(sp, TREE)]).items():
             rec[k] = x
@@ -353,7 +353,21 @@ def old_names(rec, path):
 def load(path):
     try:
         with open(path, encoding="utf-8") as f:
-            rec = yaml.safe_load(f) or {}
+            return load_text(f.read(), path)
+    except yaml.YAMLError as e:
+        problem(path, f"not valid YAML: {e}")
+        return {}
+
+
+def load_rec(e):
+    """A record read again from where `load` found it: its file, or the text it was derived from."""
+    return load_text(e["_text"], os.path.join(TREE, e["file"]), os.path.join(TREE, "SFO", "schema", "part.schema.yaml")) if e.get("_text") else load(os.path.join(TREE, e["file"]))
+
+
+def load_text(text, path, schema=None):
+    """A record from its text, as `load` reads a file (`path` names where it is, or would be; `schema` its schema where no file names one)."""
+    try:
+        rec = yaml.safe_load(text) or {}
     except yaml.YAMLError as e:
         problem(path, f"not valid YAML: {e}")
         return {}
@@ -377,7 +391,7 @@ def load(path):
                 rec["kind"] = rec.pop("form")
         else:
             del rec["key"]
-    return old_names(rec, path)
+    return old_names(rec, path, schema)
 
 
 def check_standard(s, ids):
@@ -1443,8 +1457,10 @@ PART_SCHEMA = read_schema(os.path.join(TREE, "SFO", "schema", "part.schema.yaml"
 parts = []
 
 
-def read_part(full, hull, parent, under):
-    pt = load(full)
+def read_part(full, hull, parent, under, text=None):
+    pt = load(full) if text is None else load_text(text, full, os.path.join(TREE, "SFO", "schema", "part.schema.yaml"))
+    if text is not None:
+        pt["_text"] = text
     ident = pt.get("identity") or {}
     code = str(ident.get("code", ""))
     if os.path.basename(full) != code + ".yaml":
@@ -1459,6 +1475,8 @@ def read_part(full, hull, parent, under):
         problem(full, f"code {code} twice")
     check_basis(pt, full)
     for group, props in pt.items():
+        if group == "_text":
+            continue
         if group == "basis":
             continue
         known = PART_SCHEMA["properties"].get(group)
@@ -1496,6 +1514,17 @@ for s in standards:
             sub = full[:-5]
             for pn in sorted(os.listdir(sub)) if os.path.isdir(sub) else []:
                 read_part(os.path.join(sub, pn), hull, code, s["id"])
+# Parts as a rule (SFO 12): an equipment record's `built_of.list` derives its part records, through the one template the
+# registry reader also writes (lib.part_yaml). They join `parts` as if read from the folder the record names.
+from lib import derived_parts as _derived_parts
+for _e in equipment:
+    _raw = yaml.safe_load(open(os.path.join(TREE, _e["file"]), encoding="utf-8")) or {}
+    _bo = _raw.get("built_of") or {}
+    if not _bo.get("list"):
+        continue
+    _folder = _bo.get("parts") or _e["slug"]
+    for _code, _text in _derived_parts(_raw):
+        read_part(os.path.join(TREE, "SFO", "metadata", "parts", _folder, _code + ".yaml"), _folder, None, next((s_["id"] for s_ in standards if str(s_.get("records")) == "parts"), ""), text=_text)
 # Mill stock: its material in that form; what a unit of it weighs, from the material's density and
 # its size (kg per m2 of sheet, plate and film; kg per metre of bar, wire and tube).
 import math
@@ -2397,7 +2426,7 @@ for _f in sorted(os.listdir(_mdir)) if os.path.isdir(_mdir) else []:
     MOUNTS[_m["identity"]["key"]] = _m
 rows = []
 for e_ in equipment:
-    raw = yaml.safe_load(open(os.path.join(TREE, e_["file"]), encoding="utf-8")) or {}
+    raw = load_rec(e_)
     mk = raw.get("fits")
     if not mk:
         continue
@@ -2675,7 +2704,7 @@ for kind, recs in (("elements", elements), ("materials", materials), ("processes
     tally = {"sourced": 0, "derived": 0, "invented": 0, "unsaid": 0}
     to_review = 0
     for e in recs:
-        raw = load(os.path.join(TREE, e["file"]))
+        raw = load_rec(e)
         if kind == "modules":
             # (Its first recipe is counted as the module's own figures; the others here.)
             raw["recipes"] = [{{"throughput": "rate", "product": "makes"}.get(k, k): v for k, v in rc.items()} for rc in (raw.get("recipes") or [])[1:]]

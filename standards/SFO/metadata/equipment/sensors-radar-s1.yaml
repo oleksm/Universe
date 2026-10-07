@@ -18,6 +18,15 @@ needs:
   power: 100000
 built_of:
   parts: sensors-radar-s1
+  list:
+    - { code: RDS1-01, name: "Array frame", description: "The panels the modules sit on.", mass: 120, length: 2.95, width: 1.47, height: 0.0737, item: stock.al6061-sh-2-panel, quantity: 120.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
+    - { code: RDS1-02, name: "Transmit-receive modules", description: "Thousands of small transmitters and receivers that steer the beam between them.", mass: 135, length: 3.07, width: 1.53, height: 0.0766, item: good.electronics, quantity: 135, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
+    - { code: RDS1-03, name: "Signal processor", description: "Makes tracks of the echoes.", mass: 21, length: 1.65, width: 0.824, height: 0.0412, item: good.computers, quantity: 21, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
+    - { code: RDS1-04, name: "Cooler", description: "Takes the modules' heat away.", mass: 24, length: 1.72, width: 0.862, height: 0.0431, item: good.heat-pumps, quantity: 24, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
 making:
   module: module.assembly-shop
 function:

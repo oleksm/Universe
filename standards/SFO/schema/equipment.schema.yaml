@@ -35,6 +35,28 @@ properties:
     additionalProperties: false
     properties:
       parts: { type: string, description: "The folder of parts (SFO 12) it is built of: SFO/metadata/parts/<folder>." }
+      shares: { type: string, x-ref: [rule], description: "The rule its listed parts' shares of its weight rest on (rule.discovery-ii-engine-shares, rule.shares-chosen...), where it is not the record's own built_of basis; a part may still say its own." }
+      whole: { type: boolean, description: "true: its listed parts are built in whole, as bought (rule.built-in-whole), even where a cutting module makes them; a part may still say its own." }
+      list:
+        description: "Its parts as a rule (SFO 12): one line each, from which the build and the registry reader derive the part records (key part.<code>, revision draft, basis by rules) so nothing is filed twice. A part that was measured from a model keeps its own file in the folder instead."
+        type: array
+        items:
+          type: object
+          additionalProperties: false
+          required: [code, name, mass, length, width, height]
+          properties:
+            code: { type: string, pattern: '^[A-Z0-9]+-[0-9]{2}$', description: "The part's code (SFO 12): the product's and its number." }
+            name: { type: string }
+            description: { type: string }
+            mass: { type: number, x-unit: "kg" }
+            length: { type: number, x-unit: "m" }
+            width: { type: number, x-unit: "m" }
+            height: { type: number, x-unit: "m" }
+            item: { type: string, x-ref: [material, stock, part, good], description: "What it is cut from or bought as, by its key." }
+            quantity: { type: number, x-unit: "kg", description: "kg of that item one takes (the cutting loss in, rule.cut-loss)." }
+            module: { type: string, x-ref: [module], description: "The industrial module that makes it, by its key." }
+            count: { type: integer, minimum: 1, description: "how many go into the whole; one if left out" }
+            basis: { $ref: "../../common.schema.yaml#/definitions/basis", description: "The part's own basis where the derived one (its share as the equipment's built_of says; cut with the loss where a cutting module makes it, else bought; the box by rule) does not fit." }
   making: { $ref: "../../common.schema.yaml#/definitions/making" }
   function:
     description: "What it does: one kind of device, with that kind's figures. All in SI."

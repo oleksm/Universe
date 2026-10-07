@@ -18,6 +18,9 @@ needs:
   power: 100
 built_of:
   parts: utility-suits-s1
+  list:
+    - { code: SUT1-01, name: "Two suits with their packs", description: "Pressure suits with 8 hours of air and power each.", mass: 120, length: 0.909, width: 0.545, height: 1.82, item: stock.mli-fl, quantity: 120, module: module.assembly-shop }
+    - { code: SUT1-02, name: "Locker", mass: 40, length: 0.63, width: 0.378, height: 1.26, item: stock.al6061-sh-2-panel, quantity: 46, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:

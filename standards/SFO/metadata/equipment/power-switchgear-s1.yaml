@@ -16,6 +16,10 @@ physical:
   height: 2.0
 built_of:
   parts: power-switchgear-s1
+  list:
+    - { code: SWG0-01, name: "Busbars and breakers", mass: 420, length: 1.27, width: 0.675, height: 1.69, item: stock.cu-wire-2, quantity: 483.0, module: module.electronics-works }
+    - { code: SWG0-02, name: "Cabinet", mass: 210, length: 1.0, width: 0.536, height: 1.34, item: stock.sta36-pl-20, quantity: 241.0, module: module.welding-bay }
+    - { code: SWG0-03, name: "Controls", mass: 70, length: 0.696, width: 0.371, height: 0.928, item: stock.cu-wire-2, quantity: 80.5, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:

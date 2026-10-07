@@ -18,6 +18,23 @@ needs:
   power: 200000
 built_of:
   parts: life-support-s2
+  list:
+    - { code: LSS2-01, name: "Water processor vessels", description: "Stills, beds and tanks that turn waste water to drinking water.", mass: 452, length: 2.11, width: 1.34, height: 0.57, item: stock.st304-pl-3, quantity: 519.8, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-02, name: "Water pumps", mass: 225, length: 1.67, width: 1.06, height: 0.452, item: good.pumps, quantity: 225, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-03, name: "Water plant controls", mass: 150, length: 1.46, width: 0.928, height: 0.395, item: good.electronics, quantity: 150, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-04, name: "Electrolysis stack", description: "Splits water for the oxygen to breathe.", mass: 112, length: 1.33, width: 0.842, height: 0.358, item: stock.st304-pl-3, quantity: 128.8, module: module.machining-centre,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-05, name: "Oxygen plant controls", mass: 112, length: 1.33, width: 0.842, height: 0.358, item: good.electronics, quantity: 112, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-06, name: "Fans and blowers", description: "Move the air through the scrubber.", mass: 112, length: 1.33, width: 0.842, height: 0.358, item: good.electric-motors, quantity: 112, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-07, name: "Scrubber beds and ducts", description: "Take the carbon dioxide out.", mass: 112, length: 1.33, width: 0.842, height: 0.358, item: stock.al6061-sh-2-panel, quantity: 112.0, module: module.welding-bay,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
+    - { code: LSS2-08, name: "Cabin cooler", description: "Carries the crew's and the equipment's heat to the hull.", mass: 225, length: 1.67, width: 1.06, height: 0.452, item: good.heat-pumps, quantity: 225, module: module.assembly-shop,
+        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by the International Space Station's water and oxygen systems." }] }
 making:
   module: module.assembly-shop
 function:

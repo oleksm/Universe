@@ -16,6 +16,9 @@ physical:
   height: 1.56
 built_of:
   parts: tank-air-s1
+  list:
+    - { code: AIR0-01, name: "Shell", description: "Forged steel in two halves, welded.", mass: 2678, length: 1.48, width: 1.48, height: 1.48, item: stock.st4340-fg, quantity: 3080.0, module: module.machining-centre }
+    - { code: AIR0-02, name: "Fittings", description: "Valves, burst disc and gauge.", mass: 472, length: 0.829, width: 0.829, height: 0.829, item: stock.st304-pl-3, quantity: 543.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:

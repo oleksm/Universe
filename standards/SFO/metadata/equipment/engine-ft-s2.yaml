@@ -16,6 +16,13 @@ physical:
   height: 4
 built_of:
   parts: engine-ft-s2
+  list:
+    - { code: FTE2-01, name: "Reactor coils and cases", description: "The toroidal and poloidal coils in their titanium strengtheners.", mass: 49500, length: 8.19, width: 3.28, height: 3.28, item: stock.ti64-pl-5, quantity: 56920.0, module: module.welding-bay }
+    - { code: FTE2-02, name: "Neutron and radiation shield", description: "Carbon-graphite round the coils.", mass: 22500, length: 6.3, width: 2.52, height: 2.52, item: good.carbon, quantity: 22500.0, module: module.assembly-shop }
+    - { code: FTE2-03, name: "First wall and nozzle", description: "Silicon carbide first wall; the magnetic nozzle.", mass: 4500, length: 3.68, width: 1.47, height: 1.47, item: stock.sic-tl-10, quantity: 5175, module: module.machining-centre }
+    - { code: FTE2-04, name: "Power conversion and heating", mass: 8100, length: 4.48, width: 1.79, height: 1.79, item: good.electronics, quantity: 8100, module: module.assembly-shop }
+    - { code: FTE2-05, name: "Coolant and refrigeration", mass: 3600, length: 3.42, width: 1.37, height: 1.37, item: good.pumps, quantity: 3600, module: module.assembly-shop }
+    - { code: FTE2-06, name: "Propellant feed", mass: 1800, length: 2.71, width: 1.09, height: 1.09, item: stock.st304-pl-3, quantity: 2070, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
