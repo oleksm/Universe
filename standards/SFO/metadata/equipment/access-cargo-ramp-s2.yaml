@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.cargo-ramp.s2
+  name: "Cargo ramp S2"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A ramp lowered to the ground for people or cargo."
+size_class: 3
+fits: mount.access-s3
+physical:
+  mass: 10000
+  volume: 48.0
+  length: 12.0
+  width: 5.0
+  height: 0.8
+built_of:
+  parts: access-cargo-ramp-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: "ramp"
+  load: 60000
+  width: 5.0
+  reach: 6.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 5 m ramp for 60 t: a C-17's class, scaled from the S1 by load. From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

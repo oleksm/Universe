@@ -99,8 +99,8 @@ were fixed the same night (§0). Everything else is a proposal until the user pi
   kelvin; `capacity` is kg, J, messages/s, W or an object; `life` is seconds, an object or biology;
   `fit`, `address`, `batch`, `details`, `extent`, `trade_bans` each have two shapes; `revision`
   means a design stage, a record's firmness, or free text.
-- **Keys**: equipment follows five patterns (`equipment.tank.water.tank.s1`, `equipment.tank.s1`,
-  `equipment.store.food.s1`, `equipment.engine.ft.s1`, `equipment.throat-coil`); 77 distinct key
+- **Keys**: equipment follows five patterns (`equipment.tank.water.s1`, `equipment.tank.deuterium.s1`,
+  `equipment.cargo.food-store.s1`, `equipment.engine.ft.s1`, `equipment.gate.throat-coil.s3`); 77 distinct key
   middles for 151 records; file names differ from keys for gear, ore bays, doors, lockers, 13
   makers, gates and all parcels; mill-stock files upper case, keys lower.
 - **Rule**: `equipment.<slot>.<family>.<size>`; file name = key's last part; `persons`, `period`,
@@ -128,7 +128,7 @@ were fixed the same night (§0). Everything else is a proposal until the user pi
    process remnants removed; the small renames.
 2. **Say it once** (done 2026-10-07, changelog/2026-10-07-audit-step-2.md; the census stays in the records until the engine reads one generated file): basis rules (`rule:`) for lives, cut loss, mounts margin, bulk
    density, plant weights; cite the five uncited sources; census as a report; freeze the two logs.
-3. **Structure** (two to three days, the engine regenerates on each): parts as a rule (−840
+3. **Structure** (3a done 2026-10-07: one shape gate, dictionary enums, lib.py; 3b waits on the registry crate's reader and generator, proposed to the integrator: derived parts and bulk stock, allOf flattening, key renames with aliases): parts as a rule (−840
    files); bulk stock derived (−217); shared definitions and dictionary enums; one validator;
    the naming rule applied with a key-rename pass (keys are referenced; the rename is a script).
 4. **Page** (a day): merged reports, pages per kind, docs linked, `lib.py`.

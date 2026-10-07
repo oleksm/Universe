@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.food-store.s1
+  name: "Food store"
+  maker: org.hadley
+  revision: draft
+  slot: cargo
+  description: "A larder: racks and sealed bins holding a tonne of food of any kind sold as food (market.food), part of it chilled. 1,000 kg is 667 person-days at need.food's 1.5 kg a day."
+size_class: 1
+fits: mount.cargo-s1
+physical:
+  mass: 150
+  volume: 3.6
+  length: 1.5
+  width: 1.2
+  height: 2
+needs:
+  power: 200
+built_of:
+  parts: cargo-food-store-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: store
+  capacity: 1000
+  holds: market.food
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A tonne of packed food at about 350 kg/m3 (from memory of packaged provisions) in 3.6 m3 of racks, a tenth of it chilled; the racks and bins 150 kg. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

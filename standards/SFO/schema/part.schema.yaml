@@ -51,7 +51,7 @@ properties:
       position: { type: string, description: Where in the assembly it sits. }
       order: { type: integer, minimum: 1, description: When it goes on, as the assembly is built. }
       joins_to: { type: array, items: { type: string }, description: The codes of the parts it is joined to. }
-      joining: { type: array, items: { enum: [welded, brazed, bonded, bolted, riveted, sewn] }, description: How it is joined. }
+      joining: { type: array, items: { $ref: "../../dictionary.schema.yaml#/definitions/joining" }, description: How it is joined. }
       fasteners:
         description: What holds it, and how many.
         type: array

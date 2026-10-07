@@ -91,7 +91,7 @@ properties:
     properties:
       electrical_conductivity: { $ref: "#/definitions/number_or_null", x-unit: "S/m", description: S/m }
       dielectric_strength: { $ref: "#/definitions/number_or_null", x-unit: "V/m", description: "V/m; the field an insulator withstands" }
-      magnetic: { enum: [ferromagnetic, paramagnetic, diamagnetic, null] }
+      magnetic: { $ref: "../../dictionary.schema.yaml#/definitions/magnetic_ordering" }
       superconducting_temperature: { $ref: "#/definitions/number_or_null", x-unit: "K", description: "K; null if none" }
 
   optical:
@@ -115,9 +115,9 @@ properties:
       radiation_resistance: { $ref: "#/definitions/rating", description: "Against damage from radiation over time." }
       radiation_shielding: { $ref: "#/definitions/rating", description: "How well it stops radiation." }
       uv_resistance: { $ref: "#/definitions/rating" }
-      flammability: { enum: [none, low, medium, high, null] }
+      flammability: { $ref: "../../dictionary.schema.yaml#/definitions/level" }
       permeability: { $ref: "#/definitions/rating", description: "How well it holds gas in (excellent: nothing leaks through)." }
-      toxicity: { enum: [none, low, medium, high, null] }
+      toxicity: { $ref: "../../dictionary.schema.yaml#/definitions/level" }
 
   making:
     description: Making and mending.
@@ -127,7 +127,7 @@ properties:
       formability: { $ref: "#/definitions/rating", description: "Rolled, bent, forged." }
       machinability: { $ref: "#/definitions/rating" }
       weldability: { $ref: "#/definitions/rating" }
-      joining: { type: array, items: { enum: [welded, brazed, bonded, bolted, riveted, sewn] }, description: How it's joined. }
+      joining: { type: array, items: { $ref: "../../dictionary.schema.yaml#/definitions/joining" }, description: How it's joined. }
       castability: { $ref: "#/definitions/rating", description: "Cast or printed." }
       repairability: { $ref: "#/definitions/rating" }
       recyclability: { $ref: "#/definitions/rating" }

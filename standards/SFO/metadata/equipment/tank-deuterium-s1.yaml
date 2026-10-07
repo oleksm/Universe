@@ -1,0 +1,31 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.deuterium.s1
+  name: "Fuel Tank 8 T"
+  maker: org.hadley
+  revision: outdated
+  slot: tank
+  description: "A fuel tank."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 600
+  volume: 153.1
+  length: 5.35
+  width: 5.35
+  height: 5.35
+built_of:
+  parts: tank-deuterium-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 8000
+  holds: material.deuterium
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: the 4 t tank's, larger. A real tank's wall grows with its surface and its fuel with its volume, so a larger one should be lighter for what it holds: these are, a little (7.5 to 6.3% of the fuel's weight)." }
+  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A ball of its volume: its width is that ball's. A tank's real shape waits on the hull it goes in." }
+  - { of: [life], rule: rule.life-ship-system }
+  - { of: [physical.volume], tier: derived, note: "Length by width by height, as every other piece of equipment gives it (2026-10-07): it was the sphere's own volume before, the one record kind that read differently." }

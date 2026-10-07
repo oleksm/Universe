@@ -193,5 +193,5 @@ properties:
       additionalProperties: false
       required: [use, permits]
       properties:
-        use: { enum: [port, industrial, commercial, civic, residential, agricultural, mining] }
+        use: { $ref: "dictionary.schema.yaml#/definitions/zone_use" }
         permits: { type: string }

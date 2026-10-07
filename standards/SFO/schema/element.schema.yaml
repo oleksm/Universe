@@ -63,9 +63,9 @@ properties:
         type: object
         additionalProperties: false
         properties:
-          air: { enum: [none, slow, fast, violent, null] }
-          water: { enum: [none, slow, fast, violent, null] }
-          acids: { enum: [none, slow, fast, violent, null] }
+          air: { $ref: "../../dictionary.schema.yaml#/definitions/reactivity" }
+          water: { $ref: "../../dictionary.schema.yaml#/definitions/reactivity" }
+          acids: { $ref: "../../dictionary.schema.yaml#/definitions/reactivity" }
       bond_type: { enum: [metallic, covalent, ionic, none], description: The type it typically forms. }
       standard_electrode_potential: { $ref: "#/definitions/number_or_null", x-unit: "V", description: "V; its ion to the element (the 2+ ion where there is one)" }
       flammable: { type: [boolean, "null"], description: "The bulk element burns in air once lit. Rated by hand." }
@@ -97,7 +97,7 @@ properties:
     additionalProperties: false
     properties:
       electrical_conductivity: { $ref: "#/definitions/number_or_null", x-unit: "S/m", description: S/m }
-      magnetic_ordering: { enum: [ferromagnetic, antiferromagnetic, paramagnetic, diamagnetic, null] }
+      magnetic_ordering: { $ref: "../../dictionary.schema.yaml#/definitions/magnetic_ordering" }
       superconducting_temperature: { $ref: "#/definitions/number_or_null", x-unit: "K", description: "K; null if none" }
       band_gap: { $ref: "#/definitions/number_or_null", x-unit: "J", description: "J; null if not a semiconductor or insulator" }
 

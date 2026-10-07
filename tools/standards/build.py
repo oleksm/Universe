@@ -762,9 +762,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
             for k in ["name", "kind", "parcel"]:
                 if k not in fc:
                     problem(ffull, f"no {k}")
-            for k in fc:
-                if k not in {"name", "kind", "parcel", "parts", "pipelines", "lines", "modules", "exchange", "stock", "claim"}:
-                    problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
             plot = next((r for r in plots if r.get("number") == fc.get("parcel")), None)
@@ -783,9 +780,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 names, housed = [], []
                 for pt in fc.get("parts") or []:
                     nm = pt.get("name")
-                    for k in pt:
-                        if k not in {"name", "kind", "does", "outline"}:
-                            problem(ffull, f"part {nm}: unknown field '{k}'")
                     if pt.get("kind") not in PART_KINDS:
                         problem(ffull, f"part {nm}: kind one of {', '.join(PART_KINDS)}")
                     if nm in names:
@@ -895,9 +889,6 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     for k in ["name"]:
         if k not in ad:
             problem(full, f"no {k}")
-    for k in ad:
-        if k not in {"name", "bodies", "address", "about", "story", "zoning", "compulsory_stock", "law", "recognises", "fleet", "ticker"}:
-            problem(full, f"unknown field '{k}'")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
         if x.get("kind") not in ("planet", "moon", "settlement", "rig"):
@@ -1816,8 +1807,23 @@ def write_ron():
 reports = []
 
 
+# Each report belongs to a group on the page, and names the docs that say its rules (paths from the repository root).
+REPORT_GROUPS = {"ships": ["equipment-parts", "equipment", "mounts", "members", "hulls", "budgets", "volume", "dimensions", "structure-mc-07", "shock", "mass", "chains"],
+                 "industry": ["plant", "balance", "materials", "goods", "takers", "power", "gates"],
+                 "people": ["needs", "work", "buildings", "census", "traffic"],
+                 "sky": ["worlds", "celestial"], "engine": ["clocks"],
+                 "quality": ["confidence", "invented", "review", "revisions", "dictionary"]}
+REPORT_DOCS = {"mounts": ["docs/ships/registry-note-for-ships.md"], "members": ["docs/ships/registry-note-for-ships.md"], "budgets": ["docs/ships/registry-note-for-ships.md", "docs/ships/equipment-review.md"],
+               "needs": ["docs/registry-people.md", "docs/registry-spirit.md"], "work": ["docs/registry-people.md"], "buildings": ["docs/registry-people.md"], "census": ["docs/registry-people.md", "docs/registry-order.md"],
+               "traffic": ["docs/registry-people.md", "docs/registry-stocking.md"], "worlds": ["docs/survey-contract.md"], "celestial": ["docs/survey-contract.md"], "clocks": ["docs/tick-tree.md"],
+               "balance": ["docs/registry-recipes.md"], "materials": ["docs/registry-recipes.md"], "goods": ["docs/registry-recipes.md"], "takers": ["docs/registry-recipes.md"],
+               "confidence": ["docs/registry-audit.md"], "invented": ["docs/registry-audit.md"], "review": ["docs/registry-audit.md"], "revisions": ["docs/registry-integration.md"], "dictionary": ["standards/README.md"],
+               "equipment-parts": ["docs/registry-recipes.md"], "chains": ["docs/registry-recipes.md"], "plant": ["docs/registry-recipes.md"], "hulls": ["docs/registry-integration.md"], "gates": ["docs/standards.md"]}
+
+
 def report(key, title, about, columns, rows):
-    reports.append({"key": key, "title": title, "about": about, "columns": columns, "rows": rows,
+    group = "chains" if key.startswith("chain-") else next((g for g, ks in REPORT_GROUPS.items() if key in ks), "other")
+    reports.append({"key": key, "title": title, "about": about, "columns": columns, "rows": rows, "group": group, "docs": REPORT_DOCS.get("chains" if group == "chains" else key, []),
                     "gaps": sum(1 for r in rows if r["state"] == "gap"), "ok": sum(1 for r in rows if r["state"] == "ok")})
 
 
@@ -2584,7 +2590,7 @@ for m, rc in [(m, rc) for m in modules for rc in m.get("recipes") or []]:
         continue
     d = ins - (1 + outs)
     rows.append(row("ok" if abs(d) <= 0.02 * ins else "gap", link(m["identity"]["name"] + (f": {item_name(rc['product'])}" if len(m["recipes"]) > 1 else ""), "mod:" + m["slug"]), f"{ins:.4g} t", f"{1 + outs:.4g} t", f"{d:+.3g} t ({100 * d / ins:+.1f}%)", "balanced" if abs(d) <= 0.02 * ins else ("more goes in than comes out" if d > 0 else "more comes out than goes in")))
-report("modules", "Balance: what goes into a module against what comes out", "For each tonne of a module's product: everything that goes in, against the product and everything else that comes out. Matter is not made or lost, so they should match. A gap is a difference of more than 2%.", ["Module", "Goes in", "Comes out", "Difference", ""], rows)
+report("balance", "Balance: what goes into a module against what comes out", "For each tonne of a module's product: everything that goes in, against the product and everything else that comes out. Matter is not made or lost, so they should match. A gap is a difference of more than 2%.", ["Module", "Goes in", "Comes out", "Difference", ""], rows)
 
 # 5. Each material, in each form it is said to come in: does a module's recipe make a stock of it in that form?
 rows = []
@@ -2599,7 +2605,7 @@ for m in materials:
     for form in (m.get("identity") or {}).get("form") or []:
         by = sorted(set(_made.get((m["slug"], form), [])))
         rows.append(row("ok" if by else "gap", link(m["identity"]["name"], "mat:" + m["slug"]), form, ", ".join(by) or "nothing makes it: no stock of it in this form, or no recipe for that stock"))
-report("stock", "Materials: is every form made", "Each material in each form it is said to come in, and the module whose recipe makes a stock of it in that form. A gap is a form named on the material with no stock, or stock with no recipe: either a works to describe, or a form to strike.", ["Material", "Form", "Made by"], rows)
+report("materials", "Materials: is every form made", "Each material in each form it is said to come in, and the module whose recipe makes a stock of it in that form. A gap is a form named on the material with no stock, or stock with no recipe: either a works to describe, or a form to strike.", ["Material", "Form", "Made by"], rows)
 
 for gd in goods:
     where = os.path.join(TREE, gd["file"])
@@ -3040,7 +3046,8 @@ report("celestial", "Celestial: what is written out, and against Local Administr
 
 # ---------------------------------------------------------------- the page
 # ---------------------------------------------------------------- every record against its schema
-# Types, enums, required fields, patterns, and no field its schema does not name (see validate.py).
+# Types, enums, required fields, patterns, and no field its schema does not name: validate.py is the one gate for a record's shape
+# (additionalProperties: false in every schema); the build adds only what crosses records.
 # The game's loader is to be at least this strict.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 _misfits, _unheld = V.check_all()

@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.rack.s2
+  name: "Cargo racks 10 T"
+  maker: org.hadley
+  revision: outdated
+  slot: cargo
+size_class: 2
+fits: mount.cargo-s2
+physical:
+  mass: 800
+  volume: 20.0
+  length: 4.31
+  width: 2.15
+  height: 2.15
+built_of:
+  parts: cargo-rack-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: rack
+  capacity: 10000
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 10,000 kg is 20 m3, twice as long as wide. The racks themselves are in it." }
+  - { of: [life], rule: rule.life-ship-system }

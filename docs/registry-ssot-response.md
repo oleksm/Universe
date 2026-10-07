@@ -40,7 +40,7 @@ under `identity` when their schemas are consolidated. The build checks each key:
 | `material`, `process`, `module`, `good`, `hull` | SFO, same name | `material.aluminium-alloy-6061`, `hull.mc-07` |
 | `stock` | SFO mill-stock | `stock.al6061-pl-5` |
 | `part` | SFO part | `part.mc07-23-001` |
-| `equipment` | SFO equipment | `equipment.drive.torch.s1`, `equipment.gun.mass-driver.s1`, `equipment.throat-coil` |
+| `equipment` | SFO equipment | `equipment.drive.torch.s1`, `equipment.hardpoint.mass-driver.s1`, `equipment.gate.throat-coil.s3` |
 | `gate` | SFO gate | `gate.ring.i` |
 | `standard` | SFO standard | `standard.sfo.12` |
 | `standards-body` | SFO body | `standards-body.sfo` (to be `org.` with the organisation schema) |
@@ -55,7 +55,7 @@ under `identity` when their schemas are consolidated. The build checks each key:
 | `seeding` | Celestial galaxy, asteroids, conditions | `seeding.galaxy` |
 
 Three renames to know for your side: the game's `drive.torch.s1` is `equipment.drive.torch.s1`
-(underscores become `-`: `equipment.gun.mass-driver.s1`); `structure.ring.i` is `gate.ring.i`;
+(underscores become `-`: `equipment.hardpoint.mass-driver.s1`); `structure.ring.i` is `gate.ring.i`;
 `brand.hadley` is `company.hadley`. A rock class's game label (`S-TYPE STONY`) is now
 `identity.label`, and its key is `rock-class.stony`.
 
@@ -995,9 +995,9 @@ interval is what a port's contracts should be sized to; air and water are outsid
 
 1. **The MC-07's five empty parts** are no longer parts: they are the MC-07's own products, fitted
    to its slots, built of the parts you measured from the model (moved whole, re-coded MGF/MGR/MCR/
-   MAC/MML): `equipment.gear.mc07.front` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
-   where its 150 × 10 strut buckles), `equipment.access.mc07.cargo.ramp`, `equipment.access.mc07.anchor.clamp`
-   (two access slots), `equipment.laser.mc07.mining` (both hardpoints; the pulse laser's beam
+   MAC/MML): `equipment.gear.front.mc07` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
+   where its 150 × 10 strut buckles), `equipment.access.cargo-ramp.mc07`, `equipment.access.anchor-clamp.mc07`
+   (two access slots), `equipment.hardpoint.mining-laser.mc07` (both hardpoints; the pulse laser's beam
    figures as a stand-in, priced the same in prices.ron as a placeholder). `world::legs::reckon` now
    also takes fitted landing gear (`EquipmentFunction::LandingGear`) beside hull parts, so the
    MC-07's legs reckon as before.

@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.swivel.s1
+  name: "Engine swivel S1"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "A trunnion that turns an engine of up to 30 kN through 90 degrees in about 16 s: aft in flight, down to land. Vectored thrust; the price is 70 kg a unit against a gimbal's nothing."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 70
+  volume: 0.256
+  length: 0.8
+  width: 0.8
+  height: 0.4
+needs:
+  power: 2000
+built_of:
+  parts: engine-swivel-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: swivel
+  turns: 1.571
+  bears: 30000
+  slew: 0.1
+life: 473364000
+basis:
+  - { of: [function, physical, needs], tier: invented, review: true, note: "A trunnion bearing and two actuators carrying the engine's thrust: about 0.7 kg a kilonewton plus a frame, turning a quarter turn in sixteen seconds. Chosen; no flown example at this scale. Review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
