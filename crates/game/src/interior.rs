@@ -268,8 +268,11 @@ pub struct Interior {
     set: Vec<Hover>,
     clip: Option<Assembly>,
     stamping: bool,
-    /// Exact values being typed for what's picked (ENTER), and what they are.
+    /// Exact values being typed for what's picked (ENTER), or for the targets (SET
+    /// TARGETS: those, then); where SET TARGETS was last drawn.
     entry: Option<String>,
+    entry_targets: bool,
+    targets_rect: std::cell::Cell<(Vec2, Vec2)>,
     /// The grid points on the work plane snap to (m; none set: a quarter metre).
     snap: Option<f32>,
     /// MEASURE (Q): measuring (its first point, once clicked), and the last measure.
@@ -645,6 +648,11 @@ fn level(plan: &Plan, deck: usize) -> Option<(Vec<Hover>, f32)> {
 /// What's picked, as exact values to type over: what they are, and them now.
 fn exact_of(i: &Interior) -> Option<(&'static str, String)> {
     let f = |v: &[f32]| v.iter().map(|x| format!("{x:.2}")).collect::<Vec<_>>().join(", ");
+    if i.entry_targets {
+        let t = i.plan.targets.clone().unwrap_or_default();
+        let v = [t.delta_v.map_or(0.0, |v| v / 1000.0), t.crew.unwrap_or(0.0), t.cargo.map_or(0.0, |v| v / 1000.0)];
+        return Some(("TARGETS: DELTA-V KM/S, CREW, CARGO T (0: NOT ASKED)", v.iter().map(|x| format!("{x}")).collect::<Vec<_>>().join(", ")));
+    }
     match i.pick? {
         Hover::Module(n) => {
             let b = i.plan.blocks.get(n)?;
@@ -664,6 +672,14 @@ fn exact_of(i: &Interior) -> Option<(&'static str, String)> {
 
 /// The values typed set on what's picked; what happened.
 fn set_exact(i: &mut Interior, v: &[f32]) -> String {
+    if i.entry_targets {
+        i.entry_targets = false;
+        let get = |k: usize, scale: f64| v.get(k).map(|&x| f64::from(x) * scale).filter(|&x| x > 0.0);
+        let t = Targets { delta_v: get(0, 1000.0), crew: get(1, 1.0), cargo: get(2, 1000.0) };
+        let any = t.delta_v.is_some() || t.crew.is_some() || t.cargo.is_some();
+        i.plan.targets = any.then_some(t);
+        return if any { "TARGETS SET: SEE THE BUDGETS".into() } else { "TARGETS CLEARED".into() };
+    }
     match i.pick {
         Some(Hover::Module(n)) if v.len() == 3 && n < i.plan.blocks.len() => {
             let b = &mut i.plan.blocks[n];
@@ -1022,6 +1038,18 @@ struct Plan {
     /// The gravity it's designed to land in (m/s²; not said: a standard g).
     #[serde(default)]
     gravity: Option<f64>,
+    /// The job it's designed for, if said: checked in the budgets.
+    #[serde(default)]
+    targets: Option<Targets>,
+}
+
+/// A design's job: the delta-v it's to have (m/s) carrying its cargo (kg), and the
+/// people it's to carry (each none: not asked).
+#[derive(Clone, Default, PartialEq, serde::Serialize, serde::Deserialize)]
+struct Targets {
+    delta_v: Option<f64>,
+    crew: Option<f64>,
+    cargo: Option<f64>,
 }
 
 impl Plan {
@@ -3838,7 +3866,7 @@ impl Interior {
             }
             None => Vec::new(),
         };
-        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new(), plates: Vec::new(), gravity: None };
+        self.plan = Plan { hull: id.into(), points, lines: Vec::new(), groups: Vec::new(), ends: Vec::new(), doors: Vec::new(), blocks: Vec::new(), beams: Vec::new(), on, pads: Vec::new(), plates: Vec::new(), gravity: None, targets: None };
         // The plan saved for this hull, if there is one (its hull's own points where
         // the model has them now).
         if let Some(saved) = self.read_saved() {
@@ -4810,6 +4838,69 @@ fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     Some((kind, map, e.needs.power.unwrap_or(0.0)))
 }
 
+/// The budgets' target lines: the delta-v asked (with the cargo asked aboard)
+/// against what its main engines' propellant gives, and the propellant (and tanks,
+/// at the tanks' own mass for what they hold) that would give it, and its thrust
+/// over weight then; the crew asked against its seats and its life support.
+fn target_lines(t: &Targets, placed: &[(&Block, &Fitted, String, Fields, f64)], dry: f64, full: f64, g: f64) -> Vec<(String, bool)> {
+    let mut out = Vec::new();
+    let num = |m: &Fields, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
+    let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
+    let cargo = t.cargo.unwrap_or(0.0);
+    let thrust: f64 = placed.iter().filter_map(|p| p.1.push.map(|x| x.1)).sum();
+    // (The propellant its strongest engines throw: theirs, and the tanks that hold it.)
+    let engines: Vec<_> = placed.iter().filter(|p| p.1.push.is_some() && p.3.get("exhaust").is_some()).collect();
+    let strongest = engines.iter().map(|e| num(&e.3, "thrust")).fold(0.0, f64::max);
+    let main: Vec<_> = engines.iter().filter(|e| num(&e.3, "thrust") >= strongest * 0.5).collect();
+    let fuel = main.iter().find_map(|e| e.3.get("propellant").filter(|v| !v.is_null()).or(e.3.get("burns")).and_then(|v| v.as_str())).map(bare);
+    let tanks: Vec<_> = of("tank").filter(|p| p.3.get("holds").and_then(|v| v.as_str()).map(bare) == fuel).collect();
+    let held: f64 = tanks.iter().map(|p| num(&p.3, "capacity")).sum();
+    let k = if held > 0.0 { tanks.iter().map(|p| p.1.mass).sum::<f64>() / held } else { 0.1 };
+    let pushing: f64 = main.iter().map(|e| num(&e.3, "thrust")).sum();
+    let exhaust = main.iter().map(|e| num(&e.3, "thrust") * num(&e.3, "exhaust")).sum::<f64>() / pushing.max(1.0);
+    let name = fuel.unwrap_or("PROPELLANT").to_uppercase();
+    let has = if held > 0.0 && exhaust > 0.0 { exhaust * ((full + cargo) / (full + cargo - held)).ln() } else { 0.0 };
+    let with = if cargo > 0.0 { format!(" WITH {:.1} T CARGO", cargo / 1000.0) } else { String::new() };
+    if let Some(dv) = t.delta_v {
+        let text = if has >= dv {
+            format!("TARGET DELTA-V {:.2} KM/S{with}: HAS {:.2}; MET", dv / 1000.0, has / 1000.0)
+        } else if exhaust <= 0.0 {
+            format!("TARGET DELTA-V {:.2} KM/S: NO ENGINE THROWS PROPELLANT", dv / 1000.0)
+        } else {
+            // (Without its tanks of it, then the propellant P that gives dv: (D + (1 + k)P) / (D + kP) = r.)
+            let bare_ship = dry + cargo - k * held;
+            let r = (dv / exhaust).exp();
+            let room = 1.0 + k - r * k;
+            if room <= 0.0 {
+                format!("TARGET DELTA-V {:.2} KM/S{with}: HAS {:.2}; NOT ON {name} IN THESE TANKS, ANY AMOUNT: STAGE IT", dv / 1000.0, has / 1000.0)
+            } else {
+                let p = bare_ship * (r - 1.0) / room;
+                let tw = thrust / ((bare_ship + (1.0 + k) * p) * g);
+                let lifts = if tw < 1.0 { ", TOO LITTLE TO LIFT IT: STAGE IT OR ADD THRUST" } else { "" };
+                format!("TARGET DELTA-V {:.2} KM/S{with}: HAS {:.2}; +{:.1} T {name} IN +{:.1} T OF TANKS: T/W THEN {tw:.2}{lifts}", dv / 1000.0, has / 1000.0, (p - held) / 1000.0, k * (p - held) / 1000.0)
+            }
+        };
+        out.push((text, has >= dv));
+    } else if cargo > 0.0 {
+        let tw = thrust / ((full + cargo) * g);
+        out.push((format!("TARGET CARGO {:.1} T: DELTA-V WITH IT {:.2} KM/S, T/W {tw:.2}", cargo / 1000.0, has / 1000.0), tw > 1.0));
+    }
+    if let Some(n) = t.crew {
+        let seats = of("command_station").map(|p| num(&p.3, "persons")).sum::<f64>() + of("cabin").map(|p| num(&p.3, "seats")).sum::<f64>();
+        let keeps: f64 = of("life_support").map(|p| num(&p.3, "persons")).sum();
+        let mut need = Vec::new();
+        if seats < n {
+            need.push(format!("{:.0} MORE SEATS (A CABIN)", n - seats));
+        }
+        if keeps < n {
+            need.push(format!("LIFE SUPPORT FOR {:.0} MORE", n - keeps));
+        }
+        let gap = if need.is_empty() { "MET".to_string() } else { need.join(", ") };
+        out.push((format!("TARGET CREW {n:.0}: SEATS {seats:.0}, LIFE SUPPORT KEEPS {keeps:.0}; {gap}"), seats >= n && keeps >= n));
+    }
+    out
+}
+
 /// The frame's mass by part: its members, its nodes, its decks (kg). One figure
 /// for the studio and the report alike.
 fn frame_masses(i: &Interior) -> (f64, f64, f64) {
@@ -5161,6 +5252,11 @@ fn budget(i: &Interior) -> Budget {
                 }
             }
         }
+    }
+    // (The job asked of it: each target against what it has, and what would close
+    // the gap.)
+    if let Some(t) = &i.plan.targets {
+        lines.extend(target_lines(t, &placed, dry, full, design));
     }
     Budget { lines, faults }
 }
@@ -6023,6 +6119,7 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     // Typing exact values: ESC puts it away (not the studio).
     if interior.entry.is_some() && input.pressed(KeyCode::Escape) {
         interior.entry = None;
+        interior.entry_targets = false;
         return true;
     }
     // ESC: what's in progress cancelled (a module picked, a path, member or truss
@@ -6054,6 +6151,12 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     }
     if new {
         interior.dialog = Some(Dialog::New);
+        return true;
+    }
+    // SET TARGETS (on the budgets panel): the job typed in.
+    if input.button_pressed(MouseButton::Left) && inside(interior.targets_rect.get(), input.cursor) {
+        interior.entry_targets = true;
+        interior.entry = exact_of(interior).map(|e| e.1);
         return true;
     }
     // The issue list: PGDN / PGUP (next, back) anywhere; a row clicked, the wheel
@@ -8063,6 +8166,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     // The budgets, in every tool: under the panel, each met in green, short in
     // amber; what fails, in red.
     interior.budget_rect.set((Vec2::ZERO, Vec2::ZERO));
+    interior.targets_rect.set((Vec2::ZERO, Vec2::ZERO));
     if !plan.blocks.is_empty() || !plan.groups.is_empty() {
         let b = budget(interior);
         let list = issues(interior, &b.faults);
@@ -8070,6 +8174,13 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         frame.hud_rect(p, c, Color([0.02, 0.06, 0.13, 0.88]));
         frame.hud_box(p, c, PLANE.scale(1.2));
         frame.text_scaled(p + Vec2::new(6.0, 4.0), "BUDGETS AND CHECKS", LABEL.scale(0.8), 0.6);
+        // (SET TARGETS: at the header's end.)
+        let tb = (Vec2::new(p.x + c.x - 96.0, p.y + 2.0), Vec2::new(92.0, 11.0));
+        interior.targets_rect.set(tb);
+        let lit = inside(tb, interior.cursor);
+        frame.hud_rect(tb.0, tb.1, if lit { Color([0.15, 0.2, 0.35, 0.95]) } else { Color([0.05, 0.1, 0.2, 0.95]) });
+        frame.hud_box(tb.0, tb.1, PLANE.scale(1.2));
+        frame.text_scaled(tb.0 + Vec2::new(5.0, 2.0), "SET TARGETS", LABEL, 0.55);
         let mut y = p.y + 15.0;
         for (text, ok) in &b.lines {
             let col = if *ok { Color([0.4, 1.0, 0.5, 0.95]) } else { Color([1.0, 0.7, 0.2, 1.0]) };
