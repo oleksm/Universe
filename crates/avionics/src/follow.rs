@@ -291,7 +291,7 @@ impl Avionics {
         // gear works.
         if matches!(f.manoeuvre, Manoeuvre::Surface(_)) && throttle == 0.0 {
             let up = dir;
-            let along = (ship.forward() - up * ship.forward().dot(up)).normalize_or(up.any_orthonormal_vector());
+            let along = ship.forward().reject_from_normalized(up).normalize_or(up.any_orthonormal_vector());
             return Some(attitude(&ship, facing(along, up), DVec3::ZERO, 1.0 / 60.0));
         }
         // In orbit, banked into the turn as an aircraft is: the top to the

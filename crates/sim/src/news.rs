@@ -15,7 +15,7 @@ use std::sync::Arc;
 use glam::DVec3;
 use universe_services::records::{Kill, TradeRecord};
 use universe_world::charts::Charts;
-use universe_world::hypernet::{blocked, Net, NodeAt};
+use universe_world::hypernet::{blocked, Net};
 use universe_world::modules::Comm;
 use universe_world::physics::laws::SPEED_OF_LIGHT;
 use universe_world::{Facility, StarSystem};
@@ -128,23 +128,7 @@ impl Knowledge {
                 }
             }
         }
-        let mut dist = HashMap::from([(us, 0.0)]);
-        loop {
-            let mut changed = false;
-            for &(a, b, d) in &hops {
-                if let Some(&rest) = dist.get(&b) {
-                    let via = d + rest;
-                    if dist.get(&a).is_none_or(|&old| via < old - 1e-9) {
-                        dist.insert(a, via);
-                        changed = true;
-                    }
-                }
-            }
-            if !changed {
-                break;
-            }
-        }
-        dist
+        universe_world::hypernet::delays_to(us, 0.0, &hops)
     }
 
     /// Take in what's come to us by `now`, from the kills and trades on record.
@@ -193,13 +177,7 @@ impl Knowledge {
                 let n = self.net(charts, system, now);
                 let entered = match (at, place) {
                     (Some(p), _) => Some(n.net.heard(&n.sys, &n.positions, p).map_or(f64::INFINITY, |d| time + d)),
-                    (None, Some(f)) => match f {
-                        Facility::Station(b) | Facility::Gate(b) => Some(NodeAt::Body(b)),
-                        Facility::Spaceport(k) => Some(NodeAt::Port(k)),
-                        // (Out at a rock: no relay there.)
-                        _ => None,
-                    }
-                    .map_or(Some(f64::INFINITY), |at| n.net.node(at).and_then(|k| n.net.lag[k]).map(|l| time.max(now - EVERY) + l)),
+                    (None, Some(f)) => universe_world::hypernet::relay_of(f).map_or(Some(f64::INFINITY), |at| n.net.node(at).and_then(|k| n.net.lag[k]).map(|l| time.max(now - EVERY) + l)),
                     (None, None) => Some(f64::INFINITY),
                 };
                 if let Some(e) = entered {

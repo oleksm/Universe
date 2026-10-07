@@ -283,9 +283,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
     // How much of it there is, and how much we've seen.
     let total = galaxy.stars.len();
     let settled = {
-        let mut s: Vec<usize> = app.charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        s.sort_unstable();
-        s.dedup();
+        let s = app.charts.settled();
         s.len()
     };
     let seen = app.explored.len();

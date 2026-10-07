@@ -201,7 +201,7 @@ impl Bus for PoolLink<'_> {
         if let Some(NavTarget::Spaceport(p)) = target
             && let Some(sp) = self.sys.spaceports.get(p)
         {
-            let g = universe_world::legs::surface_gravity(&self.sys.bodies[sp.body]);
+            let g = self.sys.bodies[sp.body].surface_gravity();
             let (lift, legs) = universe_world::legs::ground_check(self.ship.spec(), self.ship.mass(), g);
             if lift < 1.0 {
                 return Err(format!("REFUSED - ITS LIFT HOLDS {lift:.2} OF ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));

@@ -153,6 +153,11 @@ pub fn body_key(system: &str, name: &str) -> String {
 }
 
 impl Body {
+    /// Its surface gravity (m/s²).
+    pub fn surface_gravity(&self) -> f64 {
+        crate::units::G * self.mass / self.rail.radius.max(1.0).powi(2)
+    }
+
     pub fn rotation(&self, t: f64) -> DQuat {
         self.rail.rotation(t)
     }

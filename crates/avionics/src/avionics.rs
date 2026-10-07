@@ -269,7 +269,7 @@ impl Avionics {
             let d = sys.dominant(ship.position, &positions);
             let up = (ship.position - positions[d]).normalize_or(DVec3::Y);
             let fwd = ship.forward();
-            let level = (fwd - up * fwd.dot(up)).try_normalize().unwrap_or_else(|| up.any_orthonormal_vector());
+            let level = fwd.reject_from_normalized(up).try_normalize().unwrap_or_else(|| up.any_orthonormal_vector());
             return Some(crate::docking::attitude(&ship, universe_world::ship::facing(level, up), DVec3::ZERO, dt));
         }
         let c = self.clearance.filter(|c| c.autopilot)?;

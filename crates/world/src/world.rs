@@ -114,6 +114,11 @@ type EphemerisAt = (f64, Arc<Ephemeris>);
 type RailsAt = (f64, Arc<Vec<DVec3>>);
 
 impl World {
+    /// The settled systems (the gate network's), in order.
+    pub fn settled(&self) -> Vec<usize> {
+        crate::gate::settled(&self.gate_links)
+    }
+
     pub fn new(seed: u64) -> Self {
         let galaxy = Galaxy::generate(seed);
         let home_system = network::find_home(&galaxy, seed);
@@ -946,7 +951,7 @@ mod tests {
             let mut ship = p.ship.clone();
             ship.class = mc07;
             ship.refresh();
-            legs.hardest(ship.mass(), crate::units::G * b.mass / (b.rail.radius * b.rail.radius))
+            legs.hardest(ship.mass(), b.surface_gravity())
         };
         assert!(hardest > legs.designed + 1.0, "its legs take more than they're designed for: {hardest:.1} m/s");
         for (label, sink, lands, hull) in [("gentle", 5.0, true, None), ("hard", 100.0, false, None), ("mc-07 designed", legs.designed * 0.9, true, Some(mc07)), ("mc-07 hard", (legs.designed + hardest) / 2.0, true, Some(mc07)), ("mc-07 a leg gives", hardest + 0.5, false, Some(mc07))] {

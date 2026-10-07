@@ -379,3 +379,36 @@ mod tests {
         assert!(blocked(&sys, &positions, p + DVec3::X * 1.0e9, p - DVec3::X * 1.0e9));
     }
 }
+
+/// From each system to `us` over the backbone (s), the quickest way: `start` at `us` (its own lag
+/// out to the listener), then `hops` (from, to, s: out through `from`'s gate relays and in at
+/// `to`'s) taken backwards until nothing gets quicker.
+pub fn delays_to(us: usize, start: f64, hops: &[(usize, usize, f64)]) -> std::collections::HashMap<usize, f64> {
+    let mut dist = std::collections::HashMap::from([(us, start)]);
+    loop {
+        let mut changed = false;
+        for &(a, b, d) in hops {
+            if let Some(&rest) = dist.get(&b) {
+                let via = d + rest;
+                if dist.get(&a).is_none_or(|&old| via < old - 1e-9) {
+                    dist.insert(a, via);
+                    changed = true;
+                }
+            }
+        }
+        if !changed {
+            break;
+        }
+    }
+    dist
+}
+
+/// Where a facility's relay sits, if it has one (out at a rock: none).
+pub fn relay_of(f: crate::traffic::Facility) -> Option<NodeAt> {
+    use crate::traffic::Facility;
+    match f {
+        Facility::Station(b) | Facility::Gate(b) => Some(NodeAt::Body(b)),
+        Facility::Spaceport(k) => Some(NodeAt::Port(k)),
+        _ => None,
+    }
+}

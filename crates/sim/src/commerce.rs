@@ -75,25 +75,16 @@ impl Boards {
     fn to_us(&self, us: usize, p: glam::DVec3, comm: &universe_world::modules::Comm) -> Option<HashMap<usize, f64>> {
         let (sys, positions, net) = self.nets.get(&us)?;
         let ours = net.status(sys, positions, p, comm)?.lag;
-        let mut dist = HashMap::from([(us, ours)]);
-        loop {
-            let mut changed = false;
-            for (&a, (_, _, na)) in &self.nets {
-                for (b, out) in na.gates() {
-                    let (Some(&rest), Some((_, _, nb))) = (dist.get(&b), self.nets.get(&b)) else { continue };
-                    let Some(back) = nb.gate_in(a) else { continue };
-                    let via = out + back + rest;
-                    if dist.get(&a).is_none_or(|&old| via < old - 1e-9) {
-                        dist.insert(a, via);
-                        changed = true;
-                    }
+        // (Out of each system through its gates, and in at the far end.)
+        let mut hops = Vec::new();
+        for (&a, (_, _, na)) in &self.nets {
+            for (b, out) in na.gates() {
+                if let Some(back) = self.nets.get(&b).and_then(|(_, _, nb)| nb.gate_in(a)) {
+                    hops.push((a, b, out + back));
                 }
             }
-            if !changed {
-                break;
-            }
         }
-        Some(dist)
+        Some(universe_world::hypernet::delays_to(us, ours, &hops))
     }
 
     /// How long word from `f` (in `system`) takes to reach us, given `to_us`.
@@ -297,7 +288,7 @@ impl Universe {
 
     /// Every market in the gate network puts out its board, when due.
     pub(crate) fn publish_boards(&mut self) {
-        use universe_world::hypernet::{Net, NodeAt};
+        use universe_world::hypernet::Net;
         let now = self.world.time;
         if now < self.boards.next {
             return;
@@ -315,12 +306,7 @@ impl Universe {
             let net = Net::at(&sys, universe_world::hypernet::nodes(&self.world.galaxy, &sys), now, &positions);
             let net = &self.boards.nets.entry(system).insert_entry((sys.clone(), positions, net)).into_mut().2;
             for f in facilities(&sys) {
-                let at = match f {
-                    Facility::Station(b) | Facility::Gate(b) => Some(NodeAt::Body(b)),
-                    Facility::Spaceport(k) => Some(NodeAt::Port(k)),
-                    _ => None,
-                };
-                let lag = at.and_then(|a| net.node(a)).and_then(|k| net.lag[k]);
+                let lag = universe_world::hypernet::relay_of(f).and_then(|a| net.node(a)).and_then(|k| net.lag[k]);
                 self.boards.lags.insert((system, f), lag);
                 let quotes = self.markets.quotes_for(system, &sys, f, &all, now);
                 let list = self.boards.boards.entry((system, f)).or_default();

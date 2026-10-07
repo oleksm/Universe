@@ -59,9 +59,7 @@ fn chart_area(size: Vec2) -> (Vec2, Vec2) {
 /// Systems you can browse: the ship's first, then the gate network.
 fn browsable(app: &App) -> Vec<usize> {
     let mut v = vec![app.v.ship_system];
-    let mut net: Vec<usize> = app.charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-    net.sort();
-    net.dedup();
+    let net = app.charts.settled();
     v.extend(net.into_iter().filter(|&s| s != app.v.ship_system));
     v
 }

@@ -102,9 +102,7 @@ impl Standings {
 
     /// A desk at each settled system's station.
     fn open(charts: &Charts) -> Vec<Desk> {
-        let mut settled: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        settled.sort();
-        settled.dedup();
+        let settled = charts.settled();
         settled.into_iter().filter_map(|s| charts.system(s).station().map(|station| Desk { system: s, station, knows: Knowledge::default() })).collect()
     }
 }

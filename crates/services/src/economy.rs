@@ -62,7 +62,7 @@ pub struct Pool {
     /// What it can hold (kg).
     pub room: f64,
     pub marks: BTreeMap<usize, VecDeque<Mark>>,
-    pub lots: BTreeMap<usize, VecDeque<(Batch, f64)>>,
+    pub lots: BTreeMap<usize, crate::lots::Lots>,
 }
 
 /// Is stock item `item` a made product (one serial a unit: a hull, equipment, an industrial module,
@@ -98,13 +98,8 @@ impl Pool {
         if !marks.is_empty() {
             self.marks.entry(item).or_default().extend(marks);
         }
-        // (A piece of a lot already here joins it.)
-        for (b, kg) in lots {
-            let l = self.lots.entry(item).or_default();
-            match l.iter_mut().find(|(x, _)| x.lot == b.lot) {
-                Some((_, have)) => *have += kg,
-                None => l.push_back((b, kg)),
-            }
+        if !lots.is_empty() {
+            crate::lots::put(self.lots.entry(item).or_default(), lots);
         }
     }
 
@@ -139,17 +134,7 @@ impl Pool {
         // (Lots: the oldest first, as far as what was taken goes.)
         let mut lots = Vec::new();
         if let Some(l) = self.lots.get_mut(&item) {
-            let mut want = t;
-            while want > 1e-9 {
-                let Some((b, kg)) = l.front_mut() else { break };
-                let k = want.min(*kg);
-                *kg -= k;
-                want -= k;
-                lots.push((b.clone(), k));
-                if *kg <= 1e-9 {
-                    l.pop_front();
-                }
-            }
+            lots = crate::lots::take(l, t);
             if l.is_empty() {
                 self.lots.remove(&item);
             }

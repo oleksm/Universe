@@ -22,7 +22,7 @@ pub const APPROACH_DISTANCE: f64 = 4000.0;
 /// Lined up on the axis on its entry side, close enough for the run-in.
 pub fn in_final_zone(frame: &GateFrame, pos: DVec3) -> bool {
     let (side, h) = frame.side(pos);
-    let lateral = ((pos - frame.center) - frame.axis() * (pos - frame.center).dot(frame.axis())).length();
+    let lateral = (pos - frame.center).reject_from_normalized(frame.axis()).length();
     side < 0.0 && h < APPROACH_DISTANCE + 500.0 && lateral < gate_radius() * 0.5
 }
 
@@ -37,7 +37,7 @@ pub fn guidance(frame: &GateFrame, pos: DVec3, final_run: bool, accel: f64) -> G
     let axis = frame.axis();
     let r = pos - frame.center;
     let (side, h) = frame.side(pos);
-    let lateral = r - axis * r.dot(axis);
+    let lateral = r.reject_from_normalized(axis);
     let inward = axis;
     if final_run {
         let correct = (-lateral * 0.2).clamp_length_max(20.0);
@@ -96,7 +96,7 @@ pub fn status(frame: &GateFrame, ship: &Ship, clearance: &Clearance) -> GateStat
     let (side, h) = frame.side(ship.position);
     let h = if side == ENTRY { h } else { -h };
     let v = ship.velocity - frame.velocity;
-    let offset = (r - axis * r.dot(axis)).length();
+    let offset = r.reject_from_normalized(axis).length();
     let final_run = if clearance.autopilot { clearance.phase == Phase::Final } else { in_final_zone(frame, ship.position) };
     GateStatus {
         phase: clearance.phase,

@@ -112,7 +112,3 @@ pub fn ground_check(spec: &crate::ship::ClassSpec, mass: f64, g: f64) -> (f64, O
     (lift, of_spec(spec).map(|l| l.hardest(mass, g)))
 }
 
-/// A body's surface gravity (m/s²).
-pub fn surface_gravity(body: &crate::system::Body) -> f64 {
-    crate::units::G * body.mass / body.rail.radius.max(1.0).powi(2)
-}

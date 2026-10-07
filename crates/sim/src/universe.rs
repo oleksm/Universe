@@ -172,9 +172,7 @@ impl Universe {
             positions: Vec::new(),
         };
         // The settled systems' economy (the gate network's).
-        let mut settled: Vec<usize> = u.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        settled.sort_unstable();
-        settled.dedup();
+        let settled = u.world.settled();
         let systems: Vec<(usize, Arc<StarSystem>)> = settled.into_iter().map(|i| (i, u.world.system(i))).collect();
         // The land office, from the registry: each settlement recorded, at its system and port.
         let content = universe_world::content::content();
