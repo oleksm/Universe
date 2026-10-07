@@ -937,6 +937,8 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
     for k in ["name"]:
         if k not in ad:
             problem(full, f"no {k}")
+    if not ad.get("administers"):
+        problem(full, "administers: an administration names the system whose land it administers, by its key (the game finds its law by it)")
     names = [x.get("name") for x in ad.get("bodies") or []]
     for x in ad.get("bodies") or []:
         if x.get("kind") not in ("planet", "moon", "settlement", "rig"):

@@ -52,7 +52,7 @@ basis:
   - { of: [outer_belt], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt", note: "From the 3:2 resonance with Neptune at 39.5 AU to the 2:1 at about 48; over 100,000 above 100 km; 0.0197 Earth masses; as much as ten degrees off the plane." }
   - { of: [moons], tier: sourced, source: "https://en.wikipedia.org/wiki/Minor-planet_moon", note: "An estimated 2% of asteroids have satellites, and 11% of the objects past Neptune; the two are from a few hundred to over 3,000 km apart." }
   - { of: [sizes.exponent], tier: derived, note: "From the belt's two counts: 1.2 million over 1 km and 200 over 100 km." }
-  - { of: [sizes.smallest], tier: sourced, source: "the game: crates/world/src/belt.rs, SMALLEST" }
+  - { of: [sizes.smallest], tier: invented, review: true, note: "The smallest rock a belt bothers to make, 15 m across: at a rubble density of 2,000 kg/m3 about 3,500 t, a day's work for a mining ship; below it the rocks are too many to place and too small to mine. Chosen (it was the game's constant before the record held it)." }
   - { of: [zones], tier: derived, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "The Sun's frost line is at 2.7 AU; stony asteroids are commoner within 2.5 AU; the belt's middle ends at the gap at 2.82 AU." }
   - { of: [sizes.comet_density], tier: sourced, source: "https://en.wikipedia.org/wiki/Comet_nucleus", note: "Known comets average 0.6 g/cm3: Halley 0.6, Tempel 1 0.62, 67P 0.4. Highly porous." }
   - { of: [trojans.giant_mass], tier: invented, review: true, note: "A guess, to be reviewed: that a giant holds trojans in proportion to its mass. Only Jupiter's count is known." }
