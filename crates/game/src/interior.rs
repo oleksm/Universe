@@ -3956,6 +3956,50 @@ const HEAT_TO_HULL: f64 = 1e-6;
 struct Budget {
     lines: Vec<(String, bool)>,
     faults: Vec<String>,
+    /// The home system's planets and moons, against its lift and propellant.
+    worlds: Vec<World>,
+}
+
+/// A world it might land on and leave: the registry's figures for it, and what
+/// this ship's lift and propellant do there.
+struct World {
+    name: String,
+    moon: bool,
+    /// Surface gravity (m/s2).
+    gravity: f64,
+    /// Lift over weight there, full and dry.
+    full: f64,
+    dry: f64,
+    /// Circular orbit speed at its surface, √(g·R) (m/s).
+    orbit: f64,
+    /// That plus the gravity loss of a straight-up burn of all its landing
+    /// propellant (g × the burn's time): an upper bound, air not counted (m/s).
+    needs: f64,
+    /// Its delta-v on its landing propellant (m/s).
+    has: f64,
+}
+
+/// The home system's rocky planets and moons (their surface gravity and radius
+/// from the registry's Celestial records), against a ship's lift, masses, landing
+/// exhaust and landing propellant.
+fn worlds(lift: f64, full: f64, dry: f64, exhaust: f64, held: f64) -> Vec<World> {
+    use universe_sim::world::registry::BodyIdentityKind as K;
+    let reg = universe_sim::world::registry::registry();
+    let home = reg.galaxy().map_or("treistun".to_string(), |g| g.home.trim_start_matches("system.").to_string());
+    let has = if held > 0.0 { exhaust * (full / (full - held).max(1.0)).ln() } else { 0.0 };
+    let burn_time = if lift > 0.0 { held * exhaust / lift } else { 0.0 };
+    let mut out: Vec<World> = reg
+        .bodies
+        .iter()
+        .filter(|b| b.identity.key.starts_with(&format!("body.{home}.")) && matches!(b.identity.kind, K::RockyPlanet | K::Moon))
+        .filter_map(|b| {
+            let g = b.physical.gravity.filter(|g| *g > 0.0)?;
+            let orbit = (g * b.physical.radius.unwrap_or(0.0)).sqrt();
+            Some(World { name: b.identity.name.clone(), moon: matches!(b.identity.kind, K::Moon), gravity: g, full: lift / (full * g), dry: lift / (dry * g), orbit, needs: orbit + g * burn_time, has })
+        })
+        .collect();
+    out.sort_by(|a, b| a.gravity.total_cmp(&b.gravity));
+    out
 }
 
 /// What a walled room's opening leads to: space through nothing (an open end: a
@@ -4201,6 +4245,33 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     // (Against its weight in the gravity it's designed for; and the strongest
     // gravity it can lift itself in, full.)
     let design = i.plan.gravity();
+    // (The whole vehicle: its size over everything placed, framed and decked; its
+    // masses; its thrust (every engine, lifting or not) over its weight, full and
+    // dry, at the gravity it's designed for.)
+    {
+        let mut lo = Vec3::splat(f32::MAX);
+        let mut hi = Vec3::splat(f32::MIN);
+        for b in &i.plan.blocks {
+            let (a, z) = b.bounds();
+            lo = lo.min(a);
+            hi = hi.max(z);
+        }
+        for b in &i.plan.beams {
+            lo = lo.min(b.a).min(b.b);
+            hi = hi.max(b.a).max(b.b);
+        }
+        for p in &i.plan.plates {
+            lo = lo.min(Vec3::new(p.lo.x, p.y, p.lo.y));
+            hi = hi.max(Vec3::new(p.hi.x, p.y, p.hi.y));
+        }
+        let thrust: f64 = placed.iter().filter_map(|p| p.1.push.map(|x| x.1)).sum();
+        if hi.x >= lo.x {
+            let d = hi - lo;
+            let tw = |m: f64| thrust / (m * design);
+            lines.insert(1, (format!("VEHICLE  {:.1} WIDE × {:.1} TALL × {:.1} DEEP M; THRUST {}: T/W {:.2} FULL, {:.2} DRY AT {:.2} G", d.x, d.y, d.z, si(thrust, "N"), tw(full), tw(dry), design / STANDARD_G), true));
+        }
+    }
+    let mut found = Vec::new();
     if lift > 0.0 {
         let g = lift / (full * design);
         let most = lift / (full * STANDARD_G);
@@ -4223,6 +4294,15 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
         let throws: Vec<String> = lifting.iter().filter_map(|p| p.3.get("propellant").filter(|v| !v.is_null()).or(p.3.get("burns")).and_then(|v| v.as_str()).map(String::from)).collect();
         let held: f64 = of("tank").filter(|t| t.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| throws.iter().any(|p| bare(p) == bare(h)))).map(|t| num(&t.3, "capacity")).sum();
         let hover_s = if held > 0.0 && burn > 0.0 { format!(" FOR {:.0} S", held / burn) } else { String::new() };
+        // (The home system's worlds: which it lifts off full, and which it reaches
+        // orbit from on its landing propellant.)
+        found = worlds(lift, full, dry, exhaust, held);
+        if !found.is_empty() {
+            let lifts_off = found.iter().filter(|w| w.full > 1.0).count();
+            let to_orbit = found.iter().filter(|w| w.full > 1.0 && w.has >= w.needs).count();
+            let heaviest = found.iter().filter(|w| w.full > 1.0).map(|w| w.gravity).fold(0.0, f64::max);
+            lines.push((format!("WORLDS  OF {} HOME PLANETS AND MOONS: LIFTS OFF {lifts_off} FULL (UP TO {:.2} G), REACHES ORBIT FROM {to_orbit}", found.len(), heaviest / STANDARD_G), true));
+        }
         let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{hover_s}{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
         lines.push((text, g > 1.0 && class.is_some() && least <= weight));
         // (Balanced: its lift's middle under its weight's.)
@@ -4433,7 +4513,7 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
             }
         }
     }
-    Budget { lines, faults }
+    Budget { lines, faults, worlds: found }
 }
 
 /// A figure with its unit, at a readable size: 900000 N as 900 KN, 1e7 m/s as
@@ -4488,6 +4568,28 @@ pub fn report(name: &str) -> String {
     }
     for f in &bu.faults {
         let _ = writeln!(out, "FAULT {f}");
+    }
+    // (Each home world: its gravity, the lift over weight there, and whether its
+    // landing propellant takes it to orbit (orbit speed plus a straight-up burn's
+    // gravity loss; air not counted).)
+    if !bu.worlds.is_empty() {
+        let _ = writeln!(out, "WORLD                 KIND    GRAVITY      T/W FULL  T/W DRY  ORBIT SPEED  NEEDS      HAS        LIFTS OFF  TO ORBIT");
+        for w in &bu.worlds {
+            let _ = writeln!(
+                out,
+                "{:<21} {:<7} {:>5.2} m/s2   {:>8.2}  {:>7.2}  {:>6.2} km/s  {:>5.2} km/s {:>5.2} km/s {:<10} {}",
+                w.name,
+                if w.moon { "moon" } else { "planet" },
+                w.gravity,
+                w.full,
+                w.dry,
+                w.orbit / 1000.0,
+                w.needs / 1000.0,
+                w.has / 1000.0,
+                if w.full > 1.0 { "yes" } else { "no" },
+                if w.full > 1.0 && w.has >= w.needs { "yes" } else { "no" }
+            );
+        }
     }
     for l in &b.loose {
         let _ = writeln!(out, "LOOSE {l}");
