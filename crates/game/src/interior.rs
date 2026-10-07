@@ -1504,11 +1504,87 @@ fn knit(mut beams: Vec<Beam>) -> (Vec<Beam>, usize) {
                 made += 1;
             }
         }
+        // (Members that cross, nearer than their two radii, jointed where they come
+        // nearest; a member's end against another's side, put on it and jointed there.)
+        let n = crossings(&mut beams);
+        changed |= n > 0;
+        made += n;
         if !changed {
             break;
         }
     }
     (beams, made)
+}
+
+/// The nearest points of segments `p1 q1` and `p2 q2`: how far along each (0 to 1).
+fn nearest(p1: Vec3, q1: Vec3, p2: Vec3, q2: Vec3) -> (f32, f32) {
+    let (d1, d2, r) = (q1 - p1, q2 - p2, p1 - p2);
+    let (a, e, f, c, b) = (d1.length_squared(), d2.length_squared(), d2.dot(r), d1.dot(r), d1.dot(d2));
+    let den = a * e - b * b;
+    let mut s = if den > 1e-9 { ((b * f - c * e) / den).clamp(0.0, 1.0) } else { 0.0 };
+    let mut t = (b * s + f) / e.max(1e-9);
+    if t < 0.0 {
+        t = 0.0;
+        s = (-c / a.max(1e-9)).clamp(0.0, 1.0);
+    } else if t > 1.0 {
+        t = 1.0;
+        s = ((b - c) / a.max(1e-9)).clamp(0.0, 1.0);
+    }
+    (s, t)
+}
+
+/// Crossing members jointed (each pair once a pass; a member in one pair at most):
+/// both split at the middle of their nearest points; a member's end against
+/// another's side moved onto it, that one split there. How many joinings.
+fn crossings(beams: &mut Vec<Beam>) -> usize {
+    let mut used = vec![false; beams.len()];
+    let mut cuts: Vec<(usize, Vec3)> = Vec::new();
+    let mut moves: Vec<(usize, bool, Vec3)> = Vec::new();
+    let shares = |x: &Beam, y: &Beam| [x.a, x.b].iter().any(|p| y.a.distance(*p) < 0.05 || y.b.distance(*p) < 0.05);
+    for i in 0..beams.len() {
+        for j in i + 1..beams.len() {
+            if used[i] || used[j] || shares(&beams[i], &beams[j]) {
+                continue;
+            }
+            let (x, y) = (&beams[i], &beams[j]);
+            let (s, t) = nearest(x.a, x.b, y.a, y.b);
+            let (pi, pj) = (x.a.lerp(x.b, s), y.a.lerp(y.b, t));
+            if pi.distance(pj) >= tube_radius(&x.stock) + tube_radius(&y.stock) - TOUCH {
+                continue;
+            }
+            let inner = |u: f32, len: f32| u * len > 0.1 && (1.0 - u) * len > 0.1;
+            let (li, lj) = (x.a.distance(x.b), y.a.distance(y.b));
+            match (inner(s, li), inner(t, lj)) {
+                (true, true) => {
+                    let c = (pi + pj) * 0.5;
+                    cuts.push((i, c));
+                    cuts.push((j, c));
+                }
+                // (j's end against i's side: that end onto i, i cut there.)
+                (true, false) => {
+                    moves.push((j, t < 0.5, pi));
+                    cuts.push((i, pi));
+                }
+                (false, true) => {
+                    moves.push((i, s < 0.5, pj));
+                    cuts.push((j, pj));
+                }
+                _ => continue,
+            }
+            (used[i], used[j]) = (true, true);
+        }
+    }
+    for &(k, at_a, p) in &moves {
+        if at_a { beams[k].a = p } else { beams[k].b = p }
+    }
+    let made = cuts.len();
+    cuts.sort_by(|x, y| y.0.cmp(&x.0));
+    for (k, c) in cuts {
+        let m = beams.remove(k);
+        beams.push(Beam { a: m.a, b: c, stock: m.stock.clone(), pinned: [m.pinned[0], false] });
+        beams.push(Beam { a: c, b: m.b, stock: m.stock, pinned: [false, m.pinned[1]] });
+    }
+    made
 }
 
 /// The gravity the frame is worked out under, standing (m/s²: a standard g; each
@@ -1960,8 +2036,10 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
             let needed = |s: &Stock| forces.iter().map(|f| work(&Member { pinned: [false; 2], a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
             let ladder: Vec<&Stock> = ladder_of(&beam.stock).into_iter().filter(|s| s.material.stiffness >= decks_on[k] * 0.9).collect();
             let ladder = if ladder.is_empty() { ladder_of(&beam.stock) } else { ladder };
+            // (None that fits under strong enough: a break is worse than a clash, so
+            // any; the clash is said.)
             let fits: Vec<&Stock> = ladder.iter().copied().filter(|s| under[k].is_none_or(|room| s.section.diameter <= room)).collect();
-            let ladder = if fits.is_empty() { ladder } else { fits };
+            let ladder = if fits.iter().any(|s| needed(s) <= 1.0) { fits } else { ladder };
             let fits = ladder.iter().find(|s| needed(s) <= 0.8).copied().or_else(|| {
                 maxed += usize::from(ladder.last().is_some_and(|s| needed(s) > 1.0));
                 ladder.last().copied()
