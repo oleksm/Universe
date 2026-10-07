@@ -70,16 +70,8 @@ pub enum Does {
     },
 }
 
-/// An autopilot a nav computer runs.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Deserialize)]
-pub enum Feature {
-    Docking,
-    Landing,
-    Gate,
-    Follow,
-    Hyperdrive,
-    Route,
-}
+/// A nav computer's feature: the registry's (`EquipmentFunctionNavComputerFeature`).
+pub use crate::registry::EquipmentFunctionNavComputerFeature as Feature;
 
 /// Gear a module brings that something checks for.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -372,19 +364,7 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
         Some(Does::HyperRelay { lag: it.lag, capacity: it.capacity, cadence: it.cadence })
     }
     fn nav_computer(&mut self, it: &r::EquipmentFunctionNavComputer) -> Self::Out {
-        use crate::registry::EquipmentFunctionNavComputerFeature as N;
-        let features = it
-            .features
-            .iter()
-            .map(|f| match f {
-                N::Docking => Feature::Docking,
-                N::Landing => Feature::Landing,
-                N::Gate => Feature::Gate,
-                N::Follow => Feature::Follow,
-                N::Hyperdrive => Feature::Hyperdrive,
-                N::Route => Feature::Route,
-            })
-            .collect();
+        let features = it.features.clone();
         Some(Does::NavComputer { features, interlock: it.interlock, governor: it.governor })
     }
     fn transponder(&mut self, _: &r::EquipmentFunctionTransponder) -> Self::Out {

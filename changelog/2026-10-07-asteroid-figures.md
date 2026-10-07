@@ -10,3 +10,8 @@
   `mining.yields` and `rich_yields`; it's the stock item one of those names now
   (`Ore::all()` from the records, `from_key`, `of_item`), so a new rock class or ore needs no code.
   The content check reads the yields from the records too.
+- Three enums that copied generated ones variant for variant are the generated ones now:
+  `modules::Feature` (a nav computer's), `materials::Process` (a fuel's release) and
+  `terrain::TerrainKind` (a world's ground), each with its hand-written mapping gone. Generated
+  enums derive `PartialOrd`, `Ord` now (features are sorted). `modules::SlotKind` stays the game's
+  own: its slots are a subset with their own meaning (a relay slot, not the registry's gate).
