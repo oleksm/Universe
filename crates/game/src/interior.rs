@@ -1578,7 +1578,7 @@ fn crossings(beams: &mut Vec<Beam>) -> usize {
         if at_a { beams[k].a = p } else { beams[k].b = p }
     }
     let made = cuts.len();
-    cuts.sort_by(|x, y| y.0.cmp(&x.0));
+    cuts.sort_by_key(|c| std::cmp::Reverse(c.0));
     for (k, c) in cuts {
         let m = beams.remove(k);
         beams.push(Beam { a: m.a, b: c, stock: m.stock.clone(), pinned: [m.pinned[0], false] });
