@@ -91,7 +91,7 @@ def records():
     for cls, T, d, mass, code in [(1, 10000.0, 1.0, 60, "FAN1"), (2, 25000.0, 1.6, 150, "FAN2"), (3, 60000.0, 2.5, 350, "FAN3")]:
         A = math.pi * d * d / 4; P = T ** 1.5 / math.sqrt(2 * RHO * A) / ETA; ve = math.sqrt(T / (RHO * A))
         rec(f"engine-fan-s{cls}", f"equipment.engine.fan.s{cls}", f"Ducted fan S{cls}", "engine", cls, mass, d + 0.2, d + 0.2, 0.6 + 0.2 * cls, round(P, -3),
-            {"kind": "engine", "cycle": "ducted_fan", "thrust": T, "exhaust": float(round(ve)), "efficiency": ETA, "throttle": 0.05, "gimbal": 0.0, "isotropic_loss": 0.0, "shield_pass": 1.0, "reaction_offset": 0.0, "heat_to_hull": 0.0, "min_density": 0.3},
+            {"kind": "engine", "cycle": "ducted_fan", "thrust": T, "exhaust": float(round(ve)), "efficiency": ETA, "throttle": 0.05, "gimbal": 0.0, "isotropic_loss": 0.0, "shield_pass": 1.0, "reaction_offset": 0.0, "heat_to_hull": 0.107, "min_density": 0.3},
             [("Duct and stators", "", 0.3, CFC, MC), ("Fan and hub", "", 0.25, TI, MC), ("Electric motor", "", 0.35, MOT, AS), ("Inverter and controls", "", 0.1, EL, AS)], code,
             f"An electric fan in a {d:g} m duct: {T / 1000:g} kN in air of 1.2 kg/m3 for {P / 1e6:.2g} MW, nothing burnt. Its thrust falls with the cube root of the air's density at the same power; below 0.3 kg/m3 it is not rated.",
             [("[function, physical, needs]", "derived", None, f"Momentum theory for a ducted fan: thrust T from a disc of area A = {A:.2f} m2 in air of density 1.2 kg/m3 leaves at v = sqrt(T / (rho A)) = {ve:.0f} m/s and takes P = T^1.5 / sqrt(2 rho A) / eta of shaft power at eta = 0.75 for motor and duct: {P / 1e6:.2g} MW. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review.")])
@@ -101,7 +101,7 @@ def records():
         "50 kW from hydrogen and oxygen at 55%, its water drinkable: a commuter's power with no reactor aboard. It burns the same hydrolox as the engines, 7 g/s at full.",
         [("[function, physical]", "invented", None, "An Apollo-type cell scaled to 50 kW: about 1.8 kg a kilowatt (the shuttle's three cells gave 21 kW for 118 kg each, from memory); 55% of the hydrolox's 13 MJ/kg to power, the rest heat and warm water. Review.")])
     rec("power-battery-s0", "equipment.power.battery.s0", "Battery S0", "power", 1, 200, 0.8, 0.5, 0.5, 0,
-        {"kind": "battery", "stores": 100000000.0, "rate": 300000.0},
+        {"kind": "battery", "stores": 100000000.0, "rate": 300000.0, "efficiency": 0.97},
         [("Cells", "", 0.75, EL, AS), ("Housing and cooling", "", 0.15, AL, MC), ("Management", "", 0.1, EL, AS)], "BATS0",
         "100 MJ (28 kWh) at 300 kW in or out: a small craft's store, charged at the dock.",
         [("[function, physical]", "invented", None, "150 Wh/kg with its housing, as the S1; 300 kW in or out. From memory; review.")])
@@ -139,7 +139,7 @@ def records():
     # VTOL packs: high-rate cells, 4 kW/kg at 0.5 MJ/kg (eVTOL packs of the 2020s, from memory: about 3 to 5 kW/kg, 140 to 170 Wh/kg at the pack)
     for cls, mass, code in [(0, 150, "BATV0"), (1, 500, "BATV1"), (2, 1500, "BATV2")]:
         rec(f"power-battery-vtol-s{cls}", f"equipment.power.battery-vtol.s{cls}", f"VTOL pack S{cls}", "power", 1 if cls < 2 else 2, mass, 0.6 + 0.3 * cls, 0.5 + 0.2 * cls, 0.4 + 0.1 * cls, 0,
-            {"kind": "battery", "stores": float(mass * 500000), "rate": float(mass * 4000), "cycles": 1500},
+            {"kind": "battery", "stores": float(mass * 500000), "rate": float(mass * 4000), "cycles": 1500, "efficiency": 0.94},
             [("High-rate cells", "", 0.7, EL, AS), ("Cooling plates and housing", "", 0.2, AL, MC), ("Management and contactors", "", 0.1, EL, AS)], code,
             f"A pack built for a landing, not a voyage: {mass * 4 / 1000:g} MW out for {mass * 0.5 / (mass * 4) * 1000:.0f} s from {mass * 0.5:g} MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule.",
             [("[function, physical]", "invented", None, "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review.")])

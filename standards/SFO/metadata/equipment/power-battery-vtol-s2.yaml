@@ -26,9 +26,11 @@ function:
   kind: battery
   stores: 750000000.0
   rate: 6000000.0
+  efficiency: 0.94
   cycles: 1500
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.94: at its 8C rate a high-rate pack loses about 6% as heat (lithium cells' internal resistance, from memory). Review." }

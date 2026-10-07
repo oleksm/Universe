@@ -26,8 +26,10 @@ function:
   kind: "battery"
   stores: 1000000000.0
   rate: 1000000.0
+  efficiency: 0.97
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "1 GJ (278 kWh) at 150 Wh/kg, the usual for lithium packs with their housing; 1 MW in or out. From memory. Not sourced." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.97: a low-rate pack warms little (lithium cells' internal resistance, from memory). Review." }

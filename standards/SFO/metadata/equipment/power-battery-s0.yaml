@@ -26,8 +26,10 @@ function:
   kind: battery
   stores: 100000000.0
   rate: 300000.0
+  efficiency: 0.97
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "150 Wh/kg with its housing, as the S1; 300 kW in or out. From memory; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.97: a low-rate pack warms little (lithium cells' internal resistance, from memory). Review." }

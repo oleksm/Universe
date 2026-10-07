@@ -399,6 +399,7 @@ properties:
           stores: { type: number, x-unit: "J", description: "J" }
           rate: { type: number, x-unit: "W", description: "W it gives or takes at most" }
           cycles: { type: integer, description: "full charge-and-discharge cycles before it is worn to 80% of its store; a high-rate pack fewer than a long-duration one" }
+          efficiency: { type: number, x-unit: "1", description: "its discharge efficiency at its rate: the share of what leaves the cells that reaches the bus; the rest is heat in the pack, to be carried off" }
       - description: "Makes power from sunlight. Not in the game yet."
         type: object
         x-in-game: "not made"

@@ -43,3 +43,4 @@ basis:
   - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan: thrust T from a disc of area A = 0.79 m2 in air of density 1.2 kg/m3 leaves at v = sqrt(T / (rho A)) = 103 m/s and takes P = T^1.5 / sqrt(2 rho A) / eta of shaft power at eta = 0.75 for motor and duct: 0.97 MW. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }
