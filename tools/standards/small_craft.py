@@ -45,6 +45,13 @@ def schemas():
         return s
     edit("standards/SFO/schema/equipment.schema.yaml", eq)
 
+    def cyc(s):
+        if "cycles:" in s: return s
+        old = '          rate: { type: number, x-unit: "W", description: "W it gives or takes at most" }\n'
+        assert s.count(old) == 1
+        return s.replace(old, old + '          cycles: { type: integer, description: "full charge-and-discharge cycles before it is worn to 80% of its store; a high-rate pack fewer than a long-duration one" }\n')
+    edit("standards/SFO/schema/equipment.schema.yaml", cyc)
+
     def build(s):
         old = '            if _fn.get("holds") == "element.o": _air += _fn["capacity"]'
         if "_fn.get(\"air_store\"" in s: return s
@@ -129,6 +136,34 @@ def records():
         [("Lithium hydroxide canister", "", 0.6, ST, MC), ("Fan and housing", "", 0.4, AL, MC)], "LSC1",
         "A lithium hydroxide canister with a fan: takes up two people's carbon dioxide for twelve hours, then is swapped. No oxygen of its own: fit a bottle (tank.oxygen) for the air they breathe.",
         [("[function, physical, needs]", "invented", None, "Two people give off 2.2 kg of carbon dioxide a day (need.air); 1.3 kg of lithium hydroxide takes up twelve hours of it; with its canister and fan, 20 kg. Apollo's canisters, from memory. Review.")])
+    # VTOL packs: high-rate cells, 4 kW/kg at 0.5 MJ/kg (eVTOL packs of the 2020s, from memory: about 3 to 5 kW/kg, 140 to 170 Wh/kg at the pack)
+    for cls, mass, code in [(0, 150, "BATV0"), (1, 500, "BATV1"), (2, 1500, "BATV2")]:
+        rec(f"power-battery-vtol-s{cls}", f"equipment.power.battery-vtol.s{cls}", f"VTOL pack S{cls}", "power", 1 if cls < 2 else 2, mass, 0.6 + 0.3 * cls, 0.5 + 0.2 * cls, 0.4 + 0.1 * cls, 0,
+            {"kind": "battery", "stores": float(mass * 500000), "rate": float(mass * 4000), "cycles": 1500},
+            [("High-rate cells", "", 0.7, EL, AS), ("Cooling plates and housing", "", 0.2, AL, MC), ("Management and contactors", "", 0.1, EL, AS)], code,
+            f"A pack built for a landing, not a voyage: {mass * 4 / 1000:g} MW out for {mass * 0.5 / (mass * 4) * 1000:.0f} s from {mass * 0.5:g} MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule.",
+            [("[function, physical]", "invented", None, "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review.")])
+    # kilowatt thermal, for a craft that makes tens of kilowatts of heat, not megawatts
+    rec("thermal-radiator-s0", "equipment.thermal.radiator.s0", "Radiator S0", "thermal", 1, 40, 2.0, 1.0, 0.05, 0,
+        {"kind": "radiator", "rejects": 10000.0, "temperature": 330, "area": 2.0},
+        [("Panel", "", 0.6, AL, MC), ("Tubes and manifold", "", 0.3, ST, WB), ("Fittings", "", 0.1, ST, MC)], "RAD0",
+        "A 2 m2 panel at 330 K: 10 kW to space from both faces in vacuum; in air it also convects, more. For a cabin's and a pack's heat.",
+        [("[function, physical]", "derived", None, "Two faces of 2 m2 at 330 K and emissivity 0.9 radiate 2 x 2 x 0.9 x 5.67e-8 x 330^4 = 2.4 kW to empty space; a 10 kW rating takes a pumped panel at 20 kg/m2 that sheds the rest by convection in air of 1 kg/m3 and more; in vacuum rate it at its radiated 2.4 kW. Chosen; review.")])
+    rec("thermal-coolant-loop-s0", "equipment.thermal.coolant-loop.s0", "Coolant loop S0", "thermal", 1, 30, 0.5, 0.4, 0.3, 300,
+        {"kind": "coolant_loop", "carries": 20000.0, "flow": 0.5},
+        [("Pump and reservoir", "", 0.5, PU, AS), ("Lines and cold plates", "", 0.4, ST, MC), ("Controls", "", 0.1, EL, AS)], "CLP0",
+        "A pumped water-glycol loop carrying 20 kW from cold plates to a radiator or an air cooler: 0.5 kg/s at a 10 K rise.",
+        [("[function, physical, needs]", "derived", None, "20 kW at a 10 K rise in water-glycol (3.8 kJ/kg K) is 0.53 kg/s; a 300 W pump; 30 kg of pump, lines and plates. Chosen; review.")])
+    rec("thermal-air-cooler-s0", "equipment.thermal.air-cooler.s0", "Air cooler S0", "thermal", 1, 15, 0.5, 0.4, 0.3, 400,
+        {"kind": "heat_exchanger", "transfers": 20000.0},
+        [("Finned core", "", 0.6, AL, MC), ("Fan", "", 0.3, MOT, AS), ("Housing", "", 0.1, AL, MC)], "ACL0",
+        "A finned core with a fan: 20 kW from the coolant loop to the air, where there is air (of 0.3 kg/m3 or more); nothing in vacuum. A commuter on a world with air cools this way and carries a small radiator for the dock.",
+        [("[function, physical, needs]", "invented", None, "A car's radiator and fan: about 20 kW at a 30 K difference from 15 kg of finned aluminium, 400 W of fan. From memory; review.")])
+    rec("gear-strut-180kn", "equipment.gear.strut.180kn", "Landing leg 180 kN", "gear", 1, 190, 0.4, 0.4, 1.6, 800,
+        {"kind": "landing_gear", "holds": 180000.0, "stroke": 0.4, "efficiency": 0.8, "sink_rate": 3.0, "extended": 1.6},
+        [("Strut and oleo", "", 0.6, TI, MC), ("Pad", "", 0.2, AL, MC), ("Retraction actuator", "", 0.2, MOT, AS)], "GRS180",
+        "A middle leg: 180 kN, a 0.4 m stroke, for craft of 20 to 40 t on four or six legs.",
+        [("[physical, function, needs]", "invented", None, "At about 1 kg a kilonewton with titanium (the A320's 1.2 kg/kN, as the S1), 190 kg. Four hold a 24 t craft at 3 m/s on a 0.4 m stroke (1.1 g). Chosen; review.")])
     edit(E + "life-support-s0.yaml", lambda s: s if "air_store" in s else s.replace("  persons: 2\n  cooling: 400\n", "  persons: 2\n  cooling: 400\n  air_store: 2.2\n  water_store: 5\n"))
     if os.path.exists(E + "tank-hydrolox-s0.yaml"):
         s = open(E + "tank-hydrolox-s0.yaml").read().replace("key: equipment.tank.hydrolox.s0", "key: equipment.tank.hydrolox.3p5t").replace('name: "Hydrolox tank S0"', 'name: "Hydrolox tank 3.5 t"').replace("parts: tank-hydrolox-s0", "parts: tank-hydrolox-3p5t")

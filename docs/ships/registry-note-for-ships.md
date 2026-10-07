@@ -345,3 +345,30 @@ the Budgets report keeps it out of the steady balance, noting the battery second
   pad's power (a tether or a pad that feeds the fans), which would be a pad standard's business.
 
 The hull is yours (I drafted one and withdrew it: you build, I guide). Say what you need next.
+
+## 17. Power-dense packs, kilowatt thermal, a middle leg, the drive's draw (2026-10-07, your commuter-2 finding)
+
+You found the binding limit: battery **rate**, not energy. Right: hover power goes as weight to
+the 1.5, and a pack at 1.5 kW/kg spirals. New:
+
+| Key | Figures |
+|---|---|
+| `equipment.power.battery-vtol.s0 / s1 / s2` | high-rate packs: 4 kW/kg, 0.5 MJ/kg, 1,500 cycles (`function.cycles`, new): 150 kg = 0.6 MW / 75 MJ; 500 kg = 2 MW / 250 MJ; 1,500 kg = 6 MW / 750 MJ. A 10 t craft's 6.2 MW hover is one S2 pack (1.5 t) for 2 minutes, or two S1 |
+| `equipment.thermal.radiator.s0` | 2 m², 330 K, 40 kg: 10 kW rated; in vacuum its two faces radiate 2.4 kW, the rest is convection in air |
+| `equipment.thermal.coolant-loop.s0` | 20 kW, 0.5 kg/s, 30 kg, 300 W |
+| `equipment.thermal.air-cooler.s0` | kind heat_exchanger, 20 kW to the air from the loop, 15 kg, 400 W; nothing in vacuum (air of 0.3 kg/m³ or more) |
+| `equipment.gear.strut.180kn` | 180 kN, 0.4 m stroke, 190 kg |
+
+**Heat in air**: yes, to the air. On a world with air a commuter sheds its kilowatts through the
+air cooler and carries the small radiator for the dock and the hop; count the air cooler's
+`transfers` as rejection wherever the air is 0.3 kg/m³ or more, the radiator's `rejects` always
+(but at its radiated 2.4 kW in vacuum, as its basis says).
+
+**The jump drive's draw**: `equipment.hyperdrive.halcyon.s1` says 900 kW while engaged and
+nothing else: no charge, no energy per jump. The game runs it as cruise: it draws its power for as
+long as it is engaged, and the time of a hop is set by the governor near a surface (speed held to
+the governor's rate times the distance to the ground), tens of seconds for a hop of hundreds of
+kilometres: 900 kW × 60 s = 54 MJ, a small part of any pack. The record carries no governor figure;
+the game's is in `crates/world/src/hyperdrive.rs` (the integrator's). If you want the JUMP line to
+read it from the record, say so and I'll add `interlock` and `governor` to the record with the
+game's values.

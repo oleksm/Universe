@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.battery-vtol.s0
+  name: "VTOL pack S0"
+  maker: org.hadley
+  revision: draft
+  slot: power
+  description: "A pack built for a landing, not a voyage: 0.6 MW out for 125 s from 75 MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule."
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 150
+  volume: 0.12
+  length: 0.6
+  width: 0.5
+  height: 0.4
+built_of:
+  parts: power-battery-vtol-s0
+  list:
+    - { code: BATV0-01, name: "High-rate cells", mass: 105, length: 0.533, width: 0.444, height: 0.355, item: good.electronics, quantity: 105, module: module.assembly-shop }
+    - { code: BATV0-02, name: "Cooling plates and housing", mass: 30, length: 0.351, width: 0.292, height: 0.234, item: stock.al6061-pl-5, quantity: 34.5, module: module.machining-centre }
+    - { code: BATV0-03, name: "Management and contactors", mass: 15, length: 0.278, width: 0.232, height: 0.186, item: good.electronics, quantity: 15, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: battery
+  stores: 75000000.0
+  rate: 600000.0
+  cycles: 1500
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

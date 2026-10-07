@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.coolant-loop.s0
+  name: "Coolant loop S0"
+  maker: org.hadley
+  revision: draft
+  slot: thermal
+  description: "A pumped water-glycol loop carrying 20 kW from cold plates to a radiator or an air cooler: 0.5 kg/s at a 10 K rise."
+size_class: 1
+fits: mount.thermal-s1
+physical:
+  mass: 30
+  volume: 0.06
+  length: 0.5
+  width: 0.4
+  height: 0.3
+needs:
+  power: 300
+built_of:
+  parts: thermal-coolant-loop-s0
+  list:
+    - { code: CLP0-01, name: "Pump and reservoir", mass: 15, length: 0.397, width: 0.317, height: 0.238, item: good.pumps, quantity: 15, module: module.assembly-shop }
+    - { code: CLP0-02, name: "Lines and cold plates", mass: 12, length: 0.368, width: 0.295, height: 0.221, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
+    - { code: CLP0-03, name: "Controls", mass: 3, length: 0.232, width: 0.186, height: 0.139, item: good.electronics, quantity: 3, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: coolant_loop
+  carries: 20000.0
+  flow: 0.5
+life: 473364000
+basis:
+  - { of: [function, physical, needs], tier: derived, review: true, note: "20 kW at a 10 K rise in water-glycol (3.8 kJ/kg K) is 0.53 kg/s; a 300 W pump; 30 kg of pump, lines and plates. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
