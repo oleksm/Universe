@@ -40,6 +40,10 @@ pub struct Registry {
     /// product it is a part of names that folder.
     #[serde(default)]
     pub folders: BTreeMap<String, String>,
+    /// Each kind's records by key (built when read or decoded: see `index`); the lookups
+    /// (`reg.hull(key)`, one a kind, generated) go through it.
+    #[serde(skip)]
+    pub by_key: KeyIndex,
 }
 
 impl std::ops::Deref for Registry {
@@ -150,6 +154,8 @@ impl Registry {
                 Err(e) => problems.push(Problem { file: file.clone(), what: format!("{key} (derived): {e}") }),
             }
         }
+        // (Every record read, the derived parts with them: the lookups by key from here on.)
+        reg.by_key = reg.records.key_index();
         // Every reference names a record of a kind it may.
         reg.records.refs(&mut |from, to, kinds| {
             let kind = to.split('.').next().unwrap_or_default();
@@ -170,7 +176,9 @@ impl Registry {
 
     /// The registry from [`Registry::encode`]'s bytes.
     pub fn decode(bytes: &[u8]) -> Registry {
-        rmp_serde::from_slice(bytes).expect("the registry built into the game decodes")
+        let mut reg: Registry = rmp_serde::from_slice(bytes).expect("the registry built into the game decodes");
+        reg.by_key = reg.records.key_index();
+        reg
     }
 
     /// A record's name, by its key.
@@ -180,12 +188,7 @@ impl Registry {
 
     /// The world as a whole: `seeding.galaxy`'s settings.
     pub fn galaxy(&self) -> Option<&SeedingGalaxy> {
-        self.seeding.iter().find(|s| s.identity.key == "seeding.galaxy")?.galaxy.as_ref()
-    }
-
-    /// The good with this key.
-    pub fn good(&self, key: &str) -> Option<&Good> {
-        self.goods.iter().find(|g| g.identity.key == key)
+        self.seeding("seeding.galaxy")?.galaxy.as_ref()
     }
 
     /// What `product` (a piece of equipment, a hull, a part made of parts) is
@@ -195,24 +198,15 @@ impl Registry {
     /// its code (`parts/mc-07/MC07-23/`).
     pub fn built_of(&self, product: &str) -> Vec<(&Part, u32)> {
         let folder = match product.split_once('.') {
-            Some(("equipment", _)) => self.equipment.iter().find(|e| e.identity.key == product).and_then(|e| e.built_of.parts.clone()),
-            Some(("hull", name)) => Some(self.hulls.iter().find(|h| h.identity.key == product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
-            Some(("part", _)) => self.parts.iter().find(|p| p.identity.key == product).map(|p| p.identity.code.clone()),
+            Some(("equipment", _)) => self.equipment(&product).and_then(|e| e.built_of.parts.clone()),
+            Some(("hull", name)) => Some(self.hull(&product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
+            Some(("part", _)) => self.part(&product).map(|p| p.identity.code.clone()),
             _ => None,
         };
         let Some(folder) = folder else { return Vec::new() };
         self.parts.iter().filter(|p| self.folders.get(&p.identity.key) == Some(&folder)).map(|p| (p, p.fit.count.unwrap_or(1).max(1) as u32)).collect()
     }
 
-    /// The module with this key.
-    pub fn module(&self, key: &str) -> Option<&Module> {
-        self.modules.iter().find(|m| m.identity.key == key)
-    }
-
-    /// The system with this key.
-    pub fn system(&self, key: &str) -> Option<&System> {
-        self.systems.iter().find(|s| s.identity.key == key)
-    }
 
     /// What `item` (a good, a stock item or a material) is traded as: a
     /// market category, by key (`market.fuel`). A material is traded as the
@@ -222,7 +216,7 @@ impl Registry {
         match item.split('.').next() {
             // (A good is sold as its stock: the stock made from it.)
             Some("good") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
-            Some("stock") => self.stock.iter().find(|s| s.identity.key == item)?.identity.traded_as.clone(),
+            Some("stock") => self.stock(&item)?.identity.traded_as.clone(),
             Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
             _ => None,
         }

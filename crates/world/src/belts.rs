@@ -66,7 +66,7 @@ pub fn rocks() -> &'static BeltRocks {
 
 /// The registry's record of how small bodies are seeded.
 pub fn small_bodies_record() -> &'static crate::registry::Seeding {
-    crate::registry::registry().seeding.iter().find(|s| s.identity.key == "seeding.small-bodies").expect("the registry has seeding.small-bodies")
+    crate::registry::registry().seeding("seeding.small-bodies").expect("the registry has seeding.small-bodies")
 }
 
 /// What kind of belt.
@@ -155,7 +155,7 @@ fn resonance(r: &str) -> f64 {
 /// record and the system's own giants.
 pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     let reg = crate::registry::registry();
-    let Some(laws) = reg.seeding.iter().find(|s| s.identity.key == "seeding.asteroids") else { return Vec::new() };
+    let Some(laws) = reg.seeding("seeding.asteroids") else { return Vec::new() };
     let (mb, tr, ob, sizes) = (&laws.main_belt, &laws.trojans, &laws.outer_belt, &laws.sizes);
     let slope = sizes.exponent.unwrap_or(1.89);
     let smallest = sizes.smallest.unwrap_or(15.0);

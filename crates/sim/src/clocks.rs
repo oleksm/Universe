@@ -73,7 +73,7 @@ mod tests {
         let t = tick();
         assert!(t > 0.0);
         for &k in ClockKey::ALL {
-            assert!(registry().clocks.iter().any(|c| c.identity.key == k.key()), "{} has no record", k.key());
+            assert!(registry().clock(k.key()).is_some(), "{} has no record", k.key());
             if let Some(e) = every(k) {
                 let n = e / t;
                 assert!((n - n.round()).abs() < 1e-6, "{} every {e} s isn't whole ticks of {t}", k.key());

@@ -208,7 +208,7 @@ impl Brand {
     /// is (the settlement's body's system).
     pub fn from_record(reg: &crate::registry::Registry, o: &crate::registry::Org) -> Self {
         let home = o.address.as_ref().and_then(|a| {
-            let body = reg.settlements.iter().find(|s| s.identity.key == a.at)?.at.as_deref()?;
+            let body = reg.settlement(&a.at)?.at.as_deref()?;
             let system = body.split('.').nth(1)?;
             reg.system(&format!("system.{system}"))?.identity.index.map(|i| i as usize)
         });

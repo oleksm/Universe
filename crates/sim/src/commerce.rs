@@ -588,7 +588,7 @@ impl crate::universe::Universe {
     /// registry's that names its model.)
     fn frame_in_stock(&self, system: usize, here: Facility, hull: universe_world::ship::Hull) -> Option<(usize, f64)> {
         let spec = universe_world::content::content().get(hull);
-        let key = universe_world::registry::registry().hulls.iter().find(|h| h.identity.key == spec.key || h.model.as_deref().is_some_and(|m| spec.visual.as_deref() == Some(m))).map(|h| h.identity.key.clone())?;
+        let key = universe_world::ship::hull_record(spec)?.identity.key.clone();
         let item = universe_world::goods::item(&key)?;
         let place = self.markets.economy.place(system, here)?;
         let ask = place.price(&self.world.goods[item]).ask?;

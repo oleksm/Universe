@@ -49,7 +49,7 @@ pub fn run(u: &mut Universe) {
         let reg = universe_world::registry::registry();
         let docks: Vec<usize> = shop.iter().copied().filter(|&s| module(s) == "module.building-dock").collect();
         let hulls: Vec<usize> = docks.iter().filter_map(|&s| recipes::of(module(s)).first()).map(|r| r.makes).collect();
-        let fitted: Vec<usize> = hulls.iter().filter_map(|&h| reg.hulls.iter().find(|x| x.identity.key == goods[h].key)).flat_map(|h| h.fit.iter().filter_map(|f| universe_world::goods::item(&f.item))).collect();
+        let fitted: Vec<usize> = hulls.iter().filter_map(|&h| reg.hull(&goods[h].key)).flat_map(|h| h.fit.iter().filter_map(|f| universe_world::goods::item(&f.item))).collect();
         let goals: Vec<usize> = hulls.iter().chain(&fitted).copied().collect();
         if goals.is_empty() {
             continue;

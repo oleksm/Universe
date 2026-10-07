@@ -46,9 +46,7 @@ impl Legs {
 /// The legs of a ship of `spec`: its hull's record's (by its key, or the
 /// model it was imported from).
 pub fn of_spec(spec: &crate::ship::ClassSpec) -> Option<Legs> {
-    let reg = crate::registry::registry();
-    let h = reg.hulls.iter().find(|h| h.identity.key == spec.key || (h.model.is_some() && h.model == spec.visual))?;
-    of(&h.identity.key)
+    of(&crate::ship::hull_record(spec)?.identity.key)
 }
 
 /// The legs of hull `key`, if its record says what they're built of (its
@@ -65,15 +63,15 @@ pub fn of(key: &str) -> Option<Legs> {
 }
 
 fn reckon(reg: &Registry, key: &str) -> Option<Legs> {
-    let h = reg.hulls.iter().find(|h| h.identity.key == key)?;
+    let h = reg.hull(&key)?;
     let (designed, efficiency) = (h.design.landing_speed?, h.design.strut_efficiency.unwrap_or(1.0));
     let longest = |p: &Part| [p.physical.length, p.physical.width, p.physical.height].into_iter().flatten().fold(0.0, f64::max);
     // What one strut takes: what its material yields at, or buckles under, whichever is less.
     let takes = |p: &Part| -> Option<f64> {
         let item = &p.made_from.first()?.item;
-        let stock = reg.stock.iter().find(|s| &s.identity.key == item)?;
+        let stock = reg.stock(item)?;
         let made_of = &stock.made_from.first()?.item;
-        let material = reg.materials.iter().find(|m| &m.identity.key == made_of)?;
+        let material = reg.material(made_of)?;
         let (d, w) = (stock.size.diameter?, stock.size.wall.unwrap_or(0.0));
         let (sy, e) = (material.mechanical.yield_strength?, material.mechanical.youngs_modulus?);
         let di = if w > 0.0 { d - 2.0 * w } else { 0.0 };
@@ -84,7 +82,7 @@ fn reckon(reg: &Registry, key: &str) -> Option<Legs> {
     // Each leg (a part made of parts, as many as it's fitted, or a landing-gear product fitted to a
     // gear slot: `equipment.gear.*`, built of its parts), its struts the parts with a landing load case.
     let (mut count, mut most, mut stroke) = (0u32, f64::INFINITY, f64::INFINITY);
-    let fitted_gear = h.fit.iter().filter(|f| reg.equipment.iter().any(|e| e.identity.key == f.item && matches!(e.function, crate::registry::EquipmentFunction::LandingGear(_)))).map(|f| f.item.clone());
+    let fitted_gear = h.fit.iter().filter(|f| reg.equipment(&f.item).is_some_and(|e| matches!(e.function, crate::registry::EquipmentFunction::LandingGear(_)))).map(|f| f.item.clone());
     let mut legs: Vec<(String, u32)> = reg.built_of(key).into_iter().map(|(p, n)| (p.identity.key.clone(), n)).collect();
     for item in fitted_gear {
         match legs.iter_mut().find(|(k, _)| *k == item) {

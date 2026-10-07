@@ -60,7 +60,7 @@ fn reckoned_mean(sys: &StarSystem, i: usize, positions: &[DVec3]) -> f64 {
 /// from its run), if it has one.
 fn recorded_mean(sys: &StarSystem, i: usize) -> Option<f64> {
     let key = &sys.bodies[i].key;
-    crate::registry::registry().bodies.iter().find(|b| &b.identity.key == key)?.surface.mean_temperature
+    crate::registry::registry().body(key)?.surface.mean_temperature
 }
 
 /// How far the record's mean is from the formula's (K; 0 without a record): the formula's shape

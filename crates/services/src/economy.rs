@@ -229,10 +229,10 @@ impl Works {
     /// the recipes that lead to what it makes.
     fn new(ground: usize, works: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
-        let f = reg.facilities.iter().find(|f| f.identity.key == key)?;
+        let f = reg.facility(&key)?;
         let mut w = Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())?;
         w.key = key.to_string();
-        w.maker = reg.parcels.iter().find(|p| p.identity.key == f.parcel).and_then(|p| p.owner.clone());
+        w.maker = reg.parcel(&f.parcel).and_then(|p| p.owner.clone());
         // (A mine's claim: the deposit it digs, its ore as the survey has it.)
         w.deposit = f.claim.as_ref().and_then(|c| Some((c.deposit.clone(), deposit_ore(&c.deposit)?)));
         Some(w)
@@ -241,7 +241,7 @@ impl Works {
     /// Built as the registry's rig `key`, body `body` of `system`: its own warehouse, its owner's.
     fn rig(system: usize, body: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
-        let r = reg.settlements.iter().find(|s| s.identity.key == key)?;
+        let r = reg.settlement(&key)?;
         let mut w = Self::built(Site::Rig(system, body), 0, &r.identity.name, &r.lines, &r.modules, &[], true)?;
         w.owner = r.owner.clone();
         w.key = key.to_string();
@@ -889,7 +889,7 @@ impl Economy {
             .iter()
             .map(|&k| {
                 let m = self.works[k].maker.clone()?;
-                let ticker = reg.orgs.iter().find(|r| r.identity.key == m)?.ticker.clone()?;
+                let ticker = reg.org(&m)?.ticker.clone()?;
                 Some((m, ticker))
             })
             .collect();

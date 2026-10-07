@@ -71,6 +71,23 @@ fn main() {
         writeln!(out, "        for r in &self.{} {{\n            let key = r.identity.key.as_str();\n            r.refs(&mut |to, kinds| f(key, to, kinds));\n        }}", plural(&snake(&kinds[0]))).unwrap();
     }
     out.push_str("    }\n}\n");
+    // Each kind's records by key: an index built once (`Records::key_index`, kept on the
+    // registry), and a lookup a kind (`reg.hull(key)`), in place of a search of the list.
+    out.push_str("\n/// Each kind's records by key: the record's place in its list.\n#[derive(Clone, Debug, Default)]\npub struct KeyIndex {\n");
+    for (_, kinds) in &records {
+        writeln!(out, "    pub {}: std::collections::HashMap<String, usize>,", plural(&snake(&kinds[0]))).unwrap();
+    }
+    out.push_str("}\n\nimpl Records {\n    /// Every record's place in its list, by key.\n    pub fn key_index(&self) -> KeyIndex {\n        KeyIndex {\n");
+    for (_, kinds) in &records {
+        let f = plural(&snake(&kinds[0]));
+        writeln!(out, "            {f}: self.{f}.iter().enumerate().map(|(i, r)| (r.identity.key.clone(), i)).collect(),").unwrap();
+    }
+    out.push_str("        }\n    }\n}\n\nimpl crate::Registry {\n");
+    for (name, kinds) in &records {
+        let f = plural(&snake(&kinds[0]));
+        writeln!(out, "    /// The `{}` record with this key.\n    pub fn {}(&self, key: &str) -> Option<&{name}> {{\n        self.by_key.{f}.get(key).map(|&i| &self.records.{f}[i])\n    }}", kinds[0], snake(&kinds[0])).unwrap();
+    }
+    out.push_str("}\n");
     out.push_str(&clock_keys(root));
     let dest = Path::new(&std::env::var("OUT_DIR").unwrap()).join("generated.rs");
     std::fs::write(dest, out).unwrap();

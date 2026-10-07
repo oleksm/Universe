@@ -127,10 +127,10 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
         (m > 0.0).then_some(m)
     }
     let piece = |key: &str| -> Option<f64> {
-        let p = reg.parts.iter().find(|p| p.identity.key == key).map(|p| p.physical.mass.or_else(|| of_parts(reg, key)));
-        let e = || reg.equipment.iter().find(|e| e.identity.key == key).map(|e| e.physical.mass);
+        let p = reg.part(&key).map(|p| p.physical.mass.or_else(|| of_parts(reg, key)));
+        let e = || reg.equipment(&key).map(|e| e.physical.mass);
         let h = || {
-            let h = reg.hulls.iter().find(|h| h.identity.key == key)?;
+            let h = reg.hull(&key)?;
             let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
             Some(h.physical.mass.or((parts > 0.0).then_some(parts)))
         };
@@ -172,8 +172,8 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
         .enumerate()
         .map(|(id, key)| {
             // (A stock in bulk lies as its good does, where it doesn't say.)
-            let made_of = bulk.iter().find(|(_, s)| *s == key).and_then(|(g, _)| reg.goods.iter().find(|x| &x.identity.key == g)).map(|g| &g.physical);
-            let physical = reg.goods.iter().find(|g| &g.identity.key == key).map(|g| &g.physical).or_else(|| reg.stock.iter().find(|s| &s.identity.key == key).map(|s| &s.physical).filter(|p| p.bulk_density.is_some() || made_of.is_none())).or(made_of);
+            let made_of = bulk.iter().find(|(_, s)| *s == key).and_then(|(g, _)| reg.good(g)).map(|g| &g.physical);
+            let physical = reg.good(key).map(|g| &g.physical).or_else(|| reg.stock(key).map(|s| &s.physical).filter(|p| p.bulk_density.is_some() || made_of.is_none())).or(made_of);
             let c = category(key);
             let bulk = physical
                 .and_then(|p| p.bulk_density.or_else(|| Some(p.mass? / p.volume?)))
@@ -184,8 +184,8 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
             let p = price(id, &keys, &masses, &making, priced, &mut done).unwrap_or(RAW_PRICE / TONNE) * masses[id];
             // (A part by its code too: every product has a first wall.)
             let name = reg.name(key).unwrap_or(key).to_string();
-            let name = reg.parts.iter().find(|p| &p.identity.key == key).map_or(name.clone(), |p| format!("{} {name}", p.identity.code));
-            let shock_limit = physical.and_then(|p| p.shock_limit).or_else(|| reg.parts.iter().find(|p| &p.identity.key == key).and_then(|p| p.physical.shock_limit));
+            let name = reg.part(key).map_or(name.clone(), |p| format!("{} {name}", p.identity.code));
+            let shock_limit = physical.and_then(|p| p.shock_limit).or_else(|| reg.part(key).and_then(|p| p.physical.shock_limit));
             Item { shock_limit, id, key: key.clone(), name, category: c, price: (p * 10.0).round() / 10.0, mass: masses[id], bulk_density: bulk }
         })
         .collect();

@@ -47,7 +47,7 @@ pub(crate) fn build(reg: &Registry, index: &HashMap<String, usize>, mass: &dyn F
     }
     // The scrap of a stock item's metal: the stock of form scrap made from the same material.
     let scrap_of = |stock: &str| -> Option<usize> {
-        let s = reg.stock.iter().find(|s| s.identity.key == stock)?;
+        let s = reg.stock(&stock)?;
         let material = &s.made_from.first()?.item;
         let scrap = reg.stock.iter().find(|x| x.identity.form == "scrap" && x.made_from.iter().any(|m| &m.item == material))?;
         id(&scrap.identity.key)

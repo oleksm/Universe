@@ -289,7 +289,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
                 let flow = |(item, rate): &(String, f64)| (name(item), kind_of(item), *rate);
                 let listed: Vec<(String, u32)> = lines.iter().flat_map(|l| l.modules.clone()).chain(f.modules.iter().map(|m| (m.module.clone(), m.count))).collect();
                 let parcel = parcel_of(&f.parcel);
-                let street: Vec<Street> = parcel.address.as_ref().and_then(|a| reg.streets.iter().find(|r| r.identity.key == a.street)).map(|r| Street { name: r.identity.name.clone(), line: r.line.iter().map(pt).collect() }).into_iter().collect();
+                let street: Vec<Street> = parcel.address.as_ref().and_then(|a| reg.street(&a.street)).map(|r| Street { name: r.identity.name.clone(), line: r.line.iter().map(pt).collect() }).into_iter().collect();
                 let order: Vec<(&IndustrialModule, u32)> = listed.iter().map(|(m, n)| (industrial(m), *n)).collect();
                 let blocks = lay_out(&parcel.outline.iter().map(pt).collect::<Vec<_>>(), &street, &order).unwrap_or_else(|e| panic!("{}: {e}", f.identity.key));
                 Facility {
