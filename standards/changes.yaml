@@ -384,9 +384,9 @@
 - { record: equipment.engine.ch.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b344b3c00117e702" }
 - { record: equipment.engine.ch.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b1c91e52b5c1918a" }
 - { record: equipment.engine.ch.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "780c4a17383ef89d" }
-- { record: equipment.engine.fan.s1, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: basis", sha: "c51ec7c8162b1678" }
-- { record: equipment.engine.fan.s2, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: basis", sha: "d4a77c9f980a6479" }
-- { record: equipment.engine.fan.s3, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: basis", sha: "c8dcde9c37fe7086" }
+- { record: equipment.engine.fan.s1, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: function", sha: "4ca1df2eb8ce0584" }
+- { record: equipment.engine.fan.s2, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: function", sha: "6011212462ca0dbf" }
+- { record: equipment.engine.fan.s3, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: function", sha: "2a6af3cc6c924f42" }
 - { record: equipment.engine.ft.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "f3f8542de59f022c" }
 - { record: equipment.engine.ft.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1d7cee630db71b29" }
 - { record: equipment.engine.ft.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b7751c56000b2537" }
@@ -433,11 +433,11 @@
 - { record: equipment.power.aurel.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "251760207b02825a" }
 - { record: equipment.power.aurel.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "52afa37a742918eb" }
 - { record: equipment.power.aurel.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "dcc73336b2bb792d" }
-- { record: equipment.power.battery-vtol.s0, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: function, basis", sha: "62262fd87cb79f40" }
-- { record: equipment.power.battery-vtol.s1, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: function, basis", sha: "b9a12da1e405fc60" }
-- { record: equipment.power.battery-vtol.s2, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: function, basis", sha: "e9684955d93f0c28" }
-- { record: equipment.power.battery.s0, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: function, basis", sha: "41f18c3b501f8bc5" }
-- { record: equipment.power.battery.s1, at: "2026-10-07T13:38:32Z", status: draft, summary: "changed: function, basis", sha: "70eba72f72f62b64" }
+- { record: equipment.power.battery-vtol.s0, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "41978784b5665fab" }
+- { record: equipment.power.battery-vtol.s1, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "667d3c796908fd83" }
+- { record: equipment.power.battery-vtol.s2, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "0a95e43209f1af41" }
+- { record: equipment.power.battery.s0, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "ec40adc93ef3fcf4" }
+- { record: equipment.power.battery.s1, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "7b2b5c3b801231d1" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "7c3fc251be4c2ecf" }
 - { record: equipment.power.fusion.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "fa69257ae09c9de0" }
 - { record: equipment.power.fusion.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6314b1bde9d28ec0" }

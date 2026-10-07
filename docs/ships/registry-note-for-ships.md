@@ -378,3 +378,6 @@ game's values.
 the pack), and the fans' `heat_to_hull` is 0.107 of jet power: the motor and inverter's 8% of
 electrical power (jet / 0.75), the duct's own losses going to the air. So hover heat aboard =
 Σ packs (1 − η) × power + Σ fans 0.107 × jet power; lib.jet_heat gives the fans' share.
+Pack warming, on the records now: `physical.specific_heat` (1,000 J/(kg K) for a lithium pack
+with its housing) and `physical.operating_max_temperature` (333 K, the hottest its cells may be
+discharged at: from 293 K at the dock, 40 K of warming on its own losses before it must stop).

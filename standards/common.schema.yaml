@@ -53,6 +53,7 @@ definitions:
       bulk_density: { type: number, exclusiveMinimum: 0, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold, for what is carried in bulk" }
       operating_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it works at" }
       operating_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it works at" }
+      specific_heat: { type: number, x-unit: "J/(kg K)", description: "J/(kg K) of the whole thing, for how fast its own losses warm it (a battery pack, a motor)" }
       storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
       storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
       impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
