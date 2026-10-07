@@ -4967,9 +4967,26 @@ type Fields = serde_json::Map<String, serde_json::Value>;
 fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     let reg = universe_sim::world::registry::registry();
     let e = reg.equipment(&f.key)?;
-    let serde_json::Value::Object(map) = serde_json::to_value(&e.function).ok()? else { return None };
+    let serde_json::Value::Object(mut map) = serde_json::to_value(&e.function).ok()? else { return None };
     let kind = map.get("kind").and_then(|v| v.as_str()).unwrap_or("").to_string();
-    Some((kind, map, e.needs.power.unwrap_or(0.0)))
+    let power = e.needs.power.unwrap_or(0.0);
+    // (A ducted fan draws its power only while it lifts: kept out of the steady
+    // draw, its full-thrust draw kept for hovering's sums.)
+    if map.get("cycle").and_then(|v| v.as_str()) == Some("ducted_fan") {
+        map.insert("full_power".into(), serde_json::json!(power));
+        return Some((kind, map, 0.0));
+    }
+    // (A jump drive draws while it runs a jump, not all the while: likewise.)
+    if kind == "hyperdrive" {
+        map.insert("run_power".into(), serde_json::json!(power));
+        return Some((kind, map, 0.0));
+    }
+    Some((kind, map, power))
+}
+
+/// Days, to a tenth when under ten.
+fn short_days(d: f64) -> String {
+    if d < 10.0 { format!("{d:.1}") } else { format!("{d:.0}") }
 }
 
 /// The budgets' target lines: the delta-v asked (with the cargo asked aboard)
@@ -4983,7 +5000,7 @@ fn target_lines(t: &Targets, placed: &[(&Block, &Fitted, String, Fields, f64)], 
     let cargo = t.cargo.unwrap_or(0.0);
     let thrust: f64 = placed.iter().filter_map(|p| p.1.push.map(|x| x.1)).sum();
     // (The propellant its strongest engines throw: theirs, and the tanks that hold it.)
-    let engines: Vec<_> = placed.iter().filter(|p| p.1.push.is_some() && p.3.get("exhaust").is_some()).collect();
+    let engines: Vec<_> = placed.iter().filter(|p| p.1.push.is_some() && p.3.get("exhaust").is_some() && p.3.get("full_power").is_none()).collect();
     let strongest = engines.iter().map(|e| num(&e.3, "thrust")).fold(0.0, f64::max);
     let main: Vec<_> = engines.iter().filter(|e| num(&e.3, "thrust") >= strongest * 0.5).collect();
     let fuel = main.iter().find_map(|e| e.3.get("propellant").filter(|v| !v.is_null()).or(e.3.get("burns")).and_then(|v| v.as_str())).map(bare);
@@ -5263,8 +5280,29 @@ fn budget(i: &Interior) -> Budget {
         let held: f64 = of("tank").filter(|t| t.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| throws.iter().any(|p| bare(p) == bare(h)))).map(|t| num(&t.3, "capacity")).sum();
         let hover_s = if held > 0.0 && burn > 0.0 { format!(" FOR {:.0} S", held / burn) } else { String::new() };
 
+        // (Lifted on fans alone: what hovering draws (each fan's full draw times its
+        // share of the weight over its thrust, to the 1.5: momentum theory), against
+        // what the power plants and batteries give, and how long the batteries hold it.)
+        if lifting.iter().all(|p| p.3.get("full_power").is_some()) {
+            let full_power: f64 = lifting.iter().map(|p| num(&p.3, "full_power")).sum();
+            let hover = full_power * (weight / lift).min(1.0).powf(1.5);
+            let plants: f64 = of("power_plant").map(|p| num(&p.3, "output")).sum();
+            let (rate, stored): (f64, f64) = of("battery").fold((0.0, 0.0), |(r, s), p| (r + num(&p.3, "rate"), s + num(&p.3, "stores")));
+            let steady: f64 = placed.iter().map(|p| p.4).sum();
+            let short = (hover + steady - plants).max(0.0);
+            let lasts = if short > 0.0 { format!("; THE BATTERIES HOLD IT {:.0} S", stored / short) } else { String::new() };
+            let out_one = {
+                let strongest = lifting.iter().max_by(|a, b| num(&a.3, "thrust").total_cmp(&num(&b.3, "thrust")));
+                strongest.is_some_and(|s| lift - num(&s.3, "thrust") >= weight)
+            };
+            let min_air = lifting.iter().map(|p| num(&p.3, "min_density")).fold(0.0, f64::max);
+            let text = format!("LAND  ON FANS: HOVER DRAWS {} OF {} THE BATTERIES AND PLANTS GIVE{lasts}{}; IN AIR OF {min_air:.1} KG/M3 OR MORE", si(hover + steady, "W"), si(rate + plants, "W"), if lifting.len() > 1 { if out_one { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE FAN" });
+            lines.push((text, g > 1.0 && hover + steady <= rate + plants && stored > 0.0));
+            let _ = (pad, class, burned, hover_s, least);
+        } else {
         let text = format!("LAND  {} ON THE PAD: {}; HOVER BURNS {burned} KG/S{hover_s}{}{}", si(pad, "W"), class.unwrap_or("NO PAD TAKES IT"), if lifting.len() > 1 { if one_out { ", HOVERS ONE OUT" } else { ", NOT ONE OUT" } } else { ", ONE ENGINE" }, if least > weight { "; CAN'T THROTTLE DOWN TO HOVER" } else { "" });
         lines.push((text, g > 1.0 && class.is_some() && least <= weight));
+        }
         // (Balanced: its lift's middle under its weight's.)
         let mass_at = |p: &&(&Block, &Fitted, String, Fields, f64)| (p.0.at, p.1.mass + p.1.load);
         // (Its frame and decks too: each member at its middle, each deck at its own.)
@@ -5287,6 +5325,14 @@ fn budget(i: &Interior) -> Budget {
     let draw: f64 = placed.iter().map(|p| p.4).sum();
     let gear: f64 = of("switchgear").map(|p| num(&p.3, "carries")).sum();
     let lasts = if draw > plants && stored > 0.0 { format!(", BATTERIES LAST {:.1} H", stored / (draw - plants) / 3600.0) } else { String::new() };
+    // (A jump drive: what it draws running, against what's given; how long the
+    // batteries run it.)
+    let jump: f64 = of("hyperdrive").map(|p| num(&p.3, "run_power")).sum();
+    if jump > 0.0 {
+        let short = (jump + draw - plants).max(0.0);
+        let runs = if short > 0.0 && stored > 0.0 { format!("; THE BATTERIES RUN IT {:.0} MIN", stored / short / 60.0) } else { String::new() };
+        lines.push((format!("JUMP  THE JUMP DRIVE DRAWS {} RUNNING, OF {}{runs}", si(jump, "W"), si(supply, "W")), jump + draw <= supply));
+    }
     lines.push((format!("POWER {} DRAWN OF {}{lasts}{}", si(draw, "W"), si(supply, "W"), if gear > 0.0 { format!(", SWITCHGEAR {}", si(gear, "W")) } else { String::new() }), draw <= supply && (gear == 0.0 || gear >= supply)));
     // (Heat, as the registry's Budgets reckon it: a plant's loss; each drive's,
     // lift's and thrusters' jet power (half its thrust times its exhaust speed, a
@@ -5315,8 +5361,8 @@ fn budget(i: &Interior) -> Budget {
     let crew = crew_seats + passengers;
     if crew > 0.0 {
         // (An empty sum is -0: plus 0, it's 0.)
-        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
-        let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + of("life_support").map(|p| num(&p.3, "air_store")).sum::<f64>() + 0.0;
+        let water: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("good.water")).map(|p| num(&p.3, "capacity")).sum::<f64>() + of("life_support").map(|p| num(&p.3, "water_store")).sum::<f64>() + 0.0;
         // (What the stores make up: what the crew use less what the life support
         // recovers, its record's air_recovery and water_recovery, the best fitted.)
         let recovers = |k: &str| of("life_support").map(|p| num(&p.3, k)).fold(0.0, f64::max).min(0.999);
@@ -5335,7 +5381,11 @@ fn budget(i: &Interior) -> Budget {
         let fd = food / (a_day(&["need.food"], "market.food") * crew).max(1e-9);
         let life = of("life_support").count();
         let food_text = if food > 0.0 { format!(", FOOD {fd:.0} DAYS") } else { ", NO FOOD STORED".into() };
-        lines.push((format!("ABOARD {crew:.0} ({crew_seats:.0} CREW): AIR {ad:.0} DAYS, WATER {wd:.0} DAYS{food_text}{}", if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= 1.0 && wd >= 1.0 && fd >= 1.0 && life > 0));
+        // (Enough for its longest trip, if said (food only past a galley's); else a day.)
+        let trip = i.plan.targets.as_ref().and_then(|t| t.trip);
+        let days = trip.map_or(1.0, |h| h / 24.0);
+        let fed = trip.is_some_and(|h| h <= NEEDS_GALLEY) || fd >= days;
+        lines.push((format!("ABOARD {crew:.0} ({crew_seats:.0} CREW): AIR {} DAYS, WATER {} DAYS{food_text}{}", short_days(ad), short_days(wd), if life == 0 { ", NO LIFE SUPPORT" } else { "" }), ad >= days && wd >= days && fed && life > 0));
         // (Life support: the people it keeps, and the heat it carries out of the
         // cabin: theirs, by the need that gives it.)
         let keeps: f64 = of("life_support").map(|p| num(&p.3, "persons")).sum();
@@ -5363,7 +5413,7 @@ fn budget(i: &Interior) -> Budget {
         let volume: f64 = pr.spaces.iter().map(|s| s.0).sum();
         let leaks = pr.openings.iter().filter(|o| o.1 == Opening::Leak).count();
         let locks = pr.openings.iter().filter(|o| o.1 == Opening::Airlock).count();
-        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + 0.0;
+        let air: f64 = of("store").filter(|p| p.3.get("holds").and_then(|v| v.as_str()) == Some("element.o")).map(|p| num(&p.3, "capacity")).sum::<f64>() + of("life_support").map(|p| num(&p.3, "air_store")).sum::<f64>() + 0.0;
         let fills = air / (volume * OXYGEN_A_CUBIC_METRE).max(1e-9);
         let sealed = leaks == 0 && pr.spaces.iter().all(|s| s.1);
         lines.push((format!("SEALED {} SPACE{}, {volume:.0} M3, {locks} AIRLOCK DOOR{}; AIR FILLS IT {fills:.1} TIMES", pr.spaces.len(), if pr.spaces.len() == 1 { "" } else { "S" }, if locks == 1 { "" } else { "S" }), sealed && fills >= 1.0));
