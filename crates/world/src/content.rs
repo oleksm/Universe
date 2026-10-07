@@ -532,6 +532,13 @@ fn d_shape(d: &crate::ship::HullDef) -> String {
     d.shape_key().to_string()
 }
 
+/// The base pack's renamed keys (old key -> new), for saved things that name
+/// a key by itself: a studio design's modules.
+pub fn base_aliases() -> &'static HashMap<String, String> {
+    static ALIASES: OnceLock<HashMap<String, String>> = OnceLock::new();
+    ALIASES.get_or_init(|| ron::from_str(include_str!("../../../content/base/aliases.ron")).unwrap_or_default())
+}
+
 /// `key` in `r`, through the aliases (while loading).
 fn resolve<T: Entry>(r: &Registry<T>, aliases: &HashMap<String, String>, key: &str) -> Option<Handle<T>> {
     r.find(aliases.get(key).map_or(key, String::as_str))

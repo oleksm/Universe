@@ -697,6 +697,24 @@ const NO_HULL: (Vec3, Vec3) = (Vec3::new(-20.0, -10.0, -40.0), Vec3::new(20.0, 1
 /// Placed modules whose record's size has changed since (neither their volume nor
 /// their size's matches it: a stretched one keeps the first, one made the second)
 /// made that size, each standing where it stood; how many.
+/// Placed modules whose key isn't in `fit` but is an old key the registry renamed
+/// (the base pack's aliases): given the new key, keeping their number. How many.
+fn rename(blocks: &mut [Block], fit: &[Fitted]) -> usize {
+    let aliases = universe_sim::world::content::base_aliases();
+    let mut renamed = 0;
+    for b in blocks.iter_mut() {
+        let k = kind(&b.id);
+        if fit.iter().any(|f| f.id == k) {
+            continue;
+        }
+        if let Some(new) = aliases.get(k).filter(|n| fit.iter().any(|f| f.id == **n)) {
+            b.id = format!("{new}{}", &b.id[k.len()..]);
+            renamed += 1;
+        }
+    }
+    renamed
+}
+
 fn resize(blocks: &mut [Block], fit: &[Fitted]) -> usize {
     let mut resized = 0;
     for b in blocks.iter_mut() {
@@ -2985,11 +3003,22 @@ impl Interior {
         // (A placed module whose record's size has changed since: made that size,
         // standing where it stood; in the saved plan too: it's the registry's change,
         // not the designer's, so nothing's unsaved by it.)
+        // (A module whose key the registry has renamed: given the new key, the same
+        // way: the registry's change.)
+        let renamed = rename(&mut self.plan.blocks, &self.fit);
+        if let Some(saved) = self.saved.as_mut() {
+            rename(&mut saved.blocks, &self.fit);
+        }
         let resized = resize(&mut self.plan.blocks, &self.fit);
         if let Some(saved) = self.saved.as_mut() {
             resize(&mut saved.blocks, &self.fit);
         }
-        if resized > 0 {
+        let unknown = self.plan.blocks.iter().filter(|b| !self.fit.iter().any(|f| f.id == kind(&b.id))).count();
+        if unknown > 0 {
+            self.message = Some((format!("{unknown} MODULES NOT IN THE REGISTRY: SEE THE CHECKS"), 8.0));
+        } else if renamed > 0 {
+            self.message = Some((format!("{renamed} MODULES GIVEN THE KEYS THE REGISTRY RENAMED THEM TO"), 6.0));
+        } else if resized > 0 {
             self.message = Some((format!("{resized} MODULES MADE THE SIZE THE REGISTRY NOW GIVES THEM"), 6.0));
         }
     }
@@ -4327,6 +4356,15 @@ fn budget(i: &Interior, frame_mass: f64) -> Budget {
     }
     // Checks: sealed spaces, the way in, the way down, the ore's path.
     let mut faults = Vec::new();
+    // (Modules the registry doesn't know (renamed or taken out): not counted in
+    // anything; said, not dropped.)
+    let mut unknown: Vec<&str> = i.plan.blocks.iter().map(|b| kind(&b.id)).filter(|k| !i.fit.iter().any(|f| f.id == *k)).collect();
+    unknown.sort_unstable();
+    unknown.dedup();
+    for k in unknown {
+        let n = i.plan.blocks.iter().filter(|b| kind(&b.id) == k).count();
+        faults.push(format!("{n} × {} NOT IN THE REGISTRY: NOT COUNTED (RENAMED? TAKEN OUT?)", k.to_uppercase()));
+    }
     let pr = pressure(i);
     // (In a hull, its rooms open into it: the hull holds the air, not checked here.)
     if !pr.spaces.is_empty() && i.spec().is_some() {
