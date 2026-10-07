@@ -35,17 +35,17 @@ buildings:
   - { building: building.arena, count: 1 }
 # census: its 20,000 people by trade: the staff of its works (module.staff) and of its buildings (building.staff), pilots from the fleets, the rest dependants (children, the old, the unassigned)
 census:
-  - { profession: profession.clerk, count: 1966 }
+  - { profession: profession.clerk, count: 1967 }
   - { profession: profession.builder, count: 494 }
   - { profession: profession.driver, count: 462 }
   - { profession: profession.food-worker, count: 450 }
   - { profession: profession.nurse, count: 398 }
   - { profession: profession.teacher, count: 332 }
   - { profession: profession.merchant, count: 326 }
-  - { profession: profession.plant-operator, count: 234 }
+  - { profession: profession.plant-operator, count: 237 }
+  - { profession: profession.technician, count: 200 }
   - { profession: profession.administrator, count: 200 }
-  - { profession: profession.technician, count: 199 }
-  - { profession: profession.docker, count: 188 }
+  - { profession: profession.docker, count: 191 }
   - { profession: profession.engineer, count: 163 }
   - { profession: profession.scholar, count: 150 }
   - { profession: profession.fitter, count: 146 }
@@ -59,14 +59,14 @@ census:
   - { profession: profession.artist, count: 40 }
   - { profession: profession.pilot, count: 36 }
   - { profession: profession.performer, count: 25 }
-  - { profession: profession.chemist, count: 22 }
+  - { profession: profession.chemist, count: 23 }
   - { profession: profession.farmer, count: 20 }
   - { profession: profession.banker, count: 20 }
   - { profession: profession.welder, count: 12 }
   - { profession: profession.reporter, count: 10 }
   - { profession: profession.shipwright, count: 8 }
   - { profession: profession.judge, count: 5 }
-  - { profession: profession.dependant, count: 13475 }
+  - { profession: profession.dependant, count: 13466 }
 # independents: owner-operators based here, its share by population of the 664 that fill the system's 1000 (seeding.traffic) beside the fleets
 independents:
   - { hull: hull.drover, count: 24 }

@@ -281,7 +281,7 @@ impl HullDef {
         let kind = |k: R| match k {
             // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
             // (The command station's slot (SFO 20, crewing): where the ship is flown from. No game slot kind for it yet: not made.)
-            R::Gear | R::Access | R::Handling | R::Thermal | R::Command => None,
+            R::Gear | R::Access | R::Handling | R::Thermal | R::Command | R::Engine => None,
             R::Power => Some(G::Power),
             R::Drive => Some(G::Drive),
             R::Thrusters => Some(G::Thrusters),

@@ -1,0 +1,14 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+identity:
+  key: material.nitrogen
+  name: "Nitrogen"
+  class: fluid
+  form:
+  - fluid
+  description: "Cold gas for attitude thrusters (about 0.7 km/s), kept at 300 bar."
+fuel:
+  release: none
+mass:
+  density: 330
+basis:
+  - { of: [mass.density], tier: invented, review: true, note: "Nitrogen at 300 bar and room temperature is about 330 kg/m3 (from memory of its compressibility); as stored. Review." }

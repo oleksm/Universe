@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.cg.s2
+  name: "Cold gas block, 5 kN"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "Four cold nitrogen nozzles, 5 kN in all, for a heavy ship's attitude and docking. 7 kg/s of nitrogen at full."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 80
+  volume: 0.343
+  length: 0.7
+  width: 0.7
+  height: 0.7
+needs:
+  power: 100
+built_of:
+  parts: engine-cg-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: cold_gas
+  thrust: 5000
+  exhaust: 700
+  efficiency: 1
+  burns: material.nitrogen
+  throttle: 0
+  gimbal: 0
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 0
+  heat_to_hull: 0
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "Scaled from the half-kilonewton block. From memory; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

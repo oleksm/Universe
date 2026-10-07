@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.hydrolox-liq
+  traded_as: market.fuel
+  code: HYDROLOX-LIQ
+  name: "Hydrolox, liquid"
+  form: fluid
+made_from:
+  - item: material.hydrolox
+basis:
+  - { of: [identity], tier: invented, review: true, note: "Hydrogen and oxygen as one stock at 1:6 by mass, the engine's ratio; in truth two tanks. Added 2026-10-06 for the engine family (SFO 22)." }

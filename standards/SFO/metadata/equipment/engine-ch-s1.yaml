@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.ch.s1
+  name: "Chemical engine S1 (hydrolox)"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "Hydrolox burnt and expanded: 25 kN at 4.4 km/s, 0.055 GW of jet, 6 kg/s of propellant. Hovering a 156 t ship at 1 g takes 61.2 of these and 348 kg/s: a 60-second landing burns 21 t. The lander's engine."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 80
+  volume: 0.432
+  length: 1.2
+  width: 0.6
+  height: 0.6
+built_of:
+  parts: engine-ch-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: chemical
+  thrust: 25000
+  exhaust: 4400
+  efficiency: 0.74
+  burns: material.hydrolox
+  throttle: 0.2
+  gimbal: 0.07
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 0.6
+  heat_to_hull: 0.0001
+life: 473364000
+basis:
+  - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "scaled from the RL10 by thrust; review" }
+  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (9.7 MJ/kg) over the blend's 13 MJ/kg: 0.74." }
+  - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

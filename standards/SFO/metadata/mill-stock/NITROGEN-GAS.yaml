@@ -1,0 +1,11 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.nitrogen-gas
+  traded_as: market.fuel
+  code: NITROGEN-GAS
+  name: "Nitrogen, compressed"
+  form: fluid
+made_from:
+  - item: material.nitrogen
+basis:
+  - { of: [identity], tier: invented, review: true, note: "Cold gas at 300 bar. Added 2026-10-06 for the engine family (SFO 22)." }

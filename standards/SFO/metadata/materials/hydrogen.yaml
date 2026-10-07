@@ -4,6 +4,8 @@ identity:
   key: material.hydrogen
   name: "Hydrogen"
   class: fluid
+  form:
+  - fluid
   description: "Reaction mass for nuclear thermal engines (exhaust about 9 km/s)."
 fuel:
   release: none

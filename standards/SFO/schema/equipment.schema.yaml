@@ -404,6 +404,33 @@ properties:
         required: [kind]
         properties:
           kind: { const: throat_coil, x-in-game: "not made" }
+      - description: "One engine unit (SFO 22): a jet of a given cycle, pointed where the design points it. Replaces the drive, lift and thruster families as roles a design gives engines. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, cycle, thrust, exhaust, efficiency, burns, throttle, gimbal, isotropic_loss, shield_pass, heat_to_hull]
+        properties:
+          kind: { const: engine, x-in-game: "not made" }
+          cycle: { $ref: "../../dictionary.schema.yaml#/definitions/engine_cycle" }
+          thrust: { type: number, x-unit: "N", description: "N at full throttle" }
+          exhaust: { type: number, x-unit: "m/s", description: "m/s, how fast the jet leaves; propellant flow is thrust / exhaust, jet power half their product" }
+          efficiency: { type: number, x-unit: "1", description: "the share of the energy released (the fuel's) that goes into the jet; the rest leaves as heat and radiation" }
+          burns: { type: string, x-ref: [material], description: "What releases the energy, by its key: the fusion fuel, the fission fuel's stand-in, the chemical propellant blend, or the gas itself." }
+          propellant: { type: string, x-ref: [material], description: "The reaction mass thrown, where it is not the fuel: hydrogen for a fusion thermal or nuclear thermal engine." }
+          throttle: { type: number, x-unit: "1", minimum: 0, maximum: 1, description: "the least thrust it holds steadily, as a share of full; 0: on or off only (pulsed)" }
+          gimbal: { type: number, x-unit: "rad", description: "rad either way it can point its jet from its axis on its own gimbal; 0: fixed" }
+          isotropic_loss: { type: number, x-unit: "1", description: "the share of the energy released that leaves the reaction in every direction (neutrons, X-rays, gamma), not with the jet: what a hull in its way takes" }
+          shield_pass: { type: number, x-unit: "1", description: "the share of that loss its own shadow shield lets through toward the ship" }
+          reaction_offset: { type: number, x-unit: "m", description: "m from the mount's face, aft, to where the loss originates; the hull's share of the sphere is reckoned from there" }
+          heat_to_hull: { type: number, x-unit: "1", description: "the share of the jet's power that comes aboard as heat, for the budgets: isotropic_loss / efficiency x the hull's share of the sphere x shield_pass, plus the engine's own soak-back. The record's figure takes the hull's share as 0.05 (a hull-mounted engine); a design computes its own from its geometry and uses that instead." }
+      - description: "A swivel that turns an engine unit through a large angle (vectored thrust): aft in flight, down to land. Far heavier than a gimbal; that is the trade. Not in the game yet."
+        type: object
+        additionalProperties: false
+        required: [kind, turns, bears, slew]
+        properties:
+          kind: { const: swivel, x-in-game: "not made" }
+          turns: { type: number, x-unit: "rad", description: "rad it turns through" }
+          bears: { type: number, x-unit: "N", description: "N of thrust it carries through its bearing" }
+          slew: { type: number, x-unit: "rad/s", description: "rad/s it turns at under load" }
       - description: "Where the ship is flown from: seats, controls and displays for its pilots. On the bridge, inside the pressurised space. Not in the game yet."
         type: object
         additionalProperties: false

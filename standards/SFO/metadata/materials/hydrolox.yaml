@@ -4,6 +4,8 @@ identity:
   key: material.hydrolox
   name: "Hydrolox"
   class: fluid
+  form:
+  - fluid
   description: "Hydrogen and oxygen (exhaust 4.4–4.5 km/s): the best chemical fuel, bulky."
 fuel:
   release: chemical

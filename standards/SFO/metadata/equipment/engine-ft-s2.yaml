@@ -1,0 +1,42 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.ft.s2
+  name: "Fusion thermal engine S2"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "A D-He3 fusion reactor heating hydrogen through a magnetic nozzle: 5 kN at 347 km/s, 0.87 GW of jet. A cruise engine: 5 kN moves a 156 t ship at 0.032 m/s2. Hydrogen is its propellant, D-He3 its fuel."
+size_class: 2
+fits: mount.engine-s2
+physical:
+  mass: 90000
+  volume: 160
+  length: 10
+  width: 4
+  height: 4
+built_of:
+  parts: engine-ft-s2
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: fusion_thermal
+  thrust: 5000
+  exhaust: 347000
+  efficiency: 0.61
+  burns: material.d-he3
+  propellant: material.hydrogen
+  throttle: 0.2
+  gimbal: 0.05
+  isotropic_loss: 0.25
+  shield_pass: 0.01
+  reaction_offset: 3
+  heat_to_hull: 0.000305
+life: 473364000
+basis:
+  - { of: [function.exhaust, function.efficiency, function.thrust], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "Discovery II (NASA/TM-2005-213559): exhaust 347 km/s at the nozzle exit, 4.83 GW of jet from 7.9 GW of fusion (0.61), 6,250 lbf = 27.8 kN, 0.08 kg/s. The S3 is that engine; the others scale." }
+  - { of: [physical], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "scaled from Discovery II at a little under its specific power; review" }
+  - { of: [function.isotropic_loss, function.shield_pass, function.heat_to_hull], tier: invented, review: true, note: "D-He3 with side D-D reactions: about 5% of the fusion power in neutrons and about 20% in X-rays leave the plasma in every direction; a half-metre carbon-graphite shadow shield (Discovery II's 90 t) passes about a hundredth toward the ship. heat_to_hull = 0.25 / 0.61 x 0.05 x 0.01 + 1e-4 soak-back = 0.000305 of the jet, for a hull taking a twentieth of the sphere: 0.26 MW aboard at full thrust. From memory of the physics; the figures want a source. Review." }
+  - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "Deep throttling by fuel rate (a fifth); a magnetic nozzle steers the jet a few degrees. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

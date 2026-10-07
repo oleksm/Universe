@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.nt.s1
+  name: "Nuclear thermal engine S1"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "A fission reactor heating hydrogen: 25 kN at 9 km/s, 0.11 GW of jet, 2.78 kg/s of hydrogen. Hovering a 156 t ship at 1 g takes 61.2 of these. The fuel is the reactor's; the game draws the hydrogen."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 3500
+  volume: 4.32
+  length: 3
+  width: 1.2
+  height: 1.2
+built_of:
+  parts: engine-nt-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: nuclear_thermal
+  thrust: 25000
+  exhaust: 9000
+  efficiency: 0.95
+  burns: material.hydrogen
+  propellant: material.hydrogen
+  throttle: 0.3
+  gimbal: 0.1
+  isotropic_loss: 0.05
+  shield_pass: 0.01
+  reaction_offset: 1.2
+  heat_to_hull: 0.000126
+life: 473364000
+basis:
+  - { of: [function.exhaust, function.thrust, physical.mass], tier: invented, review: true, note: "NERVA-class, from memory: the NERVA XE gave about 250 kN at 7 km/s from about 18 t with its shield; 9 km/s is the advanced solid-core figure (Isp about 900 s). The classes scale by thrust. No source looked up. Review." }
+  - { of: [function.isotropic_loss, function.shield_pass, function.heat_to_hull], tier: invented, review: true, note: "About a twentieth of the reactor's power leaks as neutrons and gamma in every direction; a shadow shield passes a hundredth toward the ship: 0.000126 of the jet aboard at a twentieth of the sphere. From memory; review." }
+  - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "A solid core throttles to about a third; a gimballed nozzle gives about six degrees. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

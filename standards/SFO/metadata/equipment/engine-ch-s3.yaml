@@ -1,0 +1,40 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.ch.s3
+  name: "Chemical engine S3 (methalox)"
+  maker: org.kestrel
+  revision: draft
+  slot: engine
+  description: "Methalox burnt and expanded: 500 kN at 3.6 km/s, 0.9 GW of jet, 139 kg/s of propellant. Hovering a 156 t ship at 1 g takes 3.1 of these and 425 kg/s: a 60-second landing burns 26 t. The lander's engine."
+size_class: 3
+fits: mount.engine-s3
+physical:
+  mass: 600
+  volume: 3.6
+  length: 2.5
+  width: 1.2
+  height: 1.2
+built_of:
+  parts: engine-ch-s3
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: chemical
+  thrust: 500000
+  exhaust: 3600
+  efficiency: 0.65
+  burns: material.methalox
+  throttle: 0.4
+  gimbal: 0.26
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 1.25
+  heat_to_hull: 0.0001
+life: 473364000
+basis:
+  - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "between the RL10 and a Raptor by thrust, at a Raptor's weight per thrust; review" }
+  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (6.5 MJ/kg) over the blend's 10 MJ/kg: 0.65." }
+  - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }

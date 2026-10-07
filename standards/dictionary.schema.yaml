@@ -57,7 +57,7 @@ definitions:
       invented: "Chosen."
   slot_kind:
     description: "A kind of slot a hull has, and so the kind of equipment that fits it."
-    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, access, handling, thermal, gear, gate, command]
+    enum: [power, drive, thrusters, lift, tank, cargo, hyperdrive, capacitor, computer, transponder, sensors, comm, life_support, hardpoint, utility, avionics, access, handling, thermal, gear, gate, command, engine]
     x-values:
       access: "A way in or out: an airlock, a ramp, a lift, a bay door, a docking collar or clamp."
       handling: "Moves bulk or cargo aboard: a scoop, a conveyor, a crane, a transfer arm."
@@ -65,6 +65,7 @@ definitions:
       gear: "A landing leg's: one leg to a slot, a hull has several."
       gate: "A gate ring's, not a hull's."
       command: "The command station's: where the ship is flown from; on the bridge, inside the pressurised space."
+      engine: "An engine unit's (SFO 22): one engine, pointed where the design points it, on a gimbal or a swivel or fixed. Lift, drive and thrusters are what a design does with engines, not kinds of slot."
   geological_event:
     description: "What happens to a world's crust that lays down rock and ore, in the planet simulation."
     enum: [ridge, arc, collision, collision front, plume, rift, sea, craton, weathering, coast, salt flat, ocean floor, burial, impact, river]
@@ -182,3 +183,12 @@ definitions:
       period: "Every `every` seconds of game time, a whole number of the realtime tick; catches up when its parent passes its due time."
       event: "Only when something happens: a command arrives, a physics wake fires, a hand-over comes. Costs nothing between events."
       group: "Steps nothing itself; holds its children and owns their placement."
+  engine_cycle:
+    description: "How an engine makes its jet (SFO 22). The cycle sets the exhaust speed's range, and so the jet power a thrust costs and the propellant it burns."
+    enum: [fusion_pulse, fusion_thermal, nuclear_thermal, chemical, cold_gas]
+    x-values:
+      fusion_pulse: "The fusion products themselves are the exhaust, about 10,000 km/s: a torch. Terawatts of jet for a meganewton; deep space only; at ship scale not offered (Daedalus-class stages run to a thousand tonnes)."
+      fusion_thermal: "Fusion heats hydrogen propellant thrown through a magnetic nozzle, about 350 km/s (Discovery II): gigawatts for tens of kilonewtons, hundreds of tonnes of engine. The cruise engine of a large ship."
+      nuclear_thermal: "A fission reactor heats hydrogen, about 9 km/s: hundreds of kilonewtons from tens of tonnes; gigawatt jets a pad must stand."
+      chemical: "Fuel burnt with its oxidiser, 3.5 to 4.5 km/s: meganewtons from a tonne of engine; the lander's engine, paying in propellant (a tonne a second for a heavy ship)."
+      cold_gas: "Stored gas let out, about 0.7 km/s: newtons to kilonewtons, no flame, no heat; for attitude and docking."

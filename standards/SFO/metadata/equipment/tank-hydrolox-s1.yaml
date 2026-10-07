@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.hydrolox.s1
+  name: "Hydrolox tank S1"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 49 m3 tank holding 15,700 kg of hydrolox."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 1880
+  volume: 97.3
+  length: 4.6
+  width: 4.6
+  height: 4.6
+built_of:
+  parts: tank-hydrolox-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 15700
+  holds: material.hydrolox
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S1's volume filled with hydrolox at 320 kg/m3; insulated for liquid hydrogen and oxygen, 12% of its contents. Chosen; review." }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
+  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
