@@ -246,7 +246,7 @@ mod tests {
         }
         // Something in the hold, and a rock dug into.
         use universe_services::{Asset, Party};
-        let ore = universe_world::goods::Ore::Stony.item();
+        let ore = universe_world::goods::Ore::from_key("good.stony-ore").expect("stony ore").item();
         u.ledger.settle(Party::Pilot(crate::combat::PLAYER), Asset::Goods(ore), 3.0, u.tick, universe_protocol::Cause::Rules);
         u.world.mined.insert((u.ship_system, 0, 1), 1500.0);
         let save = u.save();

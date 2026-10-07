@@ -208,58 +208,46 @@ pub fn item(key: &str) -> Option<usize> {
     content().stock_index.get(key).copied()
 }
 
-/// Raw materials dug out of asteroids (see `mining`): what an excavator
-/// fills a hold with, by the tonne. In the catalogue after its generated
-/// goods, the same in every galaxy; their names and prices are content
-/// (the registry's rock goods, by key).
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum Ore {
-    /// Icy bodies: water ice with frozen volatiles.
-    WaterIce,
-    /// C-types: clays with water bound in, carbon, organics.
-    Carbonaceous,
-    /// S-types: silicates with nickel-iron grains.
-    Stony,
-    /// M-types: nickel-iron.
-    NickelIron,
-    /// M-types rich in platinum-group metals.
-    Pgm,
-}
-
 /// One unit of ore (kg).
 pub const TONNE: f64 = 1000.0;
 
-impl Ore {
-    pub const ALL: [Ore; 5] = [Ore::WaterIce, Ore::Carbonaceous, Ore::Stony, Ore::NickelIron, Ore::Pgm];
+/// An ore the game's excavators dig: a stock item some rock class yields (`yields` or
+/// `rich_yields` on the registry's rock classes), by its index in the catalogue.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
+pub struct Ore(usize);
 
-    /// The ore with this content key.
-    pub fn from_key(key: &str) -> Option<Ore> {
-        Ore::ALL.into_iter().find(|o| o.key() == key)
+impl Ore {
+    /// Every ore: what the rock classes yield, in catalogue order.
+    pub fn all() -> &'static [Ore] {
+        static ALL: std::sync::OnceLock<Vec<Ore>> = std::sync::OnceLock::new();
+        ALL.get_or_init(|| {
+            let reg = crate::registry::registry();
+            let mut v: Vec<Ore> = reg.rock_classes.iter().flat_map(|c| [c.mining.yields.as_deref(), c.mining.rich_yields.as_deref()]).flatten().filter_map(Ore::from_key).collect();
+            v.sort();
+            v.dedup();
+            v
+        })
     }
 
-    /// Its content key.
-    pub fn key(self) -> &'static str {
-        match self {
-            Ore::WaterIce => "good.asteroid-water-ice",
-            Ore::Carbonaceous => "good.carbonaceous-ore",
-            Ore::Stony => "good.stony-ore",
-            Ore::NickelIron => "good.nickel-iron-ore",
-            Ore::Pgm => "good.pgm-rich-ore",
-        }
+    /// The ore with this key: a stock item a rock class yields.
+    pub fn from_key(key: &str) -> Option<Ore> {
+        let reg = crate::registry::registry();
+        let yielded = reg.rock_classes.iter().any(|c| c.mining.yields.as_deref() == Some(key) || c.mining.rich_yields.as_deref() == Some(key));
+        yielded.then(|| item(key).map(Ore)).flatten()
     }
 
     /// As stowed, broken, in a hold (t/m³).
     pub fn bulk_density(self) -> f64 {
-        content().stock[self.item()].bulk_density
+        content().stock[self.0].bulk_density
     }
 
     /// Its stock item.
     pub fn item(self) -> usize {
-        item(self.key()).expect("every ore is in the registry (checked at load)")
+        self.0
     }
 
     /// The ore stock item `id` is, if one.
     pub fn of_item(id: usize) -> Option<Ore> {
-        Ore::ALL.into_iter().find(|o| o.item() == id)
+        Ore::all().iter().copied().find(|o| o.0 == id)
     }
 }

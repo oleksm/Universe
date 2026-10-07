@@ -284,7 +284,7 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     assert!(matches!(market, NavTarget::Spaceport(_)), "a port with a warehouse: {market:?}");
     // Landed at its market with ten tonnes of ore, the route at that stop.
     u.crafts[0].ship = u.world.ship_on(home, market, 0);
-    let ore = universe_sim::world::goods::Ore::Carbonaceous.item();
+    let ore = universe_sim::world::goods::Ore::from_key("good.carbonaceous-ore").expect("carbonaceous ore").item();
     u.ledger.settle(Party::Pilot(me), Asset::Goods(ore), 10.0, u.tick, universe_sim::protocol::Cause::Rules);
     u.crafts[0].ship.cargo = 10_000.0;
     u.pilots()[0].avionics.route.next = 1;

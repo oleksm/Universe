@@ -487,12 +487,15 @@ let c = Content { shapes, materials, brands, structures, modules, hulls, goods, 
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
             }
         }
-        for ore in crate::goods::Ore::ALL {
-            let Some(&i) = self.stock_index.get(ore.key()) else {
-                return Err(format!("no ore '{}' (asteroids are made of it)", ore.key()));
+        // (Every ore a rock class yields: in the catalogue, and traded as something. Checked by
+        // key: content isn't loaded yet for `goods::Ore`.)
+        let reg = crate::registry::registry();
+        for key in reg.rock_classes.iter().flat_map(|c| [c.mining.yields.as_deref(), c.mining.rich_yields.as_deref()]).flatten() {
+            let Some(&i) = self.stock_index.get(key) else {
+                return Err(format!("no ore '{key}' (asteroids are made of it)"));
             };
             if self.stock[i].category.is_none() {
-                return Err(format!("ore '{}' is traded as nothing (its traded_as)", ore.key()));
+                return Err(format!("ore '{key}' is traded as nothing (its traded_as)"));
             }
         }
         if self.hulls.find(crate::ship::STARTING_HULL).is_none() {

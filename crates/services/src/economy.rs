@@ -1178,7 +1178,7 @@ mod tests {
         assert!(e.works[smelter].pool.of(ingot) < 1.0, "the smelter doesn't keep what it doesn't use");
 
         // The exchange buys what no one here takes, for less as its warehouse fills.
-        let ore = universe_world::goods::Ore::Stony.item();
+        let ore = universe_world::goods::Ore::from_key("good.stony-ore").expect("stony ore").item();
         let before = e.places[trethi].price(&goods[ore]);
         assert!(!before.wanted && before.bid > 0.0);
         let room = e.places[trethi].stock.free();
