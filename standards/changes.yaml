@@ -1054,7 +1054,7 @@
 - { record: org.sunward-planters, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: who", sha: "0ad1aff13205f2db" }
 - { record: org.tallis, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "334d70d5a7ad241b" }
 - { record: org.tolland, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "606b88aa03fbd49b" }
-- { record: org.treistun, at: "2026-10-07T03:31:37Z", status: "", summary: "changed: ticker", sha: "0702678e5ecc37d0" }
+- { record: org.treistun, at: "2026-10-07T05:22:04Z", status: "", summary: "changed: administers", sha: "eb8bb071e8dcd871" }
 - { record: org.treistun-exchange, at: "2026-10-06T18:25:49Z", status: "", summary: "changed: exchange", sha: "1bae48b326edf1f3" }
 - { record: org.treistun-freight, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: note", sha: "a8eeec6191b0aa55" }
 - { record: org.treistun-mutual, at: "2026-10-06T14:13:11Z", status: "", summary: "changed: insurance", sha: "573f66fec0f40ff5" }
@@ -1449,7 +1449,7 @@
 - { record: rule.mounts-margin, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "5bc27d346d64f78a" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: seeding.asteroids, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8a7b9174fcf77850" }
+- { record: seeding.asteroids, at: "2026-10-07T05:22:04Z", status: "", summary: "changed: basis", sha: "e0ebc8653b742b4a" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
 - { record: seeding.galaxy, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "20a73d10ecbf84f6" }
 - { record: seeding.markets, at: "2026-10-05T19:03:11Z", status: "", summary: "first tracked", sha: "6620dbdc5bb4c4c2" }
