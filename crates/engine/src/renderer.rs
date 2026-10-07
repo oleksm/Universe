@@ -1145,7 +1145,7 @@ impl Renderer {
             shadow2: [tight.map_or(0.0, texel), if tight.is_some() && sun.is_some() { 1.0 } else { 0.0 }, texel(GROUND_HALF), if ground_on { 1.0 } else { 0.0 }],
             shadow_ground: shadow_ground.to_cols_array_2d(),
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
-            shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
+            shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if crate::devflags::get().shadow_debug { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
             look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), world_layer],
             env_sun: frame.light.map_or([0.0; 4], |l| {
