@@ -1,7 +1,7 @@
 # yaml-language-server: $schema=../../../organisation.schema.yaml
 # Invented (2026-10-06): the passage line. One shuttle to 10,000 people is chosen; the need for travel says one pilot to 2,000.
 identity:
-  key: org.hearth-line
+  key: org.hoar-line
   name: Hoar Line
 ticker: HRL
 kind: company

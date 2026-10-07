@@ -54,7 +54,7 @@ is a run to redo.
 
 The record keeps its inputs. Where it held a seeded guess for a figure the run derives (mean
 temperature, terrain, relief, ocean cover), the survey's figure is the truth; the next step of the
-tool (owed, once a real run exists to read them from) replaces those.
+tool (`world_install.climate()`, reading the survey's summary) replaces those.
 
 Validation: `survey` is on the body schema (required fields, SI units, closed objects); `baked` is
 in the dictionary; `build.py` accepts it and the tracker records the change. The survey folder

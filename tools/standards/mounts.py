@@ -9,8 +9,11 @@ weight at 3 g plus the thrust or landing or recoil load, with the margin; shear 
 from the nearest, twice the volume a class. Writes standards/SFO/metadata/mounts/<slot>-s<class>.yaml, `fits` on each piece
 of equipment and `mount` on each hull slot. Idempotent: run it after adding or resizing equipment. Run from the repository root.
 """
-import glob, os, re
+import glob, os, re, sys
 import yaml
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import device_heat
 
 S = "standards/SFO/"; E = S + "metadata/equipment/"; MT = S + "metadata/mounts/"
 q = lambda s: '"' + s.replace('"', '\\"') + '"'
@@ -42,7 +45,7 @@ def main():
             return None, 1.0, None
         g = lambda fn: max(fn(d) for d in base)
         fnk = lambda d: d["function"]
-        heat = lambda d: (fnk(d)["output"] * (1 / fnk(d)["efficiency"] - 1)) if fnk(d)["kind"] == "power_plant" else (0.5 * fnk(d).get("thrust", 0) * fnk(d).get("exhaust", 0) * (1 / fnk(d)["efficiency"] - 1) * 1e-6 if "thrust" in fnk(d) else 0)
+        heat = lambda d: device_heat(fnk(d))   # (one rule: lib.device_heat, SFO 22)
         burn = lambda d: fnk(d)["output"] / fnk(d)["efficiency"] / 3.45e14 if fnk(d)["kind"] == "power_plant" else (fnk(d)["thrust"] / fnk(d)["exhaust"] if "thrust" in fnk(d) else 0)
         return {"L": g(lambda d: d["physical"]["length"]) * k ** (1 / 3), "W": g(lambda d: d["physical"]["width"]) * k ** (1 / 3), "H": g(lambda d: d["physical"]["height"]) * k ** (1 / 3),
                 "mass": g(lambda d: d["physical"]["mass"]) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,

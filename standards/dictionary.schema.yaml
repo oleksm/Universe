@@ -27,12 +27,13 @@ definitions:
       user: "The user alone."
   design_stage:
     description: "Where a designed thing stands in its life as a product. Not how firm its record is: that is its revision's status."
-    enum: [draft, released, superseded, outdated]
+    enum: [draft, released, superseded, outdated, retired]
     x-values:
       draft: "Being worked out."
       released: "Settled, to be built from."
       superseded: "Replaced by a later one."
-      outdated: "An early rough guess, kept as a record, not to be balanced against."
+      outdated: "An early rough guess still in service: the game flies or builds it, but its figures are not to be balanced against; a current design is to replace it."
+      retired: "No longer built or flown; kept as a record only."
   in_game:
     description: "Whether the game makes it yet."
     enum: [made, partly, not made]

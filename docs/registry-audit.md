@@ -122,7 +122,7 @@ were fixed the same night (§0). Everything else is a proposal until the user pi
 
 ## 6. Proposed order
 
-1. **Facts first** (a day): the MC-07 onto current equipment or "in service" marks; one volume
+1. **Facts first** (done 2026-10-07, changelog/2026-10-07-audit-step-1.md; the MC-07's fit stays outdated-in-service by design, its successor the ships session's): the MC-07 onto current equipment or "in service" marks; one volume
    rule; the heat rule in one function used by mounts, Budgets and the studio, counting `engine`;
    D-He3 stock; "outdated" split into in-service / retired; the stale docs and report texts; the
    process remnants removed; the small renames.

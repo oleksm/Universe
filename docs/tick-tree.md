@@ -10,7 +10,7 @@ Coupling decides placement; the tree is the map of couplings.
 
 Figures marked *proposal* are starting points to measure, not facts.
 
-## 1. Today
+## 1. Before the clocks (main until 2026-10-06; the engine now reads §3's records)
 
 One global tick, everything in it (`crates/sim/src/universe.rs:327`).
 
@@ -56,7 +56,7 @@ The tightness, not the kind of work, decides where it runs.
 |---|---|---|---|
 | **Tight** | within a tick, exact order, swept contact; a late read is a wrong answer | two ships within reach of each other; a ship on a pad; a projectile and its target; a walker on a deck | **same thread**, shared memory, no messages: one bubble, one thread, one tick |
 | **Fast-loose** | within a few ticks; a stale read is fine if the age is known | a pilot thinking on a snapshot; the cockpit; sensors; ATC | **same process, other threads**: read the tick's frozen snapshot, post commands due at tick N+k (as today) |
-| **Slow-loose** | seconds to days; order by stamped time is all that matters | a trade, a recipe's hour, a census, a levy, the weather, a law record, a hypernet message | **messages**: other process, other machine; latency of a network is invisible under a 600 s step |
+| **Slow-loose** | seconds to days; order by stamped time is all that matters | a trade, a recipe's hour, a census, a levy, the weather, a law record, a hypernet message | **messages**: other process, other machine; latency of a network is invisible under a 10 s step |
 
 The rule's two halves: tight work is never split across a message boundary (a bubble is never
 cut between two nodes; two players in one fight are on one thread), and slow work is never put
@@ -243,5 +243,5 @@ economy's `STEP`, `BOARD_EVERY` and the rest become reads of the records; then s
 in `crates/sim` and `crates/world` (bubbles, rails with wakes, actors per body, walking into the
 tick). The schema and the records are on fso. The lab's: a weather field format if decision 4 is yes. Mine: the survey
 contract's weather package, the census periods, and the review of what each registry rate implies
-at each step (a mine's kg/s at 600 s; a levy at a day). The ships session: nothing; a ship's
+at each step (a mine's kg/s at 10 s; a levy by rate). The ships session: nothing; a ship's
 devices are read the same at any layer.

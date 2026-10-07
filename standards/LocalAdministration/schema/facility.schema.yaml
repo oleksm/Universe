@@ -17,7 +17,6 @@ properties:
       name: { type: string }
   kind: { enum: [foundry, mill, yard, power, warehouse, farm, food works, store, utility, mine] }
   parcel: { type: string, x-ref: [parcel], description: The parcel of its settlement it stands on. }
-  processes: { $ref: "installation.schema.yaml#/definitions/processes" }
   lines: { $ref: "installation.schema.yaml#/definitions/lines" }
   modules: { $ref: "installation.schema.yaml#/definitions/modules" }
   stock: { $ref: "installation.schema.yaml#/definitions/stock" }
@@ -42,7 +41,6 @@ properties:
         name: { type: string }
         kind: { enum: [module, workshop, warehouse, logistics, parking], description: 'module: industrial plant.' }
         does: { type: string }
-        processes: { type: array, items: { type: string, x-ref: [process] }, description: 'The facility''s processes run here. Each of the facility''s processes is run in exactly one part.' }
         outline: { type: array, minItems: 3, items: { $ref: '#/definitions/point' }, description: "Its corners, in order: metres [east, north] of the settlement's position." }
   pipelines:
     type: array

@@ -610,10 +610,7 @@ function detail(k) {
       + node("Mill stock", DATA.mill_stock.length, "sheet, plate, bar, tube, wire in a size", "s:SFO 13", !DATA.mill_stock.length)
       + link(DATA.mill_stock.filter(s => procBySlug[(s.making || {}).process]).length, DATA.mill_stock.length, "stock items have a process that makes them")
       + `<div class="side">From the rock, up</div>`
-      + node("Processes", DATA.processes.length, `${made.length} of ${forms.length} material forms have one that makes them`, "s:SFO 7")
-      + link(stepped.length, DATA.processes.length, "processes are broken into steps with their modules")
       + node("Industrial modules", DATA.modules.length, "furnaces, plants, yards, each with a size, a rate and what goes in and out", "s:SFO 10")
-      + link(lined.size, DATA.processes.length, "processes have a line built for them at a facility")
       + node("Facilities", allFacilities().length, most ? `at most ${most}` : "none makes anything yet", "pd")
       + link(DATA.goods.filter(g => g.identity.kind === "raw" && (g.source || {}).won_from).length, DATA.goods.filter(g => g.identity.kind === "raw").length, "raw goods are won from a rock")
       + node("Rock", DATA.goods.filter(g => g.identity.kind === "rock").length, [...new Set(DATA.goods.filter(g => g.identity.kind === "rock").map(g => (g.source || {}).occurs).filter(Boolean))].map(o => `dug on ${o}`).join("; "), "s:SFO 11", !DATA.goods.some(g => g.identity.kind === "rock"))

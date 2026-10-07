@@ -23,7 +23,7 @@ making:
 function:
   kind: suit_locker
   persons: 2
-  hours: 28800
+  endurance: 28800
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A light EVA suit with its pack at 60 kg (between a 10 kg flight suit and the station's 145 kg suit; from memory) and 8 hours of air (the station's suit's 8.5); the locker 40 kg. Chosen." }

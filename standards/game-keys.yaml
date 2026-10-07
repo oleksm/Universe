@@ -241,7 +241,7 @@
 - { key: org.halcyon, game: "brand.halcyon", in: "brands.ron" }
 - { key: org.halloran-mills, game: "brand.halloran_mills", in: "brands.ron" }
 - { key: org.halvard, game: "brand.halvard", in: "brands.ron" }
-- { key: org.hearth-line, game: "brand.hearth_line", in: "brands.ron" }
+- { key: org.hoar-line, game: "brand.hoar_line", in: "brands.ron" }
 - { key: org.kestrel, game: "brand.kestrel", in: "brands.ron" }
 - { key: org.lantern-halls, game: "brand.lantern_halls", in: "brands.ron" }
 - { key: org.marrow-and-pike, game: "brand.marrow_and_pike", in: "brands.ron" }

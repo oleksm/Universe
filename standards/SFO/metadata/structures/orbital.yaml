@@ -4,7 +4,7 @@ identity:
   name: "Tallis orbital site"
   maker: org.tallis
   kind: orbital
-  revision: outdated
+  revision: retired
   description: "A transceiver and a hyper relay in orbit round a planet or moon (a few satellites: one is always in sight)."
 fit:
   - { item: equipment.transceiver.beacon, count: 1 }

@@ -49,8 +49,5 @@ capital penalty. A hold's people have a road home, one by one: surrender, restit
 
 ## Not yet
 
-- The **census** (people by profession per settlement), so spawning comes from the pool.
-- A **bank** and what lending is (Money); **schools** with their rates (Mind), which set how fast
-  a settlement replaces its dead.
 - Patrol craft as fitted ships with crews in the census, and the watch house's craft bay.
 - Law for Biraidim, if Treistun ever administers it: the hold is the first thing it reaches.

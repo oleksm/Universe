@@ -24,7 +24,11 @@ import os
 import re
 import sys
 
+import sys
 import yaml
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from lib import jet_heat, plant_waste, JET_KINDS
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
 TREE = os.path.join(ROOT, "standards")
@@ -195,7 +199,7 @@ EQUIPMENT_READS = {
     "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle (an airlock); how it makes its jet (an engine)", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
     "propellant": "What it throws.", "throttle": "the least thrust it holds, as a share", "gimbal": "rad it steers its jet", "isotropic_loss": "the share of its power leaving in every direction", "shield_pass": "the share of that its shield lets through", "reaction_offset": "m aft to the reaction", "turns": "rad it turns through", "bears": "N it carries", "slew": "rad/s it turns at",
-    "g_rating": "m/s2 its seats are rated to", "facing": "which way the seats face", "cooling": "W of cabin heat it carries away", "protects": "m3 of room one unit covers", "accuracy": "m, how closely it reads", "field_of_view": "rad across its picture", "hours": "s of air a suit carries",
+    "g_rating": "m/s2 its seats are rated to", "facing": "which way the seats face", "cooling": "W of cabin heat it carries away", "protects": "m3 of room one unit covers", "accuracy": "m, how closely it reads", "field_of_view": "rad across its picture", "endurance": "s of air a suit carries",
     "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
 
@@ -740,7 +744,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 if k not in fc:
                     problem(ffull, f"no {k}")
             for k in fc:
-                if k not in {"name", "kind", "parcel", "processes", "parts", "pipelines", "lines", "modules", "exchange", "stock", "claim"}:
+                if k not in {"name", "kind", "parcel", "parts", "pipelines", "lines", "modules", "exchange", "stock", "claim"}:
                     problem(ffull, f"unknown field '{k}'")
             if fc.get("kind") not in FACILITY_ZONE:
                 problem(ffull, f"kind: one of {', '.join(FACILITY_ZONE)}")
@@ -761,7 +765,7 @@ for name in sorted(os.listdir(adm_dir)) if os.path.isdir(adm_dir) else []:
                 for pt in fc.get("parts") or []:
                     nm = pt.get("name")
                     for k in pt:
-                        if k not in {"name", "kind", "does", "processes", "outline"}:
+                        if k not in {"name", "kind", "does", "outline"}:
                             problem(ffull, f"part {nm}: unknown field '{k}'")
                     if pt.get("kind") not in PART_KINDS:
                         problem(ffull, f"part {nm}: kind one of {', '.join(PART_KINDS)}")
@@ -980,7 +984,7 @@ for name in sorted(os.listdir(TREE)):
 
 # Records in folders (a standard's `records`): chemical elements and materials, each kind to
 # its schema (schema/element.schema.yaml, schema/material.schema.yaml).
-KINDS = {"elements": "element", "materials": "material", "processes": "process", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
+KINDS = {"elements": "element", "materials": "material", "modules": "module", "goods": "good", "hulls": "hull", "mill-stock": "mill-stock", "equipment": "equipment", "gates": "gate"}
 # (Parts are filed in folders of their own: read further down.)
 NESTED = {"parts", "mounts"}      # (folders whose records the page lists elsewhere, or not yet)
 SCHEMAS = {k: read_schema(os.path.join(TREE, "SFO", "schema", f"{v}.schema.yaml")) for k, v in KINDS.items()}
@@ -1052,10 +1056,6 @@ for s in standards:
                     problem(full, f"identity: no {k}")
             key = ident.get("name")
             e["slug"] = name[:-5]
-        elif kind == "processes":
-            for k in ("name", "kind"):
-                if not ident.get(k):
-                    problem(full, f"identity: no {k}")
             key = ident.get("name")
             e["slug"] = name[:-5]
         else:
@@ -1093,8 +1093,8 @@ for s in standards:
 elements.sort(key=lambda e: (e.get("identity") or {}).get("atomic_number", 0))
 materials.sort(key=lambda e: (e.get("identity") or {}).get("name", ""))
 # (A process's inputs and outputs name elements by symbol, materials by file name.)
-# (A facility's processes: SFO processes, each one for its kind of facility.)
-by_process = {pr.get("slug"): pr for pr in processes}
+# (Processes are retired (SFO 7 superseded): a line's route, derived from its modules' recipes, is written out in a process's shape for the page.)
+by_process = {}
 gate_of = {g["slug"]: g for g in gates}
 for ad in administrations:
     for x in ad["bodies"]:
@@ -1106,23 +1106,10 @@ for ad in administrations:
                                 "processes": x.get("processes") or [], "lines": x.get("lines") or [], "modules": x.get("modules") or []}]
         if "gate" in x and (x["gate"] or {}).get("ring") not in gate_of:
             problem(where, f"gate.ring: no gate ring '{(x['gate'] or {}).get('ring')}' in the SFO")
-for ad in administrations:
-    for x in ad["bodies"]:
-        for fc in x.get("facilities", []):
-            for name in fc.get("processes") or []:
-                pr = by_process.get(name)
-                if pr is None:
-                    problem(os.path.join(TREE, fc["file"]), f"processes: no process '{name}' in the SFO")
-                elif (pr.get("equipment") or {}).get("facility") != fc.get("kind") and not fc.get("rig"):
-                    problem(os.path.join(TREE, fc["file"]), f"processes: '{name}' is run in a {(pr.get('equipment') or {}).get('facility')}, not a {fc.get('kind')}")
 symbols = {(e.get("identity") or {}).get("symbol") for e in elements}
 slugs = {m.get("slug") for m in materials} | {g.get("slug") for g in goods} | {ms.get("slug") for ms in mill_stock}
 # (A process's steps: each in an industrial module.)
 by_module = {m.get("slug") for m in modules}
-for pr in processes:
-    for st in (pr.get("equipment") or {}).get("steps") or []:
-        if st.get("module") not in by_module:
-            problem(os.path.join(TREE, pr["file"]), f"equipment.steps: no module '{st.get('module')}' in the SFO")
 # What a facility is to make: from each process's line of modules, how many of each it needs, what
 # they take in and give off, their power and the ground they cover.
 mod_of = {m.get("slug"): m for m in modules}
@@ -1838,7 +1825,7 @@ for pt in parts:
 # (The lines built with a module that makes something: where a part made in that module can be made.)
 shop_lines = lambda mod: [ln for ad in administrations for x in ad["bodies"] for fc in x.get("facilities", []) for ln in fc.get("lines") or [] if "most" in ln and any(r["module"] == mod and r["can"] for r in ln["most"]["modules"])]
 makers_of = lambda item: [m for m in modules if any(r.get("product") == item for r in m.get("recipes") or [])]
-ingot_makers = lambda mat: [q for q in processes + routes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
+ingot_makers = lambda mat: [q for q in routes if any(o.get("item") == mat and o.get("form") == "ingot" for o in (q.get("outputs") or {}).get("products") or [])]
 # 1. The chain from a hull down to rock: how far each part gets.
 eq_of = {e["slug"]: e for e in equipment}
 # (A hull's fit and nozzles against its slots: each names a slot it has, and what is fitted is of the slot's kind and no bigger.)
@@ -1965,7 +1952,7 @@ for e in equipment:
     mass = (e.get("physical") or {}).get("mass")
     on = [hl["identity"]["name"] for hl in hulls + gates if any(ft.get("item") == e["slug"] for ft in hl.get("fit") or [])]
     rows.append(row("note", link(e["identity"]["name"], "eq:" + e["slug"]), ", ".join(on) or "no hull", tonnes(mass) if mass is not None else "", (e.get("performance") or {}).get("kind", ""), "not yet said"))
-report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, what it weighs and what kind of device it is. The game reads these records. None says yet what it is made of: that waits for more hulls.", ["Equipment", "Fitted to", "Mass", "Kind", "Made of"], rows)
+report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, what it weighs and what kind of device it is. The game reads these records; what each is made of is its parts (the Equipment parts report).", ["Equipment", "Fitted to", "Mass", "Kind", "Made of"], rows)
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
 # same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
@@ -2052,7 +2039,7 @@ for ad in administrations:
                                 "stations": math.ceil(g["worked"]["stations"] * share) if g["worked"].get("stations") else None,
                                 "crossings": [{"what": c["what"], "mass": c["mass"], "time": c["time"] * share, "energy": c["energy"] * share} for c in g["worked"]["crossings"]]}
             rows.append(row("ok" if share <= 1 else "gap", link(x["name"], f"bd:{ad['slug']}:{x['slug']}"), f"{x['gate']['distance']:g} ly", f"a {g['identity']['name']}, which spans {g['performance']['span']:g} ly", f"{x['gate_worked']['hold_power'] / 1e9:.1f} GW to hold, {x['gate_worked']['stations']} power stations" if share <= 1 else "further than its ring spans"))
-report("gates", "Stargates: each ring against the game, and what it costs to hold", "Each gate ring: its span against the game's ring of the same key, and the power its tube takes to hold, worked out from the laws. A gap is a ring that differs from the game, or something a ring does not yet say.", ["Ring", "Span", "Against the game", "Note"], rows)
+report("gates", "Stargates: each ring, and what it costs to hold", "Each gate ring: its span, and the power its tube takes to hold, worked out from the laws. The game reads these records; a gap is a ring that or something a ring does not yet say.", ["Ring", "Span", "Against the game", "Note"], rows)
 
 # 1d. Plant: what each industrial module is built of.
 rows = []
@@ -2342,14 +2329,14 @@ rows = []
 for pf in professions:
     yrs = ((pf.get("training") or {}).get("time") or 0) / YEAR_S
     rows.append(row("note", pf["identity"]["name"], (pf.get("training") or {}).get("learned", ""), f"{yrs:.0f} years" if yrs else "", ", ".join(n["identity"]["name"].lower() for n in needs if any(s_["profession"] == pf["slug"] for s_ in n.get("served_by") or [])), "no works says yet how many it takes"))
-report("work", "Work: the trades", "Each trade: how it is learned, how long that takes, and which needs its people meet. No works says yet how many of which trade it takes to run: that waits on the engine's type for a module.", ["Trade", "Learned", "Takes", "Meets", "Works"], rows)
+report("work", "Work: the trades", "Each trade: how it is learned, how long that takes, and which needs its people meet. Each works says in module.staff how many of which trade run it.", ["Trade", "Learned", "Takes", "Meets", "Works"], rows)
 
 rows = []
 for b_ in buildings:
     ppl = max((m_["people"] for m_ in b_.get("meets") or []), default=0)
     rows.append(row("note", b_["identity"]["name"], ", ".join(f"{tail(m_['need'])} for {m_['people']:,.0f}" for m_ in b_.get("meets") or []), f"{b_.get('floor', 0):,.0f} m2", f"{b_.get('storeys', 0):g}",
                     tonnes((b_.get("physical") or {}).get("mass", 0)), ", ".join(f"{x_['count']:,.0f} {tail(x_['profession'])}" for x_ in b_.get("staff") or []) or "none", f"{b_.get('life', 0) / YEAR_S:.0f} years"))
-report("buildings", "Buildings: where people live and are served", "Each building that is not a works: which needs it meets and of how many people, its floor, its weight (all materials; nothing yet says how concrete is made), who works in it, and how long it is built to stand.", ["Building", "Meets", "Floor", "Storeys", "Weight", "Staff", "Built to stand"], rows)
+report("buildings", "Buildings: where people live and are served", "Each building that is not a works: which needs it meets and of how many people, its floor, its weight (all materials), who works in it, and how long it is built to stand.", ["Building", "Meets", "Floor", "Storeys", "Weight", "Staff", "Built to stand"], rows)
 
 # 3c. Takers: is each thing given off taken by something? (The matter loop: nothing made is nothing's to take.)
 _ins = {}
@@ -2466,7 +2453,7 @@ try:
         _c = {c_["profession"].split(".")[-1]: c_["count"] for c_ in _d["census"]}
         _dep = _c.pop("dependant", 0); _work = sum(_c.values())
         _rows.append(row("gap" if _work > _d["population"] or _work < 0.25 * _d["population"] else "ok", _d["identity"]["name"], f"{_d['population']:,}", f"{_work:,}", f"{_dep:,}", f"{_work / _d['population']:.0%}", ", ".join(f"{k_} {v_}" for k_, v_ in sorted(_c.items(), key=lambda kv: -kv[1])[:6])))
-    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under a quarter here is a settlement whose works and services, as described, give most of its people nothing to do; over all of them, one over-built. Treistun's ports read 30 to 37%: the service trades are described (shops, yards, offices, depots, taverns, clinics, schools); what is still thin against a real economy is manufacturing for people at every port (works making consumer goods), health and schooling. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
+    report("census", "Census: who lives where, by trade", "Each settlement's people at day 0: at work (the staff of its works, module.staff; the trades its needs are served by, need.served_by; pilots from the fleets based there) and dependants (the rest). In the rich countries about half the people are at work; under a quarter here is a settlement whose works and services, as described, give most of its people nothing to do; over all of them, one over-built. The rows carry each port's share: the service trades are described (shops, yards, offices, depots, taverns, clinics, schools); what is still thin against a real economy is manufacturing for people at every port (works making consumer goods), health and schooling. The operator hires from these: finite.", ["Settlement", "People", "At work", "Dependants", "Share at work", "Largest trades"], _rows)
 except Exception as _e:    # (the census tool is beside this build; without it the page lacks two reports, no more)
     print("traffic/census report:", _e)
 
@@ -2491,10 +2478,10 @@ for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yam
         _fn = _e.get("function") or {}; _k = _fn.get("kind")
         _draw += (_e.get("needs") or {}).get("power", 0)
         if _k == "power_plant":
-            _out += _fn["output"]; _waste += _fn["output"] * (1 / _fn["efficiency"] - 1)
-        elif _k in ("drive", "lift", "thrusters"):
+            _out += _fn["output"]; _waste += plant_waste(_fn)
+        elif _k in JET_KINDS:
             _n = _fi.get("nozzles", 1 if _k != "thrusters" else 4)
-            _jet += 0.5 * _fn["thrust"] * _fn["exhaust"] * _n * _fn.get("heat_to_hull", 1e-6)
+            _jet += jet_heat(_fn, _n)   # (one rule: lib.jet_heat, SFO 22; an engine record derives its own heat_to_hull)
         elif _k == "radiator":
             _reject += _fn["rejects"]
         elif _k == "coolant_loop":
@@ -2630,8 +2617,8 @@ report("goods", "Goods: where each comes from and goes", "Each good: where it co
 # 8. Confidence: where every number comes from.
 # (Elements and materials are from published sources, named in their files; a process's amounts are
 # its material's composition. Other records say for themselves, in `basis`; one that doesn't is a gap.)
-DEFAULT_TIER = {"elements": "sourced", "materials": "sourced", "processes": "derived"}
-KIND_NAME = {"elements": "Elements", "materials": "Materials", "processes": "Processes", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment", "gates": "Stargates"}
+DEFAULT_TIER = {"elements": "sourced", "materials": "sourced"}
+KIND_NAME = {"elements": "Elements", "materials": "Materials", "modules": "Industrial modules", "goods": "Goods", "hulls": "Hulls", "mill-stock": "Mill stock", "parts": "Parts", "equipment": "Ship equipment", "gates": "Stargates"}
 KEY_OF = {"gates": lambda e: "gate:" + e["slug"], "equipment": lambda e: "eq:" + e["slug"], "elements": lambda e: "el:" + e["identity"]["symbol"], "materials": lambda e: "mat:" + e["slug"], "processes": lambda e: "proc:" + e["slug"], "modules": lambda e: "mod:" + e["slug"], "goods": lambda e: "good:" + e["slug"], "hulls": lambda e: "hull:" + e["slug"], "mill-stock": lambda e: "stock:" + e["slug"], "parts": lambda e: "part:" + e["slug"]}
 
 
@@ -3118,7 +3105,7 @@ def write_html():
         "module_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["modules"]["properties"].items() if "properties" in d},
         # (Icons: SFO/icons/<a record's file name>.svg, drawn inline so they take the page's colour.)
         "icons": {f[:-4]: open(os.path.join(TREE, "SFO", "icons", f), encoding="utf-8").read().strip() for f in sorted(os.listdir(os.path.join(TREE, "SFO", "icons"))) if f.endswith(".svg")} if os.path.isdir(os.path.join(TREE, "SFO", "icons")) else {},
-        "process_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["processes"]["properties"].items() if "properties" in d},
+        "process_groups": {},   # (processes are retired; a line's route is drawn in their shape without a schema)
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},

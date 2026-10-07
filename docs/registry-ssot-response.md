@@ -1150,7 +1150,7 @@ service of artists where they work; the market category stays until an artwork i
 is met by a job (the census), the wage yours. `docs/registry-spirit.md`.
 
 **The Engine root: clocks (2026-10-06, night).** The tick tree settled with the user is now
-records: `standards/Engine/metadata/scheduling/*.yaml` (11 clocks), schema
+records: `standards/Engine/metadata/scheduling/*.yaml` (12 clocks, administration added), schema
 `Engine/schema/clock.schema.yaml`, generated as `Clock` (with `ClockScope`, `Coupling`,
 `ClockTrigger`) and read into `reg.clocks`. The ask: bind a handler to every clock key
 exhaustively (a new clock fails the build until handled, as with equipment kinds), and make

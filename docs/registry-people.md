@@ -7,7 +7,7 @@ the operator (a client) reads these and runs organisations, not loose ships.
 
 | Record | Says | Tool |
 |---|---|---|
-| `module.staff` | who runs one of each works module, round the clock (coarse, by the kind of plant) | hand, 100 modules |
+| `module.staff` | who runs one of each works module, round the clock (coarse, by the kind of plant) | hand, every module |
 | `settlement.census` | its people by trade: the staff of its works, the trades its needs are served by (one doctor to 290…), pilots from the fleets based there; the rest dependants | `tools/standards/census.py` |
 | `settlement.resupply` | where its supplies come from and how often: the fleet's cadence on the run | `census.py` |
 | `org.*.fleet` | the ships an organisation operates at day 0: hull, count, home, what they do | `census.py` for the freight line; hand for the rest |
@@ -74,5 +74,5 @@ construction 3–4%, transport 2–3%, hospitality 3%, repair 1–2%, health and
 schooling about 2%. What is still thin against the real half: **manufacturing for people** at every
 port (works making the consumer goods the shops sell, today only Eikir's food and chemical
 works and Trethi's mill), **health** (a real economy's 13%) and **schooling** (9%). Those come
-with the next parts: wear and consumer goods, Mind. The "Work" need stays unmet in the report
+with the next parts: wear and consumer goods, Mind. The "Work" need is met by a job the census counts (the report reads 0 gaps)
 until the game pays wages: what meets it is a job, which the census now counts.
