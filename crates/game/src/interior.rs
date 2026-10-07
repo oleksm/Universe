@@ -4161,7 +4161,22 @@ fn figures(f: &Fitted) -> Option<(String, Fields, f64)> {
     Some((kind, map, e.needs.power.unwrap_or(0.0)))
 }
 
-fn budget(i: &Interior, frame_mass: f64) -> Budget {
+/// The frame's mass by part: its members, its nodes, its decks (kg). One figure
+/// for the studio and the report alike.
+fn frame_masses(i: &Interior) -> (f64, f64, f64) {
+    let members: f64 = i.plan.beams.iter().filter_map(|m| stocks().iter().find(|s| s.key == m.stock).map(|s| s.per_metre * f64::from(m.a.distance(m.b)))).sum();
+    let decks: f64 = i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum();
+    let node = |ns: &[Node]| ns.iter().filter_map(|n| n.2).map(|n| n.mass).sum::<f64>();
+    let nodes = match i.node_cache.as_ref().filter(|(p, _)| *p == i.plan) {
+        Some((_, ns)) => node(ns),
+        None => node(&nodes(&i.plan.beams, &roots(&i.plan, &i.fit))),
+    };
+    (members, nodes, decks)
+}
+
+fn budget(i: &Interior) -> Budget {
+    let (members, nodes, decks) = frame_masses(i);
+    let frame_mass = members + nodes + decks;
     let num = |m: &serde_json::Map<String, serde_json::Value>, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
     let mut placed: Vec<(&Block, &Fitted, String, Fields, f64)> = Vec::new();
     for b in &i.plan.blocks {
@@ -4547,7 +4562,7 @@ pub fn report(name: &str) -> String {
             Err(e) => writeln!(out, "CASE {n}: {e}"),
         };
     }
-    let bu = budget(&i, b.mass);
+    let bu = budget(&i);
     for (l, ok) in &bu.lines {
         let _ = writeln!(out, "{} {l}", if *ok { "ok   " } else { "SHORT" });
     }
@@ -4596,9 +4611,7 @@ pub fn report(name: &str) -> String {
         let _ = writeln!(out, "CLASH modules: {}", modules.join(", "));
     }
     // (Its mass by part.)
-    let members: f64 = i.plan.beams.iter().filter_map(|m| stocks().iter().find(|s| s.key == m.stock).map(|s| s.per_metre * f64::from(m.a.distance(m.b)))).sum();
-    let decks: f64 = i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum();
-    let node_mass: f64 = nodes(&i.plan.beams, &roots(&i.plan, &i.fit)).iter().filter_map(|n| n.2).map(|n| n.mass).sum();
+    let (members, node_mass, decks) = frame_masses(&i);
     let wall_mass: f64 = walls(&i.plan).iter().map(|w| w.1 * w.2.per_square_metre).sum();
     let mods: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum();
     let _ = writeln!(out, "MASS modules {:.1} t, members {:.1} t, nodes {:.1} t, decks {:.1} t, walls {:.1} t", mods / 1000.0, members / 1000.0, node_mass / 1000.0, decks / 1000.0, wall_mass / 1000.0);
@@ -7081,10 +7094,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     // The budgets, in every tool: under the panel, each met in green, short in
     // amber; what fails, in red.
     if !plan.blocks.is_empty() || !plan.groups.is_empty() {
-        // (The frame's mass: its members and its decks' plates.)
-        let frame_mass: f64 = plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>()
-            + plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum::<f64>();
-        let b = budget(interior, frame_mass);
+        let b = budget(interior);
         let (pp, pc) = PANEL;
         let rows = b.lines.len() + b.faults.len().min(4);
         let (p, c) = (Vec2::new(pp.x, pp.y + pc.y + 6.0), Vec2::new(pc.x + 120.0, 18.0 + rows as f32 * 10.0));
