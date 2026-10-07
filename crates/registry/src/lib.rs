@@ -40,6 +40,10 @@ pub struct Registry {
     /// product it is a part of names that folder.
     #[serde(default)]
     pub folders: BTreeMap<String, String>,
+    /// Every key the registry has renamed, old to new (`renames.yaml`): for
+    /// anything that saved a key by itself.
+    #[serde(default)]
+    pub renames: BTreeMap<String, String>,
     /// Each kind's records by key (built when read or decoded: see `index`); the lookups
     /// (`reg.hull(key)`, one a kind, generated) go through it.
     #[serde(skip)]
@@ -165,6 +169,23 @@ impl Registry {
         });
         if reg.galaxy().is_none() {
             problems.push(Problem { file: root.to_path_buf(), what: "no seeding.galaxy".into() });
+        }
+        // (The renames: `renames.yaml` at the root, `was` to `is`.)
+        #[derive(Deserialize)]
+        struct Rename {
+            was: String,
+            is: String,
+        }
+        #[derive(Deserialize)]
+        struct Renames {
+            renames: Vec<Rename>,
+        }
+        let file = root.join("renames.yaml");
+        if let Ok(text) = std::fs::read_to_string(&file) {
+            match serde_norway::from_str::<Renames>(&text) {
+                Ok(r) => reg.renames.extend(r.renames.into_iter().map(|r| (r.was, r.is))),
+                Err(e) => problems.push(Problem { file, what: e.to_string() }),
+            }
         }
         if problems.is_empty() { Ok(reg) } else { Err(problems) }
     }

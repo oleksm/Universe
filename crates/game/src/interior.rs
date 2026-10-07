@@ -1278,17 +1278,25 @@ const NO_HULL: (Vec3, Vec3) = (Vec3::new(-20.0, -10.0, -40.0), Vec3::new(20.0, 1
 /// their size's matches it: a stretched one keeps the first, one made the second)
 /// made that size, each standing where it stood; how many.
 /// Placed modules whose key isn't in `fit` but is an old key the registry renamed
-/// (the base pack's aliases): given the new key, keeping their number. How many.
+/// (its `renames.yaml`, followed through renames of renames): given the new key,
+/// keeping their number. How many.
 fn rename(blocks: &mut [Block], fit: &[Fitted]) -> usize {
-    let aliases = universe_sim::world::content::base_aliases();
+    let renames = &universe_sim::world::registry::registry().renames;
     let mut renamed = 0;
     for b in blocks.iter_mut() {
-        let k = kind(&b.id);
+        let k = kind(&b.id).to_string();
         if fit.iter().any(|f| f.id == k) {
             continue;
         }
-        if let Some(new) = aliases.get(k).filter(|n| fit.iter().any(|f| f.id == **n)) {
-            b.id = format!("{new}{}", &b.id[k.len()..]);
+        let mut now = k.clone();
+        for _ in 0..8 {
+            match renames.get(&now) {
+                Some(next) => now = next.clone(),
+                None => break,
+            }
+        }
+        if now != k && fit.iter().any(|f| f.id == now) {
+            b.id = format!("{now}{}", &b.id[k.len()..]);
             renamed += 1;
         }
     }
