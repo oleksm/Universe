@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.galley.s1
+  name: "Galley"
+  maker: org.hadley
+  revision: draft
+  slot: cargo
+  description: "Where food is kept cold, heated and eaten, for a crew of six in turns."
+size_class: 1
+fits: mount.cargo-s1
+physical:
+  mass: 250
+  volume: 2.7
+  length: 1.5
+  width: 0.9
+  height: 2
+needs:
+  power: 3000
+built_of:
+  parts: cargo-galley-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: galley
+  persons: 6
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "An airliner's galley unit: about 250 kg fitted, 3 kW of ovens and a chiller (from memory of a galley insert's weights). Feeds six in turns; two for a larger crew. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

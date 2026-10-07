@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.cargo.cabin.s4
+  name: "Passenger cabin 200"
+  maker: org.hadley
+  revision: outdated
+  slot: cargo
+size_class: 4
+fits: mount.cargo-s4
+physical:
+  mass: 26000
+  volume: 199.0
+  length: 26.9
+  width: 3.7
+  height: 2.0
+needs:
+  power: 400000
+built_of:
+  parts: cargo-cabin-s4
+making:
+  module: module.assembly-shop
+function:
+  kind: cabin
+  seats: 200
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "200 seats, 6 abreast with two aisles: 34 rows at an airliner's pitch of 0.79 m and seat width of 0.45 m (from memory), 2 m high." }
+  - { of: [life], rule: rule.life-ship-system }

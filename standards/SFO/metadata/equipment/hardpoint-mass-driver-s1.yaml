@@ -1,0 +1,35 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.hardpoint.mass-driver.s1
+  name: "Mass Driver"
+  maker: org.garrick
+  revision: outdated
+  slot: hardpoint
+  description: "A weapon."
+size_class: 1
+fits: mount.hardpoint-s1
+physical:
+  mass: 800
+  volume: 3.6
+  length: 10.0
+  width: 0.6
+  height: 0.6
+needs:
+  power: 50000
+built_of:
+  parts: hardpoint-mass-driver-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: gun
+  muzzle_speed: 3000
+  rate: 10
+  slug_mass: 0.5
+  magazine: 500
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
+  - { of: [built_of, making], tier: invented, review: true, note: "A first design: a rail gun. Two rails in a strong tube, a store of pulsed power, a magazine and loader, a mount. The Navy's fired 10 kg at 2.5 km/s from a bank holding 9 to 32 MJ at about a quarter efficiency; this fires 0.5 kg at 3 km/s ten times a second, and its draw on record does not yet pay for that." }
+  - { of: [function.muzzle_speed, function.rate, function.slug_mass, function.magazine], tier: sourced, review: true, source: "the game: crates/world/src/weapons.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: invented, review: true, note: "A rail gun's barrel: the Navy's is about 10 m long for 32 MJ (from memory: its length was not found in a source). At the same acceleration a 3 km/s slug wants 14 m; 10 m taken, with the breech and loader within 0.6 m round it." }
+  - { of: [life], rule: rule.life-ship-system }

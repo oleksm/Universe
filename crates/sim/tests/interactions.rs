@@ -363,16 +363,16 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     let station = u.ship_system().station().unwrap();
     let m = |k: &str| content().handle::<universe_sim::world::modules::Module>(k).unwrap();
     // Not docked: refused.
-    assert!(u.refit("cargo", Some(m("equipment.rack.s2"))).is_err());
+    assert!(u.refit("cargo", Some(m("equipment.cargo.rack.s2"))).is_err());
     u.ship = u.world.ship_on(home, Facility::Station(station), 0);
     let credits = u.credits();
     // Smaller racks: lighter, a smaller hold, and the old racks sold back;
     // at this station's price (its maker's home is some gates off).
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
-    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.rack.s2")));
+    let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.cargo.rack.s2")));
     let before = u.ship.spec().dry_mass;
-    let cost = u.refit("cargo", Some(m("equipment.rack.s2"))).unwrap();
+    let cost = u.refit("cargo", Some(m("equipment.cargo.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
     assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
@@ -383,11 +383,11 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     let ship = u.ship.clone();
     u.ship = { let mut s = u.world.ship_on(home, trethi, 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
     let item = |k: &str| universe_sim::world::goods::item(k).unwrap();
-    let (s3, s2) = (item("equipment.rack.s3"), item("equipment.rack.s2"));
-    assert!(u.refit("cargo", Some(m("equipment.rack.s3"))).is_err(), "none in stock");
+    let (s3, s2) = (item("equipment.cargo.rack.s3"), item("equipment.cargo.rack.s2"));
+    assert!(u.refit("cargo", Some(m("equipment.cargo.rack.s3"))).is_err(), "none in stock");
     let mass = u.world.goods[s3].mass;
     u.markets.economy.put(home, trethi, s3, mass);
-    u.refit("cargo", Some(m("equipment.rack.s3"))).unwrap();
+    u.refit("cargo", Some(m("equipment.cargo.rack.s3"))).unwrap();
     let stock = |u: &Universe, i: usize| u.markets.economy.place(home, trethi).unwrap().stock.of(i);
     assert!(stock(&u, s3) < 1.0 && (stock(&u, s2) - u.world.goods[s2].mass).abs() < 1e-6, "the rack from the warehouse, the old one into it");
     assert!(u.buy_hull(content().handle("hull.hauler").unwrap()).unwrap_err().contains("IN STOCK"));
@@ -399,13 +399,13 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     let e = u.refit("power", None).unwrap_err();
     assert!(e.contains("Power"), "{e}");
     // A basic nav computer: it docks and lands, but runs no route.
-    u.refit("avionics", Some(m("equipment.nav.basic.s1"))).unwrap();
+    u.refit("avionics", Some(m("equipment.avionics.nav-basic.s1"))).unwrap();
     assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
     // Unwelcome here.
     u.standings.set(universe_sim::PLAYER, home, -20.0);
     // Saved and loaded, the fit stays, and the standing.
     let json = serde_json::to_string(&u.save()).unwrap();
-    assert!(json.contains("equipment.nav.basic.s1"));
+    assert!(json.contains("equipment.avionics.nav-basic.s1"));
     let mut back = bench(0);
     back.load(serde_json::from_str(&json).unwrap());
     assert_eq!(back.ship.spec().hold_capacity, 10_000.0);

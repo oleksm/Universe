@@ -99,8 +99,8 @@ were fixed the same night (§0). Everything else is a proposal until the user pi
   kelvin; `capacity` is kg, J, messages/s, W or an object; `life` is seconds, an object or biology;
   `fit`, `address`, `batch`, `details`, `extent`, `trade_bans` each have two shapes; `revision`
   means a design stage, a record's firmness, or free text.
-- **Keys**: equipment follows five patterns (`equipment.tank.water.tank.s1`, `equipment.tank.s1`,
-  `equipment.store.food.s1`, `equipment.engine.ft.s1`, `equipment.throat-coil`); 77 distinct key
+- **Keys**: equipment follows five patterns (`equipment.tank.water.s1`, `equipment.tank.deuterium.s1`,
+  `equipment.cargo.food-store.s1`, `equipment.engine.ft.s1`, `equipment.gate.throat-coil.s3`); 77 distinct key
   middles for 151 records; file names differ from keys for gear, ore bays, doors, lockers, 13
   makers, gates and all parcels; mill-stock files upper case, keys lower.
 - **Rule**: `equipment.<slot>.<family>.<size>`; file name = key's last part; `persons`, `period`,

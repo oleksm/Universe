@@ -58,7 +58,7 @@ mill, a new extrusion press, a new filament winder, all at the Trethi mill).
 
 ## 4. Ore bays in ten sizes
 
-`equipment.bay.hopper.5t` … `300t`: hoppers with top doors and a discharge gate, in cargo slots
+`equipment.cargo.ore-bay.5t` … `300t`: hoppers with top doors and a discharge gate, in cargo slots
 (class 1 to 10 t, 2 to 35 t, 3 to 100 t, 4 above), volume at 2,000 kg/m³ of broken rock, mass a
 tenth of capacity, five parts each. Pick the one that fits the mount.
 
@@ -210,18 +210,18 @@ In your order. All figures from memory of the space station's and airliners' pra
 review; made by `tools/standards/crew.py`, parts and chains closed, mounts regenerated.
 
 1. **Life support capacity:** `function.persons` and `function.cooling` (W of cabin heat it carries
-   away and dries) on `equipment.life.s1` (3 people, 1,500 W) and `.s2` (persons by its mass at
+   away and dries) on `equipment.life-support.s1` (3 people, 1,500 W) and `.s2` (persons by its mass at
    270 kg a head, 500 W a head). Check: units × persons ≥ crew.
 2. **Command station:** slot kind **`command`** (new; mounts `mount.command-s1/2/3`), kind
    `command_station` with `persons`, `g_rating` (m/s², the seats' rating) and `facing`
    (thrust / forward / any). `equipment.command.s1` pilot's station (1, 88 m/s² = 9 g, 180 kg,
    1.2 × 1.0 × 1.5 m, 1.5 kW); `.s2` pilot and co-pilot (2, 9 g, 340 kg, 2.2 × 1.2 × 1.5, 2.5 kW);
    `.s3` bridge of four (4, 6 g, 900 kg, 3.5 × 3.0 × 2.2, 6 kW). All `facing: thrust`.
-3. **Quarters:** kind `berths {persons}` in a cargo slot: `equipment.berths.2 / .4 / .6` (260 /
+3. **Quarters:** kind `berths {persons}` in a cargo slot: `equipment.cargo.berths.2 / .4 / .6` (260 /
    520 / 780 kg; 2 × 1 × 2, 2 × 2 × 2, 3 × 2 × 2 m; 50 W a head). Kind `galley {persons}`:
-   `equipment.galley.s1` (6, 250 kg, 1.5 × 0.9 × 2.0, 3 kW). Kind `head {persons}`:
-   `equipment.head.s1` (6, 200 kg, 1.2 × 1.0 × 2.0, 500 W; its water is `need.washing`). Food:
-   `equipment.store.food.s1`, kind `store`, `holds: market.food` (a store may now hold a market
+   `equipment.cargo.galley.s1` (6, 250 kg, 1.5 × 0.9 × 2.0, 3 kW). Kind `head {persons}`:
+   `equipment.cargo.head.s1` (6, 200 kg, 1.2 × 1.0 × 2.0, 500 W; its water is `need.washing`). Food:
+   `equipment.cargo.food-store.s1`, kind `store`, `holds: market.food` (a store may now hold a market
    category), `capacity: 1000` kg (667 person-days at `need.food` 1.5 kg/day), 150 kg,
    1.5 × 1.2 × 2.0. Medical bay: later, as you said.
 4. **Leaks and heat:** `hull.leak_rate` (kg/s per m³ of pressurised volume; the station's 0.27 kg
@@ -277,7 +277,7 @@ on the deck across the thrust), or ask for a turning command station and I'll ad
 
 Sourced: the FT S3 is Discovery II (NASA/TM-2005-213559) and the CH S2 the RL10; the rest from
 memory of flown engines (NERVA, Raptor), marked review. **Swivels** (kind `swivel`, slot `engine`):
-`equipment.swivel.s1..s4` turn 90° and bear 30 / 120 / 500 / 2,500 kN at 70 / 160 / 450 / 1,800 kg,
+`equipment.engine.swivel.s1..s4` turn 90° and bear 30 / 120 / 500 / 2,500 kN at 70 / 160 / 450 / 1,800 kg,
 0.1 rad/s. **Propellants** as materials and stock with tanks: `stock.methalox-liq`, `.hydrolox-liq`,
 `.hydrogen-liq`, `.nitrogen-gas`; tanks `equipment.tank.methalox.s1/s2` (40 / 76 t),
 `.hydrolox.s1/s2` (15.7 / 29 t), `.hydrogen.s1/s2` (3.5 / 6.5 t), `.nitrogen.s1` (300 kg at

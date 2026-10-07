@@ -1,0 +1,30 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.access.bay-door.s3
+  name: "Bay door S3"
+  maker: org.halvard
+  revision: draft
+  slot: access
+  description: "A door in the hull over a bay."
+size_class: 3
+fits: mount.access-s3
+physical:
+  mass: 12000
+  volume: 28.8
+  length: 12.0
+  width: 8.0
+  height: 0.3
+built_of:
+  parts: access-bay-door-s3
+making:
+  module: module.assembly-shop
+function:
+  kind: "bay_door"
+  width: 12
+  height: 8
+  opens_in: 50
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 12 by 8 m opening in the hull: the leaves at 30 kg/m2 of aluminium plate with their frame (chosen), opening in 50 s." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

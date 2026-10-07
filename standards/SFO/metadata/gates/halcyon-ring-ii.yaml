@@ -14,10 +14,10 @@ performance:
 built_of:
   parts: halcyon-ring
 fit:
-  - { item: equipment.throat-coil, count: 60 }
-  - { item: equipment.relay.gate, count: 1 }
-  - { item: equipment.relay.hyper, count: 1 }
-  - { item: equipment.transceiver.beacon, count: 1 }
+  - { item: equipment.gate.throat-coil.s3, count: 60 }
+  - { item: equipment.gate.relay.gate, count: 1 }
+  - { item: equipment.gate.relay.hyper, count: 1 }
+  - { item: equipment.gate.transceiver.beacon, count: 1 }
 power:
   station: module.fusion-power-station
 making:

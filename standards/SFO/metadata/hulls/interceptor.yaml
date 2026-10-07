@@ -64,18 +64,18 @@ fit:
   - { slot: drive, item: equipment.drive.torch.s2 }
   - { slot: thrusters, item: equipment.thrusters.quad.s2 }
   - { slot: lift, item: equipment.lift.belly.s1 }
-  - { slot: tank, item: equipment.tank.s0 }
-  - { slot: cargo, item: equipment.rack.s1 }
+  - { slot: tank, item: equipment.tank.deuterium.s0 }
+  - { slot: cargo, item: equipment.cargo.rack.s1 }
   - { slot: hyperdrive, item: equipment.hyperdrive.s1 }
   - { slot: capacitor, item: equipment.capacitor.s1 }
   - { slot: computer, item: equipment.computer.fbw.fast }
   - { slot: transponder, item: equipment.transponder.s1 }
   - { slot: sensors, item: equipment.sensors.radar.s1 }
   - { slot: comm, item: equipment.comm.basic.s1 }
-  - { slot: life, item: equipment.life.s1 }
-  - { slot: hardpoint_1, item: equipment.gun.mass-driver.s1 }
-  - { slot: hardpoint_2, item: equipment.laser.pulse.s1 }
-  - { slot: avionics, item: equipment.nav.full.s1 }
+  - { slot: life, item: equipment.life-support.s1 }
+  - { slot: hardpoint_1, item: equipment.hardpoint.mass-driver.s1 }
+  - { slot: hardpoint_2, item: equipment.hardpoint.pulse-laser.s1 }
+  - { slot: avionics, item: equipment.avionics.nav-full.s1 }
 design:
   loaded_mass: 45890.0
   main_thrust: 2700000.0

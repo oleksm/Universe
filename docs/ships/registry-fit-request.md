@@ -20,7 +20,7 @@ MC-07 with a different fit and a different hold, so the studio and the flying sh
 | Hold, volume | `capacity.hold_volume`: 669 m³ (the ore bay; its depth is a guess marked to review) | 6 m³, the racks' volume | `crates/world/src/ship.rs:504` |
 | Dry mass | Parts plus the 12 fitted items (11.44 t of equipment) | 153.6 t, which includes the racks' 0.35 t | follows from the fit |
 
-Fuel agrees: both say 4,000 kg (`capacity.fuel`, the `equipment.tank.s0` it fits).
+Fuel agrees: both say 4,000 kg (`capacity.fuel`, the `equipment.tank.deuterium.s0` it fits).
 
 ## What is asked
 

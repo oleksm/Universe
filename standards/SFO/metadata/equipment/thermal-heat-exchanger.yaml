@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.heat.exchanger
+  name: "Heat exchanger"
+  maker: org.aurel
+  revision: draft
+  slot: thermal
+  description: "Passes heat from one loop to another."
+size_class: 1
+fits: mount.thermal-s1
+physical:
+  mass: 800
+  volume: 1.5
+  length: 1.5
+  width: 1.0
+  height: 1.0
+built_of:
+  parts: thermal-heat-exchanger
+making:
+  module: module.assembly-shop
+function:
+  kind: "heat_exchanger"
+  transfers: 5000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Passes 5 MW between two loops: a shell-and-tube exchanger of about this size. From memory. Not sourced." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -208,14 +208,14 @@ def records():
                   [("Bunks and lockers", "A bunk, a locker and a reading light a head.", 0.45, AL, MC), ("Partition and door", "The wall round them.", 0.40, SH, WB), ("Linings, bedding, lights", "", 0.15, MLI, AS)], f"BRT{persons}",
                   f"Where {persons} of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is.",
                   f"130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen.")
-    equipment("galley", "equipment.galley.s1", "Galley", "cargo", 1, 250, 1.5, 0.9, 2.0, 3000, {"kind": "galley", "persons": 6},
+    equipment("galley", "equipment.cargo.galley.s1", "Galley", "cargo", 1, 250, 1.5, 0.9, 2.0, 3000, {"kind": "galley", "persons": 6},
               [("Cabinet and worktop", "", 0.40, AL, MC), ("Cold store and ovens", "A refrigerator and two heaters.", 0.45, HP, AS), ("Water fittings", "A tap, a drain to the waste water.", 0.15, ST, MC)], "GAL1",
               "Where food is kept cold, heated and eaten, for a crew of six in turns.", "An airliner's galley unit: about 250 kg fitted, 3 kW of ovens and a chiller (from memory of a galley insert's weights). Feeds six in turns; two for a larger crew. Chosen.")
-    equipment("head", "equipment.head.s1", "Head", "cargo", 1, 200, 1.2, 1.0, 2.0, 500, {"kind": "head", "persons": 6},
+    equipment("head", "equipment.cargo.head.s1", "Head", "cargo", 1, 200, 1.2, 1.0, 2.0, 500, {"kind": "head", "persons": 6},
               [("Compartment and door", "", 0.45, SH, WB), ("Toilet and basin", "A space toilet with its fans and separator; a basin.", 0.40, PU, AS), ("Fittings and linings", "", 0.15, ST, MC)], "HED1",
               "Toilet and washing for a crew of six. Its water is the people's need; its waste water goes to life support's recovery or the waste tank.",
               "A compartment of 1.2 by 1.0 m with a space toilet (the station's is about 100 kg with its fans and separator; from memory) and a basin; 500 W of fans and heating. Serves six; one more for every six. Chosen.")
-    equipment("food-store", "equipment.store.food.s1", "Food store", "cargo", 1, 150, 1.5, 1.2, 2.0, 200, {"kind": "store", "capacity": 1000, "holds": "market.food"},
+    equipment("food-store", "equipment.cargo.food-store.s1", "Food store", "cargo", 1, 150, 1.5, 1.2, 2.0, 200, {"kind": "store", "capacity": 1000, "holds": "market.food"},
               [("Racks and bins", "Shelving and sealed bins.", 0.6, AL, MC), ("Chilled section", "A chiller for what must be kept cold.", 0.3, HP, AS), ("Fittings", "", 0.1, ST, MC)], "FST1",
               "A larder: racks and sealed bins holding a tonne of food of any kind sold as food (market.food), part of it chilled. 1,000 kg is 667 person-days at need.food's 1.5 kg a day.",
               "A tonne of packed food at about 350 kg/m3 (from memory of packaged provisions) in 3.6 m3 of racks, a tenth of it chilled; the racks and bins 150 kg. Chosen.")

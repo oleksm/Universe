@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.switchgear.s1
+  name: "Switchgear"
+  maker: org.meridian
+  revision: draft
+  slot: power
+  description: "Distributes power from plant to loads, and breaks a fault."
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 700
+  volume: 2.4
+  length: 1.5
+  width: 0.8
+  height: 2.0
+built_of:
+  parts: power-switchgear-s1
+making:
+  module: module.assembly-shop
+function:
+  kind: "switchgear"
+  carries: 15000000.0
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 15 MW, the S3 plant's output, and breaks a fault. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
