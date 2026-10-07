@@ -4372,6 +4372,93 @@ fn si(v: f64, unit: &str) -> String {
 /// A module's sheet, beside the panel: its name, maker, kind and mount; its shape,
 /// turning; its size, mass, volume and the power it draws; its record's figures;
 /// its description. Placed and stretched (`block`): the size it's placed at too.
+/// A design's report, without a window (`freefall --report <design>`): its load cases,
+/// budgets and faults, what's past its design limit, its clashes, what isn't held,
+/// its mass by part. What the studio shows, as text, for checking a change fast.
+pub fn report(name: &str) -> String {
+    use std::fmt::Write as _;
+    let mut i = Interior::new();
+    i.open_design(name);
+    i.refit();
+    let mut out = String::new();
+    if i.plan.blocks.is_empty() && i.plan.beams.is_empty() {
+        return format!("no design named {name} (or it's empty)\n");
+    }
+    let b = bearing(&i.plan, &i.fit, i.spec(), i.plan.gravity());
+    let clash = member_clashes(&i.plan);
+    i.member_clash = Some((i.plan.clone(), clash.clone()));
+    i.node_cache = Some((i.plan.clone(), nodes(&i.plan.beams, &roots(&i.plan, &i.fit))));
+    i.bearing = Some((i.plan.clone(), std::sync::Arc::new(b.clone())));
+    let _ = writeln!(out, "DESIGN {name}: {} modules, {} members, {} decks, design gravity {:.2} g", i.plan.blocks.len(), i.plan.beams.len(), i.plan.plates.len(), i.plan.gravity() / STANDARD_G);
+    // (The load cases: each one's worst member, against its design limit and breaking.)
+    for ((n, r), felt) in b.cases.iter().zip(b.felt.iter()) {
+        let _ = match r {
+            Ok(c) => {
+                let worst = c.members.iter().map(|o| o.work.design).fold(0.0, f64::max);
+                let near = c.members.iter().map(|o| o.work.breaking).fold(0.0, f64::max);
+                let broken = c.members.iter().filter(|o| o.broken.is_some()).count();
+                writeln!(out, "CASE {n} {:.2} g: worst {:.0}% of design limit, {:.0}% of breaking{}", felt / STANDARD_G, worst * 100.0, near * 100.0, if broken > 0 { format!(", {broken} break") } else { String::new() })
+            }
+            Err(e) => writeln!(out, "CASE {n}: {e}"),
+        };
+    }
+    let bu = budget(&i, b.mass);
+    for (l, ok) in &bu.lines {
+        let _ = writeln!(out, "{} {l}", if *ok { "ok   " } else { "SHORT" });
+    }
+    for f in &bu.faults {
+        let _ = writeln!(out, "FAULT {f}");
+    }
+    for l in &b.loose {
+        let _ = writeln!(out, "LOOSE {l}");
+    }
+    // (Members past their design limit: where, what, how hard, in which case.)
+    for (k, m) in i.plan.beams.iter().enumerate() {
+        let os = b.outcomes(k);
+        if let Some((case, o)) = b.cases.iter().map(|c| c.0.as_str()).zip(os.iter()).filter(|(_, o)| o.work.design > 1.0).max_by(|a, b| a.1.work.design.total_cmp(&b.1.work.design)) {
+            let _ = writeln!(out, "OVER member {k} {:.2},{:.2},{:.2} -> {:.2},{:.2},{:.2} ({:.2} m, {}): {case} {:.0}% design, {:.0}% break, push/pull {:.0} kN, bending {:.1} kN m", m.a.x, m.a.y, m.a.z, m.b.x, m.b.y, m.b.z, m.a.distance(m.b), m.stock.trim_start_matches("stock."), o.work.design * 100.0, o.work.breaking * 100.0, o.work.forces.axial / 1000.0, o.work.forces.bending / 1000.0);
+        }
+    }
+    // (Decks past their design limit: each one's hardest worked strip, and in which
+    // case; and anything else of the frame that isn't one of its members (a deck's
+    // fittings).)
+    for n in 0..i.plan.plates.len() {
+        let worst = b.strips.iter().filter(|s| s.0 == n).flat_map(|s| b.cases.iter().map(|c| c.0.as_str()).zip(b.of_member(s.4))).max_by(|x, y| x.1.work.design.total_cmp(&y.1.work.design));
+        if let Some((case, o)) = worst.filter(|w| w.1.work.design > 1.0) {
+            let _ = writeln!(out, "OVER deck {} ({}): {case} its hardest strip {:.0}% design, {:.0}% break", n + 1, i.plan.plates[n].stock.trim_start_matches("stock."), o.work.design * 100.0, o.work.breaking * 100.0);
+        }
+    }
+    let planned: std::collections::HashSet<usize> = b.index.iter().flatten().copied().chain(b.strips.iter().map(|s| s.4)).collect();
+    for (case, r) in &b.cases {
+        if let Ok(c) = r {
+            let other = c.members.iter().enumerate().filter(|(m, o)| !planned.contains(m) && o.work.design > 1.0).count();
+            if other > 0 {
+                let _ = writeln!(out, "OVER {other} deck fittings in {case}");
+            }
+        }
+    }
+    // (Clashes: how many of each, and the first few of each.)
+    for (w, say) in [(Passes::Module, "through a module"), (Passes::Room, "into a room"), (Passes::Deck, "through a deck"), (Passes::Member, "into another member")] {
+        let ks: Vec<usize> = (0..clash.len()).filter(|&k| clash[k] == Some(w)).collect();
+        if !ks.is_empty() {
+            let eg: Vec<String> = ks.iter().take(3).map(|&k| { let m = &i.plan.beams[k]; format!("{k} {:.1},{:.1},{:.1}->{:.1},{:.1},{:.1}", m.a.x, m.a.y, m.a.z, m.b.x, m.b.y, m.b.z) }).collect();
+            let _ = writeln!(out, "CLASH {} members {say}: {}", ks.len(), eg.join("; "));
+        }
+    }
+    let modules: Vec<String> = i.plan.blocks.iter().zip(block_clashes(i.spec().and_then(|s| s.shape().walk.as_deref()), &i)).filter(|(_, c)| *c).map(|(b, _)| b.id.clone()).collect();
+    if !modules.is_empty() {
+        let _ = writeln!(out, "CLASH modules: {}", modules.join(", "));
+    }
+    // (Its mass by part.)
+    let members: f64 = i.plan.beams.iter().filter_map(|m| stocks().iter().find(|s| s.key == m.stock).map(|s| s.per_metre * f64::from(m.a.distance(m.b)))).sum();
+    let decks: f64 = i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum();
+    let node_mass: f64 = nodes(&i.plan.beams, &roots(&i.plan, &i.fit)).iter().filter_map(|n| n.2).map(|n| n.mass).sum();
+    let wall_mass: f64 = walls(&i.plan).iter().map(|w| w.1 * w.2.per_square_metre).sum();
+    let mods: f64 = i.plan.blocks.iter().filter_map(|b| i.fit.iter().find(|f| f.id == kind(&b.id))).map(|f| f.mass).sum();
+    let _ = writeln!(out, "MASS modules {:.1} t, members {:.1} t, nodes {:.1} t, decks {:.1} t, walls {:.1} t", mods / 1000.0, members / 1000.0, node_mass / 1000.0, decks / 1000.0, wall_mass / 1000.0);
+    out
+}
+
 /// A sheet beside the panel: a title, a line under it, and rows of text, each in its
 /// colour (the module sheet's place and look).
 fn draw_rows(frame: &mut Frame, down: f32, title: &str, under: &str, colour: Color, rows: &[(String, Color)]) {

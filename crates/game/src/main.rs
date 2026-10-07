@@ -1652,6 +1652,14 @@ fn main() {
         .init();
     // (The cores shared out before anything starts using them: see `thread_budget`;
     // what the game may use at all, noted before the shipyard holds it to fewer.)
+    // (`--report <design>`: the interior studio's report on a design, as text; no
+    // window. For checking a change without a game run.)
+    let args: Vec<String> = std::env::args().collect();
+    if let Some(k) = args.iter().position(|a| a == "--report") {
+        let name = args.get(k + 1).map_or("design-1", String::as_str);
+        print!("{}", interior::report(name));
+        return;
+    }
     universe_sim::engine::size_thread_pools();
     hold_to_cores(None);
     // (Slow frames written down beside the quicksave: hitches.log.)
