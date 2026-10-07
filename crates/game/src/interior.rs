@@ -263,6 +263,8 @@ pub struct Interior {
     /// made by a generator (MOUNT ALL, BRACE, AUTO-SIZE), not mirrored.
     mirror: u8,
     bulk: bool,
+    /// FIT FRAME under way: for which plan, its news, and its stop.
+    fitting: Option<(Plan, mpsc::Receiver<Fitting>, Arc<std::sync::atomic::AtomicBool>)>,
 }
 
 /// The mirror images of `p` across the planes `mirror` names (none of them `p`).
@@ -472,6 +474,18 @@ fn budget_panel(size: Vec2, lines: usize, issues: usize, top: usize) -> (Rect, R
 }
 
 impl Interior {
+    /// The tool in hand set by name (dev: `freefall --studio` with UNIVERSE_TOOL):
+    /// select, path, door, modules, frame.
+    pub fn use_tool(&mut self, name: &str) {
+        self.tool = match name {
+            "path" => Tool::Path,
+            "door" => Tool::Door,
+            "modules" => Tool::Modules,
+            "frame" => Tool::Frame,
+            _ => Tool::Look,
+        };
+    }
+
     /// Go to issue `n` (dev: `freefall --studio` with UNIVERSE_ISSUE), once the
     /// checks list that many and the frame's loads are worked out; gone to?
     pub fn go_to_issue(&mut self, n: usize) -> bool {
@@ -1484,6 +1498,81 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
 /// need more than the biggest tube (or plate) their material comes in.
 type Sized = (Vec<Beam>, Vec<Plate>, usize, usize);
 
+/// FIT FRAME's news: a step under way, or done (the plan fitted, none: stopped;
+/// and the rounds it took).
+enum Fitting {
+    Step(String),
+    Done(Option<Plan>, usize),
+}
+
+/// The frame fitted in one go: joints knit, every module mounted (members of
+/// `stock`, `spacing` apart), then sized and braced in turn until bracing adds
+/// nothing (six rounds at most), and sized once more after the last brace. Each
+/// step said through `say`; `stop` set: given up (none).
+fn fit_frame(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, mix: bool, stock: &str, spacing: f32, stop: &std::sync::atomic::AtomicBool, say: &dyn Fn(Fitting)) -> Option<(Plan, usize)> {
+    use std::sync::atomic::Ordering;
+    let mut plan = plan.clone();
+    say(Fitting::Step("MOUNTING EVERY MODULE".into()));
+    plan.beams = knit(std::mem::take(&mut plan.beams)).0;
+    plan.beams = mounts(&plan, fit, spacing, stock).0;
+    plan.beams = knit(std::mem::take(&mut plan.beams)).0;
+    let mut rounds = 0;
+    let mut braced = true;
+    while braced && rounds < 6 {
+        if stop.load(Ordering::Relaxed) {
+            return None;
+        }
+        rounds += 1;
+        say(Fitting::Step(format!("ROUND {rounds}: SIZING")));
+        let (bs, ps, _, _) = auto_size(&plan, fit, spec, mix);
+        (plan.beams, plan.plates) = (bs, ps);
+        if stop.load(Ordering::Relaxed) {
+            return None;
+        }
+        say(Fitting::Step(format!("ROUND {rounds}: BRACING WHAT'S OVER")));
+        let b = bearing(&plan, fit, spec, plan.gravity());
+        let (bs, n) = brace(&plan, &b);
+        braced = n > 0;
+        plan.beams = bs;
+    }
+    if braced {
+        say(Fitting::Step("SIZING THE LAST BRACES".into()));
+        let (bs, ps, _, _) = auto_size(&plan, fit, spec, mix);
+        (plan.beams, plan.plates) = (bs, ps);
+    }
+    Some((plan, rounds))
+}
+
+/// Fit a saved design's frame from the command line (`freefall --fit <design>`):
+/// each step timed as it goes; the design as it was kept beside it
+/// (`backups/<design>.json`), then saved fitted. What it says.
+pub fn fit_design(name: &str) -> String {
+    let mut i = Interior::new();
+    i.open_design(name);
+    i.refit();
+    if i.plan.blocks.is_empty() {
+        return format!("no design named {name} (or it has no modules)\n");
+    }
+    let backup = Interior::file(name).with_file_name("backups").join(format!("{name}.json"));
+    if let Err(e) = std::fs::create_dir_all(backup.parent().expect("a folder")).and_then(|_| std::fs::copy(Interior::file(name), &backup)) {
+        return format!("not fitted: couldn't keep the design as it was ({e})\n");
+    }
+    let start = std::time::Instant::now();
+    let say = |f: Fitting| {
+        if let Fitting::Step(s) = f {
+            println!("{:6.1} s  {s}", start.elapsed().as_secs_f64());
+        }
+    };
+    let stock = stocks().first().map_or(String::new(), |s| s.key.clone());
+    let stop = std::sync::atomic::AtomicBool::new(false);
+    let was = frame_masses(&i);
+    let Some((plan, rounds)) = fit_frame(&i.plan, &i.fit, i.spec(), true, &stock, i.spacing.max(1.0), &stop, &say) else { return "stopped\n".into() };
+    i.plan = plan;
+    i.save();
+    let now = frame_masses(&i);
+    format!("{:6.1} s  FITTED IN {rounds} ROUNDS: FRAME {:.1} T (WAS {:.1} T); SAVED, THE OLD ONE IN {}\n", start.elapsed().as_secs_f64(), (now.0 + now.1 + now.2) / 1000.0, (was.0 + was.1 + was.2) / 1000.0, backup.display())
+}
+
 /// The plan's members sized: each round every load case worked out, and each
 /// member cut from the lightest tube of its material that would carry the forces
 /// it carries in each case at four fifths of its design limit (the biggest if none
@@ -1964,15 +2053,21 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         }
         collapse(&frame, &case, sf).map_err(|_| "NOT HELD TOGETHER: SOME OF IT MOVES FREELY".to_string())
     };
-    out.cases = vec![
-        (CASES[0].into(), run(landing, true)),
-        (CASES[1].into(), run(Ok(thrust), !main.is_empty())),
-        (CASES[2].into(), if lift.is_empty() { Err(NOT_HOVERING.to_string()) } else { run(Ok(hover), true) }),
-    ];
+    // (The cases worked out side by side, each on a thread of its own.)
+    let (no_main, no_lift, decked) = (main.is_empty(), lift.is_empty(), !floor.is_empty());
+    let (landed, thrusting, hovering, standing) = std::thread::scope(|s| {
+        let l = s.spawn(|| run(landing, true));
+        let t = s.spawn(|| run(Ok(thrust), !no_main));
+        let h = s.spawn(|| if no_lift { Err(NOT_HOVERING.to_string()) } else { run(Ok(hover), true) });
+        let f = decked.then(|| s.spawn(|| run(floored, true)));
+        let done = |r: std::thread::Result<_>| r.unwrap_or_else(|_| Err("THE SOLVE FAILED".to_string()));
+        (done(l.join()), done(t.join()), done(h.join()), f.map(|f| done(f.join())))
+    });
+    out.cases = vec![(CASES[0].into(), landed), (CASES[1].into(), thrusting), (CASES[2].into(), hovering)];
     // (No decks: no floor to check.)
-    if !floor.is_empty() {
+    if let Some(standing) = standing {
         out.felt.push(g);
-        out.cases.push((CASES[3].into(), run(floored, true)));
+        out.cases.push((CASES[3].into(), standing));
     }
     // (Standing, each deck point's floor load pushes on what holds it there: its
     // posts and fittings, shared.)
@@ -4141,6 +4236,7 @@ const PRESETS: [(&str, Profile, bool); 5] = [
 /// The panel's actions: the work plane down and up, what's picked out.
 #[derive(Clone, Copy, PartialEq)]
 enum Action {
+    FitFrame,
     PlaneDown,
     PlaneUp,
     Remove,
@@ -5234,11 +5330,12 @@ fn panel_buttons(tool: Tool) -> Vec<((Vec2, Vec2), &'static str, Action)> {
     match tool {
         Tool::Frame => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
+            let w4 = (c.x - 16.0 - 18.0) / 4.0;
             let w5 = (c.x - 16.0 - 24.0) / 5.0;
             let cases = [("WORST", Action::Case(None)), ("LAND", Action::Case(Some(0))), ("THRUST", Action::Case(Some(1))), ("LIFT", Action::Case(Some(2))), ("FLOOR", Action::Case(Some(3)))];
             // (DESIGN GRAVITY's - and +: small, at the end of its row.)
             let small = |x: f32| (Vec2::new(p.x + c.x - 8.0 - x, p.y + 294.0), Vec2::new(20.0, 13.0));
-            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w5 + 6.0), w5), n, a)).chain([(at(310.0, 0.0, w3), "TRUSS", Action::Truss), (at(310.0, w3 + 6.0, w3), "BRACE", Action::Brace), (at(310.0, 2.0 * (w3 + 6.0), w3), "DECK", Action::Deck), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "MIX", Action::Mix), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
+            cases.into_iter().enumerate().map(|(k, (n, a))| (at(156.0, k as f32 * (w5 + 6.0), w5), n, a)).chain([(at(310.0, 0.0, w4), "TRUSS", Action::Truss), (at(310.0, w4 + 6.0, w4), "BRACE", Action::Brace), (at(310.0, 2.0 * (w4 + 6.0), w4), "DECK", Action::Deck), (at(310.0, 3.0 * (w4 + 6.0), w4), "MIX", Action::Mix), (at(332.0, 0.0, w3), "MOUNT ALL", Action::MountAll), (at(332.0, w3 + 6.0, w3), "AUTO-SIZE", Action::AutoSize), (at(332.0, 2.0 * (w3 + 6.0), w3), "FIT FRAME", Action::FitFrame), (small(44.0), "-", Action::GravityDown), (small(20.0), "+", Action::GravityUp)]).collect()
         }
         Tool::Modules => {
             let w3 = (c.x - 16.0 - 12.0) / 3.0;
@@ -5737,6 +5834,36 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
         };
         interior.checked = Some((interior.plan.clone(), found));
     }
+    // FIT FRAME's news: each step said; done, its frame put in (an undo step), if the
+    // plan's as it was.
+    let mut fitted = None;
+    if let Some((plan, rx, _)) = &interior.fitting {
+        while let Ok(f) = rx.try_recv() {
+            match f {
+                Fitting::Step(s) => interior.message = Some((format!("FIT FRAME: {s} (CLICK AGAIN TO STOP)"), 600.0)),
+                Fitting::Done(p, rounds) => fitted = Some((plan.clone(), p, rounds)),
+            }
+        }
+    }
+    if let Some((was, p, rounds)) = fitted {
+        interior.fitting = None;
+        match p {
+            Some(p) if was == interior.plan => {
+                let mass = |i: &Interior| {
+                    let m = frame_masses(i);
+                    (m.0 + m.1 + m.2) / 1000.0
+                };
+                let before = mass(interior);
+                interior.undo.push(interior.plan.clone());
+                interior.redo.clear();
+                interior.plan = p;
+                interior.bulk = true;
+                interior.message = Some((format!("FRAME FITTED IN {rounds} ROUNDS: {:.1} T (WAS {before:.1} T); WHAT'S LEFT IS IN THE ISSUES", mass(interior)), 10.0));
+            }
+            Some(_) => interior.message = Some(("FIT FRAME DROPPED: THE PLAN CHANGED MEANWHILE".into(), 5.0)),
+            None => interior.message = Some(("FIT FRAME STOPPED: NOTHING CHANGED".into(), 4.0)),
+        }
+    }
     // AUTO-SIZE done: its members put in (an undo step), if the plan's as it was.
     if let Some((plan, rx)) = &interior.sizing
         && let Ok((beams, plates, rounds, maxed)) = rx.try_recv()
@@ -5953,6 +6080,32 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                 interior.message = Some((if added == 0 { "EVERY MODULE IS MOUNTED (OR THERE'S NO FRAME NEAR IT)".to_string() } else { format!("{added} MOUNTING MEMBERS ADDED") }, 4.0));
                 interior.plan.beams = beams;
                 interior.bulk = true;
+            }
+            // (FIT FRAME: run (on a thread), or, running, stopped.)
+            if action == Some(Action::FitFrame) {
+                if let Some((_, _, stop)) = &interior.fitting {
+                    stop.store(true, std::sync::atomic::Ordering::Relaxed);
+                    interior.message = Some(("FIT FRAME STOPPING".into(), 3.0));
+                } else if interior.plan.blocks.is_empty() {
+                    interior.message = Some(("NOTHING TO FIT A FRAME TO: PLACE MODULES FIRST".into(), 4.0));
+                } else {
+                    let (plan, fit, spec, mix) = (interior.plan.clone(), interior.fit.clone(), interior.spec(), interior.mix);
+                    let stock = stocks().get(interior.stock).map_or(String::new(), |s| s.key.clone());
+                    let spacing = interior.spacing.max(1.0);
+                    let stop = Arc::new(std::sync::atomic::AtomicBool::new(false));
+                    let (tx, rx) = mpsc::channel();
+                    let (snapshot, halt) = (plan.clone(), stop.clone());
+                    job("studio-fit", move || {
+                        let say = |f: Fitting| {
+                            tx.send(f).ok();
+                        };
+                        let done = fit_frame(&plan, &fit, spec, mix, &stock, spacing, &halt, &say);
+                        let rounds = done.as_ref().map_or(0, |d| d.1);
+                        tx.send(Fitting::Done(done.map(|d| d.0), rounds)).ok();
+                    });
+                    interior.fitting = Some((snapshot, rx, stop));
+                    interior.message = Some(("FIT FRAME: STARTING (CLICK AGAIN TO STOP)".into(), 30.0));
+                }
             }
             if action == Some(Action::AutoSize) && interior.sizing.is_none() && !interior.plan.beams.is_empty() {
                 let (plan, fit, spec, mix) = (interior.plan.clone(), interior.fit.clone(), interior.spec(), interior.mix);

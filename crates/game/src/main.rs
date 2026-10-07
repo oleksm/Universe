@@ -1662,6 +1662,13 @@ fn main() {
         run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
         return;
     }
+    // (`--fit <design>`: its frame fitted (mounted, sized, braced) and saved, the
+    // old one kept in backups/.)
+    if let Some(k) = args.iter().position(|a| a == "--fit") {
+        let name = args.get(k + 1).map_or("design-1", String::as_str);
+        print!("{}", interior::fit_design(name));
+        return;
+    }
     if let Some(k) = args.iter().position(|a| a == "--report") {
         let name = args.get(k + 1).map_or("design-1", String::as_str);
         print!("{}", interior::report(name));

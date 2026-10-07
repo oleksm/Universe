@@ -28,6 +28,9 @@ impl StudioOnly {
         }
         // (Its modules matched to their records, as the shipyard does on opening it.)
         interior.refit();
+        if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
+            interior.use_tool(&t);
+        }
         let issue = std::env::var("UNIVERSE_ISSUE").ok().and_then(|v| v.parse().ok());
         StudioOnly { interior, spec, deckplans: Vec::new(), issue }
     }
