@@ -627,15 +627,9 @@ impl Renderer {
                     count: None,
                 },
                 wgpu::BindGroupLayoutEntry { binding: 3, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
-                // The environment's specular and diffuse cubes (see `env.rs`).
+                // The environment's cube (see `env.rs`).
                 wgpu::BindGroupLayoutEntry {
                     binding: 4,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry {
-                    binding: 5,
                     visibility: wgpu::ShaderStages::FRAGMENT,
                     ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::Cube, multisampled: false },
                     count: None,
@@ -691,7 +685,6 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 2, resource: wgpu::BindingResource::TextureView(&globe_view) },
                 wgpu::BindGroupEntry { binding: 3, resource: wgpu::BindingResource::Sampler(&globe_sampler) },
                 wgpu::BindGroupEntry { binding: 4, resource: wgpu::BindingResource::TextureView(&env.spec) },
-                wgpu::BindGroupEntry { binding: 5, resource: wgpu::BindingResource::TextureView(&env.diff) },
                 wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&globe_colors_view) },
             ],
         });

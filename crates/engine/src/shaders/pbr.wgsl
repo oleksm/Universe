@@ -38,7 +38,6 @@ struct Globals {
 // (mip by roughness), its diffuse cube.
 @group(1) @binding(3) var env_sampler: sampler;
 @group(1) @binding(4) var env_spec: texture_cube<f32>;
-@group(1) @binding(5) var env_diff: texture_cube<f32>;
 
 struct Material {
     base_color: vec4<f32>,
