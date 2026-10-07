@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.hydrolox.1t
+  name: "Hydrolox tank 1 t"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 3.1 m3 ball holding 1,000 kg of hydrolox: a small craft's propellant."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 140
+  volume: 6.97
+  length: 1.91
+  width: 1.91
+  height: 1.91
+built_of:
+  parts: tank-hydrolox-1t
+  list:
+    - { code: TKHY1T-01, name: "Shell", mass: 98, length: 1.7, width: 1.7, height: 1.7, item: stock.al6061-pl-5, quantity: 112.7, module: module.welding-bay }
+    - { code: TKHY1T-02, name: "Insulation", mass: 28, length: 1.12, width: 1.12, height: 1.12, item: stock.mli-fl, quantity: 28, module: module.assembly-shop }
+    - { code: TKHY1T-03, name: "Fittings and gauging", mass: 14, length: 0.887, width: 0.887, height: 0.887, item: stock.st304-pl-3, quantity: 16.1, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 1000
+  holds: material.hydrolox
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "hydrolox at 320 kg/m3: 3.1 m3 as a ball 1.81 m across; the tank 14% of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

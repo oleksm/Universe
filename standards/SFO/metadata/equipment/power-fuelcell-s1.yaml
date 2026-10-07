@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.fuelcell.s1
+  name: "Fuel cell"
+  maker: org.hadley
+  revision: draft
+  slot: power
+  description: "50 kW from hydrogen and oxygen at 55%, its water drinkable: a commuter's power with no reactor aboard. It burns the same hydrolox as the engines, 7 g/s at full."
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 90
+  volume: 0.2
+  length: 0.8
+  width: 0.5
+  height: 0.5
+built_of:
+  parts: power-fuelcell-s1
+  list:
+    - { code: FCL1-01, name: "Stack", mass: 45, length: 0.635, width: 0.397, height: 0.397, item: good.electronics, quantity: 45, module: module.assembly-shop }
+    - { code: FCL1-02, name: "Pumps, valves and plumbing", mass: 27, length: 0.536, width: 0.335, height: 0.335, item: good.pumps, quantity: 27, module: module.assembly-shop }
+    - { code: FCL1-03, name: "Housing and radiator", mass: 18, length: 0.468, width: 0.292, height: 0.292, item: stock.al6061-pl-5, quantity: 20.7, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: power_plant
+  output: 50000
+  efficiency: 0.55
+  burns: material.hydrolox
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "An Apollo-type cell scaled to 50 kW: about 1.8 kg a kilowatt (the shuttle's three cells gave 21 kW for 118 kg each, from memory); 55% of the hydrolox's 13 MJ/kg to power, the rest heat and warm water. Review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -186,13 +186,14 @@ definitions:
       group: "Steps nothing itself; holds its children and owns their placement."
   engine_cycle:
     description: "How an engine makes its jet (SFO 22). The cycle sets the exhaust speed's range, and so the jet power a thrust costs and the propellant it burns."
-    enum: [fusion_pulse, fusion_thermal, nuclear_thermal, chemical, cold_gas]
+    enum: [fusion_pulse, fusion_thermal, nuclear_thermal, chemical, cold_gas, ducted_fan]
     x-values:
       fusion_pulse: "The fusion products themselves are the exhaust, about 10,000 km/s: a torch. Terawatts of jet for a meganewton; deep space only; at ship scale not offered (Daedalus-class stages run to a thousand tonnes)."
       fusion_thermal: "Fusion heats hydrogen propellant thrown through a magnetic nozzle, about 350 km/s (Discovery II): gigawatts for tens of kilonewtons, hundreds of tonnes of engine. The cruise engine of a large ship."
       nuclear_thermal: "A fission reactor heats hydrogen, about 9 km/s: hundreds of kilonewtons from tens of tonnes; gigawatt jets a pad must stand."
       chemical: "Fuel burnt with its oxidiser, 3.5 to 4.5 km/s: meganewtons from a tonne of engine; the lander's engine, paying in propellant (a tonne a second for a heavy ship)."
       cold_gas: "Stored gas let out, about 0.7 km/s: newtons to kilonewtons, no flame, no heat; for attitude and docking."
+      ducted_fan: "Air driven by an electric fan in a duct, 100 to 200 m/s: kilonewtons for megawatts and no propellant, where there is air (its thrust falls with the cube root of the air's density at the same power). The lift of a commuter on a world with air."
   zone_use:
     description: "What a zone of a settlement is for; a facility of a kind goes in a zone whose use allows it."
     enum: [port, industrial, commercial, civic, residential, agricultural, mining]

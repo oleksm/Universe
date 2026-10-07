@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.nitrogen.100kg
+  name: "Nitrogen bottle 100 kg"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A composite bottle of 100 kg of nitrogen at 300 bar for cold-gas thrusters: 140 s of a 0.5 kN block at full."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 60
+  volume: 0.36
+  length: 1
+  width: 0.6
+  height: 0.6
+built_of:
+  parts: tank-nitrogen-100kg
+  list:
+    - { code: TKN100KG-01, name: "Composite pressure vessel", mass: 48, length: 0.928, width: 0.557, height: 0.557, item: stock.cfc-pl-3, quantity: 55.2, module: module.welding-bay }
+    - { code: TKN100KG-02, name: "Valve and regulator", mass: 12, length: 0.585, width: 0.351, height: 0.351, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 100.0
+  holds: material.nitrogen
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "A composite overwrapped pressure vessel at about 0.6 kg a kilogram of gas at this size. From memory; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
