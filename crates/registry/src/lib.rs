@@ -40,6 +40,10 @@ pub struct Registry {
     /// product it is a part of names that folder.
     #[serde(default)]
     pub folders: BTreeMap<String, String>,
+    /// Every key the registry has renamed, old to new (`renames.yaml`): for
+    /// anything that saved a key by itself.
+    #[serde(default)]
+    pub renames: BTreeMap<String, String>,
     /// Each kind's records by key (built when read or decoded: see `index`); the lookups
     /// (`reg.hull(key)`, one a kind, generated) go through it.
     #[serde(skip)]
@@ -166,6 +170,23 @@ impl Registry {
         if reg.galaxy().is_none() {
             problems.push(Problem { file: root.to_path_buf(), what: "no seeding.galaxy".into() });
         }
+        // (The renames: `renames.yaml` at the root, `was` to `is`.)
+        #[derive(Deserialize)]
+        struct Rename {
+            was: String,
+            is: String,
+        }
+        #[derive(Deserialize)]
+        struct Renames {
+            renames: Vec<Rename>,
+        }
+        let file = root.join("renames.yaml");
+        if let Ok(text) = std::fs::read_to_string(&file) {
+            match serde_norway::from_str::<Renames>(&text) {
+                Ok(r) => reg.renames.extend(r.renames.into_iter().map(|r| (r.was, r.is))),
+                Err(e) => problems.push(Problem { file, what: e.to_string() }),
+            }
+        }
         if problems.is_empty() { Ok(reg) } else { Err(problems) }
     }
 
@@ -198,9 +219,9 @@ impl Registry {
     /// its code (`parts/mc-07/MC07-23/`).
     pub fn built_of(&self, product: &str) -> Vec<(&Part, u32)> {
         let folder = match product.split_once('.') {
-            Some(("equipment", _)) => self.equipment(&product).and_then(|e| e.built_of.parts.clone()),
-            Some(("hull", name)) => Some(self.hull(&product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
-            Some(("part", _)) => self.part(&product).map(|p| p.identity.code.clone()),
+            Some(("equipment", _)) => self.equipment(product).and_then(|e| e.built_of.parts.clone()),
+            Some(("hull", name)) => Some(self.hull(product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
+            Some(("part", _)) => self.part(product).map(|p| p.identity.code.clone()),
             _ => None,
         };
         let Some(folder) = folder else { return Vec::new() };
@@ -216,7 +237,7 @@ impl Registry {
         match item.split('.').next() {
             // (A good is sold as its stock: the stock made from it.)
             Some("good") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
-            Some("stock") => self.stock(&item)?.identity.traded_as.clone(),
+            Some("stock") => self.stock(item)?.identity.traded_as.clone(),
             Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
             _ => None,
         }

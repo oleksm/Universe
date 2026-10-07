@@ -229,7 +229,7 @@ impl Works {
     /// the recipes that lead to what it makes.
     fn new(ground: usize, works: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
-        let f = reg.facility(&key)?;
+        let f = reg.facility(key)?;
         let mut w = Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())?;
         w.key = key.to_string();
         w.maker = reg.parcel(&f.parcel).and_then(|p| p.owner.clone());
@@ -241,7 +241,7 @@ impl Works {
     /// Built as the registry's rig `key`, body `body` of `system`: its own warehouse, its owner's.
     fn rig(system: usize, body: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
-        let r = reg.settlement(&key)?;
+        let r = reg.settlement(key)?;
         let mut w = Self::built(Site::Rig(system, body), 0, &r.identity.name, &r.lines, &r.modules, &[], true)?;
         w.owner = r.owner.clone();
         w.key = key.to_string();

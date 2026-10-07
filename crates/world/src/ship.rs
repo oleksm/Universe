@@ -220,7 +220,7 @@ pub fn mount_fit(slot: &Slot, m: &crate::modules::Module) -> Result<(), String> 
         return if m.size > slot.size { Err(format!("{} (size {}) is too big for slot '{}' (size {})", m.key, m.size, slot.name, slot.size)) } else { Ok(()) };
     };
     let reg = crate::registry::registry();
-    let mount = |key: &str| reg.mount(&key);
+    let mount = |key: &str| reg.mount(key);
     let s = mount(sm).ok_or_else(|| format!("slot '{}': no mount '{sm}'", slot.name))?;
     let fm = m.fits.as_deref().ok_or_else(|| format!("{} names no mount (slot '{}' offers {sm})", m.key, slot.name))?;
     let f = mount(fm).ok_or_else(|| format!("{}: no mount '{fm}'", m.key))?;

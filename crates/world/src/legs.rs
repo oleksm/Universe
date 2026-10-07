@@ -63,7 +63,7 @@ pub fn of(key: &str) -> Option<Legs> {
 }
 
 fn reckon(reg: &Registry, key: &str) -> Option<Legs> {
-    let h = reg.hull(&key)?;
+    let h = reg.hull(key)?;
     let (designed, efficiency) = (h.design.landing_speed?, h.design.strut_efficiency.unwrap_or(1.0));
     let longest = |p: &Part| [p.physical.length, p.physical.width, p.physical.height].into_iter().flatten().fold(0.0, f64::max);
     // What one strut takes: what its material yields at, or buckles under, whichever is less.

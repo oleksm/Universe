@@ -127,10 +127,10 @@ pub(crate) fn build_catalog(reg: &crate::registry::Registry, priced: &HashMap<St
         (m > 0.0).then_some(m)
     }
     let piece = |key: &str| -> Option<f64> {
-        let p = reg.part(&key).map(|p| p.physical.mass.or_else(|| of_parts(reg, key)));
-        let e = || reg.equipment(&key).map(|e| e.physical.mass);
+        let p = reg.part(key).map(|p| p.physical.mass.or_else(|| of_parts(reg, key)));
+        let e = || reg.equipment(key).map(|e| e.physical.mass);
         let h = || {
-            let h = reg.hull(&key)?;
+            let h = reg.hull(key)?;
             let parts: f64 = reg.built_of(key).iter().filter_map(|(p, n)| Some(p.physical.mass.or_else(|| of_parts(reg, &p.identity.key))? * *n as f64)).sum();
             Some(h.physical.mass.or((parts > 0.0).then_some(parts)))
         };

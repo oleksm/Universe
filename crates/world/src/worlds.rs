@@ -269,7 +269,7 @@ fn text(v: &serde_json::Value, k: &str) -> String {
 impl Survey {
     /// The body `key`'s survey and energy packages, checked and read (None: it has no survey).
     pub fn load(key: &str) -> Option<Result<Survey, String>> {
-        let body = registry().body(&key)?;
+        let body = registry().body(key)?;
         Some(Self::read(body))
     }
 
@@ -359,7 +359,7 @@ impl Bake {
     /// The body `key`'s bake (None: it has none; an error: the store lacks it, or it's not the
     /// bake the record names).
     pub fn open(key: &str) -> Option<Result<Bake, String>> {
-        let body = registry().body(&key)?;
+        let body = registry().body(key)?;
         // (A preview, for the lab: `UNIVERSE_BAKE_<WORLD ID>=<folder>`, a surface package not yet
         // released, read as the bake without the record's hash: each file still checked against
         // its own manifest.)

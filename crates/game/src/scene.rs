@@ -152,7 +152,7 @@ fn studio(frame: &mut Frame, app: &App) {
     let backdrop = Transform { position: pos, rotation: universe_engine::glam::Quat::IDENTITY, scale: size * 30.0 };
     frame.no_shadow(|frame| frame.model(&app.models.star, &backdrop, Color::hex(0x2a2e33), Color::hex(0x2a2e33)));
     let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
-    hull(frame, app, ship, livery(&app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
+    hull(frame, app, ship, livery(app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
 }
 
 /// The planet or moon filling most of the sky from here: its day side lights
