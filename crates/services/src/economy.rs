@@ -367,6 +367,8 @@ pub struct Place {
     pub system: usize,
     pub facility: Facility,
     pub name: String,
+    /// Its settlement record's key (None: a rig, a settlement of its own).
+    pub record: Option<String>,
     /// Where it is: its land office's ground, or a rig.
     pub site: Site,
     /// Who trades at its market: the exchange (`Party::Market`), or a rig's owner at its dock.
@@ -491,13 +493,14 @@ impl Economy {
             e.index.insert((g.system, facility), e.places.len());
             // (Its people, as the registry has them: thousands.)
             let reg = universe_world::registry::registry();
-            let record = reg.settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&g.recorded.name));
+            let record = reg.settlement(&g.recorded.key);
             let people = record.and_then(|s| s.population).map_or(0.0, |n| n as f64 / 1000.0);
             let breathes = record.and_then(|s| reg.bodies.iter().find(|b| Some(&b.identity.key) == s.at.as_ref())).is_some_and(|b| b.atmosphere.breathable == Some(true));
             e.places.push(Place {
                 system: g.system,
                 facility,
                 name: g.recorded.name.clone(),
+                record: Some(g.recorded.key.clone()),
                 site: Site::Ground(k),
                 trader: Party::Market(g.system, facility),
                 duty: duty_in(&g.recorded.system),
@@ -564,6 +567,7 @@ impl Economy {
             system,
             facility,
             name: w.name.clone(),
+            record: None,
             site: Site::Rig(system, body),
             trader,
             duty: duty_in(system_name),
@@ -592,8 +596,7 @@ impl Economy {
                 if self.works.iter().any(|x| x.site == Site::Ground(k) && x.works == j) {
                     continue;
                 }
-                let key = g.recorded.facilities.iter().find(|f| f.name.eq_ignore_ascii_case(&w.blueprint)).map(|f| f.key.clone()).or_else(|| crate::land::blueprint_key(&w.blueprint));
-                if let Some(x) = key.and_then(|key| Works::new(k, j, &key)) {
+                if let Some(x) = w.facility.as_deref().and_then(|key| Works::new(k, j, key)) {
                     self.works.push(x);
                 }
             }
@@ -639,7 +642,7 @@ impl Economy {
         }
         for k in 0..self.places.len() {
             let p = &self.places[k];
-            let record = reg.settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&p.name));
+            let record = p.record.as_deref().and_then(|k| reg.settlement(k));
             let law = record.and_then(|s| s.identity.key.split('.').nth(1)).and_then(|system| reg.orgs.iter().find(|o| o.compulsory_stock.is_some() && o.identity.key.split('.').nth(1) == Some(system))).and_then(|o| o.compulsory_stock.as_ref());
             let cover = law.and_then(|l| l.warehouse_cover).unwrap_or(1.5) * record.and_then(|s| s.resupply.as_ref()).map_or(COVER_DAYS * DAY, |r| r.interval);
             let mut wants = Vec::new();

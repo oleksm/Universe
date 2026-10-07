@@ -15,3 +15,9 @@
   `terrain::TerrainKind` (a world's ground), each with its hand-written mapping gone. Generated
   enums derive `PartialOrd`, `Ord` now (features are sorted). `modules::SlotKind` stays the game's
   own: its slots are a subset with their own meaning (a relay slot, not the registry's gate).
+- Records found by key, not by name: a place's settlement record (the economy matched its people
+  and stocking law by the settlement's name), and a works' facility (the economy and the zoning
+  panel matched its blueprint's name each time). `settlements::Settlement` and the economy's
+  `Place` carry the settlement's key; a land office works resolves its blueprint to the facility's
+  key once, when it's recorded. (A seeded port still finds its record by name and body: that's
+  all a seeded port has. The law by its administration's name waits on a record field: asked.)

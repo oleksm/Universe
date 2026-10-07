@@ -59,8 +59,11 @@ pub struct Lot {
 pub struct Works {
     pub name: String,
     pub kind: String,
-    /// The registry's facility it's built as (what it takes, gives, needs).
+    /// The registry's facility it's built as (what it takes, gives, needs): its name as chosen,
+    /// and its key (found once, when the works is recorded: the settlement's own facility of
+    /// that name first, else any).
     pub blueprint: String,
+    pub facility: Option<String>,
     pub parcel: u32,
     pub blocks: Vec<Block>,
     pub done_at: Vec<f64>,
@@ -136,7 +139,7 @@ impl LandOffice {
                     .iter()
                     .map(|p| Lot { number: p.number, owner: if p.owner.is_empty() { Owner::Vacant } else { Owner::Company { key: p.owner.clone(), name: p.owner_name.clone() } }, outline: p.outline.clone() })
                     .collect();
-                let works = s.facilities.iter().map(|f| Works { name: f.name.clone(), kind: f.kind.clone(), blueprint: f.name.clone(), parcel: f.parcel, blocks: f.blocks.clone(), done_at: vec![0.0; f.blocks.len()], last: None }).collect();
+                let works = s.facilities.iter().map(|f| Works { name: f.name.clone(), kind: f.kind.clone(), blueprint: f.name.clone(), facility: Some(f.key.clone()), parcel: f.parcel, blocks: f.blocks.clone(), done_at: vec![0.0; f.blocks.len()], last: None }).collect();
                 Arc::new(Ground { system, port, recorded: s, lots, works })
             })
             .collect::<Vec<Arc<Ground>>>();
@@ -284,7 +287,8 @@ impl LandOffice {
         let g = self.ground_mut(system, port)?;
         let mut t = now;
         let done_at = blocks.iter().map(|b| { t += build_time(b); t }).collect();
-        g.works.push(Works { name, kind, blueprint, parcel: number, blocks, done_at, last: None });
+        let facility = g.recorded.facilities.iter().find(|f| f.name.eq_ignore_ascii_case(&blueprint)).map(|f| f.key.clone()).or_else(|| blueprint_key(&blueprint));
+        g.works.push(Works { name, kind, blueprint, facility, parcel: number, blocks, done_at, last: None });
         Ok(())
     }
 }

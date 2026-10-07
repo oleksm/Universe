@@ -485,7 +485,7 @@ pub fn draw(frame: &mut Frame, app: &App, z: &Zoning) {
                             frame.text(Vec2::new(12.0, y), "NOT RUN YET", DIM);
                         }
                         let c = universe_sim::world::content::content();
-                        if let Some(f) = c.settlements.iter().flat_map(|s| &s.facilities).find(|f| f.name.eq_ignore_ascii_case(&w.blueprint)) {
+                        if let Some(f) = c.settlements.iter().flat_map(|s| &s.facilities).find(|f| Some(&f.key) == w.facility.as_ref()) {
                             let untraded: Vec<String> = f.takes.iter().chain(&f.gives).chain(&f.burns).filter(|t| t.1.is_empty()).map(|t| t.0.to_uppercase()).collect();
                             if !untraded.is_empty() {
                                 let mut text = format!("NOT TRADED YET (NO GAME KIND): {}", untraded.join(", "));
