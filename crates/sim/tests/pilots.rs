@@ -79,6 +79,10 @@ fn a_recorded_session_replays_to_the_same_world() {
     // A busy session, recorded from the start: settlers leaving, the player's cockpit at work.
     let mut u = Universe::new(1984);
     u.record_inputs();
+    // (Docked at the start: a hull bought, as the player's dealings are recorded too.)
+    let hauler = universe_sim::world::content::content().handle("hull.hauler").unwrap();
+    u.buy_hull(hauler).expect("a hauler bought on the home station");
+    u.repair_player();
     u.spawn_settlers(24, 3);
     let now = u.world.time;
     for p in u.pilots().iter_mut() {

@@ -220,6 +220,7 @@ impl Universe {
 
     /// The player fills the tank where docked or landed (as its pilot would on arrival).
     pub fn refuel_player(&mut self) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Refuel));
         let sys = self.world.system(self.ship_system);
         let Some(market) = docked_at(&sys, &self.ship) else {
             return self.events.push(universe_avionics::Event::Refused { reason: "REFUEL: NOT AT A PORT OR STATION".into() });
@@ -495,6 +496,7 @@ impl crate::universe::Universe {
 
     /// The player refits slot `slot` (see `refit_as`); the cockpit is told.
     pub fn refit(&mut self, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Refit { slot: slot.to_string(), module }));
         let r = self.refit_as(crate::combat::PLAYER, slot, module);
         let c = universe_world::content::content();
         let e = match &r {
@@ -596,6 +598,7 @@ impl crate::universe::Universe {
 
     /// The player buys a hull (see `buy_hull_as`); the cockpit is told.
     pub fn buy_hull(&mut self, hull: universe_world::ship::Hull) -> Result<f64, String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::BuyHull(hull)));
         let r = self.buy_hull_as(crate::combat::PLAYER, hull);
         let name = universe_world::content::content().get(hull).name.clone();
         self.events.push(match &r {
@@ -643,6 +646,7 @@ impl crate::universe::Universe {
 
     /// The player's hull mended (see `repair`); the cockpit is told.
     pub fn repair_player(&mut self) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Repair));
         let e = match self.repair(crate::combat::PLAYER) {
             Ok((credits, hull)) => universe_avionics::Event::Repaired { credits, hull },
             Err(reason) => universe_avionics::Event::Refused { reason: format!("REPAIR: {reason}") },
@@ -662,6 +666,7 @@ impl crate::universe::Universe {
     /// The player, on foot by a spaceport's vending machine, buys item
     /// `item` of it (`spaceport::VENDING`): paid to the port's market.
     pub fn vend(&mut self, item: usize) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Vend(item)));
         use universe_services::{Asset, Party};
         let e = match (self.pilot_reach(), universe_world::spaceport::VENDING.get(item)) {
             (Some(universe_world::crew::Reach::Vending(port)), Some(&(what, price, note))) => {
@@ -681,6 +686,7 @@ impl crate::universe::Universe {
     /// The player's ship trimmed (see `world::trim`): at a station's
     /// shipyard, where its fuel can be pumped and its drive set.
     pub fn set_trim(&mut self, trim: universe_world::trim::Trim) -> Result<(), String> {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Trim(trim.clone())));
         let sys = self.ship_system();
         let r = match universe_world::traffic::docked_at(&sys, &self.ship) {
             Some(Facility::Station(_)) => {
@@ -811,6 +817,7 @@ impl crate::universe::Universe {
     /// The player, docked: lands the passengers aboard where they're bound
     /// (if this is it), or boards those booked for `to`.
     pub fn passengers(&mut self, to: Option<(usize, Facility)>) {
+        self.note(|| crate::audit::Input::Op(crate::audit::Op::Passengers(to)));
         let sys = self.ship_system();
         let Some(market) = universe_world::traffic::docked_at(&sys, &self.ship) else {
             self.events.push(universe_avionics::Event::Refused { reason: "PASSENGERS DOCKED OR LANDED".into() });

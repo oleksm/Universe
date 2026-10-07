@@ -9,3 +9,9 @@
   texel) and read by no shader (the model shader's diffuse light is the scene's ambient). Its
   passes, texture, binding and shader branch removed; a frame of the docked deck is the same
   but for what moved.
+- The player's dealings docked are in the input log (refuel, repair, refit, buying a hull, the
+  vending machine, the drive's trim, passengers): they changed the ship and the ledger without a
+  record, so a replay, or a save made from one, built a different world. Seven new `audit::Op`s,
+  noted where the player does them and carried out on replay. The state hash now counts a ship's
+  hull, fit, fuel, cargo and passengers; the recorded-session test buys a hauler at its start
+  (and fails without the record).
