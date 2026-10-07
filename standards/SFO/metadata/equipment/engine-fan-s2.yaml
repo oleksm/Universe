@@ -36,7 +36,7 @@ function:
   isotropic_loss: 0
   shield_pass: 1
   reaction_offset: 0
-  heat_to_hull: 0
+  heat_to_hull: 0.107
   min_density: 0.3
 life: 473364000
 basis:

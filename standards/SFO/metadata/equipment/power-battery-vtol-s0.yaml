@@ -14,6 +14,8 @@ physical:
   length: 0.6
   width: 0.5
   height: 0.4
+  specific_heat: 1000
+  operating_max_temperature: 333
 built_of:
   parts: power-battery-vtol-s0
   list:
@@ -34,3 +36,4 @@ basis:
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.94: at its 8C rate a high-rate pack loses about 6% as heat (lithium cells' internal resistance, from memory). Review." }
+  - { of: [physical.specific_heat, physical.operating_max_temperature], tier: invented, review: true, note: "About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From memory of cell data sheets; review." }
