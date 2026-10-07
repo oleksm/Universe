@@ -75,7 +75,13 @@ def main(write):
     body = "".join(f'    "{old}": "{new}",\n' for old, new in sorted(changes.items()) if new in priced)
     s = re.sub(r"\{\}\s*$", "{\n    // Equipment keys to one rule, equipment.<slot>[.<family>].<variant> (registry audit, 2026-10-07).\n" + body + "}\n", s) if s.rstrip().endswith("{}") else s.replace("}\n", body + "}\n", 1)
     open(p, "w").write(s)
-    print(f"{touched} files with references rewritten; aliases written")
+    # 4. the registry's own list of every rename, for anything that saved a key and is not the game
+    p = "standards/renames.yaml"; s = open(p).read()
+    for old, new in sorted(changes.items()):
+        if f"was: {old}," not in s:
+            s = s.rstrip("\n") + f"\n  - {{ was: {old}, is: {new}, date: \"{__import__('datetime').date.today().isoformat()}\", why: \"one naming rule for equipment: equipment.<slot>[.<family>].<variant>\" }}\n"
+    open(p, "w").write(s)
+    print(f"{touched} files with references rewritten; aliases and standards/renames.yaml written")
 
 
 if __name__ == "__main__":
