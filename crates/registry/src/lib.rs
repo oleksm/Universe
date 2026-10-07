@@ -17,7 +17,7 @@
 //! Units are SI, as the records hold them; an angle is [`Degrees`] (the one
 //! exception), with `.rad()` for the engine.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fmt;
 use std::path::{Path, PathBuf};
 
@@ -122,6 +122,8 @@ impl Registry {
         // Parts as a rule (SFO 12): an equipment record's `built_of.list` derives its part records through the
         // same text the build writes (tools/standards/lib.py, part_yaml), parsed with the generated Part type,
         // so the game sees what it saw when each part was a file.
+        // (The modules that cut parts from stock say so in their records: `cuts: true`.)
+        let cuts: HashSet<String> = reg.records.modules.iter().filter(|m| m.cuts == Some(true)).map(|m| m.identity.key.clone()).collect();
         let derived: Vec<(PathBuf, String, String, String, String)> = reg
             .records
             .equipment
@@ -129,7 +131,8 @@ impl Registry {
             .flat_map(|e| {
                 let folder = e.built_of.parts.clone().unwrap_or_else(|| e.identity.key.trim_start_matches("equipment.").replace('.', "-"));
                 let file = keys.get(&e.identity.key).cloned().unwrap_or_default();
-                e.built_of.list.iter().map(move |it| (file.clone(), folder.clone(), it.code.clone(), it.name.clone(), derived_part_yaml(e, it))).collect::<Vec<_>>()
+                let cuts = &cuts;
+                e.built_of.list.iter().map(move |it| (file.clone(), folder.clone(), it.code.clone(), it.name.clone(), derived_part_yaml(e, it, cuts))).collect::<Vec<_>>()
             })
             .collect();
         for (file, folder, code, name, text) in derived {
@@ -251,12 +254,10 @@ fn basis_flow(b: &Basis) -> String {
     format!("{{ {} }}", parts.join(", "))
 }
 
-const CUT_MODULES: [&str; 4] = ["module.welding-bay", "module.machining-centre", "module.cutting-table", "module.electronics-works"];
-
 /// The basis a derived part gets where its list item says none (lib.py, part_basis): its shares as the
 /// equipment's `built_of` says, its stock cut with the loss where a cutting module makes it, else built in
 /// whole; the box by rule. An item's own entry replaces the default of the same `of`.
-fn derived_basis(e: &Equipment, it: &EquipmentBuiltOfListItem) -> Vec<Basis> {
+fn derived_basis(e: &Equipment, it: &EquipmentBuiltOfListItem, cuts: &HashSet<String>) -> Vec<Basis> {
     let mass = e.physical.mass.unwrap_or(0.0);
     let share = if mass > 0.0 { it.mass / mass } else { 0.0 };
     let eq_rule = e.built_of.shares.clone().or_else(|| e.basis.iter().find(|b| b.of.iter().any(|o| o == "built_of")).and_then(|b| b.rule.clone()));
@@ -268,7 +269,7 @@ fn derived_basis(e: &Equipment, it: &EquipmentBuiltOfListItem) -> Vec<Basis> {
     };
     let mut out = vec![first];
     if let Some(item) = &it.item {
-        let cut = it.module.as_deref().is_some_and(|m| CUT_MODULES.contains(&m)) && item.starts_with("stock.") && e.built_of.whole != Some(true);
+        let cut = it.module.as_deref().is_some_and(|m| cuts.contains(m)) && item.starts_with("stock.") && e.built_of.whole != Some(true);
         out.push(entry(&["made_from", "making"], Some(if cut { "rule.cut-loss" } else { "rule.built-in-whole" }), None, None));
     }
     out.push(entry(&["physical.length", "physical.width", "physical.height"], Some("rule.fitted-within"), None, None));
@@ -283,7 +284,7 @@ fn derived_basis(e: &Equipment, it: &EquipmentBuiltOfListItem) -> Vec<Basis> {
 }
 
 /// The YAML text of one derived part (lib.py, part_yaml): the build writes the same.
-fn derived_part_yaml(e: &Equipment, it: &EquipmentBuiltOfListItem) -> String {
+fn derived_part_yaml(e: &Equipment, it: &EquipmentBuiltOfListItem, cuts: &HashSet<String>) -> String {
     let mut lines = vec![
         "identity:".to_string(),
         format!("  key: part.{}", it.code.to_lowercase()),
@@ -311,7 +312,7 @@ fn derived_part_yaml(e: &Equipment, it: &EquipmentBuiltOfListItem) -> String {
     lines.push("fit:".to_string());
     lines.push(format!("  count: {}", it.count.unwrap_or(1)));
     lines.push("basis:".to_string());
-    for b in derived_basis(e, it) {
+    for b in derived_basis(e, it, cuts) {
         lines.push(format!("  - {}", basis_flow(&b)));
     }
     lines.join("\n") + "\n"

@@ -1544,8 +1544,10 @@ for ms in mill_stock:
     if density and t and not d:
         ms["unit"], ms["weight"] = "m2", density * t / 1000
     elif density and bw and bh and w:
-        # (A box section: four walls; sizes in mm in this view.)
-        ms["unit"], ms["weight"] = "m", density * (bw * bh - (bw - 2 * w) * (bh - 2 * w)) / 1e6
+        # (A box section: four walls. The view keeps a tube's sizes in mm; width and height stay in m: each by its value.)
+        _bm = lambda x: x if x < 1 else x / 1000
+        bw_, bh_, w_ = _bm(bw), _bm(bh), _bm(w)
+        ms["unit"], ms["weight"] = "m", density * (bw_ * bh_ - (bw_ - 2 * w_) * (bh_ - 2 * w_))
     elif density and d and w:
         ms["unit"], ms["weight"] = "m", density * math.pi * (d ** 2 - (d - 2 * w) ** 2) / 4e6
     elif density and d:

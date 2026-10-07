@@ -332,6 +332,10 @@ use crate::registry as r;
 
 impl crate::registry::EquipmentFunctionHandler for Kinds {
     type Out = Option<Does>;
+    /// A kind the game doesn't make yet (its schema says `x-in-game: "not made"`): nothing a ship does with it.
+    fn not_made(&mut self, _: &'static str) -> Self::Out {
+        None
+    }
     fn power_plant(&mut self, it: &r::EquipmentFunctionPowerPlant) -> Self::Out {
         Some(Does::PowerPlant { output: it.output, efficiency: it.efficiency, burns: it.burns.clone() })
     }
