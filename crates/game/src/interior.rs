@@ -1115,7 +1115,7 @@ fn plate_stocks() -> &'static [PlateStock] {
         let mut out: Vec<PlateStock> = reg.stock.iter().filter(|s| matches!(s.identity.form.as_str(), "plate" | "sheet") && !s.identity.code.ends_with("BLANK") && !s.identity.code.ends_with("PANEL")).filter_map(|s| {
             let t = s.size.thickness?;
             let of = &s.made_from.first()?.item;
-            let m = reg.material(&*of)?;
+            let m = reg.material(of)?;
             let k = &m.mechanical;
             let (e, y, ts, rho) = (k.youngs_modulus?, k.yield_strength?, k.tensile_strength?, m.mass.density?);
             let shear = k.shear_modulus.unwrap_or(e / (2.0 * (1.0 + k.poissons_ratio.unwrap_or(0.3))));
