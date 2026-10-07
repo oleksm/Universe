@@ -21,12 +21,7 @@ use crate::system::{Body, BodyKind, StarSystem};
 use crate::terrain::{Terrain, TerrainKind};
 use crate::units::{AU, G, SUN_MASS};
 
-/// A resonance `p:q` with a planet: where the period is p/q of the planet's,
-/// as a share of its orbit.
-fn resonance(r: &str) -> f64 {
-    let (p, q) = r.split_once(':').map(|(p, q)| (p.parse::<f64>().unwrap_or(1.0), q.parse::<f64>().unwrap_or(1.0))).unwrap_or((1.0, 1.0));
-    (q / p).powf(2.0 / 3.0)
-}
+use crate::belts::{need, resonance};
 
 /// A ring's area, from `lo` to `hi` (any unit).
 fn ring(lo: f64, hi: f64) -> f64 {
@@ -85,19 +80,19 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
         classes.last().map_or(class("rock-class.stony"), |c| c.0)
     };
     let gas = giants.iter().copied().find(|&g| sys.bodies[g].kind == BodyKind::GasGiant && au(g) > 0.8 * frost).or(giants.first().copied());
-    let main_res = (mb.inner_resonance.clone().unwrap_or("4:1".into()), mb.outer_resonance.clone().unwrap_or("2:1".into()));
+    let main_res = (need(mb.inner_resonance.clone(), "main_belt.inner_resonance"), need(mb.outer_resonance.clone(), "main_belt.outer_resonance"));
     let belt = match gas {
         Some(g) => (au(g) * resonance(&main_res.0), au(g) * resonance(&main_res.1)),
-        None => (mb.no_giant_inner.unwrap_or(0.8) * frost, mb.no_giant_outer.unwrap_or(1.3) * frost),
+        None => (need(mb.no_giant_inner, "main_belt.no_giant_inner") * frost, need(mb.no_giant_outer, "main_belt.no_giant_outer") * frost),
     };
-    let sun_belt = (mb.inner_edge.unwrap_or(3.08e11) / AU, mb.outer_edge.unwrap_or(4.89e11) / AU);
+    let sun_belt = (need(mb.inner_edge, "main_belt.inner_edge") / AU, need(mb.outer_edge, "main_belt.outer_edge") / AU);
     let share = ring(belt.0, belt.1) / ring(sun_belt.0, sun_belt.1);
     let mut made: Vec<Body> = Vec::new();
 
     // The main belt's largest body: a share of the belt's mass (the Sun's largest has 39%), by the belt's own mix.
     {
         let mut r = rng(1);
-        let (wt, ft) = (zones.warm_to.unwrap_or(0.93), zones.frost_to.unwrap_or(1.04));
+        let (wt, ft) = (need(zones.warm_to, "zones.warm_to"), need(zones.frost_to, "zones.frost_to"));
         let cuts = [belt.0, (wt * frost).clamp(belt.0, belt.1), (ft * frost).clamp(belt.0, belt.1), belt.1];
         let weights: Vec<f64> = (0..3).map(|i| ring(cuts[i], cuts[i + 1])).collect();
         let total: f64 = weights.iter().sum();
@@ -105,7 +100,7 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
         let zone = if u < weights[0] { "warm" } else if u < weights[0] + weights[1] { "frost_line" } else { "cold" };
         let c = pick(&mut r, zone);
         let d = c.density(Structure::Monolith);
-        let belt_mass = mb.mass.unwrap_or(2.39e21) * share;
+        let belt_mass = need(mb.mass, "main_belt.mass") * share;
         let lb = &sb.largest_body;
         let radius = (3.0 * one(lb.share, "largest_body.share") * belt_mass / (4.0 * PI * d)).cbrt();
         let at = one(lb.position, "largest_body.position");
@@ -180,9 +175,9 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
 
     // Dwarf planets of the outer belt: the Sun's has perhaps so many; this one's by the ground it covers.
     if let Some(&last) = giants.last() {
-        let res = (ob.inner_resonance.clone().unwrap_or("3:2".into()), ob.outer_resonance.clone().unwrap_or("2:1".into()));
+        let res = (need(ob.inner_resonance.clone(), "outer_belt.inner_resonance"), need(ob.outer_resonance.clone(), "outer_belt.outer_resonance"));
         let (lo, hi) = (au(last) / resonance(&res.0), au(last) / resonance(&res.1));
-        let sun_outer = (ob.inner_edge.unwrap_or(5.9e12) / AU, ob.outer_edge.unwrap_or(7.18e12) / AU);
+        let sun_outer = (need(ob.inner_edge, "outer_belt.inner_edge") / AU, need(ob.outer_edge, "outer_belt.outer_edge") / AU);
         let od = &sb.outer_dwarfs;
         let expect = one(od.sun, "outer_dwarfs.sun") * ring(lo, hi) / ring(sun_outer.0, sun_outer.1);
         let mut r = rng(5);
@@ -199,7 +194,7 @@ pub(crate) fn add(sys: &mut StarSystem, frost: f64, seed: u64) {
     // Comets: returning ones thrown in by the giants (under 200 years), and one from the far cloud.
     {
         let mut r = rng(6);
-        let comet_density = sizes.comet_density.unwrap_or(600.0);
+        let comet_density = need(sizes.comet_density, "sizes.comet_density");
         let icy = class("rock-class.icy");
         let (rc, cc) = (&sb.returning_comets, &sb.cloud_comet);
         if let Some(&last) = giants.last() {
