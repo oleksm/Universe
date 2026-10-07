@@ -1,6 +1,6 @@
 """One naming rule for equipment (registry audit, step 3b-iv): equipment.<slot>[.<family>].<variant>, the family left out when it
 is the slot's own word; the file and the parts folder named after the key's tail with hyphens for dots (tank-deuterium-s1). The variant is the
-record's own trailing token (s1, 5t, crew, mc07) or s<size class>. Every old key goes into content/base/aliases.ron, and every
+record's own trailing token (s1, 5t, crew, mc07) or s<size class>. Every old key goes into standards/renames.yaml (the game reads it as its aliases), and every
 reference in standards/, docs/, content/base/prices.ron and the crates' literals follows.
 
     python3 tools/standards/rename_equipment.py          # show the map
@@ -69,12 +69,7 @@ def main(write):
         if folder and folder != nf and os.path.isdir(P + folder) and not os.path.isdir(P + nf):
             os.rename(P + folder, P + nf)
             s = open(E + nf + ".yaml", encoding="utf-8").read().replace(f"  parts: {folder}\n", f"  parts: {nf}\n", 1); open(E + nf + ".yaml", "w", encoding="utf-8").write(s)
-    # 3. the aliases, for saves and peers
-    p = "content/base/aliases.ron"; s = open(p).read()
-    priced = set(re.findall(r'"(equipment\.[a-z0-9.-]+)"', open("content/base/prices.ron").read()))   # (an alias must point at an entry the game has: the priced, made kinds)
-    body = "".join(f'    "{old}": "{new}",\n' for old, new in sorted(changes.items()) if new in priced)
-    s = re.sub(r"\{\}\s*$", "{\n    // Equipment keys to one rule, equipment.<slot>[.<family>].<variant> (registry audit, 2026-10-07).\n" + body + "}\n", s) if s.rstrip().endswith("{}") else s.replace("}\n", body + "}\n", 1)
-    open(p, "w").write(s)
+    # 3. (The game's aliases are standards/renames.yaml itself since 2026-10-07: content/base/aliases.ron is not written here.)
     # 4. the registry's own list of every rename, for anything that saved a key and is not the game
     p = "standards/renames.yaml"; s = open(p).read()
     for old, new in sorted(changes.items()):
