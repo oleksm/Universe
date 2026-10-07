@@ -3236,6 +3236,9 @@ struct Stand {
     /// half height), to know when the walker's inside.
     faces: Vec<([Vec3; 3], Color)>,
     rooms: Vec<(Vec3, Vec3, f32, f32)>,
+    /// Each module's name on each face of its box: the face's middle, which way it
+    /// faces, how wide it is (m), the name.
+    labels: Vec<(Vec3, Vec3, f32, String)>,
     members: Vec<[Vec3; 2]>,
     /// The shafts climbed: each one's axis and radius.
     shafts: Vec<(Vec3, Vec3, f32)>,
@@ -3300,10 +3303,20 @@ impl Interior {
             faces.push(([c[0], c[1], c[2]], colour));
             faces.push(([c[0], c[2], c[3]], colour));
         }
-        // Its modules: solid, but an airlock a passage and a ramp a slope.
+        // Its modules: solid, but an airlock a passage and a ramp a slope; each one's
+        // name on every face of its box, to know what's walked past.
         let airlocks: Vec<&Block> = self.plan.blocks.iter().filter(|b| kind_of(b) == "airlock").collect();
         let mut start = None;
+        let mut labels = Vec::new();
         for b in &self.plan.blocks {
+            if let Some(f) = self.fit.iter().find(|f| f.id == kind(&b.id)) {
+                let h = b.size * 0.5;
+                for n in [Vec3::X, Vec3::NEG_X, Vec3::Y, Vec3::NEG_Y, Vec3::Z, Vec3::NEG_Z] {
+                    // (Its width across: a side's along the ground, the top's longer way.)
+                    let wide = if n.y != 0.0 { b.size.x.max(b.size.z) } else if n.x != 0.0 { b.size.z } else { b.size.x };
+                    labels.push((b.at + n * (h.dot(n.abs()) + 0.02), n, wide, f.name.clone()));
+                }
+            }
             let (lo, hi) = b.bounds();
             let k = kind_of(b);
             let along_z = b.size.z >= b.size.x;
@@ -3355,6 +3368,7 @@ impl Interior {
         Stand {
             mesh,
             faces,
+            labels,
             members: self.plan.beams.iter().map(|b| [b.a, b.b]).collect(),
             // (And each airlock, a room too: along its length.)
             rooms: (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).map(|k| {
@@ -3497,6 +3511,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
     enum Item {
         Face(Vec<Vec3>, Color),
         Member(Vec3, Vec3),
+        Label(Vec2, String, f32),
     }
     let mut items: Vec<(f32, Item)> = Vec::new();
     // (The ground first, beneath all; then the rest far to near.)
@@ -3537,6 +3552,25 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
             items.push(((p.z + q.z) * 0.5, Item::Member(p, q)));
         }
     }
+    // (Each module's name on its faces turned this way, near enough to read, drawn
+    // just in front of its face: what's in front of the face hides it too.)
+    for (at, n, wide, name) in &s.labels {
+        if n.dot(eye - *at) <= 0.0 || at.distance(eye) > 40.0 {
+            continue;
+        }
+        let v = view(*at);
+        if v.z < near + 0.2 {
+            continue;
+        }
+        // (About 0.3 m tall where it is, but no wider than nine tenths of its face;
+        // too small then to read: none.)
+        let fit = 0.9 * wide * focal / v.z / (name.chars().count() as f32 * universe_engine::frame::GLYPH);
+        let scale = (0.3 * focal / v.z / 8.0).min(fit).min(2.5);
+        if scale < 0.4 {
+            continue;
+        }
+        items.push((v.z - 0.05, Item::Label(screen(v), name.clone(), scale)));
+    }
     items.sort_by(|a, b| b.0.total_cmp(&a.0));
     for (poly, c) in ground {
         let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
@@ -3553,6 +3587,10 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
                 }
             }
             Item::Member(p, q) => frame.hud_line(screen(p), screen(q), Color([0.4, 0.95, 0.55, 0.9])),
+            Item::Label(at, name, scale) => {
+                let w = name.chars().count() as f32 * universe_engine::frame::GLYPH * scale;
+                frame.text_scaled(at - Vec2::new(w * 0.5, 4.0 * scale), &name, Color([1.0, 0.92, 0.6, 1.0]), scale);
+            }
         }
     }
     let c = size * 0.5;
