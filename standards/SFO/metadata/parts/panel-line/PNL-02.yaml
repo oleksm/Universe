@@ -18,6 +18,6 @@ making:
 fit:
   count: 2
 basis:
-  - { of: [physical.mass, fit], tier: invented, review: true, note: "A guess, to be reviewed: its weight and how many, from memory of real plant of this kind, not from a source." }
+  - { of: [physical.mass, fit], rule: rule.plant-weights-from-memory }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the panel line: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

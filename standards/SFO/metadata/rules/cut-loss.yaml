@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.cut-loss
+  name: "Cutting loss"
+  about: "How much of its stock a part cut from sheet, plate or tube wastes."
+statement: "A part is taken as cut from its stock with 15% lost: the allowance for nesting and kerf. Nesting on a cutting table uses 60 to 70% of a sheet by hand and 82 to 90% automated (research_yard.json, sheet nesting); 15% sits at the better end, chosen for a yard with automated nesting. What a part is made of is fitted to what the registry can describe: a real one is of more materials."
+tier: invented
+source: "standards/sources/research_yard.json"
+review: true

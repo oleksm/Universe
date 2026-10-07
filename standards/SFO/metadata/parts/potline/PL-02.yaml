@@ -15,4 +15,4 @@ fit:
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.gulfconstructiononline.com/Article/381041", note: "The aluminium busbar round one cell, 47 tonnes (Alba line 6)." }
   - { of: [fit], tier: derived, review: true, note: "One to each cell." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the potline: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

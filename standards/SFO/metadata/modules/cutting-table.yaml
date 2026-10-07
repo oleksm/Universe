@@ -42,4 +42,4 @@ basis:
   - { of: [recipes.inputs, recipes.outputs], tier: sourced, source: "https://www.craftsmenind.com/blog/how-to-minimize-waste-and-costs-in-metal-fabrication", note: "Software-nested sheet is 82 to 90% used; 85 taken. Seen only as a search excerpt, not on the page." }
   - { of: [physical, recipes.makes, recipes.rate, recipes.power], tier: invented, review: true, note: "Chosen: no source was looked up for plant of this kind." }
   - { of: [staff], tier: invented, review: true, note: "Three metalworkers. Coarse: by the kind of plant, not this one; to be reviewed." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

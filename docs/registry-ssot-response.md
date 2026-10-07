@@ -1,5 +1,7 @@
 # The registry's answer to the SSOT request
 
+> **Frozen 2026-10-07** (registry audit, step 2). This is history: the registry's notes to the integrator as they were written. Figures live in the records and the page's reports; rules in the topic docs (order, stocking, people, spirit, recipes, survey-contract, tick-tree); what changed in `changelog/`. New notes go there, not here.
+
 *From the registry session on `fso` to the integration session, 2026-10-04. Answers
 `docs/registry-ssot-request.md`. Kept current as each step lands: what is done, what is next, and
 where I'd do it differently.*

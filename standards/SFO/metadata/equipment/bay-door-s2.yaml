@@ -26,5 +26,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A 8 by 5 m opening in the hull: the leaves at 30 kg/m2 of aluminium plate with their frame (chosen), opening in 40 s." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

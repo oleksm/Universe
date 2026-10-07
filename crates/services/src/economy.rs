@@ -198,6 +198,9 @@ pub struct Works {
     /// that went into it (their serials, for the unit's mark).
     pub progress: BTreeMap<usize, f64>,
     pub parts_in: Vec<String>,
+    /// Who makes what it makes (SFO 21): the owner of the parcel it stands on (an organisation's
+    /// key; the administration where it owns the works), a rig's owner.
+    pub maker: Option<String>,
     /// Each bulk item's lot it's making now (a day of it: `LOT_SPAN`), wherever what's made of it lies.
     pub open_lots: BTreeMap<usize, Batch>,
 }
@@ -230,6 +233,7 @@ impl Works {
         let f = reg.facilities.iter().find(|f| f.identity.key == key)?;
         let mut w = Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())?;
         w.key = key.to_string();
+        w.maker = reg.parcels.iter().find(|p| p.identity.key == f.parcel).and_then(|p| p.owner.clone());
         // (A mine's claim: the deposit it digs, its ore as the survey has it.)
         w.deposit = f.claim.as_ref().and_then(|c| Some((c.deposit.clone(), deposit_ore(&c.deposit)?)));
         Some(w)
@@ -242,6 +246,7 @@ impl Works {
         let mut w = Self::built(Site::Rig(system, body), 0, &r.identity.name, &r.lines, &r.modules, &[], true)?;
         w.owner = r.owner.clone();
         w.key = key.to_string();
+        w.maker = r.owner.clone();
         Some(w)
     }
 
@@ -262,7 +267,7 @@ impl Works {
             setups.push(Setup { module: module(&m.module)?, count: m.count, recipe: None });
         }
         let holds: f64 = setups.iter().map(|s| s.module.capacity.holds.unwrap_or(0.0) * s.count as f64).sum();
-        let mut w = Works { site, works, name: name.to_string(), setups, pool: Pool::default(), exchange, owner: None, last: None, deposit: None, key: String::new(), progress: BTreeMap::new(), parts_in: Vec::new(), open_lots: BTreeMap::new() };
+        let mut w = Works { site, works, name: name.to_string(), setups, pool: Pool::default(), exchange, owner: None, last: None, deposit: None, key: String::new(), progress: BTreeMap::new(), parts_in: Vec::new(), open_lots: BTreeMap::new(), maker: None };
         w.pool.room = if holds > 0.0 { holds } else { w.takes().iter().map(|(_, r)| r * UNSTORED).sum() };
         // (What lies in it at day 0: the registry's seed state.)
         let goods = &universe_world::content::content().stock;
@@ -863,14 +868,14 @@ impl Economy {
         let cause = universe_protocol::Cause::Rules;
         let here: Vec<usize> = (0..self.works.len()).filter(|&k| self.works[k].site == site && self.built(land, k, at)).collect();
         let owners: Vec<Option<Party>> = here.iter().map(|&k| self.owner(land, k)).collect();
-        // (Who makes what each works makes, for its marks: its owning company, by its record's key
-        // and ticker.)
+        // (Who makes what each works makes, for its marks: its maker and that organisation's ticker.)
         let reg = universe_world::registry::registry();
-        let makers: Vec<Option<(String, String)>> = owners
+        let makers: Vec<Option<(String, String)>> = here
             .iter()
-            .map(|o| match o {
-                Some(Party::Company(i)) => land.companies.get(*i as usize).and_then(|c| Some((c.0.clone(), reg.orgs.iter().find(|r| r.identity.key == c.0)?.ticker.clone()?))),
-                _ => None,
+            .map(|&k| {
+                let m = self.works[k].maker.clone()?;
+                let ticker = reg.orgs.iter().find(|r| r.identity.key == m)?.ticker.clone()?;
+                Some((m, ticker))
             })
             .collect();
         let mut stamps: Vec<(usize, usize, f64)> = Vec::new();

@@ -24,7 +24,7 @@ function:
   rate: 20000000
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a store of energy as current in a superconducting coil. A real one holds 4 to 40 kJ for each kg, and the largest magnets built (ITER's) 5; this is asked for 10,000." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a coil in its case, to its volume. A stand-in until it is sized from what it must do." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

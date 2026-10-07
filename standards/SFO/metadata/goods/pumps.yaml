@@ -8,5 +8,5 @@ physical:
   bulk_density: 2500
 life: 315576000
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }
   - { of: [life], tier: sourced, review: true, source: "standards/sources/research_machines.json", note: "Taken as 10 years: the study's figure for a small water pump was read as about that." }

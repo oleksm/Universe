@@ -54,4 +54,4 @@ basis:
   - { of: [recipes], tier: sourced, review: true, source: "standards/sources/research_people_plant.json", note: "Melting scrap again: 5% of the 15.37 kWh a kg that making aluminium from ore takes. The 3% lost as dross is a guess." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
   - { of: [recipes], tier: invented, review: true, note: "Dross is about four tenths metal; the rest is oxide, which goes to the tailings pile and from there into bricks and concrete. Added 2026-10-06 so that nothing given off is left with no taker (the Takers report); the figures balance by mass and are chosen." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

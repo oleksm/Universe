@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.first-design-parts
+  name: "A first design in a few parts"
+  about: "How the first equipment records were broken into parts."
+statement: "A first design in a few parts, their shares chosen."
+tier: invented
+review: true

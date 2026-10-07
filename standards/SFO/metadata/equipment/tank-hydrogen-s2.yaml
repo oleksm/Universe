@@ -25,5 +25,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S2's volume filled with hydrogen at 71 kg/m3; a cryogenic tank at 20 K with its insulation and boil-off plant: 40% of its light contents. Chosen; review." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

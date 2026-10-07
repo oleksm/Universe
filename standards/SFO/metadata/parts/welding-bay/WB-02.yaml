@@ -19,6 +19,6 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: sourced, review: true, source: "https://www.offshore-mag.com/business-briefs/equipment-engineering/article/16760648/welding-aluminum-friction-stir-technique-now-operational-for-topside-structures", note: "An ESAB SuperStir friction stir welding installation: 63 tonnes." }
-  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [fit], rule: rule.plant-weights-from-memory, note: "research_plant_weights.json: 18_welding_gantries_and_cranes" }
   - { of: [made_from], tier: invented, review: true, note: "The formed panel it is welded from, at its own weight. What is lost in cutting the panel from its stock (15%, chosen) is the cutting table's." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the welding bay: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

@@ -32,4 +32,4 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
   - { of: [function, size_class], tier: invented, review: true, note: "Holds 1 MN: its 4340 150 x 10 strut, 4.65 m long, buckles there (Euler, pinned ends), far under its yield load of 3.8 MN. The stroke is chosen (0.8 m); the sink rate the hull's design figure; the pad, actuator and doors as the model has them." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

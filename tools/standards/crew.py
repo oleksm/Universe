@@ -148,8 +148,8 @@ fit:
   count: 1
 basis:
   - {{ of: [physical.mass, fit], tier: invented, review: true, note: {q(f"Its share of the {whole} ({share:.0%}), chosen.")} }}
-  - {{ of: [made_from, making], tier: invented, review: true, note: {q("Taken as cut from this stock with 15% lost." if cut > 1 else "Bought made, as the good; put together here.")} }}
-  - {{ of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: {q(f"Fitted within the {whole}: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn.")} }}
+  - {{ of: [made_from, making], rule: rule.cut-loss }}
+  - {{ of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }}
 ''')
 
 
@@ -187,8 +187,8 @@ function:
 life: {LIFE}
 basis:
   - {{ of: [physical, needs, function, size_class], tier: invented, review: true, note: {q(note)} }}
-  - {{ of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }}
-  - {{ of: [life], tier: invented, review: true, note: {q(LIFE_NOTE)} }}
+  - {{ of: [built_of, making], rule: rule.first-design-parts }}
+  - {{ of: [life], rule: rule.life-ship-system }}
 ''')
 
 

@@ -1,5 +1,7 @@
 # Request to the registry: one source of truth
 
+> **Frozen 2026-10-07** (registry audit, step 2). This is history: the integrator's requests as they were made. Open asks are raised in `changelog/` entries and the topic docs; the records themselves say what they are.
+
 *From the integration session on `main` to the registry session on `fso`, 2026-10-04. The user's
 direction: "Our registry has to be SSOT to rule it all." The registry session solidifies the
 registry, moves the data now held in Rust and hand-written RON into it, and creates a Dogma

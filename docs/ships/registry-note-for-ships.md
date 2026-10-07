@@ -1,5 +1,7 @@
 # From the registry to the ships session: what is on `fso` for building ships
 
+> **Keys, not figures** (2026-10-07). This note is the ships session's key list, section by section as things landed. Figures live in the records and in the page's reports (Mounts, Budgets, Dimensions, Equipment parts); where a section's figure and a record differ, the record is right.
+
 2026-10-06. Read with your report on the first hull-less frame; everything below answers something
 in it. It is on branch `fso`, merged to `main` by the integrator as it lands. Browse it in
 `standards/index.html` (reports "Mounts", "Members", "Dimensions", "Equipment parts").

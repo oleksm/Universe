@@ -26,4 +26,4 @@ basis:
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: one great coil of a gate ring, in its case, with its cold plant. ITER's eighteen coils weigh 330 t each; this is 150 t." }
   - { of: [physical.volume], tier: invented, review: true, note: "Chosen: about twice the room its 150 t of metal takes." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a segment of a ring: long and curved, to its volume. A stand-in until it is sized from what it must do." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

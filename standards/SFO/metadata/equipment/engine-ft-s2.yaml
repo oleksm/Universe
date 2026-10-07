@@ -38,5 +38,5 @@ basis:
   - { of: [physical], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "scaled from Discovery II at a little under its specific power; review" }
   - { of: [function.isotropic_loss, function.shield_pass, function.heat_to_hull], tier: invented, review: true, note: "Catalysed D-D: about 38% of the fusion power leaves as neutrons and about 12% as X-rays, in every direction (D-He3, Discovery II's fuel, would be about a quarter in all; the registry has no helium-3 stock yet, so the engine burns the deuterium the ports make); a half-metre carbon-graphite shadow shield (Discovery II's 90 t) passes about a hundredth toward the ship. heat_to_hull = 0.5 / 0.61 x 0.05 x 0.01 + 1e-4 soak-back = 0.00051 of the jet, for a hull taking a twentieth of the sphere. From memory of the physics; the figures want a source. Review." }
   - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "Deep throttling by fuel rate (a fifth); a magnetic nozzle steers the jet a few degrees. Chosen." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design in a few parts, their shares chosen." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -19,6 +19,6 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass], tier: derived, review: true, source: "https://www.asme.org/wwwasmeorg/media/ResourceFiles/AboutASME/Who%20We%20Are/Engineering%20History/Landmarks/71-ALCOA-50000-ton-Hydraulic-Forging-Press.pdf", note: "The Mesta 50,000-ton press weighs about 8,000 short tons, 2,100 of them moving: the 5,900 that stand still, in tonnes. A press of the largest kind built." }
-  - { of: [fit], tier: invented, review: true, note: "A guess, to be reviewed: how many, from memory of real plant of this kind, not from a source." }
+  - { of: [fit], rule: rule.plant-weights-from-memory, note: "research_plant_weights.json: 16_forging_press" }
   - { of: [made_from], tier: invented, review: true, note: "A guess, to be reviewed: taken as all forged steel, with half as much again machined away. Real ones are of many materials." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the forging press: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

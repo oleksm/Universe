@@ -20,4 +20,4 @@ fit:
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Chemical engine S2 (hydrolox) (30%), chosen." }
   - { of: [made_from, making], tier: invented, review: true, note: "Bought made, as the good; put together here." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Chemical engine S2 (hydrolox): its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

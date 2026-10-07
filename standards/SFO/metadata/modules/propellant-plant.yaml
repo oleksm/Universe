@@ -45,4 +45,4 @@ basis:
   - { of: [recipes.power], tier: invented, review: true, note: "Electrolysis at about 50 kWh a kilogram of hydrogen (180 MJ) plus liquefaction at about 10 kWh: 20 MJ a kilogram of hydrolox (a ninth hydrogen), 200 MJ a kilogram of liquid hydrogen; a megajoule a kilogram to chill methalox; half as much to compress nitrogen. From memory of the industry's figures; review." }
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, note: "By mass: water is a ninth hydrogen; hydrolox is kept at 1:6 (so a kilogram of water's 8 of oxygen outruns the 6 the engine wants, and the surplus is counted in the blend here, a simplification); methalox at 1:3.6; nitrogen as the element." }
   - { of: [physical, recipes.rate, staff], tier: invented, review: true, note: "A port's propellant plant: a tonne of hydrolox in three hours. Chosen." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

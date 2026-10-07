@@ -14,4 +14,4 @@ composition:
   - { part: element.ag, share: 0.00011 }
 basis:
   - { of: [composition], tier: sourced, review: true, source: "standards/Celestial/metadata/deposit-types/epithermal.yaml", note: "The typical grade of its deposit type, from the planet simulation's brief of 2026-10-05; the rest is rock." }
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }

@@ -10,4 +10,4 @@ source:
   occurs: temperate planets
   note: "It forms only where there is air, warmth and liquid water. The game has no ore for it yet."
 basis:
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }

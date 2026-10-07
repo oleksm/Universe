@@ -12,4 +12,4 @@ source:
   note: "Crushed and passed over a magnet. A laboratory separation of an H chondrite recovered 13.9% of the rock as clean metal, of the 18.5% that is there."
 basis:
   - { of: [source], tier: sourced, source: "https://arxiv.org/pdf/2409.10382" }
-  - { of: [physical.bulk_density], tier: invented, review: true, note: "A typical figure as stowed, from memory: no source was looked up. To be reviewed." }
+  - { of: [physical.bulk_density], rule: rule.bulk-density-typical }

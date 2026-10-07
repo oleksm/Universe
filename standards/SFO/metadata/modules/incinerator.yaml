@@ -25,4 +25,4 @@ recipes:
 life: 788940000
 basis:
   - { of: [physical, staff, recipes], tier: invented, review: true, note: "A hazardous-waste incinerator of about 30,000 t a year with its scrubber; the burn balances by mass, the scrubber's salts going to the tailings. Chosen, 2026-10-06, so chemical waste has a taker." }
-  - { of: [life], tier: invented, review: true, note: "Twenty-five years for industrial plant, as plant is depreciated on Earth; then it is rebuilt. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-plant }

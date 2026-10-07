@@ -22,7 +22,7 @@ function:
   capacity: 10000
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "The game's early list (content/base/modules.ron), a rough first guess: to be reviewed and brought in properly. Outdated, kept to be salvaged." }
+  - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 10,000 kg is 20 m3, twice as long as wide. The racks themselves are in it." }
-  - { of: [life], tier: invented, review: true, note: "Fifteen years of service for a ship's system, as a ship's machinery is written off on Earth; then it is replaced, and its stock comes back as scrap. Chosen; the user's rule that everything made has a life." }
+  - { of: [life], rule: rule.life-ship-system }

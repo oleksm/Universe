@@ -32,5 +32,5 @@ basis:
   - { of: [physical, floor, storeys], tier: invented, review: true, note: "Chosen. To be reviewed." }
   - { of: [built_of], tier: sourced, source: "standards/sources/research_people_plant.json", note: "1,040 kg of concrete and 58 kg of steel for each m2 of floor: the average of 538 residential buildings in China." }
   - { of: [physical.mass], tier: derived, source: "standards/sources/research_people_plant.json", note: "1,103 kg for each m2 of floor, all materials." }
-  - { of: [life], tier: sourced, source: "standards/sources/research_people_plant.json", note: "50 years: the working life building structures are designed for (EN 1990, category 4)." }
+  - { of: [life], rule: rule.life-building }
   - { of: [trains], tier: invented, review: true, note: "Every trade whose profession.training.learned is school; 40 places each at once, so its output a year in each is 40 over the trade's training time. Pilots are the flight school's. Apprenticeship and on-the-job trades are learned in the works that employ them. Chosen." }

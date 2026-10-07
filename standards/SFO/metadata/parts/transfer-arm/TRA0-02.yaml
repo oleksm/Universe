@@ -19,5 +19,5 @@ fit:
   count: 1
 basis:
   - { of: [physical.mass, fit], tier: invented, review: true, note: "Its share of the Bulk transfer arm (30%), chosen." }
-  - { of: [made_from, making], tier: invented, review: true, note: "Taken as cut from this stock with 15% lost." }
-  - { of: [physical.length, physical.width, physical.height], tier: derived, review: true, note: "Fitted within the Bulk transfer arm: its share of the room by weight, in the same proportions, so that the parts fit the whole. Its own shape is not drawn." }
+  - { of: [made_from, making], rule: rule.cut-loss }
+  - { of: [physical.length, physical.width, physical.height], rule: rule.fitted-within }

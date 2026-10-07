@@ -1,0 +1,8 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.bulk-density-typical
+  name: "Bulk density, typical"
+  about: "Where a good's bulk density comes from when no source was looked up."
+statement: "A typical figure as stowed, from memory: no source was looked up. To be reviewed."
+tier: invented
+review: true

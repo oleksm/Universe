@@ -1,0 +1,9 @@
+# yaml-language-server: $schema=../../schema/rule.schema.yaml
+identity:
+  key: rule.discovery-ii-reactor-shares
+  name: "Fusion plant shares, Discovery II"
+  about: "How a fusion power plant's weight is split into parts."
+statement: "Its share of reactor and power conversion, as in NASA's Discovery II (NASA/TM-2005-213559, 2005), brought to this product's weight."
+tier: derived
+source: "standards/sources/research_ship_equipment.json"
+review: true
