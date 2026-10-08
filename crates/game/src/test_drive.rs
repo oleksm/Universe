@@ -108,6 +108,8 @@ pub struct Drive {
     /// The mouse taken to steer (a click in the view, as the game's flight: up and
     /// down pitch, aside yaws); ESC gives it back to look round with.
     grabbed: bool,
+    /// The pitch the mouse has set (rad, nose up +): held till moved back.
+    mouse_pitch: f64,
     /// On the ground (any foot touching) last step; the hardest touchdown so far
     /// (m/s) and the most any leg took (N, which).
     grounded: bool,
@@ -146,6 +148,7 @@ impl Drive {
             power: 0.0,
             pushes: vec![0.0; n],
             grabbed: false,
+            mouse_pitch: 0.0,
             grounded: true,
             hardest: 0.0,
             leg_most: (0.0, 0),
@@ -251,7 +254,8 @@ impl Drive {
         );
         if self.grabbed && !clicked {
             let m = input.mouse_delta;
-            command.x -= f64::from(m.y) * 0.08;
+            // (Up and down set the pitch it holds, a degree for every 4 px; aside yaws.)
+            self.mouse_pitch = (self.mouse_pitch - f64::from(m.y) * 0.25f64.to_radians()).clamp(-MOST_TILT, MOST_TILT);
             command.y -= f64::from(m.x) * 0.08;
         }
         let command = command.clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
@@ -278,10 +282,6 @@ impl Drive {
     fn mix(&self, command: DVec3) -> Vec<f64> {
         let c = &self.craft;
         let body_spin = self.rot.inverse() * self.spin;
-        let up = self.rot.inverse() * DVec3::Y;
-        // (Turning about the craft's axes, by the right hand: about x, + takes the
-        // nose (+z) down; about z, + takes the right side (+x) up. The arrows: up
-        // lifts the nose, right drops the right side.)
         // (Manual thrusters: the collective on what lifts, each engine whose key is
         // held a third more (a side one full); nothing shared out, nothing steadied.)
         if !self.assist {
@@ -290,15 +290,24 @@ impl Drive {
                 (base + if h { if a.dir.y > 0.5 { 0.33 } else { 1.0 } } else { 0.0 }).clamp(0.0, 1.0)
             }).collect();
         }
-        // (The flight computer: the turning wished for, shared out among the engines;
-        // it damps the turning and leans the craft back toward level.)
-        let mut want = wished(command);
-        {
-            want -= body_spin * 1.5;
-            want += DVec3::new(up.z, 0.0, -up.x) * 2.0;
-            want = want.clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
-        }
-        throttles(c, self.collective, want)
+        // (The flight computer, flying to an attitude (angle mode): the keys tilt it
+        // toward up to MOST_TILT while held (level when let go), the mouse sets a
+        // pitch it holds; it turns the craft there, damping the turning, and shares
+        // that out among the engines (turning about the craft's axes by the right
+        // hand: about x, + takes the nose down; about z, + takes the right side up);
+        // tilted, it adds collective to hold the height.)
+        let pitch = (self.rot * DVec3::Z).y.clamp(-1.0, 1.0).asin();
+        let roll = (self.rot * DVec3::X).y.clamp(-1.0, 1.0).asin();
+        let target_pitch = (command.x * MOST_TILT + self.mouse_pitch).clamp(-MOST_TILT, MOST_TILT);
+        let target_roll = -command.z * MOST_TILT;
+        let want = DVec3::new(
+            -(target_pitch - pitch) * 1.6 - body_spin.x * 1.2,
+            command.y * 0.5 - body_spin.y * 1.2,
+            (target_roll - roll) * 1.6 - body_spin.z * 1.2,
+        )
+        .clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
+        let tilt = (self.rot * DVec3::Y).y.clamp(0.6, 1.0);
+        throttles(c, (self.collective / tilt).min(1.0), want)
     }
 
     fn step(&mut self, dt: f64, command: DVec3) {
@@ -448,6 +457,9 @@ impl Drive {
         self.pushes = pushes;
     }
 }
+
+/// The most the flight computer tilts the craft (rad): 40 degrees.
+const MOST_TILT: f64 = 0.698;
 
 /// The pilot's keys as turning wished for, about the craft's axes (by the right
 /// hand: about x, + takes the nose (+z) down; about z, + takes the right side (+x)
