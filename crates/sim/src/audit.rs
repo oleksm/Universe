@@ -152,8 +152,8 @@ impl Universe {
             (universe_world::content::content().get(s.class).key.as_str(), s.fuel.to_bits(), s.cargo.to_bits(), s.passengers).hash(&mut h);
             format!("{:?}", s.fit).hash(&mut h);
         };
-        ship(self.ship_system, &self.ship);
-        for c in &self.crafts {
+        ship(self.vessels[crate::combat::PLAYER].system, &self.vessels[crate::combat::PLAYER].ship);
+        for c in self.vessels.crafts() {
             ship(c.system, &c.ship);
         }
         (self.tick, self.world.time.to_bits()).hash(&mut h);

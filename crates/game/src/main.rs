@@ -475,15 +475,15 @@ impl App {
             match std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, &path)) {
                 Ok(h) => {
                     let u = app.engine.universe();
-                    u.ship.class = h;
-                    u.ship.refresh();
+                    u.vessels[universe_sim::PLAYER].ship.class = h;
+                    u.vessels[universe_sim::PLAYER].ship.refresh();
                     // (Set down at its own height: the new game stood the default hull.)
-                    let mut ship = u.ship.clone();
-                    u.world.resettle(u.ship_system, &mut ship);
-                    u.ship = ship;
-                    u.ship.fuel = u.ship.spec().fuel_capacity;
-                    u.ship.energy = u.ship.spec().capacitor_capacity;
-                    let name = u.ship.spec().name.clone();
+                    let mut ship = u.vessels[universe_sim::PLAYER].ship.clone();
+                    u.world.resettle(u.vessels[universe_sim::PLAYER].system, &mut ship);
+                    u.vessels[universe_sim::PLAYER].ship = ship;
+                    u.vessels[universe_sim::PLAYER].ship.fuel = u.vessels[universe_sim::PLAYER].ship.spec().fuel_capacity;
+                    u.vessels[universe_sim::PLAYER].ship.energy = u.vessels[universe_sim::PLAYER].ship.spec().capacitor_capacity;
+                    let name = u.vessels[universe_sim::PLAYER].ship.spec().name.clone();
                     app.say(format!("FLYING {name}"));
                     app.engine.refresh();
                     app.v = app.engine.view();

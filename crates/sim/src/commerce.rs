@@ -118,7 +118,7 @@ impl Universe {
     /// mass follows what's in its hold. Credits paid (negative: received),
     /// or why not.
     pub(crate) fn pilot_trade(&mut self, pilot: ShipId, f: Facility, item: usize, units: i64) -> Result<f64, String> {
-        let (system, ship) = if pilot == crate::combat::PLAYER { (self.ship_system, &self.ship) } else { (self.crafts[crate::combat::craft_of(pilot)].system, &self.crafts[crate::combat::craft_of(pilot)].ship) };
+        let (system, ship) = (self.vessels[pilot].system, &self.vessels[pilot].ship);
         self.barred(pilot, system)?;
         let sys = self.world.system(system);
         let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), room: ship.hold_room(), space: ship.hold_space(), item, units };
@@ -129,7 +129,7 @@ impl Universe {
             // The core: the hold weighs what's in it.
             let hold = self.ledger.hold(pilot);
             let (mass, volume) = (cargo_mass(&self.world.goods, &hold), universe_services::market::cargo_volume(&self.world.goods, &hold));
-            let ship = if pilot == crate::combat::PLAYER { &mut self.ship } else { &mut self.crafts[crate::combat::craft_of(pilot)].ship };
+            let ship = &mut self.vessels[pilot].ship;
             ship.cargo = mass;
             ship.cargo_volume = volume;
         }
@@ -202,18 +202,15 @@ impl Universe {
         self.messages += 1;
         let cause = universe_protocol::Cause::Message { sender: id.0 as u64, id: self.messages };
         let (tonnes, cost) = self.markets.refuel(&mut self.ledger, system, market, docked, id, want / 1000.0, self.tick, cause)?;
-        match id {
-            crate::combat::PLAYER => self.ship.fuel += tonnes * 1000.0,
-            i => self.crafts[crate::combat::craft_of(i)].ship.fuel += tonnes * 1000.0,
-        }
+        self.vessels[id].ship.fuel += tonnes * 1000.0;
         Ok((tonnes, cost))
     }
 
     /// The player fills the tank where docked or landed (as its pilot would on arrival).
     pub fn refuel_player(&mut self) {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Refuel));
-        let sys = self.world.system(self.ship_system);
-        let Some(market) = docked_at(&sys, &self.ship) else {
+        let sys = self.world.system(self.vessels[crate::combat::PLAYER].system);
+        let Some(market) = docked_at(&sys, &self.vessels[crate::combat::PLAYER].ship) else {
             return self.events.push(universe_avionics::Event::Refused { reason: "REFUEL: NOT AT A PORT OR STATION".into() });
         };
         let e = match self.refuel(crate::combat::PLAYER, market) {
@@ -235,11 +232,10 @@ impl Universe {
         use crate::vessel::Request;
         match r {
             Request::Quotes { system, market } => {
-                if id == crate::combat::PLAYER {
-                    return;
-                }
+                // (A craft's pilot hears back; the player's client reads the boards itself.)
+                let Some(i) = id.craft_index() else { return };
                 let answer = self.market_answer(id, system, market);
-                self.tell(crate::combat::craft_of(id), crate::contract::Msg::Market(Box::new(answer)));
+                self.tell(i, crate::contract::Msg::Market(Box::new(answer)));
             }
             Request::Trade { market, item, units } => {
                 if let Ok(amount) = self.pilot_trade(id, market, item, units) {
@@ -275,11 +271,11 @@ impl Universe {
             return crate::engine::MarketView { market: f, quotes: live, held, age: Some(0.0) };
         }
         // (In a gate's tube we're off the net: what we knew going in.)
-        let when = match self.ship.state {
+        let when = match self.vessels[crate::combat::PLAYER].ship.state {
             universe_world::ShipState::Transit { remaining, duration, .. } => self.world.time - (duration - remaining),
             _ => self.world.time,
         };
-        let known = self.boards.known_at(self.ship_system, f, self.ship.position, &self.ship.spec().comm, when).map(|(age, b)| (age + self.world.time - when, b));
+        let known = self.boards.known_at(self.vessels[crate::combat::PLAYER].system, f, self.vessels[crate::combat::PLAYER].ship.position, &self.vessels[crate::combat::PLAYER].ship.spec().comm, when).map(|(age, b)| (age + self.world.time - when, b));
         let Some((age, board)) = known else { return crate::engine::MarketView { market: f, quotes: Vec::new(), held: Vec::new(), age: None } };
         // (What it listed then, in its listing's order; and what we hold besides.)
         let quotes: Vec<Quote> = live.iter().filter_map(|q| board.get(q.offer.item).copied().flatten()).collect();
@@ -358,7 +354,7 @@ impl Universe {
     pub(crate) fn record_trade(&mut self, id: ShipId, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return };
         let cargo = ship.cargo;
-        let trader = if id == crate::combat::PLAYER { "YOU".to_string() } else { self.crafts[crate::combat::craft_of(id)].name.to_uppercase() };
+        let trader = self.vessels[id].name.to_uppercase();
         let sys = self.system(system);
         if item.is_some() {
             self.records.stats.trades += 1;
@@ -473,10 +469,7 @@ impl crate::universe::Universe {
         }
         let mut refitted = refitted;
         refitted.marks = (!marks.is_empty()).then(|| std::sync::Arc::new(marks));
-        match id {
-            crate::combat::PLAYER => self.ship = refitted,
-            _ => self.crafts[crate::combat::craft_of(id)].ship = refitted,
-        }
+        self.vessels[id].ship = refitted;
         Ok(cost)
     }
 
@@ -563,10 +556,7 @@ impl crate::universe::Universe {
         new.jets.clear();
         // (On its own feet: the new hull may stand taller or lower.)
         self.world.resettle(system, &mut new);
-        match id {
-            crate::combat::PLAYER => self.ship = new,
-            _ => self.crafts[crate::combat::craft_of(id)].ship = new,
-        }
+        self.vessels[id].ship = new;
         Ok(cost)
     }
 
@@ -622,10 +612,7 @@ impl crate::universe::Universe {
         }
         let cost = part * full_price;
         self.ledger.transfer(Party::Pilot(id), Party::Market(system, here), Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
-        let hull = match id {
-            crate::combat::PLAYER => &mut self.ship,
-            _ => &mut self.crafts[crate::combat::craft_of(id)].ship,
-        };
+        let hull = &mut self.vessels[id].ship;
         hull.hull = (hull.hull + part).min(1.0);
         Ok((cost, hull.hull))
     }
@@ -656,7 +643,7 @@ impl crate::universe::Universe {
         use universe_services::{Asset, Party};
         let e = match (self.pilot_reach(), universe_world::spaceport::VENDING.get(item)) {
             (Some(universe_world::crew::Reach::Vending(port)), Some(&(what, price, note))) => {
-                let market = Party::Market(self.ship_system, Facility::Spaceport(port));
+                let market = Party::Market(self.vessels[crate::combat::PLAYER].system, Facility::Spaceport(port));
                 match self.ledger.transfer(Party::Pilot(crate::combat::PLAYER), market, Asset::Credits, price, self.tick, universe_protocol::Cause::Rules) {
                     Ok(_) => universe_avionics::Event::Vended { what: what.into(), credits: price, note: note.into() },
                     Err(_) => universe_avionics::Event::Refused { reason: "THE MACHINE WANTS CREDITS YOU HAVEN'T GOT".into() },
@@ -674,9 +661,9 @@ impl crate::universe::Universe {
     pub fn set_trim(&mut self, trim: universe_world::trim::Trim) -> Result<(), String> {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Trim(trim.clone())));
         let sys = self.ship_system();
-        let r = match universe_world::traffic::docked_at(&sys, &self.ship) {
+        let r = match universe_world::traffic::docked_at(&sys, &self.vessels[crate::combat::PLAYER].ship) {
             Some(Facility::Station(_)) => {
-                self.ship.trim = trim.clamped();
+                self.vessels[crate::combat::PLAYER].ship.trim = trim.clamped();
                 Ok(())
             }
             _ => Err("TRIM DOCKED AT A STATION".to_string()),
@@ -707,7 +694,7 @@ pub struct Booking {
 
 impl crate::universe::Universe {
     fn ship_mut_by_id(&mut self, id: ShipId) -> Option<&mut universe_world::Ship> {
-        if id == crate::combat::PLAYER { Some(&mut self.ship) } else { id.craft_index().and_then(|i| self.crafts.get_mut(i)).map(|c| &mut c.ship) }
+        self.vessels.get_mut(id).map(|v| &mut v.ship)
     }
 
     /// The passage booked from `market` in `system`: its people waiting to
@@ -805,13 +792,13 @@ impl crate::universe::Universe {
     pub fn passengers(&mut self, to: Option<(usize, Facility)>) {
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Passengers(to)));
         let sys = self.ship_system();
-        let Some(market) = universe_world::traffic::docked_at(&sys, &self.ship) else {
+        let Some(market) = universe_world::traffic::docked_at(&sys, &self.vessels[crate::combat::PLAYER].ship) else {
             self.events.push(universe_avionics::Event::Refused { reason: "PASSENGERS DOCKED OR LANDED".into() });
             return;
         };
         let e = match to {
             None => {
-                let n = self.ship.passengers;
+                let n = self.vessels[crate::combat::PLAYER].ship.passengers;
                 match self.land_passengers(crate::combat::PLAYER, market) {
                     Ok(credits) => universe_avionics::Event::PassengersLanded { count: n, credits },
                     Err(reason) => universe_avionics::Event::Refused { reason },

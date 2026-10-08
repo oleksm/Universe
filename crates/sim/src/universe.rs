@@ -11,7 +11,7 @@ use universe_avionics::route::{self, Stop};
 use universe_avionics::{Event, NavTarget};
 use universe_world::{Controls, Facility, Person, Place, Ship, ShipCommands, ShipEvent, ShipState, StarSystem, StepResult, WalkCommands, World};
 
-use crate::traffic::{CrashReport, Craft};
+use crate::traffic::CrashReport;
 
 /// The longest tick (game seconds): pilots act once a tick. The realtime clock's period
 /// (`clock.realtime`), a hair over so a step of exactly it is one tick.
@@ -43,16 +43,13 @@ pub const STARTING_CREDITS: f64 = 1_000_000.0;
 pub struct Universe {
     /// The galaxy, its gate network, the clock and the star systems.
     pub world: World,
-    pub ship: Ship,
-    /// Galaxy index of the system the ship is in; ship coordinates are relative to its star.
-    pub ship_system: usize,
+    /// Every ship, the player's first (`PLAYER`), then the crafts: each its body, system, what
+    /// its pilot shows, and its commands on their way (see `vessel`).
+    pub vessels: crate::vessel::Vessels,
     /// The player's client (its pilot and ship computers), when it thinks in
     /// step with the world (tests; in the game, the client has it).
     pub player: Option<Box<dyn crate::contract::PlayerClient>>,
-    /// The player's ship's commands on their way to its devices, what its
-    /// pilot shows, and what happened to it since its pilot last looked.
-    pub(crate) player_inbox: crate::vessel::Inbox,
-    pub player_status: crate::contract::Status,
+    /// What happened to the player's ship since its pilot last looked.
     pub player_feed: Vec<ShipEvent>,
     /// With the cockpit at the client: this tick's view for it, and what
     /// happened to the ship, to send it.
@@ -65,8 +62,6 @@ pub struct Universe {
     pub(crate) replay_due: Vec<crate::contract::Posting>,
     /// What happened to the player's ship, for the pilot (the game takes them).
     pub events: Vec<Event>,
-    /// Other ships (settlers), each flying its own route.
-    pub crafts: Vec<Craft>,
     /// Recent craft crashes (most recent last, capped).
     pub crash_log: Vec<CrashReport>,
     /// The pilot: in the seat, or on foot.
@@ -131,11 +126,8 @@ impl Universe {
         let goods = std::sync::Arc::new(world.goods.clone());
         let mut u = Self {
             world,
-            ship: Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY),
-            ship_system: 0,
+            vessels: crate::vessel::Vessels::new(crate::vessel::Vessel::new("YOU", Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY), 0, 0.0)),
             player: None,
-            player_inbox: Default::default(),
-            player_status: Default::default(),
             player_feed: Vec::new(),
             cockpit_out: None,
             input_log: None,
@@ -143,7 +135,6 @@ impl Universe {
             replaying: false,
             replay_due: Vec::new(),
             events: Vec::new(),
-            crafts: Vec::new(),
             crash_log: Vec::new(),
             crew: Person::default(),
             layouts: Default::default(),
@@ -207,7 +198,7 @@ impl Universe {
     }
 
     pub fn ship_system(&mut self) -> Arc<StarSystem> {
-        self.world.system(self.ship_system)
+        self.world.system(self.vessels[crate::combat::PLAYER].system)
     }
 
     /// Distance in light years between two stars.
@@ -225,26 +216,12 @@ impl Universe {
         }
         let mut happened = Vec::new();
         let t = self.world.time;
-        let turn = self.player_inbox.deliver(&self.world, &mut self.ship, self.ship_system, t, self.tick, &mut happened);
-        let commands = ShipCommands { turn, ..self.ship.holding() };
-        let result = universe_prof::time("sim/player/world step", || self.world.step_ship(&mut self.ship, &mut self.ship_system, &commands, real_dt, warp, &mut happened));
-        let fresh: Vec<Event> = happened.iter().cloned().map(Event::Ship).collect();
-        self.player_events(happened);
-        self.log_events(crate::combat::PLAYER, &fresh);
-        self.traffic_events(crate::combat::PLAYER, &fresh);
-        self.book_mined(crate::combat::PLAYER, &fresh);
-        self.book_tolls(crate::combat::PLAYER, &fresh);
-        for e in self.book_jolts(crate::combat::PLAYER, &fresh) {
-            self.events.push(Event::Ship(e));
-        }
-        // Wrecked on something (collisions and weapons are filed by the combat phase).
-        let crashed = fresh.iter().find_map(|e| match e {
-            Event::Ship(ShipEvent::Crashed { body }) if !matches!(body.as_str(), "COLLISION" | "GUNFIRE" | "LASER FIRE" | "MISSILE") => Some(body.clone()),
-            _ => None,
-        });
-        if let Some(body) = crashed {
-            self.recorder.file(self.world.time, crate::combat::PLAYER, "YOU".into(), body, None);
-        }
+        let me = &mut self.vessels[crate::combat::PLAYER];
+        let turn = me.inbox.deliver(&self.world, &mut me.ship, me.system, t, self.tick, &mut happened);
+        let commands = ShipCommands { turn, ..me.ship.holding() };
+        let velocity = me.ship.velocity;
+        let result = universe_prof::time("sim/player/world step", || self.world.step_ship(&mut me.ship, &mut me.system, &commands, real_dt, warp, &mut happened));
+        self.after_step(crate::combat::PLAYER, happened, velocity);
         result
     }
 
@@ -256,7 +233,7 @@ impl Universe {
 
     /// A message for craft `i`'s pilot (it wakes it).
     pub(crate) fn tell(&mut self, i: usize, msg: crate::contract::Msg) {
-        if let Some(c) = self.crafts.get_mut(i) {
+        if let Some(c) = self.vessels.crafts_mut().get_mut(i) {
             c.asleep_until = 0;
         }
         self.npcs.tell(i, msg);
@@ -300,11 +277,7 @@ impl Universe {
 
     /// Ship `id` (the player's 0, craft i: i + 1): its id, system and ship.
     pub(crate) fn ship_by_id(&self, id: ShipId) -> Option<(ShipId, usize, &Ship)> {
-        if id == crate::combat::PLAYER {
-            Some((id, self.ship_system, &self.ship))
-        } else {
-            id.craft_index().and_then(|i| self.crafts.get(i)).map(|c| (id, c.system, &c.ship))
-        }
+        self.vessels.get(id).map(|v| (id, v.system, &v.ship))
     }
 
     /// Advance the whole world by `real_dt` real seconds at `warp`, in ticks
@@ -412,11 +385,8 @@ impl Universe {
         let now = self.world.time;
         let slices = crate::clocks::ticks(crate::recorder::EVERY);
         let k = self.tick % slices;
-        if k == 0 {
-            self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));
-        }
-        for (i, c) in self.crafts.iter().enumerate().skip(((k + slices - 1) % slices) as usize).step_by(slices as usize) {
-            self.recorder.record(crate::combat::craft_id(i), crate::recorder::Sample::of(now, c.system, &c.ship, &c.status));
+        for (id, v) in self.vessels.iter().skip(k as usize).step_by(slices as usize) {
+            self.recorder.record(id, crate::recorder::Sample::of(now, v.system, &v.ship, &v.status));
         }
     }
 
@@ -505,8 +475,10 @@ impl Universe {
         }
         // Who's where (on the ground, or flying in normal space).
         type Where = (universe_protocol::ShipId, usize, DVec3, bool, Option<(NavTarget, Phase)>);
-        let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.player_status.clearance))
-            .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, c.status.clearance)))
+        let ships: Vec<Where> = self
+            .vessels
+            .iter()
+            .map(|(id, v)| (id, v.system, &v.ship, v.status.clearance))
             // (In a hangar: on no pad, in no column.)
             .filter(|(_, _, s, _)| (matches!(s.state, ShipState::Landed { .. }) && s.hangar.is_none() && s.taxi.is_none()) || (s.is_flying() && !s.hyperdrive))
             .map(|(id, system, s, clearance)| (id, system, s.position, matches!(s.state, ShipState::Landed { .. }), clearance.map(|c| (c.target, c.phase))))
@@ -588,7 +560,7 @@ impl Universe {
         // and heading away down the run-in, not clear of it yet.
         let mut out = Vec::new();
         let mut frames: std::collections::HashMap<usize, Vec<(usize, universe_world::GateFrame)>> = std::collections::HashMap::new();
-        let all = std::iter::once((self.ship_system, &self.ship)).chain(self.crafts.iter().map(|c| (c.system, &c.ship)));
+        let all = self.vessels.all().iter().map(|v| (v.system, &v.ship));
         for (system, s) in all {
             match s.state {
                 ShipState::Transit { to, from, remaining, .. } if remaining < ENTRY_LEAD => out.extend(self.world.system(to).gate_to(from).map(|g| (to, g))),
@@ -618,15 +590,15 @@ impl Universe {
     pub fn walk(&mut self, c: &WalkCommands, real_dt: f64) {
         let logged = *c;
         self.note(|| crate::audit::Input::Op(crate::audit::Op::Walk(logged, real_dt)));
-        if self.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) || !self.ship.is_flying() && !matches!(self.ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. }) {
+        if self.events.iter().any(|e| matches!(e, Event::Ship(ShipEvent::Respawned))) || !self.vessels[crate::combat::PLAYER].ship.is_flying() && !matches!(self.vessels[crate::combat::PLAYER].ship.state, ShipState::Landed { .. } | ShipState::Anchored { .. }) {
             self.crew = Person::default();
         }
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
         let mut events = Vec::new();
         let around = self.around_crew(&sys);
-        let layout = self.layouts.get(&self.ship.spec().key).cloned();
-        self.crew.step(&sys, &self.ship, self.world.time, &self.positions, &around, layout.as_deref(), c, real_dt, &mut events);
+        let layout = self.layouts.get(&self.vessels[crate::combat::PLAYER].ship.spec().key).cloned();
+        self.crew.step(&sys, &self.vessels[crate::combat::PLAYER].ship, self.world.time, &self.positions, &around, layout.as_deref(), c, real_dt, &mut events);
         self.events.extend(events.into_iter().map(Event::Crew));
     }
 
@@ -637,7 +609,7 @@ impl Universe {
             Some((feet, yaw)) => {
                 let sys = self.ship_system();
                 sys.positions(self.world.time, &mut self.positions);
-                let ship = self.ship.clone();
+                let ship = self.vessels[crate::combat::PLAYER].ship.clone();
                 self.crew.stand(&sys, &ship, self.world.time, &self.positions, feet, yaw);
             }
             None => self.crew.place = universe_world::Place::Seat,
@@ -689,7 +661,7 @@ impl Universe {
             if origin.distance(position) > 5_000.0 {
                 continue;
             }
-            let Some(g) = self.land.ground(self.ship_system, port) else { continue };
+            let Some(g) = self.land.ground(self.vessels[crate::combat::PLAYER].system, port) else { continue };
             // (As the game draws them: x east, y up, z south from the port; the ground falling away with the curve.)
             let east = universe_world::spaceport::tangent(sp.direction).1;
             let rot = DQuat::from_mat3(&glam::DMat3::from_cols(east, sp.direction, east.cross(sp.direction)));
@@ -709,7 +681,7 @@ impl Universe {
         }
         let inv = b.rotation(now).inverse();
         let center = self.positions[body];
-        for craft in self.crafts.iter().filter(|c| c.system == self.ship_system && matches!(c.ship.state, ShipState::Landed { body: cb, .. } if cb == body)) {
+        for craft in self.vessels.crafts().iter().filter(|c| c.system == self.vessels[crate::combat::PLAYER].system && matches!(c.ship.state, ShipState::Landed { body: cb, .. } if cb == body)) {
             let at = inv * (craft.ship.position - center);
             if at.distance(position) < 400.0 {
                 let ramp = universe_world::crew::ramp_angle(sys, &craft.ship);
@@ -723,14 +695,14 @@ impl Universe {
     pub fn pilot_eye(&mut self, seat_eye: DVec3) -> (DVec3, DQuat) {
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
-        self.crew.eye(&sys, &self.ship, self.world.time, &self.positions, seat_eye)
+        self.crew.eye(&sys, &self.vessels[crate::combat::PLAYER].ship, self.world.time, &self.positions, seat_eye)
     }
 
     /// What the pilot on foot could use now.
     pub fn pilot_reach(&mut self) -> Option<universe_world::crew::Reach> {
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
-        self.crew.reach(&sys, &self.ship, self.world.time, &self.positions)
+        self.crew.reach(&sys, &self.vessels[crate::combat::PLAYER].ship, self.world.time, &self.positions)
     }
 
     /// The markets of the system we're in (visible from anywhere in it), with names.
@@ -742,18 +714,18 @@ impl Universe {
     /// The market we're docked or landed at, if any.
     pub fn docked_market(&mut self) -> Option<Facility> {
         let sys = self.ship_system();
-        universe_world::traffic::docked_at(&sys, &self.ship)
+        universe_world::traffic::docked_at(&sys, &self.vessels[crate::combat::PLAYER].ship)
     }
 
     /// A market in our system: its quotes.
     pub fn market_quotes(&mut self, f: Facility) -> Vec<universe_services::market::Quote> {
-        let (system, sys, now) = (self.ship_system, self.ship_system(), self.world.time);
+        let (system, sys, now) = (self.vessels[crate::combat::PLAYER].system, self.ship_system(), self.world.time);
         self.markets.quotes(system, &sys, f, now)
     }
 
     /// A market's quote for one item (listed, or of a kind it wants), if any.
     pub fn quote_for(&mut self, f: Facility, item: usize) -> Option<universe_services::market::Quote> {
-        let (system, sys, now) = (self.ship_system, self.ship_system(), self.world.time);
+        let (system, sys, now) = (self.vessels[crate::combat::PLAYER].system, self.ship_system(), self.world.time);
         self.markets.quote_for(system, &sys, f, item, now)
     }
 
@@ -790,9 +762,9 @@ impl Universe {
             universe_services::PadGrant::Pad(k) => k,
             universe_services::PadGrant::Queued(_) => universe_world::spaceport::CENTER_PAD,
         };
-        self.ship = self.world.ship_on(home, port, pad);
-        self.ship.fuel = self.ship.spec().fuel_capacity;
-        self.ship_system = home;
+        self.vessels[crate::combat::PLAYER].ship = self.world.ship_on(home, port, pad);
+        self.vessels[crate::combat::PLAYER].ship.fuel = self.vessels[crate::combat::PLAYER].ship.spec().fuel_capacity;
+        self.vessels[crate::combat::PLAYER].system = home;
     }
 
     /// The player in flight 4 km behind the home station, its ship as it
@@ -800,14 +772,17 @@ impl Universe {
     pub fn start_in_flight(&mut self) {
         self.atc.release(crate::combat::PLAYER);
         let mut events = Vec::new();
-        self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
+        {
+            let me = &mut self.vessels[crate::combat::PLAYER];
+            self.world.respawn(&mut me.ship, &mut me.system, &mut events);
+        }
     }
 
     /// Every ship low over a baked world: the fine tiles under it now and where it's heading,
     /// read in the background (see `Terrain::prefetch`), so the physics doesn't wait on them.
     fn ground_ahead(&mut self) {
         let t = self.world.time;
-        let ships: Vec<(usize, DVec3, DVec3)> = std::iter::once((self.ship_system, self.ship.position, self.ship.velocity)).chain(self.crafts.iter().map(|c| (c.system, c.ship.position, c.ship.velocity))).collect();
+        let ships: Vec<(usize, DVec3, DVec3)> = self.vessels.all().iter().map(|v| (v.system, v.ship.position, v.ship.velocity)).collect();
         let mut systems: std::collections::HashMap<usize, (Arc<StarSystem>, Arc<Vec<DVec3>>)> = Default::default();
         for (system, p, v) in ships {
             let (sys, positions) = systems.entry(system).or_insert_with(|| (self.world.system(system), self.world.rails_at(system, t)));
@@ -834,7 +809,10 @@ impl Universe {
         // (A new ship somewhere else: whatever traffic control held for the old one goes.)
         self.atc.because(self.tick, universe_protocol::Cause::Rules);
         self.atc.release(crate::combat::PLAYER);
-        self.world.respawn(&mut self.ship, &mut self.ship_system, &mut events);
+        {
+            let me = &mut self.vessels[crate::combat::PLAYER];
+            self.world.respawn(&mut me.ship, &mut me.system, &mut events);
+        }
         self.player_events(events);
         self.insure(brought_on, universe_protocol::Cause::Rules);
     }
@@ -849,7 +827,7 @@ impl Universe {
         let me = Party::Pilot(crate::combat::PLAYER);
         let terms = universe_world::order::insurer();
         let refused = brought_on.into_iter().find(|o| terms.is_some_and(|(_, t)| t.refuses.contains(o)));
-        let excess = terms.map_or(0.0, |(_, t)| t.excess) * Universe::ship_value(&self.ship);
+        let excess = terms.map_or(0.0, |(_, t)| t.excess) * Universe::ship_value(&self.vessels[crate::combat::PLAYER].ship);
         let paid = match terms {
             Some((org, _)) if refused.is_none() => {
                 let insurer = self.land.enlist(&org.identity.key);
@@ -858,8 +836,8 @@ impl Universe {
             _ => false,
         };
         if !paid {
-            self.ship.class = universe_world::ship::starting_hull();
-            self.ship.refresh_stock();
+            self.vessels[crate::combat::PLAYER].ship.class = universe_world::ship::starting_hull();
+            self.vessels[crate::combat::PLAYER].ship.refresh_stock();
         }
         let yard = terms.filter(|(_, t)| t.delivered_at == universe_world::registry::OrgInsuranceDeliveredAt::Yard).and_then(|_| self.yard());
         let at = match yard {
@@ -896,17 +874,17 @@ impl Universe {
             universe_services::PadGrant::Pad(k) => k,
             universe_services::PadGrant::Queued(_) => universe_world::spaceport::CENTER_PAD,
         };
-        let old = self.ship.clone();
-        self.ship = self.world.ship_on(system, at, pad);
-        self.ship.class = old.class;
-        self.ship.trim = old.trim.clone();
+        let old = self.vessels[crate::combat::PLAYER].ship.clone();
+        self.vessels[crate::combat::PLAYER].ship = self.world.ship_on(system, at, pad);
+        self.vessels[crate::combat::PLAYER].ship.class = old.class;
+        self.vessels[crate::combat::PLAYER].ship.trim = old.trim.clone();
         if let Some(fit) = old.fit {
-            let _ = self.ship.refit((*fit).clone());
+            let _ = self.vessels[crate::combat::PLAYER].ship.refit((*fit).clone());
         }
-        self.ship.refresh_stock();
-        self.ship.fuel = self.ship.spec().fuel_capacity;
-        self.ship.energy = self.ship.spec().capacitor_capacity;
-        self.ship_system = system;
+        self.vessels[crate::combat::PLAYER].ship.refresh_stock();
+        self.vessels[crate::combat::PLAYER].ship.fuel = self.vessels[crate::combat::PLAYER].ship.spec().fuel_capacity;
+        self.vessels[crate::combat::PLAYER].ship.energy = self.vessels[crate::combat::PLAYER].ship.spec().capacitor_capacity;
+        self.vessels[crate::combat::PLAYER].system = system;
     }
 
     // What the avionics show the pilot.

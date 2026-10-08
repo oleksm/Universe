@@ -262,7 +262,7 @@ impl crate::universe::Universe {
     /// route, starting at its first stop with staggered departures.
     pub fn spawn_settlers(&mut self, count: usize, seed: u64) {
         let charts = self.charts();
-        let (first, now) = (self.crafts.len(), self.world.time);
+        let (first, now) = (self.vessels.crafts().len(), self.world.time);
         let made = settlers(&charts, seed, count, first, now);
         let (ships, pilots): (Vec<_>, Vec<_>) = made.into_iter().unzip();
         self.register(ships);

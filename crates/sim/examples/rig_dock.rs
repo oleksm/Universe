@@ -15,14 +15,14 @@ fn main() {
     let top = universe_sim::world::rigs::half(&sys.bodies[rig]).unwrap().y;
     let up = rot * DVec3::Y;
     u.start_in_flight();
-    u.ship.state = universe_sim::world::ShipState::Flying;
-    u.ship.position = at + up * (top + u.ship.rest_height() + 4.0);
-    u.ship.velocity = sys.velocity(rig, t) - up * 1.0;
-    u.ship.orientation = universe_sim::ship::facing(rot * DVec3::Z, up);
+    u.vessels[universe_sim::PLAYER].ship.state = universe_sim::world::ShipState::Flying;
+    u.vessels[universe_sim::PLAYER].ship.position = at + up * (top + u.vessels[universe_sim::PLAYER].ship.rest_height() + 4.0);
+    u.vessels[universe_sim::PLAYER].ship.velocity = sys.velocity(rig, t) - up * 1.0;
+    u.vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(rot * DVec3::Z, up);
     for _ in 0..600 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
-    println!("state {:?}", u.ship.state);
+    println!("state {:?}", u.vessels[universe_sim::PLAYER].ship.state);
     let f = u.docked_market();
     println!("docked at {:?}", f.map(|f| f.name(&u.ship_system())));
     if let Some(f) = f {
