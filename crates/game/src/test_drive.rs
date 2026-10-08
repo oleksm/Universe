@@ -222,7 +222,7 @@ impl Drive {
         // (G: manual thrusters, the flight computer off; again, back on: the game's key.)
         if input.pressed(KeyCode::KeyG) {
             self.assist = !self.assist;
-            self.target = self.rot;
+            self.target = within_tilt(self.rot);
             self.events.retain(|e| !e.contains("FLIGHT COMPUTER"));
             self.say(if self.assist { "FLIGHT COMPUTER ON".into() } else { "MANUAL THRUSTERS: FLIGHT COMPUTER OFF; 1-9 FIRE EACH ENGINE".into() });
         }
@@ -261,7 +261,7 @@ impl Drive {
             // pitch (up: nose up), aside yaws; no limit.)
             let m = input.mouse_delta;
             let k = 0.25f64.to_radians();
-            self.target = (self.target * DQuat::from_scaled_axis(DVec3::new(f64::from(m.y) * k, -f64::from(m.x) * k, 0.0))).normalize();
+            self.target = within_tilt((self.target * DQuat::from_scaled_axis(DVec3::new(f64::from(m.y) * k, -f64::from(m.x) * k, 0.0))).normalize());
         }
         if input.pressed(KeyCode::KeyL) {
             // (Level: upright, its heading kept.)
@@ -321,7 +321,7 @@ impl Drive {
         // drops the pilot's right side (facing the nose, +z, with +y up, that's -x:
         // a turn about +z), Q yaws left.)
         if self.assist && command != DVec3::ZERO {
-            self.target = (self.target * DQuat::from_scaled_axis(DVec3::new(-command.x, command.y, command.z) * KEY_TURN * dt)).normalize();
+            self.target = within_tilt((self.target * DQuat::from_scaled_axis(DVec3::new(-command.x, command.y, command.z) * KEY_TURN * dt)).normalize());
         }
         let g = self.craft.gravity;
         let h = self.pos.y;
@@ -468,6 +468,24 @@ impl Drive {
         self.throttles = throttles;
         self.pushes = pushes;
     }
+}
+
+/// The most the flight computer leans the craft from upright (rad): 40 degrees.
+const MOST_TILT: f64 = 0.698;
+
+/// An attitude leant no further than MOST_TILT from upright: turned back toward
+/// upright, about the level line its lean is across, by what it's over.
+fn within_tilt(q: DQuat) -> DQuat {
+    let up = q * DVec3::Y;
+    let lean = up.y.clamp(-1.0, 1.0).acos();
+    if lean <= MOST_TILT {
+        return q;
+    }
+    let axis = up.cross(DVec3::Y).normalize_or_zero();
+    if axis == DVec3::ZERO {
+        return q;
+    }
+    (DQuat::from_axis_angle(axis, lean - MOST_TILT) * q).normalize()
 }
 
 /// How fast held keys turn the attitude the flight computer holds (rad/s): 90
