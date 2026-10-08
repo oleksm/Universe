@@ -33,11 +33,13 @@ pub struct Config {
     /// Where slow frames are written down (see `HITCH`): the frame, its
     /// parts, and with the profiler on, every scope's time in it. None: the log only.
     pub hitch_log: Option<std::path::PathBuf>,
+    /// A ground renderer to plug into the scene (see `ground`); None: the engine's own meshes only.
+    pub ground: Option<Box<dyn crate::GroundPass>>,
 }
 
 impl Default for Config {
     fn default() -> Self {
-        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 120.0, hitch_log: None }
+        Self { title: "Freefall".into(), window_size: (1440, 810), low_res_height: 540, hud_scale: 1, vsync: true, max_fps: 120.0, hitch_log: None, ground: None }
     }
 }
 
@@ -366,7 +368,10 @@ impl<G: Game> ApplicationHandler for Runner<G> {
         if std::env::var_os("UNIVERSE_PROFILE").is_some() {
             universe_prof::enable(true);
         }
-        let renderer = Renderer::new(&gpu, self.config.low_res_height, self.config.hud_scale, screenshot_run.then_some(16.0 / 9.0));
+        let mut renderer = Renderer::new(&gpu, self.config.low_res_height, self.config.hud_scale, screenshot_run.then_some(16.0 / 9.0));
+        if let Some(g) = self.config.ground.take() {
+            renderer.set_ground(&gpu, g);
+        }
         let ctx = Context {
             input: Input::default(),
             watch_hitches: false,

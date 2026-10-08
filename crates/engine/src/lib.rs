@@ -19,12 +19,14 @@ mod renderer;
 mod sunprobe;
 pub mod shaders;
 pub mod devflags;
+pub mod ground;
 mod cloudcache;
 pub mod gputime;
 pub mod worldmaps;
 
 pub use app::{run, Config, Context, Game, Perf, Resources, HISTORY, HITCH};
 pub use camera::Camera;
+pub use ground::{GroundFrame, GroundPass, GroundSetup};
 pub use audio::{Audio, Jet};
 pub use frame::{disc_covered, text_size, Color, Frame, Graphics, Light, Reflector, GLYPH};
 pub use glam;

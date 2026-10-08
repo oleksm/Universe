@@ -509,6 +509,11 @@ pub(crate) struct Renderer {
     hud: DynBuffer,
     /// Textured, physically based models (glTF).
     pbr: crate::pbr::PbrRenderer,
+    /// A ground renderer plugged in (`Config::ground`), and the layouts it's set up with.
+    ground: Option<Box<dyn crate::GroundPass>>,
+    globals_layout: wgpu::BindGroupLayout,
+    shadow_layout: wgpu::BindGroupLayout,
+    light_layout: wgpu::BindGroupLayout,
 }
 
 impl Renderer {
@@ -795,6 +800,10 @@ impl Renderer {
         let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear, &globals);
         let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
         Self {
+            ground: None,
+            globals_layout,
+            shadow_layout,
+            light_layout,
             env,
             sunprobe,
             gputime,
@@ -949,6 +958,23 @@ impl Renderer {
     }
 
     /// Render `frame`; if `capture` is set, also save the composited image (at HUD resolution) as PNG.
+    /// Plug in a ground renderer: set up now against the scene's layouts and formats.
+    pub fn set_ground(&mut self, gpu: &Gpu, mut ground: Box<dyn crate::GroundPass>) {
+        ground.setup(&crate::GroundSetup {
+            device: &gpu.device,
+            queue: &gpu.queue,
+            globals: &self.globals_layout,
+            shadows: &self.shadow_layout,
+            world: &self.world.layout,
+            light: &self.light_layout,
+            color: SCENE_FORMAT,
+            depth: DEPTH_FORMAT,
+            samples: SAMPLES,
+            shadow_depth: DEPTH_FORMAT,
+        });
+        self.ground = Some(ground);
+    }
+
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
         let size = self.target.size.as_vec2();
         let hud = self.target.hud_size.as_vec2();
@@ -1074,6 +1100,10 @@ impl Renderer {
         let under = clouded.map_or(glam::DVec3::Y, |(_, _, c, _)| frame.world_turn.inverse() * (frame.camera.position - *c).normalize_or(glam::DVec3::Y));
         let world = clouded.and_then(|(maps, _, _, r)| Some((maps.id(), *r, &self.world.clouds, self.world.cloud_maps.as_ref()?)));
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
+        // The plugged-in ground's own work for the frame.
+        if let Some(g) = self.ground.as_mut() {
+            g.prepare(&crate::GroundFrame { device: &gpu.device, queue: &gpu.queue, camera: frame.camera }, &mut encoder);
+        }
         self.shadow_passes(&mut encoder, sun.is_some());
         self.scene_pass(&mut encoder, frame.clear, probe.is_some());
         if probe.is_some() {
@@ -1152,10 +1182,13 @@ impl Renderer {
                 // (The ground's own cascade: the ground's patches alone.)
                 if k == 3 {
                     self.draw_meshes(&mut pass, &self.shadows.ground_runs, &self.shadows.ground_pipe, |m| (&m.faces, m.face_vertices));
-                    continue;
+                } else {
+                    self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
+                    self.pbr.draw_shadows(&mut pass);
                 }
-                self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
-                self.pbr.draw_shadows(&mut pass);
+                if let Some(g) = &self.ground {
+                    g.draw_shadow(&mut pass, k);
+                }
             }
         }
     }
@@ -1196,6 +1229,13 @@ impl Renderer {
         pass.draw(0..3, 0..1);
         self.solids.draw(&mut pass, &self.solid_pipe);
         self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        // The plugged-in ground, with the scene's groups bound (and bound again after: it may set others).
+        if let Some(g) = &self.ground {
+            g.draw(&mut pass);
+            pass.set_bind_group(0, &self.globals_bind, &[]);
+            pass.set_bind_group(1, &self.shadows.bind, &[]);
+            pass.set_bind_group(2, &self.world.bind, &[]);
+        }
         self.pbr.draw(&mut pass);
         // (The textured models take group 2 for their materials: the world's maps back.)
         pass.set_bind_group(2, &self.world.bind, &[]);
