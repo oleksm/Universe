@@ -505,7 +505,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // every player), the time wrapped as the clouds' shader wants it.
             if let Some((year_days, enso)) = &maps.clouds_year {
                 let (month, index) = universe_sim::world::worlds::clouds_at(t, *year_days, enso.as_ref());
-                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(1_048_576.0) as f32);
+                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(universe_engine::shaders::CLOUD_WRAP_S) as f32);
             }
         }
     }

@@ -8,10 +8,10 @@
 use glam::DVec3;
 
 /// Texels a side, layers (four levels, three shells each).
-const N: u32 = 512;
+pub(crate) const N: u32 = 512;
 const LAYERS: u32 = 12;
 /// Each level's half-width (m), outer to inner.
-const HALF: [f64; 4] = [4.0e6, 4.0e5, 4.0e4, 4.0e3];
+pub(crate) const HALF: [f64; 4] = [4.0e6, 4.0e5, 4.0e4, 4.0e3];
 /// Layers filled a frame.
 const PER_FRAME: u32 = 2;
 /// How long a change takes to come in (s).

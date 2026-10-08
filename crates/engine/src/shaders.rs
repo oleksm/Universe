@@ -9,6 +9,8 @@ pub const GLOBE_SIZE: u32 = 512;
 /// A ground patch splits when the eye is nearer than this many times its size (the game's
 /// terrain LOD; the mesh shader geomorphs toward the parent's shape by it).
 pub const GEOMORPH_SPLIT: f64 = 2.4;
+/// The clouds' time is world time wrapped every this many seconds (f32 keeps about a second there).
+pub const CLOUD_WRAP_S: f64 = 1_048_576.0;
 
 /// The constants, as WGSL, before every module.
 pub fn consts() -> String {
@@ -20,7 +22,10 @@ pub fn consts() -> String {
          const MICRO_PERIOD: f32 = {:.1};\n\
          const MAX_LIGHT: f32 = {:.1};\n\
          const ADAPT: f32 = {};\n\
-         const SPEC_MIPS: u32 = {}u;\n\n",
+         const SPEC_MIPS: u32 = {}u;\n\
+         const CLOUD_WRAP_S: f32 = {:.1};\n\
+         const CC_N: i32 = {};\n\
+         const CC_LEVELS: i32 = {};\n\n",
         1.0 / SHADOW_SIZE as f64,
         GLOBE_SIZE as f64,
         GEOMORPH_SPLIT,
@@ -28,6 +33,9 @@ pub fn consts() -> String {
         crate::frame::MAX_LIGHT,
         crate::frame::ADAPT,
         crate::env::SPEC_MIPS,
+        CLOUD_WRAP_S,
+        crate::cloudcache::N,
+        crate::cloudcache::HALF.len(),
     )
 }
 
