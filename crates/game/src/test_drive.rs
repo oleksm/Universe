@@ -425,13 +425,67 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             frame.hud_line(p, q, c);
         }
     };
-    // (The ground: a grid of 5 m round under the craft, to read speed and height by.)
-    let ground = Color([0.25, 0.4, 0.3, 0.6]);
-    let (cx, cz) = ((target.x / 5.0).round() * 5.0, (target.z / 5.0).round() * 5.0);
-    for k in -12..=12 {
+    // (The floor: a sheet of see-through tiles round under the craft, cut where it
+    // passes behind the eye; over it a grid of 5 m lines, every 25 m brighter; it
+    // fades out at its edge.)
+    let view = |p: Vec3| {
+        let v = p - eye;
+        Vec3::new(v.dot(right), v.dot(up), v.dot(forward))
+    };
+    let near = 0.3;
+    let screen = |v: Vec3| size * 0.5 + Vec2::new(v.x, -v.y) * (focal / v.z);
+    let reach = 150.0f32;
+    let (cx, cz) = ((target.x / 25.0).round() * 25.0, (target.z / 25.0).round() * 25.0);
+    let tile = 25.0f32;
+    let tiles = (reach / tile) as i32;
+    for i in -tiles..tiles {
+        for j in -tiles..tiles {
+            let (x0, z0) = (cx + i as f32 * tile, cz + j as f32 * tile);
+            let quad = [Vec3::new(x0, 0.0, z0), Vec3::new(x0 + tile, 0.0, z0), Vec3::new(x0 + tile, 0.0, z0 + tile), Vec3::new(x0, 0.0, z0 + tile)].map(view);
+            let mut poly = Vec::new();
+            for k in 0..4 {
+                let (a, b) = (quad[k], quad[(k + 1) % 4]);
+                if a.z >= near {
+                    poly.push(a);
+                }
+                if (a.z >= near) != (b.z >= near) {
+                    poly.push(a.lerp(b, (near - a.z) / (b.z - a.z)));
+                }
+            }
+            if poly.len() < 3 {
+                continue;
+            }
+            let far = Vec2::new(x0 + tile * 0.5 - target.x, z0 + tile * 0.5 - target.z).length() / reach;
+            let shade = if (i + j) % 2 == 0 { 0.16 } else { 0.12 };
+            let c = Color([0.2, 0.42, 0.32, shade * (1.0 - far).max(0.0)]);
+            let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
+            for k in 1..q.len() - 1 {
+                frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+            }
+        }
+    }
+    let line = |frame: &mut Frame, a: Vec3, b: Vec3, c: Color| {
+        let (mut va, mut vb) = (view(a), view(b));
+        if va.z < near && vb.z < near {
+            return;
+        }
+        if va.z < near {
+            va = va.lerp(vb, (near - va.z) / (vb.z - va.z));
+        } else if vb.z < near {
+            vb = vb.lerp(va, (near - vb.z) / (va.z - vb.z));
+        }
+        frame.hud_line(screen(va), screen(vb), c);
+    };
+    let (gx, gz) = ((target.x / 5.0).round() * 5.0, (target.z / 5.0).round() * 5.0);
+    let lines_out = (reach / 5.0) as i32;
+    for k in -lines_out..=lines_out {
         let o = k as f32 * 5.0;
-        seg(frame, Vec3::new(cx + o, 0.0, cz - 60.0), Vec3::new(cx + o, 0.0, cz + 60.0), ground);
-        seg(frame, Vec3::new(cx - 60.0, 0.0, cz + o), Vec3::new(cx + 60.0, 0.0, cz + o), ground);
+        let major = ((gx + o) / 25.0).fract().abs() < 1e-3;
+        let c = if major { Color([0.45, 0.75, 0.6, 0.55]) } else { Color([0.35, 0.6, 0.5, 0.25]) };
+        line(frame, Vec3::new(gx + o, 0.0, gz - reach), Vec3::new(gx + o, 0.0, gz + reach), c);
+        let major = ((gz + o) / 25.0).fract().abs() < 1e-3;
+        let c = if major { Color([0.45, 0.75, 0.6, 0.55]) } else { Color([0.35, 0.6, 0.5, 0.25]) };
+        line(frame, Vec3::new(gx - reach, 0.0, gz + o), Vec3::new(gx + reach, 0.0, gz + o), c);
     }
     let place = |p: Vec3| (d.pos + d.rot * p.as_dvec3()).as_vec3();
     // (Its shadow: straight down.)
@@ -464,7 +518,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     let left = if d.power > c.plants && d.energy > 0.0 { format!(", {:.0} S AT THIS DRAW", d.energy * c.efficiency / (d.power - c.plants)) } else { String::new() };
     let lines = [
         format!("TEST DRIVE - {}   {:.1} S", c.name.to_uppercase(), d.time),
-        format!("ALTITUDE {:.1} M   CLIMB {:+.1} M/S   SPEED {:.1} M/S", d.pos.y, d.vel.y, DVec3::new(d.vel.x, 0.0, d.vel.z).length()),
+        format!("ALTITUDE {:.1} M OVER THE GROUND   CLIMB {:+.1} M/S   SPEED {:.1} M/S", d.craft.legs.iter().map(|l| (d.pos + d.rot * l.foot).y).fold(d.pos.y, f64::min).max(0.0), d.vel.y, DVec3::new(d.vel.x, 0.0, d.vel.z).length()),
         format!("PITCH {pitch:+.0}   ROLL {roll:+.0}   HEADING {heading:.0}   {}", if up_now.y < 0.0 { "UPSIDE DOWN" } else { "" }),
         format!("COLLECTIVE {:.0}%   ASSIST {}", d.collective * 100.0, if d.assist { "ON (H)" } else { "OFF (H)" }),
         format!("POWER {:.2} MW OF {:.2} MW   BATTERIES {:.0}%{left}", d.power / 1e6, (c.rate + c.plants) / 1e6, if c.stored > 0.0 { d.energy.max(0.0) / c.stored * 100.0 } else { 0.0 }),
@@ -478,6 +532,66 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     }
     for (k, e) in d.events.iter().enumerate() {
         frame.text_scaled(Vec2::new(16.0, 30.0 + (lines.len() + k) as f32 * 12.0), e, Color([1.0, 0.45, 0.35, 1.0]), 0.62);
+    }
+    // (The tapes: altitude over the ground (the lowest foot's height) on the right,
+    // with the climb beside it; speed over the ground on the left; each reading
+    // large in its box at the middle.)
+    let feet = d.craft.legs.iter().map(|l| (d.pos + d.rot * l.foot).y).fold(f64::MAX, f64::min);
+    let height = if feet == f64::MAX { d.pos.y } else { feet.max(0.0) };
+    let ground_speed = DVec3::new(d.vel.x, 0.0, d.vel.z).length();
+    let tape = |frame: &mut Frame, x: f32, value: f64, per: f64, step: f64, label: &str, unit: &str, left: bool| {
+        let (h, w) = (300.0f32, 64.0f32);
+        let top = size.y * 0.5 - h * 0.5;
+        frame.hud_rect(Vec2::new(x, top), Vec2::new(w, h), Color([0.02, 0.05, 0.1, 0.55]));
+        frame.hud_box(Vec2::new(x, top), Vec2::new(w, h), Color([0.5, 0.8, 1.0, 0.5]));
+        // (Ticks every step, labelled every other; the value scrolls under the middle.)
+        let px = f64::from(h) / (per * 2.0);
+        let first = ((value - per) / step).ceil() as i64;
+        let last = ((value + per) / step).floor() as i64;
+        for n in first..=last {
+            let v = n as f64 * step;
+            if v < 0.0 {
+                continue;
+            }
+            let y = size.y * 0.5 - ((v - value) * px) as f32;
+            let major = n % 2 == 0;
+            let len = if major { 12.0 } else { 6.0 };
+            let (a, b) = if left { (x + w - len, x + w) } else { (x, x + len) };
+            frame.hud_line(Vec2::new(a, y), Vec2::new(b, y), Color([0.7, 0.9, 1.0, 0.8]));
+            if major {
+                let tx = if left { x + 6.0 } else { x + 16.0 };
+                frame.text_scaled(Vec2::new(tx, y - 4.0), &format!("{v:.0}"), Color([0.7, 0.9, 1.0, 0.8]), 0.55);
+            }
+        }
+        let bx = Vec2::new(x - 6.0, size.y * 0.5 - 11.0);
+        frame.hud_rect(bx, Vec2::new(w + 12.0, 22.0), Color([0.0, 0.0, 0.0, 0.9]));
+        frame.hud_box(bx, Vec2::new(w + 12.0, 22.0), Color([1.0, 0.85, 0.4, 1.0]));
+        frame.text_scaled(bx + Vec2::new(4.0, 4.0), &format!("{value:.1}"), Color([1.0, 0.85, 0.4, 1.0]), 0.95);
+        frame.text_scaled(Vec2::new(x, top - 14.0), label, Color([0.75, 0.88, 1.0, 0.85]), 0.6);
+        frame.text_scaled(Vec2::new(x, top + h + 4.0), unit, Color([0.75, 0.88, 1.0, 0.7]), 0.55);
+    };
+    let alt_x = size.x - 120.0;
+    tape(frame, alt_x, height, 25.0, 5.0, "ALTITUDE", "M OVER THE GROUND", false);
+    tape(frame, 40.0, ground_speed, 25.0, 5.0, "SPEED", "M/S OVER THE GROUND", true);
+    // (The climb: a bar from the middle, up green, down amber (red past the legs'
+    // rated sink), to 10 m/s each way.)
+    {
+        let (h, x) = (300.0f32, alt_x + 76.0);
+        let mid = size.y * 0.5;
+        frame.hud_rect(Vec2::new(x, mid - h * 0.5), Vec2::new(14.0, h), Color([0.02, 0.05, 0.1, 0.55]));
+        frame.hud_box(Vec2::new(x, mid - h * 0.5), Vec2::new(14.0, h), Color([0.5, 0.8, 1.0, 0.5]));
+        let climb = d.vel.y.clamp(-10.0, 10.0);
+        let len = (climb / 10.0) as f32 * h * 0.5;
+        let rated = d.craft.legs.iter().map(|l| l.sink).reduce(f64::min).unwrap_or(3.0);
+        let c = if climb >= 0.0 { Color([0.4, 1.0, 0.5, 0.9]) } else if -climb > rated { Color([1.0, 0.35, 0.3, 0.95]) } else { Color([1.0, 0.75, 0.3, 0.9]) };
+        let (top, hgt) = if len >= 0.0 { (mid - len, len) } else { (mid, -len) };
+        frame.hud_rect(Vec2::new(x + 2.0, top), Vec2::new(10.0, hgt.max(1.0)), c);
+        // (The legs' rated sink marked.)
+        let mark = mid + (rated / 10.0) as f32 * h * 0.5;
+        frame.hud_line(Vec2::new(x - 3.0, mark), Vec2::new(x + 17.0, mark), Color([1.0, 0.35, 0.3, 0.8]));
+        frame.hud_line(Vec2::new(x - 3.0, mid), Vec2::new(x + 17.0, mid), Color([0.7, 0.9, 1.0, 0.8]));
+        frame.text_scaled(Vec2::new(x - 12.0, mid - h * 0.5 - 14.0), "CLIMB", Color([0.75, 0.88, 1.0, 0.85]), 0.6);
+        frame.text_scaled(Vec2::new(x - 24.0, mid + h * 0.5 + 18.0), &format!("{:+.1} M/S", d.vel.y), c, 0.7);
     }
     frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "W / S COLLECTIVE (X CUTS IT) - ARROWS PITCH AND ROLL - Q / E YAW - H ASSIST - Z AIR - R RESTART - DRAG TO LOOK, WHEEL NEARER - ESC BACK TO THE STUDIO", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
 }
