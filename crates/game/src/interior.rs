@@ -5104,6 +5104,10 @@ fn air_only(placed: &[(&Block, &Fitted, String, Fields, f64)]) -> bool {
     placed.iter().any(|p| p.3.get("full_power").is_some()) && !rocket && !placed.iter().any(|p| p.2 == "hyperdrive")
 }
 
+/// How far its lift may pass from its middle of mass and still be in hand (m;
+/// invented, to review).
+const BALANCED: f32 = 0.25;
+
 /// Days, to a tenth when under ten.
 fn short_days(d: f64) -> String {
     if d < 10.0 { format!("{d:.1}") } else { format!("{d:.0}") }
@@ -5452,9 +5456,11 @@ fn budget(i: &Interior) -> Budget {
         let centre = all.iter().fold(Vec3::ZERO, |c, a| c + a.0 * (a.1 / total) as f32);
         let lifts = lifting.iter().fold(Vec3::ZERO, |c, p| c + p.0.at * (num(&p.3, "thrust") / lift.max(1.0)) as f32);
         let off = Vec3::new(lifts.x - centre.x, 0.0, lifts.z - centre.z).length();
-        if off > 1.0 {
-            lines.push((format!("BALANCE  ITS LIFT IS {off:.1} M OFF ITS MIDDLE OF MASS: IT TIPS"), false));
-        }
+        // (Within a quarter metre: in hand; past it, it needs holding level by trim;
+        // past a metre, it tips (thresholds invented, to review: the balance room
+        // says how much trim it takes).)
+        let say = if off <= BALANCED { "IN HAND" } else if off <= 1.0 { "IT NEEDS TRIM TO HOLD LEVEL" } else { "IT TIPS" };
+        lines.push((format!("BALANCE  ITS LIFT IS {off:.2} M OFF ITS MIDDLE OF MASS: {say}"), off <= BALANCED));
     }
     // (Batteries supply too, up to their rate, for as long as they hold: what they
     // store over what's drawn, when nothing else supplies it.)
