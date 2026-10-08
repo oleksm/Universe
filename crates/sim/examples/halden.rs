@@ -4,7 +4,7 @@ fn main() {
     let sys = u.ship_system();
     let port = sys.spaceports.iter().position(|p| p.name == "Halden Camp");
     println!("port: {:?} on {:?}", port, port.map(|p| &sys.bodies[sys.spaceports[p].body].name));
-    let e = &u.markets.economy;
+    let e = &u.services.markets.economy;
     let place = e.places.iter().find(|p| p.name == "Halden Camp");
     println!("place: {}", place.is_some());
     for w in e.works.iter().filter(|w| place.is_some_and(|p| p.site == w.site)) {
@@ -14,7 +14,7 @@ fn main() {
     while u.world.time < start + 3.0 * 86_400.0 {
         u.step_world(60.0, 1.0, &Default::default());
     }
-    let e = &u.markets.economy;
+    let e = &u.services.markets.economy;
     if let Some(p) = e.places.iter().find(|p| p.name == "Halden Camp") {
         for w in e.works.iter().filter(|w| w.site == p.site) {
             let held: Vec<String> = w.pool.stock.iter().map(|(i, kg)| format!("{} {:.0} t", u.world.goods[*i].name, kg / 1000.0)).collect();

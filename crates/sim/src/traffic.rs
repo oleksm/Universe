@@ -85,7 +85,7 @@ impl Universe {
         let now = self.world.time;
         for reg in ships {
             // (Not on a pad someone holds: the player's, starting there.)
-            let owners = self.atc.owners(reg.at.system, reg.at.target);
+            let owners = self.services.atc.owners(reg.at.system, reg.at.target);
             let n = universe_world::spaceport::PADS;
             let pad = (0..n).map(|k| (reg.pad + k) % n).find(|&k| owners[k].is_none()).unwrap_or(reg.pad);
             let mut ship = self.world.ship_on(reg.at.system, reg.at.target, pad);
@@ -107,7 +107,7 @@ impl Universe {
             }
             self.vessels.push(crate::vessel::Vessel { name: reg.name.into(), ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
             let me = universe_services::Party::Pilot(crate::combat::craft_id(self.vessels.crafts().len() - 1));
-            self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
+            self.services.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
         }
     }
 
@@ -274,7 +274,7 @@ impl Universe {
                 activity: crate::contacts::activity(c),
                 destination,
                 hull: c.ship.hull,
-                aggressed: self.law.aggressed(crate::combat::craft_id(i), now),
+                aggressed: self.services.law.aggressed(crate::combat::craft_id(i), now),
             });
         }
         crate::contract::CockpitView { world, transponders }
@@ -320,17 +320,17 @@ impl Universe {
             ships,
             snaps: self.snaps.clone(),
             aggressors: self.aggressors.clone(),
-            board: self.atc.board(),
+            board: self.services.atc.board(),
             rails,
             turrets,
-            credits: self.vessels.iter().map(|(id, _)| (id, self.ledger.credits(universe_services::Party::Pilot(id)))).collect(),
+            credits: self.vessels.iter().map(|(id, _)| (id, self.services.ledger.credits(universe_services::Party::Pilot(id)))).collect(),
         }
     }
 
     /// Take the frame's snapshot of every ship, and who's aggressed.
     pub(crate) fn snapshot(&mut self) {
         let now = self.world.time;
-        let (law, standings) = (&self.law, &self.standings);
+        let (law, standings) = (&self.services.law, &self.services.standings);
         // (Hostile to the system's authority: its standing there at or under its line.)
         let hostile = |id: ShipId, system: usize| standings.of(id, system) <= crate::standing::HOSTILE;
         use rayon::prelude::*;

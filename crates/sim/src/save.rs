@@ -178,7 +178,7 @@ impl Universe {
                 m.sort_by_key(|e| e.0);
                 m
             },
-            standings: self.standings.all(crate::combat::PLAYER).into_iter().filter(|(_, s)| *s != 0.0).collect(),
+            standings: self.services.standings.all(crate::combat::PLAYER).into_iter().filter(|(_, s)| *s != 0.0).collect(),
         }
     }
 
@@ -207,8 +207,8 @@ impl Universe {
         use universe_services::{Asset, Party};
         let me = Party::Pilot(crate::combat::PLAYER);
         let (tick, cause) = (self.tick, universe_protocol::Cause::Rules);
-        self.ledger.settle(me, Asset::Credits, save.credits, tick, cause);
-        self.ledger.write_off(crate::combat::PLAYER, tick, cause);
+        self.services.ledger.settle(me, Asset::Credits, save.credits, tick, cause);
+        self.services.ledger.write_off(crate::combat::PLAYER, tick, cause);
         // (Goods the content no longer has are lost with it.)
         for (good, units) in &save.hold {
             let id = match good {
@@ -216,14 +216,14 @@ impl Universe {
                 GoodsRef::Index(i) => (*i < self.world.goods.len()).then_some(*i),
             };
             if let Some(id) = id {
-                self.ledger.settle(me, Asset::Goods(id), *units as f64, tick, cause);
+                self.services.ledger.settle(me, Asset::Goods(id), *units as f64, tick, cause);
             }
         }
         self.vessels[crate::combat::PLAYER].ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
         self.vessels[crate::combat::PLAYER].ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
         self.world.mined = save.mined.into_iter().collect();
         // Our standing with each system.
-        self.standings.restore(crate::combat::PLAYER, save.standings.into_iter());
+        self.services.standings.restore(crate::combat::PLAYER, save.standings.into_iter());
         self.events.clear();
     }
 }
@@ -247,7 +247,7 @@ mod tests {
         // Something in the hold, and a rock dug into.
         use universe_services::{Asset, Party};
         let ore = universe_world::goods::Ore::from_key("good.stony-ore").expect("stony ore").item();
-        u.ledger.settle(Party::Pilot(crate::combat::PLAYER), Asset::Goods(ore), 3.0, u.tick, universe_protocol::Cause::Rules);
+        u.services.ledger.settle(Party::Pilot(crate::combat::PLAYER), Asset::Goods(ore), 3.0, u.tick, universe_protocol::Cause::Rules);
         u.world.mined.insert((u.vessels[crate::combat::PLAYER].system, 0, 1), 1500.0);
         let save = u.save();
         assert_eq!((save.version, save.content), (SAVE_VERSION, universe_world::content::content().hash()));

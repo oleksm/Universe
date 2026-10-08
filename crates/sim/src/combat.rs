@@ -52,9 +52,9 @@ impl Universe {
                     self.records.stats.shot_down += 1;
                     // By the law's evidence: the downed was fair game, or the
                     // killer was (an innocent killed by an aggressor).
-                    if self.law.aggressed(id, now) {
+                    if self.services.law.aggressed(id, now) {
                         self.records.stats.aggressors_downed += 1;
-                    } else if self.law.aggressed(kill.killer, now) {
+                    } else if self.services.law.aggressed(kill.killer, now) {
                         self.records.stats.innocents_killed += 1;
                     }
                 }
@@ -105,7 +105,7 @@ impl Universe {
                     let answers = universe_world::turrets::turret_of(by).is_none();
                     let hit = universe_services::law::Hit { shooter: by, target: id, time: now };
                     let law = system_of(self, id).and_then(|s| lasts(self, s));
-                    if let Some(r) = self.law.hit(hit, answers, law, universe_protocol::Cause::Event { tick, index })
+                    if let Some(r) = self.services.law.hit(hit, answers, law, universe_protocol::Cause::Event { tick, index })
                         && r.new
                     {
                         notices.push((r.ship, ShipEvent::Aggressed { until: r.until }));
@@ -217,28 +217,28 @@ mod tests {
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
         // Under Treistun's law: piracy for opening fire on it, murder for bringing it down.
-        let charged: Vec<_> = u.law.charges_of(crate::combat::PLAYER as _).map(|c| c.offence).collect();
+        let charged: Vec<_> = u.services.law.charges_of(crate::combat::PLAYER as _).map(|c| c.offence).collect();
         use universe_world::registry::Offence;
         assert!(charged.contains(&Offence::Piracy) && charged.contains(&Offence::Murder), "{charged:?}");
         use crate::combat::{craft_id, PLAYER};
         use universe_world::ShipEvent;
         // What the law gives: thirty years outside it, a bounty on our head, no one here dealing with us.
         let (me, sys, now) = (PLAYER as universe_protocol::ShipId, u.vessels[crate::combat::PLAYER].system, u.world.time);
-        assert!(u.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
+        assert!(u.services.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
         let worth = Universe::ship_value(&u.vessels[crate::combat::PLAYER].ship);
-        assert!((u.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");
+        assert!((u.services.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");
         assert!(u.barred(PLAYER, sys).is_err());
         // Brought down by a craft: the bounty is its, from the administration.
         let hunter = craft_id(0);
-        let before = u.ledger.credits(universe_services::Party::Pilot(hunter));
+        let before = u.services.ledger.credits(universe_services::Party::Pilot(hunter));
         u.log.clear();
         u.log.push((PLAYER, ShipEvent::Hit { by: hunter, damage: 1.0, hull: 0.0, weapon: true }));
         u.log.push((PLAYER, ShipEvent::Crashed { body: "GUN".into() }));
         u.judge(now);
-        assert!((u.ledger.credits(universe_services::Party::Pilot(hunter)) - before - 1.5 * worth).abs() < 1.0, "the bounty paid");
-        assert!(u.law.bounties.is_empty());
+        assert!((u.services.ledger.credits(universe_services::Party::Pilot(hunter)) - before - 1.5 * worth).abs() < 1.0, "the bounty paid");
+        assert!(u.services.law.bounties.is_empty());
         // Wrecked alone 1,500 km out: no offence. By the station: reckless flying.
-        let reckless = |u: &Universe| u.law.charges_of(me).filter(|c| c.offence == Offence::RecklessFlying).count();
+        let reckless = |u: &Universe| u.services.law.charges_of(me).filter(|c| c.offence == Offence::RecklessFlying).count();
         u.log.clear();
         u.log.push((PLAYER, ShipEvent::Crashed { body: "TREISTUN E".into() }));
         u.judge(now);

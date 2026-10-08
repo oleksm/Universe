@@ -24,7 +24,7 @@ impl crate::universe::Universe {
         let sys = self.world.system(system);
         let here = match universe_world::traffic::docked_at(&sys, ship) {
             Some(f @ Facility::Station(_)) => f,
-            Some(f) if self.markets.has_market(system, f) => f,
+            Some(f) if self.services.markets.has_market(system, f) => f,
             _ => return Err("REFIT DOCKED AT A STATION, OR LANDED AT A PORT'S MARKET".into()),
         };
         let c = universe_world::content::content();
@@ -74,18 +74,18 @@ impl crate::universe::Universe {
         let cost = price - back;
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
         let cause = universe_protocol::Cause::Rules;
-        self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
+        self.services.ledger.transfer(me, market, Asset::Credits, cost, self.tick, cause)?;
         // (The module fitted comes with its mark, onto the ship; one taken out goes back with its own.)
         let mut marks: Vec<universe_world::registry::Mark> = refitted.marks.as_deref().cloned().unwrap_or_default();
         if stocked {
             if let Some(i) = module.and_then(item) {
-                let (_, m, _) = self.markets.economy.take_marked(system, here, i, self.world.goods[i].mass);
+                let (_, m, _) = self.services.markets.economy.take_marked(system, here, i, self.world.goods[i].mass);
                 marks.extend(m);
             }
             if let Some(i) = taken.and_then(item) {
                 let key = &self.world.goods[i].key;
                 let back: Vec<_> = marks.iter().position(|m| &m.design == key).map(|k| marks.remove(k)).into_iter().collect();
-                self.markets.economy.put_marked(system, here, i, self.world.goods[i].mass, back, Vec::new());
+                self.services.markets.economy.put_marked(system, here, i, self.world.goods[i].mass, back, Vec::new());
             }
         }
         let mut refitted = refitted;
@@ -120,7 +120,7 @@ impl crate::universe::Universe {
         let sys = self.world.system(system);
         let here = match universe_world::traffic::docked_at(&sys, ship) {
             Some(f @ Facility::Station(_)) => f,
-            Some(f) if self.markets.has_market(system, f) => f,
+            Some(f) if self.services.markets.has_market(system, f) => f,
             _ => return Err("BUY A SHIP DOCKED AT A STATION, OR LANDED AT A PORT'S MARKET".into()),
         };
         let c = universe_world::content::content();
@@ -157,11 +157,11 @@ impl crate::universe::Universe {
         // (At a station, what building it takes is brought in from outside the economy, for now.)
         let cost = price - trade_in;
         let (me, market) = (Party::Pilot(id), Party::Market(system, here));
-        self.ledger.transfer(me, market, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        self.services.ledger.transfer(me, market, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
         // (The hull bought comes with its mark.)
         let mut hull_marks = Vec::new();
         if let Some((item, _)) = self.frame_in_stock(system, here, hull) {
-            hull_marks = self.markets.economy.take_marked(system, here, item, self.world.goods[item].mass).1;
+            hull_marks = self.services.markets.economy.take_marked(system, here, item, self.world.goods[item].mass).1;
         }
         // The new ship where the old one stood, with its cargo and fuel.
         let old = self.ship_by_id(id).expect("there").2.clone();
@@ -188,7 +188,7 @@ impl crate::universe::Universe {
         let spec = universe_world::content::content().get(hull);
         let key = universe_world::ship::hull_record(spec)?.identity.key.clone();
         let item = universe_world::goods::item(&key)?;
-        let place = self.markets.economy.place(system, here)?;
+        let place = self.services.markets.economy.place(system, here)?;
         let ask = place.price(&self.world.goods[item]).ask?;
         Some((item, ask))
     }
@@ -226,13 +226,13 @@ impl crate::universe::Universe {
         let spec = ship.spec();
         let full_price = spec.frame.price * REPAIR_PRICE;
         // As much as the credits allow (the metals brought in from outside the economy, for now).
-        let credits = self.ledger.credits(Party::Pilot(id)).max(0.0);
+        let credits = self.services.ledger.credits(Party::Pilot(id)).max(0.0);
         let part = missing.min(credits / full_price);
         if part <= 1e-6 {
             return Err("NO CREDITS FOR REPAIRS".into());
         }
         let cost = part * full_price;
-        self.ledger.transfer(Party::Pilot(id), Party::Market(system, here), Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        self.services.ledger.transfer(Party::Pilot(id), Party::Market(system, here), Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
         let hull = &mut self.vessels[id].ship;
         hull.hull = (hull.hull + part).min(1.0);
         Ok((cost, hull.hull))
@@ -265,7 +265,7 @@ impl crate::universe::Universe {
         let e = match (self.pilot_reach(), universe_world::spaceport::VENDING.get(item)) {
             (Some(universe_world::crew::Reach::Vending(port)), Some(&(what, price, note))) => {
                 let market = Party::Market(self.vessels[crate::combat::PLAYER].system, Facility::Spaceport(port));
-                match self.ledger.transfer(Party::Pilot(crate::combat::PLAYER), market, Asset::Credits, price, self.tick, universe_protocol::Cause::Rules) {
+                match self.services.ledger.transfer(Party::Pilot(crate::combat::PLAYER), market, Asset::Credits, price, self.tick, universe_protocol::Cause::Rules) {
                     Ok(_) => universe_avionics::Event::Vended { what: what.into(), credits: price, note: note.into() },
                     Err(_) => universe_avionics::Event::Refused { reason: "THE MACHINE WANTS CREDITS YOU HAVEN'T GOT".into() },
                 }

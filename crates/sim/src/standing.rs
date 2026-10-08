@@ -112,16 +112,17 @@ impl Universe {
     /// The authorities take in the deeds that have reached them, when due.
     pub(crate) fn update_standings(&mut self) {
         let now = self.world.time;
-        if now < self.standings.next {
+        if now < self.services.standings.next {
             return;
         }
-        self.standings.next = now + crate::clocks::period(universe_world::registry::ClockKey::Market);
+        self.services.standings.next = now + crate::clocks::period(universe_world::registry::ClockKey::Market);
         let charts = self.charts();
-        if self.standings.desks.is_empty() {
-            self.standings.desks = Standings::open(&charts);
+        if self.services.standings.desks.is_empty() {
+            self.services.standings.desks = Standings::open(&charts);
         }
         // Who opened fire on whom, seen where the shooter was.
         let sightings: Vec<Sighting> = self
+            .services
             .law
             .rulings
             .iter()
@@ -133,7 +134,7 @@ impl Universe {
             .collect();
         let (kills, trades) = (self.records.kills.clone(), self.records.trades.clone());
         let mut deeds: Vec<(ShipId, usize, f64, Key)> = Vec::new();
-        for d in &mut self.standings.desks {
+        for d in &mut self.services.standings.desks {
             let system = d.system;
             let sys = charts.system(system);
             let mut positions = Vec::new();
@@ -144,7 +145,7 @@ impl Universe {
             for k in kills.iter().filter(|k| k.system == system && universe_world::turrets::turret_of(k.killer).is_none() && k.weapon != "COLLISION") {
                 let key = Key::kill(k);
                 if d.knows.heard(&key).is_some() {
-                    let fair = self.law.until(k.victim, k.time).is_some();
+                    let fair = self.services.law.until(k.victim, k.time).is_some();
                     deeds.push((k.killer, system, if fair { BOUNTY } else { MURDER }, key));
                 }
             }
@@ -161,12 +162,12 @@ impl Universe {
             }
         }
         for (pilot, system, by, key) in deeds {
-            if self.standings.counted.insert((key, system)) {
-                self.standings.add(pilot, system, by);
+            if self.services.standings.counted.insert((key, system)) {
+                self.services.standings.add(pilot, system, by);
             }
         }
         // (Forget what's off the record: it can't come round again.)
         let live: HashSet<Key> = kills.iter().map(Key::kill).chain(trades.iter().map(Key::trade)).chain(sightings.into_iter().map(|s| s.0)).collect();
-        self.standings.counted.retain(|(k, _)| live.contains(k));
+        self.services.standings.counted.retain(|(k, _)| live.contains(k));
     }
 }

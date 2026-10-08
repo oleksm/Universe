@@ -124,10 +124,10 @@ impl Universe {
         let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), room: ship.hold_room(), space: ship.hold_space(), item, units };
         self.messages += 1;
         let cause = universe_protocol::Cause::Message { sender: pilot.0 as u64, id: self.messages };
-        let r = self.markets.trade(&mut self.ledger, &sys, order, self.world.time, self.tick, cause);
+        let r = self.services.markets.trade(&mut self.services.ledger, &sys, order, self.world.time, self.tick, cause);
         if r.is_ok() {
             // The core: the hold weighs what's in it.
-            let hold = self.ledger.hold(pilot);
+            let hold = self.services.ledger.hold(pilot);
             let (mass, volume) = (cargo_mass(&self.world.goods, &hold), universe_services::market::cargo_volume(&self.world.goods, &hold));
             let ship = &mut self.vessels[pilot].ship;
             ship.cargo = mass;
@@ -147,7 +147,7 @@ impl Universe {
             // (The k-th of its mined tonnes this tick, as logged.)
             let n = events[..=k].iter().filter(|e| matches!(e, crate::Event::Ship(universe_world::ShipEvent::Mined { .. }))).count();
             let cause = self.mined_cause(id, n).unwrap_or(universe_protocol::Cause::Rules);
-            let _ = self.ledger.transfer(Party::World, Party::Pilot(id), universe_services::ledger::Asset::Goods(*item), 1.0, self.tick, cause);
+            let _ = self.services.ledger.transfer(Party::World, Party::Pilot(id), universe_services::ledger::Asset::Goods(*item), 1.0, self.tick, cause);
         }
     }
 
@@ -157,8 +157,8 @@ impl Universe {
         for e in events {
             let crate::Event::Ship(universe_world::ShipEvent::TubeToll { credits }) = e else { continue };
             let Some((_, system, _)) = self.ship_by_id(id) else { return };
-            let pay = credits.min(self.ledger.credits(Party::Pilot(id)).max(0.0));
-            let _ = self.ledger.transfer(Party::Pilot(id), Party::Administration(system), universe_services::ledger::Asset::Credits, pay, self.tick, universe_protocol::Cause::Rules);
+            let pay = credits.min(self.services.ledger.credits(Party::Pilot(id)).max(0.0));
+            let _ = self.services.ledger.transfer(Party::Pilot(id), Party::Administration(system), universe_services::ledger::Asset::Credits, pay, self.tick, universe_protocol::Cause::Rules);
         }
     }
 
@@ -169,12 +169,12 @@ impl Universe {
         let Some(jolt) = jolts.into_iter().reduce(f64::max) else { return Vec::new() };
         let g = jolt * universe_physics::laws::STANDARD_GRAVITY;
         let goods = self.world.goods.clone();
-        let broken: Vec<(usize, u32)> = self.ledger.hold(id).into_iter().filter(|(i, _)| goods[*i].shock_limit.is_some_and(|l| g > l)).collect();
+        let broken: Vec<(usize, u32)> = self.services.ledger.hold(id).into_iter().filter(|(i, _)| goods[*i].shock_limit.is_some_and(|l| g > l)).collect();
         for &(item, _) in &broken {
-            self.ledger.settle(Party::Pilot(id), universe_services::ledger::Asset::Goods(item), 0.0, self.tick, universe_protocol::Cause::Rules);
+            self.services.ledger.settle(Party::Pilot(id), universe_services::ledger::Asset::Goods(item), 0.0, self.tick, universe_protocol::Cause::Rules);
         }
         if !broken.is_empty() {
-            let hold = self.ledger.hold(id);
+            let hold = self.services.ledger.hold(id);
             if let Some(ship) = self.ship_mut_by_id(id) {
                 ship.cargo = universe_services::market::cargo_mass(&goods, &hold);
                 ship.cargo_volume = universe_services::market::cargo_volume(&goods, &hold);
@@ -201,7 +201,7 @@ impl Universe {
         let docked = docked_at(&self.world.system(system), ship);
         self.messages += 1;
         let cause = universe_protocol::Cause::Message { sender: id.0 as u64, id: self.messages };
-        let (tonnes, cost) = self.markets.refuel(&mut self.ledger, system, market, docked, id, want / 1000.0, self.tick, cause)?;
+        let (tonnes, cost) = self.services.markets.refuel(&mut self.services.ledger, system, market, docked, id, want / 1000.0, self.tick, cause)?;
         self.vessels[id].ship.fuel += tonnes * 1000.0;
         Ok((tonnes, cost))
     }
@@ -222,7 +222,7 @@ impl Universe {
 
     /// Craft `i`'s credits, as the ledger has them.
     pub fn craft_credits(&self, i: usize) -> f64 {
-        self.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))
+        self.services.ledger.credits(Party::Pilot(crate::combat::craft_id(i)))
     }
 
     /// A pilot's request to the market service (see `vessel::Request`):
@@ -275,7 +275,7 @@ impl Universe {
             universe_world::ShipState::Transit { remaining, duration, .. } => self.world.time - (duration - remaining),
             _ => self.world.time,
         };
-        let known = self.boards.known_at(self.vessels[crate::combat::PLAYER].system, f, self.vessels[crate::combat::PLAYER].ship.position, &self.vessels[crate::combat::PLAYER].ship.spec().comm, when).map(|(age, b)| (age + self.world.time - when, b));
+        let known = self.services.boards.known_at(self.vessels[crate::combat::PLAYER].system, f, self.vessels[crate::combat::PLAYER].ship.position, &self.vessels[crate::combat::PLAYER].ship.spec().comm, when).map(|(age, b)| (age + self.world.time - when, b));
         let Some((age, board)) = known else { return crate::engine::MarketView { market: f, quotes: Vec::new(), held: Vec::new(), age: None } };
         // (What it listed then, in its listing's order; and what we hold besides.)
         let quotes: Vec<Quote> = live.iter().filter_map(|q| board.get(q.offer.item).copied().flatten()).collect();
@@ -287,12 +287,12 @@ impl Universe {
     pub(crate) fn publish_boards(&mut self) {
         use universe_world::hypernet::Net;
         let now = self.world.time;
-        if now < self.boards.next {
+        if now < self.services.boards.next {
             return;
         }
-        let first = self.boards.boards.is_empty();
-        self.boards.next = now + board_every();
-        let mut systems: Vec<usize> = self.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).chain(self.markets.economy.places.iter().map(|p| p.system)).collect();
+        let first = self.services.boards.boards.is_empty();
+        self.services.boards.next = now + board_every();
+        let mut systems: Vec<usize> = self.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).chain(self.services.markets.economy.places.iter().map(|p| p.system)).collect();
         systems.sort();
         systems.dedup();
         let all: Vec<usize> = (0..self.world.goods.len()).collect();
@@ -301,12 +301,12 @@ impl Universe {
             let mut positions = Vec::new();
             sys.positions(now, &mut positions);
             let net = Net::at(&sys, universe_world::hypernet::nodes(&self.world.galaxy, &sys), now, &positions);
-            let net = &self.boards.nets.entry(system).insert_entry((sys.clone(), positions, net)).into_mut().2;
+            let net = &self.services.boards.nets.entry(system).insert_entry((sys.clone(), positions, net)).into_mut().2;
             for f in facilities(&sys) {
                 let lag = universe_world::hypernet::relay_of(f).and_then(|a| net.node(a)).and_then(|k| net.lag[k]);
-                self.boards.lags.insert((system, f), lag);
-                let quotes = self.markets.quotes_for(system, &sys, f, &all, now);
-                let list = self.boards.boards.entry((system, f)).or_default();
+                self.services.boards.lags.insert((system, f), lag);
+                let quotes = self.services.markets.quotes_for(system, &sys, f, &all, now);
+                let list = self.services.boards.boards.entry((system, f)).or_default();
                 // (The world's first boards: long known.)
                 list.push_back((if first { f64::NEG_INFINITY } else { now }, quotes));
                 // (Older ones go, but for the newest from before then: still the latest someone far may have.)
@@ -316,10 +316,10 @@ impl Universe {
             }
         }
         // And the places' reports, all at once.
-        let snap = self.markets.economy.snapshot();
-        self.boards.places.push_back((if first { f64::NEG_INFINITY } else { now }, snap));
-        while self.boards.places.len() >= 2 && self.boards.places[1].0 <= now - BOARD_KEPT {
-            self.boards.places.pop_front();
+        let snap = self.services.markets.economy.snapshot();
+        self.services.boards.places.push_back((if first { f64::NEG_INFINITY } else { now }, snap));
+        while self.services.boards.places.len() >= 2 && self.services.boards.places[1].0 <= now - BOARD_KEPT {
+            self.services.boards.places.pop_front();
         }
     }
 
@@ -329,25 +329,25 @@ impl Universe {
     fn market_answer(&mut self, id: ShipId, system: usize, at: Facility) -> crate::contract::MarketAnswer {
         let sys = self.system(system);
         let now = self.world.time;
-        let hold = self.ledger.hold(id);
+        let hold = self.services.ledger.hold(id);
         let held: Vec<usize> = hold.iter().map(|h| h.0).collect();
-        let here = self.markets.quotes(system, &sys, at, now);
-        let here_held = self.markets.quotes_for(system, &sys, at, &held, now);
+        let here = self.services.markets.quotes(system, &sys, at, now);
+        let here_held = self.services.markets.quotes_for(system, &sys, at, &held, now);
         let mut items = held.clone();
         items.extend(here.iter().filter(|q| q.buy.is_some()).map(|q| q.offer.item).filter(|i| !held.contains(i)));
         let there = facilities(&sys)
             .into_iter()
             .filter(|&f| f != at)
             .filter_map(|f| {
-                let (age, board) = self.boards.known(system, at, f, now)?;
+                let (age, board) = self.services.boards.known(system, at, f, now)?;
                 Some((f, age, items.iter().map(|&i| board.get(i).copied().flatten()).collect()))
             })
             .collect();
         let (cargo, capacity, space) = self.ship_by_id(id).map_or((0.0, 0.0, 0.0), |(_, _, s)| (s.cargo, s.spec().hold_capacity, s.hold_space()));
         let (passengers, bound_for, seats) = self.ship_by_id(id).map_or((0, None, 0), |(_, _, s)| (s.passengers, s.bound_for, s.passenger_room()));
         let bookings = self.bookings(system, at);
-        let waiting = self.markets.economy.places.iter().filter(|p| p.system == system).map(|p| (p.facility, p.waiting)).collect();
-        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.ledger.credits(Party::Pilot(id)), hold, cargo, capacity, space, bookings, waiting, passengers, bound_for, seats }
+        let waiting = self.services.markets.economy.places.iter().filter(|p| p.system == system).map(|p| (p.facility, p.waiting)).collect();
+        crate::contract::MarketAnswer { system, at, here, here_held, items, there, credits: self.services.ledger.credits(Party::Pilot(id)), hold, cargo, capacity, space, bookings, waiting, passengers, bound_for, seats }
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.
@@ -373,7 +373,7 @@ impl Universe {
             units,
             amount,
             cargo,
-            credits: self.ledger.credits(Party::Pilot(id)),
+            credits: self.services.ledger.credits(Party::Pilot(id)),
         };
         self.log_trade(record);
     }

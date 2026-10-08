@@ -30,13 +30,14 @@ impl crate::universe::Universe {
     /// leave, each bound for a place that would have them (fed, with room)
     /// in this system or one a gate away, shared out by the room there.
     pub fn bookings(&self, system: usize, market: Facility) -> Vec<Booking> {
-        let Some(here) = self.markets.economy.place(system, market) else { return Vec::new() };
+        let Some(here) = self.services.markets.economy.place(system, market) else { return Vec::new() };
         let waiting = (here.waiting * 1000.0).floor();
         if waiting < 1.0 {
             return Vec::new();
         }
         let near = |s: usize| s == system || self.world.gate_links.iter().any(|&(a, b)| (a == system && b == s) || (b == system && a == s));
         let homes: Vec<(&universe_services::economy::Place, f64)> = self
+            .services
             .markets
             .economy
             .places
@@ -77,7 +78,7 @@ impl crate::universe::Universe {
         if n == 0 {
             return Err("EVERY SEAT TAKEN".into());
         }
-        if let Some(place) = self.markets.economy.place_mut(system, market) {
+        if let Some(place) = self.services.markets.economy.place_mut(system, market) {
             place.depart(n as f64 / 1000.0);
         }
         let ship = self.ship_mut_by_id(id).expect("there");
@@ -105,10 +106,10 @@ impl crate::universe::Universe {
         if ship.bound_for != Some((system, market)) {
             return Err("THEY BOOKED PASSAGE ELSEWHERE".into());
         }
-        let Some(place) = self.markets.economy.place_mut(system, market) else { return Err("NOBODY LIVES HERE".into()) };
+        let Some(place) = self.services.markets.economy.place_mut(system, market) else { return Err("NOBODY LIVES HERE".into()) };
         place.arrive(n as f64 / 1000.0);
         let paid = fare * n as f64;
-        self.ledger.transfer(Party::World, Party::Pilot(id), Asset::Credits, paid, self.tick, universe_protocol::Cause::Rules).map_err(|e| format!("{e:?}"))?;
+        self.services.ledger.transfer(Party::World, Party::Pilot(id), Asset::Credits, paid, self.tick, universe_protocol::Cause::Rules).map_err(|e| format!("{e:?}"))?;
         let ship = self.ship_mut_by_id(id).expect("there");
         ship.passengers = 0;
         ship.bound_for = None;

@@ -290,7 +290,7 @@ impl crate::universe::Universe {
     /// The game saved whole (it must have recorded from its start).
     pub fn world_save(&self) -> Option<WorldSave> {
         Some(WorldSave {
-            log: self.input_log.clone()?,
+            log: self.replay.input_log.clone()?,
             pilots: self.pilots().iter().map(|p| p.avionics.clone()).collect(),
             cockpit: self.player.as_ref().and_then(|p| p.as_any().downcast_ref::<crate::cockpit::Cockpit>()).map(|c| c.avionics().clone()),
         })
@@ -303,7 +303,7 @@ impl crate::universe::Universe {
             u.pool_mut().add(Pilot::new(a.clone()));
         }
         u.player = Some(Box::new(crate::cockpit::Cockpit::new(save.cockpit.clone().unwrap_or_default())));
-        u.input_log = Some(save.log.clone());
+        u.replay.input_log = Some(save.log.clone());
         u
     }
 }

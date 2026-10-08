@@ -68,13 +68,13 @@ impl Universe {
     /// Record the world's inputs from now on (from its start, for a replay
     /// or save to hold).
     pub fn record_inputs(&mut self) {
-        self.input_log = Some(InputLog { seed: self.world.galaxy.seed, ticks: Vec::new() });
+        self.replay.input_log = Some(InputLog { seed: self.world.galaxy.seed, ticks: Vec::new() });
     }
 
     /// Note an input that came in between ticks (if recording).
     pub(crate) fn note(&mut self, input: impl FnOnce() -> Input) {
-        if self.input_log.is_some() {
-            self.between.push(input());
+        if self.replay.input_log.is_some() {
+            self.replay.between.push(input());
         }
     }
 
@@ -119,7 +119,7 @@ impl Universe {
     /// tick by tick. (No pilots think: what they did is in the log.)
     pub fn replay(log: &InputLog) -> Universe {
         let mut u = Universe::bare(log.seed);
-        u.replaying = true;
+        u.replay.replaying = true;
         for t in &log.ticks {
             for input in &t.before {
                 match input {
@@ -127,10 +127,10 @@ impl Universe {
                     Input::Op(o) => u.op(o.clone()),
                 }
             }
-            u.replay_due = t.due.clone();
+            u.replay.replay_due = t.due.clone();
             u.tick(t.real_dt, t.warp, &Controls::default());
         }
-        u.replaying = false;
+        u.replay.replaying = false;
         u
     }
 
@@ -158,10 +158,10 @@ impl Universe {
         }
         (self.tick, self.world.time.to_bits()).hash(&mut h);
         format!("{:?}", self.records.stats).hash(&mut h);
-        self.atc.journal.len().hash(&mut h);
-        self.ledger.journal.len().hash(&mut h);
+        self.services.atc.journal.len().hash(&mut h);
+        self.services.ledger.journal.len().hash(&mut h);
         // (The land: every lot's owner, every facility's modules and when they're done.)
-        for g in &self.land.grounds {
+        for g in &self.services.land.grounds {
             for l in &g.lots {
                 (l.number, format!("{:?}", l.owner)).hash(&mut h);
             }

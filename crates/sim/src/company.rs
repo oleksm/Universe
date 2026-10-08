@@ -35,9 +35,9 @@ fn wanted(goals: &[usize], mass: &dyn Fn(usize) -> f64, made_by: &dyn Fn(usize) 
 pub fn run(u: &mut Universe) {
     let goods = u.world.goods.clone();
     let mass = |i: usize| goods[i].mass;
-    for k in 0..u.markets.economy.works.len() {
-        let Some(owner @ Party::Company(_)) = u.markets.economy.owner(&u.land, k) else { continue };
-        let w = &u.markets.economy.works[k];
+    for k in 0..u.services.markets.economy.works.len() {
+        let Some(owner @ Party::Company(_)) = u.services.markets.economy.owner(&u.services.land, k) else { continue };
+        let w = &u.services.markets.economy.works[k];
         // (A works with a building dock is a yard: each of its modules that can be set to
         // anything is set to what the build needs, the cutting table and panel former too.)
         if !w.setups.iter().any(|s| s.module.identity.key == "module.building-dock") {
@@ -90,7 +90,7 @@ pub fn run(u: &mut Universe) {
             }
         }
         for (s, r) in picks {
-            let _ = u.markets.economy.set_up(&u.land, k, s, r, owner);
+            let _ = u.services.markets.economy.set_up(&u.services.land, k, s, r, owner);
         }
     }
 }

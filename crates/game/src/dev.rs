@@ -43,7 +43,7 @@ pub fn apply(app: &mut App, name: &str) {
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
-        for c in u.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
+        for c in u.services.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
             log::info!("atc: {c:?}");
         }
     }
@@ -141,7 +141,7 @@ fn trethi_stocked(app: &mut App) {
     u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, f, 0);
     for (key, t) in [("stock.al6061-pl-5", 40.0), ("stock.al6061-ingot", 120.0), ("good.bauxite", 900.0), ("stock.deuterium-liq", 30.0), ("good.bread", 12.0)] {
         if let Some(i) = universe_sim::world::goods::item(key) {
-            u.markets.economy.put(home, f, i, t * 1000.0);
+            u.services.markets.economy.put(home, f, i, t * 1000.0);
         }
     }
 }
@@ -511,7 +511,7 @@ fn s_passengers(app: &mut App, _name: &str, _c: &Ctx) {
     let u = app.engine.universe();
     let station = u.ship_system().station().unwrap();
     let home = u.vessels[universe_sim::PLAYER].system;
-    if let Some(p) = u.markets.economy.place_mut(home, universe_sim::world::Facility::Station(station)) {
+    if let Some(p) = u.services.markets.economy.place_mut(home, universe_sim::world::Facility::Station(station)) {
         p.fed = 0.6;
         p.waiting = 1.0;
     }
@@ -625,10 +625,10 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
     let u = app.engine.universe();
     let step = universe_sim::services::economy::step();
     let end = u.world.time + days * 86_400.0;
-    let mut t = u.markets.economy.stepped_to;
+    let mut t = u.services.markets.economy.stepped_to;
     while t + step <= end {
         t += step;
-        u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
+        u.services.markets.step(t, &mut u.services.land, &mut u.services.ledger, u.tick);
         universe_sim::company::run(u);
     }
     app.engine.refresh();
@@ -640,16 +640,16 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
     if name == "economymodules" {
         // (Its modules open, the yard's welding bay set to the MC-07's nose cap.)
         let u = app.engine.universe();
-        let yard = u.markets.economy.works.iter().position(|w| w.name == "Trethi Yard");
+        let yard = u.services.markets.economy.works.iter().position(|w| w.name == "Trethi Yard");
         let cap = universe_sim::world::goods::item("part.mc07-01");
         if let (Some(k), Some(cap)) = (yard, cap) {
-            let bay = u.markets.economy.works[k].setups.iter().position(|s| s.module.identity.key == "module.welding-bay").unwrap_or(0);
+            let bay = u.services.markets.economy.works[k].setups.iter().position(|s| s.module.identity.key == "module.welding-bay").unwrap_or(0);
             // (As its owner sets it.)
-            let owner = u.markets.economy.owner(&u.land, k);
+            let owner = u.services.markets.economy.owner(&u.services.land, k);
             if let (Some(r), Some(owner)) = (universe_sim::world::recipes::of("module.welding-bay").iter().position(|r| r.makes == cap), owner) {
-                let _ = u.markets.economy.set_up(&u.land, k, bay, Some(r), owner);
+                let _ = u.services.markets.economy.set_up(&u.services.land, k, bay, Some(r), owner);
             }
-            let before = u.markets.economy.works.iter().enumerate().filter(|(j, w)| *j < k && Some(w.site) == site).map(|(_, w)| w.setups.len()).sum::<usize>();
+            let before = u.services.markets.economy.works.iter().enumerate().filter(|(j, w)| *j < k && Some(w.site) == site).map(|(_, w)| w.setups.len()).sum::<usize>();
             panel.module = Some(before + bay);
         }
         app.engine.refresh();
@@ -715,7 +715,7 @@ fn s_holding(app: &mut App, _name: &str, c: &Ctx) {
         u.vessels[universe_sim::craft_id(k)].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), k);
         u.vessels[universe_sim::craft_id(k)].system = home;
         let now = u.world.time;
-        u.atc.request_pad(home, universe_sim::world::Facility::Spaceport(port), universe_sim::craft_id(k), now);
+        u.services.atc.request_pad(home, universe_sim::world::Facility::Spaceport(port), universe_sim::craft_id(k), now);
     }
     {
         let mut pilots = u.pilots();
@@ -997,7 +997,7 @@ fn s_sam(app: &mut App, name: &str, c: &Ctx) {
         app.engine.universe().vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(-out, out.any_orthonormal_vector());
         let u = app.engine.universe();
         let now = u.world.time;
-        u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules);
+        u.services.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules);
         if name == "samfar" {
             for _ in 0..60 * 26 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -2073,7 +2073,7 @@ fn s_enemy(app: &mut App, _name: &str, _c: &Ctx) {
     // On approach to the home station, an enemy of the home system.
     apply(app, "approach");
     let home = app.charts.home_system;
-    app.engine.universe().standings.set(universe_sim::PLAYER, home, -100.0);
+    app.engine.universe().services.standings.set(universe_sim::PLAYER, home, -100.0);
     app.engine.refresh();
     app.v = app.engine.view();
 }
