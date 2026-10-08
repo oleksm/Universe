@@ -232,7 +232,7 @@ fn inside((p, c): (Vec2, Vec2), q: Vec2) -> bool {
 
 pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
     match y.page {
         Page::Interior => crate::interior::draw(frame, &place, &y.interior),

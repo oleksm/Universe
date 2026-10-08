@@ -184,7 +184,8 @@ struct MeshIn {
 };
 // (A patch's origin wrapped to the fine grain's period (m) rides in c0.w, c1.w, c2.w.)
 
-const EXPOSURE: f32 = 0.3;
+// How the eye adapts to the planet's light on a face (the planet's own `ADAPT`).
+const FILL_ADAPT: f32 = 0.3;
 
 fn view_factor(cos_b: f32, s_in: f32) -> f32 {
     let s = min(s_in, 1.0);
@@ -196,72 +197,12 @@ fn view_factor(cos_b: f32, s_in: f32) -> f32 {
 fn fill(v: MeshIn, n: vec3<f32>) -> vec3<f32> {
     var k2 = 0.0;
     if (v.refl_dir.w > 0.0) {
-        k2 = max(pow(v.refl_color.w * view_factor(dot(n, v.refl_dir.xyz), v.refl_dir.w), EXPOSURE) - 0.12, 0.0) / 0.88;
+        k2 = max(pow(v.refl_color.w * view_factor(dot(n, v.refl_dir.xyz), v.refl_dir.w), FILL_ADAPT) - 0.12, 0.0) / 0.88;
     }
     return k2 * v.refl_color.rgb;
 }
 
-// What the shadow map says of the sun at `p` (camera-relative), on a
-// surface facing `n`: 1 lit, 0 in shadow (2x2 filtered at the edge).
-// Looked up a texel and a half off the surface, so it doesn't shadow itself.
-fn sunlit(p: vec3<f32>, n: vec3<f32>) -> f32 {
-    if (g.shadow.z == 0.0) {
-        return 1.0;
-    }
-    return sunlit_near(p, n) * sunlit_ground(p, n);
-}
-
-// What the ground cascade says: the shadows of mountains, kilometres long.
-// (Its texels are coarse: the ground offsets further along its normal.)
-fn sunlit_ground(p: vec3<f32>, n: vec3<f32>) -> f32 {
-    if (g.shadow2.w == 0.0) {
-        return 1.0;
-    }
-    let s = g.shadow_ground * vec4<f32>(p + n * g.shadow2.z * 2.5, 1.0);
-    let c = vec2<f32>(s.x * 0.5 + 0.5, 0.5 - s.y * 0.5);
-    if (all(c > vec2<f32>(0.0)) && all(c < vec2<f32>(1.0)) && s.z > 0.0 && s.z < 1.0) {
-        // (Faded out toward the box's edge, so its end isn't a line.)
-        let edge = min(min(c.x, 1.0 - c.x), min(c.y, 1.0 - c.y));
-        return mix(1.0, pcf(c, 3, s.z), smoothstep(0.0, 0.1, edge));
-    }
-    return 1.0;
-}
-
-// What the fine cascades say (what casts near the eye: ships, stations, rocks).
-fn sunlit_near(p: vec3<f32>, n: vec3<f32>) -> f32 {
-    if (g.shadow2.y > 0.0) {
-        let tight = g.shadow_tight * vec4<f32>(p + n * g.shadow2.x * 1.5, 1.0);
-        let c = vec2<f32>(tight.x * 0.5 + 0.5, 0.5 - tight.y * 0.5);
-        if (all(c > vec2<f32>(0.02)) && all(c < vec2<f32>(0.98)) && tight.z > 0.0 && tight.z < 1.0) {
-            return pcf(c, 2, tight.z);
-        }
-    }
-    let near = g.shadow_near * vec4<f32>(p + n * g.shadow.x * 1.5, 1.0);
-    let a = vec2<f32>(near.x * 0.5 + 0.5, 0.5 - near.y * 0.5);
-    if (all(a > vec2<f32>(0.01)) && all(a < vec2<f32>(0.99)) && near.z > 0.0 && near.z < 1.0) {
-        return pcf(a, 0, near.z);
-    }
-    let far = g.shadow_far * vec4<f32>(p + n * g.shadow.y * 1.5, 1.0);
-    let b = vec2<f32>(far.x * 0.5 + 0.5, 0.5 - far.y * 0.5);
-    if (all(b > vec2<f32>(0.0)) && all(b < vec2<f32>(1.0)) && far.z > 0.0 && far.z < 1.0) {
-        return pcf(b, 1, far.z);
-    }
-    return 1.0;
-}
-
-// A shadow map texel (its uv): 1 / SHADOW_SIZE (renderer.rs).
-const SHADOW_TEXEL: f32 = 1.0 / 4096.0;
-
-// 3x3 compared samples (each itself filtered 2x2): soft edges, no stair steps.
-fn pcf(uv: vec2<f32>, layer: i32, depth: f32) -> f32 {
-    var lit = 0.0;
-    for (var y = -1; y <= 1; y++) {
-        for (var x = -1; x <= 1; x++) {
-            lit += textureSampleCompareLevel(shadow_map, shadow_cmp, uv + vec2<f32>(f32(x), f32(y)) * SHADOW_TEXEL, layer, depth);
-        }
-    }
-    return lit / 9.0;
-}
+// (The sun through the shadow map: `sunlit`, in light.wgsl.)
 
 // A mesh's face or edge, lit per pixel: its colour, the sun's light on it
 // (before shadow) and the planet's, the ambient; where it is and faces.
@@ -294,8 +235,7 @@ struct MeshOut {
     @location(16) data: vec4<f32>,
 };
 
-// The fine grain repeats every this many metres (see `MICRO_PERIOD`).
-const MICRO_PERIOD: f32 = 4096.0;
+// (The fine grain repeats every `MICRO_PERIOD` metres: written by shaders.rs, as frame.rs has it.)
 
 // The lattice's value at `q`, wrapped every `n` cells.
 fn whash(q: vec3<i32>, n: i32) -> f32 {
@@ -513,7 +453,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let span = 2.0 * length(in.at) * g.view.x * oblique;
     let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
     // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
-    let globe_lod = max(log2(footprint * 512.0 / 1.5707963), 0.0);
+    let globe_lod = max(log2(footprint * GLOBE_SIZE / 1.5707963), 0.0);
     var ground: vec4<f32>;
     if (on_patch) {
         ground = textureSampleLevel(globe_maps, globe_soft, in.local, layer, globe_lod);
@@ -656,7 +596,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             sun *= clouds_shadow_cached(in.at, g.world_at.xyz, world_turn(), in.sun_dir, pixel * 0.001, world_clouds, world_air, world_cm, world_ce, world_ca, world_cc, world_cct, world_cct_old, world_air_smp);
         }
     }
-    let light = min(sun * seen + in.fill, vec3<f32>(4.0));
+    let light = min(sun * seen + in.fill, vec3<f32>(MAX_LIGHT));
     if (g.shadow.w > 0.0 && seen < 0.5 && max(sun.r, max(sun.g, sun.b)) > 0.0) {
         return vec4<f32>(0.8, 0.0, 0.0, in.color.a);
     }
@@ -748,9 +688,8 @@ fn air_center(v: MeshIn) -> vec4<f32> {
     return vec4<f32>(v.t.xyz - off / w, length(v.c0.xyz) / w);
 }
 
-// A patch splits when the eye is nearer than this many times its size (terrain_lod's SPLIT:
-// keep them together).
-const GEOMORPH_SPLIT: f32 = 2.4;
+// (A patch splits when the eye is nearer than `GEOMORPH_SPLIT` times its size: written by
+// shaders.rs, the terrain LOD's.)
 
 @vertex
 fn vs_mesh(v_in: MeshIn) -> MeshOut {

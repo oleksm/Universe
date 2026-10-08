@@ -3,6 +3,7 @@
 //! observer of the core's events and the services' decisions; it decides
 //! nothing.
 
+use universe_protocol::ShipId;
 use universe_protocol::Cause;
 
 /// Kills kept, and trades.
@@ -15,8 +16,8 @@ pub const TRADES: usize = 100;
 pub struct Kill {
     pub time: f64,
     pub system: usize,
-    pub killer: usize,
-    pub victim: usize,
+    pub killer: ShipId,
+    pub victim: ShipId,
     pub killer_name: String,
     pub victim_name: String,
     pub weapon: String,
@@ -45,7 +46,7 @@ pub struct TradeRecord {
     pub system: usize,
     pub market: String,
     /// Who traded (the player 0, craft i: i + 1).
-    pub pilot: usize,
+    pub pilot: ShipId,
     /// The market's place (where it was heard first).
     pub place: Option<universe_world::Facility>,
     pub trader: String,

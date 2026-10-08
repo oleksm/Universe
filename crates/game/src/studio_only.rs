@@ -34,16 +34,16 @@ impl StudioOnly {
         if let Ok(how) = std::env::var("UNIVERSE_BALANCE") {
             interior.balance_room(how == "trim");
         }
-        if let Ok(c) = std::env::var("UNIVERSE_DRIVE") {
-            interior.test_drive(c.parse().ok());
+        if std::env::var_os("UNIVERSE_DRIVE").is_some() {
+            interior.test_drive(crate::devenv::num("UNIVERSE_DRIVE"));
         }
         if let Ok(other) = std::env::var("UNIVERSE_COMPARE") {
             interior.compare_with(&other);
         }
-        if let Some(k) = std::env::var("UNIVERSE_VIEW").ok().and_then(|v| v.parse().ok()) {
+        if let Some(k) = crate::devenv::num("UNIVERSE_VIEW").map(|n| n as u8) {
             interior.flat_view(k);
         }
-        let issue = std::env::var("UNIVERSE_ISSUE").ok().and_then(|v| v.parse().ok());
+        let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
         StudioOnly { interior, spec, deckplans: Vec::new(), issue }
     }
 }

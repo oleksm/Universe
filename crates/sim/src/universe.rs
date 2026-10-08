@@ -3,6 +3,7 @@
 //! time in a fixed order — the player's ship first, then every craft, each
 //! from the same moment (see `vessel` for what a ship's turn is).
 
+use universe_protocol::ShipId;
 use std::sync::Arc;
 
 use glam::{DQuat, DVec3};
@@ -20,10 +21,10 @@ pub fn tick() -> f64 {
 /// The most ticks a step may take (beyond it, under heavy warp, ticks stretch).
 pub const TICK_BUDGET: usize = 8;
 
-/// Traffic control's look at who's where, every this many ticks.
-const PRESENCE_EVERY: u64 = 6;
-/// Ticks between reading the ground ahead of ships low over a baked world (see `ground_ahead`).
-const GROUND_AHEAD_EVERY: u64 = 30;
+/// Traffic control's look at who's where, this often (s).
+const PRESENCE_EVERY: f64 = 0.1;
+/// How often the ground ahead of ships low over a baked world is read (s; see `ground_ahead`).
+const GROUND_AHEAD_EVERY: f64 = 0.5;
 /// How low over its ground a ship has its ground read ahead (m), and how far ahead (s).
 const GROUND_AHEAD_BELOW: f64 = 30_000.0;
 const GROUND_AHEAD_SECONDS: [f64; 3] = [0.0, 3.0, 8.0];
@@ -94,11 +95,11 @@ pub struct Universe {
     pub tick: u64,
     /// This tick's event log: (ship, event), in order — what services' causes
     /// point into (`Cause::Event { tick, index }`).
-    pub log: Vec<(usize, ShipEvent)>,
+    pub log: Vec<(universe_protocol::ShipId, ShipEvent)>,
     /// The law: who's fair game, since when, and why (see `universe_services::law`).
     pub law: universe_services::Law,
     /// Turret gunners' orders on the way to the guns (due tick, turret, orders).
-    pub(crate) turret_orders: std::collections::VecDeque<(u64, usize, universe_protocol::TurretCommand)>,
+    pub(crate) turret_orders: std::collections::VecDeque<(u64, universe_protocol::ShipId, universe_protocol::TurretCommand)>,
     /// Traffic control (clearance, pads, corridors): a service.
     pub atc: universe_services::TrafficControl,
     /// The ledger (credits, and what's in each hold) and the market service.
@@ -172,9 +173,7 @@ impl Universe {
             positions: Vec::new(),
         };
         // The settled systems' economy (the gate network's).
-        let mut settled: Vec<usize> = u.world.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        settled.sort_unstable();
-        settled.dedup();
+        let settled = u.world.settled();
         let systems: Vec<(usize, Arc<StarSystem>)> = settled.into_iter().map(|i| (i, u.world.system(i))).collect();
         // The land office, from the registry: each settlement recorded, at its system and port.
         let content = universe_world::content::content();
@@ -186,7 +185,7 @@ impl Universe {
         // The rigs (see `world::rigs`): each its own market, its owner's.
         for (i, sys) in &systems {
             for (b, body) in sys.bodies.iter().enumerate().filter(|(_, b)| b.kind == universe_world::BodyKind::Rig) {
-                u.markets.economy.add_rig(&mut u.land, *i, &sys.name, b, &body.key);
+                u.markets.economy.add_rig(&mut u.land, *i, b, &body.key);
             }
         }
         u.start_docked();
@@ -281,7 +280,7 @@ impl Universe {
     }
 
     /// A pilot's request (from its posting), to the service it's for.
-    pub(crate) fn request(&mut self, id: usize, r: crate::vessel::Request) {
+    pub(crate) fn request(&mut self, id: ShipId, r: crate::vessel::Request) {
         use crate::vessel::Request;
         match r {
             Request::Pad { system, port, ship, now } => {
@@ -300,11 +299,11 @@ impl Universe {
     }
 
     /// Ship `id` (the player's 0, craft i: i + 1): its id, system and ship.
-    pub(crate) fn ship_by_id(&self, id: usize) -> Option<(usize, usize, &Ship)> {
+    pub(crate) fn ship_by_id(&self, id: ShipId) -> Option<(ShipId, usize, &Ship)> {
         if id == crate::combat::PLAYER {
             Some((id, self.ship_system, &self.ship))
         } else {
-            self.crafts.get(id - 1).map(|c| (id, c.system, &c.ship))
+            id.craft_index().and_then(|i| self.crafts.get(i)).map(|c| (id, c.system, &c.ship))
         }
     }
 
@@ -360,15 +359,14 @@ impl Universe {
         self.world.time = t1;
         universe_prof::time("sim/combat", || self.combat(t1 - t0));
         self.judge(t1);
-        // Traffic control looks around ten times a second (pads freed when
-        // their ships leave, corridors when they're through): plenty, at a
-        // sixth of the cost.
         // The ground under ships low over a baked world, and where they'll be in a few seconds,
         // read ahead of the physics (twice a second).
-        if self.tick.is_multiple_of(GROUND_AHEAD_EVERY) {
+        if crate::clocks::due(self.tick, GROUND_AHEAD_EVERY) {
             universe_prof::time("sim/ground ahead", || self.ground_ahead());
         }
-        if self.tick.is_multiple_of(PRESENCE_EVERY) {
+        // Traffic control looks around ten times a second (pads freed when their ships leave,
+        // corridors when they're through): plenty, and cheaper than every tick.
+        if crate::clocks::due(self.tick, PRESENCE_EVERY) {
             universe_prof::time("sim/traffic presence", || self.traffic_presence());
         }
         universe_prof::time("sim/recorder", || self.record());
@@ -382,8 +380,7 @@ impl Universe {
         self.publish_boards();
         self.update_standings();
         // (The dead-man rule: a look each step of the machinery's clock.)
-        let machinery = (crate::clocks::period(universe_world::registry::ClockKey::Machinery) / crate::clocks::tick()).round().max(1.0) as u64;
-        if self.tick.is_multiple_of(machinery) {
+        if crate::clocks::due(self.tick, crate::clocks::period(universe_world::registry::ClockKey::Machinery)) {
             universe_prof::time("sim/dead man", || self.dead_man());
         }
         // The pilots get the world as it now is (replaying, what they did is logged).
@@ -413,7 +410,7 @@ impl Universe {
     /// every ship is sampled every `recorder::EVERY` (not all at once).
     fn record(&mut self) {
         let now = self.world.time;
-        let slices = ((crate::recorder::EVERY / tick()).round() as u64).max(1);
+        let slices = crate::clocks::ticks(crate::recorder::EVERY);
         let k = self.tick % slices;
         if k == 0 {
             self.recorder.record(crate::combat::PLAYER, crate::recorder::Sample::of(now, self.ship_system, &self.ship, &self.player_status));
@@ -426,7 +423,7 @@ impl Universe {
     /// What traffic control needs to hear from a ship's events this tick:
     /// its holds end when its clearance does, when it docks or goes through a
     /// gate, and when it's wrecked, replaced or leaves the system.
-    pub(crate) fn traffic_events(&mut self, id: usize, events: &[Event]) {
+    pub(crate) fn traffic_events(&mut self, id: ShipId, events: &[Event]) {
         let done = events.iter().any(|e| {
             matches!(
                 e,
@@ -468,7 +465,7 @@ impl Universe {
     }
 
     /// Ship `id`'s events go into the tick's log.
-    pub(crate) fn log_events(&mut self, id: usize, events: &[Event]) {
+    pub(crate) fn log_events(&mut self, id: ShipId, events: &[Event]) {
         for e in events {
             if let Event::Ship(e) = e {
                 self.log.push((id, e.clone()));
@@ -477,7 +474,7 @@ impl Universe {
     }
 
     /// The latest of ship `id`'s events in this tick's log matching `which`, as a cause.
-    pub(crate) fn logged(&self, id: usize, which: impl Fn(&ShipEvent) -> bool) -> Option<universe_protocol::Cause> {
+    pub(crate) fn logged(&self, id: ShipId, which: impl Fn(&ShipEvent) -> bool) -> Option<universe_protocol::Cause> {
         let index = self.log.iter().rposition(|(s, e)| *s == id && which(e))?;
         Some(universe_protocol::Cause::Event { tick: self.tick, index: index as u32 })
     }
@@ -502,12 +499,12 @@ impl Universe {
         }
         type Seen = (Arc<StarSystem>, Arc<Vec<DVec3>>, Vec<Port>);
         // Corridors held, by ship: (system, body).
-        let mut held: std::collections::HashMap<usize, Vec<(usize, usize)>> = std::collections::HashMap::new();
+        let mut held: std::collections::HashMap<universe_protocol::ShipId, Vec<(usize, usize)>> = std::collections::HashMap::new();
         for (system, body, ship) in self.atc.corridors_held() {
             held.entry(ship).or_default().push((system, body));
         }
         // Who's where (on the ground, or flying in normal space).
-        type Where = (usize, usize, DVec3, bool, Option<(NavTarget, Phase)>);
+        type Where = (universe_protocol::ShipId, usize, DVec3, bool, Option<(NavTarget, Phase)>);
         let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.player_status.clearance))
             .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, c.status.clearance)))
             // (In a hangar: on no pad, in no column.)

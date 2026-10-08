@@ -1,32 +1,5 @@
-// Renamed entries: old key -> new key, so saves and peers using the old
-// name still resolve. (Nothing renamed yet: org.hearth-line became org.hoar-line in the registry,
-// but the game had no brand entry for it.)
+// Renamed entries: old key -> new key, so saves and peers using the old name still resolve.
+// The registry's renames (standards/renames.yaml) are the list, and the game reads them; this
+// file holds only an alias that isn't a registry rename (none).
 {
-    // Equipment keys to one rule, equipment.<slot>[.<family>].<variant> (registry audit, 2026-10-07).
-    "equipment.cabin.s1": "equipment.cargo.cabin.s1",
-    "equipment.cabin.s2": "equipment.cargo.cabin.s2",
-    "equipment.cabin.s3": "equipment.cargo.cabin.s3",
-    "equipment.cabin.s4": "equipment.cargo.cabin.s4",
-    "equipment.gun.mass-driver.s1": "equipment.hardpoint.mass-driver.s1",
-    "equipment.laser.mc07.mining": "equipment.hardpoint.mining-laser.mc07",
-    "equipment.laser.pulse.s1": "equipment.hardpoint.pulse-laser.s1",
-    "equipment.life.s1": "equipment.life-support.s1",
-    "equipment.life.s2": "equipment.life-support.s2",
-    "equipment.mining.rig.s2": "equipment.utility.mining-rig.s2",
-    "equipment.nav.basic.s1": "equipment.avionics.nav-basic.s1",
-    "equipment.nav.full.s1": "equipment.avionics.nav-full.s1",
-    "equipment.rack.s1": "equipment.cargo.rack.s1",
-    "equipment.rack.s2": "equipment.cargo.rack.s2",
-    "equipment.rack.s3": "equipment.cargo.rack.s3",
-    "equipment.rack.s4": "equipment.cargo.rack.s4",
-    "equipment.relay.gate": "equipment.gate.relay.gate",
-    "equipment.relay.hyper": "equipment.gate.relay.hyper",
-    "equipment.tank.s0": "equipment.tank.deuterium.s0",
-    "equipment.tank.s1": "equipment.tank.deuterium.s1",
-    "equipment.tank.s2": "equipment.tank.deuterium.s2",
-    "equipment.tank.s3": "equipment.tank.deuterium.s3",
-    "equipment.tank.s4": "equipment.tank.deuterium.s4",
-    "equipment.terminal.ground": "equipment.gate.terminal-ground.s3",
-    "equipment.transceiver.beacon": "equipment.gate.transceiver.beacon",
-    "equipment.transceiver.station": "equipment.gate.transceiver.station",
 }

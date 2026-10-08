@@ -234,7 +234,7 @@ impl Gen {
             let variants: Vec<&str> = e.iter().filter_map(Value::as_str).collect();
             assert_eq!(variants.len() + usize::from(has_null), e.len(), "{at}: an enum of other than text");
             let name = self.emit_name(hint);
-            let mut s = format!("{}#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, Serialize, Deserialize)]\npub enum {name} {{\n", doc(v, ""));
+            let mut s = format!("{}#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, Serialize, Deserialize)]\npub enum {name} {{\n", doc(v, ""));
             let mut seen = HashSet::new();
             let mut arms = String::new();
             for x in &variants {

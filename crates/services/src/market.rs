@@ -14,7 +14,7 @@
 
 use std::sync::Arc;
 
-use universe_protocol::{BodyId, Cause, Tick};
+use universe_protocol::{ShipId, Cause, Tick};
 use universe_world::goods::Item;
 use universe_world::system::StarSystem;
 use universe_world::traffic::Facility;
@@ -65,7 +65,7 @@ pub struct Markets {
 /// A request to trade: who, where (and where it physically is), what.
 #[derive(Clone, Copy, Debug)]
 pub struct Order {
-    pub pilot: BodyId,
+    pub pilot: ShipId,
     pub system: usize,
     pub market: Facility,
     /// Where the pilot's ship is docked or landed, as the core reports.
@@ -190,7 +190,7 @@ impl Markets {
     /// warehouse's fuel where it has some, else brought in. The tonnes and
     /// the credits paid, or why not.
     #[allow(clippy::too_many_arguments)]
-    pub fn refuel(&mut self, ledger: &mut Ledger, system: usize, market: Facility, docked_at: Option<Facility>, pilot: BodyId, want: f64, tick: Tick, cause: Cause) -> Result<(f64, f64), String> {
+    pub fn refuel(&mut self, ledger: &mut Ledger, system: usize, market: Facility, docked_at: Option<Facility>, pilot: ShipId, want: f64, tick: Tick, cause: Cause) -> Result<(f64, f64), String> {
         if docked_at != Some(market) {
             return Err("DOCK OR LAND THERE TO REFUEL".into());
         }

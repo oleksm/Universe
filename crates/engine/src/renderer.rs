@@ -61,7 +61,7 @@ struct Globals {
 }
 
 /// The shadow map's side (texels), each of its four cascades (see `Shadows`).
-const SHADOW_SIZE: u32 = 4096; // (the shaders' SHADOW_TEXEL: keep them together)
+use crate::shaders::SHADOW_SIZE;
 /// How far toward the light (and away) a shadow box reaches from the eye
 /// (m): what casts from up to this far sunward of it.
 const SHADOW_DEPTH: f64 = 8_000.0;
@@ -73,7 +73,7 @@ const GROUND_HALF: f64 = 30_000.0;
 const GROUND_DEPTH: f64 = 80_000.0;
 
 /// Globe maps' texels a face side, layers (worlds at once), mip levels.
-const GLOBE_SIZE: u32 = 512;
+use crate::shaders::GLOBE_SIZE;
 const GLOBE_LAYERS: u32 = 16;
 const GLOBE_MIPS: u32 = 10;
 
@@ -504,10 +504,7 @@ impl Renderer {
         });
 
         // (The ground's material, the lab's, beside the scene shader that calls it.)
-        let scene = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("scene"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/ground_material.wgsl"), "\n", include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/sea.wgsl"), "\n", include_str!("shaders/clouds.wgsl"), "\n", include_str!("shaders/scene.wgsl")).into()),
-        });
+        let scene = crate::shaders::make(device, "scene", crate::shaders::scene());
         let scene_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("scene"),
             bind_group_layouts: &[Some(&globals_layout)],
@@ -702,7 +699,7 @@ impl Renderer {
         let lights = [light_buffer(), light_buffer(), light_buffer(), light_buffer()];
         let light_bind = |b: &wgpu::Buffer| device.create_bind_group(&wgpu::BindGroupDescriptor { label: Some("shadow light"), layout: &light_layout, entries: &[wgpu::BindGroupEntry { binding: 0, resource: b.as_entire_binding() }] });
         let light_binds = [light_bind(&lights[0]), light_bind(&lights[1]), light_bind(&lights[2]), light_bind(&lights[3])];
-        let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/shadow.wgsl"));
+        let shadow_shader = crate::shaders::single(device, "shadow");
         let shadow_pipe_biased = |label: &str, bias: wgpu::DepthBiasState| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some(label),
             layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("shadow"), bind_group_layouts: &[Some(&light_layout)], immediate_size: 0 })),
@@ -822,7 +819,7 @@ impl Renderer {
             layout: &atlas_layout,
             entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
         });
-        let hud_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/hud.wgsl"));
+        let hud_shader = crate::shaders::single(device, "hud");
         let hud_tri_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("hud tris"),
             layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(&globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
@@ -887,7 +884,7 @@ impl Renderer {
                 },
             ],
         });
-        let blit = device.create_shader_module(wgpu::include_wgsl!("shaders/blit.wgsl"));
+        let blit = crate::shaders::single(device, "blit");
         let blit_layout_pipeline = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
             label: Some("blit"),
             bind_group_layouts: &[Some(&blit_layout)],
@@ -1148,7 +1145,7 @@ impl Renderer {
             shadow2: [tight.map_or(0.0, texel), if tight.is_some() && sun.is_some() { 1.0 } else { 0.0 }, texel(GROUND_HALF), if ground_on { 1.0 } else { 0.0 }],
             shadow_ground: shadow_ground.to_cols_array_2d(),
             // (w: UNIVERSE_SHADOW_DEBUG tints what's in shadow red, to check them.)
-            shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if std::env::var_os("UNIVERSE_SHADOW_DEBUG").is_some() { 1.0 } else { 0.0 }],
+            shadow: [texel(near), texel(far), if sun.is_some() { 1.0 } else { 0.0 }, if crate::devflags::get().shadow_debug { 1.0 } else { 0.0 }],
             look: [on(gr.textures), on(gr.normal_maps), on(gr.occlusion), on(gr.emission)],
             look2: [on(gr.specular), on(gr.planet_light), on(gr.tone_map), world_layer],
             env_sun: frame.light.map_or([0.0; 4], |l| {

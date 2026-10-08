@@ -7,9 +7,8 @@ use universe_engine::glam::Vec2;
 use universe_engine::{Color, Context, Frame, Graphics, KeyCode, GLYPH};
 
 use crate::App;
+use crate::palette::{DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const ON: Color = Color::hex(0x60ffb0);
 const OFF: Color = Color::hex(0xff8040);
 
@@ -107,7 +106,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let w = 34.0 * (GLYPH * 0.75) + 24.0;
     let h = line * (ROWS.len() as f32 + 4.0) + 8.0;
     let (x, mut y) = (size.x - w - 16.0, 60.0);
-    frame.hud_rect(Vec2::new(x - 8.0, y - 8.0), Vec2::new(w + 16.0, h), Color([0.012, 0.018, 0.026, 0.92]));
+    frame.hud_rect(Vec2::new(x - 8.0, y - 8.0), Vec2::new(w + 16.0, h), crate::palette::panel(0.92));
     frame.text(Vec2::new(x, y), "GRAPHICS   (` OR ESC CLOSES)", TEXT);
     y += line * 1.5;
     let (kx, sx) = (x + GLYPH * 3.0, x + w - GLYPH * 3.5);

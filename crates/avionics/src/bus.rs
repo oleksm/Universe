@@ -35,7 +35,7 @@ pub trait Bus {
     fn gate_links(&self) -> &[(usize, usize)];
 
     /// The ship's id, as traffic control knows it.
-    fn id(&self) -> usize;
+    fn id(&self) -> universe_protocol::ShipId;
 
     /// Ask traffic control for a pad at spaceport `port` in the ship's system.
     fn request_pad(&mut self, port: universe_world::traffic::Facility) -> PadGrant;

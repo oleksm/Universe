@@ -181,9 +181,7 @@ mod clear {
     #[test]
     fn nothing_large_comes_near_a_gates_path() {
         let w = crate::World::new(1984);
-        let mut systems: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        systems.sort_unstable();
-        systems.dedup();
+        let systems = w.settled();
         let mut checked = 0;
         for &s in systems.iter().take(40) {
             let sys = w.system(s);
@@ -213,4 +211,12 @@ mod clear {
         eprintln!("{checked} gate positions checked in {} systems", systems.len().min(40));
         assert!(checked > 100, "{checked}");
     }
+}
+
+/// The settled systems: those on the gate network (`links`), in order, each once.
+pub fn settled(links: &[(usize, usize)]) -> Vec<usize> {
+    let mut s: Vec<usize> = links.iter().flat_map(|&(a, b)| [a, b]).collect();
+    s.sort_unstable();
+    s.dedup();
+    s
 }

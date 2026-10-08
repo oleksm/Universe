@@ -5,14 +5,12 @@
 //! of each a day, and the prices it asks and pays.
 
 use universe_engine::glam::Vec2;
-use universe_engine::{text_size, Color, Context, Frame, KeyCode};
+use universe_engine::{text_size, Context, Frame, KeyCode};
 use universe_sim::services::economy::Place;
 
 use crate::App;
+use crate::palette::{AMBER as WARN, DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
-const WARN: Color = Color::hex(0xffb030);
 
 /// The panel's cursor.
 #[derive(Default)]
@@ -107,7 +105,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         return;
     }
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = 11.0;
     // (Each place as its last report reached us over the hypernet, and how old.)
     let heard: Vec<(&Place, Option<f64>)> = app

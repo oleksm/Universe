@@ -62,7 +62,7 @@ pub struct Pool {
     /// What it can hold (kg).
     pub room: f64,
     pub marks: BTreeMap<usize, VecDeque<Mark>>,
-    pub lots: BTreeMap<usize, VecDeque<(Batch, f64)>>,
+    pub lots: BTreeMap<usize, crate::lots::Lots>,
 }
 
 /// Is stock item `item` a made product (one serial a unit: a hull, equipment, an industrial module,
@@ -98,13 +98,8 @@ impl Pool {
         if !marks.is_empty() {
             self.marks.entry(item).or_default().extend(marks);
         }
-        // (A piece of a lot already here joins it.)
-        for (b, kg) in lots {
-            let l = self.lots.entry(item).or_default();
-            match l.iter_mut().find(|(x, _)| x.lot == b.lot) {
-                Some((_, have)) => *have += kg,
-                None => l.push_back((b, kg)),
-            }
+        if !lots.is_empty() {
+            crate::lots::put(self.lots.entry(item).or_default(), lots);
         }
     }
 
@@ -139,17 +134,7 @@ impl Pool {
         // (Lots: the oldest first, as far as what was taken goes.)
         let mut lots = Vec::new();
         if let Some(l) = self.lots.get_mut(&item) {
-            let mut want = t;
-            while want > 1e-9 {
-                let Some((b, kg)) = l.front_mut() else { break };
-                let k = want.min(*kg);
-                *kg -= k;
-                want -= k;
-                lots.push((b.clone(), k));
-                if *kg <= 1e-9 {
-                    l.pop_front();
-                }
-            }
+            lots = crate::lots::take(l, t);
             if l.is_empty() {
                 self.lots.remove(&item);
             }
@@ -229,7 +214,7 @@ impl Works {
     /// the recipes that lead to what it makes.
     fn new(ground: usize, works: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
-        let f = reg.facility(&key)?;
+        let f = reg.facility(key)?;
         let mut w = Self::built(Site::Ground(ground), works, &f.identity.name, &f.lines, &f.modules, &f.stock, f.exchange.is_some())?;
         w.key = key.to_string();
         w.maker = reg.parcel(&f.parcel).and_then(|p| p.owner.clone());
@@ -241,7 +226,7 @@ impl Works {
     /// Built as the registry's rig `key`, body `body` of `system`: its own warehouse, its owner's.
     fn rig(system: usize, body: usize, key: &str) -> Option<Self> {
         let reg = universe_world::registry::registry();
-        let r = reg.settlement(&key)?;
+        let r = reg.settlement(key)?;
         let mut w = Self::built(Site::Rig(system, body), 0, &r.identity.name, &r.lines, &r.modules, &[], true)?;
         w.owner = r.owner.clone();
         w.key = key.to_string();
@@ -367,6 +352,8 @@ pub struct Place {
     pub system: usize,
     pub facility: Facility,
     pub name: String,
+    /// Its settlement record's key (None: a rig, a settlement of its own).
+    pub record: Option<String>,
     /// Where it is: its land office's ground, or a rig.
     pub site: Site,
     /// Who trades at its market: the exchange (`Party::Market`), or a rig's owner at its dock.
@@ -464,8 +451,8 @@ impl Place {
     }
 }
 
-/// The duty on sales in the system named `system`: its law's (0: no law, or none levied).
-fn duty_in(system: &str) -> f64 {
+/// The duty on sales in system `system` (its galaxy index): its law's (0: no law, or none levied).
+fn duty_in(system: usize) -> f64 {
     universe_world::order::law(system).and_then(|l| l.policies.duty).unwrap_or(0.0)
 }
 
@@ -491,16 +478,17 @@ impl Economy {
             e.index.insert((g.system, facility), e.places.len());
             // (Its people, as the registry has them: thousands.)
             let reg = universe_world::registry::registry();
-            let record = reg.settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&g.recorded.name));
+            let record = reg.settlement(&g.recorded.key);
             let people = record.and_then(|s| s.population).map_or(0.0, |n| n as f64 / 1000.0);
             let breathes = record.and_then(|s| reg.bodies.iter().find(|b| Some(&b.identity.key) == s.at.as_ref())).is_some_and(|b| b.atmosphere.breathable == Some(true));
             e.places.push(Place {
                 system: g.system,
                 facility,
                 name: g.recorded.name.clone(),
+                record: Some(g.recorded.key.clone()),
                 site: Site::Ground(k),
                 trader: Party::Market(g.system, facility),
-                duty: duty_in(&g.recorded.system),
+                duty: duty_in(g.system),
                 warehouse: None,
                 stock: Pool::default(),
                 wants: Vec::new(),
@@ -552,7 +540,7 @@ impl Economy {
     /// The registry's rig `key`, body `body` of `system` (see `world::rigs`):
     /// a place with no people whose market is its own works, where its owner
     /// trades at its dock (its owner a company of the land office's from now).
-    pub fn add_rig(&mut self, land: &mut LandOffice, system: usize, system_name: &str, body: usize, key: &str) {
+    pub fn add_rig(&mut self, land: &mut LandOffice, system: usize, body: usize, key: &str) {
         let facility = Facility::Rig(body);
         if self.index.contains_key(&(system, facility)) {
             return;
@@ -564,9 +552,10 @@ impl Economy {
             system,
             facility,
             name: w.name.clone(),
+            record: None,
             site: Site::Rig(system, body),
             trader,
-            duty: duty_in(system_name),
+            duty: duty_in(system),
             warehouse: None,
             stock: Pool::default(),
             wants: Vec::new(),
@@ -592,8 +581,7 @@ impl Economy {
                 if self.works.iter().any(|x| x.site == Site::Ground(k) && x.works == j) {
                     continue;
                 }
-                let key = g.recorded.facilities.iter().find(|f| f.name.eq_ignore_ascii_case(&w.blueprint)).map(|f| f.key.clone()).or_else(|| crate::land::blueprint_key(&w.blueprint));
-                if let Some(x) = key.and_then(|key| Works::new(k, j, &key)) {
+                if let Some(x) = w.facility.as_deref().and_then(|key| Works::new(k, j, key)) {
                     self.works.push(x);
                 }
             }
@@ -639,7 +627,7 @@ impl Economy {
         }
         for k in 0..self.places.len() {
             let p = &self.places[k];
-            let record = reg.settlements.iter().find(|s| s.identity.name.eq_ignore_ascii_case(&p.name));
+            let record = p.record.as_deref().and_then(|k| reg.settlement(k));
             let law = record.and_then(|s| s.identity.key.split('.').nth(1)).and_then(|system| reg.orgs.iter().find(|o| o.compulsory_stock.is_some() && o.identity.key.split('.').nth(1) == Some(system))).and_then(|o| o.compulsory_stock.as_ref());
             let cover = law.and_then(|l| l.warehouse_cover).unwrap_or(1.5) * record.and_then(|s| s.resupply.as_ref()).map_or(COVER_DAYS * DAY, |r| r.interval);
             let mut wants = Vec::new();
@@ -1116,7 +1104,7 @@ mod tests {
     fn a_rig_is_its_owners_market() {
         let mut land = LandOffice::seed(std::iter::empty());
         let mut e = Economy::new(&land, 0.0);
-        e.add_rig(&mut land, 3, "Treistun", 7, "rig.treistun.hadley-orbital-works");
+        e.add_rig(&mut land, 3, 7, "rig.treistun.hadley-orbital-works");
         let p = e.place(3, Facility::Rig(7)).expect("a place at the rig");
         assert!(p.warehouse.is_some(), "its works are its market");
         let hadley = land.companies.iter().position(|c| c.0 == "org.hadley").expect("its owner a company");
@@ -1178,7 +1166,7 @@ mod tests {
         assert!(e.works[smelter].pool.of(ingot) < 1.0, "the smelter doesn't keep what it doesn't use");
 
         // The exchange buys what no one here takes, for less as its warehouse fills.
-        let ore = universe_world::goods::Ore::Stony.item();
+        let ore = universe_world::goods::Ore::from_key("good.stony-ore").expect("stony ore").item();
         let before = e.places[trethi].price(&goods[ore]);
         assert!(!before.wanted && before.bid > 0.0);
         let room = e.places[trethi].stock.free();
@@ -1211,7 +1199,7 @@ mod tests {
         let cap = universe_world::goods::item("part.mc07-01").unwrap();
         let recipe = universe_world::recipes::of("module.welding-bay").iter().position(|r| r.makes == cap).expect("a recipe for it");
         let owner = e.owner(&land, yard).expect("an owner");
-        assert!(e.set_up(&land, yard, bay, Some(recipe), Party::Pilot(7)).is_err(), "not someone else's to set");
+        assert!(e.set_up(&land, yard, bay, Some(recipe), Party::Pilot(universe_protocol::ShipId(7))).is_err(), "not someone else's to set");
         e.set_up(&land, yard, bay, Some(recipe), owner).unwrap();
         let sheet = universe_world::goods::item("stock.al6061-sh-2").unwrap();
         e.works[yard].pool.put(sheet, 20_000.0);

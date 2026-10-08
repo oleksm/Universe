@@ -11,11 +11,9 @@ use universe_sim::world::content::content;
 use universe_sim::world::standards::{Body, Check, Licence, Standard, Status, Value};
 
 use crate::App;
+use crate::palette::{AMBER, DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const HEAD: Color = Color::hex(0x60ffb0);
-const AMBER: Color = Color::hex(0xffb040);
 
 /// A place in the tree.
 #[derive(Clone, Debug, PartialEq, Eq, Hash)]
@@ -159,7 +157,7 @@ fn label(node: &Node) -> (String, Color) {
 pub fn draw(frame: &mut Frame, app: &App) {
     let Some(view) = app.standards.as_ref() else { return };
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = GLYPH + 4.0;
     let (x, top) = (16.0, 16.0);
     frame.text(

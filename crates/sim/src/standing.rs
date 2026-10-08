@@ -13,6 +13,7 @@
 //! The authority's own bookkeeping (a client of the world, like an outlet):
 //! what it makes of a deed is its call. Too low, and its turrets fire (`HOSTILE`).
 
+use universe_protocol::ShipId;
 use std::collections::{HashMap, HashSet};
 
 use universe_world::charts::Charts;
@@ -63,7 +64,7 @@ struct Desk {
 pub struct Standings {
     desks: Vec<Desk>,
     /// Each pilot's standing with each settled system; absent: 0.
-    table: HashMap<(usize, usize), f64>,
+    table: HashMap<(ShipId, usize), f64>,
     /// Deeds already counted, by system.
     counted: HashSet<(Key, usize)>,
     next: f64,
@@ -71,12 +72,12 @@ pub struct Standings {
 
 impl Standings {
     /// Pilot `pilot`'s standing with system `system`'s authority.
-    pub fn of(&self, pilot: usize, system: usize) -> f64 {
+    pub fn of(&self, pilot: ShipId, system: usize) -> f64 {
         self.table.get(&(pilot, system)).copied().unwrap_or(0.0)
     }
 
     /// A pilot's standings as saved: (system, standing).
-    pub fn restore(&mut self, pilot: usize, standing: impl Iterator<Item = (usize, f64)>) {
+    pub fn restore(&mut self, pilot: ShipId, standing: impl Iterator<Item = (usize, f64)>) {
         self.table.retain(|(p, _), _| *p != pilot);
         for (system, s) in standing {
             self.set(pilot, system, s);
@@ -84,27 +85,25 @@ impl Standings {
     }
 
     /// A pilot's standings: (system, standing).
-    pub fn all(&self, pilot: usize) -> Vec<(usize, f64)> {
+    pub fn all(&self, pilot: ShipId) -> Vec<(usize, f64)> {
         let mut out: Vec<(usize, f64)> = self.table.iter().filter(|((p, _), _)| *p == pilot).map(|(&(_, s), &v)| (s, v)).collect();
         out.sort_by_key(|o| o.0);
         out
     }
 
     /// Set it outright (a scenario, a test, a court).
-    pub fn set(&mut self, pilot: usize, system: usize, s: f64) {
+    pub fn set(&mut self, pilot: ShipId, system: usize, s: f64) {
         self.table.insert((pilot, system), s.clamp(-MOST, MOST));
     }
 
-    fn add(&mut self, pilot: usize, system: usize, by: f64) {
+    fn add(&mut self, pilot: ShipId, system: usize, by: f64) {
         let s = self.table.entry((pilot, system)).or_insert(0.0);
         *s = (*s + by).clamp(-MOST, MOST);
     }
 
     /// A desk at each settled system's station.
     fn open(charts: &Charts) -> Vec<Desk> {
-        let mut settled: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        settled.sort();
-        settled.dedup();
+        let settled = charts.settled();
         settled.into_iter().filter_map(|s| charts.system(s).station().map(|station| Desk { system: s, station, knows: Knowledge::default() })).collect()
     }
 }
@@ -133,7 +132,7 @@ impl Universe {
             })
             .collect();
         let (kills, trades) = (self.records.kills.clone(), self.records.trades.clone());
-        let mut deeds: Vec<(usize, usize, f64, Key)> = Vec::new();
+        let mut deeds: Vec<(ShipId, usize, f64, Key)> = Vec::new();
         for d in &mut self.standings.desks {
             let system = d.system;
             let sys = charts.system(system);

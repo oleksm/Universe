@@ -5095,7 +5095,7 @@ impl Interior {
         let mut d = crate::test_drive::Drive::new(craft(self));
         if let Some(c) = collective {
             d.set_collective(c);
-            d.set_assist(std::env::var_os("UNIVERSE_DRIVE_MANUAL").is_none());
+            d.set_assist(!crate::devenv::flag("UNIVERSE_DRIVE_MANUAL"));
         }
         self.drive = Some(d);
     }

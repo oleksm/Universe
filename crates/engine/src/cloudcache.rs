@@ -8,10 +8,10 @@
 use glam::DVec3;
 
 /// Texels a side, layers (four levels, three shells each).
-const N: u32 = 512;
+pub(crate) const N: u32 = 512;
 const LAYERS: u32 = 12;
 /// Each level's half-width (m), outer to inner.
-const HALF: [f64; 4] = [4.0e6, 4.0e5, 4.0e4, 4.0e3];
+pub(crate) const HALF: [f64; 4] = [4.0e6, 4.0e5, 4.0e4, 4.0e3];
 /// Layers filled a frame.
 const PER_FRAME: u32 = 2;
 /// How long a change takes to come in (s).
@@ -98,10 +98,7 @@ impl CloudCache {
         let t = |binding| wgpu::BindGroupLayoutEntry { binding, visibility: wgpu::ShaderStages::COMPUTE, ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2, multisampled: false }, count: None };
         let store = wgpu::BindGroupLayoutEntry { binding: 2, visibility: wgpu::ShaderStages::COMPUTE, ty: wgpu::BindingType::StorageTexture { access: wgpu::StorageTextureAccess::WriteOnly, format: wgpu::TextureFormat::Rgba16Float, view_dimension: wgpu::TextureViewDimension::D2Array }, count: None };
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("cloud cache fill"), entries: &[u(0), u(1), store, t(3), t(4), t(5), u(6)] });
-        let module = device.create_shader_module(wgpu::ShaderModuleDescriptor {
-            label: Some("cloud cache fill"),
-            source: wgpu::ShaderSource::Wgsl(concat!(include_str!("shaders/air.wgsl"), "\n", include_str!("shaders/clouds.wgsl"), "\n", include_str!("shaders/cloud_cache.wgsl")).into()),
-        });
+        let module = crate::shaders::make(device, "cloud cache fill", crate::shaders::cloud_cache());
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("cloud cache fill"), bind_group_layouts: &[Some(&layout)], immediate_size: 0 });
         let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("cloud cache fill"), layout: Some(&pl), module: &module, entry_point: Some("cloud_cache_fill"), compilation_options: Default::default(), cache: None });
         CloudCache { new, before, new_view, old_view, store_view, uniform, pipe, layout, world: None, radius: 1.0, frame: None, old: None, fade: [1.0; 4], job: None, turn: 0, last: std::time::Instant::now() }

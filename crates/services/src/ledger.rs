@@ -6,7 +6,7 @@
 
 use std::collections::{BTreeMap, HashMap, VecDeque};
 
-use universe_protocol::{BodyId, Cause, Tick};
+use universe_protocol::{ShipId, Cause, Tick};
 use universe_world::Facility;
 use universe_world::registry::{Batch, Mark};
 
@@ -14,7 +14,7 @@ use universe_world::registry::{Batch, Mark};
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash)]
 pub enum Party {
     /// The pilot of a ship (its purse, and its hold).
-    Pilot(BodyId),
+    Pilot(ShipId),
     /// A market, by system and place.
     Market(usize, Facility),
     /// The world: where starting funds come from (and what's written off goes).
@@ -49,11 +49,11 @@ pub struct Entry {
 pub struct Ledger {
     balances: HashMap<(Party, Asset), f64>,
     /// Every pilot's goods (for listing a hold), kept alongside.
-    holds: HashMap<BodyId, BTreeMap<usize, f64>>,
+    holds: HashMap<ShipId, BTreeMap<usize, f64>>,
     /// The marks of the products in each pilot's hold, and the lots of its bulk (SFO 21), by good,
     /// oldest first.
-    marks: HashMap<BodyId, BTreeMap<usize, VecDeque<Mark>>>,
-    lots: HashMap<BodyId, BTreeMap<usize, VecDeque<(Batch, f64)>>>,
+    marks: HashMap<ShipId, BTreeMap<usize, VecDeque<Mark>>>,
+    lots: HashMap<ShipId, BTreeMap<usize, crate::lots::Lots>>,
     /// The latest transfers, oldest first (the last `KEEP`).
     pub journal: Vec<Entry>,
 }
@@ -71,7 +71,7 @@ impl Ledger {
     }
 
     /// What a pilot's hold holds: (good, units), by good.
-    pub fn hold(&self, pilot: BodyId) -> Vec<(usize, u32)> {
+    pub fn hold(&self, pilot: ShipId) -> Vec<(usize, u32)> {
         self.holds.get(&pilot).map_or_else(Vec::new, |h| h.iter().filter(|(_, n)| **n >= 0.5).map(|(&g, &n)| (g, n.round() as u32)).collect())
     }
 
@@ -107,43 +107,30 @@ impl Ledger {
     }
 
     /// Into pilot `pilot`'s hold with good `good`: its marks and lots.
-    pub fn load_marked(&mut self, pilot: BodyId, good: usize, marks: Vec<Mark>, lots: Vec<(Batch, f64)>) {
+    pub fn load_marked(&mut self, pilot: ShipId, good: usize, marks: Vec<Mark>, lots: Vec<(Batch, f64)>) {
         if !marks.is_empty() {
             self.marks.entry(pilot).or_default().entry(good).or_default().extend(marks);
         }
         if !lots.is_empty() {
-            self.lots.entry(pilot).or_default().entry(good).or_default().extend(lots);
+            crate::lots::put(self.lots.entry(pilot).or_default().entry(good).or_default(), lots);
         }
     }
 
     /// Out of pilot `pilot`'s hold: `units` of good `good` (`kg` of it), their marks and lots,
     /// oldest first.
-    pub fn unload_marked(&mut self, pilot: BodyId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>) {
+    pub fn unload_marked(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>) {
         let marks = self.marks.get_mut(&pilot).and_then(|m| m.get_mut(&good)).map_or(Vec::new(), |m| m.drain(..units.min(m.len())).collect());
-        let mut lots = Vec::new();
-        if let Some(l) = self.lots.get_mut(&pilot).and_then(|l| l.get_mut(&good)) {
-            let mut want = kg;
-            while want > 1e-9 {
-                let Some((b, have)) = l.front_mut() else { break };
-                let k = want.min(*have);
-                *have -= k;
-                want -= k;
-                lots.push((b.clone(), k));
-                if *have <= 1e-9 {
-                    l.pop_front();
-                }
-            }
-        }
+        let lots = self.lots.get_mut(&pilot).and_then(|l| l.get_mut(&good)).map_or(Vec::new(), |l| crate::lots::take(l, kg));
         (marks, lots)
     }
 
     /// The marks of the products in pilot `pilot`'s hold, by good.
-    pub fn hold_marks(&self, pilot: BodyId) -> Option<&BTreeMap<usize, VecDeque<Mark>>> {
+    pub fn hold_marks(&self, pilot: ShipId) -> Option<&BTreeMap<usize, VecDeque<Mark>>> {
         self.marks.get(&pilot)
     }
 
     /// Everything a pilot holds goes back to the world (its ship is gone).
-    pub fn write_off(&mut self, pilot: BodyId, tick: Tick, cause: Cause) {
+    pub fn write_off(&mut self, pilot: ShipId, tick: Tick, cause: Cause) {
         self.marks.remove(&pilot);
         self.lots.remove(&pilot);
         for (good, _) in self.hold(pilot) {

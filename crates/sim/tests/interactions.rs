@@ -5,7 +5,7 @@
 
 use glam::{DQuat, DVec3};
 use universe_sim::world::Facility;
-use universe_sim::{Controls, NavTarget, ShipState, Universe};
+use universe_sim::{Controls, NavTarget, ShipId, ShipState, Universe};
 
 /// A world with `n` plain settlers (no pirates, traders or routes), all in
 /// the home system, and our own ship parked out of the way.
@@ -167,8 +167,8 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     // Both legs journalled, and the seller's duty to the administration (Treistun's law: 2%), caused by our request.
     let legs: Vec<_> = u.ledger.journal.iter().rev().take(3).collect();
     assert!(legs.iter().all(|e| matches!(e.cause, universe_sim::protocol::Cause::Message { sender: 0, .. })), "{legs:?}");
-    assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(0)));
-    assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(0)));
+    assert!(legs.iter().any(|e| e.asset == Asset::Credits && e.from == Party::Pilot(ShipId(0))));
+    assert!(legs.iter().any(|e| e.asset == Asset::Goods(item) && e.to == Party::Pilot(ShipId(0))));
     assert!(legs.iter().any(|e| e.to == Party::Administration(home) && (e.amount - 0.02 * paid).abs() < 1e-6), "the duty: {legs:?}");
     // The land rate: a day's levy on every owned lot, to the administration.
     let before = u.ledger.credits(Party::Administration(home));
@@ -179,8 +179,8 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!(u.ledger.balanced(), "nothing made or lost");
     // A jolt harder than a part takes (SFO 15) breaks it in the hold; ore takes any jolt.
     let part = u.world.goods.iter().find(|g| g.shock_limit.is_some_and(|l| l < 15.0 * 9.80665)).map(|g| g.id).expect("a part that takes under 15 g");
-    u.ledger.settle(Party::Pilot(0), Asset::Goods(part), 2.0, u.tick, universe_sim::protocol::Cause::Rules);
-    let broken = u.book_jolts(0, &[universe_sim::Event::Ship(universe_sim::world::ShipEvent::HardLanding { sink: 9.0, jolt: 15.0 })]);
+    u.ledger.settle(Party::Pilot(ShipId(0)), Asset::Goods(part), 2.0, u.tick, universe_sim::protocol::Cause::Rules);
+    let broken = u.book_jolts(ShipId(0), &[universe_sim::Event::Ship(universe_sim::world::ShipEvent::HardLanding { sink: 9.0, jolt: 15.0 })]);
     assert!(broken.iter().any(|e| matches!(e, universe_sim::world::ShipEvent::CargoBroken { item, units: 2 } if *item == part)), "{broken:?}");
     assert!(u.hold().iter().all(|(i, _)| *i != part) && u.hold().iter().any(|(i, _)| *i == item), "the part broke, the plate held: {:?}", u.hold());
     assert!(u.ledger.balanced());
@@ -238,8 +238,8 @@ fn an_outlaw_gives_up_a_stop_that_refuses_it() {
     c.ship.state = ShipState::Flying;
     c.ship.position = pos[station] + DVec3::new(0.0, 0.0, 10_000.0);
     c.ship.velocity = sys.velocity(station, t);
-    let id = 1; // (craft 0)
-    u.law.outlaw(id as _, home, t + 1e9);
+    let id = universe_sim::craft_id(0);
+    u.law.outlaw(id, home, t + 1e9);
     {
         let mut pilots = u.pilots();
         let r = &mut pilots[0].avionics.route;
@@ -284,7 +284,7 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     assert!(matches!(market, NavTarget::Spaceport(_)), "a port with a warehouse: {market:?}");
     // Landed at its market with ten tonnes of ore, the route at that stop.
     u.crafts[0].ship = u.world.ship_on(home, market, 0);
-    let ore = universe_sim::world::goods::Ore::Carbonaceous.item();
+    let ore = universe_sim::world::goods::Ore::from_key("good.carbonaceous-ore").expect("carbonaceous ore").item();
     u.ledger.settle(Party::Pilot(me), Asset::Goods(ore), 10.0, u.tick, universe_sim::protocol::Cause::Rules);
     u.crafts[0].ship.cargo = 10_000.0;
     u.pilots()[0].avionics.route.next = 1;

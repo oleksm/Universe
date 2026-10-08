@@ -318,7 +318,7 @@ impl PbrRenderer {
     }
 
     pub(crate) fn new(device: &wgpu::Device, globals: &wgpu::BindGroupLayout, shadows: &wgpu::BindGroupLayout, light: &wgpu::BindGroupLayout, scene_format: wgpu::TextureFormat, depth_format: wgpu::TextureFormat, samples: u32) -> Self {
-        let shader = device.create_shader_module(wgpu::include_wgsl!("shaders/pbr.wgsl"));
+        let shader = crate::shaders::make(device, "pbr", crate::shaders::pbr());
         let tex_entry = |binding| wgpu::BindGroupLayoutEntry {
             binding,
             visibility: wgpu::ShaderStages::FRAGMENT,
@@ -359,7 +359,7 @@ impl PbrRenderer {
             })
         };
         let pipes = vec![make("pbr", false, false), make("pbr two-sided", false, true), make("pbr see-through", true, false), make("pbr see-through two-sided", true, true)];
-        let shadow_shader = device.create_shader_module(wgpu::include_wgsl!("shaders/pbr_shadow.wgsl"));
+        let shadow_shader = crate::shaders::single(device, "pbr_shadow");
         let shadow_layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("pbr shadow"), bind_group_layouts: &[Some(light)], immediate_size: 0 });
         let shadow_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("pbr shadow casters"),

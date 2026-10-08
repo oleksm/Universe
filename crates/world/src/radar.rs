@@ -4,6 +4,7 @@
 //! It measures position and velocity; who a contact is comes from its
 //! transponder, which is not the radar's business.
 
+use universe_protocol::ShipId;
 use glam::DVec3;
 
 use crate::ship::{Ship, ShipState};
@@ -25,7 +26,7 @@ pub fn range(spec: &crate::ship::ClassSpec) -> f64 {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Blip {
     /// The caller's id for the ship.
-    pub id: usize,
+    pub id: ShipId,
     pub position: DVec3,
     pub velocity: DVec3,
     /// Distance from the radar (m).
@@ -49,7 +50,7 @@ fn visible(ship: &Ship) -> bool {
 /// Sweep for `others` (id, star system, ship) from `own` in `system`: every
 /// ship in range, nearest first. Sees nothing while `own` itself isn't
 /// in normal space.
-pub fn sweep<'a>(own: &Ship, system: usize, others: impl IntoIterator<Item = (usize, usize, &'a Ship)>) -> Vec<Blip> {
+pub fn sweep<'a>(own: &Ship, system: usize, others: impl IntoIterator<Item = (ShipId, usize, &'a Ship)>) -> Vec<Blip> {
     if !visible(own) {
         return Vec::new();
     }

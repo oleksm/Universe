@@ -2,6 +2,7 @@
 //! market, booked in the ledger), quotes on request, and the trade log. What
 //! a trader buys and sells, and where it goes, is its own (see `operator`).
 
+use universe_protocol::ShipId;
 use std::collections::{HashMap, VecDeque};
 
 use universe_services::market::{cargo_mass, Order, Quote};
@@ -75,25 +76,16 @@ impl Boards {
     fn to_us(&self, us: usize, p: glam::DVec3, comm: &universe_world::modules::Comm) -> Option<HashMap<usize, f64>> {
         let (sys, positions, net) = self.nets.get(&us)?;
         let ours = net.status(sys, positions, p, comm)?.lag;
-        let mut dist = HashMap::from([(us, ours)]);
-        loop {
-            let mut changed = false;
-            for (&a, (_, _, na)) in &self.nets {
-                for (b, out) in na.gates() {
-                    let (Some(&rest), Some((_, _, nb))) = (dist.get(&b), self.nets.get(&b)) else { continue };
-                    let Some(back) = nb.gate_in(a) else { continue };
-                    let via = out + back + rest;
-                    if dist.get(&a).is_none_or(|&old| via < old - 1e-9) {
-                        dist.insert(a, via);
-                        changed = true;
-                    }
+        // (Out of each system through its gates, and in at the far end.)
+        let mut hops = Vec::new();
+        for (&a, (_, _, na)) in &self.nets {
+            for (b, out) in na.gates() {
+                if let Some(back) = self.nets.get(&b).and_then(|(_, _, nb)| nb.gate_in(a)) {
+                    hops.push((a, b, out + back));
                 }
             }
-            if !changed {
-                break;
-            }
         }
-        Some(dist)
+        Some(universe_world::hypernet::delays_to(us, ours, &hops))
     }
 
     /// How long word from `f` (in `system`) takes to reach us, given `to_us`.
@@ -125,19 +117,19 @@ impl Universe {
     /// books it (the request's cause on every entry), and the ship's cargo
     /// mass follows what's in its hold. Credits paid (negative: received),
     /// or why not.
-    pub(crate) fn pilot_trade(&mut self, pilot: usize, f: Facility, item: usize, units: i64) -> Result<f64, String> {
-        let (system, ship) = if pilot == crate::combat::PLAYER { (self.ship_system, &self.ship) } else { (self.crafts[pilot - 1].system, &self.crafts[pilot - 1].ship) };
+    pub(crate) fn pilot_trade(&mut self, pilot: ShipId, f: Facility, item: usize, units: i64) -> Result<f64, String> {
+        let (system, ship) = if pilot == crate::combat::PLAYER { (self.ship_system, &self.ship) } else { (self.crafts[crate::combat::craft_of(pilot)].system, &self.crafts[crate::combat::craft_of(pilot)].ship) };
         self.barred(pilot, system)?;
         let sys = self.world.system(system);
         let order = Order { pilot, system, market: f, docked_at: docked_at(&sys, ship), room: ship.hold_room(), space: ship.hold_space(), item, units };
         self.messages += 1;
-        let cause = universe_protocol::Cause::Message { sender: pilot as u64, id: self.messages };
+        let cause = universe_protocol::Cause::Message { sender: pilot.0 as u64, id: self.messages };
         let r = self.markets.trade(&mut self.ledger, &sys, order, self.world.time, self.tick, cause);
         if r.is_ok() {
             // The core: the hold weighs what's in it.
             let hold = self.ledger.hold(pilot);
             let (mass, volume) = (cargo_mass(&self.world.goods, &hold), universe_services::market::cargo_volume(&self.world.goods, &hold));
-            let ship = if pilot == crate::combat::PLAYER { &mut self.ship } else { &mut self.crafts[pilot - 1].ship };
+            let ship = if pilot == crate::combat::PLAYER { &mut self.ship } else { &mut self.crafts[crate::combat::craft_of(pilot)].ship };
             ship.cargo = mass;
             ship.cargo_volume = volume;
         }
@@ -147,7 +139,7 @@ impl Universe {
     /// Ore ship `id` dug this tick (as its step logged it): the world
     /// remembers it's gone from the rock, the ledger puts it in the hold
     /// (from the world's account, because of the dig).
-    pub(crate) fn book_mined(&mut self, id: usize, events: &[crate::Event]) {
+    pub(crate) fn book_mined(&mut self, id: ShipId, events: &[crate::Event]) {
         for (k, e) in events.iter().enumerate() {
             let crate::Event::Ship(universe_world::ShipEvent::Mined { field, rock, item }) = e else { continue };
             let Some((_, system, _)) = self.ship_by_id(id) else { return };
@@ -161,7 +153,7 @@ impl Universe {
 
     /// Ship `id`'s tube crossings this tick, paid to the system's
     /// administration (cleared only if it could pay; what it has, if less now).
-    pub(crate) fn book_tolls(&mut self, id: usize, events: &[crate::Event]) {
+    pub(crate) fn book_tolls(&mut self, id: ShipId, events: &[crate::Event]) {
         for e in events {
             let crate::Event::Ship(universe_world::ShipEvent::TubeToll { credits }) = e else { continue };
             let Some((_, system, _)) = self.ship_by_id(id) else { return };
@@ -172,7 +164,7 @@ impl Universe {
 
     /// Ship `id`'s hold after its jolts this tick (a hard landing's): what takes
     /// less than the jolt breaks, and is written off (SFO 15).
-    pub fn book_jolts(&mut self, id: usize, events: &[crate::Event]) -> Vec<universe_world::ShipEvent> {
+    pub fn book_jolts(&mut self, id: ShipId, events: &[crate::Event]) -> Vec<universe_world::ShipEvent> {
         let jolts: Vec<f64> = events.iter().filter_map(|e| if let crate::Event::Ship(universe_world::ShipEvent::HardLanding { jolt, .. }) = e { Some(*jolt) } else { None }).collect();
         let Some(jolt) = jolts.into_iter().reduce(f64::max) else { return Vec::new() };
         let g = jolt * universe_physics::laws::STANDARD_GRAVITY;
@@ -192,14 +184,14 @@ impl Universe {
     }
 
     /// The `n`-th of ship `id`'s `Mined` events in this tick's log, as a cause.
-    fn mined_cause(&self, id: usize, n: usize) -> Option<universe_protocol::Cause> {
+    fn mined_cause(&self, id: ShipId, n: usize) -> Option<universe_protocol::Cause> {
         let index = self.log.iter().enumerate().filter(|(_, (s, e))| *s == id && matches!(e, universe_world::ShipEvent::Mined { .. })).nth(n - 1)?.0;
         Some(universe_protocol::Cause::Event { tick: self.tick, index: index as u32 })
     }
 
     /// Pilot `id` fills its tank at `market`: the market service sells what
     /// it can (the ledger books it), and the core's tank takes it.
-    pub(crate) fn refuel(&mut self, id: usize, market: Facility) -> Result<(f64, f64), String> {
+    pub(crate) fn refuel(&mut self, id: ShipId, market: Facility) -> Result<(f64, f64), String> {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         self.barred(id, system)?;
         let want = ship.spec().fuel_capacity - ship.fuel;
@@ -208,11 +200,11 @@ impl Universe {
         }
         let docked = docked_at(&self.world.system(system), ship);
         self.messages += 1;
-        let cause = universe_protocol::Cause::Message { sender: id as u64, id: self.messages };
+        let cause = universe_protocol::Cause::Message { sender: id.0 as u64, id: self.messages };
         let (tonnes, cost) = self.markets.refuel(&mut self.ledger, system, market, docked, id, want / 1000.0, self.tick, cause)?;
         match id {
             crate::combat::PLAYER => self.ship.fuel += tonnes * 1000.0,
-            i => self.crafts[i - 1].ship.fuel += tonnes * 1000.0,
+            i => self.crafts[crate::combat::craft_of(i)].ship.fuel += tonnes * 1000.0,
         }
         Ok((tonnes, cost))
     }
@@ -239,7 +231,7 @@ impl Universe {
     /// A pilot's request to the market service (see `vessel::Request`):
     /// the quotes in its system (answered by message), a trade, or a plan
     /// declared, recorded in the trade log.
-    pub(crate) fn market_request(&mut self, id: usize, r: crate::vessel::Request) {
+    pub(crate) fn market_request(&mut self, id: ShipId, r: crate::vessel::Request) {
         use crate::vessel::Request;
         match r {
             Request::Quotes { system, market } => {
@@ -247,7 +239,7 @@ impl Universe {
                     return;
                 }
                 let answer = self.market_answer(id, system, market);
-                self.tell(id - 1, crate::contract::Msg::Market(Box::new(answer)));
+                self.tell(crate::combat::craft_of(id), crate::contract::Msg::Market(Box::new(answer)));
             }
             Request::Trade { market, item, units } => {
                 if let Ok(amount) = self.pilot_trade(id, market, item, units) {
@@ -297,7 +289,7 @@ impl Universe {
 
     /// Every market in the gate network puts out its board, when due.
     pub(crate) fn publish_boards(&mut self) {
-        use universe_world::hypernet::{Net, NodeAt};
+        use universe_world::hypernet::Net;
         let now = self.world.time;
         if now < self.boards.next {
             return;
@@ -315,12 +307,7 @@ impl Universe {
             let net = Net::at(&sys, universe_world::hypernet::nodes(&self.world.galaxy, &sys), now, &positions);
             let net = &self.boards.nets.entry(system).insert_entry((sys.clone(), positions, net)).into_mut().2;
             for f in facilities(&sys) {
-                let at = match f {
-                    Facility::Station(b) | Facility::Gate(b) => Some(NodeAt::Body(b)),
-                    Facility::Spaceport(k) => Some(NodeAt::Port(k)),
-                    _ => None,
-                };
-                let lag = at.and_then(|a| net.node(a)).and_then(|k| net.lag[k]);
+                let lag = universe_world::hypernet::relay_of(f).and_then(|a| net.node(a)).and_then(|k| net.lag[k]);
                 self.boards.lags.insert((system, f), lag);
                 let quotes = self.markets.quotes_for(system, &sys, f, &all, now);
                 let list = self.boards.boards.entry((system, f)).or_default();
@@ -343,7 +330,7 @@ impl Universe {
     /// What the market service tells pilot `id` at `at`: its own quotes, the
     /// other markets' as their boards have reached this one over the
     /// hypernet (with their age), and its account.
-    fn market_answer(&mut self, id: usize, system: usize, at: Facility) -> crate::contract::MarketAnswer {
+    fn market_answer(&mut self, id: ShipId, system: usize, at: Facility) -> crate::contract::MarketAnswer {
         let sys = self.system(system);
         let now = self.world.time;
         let hold = self.ledger.hold(id);
@@ -368,10 +355,10 @@ impl Universe {
     }
 
     /// A trade (or a plan) in the log, as pilot `id` made it at `market`.
-    pub(crate) fn record_trade(&mut self, id: usize, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
+    pub(crate) fn record_trade(&mut self, id: ShipId, market: Facility, deal: Deal, item: Option<usize>, units: u32, amount: f64) {
         let Some((_, system, ship)) = self.ship_by_id(id) else { return };
         let cargo = ship.cargo;
-        let trader = if id == crate::combat::PLAYER { "YOU".to_string() } else { self.crafts[id - 1].name.to_uppercase() };
+        let trader = if id == crate::combat::PLAYER { "YOU".to_string() } else { self.crafts[crate::combat::craft_of(id)].name.to_uppercase() };
         let sys = self.system(system);
         if item.is_some() {
             self.records.stats.trades += 1;
@@ -413,7 +400,7 @@ impl crate::universe::Universe {
     /// out goes into the warehouse at its bid. Refused, with the reason, if
     /// there's neither here, none in stock, the fit won't do (see
     /// `ClassSpec::assemble`), or it can't pay. The credits it cost.
-    pub fn refit_as(&mut self, id: usize, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
+    pub fn refit_as(&mut self, id: ShipId, slot: &str, module: Option<universe_world::content::Handle<universe_world::modules::Module>>) -> Result<f64, String> {
         use universe_services::{Asset, Party};
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         self.barred(id, system)?;
@@ -488,7 +475,7 @@ impl crate::universe::Universe {
         refitted.marks = (!marks.is_empty()).then(|| std::sync::Arc::new(marks));
         match id {
             crate::combat::PLAYER => self.ship = refitted,
-            _ => self.crafts[id - 1].ship = refitted,
+            _ => self.crafts[crate::combat::craft_of(id)].ship = refitted,
         }
         Ok(cost)
     }
@@ -513,7 +500,7 @@ impl crate::universe::Universe {
     /// at its prices (brought in); at a port with a market, a frame lying in
     /// its warehouse at the exchange's ask, its stock fit brought in. The old
     /// ship's frame and modules at `BUYBACK`.
-    pub fn hull_offer(&self, id: usize, hull: universe_world::ship::Hull) -> Result<(f64, f64), String> {
+    pub fn hull_offer(&self, id: ShipId, hull: universe_world::ship::Hull) -> Result<(f64, f64), String> {
         use universe_services::outfitter;
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         let sys = self.world.system(system);
@@ -538,7 +525,7 @@ impl crate::universe::Universe {
     /// at the station it's docked at: built from the place's metals (the
     /// frame) and its modules' own materials; its cargo moves over (if the
     /// new hold takes it) and its fuel (up to the new tank). The credits it cost.
-    pub fn buy_hull_as(&mut self, id: usize, hull: universe_world::ship::Hull) -> Result<f64, String> {
+    pub fn buy_hull_as(&mut self, id: ShipId, hull: universe_world::ship::Hull) -> Result<f64, String> {
         use universe_services::{Asset, Party};
         let (price, trade_in) = self.hull_offer(id, hull)?;
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
@@ -578,7 +565,7 @@ impl crate::universe::Universe {
         self.world.resettle(system, &mut new);
         match id {
             crate::combat::PLAYER => self.ship = new,
-            _ => self.crafts[id - 1].ship = new,
+            _ => self.crafts[crate::combat::craft_of(id)].ship = new,
         }
         Ok(cost)
     }
@@ -615,7 +602,7 @@ impl crate::universe::Universe {
     /// Pilot `id`'s hull mended at the station it's docked at, as far as its
     /// credits go: `REPAIR_PRICE` of the frame's price for a whole hull.
     /// What it cost, and how far it's mended now.
-    pub fn repair(&mut self, id: usize) -> Result<(f64, f64), String> {
+    pub fn repair(&mut self, id: ShipId) -> Result<(f64, f64), String> {
         use universe_services::{Asset, Party};
         let Some((_, system, ship)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         self.barred(id, system)?;
@@ -637,7 +624,7 @@ impl crate::universe::Universe {
         self.ledger.transfer(Party::Pilot(id), Party::Market(system, here), Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
         let hull = match id {
             crate::combat::PLAYER => &mut self.ship,
-            _ => &mut self.crafts[id - 1].ship,
+            _ => &mut self.crafts[crate::combat::craft_of(id)].ship,
         };
         hull.hull = (hull.hull + part).min(1.0);
         Ok((cost, hull.hull))
@@ -719,8 +706,8 @@ pub struct Booking {
 }
 
 impl crate::universe::Universe {
-    fn ship_mut_by_id(&mut self, id: usize) -> Option<&mut universe_world::Ship> {
-        if id == crate::combat::PLAYER { Some(&mut self.ship) } else { self.crafts.get_mut(id - 1).map(|c| &mut c.ship) }
+    fn ship_mut_by_id(&mut self, id: ShipId) -> Option<&mut universe_world::Ship> {
+        if id == crate::combat::PLAYER { Some(&mut self.ship) } else { id.craft_index().and_then(|i| self.crafts.get_mut(i)).map(|c| &mut c.ship) }
     }
 
     /// The passage booked from `market` in `system`: its people waiting to
@@ -755,7 +742,7 @@ impl crate::universe::Universe {
     /// Pilot `id`, docked at `market`, takes aboard people who've booked
     /// passage to `to` (system, market): as many as there are and its
     /// cabins seat. How many.
-    pub fn board_passengers(&mut self, id: usize, market: Facility, to: (usize, Facility)) -> Result<u32, String> {
+    pub fn board_passengers(&mut self, id: ShipId, market: Facility, to: (usize, Facility)) -> Result<u32, String> {
         let Some((_, system, _)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         let sys = self.system(system);
         let ship = self.ship_by_id(id).expect("there").2;
@@ -787,7 +774,7 @@ impl crate::universe::Universe {
     /// Pilot `id`, docked at `market`, lands its passengers where they
     /// booked passage to (if it still has room for them): their fares paid
     /// by its settlement fund. The fares.
-    pub fn land_passengers(&mut self, id: usize, market: Facility) -> Result<f64, String> {
+    pub fn land_passengers(&mut self, id: ShipId, market: Facility) -> Result<f64, String> {
         use universe_services::{Asset, Party};
         let Some((_, system, _)) = self.ship_by_id(id) else { return Err("NO SHIP".into()) };
         let sys = self.system(system);

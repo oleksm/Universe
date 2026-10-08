@@ -277,7 +277,8 @@ impl Content {
         }
         // The registry the game was built with is part of what it's made of.
         fnv(&mut hash, crate::registry::ENCODED);
-        let mut aliases = HashMap::new();
+        // (The registry's renames, the one list; then any a pack adds.)
+        let mut aliases: HashMap<String, String> = crate::registry::registry().renames.iter().map(|(a, b)| (a.clone(), b.clone())).collect();
         for p in &packs {
             if let Some(s) = p.source("aliases.ron") {
                 let more: HashMap<String, String> = ron::from_str(s).map_err(|e| format!("{} aliases.ron: {e}", p.name))?;
@@ -481,18 +482,22 @@ let c = Content { shapes, materials, brands, structures, modules, hulls, goods, 
 
     /// What must hold across the content as a whole.
     fn check(&self) -> Result<(), String> {
+        // (An alias to a game entry, or to a record the game doesn't make yet: a key the registry has.)
         for (old, new) in &self.aliases {
-            let found = self.shapes.find(new).is_some() || self.brands.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some();
+            let found = self.shapes.find(new).is_some() || self.brands.find(new).is_some() || self.modules.find(new).is_some() || self.hulls.find(new).is_some() || self.goods.find(new).is_some() || crate::registry::registry().name(new).is_some();
             if !found {
                 return Err(format!("alias '{old}' -> '{new}': no such entry"));
             }
         }
-        for ore in crate::goods::Ore::ALL {
-            let Some(&i) = self.stock_index.get(ore.key()) else {
-                return Err(format!("no ore '{}' (asteroids are made of it)", ore.key()));
+        // (Every ore a rock class yields: in the catalogue, and traded as something. Checked by
+        // key: content isn't loaded yet for `goods::Ore`.)
+        let reg = crate::registry::registry();
+        for key in reg.rock_classes.iter().flat_map(|c| [c.mining.yields.as_deref(), c.mining.rich_yields.as_deref()]).flatten() {
+            let Some(&i) = self.stock_index.get(key) else {
+                return Err(format!("no ore '{key}' (asteroids are made of it)"));
             };
             if self.stock[i].category.is_none() {
-                return Err(format!("ore '{}' is traded as nothing (its traded_as)", ore.key()));
+                return Err(format!("ore '{key}' is traded as nothing (its traded_as)"));
             }
         }
         if self.hulls.find(crate::ship::STARTING_HULL).is_none() {

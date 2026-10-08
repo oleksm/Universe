@@ -5,6 +5,7 @@
 //! collision or a kill the other ship's too, so the cause can be read off one
 //! run instead of guessed at from many.
 
+use universe_protocol::ShipId;
 use std::collections::VecDeque;
 use std::fmt;
 
@@ -72,12 +73,12 @@ impl Sample {
 pub struct Incident {
     pub time: f64,
     /// The ship (its id and name), and what did it: a body's name, "COLLISION", "GUNFIRE"…
-    pub id: usize,
+    pub id: ShipId,
     pub ship: String,
     pub cause: String,
     pub trace: Vec<Sample>,
     /// The other ship in a collision or a kill: its id, name and trace.
-    pub other: Option<(usize, String, Vec<Sample>)>,
+    pub other: Option<(ShipId, String, Vec<Sample>)>,
 }
 
 impl fmt::Display for Incident {
@@ -130,11 +131,11 @@ pub struct Recorder {
 impl Recorder {
 
     /// Take a sample of ship `id`.
-    pub fn record(&mut self, id: usize, sample: Sample) {
-        if self.tracks.len() <= id {
-            self.tracks.resize_with(id + 1, VecDeque::new);
+    pub fn record(&mut self, id: ShipId, sample: Sample) {
+        if self.tracks.len() <= id.0 {
+            self.tracks.resize_with(id.0 + 1, VecDeque::new);
         }
-        let track = &mut self.tracks[id];
+        let track = &mut self.tracks[id.0];
         let now = sample.time;
         track.push_back(sample);
         while track.front().is_some_and(|s| now - s.time > KEEP) {
@@ -144,13 +145,13 @@ impl Recorder {
 
 
     /// The trace kept for ship `id`.
-    pub fn trace(&self, id: usize) -> Vec<Sample> {
-        self.tracks.get(id).map(|t| t.iter().cloned().collect()).unwrap_or_default()
+    pub fn trace(&self, id: ShipId) -> Vec<Sample> {
+        self.tracks.get(id.0).map(|t| t.iter().cloned().collect()).unwrap_or_default()
     }
 
     /// File an incident: ship `id` (`name`) wrecked at `now` by `cause`,
     /// perhaps involving ship `other`.
-    pub fn file(&mut self, now: f64, id: usize, name: String, cause: String, other: Option<(usize, String)>) {
+    pub fn file(&mut self, now: f64, id: ShipId, name: String, cause: String, other: Option<(ShipId, String)>) {
         let incident = Incident {
             time: now,
             id,

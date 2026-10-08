@@ -85,7 +85,7 @@ pub fn apply(app: &mut App, name: &str) {
             u.ship = ship;
             app.mode = Mode::Observer;
             app.observer.focus = Focus::Ship;
-            let env = |k: &str, d: f64| std::env::var(k).ok().and_then(|v| v.parse().ok()).unwrap_or(d);
+            let env = |k: &str, d: f64| crate::devenv::num(k).unwrap_or(d);
             app.observer.distance = env("UNIVERSE_DIST", 2500.0);
             app.observer.yaw = env("UNIVERSE_YAW", 0.6);
             app.observer.pitch = env("UNIVERSE_PITCH", 0.45);
@@ -128,7 +128,7 @@ pub fn apply(app: &mut App, name: &str) {
             apply(app, if name == "padwatch" { "touchdown" } else { "docked" });
             app.mode = Mode::Observer;
             app.observer.focus = crate::observer::Focus::Ship;
-            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            let env = crate::devenv::num;
             app.observer.distance = env("UNIVERSE_DIST").unwrap_or(160.0);
             if let Some(p) = env("UNIVERSE_PITCH") {
                 app.observer.pitch = p;
@@ -150,7 +150,7 @@ pub fn apply(app: &mut App, name: &str) {
             // UNIVERSE_DIST, UNIVERSE_PITCH, UNIVERSE_YAW frame it.
             app.mode = Mode::Observer;
             app.observer.focus = crate::observer::Focus::Ship;
-            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            let env = crate::devenv::num;
             app.observer.distance = env("UNIVERSE_DIST").unwrap_or(110.0);
             app.observer.pitch = env("UNIVERSE_PITCH").unwrap_or(0.25);
             app.observer.yaw = env("UNIVERSE_YAW").unwrap_or(2.3);
@@ -483,8 +483,8 @@ pub fn apply(app: &mut App, name: &str) {
             if let Some(r) = r {
                 let _ = crate::planet_studio::go_to(app, &r);
             }
-            // (UNIVERSE_FRAME: its history's frame n, counted from 0, in place of today.)
-            if let Some(n) = std::env::var("UNIVERSE_FRAME").ok().and_then(|n| n.parse::<usize>().ok())
+            // (UNIVERSE_HISTORY_FRAME: its history's frame n, counted from 0, in place of today.)
+            if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize)
                 && let Some((key, Some(history))) = app.planet_studio.as_ref().and_then(|s| s.shown.clone())
                 && n < history.frames.len()
             {
@@ -898,7 +898,7 @@ pub fn apply(app: &mut App, name: &str) {
             for _ in 0..30 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
-            u.cockpit().lock_contact(0);
+            u.cockpit().lock_contact(universe_sim::craft_id(0));
             u.follow(universe_sim::FollowKind::Orbit, Some(1_000.0));
             for _ in 0..60 * 40 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -939,7 +939,7 @@ pub fn apply(app: &mut App, name: &str) {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
             if name == "hangrepro" {
-                u.cockpit().lock_contact(0);
+                u.cockpit().lock_contact(universe_sim::craft_id(0));
             } else {
                 u.avionics_mut().rock_lock = Some((0, rsys.bodies.len() + 80));
             }
@@ -1030,7 +1030,7 @@ pub fn apply(app: &mut App, name: &str) {
                 _ => 2.4,
             };
             // (UNIVERSE_SUN: the sun's angle from overhead instead; UNIVERSE_ALT: the height, m.)
-            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            let env = crate::devenv::num;
             let angle = env("UNIVERSE_SUN").unwrap_or(angle);
             let up = (sun * angle.cos() + side * angle.sin()).normalize();
             let center = positions[planet];
@@ -1076,7 +1076,7 @@ pub fn apply(app: &mut App, name: &str) {
             let noon = universe_sim::world::worlds::lon_lat(rot.inverse() * (positions[0] - positions[planet]));
             log::info!("lowflight: the sun overhead at {:.1}, {:.1}", noon.lat, noon.lon);
             // (UNIVERSE_ALT: the height instead, m; UNIVERSE_SPEED: the ground speed, m/s.)
-            let env = |k: &str| std::env::var(k).ok().and_then(|v| v.parse::<f64>().ok());
+            let env = crate::devenv::num;
             app.engine.universe().ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));
             let to_peak = rot * peak - up;
             let fwd = if at.is_some() {
@@ -1363,7 +1363,7 @@ pub fn apply(app: &mut App, name: &str) {
             apply(app, "studio");
             let floor = demo_plan(app).decks[0].floor;
             // (UNIVERSE_AT=x,z,yaw,pitch: stood there instead, looking that way.)
-            let look: Vec<f64> = std::env::var("UNIVERSE_AT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
+            let look: Vec<f64> = crate::devenv::list("UNIVERSE_AT");
             let (x, z, yaw, pitch) = match look[..] {
                 [x, z, yaw, pitch] => (x, z, yaw, pitch),
                 _ => (0.0, 4.0, 0.0, 0.05),
@@ -1396,7 +1396,7 @@ pub fn apply(app: &mut App, name: &str) {
             // (The world held still: the studio needs nothing of it running, and a
             // check of it is a picture or a report, fastest with the world asleep.)
             app.paused = true;
-            let turn: Vec<f32> = std::env::var("UNIVERSE_TURN").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default();
+            let turn: Vec<f32> = crate::devenv::list("UNIVERSE_TURN");
             let mut y = match turn[..] {
                 [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
                 _ => crate::shipyard::Shipyard::interior(app),
@@ -1410,9 +1410,8 @@ pub fn apply(app: &mut App, name: &str) {
                 y.interior_mut().open_saved(&id);
             }
             // (UNIVERSE_STAND=x,y,z,yaw, or 1: the design on its test stand.)
-            if let Ok(v) = std::env::var("UNIVERSE_STAND") {
-                let n: Vec<f64> = v.split(',').filter_map(|x| x.trim().parse().ok()).collect();
-                y.interior_mut().stand_test(<[f64; 4]>::try_from(n).ok());
+            if crate::devenv::flag("UNIVERSE_STAND") {
+                y.interior_mut().stand_test(<[f64; 4]>::try_from(crate::devenv::list::<f64>("UNIVERSE_STAND")).ok());
             }
             if let Ok(d) = std::env::var("UNIVERSE_DIALOG") {
                 y.interior_mut().show_dialog(d == "open");
@@ -1422,8 +1421,8 @@ pub fn apply(app: &mut App, name: &str) {
                 let spec = app.ship.spec();
                 y.interior_mut().sample_modules(spec);
             }
-            // (UNIVERSE_FRAME: the FRAME tool in hand.)
-            if std::env::var_os("UNIVERSE_FRAME").is_some() {
+            // (UNIVERSE_FRAME_TOOL: the FRAME tool in hand.)
+            if crate::devenv::flag("UNIVERSE_FRAME_TOOL") {
                 y.interior_mut().frame_tool();
             }
             // (UNIVERSE_PICK=member:N|module:N|deck:N|room:N|node:N: SELECT, that picked.)
@@ -1434,18 +1433,17 @@ pub fn apply(app: &mut App, name: &str) {
             if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
                 y.interior_mut().deck_tool();
             }
-            // (UNIVERSE_DECKS: the deck studio open instead.)
-            if std::env::var_os("UNIVERSE_DECKS").is_some() {
+            // (UNIVERSE_DECK_STUDIO: the deck studio open instead.)
+            if crate::devenv::flag("UNIVERSE_DECK_STUDIO") {
                 y.open_decks();
             }
             // (UNIVERSE_HIDE=k,k,...: those layers hidden.)
-            for k in std::env::var("UNIVERSE_HIDE").unwrap_or_default().split(',').filter_map(|n| n.trim().parse().ok()) {
+            for k in crate::devenv::list::<usize>("UNIVERSE_HIDE") {
                 y.interior_mut().hide(k);
             }
             // (UNIVERSE_WALKAT=x,y,z,yaw: a walk-through there, as WALK HERE.)
-            if let Some(v) = std::env::var("UNIVERSE_WALKAT").ok().map(|v| v.split(',').filter_map(|n| n.trim().parse::<f64>().ok()).collect::<Vec<_>>())
-                && v.len() == 4
-            {
+            let v = crate::devenv::list::<f64>("UNIVERSE_WALKAT");
+            if v.len() == 4 {
                 y.interior_mut().walk = Some((universe_engine::glam::DVec3::new(v[0], v[1], v[2]), v[3]));
             }
             // (UNIVERSE_PLAN: a sample access plan drawn.)
@@ -1509,7 +1507,7 @@ pub fn apply(app: &mut App, name: &str) {
                     }
                 }
                 // (UNIVERSE_DECKS=n: decks stacked up to n, each 2.9 m over the last.)
-                let n: usize = std::env::var("UNIVERSE_DECKS").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
+                let n = crate::devenv::num("UNIVERSE_DECKS").map_or(0, |v| v as usize);
                 while plan.decks.len() < n {
                     let last = plan.decks.last().expect("a deck");
                     let deck = universe_sim::world::deckplan::Deck { floor: last.floor + 2.9, headroom: last.headroom, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() };
@@ -1731,7 +1729,7 @@ pub fn apply(app: &mut App, name: &str) {
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
-        for c in u.atc.journal.iter().filter(|c| c.ship == 0) {
+        for c in u.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
             log::info!("atc: {c:?}");
         }
     }

@@ -3,6 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 use glam::DVec3;
+use crate::ShipId;
 
 /// Weapon triggers: held (true) or released.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, Serialize, Deserialize)]
@@ -125,5 +126,5 @@ pub struct TurretCommand {
     pub fire: bool,
     /// Launch missiles at this ship (by id) as the launcher reloads; None: hold fire.
     #[serde(default)]
-    pub launch: Option<usize>,
+    pub launch: Option<ShipId>,
 }

@@ -219,9 +219,9 @@ impl Registry {
     /// its code (`parts/mc-07/MC07-23/`).
     pub fn built_of(&self, product: &str) -> Vec<(&Part, u32)> {
         let folder = match product.split_once('.') {
-            Some(("equipment", _)) => self.equipment(&product).and_then(|e| e.built_of.parts.clone()),
-            Some(("hull", name)) => Some(self.hull(&product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
-            Some(("part", _)) => self.part(&product).map(|p| p.identity.code.clone()),
+            Some(("equipment", _)) => self.equipment(product).and_then(|e| e.built_of.parts.clone()),
+            Some(("hull", name)) => Some(self.hull(product).and_then(|h| h.built_of.parts.clone()).unwrap_or_else(|| name.to_string())),
+            Some(("part", _)) => self.part(product).map(|p| p.identity.code.clone()),
             _ => None,
         };
         let Some(folder) = folder else { return Vec::new() };
@@ -237,7 +237,7 @@ impl Registry {
         match item.split('.').next() {
             // (A good is sold as its stock: the stock made from it.)
             Some("good") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
-            Some("stock") => self.stock(&item)?.identity.traded_as.clone(),
+            Some("stock") => self.stock(item)?.identity.traded_as.clone(),
             Some("material") => self.stock.iter().find(|s| s.made_from.iter().any(|m| m.item == item))?.identity.traded_as.clone(),
             _ => None,
         }

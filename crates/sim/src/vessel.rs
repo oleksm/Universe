@@ -2,6 +2,7 @@
 //! made in order once the tick's postings are in, and each ship's inbox of
 //! commands on their way to its devices (see `pilots`).
 
+use universe_protocol::ShipId;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, World};
 
 /// A traffic control request from a pilot: made in order with the tick's
@@ -10,8 +11,8 @@ use universe_world::{Controls, Ship, ShipCommands, ShipEvent, World};
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub(crate) enum Request {
     /// To traffic control: a pad at a port, a station's or gate's corridor.
-    Pad { system: usize, port: universe_world::Facility, ship: usize, now: f64 },
-    Corridor { system: usize, body: usize, ship: usize, now: f64 },
+    Pad { system: usize, port: universe_world::Facility, ship: ShipId, now: f64 },
+    Corridor { system: usize, body: usize, ship: ShipId, now: f64 },
     /// To the market service: the quotes in this system (and the asker's
     /// account), from the market it's at; a trade there; a plan, declared.
     Quotes { system: usize, market: universe_world::Facility },

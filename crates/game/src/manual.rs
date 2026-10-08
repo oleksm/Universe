@@ -100,7 +100,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let size = frame.size();
     let (w, h) = (230.0f32, 250.0f32);
     let at = Vec2::new(8.0, ((size.y - h) * 0.5).floor());
-    frame.hud_rect(at, Vec2::new(w, h), Color([0.012, 0.018, 0.026, 0.75]));
+    frame.hud_rect(at, Vec2::new(w, h), crate::palette::panel(0.75));
     let labels = labels(s);
     let picture = crate::thrusterpanel::Picture { spec: s, jets: &ship.jets, com: ship.centre_of_mass(), mounts: false, picked: &[], labels: &labels };
     crate::thrusterpanel::view(frame, &picture, at, Vec2::new(w, h - 14.0), DVec3::X, DVec3::NEG_Z, "MANUAL THRUSTERS");

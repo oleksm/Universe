@@ -43,22 +43,6 @@ const SEA_BACK: vec3<f32> = vec3<f32>(0.0025, 0.003, 0.0035);  // per m, backsca
 const SEA_BED: vec3<f32> = vec3<f32>(0.25, 0.22, 0.17);        // a sandy bottom's reflectance
 const SEA_F0: f32 = 0.02;                                       // Fresnel at normal incidence, water
 
-fn sea_hash(p: vec3<f32>) -> f32 {
-    var q = fract(p * 0.3183099 + vec3<f32>(0.1));
-    q = q * 17.0;
-    return fract(q.x * q.y * q.z * (q.x + q.y + q.z)) * 2.0 - 1.0;
-}
-
-fn sea_noise(x: vec3<f32>) -> f32 {
-    let i = floor(x);
-    var f = fract(x);
-    f = f * f * (3.0 - 2.0 * f);
-    return mix(mix(mix(sea_hash(i), sea_hash(i + vec3<f32>(1.0, 0.0, 0.0)), f.x),
-                   mix(sea_hash(i + vec3<f32>(0.0, 1.0, 0.0)), sea_hash(i + vec3<f32>(1.0, 1.0, 0.0)), f.x), f.y),
-               mix(mix(sea_hash(i + vec3<f32>(0.0, 0.0, 1.0)), sea_hash(i + vec3<f32>(1.0, 0.0, 1.0)), f.x),
-                   mix(sea_hash(i + vec3<f32>(0.0, 1.0, 1.0)), sea_hash(i + vec3<f32>(1.0, 1.0, 1.0)), f.x), f.y), f.z);
-}
-
 // The waves' tilt of the normal close up: noise slopes over 64 m to 2 m (powers of two: `q` wraps
 // every 4096 m, see gm_pnoise), their spread the
 // wind's, each faded as it falls below a few pixels.

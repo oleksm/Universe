@@ -27,15 +27,10 @@ const RELIEF_ROUGHEST: f64 = 1.6;
 const RELIEF_FLAT_INNER: f64 = 20_000.0;
 const RELIEF_FLAT_OUTER: f64 = 60_000.0;
 
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub enum TerrainKind {
-    /// Oceans, continents, mountains, a few craters.
-    Terran,
-    /// Dry rock: hills, mountains, some craters.
-    Dry,
-    /// Airless moon: heavily cratered.
-    Cratered,
-}
+/// What a world's ground is like: the registry's (`BodySurfaceTerrain`): terran (oceans,
+/// continents, mountains, a few craters), dry (rock: hills, mountains, some craters), cratered
+/// (an airless moon).
+pub use crate::registry::BodySurfaceTerrain as TerrainKind;
 
 /// What the ground is like at a point, for drawing.
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]

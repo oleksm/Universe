@@ -67,7 +67,7 @@ impl Env {
                 add(face(&spec_tex, f, mip), Pass { face: f, kind: 0, roughness, samples: if mip == 0 { 1 } else { 64 } });
             }
         }
-        let shader = device.create_shader_module(wgpu::include_wgsl!("shaders/env.wgsl"));
+        let shader = crate::shaders::single(device, "env");
         let layout = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("environment"), bind_group_layouts: &[Some(globals), Some(&pass_layout)], immediate_size: 0 });
         let pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some("environment"),

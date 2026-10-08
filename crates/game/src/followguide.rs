@@ -11,12 +11,10 @@ use universe_sim::avionics::follow::{Anchor, Follow, Manoeuvre};
 use universe_sim::world::ship::SHIP_RADIUS;
 
 use crate::{fmt, App};
+use crate::palette::{AMBER, DIM, PANEL};
 
 const PATH: Color = Color::hex(0xff60ff);
 const OK: Color = Color::hex(0xdcebf2);
-const AMBER: Color = Color::hex(0xffb030);
-const DIM: Color = Color::hex(0x7d93a0);
-const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 
 /// Where a follow program stands: what it follows, where it's taking us,
 /// and how we're doing.
@@ -50,9 +48,9 @@ fn standing(app: &App) -> Option<Standing> {
         Anchor::Ship(id) => {
             // Where it's drawn, at the moment drawn: a radar fix is a moment
             // old, and at orbital speed a moment is hundreds of metres.
-            let c = app.contacts.iter().find(|c| c.blip.id + 1 == id)?;
-            let at = app.place(crate::Who::Craft(c.blip.id)).0;
-            let vel = app.v.crafts.get(c.blip.id).map_or(c.blip.velocity, |k| k.ship.velocity);
+            let c = app.contacts.iter().find(|c| c.blip.id == id)?;
+            let at = app.place(crate::Who::of(id)?).0;
+            let vel = id.craft_index().and_then(|i| app.v.crafts.get(i)).map_or(c.blip.velocity, |k| k.ship.velocity);
             (at, vel, c.name.to_uppercase())
         }
         Anchor::Place(target) => {

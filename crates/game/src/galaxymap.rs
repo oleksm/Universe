@@ -10,9 +10,8 @@ use universe_sim::names::star_name;
 
 use crate::scene::color;
 use crate::App;
+use crate::palette::{DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const GATE: Color = Color::hex(0xffc040);
 const YOU: Color = Color::hex(0x60ffff);
 
@@ -284,9 +283,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
     // How much of it there is, and how much we've seen.
     let total = galaxy.stars.len();
     let settled = {
-        let mut s: Vec<usize> = app.charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        s.sort_unstable();
-        s.dedup();
+        let s = app.charts.settled();
         s.len()
     };
     let seen = app.explored.len();

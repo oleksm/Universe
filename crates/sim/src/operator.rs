@@ -44,9 +44,7 @@ const STUCK: f64 = 0.8;
 /// A reproducible route of `count` stops (stations and spaceports) across
 /// the gate network, from a seed: same seed, same route.
 pub fn route(charts: &Charts, seed: u64, count: usize) -> Vec<Stop> {
-    let mut systems: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-    systems.sort();
-    systems.dedup();
+    let systems = charts.settled();
     let mut candidates = Vec::new();
     for s in systems {
         let sys = charts.system(s);

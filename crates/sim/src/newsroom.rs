@@ -60,9 +60,7 @@ const MASTHEADS: [&str; 5] = ["HERALD", "COURIER", "WIRE", "DISPATCH", "BULLETIN
 impl Newsroom {
     /// An outlet at the station of each system in the gate network.
     pub fn new(charts: &Charts, now: f64) -> Self {
-        let mut systems: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        systems.sort();
-        systems.dedup();
+        let systems = charts.settled();
         let outlets = systems
             .into_iter()
             .filter_map(|system| {

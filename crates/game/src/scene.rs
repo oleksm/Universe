@@ -152,7 +152,7 @@ fn studio(frame: &mut Frame, app: &App) {
     let backdrop = Transform { position: pos, rotation: universe_engine::glam::Quat::IDENTITY, scale: size * 30.0 };
     frame.no_shadow(|frame| frame.model(&app.models.star, &backdrop, Color::hex(0x2a2e33), Color::hex(0x2a2e33)));
     let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
-    hull(frame, app, ship, livery(&app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
+    hull(frame, app, ship, livery(app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
 }
 
 /// The planet or moon filling most of the sky from here: its day side lights
@@ -505,7 +505,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // every player), the time wrapped as the clouds' shader wants it.
             if let Some((year_days, enso)) = &maps.clouds_year {
                 let (month, index) = universe_sim::world::worlds::clouds_at(t, *year_days, enso.as_ref());
-                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(1_048_576.0) as f32);
+                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(universe_engine::shaders::CLOUD_WRAP_S) as f32);
             }
         }
     }

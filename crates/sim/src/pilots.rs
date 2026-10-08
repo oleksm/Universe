@@ -1,7 +1,7 @@
 //! NPC pilots (re-architecture R6): programs that fly crafts the way any
 //! client does. A pilot reads the newest snapshot of the world (its ship as
 //! its sensors report it, the charts, traffic control's board) and posts its
-//! ship's commands, due `COMMAND_DELAY` ticks after the snapshot it read.
+//! ship's commands, due `command_delay()` ticks after the snapshot it read.
 //!
 //! Pilots run apart from the world, on a pool of their own threads, or in
 //! lockstep with it (tests, and `UNIVERSE_LOCKSTEP=1`). Either way the world
@@ -9,7 +9,7 @@
 //! - **On time** (it came by its due tick), a posting takes effect at exactly
 //!   that tick, so the world runs the same as in lockstep.
 //! - **Late**, it takes effect at once, counted (`Pool::late`).
-//! - **Stale** (more than `LATE_HORIZON` past due), it's dropped, counted
+//! - **Stale** (more than `late_horizon()` ticks past due), it's dropped, counted
 //!   (`Pool::dropped`).
 //!
 //! A pilot that falls silent leaves its ship holding its controls, until the
@@ -23,6 +23,7 @@
 //! its operator (dispatch, the market, a run for the guns), reach it as
 //! messages, and wake it.
 
+use universe_protocol::ShipId;
 use std::collections::HashMap;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{mpsc, Arc, Condvar, Mutex, MutexGuard};
@@ -35,7 +36,7 @@ use universe_protocol::PadGrant;
 use universe_world::{Controls, Ship, ShipCommands, ShipEvent, ShipState, StarSystem};
 
 use crate::vessel::Request;
-pub use crate::contract::{Gun, Guns, PilotView, Posting, Status, COMMAND_DELAY, DEAD_MAN, LATE_HORIZON};
+pub use crate::contract::{command_delay, late_horizon, Gun, Guns, PilotView, Posting, Status, DEAD_MAN};
 pub(crate) use crate::contract::{turret_motions, Msg};
 use crate::traffic::Snap;
 
@@ -111,7 +112,7 @@ pub struct PoolLink<'a> {
     /// Its ship as it sees it (its own pending settings showing).
     ship: Ship,
     system: usize,
-    id: usize,
+    id: ShipId,
     devices: Vec<ShipCommands>,
     requests: Vec<Request>,
     pending: &'a mut Vec<(u64, ShipCommands)>,
@@ -151,7 +152,7 @@ impl Bus for PoolLink<'_> {
         &self.view.charts.gate_links
     }
 
-    fn id(&self) -> usize {
+    fn id(&self) -> ShipId {
         self.id
     }
 
@@ -178,7 +179,7 @@ impl Bus for PoolLink<'_> {
 
     fn actuate(&mut self, c: &ShipCommands) {
         self.devices.push(*c);
-        self.pending.push((self.view.tick + COMMAND_DELAY, *c));
+        self.pending.push((self.view.tick + command_delay(), *c));
         expect(&mut self.ship, c);
     }
 
@@ -191,17 +192,17 @@ impl Bus for PoolLink<'_> {
         let positions = self.rails();
         let target = target.or_else(|| universe_services::atc::nearest_station(&self.sys, self.ship.position, &positions));
         // The system's docks refuse its enemies, and those outside its law.
-        if self.view.snaps.get(self.id).is_some_and(|s| s.hostile) {
+        if self.view.snaps.get(self.id.0).is_some_and(|s| s.hostile) {
             return Err(format!("REFUSED - {} TREATS YOU AS AN ENEMY", self.sys.name.to_uppercase()));
         }
-        if self.view.snaps.get(self.id).is_some_and(|s| s.outlaw) {
+        if self.view.snaps.get(self.id.0).is_some_and(|s| s.outlaw) {
             return Err(format!("REFUSED - YOU ARE OUTSIDE {}'S LAW", self.sys.name.to_uppercase()));
         }
         // A port on ground its lift can't hold it over (or its legs can't stand on): no clearance.
         if let Some(NavTarget::Spaceport(p)) = target
             && let Some(sp) = self.sys.spaceports.get(p)
         {
-            let g = universe_world::legs::surface_gravity(&self.sys.bodies[sp.body]);
+            let g = self.sys.bodies[sp.body].surface_gravity();
             let (lift, legs) = universe_world::legs::ground_check(self.ship.spec(), self.ship.mass(), g);
             if lift < 1.0 {
                 return Err(format!("REFUSED - ITS LIFT HOLDS {lift:.2} OF ITS WEIGHT ON {}", self.sys.bodies[sp.body].name.to_uppercase()));
@@ -298,17 +299,18 @@ fn flee(a: &mut Avionics, ship: &Ship, system: usize, guns: &[Gun], events: &mut
 
 /// What pilot `i` makes of the ships around it (radar, and the pirates'
 /// transponders): shelter is real (docked or landed, or under a turret's guns).
-fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, range: f64, guns: &[Gun], crew: &Crew) -> Vec<Sighting> {
+fn sightings(view: &PilotView, me: ShipId, system: usize, pos: DVec3, range: f64, guns: &[Gun], crew: &Crew) -> Vec<Sighting> {
     let sheltered = |s: &Snap| s.landed || guns.iter().any(|g| g.at.distance(s.position) < g.reach + universe_avionics::hunter::SHELTER_MARGIN);
     view.snaps
         .iter()
         .enumerate()
+        .map(|(i, s)| (ShipId(i), s))
         .filter(|&(id, s)| id != me && s.system == system && !s.transit && s.position.distance(pos) < range)
         .map(|(id, s)| Sighting {
             id,
             position: s.position,
             velocity: s.velocity,
-            pirate: crew.pirates.get(id.wrapping_sub(1)).copied().unwrap_or(false),
+            pirate: id.craft_index().and_then(|i| crew.pirates.get(i)).copied().unwrap_or(false),
             docked: sheltered(s),
             destroyed: s.destroyed,
             hyperdrive: s.hyperdrive,
@@ -323,7 +325,7 @@ fn sightings(view: &PilotView, me: usize, system: usize, pos: DVec3, range: f64,
 /// waiting for it: what it posts. With a human at the stick (`human`), it
 /// thinks every time, flies by the stick (unless a program has it), and
 /// hunts no one.
-pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Option<Controls>, crew: &Crew, tally: &Tally) -> Option<Posting> {
+pub(crate) fn think(pilot: &mut Pilot, id: ShipId, view: &PilotView, human: Option<Controls>, crew: &Crew, tally: &Tally) -> Option<Posting> {
     let (system, ref ship) = *view.ships.get(&id)?;
     if human.is_none() && view.tick < pilot.next_think && pilot.feed.is_empty() && pilot.market.is_none() {
         return None;
@@ -459,20 +461,20 @@ pub(crate) fn think(pilot: &mut Pilot, id: usize, view: &PilotView, human: Optio
 /// The defence service's gunners (clients, in the pool): in every system
 /// with someone fair game in it, each turret's gunner orders its gun (see
 /// `gunner`); where no one is any more, they stand down.
-fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, view: &PilotView) -> Vec<Posting> {
+fn aim_guns(gunners: &mut HashMap<ShipId, universe_avionics::gunner::Gunner>, view: &PilotView) -> Vec<Posting> {
     use universe_avionics::gunner::Quarry;
     use universe_protocol::TurretCommand;
     let mut systems: Vec<usize> = view.snaps.iter().filter(|s| s.wanted() && (s.flying || s.landed)).map(|s| s.system).collect();
     systems.sort_unstable();
     systems.dedup();
-    let latency = view.dt * (COMMAND_DELAY + 1) as f64;
-    let order = |id: usize, c: TurretCommand| Posting { id, thought: view.tick, seen: view.time, devices: Vec::new(), turn: None, requests: Vec::new(), events: Vec::new(), status: Status::default(), gun: Some(c), sleep_until: None };
+    let latency = view.dt * (command_delay() + 1) as f64;
+    let order = |id: ShipId, c: TurretCommand| Posting { id, thought: view.tick, seen: view.time, devices: Vec::new(), turn: None, requests: Vec::new(), events: Vec::new(), status: Status::default(), gun: Some(c), sleep_until: None };
     let mut out = Vec::new();
     for &system in &systems {
         let sys = view.charts.system(system);
         let Some(positions) = view.rails.get(&system) else { continue };
         let guns = guns_of(view, system, &sys);
-        let quarry: Vec<Quarry> = view.snaps.iter().enumerate().filter(|(_, s)| s.system == system && s.wanted() && (s.flying || s.landed)).map(|(id, s)| Quarry { id, position: s.position, velocity: s.velocity }).collect();
+        let quarry: Vec<Quarry> = view.snaps.iter().enumerate().filter(|(_, s)| s.system == system && s.wanted() && (s.flying || s.landed)).map(|(i, s)| Quarry { id: ShipId(i), position: s.position, velocity: s.velocity }).collect();
         for g in guns.iter() {
             let gun = g.aim.unwrap_or_else(|| (quarry.first().map_or(g.at, |q| q.position) - g.at).normalize_or(DVec3::Y));
             let clear = |p: DVec3| {
@@ -491,7 +493,7 @@ fn aim_guns(gunners: &mut HashMap<usize, universe_avionics::gunner::Gunner>, vie
             out.push(order(g.id, c));
         }
     }
-    let idle: Vec<usize> = gunners.keys().copied().filter(|id| universe_world::turrets::turret_of(*id).is_some_and(|(s, _)| !systems.contains(&s))).collect();
+    let idle: Vec<ShipId> = gunners.keys().copied().filter(|id| universe_world::turrets::turret_of(*id).is_some_and(|(s, _)| !systems.contains(&s))).collect();
     for id in idle {
         gunners.remove(&id);
         out.push(order(id, TurretCommand { aim: None, fire: false, launch: None }));
@@ -545,7 +547,7 @@ pub struct Pool {
     /// The operator's own tally (see `Tally`).
     pub tally: Arc<Tally>,
     /// The defence service's gunners (see `aim_guns`).
-    gunners: Arc<Mutex<HashMap<usize, universe_avionics::gunner::Gunner>>>,
+    gunners: Arc<Mutex<HashMap<ShipId, universe_avionics::gunner::Gunner>>>,
 }
 
 /// The pool's own thread: thinks on the newest view whenever there's one,
@@ -681,7 +683,7 @@ impl Pool {
 
 /// Run `f` on the pilot of ship `id` at once (dev tools, tests, and the
 /// player's requests), against `view`: what it posts.
-pub(crate) fn run<R>(pilot: &mut Pilot, id: usize, view: &PilotView, f: impl FnOnce(&mut Avionics, &mut PoolLink, &mut Vec<Event>) -> R) -> (R, Posting) {
+pub(crate) fn run<R>(pilot: &mut Pilot, id: ShipId, view: &PilotView, f: impl FnOnce(&mut Avionics, &mut PoolLink, &mut Vec<Event>) -> R) -> (R, Posting) {
     {
         let (system, ref ship) = view.ships[&id];
         let sys = view.charts.system(system);

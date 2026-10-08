@@ -143,7 +143,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             // On legs: what they take, for this ship as it is (cargo and all) on this ground.
             if let Some(legs) = crate::legs::of_spec(ship.spec()) {
                 let sink = (-c.relative_velocity.dot(c.normal)).max(0.0);
-                let g = crate::units::G * b.mass / b.rail.radius.max(1.0).powi(2);
+                let g = b.surface_gravity();
                 let hardest = legs.hardest(ship.mass(), g);
                 if sink > hardest {
                     fired(events, name, "refused: a leg gave way");

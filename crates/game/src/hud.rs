@@ -7,17 +7,13 @@ use universe_sim::{Action, Approach, BodyKind, DockingStatus, Guidance, LandingS
 use crate::observer::Focus;
 use crate::scene::color;
 use crate::{fmt, App, Mode};
+use crate::palette::{AMBER, DIM, PANEL, RED, TEXT as HUD};
 
-const HUD: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
-const AMBER: Color = Color::hex(0xffc040);
 /// The key's letter, lit in an action's name.
 const HOT: Color = Color::hex(0xffffa0);
-const RED: Color = Color::hex(0xff4040);
 /// Colors shared with the 3D guidance: predicted path (cyan) and guidance path (magenta).
 const PREDICT: Color = Color::hex(0x40c0ff);
 const GUIDE_PATH: Color = Color::hex(0xff60ff);
-const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 /// A lighter backing for text over the world: readable on a bright sky, the view still through it.
 const SOFT_PANEL: Color = Color([0.01, 0.015, 0.022, 0.55]);
 const LINE: f32 = GLYPH + 2.0;
@@ -569,7 +565,7 @@ fn cargo_panel(frame: &mut Frame, app: &App) {
     let size = frame.size();
     // (Left, under the status lines: the notices go across the middle.)
     let pos = Vec2::new(12.0, (size.y * 0.42).floor());
-    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, Color([0.012, 0.018, 0.026, 0.9]));
+    frame.hud_rect(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, crate::palette::panel(0.9));
     frame.hud_box(pos - 8.0, Vec2::new(width, lines.len() as f32 * LINE) + 16.0, HUD.scale(0.6));
     for (k, (text, c)) in lines.iter().enumerate() {
         frame.text(pos + Vec2::new(0.0, k as f32 * LINE), text, *c);
@@ -803,7 +799,7 @@ fn landing_info(app: &App, port: usize, st: &LandingStatus, lines: &mut Vec<(Str
     };
     lines.push((format!("LAND {name}{pad}  {}", mode_label(st.autopilot, st.phase)), HUD));
     // What this ground asks of the ship as it is: its lift against its weight here, what its legs take.
-    let g = universe_sim::world::legs::surface_gravity(&sys.bodies[p.body]);
+    let g = sys.bodies[p.body].surface_gravity();
     let (lift, legs) = universe_sim::world::legs::ground_check(app.ship.spec(), app.ship.mass(), g);
     let legs = legs.map_or(String::new(), |v| if v > 0.0 { format!("  LEGS TAKE {}", fmt::speed(v)) } else { "  ITS LEGS CAN'T STAND ITS WEIGHT HERE".into() });
     let hover = if lift < 1.0 { "  CAN'T HOVER" } else { "" };
@@ -1022,7 +1018,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     let mut tags = 0;
     for contact in near {
         let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
-        let at = app.place(crate::Who::Craft(contact.blip.id)).0;
+        let at = app.place(crate::Who::of(contact.blip.id).unwrap_or(crate::Who::Me)).0;
         let Some(p) = frame.project(at).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
         // (Fainter the farther.)
         let k = (1.0f32 - (contact.blip.distance / 60_000.0) as f32).clamp(0.45, 1.0);
@@ -1044,7 +1040,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     }
     if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) {
         let c = if locked.aggressed { RED } else { crate::scene::TRAFFIC };
-        let at = app.place(crate::Who::Craft(locked.blip.id)).0;
+        let at = app.place(crate::Who::of(locked.blip.id).unwrap_or(crate::Who::Me)).0;
         bracket(frame, app, &locked.name, at, c);
         // Which way it's moving across our view: an arrow off its bracket.
         let v = locked.blip.velocity - app.ship.velocity;
@@ -1072,7 +1068,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
             }
             frame.hud_line(p - Vec2::new(2.0, 0.0), p + Vec2::new(2.0, 0.0), c);
             frame.hud_line(p - Vec2::new(0.0, 2.0), p + Vec2::new(0.0, 2.0), c);
-            if let Some(q) = frame.project(app.place(crate::Who::Craft(locked.blip.id)).0) {
+            if let Some(q) = frame.project(app.place(crate::Who::of(locked.blip.id).unwrap_or(crate::Who::Me)).0) {
                 let d = q - p;
                 if d.length() > 12.0 {
                     frame.hud_line(p + d.normalize() * 6.0, q - d.normalize() * 10.0, AMBER.scale(0.4));
@@ -1146,8 +1142,8 @@ fn gunsight(frame: &mut Frame, app: &App) {
     }
     // HIT on the locked target when one of ours lands.
     if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact)
-        && app.sparks.iter().any(|s| s.ours && s.target == universe_sim::craft_id(locked.blip.id) && s.age < 0.6)
-        && let Some(p) = frame.project(app.place(crate::Who::Craft(locked.blip.id)).0)
+        && app.sparks.iter().any(|s| s.ours && s.target == locked.blip.id && s.age < 0.6)
+        && let Some(p) = frame.project(app.place(crate::Who::of(locked.blip.id).unwrap_or(crate::Who::Me)).0)
     {
         frame.text(p + Vec2::new(12.0, -18.0), "HIT", RED);
     }
@@ -1320,7 +1316,7 @@ fn scanner(frame: &mut Frame, app: &App) {
     let locked = app.v.avionics.contact;
     for contact in &app.contacts {
         let tc = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
-        let rel: DVec3 = inv * (app.place(crate::Who::Craft(contact.blip.id)).0 - app.view.ship_pos);
+        let rel: DVec3 = inv * (app.place(crate::Who::of(contact.blip.id).unwrap_or(crate::Who::Me)).0 - app.view.ship_pos);
         scope.craft(frame, rel, tc, locked == Some(contact.blip.id));
     }
 }
@@ -2057,7 +2053,7 @@ fn profile_panel(frame: &mut Frame, top: f32) -> f32 {
     let size = frame.size();
     let box_size = text_size(&text);
     let pos = Vec2::new(size.x - box_size.x - 8.0, top + 4.0).floor();
-    frame.hud_rect(pos - 4.0, box_size + 8.0, Color([0.012, 0.018, 0.026, 0.85]));
+    frame.hud_rect(pos - 4.0, box_size + 8.0, crate::palette::panel(0.85));
     frame.hud_box(pos - 4.0, box_size + 8.0, DIM);
     frame.text(pos, &text, HUD);
     pos.y + box_size.y + 4.0
@@ -2076,7 +2072,7 @@ fn help(frame: &mut Frame) {
     let box_size = Vec2::new(a.x + gap + b.x, a.y.max(b.y) + 2.0 * LINE);
     let size = frame.size();
     let pos = ((size - box_size) / 2.0).floor();
-    frame.hud_rect(pos - 6.0, box_size + 12.0, Color([0.012, 0.018, 0.026, 0.94]));
+    frame.hud_rect(pos - 6.0, box_size + 12.0, crate::palette::panel(0.94));
     frame.hud_box(pos - 6.0, box_size + 12.0, HUD);
     frame.text(pos, &left, HUD);
     frame.text(pos + Vec2::new(a.x + gap, 0.0), &right, HUD);
