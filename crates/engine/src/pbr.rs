@@ -355,7 +355,7 @@ impl PbrRenderer {
                 multisample: wgpu::MultisampleState { count: samples, ..Default::default() },
                 fragment: Some(wgpu::FragmentState { module: &shader, entry_point: Some("fs_pbr"), compilation_options: Default::default(), targets: &[Some(wgpu::ColorTargetState { format: scene_format, blend, write_mask: wgpu::ColorWrites::ALL })] }),
                 multiview_mask: None,
-                cache: None,
+                cache: crate::pipecache::get(),
             })
         };
         let pipes = vec![make("pbr", false, false), make("pbr two-sided", false, true), make("pbr see-through", true, false), make("pbr see-through two-sided", true, true)];
@@ -376,7 +376,7 @@ impl PbrRenderer {
             multisample: Default::default(),
             fragment: None,
             multiview_mask: None,
-            cache: None,
+            cache: crate::pipecache::get(),
         });
         let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
             label: Some("pbr"),

@@ -78,7 +78,7 @@ impl Env {
             depth_stencil: None,
             multisample: wgpu::MultisampleState::default(),
             multiview_mask: None,
-            cache: None,
+            cache: crate::pipecache::get(),
         });
         Env { spec: as_cube(&spec_tex), pipe, passes }
     }

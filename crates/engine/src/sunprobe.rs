@@ -62,7 +62,7 @@ impl SunProbe {
         });
         let shader = crate::shaders::single(device, "sunprobe");
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("sun probe"), bind_group_layouts: &[Some(&layout)], immediate_size: 0 });
-        let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("sun probe"), layout: Some(&pl), module: &shader, entry_point: Some("main"), compilation_options: Default::default(), cache: None });
+        let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("sun probe"), layout: Some(&pl), module: &shader, entry_point: Some("main"), compilation_options: Default::default(), cache: crate::pipecache::get() });
         let buffer = |label, size, usage| device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size, usage, mapped_at_creation: false });
         let uniform = wgpu::BufferUsages::UNIFORM | wgpu::BufferUsages::COPY_DST;
         let params = [buffer("sun probe (scene)", size_of::<Params>() as u64, uniform), buffer("sun probe (front)", size_of::<Params>() as u64, uniform)];

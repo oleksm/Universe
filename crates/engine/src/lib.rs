@@ -20,6 +20,7 @@ mod sunprobe;
 pub mod shaders;
 pub mod devflags;
 pub mod ground;
+pub mod pipecache;
 mod cloudcache;
 pub mod gputime;
 pub mod worldmaps;

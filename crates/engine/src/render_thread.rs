@@ -59,7 +59,9 @@ impl RenderThread {
         let (shared, waiting) = (state.clone(), slot.clone());
         let thread = std::thread::Builder::new()
             .name("render".into())
-            .spawn(move || loop {
+            .spawn(move || {
+                let mut cache_saved = false;
+                loop {
                 let (resize, frame) = {
                     let (m, ready) = &*waiting;
                     let mut s = lock(m);
@@ -86,11 +88,17 @@ impl RenderThread {
                         let _p = universe_prof::scope("render");
                         renderer.render(&mut gpu, &frame, capture.as_deref());
                     }
+                    // (Every pipeline made by the first frame, kept for the next run.)
+                    if !cache_saved {
+                        crate::pipecache::save();
+                        cache_saved = true;
+                    }
                     universe_prof::add("render/wait for the surface (vsync)", renderer.wait.as_secs_f64());
                     let mut s = lock(&shared);
                     s.wait_ms = renderer.wait.as_secs_f32() * 1000.0;
                     s.render_ms = start.elapsed().as_secs_f32() * 1000.0 - s.wait_ms;
                     s.resources = renderer.resources();
+                }
                 }
             })
             .expect("render thread");

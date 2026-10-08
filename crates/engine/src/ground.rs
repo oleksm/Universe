@@ -29,6 +29,8 @@ pub struct GroundSetup<'a> {
     pub depth: wgpu::TextureFormat,
     pub samples: u32,
     pub shadow_depth: wgpu::TextureFormat,
+    /// The engine's pipeline cache (kept between runs), for the ground's own pipelines.
+    pub cache: Option<&'a wgpu::PipelineCache>,
 }
 
 /// The frame as the ground sees it.

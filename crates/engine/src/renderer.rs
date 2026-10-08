@@ -594,7 +594,7 @@ impl Renderer {
                     })],
                 }),
                 multiview_mask: None,
-                cache: None,
+                cache: crate::pipecache::get(),
             })
         };
         use wgpu::CompareFunction as Cmp;
@@ -728,7 +728,7 @@ impl Renderer {
             multisample: Default::default(),
             fragment: None,
             multiview_mask: None,
-            cache: None,
+            cache: crate::pipecache::get(),
         });
         // (Pushed back a little, more on slopes: no speckle on lit faces.)
         let shadow_pipe = shadow_pipe_biased("shadow casters", wgpu::DepthBiasState { constant: 2, slope_scale: 2.0, clamp: 0.0 });
@@ -764,7 +764,7 @@ impl Renderer {
                     targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(wgpu::BlendState::ALPHA_BLENDING), write_mask: wgpu::ColorWrites::ALL })],
                 }),
                 multiview_mask: None,
-                cache: None,
+                cache: crate::pipecache::get(),
             })
         };
         let mesh_pipe = mesh_pipeline("mesh faces", "vs_mesh", wgpu::PrimitiveTopology::TriangleList, true, wgpu::CompareFunction::Greater);
@@ -782,7 +782,7 @@ impl Renderer {
                 targets: &[Some(wgpu::ColorTargetState { format: SCENE_FORMAT, blend: Some(additive), write_mask: wgpu::ColorWrites::ALL })],
             }),
             multiview_mask: None,
-            cache: None,
+            cache: crate::pipecache::get(),
         });
         let mesh_line_pipe = mesh_pipeline("mesh edges", "vs_mesh_line", wgpu::PrimitiveTopology::LineList, false, wgpu::CompareFunction::GreaterEqual);
         let world = (SCENE_FORMAT, SAMPLES);
@@ -971,6 +971,7 @@ impl Renderer {
             depth: DEPTH_FORMAT,
             samples: SAMPLES,
             shadow_depth: DEPTH_FORMAT,
+            cache: crate::pipecache::get(),
         });
         self.ground = Some(ground);
     }
@@ -1568,7 +1569,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
             targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(alpha), write_mask: wgpu::ColorWrites::ALL })],
         }),
         multiview_mask: None,
-        cache: None,
+        cache: crate::pipecache::get(),
     });
     (atlas_bind, hud_tri_pipe)
 }
@@ -1641,7 +1642,7 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
                 targets: &[Some(format.into())],
             }),
             multiview_mask: None,
-            cache: None,
+            cache: crate::pipecache::get(),
         })
     };
     let blit_pipe = blit_pipeline("blit", gpu.config.format);

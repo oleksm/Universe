@@ -100,7 +100,7 @@ impl CloudCache {
         let layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor { label: Some("cloud cache fill"), entries: &[u(0), u(1), store, t(3), t(4), t(5), u(6)] });
         let module = crate::shaders::make(device, "cloud cache fill", crate::shaders::cloud_cache());
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("cloud cache fill"), bind_group_layouts: &[Some(&layout)], immediate_size: 0 });
-        let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("cloud cache fill"), layout: Some(&pl), module: &module, entry_point: Some("cloud_cache_fill"), compilation_options: Default::default(), cache: None });
+        let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("cloud cache fill"), layout: Some(&pl), module: &module, entry_point: Some("cloud_cache_fill"), compilation_options: Default::default(), cache: crate::pipecache::get() });
         CloudCache { new, before, new_view, old_view, store_view, uniform, pipe, layout, world: None, radius: 1.0, frame: None, old: None, fade: [1.0; 4], job: None, turn: 0, last: std::time::Instant::now() }
     }
 
