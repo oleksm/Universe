@@ -167,8 +167,8 @@ impl Universe {
             content: universe_world::content::content().hash(),
             seed: self.world.galaxy.seed,
             time: self.world.time,
-            ship: self.ship.clone(),
-            ship_system: self.ship_system,
+            ship: self.vessels[crate::combat::PLAYER].ship.clone(),
+            ship_system: self.vessels[crate::combat::PLAYER].system,
             route: avionics.route.clone(),
             avionics,
             credits: self.credits(),
@@ -187,18 +187,18 @@ impl Universe {
             *self = Universe::new(save.seed);
         }
         self.world.time = save.time;
-        self.ship = save.ship;
-        self.ship.refresh();
-        self.ship_system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
+        self.vessels[crate::combat::PLAYER].ship = save.ship;
+        self.vessels[crate::combat::PLAYER].ship.refresh();
+        self.vessels[crate::combat::PLAYER].system = save.ship_system.min(self.world.galaxy.stars.len() - 1);
         // Docked at a station but off its pads (saved when stations were
         // otherwise): onto its middle pad.
-        if let universe_world::ShipState::Landed { body, local_position, .. } = self.ship.state
-            && self.world.system(self.ship_system).bodies.get(body).is_some_and(|b| b.kind == universe_world::BodyKind::Station)
-            && self.ship.hangar.is_none()
+        if let universe_world::ShipState::Landed { body, local_position, .. } = self.vessels[crate::combat::PLAYER].ship.state
+            && self.world.system(self.vessels[crate::combat::PLAYER].system).bodies.get(body).is_some_and(|b| b.kind == universe_world::BodyKind::Station)
+            && self.vessels[crate::combat::PLAYER].ship.hangar.is_none()
             && universe_world::station::pad_at(local_position).is_none()
         {
-            let placed = self.world.ship_on(self.ship_system, universe_world::Facility::Station(body), universe_world::spaceport::CENTER_PAD);
-            (self.ship.position, self.ship.velocity, self.ship.orientation, self.ship.state) = (placed.position, placed.velocity, placed.orientation, placed.state);
+            let placed = self.world.ship_on(self.vessels[crate::combat::PLAYER].system, universe_world::Facility::Station(body), universe_world::spaceport::CENTER_PAD);
+            (self.vessels[crate::combat::PLAYER].ship.position, self.vessels[crate::combat::PLAYER].ship.velocity, self.vessels[crate::combat::PLAYER].ship.orientation, self.vessels[crate::combat::PLAYER].ship.state) = (placed.position, placed.velocity, placed.orientation, placed.state);
         }
         if let Some(c) = self.player.as_mut().and_then(|p| p.as_any_mut().downcast_mut::<crate::cockpit::Cockpit>()) {
             *c.avionics_mut() = Avionics { route: save.route, ..save.avionics };
@@ -219,8 +219,8 @@ impl Universe {
                 self.ledger.settle(me, Asset::Goods(id), *units as f64, tick, cause);
             }
         }
-        self.ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
-        self.ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
+        self.vessels[crate::combat::PLAYER].ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
+        self.vessels[crate::combat::PLAYER].ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
         self.world.mined = save.mined.into_iter().collect();
         // Our standing with each system.
         self.standings.restore(crate::combat::PLAYER, save.standings.into_iter());
@@ -238,7 +238,7 @@ mod tests {
     #[test]
     fn save_round_trips_through_json() {
         let mut u = Universe::new(7);
-        u.ship.throttle = 0.5;
+        u.vessels[crate::combat::PLAYER].ship.throttle = 0.5;
         let station = u.ship_system().station().unwrap();
         u.set_nav_target(Some(NavTarget::Station(station)));
         for _ in 0..60 {
@@ -248,7 +248,7 @@ mod tests {
         use universe_services::{Asset, Party};
         let ore = universe_world::goods::Ore::from_key("good.stony-ore").expect("stony ore").item();
         u.ledger.settle(Party::Pilot(crate::combat::PLAYER), Asset::Goods(ore), 3.0, u.tick, universe_protocol::Cause::Rules);
-        u.world.mined.insert((u.ship_system, 0, 1), 1500.0);
+        u.world.mined.insert((u.vessels[crate::combat::PLAYER].system, 0, 1), 1500.0);
         let save = u.save();
         assert_eq!((save.version, save.content), (SAVE_VERSION, universe_world::content::content().hash()));
         let json = serde_json::to_string(&save).unwrap();
@@ -256,11 +256,11 @@ mod tests {
         let mut restored = Universe::new(7);
         restored.load(serde_json::from_str(&json).unwrap());
         assert_eq!(restored.world.time, u.world.time);
-        assert_eq!(restored.ship.position, u.ship.position);
-        assert_eq!(restored.ship_system, u.ship_system);
+        assert_eq!(restored.vessels[crate::combat::PLAYER].ship.position, u.vessels[crate::combat::PLAYER].ship.position);
+        assert_eq!(restored.vessels[crate::combat::PLAYER].system, u.vessels[crate::combat::PLAYER].system);
         assert_eq!(restored.avionics().nav_target, u.avionics().nav_target);
         assert_eq!(restored.hold(), vec![(ore, 3)], "the hold comes back");
-        assert_eq!(restored.world.mined.get(&(u.ship_system, 0, 1)), Some(&1500.0), "and the dug rock");
+        assert_eq!(restored.world.mined.get(&(u.vessels[crate::combat::PLAYER].system, 0, 1)), Some(&1500.0), "and the dug rock");
     }
 
 }

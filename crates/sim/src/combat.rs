@@ -23,49 +23,36 @@ pub fn craft_id(i: usize) -> ShipId {
     ShipId::craft(i)
 }
 
-/// Which craft `id` is (it must be one: not the player's, not a turret).
-pub fn craft_of(id: ShipId) -> usize {
-    id.craft_index().unwrap_or_else(|| panic!("{id} isn't a craft"))
-}
-
 impl Universe {
     /// Weapons for every ship, over the `dt` game seconds the frame covered.
     pub(crate) fn combat(&mut self, dt: f64) {
         // The turrets' gunners have their say (the defence service's pool).
         universe_prof::time("sim/combat/gunners", || self.gunners(dt));
-        let mut player_events = Vec::new();
-        let mut craft_events: Vec<Vec<ShipEvent>> = (0..self.crafts.len()).map(|_| Vec::new()).collect();
+        // (What happens to each ship, by id: the player's first.)
+        let mut events: Vec<Vec<ShipEvent>> = (0..self.vessels.len()).map(|_| Vec::new()).collect();
         let now = self.world.time;
         {
-            let mut armed = Vec::with_capacity(self.crafts.len() + 1);
-            armed.push(Armed { id: PLAYER, system: self.ship_system, ship: &mut self.ship, events: &mut player_events });
-            for (i, (c, e)) in self.crafts.iter_mut().zip(craft_events.iter_mut()).enumerate() {
-                armed.push(Armed { id: craft_id(i), system: c.system, ship: &mut c.ship, events: e });
-            }
+            let mut armed: Vec<Armed> = self.vessels.all_mut().iter_mut().zip(events.iter_mut()).enumerate().map(|(i, (v, e))| Armed { id: ShipId(i), system: v.system, ship: &mut v.ship, events: e }).collect();
             universe_prof::time("sim/combat/weapons", || self.world.combat(&mut armed, dt));
             universe_prof::time("sim/combat/collisions", || self.world.collide(&mut armed, dt));
         }
         // The law rules on the hits, as logged: firing on a ship that isn't
         // fair game makes the shooter fair game, and it's told so.
-        universe_prof::time("sim/combat/law", || self.rule_on_hits(now, &mut player_events, &mut craft_events));
-        self.traffic_events(PLAYER, &player_events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
-        if let Some(kill) = self.kill_in(PLAYER, self.ship_system, &player_events) {
-            self.record_kill(kill);
-        }
-        self.player_events(player_events);
-        for (i, events) in craft_events.into_iter().enumerate() {
-            if events.is_empty() {
+        universe_prof::time("sim/combat/law", || self.rule_on_hits(now, &mut events));
+        for (i, events) in events.into_iter().enumerate() {
+            let id = ShipId(i);
+            if events.is_empty() && !id.is_player() {
                 continue;
             }
-            self.traffic_events(craft_id(i), &events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
-            if let Some(kill) = self.kill_in(craft_id(i), self.crafts[i].system, &events) {
+            self.traffic_events(id, &events.iter().cloned().map(universe_avionics::Event::Ship).collect::<Vec<_>>());
+            if let Some(kill) = self.kill_in(id, self.vessels[id].system, &events) {
                 if kill.weapon == "COLLISION" {
                     self.records.stats.collision_losses += 1;
                 } else {
                     self.records.stats.shot_down += 1;
                     // By the law's evidence: the downed was fair game, or the
                     // killer was (an innocent killed by an aggressor).
-                    if self.law.aggressed(craft_id(i), now) {
+                    if self.law.aggressed(id, now) {
                         self.records.stats.aggressors_downed += 1;
                     } else if self.law.aggressed(kill.killer, now) {
                         self.records.stats.innocents_killed += 1;
@@ -75,7 +62,10 @@ impl Universe {
             }
             self.records.stats.collisions += events.iter().filter(|e| matches!(e, ShipEvent::Collided { .. })).count() as u64;
             // And to its pilot, by its sensors.
-            self.tell(i, crate::contract::Msg::Feed(events));
+            match id.craft_index() {
+                None => self.player_events(events),
+                Some(c) => self.tell(c, crate::contract::Msg::Feed(events)),
+            }
         }
     }
 
@@ -96,7 +86,7 @@ impl Universe {
     /// The combat phase's events go into the tick's log; the law rules on
     /// each weapon hit there, in order (so a ship made fair game is fair game
     /// for the hits after), and a ruling that's news goes to the shooter.
-    fn rule_on_hits(&mut self, now: f64, player: &mut Vec<ShipEvent>, crafts: &mut [Vec<ShipEvent>]) {
+    fn rule_on_hits(&mut self, now: f64, events: &mut [Vec<ShipEvent>]) {
         let tick = self.tick;
         // (The law where the struck ship is: in a settled system, a station's or a port's.)
         let lasts = |u: &Self, system: usize| {
@@ -106,8 +96,9 @@ impl Universe {
         let system_of = |u: &Self, id: ShipId| u.ship_by_id(id).map(|s| s.1);
         let mut notices: Vec<(ShipId, ShipEvent)> = Vec::new();
         let mut pirates: Vec<universe_services::law::Charge> = Vec::new();
-        for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
-            for e in events {
+        for (i, list) in events.iter().enumerate() {
+            let id = ShipId(i);
+            for e in list {
                 let index = self.log.len() as u32;
                 self.log.push((id, e.clone()));
                 if let ShipEvent::Hit { by, weapon: true, .. } = *e {
@@ -120,7 +111,7 @@ impl Universe {
                         notices.push((r.ship, ShipEvent::Aggressed { until: r.until }));
                         // (Where the system has a law: charged with piracy.)
                         if let Some(system) = system_of(self, id).filter(|&s| self.has_law(s)) {
-                            pirates.push(universe_services::law::Charge { ship: r.ship, system, offence: universe_world::registry::Offence::Piracy, time: now, cause: r.cause, against: Some(id as _) });
+                            pirates.push(universe_services::law::Charge { ship: r.ship, system, offence: universe_world::registry::Offence::Piracy, time: now, cause: r.cause, against: Some(id) });
                         }
                     }
                 }
@@ -130,13 +121,8 @@ impl Universe {
             self.charge(c);
         }
         for (ship, notice) in notices {
-            match ship {
-                PLAYER => player.push(notice),
-                id => {
-                    if let Some(e) = id.craft_index().and_then(|i| crafts.get_mut(i)) {
-                        e.push(notice);
-                    }
-                }
+            if let Some(e) = events.get_mut(ship.0).filter(|_| ship.turret_of().is_none()) {
+                e.push(notice);
             }
         }
     }
@@ -172,10 +158,7 @@ impl Universe {
             let place = sys.and_then(|sys| universe_world::turrets::turrets(self.world.galaxy.seed, system, &sys).get(k).map(|t| t.facility.name(&sys)));
             return format!("SAM TURRET ({})", place.unwrap_or_default().to_uppercase());
         }
-        match id {
-            PLAYER => "YOU".into(),
-            _ => id.craft_index().and_then(|i| self.crafts.get(i)).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
-        }
+        self.vessels.get(id).map_or_else(|| "UNKNOWN".into(), |v| v.name.to_uppercase())
     }
 
     /// Fire control on the locked radar contact (the cockpit's, now).
@@ -202,25 +185,25 @@ mod tests {
         // A settler 3 km ahead, crossing at 40 m/s; we're drifting with it.
         // Well away from any defence turrets (we'll be the aggressor), and the
         // target one that won't run (a pirate, with nothing to hunt).
-        u.ship.position += DVec3::new(1.5e6, 0.0, 0.0);
-        let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
-        let c = &mut u.crafts[0];
+        u.vessels[crate::combat::PLAYER].ship.position += DVec3::new(1.5e6, 0.0, 0.0);
+        let (sys, pos, vel) = (u.vessels[crate::combat::PLAYER].system, u.vessels[crate::combat::PLAYER].ship.position, u.vessels[crate::combat::PLAYER].ship.velocity);
+        let c = &mut u.vessels[crate::combat::craft_id(0)];
         c.system = sys;
         c.ship.state = ShipState::Flying;
         c.ship.hyperdrive = false;
         c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
         c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
         u.pilots()[0].avionics = universe_avionics::Avionics { pirate: true, ..Default::default() };
-        u.command(&ShipCommands { arm: Some(true), ..u.ship.holding() });
+        u.command(&ShipCommands { arm: Some(true), ..u.vessels[crate::combat::PLAYER].ship.holding() });
         u.lock_next_contact();
         let mut destroyed = false;
         for frame in 0..600 {
             let contacts = u.contacts();
             let fc = u.fire_control(&contacts);
             if let Some((_, Some(sol))) = fc {
-                u.ship.orientation = universe_world::ship::facing(sol.aim, sol.aim.any_orthonormal_vector());
+                u.vessels[crate::combat::PLAYER].ship.orientation = universe_world::ship::facing(sol.aim, sol.aim.any_orthonormal_vector());
                 if frame % 60 == 0 {
-                    u.command(&ShipCommands { weapons: Some(Triggers { gun: true, laser: false }), ..u.ship.holding() });
+                    u.command(&ShipCommands { weapons: Some(Triggers { gun: true, laser: false }), ..u.vessels[crate::combat::PLAYER].ship.holding() });
                 }
             }
             u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -229,7 +212,7 @@ mod tests {
                 break;
             }
         }
-        let fired = u.ship.spec().gun.map_or(0, |g| g.magazine) - u.ship.ammo;
+        let fired = u.vessels[crate::combat::PLAYER].ship.spec().gun.map_or(0, |g| g.magazine) - u.vessels[crate::combat::PLAYER].ship.ammo;
         eprintln!("rounds fired {fired}, shot down {destroyed}");
         assert!(destroyed, "should be shot down; fired {fired}");
         assert!(fired < 30, "most rounds on target: {fired}");
@@ -240,9 +223,9 @@ mod tests {
         use crate::combat::{craft_id, PLAYER};
         use universe_world::ShipEvent;
         // What the law gives: thirty years outside it, a bounty on our head, no one here dealing with us.
-        let (me, sys, now) = (PLAYER as universe_protocol::ShipId, u.ship_system, u.world.time);
+        let (me, sys, now) = (PLAYER as universe_protocol::ShipId, u.vessels[crate::combat::PLAYER].system, u.world.time);
         assert!(u.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
-        let worth = Universe::ship_value(&u.ship);
+        let worth = Universe::ship_value(&u.vessels[crate::combat::PLAYER].ship);
         assert!((u.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");
         assert!(u.barred(PLAYER, sys).is_err());
         // Brought down by a craft: the bounty is its, from the administration.
@@ -260,8 +243,8 @@ mod tests {
         u.log.push((PLAYER, ShipEvent::Crashed { body: "TREISTUN E".into() }));
         u.judge(now);
         assert_eq!(reckless(&u), 0, "harming only its pilot");
-        let (sys, positions) = (u.ship_system(), u.world.rails_at(u.ship_system, now));
-        u.ship.position = positions[sys.station().unwrap()] + DVec3::new(0.0, 2_000.0, 0.0);
+        let (sys, positions) = (u.ship_system(), u.world.rails_at(u.vessels[crate::combat::PLAYER].system, now));
+        u.vessels[crate::combat::PLAYER].ship.position = positions[sys.station().unwrap()] + DVec3::new(0.0, 2_000.0, 0.0);
         u.judge(now);
         assert_eq!(reckless(&u), 1, "by the station");
     }

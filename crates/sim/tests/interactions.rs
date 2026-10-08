@@ -16,9 +16,9 @@ fn bench(n: usize) -> Universe {
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     u.events.clear();
     u.spawn_settlers(n, 1);
-    u.ship.position += DVec3::new(0.0, 0.0, 5.0e7);
-    let home = u.ship_system;
-    for c in &mut u.crafts {
+    u.vessels[universe_sim::PLAYER].ship.position += DVec3::new(0.0, 0.0, 5.0e7);
+    let home = u.vessels[universe_sim::PLAYER].system;
+    for c in u.vessels.crafts_mut() {
         c.system = home;
     }
     for p in u.pilots().iter_mut() {
@@ -32,7 +32,7 @@ fn bench(n: usize) -> Universe {
 
 /// Put craft `i` in flight at `position`, moving at `velocity`, facing `toward`.
 fn place(u: &mut Universe, i: usize, position: DVec3, velocity: DVec3, toward: DVec3) {
-    let s = &mut u.crafts[i].ship;
+    let s = &mut u.vessels[universe_sim::craft_id(i)].ship;
     s.state = ShipState::Flying;
     s.hyperdrive = false;
     s.position = position;
@@ -67,7 +67,7 @@ fn positions(u: &mut Universe) -> (std::sync::Arc<universe_sim::StarSystem>, Vec
 /// not a gate's: a ship there could drift through the ring): the turret,
 /// where it is and how it moves, and the way out from its body.
 fn a_turret(u: &mut Universe) -> (universe_sim::world::turrets::Turret, DVec3, DVec3, DVec3) {
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let (sys, pos) = positions(u);
     let (t, at, v) = u
         .world
@@ -87,18 +87,18 @@ fn turrets_shoot_the_aggressor_and_the_systems_enemy_and_spare_the_innocent() {
     place(&mut u, 0, at + side * 2_500.0, v, at);
     place(&mut u, 1, at + side * 2_600.0 + side.any_orthonormal_vector() * 60.0, v, at);
     { let now = u.world.time; u.law.declare(universe_sim::craft_id(0), now + 600.0, now, universe_sim::protocol::Cause::Rules); }
-    let down = run(&mut u, 60.0, |u| !u.crafts[0].ship.is_flying());
-    assert!(down, "the aggressor is shot down (hull {:.2})", u.crafts[0].ship.hull);
-    assert!(u.crafts[1].ship.hull > 0.99, "the innocent untouched ({:.2})", u.crafts[1].ship.hull);
+    let down = run(&mut u, 60.0, |u| !u.vessels[universe_sim::craft_id(0)].ship.is_flying());
+    assert!(down, "the aggressor is shot down (hull {:.2})", u.vessels[universe_sim::craft_id(0)].ship.hull);
+    assert!(u.vessels[universe_sim::craft_id(1)].ship.hull > 0.99, "the innocent untouched ({:.2})", u.vessels[universe_sim::craft_id(1)].ship.hull);
     let kill = u.records.kills.last().expect("a kill");
     assert!(kill.killer_name.starts_with("SAM TURRET"), "{}", kill.killer_name);
     // An enemy of the system by its standing, though it's fired on no one:
     // its docks refuse it, and its guns fire on it too.
-    let system = u.ship_system;
+    let system = u.vessels[universe_sim::PLAYER].system;
     u.standings.set(universe_sim::craft_id(1), system, -100.0);
     run(&mut u, 0.5, |_| false);
     assert!(!u.craft_request_clearance(1), "refused");
-    assert!(run(&mut u, 60.0, |u| !u.crafts[1].ship.is_flying()), "the enemy is shot down (hull {:.2})", u.crafts[1].ship.hull);
+    assert!(run(&mut u, 60.0, |u| !u.vessels[universe_sim::craft_id(1)].ship.is_flying()), "the enemy is shot down (hull {:.2})", u.vessels[universe_sim::craft_id(1)].ship.hull);
 }
 
 #[test]
@@ -110,15 +110,15 @@ fn a_ship_under_fire_runs_for_the_guns() {
     place(&mut u, 0, prey + side.any_orthonormal_vector() * 6_000.0, v, prey);
     place(&mut u, 1, prey, v, at);
     u.pilots()[0].avionics.pirate = true;
-    let hit = run(&mut u, 120.0, |u| u.crafts[1].ship.hull < 1.0);
+    let hit = run(&mut u, 120.0, |u| u.vessels[universe_sim::craft_id(1)].ship.hull < 1.0);
     assert!(hit, "the pirate strikes\n{}", incidents(&u));
     let r = u.pilots()[1].avionics.route.clone();
     let heading = r.stops.get(r.next).map(|s| s.target);
-    let havens: Vec<_> = u.world.turret_motions(u.ship_system).into_iter().map(|(t, _, _)| t.facility).collect();
+    let havens: Vec<_> = u.world.turret_motions(u.vessels[universe_sim::PLAYER].system).into_iter().map(|(t, _, _)| t.facility).collect();
     assert!(heading.is_some_and(|h| havens.contains(&h)), "heading for a defended place: {heading:?}, turret at {:?}", turret.facility);
     assert!(r.active);
     // The system's authority hears of it: the pirate's standing there falls.
-    let system = u.ship_system;
+    let system = u.vessels[universe_sim::PLAYER].system;
     let pirate = universe_sim::craft_id(0);
     assert!(run(&mut u, 15.0, |u| u.standings.of(pirate, system) < 0.0), "standing {}", u.standings.of(pirate, system));
 }
@@ -132,7 +132,7 @@ fn the_recorder_files_a_head_on_collision_with_both_traces() {
     let v = DVec3::X * 30.0;
     place(&mut u, 0, at - DVec3::X * 150.0, v, at);
     place(&mut u, 1, at + DVec3::X * 150.0, -v, at);
-    for c in &mut u.crafts {
+    for c in u.vessels.crafts_mut() {
         c.ship.orientation = DQuat::IDENTITY;
     }
     run(&mut u, 10.0, |u| u.recorder.incidents.len() >= 2);
@@ -146,10 +146,10 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     use universe_sim::services::{Asset, Party};
     let mut u = bench(0);
     let (sys, _) = positions(&mut u);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     // Landed at Port Trethi, whose warehouse has ten tonnes of 6061 plate in it.
     let f = Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == "Port Trethi").expect("Port Trethi"));
-    u.ship = u.world.ship_on(home, f, 0);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, f, 0);
     let plate = universe_sim::world::goods::item("stock.al6061-pl-5").unwrap();
     assert_eq!(u.markets.economy.put(home, f, plate, 10_000.0), 10_000.0);
     let before = u.credits();
@@ -163,7 +163,7 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!((u.markets.economy.place(home, f).unwrap().stock.of(plate) - 7_000.0).abs() < 1e-6, "out of the warehouse");
     assert!((u.credits() - (before - paid)).abs() < 1e-6);
     assert_eq!(u.hold(), vec![(item, 3)]);
-    assert!((u.ship.cargo - 3.0 * u.world.goods[item].mass).abs() < 1e-6, "the core's mass follows the hold");
+    assert!((u.vessels[universe_sim::PLAYER].ship.cargo - 3.0 * u.world.goods[item].mass).abs() < 1e-6, "the core's mass follows the hold");
     // Both legs journalled, and the seller's duty to the administration (Treistun's law: 2%), caused by our request.
     let legs: Vec<_> = u.ledger.journal.iter().rev().take(3).collect();
     assert!(legs.iter().all(|e| matches!(e.cause, universe_sim::protocol::Cause::Message { sender: 0, .. })), "{legs:?}");
@@ -185,25 +185,25 @@ fn a_trade_is_booked_in_the_ledger_with_its_request_as_cause_and_the_ship_weighs
     assert!(u.hold().iter().all(|(i, _)| *i != part) && u.hold().iter().any(|(i, _)| *i == item), "the part broke, the plate held: {:?}", u.hold());
     assert!(u.ledger.balanced());
     // Undocked, the market won't trade.
-    let far = u.ship.position + DVec3::X * 50_000.0;
+    let far = u.vessels[universe_sim::PLAYER].ship.position + DVec3::X * 50_000.0;
     place_player(&mut u, far);
     assert!(u.trade(f, item, -1).is_err());
 }
 
 fn place_player(u: &mut Universe, at: DVec3) {
-    u.ship.state = ShipState::Flying;
-    u.ship.position = at;
+    u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
+    u.vessels[universe_sim::PLAYER].ship.position = at;
 }
 
 #[test]
 fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
     let mut u = bench(1);
     let (sys, _) = positions(&mut u);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = sys.station().unwrap();
     // Docked at the station, its stop just begun: it asks the market, then
     // sells, buys and picks where next, all its own decisions.
-    u.crafts[0].ship = u.world.ship_on(home, Facility::Station(station), 0);
+    u.vessels[universe_sim::craft_id(0)].ship = u.world.ship_on(home, Facility::Station(station), 0);
     {
         let mut pilots = u.pilots();
         let p = &mut pilots[0];
@@ -214,7 +214,7 @@ fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
         r.active = true;
         r.dwell_until = None;
     }
-    let name = u.crafts[0].name.to_uppercase();
+    let name = u.vessels[universe_sim::craft_id(0)].name.to_uppercase();
     run(&mut u, 3.0, |u| u.records.trades.iter().any(|t| t.trader == name));
     let mine: Vec<_> = u.records.trades.iter().filter(|t| t.trader == name).map(|t| format!("{:?} {} {}", t.deal, t.units, t.item)).collect();
     eprintln!("{name}: {mine:?} (stops {})", u.records.stats.stops);
@@ -231,10 +231,10 @@ fn a_trader_asks_for_quotes_decides_and_trades_at_its_stop() {
 fn an_outlaw_gives_up_a_stop_that_refuses_it() {
     let mut u = bench(1);
     let (sys, pos) = positions(&mut u);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = sys.station().unwrap();
     let t = u.world.time;
-    let c = &mut u.crafts[0];
+    let c = &mut u.vessels[universe_sim::craft_id(0)];
     c.ship.state = ShipState::Flying;
     c.ship.position = pos[station] + DVec3::new(0.0, 0.0, 10_000.0);
     c.ship.velocity = sys.velocity(station, t);
@@ -255,7 +255,7 @@ fn an_outlaw_gives_up_a_stop_that_refuses_it() {
 /// station), flying among the field, 15 km from its remnant.
 fn miner_by_its_field() -> Universe {
     let mut u = bench(1);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let charts = u.world.charts();
     let stops = universe_sim::miner::route(&charts, home, 7).expect("fields at home");
     let NavTarget::Asteroid(remnant) = stops[0].target else { panic!() };
@@ -265,7 +265,7 @@ fn miner_by_its_field() -> Universe {
         p[0].avionics.route = universe_sim::avionics::route::Route { stops, next: 0, active: true, dwell_until: None, departing: false, stay: None, hangar_ordered: 0.0 };
     }
     let (sys, pos) = positions(&mut u);
-    let c = &mut u.crafts[0];
+    let c = &mut u.vessels[universe_sim::craft_id(0)];
     // (A miner flies a ship with a mining rig.)
     c.ship.class = universe_sim::world::content::content().handle("hull.prospector").unwrap();
     c.ship.state = ShipState::Flying;
@@ -279,14 +279,14 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     use universe_sim::services::{Asset, Party};
     let mut u = miner_by_its_field();
     let me = universe_sim::craft_id(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let market = u.pilots()[0].avionics.route.stops[1].target;
     assert!(matches!(market, NavTarget::Spaceport(_)), "a port with a warehouse: {market:?}");
     // Landed at its market with ten tonnes of ore, the route at that stop.
-    u.crafts[0].ship = u.world.ship_on(home, market, 0);
+    u.vessels[universe_sim::craft_id(0)].ship = u.world.ship_on(home, market, 0);
     let ore = universe_sim::world::goods::Ore::from_key("good.carbonaceous-ore").expect("carbonaceous ore").item();
     u.ledger.settle(Party::Pilot(me), Asset::Goods(ore), 10.0, u.tick, universe_sim::protocol::Cause::Rules);
-    u.crafts[0].ship.cargo = 10_000.0;
+    u.vessels[universe_sim::craft_id(0)].ship.cargo = 10_000.0;
     u.pilots()[0].avionics.route.next = 1;
     let credits = u.craft_credits(0);
     for _ in 0..60 * 30 {
@@ -302,9 +302,9 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     let mut u = bench(1);
     let sys = u.ship_system();
     let trethi = Facility::Spaceport(sys.spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());
-    u.crafts[0].ship = u.world.ship_on(home, trethi, 0);
-    u.crafts[0].ship.class = universe_sim::world::content::content().handle("hull.prospector").unwrap();
-    u.crafts[0].ship.refresh();
+    u.vessels[universe_sim::craft_id(0)].ship = u.world.ship_on(home, trethi, 0);
+    u.vessels[universe_sim::craft_id(0)].ship.class = universe_sim::world::content::content().handle("hull.prospector").unwrap();
+    u.vessels[universe_sim::craft_id(0)].ship.refresh();
     {
         let mut p = u.pilots();
         p[0].miner = true;
@@ -321,22 +321,22 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
     let (f, i) = rock.expect("a belt rock picked");
     assert!(universe_sim::world::belts::field_patch(f).is_some(), "of the belt: {f}");
     assert_eq!(route.stops.last().map(|s| s.target), Some(trethi), "it sells where it set out");
-    assert!(matches!(u.crafts[0].ship.state, ShipState::Flying), "lifted off: {:?}", u.crafts[0].ship.state);
+    assert!(matches!(u.vessels[universe_sim::craft_id(0)].ship.state, ShipState::Flying), "lifted off: {:?}", u.vessels[universe_sim::craft_id(0)].ship.state);
     // By its rock (put there: the trip is hours): it closes, anchors and digs.
     let t = u.world.time;
     let (center, velocity) = sys.field_body_state(f, i, t);
     let b = &sys.field_bodies(f)[i];
-    let up = (u.crafts[0].ship.position - center).normalize();
-    u.crafts[0].ship.position = center + up * (b.surface_radius_at(center, center + up * 1e4, t) + 300.0);
-    u.crafts[0].ship.velocity = velocity + b.angular_velocity().cross(u.crafts[0].ship.position - center);
-    u.crafts[0].ship.angular_velocity = DVec3::ZERO;
+    let up = (u.vessels[universe_sim::craft_id(0)].ship.position - center).normalize();
+    u.vessels[universe_sim::craft_id(0)].ship.position = center + up * (b.surface_radius_at(center, center + up * 1e4, t) + 300.0);
+    u.vessels[universe_sim::craft_id(0)].ship.velocity = velocity + b.angular_velocity().cross(u.vessels[universe_sim::craft_id(0)].ship.position - center);
+    u.vessels[universe_sim::craft_id(0)].ship.angular_velocity = DVec3::ZERO;
     for _ in 0..60 * 120 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-        if u.crafts[0].ship.hopper > 0.0 {
+        if u.vessels[universe_sim::craft_id(0)].ship.hopper > 0.0 {
             break;
         }
     }
-    assert!(matches!(u.crafts[0].ship.state, ShipState::Anchored { field, .. } if field == f) && u.crafts[0].ship.hopper > 0.0, "digging the belt rock: {:?}", u.crafts[0].ship.state);
+    assert!(matches!(u.vessels[universe_sim::craft_id(0)].ship.state, ShipState::Anchored { field, .. } if field == f) && u.vessels[universe_sim::craft_id(0)].ship.hopper > 0.0, "digging the belt rock: {:?}", u.vessels[universe_sim::craft_id(0)].ship.state);
 }
 
 
@@ -344,14 +344,14 @@ fn a_miner_sells_its_ore_at_the_market_then_heads_out_again() {
 fn a_pilot_refuels_at_a_station_and_pays_its_price() {
     let mut u = bench(0);
     let (sys, _) = positions(&mut u);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = sys.station().unwrap();
-    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
-    let full = u.ship.spec().fuel_capacity;
-    u.ship.fuel = full - 4000.0;
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Station(station), 0);
+    let full = u.vessels[universe_sim::PLAYER].ship.spec().fuel_capacity;
+    u.vessels[universe_sim::PLAYER].ship.fuel = full - 4000.0;
     let credits = u.credits();
     u.refuel_player();
-    assert!((u.ship.fuel - full).abs() < 1e-6, "full: {}", u.ship.fuel);
+    assert!((u.vessels[universe_sim::PLAYER].ship.fuel - full).abs() < 1e-6, "full: {}", u.vessels[universe_sim::PLAYER].ship.fuel);
     let paid = credits - u.credits();
     assert!((paid - 4.0 * universe_sim::services::market::FUEL_PRICE).abs() < 4.0 * 60.0 * 0.5, "paid {paid}");
     assert!(u.ledger.balanced());
@@ -361,29 +361,29 @@ fn a_pilot_refuels_at_a_station_and_pays_its_price() {
 fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     use universe_sim::world::content::content;
     let mut u = bench(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = u.ship_system().station().unwrap();
     let m = |k: &str| content().handle::<universe_sim::world::modules::Module>(k).unwrap();
     // Not docked: refused.
     assert!(u.refit("cargo", Some(m("equipment.cargo.rack.s2"))).is_err());
-    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Station(station), 0);
     let credits = u.credits();
     // Smaller racks: lighter, a smaller hold, and the old racks sold back;
     // at this station's price (its maker's home is some gates off).
     use universe_sim::services::outfitter;
     let here = Facility::Station(station);
     let offer = outfitter::offer(u.world.galaxy.seed, &u.world.gate_links, home, here, content().get(m("equipment.cargo.rack.s2")));
-    let before = u.ship.spec().dry_mass;
+    let before = u.vessels[universe_sim::PLAYER].ship.spec().dry_mass;
     let cost = u.refit("cargo", Some(m("equipment.cargo.rack.s2"))).unwrap();
     assert!((cost - (offer.price - 0.6 * 3000.0)).abs() < 1e-6, "{cost} at {} hops", offer.hops);
     assert!((u.credits() - (credits - cost)).abs() < 1e-6);
-    assert_eq!(u.ship.spec().hold_capacity, 10_000.0);
-    assert!((u.ship.spec().dry_mass - (before - 1500.0 + 800.0)).abs() < 1e-6, "the 1.5 t racks out, the 0.8 t in");
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.spec().hold_capacity, 10_000.0);
+    assert!((u.vessels[universe_sim::PLAYER].ship.spec().dry_mass - (before - 1500.0 + 800.0)).abs() < 1e-6, "the 1.5 t racks out, the 0.8 t in");
     // At Port Trethi's market: a rack lying in its warehouse goes in, the one taken out goes
     // into the warehouse; a hull it hasn't got isn't sold.
     let trethi = Facility::Spaceport(u.ship_system().spaceports.iter().position(|s| s.name == "Port Trethi").unwrap());
-    let ship = u.ship.clone();
-    u.ship = { let mut s = u.world.ship_on(home, trethi, 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
+    let ship = u.vessels[universe_sim::PLAYER].ship.clone();
+    u.vessels[universe_sim::PLAYER].ship = { let mut s = u.world.ship_on(home, trethi, 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
     let item = |k: &str| universe_sim::world::goods::item(k).unwrap();
     let (s3, s2) = (item("equipment.cargo.rack.s3"), item("equipment.cargo.rack.s2"));
     assert!(u.refit("cargo", Some(m("equipment.cargo.rack.s3"))).is_err(), "none in stock");
@@ -393,16 +393,16 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     let stock = |u: &Universe, i: usize| u.markets.economy.place(home, trethi).unwrap().stock.of(i);
     assert!(stock(&u, s3) < 1.0 && (stock(&u, s2) - u.world.goods[s2].mass).abs() < 1e-6, "the rack from the warehouse, the old one into it");
     assert!(u.buy_hull(content().handle("hull.hauler").unwrap()).unwrap_err().contains("IN STOCK"));
-    u.ship = { let mut s = u.world.ship_on(home, Facility::Station(station), 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
+    u.vessels[universe_sim::PLAYER].ship = { let mut s = u.world.ship_on(home, Facility::Station(station), 0); s.class = ship.class; s.fit = ship.fit.clone(); s.refresh(); s };
     // The gun out: it doesn't fire.
     u.refit("hardpoint_1", None).unwrap();
-    assert!(!u.ship.spec().has(universe_sim::world::modules::Gear::Gun));
+    assert!(!u.vessels[universe_sim::PLAYER].ship.spec().has(universe_sim::world::modules::Gear::Gun));
     // A base block can't go: the plant.
     let e = u.refit("power", None).unwrap_err();
     assert!(e.contains("Power"), "{e}");
     // A basic nav computer: it docks and lands, but runs no route.
     u.refit("avionics", Some(m("equipment.avionics.nav-basic.s1"))).unwrap();
-    assert!(u.ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.ship.spec().runs(universe_sim::world::modules::Feature::Route));
+    assert!(u.vessels[universe_sim::PLAYER].ship.spec().runs(universe_sim::world::modules::Feature::Docking) && !u.vessels[universe_sim::PLAYER].ship.spec().runs(universe_sim::world::modules::Feature::Route));
     // Unwelcome here.
     u.standings.set(universe_sim::PLAYER, home, -20.0);
     // Saved and loaded, the fit stays, and the standing.
@@ -410,8 +410,8 @@ fn a_ship_is_refitted_at_a_station_and_what_it_carries_counts() {
     assert!(json.contains("equipment.avionics.nav-basic.s1"));
     let mut back = bench(0);
     back.load(serde_json::from_str(&json).unwrap());
-    assert_eq!(back.ship.spec().hold_capacity, 10_000.0);
-    assert!(!back.ship.spec().runs(universe_sim::world::modules::Feature::Route));
+    assert_eq!(back.vessels[universe_sim::PLAYER].ship.spec().hold_capacity, 10_000.0);
+    assert!(!back.vessels[universe_sim::PLAYER].ship.spec().runs(universe_sim::world::modules::Feature::Route));
     assert_eq!(back.standings.of(universe_sim::PLAYER, home), -20.0);
 }
 
@@ -420,20 +420,20 @@ fn a_ship_is_bought_at_a_station_trading_in_the_old_one() {
     use universe_sim::services::{Asset, Party};
     use universe_sim::world::content::content;
     let mut u = bench(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = u.ship_system().station().unwrap();
     let hauler = content().handle("hull.hauler").unwrap();
     assert!(u.buy_hull(hauler).is_err(), "not docked");
-    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Station(station), 0);
     u.ledger.settle(Party::Pilot(universe_sim::PLAYER), Asset::Credits, 500_000.0, u.tick, universe_sim::protocol::Cause::Rules);
-    u.ship.cargo = 3_000.0;
+    u.vessels[universe_sim::PLAYER].ship.cargo = 3_000.0;
     let (price, trade_in) = u.hull_offer(universe_sim::PLAYER, hauler).unwrap();
     let cost = u.buy_hull(hauler).unwrap();
     assert!((cost - (price - trade_in)).abs() < 1e-6 && trade_in > 0.0, "{cost} = {price} - {trade_in}");
     assert!((u.credits() - (500_000.0 - cost)).abs() < 1e-6);
-    assert_eq!(u.ship.class, hauler);
-    assert_eq!(u.ship.spec().hold_capacity, 150_000.0);
-    assert_eq!(u.ship.cargo, 3_000.0, "the cargo moved over");
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.class, hauler);
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.spec().hold_capacity, 150_000.0);
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.cargo, 3_000.0, "the cargo moved over");
     assert!(u.buy_hull(hauler).is_err(), "that's the ship we have");
 }
 
@@ -442,14 +442,14 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     use universe_sim::services::{Asset, Party};
     use universe_sim::world::content::content;
     let mut u = bench(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = u.ship_system().station().unwrap();
-    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Station(station), 0);
     let me = Party::Pilot(universe_sim::PLAYER);
     let cause = universe_sim::protocol::Cause::Rules;
     // Half a hull, and the credits for a fifth of it: mended a fifth.
-    u.ship.hull = 0.5;
-    let full = u.ship.spec().frame.price * 0.3;
+    u.vessels[universe_sim::PLAYER].ship.hull = 0.5;
+    let full = u.vessels[universe_sim::PLAYER].ship.spec().frame.price * 0.3;
     u.ledger.settle(me, Asset::Credits, full * 0.2, u.tick, cause);
     let (cost, hull) = u.repair(universe_sim::PLAYER).unwrap();
     assert!((cost - full * 0.2).abs() < 1e-6 && (hull - 0.7).abs() < 1e-9, "{cost} {hull}");
@@ -458,38 +458,38 @@ fn a_hull_is_mended_at_a_station_and_a_lost_ship_is_insured() {
     assert_eq!(u.repair(universe_sim::PLAYER).unwrap().1, 1.0);
     // An interceptor lost: the same again, for the insurer's excess (a tenth), parked at the yard.
     let interceptor = content().handle("hull.interceptor").unwrap();
-    u.ship.class = interceptor;
-    let value = Universe::ship_value(&u.ship);
+    u.vessels[universe_sim::PLAYER].ship.class = interceptor;
+    let value = Universe::ship_value(&u.vessels[universe_sim::PLAYER].ship);
     let before = u.credits();
     u.respawn();
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
-    assert_eq!(u.ship.class, interceptor);
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.class, interceptor);
     assert!((u.credits() - (before - 0.1 * value)).abs() < 1.0, "paid the excess: {} of {before}", u.credits());
     let at = u.docked_market().map(|f| f.name(&u.ship_system()));
     assert!(at.as_deref().is_some_and(|n| n.starts_with("Port Trethi")), "delivered at the yard: {at:?}");
     // Lost as a pirate (fair game for firing on the innocent): refused, a basic ship, nothing paid.
-    u.ship.class = interceptor;
+    u.vessels[universe_sim::PLAYER].ship.class = interceptor;
     let before = u.credits();
     let now = u.world.time;
     u.law.declare(universe_sim::PLAYER as _, now + 600.0, now, cause);
     u.respawn();
-    assert_eq!(u.ship.class, universe_sim::world::ship::starting_hull());
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.class, universe_sim::world::ship::starting_hull());
     assert_eq!(u.credits(), before, "the insurer won't pay a pirate's loss");
     // Broke, lost again: a basic ship.
-    u.ship.class = interceptor;
+    u.vessels[universe_sim::PLAYER].ship.class = interceptor;
     u.ledger.settle(me, Asset::Credits, 0.0, u.tick, cause);
     u.respawn();
     run(&mut u, universe_sim::world::damage::RESPAWN_TIME + 1.0, |_| false);
-    assert_eq!(u.ship.class, universe_sim::world::ship::starting_hull());
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.class, universe_sim::world::ship::starting_hull());
 }
 
 #[test]
 fn a_cola_from_the_vending_machine_between_the_pads() {
     use universe_sim::world::crew::Reach;
     let mut u = bench(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let port = 0;
-    u.ship = u.world.ship_on(home, Facility::Spaceport(port), 5);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Spaceport(port), 5);
     let sys = u.ship_system();
     let body = sys.spaceports[port].body;
     let d = universe_sim::world::spaceport::vending_direction(&sys, port);
@@ -514,52 +514,52 @@ fn manual_thrusters_fire_only_what_is_held_and_nothing_steadies_the_ship() {
     use universe_sim::world::ship::ThrusterRole;
     use universe_sim::world::ShipCommands;
     let mut u = bench(0);
-    let spec = u.ship.spec();
+    let spec = u.vessels[universe_sim::PLAYER].ship.spec();
     let k = spec.thrusters.iter().position(|t| t.nozzle.ends_with("nose_left_side")).expect("a nose thruster");
     let mains: u64 = spec.thrusters.iter().enumerate().filter(|(_, t)| t.role == ThrusterRole::Main).map(|(i, _)| 1u64 << i).sum();
-    u.ship.angular_velocity = DVec3::ZERO;
-    u.command(&ShipCommands { manual: Some(true), ..u.ship.holding() });
+    u.vessels[universe_sim::PLAYER].ship.angular_velocity = DVec3::ZERO;
+    u.command(&ShipCommands { manual: Some(true), ..u.vessels[universe_sim::PLAYER].ship.holding() });
     // The stick does nothing now.
     u.step_world(1.0 / 60.0, 1.0, &Controls { pitch: 1.0, yaw: 1.0, roll: 1.0 });
-    assert!(u.ship.angular_velocity.length() < 1e-9, "no stick: {}", u.ship.angular_velocity);
+    assert!(u.vessels[universe_sim::PLAYER].ship.angular_velocity.length() < 1e-9, "no stick: {}", u.vessels[universe_sim::PLAYER].ship.angular_velocity);
     // One nose thruster held: it alone fires, and the ship yaws.
-    u.command(&ShipCommands { jets: Some(1 << k), ..u.ship.holding() });
+    u.command(&ShipCommands { jets: Some(1 << k), ..u.vessels[universe_sim::PLAYER].ship.holding() });
     for _ in 0..30 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
-    assert!(u.ship.jets.iter().enumerate().all(|(i, &j)| (j > 0.0) == (i == k)), "{:?}", u.ship.jets);
-    assert!(u.ship.angular_velocity.length() > 1e-3, "turning: {}", u.ship.angular_velocity);
+    assert!(u.vessels[universe_sim::PLAYER].ship.jets.iter().enumerate().all(|(i, &j)| (j > 0.0) == (i == k)), "{:?}", u.vessels[universe_sim::PLAYER].ship.jets);
+    assert!(u.vessels[universe_sim::PLAYER].ship.angular_velocity.length() > 1e-3, "turning: {}", u.vessels[universe_sim::PLAYER].ship.angular_velocity);
     // Let go (the order reaching it a tick on): nothing steadies it; it turns on as it was.
-    u.command(&ShipCommands { jets: Some(0), ..u.ship.holding() });
+    u.command(&ShipCommands { jets: Some(0), ..u.vessels[universe_sim::PLAYER].ship.holding() });
     for _ in 0..3 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
-    let spin = u.ship.angular_velocity;
+    let spin = u.vessels[universe_sim::PLAYER].ship.angular_velocity;
     for _ in 0..30 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
-    assert!((u.ship.angular_velocity - spin).length() < 1e-6 * spin.length().max(1.0) + 1e-9, "{} vs {spin}", u.ship.angular_velocity);
+    assert!((u.vessels[universe_sim::PLAYER].ship.angular_velocity - spin).length() < 1e-6 * spin.length().max(1.0) + 1e-9, "{} vs {spin}", u.vessels[universe_sim::PLAYER].ship.angular_velocity);
     // The mains held: it speeds up along its nose.
-    let v0 = u.ship.velocity;
-    let nose = u.ship.orientation * DVec3::NEG_Z;
-    u.command(&ShipCommands { jets: Some(mains), ..u.ship.holding() });
+    let v0 = u.vessels[universe_sim::PLAYER].ship.velocity;
+    let nose = u.vessels[universe_sim::PLAYER].ship.orientation * DVec3::NEG_Z;
+    u.command(&ShipCommands { jets: Some(mains), ..u.vessels[universe_sim::PLAYER].ship.holding() });
     for _ in 0..60 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
-    assert!((u.ship.velocity - v0).dot(nose) > 5.0, "mains push: {}", (u.ship.velocity - v0).dot(nose));
+    assert!((u.vessels[universe_sim::PLAYER].ship.velocity - v0).dot(nose) > 5.0, "mains push: {}", (u.vessels[universe_sim::PLAYER].ship.velocity - v0).dot(nose));
     // Back on the flight computer: nothing held.
-    u.command(&ShipCommands { manual: Some(false), ..u.ship.holding() });
+    u.command(&ShipCommands { manual: Some(false), ..u.vessels[universe_sim::PLAYER].ship.holding() });
     for _ in 0..3 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
-    assert!(!u.ship.manual && u.ship.held == 0);
+    assert!(!u.vessels[universe_sim::PLAYER].ship.manual && u.vessels[universe_sim::PLAYER].ship.held == 0);
 }
 
 #[test]
 fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fare() {
     use universe_sim::world::content::content;
     let mut u = bench(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = u.ship_system().station().unwrap();
     // (No settlement has people in the registry yet: two ports given some.)
     let sys = u.ship_system();
@@ -576,28 +576,28 @@ fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fa
     let b = bookings[0];
     let to = (b.system, b.to);
     // Landed without a cabin: no seats.
-    u.ship = u.world.ship_on(home, here, 0);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, here, 0);
     assert!(u.board_passengers(universe_sim::PLAYER, here, to).is_err(), "no cabin, no passengers");
     // A cabin in a cargo slot (one the station sells): its seats.
-    u.ship = u.world.ship_on(home, Facility::Station(station), 0);
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Station(station), 0);
     let cabins: Vec<_> = content().modules.iter().filter_map(|(h, m)| if let universe_sim::world::modules::Does::Cabin { seats } = m.does { Some((h, seats)) } else { None }).collect();
     let seats = cabins.iter().find(|(h, _)| u.refit("cargo", Some(*h)).is_ok()).map(|c| c.1).expect("a cabin sold there");
-    u.ship = { let mut s = u.world.ship_on(home, here, 0); s.class = u.ship.class; s.fit = u.ship.fit.clone(); s.refresh(); s };
+    u.vessels[universe_sim::PLAYER].ship = { let mut s = u.world.ship_on(home, here, 0); s.class = u.vessels[universe_sim::PLAYER].ship.class; s.fit = u.vessels[universe_sim::PLAYER].ship.fit.clone(); s.refresh(); s };
     let n = u.board_passengers(universe_sim::PLAYER, here, to).unwrap();
     assert_eq!(n, seats.min(b.people));
-    assert_eq!(u.ship.passengers, n);
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.passengers, n);
     let waiting = u.markets.economy.place(home, here).unwrap().waiting;
     assert!((waiting - (1.0 - n as f64 / 1000.0)).abs() < 1e-9, "they left the port");
     // Landed anywhere else: refused. Where they booked: they settle, and the fare's paid.
     assert!(u.land_passengers(universe_sim::PLAYER, here).is_err());
     let (people, credits) = (u.markets.economy.place(to.0, to.1).unwrap().population, u.credits());
-    u.ship = { let mut s = u.world.ship_on(to.0, to.1, 1); s.class = u.ship.class; s.fit = u.ship.fit.clone(); s.passengers = u.ship.passengers; s.bound_for = u.ship.bound_for; s.fare = u.ship.fare; s.refresh(); s };
-    u.ship_system = to.0;
+    u.vessels[universe_sim::PLAYER].ship = { let mut s = u.world.ship_on(to.0, to.1, 1); s.class = u.vessels[universe_sim::PLAYER].ship.class; s.fit = u.vessels[universe_sim::PLAYER].ship.fit.clone(); s.passengers = u.vessels[universe_sim::PLAYER].ship.passengers; s.bound_for = u.vessels[universe_sim::PLAYER].ship.bound_for; s.fare = u.vessels[universe_sim::PLAYER].ship.fare; s.refresh(); s };
+    u.vessels[universe_sim::PLAYER].system = to.0;
     let paid = u.land_passengers(universe_sim::PLAYER, to.1).unwrap();
     assert!((paid - b.fare * n as f64).abs() < 1e-9);
     assert!((u.credits() - credits - paid).abs() < 1e-6, "the fares paid");
     assert!((u.markets.economy.place(to.0, to.1).unwrap().population - people - n as f64 / 1000.0).abs() < 1e-9, "they settled");
-    assert_eq!(u.ship.passengers, 0);
+    assert_eq!(u.vessels[universe_sim::PLAYER].ship.passengers, 0);
     assert!(u.ledger.balanced());
 }
 
@@ -607,11 +607,11 @@ fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
     let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb")).expect("the MC-07 model");
     let hull = universe_sim::world::import::commission(&bytes, "assets/models/mc07.glb").expect("it imports");
     let mut u = bench(0);
-    let home = u.ship_system;
+    let home = u.vessels[universe_sim::PLAYER].system;
     let station = u.ship_system().station().expect("a station at home");
-    u.ship = u.world.ship_on(home, Facility::Station(station), 4);
-    u.ship.class = hull;
-    u.ship.refresh();
+    u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, Facility::Station(station), 4);
+    u.vessels[universe_sim::PLAYER].ship.class = hull;
+    u.vessels[universe_sim::PLAYER].ship.refresh();
     u.crew = Default::default();
     u.walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
     assert!(matches!(u.crew.place, universe_sim::world::Place::Aboard { .. }), "aboard, not outside on the station: {:?}", u.crew.place);

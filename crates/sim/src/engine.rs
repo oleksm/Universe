@@ -378,15 +378,16 @@ impl Engine {
         let _p = universe_prof::scope("sim/view");
         let u = &mut self.universe;
         let now = u.world.time;
-        let system = u.ship_system;
+        let system = u.vessels[crate::combat::PLAYER].system;
         let sys = u.ship_system();
         let gather = universe_prof::scope("sim/view/crafts");
         // In full: the ships where the client is looking, and those passing
         // through its gates (to or from there); the rest as seen from afar.
         let here = self.looking_at.unwrap_or(system);
-        let near = |c: &crate::traffic::Craft| c.system == here || matches!(c.ship.state, universe_world::ShipState::Transit { to, from, .. } if to == here || from == here);
+        let near = |c: &crate::vessel::Vessel| c.system == here || matches!(c.ship.state, universe_world::ShipState::Transit { to, from, .. } if to == here || from == here);
         let crafts = u
-            .crafts
+            .vessels
+            .crafts()
             .iter()
             .enumerate()
             .map(|(i, c)| CraftView {
@@ -407,7 +408,7 @@ impl Engine {
         self.serial += 1;
         let view = View {
             time: now,
-            ship: u.ship.clone(),
+            ship: u.vessels[crate::combat::PLAYER].ship.clone(),
             ship_system: system,
             aggressed_until: u.law.until(crate::combat::PLAYER, now),
             avionics: Default::default(),
@@ -443,16 +444,16 @@ impl Engine {
             nav_marker: None,
             reach: u.pilot_reach(),
             economy: u.markets.economy.snapshot(),
-            economy_heard: u.boards.heard_economy(system, u.ship.position, &u.ship.spec().comm, now),
+            economy_heard: u.boards.heard_economy(system, u.vessels[crate::combat::PLAYER].ship.position, &u.vessels[crate::combat::PLAYER].ship.spec().comm, now),
             land: u.land.clone(),
             works: u.markets.economy.works_snapshot(),
             mined: u.world.mined.iter().filter(|((s, _, _), _)| *s == system).map(|(&(_, f, b), &kg)| ((f, b), kg)).collect(),
-            dug: match u.ship.state {
+            dug: match u.vessels[crate::combat::PLAYER].ship.state {
                 universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),
                 _ => 0.0,
             },
             docked_market: u.docked_market(),
-            bookings: u.docked_market().map(|m| u.bookings(u.ship_system, m)).unwrap_or_default(),
+            bookings: u.docked_market().map(|m| u.bookings(u.vessels[crate::combat::PLAYER].system, m)).unwrap_or_default(),
             markets,
             market,
             standing: u.standings.of(crate::combat::PLAYER, system),

@@ -15,25 +15,6 @@ use crate::universe::Universe;
 /// Crash reports kept (the most recent).
 const CRASH_LOG: usize = 50;
 
-/// Another ship in the world: the body (its ship), and what the world
-/// knows of the pilot flying it (see `pilots`: the pilot itself is apart).
-pub struct Craft {
-    pub name: std::sync::Arc<str>,
-    pub ship: Ship,
-    /// Galaxy index of the system it's in.
-    pub system: usize,
-    /// What its pilot shows (posted with its commands).
-    pub status: crate::contract::Status,
-    /// When its pilot last posted (world time), and whether the dead-man rule has cut in since.
-    pub last_posted: f64,
-    pub dead_man: bool,
-    /// Its pilot sleeps till this tick (it's not in the views till then,
-    /// unless a message wakes it).
-    pub(crate) asleep_until: u64,
-    /// Its pilot's commands on their way to the devices.
-    pub inbox: crate::vessel::Inbox,
-}
-
 /// A ship as it was at the start of the frame (see `Universe::snaps`).
 #[derive(Clone, Copy, Debug)]
 pub(crate) struct Snap {
@@ -124,8 +105,8 @@ impl Universe {
                 }
                 let _ = ship.refit(fit);
             }
-            self.crafts.push(Craft { name: reg.name.into(), ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
-            let me = universe_services::Party::Pilot(crate::combat::craft_id(self.crafts.len() - 1));
+            self.vessels.push(crate::vessel::Vessel { name: reg.name.into(), ship, system: reg.at.system, status: Default::default(), last_posted: now, dead_man: false, asleep_until: 0, inbox: Default::default() });
+            let me = universe_services::Party::Pilot(crate::combat::craft_id(self.vessels.crafts().len() - 1));
             self.ledger.settle(me, universe_services::Asset::Credits, crate::commerce::SETTLER_CREDITS, self.tick, universe_protocol::Cause::Rules);
         }
     }
@@ -138,42 +119,52 @@ impl Universe {
     pub(crate) fn fly_crafts(&mut self, t0: f64, real_dt: f64, warp: f64) {
         use rayon::prelude::*;
         // What they'll look up, gathered first: read without locks.
-        let mut systems: Vec<usize> = self.crafts.iter().map(|c| c.system).collect();
+        let mut systems: Vec<usize> = self.vessels.crafts().iter().map(|c| c.system).collect();
         systems.sort_unstable();
         systems.dedup();
         universe_prof::time("sim/crafts/freeze", || self.world.freeze(&systems, t0, t0 + real_dt * warp));
         let (world, tick) = (&self.world, self.tick);
         let steps: Vec<(Vec<ShipEvent>, DVec3)> = {
             let _p = universe_prof::scope("sim/crafts/side by side");
-            self.crafts.par_iter_mut().map(|c| step_craft(world, c, t0, real_dt, warp, tick)).collect()
+            self.vessels.crafts_mut().par_iter_mut().map(|c| step_craft(world, c, t0, real_dt, warp, tick)).collect()
         };
         self.world.thaw();
         let _p = universe_prof::scope("sim/crafts/in order");
         for (i, (events, velocity)) in steps.into_iter().enumerate() {
-            self.after_step(i, events, velocity);
+            self.after_step(crate::combat::craft_id(i), events, velocity);
         }
     }
 
-    /// What came of craft `i`'s step, in order: for the services, the
-    /// records, and its pilot's feed.
-    fn after_step(&mut self, i: usize, happened: Vec<ShipEvent>, velocity: DVec3) {
+    /// What came of ship `id`'s step (`velocity`: its velocity going in), in order: to its pilot,
+    /// for the services, the records and the flight recorder. The same for every ship.
+    pub(crate) fn after_step(&mut self, id: ShipId, happened: Vec<ShipEvent>, velocity: DVec3) {
         let events: Vec<Event> = happened.iter().cloned().map(Event::Ship).collect();
-        self.log_events(crate::combat::craft_id(i), &events);
-        self.traffic_events(crate::combat::craft_id(i), &events);
-        self.book_mined(crate::combat::craft_id(i), &events);
-        self.book_tolls(crate::combat::craft_id(i), &events);
-        let _ = self.book_jolts(crate::combat::craft_id(i), &events);
+        match id.craft_index() {
+            None => self.player_events(happened.clone()),
+            Some(i) if !happened.is_empty() => self.tell(i, crate::contract::Msg::Feed(happened.clone())),
+            Some(_) => {}
+        }
+        self.log_events(id, &events);
+        self.traffic_events(id, &events);
+        self.book_mined(id, &events);
+        self.book_tolls(id, &events);
+        let broken = self.book_jolts(id, &events);
+        if id.is_player() {
+            self.events.extend(broken.into_iter().map(Event::Ship));
+        }
+        // Wrecked on something (collisions and weapons are filed by the combat phase).
         let crashed = happened.iter().find_map(|e| match e {
-            ShipEvent::Crashed { body } => Some(body.clone()),
+            ShipEvent::Crashed { body } if !matches!(body.as_str(), "COLLISION" | "GUNFIRE" | "LASER FIRE" | "MISSILE") => Some(body.clone()),
             _ => None,
         });
         if let Some(body) = crashed {
             let now = self.world.time;
-            self.recorder.file(now, crate::combat::craft_id(i), self.crafts[i].name.to_uppercase(), body.clone(), None);
-            let system = self.crafts[i].system;
+            let v = &self.vessels[id];
+            self.recorder.file(now, id, v.name.to_uppercase(), body.clone(), None);
+            let system = v.system;
             let sys = self.system(system);
             let speed = sys.bodies.iter().position(|x| x.name == body).map_or(0.0, |x| (velocity - sys.velocity(x, now)).length());
-            let (c, st) = (&self.crafts[i], &self.crafts[i].status);
+            let (c, st) = (&self.vessels[id], &self.vessels[id].status);
             self.crash_log.push(CrashReport {
                 craft: c.name.to_string(),
                 body,
@@ -197,9 +188,6 @@ impl Universe {
                 _ => {}
             }
         }
-        if !happened.is_empty() {
-            self.tell(i, crate::contract::Msg::Feed(happened));
-        }
     }
 
     /// Pilots' postings: each due tick's commands into its craft's inbox (a
@@ -221,41 +209,34 @@ impl Universe {
                 self.turret_orders.push_back((due.max(self.tick), p.id, c));
                 continue;
             }
-            if p.id == crate::combat::PLAYER {
-                for r in p.requests {
-                    self.request(p.id, r);
-                }
-                self.player_inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
-                self.player_status = p.status;
-                self.log_events(crate::combat::PLAYER, &p.events);
-                self.traffic_events(crate::combat::PLAYER, &p.events);
-                self.events.extend(p.events);
-                continue;
-            }
-            let i = crate::combat::craft_of(p.id);
-            // Going to sleep first: an answer to its requests wakes it.
-            if let Some(t) = p.sleep_until {
-                self.crafts[i].asleep_until = t;
+            // Going to sleep first: an answer to its requests wakes it. (Not the player's: its
+            // client runs every frame.)
+            if let Some(t) = p.sleep_until.filter(|_| !p.id.is_player()) {
+                self.vessels[p.id].asleep_until = t;
             }
             let requests = universe_prof::scope("sim/postings/requests");
             for r in p.requests {
                 self.request(p.id, r);
             }
             drop(requests);
-            let c = &mut self.crafts[i];
-            c.inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
-            c.last_posted = self.world.time;
-            c.dead_man = false;
-            c.status = p.status;
+            let v = &mut self.vessels[p.id];
+            v.inbox.post(due.max(self.tick), p.seen, p.devices, p.turn);
+            v.last_posted = self.world.time;
+            v.dead_man = false;
+            v.status = p.status;
             let _events = universe_prof::scope("sim/postings/events");
-            self.log_events(crate::combat::craft_id(i), &p.events);
-            self.traffic_events(crate::combat::craft_id(i), &p.events);
-            for e in p.events {
+            self.log_events(p.id, &p.events);
+            self.traffic_events(p.id, &p.events);
+            for e in &p.events {
                 match e {
                     Event::RouteStop { .. } => self.records.stats.stops += 1,
                     Event::RouteComplete => self.records.stats.routes_completed += 1,
                     _ => {}
                 }
+            }
+            // (What the player's pilot did, for the HUD.)
+            if p.id.is_player() {
+                self.events.extend(p.events);
             }
         }
     }
@@ -264,9 +245,10 @@ impl Universe {
     /// `DEAD_MAN` seconds has its engines cut and its weapons made safe (a
     /// core rule: the hardware does it).
     pub(crate) fn dead_man(&mut self) {
+        // (The crafts': the player's client is the game itself, which stops the world when it stops.)
         let now = self.world.time;
-        for i in 0..self.crafts.len() {
-            let c = &mut self.crafts[i];
+        for i in 0..self.vessels.crafts().len() {
+            let c = &mut self.vessels[crate::combat::craft_id(i)];
             if c.dead_man || now - c.last_posted < crate::contract::DEAD_MAN || !c.ship.is_flying() {
                 continue;
             }
@@ -284,8 +266,8 @@ impl Universe {
     pub(crate) fn cockpit_view(&mut self, world: Arc<crate::contract::PilotView>) -> crate::contract::CockpitView {
         let now = self.world.time;
         let mut transponders = std::collections::HashMap::new();
-        let (system, at) = (self.ship_system, self.ship.position);
-        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::range(self.ship.spec())) {
+        let (system, at) = (self.vessels[crate::combat::PLAYER].system, self.vessels[crate::combat::PLAYER].ship.position);
+        for (i, c) in self.vessels.crafts().iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::range(self.vessels[crate::combat::PLAYER].ship.spec())) {
             let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
             transponders.insert(crate::combat::craft_id(i), crate::contract::Transponder {
                 name: c.name.clone(),
@@ -302,7 +284,7 @@ impl Universe {
     pub(crate) fn pilot_view(&mut self, dt: f64) -> crate::contract::PilotView {
         let t = self.world.time;
         let charts = self.charts.get_or_insert_with(|| Arc::new(self.world.charts())).clone();
-        let mut systems: Vec<usize> = self.crafts.iter().map(|c| c.system).chain([self.ship_system]).collect();
+        let mut systems: Vec<usize> = self.vessels.crafts().iter().map(|c| c.system).chain([self.vessels[crate::combat::PLAYER].system]).collect();
         systems.sort_unstable();
         systems.dedup();
         let mut rails = std::collections::HashMap::new();
@@ -326,10 +308,9 @@ impl Universe {
         self.snapped_at = self.tick;
         let tick = self.tick;
         // (Room for them all from the start: grown, it would move every ship it holds.)
-        let mut ships: std::collections::HashMap<universe_protocol::ShipId, (usize, Ship), universe_physics::pairs::CellHash> = std::collections::HashMap::with_capacity_and_hasher(self.crafts.len() + 1, Default::default());
-        ships.insert(crate::combat::PLAYER, (self.ship_system, self.ship.clone()));
-        for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.asleep_until <= tick) {
-            ships.insert(crate::combat::craft_id(i), (c.system, c.ship.clone()));
+        let mut ships: std::collections::HashMap<universe_protocol::ShipId, (usize, Ship), universe_physics::pairs::CellHash> = std::collections::HashMap::with_capacity_and_hasher(self.vessels.len(), Default::default());
+        for (id, v) in self.vessels.iter().filter(|(_, v)| v.asleep_until <= tick) {
+            ships.insert(id, (v.system, v.ship.clone()));
         }
         crate::contract::PilotView {
             tick: self.tick,
@@ -342,7 +323,7 @@ impl Universe {
             board: self.atc.board(),
             rails,
             turrets,
-            credits: std::iter::once(crate::combat::PLAYER).chain((0..self.crafts.len()).map(crate::combat::craft_id)).map(|id| (id, self.ledger.credits(universe_services::Party::Pilot(id)))).collect(),
+            credits: self.vessels.iter().map(|(id, _)| (id, self.ledger.credits(universe_services::Party::Pilot(id)))).collect(),
         }
     }
 
@@ -352,11 +333,11 @@ impl Universe {
         let (law, standings) = (&self.law, &self.standings);
         // (Hostile to the system's authority: its standing there at or under its line.)
         let hostile = |id: ShipId, system: usize| standings.of(id, system) <= crate::standing::HOSTILE;
-        let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
-        snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system), law.outlawed(crate::combat::PLAYER as _, self.ship_system, now)));
         use rayon::prelude::*;
-        let crafts: Vec<Snap> = self.crafts.par_iter().enumerate().map(|(i, c)| Snap::of(c.system, &c.ship, law.aggressed(crate::combat::craft_id(i), now), hostile(crate::combat::craft_id(i), c.system), law.outlawed(crate::combat::craft_id(i) as _, c.system, now))).collect();
-        snaps.extend(crafts);
+        let snaps: Vec<Snap> = self.vessels.all().par_iter().enumerate().map(|(i, v)| {
+            let id = ShipId(i);
+            Snap::of(v.system, &v.ship, law.aggressed(id, now), hostile(id, v.system), law.outlawed(id, v.system, now))
+        }).collect();
         self.snaps = Arc::new(snaps);
         self.snap_time = now;
         self.aggressors = self.snaps.iter().filter(|s| s.aggressed && s.flying && !s.hyperdrive).map(|s| (s.system, s.position)).collect();
@@ -365,7 +346,7 @@ impl Universe {
 }
 
 /// Craft `c`'s step (see `fly_crafts`): its events, and its velocity before.
-fn step_craft(world: &universe_world::World, c: &mut Craft, t0: f64, real_dt: f64, warp: f64, tick: u64) -> (Vec<ShipEvent>, DVec3) {
+fn step_craft(world: &universe_world::World, c: &mut crate::vessel::Vessel, t0: f64, real_dt: f64, warp: f64, tick: u64) -> (Vec<ShipEvent>, DVec3) {
     let velocity = c.ship.velocity;
     let mut happened = Vec::new();
     let turn = c.inbox.deliver(world, &mut c.ship, c.system, t0, tick, &mut happened);

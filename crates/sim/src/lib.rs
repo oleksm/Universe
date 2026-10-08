@@ -31,7 +31,7 @@ pub mod recorder;
 pub mod save;
 mod traffic;
 pub mod universe;
-mod vessel;
+pub mod vessel;
 
 pub use universe_avionics as avionics;
 pub use universe_avionics::{docking, gate, landing, plan, route};
@@ -55,6 +55,7 @@ pub use universe_services::records::{Deal, Kill, TradeRecord, TrafficStats};
 pub use contacts::{Contact, LOCK_BEAM};
 pub use follow::FollowKind;
 pub use save::UniverseSave;
-pub use traffic::{CrashReport, Craft};
+pub use traffic::CrashReport;
+pub use vessel::{Vessel, Vessels};
 pub use engine::{Command, CraftView, EngineHandle, View};
 pub use universe::Universe;

@@ -29,7 +29,7 @@ fn autodock(mut u: Universe) -> f64 {
             phase = d.phase;
             eprintln!("t+{:.0}s phase {:?} status {:?}", u.world.time - start, phase, u.docking_status().map(|s| s.1));
         }
-        match u.ship.state {
+        match u.vessels[universe_sim::PLAYER].ship.state {
             ShipState::Landed { .. } => return u.world.time - start,
             ShipState::Destroyed { .. } => panic!("crashed: {:?}", u.events),
             ShipState::Flying | ShipState::Transit { .. } | ShipState::Anchored { .. } => {}
@@ -94,16 +94,16 @@ fn hyperdrive_autopilot_reaches_an_asteroid_field_and_drops_out_moving_with_it()
     u.throttle(0.0, Some(1.0));
     let mut engaged = false;
     let mut ticks = 0;
-    while ticks < 60 * 600 && !(engaged && !u.ship.hyperdrive) {
+    while ticks < 60 * 600 && !(engaged && !u.vessels[universe_sim::PLAYER].ship.hyperdrive) {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-        engaged |= u.ship.hyperdrive;
+        engaged |= u.vessels[universe_sim::PLAYER].ship.hyperdrive;
         ticks += 1;
     }
     let mut pos = Vec::new();
     sys.positions(u.world.time, &mut pos);
-    assert!(engaged && !u.ship.hyperdrive && u.ship.is_flying(), "{:?}", u.events);
-    let d = u.ship.position.distance(pos[rock]);
-    let v = (u.ship.velocity - sys.velocity(rock, u.world.time)).length();
+    assert!(engaged && !u.vessels[universe_sim::PLAYER].ship.hyperdrive && u.vessels[universe_sim::PLAYER].ship.is_flying(), "{:?}", u.events);
+    let d = u.vessels[universe_sim::PLAYER].ship.position.distance(pos[rock]);
+    let v = (u.vessels[universe_sim::PLAYER].ship.velocity - sys.velocity(rock, u.world.time)).length();
     eprintln!("{} s: dropped out {:.0} km from {} (swarm reaches {:.0} km), {v:.1} m/s off its motion", ticks / 60, d / 1000.0, field.name, field.extent / 1000.0);
     assert!(d > field.extent && d < field.extent + 25_000.0, "outside the swarm, close by");
     assert!(v < 1.0, "moving with it");
