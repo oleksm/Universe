@@ -5090,6 +5090,7 @@ impl Interior {
         if let Some(c) = collective {
             d.set_collective(c);
             d.set_assist(std::env::var_os("UNIVERSE_DRIVE_MANUAL").is_none());
+            d.set_mouse(std::env::var_os("UNIVERSE_DRIVE_MOUSE").is_some());
         }
         self.drive = Some(d);
     }
