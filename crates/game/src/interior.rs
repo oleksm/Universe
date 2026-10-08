@@ -5075,6 +5075,12 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
 }
 
 impl Interior {
+    /// Does the studio want the mouse taken (hidden, held in the window)? A test
+    /// drive steering with it.
+    pub fn wants_mouse(&self) -> bool {
+        self.drive.as_ref().is_some_and(|d| d.grabbed())
+    }
+
     /// The balance room opened (dev: `freefall --studio` with UNIVERSE_BALANCE: T
     /// trims it if set to "trim").
     pub fn balance_room(&mut self, trimmed: bool) {
@@ -5090,7 +5096,6 @@ impl Interior {
         if let Some(c) = collective {
             d.set_collective(c);
             d.set_assist(std::env::var_os("UNIVERSE_DRIVE_MANUAL").is_none());
-            d.set_mouse(std::env::var_os("UNIVERSE_DRIVE_MOUSE").is_some());
         }
         self.drive = Some(d);
     }
@@ -6521,10 +6526,15 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
         }
         return true;
     }
-    // TEST DRIVE: flown; ESC back to the studio.
+    // TEST DRIVE: flown; ESC gives the mouse back (if it's steering), again back to
+    // the studio.
     if let Some(d) = interior.drive.as_mut() {
         if input.pressed(KeyCode::Escape) {
-            interior.drive = None;
+            if d.grabbed() {
+                d.release();
+            } else {
+                interior.drive = None;
+            }
         } else {
             d.input(ctx);
         }

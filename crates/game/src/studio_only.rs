@@ -51,6 +51,11 @@ impl StudioOnly {
 impl Game for StudioOnly {
     fn update(&mut self, ctx: &mut Context) {
         let stay = crate::interior::input_with(self.spec, &mut self.deckplans, ctx, &mut self.interior);
+        // (A test drive steering with the mouse takes it, as the game's flight does.)
+        let want = self.interior.wants_mouse();
+        if ctx.cursor_grabbed() != want {
+            ctx.grab_cursor(want);
+        }
         // (A walk through the ship flown: there's none here; the test stand walks.)
         self.interior.walk = None;
         if let Some(n) = self.issue

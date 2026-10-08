@@ -23,6 +23,11 @@ enum Page {
 }
 
 impl Shipyard {
+    /// Does the studio want the mouse taken (a test drive steering with it)?
+    pub fn wants_mouse(&self) -> bool {
+        self.interior.wants_mouse()
+    }
+
     /// The interior studio.
     pub fn interior(_app: &App) -> Self {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::new() }

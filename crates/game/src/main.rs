@@ -1350,12 +1350,14 @@ impl Game for App {
         let top = self.top_layer();
         match top {
             Layer::Shipyard => {
-                // (Worked with the mouse: the cursor free.)
-                if ctx.cursor_grabbed() {
-                    ctx.grab_cursor(false);
-                }
+                // (Worked with the mouse: the cursor free; but a test drive steering
+                // with it takes it, as flight does.)
                 if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
                     self.shipyard = None;
+                }
+                let want = self.shipyard.as_ref().is_some_and(|y| y.wants_mouse());
+                if ctx.cursor_grabbed() != want {
+                    ctx.grab_cursor(want);
                 }
             }
             Layer::Market => {

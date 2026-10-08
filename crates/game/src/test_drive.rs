@@ -105,10 +105,9 @@ pub struct Drive {
     power: f64,
     /// Each actuator's thrust now (N: a fan's as the air allows).
     pushes: Vec<f64>,
-    /// MOUSE STEERING (M): the mouse a stick, its offset from the screen's middle
-    /// (-1..1 each way; up is forward).
-    mouse: bool,
-    stick: Vec2,
+    /// The mouse taken to steer (a click in the view, as the game's flight: up and
+    /// down pitch, aside yaws); ESC gives it back to look round with.
+    grabbed: bool,
     /// On the ground (any foot touching) last step; the hardest touchdown so far
     /// (m/s) and the most any leg took (N, which).
     grounded: bool,
@@ -146,8 +145,7 @@ impl Drive {
             throttles: vec![0.0; n],
             power: 0.0,
             pushes: vec![0.0; n],
-            mouse: false,
-            stick: Vec2::ZERO,
+            grabbed: false,
             grounded: true,
             hardest: 0.0,
             leg_most: (0.0, 0),
@@ -166,8 +164,14 @@ impl Drive {
         self.collective = c.clamp(0.0, 1.0);
     }
 
-    pub fn set_mouse(&mut self, on: bool) {
-        self.mouse = on;
+    /// Steering with the mouse (it's taken: hidden, held in the window)?
+    pub fn grabbed(&self) -> bool {
+        self.grabbed
+    }
+
+    /// The mouse given back (ESC): to look round with.
+    pub fn release(&mut self) {
+        self.grabbed = false;
     }
 
     pub fn set_assist(&mut self, on: bool) {
@@ -233,35 +237,30 @@ impl Drive {
         if input.pressed(KeyCode::KeyX) {
             self.collective = 0.0;
         }
-        // (M: mouse steering: the mouse a stick from the screen's middle (a small dead
-        // zone), forward to tilt the nose down, back up, aside to roll; the wheel the
-        // collective; the right button turns the view, [ and ] nearer and farther.)
-        if input.pressed(KeyCode::KeyM) {
-            self.mouse = !self.mouse;
+        // (The mouse, as in the game's flight: a click takes it to steer, ESC gives it
+        // back. Taken, its moves pitch (up: nose up) and yaw (aside), as the game's
+        // do; given back, a drag turns the view and the wheel brings it nearer.)
+        let clicked = input.button_pressed(MouseButton::Left) && !self.grabbed;
+        if clicked {
+            self.grabbed = true;
         }
-        self.stick = Vec2::ZERO;
-        if self.mouse {
-            let size = ctx.hud_size.as_vec2();
-            let mut v = (input.cursor - size * 0.5) / (size.y * 0.3);
-            if v.length() > 1.0 {
-                v = v.normalize();
-            }
-            if v.length() < 0.08 {
-                v = Vec2::ZERO;
-            }
-            self.stick = v;
-            self.collective = (self.collective + f64::from(input.scroll) * 0.02).clamp(0.0, 1.0);
+        let mut command = DVec3::new(
+            key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown),
+            key(KeyCode::KeyQ) - key(KeyCode::KeyE),
+            key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft) + key(KeyCode::KeyD) - key(KeyCode::KeyA),
+        );
+        if self.grabbed && !clicked {
+            let m = input.mouse_delta;
+            command.x -= f64::from(m.y) * 0.08;
+            command.y -= f64::from(m.x) * 0.08;
         }
-        let mut command = DVec3::new(key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown), key(KeyCode::KeyQ) - key(KeyCode::KeyE), key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft));
-        command += DVec3::new(f64::from(self.stick.y), 0.0, f64::from(self.stick.x));
         let command = command.clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
-        if input.button_down(MouseButton::Right) || (!self.mouse && input.button_down(MouseButton::Left)) {
+        if !self.grabbed && (input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right)) {
             self.cam_yaw -= input.mouse_delta.x * 0.008;
             self.cam_pitch = (self.cam_pitch + input.mouse_delta.y * 0.008).clamp(-0.2, 1.4);
         }
-        let zoom = if self.mouse { key(KeyCode::BracketLeft) - key(KeyCode::BracketRight) } else { f64::from(input.scroll) };
-        if zoom != 0.0 {
-            self.cam_dist = (self.cam_dist * 0.88f32.powf(zoom as f32 * if self.mouse { 0.2 } else { 1.0 })).clamp(3.0, 400.0);
+        if input.scroll != 0.0 {
+            self.cam_dist = (self.cam_dist * 0.88f32.powf(input.scroll)).clamp(3.0, 400.0);
         }
         if self.stopped {
             return;
@@ -819,22 +818,6 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             frame.text_scaled(q + Vec2::new(9.0, 0.0), &text, col, 0.55);
         }
     }
-    // (Mouse steering: the stick's dead zone and where it's held.)
-    if d.mouse {
-        let mid = size * 0.5;
-        let r = size.y * 0.3;
-        let ring = |frame: &mut Frame, radius: f32, c: Color| {
-            for k in 0..32 {
-                let (a0, a1) = (k as f32 / 32.0 * std::f32::consts::TAU, (k + 1) as f32 / 32.0 * std::f32::consts::TAU);
-                frame.hud_line(mid + Vec2::new(a0.cos(), a0.sin()) * radius, mid + Vec2::new(a1.cos(), a1.sin()) * radius, c);
-            }
-        };
-        ring(frame, r, Color([0.6, 0.85, 1.0, 0.25]));
-        ring(frame, r * 0.08, Color([0.6, 0.85, 1.0, 0.5]));
-        let at = mid + d.stick * r;
-        frame.hud_line(mid, at, Color([1.0, 0.85, 0.4, 0.8]));
-        frame.hud_box(at - Vec2::splat(4.0), Vec2::splat(8.0), Color([1.0, 0.85, 0.4, 1.0]));
-    }
     // (What it reads.)
     let up_now = d.rot * DVec3::Y;
     let nose = d.rot * DVec3::Z;
@@ -847,7 +830,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         format!("TEST DRIVE - {}   {:.1} S", c.name.to_uppercase(), d.time),
         format!("ALTITUDE {:.1} M OVER THE GROUND   CLIMB {:+.1} M/S   SPEED {:.1} M/S", d.craft.legs.iter().map(|l| (d.pos + d.rot * l.foot).y).fold(d.pos.y, f64::min).max(0.0), d.vel.y, DVec3::new(d.vel.x, 0.0, d.vel.z).length()),
         format!("PITCH {pitch:+.0}   ROLL {roll:+.0}   HEADING {heading:.0}   {}", if up_now.y < 0.0 { "UPSIDE DOWN" } else { "" }),
-        format!("COLLECTIVE {:.0}%{}   {}", d.collective * 100.0, if d.mouse { "   MOUSE STEERING (M)" } else { "" }, if d.assist { "FLIGHT COMPUTER ON: IT STEERS (G FOR MANUAL)".to_string() } else { format!("MANUAL THRUSTERS (G FOR THE FLIGHT COMPUTER): HELD {}", d.held.iter().enumerate().filter(|(_, h)| **h).map(|(k, _)| (k + 1).to_string()).collect::<Vec<_>>().join(" ")) }),
+        format!("COLLECTIVE {:.0}%   {}   {}", d.collective * 100.0, if d.grabbed { "THE MOUSE STEERS (ESC FREES IT)" } else { "CLICK TO STEER WITH THE MOUSE" }, if d.assist { "FLIGHT COMPUTER ON: IT STEERS (G FOR MANUAL)".to_string() } else { format!("MANUAL THRUSTERS (G FOR THE FLIGHT COMPUTER): HELD {}", d.held.iter().enumerate().filter(|(_, h)| **h).map(|(k, _)| (k + 1).to_string()).collect::<Vec<_>>().join(" ")) }),
         format!("POWER {:.2} MW OF {:.2} MW   BATTERIES {:.0}%{left}", d.power / 1e6, (c.rate + c.plants) / 1e6, if c.stored > 0.0 { d.energy.max(0.0) / c.stored * 100.0 } else { 0.0 }),
         format!("PACKS +{:.1} K OF {:.0} K   PROPELLANT {:.0} KG   MASS {:.2} T", d.warm, c.warming, d.propellant, d.mass / 1000.0),
         format!("AIR {:.3} KG/M3 (Z)   GRAVITY {:.2} G   HARDEST TOUCHDOWN {:.1} M/S   MOST ON A LEG {:.0} KN", d.density(d.pos.y), c.gravity / 9.80665, d.hardest, d.leg_most.0 / 1000.0),
@@ -920,7 +903,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         frame.text_scaled(Vec2::new(x - 12.0, mid - h * 0.5 - 14.0), "CLIMB", Color([0.75, 0.88, 1.0, 0.85]), 0.6);
         frame.text_scaled(Vec2::new(x - 24.0, mid + h * 0.5 + 18.0), &format!("{:+.1} M/S", d.vel.y), c, 0.7);
     }
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "W/S COLLECTIVE, X CUT - ARROWS PITCH, ROLL - Q/E YAW - M MOUSE STEERING - G MANUAL, 1-9 ENGINES - Z AIR - R RESTART - ESC BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "CLICK: THE MOUSE STEERS (PITCH, YAW) - W/S COLLECTIVE, X CUT - A/D ROLL - Q/E YAW - G MANUAL, 1-9 ENGINES - Z AIR - R RESTART - ESC: MOUSE, THEN BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
 }
 
 #[cfg(test)]
