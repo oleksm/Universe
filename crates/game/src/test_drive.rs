@@ -4,8 +4,11 @@
 //! record's thrust. Fans take their thrust from the air (thinner with height) and
 //! their power from the batteries (thrust to the 1.5), which run down and warm by
 //! their losses; rockets burn their propellant; legs are springs, rated by what
-//! they hold over their stroke. Flown by hand: a collective and differential
-//! thrust about each axis; ASSIST (optional) damps the turning and levels it.
+//! they hold over their stroke. Flown as the game flies a ship: the flight computer
+//! on (the steering assist: the arrows and Q/E say which way to turn and it shares
+//! the thrust out among the engines, damping the turning and levelling the craft),
+//! or manual thrusters (G, the game's key): no sharing, no steadying, each engine
+//! answering its own key (1-9) over the collective.
 
 use universe_engine::glam::{DMat3, DQuat, DVec3, Vec2, Vec3};
 use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
@@ -93,6 +96,8 @@ pub struct Drive {
     mass: f64,
     collective: f64,
     assist: bool,
+    /// Manual thrusters: the engines' keys held (1-9: the first nine actuators).
+    held: Vec<bool>,
     air: usize,
     time: f64,
     /// Each actuator's throttle now (0..1), the power drawn now (W).
@@ -128,7 +133,8 @@ impl Drive {
             propellant: craft.propellant,
             mass: craft.mass,
             collective: 0.0,
-            assist: false,
+            assist: true,
+            held: vec![false; n],
             air: 0,
             time: 0.0,
             throttles: vec![0.0; n],
@@ -192,8 +198,15 @@ impl Drive {
         let input = &ctx.input;
         let key = |k: KeyCode| if input.down(k) { 1.0 } else { 0.0 };
         let dt = f64::from(ctx.dt).min(0.05);
-        if input.pressed(KeyCode::KeyH) {
+        // (G: manual thrusters, the flight computer off; again, back on: the game's key.)
+        if input.pressed(KeyCode::KeyG) {
             self.assist = !self.assist;
+            self.events.retain(|e| !e.contains("FLIGHT COMPUTER"));
+            self.say(if self.assist { "FLIGHT COMPUTER ON".into() } else { "MANUAL THRUSTERS: FLIGHT COMPUTER OFF; 1-9 FIRE EACH ENGINE".into() });
+        }
+        let digits = [KeyCode::Digit1, KeyCode::Digit2, KeyCode::Digit3, KeyCode::Digit4, KeyCode::Digit5, KeyCode::Digit6, KeyCode::Digit7, KeyCode::Digit8, KeyCode::Digit9];
+        for (k, h) in self.held.iter_mut().enumerate() {
+            *h = digits.get(k).is_some_and(|&d| input.down(d));
         }
         if input.pressed(KeyCode::KeyZ) {
             self.air = (self.air + 1) % AIRS.len();
@@ -235,9 +248,18 @@ impl Drive {
         // (Turning about the craft's axes, by the right hand: about x, + takes the
         // nose (+z) down; about z, + takes the right side (+x) up. The arrows: up
         // lifts the nose, right drops the right side.)
-        let mut want = DVec3::new(-command.x * 0.5, command.y * 0.5, -command.z * 0.5);
-        if self.assist {
-            // (Damp the turning; lean back toward level.)
+        // (Manual thrusters: the collective on what lifts, each engine whose key is
+        // held a third more (a side one full); nothing shared out, nothing steadied.)
+        if !self.assist {
+            return c.actuators.iter().zip(&self.held).map(|(a, &h)| {
+                let base = if a.dir.y > 0.5 { self.collective } else { 0.0 };
+                (base + if h { if a.dir.y > 0.5 { 0.33 } else { 1.0 } } else { 0.0 }).clamp(0.0, 1.0)
+            }).collect();
+        }
+        // (The flight computer: the turning wished for, shared out among the engines;
+        // it damps the turning and leans the craft back toward level.)
+        let mut want = wished(command);
+        {
             want -= body_spin * 1.5;
             want += DVec3::new(up.z, 0.0, -up.x) * 2.0;
             want = want.clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
@@ -762,7 +784,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         format!("TEST DRIVE - {}   {:.1} S", c.name.to_uppercase(), d.time),
         format!("ALTITUDE {:.1} M OVER THE GROUND   CLIMB {:+.1} M/S   SPEED {:.1} M/S", d.craft.legs.iter().map(|l| (d.pos + d.rot * l.foot).y).fold(d.pos.y, f64::min).max(0.0), d.vel.y, DVec3::new(d.vel.x, 0.0, d.vel.z).length()),
         format!("PITCH {pitch:+.0}   ROLL {roll:+.0}   HEADING {heading:.0}   {}", if up_now.y < 0.0 { "UPSIDE DOWN" } else { "" }),
-        format!("COLLECTIVE {:.0}%   ASSIST {}", d.collective * 100.0, if d.assist { "ON (H)" } else { "OFF (H)" }),
+        format!("COLLECTIVE {:.0}%   {}", d.collective * 100.0, if d.assist { "FLIGHT COMPUTER ON: IT STEERS (G FOR MANUAL)".to_string() } else { format!("MANUAL THRUSTERS (G FOR THE FLIGHT COMPUTER): HELD {}", d.held.iter().enumerate().filter(|(_, h)| **h).map(|(k, _)| (k + 1).to_string()).collect::<Vec<_>>().join(" ")) }),
         format!("POWER {:.2} MW OF {:.2} MW   BATTERIES {:.0}%{left}", d.power / 1e6, (c.rate + c.plants) / 1e6, if c.stored > 0.0 { d.energy.max(0.0) / c.stored * 100.0 } else { 0.0 }),
         format!("PACKS +{:.1} K OF {:.0} K   PROPELLANT {:.0} KG   MASS {:.2} T", d.warm, c.warming, d.propellant, d.mass / 1000.0),
         format!("AIR {:.3} KG/M3 (Z)   GRAVITY {:.2} G   HARDEST TOUCHDOWN {:.1} M/S   MOST ON A LEG {:.0} KN", d.density(d.pos.y), c.gravity / 9.80665, d.hardest, d.leg_most.0 / 1000.0),
@@ -835,7 +857,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         frame.text_scaled(Vec2::new(x - 12.0, mid - h * 0.5 - 14.0), "CLIMB", Color([0.75, 0.88, 1.0, 0.85]), 0.6);
         frame.text_scaled(Vec2::new(x - 24.0, mid + h * 0.5 + 18.0), &format!("{:+.1} M/S", d.vel.y), c, 0.7);
     }
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "W / S COLLECTIVE (X CUTS IT) - ARROWS PITCH AND ROLL - Q / E YAW - H ASSIST - Z AIR - R RESTART - DRAG TO LOOK, WHEEL NEARER - ESC BACK TO THE STUDIO", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "W / S COLLECTIVE (X CUTS IT) - ARROWS PITCH AND ROLL, Q / E YAW (FLIGHT COMPUTER) - G MANUAL THRUSTERS, 1-9 EACH ENGINE - Z AIR - R RESTART - DRAG TO LOOK, WHEEL NEARER - ESC BACK TO THE STUDIO", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
 }
 
 #[cfg(test)]

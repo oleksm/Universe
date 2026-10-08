@@ -5084,12 +5084,12 @@ impl Interior {
     }
 
     /// TEST DRIVE started (dev: `freefall --studio` with UNIVERSE_DRIVE: its
-    /// collective set there).
+    /// collective set there; UNIVERSE_DRIVE_MANUAL: manual thrusters).
     pub fn test_drive(&mut self, collective: Option<f64>) {
         let mut d = crate::test_drive::Drive::new(craft(self));
         if let Some(c) = collective {
             d.set_collective(c);
-            d.set_assist(std::env::var_os("UNIVERSE_DRIVE_ASSIST").is_some());
+            d.set_assist(std::env::var_os("UNIVERSE_DRIVE_MANUAL").is_none());
         }
         self.drive = Some(d);
     }
