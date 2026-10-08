@@ -100,7 +100,7 @@ impl StandardsView {
 
 /// Keys while open. False when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let Some(view) = app.standards.as_mut() else { return false };
+    let Some(view) = app.panels.standards.as_mut() else { return false };
     let rows = view.rows();
     let input = &ctx.input;
     if input.pressed(KeyCode::ArrowDown) {
@@ -155,7 +155,7 @@ fn label(node: &Node) -> (String, Color) {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
-    let Some(view) = app.standards.as_ref() else { return };
+    let Some(view) = app.panels.standards.as_ref() else { return };
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = GLYPH + 4.0;

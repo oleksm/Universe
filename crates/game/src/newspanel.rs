@@ -23,7 +23,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let (x, mut y) = (16.0, 16.0);
     let now = app.v.time;
     let items = news_items(app);
-    let status = match &app.net {
+    let status = match &app.net.status {
         Some((lag, _)) => format!("ON THE HYPERNET ({} FROM THE BACKBONE)", fmt::lag(*lag)),
         None => "OFF THE HYPERNET: NOTHING NEW REACHES US".to_string(),
     };

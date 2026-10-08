@@ -68,7 +68,7 @@ pub fn ramp(frame: &mut Frame, app: &App) {
 pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach: Option<Reach>) {
     const HUD: Color = Color::hex(0xdcebf2);
     const DIM: Color = Color::hex(0x7d93a0);
-    if app.preview.is_some() {
+    if app.panels.preview.is_some() {
         lines.push(("PREVIEW - WALKING THE PLAN - ESC: BACK TO THE STUDIO".into(), Color::hex(0xffc040)));
     }
     match app.v.crew.place {

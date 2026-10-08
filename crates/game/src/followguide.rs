@@ -220,13 +220,13 @@ pub struct Liveliness {
 /// Once a frame (after `plan`): how lively the target is, and the line kept to fade.
 pub fn watch(app: &mut App) {
     let Some(s) = standing(app) else {
-        app.liveliness = Liveliness::default();
+        app.plan.liveliness = Liveliness::default();
         return;
     };
     let (t, now) = (app.v.time, app.now());
     let gravity = app.view.system.gravity(s.at, &app.view.positions);
-    let line: Option<Vec<DVec3>> = app.follow_plan.as_ref().map(|(plan, _)| plan.points.iter().map(|p| p.position - s.at).collect());
-    let l = &mut app.liveliness;
+    let line: Option<Vec<DVec3>> = app.plan.follow.as_ref().map(|(plan, _)| plan.points.iter().map(|p| p.position - s.at).collect());
+    let l = &mut app.plan.liveliness;
     match l.last {
         // (Velocities are the world's, a tick at a time.)
         Some((t0, v0)) if t > t0 => {
@@ -291,8 +291,8 @@ pub fn banner(frame: &mut Frame, app: &App) {
 pub fn lines(app: &App, lines: &mut Vec<(String, Color)>) {
     let Some(s) = standing(app) else { return };
     let label = s.follow.manoeuvre.label();
-    if app.liveliness.lively {
-        lines.push((format!("{} MANOEUVRING ({:.1} M/S2) - PATH ONLY", s.name, app.liveliness.accel), AMBER));
+    if app.plan.liveliness.lively {
+        lines.push((format!("{} MANOEUVRING ({:.1} M/S2) - PATH ONLY", s.name, app.plan.liveliness.accel), AMBER));
     }
     lines.push((format!("{label} {} - {} TO GO, CLOSING {}  {} TO CANCEL", s.name, fmt::distance(s.to_go), fmt::speed(s.closing), crate::keys::key(crate::keys::Act::Cancel)), AMBER));
     if let Some((gap, drift, _, _)) = s.rock {
@@ -313,13 +313,13 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     // The path and its frames, as every guide draws them; a lively
     // target's line alone, the lines before it fading out.
-    let lively = app.liveliness.lively;
-    if let Some((plan, _)) = &app.follow_plan {
+    let lively = app.plan.liveliness.lively;
+    if let Some((plan, _)) = &app.plan.follow {
         crate::scene::guided_path_with(frame, app, plan, s.at, None, app.now(), ship, !lively);
     }
     if lively {
         let now = app.now();
-        for (born, line) in &app.liveliness.trail {
+        for (born, line) in &app.plan.liveliness.trail {
             let fade = (1.0 - (now - born) / TRAIL_FADE).clamp(0.0, 1.0) as f32;
             for w in line.windows(2) {
                 frame.line(s.at + w[0], s.at + w[1], PATH.scale(0.6 * fade));

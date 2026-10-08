@@ -469,6 +469,25 @@ pub struct Economy {
     pub sequences: BTreeMap<String, u32>,
 }
 
+/// One works in a place's step: which (`k`), who owns it, who marks what it makes (maker and
+/// ticker), how it ran, and the power it drew (W).
+struct AtWorks {
+    k: usize,
+    owner: Option<Party>,
+    maker: Option<(String, String)>,
+    run: Run,
+    drawn: f64,
+}
+
+/// A place's step as it goes: what was made and used (kg), and what's to be marked (works, item,
+/// kg).
+#[derive(Default)]
+struct Tally {
+    made: BTreeMap<usize, f64>,
+    used: BTreeMap<usize, f64>,
+    stamps: Vec<(usize, usize, f64)>,
+}
+
 impl Economy {
     /// The settlements the land office has ground for, and their facilities.
     pub fn new(land: &LandOffice, now: f64) -> Self {
@@ -866,38 +885,56 @@ impl Economy {
 
     fn run_place(&mut self, p: usize, at: f64, land: &mut LandOffice, ledger: &mut Ledger, goods: &[Item], tick: u64) {
         let dt = step();
-        let (site, system, duty) = (self.places[p].site, self.places[p].system, self.places[p].duty);
-        let market = self.places[p].trader;
-        let cause = universe_protocol::Cause::Rules;
-        let here: Vec<usize> = (0..self.works.len()).filter(|&k| self.works[k].site == site && self.built(land, k, at)).collect();
-        let owners: Vec<Option<Party>> = here.iter().map(|&k| self.owner(land, k)).collect();
+        let site = self.places[p].site;
         // (Who makes what each works makes, for its marks: its maker and that organisation's ticker.)
         let reg = universe_world::registry::registry();
-        let makers: Vec<Option<(String, String)>> = here
-            .iter()
-            .map(|&k| {
-                let m = self.works[k].maker.clone()?;
-                let ticker = reg.org(&m)?.ticker.clone()?;
-                Some((m, ticker))
+        let mut here: Vec<AtWorks> = (0..self.works.len())
+            .filter(|&k| self.works[k].site == site && self.built(land, k, at))
+            .map(|k| AtWorks {
+                k,
+                owner: self.owner(land, k),
+                maker: self.works[k].maker.clone().and_then(|m| Some((m.clone(), reg.org(&m)?.ticker.clone()?))),
+                run: Run::default(),
+                drawn: 0.0,
             })
             .collect();
-        let mut stamps: Vec<(usize, usize, f64)> = Vec::new();
+        let mut tally = Tally::default();
         // Power: what the stations can supply with the fuel they hold, shared out.
-        let supply: f64 = here.iter().map(|&k| self.works[k].supplies() * self.works[k].fuelled(dt).min(1.0)).sum();
-        let demand: f64 = here.iter().map(|&k| self.works[k].draws()).sum();
+        let supply: f64 = here.iter().map(|h| self.works[h.k].supplies() * self.works[h.k].fuelled(dt).min(1.0)).sum();
+        let demand: f64 = here.iter().map(|h| self.works[h.k].draws()).sum();
         let share = if demand > 0.0 { (supply / demand).min(1.0) } else { 1.0 };
-        let mut runs: Vec<Run> = vec![Run::default(); here.len()];
-        let (mut made, mut used): (BTreeMap<usize, f64>, BTreeMap<usize, f64>) = Default::default();
-        let mut drawn = vec![0.0; here.len()];
-        for (n, &k) in here.iter().enumerate() {
-            let w = &mut self.works[k];
+        self.produce(&mut here, share, goods, &mut tally);
+        self.mark(&here, at, goods, std::mem::take(&mut tally.stamps));
+        self.burn_and_bill(&mut here, supply, ledger, tick, &mut tally.used);
+        self.trade(p, &mut here, ledger, goods, tick);
+        self.live(p, &mut tally.used, goods);
+        let days = step() / DAY;
+        let place = &mut self.places[p];
+        place.made = tally.made.into_iter().map(|(i, kg)| (i, kg / days)).collect();
+        place.used = tally.used.into_iter().map(|(i, kg)| (i, kg / days)).collect();
+        for h in &here {
+            self.works[h.k].last = Some(h.run.clone());
+            if let Site::Ground(g) = site
+                && let Some(w) = std::sync::Arc::make_mut(&mut land.grounds[g]).works.get_mut(self.works[h.k].works)
+            {
+                w.last = Some(h.run.clone());
+            }
+        }
+    }
+
+    /// Each works runs its setups for a step, as far as power (`share`), its inputs, its store and
+    /// its deposit let it: what it made and used, and what's to be marked, into `tally`.
+    fn produce(&mut self, here: &mut [AtWorks], share: f64, goods: &[Item], tally: &mut Tally) {
+        let dt = step();
+        for (n, h) in here.iter_mut().enumerate() {
+            let w = &mut self.works[h.k];
             let mut most: f64 = 0.0;
             let mut ran = 0.0;
             let mut held: Option<String> = None;
             for s in 0..w.setups.len() {
                 let setup = w.setups[s].clone();
                 let Some(r) = setup.recipe() else {
-                    drawn[n] += setup.module.needs.power.unwrap_or(0.0) * setup.count as f64 * share;
+                    h.drawn += setup.module.needs.power.unwrap_or(0.0) * setup.count as f64 * share;
                     continue;
                 };
                 let rate = r.rate * setup.count as f64;
@@ -941,30 +978,33 @@ impl Economy {
                 }
                 for &(i, q) in &r.inputs {
                     let (t, marks, _) = w.pool.take_with(i, q * full * k);
-                    *used.entry(i).or_default() += t;
+                    *tally.used.entry(i).or_default() += t;
                     // (The marked parts that went in: on the mark of what they went into.)
                     w.parts_in.extend(marks.into_iter().map(|m| m.serial));
                 }
                 for (i, q) in out {
                     w.pool.put(i, q * full * k);
-                    *made.entry(i).or_default() += q * full * k;
-                    stamps.push((n, i, q * full * k));
+                    *tally.made.entry(i).or_default() += q * full * k;
+                    tally.stamps.push((n, i, q * full * k));
                 }
-                drawn[n] += r.power * setup.count as f64 * k;
+                h.drawn += r.power * setup.count as f64 * k;
                 most += 1.0;
                 ran += k;
                 if k < 1.0 && held.is_none() {
                     held = why;
                 }
             }
-            runs[n] = Run { rate: if most > 0.0 { ran / most } else { 1.0 }, held_by: held, earned: 0.0 };
+            h.run = Run { rate: if most > 0.0 { ran / most } else { 1.0 }, held_by: held, earned: 0.0 };
         }
-        // What was made, marked (SFO 21): a product's every whole unit its serial (the maker's
-        // ticker, the product's code, the next number in that series), with the marked parts
-        // that went in; bulk stock a lot a step, the maker's series. (No maker: unmarked.)
+    }
+
+    /// What was made, marked (SFO 21): a product's every whole unit its serial (the maker's
+    /// ticker, the product's code, the next number in that series), with the marked parts that
+    /// went in; bulk stock a lot a step, the maker's series. (No maker: unmarked.)
+    fn mark(&mut self, here: &[AtWorks], at: f64, goods: &[Item], stamps: Vec<(usize, usize, f64)>) {
         for (n, item, kg) in stamps {
-            let (Some((maker, ticker)), true) = (makers[n].clone(), kg > 0.0) else { continue };
-            let k = here[n];
+            let (Some((maker, ticker)), true) = (here[n].maker.clone(), kg > 0.0) else { continue };
+            let k = here[n].k;
             let key = goods[item].key.clone();
             if is_product(item) {
                 let mass = goods[item].mass.max(1e-9);
@@ -998,9 +1038,15 @@ impl Economy {
                 self.works[k].pool.put_with(item, 0.0, Vec::new(), vec![(batch, kg)]);
             }
         }
-        // The stations burn for what was drawn, and are paid for it by what drew it.
-        let used_w: f64 = drawn.iter().sum();
-        for (n, &k) in here.iter().enumerate() {
+    }
+
+    /// The stations burn for what was drawn (of the `supply` they could give), and are paid for it
+    /// by what drew it.
+    fn burn_and_bill(&mut self, here: &mut [AtWorks], supply: f64, ledger: &mut Ledger, tick: u64, used: &mut BTreeMap<usize, f64>) {
+        let (dt, cause) = (step(), universe_protocol::Cause::Rules);
+        let used_w: f64 = here.iter().map(|h| h.drawn).sum();
+        for n in 0..here.len() {
+            let k = here[n].k;
             let s = self.works[k].supplies() * self.works[k].fuelled(dt).min(1.0);
             if s <= 0.0 {
                 continue;
@@ -1018,72 +1064,63 @@ impl Economy {
                     }
                 }
             }
-            runs[n].rate = out;
-            if let Some(seller) = owners[n] {
-                for (m, w) in drawn.iter().enumerate() {
-                    if let Some(payer) = owners[m]
+            here[n].run.rate = out;
+            if let Some(seller) = here[n].owner {
+                for m in 0..here.len() {
+                    if let Some(payer) = here[m].owner
                         && payer != seller
                     {
-                        let bill = w * part * dt / 3.6e9 * POWER_PRICE;
+                        let bill = here[m].drawn * part * dt / 3.6e9 * POWER_PRICE;
                         let _ = ledger.transfer(payer, seller, Asset::Credits, bill, tick, cause);
-                        runs[m].earned -= bill;
-                        runs[n].earned += bill;
+                        here[m].run.earned -= bill;
+                        here[n].run.earned += bill;
                     }
                 }
             }
         }
-        // Each owner and the market: what it makes and doesn't use, sold; what it takes, bought to cover.
-        if let Some(h) = self.places[p].warehouse {
-            self.places[p].stock = self.works[h].pool.clone();
-            for (n, &k) in here.iter().enumerate() {
-                let Some(owner) = owners[n] else { continue };
-                if k == h {
+    }
+
+    /// Each owner and place `p`'s market: what a works makes and doesn't use, sold into the
+    /// warehouse; what it takes, bought from there to cover.
+    fn trade(&mut self, p: usize, here: &mut [AtWorks], ledger: &mut Ledger, goods: &[Item], tick: u64) {
+        let (system, duty, market, cause) = (self.places[p].system, self.places[p].duty, self.places[p].trader, universe_protocol::Cause::Rules);
+        let Some(h) = self.places[p].warehouse else { return };
+        self.places[p].stock = self.works[h].pool.clone();
+        for at in here.iter_mut() {
+            let (k, Some(owner)) = (at.k, at.owner) else { continue };
+            if k == h {
+                continue;
+            }
+            let spare: Vec<(usize, f64)> = self.works[k].pool.stock.iter().filter(|(i, _)| self.works[k].sells(**i)).map(|(i, kg)| (*i, *kg)).collect();
+            for (i, kg) in spare {
+                let price = self.places[p].price(&goods[i]);
+                let t = kg.min(self.works[h].pool.free());
+                if t <= 0.0 || price.bid <= 0.0 {
                     continue;
                 }
-                let spare: Vec<(usize, f64)> = self.works[k].pool.stock.iter().filter(|(i, _)| self.works[k].sells(**i)).map(|(i, kg)| (*i, *kg)).collect();
-                for (i, kg) in spare {
-                    let price = self.places[p].price(&goods[i]);
-                    let t = kg.min(self.works[h].pool.free());
-                    if t <= 0.0 || price.bid <= 0.0 {
-                        continue;
-                    }
-                    self.shift(k, h, i, t);
-                    // (Priced a unit: a tonne of bulk, a piece of a product.)
-                    let paid = t / goods[i].mass * price.bid;
-                    let _ = ledger.transfer(market, owner, Asset::Credits, paid, tick, cause);
-                    let _ = ledger.transfer(owner, Party::Administration(system), Asset::Credits, paid * duty, tick, cause);
-                    runs[n].earned += paid;
-                    self.places[p].stock = self.works[h].pool.clone();
-                }
-                for (i, rate) in self.works[k].takes() {
-                    let want = rate * COVER_DAYS * DAY - self.works[k].pool.of(i);
-                    let t = want.min(self.works[h].pool.of(i)).min(self.works[k].pool.free());
-                    if t <= 0.0 {
-                        continue;
-                    }
-                    let Some(ask) = self.places[p].price(&goods[i]).ask else {
-                        continue;
-                    };
-                    self.shift(h, k, i, t);
-                    let cost = t / goods[i].mass * ask;
-                    let _ = ledger.transfer(owner, market, Asset::Credits, cost, tick, cause);
-                    let _ = ledger.transfer(market, Party::Administration(system), Asset::Credits, cost * duty, tick, cause);
-                    runs[n].earned -= cost;
-                    self.places[p].stock = self.works[h].pool.clone();
-                }
+                self.shift(k, h, i, t);
+                // (Priced a unit: a tonne of bulk, a piece of a product.)
+                let paid = t / goods[i].mass * price.bid;
+                let _ = ledger.transfer(market, owner, Asset::Credits, paid, tick, cause);
+                let _ = ledger.transfer(owner, Party::Administration(system), Asset::Credits, paid * duty, tick, cause);
+                at.run.earned += paid;
+                self.places[p].stock = self.works[h].pool.clone();
             }
-        }
-        self.live(p, &mut used, goods);
-        let days = step() / DAY;
-        let place = &mut self.places[p];
-        place.made = made.into_iter().map(|(i, kg)| (i, kg / days)).collect();
-        place.used = used.into_iter().map(|(i, kg)| (i, kg / days)).collect();
-        for (n, &k) in here.iter().enumerate() {
-            self.works[k].last = Some(runs[n].clone());
-            if let Site::Ground(g) = site
-                && let Some(w) = std::sync::Arc::make_mut(&mut land.grounds[g]).works.get_mut(self.works[k].works)
-            {
-                w.last = Some(runs[n].clone());
+            for (i, rate) in self.works[k].takes() {
+                let want = rate * COVER_DAYS * DAY - self.works[k].pool.of(i);
+                let t = want.min(self.works[h].pool.of(i)).min(self.works[k].pool.free());
+                if t <= 0.0 {
+                    continue;
+                }
+                let Some(ask) = self.places[p].price(&goods[i]).ask else {
+                    continue;
+                };
+                self.shift(h, k, i, t);
+                let cost = t / goods[i].mass * ask;
+                let _ = ledger.transfer(owner, market, Asset::Credits, cost, tick, cause);
+                let _ = ledger.transfer(market, Party::Administration(system), Asset::Credits, cost * duty, tick, cause);
+                at.run.earned -= cost;
+                self.places[p].stock = self.works[h].pool.clone();
             }
         }
     }

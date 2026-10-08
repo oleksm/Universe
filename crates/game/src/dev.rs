@@ -43,7 +43,7 @@ pub fn apply(app: &mut App, name: &str) {
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
-        for c in u.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
+        for c in u.services.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
             log::info!("atc: {c:?}");
         }
     }
@@ -141,7 +141,7 @@ fn trethi_stocked(app: &mut App) {
     u.vessels[universe_sim::PLAYER].ship = u.world.ship_on(home, f, 0);
     for (key, t) in [("stock.al6061-pl-5", 40.0), ("stock.al6061-ingot", 120.0), ("good.bauxite", 900.0), ("stock.deuterium-liq", 30.0), ("good.bread", 12.0)] {
         if let Some(i) = universe_sim::world::goods::item(key) {
-            u.markets.economy.put(home, f, i, t * 1000.0);
+            u.services.markets.economy.put(home, f, i, t * 1000.0);
         }
     }
 }
@@ -291,7 +291,7 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     // (Land done first as in `zoning`: UNIVERSE_LAND, UNIVERSE_AFTER.)
     if std::env::var_os("UNIVERSE_LAND").is_some() {
         apply(app, "zoning");
-        app.economy_panel = None;
+        app.panels.economy_panel = None;
     }
     let u = app.engine.universe();
     // (Our own hull, standing on its own feet.)
@@ -300,7 +300,7 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     let body = sys.spaceports[port].body;
     let r = sys.bodies[body].rail.radius;
     let taken = |k: usize| {
-        let d = universe_sim::world::spaceport::pad_direction(&sys, port, k);
+        let d = universe_sim::world::spaceport::pad_direction(sys, port, k);
         u.vessels.crafts().iter().any(|c| matches!(c.ship.state, ShipState::Landed { body: b, local_position, .. } if b == body && local_position.normalize().angle_between(d) * r < 60.0))
     };
     let pad = (0..universe_sim::world::spaceport::PADS).find(|&k| !taken(k)).unwrap_or(0);
@@ -398,7 +398,7 @@ fn s_standards(app: &mut App, _name: &str, _c: &Ctx) {
     apply(app, "docked");
     let mut view = crate::standards::StandardsView::new();
     view.focus(&std::env::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "SFO/3.1/001".into()));
-    app.standards = Some(view);
+    app.panels.standards = Some(view);
 }
 
 fn s_sunlit(app: &mut App, _name: &str, c: &Ctx) {
@@ -483,7 +483,7 @@ fn s_approach(app: &mut App, name: &str, c: &Ctx) {
     // Cleared to dock, flying manually. "approach": 2.5 km above the deck, a little off, facing in.
     // "lost": facing away from the station, to show the off-screen marker.
     app.mode = Mode::Pilot;
-    let f = StationFrame::new(&sys, station, t, &positions);
+    let f = StationFrame::new(sys, station, t, positions);
     let side = f.rotation * DVec3::X;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.pad(universe_sim::world::spaceport::CENTER_PAD) + f.up() * 2500.0 + side * 180.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity - f.up() * 30.0;
@@ -511,7 +511,7 @@ fn s_passengers(app: &mut App, _name: &str, _c: &Ctx) {
     let u = app.engine.universe();
     let station = u.ship_system().station().unwrap();
     let home = u.vessels[universe_sim::PLAYER].system;
-    if let Some(p) = u.markets.economy.place_mut(home, universe_sim::world::Facility::Station(station)) {
+    if let Some(p) = u.services.markets.economy.place_mut(home, universe_sim::world::Facility::Station(station)) {
         p.fed = 0.6;
         p.waiting = 1.0;
     }
@@ -534,7 +534,7 @@ fn s_offcourse(app: &mut App, _name: &str, c: &Ctx) {
     let station = c.station;
     // Cleared, but 6 km off to the side and drifting sideways at 40 m/s.
     app.mode = Mode::Pilot;
-    let f = StationFrame::new(&sys, station, t, &positions);
+    let f = StationFrame::new(sys, station, t, positions);
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.center + f.up() * 2000.0 + f.rotation * DVec3::X * 6000.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity + f.rotation * DVec3::Z * 40.0;
     let look = (f.center - app.engine.universe().vessels[universe_sim::PLAYER].ship.position).normalize();
@@ -557,7 +557,7 @@ fn s_galaxymap(app: &mut App, name: &str, _c: &Ctx) {
     } else if name == "galaxyzoom" {
         map.zoom(4.0);
     }
-    app.galaxy_map = Some(map);
+    app.panels.galaxy_map = Some(map);
 }
 
 fn s_help(app: &mut App, _name: &str, _c: &Ctx) {
@@ -604,7 +604,7 @@ fn s_zoning(app: &mut App, _name: &str, c: &Ctx) {
             z.pick(&pick);
         }
     }
-    app.economy_panel = Some(panel);
+    app.panels.economy_panel = Some(panel);
 }
 
 fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
@@ -625,10 +625,10 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
     let u = app.engine.universe();
     let step = universe_sim::services::economy::step();
     let end = u.world.time + days * 86_400.0;
-    let mut t = u.markets.economy.stepped_to;
+    let mut t = u.services.markets.economy.stepped_to;
     while t + step <= end {
         t += step;
-        u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
+        u.services.markets.step(t, &mut u.services.land, &mut u.services.ledger, u.tick);
         universe_sim::company::run(u);
     }
     app.engine.refresh();
@@ -640,22 +640,22 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
     if name == "economymodules" {
         // (Its modules open, the yard's welding bay set to the MC-07's nose cap.)
         let u = app.engine.universe();
-        let yard = u.markets.economy.works.iter().position(|w| w.name == "Trethi Yard");
+        let yard = u.services.markets.economy.works.iter().position(|w| w.name == "Trethi Yard");
         let cap = universe_sim::world::goods::item("part.mc07-01");
         if let (Some(k), Some(cap)) = (yard, cap) {
-            let bay = u.markets.economy.works[k].setups.iter().position(|s| s.module.identity.key == "module.welding-bay").unwrap_or(0);
+            let bay = u.services.markets.economy.works[k].setups.iter().position(|s| s.module.identity.key == "module.welding-bay").unwrap_or(0);
             // (As its owner sets it.)
-            let owner = u.markets.economy.owner(&u.land, k);
+            let owner = u.services.markets.economy.owner(&u.services.land, k);
             if let (Some(r), Some(owner)) = (universe_sim::world::recipes::of("module.welding-bay").iter().position(|r| r.makes == cap), owner) {
-                let _ = u.markets.economy.set_up(&u.land, k, bay, Some(r), owner);
+                let _ = u.services.markets.economy.set_up(&u.services.land, k, bay, Some(r), owner);
             }
-            let before = u.markets.economy.works.iter().enumerate().filter(|(j, w)| *j < k && Some(w.site) == site).map(|(_, w)| w.setups.len()).sum::<usize>();
+            let before = u.services.markets.economy.works.iter().enumerate().filter(|(j, w)| *j < k && Some(w.site) == site).map(|(_, w)| w.setups.len()).sum::<usize>();
             panel.module = Some(before + bay);
         }
         app.engine.refresh();
         app.v = app.engine.view();
     }
-    app.economy_panel = Some(panel);
+    app.panels.economy_panel = Some(panel);
 }
 
 fn s_navmap(app: &mut App, name: &str, _c: &Ctx) {
@@ -665,7 +665,7 @@ fn s_navmap(app: &mut App, name: &str, _c: &Ctx) {
     if name == "navzoom" {
         map.set_view(5.0, universe_engine::glam::Vec2::new(150.0, -500.0));
     }
-    app.nav_map = Some(map);
+    app.panels.nav_map = Some(map);
 }
 
 fn s_landing(app: &mut App, name: &str, c: &Ctx) {
@@ -676,7 +676,7 @@ fn s_landing(app: &mut App, name: &str, c: &Ctx) {
     // Target the spaceport on the station's planet and get landing clearance.
     app.mode = Mode::Pilot;
     let port = sys.spaceports.iter().position(|p| p.body == planet).expect("spaceport on the station's planet");
-    let pad = PadFrame::new(&sys, port, t, &positions);
+    let pad = PadFrame::new(sys, port, t, positions);
     if name == "padview" {
         // 12 km above and 6 km beside the pad, drifting, belly down.
         app.engine.universe().vessels[universe_sim::PLAYER].ship.position = pad.pad + pad.up * 12_000.0 + pad.up.any_orthonormal_vector() * 6000.0;
@@ -715,7 +715,7 @@ fn s_holding(app: &mut App, _name: &str, c: &Ctx) {
         u.vessels[universe_sim::craft_id(k)].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), k);
         u.vessels[universe_sim::craft_id(k)].system = home;
         let now = u.world.time;
-        u.atc.request_pad(home, universe_sim::world::Facility::Spaceport(port), universe_sim::craft_id(k), now);
+        u.services.atc.request_pad(home, universe_sim::world::Facility::Spaceport(port), universe_sim::craft_id(k), now);
     }
     {
         let mut pilots = u.pilots();
@@ -727,7 +727,7 @@ fn s_holding(app: &mut App, _name: &str, c: &Ctx) {
             p.avionics.pirate = false;
         }
     }
-    let pad = PadFrame::new(&sys, port, t, &positions);
+    let pad = PadFrame::new(sys, port, t, positions);
     u.vessels[universe_sim::PLAYER].ship.position = pad.pad + pad.up * 20_000.0;
     u.vessels[universe_sim::PLAYER].ship.velocity = pad.frame_velocity(u.vessels[universe_sim::PLAYER].ship.position);
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -783,13 +783,13 @@ fn s_worlds(app: &mut App, _name: &str, _c: &Ctx) {
         _ => crate::planet_studio::Look::Colour,
     };
     let r = studio.list.get(studio.selected).cloned();
-    app.planet_studio = Some(studio);
+    app.panels.planet_studio = Some(studio);
     if let Some(r) = r {
         let _ = crate::planet_studio::go_to(app, &r);
     }
     // (UNIVERSE_HISTORY_FRAME: its history's frame n, counted from 0, in place of today.)
     if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize)
-        && let Some((key, Some(history))) = app.planet_studio.as_ref().and_then(|s| s.shown.clone())
+        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
         && n < history.frames.len()
     {
         app.world_frame = Some(crate::planet_studio::WorldFrame { key, history, frame: n });
@@ -817,7 +817,7 @@ fn s_beltpick(app: &mut App, name: &str, c: &Ctx) {
     let main = sys.belts.iter().find(|b| b.kind == universe_sim::world::belts::BeltKind::Main).expect("a main belt");
     let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
     let star = positions[0];
-    let found = universe_sim::world::belts::survey(&sys, from, t, universe_sim::world::belts::Survey::radar());
+    let found = universe_sim::world::belts::survey(sys, from, t, universe_sim::world::belts::Survey::radar());
     let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight").clone();
     let bodies = sys.field_bodies(f.field);
     let mut pos = Vec::new();
@@ -940,7 +940,7 @@ fn s_gate(app: &mut App, name: &str, c: &Ctx) {
     app.mode = Mode::Pilot;
     let (dest, _) = app.engine.universe().gate_links_of(home)[0].clone();
     let g = sys.gate_to(dest).unwrap();
-    let f = GateFrame::new(&sys, g, t, &positions);
+    let f = GateFrame::new(sys, g, t, positions);
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.center + f.axis() * 8000.0 + (f.rotation * DVec3::X) * 2500.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity;
     let look = (f.center - app.engine.universe().vessels[universe_sim::PLAYER].ship.position).normalize();
@@ -997,7 +997,7 @@ fn s_sam(app: &mut App, name: &str, c: &Ctx) {
         app.engine.universe().vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(-out, out.any_orthonormal_vector());
         let u = app.engine.universe();
         let now = u.world.time;
-        u.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules);
+        u.services.law.declare(universe_sim::PLAYER, now + 600.0, now, universe_sim::protocol::Cause::Rules);
         if name == "samfar" {
             for _ in 0..60 * 26 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -1043,7 +1043,7 @@ fn s_gateflash(app: &mut App, _name: &str, c: &Ctx) {
     app.mode = Mode::Pilot;
     let g = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).expect("a gate");
     let dest = sys.bodies[g].link.expect("linked");
-    let f = GateFrame::new(&sys, g, t, &positions);
+    let f = GateFrame::new(sys, g, t, positions);
     let u = app.engine.universe();
     u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
     u.vessels[universe_sim::PLAYER].ship.position = f.center + f.axis() * 9_000.0 + f.rotation * DVec3::X * 2_500.0;
@@ -1093,7 +1093,7 @@ fn s_deckshadowside(app: &mut App, name: &str, c: &Ctx) {
     app.engine.universe().world.time = at_t;
     sys.positions(at_t, &mut pos);
     log::info!("scenario {name}: sun in the station's frame {:.2}", b.rotation(at_t).inverse() * (pos[star] - pos[station]).normalize());
-    let f = StationFrame::new(&sys, station, at_t, &pos);
+    let f = StationFrame::new(sys, station, at_t, &pos);
     let at = f.world(eye);
     app.mode = Mode::Pilot;
     let u = app.engine.universe();
@@ -1114,7 +1114,7 @@ fn s_sunedge0(app: &mut App, name: &str, c: &Ctx) {
     let station = sys.station().expect("home station");
     let star = sys.bodies.iter().position(|b| b.kind == universe_sim::BodyKind::Star).expect("a star");
     let t = app.engine.universe().world.time;
-    let f = StationFrame::new(&sys, station, t, &positions);
+    let f = StationFrame::new(sys, station, t, positions);
     let sun = f.rotation.inverse() * (positions[star] - f.center).normalize();
     let off = match name { "sunedge0" => -4.0, "sunedge1" => 0.0, _ => 4.0 };
     let edge = DVec3::new(0.0, 150.0 + off, universe_sim::world::station::DECK_FROM);
@@ -1190,7 +1190,7 @@ fn s_platform(app: &mut App, name: &str, c: &Ctx) {
     // (or, "platformdeck", from just above the deck), looking at it.
     app.mode = Mode::Pilot;
     let station = sys.station().expect("home station");
-    let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+    let f = StationFrame::new(sys, station, app.engine.universe().world.time, positions);
     let at = if name == "platform" { f.world(DVec3::new(900.0, 450.0, 1100.0)) } else { f.world(DVec3::new(250.0, -40.0, 520.0)) };
     let u = app.engine.universe();
     u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
@@ -1206,7 +1206,7 @@ fn s_orbit(app: &mut App, _name: &str, c: &Ctx) {
     // 7 km off the home station, orbiting it at 5 km.
     app.mode = Mode::Pilot;
     let station = sys.station().expect("home station");
-    let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+    let f = StationFrame::new(sys, station, app.engine.universe().world.time, positions);
     let side = f.up().any_orthonormal_vector();
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.center + side * 7_000.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity;
@@ -1222,7 +1222,7 @@ fn s_orbitship(app: &mut App, name: &str, c: &Ctx) {
     // stopped, its engine on low), orbiting it at 1 km.
     app.mode = Mode::Pilot;
     let station = sys.station().expect("home station");
-    let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+    let f = StationFrame::new(sys, station, app.engine.universe().world.time, positions);
     let side = f.up().any_orthonormal_vector();
     let u = app.engine.universe();
     let at = f.center + side * 40_000.0;
@@ -1304,7 +1304,7 @@ fn s_taxiwatch(app: &mut App, _name: &str, c: &Ctx) {
     // Facing the hangar.
     if let ShipState::Landed { body, local_position, .. } = u.vessels[universe_sim::PLAYER].ship.state {
         let here = local_position.normalize();
-        let hangar = universe_sim::world::spaceport::hangar_direction(&sys, port);
+        let hangar = universe_sim::world::spaceport::hangar_direction(sys, port);
         u.vessels[universe_sim::PLAYER].ship.state = ShipState::Landed { body, local_position, local_orientation: universe_sim::ship::upright(here, hangar - here) };
     }
     u.vessels[universe_sim::craft_id(0)].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 13);
@@ -1325,7 +1325,7 @@ fn s_taxiwatch(app: &mut App, _name: &str, c: &Ctx) {
     // Our ship 1.2 km over the port, nose down at the pads and the hangar.
     let t = u.world.time;
     let pos = u.world.rails_now(home);
-    let pad = PadFrame::new(&sys, port, t, &pos);
+    let pad = PadFrame::new(sys, port, t, &pos);
     u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
     u.vessels[universe_sim::PLAYER].ship.position = pad.pad + pad.up * 1_200.0;
     u.vessels[universe_sim::PLAYER].ship.velocity = pad.frame_velocity(u.vessels[universe_sim::PLAYER].ship.position);
@@ -1466,7 +1466,7 @@ fn s_routemap(app: &mut App, _name: &str, _c: &Ctx) {
     app.mode = Mode::Pilot;
     let stops = app.engine.universe().settler_route(7, 10);
     app.engine.universe().cockpit().route_set(stops);
-    app.nav_map = Some(crate::navmap::NavMap::open(app));
+    app.panels.nav_map = Some(crate::navmap::NavMap::open(app));
 }
 
 fn s_route(app: &mut App, _name: &str, _c: &Ctx) {
@@ -1773,7 +1773,7 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
     let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
     app.engine.universe().set_layout(&plan);
     app.engine.universe().preview(Some(at));
-    app.preview = app.shipyard.take();
+    app.panels.preview = app.panels.shipyard.take();
     app.mode = Mode::Pilot;
     app.chase_cam = false;
     app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
@@ -1851,7 +1851,7 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
             y.interior_mut().walk_line(k);
         }
     }
-    app.shipyard = Some(y);
+    app.panels.shipyard = Some(y);
 }
 
 fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
@@ -1924,7 +1924,7 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
         }
         app.deckplans.push(plan);
     }
-    app.shipyard = Some(y);
+    app.panels.shipyard = Some(y);
 }
 
 fn s_rampup(app: &mut App, _name: &str, _c: &Ctx) {
@@ -2074,14 +2074,14 @@ fn s_market(app: &mut App, _name: &str, _c: &Ctx) {
     }
     app.engine.refresh();
     app.v = app.engine.view();
-    app.market = Some(crate::market::MarketView::open(app));
+    app.panels.market = Some(crate::market::MarketView::open(app));
 }
 
 fn s_enemy(app: &mut App, _name: &str, _c: &Ctx) {
     // On approach to the home station, an enemy of the home system.
     apply(app, "approach");
     let home = app.charts.home_system;
-    app.engine.universe().standings.set(universe_sim::PLAYER, home, -100.0);
+    app.engine.universe().services.standings.set(universe_sim::PLAYER, home, -100.0);
     app.engine.refresh();
     app.v = app.engine.view();
 }
@@ -2099,13 +2099,13 @@ fn s_newsdesk(app: &mut App, name: &str, _c: &Ctx) {
         app.engine.refresh();
         app.v = app.engine.view();
         let (now, sys) = (app.v.time, app.v.ship_system);
-        let room = app.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
+        let room = app.net.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
         room.update(&app.charts, now, &app.v.kills, &app.v.trade_log);
         let casts = room.broadcasts();
         let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true, in_tube: false };
-        app.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
+        app.net.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
     }
-    log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));
+    log::info!("scenario newsdesk: {} digests", app.net.newsroom.as_ref().map_or(0, |r| r.digests.len()));
     app.news_panel = name == "newsdesk";
 }
 
@@ -2127,5 +2127,5 @@ fn s_marketnear(app: &mut App, name: &str, _c: &Ctx) {
     let mut m = crate::market::MarketView::open(app);
     m.shown = m.markets.iter().position(|(g, _)| Some(*g) == f).unwrap_or(0);
     m.refresh(app);
-    app.market = Some(m);
+    app.panels.market = Some(m);
 }

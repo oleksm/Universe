@@ -94,10 +94,10 @@ fn a_recorded_session_replays_to_the_same_world() {
     for _ in 0..600 {
         tick(&mut u);
     }
-    let log = u.input_log.clone().unwrap();
+    let log = u.replay.input_log.clone().unwrap();
     let replayed = Universe::replay(&log);
     eprintln!("{} ticks, {} postings; hash {:x}", log.ticks.len(), log.ticks.iter().map(|t| t.due.len()).sum::<usize>(), u.state_hash());
-    assert!(!u.atc.journal.is_empty(), "traffic control was busy");
+    assert!(!u.services.atc.journal.is_empty(), "traffic control was busy");
     assert_eq!(replayed.state_hash(), u.state_hash(), "the replay is the same world");
     // And through a save file.
     let json = serde_json::to_string(&u.world_save().unwrap()).unwrap();

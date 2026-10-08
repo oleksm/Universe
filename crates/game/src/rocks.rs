@@ -90,27 +90,27 @@ impl App {
             return;
         }
         for (f, field) in sys.fields.iter().enumerate() {
-            if !self.rocks.contains_key(&(origin, f, field.body))
+            if !self.caches.rocks.contains_key(&(origin, f, field.body))
                 && let Some(m) = mesh(&sys.bodies[field.body])
             {
-                self.rocks.insert((origin, f, field.body), m.into());
+                self.caches.rocks.insert((origin, f, field.body), m.into());
             }
         }
         // (Belt rocks in sight.)
         for (f, i, _) in belt_in_sight(&sys, self.camera.position, self.view.positions[0], self.now()) {
-            if !self.rocks.contains_key(&(origin, f, i))
+            if !self.caches.rocks.contains_key(&(origin, f, i))
                 && let Some(m) = mesh(&sys.field_bodies(f)[i])
             {
-                self.rocks.insert((origin, f, i), m.into());
+                self.caches.rocks.insert((origin, f, i), m.into());
             }
         }
         let Some(f) = swarm_in_sight(&sys, self.camera.position, &self.view.positions) else { return };
         let bodies = sys.field_bodies(f);
         for i in sys.bodies.len()..bodies.len() {
-            if !self.rocks.contains_key(&(origin, f, i))
+            if !self.caches.rocks.contains_key(&(origin, f, i))
                 && let Some(m) = mesh(&bodies[i])
             {
-                self.rocks.insert((origin, f, i), m.into());
+                self.caches.rocks.insert((origin, f, i), m.into());
             }
         }
     }
@@ -143,7 +143,7 @@ fn rock(frame: &mut Frame, app: &App, f: usize, i: usize, b: &Body, center: DVec
             return;
         }
     }
-    let Some(mesh) = app.rocks.get(&(app.view.origin, f, i)) else {
+    let Some(mesh) = app.caches.rocks.get(&(app.view.origin, f, i)) else {
         frame.point(center, c);
         return;
     };

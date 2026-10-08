@@ -50,7 +50,7 @@ impl Universe {
                 bounties.push((k, *id));
             }
             match killer {
-                Some(k) if universe_world::turrets::turret_of(k).is_none() && self.law.aggressed(k, now) && !self.law.aggressed(*id, now) => charges.push(charge(k, Offence::Murder, Some(*id))),
+                Some(k) if universe_world::turrets::turret_of(k).is_none() && self.services.law.aggressed(k, now) && !self.services.law.aggressed(*id, now) => charges.push(charge(k, Offence::Murder, Some(*id))),
                 Some(_) => {}
                 None if body == "COLLISION" || self.near_others(system, at, now) => charges.push(charge(*id, Offence::RecklessFlying, None)),
                 None => {}
@@ -60,13 +60,13 @@ impl Universe {
             self.charge(c);
         }
         for (killer, victim) in bounties {
-            for (system, credits) in self.law.claim_bounties(victim) {
+            for (system, credits) in self.services.law.claim_bounties(victim) {
                 // (A turret is the administration's own: nobody is paid.)
                 if universe_world::turrets::turret_of(killer).is_some() {
                     continue;
                 }
                 let admin = universe_services::Party::Administration(system);
-                let _ = self.ledger.transfer(admin, universe_services::Party::Pilot(killer), universe_services::Asset::Credits, credits, self.tick, universe_protocol::Cause::Rules);
+                let _ = self.services.ledger.transfer(admin, universe_services::Party::Pilot(killer), universe_services::Asset::Credits, credits, self.tick, universe_protocol::Cause::Rules);
                 if killer == crate::combat::PLAYER {
                     self.events.push(Event::Bounty { credits, on: self.ship_name(victim) });
                 }
@@ -84,7 +84,7 @@ impl Universe {
 
     /// Outside the law where ship `id` is: no one there deals with it.
     pub(crate) fn barred(&self, id: ShipId, system: usize) -> Result<(), String> {
-        if self.law.outlawed(id as _, system, self.world.time) {
+        if self.services.law.outlawed(id as _, system, self.world.time) {
             return Err(format!("YOU ARE OUTSIDE {}'S LAW: NO ONE HERE DEALS WITH YOU", self.world.system(system).name.to_uppercase()));
         }
         Ok(())
@@ -106,17 +106,17 @@ impl Universe {
             match p.kind {
                 Penalty::Outlawry => {
                     let term = p.term.unwrap_or(0.0);
-                    self.law.outlaw(c.ship, c.system, c.time + term);
+                    self.services.law.outlaw(c.ship, c.system, c.time + term);
                     said.push(format!("OUTLAWED {:.0} YEARS", term / 31_557_600.0));
                 }
                 Penalty::Bounty => {
                     let credits = p.share.unwrap_or(0.0) * worth;
-                    self.law.post_bounty(c.ship, c.system, credits);
+                    self.services.law.post_bounty(c.ship, c.system, credits);
                     said.push(format!("{credits:.0} CR ON YOUR HEAD"));
                 }
                 Penalty::Fine => {
-                    let fine = (p.share.unwrap_or(0.0) * worth).min(self.ledger.credits(me).max(0.0));
-                    let _ = self.ledger.transfer(me, admin, universe_services::Asset::Credits, fine, self.tick, c.cause);
+                    let fine = (p.share.unwrap_or(0.0) * worth).min(self.services.ledger.credits(me).max(0.0));
+                    let _ = self.services.ledger.transfer(me, admin, universe_services::Asset::Credits, fine, self.tick, c.cause);
                     said.push(format!("FINED {fine:.0} CR"));
                 }
                 _ => {}
@@ -125,14 +125,14 @@ impl Universe {
         if c.ship == crate::combat::PLAYER {
             self.events.push(Event::Charged { offence: universe_world::order::offence_name(c.offence), system: self.world.system(c.system).name.clone(), penalties: said.join(", ") });
         }
-        self.law.charge(c);
+        self.services.law.charge(c);
     }
 
     /// The offences ship `id` as it is now has been charged with; and fair
     /// game for firing on the innocent is piracy, law or none.
     pub(crate) fn brought_on(&self, id: ShipId) -> Vec<Offence> {
-        let mut out: Vec<Offence> = self.law.charges_of(id as _).map(|c| c.offence).collect();
-        if self.law.aggressed(id as _, self.world.time) {
+        let mut out: Vec<Offence> = self.services.law.charges_of(id as _).map(|c| c.offence).collect();
+        if self.services.law.aggressed(id as _, self.world.time) {
             out.push(Offence::Piracy);
         }
         out
