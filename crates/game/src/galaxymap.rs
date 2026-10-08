@@ -118,7 +118,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     }
     let size = ctx.low_res.as_vec2();
     let you = flat(app, app.v.ship_system);
-    let Some(map) = &mut app.galaxy_map else { return false };
+    let Some(map) = &mut app.panels.galaxy_map else { return false };
     let dt = ctx.dt as f64;
     let zoom = input.scroll as f64 * 0.15 + (input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64) * 1.5 * dt;
     map.scale = (map.scale * zoom.exp()).clamp(size.y as f64 / 40_000.0, 400.0);

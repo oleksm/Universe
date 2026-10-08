@@ -155,7 +155,7 @@ pub fn repeat(held: &mut f32, down: bool, pressed: bool, dt: f32) -> u32 {
 
 /// Handle map keys. Returns false when the map should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let Some(mut map) = app.nav_map.take() else { return false };
+    let Some(mut map) = app.panels.nav_map.take() else { return false };
     let input = &ctx.input;
     // The chart: the wheel zooms toward the cursor, a drag moves it; all the
     // way out, it's back as it was.
@@ -249,10 +249,10 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     }
     // U: out to the whole galaxy.
     if crate::keys::pressed(input, crate::keys::Act::Galaxy) {
-        app.galaxy_map = Some(crate::galaxymap::GalaxyMap::open(app, ctx.low_res.as_vec2()));
+        app.panels.galaxy_map = Some(crate::galaxymap::GalaxyMap::open(app, ctx.low_res.as_vec2()));
         return false;
     }
-    app.nav_map = Some(map);
+    app.panels.nav_map = Some(map);
     true
 }
 

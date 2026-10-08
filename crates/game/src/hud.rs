@@ -21,7 +21,7 @@ const LINE: f32 = GLYPH + 2.0;
 pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // The map covers the screen. (HUD fills are drawn before HUD lines, so
     // anything else drawn now would show through it.)
-    if let Some(panel) = &app.economy_panel {
+    if let Some(panel) = &app.panels.economy_panel {
         crate::economy::draw(frame, app, panel);
         return;
     }
@@ -30,22 +30,22 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         return;
     }
     // (The planet studio's panel beside the world it looks at, not over it.)
-    if let Some(studio) = &app.planet_studio {
+    if let Some(studio) = &app.panels.planet_studio {
         crate::planet_studio::draw(frame, app, studio);
     }
-    if app.standards.is_some() {
+    if app.panels.standards.is_some() {
         crate::standards::draw(frame, app);
         return;
     }
-    if let Some(map) = &app.galaxy_map {
+    if let Some(map) = &app.panels.galaxy_map {
         crate::galaxymap::draw(frame, app, map);
         return;
     }
-    if let Some(map) = &app.nav_map {
+    if let Some(map) = &app.panels.nav_map {
         crate::navmap::draw(frame, app, map);
         return;
     }
-    if let Some(m) = &app.market {
+    if let Some(m) = &app.panels.market {
         crate::market::draw(frame, app, m);
         return;
     }
@@ -53,7 +53,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         crate::passengers::draw(frame, app, pick);
         return;
     }
-    if let Some(y) = &app.shipyard {
+    if let Some(y) = &app.panels.shipyard {
         universe_prof::time("draw/studio", || crate::shipyard::draw(frame, app, y));
         return;
     }
@@ -308,7 +308,7 @@ fn instruments(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
 fn net_badge(frame: &mut Frame, app: &App, at: Vec2) {
     const GREEN: Color = Color::hex(0x60ff90);
     const YELLOW: Color = Color::hex(0xffd040);
-    let (bars, c, text) = match &app.net {
+    let (bars, c, text) = match &app.net.status {
         Some((lag, _)) if *lag < 1.0 => (4, GREEN, fmt::lag(*lag)),
         Some((lag, _)) if *lag < 60.0 => (3, YELLOW, fmt::lag(*lag)),
         Some((lag, _)) => (1, RED, fmt::lag(*lag)),
@@ -858,7 +858,7 @@ pub fn banner_y(_app: &App) -> f32 {
 fn phase_banner(frame: &mut Frame, app: &App) {
     use universe_sim::Phase;
     let Some(approach) = &app.approach else { return };
-    let plan = app.plan.as_ref();
+    let plan = app.plan.current.as_ref();
     // Flying by hand, the plan knows which step we're in; the autopilot keeps its own.
     let phase = |own: Phase, autopilot: bool| if autopilot { own } else { plan.and_then(|p| p.points.first()).map_or(own, |p| p.phase) };
     let (steps, current): (&[&str], usize) = match approach {
@@ -890,7 +890,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
     };
     let eta = match plan {
         // In real seconds, smoothed (see `App::eta_shown`).
-        Some(p) if p.arrives => format!("ETA {}", fmt::countdown(app.eta_shown.unwrap_or(0.0))),
+        Some(p) if p.arrives => format!("ETA {}", fmt::countdown(app.plan.eta_shown.unwrap_or(0.0))),
         Some(p) if p.holds => "HOLDING".into(),
         Some(_) => "ETA > 6 H".into(),
         None => String::new(),
@@ -923,7 +923,7 @@ fn phase_banner(frame: &mut Frame, app: &App) {
 /// What to do right now, from the flight plan: turn to the frame, burn,
 /// thrust or coast.
 fn action_lines(app: &App, relative_velocity: DVec3, g: &Guidance, lines: &mut Vec<(String, Color)>) {
-    let Some(plan) = &app.plan else { return };
+    let Some(plan) = &app.plan.current else { return };
     let Some(first) = plan.points.first() else { return };
     let turn = (app.ship.orientation.inverse() * first.aim).normalize();
     let turn_deg = (2.0 * turn.w.abs().clamp(0.0, 1.0).acos()).to_degrees();
@@ -1250,8 +1250,8 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
             }
         }
         // Nose cue: where the plan wants the nose now. Put the crosshair on it.
-        if let Some(first) = app.plan.as_ref().and_then(|p| p.points.first()) {
-            let path_len = app.plan.as_deref().map_or(0.0, crate::scene::path_length);
+        if let Some(first) = app.plan.current.as_ref().and_then(|p| p.points.first()) {
+            let path_len = app.plan.current.as_deref().map_or(0.0, crate::scene::path_length);
             let nose = first.aim * DVec3::NEG_Z;
             let c = crate::scene::action_color(first.action).scale(1.2);
             let size = frame.size();
@@ -1648,7 +1648,7 @@ fn action_grid(frame: &mut Frame, app: &App) {
             cells.push(b(Act::Foot, "FOOT", Lamp::Off));
             // (The standards registry: the port's copy.)
             if at.is_some() {
-                cells.push(b(Act::Standards, "STANDARDS", if app.standards.is_some() { Lamp::On } else { Lamp::Off }));
+                cells.push(b(Act::Standards, "STANDARDS", if app.panels.standards.is_some() { Lamp::On } else { Lamp::Off }));
             }
             // (Passengers only with a cabin aboard.)
             if app.v.docked_market.is_some() && ship.spec().seats > 0 {
@@ -1723,12 +1723,12 @@ fn mode_bar(frame: &mut Frame, app: &App, at: Vec2) -> f32 {
         (String::new(), "NAV".into(), lamp(m == ShipMode::Nav)),
         (key(Act::Combat), "COMBAT".into(), combat),
         (key(Act::Mining), "MINING".into(), lamp(m == ShipMode::Mining)),
-        (key(Act::Map), "MAP".into(), lamp(app.nav_map.is_some() || app.galaxy_map.is_some())),
-        (key(Act::Market), "MARKET".into(), lamp(app.market.is_some())),
+        (key(Act::Map), "MAP".into(), lamp(app.panels.nav_map.is_some() || app.panels.galaxy_map.is_some())),
+        (key(Act::Market), "MARKET".into(), lamp(app.panels.market.is_some())),
         (key(Act::Cargo), "CARGO".into(), lamp(app.show_cargo)),
-        (key(Act::Economy), "ECONOMY".into(), lamp(app.economy_panel.is_some())),
+        (key(Act::Economy), "ECONOMY".into(), lamp(app.panels.economy_panel.is_some())),
         ("F11".into(), "NEWS".into(), lamp(app.news_panel)),
-        (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.shipyard.is_some())),
+        (key(Act::Shipyard), "SHIPYARD".into(), lamp(app.panels.shipyard.is_some())),
         ("TAB".into(), (if app.mode == Mode::Observer { "WATCH" } else { "CHASE" }).into(), Lamp::Off),
         ("F7".into(), "THRUST".into(), lamp(app.show_thrusters)),
         ("F1".into(), "HELP".into(), lamp(app.show_help)),
@@ -1847,7 +1847,7 @@ pub(crate) fn news_items(app: &App) -> Vec<NewsItem<'_>> {
         .kills
         .iter()
         .filter_map(|k| {
-            let heard = app.news.heard(&universe_sim::news::Key::kill(k))?;
+            let heard = app.net.news.heard(&universe_sim::news::Key::kill(k))?;
             let ours = k.killer == universe_sim::PLAYER || k.victim == universe_sim::PLAYER;
             let line = if k.weapon == "COLLISION" {
                 format!("{} WRECKED IN A COLLISION WITH {}", k.victim_name, k.killer_name)
@@ -1857,8 +1857,8 @@ pub(crate) fn news_items(app: &App) -> Vec<NewsItem<'_>> {
             Some(NewsItem { heard, time: k.time, system: k.system, what: News::Kill(line, ours) })
         })
         .collect();
-    if let Some(room) = &app.newsroom {
-        items.extend(room.digests.iter().filter_map(|d| Some(NewsItem { heard: app.news.heard(&d.key())?, time: d.time, system: d.system, what: News::Digest(d) })));
+    if let Some(room) = &app.net.newsroom {
+        items.extend(room.digests.iter().filter_map(|d| Some(NewsItem { heard: app.net.news.heard(&d.key())?, time: d.time, system: d.system, what: News::Digest(d) })));
     }
     items.sort_by(|a, b| b.heard.total_cmp(&a.heard));
     items
@@ -1898,7 +1898,7 @@ fn trade_feed(frame: &mut Frame, app: &App, top: f32) -> f32 {
     let now = app.v.time;
     let shown = TRADE_SHOWN * app.warp().max(1.0);
     // (As heard over the hypernet; shown from then.)
-    let mut recent: Vec<(&universe_sim::TradeRecord, f64)> = app.v.trade_log.iter().filter_map(|r| Some((r, app.news.heard(&universe_sim::news::Key::trade(r))?))).filter(|(_, heard)| now - heard < shown).collect();
+    let mut recent: Vec<(&universe_sim::TradeRecord, f64)> = app.v.trade_log.iter().filter_map(|r| Some((r, app.net.news.heard(&universe_sim::news::Key::trade(r))?))).filter(|(_, heard)| now - heard < shown).collect();
     recent.sort_by(|a, b| a.1.total_cmp(&b.1));
     let mut rows = Vec::new();
     for (r, heard) in recent.iter().rev().take(6) {
@@ -1950,9 +1950,9 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
     if app.last_step.warp_limited {
         lines.push(("SIM CAN'T KEEP UP".into(), RED));
     }
-    if app.plan.is_some() {
-        let every = (app.plan_cost * 20.0).clamp(0.1, 1.0);
-        lines.push((format!("PLAN {:.1} MS EVERY {every:.1} S", app.plan_cost * 1000.0), DIM));
+    if app.plan.current.is_some() {
+        let every = (app.plan.cost * 20.0).clamp(0.1, 1.0);
+        lines.push((format!("PLAN {:.1} MS EVERY {every:.1} S", app.plan.cost * 1000.0), DIM));
     }
     if app.collision.is_some() {
         lines.push((format!("COLLIDE {:.1} MS EVERY 0.2 S", app.collision_cost * 1000.0), DIM));

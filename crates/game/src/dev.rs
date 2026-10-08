@@ -291,7 +291,7 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     // (Land done first as in `zoning`: UNIVERSE_LAND, UNIVERSE_AFTER.)
     if std::env::var_os("UNIVERSE_LAND").is_some() {
         apply(app, "zoning");
-        app.economy_panel = None;
+        app.panels.economy_panel = None;
     }
     let u = app.engine.universe();
     // (Our own hull, standing on its own feet.)
@@ -398,7 +398,7 @@ fn s_standards(app: &mut App, _name: &str, _c: &Ctx) {
     apply(app, "docked");
     let mut view = crate::standards::StandardsView::new();
     view.focus(&std::env::var("UNIVERSE_STANDARD").unwrap_or_else(|_| "SFO/3.1/001".into()));
-    app.standards = Some(view);
+    app.panels.standards = Some(view);
 }
 
 fn s_sunlit(app: &mut App, _name: &str, c: &Ctx) {
@@ -557,7 +557,7 @@ fn s_galaxymap(app: &mut App, name: &str, _c: &Ctx) {
     } else if name == "galaxyzoom" {
         map.zoom(4.0);
     }
-    app.galaxy_map = Some(map);
+    app.panels.galaxy_map = Some(map);
 }
 
 fn s_help(app: &mut App, _name: &str, _c: &Ctx) {
@@ -604,7 +604,7 @@ fn s_zoning(app: &mut App, _name: &str, c: &Ctx) {
             z.pick(&pick);
         }
     }
-    app.economy_panel = Some(panel);
+    app.panels.economy_panel = Some(panel);
 }
 
 fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
@@ -655,7 +655,7 @@ fn s_economy(app: &mut App, name: &str, _c: &Ctx) {
         app.engine.refresh();
         app.v = app.engine.view();
     }
-    app.economy_panel = Some(panel);
+    app.panels.economy_panel = Some(panel);
 }
 
 fn s_navmap(app: &mut App, name: &str, _c: &Ctx) {
@@ -665,7 +665,7 @@ fn s_navmap(app: &mut App, name: &str, _c: &Ctx) {
     if name == "navzoom" {
         map.set_view(5.0, universe_engine::glam::Vec2::new(150.0, -500.0));
     }
-    app.nav_map = Some(map);
+    app.panels.nav_map = Some(map);
 }
 
 fn s_landing(app: &mut App, name: &str, c: &Ctx) {
@@ -783,13 +783,13 @@ fn s_worlds(app: &mut App, _name: &str, _c: &Ctx) {
         _ => crate::planet_studio::Look::Colour,
     };
     let r = studio.list.get(studio.selected).cloned();
-    app.planet_studio = Some(studio);
+    app.panels.planet_studio = Some(studio);
     if let Some(r) = r {
         let _ = crate::planet_studio::go_to(app, &r);
     }
     // (UNIVERSE_HISTORY_FRAME: its history's frame n, counted from 0, in place of today.)
     if let Some(n) = crate::devenv::num("UNIVERSE_HISTORY_FRAME").map(|n| n as usize)
-        && let Some((key, Some(history))) = app.planet_studio.as_ref().and_then(|s| s.shown.clone())
+        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
         && n < history.frames.len()
     {
         app.world_frame = Some(crate::planet_studio::WorldFrame { key, history, frame: n });
@@ -1466,7 +1466,7 @@ fn s_routemap(app: &mut App, _name: &str, _c: &Ctx) {
     app.mode = Mode::Pilot;
     let stops = app.engine.universe().settler_route(7, 10);
     app.engine.universe().cockpit().route_set(stops);
-    app.nav_map = Some(crate::navmap::NavMap::open(app));
+    app.panels.nav_map = Some(crate::navmap::NavMap::open(app));
 }
 
 fn s_route(app: &mut App, _name: &str, _c: &Ctx) {
@@ -1773,7 +1773,7 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
     let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
     app.engine.universe().set_layout(&plan);
     app.engine.universe().preview(Some(at));
-    app.preview = app.shipyard.take();
+    app.panels.preview = app.panels.shipyard.take();
     app.mode = Mode::Pilot;
     app.chase_cam = false;
     app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
@@ -1843,7 +1843,7 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
             y.interior_mut().walk_line(k);
         }
     }
-    app.shipyard = Some(y);
+    app.panels.shipyard = Some(y);
 }
 
 fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
@@ -1916,7 +1916,7 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
         }
         app.deckplans.push(plan);
     }
-    app.shipyard = Some(y);
+    app.panels.shipyard = Some(y);
 }
 
 fn s_rampup(app: &mut App, _name: &str, _c: &Ctx) {
@@ -2066,7 +2066,7 @@ fn s_market(app: &mut App, _name: &str, _c: &Ctx) {
     }
     app.engine.refresh();
     app.v = app.engine.view();
-    app.market = Some(crate::market::MarketView::open(app));
+    app.panels.market = Some(crate::market::MarketView::open(app));
 }
 
 fn s_enemy(app: &mut App, _name: &str, _c: &Ctx) {
@@ -2091,13 +2091,13 @@ fn s_newsdesk(app: &mut App, name: &str, _c: &Ctx) {
         app.engine.refresh();
         app.v = app.engine.view();
         let (now, sys) = (app.v.time, app.v.ship_system);
-        let room = app.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
+        let room = app.net.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&app.charts, 0.0));
         room.update(&app.charts, now, &app.v.kills, &app.v.trade_log);
         let casts = room.broadcasts();
         let us = universe_sim::news::Listener { system: sys, at: app.v.ship.position, comm: app.v.ship.spec().comm, player: true, in_tube: false };
-        app.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
+        app.net.news.update(&app.charts, now, &us, &universe_sim::news::Happenings { kills: &app.v.kills, trades: &app.v.trade_log, broadcasts: &casts, sightings: &[] });
     }
-    log::info!("scenario newsdesk: {} digests", app.newsroom.as_ref().map_or(0, |r| r.digests.len()));
+    log::info!("scenario newsdesk: {} digests", app.net.newsroom.as_ref().map_or(0, |r| r.digests.len()));
     app.news_panel = name == "newsdesk";
 }
 
@@ -2119,5 +2119,5 @@ fn s_marketnear(app: &mut App, name: &str, _c: &Ctx) {
     let mut m = crate::market::MarketView::open(app);
     m.shown = m.markets.iter().position(|(g, _)| Some(*g) == f).unwrap_or(0);
     m.refresh(app);
-    app.market = Some(m);
+    app.panels.market = Some(m);
 }

@@ -77,7 +77,7 @@ impl MarketView {
 
 /// Handle the market's keys. Returns false when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let Some(mut v) = app.market.take() else { return false };
+    let Some(mut v) = app.panels.market.take() else { return false };
     let input = &ctx.input;
     if input.pressed(KeyCode::Escape) || crate::keys::pressed(input, crate::keys::Act::Market) {
         app.engine.send(Command::WatchMarket(None));
@@ -120,7 +120,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         app.engine.send(Command::Trade { market: f, item: row.item, units });
         v.refresh(app);
     }
-    app.market = Some(v);
+    app.panels.market = Some(v);
     true
 }
 

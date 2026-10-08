@@ -6,5 +6,4 @@
   last tick, replaying and the postings due. `Universe.interiors` (`Interiors`): hulls' insides as
   laid out and what they're made of. Paths are `u.services.ledger`, `u.replay.input_log`,
   `u.interiors.layouts`; nothing else changed. 98 tests pass.
-- Not yet: the game's `App` (99 fields) into panels, plan state, hypernet and render caches.
-  It touches the client everywhere the ships branch is working; to be done with that session.
+

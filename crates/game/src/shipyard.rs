@@ -95,13 +95,13 @@ pub fn open(app: &mut App) -> Option<Shipyard> {
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     // The shipyard key closes it (the interior studio asks first if its plan is unsaved).
     if crate::keys::pressed(&ctx.input, Act::Shipyard) {
-        return match app.shipyard.as_mut() {
+        return match app.panels.shipyard.as_mut() {
             Some(y) => y.may_close(),
             None => false,
         };
     }
     let spec = app.ship.spec();
-    let Some(y) = app.shipyard.as_mut() else { return false };
+    let Some(y) = app.panels.shipyard.as_mut() else { return false };
     // (The interior studio kept in step either way: its plan, the decks, saving.)
     y.interior.sync(&spec.key, spec.shape(), &mut app.deckplans, ctx.dt);
     y.interior.refit();
@@ -139,7 +139,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             app.send_layout();
             app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls: interior.walls() });
             app.engine.send(universe_sim::Command::Preview(Some(at)));
-            app.preview = app.shipyard.take().map(|mut y| {
+            app.panels.preview = app.panels.shipyard.take().map(|mut y| {
                 y.interior = interior;
                 y
             });
@@ -147,7 +147,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
             app.chase_cam = false;
             return false;
         }
-        if let Some(y) = app.shipyard.as_mut() {
+        if let Some(y) = app.panels.shipyard.as_mut() {
             y.interior = interior;
         }
         return stay;
@@ -165,23 +165,23 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     let id = y.interior.id().to_string();
     let mut studio = std::mem::take(&mut y.studio);
     let stay = crate::studio::input(app, ctx, &id, hull.shape(), &mut studio);
-    if studio.walk.is_some() && app.shipyard.as_ref().is_some_and(|y| !walkable(app, &y.interior)) {
+    if studio.walk.is_some() && app.panels.shipyard.as_ref().is_some_and(|y| !walkable(app, &y.interior)) {
         studio.walk = None;
-        if let Some(y) = app.shipyard.as_mut() {
+        if let Some(y) = app.panels.shipyard.as_mut() {
             y.interior.note("A WALK-THROUGH IS IN THE SHIP YOU FLY: THIS DESIGN ISN'T IN IT");
         }
     }
     // A walk-through: the studio put by, the pilot on foot there, first person.
     if let Some(at) = studio.walk.take() {
         // (The interior studio's walled tubes walked in too.)
-        let walls = app.shipyard.as_ref().map(|y| y.interior.walls()).unwrap_or_default();
-        if let Some(id) = app.shipyard.as_ref().map(|y| y.interior.id().to_string()) {
+        let walls = app.panels.shipyard.as_ref().map(|y| y.interior.walls()).unwrap_or_default();
+        if let Some(id) = app.panels.shipyard.as_ref().map(|y| y.interior.id().to_string()) {
             decks_aboard(app, &id);
         }
         app.send_layout();
         app.engine.send(universe_sim::Command::Walls { hull: spec.key.clone(), walls });
         app.engine.send(universe_sim::Command::Preview(Some(at)));
-        app.preview = app.shipyard.take().map(|mut y| {
+        app.panels.preview = app.panels.shipyard.take().map(|mut y| {
             y.studio = studio;
             y
         });
@@ -189,7 +189,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         app.chase_cam = false;
         return false;
     }
-    let Some(y) = app.shipyard.as_mut() else { return false };
+    let Some(y) = app.panels.shipyard.as_mut() else { return false };
     y.studio = studio;
     // Closed from the deck studio: the interior's plan asked about first (shown there).
     stay || y.may_close()
