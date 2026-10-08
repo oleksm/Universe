@@ -1402,7 +1402,7 @@ impl Game for App {
                 if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
                     self.panels.shipyard = None;
                 }
-                let want = self.shipyard.as_ref().is_some_and(|y| y.wants_mouse());
+                let want = self.panels.shipyard.as_ref().is_some_and(|y| y.wants_mouse());
                 if ctx.cursor_grabbed() != want {
                     ctx.grab_cursor(want);
                 }
