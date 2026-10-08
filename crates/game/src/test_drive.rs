@@ -78,6 +78,11 @@ pub struct Craft {
 const AIRS: [f64; 4] = [1.225, 0.6, 0.3, 0.0];
 /// How fast air thins with height: its scale height (m).
 const SCALE_HEIGHT: f64 = 8500.0;
+/// The practice field: a beacon where it starts, a landing pad PAD_AHEAD metres
+/// ahead of it (the way its nose points at the start), PAD_ACROSS across.
+const PAD_AHEAD: f64 = 150.0;
+const PAD_ACROSS: f64 = 20.0;
+
 /// Drag (the craft's blunt body), friction on the ground.
 const DRAG: f64 = 1.0;
 const FRICTION: f64 = 0.6;
@@ -155,7 +160,7 @@ impl Drive {
             leg_most: (0.0, 0),
             events: Vec::new(),
             stopped: false,
-            cam_yaw: 0.6,
+            cam_yaw: 0.0,
             cam_pitch: 0.25,
             cam_dist: size * 2.2,
             craft,
@@ -427,6 +432,12 @@ impl Drive {
         if touching && !self.grounded {
             let sink = -self.vel.y;
             self.hardest = self.hardest.max(sink);
+            // (Down on the pad, or off it: where, how hard.)
+            let off = DVec3::new(self.pos.x, 0.0, self.pos.z - PAD_AHEAD).length();
+            if self.time > 1.0 {
+                self.events.retain(|e| !e.starts_with("TOUCHED DOWN"));
+                self.say(if off <= PAD_ACROSS * 0.5 { format!("TOUCHED DOWN ON THE PAD, {off:.1} M FROM ITS MIDDLE, AT {sink:.1} M/S") } else { format!("TOUCHED DOWN {:.0} M FROM THE PAD, AT {sink:.1} M/S", off - PAD_ACROSS * 0.5) });
+            }
             if let Some(rated) = self.craft.legs.iter().map(|l| l.sink).reduce(f64::min)
                 && sink > rated
             {
@@ -752,7 +763,11 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     let sky = if d.density(d.pos.y) > 0.05 { Color([0.05, 0.09, 0.16, 1.0]) } else { Color([0.01, 0.01, 0.03, 1.0]) };
     frame.hud_rect(Vec2::ZERO, size, sky);
     let target = d.pos.as_vec3();
-    let (sy, cy) = d.cam_yaw.sin_cos();
+    // (Behind it, as the game's chase view: the camera round to the back of the
+    // craft's heading, plus what the drag has turned it.)
+    let nose = d.rot * DVec3::Z;
+    let behind = (-nose.x).atan2(-nose.z) as f32;
+    let (sy, cy) = (behind + d.cam_yaw).sin_cos();
     let (sp, cp) = d.cam_pitch.sin_cos();
     let eye = target + Vec3::new(sy * cp, sp, cy * cp) * d.cam_dist;
     let forward = (target - eye).normalize();
@@ -830,6 +845,34 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         let major = ((gz + o) / 25.0).fract().abs() < 1e-3;
         let c = if major { Color([0.45, 0.75, 0.6, 0.55]) } else { Color([0.35, 0.6, 0.5, 0.25]) };
         line(frame, Vec3::new(gx - reach, 0.0, gz + o), Vec3::new(gx + reach, 0.0, gz + o), c);
+    }
+    // (The pad: its ring, its middle's cross, lights round its edge; the beacon:
+    // a mast at the start, its light on top.)
+    let pad = Vec3::new(0.0, 0.0, PAD_AHEAD as f32);
+    let half = PAD_ACROSS as f32 * 0.5;
+    let pad_col = Color([1.0, 0.85, 0.35, 0.9]);
+    for k in 0..48 {
+        let (a0, a1) = (k as f32 / 48.0 * std::f32::consts::TAU, (k + 1) as f32 / 48.0 * std::f32::consts::TAU);
+        line(frame, pad + Vec3::new(a0.cos(), 0.0, a0.sin()) * half, pad + Vec3::new(a1.cos(), 0.0, a1.sin()) * half, pad_col);
+        line(frame, pad + Vec3::new(a0.cos(), 0.0, a0.sin()) * half * 0.6, pad + Vec3::new(a1.cos(), 0.0, a1.sin()) * half * 0.6, Color([1.0, 0.85, 0.35, 0.5]));
+    }
+    line(frame, pad - Vec3::X * half * 0.4, pad + Vec3::X * half * 0.4, pad_col);
+    line(frame, pad - Vec3::Z * half * 0.4, pad + Vec3::Z * half * 0.4, pad_col);
+    for k in 0..8 {
+        let a = k as f32 / 8.0 * std::f32::consts::TAU;
+        let p = pad + Vec3::new(a.cos(), 0.0, a.sin()) * half;
+        if let Some(q) = project(p) {
+            frame.hud_box(q - Vec2::splat(2.0), Vec2::splat(4.0), Color([1.0, 0.4, 0.3, 1.0]));
+        }
+    }
+    if let Some(q) = project(pad + Vec3::Y * 0.5) {
+        frame.text_scaled(q + Vec2::new(8.0, -10.0), "PAD", pad_col, 0.6);
+    }
+    let blink = if (d.time * 2.0).fract() < 0.5 { 1.0 } else { 0.35 };
+    line(frame, Vec3::ZERO, Vec3::Y * 6.0, Color([0.8, 0.85, 0.9, 0.8]));
+    if let Some(q) = project(Vec3::Y * 6.0) {
+        frame.hud_box(q - Vec2::splat(3.0), Vec2::splat(6.0), Color([1.0, 0.3, 0.3, blink]));
+        frame.text_scaled(q + Vec2::new(8.0, -4.0), "BEACON", Color([1.0, 0.5, 0.45, 0.9]), 0.6);
     }
     let place = |p: Vec3| (d.pos + d.rot * p.as_dvec3()).as_vec3();
     // (Its shadow: straight down.)
@@ -946,6 +989,23 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         frame.text_scaled(Vec2::new(x - 12.0, mid - h * 0.5 - 14.0), "CLIMB", Color([0.75, 0.88, 1.0, 0.85]), 0.6);
         frame.text_scaled(Vec2::new(x - 24.0, mid + h * 0.5 + 18.0), &format!("{:+.1} M/S", d.vel.y), c, 0.7);
     }
+    // (The pad: how far, which way (from the nose, right +), how high over it.)
+    let to_pad = DVec3::new(-d.pos.x, 0.0, PAD_AHEAD - d.pos.z);
+    let bearing = {
+        let n = DVec3::new(nose.x, 0.0, nose.z);
+        let a = (-to_pad.x).atan2(to_pad.z) - (-n.x).atan2(n.z);
+        (a.to_degrees() + 540.0) % 360.0 - 180.0
+    };
+    frame.text_scaled(Vec2::new(16.0, 18.0 + (lines.len() + d.events.len() + 1) as f32 * 12.0), &format!("PAD {:.0} M, {:+.0} DEG FROM THE NOSE, {:.1} M OVER IT   BEACON {:.0} M", to_pad.length(), -bearing, height, DVec3::new(d.pos.x, 0.0, d.pos.z).length()), Color([1.0, 0.85, 0.35, 0.95]), 0.62);
+    // (The game's own radar, on a landing's scale: 10 m in the middle to 10 km at
+    // the rim; the craft's frame turned to the scanner's (ahead -z, right +x).)
+    let scope = crate::hud::Scope::draw(frame, Vec2::new((size.x / 2.0).floor(), size.y - 74.0), 10.0, 3.0);
+    let to_scanner = |world: DVec3| {
+        let v = d.rot.inverse() * (world - d.pos);
+        DVec3::new(-v.x, v.y, -v.z)
+    };
+    scope.body(frame, to_scanner(DVec3::new(0.0, 0.0, PAD_AHEAD)), Color([1.0, 0.85, 0.35, 1.0]), 2.5);
+    scope.craft(frame, to_scanner(DVec3::new(0.0, 6.0, 0.0)), Color([1.0, 0.35, 0.3, 1.0]), false);
     frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "CLICK: MOUSE STEERS - W/S COLLECTIVE, X CUT - ARROWS PITCH, A/D ROLL, Q/E YAW - L LEVEL - G MANUAL, 1-9 - Z AIR - R RESTART - ESC: MOUSE, BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
 }
 
