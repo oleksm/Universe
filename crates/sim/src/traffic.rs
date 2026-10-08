@@ -3,6 +3,7 @@
 //! reproducible route — with the totals of what they got up to, and a log of
 //! their crashes (for diagnosing autopilots).
 
+use universe_protocol::ShipId;
 use glam::DVec3;
 use universe_avionics::{Clearance, Event, NavTarget};
 use std::sync::Arc;
@@ -231,7 +232,7 @@ impl Universe {
                 self.events.extend(p.events);
                 continue;
             }
-            let i = p.id - 1;
+            let i = crate::combat::craft_of(p.id);
             // Going to sleep first: an answer to its requests wakes it.
             if let Some(t) = p.sleep_until {
                 self.crafts[i].asleep_until = t;
@@ -286,7 +287,7 @@ impl Universe {
         let (system, at) = (self.ship_system, self.ship.position);
         for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.system == system && c.ship.position.distance(at) < universe_world::radar::range(self.ship.spec())) {
             let destination = c.status.next_stop.map(|s| universe_avionics::route::stop_name(&self.world.system(s.system), s).to_uppercase());
-            transponders.insert(i, crate::contract::Transponder {
+            transponders.insert(crate::combat::craft_id(i), crate::contract::Transponder {
                 name: c.name.clone(),
                 activity: crate::contacts::activity(c),
                 destination,
@@ -325,7 +326,7 @@ impl Universe {
         self.snapped_at = self.tick;
         let tick = self.tick;
         // (Room for them all from the start: grown, it would move every ship it holds.)
-        let mut ships: std::collections::HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash> = std::collections::HashMap::with_capacity_and_hasher(self.crafts.len() + 1, Default::default());
+        let mut ships: std::collections::HashMap<universe_protocol::ShipId, (usize, Ship), universe_physics::pairs::CellHash> = std::collections::HashMap::with_capacity_and_hasher(self.crafts.len() + 1, Default::default());
         ships.insert(crate::combat::PLAYER, (self.ship_system, self.ship.clone()));
         for (i, c) in self.crafts.iter().enumerate().filter(|(_, c)| c.asleep_until <= tick) {
             ships.insert(crate::combat::craft_id(i), (c.system, c.ship.clone()));
@@ -350,7 +351,7 @@ impl Universe {
         let now = self.world.time;
         let (law, standings) = (&self.law, &self.standings);
         // (Hostile to the system's authority: its standing there at or under its line.)
-        let hostile = |id: usize, system: usize| standings.of(id, system) <= crate::standing::HOSTILE;
+        let hostile = |id: ShipId, system: usize| standings.of(id, system) <= crate::standing::HOSTILE;
         let mut snaps = Vec::with_capacity(self.crafts.len() + 1);
         snaps.push(Snap::of(self.ship_system, &self.ship, law.aggressed(crate::combat::PLAYER, now), hostile(crate::combat::PLAYER, self.ship_system), law.outlawed(crate::combat::PLAYER as _, self.ship_system, now)));
         use rayon::prelude::*;

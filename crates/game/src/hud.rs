@@ -1018,7 +1018,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     let mut tags = 0;
     for contact in near {
         let c = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
-        let at = app.place(crate::Who::Craft(contact.blip.id)).0;
+        let at = app.place(crate::Who::of(contact.blip.id).unwrap_or(crate::Who::Me)).0;
         let Some(p) = frame.project(at).filter(|p| p.x > 0.0 && p.y > 0.0 && p.x < size.x && p.y < size.y) else { continue };
         // (Fainter the farther.)
         let k = (1.0f32 - (contact.blip.distance / 60_000.0) as f32).clamp(0.45, 1.0);
@@ -1040,7 +1040,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
     }
     if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact) {
         let c = if locked.aggressed { RED } else { crate::scene::TRAFFIC };
-        let at = app.place(crate::Who::Craft(locked.blip.id)).0;
+        let at = app.place(crate::Who::of(locked.blip.id).unwrap_or(crate::Who::Me)).0;
         bracket(frame, app, &locked.name, at, c);
         // Which way it's moving across our view: an arrow off its bracket.
         let v = locked.blip.velocity - app.ship.velocity;
@@ -1068,7 +1068,7 @@ fn contact_marker(frame: &mut Frame, app: &App) {
             }
             frame.hud_line(p - Vec2::new(2.0, 0.0), p + Vec2::new(2.0, 0.0), c);
             frame.hud_line(p - Vec2::new(0.0, 2.0), p + Vec2::new(0.0, 2.0), c);
-            if let Some(q) = frame.project(app.place(crate::Who::Craft(locked.blip.id)).0) {
+            if let Some(q) = frame.project(app.place(crate::Who::of(locked.blip.id).unwrap_or(crate::Who::Me)).0) {
                 let d = q - p;
                 if d.length() > 12.0 {
                     frame.hud_line(p + d.normalize() * 6.0, q - d.normalize() * 10.0, AMBER.scale(0.4));
@@ -1142,8 +1142,8 @@ fn gunsight(frame: &mut Frame, app: &App) {
     }
     // HIT on the locked target when one of ours lands.
     if let Some(locked) = app.contacts.iter().find(|c| Some(c.blip.id) == app.v.avionics.contact)
-        && app.sparks.iter().any(|s| s.ours && s.target == universe_sim::craft_id(locked.blip.id) && s.age < 0.6)
-        && let Some(p) = frame.project(app.place(crate::Who::Craft(locked.blip.id)).0)
+        && app.sparks.iter().any(|s| s.ours && s.target == locked.blip.id && s.age < 0.6)
+        && let Some(p) = frame.project(app.place(crate::Who::of(locked.blip.id).unwrap_or(crate::Who::Me)).0)
     {
         frame.text(p + Vec2::new(12.0, -18.0), "HIT", RED);
     }
@@ -1365,7 +1365,7 @@ fn scanner(frame: &mut Frame, app: &App) {
     let locked = app.v.avionics.contact;
     for contact in &app.contacts {
         let tc = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
-        let rel: DVec3 = inv * (app.place(crate::Who::Craft(contact.blip.id)).0 - app.view.ship_pos);
+        let rel: DVec3 = inv * (app.place(crate::Who::of(contact.blip.id).unwrap_or(crate::Who::Me)).0 - app.view.ship_pos);
         let d = rel.length();
         if d < 1.0 {
             continue;

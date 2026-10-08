@@ -62,7 +62,7 @@ pub struct Avionics {
     pub collision_warning: bool,
     /// The radar contact locked on (the id the radar reports it by).
     #[serde(skip)]
-    pub contact: Option<usize>,
+    pub contact: Option<universe_protocol::ShipId>,
     /// The rock locked on (in mining): body `.1` among field `.0`'s bodies.
     #[serde(default)]
     pub rock_lock: Option<(usize, usize)>,
@@ -213,7 +213,7 @@ impl Avionics {
         // (On the final run it has had its turn: traffic control frees the
         // corridor as it nears the ring for the next ship; asking again then
         // would put it back in line, behind the others.)
-        self.wait_place = bus.id();
+        self.wait_place = bus.id().0;
         self.corridor_ahead = match self.clearance {
             Some(Clearance { target: NavTarget::Gate(b), phase: Phase::Approach | Phase::Align, .. })
                 if target_position(bus, NavTarget::Gate(b)).is_some_and(|p| p.distance(bus.ship().position) < 12_000.0) =>

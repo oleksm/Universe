@@ -9,17 +9,23 @@
 use universe_avionics::fire_control::{Solution, Track};
 use universe_world::weapons::Armed;
 use universe_world::ShipEvent;
+use universe_protocol::ShipId;
 
 use crate::contacts::Contact;
 use universe_services::records::Kill;
 use crate::universe::Universe;
 
-/// The player's ship's id in combat.
-pub const PLAYER: usize = 0;
+/// The player's ship's id.
+pub const PLAYER: ShipId = ShipId::PLAYER;
 
-/// Combat id of craft `i`.
-pub fn craft_id(i: usize) -> usize {
-    i + 1
+/// Craft `i`'s id.
+pub fn craft_id(i: usize) -> ShipId {
+    ShipId::craft(i)
+}
+
+/// Which craft `id` is (it must be one: not the player's, not a turret).
+pub fn craft_of(id: ShipId) -> usize {
+    id.craft_index().unwrap_or_else(|| panic!("{id} isn't a craft"))
 }
 
 impl Universe {
@@ -76,7 +82,7 @@ impl Universe {
     /// Turret gunners' orders due now reach the guns (the gunners are
     /// clients: see `pilots::aim_guns`), after the command delay like a pilot's.
     fn gunners(&mut self, _dt: f64) {
-        let mut due: Vec<(usize, universe_protocol::TurretCommand)> = Vec::new();
+        let mut due: Vec<(ShipId, universe_protocol::TurretCommand)> = Vec::new();
         self.turret_orders.make_contiguous().sort_by_key(|o| o.0);
         while self.turret_orders.front().is_some_and(|(d, _, _)| *d <= self.tick) {
             let (_, id, c) = self.turret_orders.pop_front().expect("due");
@@ -97,8 +103,8 @@ impl Universe {
             let sys = u.world.system(system);
             (sys.station().is_some() || !sys.spaceports.is_empty()).then_some(crate::standing::FAIR_GAME)
         };
-        let system_of = |u: &Self, id: usize| u.ship_by_id(id).map(|s| s.1);
-        let mut notices: Vec<(usize, ShipEvent)> = Vec::new();
+        let system_of = |u: &Self, id: ShipId| u.ship_by_id(id).map(|s| s.1);
+        let mut notices: Vec<(ShipId, ShipEvent)> = Vec::new();
         let mut pirates: Vec<universe_services::law::Charge> = Vec::new();
         for (id, events) in std::iter::once((PLAYER, &*player)).chain(crafts.iter().enumerate().map(|(i, e)| (craft_id(i), e))) {
             for e in events {
@@ -127,7 +133,7 @@ impl Universe {
             match ship {
                 PLAYER => player.push(notice),
                 id => {
-                    if let Some(e) = crafts.get_mut(id - 1) {
+                    if let Some(e) = id.craft_index().and_then(|i| crafts.get_mut(i)) {
                         e.push(notice);
                     }
                 }
@@ -137,7 +143,7 @@ impl Universe {
 
     /// Did ship `victim`'s `events` end in its destruction by weapons fire?
     /// Who fired the last hit, and with what.
-    fn kill_in(&self, victim: usize, system: usize, events: &[ShipEvent]) -> Option<Kill> {
+    fn kill_in(&self, victim: ShipId, system: usize, events: &[ShipEvent]) -> Option<Kill> {
         let weapon = events.iter().find_map(|e| match e {
             ShipEvent::Crashed { body } => Some(body.clone()),
             _ => None,
@@ -160,7 +166,7 @@ impl Universe {
 
 
     /// Name of the ship with combat id `id`.
-    pub fn ship_name(&self, id: usize) -> String {
+    pub fn ship_name(&self, id: ShipId) -> String {
         if let Some((system, k)) = universe_world::turrets::turret_of(id) {
             let sys = self.world.system_if_known(system);
             let place = sys.and_then(|sys| universe_world::turrets::turrets(self.world.galaxy.seed, system, &sys).get(k).map(|t| t.facility.name(&sys)));
@@ -168,7 +174,7 @@ impl Universe {
         }
         match id {
             PLAYER => "YOU".into(),
-            _ => self.crafts.get(id - 1).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
+            _ => id.craft_index().and_then(|i| self.crafts.get(i)).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
         }
     }
 
@@ -234,7 +240,7 @@ mod tests {
         use crate::combat::{craft_id, PLAYER};
         use universe_world::ShipEvent;
         // What the law gives: thirty years outside it, a bounty on our head, no one here dealing with us.
-        let (me, sys, now) = (PLAYER as universe_protocol::BodyId, u.ship_system, u.world.time);
+        let (me, sys, now) = (PLAYER as universe_protocol::ShipId, u.ship_system, u.world.time);
         assert!(u.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
         let worth = Universe::ship_value(&u.ship);
         assert!((u.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");

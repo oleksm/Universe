@@ -71,7 +71,7 @@ pub enum Command {
     /// Lock on a rock (field, body among its bodies), or let the lock go.
     LockRock(Option<(usize, usize)>),
     /// Lock on the radar contact with this id (a pick from the list).
-    LockContact(usize),
+    LockContact(universe_protocol::ShipId),
     /// Fill the tank where docked or landed.
     Refuel,
     /// Have the hull mended (docked at a station).
@@ -218,7 +218,7 @@ pub struct View {
     /// The ship's system's defence turrets, where they are now; who's on
     /// each pad of each of its ports.
     pub turrets: Vec<(Turret, DVec3)>,
-    pub pads: Vec<[Option<usize>; universe_world::spaceport::PADS]>,
+    pub pads: Vec<[Option<universe_protocol::ShipId>; universe_world::spaceport::PADS]>,
     /// The last tick: what it did, and what it took (ms).
     pub last_step: StepResult,
     pub sim_ms: f32,

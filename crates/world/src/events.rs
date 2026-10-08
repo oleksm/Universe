@@ -2,6 +2,7 @@
 //! destroyed, went through a gate…), separate from what world services say
 //! (traffic control granting or refusing clearance).
 
+use universe_protocol::ShipId;
 use serde::{Deserialize, Serialize};
 
 /// Something that physically happened to a ship.
@@ -54,7 +55,7 @@ pub enum ShipEvent {
     /// Opened fire on a ship that wasn't fair game: aggressed until world time `until`.
     Aggressed { until: f64 },
     /// Ran into ship `with`, closing at `speed` (m/s).
-    Collided { with: usize, speed: f64 },
+    Collided { with: ShipId, speed: f64 },
     /// Combat mode: the master arm went on (weapons priming), the weapons
     /// are primed and hot, or the master arm went off (safe).
     WeaponsArming,
@@ -63,7 +64,7 @@ pub enum ShipEvent {
     /// Struck by a weapon of ship `by`: `damage` of the hull's strength taken,
     /// `hull` left (fractions).
     /// `weapon`: fired on (gun or laser), not a collision.
-    Hit { by: usize, damage: f64, hull: f64, weapon: bool },
+    Hit { by: ShipId, damage: f64, hull: f64, weapon: bool },
     /// A new ship was delivered.
     Respawned,
     /// Crossed into another star system's neighbourhood.

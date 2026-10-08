@@ -3,6 +3,7 @@
 //! time in a fixed order — the player's ship first, then every craft, each
 //! from the same moment (see `vessel` for what a ship's turn is).
 
+use universe_protocol::ShipId;
 use std::sync::Arc;
 
 use glam::{DQuat, DVec3};
@@ -94,11 +95,11 @@ pub struct Universe {
     pub tick: u64,
     /// This tick's event log: (ship, event), in order — what services' causes
     /// point into (`Cause::Event { tick, index }`).
-    pub log: Vec<(usize, ShipEvent)>,
+    pub log: Vec<(universe_protocol::ShipId, ShipEvent)>,
     /// The law: who's fair game, since when, and why (see `universe_services::law`).
     pub law: universe_services::Law,
     /// Turret gunners' orders on the way to the guns (due tick, turret, orders).
-    pub(crate) turret_orders: std::collections::VecDeque<(u64, usize, universe_protocol::TurretCommand)>,
+    pub(crate) turret_orders: std::collections::VecDeque<(u64, universe_protocol::ShipId, universe_protocol::TurretCommand)>,
     /// Traffic control (clearance, pads, corridors): a service.
     pub atc: universe_services::TrafficControl,
     /// The ledger (credits, and what's in each hold) and the market service.
@@ -279,7 +280,7 @@ impl Universe {
     }
 
     /// A pilot's request (from its posting), to the service it's for.
-    pub(crate) fn request(&mut self, id: usize, r: crate::vessel::Request) {
+    pub(crate) fn request(&mut self, id: ShipId, r: crate::vessel::Request) {
         use crate::vessel::Request;
         match r {
             Request::Pad { system, port, ship, now } => {
@@ -298,11 +299,11 @@ impl Universe {
     }
 
     /// Ship `id` (the player's 0, craft i: i + 1): its id, system and ship.
-    pub(crate) fn ship_by_id(&self, id: usize) -> Option<(usize, usize, &Ship)> {
+    pub(crate) fn ship_by_id(&self, id: ShipId) -> Option<(ShipId, usize, &Ship)> {
         if id == crate::combat::PLAYER {
             Some((id, self.ship_system, &self.ship))
         } else {
-            self.crafts.get(id - 1).map(|c| (id, c.system, &c.ship))
+            id.craft_index().and_then(|i| self.crafts.get(i)).map(|c| (id, c.system, &c.ship))
         }
     }
 
@@ -422,7 +423,7 @@ impl Universe {
     /// What traffic control needs to hear from a ship's events this tick:
     /// its holds end when its clearance does, when it docks or goes through a
     /// gate, and when it's wrecked, replaced or leaves the system.
-    pub(crate) fn traffic_events(&mut self, id: usize, events: &[Event]) {
+    pub(crate) fn traffic_events(&mut self, id: ShipId, events: &[Event]) {
         let done = events.iter().any(|e| {
             matches!(
                 e,
@@ -464,7 +465,7 @@ impl Universe {
     }
 
     /// Ship `id`'s events go into the tick's log.
-    pub(crate) fn log_events(&mut self, id: usize, events: &[Event]) {
+    pub(crate) fn log_events(&mut self, id: ShipId, events: &[Event]) {
         for e in events {
             if let Event::Ship(e) = e {
                 self.log.push((id, e.clone()));
@@ -473,7 +474,7 @@ impl Universe {
     }
 
     /// The latest of ship `id`'s events in this tick's log matching `which`, as a cause.
-    pub(crate) fn logged(&self, id: usize, which: impl Fn(&ShipEvent) -> bool) -> Option<universe_protocol::Cause> {
+    pub(crate) fn logged(&self, id: ShipId, which: impl Fn(&ShipEvent) -> bool) -> Option<universe_protocol::Cause> {
         let index = self.log.iter().rposition(|(s, e)| *s == id && which(e))?;
         Some(universe_protocol::Cause::Event { tick: self.tick, index: index as u32 })
     }
@@ -498,12 +499,12 @@ impl Universe {
         }
         type Seen = (Arc<StarSystem>, Arc<Vec<DVec3>>, Vec<Port>);
         // Corridors held, by ship: (system, body).
-        let mut held: std::collections::HashMap<usize, Vec<(usize, usize)>> = std::collections::HashMap::new();
+        let mut held: std::collections::HashMap<universe_protocol::ShipId, Vec<(usize, usize)>> = std::collections::HashMap::new();
         for (system, body, ship) in self.atc.corridors_held() {
             held.entry(ship).or_default().push((system, body));
         }
         // Who's where (on the ground, or flying in normal space).
-        type Where = (usize, usize, DVec3, bool, Option<(NavTarget, Phase)>);
+        type Where = (universe_protocol::ShipId, usize, DVec3, bool, Option<(NavTarget, Phase)>);
         let ships: Vec<Where> = std::iter::once((crate::combat::PLAYER, self.ship_system, &self.ship, self.player_status.clearance))
             .chain(self.crafts.iter().enumerate().map(|(i, c)| (crate::combat::craft_id(i), c.system, &c.ship, c.status.clearance)))
             // (In a hangar: on no pad, in no column.)

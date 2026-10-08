@@ -18,6 +18,7 @@
 //! What's observed each frame is only physical fact (`presence`): who stands
 //! on which pad or is in its column, and who has left a corridor behind.
 
+use universe_protocol::ShipId;
 use std::collections::HashMap;
 
 use glam::DVec3;
@@ -34,7 +35,7 @@ const QUEUE_PATIENCE: f64 = 60.0;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
 struct Owner {
-    ship: usize,
+    ship: ShipId,
     /// It has been on the pad (or in its column).
     arrived: bool,
 }
@@ -44,7 +45,7 @@ struct Owner {
 struct Port {
     owners: [Option<Owner>; PADS],
     /// Ships waiting, in order, with when each last asked.
-    queue: Vec<(usize, f64)>,
+    queue: Vec<(ShipId, f64)>,
 }
 
 /// Traffic control's board as it stood (see `TrafficControl::board`):
@@ -52,23 +53,23 @@ struct Port {
 #[derive(Clone, Debug, Default)]
 pub struct Board {
     ports: HashMap<(usize, Facility), Port>,
-    corridors: HashMap<(usize, usize), usize>,
-    corridor_queues: HashMap<(usize, usize), Vec<(usize, f64)>>,
+    corridors: HashMap<(usize, usize), ShipId>,
+    corridor_queues: HashMap<(usize, usize), Vec<(ShipId, f64)>>,
 }
 
 impl Board {
     /// What `TrafficControl::request_pad` would have answered.
-    pub fn peek_pad(&self, system: usize, port: Facility, ship: usize) -> PadGrant {
+    pub fn peek_pad(&self, system: usize, port: Facility, ship: ShipId) -> PadGrant {
         peek_pad(&self.ports, system, port, ship)
     }
 
     /// What `TrafficControl::request_corridor` would have answered.
-    pub fn peek_corridor(&self, system: usize, body: usize, ship: usize) -> Option<usize> {
+    pub fn peek_corridor(&self, system: usize, body: usize, ship: ShipId) -> Option<usize> {
         peek_corridor(&self.corridors, &self.corridor_queues, system, body, ship)
     }
 }
 
-fn peek_pad(ports: &HashMap<(usize, Facility), Port>, system: usize, port: Facility, ship: usize) -> PadGrant {
+fn peek_pad(ports: &HashMap<(usize, Facility), Port>, system: usize, port: Facility, ship: ShipId) -> PadGrant {
     let Some(p) = ports.get(&(system, port)) else { return PadGrant::Queued(0) };
     if let Some(k) = p.owners.iter().position(|o| o.is_some_and(|o| o.ship == ship)) {
         return PadGrant::Pad(k);
@@ -76,7 +77,7 @@ fn peek_pad(ports: &HashMap<(usize, Facility), Port>, system: usize, port: Facil
     PadGrant::Queued(p.queue.iter().position(|(s, _)| *s == ship).unwrap_or(p.queue.len()))
 }
 
-fn peek_corridor(corridors: &HashMap<(usize, usize), usize>, queues: &HashMap<(usize, usize), Vec<(usize, f64)>>, system: usize, body: usize, ship: usize) -> Option<usize> {
+fn peek_corridor(corridors: &HashMap<(usize, usize), ShipId>, queues: &HashMap<(usize, usize), Vec<(ShipId, f64)>>, system: usize, body: usize, ship: ShipId) -> Option<usize> {
     let key = (system, body);
     match corridors.get(&key) {
         Some(&s) if s == ship => None,
@@ -91,7 +92,7 @@ fn peek_corridor(corridors: &HashMap<(usize, usize), usize>, queues: &HashMap<(u
 /// Where a ship physically is, as far as traffic control cares, this frame.
 #[derive(Clone, Debug, Default)]
 pub struct Presence {
-    pub ship: usize,
+    pub ship: ShipId,
     pub system: usize,
     /// On a pad, or in the column over it: (port, pad).
     pub pad: Option<(Facility, usize)>,
@@ -105,9 +106,9 @@ pub struct Presence {
 #[derive(Clone, Debug, Default)]
 pub struct TrafficControl {
     ports: HashMap<(usize, Facility), Port>,
-    corridors: HashMap<(usize, usize), usize>,
+    corridors: HashMap<(usize, usize), ShipId>,
     /// Ships waiting for each corridor, in order, with when each last asked.
-    corridor_queues: HashMap<(usize, usize), Vec<(usize, f64)>>,
+    corridor_queues: HashMap<(usize, usize), Vec<(ShipId, f64)>>,
     /// Gate corridors with traffic coming out (or due out) of their tubes into
     /// the run-in, this frame: not given till it's clear.
     outbound: std::collections::HashSet<(usize, usize)>,
@@ -127,7 +128,7 @@ const JOURNAL: usize = 10_000;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Change {
     pub tick: Tick,
-    pub ship: usize,
+    pub ship: ShipId,
     pub what: What,
     pub cause: Cause,
 }
@@ -152,25 +153,25 @@ impl TrafficControl {
         (self.tick, self.cause) = (tick, Some(cause));
     }
 
-    fn note(&mut self, ship: usize, what: What, cause: Cause) {
+    fn note(&mut self, ship: ShipId, what: What, cause: Cause) {
         self.journal.push(Change { tick: self.tick, ship, what, cause });
         let excess = self.journal.len().saturating_sub(JOURNAL);
         self.journal.drain(..excess);
     }
 
-    fn noted(&mut self, ship: usize, what: What) {
+    fn noted(&mut self, ship: ShipId, what: What) {
         let cause = self.cause.unwrap_or(Cause::Rules);
         self.note(ship, what, cause);
     }
 
     /// A request from `ship`, as a message (sender, number).
-    pub fn request_from(&mut self, ship: usize) -> Cause {
+    pub fn request_from(&mut self, ship: ShipId) -> Cause {
         self.requests += 1;
-        Cause::Message { sender: ship as u64, id: self.requests }
+        Cause::Message { sender: ship.0 as u64, id: self.requests }
     }
 
     /// Ship `ship` asks for a pad at `port` in `system` at time `now`.
-    pub fn request_pad(&mut self, system: usize, port: Facility, ship: usize, now: f64) -> PadGrant {
+    pub fn request_pad(&mut self, system: usize, port: Facility, ship: ShipId, now: f64) -> PadGrant {
         let cause = self.request_from(ship);
         let p = self.ports.entry((system, port)).or_default();
         if let Some(k) = p.owners.iter().position(|o| o.is_some_and(|o| o.ship == ship)) {
@@ -200,12 +201,12 @@ impl TrafficControl {
 
     /// What `request_pad` would answer now, changing nothing (a ship asking
     /// while ships step side by side: its request is made after).
-    pub fn peek_pad(&self, system: usize, port: Facility, ship: usize) -> PadGrant {
+    pub fn peek_pad(&self, system: usize, port: Facility, ship: ShipId) -> PadGrant {
         peek_pad(&self.ports, system, port, ship)
     }
 
     /// What `request_corridor` would answer now, changing nothing.
-    pub fn peek_corridor(&self, system: usize, body: usize, ship: usize) -> Option<usize> {
+    pub fn peek_corridor(&self, system: usize, body: usize, ship: ShipId) -> Option<usize> {
         peek_corridor(&self.corridors, &self.corridor_queues, system, body, ship)
     }
 
@@ -218,7 +219,7 @@ impl TrafficControl {
     /// Ship `ship` asks at `now` to use the corridor of station or gate
     /// `body` in `system`: `None` if it's its (it was free and this ship's
     /// turn, or already its), otherwise how many are ahead of it in line.
-    pub fn request_corridor(&mut self, system: usize, body: usize, ship: usize, now: f64) -> Option<usize> {
+    pub fn request_corridor(&mut self, system: usize, body: usize, ship: ShipId, now: f64) -> Option<usize> {
         let key = (system, body);
         if self.corridors.get(&key) == Some(&ship) {
             return None;
@@ -255,7 +256,7 @@ impl TrafficControl {
 
     /// Ship `ship` is done with its corridor at `body` (it docked, went
     /// through the gate, launched and left).
-    pub fn release_corridor(&mut self, system: usize, body: usize, ship: usize) {
+    pub fn release_corridor(&mut self, system: usize, body: usize, ship: ShipId) {
         if self.corridors.get(&(system, body)) == Some(&ship) {
             self.corridors.remove(&(system, body));
             self.noted(ship, What::CorridorFreed { system, body });
@@ -265,7 +266,7 @@ impl TrafficControl {
     /// Everything ship `ship` holds or waits for is given up (its clearance
     /// ended, it was wrecked, it left the system). Where it physically stands
     /// is taken again by `presence`.
-    pub fn release(&mut self, ship: usize) {
+    pub fn release(&mut self, ship: ShipId) {
         let mut freed = Vec::new();
         for (&(system, port), p) in self.ports.iter_mut() {
             for (k, o) in p.owners.iter_mut().enumerate() {
@@ -295,8 +296,8 @@ impl TrafficControl {
     /// is neither: a ship coming in over the field doesn't free its own pad
     /// behind it, or take another's. Corridors are freed by ships done with them.
     pub fn presence(&mut self, present: &[Presence]) {
-        let mut at: HashMap<usize, (usize, Facility, usize)> = HashMap::new();
-        let mut landed: std::collections::HashSet<usize> = std::collections::HashSet::new();
+        let mut at: HashMap<ShipId, (usize, Facility, usize)> = HashMap::new();
+        let mut landed: std::collections::HashSet<ShipId> = std::collections::HashSet::new();
         for p in present {
             if let Some((port, pad)) = p.pad {
                 at.insert(p.ship, (p.system, port, pad));
@@ -337,17 +338,17 @@ impl TrafficControl {
     }
 
     /// Who has each pad at a port (for display).
-    pub fn owners(&self, system: usize, port: Facility) -> [Option<usize>; PADS] {
+    pub fn owners(&self, system: usize, port: Facility) -> [Option<ShipId>; PADS] {
         self.ports.get(&(system, port)).map_or([None; PADS], |p| p.owners.map(|o| o.map(|o| o.ship)))
     }
 
     /// Every corridor held: (system, body, ship).
-    pub fn corridors_held(&self) -> impl Iterator<Item = (usize, usize, usize)> + '_ {
+    pub fn corridors_held(&self) -> impl Iterator<Item = (usize, usize, ShipId)> + '_ {
         self.corridors.iter().map(|(&(system, body), &ship)| (system, body, ship))
     }
 
     /// Who holds the corridor of `body` in `system`.
-    pub fn corridor(&self, system: usize, body: usize) -> Option<usize> {
+    pub fn corridor(&self, system: usize, body: usize) -> Option<ShipId> {
         self.corridors.get(&(system, body)).copied()
     }
 
@@ -412,36 +413,36 @@ mod tests {
     #[test]
     fn pads_go_one_per_ship_and_the_rest_wait_their_turn() {
         let mut tc = TrafficControl::default();
-        let pads: Vec<PadGrant> = (0..PADS).map(|s| tc.request_pad(1, Facility::Spaceport(0), s, 0.0)).collect();
+        let pads: Vec<PadGrant> = (0..PADS).map(|s| tc.request_pad(1, Facility::Spaceport(0), ShipId(s), 0.0)).collect();
         assert!(pads.iter().all(|g| matches!(g, PadGrant::Pad(_))));
-        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), 3, 0.0), pads[3], "asking again: the same pad");
-        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), 100, 1.0), PadGrant::Queued(0));
-        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), 101, 1.0), PadGrant::Queued(1));
+        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), ShipId(3), 0.0), pads[3], "asking again: the same pad");
+        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), ShipId(100), 1.0), PadGrant::Queued(0));
+        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), ShipId(101), 1.0), PadGrant::Queued(1));
         // Ship 0 gives up: its pad goes to the first in line, not the second.
-        tc.release(0);
-        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), 101, 2.0), PadGrant::Queued(1));
-        assert!(matches!(tc.request_pad(1, Facility::Spaceport(0), 100, 2.0), PadGrant::Pad(_)));
-        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), 101, 3.0), PadGrant::Queued(0));
+        tc.release(ShipId(0));
+        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), ShipId(101), 2.0), PadGrant::Queued(1));
+        assert!(matches!(tc.request_pad(1, Facility::Spaceport(0), ShipId(100), 2.0), PadGrant::Pad(_)));
+        assert_eq!(tc.request_pad(1, Facility::Spaceport(0), ShipId(101), 3.0), PadGrant::Queued(0));
         // Another port has its own pads.
-        assert!(matches!(tc.request_pad(1, Facility::Spaceport(1), 101, 3.0), PadGrant::Pad(_)));
+        assert!(matches!(tc.request_pad(1, Facility::Spaceport(1), ShipId(101), 3.0), PadGrant::Pad(_)));
     }
 
     #[test]
     fn a_pad_is_freed_once_its_ship_has_landed_there_and_left_not_by_flying_over() {
         let port = Facility::Spaceport(0);
         let mut tc = TrafficControl::default();
-        let PadGrant::Pad(k) = tc.request_pad(1, port, 7, 0.0) else { panic!("a pad") };
-        let at = |pad: Option<usize>, landed: bool| [Presence { ship: 7, system: 1, pad: pad.map(|p| (port, p)), landed, clear_of: vec![] }];
+        let PadGrant::Pad(k) = tc.request_pad(1, port, ShipId(7), 0.0) else { panic!("a pad") };
+        let at = |pad: Option<usize>, landed: bool| [Presence { ship: ShipId(7), system: 1, pad: pad.map(|p| (port, p)), landed, clear_of: vec![] }];
         // Coming in: through its column, out over the next pad, back: still its.
         tc.presence(&at(Some(k), false));
         tc.presence(&at(Some((k + 1) % PADS), false));
         tc.presence(&at(None, false));
-        assert_eq!(tc.owners(1, port)[k], Some(7), "flying through isn't arriving");
+        assert_eq!(tc.owners(1, port)[k], Some(ShipId(7)), "flying through isn't arriving");
         assert_eq!(tc.owners(1, port)[(k + 1) % PADS], None, "nor is flying over a free pad taking it");
         // Landed, then gone: free.
         tc.presence(&at(Some(k), true));
         tc.presence(&at(Some(k), false));
-        assert_eq!(tc.owners(1, port)[k], Some(7), "lifting off in its column: still its");
+        assert_eq!(tc.owners(1, port)[k], Some(ShipId(7)), "lifting off in its column: still its");
         tc.presence(&at(None, false));
         assert_eq!(tc.owners(1, port)[k], None);
     }
@@ -449,19 +450,19 @@ mod tests {
     #[test]
     fn a_corridor_takes_one_ship_until_it_is_done_and_waits_for_traffic_coming_out() {
         let mut tc = TrafficControl::default();
-        assert_eq!(tc.request_corridor(1, 5, 1, 0.0), None);
-        assert_eq!(tc.request_corridor(1, 5, 2, 0.0), Some(1), "taken: one ahead");
-        assert_eq!(tc.request_corridor(1, 5, 3, 0.0), Some(2), "and two for the next");
-        tc.presence(&[Presence { ship: 1, system: 1, pad: None, landed: false, clear_of: vec![5] }]);
-        assert_eq!(tc.request_corridor(1, 5, 3, 1.0), Some(1), "not its turn yet: 2 was first");
-        assert_eq!(tc.request_corridor(1, 5, 2, 1.0), None, "free once it's through, and 2's turn");
-        tc.release(2);
+        assert_eq!(tc.request_corridor(1, 5, ShipId(1), 0.0), None);
+        assert_eq!(tc.request_corridor(1, 5, ShipId(2), 0.0), Some(1), "taken: one ahead");
+        assert_eq!(tc.request_corridor(1, 5, ShipId(3), 0.0), Some(2), "and two for the next");
+        tc.presence(&[Presence { ship: ShipId(1), system: 1, pad: None, landed: false, clear_of: vec![5] }]);
+        assert_eq!(tc.request_corridor(1, 5, ShipId(3), 1.0), Some(1), "not its turn yet: 2 was first");
+        assert_eq!(tc.request_corridor(1, 5, ShipId(2), 1.0), None, "free once it's through, and 2's turn");
+        tc.release(ShipId(2));
         assert_eq!(tc.corridor(1, 5), None);
         // A ship coming out of the gate's tube: the entrance waits till it's clear.
         tc.outbound([(1, 5)]);
-        assert_eq!(tc.request_corridor(1, 5, 3, 2.0), Some(1), "traffic coming out");
+        assert_eq!(tc.request_corridor(1, 5, ShipId(3), 2.0), Some(1), "traffic coming out");
         tc.outbound([]);
-        assert_eq!(tc.request_corridor(1, 5, 3, 2.0), None);
+        assert_eq!(tc.request_corridor(1, 5, ShipId(3), 2.0), None);
     }
 }
 

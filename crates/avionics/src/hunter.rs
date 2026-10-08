@@ -21,6 +21,7 @@
 //! thrusters and weapons, fire control's lead for the gun, and the stick
 //! (attitude) it returns for the frame.
 
+use universe_protocol::ShipId;
 use glam::{DQuat, DVec3};
 use serde::{Deserialize, Serialize};
 use universe_world::ship::{facing, Controls, Ship, ShipCommands, Triggers};
@@ -79,7 +80,7 @@ const DEFEND_GIVE_UP: f64 = 300.0;
 /// Another ship, as the hunter's radar and transponder see it.
 #[derive(Clone, Copy, Debug)]
 pub struct Sighting {
-    pub id: usize,
+    pub id: ShipId,
     pub position: DVec3,
     pub velocity: DVec3,
     /// One of the hunter's own kind.
@@ -103,7 +104,7 @@ pub struct Sighting {
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Hunt {
     /// The prey's id.
-    pub target: usize,
+    pub target: ShipId,
     /// When it began (world time).
     pub since: f64,
     /// The collision warning's last look (world time), and which way to
@@ -142,7 +143,7 @@ pub fn may_defend(a: &Avionics, ship: &Ship) -> bool {
 /// be judging the same); the aggressor's is its hull and its fellow pirates'
 /// near it. Its nerve (a temperament of its own, steadier with nothing in
 /// the hold) must make its side `ODDS` times the stronger.
-pub fn judge(me: usize, hull: f64, cargo: f64, aggressor: &Sighting, sightings: &[Sighting]) -> bool {
+pub fn judge(me: ShipId, hull: f64, cargo: f64, aggressor: &Sighting, sightings: &[Sighting]) -> bool {
     if hull < FIGHT_HULL {
         return false;
     }
@@ -150,7 +151,7 @@ pub fn judge(me: usize, hull: f64, cargo: f64, aggressor: &Sighting, sightings: 
     let friends: f64 = sightings.iter().filter(near).filter(|s| !s.pirate && !s.aggressed).map(|s| s.hull).sum();
     let foes: f64 = aggressor.hull + sightings.iter().filter(near).filter(|s| s.pirate || s.aggressed).map(|s| s.hull).sum::<f64>();
     // 0.6–1.4, the same for this ship against this aggressor every time.
-    let h = (me as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ (aggressor.id as u64).wrapping_mul(0xc2b2_ae3d_27d4_eb4f);
+    let h = (me.0 as u64).wrapping_mul(0x9e37_79b9_7f4a_7c15) ^ (aggressor.id.0 as u64).wrapping_mul(0xc2b2_ae3d_27d4_eb4f);
     let h = (h ^ (h >> 31)).wrapping_mul(0x94d0_49bb_1331_11eb);
     let nerve = 0.6 + 0.8 * ((h >> 11) as f64 / (1u64 << 53) as f64);
     let nerve = if cargo > 0.0 { nerve * 0.7 } else { nerve };

@@ -1199,7 +1199,7 @@ mod tests {
         let cap = universe_world::goods::item("part.mc07-01").unwrap();
         let recipe = universe_world::recipes::of("module.welding-bay").iter().position(|r| r.makes == cap).expect("a recipe for it");
         let owner = e.owner(&land, yard).expect("an owner");
-        assert!(e.set_up(&land, yard, bay, Some(recipe), Party::Pilot(7)).is_err(), "not someone else's to set");
+        assert!(e.set_up(&land, yard, bay, Some(recipe), Party::Pilot(universe_protocol::ShipId(7))).is_err(), "not someone else's to set");
         e.set_up(&land, yard, bay, Some(recipe), owner).unwrap();
         let sheet = universe_world::goods::item("stock.al6061-sh-2").unwrap();
         e.works[yard].pool.put(sheet, 20_000.0);

@@ -25,7 +25,7 @@ const CONE: f64 = universe_sim::LOCK_BEAM;
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Pick {
     /// A radar contact, by its id.
-    Ship(usize),
+    Ship(universe_sim::ShipId),
     /// A rock: body among a field's bodies.
     Rock(usize, usize),
     /// A station, gate or spaceport (locked: the nav target).

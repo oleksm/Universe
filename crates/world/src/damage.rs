@@ -1,6 +1,7 @@
 //! Damage: what destroys a ship, and how long until a new one is delivered.
 //! (Where the new one appears is `World::respawn`.)
 
+use universe_protocol::ShipId;
 use glam::DVec3;
 
 use crate::events::ShipEvent;
@@ -24,7 +25,7 @@ pub fn destroy(ship: &mut Ship, cause: &str, events: &mut Vec<ShipEvent>) {
 
 /// Struck by a weapon of ship `by`: `joules` of damage and a push of
 /// `impulse` (N·s). The hull fails when it's used up.
-pub fn hit(ship: &mut Ship, joules: f64, impulse: DVec3, by: usize, cause: &str, events: &mut Vec<ShipEvent>) {
+pub fn hit(ship: &mut Ship, joules: f64, impulse: DVec3, by: ShipId, cause: &str, events: &mut Vec<ShipEvent>) {
     if !matches!(ship.state, ShipState::Flying | ShipState::Landed { .. }) {
         return;
     }

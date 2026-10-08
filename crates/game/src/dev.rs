@@ -898,7 +898,7 @@ pub fn apply(app: &mut App, name: &str) {
             for _ in 0..30 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
-            u.cockpit().lock_contact(0);
+            u.cockpit().lock_contact(universe_sim::craft_id(0));
             u.follow(universe_sim::FollowKind::Orbit, Some(1_000.0));
             for _ in 0..60 * 40 {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -939,7 +939,7 @@ pub fn apply(app: &mut App, name: &str) {
                 u.step_world(1.0 / 60.0, 1.0, &Controls::default());
             }
             if name == "hangrepro" {
-                u.cockpit().lock_contact(0);
+                u.cockpit().lock_contact(universe_sim::craft_id(0));
             } else {
                 u.avionics_mut().rock_lock = Some((0, rsys.bodies.len() + 80));
             }
@@ -1721,7 +1721,7 @@ pub fn apply(app: &mut App, name: &str) {
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
-        for c in u.atc.journal.iter().filter(|c| c.ship == 0) {
+        for c in u.atc.journal.iter().filter(|c| c.ship == universe_sim::PLAYER) {
             log::info!("atc: {c:?}");
         }
     }

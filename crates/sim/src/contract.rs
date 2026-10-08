@@ -4,6 +4,7 @@
 //! and the timing. The world depends on this and never on a client's code;
 //! clients likewise (see docs/rearchitecture.md §0).
 
+use universe_protocol::ShipId;
 use std::any::Any;
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -68,7 +69,7 @@ pub enum Msg {
 pub struct Gun {
     /// Its id (see `turrets::turret_id`), and where its gun points now (if
     /// the world says).
-    pub id: usize,
+    pub id: ShipId,
     pub aim: Option<DVec3>,
     pub at: DVec3,
     pub velocity: DVec3,
@@ -87,7 +88,7 @@ pub struct PilotView {
     /// The ships of the pilots awake this tick (and ours), with the system
     /// each is in, by combat id (ours 0, craft i: i + 1). The rest are in
     /// `snaps`: what anyone sees of anyone.
-    pub ships: HashMap<usize, (usize, Ship), universe_physics::pairs::CellHash>,
+    pub ships: HashMap<ShipId, (usize, Ship), universe_physics::pairs::CellHash>,
     /// Every ship as others see it (by combat id), and who's aggressed and flying.
     pub(crate) snaps: Arc<Vec<Snap>>,
     pub aggressors: Vec<(usize, DVec3)>,
@@ -97,14 +98,14 @@ pub struct PilotView {
     pub rails: HashMap<usize, Arc<Vec<DVec3>>>,
     pub turrets: HashMap<usize, Guns>,
     /// Each pilot's credits (a gate's crossing is paid from them).
-    pub credits: HashMap<usize, f64>,
+    pub credits: HashMap<ShipId, f64>,
 }
 
 /// What a pilot posts after thinking.
 #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
 pub struct Posting {
     /// Whose: the ship's combat id (the player's 0, craft i: i + 1).
-    pub id: usize,
+    pub id: ShipId,
     /// The tick of the snapshot it read (due `command_delay()` ticks after), and its world time.
     pub thought: u64,
     pub seen: f64,
@@ -189,8 +190,8 @@ pub struct Transponder {
 /// What the cockpit reads each tick.
 pub struct CockpitView {
     pub world: Arc<PilotView>,
-    /// Of the crafts our radar could see, by craft index.
-    pub transponders: HashMap<usize, Transponder>,
+    /// Of the crafts our radar could see, by id.
+    pub transponders: HashMap<ShipId, Transponder>,
 }
 
 

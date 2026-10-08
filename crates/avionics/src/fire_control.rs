@@ -10,6 +10,7 @@
 //! acceleration less gravity's: the caller takes that off the track's
 //! measured acceleration) against the muzzle speed.
 
+use universe_protocol::ShipId;
 use glam::DVec3;
 
 /// Seconds of radar returns before the track gives a firing solution.
@@ -21,7 +22,7 @@ const ACCEL_RATE: f64 = 3.0;
 #[derive(Clone, Copy, Debug)]
 pub struct Track {
     /// The contact's radar id.
-    pub id: usize,
+    pub id: ShipId,
     /// When tracking began, and the latest return (world time).
     pub since: f64,
     pub last: f64,
@@ -34,7 +35,7 @@ pub struct Track {
 impl Track {
     /// Take a radar return for contact `id` at time `t`: continue the track
     /// on it, or start a new one.
-    pub fn update(track: &mut Option<Track>, id: usize, position: DVec3, velocity: DVec3, t: f64) {
+    pub fn update(track: &mut Option<Track>, id: ShipId, position: DVec3, velocity: DVec3, t: f64) {
         match track {
             Some(tr) if tr.id == id && t > tr.last => {
                 let dt = t - tr.last;

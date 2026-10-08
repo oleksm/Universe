@@ -78,7 +78,7 @@ pub struct World {
     pub mined: HashMap<(usize, usize, usize), f64>,
     /// Defence turrets by system, met so far, and their guns' cooldowns (see `turrets`).
     pub(crate) turrets: Mutex<HashMap<usize, Arc<Vec<crate::turrets::Turret>>>>,
-    pub(crate) turret_guns: HashMap<usize, crate::turrets::TurretGun>,
+    pub(crate) turret_guns: HashMap<universe_protocol::ShipId, crate::turrets::TurretGun>,
 }
 
 /// What ships stepping side by side will look up, gathered before they

@@ -11,6 +11,7 @@
 //! hyperdrive, through a gate, docked, destroyed) destroys itself; one that
 //! runs into a body, or outlives `MISSILE_LIFETIME`, is gone.
 
+use universe_protocol::ShipId;
 use glam::DVec3;
 
 use crate::system::StarSystem;
@@ -37,8 +38,8 @@ const NAV_GAIN: f64 = 3.0;
 pub struct Missile {
     pub system: usize,
     /// The launcher's turret id, and the target's ship id.
-    pub owner: usize,
-    pub target: usize,
+    pub owner: ShipId,
+    pub target: ShipId,
     pub position: DVec3,
     pub velocity: DVec3,
     pub age: f64,
@@ -111,7 +112,7 @@ mod tests {
         // Far out, a ship crossing at 300 m/s, 30 km off.
         let at = DVec3::new(0.0, 5.0 * AU, 0.0);
         let mut target = Mark { position: at + DVec3::new(30_000.0, 0.0, 0.0), velocity: DVec3::new(0.0, 0.0, 300.0) };
-        let mut m = Missile { system: 0, owner: 1, target: 2, position: at, velocity: DVec3::ZERO, age: 0.0 };
+        let mut m = Missile { system: 0, owner: ShipId(1), target: ShipId(2), position: at, velocity: DVec3::ZERO, age: 0.0 };
         let dt = 1.0 / 60.0;
         let mut t = 0.0;
         while t < MISSILE_LIFETIME {

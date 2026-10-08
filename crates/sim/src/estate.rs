@@ -5,6 +5,7 @@
 //! ledger: land to the system's administration, building to the world (no
 //! builders in the game's economy yet).
 
+use universe_protocol::ShipId;
 use universe_services::ledger::Asset;
 use universe_services::Party;
 
@@ -19,7 +20,7 @@ impl Universe {
         self.pilot_claim(crate::combat::PLAYER, system, port, outline)
     }
 
-    pub(crate) fn pilot_claim(&mut self, id: usize, system: usize, port: usize, outline: Vec<(f64, f64)>) -> Result<String, String> {
+    pub(crate) fn pilot_claim(&mut self, id: ShipId, system: usize, port: usize, outline: Vec<(f64, f64)>) -> Result<String, String> {
         let price = self.land.quote_claim(system, port, &outline)?;
         self.ledger.transfer(Party::Pilot(id), Party::Administration(system), Asset::Credits, price, self.tick, universe_protocol::Cause::Rules)?;
         let number = self.land.claim(system, port, outline, Party::Pilot(id))?;
@@ -32,7 +33,7 @@ impl Universe {
         self.pilot_buy_parcel(crate::combat::PLAYER, system, port, number)
     }
 
-    pub(crate) fn pilot_buy_parcel(&mut self, id: usize, system: usize, port: usize, number: u32) -> Result<String, String> {
+    pub(crate) fn pilot_buy_parcel(&mut self, id: ShipId, system: usize, port: usize, number: u32) -> Result<String, String> {
         let price = self.land.quote_buy(system, port, number)?;
         self.ledger.transfer(Party::Pilot(id), Party::Administration(system), Asset::Credits, price, self.tick, universe_protocol::Cause::Rules)?;
         self.land.buy(system, port, number, Party::Pilot(id))?;
@@ -46,7 +47,7 @@ impl Universe {
         self.pilot_build(crate::combat::PLAYER, system, port, number, &blueprint)
     }
 
-    pub(crate) fn pilot_build(&mut self, id: usize, system: usize, port: usize, number: u32, blueprint: &str) -> Result<String, String> {
+    pub(crate) fn pilot_build(&mut self, id: ShipId, system: usize, port: usize, number: u32, blueprint: &str) -> Result<String, String> {
         let (kind, modules) = blueprint_of(blueprint).ok_or_else(|| format!("NO BLUEPRINT '{blueprint}'"))?;
         let (blocks, cost, time) = self.land.quote_build(system, port, number, Party::Pilot(id), &modules)?;
         self.ledger.transfer(Party::Pilot(id), Party::World, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
@@ -68,7 +69,7 @@ impl Universe {
         self.pilot_set_up(crate::combat::PLAYER, works, setup, recipe)
     }
 
-    pub(crate) fn pilot_set_up(&mut self, id: usize, works: usize, setup: usize, recipe: Option<usize>) -> Result<String, String> {
+    pub(crate) fn pilot_set_up(&mut self, id: ShipId, works: usize, setup: usize, recipe: Option<usize>) -> Result<String, String> {
         self.markets.economy.set_up(&self.land, works, setup, recipe, Party::Pilot(id))?;
         let s = &self.markets.economy.works[works].setups[setup];
         let what = s.recipe().map_or("NOTHING".to_string(), |r| self.world.goods[r.makes].name.to_uppercase());

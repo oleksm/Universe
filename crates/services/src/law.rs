@@ -8,7 +8,7 @@
 
 use std::collections::HashMap;
 
-use universe_protocol::{BodyId, Cause};
+use universe_protocol::{ShipId, Cause};
 use universe_world::registry::Offence;
 
 /// How long a ship stays aggressed after hitting one that wasn't (s), where
@@ -18,8 +18,8 @@ pub const AGGRESSION: f64 = 600.0;
 /// A hit the core reported: who fired, who was struck, when.
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Hit {
-    pub shooter: BodyId,
-    pub target: BodyId,
+    pub shooter: ShipId,
+    pub target: ShipId,
     pub time: f64,
 }
 
@@ -27,7 +27,7 @@ pub struct Hit {
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Ruling {
     /// Who's aggressed, and until when.
-    pub ship: BodyId,
+    pub ship: ShipId,
     pub until: f64,
     /// What it came of: the hit event, and the hit itself.
     pub cause: Cause,
@@ -39,29 +39,29 @@ pub struct Ruling {
 /// An offence charged against a ship under its system's law.
 #[derive(Clone, Debug, PartialEq)]
 pub struct Charge {
-    pub ship: BodyId,
+    pub ship: ShipId,
     pub system: usize,
     pub offence: Offence,
     pub time: f64,
     /// What it came of (the event logged), and who suffered by it, if anyone.
     pub cause: Cause,
-    pub against: Option<BodyId>,
+    pub against: Option<ShipId>,
 }
 
 /// Who's aggressed, until when, and why; who's charged with what.
 #[derive(Clone, Debug, Default)]
 pub struct Law {
-    standing: HashMap<BodyId, Ruling>,
+    standing: HashMap<ShipId, Ruling>,
     /// Every ruling made, oldest first (the last `KEEP`).
     pub rulings: Vec<Ruling>,
     /// Every charge made, oldest first (the last `KEEP`).
     pub charges: Vec<Charge>,
     /// When each ship's record was last wiped (a new ship): its charges since are its own.
-    cleared: HashMap<BodyId, f64>,
+    cleared: HashMap<ShipId, f64>,
     /// Who is outside the law in which system, until when (outlawry is the pilot's, not the ship's).
-    outlaws: HashMap<(BodyId, usize), f64>,
+    outlaws: HashMap<(ShipId, usize), f64>,
     /// The bounties on heads, by system: credits to whoever brings the ship down.
-    pub bounties: HashMap<(BodyId, usize), f64>,
+    pub bounties: HashMap<(ShipId, usize), f64>,
 }
 
 /// Rulings kept on record.
@@ -69,17 +69,17 @@ const KEEP: usize = 1000;
 
 impl Law {
     /// Is `ship` fair game at `now`?
-    pub fn aggressed(&self, ship: BodyId, now: f64) -> bool {
+    pub fn aggressed(&self, ship: ShipId, now: f64) -> bool {
         self.standing.get(&ship).is_some_and(|r| now < r.until)
     }
 
     /// Until when `ship` is fair game, if it is at `now`.
-    pub fn until(&self, ship: BodyId, now: f64) -> Option<f64> {
+    pub fn until(&self, ship: ShipId, now: f64) -> Option<f64> {
         self.standing.get(&ship).map(|r| r.until).filter(|&u| now < u)
     }
 
     /// The ruling that made `ship` fair game, if it is at `now`.
-    pub fn standing(&self, ship: BodyId, now: f64) -> Option<&Ruling> {
+    pub fn standing(&self, ship: ShipId, now: f64) -> Option<&Ruling> {
         self.standing.get(&ship).filter(|r| now < r.until)
     }
 
@@ -100,36 +100,36 @@ impl Law {
 
     /// Declare `ship` fair game until `until` (by `cause`: a scenario, a test,
     /// a court).
-    pub fn declare(&mut self, ship: BodyId, until: f64, now: f64, cause: Cause) {
+    pub fn declare(&mut self, ship: ShipId, until: f64, now: f64, cause: Cause) {
         let evidence = Hit { shooter: ship, target: ship, time: now };
         self.record(Ruling { ship, until, cause, evidence, new: !self.aggressed(ship, now) });
     }
 
     /// Wipe the record (a new ship at `now`, the old one gone). The charges stay on the record.
-    pub fn forget(&mut self, ship: BodyId, now: f64) {
+    pub fn forget(&mut self, ship: ShipId, now: f64) {
         self.standing.remove(&ship);
         self.cleared.insert(ship, now);
     }
 
     /// Put `ship` outside the law of `system` until `until` (the later, if it already is).
-    pub fn outlaw(&mut self, ship: BodyId, system: usize, until: f64) {
+    pub fn outlaw(&mut self, ship: ShipId, system: usize, until: f64) {
         let e = self.outlaws.entry((ship, system)).or_insert(until);
         *e = e.max(until);
     }
 
     /// Is `ship` outside the law of `system` at `now`?
-    pub fn outlawed(&self, ship: BodyId, system: usize, now: f64) -> bool {
+    pub fn outlawed(&self, ship: ShipId, system: usize, now: f64) -> bool {
         self.outlaws.get(&(ship, system)).is_some_and(|&u| now < u)
     }
 
     /// Add `credits` to the bounty `system` has on `ship`.
-    pub fn post_bounty(&mut self, ship: BodyId, system: usize, credits: f64) {
+    pub fn post_bounty(&mut self, ship: ShipId, system: usize, credits: f64) {
         *self.bounties.entry((ship, system)).or_default() += credits;
     }
 
     /// `ship` brought down: the bounties on it, taken off the books (system, credits).
-    pub fn claim_bounties(&mut self, ship: BodyId) -> Vec<(usize, f64)> {
-        let mine: Vec<(BodyId, usize)> = self.bounties.keys().filter(|k| k.0 == ship).copied().collect();
+    pub fn claim_bounties(&mut self, ship: ShipId) -> Vec<(usize, f64)> {
+        let mine: Vec<(ShipId, usize)> = self.bounties.keys().filter(|k| k.0 == ship).copied().collect();
         mine.into_iter().filter_map(|k| self.bounties.remove(&k).map(|c| (k.1, c))).collect()
     }
 
@@ -141,7 +141,7 @@ impl Law {
     }
 
     /// The charges against `ship` as it is now (since its record was last wiped).
-    pub fn charges_of(&self, ship: BodyId) -> impl Iterator<Item = &Charge> {
+    pub fn charges_of(&self, ship: ShipId) -> impl Iterator<Item = &Charge> {
         let since = self.cleared.get(&ship).copied().unwrap_or(f64::NEG_INFINITY);
         self.charges.iter().filter(move |c| c.ship == ship && c.time >= since)
     }
@@ -163,16 +163,16 @@ mod tests {
     #[test]
     fn opening_fire_on_the_innocent_makes_the_shooter_fair_game_with_the_evidence() {
         let mut law = Law::default();
-        let r = law.hit(Hit { shooter: 1, target: 2, time: 10.0 }, true, Some(AGGRESSION), EV).expect("ruled");
+        let r = law.hit(Hit { shooter: ShipId(1), target: ShipId(2), time: 10.0 }, true, Some(AGGRESSION), EV).expect("ruled");
         // Unclaimed space: no law.
-        assert!(Law::default().hit(Hit { shooter: 1, target: 2, time: 10.0 }, true, None, EV).is_none());
-        assert!(law.aggressed(1, 10.0) && !law.aggressed(2, 10.0));
+        assert!(Law::default().hit(Hit { shooter: ShipId(1), target: ShipId(2), time: 10.0 }, true, None, EV).is_none());
+        assert!(law.aggressed(ShipId(1), 10.0) && !law.aggressed(ShipId(2), 10.0));
         assert_eq!(r.until, 10.0 + AGGRESSION);
         assert_eq!(r.cause, EV);
-        assert_eq!(r.evidence, Hit { shooter: 1, target: 2, time: 10.0 });
+        assert_eq!(r.evidence, Hit { shooter: ShipId(1), target: ShipId(2), time: 10.0 });
         assert!(r.new);
         // It lapses.
-        assert!(!law.aggressed(1, 10.0 + AGGRESSION + 1.0));
+        assert!(!law.aggressed(ShipId(1), 10.0 + AGGRESSION + 1.0));
     }
 
 }

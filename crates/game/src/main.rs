@@ -62,7 +62,7 @@ pub struct Spark {
     pub laser: bool,
     /// Our round or beam (and whose ship it struck).
     pub ours: bool,
-    pub target: usize,
+    pub target: universe_sim::ShipId,
 }
 
 /// Game seconds per real second, by default.
@@ -98,6 +98,17 @@ pub const STUDIO_CACHE: usize = usize::MAX;
 pub enum Who {
     Me,
     Craft(usize),
+}
+
+impl Who {
+    /// The ship with id `id` (a turret's: none).
+    pub fn of(id: universe_sim::ShipId) -> Option<Who> {
+        match id.craft_index() {
+            Some(i) => Some(Who::Craft(i)),
+            None if id.is_player() => Some(Who::Me),
+            None => None,
+        }
+    }
 }
 
 pub struct Message {
@@ -1214,11 +1225,11 @@ impl App {
     }
 
     /// A ship's name by its combat id.
-    fn ship_name(&self, id: usize) -> String {
-        match id {
-            universe_sim::PLAYER => "YOU".into(),
-            _ if universe_sim::world::turrets::turret_of(id).is_some() => "SAM TURRET".into(),
-            _ => self.v.crafts.get(id - 1).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
+    fn ship_name(&self, id: universe_sim::ShipId) -> String {
+        match Who::of(id) {
+            Some(Who::Me) => "YOU".into(),
+            Some(Who::Craft(i)) => self.v.crafts.get(i).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
+            None => "SAM TURRET".into(),
         }
     }
 

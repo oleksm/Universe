@@ -48,9 +48,9 @@ fn standing(app: &App) -> Option<Standing> {
         Anchor::Ship(id) => {
             // Where it's drawn, at the moment drawn: a radar fix is a moment
             // old, and at orbital speed a moment is hundreds of metres.
-            let c = app.contacts.iter().find(|c| c.blip.id + 1 == id)?;
-            let at = app.place(crate::Who::Craft(c.blip.id)).0;
-            let vel = app.v.crafts.get(c.blip.id).map_or(c.blip.velocity, |k| k.ship.velocity);
+            let c = app.contacts.iter().find(|c| c.blip.id == id)?;
+            let at = app.place(crate::Who::of(id)?).0;
+            let vel = id.craft_index().and_then(|i| app.v.crafts.get(i)).map_or(c.blip.velocity, |k| k.ship.velocity);
             (at, vel, c.name.to_uppercase())
         }
         Anchor::Place(target) => {

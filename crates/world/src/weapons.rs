@@ -13,6 +13,7 @@
 //! delivers its laser's power, spread thinner beyond its focus, heating the
 //! laser as it fires.
 
+use universe_protocol::ShipId;
 use std::collections::HashMap;
 
 use glam::{DQuat, DVec3};
@@ -125,8 +126,8 @@ pub struct Impact {
     pub system: usize,
     pub point: DVec3,
     /// Who fired, and who was hit (ship ids).
-    pub by: usize,
-    pub target: usize,
+    pub by: ShipId,
+    pub target: ShipId,
     pub laser: bool,
 }
 
@@ -156,7 +157,7 @@ pub struct Slug {
     /// Galaxy index of the system it's in.
     pub system: usize,
     /// Who fired it (the caller's ship id).
-    pub owner: usize,
+    pub owner: ShipId,
     pub projectile: Projectile,
     /// Seconds since it was fired.
     pub age: f64,
@@ -168,7 +169,7 @@ pub struct Slug {
 #[derive(Clone, Copy, Debug)]
 pub struct Beam {
     pub system: usize,
-    pub owner: usize,
+    pub owner: ShipId,
     pub from: DVec3,
     pub to: DVec3,
     /// It hit something (a ship or a body) at `to`.
@@ -178,7 +179,7 @@ pub struct Beam {
 /// A ship taking part in the combat phase: its id (the caller's), the system
 /// it's in, and its event feed.
 pub struct Armed<'a> {
-    pub id: usize,
+    pub id: ShipId,
     pub system: usize,
     pub ship: &'a mut Ship,
     pub events: &'a mut Vec<ShipEvent>,
@@ -198,7 +199,7 @@ impl World {
     /// The missiles in flight over `dt`: each homes on its target (where it
     /// is now, if it's still in normal space in the missile's system) and
     /// bursts on passing within its fuse. The blasts go into `hits`.
-    fn fly_missiles(&mut self, ships: &[Armed], dt: f64, hits: &mut Vec<(usize, f64, DVec3, usize, &'static str)>) {
+    fn fly_missiles(&mut self, ships: &[Armed], dt: f64, hits: &mut Vec<(ShipId, f64, DVec3, ShipId, &'static str)>) {
         if self.missiles.is_empty() {
             return;
         }
@@ -308,7 +309,7 @@ impl World {
         // guns and launchers, as their gunners have set them (what they
         // launch is where it is at the frame's end already: it flies from the next).
         drop(firing);
-        let mut hits: Vec<(usize, f64, DVec3, usize, &'static str)> = Vec::new(); // (ship id, joules, impulse, by, cause)
+        let mut hits: Vec<(ShipId, f64, DVec3, ShipId, &'static str)> = Vec::new(); // (ship id, joules, impulse, by, cause)
         universe_prof::time("sim/combat/weapons/missiles", || self.fly_missiles(ships, dt, &mut hits));
         universe_prof::time("sim/combat/weapons/turrets", || self.turrets_fire(dt, &mut fired));
         if self.slugs.is_empty() && lasers.is_empty() && hits.is_empty() {
@@ -320,10 +321,10 @@ impl World {
         let mut targets: HashMap<usize, Vec<Target>> = HashMap::new();
         for a in ships.iter() {
             if can_be_hit(a.ship) {
-                targets.entry(a.system).or_default().push(Target { id: a.id, position: a.ship.position, velocity: a.ship.velocity, radius: SHIP_RADIUS });
+                targets.entry(a.system).or_default().push(Target { id: a.id.0, position: a.ship.position, velocity: a.ship.velocity, radius: SHIP_RADIUS });
             }
         }
-        let index: HashMap<usize, usize> = ships.iter().enumerate().map(|(i, a)| (a.id, i)).collect();
+        let index: HashMap<ShipId, usize> = ships.iter().enumerate().map(|(i, a)| (a.id, i)).collect();
 
         // Slugs: each flies the frame against the ships near enough its
         // path to be met (side by side: they only read the world), then what
@@ -354,7 +355,7 @@ impl World {
                     let step = dt.min(SLUG_LIFETIME - slug.age).max(0.0);
                     slug.age += dt;
                     let bend = slug_bend(universe_physics::gravity(&sys.bodies, slug.projectile.position, positions), step);
-                    let near: Vec<Target> = targets.get(&slug.system).unwrap_or(&none).iter().filter(|tg| !(fresh && tg.id == slug.owner) && could_meet(&slug.projectile, tg, step, bend)).copied().collect();
+                    let near: Vec<Target> = targets.get(&slug.system).unwrap_or(&none).iter().filter(|tg| !(fresh && tg.id == slug.owner.0) && could_meet(&slug.projectile, tg, step, bend)).copied().collect();
                     step_projectile(&sys.bodies, positions, &mut slug.projectile, t - dt, step, &near)
                 })
                 .collect()
@@ -363,6 +364,7 @@ impl World {
         for (slug, outcome) in slugs.into_iter().zip(outcomes) {
             match outcome {
                 Some(Hit::Target { id, relative_velocity, point }) => {
+                    let id = ShipId(id);
                     let joules = 0.5 * slug.mass * relative_velocity.length_squared();
                     hits.push((id, joules, relative_velocity * slug.mass, slug.owner, "GUNFIRE"));
                     self.impacts.push(Impact { system: slug.system, point, by: slug.owner, target: id, laser: false });
@@ -384,10 +386,11 @@ impl World {
             let sys = self.system(system);
             sys.positions(t, &mut positions);
             let all = targets.get(&system).unwrap_or(&none);
-            let here: Vec<Target> = all.iter().filter(|tg| tg.id != owner).copied().collect();
+            let here: Vec<Target> = all.iter().filter(|tg| tg.id != owner.0).copied().collect();
             let found = ray(&sys.bodies, &positions, from, dir, l.range, t, &here);
             let (to, hit) = match found {
                 Some((Hit::Target { id, point, .. }, d)) => {
+                    let id = ShipId(id);
                     hits.push((id, l.power_at(d) * dt, DVec3::ZERO, owner, "LASER FIRE"));
                     self.impacts.push(Impact { system, point, by: owner, target: id, laser: true });
                     (from + dir * d, true)
@@ -430,7 +433,7 @@ mod tests {
         for s in [&mut *a, &mut *b] {
             s.position += s.velocity * dt;
         }
-        let mut ships = [Armed { id: 1, system, ship: a, events: ea }, Armed { id: 2, system, ship: b, events: eb }];
+        let mut ships = [Armed { id: ShipId(1), system, ship: a, events: ea }, Armed { id: ShipId(2), system, ship: b, events: eb }];
         world.combat(&mut ships, dt);
     }
 
