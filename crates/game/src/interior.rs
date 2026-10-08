@@ -284,8 +284,9 @@ pub struct Interior {
     /// The view: 0 as turned (in perspective); 1 front, 2 side, 3 top (flat, with
     /// the ship's sizes).
     view: u8,
-    /// TEST DRIVE under way (the design flown).
+    /// TEST DRIVE under way (the design flown), and its balance room before it.
     drive: Option<crate::test_drive::Drive>,
+    balance: Option<crate::test_drive::Balance>,
     /// FIT FRAME under way: for which plan, its news, and its stop.
     fitting: Option<(Plan, mpsc::Receiver<Fitting>, Arc<std::sync::atomic::AtomicBool>)>,
 }
@@ -5074,6 +5075,14 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
 }
 
 impl Interior {
+    /// The balance room opened (dev: `freefall --studio` with UNIVERSE_BALANCE: T
+    /// trims it if set to "trim").
+    pub fn balance_room(&mut self, trimmed: bool) {
+        let mut b = crate::test_drive::Balance::new(craft(self));
+        b.set_trim(trimmed);
+        self.balance = Some(b);
+    }
+
     /// TEST DRIVE started (dev: `freefall --studio` with UNIVERSE_DRIVE: its
     /// collective set there).
     pub fn test_drive(&mut self, collective: Option<f64>) {
@@ -6492,6 +6501,19 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     interior.spin += ctx.dt;
     interior.sync(&spec.key, spec.shape(), deckplans, 0.0);
     interior.refresh();
+    // The balance room: ENTER flies it, ESC back to the studio.
+    if let Some(b) = interior.balance.as_mut() {
+        match b.input(ctx) {
+            crate::test_drive::Asked::Fly => {
+                let craft = b.craft.clone();
+                interior.balance = None;
+                interior.drive = Some(crate::test_drive::Drive::new(craft));
+            }
+            crate::test_drive::Asked::Back => interior.balance = None,
+            crate::test_drive::Asked::Stay => {}
+        }
+        return true;
+    }
     // TEST DRIVE: flown; ESC back to the studio.
     if let Some(d) = interior.drive.as_mut() {
         if input.pressed(KeyCode::Escape) {
@@ -6599,7 +6621,7 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     }
     // TEST DRIVE (on the budgets panel, or CTRL+T): the design flown.
     if (input.button_pressed(MouseButton::Left) && inside(drive_button(), input.cursor)) || (ctrl && input.pressed(KeyCode::KeyT)) {
-        interior.test_drive(None);
+        interior.balance = Some(crate::test_drive::Balance::new(craft(interior)));
         return true;
     }
     // SET TARGETS (on the budgets panel): the job typed in.
@@ -7618,6 +7640,10 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
+    if let Some(b) = &interior.balance {
+        crate::test_drive::draw_balance(frame, b);
+        return;
+    }
     if let Some(d) = &interior.drive {
         crate::test_drive::draw(frame, d);
         return;

@@ -242,17 +242,7 @@ impl Drive {
             want += DVec3::new(up.z, 0.0, -up.x) * 2.0;
             want = want.clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
         }
-        let torques: Vec<DVec3> = c.actuators.iter().map(|a| a.at.cross(a.dir * a.thrust)).collect();
-        let most = |axis: DVec3| torques.iter().map(|t| t.dot(axis).abs()).fold(1e-9, f64::max);
-        let (mx, my, mz) = (most(DVec3::X), most(DVec3::Y), most(DVec3::Z));
-        c.actuators.iter().zip(&torques).map(|(a, t)| {
-            let lifts = a.dir.y > 0.5;
-            let base = if lifts { self.collective } else { 0.0 };
-            // (A lifting one turns by a share of its collective's room; a side one by
-            // all of its own.)
-            let gain = if lifts { 0.35 } else { 1.0 };
-            (base + gain * (want.x * t.x / mx + want.y * t.y / my + want.z * t.z / mz)).clamp(0.0, 1.0)
-        }).collect()
+        throttles(c, self.collective, want)
     }
 
     fn step(&mut self, dt: f64, command: DVec3) {
@@ -398,6 +388,258 @@ impl Drive {
         self.rot = (turn * self.rot).normalize();
         self.throttles = throttles;
     }
+}
+
+/// The pilot's keys as turning wished for, about the craft's axes (by the right
+/// hand: about x, + takes the nose (+z) down; about z, + takes the right side (+x)
+/// up): up lifts the nose, right drops the right side, Q yaws left.
+fn wished(command: DVec3) -> DVec3 {
+    DVec3::new(-command.x * 0.5, command.y * 0.5, -command.z * 0.5)
+}
+
+/// The throttles for a collective and a turning wished for: the collective on what
+/// pushes up; about each axis each actuator by its share of the most torque any
+/// gives about it (a lifting one by a share of its room, a side one by all its own).
+fn throttles(c: &Craft, collective: f64, want: DVec3) -> Vec<f64> {
+    let torques: Vec<DVec3> = c.actuators.iter().map(|a| a.at.cross(a.dir * a.thrust)).collect();
+    let most = |axis: DVec3| torques.iter().map(|t| t.dot(axis).abs()).fold(1e-9, f64::max);
+    let (mx, my, mz) = (most(DVec3::X), most(DVec3::Y), most(DVec3::Z));
+    c.actuators.iter().zip(&torques).map(|(a, t)| {
+        let lifts = a.dir.y > 0.5;
+        let base = if lifts { collective } else { 0.0 };
+        let gain = if lifts { 0.35 } else { 1.0 };
+        (base + gain * (want.x * t.x / mx + want.y * t.y / my + want.z * t.z / mz)).clamp(0.0, 1.0)
+    }).collect()
+}
+
+/// The push and turning of throttles (the craft's frame, about its middle of mass).
+fn push_and_turn(c: &Craft, throttles: &[f64]) -> (DVec3, DVec3) {
+    c.actuators.iter().zip(throttles).fold((DVec3::ZERO, DVec3::ZERO), |(f, t), (a, &th)| {
+        let push = a.dir * a.thrust * th;
+        (f + push, t + a.at.cross(push))
+    })
+}
+
+/// The collective that holds its weight up, its lifting thrust all at once (none:
+/// nothing lifts it).
+fn hover_collective(c: &Craft) -> Option<f64> {
+    let lift: f64 = c.actuators.iter().filter(|a| a.dir.y > 0.5).map(|a| a.thrust * a.dir.y).sum();
+    (lift > 0.0).then(|| c.mass * c.gravity / lift)
+}
+
+/// The trim that holds it level at a collective: the turning wished for about each
+/// axis that cancels what the throttles turn it by, solved through how each axis's
+/// wish turns it (yaw left out if nothing turns it about that axis).
+fn trim(c: &Craft, collective: f64) -> DVec3 {
+    let (_, t0) = push_and_turn(c, &throttles(c, collective, DVec3::ZERO));
+    let d = 0.05;
+    let column = |axis: DVec3| (push_and_turn(c, &throttles(c, collective, axis * d)).1 - t0) / d;
+    let mut j = DMat3::from_cols(column(DVec3::X), column(DVec3::Y), column(DVec3::Z));
+    let mut keep = DVec3::ONE;
+    for k in 0..3 {
+        if j.col(k).length() < 1e-6 {
+            *j.col_mut(k) = DVec3::ZERO;
+            j.col_mut(k)[k] = 1.0;
+            keep[k] = 0.0;
+        }
+    }
+    if j.determinant().abs() < 1e-12 {
+        return DVec3::ZERO;
+    }
+    (j.inverse() * -t0) * keep
+}
+
+/// The balance room: the craft on a stand, its middle of mass and its pushes shown,
+/// thrust tried all together, one at a time, or turned about each axis; the trim
+/// that holds it level, and how much of its turning that takes.
+pub struct Balance {
+    pub craft: Craft,
+    collective: f64,
+    command: DVec3,
+    single: Option<usize>,
+    trimmed: bool,
+    cam_yaw: f32,
+    cam_pitch: f32,
+    cam_dist: f32,
+}
+
+/// What the balance room's keys ask: stay, fly it, or go back to the studio.
+pub enum Asked {
+    Stay,
+    Fly,
+    Back,
+}
+
+impl Balance {
+    pub fn new(craft: Craft) -> Self {
+        let size = craft.boxes.iter().map(|b| b.1.distance(b.0)).fold(4.0f32, f32::max);
+        Balance { collective: hover_collective(&craft).unwrap_or(0.0).min(1.0), command: DVec3::ZERO, single: None, trimmed: false, cam_yaw: 0.7, cam_pitch: 0.3, cam_dist: size * 1.8, craft }
+    }
+
+    /// Trimmed or not (dev).
+    pub fn set_trim(&mut self, on: bool) {
+        self.trimmed = on;
+    }
+
+    pub fn input(&mut self, ctx: &Context) -> Asked {
+        let input = &ctx.input;
+        let key = |k: KeyCode| if input.down(k) { 1.0 } else { 0.0 };
+        if input.pressed(KeyCode::Escape) {
+            return Asked::Back;
+        }
+        if input.pressed(KeyCode::Enter) || input.pressed(KeyCode::NumpadEnter) {
+            return Asked::Fly;
+        }
+        let dt = f64::from(ctx.dt).min(0.05);
+        self.collective = (self.collective + (key(KeyCode::KeyW) - key(KeyCode::KeyS)) * 0.3 * dt).clamp(0.0, 1.0);
+        if input.pressed(KeyCode::KeyH) {
+            self.collective = hover_collective(&self.craft).unwrap_or(0.0).min(1.0);
+        }
+        self.command = DVec3::new(key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown), key(KeyCode::KeyQ) - key(KeyCode::KeyE), key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft));
+        if input.pressed(KeyCode::Tab) {
+            let n = self.craft.actuators.len();
+            self.single = match self.single {
+                None if n > 0 => Some(0),
+                Some(k) if k + 1 < n => Some(k + 1),
+                _ => None,
+            };
+        }
+        if input.pressed(KeyCode::KeyT) {
+            self.trimmed = !self.trimmed;
+        }
+        if input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right) {
+            self.cam_yaw -= input.mouse_delta.x * 0.008;
+            self.cam_pitch = (self.cam_pitch + input.mouse_delta.y * 0.008).clamp(-1.4, 1.4);
+        }
+        if input.scroll != 0.0 {
+            self.cam_dist = (self.cam_dist * 0.88f32.powf(input.scroll)).clamp(2.0, 400.0);
+        }
+        Asked::Stay
+    }
+
+    /// The throttles now: one actuator alone at the collective, or all mixed from the
+    /// collective, the keys and (T) the trim.
+    fn now(&self) -> (Vec<f64>, DVec3) {
+        let t = if self.trimmed { trim(&self.craft, self.collective) } else { DVec3::ZERO };
+        match self.single {
+            Some(k) => ((0..self.craft.actuators.len()).map(|i| if i == k { self.collective.max(0.5) } else { 0.0 }).collect(), DVec3::ZERO),
+            None => (throttles(&self.craft, self.collective, wished(self.command) + t), t),
+        }
+    }
+}
+
+/// The balance room drawn: the craft as it stands; its middle of mass (and its
+/// weight down from it); each push as an arrow its length; the pushes' sum along the
+/// line it acts on; and what the turning is and the trim takes.
+pub fn draw_balance(frame: &mut Frame, b: &Balance) {
+    let size = frame.size();
+    frame.hud_rect(Vec2::ZERO, size, Color([0.03, 0.04, 0.08, 1.0]));
+    let c = &b.craft;
+    let (sy, cy) = b.cam_yaw.sin_cos();
+    let (sp, cp) = b.cam_pitch.sin_cos();
+    let eye = Vec3::new(sy * cp, sp, cy * cp) * b.cam_dist;
+    let forward = (-eye).normalize();
+    let right = forward.cross(Vec3::Y).normalize_or_zero();
+    let up = right.cross(forward);
+    let focal = size.y * 0.5 / (0.85f32 * 0.5).tan();
+    let project = |p: Vec3| {
+        let v = p - eye;
+        let z = v.dot(forward);
+        (z > 0.2).then(|| size * 0.5 + Vec2::new(v.dot(right), -v.dot(up)) * (focal / z))
+    };
+    let seg = |frame: &mut Frame, a: Vec3, b: Vec3, col: Color| {
+        if let (Some(p), Some(q)) = (project(a), project(b)) {
+            frame.hud_line(p, q, col);
+        }
+    };
+    // (Arrows: a shaft and a head, `len` metres along `dir` from `at`.)
+    let arrow = |frame: &mut Frame, at: Vec3, dir: Vec3, len: f32, col: Color| {
+        let tip = at + dir * len;
+        seg(frame, at, tip, col);
+        let side = dir.cross(if dir.y.abs() < 0.9 { Vec3::Y } else { Vec3::X }).normalize_or_zero() * len.min(1.5) * 0.15;
+        seg(frame, tip, tip - dir * len.min(1.5) * 0.25 + side, col);
+        seg(frame, tip, tip - dir * len.min(1.5) * 0.25 - side, col);
+    };
+    // (The stand's floor under its lowest point.)
+    let floor = c.legs.iter().map(|l| l.foot.y as f32).chain(c.boxes.iter().map(|b| b.0.y)).fold(f32::MAX, f32::min);
+    for k in -8..=8 {
+        let o = k as f32 * 2.0;
+        seg(frame, Vec3::new(o, floor, -16.0), Vec3::new(o, floor, 16.0), Color([0.3, 0.5, 0.4, 0.25]));
+        seg(frame, Vec3::new(-16.0, floor, o), Vec3::new(16.0, floor, o), Color([0.3, 0.5, 0.4, 0.25]));
+    }
+    for (lo, hi) in &c.boxes {
+        let p = |x: bool, y: bool, z: bool| Vec3::new(if x { hi.x } else { lo.x }, if y { hi.y } else { lo.y }, if z { hi.z } else { lo.z });
+        for (a, bb) in [((0, 0, 0), (1, 0, 0)), ((0, 0, 0), (0, 1, 0)), ((0, 0, 0), (0, 0, 1)), ((1, 1, 1), (0, 1, 1)), ((1, 1, 1), (1, 0, 1)), ((1, 1, 1), (1, 1, 0)), ((1, 0, 0), (1, 1, 0)), ((1, 0, 0), (1, 0, 1)), ((0, 1, 0), (1, 1, 0)), ((0, 1, 0), (0, 1, 1)), ((0, 0, 1), (1, 0, 1)), ((0, 0, 1), (0, 1, 1))] {
+            seg(frame, p(a.0 == 1, a.1 == 1, a.2 == 1), p(bb.0 == 1, bb.1 == 1, bb.2 == 1), Color([0.6, 0.5, 0.85, 0.45]));
+        }
+    }
+    for [a, bb] in &c.members {
+        seg(frame, *a, *bb, Color([1.0, 0.7, 0.3, 0.35]));
+    }
+    // (The scale: the strongest push 4 m long.)
+    let strongest = c.actuators.iter().map(|a| a.thrust).fold(c.mass * c.gravity, f64::max);
+    let metres = |n: f64| (n / strongest * 4.0) as f32;
+    let (ts, trim_now) = b.now();
+    let (force, turn) = push_and_turn(c, &ts);
+    for (k, (a, &t)) in c.actuators.iter().zip(&ts).enumerate() {
+        let at = a.at.as_vec3();
+        let col = if b.single == Some(k) { Color([1.0, 1.0, 0.4, 1.0]) } else { Color([0.4, 0.85, 1.0, 0.95]) };
+        if t > 0.001 {
+            arrow(frame, at, a.dir.as_vec3(), metres(a.thrust * t).max(0.3), col);
+        }
+        if let Some(q) = project(at) {
+            frame.text_scaled(q + Vec2::new(6.0, 4.0), &format!("{:.0}%", t * 100.0), col, 0.55);
+        }
+    }
+    // (The middle of mass: a cross and a ring; its weight straight down.)
+    if let Some(q) = project(Vec3::ZERO) {
+        frame.hud_line(q - Vec2::new(10.0, 0.0), q + Vec2::new(10.0, 0.0), Color([1.0, 0.85, 0.3, 1.0]));
+        frame.hud_line(q - Vec2::new(0.0, 10.0), q + Vec2::new(0.0, 10.0), Color([1.0, 0.85, 0.3, 1.0]));
+        frame.hud_box(q - Vec2::splat(6.0), Vec2::splat(12.0), Color([1.0, 0.85, 0.3, 1.0]));
+        frame.text_scaled(q + Vec2::new(12.0, -14.0), "MIDDLE OF MASS", Color([1.0, 0.85, 0.3, 1.0]), 0.6);
+    }
+    arrow(frame, Vec3::ZERO, Vec3::NEG_Y, metres(c.mass * c.gravity), Color([1.0, 0.85, 0.3, 0.8]));
+    // (The pushes' sum, along the line it acts on: through the point of that line
+    // nearest the middle (F x M / F^2).)
+    let f2 = force.length_squared();
+    let through = if f2 > 1e-6 { force.cross(turn) / f2 } else { DVec3::ZERO };
+    if f2 > 1e-6 {
+        let dir = force.normalize().as_vec3();
+        let p = through.as_vec3();
+        seg(frame, p - dir * 3.0, p, Color([1.0, 0.4, 0.9, 0.6]));
+        arrow(frame, p, dir, metres(force.length()), Color([1.0, 0.4, 0.9, 1.0]));
+        if through.length() > 0.02 {
+            seg(frame, Vec3::ZERO, p, Color([1.0, 0.4, 0.9, 0.8]));
+        }
+    }
+    // (What it reads.)
+    let weight = c.mass * c.gravity;
+    let hover = hover_collective(c);
+    let trim_needed = hover.map(|h| trim(c, h.min(1.0)));
+    let use_of = |u: f64| u.abs() / 0.5 * 100.0;
+    let verdict = match (hover, trim_needed) {
+        (None, _) => ("NOTHING LIFTS IT: NO HOVER TO BALANCE".to_string(), false),
+        (Some(h), _) if h > 1.0 => (format!("TOO HEAVY TO HOVER: IT NEEDS {:.0}% OF ITS LIFT", h * 100.0), false),
+        (Some(_), Some(t)) => {
+            let most = use_of(t.x).max(use_of(t.z));
+            (format!("TO HOVER LEVEL IT TRIMS {:.0}% OF ITS PITCH AND {:.0}% OF ITS ROLL{}", use_of(t.x), use_of(t.z), if most > 100.0 { ": MORE THAN IT HAS, IT CAN'T HOLD LEVEL" } else if most > 50.0 { ": LITTLE LEFT TO FLY WITH" } else { ": WELL IN HAND" }), most <= 50.0)
+        }
+        _ => (String::new(), false),
+    };
+    let lines = [
+        format!("BALANCE ROOM - {}", c.name.to_uppercase()),
+        format!("MASS {:.2} T   WEIGHT {:.1} KN AT {:.2} G", c.mass / 1000.0, weight / 1000.0, c.gravity / 9.80665),
+        format!("COLLECTIVE {:.0}%{}   HOVERS AT {}", b.collective * 100.0, b.single.map_or(String::new(), |k| format!("   ONE ALONE: NUMBER {}", k + 1)), hover.map_or("-".into(), |h| format!("{:.0}%", h * 100.0))),
+        format!("PUSH {:.1} KN UP, {:.1} KN ACROSS   ITS LINE PASSES {:.2} M FROM THE MIDDLE ({:+.2} ACROSS, {:+.2} ALONG)", force.y / 1000.0, (force.x.powi(2) + force.z.powi(2)).sqrt() / 1000.0, DVec3::new(through.x, 0.0, through.z).length(), through.x, through.z),
+        format!("TURNING: PITCH {:+.1} KN M (NOSE {}), ROLL {:+.1} KN M, YAW {:+.1} KN M", -turn.x / 1000.0, if turn.x > 0.0 { "DOWN" } else { "UP" }, turn.z / 1000.0, turn.y / 1000.0),
+        format!("TRIM {}: PITCH {:+.0}%, ROLL {:+.0}%, YAW {:+.0}% OF WHAT IT HAS", if b.trimmed { "ON (T)" } else { "OFF (T)" }, use_of(trim_now.x) * trim_now.x.signum(), use_of(trim_now.z) * trim_now.z.signum(), use_of(trim_now.y) * trim_now.y.signum()),
+    ];
+    frame.hud_rect(Vec2::new(10.0, 10.0), Vec2::new(620.0, 30.0 + lines.len() as f32 * 12.0), Color([0.02, 0.06, 0.13, 0.88]));
+    for (k, l) in lines.iter().enumerate() {
+        frame.text_scaled(Vec2::new(16.0, 14.0 + k as f32 * 12.0), l, if k == 0 { Color([1.0, 0.85, 0.4, 1.0]) } else { Color([0.5, 1.0, 0.6, 0.95]) }, 0.62);
+    }
+    frame.text_scaled(Vec2::new(16.0, 16.0 + lines.len() as f32 * 12.0), &verdict.0, if verdict.1 { Color([0.4, 1.0, 0.5, 1.0]) } else { Color([1.0, 0.6, 0.3, 1.0]) }, 0.66);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "W / S COLLECTIVE - H TO HOVER - ARROWS PITCH AND ROLL, Q / E YAW - TAB ONE AT A TIME - T TRIM - DRAG TO LOOK - ENTER FLY IT - ESC BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
 }
 
 /// The flight drawn: the ground's grid round it, the craft's boxes and members as

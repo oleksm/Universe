@@ -31,6 +31,9 @@ impl StudioOnly {
         if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
             interior.use_tool(&t);
         }
+        if let Ok(how) = std::env::var("UNIVERSE_BALANCE") {
+            interior.balance_room(how == "trim");
+        }
         if let Ok(c) = std::env::var("UNIVERSE_DRIVE") {
             interior.test_drive(c.parse().ok());
         }
