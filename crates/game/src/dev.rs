@@ -300,7 +300,7 @@ fn s_settlement(app: &mut App, _name: &str, c: &Ctx) {
     let body = sys.spaceports[port].body;
     let r = sys.bodies[body].rail.radius;
     let taken = |k: usize| {
-        let d = universe_sim::world::spaceport::pad_direction(&sys, port, k);
+        let d = universe_sim::world::spaceport::pad_direction(sys, port, k);
         u.vessels.crafts().iter().any(|c| matches!(c.ship.state, ShipState::Landed { body: b, local_position, .. } if b == body && local_position.normalize().angle_between(d) * r < 60.0))
     };
     let pad = (0..universe_sim::world::spaceport::PADS).find(|&k| !taken(k)).unwrap_or(0);
@@ -483,7 +483,7 @@ fn s_approach(app: &mut App, name: &str, c: &Ctx) {
     // Cleared to dock, flying manually. "approach": 2.5 km above the deck, a little off, facing in.
     // "lost": facing away from the station, to show the off-screen marker.
     app.mode = Mode::Pilot;
-    let f = StationFrame::new(&sys, station, t, &positions);
+    let f = StationFrame::new(sys, station, t, positions);
     let side = f.rotation * DVec3::X;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.pad(universe_sim::world::spaceport::CENTER_PAD) + f.up() * 2500.0 + side * 180.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity - f.up() * 30.0;
@@ -534,7 +534,7 @@ fn s_offcourse(app: &mut App, _name: &str, c: &Ctx) {
     let station = c.station;
     // Cleared, but 6 km off to the side and drifting sideways at 40 m/s.
     app.mode = Mode::Pilot;
-    let f = StationFrame::new(&sys, station, t, &positions);
+    let f = StationFrame::new(sys, station, t, positions);
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.center + f.up() * 2000.0 + f.rotation * DVec3::X * 6000.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity + f.rotation * DVec3::Z * 40.0;
     let look = (f.center - app.engine.universe().vessels[universe_sim::PLAYER].ship.position).normalize();
@@ -676,7 +676,7 @@ fn s_landing(app: &mut App, name: &str, c: &Ctx) {
     // Target the spaceport on the station's planet and get landing clearance.
     app.mode = Mode::Pilot;
     let port = sys.spaceports.iter().position(|p| p.body == planet).expect("spaceport on the station's planet");
-    let pad = PadFrame::new(&sys, port, t, &positions);
+    let pad = PadFrame::new(sys, port, t, positions);
     if name == "padview" {
         // 12 km above and 6 km beside the pad, drifting, belly down.
         app.engine.universe().vessels[universe_sim::PLAYER].ship.position = pad.pad + pad.up * 12_000.0 + pad.up.any_orthonormal_vector() * 6000.0;
@@ -727,7 +727,7 @@ fn s_holding(app: &mut App, _name: &str, c: &Ctx) {
             p.avionics.pirate = false;
         }
     }
-    let pad = PadFrame::new(&sys, port, t, &positions);
+    let pad = PadFrame::new(sys, port, t, positions);
     u.vessels[universe_sim::PLAYER].ship.position = pad.pad + pad.up * 20_000.0;
     u.vessels[universe_sim::PLAYER].ship.velocity = pad.frame_velocity(u.vessels[universe_sim::PLAYER].ship.position);
     u.step_world(1.0 / 60.0, 1.0, &Controls::default());
@@ -817,7 +817,7 @@ fn s_beltpick(app: &mut App, name: &str, c: &Ctx) {
     let main = sys.belts.iter().find(|b| b.kind == universe_sim::world::belts::BeltKind::Main).expect("a main belt");
     let from = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
     let star = positions[0];
-    let found = universe_sim::world::belts::survey(&sys, from, t, universe_sim::world::belts::Survey::radar());
+    let found = universe_sim::world::belts::survey(sys, from, t, universe_sim::world::belts::Survey::radar());
     let f = found.iter().find(|f| f.diameter > 30.0).expect("a belt rock in sight").clone();
     let bodies = sys.field_bodies(f.field);
     let mut pos = Vec::new();
@@ -940,7 +940,7 @@ fn s_gate(app: &mut App, name: &str, c: &Ctx) {
     app.mode = Mode::Pilot;
     let (dest, _) = app.engine.universe().gate_links_of(home)[0].clone();
     let g = sys.gate_to(dest).unwrap();
-    let f = GateFrame::new(&sys, g, t, &positions);
+    let f = GateFrame::new(sys, g, t, positions);
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.center + f.axis() * 8000.0 + (f.rotation * DVec3::X) * 2500.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity;
     let look = (f.center - app.engine.universe().vessels[universe_sim::PLAYER].ship.position).normalize();
@@ -1043,7 +1043,7 @@ fn s_gateflash(app: &mut App, _name: &str, c: &Ctx) {
     app.mode = Mode::Pilot;
     let g = sys.bodies.iter().position(|b| b.kind == BodyKind::Gate).expect("a gate");
     let dest = sys.bodies[g].link.expect("linked");
-    let f = GateFrame::new(&sys, g, t, &positions);
+    let f = GateFrame::new(sys, g, t, positions);
     let u = app.engine.universe();
     u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
     u.vessels[universe_sim::PLAYER].ship.position = f.center + f.axis() * 9_000.0 + f.rotation * DVec3::X * 2_500.0;
@@ -1093,7 +1093,7 @@ fn s_deckshadowside(app: &mut App, name: &str, c: &Ctx) {
     app.engine.universe().world.time = at_t;
     sys.positions(at_t, &mut pos);
     log::info!("scenario {name}: sun in the station's frame {:.2}", b.rotation(at_t).inverse() * (pos[star] - pos[station]).normalize());
-    let f = StationFrame::new(&sys, station, at_t, &pos);
+    let f = StationFrame::new(sys, station, at_t, &pos);
     let at = f.world(eye);
     app.mode = Mode::Pilot;
     let u = app.engine.universe();
@@ -1114,7 +1114,7 @@ fn s_sunedge0(app: &mut App, name: &str, c: &Ctx) {
     let station = sys.station().expect("home station");
     let star = sys.bodies.iter().position(|b| b.kind == universe_sim::BodyKind::Star).expect("a star");
     let t = app.engine.universe().world.time;
-    let f = StationFrame::new(&sys, station, t, &positions);
+    let f = StationFrame::new(sys, station, t, positions);
     let sun = f.rotation.inverse() * (positions[star] - f.center).normalize();
     let off = match name { "sunedge0" => -4.0, "sunedge1" => 0.0, _ => 4.0 };
     let edge = DVec3::new(0.0, 150.0 + off, universe_sim::world::station::DECK_FROM);
@@ -1190,7 +1190,7 @@ fn s_platform(app: &mut App, name: &str, c: &Ctx) {
     // (or, "platformdeck", from just above the deck), looking at it.
     app.mode = Mode::Pilot;
     let station = sys.station().expect("home station");
-    let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+    let f = StationFrame::new(sys, station, app.engine.universe().world.time, positions);
     let at = if name == "platform" { f.world(DVec3::new(900.0, 450.0, 1100.0)) } else { f.world(DVec3::new(250.0, -40.0, 520.0)) };
     let u = app.engine.universe();
     u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
@@ -1206,7 +1206,7 @@ fn s_orbit(app: &mut App, _name: &str, c: &Ctx) {
     // 7 km off the home station, orbiting it at 5 km.
     app.mode = Mode::Pilot;
     let station = sys.station().expect("home station");
-    let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+    let f = StationFrame::new(sys, station, app.engine.universe().world.time, positions);
     let side = f.up().any_orthonormal_vector();
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = f.center + side * 7_000.0;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = f.velocity;
@@ -1222,7 +1222,7 @@ fn s_orbitship(app: &mut App, name: &str, c: &Ctx) {
     // stopped, its engine on low), orbiting it at 1 km.
     app.mode = Mode::Pilot;
     let station = sys.station().expect("home station");
-    let f = StationFrame::new(&sys, station, app.engine.universe().world.time, &positions);
+    let f = StationFrame::new(sys, station, app.engine.universe().world.time, positions);
     let side = f.up().any_orthonormal_vector();
     let u = app.engine.universe();
     let at = f.center + side * 40_000.0;
@@ -1304,7 +1304,7 @@ fn s_taxiwatch(app: &mut App, _name: &str, c: &Ctx) {
     // Facing the hangar.
     if let ShipState::Landed { body, local_position, .. } = u.vessels[universe_sim::PLAYER].ship.state {
         let here = local_position.normalize();
-        let hangar = universe_sim::world::spaceport::hangar_direction(&sys, port);
+        let hangar = universe_sim::world::spaceport::hangar_direction(sys, port);
         u.vessels[universe_sim::PLAYER].ship.state = ShipState::Landed { body, local_position, local_orientation: universe_sim::ship::upright(here, hangar - here) };
     }
     u.vessels[universe_sim::craft_id(0)].ship = u.world.ship_on(home, universe_sim::world::Facility::Spaceport(port), 13);
@@ -1325,7 +1325,7 @@ fn s_taxiwatch(app: &mut App, _name: &str, c: &Ctx) {
     // Our ship 1.2 km over the port, nose down at the pads and the hangar.
     let t = u.world.time;
     let pos = u.world.rails_now(home);
-    let pad = PadFrame::new(&sys, port, t, &pos);
+    let pad = PadFrame::new(sys, port, t, &pos);
     u.vessels[universe_sim::PLAYER].ship.state = ShipState::Flying;
     u.vessels[universe_sim::PLAYER].ship.position = pad.pad + pad.up * 1_200.0;
     u.vessels[universe_sim::PLAYER].ship.velocity = pad.frame_velocity(u.vessels[universe_sim::PLAYER].ship.position);
