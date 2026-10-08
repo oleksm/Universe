@@ -108,8 +108,9 @@ pub struct Drive {
     /// The mouse taken to steer (a click in the view, as the game's flight: up and
     /// down pitch, aside yaws); ESC gives it back to look round with.
     grabbed: bool,
-    /// The pitch the mouse has set (rad, nose up +): held till moved back.
-    mouse_pitch: f64,
+    /// The attitude the flight computer holds: the pilot turns it (the mouse, the
+    /// keys), it flies the craft there; L levels it.
+    target: DQuat,
     /// On the ground (any foot touching) last step; the hardest touchdown so far
     /// (m/s) and the most any leg took (N, which).
     grounded: bool,
@@ -148,7 +149,7 @@ impl Drive {
             power: 0.0,
             pushes: vec![0.0; n],
             grabbed: false,
-            mouse_pitch: 0.0,
+            target: DQuat::IDENTITY,
             grounded: true,
             hardest: 0.0,
             leg_most: (0.0, 0),
@@ -221,6 +222,7 @@ impl Drive {
         // (G: manual thrusters, the flight computer off; again, back on: the game's key.)
         if input.pressed(KeyCode::KeyG) {
             self.assist = !self.assist;
+            self.target = self.rot;
             self.events.retain(|e| !e.contains("FLIGHT COMPUTER"));
             self.say(if self.assist { "FLIGHT COMPUTER ON".into() } else { "MANUAL THRUSTERS: FLIGHT COMPUTER OFF; 1-9 FIRE EACH ENGINE".into() });
         }
@@ -232,7 +234,9 @@ impl Drive {
             self.air = (self.air + 1) % AIRS.len();
         }
         if input.pressed(KeyCode::KeyR) {
+            let grabbed = self.grabbed;
             *self = Drive::new(self.craft.clone());
+            self.grabbed = grabbed;
             return;
         }
         // (W and S move the collective; X cuts it.)
@@ -247,16 +251,22 @@ impl Drive {
         if clicked {
             self.grabbed = true;
         }
-        let mut command = DVec3::new(
+        let command = DVec3::new(
             key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown),
             key(KeyCode::KeyQ) - key(KeyCode::KeyE),
             key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft) + key(KeyCode::KeyD) - key(KeyCode::KeyA),
         );
         if self.grabbed && !clicked {
+            // (The mouse turns the attitude held, a degree for every 4 px: up and down
+            // pitch (up: nose up), aside yaws; no limit.)
             let m = input.mouse_delta;
-            // (Up and down set the pitch it holds, a degree for every 4 px; aside yaws.)
-            self.mouse_pitch = (self.mouse_pitch - f64::from(m.y) * 0.25f64.to_radians()).clamp(-MOST_TILT, MOST_TILT);
-            command.y -= f64::from(m.x) * 0.08;
+            let k = 0.25f64.to_radians();
+            self.target = (self.target * DQuat::from_scaled_axis(DVec3::new(f64::from(m.y) * k, -f64::from(m.x) * k, 0.0))).normalize();
+        }
+        if input.pressed(KeyCode::KeyL) {
+            // (Level: upright, its heading kept.)
+            let nose = self.rot * DVec3::Z;
+            self.target = DQuat::from_rotation_y(nose.x.atan2(nose.z));
         }
         let command = command.clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
         if !self.grabbed && (input.button_down(MouseButton::Left) || input.button_down(MouseButton::Right)) {
@@ -290,27 +300,29 @@ impl Drive {
                 (base + if h { if a.dir.y > 0.5 { 0.33 } else { 1.0 } } else { 0.0 }).clamp(0.0, 1.0)
             }).collect();
         }
-        // (The flight computer, flying to an attitude (angle mode): the keys tilt it
-        // toward up to MOST_TILT while held (level when let go), the mouse sets a
-        // pitch it holds; it turns the craft there, damping the turning, and shares
-        // that out among the engines (turning about the craft's axes by the right
-        // hand: about x, + takes the nose down; about z, + takes the right side up);
-        // tilted, it adds collective to hold the height.)
-        let pitch = (self.rot * DVec3::Z).y.clamp(-1.0, 1.0).asin();
-        let roll = (self.rot * DVec3::X).y.clamp(-1.0, 1.0).asin();
-        let target_pitch = (command.x * MOST_TILT + self.mouse_pitch).clamp(-MOST_TILT, MOST_TILT);
-        let target_roll = -command.z * MOST_TILT;
-        let want = DVec3::new(
-            -(target_pitch - pitch) * 1.6 - body_spin.x * 1.2,
-            command.y * 0.5 - body_spin.y * 1.2,
-            (target_roll - roll) * 1.6 - body_spin.z * 1.2,
-        )
-        .clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
-        let tilt = (self.rot * DVec3::Y).y.clamp(0.6, 1.0);
+        // (The flight computer, holding an attitude: it turns the craft toward the
+        // attitude held (the turn between them, about the craft's own axes, by the
+        // right hand), damping the turning, and shares that out among the engines;
+        // leaning, it adds collective to hold the height (to half as much again,
+        // none past sideways).)
+        let off = self.target * self.rot.inverse();
+        let (axis, angle) = off.to_axis_angle();
+        let angle = if angle > std::f64::consts::PI { angle - std::f64::consts::TAU } else { angle };
+        let turn = self.rot.inverse() * (axis * angle);
+        let want = (turn * 1.6 - body_spin * 1.2).clamp(DVec3::splat(-1.0), DVec3::splat(1.0));
+        let _ = command;
+        let up = (self.rot * DVec3::Y).y;
+        let tilt = if up > 0.0 { up.max(1.0 / 1.6) } else { 1.0 };
         throttles(c, (self.collective / tilt).min(1.0), want)
     }
 
     fn step(&mut self, dt: f64, command: DVec3) {
+        // (Held keys turn the attitude held at KEY_TURN: up lifts the nose, right
+        // drops the pilot's right side (facing the nose, +z, with +y up, that's -x:
+        // a turn about +z), Q yaws left.)
+        if self.assist && command != DVec3::ZERO {
+            self.target = (self.target * DQuat::from_scaled_axis(DVec3::new(-command.x, command.y, command.z) * KEY_TURN * dt)).normalize();
+        }
         let g = self.craft.gravity;
         let h = self.pos.y;
         let rho = self.density(h);
@@ -458,14 +470,15 @@ impl Drive {
     }
 }
 
-/// The most the flight computer tilts the craft (rad): 40 degrees.
-const MOST_TILT: f64 = 0.698;
+/// How fast held keys turn the attitude the flight computer holds (rad/s): 90
+/// degrees a second.
+const KEY_TURN: f64 = std::f64::consts::FRAC_PI_2;
 
 /// The pilot's keys as turning wished for, about the craft's axes (by the right
-/// hand: about x, + takes the nose (+z) down; about z, + takes the right side (+x)
-/// up): up lifts the nose, right drops the right side, Q yaws left.
+/// hand: about x, + takes the nose (+z) down; about z, + takes +x, the pilot's left
+/// side, up): up lifts the nose, right drops the pilot's right side, Q yaws left.
 fn wished(command: DVec3) -> DVec3 {
-    DVec3::new(-command.x * 0.5, command.y * 0.5, -command.z * 0.5)
+    DVec3::new(-command.x * 0.5, command.y * 0.5, command.z * 0.5)
 }
 
 /// The throttles for a collective and a turning wished for: the collective on what
@@ -915,7 +928,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         frame.text_scaled(Vec2::new(x - 12.0, mid - h * 0.5 - 14.0), "CLIMB", Color([0.75, 0.88, 1.0, 0.85]), 0.6);
         frame.text_scaled(Vec2::new(x - 24.0, mid + h * 0.5 + 18.0), &format!("{:+.1} M/S", d.vel.y), c, 0.7);
     }
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "CLICK: THE MOUSE STEERS (PITCH, YAW) - W/S COLLECTIVE, X CUT - A/D ROLL - Q/E YAW - G MANUAL, 1-9 ENGINES - Z AIR - R RESTART - ESC: MOUSE, THEN BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "CLICK: MOUSE STEERS - W/S COLLECTIVE, X CUT - ARROWS PITCH, A/D ROLL, Q/E YAW - L LEVEL - G MANUAL, 1-9 - Z AIR - R RESTART - ESC: MOUSE, BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
 }
 
 #[cfg(test)]
