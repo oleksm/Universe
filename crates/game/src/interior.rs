@@ -284,9 +284,8 @@ pub struct Interior {
     /// The view: 0 as turned (in perspective); 1 front, 2 side, 3 top (flat, with
     /// the ship's sizes).
     view: u8,
-    /// TEST DRIVE under way (the design flown), and where its button was drawn.
+    /// TEST DRIVE under way (the design flown).
     drive: Option<crate::test_drive::Drive>,
-    drive_rect: std::cell::Cell<(Vec2, Vec2)>,
     /// FIT FRAME under way: for which plan, its news, and its stop.
     fitting: Option<(Plan, mpsc::Receiver<Fitting>, Arc<std::sync::atomic::AtomicBool>)>,
 }
@@ -4518,7 +4517,7 @@ const TOOLBAR: [(&str, &str, Tool); 5] = [("V", "SELECT", Tool::Look), ("P", "PA
 
 /// Where toolbar button `k` is (one row along the top).
 fn button(k: usize) -> (Vec2, Vec2) {
-    (Vec2::new(12.0 + k as f32 * 78.0, 30.0), Vec2::new(75.0, 16.0))
+    (Vec2::new(12.0 + k as f32 * 72.0, 30.0), Vec2::new(70.0, 16.0))
 }
 
 fn button_at(q: Vec2) -> Option<Tool> {
@@ -4537,14 +4536,19 @@ fn walk_button() -> (Vec2, Vec2) {
     button(TOOLBAR.len() + HISTORY.len())
 }
 
-/// SAVE (0), OPEN (1) and NEW (2), after WALK HERE.
+/// TEST DRIVE, after WALK.
+fn drive_button() -> (Vec2, Vec2) {
+    button(TOOLBAR.len() + HISTORY.len() + 1)
+}
+
+/// SAVE (0), OPEN (1) and NEW (2), after TEST DRIVE.
 fn file_button(k: usize) -> (Vec2, Vec2) {
-    button(TOOLBAR.len() + HISTORY.len() + 1 + k)
+    button(TOOLBAR.len() + HISTORY.len() + 2 + k)
 }
 
 /// REACH, after SAVE, OPEN and NEW.
 fn reach_button() -> (Vec2, Vec2) {
-    button(TOOLBAR.len() + HISTORY.len() + 4)
+    button(TOOLBAR.len() + HISTORY.len() + 5)
 }
 
 /// A dialog's rows (`n` of them, the last CANCEL), in a box in the middle: the box,
@@ -6594,7 +6598,7 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
         return true;
     }
     // TEST DRIVE (on the budgets panel, or CTRL+T): the design flown.
-    if (input.button_pressed(MouseButton::Left) && inside(interior.drive_rect.get(), input.cursor)) || (ctrl && input.pressed(KeyCode::KeyT)) {
+    if (input.button_pressed(MouseButton::Left) && inside(drive_button(), input.cursor)) || (ctrl && input.pressed(KeyCode::KeyT)) {
         interior.test_drive(None);
         return true;
     }
@@ -7649,6 +7653,11 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             draw_cell(frame, p, c, "F", "WALK", lamp);
         }
         {
+            let (p, c) = drive_button();
+            let lamp = if inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
+            draw_cell(frame, p, c, "^T", "DRIVE", lamp);
+        }
+        {
             let (p, c) = reach_button();
             let lamp = if interior.reach_job.is_some() { Lamp::Busy } else if inside((p, c), interior.cursor) { Lamp::On } else { Lamp::Off };
             draw_cell(frame, p, c, "", if interior.reach_job.is_some() { "CHECKING" } else { "REACH" }, lamp);
@@ -8623,7 +8632,6 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     // amber; what fails, in red.
     interior.budget_rect.set((Vec2::ZERO, Vec2::ZERO));
     interior.targets_rect.set((Vec2::ZERO, Vec2::ZERO));
-    interior.drive_rect.set((Vec2::ZERO, Vec2::ZERO));
     if !plan.blocks.is_empty() || !plan.groups.is_empty() {
         let b = budget(interior);
         let list = issues(interior, &b.faults);
@@ -8632,12 +8640,6 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         frame.hud_box(p, c, PLANE.scale(1.2));
         frame.text_scaled(p + Vec2::new(6.0, 4.0), "BUDGETS AND CHECKS", LABEL.scale(0.8), 0.6);
         // (SET TARGETS: at the header's end.)
-        let db = (Vec2::new(p.x + c.x - 196.0, p.y + 2.0), Vec2::new(92.0, 11.0));
-        interior.drive_rect.set(db);
-        let lit = inside(db, interior.cursor);
-        frame.hud_rect(db.0, db.1, if lit { Color([0.15, 0.2, 0.35, 0.95]) } else { Color([0.05, 0.1, 0.2, 0.95]) });
-        frame.hud_box(db.0, db.1, PLANE.scale(1.2));
-        frame.text_scaled(db.0 + Vec2::new(5.0, 2.0), "TEST DRIVE ^T", LABEL, 0.55);
         let tb = (Vec2::new(p.x + c.x - 96.0, p.y + 2.0), Vec2::new(92.0, 11.0));
         interior.targets_rect.set(tb);
         let lit = inside(tb, interior.cursor);
