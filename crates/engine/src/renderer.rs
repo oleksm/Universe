@@ -87,6 +87,43 @@ struct Globes {
 }
 
 impl Globes {
+    /// The globe maps (a cube array, a layer per world in view) and their colours, empty: with
+    /// the views and sampler the scene reads them by.
+    fn new(device: &wgpu::Device) -> (Self, wgpu::TextureView, wgpu::TextureView, wgpu::Sampler) {
+        let globe_texture = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("globe maps"),
+            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
+            mip_level_count: GLOBE_MIPS,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rg16Float,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let globe_view = globe_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
+        let globe_colors = device.create_texture(&wgpu::TextureDescriptor {
+            label: Some("globe colours"),
+            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
+            mip_level_count: GLOBE_MIPS,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: wgpu::TextureFormat::Rgba8UnormSrgb,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        });
+        let globe_colors_view = globe_colors.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
+        let globe_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+            label: Some("globe maps"),
+            mag_filter: wgpu::FilterMode::Linear,
+            min_filter: wgpu::FilterMode::Linear,
+            mipmap_filter: wgpu::MipmapFilterMode::Linear,
+            ..Default::default()
+        });
+        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] }, globe_view, globe_colors_view, globe_sampler)
+    }
+}
+
+impl Globes {
     /// Whether `map` is in a layer already.
     fn resident(&self, map: &crate::model::GlobeMap) -> bool {
         self.layers.iter().any(|l| matches!(l, Some((id, _)) if *id == map.id()))
@@ -644,35 +681,7 @@ impl Renderer {
         let sunprobe = crate::sunprobe::SunProbe::new(device);
         let gputime = crate::gputime::GpuTime::new(device, &gpu.queue);
         // Globe maps: a cube array, a layer per world in view (see `GlobeMap`).
-        let globe_texture = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("globe maps"),
-            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
-            mip_level_count: GLOBE_MIPS,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rg16Float,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-        let globe_view = globe_texture.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
-        let globe_colors = device.create_texture(&wgpu::TextureDescriptor {
-            label: Some("globe colours"),
-            size: wgpu::Extent3d { width: GLOBE_SIZE, height: GLOBE_SIZE, depth_or_array_layers: 6 * GLOBE_LAYERS },
-            mip_level_count: GLOBE_MIPS,
-            sample_count: 1,
-            dimension: wgpu::TextureDimension::D2,
-            format: wgpu::TextureFormat::Rgba8UnormSrgb,
-            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-            view_formats: &[],
-        });
-        let globe_colors_view = globe_colors.create_view(&wgpu::TextureViewDescriptor { dimension: Some(wgpu::TextureViewDimension::CubeArray), ..Default::default() });
-        let globe_sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-            label: Some("globe maps"),
-            mag_filter: wgpu::FilterMode::Linear,
-            min_filter: wgpu::FilterMode::Linear,
-            mipmap_filter: wgpu::MipmapFilterMode::Linear,
-            ..Default::default()
-        });
+        let (globes, globe_view, globe_colors_view, globe_sampler) = Globes::new(device);
         let shadow_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
             label: Some("shadow map"),
             layout: &shadow_layout,
@@ -685,7 +694,6 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 6, resource: wgpu::BindingResource::TextureView(&globe_colors_view) },
             ],
         });
-        let globes = Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] };
         let light_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
             label: Some("shadow light"),
             entries: &[wgpu::BindGroupLayoutEntry {
@@ -779,154 +787,10 @@ impl Renderer {
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
         // Lights' glows add up, behind what's solid, hiding nothing.
         let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
-        // The HUD has its own layer without depth (or antialiasing, or HDR).
-        // HUD triangles (panels and text): their own shader, the font's atlas.
-        let atlas_data = crate::font::atlas();
-        let atlas_texture = {
-            use wgpu::util::DeviceExt;
-            gpu.device.create_texture_with_data(
-                &gpu.queue,
-                &wgpu::TextureDescriptor {
-                    label: Some("font atlas"),
-                    size: wgpu::Extent3d { width: atlas_data.width, height: atlas_data.height, depth_or_array_layers: 1 },
-                    mip_level_count: 1,
-                    sample_count: 1,
-                    dimension: wgpu::TextureDimension::D2,
-                    format: wgpu::TextureFormat::R8Unorm,
-                    usage: wgpu::TextureUsages::TEXTURE_BINDING,
-                    view_formats: &[],
-                },
-                wgpu::util::TextureDataOrder::LayerMajor,
-                &atlas_data.pixels,
-            )
-        };
-        let atlas_view = atlas_texture.create_view(&Default::default());
-        let atlas_sampler = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("font atlas"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
-        let atlas_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("font atlas"),
-            entries: &[
-                wgpu::BindGroupLayoutEntry {
-                    binding: 0,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2, multisampled: false },
-                    count: None,
-                },
-                wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
-            ],
-        });
-        let atlas_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
-            label: Some("font atlas"),
-            layout: &atlas_layout,
-            entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
-        });
-        let hud_shader = crate::shaders::single(device, "hud");
-        let hud_tri_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-            label: Some("hud tris"),
-            layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(&globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
-            vertex: wgpu::VertexState {
-                module: &hud_shader,
-                entry_point: Some("vs_hud"),
-                compilation_options: Default::default(),
-                buffers: &[Some(wgpu::VertexBufferLayout {
-                    array_stride: size_of::<crate::frame::HudVertex>() as u64,
-                    step_mode: wgpu::VertexStepMode::Vertex,
-                    attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4],
-                })],
-            },
-            primitive: wgpu::PrimitiveState { topology: Topo::TriangleList, ..Default::default() },
-            depth_stencil: None,
-            multisample: Default::default(),
-            fragment: Some(wgpu::FragmentState {
-                module: &hud_shader,
-                entry_point: Some("fs_hud"),
-                compilation_options: Default::default(),
-                targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(alpha), write_mask: wgpu::ColorWrites::ALL })],
-            }),
-            multiview_mask: None,
-            cache: None,
-        });
+        let (atlas_bind, hud_tri_pipe) = hud_atlas(gpu, &globals_layout);
         let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha, (COLOR_FORMAT, 1));
 
-        let texture_entry = |binding| wgpu::BindGroupLayoutEntry {
-            binding,
-            visibility: wgpu::ShaderStages::FRAGMENT,
-            ty: wgpu::BindingType::Texture {
-                sample_type: wgpu::TextureSampleType::Float { filterable: true },
-                view_dimension: wgpu::TextureViewDimension::D2,
-                multisampled: false,
-            },
-            count: None,
-        };
-        let blit_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
-            label: Some("blit"),
-            entries: &[
-                texture_entry(0),
-                texture_entry(1),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 2,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                    count: None,
-                },
-                texture_entry(3),
-                wgpu::BindGroupLayoutEntry {
-                    binding: 4,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
-                    count: None,
-                },
-                // (The globals: the graphics toggles, the tone map's.)
-                wgpu::BindGroupLayoutEntry {
-                    binding: 5,
-                    visibility: wgpu::ShaderStages::FRAGMENT,
-                    ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None },
-                    count: None,
-                },
-            ],
-        });
-        let blit = crate::shaders::single(device, "blit");
-        let blit_layout_pipeline = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
-            label: Some("blit"),
-            bind_group_layouts: &[Some(&blit_layout)],
-            immediate_size: 0,
-        });
-        let blit_pipeline = |label: &str, format: wgpu::TextureFormat| {
-            device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
-                label: Some(label),
-                layout: Some(&blit_layout_pipeline),
-                vertex: wgpu::VertexState {
-                    module: &blit,
-                    entry_point: Some("vs_main"),
-                    compilation_options: Default::default(),
-                    buffers: &[],
-                },
-                primitive: Default::default(),
-                depth_stencil: None,
-                multisample: Default::default(),
-                fragment: Some(wgpu::FragmentState {
-                    module: &blit,
-                    entry_point: Some("fs_main"),
-                    compilation_options: Default::default(),
-                    targets: &[Some(format.into())],
-                }),
-                multiview_mask: None,
-                cache: None,
-            })
-        };
-        let blit_pipe = blit_pipeline("blit", gpu.config.format);
-        let capture_pipe = blit_pipeline("capture", COLOR_FORMAT);
-        let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
-            label: Some("nearest"),
-            mag_filter: wgpu::FilterMode::Nearest,
-            min_filter: wgpu::FilterMode::Nearest,
-            ..Default::default()
-        });
-        let linear = device.create_sampler(&wgpu::SamplerDescriptor {
-            label: Some("linear"),
-            mag_filter: wgpu::FilterMode::Linear,
-            min_filter: wgpu::FilterMode::Linear,
-            ..Default::default()
-        });
+        let (blit_layout, blit_pipe, capture_pipe, sampler, linear) = blit_stage(gpu);
 
         let target = Self::create_target(gpu, low_height, hud_scale, forced_aspect, &blit_layout, &sampler, &linear, &globals);
         let pbr = crate::pbr::PbrRenderer::new(device, &globals_layout, &shadow_layout, &light_layout, SCENE_FORMAT, DEPTH_FORMAT, SAMPLES);
@@ -1210,126 +1074,17 @@ impl Renderer {
         let under = clouded.map_or(glam::DVec3::Y, |(_, _, c, _)| frame.world_turn.inverse() * (frame.camera.position - *c).normalize_or(glam::DVec3::Y));
         let world = clouded.and_then(|(maps, _, _, r)| Some((maps.id(), *r, &self.world.clouds, self.world.cloud_maps.as_ref()?)));
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
-        // The shadow map: each cascade, the casters seen from the light.
-        for k in 0..4 {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("shadow map"),
-                color_attachments: &[],
-                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-                    view: &self.shadows.layers[k],
-                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }),
-                    stencil_ops: None,
-                }),
-                timestamp_writes: self.gputime.as_ref().map(|t| t.shadow(k as u32)),
-                occlusion_query_set: None,
-                multiview_mask: None,
-            });
-            if sun.is_some() {
-                pass.set_bind_group(0, &self.shadows.light_binds[k], &[]);
-                // (The ground's own cascade: the ground's patches alone.)
-                if k == 3 {
-                    self.draw_meshes(&mut pass, &self.shadows.ground_runs, &self.shadows.ground_pipe, |m| (&m.faces, m.face_vertices));
-                    continue;
-                }
-                self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
-                self.pbr.draw_shadows(&mut pass);
-            }
-        }
-        {
-            let [r, g, b, a] = frame.clear.0.map(f64::from);
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("scene"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.target.color_msaa,
-                    depth_slice: None,
-                    resolve_target: Some(&self.target.color),
-                    ops: wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(wgpu::Color { r, g, b, a }),
-                        store: wgpu::StoreOp::Discard,
-                    },
-                })],
-                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-                    view: &self.target.depth,
-                    depth_ops: Some(wgpu::Operations {
-                        load: wgpu::LoadOp::Clear(0.0),
-                        store: if probe.is_some() { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard },
-                    }),
-                    stencil_ops: None,
-                }),
-                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(1)),
-                occlusion_query_set: None,
-                multiview_mask: None,
-            });
-            pass.set_bind_group(0, &self.globals_bind, &[]);
-            pass.set_bind_group(1, &self.shadows.bind, &[]);
-            pass.set_bind_group(2, &self.world.bind, &[]);
-            self.sky.draw(&mut pass, &self.sky_pipe);
-            // The air's light, a world's in view (nothing where none is bound, or it's airless).
-            pass.set_pipeline(&self.air_sky_pipe);
-            pass.draw(0..3, 0..1);
-            self.solids.draw(&mut pass, &self.solid_pipe);
-            self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
-            self.pbr.draw(&mut pass);
-            // (The textured models take group 2 for their materials: the world's maps back.)
-            pass.set_bind_group(2, &self.world.bind, &[]);
-            self.lines.draw(&mut pass, &self.line_pipe);
-            self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
-            self.points.draw(&mut pass, &self.point_pipe);
-            self.glows.draw(&mut pass, &self.glow_pipe);
-        }
+        self.shadow_passes(&mut encoder, sun.is_some());
+        self.scene_pass(&mut encoder, frame.clear, probe.is_some());
         if probe.is_some() {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, false);
         }
-        {
-            // The front layer: its meshes (and lines), with a fresh depth.
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("front"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.target.front_msaa,
-                    depth_slice: None,
-                    resolve_target: Some(&self.target.front),
-                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Discard },
-                })],
-                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
-                    view: &self.target.depth,
-                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: if probe.is_some() { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard } }),
-                    stencil_ops: None,
-                }),
-                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(2)),
-                occlusion_query_set: None,
-                multiview_mask: None,
-            });
-            pass.set_bind_group(0, &self.globals_bind, &[]);
-            pass.set_bind_group(1, &self.shadows.bind, &[]);
-            pass.set_bind_group(2, &self.world.bind, &[]);
-            self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
-            self.front_lines.draw(&mut pass, &self.line_pipe);
-            self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
-            self.front_glows.draw(&mut pass, &self.glow_pipe);
-        }
+        self.front_pass(&mut encoder, probe.is_some());
         if probe.is_some() {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, true);
             self.sunprobe.copy_out(&mut encoder);
         }
-        {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("hud"),
-                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                    view: &self.target.hud,
-                    depth_slice: None,
-                    resolve_target: None,
-                    ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
-                })],
-                depth_stencil_attachment: None,
-                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(3)),
-                occlusion_query_set: None,
-                multiview_mask: None,
-            });
-            pass.set_bind_group(0, &self.globals_bind, &[]);
-            pass.set_bind_group(1, &self.atlas_bind, &[]);
-            self.hud_tris.draw(&mut pass, &self.hud_tri_pipe);
-            self.hud.draw(&mut pass, &self.hud_pipe);
-        }
+        self.hud_pass(&mut encoder);
         let readback = capture.map(|_| {
             self.composite(&mut encoder, &self.target.composite, &self.capture_pipe);
             self.copy_to_buffer(gpu, &mut encoder)
@@ -1373,6 +1128,131 @@ impl Renderer {
                 Err(e) => log::error!("screenshot failed: {e}"),
             }
         }
+    }
+
+    /// The shadow map: each cascade, the casters seen from the light (`lit`: there's a light and
+    /// shadows are wanted; else the cascades are only cleared).
+    fn shadow_passes(&self, encoder: &mut wgpu::CommandEncoder, lit: bool) {
+        // The shadow map: each cascade, the casters seen from the light.
+        for k in 0..4 {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("shadow map"),
+                color_attachments: &[],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.shadows.layers[k],
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: self.gputime.as_ref().map(|t| t.shadow(k as u32)),
+                occlusion_query_set: None,
+                multiview_mask: None,
+            });
+            if lit {
+                pass.set_bind_group(0, &self.shadows.light_binds[k], &[]);
+                // (The ground's own cascade: the ground's patches alone.)
+                if k == 3 {
+                    self.draw_meshes(&mut pass, &self.shadows.ground_runs, &self.shadows.ground_pipe, |m| (&m.faces, m.face_vertices));
+                    continue;
+                }
+                self.draw_meshes(&mut pass, &self.shadows.runs, &self.shadows.pipe, |m| (&m.faces, m.face_vertices));
+                self.pbr.draw_shadows(&mut pass);
+            }
+        }
+    }
+
+    /// The scene: sky, air, solids, meshes, models, lines, points, glows over `clear`, with the
+    /// depth kept for the sun probe if `keep_depth`.
+    fn scene_pass(&self, encoder: &mut wgpu::CommandEncoder, clear: crate::Color, keep_depth: bool) {
+        let [r, g, b, a] = clear.0.map(f64::from);
+        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("scene"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &self.target.color_msaa,
+                depth_slice: None,
+                resolve_target: Some(&self.target.color),
+                ops: wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(wgpu::Color { r, g, b, a }),
+                    store: wgpu::StoreOp::Discard,
+                },
+            })],
+            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                view: &self.target.depth,
+                depth_ops: Some(wgpu::Operations {
+                    load: wgpu::LoadOp::Clear(0.0),
+                    store: if keep_depth { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard },
+                }),
+                stencil_ops: None,
+            }),
+            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(1)),
+            occlusion_query_set: None,
+            multiview_mask: None,
+        });
+        pass.set_bind_group(0, &self.globals_bind, &[]);
+        pass.set_bind_group(1, &self.shadows.bind, &[]);
+        pass.set_bind_group(2, &self.world.bind, &[]);
+        self.sky.draw(&mut pass, &self.sky_pipe);
+        // The air's light, a world's in view (nothing where none is bound, or it's airless).
+        pass.set_pipeline(&self.air_sky_pipe);
+        pass.draw(0..3, 0..1);
+        self.solids.draw(&mut pass, &self.solid_pipe);
+        self.draw_meshes(&mut pass, &self.face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        self.pbr.draw(&mut pass);
+        // (The textured models take group 2 for their materials: the world's maps back.)
+        pass.set_bind_group(2, &self.world.bind, &[]);
+        self.lines.draw(&mut pass, &self.line_pipe);
+        self.draw_meshes(&mut pass, &self.edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        self.points.draw(&mut pass, &self.point_pipe);
+        self.glows.draw(&mut pass, &self.glow_pipe);
+    }
+
+    /// The front layer: its meshes (and lines), with a fresh depth (kept as `scene_pass`'s).
+    fn front_pass(&self, encoder: &mut wgpu::CommandEncoder, keep_depth: bool) {
+        // The front layer: its meshes (and lines), with a fresh depth.
+        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("front"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &self.target.front_msaa,
+                depth_slice: None,
+                resolve_target: Some(&self.target.front),
+                ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Discard },
+            })],
+            depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                view: &self.target.depth,
+                depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: if keep_depth { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard } }),
+                stencil_ops: None,
+            }),
+            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(2)),
+            occlusion_query_set: None,
+            multiview_mask: None,
+        });
+        pass.set_bind_group(0, &self.globals_bind, &[]);
+        pass.set_bind_group(1, &self.shadows.bind, &[]);
+        pass.set_bind_group(2, &self.world.bind, &[]);
+        self.draw_meshes(&mut pass, &self.front_face_runs, &self.mesh_pipe, |m| (&m.faces, m.face_vertices));
+        self.front_lines.draw(&mut pass, &self.line_pipe);
+        self.draw_meshes(&mut pass, &self.front_edge_runs, &self.mesh_line_pipe, |m| (&m.edges, m.edge_vertices));
+        self.front_glows.draw(&mut pass, &self.glow_pipe);
+    }
+
+    /// The HUD's layer: its panels and text, then its lines.
+    fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder) {
+        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+            label: Some("hud"),
+            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                view: &self.target.hud,
+                depth_slice: None,
+                resolve_target: None,
+                ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
+            })],
+            depth_stencil_attachment: None,
+            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(3)),
+            occlusion_query_set: None,
+            multiview_mask: None,
+        });
+        pass.set_bind_group(0, &self.globals_bind, &[]);
+        pass.set_bind_group(1, &self.atlas_bind, &[]);
+        self.hud_tris.draw(&mut pass, &self.hud_tri_pipe);
+        self.hud.draw(&mut pass, &self.hud_pipe);
     }
 
     /// Meshes for this frame: new ones uploaded, unused ones dropped; the
@@ -1579,4 +1459,164 @@ pub fn wait_for_writes() {
     while WRITING.load(std::sync::atomic::Ordering::SeqCst) > 0 && start.elapsed() < std::time::Duration::from_secs(10) {
         std::thread::sleep(std::time::Duration::from_millis(5));
     }
+}
+
+/// The HUD's triangles (panels and text): the font's atlas bound, and their pipeline. (The HUD has
+/// its own layer without depth, antialiasing or HDR.)
+fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline) {
+    let device = &gpu.device;
+    let alpha = wgpu::BlendState::ALPHA_BLENDING;
+    let atlas_data = crate::font::atlas();
+    let atlas_texture = {
+        use wgpu::util::DeviceExt;
+        gpu.device.create_texture_with_data(
+            &gpu.queue,
+            &wgpu::TextureDescriptor {
+                label: Some("font atlas"),
+                size: wgpu::Extent3d { width: atlas_data.width, height: atlas_data.height, depth_or_array_layers: 1 },
+                mip_level_count: 1,
+                sample_count: 1,
+                dimension: wgpu::TextureDimension::D2,
+                format: wgpu::TextureFormat::R8Unorm,
+                usage: wgpu::TextureUsages::TEXTURE_BINDING,
+                view_formats: &[],
+            },
+            wgpu::util::TextureDataOrder::LayerMajor,
+            &atlas_data.pixels,
+        )
+    };
+    let atlas_view = atlas_texture.create_view(&Default::default());
+    let atlas_sampler = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("font atlas"), mag_filter: wgpu::FilterMode::Linear, min_filter: wgpu::FilterMode::Linear, ..Default::default() });
+    let atlas_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: Some("font atlas"),
+        entries: &[
+            wgpu::BindGroupLayoutEntry {
+                binding: 0,
+                visibility: wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Texture { sample_type: wgpu::TextureSampleType::Float { filterable: true }, view_dimension: wgpu::TextureViewDimension::D2, multisampled: false },
+                count: None,
+            },
+            wgpu::BindGroupLayoutEntry { binding: 1, visibility: wgpu::ShaderStages::FRAGMENT, ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering), count: None },
+        ],
+    });
+    let atlas_bind = device.create_bind_group(&wgpu::BindGroupDescriptor {
+        label: Some("font atlas"),
+        layout: &atlas_layout,
+        entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
+    });
+    let hud_shader = crate::shaders::single(device, "hud");
+    let hud_tri_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+        label: Some("hud tris"),
+        layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
+        vertex: wgpu::VertexState {
+            module: &hud_shader,
+            entry_point: Some("vs_hud"),
+            compilation_options: Default::default(),
+            buffers: &[Some(wgpu::VertexBufferLayout {
+                array_stride: size_of::<crate::frame::HudVertex>() as u64,
+                step_mode: wgpu::VertexStepMode::Vertex,
+                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4],
+            })],
+        },
+        primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
+        depth_stencil: None,
+        multisample: Default::default(),
+        fragment: Some(wgpu::FragmentState {
+            module: &hud_shader,
+            entry_point: Some("fs_hud"),
+            compilation_options: Default::default(),
+            targets: &[Some(wgpu::ColorTargetState { format: COLOR_FORMAT, blend: Some(alpha), write_mask: wgpu::ColorWrites::ALL })],
+        }),
+        multiview_mask: None,
+        cache: None,
+    });
+    (atlas_bind, hud_tri_pipe)
+}
+
+/// The last stage: what puts the scene, front and HUD layers together on the screen (or a
+/// capture): its layout, its pipelines for the window's format and the capture's, and its two
+/// samplers (nearest, linear).
+fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::Sampler, wgpu::Sampler) {
+    let device = &gpu.device;
+    let texture_entry = |binding| wgpu::BindGroupLayoutEntry {
+        binding,
+        visibility: wgpu::ShaderStages::FRAGMENT,
+        ty: wgpu::BindingType::Texture {
+            sample_type: wgpu::TextureSampleType::Float { filterable: true },
+            view_dimension: wgpu::TextureViewDimension::D2,
+            multisampled: false,
+        },
+        count: None,
+    };
+    let blit_layout = device.create_bind_group_layout(&wgpu::BindGroupLayoutDescriptor {
+        label: Some("blit"),
+        entries: &[
+            texture_entry(0),
+            texture_entry(1),
+            wgpu::BindGroupLayoutEntry {
+                binding: 2,
+                visibility: wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                count: None,
+            },
+            texture_entry(3),
+            wgpu::BindGroupLayoutEntry {
+                binding: 4,
+                visibility: wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Sampler(wgpu::SamplerBindingType::Filtering),
+                count: None,
+            },
+            // (The globals: the graphics toggles, the tone map's.)
+            wgpu::BindGroupLayoutEntry {
+                binding: 5,
+                visibility: wgpu::ShaderStages::FRAGMENT,
+                ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Uniform, has_dynamic_offset: false, min_binding_size: None },
+                count: None,
+            },
+        ],
+    });
+    let blit = crate::shaders::single(device, "blit");
+    let blit_layout_pipeline = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
+        label: Some("blit"),
+        bind_group_layouts: &[Some(&blit_layout)],
+        immediate_size: 0,
+    });
+    let blit_pipeline = |label: &str, format: wgpu::TextureFormat| {
+        device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+            label: Some(label),
+            layout: Some(&blit_layout_pipeline),
+            vertex: wgpu::VertexState {
+                module: &blit,
+                entry_point: Some("vs_main"),
+                compilation_options: Default::default(),
+                buffers: &[],
+            },
+            primitive: Default::default(),
+            depth_stencil: None,
+            multisample: Default::default(),
+            fragment: Some(wgpu::FragmentState {
+                module: &blit,
+                entry_point: Some("fs_main"),
+                compilation_options: Default::default(),
+                targets: &[Some(format.into())],
+            }),
+            multiview_mask: None,
+            cache: None,
+        })
+    };
+    let blit_pipe = blit_pipeline("blit", gpu.config.format);
+    let capture_pipe = blit_pipeline("capture", COLOR_FORMAT);
+    let sampler = device.create_sampler(&wgpu::SamplerDescriptor {
+        label: Some("nearest"),
+        mag_filter: wgpu::FilterMode::Nearest,
+        min_filter: wgpu::FilterMode::Nearest,
+        ..Default::default()
+    });
+    let linear = device.create_sampler(&wgpu::SamplerDescriptor {
+        label: Some("linear"),
+        mag_filter: wgpu::FilterMode::Linear,
+        min_filter: wgpu::FilterMode::Linear,
+        ..Default::default()
+    });
+    (blit_layout, blit_pipe, capture_pipe, sampler, linear)
 }
