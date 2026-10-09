@@ -429,6 +429,12 @@ impl StarSystem {
                 t.bake(h);
             }
         }
+        // A ground from outside (a lab's preview: `terrain::Outside`), on the bodies it's registered for.
+        for b in &mut system.bodies {
+            if let (Some(o), Some(t)) = (crate::terrain::outside(&b.key), b.terrain.as_mut()) {
+                t.take_outside(o);
+            }
+        }
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);
         crate::small_bodies::add(&mut system, frost_line, star.seed);

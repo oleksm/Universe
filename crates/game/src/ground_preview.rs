@@ -3,15 +3,18 @@
 //! tiles, the level-0 lines and their `manifest.json` (`planet-unfold-tiles/1`). Every file is checked against
 //! the manifest (size and SHA-256) before anything is drawn, and a half-copied folder stops the game with
 //! the file it lacks. The ground is drawn near the body in place of its own patches, scaled to the body's
-//! radius (the manifest's over the record's); the physics stands on the old bake meanwhile.
+//! radius (the manifest's over the record's); the physics stands on it near the eye (the ground's own query,
+//! round the rings it last showed), on the old bake beyond (`UNIVERSE_GROUND_PHYSICS=0`: on the old bake
+//! everywhere).
 
 use std::path::PathBuf;
 use std::sync::OnceLock;
 
-/// The body the ground is drawn on, and the ground's own radius (m).
+/// The body the ground is drawn on, the ground's own radius (m), and whether the physics stands on it.
 pub struct Preview {
     pub body: String,
     pub radius_m: f64,
+    pub physics: bool,
 }
 
 static PREVIEW: OnceLock<Preview> = OnceLock::new();
@@ -21,9 +24,9 @@ pub fn on(body: &str) -> Option<&'static Preview> {
     PREVIEW.get().filter(|p| p.body == body)
 }
 
-/// Is a preview running at all (for the HUD's notice)?
-pub fn running() -> bool {
-    PREVIEW.get().is_some()
+/// The preview running, if one is (for the HUD's notice).
+pub fn running() -> Option<&'static Preview> {
+    PREVIEW.get()
 }
 
 /// The ground pass for the preview named in the environment (None: none asked for). Stops the game if the
@@ -52,9 +55,21 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
     let body = m["body"].as_str().unwrap_or_else(|| fail("manifest.json: no body".into())).to_string();
     let radius_m = m["radius_m"].as_f64().unwrap_or_else(|| fail("manifest.json: no radius_m".into()));
     let l0 = folder.join(m["l0"].as_str().unwrap_or("L0_0_0.lines"));
-    eprintln!("PREVIEW: {body}'s ground from {} (UNIVERSE_GROUND_{var}, {} files checked), physics on its old bake", folder.display(), files.len());
-    let pass = unfold_view::bench::ground_pass(&folder, &l0).unwrap_or_else(|e| fail(format!("{e:#}")));
-    let _ = PREVIEW.set(Preview { body, radius_m });
+    let physics = std::env::var("UNIVERSE_GROUND_PHYSICS").map_or(true, |v| v != "0");
+    eprintln!("PREVIEW: {body}'s ground from {} (UNIVERSE_GROUND_{var}, {} files checked), physics {}", folder.display(), files.len(), if physics { "on it near the eye, on the old bake beyond" } else { "on the old bake" });
+    let (pass, query) = unfold_view::bench::ground_pass(&folder, &l0).unwrap_or_else(|e| fail(format!("{e:#}")));
+    if physics {
+        // (The body's frame into the ground's, and the ground's query there: where its rings reach.)
+        let to_ground = frame().inverse();
+        universe_sim::world::terrain::set_outside(&body, universe_sim::world::terrain::Outside {
+            query: std::sync::Arc::new(move |dir: glam::DVec3| {
+                let g = query.lock().unwrap().clone()?;
+                g.height(to_ground * dir)
+            }),
+            max: 9_000.0,
+        });
+    }
+    let _ = PREVIEW.set(Preview { body, radius_m, physics });
     Some(pass)
 }
 

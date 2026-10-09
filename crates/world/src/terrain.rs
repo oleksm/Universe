@@ -63,6 +63,36 @@ pub struct Terrain {
     /// The ground as the planet simulation grew it, where the body has a bake (`worlds`):
     /// these heights in place of the seed's.
     baked: Option<std::sync::Arc<crate::worlds::Heights>>,
+    /// A ground from outside the world (a lab's preview, `Outside`): its heights first, where it has
+    /// one; the bake's (or the seed's) elsewhere.
+    outside: Option<Outside>,
+}
+
+/// A ground from outside the world (a game's preview of a grown planet's ground): heights (m from the sea)
+/// at a body-frame direction where it has them, and the highest it stands (m). Registered by body key
+/// before the system is made (`set_outside`), taken up by the body's terrain.
+#[derive(Clone)]
+pub struct Outside {
+    pub query: std::sync::Arc<dyn Fn(DVec3) -> Option<f64> + Send + Sync>,
+    pub max: f64,
+}
+
+impl std::fmt::Debug for Outside {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Outside(max {:.0} m)", self.max)
+    }
+}
+
+static OUTSIDE: std::sync::OnceLock<std::sync::Mutex<std::collections::HashMap<String, Outside>>> = std::sync::OnceLock::new();
+
+/// Body `key`'s ground from outside from now (systems made after this take it up).
+pub fn set_outside(key: &str, ground: Outside) {
+    OUTSIDE.get_or_init(Default::default).lock().unwrap().insert(key.to_string(), ground);
+}
+
+/// Body `key`'s ground from outside, if one is registered.
+pub fn outside(key: &str) -> Option<Outside> {
+    OUTSIDE.get()?.lock().unwrap().get(key).cloned()
 }
 
 impl Terrain {
@@ -80,7 +110,12 @@ impl Terrain {
                 Crater { dir: rng.unit_vector(), radius, depth: (radius * body_radius * 0.1).min(amplitude * 0.8) }
             })
             .collect();
-        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None }
+        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, outside: None }
+    }
+
+    /// The ground's heights from outside first (`Outside`), where it has them.
+    pub fn take_outside(&mut self, ground: Outside) {
+        self.outside = Some(ground);
     }
 
     /// The ground is the bake's `heights` from now (its craters and noise gone).
@@ -212,10 +247,11 @@ impl Terrain {
 
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
-        match &self.baked {
+        let own = match &self.baked {
             Some(h) => h.max,
             None => self.amplitude * 1.3 + self.relief_max(),
-        }
+        };
+        self.outside.as_ref().map_or(own, |o| own.max(o.max))
     }
 
     /// The small-scale relief's amplitude (m) at octave `o` (see `relief`):
@@ -301,6 +337,9 @@ impl Terrain {
 
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
+        if let Some(h) = self.outside.as_ref().and_then(|o| (o.query)(dir)) {
+            return h;
+        }
         if let Some(h) = &self.baked {
             return self.baked_height(h, dir, crate::worlds::Detail::Full).0;
         }
@@ -309,6 +348,9 @@ impl Terrain {
 
     /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
     pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
+        if let Some(h) = self.outside.as_ref().and_then(|o| (o.query)(dir)) {
+            return (h, 0.0);
+        }
         if let Some(h) = &self.baked {
             return (self.baked_height(h, dir, crate::worlds::Detail::Full).0, 0.0);
         }
