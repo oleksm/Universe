@@ -2,10 +2,10 @@
 //! `UNIVERSE_GROUND_<WORLD ID>=<folder>` (as `UNIVERSE_BAKE_<WORLD ID>` for a bake), the folder holding the
 //! tiles, the level-0 lines and their `manifest.json` (`planet-unfold-tiles/1`). Every file is checked against
 //! the manifest (size and SHA-256) before anything is drawn, and a half-copied folder stops the game with
-//! the file it lacks. The ground is drawn near the body in place of its own patches, scaled to the body's
-//! radius (the manifest's over the record's); the physics stands on it near the eye (the ground's own query,
-//! round the rings it last showed), on the old bake beyond (`UNIVERSE_GROUND_PHYSICS=0`: on the old bake
-//! everywhere).
+//! the file it lacks. The ground is the body's at every range, its own globe and patches never drawn, scaled
+//! to the body's radius (the manifest's over the record's); the physics stands on it everywhere (the ground's
+//! own query round the rings it last showed near the eye, six sets round the body beyond;
+//! `UNIVERSE_GROUND_PHYSICS=0`: on the old bake).
 
 use std::path::PathBuf;
 use std::sync::OnceLock;
@@ -63,6 +63,18 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
         // (Through the query's node cache: a thousand heights a frame at ~15 µs each were 20 ms.)
         let to_ground = frame().inverse();
         let cached = unfold_view::bench::CachedQuery::new(query);
+        // (The ground over the whole body, for physics far from the eye: built in the background.)
+        let slot = cached.far_slot();
+        let dir = folder.clone();
+        std::thread::Builder::new()
+            .name("far ground".into())
+            .spawn(move || match unfold_view::bench::far_grounds(&dir) {
+                Ok(g) => {
+                    let _ = slot.set(g);
+                }
+                Err(e) => eprintln!("far ground: {e:#}"),
+            })
+            .expect("far ground thread");
         universe_sim::world::terrain::set_outside(&body, universe_sim::world::terrain::Outside {
             query: std::sync::Arc::new(move |dir: glam::DVec3| {
                 // (UNIVERSE_GROUND_STATS=1: the query's calls and time every 5 s, on stderr.)

@@ -554,16 +554,19 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
+        // (A grown planet's ground (`ground_preview`): drawn at every range by its ground pass, the body's own
+        // globe and patches not at all.)
+        if let Some(p) = crate::ground_preview::on(&b.key) {
+            frame.ground_pose = Some(universe_engine::GroundPose { centre: center, rotation: b.rotation(t) * crate::ground_preview::frame(), scale: b.rail.radius / p.radius_m });
+            continue;
+        }
         if let Some((full, coarse, map)) = app.caches.globes.get(&(app.view.cache, i)) {
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: from afar its globe; near, its ground as patches
             // finer toward the eye (see `terrain_lod`).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
-            if near && let Some(p) = crate::ground_preview::on(&b.key) {
-                // (A grown planet's ground in place of the patches: `ground_preview`.)
-                frame.ground_pose = Some(universe_engine::GroundPose { centre: center, rotation: b.rotation(t) * crate::ground_preview::frame(), scale: b.rail.radius / p.radius_m });
-            } else if near {
+            if near {
                 universe_prof::time("draw/scene/bodies/ground", || {
                     app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
                 });

@@ -74,7 +74,7 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     let mut lines: Vec<(String, Color)> = Vec::new();
     let mut alerts: Vec<(String, Color)> = Vec::new();
     if let Some(p) = crate::ground_preview::running() {
-        lines.push((if p.physics { "GROUND PREVIEW: PHYSICS ON IT NEAR THE EYE, THE OLD BAKE BEYOND" } else { "GROUND PREVIEW: PHYSICS ON THE OLD BAKE" }.into(), Color::hex(0xffc040)));
+        lines.push((if p.physics { "GROUND PREVIEW: DRAWN AND STOOD ON AT EVERY RANGE" } else { "GROUND PREVIEW: PHYSICS ON THE OLD BAKE" }.into(), Color::hex(0xffc040)));
     }
     match app.mode {
         Mode::Observer => observer_info(app, &mut lines),
