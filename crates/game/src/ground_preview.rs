@@ -60,17 +60,38 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
     let (pass, query) = unfold_view::bench::ground_pass(&folder, &l0).unwrap_or_else(|e| fail(format!("{e:#}")));
     if physics {
         // (The body's frame into the ground's, and the ground's query there: where its rings reach.)
+        // (Through the query's node cache: a thousand heights a frame at ~15 µs each were 20 ms.)
         let to_ground = frame().inverse();
+        let cached = unfold_view::bench::CachedQuery::new(query);
         universe_sim::world::terrain::set_outside(&body, universe_sim::world::terrain::Outside {
             query: std::sync::Arc::new(move |dir: glam::DVec3| {
-                let g = query.lock().unwrap().clone()?;
-                g.height(to_ground * dir)
+                // (UNIVERSE_GROUND_STATS=1: the query's calls and time every 5 s, on stderr.)
+                if !stats() {
+                    return cached.height(to_ground * dir);
+                }
+                let t0 = std::time::Instant::now();
+                let h = cached.height(to_ground * dir);
+                let mut s = STATS.lock().unwrap();
+                s.0 += 1;
+                s.1 += t0.elapsed().as_secs_f64();
+                if s.2.elapsed().as_secs_f64() >= 5.0 {
+                    eprintln!("ground query: {} calls in {:.1} s, {:.2} µs a call, {:.2} ms a second", s.0, s.2.elapsed().as_secs_f64(), s.1 / s.0.max(1) as f64 * 1e6, s.1 * 1e3 / s.2.elapsed().as_secs_f64());
+                    *s = (0, 0.0, std::time::Instant::now());
+                }
+                h
             }),
             max: 9_000.0,
         });
     }
     let _ = PREVIEW.set(Preview { body, radius_m, physics });
     Some(pass)
+}
+
+static STATS: std::sync::LazyLock<std::sync::Mutex<(u64, f64, std::time::Instant)>> = std::sync::LazyLock::new(|| std::sync::Mutex::new((0, 0.0, std::time::Instant::now())));
+
+fn stats() -> bool {
+    static ON: OnceLock<bool> = OnceLock::new();
+    *ON.get_or_init(|| std::env::var("UNIVERSE_GROUND_STATS").is_ok_and(|v| v == "1"))
 }
 
 /// The ground's own frame (north +Z, longitude 0 on +X, east +Y) in a body's (north +Y, longitude
