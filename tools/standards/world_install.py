@@ -109,7 +109,11 @@ def packages(text, folder, dest, world_id):
                    + f"  coal_in_place: {float(f'{es['coal_mt'] * 1e9:.4g}')}\n")
         print(f"energy: {es.get('oil_fields')} oil and {es.get('gas_fields')} gas fields, {es.get('coalfields')} coalfields, copied to {os.path.relpath(edest, ROOT)}")
     sf = os.path.join(world, "surface")
-    if os.path.isfile(os.path.join(sf, "latest.json")):
+    # (A body whose ground the planet-unfold renderer draws has a `ground` pointer and no bake: its surface package is not installed.)
+    has_ground = bool((yaml.safe_load(text) or {}).get("ground"))
+    if has_ground:
+        print("surface: skipped, the body's ground is a planet-unfold package (its `ground` pointer)")
+    if not has_ground and os.path.isfile(os.path.join(sf, "latest.json")):
         latest = json.load(open(os.path.join(sf, "latest.json"), encoding="utf-8"))
         vdir = os.path.join(sf, latest["path"]); vm_path = os.path.join(vdir, "manifest.json")
         if sha(vm_path) != latest["manifest_sha256"]:
