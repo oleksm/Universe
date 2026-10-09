@@ -1,0 +1,46 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.engine.fan.s1
+  name: "Ducted fan S1"
+  maker: org.hadley
+  revision: draft
+  slot: engine
+  description: "An electric fan in a 1 m duct: 10 kN in air of 1.2 kg/m3 for 0.97 MW, nothing burnt. Its thrust falls with the cube root of the air's density at the same power; below 0.3 kg/m3 it is not rated."
+size_class: 1
+fits: mount.engine-s1
+physical:
+  mass: 60
+  volume: 1.15
+  length: 1.2
+  width: 1.2
+  height: 0.8
+needs:
+  power: 971000
+built_of:
+  parts: engine-fan-s1
+  list:
+    - { code: FAN1-01, name: "Duct and stators", mass: 18, length: 0.803, width: 0.803, height: 0.536, item: stock.cfc-pl-3, quantity: 20.7, module: module.machining-centre }
+    - { code: FAN1-02, name: "Fan and hub", mass: 15, length: 0.756, width: 0.756, height: 0.504, item: stock.ti64-pl-5, quantity: 17.25, module: module.machining-centre }
+    - { code: FAN1-03, name: "Electric motor", mass: 21, length: 0.846, width: 0.846, height: 0.564, item: good.electric-motors, quantity: 21, module: module.assembly-shop }
+    - { code: FAN1-04, name: "Inverter and controls", mass: 6, length: 0.557, width: 0.557, height: 0.371, item: good.electronics, quantity: 6, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: engine
+  cycle: ducted_fan
+  thrust: 10000
+  exhaust: 103
+  efficiency: 0.75
+  throttle: 0.05
+  gimbal: 0
+  isotropic_loss: 0
+  shield_pass: 1
+  reaction_offset: 0
+  heat_to_hull: 0.107
+  min_density: 0.3
+life: 473364000
+basis:
+  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan: thrust T from a disc of area A = 0.79 m2 in air of density 1.2 kg/m3 leaves at v = sqrt(T / (rho A)) = 103 m/s and takes P = T^1.5 / sqrt(2 rho A) / eta of shaft power at eta = 0.75 for motor and duct: 0.97 MW. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }

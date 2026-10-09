@@ -27,6 +27,7 @@ import sys
 
 import sys
 import yaml
+import copy
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from lib import jet_heat, plant_waste, JET_KINDS
@@ -232,7 +233,7 @@ EQUIPMENT_READS = {
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
     "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",
     "persons": "how many it cycles at once", "cycle": "s a cycle (an airlock); how it makes its jet (an engine)", "passage": "m, the clear way", "air_lost": "kg of air lost a cycle", "load": "kg it bears or lifts", "width": "m", "height": "m", "reach": "m", "travel": "m", "opens_in": "s to open",
-    "propellant": "What it throws.", "throttle": "the least thrust it holds, as a share", "gimbal": "rad it steers its jet", "isotropic_loss": "the share of its power leaving in every direction", "shield_pass": "the share of that its shield lets through", "reaction_offset": "m aft to the reaction", "turns": "rad it turns through", "bears": "N it carries", "slew": "rad/s it turns at",
+    "propellant": "What it throws.", "min_density": "kg/m3, the thinnest air a fan is rated for", "cycles": "full cycles before it is worn", "air_store": "kg of oxygen a pack carries", "water_store": "kg of water a pack carries", "throttle": "the least thrust it holds, as a share", "gimbal": "rad it steers its jet", "isotropic_loss": "the share of its power leaving in every direction", "shield_pass": "the share of that its shield lets through", "reaction_offset": "m aft to the reaction", "turns": "rad it turns through", "bears": "N it carries", "slew": "rad/s it turns at",
     "g_rating": "m/s2 its seats are rated to", "facing": "which way the seats face", "cooling": "W of cabin heat it carries away", "protects": "m3 of room one unit covers", "accuracy": "m, how closely it reads", "field_of_view": "rad across its picture", "endurance": "s of air a suit carries",
     "standard": "the docking standard", "rejects": "W of heat thrown off", "temperature": "K, its working surface", "area": "m2", "transfers": "W passed", "carries": "W", "flow": "kg/s", "stores": "J", "head": "Pa", "pressure": "Pa", "torque": "N m", "momentum": "N m s",
 }
@@ -2434,13 +2435,17 @@ for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yam
     _fit = _hull.get("fit") or []
     if not _fit:
         continue
-    _out = _draw = _waste = _jet = _reject = _carry = 0.0; _seats = 0; _air = _water = 0.0; _wrec = _arec = 0.0; _missing = []
+    _out = _draw = _waste = _jet = _reject = _carry = 0.0; _seats = 0; _air = _water = 0.0; _wrec = _arec = 0.0; _missing = []; _battery = 0.0; _fans = 0.0
     for _fi in _fit:
         _e = _eq_raw.get(_fi["item"])
         if not _e:
             _missing.append(_fi["item"]); continue
         _fn = _e.get("function") or {}; _k = _fn.get("kind")
-        _draw += (_e.get("needs") or {}).get("power", 0)
+        if _k == "engine" and _fn.get("cycle") == "ducted_fan":
+            # (A fan's power is its thrust's, at full, for the minute of a landing: from the battery, not the steady balance.)
+            _fans += (_e.get("needs") or {}).get("power", 0)
+        else:
+            _draw += (_e.get("needs") or {}).get("power", 0)
         if _k == "power_plant":
             _out += _fn["output"]; _waste += plant_waste(_fn)
         elif _k in JET_KINDS:
@@ -2452,13 +2457,20 @@ for _h in sorted(glob.glob(os.path.join(TREE, "SFO", "metadata", "hulls", "*.yam
             _carry += _fn["carries"]
         elif _k == "cabin":
             _seats += _fn.get("seats", 0)
+        elif _k in ("command_station", "berths"):
+            _seats += _fn.get("persons", 0)
+        elif _k == "battery":
+            # (A battery supplies at its rate for stores / draw: counted as made, with the hours it lasts noted.)
+            _out += _fn.get("rate", 0); _battery = _fn.get("stores", 0)
         elif _k == "store":
             if _fn.get("holds") == "good.water": _water += _fn["capacity"]
             if _fn.get("holds") == "element.o": _air += _fn["capacity"]
+        if _k == "life_support":
+            _air += _fn.get("air_store", 0); _water += _fn.get("water_store", 0)
         elif _k == "life_support":
             _wrec = max(_wrec, _fn.get("water_recovery", 0.0)); _arec = max(_arec, _fn.get("air_recovery", 0.0))
     _heat_in = _waste + _draw + _jet      # (power used inside ends as heat inside, bar what leaves as a beam: the studio's rule too)
-    _power = f"{_out / 1e6:.1f} MW made, {_draw / 1e6:.2f} MW drawn" + ("" if _out >= _draw else ": SHORT")
+    _power = f"{_out / 1e6:.1f} MW made, {_draw / 1e6:.2f} MW drawn" + ("" if _out >= _draw else ": SHORT") + (f" (a battery: {_battery / _draw / 3600:.1f} h at that draw, charged at the dock)" if _battery and _draw else "") + (f"; fans {_fans / 1e6:.1f} MW at full thrust" + (f", {_battery / _fans:.0f} s of it on the battery" if _battery else "") if _fans else "")
     _heat = f"{_heat_in / 1e6:.1f} MW aboard ({_waste / 1e6:.1f} plant loss, {_draw / 1e6:.1f} drawn and spent inside, {_jet / 1e6:.1f} from the jets at full burn); radiators {_reject / 1e6:.0f} MW, loops {_carry / 1e6:.0f} MW" + (": NO RADIATORS" if _heat_in > 0 and _reject == 0 else ("" if _reject >= _heat_in else ": SHORT"))
     if _seats:
         _days = lambda cap, rate: f"{cap / (rate * _seats * 86400):.0f} days" if cap else "no store"
@@ -2488,7 +2500,8 @@ for b_ in sorted((yaml.safe_load(open(f__, encoding="utf-8")) or {} for f__ in _
     en, bk = b_.get("energy"), b_.get("bake")
     w_ = _index.get(sv["world_id"], {})
     energy_s = ("empty: no life, so no oil, gas or coal" if en and not (en.get("oil_fields") or en.get("gas_fields") or en.get("coalfields")) else f"{en['oil_fields']:,} oil, {en['gas_fields']:,} gas fields, {en['coalfields']} coalfields" if en else ("none: no life, so no oil, gas or coal" if w_ and (w_.get("packages") or {}).get("energy") is None else "not installed"))
-    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else "none"
+    gr = b_.get("ground")
+    surface_s = f"v{bk['version']}, {bk.get('bytes', 0) / 1e9:.2f} GB in the store" if bk else (f"ground: {gr['path'].split('/')[-1]} (planet-unfold)" if gr else "none")
     hist = "history" if (w_.get("packages") or {}).get("history") else ""
     rows.append(row("ok", (b_.get("identity") or {}).get("name", ""), sv["world_id"], f"{sv.get('deposits', 0):,} deposits in {sv.get('districts', 0):,} districts; land {sv.get('land_share', 0):.0%}", energy_s, surface_s + (f"; {hist} in the store" if hist else ""), ", ".join(sv.get("in_store") or []) or "all copied", w_.get("status", "no index")))
 for wid, w_ in sorted(_index.items()):
@@ -2577,6 +2590,54 @@ for gd in goods:
     rows.append(row("gap" if gap else "ok", link(gd["identity"]["name"], "good:" + gd["slug"]), kind, ", ".join(m["identity"]["name"] for m in made) or ("comes from outside" if not need_made else "nothing makes it"), ", ".join(m["identity"]["name"] for m in used) or ("goes out" if not need_used else "nothing uses it")))
 report("goods", "Goods: where each comes from and goes", "Each good: where it comes from and where it goes. A rock is dug; a raw good is won from a rock; consumables and fuel come from outside; the rest come out of one module and go into another, or out.", ["Good", "Kind", "Comes out of", "Goes into"], rows)
 
+
+
+# ---------------------------------------------------------------- registers: a page for every kind
+# (Record kinds the page had no view for: shown as written, each group a table with its schema's descriptions.)
+REGISTERS, REGISTER_GROUPS, KEY_PAGES = [], {}, {}
+_REG = [("mounts", "Mounts", "SFO", os.path.join("SFO", "metadata", "mounts"), "SFO/schema/mount.schema.yaml", "SFO 19"),
+        ("buildings", "Buildings", "SFO", os.path.join("SFO", "metadata", "buildings"), "SFO/schema/building.schema.yaml", None),
+        ("markets", "Markets", "SFO", os.path.join("SFO", "metadata", "markets"), "SFO/schema/market.schema.yaml", None),
+        ("structures", "Structures", "SFO", os.path.join("SFO", "metadata", "structures"), "SFO/schema/structure.schema.yaml", None),
+        ("rules", "Rules of the record", "SFO", os.path.join("SFO", "metadata", "rules"), "SFO/schema/rule.schema.yaml", None),
+        ("needs", "Needs", "People", os.path.join("People", "metadata", "needs"), "People/schema/need.schema.yaml", None),
+        ("professions", "Professions", "People", os.path.join("People", "metadata", "professions"), "People/schema/profession.schema.yaml", None),
+        ("clocks", "Clocks", "Engine", os.path.join("Engine", "metadata", "scheduling"), "Engine/schema/clock.schema.yaml", None),
+        ("sights", "Sights", "Celestial", os.path.join("Celestial", "metadata", "sights"), "Celestial/schema/sight.schema.yaml", None)]
+for _kind, _title, _root, _dir, _schema, _std in _REG:
+    _recs = []
+    for _f in sorted(glob.glob(os.path.join(TREE, _dir, "*.yaml"))):
+        _r = yaml.safe_load(open(_f, encoding="utf-8")) or {}
+        _idn = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
+        _r["slug"], _r["key"], _r["name"], _r["file"] = os.path.basename(_f)[:-5], _idn.get("key", ""), _idn.get("name", os.path.basename(_f)[:-5]), os.path.relpath(_f, TREE)
+        _recs.append(_r)
+        if _r["key"]:
+            KEY_PAGES[_r["key"]] = f"x:{_kind}:{_r['slug']}"
+    _sch = flatten_schema(yaml.safe_load(open(os.path.join(TREE, _schema), encoding="utf-8")), os.path.join(TREE, _schema))
+    _groups = {}
+    for _g, _d in (_sch.get("properties") or {}).items():
+        if "$ref" in _d:
+            _d = flatten_schema(copy.deepcopy(V.resolve(_d["$ref"], os.path.join(TREE, _schema))[0]), os.path.join(TREE, _schema))
+        _props = _d.get("properties") or ((_d.get("items") or {}).get("properties") if isinstance(_d.get("items"), dict) else None) or {}
+        _groups[_g] = {"description": _d.get("description", ""), "props": {k_: (v_.get("description", "") + (f" ({v_['x-unit']})" if v_.get("x-unit") else "")) for k_, v_ in _props.items() if isinstance(v_, dict)}, "unit": _d.get("x-unit", "")}
+    REGISTER_GROUPS[_kind] = _groups
+    REGISTERS.append({"kind": _kind, "title": _title, "root": _root, "standard": _std, "records": _recs, "about": _sch.get("description", "")})
+# (Every record with a page already: its key to the page's key, so a register's reference becomes a link.)
+def _key_of_file(rel):
+    try:
+        _r = yaml.safe_load(open(os.path.join(TREE, rel), encoding="utf-8")) or {}
+    except Exception:
+        return ""
+    _i = _r.get("identity") if isinstance(_r.get("identity"), dict) else _r
+    return str(_i.get("key", "")) if isinstance(_i, dict) else ""
+for _lst, _pre in ((equipment, "eq:"), (modules, "mod:"), (goods, "good:"), (mill_stock, "stock:"), (hulls, "hull:"), (materials, "mat:")):
+    for _e in _lst:
+        _k = _key_of_file(_e["file"])
+        if _k:
+            KEY_PAGES[_k] = _pre + _e["slug"]
+for _el in elements: KEY_PAGES["element." + str((_el.get("identity") or {}).get("symbol", "")).lower()] = "el:" + str((_el.get("identity") or {}).get("symbol", ""))
+for _mk in makers: KEY_PAGES[str(_mk.get("key", ""))] = "mk:" + str(_mk.get("key", ""))
+KEY_PAGES.pop("", None)
 
 # 8. Confidence: where every number comes from.
 # (Elements and materials are from published sources, named in their files; a process's amounts are
@@ -3074,6 +3135,9 @@ def write_html():
         # (Each property's unit or note, from the schemas.)
         "element_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["elements"]["properties"].items() if "properties" in d},
         "material_groups": {g: {k: v.get("description", "") for k, v in d["properties"].items() if "properties" in d} for g, d in SCHEMAS["materials"]["properties"].items() if "properties" in d},
+        "registers": REGISTERS,
+        "register_groups": REGISTER_GROUPS,
+        "key_pages": KEY_PAGES,
         "standards": sorted(standards, key=lambda s: (s["body"], s["number"])),
         "cited": cited,
         "problems": problems,

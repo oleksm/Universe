@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.water.50kg
+  name: "Water tank 50 kg"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "50 litres of water: 20 person-days to drink (need.water), a few days of washing."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 10
+  volume: 0.096
+  length: 0.6
+  width: 0.4
+  height: 0.4
+built_of:
+  parts: tank-water-50kg
+  list:
+    - { code: TKW50KG-01, name: "Tank", mass: 8, length: 0.557, width: 0.371, height: 0.371, item: stock.al6061-pl-5, quantity: 9.2, module: module.welding-bay }
+    - { code: TKW50KG-02, name: "Fittings and pump", mass: 2, length: 0.351, width: 0.234, height: 0.234, item: good.pumps, quantity: 2, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: store
+  capacity: 50
+  holds: good.water
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "A small aluminium tank at a fifth of its contents. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

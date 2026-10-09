@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.hydrolox.2t
+  name: "Hydrolox tank 2 t"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 6.2 m3 ball holding 2,000 kg of hydrolox: a small craft's propellant."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 280
+  volume: 13.7
+  length: 2.39
+  width: 2.39
+  height: 2.39
+built_of:
+  parts: tank-hydrolox-2t
+  list:
+    - { code: TKHY2T-01, name: "Shell", mass: 196, length: 2.12, width: 2.12, height: 2.12, item: stock.al6061-pl-5, quantity: 225.4, module: module.welding-bay }
+    - { code: TKHY2T-02, name: "Insulation", mass: 56, length: 1.4, width: 1.4, height: 1.4, item: stock.mli-fl, quantity: 56, module: module.assembly-shop }
+    - { code: TKHY2T-03, name: "Fittings and gauging", mass: 28, length: 1.11, width: 1.11, height: 1.11, item: stock.st304-pl-3, quantity: 32.2, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 2000
+  holds: material.hydrolox
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "hydrolox at 320 kg/m3: 6.2 m3 as a ball 2.29 m across; the tank 14% of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

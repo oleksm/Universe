@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.radiator.s0
+  name: "Radiator S0"
+  maker: org.hadley
+  revision: draft
+  slot: thermal
+  description: "A 2 m2 panel at 330 K: 10 kW to space from both faces in vacuum; in air it also convects, more. For a cabin's and a pack's heat."
+size_class: 1
+fits: mount.thermal-s1
+physical:
+  mass: 40
+  volume: 0.1
+  length: 2
+  width: 1
+  height: 0.05
+built_of:
+  parts: thermal-radiator-s0
+  list:
+    - { code: RAD0-01, name: "Panel", mass: 24, length: 1.69, width: 0.843, height: 0.0422, item: stock.al6061-pl-5, quantity: 27.6, module: module.machining-centre }
+    - { code: RAD0-02, name: "Tubes and manifold", mass: 12, length: 1.34, width: 0.669, height: 0.0335, item: stock.st304-pl-3, quantity: 13.8, module: module.welding-bay }
+    - { code: RAD0-03, name: "Fittings", mass: 4, length: 0.928, width: 0.464, height: 0.0232, item: stock.st304-pl-3, quantity: 4.6, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: radiator
+  rejects: 10000.0
+  temperature: 330
+  area: 2.0
+life: 473364000
+basis:
+  - { of: [function, physical], tier: derived, review: true, note: "Two faces of 2 m2 at 330 K and emissivity 0.9 radiate 2 x 2 x 0.9 x 5.67e-8 x 330^4 = 2.4 kW to empty space; a 10 kW rating takes a pumped panel at 20 kg/m2 that sheds the rest by convection in air of 1 kg/m3 and more; in vacuum rate it at its radiated 2.4 kW. Chosen; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

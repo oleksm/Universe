@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.gear.strut.s0
+  name: "Landing leg S0"
+  maker: org.hadley
+  revision: draft
+  slot: gear
+  description: "A light oleo leg for a vehicle of ten to fifteen tonnes: 60 kN a leg, a 0.3 m stroke."
+size_class: 1
+fits: mount.gear-s1
+physical:
+  mass: 60
+  volume: 0.11
+  length: 0.3
+  width: 0.3
+  height: 1.2
+needs:
+  power: 500
+built_of:
+  parts: gear-strut-s0
+  list:
+    - { code: GRS0-01, name: "Strut and oleo", mass: 36, length: 0.25, width: 0.25, height: 1.01, item: stock.ti64-pl-5, quantity: 41.4, module: module.machining-centre }
+    - { code: GRS0-02, name: "Pad", mass: 12, length: 0.18, width: 0.18, height: 0.7, item: stock.al6061-pl-5, quantity: 13.8, module: module.machining-centre }
+    - { code: GRS0-03, name: "Retraction actuator", mass: 12, length: 0.18, width: 0.18, height: 0.7, item: good.electric-motors, quantity: 12, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: landing_gear
+  holds: 60000
+  stroke: 0.3
+  efficiency: 0.8
+  sink_rate: 3.0
+  extended: 1.2
+life: 473364000
+basis:
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "At 1.2 kg a kilonewton (an A320's gear, as the S1 was sized) a 60 kN leg is about 70 kg; 60 kg with titanium. Four hold 24 t at touchdown: a 13 t vehicle at 3 m/s with a 0.3 m stroke decelerates at 1.5 g, 20 t of force over four legs. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

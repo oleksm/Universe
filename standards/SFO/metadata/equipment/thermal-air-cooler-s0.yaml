@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.thermal.air-cooler.s0
+  name: "Air cooler S0"
+  maker: org.hadley
+  revision: draft
+  slot: thermal
+  description: "A finned core with a fan: 20 kW from the coolant loop to the air, where there is air (of 0.3 kg/m3 or more); nothing in vacuum. A commuter on a world with air cools this way and carries a small radiator for the dock."
+size_class: 1
+fits: mount.thermal-s1
+physical:
+  mass: 15
+  volume: 0.06
+  length: 0.5
+  width: 0.4
+  height: 0.3
+needs:
+  power: 400
+built_of:
+  parts: thermal-air-cooler-s0
+  list:
+    - { code: ACL0-01, name: "Finned core", mass: 9, length: 0.422, width: 0.337, height: 0.253, item: stock.al6061-pl-5, quantity: 10.35, module: module.machining-centre }
+    - { code: ACL0-02, name: "Fan", mass: 4, length: 0.335, width: 0.268, height: 0.201, item: good.electric-motors, quantity: 4, module: module.assembly-shop }
+    - { code: ACL0-03, name: "Housing", mass: 2, length: 0.232, width: 0.186, height: 0.139, item: stock.al6061-pl-5, quantity: 2.3, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: heat_exchanger
+  transfers: 20000.0
+life: 473364000
+basis:
+  - { of: [function, physical, needs], tier: invented, review: true, note: "A car's radiator and fan: about 20 kW at a 30 K difference from 15 kg of finned aluminium, 400 W of fan. From memory; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

@@ -215,6 +215,8 @@ properties:
           air_recovery: { type: number, x-unit: "1", description: "the share of the oxygen people breathe out as carbon dioxide it wins back; the rest is made up from the air store. The ISS recovers about 0.5." }
           persons: { type: integer, x-unit: "1", description: "how many people it keeps: air, water and warmth for this many" }
           cooling: { type: number, x-unit: "W", description: "W of the cabin's heat it carries away to the ship's heat path: the people's (need.food.heat a head) and their equipment's; it also dries the air" }
+          air_store: { type: number, x-unit: "kg", description: "kg of oxygen an open-loop pack carries in its own bottle; counted with the ship's air stores in the budgets" }
+          water_store: { type: number, x-unit: "kg", description: "kg of water an open-loop pack carries; counted with the ship's water stores" }
       - description: "A gun: a mass driver. The game fires it as its record says."
         type: object
         additionalProperties: false
@@ -396,6 +398,8 @@ properties:
           kind: { const: battery }
           stores: { type: number, x-unit: "J", description: "J" }
           rate: { type: number, x-unit: "W", description: "W it gives or takes at most" }
+          cycles: { type: integer, description: "full charge-and-discharge cycles before it is worn to 80% of its store; a high-rate pack fewer than a long-duration one" }
+          efficiency: { type: number, x-unit: "1", description: "its discharge efficiency at its rate: the share of what leaves the cells that reaches the bus; the rest is heat in the pack, to be carried off" }
       - description: "Makes power from sunlight. Not in the game yet."
         type: object
         x-in-game: "not made"
@@ -447,7 +451,7 @@ properties:
         x-in-game: "not made"
         additionalProperties: false
         allOf: [{ $ref: "#/definitions/jet" }]
-        required: [kind, cycle, thrust, exhaust, efficiency, burns, throttle, gimbal, isotropic_loss, shield_pass, heat_to_hull]
+        required: [kind, cycle, thrust, exhaust, efficiency, throttle, gimbal, isotropic_loss, shield_pass, heat_to_hull]
         properties:
           kind: { const: engine }
           cycle: { $ref: "../../dictionary.schema.yaml#/definitions/engine_cycle" }
@@ -457,6 +461,7 @@ properties:
           isotropic_loss: { type: number, x-unit: "1", description: "the share of the energy released that leaves the reaction in every direction (neutrons, X-rays, gamma), not with the jet: what a hull in its way takes" }
           shield_pass: { type: number, x-unit: "1", description: "the share of that loss its own shadow shield lets through toward the ship" }
           reaction_offset: { type: number, x-unit: "m", description: "m from the mount's face, aft, to where the loss originates; the hull's share of the sphere is reckoned from there" }
+          min_density: { type: number, x-unit: "kg/m3", description: "kg/m3, the thinnest air a ducted fan is rated for; its thrust at full power falls with the cube root of the density (at 0.3 kg/m3, 63% of its thrust at 1.2). A fan burns nothing: `burns` is left out, and its power is `needs.power` at full thrust." }
       - description: "A swivel that turns an engine unit through a large angle (vectored thrust): aft in flight, down to land. Far heavier than a gimbal; that is the trade. Not in the game yet."
         type: object
         x-in-game: "not made"
