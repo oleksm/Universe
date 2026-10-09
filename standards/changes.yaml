@@ -90,7 +90,7 @@
 - { record: body.treistun.treistun-c-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "0eaffd000e8204b5" }
 - { record: body.treistun.treistun-d, at: "2026-10-06T19:47:40Z", status: "", summary: "changed: bake, surface", sha: "4001049a009dd488" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "ec03710d2e3a78ae" }
-- { record: body.treistun.treistun-e, at: "2026-10-09T03:42:47Z", status: "", summary: "changed: ground, bake", sha: "519319861f91a934" }
+- { record: body.treistun.treistun-e, at: "2026-10-09T17:28:25Z", status: "", summary: "changed: survey, ground, energy", sha: "428a082981a5b9f4" }
 - { record: body.treistun.treistun-f, at: "2026-10-06T20:01:57Z", status: "", summary: "changed: provenance, survey, bake, surface", sha: "00883e89e8764acc" }
 - { record: body.treistun.treistun-g, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "447e29d178391820" }
 - { record: body.treistun.treistun-g-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "afe538e160eeb704" }

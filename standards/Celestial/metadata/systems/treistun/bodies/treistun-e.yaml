@@ -3,73 +3,62 @@
 # 4.5 Gyr (the CO2 thermostat held about 3,500 ppm at the end, and the land stayed under ice at every step); no life ever began,
 # so no oxygen: the air is nitrogen with its carbon dioxide, not breathable. The seed's 264 K and 'breathable' were guesses and
 # are gone. The world's survey carries the run's figures; this header says why the lore reads as it does.
-# Baked: grown by the planet simulation (world TRE1, simulator 9c33e88bb9d5). The survey it points at owns what the run derived; this record owns the inputs.
+# Baked: grown by the planet simulation (world TRE2, simulator 64229d768f72). The survey it points at owns what the run derived; this record owns the inputs.
 provenance: baked
 survey:
   format: "planet-sim-survey/1"
-  world_id: "TRE1"
-  folder: "standards/Celestial/surveys/TRE1"
-  manifest_sha256: "9cdc9552ddffae808c1e0f8a0e80902e15770a61f503ae25690c7df6a34cd730"
-  simulator_commit: "9c33e88bb9d529779ae9b0c06caf976191ef322e"
-  created: "2026-10-06T18:29:31Z"
-  land_share: 0.2975
-  deposits: 4418
-  districts: 1154
-  belts: 518
+  world_id: "TRE2"
+  folder: "standards/Celestial/surveys/TRE2"
+  manifest_sha256: "4264b53b5dbe041bef74ae3b75404cbe657e6ebfd90db9120ee50c615e15b0d8"
+  simulator_commit: "64229d768f72f6f200adaa2fcdced6e77193b07d"
+  created: "2026-10-09T16:56:27Z"
+  land_share: 0.3156
+  deposits: 1412
+  districts: 317
+  belts: 172
   contained:
-    - {"commodity": "NaCl", "mass": 289800000000000.0}
-    - {"commodity": "Fe", "mass": 55510000000000.0}
-    - {"commodity": "Cr2O3", "mass": 7728000000000.0}
-    - {"commodity": "K2O", "mass": 7691000000000.0}
-    - {"commodity": "S", "mass": 7678000000000.0}
-    - {"commodity": "TiO2", "mass": 3026000000000.0}
-    - {"commodity": "diamond", "mass": 541400.0}
-    - {"commodity": "Mn", "mass": 1905000000000.0}
-    - {"commodity": "Cu", "mass": 1676000000000.0}
-    - {"commodity": "P2O5", "mass": 1580000000000.0}
-    - {"commodity": "MgO", "mass": 1380000000000.0}
-    - {"commodity": "V2O5", "mass": 369400000000.0}
-    - {"commodity": "Zn", "mass": 280300000000.0}
-    - {"commodity": "Pb", "mass": 106000000000.0}
-    - {"commodity": "REO", "mass": 103600000000.0}
-    - {"commodity": "Ni", "mass": 60120000000.0}
-    - {"commodity": "Mo", "mass": 53140000000.0}
-    - {"commodity": "K", "mass": 29130000000.0}
-    - {"commodity": "Nb2O5", "mass": 27560000000.0}
-    - {"commodity": "Mg", "mass": 18080000000.0}
-    - {"commodity": "graphite", "mass": 17330000000.0}
-    - {"commodity": "Sn", "mass": 16440000000.0}
-    - {"commodity": "W", "mass": 5466000000.0}
-    - {"commodity": "Li2O", "mass": 5348000000.0}
-    - {"commodity": "As", "mass": 5134000000.0}
-    - {"commodity": "U3O8", "mass": 2008000000.0}
-    - {"commodity": "Co", "mass": 1516000000.0}
-    - {"commodity": "Li", "mass": 1438000000.0}
-    - {"commodity": "WO3", "mass": 619900000.0}
-    - {"commodity": "Ag", "mass": 411000000.0}
-    - {"commodity": "Ta2O5", "mass": 99990000.0}
-    - {"commodity": "PGE", "mass": 92880000.0}
-    - {"commodity": "Au", "mass": 54450000.0}
-energy:
-  format: "planet-sim-energy/1"
-  folder: "standards/Celestial/surveys/TRE1/energy"
-  manifest_sha256: "08431725024c7603435059602d9e338e5a110f82232244658e27729fc7b4f4fa"
-  basins: 0
-  oil_fields: 0
-  gas_fields: 0
-  coalfields: 0
-  oil_in_place: 0.0
-  gas_in_place: 0.0
-  coal_in_place: 0.0
+    - {"commodity": "NaCl", "mass": 48340000000000.0}
+    - {"commodity": "Fe", "mass": 12270000000000.0}
+    - {"commodity": "Cr2O3", "mass": 5980000000000.0}
+    - {"commodity": "P2O5", "mass": 5696000000000.0}
+    - {"commodity": "K2O", "mass": 2597000000000.0}
+    - {"commodity": "S", "mass": 1851000000000.0}
+    - {"commodity": "TiO2", "mass": 1527000000000.0}
+    - {"commodity": "Mn", "mass": 1258000000000.0}
+    - {"commodity": "MgO", "mass": 1090000000000.0}
+    - {"commodity": "diamond", "mass": 136100.0}
+    - {"commodity": "Cu", "mass": 402900000000.0}
+    - {"commodity": "V2O5", "mass": 233200000000.0}
+    - {"commodity": "Al2O3", "mass": 130800000000.0}
+    - {"commodity": "Zn", "mass": 57220000000.0}
+    - {"commodity": "Ni", "mass": 36390000000.0}
+    - {"commodity": "Pb", "mass": 14130000000.0}
+    - {"commodity": "Mo", "mass": 12220000000.0}
+    - {"commodity": "ZrO2", "mass": 10810000000.0}
+    - {"commodity": "REO", "mass": 9329000000.0}
+    - {"commodity": "Li2O", "mass": 4003000000.0}
+    - {"commodity": "Nb2O5", "mass": 2899000000.0}
+    - {"commodity": "graphite", "mass": 2778000000.0}
+    - {"commodity": "Sn", "mass": 2169000000.0}
+    - {"commodity": "Co", "mass": 1000000000.0}
+    - {"commodity": "U3O8", "mass": 813100000.0}
+    - {"commodity": "W", "mass": 714100000.0}
+    - {"commodity": "As", "mass": 685600000.0}
+    - {"commodity": "Ag", "mass": 109200000.0}
+    - {"commodity": "PGE", "mass": 75590000.0}
+    - {"commodity": "Ta2O5", "mass": 53400000.0}
+    - {"commodity": "Au", "mass": 18130000.0}
+    - {"commodity": "TREO", "mass": 13900000.0}
+    - {"commodity": "WO3", "mass": 2316000.0}
 # Its ground is the planet-unfold package (2026-10-09, the owner's word after flying it): drawn from lines, scaled by the
 # game to this body's own radius; the planet-sim surface bake (v1) it had before is removed. Radius, gravity, climate
 # and lore are this record's.
 ground:
   format: "planet-unfold-tiles/1"
-  path: "worlds/TRE1/ground/earth_s3-20261009"
-  manifest_sha256: "0babf4d8ac62607f9330d9527795d32016d2d036344f6cc7a0c56559d40014aa"
+  path: "worlds/TRE2/ground/earth_s13-20261009"
+  manifest_sha256: "96fb676c4a24a6bcf9253be5e8276784674aca674284b6bcaf496fcd30f986bd"
   radius: 6371000
-  note: "earth_s3, grown by the terraform library (0215558) with the district level at the showcases: 223 files, 113 MB in the worlds store."
+  note: "earth_s13: 158 files, 108 MB in the worlds store; terraform df61917."
 identity:
   key: body.treistun.treistun-e
   name: Hoar E
@@ -89,11 +78,11 @@ identity:
 orbit: {semi_major_axis: 98949200000.0, eccentricity: 0.005887, period: 20213280.0, inclination: 0.18}
 physical: {mass: 5.6773e+24, radius: 6281370.0, gravity: 9.604, day: 67006.8, tilt: 17.3, albedo: 0.3}
 surface:
-  highest: 5045
   rain: 0.703
   temperature_high: 218.7
   temperature_low: 202.6
   mean_temperature: 216.2
+  highest: 5045
   terrain: terran
   relief: 4397
   colour: [0.3, 0.6, 1.0]

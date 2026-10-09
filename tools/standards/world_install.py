@@ -227,7 +227,12 @@ def main(argv):
     text = open(path, encoding="utf-8").read()
     rec = yaml.safe_load(text)
     radius = (rec.get("physical") or {}).get("radius")
-    if radius and abs(summary["radius_m"] - radius) > 0.01 * radius:
+    ground_r = (rec.get("ground") or {}).get("radius")
+    # (A body whose ground is a planet-unfold package grown at another radius takes that world's survey too, scaled the same:
+    # positions are latitude and longitude, tonnages and grades don't depend on the radius.)
+    if ground_r and abs(summary["radius_m"] - ground_r) <= 0.01 * ground_r:
+        print(f"survey radius {summary['radius_m']:,.0f} m is the ground's, scaled to the record's {radius:,.0f} m as the ground is")
+    elif radius and abs(summary["radius_m"] - radius) > 0.01 * radius:
         sys.exit(f"survey radius {summary['radius_m']:,.0f} m is not {key}'s {radius:,.0f} m: this world was not grown from this record")
     if rec.get("provenance") == "baked" and not replace and rec["survey"]["world_id"] != m["world_id"]:
         sys.exit(f"{key} is already baked from world {rec['survey']['world_id']}; --replace to point it at another world")
