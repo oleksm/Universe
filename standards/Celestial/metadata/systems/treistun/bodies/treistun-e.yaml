@@ -61,13 +61,15 @@ energy:
   oil_in_place: 0.0
   gas_in_place: 0.0
   coal_in_place: 0.0
-bake:
-  format: "planet-sim-surface/1"
-  version: 1
-  path: "worlds/TRE1/surface/v1"
-  manifest_sha256: "396826a1b2e6772691d2fb87422cbabf2448cf7c17b77db082268894543d0669"
-  files: 1441
-  bytes: 699407813
+# Its ground is the planet-unfold package (2026-10-09, the owner's word after flying it): drawn from lines, scaled by the
+# game to this body's own radius; the planet-sim surface bake (v1) it had before is removed. Radius, gravity, climate
+# and lore are this record's.
+ground:
+  format: "planet-unfold-tiles/1"
+  path: "worlds/TRE1/ground/earth_s3-20261009"
+  manifest_sha256: "0babf4d8ac62607f9330d9527795d32016d2d036344f6cc7a0c56559d40014aa"
+  radius: 6371000
+  note: "earth_s3, grown by the terraform library (0215558) with the district level at the showcases: 223 files, 113 MB in the worlds store."
 identity:
   key: body.treistun.treistun-e
   name: Hoar E
