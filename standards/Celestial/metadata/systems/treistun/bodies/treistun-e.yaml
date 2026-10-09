@@ -66,10 +66,10 @@ energy:
 # and lore are this record's.
 ground:
   format: "planet-unfold-tiles/1"
-  path: "worlds/TRE1/ground/earth_s3-20261009"
-  manifest_sha256: "0babf4d8ac62607f9330d9527795d32016d2d036344f6cc7a0c56559d40014aa"
+  path: "worlds/TRE1/ground/earth_s3-20261009b"
+  manifest_sha256: "8d85efc121b860a40cd832fee4ee2039f5d0db710d8c31a3a28f6d687efc69e6"
   radius: 6371000
-  note: "earth_s3, grown by the terraform library (0215558) with the district level at the showcases: 223 files, 113 MB in the worlds store."
+  note: "earth_s3: 223 files, 130 MB in the worlds store; terraform 3e3c2f3."
 identity:
   key: body.treistun.treistun-e
   name: Hoar E
