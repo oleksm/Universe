@@ -20,8 +20,50 @@ pub use traffic::PadGrant;
 /// A core tick's number. The core advances world time only in whole ticks.
 pub type Tick = u64;
 
-/// A body in the core (a ship, a projectile, a crate…).
-pub type BodyId = usize;
+/// A ship, or anything that shoots and is shot: the player's is 0, NPC craft `i` is `i + 1`, a
+/// port's turret from `TURRETS` up. Written as its number (logs, saves).
+#[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, Debug, Default, serde::Serialize, serde::Deserialize)]
+#[serde(transparent)]
+pub struct ShipId(pub usize);
+
+impl ShipId {
+    /// The player's ship.
+    pub const PLAYER: ShipId = ShipId(0);
+
+    /// NPC craft `i`'s.
+    pub const fn craft(i: usize) -> ShipId {
+        ShipId(i + 1)
+    }
+
+    /// The player's.
+    pub const fn is_player(self) -> bool {
+        self.0 == 0
+    }
+
+    /// Where turrets' ids start.
+    pub const TURRETS: usize = 1 << 40;
+
+    /// Which NPC craft it is (None: the player's, or a turret).
+    pub const fn craft_index(self) -> Option<usize> {
+        if self.0 >= Self::TURRETS { None } else { self.0.checked_sub(1) }
+    }
+
+    /// Turret `k` of `system`'s.
+    pub const fn turret(system: usize, k: usize) -> ShipId {
+        ShipId(Self::TURRETS + system * 256 + k)
+    }
+
+    /// The system and index of the turret it is, if it is one.
+    pub const fn turret_of(self) -> Option<(usize, usize)> {
+        if self.0 >= Self::TURRETS { Some(((self.0 - Self::TURRETS) / 256, (self.0 - Self::TURRETS) % 256)) } else { None }
+    }
+}
+
+impl std::fmt::Display for ShipId {
+    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
+        self.0.fmt(f)
+    }
+}
 
 /// A client (the player's, an NPC pilot, a turret gunner).
 pub type ClientId = u64;

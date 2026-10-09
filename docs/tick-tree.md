@@ -235,6 +235,23 @@ reason on its record. Still the user's to confirm as the build meets them: walki
 realtime lane as the bubble's bodies (decks as core data); checkpoints per clock at their
 boundaries in place of seed-plus-whole-log; whether the NPC lane resolves fights or only movement.
 
+### Periods that aren't clocks (2026-10-07)
+
+Two ways to run work at a period, one each:
+
+- **A world clock** (economy, market boards, the land levy) catches up in game time:
+  `while done_to + every <= now`, its period its record's (`clocks::every`).
+- **Engine work inside the realtime step** runs on the ticks that are whole multiples of its
+  period (`clocks::due(tick, s)`): the dead-man check (machinery's record), traffic control's
+  look (0.1 s), reading the ground ahead (0.5 s), the flight recorder's slices (0.25 s). Those three
+  are the engine's own rates, how often it does its bookkeeping, not world time, so they have no
+  records.
+
+Some periods are clients' and not the engine's (the engine holds no intentions): a pilot's
+thinking (`pilots::COAST_THINK`, `THINK_AT_LEAST`), a listener's news (`news::EVERY`,
+`NET_EVERY`), the newsroom's listening and digests (`newsroom::LISTEN_EVERY`, `DIGEST_EVERY`).
+They stay the client's to set.
+
 ## 9. What breaks, and who does what
 
 The integrator's build: the engine reads `reg.clocks` and binds a handler to every clock key

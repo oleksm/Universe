@@ -60,7 +60,7 @@ impl SunProbe {
                 wgpu::BindGroupLayoutEntry { binding: 2, visibility: wgpu::ShaderStages::COMPUTE, ty: wgpu::BindingType::Buffer { ty: wgpu::BufferBindingType::Storage { read_only: false }, has_dynamic_offset: false, min_binding_size: None }, count: None },
             ],
         });
-        let shader = device.create_shader_module(wgpu::include_wgsl!("shaders/sunprobe.wgsl"));
+        let shader = crate::shaders::single(device, "sunprobe");
         let pl = device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("sun probe"), bind_group_layouts: &[Some(&layout)], immediate_size: 0 });
         let pipe = device.create_compute_pipeline(&wgpu::ComputePipelineDescriptor { label: Some("sun probe"), layout: Some(&pl), module: &shader, entry_point: Some("main"), compilation_options: Default::default(), cache: None });
         let buffer = |label, size, usage| device.create_buffer(&wgpu::BufferDescriptor { label: Some(label), size, usage, mapped_at_creation: false });

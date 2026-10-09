@@ -14,11 +14,9 @@ use universe_sim::services::market::{Quote, Side};
 use universe_sim::world::Facility;
 
 use crate::App;
+use crate::palette::{AMBER, DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
-const AMBER: Color = Color::hex(0xffb040);
 const ROWS: usize = 34;
 
 /// One row: an offer here, or something in the hold this market doesn't trade.
@@ -79,7 +77,7 @@ impl MarketView {
 
 /// Handle the market's keys. Returns false when it should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let Some(mut v) = app.market.take() else { return false };
+    let Some(mut v) = app.panels.market.take() else { return false };
     let input = &ctx.input;
     if input.pressed(KeyCode::Escape) || crate::keys::pressed(input, crate::keys::Act::Market) {
         app.engine.send(Command::WatchMarket(None));
@@ -122,14 +120,14 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         app.engine.send(Command::Trade { market: f, item: row.item, units });
         v.refresh(app);
     }
-    app.market = Some(v);
+    app.panels.market = Some(v);
     true
 }
 
 /// The market screen (covers the view).
 pub fn draw(frame: &mut Frame, app: &App, v: &MarketView) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = GLYPH + 3.0;
     let x = 16.0;
     let mut y = 12.0;

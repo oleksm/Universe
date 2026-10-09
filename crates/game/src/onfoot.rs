@@ -68,7 +68,7 @@ pub fn ramp(frame: &mut Frame, app: &App) {
 pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach: Option<Reach>) {
     const HUD: Color = Color::hex(0xdcebf2);
     const DIM: Color = Color::hex(0x7d93a0);
-    if app.preview.is_some() {
+    if app.panels.preview.is_some() {
         lines.push(("PREVIEW - WALKING THE PLAN - ESC: BACK TO THE STUDIO".into(), Color::hex(0xffc040)));
     }
     match app.v.crew.place {
@@ -105,7 +105,7 @@ pub fn hud(frame: &mut Frame, app: &App, lines: &mut Vec<(String, Color)>, reach
     };
     let size = frame.size();
     let p = Vec2::new(((size.x - text_size(prompt).x) / 2.0).floor(), (size.y * 0.62).floor());
-    frame.text_boxed(p, prompt, Color::hex(0xffc040), Color([0.012, 0.018, 0.026, 0.85]));
+    frame.text_boxed(p, prompt, Color::hex(0xffc040), crate::palette::panel(0.85));
 }
 
 /// What vending item `k` looks like: a few coloured boxes in a unit square

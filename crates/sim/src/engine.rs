@@ -71,7 +71,7 @@ pub enum Command {
     /// Lock on a rock (field, body among its bodies), or let the lock go.
     LockRock(Option<(usize, usize)>),
     /// Lock on the radar contact with this id (a pick from the list).
-    LockContact(usize),
+    LockContact(universe_protocol::ShipId),
     /// Fill the tank where docked or landed.
     Refuel,
     /// Have the hull mended (docked at a station).
@@ -218,7 +218,7 @@ pub struct View {
     /// The ship's system's defence turrets, where they are now; who's on
     /// each pad of each of its ports.
     pub turrets: Vec<(Turret, DVec3)>,
-    pub pads: Vec<[Option<usize>; universe_world::spaceport::PADS]>,
+    pub pads: Vec<[Option<universe_protocol::ShipId>; universe_world::spaceport::PADS]>,
     /// The last tick: what it did, and what it took (ms).
     pub last_step: StepResult,
     pub sim_ms: f32,
@@ -378,15 +378,16 @@ impl Engine {
         let _p = universe_prof::scope("sim/view");
         let u = &mut self.universe;
         let now = u.world.time;
-        let system = u.ship_system;
+        let system = u.vessels[crate::combat::PLAYER].system;
         let sys = u.ship_system();
         let gather = universe_prof::scope("sim/view/crafts");
         // In full: the ships where the client is looking, and those passing
         // through its gates (to or from there); the rest as seen from afar.
         let here = self.looking_at.unwrap_or(system);
-        let near = |c: &crate::traffic::Craft| c.system == here || matches!(c.ship.state, universe_world::ShipState::Transit { to, from, .. } if to == here || from == here);
+        let near = |c: &crate::vessel::Vessel| c.system == here || matches!(c.ship.state, universe_world::ShipState::Transit { to, from, .. } if to == here || from == here);
         let crafts = u
-            .crafts
+            .vessels
+            .crafts()
             .iter()
             .enumerate()
             .map(|(i, c)| CraftView {
@@ -396,20 +397,20 @@ impl Engine {
                 route_next: c.status.route_next,
                 route_stops: c.status.route_len,
                 stage: crate::contacts::activity(c),
-                aggressed: u.law.aggressed(crate::combat::craft_id(i), now),
+                aggressed: u.services.law.aggressed(crate::combat::craft_id(i), now),
             })
             .collect();
         drop(gather);
         let rest = universe_prof::scope("sim/view/rest");
         let markets = universe_world::traffic::facilities(&sys).into_iter().filter(|&f| universe_world::settlements::has_market(&sys, f)).map(|f| (f, f.name(&sys))).collect();
         let market = self.watched.map(|f| u.market_view(f));
-        let pads = (0..sys.spaceports.len()).map(|p| u.atc.owners(system, universe_world::Facility::Spaceport(p))).collect();
+        let pads = (0..sys.spaceports.len()).map(|p| u.services.atc.owners(system, universe_world::Facility::Spaceport(p))).collect();
         self.serial += 1;
         let view = View {
             time: now,
-            ship: u.ship.clone(),
+            ship: u.vessels[crate::combat::PLAYER].ship.clone(),
             ship_system: system,
-            aggressed_until: u.law.until(crate::combat::PLAYER, now),
+            aggressed_until: u.services.law.until(crate::combat::PLAYER, now),
             avionics: Default::default(),
             crew: u.crew,
             credits: u.credits(),
@@ -442,20 +443,20 @@ impl Engine {
             prediction: None,
             nav_marker: None,
             reach: u.pilot_reach(),
-            economy: u.markets.economy.snapshot(),
-            economy_heard: u.boards.heard_economy(system, u.ship.position, &u.ship.spec().comm, now),
-            land: u.land.clone(),
-            works: u.markets.economy.works_snapshot(),
+            economy: u.services.markets.economy.snapshot(),
+            economy_heard: u.services.boards.heard_economy(system, u.vessels[crate::combat::PLAYER].ship.position, &u.vessels[crate::combat::PLAYER].ship.spec().comm, now),
+            land: u.services.land.clone(),
+            works: u.services.markets.economy.works_snapshot(),
             mined: u.world.mined.iter().filter(|((s, _, _), _)| *s == system).map(|(&(_, f, b), &kg)| ((f, b), kg)).collect(),
-            dug: match u.ship.state {
+            dug: match u.vessels[crate::combat::PLAYER].ship.state {
                 universe_world::ShipState::Anchored { field, body, .. } => u.world.dug(system, field, body),
                 _ => 0.0,
             },
             docked_market: u.docked_market(),
-            bookings: u.docked_market().map(|m| u.bookings(u.ship_system, m)).unwrap_or_default(),
+            bookings: u.docked_market().map(|m| u.bookings(u.vessels[crate::combat::PLAYER].system, m)).unwrap_or_default(),
             markets,
             market,
-            standing: u.standings.of(crate::combat::PLAYER, system),
+            standing: u.services.standings.of(crate::combat::PLAYER, system),
             turrets: u.world.turret_motions(system).into_iter().map(|(t, p, _)| (t, p)).collect(),
             pads,
             last_step: self.last_step,

@@ -33,8 +33,6 @@ use crate::rng::{mix, Rng};
 use crate::system::{Body, BodyKind, StarSystem};
 use crate::units::*;
 
-/// Smallest fragment in a swarm (m across).
-pub const SMALLEST: f64 = 15.0;
 /// A swarm reaches at most this far from its remnant (m)...
 const SWARM_MAX: f64 = 60_000.0;
 /// ...and no farther than this share of the remnant's Hill radius (orbits
@@ -531,7 +529,7 @@ fn swarm(sys: &StarSystem, field: &Field) -> Vec<Body> {
     (0..field.count)
         .map(|k| {
             // Cumulative sizes N(>D) ∝ D⁻², up to a tenth of the remnant.
-            let diameter = (SMALLEST * rng.f64().max(1e-9).powf(-0.5)).min(r0 * 0.2);
+            let diameter = (smallest() * rng.f64().max(1e-9).powf(-0.5)).min(r0 * 0.2);
             let rock = rock(class, diameter, field.grade, &mut rng);
             let a = inner * (field.extent / inner).powf(rng.f64());
             // Never closer than half again the remnant's radius.
@@ -600,4 +598,11 @@ mod tests {
         assert!(again.iter().any(|(q, j, _, _)| q == patch && j == k), "the same rock, a year on");
     }
 
+}
+
+/// The smallest rock a field's draw makes (m): the registry's (`seeding.asteroids`
+/// `sizes.smallest`).
+fn smallest() -> f64 {
+    let reg = crate::registry::registry();
+    crate::belts::need(reg.seeding("seeding.asteroids").and_then(|l| l.sizes.smallest), "sizes.smallest")
 }

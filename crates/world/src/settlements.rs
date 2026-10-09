@@ -13,6 +13,8 @@ use glam::DVec3;
 /// (the spaceport's).
 #[derive(Clone, Debug)]
 pub struct Settlement {
+    /// Its record's key (`settlement.<system>.<name>`).
+    pub key: String,
     pub system: String,
     /// The body it is at, by key (`system::Body::key`).
     pub body: String,
@@ -311,6 +313,7 @@ pub fn from_registry(reg: &crate::registry::Registry) -> (Vec<Settlement>, Vec<I
             })
             .collect();
         out.push(Settlement {
+            key: s.identity.key.clone(),
             system,
             body: at.to_string(),
             name: s.identity.name.clone(),

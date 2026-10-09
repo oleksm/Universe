@@ -21,7 +21,7 @@ fn main() {
         save.log.ticks.len(),
         u.world.time,
         postings,
-        u.crafts.len(),
+        u.vessels.crafts().len(),
         start.elapsed(),
         u.state_hash()
     );

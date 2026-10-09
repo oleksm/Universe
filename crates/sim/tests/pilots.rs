@@ -15,8 +15,8 @@ fn a_silent_pilot_holds_its_controls_then_the_dead_man_rule_cuts_in() {
     let mut u = Universe::new(1984);
     u.spawn_settlers(1, 1);
     // Flying free, far from anything, engine at 30%, weapons armed.
-    let (sys, pos, vel) = (u.ship_system, u.ship.position, u.ship.velocity);
-    let c = &mut u.crafts[0];
+    let (sys, pos, vel) = (u.vessels[universe_sim::PLAYER].system, u.vessels[universe_sim::PLAYER].ship.position, u.vessels[universe_sim::PLAYER].ship.velocity);
+    let c = &mut u.vessels[universe_sim::craft_id(0)];
     c.system = sys;
     c.ship.state = ShipState::Flying;
     c.ship.hyperdrive = false;
@@ -35,12 +35,12 @@ fn a_silent_pilot_holds_its_controls_then_the_dead_man_rule_cuts_in() {
     while u.world.time - start < universe_sim::pilots::DEAD_MAN - 1.0 {
         tick(&mut u);
     }
-    let c = &u.crafts[0];
+    let c = &u.vessels[universe_sim::craft_id(0)];
     assert!(!c.dead_man && c.ship.throttle == 0.3 && c.ship.armed, "silent: the ship holds its controls");
     while u.world.time - start < universe_sim::pilots::DEAD_MAN + 1.0 {
         tick(&mut u);
     }
-    let c = &u.crafts[0];
+    let c = &u.vessels[universe_sim::craft_id(0)];
     assert!(c.dead_man, "the dead-man rule cut in");
     assert_eq!(c.ship.throttle, 0.0, "engine cut");
     assert!(!c.ship.armed, "weapons safe");
@@ -54,7 +54,7 @@ fn the_cockpit_flies_the_ship_from_the_client_side() {
     // (In flight, not parked on the home station's deck; the respawn settled.)
     u.start_in_flight();
     tick(&mut u);
-    u.ship.position += DVec3::new(0.0, 0.0, 1.0e6);
+    u.vessels[universe_sim::PLAYER].ship.position += DVec3::new(0.0, 0.0, 1.0e6);
     let station = u.ship_system().station().unwrap();
     let mut e = EngineHandle::new(u);
     e.start();
@@ -94,10 +94,10 @@ fn a_recorded_session_replays_to_the_same_world() {
     for _ in 0..600 {
         tick(&mut u);
     }
-    let log = u.input_log.clone().unwrap();
+    let log = u.replay.input_log.clone().unwrap();
     let replayed = Universe::replay(&log);
     eprintln!("{} ticks, {} postings; hash {:x}", log.ticks.len(), log.ticks.iter().map(|t| t.due.len()).sum::<usize>(), u.state_hash());
-    assert!(!u.atc.journal.is_empty(), "traffic control was busy");
+    assert!(!u.services.atc.journal.is_empty(), "traffic control was busy");
     assert_eq!(replayed.state_hash(), u.state_hash(), "the replay is the same world");
     // And through a save file.
     let json = serde_json::to_string(&u.world_save().unwrap()).unwrap();

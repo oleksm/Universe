@@ -89,22 +89,11 @@ fn gm_hash(p: vec3<f32>) -> f32 {
     return fract(q.x * q.y * q.z * (q.x + q.y + q.z)) * 2.0 - 1.0;
 }
 
-fn gm_noise(x: vec3<f32>) -> f32 {
-    let i = floor(x);
-    var f = fract(x);
-    f = f * f * (3.0 - 2.0 * f);
-    return mix(mix(mix(gm_hash(i), gm_hash(i + vec3<f32>(1.0, 0.0, 0.0)), f.x),
-                   mix(gm_hash(i + vec3<f32>(0.0, 1.0, 0.0)), gm_hash(i + vec3<f32>(1.0, 1.0, 0.0)), f.x), f.y),
-               mix(mix(gm_hash(i + vec3<f32>(0.0, 0.0, 1.0)), gm_hash(i + vec3<f32>(1.0, 0.0, 1.0)), f.x),
-                   mix(gm_hash(i + vec3<f32>(0.0, 1.0, 1.0)), gm_hash(i + vec3<f32>(1.0, 1.0, 1.0)), f.x), f.y), f.z);
-}
-
 // Noise that repeats with the ground's coordinate: `q` (the caller's `micro`) wraps every
-// GM_PERIOD m (the engine's MICRO_PERIOD), so an octave of wavelength `lam` (a power of two, at
-// most GM_PERIOD) has its lattice wrapped to GM_PERIOD / lam cells, or it jumps on the wrap's
+// MICRO_PERIOD m (the engine's), so an octave of wavelength `lam` (a power of two, at
+// most MICRO_PERIOD) has its lattice wrapped to MICRO_PERIOD / lam cells, or it jumps on the wrap's
 // planes (which drew ~4 km squares). `seed` picks an independent pattern (in the hash, not the
 // position). `wrap`: which axes wrap (1) or not (0).
-const GM_PERIOD: f32 = 4096.0;
 
 fn gm_cell(i: vec3<f32>, per: vec3<f32>, wrap: vec3<f32>, seed: f32) -> f32 {
     let w = select(i, i - per * floor(i / per), wrap > vec3<f32>(0.5));
@@ -113,7 +102,7 @@ fn gm_cell(i: vec3<f32>, per: vec3<f32>, wrap: vec3<f32>, seed: f32) -> f32 {
 
 fn gm_pnoise_w(q: vec3<f32>, lam: f32, seed: f32, wrap: vec3<f32>) -> f32 {
     let x = q / lam;
-    let per = vec3<f32>(round(GM_PERIOD / lam));
+    let per = vec3<f32>(round(MICRO_PERIOD / lam));
     let i = floor(x);
     var f = fract(x);
     f = f * f * (3.0 - 2.0 * f);

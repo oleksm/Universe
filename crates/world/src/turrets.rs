@@ -6,6 +6,7 @@
 //! it actually points. Who it shoots at is its gunner's business — a client,
 //! run by the defence service — and the law's (who's fair game).
 
+use universe_protocol::ShipId;
 use glam::{DQuat, DVec3};
 
 use crate::gate::{gate_radius, ring_tube};
@@ -24,8 +25,6 @@ pub const TURRET_RANGE: f64 = 6_000.0;
 pub const PORT_TURRET_RANGE: f64 = 20_000.0;
 /// Rounds per second.
 pub const TURRET_RATE: f64 = 5.0;
-/// Turrets' ids in combat start here (ships' are small numbers).
-pub const TURRET_ID: usize = 1 << 40;
 
 /// A turret: fixed to `body` at `local` (the body's own, rotating frame),
 /// defending `facility`.
@@ -54,13 +53,13 @@ impl Turret {
 }
 
 /// Combat id of turret `k` of `system`.
-pub fn turret_id(system: usize, k: usize) -> usize {
-    TURRET_ID + system * 256 + k
+pub fn turret_id(system: usize, k: usize) -> ShipId {
+    ShipId::turret(system, k)
 }
 
 /// The system and index of a turret by its combat id, if it is one.
-pub fn turret_of(id: usize) -> Option<(usize, usize)> {
-    (id >= TURRET_ID).then(|| ((id - TURRET_ID) / 256, (id - TURRET_ID) % 256))
+pub fn turret_of(id: ShipId) -> Option<(usize, usize)> {
+    id.turret_of()
 }
 
 /// Points spread around a circle of `radius` in the plane across `axis`.
@@ -142,13 +141,13 @@ impl crate::world::World {
     }
 
     /// Give turret `id`'s gun its orders (they hold until changed).
-    pub fn command_turret(&mut self, id: usize, c: TurretCommand) {
+    pub fn command_turret(&mut self, id: ShipId, c: TurretCommand) {
         let gun = self.turret_guns.entry(id).or_insert(TurretGun { aim: c.aim.unwrap_or(DVec3::Y), orders: c, cooldown: 0.0, reload: 0.0 });
         gun.orders = c;
     }
 
     /// Turret `id`'s gun, as its gunner's sensors read it (None: never commanded).
-    pub fn turret_gun(&self, id: usize) -> Option<TurretGun> {
+    pub fn turret_gun(&self, id: ShipId) -> Option<TurretGun> {
         self.turret_guns.get(&id).copied()
     }
 
@@ -156,7 +155,7 @@ impl crate::world::World {
     /// its aim, and fires along where it points while its trigger is held.
     /// Rounds go into `fired`.
     pub(crate) fn turrets_fire(&mut self, dt: f64, fired: &mut Vec<Slug>) {
-        let mut ids: Vec<usize> = self.turret_guns.keys().copied().collect();
+        let mut ids: Vec<ShipId> = self.turret_guns.keys().copied().collect();
         ids.sort_unstable();
         let mut motions: std::collections::HashMap<usize, Vec<(Turret, DVec3, DVec3)>> = std::collections::HashMap::new();
         for id in ids {

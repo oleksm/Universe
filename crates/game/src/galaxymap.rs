@@ -10,9 +10,8 @@ use universe_sim::names::star_name;
 
 use crate::scene::color;
 use crate::App;
+use crate::palette::{DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const GATE: Color = Color::hex(0xffc040);
 const YOU: Color = Color::hex(0x60ffff);
 
@@ -119,7 +118,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     }
     let size = ctx.low_res.as_vec2();
     let you = flat(app, app.v.ship_system);
-    let Some(map) = &mut app.galaxy_map else { return false };
+    let Some(map) = &mut app.panels.galaxy_map else { return false };
     let dt = ctx.dt as f64;
     let zoom = input.scroll as f64 * 0.15 + (input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64) * 1.5 * dt;
     map.scale = (map.scale * zoom.exp()).clamp(size.y as f64 / 40_000.0, 400.0);
@@ -284,9 +283,7 @@ pub fn draw(frame: &mut Frame, app: &App, map: &GalaxyMap) {
     // How much of it there is, and how much we've seen.
     let total = galaxy.stars.len();
     let settled = {
-        let mut s: Vec<usize> = app.charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        s.sort_unstable();
-        s.dedup();
+        let s = app.charts.settled();
         s.len()
     };
     let seen = app.explored.len();

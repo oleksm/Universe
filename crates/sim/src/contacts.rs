@@ -6,7 +6,7 @@ use universe_avionics::NavTarget;
 use universe_world::radar::Blip;
 use universe_world::ShipState;
 
-use crate::traffic::Craft;
+use crate::vessel::Vessel;
 
 /// A ship on the radar, with its transponder's answer.
 #[derive(Clone, Debug)]
@@ -29,7 +29,7 @@ pub struct Contact {
 pub const LOCK_BEAM: f64 = 6.0 * std::f64::consts::PI / 180.0;
 
 /// What a craft's transponder says it's doing.
-pub(crate) fn activity(craft: &Craft) -> &'static str {
+pub(crate) fn activity(craft: &Vessel) -> &'static str {
     let a = &craft.status;
     // Weapons hot is plain to see, whatever the transponder says.
     if craft.ship.weapons_hot() {

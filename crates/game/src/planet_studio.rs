@@ -14,10 +14,8 @@ use universe_engine::{Color, Context, Frame, KeyCode};
 use universe_sim::world::worlds::{History, Release};
 
 use crate::App;
+use crate::palette::{DIM, PANEL, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
-const PANEL: Color = Color([0.012, 0.018, 0.026, 0.85]);
 
 /// How a baked world's ground is coloured close up: which of its bake's globe maps.
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq)]
@@ -86,7 +84,7 @@ impl PlanetStudio {
 pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
     app.studio_world = None;
     if app.world_frame.take().is_some() {
-        app.world_maps.clear();
+        app.caches.world_maps.clear();
     }
     let history = match History::release(r) {
         Some(Ok(h)) => Some(std::sync::Arc::new(h)),
@@ -97,7 +95,7 @@ pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
         None => None,
     };
     let key = r.body.clone().unwrap_or_else(|| format!("studio.{}", r.world_id));
-    if let Some(s) = app.planet_studio.as_mut() {
+    if let Some(s) = app.panels.planet_studio.as_mut() {
         s.shown = Some((key, history));
     }
     let Some(key) = r.body.as_deref() else {
@@ -169,7 +167,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     if input.pressed(KeyCode::Escape) || crate::keys::pressed(input, crate::keys::Act::Worlds) {
         return false;
     }
-    let Some(studio) = app.planet_studio.as_mut() else { return false };
+    let Some(studio) = app.panels.planet_studio.as_mut() else { return false };
     let n = studio.list.len().max(1);
     if input.pressed(KeyCode::ArrowDown) {
         studio.selected = (studio.selected + 1) % n;
@@ -185,7 +183,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         _ => 0,
     };
     if step != 0
-        && let Some((key, Some(history))) = app.planet_studio.as_ref().and_then(|s| s.shown.clone())
+        && let Some((key, Some(history))) = app.panels.planet_studio.as_ref().and_then(|s| s.shown.clone())
     {
         let last = history.frames.len().saturating_sub(1);
         let now = app.world_frame.as_ref().map(|f| f.frame);
@@ -197,21 +195,21 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         };
         if next != now {
             app.world_frame = next.map(|frame| WorldFrame { key, history, frame });
-            app.world_maps.clear();
+            app.caches.world_maps.clear();
         }
     }
     if input.pressed(KeyCode::KeyL) {
         app.world_look = app.world_look.next();
         // (Its maps made again in the new look.)
-        app.world_maps.clear();
+        app.caches.world_maps.clear();
     }
     if input.pressed(KeyCode::Enter) {
-        let r = app.planet_studio.as_ref().and_then(|s| s.list.get(s.selected).cloned());
+        let r = app.panels.planet_studio.as_ref().and_then(|s| s.list.get(s.selected).cloned());
         let note = match r {
             Some(r) => go_to(app, &r).err().unwrap_or_default(),
             None => "NO WORLDS: IS THE WORLDS STORE HERE? (UNIVERSE_WORLDS)".into(),
         };
-        if let Some(s) = app.planet_studio.as_mut() {
+        if let Some(s) = app.panels.planet_studio.as_mut() {
             s.note = note;
         }
     }

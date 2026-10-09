@@ -2549,6 +2549,7 @@ dependencies = [
  "glam",
  "gltf",
  "log",
+ "naga",
  "png",
  "pollster",
  "rayon",

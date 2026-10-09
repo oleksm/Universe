@@ -87,12 +87,12 @@ fn sky(d: vec3<f32>) -> vec3<f32> {
         let h2 = r * r - dot(off, off);
         if (t > 0.0 && h2 > 0.0) {
             // Its ground where the ray meets it, lit by the sun's height there,
-            // as the eye takes light in (irradiance to EXPOSURE, frame.rs: as
+            // as the eye takes light in (irradiance to ADAPT, frame.rs: as
             // the sun and the ground are drawn), over the sky's own glow.
             let p = d * (t - sqrt(h2));
             let n = normalize(p - pc);
             let lit = g.env_world_color.w * max(dot(n, g.env_sun.xyz), 0.0);
-            c = max(g.env_world_color.rgb * g.env_sun.w * pow(lit, EXPOSURE), c);
+            c = max(g.env_world_color.rgb * g.env_sun.w * pow(lit, ADAPT), c);
         }
     }
     return c;
@@ -116,8 +116,7 @@ fn basis(n: vec3<f32>) -> mat3x3<f32> {
 }
 
 const PI: f32 = 3.14159265;
-// How the eye adapts (frame.rs `EXPOSURE`).
-const EXPOSURE: f32 = 0.45;
+// (How the eye adapts: `ADAPT`, written by shaders.rs, as frame.rs has it.)
 
 @fragment
 fn fs_main(in: Out) -> @location(0) vec4<f32> {

@@ -1,3 +1,5 @@
+mod palette;
+mod devenv;
 mod dev;
 mod economy;
 mod zoning;
@@ -60,7 +62,7 @@ pub struct Spark {
     pub laser: bool,
     /// Our round or beam (and whose ship it struck).
     pub ours: bool,
-    pub target: usize,
+    pub target: universe_sim::ShipId,
 }
 
 /// Game seconds per real second, by default.
@@ -96,6 +98,17 @@ pub const STUDIO_CACHE: usize = usize::MAX;
 pub enum Who {
     Me,
     Craft(usize),
+}
+
+impl Who {
+    /// The ship with id `id` (a turret's: none).
+    pub fn of(id: universe_sim::ShipId) -> Option<Who> {
+        match id.craft_index() {
+            Some(i) => Some(Who::Craft(i)),
+            None if id.is_player() => Some(Who::Me),
+            None => None,
+        }
+    }
 }
 
 pub struct Message {
@@ -164,63 +177,16 @@ pub struct App {
     pub view: View,
     /// Docking or landing guidance for the HUD, when cleared.
     pub approach: Option<Approach>,
-    /// The flight plan to the cleared target: the path, attitudes and actions ahead.
-    pub plan: Option<Arc<universe_sim::Plan>>,
-    /// The plan before it, and how far (0..1) the display has eased from it
-    /// to `plan`: each rebuild starts from where the ship is, so the guide
-    /// would otherwise jump a little at every one.
-    pub plan_prev: Option<Arc<universe_sim::Plan>>,
-    /// The guide frames, set in space along the plan (see `scene::Guide`).
-    pub guide: crate::scene::Guide,
-    /// A follow program's way, as a plan (see `followguide`), rebuilt every frame.
-    pub follow_plan: Option<(universe_sim::Plan, Option<f64>)>,
-    /// How lively the followed target is (a lively one's guide is the line alone).
-    pub liveliness: followguide::Liveliness,
-    pub plan_blend: f32,
-    /// Real seconds since the plan was rebuilt, its serial, and how long
-    /// building it took (real seconds) and how often it's rebuilt.
-    plan_age: f32,
-    plan_serial: u64,
-    pub plan_cost: f32,
-    pub plan_every: f32,
     /// Time the world tick took (ms, smoothed): every ship's turn.
     pub sim_ms: f32,
-    /// The ETA shown on the HUD (real seconds): counts down each frame and
-    /// eases toward each new plan's prediction instead of jumping.
-    pub eta_shown: Option<f64>,
-    /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
-    pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
-    /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
-    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
-    /// Worlds grown by the planet simulation: their full-resolution maps, made in the
-    /// background (None till ready), by (system, body).
-    pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
-    /// Asteroid meshes, built once per (system, field, body among the field's bodies).
-    pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
-    /// Mining rigs: how far each ship's gear is out (see `rig`).
-    pub rigs: rig::Rigs,
-    /// The galaxy's stars as seen from a system: (system, direction and colour of each).
-    pub sky_cache: std::cell::RefCell<Option<SkyCache>>,
-    /// The navigation map, when open.
-    pub nav_map: Option<navmap::NavMap>,
-    /// The economy panel, when open (5).
-    pub economy_panel: Option<economy::EconomyPanel>,
-    /// The planet studio (WORLDS), while open; and how a baked world's ground is coloured.
-    pub planet_studio: Option<planet_studio::PlanetStudio>,
     /// The planet studio's world shown alone, in a system of its own (see `planet_studio`).
     pub studio_world: Option<Arc<StarSystem>>,
     /// A frame of the shown world's history drawn in place of its colour today (the studio's
     /// timeline).
     pub world_frame: Option<planet_studio::WorldFrame>,
     pub world_look: planet_studio::Look,
-    /// The galaxy map, when open (U from the navigation map).
-    pub galaxy_map: Option<galaxymap::GalaxyMap>,
     /// The star systems we've been to (kept in the save).
     pub explored: std::collections::BTreeSet<usize>,
-    /// The market screen, when open; and whether we're docked at a market.
-    pub market: Option<market::MarketView>,
-    /// The ship planner (the shipyard, docked at a station), while open.
-    pub shipyard: Option<shipyard::Shipyard>,
     /// The game held to the shipyard studio's budget of cores (see `hold_to_cores`).
     held_to_cores: bool,
     /// At a vending machine, its panel open: the item picked.
@@ -230,8 +196,6 @@ pub struct App {
     pub deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// The layout last sent to the world engine for our hull (sent again when it changes).
     layout_sent: Option<universe_sim::world::deckplan::DeckPlan>,
-    /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
-    pub preview: Option<shipyard::Shipyard>,
     /// Docked or landed where there's a market (as the world last said).
     pub docked_market: bool,
     /// What the target marker points at: the nav target, else the nearest station.
@@ -242,16 +206,6 @@ pub struct App {
     pub fire: Option<(universe_sim::avionics::Track, Option<universe_sim::avionics::Solution>)>,
     /// Seconds since the ship was last hit (for the HUD's flash).
     pub hit_age: f32,
-    /// On the hypernet: the lag from the backbone (s) and the node it's through.
-    pub net: Option<(f64, String)>,
-    /// When the status was last worked out (game time).
-    pub net_at: f64,
-    /// This system's relays (its index, and how many claims there were, with them).
-    pub net_nodes: Option<((usize, usize), Vec<universe_sim::world::hypernet::Node>)>,
-    /// What news has come to us over the hypernet (or our own comm), and when.
-    pub news: universe_sim::news::Knowledge,
-    /// The news outlets, and their digests (opened on the first update).
-    pub newsroom: Option<universe_sim::newsroom::Newsroom>,
     /// The news panel, when open.
     pub news_panel: bool,
     /// What's drawn of what can be (see `graphics`), and its panel open.
@@ -280,8 +234,6 @@ pub struct App {
     pub show_cargo: bool,
     /// The thrusters panel (F7).
     pub show_thrusters: bool,
-    /// The standards registry open (docked), and where in its tree.
-    pub standards: Option<standards::StandardsView>,
     /// The passengers panel open: its row picked.
     pub passengers: Option<usize>,
     /// Manual: the thrusters last held (sent when it changes).
@@ -310,6 +262,93 @@ pub struct App {
     /// Seconds into `UNIVERSE_SOUND_TEST`, if running.
     sound_test: Option<f64>,
     launched: bool,
+    /// The panels open over the flight view (None: closed).
+    pub panels: Panels,
+    /// The trajectory plan shown, as it's worked out and blended in.
+    pub plan: PlanState,
+    /// The hypernet as it reaches us: our link, the nodes in sight, and the news.
+    pub net: NetState,
+    /// What's built for drawing and kept: ground patches, globes, worlds' maps, rocks, rigs, the sky.
+    pub caches: Caches,
+}
+
+/// The panels open over the flight view (None: closed).
+pub struct Panels {
+    /// The navigation map, when open.
+    pub nav_map: Option<navmap::NavMap>,
+    /// The economy panel, when open (5).
+    pub economy_panel: Option<economy::EconomyPanel>,
+    /// The planet studio (WORLDS), while open; and how a baked world's ground is coloured.
+    pub planet_studio: Option<planet_studio::PlanetStudio>,
+    /// The galaxy map, when open (U from the navigation map).
+    pub galaxy_map: Option<galaxymap::GalaxyMap>,
+    /// The market screen, when open; and whether we're docked at a market.
+    pub market: Option<market::MarketView>,
+    /// The ship planner (the shipyard, docked at a station), while open.
+    pub shipyard: Option<shipyard::Shipyard>,
+    /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
+    pub preview: Option<shipyard::Shipyard>,
+    /// The standards registry open (docked), and where in its tree.
+    pub standards: Option<standards::StandardsView>,
+}
+
+/// The trajectory plan shown: the current and the one before (blended over `blend`), how often
+/// it's worked out and what that cost, the guide drawn along it, the follow plan, the ETA shown.
+pub struct PlanState {
+    /// The flight plan to the cleared target: the path, attitudes and actions ahead.
+    pub current: Option<Arc<universe_sim::Plan>>,
+    /// The plan before it, and how far (0..1) the display has eased from it
+    /// to `plan`: each rebuild starts from where the ship is, so the guide
+    /// would otherwise jump a little at every one.
+    pub prev: Option<Arc<universe_sim::Plan>>,
+    /// The guide frames, set in space along the plan (see `scene::Guide`).
+    pub guide: crate::scene::Guide,
+    /// A follow program's way, as a plan (see `followguide`), rebuilt every frame.
+    pub follow: Option<(universe_sim::Plan, Option<f64>)>,
+    /// How lively the followed target is (a lively one's guide is the line alone).
+    pub liveliness: followguide::Liveliness,
+    pub blend: f32,
+    /// Real seconds since the plan was rebuilt, its serial, and how long
+    /// building it took (real seconds) and how often it's rebuilt.
+    pub age: f32,
+    pub serial: u64,
+    pub cost: f32,
+    pub every: f32,
+    /// The ETA shown on the HUD (real seconds): counts down each frame and
+    /// eases toward each new plan's prediction instead of jumping.
+    pub eta_shown: Option<f64>,
+}
+
+/// The hypernet as it reaches us: our link's status and when it was read, the nodes in sight, the
+/// news we've heard and the newsroom's digests.
+pub struct NetState {
+    /// On the hypernet: the lag from the backbone (s) and the node it's through.
+    pub status: Option<(f64, String)>,
+    /// When the status was last worked out (game time).
+    pub at: f64,
+    /// This system's relays (its index, and how many claims there were, with them).
+    pub nodes: Option<((usize, usize), Vec<universe_sim::world::hypernet::Node>)>,
+    /// What news has come to us over the hypernet (or our own comm), and when.
+    pub news: universe_sim::news::Knowledge,
+    /// The news outlets, and their digests (opened on the first update).
+    pub newsroom: Option<universe_sim::newsroom::Newsroom>,
+}
+
+/// What's built for drawing and kept between frames.
+pub struct Caches {
+    /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
+    pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
+    /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
+    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
+    /// Worlds grown by the planet simulation: their full-resolution maps, made in the
+    /// background (None till ready), by (system, body).
+    pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
+    /// Asteroid meshes, built once per (system, field, body among the field's bodies).
+    pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
+    /// Mining rigs: how far each ship's gear is out (see `rig`).
+    pub rigs: rig::Rigs,
+    /// The galaxy's stars as seen from a system: (system, direction and colour of each).
+    pub sky: std::cell::RefCell<Option<SkyCache>>,
 }
 
 impl App {
@@ -366,57 +405,27 @@ impl App {
             messages: Vec::new(),
             view: View { origin, system, positions: Vec::new(), ship_pos: DVec3::ZERO, reference: None, cache: origin },
             approach: None,
-            plan: None,
-            plan_age: 0.0,
-            plan_serial: 0,
-            plan_every: 0.1,
-            plan_prev: None,
-            guide: Default::default(),
-            follow_plan: None,
-            liveliness: Default::default(),
-            plan_blend: 1.0,
-            plan_cost: 0.0,
             sim_ms: 0.0,
-            eta_shown: None,
-            globes: std::collections::HashMap::new(),
-            world_maps: std::collections::HashMap::new(),
-            terrain_lod: Default::default(),
-            rocks: std::collections::HashMap::new(),
-            rigs: Default::default(),
             mining: Default::default(),
             picker: Default::default(),
             orbit_pick: Default::default(),
             show_cargo: false,
             show_thrusters: false,
             passengers: None,
-            standards: None,
             jets_held: 0,
-            sky_cache: std::cell::RefCell::new(None),
-            nav_map: None,
-            galaxy_map: None,
-            economy_panel: None,
-            planet_studio: None,
             studio_world: None,
             world_frame: None,
             world_look: Default::default(),
             explored: Default::default(),
-            market: None,
-            shipyard: None,
             held_to_cores: false,
             deckplans: Vec::new(),
             layout_sent: None,
-            preview: None,
             vending: None,
             docked_market: false,
             nav_marker: None,
             contacts: Vec::new(),
             fire: None,
             hit_age: 99.0,
-            net: None,
-            net_at: f64::NEG_INFINITY,
-            net_nodes: None,
-            news: Default::default(),
-            newsroom: None,
             news_panel: false,
             graphics: graphics::load(),
             graphics_panel: false,
@@ -448,6 +457,44 @@ impl App {
             prev_focus: None,
             sound_test: std::env::var_os("UNIVERSE_SOUND_TEST").map(|_| 0.0),
             launched: false,
+            panels: Panels {
+                standards: None,
+                nav_map: None,
+                galaxy_map: None,
+                economy_panel: None,
+                planet_studio: None,
+                market: None,
+                shipyard: None,
+                preview: None,
+            },
+            plan: PlanState {
+                current: None,
+                age: 0.0,
+                serial: 0,
+                every: 0.1,
+                prev: None,
+                guide: Default::default(),
+                follow: None,
+                liveliness: Default::default(),
+                blend: 1.0,
+                cost: 0.0,
+                eta_shown: None,
+            },
+            net: NetState {
+                status: None,
+                at: f64::NEG_INFINITY,
+                nodes: None,
+                news: Default::default(),
+                newsroom: None,
+            },
+            caches: Caches {
+                globes: std::collections::HashMap::new(),
+                world_maps: std::collections::HashMap::new(),
+                terrain_lod: Default::default(),
+                rocks: std::collections::HashMap::new(),
+                rigs: Default::default(),
+                sky: std::cell::RefCell::new(None),
+            },
         };
         let name = app.view.system.bodies[app.view.system.station().unwrap_or(0)].name.clone();
         app.say(format!("WELCOME TO {}", name.to_uppercase()));
@@ -460,15 +507,15 @@ impl App {
             match std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, &path)) {
                 Ok(h) => {
                     let u = app.engine.universe();
-                    u.ship.class = h;
-                    u.ship.refresh();
+                    u.vessels[universe_sim::PLAYER].ship.class = h;
+                    u.vessels[universe_sim::PLAYER].ship.refresh();
                     // (Set down at its own height: the new game stood the default hull.)
-                    let mut ship = u.ship.clone();
-                    u.world.resettle(u.ship_system, &mut ship);
-                    u.ship = ship;
-                    u.ship.fuel = u.ship.spec().fuel_capacity;
-                    u.ship.energy = u.ship.spec().capacitor_capacity;
-                    let name = u.ship.spec().name.clone();
+                    let mut ship = u.vessels[universe_sim::PLAYER].ship.clone();
+                    u.world.resettle(u.vessels[universe_sim::PLAYER].system, &mut ship);
+                    u.vessels[universe_sim::PLAYER].ship = ship;
+                    u.vessels[universe_sim::PLAYER].ship.fuel = u.vessels[universe_sim::PLAYER].ship.spec().fuel_capacity;
+                    u.vessels[universe_sim::PLAYER].ship.energy = u.vessels[universe_sim::PLAYER].ship.spec().capacitor_capacity;
+                    let name = u.vessels[universe_sim::PLAYER].ship.spec().name.clone();
                     app.say(format!("FLYING {name}"));
                     app.engine.refresh();
                     app.v = app.engine.view();
@@ -535,23 +582,23 @@ impl App {
     fn update_net(&mut self) {
         use universe_sim::world::hypernet::Net;
         let t = self.now();
-        if (t - self.net_at).abs() < 0.5 {
+        if (t - self.net.at).abs() < 0.5 {
             return;
         }
-        self.net_at = t;
+        self.net.at = t;
         let sys = self.view.system.clone();
         // (In a gate's tube: off the net.)
         if sys.index != self.v.ship_system || matches!(self.ship.state, ShipState::Transit { .. }) {
-            self.net = None;
+            self.net.status = None;
             return;
         }
         let key = (sys.index, 0);
-        if self.net_nodes.as_ref().is_none_or(|(k, _)| *k != key) {
-            self.net_nodes = Some((key, universe_sim::world::hypernet::nodes(&self.charts.galaxy, &sys)));
+        if self.net.nodes.as_ref().is_none_or(|(k, _)| *k != key) {
+            self.net.nodes = Some((key, universe_sim::world::hypernet::nodes(&self.charts.galaxy, &sys)));
         }
-        let all = self.net_nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
+        let all = self.net.nodes.as_ref().map(|(_, n)| n.clone()).unwrap_or_default();
         let net = Net::at(&sys, all, t, &self.view.positions);
-        self.net = net.status(&sys, &self.view.positions, self.view.ship_pos, &self.ship.spec().comm).map(|s| (s.lag, net.nodes[s.via].name.clone()));
+        self.net.status = net.status(&sys, &self.view.positions, self.view.ship_pos, &self.ship.spec().comm).map(|s| (s.lag, net.nodes[s.via].name.clone()));
     }
 
     pub fn now(&self) -> f64 {
@@ -605,23 +652,23 @@ impl App {
     /// panels open over it (the galaxy map over the navigation map), each
     /// from the layer under it, and close back to it.
     fn top_layer(&self) -> Layer {
-        if self.shipyard.is_some() {
+        if self.panels.shipyard.is_some() {
             Layer::Shipyard
-        } else if self.market.is_some() {
+        } else if self.panels.market.is_some() {
             Layer::Market
-        } else if self.economy_panel.is_some() {
+        } else if self.panels.economy_panel.is_some() {
             Layer::Economy
-        } else if self.planet_studio.is_some() {
+        } else if self.panels.planet_studio.is_some() {
             Layer::Worlds
         } else if self.news_panel {
             Layer::News
-        } else if self.galaxy_map.is_some() {
+        } else if self.panels.galaxy_map.is_some() {
             Layer::GalaxyMap
-        } else if self.nav_map.is_some() {
+        } else if self.panels.nav_map.is_some() {
             Layer::NavMap
         } else if self.graphics_panel {
             Layer::Graphics
-        } else if self.standards.is_some() {
+        } else if self.panels.standards.is_some() {
             Layer::Standards
         } else if self.passengers.is_some() {
             Layer::Passengers
@@ -635,21 +682,21 @@ impl App {
     fn world_keys(&mut self, ctx: &mut Context) {
         let input = &ctx.input;
         // Walking through the plan: ESC (or the shipyard key) back to the studio, seated.
-        if self.preview.is_some() && (input.pressed(KeyCode::Escape) || keys::pressed(input, keys::Act::Shipyard)) {
+        if self.panels.preview.is_some() && (input.pressed(KeyCode::Escape) || keys::pressed(input, keys::Act::Shipyard)) {
             self.engine.send(Command::Preview(None));
-            if let Some(s) = self.preview.take() {
-                self.shipyard = Some(s);
+            if let Some(s) = self.panels.preview.take() {
+                self.panels.shipyard = Some(s);
             }
             ctx.grab_cursor(false);
             return;
         }
         let seated_pilot = self.mode == Mode::Pilot && self.v.crew.seated();
         if keys::pressed(input, keys::Act::Economy) {
-            self.economy_panel = Some(Default::default());
+            self.panels.economy_panel = Some(Default::default());
             return;
         }
         if self.mode == Mode::Observer && keys::pressed(input, keys::Act::Worlds) {
-            self.planet_studio = Some(planet_studio::PlanetStudio::open());
+            self.panels.planet_studio = Some(planet_studio::PlanetStudio::open());
             return;
         }
         if input.pressed(KeyCode::F11) {
@@ -661,17 +708,17 @@ impl App {
             return;
         }
         if keys::pressed(input, keys::Act::Map) {
-            self.nav_map = Some(navmap::NavMap::open(self));
+            self.panels.nav_map = Some(navmap::NavMap::open(self));
             sound::click(ctx, 900.0);
             return;
         }
         if seated_pilot && keys::pressed(input, keys::Act::Market) {
-            self.market = Some(market::MarketView::open(self));
+            self.panels.market = Some(market::MarketView::open(self));
             sound::click(ctx, 900.0);
             return;
         }
         if seated_pilot && keys::pressed(input, keys::Act::Shipyard) {
-            self.shipyard = shipyard::open(self);
+            self.panels.shipyard = shipyard::open(self);
             sound::click(ctx, 900.0);
             return;
         }
@@ -840,7 +887,7 @@ impl App {
                 self.passengers = Some(0);
             }
             if pressed(input, Act::Standards) && universe_sim::world::traffic::docked_at(&self.view.system, &self.ship).is_some() {
-                self.standards = Some(standards::StandardsView::new());
+                self.panels.standards = Some(standards::StandardsView::new());
             }
         }
         if pressed(input, Act::Hyperdrive) {
@@ -1132,24 +1179,24 @@ impl App {
     fn build_globes(&mut self) {
         let origin = self.view.cache;
         for (i, b) in self.view.system.bodies.iter().enumerate() {
-            if !self.globes.contains_key(&(origin, i))
+            if !self.caches.globes.contains_key(&(origin, i))
                 && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
             {
-                self.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
+                self.caches.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
             }
             // A world with a bake: its full-resolution maps, read and encoded on a thread of their
             // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
             // (a few hundred megabytes each while held).
             let away = self.view.positions.get(i).map_or(f64::INFINITY, |c| c.distance(self.camera.position)) / b.rail.radius;
             if away > WORLD_MAPS_FAR {
-                self.world_maps.remove(&(origin, i));
+                self.caches.world_maps.remove(&(origin, i));
             }
             if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
                 && away < WORLD_MAPS_NEAR
-                && !self.world_maps.contains_key(&(origin, i))
+                && !self.caches.world_maps.contains_key(&(origin, i))
             {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
-                self.world_maps.insert((origin, i), slot.clone());
+                self.caches.world_maps.insert((origin, i), slot.clone());
                 let (t, look) = (t.clone(), self.world_look);
                 // (A frame of its history in place of today's colour: its sea and clouds then
                 // aren't today's, so none.)
@@ -1212,11 +1259,11 @@ impl App {
     }
 
     /// A ship's name by its combat id.
-    fn ship_name(&self, id: usize) -> String {
-        match id {
-            universe_sim::PLAYER => "YOU".into(),
-            _ if universe_sim::world::turrets::turret_of(id).is_some() => "SAM TURRET".into(),
-            _ => self.v.crafts.get(id - 1).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
+    fn ship_name(&self, id: universe_sim::ShipId) -> String {
+        match Who::of(id) {
+            Some(Who::Me) => "YOU".into(),
+            Some(Who::Craft(i)) => self.v.crafts.get(i).map_or_else(|| "UNKNOWN".into(), |c| c.name.to_uppercase()),
+            None => "SAM TURRET".into(),
         }
     }
 
@@ -1317,8 +1364,8 @@ impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
         let dt = ctx.dt as f64;
         // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
-        if self.shipyard.is_some() != self.held_to_cores {
-            self.held_to_cores = self.shipyard.is_some();
+        if self.panels.shipyard.is_some() != self.held_to_cores {
+            self.held_to_cores = self.panels.shipyard.is_some();
             hold_to_cores(self.held_to_cores.then(universe_sim::engine::cores));
         }
         // The observer: the live port's questions answered; a recording's frame kept.
@@ -1340,7 +1387,7 @@ impl Game for App {
         self.system_keys(ctx);
         // Our hull's inside as laid out, to the world engine when it changes (to walk
         // in); not while it's being designed in the shipyard (a walk-through sends it).
-        if self.shipyard.is_none() {
+        if self.panels.shipyard.is_none() {
             self.send_layout();
         }
         // Where we are is explored.
@@ -1353,7 +1400,7 @@ impl Game for App {
                     ctx.grab_cursor(false);
                 }
                 if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
-                    self.shipyard = None;
+                    self.panels.shipyard = None;
                 }
             }
             Layer::Market => {
@@ -1361,15 +1408,15 @@ impl Game for App {
             }
             Layer::Economy => {
                 if !economy::input(self, ctx) {
-                    self.economy_panel = None;
+                    self.panels.economy_panel = None;
                 }
             }
             Layer::Worlds => {
                 if !planet_studio::input(self, ctx) {
-                    self.planet_studio = None;
+                    self.panels.planet_studio = None;
                     // (Its world alone goes with it: back to the system's star.)
                     if self.world_frame.take().is_some() {
-                        self.world_maps.clear();
+                        self.caches.world_maps.clear();
                     }
                     if self.studio_world.take().is_some() {
                         self.observer.focus = observer::Focus::Body { system: self.view.origin, body: 0 };
@@ -1379,7 +1426,7 @@ impl Game for App {
             Layer::News => self.news_panel = newspanel::input(self, ctx),
             Layer::GalaxyMap => {
                 if !galaxymap::input(self, ctx) {
-                    self.galaxy_map = None;
+                    self.panels.galaxy_map = None;
                 }
             }
             Layer::NavMap => {
@@ -1388,7 +1435,7 @@ impl Game for App {
             Layer::Graphics => self.graphics_panel = graphics::input(self, ctx),
             Layer::Standards => {
                 if !standards::input(self, ctx) || !matches!(self.v.ship.state, ShipState::Landed { .. }) {
-                    self.standards = None;
+                    self.panels.standards = None;
                 }
             }
             Layer::Passengers => {
@@ -1460,39 +1507,39 @@ impl Game for App {
         }
         // What the ship's computers make of things (they run in the engine).
         self.following = v.following.clone();
-        self.plan_age += ctx.dt;
-        if v.plan_serial != self.plan_serial {
+        self.plan.age += ctx.dt;
+        if v.plan_serial != self.plan.serial {
             // A new plan: ease from what's on screen now (itself maybe part-way
             // from the one before), if it's for the same target.
-            let same_target = v.plan.as_ref().zip(self.plan.as_ref()).is_some_and(|(a, b)| a.center.distance(b.center) < 1.0);
-            self.plan_prev = if same_target { self.plan.take() } else { None };
-            self.plan = v.plan.clone();
-            self.plan_serial = v.plan_serial;
-            self.plan_age = 0.0;
+            let same_target = v.plan.as_ref().zip(self.plan.current.as_ref()).is_some_and(|(a, b)| a.center.distance(b.center) < 1.0);
+            self.plan.prev = if same_target { self.plan.current.take() } else { None };
+            self.plan.current = v.plan.clone();
+            self.plan.serial = v.plan_serial;
+            self.plan.age = 0.0;
         }
         // One guide on screen at a time, on the one set of frames: a follow
         // program's while one flies the ship (a clearance may stand meanwhile),
         // else the clearance's — on each new plan, or at once when it takes
         // the guide back.
         if v.avionics.following.is_none() {
-            match (&self.plan, v.avionics.clearance) {
+            match (&self.plan.current, v.avionics.clearance) {
                 (Some(plan), Some(c)) => {
                     let key = scene::GuideKey::Clearance(c.target);
-                    if self.plan_age == 0.0 || self.guide.key() != Some(key) {
-                        self.guide.update(plan, key);
+                    if self.plan.age == 0.0 || self.plan.guide.key() != Some(key) {
+                        self.plan.guide.update(plan, key);
                     }
                 }
-                _ => self.guide.clear(),
+                _ => self.plan.guide.clear(),
             }
         }
-        self.plan_cost = v.plan_cost;
-        self.plan_every = v.plan_every;
-        self.plan_blend = (self.plan_age / self.plan_every).min(1.0);
-        let raw = self.plan.as_ref().filter(|p| p.arrives).map(|p| {
+        self.plan.cost = v.plan_cost;
+        self.plan.every = v.plan_every;
+        self.plan.blend = (self.plan.age / self.plan.every).min(1.0);
+        let raw = self.plan.current.as_ref().filter(|p| p.arrives).map(|p| {
             let left = p.points.last().map_or(0.0, |x| x.time) - (v.time - p.start);
             left / self.warp().max(1.0)
         });
-        self.eta_shown = match (raw, self.eta_shown) {
+        self.plan.eta_shown = match (raw, self.plan.eta_shown) {
             (Some(raw), Some(shown)) if (raw - shown).abs() < 10.0 => {
                 let ticked = shown - ctx.dt as f64;
                 Some(ticked + (raw - ticked) * (ctx.dt as f64 * 2.0).min(1.0))
@@ -1511,23 +1558,23 @@ impl Game for App {
         universe_prof::time("update/build view", || self.build_view());
         self.update_net();
         // The outlets hear and put out their digests; we hear what reaches us, digests too.
-        let room = self.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&self.charts, self.v.time));
+        let room = self.net.newsroom.get_or_insert_with(|| universe_sim::newsroom::Newsroom::new(&self.charts, self.v.time));
         room.update(&self.charts, self.v.time, &self.v.kills, &self.v.trade_log);
         let casts = room.broadcasts();
         let in_tube = matches!(self.ship.state, ShipState::Transit { .. });
         let us = universe_sim::news::Listener { system: self.v.ship_system, at: self.ship.position, comm: self.ship.spec().comm, player: true, in_tube };
-        self.news.update(&self.charts, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
+        self.net.news.update(&self.charts, self.v.time, &us, &universe_sim::news::Happenings { kills: &self.v.kills, trades: &self.v.trade_log, broadcasts: &casts, sightings: &[] });
         // Where things are drawn is the moment drawn: the nav target and the
         // approach guidance are worked out here, at it, from the charts (the
         // view's are a tick off it).
         self.nav_marker = self.nav_marker_now();
         self.approach = self.approach_now();
         // A follow program's way, and its frames on the same guide.
-        self.follow_plan = followguide::plan(self);
+        self.plan.follow = followguide::plan(self);
         followguide::watch(self);
         // (A lively target's guide is the line alone: no frames to lay.)
-        if let (Some((p, even)), Some(f), false) = (&self.follow_plan, self.v.avionics.following, self.liveliness.lively) {
-            self.guide.update_spaced(p, scene::GuideKey::Follow(f.anchor), *even);
+        if let (Some((p, even)), Some(f), false) = (&self.plan.follow, self.v.avionics.following, self.plan.liveliness.lively) {
+            self.plan.guide.update_spaced(p, scene::GuideKey::Follow(f.anchor), *even);
         }
         // The turrets in view, where they are at the moment drawn (from the charts).
         let (origin, t) = (self.view.origin, self.now());

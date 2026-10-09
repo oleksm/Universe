@@ -10,19 +10,19 @@ fn main() {
         let end = t + 86_400.0;
         while t + step <= end {
             t += step;
-            u.markets.step(t, &mut u.land, &mut u.ledger, u.tick);
+            u.services.markets.step(t, &mut u.services.land, &mut u.services.ledger, u.tick);
             universe_sim::company::run(&mut u);
         }
         if day == 2 || day == 20 || day == 40 {
             // What a trader sees: flour's ask where it's made, and its bid where people need it.
             let flour = universe_sim::world::goods::item("stock.flour-bulk").unwrap();
             let g = &u.world.goods[flour];
-            let line: Vec<String> = u.markets.economy.places.iter().map(|p| { let q = p.price(g); format!("{} ask {} bid {:.0}", p.name.trim_start_matches("Port "), q.ask.map_or("-".into(), |a| format!("{a:.0}")), q.bid) }).collect();
+            let line: Vec<String> = u.services.markets.economy.places.iter().map(|p| { let q = p.price(g); format!("{} ask {} bid {:.0}", p.name.trim_start_matches("Port "), q.ask.map_or("-".into(), |a| format!("{a:.0}")), q.bid) }).collect();
             println!("  flour day {day}: {}", line.join(" | "));
         }
         if day % 10 == 0 || day == 1 || day == 3 {
             println!("--- day {day}");
-            for p in &u.markets.economy.places {
+            for p in &u.services.markets.economy.places {
                 let short: Vec<String> = p.needs.iter().filter(|(_, (m, _))| *m < 0.999).map(|(k, (m, s))| format!("{} {:.0}% ({:.1} d short)", k.trim_start_matches("need."), m * 100.0, s / 86_400.0)).collect();
                 println!("{:<16} {:>6.1}k people, fed {:>3.0}%, dying {:.2}k/day, waiting {:.1}k  {}", p.name, p.population, p.fed * 100.0, p.deaths, p.waiting, short.join(", "));
             }
@@ -32,7 +32,7 @@ fn main() {
 
 #[allow(dead_code)]
 fn works_at(u: &universe_sim::Universe, place: &str) {
-    let e = &u.markets.economy;
+    let e = &u.services.markets.economy;
     let p = e.places.iter().find(|p| p.name == place).unwrap();
     for w in e.works.iter().filter(|w| w.site == p.site) {
         let run = &w.last;

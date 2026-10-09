@@ -1,6 +1,9 @@
 //! The engine's clocks (the tick tree: `docs/tick-tree.md`), their periods read from their records
 //! (`standards/Engine/metadata/scheduling`) and nowhere else, and the work each runs bound to it
 //! by `ClockHandler`: a clock added to the registry doesn't build until it's bound here.
+//!
+//! A world clock catches up in game time at its record's period; engine work inside the realtime
+//! step runs on the ticks a whole multiple of its period (`due`). (`docs/tick-tree.md` §8.)
 
 use universe_world::registry::{ClockHandler, ClockKey};
 #[cfg(test)]
@@ -10,6 +13,17 @@ pub use universe_world::registry::clock_every as every;
 /// Clock `k`'s period, which it must have (a clock the engine steps by time).
 pub fn period(k: ClockKey) -> f64 {
     every(k).unwrap_or_else(|| panic!("{} has no period in its record", k.key()))
+}
+
+/// `seconds` of game time in realtime ticks (at least one).
+pub fn ticks(seconds: f64) -> u64 {
+    (seconds / tick()).round().max(1.0) as u64
+}
+
+/// Whether work every `seconds` is due on realtime tick `tick` (the engine's way to run work at a
+/// period: on the ticks that are whole multiples of it).
+pub fn due(tick: u64, seconds: f64) -> bool {
+    tick.is_multiple_of(ticks(seconds))
 }
 
 /// The realtime tick (s): every other period is a whole number of it.

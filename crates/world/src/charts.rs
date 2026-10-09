@@ -21,6 +21,11 @@ pub struct Charts {
 }
 
 impl Charts {
+    /// The settled systems (the gate network's), in order.
+    pub fn settled(&self) -> Vec<usize> {
+        crate::gate::settled(&self.gate_links)
+    }
+
     pub fn new(seed: u64, galaxy: Galaxy, gate_links: Vec<(usize, usize)>, goods: Vec<Item>, home_system: usize) -> Self {
         Charts { seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()) }
     }

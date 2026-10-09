@@ -5,6 +5,7 @@
 //! ledger: land to the system's administration, building to the world (no
 //! builders in the game's economy yet).
 
+use universe_protocol::ShipId;
 use universe_services::ledger::Asset;
 use universe_services::Party;
 
@@ -19,10 +20,10 @@ impl Universe {
         self.pilot_claim(crate::combat::PLAYER, system, port, outline)
     }
 
-    pub(crate) fn pilot_claim(&mut self, id: usize, system: usize, port: usize, outline: Vec<(f64, f64)>) -> Result<String, String> {
-        let price = self.land.quote_claim(system, port, &outline)?;
-        self.ledger.transfer(Party::Pilot(id), Party::Administration(system), Asset::Credits, price, self.tick, universe_protocol::Cause::Rules)?;
-        let number = self.land.claim(system, port, outline, Party::Pilot(id))?;
+    pub(crate) fn pilot_claim(&mut self, id: ShipId, system: usize, port: usize, outline: Vec<(f64, f64)>) -> Result<String, String> {
+        let price = self.services.land.quote_claim(system, port, &outline)?;
+        self.services.ledger.transfer(Party::Pilot(id), Party::Administration(system), Asset::Credits, price, self.tick, universe_protocol::Cause::Rules)?;
+        let number = self.services.land.claim(system, port, outline, Party::Pilot(id))?;
         Ok(format!("PARCEL {number} FILED AS YOURS FOR {price:.0} CR"))
     }
 
@@ -32,10 +33,10 @@ impl Universe {
         self.pilot_buy_parcel(crate::combat::PLAYER, system, port, number)
     }
 
-    pub(crate) fn pilot_buy_parcel(&mut self, id: usize, system: usize, port: usize, number: u32) -> Result<String, String> {
-        let price = self.land.quote_buy(system, port, number)?;
-        self.ledger.transfer(Party::Pilot(id), Party::Administration(system), Asset::Credits, price, self.tick, universe_protocol::Cause::Rules)?;
-        self.land.buy(system, port, number, Party::Pilot(id))?;
+    pub(crate) fn pilot_buy_parcel(&mut self, id: ShipId, system: usize, port: usize, number: u32) -> Result<String, String> {
+        let price = self.services.land.quote_buy(system, port, number)?;
+        self.services.ledger.transfer(Party::Pilot(id), Party::Administration(system), Asset::Credits, price, self.tick, universe_protocol::Cause::Rules)?;
+        self.services.land.buy(system, port, number, Party::Pilot(id))?;
         Ok(format!("PARCEL {number} BOUGHT FOR {price:.0} CR"))
     }
 
@@ -46,15 +47,15 @@ impl Universe {
         self.pilot_build(crate::combat::PLAYER, system, port, number, &blueprint)
     }
 
-    pub(crate) fn pilot_build(&mut self, id: usize, system: usize, port: usize, number: u32, blueprint: &str) -> Result<String, String> {
+    pub(crate) fn pilot_build(&mut self, id: ShipId, system: usize, port: usize, number: u32, blueprint: &str) -> Result<String, String> {
         let (kind, modules) = blueprint_of(blueprint).ok_or_else(|| format!("NO BLUEPRINT '{blueprint}'"))?;
-        let (blocks, cost, time) = self.land.quote_build(system, port, number, Party::Pilot(id), &modules)?;
-        self.ledger.transfer(Party::Pilot(id), Party::World, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
+        let (blocks, cost, time) = self.services.land.quote_build(system, port, number, Party::Pilot(id), &modules)?;
+        self.services.ledger.transfer(Party::Pilot(id), Party::World, Asset::Credits, cost, self.tick, universe_protocol::Cause::Rules)?;
         let name = match kind {
             "power" => "POWER STATION".to_string(),
             k => k.to_uppercase(),
         };
-        self.land.build(system, port, number, name, kind.to_string(), blueprint.to_string(), blocks, self.world.time)?;
+        self.services.land.build(system, port, number, name, kind.to_string(), blueprint.to_string(), blocks, self.world.time)?;
         Ok(format!("BUILDING STARTED FOR {cost:.0} CR: DONE IN {}", crate::estate::duration(time)))
     }
 }
@@ -68,9 +69,9 @@ impl Universe {
         self.pilot_set_up(crate::combat::PLAYER, works, setup, recipe)
     }
 
-    pub(crate) fn pilot_set_up(&mut self, id: usize, works: usize, setup: usize, recipe: Option<usize>) -> Result<String, String> {
-        self.markets.economy.set_up(&self.land, works, setup, recipe, Party::Pilot(id))?;
-        let s = &self.markets.economy.works[works].setups[setup];
+    pub(crate) fn pilot_set_up(&mut self, id: ShipId, works: usize, setup: usize, recipe: Option<usize>) -> Result<String, String> {
+        self.services.markets.economy.set_up(&self.services.land, works, setup, recipe, Party::Pilot(id))?;
+        let s = &self.services.markets.economy.works[works].setups[setup];
         let what = s.recipe().map_or("NOTHING".to_string(), |r| self.world.goods[r.makes].name.to_uppercase());
         Ok(format!("{} SET TO MAKE {what}", s.module.identity.name.to_uppercase()))
     }

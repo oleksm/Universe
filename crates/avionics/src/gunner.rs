@@ -7,6 +7,7 @@
 //! old and that its orders reach the gun later still (`latency`), so it
 //! leads from where things will be then.
 
+use universe_protocol::ShipId;
 use glam::DVec3;
 use universe_protocol::TurretCommand;
 use universe_world::weapons::{standard_gun, SLUG_LIFETIME};
@@ -19,7 +20,7 @@ pub const ON_TARGET: f64 = 0.004;
 /// A ship the gunner may fire on: fair game, as the law has it, and seen.
 #[derive(Clone, Copy, Debug)]
 pub struct Quarry {
-    pub id: usize,
+    pub id: ShipId,
     pub position: DVec3,
     pub velocity: DVec3,
 }

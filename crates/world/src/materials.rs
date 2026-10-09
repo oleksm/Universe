@@ -3,18 +3,10 @@
 //! fuels among them). Tanks hold one, reactors and engines burn one. Dogma knows
 //! none of them; which exist and what burns them is the world's.
 
-use serde::Deserialize;
 
-/// How a material gives up its energy.
-#[derive(Clone, Copy, Debug, PartialEq, Eq, Deserialize)]
-pub enum Process {
-    Fusion,
-    Fission,
-    /// Burnt with what it carries (fuel and oxidiser together).
-    Chemical,
-    /// Inert, or reaction mass only.
-    None,
-}
+/// How a material gives up its energy: the registry's (`MaterialFuelRelease`: fusion,
+/// fission, chemical, or none: inert or reaction mass only).
+pub use crate::registry::MaterialFuelRelease as Process;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Material {
@@ -55,19 +47,13 @@ impl Material {
     /// From the registry's record of a material that is burnt for its energy,
     /// or thrown as reaction mass (one with a `fuel` group); None for any other.
     pub fn from_record(reg: &crate::registry::Registry, m: &crate::registry::Material) -> Option<Self> {
-        use crate::registry::MaterialFuelRelease as R;
         let fuel = m.fuel.as_ref()?;
         Some(Material {
             key: m.identity.key.clone(),
             name: crate::standards::caps(&m.identity.name),
             density: m.mass.density.unwrap_or(0.0),
             energy: fuel.energy.unwrap_or(0.0),
-            process: match fuel.release {
-                R::Fusion => Process::Fusion,
-                R::Fission => Process::Fission,
-                R::Chemical => Process::Chemical,
-                R::None => Process::None,
-            },
+            process: fuel.release,
             goods: reg.traded_as(&m.identity.key).unwrap_or_default(),
             note: m.identity.description.clone().unwrap_or_default(),
         })

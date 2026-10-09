@@ -22,3 +22,4 @@ rayon.workspace = true
 
 [dev-dependencies]
 universe-world = { path = "../world" }
+naga = { version = "30", features = ["wgsl-in"] }

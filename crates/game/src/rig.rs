@@ -56,7 +56,7 @@ impl Rigs {
 impl App {
     pub fn update_rigs(&mut self, dt: f32) {
         let ships: Vec<(usize, bool)> = std::iter::once((0, digging(&self.v.ship))).chain(self.v.crafts.iter().enumerate().map(|(i, c)| (i + 1, c.system == self.view.origin && digging(&c.ship)))).collect();
-        self.rigs.update(ships.into_iter(), dt);
+        self.caches.rigs.update(ships.into_iter(), dt);
     }
 }
 
@@ -65,7 +65,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
     let sys = &app.view.system;
     let t = app.now();
     let mut draw_one = |who: usize, ship: &Ship, pos: DVec3, turned: DQuat| {
-        let k = app.rigs.out(who);
+        let k = app.caches.rigs.out(who);
         if k <= 0.0 || frame.projected_radius(pos, 25.0) < 2.0 {
             return;
         }
@@ -75,7 +75,7 @@ pub fn draw(frame: &mut Frame, app: &App) {
         draw_one(0, &app.ship, app.view.ship_pos, app.place(crate::Who::Me).1);
     }
     for (i, c) in app.v.crafts.iter().enumerate() {
-        if c.system == app.view.origin && app.rigs.out(i + 1) > 0.0 {
+        if c.system == app.view.origin && app.caches.rigs.out(i + 1) > 0.0 {
             let (pos, turned) = app.place(crate::Who::Craft(i));
             draw_one(i + 1, &c.ship, pos, turned);
         }

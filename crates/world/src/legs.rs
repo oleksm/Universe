@@ -63,7 +63,7 @@ pub fn of(key: &str) -> Option<Legs> {
 }
 
 fn reckon(reg: &Registry, key: &str) -> Option<Legs> {
-    let h = reg.hull(&key)?;
+    let h = reg.hull(key)?;
     let (designed, efficiency) = (h.design.landing_speed?, h.design.strut_efficiency.unwrap_or(1.0));
     let longest = |p: &Part| [p.physical.length, p.physical.width, p.physical.height].into_iter().flatten().fold(0.0, f64::max);
     // What one strut takes: what its material yields at, or buckles under, whichever is less.
@@ -112,7 +112,3 @@ pub fn ground_check(spec: &crate::ship::ClassSpec, mass: f64, g: f64) -> (f64, O
     (lift, of_spec(spec).map(|l| l.hardest(mass, g)))
 }
 
-/// A body's surface gravity (m/s²).
-pub fn surface_gravity(body: &crate::system::Body) -> f64 {
-    crate::units::G * body.mass / body.rail.radius.max(1.0).powi(2)
-}

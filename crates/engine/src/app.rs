@@ -225,7 +225,7 @@ impl<G: Game> Runner<G> {
             p.history.pop_front();
         }
         // (UNIVERSE_HITCH_MS: a lower bar, to catch the small dips too.)
-        let bar = std::env::var("UNIVERSE_HITCH_MS").ok().and_then(|v| v.parse::<f32>().ok()).map_or(HITCH, |ms| ms / 1000.0);
+        let bar = crate::devflags::get().hitch.unwrap_or(HITCH);
         if raw_dt > bar && s.frame_count > 60 {
             p.hitches += 1;
         }
@@ -261,8 +261,8 @@ impl<G: Game> Runner<G> {
         // to compare frame to frame.
         // (UNIVERSE_SCREENSHOT_AT=n: the first at frame n, not 120: a later moment without every
         // frame before it written down.)
-        let extra: u64 = std::env::var("UNIVERSE_SCREENSHOT_FRAMES").ok().and_then(|v| v.parse().ok()).unwrap_or(0);
-        let first: u64 = std::env::var("UNIVERSE_SCREENSHOT_AT").ok().and_then(|v| v.parse().ok()).unwrap_or(120);
+        let extra = crate::devflags::get().screenshot_frames;
+        let first = crate::devflags::get().screenshot_at;
         let shot = s.frame_count >= first && s.frame_count <= first + extra && s.auto_screenshot.is_some();
         let auto_capture = s.frame_count == first + extra && s.auto_screenshot.is_some();
         if shot {
@@ -448,7 +448,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
     fn about_to_wait(&mut self, event_loop: &ActiveEventLoop) {
         let Some(s) = &self.state else { return };
         // At most `max_fps`: early, wait (events still come in) till the next frame's due.
-        let max_fps = std::env::var("UNIVERSE_MAX_FPS").ok().and_then(|v| v.parse().ok()).unwrap_or(self.config.max_fps);
+        let max_fps = crate::devflags::get().max_fps.unwrap_or(self.config.max_fps);
         if max_fps > 0.0 {
             let due = s.last_frame + std::time::Duration::from_secs_f32(1.0 / max_fps);
             if Instant::now() < due {

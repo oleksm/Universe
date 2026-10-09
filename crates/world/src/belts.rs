@@ -146,9 +146,15 @@ pub fn longitude(p: DVec3) -> f64 {
     (-p.z).atan2(p.x)
 }
 
-fn resonance(r: &str) -> f64 {
-    let (p, q) = r.split_once(':').map(|(p, q)| (p.parse::<f64>().unwrap_or(1.0), q.parse::<f64>().unwrap_or(1.0))).unwrap_or((1.0, 1.0));
+/// A resonance `p:q` with a planet (the period p/q of the planet's), as a share of its orbit.
+pub(crate) fn resonance(r: &str) -> f64 {
+    let (p, q) = r.split_once(':').and_then(|(p, q)| Some((p.parse::<f64>().ok()?, q.parse::<f64>().ok()?))).unwrap_or_else(|| panic!("seeding.asteroids: a resonance '{r}' that isn't p:q"));
     (q / p).powf(2.0 / 3.0)
+}
+
+/// A figure `seeding.asteroids` must give (named by its path there).
+pub(crate) fn need<T>(v: Option<T>, what: &str) -> T {
+    v.unwrap_or_else(|| panic!("seeding.asteroids: no {what}"))
 }
 
 /// The belts of `sys` (its frost line `frost`, m), by the registry's seeding
@@ -157,8 +163,8 @@ pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     let reg = crate::registry::registry();
     let Some(laws) = reg.seeding("seeding.asteroids") else { return Vec::new() };
     let (mb, tr, ob, sizes) = (&laws.main_belt, &laws.trojans, &laws.outer_belt, &laws.sizes);
-    let slope = sizes.exponent.unwrap_or(1.89);
-    let smallest = sizes.smallest.unwrap_or(15.0);
+    let slope = need(sizes.exponent, "sizes.exponent");
+    let smallest = need(sizes.smallest, "sizes.smallest");
     let a_of = |i: usize| sys.bodies[i].rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis);
     let mut giants: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0) && matches!(sys.bodies[i].kind, BodyKind::GasGiant | BodyKind::IceGiant)).collect();
     giants.sort_by(|&a, &b| a_of(a).total_cmp(&a_of(b)));
@@ -190,22 +196,22 @@ pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     let (inner, outer, gaps, width) = match gas {
         Some(g) => {
             let a = a_of(g);
-            let r = |s: &Option<String>, d: &str| resonance(s.as_deref().unwrap_or(d));
+            let r = |s: &Option<String>, what: &str| resonance(need(s.as_deref(), what));
             // (The Kirkwood gaps: the giant's 3:1, 5:2 and 7:3, each 0.007 of its orbit wide either side.)
-            (a * r(&mb.inner_resonance, "4:1"), a * r(&mb.outer_resonance, "2:1"), vec![a * resonance("3:1"), a * resonance("5:2"), a * resonance("7:3")], 0.007 * a)
+            (a * r(&mb.inner_resonance, "main_belt.inner_resonance"), a * r(&mb.outer_resonance, "main_belt.outer_resonance"), vec![a * resonance("3:1"), a * resonance("5:2"), a * resonance("7:3")], 0.007 * a)
         }
-        None => (mb.no_giant_inner.unwrap_or(0.8) * frost, mb.no_giant_outer.unwrap_or(1.3) * frost, Vec::new(), 0.0),
+        None => (need(mb.no_giant_inner, "main_belt.no_giant_inner") * frost, need(mb.no_giant_outer, "main_belt.no_giant_outer") * frost, Vec::new(), 0.0),
     };
     if outer > inner {
-        let sun = ring_area(mb.inner_edge.unwrap_or(3.08e11), mb.outer_edge.unwrap_or(4.89e11));
-        let over_1km = mb.count_over_1km.unwrap_or(1.2e6) * ring_area(inner, outer) / sun;
+        let sun = ring_area(need(mb.inner_edge, "main_belt.inner_edge"), need(mb.outer_edge, "main_belt.outer_edge"));
+        let over_1km = need(mb.count_over_1km, "main_belt.count_over_1km") * ring_area(inner, outer) / sun;
         out.push(Belt { kind: BeltKind::Main, inner, outer, classes: classes(inner, outer, TAU, over_1km, &gaps, width), spread: 0.0, centre: 0.0, mu: star_mu, tilt: rocks().main_tilt, over_1km, slope, smallest });
     }
     // Each giant's two swarms, ahead and behind, as many as its mass to Jupiter's.
     for &g in &giants {
         let a = a_of(g);
-        let per_swarm = tr.count_over_1km.unwrap_or(1.0e6) / 2.0 * sys.bodies[g].mass / tr.giant_mass.unwrap_or(1.898e27);
-        let spread = tr.spread.map_or(26f64.to_radians(), |d| d.rad());
+        let per_swarm = need(tr.count_over_1km, "trojans.count_over_1km") / 2.0 * sys.bodies[g].mass / need(tr.giant_mass, "trojans.giant_mass");
+        let spread = need(tr.spread, "trojans.spread").rad();
         let Some(orbit) = sys.bodies[g].rail.orbit.as_ref() else { continue };
         let at = longitude(orbit.position(0.0));
         for lead in [true, false] {
@@ -219,12 +225,12 @@ pub fn belts(sys: &StarSystem, frost: f64) -> Vec<Belt> {
     // The outer belt: between the outermost giant's resonances.
     if let Some(&last) = giants.last() {
         let a = a_of(last);
-        let r = |s: &Option<String>, d: &str| resonance(s.as_deref().unwrap_or(d));
-        let (inner, outer) = (a / r(&ob.inner_resonance, "3:2"), a / r(&ob.outer_resonance, "2:1"));
-        let sun = ring_area(ob.inner_edge.unwrap_or(5.9e12), ob.outer_edge.unwrap_or(7.18e12));
+        let r = |s: &Option<String>, what: &str| resonance(need(s.as_deref(), what));
+        let (inner, outer) = (a / r(&ob.inner_resonance, "outer_belt.inner_resonance"), a / r(&ob.outer_resonance, "outer_belt.outer_resonance"));
+        let sun = ring_area(need(ob.inner_edge, "outer_belt.inner_edge"), need(ob.outer_edge, "outer_belt.outer_edge"));
         // (Counted over 100 km; over 1 km by the size curve.)
-        let over_1km = ob.count_over_100km.unwrap_or(1.0e5) * 100f64.powf(slope) * ring_area(inner, outer) / sun;
-        out.push(Belt { kind: BeltKind::Outer, inner, outer, classes: classes(inner, outer, TAU, over_1km, &[], 0.0), spread: 0.0, centre: 0.0, mu: star_mu, tilt: ob.thickness.map_or(10f64.to_radians(), |d| d.rad()), over_1km, slope, smallest });
+        let over_1km = need(ob.count_over_100km, "outer_belt.count_over_100km") * 100f64.powf(slope) * ring_area(inner, outer) / sun;
+        out.push(Belt { kind: BeltKind::Outer, inner, outer, classes: classes(inner, outer, TAU, over_1km, &[], 0.0), spread: 0.0, centre: 0.0, mu: star_mu, tilt: need(ob.thickness, "outer_belt.thickness").rad(), over_1km, slope, smallest });
     }
     out
 }

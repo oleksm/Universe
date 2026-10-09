@@ -10,9 +10,8 @@ use universe_sim::{BodyKind, NavTarget, StarSystem};
 
 use crate::scene::color;
 use crate::{fmt, App};
+use crate::palette::{DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
 const SELECT: Color = Color::hex(0xffc040);
 const LOCKED: Color = Color::hex(0xff60ff);
 
@@ -60,9 +59,7 @@ fn chart_area(size: Vec2) -> (Vec2, Vec2) {
 /// Systems you can browse: the ship's first, then the gate network.
 fn browsable(app: &App) -> Vec<usize> {
     let mut v = vec![app.v.ship_system];
-    let mut net: Vec<usize> = app.charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-    net.sort();
-    net.dedup();
+    let net = app.charts.settled();
     v.extend(net.into_iter().filter(|&s| s != app.v.ship_system));
     v
 }
@@ -158,7 +155,7 @@ pub fn repeat(held: &mut f32, down: bool, pressed: bool, dt: f32) -> u32 {
 
 /// Handle map keys. Returns false when the map should close.
 pub fn input(app: &mut App, ctx: &Context) -> bool {
-    let Some(mut map) = app.nav_map.take() else { return false };
+    let Some(mut map) = app.panels.nav_map.take() else { return false };
     let input = &ctx.input;
     // The chart: the wheel zooms toward the cursor, a drag moves it; all the
     // way out, it's back as it was.
@@ -252,16 +249,16 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
     }
     // U: out to the whole galaxy.
     if crate::keys::pressed(input, crate::keys::Act::Galaxy) {
-        app.galaxy_map = Some(crate::galaxymap::GalaxyMap::open(app, ctx.low_res.as_vec2()));
+        app.panels.galaxy_map = Some(crate::galaxymap::GalaxyMap::open(app, ctx.low_res.as_vec2()));
         return false;
     }
-    app.nav_map = Some(map);
+    app.panels.nav_map = Some(map);
     true
 }
 
 pub fn draw(frame: &mut Frame, app: &App, map: &NavMap) {
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = GLYPH + 4.0;
 
     // Target list.

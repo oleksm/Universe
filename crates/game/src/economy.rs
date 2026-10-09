@@ -5,14 +5,12 @@
 //! of each a day, and the prices it asks and pays.
 
 use universe_engine::glam::Vec2;
-use universe_engine::{text_size, Color, Context, Frame, KeyCode};
+use universe_engine::{text_size, Context, Frame, KeyCode};
 use universe_sim::services::economy::Place;
 
 use crate::App;
+use crate::palette::{AMBER as WARN, DIM, TEXT};
 
-const TEXT: Color = Color::hex(0xdcebf2);
-const DIM: Color = Color::hex(0x7d93a0);
-const WARN: Color = Color::hex(0xffb030);
 
 /// The panel's cursor.
 #[derive(Default)]
@@ -34,9 +32,9 @@ fn modules(app: &App, p: &Place) -> Vec<(usize, usize)> {
 pub fn input(app: &mut App, ctx: &Context) -> bool {
     let input = &ctx.input;
     // The zoning view, while open, has the keys (Esc back to the list).
-    if let Some(mut z) = app.economy_panel.as_mut().and_then(|p| p.zoning.take()) {
+    if let Some(mut z) = app.panels.economy_panel.as_mut().and_then(|p| p.zoning.take()) {
         let keep = crate::zoning::input(app, &mut z, ctx);
-        if let Some(p) = app.economy_panel.as_mut() {
+        if let Some(p) = app.panels.economy_panel.as_mut() {
             p.zoning = keep.then_some(z);
         }
         return true;
@@ -45,23 +43,23 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         return false;
     }
     if input.pressed(KeyCode::Enter) {
-        let selected = app.economy_panel.as_ref().map_or(0, |p| p.selected);
+        let selected = app.panels.economy_panel.as_ref().map_or(0, |p| p.selected);
         let z = app.v.economy.get(selected).and_then(|place| crate::zoning::Zoning::open(app, place));
-        if let (Some(z), Some(p)) = (z, app.economy_panel.as_mut()) {
+        if let (Some(z), Some(p)) = (z, app.panels.economy_panel.as_mut()) {
             p.zoning = Some(z);
             return true;
         }
     }
     // Its works' modules (Tab): up and down a module, left and right what it's set to make
     // (Shift: ten at a time), sent as its owner's choice (refused if not yours).
-    let selected = app.economy_panel.as_ref().map_or(0, |p| p.selected);
+    let selected = app.panels.economy_panel.as_ref().map_or(0, |p| p.selected);
     if input.pressed(KeyCode::Tab)
-        && let Some(p) = app.economy_panel.as_mut()
+        && let Some(p) = app.panels.economy_panel.as_mut()
     {
         p.module = if p.module.is_some() { None } else { Some(0) };
         return true;
     }
-    if let Some(at) = app.economy_panel.as_ref().and_then(|p| p.module) {
+    if let Some(at) = app.panels.economy_panel.as_ref().and_then(|p| p.module) {
         let rows = app.v.economy.get(selected).map(|p| modules(app, p)).unwrap_or_default();
         let n = rows.len().max(1);
         let (left, right) = (input.pressed(KeyCode::ArrowLeft), input.pressed(KeyCode::ArrowRight));
@@ -78,7 +76,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
                 app.engine.send(universe_sim::Command::SetUp { works: k, setup: s, recipe: next.checked_sub(1) });
             }
         }
-        let Some(panel) = &mut app.economy_panel else { return false };
+        let Some(panel) = &mut app.panels.economy_panel else { return false };
         let (down, up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
         let steps = crate::navmap::repeat(&mut panel.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt);
         for _ in 0..steps {
@@ -87,7 +85,7 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         return true;
     }
     let n = app.v.economy.len().max(1);
-    let Some(panel) = &mut app.economy_panel else { return false };
+    let Some(panel) = &mut app.panels.economy_panel else { return false };
     let (down, up) = (input.down(KeyCode::ArrowDown), input.down(KeyCode::ArrowUp));
     let steps = crate::navmap::repeat(&mut panel.held, down || up, input.pressed(KeyCode::ArrowDown) || input.pressed(KeyCode::ArrowUp), ctx.dt);
     for _ in 0..steps {
@@ -107,7 +105,7 @@ pub fn draw(frame: &mut Frame, app: &App, panel: &EconomyPanel) {
         return;
     }
     let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
+    frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let line = 11.0;
     // (Each place as its last report reached us over the hypernet, and how old.)
     let heard: Vec<(&Place, Option<f64>)> = app

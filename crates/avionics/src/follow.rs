@@ -53,7 +53,7 @@ const GAIN: f64 = 0.6;
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub enum Anchor {
     /// A ship, by its id (the player's 0, craft i: i + 1).
-    Ship(usize),
+    Ship(universe_protocol::ShipId),
     /// A station or a gate.
     Place(NavTarget),
     /// An asteroid: body `body` among field `field`'s bodies (see
@@ -216,8 +216,9 @@ impl Avionics {
         };
         let id = match f.anchor {
             Anchor::Ship(id) => id,
-            Anchor::Place(t) => usize::MAX - place_body(t),
-            Anchor::Rock { body, .. } => usize::MAX / 2 - body,
+            // (A place or a rock tracked under an id no ship has.)
+            Anchor::Place(t) => universe_protocol::ShipId(usize::MAX - place_body(t)),
+            Anchor::Rock { body, .. } => universe_protocol::ShipId(usize::MAX / 2 - body),
         };
         Track::update(&mut f.track, id, at, velocity, now);
         let anchor_accel = f.track.map_or(DVec3::ZERO, |t| t.acceleration);
@@ -291,7 +292,7 @@ impl Avionics {
         // gear works.
         if matches!(f.manoeuvre, Manoeuvre::Surface(_)) && throttle == 0.0 {
             let up = dir;
-            let along = (ship.forward() - up * ship.forward().dot(up)).normalize_or(up.any_orthonormal_vector());
+            let along = ship.forward().reject_from_normalized(up).normalize_or(up.any_orthonormal_vector());
             return Some(attitude(&ship, facing(along, up), DVec3::ZERO, 1.0 / 60.0));
         }
         // In orbit, banked into the turn as an aircraft is: the top to the

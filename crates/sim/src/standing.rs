@@ -13,6 +13,7 @@
 //! The authority's own bookkeeping (a client of the world, like an outlet):
 //! what it makes of a deed is its call. Too low, and its turrets fire (`HOSTILE`).
 
+use universe_protocol::ShipId;
 use std::collections::{HashMap, HashSet};
 
 use universe_world::charts::Charts;
@@ -63,7 +64,7 @@ struct Desk {
 pub struct Standings {
     desks: Vec<Desk>,
     /// Each pilot's standing with each settled system; absent: 0.
-    table: HashMap<(usize, usize), f64>,
+    table: HashMap<(ShipId, usize), f64>,
     /// Deeds already counted, by system.
     counted: HashSet<(Key, usize)>,
     next: f64,
@@ -71,12 +72,12 @@ pub struct Standings {
 
 impl Standings {
     /// Pilot `pilot`'s standing with system `system`'s authority.
-    pub fn of(&self, pilot: usize, system: usize) -> f64 {
+    pub fn of(&self, pilot: ShipId, system: usize) -> f64 {
         self.table.get(&(pilot, system)).copied().unwrap_or(0.0)
     }
 
     /// A pilot's standings as saved: (system, standing).
-    pub fn restore(&mut self, pilot: usize, standing: impl Iterator<Item = (usize, f64)>) {
+    pub fn restore(&mut self, pilot: ShipId, standing: impl Iterator<Item = (usize, f64)>) {
         self.table.retain(|(p, _), _| *p != pilot);
         for (system, s) in standing {
             self.set(pilot, system, s);
@@ -84,27 +85,25 @@ impl Standings {
     }
 
     /// A pilot's standings: (system, standing).
-    pub fn all(&self, pilot: usize) -> Vec<(usize, f64)> {
+    pub fn all(&self, pilot: ShipId) -> Vec<(usize, f64)> {
         let mut out: Vec<(usize, f64)> = self.table.iter().filter(|((p, _), _)| *p == pilot).map(|(&(_, s), &v)| (s, v)).collect();
         out.sort_by_key(|o| o.0);
         out
     }
 
     /// Set it outright (a scenario, a test, a court).
-    pub fn set(&mut self, pilot: usize, system: usize, s: f64) {
+    pub fn set(&mut self, pilot: ShipId, system: usize, s: f64) {
         self.table.insert((pilot, system), s.clamp(-MOST, MOST));
     }
 
-    fn add(&mut self, pilot: usize, system: usize, by: f64) {
+    fn add(&mut self, pilot: ShipId, system: usize, by: f64) {
         let s = self.table.entry((pilot, system)).or_insert(0.0);
         *s = (*s + by).clamp(-MOST, MOST);
     }
 
     /// A desk at each settled system's station.
     fn open(charts: &Charts) -> Vec<Desk> {
-        let mut settled: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        settled.sort();
-        settled.dedup();
+        let settled = charts.settled();
         settled.into_iter().filter_map(|s| charts.system(s).station().map(|station| Desk { system: s, station, knows: Knowledge::default() })).collect()
     }
 }
@@ -113,16 +112,17 @@ impl Universe {
     /// The authorities take in the deeds that have reached them, when due.
     pub(crate) fn update_standings(&mut self) {
         let now = self.world.time;
-        if now < self.standings.next {
+        if now < self.services.standings.next {
             return;
         }
-        self.standings.next = now + crate::clocks::period(universe_world::registry::ClockKey::Market);
+        self.services.standings.next = now + crate::clocks::period(universe_world::registry::ClockKey::Market);
         let charts = self.charts();
-        if self.standings.desks.is_empty() {
-            self.standings.desks = Standings::open(&charts);
+        if self.services.standings.desks.is_empty() {
+            self.services.standings.desks = Standings::open(&charts);
         }
         // Who opened fire on whom, seen where the shooter was.
         let sightings: Vec<Sighting> = self
+            .services
             .law
             .rulings
             .iter()
@@ -133,8 +133,8 @@ impl Universe {
             })
             .collect();
         let (kills, trades) = (self.records.kills.clone(), self.records.trades.clone());
-        let mut deeds: Vec<(usize, usize, f64, Key)> = Vec::new();
-        for d in &mut self.standings.desks {
+        let mut deeds: Vec<(ShipId, usize, f64, Key)> = Vec::new();
+        for d in &mut self.services.standings.desks {
             let system = d.system;
             let sys = charts.system(system);
             let mut positions = Vec::new();
@@ -145,7 +145,7 @@ impl Universe {
             for k in kills.iter().filter(|k| k.system == system && universe_world::turrets::turret_of(k.killer).is_none() && k.weapon != "COLLISION") {
                 let key = Key::kill(k);
                 if d.knows.heard(&key).is_some() {
-                    let fair = self.law.until(k.victim, k.time).is_some();
+                    let fair = self.services.law.until(k.victim, k.time).is_some();
                     deeds.push((k.killer, system, if fair { BOUNTY } else { MURDER }, key));
                 }
             }
@@ -162,12 +162,12 @@ impl Universe {
             }
         }
         for (pilot, system, by, key) in deeds {
-            if self.standings.counted.insert((key, system)) {
-                self.standings.add(pilot, system, by);
+            if self.services.standings.counted.insert((key, system)) {
+                self.services.standings.add(pilot, system, by);
             }
         }
         // (Forget what's off the record: it can't come round again.)
         let live: HashSet<Key> = kills.iter().map(Key::kill).chain(trades.iter().map(Key::trade)).chain(sightings.into_iter().map(|s| s.0)).collect();
-        self.standings.counted.retain(|(k, _)| live.contains(k));
+        self.services.standings.counted.retain(|(k, _)| live.contains(k));
     }
 }

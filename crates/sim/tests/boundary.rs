@@ -36,8 +36,18 @@ fn words(line: &str) -> Vec<String> {
 #[test]
 fn the_engine_knows_no_intentions() {
     let mut found = Vec::new();
-    for name in ENGINE {
-        let path = format!("{}/src/{name}.rs", env!("CARGO_MANIFEST_DIR"));
+    // (A module is a file, or a directory of them.)
+    let files = ENGINE.iter().flat_map(|name| {
+        let src = format!("{}/src", env!("CARGO_MANIFEST_DIR"));
+        let dir = std::path::Path::new(&src).join(name);
+        let mut files: Vec<(String, std::path::PathBuf)> = match std::fs::read_dir(&dir) {
+            Ok(d) => d.flatten().map(|e| e.path()).filter(|p| p.extension().is_some_and(|x| x == "rs")).map(|p| (format!("{name}/{}", p.file_stem().unwrap().to_string_lossy()), p)).collect(),
+            Err(_) => vec![(name.to_string(), dir.with_extension("rs"))],
+        };
+        files.sort();
+        files
+    });
+    for (name, path) in files {
         let source = std::fs::read_to_string(&path).expect("engine source");
         let code = source.split("#[cfg(test)]").next().unwrap_or("");
         for (n, line) in code.lines().enumerate() {

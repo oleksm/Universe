@@ -1,7 +1,7 @@
 //! The player's cockpit (re-architecture R7): the player's pilot and ship
 //! computers, a client like any NPC pilot. It reads a `CockpitView` (the
 //! pilots' view of the world, with the crafts' transponders) and flies the
-//! ship only by posting (`pilots::Posting`, due `COMMAND_DELAY` ticks after
+//! ship only by posting (`pilots::Posting`, due `command_delay()` ticks after
 //! the view it read): the human's stick and requests, and the programs
 //! (autopilots, follow, fire control laying the gun).
 //!
@@ -9,6 +9,7 @@
 //! plan, the collision warning, approach guidance, follow status) is its
 //! own: software modules are the client's.
 
+use universe_protocol::ShipId;
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -23,7 +24,7 @@ use universe_world::rules::Rules;
 use universe_world::weapons::{standard_gun, SLUG_LIFETIME};
 use universe_world::{Controls, ShipCommands, StarSystem};
 
-use crate::combat::{craft_id, PLAYER};
+use crate::combat::PLAYER;
 use crate::contacts::{Contact, LOCK_BEAM};
 use crate::follow::FollowKind;
 use crate::pilots::{self, Pilot, PilotView, PoolLink, Posting};
@@ -198,7 +199,7 @@ impl Cockpit {
             return None;
         }
         let world = self.world.take().unwrap_or_else(|| universe_world::World::new(w.charts.seed));
-        let last = w.tick + pilots::COMMAND_DELAY;
+        let last = w.tick + pilots::command_delay();
         let run = |world: &universe_world::World, with: bool| {
             let (mut ship, mut system, mut clock) = (ship.clone(), system, w.time);
             let mut events = Vec::new();
@@ -365,7 +366,7 @@ impl Cockpit {
     }
 
     /// Lock on radar contact `id` (picked from the list), if it's on the radar.
-    pub fn lock_contact(&mut self, id: usize) {
+    pub fn lock_contact(&mut self, id: ShipId) {
         let view = self.view.clone().expect("a view");
         self.contacts = contacts(&view);
         let Some(c) = self.contacts.iter().find(|c| c.blip.id == id).cloned() else { return };
@@ -399,7 +400,7 @@ impl Cockpit {
     pub fn follow(&mut self, kind: FollowKind, range: Option<f64>) {
         let a = &self.pilot.avionics;
         let anchor = match (a.contact, a.nav_target) {
-            (Some(c), _) => Anchor::Ship(craft_id(c)),
+            (Some(c), _) => Anchor::Ship(c),
             (None, _) if self.pilot.avionics.rock_lock.is_some() => {
                 let (field, body) = self.pilot.avionics.rock_lock.unwrap_or_default();
                 Anchor::Rock { field, body }
@@ -463,7 +464,7 @@ impl Cockpit {
         self.view.as_ref()?;
         let (_, sys, rails) = self.system();
         let name = match f.anchor {
-            Anchor::Ship(id) => self.view.as_ref()?.transponders.get(&id.checked_sub(1)?).map(|t| t.name.to_uppercase())?,
+            Anchor::Ship(id) => self.view.as_ref()?.transponders.get(&id).map(|t| t.name.to_uppercase())?,
             Anchor::Place(t) => t.name(&sys).to_uppercase(),
             Anchor::Rock { field, body } => sys.field_bodies(field)[body].name.to_uppercase(),
         };
@@ -581,13 +582,14 @@ fn contacts(view: &CockpitView) -> Vec<Contact> {
         .enumerate()
         .skip(1)
         .filter(|(_, s)| s.system == system && (s.flying || s.landed))
-        .filter_map(|(id, s)| {
+        .filter_map(|(i, s)| {
+            let id = ShipId(i);
             let distance = s.position.distance(ship.position);
             if distance >= universe_world::radar::range(ship.spec()) {
                 return None;
             }
-            let t = view.transponders.get(&(id - 1))?;
-            let blip = universe_world::radar::Blip { id: id - 1, position: s.position, velocity: s.velocity, distance };
+            let t = view.transponders.get(&id)?;
+            let blip = universe_world::radar::Blip { id, position: s.position, velocity: s.velocity, distance };
             let name = t.name.to_uppercase();
             Some(Contact { blip, name, activity: t.activity, destination: t.destination.clone(), hull: t.hull, aggressed: t.aggressed })
         })

@@ -152,7 +152,7 @@ fn studio(frame: &mut Frame, app: &App) {
     let backdrop = Transform { position: pos, rotation: universe_engine::glam::Quat::IDENTITY, scale: size * 30.0 };
     frame.no_shadow(|frame| frame.model(&app.models.star, &backdrop, Color::hex(0x2a2e33), Color::hex(0x2a2e33)));
     let t = Transform { position: pos, rotation: turned.as_quat(), scale: 1.0 };
-    hull(frame, app, ship, livery(&app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
+    hull(frame, app, ship, livery(app.v.crafts.get(match app.observer.focus { Focus::Craft(i) => i, _ => usize::MAX }).map_or("", |c| &c.name)), &t);
 }
 
 /// The planet or moon filling most of the sky from here: its day side lights
@@ -221,7 +221,7 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     frame.clear = Color([c(0), c(1), c(2), 1.0]);
     // (A world grown with its own air: its sky is the air's light itself, drawn behind everything
     // (`fs_air_sky`), on black.)
-    if app.world_maps.get(&(app.view.cache, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
+    if app.caches.world_maps.get(&(app.view.cache, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
     {
         frame.clear = Color::BLACK;
     }
@@ -249,7 +249,7 @@ fn galaxy(frame: &mut Frame, app: &App, starlight: f32) {
         }
     } else {
         // Within a system they don't: worked out once per system.
-        let mut cache = app.sky_cache.borrow_mut();
+        let mut cache = app.caches.sky.borrow_mut();
         if cache.as_ref().is_none_or(|(o, _)| *o != app.view.origin) {
             *cache = Some((app.view.origin, others().map(star).collect()));
         }
@@ -455,7 +455,7 @@ fn transit_guide(frame: &mut Frame, app: &App, gate: usize, st: &GateStatus) {
     }
     if app.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, st.relative_velocity);
-        if let Some(plan) = &app.plan {
+        if let Some(plan) = &app.plan.current {
             plan_path(frame, app, plan, app.now(), app.view.ship_pos);
         }
     }
@@ -490,6 +490,7 @@ fn bodies(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     // The world nearest the eye with its full-resolution maps ready (within a few radii): drawn with them.
     let near = app
+        .caches
         .world_maps
         .iter()
         .filter(|((o, _), _)| *o == app.view.cache)
@@ -497,7 +498,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
         .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
     if let Some((i, maps)) = near
-        && let Some((_, _, map)) = app.globes.get(&(app.view.cache, i))
+        && let Some((_, _, map)) = app.caches.globes.get(&(app.view.cache, i))
     {
         if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
             frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
@@ -505,7 +506,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // every player), the time wrapped as the clouds' shader wants it.
             if let Some((year_days, enso)) = &maps.clouds_year {
                 let (month, index) = universe_sim::world::worlds::clouds_at(t, *year_days, enso.as_ref());
-                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(1_048_576.0) as f32);
+                frame.world_clouds(sys.bodies[i].rotation(t).as_quat().as_dquat(), month, index, t.rem_euclid(universe_engine::shaders::CLOUD_WRAP_S) as f32);
             }
         }
     }
@@ -553,7 +554,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some((full, coarse, map)) = app.globes.get(&(app.view.cache, i)) {
+        if let Some((full, coarse, map)) = app.caches.globes.get(&(app.view.cache, i)) {
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: from afar its globe; near, its ground as patches
@@ -561,7 +562,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             if near {
                 universe_prof::time("draw/scene/bodies/ground", || {
-                    app.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
+                    app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
                 });
             } else {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
@@ -891,7 +892,7 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         }
         // The interior studio's walled tubes, walked through.
         if std::ptr::eq(ship, &app.ship)
-            && let Some(faces) = app.preview.as_ref().and_then(|y| y.wall_faces())
+            && let Some(faces) = app.panels.preview.as_ref().and_then(|y| y.wall_faces())
             && let Some(mesh) = crate::models::walls(&faces)
         {
             frame.in_scene(|frame| frame.model_colored(&mesh, t, 0.55, 1.0));
@@ -899,7 +900,7 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         // The interior studio's hatches, walked through: each slid open as far as the
         // eye is near it (open within 1.6 m, shut from 2.8 m).
         if std::ptr::eq(ship, &app.ship)
-            && let Some(y) = app.preview.as_ref()
+            && let Some(y) = app.panels.preview.as_ref()
         {
             let leaves = y.leaves();
             let meshes = crate::models::hatches(&leaves);
@@ -1072,7 +1073,7 @@ fn docking_guide(frame: &mut Frame, app: &App, station: usize, status: &DockingS
 
     if app.ship.is_flying() {
         drift_line(frame, app.view.ship_pos, status.relative_velocity);
-        if let Some(plan) = &app.plan {
+        if let Some(plan) = &app.plan.current {
             plan_path(frame, app, plan, app.now(), app.view.ship_pos);
         }
     }
@@ -1142,10 +1143,10 @@ fn plan_path(frame: &mut Frame, app: &App, plan: &Plan, now: f64, ship: DVec3) {
     // The plan may be a few frames old: carry it along with its reference.
     let Some(center_now) = plan_reference(app) else { return };
     // (While a follow program has the guide, its own drawing shows it.)
-    if !matches!(app.guide.key(), Some(GuideKey::Clearance(_))) {
+    if !matches!(app.plan.guide.key(), Some(GuideKey::Clearance(_))) {
         return;
     }
-    guided_path(frame, app, plan, center_now, app.plan_prev.as_deref().filter(|_| app.plan_blend < 1.0), now, ship);
+    guided_path(frame, app, plan, center_now, app.plan.prev.as_deref().filter(|_| app.plan.blend < 1.0), now, ship);
 }
 
 /// A planned path and its guide frames, drawn the one way for every kind of
@@ -1161,7 +1162,7 @@ pub fn guided_path_with(frame: &mut Frame, app: &App, plan: &Plan, center_now: D
     let new_place = plan.anchor(center_now, now);
     // Eased from the plan before, at the same moment of absolute time (so
     // rebuilds glide rather than jump).
-    let w = app.plan_blend as f64;
+    let w = app.plan.blend as f64;
     let blend = |p: DVec3, abs: f64| -> DVec3 {
         let now_pos = new_place(p);
         match prev.and_then(|old| plan_sample(old, abs).map(|q| old.anchor(center_now, now)(q))) {
@@ -1182,7 +1183,7 @@ pub fn guided_path_with(frame: &mut Frame, app: &App, plan: &Plan, center_now: D
     }
 
     if frames {
-        app.guide.draw(frame, center_now, now, ship);
+        app.plan.guide.draw(frame, center_now, now, ship);
     }
 }
 
@@ -1424,7 +1425,7 @@ fn landing_guide(frame: &mut Frame, app: &App, st: &LandingStatus) {
             frame.line(hit - d * size, hit + d * size, Color::hex(0xff4040));
         }
     }
-    if let Some(plan) = &app.plan {
+    if let Some(plan) = &app.plan.current {
         plan_path(frame, app, plan, app.now(), app.view.ship_pos);
     }
 }
@@ -1678,7 +1679,7 @@ fn ship(frame: &mut Frame, app: &App) {
     // Seen from just behind it (chase view), nothing is nearer the eye than
     // our hull: it's drawn over everything, the HUD included.
     // (Not over a full-screen panel: the nav map or the market.)
-    let panel = app.nav_map.is_some() || app.galaxy_map.is_some() || app.economy_panel.is_some() || app.news_panel || app.market.is_some() || app.passengers.is_some() || app.shipyard.is_some() || app.show_cargo || app.show_thrusters || app.picker.listing() || app.mining.on;
+    let panel = app.panels.nav_map.is_some() || app.panels.galaxy_map.is_some() || app.panels.economy_panel.is_some() || app.news_panel || app.panels.market.is_some() || app.passengers.is_some() || app.panels.shipyard.is_some() || app.show_cargo || app.show_thrusters || app.picker.listing() || app.mining.on;
     // (Over a rock the camera stands off to the side: no need either.)
     let panel = panel || matches!(app.ship.state, ShipState::Anchored { .. });
     let turned = app.place(crate::Who::Me).1;

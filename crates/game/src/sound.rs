@@ -69,9 +69,9 @@ fn vend(a: &universe_engine::Audio, drink: bool) {
 }
 
 /// Which side of the ship (-1 left .. 1 right) a ship seen from `us` is on.
-fn side_of(app: Option<&App>, by: usize) -> f32 {
+fn side_of(app: Option<&App>, by: universe_sim::ShipId) -> f32 {
     let Some(app) = app else { return 0.0 };
-    let Some(c) = by.checked_sub(1).and_then(|i| app.v.crafts.get(i)) else { return 0.0 };
+    let Some(c) = by.craft_index().and_then(|i| app.v.crafts.get(i)) else { return 0.0 };
     let ship = &app.v.ship;
     let local = ship.orientation.inverse() * (c.ship.position - ship.position);
     (local.normalize_or_zero().x as f32).clamp(-1.0, 1.0)

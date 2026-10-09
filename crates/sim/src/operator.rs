@@ -44,9 +44,7 @@ const STUCK: f64 = 0.8;
 /// A reproducible route of `count` stops (stations and spaceports) across
 /// the gate network, from a seed: same seed, same route.
 pub fn route(charts: &Charts, seed: u64, count: usize) -> Vec<Stop> {
-    let mut systems: Vec<usize> = charts.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-    systems.sort();
-    systems.dedup();
+    let systems = charts.settled();
     let mut candidates = Vec::new();
     for s in systems {
         let sys = charts.system(s);
@@ -264,7 +262,7 @@ impl crate::universe::Universe {
     /// route, starting at its first stop with staggered departures.
     pub fn spawn_settlers(&mut self, count: usize, seed: u64) {
         let charts = self.charts();
-        let (first, now) = (self.crafts.len(), self.world.time);
+        let (first, now) = (self.vessels.crafts().len(), self.world.time);
         let made = settlers(&charts, seed, count, first, now);
         let (ships, pilots): (Vec<_>, Vec<_>) = made.into_iter().unzip();
         self.register(ships);
@@ -292,7 +290,7 @@ impl crate::universe::Universe {
     /// The game saved whole (it must have recorded from its start).
     pub fn world_save(&self) -> Option<WorldSave> {
         Some(WorldSave {
-            log: self.input_log.clone()?,
+            log: self.replay.input_log.clone()?,
             pilots: self.pilots().iter().map(|p| p.avionics.clone()).collect(),
             cockpit: self.player.as_ref().and_then(|p| p.as_any().downcast_ref::<crate::cockpit::Cockpit>()).map(|c| c.avionics().clone()),
         })
@@ -305,7 +303,7 @@ impl crate::universe::Universe {
             u.pool_mut().add(Pilot::new(a.clone()));
         }
         u.player = Some(Box::new(crate::cockpit::Cockpit::new(save.cockpit.clone().unwrap_or_default())));
-        u.input_log = Some(save.log.clone());
+        u.replay.input_log = Some(save.log.clone());
         u
     }
 }

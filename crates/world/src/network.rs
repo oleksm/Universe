@@ -103,9 +103,7 @@ mod tests {
     #[test]
     fn gate_network_links_home_to_its_neighbours_each_with_one_to_three_gates() {
         let w = World::new(1984);
-        let mut systems: Vec<usize> = w.gate_links.iter().flat_map(|&(a, b)| [a, b]).collect();
-        systems.sort();
-        systems.dedup();
+        let systems = w.settled();
         assert_eq!(systems.len(), 5, "links: {:?}", w.gate_links);
         assert!(systems.contains(&w.home_system));
         for &s in &systems {

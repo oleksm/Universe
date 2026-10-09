@@ -71,6 +71,7 @@ fn film(x: vec3<f32>) -> vec3<f32> {
     return clamp(agx_inv * v, vec3<f32>(0.0), vec3<f32>(1.0));
 }
 
+// The camera's exposure: scene light to the screen, before the curve.
 const EXPOSURE: f32 = 0.9;
 
 @fragment
