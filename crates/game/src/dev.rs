@@ -1401,7 +1401,8 @@ fn s_noon(app: &mut App, name: &str, c: &Ctx) {
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = center + up * (ground + env("UNIVERSE_ALT").unwrap_or(2_000.0));
     app.engine.universe().vessels[universe_sim::PLAYER].ship.velocity = sys.velocity(planet, t) + b.angular_velocity().cross(app.engine.universe().vessels[universe_sim::PLAYER].ship.position - center);
     // Look toward the sun's side along the horizon, a little down.
-    let ahead = (sun - up * sun.dot(up)).normalize_or(side);
+    // (UNIVERSE_YAW: turned that many degrees round the up.)
+    let ahead = glam::DQuat::from_axis_angle(up, env("UNIVERSE_YAW").unwrap_or(0.0).to_radians()) * (sun - up * sun.dot(up)).normalize_or(side);
     let look = (ahead - up * std::env::var("UNIVERSE_DOWN").ok().and_then(|v| v.parse::<f64>().ok()).unwrap_or(0.08)).normalize();
     app.engine.universe().vessels[universe_sim::PLAYER].ship.orientation = universe_sim::ship::facing(look, up);
 }

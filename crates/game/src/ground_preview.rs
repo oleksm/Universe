@@ -29,15 +29,36 @@ pub fn running() -> Option<&'static Preview> {
     PREVIEW.get()
 }
 
-/// The ground pass for the preview named in the environment (None: none asked for). Stops the game if the
-/// folder isn't what its manifest says.
+/// The ground pass for the body whose record has a `ground`, or the preview named in the environment over it
+/// (None: neither). Stops the game if the folder isn't what its manifest says, or the manifest isn't the record's.
 pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
-    let (var, folder) = std::env::vars_os().find_map(|(k, v)| {
+    // (The record's ground (a body's `ground`: its folder in the worlds store, its manifest's hash); over it, a
+    // preview's folder, `UNIVERSE_GROUND_<WORLD ID>`, its manifest not checked against a record.)
+    let preview = std::env::vars_os().find_map(|(k, v)| {
         let k = k.into_string().ok()?;
-        k.strip_prefix("UNIVERSE_GROUND_").map(|id| (id.to_string(), PathBuf::from(v)))
-    })?;
-    let fail = |e: String| -> ! { panic!("UNIVERSE_GROUND_{var}: {e}") };
+        k.strip_prefix("UNIVERSE_GROUND_").filter(|id| *id != "STATS" && *id != "PHYSICS").map(|id| (id.to_string(), PathBuf::from(v)))
+    });
+    let (var, folder, want) = match preview {
+        Some((id, folder)) => (id, folder, None),
+        None => {
+            let r = universe_sim::world::registry::registry();
+            let (b, g) = r.records.bodies.iter().find_map(|b| b.ground.as_ref().map(|g| (b, g)))?;
+            let id = b.survey.as_ref().map_or_else(|| b.identity.key.clone(), |s| s.world_id.clone());
+            let Some(store) = universe_sim::world::worlds::store() else {
+                eprintln!("{}: its ground is in the worlds store, and there is none here (set UNIVERSE_WORLDS): drawn without it", b.identity.key);
+                return None;
+            };
+            (id, store.join(&g.path), Some(g.manifest_sha256.clone()))
+        }
+    };
+    let fail = |e: String| -> ! { panic!("ground of {var}: {e}") };
     let bytes = std::fs::read(folder.join("manifest.json")).unwrap_or_else(|e| fail(format!("{}: {e}", folder.join("manifest.json").display())));
+    if let Some(want) = &want {
+        let got = universe_sim::world::worlds::sha256(&bytes);
+        if &got != want {
+            fail(format!("{}/manifest.json is {got}, the record says {want}", folder.display()));
+        }
+    }
     let m: serde_json::Value = serde_json::from_slice(&bytes).unwrap_or_else(|e| fail(format!("manifest.json: {e}")));
     if m["format"] != "planet-unfold-tiles/1" {
         fail(format!("manifest.json: format {}, not planet-unfold-tiles/1", m["format"]));
@@ -56,7 +77,11 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
     let radius_m = m["radius_m"].as_f64().unwrap_or_else(|| fail("manifest.json: no radius_m".into()));
     let l0 = folder.join(m["l0"].as_str().unwrap_or("L0_0_0.lines"));
     let physics = std::env::var("UNIVERSE_GROUND_PHYSICS").map_or(true, |v| v != "0");
-    eprintln!("PREVIEW: {body}'s ground from {} (UNIVERSE_GROUND_{var}, {} files checked), physics {}", folder.display(), files.len(), if physics { "on it near the eye, on the old bake beyond" } else { "on the old bake" });
+    if want.is_some() {
+        eprintln!("GROUND: {body}'s ground from {} (its record's, {} files checked)", folder.display(), files.len());
+    } else {
+        eprintln!("PREVIEW: {body}'s ground from {} (UNIVERSE_GROUND_{var}, {} files checked)", folder.display(), files.len());
+    }
     let (pass, query) = unfold_view::bench::ground_pass(&folder, &l0).unwrap_or_else(|e| fail(format!("{e:#}")));
     if physics {
         // (The body's frame into the ground's, and the ground's query there: where its rings reach.)
@@ -68,11 +93,12 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
         let dir = folder.clone();
         std::thread::Builder::new()
             .name("far ground".into())
-            .spawn(move || match unfold_view::bench::far_grounds(&dir) {
-                Ok(g) => {
+            .spawn(move || match (std::time::Instant::now(), unfold_view::bench::far_grounds(&dir)) {
+                (t0, Ok(g)) => {
+                    eprintln!("far ground: the whole body in {:.1} s", t0.elapsed().as_secs_f64());
                     let _ = slot.set(g);
                 }
-                Err(e) => eprintln!("far ground: {e:#}"),
+                (_, Err(e)) => eprintln!("far ground: {e:#}"),
             })
             .expect("far ground thread");
         universe_sim::world::terrain::set_outside(&body, universe_sim::world::terrain::Outside {
