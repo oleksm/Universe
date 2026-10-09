@@ -30,6 +30,7 @@ mod planet_studio;
 mod standards;
 mod sound;
 mod terrain_lod;
+mod ground_preview;
 mod terrain_view;
 mod thrusterpanel;
 mod passengers;
@@ -1698,5 +1699,7 @@ fn main() {
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {
         let _ = std::fs::create_dir_all(dir);
     }
-    run(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new());
+    // (A grown planet's ground on its body, for the lab: `UNIVERSE_GROUND_<WORLD ID>`, see `ground_preview`.)
+    let ground = ground_preview::open();
+    run(Config { title: "Freefall".into(), hitch_log, ground, ..Default::default() }, App::new());
 }

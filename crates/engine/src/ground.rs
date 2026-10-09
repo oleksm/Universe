@@ -12,6 +12,18 @@
 //! (`GroundFrame::camera`), the globals' `view_proj` takes camera-relative metres.
 
 use crate::Camera;
+use glam::{DQuat, DVec3};
+
+/// Where the game puts the ground's body this frame (`Frame::ground_pose`): its centre in the camera's world
+/// (m, f64, as the camera's own position), its rotation from the ground's own frame into the world, and its
+/// scale across (the body's radius over the ground's; heights not scaled). It travels with the frame, so the
+/// ground is placed as the frame it's drawn in.
+#[derive(Clone, Copy, Debug)]
+pub struct GroundPose {
+    pub centre: DVec3,
+    pub rotation: DQuat,
+    pub scale: f64,
+}
 
 /// What the ground's pipelines must match: the device, the layouts of the groups the engine binds, and
 /// the targets' formats.
@@ -38,6 +50,8 @@ pub struct GroundFrame<'a> {
     pub device: &'a wgpu::Device,
     pub queue: &'a wgpu::Queue,
     pub camera: Camera,
+    /// The body's pose this frame (None: a bench's planet at the origin, or a game's out of sight).
+    pub pose: Option<GroundPose>,
 }
 
 /// A ground renderer.

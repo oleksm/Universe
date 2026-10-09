@@ -117,6 +117,8 @@ pub struct Frame {
     pub shadow_reach: f64,
     /// What's drawn of what can be (see `Graphics`).
     pub graphics: Graphics,
+    /// The plugged-in ground's body this frame (`Config::ground`; see `GroundPose`).
+    pub ground_pose: Option<crate::GroundPose>,
     casts: bool,
     /// Meshes drawn now are ground (see `ground_shadow`).
     ground: bool,
@@ -344,6 +346,7 @@ impl Frame {
             eclipsers: Vec::new(),
             shadow_reach: 0.0,
             graphics: Graphics::default(),
+            ground_pose: None,
             casts: true,
             ground: false,
             surface: [0.0, 16.0, 0.0, 0.0],

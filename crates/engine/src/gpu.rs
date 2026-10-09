@@ -47,6 +47,9 @@ impl Gpu {
                 max_inter_stage_shader_variables: adapter.limits().max_inter_stage_shader_variables.min(32),
                 // (A world's maps, tables and clouds beside the shadows and globes: past 16.)
                 max_sampled_textures_per_shader_stage: adapter.limits().max_sampled_textures_per_shader_stage.min(32),
+                // (A plugged-in ground's rings bind its lines whole: as large as the GPU binds them.)
+                max_storage_buffer_binding_size: adapter.limits().max_storage_buffer_binding_size,
+                max_buffer_size: adapter.limits().max_buffer_size,
                 ..wgpu::Limits::default()
             },
             experimental_features: wgpu::ExperimentalFeatures::disabled(),

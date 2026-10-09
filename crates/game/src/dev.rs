@@ -1391,6 +1391,11 @@ fn s_noon(app: &mut App, name: &str, c: &Ctx) {
     let env = crate::devenv::num;
     let angle = env("UNIVERSE_SUN").unwrap_or(angle);
     let up = (sun * angle.cos() + side * angle.sin()).normalize();
+    // (UNIVERSE_LONLAT="lon lat": over that place of the body instead, wherever the sun is.)
+    let up = std::env::var("UNIVERSE_LONLAT").ok().and_then(|v| {
+        let n: Vec<f64> = v.split_whitespace().filter_map(|x| x.parse().ok()).collect();
+        (n.len() == 2).then(|| b.rotation(t) * universe_sim::world::worlds::direction(universe_sim::world::worlds::LonLat { lon: n[0], lat: n[1] }))
+    }).unwrap_or(up);
     let center = positions[planet];
     let ground = b.surface_radius_at(center, center + up, t);
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = center + up * (ground + env("UNIVERSE_ALT").unwrap_or(2_000.0));

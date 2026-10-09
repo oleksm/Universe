@@ -12,6 +12,8 @@ path = "src/main.rs"
 rayon.workspace = true
 universe-prof = { path = "../prof" }
 universe-engine = { path = "../engine" }
+# (A grown planet's ground, as a preview: planet-unfold's ground pass; a path beside this tree for now.)
+unfold-view = { path = "../../../planet-unfold-engine/crates/unfold-view" }
 glam.workspace = true
 log.workspace = true
 env_logger.workspace = true

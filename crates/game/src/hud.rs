@@ -73,6 +73,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     // at the left; warnings in a stack at the top centre.
     let mut lines: Vec<(String, Color)> = Vec::new();
     let mut alerts: Vec<(String, Color)> = Vec::new();
+    if crate::ground_preview::running() {
+        lines.push(("GROUND PREVIEW: PHYSICS ON THE OLD BAKE".into(), Color::hex(0xffc040)));
+    }
     match app.mode {
         Mode::Observer => observer_info(app, &mut lines),
         Mode::Pilot if !app.v.crew.seated() => crate::onfoot::hud(frame, app, &mut lines, app.reach),

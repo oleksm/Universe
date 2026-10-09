@@ -1103,7 +1103,7 @@ impl Renderer {
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
         // The plugged-in ground's own work for the frame.
         if let Some(g) = self.ground.as_mut() {
-            g.prepare(&crate::GroundFrame { device: &gpu.device, queue: &gpu.queue, camera: frame.camera }, &mut encoder);
+            g.prepare(&crate::GroundFrame { device: &gpu.device, queue: &gpu.queue, camera: frame.camera, pose: frame.ground_pose }, &mut encoder);
         }
         self.shadow_passes(&mut encoder, sun.is_some());
         self.scene_pass(&mut encoder, frame.clear, probe.is_some());
