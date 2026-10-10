@@ -80,8 +80,9 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
         }
     });
     let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
-    // A world grown by the planet simulation: its own colour, texel by texel.
-    let Some(image) = terrain.colour() else { return Some(map) };
+    // A world grown by the planet simulation: its own colour, texel by texel (painted from its
+    // lines where it has them, else its bake's).
+    let Some(image) = universe_sim::world::worlds::lines_colour(&body.key).or_else(|| terrain.colour()) else { return Some(map) };
     let mut colors = vec![[0u8; 4]; 6 * n * n];
     std::thread::scope(|s| {
         for (k, chunk) in colors.chunks_mut(rows * n).enumerate() {

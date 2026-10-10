@@ -1201,6 +1201,7 @@ impl App {
                 // (A frame of its history in place of today's colour: its sea and clouds then
                 // aren't today's, so none.)
                 let then = self.world_frame.clone().filter(|f| f.key == b.key);
+                let key = b.key.clone();
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
@@ -1210,6 +1211,8 @@ impl App {
                         let image = match &then {
                             Some(f) if k == 0 => f.history.image(f.frame),
                             Some(_) if name == "globe_spec.png" => None,
+                            // (Today's colour painted from the world's lines, where it has them.)
+                            None if name == "globe_color.jpg" => universe_sim::world::worlds::lines_colour_rgba(&key).or_else(|| t.bake_image(name)),
                             _ => t.bake_image(name),
                         };
                         let e = image.and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));

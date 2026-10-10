@@ -19,9 +19,11 @@ use sha2::{Digest, Sha256};
 use crate::registry::registry;
 
 mod heights;
+mod lines;
 mod releases;
 mod survey;
 pub use heights::*;
+pub use lines::*;
 pub use releases::*;
 pub use survey::*;
 
