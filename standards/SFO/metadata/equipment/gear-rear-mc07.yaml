@@ -27,6 +27,12 @@ function:
   efficiency: 0.8
   sink_rate: 3.05
   extended: 7.58
+visual:
+  format: "freefall-model/1"
+  path: "models/gear-rear-mc07/v1"
+  manifest_sha256: "98bdd36ac4d06874e6017a66715a548d857be10e8179ec0f6888e48f37de24b3"
+  version: 1
+  triangles: 3684
 life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
