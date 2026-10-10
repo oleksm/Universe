@@ -12,10 +12,10 @@ size_class: 3
 fits: mount.gear-s3
 physical:
   mass: 1048
-  volume: 223.4
-  length: 7.28
-  width: 3.38
-  height: 9.08
+  volume: 29.6
+  length: 6.46
+  width: 2.205
+  height: 2.08
 built_of:
   parts: gear-front-mc07
 making:
@@ -32,4 +32,5 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
   - { of: [function, size_class], tier: invented, review: true, note: "Holds 1 MN: its 4340 150 x 10 strut, 4.65 m long, buckles there (Euler, pinned ends), far under its yield load of 3.8 MN. The stroke is chosen (0.8 m); the sink rate the hull's design figure; the pad, actuator and doors as the model has them." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The record's box is the thing at rest, stowed, as fitted and carried (the installer checks a model against it; registry convention 2026-10-10); its deployed reach is in function. Measured stowed from mining_ship.blend by blender (gear-front prototype-v01 extraction, 2026-10-10): 2.205 x 6.460 x 2.080 m; the source compresses it 0.75 across the ship. Extended mount to pad stays 9.08 m (function.extended)." }
   - { of: [life], rule: rule.life-ship-system }
