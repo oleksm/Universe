@@ -229,6 +229,10 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     let step = 600.0 / r;
     let fields = |d: DVec3| -> [f32; 4] {
         let Some(t) = body.terrain.as_ref() else { return [0.0; 4] };
+        // Palette 4 reads the local authoritative wet mask, independent of the orbit map.
+        if let Some(sample) = crate::terrain_view::canonical_texel(t, d) {
+            return [sample[1], 0.0, 0.0, -1.0];
+        }
         let (f, w) = t.surface_fields_view(d);
         whole.set(whole.get() && w);
         let e1 = d.any_orthonormal_vector();

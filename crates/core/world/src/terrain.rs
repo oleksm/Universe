@@ -127,6 +127,9 @@ impl Terrain {
     /// Whether a canonical surface supplies the terrain (no inferred water or materials).
     pub fn canonical_surface(&self) -> bool { self.graph.is_some() }
 
+    /// Whether the canonical source supplies explicit water domains.
+    pub fn canonical_water(&self) -> bool { self.graph.as_ref().is_some_and(|s| s.capabilities & 2 != 0) }
+
     fn graph_surface(&self, dir: DVec3) -> Option<f64> {
         self.surface_sample(dir).map(|s| match s.water {
             crate::worlds::pgs::Water::Wet { level_m, .. } => level_m,

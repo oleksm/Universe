@@ -78,8 +78,8 @@ Each contains 20,000 points and 39,996 faces. The measured inputs were:
 The dev build accepts `UNIVERSE_PGS1`, a lab export directory, with an explicit
 `UNIVERSE_BODY` and either the `planet` or `lowflight` scenario. It checks the
 manifest format, surface hash/size, file validity and any existing body binding.
-This preview currently requires **terrain-only** capability 1. Other capabilities
-are rejected instead of being drawn incorrectly.
+The preview accepts capability 1 (terrain, unknown water) and capability 3
+(terrain plus explicit water domains). Other capabilities remain rejected.
 
 ```sh
 cargo build --release -p universe --bin freefall
@@ -104,7 +104,8 @@ negative terrain, and contacts 5 cm above/below the expected contact boundary.
 The globe shader's canonical palette is grayscale by measured elevation (clamped
 to ± the terrain relief scale). It preserves negative
 heights and suppresses inferred oceans, materials, procedural grain and relief.
-Local patches shade their actual mesh slopes. Old contour overlays and bake maps
+Capability 3 adds diagnostic blue for known ocean/lake domains, at their exported
+absolute levels. Categories remain unknown. Local patches shade their actual mesh slopes. Old contour overlays and bake maps
 are not used. Brightness is a diagnostic elevation tint, not a material or water classification.
 Atmosphere still comes from the selected body's record. The existing mesh LOD
 still approximates the canonical field between mesh vertices.
@@ -196,5 +197,41 @@ This agrees with the exported water interpretation; it does not certify the
 spill-cap hydrology or independently reconstruct the lake assignment. Planets'
 reported S13 multi-level conflict remains unresolved, and no S13 water package
 was accepted. Shore-chain sidecars are diagnostic; feature sections remain absent.
-The in-game development preview still requires terrain-only capability 1, so
-this CPU water-reader pass does not enable water drawing or installation.
+This CPU water-reader pass preceded the development rendering extension below;
+it does not authorize installation.
+
+## Water development rendering, 2026-10-10
+
+Capability 3 is now accepted by the explicit preview. `canonical_texel` supplies
+absolute visible height (the exported level for wet samples, terrain height
+otherwise) plus a known-water mask. Palette 4 draws that mask blue; palette 3
+preserves unknown water. Both keep categories unknown and disable synthetic
+terrain/material detail. Nearby LOD patches sample the mask directly from PGS1
+rather than inheriting the 512-square orbit map's resolution. Their geometry
+continues to use the same `Terrain::surface_view_to` source as before; the
+physics/contact scalar surface also uses the known level, while `surface_sample`
+and raw-height queries retain the underlying terrain. No buoyancy, underwater
+physics, rivers or categorical materials are introduced.
+
+Blue is an invented diagnostic display colour, not a physical water material.
+The filtered mask and existing mesh LOD approximate shores between samples;
+small domains can disappear at coarse resolution. This is not an exact
+face-edge shoreline renderer or a millimetre geometry claim. The CPU agreement
+and its exact ownership rules are unchanged.
+
+Reproduce S15 water orbit and elevated-lake views with the prior screenshot
+controls and `surface_model_005`. Lake body 1504 has absolute level
+620.6131151627992 m; one golden query inside it is at engine latitude
+59.01000627043136, longitude -103.1714991841128 (engine longitude is atan2(-z,x)).
+Use `UNIVERSE_SCENARIO=lowflight UNIVERSE_LAT=59.01000627043136
+UNIVERSE_LON=-103.1714991841128 UNIVERSE_HOURS=9.3065
+UNIVERSE_ALT=10000 UNIVERSE_DOWN=0.6` to inspect it.
+All prior save/load/replay and non-dev-build restrictions still apply.
+
+Validation: full `cargo test -q --workspace` (including WGSL validation and the
+new renderer sample regression), `cargo check -p universe --no-default-features`,
+registry generation and the release game build pass. Inspected Vulkan captures
+`/tmp/pgs-water-orbit.png` (240 frames) and `/tmp/pgs-water-lake-day.png`
+(480 frames): known water blue, neighboring uncategorized terrain gray, visible
+sampled shore. The daylight lake capture uses zero speed, paused, 9.3065 hours.
+This visual check does not establish shoreline accuracy between mesh samples.

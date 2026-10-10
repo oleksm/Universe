@@ -338,7 +338,7 @@ fn globe_detail(dir: vec3<f32>, footprint: f32) -> vec3<f32> {
 // and height; others their own colour, lighter high, darker in craters,
 // with outcrops; ice at the poles. `d`: the fine detail (see `globe_detail`).
 fn globe_color(kind: f32, h: f32, inside: f32, base: vec3<f32>, dir: vec3<f32>, d: vec3<f32>, ragged: f32) -> vec3<f32> {
-    // Palette 3 is a canonical terrain-only preview: grayscale by measured
+    // Palettes 3/4 are canonical previews: grayscale by measured
     // elevation in relief units, never inferred rock, vegetation or water.
     if (kind > 2.5) { return vec3<f32>(0.42 + 0.22 * clamp(h, -1.0, 1.0)); }
     var c: vec3<f32>;
@@ -525,6 +525,11 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             if (dot(tilt, tilt) > 1e-30) { n = normalize(tilt) * sign(dot(tilt, in.up)); }
         }
         albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * abs(in.globe.w), in.color.a);
+        // Palette 4's second map channel (patch data.x nearby) is explicit water,
+        // never inferred from height. Blue is a diagnostic colour, not a material category.
+        if (in.globe.y > 3.5 && select(ground.g, in.data.x, on_patch) > 0.5) {
+            albedo = vec4<f32>(vec3<f32>(0.12, 0.35, 0.95) * abs(in.globe.w), in.color.a);
+        }
         // A world's own colour, where it has one (grown, not painted): its globe map's, or
         // where its full-resolution maps are bound, theirs; and close up, its ground's material.
         var own: vec4<f32>;

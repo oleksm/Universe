@@ -8,7 +8,7 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
-/// An explicit terrain-only lab package, isolated to this process. Both world
+/// An explicit terrain or terrain/water lab package, isolated to this process. Both world
 /// and charts receive the same source before either is generated.
 pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
     use universe_sim::world::{World, worlds::{pgs::Surface, sha256}};
@@ -26,13 +26,13 @@ pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
         return Err("surface manifest/hash/size mismatch".into());
     }
     let surface = std::sync::Arc::new(Surface::read(&bytes)?);
-    if surface.capabilities != 1 { return Err("this preview renders terrain-only packages; water-domain rendering is not enabled".into()); }
+    if !matches!(surface.capabilities, 1 | 3) { return Err("this preview supports terrain and optional water domains only".into()); }
     if !surface.provenance[0].is_empty() && surface.provenance[0] != key { return Err("package body binding differs from UNIVERSE_BODY".into()); }
     let world = World::with_surfaces(seed, std::sync::Arc::new([(key.clone(), surface)].into_iter().collect()));
     let system = world.system(world.home_system);
     let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
     if !body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Err("preview body has no terrain".into()); }
-    log::info!("PGS1 PREVIEW: {} on {}; water/categories unknown; registry unchanged", folder.display(), key);
+    log::info!("PGS1 PREVIEW: {} on {}; explicit water where supplied; categories unknown; registry unchanged", folder.display(), key);
     Ok(world)
 }
 
@@ -68,7 +68,7 @@ pub fn apply(app: &mut App, name: &str) {
         }
     }
     app.messages.clear();
-    if app.charts.has_surface_sources() { app.say("PGS1 TERRAIN PREVIEW: WATER AND MATERIALS UNKNOWN".into()); }
+    if app.charts.has_surface_sources() { app.say("PGS1 PREVIEW: EXPORTED WATER ONLY; MATERIALS UNKNOWN".into()); }
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
