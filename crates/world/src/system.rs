@@ -428,6 +428,12 @@ impl StarSystem {
             {
                 t.bake(h);
             }
+            // (A world drawn from its vector lines (its record's `ground`): its ground from them.)
+            if let Some(t) = b.terrain.as_mut()
+                && let Some(l) = crate::worlds::LineHeights::of(&b.key)
+            {
+                t.from_lines(l);
+            }
         }
         system.add_spaceports(star.seed);
         crate::belt::add_fields(&mut system, frost_line, star.seed);

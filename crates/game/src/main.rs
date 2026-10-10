@@ -32,6 +32,7 @@ mod planet_studio;
 mod standards;
 mod sound;
 mod terrain_lod;
+mod lines_near;
 mod terrain_view;
 mod thrusterpanel;
 mod passengers;
@@ -342,6 +343,11 @@ pub struct Caches {
     pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
     /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
+    /// Worlds drawn from their vector lines: the lines as a mesh of edges and the peaks and lows
+    /// pinned, by (system, body).
+    pub lines: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, std::sync::Arc<universe_sim::world::worlds::LinesDraw>)>,
+    /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
+    pub lines_near: std::cell::RefCell<lines_near::Near>,
     /// Worlds grown by the planet simulation: their full-resolution maps, made in the
     /// background (None till ready), by (system, body).
     pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
@@ -491,6 +497,8 @@ impl App {
             },
             caches: Caches {
                 globes: std::collections::HashMap::new(),
+                lines: std::collections::HashMap::new(),
+                lines_near: Default::default(),
                 world_maps: std::collections::HashMap::new(),
                 terrain_lod: Default::default(),
                 rocks: std::collections::HashMap::new(),
@@ -529,6 +537,10 @@ impl App {
             dev::apply(&mut app, &name);
             app.engine.refresh();
             app.v = app.engine.view();
+        }
+        // (UNIVERSE_PAUSED: start paused, as F6 pauses: look round before the world runs.)
+        if std::env::var_os("UNIVERSE_PAUSED").is_some() {
+            app.paused = true;
         }
         // The world engine runs on its own thread (UNIVERSE_ENGINE_THREAD=0: here, for debugging).
         if std::env::var("UNIVERSE_ENGINE_THREAD").as_deref() != Ok("0") {
@@ -786,8 +798,26 @@ impl App {
         if input.pressed(KeyCode::F7) {
             self.show_thrusters = !self.show_thrusters;
         }
-        if input.pressed(KeyCode::F4) {
+        if input.pressed(KeyCode::F4) && !shift {
             self.show_grid = !self.show_grid;
+        }
+        // SHIFT+F4: the heights of worlds drawn from their lines stretched, x1, x5, x10, for seeing
+        // their relief; their globes, ground and lines made again.
+        if input.pressed(KeyCode::F4) && shift && !self.caches.lines.is_empty() {
+            let next = match universe_sim::world::worlds::stretch() as u32 {
+                1 => 5.0,
+                5 => 10.0,
+                _ => 1.0,
+            };
+            universe_sim::world::worlds::set_stretch(next);
+            let worlds: Vec<(usize, usize)> = self.caches.lines.keys().copied().collect();
+            for k in worlds {
+                self.caches.globes.remove(&k);
+                self.caches.lines.remove(&k);
+            }
+            *self.caches.lines_near.borrow_mut() = Default::default();
+            *self.caches.terrain_lod.borrow_mut() = Default::default();
+            self.say(format!("HEIGHTS X{next}"));
         }
         if input.pressed(KeyCode::F2) {
             self.show_labels = !self.show_labels;
@@ -1185,6 +1215,9 @@ impl App {
                 && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
             {
                 self.caches.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
+                if let Some((lines, draw)) = terrain_view::lines(b) {
+                    self.caches.lines.insert((origin, i), (lines.into(), std::sync::Arc::new(draw)));
+                }
             }
             // A world with a bake: its full-resolution maps, read and encoded on a thread of their
             // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
@@ -1203,6 +1236,8 @@ impl App {
                 // (A frame of its history in place of today's colour: its sea and clouds then
                 // aren't today's, so none.)
                 let then = self.world_frame.clone().filter(|f| f.key == b.key);
+                let key = b.key.clone();
+                let lines = self.caches.lines.contains_key(&(origin, i));
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
@@ -1212,6 +1247,9 @@ impl App {
                         let image = match &then {
                             Some(f) if k == 0 => f.history.image(f.frame),
                             Some(_) if name == "globe_spec.png" => None,
+                            // (A world drawn from its lines: their flat ground in place of its colour, and
+                            // none of its bake's other maps: ground, normals, climate, rock, shine.)
+                            None if lines => if k == 0 { universe_sim::world::worlds::lines_colour_rgba(&key) } else { None },
                             _ => t.bake_image(name),
                         };
                         let e = image.and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
@@ -1723,6 +1761,10 @@ fn main() {
         return;
     }
     universe_sim::engine::size_thread_pools();
+    // (UNIVERSE_HEIGHTS_STRETCH: the lines' heights stretched from the start, as SHIFT+F4 does.)
+    if let Some(k) = std::env::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {
+        universe_sim::world::worlds::set_stretch(k);
+    }
     hold_to_cores(None);
     // (Slow frames written down beside the quicksave: hitches.log.)
     let hitch_log = Some(save::data_dir().join("freefall").join("hitches.log"));

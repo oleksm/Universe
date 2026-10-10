@@ -80,8 +80,9 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
         }
     });
     let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
-    // A world grown by the planet simulation: its own colour, texel by texel.
-    let Some(image) = terrain.colour() else { return Some(map) };
+    // A world grown by the planet simulation: its own colour, texel by texel (a world drawn from
+    // its lines: the flat ground under them, else its bake's).
+    let Some(image) = universe_sim::world::worlds::lines_colour(&body.key).or_else(|| terrain.colour()) else { return Some(map) };
     let mut colors = vec![[0u8; 4]; 6 * n * n];
     std::thread::scope(|s| {
         for (k, chunk) in colors.chunks_mut(rows * n).enumerate() {
@@ -97,6 +98,31 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
         }
     });
     Some(map.with_colors(colors))
+}
+
+/// A world drawn from its vector lines (see `worlds::lines_draw`): its level lines, shores, rivers,
+/// peaks and lows, on a unit globe just over its highest ground, and its highest peaks and lowest
+/// lows to pin. None: it has no lines.
+pub fn lines(body: &Body) -> Option<(WireModel, universe_sim::world::worlds::LinesDraw)> {
+    body.terrain.as_ref()?;
+    let d = universe_sim::world::worlds::lines_draw(&body.key, lines_lift(body))?;
+    let mut m = WireModel::default();
+    m.positions = d.positions.iter().map(|&p| universe_engine::glam::Vec3::from(p)).collect();
+    m.colors = d.colors.clone();
+    m.edges = d.edges.clone();
+    Some((m, d))
+}
+
+/// Where a world's lines are drawn from afar: a globe just over its highest ground (in radii).
+pub fn lines_lift(body: &Body) -> f64 {
+    1.0 + (body.terrain.as_ref().map_or(0.0, |t| t.max_height()) + 1_000.0) / body.rail.radius
+}
+
+/// A world's globe's brightness as the shader takes it (see `Frame::with_globe`): below zero for a
+/// world drawn from its lines (its slopes steepened in the shading, no made-up detail).
+pub fn globe_bright(body: &Body) -> f32 {
+    let bright = FILL * 2.5;
+    if body.terrain.as_ref().is_some_and(|t| t.drawn_from_lines()) { -bright } else { bright }
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).
