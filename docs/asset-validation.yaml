@@ -94,3 +94,19 @@ validations:
       - "GPU look and cost, placement on the MC-07"
       - "extension motion (measured axes in its about evidence.motion; device state and joints in freefall-motion/1 later)"
       - "mass from its measured parts; grip 2 MN against the mount's hold (mount loads rederived on registry-wip)"
+  - key: equipment.access.anchor-clamp.mc07-fwd
+    version: 1
+    manifest_sha256: "bd1b4416bb0e6187d7a77d43dba4d3cd95d36f9847615c0e3917f10d90c421b6"
+    installed: e837b2f7
+    game: "the loader (world::assets) at fso e837b2f7"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-anchor-clamp-mc07-fwd/v1 (117684 bytes, bounds [-1.9788, -2.9, -2.1467] to [1.9788, 0.8049, 2.1467]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "extension motion (measured axes in its about evidence.motion; device state and joints in freefall-motion/1 later)"
+      - "mass from its measured parts"
