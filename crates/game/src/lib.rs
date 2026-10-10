@@ -1,6 +1,7 @@
 mod palette;
 mod devenv;
 mod devkit;
+mod visuals;
 use devkit::{dev, observe};
 mod economy;
 mod zoning;
@@ -346,6 +347,8 @@ pub struct Caches {
     /// Worlds drawn from their vector lines: the lines as a mesh of edges and the peaks and lows
     /// pinned, by (system, body).
     pub lines: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, std::sync::Arc<universe_sim::world::worlds::LinesDraw>)>,
+    /// The registry's things' models (`visual`), loaded the first time each is drawn.
+    pub visuals: visuals::Visuals,
     /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
     pub lines_near: std::cell::RefCell<lines_near::Near>,
     /// Worlds grown by the planet simulation: their full-resolution maps, made in the
@@ -499,6 +502,7 @@ impl App {
                 globes: std::collections::HashMap::new(),
                 lines: std::collections::HashMap::new(),
                 lines_near: Default::default(),
+                visuals: Default::default(),
                 world_maps: std::collections::HashMap::new(),
                 terrain_lod: Default::default(),
                 rocks: std::collections::HashMap::new(),
