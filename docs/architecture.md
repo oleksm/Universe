@@ -61,7 +61,12 @@ designs, production and economy. The world can change anything of its own and no
 ## Layers (crates), dependencies pointing down only
 
 ```
- game (universe)        rendering, HUD, input, audio, dev scenarios        crates/game
+ game (universe)        the game's library: flight, scene, HUD, input,      crates/game
+   │                    audio, panels, the studio; two binaries: freefall
+   │                    (the game) and freefall-studio (the studio alone);
+   │                    devkit (scenarios, the observer port) only with the
+   │                    dev feature (default on; a player build is
+   │                    --no-default-features)
    │
  sim (universe-sim)     orchestration: the tick loop, ships (player +      crates/core/sim
    │                    crafts), per-ship avionics, traffic (settlers),
@@ -79,8 +84,13 @@ designs, production and economy. The world can change anything of its own and no
    │
  physics                Dogma (below)                                 crates/core/physics
  (universe-physics)
-                        engine (universe-engine): rendering only, no sim deps
+                        engine (universe-engine): rendering only, no sim deps   crates/engine
 ```
+
+Everything under `crates/core` is the runtime with no window and no dev hooks. `crates/game/tests/layers.rs`
+holds the layers: a core crate depends only on core crates, the engine only on the profiler (the world
+only for its agreement test), and nothing depends on the game. The Python and Blender tooling lives in
+`tools/`, outside the workspace.
 
 ## Threads: the world engine and the client
 
