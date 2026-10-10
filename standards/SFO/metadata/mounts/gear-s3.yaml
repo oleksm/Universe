@@ -7,9 +7,9 @@ identity:
   size_class: 3
   description: "What a class 3 landing gear slot offers, and what fits it."
 envelope:
-  length: 8.01
+  length: 7.11
   width: 4.24
-  height: 9.99
+  height: 8.34
 bears:
   mass: 5250.0
   landing: 4380000.0

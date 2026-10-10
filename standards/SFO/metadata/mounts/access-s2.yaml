@@ -9,7 +9,7 @@ identity:
 envelope:
   length: 8.8
   width: 5.5
-  height: 3.3
+  height: 3.59
 bears:
   mass: 7500.0
 attachment:
