@@ -15,7 +15,7 @@
                                                      session agent-<name>); `serve` types its mail into it and notifies you
 
 kind: task | ack | done | blocked | note. Answer only a task, a blocked or a question; acks never wake anyone (they come
-with the next mail), and an inbox is delivered once it has been quiet for $AGENTMSG_SETTLE s (20), as one wake. A summary is at most 300 characters: put detail in files, commits and keys and
+with the next mail), and an inbox is delivered once it has been quiet for $AGENTMSG_SETTLE s (20), as one wake. A summary is at most 400 characters: put detail in files, commits and keys and
 point at them with --ref and --see; the receiver opens them only if it needs to. Reply on a thread with --reply-to.
 
 Who am I: --as, else $AGENTMSG_NAME, else the agent in ~/.agents/agents.json whose "cwd" holds the current directory.
@@ -27,7 +27,7 @@ HOME = os.environ.get("AGENTMSG_HOME") or os.path.expanduser("~/.agents")
 MAIL, LOG, RUN = os.path.join(HOME, "mail"), os.path.join(HOME, "log"), os.path.join(HOME, "run")
 CONF = os.path.join(HOME, "agents.json")
 KINDS = ("task", "ack", "done", "blocked", "note")
-MAX_SUMMARY = 300
+MAX_SUMMARY = 400
 SETTLE = float(os.environ.get("AGENTMSG_SETTLE", 20))     # s of quiet in an inbox before its mail is delivered, as one wake
 
 
@@ -123,7 +123,7 @@ def cmd_send(pos, opt):
     if kind not in KINDS:
         die(f"kind is one of {', '.join(KINDS)}")
     frm = me(opt) or die("who are you? --as NAME, $AGENTMSG_NAME, or a cwd in ~/.agents/agents.json")
-    s = opt.get("summary") if isinstance(opt.get("summary"), str) else die("--summary '...' (at most 300 characters)")
+    s = opt.get("summary") if isinstance(opt.get("summary"), str) else die(f"--summary '...' (at most {MAX_SUMMARY} characters)")
     if len(s) > MAX_SUMMARY:
         die(f"the summary is {len(s)} characters; at most {MAX_SUMMARY}: put the rest in a file and --see it")
     now = datetime.datetime.now()
@@ -198,7 +198,7 @@ def wake_prompt(name, got, term=False):
              "Send results by mail, not only in your window.")
     if not ask:
         return f"Mail for you ({name}), {len(got)} message(s):\n{lines}\nNo reply needed."
-    cmds = " ".join(f"agentmsg send {m['from']} done|blocked --reply-to {m['id']}{as_} --summary '<=300 chars, name the commit or file'." for m in ask)
+    cmds = " ".join(f"agentmsg send {m['from']} done|blocked --reply-to {m['id']}{as_} --summary '<={MAX_SUMMARY} chars, name the commit or file'." for m in ask)
     return (f"Mail for you ({name}), {len(got)} message(s):\n{lines}\n"
             f"Start working on {'it' if len(ask) == 1 else 'them'} (after the current task, if busy). Answer with: {cmds} {help_}"
             + (" No reply to the rest." if len(ask) < len(got) else ""))

@@ -14,7 +14,7 @@ tools, survives restarts and power cuts, and costs no tokens while an agent wait
     agentmsg open [--as ME]                          what I owe and what I wait on, a few lines
     agentmsg who                                     agents, their unread counts, auto or notify
 
-`kind` is one of task, ack, done, blocked, note. A summary is at most 300 characters: detail lives in files, commits
+`kind` is one of task, ack, done, blocked, note. A summary is at most 400 characters: detail lives in files, commits
 and registry keys, pointed at with `--ref` and `--see`, and the receiver opens them only if it needs them. A hand-off is
 a `task`, answered by `done` (with a commit or a path) or `blocked` (one line why), `--reply-to` the task's id; an
 `ack` in between is optional.
