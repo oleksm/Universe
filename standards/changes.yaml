@@ -416,7 +416,7 @@
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c543e988b3b31052" }
 - { record: equipment.handling.transfer.arm, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "635247105c3cc019" }
 - { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "96bda6031ca36f8d" }
-- { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-10T23:04:31Z", status: draft, summary: "changed: physical, basis", sha: "9714ebdf320452e2" }
+- { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-10T23:20:57Z", status: draft, summary: "changed: visual", sha: "b7fdddfdb450b8f8" }
 - { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "6a1dbe5174efe2e8" }
 - { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54beaa20b9d5f1b9" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "43ab02cce06b3cb7" }
