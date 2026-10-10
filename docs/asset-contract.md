@@ -111,7 +111,7 @@ engine and blender agreed for v04). The installer checks it against the schema, 
 parents, the record's gimbal limit, actuator overlap and hose reach (16 directions), and over 65 poses: link closure,
 each joint's relative rotation decomposed in hinge order (hinge angles against limits, twist and slide against
 allowances, any other turn refused), roll never undetermined, tie lengths, bellows rims against their skirt, and every
-reference pose's node transforms within 1e-5; then writes it into the package (listed in the manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
+reference pose's node transforms within 2e-6; then writes it into the package (listed in the manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
 
 ## Game validation
 

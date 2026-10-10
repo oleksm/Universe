@@ -186,8 +186,8 @@ properties:
       evaluator engine and blender agreed for v04 (blender proposal-v04/source/ring-fan-fixture.json). At a pose: each
       end's point and tangent are taken from its parent's frame into model root (the tangent turned with its parent,
       scaled to tangent_magnitude); H(t) is the cubic Hermite curve between them. A ring's frame F(t): origin H(t); Z the
-      unit derivative H'(t); X the upstream hinge axis turned with the upstream parent, made square to Z; Y = Z x X.
-      Refused where that hinge axis comes within 10 degrees of Z. A ring's transform is F(t, pose) F(t, neutral)^-1 bind,
+      unit derivative H'(t); X the upstream hinge axis turned with the upstream parent (numerically squared to Z); Y = Z x X.
+      A planar single hinge: refused wherever that axis is not square to Z (|axis . Z| over 1e-3), never another roll. A ring's transform is F(t, pose) F(t, neutral)^-1 bind,
       so its exported local basis is kept (no mesh edits, no scale). Rings are not listed nodes: this is their one pose
       producer.
     items:
@@ -230,7 +230,7 @@ properties:
               bind: { $ref: "#/definitions/transform", description: "model root, neutral" }
   references:
     type: array
-    description: "poses to compare against: input and node transforms in model root at that pose (motion times bind, the A of engine's draw rule); the installer compares every node it can evaluate (listed nodes, solved links, rings) within 1e-5"
+    description: "poses to compare against: input and node transforms in model root at that pose (motion times bind, the A of engine's draw rule); the installer compares every node it can evaluate (listed nodes, solved links, rings) within 2e-6 per matrix component (engine's threshold)"
     items:
       type: object
       additionalProperties: false

@@ -360,9 +360,10 @@ def check_links(mo, g, pose, bind, parent, eye):
             t = r["t"]; t2, t3 = t * t, t * t * t
             h = [(2 * t3 - 3 * t2 + 1) * p0[k] + (t3 - 2 * t2 + t) * m0[k] + (-2 * t3 + 3 * t2) * p1[k] + (t3 - t2) * m1[k] for k in range(3)]
             dh = [(6 * t2 - 6 * t) * p0[k] + (3 * t2 - 4 * t + 1) * m0[k] + (-6 * t2 + 6 * t) * p1[k] + (3 * t2 - 2 * t) * m1[k] for k in range(3)]
-            z = _unit(dh); x = [hinge[k] - z[k] * _dot(hinge, z) for k in range(3)]
-            if math.sqrt(_dot(x, x)) < math.sin(math.radians(10)):
+            z = _unit(dh)
+            if abs(_dot(hinge, z)) > 1e-3:      # (engine's rule: a planar single hinge, the axis square to the curve; no other roll is chosen)
                 return None
+            x = [hinge[k] - z[k] * _dot(hinge, z) for k in range(3)]
             x = _unit(x); y = _cross(z, x)
             out[r["node"]] = [[x[0], y[0], z[0], h[0]], [x[1], y[1], z[1], h[1]], [x[2], y[2], z[2], h[2]], [0, 0, 0, 1]]
         return out
@@ -384,7 +385,7 @@ def check_links(mo, g, pose, bind, parent, eye):
         bad += [f"motion: bellows {b['name']}: ring {r['node']!r} is also a listed node: one pose producer only" for r in b["rings"] if r["node"] in listed]
         f0 = ring_frames(b, A0)
         if f0 is None:
-            bad.append(f"motion: bellows {b['name']}: at neutral the hinge axis runs along the curve: roll undetermined"); continue
+            bad.append(f"motion: bellows {b['name']}: at neutral the hinge axis is not square to the curve (a planar single hinge is required)"); continue
         gap, roll_lost = -1.0, False
         for q in dense:
             f = ring_frames(b, current(q))
@@ -400,14 +401,14 @@ def check_links(mo, g, pose, bind, parent, eye):
                     zm = _unit([fa[i][2] + fb[i][2] for i in range(3)])
                     gap = max(gap, _dot([rim(fb, -1)[i] - rim(fa, 1)[i] for i in range(3)], zm))
         if roll_lost:
-            bad.append(f"motion: bellows {b['name']}: somewhere in the envelope the hinge axis runs along the curve: roll undetermined")
+            bad.append(f"motion: bellows {b['name']}: somewhere in the envelope the hinge axis leaves square to the curve (a planar single hinge is required)")
         if gap > (b.get("skirt_length") or 0) + 1e-6:
             bad.append(f"motion: bellows {b['name']}: neighbouring rims open {gap:.4f} m, more than the {b.get('skirt_length') or 0} m skirt covers")
     for ref in mo.get("references", []):
         A = current(tuple(ref["input"]))
         A.update(rings(tuple(ref["input"]), A))
         for n, t in ref["transforms"].items():
-            if A.get(n) is not None and _diff(A[n], _m4(t)) > 1e-5:
+            if A.get(n) is not None and _diff(A[n], _m4(t)) > 2e-6:      # (engine's acceptance threshold for matrix components)
                 bad.append(f"motion: reference {ref['pose']}: {n} is {_diff(A[n], _m4(t)):.2e} off what the motion gives")
     return bad
 
