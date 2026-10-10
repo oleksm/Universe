@@ -104,12 +104,14 @@ A model whose parts move carries `motion.json` beside `model.glb`: `--motion=<fi
 `docs/formats/freefall-motion-1.schema.yaml` (moving nodes with parents and neutral binds in model-root space; the
 gimbal's pivot, axes, nesting, normalisation and limit; actuators by their two anchors; hoses by end frames and
 tangents, diameter, free length and tolerance, bend radius and its source, neutral centreline, guides; rigid links
-between two rated joints, such as a tied bellows duct: fixed centre-to-centre length and closure tolerance, joints with
-parent frames, ordered hinge axes, limits and their source, a deterministic roll rule, tie rods). The installer
-checks it against the schema, the model's nodes, rigid binds, parents, the record's gimbal limit, actuator overlap and
-hose end distance over the whole gimbal envelope (16 directions), and for links closure, each hinge's turn against its
-limit, a single hinge kept in its plane, roll never undetermined and tie lengths over 65 poses, and writes it into the package (listed in the
-manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
+between two joints: one pose producer each, `inherited` (rides a listed parent) or `solved` (placed from joint a toward
+joint b, rolled by a stated rule), joints framed on both sides with ordered hinges, limits and their source, axial,
+lateral and twist allowances, tie rods; bellows as rigid rings on the Hermite curve between two cuffs, the evaluator
+engine and blender agreed for v04). The installer checks it against the schema, the model's nodes, rigid binds,
+parents, the record's gimbal limit, actuator overlap and hose reach (16 directions), and over 65 poses: link closure,
+each joint's relative rotation decomposed in hinge order (hinge angles against limits, twist and slide against
+allowances, any other turn refused), roll never undetermined, tie lengths, bellows rims against their skirt, and every
+reference pose's node transforms within 1e-5; then writes it into the package (listed in the manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
 
 ## Game validation
 

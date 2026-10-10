@@ -191,6 +191,231 @@ def _shape(root, sc, v, at):
     return out
 
 
+def _inv(m):
+    """A rigid transform's inverse."""
+    r = [[m[j][i] for j in range(3)] for i in range(3)]
+    t = [-sum(r[i][k] * m[k][3] for k in range(3)) for i in range(3)]
+    return [[*r[0], t[0]], [*r[1], t[1]], [*r[2], t[2]], [0, 0, 0, 1]]
+
+
+def _unit(v):
+    n = math.sqrt(sum(c * c for c in v)); return [c / n for c in v]
+
+
+def _dot(a, b):
+    return sum(x * y for x, y in zip(a, b))
+
+
+def _cross(a, b):
+    return [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]]
+
+
+def _r3(m, v):
+    return [sum(m[i][k] * v[k] for k in range(3)) for i in range(3)]
+
+
+def _angle(m):
+    """A rotation's angle (rad)."""
+    return math.acos(max(-1.0, min(1.0, (m[0][0] + m[1][1] + m[2][2] - 1) / 2)))
+
+
+def _turn(m, h):
+    """The signed angle a rotation turns about the unit axis h (exact when it is a turn about h)."""
+    u = _unit(_cross(h, [1, 0, 0] if abs(h[0]) < 0.9 else [0, 1, 0]))
+    w = _r3(m, u); w = [w[k] - h[k] * _dot(w, h) for k in range(3)]
+    return math.atan2(_dot(_cross(u, w), h), _dot(u, w))
+
+
+def _diff(a, b):
+    return max(abs(a[i][j] - b[i][j]) for i in range(4) for j in range(4))
+
+
+def check_links(mo, g, pose, bind, parent, eye):
+    """Links, joints, ties and bellows over the gimbal envelope, as the schema orders the pose: plain sentences."""
+    bad = []
+    links = mo.get("links", [])
+    by = {ln["name"]: ln for ln in links}
+
+    def current(q):
+        """Every node's transform in model root at input q (motion times bind): listed nodes, then solved links."""
+        moved = pose(*q)
+        A = {mo["root"]: eye}
+        for n, b in bind.items():
+            m, x = moved.get(n), n
+            while m is None and x in parent:
+                x = parent[x]; m = moved.get(x)
+            A[n] = _mul(m or eye, b)
+        for ln in links:
+            if ln["pose"] != "solved":
+                continue
+            ja, jb = ln["joints"]
+            def fixed_centre(j):
+                sd = j["a"] if j["a"]["parent"] != ln["node"] else j["b"]
+                return _apply(_mul(A.get(sd["parent"], eye), _m4(sd["frame"])), [0, 0, 0])
+            ca, cb = fixed_centre(ja), fixed_centre(jb)
+            d = _unit([cb[k] - ca[k] for k in range(3)])
+            sa = ja["a"] if ja["a"]["parent"] != ln["node"] else ja["b"]
+            h = _unit(_r3(_mul(A.get(sa["parent"], eye), _m4(sa["frame"])), ja["hinges"][0]))
+            rr = [h[k] - d[k] * _dot(h, d) for k in range(3)]
+            if math.sqrt(_dot(rr, rr)) < math.sin(math.radians(10)):
+                A[ln["node"]] = None; continue
+            rr = _unit(rr); third = _cross(d, rr)
+            ax, ro = _unit(ln["axis"]), _unit(ln["roll_axis"]); lt = _cross(ax, ro)
+            R = [[d[i] * ax[j] + rr[i] * ro[j] + third[i] * lt[j] for j in range(3)] for i in range(3)]
+            o = _r3(R, ln["origin"])
+            A[ln["node"]] = [[*R[0], ca[0] - o[0]], [*R[1], ca[1] - o[1]], [*R[2], ca[2] - o[2]], [0, 0, 0, 1]]
+        return A
+
+    def side(A, sd):
+        return _mul(A.get(sd["parent"], eye), _m4(sd["frame"]))
+
+    def decompose(j, rel):
+        """A joint's relative rotation as its ordered hinge angles, its twist about the line, and what is left."""
+        hs = [_unit(h) for h in j["hinges"]]
+        rot = [r[:3] for r in rel[:3]]
+        if len(hs) == 1:
+            t = [_turn(rot, hs[0])]
+            rest = _mul4(_rot(hs[0], -t[0]), rel)
+        else:
+            v = _r3(rot, hs[1])
+            t1 = math.atan2(_dot(_cross(hs[1], v), hs[0]), _dot(hs[1], v) - _dot(hs[1], hs[0]) * _dot(v, hs[0]))
+            r2 = _mul4(_rot(hs[0], -t1), rel)
+            t2 = _turn([r[:3] for r in r2[:3]], hs[1])
+            t = [t1, t2]
+            rest = _mul4(_rot(hs[1], -t2), r2)
+        line = _unit(j["line_axis"])
+        tw = _turn([r[:3] for r in rest[:3]], line)
+        left = _angle(_mul4(_rot(line, -tw), rest))
+        return t, tw, left
+
+    dense = [(0, 0)] + [(r * math.cos(k * math.pi / 16), r * math.sin(k * math.pi / 16)) for r in (0.5, 1.0) for k in range(32)]
+    A0 = current((0, 0))
+    for ln in links:
+        if ln["pose"] == "solved" and A0.get(ln["node"]) is not None and _diff(A0[ln["node"]], _m4(ln["bind"])) > 1e-5:
+            bad.append(f"motion: link {ln['name']}: solved at neutral it does not land on its bind")
+        for j in ln["joints"]:
+            if _diff(side(A0, j["a"]), side(A0, j["b"])) > 1e-5:
+                bad.append(f"motion: link {ln['name']} joint {j['name']}: its two sides' frames do not coincide at neutral")
+            if len(j["limits"]) != len(j["hinges"]):
+                bad.append(f"motion: link {ln['name']} joint {j['name']}: {len(j['hinges'])} hinge(s) but {len(j['limits'])} limit(s)")
+    if bad:
+        return bad
+    worst = {}
+    def note(k, v):
+        worst[k] = max(worst.get(k, 0.0), v)
+    for q in dense:
+        A = current(q)
+        for ln in links:
+            if A.get(ln["node"], 0) is None:
+                bad.append(f"motion: link {ln['name']}: at input {q[0]:.2f}, {q[1]:.2f} joint a's hinge runs within 10 degrees of the link: roll undetermined")
+                continue
+            if "rest_length" in ln:
+                ca = [side(A, ln["joints"][0]["a"])[k][3] for k in range(3)]; cb = [side(A, ln["joints"][1]["a"])[k][3] for k in range(3)]
+                note((ln["name"], "closure"), abs(math.dist(ca, cb) - ln["rest_length"]))
+            for j in ln["joints"]:
+                rel = _mul(_inv(side(A, j["a"])), side(A, j["b"]))
+                t = [rel[k][3] for k in range(3)]; line = _unit(j["line_axis"])
+                ax = _dot(t, line); lat = math.sqrt(max(0.0, _dot(t, t) - ax * ax))
+                angles, tw, left = decompose(j, rel)
+                n = (ln["name"], j["name"])
+                note(n + ("axial",), abs(ax)); note(n + ("lateral",), lat); note(n + ("torsion",), abs(tw)); note(n + ("other",), left)
+                for i, a in enumerate(angles):
+                    note(n + (f"hinge{i}",), abs(a))
+            for tie in ln.get("ties", []):
+                pa = _apply(A.get(tie["a"]["parent"], eye), tie["a"]["point"]); pb = _apply(A.get(tie["b"]["parent"], eye), tie["b"]["point"])
+                note((ln["name"], tie["name"], "tie"), abs(math.dist(pa, pb) - tie["length"]))
+    for ln in links:
+        c = worst.get((ln["name"], "closure"))
+        if c is not None and c > ln["tolerance"]:
+            bad.append(f"motion: link {ln['name']}: joint centres move {c:.4f} m off its rest length, over {ln['tolerance']} m (a rigid link cannot follow)")
+        for j in ln["joints"]:
+            n = (ln["name"], j["name"]); who = f"motion: link {ln['name']} joint {j['name']}"
+            if worst.get(n + ("axial",), 0) > (j.get("axial") or 0) + 1e-6:
+                bad.append(f"{who}: slides {worst[n + ('axial',)]:.5f} m along its line, allowed {j.get('axial') or 0}")
+            if worst.get(n + ("lateral",), 0) > (j.get("lateral") or 0) + 1e-6:
+                bad.append(f"{who}: offsets {worst[n + ('lateral',)]:.5f} m sideways, allowed {j.get('lateral') or 0}")
+            if worst.get(n + ("torsion",), 0) > (j.get("torsion") or 0) + 1e-6:
+                bad.append(f"{who}: twists {worst[n + ('torsion',)]:.5f} rad about its line, allowed {j.get('torsion') or 0}")
+            if worst.get(n + ("other",), 0) > 1e-4:
+                bad.append(f"{who}: turns {worst[n + ('other',)]:.5f} rad about an axis it does not have (not its hinges in order, not twist)")
+            for i, lim in enumerate(j["limits"]):
+                if worst.get(n + (f"hinge{i}",), 0) > lim + 1e-9:
+                    bad.append(f"{who}: hinge {i + 1} turns {worst[n + (f'hinge{i}',)]:.4f} rad, over its {lim} rad")
+        for tie in ln.get("ties", []):
+            v = worst.get((ln["name"], tie["name"], "tie"), 0)
+            if v > tie["tolerance"]:
+                bad.append(f"motion: link {ln['name']} tie {tie['name']}: its ends move {v:.4f} m off its length, over {tie['tolerance']} m")
+    if bad:
+        return bad
+
+    def ring_frames(b, A):
+        """The rings' frames F(t) at a pose (the Hermite evaluator): {node: F}, or None where roll is undetermined."""
+        up, dn, L = b["upstream"], b["downstream"], b["tangent_magnitude"]
+        fu, fd = A.get(up["parent"], eye), A.get(dn["parent"], eye)
+        p0, p1 = _apply(fu, up["point"]), _apply(fd, dn["point"])
+        m0 = [L * c for c in _unit(_r3(fu, up["tangent"]))]; m1 = [L * c for c in _unit(_r3(fd, dn["tangent"]))]
+        hinge = _unit(_r3(fu, up["hinge_axis"]))
+        out = {}
+        for r in b["rings"]:
+            t = r["t"]; t2, t3 = t * t, t * t * t
+            h = [(2 * t3 - 3 * t2 + 1) * p0[k] + (t3 - 2 * t2 + t) * m0[k] + (-2 * t3 + 3 * t2) * p1[k] + (t3 - t2) * m1[k] for k in range(3)]
+            dh = [(6 * t2 - 6 * t) * p0[k] + (3 * t2 - 4 * t + 1) * m0[k] + (-6 * t2 + 6 * t) * p1[k] + (3 * t2 - 2 * t) * m1[k] for k in range(3)]
+            z = _unit(dh); x = [hinge[k] - z[k] * _dot(hinge, z) for k in range(3)]
+            if math.sqrt(_dot(x, x)) < math.sin(math.radians(10)):
+                return None
+            x = _unit(x); y = _cross(z, x)
+            out[r["node"]] = [[x[0], y[0], z[0], h[0]], [x[1], y[1], z[1], h[1]], [x[2], y[2], z[2], h[2]], [0, 0, 0, 1]]
+        return out
+
+    def rings(q, A):
+        """The rings' transforms at input q: F(t, pose) F(t, neutral)^-1 bind."""
+        out = {}
+        for b in mo.get("bellows", []):
+            f, f0 = ring_frames(b, A), ring_frames(b, A0)
+            if f and f0:
+                for r in b["rings"]:
+                    out[r["node"]] = _mul(_mul(f[r["node"]], _inv(f0[r["node"]])), _m4(r["bind"]))
+        return out
+    listed = set(bind)
+    for b in mo.get("bellows", []):
+        ts = [r["t"] for r in b["rings"]]
+        if any(not 0 <= t <= 1 for t in ts) or any(y <= x for x, y in zip(ts, ts[1:])):
+            bad.append(f"motion: bellows {b['name']}: ring t must rise within 0 to 1 ({ts})"); continue
+        bad += [f"motion: bellows {b['name']}: ring {r['node']!r} is also a listed node: one pose producer only" for r in b["rings"] if r["node"] in listed]
+        f0 = ring_frames(b, A0)
+        if f0 is None:
+            bad.append(f"motion: bellows {b['name']}: at neutral the hinge axis runs along the curve: roll undetermined"); continue
+        gap, roll_lost = -1.0, False
+        for q in dense:
+            f = ring_frames(b, current(q))
+            if f is None:
+                roll_lost = True; continue
+            fs = [f[r["node"]] for r in b["rings"]]
+            for fa, fb in zip(fs, fs[1:]):     # (the rims facing each other, round the circle: the widest opening between them)
+                for k in range(24):
+                    ph = 2 * math.pi * k / 24
+                    def rim(F, sign):
+                        local = [b["radius"] * math.cos(ph), b["radius"] * math.sin(ph), sign * b["ring_width"] / 2]
+                        return _apply(F, local)
+                    zm = _unit([fa[i][2] + fb[i][2] for i in range(3)])
+                    gap = max(gap, _dot([rim(fb, -1)[i] - rim(fa, 1)[i] for i in range(3)], zm))
+        if roll_lost:
+            bad.append(f"motion: bellows {b['name']}: somewhere in the envelope the hinge axis runs along the curve: roll undetermined")
+        if gap > (b.get("skirt_length") or 0) + 1e-6:
+            bad.append(f"motion: bellows {b['name']}: neighbouring rims open {gap:.4f} m, more than the {b.get('skirt_length') or 0} m skirt covers")
+    for ref in mo.get("references", []):
+        A = current(tuple(ref["input"]))
+        A.update(rings(tuple(ref["input"]), A))
+        for n, t in ref["transforms"].items():
+            if A.get(n) is not None and _diff(A[n], _m4(t)) > 1e-5:
+                bad.append(f"motion: reference {ref['pose']}: {n} is {_diff(A[n], _m4(t)):.2e} off what the motion gives")
+    return bad
+
+
+def _mul4(a, b):
+    return _mul(a, b)
+
+
 def check_motion(key, r, info, mo):
     """What is wrong with a motion account against its record and model: plain sentences (empty: it fits)."""
     schema = yaml.safe_load(open(MOTION_SCHEMA, encoding="utf-8"))
@@ -210,14 +435,23 @@ def check_motion(key, r, info, mo):
     for h in mo.get("hoses", []):
         refs += [h["rest_node"]] + [e["parent"] for e in h["ends"]] + [x["parent"] for x in h.get("guides", [])]
     for ln in mo.get("links", []):
-        refs += [ln["node"]] + [j["parent"] for j in ln["joints"]] + [t["node"] for t in ln.get("ties", [])]
+        refs += [ln["node"]] + [j[sd]["parent"] for j in ln["joints"] for sd in "ab"] + [t["node"] for t in ln.get("ties", [])]
         refs += [x["parent"] for t in ln.get("ties", []) for x in (t["a"], t["b"])]
+    refs += [r["node"] for b in mo.get("bellows", []) for r in b["rings"]]
     bad += [f"motion: no node {n!r} in the model" for n in sorted(set(refs) - names)]
     moving = [n["node"] for n in mo["nodes"]]
-    frames = set(moving) | {mo["root"]}       # (an attachment's frame must be known: the root's, or a listed node's bind)
+    solved_nodes = {ln["node"] for ln in mo.get("links", []) if ln["pose"] == "solved"}
+    frames = set(moving) | {mo["root"]} | solved_nodes       # (an attachment's frame must be known: the root, a listed node, a solved link)
+    for ln in mo.get("links", []):
+        if ln["pose"] == "inherited" and ln["node"] not in moving:
+            bad.append(f"motion: link {ln['name']}: inherited, but {ln['node']!r} is not a listed node (it needs a parent and bind there)")
+        if ln["pose"] == "solved":
+            if ln["node"] in moving:
+                bad.append(f"motion: link {ln['name']}: solved, but {ln['node']!r} is also a listed node: one pose producer only")
+            bad += [f"motion: link {ln['name']}: solved needs `{k}`" for k in ("bind", "origin", "axis", "roll_axis", "roll_rule", "rest_length", "tolerance") if k not in ln]
     atts = [(f"actuator {a['name']}", x["parent"]) for a in mo.get("actuators", []) for x in (a["fixed"], a["moving"])]
     atts += [(f"hose {h['name']}", x["parent"]) for h in mo.get("hoses", []) for x in h["ends"] + h.get("guides", [])]
-    atts += [(f"link {ln['name']}", j["parent"]) for ln in mo.get("links", []) for j in ln["joints"]]
+    atts += [(f"link {ln['name']} joint {j['name']}", j[sd]["parent"]) for ln in mo.get("links", []) for j in ln["joints"] for sd in "ab"]
     atts += [(f"link {ln['name']} tie {t['name']}", x["parent"]) for ln in mo.get("links", []) for t in ln.get("ties", []) for x in (t["a"], t["b"])]
     for ln in mo.get("links", []):
         for j in ln["joints"]:
@@ -283,68 +517,13 @@ def check_motion(key, r, info, mo):
             bad.append(f"motion: actuator {a['name']}: overlap falls to {least:.4f} m at full stroke, under its {a['min_overlap']} m")
         if min(lens) < max(a["body_length"], a["rod_length"]):
             bad.append(f"motion: actuator {a['name']}: closes to {min(lens):.4f} m, shorter than its longer part")
-    def frame(par, moved):
-        """A parent's frame in model root at a pose (its motion times its bind)."""
-        m, x = moved.get(par), par
-        while m is None and x in parent:
-            x = parent[x]; m = moved.get(x)
-        return _mul(m or eye, bind.get(par, eye))
-
-    def unit(v):
-        n = math.sqrt(sum(c * c for c in v)); return [c / n for c in v]
-
-    def in_frame(f, v):       # (a model-root direction in frame f: the transpose of its rotation)
-        return [sum(f[k][i] * v[k] for k in range(3)) for i in range(3)]
-
-    def turn_about(h, d0, d):
-        """The signed angle about h from d0 to d, each projected square to h."""
-        p0 = [d0[k] - h[k] * sum(d0[i] * h[i] for i in range(3)) for k in range(3)]
-        p1 = [d[k] - h[k] * sum(d[i] * h[i] for i in range(3)) for k in range(3)]
-        cr = [p0[1] * p1[2] - p0[2] * p1[1], p0[2] * p1[0] - p0[0] * p1[2], p0[0] * p1[1] - p0[1] * p1[0]]
-        return math.atan2(sum(cr[k] * h[k] for k in range(3)), sum(p0[k] * p1[k] for k in range(3)))
-
-    dense = [(0, 0)] + [(r * math.cos(k * math.pi / 16), r * math.sin(k * math.pi / 16)) for r in (0.5, 1.0) for k in range(32)]
-    for ln in mo.get("links", []):
-        ja, jb = ln["joints"]
-        worst = {"closure": 0.0, "roll": 90.0}
-        turns = {(j["name"], i): 0.0 for j in ln["joints"] for i in range(len(j["hinges"]))}
-        off = {j["name"]: 0.0 for j in ln["joints"] if len(j["hinges"]) == 1}
-        def ends(q):
-            mv = pose(*q)
-            return mv, _apply(frame(ja["parent"], mv), ja["centre"]), _apply(frame(jb["parent"], mv), jb["centre"])
-        _, a0, b0 = ends((0, 0)); d0 = unit([b0[k] - a0[k] for k in range(3)])
-        for q in dense:
-            mv, a, b = ends(q)
-            worst["closure"] = max(worst["closure"], abs(math.dist(a, b) - ln["rest_length"]))
-            d = unit([b[k] - a[k] for k in range(3)])
-            h = unit(_apply([[*r[:3], 0] for r in frame(ja["parent"], mv)], ja["hinges"][0]))
-            worst["roll"] = min(worst["roll"], math.degrees(math.acos(min(1.0, abs(sum(h[k] * d[k] for k in range(3)))))))
-            for j in ln["joints"]:
-                f0, f = frame(j["parent"], pose(0, 0)), frame(j["parent"], mv)
-                l0, l1 = in_frame(f0, d0), in_frame(f, d)
-                for i, hx in enumerate(j["hinges"]):
-                    turns[(j["name"], i)] = max(turns[(j["name"], i)], abs(turn_about(unit(hx), l0, l1)))
-                if len(j["hinges"]) == 1:
-                    hx = unit(j["hinges"][0])
-                    off[j["name"]] = max(off[j["name"]], abs(math.asin(max(-1, min(1, sum(l1[k] * hx[k] for k in range(3))))) - math.asin(max(-1, min(1, sum(l0[k] * hx[k] for k in range(3)))))))
-        if worst["closure"] > ln["tolerance"]:
-            bad.append(f"motion: link {ln['name']}: its joint centres move {worst['closure']:.4f} m off its rest length, over its {ln['tolerance']} m tolerance (a rigid link cannot follow)")
-        if abs(math.dist(a0, b0) - ln["rest_length"]) > ln["tolerance"]:
-            bad.append(f"motion: link {ln['name']}: centres {math.dist(a0, b0):.4f} m apart at neutral, rest_length {ln['rest_length']}")
-        if worst["roll"] < 10:
-            bad.append(f"motion: link {ln['name']}: joint a's hinge comes within {worst['roll']:.1f} degrees of the link: its roll is undetermined there")
-        for (jn, i), t in turns.items():
-            lim = next(j for j in ln["joints"] if j["name"] == jn)["limits"][i]
-            if t > lim + 1e-9:
-                bad.append(f"motion: link {ln['name']} joint {jn}: hinge {i + 1} turns {t:.4f} rad, over its {lim} rad")
-        for jn, o in off.items():
-            allow = max(1e-3, (next(j for j in ln["joints"] if j["name"] == jn).get("lateral") or 0) / ln["rest_length"])
-            if o > allow:
-                bad.append(f"motion: link {ln['name']} joint {jn}: a single hinge, but the link leaves its plane by {o:.4f} rad (it needs a second hinge or lateral travel)")
-        for t in ln.get("ties", []):
-            far = max(abs(math.dist(_apply(frame(t["a"]["parent"], pose(*q)), t["a"]["point"]), _apply(frame(t["b"]["parent"], pose(*q)), t["b"]["point"])) - t["length"]) for q in dense)
-            if far > t["tolerance"]:
-                bad.append(f"motion: link {ln['name']} tie {t['name']}: its ends move {far:.4f} m off its length, over its {t['tolerance']} m")
+    links = mo.get("links", [])
+    if not links and not mo.get("bellows"):
+        pass
+    elif bad:
+        return bad
+    else:
+        bad += check_links(mo, g, pose, bind, parent, eye)
     for h in mo.get("hoses", []):
         def end_point(e, moved):
             par = e["parent"]; m = moved.get(par)
