@@ -80,8 +80,8 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
         }
     });
     let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
-    // A world grown by the planet simulation: its own colour, texel by texel (painted from its
-    // lines where it has them, else its bake's).
+    // A world grown by the planet simulation: its own colour, texel by texel (a world drawn from
+    // its lines: the flat ground under them, else its bake's).
     let Some(image) = universe_sim::world::worlds::lines_colour(&body.key).or_else(|| terrain.colour()) else { return Some(map) };
     let mut colors = vec![[0u8; 4]; 6 * n * n];
     std::thread::scope(|s| {
@@ -98,6 +98,19 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
         }
     });
     Some(map.with_colors(colors))
+}
+
+/// A world drawn from its vector lines (see `worlds::lines_draw`): its level lines, shores, rivers,
+/// peaks and lows, on a unit globe just over its highest ground. None: it has no lines.
+pub fn lines(body: &Body) -> Option<WireModel> {
+    let terrain = body.terrain.as_ref()?;
+    let lift = 1.0 + (terrain.amplitude * 1.3 + 1_000.0) / body.rail.radius;
+    let d = universe_sim::world::worlds::lines_draw(&body.key, lift)?;
+    let mut m = WireModel::default();
+    m.positions = d.positions.into_iter().map(universe_engine::glam::Vec3::from).collect();
+    m.colors = d.colors;
+    m.edges = d.edges;
+    Some(m)
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).

@@ -340,6 +340,8 @@ pub struct Caches {
     pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
     /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
+    /// Worlds drawn from their vector lines: the lines as a mesh of edges, by (system, body).
+    pub lines: std::collections::HashMap<(usize, usize), universe_engine::Mesh>,
     /// Worlds grown by the planet simulation: their full-resolution maps, made in the
     /// background (None till ready), by (system, body).
     pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
@@ -489,6 +491,7 @@ impl App {
             },
             caches: Caches {
                 globes: std::collections::HashMap::new(),
+                lines: std::collections::HashMap::new(),
                 world_maps: std::collections::HashMap::new(),
                 terrain_lod: Default::default(),
                 rocks: std::collections::HashMap::new(),
@@ -1183,6 +1186,9 @@ impl App {
                 && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
             {
                 self.caches.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
+                if let Some(lines) = terrain_view::lines(b) {
+                    self.caches.lines.insert((origin, i), lines.into());
+                }
             }
             // A world with a bake: its full-resolution maps, read and encoded on a thread of their
             // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
@@ -1211,7 +1217,7 @@ impl App {
                         let image = match &then {
                             Some(f) if k == 0 => f.history.image(f.frame),
                             Some(_) if name == "globe_spec.png" => None,
-                            // (Today's colour painted from the world's lines, where it has them.)
+                            // (A world drawn from its lines: their flat ground in place of its colour.)
                             None if name == "globe_color.jpg" => universe_sim::world::worlds::lines_colour_rgba(&key).or_else(|| t.bake_image(name)),
                             _ => t.bake_image(name),
                         };

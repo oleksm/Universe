@@ -1,12 +1,11 @@
-//! A world's colour painted from its vector lines (the planet graph's root, a `planet-unfold-tiles`
-//! package in the worlds store): an equirectangular image in place of its bake's `globe_color.jpg`.
-//! Every closed level line (loops and shores) is filled on its inside, the smaller of its two sides on
-//! the sphere, largest first, so a pixel ends up with the innermost line around it. Its band is that
-//! line's height and which side of it the pixel is on (the high side is on the line's left). Water is
-//! the same with the shores alone: a pixel is water where the shore around it has its low side there.
-//! Rivers that carry water are drawn over it.
+//! A world drawn from its vector lines (the planet graph's root, a `planet-unfold-tiles` package in the
+//! worlds store), as the planet lab's anchor model draws it: its level lines, shores, rivers, peaks and
+//! lows as lines on the globe (`lines_draw`), over flat ground, land grey and water near black
+//! (`lines_colour`, in place of its bake's `globe_color.jpg`). Water is where the shore round a pixel
+//! has its low side there: each shore filled on its inside, the smaller of its two sides on the sphere,
+//! largest first, so a pixel ends up with the innermost shore around it.
 
-use super::{store, Equirect, Package};
+use super::{direction, store, Equirect, LonLat, Package};
 use rayon::prelude::*;
 use std::f64::consts::PI;
 
@@ -18,16 +17,95 @@ const PAINTED: &[(&str, &str, &str)] = &[("body.treistun.treistun-e", "worlds/TR
 const W: usize = 8192;
 const H: usize = 4096;
 
-/// Body `key`'s colour painted from its lines. None: it has none (or the store lacks them: said).
-pub fn lines_colour(key: &str) -> Option<Equirect> {
+/// Body `key`'s lines. None: it has none (or the store lacks them: said).
+fn open(key: &str) -> Option<Vec<Line>> {
     let &(_, folder, sha) = PAINTED.iter().find(|p| p.0 == key)?;
-    let painted = (|| -> Result<Equirect, String> {
+    let lines = (|| -> Result<Vec<Line>, String> {
         let package = Package::open(store().ok_or("no worlds store (set UNIVERSE_WORLDS)")?.join(folder), sha)?;
-        let lines = load(&package.read("L0_0_0.lines")?)?;
-        let rgba = paint(&lines, W, H);
-        Ok(Equirect { width: W, height: H, rgb: rgba.chunks(4).flat_map(|p| [p[0], p[1], p[2]]).collect() })
+        load(&package.read("L0_0_0.lines")?)
     })();
-    painted.map_err(|e| eprintln!("{key}: no colour from its lines: {e}")).ok()
+    lines.map_err(|e| eprintln!("{key}: no lines: {e}")).ok()
+}
+
+/// Body `key`'s ground under its lines: land grey, water near black.
+pub fn lines_colour(key: &str) -> Option<Equirect> {
+    let rgba = paint(&open(key)?, W, H);
+    Some(Equirect { width: W, height: H, rgb: rgba.chunks(4).flat_map(|p| [p[0], p[1], p[2]]).collect() })
+}
+
+/// Lines to draw on a unit globe: vertex positions, their colours (linear RGBA), and the edges between them.
+pub struct LinesDraw {
+    pub positions: Vec<[f32; 3]>,
+    pub colors: Vec<[f32; 4]>,
+    pub edges: Vec<[u32; 2]>,
+}
+
+/// The anchor model's colours (sRGB): shores white, land's level lines tan (paler above 2,000 m), the
+/// sea floor's blue, rivers pale blue, dry traces brown, peaks red and lows blue.
+const SHORE: [u8; 3] = [255, 255, 255];
+const LAND_LOW: [u8; 3] = [150, 120, 78];
+const LAND_HIGH: [u8; 3] = [226, 192, 130];
+const SEA_FLOOR: [u8; 3] = [70, 112, 186];
+const RIVER: [u8; 3] = [120, 180, 240];
+const DRY_TRACE: [u8; 3] = [138, 112, 80];
+const PEAK: [u8; 3] = [232, 64, 52];
+const LOW: [u8; 3] = [64, 120, 240];
+/// A peak's or low's mark: a ring this wide (radians) round it.
+const MARK: f64 = 0.004;
+
+/// Body `key`'s lines as the anchor model draws them, on a globe of radius `lift` (1: the datum).
+pub fn lines_draw(key: &str, lift: f64) -> Option<LinesDraw> {
+    let lines = open(key)?;
+    let lin = |c: [u8; 3]| {
+        let f = |v: u8| {
+            let v = v as f32 / 255.0;
+            if v <= 0.04045 { v / 12.92 } else { ((v + 0.055) / 1.055).powf(2.4) }
+        };
+        [f(c[0]), f(c[1]), f(c[2]), 1.0]
+    };
+    let at = |lon: f64, lat: f64| (direction(LonLat { lon, lat }) * lift).as_vec3().to_array();
+    let mut d = LinesDraw { positions: Vec::new(), colors: Vec::new(), edges: Vec::new() };
+    for l in &lines {
+        let colour = match l.kind {
+            KIND_COAST => SHORE,
+            KIND_CONTOUR if l.z < 0.0 => SEA_FLOOR,
+            KIND_CONTOUR if l.z > 2000.0 => LAND_HIGH,
+            KIND_CONTOUR => LAND_LOW,
+            KIND_RIVER if l.flags & DRY != 0 => DRY_TRACE,
+            KIND_RIVER => RIVER,
+            KIND_ANCHOR if l.flags & FLAG_PEAK != 0 => PEAK,
+            KIND_ANCHOR if l.flags & FLAG_LOW != 0 => LOW,
+            _ => continue,
+        };
+        let c = lin(colour);
+        let first = d.positions.len() as u32;
+        if l.kind == KIND_ANCHOR {
+            // (A small ring round it, in the plane across it.)
+            let Some(&(lon, lat)) = l.pts.first() else { continue };
+            let n = direction(LonLat { lon, lat });
+            let u = n.any_orthonormal_vector();
+            let v = n.cross(u);
+            for k in 0..8 {
+                let a = k as f64 / 8.0 * std::f64::consts::TAU;
+                d.positions.push(((n + (u * a.cos() + v * a.sin()) * MARK).normalize() * lift).as_vec3().to_array());
+                d.colors.push(c);
+                d.edges.push([first + k, first + (k + 1) % 8]);
+            }
+            continue;
+        }
+        for &(lon, lat) in &l.pts {
+            d.positions.push(at(lon, lat));
+            d.colors.push(c);
+        }
+        let n = l.pts.len() as u32;
+        for k in 1..n {
+            d.edges.push([first + k - 1, first + k]);
+        }
+        if l.flags & CLOSED != 0 && n > 2 {
+            d.edges.push([first + n - 1, first]);
+        }
+    }
+    Some(d)
 }
 
 /// The same as RGBA rows (width, height, bytes), for the near maps.
@@ -39,8 +117,11 @@ pub fn lines_colour_rgba(key: &str) -> Option<(usize, usize, Vec<u8>)> {
 const KIND_CONTOUR: u8 = 0;
 const KIND_RIVER: u8 = 2;
 const KIND_COAST: u8 = 4;
+const KIND_ANCHOR: u8 = 10;
 const CLOSED: u16 = 1;
 const DRY: u16 = 1 << 3;
+const FLAG_PEAK: u16 = 1 << 5;
+const FLAG_LOW: u16 = 1 << 6;
 
 struct Line {
     kind: u8,
@@ -83,14 +164,13 @@ fn load(b: &[u8]) -> Result<Vec<Line>, String> {
     Ok(lines)
 }
 
-/// A closed level line ready to fill: its inside as a plane polygon in unwrapped longitude, whether that
+/// A closed line ready to fill: its inside as a plane polygon in unwrapped longitude, whether that
 /// polygon is the inside or its complement, the inside's area and whether the inside is the high side.
 struct Loop {
     poly: Vec<(f64, f64)>,
     complement: bool,
     area: f64,
     inside_high: bool,
-    z: f32,
 }
 
 fn prepare(l: &Line) -> Option<Loop> {
@@ -143,7 +223,7 @@ fn prepare(l: &Line) -> Option<Loop> {
         poly.push((poly[0].0, pole));
         complement = false;
     }
-    Some(Loop { poly, complement, area, inside_high, z: l.z })
+    Some(Loop { poly, complement, area, inside_high })
 }
 
 /// Fills each row with the index of the innermost loop around each pixel (u32::MAX: none).
@@ -212,92 +292,24 @@ fn innermost(loops: &[Loop], w: usize, h: usize) -> Vec<u32> {
     out
 }
 
-/// The planet's height bands (m, the middle of each 200 m band) and its water, painted as RGBA.
+/// The ground under the lines, painted as RGBA: land grey, water near black.
 fn paint(lines: &[Line], w: usize, h: usize) -> Vec<u8> {
-    const STEP: f32 = 200.0;
-    let order = |kinds: &[u8]| {
-        let mut v: Vec<Loop> = lines.iter().filter(|l| kinds.contains(&l.kind) && l.flags & CLOSED != 0).filter_map(prepare).collect();
-        v.sort_by(|a, b| b.area.total_cmp(&a.area));
-        v
-    };
-    let levels = order(&[KIND_CONTOUR, KIND_COAST]);
-    let shores = order(&[KIND_COAST]);
-    let band = innermost(&levels, w, h);
-    let water = innermost(&shores, w, h);
-    // Outside every inside: the outside of the largest.
-    let height = |i: u32| -> f32 {
-        if i == u32::MAX {
-            let lp = &levels[0];
-            return lp.z + if lp.inside_high { -STEP * 0.5 } else { STEP * 0.5 };
-        }
-        let lp = &levels[i as usize];
-        lp.z + if lp.inside_high { STEP * 0.5 } else { -STEP * 0.5 }
-    };
-    let wet = |i: u32| -> Option<f32> {
-        let (lp, inside) = if i == u32::MAX { (&shores[0], false) } else { (&shores[i as usize], true) };
-        let low_here = lp.inside_high != inside;
-        low_here.then_some(lp.z)
-    };
+    let mut shores: Vec<Loop> = lines.iter().filter(|l| l.kind == KIND_COAST && l.flags & CLOSED != 0).filter_map(prepare).collect();
+    shores.sort_by(|a, b| b.area.total_cmp(&a.area));
     let mut rgba = vec![0u8; w * h * 4];
-    rgba.par_chunks_mut(4).enumerate().for_each(|(p, px)| {
-        let z = height(band[p]);
-        let c = match wet(water[p]) {
-            Some(level) => sea(level - z),
-            None => land(z),
-        };
-        px.copy_from_slice(&[c[0], c[1], c[2], 255]);
-    });
-    // Rivers that carry water.
-    let (sx, sy) = (w as f64 / 360.0, h as f64 / 180.0);
-    for l in lines.iter().filter(|l| l.kind == KIND_RIVER && l.flags & DRY == 0) {
-        for s in l.pts.windows(2) {
-            let mut d = s[1].0 - s[0].0;
-            d -= 360.0 * (d / 360.0).round();
-            let (x0, y0) = ((s[0].0 + 180.0) * sx, (90.0 - s[0].1) * sy);
-            let (x1, y1) = (x0 + d * sx, (90.0 - s[1].1) * sy);
-            let n = ((x1 - x0).abs().max((y1 - y0).abs()).ceil() as usize).max(1);
-            for k in 0..=n {
-                let t = k as f64 / n as f64;
-                let x = ((x0 + t * (x1 - x0)).floor() as i64).rem_euclid(w as i64) as usize;
-                let y = ((y0 + t * (y1 - y0)).floor() as usize).min(h - 1);
-                rgba[(y * w + x) * 4..(y * w + x) * 4 + 3].copy_from_slice(&[52, 104, 168]);
-            }
-        }
+    if shores.is_empty() {
+        rgba.chunks_mut(4).for_each(|px| px.copy_from_slice(&LAND));
+        return rgba;
     }
+    let water = innermost(&shores, w, h);
+    rgba.par_chunks_mut(4).enumerate().for_each(|(p, px)| {
+        // (Outside every shore's inside: the outside of the largest.)
+        let (lp, inside) = if water[p] == u32::MAX { (&shores[0], false) } else { (&shores[water[p] as usize], true) };
+        px.copy_from_slice(if lp.inside_high != inside { &WATER } else { &LAND });
+    });
     rgba
 }
 
-fn mix(stops: &[(f32, [f32; 3])], v: f32) -> [u8; 3] {
-    let k = stops.iter().position(|s| v < s.0).unwrap_or(stops.len());
-    let c = if k == 0 {
-        stops[0].1
-    } else if k == stops.len() {
-        stops[k - 1].1
-    } else {
-        let (a, b) = (stops[k - 1], stops[k]);
-        let t = (v - a.0) / (b.0 - a.0);
-        [0, 1, 2].map(|j| a.1[j] + t * (b.1[j] - a.1[j]))
-    };
-    c.map(|x| x.round().clamp(0.0, 255.0) as u8)
-}
-
-/// Water by depth (m).
-fn sea(depth: f32) -> [u8; 3] {
-    mix(&[(0.0, [86.0, 150.0, 196.0]), (200.0, [52.0, 112.0, 170.0]), (2000.0, [28.0, 70.0, 132.0]), (5000.0, [14.0, 36.0, 84.0])], depth)
-}
-
-/// Land by height (m).
-fn land(z: f32) -> [u8; 3] {
-    mix(
-        &[
-            (-500.0, [120.0, 140.0, 96.0]),
-            (0.0, [92.0, 140.0, 80.0]),
-            (500.0, [134.0, 160.0, 92.0]),
-            (1500.0, [196.0, 180.0, 120.0]),
-            (3000.0, [150.0, 116.0, 84.0]),
-            (5000.0, [120.0, 104.0, 98.0]),
-            (6500.0, [236.0, 236.0, 240.0]),
-        ],
-        z,
-    )
-}
+/// The ground's two colours (sRGB): land, and water.
+const LAND: [u8; 4] = [58, 58, 62, 255];
+const WATER: [u8; 4] = [16, 17, 22, 255];

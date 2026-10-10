@@ -574,7 +574,11 @@ fn bodies(frame: &mut Frame, app: &App) {
                                 frame.model_shaded_faded(globe, &Transform { position: center, rotation, scale: b.rail.radius }, c, c, if app.show_grid { grid_detail(px) } else { 0.0 });
                             })
                         })
-                    })
+                    });
+                    // A world drawn from its vector lines: the lines over it, in their own colours.
+                    if let Some(lines) = app.caches.lines.get(&(app.view.cache, i)) {
+                        frame.no_shadow(|frame| frame.model_colored(lines, &Transform { position: center, rotation, scale: b.rail.radius }, 1.0, 0.0));
+                    }
                 });
             }
             // The grid on the ground (F4), and underfoot on foot.

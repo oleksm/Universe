@@ -1,11 +1,13 @@
-# Hoar's colour painted from its lines
+# Hoar drawn from its lines, as the anchor model
 
-- Hoar's globe, from afar and in its near maps, takes its colour from the earth_s13 graph root
-  (`worlds/TRE3/ground/earth_s13-graph-20261009b` in the worlds store, checked by its manifest's hash)
-  in place of its bake's `globe_color.jpg`: `worlds::lines_colour`, an 8192 by 4096 image painted in
-  about a tenth of a second. Each closed level line and shore is filled on its inside; a pixel takes the
-  200 m band of the innermost line round it, water inside the shores by depth, rivers that carry water
-  drawn over it.
-- Only the colour: Hoar's heights and ground are still its earth_s3 bake (TRE1), so the continents seen
-  from orbit are not the ground you land on until TRE3 comes to main.
+- Hoar is drawn from the earth_s13 graph root (`worlds/TRE3/ground/earth_s13-graph-20261009b` in the
+  worlds store, checked by its manifest's hash) as the planet lab's anchor model draws it: its level
+  lines (land tan, paler above 2,000 m; sea floor blue), shores white, rivers pale blue, dry traces
+  brown, peaks red and lows blue, as lines on the globe (`worlds::lines_draw`, a mesh of edges in
+  their own colours, drawn unlit over the globe from afar). No painted texture: under the lines, flat
+  ground, land grey and water near black from the shores (`worlds::lines_colour`, in place of the
+  bake's `globe_color.jpg`, from afar and in the near maps).
+- Only the look: Hoar's heights and ground are still its earth_s3 bake (TRE1), so the lines seen from
+  orbit are not the ground you land on until TRE3 comes to main. The lines sit just over its highest
+  ground and are drawn from afar only, not over the near ground.
 - The package is named in `worlds/lines.rs` until Hoar's record names its lines.
