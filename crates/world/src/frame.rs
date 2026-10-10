@@ -40,6 +40,9 @@ pub struct Section {
     /// A sandwich panel's core, if a strip is one: its thickness then each face's,
     /// the two faces held this far apart by the core.
     pub core: Option<Core>,
+    /// A box section's width and height (m), in place of the round's: a welded
+    /// rectangular tube, its wall `wall`. Its `diameter` is its larger side.
+    pub boxed: Option<(f64, f64)>,
 }
 
 /// A sandwich panel's core (honeycomb or foam between two faces): how deep it is
@@ -53,18 +56,33 @@ pub struct Core {
 impl Section {
     /// A round tube (a bar: its wall half its diameter).
     pub fn round(diameter: f64, wall: f64) -> Self {
-        Section { diameter, wall, flat: None, core: None }
+        Section { diameter, wall, flat: None, core: None, boxed: None }
     }
 
     /// A flat strip `width` wide, `thickness` thick.
     pub fn strip(width: f64, thickness: f64) -> Self {
-        Section { diameter: 0.0, wall: 0.0, flat: Some((width, thickness)), core: None }
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, thickness)), core: None, boxed: None }
     }
 
     /// A sandwich panel strip `width` wide: two faces `face` thick either side of
     /// `core`.
     pub fn panel(width: f64, face: f64, core: Core) -> Self {
-        Section { diameter: 0.0, wall: 0.0, flat: Some((width, face)), core: Some(core) }
+        Section { diameter: 0.0, wall: 0.0, flat: Some((width, face)), core: Some(core), boxed: None }
+    }
+
+    /// A box section `width` by `height`, its wall `wall` (a solid one: its wall
+    /// half its smaller side).
+    pub fn boxed(width: f64, height: f64, wall: f64) -> Self {
+        Section { diameter: width.max(height), wall: wall.min(width.min(height) * 0.5), flat: None, core: None, boxed: Some((width, height)) }
+    }
+
+    /// A box's second moments about its two axes (m⁴): bent across its height,
+    /// across its width.
+    fn box_inertias(&self) -> Option<(f64, f64)> {
+        let (w, h) = self.boxed?;
+        let t = self.wall;
+        let (wi, hi) = ((w - 2.0 * t).max(0.0), (h - 2.0 * t).max(0.0));
+        Some(((w * h.powi(3) - wi * hi.powi(3)) / 12.0, (h * w.powi(3) - hi * wi.powi(3)) / 12.0))
     }
 
     /// A sandwich's faces' spacing, middle to middle (m).
@@ -77,6 +95,7 @@ impl Section {
         match (self.flat, self.core) {
             (Some((_, t)), Some(c)) => c.depth * 0.5 + t,
             (Some((_, t)), None) => t * 0.5,
+            // (A box's corner is farthest, but bent about one axis its face is.)
             _ => self.diameter * 0.5,
         }
     }
@@ -88,7 +107,15 @@ impl Section {
             // (A sandwich twists as its faces shear against each other: b t d².)
             (Some((b, t)), Some(d)) => b * t * d * d,
             (Some((b, t)), None) => b * t.powi(3) / 3.0,
-            _ => 2.0 * self.inertia(),
+            _ => match self.boxed {
+                // (A closed thin-walled box (Bredt): 4 A² t over the wall's mid-line
+                // perimeter, A what that mid-line encloses.)
+                Some((w, h)) => {
+                    let (a, b) = (w - self.wall, h - self.wall);
+                    4.0 * (a * b).powi(2) * self.wall / (2.0 * (a + b)).max(1e-9)
+                }
+                None => 2.0 * self.inertia(),
+            },
         }
     }
 
@@ -110,6 +137,9 @@ impl Section {
         if let Some((b, t)) = self.flat {
             return b * t * if self.core.is_some() { 2.0 } else { 1.0 };
         }
+        if let Some((w, h)) = self.boxed {
+            return w * h - (w - 2.0 * self.wall).max(0.0) * (h - 2.0 * self.wall).max(0.0);
+        }
         let (ro, ri) = self.radii();
         std::f64::consts::PI * (ro * ro - ri * ri)
     }
@@ -123,6 +153,10 @@ impl Section {
                 Some(d) => b * t * d * d / 2.0 + b * t.powi(3) / 6.0,
                 None => b * t.powi(3) / 12.0,
             };
+        }
+        // (A box: its weaker way, taken for both, as a strip's is.)
+        if let Some((across_h, across_w)) = self.box_inertias() {
+            return across_h.min(across_w);
         }
         let (ro, ri) = self.radii();
         std::f64::consts::PI / 4.0 * (ro.powi(4) - ri.powi(4))
@@ -558,7 +592,7 @@ mod tests {
     use super::*;
 
     const STEEL: Material = Material { stiffness: 200e9, shear: 77e9, yield_strength: 1300e6, tensile_strength: 1420e6, density: 7850.0 };
-    const TUBE: Section = Section { diameter: 0.15, wall: 0.01, flat: None, core: None };
+    const TUBE: Section = Section { diameter: 0.15, wall: 0.01, flat: None, core: None, boxed: None };
 
     /// A cantilever bends as the textbook has it (tip load P, length L: the
     /// moment at its root P L), a column pulled carries its load, and one past
@@ -588,5 +622,13 @@ mod tests {
         assert!((w.breaking * STEEL.tensile_strength / face - 1.0).abs() < 0.03, "{w:?} {face}");
         let sheared = work(&deck.members[0], Forces { shear: 0.5 * core.shear_strength * d, ..Forces::default() }, 2.0, 1.0);
         assert!((sheared.breaking - 0.5).abs() < 1e-9, "{sheared:?}");
+        // (A box section, 300 x 300 x 20 mm: its area, w h less the hollow's; its
+        // bending stress M c / I, I = (w h³ - (w-2t)(h-2t)³) / 12.)
+        let b = Section::boxed(0.3, 0.3, 0.02);
+        assert!((b.area() - (0.09 - 0.26 * 0.26)).abs() < 1e-12);
+        let i = (0.3f64.powi(4) - 0.26f64.powi(4)) / 12.0;
+        let boxed = Member { section: b, ..frame.members[0] };
+        let bent = work(&boxed, Forces { bending: 1.0e5, ..Forces::default() }, 2.0, 1.0);
+        assert!((bent.breaking * STEEL.tensile_strength / (1.0e5 * 0.15 / i) - 1.0).abs() < 0.01, "{bent:?}");
     }
 }

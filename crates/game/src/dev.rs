@@ -1782,8 +1782,12 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
 fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
     // The shipyard's interior studio on our hull (UNIVERSE_TURN=yaw,pitch: looked
     // at from there, rad).
-    apply(app, "docked");
+    // (Parked where a new game starts, at the station: no flight in first, the
+    // "docked" scenario's autopilot run took a minute and more each time.)
     mc07(app);
+    // (The world held still: the studio needs nothing of it running, and a
+    // check of it is a picture or a report, fastest with the world asleep.)
+    app.paused = true;
     let turn: Vec<f32> = crate::devenv::list("UNIVERSE_TURN");
     let mut y = match turn[..] {
         [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
@@ -1812,6 +1816,10 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
     // (UNIVERSE_FRAME_TOOL: the FRAME tool in hand.)
     if crate::devenv::flag("UNIVERSE_FRAME_TOOL") {
         y.interior_mut().frame_tool();
+    }
+    // (UNIVERSE_PICK=member:N|module:N|deck:N|room:N|node:N: SELECT, that picked.)
+    if let Ok(w) = std::env::var("UNIVERSE_PICK") {
+        y.interior_mut().select(&w);
     }
     // (UNIVERSE_DECKMODE: the FRAME tool in DECK mode.)
     if std::env::var_os("UNIVERSE_DECKMODE").is_some() {
