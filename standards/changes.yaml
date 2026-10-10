@@ -367,7 +367,7 @@
 - { record: equipment.cargo.rack.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "9500260dfc20e4a9" }
 - { record: equipment.cargo.rack.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "513db79ab13e339e" }
 - { record: equipment.cargo.rack.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "0568d8653d193d85" }
-- { record: equipment.comm.basic.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "ecb05af1345fff97" }
+- { record: equipment.comm.basic.s1, at: "2026-10-10T23:42:56Z", status: draft, summary: "changed", sha: "de785060b2629d64" }
 - { record: equipment.comm.long.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "46645b4b8014f41a" }
 - { record: equipment.command.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b27d29c5d812c323" }
 - { record: equipment.command.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "ea3192d93566e94a" }
@@ -995,7 +995,7 @@
 - { record: mount.cargo-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "453807c058591a54" }
 - { record: mount.cargo-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "e0083c401a58c57e" }
 - { record: mount.cargo-s4, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "f9a6cdb0813971cd" }
-- { record: mount.comm-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "c7ec613b2022b9bf" }
+- { record: mount.comm-s1, at: "2026-10-10T23:42:56Z", status: draft, summary: "changed: envelope", sha: "2ea61a59ec660d51" }
 - { record: mount.command-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "74d9055a340b80fb" }
 - { record: mount.command-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "7aa312b0783ec19a" }
 - { record: mount.command-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "c64f4b80f43fdb3f" }
