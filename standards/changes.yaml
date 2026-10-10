@@ -477,7 +477,7 @@
 - { record: equipment.tank.waste.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "eccbe48b4116fac5" }
 - { record: equipment.tank.water.100kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "445cd6a60195253e" }
 - { record: equipment.tank.water.50kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "88126fdd0d25b845" }
-- { record: equipment.tank.water.s1, at: "2026-10-10T22:00:55Z", status: draft, summary: "changed: physical, built_of, basis", sha: "a9ce278e8038e734" }
+- { record: equipment.tank.water.s1, at: "2026-10-10T23:39:09Z", status: draft, summary: "changed: visual", sha: "299ed66397c1702a" }
 - { record: equipment.tank.water.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6b50a26d061ac722" }
 - { record: equipment.thermal.air-cooler.s0, at: "2026-10-07T13:31:46Z", status: draft, summary: "first tracked", sha: "cbfca87d7c765c56" }
 - { record: equipment.thermal.coolant-loop.s0, at: "2026-10-07T13:31:46Z", status: draft, summary: "first tracked", sha: "60c52239ceec4431" }

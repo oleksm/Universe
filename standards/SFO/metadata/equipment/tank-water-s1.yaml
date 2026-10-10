@@ -26,6 +26,12 @@ function:
   kind: "store"
   capacity: 5000
   holds: "good.water"
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-water-s1/v1"
+  manifest_sha256: "c930717b7a1b40ceba878b6e881d77af1a1925d2082e8c2282f1ad23c9458f83"
+  version: 1
+  triangles: 3600
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "5 m3 as a ball 2.12 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
