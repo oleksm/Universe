@@ -447,7 +447,7 @@
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "66129b7e96bb95d6" }
 - { record: equipment.sensors.camera.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "af5f5d52ee39041c" }
 - { record: equipment.sensors.radar.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "db52b4c446a87c57" }
-- { record: equipment.tank.air.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "765e3214f25f6ed9" }
+- { record: equipment.tank.air.s1, at: "2026-10-10T22:00:55Z", status: draft, summary: "changed: physical, built_of, basis", sha: "85530a251d036c1d" }
 - { record: equipment.tank.deuterium.s0, at: "2026-10-07T03:58:19Z", status: review, summary: "changed: built_of", sha: "efef76bd7d090bb9" }
 - { record: equipment.tank.deuterium.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "e077c6ae229aacd0" }
 - { record: equipment.tank.deuterium.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7530b38f5c6c0dec" }
@@ -476,7 +476,7 @@
 - { record: equipment.tank.waste.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "eccbe48b4116fac5" }
 - { record: equipment.tank.water.100kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "445cd6a60195253e" }
 - { record: equipment.tank.water.50kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "88126fdd0d25b845" }
-- { record: equipment.tank.water.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c46cc5f0c6868d58" }
+- { record: equipment.tank.water.s1, at: "2026-10-10T22:00:55Z", status: draft, summary: "changed: physical, built_of, basis", sha: "a9ce278e8038e734" }
 - { record: equipment.tank.water.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6b50a26d061ac722" }
 - { record: equipment.thermal.air-cooler.s0, at: "2026-10-07T13:31:46Z", status: draft, summary: "first tracked", sha: "cbfca87d7c765c56" }
 - { record: equipment.thermal.coolant-loop.s0, at: "2026-10-07T13:31:46Z", status: draft, summary: "first tracked", sha: "60c52239ceec4431" }
