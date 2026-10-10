@@ -1,5 +1,5 @@
-//! A world drawn from its vector lines (the planet graph's root, a `planet-unfold-tiles` package in the
-//! worlds store), as the planet lab's anchor model draws it: its level lines, shores, rivers, peaks and
+//! A world drawn from its vector lines (the planet graph's root, the `planet-unfold-tiles` package its
+//! record's `ground` names in the worlds store), as the planet lab's anchor model draws it: its level lines, shores, rivers, peaks and
 //! lows as lines on the globe (`lines_draw`), over flat ground, land grey and water near black
 //! (`lines_colour`, in place of its bake's `globe_color.jpg`). Water is where the shore round a pixel
 //! has its low side there: each shore filled on its inside, the smaller of its two sides on the sphere,
@@ -9,20 +9,22 @@ use super::{direction, store, Equirect, LonLat, Package};
 use rayon::prelude::*;
 use std::f64::consts::PI;
 
-/// The worlds whose colour comes from their lines: body key, package (in the store) and its
-/// manifest's hash. (Here until the body's record names its lines.)
-const PAINTED: &[(&str, &str, &str)] = &[("body.treistun.treistun-e", "worlds/TRE3/ground/earth_s13-graph-20261009b", "05d07e51c8caea77f22d9ca50b72e1b53cbfe7f0e1a46a524e8078b77b0ea308")];
-
 /// The painted image's size: 4.9 km a pixel at the equator.
 const W: usize = 8192;
 const H: usize = 4096;
 
-/// Body `key`'s lines. None: it has none (or the store lacks them: said).
+/// Body `key`'s lines: the root of the ground its record names (`ground`, a `planet-unfold-tiles`
+/// package in the worlds store, checked by its manifest's hash). None: it has none (or the store
+/// lacks them: said).
 fn open(key: &str) -> Option<Vec<Line>> {
-    let &(_, folder, sha) = PAINTED.iter().find(|p| p.0 == key)?;
+    let g = crate::registry::registry().body(key)?.ground.as_ref()?;
     let lines = (|| -> Result<Vec<Line>, String> {
-        let package = Package::open(store().ok_or("no worlds store (set UNIVERSE_WORLDS)")?.join(folder), sha)?;
-        load(&package.read("L0_0_0.lines")?)
+        let folder = store().ok_or("no worlds store (set UNIVERSE_WORLDS)")?.join(&g.path);
+        let package = Package::open(folder.clone(), &g.manifest_sha256)?;
+        // (The root tile, as the manifest names it.)
+        let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+        let root = manifest.get("l0").and_then(|v| v.as_str()).unwrap_or("L0_0_0.lines");
+        load(&package.read(root)?)
     })();
     lines.map_err(|e| eprintln!("{key}: no lines: {e}")).ok()
 }
@@ -387,7 +389,7 @@ impl LineHeights {
         use std::collections::HashMap;
         use std::sync::{Arc, Mutex, OnceLock};
         static MADE: OnceLock<Mutex<HashMap<String, Option<Arc<LineHeights>>>>> = OnceLock::new();
-        PAINTED.iter().find(|p| p.0 == key)?;
+        crate::registry::registry().body(key)?.ground.as_ref()?;
         let mut made = MADE.get_or_init(Default::default).lock().ok()?;
         made.entry(key.to_string()).or_insert_with(|| open(key).map(|l| Arc::new(LineHeights::new(&l)))).clone()
     }

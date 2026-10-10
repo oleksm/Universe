@@ -93,9 +93,11 @@ impl Terrain {
         self.baked = Some(heights);
     }
 
-    /// The ground is `lines`' from now (its bake's heights and detail no longer used).
+    /// The ground is `lines`' from now (a bake's heights and detail, if it has one, no longer used;
+    /// its craters gone).
     pub fn from_lines(&mut self, lines: std::sync::Arc<crate::worlds::LineHeights>) {
         self.amplitude = lines.max() / 1.3;
+        self.craters.clear();
         self.lines = Some(lines);
     }
 
@@ -151,30 +153,44 @@ impl Terrain {
 
     /// As `baked_height`, with the runtime detail to the band `cell` (m; see `detail`).
     fn baked_height_to(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail, cell: f64) -> (f64, bool) {
-        // (A world drawn from its lines: their ground, whole; no runtime detail.)
-        let (mut out, mut whole) = match &self.lines {
-            Some(l) => (l.at(dir), true),
-            None => {
-                let (out, whole) = h.at_detail(dir, detail);
-                let (fine, w) = h.detail_at(dir, detail, cell, self.body_radius);
-                (out + fine, whole && w)
-            }
-        };
+        let (mut out, mut whole) = h.at_detail(dir, detail);
+        let (fine, w) = h.detail_at(dir, detail, cell, self.body_radius);
+        out += fine;
+        whole &= w;
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
             if t < 1.0 {
                 let w = t * t * (3.0 - 2.0 * t);
-                let (at, w2) = match &self.lines {
-                    Some(l) => (l.at(*p), true),
-                    None => h.at_detail(*p, detail),
-                };
+                let (at, w2) = h.at_detail(*p, detail);
                 let at = at.max(0.0);
                 whole &= w2;
                 out = at + (out - at) * w;
             }
         }
         (out, whole)
+    }
+
+    /// A world drawn from its lines: their ground's height at `dir` (see `worlds::LineHeights`), a
+    /// port's plain levelled to the ground at the port as a bake's is. None: not such a world.
+    fn lines_height(&self, dir: DVec3) -> Option<f64> {
+        let l = self.lines.as_ref()?;
+        let mut out = l.at(dir);
+        for p in &self.pads {
+            let ground = dir.distance(*p) * self.body_radius;
+            let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
+            if t < 1.0 {
+                let w = t * t * (3.0 - 2.0 * t);
+                let at = l.at(*p).max(0.0);
+                out = at + (out - at) * w;
+            }
+        }
+        Some(out)
+    }
+
+    /// `h` as the surface: the sea over anything below 0 on an Earth-like world.
+    fn sea_over(&self, h: f64) -> f64 {
+        if self.kind == TerrainKind::Terran { h.max(0.0) } else { h }
     }
 
     /// The surface height (as `surface`) for drawing: the bake's fine tiles as far as they're
@@ -185,6 +201,9 @@ impl Terrain {
 
     /// As `surface_view`, the runtime detail to the band `cell` (m): a patch's cells.
     pub fn surface_view_to(&self, dir: DVec3, cell: f64) -> (f64, bool) {
+        if let Some(h) = self.lines_height(dir) {
+            return (self.sea_over(h), true);
+        }
         match &self.baked {
             Some(h) => {
                 let (v, whole) = self.baked_height_to(h, dir, crate::worlds::Detail::Loaded, cell);
@@ -196,6 +215,9 @@ impl Terrain {
 
     /// The surface height (as `surface`) from a bake's 5 km heights alone (a whole globe's).
     pub fn surface_coarse(&self, dir: DVec3) -> f64 {
+        if let Some(h) = self.lines_height(dir) {
+            return self.sea_over(h);
+        }
         match &self.baked {
             Some(h) => {
                 let v = self.baked_height(h, dir, crate::worlds::Detail::Coarse).0;
@@ -209,8 +231,10 @@ impl Terrain {
     /// `worlds::Heights::surface_at`), as far as they're read; and whether that's all of it.
     /// None: no bake, or none there (the sea).
     pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
+        if self.lines.is_some() {
+            return (None, true);
+        }
         match &self.baked {
-            Some(_) if self.lines.is_some() => (None, true),
             Some(h) => h.surface_at(dir, crate::worlds::Detail::Loaded),
             None => (None, true),
         }
@@ -218,6 +242,9 @@ impl Terrain {
 
     /// `height_and_crater` for a whole globe's map: a bake's 5 km heights alone.
     pub fn height_and_crater_coarse(&self, dir: DVec3) -> (f64, f64) {
+        if let Some(h) = self.lines_height(dir) {
+            return (h, 0.0);
+        }
         match &self.baked {
             Some(h) => (self.baked_height(h, dir, crate::worlds::Detail::Coarse).0, 0.0),
             None => self.height_and_crater(dir),
@@ -235,8 +262,10 @@ impl Terrain {
 
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
+        if let Some(l) = &self.lines {
+            return l.max();
+        }
         match &self.baked {
-            Some(_) if let Some(l) = &self.lines => l.max(),
             Some(h) => h.max,
             None => self.amplitude * 1.3 + self.relief_max(),
         }
@@ -325,6 +354,9 @@ impl Terrain {
 
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
+        if let Some(h) = self.lines_height(dir) {
+            return h;
+        }
         if let Some(h) = &self.baked {
             return self.baked_height(h, dir, crate::worlds::Detail::Full).0;
         }
@@ -333,6 +365,9 @@ impl Terrain {
 
     /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
     pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
+        if let Some(h) = self.lines_height(dir) {
+            return (h, 0.0);
+        }
         if let Some(h) = &self.baked {
             return (self.baked_height(h, dir, crate::worlds::Detail::Full).0, 0.0);
         }

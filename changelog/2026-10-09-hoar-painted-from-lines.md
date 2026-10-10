@@ -32,4 +32,5 @@
   (`LINES_SLOPE_SHADE` in `scene.wgsl`), the slope from the ground as drawn, triangle by triangle
   (a patch's normals are the world's smooth up). No made-up detail on it (the globe's noise and the
   near grain are off): its relief is its lines' alone. Its land a lighter grey to shade.
-- The package is named in `worlds/lines.rs` until Hoar's record names its lines.
+- The lines are the root of the ground Hoar's record names (`ground`: TRE3's `earth_s13-graph-20261009b`,
+  checked by its manifest's hash), with or without a bake: a world with a `ground` is drawn and flown from it.
