@@ -110,3 +110,18 @@ validations:
       - "GPU look and cost, placement on a real hull"
       - "extension motion (measured axes in its about evidence.motion; device state and joints in freefall-motion/1 later)"
       - "mass from its measured parts"
+  - key: equipment.access.cargo-ramp.mc07
+    version: 1
+    manifest_sha256: "9f45d05b20f22cf0d9311c3346c77707e67bb2b2d28f5bf2b7cf22ce1edc9940"
+    installed: 304edf1c
+    game: "the loader (world::assets) at fso 304edf1c"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-cargo-ramp-mc07/v1 (59484 bytes, bounds [-3.75, -0.42, -9.2] to [3.75, 3.0128, 0.18]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "General device motion and ramp deployment"
