@@ -140,3 +140,20 @@ installation needs the registry ground format, installer and game loading path
 to agree on a PGS1 package, plus rendering for its real water/material capabilities.
 The current preview deliberately cannot install a world. Existing registered PTL2
 worlds remain the normal game's source.
+
+## Cross-reader recheck, 2026-10-10 16:57
+
+For planets task `20261010T165643-planets-8d30`, rechecked the current lab
+`tests/fixtures/pgs1-v1/` against the engine copies. All six binary/query files
+and the manifest are byte-identical; all manifest hashes and byte counts pass.
+The eight PGS integration tests pass, including 123 analytical golden queries,
+2,000 split-invariance directions, unknown-water semantics and shared contacts.
+
+Rebuilt the acceptance example from current engine source with
+`~/bin/capped cargo build -p universe-world --example pgs_accept`, then ran
+`target/debug/examples/pgs_accept` on both directories listed above. Each passed
+all 27 world queries with exact face IDs and unknown water. Maximum height error:
+S13 `9.094947017729282e-12 m`; S15 `7.275957614183426e-12 m`. Both whole-file hashes
+remain those recorded above; manifest and section integrity checks passed.
+No mismatches or reader changes. Real water-domain/shoreline exports remain a
+separate forthcoming acceptance input; the terrain-only baseline is preserved.

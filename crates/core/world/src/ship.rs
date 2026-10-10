@@ -275,33 +275,8 @@ impl HullDef {
     /// (None for one built from its model, as the MC-07 is: see `import`), at
     /// `price` (the game's).
     pub(crate) fn from_record(h: &crate::registry::Hull, price: f64) -> Option<Self> {
-        use crate::modules::SlotKind as G;
-        use crate::registry::SlotKind as R;
         let shape = h.shape.clone()?;
         let flight = &h.flight;
-        // (A gear slot is a landing leg's: the game reckons legs from the hull's parts (world::legs), not from fitted gear, so it has no slot for one yet.)
-        let kind = |k: R| match k {
-            // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
-            // (The command station's slot (SFO 20, crewing): where the ship is flown from. No game slot kind for it yet: not made.)
-            R::Gear | R::Access | R::Handling | R::Thermal | R::Command | R::Engine => None,
-            R::Power => Some(G::Power),
-            R::Drive => Some(G::Drive),
-            R::Thrusters => Some(G::Thrusters),
-            R::Lift => Some(G::Lift),
-            R::Tank => Some(G::Tank),
-            R::Cargo => Some(G::Cargo),
-            R::Hyperdrive => Some(G::Hyperdrive),
-            R::Capacitor => Some(G::Capacitor),
-            R::Computer => Some(G::Computer),
-            R::Transponder => Some(G::Transponder),
-            R::Sensors => Some(G::Sensors),
-            R::Comm => Some(G::Comm),
-            R::LifeSupport => Some(G::LifeSupport),
-            R::Hardpoint => Some(G::Hardpoint),
-            R::Utility => Some(G::Utility),
-            R::Avionics => Some(G::Avionics),
-            R::Gate => Some(G::Relay),
-        };
         Some(HullDef {
             key: h.identity.key.clone(),
             name: crate::standards::caps(&h.identity.name),
@@ -309,7 +284,7 @@ impl HullDef {
             shape,
             frame_mass: h.physical.mass.unwrap_or(0.0),
             price,
-            slots: h.slots.iter().filter_map(|s| Some((s.name.clone(), kind(s.kind)?, s.size as u8))).collect(),
+            slots: h.slots.iter().filter_map(|s| Some((s.name.clone(), crate::modules::SlotKind::from_record(s.kind)?, s.size as u8))).collect(),
             fit: h.fit.iter().map(|f| (f.slot.clone(), f.item.clone())).collect(),
             thrusters: h.thrusters.iter().map(|t| ThrusterDef { nozzle: t.nozzle.clone(), slot: t.slot.clone(), share: t.share }).collect(),
             radius: flight.radius.unwrap_or(0.0),
@@ -569,7 +544,7 @@ impl ClassSpec {
             fitted.push((slot, m));
         }
         for base in BASE_BLOCKS {
-            if !fitted.iter().any(|(s, _)| s.kind == base) {
+            if !fitted.iter().any(|(s, m)| s.kind == base && !matches!(m.does, Does::Inert { .. })) {
                 return Err(format!("no {base:?}: every ship must carry one"));
             }
         }
@@ -1511,3 +1486,39 @@ mod energy_tests {
 }
 
 
+#[cfg(test)]
+mod inert_fitting_tests {
+    use super::*;
+    use crate::{content::content, modules::{Does, SlotKind, Gear}};
+
+    #[test]
+    fn inert_hardpoints_add_mass_and_boxes_but_no_weapons() {
+        let c = content();
+        let base = starter();
+        let mut modules: std::collections::HashMap<_, _> = base.fit.iter()
+            .map(|(_, h)| (*h, c.get(*h).clone())).collect();
+        let mut added = 0.0;
+        for m in modules.values_mut().filter(|m| m.does.slot() == SlotKind::Hardpoint) {
+            m.does = Does::Inert { slot: SlotKind::Hardpoint };
+            m.power = 0.0;
+            m.mass += 123.0;
+        }
+        for (_, h) in &base.fit {
+            added += modules[h].mass - c.get(*h).mass;
+        }
+        assert!(added > 0.0);
+        let build = |modules: &std::collections::HashMap<_, crate::modules::Module>| ClassSpec::assemble(
+            base.key.clone(), base.name.clone(), base.shape.clone(), base.shape_ref,
+            base.shape(), base.frame.clone(), base.fit.clone(), |h| &modules[&h]);
+        let fitted = build(&modules).unwrap();
+        assert!((fitted.dry_mass - base.dry_mass - added).abs() < 1e-8);
+        assert!(fitted.gun.is_none() && fitted.laser.is_none());
+        assert!(!fitted.has(Gear::Gun) && !fitted.has(Gear::Laser));
+        assert_eq!(fitted.layout().len(), base.layout().len());
+        // Physical presence must not satisfy a mandatory functioning base block.
+        for m in modules.values_mut().filter(|m| m.does.slot() == SlotKind::Sensors) {
+            m.does = Does::Inert { slot: SlotKind::Sensors };
+        }
+        assert!(build(&modules).unwrap_err().contains("no Sensors"));
+    }
+}
