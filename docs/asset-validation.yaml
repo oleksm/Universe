@@ -78,3 +78,19 @@ validations:
       - "GPU look and cost, placement on a real hull"
       - "deployment (a device state and a hinge driver in freefall-motion/1: registry and engine)"
       - "the panel's material at 1,000 K and the 24 m cantilever's loads under thrust (registry, open)"
+  - key: equipment.access.anchor-clamp.mc07-aft
+    version: 1
+    manifest_sha256: "32107817434d4d2102b5a9f8e7505250c6977f2fb4ca7aeffe587542bf0f0275"
+    installed: 5e7f7b8f
+    game: "main a1ecf04e (the loader, world::assets), run from fso"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): package found, manifest matches the record's hash, model.glb matches the manifest, bounds [-2.147, -2.3, -2.147] to [2.147, 0.966, 2.147] (stowed); 4,036 triangles: pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
+      - "GPU look and cost, placement on the MC-07"
+      - "extension motion (measured axes in its about evidence.motion; device state and joints in freefall-motion/1 later)"
+      - "mass from its measured parts; grip 2 MN against the mount's hold (mount loads rederived on registry-wip)"
