@@ -13,6 +13,8 @@ use serde::Deserialize;
 /// What a module does, with its numbers.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Does {
+    /// A physical fitting whose device behavior is not implemented. Grants no capability.
+    Inert { slot: SlotKind },
     /// Makes power (W) from the material it `burns`, at `efficiency` (the rest heat).
     PowerPlant { output: f64, efficiency: f64, burns: String },
     /// The main drive: the thrust of a full-share nozzle (N).
@@ -110,6 +112,36 @@ pub enum SlotKind {
     Avionics,
 }
 
+impl SlotKind {
+    /// Registry slots represented by the current hull fitter.
+    pub(crate) fn from_record(k: crate::registry::SlotKind) -> Option<Self> {
+        use crate::registry::SlotKind as R;
+        use SlotKind as G;
+        match k {
+            // (Fittings, SFO 20: ways in and out, bulk handling, heat. No game slot kind for them yet: not made.)
+            // (The command station's slot (SFO 20, crewing): where the ship is flown from. No game slot kind for it yet: not made.)
+            R::Gear | R::Access | R::Handling | R::Thermal | R::Command | R::Engine => None,
+            R::Power => Some(G::Power),
+            R::Drive => Some(G::Drive),
+            R::Thrusters => Some(G::Thrusters),
+            R::Lift => Some(G::Lift),
+            R::Tank => Some(G::Tank),
+            R::Cargo => Some(G::Cargo),
+            R::Hyperdrive => Some(G::Hyperdrive),
+            R::Capacitor => Some(G::Capacitor),
+            R::Computer => Some(G::Computer),
+            R::Transponder => Some(G::Transponder),
+            R::Sensors => Some(G::Sensors),
+            R::Comm => Some(G::Comm),
+            R::LifeSupport => Some(G::LifeSupport),
+            R::Hardpoint => Some(G::Hardpoint),
+            R::Utility => Some(G::Utility),
+            R::Avionics => Some(G::Avionics),
+            R::Gate => Some(G::Relay),
+        }
+    }
+}
+
 impl Does {
     /// The gear it is, if anything checks for it.
     pub fn gear(&self) -> Option<Gear> {
@@ -143,6 +175,7 @@ impl Does {
     /// The kind of slot it goes in.
     pub fn slot(&self) -> SlotKind {
         match self {
+            Does::Inert { slot } => *slot,
             Does::PowerPlant { .. } => SlotKind::Power,
             Does::Drive { .. } => SlotKind::Drive,
             Does::Thrusters { .. } => SlotKind::Thrusters,
@@ -234,7 +267,13 @@ pub struct Module {
 impl Module {
     /// Its box (m: across, up, along the ship): as much room as its volume,
     /// proportioned by what it is — a drive long, a lift flat, racks broad.
+    /// Inert fittings use the registry box when provided.
     pub fn dims(&self) -> glam::DVec3 {
+        if matches!(self.does, Does::Inert { .. }) {
+            if let Some([length, width, height]) = self.dims {
+                return glam::DVec3::new(width, height, length);
+            }
+        }
         let a = match self.does.slot() {
             SlotKind::Drive | SlotKind::Hardpoint => glam::DVec3::new(1.0, 1.0, 2.2),
             SlotKind::Lift => glam::DVec3::new(1.6, 0.5, 1.6),
@@ -285,10 +324,14 @@ impl Module {
 
 impl Module {
     /// From the registry's record of a piece of equipment, at `price` (the
-    /// game's: prices aren't the registry's). None for a kind of device the
-    /// game doesn't make yet (a gate's throat coil).
+    /// game's: prices aren't the registry's). Unimplemented devices in supported
+    /// slots retain their physical fitting but grant no function. None if their
+    /// registry slot is absent or not represented by the fitter yet.
     pub fn from_record(e: &crate::registry::Equipment, price: f64) -> Option<Self> {
-        let does = e.function.handle(&mut Kinds)?;
+        let does = e.function.handle(&mut Kinds).or_else(|| {
+            Some(Does::Inert { slot: SlotKind::from_record(e.identity.slot?)? })
+        })?;
+        let inert = matches!(does, Does::Inert { .. });
         Some(Module {
             key: e.identity.key.clone(),
             name: crate::standards::caps(&e.identity.name),
@@ -297,7 +340,7 @@ impl Module {
             size: e.size_class.unwrap_or(1) as u8,
             mass: e.physical.mass.unwrap_or(0.0),
             volume: e.physical.volume.unwrap_or(0.0),
-            power: e.needs.power.unwrap_or(0.0),
+            power: if inert { 0.0 } else { e.needs.power.unwrap_or(0.0) },
             price,
             fits: e.fits.clone(),
             dims: match (e.physical.length, e.physical.width, e.physical.height) {
@@ -389,4 +432,32 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     // coil, an ore bay as a product, the ship fittings of SFO 20, the crewing equipment, the
     // engines and swivels, a landing leg as a product) go to `not_made`: the generated trait's
     // default for each.)
+}
+
+#[cfg(test)]
+mod inert_tests {
+    use super::*;
+
+    #[test]
+    fn unimplemented_equipment_keeps_physics_without_capabilities() {
+        let mut e = crate::registry::registry().equipment("equipment.cargo.ore-bay.5t").unwrap().clone();
+        // Exercise the same generated not_made dispatch a future breaker uses,
+        // without importing an unmerged registry schema or its guessed numbers.
+        e.identity.slot = Some(crate::registry::SlotKind::Hardpoint);
+        e.needs.power = Some(1000.0);
+        let m = Module::from_record(&e, 100.0).unwrap();
+        assert_eq!(m.does, Does::Inert { slot: SlotKind::Hardpoint });
+        assert_eq!(m.mass, e.physical.mass.unwrap());
+        assert_eq!(m.volume, e.physical.volume.unwrap());
+        assert_eq!(m.fits, e.fits);
+        let [l, w, h] = m.dims.unwrap();
+        assert_eq!(m.dims(), glam::DVec3::new(w, h, l));
+        assert_eq!(m.power, 0.0);
+        assert_eq!(m.does.gear(), None);
+        assert_eq!(m.does.engine(), None);
+        assert_eq!(m.does.comm(), None);
+        m.check().unwrap();
+        e.identity.slot = None;
+        assert!(Module::from_record(&e, 100.0).is_none());
+    }
 }

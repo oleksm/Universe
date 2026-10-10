@@ -320,12 +320,16 @@ impl Content {
             }
         }
         let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
+        // Unimplemented equipment enters the playable catalogue only when explicitly
+        // priced by game content. Do not invent prices for the registry's prototypes.
         // Modules: the registry's ship equipment, at the game's prices.
         let modules: Registry<crate::modules::Module> = Registry::build(
             crate::registry::registry()
                 .equipment
                 .iter()
                 .filter_map(|e| Some((e, crate::modules::Module::from_record(e, 0.0)?)))
+                .filter(|(e, m)| !matches!(m.does, crate::modules::Does::Inert { .. })
+                    || prices.contains_key(&e.identity.key))
                 .map(|(e, m)| Ok(crate::modules::Module { price: price(&e.identity.key)?, ..m }))
                 .collect::<Result<Vec<_>, String>>()?,
         )?;

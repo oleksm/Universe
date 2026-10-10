@@ -1,0 +1,36 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+# Measured from the model (assets/models/mc07.glb), then LaserL_*, LaserR_*; the model now draws a hammer (HammerL_*, HammerR_*: hatch, lift, two ram stages, gimbal, risers, breaker and chisel), to be measured again. Once an empty part of the hull (MC07-29); now the MC-07's own product,
+# fitted to its hardpoint slot like any other, built of the parts measured from the model.
+identity:
+  key: equipment.hardpoint.mining-hammer.mc07
+  name: "MC-07 mining hammer"
+  maker: org.kestrel
+  revision: draft
+  slot: hardpoint
+  description: "MC-07 mining hammer, as the model draws it: a hydraulic breaker and chisel on a telescoping boom that rises from its hatch on a lift and gimbal, and strikes rock to break it. A product the hull fits, not a part of it. Each blow pushes the ship back: it works with the MC-07 clamped to the rock."
+size_class: 2
+fits: mount.hardpoint-s2
+physical:
+  mass: 1726
+  volume: 140.6
+  length: 6.39
+  width: 4.09
+  height: 5.38
+built_of:
+  parts: hardpoint-mining-hammer-mc07
+making:
+  module: module.assembly-shop
+function:
+  kind: breaker
+  blow_energy: 4000
+  blow_rate: 8
+  hydraulic_power: 53000
+  reach: 4.5
+  feed_force: 7800
+life: 473364000
+basis:
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
+  - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
+  - { of: [function, size_class], tier: invented, review: true, note: "A heavy hydraulic breaker of this size class, from memory of excavator breakers in the 1.5-2 t class: about 4 kJ a blow at about 480 blows a minute (8 Hz): 32 kW in the blows, 53 kW of hydraulic power at 60%. The chisel's push-back: a 120 kg piston at 8.2 m/s (4 kJ) carries 980 N s a blow, 7.8 kN on average at 8 Hz, which the boom must feed against and the ship must take: in free fall it is clamped to the rock (MC-07's anchor clamps) or drifts away at 7.8 kN over its mass. Reach: the boom's telescoping stroke, from the model (two ram stages), to be measured." }
+  - { of: [physical, built_of], tier: derived, review: true, note: "Measured from the earlier laser drawing; the hammer drawing is to be measured again (ships, blender, 2026-10-10)." }
+  - { of: [life], rule: rule.life-ship-system }
