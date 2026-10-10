@@ -95,7 +95,7 @@ impl Terrain {
 
     /// The ground is `lines`' from now (its bake's heights and detail no longer used).
     pub fn from_lines(&mut self, lines: std::sync::Arc<crate::worlds::LineHeights>) {
-        self.amplitude = lines.max / 1.3;
+        self.amplitude = lines.max() / 1.3;
         self.lines = Some(lines);
     }
 
@@ -231,7 +231,7 @@ impl Terrain {
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
         match &self.baked {
-            Some(_) if let Some(l) = &self.lines => l.max,
+            Some(_) if let Some(l) = &self.lines => l.max(),
             Some(h) => h.max,
             None => self.amplitude * 1.3 + self.relief_max(),
         }

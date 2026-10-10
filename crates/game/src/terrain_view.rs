@@ -115,7 +115,7 @@ pub fn lines(body: &Body) -> Option<(WireModel, universe_sim::world::worlds::Lin
 
 /// Where a world's lines are drawn from afar: a globe just over its highest ground (in radii).
 pub fn lines_lift(body: &Body) -> f64 {
-    1.0 + (body.terrain.as_ref().map_or(0.0, |t| t.amplitude) * 1.3 + 1_000.0) / body.rail.radius
+    1.0 + (body.terrain.as_ref().map_or(0.0, |t| t.max_height()) + 1_000.0) / body.rail.radius
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).

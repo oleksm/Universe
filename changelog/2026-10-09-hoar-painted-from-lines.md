@@ -24,4 +24,7 @@
   rock, shine) are not used: near, only the lines' flat ground. From afar the lines sit on a globe
   just over its highest ground. Low down few lines are in view: the root has a level line every
   200 m from samples ~160 km apart.
+- SHIFT+F4 stretches the lines' heights for seeing their relief, x1, x5, x10 (`worlds::set_stretch`;
+  `UNIVERSE_HEIGHTS_STRETCH` from the start): the ground itself, so drawing, landing and collisions
+  all see it; the globes, patches and lines made again. The pins keep the true heights.
 - The package is named in `worlds/lines.rs` until Hoar's record names its lines.

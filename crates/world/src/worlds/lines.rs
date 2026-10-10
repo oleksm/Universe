@@ -342,8 +342,23 @@ pub struct LineHeights {
     /// Segment indices by cell (`CELL_DEG` of latitude and longitude, row 0 at the south pole).
     cells: Vec<Vec<u32>>,
     anchors: Vec<(DVec3, f32, bool)>,
-    /// The highest ground (m).
-    pub max: f64,
+    /// The highest ground (m, unstretched).
+    max: f64,
+}
+
+/// The heights' stretch for viewing (see `set_stretch`), as f32 bits.
+static STRETCH: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0x3f80_0000);
+
+/// Every world's ground from its lines stretched upward this many times, for seeing relief the lines
+/// hold too gently to show (1: as they are). The ground is the ground: drawing, landing and collisions
+/// all see it stretched.
+pub fn set_stretch(k: f64) {
+    STRETCH.store((k as f32).to_bits(), std::sync::atomic::Ordering::Relaxed);
+}
+
+/// The heights' stretch now (see `set_stretch`).
+pub fn stretch() -> f64 {
+    f32::from_bits(STRETCH.load(std::sync::atomic::Ordering::Relaxed)) as f64
 }
 
 /// A level line's segment: its ends (unit), its height.
@@ -450,8 +465,19 @@ impl LineHeights {
         }
     }
 
-    /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`.
+    /// The highest ground (m), as stretched now.
+    pub fn max(&self) -> f64 {
+        self.max * stretch()
+    }
+
+    /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`, as
+    /// stretched now (see `set_stretch`).
     pub fn at(&self, dir: DVec3) -> f64 {
+        self.at_unstretched(dir) * stretch()
+    }
+
+    /// The ground's height as the lines hold it.
+    fn at_unstretched(&self, dir: DVec3) -> f64 {
         let q = dir.normalize();
         let Some((ia, da, foot)) = self.nearest(q, |_| true) else { return 0.0 };
         let a = &self.segs[ia];
@@ -509,11 +535,11 @@ mod tests {
         let lines = open("body.treistun.treistun-e").unwrap();
         for l in lines.iter().filter(|l| l.kind == KIND_CONTOUR).step_by(97).take(40) {
             let p = l.pts[l.pts.len() / 2];
-            let h = g.at(direction(LonLat { lon: p.0, lat: p.1 }));
+            let h = g.at_unstretched(direction(LonLat { lon: p.0, lat: p.1 }));
             assert!((h - l.z as f64).abs() < 1.0, "on a {} m line: {h}", l.z);
         }
         for &(p, z, _) in g.anchors.iter().step_by(37) {
-            assert!((g.at(p) - z as f64).abs() < 1.0, "on a {z} m anchor: {}", g.at(p));
+            assert!((g.at_unstretched(p) - z as f64).abs() < 1.0, "on a {z} m anchor: {}", g.at_unstretched(p));
         }
         let t = std::time::Instant::now();
         let n = 20_000;
@@ -524,7 +550,7 @@ mod tests {
             let y = 1.0 - 2.0 * (k as f64 + 0.5) / n as f64;
             let a = k as f64 * 2.399_963;
             let r = (1.0 - y * y).sqrt();
-            let h = g.at(DVec3::new(r * a.cos(), y, r * a.sin()));
+            let h = g.at_unstretched(DVec3::new(r * a.cos(), y, r * a.sin()));
             (lo, hi) = (lo.min(h), hi.max(h));
         }
         let us = t.elapsed().as_secs_f64() * 1e6 / n as f64;

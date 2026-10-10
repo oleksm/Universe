@@ -792,8 +792,26 @@ impl App {
         if input.pressed(KeyCode::F7) {
             self.show_thrusters = !self.show_thrusters;
         }
-        if input.pressed(KeyCode::F4) {
+        if input.pressed(KeyCode::F4) && !shift {
             self.show_grid = !self.show_grid;
+        }
+        // SHIFT+F4: the heights of worlds drawn from their lines stretched, x1, x5, x10, for seeing
+        // their relief; their globes, ground and lines made again.
+        if input.pressed(KeyCode::F4) && shift && !self.caches.lines.is_empty() {
+            let next = match universe_sim::world::worlds::stretch() as u32 {
+                1 => 5.0,
+                5 => 10.0,
+                _ => 1.0,
+            };
+            universe_sim::world::worlds::set_stretch(next);
+            let worlds: Vec<(usize, usize)> = self.caches.lines.keys().copied().collect();
+            for k in worlds {
+                self.caches.globes.remove(&k);
+                self.caches.lines.remove(&k);
+            }
+            *self.caches.lines_near.borrow_mut() = Default::default();
+            *self.caches.terrain_lod.borrow_mut() = Default::default();
+            self.say(format!("HEIGHTS X{next}"));
         }
         if input.pressed(KeyCode::F2) {
             self.show_labels = !self.show_labels;
@@ -1708,6 +1726,10 @@ fn main() {
     // (The cores shared out before anything starts using them: see `thread_budget`;
     // what the game may use at all, noted before the shipyard holds it to fewer.)
     universe_sim::engine::size_thread_pools();
+    // (UNIVERSE_HEIGHTS_STRETCH: the lines' heights stretched from the start, as SHIFT+F4 does.)
+    if let Some(k) = std::env::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {
+        universe_sim::world::worlds::set_stretch(k);
+    }
     hold_to_cores(None);
     // (Slow frames written down beside the quicksave: hitches.log.)
     let hitch_log = Some(save::data_dir().join("freefall").join("hitches.log"));
