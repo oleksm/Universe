@@ -28,8 +28,9 @@ Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--su
 ## Static models
 
 The game draws a registry model as it stands: no animation clips, skins or deforming meshes (hoses, bellows). A part
-that will move (a gimbal, a door, a gear leg) is its own rigid mesh under a named node with its pivot at the node's
-origin, so moving it later needs no new model. What the game does with such parts, and what Blender hands over for a
+that will move (a gimbal, a door, a gear leg) is its own rigid mesh under its own node with an unambiguous name (no name
+inside another's), and the handoff gives its parent, bind transform, pivot and axes in model-root coordinates (metres,
++Y up): the loader bakes node transforms into the vertices, so these are not read from the model. What the game does with such parts, and what Blender hands over for a
 moving engine: engine's `docs/ships/ch-s2-motion-contract.md` (main 462a7b45).
 
 ## The queue
