@@ -9,7 +9,7 @@ identity:
 envelope:
   length: 7.08
   width: 5.87
-  height: 5.33
+  height: 5.85
 bears:
   mass: 2160.0
   recoil: 9750.0

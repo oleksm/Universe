@@ -416,7 +416,7 @@
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c543e988b3b31052" }
 - { record: equipment.handling.transfer.arm, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "635247105c3cc019" }
 - { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "96bda6031ca36f8d" }
-- { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-10T22:30:50Z", status: draft, summary: "changed: function, basis", sha: "c30b962a2f75a6e7" }
+- { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-10T23:04:31Z", status: draft, summary: "changed: physical, basis", sha: "9714ebdf320452e2" }
 - { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "6a1dbe5174efe2e8" }
 - { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54beaa20b9d5f1b9" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "43ab02cce06b3cb7" }
@@ -1016,7 +1016,7 @@
 - { record: mount.handling-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "00d6159948962cb9" }
 - { record: mount.hardpoint-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fe1ebaa01dc6b8db" }
 - { record: mount.hardpoint-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "7b983472ec4ac271" }
-- { record: mount.hardpoint-s3, at: "2026-10-10T22:25:54Z", status: draft, summary: "first tracked", sha: "7d23537520b9428c" }
+- { record: mount.hardpoint-s3, at: "2026-10-10T23:04:31Z", status: draft, summary: "changed: envelope", sha: "4d1aecaa9189e66a" }
 - { record: mount.hyperdrive-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "178c386138b4815d" }
 - { record: mount.hyperdrive-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "869efcebee83cb75" }
 - { record: mount.hyperdrive-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "444381a42ae641a0" }
