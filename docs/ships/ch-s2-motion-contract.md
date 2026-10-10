@@ -357,3 +357,60 @@ before production package validation. Schema planar-axis tolerance is 1e-3;
 the diagnostic is stricter at 1e-6. Both use a 2e-6 matrix-reference threshold.
 These differences must be explicit in a production consumer; this fixture passes
 the stricter diagnostic. No registry merge or production installation is implied.
+
+## Refinement-v11 integrated consumer check
+
+2026-10-10, Blender task `20261010T144348-blender-9691`. Extended the Rust
+fixture diagnostic to read schema-owned ring binds and evaluate both rigid
+actuators. The v11 integrated model passes the CPU loader/pose/vertex/normal
+comparison. This tests all rendered rigid parts, not GPU rendering or installation.
+
+```sh
+cargo run -p universe-engine --example ch_s2_fixture -- \
+  /home/alexm/git/blender/engine-ch-s2/refinement-v11/motion.json \
+  /home/alexm/git/blender/engine-ch-s2/refinement-v11/exports/engine-ch-s2-rest.glb
+```
+
+The root is identity; each actuator body/rod is root-owned. Evaluate its two
+anchors from their named parents. Place the body at the fixed anchor aimed at
+the moving anchor; place the rod at the moving anchor aimed at the fixed one.
+Blender's DAMPED_TRACK convention here is the shortest rotation from the authored
+local +Y axis to the target direction, with no scale and no extra authored roll.
+It is **not** a shortest-arc correction from the already-aimed neutral bind.
+Use the resulting current frame with the same inverse-bind drawing rule as other
+parts. Antiparallel directions have ambiguous roll and this diagnostic rejects
+them; a production contract must specify their treatment. This diagnostic
+explicitly restricts actuators to root-owned parts rather than claiming support
+for arbitrary actuator parenting.
+
+The sweep checks minimum rod overlap and rejects bottoming out (anchor separation
+shorter than the longer rigid part). Each body and rod is an independent loader
+part; no vertex stretching is involved. Registry has been sent the exact roll
+convention and evidence on task `20261010T144506-engine-7c75`; the previously
+reported installer treatment of actuator nodes as merely inherited is incorrect.
+
+| Check | Result |
+|---|---|
+| Evaluated nodes / sleeves / actuators | 140 / 16 / 2 |
+| Primitives / part groups including static | 131 / 23 |
+| Complete reference poses / additional rigid-frame sweep | 9 / 513 passed |
+| GLB bind maximum component error | 4.769e-7 |
+| Pose maximum component error | 3.689e-7 |
+| Placed vertex maximum difference | 1.073e-6 m |
+| Normal maximum vector difference | 5.463e-7 |
+
+All GLB vertices and normals are compared using the actual engine loader and
+part assignments, against local GLB geometry transformed by Blender's reference
+node matrices. Normals use inverse-transpose transforms for the expected result.
+Frozen-body reference, wrong actuator axis and impossible-overlap mutations are
+rejected. The earlier v04 fixture still passes with the extended diagnostic.
+
+Input SHA-256: motion file
+`2df2db67e7f0247cf9c372b693f6428beca444ecd55ab140be72911ff3826761`; GLB
+`26b779d7c95ff0ff4277e64824777b44e8b8c41588d703bc3b96f7c783f1310b`.
+
+The example is a fixture consumer, not a full schema validator: registry remains
+responsible for joint-rating, link/tie and package checks. Its current inherited
+spools are covered by all-node pose comparisons. GPU appearance/performance,
+full-engine/hull collision evidence, applied flight-state wiring and production
+package loading remain separate gates. No installation is performed by this test.
