@@ -486,7 +486,7 @@
 - { record: equipment.thermal.heat.sink, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "08a1efc0f5db202b" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-07T13:31:46Z", status: draft, summary: "first tracked", sha: "e2986904b512ab9f" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "344e2cfa396778af" }
-- { record: equipment.thermal.radiator.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "48026823601be0d2" }
+- { record: equipment.thermal.radiator.s2, at: "2026-10-10T20:05:49Z", status: draft, summary: "changed: identity, built_of, basis", sha: "f75088321c4bdf36" }
 - { record: equipment.thermal.radiator.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "8d481e4cf7b42bbf" }
 - { record: equipment.thrusters.quad.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "39cc8f888041263e" }
 - { record: equipment.thrusters.quad.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "9295508548d86c5b" }
