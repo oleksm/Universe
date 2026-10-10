@@ -24,6 +24,12 @@ function:
   kind: "docking"
   holds: 2000000.0
   standard: "rock: it grips an asteroid, not a rail"
+visual:
+  format: "freefall-model/1"
+  path: "models/access-anchor-clamp-mc07-fwd/v1"
+  manifest_sha256: "bd1b4416bb0e6187d7a77d43dba4d3cd95d36f9847615c0e3917f10d90c421b6"
+  version: 1
+  triangles: 4036
 life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it. Four telescoping stages (the source rig, CLAMPS in build_mining_ship.py, NST=4; the record said three); measured stowed from mining_ship.blend (blender source probe, 2026-10-10); mass unchanged until the parts are measured again (review)." }

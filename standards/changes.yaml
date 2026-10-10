@@ -326,7 +326,7 @@
 - { record: equipment.access.airlock.cargo, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "44cc13661ee79eaa" }
 - { record: equipment.access.airlock.crew, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "fbc75bf46078087b" }
 - { record: equipment.access.anchor-clamp.mc07-aft, at: "2026-10-10T22:20:37Z", status: draft, summary: "changed: visual", sha: "8b15df796be1cb61" }
-- { record: equipment.access.anchor-clamp.mc07-fwd, at: "2026-10-10T22:25:54Z", status: draft, summary: "changed", sha: "581720b8883830dc" }
+- { record: equipment.access.anchor-clamp.mc07-fwd, at: "2026-10-10T22:27:46Z", status: draft, summary: "changed: visual", sha: "defeb40e83e31073" }
 - { record: equipment.access.bay-door.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "ba522be183b04edd" }
 - { record: equipment.access.bay-door.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "a7152ad149e1e206" }
 - { record: equipment.access.bay-door.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54a448c12aec4922" }
