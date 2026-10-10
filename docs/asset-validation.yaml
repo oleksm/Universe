@@ -125,3 +125,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "General device motion and ramp deployment"
+  - key: equipment.tank.air.s1
+    version: 1
+    manifest_sha256: "067087c7eca6dcc2ea4b77dfde5954f651dd01d970273cacc995c88d57c322d0"
+    installed: 72324b42
+    game: "the loader (world::assets) at fso 72324b42"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-air-s1/v1 (91952 bytes, bounds [-0.8, 0.0, -0.8] to [0.8, 1.72, 0.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Drawing at mounts; final hull saddle placement and restraint; GPU appearance/cost; draft pressure/material assumptions unqualified"
