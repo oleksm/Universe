@@ -50,3 +50,31 @@ duct design is set).
 | Bellows angular rating and size: a maker's figure, provisional | blender (source), registry (a duct product when needed) |
 | `freefall-motion/1`: a joint's angle rating on rigid links, checked over the envelope | registry |
 | Pump inlet speed limit (10 m/s here): confirm or replace with a sourced figure | registry, review |
+
+## Joint mass and envelope targets (2026-10-10, for blender proposal-v03)
+
+The WRN25 catalogue joints (40.6 kg for the four) are industrial PN25 hardware: 25 bar, heavy weld ends. These lines
+see tank pressure. Derived targets for flight joints (review: design pressure 0.6 MPa = twice an assumed 0.3 MPa tank,
+304 stainless at an allowable 140 MPa, invented):
+
+| Item | DN100 (hydrogen) | DN65 (oxygen) | How |
+|---|---|---|---|
+| bellows wall needed | 0.24 mm | 0.16 mm | pressure x diameter / (2 x allowable); built as two plies of 0.3 mm |
+| bellows | 0.44 kg | 0.29 kg | 60 mm active, 10 mm deep, 6 mm pitch convolutions |
+| end rings and hinge hardware | about 1.1 kg | about 0.7 kg | carry the pressure thrust, 6.1 kN and 2.7 kN, with margin (estimate) |
+| one joint | about 1.5 kg | about 1.0 kg | |
+| rigid duct, 0.3 m, 1 mm wall | 0.85 kg | 0.57 kg | |
+| one line (two joints, duct) | about 3.9 kg | about 2.6 kg | |
+
+With the two fixed inlet flanges at the mount face (about 0.5 kg each), the feed crossing is **about 8 kg**, taken out
+of CHE2-03's 45 kg (valves, lines and injector), which stays 45 kg. Envelope per joint: the catalogue's width (260 mm
+and 215 mm) is for PN25 plates; take the bore plus 2 x 40 mm for hinge plates (about 195 mm and 150 mm) and an active
+length of 60 mm plus 2 x 15 mm end rings. The joint angle each must take comes from the layout (hinge centres on the
+gimbal axes: each hinge turns with one stage, up to 0.07 rad); rate them at least twice that (0.14 rad, 8 degrees),
+which catalogue DN100 and DN65 joints exceed (14 degrees and up).
+
+## Bellows surface (engine's open point)
+
+A bellows bends, so one rigid mesh cannot show it. Proposal: split each bellows into its convolution rings as rigid
+parts, ring i of n turned by i/n of its joint's angle about the hinge (a fan); the end rings ride their flanges. Rigid
+parts only, which the game already draws. Not in freefall-motion/1 until engine agrees.
