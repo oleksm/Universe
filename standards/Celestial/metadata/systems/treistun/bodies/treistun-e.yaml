@@ -49,10 +49,10 @@ survey:
 # and lore are this record's.
 ground:
   format: "planet-unfold-tiles/1"
-  path: "worlds/TRE3/ground/earth_s13-graph-20261009"
-  manifest_sha256: "b3c6f750a831fbb727b44b1b27fbeb77e52ecc5299334bf361a1670663e276f1"
+  path: "worlds/TRE3/ground/earth_s13-graph-20261009b"
+  manifest_sha256: "05d07e51c8caea77f22d9ca50b72e1b53cbfe7f0e1a46a524e8078b77b0ea308"
   radius: 6371000
-  note: "earth_s13-inverted-graph: 1 files, 15 MB in the worlds store; terraform d058fd9."
+  note: "earth_s13: 1 files, 29 MB in the worlds store."
 identity:
   key: body.treistun.treistun-e
   name: Hoar E
