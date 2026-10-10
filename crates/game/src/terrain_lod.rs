@@ -392,13 +392,15 @@ impl Lod {
             p.used = now;
             let at = [(p.origin.x / r) as f32, (p.origin.y / r) as f32, (p.origin.z / r) as f32, (1.0 / r) as f32];
             let t = Transform { position: center + rotation * p.origin, rotation: turn, scale: 1.0 };
-            frame.ground_shadow(|frame| {
+            let draw_patch = |frame: &mut Frame| {
                 frame.with_air(depth, shell, |frame| {
                     frame.with_globe(map, kind, relief, crate::terrain_view::globe_bright(body), at, p.origin, |frame| {
                         frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
                     })
                 })
-            });
+            };
+            if crate::pgs_preview::terrain_shadows(body) { frame.ground_shadow(draw_patch); }
+            else { frame.no_shadow(draw_patch); }
         }
         self.patches.retain(|_, p| now - p.used < KEEP);
         if self.patches.len() > MAX_PATCHES {

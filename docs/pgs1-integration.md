@@ -321,3 +321,50 @@ lookup/refusal tests, final non-dev compilation and release build. Inspected
 Vulkan captures `/tmp/pgs-colours-orbit.png`, `/tmp/pgs-colours-neutral.png` and
 `/tmp/pgs-colours-lake.png`: distinct diagnostic land regions in colour mode,
 neutral comparison retained, and the elevated lake remains blue on local patches.
+
+## Opt-in canonical terrain shadows
+
+Task `20261010T173456-planets-19ed`: `UNIVERSE_PGS1_SHADOWS=on` enables
+canonical local patches in the existing ground-shadow cascade; `off` (default)
+keeps a neutral comparison. Legacy terrain keeps its previous behaviour. The
+switch changes caster submission only: canonical relief, water levels, contact
+physics and category handling are unchanged. It does not add fine relief.
+
+Vulkan comparison used S15 006, neutral colours, lowflight at latitude
+-50.927589054482716, longitude -19.166702846855568, altitude 1000 m, heading
+90 degrees, down 0.25, hours 0.67. Both paused captures used
+`UNIVERSE_ENGINE_THREAD=0`, `UNIVERSE_SPEED=0`, `UNIVERSE_SETTLERS=0` and
+`UNIVERSE_SCREENSHOT_AT=480`. Both logs report time 2412.000000 s, surface
+5456.784229 m and sun elevation 0.117434 degrees. Images:
+`/tmp/pgs-shadow-on.png` and `/tmp/pgs-shadow-off.png`; corresponding `.log`
+files record Vulkan timing. On/off: 27.65/27.24 ms per frame over 480 frames;
+GPU shadow pass 0.63/0.07 ms, scene 2.08/1.60 ms. These are single-run
+observations including warmup, not a benchmark or guaranteed overhead.
+
+**This pair does not demonstrate visible mountain shadows:** only two pixels
+changed by more than two channel values. The summit view and this coarse relief
+are not a useful positive visual fixture. The diagnostic example
+`pgs_shadow_sites surface.pgs [time_s]` searches a 4-degree neighbourhood at
+0.1-degree steps, estimating lit normals and checking rays every 250 m to 40 km
+from a 40 m normal offset. At times 1800, 2100, 2300, 2412, 2600 and 3000 s it
+found no candidate with more than 10 m occlusion. These invented screening
+parameters approximate the existing cascade; this is not proof that the world
+has no cast shadows. A canonical receiver/caster location is requested from
+planets before claiming the visual milestone complete.
+
+Current limits of the existing renderer:
+
+- One 4096-square ground map spans 60 km: 14.65 m texels, approximately 36.6 m
+  receiver-normal offset, filtered edges and a fade in the outer 10 percent.
+- The light depth covers +/-80 km; caster bounds use a 45 km reach test. Only
+  currently selected local terrain patches are submitted, not an independent
+  light-frustum terrain set. Distant or unloaded mountain shadows can be absent.
+- Current LOD geometry, asynchronous fallback patches and skirts determine the
+  caster silhouette. The depth shader does not apply the visible terrain's
+  geomorph, so transition silhouettes can disagree. Orbit globe rendering is
+  not a mountain-shadow caster.
+- Water shares canonical patch geometry at known absolute levels. Neither
+  shoreline refinement nor additional terrain samples are introduced here.
+
+Full workspace tests, release build and non-development compilation pass.
+No installation or branch merge accompanies this diagnostic switch.

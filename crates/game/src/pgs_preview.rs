@@ -18,6 +18,18 @@ impl Palette {
 #[cfg(feature = "dev")]
 static PALETTE: std::sync::OnceLock<Option<Palette>> = std::sync::OnceLock::new();
 
+#[cfg(feature = "dev")]
+static SHADOWS: std::sync::OnceLock<(String, bool)> = std::sync::OnceLock::new();
+
+/// Opt-in canonical mountain casters; legacy worlds keep their existing shadows.
+pub fn terrain_shadows(body: &Body) -> bool {
+    if !body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return true; }
+    #[cfg(feature = "dev")]
+    { SHADOWS.get().is_some_and(|(key, enabled)| key == &body.key && *enabled) }
+    #[cfg(not(feature = "dev"))]
+    { false }
+}
+
 pub fn palette(body: &Body) -> Option<&'static Palette> {
     fn configured() -> Option<&'static Palette> {
         #[cfg(feature = "dev")]
@@ -32,6 +44,11 @@ pub fn palette(body: &Body) -> Option<&'static Palette> {
 
 #[cfg(feature = "dev")]
 pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::world::worlds::pgs::Surface, surface_hash: &str, manifest: &serde_json::Value) -> Result<(), String> {
+    let shadows = match std::env::var("UNIVERSE_PGS1_SHADOWS").as_deref() {
+        Err(std::env::VarError::NotPresent) | Ok("off") => false,
+        Ok("on") => true,
+        _ => return Err("UNIVERSE_PGS1_SHADOWS must be on or off".into()),
+    };
     let mode = std::env::var("UNIVERSE_PGS1_COLOURS").unwrap_or_else(|_| "neutral".into());
     let palette = match mode.as_str() {
         "neutral" => None,
@@ -47,6 +64,7 @@ pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::w
         }
         _ => return Err("UNIVERSE_PGS1_COLOURS must be neutral or categories".into()),
     };
+    SHADOWS.set((body.to_owned(), shadows)).map_err(|_| "PGS1 shadows already configured".to_string())?;
     PALETTE.set(palette).map_err(|_| "PGS1 display already configured".to_string())
 }
 

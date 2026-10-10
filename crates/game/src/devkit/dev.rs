@@ -1471,6 +1471,10 @@ fn s_lowflight(app: &mut App, _name: &str, c: &Ctx) {
     // (Where the sun stands overhead now, in the registry's latitude and longitude.)
     let noon = universe_sim::world::worlds::lon_lat(rot.inverse() * (positions[0] - positions[planet]));
     log::info!("lowflight: the sun overhead at {:.1}, {:.1}", noon.lat, noon.lon);
+    if terrain.canonical_surface() {
+        let sun = (positions[0] - positions[planet]).normalize();
+        log::info!("PGS1 lowflight comparison: time={t:.6}s surface={:.6}m sun_elevation={:.6}deg terrain_shadows={}", terrain.surface(off), up.dot(sun).clamp(-1.0,1.0).asin().to_degrees(), crate::pgs_preview::terrain_shadows(b));
+    }
     // (UNIVERSE_ALT: the height instead, m; UNIVERSE_SPEED: the ground speed, m/s.)
     let env = crate::devenv::num;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));
