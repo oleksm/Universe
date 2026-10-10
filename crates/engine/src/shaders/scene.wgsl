@@ -338,6 +338,9 @@ fn globe_detail(dir: vec3<f32>, footprint: f32) -> vec3<f32> {
 // and height; others their own colour, lighter high, darker in craters,
 // with outcrops; ice at the poles. `d`: the fine detail (see `globe_detail`).
 fn globe_color(kind: f32, h: f32, inside: f32, base: vec3<f32>, dir: vec3<f32>, d: vec3<f32>, ragged: f32) -> vec3<f32> {
+    // Palette 3 is a canonical terrain-only preview: grayscale by measured
+    // elevation in relief units, never inferred rock, vegetation or water.
+    if (kind > 2.5) { return vec3<f32>(0.42 + 0.22 * clamp(h, -1.0, 1.0)); }
     var c: vec3<f32>;
     let polar = abs(dir.y);
     if (kind < 0.5) {
@@ -468,8 +471,9 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // (A world drawn from its lines, its brightness given below zero: its slopes steepened in the
     // shading, and no made-up detail: its relief is its lines' alone.)
     let from_lines = in.globe.w < 0.0;
+    let canonical = in.globe.y > 2.5;
     var d = vec3<f32>(0.0);
-    if (in.globe.x > 0.5 && !from_lines) {
+    if (in.globe.x > 0.5 && !from_lines && !canonical) {
         d = globe_detail(dir, footprint);
     }
     // A patch of ground: its height is its own (in relief units), exact —
@@ -484,9 +488,10 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         let own = (length(in.local) - 1.0) / max(in.patch_scale * in.globe.z, 1e-12);
         let sea = in.globe.y < 0.5 && ground.r < -0.002 && plain < 0.01 && own < 0.0004;
         h = select(max(own, 0.0), min(ground.r, -0.0005), sea);
+        if (canonical) { h = own; }
     }
     // (A port's plain: dry ground, no beach.)
-    h = max(h, 0.03 * smoothstep(0.0, 0.3, plain));
+    if (!canonical) { h = max(h, 0.03 * smoothstep(0.0, 0.3, plain)); }
     let land = select(1.0, step(0.0, select(ground.r + d.x * 0.03, h, on_patch)), in.globe.y < 0.5);
     // (Shaded the same near and far: the map's slopes and the fine detail's,
     // over whatever shape the mesh has — till a pixel is a few metres or
@@ -496,7 +501,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let slopes = select(1.0, smoothstep(2.0, 10.0, pixel), on_patch);
     // Up close on a patch, the fine grain instead (exact: it doesn't speckle).
     var grain = vec2<f32>(0.0);
-    if (on_patch && in.globe.x > 0.5 && !from_lines) {
+    if (on_patch && in.globe.x > 0.5 && !from_lines && !canonical) {
         grain = micro_detail(in.micro, pixel) * (1.0 - slopes * 0.5);
     }
     // (The map's own slopes on a globe only: a patch stands on the true heights, finer than the
@@ -515,6 +520,10 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             let grad = sign(det) * (hx * r1 + hy * r2);
             n = normalize(abs(det) * n - grad);
         }
+        if (canonical && on_patch) {
+            let tilt = cross(px, py);
+            if (dot(tilt, tilt) > 1e-30) { n = normalize(tilt) * sign(dot(tilt, in.up)); }
+        }
         albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * abs(in.globe.w), in.color.a);
         // A world's own colour, where it has one (grown, not painted): its globe map's, or
         // where its full-resolution maps are bound, theirs; and close up, its ground's material.
@@ -526,7 +535,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         }
         let mapped = in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5;
         let uv = world_uv(dir);
-        if (mapped) {
+        if (mapped && !canonical) {
             let full = textureSampleLevel(world_color, world_soft, uv, world_lod(textureDimensions(world_color).x, footprint));
             if (full.a > 0.5 && own.a > 0.5) {
                 own = vec4<f32>(mix(own.rgb, full.rgb, g.view.y), 1.0);
@@ -534,7 +543,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                 own = full;
             }
         }
-        if (own.a > 0.5) {
+        if (own.a > 0.5 && !canonical) {
             var rgb = own.rgb;
             // (Close up, over land: the ground's material, faded in as a pixel comes under 2.5 km.)
             let near = smoothstep(2500.0, 1250.0, pixel) * g.view.y;

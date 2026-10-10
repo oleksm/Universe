@@ -21,6 +21,7 @@ texpresso = { version = "2.0.2", features = ["rayon"] }
 rayon.workspace = true
 
 [dev-dependencies]
+serde_json.workspace = true
 naga = { version = "30", features = ["wgsl-in"] }
 # (The CPU twin of the detail shader, held to it by detail_agree: a test-only tie to the world.)
 universe-world = { path = "../core/world" }

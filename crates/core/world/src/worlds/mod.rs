@@ -20,6 +20,7 @@ use crate::registry::registry;
 
 mod heights;
 mod lines;
+pub mod pgs;
 mod releases;
 mod survey;
 pub use heights::*;

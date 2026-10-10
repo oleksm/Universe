@@ -8,6 +8,34 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
+/// An explicit terrain-only lab package, isolated to this process. Both world
+/// and charts receive the same source before either is generated.
+pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
+    use universe_sim::world::{World, worlds::{pgs::Surface, sha256}};
+    let Some(folder) = std::env::var_os("UNIVERSE_PGS1") else { return Ok(World::new(seed)); };
+    let key = std::env::var("UNIVERSE_BODY").map_err(|_| "UNIVERSE_PGS1 requires UNIVERSE_BODY")?;
+    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight")) {
+        return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet or lowflight".into());
+    }
+    if std::env::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
+    let folder = std::path::PathBuf::from(folder);
+    let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+    let bytes = std::fs::read(folder.join("surface.pgs")).map_err(|e| e.to_string())?;
+    let entry = &manifest["files"]["surface.pgs"];
+    if manifest["format"] != "planet-graph-surface/1" || entry["sha256"] != sha256(&bytes) || entry["bytes"].as_u64() != Some(bytes.len() as u64) {
+        return Err("surface manifest/hash/size mismatch".into());
+    }
+    let surface = std::sync::Arc::new(Surface::read(&bytes)?);
+    if surface.capabilities != 1 { return Err("this preview renders terrain-only packages; water-domain rendering is not enabled".into()); }
+    if !surface.provenance[0].is_empty() && surface.provenance[0] != key { return Err("package body binding differs from UNIVERSE_BODY".into()); }
+    let world = World::with_surfaces(seed, std::sync::Arc::new([(key.clone(), surface)].into_iter().collect()));
+    let system = world.system(world.home_system);
+    let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
+    if !body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Err("preview body has no terrain".into()); }
+    log::info!("PGS1 PREVIEW: {} on {}; water/categories unknown; registry unchanged", folder.display(), key);
+    Ok(world)
+}
+
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
     // once did, not parked on its deck.)
@@ -40,6 +68,7 @@ pub fn apply(app: &mut App, name: &str) {
         }
     }
     app.messages.clear();
+    if app.charts.has_surface_sources() { app.say("PGS1 TERRAIN PREVIEW: WATER AND MATERIALS UNKNOWN".into()); }
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {

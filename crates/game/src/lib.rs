@@ -375,7 +375,7 @@ impl App {
     }
 
     fn new() -> Self {
-        let mut u = Universe::new(seed());
+        let mut u = Universe::from_world(dev::world(seed()).unwrap_or_else(|e| panic!("PGS1 preview: {e}")));
         // UNIVERSE_RECORD=path: record the session from its start, saved there
         // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
         if std::env::var_os("UNIVERSE_RECORD").is_some() {

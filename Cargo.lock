@@ -2554,6 +2554,7 @@ dependencies = [
  "pollster",
  "rayon",
  "serde",
+ "serde_json",
  "texpresso",
  "universe-prof",
  "universe-world",

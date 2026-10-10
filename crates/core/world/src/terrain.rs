@@ -66,6 +66,8 @@ pub struct Terrain {
     /// A world drawn from its vector lines: its ground from them (see `worlds::LineHeights`), in
     /// place of its bake's heights.
     lines: Option<std::sync::Arc<crate::worlds::LineHeights>>,
+    /// Canonical PGS1 surface, currently used by the explicit development preview.
+    graph: Option<std::sync::Arc<crate::worlds::pgs::Surface>>,
 }
 
 impl Terrain {
@@ -83,11 +85,12 @@ impl Terrain {
                 Crater { dir: rng.unit_vector(), radius, depth: (radius * body_radius * 0.1).min(amplitude * 0.8) }
             })
             .collect();
-        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, lines: None }
+        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, lines: None, graph: None }
     }
 
     /// The ground is the bake's `heights` from now (its craters and noise gone).
     pub fn bake(&mut self, heights: std::sync::Arc<crate::worlds::Heights>) {
+        self.graph = None;
         self.amplitude = heights.max / 1.3;
         self.craters.clear();
         self.baked = Some(heights);
@@ -96,9 +99,39 @@ impl Terrain {
     /// The ground is `lines`' from now (a bake's heights and detail, if it has one, no longer used;
     /// its craters gone).
     pub fn from_lines(&mut self, lines: std::sync::Arc<crate::worlds::LineHeights>) {
+        self.graph = None;
         self.amplitude = lines.max() / 1.3;
         self.craters.clear();
         self.lines = Some(lines);
+    }
+
+    /// Attach a canonical surface for development and acceptance. The source field is
+    /// used unchanged: no old bake, contours, noise or port flattening is mixed into it.
+    /// Production package installation is deliberately separate from this operation.
+    pub fn from_surface(&mut self, surface: std::sync::Arc<crate::worlds::pgs::Surface>) {
+        self.amplitude = surface.max_height().max(1.0) / 1.3;
+        self.baked = None;
+        self.lines = None;
+        self.craters.clear();
+        self.pads.clear();
+        self.graph = Some(surface);
+    }
+
+    /// A canonical query, including unknown water/categories. None means this terrain
+    /// uses the legacy generator, bake or contours. Directions must be finite/nonzero,
+    /// as for the other Terrain query methods.
+    pub fn surface_sample(&self, dir: DVec3) -> Option<crate::worlds::pgs::Sample> {
+        self.graph.as_ref().map(|s| s.query(dir).expect("valid terrain direction"))
+    }
+
+    /// Whether a canonical surface supplies the terrain (no inferred water or materials).
+    pub fn canonical_surface(&self) -> bool { self.graph.is_some() }
+
+    fn graph_surface(&self, dir: DVec3) -> Option<f64> {
+        self.surface_sample(dir).map(|s| match s.water {
+            crate::worlds::pgs::Water::Wet { level_m, .. } => level_m,
+            _ => s.height_m,
+        })
     }
 
     /// Whether its ground is drawn from its vector lines (see `from_lines`).
@@ -201,6 +234,7 @@ impl Terrain {
 
     /// As `surface_view`, the runtime detail to the band `cell` (m): a patch's cells.
     pub fn surface_view_to(&self, dir: DVec3, cell: f64) -> (f64, bool) {
+        if let Some(h) = self.graph_surface(dir) { return (h, true); }
         if let Some(h) = self.lines_height(dir) {
             return (self.sea_over(h), true);
         }
@@ -215,6 +249,7 @@ impl Terrain {
 
     /// The surface height (as `surface`) from a bake's 5 km heights alone (a whole globe's).
     pub fn surface_coarse(&self, dir: DVec3) -> f64 {
+        if let Some(h) = self.graph_surface(dir) { return h; }
         if let Some(h) = self.lines_height(dir) {
             return self.sea_over(h);
         }
@@ -231,7 +266,7 @@ impl Terrain {
     /// `worlds::Heights::surface_at`), as far as they're read; and whether that's all of it.
     /// None: no bake, or none there (the sea).
     pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
-        if self.lines.is_some() {
+        if self.lines.is_some() || self.graph.is_some() {
             return (None, true);
         }
         match &self.baked {
@@ -242,6 +277,7 @@ impl Terrain {
 
     /// `height_and_crater` for a whole globe's map: a bake's 5 km heights alone.
     pub fn height_and_crater_coarse(&self, dir: DVec3) -> (f64, f64) {
+        if let Some(s) = self.surface_sample(dir) { return (s.height_m, 0.0); }
         if let Some(h) = self.lines_height(dir) {
             return (h, 0.0);
         }
@@ -262,6 +298,7 @@ impl Terrain {
 
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
+        if let Some(s) = &self.graph { return s.max_height(); }
         if let Some(l) = &self.lines {
             return l.max();
         }
@@ -354,6 +391,7 @@ impl Terrain {
 
     /// Ground height (m), ignoring oceans. Flattened to 0 around spaceports.
     pub fn raw_height(&self, dir: DVec3) -> f64 {
+        if let Some(s) = self.surface_sample(dir) { return s.height_m; }
         if let Some(h) = self.lines_height(dir) {
             return h;
         }
@@ -365,6 +403,7 @@ impl Terrain {
 
     /// Ground height (as `raw_height`) and how far inside a crater (0..1), together.
     pub fn height_and_crater(&self, dir: DVec3) -> (f64, f64) {
+        if let Some(s) = self.surface_sample(dir) { return (s.height_m, 0.0); }
         if let Some(h) = self.lines_height(dir) {
             return (h, 0.0);
         }
@@ -398,16 +437,27 @@ impl Terrain {
 
     /// The solid (or liquid) surface height (m): oceans fill anything below 0.
     pub fn surface(&self, dir: DVec3) -> f64 {
+        if let Some(h) = self.graph_surface(dir) { return h; }
         let h = self.raw_height(dir);
         if self.kind == TerrainKind::Terran { h.max(0.0) } else { h }
     }
 
+    /// Legacy boolean convenience: unknown PGS1 water is not evidence of ocean.
+    /// Use surface_sample when the distinction between dry and unknown matters.
     pub fn is_ocean(&self, dir: DVec3) -> bool {
+        if let Some(s) = self.surface_sample(dir) { return matches!(s.water, crate::worlds::pgs::Water::Wet { .. }); }
         self.kind == TerrainKind::Terran && self.raw_height(dir) < 0.0
     }
 
     /// What the ground is like here (for colors), and its height.
     pub fn classify(&self, dir: DVec3) -> (Ground, f64) {
+        if let Some(s) = self.surface_sample(dir) {
+            // Neutral drawing fallback, not a categorical claim; surface_sample keeps None.
+            return match s.water {
+                crate::worlds::pgs::Water::Wet { level_m, .. } => (Ground::Ocean, level_m),
+                _ => (Ground::Lowland, s.height_m),
+            };
+        }
         let h = self.raw_height(dir);
         if self.kind == TerrainKind::Terran && h < 0.0 {
             return (Ground::Ocean, 0.0);

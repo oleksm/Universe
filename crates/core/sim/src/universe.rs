@@ -140,7 +140,10 @@ pub struct Universe {
 impl Universe {
     /// A world of its own, without clients (see `setup` for one with them).
     pub(crate) fn bare(seed: u64) -> Self {
-        let world = World::new(seed);
+        Self::bare_world(World::new(seed))
+    }
+
+    pub(crate) fn bare_world(world: World) -> Self {
         let goods = std::sync::Arc::new(world.goods.clone());
         let mut u = Self {
             world,
