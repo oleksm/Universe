@@ -170,3 +170,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Fixed hull v02 supports and combined MC-07 integration; live deployment and landing suspension/contact response; GPU look/cost; simultaneous mechanisms; provisional load/bearing-life qualification"
+  - key: equipment.gear.rear.mc07
+    version: 1
+    manifest_sha256: "98bdd36ac4d06874e6017a66715a548d857be10e8179ec0f6888e48f37de24b3"
+    installed: 92f8888a
+    game: "the loader (world::assets) at fso 92f8888a"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-rear-mc07/v1 (109020 bytes, bounds [-1.67, -1.41, -0.58] to [1.67, 0.67, 4.88]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Fixed hull v02 supports and combined MC-07 integration; live deployment and landing suspension/contact response; GPU look/cost; simultaneous mechanisms; provisional load/bearing-life qualification"
