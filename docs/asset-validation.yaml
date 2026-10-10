@@ -200,3 +200,16 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull saddle placement and restraint; GPU look/cost; provisional weld/pressure/handling and zero-g fluid assumptions"
+  - key: equipment.access.cargo-ramp.mc07
+    version: 1
+    installed: "(as above)"
+    game: "main 5edc9656 (engine's walker test on ships' real collision triangles)"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "walker over the heel, ramp deployed, including its chamfer: 12/12 pass; full routes reach the end (grounding drops for 33-67 ms away from the heel): pass (docs/ships/mc07-cargo-ramp-runtime.md, main)"
+    unsupported:
+      - "cargo crossing: no carrier and no container forms in the registry yet"
+    pending:
+      - "combined hull and the live five-part gate (engine)"
