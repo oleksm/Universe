@@ -1,0 +1,30 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Ground vocabulary
+x-kind: [ground-vocabulary]
+description: "standards/Celestial/metadata/ground-vocabularies/<name>.yaml: the u16 ids a world's ground (PGS1, planet-unfold docs/format-v4.md) writes for a category of each face, frozen here before any install. 0 is none (not unknown: unknown is a capability bit off). Append-only: a new version keeps every earlier id and only adds; an id is never reused. The ground's header names the vocabulary as <key>@<version>."
+type: object
+additionalProperties: false
+required: [identity, version, entries]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      about: { type: string }
+  version: { type: integer, minimum: 1, description: "Raised whenever an entry is added; earlier ids keep their meaning" }
+  entries:
+    type: array
+    description: "id 1 upward, each once; 0 is none and is not listed"
+    items:
+      type: object
+      additionalProperties: false
+      required: [id, source]
+      properties:
+        id: { type: integer, minimum: 1, maximum: 65535, x-unit: "1", description: "the u16 a face carries" }
+        record: { type: string, x-ref: [rock-unit], description: "the registry record it means, by its key (where there is one)" }
+        source: { type: string, description: "the producer's own word for it (the planet simulation's unit key, the landform library's entry id)" }
+        since: { type: integer, minimum: 1, description: "the version that added it (1 if absent)" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }
