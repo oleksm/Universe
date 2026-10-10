@@ -299,13 +299,29 @@ def tmux_alive(sess):
     return shutil.which("tmux") and subprocess.run([*tx(sess), "has-session", "-t", sess], capture_output=True).returncode == 0
 
 
+def unsent(sess, mark):
+    """Whether the agent's input box still holds the mail: the lowest prompt line (Codex `›`, Claude `❯`) shows its start."""
+    pane = subprocess.run([*tx(sess), "capture-pane", "-p", "-t", sess], capture_output=True, text=True).stdout.splitlines()
+    prompts = [ln for ln in pane if ln.lstrip().startswith(("›", "❯"))]
+    return bool(prompts) and mark in prompts[-1]
+
+
 def inject(name, sess, got):
-    """Type the mail into the agent's terminal as one line and press Enter: a Claude or Codex prompt takes it as a message
-    (queued if the agent is mid-turn)."""
+    """Hand the mail to the agent's terminal as one pasted line, then press Enter: a Claude or Codex prompt takes it as a
+    message (queued if the agent is mid-turn). Pasted, not typed: a TUI reads fast typing as a paste burst and can take
+    the Enter as a new line. If the line is still sitting in the input box, Enter again (up to three times)."""
     text = " | ".join(wake_prompt(name, got, term=True).splitlines())
-    subprocess.run([*tx(sess), "send-keys", "-t", sess, "-l", text], check=False)
-    time.sleep(0.3)
-    subprocess.run([*tx(sess), "send-keys", "-t", sess, "Enter"], check=False)
+    buf = f"agentmsg-{name}"
+    subprocess.run([*tx(sess), "set-buffer", "-b", buf, text], check=False)
+    subprocess.run([*tx(sess), "paste-buffer", "-p", "-d", "-b", buf, "-t", sess], check=False)    # (-p: bracketed paste)
+    for _ in range(3):
+        time.sleep(0.8)
+        subprocess.run([*tx(sess), "send-keys", "-t", sess, "Enter"], check=False)
+        time.sleep(0.7)
+        if not unsent(sess, text[:24]):
+            return True
+    print(f"{datetime.datetime.now():%T} {name}: the mail is still in its input box after three Enters", flush=True)
+    return False
 
 
 def start(name, c):
