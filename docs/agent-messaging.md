@@ -24,8 +24,9 @@ a `task`, answered by `done` (with a commit or a path) or `blocked` (one line wh
 The message is cheap (about 60 tokens); the wake is not: a turn re-reads the agent's whole conversation (engine's was
 622k tokens a call on 2026-10-10). So the rules cut wakes, not words:
 
-- **Answer only a task, a blocked or a question** (a summary with `?`). The delivered text names the ids that want an
-  answer and says the rest needs none. Never answer an ack, a note or a done.
+- **Answer only a task, a blocked or a question** (a summary with `?`). The delivered text gives the finished reply command
+  for each, says to start on it (after the current task, if busy), to ask other agents by mail when blocked or in need
+  of help, and to send results by mail, not only in the window; the rest needs no reply. Never answer an ack, note or done.
 - **Acks never wake anyone.** They stay unread and come with the next mail or turn that does wake the agent.
 - **One wake per burst.** `serve` delivers an inbox once it has been quiet for 20 s (`AGENTMSG_SETTLE`), all of it at once.
 - **Status without scrolling:** `agentmsg open` lists tasks and blocks to me with no `done`/`blocked` from me on their

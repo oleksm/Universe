@@ -190,13 +190,18 @@ def owed(m):
     return m.get("kind") in ("task", "blocked") or "?" in m.get("summary", "")
 
 
-def wake_prompt(name, got):
+def wake_prompt(name, got, term=False):
     lines = "\n".join(line(m) for _, m in got)
-    ask = [m["id"] for _, m in got if owed(m)]
-    tail = (f"Answer {', '.join(ask)} when handled: `agentmsg send <to> <done|blocked|note> --summary '...' --reply-to <id> --as {name}` "
-            f"(at most 300 characters; point at files and commits). The rest needs no reply." if ask else
-            "None of it needs a reply (acks, notes, done): do not answer them.")
-    return f"Mail for you ({name}), {len(got)} message(s):\n{lines}\n{tail}"
+    ask = [m for _, m in got if owed(m)]
+    as_ = "" if term or os.environ.get("AGENTMSG_NAME") == name else f" --as {name}"     # (a term agent knows its name)
+    help_ = (f"If you are blocked or need another agent's help, ask by mail: agentmsg send <agent> task|blocked --summary '...'{as_}. "
+             "Send results by mail, not only in your window.")
+    if not ask:
+        return f"Mail for you ({name}), {len(got)} message(s):\n{lines}\nNo reply needed."
+    cmds = " ".join(f"agentmsg send {m['from']} done|blocked --reply-to {m['id']}{as_} --summary '<=300 chars, name the commit or file'." for m in ask)
+    return (f"Mail for you ({name}), {len(got)} message(s):\n{lines}\n"
+            f"Start working on {'it' if len(ask) == 1 else 'them'} (after the current task, if busy). Answer with: {cmds} {help_}"
+            + (" No reply to the rest." if len(ask) < len(got) else ""))
 
 
 def wakes(got):
@@ -297,7 +302,7 @@ def tmux_alive(sess):
 def inject(name, sess, got):
     """Type the mail into the agent's terminal as one line and press Enter: a Claude or Codex prompt takes it as a message
     (queued if the agent is mid-turn)."""
-    text = " | ".join(wake_prompt(name, got).splitlines())
+    text = " | ".join(wake_prompt(name, got, term=True).splitlines())
     subprocess.run([*tx(sess), "send-keys", "-t", sess, "-l", text], check=False)
     time.sleep(0.3)
     subprocess.run([*tx(sess), "send-keys", "-t", sess, "Enter"], check=False)
