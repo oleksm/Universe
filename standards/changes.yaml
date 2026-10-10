@@ -778,6 +778,8 @@
 - { record: good.woollen-cloth, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "397d6fdb6b006816" }
 - { record: good.woollens, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "ab28b570ffd2246a" }
 - { record: good.zinc-concentrate, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "1065a96e13f241ed" }
+- { record: ground-vocabulary.pattern, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "011b65eb9982c559" }
+- { record: ground-vocabulary.rock, at: "2026-10-10T22:11:43Z", status: "", summary: "first tracked", sha: "7d3835cbcfa04d13" }
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
