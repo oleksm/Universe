@@ -30,6 +30,7 @@ mod planet_studio;
 mod standards;
 mod sound;
 mod terrain_lod;
+mod lines_near;
 mod terrain_view;
 mod thrusterpanel;
 mod passengers;
@@ -342,7 +343,9 @@ pub struct Caches {
     pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
     /// Worlds drawn from their vector lines: the lines as a mesh of edges and the peaks and lows
     /// pinned, by (system, body).
-    pub lines: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, Vec<universe_sim::world::worlds::Pin>)>,
+    pub lines: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, std::sync::Arc<universe_sim::world::worlds::LinesDraw>)>,
+    /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
+    pub lines_near: std::cell::RefCell<lines_near::Near>,
     /// Worlds grown by the planet simulation: their full-resolution maps, made in the
     /// background (None till ready), by (system, body).
     pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
@@ -493,6 +496,7 @@ impl App {
             caches: Caches {
                 globes: std::collections::HashMap::new(),
                 lines: std::collections::HashMap::new(),
+                lines_near: Default::default(),
                 world_maps: std::collections::HashMap::new(),
                 terrain_lod: Default::default(),
                 rocks: std::collections::HashMap::new(),
@@ -1187,8 +1191,8 @@ impl App {
                 && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
             {
                 self.caches.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
-                if let Some((lines, pins)) = terrain_view::lines(b) {
-                    self.caches.lines.insert((origin, i), (lines.into(), pins));
+                if let Some((lines, draw)) = terrain_view::lines(b) {
+                    self.caches.lines.insert((origin, i), (lines.into(), std::sync::Arc::new(draw)));
                 }
             }
             // A world with a bake: its full-resolution maps, read and encoded on a thread of their

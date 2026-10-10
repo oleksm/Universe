@@ -564,6 +564,12 @@ fn bodies(frame: &mut Frame, app: &App) {
                 universe_prof::time("draw/scene/bodies/ground", || {
                     app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
                 });
+                // A world drawn from its lines: the lines laid on the ground round the eye.
+                if let Some((_, lines)) = app.caches.lines.get(&(app.view.cache, i)) {
+                    universe_prof::time("draw/scene/bodies/lines near", || {
+                        crate::lines_near::draw(&mut app.caches.lines_near.borrow_mut(), frame, (app.view.cache, i), &app.view.system, lines, center, b.rotation(t), cam);
+                    });
+                }
             } else {
                 let relief = b.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
                 universe_prof::time("draw/scene/bodies/globe mesh", || {
@@ -1810,14 +1816,12 @@ impl Labels {
         frame.text(pos, text, c);
     }
 
-    /// Like `add`, on a dark box (over a busy picture).
-    fn add_boxed(&mut self, frame: &mut Frame, at: DVec3, text: &str, c: Color) {
-        let Some(p) = frame.project(at) else { return };
+    /// Text on a dark box (over a busy picture) at screen position `pos`, unless it would cover a label.
+    fn add_boxed_at(&mut self, frame: &mut Frame, pos: Vec2, text: &str, c: Color) {
         let size = frame.size();
-        if p.x < -50.0 || p.y < 0.0 || p.x > size.x || p.y > size.y {
+        if pos.x < -50.0 || pos.y < 0.0 || pos.x > size.x || pos.y > size.y {
             return;
         }
-        let pos = p + Vec2::new(4.0, -10.0);
         let extent = text_size(text) + Vec2::new(8.0, 6.0);
         let overlaps = |&(q, e): &(Vec2, Vec2)| pos.x < q.x + e.x && q.x < pos.x + extent.x && pos.y < q.y + e.y && q.y < pos.y + extent.y;
         if self.placed.iter().any(overlaps) {
@@ -1875,29 +1879,34 @@ fn labels(frame: &mut Frame, app: &App) {
     }
 
     // A world drawn from its lines, big in view: its highest peaks and lowest lows pinned, each a
-    // stem up from it and its height, on the side facing the eye.
-    for (&(origin, i), (_, pins)) in &app.caches.lines {
+    // pin stuck in its dot (a stem straight up the screen, a head, its height on top), on the side
+    // facing the eye.
+    for (&(origin, i), (_, lines)) in &app.caches.lines {
         let b = &sys.bodies[i];
         let center = app.view.positions[i];
         if origin != app.view.cache || frame.projected_radius(center, b.rail.radius) < 60.0 {
             continue;
         }
         let rot = b.rotation(app.now());
-        let lift = 1.0 + (b.terrain.as_ref().map_or(0.0, |t| t.amplitude) * 1.3 + 1_000.0) / b.rail.radius;
+        // (Near, on the ground as the lines are there; from afar, on the globe the lines are drawn on.)
+        let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
         let mut rank = [0, 0];
-        for pin in pins {
+        for pin in &lines.pins {
             let k = &mut rank[pin.peak as usize];
             *k += 1;
             let k = *k;
             let up = rot * pin.dir;
-            let base = center + up * b.rail.radius * lift;
+            let height = if near { b.rail.radius + b.terrain.as_ref().map_or(0.0, |t| t.surface_coarse(pin.dir)) } else { b.rail.radius * terrain_view::lines_lift(b) };
+            let base = center + up * height;
             if up.dot(cam - base) <= 0.0 {
                 continue;
             }
+            let Some(p) = frame.project(base) else { continue };
             let c = if pin.peak { Color::hex(0xff6a5a) } else { Color::hex(0x6aa8ff) };
-            let top = base + up * b.rail.radius * 0.08;
-            frame.line(base, top, c);
-            labels.add_boxed(frame, top, &format!("{} {k}  {} M", if pin.peak { "PEAK" } else { "LOW" }, thousands(pin.z.round() as i64)), c);
+            let head = p - Vec2::new(0.0, 36.0);
+            frame.hud_line(p, head, c);
+            frame.hud_glow(head, 3.5, 12, c, c);
+            labels.add_boxed_at(frame, head + Vec2::new(4.0, -8.0), &format!("{} {k}  {} M", if pin.peak { "PEAK" } else { "LOW" }, thousands(pin.z.round() as i64)), c);
         }
     }
 

@@ -103,15 +103,19 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
 /// A world drawn from its vector lines (see `worlds::lines_draw`): its level lines, shores, rivers,
 /// peaks and lows, on a unit globe just over its highest ground, and its highest peaks and lowest
 /// lows to pin. None: it has no lines.
-pub fn lines(body: &Body) -> Option<(WireModel, Vec<universe_sim::world::worlds::Pin>)> {
-    let terrain = body.terrain.as_ref()?;
-    let lift = 1.0 + (terrain.amplitude * 1.3 + 1_000.0) / body.rail.radius;
-    let d = universe_sim::world::worlds::lines_draw(&body.key, lift)?;
+pub fn lines(body: &Body) -> Option<(WireModel, universe_sim::world::worlds::LinesDraw)> {
+    body.terrain.as_ref()?;
+    let d = universe_sim::world::worlds::lines_draw(&body.key, lines_lift(body))?;
     let mut m = WireModel::default();
-    m.positions = d.positions.into_iter().map(universe_engine::glam::Vec3::from).collect();
-    m.colors = d.colors;
-    m.edges = d.edges;
-    Some((m, d.pins))
+    m.positions = d.positions.iter().map(|&p| universe_engine::glam::Vec3::from(p)).collect();
+    m.colors = d.colors.clone();
+    m.edges = d.edges.clone();
+    Some((m, d))
+}
+
+/// Where a world's lines are drawn from afar: a globe just over its highest ground (in radii).
+pub fn lines_lift(body: &Body) -> f64 {
+    1.0 + (body.terrain.as_ref().map_or(0.0, |t| t.amplitude) * 1.3 + 1_000.0) / body.rail.radius
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).
