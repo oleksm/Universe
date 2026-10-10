@@ -40,7 +40,7 @@ If `B` is a part's bind transform in model-root space and `A` its current transf
 in that same space (including moving ancestors), draw the baked vertices with
 `equipment_placement * A * inverse(B)`. For a pivot-only rotation the delta is
 `T(pivot) * R * T(-pivot)`. Do not reapply the bind transform to already baked
-vertices. Supply the pivot and axes in exported glTF/model-root coordinates;
+vertices. Supply the pivot and axes in exported glTF/model-root coordinates.
 The v09 delivery updates the Blender-space pivot to `[0, 0, -0.43]`, superseding
 the earlier JSON value `[0, 0, -0.3]`. Neither is an exported pivot: regenerate
 the converted motion evidence from the latest source. Export conventions are
@@ -64,29 +64,68 @@ Add these fields to the handoff, without treating them as a shipped schema:
   positive/negative single-axis limits and combined limits, after export-axis
   conversion, for engine agreement checks.
 
-## Hoses and installation
+## Feed ducts and installation — supersedes the hose route
 
-The present renderer cannot reproduce the rig's deforming feed hoses. Baking a
-clip, exporting an armature, or retaining hooks will not make that work today.
-Do not mark the asset motion-complete with a fixed hose that detaches when steered.
+2026-10-10 update for Blender task `20261010T140310-blender-6982`, based on
+registry commit `b5951123`, `docs/ships/ch-s2-feed-lines.md` on fso. Stop the
+previous CH-S2 procedural-hose implementation plan. The v10 hose fixtures fail
+bend/length checks and remain negative reference cases, not enabled motion.
 
-The selected CH-S2 runtime route is a procedural tube with fixed topology and
-updated vertex positions/normals. No clips, skinning or morph playback is needed.
-This requires a new dynamic PBR mesh update path; today's rigid-part support alone
-cannot do it. Keep the Blender hoses and evaluated sweeps as reference evidence.
+Registry now recommends two tied bellows joints and a rigid duct between them
+for each feed, with fixed inlet flanges at the mount face and pump inlets near
+the gimbal plane. The stated bore ranges are hydrogen 85–120 mm and oxygen
+50–70 mm. These are registry design inputs, not renderer constants; the inlet
+velocity rule and joint ratings remain provisional pending registry/source work.
 
-End frames, diameter and free length are necessary but do not uniquely specify a
-routed hose. Supply the rest centreline, end tangent axes, routing guides and their
-parent frames, minimum bend radius and clearance constraints. Use a deterministic
-curve solver and stable transported cross-section frames. Preserve the declared
-free length within an agreed tolerance; reject infeasible endpoint distances,
-bend radii or routing instead of silently stretching the hose. Compare endpoints,
-tangents, arc length, bends and clearances throughout the steering envelope.
+**Runtime decision:** reuse rigid-part transforms for the central ducts, flanges,
+gimbal rings and tie hardware. No animation clips or morph playback is required
+for these parts. Reusing the aiming calculation from an actuator is appropriate;
+reusing its telescoping behavior for a fixed-length duct is not.
 
-A static preview uses the complete neutral assembly. Do not steer rigid parts
-while leaving their hoses frozen. A failed motion validation prevents enabling
-motion for that package. The latest v09 delivery is Building, accepted=false and
-installed=false; a technically loadable neutral export is not asset acceptance.
+The blockout/export must provide:
+
+- Exact node names, neutral binds, local longitudinal and roll-reference axes;
+  both joint centres and attachment orientations in explicitly named parent
+  frames, converted to the exported coordinate basis.
+- Fixed centre-to-centre length and closure tolerance for each rigid link. At
+  every pose, check `abs(length(B - A) - rest_length) <= tolerance`. A rigid
+  transform cannot satisfy two anchors whose separation changes. Reject such a
+  layout or explicitly model the additional rated degree of freedom; do not
+  scale the duct or silently allow actuator-like sliding.
+- Each joint's actual degrees of freedom, hinge axes/order, neutral alignment,
+  angular limits and any permitted axial/lateral travel and torsion. A two-axis
+  gimbal is not an unrestricted ball joint. Do not infer joint ratings from the
+  engine's 0.07 rad steering limit. Include source/provisional status for ratings.
+- A deterministic roll rule from the joint frames, including singular cases.
+  A direction between two points alone leaves roll undetermined; tie rods and
+  gimbal axes must follow the same solved frames, not independent look-at rules.
+- Bore, outside envelope, bellows active span, tie attachment frames and lengths,
+  and collision envelopes. Provide neutral, signed axis/combined limits and a
+  dense steering sweep with worst-case closure, joint travel, tie closure and
+  clearance residuals. Identify sampled clearance evidence as sampled.
+
+Evaluate the engine pose first, then attachment frames, rigid-link closure and
+joint orientation, and finally the hardware transforms. Apply the existing
+`placement * current * inverse(bind)` drawing rule. This is kinematic geometry
+validation, not pressure, fatigue or cryogenic qualification.
+
+**Bellows surface is a separate representation decision.** A corrugated mesh
+cannot stay attached to two relatively rotating flanges through one rigid
+transform. Blender should provide the end frames, rest profile and an explicit
+visual proposal. A rigid overlapping cover may suffice only if that approximation
+is accepted and its seam/clearance sweep passes; otherwise the bellows needs a
+small procedural deformation path. Neither generic hose routing nor skin/morph
+support is a prerequisite we should implement speculatively. Do not call the
+whole assembly motion-complete while the bellows visibly separates or intersects.
+
+Registry's proposed reuse of a rigid-link schema is acceptable only if it encodes
+these length, frame, roll and joint constraints. A joint angle field alone is
+insufficient. Registry owns the schema; these are consumer requirements, not a
+new shipped format. Missing ratings permit labelled blockout review only.
+
+A static preview uses the complete neutral assembly. Failed motion validation
+prevents enabling motion for that package. Technical runtime agreement does not
+accept the asset or authorize installation.
 
 ## Confirmed engine sequence (registry steps 3–5)
 
@@ -122,11 +161,12 @@ that these consumers exist yet.
    attachment agreement, stroke/overlap and clearance. Independent instances
    must not share mutable pose state. Reference fixture poses can be evaluated
    before 4a, but live motion depends on it.
-5. **Step 5: flexible motion.** Implement the routed tube evaluator and bounded
-   per-instance dynamic vertex updates, reusing topology/buffers rather than
-   generating new model IDs each frame. Include normals, shadow rendering and
-   motion bounds. Validate hose seating, tangents, length, bend radius and
-   interference over the same full-envelope fixtures, then measure update cost.
+5. **Step 5: tied feed ducts (revised).** Validate Blender's new joint layout
+   against fixed-length closure, allowed joint travel, deterministic roll, tie
+   closure and clearances before enabling rigid duct motion. Reuse the part
+   evaluator from step 4b. Settle and validate the bellows surface representation
+   separately; implement a bounded procedural update only if that representation
+   requires it. The previous routed-hose solver is removed from this sequence.
 6. **Integration gate.** Check mounted motion on the actual hull, command/render/
    force agreement, independent instances and save/replay. Enable moving
    installation only after the schema, exporter, runtime and asset QC agree.

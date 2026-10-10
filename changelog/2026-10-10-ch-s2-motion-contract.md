@@ -9,3 +9,6 @@
   frames, mounted neutral equipment, applied gimbal state, rigid linkage, then
   procedural hoses with routing constraints and dynamic mesh updates. Updated
   the v09 pivot and separated technical readiness from asset acceptance.
+- Superseded the CH-S2 hose route with registry's tied-bellows duct proposal.
+  Required fixed-length closure, explicit joint freedoms/ratings and roll, and
+  separated rigid hardware motion from the unresolved bellows surface rendering.
