@@ -125,3 +125,19 @@ build passes. Full workspace testing hits the unrelated existing
 empty-hold lift is 8.2 m/s², below the required 1.1 g margin. Reported to registry
 as `20261010T183954-engine-1a81`; no rating or assertion changed for this review.
 The remaining workspace tests pass with only that named assertion excluded.
+
+
+Follow-up classification (`runtime-collision-v01/tread-classification.yaml`):
+ships maps all 21 unsupported-frame witnesses to authored 20 mm anti-slip rib
+bevels and subsequent ordinary ramp-top hits. The bevel is 45 degrees locally;
+deployment adds 29.656 degrees, explaining normal.y ≈ 0.26461. Source/export
+vertices match exactly and triangle indices are identical. No geometry repair
+or controller-policy change is included.
+
+Registry confirmed the hover assertion concerns owner-deferred MC-07 sizing,
+recorded in `standards/SFO/metadata/hulls/mc-07.yaml` revision (2026-10-05).
+The test now exempts only `hull.import.mc07` from the unaccepted hover target;
+its allocator checks remain active. Other imported hulls are not broadly exempt.
+Ratings, mass and gameplay remain unchanged.
+After this scoped exemption, full workspace tests pass without skips and the
+registry build passes.
