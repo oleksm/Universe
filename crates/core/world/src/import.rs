@@ -241,3 +241,56 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
         walk(&child, m, blob, ramp, read);
     }
 }
+
+#[cfg(test)]
+mod mount_fixture_tests {
+    use super::*;
+
+    #[test]
+    fn provisional_radiator_frames_keep_axes_and_one_root_turn() {
+        // Ships' meshless placement study, not an accepted/installed hull. Keep the
+        // full frames as integration goldens; current Shape nodes still lose roll.
+        let bytes = include_bytes!("../tests/fixtures/mc07-radiator-mounts/mount-frames.glb");
+        let gold: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/mc07-radiator-mounts/mount-frames.json")).unwrap();
+        let gltf = gltf::Gltf::from_slice(bytes).unwrap();
+        assert_eq!(gltf.meshes().count(), 0);
+        let mut frames = std::collections::BTreeMap::new();
+        fn visit(node: gltf::Node<'_>, parent: DMat4, frames: &mut std::collections::BTreeMap<String, DMat4>) {
+            let m = parent * DMat4::from_cols_array_2d(&node.transform().matrix().map(|c| c.map(f64::from)));
+            if let Some(name) = node.name().filter(|n| n.starts_with("mount_")) {
+                assert!(frames.insert(name.to_string(), m).is_none());
+            }
+            for child in node.children() { visit(child, m, frames); }
+        }
+        for root in gltf.default_scene().unwrap().nodes() { visit(root, DMat4::IDENTITY, &mut frames); }
+        let read = read(bytes).unwrap();
+        assert_eq!(read.nodes.len(), 4);
+        assert_eq!(frames.len(), 4);
+        let mut max_error = 0.0f64;
+        for g in gold["mounts"].as_array().unwrap() {
+            let name = g["node"].as_str().unwrap();
+            assert_eq!(name.strip_prefix("mount_").unwrap(), g["slot"].as_str().unwrap());
+            let cols: Vec<f64> = g["hull_model_gltf_column_major"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect();
+            let expected = DMat4::from_cols_slice(&cols);
+            let frame = frames[name];
+            for (a, b) in frame.to_cols_array().iter().zip(&cols) {
+                max_error = max_error.max((a - b).abs());
+            }
+            assert!((frame.determinant() - 1.0).abs() < 2e-6);
+            for axis in [DVec3::X, DVec3::Y, DVec3::Z] {
+                assert!((frame.transform_vector3(axis).length() - 1.0).abs() < 2e-6);
+                // Full right-handed frame, including roll, compared to the export.
+                assert!(frame.transform_vector3(axis).distance(expected.transform_vector3(axis)) < 2e-6);
+            }
+            let (_, at, dir) = read.nodes.iter().find(|n| n.0 == name).unwrap();
+            assert!(at.distance(expected.transform_point3(DVec3::ZERO)) < 2e-6);
+            // Legacy forward is -Z, NOT the radiator's outward +Y normal.
+            assert!(dir.distance(expected.transform_vector3(DVec3::NEG_Z).normalize()) < 2e-6);
+            assert!(dir.dot(expected.transform_vector3(DVec3::Y)).abs() < 2e-6);
+        }
+        assert!(max_error < 2e-6, "matrix error {max_error}");
+        println!("four provisional mount frames: maximum component error {max_error:e}");
+        // A fixture of empties must never be mistaken for an installable hull.
+        assert_eq!(hull_from_gltf(bytes, "fixture.glb").unwrap_err(), "no geometry to make its hull from");
+    }
+}

@@ -120,3 +120,50 @@ steering/divergence range where applicable, simultaneous operating cases and
 radiator exposure limits. Ships may use explicitly assumed screening volumes
 and report their parameters/results, but must keep final exhaust/thermal clearance
 open. The radiator's own thermal/material qualification is separate as well.
+
+## Provisional frame consumer check, 2026-10-10 17:20
+
+Ships task `20261010T171500-ships-2da8` supplied a meshless GLB plus full-frame
+JSON from `blender/mc07-radiator-fit/review/`. Copies are preserved verbatim in
+`crates/core/world/tests/fixtures/mc07-radiator-mounts/` for subsequent importer
+work. GLB SHA-256:
+`e819ec8547e64666c4bc00d4c32e0f9d972945bcc943365253258e123fced623`;
+JSON SHA-256:
+`a69ae31b9f4032d6b8dd780a86ec5bca85e0336100c0131482441f0d0fa97e8d`.
+
+The Rust glTF hierarchy evaluation matches all four reference matrices to
+`9.5367431640625e-7` maximum component error (0.954 micrometres in translation),
+within the 2e-6 comparison tolerance. Unit axes, positive unit determinant,
+unique names and slot bindings pass. The actual importer `read` agrees on all
+four origins and legacy -Z forward directions. The meshless file is correctly
+refused by `hull_from_gltf` as having no hull geometry.
+
+Rounded model-root frames, metres; these include the source root turn once and
+have **not** had `made_centre` subtracted:
+
+| Slot | Origin | Equipment +X tip | Equipment +Y outward | Equipment +Z width |
+|---|---|---|---|---|
+| radiator_1 (S3) | (-18.6, 0, -11.3) | +Z | -X | -Y |
+| radiator_2 (S2) | (-6, 11.4, 26) | -Z | +Y | +X |
+| radiator_3 (S2) | (6, 11.4, 26) | -Z | +Y | +X |
+| radiator_4 (S2) | (18.6, 0.8, -6) | +Z | +X | +Y |
+
+This accepts the fixture's frame convention, not its hull placement. In
+particular the legacy importer forward is perpendicular to the panel normal;
+it cannot serve as that normal or reconstruct arbitrary roll. The regression
+preserves the full-matrix goldens for future frame retention while checking the
+existing reader's supported output. No production mount schema, thermal slot,
+radiator draw/deployment or hull installation is added by this check.
+
+Reproduce: `cargo test -p universe-world --lib mount_fixture_tests -- --nocapture`.
+The targeted test passes. Next consumer work remains: retain each full rigid
+frame through the shape-centre shift, admit registry thermal slots/fits, compose
+the equipment mount frame at draw time, then consume an accepted motion package.
+Ships continues to own placement/clearance acceptance.
+
+Registry has since supplied **invented, review-required screening** rules on
+fso `97610cbe`, `docs/ships/exhaust-keepouts.md`. They supplement the earlier
+missing-envelope note; they do not constitute sourced plume certification.
+HOT EXHAUST is provisionally a radiating surface, not a gas plume. Ships has been
+sent that source; structural, thermal and plasma-radiation qualification remain
+open.
