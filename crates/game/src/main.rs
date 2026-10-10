@@ -536,6 +536,10 @@ impl App {
             app.engine.refresh();
             app.v = app.engine.view();
         }
+        // (UNIVERSE_PAUSED: start paused, as F6 pauses: look round before the world runs.)
+        if std::env::var_os("UNIVERSE_PAUSED").is_some() {
+            app.paused = true;
+        }
         // The world engine runs on its own thread (UNIVERSE_ENGINE_THREAD=0: here, for debugging).
         if std::env::var("UNIVERSE_ENGINE_THREAD").as_deref() != Ok("0") {
             app.engine.start();
