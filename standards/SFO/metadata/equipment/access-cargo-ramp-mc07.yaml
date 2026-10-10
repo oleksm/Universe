@@ -25,6 +25,12 @@ function:
   load: 40000
   width: 7.5
   reach: 7.78
+visual:
+  format: "freefall-model/1"
+  path: "models/access-cargo-ramp-mc07/v1"
+  manifest_sha256: "9f45d05b20f22cf0d9311c3346c77707e67bb2b2d28f5bf2b7cf22ce1edc9940"
+  version: 1
+  triangles: 2172
 life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
