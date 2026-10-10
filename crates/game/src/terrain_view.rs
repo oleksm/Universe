@@ -10,6 +10,7 @@ use crate::scene::color;
 
 /// Color for a kind of ground on a body.
 pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
+    if body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Color::rgb(0.45, 0.45, 0.45); }
     let base = color(body.color);
     let lighten = |c: Color, k: f32| {
         let [r, g, b, a] = c.0;
@@ -82,6 +83,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
     let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
     // A world grown by the planet simulation: its own colour, texel by texel (a world drawn from
     // its lines: the flat ground under them, else its bake's).
+    if terrain.canonical_surface() { return Some(map); }
     let Some(image) = universe_sim::world::worlds::lines_colour(&body.key).or_else(|| terrain.colour()) else { return Some(map) };
     let mut colors = vec![[0u8; 4]; 6 * n * n];
     std::thread::scope(|s| {
@@ -104,7 +106,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
 /// peaks and lows, on a unit globe just over its highest ground, and its highest peaks and lowest
 /// lows to pin. None: it has no lines.
 pub fn lines(body: &Body) -> Option<(WireModel, universe_sim::world::worlds::LinesDraw)> {
-    body.terrain.as_ref()?;
+    if body.terrain.as_ref()?.canonical_surface() { return None; }
     let d = universe_sim::world::worlds::lines_draw(&body.key, lines_lift(body))?;
     let mut m = WireModel::default();
     m.positions = d.positions.iter().map(|&p| universe_engine::glam::Vec3::from(p)).collect();
@@ -127,6 +129,8 @@ pub fn globe_bright(body: &Body) -> f32 {
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).
 pub fn globe_kind(body: &Body) -> f32 {
+    // Renderer palette 3: measured surface, unknown materials/water, no synthetic detail.
+    if body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return 3.0; }
     match body.terrain.as_ref().map(|t| t.kind) {
         Some(TerrainKind::Terran) | None => 0.0,
         Some(TerrainKind::Dry) => 1.0,

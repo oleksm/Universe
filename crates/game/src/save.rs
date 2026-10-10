@@ -38,6 +38,7 @@ fn old_path() -> PathBuf {
 }
 
 pub fn save(app: &mut App) -> Result<PathBuf, String> {
+    if app.charts.has_surface_sources() { return Err("PGS1 preview sources are not supported by saves yet".into()); }
     let save = GameSave {
         universe: app.engine.save().ok_or("the world engine didn't answer")?,
         mode: app.mode,
@@ -54,6 +55,7 @@ pub fn save(app: &mut App) -> Result<PathBuf, String> {
 }
 
 pub fn load(app: &mut App) -> Result<(), String> {
+    if app.charts.has_surface_sources() { return Err("restart without the PGS1 preview to load a saved game".into()); }
     let json = std::fs::read_to_string(path()).or_else(|_| std::fs::read_to_string(old_path())).map_err(|e| e.to_string())?;
     let mut value: serde_json::Value = serde_json::from_str(&json).map_err(|e| e.to_string())?;
     if let Some(u) = value.get_mut("universe") {

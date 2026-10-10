@@ -208,7 +208,7 @@ pub(crate) struct Instance {
     /// tight the glint (a power: higher, sharper), how much it glows itself.
     pub material: [f32; 4],
     /// A globe's surface map (see `Frame::with_globe`): its layer + 1 (0:
-    /// none), the world's kind (0 Earth-like, 1 dry, 2 cratered), its relief
+    /// none), the world's kind (0 Earth-like, 1 dry, 2 cratered, 3 canonical terrain-only), its relief
     /// (m, scaled), the brightness of its colours.
     pub globe: [f32; 4],
     /// Where its vertices are on the world, in radii: `pos * w + xyz` (a
