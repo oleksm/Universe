@@ -62,3 +62,19 @@ validations:
       - "GPU look and cost, placement on a real hull"
       - "deployment (a device state and a hinge driver in freefall-motion/1: registry and engine)"
       - "the panel's material at 1,000 K (registry, open)"
+  - key: equipment.thermal.radiator.s3
+    version: 1
+    manifest_sha256: "e49c3e9ed9f6e55dd16c140490b0e43e9fbd96591d100d43dcdee8602a3ffe2d"
+    installed: 2c451205
+    game: "main a1ecf04e (the loader, world::assets), run from fso 2c451205"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): package found, manifest matches the record's hash, model.glb matches the manifest, bounds [0, 0, -6.05] to [24.1975, 0.08, 6.05] (stowed); 5,112 triangles: pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "deployment (a device state and a hinge driver in freefall-motion/1: registry and engine)"
+      - "the panel's material at 1,000 K and the 24 m cantilever's loads under thrust (registry, open)"
