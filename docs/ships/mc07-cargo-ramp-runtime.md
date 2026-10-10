@@ -1,9 +1,10 @@
 # MC-07 cargo ramp runtime integration
 
 Task `20261010T173807-ships-ac86`, installed static package `304edf1c`.
-The replacement is **not enabled**: ships' final hull-fit gate fails pending
-classification/repair of hinge-region contacts. Static package acceptance does
-not certify moving hull fit. No asset installation or branch merge is made here.
+The replacement is **not enabled**. The isolated heel-pocket interface is now
+accepted by ships and Blender, superseding the old native hinge-contact failure.
+Combined-hull and live five-part drawing/collision/boarding gates remain open.
+No asset installation or branch merge is made here.
 
 ## Corrected native hinge
 
@@ -47,7 +48,10 @@ This is a diagnostic consumer, not an installed motion schema or live drawing.
 Authoritative handoffs:
 
 - `../blender/mc07-ramp-fit/motion-handoff.yaml`: anchor frames, axes, placement.
-- `../blender/mc07-ramp-fit/fit-review.yaml`: failed final fit, action-cleared sweep.
+- `../blender/mc07-ramp-fit/integration-plan.yaml`: accepted isolated interface,
+  pinned heel-pocket fixture and remaining combined-hull gates.
+- `../blender/mc07-ramp-fit/runtime-collision-v01/handoff.yaml`: exact collision
+  meshes and ray-measured diagnostic walking path.
 - `../blender/mc07-equipment/cargo-ramp/candidate-v01/review/runtime-fixtures.json`:
   complete glTF binds and pose references, supplied by Blender.
 
@@ -67,7 +71,57 @@ check boarding against the moving toe and collision surfaces rather than
 inventing a deployment duration. Existing ram rendering/collision is not a
 complete articulated actuator consumer, and needs replacement together.
 
-Next gates: ships resolves hull seating/pockets and repeats fit; runtime mounts
+Next gates: ships assembles and verifies the combined hull; runtime mounts
 and five-part drawing/collision/boarding integration use this evaluator and
 fixtures; Vulkan closed/deployed views and boarding checks verify the assembled
 result. Passing source matrices alone does not close those gates.
+
+## Heel threshold consumer check
+
+Registry task `20261010T183252-registry-02b4`: **walker heel crossing passes**
+for both closed/deployed snapshots, both directions, at 30/60/120 Hz (12 cases).
+The real `walk::Walker` consumes the exact exported GLB triangles: 14 meshes,
+28,029 triangles per pose. This includes the nominal 30 mm cover rise and the
+actual deployed chamfer transition (approximately 58 mm over the final 20 mm,
+per ships), rather than a synthetic step. All heel cases remain grounded.
+
+The test uses existing 0.45 m step, 0.35 m body radius, 1.8 m height and 0.643
+floor-normal threshold. Speed 1.5 m/s and standard gravity are diagnostic choices,
+not new gameplay tuning. The ray-measured centreline runs model z=4 to z=2 m
+through the heel; the longer route continues to z=-4 m. No jump/climb input.
+
+All 12 full-route cases reach the opposite endpoint. Closed cases remain grounded;
+deployed cases briefly lose grounded status: about 67 ms outbound and 33 ms
+inbound at each tested rate. Downward rays near z=0.475 and -3 m encounter faces
+with normal.y about 0.265, below the controller floor threshold. These are outside
+the heel window. Thus the longer deployed route fails the conservative continuous
+support gate despite completing traversal. No controller tuning or geometry fix
+is included. This is a static snapshot test, not live boarding/toe behavior.
+
+**Cargo crossing is UNSUPPORTED**, not passed: cargo currently has aggregate
+mass/volume inventory, without a traversing body, wheels, pallet or clearance
+contract. Registry confirmed this classification in `20261010T183429-registry-cf82`;
+the ramp's 40 t rating alone cannot define a collision test.
+
+Reproduce after building `cargo build -p universe-world --example ramp_threshold`:
+
+```sh
+/home/alexm/git/planet-trees/.venv/bin/python \
+ /home/alexm/git/planet-trees/tools/scenery_job.py --memory-gib 8 --threads 2 -- \
+ python3 tools/review/ramp_threshold.py \
+ ../blender/mc07-ramp-fit/runtime-collision-v01 /tmp/ramp-threshold.json
+```
+
+`mc07-ramp-threshold-validation.json` retains fixture and final GLB hashes,
+controller outputs and unsupported-frame evidence. The runner verifies the owner
+manifest and triangle counts; its `reached_end` and `continuous_support` results
+are separate. The example exits nonzero when continuous supported traversal
+fails. Combined-hull geometry, off-centre routes, moving articulation, live
+boarding actions and cargo traversal remain outside this acceptance.
+
+Validation: example builds and executes all 24 snapshot/route cases; registry
+build passes. Full workspace testing hits the unrelated existing
+`ship::classes::every_hull_is_balanced_and_sized_for_its_job` assertion: MC-07
+empty-hold lift is 8.2 m/s², below the required 1.1 g margin. Reported to registry
+as `20261010T183954-engine-1a81`; no rating or assertion changed for this review.
+The remaining workspace tests pass with only that named assertion excluded.
