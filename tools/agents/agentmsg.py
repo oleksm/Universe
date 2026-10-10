@@ -322,7 +322,8 @@ def cmd_term(pos, opt, rest=None):
         term = os.environ.get("TERMINAL") or next((t for t in ("alacritty", "kitty", "foot", "gnome-terminal", "xterm") if shutil.which(t)), None)
         if not term:
             die(f"no terminal found: attach with  tmux attach -t {sess}")
-        subprocess.Popen([term, "-e", *tx(sess), "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.Popen([term, "-e", *tx(sess), "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                         env={k: v for k, v in os.environ.items() if k != "TMUX"})     # (run from inside an agent's window: still a window of its own)
         print(f"opened a {term} window on {sess}; detach with Ctrl-b d, the agent keeps running")
     else:
         os.execvp("tmux", [*tx(sess), "attach", "-t", sess])
