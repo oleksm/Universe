@@ -15,6 +15,42 @@ pub struct Preview {
     pub body: String,
     pub radius_m: f64,
     pub physics: bool,
+    /// The planet graph's pins: its top peaks and dips (direction in the ground's frame, height m, a peak).
+    pub pins: Vec<(glam::DVec3, f64, bool)>,
+}
+
+/// The top five peaks and dips of a planet graph's root, as its page picks them: anchors flagged a peak by
+/// height down, a low by height up, each at least 1,500 km from those picked before.
+fn pins(l0: &std::path::Path) -> Vec<(glam::DVec3, f64, bool)> {
+    use unfold_view::unfold_core::{direction, flags, Kind, LineSet};
+    let Ok(set) = LineSet::load(l0) else { return Vec::new() };
+    let mut out = Vec::new();
+    for peak in [true, false] {
+        let bit = if peak { flags::PEAK } else { flags::LOW };
+        let mut a: Vec<(glam::DVec3, f64)> = set.lines.iter().filter(|l| l.kind == Kind::Anchor && l.flags & bit != 0).map(|l| (direction(l.vertices[0].lon, l.vertices[0].lat), l.vertices[0].z as f64)).collect();
+        a.sort_by(|x, y| if peak { y.1.total_cmp(&x.1) } else { x.1.total_cmp(&y.1) });
+        let mut picked: Vec<glam::DVec3> = Vec::new();
+        for (d, z) in a {
+            if picked.len() == 5 {
+                break;
+            }
+            if picked.iter().all(|p| p.angle_between(d) * set.header.radius_m >= 1.5e6) {
+                picked.push(d);
+                out.push((d, z, peak));
+            }
+        }
+    }
+    out
+}
+
+/// Whether the planet graph's overlay is on (SHIFT+F7; `UNIVERSE_GROUND_GRAPH=1` at launch): its lines and anchors
+/// over the ground, its top peaks and dips pinned.
+pub fn graph_on() -> bool {
+    unfold_view::bench::graph_overlay()
+}
+
+pub fn toggle_graph() {
+    unfold_view::bench::set_graph_overlay(!graph_on());
 }
 
 static PREVIEW: OnceLock<Preview> = OnceLock::new();
@@ -36,7 +72,7 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
     // preview's folder, `UNIVERSE_GROUND_<WORLD ID>`, its manifest not checked against a record.)
     let preview = std::env::vars_os().find_map(|(k, v)| {
         let k = k.into_string().ok()?;
-        k.strip_prefix("UNIVERSE_GROUND_").filter(|id| *id != "STATS" && *id != "PHYSICS").map(|id| (id.to_string(), PathBuf::from(v)))
+        k.strip_prefix("UNIVERSE_GROUND_").filter(|id| !matches!(*id, "STATS" | "PHYSICS" | "PROBE" | "GRAPH")).map(|id| (id.to_string(), PathBuf::from(v)))
     });
     let (var, folder, want) = match preview {
         Some((id, folder)) => (id, folder, None),
@@ -96,6 +132,17 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
             .spawn(move || match (std::time::Instant::now(), unfold_view::bench::far_grounds(&dir)) {
                 (t0, Ok(g)) => {
                     eprintln!("far ground: the whole body in {:.1} s", t0.elapsed().as_secs_f64());
+                    // (UNIVERSE_GROUND_PROBE="lon lat; lon lat": the physics query's height there, on stderr.)
+                    if let Ok(v) = std::env::var("UNIVERSE_GROUND_PROBE") {
+                        for pair in v.split(';') {
+                            let n: Vec<f64> = pair.split_whitespace().filter_map(|x| x.parse().ok()).collect();
+                            if n.len() == 2 {
+                                let d = unfold_view::unfold_core::direction(n[0], n[1]);
+                                let h = g.iter().max_by(|a, b| a.rings[0].0.frame.origin().dot(d).total_cmp(&b.rings[0].0.frame.origin().dot(d))).and_then(|f| f.height(d));
+                                eprintln!("ground probe ({}, {}): {}", n[0], n[1], h.map_or("none".into(), |h| format!("{h:.1} m")));
+                            }
+                        }
+                    }
                     let _ = slot.set(g);
                 }
                 (_, Err(e)) => eprintln!("far ground: {e:#}"),
@@ -121,7 +168,11 @@ pub fn open() -> Option<Box<dyn universe_engine::GroundPass>> {
             max: 9_000.0,
         });
     }
-    let _ = PREVIEW.set(Preview { body, radius_m, physics });
+    if std::env::var("UNIVERSE_GROUND_GRAPH").is_ok_and(|v| v == "1") {
+        unfold_view::bench::set_graph_overlay(true);
+    }
+    let pins = pins(&l0);
+    let _ = PREVIEW.set(Preview { body, radius_m, physics, pins });
     Some(pass)
 }
 

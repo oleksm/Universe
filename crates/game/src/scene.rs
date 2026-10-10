@@ -1829,6 +1829,19 @@ fn labels(frame: &mut Frame, app: &App) {
             labels.add(frame, app.view.positions[body], &b.name.to_uppercase(), LABEL.scale(1.3));
         }
     }
+    // (A grown planet's graph on: its top peaks and dips pinned at their heights.)
+    if crate::ground_preview::graph_on() {
+        let t = app.now();
+        for (i, b) in sys.bodies.iter().enumerate() {
+            let Some(p) = crate::ground_preview::on(&b.key) else { continue };
+            let rot = b.rotation(t) * crate::ground_preview::frame();
+            for &(d, z, peak) in &p.pins {
+                let at = app.view.positions[i] + rot * (d * (b.rail.radius + z));
+                frame.point(at, if peak { Color::hex(0xff5040) } else { Color::hex(0x4080ff) });
+                labels.add(frame, at, &format!("{} {:.0} M", if peak { "PEAK" } else { "DIP" }, z), if peak { Color::hex(0xff8070) } else { Color::hex(0x80b0ff) });
+            }
+        }
+    }
     for (i, b) in sys.bodies.iter().enumerate() {
         let near_parent = b.rail.parent.is_some_and(|p| app.view.positions[p].distance(cam) < b.rail.orbit.as_ref().map_or(0.0, |o| o.semi_major_axis * 25.0));
         let wanted = match b.kind {

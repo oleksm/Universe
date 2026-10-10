@@ -782,7 +782,11 @@ impl App {
                 universe_prof::enable(self.debug == 2);
             }
         }
-        if input.pressed(KeyCode::F7) {
+        // F7: the thrusters; SHIFT+F7: a grown planet's graph over its ground (`ground_preview`).
+        if input.pressed(KeyCode::F7) && shift {
+            crate::ground_preview::toggle_graph();
+            self.say(if crate::ground_preview::graph_on() { "PLANET GRAPH ON".into() } else { "PLANET GRAPH OFF".into() });
+        } else if input.pressed(KeyCode::F7) {
             self.show_thrusters = !self.show_thrusters;
         }
         if input.pressed(KeyCode::F4) {
