@@ -15,7 +15,7 @@ The gimbal's angle is ship state, not a film: the game's flight model commands p
   its length follows from the anchors, so it needs no keys;
 - each flexible hose is a tube between two end frames (one on the fixed structure, one on the gimbal) with its diameter
   and free length: drawn by the game as a bent tube between them, so it needs no morphs;
-- the turbulence (0.02 rad, 1.6-? Hz in v09's preview) is invented visual motion. If the owner keeps it, it is a small
+- the turbulence (0.02 rad peak, 1.625 to 5.125 Hz in v09's preview) is invented visual motion. If the owner keeps it, it is a small
   noise on the commanded angle in the game (labelled invented), not a clip in the model.
 
 ## The package
