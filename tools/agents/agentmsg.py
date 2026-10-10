@@ -8,7 +8,7 @@
     agentmsg serve                                   watch every inbox; wake or notify the agent mail is for
     agentmsg hook-claude                             a Claude Code Stop hook: unread mail keeps the session going
     agentmsg who                                     the agents configured, their inboxes and wake commands
-    agentmsg term <agent> [--window] [-- CMD ...]    run the agent in a terminal you can watch and type into (tmux
+    agentmsg term <agent> [--here] [-- CMD ...]      run the agent in a terminal you can watch and type into (tmux
                                                      session agent-<name>); `serve` types its mail into it and notifies you
 
 kind: task | ack | done | blocked | note. A summary is at most 300 characters: put detail in files, commits and keys and
@@ -266,7 +266,7 @@ def inject(name, sess, got):
 
 def cmd_term(pos, opt, rest=None):
     if not pos:
-        die("term <agent> [--window] [-- CMD ...]")
+        die("term <agent> [--here] [-- CMD ...]")
     name = pos[0]
     agents = conf(); c = agents.get(name) or die(f"no agent {name} in {CONF}")
     if rest:
@@ -279,7 +279,9 @@ def cmd_term(pos, opt, rest=None):
         env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
         subprocess.run(["tmux", "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
         print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
-    if opt.get("window") or not sys.stdout.isatty():
+    if opt.get("here") and os.environ.get("TMUX"):
+        os.execvp("tmux", ["tmux", "switch-client", "-t", sess])
+    if not opt.get("here") or not sys.stdout.isatty():
         term = os.environ.get("TERMINAL") or next((t for t in ("alacritty", "kitty", "foot", "gnome-terminal", "xterm") if shutil.which(t)), None)
         if not term:
             die(f"no terminal found: attach with  tmux attach -t {sess}")

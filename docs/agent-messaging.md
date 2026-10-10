@@ -28,8 +28,13 @@ An agent is known by `--as`, else `$AGENTMSG_NAME`, else the entry whose `cwd` h
 ## Watching an agent and letting it answer: `agentmsg term`
 
     agentmsg term blender -- codex --dangerously-bypass-approvals-and-sandbox    # first time: how it starts
-    agentmsg term blender                                                        # later: start it, or attach to it
-    agentmsg term blender --window                                               # in a new terminal window
+    agentmsg term blender                                                        # later: start it, or open a window on it
+    agentmsg term blender --here                                                 # in this terminal instead of a new window
+
+Each agent opens in its own terminal window, so starting a second never lands in the first one's window. Claude
+sessions of several agents share one project folder (~/git/universe), where `claude --continue` picks whichever
+session ran last: so a Claude agent's command resumes its own session by id, `sh -c "cd ~/git/universe && exec claude
+--resume <id>"` (the id is the session's file name under ~/.claude/projects/; `/rename` titles show which is which).
 
 The agent runs in a tmux session, `agent-<name>`, in its folder, so you watch it and type into it like any session;
 detach with Ctrl-b d and it keeps running. While its session is up, `serve` types each piece of mail into it as one
