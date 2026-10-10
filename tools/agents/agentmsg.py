@@ -7,6 +7,8 @@
     agentmsg wait [--as ME] [--timeout S]            block until mail arrives, then print it (inotify; slow poll elsewhere)
     agentmsg serve                                   watch every inbox; wake or notify the agent mail is for
     agentmsg hook-claude                             a Claude Code Stop hook: unread mail keeps the session going
+    agentmsg up [AGENT...] [--no-windows]            start every agent (or those named) that is down, a window on each
+                                                     nobody watches, the mail watcher; safe to run again any time
     agentmsg open [--as ME]                          what I owe (tasks, blocks to me unanswered) and wait on (my tasks)
     agentmsg who                                     the agents configured, their inboxes and wake commands
     agentmsg term <agent> [--here] [-- CMD ...]      run the agent in a terminal you can watch and type into (tmux
@@ -19,7 +21,7 @@ point at them with --ref and --see; the receiver opens them only if it needs to.
 Who am I: --as, else $AGENTMSG_NAME, else the agent in ~/.agents/agents.json whose "cwd" holds the current directory.
 The mailbox: $AGENTMSG_HOME, else ~/.agents. Docs: docs/agent-messaging.md.
 """
-import datetime, glob, json, os, secrets, shutil, subprocess, sys, time
+import datetime, glob, json, os, re, secrets, shutil, subprocess, sys, time
 
 HOME = os.environ.get("AGENTMSG_HOME") or os.path.expanduser("~/.agents")
 MAIL, LOG, RUN = os.path.join(HOME, "mail"), os.path.join(HOME, "log"), os.path.join(HOME, "run")
@@ -301,6 +303,45 @@ def inject(name, sess, got):
     subprocess.run([*tx(sess), "send-keys", "-t", sess, "Enter"], check=False)
 
 
+def start(name, c):
+    """Start an agent's tmux session (its own server, in a systemd scope of its own) unless it is up; True if it is up."""
+    sess = f"agent-{name}"
+    if tmux_alive(sess):
+        return True
+    cmd = c.get("term")
+    if not cmd:
+        return False
+    sid = re.search(r"[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}", " ".join(cmd))
+    if sid:       # (the same conversation open in another terminal: two copies would fight over it)
+        other = subprocess.run(["pgrep", "-f", f"(claude|codex).*{sid.group(0)}"], capture_output=True, text=True).stdout.split()
+        if other:
+            print(f"{name}: its conversation is open elsewhere (pid {', '.join(other)}): close it there, then run this again")
+            return False
+    env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
+    own = ["systemd-run", "--user", "--scope", "--quiet", f"--unit={sess}-{secrets.token_hex(3)}"] if shutil.which("systemd-run") else []
+    subprocess.run([*own, *tx(sess), "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
+    print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
+    if unread(name):        # mail that came while it was not running: typed in once its prompt is up
+        subprocess.Popen([sys.executable, os.path.abspath(__file__), "deliver", name], start_new_session=True,
+                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return True
+
+
+def watched(sess):
+    """Whether a terminal shows the session now."""
+    return bool(subprocess.run([*tx(sess), "list-clients", "-t", sess], capture_output=True, text=True).stdout.strip())
+
+
+def window(sess):
+    """A terminal window of its own on the session."""
+    term = os.environ.get("TERMINAL") or next((t for t in ("alacritty", "kitty", "foot", "gnome-terminal", "xterm") if shutil.which(t)), None)
+    if not term:
+        die(f"no terminal found: attach with  {' '.join(tx(sess))} attach -t {sess}")
+    subprocess.Popen([term, "-e", *tx(sess), "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                     env={k: v for k, v in os.environ.items() if k != "TMUX"})     # (run from inside an agent's window: still a window of its own)
+    print(f"opened a {term} window on {sess}; detach with Ctrl-b d, the agent keeps running")
+
+
 def cmd_term(pos, opt, rest=None):
     if not pos:
         die("term <agent> [--here] [-- CMD ...]")
@@ -311,26 +352,34 @@ def cmd_term(pos, opt, rest=None):
         agents[name] = c
         os.makedirs(HOME, exist_ok=True); json.dump(agents, open(CONF, "w"), indent=1)
     sess = f"agent-{name}"
-    if not tmux_alive(sess):
-        cmd = c.get("term") or die(f"how is {name} started? give it once: agentmsg term {name} -- codex   (or -- claude)")
-        env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
-        own = ["systemd-run", "--user", "--scope", "--quiet", f"--unit={sess}-{secrets.token_hex(3)}"] if shutil.which("systemd-run") else []
-        subprocess.run([*own, *tx(sess), "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
-        print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
-        if unread(name):        # mail that came while it was not running: typed in once its prompt is up
-            subprocess.Popen([sys.executable, os.path.abspath(__file__), "deliver", name], start_new_session=True,
-                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if not c.get("term") and not tmux_alive(sess):
+        die(f"how is {name} started? give it once: agentmsg term {name} -- codex   (or -- claude)")
+    if not start(name, c):
+        sys.exit(1)
     if opt.get("here") and os.environ.get("TMUX"):
         os.execvp("tmux", [*tx(sess), "switch-client", "-t", sess])
     if not opt.get("here") or not sys.stdout.isatty():
-        term = os.environ.get("TERMINAL") or next((t for t in ("alacritty", "kitty", "foot", "gnome-terminal", "xterm") if shutil.which(t)), None)
-        if not term:
-            die(f"no terminal found: attach with  tmux attach -t {sess}")
-        subprocess.Popen([term, "-e", *tx(sess), "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-                         env={k: v for k, v in os.environ.items() if k != "TMUX"})     # (run from inside an agent's window: still a window of its own)
-        print(f"opened a {term} window on {sess}; detach with Ctrl-b d, the agent keeps running")
+        window(sess)
     else:
         os.execvp("tmux", [*tx(sess), "attach", "-t", sess])
+
+
+def cmd_up(pos, opt):
+    """Every agent with a start command: started if down, a window on each nobody is watching (--no-windows: none), and
+    the mail watcher running. Safe to run again at any time: what is up is left alone."""
+    if shutil.which("systemctl"):
+        subprocess.run(["systemctl", "--user", "enable", "--now", "agentmsg.service"], capture_output=True)
+    for name, c in conf().items():
+        if pos and name not in pos:
+            continue
+        if not c.get("term"):
+            print(f"{name}: no start command (agentmsg term {name} -- <command> once)")
+            continue
+        if start(name, c) and not opt.get("no-windows") and not watched(f"agent-{name}"):
+            window(f"agent-{name}")
+            time.sleep(0.5)
+    print()
+    cmd_who([], {})
 
 
 def cmd_deliver(pos, opt):
@@ -387,7 +436,7 @@ def main(argv):
     if argv[1] == "term":
         return cmd_term(pos, opt, rest)
     {"send": cmd_send, "inbox": cmd_inbox, "show": cmd_show, "wait": cmd_wait, "serve": cmd_serve,
-     "hook-claude": cmd_hook_claude, "who": cmd_who, "deliver": cmd_deliver, "open": cmd_open}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
+     "hook-claude": cmd_hook_claude, "who": cmd_who, "deliver": cmd_deliver, "open": cmd_open, "up": cmd_up}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
 
 
 if __name__ == "__main__":

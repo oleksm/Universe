@@ -39,6 +39,16 @@ The message is cheap (about 60 tokens); the wake is not: a turn re-reads the age
 
 An agent is known by `--as`, else `$AGENTMSG_NAME`, else the entry whose `cwd` holds the current directory.
 
+## Launching everyone: `agents-up`
+
+    agents-up                    # every agent with a start command: started if down, a window on each nobody watches
+    agents-up engine blender     # only these
+    agents-up --no-windows       # started, no windows
+
+It is `agentmsg up`. What is up is left alone, so run it whenever: after a reboot, after a window closed, when unsure.
+An agent whose conversation is open in another terminal is skipped with its pid (close it there first). Each agent's
+start command is its `term` in agents.json, set once with `agentmsg term <name> -- <command>`.
+
 ## Watching an agent and letting it answer: `agentmsg term`
 
     agentmsg term blender -- codex --dangerously-bypass-approvals-and-sandbox    # first time: how it starts
