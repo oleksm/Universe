@@ -1425,7 +1425,7 @@ fn s_lowflight(app: &mut App, _name: &str, c: &Ctx) {
         }
     }
     // Stand off from the peak and look toward it. (UNIVERSE_LAT, UNIVERSE_LON: over that
-    // place instead, as the registry gives it, looking north.)
+    // place instead, as the registry gives it, looking north or UNIVERSE_HEADING.)
     let at = std::env::var("UNIVERSE_LAT").ok().and_then(|a| a.parse().ok()).zip(std::env::var("UNIVERSE_LON").ok().and_then(|o| o.parse().ok()));
     let best = match at {
         Some((lat, lon)) => (0.0, universe_sim::world::worlds::direction(universe_sim::world::worlds::LonLat { lat, lon })),
@@ -1443,8 +1443,11 @@ fn s_lowflight(app: &mut App, _name: &str, c: &Ctx) {
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));
     let to_peak = rot * peak - up;
     let fwd = if at.is_some() {
-        let north = rot * DVec3::Y;
-        (north - up * north.dot(up)).normalize()
+        // (UNIVERSE_HEADING: facing that many degrees round from north, clockwise; else north.)
+        let north = (rot * DVec3::Y - up * (rot * DVec3::Y).dot(up)).normalize();
+        let heading = env("UNIVERSE_HEADING").unwrap_or(0.0).to_radians();
+        let east = north.cross(up);
+        (north * heading.cos() + east * heading.sin()).normalize()
     } else {
         (to_peak - up * to_peak.dot(up)).normalize()
     };
