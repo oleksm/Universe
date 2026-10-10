@@ -7,6 +7,9 @@
   their own colours, drawn unlit over the globe from afar). No painted texture: under the lines, flat
   ground, land grey and water near black from the shores (`worlds::lines_colour`, in place of the
   bake's `globe_color.jpg`, from afar and in the near maps).
+- Its five highest peaks and five lowest lows pinned (from the lines' anchors): a stem up from each
+  and a label on a dark box, `PEAK 1  8,566 M` to `LOW 5`, on the side facing the eye, while the
+  globe is big in view.
 - Only the look: Hoar's heights and ground are still its earth_s3 bake (TRE1), so the lines seen from
   orbit are not the ground you land on until TRE3 comes to main. The lines sit just over its highest
   ground and are drawn from afar only, not over the near ground.

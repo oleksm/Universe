@@ -576,7 +576,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                         })
                     });
                     // A world drawn from its vector lines: the lines over it, in their own colours.
-                    if let Some(lines) = app.caches.lines.get(&(app.view.cache, i)) {
+                    if let Some((lines, _)) = app.caches.lines.get(&(app.view.cache, i)) {
                         frame.no_shadow(|frame| frame.model_colored(lines, &Transform { position: center, rotation, scale: b.rail.radius }, 1.0, 0.0));
                     }
                 });
@@ -1809,6 +1809,36 @@ impl Labels {
         self.placed.push((pos, extent));
         frame.text(pos, text, c);
     }
+
+    /// Like `add`, on a dark box (over a busy picture).
+    fn add_boxed(&mut self, frame: &mut Frame, at: DVec3, text: &str, c: Color) {
+        let Some(p) = frame.project(at) else { return };
+        let size = frame.size();
+        if p.x < -50.0 || p.y < 0.0 || p.x > size.x || p.y > size.y {
+            return;
+        }
+        let pos = p + Vec2::new(4.0, -10.0);
+        let extent = text_size(text) + Vec2::new(8.0, 6.0);
+        let overlaps = |&(q, e): &(Vec2, Vec2)| pos.x < q.x + e.x && q.x < pos.x + extent.x && pos.y < q.y + e.y && q.y < pos.y + extent.y;
+        if self.placed.iter().any(overlaps) {
+            return;
+        }
+        self.placed.push((pos, extent));
+        frame.text_boxed(pos, text, c, Color([0.0, 0.0, 0.0, 0.8]));
+    }
+}
+
+/// `n` with its thousands apart: 8,566 and -3,729.
+fn thousands(n: i64) -> String {
+    let digits = n.unsigned_abs().to_string();
+    let mut out = String::new();
+    for (k, ch) in digits.chars().enumerate() {
+        if k > 0 && (digits.len() - k) % 3 == 0 {
+            out.push(',');
+        }
+        out.push(ch);
+    }
+    if n < 0 { format!("-{out}") } else { out }
 }
 
 fn labels(frame: &mut Frame, app: &App) {
@@ -1841,6 +1871,33 @@ fn labels(frame: &mut Frame, app: &App) {
         // Skip when the body fills the view; the label would sit on top of it.
         if wanted && frame.projected_radius(app.view.positions[i], b.rail.radius) < 60.0 {
             labels.add(frame, app.view.positions[i], &b.name.to_uppercase(), LABEL);
+        }
+    }
+
+    // A world drawn from its lines, big in view: its highest peaks and lowest lows pinned, each a
+    // stem up from it and its height, on the side facing the eye.
+    for (&(origin, i), (_, pins)) in &app.caches.lines {
+        let b = &sys.bodies[i];
+        let center = app.view.positions[i];
+        if origin != app.view.cache || frame.projected_radius(center, b.rail.radius) < 60.0 {
+            continue;
+        }
+        let rot = b.rotation(app.now());
+        let lift = 1.0 + (b.terrain.as_ref().map_or(0.0, |t| t.amplitude) * 1.3 + 1_000.0) / b.rail.radius;
+        let mut rank = [0, 0];
+        for pin in pins {
+            let k = &mut rank[pin.peak as usize];
+            *k += 1;
+            let k = *k;
+            let up = rot * pin.dir;
+            let base = center + up * b.rail.radius * lift;
+            if up.dot(cam - base) <= 0.0 {
+                continue;
+            }
+            let c = if pin.peak { Color::hex(0xff6a5a) } else { Color::hex(0x6aa8ff) };
+            let top = base + up * b.rail.radius * 0.08;
+            frame.line(base, top, c);
+            labels.add_boxed(frame, top, &format!("{} {k}  {} M", if pin.peak { "PEAK" } else { "LOW" }, thousands(pin.z.round() as i64)), c);
         }
     }
 

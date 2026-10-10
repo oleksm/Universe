@@ -101,8 +101,9 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
 }
 
 /// A world drawn from its vector lines (see `worlds::lines_draw`): its level lines, shores, rivers,
-/// peaks and lows, on a unit globe just over its highest ground. None: it has no lines.
-pub fn lines(body: &Body) -> Option<WireModel> {
+/// peaks and lows, on a unit globe just over its highest ground, and its highest peaks and lowest
+/// lows to pin. None: it has no lines.
+pub fn lines(body: &Body) -> Option<(WireModel, Vec<universe_sim::world::worlds::Pin>)> {
     let terrain = body.terrain.as_ref()?;
     let lift = 1.0 + (terrain.amplitude * 1.3 + 1_000.0) / body.rail.radius;
     let d = universe_sim::world::worlds::lines_draw(&body.key, lift)?;
@@ -110,7 +111,7 @@ pub fn lines(body: &Body) -> Option<WireModel> {
     m.positions = d.positions.into_iter().map(universe_engine::glam::Vec3::from).collect();
     m.colors = d.colors;
     m.edges = d.edges;
-    Some(m)
+    Some((m, d.pins))
 }
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).

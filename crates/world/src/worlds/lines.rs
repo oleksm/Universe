@@ -38,7 +38,19 @@ pub struct LinesDraw {
     pub positions: Vec<[f32; 3]>,
     pub colors: Vec<[f32; 4]>,
     pub edges: Vec<[u32; 2]>,
+    /// The highest peaks and the lowest lows (`PINS` of each), to pin with their heights.
+    pub pins: Vec<Pin>,
 }
+
+/// A peak or a low to pin: its body direction (unit), its height (m from the sea), which.
+pub struct Pin {
+    pub dir: glam::DVec3,
+    pub z: f32,
+    pub peak: bool,
+}
+
+/// How many of the highest peaks and of the lowest lows are pinned.
+const PINS: usize = 5;
 
 /// The anchor model's colours (sRGB): shores white, land's level lines tan (paler above 2,000 m), the
 /// sea floor's blue, rivers pale blue, dry traces brown, peaks red and lows blue.
@@ -64,7 +76,13 @@ pub fn lines_draw(key: &str, lift: f64) -> Option<LinesDraw> {
         [f(c[0]), f(c[1]), f(c[2]), 1.0]
     };
     let at = |lon: f64, lat: f64| (direction(LonLat { lon, lat }) * lift).as_vec3().to_array();
-    let mut d = LinesDraw { positions: Vec::new(), colors: Vec::new(), edges: Vec::new() };
+    let mut d = LinesDraw { positions: Vec::new(), colors: Vec::new(), edges: Vec::new(), pins: Vec::new() };
+    for peak in [true, false] {
+        let flag = if peak { FLAG_PEAK } else { FLAG_LOW };
+        let mut anchors: Vec<&Line> = lines.iter().filter(|l| l.kind == KIND_ANCHOR && l.flags & flag != 0 && !l.pts.is_empty()).collect();
+        anchors.sort_by(|a, b| if peak { b.z.total_cmp(&a.z) } else { a.z.total_cmp(&b.z) });
+        d.pins.extend(anchors.iter().take(PINS).map(|l| Pin { dir: direction(LonLat { lon: l.pts[0].0, lat: l.pts[0].1 }), z: l.z, peak }));
+    }
     for l in &lines {
         let colour = match l.kind {
             KIND_COAST => SHORE,
