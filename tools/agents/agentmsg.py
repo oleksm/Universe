@@ -281,6 +281,9 @@ def cmd_term(pos, opt, rest=None):
         env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
         subprocess.run(["tmux", "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
         print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
+        if unread(name):        # mail that came while it was not running: typed in once its prompt is up
+            subprocess.Popen([sys.executable, os.path.abspath(__file__), "deliver", name], start_new_session=True,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     if opt.get("here") and os.environ.get("TMUX"):
         os.execvp("tmux", ["tmux", "switch-client", "-t", sess])
     if not opt.get("here") or not sys.stdout.isatty():
@@ -291,6 +294,16 @@ def cmd_term(pos, opt, rest=None):
         print(f"opened a {term} window on {sess}; detach with Ctrl-b d, the agent keeps running")
     else:
         os.execvp("tmux", ["tmux", "attach", "-t", sess])
+
+
+def cmd_deliver(pos, opt):
+    """Type an agent's waiting mail into its terminal, after giving its prompt time to come up (used by term)."""
+    name, sess = pos[0], f"agent-{pos[0]}"
+    time.sleep(float(opt.get("delay", 12)))
+    got = unread(name)
+    if got and tmux_alive(sess):
+        mark_read(name, [f for f, _ in got])
+        inject(name, sess, got)
 
 
 def cmd_who(pos, opt):
@@ -313,7 +326,7 @@ def main(argv):
     if argv[1] == "term":
         return cmd_term(pos, opt, rest)
     {"send": cmd_send, "inbox": cmd_inbox, "show": cmd_show, "wait": cmd_wait, "serve": cmd_serve,
-     "hook-claude": cmd_hook_claude, "who": cmd_who}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
+     "hook-claude": cmd_hook_claude, "who": cmd_who, "deliver": cmd_deliver}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
 
 
 if __name__ == "__main__":
