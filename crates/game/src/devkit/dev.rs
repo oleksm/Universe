@@ -26,13 +26,13 @@ pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
         return Err("surface manifest/hash/size mismatch".into());
     }
     let surface = std::sync::Arc::new(Surface::read(&bytes)?);
-    if !matches!(surface.capabilities, 1 | 3) { return Err("this preview supports terrain and optional water domains only".into()); }
+    if !matches!(surface.capabilities, 1 | 3 | 33 | 35) { return Err("this preview supports canonical terrain, water and category roots only".into()); }
     if !surface.provenance[0].is_empty() && surface.provenance[0] != key { return Err("package body binding differs from UNIVERSE_BODY".into()); }
     let world = World::with_surfaces(seed, std::sync::Arc::new([(key.clone(), surface)].into_iter().collect()));
     let system = world.system(world.home_system);
     let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
     if !body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Err("preview body has no terrain".into()); }
-    log::info!("PGS1 PREVIEW: {} on {}; explicit water where supplied; categories unknown; registry unchanged", folder.display(), key);
+    log::info!("PGS1 PREVIEW: {} on {}; explicit water where supplied; category IDs retained without material rendering; registry unchanged", folder.display(), key);
     Ok(world)
 }
 
@@ -68,7 +68,7 @@ pub fn apply(app: &mut App, name: &str) {
         }
     }
     app.messages.clear();
-    if app.charts.has_surface_sources() { app.say("PGS1 PREVIEW: EXPORTED WATER ONLY; MATERIALS UNKNOWN".into()); }
+    if app.charts.has_surface_sources() { app.say("PGS1 PREVIEW: EXPORTED WATER; NO MATERIAL RENDERING".into()); }
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {

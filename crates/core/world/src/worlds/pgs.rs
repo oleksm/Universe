@@ -24,7 +24,8 @@ pub struct Sample {
     pub face: u32,
     pub height_m: f64,
     pub water: Water,
-    /// This reader has no categorical support. None means unknown.
+    /// Owner-face (rock, pattern) IDs in the header vocabularies. None means unknown;
+    /// Some((0, 0)) means explicitly unassigned, not basalt or missing data.
     pub categories: Option<(u16, u16)>,
 }
 
@@ -38,6 +39,7 @@ struct Face {
     vertices: [usize; 3],
     neighbours: [usize; 3],
     body: u32,
+    categories: (u16, u16),
     edges: [DVec3; 3],
     normal: DVec3,
     plane: f64,
@@ -114,9 +116,9 @@ impl Surface {
         }
         b.zero(2)?;
         let capabilities = b.u32()?;
-        if capabilities & 1 == 0 || capabilities & !3 != 0 {
+        if capabilities & 1 == 0 || capabilities & !35 != 0 {
             return Err(
-                "unsupported PGS1 capabilities (canonical terrain/water roots only)".into(),
+                "unsupported PGS1 capabilities (canonical terrain/water/category roots only)".into(),
             );
         }
         b.zero(12)?; // root depth, reserved bytes, tile i/j
@@ -143,6 +145,16 @@ impl Surface {
                 .all(|b| b.is_ascii_digit() || (b'a'..=b'f').contains(&b))
         {
             return Err("invalid generator parameters or source hash".into());
+        }
+        if capabilities & 32 != 0 {
+            // Labels are opaque IDs qualified by these namespaces, not material enums.
+            for vocabulary in &provenance[5..7] {
+                let valid = vocabulary.rsplit_once('@').is_some_and(|(name, version)| {
+                    !name.is_empty() && !name.chars().any(char::is_whitespace)
+                        && version.parse::<u32>().is_ok_and(|v| v > 0)
+                });
+                if !valid { return Err("categories require named versioned vocabularies".into()); }
+            }
         }
         b.align()?;
         let count = b.u32()? as usize;
@@ -274,7 +286,10 @@ impl Surface {
             let vertices = [b.u32()? as usize, b.u32()? as usize, b.u32()? as usize];
             let neighbours = [b.u32()? as usize, b.u32()? as usize, b.u32()? as usize];
             let body = b.u32()?;
-            b.take(4)?; // labels unknown without the categories capability
+            let categories = (
+                u16::from_le_bytes(b.take(2)?.try_into().unwrap()),
+                u16::from_le_bytes(b.take(2)?.try_into().unwrap()),
+            );
             if vertices.iter().any(|&v| v >= points.len())
                 || neighbours.iter().any(|&n| n >= s.count)
             {
@@ -309,6 +324,7 @@ impl Surface {
                 vertices,
                 neighbours,
                 body,
+                categories,
                 edges: edges.map(DVec3::normalize),
                 normal,
                 plane,
@@ -525,7 +541,7 @@ impl Surface {
             face: face as u32,
             height_m,
             water,
-            categories: None,
+            categories: (self.capabilities & 32 != 0).then_some(self.faces[face].categories),
         })
     }
 }

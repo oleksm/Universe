@@ -1,0 +1,103 @@
+{
+  "format": "planet-graph-surface/1",
+  "cases": [
+    {
+      "name": "area_ties",
+      "queries": 37,
+      "bytes": 1096,
+      "sha256": "cfddde00fa28d934a10531ccdaa0486b2078f3b4a605a1c5e7612359d094f5bc",
+      "version": 1,
+      "capabilities": 33,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 600,
+          "bytes": 240,
+          "count": 6
+        },
+        {
+          "kind": 2,
+          "offset": 840,
+          "bytes": 256,
+          "count": 8
+        }
+      ]
+    },
+    {
+      "name": "irregular_support",
+      "queries": 301,
+      "bytes": 5672,
+      "sha256": "c48441dd6dbe4afaccc251d7e9f2d55f6aa0aedb51c38bceacb87af87d3252ae",
+      "version": 1,
+      "capabilities": 33,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 600,
+          "bytes": 2000,
+          "count": 50
+        },
+        {
+          "kind": 2,
+          "offset": 2600,
+          "bytes": 3072,
+          "count": 96
+        }
+      ]
+    },
+    {
+      "name": "shore_inheritance",
+      "queries": 61,
+      "bytes": 1712,
+      "sha256": "46eb72d10437669486eee738a68c5f8c1292d17eb7069a25fb1e62e52e3b4d41",
+      "version": 1,
+      "capabilities": 35,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 784,
+          "bytes": 400,
+          "count": 10
+        },
+        {
+          "kind": 2,
+          "offset": 1184,
+          "bytes": 512,
+          "count": 16
+        },
+        {
+          "kind": 4,
+          "offset": 1696,
+          "bytes": 16,
+          "count": 1
+        }
+      ]
+    }
+  ],
+  "files": {
+    "area_ties.json": {
+      "bytes": 13489,
+      "sha256": "f0b05372c5495bda1fc03c0993829d1cce73eb588b9b429ace62f811cab480f8"
+    },
+    "area_ties.pgs": {
+      "bytes": 1096,
+      "sha256": "cfddde00fa28d934a10531ccdaa0486b2078f3b4a605a1c5e7612359d094f5bc"
+    },
+    "irregular_support.json": {
+      "bytes": 121402,
+      "sha256": "950fd66415094d4fcfdf21696d3860c65083525194776ff71fc14736daee4639"
+    },
+    "irregular_support.pgs": {
+      "bytes": 5672,
+      "sha256": "c48441dd6dbe4afaccc251d7e9f2d55f6aa0aedb51c38bceacb87af87d3252ae"
+    },
+    "shore_inheritance.json": {
+      "bytes": 22220,
+      "sha256": "41d3b6286abf133583be7bf9b357d7fefffa8d038b6f00584de0035c99f8781d"
+    },
+    "shore_inheritance.pgs": {
+      "bytes": 1712,
+      "sha256": "46eb72d10437669486eee738a68c5f8c1292d17eb7069a25fb1e62e52e3b4d41"
+    }
+  }
+}

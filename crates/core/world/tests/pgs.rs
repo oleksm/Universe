@@ -20,7 +20,11 @@ fn check(bytes: &[u8], json: &str) {
             (actual.height_m - q["height_m"].as_f64().unwrap()).abs() <= 0.001,
             "{q}: {actual:?}"
         );
-        assert_eq!(actual.categories, None);
+        let c = &q["categories"];
+        let expected_categories = if c["state"] == "known" {
+            Some((c["rock"].as_u64().unwrap() as u16, c["pattern"].as_u64().unwrap() as u16))
+        } else { None };
+        assert_eq!(actual.categories, expected_categories, "{q}");
         let w = &q["water"];
         match actual.water {
             Water::Unknown => assert_eq!(w["state"], "unknown"),
@@ -77,7 +81,7 @@ fn malformed_files_and_queries_are_errors() {
         (4, 0),
         (6, 1),
         (8, 0),
-        (8, 33),
+        (8, 5),
         (12, 1),
         (16, 1),
         (32, 8),
@@ -322,5 +326,65 @@ fn independent_water_domain_goldens() {
             assert_eq!(data.len() as u64, manifest["files"][&file]["bytes"].as_u64().unwrap());
         }
         check(bytes, queries);
+    }
+}
+
+#[test]
+fn independent_category_goldens() {
+    let manifest: Value = serde_json::from_str(include_str!("fixtures/pgs1-categories-v1/manifest.json")).unwrap();
+    for (name, bytes, queries) in [
+        ("area_ties", include_bytes!("fixtures/pgs1-categories-v1/area_ties.pgs").as_slice(), include_str!("fixtures/pgs1-categories-v1/area_ties.json")),
+        ("irregular_support", include_bytes!("fixtures/pgs1-categories-v1/irregular_support.pgs").as_slice(), include_str!("fixtures/pgs1-categories-v1/irregular_support.json")),
+        ("shore_inheritance", include_bytes!("fixtures/pgs1-categories-v1/shore_inheritance.pgs").as_slice(), include_str!("fixtures/pgs1-categories-v1/shore_inheritance.json")),
+    ] {
+        for (file, data) in [(format!("{name}.pgs"), bytes), (format!("{name}.json"), queries.as_bytes())] {
+            assert_eq!(sha256(data), manifest["files"][&file]["sha256"]);
+            assert_eq!(data.len() as u64, manifest["files"][&file]["bytes"].as_u64().unwrap());
+        }
+        let surface = Surface::read(bytes).unwrap();
+        assert_eq!(surface.provenance[5], "ground-vocabulary.rock@1");
+        assert_eq!(surface.provenance[6], "ground-vocabulary.pattern@1");
+        check(bytes, queries);
+        // Clearing bit 5 leaves stored labels intact but makes them unknown. It must
+        // change neither the terrain owner/height nor the independent water owner.
+        let mut unknown = bytes.to_vec();
+        unknown[8] &= !32;
+        let unknown = Surface::read(&unknown).unwrap();
+        let qs: Value = serde_json::from_str(queries).unwrap();
+        for q in qs["queries"].as_array().unwrap() {
+            let dir = DVec3::from_array(std::array::from_fn(|i| q["direction"][i].as_f64().unwrap()));
+            let known = surface.query(dir).unwrap();
+            let absent = unknown.query(dir).unwrap();
+            assert!(known.categories.is_some());
+            assert_eq!(absent.categories, None);
+            assert_eq!((known.face, known.height_m, known.water), (absent.face, absent.height_m, absent.water));
+        }
+    }
+}
+
+#[test]
+fn category_zero_is_explicit_none_and_namespaces_are_required() {
+    let bytes = include_bytes!("fixtures/pgs1-categories-v1/area_ties.pgs");
+    let mut zero = bytes.to_vec();
+    let e = entry(bytes, 2);
+    let offset = u64::from_le_bytes(bytes[e + 16..e + 24].try_into().unwrap()) as usize;
+    let count = u64::from_le_bytes(bytes[e + 32..e + 40].try_into().unwrap()) as usize;
+    for face in 0..count { zero[offset + face * 32 + 28..offset + face * 32 + 32].fill(0); }
+    resign(&mut zero, 2);
+    let surface = Surface::read(&zero).unwrap();
+    assert_eq!(surface.query(DVec3::X).unwrap().categories, Some((0, 0)));
+    let mut terrain = universe_world::terrain::Terrain::new(universe_world::terrain::TerrainKind::Terran, 6e6, 0);
+    terrain.from_surface(std::sync::Arc::new(surface));
+    assert_eq!(terrain.category_vocabularies(), Some(("ground-vocabulary.rock@1", "ground-vocabulary.pattern@1")));
+    assert_eq!(terrain.surface_sample(DVec3::X).unwrap().categories, Some((0, 0)));
+    terrain.from_surface(std::sync::Arc::new(Surface::read(ROOT).unwrap()));
+    assert_eq!(terrain.category_vocabularies(), None);
+    for name in [b"ground-vocabulary.rock@1".as_slice(), b"ground-vocabulary.pattern@1".as_slice()] {
+        let at = bytes.windows(name.len()).position(|w| w == name).unwrap();
+        for (off, value) in [(0, b' '), (name.len() - 1, b'0'), (name.len() - 2, b'_')] {
+            let mut bad = bytes.to_vec();
+            bad[at + off] = value;
+            assert!(Surface::read(&bad).unwrap_err().contains("vocabularies"));
+        }
     }
 }

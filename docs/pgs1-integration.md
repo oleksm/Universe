@@ -8,9 +8,10 @@ acceptance, not a registry installation.
 header, provenance JSON/source digest, reserved bytes, section ranges, alignment,
 strides, counts and SHA-256 hashes. Unknown optional sections are checked and
 skipped; unknown required sections and unsupported capabilities are refused.
-Canonical points, faces and optional water bodies are supported. Children,
-compact points, overlays, anchors, categories and the serialized cube index are
-not supported yet.
+Canonical points, faces, optional water bodies and owner-face category IDs are
+supported. Children, compact points, overlays, anchors and the serialized cube
+index are not supported yet. Category IDs remain qualified by the two header
+vocabularies; the reader does not turn them into gameplay materials.
 
 Roots must be connected, closed, outward-facing spherical meshes with reciprocal
 edge neighbours. Wet faces must name an existing body, stay below its level and
@@ -78,8 +79,10 @@ Each contains 20,000 points and 39,996 faces. The measured inputs were:
 The dev build accepts `UNIVERSE_PGS1`, a lab export directory, with an explicit
 `UNIVERSE_BODY` and either the `planet` or `lowflight` scenario. It checks the
 manifest format, surface hash/size, file validity and any existing body binding.
-The preview accepts capability 1 (terrain, unknown water) and capability 3
-(terrain plus explicit water domains). Other capabilities remain rejected.
+The preview accepts capability 1 (terrain, unknown water), 3 (terrain plus water),
+33 (terrain plus categories) and 35 (terrain/water/categories). Other capabilities
+remain rejected. Categories are retained for queries; the current preview draws
+gray terrain and blue known water, without category colours or material textures.
 
 ```sh
 cargo build --release -p universe --bin freefall
@@ -235,3 +238,48 @@ registry generation and the release game build pass. Inspected Vulkan captures
 (480 frames): known water blue, neighboring uncategorized terrain gray, visible
 sampled shore. The daylight lake capture uses zero speed, paused, 9.3065 hours.
 This visual check does not establish shoreline accuracy between mesh samples.
+
+## Category reader agreement, 2026-10-10
+
+Planets task `20261010T172314-planets-97c6`: the reader now accepts bit 5 and returns
+`Some((rock, pattern))` from the selected terrain owner face. Water's boundary
+ownership remains independently evaluated. Without bit 5, stored label bytes are
+ignored and categories remain `None`; ID 0 with bit 5 means explicitly unassigned,
+not unknown and not basalt. Versioned vocabulary identifiers are required when
+categories are present. IDs are opaque values qualified by the header names;
+this reader does not resolve names, validate membership in an external vocabulary,
+reintegrate source Voronoi support or assign materials/gameplay properties.
+`Terrain::category_vocabularies` exposes those names alongside `surface_sample`.
+
+Vendored the three shared category fixtures unchanged, with their manifest.
+All **399 shared queries** pass, including nonzero pattern IDs and edge/vertex
+ownership. Additional regressions cover explicit `(0,0)`, absent capabilities
+with nonzero stored labels, and invalid/missing-version namespace identifiers.
+The prior terrain-only and water fixtures remain passing.
+
+The acceptance CLI now compares category IDs/unknown semantics as well as
+terrain and water. S15 `surface_model_006` passes **185 world queries**, with
+exact face owners, category IDs and water body IDs; maximum height error is
+`1.4097167877480388e-10 m`. SHA-256:
+`444d983b703e6a2c9629c41a75be720ef5c15f16bb4616b9d3989e9b0500f616`.
+The 2,399,408-byte file contains 23,048 points and 46,092 faces, capability 35.
+Independent byte comparison against 005 confirms identical point/water payloads
+and identical vertex/neighbour/body fields on every face. S15 patterns are all
+explicitly unassigned, per its declared source policy.
+
+Both export vocabulary snapshots match the registry YAML byte-for-byte and match
+their export manifest entries:
+
+- `ground-vocabulary.rock@1`: `7d3835cbcfa04d13deceb8038d6a2757e8fcafd51aabbd87e92e6d45fe777c9b`.
+- `ground-vocabulary.pattern@1`: `011b65eb9982c5593614fe30fae26a0e124ec4de7136bfa708fa487f0b4896e9`.
+
+Use the existing explicit `UNIVERSE_PGS1` commands with `surface_model_006`.
+This enables terrain/water preview of the category-bearing package, preserving
+labels in canonical queries; category colour/texturing is not implemented. No
+registry installation, feature/river export or main-branch merge is involved.
+
+Validation passes: full workspace tests, the final 11-test PGS suite including
+namespace propagation through Terrain, non-dev compilation and release build.
+The S15 cap35 Vulkan orbit capture `/tmp/pgs-categories-orbit.png` loads correctly
+and preserves the neutral terrain/known-water presentation. Earlier registry
+generation passed unchanged; this work does not modify registry data.

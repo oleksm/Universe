@@ -1,0 +1,819 @@
+{
+  "format": "planet-graph-surface/1",
+  "surface_sha256": "cfddde00fa28d934a10531ccdaa0486b2078f3b4a605a1c5e7612359d094f5bc",
+  "height_tolerance_m": 0.001,
+  "ownership_tolerance_radians": 1e-12,
+  "queries": [
+    {
+      "kind": "vertex",
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 0.0,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "face": 4,
+      "height_m": 0.0,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 999.9999999999998,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "face": 1,
+      "height_m": -999.9999999999998,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "face": 0,
+      "height_m": 1.5700924586837749e-13,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "face": 1,
+      "height_m": -1.5700924586837749e-13,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        0.5,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 499.9999999999999,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        -0.5,
+        0.0
+      ],
+      "face": 1,
+      "height_m": -499.9999999999999,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        0.0,
+        0.5
+      ],
+      "face": 0,
+      "height_m": 7.850462293418874e-14,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        0.0,
+        -0.5
+      ],
+      "face": 1,
+      "height_m": -7.850462293418874e-14,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        0.5,
+        0.0
+      ],
+      "face": 4,
+      "height_m": 499.9999999999999,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        -0.5,
+        0.0
+      ],
+      "face": 5,
+      "height_m": -499.9999999999999,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        0.0,
+        0.5
+      ],
+      "face": 5,
+      "height_m": -7.850462293418874e-14,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        0.0,
+        -0.5
+      ],
+      "face": 4,
+      "height_m": 7.850462293418874e-14,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "face": 0,
+      "height_m": 499.9999999999998,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        0.5,
+        -0.5
+      ],
+      "face": 3,
+      "height_m": 500.0000000000001,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        -0.5,
+        0.5
+      ],
+      "face": 2,
+      "height_m": -500.0000000000001,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        -0.5,
+        -0.5
+      ],
+      "face": 1,
+      "height_m": -499.9999999999998,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        0.37,
+        0.44
+      ],
+      "face": 0,
+      "height_m": 369.99999999999994,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        -0.37,
+        -0.44
+      ],
+      "face": 1,
+      "height_m": -369.99999999999994,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        -0.44,
+        0.37
+      ],
+      "face": 2,
+      "height_m": -440.00000000000006,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        0.44,
+        -0.37
+      ],
+      "face": 3,
+      "height_m": 440.00000000000006,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        0.37,
+        -0.44
+      ],
+      "face": 4,
+      "height_m": 369.99999999999994,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        -0.37,
+        0.44
+      ],
+      "face": 5,
+      "height_m": -369.99999999999994,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        0.44,
+        0.37
+      ],
+      "face": 6,
+      "height_m": 440.00000000000006,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        -0.44,
+        -0.37
+      ],
+      "face": 7,
+      "height_m": -440.00000000000006,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        -5e-13
+      ],
+      "face": 0,
+      "height_m": 500.0000000001767,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5e-13
+      ],
+      "face": 0,
+      "height_m": 499.99999999982316,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        -2e-12
+      ],
+      "face": 3,
+      "height_m": 499.99999999929304,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        2e-12
+      ],
+      "face": 0,
+      "height_m": 499.99999999929287,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        -5e-11
+      ],
+      "face": 3,
+      "height_m": 499.99999998232227,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5e-11
+      ],
+      "face": 0,
+      "height_m": 499.99999998232227,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 999.9999999999998,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "face": 1,
+      "height_m": -999.9999999999998,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "face": 1,
+      "height_m": -1.5700924586837749e-13,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        1e-10,
+        0.0,
+        -1.0
+      ],
+      "face": 1,
+      "height_m": -6.1237503860676e-14,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 1,
+        "pattern": 1
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        -1e-10,
+        0.0,
+        -1.0
+      ],
+      "face": 4,
+      "height_m": 6.1237503860676e-14,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "known",
+        "rock": 2,
+        "pattern": 2
+      }
+    }
+  ],
+  "integration": {
+    "rule": "spherical-voronoi-great-circle-area/1",
+    "numerical_tie_relative_area": 1e-12,
+    "original_faces": 8,
+    "integrated_faces": 8,
+    "uniform_candidate_faces": 0,
+    "faces_with_nonvertex_support": 0,
+    "faces_differing_from_vertex_vote": 0,
+    "maximum_relative_area_partition_error": 0.0
+  },
+  "source_points": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0
+    ]
+  ],
+  "source_faces": [
+    [
+      0,
+      2,
+      4
+    ],
+    [
+      0,
+      3,
+      5
+    ],
+    [
+      0,
+      4,
+      3
+    ],
+    [
+      0,
+      5,
+      2
+    ],
+    [
+      1,
+      2,
+      5
+    ],
+    [
+      1,
+      3,
+      4
+    ],
+    [
+      1,
+      4,
+      2
+    ],
+    [
+      1,
+      5,
+      3
+    ]
+  ],
+  "sample_rock": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "sample_pattern": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "original_face_categories": [
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      1,
+      1
+    ],
+    [
+      2,
+      2
+    ],
+    [
+      2,
+      2
+    ],
+    [
+      2,
+      2
+    ],
+    [
+      2,
+      2
+    ]
+  ],
+  "parent_faces": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "note": "Synthetic labels and heights exercise the format, not a physical world."
+}

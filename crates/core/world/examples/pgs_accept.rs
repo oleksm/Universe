@@ -51,6 +51,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if difference > 0.001 || q["face"].as_u64() != Some(actual.face as u64) {
             return Err(format!("height/ownership mismatch: {q}: {actual:?}").into());
         }
+        let c = &q["categories"];
+        let categories_ok = match actual.categories {
+            None => c.is_null() || c["state"] == "unknown",
+            Some((rock, pattern)) => c["state"] == "known" && c["rock"] == rock && c["pattern"] == pattern,
+        };
+        if !categories_ok { return Err(format!("category mismatch: {q}: {actual:?}").into()); }
         let expected = &q["water"];
         let water_ok = match actual.water {
             Water::Unknown => expected["state"] == "unknown",
@@ -126,7 +132,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         "{}",
         serde_json::to_string_pretty(&json!({
             "surface_sha256": sha256(&bytes), "bytes": bytes.len(), "points": surface.point_count(), "faces": surface.face_count(),
-            "capabilities": surface.capabilities, "queries_passed": qs.len(), "max_error_m": error,
+            "capabilities": surface.capabilities, "category_vocabularies": &surface.provenance[5..7], "queries_passed": qs.len(), "max_error_m": error,
             "load_ms": load_ms, "coherent_query_us": costs[0], "distributed_query_us": costs[1],
             "preview": args.get(1), "installed": false
         }))?

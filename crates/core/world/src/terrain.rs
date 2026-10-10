@@ -130,6 +130,12 @@ impl Terrain {
     /// Whether the canonical source supplies explicit water domains.
     pub fn canonical_water(&self) -> bool { self.graph.as_ref().is_some_and(|s| s.capabilities & 2 != 0) }
 
+    /// Namespaces for canonical category IDs; absent capability means unknown.
+    pub fn category_vocabularies(&self) -> Option<(&str, &str)> {
+        let s = self.graph.as_ref().filter(|s| s.capabilities & 32 != 0)?;
+        Some((&s.provenance[5], &s.provenance[6]))
+    }
+
     fn graph_surface(&self, dir: DVec3) -> Option<f64> {
         self.surface_sample(dir).map(|s| match s.water {
             crate::worlds::pgs::Water::Wet { level_m, .. } => level_m,
