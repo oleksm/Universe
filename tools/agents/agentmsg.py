@@ -241,9 +241,11 @@ def cmd_hook_claude(pos, opt):
         data = json.load(sys.stdin)
     except Exception:
         data = {}
-    name = me(opt, data.get("cwd"))
-    if not name:
-        return
+    sid = data.get("session_id")
+    owner = next((n for n, c in conf().items() if sid and c.get("session") == sid), None)
+    name = opt.get("as") or os.environ.get("AGENTMSG_NAME") or owner or me(opt, data.get("cwd"))
+    if not name or (not owner and sid and conf().get(name, {}).get("session") not in (None, sid)):
+        return          # (a Claude session of another agent in a shared folder: the folder alone does not make it this one)
     got = unread(name)
     if not got:
         return

@@ -34,7 +34,8 @@ An agent is known by `--as`, else `$AGENTMSG_NAME`, else the entry whose `cwd` h
 Each agent opens in its own terminal window, so starting a second never lands in the first one's window. Claude
 sessions of several agents share one project folder (~/git/universe), where `claude --continue` picks whichever
 session ran last: so a Claude agent's command resumes its own session by id, `sh -c "cd ~/git/universe && exec claude
---resume <id>"` (the id is the session's file name under ~/.claude/projects/; `/rename` titles show which is which).
+--resume <id>"` (the id is the session's file name under ~/.claude/projects/; `/rename` titles show which is which). Put the id in agents.json as `"session": "<id>"` too: the Stop hook
+then knows the session by its id, not its folder, and a session that is not the folder's agent takes no mail.
 
 The agent runs in a tmux session, `agent-<name>`, in its folder, so you watch it and type into it like any session;
 detach with Ctrl-b d and it keeps running. While its session is up, `serve` types each piece of mail into it as one
