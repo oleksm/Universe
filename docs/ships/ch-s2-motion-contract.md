@@ -268,3 +268,78 @@ Compact flight-joint targets, one-sided ratings, actual route-length mass,
 pump supports/outlets and full-assembly/hull clearance remain registry/Blender
 work. This review neither selects those provisional engineering values nor
 changes the production installation gate.
+
+## Proposal-v04 rigid-sleeve consumer check
+
+2026-10-10, Blender task `20261010T143628-blender-663a`. Engine agrees to the
+prototype evaluator below; registry agreement/schema publication remains pending
+on task `20261010T143719-engine-68d2`. This does not implement production equipment
+motion loading or approve installation.
+
+The repeatable Rust diagnostic uses the actual `PbrModel::load_gltf_parts` loader,
+its baked vertices and its part IDs. Run from the engine checkout:
+
+```sh
+cargo run -p universe-engine --example ch_s2_fixture -- \
+  /home/alexm/git/blender/engine-ch-s2/proposal-v04/source/ring-fan-fixture.json \
+  /home/alexm/git/blender/engine-ch-s2/proposal-v04/exports/duct-ring-rest.glb
+```
+
+The fixture is external review input, not installed game content. The example is
+a diagnostic of this provisional format, not a hardened package parser. It uses
+18 explicit moving selectors (pitch, yaw, 16 sleeves), plus static part 0. The
+63 primitives retain their immutable geometry and model ID. Stage-owned hardware
+inherits its stage part; each sleeve has its own part. Selector overlap is rejected.
+
+Evaluator semantics to preserve in the registry contract:
+
+1. Attachment points, tangents and the upstream hinge axis are local to their
+   named parent. Transform them using the evaluated parent root-space frame.
+   Both endpoint tangents point downstream along increasing Hermite parameter;
+   the downstream tangent is not an outward-facing end normal.
+2. Use cubic Hermite interpolation with the supplied `tangent_magnitude` for
+   both endpoint derivatives. Each sleeve origin is `H(t)` at its supplied `t`.
+   Frame Z is the normalized derivative; X follows the upstream hinge axis,
+   and Y is Z cross X. This prototype requires a planar single-hinge arrangement:
+   reject degenerate derivatives/axes and nonperpendicular hinge/tangent pairs,
+   rather than silently selecting a different roll. Orthonormalize numerical
+   roundoff after checking perpendicularity.
+3. Let F be that root-space frame, F0 its evaluated neutral frame, and B the
+   exported sleeve bind. The current exported node frame is `F * inverse(F0) * B`.
+   This neutral calibration preserves the exported mesh's local-axis convention;
+   it avoids an implicit Blender-to-glTF conversion in the consumer. The draw
+   delta is then `current * inverse(B)`, with equipment placement applied once.
+4. Other nodes use their parent's evaluated frame times inverse parent bind
+   times their own bind. Sleeve frames have one procedural pose producer; do not
+   apply stage motion to them a second time. Bind and pose references remain in
+   model-root space. Production validation must reject cyclic dependencies and
+   define evaluation order before allowing attachments to other procedural nodes.
+
+Observed CPU results on v04:
+
+| Check | Result |
+|---|---|
+| Nodes / sleeves / primitives / part groups including static | 66 / 16 / 63 / 19 |
+| All-node reference poses | 9 passed |
+| Additional finite, rigid-frame sweep | 513 poses passed |
+| GLB vs fixture bind maximum component error | 2.385e-7 |
+| Evaluated vs reference pose maximum component error | 3.703e-7 |
+| Maximum placed vertex difference vs reference (metres) | 5.841e-7 |
+
+The vertex comparison includes a rotated/translated equipment placement and
+uses independent GLB local vertices with Blender's reference matrices as the
+expected result. This tests the bind-delta and inherited-part conventions, not
+just the Hermite formula. Acceptance thresholds are 2e-6 for matrix components
+and 3e-6 m for placed vertices, accommodating exported single precision.
+
+Blender reports sampled sleeve overlap/cuff seating success. This diagnostic
+does not independently reproduce that surface QC, issue GPU draws, measure GPU
+cost, or check full-engine/hull collisions. Those gates remain open; the current
+catalogue-sized study is not the compact production design.
+
+Input SHA-256 values were checked against the delivery: fixture
+`da819e1ab60bf60d3dcbf6def872bcad097532a4d2a6cd1f4518dc93179f4a58`, GLB
+`78019c2b3c2713e61fc0f526c6bfd75698e69b4714a67846214a31d3156e603d`.
+A deliberately displaced reference sleeve and a nonplanar hinge-axis mutation
+were each rejected as expected. Registry build and workspace tests passed after
+adding the diagnostic (serde_json is a development dependency only).

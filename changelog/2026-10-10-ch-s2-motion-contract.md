@@ -15,3 +15,6 @@
 - Reviewed proposal-v03 with an independent 513-pose kinematic sweep. Documented
   links export/orientation-validator gaps and a conditional rigid-ring bellows
   prototype, with the Hermite surface retained as review reference.
+- Added a repeatable Rust v04 fixture consumer check using the actual PBR loader.
+  All 66 node poses and baked-part vertex transforms match Blender references;
+  documented neutral-calibrated Hermite sleeve frames and pending runtime gates.
