@@ -23,7 +23,7 @@ slots:
   - { name: gear_2, kind: gear, size: 3, mount: mount.gear-s3 }
   - { name: gear_3, kind: gear, size: 3, mount: mount.gear-s3 }
   - { name: cargo_ramp, kind: access, size: 3, mount: mount.access-s3 }
-  - { name: clamp_fwd, kind: access, size: 2, mount: mount.access-s2 }
+  - { name: clamp_fwd, kind: access, size: 3, mount: mount.access-s3 }
   - { name: radiator_1, kind: thermal, size: 3, mount: mount.thermal-s3 }
   - { name: radiator_2, kind: thermal, size: 2, mount: mount.thermal-s2 }
   - { name: radiator_3, kind: thermal, size: 2, mount: mount.thermal-s2 }
@@ -49,8 +49,8 @@ slots:
   - { name: life, kind: life_support, size: 2, mount: mount.life-support-s2 }
   - { name: avionics, kind: avionics, size: 1, mount: mount.avionics-s1 }
   - { name: cargo, kind: cargo, size: 4, mount: mount.cargo-s4 }
-  - { name: hardpoint_1, kind: hardpoint, size: 2, mount: mount.hardpoint-s2 }
-  - { name: hardpoint_2, kind: hardpoint, size: 2, mount: mount.hardpoint-s2 }
+  - { name: hardpoint_1, kind: hardpoint, size: 3, mount: mount.hardpoint-s3 }
+  - { name: hardpoint_2, kind: hardpoint, size: 3, mount: mount.hardpoint-s3 }
 thrusters:
   - { nozzle: nozzle_lift_0, slot: lift, share: 1 }
   - { nozzle: nozzle_lift_1, slot: lift, share: 1 }

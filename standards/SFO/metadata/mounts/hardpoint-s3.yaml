@@ -1,24 +1,24 @@
 # yaml-language-server: $schema=../../schema/mount.schema.yaml
 # SFO 19. Set round the equipment of this slot and class on the list today, with a quarter to spare.
 identity:
-  key: mount.access-s3
-  name: "Access mount, class 3"
-  slot: access
+  key: mount.hardpoint-s3
+  name: "Hardpoint mount, class 3"
+  slot: hardpoint
   size_class: 3
-  description: "What a class 3 access slot offers, and what fits it."
+  description: "What a class 3 hardpoint slot offers, and what fits it."
 envelope:
-  length: 13.2
-  width: 8.8
-  height: 4.08
+  length: 7.08
+  width: 5.87
+  height: 5.33
 bears:
-  mass: 15000.0
-  hold: 2500000.0
+  mass: 2160.0
+  recoil: 9750.0
 attachment:
-  points: 8
+  points: 4
   pattern: ring
   each:
-    tension: 368000.0
-    compression: 368000.0
-    shear: 184000.0
+    tension: 18300.0
+    compression: 18300.0
+    shear: 9150.0
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

@@ -8,8 +8,8 @@ identity:
   revision: draft
   slot: access
   description: "MC-07 anchor clamp, forward, as the model draws it: a telescoping clamp of four 2.9 m stages, its jaws set 0.75 as wide across the ship (the source scales it so) with four jaws that grips the rock. A product the hull fits, not a part of it."
-size_class: 2
-fits: mount.access-s2
+size_class: 3
+fits: mount.access-s3
 physical:
   mass: 524
   volume: 58.0
@@ -29,4 +29,5 @@ basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it. Four telescoping stages (the source rig, CLAMPS in build_mining_ship.py, NST=4; the record said three); measured stowed from mining_ship.blend (blender source probe, 2026-10-10); mass unchanged until the parts are measured again (review)." }
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
   - { of: [function, size_class], tier: invented, review: true, note: "A four-stage telescoping clamp with four jaws that grips the rock the ship mines: 2 MN chosen, a 200 t ship held at 1 g. The mining rig's anchor reach is this clamp's." }
+  - { of: [size_class], tier: derived, review: true, note: "Stowed 4.127 x 3.791 x 3.705 m: every side over access-s2's 3.3 m height, so class 3 (access-s3, 13.2 x 8.8 x 8.56 m; ships' choice, 2026-10-10). The aft clamp (3.266 m) stays class 2." }
   - { of: [life], rule: rule.life-ship-system }
