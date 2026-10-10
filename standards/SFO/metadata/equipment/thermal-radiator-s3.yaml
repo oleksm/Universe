@@ -5,7 +5,7 @@ identity:
   maker: org.aurel
   revision: draft
   slot: thermal
-  description: "Throws heat into space from a hot surface."
+  description: "A deployable radiator panel, as the S2 (docs/ships/radiator-s2-targets.md): stowed flat against the hull, swung out on its root hinge to stand clear so both faces see space, where it throws off 30 MW at 1,000 K."
 size_class: 3
 fits: mount.thermal-s3
 physical:
@@ -17,9 +17,9 @@ physical:
 built_of:
   parts: thermal-radiator-s3
   list:
-    - { code: RAD3-01, name: "Panel", description: "The face sheets and the fins between.", mass: 1942, length: 19.8, width: 9.91, height: 0.0655, item: stock.ti64-pl-5, quantity: 2230.0, module: module.welding-bay }
-    - { code: RAD3-02, name: "Headers and tubes", description: "The coolant passages.", mass: 1059, length: 16.2, width: 8.1, height: 0.0536, item: stock.ti64-tb-60x1p5, quantity: 1220.0, module: module.machining-centre }
-    - { code: RAD3-03, name: "Hinge and lines", description: "The root hinge and the flexible lines through it.", mass: 530, length: 12.9, width: 6.43, height: 0.0425, item: stock.st4340-bar-120, quantity: 610.0, module: module.machining-centre }
+    - { code: RAD3-01, name: "Panel", description: "The face sheets and the fins between, 24.2 m out from the hinge by 12.1 m along it, 30 mm thick; both faces dark; the coolant tubes run out from the root and back.", mass: 1942, length: 24.2, width: 12.1, height: 0.03, item: stock.ti64-pl-5, quantity: 2230.0, module: module.welding-bay }
+    - { code: RAD3-02, name: "Headers and tubes", description: "A supply and a return header side by side along the root edge (80 mm across), U-tubes from them through the panel and back.", mass: 1059, length: 12.1, width: 0.18, height: 0.08, item: stock.ti64-tb-60x1p5, quantity: 1220.0, module: module.machining-centre }
+    - { code: RAD3-03, name: "Hinge and lines", description: "Low root hinge brackets at the root corners (hinge line along the 12.1 m root edge, 40 mm off the hull, within the panel's 80 mm), the deploy drive, tip latches that hold it stowed, rotary coolant joints on the hinge axis.", mass: 530, length: 12.1, width: 0.3, height: 0.08, item: stock.st4340-bar-120, quantity: 610.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -31,4 +31,5 @@ life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Throws off 30 MW at 1,000 K from 294 m2, both faces to deep space (Stefan-Boltzmann, emissivity 0.9): twice as long as wide. 12 kg/m2 chosen for a titanium panel with its headers." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [built_of.list, identity.description], tier: derived, review: true, note: "As the S2's (2026-10-10): deployable, exported stowed (the record's 24.2 x 12.1 x 0.08 m, inside the mount's 26.6 x 13.3 x 0.088 m envelope), hinge brackets and tip latches the mount's corners, deployed 90 degrees about the root edge (motion later). A 24 m cantilever at 12 kg/m2 is for free fall only: deploying or slewing under thrust loads its root, unchecked (review). Titanium at 1,000 K is open, as for the S2." }
   - { of: [life], rule: rule.life-ship-system }
