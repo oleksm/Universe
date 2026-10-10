@@ -31,6 +31,8 @@ struct Read {
     tris: Vec<[DVec3; 3]>,
     /// A `*Ramp*` mesh's triangles (and what hangs from it): a part that swings down.
     ramp: Vec<[DVec3; 3]>,
+    /// Authored CargoRamp mesh origin and local hinge axis, in model coordinates.
+    ramp_frame: Option<(DVec3, DVec3)>,
     /// The named empties: (name, where, which way).
     nodes: Vec<(String, DVec3, DVec3)>,
     /// Each named mesh's box: (name, least corner, most corner).
@@ -77,7 +79,7 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let c = shape.made_centre;
     let tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
     shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
-    shape.ramp = ramp(&shape, read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
+    shape.ramp = ramp(&shape, read.ramp_frame.map(|(p, a)| (p - c, a)), read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
     shape.pieces = read.pieces.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     shape.islands = read.islands.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     let (lo, hi) = shape.mesh.extent();
@@ -113,19 +115,18 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     Ok(spec)
 }
 
-/// A ramp hinged at the hull's `hatch` (put at the ramp's top, where it meets
-/// the belly), swinging down about the level line across it, its far end
-/// (the side its middle is on) going down. None without both.
-fn ramp(shape: &crate::shape::Shape, tris: Vec<[DVec3; 3]>) -> Option<crate::shape::Ramp> {
-    let hinge = shape.node("hatch")?.at;
+/// Prefer the authored CargoRamp hinge. Older unnamed ramps use the hatch
+/// convention; a boarding marker is not necessarily the mesh hinge.
+fn ramp(shape: &crate::shape::Shape, authored: Option<(DVec3, DVec3)>, tris: Vec<[DVec3; 3]>) -> Option<crate::shape::Ramp> {
+    let hinge = authored.map(|f| f.0).or_else(|| shape.node("hatch").map(|n| n.at))?;
     if tris.is_empty() {
         return None;
     }
     let points: Vec<DVec3> = tris.iter().flatten().copied().collect();
     let middle = points.iter().sum::<DVec3>() / points.len() as f64;
-    let out = DVec3::new(middle.x - hinge.x, 0.0, middle.z - hinge.z).try_normalize()?;
+    let out = authored.map_or_else(|| DVec3::new(middle.x - hinge.x, 0.0, middle.z - hinge.z), |f| f.1.cross(DVec3::Y)).try_normalize()?;
     let length = points.iter().map(|p| (*p - hinge).dot(out)).fold(0.0, f64::max);
-    Some(crate::shape::Ramp { hinge, axis: DVec3::Y.cross(out).normalize(), length, walk: std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)) })
+    Some(crate::shape::Ramp { hinge, axis: authored.map_or_else(|| DVec3::Y.cross(out).normalize(), |f| f.1), length, walk: std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)) })
 }
 
 /// Imported: a hull among the others for good (the same file, the same hull).
@@ -149,6 +150,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         visual: Vec::new(),
         tris: Vec::new(),
         ramp: Vec::new(),
+        ramp_frame: None,
         nodes: Vec::new(),
         pieces: Vec::new(),
         islands: Vec::new(),
@@ -201,6 +203,9 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
     let m = parent * DMat4::from_cols_array_2d(&node.transform().matrix().map(|c| c.map(f64::from)));
     // (Blender numbers repeated names: "nozzle_main.001".)
     let name = node.name().unwrap_or("").split('.').next().unwrap_or("").to_string();
+    if name == "CargoRamp" && node.mesh().is_some() {
+        read.ramp_frame = Some((m.transform_point3(DVec3::ZERO), m.transform_vector3(DVec3::X).normalize()));
+    }
     let ramp = ramp || name.contains("Ramp");
     if let Some(mesh) = node.mesh() {
         let mut points = Vec::new();
@@ -245,6 +250,25 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
 #[cfg(test)]
 mod mount_fixture_tests {
     use super::*;
+
+    #[test]
+    fn cargo_ramp_uses_authored_hinge_not_boarding_marker() {
+        let bytes = include_bytes!("../../../../assets/models/mc07.glb");
+        let spec = hull_from_gltf(bytes, "assets/models/mc07.glb").unwrap();
+        let shape = spec.shape();
+        let r = shape.ramp.as_ref().unwrap();
+        let hinge = r.hinge + shape.made_centre;
+        assert!(hinge.distance(DVec3::new(0.0, -7.15, 2.6)) < 2e-6, "{hinge:?}");
+        assert!(r.axis.distance(DVec3::NEG_X) < 2e-6);
+        let expected_length = read(bytes).unwrap().ramp.iter().flatten().map(|p| hinge.z - p.z).fold(0.0, f64::max);
+        assert!((r.length - expected_length).abs() < 1e-4);
+        assert!(r.length > 9.19 && r.length < 9.22);
+        assert!(r.hinge.distance(shape.node("hatch").unwrap().at) > 3.8);
+        let toe = r.hinge + DVec3::NEG_Z * r.length;
+        let moved = r.hinge + r.turn(0.5176) * (toe - r.hinge);
+        assert!(moved.y < toe.y - 4.0);
+        assert!((r.turn(0.5176) * r.axis - r.axis).length() < 1e-12);
+    }
 
     #[test]
     fn provisional_radiator_frames_keep_axes_and_one_root_turn() {
