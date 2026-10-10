@@ -390,7 +390,7 @@ impl Lod {
             let t = Transform { position: center + rotation * p.origin, rotation: turn, scale: 1.0 };
             frame.ground_shadow(|frame| {
                 frame.with_air(depth, shell, |frame| {
-                    frame.with_globe(map, kind, relief, crate::terrain_view::FILL * 2.5, at, p.origin, |frame| {
+                    frame.with_globe(map, kind, relief, crate::terrain_view::globe_bright(body), at, p.origin, |frame| {
                         frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
                     })
                 })

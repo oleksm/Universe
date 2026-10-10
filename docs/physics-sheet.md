@@ -1,6 +1,6 @@
 # The physics sheet
 
-Generated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.
+Generated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/core/world/tests/dogma.rs`.
 
 # Dogma's laws
 

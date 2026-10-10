@@ -2,20 +2,36 @@
 name = "universe"
 edition.workspace = true
 version.workspace = true
+default-run = "freefall"
 
-# The game: Freefall (by Plurence).
+# The game: Freefall (by Plurence). The library holds it; two binaries ship: the game, and the studio
+# on its own (it is part of the game: the same code, opened alone).
+[lib]
+name = "game"
+path = "src/lib.rs"
+
 [[bin]]
 name = "freefall"
-path = "src/main.rs"
+path = "src/bin/freefall.rs"
+
+[[bin]]
+name = "freefall-studio"
+path = "src/bin/freefall-studio.rs"
+
+# The developer's kit (scenarios, the observer port): on by default; a player build is
+# `--no-default-features`.
+[features]
+default = ["dev"]
+dev = []
 
 [dependencies]
 rayon.workspace = true
-universe-prof = { path = "../prof" }
+universe-prof = { path = "../core/prof" }
 universe-engine = { path = "../engine" }
 glam.workspace = true
 log.workspace = true
 env_logger.workspace = true
-universe-sim = { path = "../sim" }
+universe-sim = { path = "../core/sim" }
 serde.workspace = true
 serde_json.workspace = true
 

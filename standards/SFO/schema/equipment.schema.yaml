@@ -462,6 +462,30 @@ properties:
           shield_pass: { type: number, x-unit: "1", description: "the share of that loss its own shadow shield lets through toward the ship" }
           reaction_offset: { type: number, x-unit: "m", description: "m from the mount's face, aft, to where the loss originates; the hull's share of the sphere is reckoned from there" }
           min_density: { type: number, x-unit: "kg/m3", description: "kg/m3, the thinnest air a ducted fan is rated for; its thrust at full power falls with the cube root of the density (at 0.3 kg/m3, 63% of its thrust at 1.2). A fan burns nothing: `burns` is left out, and its power is `needs.power` at full thrust." }
+          chamber:
+            description: "A rocket's chamber and nozzle as a design: what a modeller and a structural or thermal check need. Its figures follow from the jet's (thrust, exhaust) and these: throat area = thrust / (thrust coefficient x pressure)."
+            type: object
+            additionalProperties: false
+            properties:
+              feed: { enum: [expander, gas_generator, staged_combustion, pressure_fed, electric_pump], description: "How the propellants are pumped: expander, the coolant's heat from the chamber wall drives the turbine (no gas generator, no hot turbine)" }
+              pressure: { type: number, x-unit: "Pa", description: "Pa, the chamber's" }
+              mixture_ratio: { type: number, x-unit: "1", description: "oxidiser to fuel, by mass" }
+              thrust_coefficient: { type: number, x-unit: "1", description: "in vacuum at its expansion ratio" }
+              throat_diameter: { type: number, x-unit: "m" }
+              exit_diameter: { type: number, x-unit: "m" }
+              expansion_ratio: { type: number, x-unit: "1", description: "exit area over throat area" }
+              chamber_diameter: { type: number, x-unit: "m" }
+              chamber_length: { type: number, x-unit: "m", description: "m, injector face to throat" }
+              nozzle_length: { type: number, x-unit: "m", description: "m, throat to exit (a bell's)" }
+              cooling: { enum: [regenerative, radiative, ablative, film], description: "regenerative: the fuel runs through the wall before it burns" }
+              wall: { type: string, x-ref: [material], description: "The wall's material, by its key." }
+              construction: { enum: [tubes, channels, solid], description: "tubes: the wall is coolant tubes brazed side by side, each tube's wall the hot wall; channels: milled in a liner and closed by a jacket; solid: a plain shell (radiative or ablative only)" }
+              tubes: { type: integer, description: "how many coolant tubes make the wall" }
+              tube_wall: { type: number, x-unit: "m", description: "m, the tubes' wall" }
+              hot_wall_temperature: { type: number, x-unit: "K", description: "K, the gas side of the wall at full thrust, by design" }
+              coolant_in: { type: number, x-unit: "K", description: "K, the coolant entering the wall (at the exit manifold for a tube nozzle fed from its end)" }
+              coolant_out: { type: number, x-unit: "K", description: "K, the coolant leaving the wall (to the turbine in an expander)" }
+              exit_manifold: { type: number, x-unit: "m", description: "m, the section of the torus at the nozzle's exit that feeds the tubes: the rim a modeller draws" }
       - description: "A swivel that turns an engine unit through a large angle (vectored thrust): aft in flight, down to land. Far heavier than a gimbal; that is the trade. Not in the game yet."
         type: object
         x-in-game: "not made"
@@ -549,6 +573,7 @@ properties:
         properties:
           kind: { const: camera }
           field_of_view: { type: number, x-unit: "rad", description: "rad across its picture" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   life: { type: number, x-unit: "s", description: "s in service before it is worn out and replaced; what it is made of comes back as scrap. Everything made has a life (the user's rule): this is what makes demand steady." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

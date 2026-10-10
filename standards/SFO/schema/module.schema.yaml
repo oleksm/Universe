@@ -102,6 +102,7 @@ properties:
     additionalProperties: false
     properties:
       power: { type: number, x-unit: "W", description: "W" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   life: { type: number, x-unit: "s", description: "s in service before it is worn out and replaced; what it is made of comes back as scrap. Everything made has a life (the user's rule): this is what makes demand steady." }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

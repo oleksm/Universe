@@ -185,7 +185,7 @@ nt.links.new(te.outputs["Color"], bsdf.inputs["Emission Color"])
 bsdf.inputs["Emission Strength"].default_value = 4.0
 hull.data.materials.append(mat)
 
-# --- The hull's conventions (see crates/world/src/import.rs).
+# --- The hull's conventions (see crates/core/world/src/import.rs).
 def collider(name, size, loc):
     bpy.ops.mesh.primitive_cube_add(size=1, location=loc)
     o = bpy.context.active_object

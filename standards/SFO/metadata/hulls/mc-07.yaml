@@ -149,8 +149,8 @@ revision:
   ask: docs/registry-ssot-request.md
 life: 1262304000
 basis:
-  - { of: [slots, thrusters], tier: sourced, source: "the game: the MC-07 as it imports its model (crates/world/src/import.rs)", note: "Its slots are the standard set for a class 3 hull with two hardpoints; its nozzles are the model's, each at full share." }
-  - { of: [flight.radius, flight.drag_area], tier: derived, source: "the game: crates/world/src/import.rs", note: "Worked out by the engine from the model's size: 0.3 of half its longest side and 6 m; 0.6 of its width by its height. Rough rules, the engine's." }
+  - { of: [slots, thrusters], tier: sourced, source: "the game: the MC-07 as it imports its model (crates/core/world/src/import.rs)", note: "Its slots are the standard set for a class 3 hull with two hardpoints; its nozzles are the model's, each at full share." }
+  - { of: [flight.radius, flight.drag_area], tier: derived, source: "the game: crates/core/world/src/import.rs", note: "Worked out by the engine from the model's size: 0.3 of half its longest side and 6 m; 0.6 of its width by its height. Rough rules, the engine's." }
   - { of: [fit], tier: sourced, source: "the game: the fit it gives the MC-07 as imported", note: "The cheapest module for each of its slots, less the cargo racks: its hold is its ore bay. Fixed for now." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: sourced, source: "the game: the MC-07 model as imported", note: "Its collision shape's extent and volume." }
   - { of: [capacity.hold_volume], tier: invented, review: true, note: "A guess, to be reviewed: the ore bay under its two top doors. The opening is the doors' (9.95 by 8.4 m, measured from the model); its depth of 8 m is chosen, leaving the cargo deck below. The model's inside has not been measured." }

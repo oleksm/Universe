@@ -1,7 +1,7 @@
 # The galaxy and the charted region
 
-*A world article: where the stars are and why. In code: `crates/world/src/galaxy.rs` (the
-region), `crates/world/src/network.rs` (home and the first gates). Kept current as it changes.*
+*A world article: where the stars are and why. In code: `crates/core/world/src/galaxy.rs` (the
+region), `crates/core/world/src/network.rs` (home and the first gates). Kept current as it changes.*
 
 ## In one breath
 

@@ -26,6 +26,7 @@ properties:
       hold: { type: number, x-unit: "kg", description: "kg, the most cargo it is rated to carry" }
       fuel: { type: number, x-unit: "kg", description: "kg of fuel its tanks hold, as fitted" }
   model: { type: string, description: "Its model: a file of the game's (assets/models/<name>.glb). Its nozzles, mounts, gear and hatch are named nodes in it." }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   shape: { type: string, description: "For a hull with no model file: its shape, a key in the game's shapes.ron." }
   slots:
     description: "Its slots: what can be fitted to it, and how big."

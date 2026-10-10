@@ -70,6 +70,7 @@ fn store(g: &Graphics) {
     }
 }
 
+#[cfg(feature = "dev")]
 /// One setting by name (as `UNIVERSE_GRAPHICS` has them) set; false if there's none of that name.
 pub fn set(g: &mut Graphics, name: &str, on: bool) -> bool {
     match flag(g, name) {

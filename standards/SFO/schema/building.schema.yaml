@@ -53,6 +53,7 @@ properties:
       properties:
         item: { type: string, x-ref: [good, stock, material], description: "What goes into it, by its key." }
         quantity: { type: number, x-unit: "kg", description: "kg of it in the whole building" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   life: { type: number, x-unit: "s", description: "s it is built to stand before it must be rebuilt" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"

@@ -46,6 +46,7 @@ properties:
     properties:
       station: { type: string, x-ref: [module], description: "The industrial module (SFO 10) that powers it. How many it takes to hold its tube is worked out." }
   making: { $ref: "../../common.schema.yaml#/definitions/making" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: review, owner: registry, on_conflict: propose, because: "By Dogma's tube laws, which are invented.", ask: docs/registry-ssot-request.md }

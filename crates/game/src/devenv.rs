@@ -11,6 +11,7 @@ pub fn flag(name: &str) -> bool {
     std::env::var_os(name).is_some()
 }
 
+#[cfg(feature = "dev")]
 /// A comma-separated list (empty: unset; what doesn't parse is skipped).
 pub fn list<T: std::str::FromStr>(name: &str) -> Vec<T> {
     std::env::var(name).ok().map(|v| v.split(',').filter_map(|n| n.trim().parse().ok()).collect()).unwrap_or_default()

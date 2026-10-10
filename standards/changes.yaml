@@ -90,7 +90,7 @@
 - { record: body.treistun.treistun-c-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "0eaffd000e8204b5" }
 - { record: body.treistun.treistun-d, at: "2026-10-06T19:47:40Z", status: "", summary: "changed: bake, surface", sha: "4001049a009dd488" }
 - { record: body.treistun.treistun-d-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "ec03710d2e3a78ae" }
-- { record: body.treistun.treistun-e, at: "2026-10-06T19:51:35Z", status: "", summary: "changed: identity", sha: "5cde2189940446f2" }
+- { record: body.treistun.treistun-e, at: "2026-10-10T01:12:29Z", status: "", summary: "changed: ground", sha: "5312f1d9bfcabd38" }
 - { record: body.treistun.treistun-f, at: "2026-10-06T20:01:57Z", status: "", summary: "changed: provenance, survey, bake, surface", sha: "00883e89e8764acc" }
 - { record: body.treistun.treistun-g, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "447e29d178391820" }
 - { record: body.treistun.treistun-g-i, at: "2026-10-06T19:09:59Z", status: "", summary: "changed: identity", sha: "afe538e160eeb704" }
@@ -381,7 +381,7 @@
 - { record: equipment.engine.cg.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "17c9971f1fb0daa9" }
 - { record: equipment.engine.cg.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "69cf10f08d584cb2" }
 - { record: equipment.engine.ch.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1ecad538381fe42d" }
-- { record: equipment.engine.ch.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b344b3c00117e702" }
+- { record: equipment.engine.ch.s2, at: "2026-10-10T15:46:42Z", status: draft, summary: "changed: built_of, function, basis", sha: "16e4b0a75017d720" }
 - { record: equipment.engine.ch.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b1c91e52b5c1918a" }
 - { record: equipment.engine.ch.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "780c4a17383ef89d" }
 - { record: equipment.engine.fan.s1, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: function", sha: "4ca1df2eb8ce0584" }
@@ -414,9 +414,9 @@
 - { record: equipment.handling.conveyor.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "2681eea7a8d7463b" }
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c543e988b3b31052" }
 - { record: equipment.handling.transfer.arm, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "635247105c3cc019" }
-- { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "a95fdfeef2ce9273" }
+- { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "96bda6031ca36f8d" }
 - { record: equipment.hardpoint.mining-laser.mc07, at: "2026-10-07T03:42:03Z", status: draft, summary: "first tracked", sha: "165b361e84afafc4" }
-- { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "e92adcf95ff625bf" }
+- { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "6a1dbe5174efe2e8" }
 - { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54beaa20b9d5f1b9" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "43ab02cce06b3cb7" }
 - { record: equipment.hyperdrive.halcyon.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "692f328dbc32d8aa" }
@@ -446,7 +446,7 @@
 - { record: equipment.power.switchgear.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "16096ae9e5aa4e91" }
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "66129b7e96bb95d6" }
 - { record: equipment.sensors.camera.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "af5f5d52ee39041c" }
-- { record: equipment.sensors.radar.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "66c093499ed93af4" }
+- { record: equipment.sensors.radar.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "db52b4c446a87c57" }
 - { record: equipment.tank.air.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "765e3214f25f6ed9" }
 - { record: equipment.tank.deuterium.s0, at: "2026-10-07T03:58:19Z", status: review, summary: "changed: built_of", sha: "efef76bd7d090bb9" }
 - { record: equipment.tank.deuterium.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "e077c6ae229aacd0" }
@@ -494,7 +494,7 @@
 - { record: equipment.transponder.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1466a112a485ec6a" }
 - { record: equipment.utility.compressor.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6223ecae75b2e757" }
 - { record: equipment.utility.fire.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "77abb2c083f7d525" }
-- { record: equipment.utility.mining-rig.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "0b1eb3cfa3febee2" }
+- { record: equipment.utility.mining-rig.s2, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "bf2e015fea9de367" }
 - { record: equipment.utility.pumps.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "3ff204b62385ca29" }
 - { record: equipment.utility.reaction-wheels.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "f776b4d8052ff51f" }
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "8c71ab68a02f8a0e" }
@@ -780,7 +780,7 @@
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
-- { record: hull.mc-07, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "0634085bd23b7cab" }
+- { record: hull.mc-07, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "fec81bb9440947fa" }
 - { record: hull.prospector, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "b6d587bb611c4b96" }
 - { record: hull.sprint, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "2d770d0652d7597c" }
 - { record: law.air-heat-capacity, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "76b6ebdfb0ab99b4" }
@@ -1430,13 +1430,13 @@
 - { record: rig.biraidim.shikra-hold, at: "2026-10-06T17:56:25Z", status: "", summary: "changed: buildings, census", sha: "69403224b842722e" }
 - { record: rig.treistun.hadley-orbital-works, at: "2026-10-06T01:10:21Z", status: "", summary: "changed: about", sha: "af416db507c212ae" }
 - { record: rock-class.basaltic, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "c01d4654b7759d41" }
-- { record: rock-class.carbonaceous, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "56a086e366bec47d" }
+- { record: rock-class.carbonaceous, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "d9c7db6cb93f1990" }
 - { record: rock-class.enstatite, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "829ba2f8cecdc5e4" }
-- { record: rock-class.icy, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "8c0cc07eed7fdfbc" }
-- { record: rock-class.metallic, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "2e8a72eea9faf614" }
+- { record: rock-class.icy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "4edadc22444ec3bd" }
+- { record: rock-class.metallic, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "e377dbaf112434d1" }
 - { record: rock-class.olivine, at: "2026-10-05T22:02:37Z", status: "", summary: "changed: found, basis", sha: "29d9892577d73ee5" }
 - { record: rock-class.primitive, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "6244e99a969e0517" }
-- { record: rock-class.stony, at: "2026-10-05T20:20:57Z", status: "", summary: "changed: composition, basis", sha: "515719ecac4b5bcd" }
+- { record: rock-class.stony, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "ebd69b3a77c57bab" }
 - { record: rock-class.stony-iron, at: "2026-10-05T20:21:43Z", status: "", summary: "changed: composition, basis", sha: "8cfb2c2f3a8f1e89" }
 - { record: rock-unit.andesite, at: "2026-10-05T20:16:37Z", status: draft, summary: "changed: sim, yields, also, basis", sha: "3a1512c1f316b6d9" }
 - { record: rock-unit.anorthosite, at: "2026-10-06T15:35:52Z", status: draft, summary: "first tracked", sha: "b41c6fb8a44ff525" }
@@ -1477,11 +1477,11 @@
 - { record: rule.mounts-margin, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "5bc27d346d64f78a" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
-- { record: seeding.asteroids, at: "2026-10-07T05:22:04Z", status: "", summary: "changed: basis", sha: "e0ebc8653b742b4a" }
+- { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
 - { record: seeding.conditions, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "96e581fa4cb02009" }
-- { record: seeding.galaxy, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "20a73d10ecbf84f6" }
+- { record: seeding.galaxy, at: "2026-10-10T16:13:03Z", status: "", summary: "changed", sha: "c3aeb429e01bf69f" }
 - { record: seeding.markets, at: "2026-10-05T19:03:11Z", status: "", summary: "first tracked", sha: "6620dbdc5bb4c4c2" }
-- { record: seeding.small-bodies, at: "2026-10-05T19:05:30Z", status: "", summary: "first tracked", sha: "730290894a0b11f1" }
+- { record: seeding.small-bodies, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "086a62ed9080f4f4" }
 - { record: seeding.traffic, at: "2026-10-06T13:52:23Z", status: "", summary: "first tracked", sha: "eec1eb8222b554bc" }
 - { record: settlement.treistun.ashfall-camp, at: "2026-10-06T19:01:21Z", status: "", summary: "changed", sha: "15a39640385c2f2c" }
 - { record: settlement.treistun.gate-to-biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "577a6808373c3163" }
@@ -1508,7 +1508,7 @@
 - { record: standard.sfo.1, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "7b0c226f205b56ac" }
 - { record: standard.sfo.10, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "1f4b586c49cef4ea" }
 - { record: standard.sfo.11, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "91aaefa222c3a756" }
-- { record: standard.sfo.12, at: "2026-10-07T04:00:26Z", status: "", summary: "changed: details, status", sha: "14097d0ab63f2bb5" }
+- { record: standard.sfo.12, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: details", sha: "299473dadfcd56e0" }
 - { record: standard.sfo.13, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "030bf5b9dd6bbc58" }
 - { record: standard.sfo.14, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2727596e61be754" }
 - { record: standard.sfo.15, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "018031e19774c9e8" }

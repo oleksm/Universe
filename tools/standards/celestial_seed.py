@@ -34,7 +34,7 @@ classes = {f[:-5]: yaml.safe_load(open(os.path.join(CEL, "rock-classes", f))) fo
 slug = lambda name: re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-")
 r3 = lambda v, n=4: float(f"{v:.{n}g}")
 
-# (Names: the game's own syllables, crates/world/src/names.rs.)
+# (Names: the game's own syllables, crates/core/world/src/names.rs.)
 ONSETS = ["", "", "", "b", "br", "c", "d", "dr", "f", "g", "h", "k", "kr", "l", "m", "n", "p", "r", "s", "sh", "st", "t", "th", "tr", "v", "w", "y", "z"]
 VOWELS = ["a", "a", "e", "e", "i", "i", "o", "o", "u", "ai", "au", "ei"]
 CODAS = ["", "", "", "", "", "l", "m", "n", "n", "r", "r", "s", "th", "k", "nd", "rn"]

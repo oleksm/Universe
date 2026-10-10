@@ -46,7 +46,7 @@ another. It stays as a second, small pass with no knowledge of any kind.
 
 ## What it needs from the engine's side
 
-- The type generator (`crates/registry/build.rs`) must learn `allOf`.
+- The type generator (`crates/core/registry/build.rs`) must learn `allOf`.
 - A `required` figure becomes a plain field in the generated type, so tightening a kind the engine
   reads lands with the engine's code in one merge.
 

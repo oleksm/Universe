@@ -1,0 +1,246 @@
+{
+ "world": "TRE3",
+ "units": [
+  {
+   "unit": "morb",
+   "name": "ocean-floor basalt",
+   "land_km2": 197726493,
+   "pct_of_land": 56.64,
+   "yields": []
+  },
+  {
+   "unit": "arc_volcanic",
+   "name": "andesite volcanics",
+   "land_km2": 60417137,
+   "pct_of_land": 17.31,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "road stone, lightweight aggregate",
+     "measure": "strength MPa",
+     "range": [
+      80,
+      200
+     ]
+    },
+    {
+     "material": "pozzolan",
+     "use": "cement additive",
+     "measure": "reactive SiO2 %",
+     "range": [
+      25,
+      45
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "carbonate",
+   "name": "limestone and dolomite",
+   "land_km2": 46288351,
+   "pct_of_land": 13.26,
+   "yields": [
+    {
+     "material": "limestone",
+     "use": "cement and lime",
+     "measure": "CaCO3 %",
+     "range": [
+      75,
+      98
+     ]
+    },
+    {
+     "material": "dolomite",
+     "use": "refractory, flux, magnesium",
+     "measure": "MgCO3 %",
+     "range": [
+      20,
+      45
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "clastic",
+   "name": "sandstone and shale",
+   "land_km2": 41136700,
+   "pct_of_land": 11.78,
+   "yields": [
+    {
+     "material": "quartz sand",
+     "use": "glass, foundry, silicon",
+     "measure": "SiO2 %",
+     "range": [
+      85,
+      99.5
+     ]
+    },
+    {
+     "material": "clay",
+     "use": "brick, ceramics, cement blend",
+     "measure": "Al2O3 %",
+     "range": [
+      15,
+      35
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "flood_basalt",
+   "name": "flood basalt",
+   "land_km2": 2983877,
+   "pct_of_land": 0.85,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      150,
+      300
+     ]
+    },
+    {
+     "material": "basalt fibre stock",
+     "use": "mineral fibre",
+     "measure": "SiO2 %",
+     "range": [
+      45,
+      52
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "schist",
+   "name": "schist and gneiss",
+   "land_km2": 280535,
+   "pct_of_land": 0.08,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "fill and road base",
+     "measure": "strength MPa",
+     "range": [
+      60,
+      150
+     ]
+    },
+    {
+     "material": "slate",
+     "use": "roofing and flooring",
+     "measure": "block m",
+     "range": [
+      0.5,
+      2
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "arc_plutonic",
+   "name": "granodiorite batholith",
+   "land_km2": 127516,
+   "pct_of_land": 0.04,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      130,
+      220
+     ]
+    },
+    {
+     "material": "dimension stone",
+     "use": "building stone",
+     "measure": "block m",
+     "range": [
+      1,
+      4
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "basement",
+   "name": "gneiss basement",
+   "land_km2": 51006,
+   "pct_of_land": 0.01,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      120,
+      220
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "rift",
+   "name": "rift basalt and red beds",
+   "land_km2": 51006,
+   "pct_of_land": 0.01,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "fill",
+     "measure": "strength MPa",
+     "range": [
+      50,
+      150
+     ]
+    },
+    {
+     "material": "clay",
+     "use": "brick",
+     "measure": "Al2O3 %",
+     "range": [
+      12,
+      25
+     ]
+    }
+   ]
+  },
+  {
+   "unit": "granite",
+   "name": "S-type granite",
+   "land_km2": 25503,
+   "pct_of_land": 0.01,
+   "yields": [
+    {
+     "material": "aggregate",
+     "use": "concrete and road stone",
+     "measure": "strength MPa",
+     "range": [
+      150,
+      250
+     ]
+    },
+    {
+     "material": "dimension stone",
+     "use": "building stone",
+     "measure": "block m",
+     "range": [
+      1,
+      4
+     ]
+    },
+    {
+     "material": "feldspar",
+     "use": "glass and ceramics",
+     "measure": "K2O+Na2O %",
+     "range": [
+      8,
+      14
+     ]
+    }
+   ]
+  }
+ ]
+}

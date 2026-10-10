@@ -41,12 +41,12 @@ way to see what joins up and what doesn't.
 
 ## What the game loads
 
-One way, from `standards/` and nothing else: `crates/registry/build.rs` generates a Rust type from
+One way, from `standards/` and nothing else: `crates/core/registry/build.rs` generates a Rust type from
 every schema (`standards/**/schema/*.yaml`, `standards/*.schema.yaml`, with `allOf` shapes
 flattened), and `universe_registry::Registry::read` reads every record into them at the world
-crate's build (`crates/world/build.rs`); a record that does not fit fails the build. Equipment,
+crate's build (`crates/core/world/build.rs`); a record that does not fit fails the build. Equipment,
 hulls, parts (derived from their equipment's `built_of.list`), stock, goods, materials, needs,
-clocks, marks, settlements, bodies: all come this way, by key. `crates/physics/build.rs` generates
+clocks, marks, settlements, bodies: all come this way, by key. `crates/core/physics/build.rs` generates
 the Dogma constants (`laws.rs`) from `standards/Dogma`. The seed is `seeding.galaxy`, required.
 
 Beside the records the game keeps only its own hand-kept files in `content/base`: `aliases.ron`
@@ -111,7 +111,7 @@ Say what the game needs to read and in what shape. The usual path:
 1. A schema property (`standards/<root>/schema/*.schema.yaml`), with its unit in the description.
 2. The records.
 3. The build writes it into a RON file, in SI.
-4. A struct in the game with `serde::Deserialize`, loaded in `crates/world/src/content.rs`.
+4. A struct in the game with `serde::Deserialize`, loaded in `crates/core/world/src/content.rs`.
 5. If the game's own code also holds the value, a test that holds the two together.
 
 A property that doesn't apply to a record is left out, not written empty.

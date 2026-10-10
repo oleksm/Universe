@@ -28,7 +28,7 @@ transfers, legal status) from declarations and evidence.
 Why: the engine must stay a dumb, trusted, scalable body (to be split across a cluster later),
 and clients untrusted. Anything a client decides that the engine does instead can't be
 clustered, audited or replaced by a remote player. A boundary test keeps engine code from
-reaching into client state (`crates/sim/tests/boundary.rs`).
+reaching into client state (`crates/core/sim/tests/boundary.rs`).
 
 ---
 
