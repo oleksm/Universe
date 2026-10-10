@@ -51,27 +51,37 @@ duct design is set).
 | `freefall-motion/1`: a joint's angle rating on rigid links, checked over the envelope | registry |
 | Pump inlet speed limit (10 m/s here): confirm or replace with a sourced figure | registry, review |
 
-## Joint mass and envelope targets (2026-10-10, for blender proposal-v03)
+## Joint mass and envelope targets (2026-10-10, revised for blender proposal-v03)
 
-The WRN25 catalogue joints (40.6 kg for the four) are industrial PN25 hardware: 25 bar, heavy weld ends. These lines
-see tank pressure. Derived targets for flight joints (review: design pressure 0.6 MPa = twice an assumed 0.3 MPa tank,
-304 stainless at an allowable 140 MPa, invented):
+The catalogue joints (WRN25, 38.2 kg for the four in v03's DN100 + DN50 pairs) are industrial PN25 hardware: 25 bar,
+heavy weld ends. These lines see tank pressure. Targets from v03's routes (`review/duct-study.json`): per line a rigid
+spool of about 0.80 m between the joints (1.05 m of arc centre to centre less the joints), a riser of 0.53 m from the
+fixed port to joint 1 and 0.37 m from joint 2 to the pump inlet (straight lines; elbows added below). Bores: hydrogen
+107.1 mm (6.0 m/s), oxygen 54.5 mm (7.9 m/s), both under the 10 m/s inlet bound.
 
-| Item | DN100 (hydrogen) | DN65 (oxygen) | How |
-|---|---|---|---|
-| bellows wall needed | 0.24 mm | 0.16 mm | pressure x diameter / (2 x allowable); built as two plies of 0.3 mm |
-| bellows | 0.44 kg | 0.29 kg | 60 mm active, 10 mm deep, 6 mm pitch convolutions |
-| end rings and hinge hardware | about 1.1 kg | about 0.7 kg | carry the pressure thrust, 6.1 kN and 2.7 kN, with margin (estimate) |
-| one joint | about 1.5 kg | about 1.0 kg | |
-| rigid duct, 0.3 m, 1 mm wall | 0.85 kg | 0.57 kg | |
-| one line (two joints, duct) | about 3.9 kg | about 2.6 kg | |
+Assumptions (invented, review): design pressure 0.6 MPa (twice an assumed 0.3 MPa tank); 304 stainless at an allowable
+140 MPa; the pressure needs 0.24 mm (DN100) and 0.12 mm (DN50) of wall, so the wall is set by handling and welding:
+1.0 mm and 0.8 mm; elbows add 20% to the pipe; foam insulation 25 mm at 30 kg/m3.
 
-With the two fixed inlet flanges at the mount face (about 0.5 kg each), the feed crossing is **about 8 kg**, taken out
-of CHE2-03's 45 kg (valves, lines and injector), which stays 45 kg. Envelope per joint: the catalogue's width (260 mm
-and 215 mm) is for PN25 plates; take the bore plus 2 x 40 mm for hinge plates (about 195 mm and 150 mm) and an active
-length of 60 mm plus 2 x 15 mm end rings. The joint angle each must take comes from the layout (hinge centres on the
-gimbal axes: each hinge turns with one stage, up to 0.07 rad); rate them at least twice that (0.14 rad, 8 degrees),
-which catalogue DN100 and DN65 joints exceed (14 degrees and up).
+| Item | Hydrogen (DN100, OD 114.3) | Oxygen (DN50, OD 60.3) |
+|---|---|---|
+| pipe, 1.70 m (spool 0.80 + risers 0.90), with elbows | 5.8 kg | 2.4 kg |
+| two flight joints (bellows of two 0.3 mm plies, end rings, hinge plates for 6.1 kN / 1.7 kN pressure thrust) | 3.0 kg | 1.6 kg |
+| fixed port flange and pump inlet flange | 0.8 kg | 0.6 kg |
+| insulation | 0.7 kg | 0.4 kg |
+| **line** | **10.3 kg** | **5.0 kg** |
+
+The crossing is **about 15 kg**, inside CHE2-03's 45 kg (valves, lines and injector), leaving about 30 kg for valves and
+injector; CHE2-03 stays 45 kg until that split is measured. All provisional.
+
+Ratings: each hinge turns with one gimbal stage, at most 0.07 rad either way (v03's sweep: 0.07). The catalogue's 2aN
+is the **total** angular movement: 14 degrees is +/-7 degrees, +/-0.122 rad, 1.75 times the need. That is an industrial
+analogue, not a rating for cryogenic flight joints: a flight joint's rating is its maker's (provisional until sourced).
+(Corrected: this section said "0.14 rad, 8 degrees" as a rating at twice the swing, mixing a total with an each-way
+figure; the need is +/-0.07 rad, a total of 0.14 rad.)
+
+Envelope per joint: v03's joint lengths (0.249 m and 0.230 m, catalogue) stand for now; a flight joint's width is the
+bore plus about 2 x 40 mm of hinge plates (about 195 mm and 140 mm) against the catalogue's 260 mm.
 
 ## Bellows surface (engine's open point)
 
