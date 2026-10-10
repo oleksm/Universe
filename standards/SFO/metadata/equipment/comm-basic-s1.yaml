@@ -10,10 +10,10 @@ size_class: 1
 fits: mount.comm-s1
 physical:
   mass: 90.0
-  volume: 11.7
+  volume: 13.5
   length: 3.0
   width: 3.0
-  height: 1.3
+  height: 1.5
 needs:
   power: 360.0
 built_of:
@@ -21,9 +21,9 @@ built_of:
   list:
     - { code: CMS1-01, name: "Transponder and amplifiers", description: "In a box behind the dish, on the gimbal's moving side.", mass: 18.0, length: 0.5, width: 0.4, height: 0.25, item: good.electronics, quantity: 18.0, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
-    - { code: CMS1-02, name: "Dish", description: "An offset dual-reflector antenna, as the Mars Reconnaissance Orbiter's: a 3.0 m offset paraboloid and a 0.45 m ellipsoidal subreflector near its focus on a strut to one side, the feed below the subreflector; no strut blocks the beam.", mass: 22.5, length: 3.0, width: 3.0, height: 0.95, item: stock.al6061-sh-2-panel, quantity: 22.5, module: module.welding-bay,
+    - { code: CMS1-02, name: "Dish", description: "An offset dual-reflector antenna, as the Mars Reconnaissance Orbiter's: a 3.0 m offset paraboloid and a 0.45 m ellipsoidal subreflector near its focus on a strut to one side, the feed below the subreflector; no strut blocks the beam.", mass: 22.5, length: 3.0, width: 3.0, height: 1.2, item: stock.al6061-sh-2-panel, quantity: 22.5, module: module.welding-bay,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
-    - { code: CMS1-03, name: "Gimbal", description: "Points the dish within a cone 13 degrees about the mount's normal (azimuth all round; elevation 77 to 90 degrees): any lower and the 1.5 m rim, 0.35 m above the plate, crosses the hull's plane; the ship turns for the rest. Its base plate bolts to the hull's mount, the rest is the equipment's.", mass: 40.5, length: 0.6, width: 0.6, height: 0.35, item: good.electric-motors, quantity: 40.5, module: module.assembly-shop,
+    - { code: CMS1-03, name: "Gimbal", description: "Points the dish within a cone 13 degrees about the mount's normal (azimuth all round; elevation 77 to 90 degrees): lower, the 1.5 m rim nears the hull's plane (the modeller's probe of the offset design: the rim clears from 60 degrees up; 77 keeps the electronics clear too); the ship turns for the rest. Its base plate bolts to the hull's mount, the rest is the equipment's.", mass: 40.5, length: 0.6, width: 0.6, height: 0.3, item: good.electric-motors, quantity: 40.5, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
     - { code: CMS1-04, name: "Waveguide", description: "From the amplifiers through the gimbal's rotary joints to the horn.", mass: 9.0, length: 0.4, width: 0.25, height: 0.25, item: stock.cu-wire-2, quantity: 10.3, module: module.machining-centre,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter (transponders 6.4 kg, amplifiers 12.1, antennas 22.6, gimbals 45, waveguide 8.3), brought to this product's weight." }] }
@@ -38,7 +38,7 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
-  - { of: [physical.height, built_of.list], tier: invented, review: true, note: "Geometry for the modeller (2026-10-10): the architecture is the Mars Reconnaissance Orbiter's (JPL DESCANSO article on MRO telecommunications, section 2.1.1, found by blender: a 3 m offset paraboloid, a 0.45 m ellipsoidal subreflector near the focus, a two-axis gimbal). The stack, gimbal 0.35 m and the dish with its subreflector arm within 0.95 m, 1.3 m overall, and the pointing cone (13 degrees: arccos(0.35 / 1.5), the rim kept above the mount plane; a raised or deploying mast would widen it, not made) are chosen, not sourced (the old 0.6 m was the dish alone, with no room for a feed)." }
+  - { of: [physical.height, built_of.list], tier: invented, review: true, note: "Geometry for the modeller (2026-10-10): the architecture is the Mars Reconnaissance Orbiter's (JPL DESCANSO article on MRO telecommunications, section 2.1.1, found by blender: a 3 m offset paraboloid, a 0.45 m ellipsoidal subreflector near the focus, a two-axis gimbal). Blender's offset blockout (comm-basic-s1 blockout-v01/design.yaml): parent paraboloid f 0.625 m cut 1.5 m off axis, a 3 m circular aperture, sag up to 0.703 m, the 0.45 m subreflector near the focus; vertex and pivot 0.30 m above the base: 1.5 m overall (was 1.3, too tight for the subreflector). The pointing cone (elevation 77 to 90 degrees, inside the probe's clear range; a mast would widen it, not made) is chosen, not sourced (the old 0.6 m was the dish alone, with no room for a feed)." }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide." }
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "The Mars Reconnaissance Orbiter's radio: a 3 m dish on its gimbal and the boxes behind it, 94 kg, 360 W. Its size is the dish's, stowed. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
