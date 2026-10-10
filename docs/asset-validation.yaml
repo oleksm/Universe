@@ -16,3 +16,49 @@ validations:
     pending:
       - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: equipment.engine.ch.s2
+    version: 1
+    manifest_sha256: "94f9412069a546bd04774fd59c0206e7b049a6465961f7a9a3cb1395665a4aea"
+    installed: eac376fe
+    game: "main a1ecf04e (the loader, world::assets), run from fso 91f917df"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): package found, manifest matches the record's hash, model.glb matches the manifest, bounds [-0.6975, -2.3, -0.6975] to [0.73, 0.0, 0.73]; 46,276 triangles; motion.json in the package (freefall-motion/1): pass"
+      - "installer checks at install (size, nodes, budget, static, motion): pass"
+    pending:
+      - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "the game reads model.glb only, not motion.json yet (engine)"
+      - "a per-engine gimbal command and live part motion (engine)"
+  - key: equipment.thermal.coolant-loop.s2
+    version: 1
+    manifest_sha256: "f064e7d8fed2eb2ee96db6651a132d383f7e738aedfc7198a764e255bb6432a9"
+    installed: 5bbd152f
+    game: "main a1ecf04e (the loader, world::assets), run from fso 91f917df"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): package found, manifest matches the record's hash, model.glb matches the manifest, bounds [-1.5, 0.0, -0.75] to [1.5, 1.4738, 0.75]; 8,036 triangles: pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+  - key: equipment.thermal.radiator.s2
+    version: 1
+    manifest_sha256: "9677ce89eefd06f7bba19603113ca07f8939575050208dd6e2d732ded09339cb"
+    installed: 91f917df
+    game: "main a1ecf04e (the loader, world::assets), run from fso 91f917df"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): package found, manifest matches the record's hash, model.glb matches the manifest, bounds [0, 0, -3.13] to [12.4975, 0.08, 3.13] (stowed); 4,056 triangles: pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "deployment (a device state and a hinge driver in freefall-motion/1: registry and engine)"
+      - "the panel's material at 1,000 K (registry, open)"
