@@ -18,6 +18,12 @@ path = "src/bin/freefall.rs"
 name = "freefall-studio"
 path = "src/bin/freefall-studio.rs"
 
+# The developer's kit (scenarios, the observer port): on by default; a player build is
+# `--no-default-features`.
+[features]
+default = ["dev"]
+dev = []
+
 [dependencies]
 rayon.workspace = true
 universe-prof = { path = "../core/prof" }

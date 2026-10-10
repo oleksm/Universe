@@ -151,6 +151,7 @@ pub fn input(app: &mut App, ctx: &Context) {
     }
 }
 
+#[cfg(feature = "dev")]
 /// (Dev scenarios: a pulse sent `age` seconds ago, once the view is up.)
 pub fn prospect_for_show(app: &mut App, age: f32) {
     app.mining.show = Some(age);

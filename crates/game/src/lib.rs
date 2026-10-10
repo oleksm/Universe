@@ -1,6 +1,7 @@
 mod palette;
 mod devenv;
-mod dev;
+mod devkit;
+use devkit::{dev, observe};
 mod economy;
 mod zoning;
 mod newspanel;
@@ -16,7 +17,6 @@ mod observer;
 mod keys;
 mod lock;
 mod mining;
-mod observe;
 mod onfoot;
 mod orbitpick;
 mod rig;
