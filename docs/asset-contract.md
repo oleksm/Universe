@@ -113,6 +113,16 @@ each joint's relative rotation decomposed in hinge order (hinge angles against l
 allowances, any other turn refused), roll never undetermined, tie lengths, bellows rims against their skirt, and every
 reference pose's node transforms within 2e-6; then writes it into the package (listed in the manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
 
+## Pre-acceptance check: one command, by the modeller
+
+    python3 tools/standards/precheck_model.py /abs/candidate/delivery.yaml
+
+From `~/git/universe-fso`. It checks the delivery record's `hashes`, runs the installer's dry run with `--source`,
+`--about` and `--motion`, and, with a motion file, the game's own CPU consumer (engine's `ch_s2_fixture` example: the real
+model loader, every reference pose, a 513-pose sweep), then writes `review/registry-precheck.md` beside the record.
+Exit 0 is a pass: no registry review is needed before the owner's acceptance. Exit 1: send the registry a task with the
+report. The first build takes a few minutes; later runs are quick.
+
 ## Game validation
 
 The registry validates installed models in the game. After `--push`, the modeller sends the registry a `task` naming the
