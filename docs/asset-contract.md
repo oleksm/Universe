@@ -25,6 +25,13 @@ edges, so nothing waits on a model to exist.
 Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--summary` (records and models by kind),
 `--key <key>` (one record's brief), `--hulls` (hulls too).
 
+## Static models
+
+The game draws a registry model as it stands: no animation clips, skins or deforming meshes (hoses, bellows). A part
+that will move (a gimbal, a door, a gear leg) is its own rigid mesh under a named node with its pivot at the node's
+origin, so moving it later needs no new model. What the game does with such parts, and what Blender hands over for a
+moving engine: engine's `docs/ships/ch-s2-motion-contract.md` (main 462a7b45).
+
 ## The queue
 
 Kinds that take a model: equipment, industrial modules, buildings, structures, gate rings, and hulls on asking. A record
