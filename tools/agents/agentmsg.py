@@ -275,7 +275,9 @@ def cmd_hook_claude(pos, opt):
 
 def tx(sess):
     """tmux for one agent's session. Each agent has its own tmux server (socket agent-<name>), so one going down takes no
-    other agent with it; a session started before that lives on the default server and is still found there."""
+    other agent with it; a session started before that lives on the default server and is still found there. The server
+    starts in a systemd scope of its own: started from inside a terminal it would belong to that terminal's scope, and
+    closing that window would take every agent down with it (2026-10-10)."""
     for sock in (["-L", sess], []):
         if subprocess.run(["tmux", *sock, "has-session", "-t", sess], capture_output=True).returncode == 0:
             return ["tmux", *sock]
@@ -308,7 +310,8 @@ def cmd_term(pos, opt, rest=None):
     if not tmux_alive(sess):
         cmd = c.get("term") or die(f"how is {name} started? give it once: agentmsg term {name} -- codex   (or -- claude)")
         env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
-        subprocess.run([*tx(sess), "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
+        own = ["systemd-run", "--user", "--scope", "--quiet", f"--unit={sess}-{secrets.token_hex(3)}"] if shutil.which("systemd-run") else []
+        subprocess.run([*own, *tx(sess), "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
         print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
         if unread(name):        # mail that came while it was not running: typed in once its prompt is up
             subprocess.Popen([sys.executable, os.path.abspath(__file__), "deliver", name], start_new_session=True,
