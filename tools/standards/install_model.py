@@ -6,7 +6,9 @@
 
 Options: --source=<file.blend> (the source it was exported from: its path and sha256 go in the manifest), --note=<text>,
 --about=<file.yaml|json> (the modeller's account, required with --push: sections model, work, considerations, and
-optionally stats and evidence; it goes in the manifest as `about`, beside the stats the installer measures itself).
+optionally stats and evidence; it goes in the manifest as `about`, beside the stats the installer measures itself),
+--motion=<file.json> (freefall-motion/1, docs/formats/freefall-motion-1.schema.yaml: how its parts move; checked against
+the model and the record, then written into the package as motion.json).
 
 It reads the model itself (no manifest from the modeller needed): its size (the world bounds of its meshes), its node
 names, its triangles (meshes named COL_* are collision and not counted), and checks them against the record: the three
@@ -22,7 +24,7 @@ import datetime, json, os, re, shutil, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from assets import FORMAT, ROOT, check_model, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
+from assets import FORMAT, MOTION_FORMAT, ROOT, check_model, check_motion, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
 
 
 def die(msg):
@@ -61,6 +63,13 @@ def main(argv):
         bad += more
     elif push:
         bad.append("--push needs --about=<file> (model, work, considerations; stats, evidence): the package says what it is (docs/asset-contract.md)")
+    motion = None
+    if isinstance(opt.get("motion"), str):
+        try:
+            motion = json.load(open(os.path.expanduser(opt["motion"]), encoding="utf-8"))
+            bad += check_motion(key, rec, info, motion)
+        except (OSError, ValueError) as e:
+            bad.append(f"--motion: {e}")
     if bad:
         die("not installed:\n  - " + "\n  - ".join(bad))
     print("  1. checks: size, nodes and budget fit")
@@ -72,7 +81,9 @@ def main(argv):
     def installed(v):     # (the same model with the same account: that version again)
         d = os.path.join(base, f"v{v}")
         try:
-            return sha(os.path.join(d, "model.glb")) == gsha and json.load(open(os.path.join(d, "manifest.json"))).get("about") == about
+            mf = os.path.join(d, "motion.json")
+            return (sha(os.path.join(d, "model.glb")) == gsha and json.load(open(os.path.join(d, "manifest.json"))).get("about") == about
+                    and (json.load(open(mf)) if os.path.exists(mf) else None) == motion)
         except (OSError, ValueError):
             return False
     same = next((v for v in versions if installed(v)), None)
@@ -91,6 +102,8 @@ def main(argv):
     if not same:
         os.makedirs(dest, exist_ok=True)
         shutil.copyfile(glb, os.path.join(dest, "model.glb"))
+        if motion:
+            json.dump(motion, open(os.path.join(dest, "motion.json"), "w"), indent=1)
         src = opt.get("source") if isinstance(opt.get("source"), str) else None
         repo = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(src)), "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip() if src and os.path.exists(src) else None
         manifest = {"format": FORMAT, "key": key, "kind": kind, "version": version, "file": "model.glb",
@@ -98,7 +111,9 @@ def main(argv):
                     "measured": info["stats"], **({"about": about} if about else {}),
                     "source": {"file": src and os.path.abspath(src), "sha256": sha(src) if src and os.path.exists(src) else None, "commit": repo, "exported": os.path.basename(glb)},
                     "date": datetime.date.today().isoformat(), **({"note": opt["note"]} if isinstance(opt.get("note"), str) else {}),
-                    "files": {"model.glb": {"sha256": gsha, "size": os.path.getsize(glb)}}}
+                    **({"motion": {"format": MOTION_FORMAT, "file": "motion.json"}} if motion else {}),
+                    "files": {"model.glb": {"sha256": gsha, "size": os.path.getsize(glb)},
+                              **({"motion.json": {"sha256": sha(os.path.join(dest, "motion.json")), "size": os.path.getsize(os.path.join(dest, "motion.json"))}} if motion else {})}}
         json.dump(manifest, open(os.path.join(dest, "manifest.json"), "w"), indent=1)
     msha = sha(os.path.join(dest, "manifest.json"))
 

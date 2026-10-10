@@ -87,6 +87,7 @@ From `~/git/universe-fso` (branch fso, no unrelated changes staged):
     python3 tools/standards/next_asset.py --key <key> --json          # the brief
     python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml          # dry run
     python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml --push   # install
+    (add --motion=/abs/motion.json for a model whose parts move)
 
 Inputs: the exported `.glb` (metres, static: no animations, skins or morph targets), its `.blend`, and the modeller's
 account (`--about`, YAML or JSON; template `docs/asset-about.example.yaml`): `model` (key, purpose, source revision,
@@ -96,6 +97,16 @@ installer cannot measure: texture memory, draw calls; unknown is `unknown`) and 
 `--push` refuses without `--about`. The account goes into the manifest as `about`, beside `measured` (the installer's
 own count: triangles, vertices, meshes, primitives, materials, textures, images, nodes, animations, skins, morph
 targets, bytes). The same model with the same account again changes nothing; a changed account is a new version.
+
+## Moving parts: `freefall-motion/1`
+
+A model whose parts move carries `motion.json` beside `model.glb`: `--motion=<file.json>` to the installer. Format:
+`docs/formats/freefall-motion-1.schema.yaml` (moving nodes with parents and neutral binds in model-root space; the
+gimbal's pivot, axes, nesting, normalisation and limit; actuators by their two anchors; hoses by end frames and
+tangents, diameter, free length and tolerance, bend radius and its source, neutral centreline, guides). The installer
+checks it against the schema, the model's nodes, rigid binds, parents, the record's gimbal limit, actuator overlap and
+hose end distance over the whole gimbal envelope (16 directions), and writes it into the package (listed in the
+manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
 
 ## Game validation
 

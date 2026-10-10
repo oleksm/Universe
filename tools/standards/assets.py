@@ -105,6 +105,194 @@ def read_about(path):
     return bad, a
 
 
+# ---- freefall-motion/1 (docs/formats/freefall-motion-1.schema.yaml)
+
+MOTION_FORMAT = "freefall-motion/1"
+MOTION_SCHEMA = os.path.join(ROOT, "docs/formats/freefall-motion-1.schema.yaml")
+
+
+def _m4(t):
+    """A column-major 16 into rows."""
+    return [[t[c * 4 + r] for c in range(4)] for r in range(4)]
+
+
+def _apply(m, p):
+    return [m[r][0] * p[0] + m[r][1] * p[1] + m[r][2] * p[2] + m[r][3] for r in range(3)]
+
+
+def _rot(axis, a):
+    n = math.sqrt(sum(x * x for x in axis)); x, y, z = (v / n for v in axis); c, s = math.cos(a), math.sin(a); C = 1 - c
+    return [[c + x * x * C, x * y * C - z * s, x * z * C + y * s, 0], [y * x * C + z * s, c + y * y * C, y * z * C - x * s, 0],
+            [z * x * C - y * s, z * y * C + x * s, c + z * z * C, 0], [0, 0, 0, 1]]
+
+
+def _about(pivot, r):
+    """Rotation r (4x4) about a point."""
+    t = [[1, 0, 0, pivot[0]], [0, 1, 0, pivot[1]], [0, 0, 1, pivot[2]], [0, 0, 0, 1]]
+    ti = [[1, 0, 0, -pivot[0]], [0, 1, 0, -pivot[1]], [0, 0, 1, -pivot[2]], [0, 0, 0, 1]]
+    return _mul(_mul(t, r), ti)
+
+
+def _rigid(t):
+    """What is wrong with a transform as a rigid one (None: rigid)."""
+    if not all(math.isfinite(v) for v in t):
+        return "not finite"
+    m = _m4(t)
+    if any(abs(m[3][k] - (0, 0, 0, 1)[k]) > 1e-6 for k in range(4)):
+        return "bottom row is not 0 0 0 1"
+    for i in range(3):
+        for j in range(3):
+            d = sum(m[k][i] * m[k][j] for k in range(3))
+            if abs(d - (1 if i == j else 0)) > 1e-4:
+                return "rotation not orthonormal (scaled or sheared)"
+    det = (m[0][0] * (m[1][1] * m[2][2] - m[1][2] * m[2][1]) - m[0][1] * (m[1][0] * m[2][2] - m[1][2] * m[2][0])
+           + m[0][2] * (m[1][0] * m[2][1] - m[1][1] * m[2][0]))
+    return None if det > 0 else "mirrored (determinant below 0)"
+
+
+def _shape(root, sc, v, at):
+    """The schema keywords a format file uses (type, const, enum, required, properties, additionalProperties, items,
+    minItems, maxItems, minLength, $ref): what does not fit, as `path: why`. No dependency, so the installer runs anywhere."""
+    if "$ref" in sc:
+        node = root
+        for part in sc["$ref"].lstrip("#/").split("/"):
+            node = node[part]
+        return _shape(root, node, v, at)
+    where = at or "(top)"
+    t = sc.get("type")
+    ok = {"object": isinstance(v, dict), "array": isinstance(v, list), "string": isinstance(v, str),
+          "number": isinstance(v, (int, float)) and not isinstance(v, bool), "integer": isinstance(v, int) and not isinstance(v, bool),
+          "boolean": isinstance(v, bool)}
+    if t and not ok[t]:
+        return [f"{where}: not a {t}"]
+    if "const" in sc and v != sc["const"]:
+        return [f"{where}: must be {sc['const']!r}"]
+    if "enum" in sc and v not in sc["enum"]:
+        return [f"{where}: {v!r} is not one of {sc['enum']}"]
+    out = []
+    if isinstance(v, str) and len(v) < sc.get("minLength", 0):
+        out.append(f"{where}: empty")
+    if isinstance(v, dict):
+        out += [f"{where}: no `{k}`" for k in sc.get("required", []) if k not in v]
+        props = sc.get("properties", {})
+        for k, x in v.items():
+            if k in props:
+                out += _shape(root, props[k], x, f"{at}/{k}" if at else k)
+            elif sc.get("additionalProperties") is False:
+                out.append(f"{where}: unknown `{k}`")
+            elif isinstance(sc.get("additionalProperties"), dict):
+                out += _shape(root, sc["additionalProperties"], x, f"{at}/{k}" if at else k)
+    if isinstance(v, list):
+        if len(v) < sc.get("minItems", 0) or len(v) > sc.get("maxItems", len(v)):
+            out.append(f"{where}: {len(v)} items")
+        if "items" in sc:
+            for i, x in enumerate(v):
+                out += _shape(root, sc["items"], x, f"{at}/{i}")
+    return out
+
+
+def check_motion(key, r, info, mo):
+    """What is wrong with a motion account against its record and model: plain sentences (empty: it fits)."""
+    schema = yaml.safe_load(open(MOTION_SCHEMA, encoding="utf-8"))
+    errs = _shape(schema, schema, mo, "")
+    if errs:
+        return [f"motion: {e}" for e in errs[:12]]
+    bad = []
+    if mo["key"] != key:
+        bad.append(f"motion: key {mo['key']} is not {key}")
+    names = set(info["nodes"])
+    refs = [mo["root"]] + [n["node"] for n in mo["nodes"]] + [n["parent"] for n in mo["nodes"]]
+    g = mo.get("gimbal")
+    if g:
+        refs += [g["pitch_node"], g["yaw_node"]]
+    for a in mo.get("actuators", []):
+        refs += [a["body_node"], a["rod_node"], a["fixed"]["parent"], a["moving"]["parent"]]
+    for h in mo.get("hoses", []):
+        refs += [h["rest_node"]] + [e["parent"] for e in h["ends"]] + [x["parent"] for x in h.get("guides", [])]
+    bad += [f"motion: no node {n!r} in the model" for n in sorted(set(refs) - names)]
+    moving = [n["node"] for n in mo["nodes"]]
+    frames = set(moving) | {mo["root"]}       # (an attachment's frame must be known: the root's, or a listed node's bind)
+    atts = [(f"actuator {a['name']}", x["parent"]) for a in mo.get("actuators", []) for x in (a["fixed"], a["moving"])]
+    atts += [(f"hose {h['name']}", x["parent"]) for h in mo.get("hoses", []) for x in h["ends"] + h.get("guides", [])]
+    bad += [f"motion: {who}: parent {par!r} is neither the root nor a listed node (its frame is unknown)" for who, par in atts if par not in frames]
+    bad += [f"motion: node {n!r} listed twice" for n in sorted({n for n in moving if moving.count(n) > 1})]
+    parent = {n["node"]: n["parent"] for n in mo["nodes"]}
+    for n in parent:
+        seen, x = set(), n
+        while x in parent:
+            if x in seen:
+                bad.append(f"motion: {n!r} is its own ancestor"); break
+            seen.add(x); x = parent[x]
+    bind = {}
+    for n in mo["nodes"]:
+        why = _rigid(n["bind"])
+        if why:
+            bad.append(f"motion: {n['node']}'s bind is {why}")
+        bind[n["node"]] = _m4(n["bind"])
+    for h in mo.get("hoses", []):
+        for e in h["ends"]:
+            why = _rigid(e["frame"])
+            if why:
+                bad.append(f"motion: hose {h['name']}: an end frame is {why}")
+    if bad:
+        return bad
+    limit = (r.get("function") or {}).get("gimbal")
+    if g:
+        if limit is None:
+            bad.append("motion: a gimbal, but the record says none (function.gimbal)")
+        elif abs(g["limit"] - float(limit)) > 1e-9:
+            bad.append(f"motion: gimbal limit {g['limit']} rad, the record's is {limit} (the registry is the authority)")
+    elif limit:
+        bad.append(f"motion: the record gimbals ({limit} rad) but the motion has no gimbal")
+    if bad or not g:
+        return bad
+    eye = [[1 if i == j else 0 for j in range(4)] for i in range(4)]
+
+    def pose(p, y):
+        """Each node's motion (model root) at input (p, y): the pitch stage turns, the yaw stage turns within it."""
+        d = max(1.0, math.hypot(p, y))
+        mp = _about(g["pivot"], _rot(g["pitch_axis"], g["limit"] * p / d))
+        my = _mul(mp, _about(g["pivot"], _rot(g["yaw_axis"], g["limit"] * y / d)))
+        return {g["pitch_node"]: mp, g["yaw_node"]: my}
+
+    def at(att, moved):
+        """An attachment's point in model root at a pose."""
+        par = att["parent"]
+        base = bind.get(par, eye)
+        m = moved.get(par)
+        if m is None:      # (a child of a stage moves with it)
+            x = par
+            while x in parent and m is None:
+                x = parent[x]; m = moved.get(x)
+        return _apply(_mul(m or eye, base), att["point"])
+
+    poses = [(0, 0)] + [(math.cos(k * math.pi / 8), math.sin(k * math.pi / 8)) for k in range(16)]
+    for a in mo.get("actuators", []):
+        lens = [math.dist(at(a["fixed"], pose(*q)), at(a["moving"], pose(*q))) for q in poses]
+        least = a["body_length"] + a["rod_length"] - max(lens)
+        if least < a["min_overlap"] - 1e-6:
+            bad.append(f"motion: actuator {a['name']}: overlap falls to {least:.4f} m at full stroke, under its {a['min_overlap']} m")
+        if min(lens) < max(a["body_length"], a["rod_length"]):
+            bad.append(f"motion: actuator {a['name']}: closes to {min(lens):.4f} m, shorter than its longer part")
+    for h in mo.get("hoses", []):
+        def end_point(e, moved):
+            par = e["parent"]; m = moved.get(par)
+            x = par
+            while m is None and x in parent:
+                x = parent[x]; m = moved.get(x)
+            return _apply(_mul(m or eye, bind.get(par, eye)), [e["frame"][12], e["frame"][13], e["frame"][14]])
+        far = max(math.dist(end_point(h["ends"][0], pose(*q)), end_point(h["ends"][1], pose(*q))) for q in poses)
+        if far > h["free_length"] + h["length_tolerance"]:
+            bad.append(f"motion: hose {h['name']}: its ends reach {far:.4f} m apart, more than its {h['free_length']} m")
+        for e in h["ends"]:
+            n = math.sqrt(sum(v * v for v in e["tangent"]))
+            if abs(n - 1) > 1e-3:
+                bad.append(f"motion: hose {h['name']}: an end tangent is not unit ({n:.4f})")
+        if h["min_bend_radius"] <= 0 or h["diameter"] <= 0:
+            bad.append(f"motion: hose {h['name']}: diameter and bend radius must be above 0")
+    return bad
+
+
 # ---- glTF binary
 
 def _mul(a, b):

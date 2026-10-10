@@ -1,0 +1,125 @@
+# freefall-motion/1: how a registry model's rigid parts and flexible lines move, without clips (docs/asset-contract.md,
+# Moving parts). A package file, motion.json, beside model.glb; written by install_model.py from --motion=<file>, checked
+# there (this schema, then the checks in tools/standards/assets.py check_motion). Units: metres, radians; the exported
+# glTF basis (+Y up). A transform is 16 numbers, column-major, rigid (rotation and translation, no scale).
+# Two frames, never mixed: `bind` is a node's transform in model-root space at the neutral pose; `point`/`frame` of an
+# attachment is local to its named `parent` node.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: freefall-motion/1
+type: object
+additionalProperties: false
+required: [format, key, root, nodes]
+definitions:
+  vec3: { type: array, items: { type: number }, minItems: 3, maxItems: 3 }
+  transform: { type: array, items: { type: number }, minItems: 16, maxItems: 16, description: "column-major 4x4, rigid" }
+  node: { type: string, minLength: 1, description: "a node name in model.glb, exactly" }
+  attachment:
+    type: object
+    additionalProperties: false
+    required: [parent, point]
+    properties:
+      parent: { $ref: "#/definitions/node" }
+      point: { $ref: "#/definitions/vec3", description: "m, in the parent's frame" }
+  end:
+    type: object
+    additionalProperties: false
+    required: [parent, frame, tangent]
+    properties:
+      parent: { $ref: "#/definitions/node" }
+      frame: { $ref: "#/definitions/transform", description: "the hose end's frame, in the parent's frame" }
+      tangent: { $ref: "#/definitions/vec3", description: "unit, in the end frame: the direction the hose leaves the end" }
+properties:
+  format: { const: "freefall-motion/1" }
+  key: { type: string, description: "the registry record this moves (the package's key)" }
+  root: { $ref: "#/definitions/node" }
+  nodes:
+    type: array
+    minItems: 1
+    description: "every moving node: its parent (a node, or the root) and neutral bind in model-root space"
+    items:
+      type: object
+      additionalProperties: false
+      required: [node, parent, bind]
+      properties:
+        node: { $ref: "#/definitions/node" }
+        parent: { $ref: "#/definitions/node" }
+        bind: { $ref: "#/definitions/transform" }
+  gimbal:
+    type: object
+    additionalProperties: false
+    required: [pitch_node, yaw_node, pivot, pitch_axis, yaw_axis, order, normalisation, limit]
+    properties:
+      pitch_node: { $ref: "#/definitions/node" }
+      yaw_node: { $ref: "#/definitions/node" }
+      pivot: { $ref: "#/definitions/vec3", description: "m, model root" }
+      pitch_axis: { $ref: "#/definitions/vec3", description: "unit, model root, at neutral" }
+      yaw_axis: { $ref: "#/definitions/vec3", description: "unit, model root, at neutral" }
+      order: { enum: [pitch_then_yaw], description: "pitch stage the parent, yaw stage its child" }
+      normalisation: { enum: [radial], description: "input (pitch, yaw) in [-1, 1]; d = max(1, |input|); stage angles limit * pitch / d, limit * yaw / d" }
+      limit: { type: number, description: "rad; must equal the record's function.gimbal (the registry is the authority)" }
+  actuators:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, body_node, rod_node, fixed, moving, body_length, rod_length, min_overlap, axis]
+      properties:
+        name: { type: string }
+        body_node: { $ref: "#/definitions/node" }
+        rod_node: { $ref: "#/definitions/node" }
+        fixed: { $ref: "#/definitions/attachment", description: "the body's end: its origin sits here" }
+        moving: { $ref: "#/definitions/attachment", description: "the rod's end: its origin sits here" }
+        body_length: { type: number, description: "m" }
+        rod_length: { type: number, description: "m" }
+        min_overlap: { type: number, description: "m, rod inside body, at every pose" }
+        axis: { $ref: "#/definitions/vec3", description: "unit, each mesh's local axis aimed at the other anchor" }
+  hoses:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, rest_node, diameter, free_length, length_tolerance, min_bend_radius, ends, centreline]
+      properties:
+        name: { type: string }
+        rest_node: { $ref: "#/definitions/node", description: "the hose drawn at neutral: the fallback" }
+        diameter: { type: number, description: "m, outer" }
+        free_length: { type: number, description: "m, centreline arc length between the ends" }
+        length_tolerance: { type: number, description: "m, how far the solved length may differ" }
+        min_bend_radius: { type: number, description: "m, centreline; the product's dynamic figure" }
+        min_bend_radius_source: { type: string, description: "where that figure comes from (a maker's datasheet, an assumption)" }
+        clearance: { type: number, description: "m, the least gap to any other part" }
+        ends: { type: array, items: { $ref: "#/definitions/end" }, minItems: 2, maxItems: 2 }
+        centreline:
+          type: array
+          minItems: 2
+          description: "the neutral centreline, model root: Bezier knots"
+          items:
+            type: object
+            additionalProperties: false
+            required: [point, handle_in, handle_out]
+            properties:
+              point: { $ref: "#/definitions/vec3" }
+              handle_in: { $ref: "#/definitions/vec3" }
+              handle_out: { $ref: "#/definitions/vec3" }
+        guides:
+          type: array
+          description: "points the hose passes near, each riding on a node"
+          items:
+            type: object
+            additionalProperties: false
+            required: [parent, point, radius]
+            properties:
+              parent: { $ref: "#/definitions/node" }
+              point: { $ref: "#/definitions/vec3" }
+              radius: { type: number, description: "m, how far from the point the centreline may pass" }
+  references:
+    type: array
+    description: "poses to compare a consumer against: input and each moving node's transform in model-root space"
+    items:
+      type: object
+      additionalProperties: false
+      required: [pose, input, transforms]
+      properties:
+        pose: { type: string }
+        input: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+        transforms: { type: object, additionalProperties: { $ref: "#/definitions/transform" } }
