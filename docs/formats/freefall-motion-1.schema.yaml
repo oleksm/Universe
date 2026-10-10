@@ -86,6 +86,11 @@ properties:
       limit: { type: number, description: "rad; must equal the record's function.gimbal (the registry is the authority)" }
   actuators:
     type: array
+    description: >-
+      Each actuator is the pose producer of its body and rod (they may be listed in `nodes`, under the root only, for
+      their bind). At a pose each part is placed at its own anchor (body at fixed, rod at moving) and turned by the
+      shortest rotation taking its local `axis` to the line toward the other anchor: absolute, not a delta from the bind
+      (engine's convention, v11). A pose needing the axis turned end over end (antiparallel) is refused: no roll is stated.
     items:
       type: object
       additionalProperties: false

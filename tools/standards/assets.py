@@ -226,6 +226,16 @@ def _turn(m, h):
     return math.atan2(_dot(_cross(u, w), h), _dot(u, w))
 
 
+def _swing(a, b):
+    """The shortest rotation taking unit a to unit b (3x3)."""
+    v = _cross(a, b); c = _dot(a, b); s2 = _dot(v, v)
+    if s2 < 1e-24:
+        return [[1, 0, 0], [0, 1, 0], [0, 0, 1]]
+    k = (1 - c) / s2
+    vx = [[0, -v[2], v[1]], [v[2], 0, -v[0]], [-v[1], v[0], 0]]
+    return [[(1 if i == j else 0) + vx[i][j] + k * sum(vx[i][m] * vx[m][j] for m in range(3)) for j in range(3)] for i in range(3)]
+
+
 def _diff(a, b):
     return max(abs(a[i][j] - b[i][j]) for i in range(4) for j in range(4))
 
@@ -236,8 +246,9 @@ def check_links(mo, g, pose, bind, parent, eye):
     links = mo.get("links", [])
     by = {ln["name"]: ln for ln in links}
 
+
     def current(q):
-        """Every node's transform in model root at input q (motion times bind): listed nodes, then solved links."""
+        """Every node's transform in model root at input q (motion times bind): listed nodes, actuators, solved links."""
         moved = pose(*q)
         A = {mo["root"]: eye}
         for n, b in bind.items():
@@ -245,6 +256,18 @@ def check_links(mo, g, pose, bind, parent, eye):
             while m is None and x in parent:
                 x = parent[x]; m = moved.get(x)
             A[n] = _mul(m or eye, b)
+        for ac in mo.get("actuators", []):
+            # (each part: the shortest rotation from its local axis to the line toward the other anchor, at its own anchor;
+            # absolute, not a delta from the bind; antiparallel refused: no roll is stated for it)
+            f = _apply(A.get(ac["fixed"]["parent"], eye), ac["fixed"]["point"])
+            m_ = _apply(A.get(ac["moving"]["parent"], eye), ac["moving"]["point"])
+            ax = _unit(ac["axis"])
+            for node, at, to in ((ac["body_node"], f, m_), (ac["rod_node"], m_, f)):
+                d = _unit([to[k] - at[k] for k in range(3)])
+                if _dot(ax, d) < -1 + 1e-9:
+                    A[node] = None; continue
+                r = _swing(ax, d)
+                A[node] = [[*r[0], at[0]], [*r[1], at[1]], [*r[2], at[2]], [0, 0, 0, 1]]
         for ln in links:
             if ln["pose"] != "solved":
                 continue
@@ -303,8 +326,15 @@ def check_links(mo, g, pose, bind, parent, eye):
     worst = {}
     def note(k, v):
         worst[k] = max(worst.get(k, 0.0), v)
+    acts = [(ac["name"], n) for ac in mo.get("actuators", []) for n in (ac["body_node"], ac["rod_node"])]
+    for nm, n in acts:
+        if n in parent and parent[n] != mo["root"]:
+            bad.append(f"motion: actuator {nm}: {n!r} is listed under {parent[n]!r}; an actuator part is listed (for its bind) under the root only: the actuator is its pose producer")
     for q in dense:
         A = current(q)
+        for nm, n in acts:
+            if A.get(n, 0) is None:
+                bad.append(f"motion: actuator {nm}: at input {q[0]:.2f}, {q[1]:.2f} {n!r} would have to turn its axis end over end: no roll is stated for that")
         for ln in links:
             if A.get(ln["node"], 0) is None:
                 bad.append(f"motion: link {ln['name']}: at input {q[0]:.2f}, {q[1]:.2f} joint a's hinge runs within 10 degrees of the link: roll undetermined")
@@ -519,7 +549,7 @@ def check_motion(key, r, info, mo):
         if min(lens) < max(a["body_length"], a["rod_length"]):
             bad.append(f"motion: actuator {a['name']}: closes to {min(lens):.4f} m, shorter than its longer part")
     links = mo.get("links", [])
-    if not links and not mo.get("bellows"):
+    if not (links or mo.get("bellows") or mo.get("references") or mo.get("actuators")):
         pass
     elif bad:
         return bad
