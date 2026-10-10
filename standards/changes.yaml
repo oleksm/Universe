@@ -325,7 +325,8 @@
 - { record: element.zr, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "02328c370caf8440" }
 - { record: equipment.access.airlock.cargo, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "44cc13661ee79eaa" }
 - { record: equipment.access.airlock.crew, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "fbc75bf46078087b" }
-- { record: equipment.access.anchor-clamp.mc07, at: "2026-10-07T03:42:03Z", status: draft, summary: "first tracked", sha: "668a8246a448e150" }
+- { record: equipment.access.anchor-clamp.mc07-aft, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "a4a152e68cdfc92f" }
+- { record: equipment.access.anchor-clamp.mc07-fwd, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "ca12d60a2ab9d204" }
 - { record: equipment.access.bay-door.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "ba522be183b04edd" }
 - { record: equipment.access.bay-door.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "a7152ad149e1e206" }
 - { record: equipment.access.bay-door.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54a448c12aec4922" }
@@ -780,7 +781,7 @@
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
-- { record: hull.mc-07, at: "2026-10-10T21:54:25Z", status: draft, summary: "changed: fit", sha: "9016586b48756d0c" }
+- { record: hull.mc-07, at: "2026-10-10T22:08:24Z", status: draft, summary: "changed: fit", sha: "5b431bee3e0ed898" }
 - { record: hull.prospector, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "b6d587bb611c4b96" }
 - { record: hull.sprint, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "2d770d0652d7597c" }
 - { record: law.air-heat-capacity, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "76b6ebdfb0ab99b4" }
@@ -1220,6 +1221,11 @@
 - { record: part.mac-03, at: "2026-10-06T05:02:18Z", status: draft, summary: "first tracked", sha: "6b7c65e45df76751" }
 - { record: part.mac-04, at: "2026-10-06T05:02:18Z", status: draft, summary: "first tracked", sha: "504eea49f0a664ff" }
 - { record: part.mac-05, at: "2026-10-06T05:02:18Z", status: draft, summary: "first tracked", sha: "06c2332989a867ba" }
+- { record: part.macf-01, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "f8d647498b1eb365" }
+- { record: part.macf-02, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "6d384b841a5c712d" }
+- { record: part.macf-03, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "5114fddbe509c582" }
+- { record: part.macf-04, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "a50c842a39bad854" }
+- { record: part.macf-05, at: "2026-10-10T22:08:24Z", status: draft, summary: "first tracked", sha: "b7e3adaf22c32647" }
 - { record: part.mc-01, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "f58c0fa0bef54646" }
 - { record: part.mc-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b725b78efa88fab8" }
 - { record: part.mc-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "a75ed40f66134b1b" }

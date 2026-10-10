@@ -1,0 +1,32 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+# Measured from the model (assets/models/mc07.glb): assets/models/mc07.glb: ClampFwd_*. Once an empty part of the hull (MC07-28); now the MC-07's own product,
+# fitted to its access slot like any other, built of the parts measured from the model.
+identity:
+  key: equipment.access.anchor-clamp.mc07-fwd
+  name: "MC-07 anchor clamp, forward"
+  maker: org.kestrel
+  revision: draft
+  slot: access
+  description: "MC-07 anchor clamp, forward, as the model draws it: a telescoping clamp of four 2.9 m stages, its jaws set 0.75 as wide across the ship (the source scales it so) with four jaws that grips the rock. A product the hull fits, not a part of it."
+size_class: 2
+fits: mount.access-s2
+physical:
+  mass: 524
+  volume: 58.0
+  length: 4.127
+  width: 3.791
+  height: 3.705
+built_of:
+  parts: access-anchor-clamp-mc07-fwd
+making:
+  module: module.assembly-shop
+function:
+  kind: "docking"
+  holds: 2000000.0
+  standard: "rock: it grips an asteroid, not a rail"
+life: 473364000
+basis:
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it. Four telescoping stages (the source rig, CLAMPS in build_mining_ship.py, NST=4; the record said three); measured stowed from mining_ship.blend (blender source probe, 2026-10-10); mass unchanged until the parts are measured again (review)." }
+  - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }
+  - { of: [function, size_class], tier: invented, review: true, note: "A four-stage telescoping clamp with four jaws that grips the rock the ship mines: 2 MN chosen, a 200 t ship held at 1 g. The mining rig's anchor reach is this clamp's." }
+  - { of: [life], rule: rule.life-ship-system }

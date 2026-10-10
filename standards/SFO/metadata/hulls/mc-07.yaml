@@ -108,8 +108,8 @@ fit:
   - { slot: gear_2, item: equipment.gear.rear.mc07 }
   - { slot: gear_3, item: equipment.gear.rear.mc07 }
   - { slot: cargo_ramp, item: equipment.access.cargo-ramp.mc07 }
-  - { slot: clamp_fwd, item: equipment.access.anchor-clamp.mc07 }
-  - { slot: clamp_aft, item: equipment.access.anchor-clamp.mc07 }
+  - { slot: clamp_fwd, item: equipment.access.anchor-clamp.mc07-fwd }
+  - { slot: clamp_aft, item: equipment.access.anchor-clamp.mc07-aft }
   - { slot: hardpoint_1, item: equipment.hardpoint.mining-hammer.mc07 }
   - { slot: hardpoint_2, item: equipment.hardpoint.mining-hammer.mc07 }
   # Heat, people, air and water (the ships session's request, docs/ships/mc07-heat-cabin-request.md on branch ships, 2026-10-06):
