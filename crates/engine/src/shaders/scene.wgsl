@@ -72,6 +72,9 @@ struct Globals {
 @group(2) @binding(17) var world_cct: texture_2d_array<f32>;
 @group(2) @binding(18) var world_cct_old: texture_2d_array<f32>;
 
+/// How many times a world drawn from its lines has its slopes steepened in its shading.
+const LINES_SLOPE_SHADE: f32 = 30.0;
+
 fn world_turn() -> mat3x3<f32> {
     return mat3x3<f32>(g.world_to_body[0].xyz, g.world_to_body[1].xyz, g.world_to_body[2].xyz);
 }
@@ -462,8 +465,11 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     }
     // (Fine detail, for a globe: in its colour, and in the heights its
     // slopes are shaded by — ridges and hollows at any zoom, drawing only.)
+    // (A world drawn from its lines, its brightness given below zero: its slopes steepened in the
+    // shading, and no made-up detail: its relief is its lines' alone.)
+    let from_lines = in.globe.w < 0.0;
     var d = vec3<f32>(0.0);
-    if (in.globe.x > 0.5) {
+    if (in.globe.x > 0.5 && !from_lines) {
         d = globe_detail(dir, footprint);
     }
     // A patch of ground: its height is its own (in relief units), exact —
@@ -490,7 +496,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     let slopes = select(1.0, smoothstep(2.0, 10.0, pixel), on_patch);
     // Up close on a patch, the fine grain instead (exact: it doesn't speckle).
     var grain = vec2<f32>(0.0);
-    if (on_patch && in.globe.x > 0.5) {
+    if (on_patch && in.globe.x > 0.5 && !from_lines) {
         grain = micro_detail(in.micro, pixel) * (1.0 - slopes * 0.5);
     }
     // (The map's own slopes on a globe only: a patch stands on the true heights, finer than the
@@ -509,7 +515,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             let grad = sign(det) * (hx * r1 + hy * r2);
             n = normalize(abs(det) * n - grad);
         }
-        albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * in.globe.w, in.color.a);
+        albedo = vec4<f32>(globe_color(in.globe.y, h, inside, in.color.rgb, dir, d, select(1.0, 0.0, on_patch)) * (1.0 + 0.25 * grain.x * land) * abs(in.globe.w), in.color.a);
         // A world's own colour, where it has one (grown, not painted): its globe map's, or
         // where its full-resolution maps are bound, theirs; and close up, its ground's material.
         var own: vec4<f32>;
@@ -582,6 +588,23 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
                     rgb = mix(rgb, ground_material(gi), near);
                 }
             }
+            // (A world drawn from its lines: shaded as a map shades relief, whatever the sun: each
+            // pixel brighter or darker by how much more or less than flat ground it faces a light
+            // from the upper left of the screen, LINES_SLOPE_SHADE times: slopes of a degree or
+            // two, all its lines hold, read.)
+            if (from_lines) {
+                // (The slope from the ground as drawn, triangle by triangle: its lines' own shape. The
+                // mesh's normals on a patch are the world's smooth up, and carry no slope.)
+                let up = normalize(in.up);
+                var tilt = cross(px, py);
+                let right = px - up * dot(px, up);
+                if (dot(tilt, tilt) > 1e-30 && dot(right, right) > 1e-30) {
+                    tilt = normalize(tilt) * sign(dot(tilt, up));
+                    let ahead = cross(up, normalize(right));
+                    let l = normalize(up - 0.6 * normalize(right) + 0.4 * ahead);
+                    rgb *= clamp(1.0 + LINES_SLOPE_SHADE * (dot(tilt, l) - dot(up, l)), 0.45, 1.8);
+                }
+            }
             // (A world's own colour is its true albedo: no palette brightness factor (in.globe.w).)
             albedo = vec4<f32>(rgb * (1.0 + 0.12 * d.x * land) * (1.0 + 0.25 * grain.x * land) * OWN_COLOR, in.color.a);
         }
@@ -640,7 +663,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             c = world_air_ground(c, in.at, in.sun_dir, in.sun_light);
             c = world_clouds_over(c, normalize(in.at), length(in.at), in.sun_dir, in.sun_light);
         } else {
-            c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, in.globe.w);
+            c = through_air(c, in.at, in.air_center.xyz, in.air_center.w, in.air, in.sun_dir, in.sun_light, abs(in.globe.w));
         }
     }
     return vec4<f32>(c, albedo.a);

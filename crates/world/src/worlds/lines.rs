@@ -329,7 +329,7 @@ fn paint(lines: &[Line], w: usize, h: usize) -> Vec<u8> {
 }
 
 /// The ground's two colours (sRGB): land, and water.
-const LAND: [u8; 4] = [58, 58, 62, 255];
+const LAND: [u8; 4] = [96, 96, 100, 255];
 const WATER: [u8; 4] = [16, 17, 22, 255];
 
 /// A world's ground from its lines: the height anywhere, by the band rule. The nearest level line

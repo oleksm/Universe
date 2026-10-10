@@ -118,6 +118,13 @@ pub fn lines_lift(body: &Body) -> f64 {
     1.0 + (body.terrain.as_ref().map_or(0.0, |t| t.max_height()) + 1_000.0) / body.rail.radius
 }
 
+/// A world's globe's brightness as the shader takes it (see `Frame::with_globe`): below zero for a
+/// world drawn from its lines (its slopes steepened in the shading, no made-up detail).
+pub fn globe_bright(body: &Body) -> f32 {
+    let bright = FILL * 2.5;
+    if body.terrain.as_ref().is_some_and(|t| t.drawn_from_lines()) { -bright } else { bright }
+}
+
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).
 pub fn globe_kind(body: &Body) -> f32 {
     match body.terrain.as_ref().map(|t| t.kind) {

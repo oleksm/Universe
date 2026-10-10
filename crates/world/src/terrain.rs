@@ -99,6 +99,11 @@ impl Terrain {
         self.lines = Some(lines);
     }
 
+    /// Whether its ground is drawn from its vector lines (see `from_lines`).
+    pub fn drawn_from_lines(&self) -> bool {
+        self.lines.is_some()
+    }
+
     /// The world's true colour, if its bake has one (read now; see `worlds::Heights::colour`).
     pub fn colour(&self) -> Option<crate::worlds::Equirect> {
         self.baked.as_ref()?.colour()

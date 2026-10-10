@@ -27,4 +27,9 @@
 - SHIFT+F4 stretches the lines' heights for seeing their relief, x1, x5, x10 (`worlds::set_stretch`;
   `UNIVERSE_HEIGHTS_STRETCH` from the start): the ground itself, so drawing, landing and collisions
   all see it; the globes, patches and lines made again. The pins keep the true heights.
+- Its slopes shaded as a map shades relief, whatever the sun: each pixel brighter or darker by how
+  much more or less than flat ground it faces a light from the upper left of the screen, 30 times
+  (`LINES_SLOPE_SHADE` in `scene.wgsl`), the slope from the ground as drawn, triangle by triangle
+  (a patch's normals are the world's smooth up). No made-up detail on it (the globe's noise and the
+  near grain are off): its relief is its lines' alone. Its land a lighter grey to shade.
 - The package is named in `worlds/lines.rs` until Hoar's record names its lines.
