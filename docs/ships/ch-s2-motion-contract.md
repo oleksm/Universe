@@ -272,8 +272,8 @@ changes the production installation gate.
 ## Proposal-v04 rigid-sleeve consumer check
 
 2026-10-10, Blender task `20261010T143628-blender-663a`. Engine agrees to the
-prototype evaluator below; registry agreement/schema publication remains pending
-on task `20261010T143719-engine-68d2`. This does not implement production equipment
+prototype evaluator below; registry confirmed it in fso `e30b8d52` on task
+`20261010T143719-engine-68d2` (reply `20261010T144157-registry-d5c9`). This does not implement production equipment
 motion loading or approve installation.
 
 The repeatable Rust diagnostic uses the actual `PbrModel::load_gltf_parts` loader,
@@ -343,3 +343,17 @@ Input SHA-256 values were checked against the delivery: fixture
 A deliberately displaced reference sleeve and a nonplanar hinge-axis mutation
 were each rejected as expected. Registry build and workspace tests passed after
 adding the diagnostic (serde_json is a development dependency only).
+
+Registry follow-up: fso `297f2a3f` adds the inherited/solved link distinction,
+two-sided joint frames, ordered hinge decomposition and reference checks; fso
+`e30b8d52` publishes the agreed bellows evaluator. Registry reports an independent
+Python match for all nine v04 poses and sampled rim opening of 1.0 mm against a
+3.5 mm skirt. The evaluator-agreement dependency is now cleared.
+
+The production schema stores binds on `bellows.rings` and excludes those rings
+from ordinary `nodes` to enforce a single producer. The provisional fixture and
+Rust diagnostic still use the original all-node list; conversion is required
+before production package validation. Schema planar-axis tolerance is 1e-3;
+the diagnostic is stricter at 1e-6. Both use a 2e-6 matrix-reference threshold.
+These differences must be explicit in a production consumer; this fixture passes
+the stricter diagnostic. No registry merge or production installation is implied.

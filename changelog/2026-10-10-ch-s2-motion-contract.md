@@ -18,3 +18,5 @@
 - Added a repeatable Rust v04 fixture consumer check using the actual PBR loader.
   All 66 node poses and baked-part vertex transforms match Blender references;
   documented neutral-calibrated Hermite sleeve frames and pending runtime gates.
+- Recorded registry agreement/publication of the v04 bellows evaluator and
+  closed that handoff dependency, with fixture/schema mapping differences noted.
