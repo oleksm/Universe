@@ -86,6 +86,25 @@ def required_nodes(kind, r):
     return need
 
 
+# The modeller's account of a version (--about=<file>): required sections, then free to say what it needs.
+ABOUT_REQUIRED = ("model", "work", "considerations")
+ABOUT_KNOWN = ABOUT_REQUIRED + ("stats", "evidence")
+
+
+def read_about(path):
+    """The modeller's account (YAML or JSON): model, work, considerations required; stats and evidence optional. A list of
+    plain sentences on what is wrong (empty: it is fine) and the account."""
+    try:
+        a = yaml.safe_load(open(path, encoding="utf-8"))
+    except (OSError, yaml.YAMLError) as e:
+        return [f"--about {path}: {e}"], None
+    if not isinstance(a, dict):
+        return [f"--about {path}: not a mapping of sections"], None
+    bad = [f"--about: no `{k}` section" for k in ABOUT_REQUIRED if not a.get(k)]
+    bad += [f"--about: unknown section `{k}` (sections: {', '.join(ABOUT_KNOWN)})" for k in a if k not in ABOUT_KNOWN]
+    return bad, a
+
+
 # ---- glTF binary
 
 def _mul(a, b):
@@ -150,7 +169,15 @@ def inspect_glb(path):
         walk(i, eye)
     if lo[0] == math.inf:
         raise ValueError("no mesh with position bounds in it")
-    return {"bounds": [round(hi[k] - lo[k], 4) for k in range(3)], "nodes": names, "triangles": tris, "meshes": len(meshes)}
+    prims = [p for m in meshes for p in m.get("primitives", [])]
+    images = g.get("images", [])
+    return {"bounds": [round(hi[k] - lo[k], 4) for k in range(3)], "lo": [round(v, 4) for v in lo], "hi": [round(v, 4) for v in hi],
+            "nodes": names, "triangles": tris, "meshes": len(meshes),
+            "stats": {"triangles": tris, "vertices": sum(acc[p["attributes"]["POSITION"]]["count"] for p in prims),
+                      "meshes": len(meshes), "primitives": len(prims), "materials": len(g.get("materials", [])),
+                      "textures": len(g.get("textures", [])), "images": len(images), "nodes": len(nodes),
+                      "animations": len(g.get("animations", [])), "skins": len(g.get("skins", [])),
+                      "morph_targets": sum(len(p.get("targets", [])) for p in prims), "bytes": len(b)}}
 
 
 def check_model(kind, r, info):
@@ -168,6 +195,10 @@ def check_model(kind, r, info):
     for p in required_nodes(kind, r):
         if not any(n.startswith(p) for n in info["nodes"]):
             bad.append(f"no node named {p}* (the game attaches to it)")
+    st = info.get("stats") or {}
+    if st.get("animations") or st.get("skins") or st.get("morph_targets"):
+        bad.append(f"{st.get('animations')} animation(s), {st.get('skins')} skin(s), {st.get('morph_targets')} morph target(s): the game draws "
+                   "models static (docs/asset-contract.md, Static models); export without them, moving parts as rigid named nodes")
     budget = KINDS[kind][1]
     if info["triangles"] > budget:
         bad.append(f"{info['triangles']:,} triangles drawn, over the {budget:,} a {kind} may have")

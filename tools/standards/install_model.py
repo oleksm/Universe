@@ -4,7 +4,9 @@
     python3 tools/standards/install_model.py <model.glb> --as=<key> --apply             # write the package and the record, validate, build
     python3 tools/standards/install_model.py <model.glb> --as=<key> --push              # and commit and push on fso
 
-Options: --source=<file.blend> (the source it was exported from: its path and sha256 go in the manifest), --note=<text>.
+Options: --source=<file.blend> (the source it was exported from: its path and sha256 go in the manifest), --note=<text>,
+--about=<file.yaml|json> (the modeller's account, required with --push: sections model, work, considerations, and
+optionally stats and evidence; it goes in the manifest as `about`, beside the stats the installer measures itself).
 
 It reads the model itself (no manifest from the modeller needed): its size (the world bounds of its meshes), its node
 names, its triangles (meshes named COL_* are collision and not counted), and checks them against the record: the three
@@ -20,7 +22,7 @@ import datetime, json, os, re, shutil, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from assets import FORMAT, ROOT, check_model, inspect_glb, records, sha, size_of, store, tail  # noqa: E402
+from assets import FORMAT, ROOT, check_model, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
 
 
 def die(msg):
@@ -53,15 +55,27 @@ def main(argv):
     size = size_of(kind, rec)
     print(f"  record: {' x '.join(f'{v:.3g}' for v in size) + ' m' if size else 'no size'}")
     bad = check_model(kind, rec, info)
+    about = None
+    if isinstance(opt.get("about"), str):
+        more, about = read_about(os.path.expanduser(opt["about"]))
+        bad += more
+    elif push:
+        bad.append("--push needs --about=<file> (model, work, considerations; stats, evidence): the package says what it is (docs/asset-contract.md)")
     if bad:
-        die("the model does not fit its record:\n  - " + "\n  - ".join(bad))
+        die("not installed:\n  - " + "\n  - ".join(bad))
     print("  1. checks: size, nodes and budget fit")
 
     # 2. the package
     base = os.path.join(store(), "models", tail(key))
     gsha = sha(glb)
     versions = sorted(int(d[1:]) for d in os.listdir(base) if re.fullmatch(r"v\d+", d)) if os.path.isdir(base) else []
-    same = next((v for v in versions if os.path.exists(os.path.join(base, f"v{v}", "model.glb")) and sha(os.path.join(base, f"v{v}", "model.glb")) == gsha), None)
+    def installed(v):     # (the same model with the same account: that version again)
+        d = os.path.join(base, f"v{v}")
+        try:
+            return sha(os.path.join(d, "model.glb")) == gsha and json.load(open(os.path.join(d, "manifest.json"))).get("about") == about
+        except (OSError, ValueError):
+            return False
+    same = next((v for v in versions if installed(v)), None)
     version = same or (max(versions) + 1 if versions else 1)
     rel = f"models/{tail(key)}/v{version}"
     dest = os.path.join(store(), rel)
@@ -80,7 +94,8 @@ def main(argv):
         src = opt.get("source") if isinstance(opt.get("source"), str) else None
         repo = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(src)), "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip() if src and os.path.exists(src) else None
         manifest = {"format": FORMAT, "key": key, "kind": kind, "version": version, "file": "model.glb",
-                    "bounds_m": info["bounds"], "record_size_m": size, "nodes": info["nodes"], "triangles": info["triangles"],
+                    "bounds_m": [info["lo"], info["hi"]], "size_m": info["bounds"], "record_size_m": size, "nodes": info["nodes"], "triangles": info["triangles"],
+                    "measured": info["stats"], **({"about": about} if about else {}),
                     "source": {"file": src and os.path.abspath(src), "sha256": sha(src) if src and os.path.exists(src) else None, "commit": repo, "exported": os.path.basename(glb)},
                     "date": datetime.date.today().isoformat(), **({"note": opt["note"]} if isinstance(opt.get("note"), str) else {}),
                     "files": {"model.glb": {"sha256": gsha, "size": os.path.getsize(glb)}}}

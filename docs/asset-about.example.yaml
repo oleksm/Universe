@@ -1,0 +1,29 @@
+# The modeller's account of one model version, given to install_model.py --about=<this file>. It goes into the
+# package's manifest as `about`, beside what the installer measures itself (`measured`: triangles, vertices, meshes,
+# primitives, materials, textures, images, nodes, animations, skins, morph targets, bytes; `bounds_m`, `size_m`).
+# Required: model, work, considerations. Optional: stats, evidence. Within each, say what you need: these keys are a
+# guide. Unknown is written `unknown`, never 0. Observed and assumed are kept apart.
+model:
+  key: equipment.engine.ch.s2
+  purpose: "The lander's hydrolox engine, fitted at mount.engine-s2"
+  source_revision: "blender repo <commit>, refinement-v06"
+  components: [thrust chamber and nozzle, turbopumps, valves and injector, gimbal ring]
+  basis: "metres, +Y up, origin at the mount face"
+  interfaces: [mount, nozzle_exit]
+  motion: "static (gimbal parts are separate rigid nodes; pivots in evidence)"
+work:
+  summary: "What was built or changed in this version: geometry, materials, optimisation"
+  runtime_vs_source: "What the game shows versus what only the .blend demonstrates"
+considerations:
+  - { kind: decision, text: "A consequential choice and why" }
+  - { kind: easement, text: "A deliberate visual simplification" }
+  - { kind: assumption, text: "A provisional value, and whose" }
+  - { kind: limitation, text: "What the model or the game cannot do yet" }
+  - { kind: defect, text: "A known open defect" }
+stats:
+  texture_memory: unknown
+  draw_calls: unknown
+evidence:
+  export_sha256: "<sha256 of the .glb>"
+  qc: [/absolute/path/review.yaml]
+  approval: "the owner's approval, where and when"

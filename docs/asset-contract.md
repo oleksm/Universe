@@ -69,7 +69,7 @@ built of, to lay it out), `required_nodes`, `triangle_budget`, `record` (the YAM
 ## The package
 
 In the assets store (`UNIVERSE_ASSETS`, else `~/git/freefall-assets`): `models/<key tail>/v<N>/` holding `model.glb`
-and `manifest.json`: format `freefall-model/1`, key, kind, version, the model's bounds, the record's size it was checked
+and `manifest.json`: format `freefall-model/1`, key, kind, version, `bounds_m` (the model's world bounds as [[min x, y, z], [max x, y, z]] in glTF metres: the game centres the model on its thing's place with it), `size_m` (its three sides), the record's size it was checked
 against, its node names, triangles, source (the .blend's path and sha256, its repository commit, the exported file),
 date, note, and `files` with sha256 and size. A version is written once; a new export is a new version. The installer
 reads the model itself, so the modeller writes no manifest.
@@ -80,9 +80,40 @@ The record's `visual` (common.schema.yaml): `{format: freefall-model/1, path: mo
 version, triangles}`. The installer writes it, runs the validators and the registry build, puts the record back if
 either fails, and with `--push` commits it on fso. Running it again with the same file changes nothing.
 
+## Installing: one command
+
+From `~/git/universe-fso` (branch fso, no unrelated changes staged):
+
+    python3 tools/standards/next_asset.py --key <key> --json          # the brief
+    python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml          # dry run
+    python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml --push   # install
+
+Inputs: the exported `.glb` (metres, static: no animations, skins or morph targets), its `.blend`, and the modeller's
+account (`--about`, YAML or JSON; template `docs/asset-about.example.yaml`): `model` (key, purpose, source revision,
+components, basis, interfaces, motion scope), `work` (what this version built or changed; runtime versus source-only),
+`considerations` (decisions, easements, assumptions, limitations, defects, each marked), optionally `stats` (what the
+installer cannot measure: texture memory, draw calls; unknown is `unknown`) and `evidence` (hashes, QC, approval).
+`--push` refuses without `--about`. The account goes into the manifest as `about`, beside `measured` (the installer's
+own count: triangles, vertices, meshes, primitives, materials, textures, images, nodes, animations, skins, morph
+targets, bytes). The same model with the same account again changes nothing; a changed account is a new version.
+
+## Game validation
+
+The registry validates installed models in the game. After `--push`, the modeller sends the registry a `task` naming the
+key, the commit and the package's manifest. The registry then:
+
+1. runs the game's own loader on every model (`cargo test -p universe-world --test visuals -- --nocapture`): the
+   package found, its manifest matching the record's hash, the model matching the manifest, bounds to centre it by;
+2. where the game draws that kind, looks at it in the game (frames captured on workspace 8): place, scale, materials,
+   readability at play distance;
+3. records the result in `docs/asset-validation.yaml` (key, version, manifest sha256, game commit, result, what was
+   checked, evidence) and answers the task with `done` (pass) or `blocked` (what fails, whose fix).
+
+The package is never edited after installing: a fix is a new version.
+
 ## Open
 
-- The game's loader for `visual` packages (the integrator's): read the package from the assets store, check its manifest
-  sha256, draw it at the record's place; the box fallback stays for records without one.
+- The game draws models for settlement modules and buildings, rigs and gates (main 364a539e); equipment at mounts and
+  stations are not drawn yet (engine's), so their validation is step 1 only until then.
 - Containers for goods and stock by form; module and building nodes (entrances, ports, pipe connections) when the
   game places things by them.

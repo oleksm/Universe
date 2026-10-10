@@ -1,0 +1,4 @@
+# Game validation of installed models: the registry's record, one entry per package version checked (docs/asset-contract.md,
+# Game validation). A package is immutable; its validation lives here. result: pass | fail | partial; drawn: whether the
+# game draws this kind yet (equipment at mounts and stations are not drawn yet: engine, 2026-10-10).
+validations: []
