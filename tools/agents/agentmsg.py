@@ -7,11 +7,13 @@
     agentmsg wait [--as ME] [--timeout S]            block until mail arrives, then print it (inotify; slow poll elsewhere)
     agentmsg serve                                   watch every inbox; wake or notify the agent mail is for
     agentmsg hook-claude                             a Claude Code Stop hook: unread mail keeps the session going
+    agentmsg open [--as ME]                          what I owe (tasks, blocks to me unanswered) and wait on (my tasks)
     agentmsg who                                     the agents configured, their inboxes and wake commands
     agentmsg term <agent> [--here] [-- CMD ...]      run the agent in a terminal you can watch and type into (tmux
                                                      session agent-<name>); `serve` types its mail into it and notifies you
 
-kind: task | ack | done | blocked | note. A summary is at most 300 characters: put detail in files, commits and keys and
+kind: task | ack | done | blocked | note. Answer only a task, a blocked or a question; acks never wake anyone (they come
+with the next mail), and an inbox is delivered once it has been quiet for $AGENTMSG_SETTLE s (20), as one wake. A summary is at most 300 characters: put detail in files, commits and keys and
 point at them with --ref and --see; the receiver opens them only if it needs to. Reply on a thread with --reply-to.
 
 Who am I: --as, else $AGENTMSG_NAME, else the agent in ~/.agents/agents.json whose "cwd" holds the current directory.
@@ -24,6 +26,7 @@ MAIL, LOG, RUN = os.path.join(HOME, "mail"), os.path.join(HOME, "log"), os.path.
 CONF = os.path.join(HOME, "agents.json")
 KINDS = ("task", "ack", "done", "blocked", "note")
 MAX_SUMMARY = 300
+SETTLE = float(os.environ.get("AGENTMSG_SETTLE", 20))     # s of quiet in an inbox before its mail is delivered, as one wake
 
 
 def die(msg, code=2):
@@ -180,11 +183,23 @@ def cmd_wait(pos, opt):
     cmd_inbox([], {"as": name})
 
 
+def owed(m):
+    """A message that wants an answer: a task, a blocked, or a question."""
+    return m.get("kind") in ("task", "blocked") or "?" in m.get("summary", "")
+
+
 def wake_prompt(name, got):
     lines = "\n".join(line(m) for _, m in got)
-    return (f"Mail for you ({name}), {len(got)} message(s):\n{lines}\n"
-            f"Handle it, then reply with `agentmsg send <to> <ack|done|blocked|note> --summary '...' --reply-to <id> --as {name}` "
-            f"(summary at most 300 characters; point at files and commits). The messages are marked read.")
+    ask = [m["id"] for _, m in got if owed(m)]
+    tail = (f"Answer {', '.join(ask)} when handled: `agentmsg send <to> <done|blocked|note> --summary '...' --reply-to <id> --as {name}` "
+            f"(at most 300 characters; point at files and commits). The rest needs no reply." if ask else
+            "None of it needs a reply (acks, notes, done): do not answer them.")
+    return f"Mail for you ({name}), {len(got)} message(s):\n{lines}\n{tail}"
+
+
+def wakes(got):
+    """Whether mail is worth a turn: acks never are; they ride along with the next mail or turn that is."""
+    return any(m.get("kind") != "ack" for _, m in got)
 
 
 def running(name):
@@ -203,9 +218,14 @@ def cmd_serve(pos, opt):
     while True:
         agents = conf()
         names = sorted(set(os.listdir(MAIL)) | set(agents)) if os.path.isdir(MAIL) else sorted(agents)
+        soonest = 60
         for name in names:
             got = unread(name)
-            if not got:
+            if not got or not wakes(got):
+                continue
+            quiet = time.time() - max(os.path.getmtime(f) for f, _ in got)
+            if quiet < SETTLE:              # (more may be coming: one wake for the lot)
+                soonest = min(soonest, SETTLE - quiet + 0.5)
                 continue
             c = agents.get(name, {})
             if tmux_alive(f"agent-{name}"):
@@ -232,7 +252,7 @@ def cmd_serve(pos, opt):
                     open(key, "w").write(newest)
                     print(f"{datetime.datetime.now():%T} {name}: {len(got)} unread (notified)", flush=True)
         os.makedirs(MAIL, exist_ok=True)
-        watch([MAIL], 60, recursive=True)      # (the whole tree: an agent's first mail makes its folder)
+        watch([MAIL], soonest, recursive=True)      # (the whole tree: an agent's first mail makes its folder)
 
 
 def cmd_hook_claude(pos, opt):
@@ -247,7 +267,7 @@ def cmd_hook_claude(pos, opt):
     if not name or (not owner and sid and conf().get(name, {}).get("session") not in (None, sid)):
         return          # (a Claude session of another agent in a shared folder: the folder alone does not make it this one)
     got = unread(name)
-    if not got:
+    if not got or not wakes(got):
         return
     mark_read(name, [f for f, _ in got])
     print(json.dumps({"decision": "block", "reason": wake_prompt(name, got)}))
@@ -301,9 +321,33 @@ def cmd_deliver(pos, opt):
     name, sess = pos[0], f"agent-{pos[0]}"
     time.sleep(float(opt.get("delay", 12)))
     got = unread(name)
-    if got and tmux_alive(sess):
+    if got and wakes(got) and tmux_alive(sess):
         mark_read(name, [f for f, _ in got])
         inject(name, sess, got)
+
+
+def cmd_open(pos, opt):
+    """What is still open for me: tasks and blocks sent to me with no done or blocked from me on their thread (owe), and
+    tasks I sent with no done or blocked back (waiting). Reads the mailbox, never prints it."""
+    name = me(opt) or die("who are you? --as NAME")
+    def load(paths):
+        out = []
+        for f in paths:
+            try:
+                out.append(json.load(open(f)))
+            except (json.JSONDecodeError, OSError):
+                pass
+        return out
+    mine = load(glob.glob(os.path.join(MAIL, name, "sent", "*.json")))
+    to_me = load(glob.glob(os.path.join(MAIL, name, "new", "*.json")) + glob.glob(os.path.join(MAIL, name, "read", "*.json")))
+    closed_by_me = {m.get("reply_to") for m in mine if m.get("kind") in ("done", "blocked")}
+    closed_to_me = {m.get("reply_to") for m in to_me if m.get("kind") in ("done", "blocked")}
+    owe = [m for m in to_me if m.get("kind") in ("task", "blocked") and m["id"] not in closed_by_me]
+    wait = [m for m in mine if m.get("kind") == "task" and m["id"] not in closed_to_me]
+    for title, ms in (("owe", owe), ("waiting", wait)):
+        print(f"{title}: {len(ms)}")
+        for m in sorted(ms, key=lambda m: m["id"]):
+            print("  " + line(m)[:240])
 
 
 def cmd_who(pos, opt):
@@ -326,7 +370,7 @@ def main(argv):
     if argv[1] == "term":
         return cmd_term(pos, opt, rest)
     {"send": cmd_send, "inbox": cmd_inbox, "show": cmd_show, "wait": cmd_wait, "serve": cmd_serve,
-     "hook-claude": cmd_hook_claude, "who": cmd_who, "deliver": cmd_deliver}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
+     "hook-claude": cmd_hook_claude, "who": cmd_who, "deliver": cmd_deliver, "open": cmd_open}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
 
 
 if __name__ == "__main__":

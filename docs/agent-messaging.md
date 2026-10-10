@@ -11,12 +11,26 @@ tools, survives restarts and power cuts, and costs no tokens while an agent wait
     agentmsg show <id>                               one message in full
     agentmsg wait [--as ME] [--timeout S]            block until mail arrives (inotify), then print it
     agentmsg serve                                   watch every inbox: wake or notify the agent mail is for
+    agentmsg open [--as ME]                          what I owe and what I wait on, a few lines
     agentmsg who                                     agents, their unread counts, auto or notify
 
 `kind` is one of task, ack, done, blocked, note. A summary is at most 300 characters: detail lives in files, commits
 and registry keys, pointed at with `--ref` and `--see`, and the receiver opens them only if it needs them. A hand-off is
-a `task`, answered by an `ack`, then `done` (with a commit or a path) or `blocked` (one line why), each `--reply-to` the
-task's id.
+a `task`, answered by `done` (with a commit or a path) or `blocked` (one line why), `--reply-to` the task's id; an
+`ack` in between is optional.
+
+## Spending few tokens
+
+The message is cheap (about 60 tokens); the wake is not: a turn re-reads the agent's whole conversation (engine's was
+622k tokens a call on 2026-10-10). So the rules cut wakes, not words:
+
+- **Answer only a task, a blocked or a question** (a summary with `?`). The delivered text names the ids that want an
+  answer and says the rest needs none. Never answer an ack, a note or a done.
+- **Acks never wake anyone.** They stay unread and come with the next mail or turn that does wake the agent.
+- **One wake per burst.** `serve` delivers an inbox once it has been quiet for 20 s (`AGENTMSG_SETTLE`), all of it at once.
+- **Status without scrolling:** `agentmsg open` lists tasks and blocks to me with no `done`/`blocked` from me on their
+  thread (owe) and my tasks with none back (waiting).
+- A long conversation makes every wake dear: compact it (`/compact`) at a quiet moment.
 
 ## Who is who: `~/.agents/agents.json`
 
