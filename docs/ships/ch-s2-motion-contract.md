@@ -41,8 +41,10 @@ in that same space (including moving ancestors), draw the baked vertices with
 `equipment_placement * A * inverse(B)`. For a pivot-only rotation the delta is
 `T(pivot) * R * T(-pivot)`. Do not reapply the bind transform to already baked
 vertices. Supply the pivot and axes in exported glTF/model-root coordinates;
-`[0, 0, -0.3]` is currently an unlabelled Blender-space value in the JSON, not an
-established exported pivot. Export conventions are metres, +Y up.
+The v09 delivery updates the Blender-space pivot to `[0, 0, -0.43]`, superseding
+the earlier JSON value `[0, 0, -0.3]`. Neither is an exported pivot: regenerate
+the converted motion evidence from the latest source. Export conventions are
+metres, +Y up.
 
 Add these fields to the handoff, without treating them as a shipped schema:
 
@@ -68,13 +70,71 @@ The present renderer cannot reproduce the rig's deforming feed hoses. Baking a
 clip, exporting an armature, or retaining hooks will not make that work today.
 Do not mark the asset motion-complete with a fixed hose that detaches when steered.
 
-Keep the flexible hoses in the Blender source. A runtime route still has to be
-chosen and implemented: a deformable mesh/skin path, or an explicitly accepted
-articulated approximation with its own clearance and endpoint checks. Neither is
-promised by this reply. Hose neutral centreline, end frames and bend constraints
-will be needed for that choice. A neutral-pose static preview can be reviewed
-separately and must be labelled static.
+The selected CH-S2 runtime route is a procedural tube with fixed topology and
+updated vertex positions/normals. No clips, skinning or morph playback is needed.
+This requires a new dynamic PBR mesh update path; today's rigid-part support alone
+cannot do it. Keep the Blender hoses and evaluated sweeps as reference evidence.
 
-The next integration work is part-aware equipment loading/placement, live gimbal
-state and rigid-linkage evaluation, followed by an agreed hose representation and
-motion/clearance tests. No package is installed by this confirmation.
+End frames, diameter and free length are necessary but do not uniquely specify a
+routed hose. Supply the rest centreline, end tangent axes, routing guides and their
+parent frames, minimum bend radius and clearance constraints. Use a deterministic
+curve solver and stable transported cross-section frames. Preserve the declared
+free length within an agreed tolerance; reject infeasible endpoint distances,
+bend radii or routing instead of silently stretching the hose. Compare endpoints,
+tangents, arc length, bends and clearances throughout the steering envelope.
+
+A static preview uses the complete neutral assembly. Do not steer rigid parts
+while leaving their hoses frozen. A failed motion validation prevents enabling
+motion for that package. The latest v09 delivery is Building, accepted=false and
+installed=false; a technically loadable neutral export is not asset acceptance.
+
+## Confirmed engine sequence (registry steps 3–5)
+
+Reply to registry task `20261010T134430-registry-c09b`, reviewing
+`~/git/universe-fso/docs/ships/ch-s2-motion-plan.md`. This confirms the clipless
+approach with the amendments below; it is an implementation plan, not a claim
+that these consumers exist yet.
+
+1. **Agree the data contract before the consumer.** Move registry step 6 ahead of
+   runtime motion loading. Registry owns `freefall-motion/1`, installer validation
+   and the equipment limit; engine and Blender provide consumer/export fixtures.
+   Distinguish model-root bind transforms from attachment transforms local to a
+   named parent. Both use the exported basis, metres and radians, but are not the
+   same coordinate frame. Validate unique nodes, parent acyclicity, finite rigid
+   transforms, frame references, dimensions and package/model association.
+2. **Step 3: mount placement and neutral equipment.** Resolve each fitted device
+   to its model and hull mount. Compose the full hull mount frame with the inverse
+   equipment mount frame, preserving roll and the authored datum. Retain any
+   orientation missing from the current import path; do not centre by bounds.
+   Add part-aware loading, neutral bounds and a neutral placement comparison on
+   the target hull. This can proceed alongside the schema/fixture work.
+3. **Step 4a: actual device state.** There is no engine gimbal command/state today
+   (`protocol::ShipCommands` has throttle and attitude-rate commands, not a
+   per-engine pitch/yaw setting). Define the device command and applied state,
+   core clamping from the registry limit, view exposure and save/replay behavior.
+   Do not directly reinterpret the attitude-rate stick as a gimbal angle. Client
+   flight control owns command allocation; core applies device commands. Use the
+   applied angle for both thrust direction/torque and rendered nozzle direction.
+   Any slew/response law requires specification; do not invent a rate.
+4. **Step 4b: rigid motion.** Evaluate nested pitch/yaw and the rigid sliding
+   actuator linkage from that state, using the bind-space deltas above. Verify
+   exported neutral, axis-limit and combined-limit reference poses, actuator
+   attachment agreement, stroke/overlap and clearance. Independent instances
+   must not share mutable pose state. Reference fixture poses can be evaluated
+   before 4a, but live motion depends on it.
+5. **Step 5: flexible motion.** Implement the routed tube evaluator and bounded
+   per-instance dynamic vertex updates, reusing topology/buffers rather than
+   generating new model IDs each frame. Include normals, shadow rendering and
+   motion bounds. Validate hose seating, tangents, length, bend radius and
+   interference over the same full-envelope fixtures, then measure update cost.
+6. **Integration gate.** Check mounted motion on the actual hull, command/render/
+   force agreement, independent instances and save/replay. Enable moving
+   installation only after the schema, exporter, runtime and asset QC agree.
+   Static installation remains a separately accepted neutral package after
+   Blender's open pipe/manifold/datum/mass/thermal checks and owner acceptance.
+
+Turbulence remains an owner/spec decision. Do not silently add invented noise to
+the command or applied thrust. A physically moving nozzle must remain consistent
+with its thrust direction; any approved purely cosmetic vibration needs its own
+explicit scope and attachment behavior. The v09 turbulence clip is review
+reference, and the steering sweep remains QC evidence.

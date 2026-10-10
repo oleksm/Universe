@@ -5,3 +5,7 @@
 - Specified the exported coordinate/bind-transform, actuator attachment and
   normalized two-axis steering data needed from Blender. No runtime behavior or
   installed asset changed.
+- Confirmed the clipless integration sequence for registry: schema and exported
+  frames, mounted neutral equipment, applied gimbal state, rigid linkage, then
+  procedural hoses with routing constraints and dynamic mesh updates. Updated
+  the v09 pivot and separated technical readiness from asset acceptance.
