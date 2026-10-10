@@ -29,7 +29,8 @@ An agent is known by `--as`, else `$AGENTMSG_NAME`, else the entry whose `cwd` h
 
 - **A Claude Code session** has a Stop hook (`~/.claude/settings.json`: `agentmsg hook-claude`): when the session is
   about to end its turn and its agent has unread mail, the hook keeps it going with the summaries.
-- **An idle agent**: `agentmsg serve` (run it once in a terminal, or as a user service) watches the inboxes. For an
+- **An idle agent**: `agentmsg serve` watches the inboxes. It runs as a user service, `agentmsg.service`
+  (`~/.config/systemd/user/`; `systemctl --user status agentmsg`), started at login and restarted if it stops. For an
   agent with a `wake` command it starts that command with the mail as the prompt (`{prompt}`), one run at a time,
   logging to `~/.agents/log/<agent>.log`; the agent reads, works and replies with `agentmsg send`. For an agent without
   one it sends a desktop notification. Wake is opt-in per agent: a Codex agent wakes with `codex exec … "{prompt}"`
