@@ -576,9 +576,15 @@ fn bodies(frame: &mut Frame, app: &App) {
 
         if b.kind == BodyKind::Gate {
             if frame.projected_radius(center, b.rail.radius) > 0.8 {
-                let t = Transform { position: center, rotation, scale: 1.0 };
-                let metal = Color::hex(0x767d85);
-                frame.with_surface(0.45, 44.0, 0.0, |frame| frame.model_shaded(&app.models.gate, &t, metal.scale(0.7), metal));
+                // (Its ring's model, where the ring design's record has one; else the ring made from its size.)
+                let ring = universe_sim::world::registry::registry().gates.first().and_then(|g| app.caches.visuals.get(&g.identity.key));
+                if let Some(l) = ring {
+                    crate::visuals::centred(frame, &l, center, b.rotation(t));
+                } else {
+                    let t = Transform { position: center, rotation, scale: 1.0 };
+                    let metal = Color::hex(0x767d85);
+                    frame.with_surface(0.45, 44.0, 0.0, |frame| frame.model_shaded(&app.models.gate, &t, metal.scale(0.7), metal));
+                }
                 gate_lights(frame, center, b.rotation(app.now()), app.now());
             } else {
                 frame.point(center, c);
@@ -586,9 +592,13 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
         if b.kind == BodyKind::Rig {
-            // No model yet: its box at its size, a faint fill, its edges, its name along them.
+            // Its model where its record has one; else its box at its size, a faint fill, its edges, its
+            // name along them.
             match universe_sim::world::rigs::half(b) {
-                Some(half) if px > 0.8 => rig_box(frame, center, b.rotation(t), half, &b.name),
+                Some(half) if px > 0.8 => match app.caches.visuals.get(&b.key) {
+                    Some(l) => crate::visuals::centred(frame, &l, center, b.rotation(t)),
+                    None => rig_box(frame, center, b.rotation(t), half, &b.name),
+                },
                 _ => frame.point(center, c.scale(0.8)),
             }
             continue;
@@ -1515,7 +1525,20 @@ fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
     // What stands built, as one mesh (made again when more is finished); what's
     // going up, each at the height it has reached (in steps of 1/32).
     let now = app.now();
-    let built: Vec<(&universe_sim::world::settlements::Block, f64)> = g.works.iter().flat_map(|w| w.blocks.iter().enumerate().filter(move |(k, _)| w.progress(*k, now) >= 1.0).map(|(_, b)| (b, b.height))).collect();
+    let all_built: Vec<(&universe_sim::world::settlements::Block, f64)> = g.works.iter().flat_map(|w| w.blocks.iter().enumerate().filter(move |(k, _)| w.progress(*k, now) >= 1.0).map(|(_, b)| (b, b.height))).collect();
+    // (A module or building whose record has a model stands as it, on the ground at its block's centre;
+    // the rest are boxes in the one mesh.)
+    let mut built = Vec::new();
+    for (bl, h) in all_built {
+        match app.caches.visuals.get(&bl.module) {
+            Some(l) => {
+                let (e, n) = bl.centre;
+                let floor = -(e * e + n * n) / (2.0 * r);
+                crate::visuals::standing(frame, &l, &tr, DVec3::new(e, floor, -n), bl.heading);
+            }
+            None => built.push((bl, h)),
+        }
+    }
     let key = format!("{}/{}/{} built {}", s.system, s.body, s.name, g.works.iter().map(|w| format!("{}:{}", w.parcel, (0..w.blocks.len()).filter(|&k| w.progress(k, now) >= 1.0).count())).collect::<Vec<_>>().join(","));
     let mesh = crate::models::ground_blocks(key, &built, r);
     frame.with_surface(0.15, 16.0, 0.0, |frame| frame.model_shaded(&mesh, &tr, Color::hex(0x3a3f45), Color::hex(0x8c9196)));

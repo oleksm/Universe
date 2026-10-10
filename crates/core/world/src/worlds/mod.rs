@@ -64,7 +64,7 @@ struct FileEntry {
 }
 
 /// A package folder, its manifest checked against `want` (the record's hash).
-struct Package {
+pub(crate) struct Package {
     folder: PathBuf,
     files: HashMap<String, String>,
 }
@@ -72,7 +72,7 @@ struct Package {
 impl Package {
     /// The package in `folder`, its manifest's hash `want` (None: not checked against a record:
     /// a preview, see `Bake::open`).
-    fn open(folder: PathBuf, want: &str) -> Result<Self, String> {
+    pub(crate) fn open(folder: PathBuf, want: &str) -> Result<Self, String> {
         Self::open_checked(folder, Some(want))
     }
 
@@ -89,7 +89,7 @@ impl Package {
     }
 
     /// File `name`'s bytes, checked against the manifest.
-    fn read(&self, name: &str) -> Result<Vec<u8>, String> {
+    pub(crate) fn read(&self, name: &str) -> Result<Vec<u8>, String> {
         let want = self.files.get(name).ok_or_else(|| format!("{}: {name} is not in its manifest", self.folder.display()))?;
         let bytes = std::fs::read(self.folder.join(name)).map_err(|e| format!("{}/{name}: {e}", self.folder.display()))?;
         if &sha256(&bytes) != want {
