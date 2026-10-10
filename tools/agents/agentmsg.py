@@ -273,17 +273,26 @@ def cmd_hook_claude(pos, opt):
     print(json.dumps({"decision": "block", "reason": wake_prompt(name, got)}))
 
 
+def tx(sess):
+    """tmux for one agent's session. Each agent has its own tmux server (socket agent-<name>), so one going down takes no
+    other agent with it; a session started before that lives on the default server and is still found there."""
+    for sock in (["-L", sess], []):
+        if subprocess.run(["tmux", *sock, "has-session", "-t", sess], capture_output=True).returncode == 0:
+            return ["tmux", *sock]
+    return ["tmux", "-L", sess]
+
+
 def tmux_alive(sess):
-    return shutil.which("tmux") and subprocess.run(["tmux", "has-session", "-t", sess], capture_output=True).returncode == 0
+    return shutil.which("tmux") and subprocess.run([*tx(sess), "has-session", "-t", sess], capture_output=True).returncode == 0
 
 
 def inject(name, sess, got):
     """Type the mail into the agent's terminal as one line and press Enter: a Claude or Codex prompt takes it as a message
     (queued if the agent is mid-turn)."""
     text = " | ".join(wake_prompt(name, got).splitlines())
-    subprocess.run(["tmux", "send-keys", "-t", sess, "-l", text], check=False)
+    subprocess.run([*tx(sess), "send-keys", "-t", sess, "-l", text], check=False)
     time.sleep(0.3)
-    subprocess.run(["tmux", "send-keys", "-t", sess, "Enter"], check=False)
+    subprocess.run([*tx(sess), "send-keys", "-t", sess, "Enter"], check=False)
 
 
 def cmd_term(pos, opt, rest=None):
@@ -299,21 +308,21 @@ def cmd_term(pos, opt, rest=None):
     if not tmux_alive(sess):
         cmd = c.get("term") or die(f"how is {name} started? give it once: agentmsg term {name} -- codex   (or -- claude)")
         env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
-        subprocess.run(["tmux", "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
+        subprocess.run([*tx(sess), "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
         print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
         if unread(name):        # mail that came while it was not running: typed in once its prompt is up
             subprocess.Popen([sys.executable, os.path.abspath(__file__), "deliver", name], start_new_session=True,
                              stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     if opt.get("here") and os.environ.get("TMUX"):
-        os.execvp("tmux", ["tmux", "switch-client", "-t", sess])
+        os.execvp("tmux", [*tx(sess), "switch-client", "-t", sess])
     if not opt.get("here") or not sys.stdout.isatty():
         term = os.environ.get("TERMINAL") or next((t for t in ("alacritty", "kitty", "foot", "gnome-terminal", "xterm") if shutil.which(t)), None)
         if not term:
             die(f"no terminal found: attach with  tmux attach -t {sess}")
-        subprocess.Popen([term, "-e", "tmux", "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.Popen([term, "-e", *tx(sess), "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         print(f"opened a {term} window on {sess}; detach with Ctrl-b d, the agent keeps running")
     else:
-        os.execvp("tmux", ["tmux", "attach", "-t", sess])
+        os.execvp("tmux", [*tx(sess), "attach", "-t", sess])
 
 
 def cmd_deliver(pos, opt):

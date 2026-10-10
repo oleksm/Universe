@@ -51,7 +51,7 @@ session ran last: so a Claude agent's command resumes its own session by id, `sh
 --resume <id>"` (the id is the session's file name under ~/.claude/projects/; `/rename` titles show which is which). Put the id in agents.json as `"session": "<id>"` too: the Stop hook
 then knows the session by its id, not its folder, and a session that is not the folder's agent takes no mail.
 
-The agent runs in a tmux session, `agent-<name>`, in its folder, so you watch it and type into it like any session;
+The agent runs in a tmux session, `agent-<name>`, on its own tmux server (socket `agent-<name>`: one going down takes no other with it), in its folder, so you watch it and type into it like any session;
 detach with Ctrl-b d and it keeps running. While its session is up, `serve` types each piece of mail into it as one
 line and presses Enter (Codex and Claude take it as your next message, queued if mid-turn), and sends a desktop
 notification. Its replies come back through `agentmsg send`. `agentmsg who` shows `term` for an agent running this way.
