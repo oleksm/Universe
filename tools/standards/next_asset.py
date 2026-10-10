@@ -70,7 +70,7 @@ def brief(kind, key, path, r, used):
          "package": f"{store()}/models/{tail(key)}/v<N>/"}
     fn = r.get("function") or {}
     if fn:
-        b["function"] = {k: v for k, v in fn.items() if not isinstance(v, (dict, list))}
+        b["function"] = {k: v for k, v in fn.items() if not isinstance(v, list)}   # (a rocket's chamber design comes with it)
     if r.get("fits"):
         m = yaml.safe_load(open(os.path.join(TREE, "SFO/metadata/mounts", r["fits"].split(".", 1)[1] + ".yaml"))) if os.path.exists(os.path.join(TREE, "SFO/metadata/mounts", r["fits"].split(".", 1)[1] + ".yaml")) else {}
         b["mount"] = {"key": r["fits"], "envelope_m": m.get("envelope"), "attachment": m.get("attachment")}
