@@ -83,3 +83,40 @@ Sources: candidate-v01 `delivery.yaml`, `about.yaml`, and
 `docs/ships/radiator-s2-targets.md`, `docs/asset-contract.md` and
 `standards/SFO/metadata/mounts/thermal-s2.yaml`. Engine's general placement/bind
 rules are also in `docs/ships/ch-s2-motion-contract.md`.
+
+## Exhaust clearance inputs, 2026-10-10
+
+Reply to ships task `20261010T170802-ships-33c5`: **no authoritative plume
+exclusion envelopes were found** in the current engine/registry contracts.
+`docs/ships/mc07-exhaust-frames.json` supplies the current engine GLB's meshless
+nozzle origins, normalized exhaust directions and slot classification, with the
+source hash. It is model-root geometry before the physics `made_centre` shift.
+Regenerate/compare these frames for the actual ships candidate export; the
+working Blender source can differ from the engine's installed GLB.
+
+Importer rule: accumulate the entire glTF node hierarchy; origin is transformed
+zero, exhaust direction is transformed local -Z (Blender +Y). `nozzle_main*`
+binds to drive, `nozzle_lift*` to lift, remaining `nozzle_*` to thrusters. Physics
+push is the negative of exhaust direction. Runtime positions subtract the
+shape's `made_centre`, then use the ship's world rotation/translation. Hull-root
+clearance work must keep the uncentred hull and nozzle geometry in the same frame.
+
+`crates/game/src/scene.rs::jets` uses PLUME=0.035 times square-root thrust and
+GLOW=0.0016 times square-root rated thrust, plus flicker and rendering-specific
+clamps. These are visual rules, not gas/radiation exclusion cones, heat-flux
+limits or certified safe distances. Do not use the glow boundary as final
+radiator clearance.
+
+The rear pod's HOT EXHAUST marking is near the authored louver/heat-sink bank
+(`build_mining_ship.py`, engine-bay section, VX/VY/VZ/VW/VH). The source does not
+specify a plume cone, outlet flow, operating temperature or allowable exposure
+there. A label or visible recess does not identify a physical flow axis. Registry
+must define whether these are exhaust outlets, cooling surfaces or another device,
+with stable interface frames and their operating/exclusion conditions.
+
+Missing inputs for certification: envelope shape/extent or a flux-and-exposure
+criterion per outlet, operating power/throttle and environment assumptions,
+steering/divergence range where applicable, simultaneous operating cases and
+radiator exposure limits. Ships may use explicitly assumed screening volumes
+and report their parameters/results, but must keep final exhaust/thermal clearance
+open. The radiator's own thermal/material qualification is separate as well.
