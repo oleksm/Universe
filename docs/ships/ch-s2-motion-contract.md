@@ -178,3 +178,93 @@ the command or applied thrust. A physically moving nozzle must remain consistent
 with its thrust direction; any approved purely cosmetic vibration needs its own
 explicit scope and attachment behavior. The v09 turbulence clip is review
 reference, and the steering sweep remains QC evidence.
+
+## Proposal-v03 runtime/schema review
+
+2026-10-10, Blender task `20261010T141306-blender-c688`. Reviewed
+`~/git/blender/engine-ch-s2/proposal-v03/delivery.yaml`, `review/duct-study.json`,
+`source/build_duct_study.py` and the neutral GLB against registry `c5ae8c1a`
+(`docs/formats/freefall-motion-1.schema.yaml`, `tools/standards/assets.py`).
+
+**Conclusion: the axis-aligned rigid mechanism is suitable for a runtime fixture.**
+It is not an accepted production engine or a schema-conforming package. Both
+spools inherit pitch; the first hinge joins root to pitch on the pitch axis,
+the second joins pitch to yaw on the yaw axis. Use inherited transforms for the
+spools, cuffs and hinge hardware. No independent look-at or roll solver is needed
+for this layout, and no part should receive both inherited and solved motion.
+
+Independent check using the exported pivot/axes, Rodrigues rotations in double
+precision, radial inputs at radii 0, .25, .5, .75 and 1 (128 directions per nonzero
+radius), and the nine supplied reference matrices:
+
+| Check | Engine result |
+|---|---|
+| Sampled poses | 513 |
+| Maximum chord-length residual | 3.033e-8 m |
+| Maximum paired joint-centre residual | 2.503e-10 m |
+| Maximum component error against supplied stage matrices | 2.371e-8 |
+| Projected first-hinge roll vs inherited pitch, maximum vector residual | 2.087e-10 |
+| GLB bind-node names | All five present |
+| GLB animations / skins | 0 / 0 |
+
+Input GLB SHA-256 matches the delivery:
+`5579cfc4037acf54762e2cb1c39431f5ad58024e9c4a69105d6a7e9a05b6f096`.
+This independently supports the kinematics; it does not rerun Blender's mesh
+clearance or validate bellows deformation. Reference matrices currently cover
+only the two stages. Add spool, cuff, hinge and bellows-part references in the
+next fixture so the complete exported hierarchy can be compared.
+
+### Schema mapping and validator amendments
+
+- Represent each rigid spool as a pitch child with its actual root-space bind.
+  The study's spool binds are identity, whereas `links.node` currently requires
+  an origin at joint a. For a links export either rebase the mesh and bind
+  together, or have registry explicitly support local joint attachment frames;
+  do not merely replace the bind translation. Preserve the working source study.
+- The projected `joint_a_hinge` roll agrees with inherited pitch in this layout
+  (see the numeric check), but schema/consumer must state whether the link is
+  solved or inherited and checked. There must be exactly one pose producer.
+- `check_motion` at c5ae8c1a checks chord length, projected chord hinge turns,
+  single-hinge direction constraints, roll singularity and sampled tie lengths.
+  It does not evaluate full link orientations or consume `roll_axis`, `torsion`,
+  `axial`, or reference transforms. Its two-hinge angle projections are not an
+  ordered rotation decomposition. Passing it is therefore not complete joint
+  validation, particularly for twist or a curved spool's end frames.
+- Extend the contract to make both joint-side neutral frames unambiguous, and
+  validate their relative rotation against the ordered permitted hinges, with
+  residual torsion/translation checks. Check the solved/inherited link pose and
+  ties against that same evaluation. Add negative fixtures with unchanged joint
+  centres but forbidden twist, wrong roll and disallowed second-axis rotation.
+  Include signed limit poses and full node-transform reference comparisons.
+- The 65-pose installer sweep is sampled evidence, not proof of clearance or
+  compliance throughout travel. Retain the denser exporter sweep and final-hull
+  clearance checks. A limit means maximum turn either way from neutral in the
+  current schema; do not import a catalogue total-travel number as that limit.
+
+### Bellows representation decision
+
+The study's Hermite surface is explicit and useful review evidence, but its mesh
+is rebuilt by Blender; the neutral GLB cannot reproduce that behavior in the
+current renderer. Keep it as the reference surface for now.
+
+Prefer a **rigid-ring fan prototype** as the next consumer experiment because it
+uses the existing rigid-part draw path. This is conditional technical preference,
+not approval of its appearance or engineering. A usable fixture must define each
+ring node/bind, both cuff frames, hinge centre/axis, ordered interpolation weights
+including the end-ring rules, and the position as well as rotation formula. An
+instruction to rotate ring i by i/n alone does not establish a sealed surface.
+Show end seating, overlaps/gaps, self-intersection, bounds and silhouette through
+signed/combined limits, compared with the Hermite reference. Count parts/draws;
+the current part selector uses u8 IDs, with part 0 reserved.
+
+Registry's current schema has no ring-fan evaluator fields. Agree those fields
+with the consumer before calling the ring export runtime-ready. If rigid rings
+fail the visual checks, use a bounded procedural bellows surface update with
+reused buffers; do not revive the infeasible free-hose route. The Hermite method
+would also need explicit active span, tangent magnitudes and profile parameters
+instead of treating the entire catalogue joint length as the active bellows.
+
+Compact flight-joint targets, one-sided ratings, actual route-length mass,
+pump supports/outlets and full-assembly/hull clearance remain registry/Blender
+work. This review neither selects those provisional engineering values nor
+changes the production installation gate.

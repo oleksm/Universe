@@ -12,3 +12,6 @@
 - Superseded the CH-S2 hose route with registry's tied-bellows duct proposal.
   Required fixed-length closure, explicit joint freedoms/ratings and roll, and
   separated rigid hardware motion from the unresolved bellows surface rendering.
+- Reviewed proposal-v03 with an independent 513-pose kinematic sweep. Documented
+  links export/orientation-validator gaps and a conditional rigid-ring bellows
+  prototype, with the Hermite surface retained as review reference.
