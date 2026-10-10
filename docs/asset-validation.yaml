@@ -140,3 +140,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Drawing at mounts; final hull saddle placement and restraint; GPU appearance/cost; draft pressure/material assumptions unqualified"
+  - key: equipment.hardpoint.mining-hammer.mc07
+    version: 1
+    manifest_sha256: "33b0c8bd7a29a9f57d16b4efb6ff6a6927963912e2dfb5054d5e7b97da9733f6"
+    installed: 1b6c35c9
+    game: "the loader (world::assets) at fso 1b6c35c9"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hardpoint-mining-hammer-mc07/v1 (266844 bytes, bounds [-2.67, -1.49, -3.22] to [2.67, 3.75, 3.22]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Fixed hull supports and final combined MC-07 integration; general-device motion and operational breaker interaction; GPU look/cost; simultaneous mechanisms; provisional mass/load qualification"
