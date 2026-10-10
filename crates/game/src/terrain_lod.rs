@@ -231,7 +231,10 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
         let Some(t) = body.terrain.as_ref() else { return [0.0; 4] };
         // Palette 4 reads the local authoritative wet mask, independent of the orbit map.
         if let Some(sample) = crate::terrain_view::canonical_texel(t, d) {
-            return [sample[1], 0.0, 0.0, -1.0];
+            let slope = if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) {
+                t.surface_differential(d, r).map_or(0.0, |(_, derivative)| derivative.slope as f32)
+            } else { 0.0 };
+            return [sample[1], 0.0, 0.0, -(1.0+slope)];
         }
         let (f, w) = t.surface_fields_view(d);
         whole.set(whole.get() && w);

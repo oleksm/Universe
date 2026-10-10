@@ -33,7 +33,7 @@ pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
     let system = world.system(world.home_system);
     let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
     if !body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Err("preview body has no terrain".into()); }
-    log::info!("PGS1 PREVIEW: {} on {}; explicit water where supplied; optional diagnostic rock colours; no physical textures; registry unchanged", folder.display(), key);
+    log::info!("PGS1 PREVIEW: {} on {}; explicit water where supplied; optional category/rock appearance previews (visual tuning); no physical textures or local climate; registry unchanged", folder.display(), key);
     Ok(world)
 }
 
@@ -70,8 +70,8 @@ pub fn apply(app: &mut App, name: &str) {
     }
     app.messages.clear();
     if app.charts.has_surface_sources() {
-        let diagnostic = crate::pgs_preview::palette(&c.sys.bodies[c.planet]).is_some();
-        app.say(if diagnostic { "PGS1: DIAGNOSTIC ROCK COLOURS, NOT PHYSICAL TEXTURES" } else { "PGS1: NEUTRAL TERRAIN / EXPORTED WATER" }.into());
+        let palette = crate::pgs_preview::palette(&c.sys.bodies[c.planet]);
+        app.say(if palette.is_some_and(|p| p.materials()) { "PGS1: ROCK APPEARANCE PILOT - VISUAL TUNING" } else if palette.is_some() { "PGS1: DIAGNOSTIC ROCK COLOURS, NOT PHYSICAL TEXTURES" } else { "PGS1: NEUTRAL TERRAIN / EXPORTED WATER" }.into());
     }
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);

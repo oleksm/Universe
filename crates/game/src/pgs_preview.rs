@@ -6,8 +6,10 @@ pub struct Palette {
     body: String,
     vocabularies: [String; 2],
     colours: BTreeMap<u16, [u8; 4]>,
+    materials: bool,
 }
 impl Palette {
+    pub fn materials(&self) -> bool { self.materials }
     pub fn colour(&self, sample: Sample) -> [u8; 4] {
         // Unknown and explicitly unassigned stay neutral; no lookup by source-array index.
         sample.categories.filter(|(rock, _)| *rock != 0)
@@ -52,7 +54,7 @@ pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::w
     let mode = std::env::var("UNIVERSE_PGS1_COLOURS").unwrap_or_else(|_| "neutral".into());
     let palette = match mode.as_str() {
         "neutral" => None,
-        "categories" => {
+        "categories" | "materials" => {
             if surface.capabilities & 32 == 0 { return Err("category colours require explicit PGS1 category capability".into()); }
             let bytes = std::fs::read(folder.join("surface.json")).map_err(|e| e.to_string())?;
             let entry = &manifest["files"]["surface.json"];
@@ -60,9 +62,11 @@ pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::w
                 return Err("category legend manifest/hash/size mismatch".into());
             }
             let json = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
-            Some(parse(body, [&surface.provenance[5], &surface.provenance[6]], surface_hash, &json)?)
+            let mut palette = parse(body, [&surface.provenance[5], &surface.provenance[6]], surface_hash, &json)?;
+            if mode == "materials" { palette.use_materials(&json); }
+            Some(palette)
         }
-        _ => return Err("UNIVERSE_PGS1_COLOURS must be neutral or categories".into()),
+        _ => return Err("UNIVERSE_PGS1_COLOURS must be neutral, categories or materials".into()),
     };
     SHADOWS.set((body.to_owned(), shadows)).map_err(|_| "PGS1 shadows already configured".to_string())?;
     PALETTE.set(palette).map_err(|_| "PGS1 display already configured".to_string())
@@ -84,7 +88,53 @@ fn parse(body: &str, vocabularies: [&str; 2], surface_hash: &str, json: &serde_j
         if colours.insert(id, [rgb[0], rgb[1], rgb[2], 255]).is_some() { return Err("duplicate legend ID".into()); }
     }
     if colours.is_empty() { return Err("empty category legend".into()); }
-    Ok(Palette { body: body.to_owned(), vocabularies: vocabularies.map(str::to_owned), colours })
+    Ok(Palette { body: body.to_owned(), vocabularies: vocabularies.map(str::to_owned), colours, materials: false })
+}
+
+// Existing legacy shader ROCK values: visual tuning, never physical PGS reflectance.
+// Explicit frozen source-name mapping; a test below keeps values tied to the shader.
+#[cfg(any(feature = "dev", test))]
+const ROCK_LOOK: [(&str, [f32; 3]); 20] = [
+    ("morb", [0.102, 0.089, 0.076]),
+    ("arc_volcanic", [0.195, 0.138, 0.112]),
+    ("arc_plutonic", [0.434, 0.352, 0.287]),
+    ("basement", [0.392, 0.305, 0.231]),
+    ("greenstone", [0.150, 0.156, 0.107]),
+    ("schist", [0.305, 0.262, 0.223]),
+    ("granite", [0.527, 0.413, 0.352]),
+    ("flood_basalt", [0.076, 0.058, 0.045]),
+    ("carbonate", [0.672, 0.604, 0.468]),
+    ("clastic", [0.617, 0.413, 0.195]),
+    ("ophiolite", [0.122, 0.112, 0.080]),
+    ("rift", [0.413, 0.122, 0.065]),
+    ("iron_formation", [0.262, 0.065, 0.034]),
+    ("primary_crust", [0.305, 0.262, 0.223]),
+    ("intercrater_plains", [0.238, 0.205, 0.171]),
+    ("high_ti_basalt", [0.058, 0.061, 0.076]),
+    ("impact_melt", [0.133, 0.114, 0.102]),
+    ("impact_breccia", [0.468, 0.423, 0.361]),
+    ("anorthosite", [0.552, 0.539, 0.503]),
+    ("kreep", [0.195, 0.150, 0.112]),
+];
+#[cfg(any(feature = "dev", test))]
+impl Palette {
+    fn use_materials(&mut self, json: &serde_json::Value) {
+        self.materials = true;
+        let known = self.colours.clone();
+        self.colours.clear();
+        if self.vocabularies[0] != "ground-vocabulary.rock@1" { return; }
+        let srgb = |x: f32| -> u8 {
+            let x = if x <= 0.0031308 { 12.92*x } else { 1.055*x.powf(1.0/2.4)-0.055 };
+            (x.clamp(0.0,1.0)*255.0).round() as u8
+        };
+        for (source, linear) in ROCK_LOOK {
+            if let Some(id) = json["categories"]["vocabularies"]["rock"]["mapping"][source].as_u64()
+                .and_then(|v| u16::try_from(v).ok()).filter(|v| *v != 0) {
+                if !known.contains_key(&id) || !json["categories"]["legend"].as_array().is_some_and(|entries| entries.iter().any(|e| e["id"] == id && e["source"] == source)) { continue; }
+                self.colours.insert(id, [srgb(linear[0]),srgb(linear[1]),srgb(linear[2]),255]);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -99,6 +149,29 @@ mod tests {
             "legend":[{"id":1,"source":"morb","colour":[62,74,92]}]
         }})
     }
+    #[test]
+    fn material_names_are_explicit_and_legacy_visual_values_stay_in_sync() {
+        let shader = include_str!("../../engine/src/shaders/ground_material.wgsl");
+        let table = shader.split("const ROCK:").nth(1).unwrap().split("const SAND").next().unwrap();
+        let colours: Vec<[f32;3]> = table.split("vec3<f32>(").skip(1).map(|s| {
+            let values: Vec<f32> = s.split(')').next().unwrap().split(',').map(|v| v.trim().parse().unwrap()).collect();
+            values.try_into().unwrap()
+        }).collect();
+        assert_eq!(colours, ROCK_LOOK.iter().map(|(_,c)| *c).collect::<Vec<_>>());
+        let mut json = legend();
+        // A frozen ID is not a legacy table index: MORB can be assigned another ID.
+        json["categories"]["legend"][0]["id"] = json!(17);
+        json["categories"]["vocabularies"]["rock"]["mapping"]["morb"] = json!(17);
+        let mut p = parse("test", VOCABS, "test-surface", &json).unwrap();
+        p.use_materials(&json);
+        let mut sample = Sample {face:0,height_m:0.0,water:Water::Unknown,categories:Some((17,0))};
+        assert_eq!(p.colour(sample), [90,84,78,255]);
+        for id in [0,1,65535] { sample.categories=Some((id,0)); assert_eq!(p.colour(sample),[0;4]); }
+        sample.categories=None; assert_eq!(p.colour(sample),[0;4]);
+        p.vocabularies[0]="other@1".into(); p.use_materials(&json);
+        sample.categories=Some((17,0)); assert_eq!(p.colour(sample),[0;4]);
+    }
+
     #[test]
     fn frozen_id_lookup_preserves_unknown_unassigned_and_unmapped() {
         let palette = parse("test", VOCABS, "test-surface", &legend()).unwrap();

@@ -1,0 +1,127 @@
+{
+  "version": "canonical-terrain-differential/1",
+  "cases": [
+    {
+      "name": "root",
+      "queries": 37,
+      "maximum_errors": {
+        "height_m": 1.1368683772161603e-13,
+        "gradient_m_per_radian": 2.2737367544323206e-13,
+        "slope_rise_run": 5.421010862427522e-20,
+        "slope_degrees": 3.469446951953614e-18,
+        "terrain_normal": 5.421010862427522e-20
+      },
+      "surface_sha256": "33889bbb54be3e6a425ba6df50dba2e523061719ae0f9e05f0fcb9542d5cffbc"
+    },
+    {
+      "name": "shore",
+      "queries": 43,
+      "maximum_errors": {
+        "height_m": 1.1368683772161603e-13,
+        "gradient_m_per_radian": 4.547473508864641e-13,
+        "slope_rise_run": 5.421010862427522e-20,
+        "slope_degrees": 3.469446951953614e-18,
+        "terrain_normal": 1.1102230246251565e-16
+      },
+      "surface_sha256": "1e9aebec726a20095edbf19b0b8b602e0d453b96cbcf286d8cc96f50dd2d8353"
+    },
+    {
+      "name": "split",
+      "queries": 43,
+      "maximum_errors": {
+        "height_m": 1.1368683772161603e-13,
+        "gradient_m_per_radian": 4.547473508864641e-13,
+        "slope_rise_run": 5.421010862427522e-20,
+        "slope_degrees": 3.469446951953614e-18,
+        "terrain_normal": 1.1102230246251565e-16
+      },
+      "surface_sha256": "45d25697beb3844503a1adf14a9d6b0fffa00acb1841995180f0288cc83966ab"
+    },
+    {
+      "name": "lake_cut",
+      "queries": 85,
+      "maximum_errors": {
+        "height_m": 1.7053025658242404e-13,
+        "gradient_m_per_radian": 4.547473508864641e-13,
+        "slope_rise_run": 8.131516293641283e-20,
+        "slope_degrees": 5.204170427930421e-18,
+        "terrain_normal": 2.220446049250313e-16
+      },
+      "surface_sha256": "785accd9a0c712bfd0b3f063a1164a9043e45b2f8f7ecd0f0e21fc55847f0cb2"
+    },
+    {
+      "name": "lake_spill_cap",
+      "queries": 61,
+      "maximum_errors": {
+        "height_m": 1.2079226507921703e-13,
+        "gradient_m_per_radian": 4.547473508864641e-13,
+        "slope_rise_run": 8.131516293641283e-20,
+        "slope_degrees": 5.204170427930421e-18,
+        "terrain_normal": 1.1102230246251565e-16
+      },
+      "surface_sha256": "1f8f3106ea48ef952e846323ea484935daed8ce3bdb7f10f5dd7b536be2a0dcd"
+    },
+    {
+      "name": "ocean_cut",
+      "queries": 61,
+      "maximum_errors": {
+        "height_m": 1.1368683772161603e-13,
+        "gradient_m_per_radian": 2.2737367544323206e-13,
+        "slope_rise_run": 5.421010862427522e-20,
+        "slope_degrees": 3.469446951953614e-18,
+        "terrain_normal": 2.220446049250313e-16
+      },
+      "surface_sha256": "5ec4a7853de0d5a9e80d49d1fe29f50cf750e09c19ebecab5a9c78b91ff2f476"
+    }
+  ],
+  "files": {
+    "lake_cut.json": {
+      "bytes": 42273,
+      "sha256": "8c654a54522a9712ca1365c3f6f26b2880ff4003c834df150be6e2c47f43f401"
+    },
+    "lake_cut.pgs": {
+      "bytes": 2016,
+      "sha256": "785accd9a0c712bfd0b3f063a1164a9043e45b2f8f7ecd0f0e21fc55847f0cb2"
+    },
+    "lake_spill_cap.json": {
+      "bytes": 30031,
+      "sha256": "3fd1c4cc231020cd0fd8193174c647209e3cb7a1d53e74960f584155e931a202"
+    },
+    "lake_spill_cap.pgs": {
+      "bytes": 1600,
+      "sha256": "1f8f3106ea48ef952e846323ea484935daed8ce3bdb7f10f5dd7b536be2a0dcd"
+    },
+    "ocean_cut.json": {
+      "bytes": 29315,
+      "sha256": "ad43b059fe780b6c3e1461b1ba6e8f990094a3aa5d933a1634fdc0b6356a410d"
+    },
+    "ocean_cut.pgs": {
+      "bytes": 1584,
+      "sha256": "5ec4a7853de0d5a9e80d49d1fe29f50cf750e09c19ebecab5a9c78b91ff2f476"
+    },
+    "root.json": {
+      "bytes": 18049,
+      "sha256": "7c067b8c18c1f72891d95a807e5b31a2757f3c08618b5f691312de526e363ce5"
+    },
+    "root.pgs": {
+      "bytes": 960,
+      "sha256": "33889bbb54be3e6a425ba6df50dba2e523061719ae0f9e05f0fcb9542d5cffbc"
+    },
+    "shore.json": {
+      "bytes": 21114,
+      "sha256": "0dbca1e6eb1c4f9c3520727225a39a0dd3645af73d10eaf150a9d843d0fb1959"
+    },
+    "shore.pgs": {
+      "bytes": 1152,
+      "sha256": "1e9aebec726a20095edbf19b0b8b602e0d453b96cbcf286d8cc96f50dd2d8353"
+    },
+    "split.json": {
+      "bytes": 21114,
+      "sha256": "2b14ceb67af0cb25a22de540b4c73cf83c8d6c4bf78b51a166c0fbbec0e24a59"
+    },
+    "split.pgs": {
+      "bytes": 1064,
+      "sha256": "45d25697beb3844503a1adf14a9d6b0fffa00acb1841995180f0288cc83966ab"
+    }
+  }
+}

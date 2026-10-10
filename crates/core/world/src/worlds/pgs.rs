@@ -29,6 +29,15 @@ pub struct Sample {
     pub categories: Option<(u16, u16)>,
 }
 
+/// Analytic derivative of the selected owner's radial terrain surface.
+/// Gradient is metres per radian on the unit sphere; slope uses R + height.
+#[derive(Clone, Copy, Debug)]
+pub struct Differential {
+    pub gradient: DVec3,
+    pub normal: DVec3,
+    pub slope: f64,
+}
+
 #[derive(Clone, Debug)]
 struct Point {
     position: DVec3,
@@ -472,6 +481,27 @@ impl Surface {
             + v * self.points[f.vertices[1]].height
             + w * self.points[f.vertices[2]].height
     }
+    /// Exact derivative of chord-plane barycentric height, using query's tie owner.
+    /// `radius_m` is the radius where the host draws this surface; water is not terrain.
+    pub fn query_differential(&self, direction: DVec3, radius_m: f64) -> Result<(Sample, Differential), String> {
+        let sample = self.query(direction)?;
+        let radius = radius_m + sample.height_m;
+        if !radius_m.is_finite() || radius_m <= 0.0 || radius <= 0.0 {
+            return Err("invalid differential radius".into());
+        }
+        let q = direction.normalize();
+        let f = &self.faces[sample.face as usize];
+        let [a,b,c] = f.vertices.map(|i| &self.points[i]);
+        let e1 = b.position - a.position;
+        let e2 = c.position - a.position;
+        let g = ((b.height-a.height)*e2.cross(f.normal)
+            + (c.height-a.height)*f.normal.cross(e1))/f.normal.length_squared();
+        let nq = f.normal.dot(q);
+        let ambient = (g - f.normal*(g.dot(q)/nq))*(f.plane/nq);
+        let gradient = ambient - q*ambient.dot(q);
+        Ok((sample, Differential { gradient, normal: (q-gradient/radius).normalize(), slope: gradient.length()/radius }))
+    }
+
     /// Direction need not be normalized. Zero and nonfinite queries are errors.
     /// A runtime centroid index seeds a neighbour walk; boundary traversal visits
     /// the entire tied fan, including a wet face when the terrain owner is dry.

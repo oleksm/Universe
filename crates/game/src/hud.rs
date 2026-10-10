@@ -112,6 +112,14 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
     // The status strip: mode, clock, time rate, system; credits at the right.
     y += status_strip(frame, app, Vec2::new(4.0, y)) + 6.0;
+    if let Some(body) = app.view.system.bodies.iter().find(|b| b.terrain.as_ref().is_some_and(|t| t.canonical_surface())) {
+        let palette = crate::pgs_preview::palette(body);
+        let label = if palette.is_some_and(|p| p.materials()) { "PGS1 ROCK PILOT: VISUAL TUNING" }
+            else if palette.is_some() { "PGS1 DIAGNOSTIC CATEGORY COLOURS" }
+            else { "PGS1 NEUTRAL TERRAIN / KNOWN WATER" };
+        frame.text_boxed(Vec2::new(4.0, y), label, AMBER, SOFT_PANEL);
+        y += LINE + 6.0;
+    }
     let under_strip = y;
     let credits = format!("{:.0} CR", app.v.credits);
     frame.text_boxed(Vec2::new(size.x - text_size(&credits).x - 6.0, top + 2.0), &credits, HUD, SOFT_PANEL);

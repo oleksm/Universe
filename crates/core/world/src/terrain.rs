@@ -124,6 +124,11 @@ impl Terrain {
         self.graph.as_ref().map(|s| s.query(dir).expect("valid terrain direction"))
     }
 
+    /// Owner-face analytic terrain derivative, independent of rendering LOD.
+    pub fn surface_differential(&self, dir: DVec3, radius_m: f64) -> Option<(crate::worlds::pgs::Sample, crate::worlds::pgs::Differential)> {
+        self.graph.as_ref().map(|s| s.query_differential(dir, radius_m).expect("valid terrain direction/radius"))
+    }
+
     /// Whether a canonical surface supplies the terrain (no inferred water or materials).
     pub fn canonical_surface(&self) -> bool { self.graph.is_some() }
 

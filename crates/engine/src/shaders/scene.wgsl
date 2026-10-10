@@ -541,7 +541,12 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         // Palette 5 uses the exported diagnostic rock legend only on dry/unknown-water
         // ground. Water wins at all LODs; missing labels stay on the neutral palette.
         if (in.globe.y > 4.5 && own.a > 0.5 && select(ground.g, in.data.x, on_patch) <= 0.5) {
-            albedo = vec4<f32>(own.rgb * abs(in.globe.w), in.color.a);
+            var rock = own.rgb;
+            if (in.globe.y > 5.5) {
+                // No slope on the orbit cubemap: local patches carry owner-face analytic slope.
+                rock = ground_rock_pilot(rock, select(0.0, max(abs(in.data.w)-1.0, 0.0), on_patch));
+            }
+            albedo = vec4<f32>(rock * abs(in.globe.w), in.color.a);
         }
         let mapped = in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5;
         let uv = world_uv(dir);

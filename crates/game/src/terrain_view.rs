@@ -159,7 +159,7 @@ pub fn globe_bright(body: &Body) -> f32 {
 pub fn globe_kind(body: &Body) -> f32 {
     // Palettes 3/4: measured surface, unknown categories, optional explicit water.
     if let Some(t) = body.terrain.as_ref().filter(|t| t.canonical_surface()) {
-        return if crate::pgs_preview::palette(body).is_some() { 5.0 } else if t.canonical_water() { 4.0 } else { 3.0 };
+        return if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) { 6.0 } else if crate::pgs_preview::palette(body).is_some() { 5.0 } else if t.canonical_water() { 4.0 } else { 3.0 };
     }
     match body.terrain.as_ref().map(|t| t.kind) {
         Some(TerrainKind::Terran) | None => 0.0,
