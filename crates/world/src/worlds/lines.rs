@@ -331,3 +331,204 @@ fn paint(lines: &[Line], w: usize, h: usize) -> Vec<u8> {
 /// The ground's two colours (sRGB): land, and water.
 const LAND: [u8; 4] = [58, 58, 62, 255];
 const WATER: [u8; 4] = [16, 17, 22, 255];
+
+/// A world's ground from its lines: the height anywhere, by the band rule. The nearest level line
+/// (a loop or a shore) gives one height and, by which side of it the point is (the high side on its
+/// left), which way the ground goes; the nearest line beyond it that way (a level line higher on the
+/// high side, lower on the low; a peak above, a low below) gives the other; the height is the straight
+/// blend between the two by distance. Exact on every line and anchor; the sea's is the ground under it.
+pub struct LineHeights {
+    segs: Vec<Seg>,
+    /// Segment indices by cell (`CELL_DEG` of latitude and longitude, row 0 at the south pole).
+    cells: Vec<Vec<u32>>,
+    anchors: Vec<(DVec3, f32, bool)>,
+    /// The highest ground (m).
+    pub max: f64,
+}
+
+/// A level line's segment: its ends (unit), its height.
+struct Seg {
+    a: DVec3,
+    b: DVec3,
+    z: f32,
+}
+
+use glam::DVec3;
+
+/// The cell size of the segments' index (degrees).
+const CELL_DEG: f64 = 1.0;
+const COLS: usize = (360.0 / CELL_DEG) as usize;
+const ROWS: usize = (180.0 / CELL_DEG) as usize;
+/// The farthest a line is looked for (cells round the point's): about 1,300 km.
+const REACH_CELLS: usize = 12;
+/// Where no line beyond is in reach: as if the next level were this far beyond the nearest line (m
+/// of height, and radians).
+const STEP: f32 = 200.0;
+const BEYOND: f64 = 0.01;
+
+impl LineHeights {
+    /// Body `key`'s ground from its lines, made once and shared. None: it has none.
+    pub fn of(key: &str) -> Option<std::sync::Arc<LineHeights>> {
+        use std::collections::HashMap;
+        use std::sync::{Arc, Mutex, OnceLock};
+        static MADE: OnceLock<Mutex<HashMap<String, Option<Arc<LineHeights>>>>> = OnceLock::new();
+        PAINTED.iter().find(|p| p.0 == key)?;
+        let mut made = MADE.get_or_init(Default::default).lock().ok()?;
+        made.entry(key.to_string()).or_insert_with(|| open(key).map(|l| Arc::new(LineHeights::new(&l)))).clone()
+    }
+
+    fn new(lines: &[Line]) -> LineHeights {
+        let dir = |p: (f64, f64)| direction(LonLat { lon: p.0, lat: p.1 });
+        let mut segs = Vec::new();
+        let mut anchors = Vec::new();
+        let mut max = 0.0f64;
+        for l in lines {
+            max = max.max(l.z as f64);
+            match l.kind {
+                KIND_CONTOUR | KIND_COAST => {
+                    let n = l.pts.len();
+                    let edges = if l.flags & CLOSED != 0 && n > 2 { n } else { n.saturating_sub(1) };
+                    for k in 0..edges {
+                        segs.push(Seg { a: dir(l.pts[k]), b: dir(l.pts[(k + 1) % n]), z: l.z });
+                    }
+                }
+                KIND_ANCHOR if !l.pts.is_empty() => anchors.push((dir(l.pts[0]), l.z, l.flags & FLAG_PEAK != 0)),
+                _ => {}
+            }
+        }
+        let mut cells = vec![Vec::new(); COLS * ROWS];
+        for (i, s) in segs.iter().enumerate() {
+            // (Each segment in every cell its ends' box spans: they are short.)
+            let (pa, pb) = (super::lon_lat(s.a), super::lon_lat(s.b));
+            let (r0, r1) = (row(pa.lat.min(pb.lat)), row(pa.lat.max(pb.lat)));
+            let (mut c0, mut c1) = (col(pa.lon), col(pb.lon));
+            if c0 > c1 {
+                std::mem::swap(&mut c0, &mut c1);
+            }
+            // (Across the date line: the short way round.)
+            let cols: Vec<usize> = if c1 - c0 > COLS / 2 { (c1..COLS).chain(0..=c0).collect() } else { (c0..=c1).collect() };
+            for r in r0..=r1 {
+                for &c in &cols {
+                    cells[r * COLS + c].push(i as u32);
+                }
+            }
+        }
+        LineHeights { segs, cells, anchors, max }
+    }
+
+    /// The nearest segment to `q` (unit) passing `keep`: its index, the angle to it, and the point
+    /// on it nearest.
+    fn nearest(&self, q: DVec3, keep: impl Fn(&Seg) -> bool) -> Option<(usize, f64, DVec3)> {
+        let p = super::lon_lat(q);
+        let (r, c) = (row(p.lat), col(p.lon));
+        let cell = CELL_DEG.to_radians();
+        let mut best: Option<(usize, f64, DVec3)> = None;
+        let mut k = 1;
+        loop {
+            let shrink = p.lat.to_radians().cos().max(0.02);
+            let kc = ((k as f64 / shrink).ceil() as usize).min(COLS / 2);
+            for rr in r.saturating_sub(k)..=(r + k).min(ROWS - 1) {
+                for dc in -(kc as i64)..=kc as i64 {
+                    let cc = (c as i64 + dc).rem_euclid(COLS as i64) as usize;
+                    for &i in &self.cells[rr * COLS + cc] {
+                        let s = &self.segs[i as usize];
+                        if !keep(s) {
+                            continue;
+                        }
+                        let (d, foot) = to_segment(q, s.a, s.b);
+                        if best.is_none_or(|b| d < b.1) {
+                            best = Some((i as usize, d, foot));
+                        }
+                    }
+                }
+            }
+            // (Found within the box searched: nothing outside it is nearer.)
+            if best.is_some_and(|b| b.1 <= (k as f64 - 0.5) * cell) || k >= REACH_CELLS {
+                return best;
+            }
+            k *= 2;
+        }
+    }
+
+    /// The ground's height (m from the sea; below 0, the sea floor) at body direction `dir`.
+    pub fn at(&self, dir: DVec3) -> f64 {
+        let q = dir.normalize();
+        let Some((ia, da, foot)) = self.nearest(q, |_| true) else { return 0.0 };
+        let a = &self.segs[ia];
+        // (Which side: the high side is on the line's left, up × along.)
+        let left = foot.cross(a.b - a.a);
+        let high = (q - foot).dot(left) >= 0.0;
+        let za = a.z;
+        let beyond = |z: f32| if high { z > za } else { z < za };
+        let mut b = self.nearest(q, |s| beyond(s.z)).map(|(i, d, _)| (self.segs[i].z, d));
+        for &(p, z, peak) in &self.anchors {
+            if peak == high && beyond(z) {
+                let d = p.angle_between(q);
+                if b.is_none_or(|b| d < b.1) {
+                    b = Some((z, d));
+                }
+            }
+        }
+        let (zb, db) = b.unwrap_or((if high { za + STEP } else { za - STEP }, da + BEYOND));
+        let t = if da + db > 0.0 { da / (da + db) } else { 0.0 };
+        za as f64 + (zb - za) as f64 * t
+    }
+}
+
+fn row(lat: f64) -> usize {
+    (((lat + 90.0) / CELL_DEG).floor() as usize).min(ROWS - 1)
+}
+
+fn col(lon: f64) -> usize {
+    (((lon + 180.0) / CELL_DEG).floor() as i64).rem_euclid(COLS as i64) as usize
+}
+
+/// The angle from `q` to the segment `a`–`b` (unit vectors, short), and the point on it nearest.
+fn to_segment(q: DVec3, a: DVec3, b: DVec3) -> (f64, DVec3) {
+    let ab = b - a;
+    let t = if ab.length_squared() > 0.0 { ((q - a).dot(ab) / ab.length_squared()).clamp(0.0, 1.0) } else { 0.0 };
+    let foot = (a + ab * t).normalize();
+    (foot.angle_between(q), foot)
+}
+
+impl std::fmt::Debug for LineHeights {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "LineHeights({} segments, {} anchors)", self.segs.len(), self.anchors.len())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Hoar's ground from its lines (where the store holds them): exact on its lines and anchors,
+    /// between neighbouring levels elsewhere, and quick.
+    #[test]
+    fn ground_from_lines() {
+        let Some(g) = LineHeights::of("body.treistun.treistun-e") else { return };
+        let lines = open("body.treistun.treistun-e").unwrap();
+        for l in lines.iter().filter(|l| l.kind == KIND_CONTOUR).step_by(97).take(40) {
+            let p = l.pts[l.pts.len() / 2];
+            let h = g.at(direction(LonLat { lon: p.0, lat: p.1 }));
+            assert!((h - l.z as f64).abs() < 1.0, "on a {} m line: {h}", l.z);
+        }
+        for &(p, z, _) in g.anchors.iter().step_by(37) {
+            assert!((g.at(p) - z as f64).abs() < 1.0, "on a {z} m anchor: {}", g.at(p));
+        }
+        let t = std::time::Instant::now();
+        let n = 20_000;
+        let mut lo = f64::MAX;
+        let mut hi = f64::MIN;
+        for k in 0..n {
+            // (A spiral over the whole sphere.)
+            let y = 1.0 - 2.0 * (k as f64 + 0.5) / n as f64;
+            let a = k as f64 * 2.399_963;
+            let r = (1.0 - y * y).sqrt();
+            let h = g.at(DVec3::new(r * a.cos(), y, r * a.sin()));
+            (lo, hi) = (lo.min(h), hi.max(h));
+        }
+        let us = t.elapsed().as_secs_f64() * 1e6 / n as f64;
+        eprintln!("{us:.1} µs a height; {lo:.0} to {hi:.0} m");
+        assert!(lo >= -3_800.0 && hi <= 8_600.0, "{lo} to {hi}");
+    }
+}

@@ -63,6 +63,9 @@ pub struct Terrain {
     /// The ground as the planet simulation grew it, where the body has a bake (`worlds`):
     /// these heights in place of the seed's.
     baked: Option<std::sync::Arc<crate::worlds::Heights>>,
+    /// A world drawn from its vector lines: its ground from them (see `worlds::LineHeights`), in
+    /// place of its bake's heights.
+    lines: Option<std::sync::Arc<crate::worlds::LineHeights>>,
 }
 
 impl Terrain {
@@ -80,7 +83,7 @@ impl Terrain {
                 Crater { dir: rng.unit_vector(), radius, depth: (radius * body_radius * 0.1).min(amplitude * 0.8) }
             })
             .collect();
-        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None }
+        Self { kind, amplitude, seed, body_radius, craters, pads: Vec::new(), baked: None, lines: None }
     }
 
     /// The ground is the bake's `heights` from now (its craters and noise gone).
@@ -88,6 +91,12 @@ impl Terrain {
         self.amplitude = heights.max / 1.3;
         self.craters.clear();
         self.baked = Some(heights);
+    }
+
+    /// The ground is `lines`' from now (its bake's heights and detail no longer used).
+    pub fn from_lines(&mut self, lines: std::sync::Arc<crate::worlds::LineHeights>) {
+        self.amplitude = lines.max / 1.3;
+        self.lines = Some(lines);
     }
 
     /// The world's true colour, if its bake has one (read now; see `worlds::Heights::colour`).
@@ -137,16 +146,24 @@ impl Terrain {
 
     /// As `baked_height`, with the runtime detail to the band `cell` (m; see `detail`).
     fn baked_height_to(&self, h: &std::sync::Arc<crate::worlds::Heights>, dir: DVec3, detail: crate::worlds::Detail, cell: f64) -> (f64, bool) {
-        let (mut out, mut whole) = h.at_detail(dir, detail);
-        let (fine, w) = h.detail_at(dir, detail, cell, self.body_radius);
-        out += fine;
-        whole &= w;
+        // (A world drawn from its lines: their ground, whole; no runtime detail.)
+        let (mut out, mut whole) = match &self.lines {
+            Some(l) => (l.at(dir), true),
+            None => {
+                let (out, whole) = h.at_detail(dir, detail);
+                let (fine, w) = h.detail_at(dir, detail, cell, self.body_radius);
+                (out + fine, whole && w)
+            }
+        };
         for p in &self.pads {
             let ground = dir.distance(*p) * self.body_radius;
             let t = ((ground - PAD_FLAT_INNER) / (PAD_FLAT_OUTER - PAD_FLAT_INNER)).clamp(0.0, 1.0);
             if t < 1.0 {
                 let w = t * t * (3.0 - 2.0 * t);
-                let (at, w2) = h.at_detail(*p, detail);
+                let (at, w2) = match &self.lines {
+                    Some(l) => (l.at(*p), true),
+                    None => h.at_detail(*p, detail),
+                };
                 let at = at.max(0.0);
                 whole &= w2;
                 out = at + (out - at) * w;
@@ -188,6 +205,7 @@ impl Terrain {
     /// None: no bake, or none there (the sea).
     pub fn surface_fields_view(&self, dir: DVec3) -> (Option<[f32; 3]>, bool) {
         match &self.baked {
+            Some(_) if self.lines.is_some() => (None, true),
             Some(h) => h.surface_at(dir, crate::worlds::Detail::Loaded),
             None => (None, true),
         }
@@ -213,6 +231,7 @@ impl Terrain {
     /// Upper bound on the surface height (m).
     pub fn max_height(&self) -> f64 {
         match &self.baked {
+            Some(_) if let Some(l) = &self.lines => l.max,
             Some(h) => h.max,
             None => self.amplitude * 1.3 + self.relief_max(),
         }

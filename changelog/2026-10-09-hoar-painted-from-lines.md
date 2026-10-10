@@ -15,8 +15,12 @@
   (`lines_near`: each edge cut finer toward the eye, each point at the ground's height), laid again
   on a thread of its own when the eye has moved on (14 to 18 ms low down, about 75 ms from 1,250 km),
   the last laid drawn till then.
-- Only the look: Hoar's heights and ground are still its earth_s3 bake (TRE1), so the lines seen from
-  orbit are not the ground you land on until TRE3 comes to main. From afar the lines sit on a globe
+- Hoar's ground from its lines (`worlds::LineHeights`, given to its terrain in place of its bake's
+  heights): the nearest level line (loop or shore) and which side of it, the nearest line beyond it
+  that way (a higher level or a peak on the high side, a lower one or a low on the low), the straight
+  blend between by distance. Exact on every line and anchor (held by a test); the sea flat at 0 over
+  it; about 31 µs a height, from a grid of the segments by 1° cell. The globe, the near patches,
+  landing and collisions all read it. Its bake's runtime detail and surface fields are not used. From afar the lines sit on a globe
   just over its highest ground. Low down few lines are in view: the root has a level line every
   200 m from samples ~160 km apart.
 - The package is named in `worlds/lines.rs` until Hoar's record names its lines.

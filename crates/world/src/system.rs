@@ -427,6 +427,10 @@ impl StarSystem {
                 && let Some(t) = b.terrain.as_mut()
             {
                 t.bake(h);
+                // (A world drawn from its vector lines: its ground from them.)
+                if let Some(l) = crate::worlds::LineHeights::of(&b.key) {
+                    t.from_lines(l);
+                }
             }
         }
         system.add_spaceports(star.seed);
