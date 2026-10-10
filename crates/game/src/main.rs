@@ -26,6 +26,8 @@ mod scene;
 mod interior;
 mod shipyard;
 mod studio;
+mod studio_only;
+mod test_drive;
 mod planet_studio;
 mod standards;
 mod sound;
@@ -1433,12 +1435,14 @@ impl Game for App {
         let top = self.top_layer();
         match top {
             Layer::Shipyard => {
-                // (Worked with the mouse: the cursor free.)
-                if ctx.cursor_grabbed() {
-                    ctx.grab_cursor(false);
-                }
+                // (Worked with the mouse: the cursor free; but a test drive steering
+                // with it takes it, as flight does.)
                 if !universe_prof::time("studio", || shipyard::input(self, ctx)) {
                     self.panels.shipyard = None;
+                }
+                let want = self.panels.shipyard.as_ref().is_some_and(|y| y.wants_mouse());
+                if ctx.cursor_grabbed() != want {
+                    ctx.grab_cursor(want);
                 }
             }
             Layer::Market => {
@@ -1729,6 +1733,33 @@ fn main() {
         .init();
     // (The cores shared out before anything starts using them: see `thread_budget`;
     // what the game may use at all, noted before the shipyard holds it to fewer.)
+    // (`--report <design>`: the interior studio's report on a design, as text; no
+    // window. For checking a change without a game run.)
+    let args: Vec<String> = std::env::args().collect();
+    // (`--studio [design]`: the interior studio alone, no universe loaded.)
+    if let Some(k) = args.iter().position(|a| a == "--studio") {
+        let design = args.get(k + 1).filter(|a| !a.starts_with("--")).map(String::as_str);
+        run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
+        return;
+    }
+    // (`--fit <design>`: its frame fitted (mounted, sized, braced) and saved, the
+    // old one kept in backups/.)
+    if let Some(k) = args.iter().position(|a| a == "--fit") {
+        let name = args.get(k + 1).map_or("design-1", String::as_str);
+        print!("{}", interior::fit_design(name));
+        return;
+    }
+    // (`--compare <a> <b>`: two designs' key figures side by side.)
+    if let Some(k) = args.iter().position(|a| a == "--compare") {
+        let (a, b) = (args.get(k + 1).map_or("design-1", String::as_str), args.get(k + 2).map_or("design-2", String::as_str));
+        print!("{}", interior::compare_designs(a, b));
+        return;
+    }
+    if let Some(k) = args.iter().position(|a| a == "--report") {
+        let name = args.get(k + 1).map_or("design-1", String::as_str);
+        print!("{}", interior::report(name));
+        return;
+    }
     universe_sim::engine::size_thread_pools();
     // (UNIVERSE_HEIGHTS_STRETCH: the lines' heights stretched from the start, as SHIFT+F4 does.)
     if let Some(k) = std::env::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {

@@ -53,6 +53,7 @@ definitions:
       bulk_density: { type: number, exclusiveMinimum: 0, x-unit: "kg/m3", description: "kg/m3, as stowed broken in a hold, for what is carried in bulk" }
       operating_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it works at" }
       operating_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it works at" }
+      specific_heat: { type: number, x-unit: "J/(kg K)", description: "J/(kg K) of the whole thing, for how fast its own losses warm it (a battery pack, a motor)" }
       storage_min_temperature: { type: number, x-unit: "K", description: "K, the coldest it may be kept or carried at" }
       storage_max_temperature: { type: number, x-unit: "K", description: "K, the hottest it may be kept or carried at" }
       impact_resistance: { type: number, x-unit: "J", description: "J, the blow it takes without damage" }
@@ -155,6 +156,18 @@ definitions:
       properties:
         profession: { type: string, x-ref: [profession], description: "The trade, by its key." }
         count: { type: integer, minimum: 0, description: "how many of them" }
+  visual:
+    description: "A made thing's model (the asset contract, docs/asset-contract.md): a package in the assets store (UNIVERSE_ASSETS, else ~/git/freefall-assets) written once per version by tools/standards/install_model.py, which checks the model against this record (its size, its required nodes, its budget) and the package's files against their hashes. Without one the game draws the record as a translucent box of its size with its name on the edges."
+    type: object
+    additionalProperties: false
+    required: [format, path, manifest_sha256, version]
+    properties:
+      format: { const: "freefall-model/1" }
+      path: { type: string, description: "The version's folder in the assets store, relative to it: models/<key tail>/v<N>." }
+      manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "Of the version's manifest.json." }
+      version: { type: integer, minimum: 1 }
+      triangles: { type: integer, description: "triangles drawn, from the model" }
+      note: { type: string }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."
     required: [physical]

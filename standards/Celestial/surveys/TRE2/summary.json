@@ -1,0 +1,403 @@
+{
+ "format": "planet-sim-survey/1",
+ "world_id": "TRE2",
+ "body": "body.treistun.treistun-e",
+ "radius_m": 6371000.0,
+ "rock_units": {
+  "file": "rock_units.png",
+  "index": [
+   "morb",
+   "arc_volcanic",
+   "arc_plutonic",
+   "basement",
+   "greenstone",
+   "schist",
+   "granite",
+   "flood_basalt",
+   "carbonate",
+   "clastic",
+   "ophiolite",
+   "rift",
+   "iron_formation",
+   "primary_crust",
+   "intercrater_plains",
+   "high_ti_basalt",
+   "impact_melt",
+   "impact_breccia",
+   "anorthosite",
+   "kreep"
+  ],
+  "sea": 255
+ },
+ "land_pct": 31.56,
+ "deposits": 1412,
+ "blind_deposits": 594,
+ "districts": 317,
+ "belts": 172,
+ "contained": {
+  "NaCl": {
+   "amount": 48340000000.0,
+   "unit": "t"
+  },
+  "Fe": {
+   "amount": 12270000000.0,
+   "unit": "t"
+  },
+  "Cr2O3": {
+   "amount": 5980000000.0,
+   "unit": "t"
+  },
+  "P2O5": {
+   "amount": 5696000000.0,
+   "unit": "t"
+  },
+  "K2O": {
+   "amount": 2597000000.0,
+   "unit": "t"
+  },
+  "S": {
+   "amount": 1851000000.0,
+   "unit": "t"
+  },
+  "TiO2": {
+   "amount": 1527000000.0,
+   "unit": "t"
+  },
+  "Mn": {
+   "amount": 1258000000.0,
+   "unit": "t"
+  },
+  "MgO": {
+   "amount": 1090000000.0,
+   "unit": "t"
+  },
+  "diamond": {
+   "amount": 680400000.0,
+   "unit": "ct"
+  },
+  "Cu": {
+   "amount": 402900000.0,
+   "unit": "t"
+  },
+  "V2O5": {
+   "amount": 233200000.0,
+   "unit": "t"
+  },
+  "Al2O3": {
+   "amount": 130800000.0,
+   "unit": "t"
+  },
+  "Zn": {
+   "amount": 57220000.0,
+   "unit": "t"
+  },
+  "Ni": {
+   "amount": 36390000.0,
+   "unit": "t"
+  },
+  "Pb": {
+   "amount": 14130000.0,
+   "unit": "t"
+  },
+  "Mo": {
+   "amount": 12220000.0,
+   "unit": "t"
+  },
+  "ZrO2": {
+   "amount": 10810000.0,
+   "unit": "t"
+  },
+  "REO": {
+   "amount": 9329000.0,
+   "unit": "t"
+  },
+  "Li2O": {
+   "amount": 4003000.0,
+   "unit": "t"
+  },
+  "Nb2O5": {
+   "amount": 2899000.0,
+   "unit": "t"
+  },
+  "graphite": {
+   "amount": 2778000.0,
+   "unit": "t"
+  },
+  "Sn": {
+   "amount": 2169000.0,
+   "unit": "t"
+  },
+  "Co": {
+   "amount": 1000000.0,
+   "unit": "t"
+  },
+  "U3O8": {
+   "amount": 813100.0,
+   "unit": "t"
+  },
+  "W": {
+   "amount": 714100.0,
+   "unit": "t"
+  },
+  "As": {
+   "amount": 685600.0,
+   "unit": "t"
+  },
+  "Ag": {
+   "amount": 109200.0,
+   "unit": "t"
+  },
+  "PGE": {
+   "amount": 75590.0,
+   "unit": "t"
+  },
+  "Ta2O5": {
+   "amount": 53400.0,
+   "unit": "t"
+  },
+  "Au": {
+   "amount": 18130.0,
+   "unit": "t"
+  },
+  "TREO": {
+   "amount": 13900.0,
+   "unit": "t"
+  },
+  "WO3": {
+   "amount": 2316.0,
+   "unit": "t"
+  }
+ },
+ "by_kind": {
+  "vms": {
+   "count": 249,
+   "tonnage_mt": 1264.0
+  },
+  "orogenic_gold": {
+   "count": 138,
+   "tonnage_mt": 36.41
+  },
+  "porphyry": {
+   "count": 135,
+   "tonnage_mt": 82540.0
+  },
+  "chromite": {
+   "count": 113,
+   "tonnage_mt": 4.596
+  },
+  "magnesite": {
+   "count": 101,
+   "tonnage_mt": 1106.0
+  },
+  "epithermal": {
+   "count": 67,
+   "tonnage_mt": 259.9
+  },
+  "tin_tungsten": {
+   "count": 65,
+   "tonnage_mt": 743.4
+  },
+  "skarn_copper": {
+   "count": 50,
+   "tonnage_mt": 96.9
+  },
+  "carlin_gold": {
+   "count": 37,
+   "tonnage_mt": 205.1
+  },
+  "diamond": {
+   "count": 34,
+   "tonnage_mt": 1532.0
+  },
+  "laterite_nickel": {
+   "count": 28,
+   "tonnage_mt": 1226.0
+  },
+  "heavy_mineral_sands": {
+   "count": 27,
+   "tonnage_mt": 3644.0
+  },
+  "lithium_pegmatite": {
+   "count": 27,
+   "tonnage_mt": 204.9
+  },
+  "sediment_copper": {
+   "count": 24,
+   "tonnage_mt": 1038.0
+  },
+  "phosphorite": {
+   "count": 24,
+   "tonnage_mt": 16470.0
+  },
+  "layered_vti": {
+   "count": 22,
+   "tonnage_mt": 10500.0
+  },
+  "halite": {
+   "count": 22,
+   "tonnage_mt": 45550.0
+  },
+  "layered_cr_pge": {
+   "count": 21,
+   "tonnage_mt": 10830.0
+  },
+  "mvt": {
+   "count": 20,
+   "tonnage_mt": 215.6
+  },
+  "iocg": {
+   "count": 20,
+   "tonnage_mt": 4310.0
+  },
+  "iron_formation": {
+   "count": 19,
+   "tonnage_mt": 6160.0
+  },
+  "potash": {
+   "count": 19,
+   "tonnage_mt": 15650.0
+  },
+  "evaporite_sulphur": {
+   "count": 17,
+   "tonnage_mt": 718.6
+  },
+  "uranium_sandstone": {
+   "count": 17,
+   "tonnage_mt": 27.47
+  },
+  "sedex": {
+   "count": 16,
+   "tonnage_mt": 232.7
+  },
+  "volcanic_sulphur": {
+   "count": 16,
+   "tonnage_mt": 34.85
+  },
+  "sed_manganese": {
+   "count": 15,
+   "tonnage_mt": 2540.0
+  },
+  "carbonatite": {
+   "count": 15,
+   "tonnage_mt": 593.1
+  },
+  "nickel_sulphide": {
+   "count": 11,
+   "tonnage_mt": 34.63
+  },
+  "bauxite": {
+   "count": 11,
+   "tonnage_mt": 267.0
+  },
+  "uranium_unconformity": {
+   "count": 10,
+   "tonnage_mt": 1.685
+  },
+  "ree_ion_clay": {
+   "count": 7,
+   "tonnage_mt": 15.08
+  },
+  "graphite": {
+   "count": 7,
+   "tonnage_mt": 25.83
+  },
+  "placer_gold": {
+   "count": 5,
+   "tonnage_mt": 14.98
+  },
+  "skarn_tungsten": {
+   "count": 3,
+   "tonnage_mt": 0.4676
+  }
+ },
+ "land_share_by_unit_pct": {
+  "basement": 24.75,
+  "arc_plutonic": 22.94,
+  "carbonate": 12.07,
+  "granite": 11.19,
+  "arc_volcanic": 10.41,
+  "clastic": 9.52,
+  "schist": 4.83,
+  "flood_basalt": 3.25,
+  "ophiolite": 0.81,
+  "rift": 0.19,
+  "morb": 0.05
+ },
+ "bulk_makeup_by_rock_class": {
+  "zone": "warm",
+  "basis": "origin model: the zone's primitive material (stages/bodies.py)",
+  "shares": {
+   "carbonaceous": 0.1412,
+   "enstatite": 0.0588,
+   "stony": 0.8
+  }
+ },
+ "climate": {
+  "mean_surface_temp_c": 12.68,
+  "mean_land_temp_c": 6.69,
+  "rain_land_m": 0.744,
+  "bands": [
+   {
+    "lat_from": 0,
+    "lat_to": 10,
+    "name": "Equator, 0\u201310\u00b0",
+    "temp_c": 28.96,
+    "land_temp_c": 25.04,
+    "land_coldest_month_c": 23.34,
+    "land_warmest_month_c": 26.73,
+    "land_rain_m": 1.55
+   },
+   {
+    "lat_from": 10,
+    "lat_to": 25,
+    "name": "Tropics, 10\u201325\u00b0",
+    "temp_c": 25.34,
+    "land_temp_c": 20.77,
+    "land_coldest_month_c": 16.58,
+    "land_warmest_month_c": 24.46,
+    "land_rain_m": 1.25
+   },
+   {
+    "lat_from": 25,
+    "lat_to": 35,
+    "name": "25\u201335\u00b0",
+    "temp_c": 18.37,
+    "land_temp_c": 12.97,
+    "land_coldest_month_c": 6.13,
+    "land_warmest_month_c": 19.45,
+    "land_rain_m": 0.41
+   },
+   {
+    "lat_from": 35,
+    "lat_to": 50,
+    "name": "35\u201350\u00b0",
+    "temp_c": 7.4,
+    "land_temp_c": 1.03,
+    "land_coldest_month_c": -6.51,
+    "land_warmest_month_c": 8.51,
+    "land_rain_m": 0.48
+   },
+   {
+    "lat_from": 50,
+    "lat_to": 70,
+    "name": "50\u201370\u00b0",
+    "temp_c": -8.16,
+    "land_temp_c": -16.84,
+    "land_coldest_month_c": -23.5,
+    "land_warmest_month_c": -9.84,
+    "land_rain_m": 0.11
+   },
+   {
+    "lat_from": 70,
+    "lat_to": 90,
+    "name": "Poles, 70\u201390\u00b0",
+    "temp_c": -19.4,
+    "land_temp_c": -21.04,
+    "land_coldest_month_c": -26.9,
+    "land_warmest_month_c": -14.06,
+    "land_rain_m": 0.04
+   }
+  ]
+ },
+ "highest_point_plate_stage_m": 4612
+}

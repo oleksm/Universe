@@ -1,0 +1,54 @@
+{
+ "format": "planet-sim-survey/1",
+ "world_id": "TRE2",
+ "body": "body.treistun.treistun-e",
+ "created": "2026-10-09T16:56:27Z",
+ "immutable": true,
+ "simulator": {
+  "commit": "64229d768f72f6f200adaa2fcdced6e77193b07d",
+  "dirty": true
+ },
+ "inputs": {
+  "world": {
+   "file": "world.npz",
+   "sha256": "87971385047b9cd98529e6d8532e0a33edf36eae5c13d9a321dbeb7e78848bde"
+  },
+  "climate": {
+   "file": "climate.npz",
+   "sha256": "899ece1bc176cf2c517aa8743cb4fa411dfd0aa8e6d9dfac323e573ebce6ca22"
+  }
+ },
+ "vocabulary": {
+  "file": "docs/vocabulary.json",
+  "sha256": "73da6d8858d74809c3364c3051de1c592c084448d6fbcb6ca847527688c106ea"
+ },
+ "record": null,
+ "spec": null,
+ "assumed": null,
+ "files": {
+  "bulk_rock.json": {
+   "sha256": "8d8b64f52be131a7e2c23212f79558fa5c1e804a1173dcb0812a38df443e6cbe",
+   "bytes": 4504
+  },
+  "deposits.geojson": {
+   "sha256": "aa3b350dc8de959a8f3e8a7eda95f79e32e18c6c923863bf72c81eb4ade01dbc",
+   "bytes": 799190
+  },
+  "districts.json": {
+   "sha256": "c22b755ed42a5e7c44692426358badc6d6b1511f92594b0d22be880c273375b5",
+   "bytes": 107024
+  },
+  "geology.png": {
+   "sha256": "1ec305bebb52f57f3328b9cba85f720ca9fc478a51c28f84c4ca9983ce71d902",
+   "bytes": 125989
+  },
+  "rock_units.png": {
+   "sha256": "191b9302268326b940c5540d9c86821c96e567c3f27b587a1136e1fe6e6ac2b9",
+   "bytes": 46087
+  },
+  "summary.json": {
+   "sha256": "08177266498f7d3524985642f515de5f67400cfb900ef71c925f4735dcbc9bcf",
+   "bytes": 6742
+  }
+ }
+}

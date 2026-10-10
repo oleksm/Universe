@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.hydrolox.3p5t
+  name: "Hydrolox tank 3.5 t"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A 10.9 m3 ball holding 3,500 kg of hydrolox: a landing and a take-off for a light VTOL, with margin."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 420
+  volume: 22
+  length: 2.8
+  width: 2.8
+  height: 2.8
+built_of:
+  parts: tank-hydrolox-3p5t
+  list:
+    - { code: TKHL0-01, name: "Shell", mass: 294, length: 2.49, width: 2.49, height: 2.49, item: stock.al6061-pl-5, quantity: 338.1, module: module.welding-bay }
+    - { code: TKHL0-02, name: "Insulation", mass: 84, length: 1.64, width: 1.64, height: 1.64, item: stock.mli-fl, quantity: 84, module: module.assembly-shop }
+    - { code: TKHL0-03, name: "Fittings and gauging", mass: 42, length: 1.3, width: 1.3, height: 1.3, item: stock.st304-pl-3, quantity: 48.3, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: tank
+  capacity: 3500
+  holds: material.hydrolox
+life: 473364000
+basis:
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Hydrolox at 320 kg/m3: 10.9 m3 as a ball 2.75 m across, in a 2.8 m box; insulated for liquid hydrogen and oxygen at 12% of its contents. Sized for the Wren commuter (2026-10-07): a landing and a take-off at 1 g take about 3 t. Chosen." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

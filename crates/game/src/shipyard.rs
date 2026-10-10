@@ -23,6 +23,11 @@ enum Page {
 }
 
 impl Shipyard {
+    /// Does the studio want the mouse taken (a test drive steering with it)?
+    pub fn wants_mouse(&self) -> bool {
+        self.interior.wants_mouse()
+    }
+
     /// The interior studio.
     pub fn interior(_app: &App) -> Self {
         Shipyard { page: Page::Interior, studio: Default::default(), interior: crate::interior::Interior::new() }
@@ -230,7 +235,7 @@ pub fn draw(frame: &mut Frame, app: &App, y: &Shipyard) {
     frame.hud_rect(Vec2::ZERO, size, crate::palette::panel(1.0));
     let place = station(app).map_or_else(|| "SHIPYARD".to_string(), |s| format!("SHIPYARD - {s}"));
     match y.page {
-        Page::Interior => crate::interior::draw(frame, app, &place, &y.interior),
+        Page::Interior => crate::interior::draw(frame, &place, &y.interior),
         Page::Layout => match y.interior.spec() {
             Some(hull) => crate::studio::draw(frame, app, &place, y.interior.id(), &hull.name, &y.studio, &y.interior.access()),
             None => {

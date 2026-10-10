@@ -14,6 +14,8 @@ physical:
   length: 2.0
   width: 1.0
   height: 1.2
+  specific_heat: 1000
+  operating_max_temperature: 333
 built_of:
   parts: power-battery-s1
   list:
@@ -26,8 +28,11 @@ function:
   kind: "battery"
   stores: 1000000000.0
   rate: 1000000.0
+  efficiency: 0.97
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "1 GJ (278 kWh) at 150 Wh/kg, the usual for lithium packs with their housing; 1 MW in or out. From memory. Not sourced." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.97: a low-rate pack warms little (lithium cells' internal resistance, from memory). Review." }
+  - { of: [physical.specific_heat, physical.operating_max_temperature], tier: invented, review: true, note: "About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From memory of cell data sheets; review." }

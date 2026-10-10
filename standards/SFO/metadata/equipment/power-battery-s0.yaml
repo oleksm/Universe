@@ -1,0 +1,38 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.battery.s0
+  name: "Battery S0"
+  maker: org.hadley
+  revision: draft
+  slot: power
+  description: "100 MJ (28 kWh) at 300 kW in or out: a small craft's store, charged at the dock."
+size_class: 1
+fits: mount.power-s1
+physical:
+  mass: 200
+  volume: 0.2
+  length: 0.8
+  width: 0.5
+  height: 0.5
+  specific_heat: 1000
+  operating_max_temperature: 333
+built_of:
+  parts: power-battery-s0
+  list:
+    - { code: BATS0-01, name: "Cells", mass: 150, length: 0.727, width: 0.454, height: 0.454, item: good.electronics, quantity: 150, module: module.assembly-shop }
+    - { code: BATS0-02, name: "Housing and cooling", mass: 30, length: 0.425, width: 0.266, height: 0.266, item: stock.al6061-pl-5, quantity: 34.5, module: module.machining-centre }
+    - { code: BATS0-03, name: "Management", mass: 20, length: 0.371, width: 0.232, height: 0.232, item: good.electronics, quantity: 20, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: battery
+  stores: 100000000.0
+  rate: 300000.0
+  efficiency: 0.97
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "150 Wh/kg with its housing, as the S1; 300 kW in or out. From memory; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.97: a low-rate pack warms little (lithium cells' internal resistance, from memory). Review." }
+  - { of: [physical.specific_heat, physical.operating_max_temperature], tier: invented, review: true, note: "About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From memory of cell data sheets; review." }

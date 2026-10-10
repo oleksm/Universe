@@ -294,3 +294,90 @@ Round tubes: `stock.st4340-tb-250x20` (113 kg/m), `-300x20` (138), `-300x30` (20
 line (`module.section-line`) at the Trethi mill. The Members report lists them with area, yield
 and Euler lengths like the tubes (I = (w h³ − (w−2t)(h−2t)³)/12). No thrust ring as equipment:
 build it from the boxes and say if a product would serve better.
+
+## 16. The personal commuter: parts and the physics (2026-10-07, the user's picture and your request)
+
+You build it; this is what the registry gives and what physics says. The picture is a two-seat
+cab on four ducted-fan pods on swivelling arms, a side door, legs, a glass cockpit.
+
+**New equipment, all draft, figures marked review:**
+
+| Key | What | Figures |
+|---|---|---|
+| `equipment.engine.fan.s1 / s2 / s3` | electric ducted fans, cycle `ducted_fan`, slot engine | 10 / 25 / 60 kN in air of 1.2 kg/m³; 1.0 / 1.6 / 2.5 m ducts; 60 / 150 / 350 kg; `needs.power` at full thrust 0.78 / 2.4 / 5.7 MW; `min_density` 0.3 |
+| `equipment.power.fuelcell.s1` | hydrolox fuel cell, slot power | 50 kW at 55%, 90 kg, 7 g/s of hydrolox at full; its water drinkable |
+| `equipment.power.battery.s0` | small battery | 100 MJ, 300 kW in or out, 200 kg |
+| `equipment.tank.hydrolox.0p5t / 1t / 2t / 3p5t`, `tank.methalox.0p5t / 1t / 2t` | small propellant tanks | 14% (hydrolox) and 8% (methalox) of contents; balls of 1.4 to 2.8 m |
+| `equipment.tank.nitrogen.50kg / 100kg` | cold-gas bottles, 300 bar | 30 / 60 kg |
+| `equipment.tank.oxygen.10kg / 20kg` | oxygen bottles, kind store holds element.o, 300 bar | 15 / 30 kg; 11 / 22 person-days |
+| `equipment.tank.water.50kg / 100kg` | small water tanks, kind store holds good.water | 10 / 20 kg |
+| `equipment.life-support.cartridge` | lithium hydroxide scrubber with fan | 2 people for 12 h, 20 kg, 200 W; no oxygen of its own |
+| `equipment.life-support.s0` | cabin air pack: bottle, scrubber, fans, cooler | 2 people for a day, 150 kg, 2 kW; `air_store` 2.2 kg, `water_store` 5 kg |
+| `equipment.gear.strut.s0` | light legs | 60 kN each, 0.3 m stroke, 60 kg |
+
+Life support records may now say `air_store` and `water_store` (an open-loop pack's own); the
+Budgets report counts them. A fan says no `burns`; its power is `needs.power` at full thrust and
+the Budgets report keeps it out of the steady balance, noting the battery seconds it gives.
+
+**The physics, for the design:**
+
+- **Fans**: momentum theory, thrust T from a disc of area A in air of density ρ leaves at
+  v = √(T/ρA) and takes P = T^1.5 / √(2ρA) / η with η = 0.75 for motor and duct. Power goes as
+  thrust to the 1.5, so a fan at half thrust draws 35% of its full power. Thrust at full power falls
+  with the cube root of density: 63% at 0.3 kg/m³. Mass about 6 kg/kN.
+- **Hover**: a 5 t craft at 1 g needs 49 kN; on four S2 fans (25 kN each, 1.6 m ducts) that is
+  12 kN each, 0.8 MW each, **3.2 MW in all**: a 1 GJ battery (S1, 1.9 t) holds it 5 min, the S0
+  (100 MJ) 30 s. A landing and a take-off of a minute each want about 0.4 GJ. Fans hover on
+  megawatts, not watts; the win over rockets is no propellant, not no power.
+- **Rockets**, where there is no air: hovering 5 t at 1 g on hydrolox burns 11 kg/s; a 60 s
+  landing 0.7 t; the 1 t tank is one round trip.
+- **Orbit** is 9 km/s of change: on hydrolox that is seven times the dry mass in propellant, so no
+  commuter climbs to orbit on its engines. The hyperdrive does the hop (S1: 2.6 t, 0.9 MW; 18 min
+  on the 1 GJ battery) and the fans or rockets only the last kilometre, as the game flies.
+- **Air for two for an hour**: 0.075 kg of oxygen, 0.09 kg of CO₂ to take up, 0.2 litres of water.
+  The cartridge or the air pack covers a day; recycling life support is for voyages.
+- **Legs**: a 5 t craft at 3 m/s on a 0.3 m stroke decelerates at 1.5 g: 74 kN over four legs,
+  19 kN each; the S0 leg holds 60.
+- **Mass**: with hyperdrive (2.6 t) and the 1 GJ battery (1.9 t) the craft cannot be 4 to 6 t;
+  with the S0 battery and a fuel cell it can, but then it hovers 30 s on the battery and the fuel
+  cell (50 kW) cannot feed the fans: the hover energy must be stored. The honest commuter is
+  either 10 t with the big battery, or 5 t with a hop-only hyperdrive budget and a landing on a
+  pad's power (a tether or a pad that feeds the fans), which would be a pad standard's business.
+
+The hull is yours (I drafted one and withdrew it: you build, I guide). Say what you need next.
+
+## 17. Power-dense packs, kilowatt thermal, a middle leg, the drive's draw (2026-10-07, your commuter-2 finding)
+
+You found the binding limit: battery **rate**, not energy. Right: hover power goes as weight to
+the 1.5, and a pack at 1.5 kW/kg spirals. New:
+
+| Key | Figures |
+|---|---|
+| `equipment.power.battery-vtol.s0 / s1 / s2` | high-rate packs: 4 kW/kg, 0.5 MJ/kg, 1,500 cycles (`function.cycles`, new): 150 kg = 0.6 MW / 75 MJ; 500 kg = 2 MW / 250 MJ; 1,500 kg = 6 MW / 750 MJ. A 10 t craft's 6.2 MW hover is one S2 pack (1.5 t) for 2 minutes, or two S1 |
+| `equipment.thermal.radiator.s0` | 2 m², 330 K, 40 kg: 10 kW rated; in vacuum its two faces radiate 2.4 kW, the rest is convection in air |
+| `equipment.thermal.coolant-loop.s0` | 20 kW, 0.5 kg/s, 30 kg, 300 W |
+| `equipment.thermal.air-cooler.s0` | kind heat_exchanger, 20 kW to the air from the loop, 15 kg, 400 W; nothing in vacuum (air of 0.3 kg/m³ or more) |
+| `equipment.gear.strut.180kn` | 180 kN, 0.4 m stroke, 190 kg |
+
+**Heat in air**: yes, to the air. On a world with air a commuter sheds its kilowatts through the
+air cooler and carries the small radiator for the dock and the hop; count the air cooler's
+`transfers` as rejection wherever the air is 0.3 kg/m³ or more, the radiator's `rejects` always
+(but at its radiated 2.4 kW in vacuum, as its basis says).
+
+**The jump drive's draw**: `equipment.hyperdrive.halcyon.s1` says 900 kW while engaged and
+nothing else: no charge, no energy per jump. The game runs it as cruise: it draws its power for as
+long as it is engaged, and the time of a hop is set by the governor near a surface (speed held to
+the governor's rate times the distance to the ground), tens of seconds for a hop of hundreds of
+kilometres: 900 kW × 60 s = 54 MJ, a small part of any pack. The record carries no governor figure;
+the game's is in `crates/world/src/hyperdrive.rs` (the integrator's). If you want the JUMP line to
+read it from the record, say so and I'll add `interlock` and `governor` to the record with the
+game's values.
+
+**Losses while hovering** (2026-10-07, your gap): batteries carry `function.efficiency`
+(discharge: 0.97 on the S0 and S1, 0.94 on the VTOL packs at their 8C rate; the rest is heat in
+the pack), and the fans' `heat_to_hull` is 0.107 of jet power: the motor and inverter's 8% of
+electrical power (jet / 0.75), the duct's own losses going to the air. So hover heat aboard =
+Σ packs (1 − η) × power + Σ fans 0.107 × jet power; lib.jet_heat gives the fans' share.
+Pack warming, on the records now: `physical.specific_heat` (1,000 J/(kg K) for a lithium pack
+with its housing) and `physical.operating_max_temperature` (333 K, the hottest its cells may be
+discharged at: from 293 K at the dock, 40 K of warming on its own losses before it must stop).

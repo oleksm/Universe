@@ -181,6 +181,17 @@ properties:
       files: { type: integer }
       bytes: { type: number, x-unit: "1", description: "bytes, all its files" }
       note: { type: string, description: "The bake's own note." }
+  ground:
+    description: "For a body whose ground the planet-unfold renderer draws: the ground package (planet-unfold-tiles/1: level-0 lines and PTL2 tiles beside a manifest), written once per snapshot in the worlds store. It takes the place of a `bake`: a body has one or the other. The game scales the package to the body's own radius (physical.radius / the manifest's radius_m) and keeps the body's gravity, climate and lore."
+    type: object
+    additionalProperties: false
+    required: [format, path, manifest_sha256]
+    properties:
+      format: { const: "planet-unfold-tiles/1" }
+      path: { type: string, description: "The snapshot's folder in the worlds store, relative to it: worlds/<world_id>/ground/<snapshot>; its manifest.json names every file with its size and sha256." }
+      manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "Of the snapshot's manifest.json." }
+      radius: { type: number, x-unit: "m", description: "m, the package's own radius (the manifest's radius_m), for the scale the game applies" }
+      note: { type: string }
   life:
     type: object
     additionalProperties: false

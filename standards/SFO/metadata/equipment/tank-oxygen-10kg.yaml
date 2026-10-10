@@ -1,0 +1,33 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.tank.oxygen.10kg
+  name: "Oxygen bottle 10 kg"
+  maker: org.hadley
+  revision: draft
+  slot: tank
+  description: "A composite bottle of 10 kg of oxygen at 300 bar: 11 person-days of breathing (need.air)."
+size_class: 1
+fits: mount.tank-s1
+physical:
+  mass: 15
+  volume: 0.054
+  length: 0.6
+  width: 0.3
+  height: 0.3
+built_of:
+  parts: tank-oxygen-10kg
+  list:
+    - { code: TKO10KG-01, name: "Composite pressure vessel", mass: 12, length: 0.557, width: 0.278, height: 0.278, item: stock.cfc-pl-3, quantity: 13.8, module: module.welding-bay }
+    - { code: TKO10KG-02, name: "Valve and regulator", mass: 3, length: 0.351, width: 0.175, height: 0.175, item: stock.st304-pl-3, quantity: 3.45, module: module.machining-centre }
+making:
+  module: module.assembly-shop
+function:
+  kind: store
+  capacity: 10.0
+  holds: element.o
+  pressure: 30000000.0
+life: 473364000
+basis:
+  - { of: [physical, function], tier: invented, review: true, note: "A composite overwrapped bottle at about 1.5 kg a kilogram of oxygen at this size, with its regulator. From memory; review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }

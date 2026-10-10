@@ -1,0 +1,39 @@
+# yaml-language-server: $schema=../../schema/equipment.schema.yaml
+identity:
+  key: equipment.power.battery-vtol.s2
+  name: "VTOL pack S2"
+  maker: org.hadley
+  revision: draft
+  slot: power
+  description: "A pack built for a landing, not a voyage: 6 MW out for 125 s from 750 MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule."
+size_class: 2
+fits: mount.power-s2
+physical:
+  mass: 1500
+  volume: 0.648
+  length: 1.2
+  width: 0.9
+  height: 0.6
+  specific_heat: 1000
+  operating_max_temperature: 333
+built_of:
+  parts: power-battery-vtol-s2
+  list:
+    - { code: BATV2-01, name: "High-rate cells", mass: 1050, length: 1.07, width: 0.799, height: 0.533, item: good.electronics, quantity: 1050, module: module.assembly-shop }
+    - { code: BATV2-02, name: "Cooling plates and housing", mass: 300, length: 0.702, width: 0.526, height: 0.351, item: stock.al6061-pl-5, quantity: 345, module: module.machining-centre }
+    - { code: BATV2-03, name: "Management and contactors", mass: 150, length: 0.557, width: 0.418, height: 0.278, item: good.electronics, quantity: 150, module: module.assembly-shop }
+making:
+  module: module.assembly-shop
+function:
+  kind: battery
+  stores: 750000000.0
+  rate: 6000000.0
+  efficiency: 0.94
+  cycles: 1500
+life: 473364000
+basis:
+  - { of: [function, physical], tier: invented, review: true, note: "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [life], rule: rule.life-ship-system }
+  - { of: [function.efficiency], tier: invented, review: true, note: "Discharge efficiency 0.94: at its 8C rate a high-rate pack loses about 6% as heat (lithium cells' internal resistance, from memory). Review." }
+  - { of: [physical.specific_heat, physical.operating_max_temperature], tier: invented, review: true, note: "About 1 kJ/(kg K) for a lithium pack with its housing and plates, and 333 K (60 C) the hottest its cells may be discharged at: from 293 K at the dock it may warm 40 K on its own losses before it must stop. From memory of cell data sheets; review." }

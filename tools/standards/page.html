@@ -365,6 +365,18 @@ function rows(q) {
     };
     under(null, 2);
   }
+  // Registers: every record kind with a page of its own, as written.
+  const REG = DATA.registers || [];
+  if (REG.length) {
+    const rq = r => !q || q.split(/\s+/).every(w => `${r.name} ${r.key}`.toLowerCase().includes(w));
+    out.push({ k: "rg", depth: 0, kind: "body", label: "Registers", n: REG.reduce((s, r) => s + r.records.length, 0) });
+    if (open.has("rg") || q) for (const r of REG) {
+      const hits = r.records.filter(rq);
+      if (q && !hits.length) continue;
+      out.push({ k: "rg:" + r.kind, depth: 1, kind: "maker", label: r.title, ticker: `${r.records.length} · ${r.root}`, leaf: false });
+      if (open.has("rg:" + r.kind) || q) for (const x of hits) out.push({ k: `x:${r.kind}:${x.slug}`, depth: 2, kind: "maker", label: x.name, ticker: x.key.split(".").slice(1).join("."), leaf: true });
+    }
+  }
   // Reports: where the registry does not yet join up (worked out by the build).
   const gapsAll = DATA.reports.reduce((s, r) => s + r.gaps, 0);
   // Dogma: the laws everything runs on, by section.
@@ -456,6 +468,8 @@ function reveal(k) {
   if (k.startsWith("ra:") || k.startsWith("rp:")) { open.add("ar"); keepOpen(); return; }
   if (k.startsWith("pl:")) { open.add("pd"); keepOpen(); return; }
   if (k.startsWith("rep:") || k === "chains") { open.add("rp0"); keepOpen(); return; }
+  if (k.startsWith("x:")) { open.add("rg"); open.add("rg:" + k.split(":")[1]); keepOpen(); return; }
+  if (k.startsWith("rg:")) { open.add("rg"); keepOpen(); return; }
   if (k.startsWith("ds:")) { open.add("dg"); keepOpen(); return; }
   if (k.startsWith("dl:")) { open.add("dg"); const s = (DATA.dogma || []).find(s => s.laws.some(l => "dl:" + l.slug === k)); if (s) open.add("ds:" + s.slug); keepOpen(); return; }
   if (k.startsWith("cr:") || k === "cvoc") { open.add("cel"); keepOpen(); return; }
@@ -599,6 +613,43 @@ function detail(k) {
       h += `</table>`;
     }
     return h + `<p class="meta">In all: ${DATA.reports.reduce((s, r) => s + r.rows.length, 0)} rows, ${DATA.reports.reduce((s, r) => s + r.ok, 0)} complete, ${DATA.reports.reduce((s, r) => s + r.gaps, 0)} gaps.</p>`;
+  }
+  if (k === "rg") {
+    const REG = DATA.registers || [];
+    return `<h2>Registers</h2><p>Every kind of record the registry keeps, as written: one page a record, each group a table with its schema's words.</p><table><tr><th>Register</th><th>Root</th><th>Records</th></tr>` + REG.map(r => `<tr><td><a data-k="${esc("rg:" + r.kind)}">${esc(r.title)}</a></td><td>${esc(r.root)}</td><td>${r.records.length}</td></tr>`).join("") + `</table>`;
+  }
+  if (kind === "rg") {
+    const r = (DATA.registers || []).find(x => x.kind === rest[0]); if (!r) return "";
+    return `<h2>${esc(r.title)}</h2><div class="meta">${esc(r.root)}${r.standard ? ` · <a data-k="${esc("s:" + r.standard)}">${esc(r.standard)}</a>` : ""} · ${r.records.length} records</div><p>${esc(r.about)}</p><table><tr><th>Record</th><th>Key</th></tr>` + r.records.map(x => `<tr><td><a data-k="${esc(`x:${r.kind}:${x.slug}`)}">${esc(x.name)}</a></td><td class="meta">${esc(x.key)}</td></tr>`).join("") + `</table>`;
+  }
+  if (kind === "x") {
+    const r = (DATA.registers || []).find(x => x.kind === rest[0]); if (!r) return "";
+    const e = r.records.find(x => x.slug === rest.slice(1).join(":")); if (!e) return "";
+    const G = (DATA.register_groups || {})[r.kind] || {}, KP = DATA.key_pages || {};
+    const keyish = v => typeof v === "string" && /^[a-z][a-z0-9-]*\.[a-z0-9.-]+$/.test(v);
+    const val = v => v === null || v === undefined ? "–" : Array.isArray(v) ? (v.length ? v.map(val).join(", ") : "–") : typeof v === "object" ? Object.entries(v).map(([a, b]) => `${esc(a)}: ${val(b)}`).join("; ") : keyish(v) && KP[v] ? `<a data-k="${esc(KP[v])}">${esc(v)}</a>` : typeof v === "number" ? esc((+v).toLocaleString(undefined, { maximumFractionDigits: 6 })) : esc(String(v));
+    const idn = e.identity && typeof e.identity === "object" ? e.identity : {};
+    let h = `<h2>${esc(e.name)}</h2><div class="meta">${esc(r.title.toLowerCase())} · <a data-k="${esc("rg:" + r.kind)}">${esc(r.title)}</a> · ${esc(e.key)}</div>`;
+    if (idn.about || idn.description) h += `<p>${esc(idn.about || idn.description)}</p>`;
+    const skip = new Set(["slug", "key", "name", "file", "identity", "basis", "revision"]);
+    for (const [g, v] of Object.entries(e)) {
+      if (skip.has(g) || v === null || v === undefined) continue;
+      const gd = G[g] || {}, props = gd.props || {};
+      h += `<h3>${esc(g.replace(/_/g, " "))}</h3>` + (gd.description ? `<p class="meta">${esc(gd.description)}</p>` : "");
+      if (Array.isArray(v) && v.length && typeof v[0] === "object" && v[0] !== null) {
+        const cols = [...new Set(v.flatMap(x => Object.keys(x)))];
+        h += `<table><tr>${cols.map(c => `<th title="${esc(props[c] || "")}">${esc(c.replace(/_/g, " "))}</th>`).join("")}</tr>` + v.map(x => `<tr>${cols.map(c => `<td>${val(x[c])}</td>`).join("")}</tr>`).join("") + `</table>`;
+      } else if (typeof v === "object" && !Array.isArray(v)) {
+        h += `<table><tr><th>Property</th><th>Value</th><th>Unit or note</th></tr>` + Object.entries(v).map(([a, b]) => `<tr><td>${esc(a.replace(/_/g, " "))}</td><td>${val(b)}</td><td class="meta">${esc(props[a] || "")}</td></tr>`).join("") + `</table>`;
+      } else {
+        h += `<table><tr><th>Value</th><th>Unit or note</th></tr><tr><td>${val(v)}</td><td class="meta">${esc(gd.unit || gd.description || "")}</td></tr></table>`;
+      }
+    }
+    const idRows = Object.entries(idn).filter(([a]) => !["key", "name", "about", "description"].includes(a));
+    if (idRows.length) h += `<h3>identity</h3><table><tr><th>Property</th><th>Value</th></tr>` + idRows.map(([a, b]) => `<tr><td>${esc(a)}</td><td>${val(b)}</td></tr>`).join("") + `</table>`;
+    if (Array.isArray(e.basis) && e.basis.length) h += `<h3>Where its figures come from</h3><table><tr><th>Figures</th><th>How</th><th>Source or note</th></tr>` + e.basis.map(bs => `<tr class="${bs.tier === "invented" ? "gap" : ""}"><td>${esc((bs.of || []).join(", "))}</td><td>${bs.rule ? `by rule ${val(bs.rule)}` : esc(bs.tier || "")}${bs.review ? " · to review" : ""}</td><td>${bs.source ? `<span class="meta">${esc(bs.source)}</span> ` : ""}${esc(bs.note || "")}</td></tr>`).join("") + `</table>`;
+    h += `<div class="file" style="margin-top:24px">standards/${esc(e.file)}</div>`;
+    return h;
   }
   if (k === "chains") {
     const chains = DATA.reports.filter(r => r.group === "chains").slice().sort((a, b) => b.gaps - a.gaps || a.title.localeCompare(b.title));

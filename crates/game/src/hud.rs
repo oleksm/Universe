@@ -1306,78 +1306,101 @@ fn pilot_overlay(frame: &mut Frame, app: &App) {
 /// Range is logarithmic from 1 km (center) to 10^12 m (rim).
 fn scanner(frame: &mut Frame, app: &App) {
     let size = frame.size();
-    let center = Vec2::new((size.x / 2.0).floor(), size.y - 58.0);
-    let radii = Vec2::new(140.0, 42.0);
-    // The scope: a soft dark disc (no box), its range rings faint, the rim
-    // a little brighter with ticks round it, a sector ahead, our chevron.
-    let ring = Color::hex(0x7fb8cc);
-    let disc = |frame: &mut Frame, r: Vec2, inner: Color, outer: Color| {
-        let n = 128;
-        let at = |k: u32| {
-            let a = k as f32 / n as f32 * std::f32::consts::TAU;
-            center + Vec2::new(a.cos() * r.x, a.sin() * r.y)
-        };
-        for k in 0..n {
-            let (p, q) = (at(k), at(k + 1));
-            frame.hud_triangle_colored([center, p, q], [inner, outer, outer]);
-        }
-    };
-    disc(frame, radii * 1.08, Color([0.015, 0.028, 0.04, 0.78]), Color([0.015, 0.028, 0.04, 0.55]));
-    for (k, a) in [(1.0 / 3.0, 0.18), (2.0 / 3.0, 0.22)] {
-        frame.hud_ellipse(center, radii * k, 128, Color([ring.0[0], ring.0[1], ring.0[2], a]));
-    }
-    frame.hud_ellipse(center, radii, 160, Color([ring.0[0], ring.0[1], ring.0[2], 0.55]));
-    for k in 0..36 {
-        let a = k as f32 / 36.0 * std::f32::consts::TAU;
-        let dir = Vec2::new(a.cos(), a.sin());
-        let len = if k % 9 == 0 { 0.08 } else { 0.035 };
-        frame.hud_line_smooth(center + dir * radii, center + dir * radii * (1.0 - len), Color([ring.0[0], ring.0[1], ring.0[2], 0.5]));
-    }
-    // Ahead (up the scope): a faint sector.
-    for s in [-1.0f32, 1.0] {
-        let a = -std::f32::consts::FRAC_PI_2 + s * 0.45;
-        frame.hud_line_smooth(center, center + Vec2::new(a.cos() * radii.x, a.sin() * radii.y), Color([ring.0[0], ring.0[1], ring.0[2], 0.16]));
-    }
-    frame.hud_line_smooth(center - Vec2::new(radii.x, 0.0), center + Vec2::new(radii.x, 0.0), Color([ring.0[0], ring.0[1], ring.0[2], 0.1]));
-    let chevron = Color([0.9, 0.95, 1.0, 0.9]);
-    frame.hud_line_smooth(center + Vec2::new(-3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
-    frame.hud_line_smooth(center + Vec2::new(3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
-
+    let scope = Scope::draw(frame, Vec2::new((size.x / 2.0).floor(), size.y - 58.0), 1.0e3, 9.0);
     let inv = app.ship.orientation.inverse();
     for (i, b) in app.view.system.bodies.iter().enumerate() {
         let rel: DVec3 = inv * (app.view.positions[i] - app.view.ship_pos);
-        let d = rel.length();
-        if d < 1.0 {
-            continue;
-        }
-        let r = ((d / 1.0e3).max(1.0).log10() / 9.0).min(1.0) as f32;
-        let (x, y, z) = ((rel.x / d) as f32, (rel.y / d) as f32, (rel.z / d) as f32);
-        let base = center + Vec2::new(x * radii.x * r, z * radii.y * r);
-        let top = base - Vec2::new(0.0, y * 36.0 * r);
-        let c = color(b.color);
-        // (Above the plane a firm stalk; below, fainter.)
-        frame.hud_line(base, top, Color([c.0[0], c.0[1], c.0[2], if y > 0.0 { 0.6 } else { 0.3 }]));
-        let dot = if b.kind == BodyKind::Star { 3.2 } else { 2.0 };
-        frame.hud_glow(top, dot * 2.2, 10, Color([c.0[0], c.0[1], c.0[2], 0.45]), Color([c.0[0], c.0[1], c.0[2], 0.0]));
-        frame.hud_glow(top, dot, 10, c, Color([c.0[0], c.0[1], c.0[2], 0.6]));
+        scope.body(frame, rel, color(b.color), if b.kind == BodyKind::Star { 3.2 } else { 2.0 });
     }
     // Other ships the radar sees, as small cyan blips (red: aggressed); the locked one boxed.
     let locked = app.v.avionics.contact;
     for contact in &app.contacts {
         let tc = if contact.aggressed { RED } else { crate::scene::TRAFFIC };
         let rel: DVec3 = inv * (app.place(crate::Who::of(contact.blip.id).unwrap_or(crate::Who::Me)).0 - app.view.ship_pos);
+        scope.craft(frame, rel, tc, locked == Some(contact.blip.id));
+    }
+}
+
+/// A 3D scanner's scope as drawn: where its middle is, its radii, and its range:
+/// logarithmic from `near` (m, its middle) over `decades` tens to its rim. The
+/// flight HUD's and the test drive's, one drawing.
+pub struct Scope {
+    center: Vec2,
+    radii: Vec2,
+    near: f64,
+    decades: f64,
+}
+
+impl Scope {
+    /// The scope drawn at `center`: a soft dark disc (no box), its range rings
+    /// faint, the rim a little brighter with ticks round it, a sector ahead, our
+    /// chevron.
+    pub fn draw(frame: &mut Frame, center: Vec2, near: f64, decades: f64) -> Scope {
+        let radii = Vec2::new(140.0, 42.0);
+        let ring = Color::hex(0x7fb8cc);
+        let disc = |frame: &mut Frame, r: Vec2, inner: Color, outer: Color| {
+            let n = 128;
+            let at = |k: u32| {
+                let a = k as f32 / n as f32 * std::f32::consts::TAU;
+                center + Vec2::new(a.cos() * r.x, a.sin() * r.y)
+            };
+            for k in 0..n {
+                let (p, q) = (at(k), at(k + 1));
+                frame.hud_triangle_colored([center, p, q], [inner, outer, outer]);
+            }
+        };
+        disc(frame, radii * 1.08, Color([0.015, 0.028, 0.04, 0.78]), Color([0.015, 0.028, 0.04, 0.55]));
+        for (k, a) in [(1.0 / 3.0, 0.18), (2.0 / 3.0, 0.22)] {
+            frame.hud_ellipse(center, radii * k, 128, Color([ring.0[0], ring.0[1], ring.0[2], a]));
+        }
+        frame.hud_ellipse(center, radii, 160, Color([ring.0[0], ring.0[1], ring.0[2], 0.55]));
+        for k in 0..36 {
+            let a = k as f32 / 36.0 * std::f32::consts::TAU;
+            let dir = Vec2::new(a.cos(), a.sin());
+            let len = if k % 9 == 0 { 0.08 } else { 0.035 };
+            frame.hud_line_smooth(center + dir * radii, center + dir * radii * (1.0 - len), Color([ring.0[0], ring.0[1], ring.0[2], 0.5]));
+        }
+        // Ahead (up the scope): a faint sector.
+        for s in [-1.0f32, 1.0] {
+            let a = -std::f32::consts::FRAC_PI_2 + s * 0.45;
+            frame.hud_line_smooth(center, center + Vec2::new(a.cos() * radii.x, a.sin() * radii.y), Color([ring.0[0], ring.0[1], ring.0[2], 0.16]));
+        }
+        frame.hud_line_smooth(center - Vec2::new(radii.x, 0.0), center + Vec2::new(radii.x, 0.0), Color([ring.0[0], ring.0[1], ring.0[2], 0.1]));
+        let chevron = Color([0.9, 0.95, 1.0, 0.9]);
+        frame.hud_line_smooth(center + Vec2::new(-3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
+        frame.hud_line_smooth(center + Vec2::new(3.0, 2.0), center + Vec2::new(0.0, -3.0), chevron);
+        Scope { center, radii, near, decades }
+    }
+
+    /// Where `rel` (the ship's frame: +x right, +y up, ahead -z) lies on the scope:
+    /// its foot on the plane and the top of its stalk, and whether it's above.
+    fn place(&self, rel: DVec3) -> Option<(Vec2, Vec2, bool)> {
         let d = rel.length();
         if d < 1.0 {
-            continue;
+            return None;
         }
-        let r = ((d / 1.0e3).max(1.0).log10() / 9.0).min(1.0) as f32;
+        let r = ((d / self.near).max(1.0).log10() / self.decades).min(1.0) as f32;
         let (x, y, z) = ((rel.x / d) as f32, (rel.y / d) as f32, (rel.z / d) as f32);
-        let base = center + Vec2::new(x * radii.x * r, z * radii.y * r);
-        let top = base - Vec2::new(0.0, y * 36.0 * r);
-        frame.hud_line(base, top, Color([tc.0[0], tc.0[1], tc.0[2], if y > 0.0 { 0.55 } else { 0.25 }]));
+        let base = self.center + Vec2::new(x * self.radii.x * r, z * self.radii.y * r);
+        Some((base, base - Vec2::new(0.0, y * 36.0 * r), y > 0.0))
+    }
+
+    /// A body (or a place) on the scope: its stalk (above the plane a firm
+    /// stalk; below, fainter) and a glowing dot `dot` across.
+    pub fn body(&self, frame: &mut Frame, rel: DVec3, c: Color, dot: f32) {
+        let Some((base, top, above)) = self.place(rel) else { return };
+        frame.hud_line(base, top, Color([c.0[0], c.0[1], c.0[2], if above { 0.6 } else { 0.3 }]));
+        frame.hud_glow(top, dot * 2.2, 10, Color([c.0[0], c.0[1], c.0[2], 0.45]), Color([c.0[0], c.0[1], c.0[2], 0.0]));
+        frame.hud_glow(top, dot, 10, c, Color([c.0[0], c.0[1], c.0[2], 0.6]));
+    }
+
+    /// A craft on the scope: a small blip on its stalk, boxed if `locked`.
+    pub fn craft(&self, frame: &mut Frame, rel: DVec3, tc: Color, locked: bool) {
+        let Some((base, top, above)) = self.place(rel) else { return };
+        frame.hud_line(base, top, Color([tc.0[0], tc.0[1], tc.0[2], if above { 0.55 } else { 0.25 }]));
         frame.hud_glow(top, 3.0, 8, Color([tc.0[0], tc.0[1], tc.0[2], 0.5]), Color([tc.0[0], tc.0[1], tc.0[2], 0.0]));
         frame.hud_glow(top, 1.3, 8, tc, tc);
-        if locked == Some(contact.blip.id) {
+        if locked {
             frame.hud_ellipse(top, Vec2::splat(5.0), 16, tc);
         }
     }
