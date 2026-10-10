@@ -20,7 +20,8 @@
   that way (a higher level or a peak on the high side, a lower one or a low on the low), the straight
   blend between by distance. Exact on every line and anchor (held by a test); the sea flat at 0 over
   it; about 31 µs a height, from a grid of the segments by 1° cell. The globe, the near patches,
-  landing and collisions all read it. Its bake's runtime detail and surface fields are not used. From afar the lines sit on a globe
+  landing and collisions all read it. Its bake's runtime detail, surface fields and near maps (ground, normals, climate,
+  rock, shine) are not used: near, only the lines' flat ground. From afar the lines sit on a globe
   just over its highest ground. Low down few lines are in view: the root has a level line every
   200 m from samples ~160 km apart.
 - The package is named in `worlds/lines.rs` until Hoar's record names its lines.
