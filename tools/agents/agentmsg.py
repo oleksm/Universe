@@ -215,7 +215,11 @@ def running(name):
 def cmd_serve(pos, opt):
     os.makedirs(LOG, exist_ok=True); os.makedirs(RUN, exist_ok=True)
     print(f"agentmsg serve: watching {MAIL}", flush=True)
+    me_file = os.path.realpath(__file__); born = os.path.getmtime(me_file)
     while True:
+        if os.path.getmtime(me_file) != born:       # (agentmsg was changed: run the new one, or it keeps the old rules)
+            print("agentmsg changed: restarting serve", flush=True)
+            os.execv(sys.executable, [sys.executable, me_file, "serve"])
         agents = conf()
         names = sorted(set(os.listdir(MAIL)) | set(agents)) if os.path.isdir(MAIL) else sorted(agents)
         soonest = 60
