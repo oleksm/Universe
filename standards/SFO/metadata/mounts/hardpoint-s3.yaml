@@ -12,12 +12,13 @@ envelope:
   height: 5.33
 bears:
   mass: 2160.0
+  recoil: 9750.0
 attachment:
   points: 4
   pattern: ring
   each:
-    tension: 15900.0
-    compression: 15900.0
-    shear: 7930.0
+    tension: 18300.0
+    compression: 18300.0
+    shear: 9150.0
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

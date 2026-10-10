@@ -12,12 +12,13 @@ envelope:
   height: 4.08
 bears:
   mass: 15000.0
+  hold: 2500000.0
 attachment:
   points: 8
   pattern: ring
   each:
-    tension: 55200.0
-    compression: 55200.0
-    shear: 27600.0
+    tension: 368000.0
+    compression: 368000.0
+    shear: 184000.0
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

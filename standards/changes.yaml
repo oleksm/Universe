@@ -984,9 +984,9 @@
 - { record: module.winery, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6e08c6b8710a8365" }
 - { record: module.wire-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "12a44b1e38267db0" }
 - { record: module.zinc-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "069e62b93c59de5e" }
-- { record: mount.access-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "d85ab8c982df2ff4" }
-- { record: mount.access-s2, at: "2026-10-10T22:19:23Z", status: draft, summary: "changed: envelope", sha: "dd955f38579e9ee6" }
-- { record: mount.access-s3, at: "2026-10-10T22:19:23Z", status: draft, summary: "changed: envelope", sha: "8c0be85fe9d89190" }
+- { record: mount.access-s1, at: "2026-10-10T22:21:04Z", status: draft, summary: "changed: bears, attachment", sha: "ddf8ea7b2c988301" }
+- { record: mount.access-s2, at: "2026-10-10T22:21:04Z", status: draft, summary: "changed: bears, attachment", sha: "88378f06b3572d1b" }
+- { record: mount.access-s3, at: "2026-10-10T22:21:04Z", status: draft, summary: "changed: bears, attachment", sha: "c858a732dc83a13d" }
 - { record: mount.avionics-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "94e7b34d26e2c81f" }
 - { record: mount.capacitor-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "934388ce128db0ef" }
 - { record: mount.capacitor-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b165480fdcedd124" }
@@ -1016,7 +1016,7 @@
 - { record: mount.handling-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "00d6159948962cb9" }
 - { record: mount.hardpoint-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fe1ebaa01dc6b8db" }
 - { record: mount.hardpoint-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "7b983472ec4ac271" }
-- { record: mount.hardpoint-s3, at: "2026-10-10T22:19:23Z", status: draft, summary: "first tracked", sha: "4a48c1f3f649bb60" }
+- { record: mount.hardpoint-s3, at: "2026-10-10T22:21:04Z", status: draft, summary: "changed: bears, attachment", sha: "7d23537520b9428c" }
 - { record: mount.hyperdrive-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "178c386138b4815d" }
 - { record: mount.hyperdrive-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "869efcebee83cb75" }
 - { record: mount.hyperdrive-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "444381a42ae641a0" }
