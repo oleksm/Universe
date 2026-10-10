@@ -103,9 +103,12 @@ targets, bytes). The same model with the same account again changes nothing; a c
 A model whose parts move carries `motion.json` beside `model.glb`: `--motion=<file.json>` to the installer. Format:
 `docs/formats/freefall-motion-1.schema.yaml` (moving nodes with parents and neutral binds in model-root space; the
 gimbal's pivot, axes, nesting, normalisation and limit; actuators by their two anchors; hoses by end frames and
-tangents, diameter, free length and tolerance, bend radius and its source, neutral centreline, guides). The installer
+tangents, diameter, free length and tolerance, bend radius and its source, neutral centreline, guides; rigid links
+between two rated joints, such as a tied bellows duct: fixed centre-to-centre length and closure tolerance, joints with
+parent frames, ordered hinge axes, limits and their source, a deterministic roll rule, tie rods). The installer
 checks it against the schema, the model's nodes, rigid binds, parents, the record's gimbal limit, actuator overlap and
-hose end distance over the whole gimbal envelope (16 directions), and writes it into the package (listed in the
+hose end distance over the whole gimbal envelope (16 directions), and for links closure, each hinge's turn against its
+limit, a single hinge kept in its plane, roll never undetermined and tie lengths over 65 poses, and writes it into the package (listed in the
 manifest's `files`). The game does not read it yet (engine's sequence, docs/ships/ch-s2-motion-contract.md on main).
 
 ## Game validation
