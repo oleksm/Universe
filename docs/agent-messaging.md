@@ -25,6 +25,17 @@ task's id.
 
 An agent is known by `--as`, else `$AGENTMSG_NAME`, else the entry whose `cwd` holds the current directory.
 
+## Watching an agent and letting it answer: `agentmsg term`
+
+    agentmsg term blender -- codex --dangerously-bypass-approvals-and-sandbox    # first time: how it starts
+    agentmsg term blender                                                        # later: start it, or attach to it
+    agentmsg term blender --window                                               # in a new terminal window
+
+The agent runs in a tmux session, `agent-<name>`, in its folder, so you watch it and type into it like any session;
+detach with Ctrl-b d and it keeps running. While its session is up, `serve` types each piece of mail into it as one
+line and presses Enter (Codex and Claude take it as your next message, queued if mid-turn), and sends a desktop
+notification. Its replies come back through `agentmsg send`. `agentmsg who` shows `term` for an agent running this way.
+
 ## Being told
 
 - **A Claude Code session** has a Stop hook (`~/.claude/settings.json`: `agentmsg hook-claude`): when the session is

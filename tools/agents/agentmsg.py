@@ -8,6 +8,8 @@
     agentmsg serve                                   watch every inbox; wake or notify the agent mail is for
     agentmsg hook-claude                             a Claude Code Stop hook: unread mail keeps the session going
     agentmsg who                                     the agents configured, their inboxes and wake commands
+    agentmsg term <agent> [--window] [-- CMD ...]    run the agent in a terminal you can watch and type into (tmux
+                                                     session agent-<name>); `serve` types its mail into it and notifies you
 
 kind: task | ack | done | blocked | note. A summary is at most 300 characters: put detail in files, commits and keys and
 point at them with --ref and --see; the receiver opens them only if it needs to. Reply on a thread with --reply-to.
@@ -95,7 +97,7 @@ def parse(argv):
         if a.startswith("--"):
             k, _, v = a[2:].partition("=")
             if not _:
-                if i + 1 < len(argv) and not argv[i + 1].startswith("--") and k not in ("peek", "quiet"):
+                if i + 1 < len(argv) and not argv[i + 1].startswith("--") and k not in ("peek", "quiet", "window"):
                     v = argv[i + 1]; i += 1
                 else:
                     v = True
@@ -154,10 +156,10 @@ def cmd_show(pos, opt):
     print(json.dumps(json.load(open(hits[0])), indent=1, ensure_ascii=False))
 
 
-def watch(dirs, timeout=None):
+def watch(dirs, timeout=None, recursive=False):
     """Block until a file appears in one of `dirs` (or the timeout passes): inotifywait where there is one, else a poll."""
     if shutil.which("inotifywait"):
-        args = ["inotifywait", "-q", "-e", "moved_to", "-e", "close_write"] + (["-t", str(int(timeout))] if timeout else []) + dirs
+        args = ["inotifywait", "-q", "-e", "moved_to", "-e", "close_write"] + (["-r"] if recursive else []) + (["-t", str(int(timeout))] if timeout else []) + dirs
         subprocess.run(args, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     else:
         end = time.time() + (timeout or 1e12)
@@ -206,7 +208,13 @@ def cmd_serve(pos, opt):
             if not got:
                 continue
             c = agents.get(name, {})
-            if c.get("wake") and not running(name):
+            if tmux_alive(f"agent-{name}"):
+                mark_read(name, [f for f, _ in got])
+                inject(name, f"agent-{name}", got)
+                if shutil.which("notify-send"):
+                    subprocess.run(["notify-send", f"Mail for {name} (typed into its terminal)", line(got[-1][1])[:200]], check=False)
+                print(f"{datetime.datetime.now():%T} typed {len(got)} message(s) into agent-{name}", flush=True)
+            elif c.get("wake") and not running(name):
                 prompt = wake_prompt(name, got)
                 cmd = [a.replace("{prompt}", prompt).replace("{name}", name) for a in c["wake"]]
                 mark_read(name, [f for f, _ in got])
@@ -223,8 +231,8 @@ def cmd_serve(pos, opt):
                         subprocess.run(["notify-send", f"Mail for {name}", line(got[-1][1])[:200]], check=False)
                     open(key, "w").write(newest)
                     print(f"{datetime.datetime.now():%T} {name}: {len(got)} unread (notified)", flush=True)
-        dirs = [box(n) for n in names] or [MAIL]
-        watch(dirs, 60)
+        os.makedirs(MAIL, exist_ok=True)
+        watch([MAIL], 60, recursive=True)      # (the whole tree: an agent's first mail makes its folder)
 
 
 def cmd_hook_claude(pos, opt):
@@ -243,19 +251,63 @@ def cmd_hook_claude(pos, opt):
     print(json.dumps({"decision": "block", "reason": wake_prompt(name, got)}))
 
 
+def tmux_alive(sess):
+    return shutil.which("tmux") and subprocess.run(["tmux", "has-session", "-t", sess], capture_output=True).returncode == 0
+
+
+def inject(name, sess, got):
+    """Type the mail into the agent's terminal as one line and press Enter: a Claude or Codex prompt takes it as a message
+    (queued if the agent is mid-turn)."""
+    text = " | ".join(wake_prompt(name, got).splitlines())
+    subprocess.run(["tmux", "send-keys", "-t", sess, "-l", text], check=False)
+    time.sleep(0.3)
+    subprocess.run(["tmux", "send-keys", "-t", sess, "Enter"], check=False)
+
+
+def cmd_term(pos, opt, rest=None):
+    if not pos:
+        die("term <agent> [--window] [-- CMD ...]")
+    name = pos[0]
+    agents = conf(); c = agents.get(name) or die(f"no agent {name} in {CONF}")
+    if rest:
+        c["term"] = rest
+        agents[name] = c
+        os.makedirs(HOME, exist_ok=True); json.dump(agents, open(CONF, "w"), indent=1)
+    sess = f"agent-{name}"
+    if not tmux_alive(sess):
+        cmd = c.get("term") or die(f"how is {name} started? give it once: agentmsg term {name} -- codex   (or -- claude)")
+        env = ["-e", f"AGENTMSG_NAME={name}", "-e", f"PATH={os.path.expanduser('~/bin')}{os.pathsep}{os.environ.get('PATH', '')}"]
+        subprocess.run(["tmux", "new-session", "-d", "-s", sess, "-c", os.path.expanduser(c.get("cwd", "~")), *env, *cmd], check=True)
+        print(f"started {name} in tmux session {sess} ({' '.join(cmd)})")
+    if opt.get("window") or not sys.stdout.isatty():
+        term = os.environ.get("TERMINAL") or next((t for t in ("alacritty", "kitty", "foot", "gnome-terminal", "xterm") if shutil.which(t)), None)
+        if not term:
+            die(f"no terminal found: attach with  tmux attach -t {sess}")
+        subprocess.Popen([term, "-e", "tmux", "attach", "-t", sess], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        print(f"opened a {term} window on {sess}; detach with Ctrl-b d, the agent keeps running")
+    else:
+        os.execvp("tmux", ["tmux", "attach", "-t", sess])
+
+
 def cmd_who(pos, opt):
     agents = conf()
     names = sorted(set(os.listdir(MAIL)) | set(agents)) if os.path.isdir(MAIL) else sorted(agents)
     print(f"{'agent':<14} {'unread':>6}  {'wake':<6} cwd")
     for n in names:
         c = agents.get(n, {})
-        print(f"{n:<14} {len(unread(n)):>6}  {'auto' if c.get('wake') else 'notify':<6} {c.get('cwd', '')}")
+        how = "term" if tmux_alive(f"agent-{n}") else ("auto" if c.get("wake") else "notify")
+        print(f"{n:<14} {len(unread(n)):>6}  {how:<6} {c.get('cwd', '')}")
 
 
 def main(argv):
     if len(argv) < 2 or argv[1] in ("-h", "--help", "help"):
         print(__doc__); return
+    rest = None
+    if "--" in argv:
+        rest = argv[argv.index("--") + 1:]; argv = argv[:argv.index("--")]
     pos, opt = parse(argv[2:])
+    if argv[1] == "term":
+        return cmd_term(pos, opt, rest)
     {"send": cmd_send, "inbox": cmd_inbox, "show": cmd_show, "wait": cmd_wait, "serve": cmd_serve,
      "hook-claude": cmd_hook_claude, "who": cmd_who}.get(argv[1], lambda p, o: die(f"no command {argv[1]}"))(pos, opt)
 
