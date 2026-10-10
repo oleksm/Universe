@@ -229,7 +229,7 @@ What each world is made of stays empty: the user will bring it.
 - **A gate's distance is worked out**, not written: `gate.distance` is gone from the settlement;
   it is the distance between the two systems' `position.from_home`.
 - **System positions were wrong and are fixed.** Every system's `position` was zero: the export
-  (`crates/world/examples/celestial_export.rs`) divided a position already in light years by a
+  (`crates/core/world/examples/celestial_export.rs`) divided a position already in light years by a
   light year. One line, in the registry's own exporter; no engine code. `celestial.ron` now lists
   the systems in order of distance from home, which is the only change in it.
 
@@ -822,7 +822,7 @@ good I put it there, and that broke the rule: goods became sellable. The user ha
 - **Every good that was traded has a stock item:** `SFO/metadata/stock/<GOOD>-BULK.yaml`, key
   `stock.<good>-bulk`, form `bulk`, `made_from` the good, carrying the market category the good
   had. 200 of them. They are of kind `stock`, by the same schema as mill stock.
-- **Your build fails, by one line:** `crates/registry/src/lib.rs:192`,
+- **Your build fails, by one line:** `crates/core/registry/src/lib.rs:192`,
   `Some("good") => self.good(item)?.identity.traded_as.clone()`. A good is now sold as a material
   is: as the stock made from it, the line you already have for `Some("material")`.
 - What lies in a store or goes through a recipe is still the good (`good.wheat`); what is listed,

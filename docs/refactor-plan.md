@@ -26,7 +26,7 @@ workspace compiling, clippy-clean and with **every test passing**.
 - If the plan is wrong somewhere, deviate deliberately and document it in the changelog and in
   `docs/architecture.md`.
 
-## Phase 1 — Physics kernel crate (`crates/physics`, `universe-physics`)
+## Phase 1 — Physics kernel crate (`crates/core/physics`, `universe-physics`)
 
 Create the kernel and move the generic physics into it; `universe-sim` depends on it.
 
@@ -53,7 +53,7 @@ Create the kernel and move the generic physics into it; `universe-sim` depends o
   clearance, route, nav, player, settler (generic names only: polytope, cut-out, ring, trigger,
   weld, relocate…).
 
-## Phase 2 — World layer (`crates/world`, `universe-world`)
+## Phase 2 — World layer (`crates/core/world`, `universe-world`)
 
 Split world content and device/contact rules out of `sim`:
 
@@ -71,7 +71,7 @@ Split world content and device/contact rules out of `sim`:
 - Physics decisions must not read navigation state (e.g. fine substeps near structures should
   come from proximity to structures, not from "has clearance").
 
-## Phase 3 — Avionics (`crates/avionics`, `universe-avionics`)
+## Phase 3 — Avionics (`crates/core/avionics`, `universe-avionics`)
 
 - Move guidance, the dock/land/gate autopilots, the hyperdrive autopilot (steering to the target,
   going around bodies, deciding when to drop out and which frame/stop distance to command), the
@@ -83,7 +83,7 @@ Split world content and device/contact rules out of `sim`:
   (delete the planner's private integrator).
 - Status types for the HUD (DockingStatus, LandingStatus, GateStatus, Approach, Plan) live here.
 
-## Phase 4 — Orchestration and game (`crates/sim`, `crates/game`)
+## Phase 4 — Orchestration and game (`crates/core/sim`, `crates/game`)
 
 - `universe-sim` becomes the orchestrator: `Universe` owns world + player ship + crafts, each ship
   with its avionics; `step_world` = for each ship in fixed order: avionics/player input →

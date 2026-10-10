@@ -941,7 +941,7 @@ mod tests {
     #[test]
     fn landing_gear_lands_gently_and_breaks_on_a_hard_touchdown() {
         // The MC-07 on its legs (`legs`): they take what they take, for its mass on this ground.
-        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb")).expect("the MC-07 model");
+        let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../assets/models/mc07.glb")).expect("the MC-07 model");
         let mc07 = crate::import::commission(&bytes, "assets/models/mc07.glb").expect("it imports");
         let legs = crate::legs::of_spec(crate::content::content().get(mc07)).expect("its legs");
         let hardest = {

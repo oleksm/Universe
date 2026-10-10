@@ -96,7 +96,7 @@ adoption decides.
   **topics** as tags. The classification (likely multi-dimensional) waits until the standards
   written show what it should be; nothing is renumbered when it comes.
 - `python3 tools/standards/build.py` checks it all and writes `standards/index.html` (browse by
-  topic or by number) and the game, which reads the records through crates/registry.
+  topic or by number) and the game, which reads the records through crates/core/registry.
 - **In the game:** docked or landed at a port, **V STANDARDS** shows the port's copy.
 
 ## Ships to standards (the first use)

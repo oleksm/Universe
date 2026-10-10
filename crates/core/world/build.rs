@@ -6,9 +6,9 @@
 include!("../physics/build/sheetgen.rs");
 
 fn main() {
-    generate("../../content/base/sheet.ron", "sheet.rs", "universe_physics::sheet");
-    println!("cargo:rerun-if-changed=../../standards");
-    let reg = universe_registry::Registry::read(std::path::Path::new("../../standards")).unwrap_or_else(|problems| {
+    generate("../../../content/base/sheet.ron", "sheet.rs", "universe_physics::sheet");
+    println!("cargo:rerun-if-changed=../../../standards");
+    let reg = universe_registry::Registry::read(std::path::Path::new("../../../standards")).unwrap_or_else(|problems| {
         for p in &problems {
             println!("cargo:warning={p}");
         }

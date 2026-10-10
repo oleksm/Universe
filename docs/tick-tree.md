@@ -12,7 +12,7 @@ Figures marked *proposal* are starting points to measure, not facts.
 
 ## 1. Before the clocks (main until 2026-10-06; the engine now reads §3's records)
 
-One global tick, everything in it (`crates/sim/src/universe.rs:327`).
+One global tick, everything in it (`crates/core/sim/src/universe.rs:327`).
 
 | What | Cadence today | Where |
 |---|---|---|
@@ -257,7 +257,7 @@ They stay the client's to set.
 The integrator's build: the engine reads `reg.clocks` and binds a handler to every clock key
 (exhaustively, so a new clock fails the build until it is handled); `TICK_HZ`, `TICK`, the
 economy's `STEP`, `BOARD_EVERY` and the rest become reads of the records; then steps 2 and 3 of §6
-in `crates/sim` and `crates/world` (bubbles, rails with wakes, actors per body, walking into the
+in `crates/core/sim` and `crates/core/world` (bubbles, rails with wakes, actors per body, walking into the
 tick). The schema and the records are on fso. The lab's: a weather field format if decision 4 is yes. Mine: the survey
 contract's weather package, the census periods, and the review of what each registry rate implies
 at each step (a mine's kg/s at 10 s; a levy by rate). The ships session: nothing; a ship's

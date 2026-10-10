@@ -508,7 +508,7 @@ Needed from the registry for the loader:
 - **A law's `note` is optional, but the engine documents each constant with it:** please give every
   law one.
 
-**The registry crate (this commit).** `crates/registry` reads `standards/` into typed records when the
+**The registry crate (this commit).** `crates/core/registry` reads `standards/` into typed records when the
 game is built and carries them in the binary. Today it reads `seeding.galaxy` (the galaxy's
 settings, now the game's only source of them), `rock-class.*` and `system.*` (identity and position).
 - **`galaxy.ron` and `rock_classes.ron` are no longer loaded:** their writers in `build.py` can go.
@@ -675,7 +675,7 @@ Prices live game-side in `content/base/prices.ron` (items and category ranges), 
 
 ## The registry's types are generated (2026-10-04)
 
-The game's registry types are now generated from your schemas (`crates/registry/build.rs`): every
+The game's registry types are now generated from your schemas (`crates/core/registry/build.rs`): every
 schema is a Rust type, field for field, rebuilt whenever a schema changes. So:
 - **A schema change no longer needs me in the same merge** to load it: new properties, records and
   kinds load on the next build. Only behaviour (what the game does with a new figure) needs code.
@@ -774,7 +774,7 @@ rules, different draws. To bring the records in step, as for every seeded body:
 
 Also:
 - **The seeder's inline figures** (5 crossing asteroids, 2–4 captured moons a gas giant, the
-  ranges of size, eccentricity and tilt) are now in `crates/world/src/small_bodies.rs`. They belong
+  ranges of size, eccentricity and tilt) are now in `crates/core/world/src/small_bodies.rs`. They belong
   in a seeding record (`seeding.small-bodies`?) next to `seeding.asteroids`.
 - **`rock-class.primitive`, `basaltic`, `enstatite`, `stony-iron` have no `colour`** (and some no
   `albedo`): the game won't make a body of a class it can't draw. Captured moons are made

@@ -102,7 +102,7 @@ def flattened(sch, here):
     """An object's properties (each with the schema file it is written in) and required fields, with those of every shape its
     `allOf` derives from, flattened: one definition (common's physical_object, equipment's jet) serves many kinds without
     nesting the YAML, and `additionalProperties: false` counts the derived fields as the object's own. The registry's generator
-    reads allOf the same way (crates/registry/build.rs, flattened)."""
+    reads allOf the same way (crates/core/registry/build.rs, flattened)."""
     props = {k: (p, here) for k, p in (sch.get("properties") or {}).items()}
     required = list(sch.get("required") or [])
     for shape in sch.get("allOf") or []:

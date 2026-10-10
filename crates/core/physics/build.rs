@@ -3,5 +3,5 @@
 include!("build/dogmagen.rs");
 
 fn main() {
-    generate_dogma("../../standards/Dogma/metadata", "laws.rs", "crate::sheet");
+    generate_dogma("../../../standards/Dogma/metadata", "laws.rs", "crate::sheet");
 }

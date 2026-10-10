@@ -10,12 +10,12 @@ path = "src/main.rs"
 
 [dependencies]
 rayon.workspace = true
-universe-prof = { path = "../prof" }
+universe-prof = { path = "../core/prof" }
 universe-engine = { path = "../engine" }
 glam.workspace = true
 log.workspace = true
 env_logger.workspace = true
-universe-sim = { path = "../sim" }
+universe-sim = { path = "../core/sim" }
 serde.workspace = true
 serde_json.workspace = true
 

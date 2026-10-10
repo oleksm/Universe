@@ -47,7 +47,7 @@ zones:
 basis:
   - { of: [main_belt], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_belt", note: "Mass 2.39e21 kg (3% of the Moon's); 700,000 to 1.7 million over 1 km (the middle taken); over 200 above 100 km; 965,600 km apart on average; edges at the 4:1 and 2:1 resonances with Jupiter." }
   - { of: [main_belt.family_share, main_belt.families], tier: sourced, source: "https://en.wikipedia.org/wiki/Asteroid_family", note: "33 to 35% are family members; 20 to 30 families reliably recognised. A family lasts about a billion years." }
-  - { of: [main_belt.no_giant_inner, main_belt.no_giant_outer], tier: invented, source: "the game: crates/world/src/belt.rs", note: "Chosen in the game: with no giant to stir it, a belt stays round the frost line." }
+  - { of: [main_belt.no_giant_inner, main_belt.no_giant_outer], tier: invented, source: "the game: crates/core/world/src/belt.rs", note: "Chosen in the game: with no giant to stir it, a belt stays round the frost line." }
   - { of: [trojans], tier: sourced, source: "https://en.wikipedia.org/wiki/Jupiter_trojan", note: "About a million over 1 km; each swarm stretches about 26 degrees along the orbit; a fifth of the belt's mass." }
   - { of: [outer_belt], tier: sourced, source: "https://en.wikipedia.org/wiki/Kuiper_belt", note: "From the 3:2 resonance with Neptune at 39.5 AU to the 2:1 at about 48; over 100,000 above 100 km; 0.0197 Earth masses; as much as ten degrees off the plane." }
   - { of: [moons], tier: sourced, source: "https://en.wikipedia.org/wiki/Minor-planet_moon", note: "An estimated 2% of asteroids have satellites, and 11% of the objects past Neptune; the two are from a few hundred to over 3,000 km apart." }

@@ -123,7 +123,7 @@ def effective_basis(eq, it):
 def part_yaml(eq, folder, it):
     """The YAML text of one derived part of equipment record `eq` (a dict), filed under `folder`, from list item `it`:
     {code, name, description?, mass, length, width, height, item?, quantity?, module?, count?, basis?}. The registry crate writes
-    the same text (crates/registry/src/lib.rs, derived_parts) and parses it, so the two never drift in meaning."""
+    the same text (crates/core/registry/src/lib.rs, derived_parts) and parses it, so the two never drift in meaning."""
     q = lambda s: '"' + str(s).replace('"', '\\"') + '"'
     lines = ["# yaml-language-server: $schema=../../../schema/part.schema.yaml", "identity:", f"  key: part.{it['code'].lower()}", f"  code: {it['code']}", f"  name: {q(it['name'])}", "  revision: draft",
              f"  description: {q(it.get('description', ''))}", "physical:", f"  mass: {_num(it['mass'])}", f"  length: {_num(it['length'])}", f"  width: {_num(it['width'])}", f"  height: {_num(it['height'])}"]

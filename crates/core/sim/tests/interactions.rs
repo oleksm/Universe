@@ -604,7 +604,7 @@ fn passengers_book_passage_board_a_cabin_and_settle_where_they_booked_for_the_fa
 #[test]
 fn standing_up_docked_on_a_station_deck_keeps_you_aboard() {
     // (The MC-07: a hull with floors to stand on.)
-    let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb")).expect("the MC-07 model");
+    let bytes = std::fs::read(concat!(env!("CARGO_MANIFEST_DIR"), "/../../../assets/models/mc07.glb")).expect("the MC-07 model");
     let hull = universe_sim::world::import::commission(&bytes, "assets/models/mc07.glb").expect("it imports");
     let mut u = bench(0);
     let home = u.vessels[universe_sim::PLAYER].system;

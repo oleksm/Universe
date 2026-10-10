@@ -355,7 +355,7 @@ mod tests {
     /// name), and comes back the same through the binary's encoding.
     #[test]
     fn the_registry_reads_and_round_trips() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../standards");
+        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../standards");
         let reg = Registry::read(&root).unwrap_or_else(|p| panic!("{}", p.iter().map(|p| p.to_string()).collect::<Vec<_>>().join("\n")));
         let back = Registry::decode(&reg.encode());
         assert_eq!(back.galaxy().map(|g| g.seed), reg.galaxy().map(|g| g.seed));

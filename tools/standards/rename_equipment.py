@@ -56,7 +56,7 @@ def main(write):
     if not write: return
     # 1. the references, whole keys only, longest first
     rx = re.compile("|".join(re.escape(k) for k in sorted(changes, key=len, reverse=True)) + r"(?![a-z0-9-]|\.[a-z])")
-    paths = [f for f in glob.glob("standards/**/*.yaml", recursive=True) if not f.startswith("standards/changes.yaml")] + glob.glob("docs/**/*.md", recursive=True) + ["content/base/prices.ron", "standards/game-keys.yaml", "crates/sim/src/operator.rs", "crates/world/src/belts.rs", "crates/game/src/dev.rs", "tools/standards/build.py", "tools/standards/crew.py", "tools/standards/propulsion.py", "tools/standards/mounts.py"]
+    paths = [f for f in glob.glob("standards/**/*.yaml", recursive=True) if not f.startswith("standards/changes.yaml")] + glob.glob("docs/**/*.md", recursive=True) + ["content/base/prices.ron", "standards/game-keys.yaml", "crates/core/sim/src/operator.rs", "crates/core/world/src/belts.rs", "crates/game/src/dev.rs", "tools/standards/build.py", "tools/standards/crew.py", "tools/standards/propulsion.py", "tools/standards/mounts.py"]
     touched = 0
     for f in paths:
         if not os.path.exists(f): continue

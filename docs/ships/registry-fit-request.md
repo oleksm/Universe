@@ -15,9 +15,9 @@ MC-07 with a different fit and a different hold, so the studio and the flying sh
 
 | What | The registry (`mc-07.yaml`) | The game builds | Where the game decides it |
 |---|---|---|---|
-| Fit | Its `fit`: 12 items, the cargo slot left empty ("its hold is its ore bay") | The cheapest module for every slot, so the cargo slot gets `Cargo Racks 4 T` (0.35 t, 6 m³) | `crates/world/src/import.rs:90` calls `stock_fit`, `crates/world/src/design.rs:479` |
-| Hold, mass | `capacity.hold`: 1,200,000 kg | 4,000 kg, the racks' capacity | `crates/world/src/ship.rs:501` |
-| Hold, volume | `capacity.hold_volume`: 669 m³ (the ore bay; its depth is a guess marked to review) | 6 m³, the racks' volume | `crates/world/src/ship.rs:504` |
+| Fit | Its `fit`: 12 items, the cargo slot left empty ("its hold is its ore bay") | The cheapest module for every slot, so the cargo slot gets `Cargo Racks 4 T` (0.35 t, 6 m³) | `crates/core/world/src/import.rs:90` calls `stock_fit`, `crates/core/world/src/design.rs:479` |
+| Hold, mass | `capacity.hold`: 1,200,000 kg | 4,000 kg, the racks' capacity | `crates/core/world/src/ship.rs:501` |
+| Hold, volume | `capacity.hold_volume`: 669 m³ (the ore bay; its depth is a guess marked to review) | 6 m³, the racks' volume | `crates/core/world/src/ship.rs:504` |
 | Dry mass | Parts plus the 12 fitted items (11.44 t of equipment) | 153.6 t, which includes the racks' 0.35 t | follows from the fit |
 
 Fuel agrees: both say 4,000 kg (`capacity.fuel`, the `equipment.tank.deuterium.s0` it fits).

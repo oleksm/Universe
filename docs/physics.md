@@ -10,7 +10,7 @@
 > or designs. **The base world** (`content/base/`) brings its matter (`materials.ron`: real
 > substances at real properties), its devices (`modules.ron`: a plant says what it burns and how
 > well, a tank what it holds) and its fixed design numbers (`sheet.ron`). Every constant carries a
-> unit, a kind and a reason; `crates/world/tests/dogma.rs` checks the claims below against both;
+> unit, a kind and a reason; `crates/core/world/tests/dogma.rs` checks the claims below against both;
 > `docs/physics-sheet.md` is the generated report (`cargo run -p universe-world --example
 > physics_sheet`).
 
