@@ -98,6 +98,60 @@ pub fn draw(frame: &mut Frame, app: &App) {
     if app.show_labels {
         universe_prof::time("draw/scene/labels", || labels(frame, app));
     }
+    universe_prof::time("draw/scene/height pins", || height_pins(frame, app));
+}
+
+/// A world drawn from its lines: its highest peaks and lowest lows pinned to the ground, from any
+/// distance, on top of everything as the HUD's marks are: a ring on the spot, a stem straight up the
+/// screen, a head and a label (which, its height, how far). Round the back of the world, dimmed.
+fn height_pins(frame: &mut Frame, app: &App) {
+    let sys = &app.view.system;
+    let cam = frame.camera.position;
+    let size = frame.size();
+    let mut placed: Vec<(Vec2, Vec2)> = Vec::new();
+    for (&(origin, i), (_, lines)) in &app.caches.lines {
+        if origin != app.view.cache {
+            continue;
+        }
+        let b = &sys.bodies[i];
+        let center = app.view.positions[i];
+        let rot = b.rotation(app.now());
+        let mut rank = [0, 0];
+        // (Those facing the eye last: drawn over the ones round the back.)
+        let mut pins: Vec<(bool, DVec3, String, Color)> = Vec::new();
+        for pin in &lines.pins {
+            let k = &mut rank[pin.peak as usize];
+            *k += 1;
+            let up = rot * pin.dir;
+            let ground = b.terrain.as_ref().map_or(0.0, |t| t.surface_coarse(pin.dir));
+            let at = center + up * (b.rail.radius + ground);
+            // (Seen: over the horizon from the eye.)
+            let to = cam - center;
+            let facing = up.dot(to) > b.rail.radius;
+            let c = if pin.peak { Color::hex(0xff6a5a) } else { Color::hex(0x6aa8ff) };
+            let text = format!("{} {}  {} M  {}", if pin.peak { "PEAK" } else { "LOW" }, *k, thousands(pin.z.round() as i64), crate::fmt::distance(at.distance(cam)));
+            pins.push((facing, at, text, if facing { c } else { c.scale(0.4) }));
+        }
+        pins.sort_by_key(|p| p.0);
+        for (_, at, text, c) in pins.iter().rev() {
+            let Some(p) = frame.project(*at) else { continue };
+            if p.x < 0.0 || p.y < 0.0 || p.x > size.x || p.y > size.y {
+                continue;
+            }
+            let head = p - Vec2::new(0.0, 40.0);
+            frame.hud_ellipse(p, Vec2::splat(5.0), 12, *c);
+            frame.hud_line(p - Vec2::new(0.0, 5.0), head, *c);
+            frame.hud_glow(head, 3.5, 12, *c, *c);
+            let pos = head + Vec2::new(6.0, -8.0);
+            let extent = text_size(text) + Vec2::new(8.0, 6.0);
+            let overlaps = |&(q, e): &(Vec2, Vec2)| pos.x < q.x + e.x && q.x < pos.x + extent.x && pos.y < q.y + e.y && q.y < pos.y + extent.y;
+            if placed.iter().any(overlaps) {
+                continue;
+            }
+            placed.push((pos, extent));
+            frame.text_boxed(pos, text, *c, Color([0.0, 0.0, 0.0, 0.8]));
+        }
+    }
 }
 
 /// How far off the ship being looked at is (m), for the tight shadow
@@ -1815,21 +1869,6 @@ impl Labels {
         self.placed.push((pos, extent));
         frame.text(pos, text, c);
     }
-
-    /// Text on a dark box (over a busy picture) at screen position `pos`, unless it would cover a label.
-    fn add_boxed_at(&mut self, frame: &mut Frame, pos: Vec2, text: &str, c: Color) {
-        let size = frame.size();
-        if pos.x < -50.0 || pos.y < 0.0 || pos.x > size.x || pos.y > size.y {
-            return;
-        }
-        let extent = text_size(text) + Vec2::new(8.0, 6.0);
-        let overlaps = |&(q, e): &(Vec2, Vec2)| pos.x < q.x + e.x && q.x < pos.x + extent.x && pos.y < q.y + e.y && q.y < pos.y + extent.y;
-        if self.placed.iter().any(overlaps) {
-            return;
-        }
-        self.placed.push((pos, extent));
-        frame.text_boxed(pos, text, c, Color([0.0, 0.0, 0.0, 0.8]));
-    }
 }
 
 /// `n` with its thousands apart: 8,566 and -3,729.
@@ -1875,38 +1914,6 @@ fn labels(frame: &mut Frame, app: &App) {
         // Skip when the body fills the view; the label would sit on top of it.
         if wanted && frame.projected_radius(app.view.positions[i], b.rail.radius) < 60.0 {
             labels.add(frame, app.view.positions[i], &b.name.to_uppercase(), LABEL);
-        }
-    }
-
-    // A world drawn from its lines, big in view: its highest peaks and lowest lows pinned, each a
-    // pin stuck in its dot (a stem straight up the screen, a head, its height on top), on the side
-    // facing the eye.
-    for (&(origin, i), (_, lines)) in &app.caches.lines {
-        let b = &sys.bodies[i];
-        let center = app.view.positions[i];
-        if origin != app.view.cache || frame.projected_radius(center, b.rail.radius) < 60.0 {
-            continue;
-        }
-        let rot = b.rotation(app.now());
-        // (Near, on the ground as the lines are there; from afar, on the globe the lines are drawn on.)
-        let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
-        let mut rank = [0, 0];
-        for pin in &lines.pins {
-            let k = &mut rank[pin.peak as usize];
-            *k += 1;
-            let k = *k;
-            let up = rot * pin.dir;
-            let height = if near { b.rail.radius + b.terrain.as_ref().map_or(0.0, |t| t.surface_coarse(pin.dir)) } else { b.rail.radius * terrain_view::lines_lift(b) };
-            let base = center + up * height;
-            if up.dot(cam - base) <= 0.0 {
-                continue;
-            }
-            let Some(p) = frame.project(base) else { continue };
-            let c = if pin.peak { Color::hex(0xff6a5a) } else { Color::hex(0x6aa8ff) };
-            let head = p - Vec2::new(0.0, 36.0);
-            frame.hud_line(p, head, c);
-            frame.hud_glow(head, 3.5, 12, c, c);
-            labels.add_boxed_at(frame, head + Vec2::new(4.0, -8.0), &format!("{} {k}  {} M", if pin.peak { "PEAK" } else { "LOW" }, thousands(pin.z.round() as i64)), c);
         }
     }
 

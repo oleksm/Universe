@@ -7,9 +7,10 @@
   their own colours, drawn unlit over the globe from afar). No painted texture: under the lines, flat
   ground, land grey and water near black from the shores (`worlds::lines_colour`, in place of the
   bake's `globe_color.jpg`, from afar and in the near maps).
-- Its five highest peaks and five lowest lows pinned (from the lines' anchors): a pin stuck in each
-  dot, straight up the screen with a head and a label on a dark box, `PEAK 1  8,566 M` to `LOW 5`,
-  on the side facing the eye, while the globe is big in view.
+- Its five highest peaks and five lowest lows (from the lines' anchors) pinned to the ground, from
+  any distance, in every view, on top as the HUD's marks are: a ring on the spot, a stem straight up
+  the screen with a head, and a label on a dark box (`PEAK 1  8,566 M  3,760 KM`: which, its height,
+  how far). Round the back of the world, dimmed.
 - Near, down to the ground: the lines within the horizon laid on the ground the patches show
   (`lines_near`: each edge cut finer toward the eye, each point at the ground's height), laid again
   on a thread of its own when the eye has moved on (14 to 18 ms low down, about 75 ms from 1,250 km),
