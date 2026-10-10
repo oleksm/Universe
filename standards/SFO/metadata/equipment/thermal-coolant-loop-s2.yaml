@@ -26,6 +26,12 @@ function:
   kind: "coolant_loop"
   carries: 20000000.0
   flow: 50.0
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-coolant-loop-s2/v1"
+  manifest_sha256: "f064e7d8fed2eb2ee96db6651a132d383f7e738aedfc7198a764e255bb6432a9"
+  version: 1
+  triangles: 8036
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Carries 20 MW at 50 kg/s. Chosen." }
