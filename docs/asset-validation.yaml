@@ -1,4 +1,18 @@
 # Game validation of installed models: the registry's record, one entry per package version checked (docs/asset-contract.md,
 # Game validation). A package is immutable; its validation lives here. result: pass | fail | partial; drawn: whether the
 # game draws this kind yet (equipment at mounts and stations are not drawn yet: engine, 2026-10-10).
-validations: []
+validations:
+  - key: equipment.thermal.coolant-loop.s1
+    version: 1
+    manifest_sha256: "81a43e1b42c8f36fd87ba408d1231861fd87d58b86a125fed6cc2804c8d553af"
+    installed: a8bbd637
+    game: "main a1ecf04e (the loader, world::assets), run from fso a8bbd637"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): package found, manifest matches the record's hash, model.glb matches the manifest, bounds [-1.0, 0.0, -0.5] to [1.0, 0.9825, 0.5]: pass"
+      - "installer checks at install (size, nodes, 8,036 triangles, static): pass"
+    pending:
+      - "frames in the game: the game does not draw equipment at its mounts yet (engine)"
+      - "GPU look and cost, placement on a real hull"
