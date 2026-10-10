@@ -35,6 +35,7 @@ mod sound;
 mod terrain_lod;
 mod lines_near;
 mod terrain_view;
+mod pgs_preview;
 mod thrusterpanel;
 mod passengers;
 mod manual;

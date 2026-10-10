@@ -96,7 +96,22 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
     let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
     // A world grown by the planet simulation: its own colour, texel by texel (a world drawn from
     // its lines: the flat ground under them, else its bake's).
-    if terrain.canonical_surface() { return Some(map); }
+    if terrain.canonical_surface() {
+        let Some(palette) = crate::pgs_preview::palette(body) else { return Some(map) };
+        let mut colours = vec![[0u8; 4]; 6 * n * n];
+        std::thread::scope(|s| {
+            for (k, chunk) in colours.chunks_mut(rows * n).enumerate() {
+                s.spawn(move || {
+                    for (i, colour) in chunk.iter_mut().enumerate() {
+                        let row = k * rows + i / n;
+                        let dir = universe_engine::GlobeMap::direction(MAP_SIZE, row / n, (i % n) as u32, (row % n) as u32);
+                        *colour = palette.colour(terrain.surface_sample(dir).expect("canonical surface"));
+                    }
+                });
+            }
+        });
+        return Some(map.with_colors(colours));
+    }
     let Some(image) = universe_sim::world::worlds::lines_colour(&body.key).or_else(|| terrain.colour()) else { return Some(map) };
     let mut colors = vec![[0u8; 4]; 6 * n * n];
     std::thread::scope(|s| {
@@ -144,7 +159,7 @@ pub fn globe_bright(body: &Body) -> f32 {
 pub fn globe_kind(body: &Body) -> f32 {
     // Palettes 3/4: measured surface, unknown categories, optional explicit water.
     if let Some(t) = body.terrain.as_ref().filter(|t| t.canonical_surface()) {
-        return if t.canonical_water() { 4.0 } else { 3.0 };
+        return if crate::pgs_preview::palette(body).is_some() { 5.0 } else if t.canonical_water() { 4.0 } else { 3.0 };
     }
     match body.terrain.as_ref().map(|t| t.kind) {
         Some(TerrainKind::Terran) | None => 0.0,

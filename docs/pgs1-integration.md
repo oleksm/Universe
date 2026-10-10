@@ -283,3 +283,41 @@ namespace propagation through Terrain, non-dev compilation and release build.
 The S15 cap35 Vulkan orbit capture `/tmp/pgs-categories-orbit.png` loads correctly
 and preserves the neutral terrain/known-water presentation. Earlier registry
 generation passed unchanged; this work does not modify registry data.
+
+## Optional diagnostic rock colours
+
+For task `20261010T172840-planets-43e6`, set
+`UNIVERSE_PGS1_COLOURS=categories` with the explicit S15 `surface_model_006`
+preview. Omit it or set `neutral` to keep the gray-ground/blue-water comparison.
+The on-screen caption identifies the category view as diagnostic colours, not
+physical textures. These are the existing export's rock colours, not invented
+engine colours. Landform pattern IDs remain queryable but are not rendered.
+
+The development host checks `surface.json` against the manifest hash/size and
+checks its `export.sha256` against the loaded surface. Both vocabulary names
+must match the binary header, and each nonzero legend rock ID must match its
+source name in the supplied frozen mapping. Duplicate IDs, malformed RGB values,
+missing categories or an unknown mode are refused. No change to canonical
+terrain, water, physics, categories or registry records is made.
+
+The cube map uses the export's byte RGB legend by rock ID. Unknown categories,
+ID 0 and missing legend entries fall back to neutral shading. Known water is
+always blue in both modes, including nearby patches with their finer water mask.
+The palette is process-local development display state, scoped to the selected
+body and vocabulary pair; it is not stored in the simulation. Player builds
+never enable it. The 512x512 cube faces and texture filtering approximate category
+boundaries and can miss very small regions; interpolated colours are display
+blends, never interpolated category IDs or new materials.
+
+```sh
+UNIVERSE_PGS1=../planet-trees/out/planet/earth_s15/surface_model_006 \
+UNIVERSE_PGS1_COLOURS=categories UNIVERSE_BODY=body.treistun.treistun-e \
+UNIVERSE_SCENARIO=planet UNIVERSE_SETTLERS=0 UNIVERSE_PAUSED=1 \
+UNIVERSE_YAW=3.74 UNIVERSE_DIST=2.5 target/release/freefall
+```
+
+Validation passes: full workspace suite including WGSL validation, palette
+lookup/refusal tests, final non-dev compilation and release build. Inspected
+Vulkan captures `/tmp/pgs-colours-orbit.png`, `/tmp/pgs-colours-neutral.png` and
+`/tmp/pgs-colours-lake.png`: distinct diagnostic land regions in colour mode,
+neutral comparison retained, and the elevated lake remains blue on local patches.

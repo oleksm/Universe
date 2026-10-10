@@ -538,6 +538,11 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
         } else {
             own = textureSampleGrad(globe_colors, globe_soft, in.local, layer, ldx, ldy);
         }
+        // Palette 5 uses the exported diagnostic rock legend only on dry/unknown-water
+        // ground. Water wins at all LODs; missing labels stay on the neutral palette.
+        if (in.globe.y > 4.5 && own.a > 0.5 && select(ground.g, in.data.x, on_patch) <= 0.5) {
+            albedo = vec4<f32>(own.rgb * abs(in.globe.w), in.color.a);
+        }
         let mapped = in.globe.x > 0.5 && abs(in.globe.x - g.look2.w) < 0.5;
         let uv = world_uv(dir);
         if (mapped && !canonical) {
