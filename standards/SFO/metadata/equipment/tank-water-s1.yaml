@@ -9,17 +9,17 @@ identity:
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 250
-  volume: 9.53
-  length: 2.12
-  width: 2.12
-  height: 2.12
+  mass: 268
+  volume: 10.21
+  length: 2.13
+  width: 2.13
+  height: 2.25
 built_of:
   parts: tank-water-s1
   list:
-    - { code: WTK1-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 175, length: 1.88, width: 1.88, height: 1.88, item: stock.al6061-pl-5, quantity: 201.0, module: module.welding-bay }
+    - { code: WTK1-01, name: "Shell", description: "The ball, welded from pressed halves of 5 mm 6061: 2.122 m inside (5 m3), 2.13 m outside.", mass: 192, length: 2.13, width: 2.13, height: 2.13, item: stock.al6061-pl-5, quantity: 220.6, module: module.welding-bay }
     - { code: WTK1-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 38, length: 1.13, width: 1.13, height: 1.13, item: stock.al6061-pl-5, quantity: 43.7, module: module.cutting-table }
-    - { code: WTK1-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 38, length: 1.13, width: 1.13, height: 1.13, item: stock.st304-pl-3, quantity: 43.7, module: module.machining-centre }
+    - { code: WTK1-03, name: "Fittings", description: "Fill and vent on a boss at the top (0.12 m above the ball), drain at the bottom inside the ball's box, gauge.", mass: 38, length: 0.3, width: 0.3, height: 0.12, item: stock.st304-pl-3, quantity: 43.7, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -29,5 +29,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "5 m3 as a ball 2.12 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
+  - { of: [physical, built_of.list], tier: derived, review: true, note: "For the modeller (2026-10-10): the 5 mm plate makes the ball 2.13 m outside and 192 kg (4 pi r2 t rho); pressure needs far less (0.2 MPa: 0.6 mm), so the plate is for handling and stiffness. The fittings' boss adds 0.12 m on top: 2.13 x 2.13 x 2.25 m overall." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

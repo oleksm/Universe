@@ -415,7 +415,7 @@
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c543e988b3b31052" }
 - { record: equipment.handling.transfer.arm, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "635247105c3cc019" }
 - { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "96bda6031ca36f8d" }
-- { record: equipment.hardpoint.mining-laser.mc07, at: "2026-10-07T03:42:03Z", status: draft, summary: "first tracked", sha: "165b361e84afafc4" }
+- { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-10T21:56:25Z", status: draft, summary: "changed", sha: "3c80093d390b312e" }
 - { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "6a1dbe5174efe2e8" }
 - { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54beaa20b9d5f1b9" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "43ab02cce06b3cb7" }
@@ -780,7 +780,7 @@
 - { record: hull.drover, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "43e4088fcb8c1351" }
 - { record: hull.hauler, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "bb65478e558da977" }
 - { record: hull.interceptor, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "51cc059564d57a1f" }
-- { record: hull.mc-07, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "fec81bb9440947fa" }
+- { record: hull.mc-07, at: "2026-10-10T21:54:25Z", status: draft, summary: "changed: fit", sha: "9016586b48756d0c" }
 - { record: hull.prospector, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "b6d587bb611c4b96" }
 - { record: hull.sprint, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "2d770d0652d7597c" }
 - { record: law.air-heat-capacity, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "76b6ebdfb0ab99b4" }
