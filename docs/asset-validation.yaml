@@ -155,3 +155,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Fixed hull supports and final combined MC-07 integration; general-device motion and operational breaker interaction; GPU look/cost; simultaneous mechanisms; provisional mass/load qualification"
+  - key: equipment.gear.front.mc07
+    version: 1
+    manifest_sha256: "a2932faf77c7e2ce6867e6579877c98b42f060c8540e768d9a926a5db73911d9"
+    installed: 121369d9
+    game: "the loader (world::assets) at fso 121369d9"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-front-mc07/v1 (108980 bytes, bounds [-1.1025, -1.41, -0.58] to [1.1025, 0.67, 5.88]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Fixed hull v02 supports and combined MC-07 integration; live deployment and landing suspension/contact response; GPU look/cost; simultaneous mechanisms; provisional load/bearing-life qualification"
