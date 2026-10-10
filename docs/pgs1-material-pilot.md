@@ -141,3 +141,40 @@ Measured frame averages (neutral/category/material) are 24.54/24.26/23.56 ms at
 the summit and 30.41/29.99/30.13 ms at the lake. These single 480-frame runs
 include warmup and asynchronous terrain work: they are not evidence of a
 speedup or a controlled overhead benchmark. GPU scene timings are in the JSON.
+
+## Conforming 2.5 km regional control: v2 agreement
+
+Task `20261010T181713-planets-ebbf` passes the requested engine checks with
+unchanged engine `2534310e`. The package is
+`planet-trees/out/benchmarks/scenery-mesh-control-s15-v2`, SHA-256
+`452027f891038a9eeabdd1261b2403561c36f739ffec107b1f54462282349dbb`:
+6,141,424 bytes, 59,027 points, 118,050 faces, capability35. All manifest files
+match hashes/sizes. All 185 remapped face IDs point through `source_faces.npy`
+to their original 006 owner, and the expected height/water/category records
+are otherwise unchanged.
+
+The Rust reader passes all 185 remapped goldens: exact owners, water body and
+category IDs; maximum height error `1.409717e-10 m`. The independent 006
+derivative reference, with only face IDs/hash remapped, also passes all185:
+maximum slope error `2.213507e-15`, normal-component error `6.328271e-15`.
+No terrain, material or water alteration was needed in the consumer.
+
+The fixed material summit/lake cameras were repeated under Vulkan with the same
+frame480, paused time, heading, sun and shadow-off settings as the preceding
+006 comparison. Original 006 PNG hashes were verified against the saved report.
+Both complete images differ by **at most one byte-channel step**, with no pixels
+changing by more than two. The summit silhouette remains gentle and the lake
+and shore remain visually consistent. This confirms an unchanged-field mesh
+control, not improved relief or a stronger scenery result.
+
+Evidence: `docs/pgs1-mesh-control-v2-validation.json`, captures/logs in
+`/tmp/pgs-mesh-control-v2/`. Single-run frame means are summit27.15 ms and
+lake30.48 ms (006:23.56/30.13); warmup/asynchronous work prevents attributing
+these differences solely to refinement. Reader load55.25 ms; coherent/distributed
+queries0.114/0.319 microseconds in its existing 10,000-query diagnostic loops.
+These are observations, not controlled performance claims.
+
+Reproduce the CPU checks with `pgs_accept` and this control folder. The existing
+`tools/review/pgs_material_captures.sh CONTROL_FOLDER OUTPUT_FOLDER` reproduces
+the fixed cameras (all three modes; this review compared the material pair).
+No registry installation, binary format change or main merge was performed.
