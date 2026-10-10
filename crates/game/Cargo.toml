@@ -2,11 +2,21 @@
 name = "universe"
 edition.workspace = true
 version.workspace = true
+default-run = "freefall"
 
-# The game: Freefall (by Plurence).
+# The game: Freefall (by Plurence). The library holds it; two binaries ship: the game, and the studio
+# on its own (it is part of the game: the same code, opened alone).
+[lib]
+name = "game"
+path = "src/lib.rs"
+
 [[bin]]
 name = "freefall"
-path = "src/main.rs"
+path = "src/bin/freefall.rs"
+
+[[bin]]
+name = "freefall-studio"
+path = "src/bin/freefall-studio.rs"
 
 [dependencies]
 rayon.workspace = true

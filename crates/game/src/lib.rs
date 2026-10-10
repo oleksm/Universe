@@ -1728,38 +1728,51 @@ fn hold_to_cores(n: Option<usize>) {
     let _ = n;
 }
 
-fn main() {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
-        .init();
-    // (The cores shared out before anything starts using them: see `thread_budget`;
-    // what the game may use at all, noted before the shipyard holds it to fewer.)
-    // (`--report <design>`: the interior studio's report on a design, as text; no
-    // window. For checking a change without a game run.)
-    let args: Vec<String> = std::env::args().collect();
-    // (`--studio [design]`: the interior studio alone, no universe loaded.)
-    if let Some(k) = args.iter().position(|a| a == "--studio") {
-        let design = args.get(k + 1).filter(|a| !a.starts_with("--")).map(String::as_str);
-        run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
-        return;
-    }
+/// The studio modes, alone (`freefall-studio`, or `freefall` with one of these flags): `--report`,
+/// `--fit`, `--compare` print and return true; with none, the interior studio's window
+/// (`[design]` the design to open). False: none was asked for and `window` is false.
+pub fn studio(args: &[String], window: bool) -> bool {
     // (`--fit <design>`: its frame fitted (mounted, sized, braced) and saved, the
     // old one kept in backups/.)
     if let Some(k) = args.iter().position(|a| a == "--fit") {
         let name = args.get(k + 1).map_or("design-1", String::as_str);
         print!("{}", interior::fit_design(name));
-        return;
+        return true;
     }
     // (`--compare <a> <b>`: two designs' key figures side by side.)
     if let Some(k) = args.iter().position(|a| a == "--compare") {
         let (a, b) = (args.get(k + 1).map_or("design-1", String::as_str), args.get(k + 2).map_or("design-2", String::as_str));
         print!("{}", interior::compare_designs(a, b));
-        return;
+        return true;
     }
+    // (`--report <design>`: the interior studio's report on a design, as text; no
+    // window. For checking a change without a game run.)
     if let Some(k) = args.iter().position(|a| a == "--report") {
         let name = args.get(k + 1).map_or("design-1", String::as_str);
         print!("{}", interior::report(name));
+        return true;
+    }
+    // (The interior studio alone, no universe loaded: `--studio [design]`, or the studio's own binary.)
+    let flag = args.iter().position(|a| a == "--studio");
+    if window || flag.is_some() {
+        let first = flag.map_or(1, |k| k + 1);
+        let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
+        run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
+        return true;
+    }
+    false
+}
+
+/// The game (`freefall`). The studio's flags still open the studio, as before it had its own binary.
+pub fn play() {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
+        .init();
+    let args: Vec<String> = std::env::args().collect();
+    if studio(&args, false) {
         return;
     }
+    // (The cores shared out before anything starts using them: see `thread_budget`;
+    // what the game may use at all, noted before the shipyard holds it to fewer.)
     universe_sim::engine::size_thread_pools();
     // (UNIVERSE_HEIGHTS_STRETCH: the lines' heights stretched from the start, as SHIFT+F4 does.)
     if let Some(k) = std::env::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {
