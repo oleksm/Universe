@@ -308,3 +308,19 @@ fn world_charts_and_contacts_share_the_explicit_surface() {
         ));
     }
 }
+
+#[test]
+fn independent_water_domain_goldens() {
+    let manifest: Value = serde_json::from_str(include_str!("fixtures/pgs1-water-v1/manifest.json")).unwrap();
+    for (name, bytes, queries) in [
+        ("ocean_cut", include_bytes!("fixtures/pgs1-water-v1/ocean_cut.pgs").as_slice(), include_str!("fixtures/pgs1-water-v1/ocean_cut.json")),
+        ("lake_cut", include_bytes!("fixtures/pgs1-water-v1/lake_cut.pgs").as_slice(), include_str!("fixtures/pgs1-water-v1/lake_cut.json")),
+        ("lake_spill_cap", include_bytes!("fixtures/pgs1-water-v1/lake_spill_cap.pgs").as_slice(), include_str!("fixtures/pgs1-water-v1/lake_spill_cap.json")),
+    ] {
+        for (file, data) in [(format!("{name}.pgs"), bytes), (format!("{name}.json"), queries.as_bytes())] {
+            assert_eq!(sha256(data), manifest["files"][&file]["sha256"]);
+            assert_eq!(data.len() as u64, manifest["files"][&file]["bytes"].as_u64().unwrap());
+        }
+        check(bytes, queries);
+    }
+}

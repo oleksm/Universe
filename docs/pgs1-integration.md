@@ -157,3 +157,44 @@ S13 `9.094947017729282e-12 m`; S15 `7.275957614183426e-12 m`. Both whole-file ha
 remain those recorded above; manifest and section integrity checks passed.
 No mismatches or reader changes. Real water-domain/shoreline exports remain a
 separate forthcoming acceptance input; the terrain-only baseline is preserved.
+
+## Water-domain agreement, 2026-10-10
+
+For planets task `20261010T170628-planets-89d9`, the current reader passed all
+**381 new queries** without decoder/query changes. Vendored the three small water
+fixtures, query files and manifest verbatim from
+`planet-trees/tests/fixtures/pgs1-water-v1/` into the engine tests. The new
+`independent_water_domain_goldens` regression checks both binary and query-file
+hashes/byte counts, exact face owners, unknown categories, water state and body
+IDs, and terrain height/water level/depth within 0.001 m. All nine PGS integration
+tests pass, preserving the earlier terrain-only and split-invariance checks.
+
+| Input | Queries passed | Maximum terrain-height error (m) |
+|---|---:|---:|
+| ocean_cut | 61 | 3.498e-13 |
+| lake_cut | 85 | 2.843e-13 |
+| lake_spill_cap | 61 | 2.307e-13 |
+| S15 surface_model_005 | 174 | 1.410e-10 |
+
+The small-case error measurements used unchanged binary/JSON bytes through the
+acceptance CLI, with temporary surface/query filenames and corresponding manifest
+entries. Their checked-in original manifest remains unchanged.
+
+S15 is 2,398,728 bytes, capability 3, 23,048 points and 46,092 faces. The acceptance
+CLI verifies manifest entries for the surface and queries, internal section
+hashes, and all query expectations, including known standing water. Its surface
+SHA-256 is `c20fde3bd5662e53b86b8106c4a5938a15858f742351120c4bc3ae7198cabc79`.
+Reproduce after building the example:
+
+```sh
+cargo test -p universe-world --test pgs
+~/bin/capped cargo run -p universe-world --example pgs_accept -- \
+  ../planet-trees/out/planet/earth_s15/surface_model_005
+```
+
+This agrees with the exported water interpretation; it does not certify the
+spill-cap hydrology or independently reconstruct the lake assignment. Planets'
+reported S13 multi-level conflict remains unresolved, and no S13 water package
+was accepted. Shore-chain sidecars are diagnostic; feature sections remain absent.
+The in-game development preview still requires terrain-only capability 1, so
+this CPU water-reader pass does not enable water drawing or installation.
