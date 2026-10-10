@@ -102,7 +102,7 @@ worlds' 0.5 AU radii, are off it.
 1. ✓ Comm equipment as modules and as infrastructure (content, brands); every ship fitted with a
    basic comm.
 2. ✓ The network: nodes, links (range, line of sight), gate relays, lag from the backbone. The
-   HUD status. (`crates/world/src/hypernet.rs`: a system's nodes are its station, gates and ports;
+   HUD status. (`crates/core/world/src/hypernet.rs`: a system's nodes are its station, gates and ports;
    the station is the backbone, its ports where it has none. Worlds block the line, so a port on
    its world's far side drops off the net and comes back as the world turns. Ships link to nodes
    but don't relay yet: that comes with capture and delivery.)
@@ -121,7 +121,7 @@ worlds' 0.5 AU radii, are off it.
    **Routing is a tree, not a mesh:** each relay keeps one uplink, to the neighbour that gets it to
    the backbone soonest, and messages hop relay to relay. As the worlds go round their orbits, a
    line closes and the relay switches to another neighbour: the net reshapes with the seasons.
-4. ✓ Capture and delivery (`crates/sim/src/news.rs`): a kill is heard where it happens, by our own
+4. ✓ Capture and delivery (`crates/core/sim/src/news.rs`): a kill is heard where it happens, by our own
    comm in its capture range, or by a relay on the net in its capture range (the light passes once:
    unseen then, never known); a trade by its market's relay (a dark port passes it on when it's back
    on the net). From its system's backbone through gate relays (the crossing and the relays' lags)
@@ -129,7 +129,7 @@ worlds' 0.5 AU radii, are off it.
    when we're back. The kill and trade feeds show what we've heard, from when we heard it, with
    where (other systems) and how old it was on arrival. Not yet: ships carrying news in their
    memories (couriers), and anyone but us acting on what they know (step 5).
-5. ✓ Markets on knowledge (`crates/sim/src/commerce.rs`, `Boards`): every market puts out its price
+5. ✓ Markets on knowledge (`crates/core/sim/src/commerce.rs`, `Boards`): every market puts out its price
    board every 2 minutes; another market has it once it's crossed the net (both markets' lags from
    the backbone). Traders decide on the boards their market has, so a far port's prices are old
    and the trip may find otherwise; a market off the net hears nothing new. The world's first

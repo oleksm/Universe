@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/seeding.schema.yaml
-# How a system's small bodies are seeded: the figures the engine's seeder holds (crates/world/src/small_bodies.rs, belts.rs),
+# How a system's small bodies are seeded: the figures the engine's seeder holds (crates/core/world/src/small_bodies.rs, belts.rs),
 # moved here so that they are the registry's and not the code's. Where a figure is given as least and most, the seeder draws between.
 identity:
   key: seeding.small-bodies
@@ -65,5 +65,5 @@ belt_rocks:
   most_eccentric: 0.2
   rubble_above: 100.0
 basis:
-  - { of: [largest_body, crossing, captured, centaurs, outer_dwarfs, returning_comets, cloud_comet, spin], tier: sourced, review: true, source: "the game: crates/world/src/small_bodies.rs", note: "The seeder's own figures, as it draws them, moved here. They were the registry's seeder's first (celestial_seed.py), chosen to follow what is known of the Sun's small bodies." }
-  - { of: [belt_rocks], tier: sourced, review: true, source: "the game: crates/world/src/belts.rs, small_bodies.rs", note: "The engine's own figures, moved here: the two tilts and the swarm's width as its note of 2026-10-04 gives them." }
+  - { of: [largest_body, crossing, captured, centaurs, outer_dwarfs, returning_comets, cloud_comet, spin], tier: sourced, review: true, source: "the game: crates/core/world/src/small_bodies.rs", note: "The seeder's own figures, as it draws them, moved here. They were the registry's seeder's first (celestial_seed.py), chosen to follow what is known of the Sun's small bodies." }
+  - { of: [belt_rocks], tier: sourced, review: true, source: "the game: crates/core/world/src/belts.rs, small_bodies.rs", note: "The engine's own figures, moved here: the two tilts and the swarm's width as its note of 2026-10-04 gives them." }

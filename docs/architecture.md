@@ -44,7 +44,7 @@ designs, production and economy. The world can change anything of its own and no
 
 | | Dogma | The world (the base world) |
 |---|---|---|
-| Where | `crates/physics` (`universe-physics`) and its laws, the Dogma registry (`standards/Dogma`) | `content/base/` (a content pack), and the world code that runs it |
+| Where | `crates/core/physics` (`universe-physics`) and its laws, the Dogma registry (`standards/Dogma`) | `content/base/` (a content pack), and the world code that runs it |
 | What | nature's constants; mechanics, gravity, orbits, contact; the hyper layer's laws (the medium, fields, throats: `laws`, `hyper`) | materials (`materials.ron`), devices (`modules.ron`), hulls, brands, recipes, places, markets, its fixed design numbers (`sheet.ron`) |
 | Knows | bodies, forces, energy, the medium | fuels, reactors, tanks, ships, stations, goods, who makes what |
 | Never | names a material, a device, a fuel or a good (`dogma.rs` checks) | breaks a law (devices are checked against Dogma and their materials) |
@@ -61,26 +61,36 @@ designs, production and economy. The world can change anything of its own and no
 ## Layers (crates), dependencies pointing down only
 
 ```
- game (universe)        rendering, HUD, input, audio, dev scenarios        crates/game
+ game (universe)        the game's library: flight, scene, HUD, input,      crates/game
+   │                    audio, panels, the studio; two binaries: freefall
+   │                    (the game) and freefall-studio (the studio alone);
+   │                    devkit (scenarios, the observer port) only with the
+   │                    dev feature (default on; a player build is
+   │                    --no-default-features)
    │
- sim (universe-sim)     orchestration: the tick loop, ships (player +      crates/sim
+ sim (universe-sim)     orchestration: the tick loop, ships (player +      crates/core/sim
    │                    crafts), per-ship avionics, traffic (settlers),
    │                    save/load. The only place layers meet.
    ├──────────────┐
- avionics            │  ship software: nav computer, guidance, planner,   crates/avionics
+ avionics            │  ship software: nav computer, guidance, planner,   crates/core/avionics
  (universe-avionics) │  autopilots (dock/land/gate/hyper/route)
    │                 │  reads sensors → writes ShipCommands
    ├─────────────────┘
- world (universe-world) entities & devices: galaxy, star systems, terrain  crates/world
+ world (universe-world) entities & devices: galaxy, star systems, terrain  crates/core/world
    │                    content, structures (station, spaceport, gate),
    │                    ships and their devices, contact rules (docking
    │                    port, landing gear, damage, gate transit), world
    │                    services (traffic control / clearance), events
    │
- physics                Dogma (below)                                 crates/physics
+ physics                Dogma (below)                                 crates/core/physics
  (universe-physics)
-                        engine (universe-engine): rendering only, no sim deps
+                        engine (universe-engine): rendering only, no sim deps   crates/engine
 ```
+
+Everything under `crates/core` is the runtime with no window and no dev hooks. `crates/game/tests/layers.rs`
+holds the layers: a core crate depends only on core crates, the engine only on the profiler (the world
+only for its agreement test), and nothing depends on the game. The Python and Blender tooling lives in
+`tools/`, outside the workspace.
 
 ## Threads: the world engine and the client
 
@@ -148,7 +158,7 @@ route}` and the common types at its root), so the game needs only the one depend
 
 ## Dogma (`universe-physics`)
 
-`crates/physics/src/`: `orbit`, `rails`, `surface`, `body`, `collide`, `integrate`, `ops`,
+`crates/core/physics/src/`: `orbit`, `rails`, `surface`, `body`, `collide`, `integrate`, `ops`,
 `query` (plus a test-only `testkit`). It knows only:
 
 - **Rail bodies**: celestial bodies on exact Kepler orbits around a parent (planets, moons,
@@ -210,7 +220,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 
 ## World (`universe-world`)
 
-`crates/world/src/`, the entities and their rules:
+`crates/core/world/src/`, the entities and their rules:
 
 - **Content**: `units`, `rng`, `names`, `galaxy`, `terrain` (implements Dogma's `Surface`),
   `system` (star systems: bodies with a `rail`, kinds, colours, spaceports; `on_pad`,
@@ -309,7 +319,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 
 ## Avionics (`universe-avionics`)
 
-`crates/avionics/src/`, per-ship software. It reads sensors and its own state and writes
+`crates/core/avionics/src/`, per-ship software. It reads sensors and its own state and writes
 `ShipCommands`, nothing else:
 
 - `nav`: `NavTarget` (the world's `Facility`), `Phase`, `Clearance`.
@@ -366,7 +376,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
 
 ## Orchestration (`universe-sim`)
 
-`crates/sim/src/`: the only place the layers meet.
+`crates/core/sim/src/`: the only place the layers meet.
 
 - `universe`: **`Universe { world, ship, ship_system, avionics, events, crafts, traffic,
   crash_log }`** — the world, the player's ship with its avionics and event feed, the crafts.
@@ -403,7 +413,7 @@ spin, relocation keeps relative motion), stop/bounce, and `simulate` matching th
     routes, trader decisions, world saves), `cockpit`.
   - `setup` puts world and clients together (`Universe::new`; the engine's own is
     `Universe::bare`, used by replay).
-  - `crates/sim/tests/boundary.rs` fails the build if engine code names a client module or
+  - `crates/core/sim/tests/boundary.rs` fails the build if engine code names a client module or
     type, or an intention.
 - `operator`: **the NPC operator** (a client). It registers settlers with the world (names,
   starting pads: `Universe::register`) and keeps their pilots. It gives each a new route when
@@ -439,9 +449,9 @@ The world time scale (default 1×) is game seconds per real second, chosen by th
 player warp multiplies it (not in hyperdrive).
 
 Tests: unit tests next to the code; whole flights through the orchestrator in
-`crates/sim/tests/flights.rs` (autodock, the plan reaching the pads, hyperdrive to a field);
-a few ships in one situation in `crates/sim/tests/interactions.rs`; pilots and the cockpit in
-`crates/sim/tests/pilots.rs` (the dead-man rule, a recorded session replaying). The suite is
+`crates/core/sim/tests/flights.rs` (autodock, the plan reaching the pads, hyperdrive to a field);
+a few ships in one situation in `crates/core/sim/tests/interactions.rs`; pilots and the cockpit in
+`crates/core/sim/tests/pilots.rs` (the dead-man rule, a recorded session replaying). The suite is
 kept under 80 tests and a few seconds: only fast, isolated checks; a slow one is cut, not kept.
 
 **Not yet**
@@ -562,7 +572,7 @@ ship's pose directly, like tests do — then render.
 
 - **Unit tests** in each crate (Dogma invariants, device rules, traffic control, markets…): the
   whole suite runs in a few seconds.
-- **Interaction tests** (`crates/sim/tests/interactions.rs`): 2–10 ships placed in one situation
+- **Interaction tests** (`crates/core/sim/tests/interactions.rs`): 2–10 ships placed in one situation
   (two ships at a gate, full pads with one holding, one leaving a station as another docks, a
   pirate and its prey, a head-on collision), run for a few game minutes at 1×, and checked for
   the outcome. Together they take under a second. This is where traffic behaviour is developed.

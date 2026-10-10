@@ -25,7 +25,7 @@ use std::fmt::Write;
 use std::path::{Path, PathBuf};
 
 fn main() {
-    let root = Path::new("../../standards");
+    let root = Path::new("../../../standards");
     println!("cargo:rerun-if-changed={}", root.display());
     let mut files = Vec::new();
     schemas(root, &mut files);

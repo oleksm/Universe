@@ -34,7 +34,7 @@ const BCF: f64 = 2.831_684_659_2e7;
 
 /// Where the registry's files lie: `UNIVERSE_ROOT`, else the source tree this was built from.
 pub fn root() -> PathBuf {
-    std::env::var_os("UNIVERSE_ROOT").map(PathBuf::from).unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("../.."))
+    std::env::var_os("UNIVERSE_ROOT").map(PathBuf::from).unwrap_or_else(|| Path::new(env!("CARGO_MANIFEST_DIR")).join("../../.."))
 }
 
 /// The worlds store: `UNIVERSE_WORLDS`, else the planet simulation's output beside this tree

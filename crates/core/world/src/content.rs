@@ -25,9 +25,9 @@ use crate::ship::ClassSpec;
 
 /// The base pack, built in: (file, source).
 const BASE: &[(&str, &str)] = &[
-    ("shapes.ron", include_str!("../../../content/base/shapes.ron")),
-    ("prices.ron", include_str!("../../../content/base/prices.ron")),
-    ("aliases.ron", include_str!("../../../content/base/aliases.ron")),
+    ("shapes.ron", include_str!("../../../../content/base/shapes.ron")),
+    ("prices.ron", include_str!("../../../../content/base/prices.ron")),
+    ("aliases.ron", include_str!("../../../../content/base/aliases.ron")),
 ];
 
 /// A kind of content entry: what file of a pack it's in, its key, whether

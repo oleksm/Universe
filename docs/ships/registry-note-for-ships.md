@@ -369,7 +369,7 @@ nothing else: no charge, no energy per jump. The game runs it as cruise: it draw
 long as it is engaged, and the time of a hop is set by the governor near a surface (speed held to
 the governor's rate times the distance to the ground), tens of seconds for a hop of hundreds of
 kilometres: 900 kW × 60 s = 54 MJ, a small part of any pack. The record carries no governor figure;
-the game's is in `crates/world/src/hyperdrive.rs` (the integrator's). If you want the JUMP line to
+the game's is in `crates/core/world/src/hyperdrive.rs` (the integrator's). If you want the JUMP line to
 read it from the record, say so and I'll add `interlock` and `governor` to the record with the
 game's values.
 

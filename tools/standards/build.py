@@ -10,7 +10,7 @@ are free tags describing it; how they'll be classified is left until patterns sh
 
 Writes:
 - `standards/index.html`: browse by topic or by number (rerun and refresh after an edit);
-- (no game content: the game reads the records through crates/registry; this build writes only the page and the trackers)
+- (no game content: the game reads the records through crates/core/registry; this build writes only the page and the trackers)
 - formerly: `content/base/*.ron` (generated:
   edit the YAML, not these; the game's tree is the topics for now).
 
@@ -581,8 +581,8 @@ LOCAL = "LocalAdministration"
 ZONE_USES = ["port", "industrial", "commercial", "civic", "residential", "agricultural", "mining"]
 # What zone each kind of facility needs.
 FACILITY_ZONE = {"foundry": "industrial", "mine": "mining", "mill": "industrial", "yard": "industrial", "power": "industrial", "warehouse": "port", "farm": "agricultural", "food works": "industrial", "store": "port", "utility": "industrial"}
-# The game's spaceport, for the map of a settlement: its pads and its hangar (crates/world/src/spaceport.rs).
-_port = open(os.path.join(ROOT, "crates", "world", "src", "spaceport.rs"), encoding="utf-8").read()
+# The game's spaceport, for the map of a settlement: its pads and its hangar (crates/core/world/src/spaceport.rs).
+_port = open(os.path.join(ROOT, "crates", "core", "world", "src", "spaceport.rs"), encoding="utf-8").read()
 PORT = {
     "grid": int(re.search(r"pub const GRID: usize = (\d+);", _port).group(1)),
     "spacing": float(re.search(r"pub const PAD_SPACING: f64 = ([0-9.]+);", _port).group(1)),
@@ -1728,7 +1728,7 @@ def enum(e):
 
 
 # (The eight RON files this build once wrote for the game are gone (2026-10-07): the game reads the registry's records
-# directly through crates/registry, and keeps only its own hand-kept files beside them: aliases, prices, shapes, sheet.)
+# directly through crates/core/registry, and keeps only its own hand-kept files beside them: aliases, prices, shapes, sheet.)
 
 
 # ---------------------------------------------------------------- reports
@@ -1910,7 +1910,7 @@ for e in equipment:
 report("equipment", "Equipment: what hulls are fitted with", "Each piece of ship equipment: the hulls fitted with it, what it weighs and what kind of device it is. The game reads these records; what each is made of is its parts (the Equipment parts report).", ["Equipment", "Fitted to", "Mass", "Kind", "Made of"], rows)
 
 # 1c. Stargates: what opening and holding each ring's tube costs, by the laws (Dogma's Tube; the
-# same formulas as crates/physics/src/hyper.rs), and each ring against the game's.
+# same formulas as crates/core/physics/src/hyper.rs), and each ring against the game's.
 LAW = {l["identity"]["label"]: l["value"] for s_ in dogma for l in s_["laws"]}
 tube_time = lambda m, span_ly: LAW["TUBE_T_LY"] * span_ly * LY * m ** LAW["TUBE_GAMMA"]      # (the law is for each metre)
 tube_energy = lambda m, span_ly: LAW["TUBE_EPS"] * m * span_ly * LY * math.e      # (at its natural time)

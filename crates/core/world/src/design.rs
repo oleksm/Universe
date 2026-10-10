@@ -547,7 +547,7 @@ mod tests {
         assert!(ship.applied.0.z < -0.9 * content().get(h).main_thrust * 0.5, "{:?}", ship.applied);
         // A hull modelled in Blender, imported the same way: it flies too. (The MC-07's model: the
         // little test hull of tools/blender/test_hull.py has no room for equipment at real size.)
-        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../assets/models/mc07.glb");
+        let path = concat!(env!("CARGO_MANIFEST_DIR"), "/../../../assets/models/mc07.glb");
         let visual = "assets/models/mc07.glb";
         let h = crate::import::commission(&std::fs::read(path).unwrap(), visual).unwrap();
         let s = content().get(h);

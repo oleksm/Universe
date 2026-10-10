@@ -1,5 +1,5 @@
 # yaml-language-server: $schema=../../schema/seeding.schema.yaml
-# As the game's code has it (crates/world/src/galaxy.rs, network.rs). The game does not read this
+# As the game's code has it (crates/core/world/src/galaxy.rs, network.rs). The game does not read this
 # record yet: it is here so the world's laws are written down in one place.
 identity:
   key: seeding.galaxy

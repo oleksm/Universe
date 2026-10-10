@@ -8,7 +8,7 @@ use universe_world::units::{DAY, LIGHT_YEAR};
 
 
 fn main() {
-    let mut md = String::from("# The physics sheet\n\nGenerated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/world/tests/dogma.rs`.\n\n");
+    let mut md = String::from("# The physics sheet\n\nGenerated (run `cargo run -p universe-world --example physics_sheet`): edit the sheets, not this. The charter is `docs/physics.md`; the dogma's claims are checked in `crates/core/world/tests/dogma.rs`.\n\n");
     let mut table = |title: &str, source: &str, sections: &[(&str, &str)], sheet: &[universe_physics::sheet::Entry]| {
         md.push_str(&format!("# {title}\n\nFrom `{source}`.\n\n"));
         for &(section, note) in sections {
