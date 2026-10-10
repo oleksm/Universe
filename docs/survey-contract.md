@@ -85,6 +85,29 @@ studio: `frames.json` and the globe frames over time (`t<NNNN>.jpg`, `today.jpg`
 The registry keeps nothing of it (the installer needs nothing from it); the game's studio reads it
 from the store; the Worlds report says whether a world has one.
 
+## 2c. Installing a grown planet's ground: one command
+
+A planet grown as lines (the planet graph, planet-unfold's renderer) goes to the game with one command, from the
+planet's directory, run in the fso worktree:
+
+    python3 tools/standards/install_world.py <planet-dir> --world=TRE3 --as=Hoar                  # dry run: what it would do
+    python3 tools/standards/install_world.py <planet-dir> --world=TRE3 --as=Hoar --apply          # do it, validate, build
+    python3 tools/standards/install_world.py <planet-dir> --world=TRE3 --as=Hoar --push           # and commit and push on fso
+
+Options: `--survey=<id>` (default the `--world`'s, if the store has its survey), `--snapshot-name=<name>` (default
+`<planet>-<root sha256, 8 hex>`), `--root=<file>` (default `ck_22_rivers_anchors.lines`; depth files
+`L<level>_<i>_<j>.lines` beside it are taken too), `--engine=<lines.rs>` (default the reader the game's Cargo.toml
+names), `--climate` (take the survey's climate; by default the record's is untouched), `--note=<text>`.
+
+It checks every line file's PTL version and line kinds against the engine's reader (its `VERSION` and `Kind` enum) and
+**refuses cleanly** while the engine does not read a kind the file carries, so the install waits instead of breaking the
+game; makes the snapshot `worlds/<world>/ground/<name>/` in the worlds store (the root as `L0_0_0.lines`, the depth files,
+and `manifest.json`: format `planet-unfold-tiles/1`, world_id, body, name, radius_m read from the file, l0, start,
+source {commit, file, snapshot, date}, files with sha256 and size); points the body's record at it (survey and energy
+from the survey world through `world_install.py`, `ground` through `set_ground.py`; radius, gravity, climate and lore
+stay the record's); runs the validators and the registry build and puts the record back if either fails; with
+`--push` commits the record and the survey folder on fso and pushes. A second run with the same files changes nothing.
+
 ## 2b. Installing without anyone: the watcher
 
 `tools/standards/watch_worlds.py` watches the store's `releases.json`. When it has changed since
