@@ -185,3 +185,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Fixed hull v02 supports and combined MC-07 integration; live deployment and landing suspension/contact response; GPU look/cost; simultaneous mechanisms; provisional load/bearing-life qualification"
+  - key: equipment.tank.water.s1
+    version: 1
+    manifest_sha256: "c930717b7a1b40ceba878b6e881d77af1a1925d2082e8c2282f1ad23c9458f83"
+    installed: fdd3b61d
+    game: "the loader (world::assets) at fso fdd3b61d"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-water-s1/v1 (111076 bytes, bounds [-1.065, 0.0, -1.065] to [1.065, 2.25, 1.065]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull saddle placement and restraint; GPU look/cost; provisional weld/pressure/handling and zero-g fluid assumptions"
