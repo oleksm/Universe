@@ -60,7 +60,7 @@ fixed port to joint 1 and 0.37 m from joint 2 to the pump inlet (straight lines;
 107.1 mm (6.0 m/s), oxygen 54.5 mm (7.9 m/s), both under the 10 m/s inlet bound.
 
 Assumptions (invented, review): design pressure 0.6 MPa (twice an assumed 0.3 MPa tank); 304 stainless at an allowable
-140 MPa; the pressure needs 0.24 mm (DN100) and 0.12 mm (DN50) of wall, so the wall is set by handling and welding:
+140 MPa; the pressure needs 0.24 mm (DN100) and 0.13 mm (DN50) of wall, so the wall is set by handling and welding:
 1.0 mm and 0.8 mm; elbows add 20% to the pipe; foam insulation 25 mm at 30 kg/m3.
 
 | Item | Hydrogen (DN100, OD 114.3) | Oxygen (DN50, OD 60.3) |
@@ -68,8 +68,8 @@ Assumptions (invented, review): design pressure 0.6 MPa (twice an assumed 0.3 MP
 | pipe, 1.70 m (spool 0.80 + risers 0.90), with elbows | 5.8 kg | 2.4 kg |
 | two flight joints (bellows of two 0.3 mm plies, end rings, hinge plates for 6.1 kN / 1.7 kN pressure thrust) | 3.0 kg | 1.6 kg |
 | fixed port flange and pump inlet flange | 0.8 kg | 0.6 kg |
-| insulation | 0.7 kg | 0.4 kg |
-| **line** | **10.3 kg** | **5.0 kg** |
+| insulation | 0.6 kg | 0.3 kg |
+| **line** | **10.2 kg** | **4.9 kg** |
 
 The crossing is **about 15 kg**, inside CHE2-03's 45 kg (valves, lines and injector), leaving about 30 kg for valves and
 injector; CHE2-03 stays 45 kg until that split is measured. All provisional.
