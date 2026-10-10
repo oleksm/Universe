@@ -21,6 +21,12 @@ block sits at the hull's outer corner (or on an outrigger) so that no nozzle's c
 anything fitted to it. That is the placement test ships runs. Radiators and sensors keep
 out of those cones (docs/ships/exhaust-keepouts.md).
 
+**Update (2026-10-10, after ships' study, blender mc07-rcs-proposal/proposal-review.yaml):** compact corner pods fail the
+hull-core and radiator screens; a distributed layout of the same 20 named nozzles passes the sampled screen. Nothing in
+physics asks for pods: the registry drops the compact-pod constraint. Each nozzle is its own small socket (a real
+mount point on structure, with its feed), the 20 names and directions stay, and the test is engine's control-authority
+check plus the hull, hardware and thermal checks still open.
+
 ## Per-nozzle rating
 
 **Baseline (as the game reads it today):** a nozzle's thrust is the device's rating times its `share`
