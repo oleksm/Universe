@@ -167,3 +167,32 @@ missing-envelope note; they do not constitute sourced plume certification.
 HOT EXHAUST is provisionally a radiating surface, not a gas plume. Ships has been
 sent that source; structural, thermal and plasma-radiation qualification remain
 open.
+
+## RCS layout blocks radiator refit
+
+Ships' `20261010T171959-ships-e41f` screening report rejects both roof S2 panels
+in RCS core zones even stowed, and side S2/S3 panels in fringe zones. This is a
+failure against the registry's provisional screening rule, not a certified
+plume calculation.
+
+Confirmed in `tools/blender/export_hull.py:254`: when no authored RCS empty exists,
+the exporter places four clusters at nose/tail, left/right. Each cluster emits
+five co-located nozzles: up/down/out/fore/aft (20 total, despite the "quads" comment).
+In Blender world coordinates the fallback uses nose/tail 12% of the bounding
+length in from either end, x = +/- (hi.x - 2)/2, z = hi.z - 4. These are inferred
+from currently exported geometry, not explicit mechanical sockets. One authored
+RCS empty suppresses the entire fallback: a partial authored set is unsafe.
+The importer binds all non-main/non-lift nozzles to the thrusters slot at share 1;
+changing the layout changes actual forces/torques, not only plume graphics.
+
+No independently specified intended socket coordinates were found. The fso hull
+record copies the imported nozzle names, marks slots/thrusters/model fixed, and
+uses `on_conflict: propose`. Therefore the existing frames are the current
+runtime baseline, not a geometry-qualified design to confirm. Registry is being
+asked to resolve the fixed-record boundary and nozzle topology/rating intent.
+Ships should author a separate explicit complete socket proposal, with mechanical
+supports, neutral-pose frames, exit diameters and hull/radiator exhaust screening.
+Label placements invented/review and keep production nodes/physics unchanged
+pending review. Engine can compare candidate force/torque authority, symmetry,
+slot shares and importer round-trip before a coordinated installation. The
+radiator fixture accepted above remains only an axes/serialization reference.
