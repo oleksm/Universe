@@ -1364,3 +1364,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior; actual game GPU look/cost, hull placement and mount loads, cryogenic heat rejection, structural qualification and fictional hyper-field behavior pending."
+  - key: equipment.hyperdrive.s2
+    version: 1
+    manifest_sha256: "ee35186ac97c7fc1e39185ee1d693b9e4ac4cfabfd23b409c496a2c40b142487"
+    installed: 79410807
+    game: "the loader (world::assets) at fso 79410807"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-s2/v1 (153660 bytes, bounds [-1.41, 0.0, -0.94] to [1.41, 1.88, 0.94]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static scaled family exterior; actual game GPU look/cost, hull placement and mount loads, cryogenic heat rejection, structural qualification and fictional hyper-field behavior pending. Scaled walls/pads provisional."
