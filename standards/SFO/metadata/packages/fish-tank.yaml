@@ -20,9 +20,9 @@ shows_contents: false
 keeps: aerated
 visual:
   format: "freefall-model/1"
-  path: "models/fish-tank/v1"
-  manifest_sha256: "8ef952f1977bf1d8511ec4d50b274566b16302920029eb4d2374a2a58ada6025"
-  version: 1
+  path: "models/fish-tank/v2"
+  manifest_sha256: "8e335502801d0057108ea5a4fb722629cebb079744ca8153cff8c8ee6ced04d7"
+  version: 2
   triangles: 3564
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A live-fish transport tank of the 1,000-litre class, sized by the registry (2026-10-11); fish travel at a fraction of the tank's water (the holds mass counts both)." }
