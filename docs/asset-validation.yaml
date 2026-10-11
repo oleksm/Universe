@@ -1700,3 +1700,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static closed only; source swing demo not runtime motion. Actual mounted drawing, GPU appearance/cost, interaction and final hull fit remain pending. Internal rams/locks, thermal seals, mass distribution and mounting loads unqualified."
+  - key: equipment.access.bay-door.s2
+    version: 1
+    manifest_sha256: "3175775ec7c1b0456efa82b03254f04f5caf4442b8f6d19f7b269519f72091fa"
+    installed: c0dbb290
+    game: "the loader (world::assets) at fso c0dbb290"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-bay-door-s2/v1 (339620 bytes, bounds [-4.15, 0.0, -2.65] to [4.15, 0.3, 2.65]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static closed only; source swing demo not runtime motion. Actual mounted drawing, GPU appearance/cost, interaction and final hull fit remain pending. Internal rams/locks, thermal seals, mass distribution and mounting loads unqualified."
