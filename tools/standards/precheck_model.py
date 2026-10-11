@@ -3,9 +3,11 @@
     python3 tools/standards/precheck_model.py /abs/candidate/delivery.yaml          # check, print, write the report
     python3 tools/standards/precheck_model.py /abs/candidate/delivery.yaml --quiet  # only the verdict line
 
-From the candidate's delivery record (keys: asset, export, motion, about, source, hashes; paths relative to it) it:
+From the candidate's delivery record (keys: asset, export, motion, about, source, thumb, icon, hashes; paths relative
+to it) it:
 
-1. checks every file named in `hashes` against its sha256;
+1. checks every file named in `hashes` against its sha256, and that `thumb` (512 px) and `icon` (128 px) are square PNGs
+   with a transparent background (required: every item can be previewed);
 2. runs the installer's dry run (install_model.py, with --source, --about and --motion where given): size, nodes,
    budget, the account's sections, and the motion file against its schema, the model and the record;
 3. when there is a motion file, runs the game's own CPU consumer (engine's crates/engine/examples/ch_s2_fixture.rs,
@@ -53,7 +55,16 @@ def main(argv):
     steps.append(("hashes", not bad, "\n".join(bad) or f"{len(d.get('hashes') or {})} files match"))
     ok &= not bad
 
-    # 2. installer dry run
+    # 2. previews (the user's rule: every item can be previewed): both named in the record, both fit
+    from assets import PREVIEWS, check_png  # noqa: E402
+    pv = []
+    for n, side in PREVIEWS.items():
+        f = at(n)
+        pv += [f"no `{n}` in the delivery record ({side} x {side} px PNG, transparent background)"] if not f else check_png(f, side)
+    steps.append(("previews", not pv, "\n".join(pv) or "thumb 512 px and icon 128 px, square, with alpha"))
+    ok &= not pv
+
+    # 3. installer dry run
     cmd = [sys.executable, "tools/standards/install_model.py", glb, f"--as={key}"]
     cmd += [f"--source={source}"] if source else []
     cmd += [f"--about={about}"] if about else []
@@ -64,7 +75,7 @@ def main(argv):
     steps.append(("installer dry run", code == 0, out))
     ok &= code == 0
 
-    # 3. the game's CPU consumer
+    # 4. the game's CPU consumer
     if motion:
         capped = [os.path.expanduser("~/bin/capped")] if os.path.exists(os.path.expanduser("~/bin/capped")) else []   # (heavy builds under the memory cap)
         code, out = run([*capped, "cargo", "run", "-q", "--release", "-p", "universe-engine", "--example", "ch_s2_fixture", "--", motion, glb])

@@ -9,7 +9,7 @@ bounds), and appends an entry to docs/asset-validation.yaml: result `partial` wh
 With --push it commits that file on fso and pushes. Frames in the game (step 2 of the contract) stay a look by the
 registry once the kind is drawn; this records that they are pending.
 """
-import datetime, hashlib, os, re, subprocess, sys
+import datetime, hashlib, json, os, re, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -41,9 +41,13 @@ def main(argv):
     head = subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%h"], capture_output=True, text=True).stdout.strip()
     installed = get("installed") or subprocess.run(["git", "-C", ROOT, "log", "-1", "--format=%h", "-S", v["manifest_sha256"], "--", "standards"],
                                                    capture_output=True, text=True).stdout.strip() or "unknown"
+    man = json.load(open(os.path.join(store(), v["path"], "manifest.json")))
+    has_previews = all(os.path.exists(os.path.join(store(), v["path"], f)) for f in (man.get("previews") or {}).values()) and \
+        set((man.get("previews") or {})) >= {"thumb", "icon"}
     drawn = kind in DRAWN
     pending = ([] if drawn else ["frames in the game: the game does not draw this kind yet (engine)"]) + \
-              ["frames at play distance, GPU look and cost" if drawn else "GPU look and cost, placement on a real hull"] + extra
+              ["frames at play distance, GPU look and cost" if drawn else "GPU look and cost, placement on a real hull"] + \
+              ([] if has_previews else ["previews: thumb.png and icon.png missing from the package (reinstall with --thumb and --icon)"]) + extra
     result = "fail" if not ok else ("partial" if pending else "pass")
     detail = line.split(": ", 1)[1] if line else (bad or "no line for this key in the loader's output")
     entry = (f"  - key: {key}\n    version: {v['version']}\n    manifest_sha256: \"{msha}\"\n    installed: {installed}\n"
@@ -51,6 +55,7 @@ def main(argv):
              f"    result: {result}\n    drawn: {str(drawn).lower()}\n    checked:\n"
              f"      - \"loader (cargo test -p universe-world --test visuals): {detail.replace(chr(34), chr(39))}: {'pass' if ok else 'FAIL'}\"\n"
              f"      - \"installer checks at install (size, nodes, budget, static): pass\"\n"
+             f"      - \"previews (thumb.png, icon.png in the package): {'pass' if has_previews else 'missing'}\"\n"
              + ("    pending:\n" + "".join(f"      - \"{p}\"\n" for p in pending) if pending else ""))
     path = os.path.join(ROOT, "docs/asset-validation.yaml")
     s = open(path, encoding="utf-8").read().rstrip("\n") + "\n" + entry

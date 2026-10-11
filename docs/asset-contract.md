@@ -121,7 +121,8 @@ reference pose's node transforms within 2e-6; then writes it into the package (l
 
     python3 tools/standards/precheck_model.py /abs/candidate/delivery.yaml
 
-From `~/git/universe-fso`. It checks the delivery record's `hashes`, runs the installer's dry run with `--source`,
+From `~/git/universe-fso`. It checks the delivery record's `hashes`, that its `thumb` and `icon` are there and fit
+(512 and 128 px, square PNG, transparent), runs the installer's dry run with `--source`,
 `--about` and `--motion`, and, with a motion file, the game's own CPU consumer (engine's `ch_s2_fixture` example: the real
 model loader, every reference pose, a 513-pose sweep), then writes `review/registry-precheck.md` beside the record.
 Exit 0 is a pass: no registry review is needed before the owner's acceptance. Exit 1: send the registry a task with the
