@@ -441,3 +441,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.hardpoint.mass-driver.s1
+    version: 2
+    manifest_sha256: "78fadb56322f5c1c198ea5ec88cd10c3e32176977ef573ebdffebf479c89ef24"
+    installed: 6edcea5cb9e398340cbc6fb99d920b232713596f
+    game: "the loader (world::assets) at fso 6edcea5c"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hardpoint-mass-driver-s1/v2 (57284 bytes, bounds [-0.3, 0.0, -8.5] to [0.3, 0.6, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
