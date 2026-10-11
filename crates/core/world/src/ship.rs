@@ -1116,35 +1116,21 @@ impl Ship {
         // The push: the main drive along the nose, the thrusters as set — as
         // much as they give without turning the ship (off balance, less: the
         // flight computer keeps it straight first).
-        let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
         let a = if push { self.authority() } else { Authority { main: 0.0, lift: 0.0, side: 0.0 } };
-        let force = if push { DVec3::NEG_Z * (self.throttle.clamp(0.0, 1.0) * a.main) + DVec3::new(c.x * a.side, c.y * if c.y > 0.0 { a.lift } else { a.side }, c.z * a.side) } else { DVec3::ZERO };
-        // The turn: toward the rates asked, as fast as the span allows.
-        let want = turn.map(|t| DVec3::new(t.pitch.clamp(-1.0, 1.0) * s.turn_rate, t.yaw.clamp(-1.0, 1.0) * s.turn_rate, t.roll.clamp(-1.0, 1.0) * s.roll_rate));
-        let torque = want.map_or(DVec3::ZERO, |want| inertia * ((want - w) / dt.max(TURN_RESPONSE)));
-        if self.fuel <= 0.0 || (force == DVec3::ZERO && torque.length_squared() < 1e-6) {
-            // (Nothing asked, or nothing to burn: every jet off.)
-            self.jets.iter_mut().for_each(|j| *j = 0.0);
-            self.applied = (DVec3::ZERO, DVec3::ZERO);
-        } else {
-            // The drive at the throttle (its nozzles together, as far as it
-            // goes straight); the thrusters and lift do the rest.
-            let level = if push { self.throttle.clamp(0.0, 1.0) * a.main / s.main_thrust.max(1.0) } else { 0.0 };
-            let thrusters = crate::trim::thrusters(s, &self.trim);
-            self.applied = crate::thrusters::allocate_with(&thrusters, self.centre_of_mass(), self.mass(), inertia, Some(level), force, torque, &mut self.jets);
-        }
-        // Turning: I ω̇ = τ. (The spin's own coupling, ω × Iω, is left out:
-        // the flight computer holds against it when it turns the ship, and a
-        // ship tumbling free keeps its spin about its own axes — near enough
-        // for a hull this close to symmetric, and steady over the long steps
-        // the planner takes.) Never past the rates asked in one span.
-        let accel = inertia.inverse() * self.applied.1;
-        let mut next = w + accel * dt;
-        if let Some(want) = want {
-            let toward = |w: f64, n: f64, t: f64| if (t - w) * (t - n) < 0.0 { t } else { n };
-            next = DVec3::new(toward(w.x, next.x, want.x), toward(w.y, next.y, want.y), toward(w.z, next.z, want.z));
-        }
-        self.angular_velocity = next;
+        let (force, level) = crate::flight_control::force_demand(self.throttle, self.rcs, a, s.main_thrust, push);
+        let want = turn.map(|t| crate::flight_control::rates(
+            DVec3::new(t.pitch, t.yaw, t.roll),
+            DVec3::new(s.turn_rate, s.turn_rate, s.roll_rate),
+        ));
+        let thrusters = crate::trim::thrusters(s, &self.trim);
+        let result = crate::flight_control::step(
+            &thrusters,
+            crate::flight_control::Body { mass: self.mass(), com: self.centre_of_mass(), inertia, spin: w },
+            crate::flight_control::Demand { force, want_rates: want, drive: Some(level), enabled: self.fuel > 0.0 },
+            dt, &mut self.jets,
+        );
+        self.applied = (result.force, result.torque);
+        self.angular_velocity = result.spin;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
     }
 
@@ -1152,22 +1138,14 @@ impl Ship {
     /// fuel), every other off; the ship pushed and turned by just what
     /// they give about its centre of mass, nothing held against it.
     fn drive_manual(&mut self, dt: f64) {
-        let s = self.spec();
-        let com = self.centre_of_mass();
-        self.jets.resize(s.thrusters.len(), 0.0);
-        let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);
-        let thrusters = crate::trim::thrusters(s, &self.trim);
-        for (k, t) in thrusters.iter().enumerate() {
-            let on = k < 64 && self.held & (1 << k) != 0 && self.fuel > 0.0;
-            self.jets[k] = if on { 1.0 } else { 0.0 };
-            if on {
-                let f = t.push * t.thrust;
-                force += f;
-                torque += (t.at - com).cross(f);
-            }
-        }
-        self.applied = (force, torque);
-        self.angular_velocity += self.inertia().inverse() * torque * dt;
+        let thrusters = crate::trim::thrusters(self.spec(), &self.trim);
+        let result = crate::flight_control::manual(
+            &thrusters,
+            crate::flight_control::Body { mass: self.mass(), com: self.centre_of_mass(), inertia: self.inertia(), spin: self.angular_velocity },
+            self.held, self.fuel > 0.0, dt, &mut self.jets,
+        );
+        self.applied = (result.force, result.torque);
+        self.angular_velocity = result.spin;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
     }
 
@@ -1528,3 +1506,7 @@ mod inert_fitting_tests {
         assert!(build(&modules).unwrap_err().contains("no Sensors"));
     }
 }
+
+#[cfg(test)]
+#[path = "flight_control_tests.rs"]
+mod flight_control_tests;
