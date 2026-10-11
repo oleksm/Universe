@@ -24,6 +24,7 @@
         "equipment.hardpoint.pulse-laser.s1": 14000.0,
         // The MC-07's mining hammer keeps the price its laser had (the pulse laser's): a placeholder for the integrator.
         "equipment.hardpoint.mining-hammer.mc07": 14000.0,
+        "equipment.hardpoint.mining-hammer.mc07-right": 14000.0,
         "equipment.utility.mining-rig.s2": 12000.0,
         "equipment.power.fusion.s1": 9000.0,
         "equipment.thrusters.quad.s1": 4500.0,
