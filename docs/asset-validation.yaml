@@ -1508,3 +1508,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU lighting/cost, gate placement and mounting; full feed deployment, pointing, 300 kW thermal path, RF and structural loads remain unqualified."
+  - key: equipment.hyperdrive.s3
+    version: 1
+    manifest_sha256: "7623b0af5b9123e0e976d7d5ec3b4911cf3e6b0108b6ac4b0ea238dfcc4aa0f5"
+    installed: 39ffb1b3
+    game: "the loader (world::assets) at fso 39ffb1b3"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-s3/v1 (153652 bytes, bounds [-1.835, 0.0, -1.225] to [1.835, 2.45, 1.225]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU and final hull fit; field physics, 3 MW thermal path and structural loads unqualified."
