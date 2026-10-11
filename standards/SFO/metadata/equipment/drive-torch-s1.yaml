@@ -41,6 +41,12 @@ function:
   burns: material.deuterium
   heat_to_hull: 1.0e-06
 life: 473364000
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  priority: low
+  because: "Low priority (the user, 2026-10-10): its box is taken from the MC-07's model, which waits for the hull rework; a product of its own would be sized afresh then."
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design of a main drive: the components of a fusion engine, in the shares of the one such engine designed in detail (NASA's Discovery II), brought to this product's weight. That engine makes 8.6 kW of jet for each kg; this one is asked for about a hundred thousand times that: the invented part." }

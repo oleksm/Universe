@@ -374,10 +374,10 @@
 - { record: equipment.command.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4caef18e8c8babb2" }
 - { record: equipment.computer.fbw.fast, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1817f826c5891f96" }
 - { record: equipment.computer.fbw.s1, at: "2026-10-11T02:38:35Z", status: draft, summary: "changed: visual", sha: "199e7a0ffe056c1b" }
-- { record: equipment.drive.kestrel.k2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "077294b75aa96ff7" }
-- { record: equipment.drive.torch.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4946bad82538976e" }
+- { record: equipment.drive.kestrel.k2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "ecc930140ca66688" }
+- { record: equipment.drive.torch.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2ce9926699091633" }
 - { record: equipment.drive.torch.s2, at: "2026-10-11T02:31:00Z", status: draft, summary: "changed: visual", sha: "48b715b159afcb9f" }
-- { record: equipment.drive.torch.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "e8c68e5b6cb8e9b5" }
+- { record: equipment.drive.torch.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "22a7762606e2e6bc" }
 - { record: equipment.engine.ca.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "67af8cbce4c9b5ec" }
 - { record: equipment.engine.cg.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "17c9971f1fb0daa9" }
 - { record: equipment.engine.cg.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "69cf10f08d584cb2" }
@@ -431,9 +431,9 @@
 - { record: equipment.life-support.s0, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "4ebff4179ab2a999" }
 - { record: equipment.life-support.s1, at: "2026-10-11T18:50:00Z", status: draft, summary: "changed: visual", sha: "68f2aeb4cdd2d961" }
 - { record: equipment.life-support.s2, at: "2026-10-11T03:27:54Z", status: draft, summary: "changed: visual", sha: "dca5121157bab0ff" }
-- { record: equipment.lift.belly.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7b80efee20d538b6" }
-- { record: equipment.lift.belly.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "d0c65d5fe0dbe44e" }
-- { record: equipment.lift.belly.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7e748369b5e68043" }
+- { record: equipment.lift.belly.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "b14a92771fd37651" }
+- { record: equipment.lift.belly.s2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2510b2eaa9ec3756" }
+- { record: equipment.lift.belly.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "038d104c6c6ef3cf" }
 - { record: equipment.power.aurel.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "251760207b02825a" }
 - { record: equipment.power.aurel.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "52afa37a742918eb" }
 - { record: equipment.power.aurel.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "dcc73336b2bb792d" }
