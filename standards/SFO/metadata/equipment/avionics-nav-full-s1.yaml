@@ -22,7 +22,7 @@ built_of:
   list:
     - { code: NVF1-01, name: "Navigation computer", description: "Runs the autopilots; the upper tray.", mass: 11.1, length: 0.38, width: 0.28, height: 0.16, item: good.computers, quantity: 11.1, module: module.assembly-shop }
     - { code: NVF1-02, name: "Approach and route sensors", description: "The inertial unit and the receivers that take the ship's sensor feeds; the lower tray, inside the case.", mass: 6.0, length: 0.38, width: 0.28, height: 0.12, item: good.electronics, quantity: 6.0, module: module.assembly-shop }
-    - { code: NVF1-03, name: "Case", description: "The sealed case round both trays, its base conductive to the mount.", mass: 2.93, length: 0.4, width: 0.3, height: 0.33, item: stock.al6061-sh-2-panel, quantity: 2.93, module: module.welding-bay }
+    - { code: NVF1-03, name: "Case", description: "The sealed case round both trays: 1.2 mm formed sides, a 1 mm lid, a 3 mm conductive base to the mount (about 2.77 kg, 2.93 with lugs and fasteners); the 2 mm sheet stock is a proxy.", mass: 2.93, length: 0.4, width: 0.3, height: 0.33, item: stock.al6061-sh-2-panel, quantity: 2.93, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
