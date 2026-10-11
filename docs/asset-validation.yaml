@@ -996,3 +996,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, label printing and close-view text scale, handling/tint, GPU cost and temporal filtering; baseline capacity/tare and structural qualification remain open."
+  - key: package.skip
+    version: 2
+    manifest_sha256: "031abdeff63675e4f10092e1fb93d70217c38cfd9a46642fa51e96d854f5e614"
+    installed: 770c5026
+    game: "the loader (world::assets) at fso 770c5026"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/skip/v2 (85668 bytes, bounds [-1.0, 0.0, -0.7] to [1.0, 1.0, 0.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, vendor label printing, handling/tint, GPU cost and temporal filtering; baseline lifting/stacking/capacity qualification remains open."
