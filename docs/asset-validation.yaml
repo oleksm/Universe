@@ -1348,3 +1348,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static fixed exterior; actual game GPU look/cost, hull placement, outgoing beam and firing effects, optical/thermal/structural qualification pending. Registry80percent efficiency and1.2t assumptions retained."
+  - key: equipment.hyperdrive.s1
+    version: 1
+    manifest_sha256: "9499f9a3fc85b6c8b333fea9c7d823a5401f5d9c807d105e8e19ad97c13a6d62"
+    installed: 0dca7e9f
+    game: "the loader (world::assets) at fso 0dca7e9f"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-s1/v1 (153660 bytes, bounds [-1.19, 0.0, -0.795] to [1.19, 1.59, 0.795]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior; actual game GPU look/cost, hull placement and mount loads, cryogenic heat rejection, structural qualification and fictional hyper-field behavior pending."
