@@ -714,16 +714,20 @@ def check_model(kind, r, info):
             if not box:
                 bad.append(f"no label plate {lb['node']} (a mesh under a node of that name) on face {lb['face']}"); continue
             c = [(box[0][k] + box[1][k]) / 2 for k in range(3)]; e = [box[1][k] - box[0][k] for k in range(3)]
-            off = math.dist(c, lb["centre"])
-            if off > 0.02:
-                bad.append(f"label plate {lb['node']} centred at {[round(v, 3) for v in c]}, the record puts it at {lb['centre']} ({off:.3f} m off)")
             normal = {"X": 0, "Z": 2, "Y": 1}[lb["face"][1]]
             across = 2 if normal == 0 else 0
             up = 1 if normal != 1 else 2
-            if e[normal] > 0.005:
-                bad.append(f"label plate {lb['node']} is {e[normal]:.3f} m thick across face {lb['face']}: it should be flat on it")
-            if abs(e[across] - lb["size"][0]) > 0.01 or abs(e[up] - lb["size"][1]) > 0.01:
-                bad.append(f"label plate {lb['node']} is {e[across]:.3f} x {e[up]:.3f} m, the record's {lb['size'][0]} x {lb['size'][1]}")
+            w, h = lb["size"]; tilt = math.radians(15)          # (a tapered side tilts its plate)
+            sign = 1 if lb["face"][0] == "+" else -1
+            if math.hypot(c[across] - lb["centre"][across], c[up] - lb["centre"][up]) > 0.02:
+                bad.append(f"label plate {lb['node']} centred at {[round(v, 3) for v in c]}, the record puts it at {lb['centre']} across and up its face")
+            depth = sign * (lb["centre"][normal] - c[normal])        # (how far inside the record's face the plate sits)
+            if not -0.002 <= depth <= 0.10:
+                bad.append(f"label plate {lb['node']} sits {depth:.3f} m inside face {lb['face']}: it must lie on the package's surface, at most 0.10 m in from the record's face and not out past it")
+            if e[normal] > 0.005 + h * math.sin(tilt):
+                bad.append(f"label plate {lb['node']} leans {e[normal]:.3f} m across face {lb['face']}: flat, or tilted no more than 15 degrees with a tapered side")
+            if abs(e[across] - w) > 0.01 or not (h * math.cos(tilt) - 0.01 <= e[up] <= h + 0.01):
+                bad.append(f"label plate {lb['node']} is {e[across]:.3f} x {e[up]:.3f} m, the record's {w} x {h}")
         if "label" not in info.get("materials", []):
             bad.append("no material named label for its plates")
     budget = KINDS[kind][1]

@@ -35,6 +35,8 @@ same place. The package's model frame: origin at the centre of its base, X along
 metres). Pallets and crates carry two 0.30 x 0.15 m plates on their long faces (+Z and -Z) at six tenths of their height;
 the bar bundle carries 0.16 x 0.08 m tags on its two ends; the ladle on its two sides. Each plate is a flat quad under a
 node of its name (`label`, `label_2`), 1 mm proud of the face, UV 0 to 1 across it (u along its width, v up), in one
-material named `label`. The installer checks each plate's centre (within 2 cm), size (within 1 cm) and flatness. The
+material named `label`. The record's centre fixes the plate across and up its face (within 2 cm); along the face's normal the plate lies on the
+package's real surface, 1 mm proud of it, anywhere from the record's face to 10 cm inside it (a tapered skip, a round
+dewar), flat or tilted up to 15 degrees with a tapered side. The installer checks those, and its size within 1 cm. The
 game draws each packed unit's label into that material. The plate is part of the shared template; the label is the
 unit's.
