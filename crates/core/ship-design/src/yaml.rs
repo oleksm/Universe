@@ -235,28 +235,56 @@ pub(crate) fn read(
 }
 
 pub(crate) fn write(v: &Value) -> Result<String, Error> {
-    fn convert(v: &Value) -> yaml_rust2::Yaml {
-        use yaml_rust2::Yaml as Y;
+    // Always quote strings using JSON escapes (a YAML1.2 subset). This avoids
+    // an emitter using different scalar rules, e.g. emitting string "0o17" as
+    // an unquoted integer. Maps are block style, short scalar arrays flow style.
+    fn inline(v: &Value) -> bool {
         match v {
-            Value::Null => Y::Null,
-            Value::Bool(v) => Y::Boolean(*v),
-            Value::String(v) => Y::String(v.clone()),
-            Value::Number(n) => n
-                .as_i64()
-                .map(Y::Integer)
-                .unwrap_or_else(|| Y::Real(n.to_string())),
-            Value::Array(a) => Y::Array(a.iter().map(convert).collect()),
-            Value::Object(o) => Y::Hash(
-                o.iter()
-                    .map(|(k, v)| (Y::String(k.clone()), convert(v)))
-                    .collect(),
-            ),
+            Value::Object(o) => o.is_empty(),
+            Value::Array(a) => a.len() <= 8 && a.iter().all(|x| !x.is_array() && !x.is_object()),
+            _ => true,
         }
     }
-    let mut out = String::from("%YAML 1.2\n");
-    yaml_rust2::YamlEmitter::new(&mut out)
-        .dump(&convert(v))
-        .map_err(|e| Error::message("", e.to_string()))?;
-    out.push('\n');
+    fn block(v: &Value, indent: usize, out: &mut String) {
+        let pad = " ".repeat(indent);
+        match v {
+            Value::Object(o) if !o.is_empty() => {
+                for (k, v) in o {
+                    out.push_str(&pad);
+                    out.push_str(&serde_json::to_string(k).unwrap());
+                    out.push(':');
+                    if inline(v) {
+                        out.push(' ');
+                        out.push_str(&serde_json::to_string(v).unwrap());
+                        out.push('\n');
+                    } else {
+                        out.push('\n');
+                        block(v, indent + 2, out);
+                    }
+                }
+            }
+            Value::Array(a) if !inline(v) => {
+                for v in a {
+                    out.push_str(&pad);
+                    out.push('-');
+                    if inline(v) {
+                        out.push(' ');
+                        out.push_str(&serde_json::to_string(v).unwrap());
+                        out.push('\n');
+                    } else {
+                        out.push('\n');
+                        block(v, indent + 2, out);
+                    }
+                }
+            }
+            _ => {
+                out.push_str(&pad);
+                out.push_str(&serde_json::to_string(v).unwrap());
+                out.push('\n');
+            }
+        }
+    }
+    let mut out = String::from("%YAML 1.2\n---\n");
+    block(v, 0, &mut out);
     Ok(out)
 }

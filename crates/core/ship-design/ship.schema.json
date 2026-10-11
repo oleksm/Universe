@@ -468,14 +468,35 @@
       "type": "object"
     },
     "Module": {
-      "anyOf": [
+      "allOf": [
         {
-          "$ref": "#/$defs/Equipment"
-        },
-        {
-          "$ref": "#/$defs/Hold"
+          "else": {
+            "$ref": "#/$defs/Hold"
+          },
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "equipment"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/$defs/Equipment"
+          }
         }
-      ]
+      ],
+      "properties": {
+        "kind": {
+          "enum": [
+            "equipment",
+            "hull_hold"
+          ]
+        }
+      },
+      "required": [
+        "kind"
+      ],
+      "type": "object"
     },
     "Path": {
       "additionalProperties": false,

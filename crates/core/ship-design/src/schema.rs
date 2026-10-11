@@ -59,6 +59,9 @@ pub fn schema() -> Value {
     s["$id"] = json!("urn:freefall:ship-code:1-draft");
     let hull = s["properties"]["hull"].take();
     s["properties"]["hull"] = json!({"anyOf":[hull,{"type":"null"}]});
+    // Dispatch on the known tag so malformed equipment reports its actual
+    // field, rather than only "no enum alternative" at the module root.
+    s["$defs"]["Module"] = json!({"type":"object","properties":{"kind":{"enum":["equipment","hull_hold"]}},"required":["kind"],"allOf":[{"if":{"properties":{"kind":{"const":"equipment"}}},"then":{"$ref":"#/$defs/Equipment"},"else":{"$ref":"#/$defs/Hold"}}]});
     s["$defs"]["Deck"]["properties"]["floors"]["additionalProperties"]["minItems"] = json!(3);
     s["$defs"]["Group"]["properties"]["paths"]["items"]["minLength"] = json!(1);
     s["$defs"]["PathEnd"]["allOf"] = json!([{"if":{"properties":{"state":{"const":"door"}}},"then":{"required":["hatch"]},"else":{"not":{"required":["hatch"]}}}]);
@@ -73,10 +76,25 @@ pub(crate) fn structural(value: &Value) -> Vec<crate::Diagnostic> {
     validator
         .iter_errors(value)
         .take(256)
-        .map(|e| crate::Diagnostic {
-            path: e.instance_path.to_string(),
-            message: e.to_string(),
-            location: None,
+        .map(|e| {
+            let parent = e.instance_path.to_string();
+            let path = match &e.kind {
+                jsonschema::error::ValidationErrorKind::AdditionalProperties { unexpected }
+                    if unexpected.len() == 1 =>
+                {
+                    crate::yaml::pointer(&parent, &unexpected[0])
+                }
+                jsonschema::error::ValidationErrorKind::Required { property } => property
+                    .as_str()
+                    .map(|k| crate::yaml::pointer(&parent, k))
+                    .unwrap_or(parent),
+                _ => parent,
+            };
+            crate::Diagnostic {
+                path,
+                message: e.to_string(),
+                location: None,
+            }
         })
         .collect()
 }

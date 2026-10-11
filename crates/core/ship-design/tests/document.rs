@@ -175,3 +175,101 @@ fn resource_limits_reject_before_authoring_mutation() {
         .is_err()
     );
 }
+
+#[test]
+fn scalar_looking_strings_emit_without_reinterpretation() {
+    for s in [
+        "0o17",
+        "0x2A",
+        "True",
+        "NULL",
+        ".NaN",
+        "1e9",
+        "18446744073709551615",
+        "on",
+        "αβ船",
+        "line\nbreak",
+        "quote\"slash\\",
+    ] {
+        let d = Document::new("example", s);
+        assert_eq!(parse(&emit(&d).unwrap()).unwrap(), d, "string {s}");
+    }
+    for s in ["+0o17", "-0x2A"] {
+        let input = YAML.replace("All layers schema study", s);
+        assert_eq!(parse(&input).unwrap().design.name, s);
+    }
+}
+#[test]
+fn field_errors_are_local_to_the_selected_module() {
+    let input = YAML.replace("envelope_m: [1.5, 1.5, 2.3]", "envelope_m: [-1, 1.5, 2.3]");
+    let e = parse(&input).unwrap_err();
+    assert!(
+        e.diagnostics
+            .iter()
+            .any(|d| d.path == "/modules/engine_left/envelope_m/0" && d.location.is_some())
+    );
+}
+#[test]
+fn deck_connections_and_wall_shapes_are_checked() {
+    let mut d = parse(YAML).unwrap();
+    let deck = d.decks.values_mut().next().unwrap();
+    deck.ladders.insert(
+        "dangling".into(),
+        Ladder {
+            at_xz_m: [0., 0.],
+            to_deck: "unknown".into(),
+        },
+    );
+    let errors = validate(&d);
+    assert!(
+        errors
+            .iter()
+            .any(|e| e.path.ends_with("/ladders/dangling/to_deck"))
+    );
+    let mut d = parse(YAML).unwrap();
+    let wall = d
+        .decks
+        .values_mut()
+        .flat_map(|d| d.walls.values_mut())
+        .next()
+        .unwrap();
+    wall.bulges_m.clear();
+    assert!(validate(&d).iter().any(|e| e.path.ends_with("/bulges_m")));
+}
+#[test]
+fn generated_schema_snapshot_is_current() {
+    let frozen: serde_json::Value =
+        serde_json::from_str(include_str!("../ship.schema.json")).unwrap();
+    assert_eq!(schema(), frozen);
+}
+
+#[test]
+fn thousand_module_document_roundtrip_and_limits() {
+    let baseline = parse(YAML).unwrap();
+    let prototype = baseline.modules["engine_left"].clone();
+    let mut d = Document::new("load-test", "1000 module parser probe");
+    for i in 0..1000 {
+        d.modules.insert(format!("engine_{i}"), prototype.clone());
+    }
+    let start = std::time::Instant::now();
+    let text = emit(&d).unwrap();
+    let emit_ms = start.elapsed().as_secs_f64() * 1000.;
+    let start = std::time::Instant::now();
+    let parsed = parse(&text).unwrap();
+    let parse_ms = start.elapsed().as_secs_f64() * 1000.;
+    assert_eq!(d, parsed);
+    eprintln!(
+        "1000 modules: {} bytes, emit {emit_ms:.2}ms, parse+validate {parse_ms:.2}ms (dev build)",
+        text.len()
+    );
+    assert!(
+        parse_with_limits(
+            &text,
+            Limits {
+                max_bytes: text.len() - 1,
+                ..Limits::default()
+            }
+        )
+        .is_err()
+    );
+}

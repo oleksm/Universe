@@ -8,3 +8,7 @@ Canonical emit does not preserve comments; parse_source retains original text.
 
 Validation: all-layer YAML/JSON round trip and eight focused parser/schema/semantic
 checks pass at foundation handoff. Further edge-case evidence lives with crate tests.
+
+Follow-up: quote emitted strings consistently with the YAML1.2 profile, produce
+module field-level diagnostics, and cover deck references plus a1000-module
+round trip. Thirteen crate tests pass; generated schema snapshot matches types.
