@@ -32,6 +32,12 @@ function:
   kind: hyperdrive
   efficiency: 0.6
   top_speed: 899377374000
+visual:
+  format: "freefall-model/1"
+  path: "models/hyperdrive-s2/v1"
+  manifest_sha256: "ee35186ac97c7fc1e39185ee1d693b9e4ac4cfabfd23b409c496a2c40b142487"
+  version: 1
+  triangles: 3096
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
