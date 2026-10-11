@@ -32,7 +32,7 @@ avionics) has its `mount` node at the origin, the contact face, and expects the 
 | equipment.access.anchor-clamp.mc07-fwd | access-anchor-clamp-mc07-fwd/v1 | `mount_clamp_fwd` | |
 | equipment.access.cargo-ramp.mc07 | access-cargo-ramp-mc07/v1 | `mount_cargo_ramp` | |
 | equipment.gear.front.mc07, .rear.mc07 | gear-front-mc07/v1, gear-rear-mc07/v1 | `mount_gear_front`, `mount_gear_rear` | stowed |
-| equipment.hardpoint.mining-hammer.mc07 | hardpoint-mining-hammer-mc07/v1 | **ambiguous**: `mount_hardpoint_l` (rotated, off origin) and `mount_mining_hammer` (origin) | blender to keep one primary per slot or name both slots |
+| equipment.hardpoint.mining-hammer.mc07 | hardpoint-mining-hammer-mc07/v2 | one primary mount at the origin, identity (v2, installed 9ec2e645; the old offset marker is now `attachment_reference_hardpoint_l`) | |
 | equipment.thermal.radiator.s2, .s3 | thermal-radiator-s2/v1, -s3/v1 | root (`mount_root` at origin) | stowed |
 | equipment.thermal.coolant-loop.s1, .s2 | thermal-coolant-loop-s1/v1, -s2/v1 | root (only foot nodes) | |
 | equipment.tank.air.s1, .water.s1 | tank-air-s1/v1, tank-water-s1/v1 | `mount` | |
