@@ -35,8 +35,8 @@ const PAD: [(KeyCode, f64, f64, &str); 16] = [
 /// fires them together); the rest, each to the free key nearest where it
 /// sits on the ship seen from above (nose up), the nearest pairs first.
 /// More thrusters than keys: the last unbound.
-pub fn keys(spec: &ClassSpec) -> Vec<Option<usize>> {
-    let ts = &spec.thrusters;
+/// The same spatial key assignment for an authored Studio actuator layout.
+pub fn keys_for(ts: &[universe_sim::world::ship::Thruster]) -> Vec<Option<usize>> {
     let others: Vec<usize> = (0..ts.len()).filter(|&k| ts[k].role != ThrusterRole::Main).collect();
     let (mut lo, mut hi) = (DVec3::splat(f64::INFINITY), DVec3::splat(f64::NEG_INFINITY));
     for &k in &others {
@@ -67,11 +67,15 @@ pub fn keys(spec: &ClassSpec) -> Vec<Option<usize>> {
 
 /// The thrusters held now (bit `k`: thruster `k`): each bound key down, W the mains.
 pub fn held(input: &Input, spec: &ClassSpec) -> u64 {
+    held_for(input, &spec.thrusters)
+}
+
+pub fn held_for(input: &Input, ts: &[universe_sim::world::ship::Thruster]) -> u64 {
     let mut bits = 0u64;
-    for (k, key) in keys(spec).into_iter().enumerate().take(64) {
+    for (k, key) in keys_for(ts).into_iter().enumerate().take(64) {
         let down = match key {
             Some(p) => input.down(PAD[p].0),
-            None => spec.thrusters[k].role == ThrusterRole::Main && input.down(KeyCode::KeyW),
+            None => ts[k].role == ThrusterRole::Main && input.down(KeyCode::KeyW),
         };
         if down {
             bits |= 1 << k;
@@ -82,9 +86,13 @@ pub fn held(input: &Input, spec: &ClassSpec) -> u64 {
 
 /// Each thruster's key as shown ("W" the mains; unbound, none).
 pub fn labels(spec: &ClassSpec) -> Vec<String> {
-    keys(spec).into_iter().enumerate().map(|(k, p)| match p {
+    labels_for(&spec.thrusters)
+}
+
+pub fn labels_for(ts: &[universe_sim::world::ship::Thruster]) -> Vec<String> {
+    keys_for(ts).into_iter().enumerate().map(|(k, p)| match p {
         Some(p) => PAD[p].3.to_string(),
-        None if spec.thrusters[k].role == ThrusterRole::Main => "W".into(),
+        None if ts[k].role == ThrusterRole::Main => "W".into(),
         None => String::new(),
     }).collect()
 }
