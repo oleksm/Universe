@@ -1124,3 +1124,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, vendor label printing, handling, GPU cost and temporal filtering; original thermal hold/tare/payload/stacking qualification remains open."
+  - key: package.produce-crate
+    version: 2
+    manifest_sha256: "d07b6444eed3f11ae833b5c0e676be9150936b3090464cb4259808f21f322821"
+    installed: d7e9598b
+    game: "the loader (world::assets) at fso d7e9598b"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/produce-crate/v2 (255076 bytes, bounds [-0.6, 0.0, -0.501] to [0.6, 1.4, 0.501]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, vendor label printing, handling/tint, GPU cost and temporal filtering; local label coverage of one vent and original produce ventilation/handling qualification remain open."
