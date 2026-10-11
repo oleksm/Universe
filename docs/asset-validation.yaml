@@ -273,3 +273,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final rear harness and hull conductive mounting;140W cooling capacity and attachment qualification; static package"
+  - key: equipment.computer.fbw.s1
+    version: 1
+    manifest_sha256: "91daf29b4b6e3f85dba09c3975043debf68708108066cb9511f6db13d9f3d589"
+    installed: f04800b7
+    game: "the loader (world::assets) at fso f04800b7"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/computer-fbw-s1/v1 (52960 bytes, bounds [-0.267, 0.0, -0.2] to [0.267, 0.2508, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final harness and conductive hull mounting;200W thermal and attachment qualification; separate star-tracker heads absent from this cabinet"
