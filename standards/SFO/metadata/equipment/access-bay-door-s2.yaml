@@ -27,6 +27,12 @@ function:
   width: 8
   height: 5
   opens_in: 40
+visual:
+  format: "freefall-model/1"
+  path: "models/access-bay-door-s2/v1"
+  manifest_sha256: "3175775ec7c1b0456efa82b03254f04f5caf4442b8f6d19f7b269519f72091fa"
+  version: 1
+  triangles: 5008
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A 8 by 5 m opening in the hull: the leaves at 30 kg/m2 of aluminium plate with their frame (chosen), opening in 40 s. The frame round the clear opening makes it 8.3 by 5.3 m (blender, 2026-10-11). Its two leaves, hinged along the 8 m edges, swing outward; it holds no pressure: a bay is open to space, and an airlock keeps the air." }
