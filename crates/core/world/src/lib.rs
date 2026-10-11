@@ -23,6 +23,7 @@ pub mod damage;
 pub mod design;
 pub mod events;
 pub mod frame;
+pub mod flight_control;
 pub mod galaxy;
 pub mod goods;
 pub mod recipes;
