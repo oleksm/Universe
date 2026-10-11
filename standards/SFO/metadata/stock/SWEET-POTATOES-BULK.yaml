@@ -6,5 +6,6 @@ identity:
   code: SWEET-POTATOES-BULK
   name: "Sweet potatoes, in bulk"
   form: bulk
+package: package.produce-crate
 made_from:
   - item: good.sweet-potatoes

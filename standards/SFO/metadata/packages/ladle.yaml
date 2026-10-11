@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.ladle
+  name: "Ladle"
+  description: "A refractory-lined steel ladle on trunnions: molten metal and hot ingots, from furnace to mould within the works."
+physical:
+  length: 2.0
+  width: 2.0
+  height: 2.2
+  mass: 4000
+holds:
+  volume: 0.85
+  mass: 6000
+handling: crane
+stack: 1
+keeps: hot
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

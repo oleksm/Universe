@@ -6,5 +6,6 @@ identity:
   code: COMPOST-BULK
   name: "Compost, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.compost

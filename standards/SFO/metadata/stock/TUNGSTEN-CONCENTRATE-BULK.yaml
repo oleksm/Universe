@@ -6,5 +6,6 @@ identity:
   code: TUNGSTEN-CONCENTRATE-BULK
   name: "Tungsten concentrate, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.tungsten-concentrate

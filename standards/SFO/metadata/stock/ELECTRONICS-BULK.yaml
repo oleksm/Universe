@@ -6,5 +6,6 @@ identity:
   code: ELECTRONICS-BULK
   name: "Electronics, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.electronics

@@ -6,5 +6,6 @@ identity:
   code: MUTTON-BULK
   name: "Mutton, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.mutton

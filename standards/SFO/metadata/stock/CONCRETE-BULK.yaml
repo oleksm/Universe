@@ -6,5 +6,6 @@ identity:
   code: CONCRETE-BULK
   name: "Concrete, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.concrete

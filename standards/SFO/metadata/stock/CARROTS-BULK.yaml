@@ -6,5 +6,6 @@ identity:
   code: CARROTS-BULK
   name: "Carrots, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.carrots

@@ -6,5 +6,6 @@ identity:
   code: POMACE-BULK
   name: "Pomace, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.pomace

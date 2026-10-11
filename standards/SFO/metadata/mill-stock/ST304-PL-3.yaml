@@ -5,6 +5,7 @@ identity:
   name: "304 stainless plate 3 mm"
   traded_as: market.metals
   form: plate
+package: package.plate-stack
 made_from:
   - item: material.stainless-steel-304
 size:

@@ -6,5 +6,6 @@ identity:
   code: UNCONFORMITY-URANIUM-ORE-BULK
   name: "Unconformity uranium ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.unconformity-uranium-ore

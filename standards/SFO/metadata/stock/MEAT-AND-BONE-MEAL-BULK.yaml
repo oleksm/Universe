@@ -6,5 +6,6 @@ identity:
   code: MEAT-AND-BONE-MEAL-BULK
   name: "Meat and bone meal, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.meat-and-bone-meal

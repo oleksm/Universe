@@ -6,5 +6,6 @@ identity:
   code: HOT-INGOT-6061-BULK
   name: "Hot ingot, 6061 aluminium, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.hot-ingot-6061

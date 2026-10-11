@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.carton-pallet
+  name: "Carton pallet"
+  description: "Cartons stretch-wrapped on a pallet: made goods by the box, electronics, medicines, clothes, cloth, tools."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 1.5
+  mass: 25
+holds:
+  volume: 1.4
+  mass: 1000
+handling: forklift
+stack: 2
+keeps: dry
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

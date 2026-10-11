@@ -6,5 +6,6 @@ identity:
   code: SEED-COTTON-BULK
   name: "Seed cotton, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.seed-cotton

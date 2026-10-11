@@ -6,5 +6,6 @@ identity:
   code: PHOSPHATE-FERTILISER-BULK
   name: "Phosphate fertiliser, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.phosphate-fertiliser

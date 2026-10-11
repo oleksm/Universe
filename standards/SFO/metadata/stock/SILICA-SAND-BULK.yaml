@@ -6,5 +6,6 @@ identity:
   code: SILICA-SAND-BULK
   name: "Silica sand, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.silica-sand

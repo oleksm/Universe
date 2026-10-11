@@ -6,5 +6,6 @@ identity:
   code: NICKEL-SULPHIDE-ORE-BULK
   name: "Nickel sulphide ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.nickel-sulphide-ore

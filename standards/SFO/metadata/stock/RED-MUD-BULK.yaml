@@ -6,5 +6,6 @@ identity:
   code: RED-MUD-BULK
   name: "Red mud, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.red-mud

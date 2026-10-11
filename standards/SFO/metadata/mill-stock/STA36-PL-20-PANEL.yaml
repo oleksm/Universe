@@ -6,6 +6,7 @@ identity:
   name: "A36 plate 20 mm, formed panels"
   traded_as: market.metals
   form: panel
+package: package.plate-stack
 made_from:
   - item: material.structural-steel-a36
 size:

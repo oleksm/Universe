@@ -6,5 +6,6 @@ identity:
   code: TAILINGS-BULK
   name: "Tailings, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.tailings

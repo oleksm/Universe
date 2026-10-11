@@ -6,5 +6,6 @@ identity:
   code: WASTE-ROCK-BULK
   name: "Waste rock, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.waste-rock

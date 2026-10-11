@@ -5,6 +5,7 @@ identity:
   name: "Silicon carbide tile 10 mm"
   traded_as: market.minerals
   form: tile
+package: package.plate-stack
 made_from:
   - item: material.silicon-carbide
 size:

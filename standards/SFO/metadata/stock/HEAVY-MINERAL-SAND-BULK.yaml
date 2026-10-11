@@ -6,5 +6,6 @@ identity:
   code: HEAVY-MINERAL-SAND-BULK
   name: "Heavy-mineral sand, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.heavy-mineral-sand

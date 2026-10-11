@@ -6,5 +6,6 @@ identity:
   code: CARBONATITE-ORE-BULK
   name: "Carbonatite ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.carbonatite-ore

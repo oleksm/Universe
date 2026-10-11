@@ -6,5 +6,6 @@ identity:
   code: SOAP-BULK
   name: "Soap, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.soap

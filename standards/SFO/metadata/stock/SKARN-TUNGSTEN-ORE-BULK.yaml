@@ -6,5 +6,6 @@ identity:
   code: SKARN-TUNGSTEN-ORE-BULK
   name: "Skarn tungsten ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.skarn-tungsten-ore

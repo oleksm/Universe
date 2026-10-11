@@ -6,5 +6,6 @@ identity:
   code: CARBONATE-ZINC-ORE-BULK
   name: "Carbonate zinc-lead ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.carbonate-zinc-ore

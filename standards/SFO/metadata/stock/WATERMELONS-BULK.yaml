@@ -6,5 +6,6 @@ identity:
   code: WATERMELONS-BULK
   name: "Watermelons, in bulk"
   form: bulk
+package: package.produce-crate
 made_from:
   - item: good.watermelons

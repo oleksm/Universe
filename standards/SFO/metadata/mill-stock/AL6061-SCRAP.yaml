@@ -6,5 +6,6 @@ identity:
   name: "6061 scrap"
   traded_as: market.metals
   form: scrap
+package: package.skip
 made_from:
   - item: material.aluminium-alloy-6061

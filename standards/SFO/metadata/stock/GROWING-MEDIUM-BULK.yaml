@@ -6,5 +6,6 @@ identity:
   code: GROWING-MEDIUM-BULK
   name: "Growing medium, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.growing-medium

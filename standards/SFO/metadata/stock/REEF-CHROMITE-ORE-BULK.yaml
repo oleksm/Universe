@@ -6,5 +6,6 @@ identity:
   code: REEF-CHROMITE-ORE-BULK
   name: "Reef chromite ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.reef-chromite-ore

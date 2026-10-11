@@ -6,5 +6,6 @@ identity:
   code: TOMATOES-BULK
   name: "Tomatoes, in bulk"
   form: bulk
+package: package.produce-crate
 made_from:
   - item: good.tomatoes

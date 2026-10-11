@@ -6,5 +6,6 @@ identity:
   code: HOT-ROLLED-STRIP-6061-BULK
   name: "Hot-rolled strip, 6061 aluminium, in bulk"
   form: bulk
+package: package.coil
 made_from:
   - item: good.hot-rolled-strip-6061

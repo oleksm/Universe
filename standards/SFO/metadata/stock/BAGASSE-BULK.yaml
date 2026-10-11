@@ -6,5 +6,6 @@ identity:
   code: BAGASSE-BULK
   name: "Bagasse, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.bagasse

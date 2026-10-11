@@ -6,5 +6,6 @@ identity:
   code: COAL-BULK
   name: "Coal, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.coal

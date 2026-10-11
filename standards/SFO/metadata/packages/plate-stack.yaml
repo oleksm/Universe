@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.plate-stack
+  name: "Plate stack"
+  description: "Plate, sheet, panels or tiles stacked flat on a 2 x 1 m pallet and strapped."
+physical:
+  length: 2.0
+  width: 1.0
+  height: 0.6
+  mass: 40
+holds:
+  volume: 1.0
+  mass: 2500
+handling: forklift
+stack: 3
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

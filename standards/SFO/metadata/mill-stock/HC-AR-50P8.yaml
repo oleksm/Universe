@@ -5,6 +5,7 @@ identity:
   name: "aramid honeycomb core 50.8 mm"
   traded_as: market.metals
   form: honeycomb
+package: package.plate-stack
 made_from:
   - item: material.aramid-honeycomb
 size:

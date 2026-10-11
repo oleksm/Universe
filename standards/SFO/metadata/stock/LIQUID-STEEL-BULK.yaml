@@ -6,5 +6,6 @@ identity:
   code: LIQUID-STEEL-BULK
   name: "Liquid steel, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.liquid-steel

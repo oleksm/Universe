@@ -6,5 +6,6 @@ identity:
   code: RARE-EARTH-CLAY-ORE-BULK
   name: "Rare earth clay, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.rare-earth-clay-ore

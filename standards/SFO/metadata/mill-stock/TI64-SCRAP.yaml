@@ -5,5 +5,6 @@ identity:
   name: "Ti-6Al-4V scrap"
   traded_as: market.metals
   form: scrap
+package: package.skip
 made_from:
   - item: material.titanium-alloy-ti-6al-4v

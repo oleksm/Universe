@@ -6,6 +6,7 @@ identity:
   name: "6061 sheet 2 mm, cut blanks"
   traded_as: market.metals
   form: blank
+package: package.crate-heavy
 made_from:
   - item: material.aluminium-alloy-6061
 size:

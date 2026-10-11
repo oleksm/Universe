@@ -6,5 +6,6 @@ identity:
   code: SODA-ASH-BULK
   name: "Soda ash, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.soda-ash

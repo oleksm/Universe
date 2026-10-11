@@ -6,5 +6,6 @@ identity:
   code: OFFAL-BULK
   name: "Offal and hides, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.offal

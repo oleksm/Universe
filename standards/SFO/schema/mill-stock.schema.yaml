@@ -17,6 +17,7 @@ properties:
       name: { type: string }
       form: { type: string, description: "The form it comes in: one of its material's; for a good, how it is stocked (bulk)." }
       temper: { type: string, description: "Its heat treatment or temper (T6, quenched and tempered, annealed)." }
+  package: { type: string, x-ref: [package], description: "The package it travels and lies in, by its key (tools/standards/packages.py assigns it): what the game draws where it lies, and what logistics counts." }
   made_from: { $ref: "../../common.schema.yaml#/definitions/made_from" }
   size:
     type: object

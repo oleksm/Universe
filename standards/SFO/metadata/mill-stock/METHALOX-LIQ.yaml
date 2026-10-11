@@ -5,6 +5,7 @@ identity:
   code: METHALOX-LIQ
   name: "Methalox, liquid"
   form: fluid
+package: package.tote
 made_from:
   - item: material.methalox
 basis:

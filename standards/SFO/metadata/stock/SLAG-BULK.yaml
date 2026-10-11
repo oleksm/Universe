@@ -6,5 +6,6 @@ identity:
   code: SLAG-BULK
   name: "Slag, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.slag

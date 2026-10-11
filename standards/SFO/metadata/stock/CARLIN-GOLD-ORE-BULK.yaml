@@ -6,5 +6,6 @@ identity:
   code: CARLIN-GOLD-ORE-BULK
   name: "Carlin gold ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.carlin-gold-ore

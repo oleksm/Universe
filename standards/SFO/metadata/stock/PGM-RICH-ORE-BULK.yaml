@@ -6,5 +6,6 @@ identity:
   code: PGM-RICH-ORE-BULK
   name: "PGM-Rich Ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.pgm-rich-ore

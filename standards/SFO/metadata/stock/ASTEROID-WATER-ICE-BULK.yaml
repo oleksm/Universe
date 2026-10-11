@@ -6,5 +6,6 @@ identity:
   code: ASTEROID-WATER-ICE-BULK
   name: "Asteroid Water Ice, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.asteroid-water-ice

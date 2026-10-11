@@ -6,5 +6,6 @@ identity:
   code: CROP-RESIDUE-BULK
   name: "Straw and stalks, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.crop-residue

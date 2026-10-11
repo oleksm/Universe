@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.coil
+  name: "Coil on a skid"
+  description: "Wire, fibre, film or strip wound on a coil up to 1 m across, on a skid."
+physical:
+  length: 1.2
+  width: 1.2
+  height: 1.0
+  mass: 40
+holds:
+  volume: 0.8
+  mass: 2000
+handling: forklift
+stack: 2
+keeps: dry
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

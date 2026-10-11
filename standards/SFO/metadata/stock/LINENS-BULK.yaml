@@ -6,5 +6,6 @@ identity:
   code: LINENS-BULK
   name: "Linens, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.linens

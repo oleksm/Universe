@@ -32,6 +32,8 @@ def usage():
             continue
         for x in d.get("fit") or []:
             add(x.get("item"), x.get("count", 1))
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/stock/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/mill-stock/*.yaml")):
+        add((yaml.safe_load(open(f)) or {}).get("package"))      # (a package is used by every stock it carries)
     for f in glob.glob(os.path.join(TREE, "LocalAdministration/**/*.yaml"), recursive=True):
         d = yaml.safe_load(open(f)) or {}
         for x in d.get("modules") or []:
@@ -47,8 +49,12 @@ def usage():
 def tier(kind, key, used):
     """Ship equipment first (the user, 2026-10-10): what is in use, then the rest; then structures and gates; works
     modules and buildings after (their vision is still being settled); hulls last (they are the ships session's)."""
+    if kind == "equipment" and used.get(key):
+        return 0
+    if kind == "package":      # (stock is drawn as its packages: the user, 2026-10-10)
+        return 0
     if kind == "equipment":
-        return 0 if used.get(key) else 1
+        return 1
     if kind in ("structure", "gate"):
         return 2
     if kind == "module":
@@ -91,6 +97,12 @@ def brief(kind, key, path, r, used):
                       for d in (yaml.safe_load(open(f)) for f in sorted(glob.glob(folder + "/*.yaml")))]
     if r.get("basis"):
         b["basis"] = [{"of": x.get("of"), "tier": x.get("tier"), "rule": x.get("rule"), "note": x.get("note")} for x in r["basis"]]
+    if kind == "package":
+        carried = sorted((yaml.safe_load(open(f)) or {})["identity"]["key"] for f in glob.glob(os.path.join(TREE, "SFO/metadata/stock/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/mill-stock/*.yaml"))
+                         if (yaml.safe_load(open(f)) or {}).get("package") == key)
+        b["carries"] = {"count": len(carried), "examples": carried[:12]}
+        b["holds"] = r.get("holds"); b["handling"] = r.get("handling"); b["keeps"] = r.get("keeps")
+        b["model_notes"] = "one model for every stock it carries: draw it full, with neutral contents the game can tint by the stock's material; no labels"
     if kind == "hull":
         b["conventions"] = "docs/ship-import.md (nose +Y, up +Z, COL_ meshes, nozzle_/gear/dock empties); hulls are the ships session's designs"
     return b

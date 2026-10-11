@@ -6,5 +6,6 @@ identity:
   code: BREAD-BULK
   name: "Bread, in bulk"
   form: bulk
+package: package.produce-crate
 made_from:
   - item: good.bread

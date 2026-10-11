@@ -6,5 +6,6 @@ identity:
   code: TIN-TUNGSTEN-ORE-BULK
   name: "Tin-tungsten ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.tin-tungsten-ore

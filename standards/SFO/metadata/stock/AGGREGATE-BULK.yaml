@@ -6,5 +6,6 @@ identity:
   code: AGGREGATE-BULK
   name: "Aggregate, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.aggregate

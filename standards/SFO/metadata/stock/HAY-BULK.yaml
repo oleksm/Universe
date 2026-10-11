@@ -6,5 +6,6 @@ identity:
   code: HAY-BULK
   name: "Hay, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.hay

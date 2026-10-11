@@ -6,5 +6,6 @@ identity:
   code: LAMPS-BULK
   name: "Lamps, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.lamps

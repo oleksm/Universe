@@ -6,5 +6,6 @@ identity:
   code: MANGANESE-NODULES-BULK
   name: "Manganese nodules, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.manganese-nodules

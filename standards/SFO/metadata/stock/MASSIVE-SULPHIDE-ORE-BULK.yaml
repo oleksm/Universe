@@ -6,5 +6,6 @@ identity:
   code: MASSIVE-SULPHIDE-ORE-BULK
   name: "Massive sulphide ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.massive-sulphide-ore

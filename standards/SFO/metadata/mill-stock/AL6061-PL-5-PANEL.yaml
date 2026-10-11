@@ -6,6 +6,7 @@ identity:
   name: "6061 plate 5 mm, formed panels"
   traded_as: market.metals
   form: panel
+package: package.plate-stack
 made_from:
   - item: material.aluminium-alloy-6061
 size:

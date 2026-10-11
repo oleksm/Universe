@@ -6,6 +6,7 @@ identity:
   traded_as: market.metals
   form: sheet
   temper: "T6"
+package: package.plate-stack
 made_from:
   - item: material.aluminium-alloy-6061
 size:

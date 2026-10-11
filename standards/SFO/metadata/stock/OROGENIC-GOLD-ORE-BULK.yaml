@@ -6,5 +6,6 @@ identity:
   code: OROGENIC-GOLD-ORE-BULK
   name: "Orogenic gold ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.orogenic-gold-ore

@@ -6,5 +6,6 @@ identity:
   code: VEGETABLE-OIL-BULK
   name: "Vegetable oil, in bulk"
   form: bulk
+package: package.tote
 made_from:
   - item: good.vegetable-oil

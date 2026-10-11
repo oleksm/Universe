@@ -6,5 +6,6 @@ identity:
   code: CASSAVA-BULK
   name: "Cassava, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.cassava

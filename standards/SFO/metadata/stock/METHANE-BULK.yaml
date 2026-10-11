@@ -6,5 +6,6 @@ identity:
   code: METHANE-BULK
   name: "Methane, in bulk"
   form: bulk
+package: package.gas-rack
 made_from:
   - item: good.methane

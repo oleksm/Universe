@@ -6,5 +6,6 @@ identity:
   code: VOLCANIC-SULPHUR-ORE-BULK
   name: "Volcanic sulphur ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.volcanic-sulphur-ore

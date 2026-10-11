@@ -6,5 +6,6 @@ identity:
   code: NICKEL-CONCENTRATE-BULK
   name: "Nickel concentrate, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.nickel-concentrate

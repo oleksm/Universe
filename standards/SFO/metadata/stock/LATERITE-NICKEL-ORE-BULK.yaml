@@ -6,5 +6,6 @@ identity:
   code: LATERITE-NICKEL-ORE-BULK
   name: "Laterite nickel ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.laterite-nickel-ore

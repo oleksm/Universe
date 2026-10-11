@@ -6,5 +6,6 @@ identity:
   code: PHOSPHATE-ROCK-BULK
   name: "Phosphate rock, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.phosphate-rock

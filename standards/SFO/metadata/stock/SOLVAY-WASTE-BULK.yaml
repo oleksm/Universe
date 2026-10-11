@@ -6,5 +6,6 @@ identity:
   code: SOLVAY-WASTE-BULK
   name: "Soda works waste, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.solvay-waste

@@ -6,5 +6,6 @@ identity:
   name: "4340 steel scrap"
   traded_as: market.metals
   form: scrap
+package: package.skip
 made_from:
   - item: material.high-strength-steel-4340

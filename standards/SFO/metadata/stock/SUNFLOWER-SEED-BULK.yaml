@@ -6,5 +6,6 @@ identity:
   code: SUNFLOWER-SEED-BULK
   name: "Sunflower seed, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.sunflower-seed

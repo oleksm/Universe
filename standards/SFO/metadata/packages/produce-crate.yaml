@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.produce-crate
+  name: "Produce crate"
+  description: "A vented crate pallet: fresh fruit, vegetables, eggs and bread, kept cool and aired."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 1.4
+  mass: 45
+holds:
+  volume: 1.3
+  mass: 800
+handling: forklift
+stack: 3
+keeps: ventilated
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

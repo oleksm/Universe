@@ -6,5 +6,6 @@ identity:
   code: HOT-INGOT-TI64-BULK
   name: "Hot ingot, Ti-6Al-4V, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.hot-ingot-ti64

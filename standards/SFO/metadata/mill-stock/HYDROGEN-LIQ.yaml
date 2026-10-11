@@ -5,6 +5,7 @@ identity:
   code: HYDROGEN-LIQ
   name: "Hydrogen, liquid"
   form: fluid
+package: package.tote
 made_from:
   - item: material.hydrogen
 basis:

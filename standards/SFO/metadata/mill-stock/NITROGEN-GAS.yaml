@@ -5,6 +5,7 @@ identity:
   code: NITROGEN-GAS
   name: "Nitrogen, compressed"
   form: fluid
+package: package.tote
 made_from:
   - item: material.nitrogen
 basis:

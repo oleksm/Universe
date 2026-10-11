@@ -6,5 +6,6 @@ identity:
   code: REFINED-STEEL-4340-BULK
   name: "Refined steel, 4340, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.refined-steel-4340

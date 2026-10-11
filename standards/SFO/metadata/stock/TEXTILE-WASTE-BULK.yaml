@@ -6,5 +6,6 @@ identity:
   code: TEXTILE-WASTE-BULK
   name: "Textile waste, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.textile-waste

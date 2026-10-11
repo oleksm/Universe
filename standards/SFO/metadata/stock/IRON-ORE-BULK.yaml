@@ -6,5 +6,6 @@ identity:
   code: IRON-ORE-BULK
   name: "Iron ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.iron-ore

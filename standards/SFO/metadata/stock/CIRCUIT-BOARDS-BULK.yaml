@@ -6,5 +6,6 @@ identity:
   code: CIRCUIT-BOARDS-BULK
   name: "Circuit boards, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.circuit-boards

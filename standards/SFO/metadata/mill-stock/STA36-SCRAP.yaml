@@ -6,5 +6,6 @@ identity:
   name: "A36 steel scrap"
   traded_as: market.metals
   form: scrap
+package: package.skip
 made_from:
   - item: material.structural-steel-a36

@@ -6,5 +6,6 @@ identity:
   code: TITANOMAGNETITE-ORE-BULK
   name: "Titanomagnetite ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.titanomagnetite-ore

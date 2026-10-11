@@ -1,0 +1,38 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Package
+x-kind: [package]
+description: "standards/SFO/metadata/packages/<name>.yaml: a standard handling unit stock travels and lies in (a bulk bag on its pallet, a tote, a bundle, a skip): what logistics and trade move, store and count. Every stock record names its package; the game draws stock as its packages where it lies. Sizes are outside, with the pallet or skid."
+type: object
+additionalProperties: false
+required: [identity, physical, holds]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+  physical:
+    type: object
+    additionalProperties: false
+    required: [length, width, height, mass]
+    properties:
+      length: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, outside" }
+      width: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, outside" }
+      height: { type: number, exclusiveMinimum: 0, x-unit: "m", description: "m, outside, full" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg empty (the tare)" }
+  holds:
+    type: object
+    additionalProperties: false
+    required: [volume, mass]
+    properties:
+      volume: { type: number, exclusiveMinimum: 0, x-unit: "m3", description: "m3 of contents at most" }
+      mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of contents at most: a dense stock fills it by weight before volume" }
+  handling: { enum: [forklift, crane, pump, walk], description: "what moves it: a forklift's tines (pallets, skids), a crane's hook (skips, ladles, bundles), a pump through its valves (and a forklift), or animals led" }
+  stack: { type: integer, minimum: 1, x-unit: "1", description: "how many high it may stand, full" }
+  keeps: { type: string, description: "what it keeps its contents from, or at: cold, dry, sealed, ventilated" }
+  visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  revision: { $ref: "../../common.schema.yaml#/definitions/record_revision" }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

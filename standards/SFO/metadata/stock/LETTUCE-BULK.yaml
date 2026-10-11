@@ -6,5 +6,6 @@ identity:
   code: LETTUCE-BULK
   name: "Lettuce, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.lettuce

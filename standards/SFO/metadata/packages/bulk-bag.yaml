@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.bulk-bag
+  name: "Bulk bag on a pallet"
+  description: "A woven bulk bag of 1 m3 on a pallet, filled from the top, emptied from a spout below: grain, flour, sugar, seed, powders and light granular stock."
+physical:
+  length: 1.1
+  width: 1.1
+  height: 1.25
+  mass: 30
+holds:
+  volume: 1.0
+  mass: 1500
+handling: forklift
+stack: 2
+keeps: dry
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

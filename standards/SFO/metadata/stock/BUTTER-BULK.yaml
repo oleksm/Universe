@@ -6,5 +6,6 @@ identity:
   code: BUTTER-BULK
   name: "Butter, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.butter

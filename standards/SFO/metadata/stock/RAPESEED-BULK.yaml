@@ -6,5 +6,6 @@ identity:
   code: RAPESEED-BULK
   name: "Rapeseed, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.rapeseed

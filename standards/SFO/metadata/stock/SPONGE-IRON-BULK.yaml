@@ -6,5 +6,6 @@ identity:
   code: SPONGE-IRON-BULK
   name: "Sponge iron, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.sponge-iron

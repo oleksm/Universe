@@ -6,5 +6,6 @@ identity:
   code: CLAY-BULK
   name: "Clay, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.clay

@@ -5,6 +5,7 @@ identity:
   code: HYDROLOX-LIQ
   name: "Hydrolox, liquid"
   form: fluid
+package: package.tote
 made_from:
   - item: material.hydrolox
 basis:

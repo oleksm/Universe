@@ -5,6 +5,7 @@ identity:
   name: "Bearing bronze bar 50 mm"
   traded_as: market.metals
   form: bar
+package: package.bar-bundle
 made_from:
   - item: material.bearing-bronze-c93200
 size:

@@ -6,5 +6,6 @@ identity:
   code: LEAD-CONCENTRATE-BULK
   name: "Lead concentrate, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.lead-concentrate

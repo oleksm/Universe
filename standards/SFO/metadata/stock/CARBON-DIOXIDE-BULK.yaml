@@ -6,5 +6,6 @@ identity:
   code: CARBON-DIOXIDE-BULK
   name: "Carbon dioxide, in bulk"
   form: bulk
+package: package.gas-rack
 made_from:
   - item: good.carbon-dioxide

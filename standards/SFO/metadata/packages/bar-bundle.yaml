@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.bar-bundle
+  name: "Bar bundle"
+  description: "Bars or tubes 6 m long, strapped in a bundle with timber spacers."
+physical:
+  length: 6.0
+  width: 0.4
+  height: 0.4
+  mass: 5
+holds:
+  volume: 0.6
+  mass: 2000
+handling: crane
+stack: 4
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

@@ -6,5 +6,6 @@ identity:
   code: GLYCERINE-BULK
   name: "Glycerine, in bulk"
   form: bulk
+package: package.tote
 made_from:
   - item: good.glycerine

@@ -6,5 +6,6 @@ identity:
   code: SULPHURIC-ACID-BULK
   name: "Sulphuric acid, in bulk"
   form: bulk
+package: package.tote
 made_from:
   - item: good.sulphuric-acid

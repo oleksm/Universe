@@ -6,5 +6,6 @@ identity:
   code: MEDICINES-BULK
   name: "Medicines, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.medicines

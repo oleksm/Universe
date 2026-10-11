@@ -6,5 +6,6 @@ identity:
   code: HOT-INGOT-4340-BULK
   name: "Hot ingot, 4340 steel, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.hot-ingot-4340

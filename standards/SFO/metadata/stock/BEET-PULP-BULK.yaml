@@ -6,5 +6,6 @@ identity:
   code: BEET-PULP-BULK
   name: "Beet pulp, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.beet-pulp

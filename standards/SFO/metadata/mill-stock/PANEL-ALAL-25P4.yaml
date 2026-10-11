@@ -5,6 +5,7 @@ identity:
   name: "6061-faced aluminium sandwich panel 25.4 mm"
   traded_as: market.metals
   form: sandwich
+package: package.plate-stack
 made_from:
   - item: material.honeycomb-sandwich-panel
 size:

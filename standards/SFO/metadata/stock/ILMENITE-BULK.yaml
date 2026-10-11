@@ -6,5 +6,6 @@ identity:
   code: ILMENITE-BULK
   name: "Ilmenite, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.ilmenite

@@ -6,5 +6,6 @@ identity:
   code: OLIVES-BULK
   name: "Olives, in bulk"
   form: bulk
+package: package.produce-crate
 made_from:
   - item: good.olives

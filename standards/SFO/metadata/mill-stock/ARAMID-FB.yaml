@@ -5,6 +5,7 @@ identity:
   name: "Aramid fibre, on bobbins"
   traded_as: market.textiles
   form: fibre
+package: package.coil
 made_from:
   - item: material.aramid-fibre
 basis:

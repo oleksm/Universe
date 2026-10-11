@@ -6,5 +6,6 @@ identity:
   code: DUST-BULK
   name: "Furnace dust, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.dust

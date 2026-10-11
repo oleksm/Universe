@@ -6,5 +6,6 @@ identity:
   code: TALLOW-BULK
   name: "Tallow, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.tallow

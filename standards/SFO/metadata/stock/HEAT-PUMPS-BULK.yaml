@@ -6,5 +6,6 @@ identity:
   code: HEAT-PUMPS-BULK
   name: "Heat pumps, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.heat-pumps

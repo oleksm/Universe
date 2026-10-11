@@ -6,5 +6,6 @@ identity:
   code: CHEMICAL-WASTE-BULK
   name: "Chemical waste, in bulk"
   form: bulk
+package: package.tote
 made_from:
   - item: good.chemical-waste

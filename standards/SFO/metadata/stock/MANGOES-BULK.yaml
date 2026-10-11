@@ -6,5 +6,6 @@ identity:
   code: MANGOES-BULK
   name: "Mangoes, in bulk"
   form: bulk
+package: package.produce-crate
 made_from:
   - item: good.mangoes

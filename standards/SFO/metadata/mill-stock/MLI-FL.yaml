@@ -5,6 +5,7 @@ identity:
   name: "Multi-layer insulation blanket"
   traded_as: market.chemicals
   form: film
+package: package.coil
 made_from:
   - item: material.multi-layer-insulation
 size:

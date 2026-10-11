@@ -6,6 +6,7 @@ identity:
   traded_as: market.metals
   form: plate
   temper: "quenched and tempered"
+package: package.plate-stack
 made_from:
   - item: material.high-strength-steel-4340
 size:

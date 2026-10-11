@@ -6,5 +6,6 @@ identity:
   code: DIAMONDS-BULK
   name: "Diamonds, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.diamonds

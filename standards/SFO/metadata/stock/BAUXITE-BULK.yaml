@@ -6,5 +6,6 @@ identity:
   code: BAUXITE-BULK
   name: "Bauxite, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.bauxite

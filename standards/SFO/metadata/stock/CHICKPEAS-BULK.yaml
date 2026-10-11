@@ -6,5 +6,6 @@ identity:
   code: CHICKPEAS-BULK
   name: "Chickpeas, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.chickpeas

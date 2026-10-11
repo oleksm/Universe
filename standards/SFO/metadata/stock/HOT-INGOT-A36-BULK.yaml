@@ -6,5 +6,6 @@ identity:
   code: HOT-INGOT-A36-BULK
   name: "Hot ingot, A36 steel, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.hot-ingot-a36

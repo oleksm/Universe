@@ -35,7 +35,7 @@ moving engine: engine's `docs/ships/ch-s2-motion-contract.md` (main 462a7b45).
 
 ## The queue
 
-Kinds that take a model: equipment, industrial modules, buildings, structures, gate rings, and hulls on asking. A record
+Kinds that take a model: equipment, packages (the standard units stock travels and lies in: `standards/SFO/metadata/packages/`, one model each, drawn for every stock that names it; `tools/standards/packages.py` assigns them), industrial modules, buildings, structures, gate rings, and hulls on asking. Stock itself takes no model: it is drawn as its packages. A record
 is queued when it has no `visual` and is not retired, in the order the player sees things most:
 
 1. equipment fitted on hulls and structures, most fitted first;
@@ -146,7 +146,7 @@ The package is never edited after installing: a fix is a new version.
 
 - The game draws models for settlement modules and buildings, rigs and gates (main 364a539e); equipment at mounts and
   stations are not drawn yet (engine's), so their validation is step 1 only until then.
-- Containers for goods and stock by form; module and building nodes (entrances, ports, pipe connections) when the
+- Module and building nodes (entrances, ports, pipe connections) when the
   game places things by them.
 - Previews for the models installed before 2026-10-10's preview rule: reinstall the same `.glb` with `--thumb` and
   `--icon` (a new version; the model is unchanged).

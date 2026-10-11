@@ -6,5 +6,6 @@ identity:
   code: SPINACH-BULK
   name: "Spinach, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.spinach

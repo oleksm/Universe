@@ -6,5 +6,6 @@ identity:
   code: MOLYBDENUM-CONCENTRATE-BULK
   name: "Molybdenum concentrate, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.molybdenum-concentrate

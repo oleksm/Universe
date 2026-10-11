@@ -6,5 +6,6 @@ identity:
   code: IMPACT-DIAMOND-ROCK-BULK
   name: "Impact diamond rock, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.impact-diamond-rock

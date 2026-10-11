@@ -6,5 +6,6 @@ identity:
   code: REFINED-STEEL-A36-BULK
   name: "Refined steel, A36, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.refined-steel-a36

@@ -6,5 +6,6 @@ identity:
   code: IRON-ORE-PELLETS-BULK
   name: "Iron ore pellets, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.iron-ore-pellets

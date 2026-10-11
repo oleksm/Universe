@@ -6,5 +6,6 @@ identity:
   code: GRAPHITE-ORE-BULK
   name: "Graphite ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.graphite-ore

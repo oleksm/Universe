@@ -6,5 +6,6 @@ identity:
   code: EPITHERMAL-GOLD-ORE-BULK
   name: "Epithermal gold ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.epithermal-gold-ore

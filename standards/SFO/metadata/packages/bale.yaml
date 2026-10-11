@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.bale
+  name: "Big bale"
+  description: "A big square bale tied with twine: hay, straw, bagasse, crop residue, raw fibre and wool."
+physical:
+  length: 2.4
+  width: 1.2
+  height: 1.2
+  mass: 2
+holds:
+  volume: 3.4
+  mass: 700
+handling: forklift
+stack: 3
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

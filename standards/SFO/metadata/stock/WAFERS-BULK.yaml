@@ -6,5 +6,6 @@ identity:
   code: WAFERS-BULK
   name: "Silicon wafers, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.wafers

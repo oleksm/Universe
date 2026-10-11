@@ -6,5 +6,6 @@ identity:
   code: HOT-INGOT-304-BULK
   name: "Hot ingot, 304 stainless, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.hot-ingot-304

@@ -6,5 +6,6 @@ identity:
   code: NATURAL-GAS-BULK
   name: "Natural gas, in bulk"
   form: bulk
+package: package.gas-rack
 made_from:
   - item: good.natural-gas

@@ -6,5 +6,6 @@ identity:
   code: WATER-BULK
   name: "Water, in bulk"
   form: bulk
+package: package.tote
 made_from:
   - item: good.water

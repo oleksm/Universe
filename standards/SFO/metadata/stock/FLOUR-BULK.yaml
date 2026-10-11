@@ -6,5 +6,6 @@ identity:
   code: FLOUR-BULK
   name: "Flour, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.flour

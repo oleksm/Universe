@@ -6,5 +6,6 @@ identity:
   code: LIVE-PIGS-BULK
   name: "Pigs, in bulk"
   form: bulk
+package: package.livestock-crate
 made_from:
   - item: good.live-pigs

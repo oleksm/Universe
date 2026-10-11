@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.livestock-crate
+  name: "Livestock crate"
+  description: "A ventilated crate with a ramp door for live animals, watered on the way."
+physical:
+  length: 2.4
+  width: 1.2
+  height: 1.8
+  mass: 300
+holds:
+  volume: 5.0
+  mass: 1500
+handling: walk
+stack: 1
+keeps: ventilated
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

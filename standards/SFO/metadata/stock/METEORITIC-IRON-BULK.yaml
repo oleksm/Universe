@@ -6,5 +6,6 @@ identity:
   code: METEORITIC-IRON-BULK
   name: "Meteoritic iron, in bulk"
   form: bulk
+package: package.crate-heavy
 made_from:
   - item: good.meteoritic-iron

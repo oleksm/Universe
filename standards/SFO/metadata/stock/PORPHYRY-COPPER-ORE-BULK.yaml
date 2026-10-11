@@ -6,5 +6,6 @@ identity:
   code: PORPHYRY-COPPER-ORE-BULK
   name: "Porphyry copper ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.porphyry-copper-ore

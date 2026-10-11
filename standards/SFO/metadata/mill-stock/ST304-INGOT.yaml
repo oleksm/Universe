@@ -5,5 +5,6 @@ identity:
   name: "304 stainless ingot"
   traded_as: market.metals
   form: ingot
+package: package.crate-heavy
 made_from:
   - item: material.stainless-steel-304

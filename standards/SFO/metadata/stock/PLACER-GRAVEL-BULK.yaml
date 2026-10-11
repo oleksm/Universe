@@ -6,5 +6,6 @@ identity:
   code: PLACER-GRAVEL-BULK
   name: "Gold placer gravel, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.placer-gravel

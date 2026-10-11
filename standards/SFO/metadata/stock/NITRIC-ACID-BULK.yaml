@@ -6,5 +6,6 @@ identity:
   code: NITRIC-ACID-BULK
   name: "Nitric acid, in bulk"
   form: bulk
+package: package.tote
 made_from:
   - item: good.nitric-acid

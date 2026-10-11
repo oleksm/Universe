@@ -6,5 +6,6 @@ identity:
   code: LIMESTONE-BULK
   name: "Limestone, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.limestone

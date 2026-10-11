@@ -6,5 +6,6 @@ identity:
   code: SPENT-MEDIUM-BULK
   name: "Spent growing medium, in bulk"
   form: bulk
+package: package.bale
 made_from:
   - item: good.spent-medium

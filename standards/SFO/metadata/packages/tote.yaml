@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.tote
+  name: "Tote tank"
+  description: "A 1 m3 plastic tank in a steel cage on a pallet, valve at the foot: liquids and slurries."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 1.16
+  mass: 60
+holds:
+  volume: 1.0
+  mass: 1900
+handling: pump
+stack: 2
+keeps: sealed
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

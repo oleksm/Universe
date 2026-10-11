@@ -5,6 +5,7 @@ identity:
   name: "Ti-6-4-faced titanium sandwich panel 50.8 mm"
   traded_as: market.metals
   form: sandwich
+package: package.plate-stack
 made_from:
   - item: material.honeycomb-sandwich-panel
 size:

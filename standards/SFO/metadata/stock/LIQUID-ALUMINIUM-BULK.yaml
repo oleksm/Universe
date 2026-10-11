@@ -6,5 +6,6 @@ identity:
   code: LIQUID-ALUMINIUM-BULK
   name: "Liquid aluminium, in bulk"
   form: bulk
+package: package.ladle
 made_from:
   - item: good.liquid-aluminium

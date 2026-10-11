@@ -8,5 +8,6 @@ identity:
   code: DEUTERIUM-LIQ
   name: "Deuterium, liquid"
   form: fluid
+package: package.tote
 made_from:
   - item: material.deuterium

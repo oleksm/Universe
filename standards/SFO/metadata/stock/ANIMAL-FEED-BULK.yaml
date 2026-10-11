@@ -6,5 +6,6 @@ identity:
   code: ANIMAL-FEED-BULK
   name: "Animal feed, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.animal-feed

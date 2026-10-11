@@ -6,5 +6,6 @@ identity:
   code: WHEAT-BULK
   name: "Wheat, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.wheat

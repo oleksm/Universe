@@ -5,6 +5,7 @@ identity:
   name: "Copper wire 2 mm"
   traded_as: market.metals
   form: wire
+package: package.coil
 made_from:
   - item: material.copper
 size:

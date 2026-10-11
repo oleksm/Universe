@@ -6,5 +6,6 @@ identity:
   code: POTASH-ORE-BULK
   name: "Potash ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.potash-ore

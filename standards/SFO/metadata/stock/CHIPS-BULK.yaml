@@ -6,5 +6,6 @@ identity:
   code: CHIPS-BULK
   name: "Chips, in bulk"
   form: bulk
+package: package.carton-pallet
 made_from:
   - item: good.chips

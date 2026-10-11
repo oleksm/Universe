@@ -6,5 +6,6 @@ identity:
   code: SKARN-COPPER-ORE-BULK
   name: "Skarn copper ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.skarn-copper-ore

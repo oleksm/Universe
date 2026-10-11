@@ -6,5 +6,6 @@ identity:
   code: FOSSIL-PLACER-ORE-BULK
   name: "Fossil placer ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.fossil-placer-ore

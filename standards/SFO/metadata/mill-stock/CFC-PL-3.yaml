@@ -5,6 +5,7 @@ identity:
   name: "Carbon fibre composite plate 3 mm"
   traded_as: market.chemicals
   form: plate
+package: package.plate-stack
 made_from:
   - item: material.carbon-fibre-composite
 size:

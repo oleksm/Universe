@@ -6,5 +6,6 @@ identity:
   code: LENTILS-BULK
   name: "Lentils, in bulk"
   form: bulk
+package: package.bulk-bag
 made_from:
   - item: good.lentils

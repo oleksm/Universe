@@ -6,5 +6,6 @@ identity:
   code: TIN-CONCENTRATE-BULK
   name: "Tin concentrate, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.tin-concentrate

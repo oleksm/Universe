@@ -6,5 +6,6 @@ identity:
   code: CABBAGE-BULK
   name: "Cabbage, in bulk"
   form: bulk
+package: package.cold-crate
 made_from:
   - item: good.cabbage

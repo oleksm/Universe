@@ -6,5 +6,6 @@ identity:
   code: SHALE-ZINC-ORE-BULK
   name: "Shale zinc-lead ore, in bulk"
   form: bulk
+package: package.skip
 made_from:
   - item: good.shale-zinc-ore
