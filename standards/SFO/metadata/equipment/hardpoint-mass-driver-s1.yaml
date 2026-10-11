@@ -37,6 +37,12 @@ function:
   rate: 10
   slug_mass: 0.5
   magazine: 500
+visual:
+  format: "freefall-model/1"
+  path: "models/hardpoint-mass-driver-s1/v1"
+  manifest_sha256: "eec78e18124eddda73f476d2cbdd1443c3d73986e82d2cc91baaf5605f4168ee"
+  version: 1
+  triangles: 1250
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
