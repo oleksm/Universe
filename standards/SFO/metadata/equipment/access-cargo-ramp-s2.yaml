@@ -27,6 +27,12 @@ function:
   load: 60000
   width: 5.0
   reach: 11.63
+visual:
+  format: "freefall-model/1"
+  path: "models/access-cargo-ramp-s2/v1"
+  manifest_sha256: "998dfe8ff9c0024b0cd034f3f364966039fd0665322b71e6076dad5a8358cb75"
+  version: 1
+  triangles: 4556
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A 5 m ramp for 60 t: a C-17's class, scaled from the S1 by load. From memory. Not sourced. Laid out as the S1: one 12 m deck, 5 m clear, upright to shut the opening, the hull giving a recessed threshold and lock receivers; at 15 degrees its sill sits no more than 3.12 m up and its foot lands 11.63 m out (measured), its walking surface 150 mm above the hinge and its heel 15 mm below the sill when down: the hull's threshold is recessed for both (blender, 2026-10-11; the first draft's 6 m reach was 30 degrees)." }
