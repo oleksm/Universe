@@ -1236,3 +1236,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game label printing and GPU look/cost remain open; plaque attachment, vessel pressure/thermal/relief/fill limits and transport qualification unverified."
+  - key: package.gas-rack
+    version: 2
+    manifest_sha256: "0e12f50c9ad70fecd59b35a70caf16ec855eecb548028de71b846265fde549c8"
+    installed: 07b183ff
+    game: "the loader (world::assets) at fso 07b183ff"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gas-rack/v2 (298112 bytes, bounds [-0.5, 0.0, -0.4] to [0.5, 1.85, 0.417]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game label printing and GPU look/cost remain open; hanger weld/retention and cylinder pressure, filling, handling qualification unverified."
