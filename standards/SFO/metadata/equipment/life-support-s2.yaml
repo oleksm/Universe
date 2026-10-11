@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: life_support
-  description: "Air, water and warmth for the crew."
+  description: "Air, water and warmth for the crew: three closed service racks side by side (water, oxygen, air), 3.15 m long, 2.0 m tall, 0.85 m deep, on four corner feet, service panels and ports recessed in their fronts."
 size_class: 2
 fits: mount.life-support-s2
 physical:
@@ -49,5 +49,6 @@ basis:
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, by the space station's plant. By the station's weights (293 kg a head for water and oxygen) 1,500 kg keeps about five people." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_people_needs.json", note: "3 racks of the space station's size (a rack is 1.57 m3: about 2.0 by 1.05 by 0.85 m), side by side: the station's water and oxygen plant is 2,061 kg in three racks, this 1,500 kg is 3. The rack's shape is from memory." }
   - { of: [function.water_recovery, function.air_recovery], tier: sourced, review: true, source: "standards/sources/research_people_needs.json", note: "The space station's figures: about 90% of water recovered, about half the oxygen from carbon dioxide (its Sabatier reactor), from memory of its ECLSS reports; the rest is made up from the tanks." }
+  - { of: [needs.power, function.cooling], tier: invented, review: true, note: "Open: 200 kW drawn (the game's early list) against 3 kW of cabin cooling cannot both stand: nearly all that power ends as heat aboard. The space station's water and oxygen plant for six draws a few kW (from memory), so a few kW is likely right and 200 kW the outlier; the game uses the figure, so engine first. The model is the exterior only; the parts are mass proxies, not a packing." }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.persons, function.cooling], tier: derived, review: true, note: "By the space station's weights (about 270 kg of plant a head) 1,500 kg keeps about 6 people; it carries their heat and their equipment's, 500 W a head, and dries the air." }

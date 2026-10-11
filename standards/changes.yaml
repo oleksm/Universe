@@ -430,7 +430,7 @@
 - { record: equipment.life-support.cartridge, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "17042cd9ce16e4a7" }
 - { record: equipment.life-support.s0, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "4ebff4179ab2a999" }
 - { record: equipment.life-support.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "bce72dddbb6acea6" }
-- { record: equipment.life-support.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "63420d5f07033d3d" }
+- { record: equipment.life-support.s2, at: "2026-10-11T03:19:48Z", status: draft, summary: "changed: identity, basis", sha: "31367c22928315d6" }
 - { record: equipment.lift.belly.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7b80efee20d538b6" }
 - { record: equipment.lift.belly.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "d0c65d5fe0dbe44e" }
 - { record: equipment.lift.belly.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7e748369b5e68043" }
