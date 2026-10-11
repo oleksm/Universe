@@ -32,9 +32,9 @@ function:
   governor: 2
 visual:
   format: "freefall-model/1"
-  path: "models/avionics-nav-full-s1/v1"
-  manifest_sha256: "bcc7581bbd0577c5e68c7a368592ad960ef1c772aee9cb32c2ec3e2c06feaf5f"
-  version: 1
+  path: "models/avionics-nav-full-s1/v2"
+  manifest_sha256: "0138fa39cd2245e7c9a7831e74624213c0ef8a238afad1d0850e748cad1fc427"
+  version: 2
   triangles: 702
 life: 473364000
 basis:
