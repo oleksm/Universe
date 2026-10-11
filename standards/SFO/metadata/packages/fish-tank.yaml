@@ -13,7 +13,9 @@ holds:
   mass: 1100
 handling: forklift
 stack: 1
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.75, 0.501], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.75, -0.501], size: [0.3, 0.15] }
 shows_contents: false
 keeps: aerated
 visual:

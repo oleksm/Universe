@@ -1095,22 +1095,22 @@
 - { record: org.treistun-mutual, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "925ffb2ed2d90544" }
 - { record: org.verdance, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "196f09d68b59e56a" }
 - { record: org.vireo, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "adf509b82f447687" }
-- { record: package.bale, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "efe85d95bbd03db8" }
-- { record: package.bar-bundle, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "18e9dc52fa06b05c" }
-- { record: package.bulk-bag, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "be61f9a6d4f26de0" }
-- { record: package.carton-pallet, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "456271c9627d723a" }
-- { record: package.coil, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "81331d17258af7c8" }
-- { record: package.cold-crate, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "4b182c7cff55d93c" }
-- { record: package.crate-heavy, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "609d9747b50fb383" }
-- { record: package.cryo-dewar, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "0f780c9b0c15cdd6" }
-- { record: package.fish-tank, at: "2026-10-11T15:38:31Z", status: "", summary: "changed: visual", sha: "91619bb6d4da0bf7" }
-- { record: package.gas-rack, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "0f919e38dc1715a8" }
-- { record: package.ladle, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "96b4da6de850ed23" }
-- { record: package.livestock-crate, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "f51948252e67b3c8" }
-- { record: package.plate-stack, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "9b786b726a67b2bf" }
-- { record: package.produce-crate, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "80090f01bee9e388" }
-- { record: package.skip, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "3258d112227460a2" }
-- { record: package.tote, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "b88964cd16e1b176" }
+- { record: package.bale, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "9f69bea42310a397" }
+- { record: package.bar-bundle, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "cf5dfdc76412de12" }
+- { record: package.bulk-bag, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "572ed3fc1c1720fb" }
+- { record: package.carton-pallet, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "a7a0d06163b4b8b1" }
+- { record: package.coil, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "7d64d6043e396dcb" }
+- { record: package.cold-crate, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "6661ab80f7593789" }
+- { record: package.crate-heavy, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "c87c7f93b2b67317" }
+- { record: package.cryo-dewar, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "ee0b730852e94ab4" }
+- { record: package.fish-tank, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "6a4bd7bd8494d7d8" }
+- { record: package.gas-rack, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "622ce6f227d7c416" }
+- { record: package.ladle, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "c8d2a96ccdaebdea" }
+- { record: package.livestock-crate, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "64b50ffdbef8582a" }
+- { record: package.plate-stack, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "c85a4785a985e036" }
+- { record: package.produce-crate, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "049521e19791c8f9" }
+- { record: package.skip, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "eb0cb127dff0a3a6" }
+- { record: package.tote, at: "2026-10-11T15:42:07Z", status: "", summary: "changed: labels, label", sha: "017c7880e6bd6cd8" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
 - { record: parcel.treistun.ashfall-camp.2, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "38fe80aeecce0011" }
 - { record: parcel.treistun.ashfall-camp.3, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "73a99a528497fd07" }

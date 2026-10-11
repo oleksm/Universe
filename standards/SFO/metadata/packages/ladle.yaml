@@ -14,7 +14,9 @@ holds:
 handling: crane
 stack: 1
 keeps: hot
-label: 2
+labels:
+  - { node: label, face: "+X", centre: [1.001, 1.21, 0.0], size: [0.3, 0.15] }
+  - { node: label_2, face: "-X", centre: [-1.001, 1.21, 0.0], size: [0.3, 0.15] }
 shows_contents: true
 visual:
   format: "freefall-model/1"

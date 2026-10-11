@@ -14,7 +14,9 @@ holds:
 handling: forklift
 stack: 3
 keeps: ventilated
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.84, 0.501], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.84, -0.501], size: [0.3, 0.15] }
 shows_contents: true
 visual:
   format: "freefall-model/1"
