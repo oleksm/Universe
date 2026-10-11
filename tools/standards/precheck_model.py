@@ -58,6 +58,7 @@ def main(argv):
     cmd += [f"--source={source}"] if source else []
     cmd += [f"--about={about}"] if about else []
     cmd += [f"--motion={motion}"] if motion else []
+    cmd += [f"--{n}={at(n)}" for n in ("thumb", "icon") if at(n)]
     env_store = os.path.join("/tmp", f"precheck-store-{os.getpid()}")      # (a dry run writes nothing; the store is never touched)
     code, out = run(["env", f"UNIVERSE_ASSETS={env_store}", *cmd])
     steps.append(("installer dry run", code == 0, out))

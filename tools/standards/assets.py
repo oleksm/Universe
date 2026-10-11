@@ -86,6 +86,28 @@ def required_nodes(kind, r):
     return need
 
 
+# Previews in a package (the user, 2026-10-10: every item can be previewed): a thumbnail and an icon, square PNG.
+PREVIEWS = {"thumb": 512, "icon": 128}     # (name: side in pixels)
+
+
+def check_png(path, side):
+    """What is wrong with a preview image: plain sentences (empty: it fits). A square PNG of `side` pixels, with alpha."""
+    import struct as st
+    try:
+        b = open(path, "rb").read(33)
+    except OSError as e:
+        return [f"{path}: {e}"]
+    if b[:8] != b"\x89PNG\r\n\x1a\n" or b[12:16] != b"IHDR":
+        return [f"{os.path.basename(path)}: not a PNG"]
+    w, h = st.unpack(">II", b[16:24]); colour = b[25]
+    bad = []
+    if (w, h) != (side, side):
+        bad.append(f"{os.path.basename(path)}: {w} x {h} px, wants {side} x {side}")
+    if colour not in (4, 6):
+        bad.append(f"{os.path.basename(path)}: no alpha channel (the background must be transparent)")
+    return bad
+
+
 # The modeller's account of a version (--about=<file>): required sections, then free to say what it needs.
 ABOUT_REQUIRED = ("model", "work", "considerations")
 ABOUT_KNOWN = ABOUT_REQUIRED + ("stats", "evidence")

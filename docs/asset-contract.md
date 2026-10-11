@@ -86,10 +86,14 @@ From `~/git/universe-fso` (branch fso, no unrelated changes staged):
 
     python3 tools/standards/next_asset.py --key <key> --json          # the brief
     python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml          # dry run
-    python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml --push   # install
+    python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml \
+        --thumb=/abs/thumb.png --icon=/abs/icon.png --push                                                          # install
     (add --motion=/abs/motion.json for a model whose parts move)
 
-Inputs: the exported `.glb` (metres, static: no animations, skins or morph targets), its `.blend`, and the modeller's
+Inputs: the exported `.glb` (metres, static: no animations, skins or morph targets), its `.blend`, two previews
+(`--thumb=thumb.png`, 512 x 512 px, and `--icon=icon.png`, 128 x 128 px: square PNG with a transparent background, the
+item alone in a three-quarter view, rendered from the same source; required with `--push`, written into the package
+as `thumb.png` and `icon.png` and listed in the manifest's `previews` and `files`), and the modeller's
 account (`--about`, YAML or JSON; template `docs/asset-about.example.yaml`): `model` (key, purpose, source revision,
 components, basis, interfaces, motion scope), `work` (what this version built or changed; runtime versus source-only),
 `considerations` (decisions, easements, assumptions, limitations, defects, each marked), optionally `stats` (what the
@@ -143,3 +147,5 @@ The package is never edited after installing: a fix is a new version.
   stations are not drawn yet (engine's), so their validation is step 1 only until then.
 - Containers for goods and stock by form; module and building nodes (entrances, ports, pipe connections) when the
   game places things by them.
+- Previews for the models installed before 2026-10-10's preview rule: reinstall the same `.glb` with `--thumb` and
+  `--icon` (a new version; the model is unchanged).

@@ -7,6 +7,8 @@
 Options: --source=<file.blend> (the source it was exported from: its path and sha256 go in the manifest), --note=<text>,
 --about=<file.yaml|json> (the modeller's account, required with --push: sections model, work, considerations, and
 optionally stats and evidence; it goes in the manifest as `about`, beside the stats the installer measures itself),
+--thumb=<thumb.png> and --icon=<icon.png> (previews, required with --push: square PNG with a transparent background,
+512 and 128 px; written into the package as thumb.png and icon.png),
 --motion=<file.json> (freefall-motion/1, docs/formats/freefall-motion-1.schema.yaml: how its parts move; checked against
 the model and the record, then written into the package as motion.json).
 
@@ -24,7 +26,7 @@ import datetime, json, os, re, shutil, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from assets import FORMAT, MOTION_FORMAT, ROOT, check_model, check_motion, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
+from assets import FORMAT, MOTION_FORMAT, PREVIEWS, ROOT, check_model, check_motion, check_png, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
 
 
 def die(msg):
@@ -63,6 +65,13 @@ def main(argv):
         bad += more
     elif push:
         bad.append("--push needs --about=<file> (model, work, considerations; stats, evidence): the package says what it is (docs/asset-contract.md)")
+    previews = {}
+    for name, side in PREVIEWS.items():
+        if isinstance(opt.get(name), str):
+            previews[name] = os.path.abspath(os.path.expanduser(opt[name]))
+            bad += check_png(previews[name], side)
+        elif push:
+            bad.append(f"--push needs --{name}=<{name}.png> ({side} x {side} px, transparent background): every installed item can be previewed")
     motion = None
     if isinstance(opt.get("motion"), str):
         try:
@@ -82,8 +91,9 @@ def main(argv):
         d = os.path.join(base, f"v{v}")
         try:
             mf = os.path.join(d, "motion.json")
+            same_previews = all(os.path.exists(os.path.join(d, n + ".png")) and sha(os.path.join(d, n + ".png")) == sha(f) for n, f in previews.items())
             return (sha(os.path.join(d, "model.glb")) == gsha and json.load(open(os.path.join(d, "manifest.json"))).get("about") == about
-                    and (json.load(open(mf)) if os.path.exists(mf) else None) == motion)
+                    and (json.load(open(mf)) if os.path.exists(mf) else None) == motion and same_previews)
         except (OSError, ValueError):
             return False
     same = next((v for v in versions if installed(v)), None)
@@ -104,6 +114,8 @@ def main(argv):
         shutil.copyfile(glb, os.path.join(dest, "model.glb"))
         if motion:
             json.dump(motion, open(os.path.join(dest, "motion.json"), "w"), indent=1)
+        for n, f in previews.items():
+            shutil.copyfile(f, os.path.join(dest, n + ".png"))
         src = opt.get("source") if isinstance(opt.get("source"), str) else None
         repo = subprocess.run(["git", "-C", os.path.dirname(os.path.abspath(src)), "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip() if src and os.path.exists(src) else None
         manifest = {"format": FORMAT, "key": key, "kind": kind, "version": version, "file": "model.glb",
@@ -112,8 +124,10 @@ def main(argv):
                     "source": {"file": src and os.path.abspath(src), "sha256": sha(src) if src and os.path.exists(src) else None, "commit": repo, "exported": os.path.basename(glb)},
                     "date": datetime.date.today().isoformat(), **({"note": opt["note"]} if isinstance(opt.get("note"), str) else {}),
                     **({"motion": {"format": MOTION_FORMAT, "file": "motion.json"}} if motion else {}),
+                    **({"previews": {n: n + ".png" for n in previews}} if previews else {}),
                     "files": {"model.glb": {"sha256": gsha, "size": os.path.getsize(glb)},
-                              **({"motion.json": {"sha256": sha(os.path.join(dest, "motion.json")), "size": os.path.getsize(os.path.join(dest, "motion.json"))}} if motion else {})}}
+                              **({"motion.json": {"sha256": sha(os.path.join(dest, "motion.json")), "size": os.path.getsize(os.path.join(dest, "motion.json"))}} if motion else {}),
+                              **{n + ".png": {"sha256": sha(os.path.join(dest, n + ".png")), "size": os.path.getsize(os.path.join(dest, n + ".png"))} for n in previews}}}
         json.dump(manifest, open(os.path.join(dest, "manifest.json"), "w"), indent=1)
     msha = sha(os.path.join(dest, "manifest.json"))
 
