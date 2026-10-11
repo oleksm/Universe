@@ -664,3 +664,16 @@ validations:
     pending:
       - "frames at play distance, GPU look and cost"
       - "Actual settlement terrain seating and boundary transitions, aerial GPU appearance/temporal filtering/cost, crop/growth game state; flat generic canopy only"
+  - key: module.field
+    version: 1
+    installed: 0b589ce2
+    game: "engine's in-game review on an fso build (out/review/field-v1/review.md in ~/git/universe, 5 frames)"
+    date: "2026-10-10"
+    result: partial
+    drawn: true
+    checked:
+      - "the model loads and draws (PBR): pass; 170 fields at Port Eikir, 83,640 triangles in 510 draws, whole scene 1.16 ms on the GPU at noon (not an incremental benchmark)"
+    fails:
+      - "the site, not the model: Port Eikir's record puts it at sea on Heath D (45.649, 165.925): all 13,770 samples ocean (-2192 to -42 m); bases -1.8 to +1.9 m about sea level, neighbouring planes stepping up to 2.4 m. Registry moves the settlement (planets asked for coastal land); then terrain seating is engine's"
+    pending:
+      - "frames again once the settlement stands on land"
