@@ -692,3 +692,19 @@ validations:
     pending:
       - "frames at play distance, GPU look and cost"
       - "Actual settlement terrain seating, access, GPU appearance/filtering/cost and operational game states; structural and agricultural qualification not supplied by exterior model"
+  - key: equipment.life-support.s2
+    version: 1
+    manifest_sha256: "5ff414887e644c1f0f3c5949c025e0ccf0c96fc1bc7c5d5d05fa851129befc47"
+    installed: 306ee517
+    game: "the loader (world::assets) at fso 306ee517"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/life-support-s2/v1 (218260 bytes, bounds [-1.575, 0.0, -0.425] to [1.575, 2.0, 0.425]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull placement/service routing and in-game GPU appearance/filtering/cost. Static exterior only; registry/engine retain internal packing and200kW/3kW engineering discrepancy."
