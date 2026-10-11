@@ -1109,7 +1109,7 @@
 - { record: package.livestock-crate, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "64b50ffdbef8582a" }
 - { record: package.plate-stack, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "c85a4785a985e036" }
 - { record: package.produce-crate, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "049521e19791c8f9" }
-- { record: package.skip, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "eb0cb127dff0a3a6" }
+- { record: package.skip, at: "2026-10-11T15:49:48Z", status: "", summary: "changed: visual", sha: "fdd5513503fc0f8c" }
 - { record: package.tote, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "017c7880e6bd6cd8" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
 - { record: parcel.treistun.ashfall-camp.2, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "38fe80aeecce0011" }
