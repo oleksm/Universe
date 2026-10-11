@@ -37,9 +37,9 @@ function:
   roll_rate: 1.8
 visual:
   format: "freefall-model/1"
-  path: "models/computer-fbw-s1/v1"
-  manifest_sha256: "91daf29b4b6e3f85dba09c3975043debf68708108066cb9511f6db13d9f3d589"
-  version: 1
+  path: "models/computer-fbw-s1/v2"
+  manifest_sha256: "8ffb5c2bb4584d411792fe6fde0fc6624069d27652f47a511b92a45d10f8ff85"
+  version: 2
   triangles: 972
 life: 473364000
 basis:
