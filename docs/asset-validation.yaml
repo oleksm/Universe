@@ -932,3 +932,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual package drawing, occupancy, placement, GPU appearance/cost and runtime ramp operation pending. Static empty crate; source-only 65-pose ramp QC. Structural/species transport qualification provisional."
+  - key: package.cryo-dewar
+    version: 1
+    manifest_sha256: "84494a9efd36f567c7e33690ef863ee2e30c8caa33b3edf94997e041ff81e35c"
+    installed: ac17dd66
+    game: "the loader (world::assets) at fso ac17dd66"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cryo-dewar/v1 (153628 bytes, bounds [-0.6, 0.0, -0.6] to [0.6, 1.9, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual package drawing, placement, forklift handling, GPU appearance/cost and temporal edges pending. Pressure, thermal, filling/relief and transport qualification remain provisional in about account."
