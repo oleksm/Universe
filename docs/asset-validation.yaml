@@ -1412,3 +1412,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU lighting and cost, final hull and service placement, loaded attachment strength, pressure, cryogenic shrinkage and boiloff remain unqualified; static exterior only."
+  - key: equipment.utility.mining-rig.s2
+    version: 1
+    manifest_sha256: "74050edc19bb8eabb1c80844122f938076aa65c6447bf3e97f6c18d89158014b"
+    installed: e0849b0d
+    game: "the loader (world::assets) at fso e0849b0d"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-mining-rig-s2/v1 (457256 bytes, bounds [-0.75, 0.0, -6.485] to [0.75, 1.5, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static rest package only. Actual game GPU appearance/cost, final hull and discharge interfaces, boom actuation, anchor deployment, winch and conveyor motion, live cutter behavior and cutting/attachment loads remain pending."
