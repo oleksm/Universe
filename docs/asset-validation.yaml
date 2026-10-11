@@ -1220,3 +1220,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game label printing, GPU look/cost, ramp runtime and animal transport qualification remain open; original ramp fixtures retained, tag attachment unqualified."
+  - key: package.cryo-dewar
+    version: 2
+    manifest_sha256: "d28409c385a20ca240bfa84fd22c50488e968682480686d754007833fb8d192d"
+    installed: 3e44e9d2
+    game: "the loader (world::assets) at fso 3e44e9d2"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cryo-dewar/v2 (155852 bytes, bounds [-0.6, 0.0, -0.6] to [0.6, 1.9, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game label printing and GPU look/cost remain open; plaque attachment, vessel pressure/thermal/relief/fill limits and transport qualification unverified."
