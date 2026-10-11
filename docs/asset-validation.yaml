@@ -884,3 +884,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, stock tint/temperature glow, actual crane/yoke placement and motion, game lighting, GPU cost and temporal filtering pending; refractory grade/thermal and6tonne lifting engineering unqualified."
+  - key: package.bale
+    version: 1
+    manifest_sha256: "95bbe92190f52cb0d08bbb82063c6010561994e5c8f00aeed2ec6decd57ee5eb"
+    installed: 01b24c68
+    game: "the loader (world::assets) at fso 01b24c68"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/bale/v1 (230788 bytes, bounds [-1.203, -0.0, -0.6082] to [1.203, 1.201, 0.6082]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, stock tint, actual forklift/bale attachment placement, game lighting, GPU cost and temporal filtering pending; twine/knot strength,700kg payload andstack3 unqualified."
