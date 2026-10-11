@@ -155,11 +155,13 @@ pub struct Camera {
 pub struct Projected {
     pub depth: f32,
     pub points: [glam::Vec2; 3],
+    pub distances: [f32; 3],
+    pub near: f32,
     pub colours: [universe_engine::Color; 3],
 }
 impl Projected {
     pub fn draw(&self, frame: &mut universe_engine::Frame) {
-        frame.hud_triangle_colored(self.points, self.colours);
+        frame.canvas_triangle(self.points, self.distances, self.near, self.colours);
     }
 }
 
@@ -209,6 +211,8 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
                 let triangle = [clipped[0], clipped[i], clipped[i + 1]];
                 output.push(Projected {
                     depth: triangle.iter().map(|v| v.0.z).sum::<f32>() / 3.,
+                    distances: triangle.map(|v| v.0.z.max(camera.near)),
+                    near: camera.near,
                     points: triangle.map(|(p, _)| {
                         camera.centre + glam::Vec2::new(p.x, -p.y) * (camera.focal / p.z)
                     }),
@@ -217,7 +221,6 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
             }
         }
     }
-    output.sort_unstable_by(|a, b| b.depth.total_cmp(&a.depth));
     output
 }
 

@@ -684,6 +684,7 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
         seg(frame, Vec3::new(-16.0, floor, o), Vec3::new(16.0, floor, o), Color([0.3, 0.5, 0.4, 0.25]));
     }
     let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near:0.2};
+    frame.canvas_scene();
     for t in crate::equipment_visual::project(&c.equipment, universe_engine::glam::Mat4::from_translation(-c.visual_origin), &camera) {t.draw(frame);}
     for [a, bb] in &c.members {
         seg(frame, *a, *bb, Color([1.0, 0.7, 0.3, 0.35]));
@@ -878,6 +879,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     seg(frame, target, Vec3::new(target.x, 0.0, target.z), Color([0.6, 0.6, 0.6, 0.4]));
     let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near:0.2};
     let pose = universe_engine::glam::Mat4::from_rotation_translation(d.rot.as_quat(), d.pos.as_vec3()) * universe_engine::glam::Mat4::from_translation(-d.craft.visual_origin);
+    frame.canvas_scene();
     for t in crate::equipment_visual::project(&d.craft.equipment, pose, &camera) {t.draw(frame);}
     for [a, b] in &d.craft.members {
         seg(frame, place(*a), place(*b), Color([1.0, 0.7, 0.3, 0.8]));

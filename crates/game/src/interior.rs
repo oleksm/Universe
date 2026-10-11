@@ -2709,6 +2709,7 @@ fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed>
 }
 
 fn draw_design_models(frame: &mut Frame, cam: &Camera, placed: &[crate::equipment_visual::Placed]) {
+    frame.canvas_scene();
     let camera = crate::equipment_visual::Camera {eye:cam.eye,right:cam.right,up:cam.up,forward:cam.forward,focal:cam.focal,centre:cam.centre,near:0.1};
     for t in crate::equipment_visual::project(placed, universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
 }
@@ -4353,6 +4354,7 @@ fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
 /// near ones over the far), cut where it passes behind the eye; the frame's
 /// members as lines among them; a cross at the middle; how to walk.
 fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
+    frame.canvas_scene();
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.02, 0.03, 0.06, 1.0]));
     let eye = (s.feet + universe_engine::glam::DVec3::Y * 1.65).as_vec3();
@@ -4457,7 +4459,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
     for (poly, c) in ground {
         let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
         for k in 1..q.len() - 1 {
-            frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+            frame.canvas_triangle([q[0], q[k], q[k + 1]], [poly[0].z.max(near), poly[k].z.max(near), poly[k+1].z.max(near)], near, [c; 3]);
         }
     }
     for (_, item) in items {
@@ -4466,7 +4468,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
             Item::Face(poly, c) => {
                 let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
                 for k in 1..q.len() - 1 {
-                    frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
+                    frame.canvas_triangle([q[0], q[k], q[k + 1]], [poly[0].z.max(near), poly[k].z.max(near), poly[k+1].z.max(near)], near, [c; 3]);
                 }
             }
             Item::Member(p, q) => frame.hud_line(screen(p), screen(q), Color([0.4, 0.95, 0.55, 0.9])),
@@ -6031,6 +6033,7 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     let forward = -eye.normalize();
     let right = forward.cross(Vec3::Y).normalize();
     let camera = crate::equipment_visual::Camera {eye,right,up:right.cross(forward),forward,focal:wc.y*0.85/size.length().max(1e-3)*distance,centre:wp+wc*0.5,near:0.1};
+    frame.canvas_scene();
     for t in crate::equipment_visual::project(&[visual], universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
     // Its size, mass, volume, what it draws.
     let mut y = p.y + 122.0;
