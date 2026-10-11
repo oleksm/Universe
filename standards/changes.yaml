@@ -1096,7 +1096,7 @@
 - { record: org.verdance, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "196f09d68b59e56a" }
 - { record: org.vireo, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "adf509b82f447687" }
 - { record: package.bale, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "efe85d95bbd03db8" }
-- { record: package.bar-bundle, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "18e9dc52fa06b05c" }
+- { record: package.bar-bundle, at: "2026-10-11T15:43:34Z", status: "", summary: "changed: visual", sha: "c838f87a7caed2ac" }
 - { record: package.bulk-bag, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "be61f9a6d4f26de0" }
 - { record: package.carton-pallet, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "456271c9627d723a" }
 - { record: package.coil, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "81331d17258af7c8" }
