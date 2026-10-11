@@ -3,7 +3,7 @@
   "$id": "urn:freefall:ship-code:1-draft",
   "title": "Ship code schema proposal",
   "description": "Research draft, not a shipped import format. Encodes every current authored Studio layer and visibility for all 26 layer entries. Semantic validation and shared-model integration remain required.",
-  "$comment": "Only JSON structural validation is covered here. Duplicate keys, reference resolution, physical consistency, finite arithmetic, asset availability, hull attachment, migrations and resource limits require importer checks. JSONC syntax is parsed before validation.",
+  "$comment": "Only structural validation of the parsed data is covered here. Duplicate keys, reference resolution, physical consistency, finite arithmetic, asset availability, hull attachment, migrations and resource limits require importer checks. YAML 1.2 authoring syntax is parsed to JSON-compatible values before validation; a source-preserving YAML editor remains to be implemented.",
   "type": "object",
   "properties": {
     "$schema": {

@@ -17,7 +17,10 @@
     "engineering viability",
     "runtime round-trip",
     "general pose consumer",
-    "JSONC comment preservation",
+    "production YAML editor comment preservation",
     "asset dependency locking"
-  ]
+  ],
+  "authoring_format": "YAML 1.2 (.ship.yaml)",
+  "yaml_example": "valid against ship.schema.json",
+  "yaml_json_equivalence": "exact parsed-value equality"
 }
