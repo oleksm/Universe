@@ -7,9 +7,9 @@ physical:
   length: 2.4
   width: 1.2
   height: 1.8
-  mass: 300
+  mass: 301.2
 holds:
-  volume: 4.0
+  volume: 4.15
   mass: 1500
 handling: walk
 stack: 1
@@ -22,5 +22,5 @@ visual:
   version: 1
   triangles: 2512
 basis:
-  - { of: [holds.volume], tier: derived, review: true, note: "The floor-to-roof space inside the frame, about 2.3 x 1.1 x 1.6 m: 4.0 m3 (was 5, the outside); blender's measured interior replaces it at install." }
+  - { of: [holds.volume], tier: derived, review: true, note: "Blender's measured interior, 2.30 x 1.08 x 1.686 m less the trough and feet: 4.15 m3 (was 5, the outside); its tare 301.2 kg from the drawn steel (7,850 kg/m3) and polymer (950)." }
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
