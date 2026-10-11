@@ -40,6 +40,12 @@ function:
   efficiency: 0.3
   burns: material.deuterium
   heat_to_hull: 1.0e-06
+visual:
+  format: "freefall-model/1"
+  path: "models/drive-torch-s2/v1"
+  manifest_sha256: "10a72428f987aa9bb225ef891a58ab8d89982c20ac69f661508dacc1c27a6ffe"
+  version: 1
+  triangles: 6476
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
