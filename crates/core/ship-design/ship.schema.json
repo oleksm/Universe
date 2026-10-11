@@ -1,0 +1,1147 @@
+{
+  "$defs": {
+    "Access": {
+      "additionalProperties": false,
+      "properties": {
+        "ends": {
+          "additionalProperties": {
+            "$ref": "#/$defs/PathEnd"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "groups": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Group"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "paths": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Path"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "points": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Point"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "side_doors": {
+          "additionalProperties": {
+            "$ref": "#/$defs/SideDoor"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "points",
+        "paths",
+        "groups",
+        "side_doors",
+        "ends"
+      ],
+      "type": "object"
+    },
+    "Beam": {
+      "additionalProperties": false,
+      "properties": {
+        "from_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "pinned": {
+          "items": {
+            "type": "boolean"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "stock": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "to_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "required": [
+        "from_m",
+        "to_m",
+        "stock",
+        "pinned"
+      ],
+      "type": "object"
+    },
+    "Camera": {
+      "additionalProperties": false,
+      "properties": {
+        "distance_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        },
+        "pitch_rad": {
+          "format": "double",
+          "type": "number"
+        },
+        "target_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "yaw_rad": {
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "target_m",
+        "yaw_rad",
+        "pitch_rad",
+        "distance_m"
+      ],
+      "type": "object"
+    },
+    "Coordinates": {
+      "enum": [
+        "right-handed-x-right-y-up-z-aft-metres"
+      ],
+      "type": "string"
+    },
+    "Deck": {
+      "additionalProperties": false,
+      "properties": {
+        "floor_m": {
+          "format": "double",
+          "type": "number"
+        },
+        "floors": {
+          "additionalProperties": {
+            "items": {
+              "items": {
+                "format": "double",
+                "type": "number"
+              },
+              "maxItems": 2,
+              "minItems": 2,
+              "type": "array"
+            },
+            "minItems": 3,
+            "type": "array"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "headroom_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        },
+        "ladders": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Ladder"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "stairs": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Stair"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "walls": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Wall"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "floor_m",
+        "headroom_m",
+        "floors",
+        "walls",
+        "ladders",
+        "stairs"
+      ],
+      "type": "object"
+    },
+    "Dependencies": {
+      "additionalProperties": false,
+      "properties": {
+        "models": {
+          "additionalProperties": {
+            "$ref": "#/$defs/ModelLock"
+          },
+          "type": [
+            "object"
+          ]
+        },
+        "policy": {
+          "$ref": "#/$defs/DependenciesPolicy"
+        },
+        "registry_revision": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "required": [
+        "policy"
+      ],
+      "type": "object"
+    },
+    "DependenciesPolicy": {
+      "enum": [
+        "compatible",
+        "locked"
+      ],
+      "type": "string"
+    },
+    "Equipment": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_m": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/EquipmentKind"
+        },
+        "notes": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        },
+        "record": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "slot": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "required": [
+        "kind",
+        "record",
+        "pose",
+        "envelope_m"
+      ],
+      "type": "object"
+    },
+    "EquipmentKind": {
+      "enum": [
+        "equipment"
+      ],
+      "type": "string"
+    },
+    "Format": {
+      "enum": [
+        "freefall.ship"
+      ],
+      "type": "string"
+    },
+    "Group": {
+      "additionalProperties": false,
+      "properties": {
+        "paths": {
+          "items": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "type": "array"
+        },
+        "walled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "paths",
+        "walled"
+      ],
+      "type": "object"
+    },
+    "Hatch": {
+      "additionalProperties": false,
+      "properties": {
+        "height_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        },
+        "shape": {
+          "$ref": "#/$defs/HatchShape"
+        },
+        "slide": {
+          "$ref": "#/$defs/HatchSlide"
+        },
+        "width_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "shape",
+        "width_m",
+        "height_m",
+        "slide"
+      ],
+      "type": "object"
+    },
+    "HatchShape": {
+      "enum": [
+        "round",
+        "square",
+        "hex",
+        "oct"
+      ],
+      "type": "string"
+    },
+    "HatchSlide": {
+      "enum": [
+        "none",
+        "up",
+        "side"
+      ],
+      "type": "string"
+    },
+    "Hold": {
+      "additionalProperties": false,
+      "properties": {
+        "envelope_m": {
+          "items": {
+            "exclusiveMinimum": 0,
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "kind": {
+          "$ref": "#/$defs/HoldKind"
+        },
+        "notes": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        },
+        "pose": {
+          "$ref": "#/$defs/Pose"
+        }
+      },
+      "required": [
+        "kind",
+        "pose",
+        "envelope_m"
+      ],
+      "type": "object"
+    },
+    "HoldKind": {
+      "enum": [
+        "hull_hold"
+      ],
+      "type": "string"
+    },
+    "Identity": {
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "notes": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "type": "object"
+    },
+    "Ladder": {
+      "additionalProperties": false,
+      "properties": {
+        "at_xz_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "to_deck": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "at_xz_m",
+        "to_deck"
+      ],
+      "type": "object"
+    },
+    "ModelLock": {
+      "additionalProperties": false,
+      "properties": {
+        "manifest_sha256": {
+          "pattern": "^[a-f0-9]{64}$",
+          "type": "string"
+        },
+        "version": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "version",
+        "manifest_sha256"
+      ],
+      "type": "object"
+    },
+    "Module": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/Equipment"
+        },
+        {
+          "$ref": "#/$defs/Hold"
+        }
+      ]
+    },
+    "Path": {
+      "additionalProperties": false,
+      "properties": {
+        "from": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "profile": {
+          "$ref": "#/$defs/Profile"
+        },
+        "to": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "profile"
+      ],
+      "type": "object"
+    },
+    "PathEnd": {
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "else": {
+            "not": {
+              "required": [
+                "hatch"
+              ]
+            }
+          },
+          "if": {
+            "properties": {
+              "state": {
+                "const": "door"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "hatch"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "end": {
+          "$ref": "#/$defs/PathEndEnd"
+        },
+        "hatch": {
+          "$ref": "#/$defs/Hatch"
+        },
+        "path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/$defs/PathEndState"
+        }
+      },
+      "required": [
+        "path",
+        "end",
+        "state"
+      ],
+      "type": "object"
+    },
+    "PathEndEnd": {
+      "enum": [
+        "from",
+        "to"
+      ],
+      "type": "string"
+    },
+    "PathEndState": {
+      "enum": [
+        "closed",
+        "open",
+        "door"
+      ],
+      "type": "string"
+    },
+    "PlacementConvention": {
+      "enum": [
+        "studio-centered-v1"
+      ],
+      "type": "string"
+    },
+    "Plate": {
+      "additionalProperties": false,
+      "properties": {
+        "height_m": {
+          "format": "double",
+          "type": "number"
+        },
+        "max_xz_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "min_xz_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "stock": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "min_xz_m",
+        "max_xz_m",
+        "height_m",
+        "stock"
+      ],
+      "type": "object"
+    },
+    "Point": {
+      "additionalProperties": false,
+      "properties": {
+        "hull_anchor": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        },
+        "name": {
+          "minLength": 1,
+          "type": [
+            "string"
+          ]
+        },
+        "position_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        }
+      },
+      "required": [
+        "position_m"
+      ],
+      "type": "object"
+    },
+    "Pose": {
+      "additionalProperties": false,
+      "properties": {
+        "position_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 3,
+          "minItems": 3,
+          "type": "array"
+        },
+        "rotation_xyzw": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 4,
+          "minItems": 4,
+          "type": "array"
+        }
+      },
+      "required": [
+        "position_m",
+        "rotation_xyzw"
+      ],
+      "type": "object"
+    },
+    "Profile": {
+      "additionalProperties": false,
+      "properties": {
+        "height_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        },
+        "placement": {
+          "$ref": "#/$defs/ProfilePlacement"
+        },
+        "shape": {
+          "$ref": "#/$defs/ProfileShape"
+        },
+        "width_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "shape",
+        "width_m",
+        "height_m",
+        "placement"
+      ],
+      "type": "object"
+    },
+    "ProfilePlacement": {
+      "enum": [
+        "floor",
+        "center"
+      ],
+      "type": "string"
+    },
+    "ProfileShape": {
+      "enum": [
+        "line",
+        "round",
+        "square",
+        "hex",
+        "oct"
+      ],
+      "type": "string"
+    },
+    "Requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "cargo_kg": {
+          "format": "double",
+          "minimum": 0,
+          "type": [
+            "number"
+          ]
+        },
+        "crew": {
+          "format": "double",
+          "minimum": 0,
+          "type": [
+            "number"
+          ]
+        },
+        "delta_v_m_s": {
+          "format": "double",
+          "minimum": 0,
+          "type": [
+            "number"
+          ]
+        },
+        "gravity_m_s2": {
+          "format": "double",
+          "minimum": 0,
+          "type": [
+            "number"
+          ]
+        },
+        "trip_s": {
+          "format": "double",
+          "minimum": 0,
+          "type": [
+            "number"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "SideDoor": {
+      "additionalProperties": false,
+      "properties": {
+        "fraction": {
+          "format": "double",
+          "maximum": 1,
+          "minimum": 0,
+          "type": "number"
+        },
+        "hatch": {
+          "$ref": "#/$defs/Hatch"
+        },
+        "path": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "side": {
+          "$ref": "#/$defs/SideDoorSide"
+        }
+      },
+      "required": [
+        "path",
+        "fraction",
+        "side",
+        "hatch"
+      ],
+      "type": "object"
+    },
+    "SideDoorSide": {
+      "enum": [
+        "left",
+        "right"
+      ],
+      "type": "string"
+    },
+    "Stair": {
+      "additionalProperties": false,
+      "properties": {
+        "from_xz_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "to_deck": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "to_xz_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "maxItems": 2,
+          "minItems": 2,
+          "type": "array"
+        },
+        "width_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "from_xz_m",
+        "to_xz_m",
+        "width_m",
+        "to_deck"
+      ],
+      "type": "object"
+    },
+    "Structure": {
+      "additionalProperties": false,
+      "properties": {
+        "landing_pads": {
+          "additionalProperties": {
+            "items": {
+              "format": "double",
+              "type": "number"
+            },
+            "maxItems": 3,
+            "minItems": 3,
+            "type": "array"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "members": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Beam"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "plates": {
+          "additionalProperties": {
+            "$ref": "#/$defs/Plate"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        }
+      },
+      "required": [
+        "members",
+        "plates",
+        "landing_pads"
+      ],
+      "type": "object"
+    },
+    "Version": {
+      "enum": [
+        "1-draft"
+      ],
+      "type": "string"
+    },
+    "View": {
+      "additionalProperties": false,
+      "properties": {
+        "camera": {
+          "$ref": "#/$defs/Camera"
+        },
+        "layers": {
+          "additionalProperties": false,
+          "properties": {
+            "access": {
+              "type": "boolean"
+            },
+            "access.hatches": {
+              "type": "boolean"
+            },
+            "access.lines": {
+              "type": "boolean"
+            },
+            "access.outlines": {
+              "type": "boolean"
+            },
+            "access.walls": {
+              "type": "boolean"
+            },
+            "clashes": {
+              "type": "boolean"
+            },
+            "decks": {
+              "type": "boolean"
+            },
+            "decks_2d": {
+              "type": "boolean"
+            },
+            "decks_2d.floors": {
+              "type": "boolean"
+            },
+            "decks_2d.walls": {
+              "type": "boolean"
+            },
+            "frame": {
+              "type": "boolean"
+            },
+            "grid_measures": {
+              "type": "boolean"
+            },
+            "hollow_map": {
+              "type": "boolean"
+            },
+            "hull": {
+              "type": "boolean"
+            },
+            "modules": {
+              "type": "boolean"
+            },
+            "points": {
+              "type": "boolean"
+            },
+            "points.dash": {
+              "type": "boolean"
+            },
+            "points.entry": {
+              "type": "boolean"
+            },
+            "points.laid": {
+              "type": "boolean"
+            },
+            "points.mining": {
+              "type": "boolean"
+            },
+            "points.mounts_engines": {
+              "type": "boolean"
+            },
+            "points.names": {
+              "type": "boolean"
+            },
+            "points.service": {
+              "type": "boolean"
+            },
+            "points.windows": {
+              "type": "boolean"
+            },
+            "pressure": {
+              "type": "boolean"
+            },
+            "reach": {
+              "type": "boolean"
+            }
+          },
+          "type": [
+            "object"
+          ]
+        },
+        "work_plane_m": {
+          "format": "double",
+          "type": [
+            "number"
+          ]
+        }
+      },
+      "type": "object"
+    },
+    "Wall": {
+      "additionalProperties": false,
+      "properties": {
+        "bulges_m": {
+          "items": {
+            "format": "double",
+            "type": "number"
+          },
+          "type": "array"
+        },
+        "doors": {
+          "additionalProperties": {
+            "$ref": "#/$defs/WallDoor"
+          },
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "type": "object"
+        },
+        "points_xz_m": {
+          "items": {
+            "items": {
+              "format": "double",
+              "type": "number"
+            },
+            "maxItems": 2,
+            "minItems": 2,
+            "type": "array"
+          },
+          "minItems": 2,
+          "type": "array"
+        },
+        "rail": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "points_xz_m",
+        "bulges_m",
+        "doors",
+        "rail"
+      ],
+      "type": "object"
+    },
+    "WallDoor": {
+      "additionalProperties": false,
+      "properties": {
+        "distance_m": {
+          "format": "double",
+          "minimum": 0,
+          "type": "number"
+        },
+        "height_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        },
+        "width_m": {
+          "exclusiveMinimum": 0,
+          "format": "double",
+          "type": "number"
+        }
+      },
+      "required": [
+        "distance_m",
+        "width_m",
+        "height_m"
+      ],
+      "type": "object"
+    }
+  },
+  "$id": "urn:freefall:ship-code:1-draft",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "$schema": {
+      "minLength": 1,
+      "type": [
+        "string"
+      ]
+    },
+    "access": {
+      "$ref": "#/$defs/Access"
+    },
+    "coordinates": {
+      "$ref": "#/$defs/Coordinates"
+    },
+    "decks": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Deck"
+      },
+      "propertyNames": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+      },
+      "type": "object"
+    },
+    "dependencies": {
+      "$ref": "#/$defs/Dependencies"
+    },
+    "design": {
+      "$ref": "#/$defs/Identity"
+    },
+    "format": {
+      "$ref": "#/$defs/Format"
+    },
+    "hull": {
+      "anyOf": [
+        {
+          "additionalProperties": false,
+          "properties": {
+            "model_sha256": {
+              "pattern": "^[a-f0-9]{64}$",
+              "type": [
+                "string"
+              ]
+            },
+            "record": {
+              "minLength": 1,
+              "type": "string"
+            }
+          },
+          "required": [
+            "record"
+          ],
+          "type": "object"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "modules": {
+      "additionalProperties": {
+        "$ref": "#/$defs/Module"
+      },
+      "propertyNames": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+      },
+      "type": "object"
+    },
+    "placement_convention": {
+      "$ref": "#/$defs/PlacementConvention"
+    },
+    "requirements": {
+      "$ref": "#/$defs/Requirements"
+    },
+    "structure": {
+      "$ref": "#/$defs/Structure"
+    },
+    "version": {
+      "$ref": "#/$defs/Version"
+    },
+    "view": {
+      "$ref": "#/$defs/View"
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "design",
+    "coordinates",
+    "placement_convention",
+    "hull",
+    "modules",
+    "access",
+    "structure",
+    "decks"
+  ],
+  "title": "Document",
+  "type": "object"
+}

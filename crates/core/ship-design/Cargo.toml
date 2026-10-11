@@ -1,0 +1,11 @@
+[package]
+name = "universe-ship-design"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+schemars = "1"
+yaml-rust2 = "0.10"
+jsonschema = { version = "0.33", default-features = false }
