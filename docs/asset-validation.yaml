@@ -1060,3 +1060,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, vendor label printing, handling, GPU cost and temporal filtering; label backing attachment durability and original bag/pallet capacity/handling qualification remain open."
+  - key: package.plate-stack
+    version: 2
+    manifest_sha256: "b3839fe2b2515aeebd052b75a48cf00e54068c8823cbe7d104a74d2950e611f8"
+    installed: cdedb432
+    game: "the loader (world::assets) at fso cdedb432"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/plate-stack/v2 (52504 bytes, bounds [-1.001, 0.0, -0.5] to [1.001, 0.591, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, label printing, handling/tint, GPU cost and temporal filtering; original capacity/tare/stacking/handling qualification remains open."
