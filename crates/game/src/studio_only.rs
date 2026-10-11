@@ -31,6 +31,11 @@ impl StudioOnly {
         if let Ok(t) = std::env::var("UNIVERSE_TOOL") {
             interior.use_tool(&t);
         }
+        if let Ok(at) = std::env::var("UNIVERSE_STUDIO_WALK") {
+            let values: Vec<f64> = at.split(',').filter_map(|v|v.parse().ok()).collect();
+            let at = <[f64;4]>::try_from(values).ok();
+            interior.stand_test(at);
+        }
         if let Ok(how) = std::env::var("UNIVERSE_BALANCE") {
             interior.balance_room(how == "trim");
         }

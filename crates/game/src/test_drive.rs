@@ -46,6 +46,9 @@ pub struct Leg {
 #[derive(Clone, Default)]
 pub struct Craft {
     pub name: String,
+    pub equipment: Vec<crate::equipment_visual::Placed>,
+    /// Design coordinates to centre on the physical COM exactly once.
+    pub visual_origin: Vec3,
     /// Its mass, full (kg), and its inertia about its middle (kg m2).
     pub mass: f64,
     pub inertia: DMat3,
@@ -680,12 +683,8 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
         seg(frame, Vec3::new(o, floor, -16.0), Vec3::new(o, floor, 16.0), Color([0.3, 0.5, 0.4, 0.25]));
         seg(frame, Vec3::new(-16.0, floor, o), Vec3::new(16.0, floor, o), Color([0.3, 0.5, 0.4, 0.25]));
     }
-    for (lo, hi) in &c.boxes {
-        let p = |x: bool, y: bool, z: bool| Vec3::new(if x { hi.x } else { lo.x }, if y { hi.y } else { lo.y }, if z { hi.z } else { lo.z });
-        for (a, bb) in [((0, 0, 0), (1, 0, 0)), ((0, 0, 0), (0, 1, 0)), ((0, 0, 0), (0, 0, 1)), ((1, 1, 1), (0, 1, 1)), ((1, 1, 1), (1, 0, 1)), ((1, 1, 1), (1, 1, 0)), ((1, 0, 0), (1, 1, 0)), ((1, 0, 0), (1, 0, 1)), ((0, 1, 0), (1, 1, 0)), ((0, 1, 0), (0, 1, 1)), ((0, 0, 1), (1, 0, 1)), ((0, 0, 1), (0, 1, 1))] {
-            seg(frame, p(a.0 == 1, a.1 == 1, a.2 == 1), p(bb.0 == 1, bb.1 == 1, bb.2 == 1), Color([0.6, 0.5, 0.85, 0.45]));
-        }
-    }
+    let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near:0.2};
+    for t in crate::equipment_visual::project(&c.equipment, universe_engine::glam::Mat4::from_translation(-c.visual_origin), &camera) {t.draw(frame);}
     for [a, bb] in &c.members {
         seg(frame, *a, *bb, Color([1.0, 0.7, 0.3, 0.35]));
     }
@@ -877,13 +876,9 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     let place = |p: Vec3| (d.pos + d.rot * p.as_dvec3()).as_vec3();
     // (Its shadow: straight down.)
     seg(frame, target, Vec3::new(target.x, 0.0, target.z), Color([0.6, 0.6, 0.6, 0.4]));
-    let part = Color([0.75, 0.6, 1.0, 0.85]);
-    for (lo, hi) in &d.craft.boxes {
-        let c = |x: bool, y: bool, z: bool| place(Vec3::new(if x { hi.x } else { lo.x }, if y { hi.y } else { lo.y }, if z { hi.z } else { lo.z }));
-        for (a, b) in [((0, 0, 0), (1, 0, 0)), ((0, 0, 0), (0, 1, 0)), ((0, 0, 0), (0, 0, 1)), ((1, 1, 1), (0, 1, 1)), ((1, 1, 1), (1, 0, 1)), ((1, 1, 1), (1, 1, 0)), ((1, 0, 0), (1, 1, 0)), ((1, 0, 0), (1, 0, 1)), ((0, 1, 0), (1, 1, 0)), ((0, 1, 0), (0, 1, 1)), ((0, 0, 1), (1, 0, 1)), ((0, 0, 1), (0, 1, 1))] {
-            seg(frame, c(a.0 == 1, a.1 == 1, a.2 == 1), c(b.0 == 1, b.1 == 1, b.2 == 1), part);
-        }
-    }
+    let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near:0.2};
+    let pose = universe_engine::glam::Mat4::from_rotation_translation(d.rot.as_quat(), d.pos.as_vec3()) * universe_engine::glam::Mat4::from_translation(-d.craft.visual_origin);
+    for t in crate::equipment_visual::project(&d.craft.equipment, pose, &camera) {t.draw(frame);}
     for [a, b] in &d.craft.members {
         seg(frame, place(*a), place(*b), Color([1.0, 0.7, 0.3, 0.8]));
     }

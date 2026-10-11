@@ -1,46 +1,58 @@
-# Installed models in Ship Studio DESIGN
+# Installed equipment across Ship Studio
 
 Run `./target/release/freefall-studio` (or `./target/release/freefall --studio`).
-Start a new design, choose MODULES, select Chemical engine S2 (hydrolox), and
-click the work plane to place it. T rotates a selected engine through its six
-thrust directions. Existing save/open and envelope selection remain available.
+In a new design, choose MODULES, select Chemical engine S2 (hydrolox), and click
+the work plane. T rotates a selected engine through six thrust directions.
+The same placed equipment appears in DESIGN, walk/PREVIEW, BALANCE and TEST DRIVE.
 
-Catalogue `Fitted.key` resolves the installed registry visual through the checked
-asset manifest and GLB loader. The shared immutable cache also supplies mounted
-flight models. Unsupported skin/morph/clip data or failed package checks retain
-the envelope fallback and log once. A motion sidecar alone is allowed for neutral
-studio drawing; flight's articulated-motion gate remains in place.
+`equipment_visual::Placed` is the common visual representation. It resolves
+`Fitted.key` through one hash-checked asset cache, selects an installed mesh or
+fallback once, and stores its material colours and design-space transform.
+The rotating catalogue card uses this same representation too. Every mode uses
+the same projector, lighting, near-plane clipping and triangle
+ordering; only the camera and parent pose differ. Mounted flight shares the
+checked package/PBR cache but keeps its operational-motion acceptance gate.
 
-The mesh's baked root transforms are retained. Its actual bounds centre is
-subtracted once, then its +Y thrust axis is rotated to the block's saved thrust
-direction and translated to the existing block centre. Geometry remains in
-metres with no stretching to match a resized design envelope. The envelope
-continues to represent the saved planning dimensions, not a new mesh collision
-shape. No record sizes, physical calculations, saved schema or model packages
-were changed.
+Authored GLB root transforms and metres are preserved. A model's bounds centre
+is subtracted once, its +Y thrust axis is rotated to the saved engine direction,
+and it is translated to the design block centre. Walk and DESIGN use that frame
+directly. BALANCE subtracts physical COM once. TEST DRIVE adds craft rotation
+and position after that subtraction. Members and physical boxes already stored
+relative to COM are not recentered again.
 
-The design canvas draws actual mesh triangles, material base colours and
-camera-relative studio lighting. It sorts all placed module triangles together;
-this painter-based canvas is not a depth-buffered PBR view, and intersecting
-triangles can have ordering artifacts. Textures, operational animation and
-physical collision are not enabled by this change. Selection/clash envelopes
-remain overlaid, and unmodelled catalogue entries retain their box/ellipsoid.
+Block dimensions, selection, placement, saved schema and physical calculations
+remain independent of the visual mesh. The walker retains the previous physical
+triangles; test drive retains its existing contact boxes. Neither acquires mesh
+collision or operational animation from this change. Skin/morph/clip data and
+failed packages fall back with a once-only warning. A motion sidecar alone does
+not prevent drawing the neutral rigid GLB.
 
-Validation capture: `out/review/studio-equipment-v1/design.png` shows a fresh
-hull-free saved design containing two CH-S2 instances, one upright and one
-forward-thrusting. Vulkan completed 120 frames; both real meshes, feed ducts and
-nozzles were visually inspected. Fixture/save, GLB, binary and PNG hashes are in
-that folder's `validation.json`. The six-axis orientation/centering and save
-round-trip test passes. Registry build passes. A live window was launched using
-an isolated review data directory so existing owner saves remain untouched:
+The shared studio canvas draws actual triangles with material base colours and
+camera-relative studio shading. It is a painter-based canvas, not flight PBR:
+textures are not sampled and intersecting triangles can have ordering artifacts.
+Walk meshes join the walls' depth ordering. Selection/clash envelopes remain
+available in DESIGN. Missing models share one box/ellipsoid visual fallback;
+physical airlock passages and ramps retain their separate collision treatment.
+
+Validation uses one hull-free saved design with two CH-S2 instances, upright and
+forward-thrusting, across all modes. The isolated review data directory leaves
+normal owner saves untouched. Reproduce the review design with:
 
 ```
 XDG_DATA_HOME="$PWD/out/review/studio-equipment-v1/data" UNIVERSE_TOOL=modules \
   ./target/release/freefall-studio installed-equipment-review
 ```
 
-Without the isolated data override, the standard launcher uses your normal
-saved designs. New designs use the same installed-model drawing path.
+Review-only startup controls select existing modes: `UNIVERSE_BALANCE=trim`,
+`UNIVERSE_DRIVE=0`, or `UNIVERSE_STUDIO_WALK=0,0.45,8,0` (feet x,y,z and yaw).
+Ordinary UI controls use the same paths. Without XDG_DATA_HOME, the launcher uses
+normal saved designs. Earlier DESIGN-only capture evidence is in
+`out/review/studio-equipment-v1`; consolidated captures are in
+`out/review/studio-equipment-v2`.
 
-Workspace validation: 133 tests passed, including the new six-axis design test;
-both release launchers built successfully. No operational-motion gate changed.
+Final validation: 135 workspace tests passed, the registry build passed, and both
+release binaries rebuilt. All four Vulkan captures were inspected; their binary,
+saved-design and image hashes are recorded in `out/review/studio-equipment-v2/captures.json`.
+The test-drive fixture has only engines, so its missing fuel/gear and contact
+warnings are expected; this validates drawing, not flight readiness. The rebuilt
+Studio was launched with the isolated review design above.

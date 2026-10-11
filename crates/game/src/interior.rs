@@ -2700,44 +2700,17 @@ fn push_of(b: &Block, f: &Fitted) -> Option<(Vec3, f64)> {
     f.push.map(|(d, t)| (b.push.unwrap_or(d), t))
 }
 
-/// Installed engine models use +Y thrust; design blocks store the commanded
-/// direction. Bounds centring is a design convention, never a hull mount offset.
-fn design_visual_rotation(b: &Block, f: &Fitted) -> universe_engine::glam::Quat {
-    push_of(b, f).and_then(|(d, _)| d.try_normalize())
-        .map_or(universe_engine::glam::Quat::IDENTITY, |d| universe_engine::glam::Quat::from_rotation_arc(Vec3::Y, d))
+fn placed_module(b: &Block, f: Option<&Fitted>) -> crate::equipment_visual::Placed {
+    crate::equipment_visual::placed(f.map_or("",|f|f.key.as_str()), b.at, f.and_then(|f|push_of(b,f).map(|p|p.0)), || b.faces(f.is_some_and(|f|f.round)).into_iter().map(|(t,_)|t).collect())
 }
 
-/// The design canvas uses its own camera and HUD triangles. Draw the installed
-/// neutral meshes in that same projection, sorting all modules together. This is
-/// a material-colour design preview, not the operational PBR/motion renderer.
-fn draw_design_models(frame: &mut Frame, cam: &Camera, interior: &Interior) {
-    if !interior.shown(layer::MODULES) { return; }
-    let mut triangles = Vec::new();
-    let light = (-cam.forward + cam.up * 0.7 - cam.right * 0.4).normalize();
-    for b in &interior.plan.blocks {
-        let Some(f) = interior.fit.iter().find(|f| f.id == kind(&b.id)) else { continue };
-        let Some(visual) = crate::equipment_visual::get(&f.key) else { continue };
-        let rotation = design_visual_rotation(b, f);
-        for primitive in &visual.model.data.primitives {
-            let material = visual.model.data.materials.get(primitive.material);
-            let base = material.map_or([0.6, 0.6, 0.6, 1.0], |m| m.base_color);
-            for indices in primitive.indices.chunks_exact(3) {
-                let vertices = [indices[0], indices[1], indices[2]].map(|i| primitive.vertices[i as usize]);
-                let positions = vertices.map(|v| b.at + rotation * (Vec3::from(v.pos) - visual.centre));
-                let [Some(a), Some(c), Some(d)] = positions.map(|p| cam.project(p)) else { continue };
-                let geometric_normal = (positions[1]-positions[0]).cross(positions[2]-positions[0]);
-                if !material.is_some_and(|m| m.double_sided) && geometric_normal.dot(cam.eye-positions[0]) <= 0.0 { continue; }
-                let colours = vertices.map(|v| {
-                    let normal = rotation * Vec3::from(v.normal);
-                    let shade = 0.3 + 0.7 * normal.dot(light).max(0.0);
-                    Color([base[0]*shade, base[1]*shade, base[2]*shade, base[3]])
-                });
-                triangles.push(((a.1+c.1+d.1)/3.0, [a.0,c.0,d.0], colours));
-            }
-        }
-    }
-    triangles.sort_unstable_by(|a,b| b.0.total_cmp(&a.0));
-    for (_, points, colours) in triangles { frame.hud_triangle_colored(points, colours); }
+fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed> {
+    interior.plan.blocks.iter().map(|b| placed_module(b, interior.fit.iter().find(|f|f.id==kind(&b.id)))).collect()
+}
+
+fn draw_design_models(frame: &mut Frame, cam: &Camera, placed: &[crate::equipment_visual::Placed]) {
+    let camera = crate::equipment_visual::Camera {eye:cam.eye,right:cam.right,up:cam.up,forward:cam.forward,focal:cam.focal,centre:cam.centre,near:0.1};
+    for t in crate::equipment_visual::project(placed, universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
 }
 
 /// Whether a placed engine has a swivel at it that bears its thrust: it can turn to
@@ -4135,6 +4108,7 @@ struct Stand {
     /// all); the frame's members as lines; the rooms (axis ends, half width,
     /// half height), to know when the walker's inside.
     faces: Vec<([Vec3; 3], Color)>,
+    equipment: Vec<crate::equipment_visual::Placed>,
     rooms: Vec<(Vec3, Vec3, f32, f32)>,
     /// Each module's name on each face of its box: the face's middle, which way it
     /// faces, how wide it is (m), the name.
@@ -4203,6 +4177,7 @@ impl Interior {
             faces.push(([c[0], c[1], c[2]], colour));
             faces.push(([c[0], c[2], c[3]], colour));
         }
+        let structure_faces = faces.len();
         // Its modules: solid, but an airlock a passage and a ramp a slope; each one's
         // name on every face of its box, to know what's walked past.
         let airlocks: Vec<&Block> = self.plan.blocks.iter().filter(|b| kind_of(b) == "airlock").collect();
@@ -4259,6 +4234,7 @@ impl Interior {
         }
         let tris: Vec<[DVec3; 3]> = faces.iter().map(|(t, _)| t.map(|p| p.as_dvec3())).collect();
         let mesh = universe_sim::world::walk::WalkMesh::new(&tris);
+        faces.truncate(structure_faces); // drawing is resolved once; collision stays above
         // The shafts: walled rooms standing upright.
         let shafts = (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).filter_map(|k| {
             let (a, b) = self.plan.axis(k);
@@ -4266,6 +4242,7 @@ impl Interior {
         }).collect();
         let (feet, yaw) = start.unwrap_or_else(|| (Vec3::new(0.0, ground, -40.0), 0.0));
         Stand {
+            equipment: placed_equipment(self),
             mesh,
             faces,
             labels,
@@ -4410,6 +4387,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
     // (Everything to draw, with its distance: faces, then the members.)
     enum Item {
         Face(Vec<Vec3>, Color),
+        Equipment(crate::equipment_visual::Projected),
         Member(Vec3, Vec3),
         Label(Vec2, String, f32),
     }
@@ -4433,6 +4411,10 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
             let depth = poly.iter().map(|p| p.z).sum::<f32>() / poly.len() as f32;
             items.push((depth, Item::Face(poly, c)));
         }
+    }
+    let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near};
+    for t in crate::equipment_visual::project(&s.equipment, universe_engine::glam::Mat4::IDENTITY, &camera) {
+        items.push((t.depth, Item::Equipment(t)));
     }
     // (Inside a room, its walls hide the frame round it: no members.)
     let head = eye;
@@ -4480,6 +4462,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
     }
     for (_, item) in items {
         match item {
+            Item::Equipment(t) => t.draw(frame),
             Item::Face(poly, c) => {
                 let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
                 for k in 1..q.len() - 1 {
@@ -5094,6 +5077,8 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
     let (lo, hi) = boxes.iter().fold((Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)), |(a, z), b| (a.min(b.0), z.max(b.1)));
     Craft {
         name: i.plan.hull.clone(),
+        equipment: placed_equipment(i),
+        visual_origin: mid32,
         mass: total,
         inertia,
         actuators,
@@ -6034,23 +6019,19 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
         None => "THE HULL'S OWN".to_string(),
     };
     frame.text_scaled(p + Vec2::new(8.0, 19.0), &line.chars().take(44).collect::<String>(), LABEL.scale(0.7), 0.55);
-    // Its shape, turning (a box, or a tank's ball or egg), in a window of its own.
+    // Its shared neutral visual, turning in a window of its own.
     let (wp, wc) = (p + Vec2::new(8.0, 32.0), Vec2::new(c.x - 16.0, 84.0));
     frame.hud_box(wp, wc, LABEL.scale(0.25));
     let size = block.map_or(f.size, |b| b.size);
-    let shape = Block { id: String::new(), at: Vec3::ZERO, size, push: None };
+    let shape = Block { id: f.id.clone(), at: Vec3::ZERO, size, push: block.and_then(|b|b.push) };
+    let visual = placed_module(&shape, Some(f));
     let (yaw, tilt) = (interior.spin * 0.5, 0.45f32);
-    let turn = |q: Vec3| {
-        let (sy, cy) = yaw.sin_cos();
-        let r = Vec3::new(q.x * cy + q.z * sy, q.y, -q.x * sy + q.z * cy);
-        let (st, ct) = tilt.sin_cos();
-        Vec2::new(r.x, -(r.y * ct - r.z * st))
-    };
-    let k = (wc.y * 0.85) / size.length().max(1e-3);
-    let mid = wp + wc * 0.5;
-    for [a, b] in shape.edges(f.round) {
-        frame.hud_line(mid + turn(a) * k, mid + turn(b) * k, MODULE);
-    }
+    let distance = size.length().max(1e-3)*25.;
+    let eye = Vec3::new(yaw.sin()*tilt.cos(),tilt.sin(),yaw.cos()*tilt.cos())*distance;
+    let forward = -eye.normalize();
+    let right = forward.cross(Vec3::Y).normalize();
+    let camera = crate::equipment_visual::Camera {eye,right,up:right.cross(forward),forward,focal:wc.y*0.85/size.length().max(1e-3)*distance,centre:wp+wc*0.5,near:0.1};
+    for t in crate::equipment_visual::project(&[visual], universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
     // Its size, mass, volume, what it draws.
     let mut y = p.y + 122.0;
     let dims = format!("L {:.2} X W {:.2} X H {:.2} M", f.size.z, f.size.x, f.size.y);
@@ -8138,7 +8119,8 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The modules placed: faintly filled, outlined (picked or under the cursor lit;
     // clashing red), named.
-    draw_design_models(frame, &cam, interior);
+    let module_visuals = if interior.shown(layer::MODULES) { placed_equipment(interior) } else { Vec::new() };
+    draw_design_models(frame, &cam, &module_visuals);
     let block_clash = interior.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
     for (n, b) in plan.blocks.iter().enumerate().filter(|_| interior.shown(layer::MODULES)) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
@@ -8159,12 +8141,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             }
         }
         let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES) { CLASH } else { MODULE };
-        let has_visual = crate::equipment_visual::get(&f.key).is_some();
-        for (t, _) in b.faces(f.round).into_iter().filter(|_| !has_visual) {
-            if let [Some((p, _)), Some((q, _)), Some((r, _))] = t.map(|p| cam.project(p)) {
-                frame.hud_triangle_colored([p, q, r], [Color([col.0[0], col.0[1], col.0[2], if f.round { 0.025 } else { 0.07 }]); 3]);
-            }
-        }
+        let has_visual = module_visuals.get(n).is_some_and(|v|v.installed);
         for [p, q] in b.edges(f.round).into_iter().filter(|_| !has_visual || lit || (block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES))) {
             seg(frame, p, q, Color([col.0[0], col.0[1], col.0[2], 0.85]));
         }
@@ -8858,6 +8835,35 @@ mod design_visual_tests {
     use super::*;
 
     #[test]
+    fn studio_modes_share_placement_and_keep_collision_separate() {
+        use universe_engine::glam::{Mat4, Quat};
+        let mut i = Interior::new();
+        i.new_design(None);
+        i.refit();
+        let f = i.fit.iter().find(|f|f.key=="equipment.engine.ch.s2").unwrap();
+        i.plan.blocks = vec![Block {id:format!("{}#1",f.id),at:Vec3::new(7.,3.,-2.),size:f.size,push:Some(Vec3::X)}];
+        let saved = serde_json::to_string(&i.plan).unwrap();
+        let design = placed_equipment(&i);
+        let walk = i.stand_up();
+        let craft = craft(&i);
+        assert_eq!(design.len(),1);
+        assert_eq!(walk.equipment.len(),1);
+        assert_eq!(craft.equipment.len(),1);
+        let vertex = design[0].faces[0].positions[0];
+        let design_point = design[0].transform.transform_point3(vertex);
+        assert!(walk.equipment[0].transform.transform_point3(vertex).abs_diff_eq(design_point,1e-6));
+        let rotation = Quat::from_euler(universe_engine::glam::EulerRot::XYZ,0.3,0.5,0.7);
+        let translation = Vec3::new(10.,20.,30.);
+        let parent = Mat4::from_rotation_translation(rotation,translation)*Mat4::from_translation(-craft.visual_origin);
+        let flown = (parent*craft.equipment[0].transform).transform_point3(vertex);
+        assert!(flown.abs_diff_eq(translation+rotation*(design_point-craft.visual_origin),1e-5));
+        let top = i.plan.blocks[0].at.y+i.plan.blocks[0].size.y*0.5;
+        let (distance,_) = walk.mesh.ray(universe_engine::glam::DVec3::new(7.,10.,-2.),universe_engine::glam::DVec3::NEG_Y,20.).unwrap();
+        assert!((distance-(10.-f64::from(top))).abs()<1e-6);
+        assert_eq!(serde_json::to_string(&i.plan).unwrap(),saved);
+    }
+
+    #[test]
     fn installed_engine_orientation_preserves_design_and_save() {
         let f = catalogue().iter().find(|f| f.key == "equipment.engine.ch.s2").expect("CH-S2 catalogue entry");
         for direction in [Vec3::X, Vec3::NEG_X, Vec3::Y, Vec3::NEG_Y, Vec3::Z, Vec3::NEG_Z] {
@@ -8865,7 +8871,7 @@ mod design_visual_tests {
             let saved = serde_json::to_string(&block).unwrap();
             let reopened: Block = serde_json::from_str(&saved).unwrap();
             assert_eq!(block, reopened);
-            let rotation = design_visual_rotation(&reopened, f);
+            let rotation = crate::equipment_visual::rotation(push_of(&reopened, f).map(|p|p.0));
             assert!((rotation * Vec3::Y).abs_diff_eq(direction, 1e-6));
             let centre = Vec3::new(0.01625, -1.15, 0.01625);
             let at = |p: Vec3| reopened.at + rotation * (p - centre);
