@@ -243,3 +243,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Equipment drawing at mounts; radar75kW heat accounting and ship coolant hookup; final hull fit; GPU appearance/cost and temporal edges; RF/thermal/structural qualification"
+  - key: equipment.transponder.s1
+    version: 1
+    manifest_sha256: "b89cbc78acfe21a741db81c382756308303e40a28d26f71b7cb1cab9f3fc3f36"
+    installed: 382d7da5
+    game: "the loader (world::assets) at fso 382d7da5"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/transponder-s1/v1 (45304 bytes, bounds [-0.109, 0.0, -0.075] to [0.109, 0.17, 0.075]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final rear harness and hull aperture fit; RF and thermal qualification; static package only"
