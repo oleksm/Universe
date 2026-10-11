@@ -505,3 +505,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.sensors.radar.s1
+    version: 2
+    manifest_sha256: "476860e316d2123e1ee42ffab64e888a0fcd1791d1697c39c4e94f201c240cd0"
+    installed: e6d65277beac69e5c42dbcd50a91ccdac658588a
+    game: "the loader (world::assets) at fso e6d65277"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/sensors-radar-s1/v2 (55432 bytes, bounds [-2.0, 0.0, -1.0] to [2.0, 0.1, 1.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
