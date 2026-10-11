@@ -1103,7 +1103,7 @@
 - { record: package.cold-crate, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "4b182c7cff55d93c" }
 - { record: package.crate-heavy, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "609d9747b50fb383" }
 - { record: package.cryo-dewar, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "0f780c9b0c15cdd6" }
-- { record: package.fish-tank, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "d588cc6b99dab0de" }
+- { record: package.fish-tank, at: "2026-10-11T15:38:31Z", status: "", summary: "changed: visual", sha: "91619bb6d4da0bf7" }
 - { record: package.gas-rack, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "0f919e38dc1715a8" }
 - { record: package.ladle, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "96b4da6de850ed23" }
 - { record: package.livestock-crate, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: label", sha: "f51948252e67b3c8" }
