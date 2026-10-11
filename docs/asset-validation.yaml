@@ -213,3 +213,18 @@ validations:
       - "cargo crossing: no carrier and no container forms in the registry yet"
     pending:
       - "combined hull and the live five-part gate (engine)"
+  - key: equipment.comm.basic.s1
+    version: 1
+    manifest_sha256: "7a5a84a638851bc1330c37a6c6039aeb03b139ba4680dd6c4f327b9869de7bba"
+    installed: 938e637d
+    game: "the loader (world::assets) at fso 938e637d"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/comm-basic-s1/v1 (200648 bytes, bounds [-1.5, 0.0, -1.5] to [1.5, 1.4907, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Equipment drawing at mounts; live gimbal pointing and RF boresight consumer; GPU appearance/cost and temporal edges; final hull fit and structural/RF qualification"
