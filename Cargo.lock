@@ -2624,6 +2624,7 @@ version = "0.1.0"
 dependencies = [
  "glam",
  "gltf",
+ "log",
  "png",
  "rayon",
  "ron",

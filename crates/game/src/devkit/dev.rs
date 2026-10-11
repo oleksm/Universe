@@ -1170,6 +1170,7 @@ fn s_alarms(app: &mut App, _name: &str, _c: &Ctx) {
 }
 
 fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
+    app.observer.studio = std::env::var_os("UNIVERSE_STUDIO").is_some();
     // Our ship as the hull UNIVERSE_HULL names (default the hauler),
     // in sunlight by the home station, seen from the side and above.
     let key = std::env::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
@@ -1179,6 +1180,12 @@ fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
         u.vessels[universe_sim::PLAYER].ship.class = h;
         u.vessels[universe_sim::PLAYER].ship.fit = None;
         u.vessels[universe_sim::PLAYER].ship.refresh();
+    }
+    if let Some(slot) = std::env::var("UNIVERSE_INSPECT_SLOT").ok().filter(|s| !s.is_empty()) {
+        let ship=&u.vessels[universe_sim::PLAYER].ship;
+        if let Some(at)=crate::mounted::for_ship(ship).slot_origin(&slot) {
+            app.observer.inspection_offset=at-ship.spec().shape().made_centre;
+        } else { log::warn!("inspection slot {slot} has no ready mounted visual"); }
     }
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Ship;

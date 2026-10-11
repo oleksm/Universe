@@ -25,7 +25,9 @@ use std::fmt::Write;
 use std::path::{Path, PathBuf};
 
 fn main() {
-    let root = Path::new("../../../standards");
+    println!("cargo:rerun-if-env-changed=UNIVERSE_REGISTRY_ROOT");
+    let root_path = std::env::var_os("UNIVERSE_REGISTRY_ROOT").map(PathBuf::from).unwrap_or_else(|| PathBuf::from("../../../standards"));
+    let root = root_path.as_path();
     println!("cargo:rerun-if-changed={}", root.display());
     let mut files = Vec::new();
     schemas(root, &mut files);

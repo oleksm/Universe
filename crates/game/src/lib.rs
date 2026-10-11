@@ -27,6 +27,7 @@ mod scene;
 mod interior;
 mod shipyard;
 mod studio;
+mod mounted;
 mod studio_only;
 mod test_drive;
 mod planet_studio;
@@ -1337,7 +1338,7 @@ impl App {
     fn focus_position(&self) -> DVec3 {
         match self.observer.focus {
             Focus::Body { body, .. } => self.view.positions[body],
-            Focus::Ship => self.view.ship_pos,
+            Focus::Ship => self.view.ship_pos + self.place(Who::Me).1 * self.observer.inspection_offset,
             Focus::Craft(i) => self.place(Who::Craft(i)).0,
         }
     }

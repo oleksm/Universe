@@ -59,8 +59,18 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     if body.len() < 4 {
         return Err("no geometry to make its hull from".into());
     }
+    let record = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual));
     let count = |prefix: &str| read.nodes.iter().filter(|n| n.0.starts_with(prefix)).count() as u8;
-    let slots = standard_slots(read.class.unwrap_or(2), count("mount_cargo").max(1), count("mount_hardpoint"), count("mount_utility"));
+    let inferred_slots = standard_slots(read.class.unwrap_or(2), count("mount_cargo").max(1), count("mount_hardpoint"), count("mount_utility"));
+    let slots = match record.filter(|h| !h.slots.is_empty()) {
+        // Keep registry names/sizes for represented kinds (including additional
+        // air/water/cabin slots). Unimplemented kinds stay explicitly unfitted.
+        Some(h) => h.slots.iter().filter_map(|s| {
+            crate::modules::SlotKind::from_record(s.kind)
+                .map(|kind| (s.name.clone(), kind, s.size as u8))
+        }).collect(),
+        None => inferred_slots,
+    };
     // Its nozzles, each driven by a slot by its name.
     let thrusters: Vec<(String, String, f64)> = read
         .nodes
@@ -86,14 +96,18 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let size = hi - lo;
     // (A hull the registry describes by this model weighs what its parts do, at its price;
     // any other, by its size.)
-    let record = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual));
+
     let recorded = record.and_then(|h| crate::goods::item(&h.identity.key)).map(|i| &content().stock[i]);
     let frame_mass = recorded.map_or(FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0), |h| h.mass);
     let price = recorded.map_or(PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>(), |h| h.price);
     // (Fitted as its record says, with its own hold, where the registry describes it: an
     // ore bay, not racks. Any other: the cheapest that fits each slot.)
     let fit = match record {
-        Some(h) if !h.fit.is_empty() => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).map(|f| (f.slot.clone(), f.item.clone())).collect(),
+        Some(h) if !h.fit.is_empty() => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).filter(|f| {
+            let available = content().handle::<Module>(&f.item).is_some();
+            if !available { log::warn!("{} slot {}: {} is not in the playable module catalogue; fitting held", h.identity.key, f.slot, f.item); }
+            available
+        }).map(|f| (f.slot.clone(), f.item.clone())).collect(),
         _ => stock_fit(&slots)?,
     };
     let bay = record.filter(|h| !h.fit.iter().any(|f| f.slot == "cargo")).map_or((0.0, 0.0), |h| (h.capacity.hold.unwrap_or(0.0), h.capacity.hold_volume.unwrap_or(0.0)));
@@ -250,6 +264,20 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
 #[cfg(test)]
 mod mount_fixture_tests {
     use super::*;
+
+    #[test]
+    fn imported_registry_slots_preserve_named_supported_fittings() {
+        let spec = hull_from_gltf(include_bytes!("../../../../assets/models/mc07.glb"), "assets/models/mc07.glb").unwrap();
+        let record = crate::ship::hull_record(&spec).unwrap();
+        for slot in record.slots.iter().filter(|s| crate::modules::SlotKind::from_record(s.kind).is_some()) {
+            let actual = spec.slots.iter().find(|s| s.name == slot.name).expect("registry slot lost");
+            assert_eq!(actual.size, slot.size as u8);
+            if let Some(fit) = record.fit.iter().find(|f| f.slot == slot.name && content().handle::<Module>(&f.item).is_some()) {
+                let fitted = spec.fit.iter().find(|(s,_)| s == &slot.name).expect("fitted item lost");
+                assert_eq!(content().get(fitted.1).key, fit.item);
+            }
+        }
+    }
 
     #[test]
     fn cargo_ramp_uses_authored_hinge_not_boarding_marker() {

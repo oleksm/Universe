@@ -37,6 +37,8 @@ pub struct Model {
     pub glb: Vec<u8>,
     pub lo: [f64; 3],
     pub hi: [f64; 3],
+    /// A declared motion contract requires an articulated consumer.
+    pub has_motion: bool,
 }
 
 /// The model `visual` names, from the assets store, checked (the manifest against the record's hash,
@@ -55,7 +57,8 @@ pub fn model(visual: &Visual) -> Result<Model, String> {
         Some([c.get(0)?.as_f64()?, c.get(1)?.as_f64()?, c.get(2)?.as_f64()?])
     };
     let (lo, hi) = corner(0).zip(corner(1)).unwrap_or(([0.0; 3], [0.0; 3]));
-    Ok(Model { glb, lo, hi })
+    let has_motion = manifest.get("motion").is_some_and(|v| !v.is_null());
+    Ok(Model { glb, lo, hi, has_motion })
 }
 
 #[cfg(test)]
@@ -87,3 +90,6 @@ mod tests {
         let _ = std::fs::remove_dir_all(&dir);
     }
 }
+
+#[path = "assets_mounts.rs"]
+pub mod mounts;

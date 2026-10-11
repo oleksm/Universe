@@ -319,6 +319,7 @@ impl Content {
                 ranges.extend(more.ranges);
             }
         }
+        inherit_renamed_prices(&mut prices, &aliases)?;
         let price = |key: &str| prices.get(key).copied().ok_or_else(|| format!("prices.ron: no price for {key}"));
         // Unimplemented equipment enters the playable catalogue only when explicitly
         // priced by game content. Do not invent prices for the registry's prototypes.
@@ -532,6 +533,43 @@ let c = Content { shapes, materials, brands, structures, modules, hulls, goods, 
     /// The packs loaded, in order.
     pub fn packs(&self) -> &[String] {
         &self.packs
+    }
+}
+
+/// Preserve an explicitly authored game price across a registry rename. A new
+/// key's explicit price wins; ambiguous inherited prices fail deterministically.
+fn inherit_renamed_prices(prices: &mut HashMap<String,f64>, aliases: &HashMap<String,String>) -> Result<(),String> {
+    let mut inherited = HashMap::new();
+    for (old,new) in aliases {
+        if prices.contains_key(new) {continue;}
+        if let Some(&value)=prices.get(old) {
+            if inherited.insert(new.clone(),value).is_some_and(|previous|previous!=value) {
+                return Err(format!("prices.ron: conflicting renamed prices for {new}"));
+            }
+        }
+    }
+    prices.extend(inherited);
+    Ok(())
+}
+
+#[cfg(test)]
+mod renamed_prices {
+    use super::*;
+    #[test]
+    fn preserves_old_price_without_overriding_new_price() {
+        let aliases=HashMap::from([("old".into(),"new".into())]);
+        let mut p=HashMap::from([("old".into(),14.)]);
+        inherit_renamed_prices(&mut p,&aliases).unwrap();
+        assert_eq!(p["new"],14.);
+        p.insert("new".into(),20.);
+        inherit_renamed_prices(&mut p,&aliases).unwrap();
+        assert_eq!(p["new"],20.);
+    }
+    #[test]
+    fn conflicting_old_prices_are_refused() {
+        let aliases=HashMap::from([("a".into(),"new".into()),("b".into(),"new".into())]);
+        let mut p=HashMap::from([("a".into(),1.),("b".into(),2.)]);
+        assert!(inherit_renamed_prices(&mut p,&aliases).is_err());
     }
 }
 
