@@ -964,3 +964,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual package drawing, placement, forklift handling, GPU appearance/cost and temporal edges pending. Pressure rating, gas filling/thermodynamics and structural/transport qualification remain provisional."
+  - key: package.fish-tank
+    version: 1
+    manifest_sha256: "8ef952f1977bf1d8511ec4d50b274566b16302920029eb4d2374a2a58ada6025"
+    installed: c21899a7
+    game: "the loader (world::assets) at fso c21899a7"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/fish-tank/v1 (221288 bytes, bounds [-0.6, 0.0, -0.517] to [0.601, 1.322, 0.522]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, vendor label printing, placement/handling, GPU appearance/cost and temporal filtering; oxygen/diffusion, stocking, thermal and structural qualification remain open. Tare estimate136.96kg vs provisional120kg remains assumption."
