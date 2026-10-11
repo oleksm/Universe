@@ -1,6 +1,8 @@
 //! Pure shared ship authoring: typed YAML document, schema and local semantics.
 //! Does not resolve registry/assets, read files, migrate saves, or accept a ship
 //! as structurally sound or flight-ready. Canonical emit is not a comment editor.
+mod patch;
+pub use patch::patch;
 mod schema;
 mod types;
 mod validation;

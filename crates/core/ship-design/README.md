@@ -41,3 +41,24 @@ Measured foundation check (2026-10-11, shared2CPU/8GiB, dev build): a1000-module
 bounded synthetic parser probe, not an editor/renderer performance claim.
 Thirteen focused tests cover the full draft fixture, scalar spelling traps,
 malformed input, schema parity/snapshot, source paths, deck references and limits.
+
+## Source patching
+
+`patch(&SourceDocument, &Document) -> Result<String>` validates the new document
+and checks that the original source still matches its parsed document. Unchanged
+input is returned byte-for-byte, including comments and newline style. Single-line
+scalar edits (including flow-array numbers) preserve surrounding source bytes and
+comment positions. Locations are reparsed rather than trusting mutable metadata.
+
+Structural edits and unsupported multiline scalar edits use canonical YAML plus
+an explicitly labelled comment appendix. Full-line comments are retained; inline
+comments retain their original source line as context. To avoid losing comments,
+this fallback conservatively retains every source line containing `#`, including
+some quoted/block-scalar hashes that are not comments. It does not preserve comment
+attachment or formatting in the fallback, and repeated fallback does not recursively
+prefix archived source. This is a bounded bridge, not a full YAML syntax editor.
+
+Every result reparses to the requested typed document. The normal parser limits
+apply; an oversized comment-preserving result returns an error instead of dropping
+comments. Callers must retain the original draft on errors and update their
+SourceDocument by parsing the successfully saved result.
