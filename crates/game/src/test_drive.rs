@@ -40,6 +40,7 @@ pub struct Leg {
 pub struct Craft {
     pub name: String,
     pub equipment: Vec<crate::equipment_visual::Placed>,
+    pub structure: Vec<crate::equipment_visual::Placed>,
     /// Design coordinates to centre on the physical COM exactly once.
     pub visual_origin: Vec3,
     /// Its mass, full (kg), and its inertia about its middle (kg m2).
@@ -613,7 +614,7 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
     }
     let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near:0.2};
     frame.canvas_scene();
-    for t in crate::equipment_visual::project(&c.equipment, universe_engine::glam::Mat4::from_translation(-c.visual_origin), &camera) {t.draw(frame);}
+    for visuals in [&c.equipment,&c.structure] {for t in crate::equipment_visual::project(visuals, universe_engine::glam::Mat4::from_translation(-c.visual_origin), &camera) {t.draw(frame);}}
     for [a, bb] in &c.members {
         seg(frame, *a, *bb, Color([1.0, 0.7, 0.3, 0.35]));
     }
@@ -806,7 +807,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near:0.2};
     let pose = universe_engine::glam::Mat4::from_rotation_translation(d.rot.as_quat(), d.pos.as_vec3()) * universe_engine::glam::Mat4::from_translation(-d.craft.visual_origin);
     frame.canvas_scene();
-    for t in crate::equipment_visual::project(&d.craft.equipment, pose, &camera) {t.draw(frame);}
+    for visuals in [&d.craft.equipment,&d.craft.structure] {for t in crate::equipment_visual::project(visuals, pose, &camera) {t.draw(frame);}}
     for [a, b] in &d.craft.members {
         seg(frame, place(*a), place(*b), Color([1.0, 0.7, 0.3, 0.8]));
     }
