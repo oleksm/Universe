@@ -473,3 +473,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.avionics.nav-full.s1
+    version: 2
+    manifest_sha256: "0138fa39cd2245e7c9a7831e74624213c0ef8a238afad1d0850e748cad1fc427"
+    installed: 45bd0edaef2a22f58cc4c6728b3044e50cfb2043
+    game: "the loader (world::assets) at fso 45bd0eda"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/avionics-nav-full-s1/v2 (42408 bytes, bounds [-0.217, 0.0, -0.15] to [0.217, 0.3308, 0.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
