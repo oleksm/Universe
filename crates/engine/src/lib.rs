@@ -35,3 +35,6 @@ pub use model::{GlobeMap, Mesh, Transform, WireModel};
 pub use pbr::PbrModel;
 pub use sunprobe::sun_seen;
 pub use worldmaps::WorldMaps;
+
+pub mod clipboard;
+pub mod text_editor;

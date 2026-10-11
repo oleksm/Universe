@@ -420,7 +420,7 @@ impl<G: Game> ApplicationHandler for Runner<G> {
                 if event.state == ElementState::Pressed
                     && let Some(text) = &event.text
                 {
-                    s.ctx.input.typed.extend(text.chars().filter(|c| !c.is_control()));
+                    s.ctx.input.text(text);
                 }
             }
             WindowEvent::MouseInput { state, button, .. } => {

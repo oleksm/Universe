@@ -4,6 +4,17 @@ use glam::Vec2;
 pub use winit::event::MouseButton;
 pub use winit::keyboard::KeyCode;
 
+/// Ordered editing input, including key repeats and modifiers at event time.
+#[derive(Clone, Debug)]
+pub enum TextEvent {
+    Key {
+        key: KeyCode,
+        control: bool,
+        shift: bool,
+    },
+    Text(String),
+}
+
 /// Per-frame input snapshot. "Pressed" sets are cleared after every frame.
 #[derive(Default)]
 pub struct Input {
@@ -19,6 +30,7 @@ pub struct Input {
     pub cursor: Vec2,
     /// Text typed this frame (printable characters, as the keyboard makes them).
     pub typed: String,
+    pub text_events: Vec<TextEvent>,
 }
 
 impl Input {
@@ -45,11 +57,31 @@ impl Input {
 
     pub(crate) fn key(&mut self, key: KeyCode, down: bool) {
         if down {
+            self.text_events.push(TextEvent::Key {
+                key,
+                control: self.down(KeyCode::ControlLeft) || self.down(KeyCode::ControlRight),
+                shift: self.down(KeyCode::ShiftLeft) || self.down(KeyCode::ShiftRight),
+            });
             if self.keys_down.insert(key) {
                 self.keys_pressed.insert(key);
             }
         } else {
             self.keys_down.remove(&key);
+        }
+    }
+
+    pub(crate) fn text(&mut self, text: &str) {
+        let text: String = text.chars().filter(|c| !c.is_control()).collect();
+        if self.down(KeyCode::ControlLeft)
+            || self.down(KeyCode::ControlRight)
+            || self.down(KeyCode::SuperLeft)
+            || self.down(KeyCode::SuperRight)
+        {
+            return;
+        }
+        self.typed.push_str(&text);
+        if !text.is_empty() {
+            self.text_events.push(TextEvent::Text(text));
         }
     }
 
@@ -74,6 +106,7 @@ impl Input {
         self.keys_pressed.clear();
         self.keys_down.clear();
         self.typed.clear();
+        self.text_events.clear();
     }
 
     pub(crate) fn end_frame(&mut self) {
@@ -82,5 +115,6 @@ impl Input {
         self.mouse_delta = Vec2::ZERO;
         self.scroll = 0.0;
         self.typed.clear();
+        self.text_events.clear();
     }
 }
