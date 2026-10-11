@@ -1104,7 +1104,7 @@
 - { record: package.crate-heavy, at: "2026-10-11T13:34:04Z", status: "", summary: "changed: visual", sha: "58631658381004d4" }
 - { record: package.cryo-dewar, at: "2026-10-11T13:37:32Z", status: "", summary: "first tracked", sha: "d1b2f90d81474ee9" }
 - { record: package.gas-rack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "aa025afe1f15cdbd" }
-- { record: package.ladle, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "3a19883b5e997acd" }
+- { record: package.ladle, at: "2026-10-11T14:09:39Z", status: "", summary: "changed: identity", sha: "cd6a92b7f065adf2" }
 - { record: package.livestock-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "e8b0c7026baa8a43" }
 - { record: package.plate-stack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "cd52c8d67d6bed33" }
 - { record: package.produce-crate, at: "2026-10-11T13:59:40Z", status: "", summary: "changed: visual", sha: "b5412101014d15db" }

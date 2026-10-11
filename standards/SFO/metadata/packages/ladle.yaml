@@ -2,7 +2,7 @@
 identity:
   key: package.ladle
   name: "Ladle"
-  description: "A refractory-lined steel ladle on trunnions: molten metal and hot ingots, from furnace to mould within the works."
+  description: "A refractory-lined steel ladle on trunnions: molten metal and hot ingots, from furnace to mould within the works. Its box is the vessel with its trunnions, foot ring and pour lip; the crane's lifting yoke belongs to the crane. The melt's surface at the top is its contents (tinted; any glow is the game's, by temperature)."
 physical:
   length: 2.0
   width: 2.0
