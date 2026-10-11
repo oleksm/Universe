@@ -378,3 +378,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static package only; pose24 chisel/well nominal zero clearance keeps combined motion and runtime held. Supported v04 hull fixture required. Production hull integration, full aim volume, continuous containment, breaker interaction, loads and GPU appearance/cost pending."
+  - key: equipment.cargo.rack.s3
+    version: 1
+    manifest_sha256: "3d816af1d4da8e5f31d5ec12079a7a01203285170bb6b33d77d272b5e1e82edb"
+    installed: 281f6a0b
+    game: "the loader (world::assets) at fso 281f6a0b"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-rack-s3/v1 (160500 bytes, bounds [-1.355, 0.0, -2.715] to [1.355, 2.71, 2.715]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Provisional static released rack exterior. 120x7 tube strength under20t/3g unqualified; internal deck stiffening and drives reserved mass only. Cargo locking/transfer physics, final hull placement and game GPU appearance/cost pending."
