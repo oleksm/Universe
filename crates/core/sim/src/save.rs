@@ -9,6 +9,7 @@
 //! earlier form.
 
 use serde::{Deserialize, Serialize};
+pub mod packing;
 use universe_avionics::route::Route;
 use universe_avionics::{Avionics, Clearance, NavTarget};
 use universe_world::Ship;
@@ -36,6 +37,9 @@ pub struct UniverseSave {
     pub credits: f64,
     #[serde(default)]
     pub hold: Vec<(GoodsRef, u32)>,
+    /// Physical cargo, works inventories and serial allocation state (v3+).
+    #[serde(default)]
+    pub packing: Option<packing::PackingSave>,
     /// What's been dug out of asteroids: ((system, field, rock), kg).
     #[serde(default)]
     pub mined: Vec<((usize, usize, usize), f64)>,
@@ -45,9 +49,9 @@ pub struct UniverseSave {
     pub standings: Vec<(usize, f64)>,
 }
 
-/// The save format's version: 2, the charted region's stars (1: content by key, in the old
-/// sparse galaxy; 0: goods by catalogue position).
-pub const SAVE_VERSION: u32 = 2;
+/// Save version 3 persists physical packages and allocation state (2: charted
+/// region; 1: content keys in the old galaxy; 0: catalogue positions).
+pub const SAVE_VERSION: u32 = 3;
 /// Saves before this were made in the old sparse galaxy: their stars are other stars now.
 pub const REGION_VERSION: u32 = 2;
 
@@ -85,6 +89,8 @@ struct SaveRecord {
     #[serde(default)]
     hold: Vec<(GoodsRef, u32)>,
     #[serde(default)]
+    packing: Option<packing::PackingSave>,
+    #[serde(default)]
     mined: Vec<((usize, usize, usize), f64)>,
     #[serde(default)]
     standings: Vec<(usize, f64)>,
@@ -121,6 +127,7 @@ impl From<SaveRecord> for UniverseSave {
             avionics,
             credits: r.credits,
             hold: r.hold,
+            packing: r.packing,
             mined: r.mined,
             standings: r.standings,
         }
@@ -173,6 +180,7 @@ impl Universe {
             avionics,
             credits: self.credits(),
             hold: self.hold().into_iter().map(|(good, units)| (GoodsRef::Key(self.world.goods[good].key.clone()), units)).collect(),
+            packing: Some(packing::PackingSave::capture(self)),
             mined: {
                 let mut m: Vec<_> = self.world.mined.iter().map(|(&k, &v)| (k, v)).collect();
                 m.sort_by_key(|e| e.0);
@@ -219,8 +227,11 @@ impl Universe {
                 self.services.ledger.settle(me, Asset::Goods(id), *units as f64, tick, cause);
             }
         }
-        self.vessels[crate::combat::PLAYER].ship.cargo = universe_services::market::cargo_mass(&self.world.goods, &self.hold());
-        self.vessels[crate::combat::PLAYER].ship.cargo_volume = universe_services::market::cargo_volume(&self.world.goods, &self.hold());
+        if let Some(packing) = save.packing {
+            packing.restore(self);
+        }
+        self.vessels[crate::combat::PLAYER].ship.cargo = self.services.ledger.cargo_mass(crate::combat::PLAYER, &self.world.goods);
+        self.vessels[crate::combat::PLAYER].ship.cargo_volume = self.services.ledger.cargo_volume(crate::combat::PLAYER, &self.world.goods);
         self.world.mined = save.mined.into_iter().collect();
         // Our standing with each system.
         self.services.standings.restore(crate::combat::PLAYER, save.standings.into_iter());
