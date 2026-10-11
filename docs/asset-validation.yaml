@@ -1444,3 +1444,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU lighting/cost, placement and final hull clearance; structural loads, deck, connections and cargo handling remain unqualified."
+  - key: equipment.computer.fbw.fast
+    version: 1
+    manifest_sha256: "135b377f16184ada8d663a60e0ac260abc040ccc9aa89ff27cd19b9c18c79941"
+    installed: f3e22159
+    game: "the loader (world::assets) at fso f3e22159"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/computer-fbw-fast/v1 (77044 bytes, bounds [-0.3, 0.0, -0.2] to [0.3, 0.3, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU lighting/cost, placement and mount clearance; 300 W thermal path, internal packing and loads remain unqualified."
