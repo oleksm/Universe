@@ -14,5 +14,11 @@ holds:
 handling: forklift
 stack: 2
 keeps: dry
+visual:
+  format: "freefall-model/1"
+  path: "models/bulk-bag/v1"
+  manifest_sha256: "037c6d74141843013ab0225a631b66be71322abf1a3b96f3533988aebad14b30"
+  version: 1
+  triangles: 1520
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

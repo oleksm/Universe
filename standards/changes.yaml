@@ -1097,7 +1097,7 @@
 - { record: org.vireo, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f2ca3f6a59fa774a" }
 - { record: package.bale, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "5ed960d178cdd4e0" }
 - { record: package.bar-bundle, at: "2026-10-11T04:02:29Z", status: "", summary: "changed: visual", sha: "2fdc4ab478cc1db3" }
-- { record: package.bulk-bag, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "8391f7aa40467e0c" }
+- { record: package.bulk-bag, at: "2026-10-11T04:20:25Z", status: "", summary: "changed: visual", sha: "5a7a69e3b56c138f" }
 - { record: package.carton-pallet, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "d236b94c3e2d6adc" }
 - { record: package.coil, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "b07133354de3a9c6" }
 - { record: package.cold-crate, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "2ce6ee83f79b3352" }
