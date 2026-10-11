@@ -1,0 +1,275 @@
+{
+  "surface_sha256": "addaaa3987b1b968fff0feae1843f7c6af481e690b9c87bbd61f57cb4bbca227",
+  "queries": [
+    {
+      "direction": [
+        0.5953627268757558,
+        -0.7763500000000001,
+        0.20693936538770016
+      ],
+      "face": 0,
+      "height_m": 50.21745364920658,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953635230869933,
+        -0.7763478271484376,
+        0.20694487311281312
+      ],
+      "face": 0,
+      "height_m": 50.21774195911497,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953616573496423,
+        -0.7763521728515625,
+        0.20693394159461093
+      ],
+      "face": 1,
+      "height_m": 50.217140525771306,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953652177587777,
+        -0.7763482421875001,
+        0.20693859809771398
+      ],
+      "face": 2,
+      "height_m": 50.217714875059194,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953647089510881,
+        -0.7763493286132813,
+        0.20693585052365893
+      ],
+      "face": 1,
+      "height_m": 50.217559838552944,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953605689892851,
+        -0.7763506713867189,
+        0.20694272972233102
+      ],
+      "face": 0,
+      "height_m": 50.21732536286407,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953601405083186,
+        -0.7763517578125001,
+        0.20694000998009793
+      ],
+      "face": 4,
+      "height_m": 50.217179193984805,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953656158643965,
+        -0.7763471557617189,
+        0.20694135196027047
+      ],
+      "face": 2,
+      "height_m": 50.217859030013386,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5953596057452619,
+        -0.7763528442382813,
+        0.2069372980835533
+      ],
+      "face": 5,
+      "height_m": 50.21702263226717,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.9953939126451221,
+        -0.5017527300689743,
+        0.08622735373027653
+      ],
+      "face": 15,
+      "height_m": 92.09115727504103,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.9204433205564595,
+        -0.46792977566438615,
+        0.42874913260495057
+      ],
+      "face": 8,
+      "height_m": 95.54821052050674,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.6656483452565066,
+        -0.5992311209504463,
+        0.6692042618843571
+      ],
+      "face": 9,
+      "height_m": 74.65633996317246,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.33405317861364353,
+        -0.8656342510778463,
+        0.6237674384544251
+      ],
+      "face": 18,
+      "height_m": 34.805655993440176,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.1942047938812152,
+        -1.0567183366711839,
+        0.309242388743716
+      ],
+      "face": 20,
+      "height_m": 7.563384317009325,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.26832598790124235,
+        -1.0852995385041178,
+        -0.011228354541277352
+      ],
+      "face": 11,
+      "height_m": 4.7897573838035585,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.5089490190857183,
+        -0.9639883118154787,
+        -0.24838967502704787
+      ],
+      "face": 12,
+      "height_m": 24.163445421450824,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        0.8426525155965074,
+        -0.7007804275406059,
+        -0.2210057246796476
+      ],
+      "face": 14,
+      "height_m": 63.6194712684492,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    },
+    {
+      "direction": [
+        -0.5953627268757558,
+        0.7763500000000001,
+        -0.20693936538770016
+      ],
+      "face": 24,
+      "height_m": -50.21745364920658,
+      "water": {
+        "state": "unknown"
+      },
+      "categories": {
+        "state": "unknown"
+      }
+    }
+  ]
+}
