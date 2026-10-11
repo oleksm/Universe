@@ -836,3 +836,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, actual forklift/world placement, game lighting, GPU cost and temporal filtering pending; thermal hold/charging, material mass estimate and payload/stack qualification unresolved."
+  - key: package.produce-crate
+    version: 1
+    manifest_sha256: "4227b86a0719309e9ddc88538e63b92e487489408cf3bbcf80c83becf649b103"
+    installed: 4bf07bf7
+    game: "the loader (world::assets) at fso 4bf07bf7"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/produce-crate/v1 (252972 bytes, bounds [-0.6, 0.0, -0.5] to [0.6, 1.4, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, stock tint, actual forklift/world placement, game lighting, GPU cost and temporal filtering pending; generic load is not literal product packing/count, payload/stack qualification unresolved."
