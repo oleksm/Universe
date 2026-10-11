@@ -36,9 +36,9 @@ function:
   survey_range: 20000000000
 visual:
   format: "freefall-model/1"
-  path: "models/sensors-radar-s1/v1"
-  manifest_sha256: "a10fc7b117ddfc09c81465f7ee1ac2bd8e00324756c8d85445eee652820a56e6"
-  version: 1
+  path: "models/sensors-radar-s1/v2"
+  manifest_sha256: "476860e316d2123e1ee42ffab64e888a0fcd1791d1697c39c4e94f201c240cd0"
+  version: 2
   triangles: 1008
 life: 473364000
 basis:
