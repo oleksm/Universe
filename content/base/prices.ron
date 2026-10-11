@@ -24,6 +24,8 @@
         "equipment.hardpoint.pulse-laser.s1": 14000.0,
         // The MC-07's mining laser carries the pulse laser's figures: the same price, a placeholder for the integrator.
         "equipment.hardpoint.mining-laser.mc07": 14000.0,
+        // Explicit handed variant price agreed in fso a8fca58b (not a rename).
+        "equipment.hardpoint.mining-hammer.mc07-right": 14000.0,
         "equipment.utility.mining-rig.s2": 12000.0,
         "equipment.power.fusion.s1": 9000.0,
         "equipment.thrusters.quad.s1": 4500.0,

@@ -76,3 +76,25 @@ under `out/review/mc07-mounted-v1/`. Close inspection permits entering the hull
 bounding sphere and uses a 2 cm camera near plane. These controls change only
 the development view. The first full-ship screenshot used the same placement
 consumer before this close-camera adjustment.
+
+Right-handed variant review (Blender `20261010T200919-blender-7bce`): bake model-X
+reflection into vertices, reverse triangle winding, transform normals and tangent
+handedness, and conjugate node/bind frames `S M S`. Proper hull mount frames then
+remain determinant +1. With the same scalar angle convention, rotation axes are
+axial vectors (`det(S) S axis`), while anchor positions/directions transform as
+polar vectors. Preserve control ordering, units, limits and neutral state.
+
+Consumer fixtures must include exact node names and parents, neutral GLB binds,
+parent-local anchor frames and axis conventions, primary mount, all-node absolute
+reference transforms across the original sampled control domain, and mirrored
+world-vertex equivalence at neutral and those poses. Include asymmetric poses
+and extrema; report maximum vertex/transform error, winding/normal checks and
+no-scale/determinant checks. Retain fixed support/contact/tool interfaces for
+ships' combined sweep. Registry owns variant keys/fit identity. This accepts the
+representation and fixture contract, not moving-device enablement or installation.
+
+The right-handed hammer also has an explicit 14,000-credit game price, matching
+fso `a8fca58b` and registry reply `20261010T201758-registry-308c`. It is not a
+rename/inherited alias. This preserves its inert fitted mass/box in the fso
+preview without inventing pricing or enabling breaker mechanics. Current main
+registry has no such record, so the extra keyed price has no effect there.
