@@ -153,11 +153,11 @@ impl Ledger {
     }
 
     pub fn cargo_mass(&self, pilot: ShipId, goods: &[universe_world::goods::Item]) -> f64 {
-        crate::market::cargo_mass(goods, &self.hold(pilot)) + self.packages.get(&pilot).into_iter().flat_map(|p| p.values()).flatten().map(|u| u.tare).sum::<f64>()
+        self.holds.get(&pilot).into_iter().flat_map(|h| h.iter()).map(|(i, n)| goods[*i].mass * n).sum::<f64>() + self.packages.get(&pilot).into_iter().flat_map(|p| p.values()).flatten().map(|u| u.tare).sum::<f64>()
     }
 
     pub fn cargo_volume(&self, pilot: ShipId, goods: &[universe_world::goods::Item]) -> f64 {
-        let loose = crate::market::cargo_volume(goods, &self.hold(pilot));
+        let loose: f64 = self.holds.get(&pilot).into_iter().flat_map(|h| h.iter()).map(|(i, n)| goods[*i].mass * n / (1000.0 * goods[*i].bulk_density)).sum();
         loose + self.packages.get(&pilot).into_iter().flat_map(|p| p.iter()).map(|(i, units)| {
             units.iter().map(|u| (u.volume - u.net_mass / (1000.0 * goods[*i].bulk_density)).max(0.0)).sum::<f64>()
         }).sum::<f64>()
@@ -173,7 +173,8 @@ impl Ledger {
         self.marks.remove(&pilot);
         self.lots.remove(&pilot);
         self.packages.remove(&pilot);
-        for (good, _) in self.hold(pilot) {
+        let goods: Vec<_> = self.holds.get(&pilot).into_iter().flat_map(|h| h.keys()).copied().collect();
+        for good in goods {
             self.settle(Party::Pilot(pilot), Asset::Goods(good), 0.0, tick, cause);
         }
     }
