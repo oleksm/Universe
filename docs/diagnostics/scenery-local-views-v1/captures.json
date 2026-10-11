@@ -13,7 +13,7 @@
         "UNIVERSE_LAT": "-50.930818875027846",
         "UNIVERSE_LON": "-19.20780668536734",
         "UNIVERSE_HOURS": "2",
-        "UNIVERSE_ALT": "1301.9733773534772",
+        "UNIVERSE_ALT": "1301.9774296701935",
         "UNIVERSE_DOWN": "0.10326849032826112",
         "UNIVERSE_HEADING": "132.45577440642353",
         "UNIVERSE_SPEED": "0",
@@ -24,18 +24,18 @@
         "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/control-empty-debug.json",
         "UNIVERSE_PGS1_GEOMETRY": "off"
       },
-      "png_sha256": "7994353920e396ad15306ee451a49b442b0356248761bd4580b373ed866f3020",
+      "png_sha256": "7cc4e896a161bb1e255d3e3d9f7e458c3ae44f00624c4ab473449e4bd5a4ece1",
       "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-control-neutral.log",
       "runtime_eye_height_m": [
-        6751.39812,
-        6751.39812
+        6751.402175,
+        6751.402175
       ],
       "comparison": [
         "time=7200.000000s surface=5449.428795m sun_elevation=15.658530deg terrain_shadows=false"
       ],
       "residency": [
-        "SCENERY DEBUG frame=120 resident_draw_levels={6: 44, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.398120",
-        "SCENERY DEBUG frame=240 resident_draw_levels={6: 44, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.398120"
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 44, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 44, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175"
       ]
     },
     {
@@ -50,7 +50,7 @@
         "UNIVERSE_LAT": "-51.00222698954717",
         "UNIVERSE_LON": "-19.083665220874618",
         "UNIVERSE_HOURS": "2",
-        "UNIVERSE_ALT": "1409.004933263348",
+        "UNIVERSE_ALT": "1408.9679775800641",
         "UNIVERSE_DOWN": "0.08699189567157428",
         "UNIVERSE_HEADING": "312.35934399854943",
         "UNIVERSE_SPEED": "0",
@@ -61,18 +61,18 @@
         "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/control-empty-debug.json",
         "UNIVERSE_PGS1_GEOMETRY": "off"
       },
-      "png_sha256": "1c347f217649e8141f96de63c314c33c749042380d0fda253fd511e24e56742d",
+      "png_sha256": "cddd8b7a06c8c7b985fa96ebaa973072c52b4dab5276561d96399a6730ed7b43",
       "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-control-neutral.log",
       "runtime_eye_height_m": [
-        6751.439128,
-        6751.439128
+        6751.402171,
+        6751.402171
       ],
       "comparison": [
         "time=7200.000000s surface=5342.397239m sun_elevation=15.742591deg terrain_shadows=false"
       ],
       "residency": [
-        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.439128",
-        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.439128"
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402171",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402171"
       ]
     },
     {
@@ -87,7 +87,7 @@
         "UNIVERSE_LAT": "-50.930818875027846",
         "UNIVERSE_LON": "-19.20780668536734",
         "UNIVERSE_HOURS": "2",
-        "UNIVERSE_ALT": "1000.0000000000018",
+        "UNIVERSE_ALT": "1000.0841443167183",
         "UNIVERSE_DOWN": "0.10326849032826112",
         "UNIVERSE_HEADING": "132.45577440642353",
         "UNIVERSE_SPEED": "0",
@@ -100,18 +100,18 @@
         "UNIVERSE_PGS1_DEBUG_LIFT": "2",
         "UNIVERSE_PGS1_GEOMETRY": "off"
       },
-      "png_sha256": "377e30c7e6e27fa93facf22b99f90e0cad536d2fd66e4c7bfb3e9bd82dfdfeef",
+      "png_sha256": "7f2b97bbc2ec4c2b49aa661e510ab0d406bb45c1e20ebb40547ce72844d321c8",
       "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-candidate-channels.log",
       "runtime_eye_height_m": [
-        6751.318028,
-        6751.318028
+        6751.402175,
+        6751.402175
       ],
       "comparison": [
         "time=7200.000000s surface=5751.402172m sun_elevation=15.658530deg terrain_shadows=false"
       ],
       "residency": [
-        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.318028",
-        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.318028"
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175"
       ]
     },
     {
@@ -126,7 +126,7 @@
         "UNIVERSE_LAT": "-50.930818875027846",
         "UNIVERSE_LON": "-19.20780668536734",
         "UNIVERSE_HOURS": "2",
-        "UNIVERSE_ALT": "1000.0000000000018",
+        "UNIVERSE_ALT": "1000.0841443167183",
         "UNIVERSE_DOWN": "0.10326849032826112",
         "UNIVERSE_HEADING": "132.45577440642353",
         "UNIVERSE_SPEED": "0",
@@ -137,18 +137,18 @@
         "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/candidate-empty-debug.json",
         "UNIVERSE_PGS1_GEOMETRY": "off"
       },
-      "png_sha256": "21f4aae6544566ac903fe33d5e19c8b5c70b9c001cf8714293c5bc6ff3d80c3d",
+      "png_sha256": "8cb3f89d5493f27bd9f300fda9b3ed5639d5e83f7fe09fa382da7e1ed728fd21",
       "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-candidate-neutral.log",
       "runtime_eye_height_m": [
-        6751.318028,
-        6751.318028
+        6751.402175,
+        6751.402175
       ],
       "comparison": [
         "time=7200.000000s surface=5751.402172m sun_elevation=15.658530deg terrain_shadows=false"
       ],
       "residency": [
-        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.318028",
-        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.318028"
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175"
       ]
     },
     {
@@ -163,7 +163,7 @@
         "UNIVERSE_LAT": "-51.00222698954717",
         "UNIVERSE_LON": "-19.083665220874618",
         "UNIVERSE_HOURS": "2",
-        "UNIVERSE_ALT": "1189.077690654448",
+        "UNIVERSE_ALT": "1189.1148909711637",
         "UNIVERSE_DOWN": "0.08699189567157428",
         "UNIVERSE_HEADING": "312.35934399854943",
         "UNIVERSE_SPEED": "0",
@@ -176,18 +176,18 @@
         "UNIVERSE_PGS1_DEBUG_LIFT": "2",
         "UNIVERSE_PGS1_GEOMETRY": "off"
       },
-      "png_sha256": "864e9c1d57d2275a4dd20d7b830b5f80fd8f14952f0af55cb66f7480df5c5ab9",
+      "png_sha256": "33f73a687e5f0d521a73eb3fd79cfa83826d73573cedc31f9f526e65df2cbd62",
       "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-candidate-channels.log",
       "runtime_eye_height_m": [
-        6751.364972,
-        6751.364972
+        6751.402172,
+        6751.402172
       ],
       "comparison": [
         "time=7200.000000s surface=5562.324482m sun_elevation=15.742591deg terrain_shadows=false"
       ],
       "residency": [
-        "SCENERY DEBUG frame=120 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.364972",
-        "SCENERY DEBUG frame=240 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.364972"
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172"
       ]
     },
     {
@@ -202,7 +202,7 @@
         "UNIVERSE_LAT": "-51.00222698954717",
         "UNIVERSE_LON": "-19.083665220874618",
         "UNIVERSE_HOURS": "2",
-        "UNIVERSE_ALT": "1189.077690654448",
+        "UNIVERSE_ALT": "1189.1148909711637",
         "UNIVERSE_DOWN": "0.08699189567157428",
         "UNIVERSE_HEADING": "312.35934399854943",
         "UNIVERSE_SPEED": "0",
@@ -213,22 +213,22 @@
         "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/candidate-empty-debug.json",
         "UNIVERSE_PGS1_GEOMETRY": "off"
       },
-      "png_sha256": "3bd2e5ce671ca004b2906e416a7ac2576baf0eb442aaa7fbd4346ff339d46bd0",
+      "png_sha256": "a139fff3a6b7f735857a7e9fd2f4f0447ade08813f11e23dfe8d75f7e1485c35",
       "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-candidate-neutral.log",
       "runtime_eye_height_m": [
-        6751.364972,
-        6751.364972
+        6751.402172,
+        6751.402172
       ],
       "comparison": [
         "time=7200.000000s surface=5562.324482m sun_elevation=15.742591deg terrain_shadows=false"
       ],
       "residency": [
-        "SCENERY DEBUG frame=120 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.364972",
-        "SCENERY DEBUG frame=240 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.364972"
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172"
       ]
     }
   ],
-  "visual_inspection": "All six images inspected: high-to-low shows blue source and yellow native channel guides, reverse shows native guide only; neutral relief remains broad and faint. Neither is convincing mountain scenery.",
+  "visual_inspection": "All six final calibrated images inspected: high-to-low source/native guides visible; reverse native guide only. Neutral relief remains broad and faint; mountain scenery goal unmet.",
   "comparison_crops": {
     "high_to_low": {
       "bounds_xy": [
@@ -237,8 +237,8 @@
         1600,
         680
       ],
-      "mean_abs_channel": 0.5280842911877395,
-      "max_abs_channel": 16
+      "mean_abs_channel": 0.527919061302682,
+      "max_abs_channel": 18
     },
     "low_to_high": {
       "bounds_xy": [
@@ -247,8 +247,8 @@
         1600,
         680
       ],
-      "mean_abs_channel": 0.44710249042145594,
-      "max_abs_channel": 19
+      "mean_abs_channel": 0.44645354406130267,
+      "max_abs_channel": 5
     }
   }
 }

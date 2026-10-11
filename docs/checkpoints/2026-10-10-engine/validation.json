@@ -1,0 +1,14 @@
+{
+  "workspace_tests_passed": 132,
+  "registry_build": "passed",
+  "release_build": "passed",
+  "release_binary_sha256": "812793ef9011f5deeb96dd964a24908fc8bf11c8dec6cd62e39f6747f47287b7",
+  "vulkan_smoke": {
+    "frames": 120,
+    "exit_code": 0,
+    "screenshot_inspected": true,
+    "screenshot_sha256": "f729f6e64ebf62e4e2c591800714271305a11cd993215fa08b0c41417e9399a1",
+    "log_sha256": "ae81fb562f7744f7fb1caa366ccce0bcadbbb56c6f01dfbaffce8b63b4291e83",
+    "scope": "MC07 shared mounted computer/transponder preview; computer visibly seated in inspected closeup. Existing missing mounts and air/water catalogue holds retained; no moving runtime acceptance."
+  }
+}
