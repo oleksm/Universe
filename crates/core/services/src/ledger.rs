@@ -76,6 +76,11 @@ impl Ledger {
         self.holds.get(&pilot).map_or_else(Vec::new, |h| h.iter().filter(|(_, n)| **n >= 0.5).map(|(&g, &n)| (g, n.round() as u32)).collect())
     }
 
+    /// Exact ledger quantities for persistence; the display-oriented hold() rounds units.
+    pub fn hold_quantities(&self, pilot: ShipId) -> Option<&BTreeMap<usize, f64>> {
+        self.holds.get(&pilot)
+    }
+
     /// Move `amount` of `asset` from `from` to `to` (at `tick`, because of
     /// `cause`). A pilot can't give what it hasn't got.
     pub fn transfer(&mut self, from: Party, to: Party, asset: Asset, amount: f64, tick: Tick, cause: Cause) -> Result<(), String> {
