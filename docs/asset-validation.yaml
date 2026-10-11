@@ -1332,3 +1332,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static stowed exterior only; actual game drawing/GPU cost, foundation terrain fit, deployed feed and live pointing, wind/gravity stiffness, RF/thermal and structural qualification pending."
+  - key: equipment.hardpoint.pulse-laser.s1
+    version: 1
+    manifest_sha256: "15f8cc8aead6b090b019e38285ddcd5212fdeb825b4a9e7bcb484d69133d4633"
+    installed: be2c53d4
+    game: "the loader (world::assets) at fso be2c53d4"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hardpoint-pulse-laser-s1/v1 (115216 bytes, bounds [-2.0, 0.0, -2.5] to [2.0, 2.0, 2.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static fixed exterior; actual game GPU look/cost, hull placement, outgoing beam and firing effects, optical/thermal/structural qualification pending. Registry80percent efficiency and1.2t assumptions retained."
