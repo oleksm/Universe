@@ -1780,3 +1780,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static upright only; game drawing, lighting and GPU cost, runtime lowering, final hull threshold/lock receivers and fit, 20t capacity/drive/structure and complete mass remain unqualified."
+  - key: equipment.access.cargo-ramp.s2
+    version: 1
+    manifest_sha256: "998dfe8ff9c0024b0cd034f3f364966039fd0665322b71e6076dad5a8358cb75"
+    installed: b8536c3e
+    game: "the loader (world::assets) at fso b8536c3e"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-cargo-ramp-s2/v1 (309832 bytes, bounds [-2.5, -0.0, -0.655] to [2.5, 12.6, 0.153]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static upright only; game drawing, lighting/GPU cost, runtime lowering, final hull threshold and lock receivers, placement,60t capacity/drive and14.078t versus10t mass remain unqualified."
