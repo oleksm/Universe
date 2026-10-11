@@ -1095,7 +1095,7 @@
 - { record: org.treistun-mutual, at: "2026-10-06T14:13:11Z", status: "", summary: "changed: insurance", sha: "573f66fec0f40ff5" }
 - { record: org.verdance, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "bbe18fd6a56af8b2" }
 - { record: org.vireo, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f2ca3f6a59fa774a" }
-- { record: package.bale, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "84945ba84f13f85c" }
+- { record: package.bale, at: "2026-10-11T14:32:09Z", status: "", summary: "changed: visual", sha: "cb095e8a8e630b3b" }
 - { record: package.bar-bundle, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "fbe321a86b589985" }
 - { record: package.bulk-bag, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "6d12ae051ae6ce78" }
 - { record: package.carton-pallet, at: "2026-10-11T14:06:07Z", status: "", summary: "changed: visual", sha: "fda35d2df85928af" }
