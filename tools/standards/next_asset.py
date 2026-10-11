@@ -9,8 +9,8 @@
 
 The queue is every record of a kind that takes a model (equipment, modules, buildings, structures, gates; hulls on
 asking) with no `visual` yet and not retired, in the order the player sees them most: equipment fitted on hulls and
-structures, then structures and gates, then works modules standing at facilities, then buildings standing at
-settlements, then the rest; within each, the most used first, current designs before outdated ones. Docs:
+structures and works modules standing at facilities (standard modules and equipment first, the user's order), then
+the rest of them, then structures and gates, then buildings, held records (revision priority low: the MC-07) last; within each, the most used first, current designs before outdated ones. Docs:
 docs/asset-contract.md.
 """
 import glob, json, os, sys
@@ -26,7 +26,10 @@ def usage():
     def add(k, n=1):
         used[k] = used.get(k, 0) + n
     for f in glob.glob(os.path.join(TREE, "SFO/metadata/hulls/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/structures/*.yaml")):
-        for x in (yaml.safe_load(open(f)) or {}).get("fit") or []:
+        d = yaml.safe_load(open(f)) or {}
+        if (d.get("revision") or {}).get("priority") == "low":     # (a held hull's fits lend no priority)
+            continue
+        for x in d.get("fit") or []:
             add(x.get("item"), x.get("count", 1))
     for f in glob.glob(os.path.join(TREE, "LocalAdministration/**/*.yaml"), recursive=True):
         d = yaml.safe_load(open(f)) or {}
@@ -41,15 +44,15 @@ def usage():
 
 
 def tier(kind, key, used):
-    if kind == "equipment" and used.get(key):
-        return 0
+    """Standard modules and equipment first (the user, 2026-10-10): what is in use, then the rest of them; then
+    structures, gates and buildings; hulls last (they are the ships session's)."""
+    if kind in ("equipment", "module"):
+        return 0 if used.get(key) else 1
     if kind in ("structure", "gate"):
-        return 1
-    if kind == "module" and used.get(key):
         return 2
-    if kind == "building" and used.get(key):
-        return 3
-    return {"hull": 0, "equipment": 4, "module": 5, "building": 6}.get(kind, 7)
+    if kind == "building":
+        return 3 if used.get(key) else 4
+    return 5
 
 
 def stage(r):
