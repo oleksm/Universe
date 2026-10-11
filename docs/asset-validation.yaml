@@ -348,3 +348,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Requires v02 fixed hull supports and proper gear_1 mount frame; moving runtime, combined hull installation, landing suspension/load and GPU review remain held."
+  - key: equipment.gear.rear.mc07-right
+    version: 1
+    manifest_sha256: "8e8fb65f7ad0ad230a4d1a3700c8e60ca927e67ffb6d6245c96940c9e922962e"
+    installed: f6ede496
+    game: "the loader (world::assets) at fso f6ede496"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-rear-mc07-right/v1 (109020 bytes, bounds [-1.67, -1.41, -0.58] to [1.67, 0.67, 4.88]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Requires v02 fixed hull supports and proper gear_3 mount frame; moving runtime, production hull installation, landing suspension/load and GPU checks remain held."
