@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: cargo
-  description: "Racks that hold cargo in the hold. An open cage of 300 x 500 x 10 mm beams along the bottom, 180 x 180 x 6 mm posts and 120 x 120 x 6 mm along the top, a 12 mm aluminium deck with rails, its locks and drives recessed; drawn empty and still."
+  description: "Racks that hold cargo in the hold. An open cage of 300 x 500 x 10 mm beams along the bottom (300 x 200 x 8 mm across its ends), 180 x 180 x 6 mm posts and 120 x 120 x 6 mm along the top, a 12 mm aluminium deck with rails, its locks and drives recessed; drawn empty and still."
 size_class: 4
 fits: mount.cargo-s4
 physical:
@@ -31,5 +31,5 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 150,000 kg is 300 m3, twice as long as wide. The racks themselves are in it." }
-  - { of: [function.capacity], tier: derived, review: true, note: "Measured by blender (2026-10-11): about 215 m3 clear inside its 300 m3 box (frame, deck, rails, drives), so its 150 t fills it only for cargo denser than about 700 kg/m3; lighter cargo fills it by volume first. The frame drawn is about 4,950 kg or less." }
+  - { of: [function.capacity], tier: derived, review: true, note: "Measured by blender (candidate-v01, 2026-10-11): a clear rectangular load of 10 x 4.7 x 4.5 m, 211.5 m3, inside its 300 m3 box, so its 150 t fills it only for cargo of at least 709 kg/m3; lighter cargo fills it by volume first. Frame 4,597 kg (lower-end crossmembers 300 x 200 x 8 mm), deck, rails and ribs 2,028 kg. Strength not checked." }
   - { of: [life], rule: rule.life-ship-system }
