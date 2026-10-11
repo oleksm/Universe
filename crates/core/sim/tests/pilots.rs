@@ -104,4 +104,5 @@ fn a_recorded_session_replays_to_the_same_world() {
     let loaded = Universe::world_load(&serde_json::from_str(&json).unwrap());
     assert_eq!(loaded.state_hash(), u.state_hash(), "loaded, the same world");
     assert_eq!(loaded.pilots().len(), 24);
+    assert_eq!(serde_json::to_value(loaded.save().packing).unwrap(), serde_json::to_value(u.save().packing).unwrap(), "replay preserves cargo provenance, works packing state and serial allocation");
 }
