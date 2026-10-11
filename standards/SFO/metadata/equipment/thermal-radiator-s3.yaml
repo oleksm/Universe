@@ -29,9 +29,9 @@ function:
   area: 294.0
 visual:
   format: "freefall-model/1"
-  path: "models/thermal-radiator-s3/v1"
-  manifest_sha256: "e49c3e9ed9f6e55dd16c140490b0e43e9fbd96591d100d43dcdee8602a3ffe2d"
-  version: 1
+  path: "models/thermal-radiator-s3/v2"
+  manifest_sha256: "d78c533a0353509c55e8a738171db75e0823f0445005ba6a56ef08591dfb1495"
+  version: 2
   triangles: 5112
 life: 473364000
 basis:
