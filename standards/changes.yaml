@@ -452,7 +452,7 @@
 - { record: equipment.sensors.camera.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "af5f5d52ee39041c" }
 - { record: equipment.sensors.radar.s1, at: "2026-10-11T02:41:55Z", status: draft, summary: "changed: visual", sha: "439938caca9e701d" }
 - { record: equipment.tank.air.s1, at: "2026-10-11T02:44:35Z", status: draft, summary: "changed: visual", sha: "773197aed42ee1dd" }
-- { record: equipment.tank.deuterium.s0, at: "2026-10-07T03:58:19Z", status: review, summary: "changed: built_of", sha: "efef76bd7d090bb9" }
+- { record: equipment.tank.deuterium.s0, at: "2026-10-11T20:42:22Z", status: review, summary: "changed: visual", sha: "3759b1127356f895" }
 - { record: equipment.tank.deuterium.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "e077c6ae229aacd0" }
 - { record: equipment.tank.deuterium.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7530b38f5c6c0dec" }
 - { record: equipment.tank.deuterium.s3, at: "2026-10-11T19:03:33Z", status: draft, summary: "changed: visual", sha: "8952dc5911d17234" }

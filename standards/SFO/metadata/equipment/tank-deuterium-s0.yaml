@@ -40,6 +40,12 @@ revision:
   open_to: [physical.volume, physical.mass]
   because: "Its weight agrees with real tanks (9% of its fuel's; Centaur 11%, Discovery II 10%). Its volume on record (not the 24.6 m3 its fuel takes) has not been checked."
   ask: docs/registry-ssot-request.md
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-deuterium-s0/v1"
+  manifest_sha256: "106657d1a3d987de0fe2687e55936bcc1bbb3e8de5c5ec540213119bd7370722"
+  version: 1
+  triangles: 6248
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
