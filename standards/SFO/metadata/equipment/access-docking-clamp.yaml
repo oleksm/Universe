@@ -28,6 +28,6 @@ function:
   standard: "SFO 20 clamp"
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "Holds the ship to a station's rail, or a ship to a ship, against 2 MN: a 200 t ship at 1 g. Chosen; the standard is this registry's." }
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "Holds the ship to a station's rail, or a ship to a ship, against 2 MN: a 200 t ship at 1 g. Chosen; the standard is this registry's. The SFO 20 rail it grips (provisional, blender and registry 2026-10-11): a T, its head 0.48 m wide and 0.12 m thick on a 0.14 m web, running along the clamp's Y with the jaws facing out along +Z; two opposed hook jaws slide 0.16 m each to take its head. At 2 MN over a 1 m grip the head's flanges see about 8 MPa in shear and 35 MPa bending, well within steel." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
