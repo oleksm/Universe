@@ -1105,7 +1105,7 @@
 - { record: package.gas-rack, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "1d0f86db987ab8d2" }
 - { record: package.ladle, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "5ce7a150aade7b8a" }
 - { record: package.livestock-crate, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "9d06f6f39092e938" }
-- { record: package.plate-stack, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "9d0a6ddc6354bff4" }
+- { record: package.plate-stack, at: "2026-10-11T04:28:21Z", status: "", summary: "changed: visual", sha: "0cffc4fbc6c085cc" }
 - { record: package.produce-crate, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "515641a73155d39b" }
 - { record: package.skip, at: "2026-10-11T04:12:22Z", status: "", summary: "changed: visual", sha: "6d944b763b0baa7b" }
 - { record: package.tote, at: "2026-10-11T03:44:44Z", status: "", summary: "first tracked", sha: "2dd66a2becdd9d0d" }

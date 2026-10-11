@@ -13,5 +13,11 @@ holds:
   mass: 2500
 handling: forklift
 stack: 3
+visual:
+  format: "freefall-model/1"
+  path: "models/plate-stack/v1"
+  manifest_sha256: "9c6b6e05e1a78d9e4a12c998e2c7c0ab4bf85cc9cecd6830addd72eddd92039c"
+  version: 1
+  triangles: 656
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
