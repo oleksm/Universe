@@ -1268,3 +1268,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game mounted rendering, nozzle VFX, GPU look/cost and final hull exhaust clearance pending; fusion/thermal/internal packing and structural qualification remain provisional. Mount load record reconciled by ae264731."
+  - key: equipment.capacitor.s2
+    version: 1
+    manifest_sha256: "7bdb34d40bafa5507e8308b965b5932b2a66f1535c8bb7a755c7974d858ffbea"
+    installed: a777ba52
+    game: "the loader (world::assets) at fso a777ba52"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/capacitor-s2/v1 (99900 bytes, bounds [-1.04, 0.0, -0.695] to [1.04, 1.39, 0.695]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game lighting, temporal edge filtering, GPU cost and final hull fit pending. Provisional SMES energy density, containment, refrigeration, internal packing and structural qualification unresolved."
