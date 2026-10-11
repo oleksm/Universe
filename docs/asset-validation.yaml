@@ -852,3 +852,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, stock tint, actual forklift/world placement, game lighting, GPU cost and temporal filtering pending; generic load is not literal product packing/count, payload/stack qualification unresolved."
+  - key: package.carton-pallet
+    version: 1
+    manifest_sha256: "e42cf91bcc94ebf4ac87c2767dbecff4d98dabe3650320929518c1ee138dd74e"
+    installed: 8d2d5681
+    game: "the loader (world::assets) at fso 8d2d5681"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/carton-pallet/v1 (55736 bytes, bounds [-0.602, 0.0, -0.502] to [0.602, 1.5002, 0.502]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, actual forklift/world placement, game lighting, GPU cost and temporal filtering pending; carton packing, thin film assumptions and payload/stack qualification unresolved."
