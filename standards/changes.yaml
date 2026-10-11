@@ -335,7 +335,7 @@
 - { record: equipment.access.cargo-ramp.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "713e1b25d888721c" }
 - { record: equipment.access.cargo-ramp.s1, at: "2026-10-11T23:19:56Z", status: draft, summary: "changed: visual", sha: "d823f89d601960b1" }
 - { record: equipment.access.cargo-ramp.s2, at: "2026-10-11T23:27:35Z", status: draft, summary: "changed: visual", sha: "c7e82ab627bea318" }
-- { record: equipment.access.docking.clamp, at: "2026-10-11T23:34:59Z", status: draft, summary: "changed: basis", sha: "5bdf32962d91e456" }
+- { record: equipment.access.docking.clamp, at: "2026-10-11T23:40:42Z", status: draft, summary: "changed: basis", sha: "f6b536557c072bab" }
 - { record: equipment.access.docking.collar, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "bd86ab97df236df7" }
 - { record: equipment.access.door.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "537a9e8a221494ec" }
 - { record: equipment.avionics.nav-basic.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "0048f967536002f6" }
