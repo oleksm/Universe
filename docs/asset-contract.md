@@ -31,7 +31,10 @@ A package model is drawn full. What it carries is the meshes under one node name
 named `contents` (neutral light grey, no texture): the game tints that material by the stock's `tint` (sRGB 0 to 1 on
 every stock record, artistic, tools/standards/tints.py), and may
 hide or scale the node for a part-full package. Everything else (pallet, straps, cage, frame) is the package itself, in
-its own materials, never tinted. No labels, no text. The contents stand for any stock the package carries: a
+its own materials, never tinted. No labels, no text. A closed package whose load cannot be seen (bulk bag, carton
+pallet, cold crate, gas rack, heavy crate) has no `contents` node and no hidden fill: it looks the same whatever it
+carries, as real ones do. Where the load shows, it has one: the skip, produce crate, tote (its liquid through the
+cage-held tank), plate stack, bar bundle, coil, bale (the bale is its contents), ladle (the melt at the top). The contents stand for any stock the package carries: a
 representative load, not its count, cross-section or weight. The bar bundle's contents are round tubes (71 of the 73
 stock records it carries are tubes).
 
