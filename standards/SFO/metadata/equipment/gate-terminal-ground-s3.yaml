@@ -5,6 +5,7 @@ identity:
   maker: org.tallis
   revision: outdated
   slot: gate
+  description: "A 20.6 m dish that links a ground station to the gate overhead. Drawn stowed: the dish face up on its low gimbal, a mesh reflector on ribs, the feed mast folded down across it (it stands 14.7 m above the dish when deployed). It points within 13 degrees of the zenith: further and its rim sweeps the ground."
 size_class: 3
 fits: mount.gate-s3
 physical:
@@ -36,6 +37,7 @@ function:
   capacity: 13.8888888889
 life: 473364000
 basis:
+  - { of: [identity.description], tier: derived, review: true, note: "For the modeller (2026-10-11, blender's feasibility): a 1.8 m deep bowl puts the focus 14.7 m above the vertex, so the feed mast folds to fit the 2.94 m box; the reflector's 718 kg over 333 m2 is 2.2 kg/m2, a mesh on ribs. Open: 3 t for a 20 m dish standing in a world's gravity is far too light (real dishes this size weigh hundreds of tonnes)." }
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A dish: taking three tenths of its 3,000 kg as the reflector, at the Mars Reconnaissance Orbiter's 2.7 kg a m2 (19.1 kg for a 3 m dish), gives 333 m2: 21 m across, a seventh as deep." }
