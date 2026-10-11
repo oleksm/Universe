@@ -1652,3 +1652,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU, final hull and cargo handling, runtime doors/interlock/cycling, pressure/seal/lock/pump and load qualification."
+  - key: equipment.access.airlock.crew
+    version: 1
+    manifest_sha256: "f10b41eaad437cd78dd6d288b773eda7130984cdc71911645e38e0965cfced7a"
+    installed: 55991942
+    game: "the loader (world::assets) at fso 55991942"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-airlock-crew/v1 (260476 bytes, bounds [-0.765, -0.0, -1.16] to [0.765, 2.21, 1.2675]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU, final hull and crew access, runtime doors/interlock/cycling, pressure/seal/lock/pump and load qualification."
