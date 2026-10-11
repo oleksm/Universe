@@ -425,3 +425,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.capacitor.s1
+    version: 2
+    manifest_sha256: "f2f2edb26781643b583383b133d68582150d21772cc256534528fd0ec64fc801"
+    installed: 4af654940af04ec5c2d319e3bddac4663c301b24
+    game: "the loader (world::assets) at fso 4af65494"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/capacitor-s1/v2 (65772 bytes, bounds [-0.538, 0.0, -0.75] to [0.538, 1.0, 0.772]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
