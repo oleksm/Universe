@@ -1188,3 +1188,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game label printing, contents tint, GPU look/cost and handling remain open; label pad density and retention assumptions recorded."
+  - key: package.coil
+    version: 2
+    manifest_sha256: "e2b043181c80e5245d35d9551fa6bfaeebefaf1a1d2ebad34d520c66a178715e"
+    installed: a1a0770d
+    game: "the loader (world::assets) at fso a1a0770d"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/coil/v2 (133660 bytes, bounds [-0.6, 0.0, -0.6] to [0.6, 1.087, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game label printing, contents tint, GPU look/cost and handling remain open; rigid tag retention and original load/stack strength unqualified."
