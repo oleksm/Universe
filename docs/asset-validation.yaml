@@ -1252,3 +1252,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game label printing and GPU look/cost remain open; hanger weld/retention and cylinder pressure, filling, handling qualification unverified."
+  - key: equipment.thrusters.quad.s2
+    version: 1
+    manifest_sha256: "3898afeb2d8afe9259bcbaf118008e0210644af90197a9e005896d41bcd423d3"
+    installed: 77aa94aa
+    game: "the loader (world::assets) at fso 77aa94aa"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thrusters-quad-s2/v1 (147124 bytes, bounds [-0.72, 0.0, -0.72] to [0.72, 1.442, 0.72]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game mounted rendering, nozzle VFX, GPU look/cost and final hull exhaust clearance pending; fusion/thermal/internal packing and structural qualification remain provisional. Mount load record reconciled by ae264731."
