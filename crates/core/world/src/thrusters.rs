@@ -155,6 +155,13 @@ pub fn balanced_with(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMa
         return 0.0;
     }
     let inverse = inertia.inverse();
+    // A missing turn axis makes `straight` zero, not the available balanced
+    // translation. Allow only force-summation roundoff at that boundary, scaled
+    // by the actuator angular accelerations (not an invented physical tolerance).
+    let roundoff = 64.0 * f64::EPSILON * thrusters.iter().map(|t| {
+        (inverse * column(t, com).1).length()
+    }).sum::<f64>();
+    let tolerance = if straight == 0.0 { roundoff } else { straight };
     let mut u = Vec::new();
     let mut try_at = |k: f64| {
         // (From cold, the solver needs more sweeps than a frame's, where it
@@ -164,7 +171,21 @@ pub fn balanced_with(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMa
             fq = allocate_with(thrusters, com, mass, inertia, drive.then_some(k), d * full * k, DVec3::ZERO, &mut u);
         }
         let (f, q) = fq;
-        ((inverse * q).length() < straight).then_some(f.dot(d).max(0.0))
+        let mut achieved = (f, q);
+        if straight == 0.0 {
+            // The usual cold-start budget can leave a small real residual even
+            // for symmetric fans. Refine only this exact-balance case; never
+            // admit that residual by widening the physical turn allowance.
+            for _ in 0..1024 {
+                if (inverse * achieved.1).length() <= tolerance { break; }
+                let previous = achieved;
+                achieved = allocate_with(thrusters, com, mass, inertia, drive.then_some(k), d * full * k, DVec3::ZERO, &mut u);
+                if achieved == previous { break; }
+            }
+        }
+        let residual = (inverse * achieved.1).length();
+        let accepted = if straight == 0.0 { residual <= tolerance } else { residual < straight };
+        accepted.then_some(achieved.0.dot(d).max(0.0))
     };
     if let Some(f) = try_at(1.0) {
         return f;
@@ -207,6 +228,32 @@ mod tests {
         let (f, q) = allocate(&starter().thrusters, com, m, i, DVec3::ZERO, want, &mut u);
         assert!((q - want).length() < 0.05 * want.length(), "{q} vs {want}");
         assert!(f.length() / m < 0.05, "pushes nowhere: {} m/s²", f.length() / m);
+    }
+
+    #[test]
+    fn zero_yaw_authority_does_not_disable_balanced_lift() {
+        use crate::ship::ThrusterRole;
+        let fan = |x, z| Thruster { nozzle: "fan".into(), role: ThrusterRole::Lift,
+            at: DVec3::new(x, 0., z), push: DVec3::Y, thrust: 4000., exhaust: 0., efficiency: 1. };
+        let ts = [fan(-1., -1.), fan(1., -1.), fan(-1., 1.), fan(1., 1.)];
+        let inertia = DMat3::from_diagonal(DVec3::splat(400.));
+        let envelope = turn_envelope(&ts, DVec3::ZERO, 1000., inertia);
+        assert_eq!(envelope.y, 0.);
+        let lift = balanced(&ts, DVec3::ZERO, 1000., inertia, DVec3::Y, 16000., STRAIGHT * envelope.min_element());
+        assert!(lift > 15900., "symmetric fans retain their lift: {lift}");
+    }
+
+    #[test]
+    fn zero_tolerance_accepts_exact_centre_push_but_rejects_offset_push() {
+        use crate::ship::ThrusterRole;
+        let mut t = Thruster { nozzle: "main".into(), role: ThrusterRole::Main,
+            at: DVec3::ZERO, push: DVec3::NEG_Z, thrust: 4000., exhaust: 1., efficiency: 1. };
+        let inertia = DMat3::from_diagonal(DVec3::splat(400.));
+        assert_eq!(balanced_with(&[t.clone()],DVec3::ZERO,1000.,inertia,DVec3::NEG_Z,4000.,0.,true),4000.);
+        t.at = DVec3::X;
+        for drive in [false,true] {
+            assert_eq!(balanced_with(&[t.clone()],DVec3::ZERO,1000.,inertia,DVec3::NEG_Z,4000.,0.,drive),0.,"an unopposed torque is not roundoff");
+        }
     }
 
 }
