@@ -521,3 +521,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.comm.basic.s1
+    version: 2
+    manifest_sha256: "285c2bb4b6c833c08aab02e2c1c688fce41252c6797ccd64d1c252bd83b0b7db"
+    installed: af13f4dba32d722c7af54888beceb091fcae9646
+    game: "the loader (world::assets) at fso af13f4db"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/comm-basic-s1/v2 (200648 bytes, bounds [-1.5, 0.0, -1.5] to [1.5, 1.4907, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
