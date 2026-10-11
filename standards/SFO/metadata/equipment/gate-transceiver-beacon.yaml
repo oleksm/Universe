@@ -37,9 +37,9 @@ function:
   capacity: 5.55555555556
 visual:
   format: "freefall-model/1"
-  path: "models/gate-transceiver-beacon/v1"
-  manifest_sha256: "2148ca91c54c406ac6b95da6761b3f612ec873c919a91792a542132dc48530b6"
-  version: 1
+  path: "models/gate-transceiver-beacon/v2"
+  manifest_sha256: "331bad66ffcbc2511750cb30553d94707ce475a7745a7f3e934dd6cec46b9b9d"
+  version: 2
   triangles: 10798
 life: 473364000
 basis:
