@@ -553,3 +553,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.tank.air.s1
+    version: 2
+    manifest_sha256: "e6960da0b9cc3056e10f77cc329ab24d1ba9761090c7d89156e45e1c8eb14eb1"
+    installed: 2c157010c1552e319b8ca33ef27ae61e4b4b84ea
+    game: "the loader (world::assets) at fso 2c157010"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-air-s1/v2 (91952 bytes, bounds [-0.8, 0.0, -0.8] to [0.8, 1.72, 0.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
