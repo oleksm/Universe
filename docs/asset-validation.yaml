@@ -677,3 +677,18 @@ validations:
       - "the site, not the model: Port Eikir's record puts it at sea on Heath D (45.649, 165.925): all 13,770 samples ocean (-2192 to -42 m); bases -1.8 to +1.9 m about sea level, neighbouring planes stepping up to 2.4 m. Registry moves the settlement (planets asked for coastal land); then terrain seating is engine's"
     pending:
       - "frames again once the settlement stands on land"
+  - key: module.livestock-barn
+    version: 1
+    manifest_sha256: "d27a9cc0c18c93fe1f0e8759d73c9989d3b2faef3b7e166f3b91dfe4d10b58d8"
+    installed: 633e5b30
+    game: "the loader (world::assets) at fso 633e5b30"
+    date: "2026-10-10"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/livestock-barn/v1 (149688 bytes, bounds [-100.0, 0.0, -25.0] to [100.0, 8.0, 25.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
+      - "Actual settlement terrain seating, access, GPU appearance/filtering/cost and operational game states; structural and agricultural qualification not supplied by exterior model"
