@@ -39,3 +39,13 @@ allocator state rather than relying only on the older world fingerprint.
 
 This is inventory persistence, not a full quick-save of land ownership, NPC flight
 or market population state. The existing replay save remains the whole-world path.
+
+Validation on `ships-package-save` (implementation `034bd693`): registry build
+passes; all 144 workspace tests pass, including nine save tests and the replay
+snapshot comparison. Commands used an absolute `UNIVERSE_REGISTRY_ROOT`, the
+shared Cargo target, and the bounded two-CPU/eight-GiB runner.
+
+Dependencies: engine `a962a100`, `03cedb17`, `e71a7556`, `f68a3d83`; registry
+validator fix `5873279c`. This validation covers that foundation and the persistence
+integration. Engine's subsequent production packing/roundoff repair is a separate
+handoff and has not been included in this branch's results.
