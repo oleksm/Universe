@@ -242,6 +242,12 @@ recipes:
       - { item: good.crop-residue, quantity: 7.2 }
     rate: 0.001901
     power: 20000
+visual:
+  format: "freefall-model/1"
+  path: "models/field/v1"
+  manifest_sha256: "7b010f3e7f488cca243f1c0067753e6a7277305ee302792eb98fd0e812112e64"
+  version: 1
+  triangles: 492
 life: 788940000
 basis:
   - { of: [physical.height], tier: invented, review: true, note: "For the modeller (2026-10-10): 1 m, a ripe cereal crop standing on the ground; the model's base is the ground plane at y = 0 (the game lays it on the terrain). v1 is one generic crop in bands with low headlands, no buildings or machines; which crop stands, and its growth, is the game's state, not the model's." }
