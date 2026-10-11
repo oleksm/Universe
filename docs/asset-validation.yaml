@@ -1300,3 +1300,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual GPU materials, temporal edges, performance, final hull upper/lower mounting and loaded cargo fit pending;4tonne dynamic strength, restraint and handling unqualified. Static empty package only."
+  - key: equipment.gate.relay.hyper
+    version: 1
+    manifest_sha256: "233bbe0f8c3d87e3aa0bd5eace901d8d10a56ccc7a18d141b5b97ff395def671"
+    installed: 95d981fd
+    game: "the loader (world::assets) at fso 95d981fd"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gate-relay-hyper/v1 (186680 bytes, bounds [-2.24, 0.0, -1.495] to [2.24, 2.99, 1.495]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual GPU materials, temporal filtering and cost; full gate/hull mounting and upper attachments; invented hyperspace behavior,1.5MW thermal/field feasibility, internal packing and structural qualification. Static exterior only."
