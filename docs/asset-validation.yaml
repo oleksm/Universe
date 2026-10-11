@@ -1140,3 +1140,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, vendor label printing, handling/tint, GPU cost and temporal filtering; local label coverage of one vent and original produce ventilation/handling qualification remain open."
+  - key: package.carton-pallet
+    version: 2
+    manifest_sha256: "6d9e30701991cdffb07b92fe586795501edd975e5f4c7d65edb967bc14b504bb"
+    installed: a3ff9c74
+    game: "the loader (world::assets) at fso a3ff9c74"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/carton-pallet/v2 (57832 bytes, bounds [-0.602, 0.0, -0.502] to [0.602, 1.5002, 0.502]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, vendor label printing, handling, GPU cost and temporal filtering; original wrap/carton/pallet payload and stacking qualification remain open."
