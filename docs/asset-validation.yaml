@@ -948,3 +948,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual package drawing, placement, forklift handling, GPU appearance/cost and temporal edges pending. Pressure, thermal, filling/relief and transport qualification remain provisional in about account."
+  - key: package.gas-rack
+    version: 1
+    manifest_sha256: "6858a033dc89c4fef8a3e1691f013f556f42506616261152af42cdecdc7dd5af"
+    installed: 0d3a0284
+    game: "the loader (world::assets) at fso 0d3a0284"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gas-rack/v1 (290232 bytes, bounds [-0.5, 0.0, -0.4] to [0.5, 1.85, 0.417]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual package drawing, placement, forklift handling, GPU appearance/cost and temporal edges pending. Pressure rating, gas filling/thermodynamics and structural/transport qualification remain provisional."
