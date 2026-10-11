@@ -363,3 +363,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Requires v02 fixed hull supports and proper gear_3 mount frame; moving runtime, production hull installation, landing suspension/load and GPU checks remain held."
+  - key: equipment.hardpoint.mining-hammer.mc07-right
+    version: 1
+    manifest_sha256: "5781c20f88024a0370e3fd86fc5d6a60577b753eb3cdb6879ccb096a719107dc"
+    installed: 2b0385ad
+    game: "the loader (world::assets) at fso 2b0385ad"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hardpoint-mining-hammer-mc07-right/v1 (266848 bytes, bounds [-2.67, -1.49, -3.22] to [2.67, 3.75, 3.22]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static package only; pose24 chisel/well nominal zero clearance keeps combined motion and runtime held. Supported v04 hull fixture required. Production hull integration, full aim volume, continuous containment, breaker interaction, loads and GPU appearance/cost pending."
