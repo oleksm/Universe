@@ -1748,3 +1748,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static stowed asset; source-only folding demo. Actual equipment drawing, GPU/material look and cost, interaction/runtime motion, final hull/terrain fit, one-tonne rating and structural/drive qualification pending."
+  - key: equipment.access.cargo-lift.s2
+    version: 1
+    manifest_sha256: "e1f233d652523501118aef9e94b16689b3aae86c99c18f0e2d3b994b9f4503e2"
+    installed: 513329d6
+    game: "the loader (world::assets) at fso 513329d6"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-cargo-lift-s2/v1 (486836 bytes, bounds [-1.755, 0.0, -1.75] to [1.755, 1.002, 1.75]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Provisional static lowered asset; source-only8m scissor demo.3776kg structure exceeds3t record;20t capacity and18.234MN folded force remain unqualified. Actual drawing/materials/GPU cost,runtime motion,final hull fit,drive/strength/stability and safety pending."
