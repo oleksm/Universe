@@ -329,7 +329,7 @@
 - { record: equipment.access.anchor-clamp.mc07-fwd, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "049ecdf6c99abfb2" }
 - { record: equipment.access.bay-door.s1, at: "2026-10-11T21:56:15Z", status: draft, summary: "changed: visual", sha: "7a6d80b0f163cf2e" }
 - { record: equipment.access.bay-door.s2, at: "2026-10-11T22:02:47Z", status: draft, summary: "changed: visual", sha: "504ce614d28428b4" }
-- { record: equipment.access.bay-door.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54a448c12aec4922" }
+- { record: equipment.access.bay-door.s3, at: "2026-10-11T22:05:02Z", status: draft, summary: "changed: physical, built_of, basis", sha: "709512017334938c" }
 - { record: equipment.access.boarding-ramp.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "65846d817f9cb44a" }
 - { record: equipment.access.cargo-lift.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "8dda9ae4883969b7" }
 - { record: equipment.access.cargo-ramp.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "713e1b25d888721c" }
