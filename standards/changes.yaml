@@ -914,7 +914,7 @@
 - { record: module.feed-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "2149d25f26397089" }
 - { record: module.ferroalloy-furnace, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "f6668d954e2e3947" }
 - { record: module.fertiliser-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "890902a516fc96a0" }
-- { record: module.field, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "21cc7756b422bccf" }
+- { record: module.field, at: "2026-10-11T02:53:44Z", status: review, summary: "changed: physical, basis", sha: "03f53f0c8707797b" }
 - { record: module.filament-winder, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "772c4dd324afb3d9" }
 - { record: module.film-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "a0461a62fc61979b" }
 - { record: module.finishing-line, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "180de4a7a42e1be8" }
