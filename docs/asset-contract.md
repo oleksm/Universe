@@ -25,6 +25,15 @@ edges, so nothing waits on a model to exist.
 Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--summary` (records and models by kind),
 `--key <key>` (one record's brief), `--hulls` (hulls too).
 
+## Packages: the contents convention
+
+A package model is drawn full. What it carries is the meshes under one node named `contents`, all with one material
+named `contents` (neutral light grey, no texture): the game tints that material by the stock's material colour, and may
+hide or scale the node for a part-full package. Everything else (pallet, straps, cage, frame) is the package itself, in
+its own materials, never tinted. No labels, no text. The contents stand for any stock the package carries: a
+representative load, not its count, cross-section or weight. The bar bundle's contents are round tubes (71 of the 73
+stock records it carries are tubes).
+
 ## Static models
 
 The game draws a registry model as it stands: no animation clips, skins or deforming meshes (hoses, bellows). A part
