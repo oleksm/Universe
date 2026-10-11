@@ -14,6 +14,7 @@ holds:
 handling: crane
 stack: 1
 keeps: hot
+label: 2
 shows_contents: true
 visual:
   format: "freefall-model/1"

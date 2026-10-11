@@ -3,6 +3,10 @@ identity:
   key: org.castellan
   name: Castellan Storage
 kind: company
+brand:
+  name: "Castellan Storage"
+  primary: [0.157, 0.315, 0.542]
+  accent: [0.875, 0.773, 0.625]
 ticker: CST
 business: warehousing
 note: "Port warehouses, yards and tanks"

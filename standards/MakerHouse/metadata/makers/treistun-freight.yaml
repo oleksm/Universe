@@ -4,6 +4,10 @@
 identity:
   key: org.treistun-freight
   name: Treistun Freight
+brand:
+  name: "Treistun Freight"
+  primary: [0.542, 0.157, 0.278]
+  accent: [0.625, 0.875, 0.797]
 ticker: TFR
 kind: company
 business: hauling

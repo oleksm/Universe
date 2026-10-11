@@ -3,6 +3,11 @@ identity:
   key: org.hadley
   name: Hadley Heavy Industries
 kind: company
+brand:
+  name: "Hadley Heavy Industries"
+  primary: [0.694, 0.522, 0.243]
+  accent: [0.694, 0.733, 0.773]
+  logo: MakerHouse/logos/hadley-heavy-industries.svg
 ticker: HHI
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 1, section: A, unit: 1 }
 note: "Plants, tanks and racks: rugged and cheap"

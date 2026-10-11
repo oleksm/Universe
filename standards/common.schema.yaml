@@ -117,6 +117,23 @@ definitions:
       made_at: { type: string, x-ref: [facility, rig], description: "The works it came from, by its key." }
       made_on: { type: number, x-unit: "s", description: "s of world time when it was finished: when its life (the design's `life`) began." }
       parts: { type: array, items: { type: string }, description: "The serials of the marked parts built into it, for tracing a failure to its part and its part to its batch." }
+  label:
+    description: "A packed unit's label (SFO 21): what a works stamps on each package it fills, read by eye and by barcode: who, what, where, when. Game state, stamped at packing; the registry gives its shape and the layout (docs/formats/freefall-label-1.md). The package's own handling marks come from its template."
+    type: object
+    additionalProperties: false
+    required: [brand, product, lot, serial, made_at, made_on, packed_on, net_mass, gross_mass, package]
+    properties:
+      brand: { type: string, x-ref: [org], description: "The maker whose brand it carries, by its key" }
+      product: { type: string, x-ref: [stock], description: "What is in it, by the stock's key" }
+      lot: { type: string, pattern: "^[A-Z]{2,4}-[0-9]{6}$", description: "The batch it came from (batch.lot)" }
+      serial: { type: string, pattern: "^[A-Z]{2,4}-[0-9]{6}-[0-9]{4}$", description: "This package: its lot and a four-figure count within the lot, BWD-004471-0007; the barcode carries it" }
+      made_at: { type: string, x-ref: [facility, rig], description: "The works, by its key" }
+      made_on: { type: number, x-unit: "s", description: "s of world time when its lot was finished" }
+      packed_on: { type: number, x-unit: "s", description: "s of world time when it was filled and labelled" }
+      net_mass: { type: number, x-unit: "kg", description: "kg of contents" }
+      gross_mass: { type: number, x-unit: "kg", description: "kg with the package (its tare)" }
+      package: { type: string, x-ref: [package], description: "The package template, by its key" }
+      barcode: { enum: [code128], description: "The symbology of its barcode, which encodes the serial (Code 128, set B)" }
   batch:
     description: "A lot's mark (SFO 21), for what is kept in bulk: stock, goods. One batch number a lot, from the works that made it; mill stock carries the heat (the melt) it was rolled from, as a mill certificate does."
     type: object

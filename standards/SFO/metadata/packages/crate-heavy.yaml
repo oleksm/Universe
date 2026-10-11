@@ -13,6 +13,7 @@ holds:
   mass: 2000
 handling: forklift
 stack: 2
+label: 2
 shows_contents: false
 visual:
   format: "freefall-model/1"

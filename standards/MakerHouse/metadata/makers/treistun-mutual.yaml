@@ -4,6 +4,10 @@
 identity:
   key: org.treistun-mutual
   name: Treistun Mutual
+brand:
+  name: "Treistun Mutual"
+  primary: [0.157, 0.303, 0.542]
+  accent: [0.875, 0.781, 0.625]
 ticker: TMU
 kind: company
 business: insurance

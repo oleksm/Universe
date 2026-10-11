@@ -3,6 +3,11 @@ identity:
   key: org.tallis
   name: Tallis Signal Works
 kind: company
+brand:
+  name: "Tallis Signal Works"
+  primary: [0.804, 0.373, 0.329]
+  accent: [0.918, 0.753, 0.71]
+  logo: MakerHouse/logos/tallis-signal-works.svg
 ticker: TSW
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 38, section: B, unit: 3 }
 note: "Comms and relays: far-reaching, power-hungry"

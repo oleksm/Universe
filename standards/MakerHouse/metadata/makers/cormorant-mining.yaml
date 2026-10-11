@@ -3,6 +3,11 @@ identity:
   key: org.cormorant
   name: Cormorant Mining
 kind: company
+brand:
+  name: "Cormorant Mining"
+  primary: [0.694, 0.522, 0.243]
+  accent: [0.192, 0.408, 0.365]
+  logo: MakerHouse/logos/cormorant-mining.svg
 ticker: CMN
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 2, section: D, unit: 8 }
 note: "Mining gear"

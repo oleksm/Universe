@@ -3,6 +3,11 @@ identity:
   key: org.garrick
   name: Garrick Arms
 kind: company
+brand:
+  name: "Garrick Arms"
+  primary: [0.776, 0.431, 0.416]
+  accent: [0.529, 0.275, 0.267]
+  logo: MakerHouse/logos/garrick-arms.svg
 ticker: GAR
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 7, section: C, unit: 10 }
 note: "Weapons: mass drivers and lasers"

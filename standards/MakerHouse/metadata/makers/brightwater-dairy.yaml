@@ -4,6 +4,10 @@ identity:
   key: org.brightwater-dairy
   name: "Brightwater Dairy"
 kind: company
+brand:
+  name: "Brightwater Dairy"
+  primary: [0.542, 0.157, 0.514]
+  accent: [0.625, 0.875, 0.643]
 ticker: BWD
 address: { at: settlement.treistun.port-eikir }
 note: "Milk, cheese, butter and eggs"

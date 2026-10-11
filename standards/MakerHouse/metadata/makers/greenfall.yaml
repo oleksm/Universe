@@ -4,6 +4,10 @@ identity:
   key: org.greenfall
   name: "Greenfall Agrochemical"
 kind: company
+brand:
+  name: "Greenfall Agrochemical"
+  primary: [0.233, 0.542, 0.157]
+  accent: [0.826, 0.625, 0.875]
 ticker: GFA
 address: { at: settlement.treistun.port-eikir }
 note: "Fertiliser"

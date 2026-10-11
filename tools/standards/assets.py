@@ -702,6 +702,12 @@ def check_model(kind, r, info):
             bad.append("its load shows: it needs a node and a material both named contents (tinted by the stock)")
         if not r["shows_contents"] and ("contents" in info["nodes"] or "contents" in info.get("materials", [])):
             bad.append("it is closed: no node or material named contents")
+    if kind == "package" and r.get("label"):           # (its label plates: docs/formats/freefall-label-1.md)
+        for n in ["label", "label_2"][: r["label"]]:
+            if n not in info["nodes"]:
+                bad.append(f"no label plate node named {n} (the record asks for {r['label']})")
+        if "label" not in info.get("materials", []):
+            bad.append("no material named label for its plates")
     budget = KINDS[kind][1]
     if info["triangles"] > budget:
         bad.append(f"{info['triangles']:,} triangles drawn, over the {budget:,} a {kind} may have")

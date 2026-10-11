@@ -14,6 +14,7 @@ holds:
 handling: forklift
 stack: 1
 keeps: sealed
+label: 2
 shows_contents: false
 visual:
   format: "freefall-model/1"

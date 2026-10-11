@@ -3,6 +3,11 @@ identity:
   key: org.meridian
   name: Meridian Power
 kind: company
+brand:
+  name: "Meridian Power"
+  primary: [0.302, 0.651, 0.796]
+  accent: [0.502, 0.376, 0.184]
+  logo: MakerHouse/logos/meridian-power.svg
 ticker: MPW
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 9, section: B, unit: 2 }
 note: "Capacitor banks and power storage"

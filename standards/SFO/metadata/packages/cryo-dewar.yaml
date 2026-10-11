@@ -13,6 +13,7 @@ holds:
   mass: 1200
 handling: forklift
 stack: 1
+label: 2
 shows_contents: false
 keeps: cold
 visual:

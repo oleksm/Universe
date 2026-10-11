@@ -4,6 +4,10 @@ identity:
   key: org.eikir-growers
   name: "Eikir Growers"
 kind: company
+brand:
+  name: "Eikir Growers"
+  primary: [0.542, 0.157, 0.499]
+  accent: [0.625, 0.875, 0.654]
 ticker: EKG
 address: { at: settlement.treistun.port-eikir }
 note: "Grain, potatoes, beet and hay from the temperate north"

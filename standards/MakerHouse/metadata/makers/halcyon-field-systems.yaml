@@ -3,6 +3,11 @@ identity:
   key: org.halcyon
   name: Halcyon Field Systems
 kind: company
+brand:
+  name: "Halcyon Field Systems"
+  primary: [0.796, 0.494, 0.294]
+  accent: [0.545, 0.741, 0.867]
+  logo: MakerHouse/logos/halcyon-field-systems.svg
 ticker: HFS
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 31, section: A, unit: 1 }
 note: "Hyperdrives and gate rings: clean fields, dear"

@@ -3,6 +3,11 @@ identity:
   key: org.halvard
   name: Halvard Construction
 kind: company
+brand:
+  name: "Halvard Construction"
+  primary: [0.427, 0.604, 0.749]
+  accent: [0.102, 0.125, 0.149]
+  logo: MakerHouse/logos/halvard-construction.svg
 ticker: HVC
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 15, section: D, unit: 7 }
 note: "Stations, spaceports and outposts"

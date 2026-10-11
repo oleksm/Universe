@@ -20,6 +20,16 @@ properties:
   about: { type: array, items: { type: string }, description: 'What it is, in paragraphs.' }
   story: { type: array, items: { type: string }, description: 'Its story, in paragraphs.' }
   # A company.
+  brand:
+    description: "How its products are marked (SFO 21): the name, colours and logo its labels and nameplates carry."
+    type: object
+    additionalProperties: false
+    required: [name, primary, accent]
+    properties:
+      name: { type: string, description: "The brand as printed: short, often not the company's full name" }
+      primary: { type: array, items: { type: number, minimum: 0, maximum: 1 }, minItems: 3, maxItems: 3, x-unit: "1", description: "sRGB 0 to 1: the label's band and the logo's ground" }
+      accent: { type: array, items: { type: number, minimum: 0, maximum: 1 }, minItems: 3, maxItems: 3, x-unit: "1", description: "sRGB 0 to 1: the second colour" }
+      logo: { type: string, description: "The logo, an SVG under standards/ (MakerHouse/logos/<name>.svg); absent: the label prints the ticker in the brand's colours" }
   ticker: { type: string, pattern: '^[A-Z]{2,4}$', description: "A company's short trading name; no two alike." }
   business: { enum: [maker, warehousing, exchange, food, insurance, banking, hauling, passage], description: "What kind of company it is. food: it grows or makes food. insurance: it covers hulls and cargoes. banking: it lends. hauling: it carries freight. passage: it carries people. Left out: a maker. Only makers go to the game's brands." }
   who: { type: string, description: Who they are. }

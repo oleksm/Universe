@@ -3,6 +3,11 @@ identity:
   key: org.aurel
   name: Aurel Fusion Works
 kind: company
+brand:
+  name: "Aurel Fusion Works"
+  primary: [0.733, 0.58, 0.239]
+  accent: [0.843, 0.761, 0.459]
+  logo: MakerHouse/logos/aurel-fusion-works.svg
 ticker: AFW
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 11, section: A, unit: 6 }
 note: "Fusion plants: light, efficient, dear"

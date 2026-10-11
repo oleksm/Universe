@@ -3,6 +3,11 @@ identity:
   key: org.vireo
   name: Vireo Spaceworks
 kind: company
+brand:
+  name: "Vireo Spaceworks"
+  primary: [0.722, 0.686, 0.325]
+  accent: [0.22, 0.373, 0.212]
+  logo: MakerHouse/logos/vireo-spaceworks.svg
 ticker: VIR
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 5, section: D, unit: 4 }
 note: "Hulls: fast and light"
