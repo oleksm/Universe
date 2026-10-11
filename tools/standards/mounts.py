@@ -23,6 +23,7 @@ NAMES = {"power": "power plant", "drive": "main drive", "thrusters": "thruster",
          "avionics": "avionics", "gear": "landing gear", "access": "access", "handling": "handling", "thermal": "thermal", "command": "command station", "engine": "engine"}
 PATTERN = {"drive": ("ring", 8), "thrusters": ("ring", 4), "lift": ("ring", 6), "tank": ("saddles", 4), "gear": ("trunnion", 3), "hardpoint": ("ring", 4), "access": ("ring", 8), "thermal": ("corners", 4), "engine": ("ring", 8)}
 M, DESIGN_G = 1.25, 3 * 9.80665
+CARRIES = ("tank", "rack", "ore_bay", "store")   # kinds whose capacity is kg they hold: the mount bears the thing full
 
 
 def main():
@@ -48,7 +49,7 @@ def main():
         heat = lambda d: device_heat(fnk(d))   # (one rule: lib.device_heat, SFO 22)
         burn = lambda d: fnk(d)["output"] / fnk(d)["efficiency"] / 3.45e14 if fnk(d)["kind"] == "power_plant" else (fnk(d)["thrust"] / fnk(d)["exhaust"] if "thrust" in fnk(d) else 0)
         return {"L": g(lambda d: d["physical"]["length"]) * k ** (1 / 3), "W": g(lambda d: d["physical"]["width"]) * k ** (1 / 3), "H": g(lambda d: d["physical"]["height"]) * k ** (1 / 3),
-                "mass": g(lambda d: d["physical"]["mass"]) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,
+                "mass": g(lambda d: d["physical"]["mass"] + (fnk(d).get("capacity", 0) if fnk(d)["kind"] in CARRIES else 0)) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,
                 "thrust": g(lambda d: fnk(d).get("thrust", 0)) * k, "heat": g(heat) * k, "burn": g(burn) * k,
                 "recoil": g(lambda d: fnk(d).get("slug_mass", 0) * fnk(d).get("muzzle_speed", 0) * fnk(d).get("rate", 0) + (fnk(d).get("feed_force", 0) if fnk(d)["kind"] == "breaker" else 0)) * k,
                 "hold": g(lambda d: fnk(d).get("holds", 0) if fnk(d)["kind"] == "docking" else 0) * k,
