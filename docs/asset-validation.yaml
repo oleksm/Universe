@@ -1156,3 +1156,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, vendor label printing, handling, GPU cost and temporal filtering; original wrap/carton/pallet payload and stacking qualification remain open."
+  - key: package.ladle
+    version: 2
+    manifest_sha256: "6d62e9d4e2c36f93548d26ee9ea350ec4a1d855fae62f3a22756a074c23a2d6a"
+    installed: 2eac045d
+    game: "the loader (world::assets) at fso 2eac045d"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle/v2 (87680 bytes, bounds [-0.99, 0.0, -1.02] to [0.99, 2.197, 0.69]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game label printing, content tint, GPU look/cost and hot-work engineering remain open; added pad mass estimated, attachment and heat durability unqualified."
