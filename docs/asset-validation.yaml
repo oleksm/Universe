@@ -804,3 +804,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, actual forklift/world placement, GPU appearance/cost and temporal filtering pending. Closed crate has no contents node per9846ae63; registry capacity reconciled0.71m3. Rated2000kg loading/stack2 unqualified; timber tare52.884kg at assumed450kg/m3 versus50kg record."
+  - key: package.tote
+    version: 1
+    manifest_sha256: "1e430ac35037a038aa85c6ec73ab4a9c15b2e038919460fc6bc184475a77e641"
+    installed: b0b5942c
+    game: "the loader (world::assets) at fso b0b5942c"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tote/v1 (314788 bytes, bounds [-0.6, 0.0, -0.5] to [0.6, 1.16, 0.5105]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, actual world/forklift placement, game lighting, GPU cost and temporal filtering remain pending; pressure/chemical compatibility and payload/stack engineering unqualified."
