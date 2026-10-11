@@ -1,0 +1,99 @@
+{
+  "candidate_surface_sha256": "b84f9ef3e0b44739c1072f93b896a9a64431265b9a9233a8a76f609ada6f66d2",
+  "control_surface_sha256": "5029fe82637cdde3e2c7ac93b980eee3af0ae509caf2555450d774685b37bfd7",
+  "source_manifests_verified": true,
+  "reader": {
+    "bytes": 16961360,
+    "capabilities": 3,
+    "category_vocabularies": [
+      "",
+      ""
+    ],
+    "coherent_query_us": 0.1473196,
+    "distributed_query_us": 0.4648996,
+    "faces": 326110,
+    "installed": false,
+    "load_ms": 268.96314,
+    "max_error_m": 1.2732925824820995e-11,
+    "points": 163057,
+    "preview": null,
+    "queries_passed": 198,
+    "surface_sha256": "b84f9ef3e0b44739c1072f93b896a9a64431265b9a9233a8a76f609ada6f66d2"
+  },
+  "derivative": {
+    "height_error_m": 9.094947017729282e-12,
+    "normal_error": 2.220446049250313e-16,
+    "queries": 198,
+    "slope_error": 1.0408340855860843e-17
+  },
+  "renderer_sha256": "5bdeeacea9ccbad750bdf8ae2f9d4b727811ff2a897a58949b3604daea2315e6",
+  "mode": "neutral",
+  "shadows": false,
+  "captures": {
+    "summit": {
+      "camera": {
+        "control_surface": 5456.784228772857,
+        "candidate_surface": 5746.577903775151,
+        "control_alt": 1000,
+        "candidate_alt": 710.2063249977064,
+        "absolute_height": 6456.784228772857
+      },
+      "files": {
+        "control": {
+          "path": "/home/alexm/git/universe/out/review/pgs-basin-native-v1/control-summit.png",
+          "sha256": "1ac121ed9c492483db1f6fea5b317126c5f188d57a8e39db263249e0fc8df1a7",
+          "comparison": "time=7200.000000s surface=5456.784229m sun_elevation=15.684057deg terrain_shadows=false"
+        },
+        "candidate": {
+          "path": "/home/alexm/git/universe/out/review/pgs-basin-native-v1/candidate-summit.png",
+          "sha256": "b118447ca067cfc348659b7e962ea45d5aedb9eb21ce3a24fa027b43764cd3bd",
+          "comparison": "time=7200.000000s surface=5746.577904m sun_elevation=15.684057deg terrain_shadows=false"
+        }
+      },
+      "full_frame_max_channel": 178,
+      "terrain_crop": {
+        "bounds_xy": [
+          440,
+          450,
+          1500,
+          800
+        ],
+        "mean_channel_difference": 0.22860377358490566,
+        "pixels_over_2": 0
+      }
+    },
+    "lake": {
+      "camera": {
+        "control_surface": 620.613115,
+        "candidate_surface": 620.613115,
+        "control_alt": 10000,
+        "candidate_alt": 10000.0,
+        "absolute_height": 10620.613115,
+        "surface_note": "Water level is the surface used for camera altitude; bed height590.379461m unchanged."
+      },
+      "files": {
+        "control": {
+          "path": "/home/alexm/git/universe/out/review/pgs-basin-native-v1/control-lake.png",
+          "sha256": "14a820ac81dc13c386fc27581e1aff0be43f77125bffa231806198cc1e267ab5",
+          "comparison": "time=33503.400000s surface=620.613115m sun_elevation=12.521021deg terrain_shadows=false"
+        },
+        "candidate": {
+          "path": "/home/alexm/git/universe/out/review/pgs-basin-native-v1/candidate-lake.png",
+          "sha256": "88ac0dbdc2bbfff6279c58e79f33b815b251a358db419d2b735a17a6986f5c2c",
+          "comparison": "time=33503.400000s surface=620.613115m sun_elevation=12.521021deg terrain_shadows=false"
+        }
+      },
+      "full_frame_max_channel": 1,
+      "terrain_crop": {
+        "bounds_xy": [
+          440,
+          450,
+          1500,
+          800
+        ],
+        "mean_channel_difference": 0.0,
+        "pixels_over_2": 0
+      }
+    }
+  }
+}

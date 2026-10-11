@@ -94,3 +94,35 @@ All acceptance gates from `pgs1-drainage-unit-review.md` remain. No height bound
 water pins, source grades or preview criteria were relaxed by this review.
 The small synthetic checks passed under the shared 2-CPU/4-GiB launcher; they do
 not establish which rows caused v8's failure. Actual-row diagnosis awaits the dump.
+
+## Analytic rows and conforming footprint follow-up
+
+Review task `20261010T194759-planets-74c8`: analytic along-arc derivative rows
+are a sensible way to avoid cancellation from nearly identical endpoint queries.
+Use the actual minor-arc tangent, consistent direction and units, and a face
+owning the open interval. An edge-coincident arc has the shared-edge derivative;
+do not introduce a discontinuity by switching tie owners. Form coefficients
+from height differences so their sum is zero by construction; validate constant
+height gives zero and compare finite differences away from vertices. Keep the
+geometric trace audit: tiny duplicate intervals should not become new rivers.
+
+A single derivative sample proves the derivative sign within one face on a
+great-circle segment, but does not automatically prove the requested *minimum
+grade* everywhere. The derivative's numerator has constant sign while its
+squared projection denominator varies. For a uniform margin, bound that
+geometry-dependent denominator over the interval (including interior extrema),
+or explicitly certify only sign and separately measure the minimum grade.
+Do not silently replace endpoint drop-per-length with a midpoint slope test.
+
+Including all crossed-face vertices can remove the witnessed contradictory
+inside/outside edge labels. It also expands the intended catchment: publish the
+old/new masks, added area and boundary, preserve the source mapping/provenance,
+and call it a conforming candidate footprint rather than unchanged measured
+basin extent. A connected channel corridor does not certify the whole catchment;
+rerun sinks, extra outlets, native routes, collar and all water/spill gates.
+Do not absorb pinned wet/exterior vertices or another outlet just to satisfy rows.
+A native prefix may be included only with the declared outlet anchored on that
+same directed native arc and a verified downstream connector to known water;
+check branching, upstream exits and crossings of the new divide explicitly.
+The existing bounds and failure gates stay in force; no visual acceptance follows
+from changing the footprint or the row formula alone.
