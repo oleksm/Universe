@@ -916,3 +916,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual package drawing, stock tint, GPU appearance/cost, temporal edges, handling and placement pending; 2000 kg payload and stack-two qualification remain provisional."
+  - key: package.livestock-crate
+    version: 1
+    manifest_sha256: "d5f6c778e513b06c0dbf8927bd67afd5098a8eacd56cc0ebfb7f6026f2e4b69e"
+    installed: a5369a09
+    game: "the loader (world::assets) at fso a5369a09"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/livestock-crate/v1 (159060 bytes, bounds [-1.2, 0.0, -0.6] to [1.3, 1.794, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual package drawing, occupancy, placement, GPU appearance/cost and runtime ramp operation pending. Static empty crate; source-only 65-pose ramp QC. Structural/species transport qualification provisional."
