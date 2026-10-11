@@ -5081,6 +5081,7 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         name: i.plan.hull.clone(),
         equipment: placed_equipment(i),
         visual_origin: mid32,
+        rates: placed.iter().find(|p|p.2=="flight_computer").map(|p|DVec3::new(num(&p.3,"turn_rate"),num(&p.3,"turn_rate"),num(&p.3,"roll_rate"))),
         mass: total,
         inertia,
         actuators,
@@ -5117,11 +5118,11 @@ impl Interior {
     }
 
     /// TEST DRIVE started (dev: `freefall --studio` with UNIVERSE_DRIVE: its
-    /// collective set there; UNIVERSE_DRIVE_MANUAL: manual thrusters).
+    /// forward throttle set there; UNIVERSE_DRIVE_MANUAL: manual thrusters).
     pub fn test_drive(&mut self, collective: Option<f64>) {
         let mut d = crate::test_drive::Drive::new(craft(self));
         if let Some(c) = collective {
-            d.set_collective(c);
+            d.set_throttle(c);
             d.set_assist(!crate::devenv::flag("UNIVERSE_DRIVE_MANUAL"));
         }
         self.drive = Some(d);

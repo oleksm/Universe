@@ -31,6 +31,7 @@ mod mounted;
 mod equipment_visual;
 mod studio_only;
 mod test_drive;
+mod flight_input;
 mod planet_studio;
 mod standards;
 mod sound;
@@ -1039,45 +1040,18 @@ impl App {
             return Controls::default();
         }
 
-        // Shift turns W/S/A/D/Q/E into translation thrusters (RCS).
-        let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
-        let mut command = self.v.ship.holding();
-        if shift {
-            command.rcs = DVec3::new(
-                input.axis(KeyCode::KeyA, KeyCode::KeyD) as f64,
-                input.axis(KeyCode::KeyQ, KeyCode::KeyE) as f64,
-                input.axis(KeyCode::KeyW, KeyCode::KeyS) as f64,
-            );
-        } else {
-            command.rcs = DVec3::ZERO;
-        }
-        // The throttle as a change (the engine has the ship as it is now).
-        let delta = if shift { 0.0 } else { input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt };
-        let set = None;
-        if delta != 0.0 || set.is_some() {
-            self.engine.send(Command::Throttle { delta, set });
-        }
-        self.engine.send(Command::Thrusters(command.rcs));
-
-        let keys: f32 = if shift { 0.0 } else { 1.0 };
-        let mut c = Controls {
-            pitch: input.axis(KeyCode::ArrowUp, KeyCode::ArrowDown) as f64,
-            yaw: (input.axis(KeyCode::KeyE, KeyCode::KeyQ) * keys) as f64,
-            roll: (input.axis(KeyCode::KeyD, KeyCode::KeyA) * keys + input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft))
-                .clamp(-1.0, 1.0) as f64,
-        };
-        // (Not while T's list has the mouse.)
-        if ctx.cursor_grabbed() && !listing {
-            let m = if self.engine.running() {
+        let mouse = if ctx.cursor_grabbed() && !listing {
+            Some(if self.engine.running() {
                 self.mouse_since_tick += input.mouse_delta;
                 self.mouse_since_tick
-            } else {
-                input.mouse_delta
-            };
-            c.pitch = (c.pitch - m.y as f64 * 0.08).clamp(-1.0, 1.0);
-            c.yaw = (c.yaw - m.x as f64 * 0.08).clamp(-1.0, 1.0);
+            } else { input.mouse_delta })
+        } else { None };
+        let pilot = flight_input::sample(input, mouse, dt);
+        if pilot.throttle_delta != 0.0 {
+            self.engine.send(Command::Throttle { delta: pilot.throttle_delta, set: None });
         }
-        c
+        self.engine.send(Command::Thrusters(pilot.translation));
+        pilot.turn
     }
 
     fn handle_events(&mut self, ctx: &Context) {
