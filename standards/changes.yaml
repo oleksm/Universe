@@ -323,7 +323,7 @@
 - { record: element.yb, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c9fcbbd837d20c33" }
 - { record: element.zn, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "cde096ae4adf03ef" }
 - { record: element.zr, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "02328c370caf8440" }
-- { record: equipment.access.airlock.cargo, at: "2026-10-11T21:19:33Z", status: draft, summary: "changed: visual", sha: "9329d9f563d9ed1a" }
+- { record: equipment.access.airlock.cargo, at: "2026-10-11T21:41:22Z", status: draft, summary: "changed: visual", sha: "755af863260cddb2" }
 - { record: equipment.access.airlock.crew, at: "2026-10-11T21:32:01Z", status: draft, summary: "changed: visual", sha: "50a3f6075f9f54eb" }
 - { record: equipment.access.anchor-clamp.mc07-aft, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "f4a3a8f2ae65afd1" }
 - { record: equipment.access.anchor-clamp.mc07-fwd, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "049ecdf6c99abfb2" }
