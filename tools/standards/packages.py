@@ -57,8 +57,9 @@ def package_for(d, g):
         return OVERRIDES[name]
     if form in FORMS:
         return FORMS[form]
-    if form == "fluid":
-        return "gas-rack" if name in GASES else "tote"
+    if form == "fluid":      # (by the stock's own key: -gas a gas, -liq a cryogenic liquid)
+        key = i["key"]
+        return "gas-rack" if key.endswith("-gas") or name in GASES else ("cryo-dewar" if key.endswith("-liq") else "tote")
     if name in GASES:
         return "gas-rack"
     if name.startswith(MOLTEN):

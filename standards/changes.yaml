@@ -1102,13 +1102,14 @@
 - { record: package.coil, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "be0111810d76d8af" }
 - { record: package.cold-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "497571429b605b06" }
 - { record: package.crate-heavy, at: "2026-10-11T13:34:04Z", status: "", summary: "changed: visual", sha: "58631658381004d4" }
+- { record: package.cryo-dewar, at: "2026-10-11T13:37:32Z", status: "", summary: "first tracked", sha: "d1b2f90d81474ee9" }
 - { record: package.gas-rack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "aa025afe1f15cdbd" }
 - { record: package.ladle, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "3a19883b5e997acd" }
 - { record: package.livestock-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "e8b0c7026baa8a43" }
 - { record: package.plate-stack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "cd52c8d67d6bed33" }
 - { record: package.produce-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "94a64d8262968639" }
 - { record: package.skip, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "052f812cab0000dc" }
-- { record: package.tote, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "6463cb652a907fd5" }
+- { record: package.tote, at: "2026-10-11T13:37:32Z", status: "", summary: "changed: identity, shows_contents", sha: "837f08405298b460" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
 - { record: parcel.treistun.ashfall-camp.2, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "38fe80aeecce0011" }
 - { record: parcel.treistun.ashfall-camp.3, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "73a99a528497fd07" }
@@ -1656,7 +1657,7 @@
 - { record: stock.cu-scrap, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "72c00e245fdcd782" }
 - { record: stock.cu-wire-2, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "30863e66b6ab4f0c" }
 - { record: stock.cucumbers-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "72de5cbbc220f40a" }
-- { record: stock.deuterium-liq, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "baf64957658caa50" }
+- { record: stock.deuterium-liq, at: "2026-10-11T13:37:32Z", status: review, summary: "changed: package", sha: "dfa7f136b2c0e283" }
 - { record: stock.diamonds-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "24602c7f6a1b6208" }
 - { record: stock.dross-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "8cd20f83434e283b" }
 - { record: stock.dust-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "b71b4c713168c4d3" }
@@ -1695,8 +1696,8 @@
 - { record: stock.hot-ingot-a36-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "14cb7d575511a8c7" }
 - { record: stock.hot-ingot-ti64-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "769b55c11075b457" }
 - { record: stock.hot-rolled-strip-6061-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "ea0da527da248fb9" }
-- { record: stock.hydrogen-liq, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "3f55e16d61258067" }
-- { record: stock.hydrolox-liq, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "3697f6d58ff0926f" }
+- { record: stock.hydrogen-liq, at: "2026-10-11T13:37:32Z", status: review, summary: "changed: package", sha: "9ad8b267f4ae9cbf" }
+- { record: stock.hydrolox-liq, at: "2026-10-11T13:37:32Z", status: review, summary: "changed: package", sha: "c6f28b2890055ccd" }
 - { record: stock.ilmenite-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f3a8f546726593a8" }
 - { record: stock.impact-diamond-rock-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "62f3b1779a3a45bf" }
 - { record: stock.impact-melt-nickel-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f91e0da5578e5fb7" }
@@ -1735,7 +1736,7 @@
 - { record: stock.meat-and-bone-meal-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "29061d719f13f21e" }
 - { record: stock.medicines-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "d3c8bd326743d8c5" }
 - { record: stock.meteoritic-iron-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "371f1adfc82d8c59" }
-- { record: stock.methalox-liq, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "dec5aa3f6de2cab9" }
+- { record: stock.methalox-liq, at: "2026-10-11T13:37:32Z", status: review, summary: "changed: package", sha: "db76f2b5bf35ba2e" }
 - { record: stock.methane-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "7386639510c5cf11" }
 - { record: stock.methanol-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "7b56073189270525" }
 - { record: stock.milk-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "b70950abfb337f9f" }
@@ -1747,7 +1748,7 @@
 - { record: stock.nickel-iron-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "2d11d7f60ec9db8f" }
 - { record: stock.nickel-sulphide-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "0251b9af540064e6" }
 - { record: stock.nitric-acid-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "c4c2d13f8f873533" }
-- { record: stock.nitrogen-gas, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "3a23a53fcf898557" }
+- { record: stock.nitrogen-gas, at: "2026-10-11T13:37:32Z", status: review, summary: "changed: package", sha: "a8e00a09a3d998f5" }
 - { record: stock.oats-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "61b52f3b31c2bf4b" }
 - { record: stock.offal-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "1dcd556d4c90dcf0" }
 - { record: stock.oilseed-meal-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "2c4835afcec62b9b" }

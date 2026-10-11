@@ -5,7 +5,7 @@ identity:
   code: HYDROLOX-LIQ
   name: "Hydrolox, liquid"
   form: fluid
-package: package.tote
+package: package.cryo-dewar
 tint: [0.15, 0.15, 0.15]
 made_from:
   - item: material.hydrolox

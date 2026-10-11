@@ -2,7 +2,7 @@
 identity:
   key: package.tote
   name: "Tote tank"
-  description: "A 1 m3 plastic tank in a steel cage on a pallet, valve at the foot: liquids and slurries."
+  description: "A 1 m3 opaque plastic tank in a steel cage on a pallet, valve at the foot: liquids and slurries at ordinary temperatures (cryogenic liquids go in dewars)."
 physical:
   length: 1.2
   width: 1.0
@@ -14,6 +14,6 @@ holds:
 handling: pump
 stack: 2
 keeps: sealed
-shows_contents: true
+shows_contents: false
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
