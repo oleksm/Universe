@@ -173,15 +173,19 @@ pub fn take(units: &mut Units, before: &crate::lots::Lots, pieces: &[(Batch, f64
             .map(|(_, k)| k)
             .sum();
         let mut want = (*kg - (total - packed).max(0.0)).max(0.0);
+        // Inventory sums and per-unit sums take different floating-point paths.
+        // An ulp-sized remainder after a whole unit must not open the next shell.
+        // Scale to the quantities themselves so genuinely tiny fills still move.
+        let roundoff = 64.0 * f64::EPSILON * kg.abs().max(total.abs()).max(packed.abs());
         let mut i = 0;
-        while want > 0.0 && i < units.len() {
+        while want > roundoff && i < units.len() {
             if units[i].batch.lot != batch.lot {
                 i += 1;
                 continue;
             }
             let u = units.remove(i).unwrap();
-            if want >= u.net_mass {
-                want -= u.net_mass;
+            if want + roundoff >= u.net_mass {
+                want = (want - u.net_mass).max(0.0);
                 if u.label.is_some() {
                     out.push(u);
                 }
@@ -280,6 +284,20 @@ mod tests {
         assert!(take(&mut u, &[(batch(), 100.0)].into(), &[(batch(), 1.0)]).is_empty());
         assert!(u.is_empty());
     }
+    #[test]
+    fn whole_transfer_roundoff_does_not_open_next_fill() {
+        let (mut u, _) = filled(125.0);
+        let moved = take(&mut u, &[(batch(), 125.0)].into(), &[(batch(), 100.0 + 1e-13)]);
+        assert_eq!(moved.len(), 1);
+        assert_eq!(u.len(), 1);
+        assert_eq!(u[0].net_mass, 25.0);
+        assert!(u[0].label.is_none());
+        let (mut u, _) = filled(125.0);
+        let moved = take(&mut u, &[(batch(), 125.0)].into(), &[(batch(), 100.0 - 1e-13)]);
+        assert_eq!(moved.len(), 1);
+        assert_eq!(u.len(), 1);
+    }
+
     #[test]
     fn loose_first_and_no_mixed_lots() {
         let (mut u, mut s) = filled(100.0);
