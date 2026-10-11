@@ -444,7 +444,7 @@
 - { record: equipment.power.battery.s1, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "7b2b5c3b801231d1" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "7c3fc251be4c2ecf" }
 - { record: equipment.power.fusion.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "fa69257ae09c9de0" }
-- { record: equipment.power.fusion.s2, at: "2026-10-11T03:29:49Z", status: draft, summary: "changed: identity, basis", sha: "1c052894c85cec7f" }
+- { record: equipment.power.fusion.s2, at: "2026-10-11T03:49:02Z", status: draft, summary: "changed: visual", sha: "4ea82e04d9539e72" }
 - { record: equipment.power.fusion.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "5809c99352d16695" }
 - { record: equipment.power.solar-array.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "9d872cb69d629e4a" }
 - { record: equipment.power.switchgear.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "16096ae9e5aa4e91" }
