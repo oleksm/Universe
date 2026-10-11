@@ -1,0 +1,8 @@
+{
+  "scope": "Independent traversal of producer receiver arrays; not independent reconstruction of slopes/receivers or water-domain intersections.",
+  "affected": 21142,
+  "baseline_reaching_wet": 21142,
+  "candidate_reaching_wet": 21142,
+  "changed_first_wet_vertex": 1037,
+  "sha256": "f1b88c54ece4f9e77e5d7c7d0aff639874b2c9ac1961e88e03060739c0d4f934"
+}

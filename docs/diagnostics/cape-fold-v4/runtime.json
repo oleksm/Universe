@@ -1,0 +1,34 @@
+{
+  "lake-candidate-final": {
+    "frames": [
+      "480 frames in 21.47s (44.73 ms/frame)"
+    ],
+    "lod": [
+      "SCENERY DEBUG frame=480 resident_draw_levels={5: 4, 6: 52, 7: 63, 8: 62, 9: 67, 10: 67, 11: 64, 12: 16} pending=0 eye_height_m=10620.613114"
+    ]
+  },
+  "lake-control-final": {
+    "frames": [
+      "480 frames in 22.89s (47.69 ms/frame)"
+    ],
+    "lod": [
+      "SCENERY DEBUG frame=480 resident_draw_levels={5: 3, 6: 50, 7: 63, 8: 62, 9: 67, 10: 67, 11: 64, 12: 16} pending=0 eye_height_m=10620.613114"
+    ]
+  },
+  "summit-candidate-final": {
+    "frames": [
+      "480 frames in 19.19s (39.98 ms/frame)"
+    ],
+    "lod": [
+      "SCENERY DEBUG frame=480 resident_draw_levels={5: 1, 6: 52, 7: 68, 8: 73, 9: 69, 10: 70, 11: 74, 12: 56} pending=0 eye_height_m=7765.607268"
+    ]
+  },
+  "summit-control-final": {
+    "frames": [
+      "480 frames in 16.63s (34.64 ms/frame)"
+    ],
+    "lod": [
+      "SCENERY DEBUG frame=480 resident_draw_levels={6: 48, 7: 68, 8: 73, 9: 69, 10: 70, 11: 74, 12: 56} pending=0 eye_height_m=7765.607267"
+    ]
+  }
+}

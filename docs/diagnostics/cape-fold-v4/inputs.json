@@ -1,0 +1,7 @@
+{
+  "query_fixtures.json": "29bc6b4fbb4b55acfc5c8e0c6fa3531f70c838aeb26b14ca840aa7f768985b18",
+  "derivative_fixtures.json": "43673100ca531b28456d5d6e9fec405e137ff0685a499befe71659137596c90f",
+  "validation.json": "cd826ae96572d7c4d91bc37b8e90a9a3cf2582fc5c61018244c2c05173a6c44f",
+  "pgs_accept": "c92007a41fa79f3008e1f817e55a185d994f3cf4825cfa31e364269c9e4e4223",
+  "pgs_slope_accept": "949f11bd212a7f428fcd3cee6430322b60ee8173ea0965650163d4c213951abd"
+}
