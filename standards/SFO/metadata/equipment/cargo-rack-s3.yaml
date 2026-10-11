@@ -28,9 +28,9 @@ function:
   capacity: 20000
 visual:
   format: "freefall-model/1"
-  path: "models/cargo-rack-s3/v1"
-  manifest_sha256: "3d816af1d4da8e5f31d5ec12079a7a01203285170bb6b33d77d272b5e1e82edb"
-  version: 1
+  path: "models/cargo-rack-s3/v2"
+  manifest_sha256: "81a63e5a8b0a24f54a5e77763ffab23fc88433573dbf3c3a44cddd42898a17de"
+  version: 2
   triangles: 3808
 life: 473364000
 basis:
