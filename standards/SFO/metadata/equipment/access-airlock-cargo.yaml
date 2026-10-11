@@ -29,6 +29,12 @@ function:
   cycle: 600
   passage: 2.4
   air_lost: 15.0
+visual:
+  format: "freefall-model/1"
+  path: "models/access-airlock-cargo/v1"
+  manifest_sha256: "fbe073c460ba3d9db38319849c10e7040ebf62a6e3e249b0394eb469531262df"
+  version: 1
+  triangles: 5980
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A lock a pallet or six suited people go through: 54 m3, 6 t, about the ISS Quest airlock whole (9.9 t with its tanks). From memory. Not sourced." }
