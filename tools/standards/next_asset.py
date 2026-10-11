@@ -9,8 +9,9 @@
 
 The queue is every record of a kind that takes a model (equipment, modules, buildings, structures, gates; hulls on
 asking) with no `visual` yet and not retired, in the order the player sees them most: equipment fitted on hulls and
-structures and works modules standing at facilities (standard modules and equipment first, the user's order), then
-the rest of them, then structures and gates, then buildings, held records (revision priority low: the MC-07) last; within each, the most used first, current designs before outdated ones. Docs:
+structures first (ship equipment first, the user's order of 2026-10-10), then the rest of the equipment, then structures
+and gates, then works modules and buildings (their vision still being settled), held records (revision priority low:
+the MC-07) last; within each, the most used first, current designs before outdated ones. Docs:
 docs/asset-contract.md.
 """
 import glob, json, os, sys
@@ -44,14 +45,16 @@ def usage():
 
 
 def tier(kind, key, used):
-    """Standard modules and equipment first (the user, 2026-10-10): what is in use, then the rest of them; then
-    structures, gates and buildings; hulls last (they are the ships session's)."""
-    if kind in ("equipment", "module"):
+    """Ship equipment first (the user, 2026-10-10): what is in use, then the rest; then structures and gates; works
+    modules and buildings after (their vision is still being settled); hulls last (they are the ships session's)."""
+    if kind == "equipment":
         return 0 if used.get(key) else 1
     if kind in ("structure", "gate"):
         return 2
+    if kind == "module":
+        return 3
     if kind == "building":
-        return 3 if used.get(key) else 4
+        return 4
     return 5
 
 
