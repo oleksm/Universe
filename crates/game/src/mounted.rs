@@ -85,15 +85,12 @@ impl Cache {
         let k = (key.to_string(), slot.to_string());
         if !self.items.contains_key(&k) {
             let read = || -> Result<_, String> {
-                let visual = assets::visual(key).ok_or("no installed visual")?;
-                let m = assets::model(visual)?;
+                let m = crate::equipment_visual::get(key).ok_or("no usable installed visual")?;
                 if m.has_motion {
                     return Err("motion contract requires articulated mounted consumer".into());
                 }
-                assets::mounts::require_static(&m.glb)?;
-                let nodes = assets::mounts::frames(&m.glb)?;
-                let inverse_primary = assets::mounts::placement(DMat4::IDENTITY, &nodes, slot)?;
-                Ok((PbrModel::load_gltf(&m.glb)?, inverse_primary))
+                let inverse_primary = assets::mounts::placement(DMat4::IDENTITY, &m.nodes, slot)?;
+                Ok((m.model.clone(), inverse_primary))
             };
             let result = match read() {
                 Ok(v) => Some(v),

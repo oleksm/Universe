@@ -28,6 +28,7 @@ mod interior;
 mod shipyard;
 mod studio;
 mod mounted;
+mod equipment_visual;
 mod studio_only;
 mod test_drive;
 mod planet_studio;

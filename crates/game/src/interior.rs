@@ -2700,6 +2700,46 @@ fn push_of(b: &Block, f: &Fitted) -> Option<(Vec3, f64)> {
     f.push.map(|(d, t)| (b.push.unwrap_or(d), t))
 }
 
+/// Installed engine models use +Y thrust; design blocks store the commanded
+/// direction. Bounds centring is a design convention, never a hull mount offset.
+fn design_visual_rotation(b: &Block, f: &Fitted) -> universe_engine::glam::Quat {
+    push_of(b, f).and_then(|(d, _)| d.try_normalize())
+        .map_or(universe_engine::glam::Quat::IDENTITY, |d| universe_engine::glam::Quat::from_rotation_arc(Vec3::Y, d))
+}
+
+/// The design canvas uses its own camera and HUD triangles. Draw the installed
+/// neutral meshes in that same projection, sorting all modules together. This is
+/// a material-colour design preview, not the operational PBR/motion renderer.
+fn draw_design_models(frame: &mut Frame, cam: &Camera, interior: &Interior) {
+    if !interior.shown(layer::MODULES) { return; }
+    let mut triangles = Vec::new();
+    let light = (-cam.forward + cam.up * 0.7 - cam.right * 0.4).normalize();
+    for b in &interior.plan.blocks {
+        let Some(f) = interior.fit.iter().find(|f| f.id == kind(&b.id)) else { continue };
+        let Some(visual) = crate::equipment_visual::get(&f.key) else { continue };
+        let rotation = design_visual_rotation(b, f);
+        for primitive in &visual.model.data.primitives {
+            let material = visual.model.data.materials.get(primitive.material);
+            let base = material.map_or([0.6, 0.6, 0.6, 1.0], |m| m.base_color);
+            for indices in primitive.indices.chunks_exact(3) {
+                let vertices = [indices[0], indices[1], indices[2]].map(|i| primitive.vertices[i as usize]);
+                let positions = vertices.map(|v| b.at + rotation * (Vec3::from(v.pos) - visual.centre));
+                let [Some(a), Some(c), Some(d)] = positions.map(|p| cam.project(p)) else { continue };
+                let geometric_normal = (positions[1]-positions[0]).cross(positions[2]-positions[0]);
+                if !material.is_some_and(|m| m.double_sided) && geometric_normal.dot(cam.eye-positions[0]) <= 0.0 { continue; }
+                let colours = vertices.map(|v| {
+                    let normal = rotation * Vec3::from(v.normal);
+                    let shade = 0.3 + 0.7 * normal.dot(light).max(0.0);
+                    Color([base[0]*shade, base[1]*shade, base[2]*shade, base[3]])
+                });
+                triangles.push(((a.1+c.1+d.1)/3.0, [a.0,c.0,d.0], colours));
+            }
+        }
+    }
+    triangles.sort_unstable_by(|a,b| b.0.total_cmp(&a.0));
+    for (_, points, colours) in triangles { frame.hud_triangle_colored(points, colours); }
+}
+
 /// Whether a placed engine has a swivel at it that bears its thrust: it can turn to
 /// push the ship up (to land), whichever way it's placed.
 fn swivelled(plan: &Plan, fit: &[Fitted], b: &Block) -> bool {
@@ -8098,6 +8138,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The modules placed: faintly filled, outlined (picked or under the cursor lit;
     // clashing red), named.
+    draw_design_models(frame, &cam, interior);
     let block_clash = interior.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
     for (n, b) in plan.blocks.iter().enumerate().filter(|_| interior.shown(layer::MODULES)) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
@@ -8118,12 +8159,13 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             }
         }
         let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES) { CLASH } else { MODULE };
-        for (t, _) in b.faces(f.round) {
+        let has_visual = crate::equipment_visual::get(&f.key).is_some();
+        for (t, _) in b.faces(f.round).into_iter().filter(|_| !has_visual) {
             if let [Some((p, _)), Some((q, _)), Some((r, _))] = t.map(|p| cam.project(p)) {
                 frame.hud_triangle_colored([p, q, r], [Color([col.0[0], col.0[1], col.0[2], if f.round { 0.025 } else { 0.07 }]); 3]);
             }
         }
-        for [p, q] in b.edges(f.round) {
+        for [p, q] in b.edges(f.round).into_iter().filter(|_| !has_visual || lit || (block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES))) {
             seg(frame, p, q, Color([col.0[0], col.0[1], col.0[2], 0.85]));
         }
         if let Some((q, _)) = cam.project(b.at + Vec3::Y * b.size.y * 0.5) {
@@ -8810,3 +8852,26 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
 
 
 
+
+#[cfg(test)]
+mod design_visual_tests {
+    use super::*;
+
+    #[test]
+    fn installed_engine_orientation_preserves_design_and_save() {
+        let f = catalogue().iter().find(|f| f.key == "equipment.engine.ch.s2").expect("CH-S2 catalogue entry");
+        for direction in [Vec3::X, Vec3::NEG_X, Vec3::Y, Vec3::NEG_Y, Vec3::Z, Vec3::NEG_Z] {
+            let block = Block { id: format!("{}#1", f.id), at: Vec3::new(7., 3., -2.), size: f.size, push: Some(direction) };
+            let saved = serde_json::to_string(&block).unwrap();
+            let reopened: Block = serde_json::from_str(&saved).unwrap();
+            assert_eq!(block, reopened);
+            let rotation = design_visual_rotation(&reopened, f);
+            assert!((rotation * Vec3::Y).abs_diff_eq(direction, 1e-6));
+            let centre = Vec3::new(0.01625, -1.15, 0.01625);
+            let at = |p: Vec3| reopened.at + rotation * (p - centre);
+            assert!(at(centre).abs_diff_eq(block.at, 1e-6));
+            assert!((at(centre + Vec3::Y)-at(centre)).abs_diff_eq(direction, 1e-6));
+            assert_eq!(serde_json::to_string(&reopened).unwrap(), saved);
+        }
+    }
+}
