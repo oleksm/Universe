@@ -788,3 +788,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, contents tint, actual forklift/world placement, GPU appearance/cost and temporal filtering pending. Eight panel proxies do not represent actual stock count/thickness/mass. Rated2500kg andstack3 unqualified; tare geometry41.63kg under assumed timber/steel densities."
+  - key: package.crate-heavy
+    version: 1
+    manifest_sha256: "93611b129b7aa31eff1b2addb4a0eb07558b025d64bcd7e9727096f72f0a2242"
+    installed: 265d3783
+    game: "the loader (world::assets) at fso 265d3783"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/crate-heavy/v1 (140848 bytes, bounds [-0.6, 0.0, -0.5] to [0.6, 0.8, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, actual forklift/world placement, GPU appearance/cost and temporal filtering pending. Closed crate has no contents node per9846ae63; registry capacity reconciled0.71m3. Rated2000kg loading/stack2 unqualified; timber tare52.884kg at assumed450kg/m3 versus50kg record."
