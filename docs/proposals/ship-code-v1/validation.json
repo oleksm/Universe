@@ -1,0 +1,23 @@
+{
+  "status": "proposal only; no Studio importer implemented",
+  "schema": "valid Draft202012",
+  "example": "valid",
+  "negative_cases_rejected": [
+    "misspelled property",
+    "bad quaternion length",
+    "negative envelope",
+    "unknown version",
+    "door fraction out of range",
+    "missing hatch on door",
+    "unknown layer"
+  ],
+  "layer_entries": 26,
+  "example_references": "resolved",
+  "not_checked": [
+    "engineering viability",
+    "runtime round-trip",
+    "general pose consumer",
+    "JSONC comment preservation",
+    "asset dependency locking"
+  ]
+}
