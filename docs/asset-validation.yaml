@@ -772,3 +772,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, actual forklift/world placement, GPU appearance/cost and temporal filtering pending. Closed bag has no contents node or tint by contract23aa25f6. Rated1500kg loading/stack2 and cloth/hoisting behavior not qualified; full static exterior only."
+  - key: package.plate-stack
+    version: 1
+    manifest_sha256: "9c6b6e05e1a78d9e4a12c998e2c7c0ab4bf85cc9cecd6830addd72eddd92039c"
+    installed: c8d1dadb
+    game: "the loader (world::assets) at fso c8d1dadb"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/plate-stack/v1 (50408 bytes, bounds [-1.001, 0.0, -0.5] to [1.001, 0.591, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, contents tint, actual forklift/world placement, GPU appearance/cost and temporal filtering pending. Eight panel proxies do not represent actual stock count/thickness/mass. Rated2500kg andstack3 unqualified; tare geometry41.63kg under assumed timber/steel densities."
