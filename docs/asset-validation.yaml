@@ -537,3 +537,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.tank.water.s1
+    version: 2
+    manifest_sha256: "795250cc7aac90f801a4dd16dbab6d12d2e1ebf6919027f0dd94dc24e1328bf0"
+    installed: 68630750ba143cd7e2eec572f7cd9d97f529ce06
+    game: "the loader (world::assets) at fso 68630750"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-water-s1/v2 (111076 bytes, bounds [-1.065, 0.0, -1.065] to [1.065, 2.25, 1.065]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
