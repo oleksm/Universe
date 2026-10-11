@@ -740,3 +740,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package world/cargo drawing and per-stock contents RGB tint are not implemented; actual placement, GPU appearance/cost and temporal filtering pending. No part-full scaling for bundles/cages. Representative load, not qualified tare/payload or handling/stack strength."
+  - key: package.skip
+    version: 1
+    manifest_sha256: "afdc7536ffabefedc16120a5f28767992989f6812ed63fc1db011a9dce38470a"
+    installed: 29038155
+    game: "the loader (world::assets) at fso 29038155"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/skip/v1 (83456 bytes, bounds [-1.0, 0.0, -0.7] to [1.0, 1.0, 0.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, per-stock contents tint, world/cargo placement, GPU appearance/cost and temporal filtering remain unimplemented or unmeasured. Rated5t lifting strength and handling rig are not qualified by the static asset; provisional339.45kg geometric steel estimate versus350kg tare."
