@@ -30,6 +30,12 @@ function:
   features: [docking, landing, gate, follow, hyperdrive, route]
   interlock: 1000
   governor: 2
+visual:
+  format: "freefall-model/1"
+  path: "models/avionics-nav-full-s1/v1"
+  manifest_sha256: "bcc7581bbd0577c5e68c7a368592ad960ef1c772aee9cb32c2ec3e2c06feaf5f"
+  version: 1
+  triangles: 702
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
