@@ -1102,7 +1102,7 @@
 - { record: package.coil, at: "2026-10-11T14:47:20Z", status: "", summary: "changed: visual", sha: "88c8e467c568da2b" }
 - { record: package.cold-crate, at: "2026-10-11T13:53:48Z", status: "", summary: "changed: visual", sha: "7b744726d25ba51b" }
 - { record: package.crate-heavy, at: "2026-10-11T13:34:04Z", status: "", summary: "changed: visual", sha: "58631658381004d4" }
-- { record: package.cryo-dewar, at: "2026-10-11T13:37:32Z", status: "", summary: "first tracked", sha: "d1b2f90d81474ee9" }
+- { record: package.cryo-dewar, at: "2026-10-11T15:10:06Z", status: "", summary: "changed: visual", sha: "85ea48e9b38aca44" }
 - { record: package.fish-tank, at: "2026-10-11T14:49:54Z", status: "", summary: "first tracked", sha: "da4456885e113154" }
 - { record: package.gas-rack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "aa025afe1f15cdbd" }
 - { record: package.ladle, at: "2026-10-11T14:20:16Z", status: "", summary: "changed: visual", sha: "3b1a0cf1d05598bf" }
