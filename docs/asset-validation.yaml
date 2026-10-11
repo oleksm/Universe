@@ -457,3 +457,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.computer.fbw.s1
+    version: 2
+    manifest_sha256: "8ffb5c2bb4584d411792fe6fde0fc6624069d27652f47a511b92a45d10f8ff85"
+    installed: a3c87521d01a6c872e61a8d24c1c9db555ead9af
+    game: "the loader (world::assets) at fso a3c87521"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/computer-fbw-s1/v2 (52960 bytes, bounds [-0.267, 0.0, -0.2] to [0.267, 0.2508, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
