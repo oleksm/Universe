@@ -1039,9 +1039,9 @@
 - { record: mount.thermal-s1, at: "2026-10-07T13:31:46Z", status: draft, summary: "changed: feeds, basis", sha: "a5a4cef5113e8147" }
 - { record: mount.thermal-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "cd3ff4ebd1fb849b" }
 - { record: mount.thermal-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "9b4faa51e624efde" }
-- { record: mount.thrusters-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "2a95399eec6e234a" }
-- { record: mount.thrusters-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "e6927dcbdf1bee13" }
-- { record: mount.thrusters-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "0b1a483054fe3cc3" }
+- { record: mount.thrusters-s1, at: "2026-10-11T17:05:27Z", status: draft, summary: "changed: attachment", sha: "53a31266e9d75c27" }
+- { record: mount.thrusters-s2, at: "2026-10-11T17:05:27Z", status: draft, summary: "changed: attachment", sha: "27fc1bba4d10355e" }
+- { record: mount.thrusters-s3, at: "2026-10-11T17:05:27Z", status: draft, summary: "changed: attachment", sha: "22a672b29659ecb2" }
 - { record: mount.transponder-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "d261e74d05e71df8" }
 - { record: mount.utility-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b5ebf76a0f0fd60d" }
 - { record: mount.utility-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "18443c9508e69225" }
