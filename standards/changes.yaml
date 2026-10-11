@@ -373,7 +373,7 @@
 - { record: equipment.command.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "ea3192d93566e94a" }
 - { record: equipment.command.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4caef18e8c8babb2" }
 - { record: equipment.computer.fbw.fast, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1817f826c5891f96" }
-- { record: equipment.computer.fbw.s1, at: "2026-10-11T00:33:45Z", status: draft, summary: "changed: identity, built_of, basis", sha: "dec34d60f02aad80" }
+- { record: equipment.computer.fbw.s1, at: "2026-10-11T00:38:36Z", status: draft, summary: "changed: visual", sha: "f44b18e3ac8beb4f" }
 - { record: equipment.drive.kestrel.k2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "077294b75aa96ff7" }
 - { record: equipment.drive.torch.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4946bad82538976e" }
 - { record: equipment.drive.torch.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6ddbefe5a519f391" }
