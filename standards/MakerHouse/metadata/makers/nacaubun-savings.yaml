@@ -4,6 +4,10 @@
 identity:
   key: org.nacaubun-savings
   name: Nacaubun Savings
+brand:
+  name: "Nacaubun Savings"
+  primary: [0.54, 0.542, 0.157]
+  accent: [0.626, 0.625, 0.875]
 ticker: NSB
 kind: company
 business: banking

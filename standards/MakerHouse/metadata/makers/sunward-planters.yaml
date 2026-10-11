@@ -4,6 +4,10 @@ identity:
   key: org.sunward-planters
   name: "Sunward Planters"
 kind: company
+brand:
+  name: "Sunward Planters"
+  primary: [0.379, 0.157, 0.542]
+  accent: [0.731, 0.875, 0.625]
 ticker: SWP
 address: { at: settlement.treistun.port-eikir }
 note: "Rice, maize, sugarcane and the crops of the hot country"

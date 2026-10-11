@@ -4,6 +4,10 @@
 identity:
   key: org.shikra-hold
   name: Shikra Hold
+brand:
+  name: "Shikra Hold"
+  primary: [0.542, 0.541, 0.157]
+  accent: [0.625, 0.626, 0.875]
 ticker: SHK
 kind: band
 note: "The pirates of Biraidim"

@@ -22,13 +22,13 @@ pub fn put(lots: &mut Lots, pieces: Vec<(Batch, f64)>) {
 pub fn take(lots: &mut Lots, kg: f64) -> Vec<(Batch, f64)> {
     let mut out = Vec::new();
     let mut want = kg;
-    while want > 1e-9 {
+    while want > 0.0 {
         let Some((b, have)) = lots.front_mut() else { break };
         let k = want.min(*have);
         *have -= k;
         want -= k;
         out.push((b.clone(), k));
-        if *have <= 1e-9 {
+        if *have <= 0.0 {
             lots.pop_front();
         }
     }

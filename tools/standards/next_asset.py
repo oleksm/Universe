@@ -9,8 +9,9 @@
 
 The queue is every record of a kind that takes a model (equipment, modules, buildings, structures, gates; hulls on
 asking) with no `visual` yet and not retired, in the order the player sees them most: equipment fitted on hulls and
-structures, then structures and gates, then works modules standing at facilities, then buildings standing at
-settlements, then the rest; within each, the most used first, current designs before outdated ones. Docs:
+structures first (ship equipment first, the user's order of 2026-10-10), then the rest of the equipment, then structures
+and gates, then works modules and buildings (their vision still being settled), held records (revision priority low:
+the MC-07) last; within each, the most used first, current designs before outdated ones. Docs:
 docs/asset-contract.md.
 """
 import glob, json, os, sys
@@ -26,8 +27,13 @@ def usage():
     def add(k, n=1):
         used[k] = used.get(k, 0) + n
     for f in glob.glob(os.path.join(TREE, "SFO/metadata/hulls/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/structures/*.yaml")):
-        for x in (yaml.safe_load(open(f)) or {}).get("fit") or []:
+        d = yaml.safe_load(open(f)) or {}
+        if (d.get("revision") or {}).get("priority") == "low":     # (a held hull's fits lend no priority)
+            continue
+        for x in d.get("fit") or []:
             add(x.get("item"), x.get("count", 1))
+    for f in glob.glob(os.path.join(TREE, "SFO/metadata/stock/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/mill-stock/*.yaml")):
+        add((yaml.safe_load(open(f)) or {}).get("package"))      # (a package is used by every stock it carries)
     for f in glob.glob(os.path.join(TREE, "LocalAdministration/**/*.yaml"), recursive=True):
         d = yaml.safe_load(open(f)) or {}
         for x in d.get("modules") or []:
@@ -41,15 +47,21 @@ def usage():
 
 
 def tier(kind, key, used):
+    """Ship equipment first (the user, 2026-10-10): what is in use, then the rest; then structures and gates; works
+    modules and buildings after (their vision is still being settled); hulls last (they are the ships session's)."""
     if kind == "equipment" and used.get(key):
         return 0
-    if kind in ("structure", "gate"):
+    if kind == "package":      # (stock is drawn as its packages: the user, 2026-10-10)
+        return 0
+    if kind == "equipment":
         return 1
-    if kind == "module" and used.get(key):
+    if kind in ("structure", "gate"):
         return 2
-    if kind == "building" and used.get(key):
+    if kind == "module":
         return 3
-    return {"hull": 0, "equipment": 4, "module": 5, "building": 6}.get(kind, 7)
+    if kind == "building":
+        return 4
+    return 5
 
 
 def stage(r):
@@ -61,6 +73,7 @@ def brief(kind, key, path, r, used):
     size = size_of(kind, r)
     b = {"key": key, "kind": kind, "name": i.get("name"), "description": i.get("description") or i.get("about"),
          "maker": i.get("maker"), "design_stage": stage(r) or "draft", "used": used.get(key, 0),
+         "priority": (r.get("revision") or {}).get("priority", "normal"), "priority_because": (r.get("revision") or {}).get("because") if (r.get("revision") or {}).get("priority") else None,
          "size_m": {"length": size[0], "width": size[1], "height": size[2]} if size else None,
          "size_rule": f"the model's three sides, sorted, each {LOW:.0%} to {HIGH:.0%} of the record's, sorted (glTF metres; axes free)",
          "mass_kg": (r.get("physical") or {}).get("mass"),
@@ -84,6 +97,12 @@ def brief(kind, key, path, r, used):
                       for d in (yaml.safe_load(open(f)) for f in sorted(glob.glob(folder + "/*.yaml")))]
     if r.get("basis"):
         b["basis"] = [{"of": x.get("of"), "tier": x.get("tier"), "rule": x.get("rule"), "note": x.get("note")} for x in r["basis"]]
+    if kind == "package":
+        carried = sorted((yaml.safe_load(open(f)) or {})["identity"]["key"] for f in glob.glob(os.path.join(TREE, "SFO/metadata/stock/*.yaml")) + glob.glob(os.path.join(TREE, "SFO/metadata/mill-stock/*.yaml"))
+                         if (yaml.safe_load(open(f)) or {}).get("package") == key)
+        b["carries"] = {"count": len(carried), "examples": carried[:12]}
+        b["holds"] = r.get("holds"); b["handling"] = r.get("handling"); b["keeps"] = r.get("keeps")
+        b["model_notes"] = "one model for every stock it carries: draw it full, with neutral contents the game can tint by the stock's material; no labels"
     if kind == "hull":
         b["conventions"] = "docs/ship-import.md (nose +Y, up +Z, COL_ meshes, nozzle_/gear/dock empties); hulls are the ships session's designs"
     return b
@@ -93,7 +112,8 @@ def queue(hulls=False):
     used = usage()
     q = [(kind, key, path, r) for kind, key, path, r in records()
          if not r.get("visual") and stage(r) != "retired" and (hulls or kind != "hull")]
-    q.sort(key=lambda x: (tier(x[0], x[1], used), stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
+    low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)
+    q.sort(key=lambda x: (low(x[3]), tier(x[0], x[1], used), stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
     return q, used
 
 

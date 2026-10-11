@@ -6,5 +6,7 @@ identity:
   code: ALUMINA-BULK
   name: "Alumina, in bulk"
   form: bulk
+package: package.bulk-bag
+tint: [0.7, 0.68, 0.64]
 made_from:
   - item: good.alumina

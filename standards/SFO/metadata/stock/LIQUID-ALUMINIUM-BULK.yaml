@@ -6,5 +6,7 @@ identity:
   code: LIQUID-ALUMINIUM-BULK
   name: "Liquid aluminium, in bulk"
   form: bulk
+package: package.ladle
+tint: [0.8, 0.81, 0.83]
 made_from:
   - item: good.liquid-aluminium

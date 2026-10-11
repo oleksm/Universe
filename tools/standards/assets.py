@@ -18,6 +18,7 @@ KINDS = {
     "structure": ("SFO/metadata/structures", 400_000),
     "gate": ("SFO/metadata/gates", 400_000),
     "hull": ("SFO/metadata/hulls", 1_000_000),
+    "package": ("SFO/metadata/packages", 20_000),
 }
 # A model's size against its record's, each of the three sorted dimensions: at least LOW and at most HIGH of the record's.
 LOW, HIGH = 0.85, 1.10
@@ -84,6 +85,28 @@ def required_nodes(kind, r):
     if fk == "docking":
         need.append("dock")
     return need
+
+
+# Previews in a package (the user, 2026-10-10: every item can be previewed): a thumbnail and an icon, square PNG.
+PREVIEWS = {"thumb": 512, "icon": 128}     # (name: side in pixels)
+
+
+def check_png(path, side):
+    """What is wrong with a preview image: plain sentences (empty: it fits). A square PNG of `side` pixels, with alpha."""
+    import struct as st
+    try:
+        b = open(path, "rb").read(33)
+    except OSError as e:
+        return [f"{path}: {e}"]
+    if b[:8] != b"\x89PNG\r\n\x1a\n" or b[12:16] != b"IHDR":
+        return [f"{os.path.basename(path)}: not a PNG"]
+    w, h = st.unpack(">II", b[16:24]); colour = b[25]
+    bad = []
+    if (w, h) != (side, side):
+        bad.append(f"{os.path.basename(path)}: {w} x {h} px, wants {side} x {side}")
+    if colour not in (4, 6):
+        bad.append(f"{os.path.basename(path)}: no alpha channel (the background must be transparent)")
+    return bad
 
 
 # The modeller's account of a version (--about=<file>): required sections, then free to say what it needs.
@@ -641,7 +664,7 @@ def inspect_glb(path):
     prims = [p for m in meshes for p in m.get("primitives", [])]
     images = g.get("images", [])
     return {"bounds": [round(hi[k] - lo[k], 4) for k in range(3)], "lo": [round(v, 4) for v in lo], "hi": [round(v, 4) for v in hi],
-            "nodes": names, "triangles": tris, "meshes": len(meshes),
+            "nodes": names, "materials": [m.get("name", "") for m in g.get("materials", [])], "triangles": tris, "meshes": len(meshes),
             "stats": {"triangles": tris, "vertices": sum(acc[p["attributes"]["POSITION"]]["count"] for p in prims),
                       "meshes": len(meshes), "primitives": len(prims), "materials": len(g.get("materials", [])),
                       "textures": len(g.get("textures", [])), "images": len(images), "nodes": len(nodes),
@@ -657,7 +680,12 @@ def check_model(kind, r, info):
         bad.append("the record says no size (physical.length, width, height): ask the registry for one first")
     else:
         m, s = sorted(info["bounds"], reverse=True), sorted(size, reverse=True)
+        planar = s[2] < s[0] / 50          # (a field, a pad: its thin side is relief, held only to at most the record's)
         for k, (a, e) in enumerate(zip(m, s)):
+            if planar and k == 2:
+                if a > HIGH * e + 0.05:
+                    bad.append(f"its thin side is {a:.3g} m, more than the record's {e:.3g} m allows for a flat thing (at most {HIGH * e + 0.05:.3g})")
+                continue
             if not (LOW * e - 0.05 <= a <= HIGH * e + 0.05):      # (and 5 cm either way, for thin things: a panel, a door)
                 bad.append(f"its {('longest', 'middle', 'shortest')[k]} side is {a:.3g} m against the record's {e:.3g} m "
                            f"(allowed {LOW * e - 0.05:.3g} to {HIGH * e + 0.05:.3g}); model metres, or the record's size is wrong: then a request to the registry")
@@ -668,6 +696,18 @@ def check_model(kind, r, info):
     if st.get("animations") or st.get("skins") or st.get("morph_targets"):
         bad.append(f"{st.get('animations')} animation(s), {st.get('skins')} skin(s), {st.get('morph_targets')} morph target(s): the game draws "
                    "models static (docs/asset-contract.md, Static models); export without them, moving parts as rigid named nodes")
+    if kind == "package" and "shows_contents" in r:      # (the contents convention: docs/asset-contract.md, Packages)
+        has = "contents" in info["nodes"] and "contents" in info.get("materials", [])
+        if r["shows_contents"] and not has:
+            bad.append("its load shows: it needs a node and a material both named contents (tinted by the stock)")
+        if not r["shows_contents"] and ("contents" in info["nodes"] or "contents" in info.get("materials", [])):
+            bad.append("it is closed: no node or material named contents")
+    if kind == "package" and r.get("label"):           # (its label plates: docs/formats/freefall-label-1.md)
+        for n in ["label", "label_2"][: r["label"]]:
+            if n not in info["nodes"]:
+                bad.append(f"no label plate node named {n} (the record asks for {r['label']})")
+        if "label" not in info.get("materials", []):
+            bad.append("no material named label for its plates")
     budget = KINDS[kind][1]
     if info["triangles"] > budget:
         bad.append(f"{info['triangles']:,} triangles drawn, over the {budget:,} a {kind} may have")

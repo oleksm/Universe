@@ -3,6 +3,10 @@ identity:
   key: org.treistun-exchange
   name: Treistun Exchange
 kind: company
+brand:
+  name: "Treistun Exchange"
+  primary: [0.383, 0.542, 0.157]
+  accent: [0.728, 0.625, 0.875]
 ticker: TEX
 business: exchange
 note: "The market: where goods in store change hands"

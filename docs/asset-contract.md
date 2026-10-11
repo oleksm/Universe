@@ -25,6 +25,20 @@ edges, so nothing waits on a model to exist.
 Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--summary` (records and models by kind),
 `--key <key>` (one record's brief), `--hulls` (hulls too).
 
+## Packages: the contents convention
+
+A package model is drawn full. What it carries is the meshes under one node named `contents`, all with one material
+named `contents` (neutral light grey, no texture): the game tints that material by the stock's `tint` (sRGB 0 to 1 on
+every stock record, artistic, tools/standards/tints.py), and may
+hide or scale the node for a part-full package. Everything else (pallet, straps, cage, frame) is the package itself, in
+its own materials, never tinted. No printed text in the model: its labels are blank plates (nodes `label`, `label_2`,
+material `label`, 2:1, UV 0 to 1) that the game prints each packed unit's label on (docs/formats/freefall-label-1.md:
+brand, product, lot, serial, where and when made and packed, weights, barcode). A closed package whose load cannot be seen (bulk bag, carton
+pallet, cold crate, gas rack, heavy crate, tote, cryogenic dewar, livestock crate, fish tank) has no `contents` node and no hidden fill: it looks the same whatever it
+carries, as real ones do. Where the load shows, it has one: the skip, produce crate, plate stack, bar bundle, coil, bale (the bale is its contents), ladle (the melt at the top). The contents stand for any stock the package carries: a
+representative load, not its count, cross-section or weight. The bar bundle's contents are round tubes (71 of the 73
+stock records it carries are tubes).
+
 ## Static models
 
 The game draws a registry model as it stands: no animation clips, skins or deforming meshes (hoses, bellows). A part
@@ -35,7 +49,7 @@ moving engine: engine's `docs/ships/ch-s2-motion-contract.md` (main 462a7b45).
 
 ## The queue
 
-Kinds that take a model: equipment, industrial modules, buildings, structures, gate rings, and hulls on asking. A record
+Kinds that take a model: equipment, packages (the standard units stock travels and lies in: `standards/SFO/metadata/packages/`, one model each, drawn for every stock that names it; `tools/standards/packages.py` assigns them), industrial modules, buildings, structures, gate rings, and hulls on asking. Stock itself takes no model: it is drawn as its packages. A record
 is queued when it has no `visual` and is not retired, in the order the player sees things most:
 
 1. equipment fitted on hulls and structures, most fitted first;
@@ -61,7 +75,7 @@ built of, to lay it out), `required_nodes`, `triangle_budget`, `record` (the YAM
 | Check | Rule |
 |---|---|
 | Format | glTF 2 binary (`.glb`), metres. Axes are free for the size check; equipment and hulls follow docs/ship-import.md (+Y up in the export) |
-| Size | the model's three sides (world bounds of its meshes), sorted, each 85% to 110% of the record's three sides, sorted, and 5 cm either way for thin things. The registry is the size authority: if the record is wrong, send a request to the registry; never fudge the model |
+| Size | the model's three sides (world bounds of its meshes), sorted, each 85% to 110% of the record's three sides, sorted, and 5 cm either way for thin things. A flat thing (its thin side under a fiftieth of its longest: a field, a pad) has its thin side held only to at most the record's. The registry is the size authority: if the record is wrong, send a request to the registry; never fudge the model |
 | Nodes | equipment: `mount*` (the face it attaches by); jet engines `nozzle*`; ducted fans `duct*`; landing gear `contact*`; doors, ramps, lifts `door*`; docking `dock*`. Other kinds: none required yet |
 | Collision | meshes named `COL_*` are collision; they are not counted as drawn |
 | Budget | triangles drawn: equipment 60,000; modules and buildings 150,000; structures and gates 400,000; hulls 1,000,000 |
@@ -86,10 +100,14 @@ From `~/git/universe-fso` (branch fso, no unrelated changes staged):
 
     python3 tools/standards/next_asset.py --key <key> --json          # the brief
     python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml          # dry run
-    python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml --push   # install
+    python3 tools/standards/install_model.py /abs/model.glb --as=<key> --source=/abs/model.blend --about=/abs/about.yaml \
+        --thumb=/abs/thumb.png --icon=/abs/icon.png --push                                                          # install
     (add --motion=/abs/motion.json for a model whose parts move)
 
-Inputs: the exported `.glb` (metres, static: no animations, skins or morph targets), its `.blend`, and the modeller's
+Inputs: the exported `.glb` (metres, static: no animations, skins or morph targets), its `.blend`, two previews
+(`--thumb=thumb.png`, 512 x 512 px, and `--icon=icon.png`, 128 x 128 px: square PNG with a transparent background, the
+item alone in a three-quarter view, rendered from the same source; required with `--push`, written into the package
+as `thumb.png` and `icon.png` and listed in the manifest's `previews` and `files`), and the modeller's
 account (`--about`, YAML or JSON; template `docs/asset-about.example.yaml`): `model` (key, purpose, source revision,
 components, basis, interfaces, motion scope), `work` (what this version built or changed; runtime versus source-only),
 `considerations` (decisions, easements, assumptions, limitations, defects, each marked), optionally `stats` (what the
@@ -117,7 +135,8 @@ reference pose's node transforms within 2e-6; then writes it into the package (l
 
     python3 tools/standards/precheck_model.py /abs/candidate/delivery.yaml
 
-From `~/git/universe-fso`. It checks the delivery record's `hashes`, runs the installer's dry run with `--source`,
+From `~/git/universe-fso`. It checks the delivery record's `hashes`, that its `thumb` and `icon` are there and fit
+(512 and 128 px, square PNG, transparent), runs the installer's dry run with `--source`,
 `--about` and `--motion`, and, with a motion file, the game's own CPU consumer (engine's `ch_s2_fixture` example: the real
 model loader, every reference pose, a 513-pose sweep), then writes `review/registry-precheck.md` beside the record.
 Exit 0 is a pass: no registry review is needed before the owner's acceptance. Exit 1: send the registry a task with the
@@ -141,5 +160,7 @@ The package is never edited after installing: a fix is a new version.
 
 - The game draws models for settlement modules and buildings, rigs and gates (main 364a539e); equipment at mounts and
   stations are not drawn yet (engine's), so their validation is step 1 only until then.
-- Containers for goods and stock by form; module and building nodes (entrances, ports, pipe connections) when the
+- Module and building nodes (entrances, ports, pipe connections) when the
   game places things by them.
+- Previews for the models installed before 2026-10-10's preview rule: reinstall the same `.glb` with `--thumb` and
+  `--icon` (a new version; the model is unchanged).

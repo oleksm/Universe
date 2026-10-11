@@ -6,5 +6,7 @@ identity:
   code: LETTUCE-BULK
   name: "Lettuce, in bulk"
   form: bulk
+package: package.cold-crate
+tint: [0.55, 0.78, 0.35]
 made_from:
   - item: good.lettuce

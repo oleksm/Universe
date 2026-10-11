@@ -6,5 +6,7 @@ identity:
   code: PUMPKINS-BULK
   name: "Pumpkins, in bulk"
   form: bulk
+package: package.produce-crate
+tint: [0.92, 0.55, 0.15]
 made_from:
   - item: good.pumpkins

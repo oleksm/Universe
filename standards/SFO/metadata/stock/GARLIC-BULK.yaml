@@ -6,5 +6,7 @@ identity:
   code: GARLIC-BULK
   name: "Garlic, in bulk"
   form: bulk
+package: package.cold-crate
+tint: [0.92, 0.9, 0.84]
 made_from:
   - item: good.garlic

@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.coil
+  name: "Coil on a skid"
+  description: "Wire, fibre, film or strip wound on a coil up to 1 m across, on a skid."
+physical:
+  length: 1.2
+  width: 1.2
+  height: 1.0
+  mass: 40
+holds:
+  volume: 0.8
+  mass: 2000
+handling: forklift
+stack: 2
+keeps: dry
+label: 2
+shows_contents: true
+visual:
+  format: "freefall-model/1"
+  path: "models/coil/v1"
+  manifest_sha256: "b1238699c432b2e4b51cac9f40911d8d4ed4b601d83a97a0707e1840bda2a497"
+  version: 1
+  triangles: 3432
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

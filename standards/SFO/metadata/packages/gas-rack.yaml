@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.gas-rack
+  name: "Gas cylinder rack"
+  description: "Twelve 50-litre cylinders at 20 MPa in a steel frame, piped to one valve: gases."
+physical:
+  length: 1.0
+  width: 0.8
+  height: 1.85
+  mass: 900
+holds:
+  volume: 0.6
+  mass: 200
+handling: forklift
+stack: 1
+keeps: sealed
+label: 2
+shows_contents: false
+visual:
+  format: "freefall-model/1"
+  path: "models/gas-rack/v1"
+  manifest_sha256: "6858a033dc89c4fef8a3e1691f013f556f42506616261152af42cdecdc7dd5af"
+  version: 1
+  triangles: 8476
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

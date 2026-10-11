@@ -6,5 +6,7 @@ identity:
   code: MAIZE-BULK
   name: "Maize, in bulk"
   form: bulk
+package: package.bulk-bag
+tint: [0.94, 0.78, 0.25]
 made_from:
   - item: good.maize

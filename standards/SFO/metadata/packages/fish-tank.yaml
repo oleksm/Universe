@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.fish-tank
+  name: "Live fish tank"
+  description: "An insulated watertight tank of 1 m3 on a pallet, lidded, with an oxygen bottle and diffuser: live fish carried in their water."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 1.25
+  mass: 120
+holds:
+  volume: 1.0
+  mass: 1100
+handling: forklift
+stack: 1
+label: 2
+shows_contents: false
+keeps: aerated
+basis:
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A live-fish transport tank of the 1,000-litre class, sized by the registry (2026-10-11); fish travel at a fraction of the tank's water (the holds mass counts both)." }

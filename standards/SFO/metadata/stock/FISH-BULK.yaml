@@ -6,5 +6,7 @@ identity:
   code: FISH-BULK
   name: "Fish fillets, in bulk"
   form: bulk
+package: package.cold-crate
+tint: [0.75, 0.78, 0.8]
 made_from:
   - item: good.fish

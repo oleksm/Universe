@@ -6,6 +6,8 @@ identity:
   name: "6061 sheet 2 mm, formed panels"
   traded_as: market.metals
   form: panel
+package: package.plate-stack
+tint: [0.8, 0.81, 0.83]
 made_from:
   - item: material.aluminium-alloy-6061
 size:

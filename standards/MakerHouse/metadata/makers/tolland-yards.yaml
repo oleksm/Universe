@@ -3,6 +3,11 @@ identity:
   key: org.tolland
   name: Tolland Yards
 kind: company
+brand:
+  name: "Tolland Yards"
+  primary: [0.773, 0.576, 0.373]
+  accent: [0.514, 0.345, 0.22]
+  logo: MakerHouse/logos/tolland-yards.svg
 ticker: TOL
 address: { at: settlement.treistun.treistun-e-station, tower: Works Tower, deck: 3, section: A, unit: 2 }
 note: "Hulls: workhorses and haulers"

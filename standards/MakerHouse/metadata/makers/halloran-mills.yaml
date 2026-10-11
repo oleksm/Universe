@@ -4,6 +4,10 @@ identity:
   key: org.halloran-mills
   name: "Halloran Mills"
 kind: company
+brand:
+  name: "Halloran Mills"
+  primary: [0.542, 0.382, 0.157]
+  accent: [0.625, 0.729, 0.875]
 ticker: HLM
 address: { at: settlement.treistun.port-eikir }
 note: "Flour, sugar, oil and feed"

@@ -3,6 +3,10 @@
 identity:
   key: org.hoar-line
   name: Hoar Line
+brand:
+  name: "Hoar Line"
+  primary: [0.456, 0.157, 0.542]
+  accent: [0.681, 0.875, 0.625]
 ticker: HRL
 kind: company
 business: passage

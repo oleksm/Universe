@@ -145,7 +145,8 @@ revision:
   owner: registry
   on_conflict: propose
   fixed: [slots, thrusters, model]
-  because: "Deferred by the user (2026-10-05) until the ship is fitted and flown: its hold, tank and lift are to be reworked from what flying it shows, not on paper. What paper says so far: docs/ships/mc-07-sizing.md. Its slots and nozzles are its model's."
+  priority: low
+  because: "Low priority (the user, 2026-10-10): the MC-07 as a whole waits behind the standard modules and equipment. Deferred by the user (2026-10-05) until the ship is fitted and flown: its hold, tank and lift are to be reworked from what flying it shows, not on paper. What paper says so far: docs/ships/mc-07-sizing.md. Its slots and nozzles are its model's."
   ask: docs/registry-ssot-request.md
 life: 1262304000
 basis:

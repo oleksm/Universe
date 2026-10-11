@@ -28,9 +28,9 @@ function:
   pressure: 30000000.0
 visual:
   format: "freefall-model/1"
-  path: "models/tank-air-s1/v1"
-  manifest_sha256: "067087c7eca6dcc2ea4b77dfde5954f651dd01d970273cacc995c88d57c322d0"
-  version: 1
+  path: "models/tank-air-s1/v2"
+  manifest_sha256: "e6960da0b9cc3056e10f77cc329ab24d1ba9761090c7d89156e45e1c8eb14eb1"
+  version: 2
   triangles: 3196
 life: 473364000
 basis:

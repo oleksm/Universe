@@ -4,6 +4,10 @@ identity:
   key: org.marrow-and-pike
   name: "Marrow & Pike"
 kind: company
+brand:
+  name: "Marrow & Pike"
+  primary: [0.542, 0.194, 0.157]
+  accent: [0.625, 0.852, 0.875]
 ticker: MPK
 address: { at: settlement.treistun.port-eikir }
 note: "Meat and fish"

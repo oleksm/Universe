@@ -31,6 +31,12 @@ visual:
   version: 1
   triangles: 4036
 life: 473364000
+revision:
+  status: draft
+  owner: registry
+  on_conflict: propose
+  priority: low
+  because: "Low priority (the user, 2026-10-10): the MC-07 hull is to be reworked before its equipment is wrapped up; models installed so far stay."
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it. Four telescoping stages (the source rig, CLAMPS in build_mining_ship.py, NST=4; the record said three); measured stowed from mining_ship.blend (blender source probe, 2026-10-10); mass unchanged until the parts are measured again (review)." }
   - { of: [physical.mass, built_of], tier: derived, note: "The sum of its measured parts, each its length in the stock it is cut from (the integrator's measuring, 2026-10-05)." }

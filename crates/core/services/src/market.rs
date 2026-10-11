@@ -150,10 +150,11 @@ impl Markets {
             if ledger.credits(who) < cost {
                 return Err("NOT ENOUGH CREDITS".into());
             }
-            if kg > o.room {
+            let packages = self.economy.place(o.system, o.market).map_or_else(Vec::new, |p| p.stock.preview_packages(item.id, kg));
+            if kg + packages.iter().map(|u| u.tare).sum::<f64>() > o.room {
                 return Err("HOLD FULL".into());
             }
-            if kg / 1000.0 / item.bulk_density > o.space + 1e-9 {
+            if kg / 1000.0 / item.bulk_density + crate::packages::extra_volume(&packages, 1000.0 * item.bulk_density) > o.space + 1e-9 {
                 return Err("NO SPACE IN THE HOLD".into());
             }
             ledger.transfer(who, me, Asset::Credits, cost, tick, cause)?;
@@ -161,15 +162,16 @@ impl Markets {
             // (The seller owes the administration its duty on the sale.)
             ledger.transfer(me, Party::Administration(o.system), Asset::Credits, cost * duty, tick, cause)?;
             // (What's bought goes into the hold with its marks and lots.)
-            let (_, marks, lots) = self.economy.take_marked(o.system, o.market, item.id, kg);
-            ledger.load_marked(o.pilot, item.id, marks, lots);
+            let (_, marks, lots, packages) = self.economy.take_cargo(o.system, o.market, item.id, kg);
+            ledger.load_cargo(o.pilot, item.id, marks, lots, packages);
             Ok(cost)
         } else {
             if ledger.balance(who, Asset::Goods(item.id)) + 1e-6 < n {
                 return Err("NOT IN THE HOLD".into());
             }
             let room = self.economy.place(o.system, o.market).map_or(0.0, |p| p.stock.free());
-            if kg > room + 1e-6 {
+            let packages = ledger.preview_packages(o.pilot, item.id, kg);
+            if kg + packages.iter().map(|u| u.tare).sum::<f64>() > room + 1e-6 {
                 return Err(format!("THEY ONLY HAVE ROOM FOR {:.0} T", (room / 1000.0).floor()));
             }
             if q.sell <= 0.0 {
@@ -179,8 +181,8 @@ impl Markets {
             ledger.transfer(who, me, Asset::Goods(item.id), n, tick, cause)?;
             ledger.transfer(me, who, Asset::Credits, paid, tick, cause)?;
             ledger.transfer(who, Party::Administration(o.system), Asset::Credits, paid * duty, tick, cause)?;
-            let (marks, lots) = ledger.unload_marked(o.pilot, item.id, n as usize, kg);
-            self.economy.put_marked(o.system, o.market, item.id, kg, marks, lots);
+            let (marks, lots, packages) = ledger.unload_cargo(o.pilot, item.id, n as usize, kg);
+            assert!(self.economy.put_cargo(o.system, o.market, item.id, kg, marks, lots, packages), "capacity checked before trade");
             Ok(-paid * (1.0 - duty))
         }
     }

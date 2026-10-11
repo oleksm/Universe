@@ -28,9 +28,9 @@ function:
   flow: 12.0
 visual:
   format: "freefall-model/1"
-  path: "models/thermal-coolant-loop-s1/v1"
-  manifest_sha256: "81a43e1b42c8f36fd87ba408d1231861fd87d58b86a125fed6cc2804c8d553af"
-  version: 1
+  path: "models/thermal-coolant-loop-s1/v2"
+  manifest_sha256: "edd43f80a1c219771640cec9cc3b5d4853ade2560d2103528605b6e5c0b66e67"
+  version: 2
   triangles: 8036
 life: 473364000
 basis:

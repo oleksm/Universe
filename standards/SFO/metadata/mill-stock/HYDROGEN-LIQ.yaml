@@ -5,6 +5,8 @@ identity:
   code: HYDROGEN-LIQ
   name: "Hydrogen, liquid"
   form: fluid
+package: package.cryo-dewar
+tint: [0.15, 0.15, 0.15]
 made_from:
   - item: material.hydrogen
 basis:

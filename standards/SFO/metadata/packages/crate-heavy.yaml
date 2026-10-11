@@ -1,0 +1,26 @@
+# yaml-language-server: $schema=../../schema/package.schema.yaml
+identity:
+  key: package.crate-heavy
+  name: "Heavy crate"
+  description: "A low timber crate on skids: ingots, blanks, forgings, boxed parts and machines."
+physical:
+  length: 1.2
+  width: 1.0
+  height: 0.8
+  mass: 50
+holds:
+  volume: 0.71
+  mass: 2000
+handling: forklift
+stack: 2
+label: 2
+shows_contents: false
+visual:
+  format: "freefall-model/1"
+  path: "models/crate-heavy/v1"
+  manifest_sha256: "93611b129b7aa31eff1b2addb4a0eb07558b025d64bcd7e9727096f72f0a2242"
+  version: 1
+  triangles: 1848
+basis:
+  - { of: [holds.volume], tier: derived, review: true, note: "The clear inside of the crate as drawn by blender (80 mm skids, walls, outer battens): 0.712 m3 (was 0.8, the outside less too little)." }
+  - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

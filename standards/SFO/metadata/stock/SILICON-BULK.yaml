@@ -6,5 +6,7 @@ identity:
   code: SILICON-BULK
   name: "Silicon, in bulk"
   form: bulk
+package: package.crate-heavy
+tint: [0.36, 0.38, 0.42]
 made_from:
   - item: good.silicon

@@ -6,5 +6,7 @@ identity:
   code: GRAPHITE-ELECTRODE-BULK
   name: "Graphite electrode, in bulk"
   form: bulk
+package: package.crate-heavy
+tint: [0.18, 0.18, 0.19]
 made_from:
   - item: good.graphite-electrode

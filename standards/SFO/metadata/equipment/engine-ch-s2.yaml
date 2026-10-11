@@ -63,9 +63,9 @@ function:
     vacuum_only: true
 visual:
   format: "freefall-model/1"
-  path: "models/engine-ch-s2/v1"
-  manifest_sha256: "94f9412069a546bd04774fd59c0206e7b049a6465961f7a9a3cb1395665a4aea"
-  version: 1
+  path: "models/engine-ch-s2/v2"
+  manifest_sha256: "80d8e1cfdd8f264501839a5ef084eb14d2441bd098da12131803c5da478b564e"
+  version: 2
   triangles: 46276
 life: 473364000
 basis:

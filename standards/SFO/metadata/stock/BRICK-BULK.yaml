@@ -6,5 +6,7 @@ identity:
   code: BRICK-BULK
   name: "Brick, in bulk"
   form: bulk
+package: package.crate-heavy
+tint: [0.66, 0.32, 0.24]
 made_from:
   - item: good.brick

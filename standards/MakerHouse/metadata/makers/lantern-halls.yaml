@@ -4,6 +4,10 @@ identity:
   key: org.lantern-halls
   name: "Lantern Halls"
 kind: company
+brand:
+  name: "Lantern Halls"
+  primary: [0.195, 0.157, 0.542]
+  accent: [0.85, 0.875, 0.625]
 ticker: LNH
 address: { at: settlement.treistun.treistun-e-station, tower: Trade Tower, deck: 27, section: C, unit: 4 }
 note: "Fresh food grown under lamps, where there is no sky"

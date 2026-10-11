@@ -6,5 +6,7 @@ identity:
   code: FLAX-BULK
   name: "Flax, in bulk"
   form: bulk
+package: package.bale
+tint: [0.78, 0.7, 0.52]
 made_from:
   - item: good.flax

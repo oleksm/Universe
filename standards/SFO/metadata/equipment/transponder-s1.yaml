@@ -29,9 +29,9 @@ function:
   kind: transponder
 visual:
   format: "freefall-model/1"
-  path: "models/transponder-s1/v1"
-  manifest_sha256: "b89cbc78acfe21a741db81c382756308303e40a28d26f71b7cb1cab9f3fc3f36"
-  version: 1
+  path: "models/transponder-s1/v2"
+  manifest_sha256: "07c4c6341bda3b95790af5e6ab8e4a28158320c28adb285188d5a94f7d16b9df"
+  version: 2
   triangles: 840
 life: 473364000
 basis:

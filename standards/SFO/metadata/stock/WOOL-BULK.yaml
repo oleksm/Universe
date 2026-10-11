@@ -6,5 +6,7 @@ identity:
   code: WOOL-BULK
   name: "Wool, in bulk"
   form: bulk
+package: package.bale
+tint: [0.92, 0.89, 0.82]
 made_from:
   - item: good.wool
