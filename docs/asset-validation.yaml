@@ -1092,3 +1092,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, vendor label printing, handling, GPU cost and temporal filtering; original crate tare/capacity/stacking qualification remains open."
+  - key: package.tote
+    version: 2
+    manifest_sha256: "925f416fdb80fbd31ef165761b59dd9bfbb99dcd5681595f0892ebec7d0b1b66"
+    installed: 54660cf1
+    game: "the loader (world::assets) at fso 54660cf1"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tote/v2 (316892 bytes, bounds [-0.6, 0.0, -0.5] to [0.6, 1.16, 0.5105]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, label printing, handling, GPU cost and temporal filtering; rigid cage-plate attachment strength and original tote pressure/payload/stacking qualification remain open."
