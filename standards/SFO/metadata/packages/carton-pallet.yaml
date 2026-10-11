@@ -20,9 +20,9 @@ labels:
 shows_contents: false
 visual:
   format: "freefall-model/1"
-  path: "models/carton-pallet/v1"
-  manifest_sha256: "e42cf91bcc94ebf4ac87c2767dbecff4d98dabe3650320929518c1ee138dd74e"
-  version: 1
-  triangles: 776
+  path: "models/carton-pallet/v2"
+  manifest_sha256: "6d9e30701991cdffb07b92fe586795501edd975e5f4c7d65edb967bc14b504bb"
+  version: 2
+  triangles: 780
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
