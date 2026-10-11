@@ -35,6 +35,12 @@ function:
   link: 1000000000
   lag: 0.02
   capacity: 13.8888888889
+visual:
+  format: "freefall-model/1"
+  path: "models/gate-terminal-ground-s3/v1"
+  manifest_sha256: "fda0299f6d3c832a46af16618cab677e8cc306b250044177105ac7e1aac8f9b2"
+  version: 1
+  triangles: 10398
 life: 473364000
 basis:
   - { of: [identity.description], tier: derived, review: true, note: "Measured by blender (candidate-v01 interface-qc.json): pivot 0.75 m and dish vertex 0.90 m above the base; over every azimuth at tilts up to 13 degrees the least clearance to the ground is 43 mm, at a rib 6.84 m from the centre. The ground only: the deployed feed and the full mechanism are not checked." }
