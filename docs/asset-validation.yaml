@@ -489,3 +489,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.transponder.s1
+    version: 2
+    manifest_sha256: "07c4c6341bda3b95790af5e6ab8e4a28158320c28adb285188d5a94f7d16b9df"
+    installed: c381ad9cff4527bf37dca9ab2bfd1c5f67b5c0ca
+    game: "the loader (world::assets) at fso c381ad9c"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/transponder-s1/v2 (45304 bytes, bounds [-0.109, 0.0, -0.075] to [0.109, 0.17, 0.075]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
