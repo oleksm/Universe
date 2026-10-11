@@ -76,12 +76,14 @@ def brief(kind, key, path, r, used):
         b["mount"] = {"key": r["fits"], "envelope_m": m.get("envelope"), "attachment": m.get("attachment")}
     lst = (r.get("built_of") or {}).get("list") or []
     if lst:
-        b["parts"] = [{"code": p["code"], "name": p["name"], "mass_kg": p["mass"], "box_m": [p["length"], p["width"], p["height"]], "of": p.get("item")} for p in lst]
+        b["parts"] = [{"code": p["code"], "name": p["name"], "description": p.get("description"), "mass_kg": p["mass"], "box_m": [p["length"], p["width"], p["height"]], "of": p.get("item")} for p in lst]
     elif (r.get("built_of") or {}).get("parts"):
         folder = os.path.join(TREE, "SFO/metadata/parts", r["built_of"]["parts"])
         b["parts"] = [{"code": d["identity"]["code"], "name": d["identity"]["name"], "mass_kg": (d.get("physical") or {}).get("mass"),
                        "box_m": [(d.get("physical") or {}).get(k) for k in ("length", "width", "height")]}
                       for d in (yaml.safe_load(open(f)) for f in sorted(glob.glob(folder + "/*.yaml")))]
+    if r.get("basis"):
+        b["basis"] = [{"of": x.get("of"), "tier": x.get("tier"), "rule": x.get("rule"), "note": x.get("note")} for x in r["basis"]]
     if kind == "hull":
         b["conventions"] = "docs/ship-import.md (nose +Y, up +Z, COL_ meshes, nozzle_/gear/dock empties); hulls are the ships session's designs"
     return b

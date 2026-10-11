@@ -5,7 +5,7 @@ identity:
   maker: org.aurel
   revision: draft
   slot: thermal
-  description: "Throws heat into space from a hot surface."
+  description: "A deployable radiator panel: stowed flat against the hull for flight in air and docking, swung out on its root hinge to stand clear so both faces see space, where it throws off 8 MW at 1,000 K."
 size_class: 2
 fits: mount.thermal-s2
 physical:
@@ -17,9 +17,9 @@ physical:
 built_of:
   parts: thermal-radiator-s2
   list:
-    - { code: RAD2-01, name: "Panel", description: "The face sheets and the fins between.", mass: 517, length: 10.2, width: 5.13, height: 0.0655, item: stock.ti64-pl-5, quantity: 595.0, module: module.welding-bay }
-    - { code: RAD2-02, name: "Headers and tubes", description: "The coolant passages.", mass: 282, length: 8.37, width: 4.19, height: 0.0536, item: stock.ti64-tb-60x1p5, quantity: 324.0, module: module.machining-centre }
-    - { code: RAD2-03, name: "Hinge and lines", description: "The root hinge and the flexible lines through it.", mass: 141, length: 6.64, width: 3.33, height: 0.0425, item: stock.st4340-bar-120, quantity: 162.0, module: module.machining-centre }
+    - { code: RAD2-01, name: "Panel", description: "The face sheets and the fins between, 12.5 m out from the hinge by 6.26 m along it, 30 mm thick; both faces dark (high emissivity); the coolant tubes run out from the root and back in it.", mass: 517, length: 12.5, width: 6.26, height: 0.03, item: stock.ti64-pl-5, quantity: 595.0, module: module.welding-bay }
+    - { code: RAD2-02, name: "Headers and tubes", description: "The coolant passages: a supply and a return header side by side along the root edge (80 mm across: the panel's full thickness there), U-tubes from them through the panel and back.", mass: 282, length: 6.26, width: 0.18, height: 0.08, item: stock.ti64-tb-60x1p5, quantity: 324.0, module: module.machining-centre }
+    - { code: RAD2-03, name: "Hinge and lines", description: "Two low root hinge brackets at the root corners (the hinge line along the 6.26 m root edge, 40 mm off the hull, everything within the panel's 80 mm), the deploy drive, two tip latches that hold it stowed, and two rotary coolant joints on the hinge axis (no flexible hose at 1,000 K).", mass: 141, length: 6.26, width: 0.3, height: 0.08, item: stock.st4340-bar-120, quantity: 162.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -27,8 +27,16 @@ function:
   rejects: 8000000.0
   temperature: 1000
   area: 78.4
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-radiator-s2/v1"
+  manifest_sha256: "9677ce89eefd06f7bba19603113ca07f8939575050208dd6e2d732ded09339cb"
+  version: 1
+  triangles: 4056
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Throws off 8 MW at 1,000 K from 78 m2, both faces to deep space (Stefan-Boltzmann, emissivity 0.9): twice as long as wide. 12 kg/m2 chosen for a titanium panel with its headers." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [built_of.list, identity.description], tier: derived, review: true, note: "Geometry for the modeller (2026-10-10): the part boxes follow the panel (they were scaled stand-ins). Both faces radiating needs the panel clear of the hull, so it deploys: stowed flat inside the mount's envelope (13.8 x 6.89 x 1.65 m), held at the root by the two hinge brackets and at the tip by two latches, which are the mount's four corners; deployed it turns 90 degrees about the root edge. The model is exported stowed (its box is the record's 12.5 x 6.26 x 0.08 m); deploying is motion, later. The hull's view of the deployed panel is ignored (review)." }
+  - { of: [physical.mass, built_of.list], tier: invented, review: true, note: "Open: titanium Ti-6Al-4V is not a 1,000 K material (its strength falls away above about 700 K, from memory); a panel this hot wants carbon-carbon fins on niobium-alloy or stainless headers, or a cooler panel 4 times larger (700 K: 326 m2). The registry has no service temperature for materials yet. The stock stays a mass proxy until that is settled." }
   - { of: [life], rule: rule.life-ship-system }

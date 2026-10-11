@@ -9,7 +9,7 @@ renames:
   - { was: equipment.access.cargo.lift, is: equipment.access.cargo-lift.s2, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.access.cargo.ramp.s1, is: equipment.access.cargo-ramp.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.access.cargo.ramp.s2, is: equipment.access.cargo-ramp.s2, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
-  - { was: equipment.access.mc07.anchor.clamp, is: equipment.access.anchor-clamp.mc07, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
+  - { was: equipment.access.mc07.anchor.clamp, is: equipment.access.anchor-clamp.mc07-aft, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.access.mc07.cargo.ramp, is: equipment.access.cargo-ramp.mc07, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.bay.hopper.100t, is: equipment.cargo.ore-bay.100t, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.bay.hopper.10t, is: equipment.cargo.ore-bay.10t, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
@@ -34,7 +34,7 @@ renames:
   - { was: equipment.gun.mass-driver.s1, is: equipment.hardpoint.mass-driver.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.handling.ore.scoop, is: equipment.handling.ore-scoop.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.head.s1, is: equipment.cargo.head.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
-  - { was: equipment.laser.mc07.mining, is: equipment.hardpoint.mining-laser.mc07, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
+  - { was: equipment.laser.mc07.mining, is: equipment.hardpoint.mining-hammer.mc07, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.laser.pulse.s1, is: equipment.hardpoint.pulse-laser.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.life.s1, is: equipment.life-support.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.life.s2, is: equipment.life-support.s2, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
@@ -77,3 +77,5 @@ renames:
   - { was: equipment.utility.reaction.wheels, is: equipment.utility.reaction-wheels.s2, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: equipment.utility.refuelling.port, is: equipment.utility.refuelling-port.s1, date: "2026-10-07", why: "one naming rule for equipment: equipment.<slot>[.<family>].<variant>" }
   - { was: org.hearth-line, is: org.hoar-line, date: "2026-10-07", why: "the planet renamed (Hearth to Hoar)" }
+  - { was: equipment.hardpoint.mining-laser.mc07, is: equipment.hardpoint.mining-hammer.mc07, date: "2026-10-10", why: "the MC-07 model draws a hydraulic breaker, not a laser (ships, 2026-10-10)" }
+  - { was: equipment.access.anchor-clamp.mc07, is: equipment.access.anchor-clamp.mc07-aft, date: "2026-10-10", why: "the MC-07 has two clamps of different geometry (source rig: aft 2.3 m stages, forward 2.9 m); the forward one is a new key, equipment.access.anchor-clamp.mc07-fwd" }

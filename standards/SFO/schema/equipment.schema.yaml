@@ -239,6 +239,18 @@ properties:
           burn: { type: number, x-unit: "s", description: "s of firing from cold to too hot" }
           cool: { type: number, x-unit: "s", description: "s to cool again" }
           reset: { type: number, x-unit: "1", description: "the share of too hot it must cool to, after overheating, before it fires again" }
+      - description: "A hydraulic breaker (a hammer): a piston drives a chisel into rock, blow after blow. Each blow pushes back on whatever holds it; in free fall the ship must be clamped to the rock or thrust against it. Not in the game yet."
+        type: object
+        x-in-game: "not made"
+        additionalProperties: false
+        required: [kind]
+        properties:
+          kind: { const: breaker }
+          blow_energy: { type: number, x-unit: "J", description: "J delivered to the chisel each blow" }
+          blow_rate: { type: number, x-unit: "1/s", description: "blows a second" }
+          hydraulic_power: { type: number, x-unit: "W", description: "W of hydraulic power it draws" }
+          reach: { type: number, x-unit: "m", description: "m its boom reaches beyond its hatch" }
+          feed_force: { type: number, x-unit: "N", description: "N, the average push it needs to keep the chisel on the rock: the push-back the ship takes" }
       - description: "The anchor and excavator. Their figures are still in the engine's code."
         type: object
         additionalProperties: false
@@ -483,9 +495,14 @@ properties:
               tubes: { type: integer, description: "how many coolant tubes make the wall" }
               tube_wall: { type: number, x-unit: "m", description: "m, the tubes' wall" }
               hot_wall_temperature: { type: number, x-unit: "K", description: "K, the gas side of the wall at full thrust, by design" }
+              coolant_passes: { type: integer, minimum: 1, maximum: 2, description: "1: the coolant runs the wall once, fed from the exit manifold by a line outside the nozzle; 2: half the tubes carry it down to the exit manifold, where it turns, and half bring it back up, so every line stays at the chamber end" }
+              tubes_lower: { type: integer, x-unit: "1", description: "Tubes below the splice, where each upper tube branches in two (a wide bell's tubes would grow too wide for their wall)" }
+              splice_expansion: { type: number, x-unit: "1", description: "The area ratio at which the tubes branch to tubes_lower" }
+              coolant_pressure: { type: number, x-unit: "Pa", description: "Pa, the coolant's pressure in the tubes: the load on their wall" }
               coolant_in: { type: number, x-unit: "K", description: "K, the coolant entering the wall (at the exit manifold for a tube nozzle fed from its end)" }
               coolant_out: { type: number, x-unit: "K", description: "K, the coolant leaving the wall (to the turbine in an expander)" }
-              exit_manifold: { type: number, x-unit: "m", description: "m, the section of the torus at the nozzle's exit that feeds the tubes: the rim a modeller draws" }
+              exit_manifold: { type: number, x-unit: "m", description: "m, the outer diameter of the torus tube's section at the nozzle's exit: the rim a modeller draws. It sits outside the exit, so the rim is exit_diameter + 2 x this across" }
+              vacuum_only: { type: boolean, description: "true: the bell over-expands in air (its exit pressure far below a sea-level atmosphere): it fires only in vacuum or very thin air" }
       - description: "A swivel that turns an engine unit through a large angle (vectored thrust): aft in flight, down to land. Far heavier than a gimbal; that is the trade. Not in the game yet."
         type: object
         x-in-game: "not made"

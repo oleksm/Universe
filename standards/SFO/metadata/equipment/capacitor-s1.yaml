@@ -5,7 +5,7 @@ identity:
   maker: org.meridian
   revision: outdated
   slot: capacitor
-  description: "Stores energy for bursts, charged by the plant."
+  description: "Stores energy for bursts, charged by the plant: a sealed 1.5 x 1.0 x 1.0 m module on four base lugs, the coil in its case filling most of it, the refrigerator and the switchgear enclosed at one end."
 size_class: 1
 fits: mount.capacitor-s1
 physical:
@@ -17,13 +17,13 @@ physical:
 built_of:
   parts: capacitor-s1
   list:
-    - { code: CPS1-01, name: "Coil case", description: "Holds the winding against the force of its own current.", mass: 300, length: 1.27, width: 0.843, height: 0.843, item: stock.ti64-pl-5, quantity: 345.0, module: module.welding-bay,
+    - { code: CPS1-01, name: "Coil case", description: "Holds the winding against the force of its own current.", mass: 300, length: 1.0, width: 1.0, height: 0.95, item: stock.ti64-pl-5, quantity: 345.0, module: module.welding-bay,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
-    - { code: CPS1-02, name: "Winding", description: "Superconducting cable.", mass: 40, length: 0.646, width: 0.431, height: 0.431, item: stock.cu-wire-2, quantity: 46.0, module: module.machining-centre,
+    - { code: CPS1-02, name: "Winding", description: "Superconducting cable.", mass: 40, length: 0.9, width: 0.9, height: 0.3, item: stock.cu-wire-2, quantity: 46.0, module: module.machining-centre,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
-    - { code: CPS1-03, name: "Refrigerator", mass: 60, length: 0.74, width: 0.493, height: 0.493, item: good.heat-pumps, quantity: 60, module: module.assembly-shop,
+    - { code: CPS1-03, name: "Refrigerator", mass: 60, length: 0.45, width: 0.45, height: 0.4, item: good.heat-pumps, quantity: 60, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
-    - { code: CPS1-04, name: "Switchgear", description: "Lets the current in and out, fast.", mass: 100, length: 0.877, width: 0.585, height: 0.585, item: good.electronics, quantity: 100, module: module.assembly-shop,
+    - { code: CPS1-04, name: "Switchgear", description: "Lets the current in and out, fast.", mass: 100, length: 0.45, width: 0.5, height: 0.5, item: good.electronics, quantity: 100, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. Real superconducting stores hold 4 to 40 kJ a kg." }] }
 making:
   module: module.assembly-shop
@@ -31,9 +31,17 @@ function:
   kind: capacitor
   capacity: 5000000000
   rate: 20000000
+visual:
+  format: "freefall-model/1"
+  path: "models/capacitor-s1/v1"
+  manifest_sha256: "d39515f22ec4cca69dd91414789bf81f0e645f8d1d7f4ddacbc226601ebe4ce0"
+  version: 1
+  triangles: 1172
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a store of energy as current in a superconducting coil. A real one holds 4 to 40 kJ for each kg, and the largest magnets built (ITER's) 5; this is asked for 10,000." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a coil in its case, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [built_of.list, identity.description], tier: invented, review: true, note: "Exterior and packing for the modeller (2026-10-10): sealed module, lugs, coil case 1.0 x 1.0 x 0.95 m, refrigerator and switchgear at one end; no working internals drawn." }
+  - { of: [function.capacity], tier: invented, review: true, note: "Open: physics forbids it. A magnet's stored energy is held by its structure's stress; the virial theorem caps the energy at the structure's strength over its density: titanium alloy at 900 MPa and 4,430 kg/m3 gives about 0.2 MJ/kg, so 5 GJ needs at least 25 t of structure, not 500 kg (real stores reach 4 to 40 kJ/kg). The capacity or the mass must change; the game uses this figure, so engine first." }
   - { of: [life], rule: rule.life-ship-system }

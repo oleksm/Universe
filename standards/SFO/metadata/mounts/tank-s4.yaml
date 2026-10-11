@@ -11,13 +11,13 @@ envelope:
   width: 12.7
   height: 12.7
 bears:
-  mass: 6250.0
+  mass: 131000.0
 attachment:
   points: 4
   pattern: saddles
   each:
-    tension: 46000.0
-    compression: 46000.0
-    shear: 23000.0
+    tension: 965000.0
+    compression: 965000.0
+    shear: 483000.0
 basis:
   - { of: [envelope, bears, attachment], rule: rule.mounts-margin }

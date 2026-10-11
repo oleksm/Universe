@@ -1,0 +1,246 @@
+# freefall-motion/1: how a registry model's rigid parts and flexible lines move, without clips (docs/asset-contract.md,
+# Moving parts). A package file, motion.json, beside model.glb; written by install_model.py from --motion=<file>, checked
+# there (this schema, then the checks in tools/standards/assets.py check_motion). Units: metres, radians; the exported
+# glTF basis (+Y up). A transform is 16 numbers, column-major, rigid (rotation and translation, no scale).
+# Two frames, never mixed: `bind` is a node's transform in model-root space at the neutral pose; `point`/`frame` of an
+# attachment is local to its named `parent` node.
+$schema: "https://json-schema.org/draft/2020-12/schema"
+title: freefall-motion/1
+type: object
+additionalProperties: false
+required: [format, key, root, nodes]
+definitions:
+  vec3: { type: array, items: { type: number }, minItems: 3, maxItems: 3 }
+  transform: { type: array, items: { type: number }, minItems: 16, maxItems: 16, description: "column-major 4x4, rigid" }
+  node: { type: string, minLength: 1, description: "a node name in model.glb, exactly" }
+  attachment:
+    type: object
+    additionalProperties: false
+    required: [parent, point]
+    properties:
+      parent: { $ref: "#/definitions/node" }
+      point: { $ref: "#/definitions/vec3", description: "m, in the parent's frame" }
+  side:
+    type: object
+    additionalProperties: false
+    required: [parent, frame]
+    properties:
+      parent: { $ref: "#/definitions/node", description: "the root, a listed node, or a solved link's node" }
+      frame: { $ref: "#/definitions/transform", description: "the joint's frame on this side, in the parent's frame: origin at the joint centre" }
+  joint:
+    type: object
+    additionalProperties: false
+    required: [name, a, b, line_axis, hinges, limits, rating_source]
+    properties:
+      name: { type: string }
+      a: { $ref: "#/definitions/side", description: "one side's frame; at neutral both sides' frames coincide in model root" }
+      b: { $ref: "#/definitions/side" }
+      line_axis: { $ref: "#/definitions/vec3", description: "unit, in side a's frame: the line through the joint (axial travel along it, torsion about it)" }
+      hinges:
+        type: array
+        minItems: 1
+        maxItems: 2
+        description: "unit hinge axes in side a's frame, in order: the relative rotation of side b is hinge 1 by theta_1, then hinge 2 (carried by hinge 1) by theta_2. A gimbal joint is not a ball joint"
+        items: { $ref: "#/definitions/vec3" }
+      limits: { type: array, items: { type: number }, minItems: 1, maxItems: 2, description: "rad, each hinge's most turn either way from neutral (never a catalogue total-travel figure)" }
+      axial: { type: number, description: "m, travel along line_axis allowed (0 if absent)" }
+      lateral: { type: number, description: "m, offset square to line_axis allowed (0 if absent)" }
+      torsion: { type: number, description: "rad, twist about line_axis allowed (0 if absent)" }
+      rating_source: { type: string, description: "where the limits come from: a maker's figure (provisional) or an assumption. Never the engine's steering limit" }
+  end:
+    type: object
+    additionalProperties: false
+    required: [parent, frame, tangent]
+    properties:
+      parent: { $ref: "#/definitions/node" }
+      frame: { $ref: "#/definitions/transform", description: "the hose end's frame, in the parent's frame" }
+      tangent: { $ref: "#/definitions/vec3", description: "unit, in the end frame: the direction the hose leaves the end" }
+properties:
+  format: { const: "freefall-motion/1" }
+  key: { type: string, description: "the registry record this moves (the package's key)" }
+  root: { $ref: "#/definitions/node" }
+  nodes:
+    type: array
+    minItems: 1
+    description: "every moving node: its parent (a node, or the root) and neutral bind in model-root space"
+    items:
+      type: object
+      additionalProperties: false
+      required: [node, parent, bind]
+      properties:
+        node: { $ref: "#/definitions/node" }
+        parent: { $ref: "#/definitions/node" }
+        bind: { $ref: "#/definitions/transform" }
+  gimbal:
+    type: object
+    additionalProperties: false
+    required: [pitch_node, yaw_node, pivot, pitch_axis, yaw_axis, order, normalisation, limit]
+    properties:
+      pitch_node: { $ref: "#/definitions/node" }
+      yaw_node: { $ref: "#/definitions/node" }
+      pivot: { $ref: "#/definitions/vec3", description: "m, model root" }
+      pitch_axis: { $ref: "#/definitions/vec3", description: "unit, model root, at neutral" }
+      yaw_axis: { $ref: "#/definitions/vec3", description: "unit, model root, at neutral" }
+      order: { enum: [pitch_then_yaw], description: "pitch stage the parent, yaw stage its child" }
+      normalisation: { enum: [radial], description: "input (pitch, yaw) in [-1, 1]; d = max(1, |input|); stage angles limit * pitch / d, limit * yaw / d" }
+      limit: { type: number, description: "rad; must equal the record's function.gimbal (the registry is the authority)" }
+  actuators:
+    type: array
+    description: >-
+      Each actuator is the pose producer of its body and rod (they may be listed in `nodes`, under the root only, for
+      their bind). At a pose each part is placed at its own anchor (body at fixed, rod at moving) and turned by the
+      shortest rotation taking its local `axis` to the line toward the other anchor: absolute, not a delta from the bind
+      (engine's convention, v11). A pose needing the axis turned end over end (antiparallel) is refused: no roll is stated.
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, body_node, rod_node, fixed, moving, body_length, rod_length, min_overlap, axis]
+      properties:
+        name: { type: string }
+        body_node: { $ref: "#/definitions/node" }
+        rod_node: { $ref: "#/definitions/node" }
+        fixed: { $ref: "#/definitions/attachment", description: "the body's end: its origin sits here" }
+        moving: { $ref: "#/definitions/attachment", description: "the rod's end: its origin sits here" }
+        body_length: { type: number, description: "m" }
+        rod_length: { type: number, description: "m" }
+        min_overlap: { type: number, description: "m, rod inside body, at every pose" }
+        axis: { $ref: "#/definitions/vec3", description: "unit, each mesh's local axis aimed at the other anchor" }
+  hoses:
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, rest_node, diameter, free_length, length_tolerance, min_bend_radius, ends, centreline]
+      properties:
+        name: { type: string }
+        rest_node: { $ref: "#/definitions/node", description: "the hose drawn at neutral: the fallback" }
+        diameter: { type: number, description: "m, outer" }
+        free_length: { type: number, description: "m, centreline arc length between the ends" }
+        length_tolerance: { type: number, description: "m, how far the solved length may differ" }
+        min_bend_radius: { type: number, description: "m, centreline; the product's dynamic figure" }
+        min_bend_radius_source: { type: string, description: "where that figure comes from (a maker's datasheet, an assumption)" }
+        clearance: { type: number, description: "m, the least gap to any other part" }
+        ends: { type: array, items: { $ref: "#/definitions/end" }, minItems: 2, maxItems: 2 }
+        centreline:
+          type: array
+          minItems: 2
+          description: "the neutral centreline, model root: Bezier knots"
+          items:
+            type: object
+            additionalProperties: false
+            required: [point, handle_in, handle_out]
+            properties:
+              point: { $ref: "#/definitions/vec3" }
+              handle_in: { $ref: "#/definitions/vec3" }
+              handle_out: { $ref: "#/definitions/vec3" }
+        guides:
+          type: array
+          description: "points the hose passes near, each riding on a node"
+          items:
+            type: object
+            additionalProperties: false
+            required: [parent, point, radius]
+            properties:
+              parent: { $ref: "#/definitions/node" }
+              point: { $ref: "#/definitions/vec3" }
+              radius: { type: number, description: "m, how far from the point the centreline may pass" }
+  links:
+    type: array
+    description: >-
+      Rigid links between two joints (a tied bellows duct's spool, a strut): fixed length, never scaled or slid. Exactly
+      one pose producer per link: `inherited` (the link node is a listed node riding its parent, as v03's spools ride the
+      pitch stage; its joints are checked, nothing is solved) or `solved` (the node is not a listed node; it is placed
+      from joint a's centre toward joint b's, turned by roll_rule). Order: the gimbal, then listed nodes, then solved links,
+      then joints (checked), ties and bellows rings.
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, node, pose, joints]
+      properties:
+        name: { type: string }
+        node: { $ref: "#/definitions/node" }
+        pose: { enum: [inherited, solved] }
+        bind: { $ref: "#/definitions/transform", description: "solved only: the link node's neutral transform in model root" }
+        origin: { $ref: "#/definitions/vec3", description: "solved only: joint a's centre in the link mesh's local frame" }
+        axis: { $ref: "#/definitions/vec3", description: "solved only: unit, local, from joint a toward joint b" }
+        roll_axis: { $ref: "#/definitions/vec3", description: "solved only: unit, local, square to axis: where the roll reference points" }
+        roll_rule: { enum: [joint_a_hinge], description: "solved only: the roll reference follows joint a's first hinge axis (in model root, at the pose), made square to the link; refused within 10 degrees of the link" }
+        rest_length: { type: number, description: "m, joint centre to centre" }
+        tolerance: { type: number, description: "m, the most the centres' distance may differ from rest_length at any pose" }
+        joints: { type: array, items: { $ref: "#/definitions/joint" }, minItems: 2, maxItems: 2 }
+        bore: { type: number, description: "m, inner diameter" }
+        outer: { type: number, description: "m, outer envelope diameter (collision)" }
+        ties:
+          type: array
+          description: "tie rods across a joint: fixed length between two attachments"
+          items:
+            type: object
+            additionalProperties: false
+            required: [name, node, a, b, length, tolerance]
+            properties:
+              name: { type: string }
+              node: { $ref: "#/definitions/node" }
+              a: { $ref: "#/definitions/attachment" }
+              b: { $ref: "#/definitions/attachment" }
+              length: { type: number, description: "m" }
+              tolerance: { type: number, description: "m" }
+  bellows:
+    type: array
+    description: >-
+      A flexible element (a bellows across a hinge joint) drawn as rigid rings along a curve between its two cuffs; the
+      evaluator engine and blender agreed for v04 (blender proposal-v04/source/ring-fan-fixture.json). At a pose: each
+      end's point and tangent are taken from its parent's frame into model root (the tangent turned with its parent,
+      scaled to tangent_magnitude); H(t) is the cubic Hermite curve between them. A ring's frame F(t): origin H(t); Z the
+      unit derivative H'(t); X the upstream hinge axis turned with the upstream parent (numerically squared to Z); Y = Z x X.
+      A planar single hinge: refused wherever that axis is not square to Z (|axis . Z| over 1e-3), never another roll. A ring's transform is F(t, pose) F(t, neutral)^-1 bind,
+      so its exported local basis is kept (no mesh edits, no scale). Rings are not listed nodes: this is their one pose
+      producer.
+    items:
+      type: object
+      additionalProperties: false
+      required: [name, upstream, downstream, tangent_magnitude, radius, ring_width, rings]
+      properties:
+        name: { type: string }
+        upstream:
+          type: object
+          additionalProperties: false
+          required: [parent, point, tangent, hinge_axis]
+          properties:
+            parent: { $ref: "#/definitions/node" }
+            point: { $ref: "#/definitions/vec3", description: "m, the cuff's centre, in the parent's frame" }
+            tangent: { $ref: "#/definitions/vec3", description: "unit, in the parent's frame, pointing downstream" }
+            hinge_axis: { $ref: "#/definitions/vec3", description: "unit, in the parent's frame: the rings' roll reference" }
+        downstream:
+          type: object
+          additionalProperties: false
+          required: [parent, point, tangent]
+          properties:
+            parent: { $ref: "#/definitions/node" }
+            point: { $ref: "#/definitions/vec3" }
+            tangent: { $ref: "#/definitions/vec3" }
+        tangent_magnitude: { type: number, description: "m, both end tangents' length in the Hermite curve" }
+        radius: { type: number, description: "m, the rings' outer radius" }
+        ring_width: { type: number, description: "m, each ring's length along its Z" }
+        skirt_length: { type: number, description: "m, how far a ring's skirt reaches over its neighbour: the most two rims may open before a gap shows (0 if absent)" }
+        rings:
+          type: array
+          minItems: 1
+          items:
+            type: object
+            additionalProperties: false
+            required: [node, t, bind]
+            properties:
+              node: { $ref: "#/definitions/node" }
+              t: { type: number, description: "0 to 1 along the curve, rising" }
+              bind: { $ref: "#/definitions/transform", description: "model root, neutral" }
+  references:
+    type: array
+    description: "poses to compare against: input and node transforms in model root at that pose (motion times bind, the A of engine's draw rule); the installer compares every node it can evaluate (listed nodes, solved links, rings) within 2e-6 per matrix component (engine's threshold)"
+    items:
+      type: object
+      additionalProperties: false
+      required: [pose, input, transforms]
+      properties:
+        pose: { type: string }
+        input: { type: array, items: { type: number }, minItems: 2, maxItems: 2 }
+        transforms: { type: object, additionalProperties: { $ref: "#/definitions/transform" } }

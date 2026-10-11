@@ -3,7 +3,7 @@
     python3 tools/standards/mounts.py
 
 For every (slot kind, size class) in use by equipment or a hull's slots: an envelope a tenth larger than the largest piece,
-the weight, thrust, recoil and landing load a quarter more than the most, the feeds (power, cooling as a millionth of the
+the weight, thrust, recoil (a breaker's push-back too), landing load and hold (a clamp's or docking gear's grip on the ship) a quarter more than the most, the feeds (power, cooling as a millionth of the
 jet's loss, fuel) likewise, a nozzle opening four fifths of the width, and the attachment (pattern by kind; each point the
 weight at 3 g plus the thrust or landing or recoil load, with the margin; shear half). A class with no equipment is scaled
 from the nearest, twice the volume a class. Writes standards/SFO/metadata/mounts/<slot>-s<class>.yaml, `fits` on each piece
@@ -23,6 +23,7 @@ NAMES = {"power": "power plant", "drive": "main drive", "thrusters": "thruster",
          "avionics": "avionics", "gear": "landing gear", "access": "access", "handling": "handling", "thermal": "thermal", "command": "command station", "engine": "engine"}
 PATTERN = {"drive": ("ring", 8), "thrusters": ("ring", 4), "lift": ("ring", 6), "tank": ("saddles", 4), "gear": ("trunnion", 3), "hardpoint": ("ring", 4), "access": ("ring", 8), "thermal": ("corners", 4), "engine": ("ring", 8)}
 M, DESIGN_G = 1.25, 3 * 9.80665
+CARRIES = ("tank", "rack", "ore_bay", "store")   # kinds whose capacity is kg they hold: the mount bears the thing full
 
 
 def main():
@@ -48,9 +49,10 @@ def main():
         heat = lambda d: device_heat(fnk(d))   # (one rule: lib.device_heat, SFO 22)
         burn = lambda d: fnk(d)["output"] / fnk(d)["efficiency"] / 3.45e14 if fnk(d)["kind"] == "power_plant" else (fnk(d)["thrust"] / fnk(d)["exhaust"] if "thrust" in fnk(d) else 0)
         return {"L": g(lambda d: d["physical"]["length"]) * k ** (1 / 3), "W": g(lambda d: d["physical"]["width"]) * k ** (1 / 3), "H": g(lambda d: d["physical"]["height"]) * k ** (1 / 3),
-                "mass": g(lambda d: d["physical"]["mass"]) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,
+                "mass": g(lambda d: d["physical"]["mass"] + (fnk(d).get("capacity", 0) if fnk(d)["kind"] in CARRIES else 0)) * k, "power": g(lambda d: (d.get("needs") or {}).get("power", 0)) * k,
                 "thrust": g(lambda d: fnk(d).get("thrust", 0)) * k, "heat": g(heat) * k, "burn": g(burn) * k,
-                "recoil": g(lambda d: fnk(d).get("slug_mass", 0) * fnk(d).get("muzzle_speed", 0) * fnk(d).get("rate", 0)) * k,
+                "recoil": g(lambda d: fnk(d).get("slug_mass", 0) * fnk(d).get("muzzle_speed", 0) * fnk(d).get("rate", 0) + (fnk(d).get("feed_force", 0) if fnk(d)["kind"] == "breaker" else 0)) * k,
+                "hold": g(lambda d: fnk(d).get("holds", 0) if fnk(d)["kind"] == "docking" else 0) * k,
                 "landing": g(lambda d: fnk(d).get("holds", 0) if fnk(d)["kind"] == "landing_gear" else 0) * k}, k, here is not None
 
     n = 0
@@ -66,8 +68,9 @@ def main():
         if fig["thrust"]: s += f"  thrust: {r(fig['thrust'] * M)!r}\n"
         if fig["recoil"]: s += f"  recoil: {r(fig['recoil'] * M)!r}\n"
         if fig["landing"]: s += f"  landing: {r(fig['landing'] * M)!r}\n"
+        if fig.get("hold"): s += f"  hold: {r(fig['hold'] * M)!r}\n"
         pattern, pts = PATTERN.get(kind, ("corners", 4 if fig["mass"] < 2000 else 8))
-        per = (fig["mass"] * DESIGN_G + fig["thrust"] + fig["landing"] + fig["recoil"]) * M / pts
+        per = (fig["mass"] * DESIGN_G + fig["thrust"] + fig["landing"] + fig["recoil"] + fig.get("hold", 0)) * M / pts
         s += f"attachment:\n  points: {pts}\n  pattern: {pattern}\n  each:\n    tension: {r(per)!r}\n    compression: {r(per)!r}\n    shear: {r(per / 2)!r}\n"
         feeds = []
         if fig["power"]: feeds.append(f"  power: {r(fig['power'] * M)!r}\n")

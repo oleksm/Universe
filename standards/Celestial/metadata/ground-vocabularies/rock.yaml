@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schema/ground-vocabulary.schema.yaml
+identity:
+  key: ground-vocabulary.rock
+  name: "Rock units of the ground"
+  about: "The rock a ground face lies on: one of the registry's rock units. Ids are the planet simulation's unit order plus 1 (its 0, ocean-floor basalt, is 1 here; 0 is none)."
+version: 1
+entries:
+  - { id: 1, record: rock-unit.ocean-floor-basalt, source: morb }
+  - { id: 2, record: rock-unit.andesite, source: arc_volcanic }
+  - { id: 3, record: rock-unit.granodiorite, source: arc_plutonic }
+  - { id: 4, record: rock-unit.gneiss-basement, source: basement }
+  - { id: 5, record: rock-unit.greenstone, source: greenstone }
+  - { id: 6, record: rock-unit.schist, source: schist }
+  - { id: 7, record: rock-unit.granite, source: granite }
+  - { id: 8, record: rock-unit.flood-basalt, source: flood_basalt }
+  - { id: 9, record: rock-unit.limestone, source: carbonate }
+  - { id: 10, record: rock-unit.sandstone-shale, source: clastic }
+  - { id: 11, record: rock-unit.ophiolite, source: ophiolite }
+  - { id: 12, record: rock-unit.rift-basalt, source: rift }
+  - { id: 13, record: rock-unit.iron-formation, source: iron_formation }
+  - { id: 14, record: rock-unit.primary-crust, source: primary_crust }
+  - { id: 15, record: rock-unit.intercrater-plains, source: intercrater_plains }
+  - { id: 16, record: rock-unit.high-titanium-basalt, source: high_ti_basalt }
+  - { id: 17, record: rock-unit.impact-melt, source: impact_melt }
+  - { id: 18, record: rock-unit.impact-breccia, source: impact_breccia }
+  - { id: 19, record: rock-unit.anorthosite, source: anorthosite }
+  - { id: 20, record: rock-unit.kreep-basalt, source: kreep }
+basis:
+  - { of: [entries], tier: derived, note: "From planet-sim src/planet_sim/stages/geology.py UNITS (20 units, its index + 1) and the rock-unit records' sim keys, 2026-10-10. Appending only: the simulation appends units, so its order stays the ids." }

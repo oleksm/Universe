@@ -17,7 +17,7 @@ physical:
 built_of:
   parts: engine-ch-s2
   list:
-    - { code: CHE2-01, name: "Thrust chamber and nozzle", description: "One piece to the exit: 180 stainless tubes of 0.3 mm wall brazed side by side into the chamber and the bell, held by hat bands, fed with hydrogen from a torus manifold at the exit rim; about 75 kg of tubes, braze and bands, 20 kg of manifolds, 40 kg of throat support, gimbal ring and jacket.", mass: 135, length: 1.76, width: 1.15, height: 1.15, item: stock.st304-pl-3, quantity: 155.2, module: module.welding-bay }
+    - { code: CHE2-01, name: "Thrust chamber and nozzle", description: "One piece, injector face to exit rim: 1.96 m long (chamber 0.35 m to the throat, bell 1.61 m to the exit), 1.31 m across the rim (exit 1.21 m inside, the 50 mm exit torus outside it). Brazed stainless tubes of 0.3 mm wall: 180 from the chamber to an area ratio of 20, each branching in two below it, 360 to the exit; held by hat bands. Two passes: hydrogen from the pump enters a manifold at the chamber end, runs down every other tube to the exit torus, turns there and comes back up the others to an outlet manifold at the chamber end, then to the turbine and the injector: no line outside the nozzle, so the pump, turbine and every pipe sit forward, behind the hull's closure. The engine owns its gimbal ring and thrust take-out; the mount's flange and struts are the hull's. About 75 kg of tubes, braze and bands, 20 kg of manifolds, 40 kg of throat support, gimbal ring and jacket. Its stock is a mass proxy: tube stock and a brazing works are not in the registry yet.", mass: 135, length: 1.96, width: 1.31, height: 1.31, item: stock.st304-pl-3, quantity: 155.2, module: module.welding-bay }
     - { code: CHE2-02, name: "Turbopumps", mass: 90, length: 1.54, width: 1, height: 1, item: good.pumps, quantity: 90, module: module.assembly-shop }
     - { code: CHE2-03, name: "Valves, lines and injector", mass: 45, length: 1.22, width: 0.797, height: 0.797, item: stock.st304-pl-3, quantity: 51.75, module: module.machining-centre }
     - { code: CHE2-04, name: "Controller and gimbal actuators", mass: 30, length: 1.07, width: 0.696, height: 0.696, item: good.electric-motors, quantity: 30, module: module.assembly-shop }
@@ -51,11 +51,22 @@ function:
     wall: material.stainless-steel-304
     construction: tubes
     tubes: 180
+    tubes_lower: 360
+    splice_expansion: 20
     tube_wall: 0.0003
+    coolant_passes: 2
+    coolant_pressure: 7000000.0
     hot_wall_temperature: 830
     coolant_in: 25
     coolant_out: 200
     exit_manifold: 0.05
+    vacuum_only: true
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-ch-s2/v1"
+  manifest_sha256: "94f9412069a546bd04774fd59c0206e7b049a6465961f7a9a3cb1395665a4aea"
+  version: 1
+  triangles: 46276
 life: 473364000
 basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "the RL10: about 110 kN, 300 kg, hydrogen and oxygen; its extendable nozzle is carbon-carbon" }
@@ -64,3 +75,6 @@ basis:
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.chamber], tier: derived, review: true, note: "An RL10A-4-class expander engine, from memory of its published figures: about 42 bar, mixture 5.5, expansion 84, a nozzle of brazed stainless tubes cooled by the hydrogen on its way to the turbine. Derived for this record's 110 kN at 4.4 km/s (25 kg/s): a throat of 0.0138 m2 (110 kN / (1.9 x 4.2 MPa)), 0.132 m across; an exit 84 times that, 1.21 m; an 80% bell 1.61 m from throat to exit; a chamber of 4 times the throat's area, 0.35 m long. The wall: tubes of 0.3 mm (the tube is the wall: a solid shell of plate would be four times too heavy and could not be cooled), 830 K on the gas side, hydrogen in at 25 K at the exit manifold and out at about 200 K to the turbine. Tube count, wall and temperatures from memory; review." }
+  - { of: [function.chamber.tubes_lower, function.chamber.splice_expansion, function.chamber.coolant_pressure, function.chamber.coolant_passes], tier: derived, review: true, note: "The coolant at 7 MPa (invented: 1.7 times the chamber, for the turbine's and injector's drops) loads each tube's wall with pressure times half its width over 0.3 mm. At the throat 180 tubes are 2.3 mm wide: 27 MPa. At the exit they would be 21 mm: 246 MPa, over 304's 207 MPa yield. Branched in two at an area ratio of 20 (10.3 mm, 120 MPa), 360 reach the exit 10.6 mm wide: 123 MPa, a margin of 1.7 on room-temperature yield. Two passes keep every line at the chamber end (the owner's rule: vulnerable pipes behind the hull's closure)." }
+  - { of: [function.chamber.vacuum_only], tier: derived, review: true, note: "Expansion 84 at 4.2 MPa (gas ratio 1.2) leaves about 3.4 kPa at the exit. Sea-level air on the 1.15 m2 exit pushes back 117 kN, more than the 110 kN thrust, and the flow would separate in the bell: it fires in vacuum or air thinner than about 3 kPa (a Mars-like world's 0.6 kPa is fine). A lander for worlds with thick air needs a shorter bell." }
+  - { of: [built_of.list], tier: derived, review: true, note: "CHE2-01's box: 0.35 + 1.61 m long; the rim 1.21 + 2 x 0.05 m across. The engine's 2.3 m: 0.34 m of turbopump, valves and injector ahead of the injector face. At 0.07 rad of gimbal the rim swings 0.14 m to each side: the hull leaves room for it." }

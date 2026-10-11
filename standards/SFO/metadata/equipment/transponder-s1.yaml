@@ -5,7 +5,7 @@ identity:
   maker: org.orbital
   revision: outdated
   slot: transponder
-  description: "Says who the ship is."
+  description: "Says who the ship is: one sealed unit on the hull skin, a 200 x 150 x 130 mm case with a 40 mm radome over its patch aerial on the outer face, four base lugs, power and data at the rear."
 size_class: 1
 fits: mount.transponder-s1
 physical:
@@ -19,14 +19,20 @@ needs:
 built_of:
   parts: transponder-s1
   list:
-    - { code: TPS1-01, name: "Radio", description: "Answers when asked who the ship is.", mass: 2.1, length: 0.178, width: 0.133, height: 0.151, item: good.electronics, quantity: 2.1, module: module.assembly-shop,
+    - { code: TPS1-01, name: "Radio", description: "Answers when asked who the ship is; inside the case.", mass: 2.1, length: 0.19, width: 0.14, height: 0.12, item: good.electronics, quantity: 2.1, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A deep-space transponder weighs 3 kg; this is allowed far more." }] }
-    - { code: TPS1-02, name: "Aerial and case", mass: 0.9, length: 0.134, width: 0.1, height: 0.114, item: stock.al6061-sh-2-panel, quantity: 0.9, module: module.welding-bay,
+    - { code: TPS1-02, name: "Aerial and case", description: "The case (200 x 150 x 130 mm, four base lugs) and the patch aerial under its 40 mm radome on the outer face: the whole unit's outside.", mass: 0.9, length: 0.2, width: 0.15, height: 0.17, item: stock.al6061-sh-2-panel, quantity: 0.9, module: module.welding-bay,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A deep-space transponder weighs 3 kg; this is allowed far more." }] }
 making:
   module: module.assembly-shop
 function:
   kind: transponder
+visual:
+  format: "freefall-model/1"
+  path: "models/transponder-s1/v1"
+  manifest_sha256: "b89cbc78acfe21a741db81c382756308303e40a28d26f71b7cb1cab9f3fc3f36"
+  version: 1
+  triangles: 840
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }

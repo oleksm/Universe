@@ -9,16 +9,16 @@ identity:
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 3150
-  volume: 3.8
-  length: 1.56
-  width: 1.56
-  height: 1.56
+  mass: 1160
+  volume: 4.4
+  length: 1.6
+  width: 1.6
+  height: 1.72
 built_of:
   parts: tank-air-s1
   list:
-    - { code: AIR0-01, name: "Shell", description: "Forged steel in two halves, welded.", mass: 2678, length: 1.48, width: 1.48, height: 1.48, item: stock.st4340-fg, quantity: 3080.0, module: module.machining-centre }
-    - { code: AIR0-02, name: "Fittings", description: "Valves, burst disc and gauge.", mass: 472, length: 0.829, width: 0.829, height: 0.829, item: stock.st304-pl-3, quantity: 543.0, module: module.machining-centre }
+    - { code: AIR0-01, name: "Shell", description: "A sphere of forged 4340 steel in two halves, welded: 1.564 m inside (2 m3), 18.6 mm wall, 1.60 m outside.", mass: 1120, length: 1.6, width: 1.6, height: 1.6, item: stock.st4340-fg, quantity: 1288.0, module: module.machining-centre }
+    - { code: AIR0-02, name: "Fittings", description: "Valve block, burst disc and gauge on a boss at the top, under a guard: 0.12 m above the sphere.", mass: 40, length: 0.3, width: 0.3, height: 0.12, item: stock.st304-pl-3, quantity: 46.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -26,8 +26,15 @@ function:
   capacity: 788.0
   holds: "element.o"
   pressure: 30000000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-air-s1/v1"
+  manifest_sha256: "067087c7eca6dcc2ea4b77dfde5954f651dd01d970273cacc995c88d57c322d0"
+  version: 1
+  triangles: 3196
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "2 m3 at 30 MPa holds 788 kg of oxygen (ideal gas at 293 K); the steel shell weighs four times its contents, as a high-pressure gas cylinder does (a 50 l cylinder: 60 kg for 10 kg of gas, from memory)." }
+  - { of: [physical, built_of.list], tier: derived, review: true, note: "Sized as a sphere (2026-10-10, for the modeller): a sphere's wall mass is 1.5 p V rho / allowable, whatever its size; 4340 steel at its 1,420 MPa tensile over a burst factor of 2.25 (a gas cylinder's, from memory): 631 MPa allowable, an 18.6 mm wall, 1,120 kg (the small-cylinder rule above made it 2,678 kg). Fittings 40 kg, invented." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

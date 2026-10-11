@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: cargo
-  description: "Racks that hold cargo in the hold."
+  description: "An open cage that holds 20 t of cargo in the hold: twelve 120 mm tube edges and eight corner nodes round a railed deck, loaded through one short end (-Y in the model); its locks sit below the rail plane while loading. Clear inside about 27 m3 of its 40 m3 outer box."
 size_class: 3
 fits: mount.cargo-s3
 physical:
@@ -18,9 +18,9 @@ built_of:
   parts: cargo-rack-s3
   shares: rule.shares-chosen
   list:
-    - { code: RKS3-01, name: "Frame", description: "Tube uprights and beams.", mass: 825, length: 4.45, width: 2.22, height: 2.22, item: stock.st4340-tb-120x10, quantity: 948.7, module: module.welding-bay }
-    - { code: RKS3-02, name: "Decking and rails", mass: 525, length: 3.83, width: 1.91, height: 1.91, item: stock.al6061-pl-5-panel, quantity: 525.04348, module: module.welding-bay }
-    - { code: RKS3-03, name: "Locks and drives", description: "Hold the load and move it to the door.", mass: 150, length: 2.52, width: 1.26, height: 1.26, item: good.electric-motors, quantity: 150, module: module.assembly-shop }
+    - { code: RKS3-01, name: "Frame", description: "Twelve tube edges (39.9 m of 120 x 7 mm) and eight corner nodes.", mass: 825, length: 5.43, width: 2.71, height: 2.71, item: stock.st4340-tb-120x10, quantity: 948.7, module: module.welding-bay }
+    - { code: RKS3-02, name: "Decking and rails", description: "The deck and its rails, along the floor of the cage.", mass: 525, length: 5.3, width: 2.6, height: 0.15, item: stock.al6061-pl-5-panel, quantity: 525.04348, module: module.welding-bay }
+    - { code: RKS3-03, name: "Locks and drives", description: "Hold the load and move it to the door.", mass: 150, length: 5.3, width: 2.6, height: 0.1, item: good.electric-motors, quantity: 150, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -31,4 +31,5 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 20,000 kg is 40 m3, twice as long as wide. The racks themselves are in it." }
+  - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "For the modeller (2026-10-10, blender's blockout): the frame's twelve edges are 39.88 m of tube; at 120 x 7 mm that is 778 kg at 7,850 kg/m3, with about 47 kg of corner nodes: the record's 825 kg (120 x 10 mm would be 1,082 kg); the rack stays 1,500 kg. The stock 120 x 10 is a proxy; whether 7 mm carries 20 t at 3 g is not checked (review). Its mount bears it full (rack and 20 t), by the mounts rule. Static: locks and drives drawn at rest, no motion." }
   - { of: [life], rule: rule.life-ship-system }

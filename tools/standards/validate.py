@@ -252,8 +252,8 @@ def key_of(rel, rec):
             return "seeding." + low
         if len(p) == 3:
             return "seeding." + low
-        if p[2] in ("rock-classes", "vocabulary", "rock-units", "deposit-types", "sights"):
-            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary.", "rock-units": "rock-unit.", "deposit-types": "deposit-type.", "sights": "sight."}[p[2]] + low
+        if p[2] in ("rock-classes", "vocabulary", "rock-units", "deposit-types", "sights", "ground-vocabularies"):
+            return {"rock-classes": "rock-class.", "vocabulary": "vocabulary.", "rock-units": "rock-unit.", "deposit-types": "deposit-type.", "sights": "sight.", "ground-vocabularies": "ground-vocabulary."}[p[2]] + low
         if len(p) == 4:
             return "system." + low
         return {"bodies": "body.", "fields": "population.", "small-bodies": "body.", "regions": "population."}[p[4]] + p[3] + "." + low

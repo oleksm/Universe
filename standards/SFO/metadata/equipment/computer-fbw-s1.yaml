@@ -5,7 +5,7 @@ identity:
   maker: org.orbital
   revision: outdated
   slot: computer
-  description: "Flies the ship by wire: turns the pilot's hand into thruster firings."
+  description: "Flies the ship by wire: turns the pilot's hand into thruster firings. One sealed 500 x 400 x 250 mm cabinet: three voting computer modules above, the thruster drivers and inertial units below, a conductive base carrying its 200 W into the mount, power and harness connectors at the rear."
 size_class: 1
 fits: mount.computer-s1
 physical:
@@ -19,15 +19,15 @@ needs:
 built_of:
   parts: computer-fbw-s1
   list:
-    - { code: FCS1-01, name: "Flight computers", description: "Three, voting.", mass: 9.0, length: 0.335, width: 0.268, height: 0.167, item: good.computers, quantity: 9.0, module: module.assembly-shop,
+    - { code: FCS1-01, name: "Flight computers", description: "Three, voting: three modules side by side in the upper bay.", mass: 9.0, length: 0.46, width: 0.36, height: 0.11, item: good.computers, quantity: 9.0, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
-    - { code: FCS1-02, name: "Inertial units and star trackers", description: "Feel the ship's turning and see where it points.", mass: 4.5, length: 0.266, width: 0.213, height: 0.133, item: good.electronics, quantity: 4.5, module: module.assembly-shop,
+    - { code: FCS1-02, name: "Inertial units", description: "Three, feel the ship's turning; a tray in the lower bay. The star trackers that see where it points need the sky: they are not in this cabinet.", mass: 4.5, length: 0.46, width: 0.16, height: 0.1, item: good.electronics, quantity: 4.5, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
-    - { code: FCS1-03, name: "Thruster drivers", description: "Switch the thrusters.", mass: 7.5, length: 0.315, width: 0.252, height: 0.157, item: good.electronics, quantity: 7.5, module: module.assembly-shop,
+    - { code: FCS1-03, name: "Thruster drivers", description: "Switch the thrusters; a tray in the lower bay.", mass: 7.5, length: 0.46, width: 0.2, height: 0.1, item: good.electronics, quantity: 7.5, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
-    - { code: FCS1-04, name: "Cabinet and cold plates", mass: 6.0, length: 0.292, width: 0.234, height: 0.146, item: stock.al6061-sh-2-panel, quantity: 6.0, module: module.welding-bay,
+    - { code: FCS1-04, name: "Cabinet and cold plates", description: "The sealed cabinet with its bay shelves and the conductive base that takes the 200 W into the mount.", mass: 6.0, length: 0.5, width: 0.4, height: 0.25, item: stock.al6061-sh-2-panel, quantity: 6.0, module: module.welding-bay,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
-    - { code: FCS1-05, name: "Harness", description: "The wiring to every nozzle.", mass: 3.0, length: 0.232, width: 0.186, height: 0.116, item: stock.cu-wire-2, quantity: 3.45, module: module.machining-centre,
+    - { code: FCS1-05, name: "Harness", description: "The cabinet's own wiring and rear connectors; the runs to every nozzle are the hull's wiring.", mass: 3.0, length: 0.46, width: 0.36, height: 0.03, item: stock.cu-wire-2, quantity: 3.45, module: module.machining-centre,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A spacecraft's own computer draws 10 W and a star tracker weighs 3 kg; most of this product's 200 kg is cabinet, wiring and drive electronics." }] }
 making:
   module: module.assembly-shop
@@ -35,10 +35,17 @@ function:
   kind: flight_computer
   turn_rate: 1
   roll_rate: 1.8
+visual:
+  format: "freefall-model/1"
+  path: "models/computer-fbw-s1/v1"
+  manifest_sha256: "91daf29b4b6e3f85dba09c3975043debf68708108066cb9511f6db13d9f3d589"
+  version: 1
+  triangles: 972
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: three computers that check each other, the instruments that tell them how the ship is turning, and the drivers that pass their word to the thrusters." }
   - { of: [physical.length, physical.width, physical.height], tier: sourced, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "Three flight computers, three inertial units and three star trackers: a spacecraft's computer draws 10 W, a star tracker weighs 3 kg, an inertial unit 4 kg. Half a cubic metre of rack. Real figures: docs/ships/mc-07-equipment-dimensions.md." }
   - { of: [physical.mass, physical.volume, needs.power], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "As the audit of 2026-10-05 has it (docs/ships/mc-07-equipment-dimensions.md): real avionics are far lighter and thriftier than the game's first list." }
+  - { of: [built_of.list, identity.description], tier: derived, review: true, note: "For the modeller (2026-10-10): packed into the record's 0.5 x 0.4 x 0.25 m. Three inertial units in 4.5 kg are small fibre-optic or MEMS units (1.5 kg each, invented); the three 3 kg star trackers the dimensions note counts are heads that must see the sky: separate sensor equipment, not made yet (flagged). Ship wiring belongs to the hull." }
   - { of: [life], rule: rule.life-ship-system }
