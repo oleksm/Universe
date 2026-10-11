@@ -1812,3 +1812,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Game drawing/lighting/GPU cost,docking interaction and runtime release,final hull/rail fit,2MN strength/drive and1123kg partial versus800kg mass unqualified."
+  - key: equipment.utility.fire.s1
+    version: 1
+    manifest_sha256: "32edd69baafece679e9497919701d7ea6e811787492a690350b6b66e0572227a"
+    installed: 1b1a3561
+    game: "the loader (world::assets) at fso 1b1a3561"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-fire-s1/v1 (161884 bytes, bounds [-0.25, 0.0, -0.15] to [0.25, 0.3, 0.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual room placement,game drawing/lighting/GPU cost and fire effects;50m3 coverage contradiction,25bar assumption,complete25kg mass and internal bottle/controller unqualified."
