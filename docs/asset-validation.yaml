@@ -900,3 +900,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, stock tint, actual forklift/bale attachment placement, game lighting, GPU cost and temporal filtering pending; twine/knot strength,700kg payload andstack3 unqualified."
+  - key: package.coil
+    version: 1
+    manifest_sha256: "b1238699c432b2e4b51cac9f40911d8d4ed4b601d83a97a0707e1840bda2a497"
+    installed: dba88142
+    game: "the loader (world::assets) at fso dba88142"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/coil/v1 (131556 bytes, bounds [-0.6, 0.0, -0.6] to [0.6, 1.087, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual package drawing, stock tint, GPU appearance/cost, temporal edges, handling and placement pending; 2000 kg payload and stack-two qualification remain provisional."
