@@ -1106,7 +1106,7 @@
 - { record: package.fish-tank, at: "2026-10-11T14:49:54Z", status: "", summary: "first tracked", sha: "da4456885e113154" }
 - { record: package.gas-rack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "aa025afe1f15cdbd" }
 - { record: package.ladle, at: "2026-10-11T14:20:16Z", status: "", summary: "changed: visual", sha: "3b1a0cf1d05598bf" }
-- { record: package.livestock-crate, at: "2026-10-11T14:49:54Z", status: "", summary: "changed: identity, holds, shows_contents, basis", sha: "99c9563fef365e59" }
+- { record: package.livestock-crate, at: "2026-10-11T14:59:35Z", status: "", summary: "changed: visual", sha: "85563998bfa8c118" }
 - { record: package.plate-stack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "cd52c8d67d6bed33" }
 - { record: package.produce-crate, at: "2026-10-11T13:59:40Z", status: "", summary: "changed: visual", sha: "b5412101014d15db" }
 - { record: package.skip, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "052f812cab0000dc" }

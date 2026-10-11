@@ -15,6 +15,12 @@ handling: walk
 stack: 1
 keeps: ventilated
 shows_contents: false
+visual:
+  format: "freefall-model/1"
+  path: "models/livestock-crate/v1"
+  manifest_sha256: "d5f6c778e513b06c0dbf8927bd67afd5098a8eacd56cc0ebfb7f6026f2e4b69e"
+  version: 1
+  triangles: 2512
 basis:
   - { of: [holds.volume], tier: derived, review: true, note: "The floor-to-roof space inside the frame, about 2.3 x 1.1 x 1.6 m: 4.0 m3 (was 5, the outside); blender's measured interior replaces it at install." }
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
