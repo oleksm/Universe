@@ -32,6 +32,7 @@ properties:
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg of contents at most: a dense stock fills it by weight before volume" }
   handling: { enum: [forklift, crane, pump, walk], description: "what moves it: a forklift's tines (pallets, skids), a crane's hook (skips, ladles, bundles), a pump through its valves (and a forklift), or animals led" }
   stack: { type: integer, minimum: 1, x-unit: "1", description: "how many high it may stand, full" }
+  shows_contents: { type: boolean, description: "true: its load can be seen, and its model carries it under a node and material named contents, tinted by the stock; false: closed, no contents node (docs/asset-contract.md, Packages)" }
   keeps: { type: string, description: "what it keeps its contents from, or at: cold, dry, sealed, ventilated" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision: { $ref: "../../common.schema.yaml#/definitions/record_revision" }

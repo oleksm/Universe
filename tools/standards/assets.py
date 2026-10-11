@@ -664,7 +664,7 @@ def inspect_glb(path):
     prims = [p for m in meshes for p in m.get("primitives", [])]
     images = g.get("images", [])
     return {"bounds": [round(hi[k] - lo[k], 4) for k in range(3)], "lo": [round(v, 4) for v in lo], "hi": [round(v, 4) for v in hi],
-            "nodes": names, "triangles": tris, "meshes": len(meshes),
+            "nodes": names, "materials": [m.get("name", "") for m in g.get("materials", [])], "triangles": tris, "meshes": len(meshes),
             "stats": {"triangles": tris, "vertices": sum(acc[p["attributes"]["POSITION"]]["count"] for p in prims),
                       "meshes": len(meshes), "primitives": len(prims), "materials": len(g.get("materials", [])),
                       "textures": len(g.get("textures", [])), "images": len(images), "nodes": len(nodes),
@@ -696,6 +696,12 @@ def check_model(kind, r, info):
     if st.get("animations") or st.get("skins") or st.get("morph_targets"):
         bad.append(f"{st.get('animations')} animation(s), {st.get('skins')} skin(s), {st.get('morph_targets')} morph target(s): the game draws "
                    "models static (docs/asset-contract.md, Static models); export without them, moving parts as rigid named nodes")
+    if kind == "package" and "shows_contents" in r:      # (the contents convention: docs/asset-contract.md, Packages)
+        has = "contents" in info["nodes"] and "contents" in info.get("materials", [])
+        if r["shows_contents"] and not has:
+            bad.append("its load shows: it needs a node and a material both named contents (tinted by the stock)")
+        if not r["shows_contents"] and ("contents" in info["nodes"] or "contents" in info.get("materials", [])):
+            bad.append("it is closed: no node or material named contents")
     budget = KINDS[kind][1]
     if info["triangles"] > budget:
         bad.append(f"{info['triangles']:,} triangles drawn, over the {budget:,} a {kind} may have")

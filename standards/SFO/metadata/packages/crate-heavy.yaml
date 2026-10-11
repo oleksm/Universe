@@ -9,9 +9,11 @@ physical:
   height: 0.8
   mass: 50
 holds:
-  volume: 0.8
+  volume: 0.71
   mass: 2000
 handling: forklift
 stack: 2
+shows_contents: false
 basis:
+  - { of: [holds.volume], tier: derived, review: true, note: "The clear inside of the crate as drawn by blender (80 mm skids, walls, outer battens): 0.712 m3 (was 0.8, the outside less too little)." }
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
