@@ -288,3 +288,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final harness and conductive hull mounting;200W thermal and attachment qualification; separate star-tracker heads absent from this cabinet"
+  - key: equipment.hardpoint.mass-driver.s1
+    version: 1
+    manifest_sha256: "eec78e18124eddda73f476d2cbdd1443c3d73986e82d2cc91baaf5605f4168ee"
+    installed: 4f6e6eee
+    game: "the loader (world::assets) at fso 4f6e6eee"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hardpoint-mass-driver-s1/v1 (57284 bytes, bounds [-0.3, 0.0, -8.5] to [0.3, 0.6, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull placement and runtime muzzle-marker consumption; registry engineering figures provisional; static exterior only"
