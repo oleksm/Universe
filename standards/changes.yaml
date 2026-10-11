@@ -1095,7 +1095,7 @@
 - { record: org.treistun-mutual, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "925ffb2ed2d90544" }
 - { record: org.verdance, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "196f09d68b59e56a" }
 - { record: org.vireo, at: "2026-10-11T15:26:37Z", status: "", summary: "changed: brand", sha: "adf509b82f447687" }
-- { record: package.bale, at: "2026-10-11T16:37:10Z", status: "", summary: "changed: labels", sha: "cf689e97598294dd" }
+- { record: package.bale, at: "2026-10-11T16:38:07Z", status: "", summary: "changed: visual", sha: "acaf999c19ba47ee" }
 - { record: package.bar-bundle, at: "2026-10-11T15:57:49Z", status: "", summary: "changed: visual", sha: "df0cbb3575c1656b" }
 - { record: package.bulk-bag, at: "2026-10-11T16:03:27Z", status: "", summary: "changed: visual", sha: "206d41f29970f4a2" }
 - { record: package.carton-pallet, at: "2026-10-11T16:23:03Z", status: "", summary: "changed: visual", sha: "6e91bc9d58b4cee9" }
