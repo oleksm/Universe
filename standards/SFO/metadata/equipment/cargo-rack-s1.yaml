@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: cargo
-  description: "Racks that hold cargo in the hold. An open frame of 80 x 3 mm square tube round a railed deck, eight corner mount pads, its locks and drives recessed at rest; drawn empty and still."
+  description: "Racks that hold cargo in the hold. An open frame round a railed deck: 120 x 60 x 4 mm rectangular tube along the bottom, 80 x 80 x 3 mm uprights, 60 x 40 x 3 mm along the top; eight corner mount pads (four at the base, four on top), loaded from +X, its locks and drives recessed at rest; drawn empty and still."
 size_class: 1
 fits: mount.cargo-s1
 physical:
@@ -31,5 +31,5 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 4,000 kg is 8 m3, twice as long as wide. The racks themselves are in it." }
-  - { of: [identity.description], tier: derived, review: true, note: "For the modeller (2026-10-11): the frame's edges are 25.4 m; at 80 x 3 mm square tube (7.25 kg/m) 184 kg, about the record's 193 with nodes. The stock named stays a proxy." }
+  - { of: [identity.description], tier: derived, review: true, note: "For the modeller (2026-10-11): blender's mass-aware frame (heavier along the bottom, where the load sits) comes to about 180 kg with the pads extra, against the record's 193. The stock named stays a proxy." }
   - { of: [life], rule: rule.life-ship-system }
