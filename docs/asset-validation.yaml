@@ -1604,3 +1604,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU and hull placement; assumed inner vessel, pressure strength, cryogenics, mounting mass margin and structural loads unqualified."
+  - key: equipment.thrusters.quad.s1
+    version: 1
+    manifest_sha256: "bd0e9bdf2e01df013319e25c9f49619e43beb1889f386d7f1e4d1df3d9517a91"
+    installed: 3f26e55a
+    game: "the loader (world::assets) at fso 3f26e55a"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thrusters-quad-s1/v1 (147124 bytes, bounds [-0.57, 0.0, -0.57] to [0.57, 1.1416, 0.57]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU, hull fit, exhaust VFX, fusion performance, component mass allocation, thermal and structural qualification."
