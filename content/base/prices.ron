@@ -22,7 +22,7 @@
         "equipment.hyperdrive.s2": 60000.0,
         "equipment.hardpoint.mass-driver.s1": 8000.0,
         "equipment.hardpoint.pulse-laser.s1": 14000.0,
-        // The MC-07's mining laser carries the pulse laser's figures: the same price, a placeholder for the integrator.
+        // The MC-07's mining hammer keeps the price its laser had (the pulse laser's): a placeholder for the integrator.
         "equipment.hardpoint.mining-hammer.mc07": 14000.0,
         "equipment.utility.mining-rig.s2": 12000.0,
         "equipment.power.fusion.s1": 9000.0,
