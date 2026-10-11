@@ -39,14 +39,14 @@ pub fn rotation(thrust: Option<Vec3>) -> glam::Quat {
         })
 }
 
-pub fn placed(
+/// Full authoring orientation, shared by every Studio view.
+pub fn placed_rotated(
     key: &str,
     at: Vec3,
-    thrust: Option<Vec3>,
+    r: glam::Quat,
     fallback: impl FnOnce() -> Vec<[Vec3; 3]>,
 ) -> Placed {
     if let Some(v) = get(key) {
-        let r = rotation(thrust);
         return Placed {
             faces: v.faces.clone(),
             transform: glam::Mat4::from_rotation_translation(r, at - r * v.centre),
@@ -307,7 +307,7 @@ mod tests {
             Vec3::new(1., -1., 2.),
             Vec3::new(0., 1., 2.),
         ];
-        let item = placed("no-such-equipment", Vec3::ZERO, None, || vec![triangle]);
+        let item = placed_rotated("no-such-equipment", Vec3::ZERO, glam::Quat::IDENTITY, || vec![triangle]);
         assert!(!item.installed);
         let camera = Camera {
             eye: Vec3::ZERO,

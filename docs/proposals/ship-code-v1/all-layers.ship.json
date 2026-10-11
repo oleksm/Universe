@@ -5,7 +5,7 @@
   "design": {
     "id": "schema-study",
     "name": "All layers schema study",
-    "notes": "Invented illustrative placement and dimensions; deliberately incomplete engineering design. This tests representation, not ship acceptance. Not importable by the current Studio."
+    "notes": "Invented illustrative placement and dimensions; deliberately incomplete engineering design. This tests representation, not ship acceptance. Preview supported; this is not an accepted ship."
   },
   "coordinates": "right-handed-x-right-y-up-z-aft-metres",
   "placement_convention": "studio-centered-v1",

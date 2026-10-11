@@ -2988,6 +2988,7 @@ dependencies = [
  "serde_json",
  "universe-engine",
  "universe-prof",
+ "universe-ship-design",
  "universe-sim",
 ]
 

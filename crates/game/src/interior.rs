@@ -9,6 +9,8 @@ use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
 
 use crate::App;
 
+pub(crate) mod ship_code;
+
 /// The blueprint's paper, its lines, its ground grid, its writing.
 const PAPER: Color = Color([0.02, 0.07, 0.15, 1.0]);
 const LINE: [f32; 3] = [0.55, 0.8, 1.0];
@@ -121,6 +123,8 @@ const FOV: f32 = 0.85;
 
 #[derive(Default)]
 pub struct Interior {
+    /// Source document retained while previewing; visual edits cannot overwrite it.
+    code_preview: Option<universe_ship_design::Document>,
     /// The hull's lines, for which hull; and being worked out (on a thread of their
     /// own: they take a moment), for which.
     lines: Option<(String, Arc<Hull>)>,
@@ -316,6 +320,12 @@ fn image_dir(d: Vec3, mirror: u8, n: usize) -> Vec3 {
     d * flip
 }
 
+// S R S preserves handedness while reflecting the authored thrust axis.
+fn mirror_rotation(q: glam::Quat, mirror: u8, n: usize) -> glam::Quat {
+    let s = glam::Mat3::from_diagonal(image_dir(Vec3::ONE, mirror, n));
+    glam::Quat::from_mat3(&(s * glam::Mat3::from_quat(q) * s)).normalize()
+}
+
 /// An edit (`before` to `plan`) made across the mirror planes too: modules placed,
 /// moved, turned or taken out, members laid or taken out (or their stock changed),
 /// decks laid or taken out, each done to its twins as well. Modules mirror only in
@@ -340,7 +350,7 @@ fn mirror_edit(before: &Plan, plan: &mut Plan, mirror: u8) {
                             continue;
                         }
                         let k = (1..).find(|k| !plan.blocks.iter().any(|o| o.id == format!("{}#{k}", kind(&b.id)))).unwrap_or(1);
-                        plan.blocks.push(Block { id: format!("{}#{k}", kind(&b.id)), at: m, size: b.size, push: b.push.map(|d| image_dir(d, mirror, n)) });
+                        plan.blocks.push(Block { id: format!("{}#{k}", kind(&b.id)), at: m, size: b.size, push: b.push.map(|d| image_dir(d, mirror, n)), rotation: b.rotation.map(|q| mirror_rotation(q, mirror, n)) });
                     }
                 }
                 // (Moved, resized or turned: its twins (where its images were) too.)
@@ -351,6 +361,7 @@ fn mirror_edit(before: &Plan, plan: &mut Plan, mirror: u8) {
                         }
                         if let Some(t) = plan.blocks.iter_mut().find(|t| t.id != b.id && kind(&t.id) == kind(&b.id) && near(t.at, was)) {
                             (t.at, t.size, t.push) = (m, b.size, b.push.map(|d| image_dir(d, mirror, n)));
+                            t.rotation = b.rotation.map(|q| mirror_rotation(q, mirror, n));
                         }
                     }
                 }
@@ -2570,6 +2581,9 @@ struct Block {
     /// drive forward, a lift up, an engine forward).
     #[serde(default, skip_serializing_if = "Option::is_none")]
     push: Option<Vec3>,
+    /// Full local-to-design orientation for ship-code imports (roll included).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    rotation: Option<glam::Quat>,
 }
 
 /// What the ship is fitted with, to be placed: its slot (the hold: HOLD), its name,
@@ -2697,11 +2711,11 @@ fn game_fit(spec: &universe_sim::world::ship::ClassSpec) -> Vec<Fitted> {
 /// Which way a placed module pushes the ship and how hard (N), if it does: as placed,
 /// else its kind's way.
 fn push_of(b: &Block, f: &Fitted) -> Option<(Vec3, f64)> {
-    f.push.map(|(d, t)| (b.push.unwrap_or(d), t))
+    f.push.map(|(d, t)| (b.rotation.map_or_else(|| b.push.unwrap_or(d), |q| q * Vec3::Y), t))
 }
 
 fn placed_module(b: &Block, f: Option<&Fitted>) -> crate::equipment_visual::Placed {
-    crate::equipment_visual::placed(f.map_or("",|f|f.key.as_str()), b.at, f.and_then(|f|push_of(b,f).map(|p|p.0)), || b.faces(f.is_some_and(|f|f.round)).into_iter().map(|(t,_)|t).collect())
+    crate::equipment_visual::placed_rotated(f.map_or("",|f|f.key.as_str()), b.at, b.rotation.unwrap_or_else(|| crate::equipment_visual::rotation(f.and_then(|f|push_of(b,f).map(|p|p.0)))), || b.faces(f.is_some_and(|f|f.round)).into_iter().map(|(t,_)|t).collect())
 }
 
 fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed> {
@@ -3717,6 +3731,10 @@ impl Interior {
     /// The plan written to its file, and the deck studio's decks to theirs (none:
     /// that file gone); a message says how it went.
     pub fn save(&mut self) {
+        if self.code_preview.is_some() {
+            self.note("YAML PREVIEW: SAVING VISUAL EDITS IS NOT YET SUPPORTED");
+            return;
+        }
         let path = Self::file(&self.plan.hull);
         let decks = Self::deck_file(&self.plan.hull);
         let done = std::fs::create_dir_all(path.parent().expect("a folder"))
@@ -3774,7 +3792,7 @@ impl Interior {
             let mut x = -12.0;
             for (n, f) in self.fit.iter().step_by(7).take(7).enumerate() {
                 for copy in 1..=if n == 0 { 2 } else { 1 } {
-                    self.plan.blocks.push(Block { id: format!("{}#{copy}", f.id), at: Vec3::new(x + f.size.x * 0.5, f.size.y * 0.5, 0.0), size: f.size, push: None });
+                    self.plan.blocks.push(Block { id: format!("{}#{copy}", f.id), at: Vec3::new(x + f.size.x * 0.5, f.size.y * 0.5, 0.0), size: f.size, push: None, rotation: None });
                     x += f.size.x + 1.0;
                 }
             }
@@ -3789,7 +3807,7 @@ impl Interior {
         let floor = lo.y + 8.5;
         let mut z = lo.z + 10.0;
         for f in &self.fit {
-            self.plan.blocks.push(Block { id: f.id.clone(), at: Vec3::new(0.0, floor + f.size.y * 0.5, z + f.size.z * 0.5), size: f.size, push: None });
+            self.plan.blocks.push(Block { id: f.id.clone(), at: Vec3::new(0.0, floor + f.size.y * 0.5, z + f.size.z * 0.5), size: f.size, push: None, rotation: None });
             z += f.size.z + 0.6;
             if z > hi.z - 4.0 {
                 break;
@@ -3810,6 +3828,7 @@ impl Interior {
         // not the designer's, so nothing's unsaved by it.)
         // (A module whose key the registry has renamed: given the new key, the same
         // way: the registry's change.)
+        if self.code_preview.is_some() { return; }
         let renamed = rename(&mut self.plan.blocks, &self.fit);
         if let Some(saved) = self.saved.as_mut() {
             rename(&mut saved.blocks, &self.fit);
@@ -3927,6 +3946,7 @@ impl Interior {
     /// own name), or none; the plan saved as `id` if there is one, else fresh (the
     /// hull's own places as points); its decks too.
     fn start(&mut self, id: &str, shape: Option<&universe_sim::world::shape::Shape>, on: Option<String>) {
+        self.code_preview = None;
         let points = match shape {
             Some(shape) => {
             use universe_sim::world::shape::Role;
@@ -4053,6 +4073,11 @@ impl Interior {
 
     /// Saved design `id` opened.
     pub(crate) fn open_design(&mut self, id: &str) {
+        if id.ends_with(".ship.yaml") || id.ends_with(".ship.yml") {
+            if let Err(e) = self.open_ship_source(std::path::Path::new(id)) { self.note(&format!("SHIP CODE: {e}")); }
+            return;
+        }
+        self.code_preview = None;
         let text = std::fs::read_to_string(Self::file(id)).unwrap_or_default();
         let on = serde_json::from_str::<Plan>(&text).ok().and_then(|p| p.on);
         let probe = Plan { hull: id.into(), on: on.clone(), ..Default::default() };
@@ -6026,7 +6051,7 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     let (wp, wc) = (p + Vec2::new(8.0, 32.0), Vec2::new(c.x - 16.0, 84.0));
     frame.hud_box(wp, wc, LABEL.scale(0.25));
     let size = block.map_or(f.size, |b| b.size);
-    let shape = Block { id: f.id.clone(), at: Vec3::ZERO, size, push: block.and_then(|b|b.push) };
+    let shape = Block { id: f.id.clone(), at: Vec3::ZERO, size, push: block.and_then(|b|b.push), rotation: block.and_then(|b| b.rotation) };
     // Selected/hovered catalogue card is needed now, ahead of speculative rows.
     let _ = crate::visual_assets::request(&f.key, 0);
     let visual = placed_module(&shape, Some(f));
@@ -7316,6 +7341,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         const WAYS: [Vec3; 6] = [Vec3::NEG_Z, Vec3::Y, Vec3::Z, Vec3::NEG_Y, Vec3::X, Vec3::NEG_X];
         let at = WAYS.iter().position(|w| w.distance(now) < 0.1).unwrap_or(0);
         interior.plan.blocks[n].push = Some(WAYS[(at + 1) % WAYS.len()]);
+        interior.plan.blocks[n].rotation = None;
         return true;
     }
     // (FRAME: DEL takes out the member under the cursor.)
@@ -7523,7 +7549,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
                                     let n = (1..).find(|n| !interior.plan.blocks.iter().any(|b| b.id == format!("{}#{n}", f.id))).unwrap_or(1);
                                     format!("{}#{n}", f.id)
                                 };
-                                interior.plan.blocks.push(Block { id, at: at + Vec3::Y * f.size.y * 0.5, size: f.size, push: None });
+                                interior.plan.blocks.push(Block { id, at: at + Vec3::Y * f.size.y * 0.5, size: f.size, push: None, rotation: None });
                                 interior.block = Some(interior.plan.blocks.len() - 1);
                             }
                         }
@@ -7700,7 +7726,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     let spec = interior.spec();
     frame.hud_rect(Vec2::ZERO, size, PAPER);
     let on = spec.map_or("NO HULL".to_string(), |s| s.name.to_uppercase());
-    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {} ({on})", interior.plan.hull.to_uppercase()), LABEL);
+    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {} ({on}){}", interior.plan.hull.to_uppercase(), if interior.code_preview.is_some() { " - YAML PREVIEW (NOT SAVED)" } else { "" }), LABEL);
     let hint = match interior.tool {
         _ if interior.walk_armed && interior.spec().is_none() => "CLICK WHERE TO START WALKING (A ROOM: ON ITS FLOOR) - RIGHT-CLICK OR ESC CANCELS",
         Tool::Modules => "PICK ONE IN THE LIST, CLICK THE PLANE: IT STANDS THERE - CLICK ONE IN THE VIEW TO PICK IT - RIGHT-CLICK OR ESC DROPS IT - WHEEL OVER THE LIST SCROLLS",
@@ -8004,7 +8030,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                 if let Some(to) = on_plane(interior, &cam, plane, interior.cursor, false) {
                     let from = interior.truss_from.unwrap_or(to);
                     let (lo, hi) = (from.min(Vec3::new(to.x, from.y, to.z)), from.max(Vec3::new(to.x, from.y, to.z)) + Vec3::Y * interior.depth);
-                    let ghost = Block { id: String::new(), at: (lo + hi) * 0.5, size: hi - lo, push: None };
+                    let ghost = Block { id: String::new(), at: (lo + hi) * 0.5, size: hi - lo, push: None, rotation: None };
                     for [a, b] in ghost.edges(false) {
                         seg(frame, a, b, PICKED.scale(0.6));
                     }
@@ -8035,7 +8061,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                     && let Some(at) = on_plane(interior, &cam, plane, interior.cursor, false)
                 {
                     let size = picked.map_or(f.size, |b| b.size);
-                    let ghost = Block { id: f.id.clone(), at: at + Vec3::Y * size.y * 0.5, size, push: None };
+                    let ghost = Block { id: f.id.clone(), at: at + Vec3::Y * size.y * 0.5, size, push: None, rotation: None };
                     for [a, b] in ghost.edges(f.round) {
                         seg(frame, a, b, MODULE.scale(0.45));
                     }
@@ -8849,7 +8875,7 @@ mod design_visual_tests {
         i.new_design(None);
         i.refit();
         let f = i.fit.iter().find(|f|f.key=="equipment.engine.ch.s2").unwrap();
-        i.plan.blocks = vec![Block {id:format!("{}#1",f.id),at:Vec3::new(7.,3.,-2.),size:f.size,push:Some(Vec3::X)}];
+        i.plan.blocks = vec![Block {id:format!("{}#1",f.id),at:Vec3::new(7.,3.,-2.),size:f.size,push:Some(Vec3::X), rotation: None }];
         let saved = serde_json::to_string(&i.plan).unwrap();
         let design = placed_equipment(&i);
         let walk = i.stand_up();
@@ -8875,7 +8901,7 @@ mod design_visual_tests {
     fn installed_engine_orientation_preserves_design_and_save() {
         let f = catalogue().iter().find(|f| f.key == "equipment.engine.ch.s2").expect("CH-S2 catalogue entry");
         for direction in [Vec3::X, Vec3::NEG_X, Vec3::Y, Vec3::NEG_Y, Vec3::Z, Vec3::NEG_Z] {
-            let block = Block { id: format!("{}#1", f.id), at: Vec3::new(7., 3., -2.), size: f.size, push: Some(direction) };
+            let block = Block { id: format!("{}#1", f.id), at: Vec3::new(7., 3., -2.), size: f.size, push: Some(direction), rotation: None };
             let saved = serde_json::to_string(&block).unwrap();
             let reopened: Block = serde_json::from_str(&saved).unwrap();
             assert_eq!(block, reopened);

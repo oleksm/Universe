@@ -1,5 +1,7 @@
 # Ship as code in Ship Studio
 
+Implementation progress and commands: [YAML export and preview](../../ship-code.md). The full editor and unified save format below remain the goal.
+
 Ship Studio should let a designer describe a complete ship in human-readable YAML, open that code beside the visual editor, copy or export it, and paste it back to recreate the design. Code and visual tools must edit the same ship document, with every current design layer represented. The resulting design must use the same model resolution, analysis and flight-control paths as a visually authored ship.
 
 This is the agreed direction and implementation guide following the owner's review on 10 October 2026. YAML is the authoring format. The schema and examples remain drafts; the importer and code editor are not implemented. The goal is a complete round trip: design visually, export YAML, paste into a fresh design, and retain equivalent geometry, references, layers, budgets and test-drive inputs.
