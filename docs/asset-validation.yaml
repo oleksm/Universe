@@ -1380,3 +1380,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static scaled family exterior; actual game GPU look/cost, hull placement and mount loads, cryogenic heat rejection, structural qualification and fictional hyper-field behavior pending. Scaled walls/pads provisional."
+  - key: equipment.life-support.s1
+    version: 1
+    manifest_sha256: "0953077148b25fe71de6194a10fee23e16004c5bac832127bc1789ca1a530b7e"
+    installed: 05f4d9ae
+    game: "the loader (world::assets) at fso 05f4d9ae"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/life-support-s1/v1 (138592 bytes, bounds [-1.05, 0.0, -0.425] to [1.05, 2.0, 0.425]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static two-rack exterior only; actual game lighting/GPU cost, final hull/service placement, internal packing, chemistry, pressure, heat rejection, crew capacity and attachment strength remain unqualified."
