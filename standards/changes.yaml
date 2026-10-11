@@ -331,7 +331,7 @@
 - { record: equipment.access.bay-door.s2, at: "2026-10-11T22:02:47Z", status: draft, summary: "changed: visual", sha: "504ce614d28428b4" }
 - { record: equipment.access.bay-door.s3, at: "2026-10-11T22:10:21Z", status: draft, summary: "changed: visual", sha: "1e2ba7a4a929676e" }
 - { record: equipment.access.boarding-ramp.s1, at: "2026-10-11T22:41:35Z", status: draft, summary: "changed: visual", sha: "c5eedc2940cbb89d" }
-- { record: equipment.access.cargo-lift.s2, at: "2026-10-11T22:43:12Z", status: draft, summary: "changed: built_of, basis", sha: "4ccf9d39978033eb" }
+- { record: equipment.access.cargo-lift.s2, at: "2026-10-11T22:47:05Z", status: draft, summary: "changed: basis", sha: "7c52796365bc78bb" }
 - { record: equipment.access.cargo-ramp.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "713e1b25d888721c" }
 - { record: equipment.access.cargo-ramp.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "a7359dbbabacf169" }
 - { record: equipment.access.cargo-ramp.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c4a7dcdb39e10583" }
