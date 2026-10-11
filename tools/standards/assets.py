@@ -630,13 +630,15 @@ def inspect_glb(path):
     nodes, meshes, acc = g.get("nodes", []), g.get("meshes", []), g.get("accessors", [])
     lo, hi = [math.inf] * 3, [-math.inf] * 3
     names, tris = [], 0
+    node_box = {}     # (name: [lo, hi] of the meshes at or under it, world)
 
-    def walk(i, m):
+    def walk(i, m, owners=()):
         nonlocal tris
         n = nodes[i]
         w = _mul(m, _trs(n))
         if n.get("name"):
             names.append(n["name"])
+            owners = owners + (n["name"],)
         if "mesh" in n:
             mesh = meshes[n["mesh"]]
             drawn = not str(n.get("name", "") or mesh.get("name", "")).startswith("COL_")
@@ -652,8 +654,12 @@ def inspect_glb(path):
                                 v = [w[r][0] * cx + w[r][1] * cy + w[r][2] * cz + w[r][3] for r in range(3)]
                                 for k in range(3):
                                     lo[k] = min(lo[k], v[k]); hi[k] = max(hi[k], v[k])
+                                for o in owners:
+                                    b = node_box.setdefault(o, [[math.inf] * 3, [-math.inf] * 3])
+                                    for k in range(3):
+                                        b[0][k] = min(b[0][k], v[k]); b[1][k] = max(b[1][k], v[k])
         for c in n.get("children", []):
-            walk(c, w)
+            walk(c, w, owners)
 
     eye = [[1 if r == c else 0 for c in range(4)] for r in range(4)]
     scene = g.get("scenes", [{}])[g.get("scene", 0)] if g.get("scenes") else {"nodes": list(range(len(nodes)))}
@@ -664,7 +670,7 @@ def inspect_glb(path):
     prims = [p for m in meshes for p in m.get("primitives", [])]
     images = g.get("images", [])
     return {"bounds": [round(hi[k] - lo[k], 4) for k in range(3)], "lo": [round(v, 4) for v in lo], "hi": [round(v, 4) for v in hi],
-            "nodes": names, "materials": [m.get("name", "") for m in g.get("materials", [])], "triangles": tris, "meshes": len(meshes),
+            "node_box": node_box, "nodes": names, "materials": [m.get("name", "") for m in g.get("materials", [])], "triangles": tris, "meshes": len(meshes),
             "stats": {"triangles": tris, "vertices": sum(acc[p["attributes"]["POSITION"]]["count"] for p in prims),
                       "meshes": len(meshes), "primitives": len(prims), "materials": len(g.get("materials", [])),
                       "textures": len(g.get("textures", [])), "images": len(images), "nodes": len(nodes),
@@ -702,10 +708,22 @@ def check_model(kind, r, info):
             bad.append("its load shows: it needs a node and a material both named contents (tinted by the stock)")
         if not r["shows_contents"] and ("contents" in info["nodes"] or "contents" in info.get("materials", [])):
             bad.append("it is closed: no node or material named contents")
-    if kind == "package" and r.get("label"):           # (its label plates: docs/formats/freefall-label-1.md)
-        for n in ["label", "label_2"][: r["label"]]:
-            if n not in info["nodes"]:
-                bad.append(f"no label plate node named {n} (the record asks for {r['label']})")
+    if kind == "package" and r.get("labels"):          # (its label plates where its record puts them: freefall-label/1)
+        for lb in r["labels"]:
+            box = info.get("node_box", {}).get(lb["node"])
+            if not box:
+                bad.append(f"no label plate {lb['node']} (a mesh under a node of that name) on face {lb['face']}"); continue
+            c = [(box[0][k] + box[1][k]) / 2 for k in range(3)]; e = [box[1][k] - box[0][k] for k in range(3)]
+            off = math.dist(c, lb["centre"])
+            if off > 0.02:
+                bad.append(f"label plate {lb['node']} centred at {[round(v, 3) for v in c]}, the record puts it at {lb['centre']} ({off:.3f} m off)")
+            normal = {"X": 0, "Z": 2, "Y": 1}[lb["face"][1]]
+            across = 2 if normal == 0 else 0
+            up = 1 if normal != 1 else 2
+            if e[normal] > 0.005:
+                bad.append(f"label plate {lb['node']} is {e[normal]:.3f} m thick across face {lb['face']}: it should be flat on it")
+            if abs(e[across] - lb["size"][0]) > 0.01 or abs(e[up] - lb["size"][1]) > 0.01:
+                bad.append(f"label plate {lb['node']} is {e[across]:.3f} x {e[up]:.3f} m, the record's {lb['size'][0]} x {lb['size'][1]}")
         if "label" not in info.get("materials", []):
             bad.append("no material named label for its plates")
     budget = KINDS[kind][1]
