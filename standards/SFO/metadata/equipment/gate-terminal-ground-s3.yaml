@@ -37,6 +37,7 @@ function:
   capacity: 13.8888888889
 life: 473364000
 basis:
+  - { of: [identity.description], tier: derived, review: true, note: "Measured by blender (candidate-v01 interface-qc.json): pivot 0.75 m and dish vertex 0.90 m above the base; over every azimuth at tilts up to 13 degrees the least clearance to the ground is 43 mm, at a rib 6.84 m from the centre. The ground only: the deployed feed and the full mechanism are not checked." }
   - { of: [identity.description], tier: derived, review: true, note: "For the modeller (2026-10-11, blender's feasibility): a 1.8 m deep bowl puts the focus 14.7 m above the vertex, so the feed mast folds to fit the 2.94 m box; the reflector's 718 kg over 333 m2 is 2.2 kg/m2, a mesh on ribs. Open: 3 t for a 20 m dish standing in a world's gravity is far too light (real dishes this size weigh hundreds of tonnes)." }
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
