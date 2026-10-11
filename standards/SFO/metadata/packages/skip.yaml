@@ -13,5 +13,11 @@ holds:
   mass: 5000
 handling: crane
 stack: 1
+visual:
+  format: "freefall-model/1"
+  path: "models/skip/v1"
+  manifest_sha256: "afdc7536ffabefedc16120a5f28767992989f6812ed63fc1db011a9dce38470a"
+  version: 1
+  triangles: 1490
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
