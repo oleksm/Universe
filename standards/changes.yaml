@@ -1107,7 +1107,7 @@
 - { record: package.ladle, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "3a19883b5e997acd" }
 - { record: package.livestock-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "e8b0c7026baa8a43" }
 - { record: package.plate-stack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "cd52c8d67d6bed33" }
-- { record: package.produce-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "94a64d8262968639" }
+- { record: package.produce-crate, at: "2026-10-11T13:59:40Z", status: "", summary: "changed: visual", sha: "b5412101014d15db" }
 - { record: package.skip, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "052f812cab0000dc" }
 - { record: package.tote, at: "2026-10-11T13:47:59Z", status: "", summary: "changed: visual", sha: "152eb378d0e9989f" }
 - { record: parcel.treistun.ashfall-camp.1, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: outline", sha: "42f17141996df99c" }
