@@ -39,6 +39,12 @@ function:
   burn: 8
   cool: 4
   reset: 0.3
+visual:
+  format: "freefall-model/1"
+  path: "models/hardpoint-pulse-laser-s1/v1"
+  manifest_sha256: "15f8cc8aead6b090b019e38285ddcd5212fdeb825b4a9e7bcb484d69133d4633"
+  version: 1
+  triangles: 2262
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
