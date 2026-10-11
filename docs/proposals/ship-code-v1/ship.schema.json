@@ -1,0 +1,999 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:freefall:ship-code:1-draft",
+  "title": "Ship code schema proposal",
+  "description": "Research draft, not a shipped import format. Encodes every current authored Studio layer and visibility for all 26 layer entries. Semantic validation and shared-model integration remain required.",
+  "$comment": "Only JSON structural validation is covered here. Duplicate keys, reference resolution, physical consistency, finite arithmetic, asset availability, hull attachment, migrations and resource limits require importer checks. JSONC syntax is parsed before validation.",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "minLength": 1
+    },
+    "format": {
+      "const": "freefall.ship"
+    },
+    "version": {
+      "const": "1-draft"
+    },
+    "design": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ],
+      "additionalProperties": false
+    },
+    "coordinates": {
+      "const": "right-handed-x-right-y-up-z-aft-metres"
+    },
+    "placement_convention": {
+      "const": "studio-centered-v1",
+      "description": "Named existing Studio convention: centre neutral visual bounds once at pose.position_m; rotation maps centred asset coordinates into design coordinates. Engine local +Y is thrust in this convention. The single shared placement/physics adapter owns the mapping; no second independent thrust vector."
+    },
+    "hull": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "$ref": "#/$defs/hull"
+        }
+      ]
+    },
+    "requirements": {
+      "type": "object",
+      "properties": {
+        "gravity_m_s2": {
+          "type": "number",
+          "minimum": 0
+        },
+        "delta_v_m_s": {
+          "type": "number",
+          "minimum": 0
+        },
+        "cargo_kg": {
+          "type": "number",
+          "minimum": 0
+        },
+        "crew": {
+          "type": "number",
+          "minimum": 0
+        },
+        "trip_s": {
+          "type": "number",
+          "minimum": 0
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "description": "Design requirements, not generated performance. Omitted values mean no target; unspecified gravity retains the versioned legacy default on migration. trip_s converts legacy trip hours to seconds."
+    },
+    "modules": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+      },
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "$ref": "#/$defs/equipment"
+          },
+          {
+            "$ref": "#/$defs/hold"
+          }
+        ]
+      }
+    },
+    "access": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/point"
+          }
+        },
+        "paths": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/path"
+          }
+        },
+        "groups": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/group"
+          }
+        },
+        "side_doors": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/side_door"
+          }
+        },
+        "ends": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/path_end"
+          }
+        }
+      },
+      "required": [
+        "points",
+        "paths",
+        "groups",
+        "side_doors",
+        "ends"
+      ],
+      "additionalProperties": false
+    },
+    "structure": {
+      "type": "object",
+      "properties": {
+        "members": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/beam"
+          }
+        },
+        "plates": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/plate"
+          }
+        },
+        "landing_pads": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 3,
+            "maxItems": 3
+          }
+        }
+      },
+      "required": [
+        "members",
+        "plates",
+        "landing_pads"
+      ],
+      "additionalProperties": false
+    },
+    "decks": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/deck"
+      }
+    },
+    "view": {
+      "type": "object",
+      "properties": {
+        "layers": {
+          "type": "object",
+          "properties": {
+            "hull": {
+              "type": "boolean"
+            },
+            "grid_measures": {
+              "type": "boolean"
+            },
+            "points": {
+              "type": "boolean"
+            },
+            "points.entry": {
+              "type": "boolean"
+            },
+            "points.dash": {
+              "type": "boolean"
+            },
+            "points.windows": {
+              "type": "boolean"
+            },
+            "points.service": {
+              "type": "boolean"
+            },
+            "points.mining": {
+              "type": "boolean"
+            },
+            "points.mounts_engines": {
+              "type": "boolean"
+            },
+            "points.laid": {
+              "type": "boolean"
+            },
+            "points.names": {
+              "type": "boolean"
+            },
+            "access": {
+              "type": "boolean"
+            },
+            "access.lines": {
+              "type": "boolean"
+            },
+            "access.outlines": {
+              "type": "boolean"
+            },
+            "access.walls": {
+              "type": "boolean"
+            },
+            "access.hatches": {
+              "type": "boolean"
+            },
+            "clashes": {
+              "type": "boolean"
+            },
+            "decks_2d": {
+              "type": "boolean"
+            },
+            "decks_2d.floors": {
+              "type": "boolean"
+            },
+            "decks_2d.walls": {
+              "type": "boolean"
+            },
+            "hollow_map": {
+              "type": "boolean"
+            },
+            "reach": {
+              "type": "boolean"
+            },
+            "modules": {
+              "type": "boolean"
+            },
+            "frame": {
+              "type": "boolean"
+            },
+            "pressure": {
+              "type": "boolean"
+            },
+            "decks": {
+              "type": "boolean"
+            }
+          },
+          "required": [],
+          "additionalProperties": false
+        },
+        "work_plane_m": {
+          "type": "number"
+        },
+        "camera": {
+          "type": "object",
+          "properties": {
+            "target_m": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 3,
+              "maxItems": 3
+            },
+            "yaw_rad": {
+              "type": "number"
+            },
+            "pitch_rad": {
+              "type": "number"
+            },
+            "distance_m": {
+              "type": "number",
+              "exclusiveMinimum": 0
+            }
+          },
+          "required": [
+            "target_m",
+            "yaw_rad",
+            "pitch_rad",
+            "distance_m"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [],
+      "additionalProperties": false,
+      "description": "Optional presentation state. Hidden layers still belong to the design and full exports; visibility never changes physics. Effective visibility includes parent-layer visibility."
+    },
+    "dependencies": {
+      "type": "object",
+      "properties": {
+        "policy": {
+          "enum": [
+            "compatible",
+            "locked"
+          ]
+        },
+        "registry_revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "models": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "version": {
+                "type": "string",
+                "minLength": 1
+              },
+              "manifest_sha256": {
+                "type": "string",
+                "pattern": "^[a-f0-9]{64}$"
+              }
+            },
+            "required": [
+              "version",
+              "manifest_sha256"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "policy"
+      ],
+      "additionalProperties": false,
+      "description": "Compatible mode resolves installed records and reports changes. Locked mode requires the exported registry revision and referenced asset manifest hashes; structural validation alone cannot enforce complete lock coverage. Missing assets are not silently downloaded or installed."
+    }
+  },
+  "required": [
+    "format",
+    "version",
+    "design",
+    "coordinates",
+    "placement_convention",
+    "hull",
+    "modules",
+    "access",
+    "structure",
+    "decks"
+  ],
+  "additionalProperties": false,
+  "$defs": {
+    "pose": {
+      "type": "object",
+      "properties": {
+        "position_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "rotation_xyzw": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 4,
+          "maxItems": 4,
+          "description": "Unit quaternion, local-to-design rotation; identity [0,0,0,1]. Proper rigid transforms only."
+        }
+      },
+      "required": [
+        "position_m",
+        "rotation_xyzw"
+      ],
+      "additionalProperties": false
+    },
+    "hull": {
+      "type": "object",
+      "properties": {
+        "record": {
+          "type": "string",
+          "minLength": 1
+        },
+        "model_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      },
+      "required": [
+        "record"
+      ],
+      "additionalProperties": false
+    },
+    "equipment": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "equipment"
+        },
+        "record": {
+          "type": "string",
+          "minLength": 1
+        },
+        "slot": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pose": {
+          "$ref": "#/$defs/pose"
+        },
+        "envelope_m": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Existing physical envelope size in DESIGN axes, centred at pose.position_m. Independent of model orientation; never a scale applied to the installed model. This retains current Studio contact semantics. Oriented physical envelopes would need an explicit later representation."
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "record",
+        "pose",
+        "envelope_m"
+      ],
+      "additionalProperties": false
+    },
+    "hold": {
+      "type": "object",
+      "properties": {
+        "kind": {
+          "const": "hull_hold"
+        },
+        "pose": {
+          "$ref": "#/$defs/pose"
+        },
+        "envelope_m": {
+          "type": "array",
+          "items": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "minItems": 3,
+          "maxItems": 3,
+          "description": "Existing physical envelope size in DESIGN axes, centred at pose.position_m. Independent of model orientation; never a scale applied to the installed model. This retains current Studio contact semantics. Oriented physical envelopes would need an explicit later representation."
+        },
+        "notes": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "kind",
+        "pose",
+        "envelope_m"
+      ],
+      "additionalProperties": false
+    },
+    "point": {
+      "type": "object",
+      "properties": {
+        "position_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hull_anchor": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Bound hull node/semantic anchor; position is the exported snapshot, not permission to move the hull anchor."
+        }
+      },
+      "required": [
+        "position_m"
+      ],
+      "additionalProperties": false
+    },
+    "profile": {
+      "type": "object",
+      "properties": {
+        "shape": {
+          "enum": [
+            "line",
+            "round",
+            "square",
+            "hex",
+            "oct"
+          ]
+        },
+        "width_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "placement": {
+          "enum": [
+            "floor",
+            "center"
+          ]
+        }
+      },
+      "required": [
+        "shape",
+        "width_m",
+        "height_m",
+        "placement"
+      ],
+      "additionalProperties": false
+    },
+    "path": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "minLength": 1
+        },
+        "to": {
+          "type": "string",
+          "minLength": 1
+        },
+        "profile": {
+          "$ref": "#/$defs/profile"
+        }
+      },
+      "required": [
+        "from",
+        "to",
+        "profile"
+      ],
+      "additionalProperties": false
+    },
+    "group": {
+      "type": "object",
+      "properties": {
+        "paths": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "walled": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "paths",
+        "walled"
+      ],
+      "additionalProperties": false
+    },
+    "hatch": {
+      "type": "object",
+      "properties": {
+        "shape": {
+          "enum": [
+            "round",
+            "square",
+            "hex",
+            "oct"
+          ]
+        },
+        "width_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "slide": {
+          "enum": [
+            "none",
+            "up",
+            "side"
+          ]
+        }
+      },
+      "required": [
+        "shape",
+        "width_m",
+        "height_m",
+        "slide"
+      ],
+      "additionalProperties": false
+    },
+    "side_door": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "fraction": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "side": {
+          "enum": [
+            "left",
+            "right"
+          ]
+        },
+        "hatch": {
+          "$ref": "#/$defs/hatch"
+        }
+      },
+      "required": [
+        "path",
+        "fraction",
+        "side",
+        "hatch"
+      ],
+      "additionalProperties": false
+    },
+    "path_end": {
+      "type": "object",
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "end": {
+          "enum": [
+            "from",
+            "to"
+          ]
+        },
+        "state": {
+          "enum": [
+            "closed",
+            "open",
+            "door"
+          ]
+        },
+        "hatch": {
+          "$ref": "#/$defs/hatch"
+        }
+      },
+      "required": [
+        "path",
+        "end",
+        "state"
+      ],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "state": {
+                "const": "door"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "hatch"
+            ]
+          },
+          "else": {
+            "not": {
+              "required": [
+                "hatch"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "beam": {
+      "type": "object",
+      "properties": {
+        "from_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "to_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "stock": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pinned": {
+          "type": "array",
+          "items": {
+            "type": "boolean"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        }
+      },
+      "required": [
+        "from_m",
+        "to_m",
+        "stock",
+        "pinned"
+      ],
+      "additionalProperties": false
+    },
+    "plate": {
+      "type": "object",
+      "properties": {
+        "min_xz_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "max_xz_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "height_m": {
+          "type": "number"
+        },
+        "stock": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "min_xz_m",
+        "max_xz_m",
+        "height_m",
+        "stock"
+      ],
+      "additionalProperties": false
+    },
+    "wall_door": {
+      "type": "object",
+      "properties": {
+        "distance_m": {
+          "type": "number",
+          "minimum": 0
+        },
+        "width_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "height_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        }
+      },
+      "required": [
+        "distance_m",
+        "width_m",
+        "height_m"
+      ],
+      "additionalProperties": false
+    },
+    "wall": {
+      "type": "object",
+      "properties": {
+        "points_xz_m": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "minItems": 2
+        },
+        "bulges_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          }
+        },
+        "doors": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/wall_door"
+          }
+        },
+        "rail": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "points_xz_m",
+        "bulges_m",
+        "doors",
+        "rail"
+      ],
+      "additionalProperties": false
+    },
+    "ladder": {
+      "type": "object",
+      "properties": {
+        "at_xz_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "to_deck": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "at_xz_m",
+        "to_deck"
+      ],
+      "additionalProperties": false
+    },
+    "stair": {
+      "type": "object",
+      "properties": {
+        "from_xz_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "to_xz_m": {
+          "type": "array",
+          "items": {
+            "type": "number"
+          },
+          "minItems": 2,
+          "maxItems": 2
+        },
+        "width_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "to_deck": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "required": [
+        "from_xz_m",
+        "to_xz_m",
+        "width_m",
+        "to_deck"
+      ],
+      "additionalProperties": false
+    },
+    "deck": {
+      "type": "object",
+      "properties": {
+        "floor_m": {
+          "type": "number"
+        },
+        "headroom_m": {
+          "type": "number",
+          "exclusiveMinimum": 0
+        },
+        "floors": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 2,
+              "maxItems": 2
+            },
+            "minItems": 3
+          }
+        },
+        "walls": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/wall"
+          }
+        },
+        "ladders": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/ladder"
+          }
+        },
+        "stairs": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-zA-Z][a-zA-Z0-9_.-]*$"
+          },
+          "additionalProperties": {
+            "$ref": "#/$defs/stair"
+          }
+        }
+      },
+      "required": [
+        "floor_m",
+        "headroom_m",
+        "floors",
+        "walls",
+        "ladders",
+        "stairs"
+      ],
+      "additionalProperties": false
+    }
+  }
+}
