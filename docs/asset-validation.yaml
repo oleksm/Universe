@@ -820,3 +820,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, actual world/forklift placement, game lighting, GPU cost and temporal filtering remain pending; pressure/chemical compatibility and payload/stack engineering unqualified."
+  - key: package.cold-crate
+    version: 1
+    manifest_sha256: "f3d0909e4df68ed821c69d25cd93f948107559cb8ea5414eb4ccbc1c70b41a9b"
+    installed: d8dd6521
+    game: "the loader (world::assets) at fso d8dd6521"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cold-crate/v1 (147904 bytes, bounds [-0.6, 0.0, -0.518] to [0.6, 1.4, 0.5235]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, actual forklift/world placement, game lighting, GPU cost and temporal filtering pending; thermal hold/charging, material mass estimate and payload/stack qualification unresolved."
