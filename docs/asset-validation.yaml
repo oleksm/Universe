@@ -708,3 +708,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull placement/service routing and in-game GPU appearance/filtering/cost. Static exterior only; registry/engine retain internal packing and200kW/3kW engineering discrepancy."
+  - key: equipment.power.fusion.s2
+    version: 1
+    manifest_sha256: "8796aae6d9bdb4ec8476ffc2d155034147aea3428a4d4c33c98aa468ebe9f949"
+    installed: 58aa1299
+    game: "the loader (world::assets) at fso 58aa1299"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-fusion-s2/v1 (145600 bytes, bounds [-6.0, 0.0, -6.05] to [18.1, 2.0, 6.05]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed only; runtime deployment, final hull placement, thermal view factor,1000K joints,mass/structure/internal packing and actual GPU appearance/filtering/cost remain unqualified. Standing registry174a ownership."
