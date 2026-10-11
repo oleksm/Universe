@@ -318,3 +318,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Runtime motion, opposite-side handedness, fixed hull supports and combined hull clearance remain pending; v2 changes only primary marker naming."
+  - key: equipment.capacitor.s1
+    version: 1
+    manifest_sha256: "d39515f22ec4cca69dd91414789bf81f0e645f8d1d7f4ddacbc226601ebe4ce0"
+    installed: 1689c893
+    game: "the loader (world::assets) at fso 1689c893"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/capacitor-s1/v1 (65772 bytes, bounds [-0.538, 0.0, -0.75] to [0.538, 1.0, 0.772]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Provisional exterior only: registry energy/mass contradiction and cryogenic/load qualification unresolved; final hull service routing and GPU appearance/cost pending."
