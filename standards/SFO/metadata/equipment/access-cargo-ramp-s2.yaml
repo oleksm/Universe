@@ -26,9 +26,10 @@ function:
   kind: "ramp"
   load: 60000
   width: 5.0
-  reach: 6.0
+  reach: 11.6
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 5 m ramp for 60 t: a C-17's class, scaled from the S1 by load. From memory. Not sourced." }
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 5 m ramp for 60 t: a C-17's class, scaled from the S1 by load. From memory. Not sourced. Laid out as the S1: one 12 m deck, 5 m clear, upright to shut the opening, the hull giving a recessed threshold and lock receivers; at 15 degrees its sill sits no more than 3.1 m up and its foot lands 11.6 m out (blender, 2026-10-11; the first draft's 6 m reach was 30 degrees)." }
+  - { of: [physical.mass], tier: invented, review: true, note: "The S1's sections scaled to this ramp come to about 14 t, over its 10 t; left for review, not thinned to fit." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
