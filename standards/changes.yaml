@@ -420,7 +420,7 @@
 - { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-11T02:37:05Z", status: draft, summary: "changed: visual", sha: "2826a7d76e0ce87f" }
 - { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "92f797ed52ebf7ab" }
 - { record: equipment.hardpoint.mining-hammer.mc07-right, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "bba06c634d9b1793" }
-- { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-10T16:13:03Z", status: draft, summary: "changed: basis", sha: "6a1dbe5174efe2e8" }
+- { record: equipment.hardpoint.pulse-laser.s1, at: "2026-10-11T18:12:57Z", status: draft, summary: "changed: identity, basis", sha: "a707bf150adf7be4" }
 - { record: equipment.hyperdrive.halcyon.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "54beaa20b9d5f1b9" }
 - { record: equipment.hyperdrive.halcyon.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "43ab02cce06b3cb7" }
 - { record: equipment.hyperdrive.halcyon.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "692f328dbc32d8aa" }
