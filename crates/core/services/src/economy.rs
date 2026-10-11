@@ -511,6 +511,17 @@ struct Tally {
 }
 
 impl Economy {
+    /// Refresh derived market views after restoring authoritative works inventories.
+    pub fn invalidate_snapshots(&mut self) {
+        for place in &mut self.places {
+            if let Some(k) = place.warehouse {
+                place.stock = self.works[k].pool.clone();
+            }
+        }
+        self.snapshot = None;
+        self.works_snap = None;
+    }
+
     /// The settlements the land office has ground for, and their facilities.
     pub fn new(land: &LandOffice, now: f64) -> Self {
         let mut e = Economy { stepped_to: now, ..Default::default() };
