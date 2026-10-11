@@ -15,9 +15,9 @@ handling: crane
 stack: 4
 visual:
   format: "freefall-model/1"
-  path: "models/bar-bundle/v2"
-  manifest_sha256: "f36e3f804e51ebc4ac82ed305e2b65b2424e9ed5fc7abae229481fc6198ee1a9"
-  version: 2
+  path: "models/bar-bundle/v3"
+  manifest_sha256: "638f247886b69bf0be80f79595f2b3193257f9d83f87fef6b944e0704f9cf4bd"
+  version: 3
   triangles: 2556
 labels:
   - { node: label, face: "+X", centre: [3.001, 0.2, 0.0], size: [0.16, 0.08] }
