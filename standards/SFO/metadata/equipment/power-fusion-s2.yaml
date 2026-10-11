@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: power
-  description: "A ship's power plant."
+  description: "A ship's power plant: the box is two halves side by side, each 12 x 12.1 m. One is the plant bay, 2 m deep, closed, with the reactor and turbine set inside; the other is its radiator, a 146 m2 panel that sheds 14.9 MW from both faces at 1,000 K, stowed flat beside the bay and swung out on its root hinge along the bay's edge to stand clear. Mount at the base of the bay."
 size_class: 2
 fits: mount.power-s2
 physical:
@@ -45,4 +45,5 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 14.9 MW of waste heat at 1,000 K, 146 m2 of panel, with the plant beneath." }
+  - { of: [identity.description], tier: derived, review: true, note: "For the modeller (2026-10-10): 8 MW out at 35% leaves 14.9 MW to shed; at 1,000 K from both faces (102 kW/m2) that is 146 m2, half the 24.1 x 12.1 m box, so the box holds the panel stowed beside the plant bay, not twice the panel. Exterior only; the parts stay mass proxies (the plant's 3 t is far too light for a fusion reactor of this power, as for the torch: open)." }
   - { of: [life], rule: rule.life-ship-system }
