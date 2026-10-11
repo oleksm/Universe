@@ -1732,3 +1732,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static closed only; source swing demo not runtime motion. Requires 4.4 m outside-hull swing keep-out. Actual mounted drawing, GPU appearance/cost, interaction and final hull fit pending. Internal rams/locks, thermal seals, mass distribution and mounting loads unqualified."
+  - key: equipment.access.boarding-ramp.s1
+    version: 1
+    manifest_sha256: "ca5d397380e03788fc31da2805e9a48d0f0b767a8828c33762e5ac2074c15aaf"
+    installed: 5252f9f1
+    game: "the loader (world::assets) at fso 5252f9f1"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-boarding-ramp-s1/v1 (496272 bytes, bounds [-0.7, -0.0, -3.053] to [0.7, 0.36, 0.24]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed asset; source-only folding demo. Actual equipment drawing, GPU/material look and cost, interaction/runtime motion, final hull/terrain fit, one-tonne rating and structural/drive qualification pending."
