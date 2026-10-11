@@ -61,6 +61,7 @@ def brief(kind, key, path, r, used):
     size = size_of(kind, r)
     b = {"key": key, "kind": kind, "name": i.get("name"), "description": i.get("description") or i.get("about"),
          "maker": i.get("maker"), "design_stage": stage(r) or "draft", "used": used.get(key, 0),
+         "priority": (r.get("revision") or {}).get("priority", "normal"), "priority_because": (r.get("revision") or {}).get("because") if (r.get("revision") or {}).get("priority") else None,
          "size_m": {"length": size[0], "width": size[1], "height": size[2]} if size else None,
          "size_rule": f"the model's three sides, sorted, each {LOW:.0%} to {HIGH:.0%} of the record's, sorted (glTF metres; axes free)",
          "mass_kg": (r.get("physical") or {}).get("mass"),
@@ -93,7 +94,8 @@ def queue(hulls=False):
     used = usage()
     q = [(kind, key, path, r) for kind, key, path, r in records()
          if not r.get("visual") and stage(r) != "retired" and (hulls or kind != "hull")]
-    q.sort(key=lambda x: (tier(x[0], x[1], used), stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
+    low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)
+    q.sort(key=lambda x: (low(x[3]), tier(x[0], x[1], used), stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
     return q, used
 
 
