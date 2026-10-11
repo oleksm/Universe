@@ -26,6 +26,12 @@ function:
   kind: "docking"
   holds: 2000000
   standard: "SFO 20 clamp"
+visual:
+  format: "freefall-model/1"
+  path: "models/access-docking-clamp/v1"
+  manifest_sha256: "032e046ab73bfb75bafec9f023707fafa33e403dc90f9aa063bd61145d448cf8"
+  version: 1
+  triangles: 3132
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Holds the ship to a station's rail, or a ship to a ship, against 2 MN: a 200 t ship at 1 g. Chosen; the standard is this registry's. The SFO 20 rail it grips (provisional, blender and registry 2026-10-11): a T, its head 0.48 m wide and 0.12 m thick on a 0.14 m web, running along the clamp's Y with the jaws facing out along +Z; two opposed hook jaws slide 0.16 m each to take its head. Each jaw bears on two 75 mm strips (0.15 m of rail, 0.042 m2 in all, measured): at 2 MN the head sees about 48 MPa in bearing, 56 MPa in shear and 240 MPa bending at its flange roots, inside a 4340-class steel's yield; the jaws' own strength is not checked." }
