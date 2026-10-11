@@ -33,9 +33,9 @@ function:
   rate: 20000000
 visual:
   format: "freefall-model/1"
-  path: "models/capacitor-s1/v1"
-  manifest_sha256: "d39515f22ec4cca69dd91414789bf81f0e645f8d1d7f4ddacbc226601ebe4ce0"
-  version: 1
+  path: "models/capacitor-s1/v2"
+  manifest_sha256: "f2f2edb26781643b583383b133d68582150d21772cc256534528fd0ec64fc801"
+  version: 2
   triangles: 1172
 life: 473364000
 basis:
