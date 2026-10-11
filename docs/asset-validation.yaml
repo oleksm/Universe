@@ -1044,3 +1044,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, label printing/readability, handling/tint, GPU cost and temporal filtering; rigid end-tag attachment and baseline lifting/stacking/capacity qualification remain open."
+  - key: package.bulk-bag
+    version: 2
+    manifest_sha256: "016f6a6582c0b087eb4df22f8030feb77f79c67d81c17f44afb22f682a3f669b"
+    installed: 3c078ab4
+    game: "the loader (world::assets) at fso 3c078ab4"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/bulk-bag/v2 (82152 bytes, bounds [-0.5508, 0.0, -0.55] to [0.55, 1.25, 0.55]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, vendor label printing, handling, GPU cost and temporal filtering; label backing attachment durability and original bag/pallet capacity/handling qualification remain open."
