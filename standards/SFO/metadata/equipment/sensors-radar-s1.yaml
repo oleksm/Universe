@@ -19,11 +19,11 @@ needs:
 built_of:
   parts: sensors-radar-s1
   list:
-    - { code: RDS1-01, name: "Array frame", description: "A 5 mm aluminium backplate (108 kg) with frame ribs (12 kg): the panel's structure.", mass: 120, length: 4.0, width: 2.0, height: 0.03, item: stock.al6061-sh-2-panel, quantity: 120.0, module: module.welding-bay,
+    - { code: RDS1-01, name: "Array frame", description: "A 5 mm aluminium backplate (108 kg), 2 mm folded perimeter webs and returns to the full 0.1 m, three 47 mm ribs (12 kg in all with the webs): the panel's structure.", mass: 120, length: 4.0, width: 2.0, height: 0.1, item: stock.al6061-sh-2-panel, quantity: 120.0, module: module.welding-bay,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
     - { code: RDS1-02, name: "Transmit-receive modules", description: "Thousands of small transmitters and receivers that steer the beam between them.", mass: 135, length: 4.0, width: 2.0, height: 0.04, item: good.electronics, quantity: 135, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
-    - { code: RDS1-03, name: "Signal processor", description: "Makes tracks of the echoes; recessed in the back of the panel.", mass: 21, length: 0.5, width: 0.4, height: 0.06, item: good.computers, quantity: 21, module: module.assembly-shop,
+    - { code: RDS1-03, name: "Signal processor", description: "Makes tracks of the echoes; recessed 7 mm into the underside of one tile, the cold plate cut out round it with a thermal bridge.", mass: 21, length: 0.5, width: 0.4, height: 0.06, item: good.computers, quantity: 21, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
     - { code: RDS1-04, name: "Cooler", description: "A cold plate under the tiles, with two flush coolant ports: it hands the modules' heat to the ship's coolant loop (the loop's pumps and radiators are the ship's).", mass: 24, length: 4.0, width: 2.0, height: 0.01, item: good.heat-pumps, quantity: 24, module: module.assembly-shop,
         basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen, by Sentinel-1's radar: nearly all of it is the antenna." }] }
