@@ -1098,7 +1098,7 @@
 - { record: package.bale, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "84945ba84f13f85c" }
 - { record: package.bar-bundle, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "fbe321a86b589985" }
 - { record: package.bulk-bag, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "6d12ae051ae6ce78" }
-- { record: package.carton-pallet, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "4d2a86dbfdb02740" }
+- { record: package.carton-pallet, at: "2026-10-11T14:06:07Z", status: "", summary: "changed: visual", sha: "fda35d2df85928af" }
 - { record: package.coil, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "be0111810d76d8af" }
 - { record: package.cold-crate, at: "2026-10-11T13:53:48Z", status: "", summary: "changed: visual", sha: "7b744726d25ba51b" }
 - { record: package.crate-heavy, at: "2026-10-11T13:34:04Z", status: "", summary: "changed: visual", sha: "58631658381004d4" }
