@@ -40,6 +40,12 @@ function:
   output: 4000000
   efficiency: 0.35
   burns: material.deuterium
+visual:
+  format: "freefall-model/1"
+  path: "models/power-fusion-s1/v1"
+  manifest_sha256: "a0cf8edabf636e7abff1ba93fb3339350a0445d7a0f4ed75fc94db967b9a7235"
+  version: 1
+  triangles: 3494
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
