@@ -1316,3 +1316,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual GPU materials, temporal filtering and cost; full gate/hull mounting and upper attachments; invented hyperspace behavior,1.5MW thermal/field feasibility, internal packing and structural qualification. Static exterior only."
+  - key: equipment.gate.terminal-ground.s3
+    version: 1
+    manifest_sha256: "fda0299f6d3c832a46af16618cab677e8cc306b250044177105ac7e1aac8f9b2"
+    installed: 34f2f4d5
+    game: "the loader (world::assets) at fso 34f2f4d5"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gate-terminal-ground-s3/v1 (468344 bytes, bounds [-10.3, 0.0, -10.3] to [10.3, 2.94, 10.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed exterior only; actual game drawing/GPU cost, foundation terrain fit, deployed feed and live pointing, wind/gravity stiffness, RF/thermal and structural qualification pending."
