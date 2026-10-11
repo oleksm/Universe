@@ -393,3 +393,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Provisional static released rack exterior. 120x7 tube strength under20t/3g unqualified; internal deck stiffening and drives reserved mass only. Cargo locking/transfer physics, final hull placement and game GPU appearance/cost pending."
+  - key: equipment.drive.torch.s2
+    version: 1
+    manifest_sha256: "10a72428f987aa9bb225ef891a58ab8d89982c20ac69f661508dacc1c27a6ffe"
+    installed: 8f103ebb
+    game: "the loader (world::assets) at fso 8f103ebb"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/drive-torch-s2/v1 (187720 bytes, bounds [-11.05, -1.63, 0.0] to [11.05, 1.63, 9.86]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "GPU appearance/cost, final hull placement, fusion/thermal/shielding/load feasibility; provisional static exterior only"
