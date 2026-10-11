@@ -44,5 +44,5 @@ life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 26.0 MW of waste heat at 1,000 K, 255 m2 of panel, with the plant beneath." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 26.0 MW of waste heat at 1,000 K, 255 m2 of panel radiating both sides (a 16 by 16 m panel), the plant in a closed 15.9 m bay beside it, as the S2 lays it out (blender, 2026-10-11)." }
   - { of: [life], rule: rule.life-ship-system }
