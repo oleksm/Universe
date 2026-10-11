@@ -92,6 +92,12 @@ recipes:
       - { item: good.manure, quantity: 404.0 }
     rate: 0.0002852
     power: 50000
+visual:
+  format: "freefall-model/1"
+  path: "models/livestock-barn/v1"
+  manifest_sha256: "d27a9cc0c18c93fe1f0e8759d73c9989d3b2faef3b7e166f3b91dfe4d10b58d8"
+  version: 1
+  triangles: 2036
 life: 788940000
 basis:
   - { of: [recipes, recipes.rate, recipes.inputs], tier: sourced, source: "standards/sources/research_food_livestock.json", note: "Feed for each kg, water a head, eggs a hen, milk a cow, weights at slaughter: the file named. The herd and flock sizes, and so the barn's rate, are chosen. Sheep's water for each kg gained is worked out from a guess at how fast they gain." }
