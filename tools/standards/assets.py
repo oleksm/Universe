@@ -679,7 +679,12 @@ def check_model(kind, r, info):
         bad.append("the record says no size (physical.length, width, height): ask the registry for one first")
     else:
         m, s = sorted(info["bounds"], reverse=True), sorted(size, reverse=True)
+        planar = s[2] < s[0] / 50          # (a field, a pad: its thin side is relief, held only to at most the record's)
         for k, (a, e) in enumerate(zip(m, s)):
+            if planar and k == 2:
+                if a > HIGH * e + 0.05:
+                    bad.append(f"its thin side is {a:.3g} m, more than the record's {e:.3g} m allows for a flat thing (at most {HIGH * e + 0.05:.3g})")
+                continue
             if not (LOW * e - 0.05 <= a <= HIGH * e + 0.05):      # (and 5 cm either way, for thin things: a panel, a door)
                 bad.append(f"its {('longest', 'middle', 'shortest')[k]} side is {a:.3g} m against the record's {e:.3g} m "
                            f"(allowed {LOW * e - 0.05:.3g} to {HIGH * e + 0.05:.3g}); model metres, or the record's size is wrong: then a request to the registry")

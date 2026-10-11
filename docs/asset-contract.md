@@ -61,7 +61,7 @@ built of, to lay it out), `required_nodes`, `triangle_budget`, `record` (the YAM
 | Check | Rule |
 |---|---|
 | Format | glTF 2 binary (`.glb`), metres. Axes are free for the size check; equipment and hulls follow docs/ship-import.md (+Y up in the export) |
-| Size | the model's three sides (world bounds of its meshes), sorted, each 85% to 110% of the record's three sides, sorted, and 5 cm either way for thin things. The registry is the size authority: if the record is wrong, send a request to the registry; never fudge the model |
+| Size | the model's three sides (world bounds of its meshes), sorted, each 85% to 110% of the record's three sides, sorted, and 5 cm either way for thin things. A flat thing (its thin side under a fiftieth of its longest: a field, a pad) has its thin side held only to at most the record's. The registry is the size authority: if the record is wrong, send a request to the registry; never fudge the model |
 | Nodes | equipment: `mount*` (the face it attaches by); jet engines `nozzle*`; ducted fans `duct*`; landing gear `contact*`; doors, ramps, lifts `door*`; docking `dock*`. Other kinds: none required yet |
 | Collision | meshes named `COL_*` are collision; they are not counted as drawn |
 | Budget | triangles drawn: equipment 60,000; modules and buildings 150,000; structures and gates 400,000; hulls 1,000,000 |
