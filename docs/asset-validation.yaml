@@ -258,3 +258,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final rear harness and hull aperture fit; RF and thermal qualification; static package only"
+  - key: equipment.avionics.nav-full.s1
+    version: 1
+    manifest_sha256: "bcc7581bbd0577c5e68c7a368592ad960ef1c772aee9cb32c2ec3e2c06feaf5f"
+    installed: 926c8bf8
+    game: "the loader (world::assets) at fso 926c8bf8"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/avionics-nav-full-s1/v1 (42408 bytes, bounds [-0.217, 0.0, -0.15] to [0.217, 0.3308, 0.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final rear harness and hull conductive mounting;140W cooling capacity and attachment qualification; static package"
