@@ -26,6 +26,12 @@ making:
 function:
   kind: rack
   capacity: 20000
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-rack-s3/v1"
+  manifest_sha256: "3d816af1d4da8e5f31d5ec12079a7a01203285170bb6b33d77d272b5e1e82edb"
+  version: 1
+  triangles: 3808
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
