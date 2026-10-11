@@ -7,8 +7,10 @@ include!("../physics/build/sheetgen.rs");
 
 fn main() {
     generate("../../../content/base/sheet.ron", "sheet.rs", "universe_physics::sheet");
-    println!("cargo:rerun-if-changed=../../../standards");
-    let reg = universe_registry::Registry::read(std::path::Path::new("../../../standards")).unwrap_or_else(|problems| {
+    println!("cargo:rerun-if-env-changed=UNIVERSE_REGISTRY_ROOT");
+    let root = std::env::var_os("UNIVERSE_REGISTRY_ROOT").map(std::path::PathBuf::from).unwrap_or_else(|| "../../../standards".into());
+    println!("cargo:rerun-if-changed={}", root.display());
+    let reg = universe_registry::Registry::read(&root).unwrap_or_else(|problems| {
         for p in &problems {
             println!("cargo:warning={p}");
         }

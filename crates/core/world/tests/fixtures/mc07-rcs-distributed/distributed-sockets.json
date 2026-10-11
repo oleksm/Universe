@@ -1,0 +1,1444 @@
+{
+  "status": "DISTRIBUTED_TOPOLOGY_ALLOWED_GEOMETRY_AND_AUTHORITY_PENDING",
+  "basis": "hull model glTF, includes source root rotation once; neutral independent of rig pose",
+  "source_glb_sha256": "11e3402c23ddfbb300c2f3b8cfdd865617ff355f63ba4fce00fd6be7d7b890ce",
+  "topology": "20 existing RCS names, each a real distributed socket with feed; registry 9c977663 permits this topology",
+  "rating": "Baseline retained: 120000 N/nozzle at share1; no rating/fuel/physics changes",
+  "cants_deg": {
+    "side": 30,
+    "up_down": 45
+  },
+  "nozzles": [
+    {
+      "node": "nozzle_nose_left_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -3.5000030994415283,
+        -2.800001382827759,
+        -35.17478561401367
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.7484555314695172e-07,
+        0.0,
+        -1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        1.0,
+        -7.64274186065882e-15,
+        -1.7484555314695172e-07,
+        0.0,
+        7.64274186065882e-15,
+        1.0,
+        0.0,
+        0.0,
+        1.7484555314695172e-07,
+        0.0,
+        1.0,
+        0.0,
+        -3.5000030994415283,
+        -2.800001382827759,
+        -35.17478561401367,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        3.5,
+        -35.17478561401367,
+        -2.799999952316284
+      ],
+      "attachment_hull_blender_m": [
+        3.5,
+        -34.624786376953125,
+        -2.799999952316284
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_left_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -7.1999969482421875,
+        -2.4999985694885254,
+        33.450164794921875
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        -7.1999969482421875,
+        -2.4999985694885254,
+        33.450164794921875,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        7.199999809265137,
+        33.450164794921875,
+        -2.5
+      ],
+      "attachment_hull_blender_m": [
+        7.199999809265137,
+        32.90016555786133,
+        -2.5
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_left_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -7.998816013336182,
+        -1.3233623121777782e-06,
+        -30.274999618530273
+      ],
+      "exhaust_direction_hull_gltf": [
+        -0.8660255074501038,
+        2.1855701248796322e-08,
+        -0.49999991059303284
+      ],
+      "matrix_hull_gltf_column_major": [
+        0.49999985098838806,
+        -3.785517321830412e-08,
+        -0.8660253882408142,
+        0.0,
+        3.785517321830412e-08,
+        1.0,
+        -2.1855701248796322e-08,
+        0.0,
+        0.8660253882408142,
+        -2.1855699472439483e-08,
+        0.49999985098838806,
+        0.0,
+        -7.998816013336182,
+        -1.3233623121777782e-06,
+        -30.274999618530273,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        7.998813152313232,
+        -30.274999618530273,
+        0.0
+      ],
+      "attachment_hull_blender_m": [
+        7.522499084472656,
+        -30.0,
+        0.0
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_left_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -4.000002861022949,
+        5.889731407165527,
+        -30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        -6.181723222198343e-08,
+        0.7071067690849304,
+        -0.7071067094802856
+      ],
+      "matrix_hull_gltf_column_major": [
+        0.9999998211860657,
+        -6.181723222198343e-08,
+        -1.4923999458460457e-07,
+        0.0,
+        1.4923999458460457e-07,
+        0.7071068286895752,
+        0.7071067094802856,
+        0.0,
+        6.181722511655607e-08,
+        -0.7071067094802856,
+        0.7071066498756409,
+        0.0,
+        -4.000002861022949,
+        5.889731407165527,
+        -30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        4.0,
+        -30.38890838623047,
+        5.889732837677002
+      ],
+      "attachment_hull_blender_m": [
+        4.0,
+        -30.0,
+        5.500823974609375
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_left_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -4.000002861022949,
+        -5.270132064819336,
+        -30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        -6.181722511655607e-08,
+        -0.7071067690849304,
+        -0.7071067094802856
+      ],
+      "matrix_hull_gltf_column_major": [
+        0.9999998211860657,
+        -6.181722511655607e-08,
+        -2.5605526587924032e-08,
+        0.0,
+        2.560553369335139e-08,
+        0.7071068286895752,
+        -0.7071067094802856,
+        0.0,
+        6.181721801112872e-08,
+        0.7071067094802856,
+        0.7071066498756409,
+        0.0,
+        -4.000002861022949,
+        -5.270132064819336,
+        -30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        4.0,
+        -30.38890838623047,
+        -5.270130634307861
+      ],
+      "attachment_hull_blender_m": [
+        4.0,
+        -30.0,
+        -4.881221771240234
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_right_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        3.4999969005584717,
+        -2.800001382827759,
+        -35.174781799316406
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.7484555314695172e-07,
+        0.0,
+        -1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        1.0,
+        -7.64274186065882e-15,
+        -1.7484555314695172e-07,
+        0.0,
+        7.64274186065882e-15,
+        1.0,
+        0.0,
+        0.0,
+        1.7484555314695172e-07,
+        0.0,
+        1.0,
+        0.0,
+        3.4999969005584717,
+        -2.800001382827759,
+        -35.174781799316406,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -3.5,
+        -35.174781799316406,
+        -2.799999952316284
+      ],
+      "attachment_hull_blender_m": [
+        -3.5,
+        -34.62478256225586,
+        -2.799999952316284
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_right_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        7.200002670288086,
+        -2.4999985694885254,
+        33.4501953125
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        7.200002670288086,
+        -2.4999985694885254,
+        33.4501953125,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -7.199999809265137,
+        33.4501953125,
+        -2.5
+      ],
+      "attachment_hull_blender_m": [
+        -7.199999809265137,
+        32.90019607543945,
+        -2.5
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_right_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        7.998814105987549,
+        -1.3233623121777782e-06,
+        -30.274999618530273
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.8660253882408142,
+        2.1855694143368964e-08,
+        -0.5000000596046448
+      ],
+      "matrix_hull_gltf_column_major": [
+        0.5,
+        3.785516611287676e-08,
+        0.8660252690315247,
+        0.0,
+        -3.785516611287676e-08,
+        1.0,
+        -2.1855694143368964e-08,
+        0.0,
+        -0.8660252690315247,
+        -2.1855692367012125e-08,
+        0.5,
+        0.0,
+        7.998814105987549,
+        -1.3233623121777782e-06,
+        -30.274999618530273,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -7.998816967010498,
+        -30.274999618530273,
+        0.0
+      ],
+      "attachment_hull_blender_m": [
+        -7.522502899169922,
+        -30.0,
+        0.0
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_right_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        3.99999737739563,
+        5.889725685119629,
+        -30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        -6.181723222198343e-08,
+        0.7071067690849304,
+        -0.7071067094802856
+      ],
+      "matrix_hull_gltf_column_major": [
+        0.9999998211860657,
+        -6.181723222198343e-08,
+        -1.4923999458460457e-07,
+        0.0,
+        1.4923999458460457e-07,
+        0.7071068286895752,
+        0.7071067094802856,
+        0.0,
+        6.181722511655607e-08,
+        -0.7071067094802856,
+        0.7071066498756409,
+        0.0,
+        3.99999737739563,
+        5.889725685119629,
+        -30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -4.0,
+        -30.38890838623047,
+        5.8897271156311035
+      ],
+      "attachment_hull_blender_m": [
+        -4.0,
+        -30.0,
+        5.500818252563477
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_nose_right_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        3.99999737739563,
+        -5.280065536499023,
+        -30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        -6.181722511655607e-08,
+        -0.7071067690849304,
+        -0.7071067094802856
+      ],
+      "matrix_hull_gltf_column_major": [
+        0.9999998211860657,
+        -6.181722511655607e-08,
+        -2.5605526587924032e-08,
+        0.0,
+        2.560553369335139e-08,
+        0.7071068286895752,
+        -0.7071067094802856,
+        0.0,
+        6.181721801112872e-08,
+        0.7071067094802856,
+        0.7071066498756409,
+        0.0,
+        3.99999737739563,
+        -5.280065536499023,
+        -30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -4.0,
+        -30.38890838623047,
+        -5.280064105987549
+      ],
+      "attachment_hull_blender_m": [
+        -4.0,
+        -30.0,
+        -4.891155242919922
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_left_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -3.5000030994415283,
+        -0.2000015377998352,
+        -34.960628509521484
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.7484555314695172e-07,
+        0.0,
+        -1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        1.0,
+        -7.64274186065882e-15,
+        -1.7484555314695172e-07,
+        0.0,
+        7.64274186065882e-15,
+        1.0,
+        0.0,
+        0.0,
+        1.7484555314695172e-07,
+        0.0,
+        1.0,
+        0.0,
+        -3.5000030994415283,
+        -0.2000015377998352,
+        -34.960628509521484,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        3.5,
+        -34.960628509521484,
+        -0.20000000298023224
+      ],
+      "attachment_hull_blender_m": [
+        3.5,
+        -34.41062927246094,
+        -0.20000000298023224
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_left_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -7.1999969482421875,
+        1.5000014305114746,
+        33.4501838684082
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        -7.1999969482421875,
+        1.5000014305114746,
+        33.4501838684082,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        7.199999809265137,
+        33.4501838684082,
+        1.5
+      ],
+      "attachment_hull_blender_m": [
+        7.199999809265137,
+        32.900184631347656,
+        1.5
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_left_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -9.506309509277344,
+        1.3233623121777782e-06,
+        30.274999618530273
+      ],
+      "exhaust_direction_hull_gltf": [
+        -0.8660253882408142,
+        6.556709308824793e-08,
+        0.5000001788139343
+      ],
+      "matrix_hull_gltf_column_major": [
+        -0.5000001192092896,
+        -3.785516611287676e-08,
+        -0.8660252690315247,
+        0.0,
+        3.785516611287676e-08,
+        1.0,
+        -6.556708598282057e-08,
+        0.0,
+        0.8660252690315247,
+        -6.556708598282057e-08,
+        -0.5000001192092896,
+        0.0,
+        -9.506309509277344,
+        1.3233623121777782e-06,
+        30.274999618530273,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        9.506312370300293,
+        30.274999618530273,
+        0.0
+      ],
+      "attachment_hull_blender_m": [
+        9.029998779296875,
+        30.0,
+        0.0
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_left_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -3.99999737739563,
+        3.6309986114501953,
+        30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181723932741079e-08,
+        0.7071068286895752,
+        0.7071067094802856
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -6.181723222198343e-08,
+        0.7071067094802856,
+        -0.7071068286895752,
+        0.0,
+        -6.181723932741079e-08,
+        -0.7071068286895752,
+        -0.7071067094802856,
+        0.0,
+        -3.99999737739563,
+        3.6309986114501953,
+        30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        4.0,
+        30.38890838623047,
+        3.6309971809387207
+      ],
+      "attachment_hull_blender_m": [
+        4.0,
+        30.0,
+        3.2420883178710938
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_left_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -3.99999737739563,
+        -4.630995750427246,
+        30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181723932741079e-08,
+        -0.7071065902709961,
+        0.7071069478988647
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        6.181723222198343e-08,
+        0.7071069478988647,
+        0.7071065902709961,
+        0.0,
+        -6.181723932741079e-08,
+        0.7071065902709961,
+        -0.7071069478988647,
+        0.0,
+        -3.99999737739563,
+        -4.630995750427246,
+        30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        4.0,
+        30.38890838623047,
+        -4.630997180938721
+      ],
+      "attachment_hull_blender_m": [
+        4.0,
+        30.0,
+        -4.242088317871094
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_right_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        3.4999969005584717,
+        -0.2000015377998352,
+        -34.96063232421875
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.7484555314695172e-07,
+        0.0,
+        -1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        1.0,
+        -7.64274186065882e-15,
+        -1.7484555314695172e-07,
+        0.0,
+        7.64274186065882e-15,
+        1.0,
+        0.0,
+        0.0,
+        1.7484555314695172e-07,
+        0.0,
+        1.0,
+        0.0,
+        3.4999969005584717,
+        -0.2000015377998352,
+        -34.96063232421875,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -3.5,
+        -34.96063232421875,
+        -0.20000000298023224
+      ],
+      "attachment_hull_blender_m": [
+        -3.5,
+        -34.4106330871582,
+        -0.20000000298023224
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_right_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        7.200002670288086,
+        1.5000014305114746,
+        33.450191497802734
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        7.200002670288086,
+        1.5000014305114746,
+        33.450191497802734,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -7.199999809265137,
+        33.450191497802734,
+        1.5
+      ],
+      "attachment_hull_blender_m": [
+        -7.199999809265137,
+        32.90019226074219,
+        1.5
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_right_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        9.506315231323242,
+        1.3233623121777782e-06,
+        30.274999618530273
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.8660253882408142,
+        6.556707887739321e-08,
+        0.4999999701976776
+      ],
+      "matrix_hull_gltf_column_major": [
+        -0.4999999701976776,
+        3.785517321830412e-08,
+        0.8660253882408142,
+        0.0,
+        -3.785517321830412e-08,
+        1.0,
+        -6.556707887739321e-08,
+        0.0,
+        -0.8660253882408142,
+        -6.556707887739321e-08,
+        -0.4999999701976776,
+        0.0,
+        9.506315231323242,
+        1.3233623121777782e-06,
+        30.274999618530273,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -9.506312370300293,
+        30.274999618530273,
+        0.0
+      ],
+      "attachment_hull_blender_m": [
+        -9.029998779296875,
+        30.0,
+        0.0
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_right_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        4.000002861022949,
+        3.6309947967529297,
+        30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181723932741079e-08,
+        0.7071068286895752,
+        0.7071067094802856
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -6.181723222198343e-08,
+        0.7071067094802856,
+        -0.7071068286895752,
+        0.0,
+        -6.181723932741079e-08,
+        -0.7071068286895752,
+        -0.7071067094802856,
+        0.0,
+        4.000002861022949,
+        3.6309947967529297,
+        30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -4.0,
+        30.38890838623047,
+        3.630993366241455
+      ],
+      "attachment_hull_blender_m": [
+        -4.0,
+        30.0,
+        3.242084503173828
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_tail_right_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        4.000002861022949,
+        -4.630997657775879,
+        30.38890838623047
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181723932741079e-08,
+        -0.7071065902709961,
+        0.7071069478988647
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        6.181723222198343e-08,
+        0.7071069478988647,
+        0.7071065902709961,
+        0.0,
+        -6.181723932741079e-08,
+        0.7071065902709961,
+        -0.7071069478988647,
+        0.0,
+        4.000002861022949,
+        -4.630997657775879,
+        30.38890838623047,
+        1.0
+      ],
+      "exit_diameter_m": 0.83,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -4.0,
+        30.38890838623047,
+        -4.6309990882873535
+      ],
+      "attachment_hull_blender_m": [
+        -4.0,
+        30.0,
+        -4.242090225219727
+      ],
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Distributed manifold outlet, not a compact five-nozzle pod. .55m exit stand-off; no mechanical hardware or feed lines designed."
+    },
+    {
+      "node": "nozzle_lift_0",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        -2.5,
+        -9.114999771118164,
+        -17.362499237060547
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.3064326164391633e-14,
+        -1.0,
+        1.21651311246751e-07
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        -1.6056680114738368e-14,
+        -1.440989905177048e-07,
+        0.0,
+        -1.440989905177048e-07,
+        1.21651311246751e-07,
+        1.0,
+        0.0,
+        1.3064326164391633e-14,
+        1.0,
+        -1.21651311246751e-07,
+        0.0,
+        -2.5,
+        -9.114999771118164,
+        -17.362499237060547,
+        1.0
+      ],
+      "exit_diameter_m": 5.715476066494083,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        2.4999985694885254,
+        -17.362499237060547,
+        -9.114998817443848
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_lift_1",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        2.5,
+        -9.114999771118164,
+        -17.362499237060547
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.3064326164391633e-14,
+        -1.0,
+        1.21651311246751e-07
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        -1.6056680114738368e-14,
+        -1.440989905177048e-07,
+        0.0,
+        -1.440989905177048e-07,
+        1.21651311246751e-07,
+        1.0,
+        0.0,
+        1.3064326164391633e-14,
+        1.0,
+        -1.21651311246751e-07,
+        0.0,
+        2.5,
+        -9.114999771118164,
+        -17.362499237060547,
+        1.0
+      ],
+      "exit_diameter_m": 5.715476066494083,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -2.5000014305114746,
+        -17.362499237060547,
+        -9.114998817443848
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_lift_2",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        -2.5,
+        -9.114999771118164,
+        1.1000003814697266
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.3064326164391633e-14,
+        -1.0,
+        1.21651311246751e-07
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        -1.6056680114738368e-14,
+        -1.440989905177048e-07,
+        0.0,
+        -1.440989905177048e-07,
+        1.21651311246751e-07,
+        1.0,
+        0.0,
+        1.3064326164391633e-14,
+        1.0,
+        -1.21651311246751e-07,
+        0.0,
+        -2.5,
+        -9.114999771118164,
+        1.1000003814697266,
+        1.0
+      ],
+      "exit_diameter_m": 5.715476066494083,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        2.5,
+        1.0999997854232788,
+        -9.114999771118164
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_lift_3",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        2.5,
+        -9.114999771118164,
+        1.1000005006790161
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.3064326164391633e-14,
+        -1.0,
+        1.21651311246751e-07
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        -1.6056680114738368e-14,
+        -1.440989905177048e-07,
+        0.0,
+        -1.440989905177048e-07,
+        1.21651311246751e-07,
+        1.0,
+        0.0,
+        1.3064326164391633e-14,
+        1.0,
+        -1.21651311246751e-07,
+        0.0,
+        2.5,
+        -9.114999771118164,
+        1.1000005006790161,
+        1.0
+      ],
+      "exit_diameter_m": 5.715476066494083,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -2.5,
+        1.100000262260437,
+        -9.114999771118164
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_lift_4",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        -2.5,
+        -9.114999771118164,
+        19.5625
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.3064326164391633e-14,
+        -1.0,
+        1.21651311246751e-07
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        -1.6056680114738368e-14,
+        -1.440989905177048e-07,
+        0.0,
+        -1.440989905177048e-07,
+        1.21651311246751e-07,
+        1.0,
+        0.0,
+        1.3064326164391633e-14,
+        1.0,
+        -1.21651311246751e-07,
+        0.0,
+        -2.5,
+        -9.114999771118164,
+        19.5625,
+        1.0
+      ],
+      "exit_diameter_m": 5.715476066494083,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        2.5000016689300537,
+        19.5625,
+        -9.11500072479248
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_lift_5",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        2.5,
+        -9.114999771118164,
+        19.5625
+      ],
+      "exhaust_direction_hull_gltf": [
+        -1.3064326164391633e-14,
+        -1.0,
+        1.21651311246751e-07
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        -1.6056680114738368e-14,
+        -1.440989905177048e-07,
+        0.0,
+        -1.440989905177048e-07,
+        1.21651311246751e-07,
+        1.0,
+        0.0,
+        1.3064326164391633e-14,
+        1.0,
+        -1.21651311246751e-07,
+        0.0,
+        2.5,
+        -9.114999771118164,
+        19.5625,
+        1.0
+      ],
+      "exit_diameter_m": 5.715476066494083,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -2.4999983310699463,
+        19.5625,
+        -9.11500072479248
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_main_0",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        2.8013598694087705e-06,
+        1.3999998569488525,
+        32.54000473022461
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        2.8013598694087705e-06,
+        1.3999998569488525,
+        32.54000473022461,
+        1.0
+      ],
+      "exit_diameter_m": 3.9191835884530852,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        4.337766768003348e-08,
+        32.54000473022461,
+        1.399998426437378
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_main_1",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        4.000002861022949,
+        1.3999994993209839,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        4.000002861022949,
+        1.3999994993209839,
+        32.540000915527344,
+        1.0
+      ],
+      "exit_diameter_m": 3.9191835884530852,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -4.0,
+        32.540000915527344,
+        1.3999980688095093
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_main_2",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        2.814395202221931e-06,
+        -2.0999996662139893,
+        32.53999710083008
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        2.814395202221931e-06,
+        -2.0999996662139893,
+        32.53999710083008,
+        1.0
+      ],
+      "exit_diameter_m": 3.9191835884530852,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        3.034165274584666e-08,
+        32.53999710083008,
+        -2.100001096725464
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_main_3",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        -3.9999969005584717,
+        -2.0999999046325684,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        -3.9999969005584717,
+        -2.0999999046325684,
+        32.540000915527344,
+        1.0
+      ],
+      "exit_diameter_m": 3.9191835884530852,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        3.999999761581421,
+        32.540000915527344,
+        -2.100001335144043
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_main_4",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        4.000002384185791,
+        -2.0999996662139893,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        4.000002384185791,
+        -2.0999996662139893,
+        32.540000915527344,
+        1.0
+      ],
+      "exit_diameter_m": 3.9191835884530852,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        -3.999999523162842,
+        32.540000915527344,
+        -2.100001096725464
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    },
+    {
+      "node": "nozzle_main_5",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        -3.9999964237213135,
+        1.3999994993209839,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        8.742277657347586e-08,
+        8.742277657347586e-08,
+        1.0
+      ],
+      "matrix_hull_gltf_column_major": [
+        -1.0,
+        3.82137093032941e-15,
+        8.742277657347586e-08,
+        0.0,
+        -3.82137093032941e-15,
+        1.0,
+        -8.742277657347586e-08,
+        0.0,
+        -8.742277657347586e-08,
+        -8.742277657347586e-08,
+        -1.0,
+        0.0,
+        -3.9999964237213135,
+        1.3999994993209839,
+        32.540000915527344,
+        1.0
+      ],
+      "exit_diameter_m": 3.9191835884530852,
+      "exit_diameter_basis": "invented/review, registry 20261010T172126-registry-2bef",
+      "socket_hull_blender_m": [
+        3.9999992847442627,
+        32.540000915527344,
+        1.3999980688095093
+      ],
+      "attachment_hull_blender_m": null,
+      "geometry_basis": "invented/review proposal, hull contact ray measured",
+      "assumptions": "Unchanged engine-supplied current main/lift frame; screen diameter invented by registry."
+    }
+  ],
+  "limitations": [
+    "No installed model changes",
+    "No mechanical pod/nozzle geometry or feed routing",
+    "Socket exit stand-offs and cants invented/review",
+    "Engine must assess force/torque authority and approve topology/rating",
+    "Screening only; no plume/plasma/thermal qualification"
+  ]
+}

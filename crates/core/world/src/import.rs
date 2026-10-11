@@ -31,6 +31,8 @@ struct Read {
     tris: Vec<[DVec3; 3]>,
     /// A `*Ramp*` mesh's triangles (and what hangs from it): a part that swings down.
     ramp: Vec<[DVec3; 3]>,
+    /// Authored CargoRamp mesh origin and local hinge axis, in model coordinates.
+    ramp_frame: Option<(DVec3, DVec3)>,
     /// The named empties: (name, where, which way).
     nodes: Vec<(String, DVec3, DVec3)>,
     /// Each named mesh's box: (name, least corner, most corner).
@@ -57,8 +59,18 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     if body.len() < 4 {
         return Err("no geometry to make its hull from".into());
     }
+    let record = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual));
     let count = |prefix: &str| read.nodes.iter().filter(|n| n.0.starts_with(prefix)).count() as u8;
-    let slots = standard_slots(read.class.unwrap_or(2), count("mount_cargo").max(1), count("mount_hardpoint"), count("mount_utility"));
+    let inferred_slots = standard_slots(read.class.unwrap_or(2), count("mount_cargo").max(1), count("mount_hardpoint"), count("mount_utility"));
+    let slots = match record.filter(|h| !h.slots.is_empty()) {
+        // Keep registry names/sizes for represented kinds (including additional
+        // air/water/cabin slots). Unimplemented kinds stay explicitly unfitted.
+        Some(h) => h.slots.iter().filter_map(|s| {
+            crate::modules::SlotKind::from_record(s.kind)
+                .map(|kind| (s.name.clone(), kind, s.size as u8))
+        }).collect(),
+        None => inferred_slots,
+    };
     // Its nozzles, each driven by a slot by its name.
     let thrusters: Vec<(String, String, f64)> = read
         .nodes
@@ -77,21 +89,25 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     let c = shape.made_centre;
     let tris: Vec<[DVec3; 3]> = read.tris.iter().map(|t| t.map(|p| p - c)).collect();
     shape.walk = Some(std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)));
-    shape.ramp = ramp(&shape, read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
+    shape.ramp = ramp(&shape, read.ramp_frame.map(|(p, a)| (p - c, a)), read.ramp.iter().map(|t| t.map(|p| p - c)).collect());
     shape.pieces = read.pieces.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     shape.islands = read.islands.iter().map(|(n, lo, hi)| (n.clone(), *lo - c, *hi - c)).collect();
     let (lo, hi) = shape.mesh.extent();
     let size = hi - lo;
     // (A hull the registry describes by this model weighs what its parts do, at its price;
     // any other, by its size.)
-    let record = crate::registry::registry().hulls.iter().find(|h| h.model.as_deref() == Some(visual));
+
     let recorded = record.and_then(|h| crate::goods::item(&h.identity.key)).map(|i| &content().stock[i]);
     let frame_mass = recorded.map_or(FRAME_PER_AREA * shape.solid.volume.powf(2.0 / 3.0), |h| h.mass);
     let price = recorded.map_or(PRICE_PER_KG * frame_mass + PRICE_PER_SLOT_SIZE * slots.iter().map(|s| f64::from(s.2)).sum::<f64>(), |h| h.price);
     // (Fitted as its record says, with its own hold, where the registry describes it: an
     // ore bay, not racks. Any other: the cheapest that fits each slot.)
     let fit = match record {
-        Some(h) if !h.fit.is_empty() => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).map(|f| (f.slot.clone(), f.item.clone())).collect(),
+        Some(h) if !h.fit.is_empty() => h.fit.iter().filter(|f| slots.iter().any(|s| s.0 == f.slot)).filter(|f| {
+            let available = content().handle::<Module>(&f.item).is_some();
+            if !available { log::warn!("{} slot {}: {} is not in the playable module catalogue; fitting held", h.identity.key, f.slot, f.item); }
+            available
+        }).map(|f| (f.slot.clone(), f.item.clone())).collect(),
         _ => stock_fit(&slots)?,
     };
     let bay = record.filter(|h| !h.fit.iter().any(|f| f.slot == "cargo")).map_or((0.0, 0.0), |h| (h.capacity.hold.unwrap_or(0.0), h.capacity.hold_volume.unwrap_or(0.0)));
@@ -113,19 +129,18 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     Ok(spec)
 }
 
-/// A ramp hinged at the hull's `hatch` (put at the ramp's top, where it meets
-/// the belly), swinging down about the level line across it, its far end
-/// (the side its middle is on) going down. None without both.
-fn ramp(shape: &crate::shape::Shape, tris: Vec<[DVec3; 3]>) -> Option<crate::shape::Ramp> {
-    let hinge = shape.node("hatch")?.at;
+/// Prefer the authored CargoRamp hinge. Older unnamed ramps use the hatch
+/// convention; a boarding marker is not necessarily the mesh hinge.
+fn ramp(shape: &crate::shape::Shape, authored: Option<(DVec3, DVec3)>, tris: Vec<[DVec3; 3]>) -> Option<crate::shape::Ramp> {
+    let hinge = authored.map(|f| f.0).or_else(|| shape.node("hatch").map(|n| n.at))?;
     if tris.is_empty() {
         return None;
     }
     let points: Vec<DVec3> = tris.iter().flatten().copied().collect();
     let middle = points.iter().sum::<DVec3>() / points.len() as f64;
-    let out = DVec3::new(middle.x - hinge.x, 0.0, middle.z - hinge.z).try_normalize()?;
+    let out = authored.map_or_else(|| DVec3::new(middle.x - hinge.x, 0.0, middle.z - hinge.z), |f| f.1.cross(DVec3::Y)).try_normalize()?;
     let length = points.iter().map(|p| (*p - hinge).dot(out)).fold(0.0, f64::max);
-    Some(crate::shape::Ramp { hinge, axis: DVec3::Y.cross(out).normalize(), length, walk: std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)) })
+    Some(crate::shape::Ramp { hinge, axis: authored.map_or_else(|| DVec3::Y.cross(out).normalize(), |f| f.1), length, walk: std::sync::Arc::new(crate::walk::WalkMesh::new(&tris)) })
 }
 
 /// Imported: a hull among the others for good (the same file, the same hull).
@@ -149,6 +164,7 @@ fn read(bytes: &[u8]) -> Result<Read, String> {
         visual: Vec::new(),
         tris: Vec::new(),
         ramp: Vec::new(),
+        ramp_frame: None,
         nodes: Vec::new(),
         pieces: Vec::new(),
         islands: Vec::new(),
@@ -201,6 +217,9 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
     let m = parent * DMat4::from_cols_array_2d(&node.transform().matrix().map(|c| c.map(f64::from)));
     // (Blender numbers repeated names: "nozzle_main.001".)
     let name = node.name().unwrap_or("").split('.').next().unwrap_or("").to_string();
+    if name == "CargoRamp" && node.mesh().is_some() {
+        read.ramp_frame = Some((m.transform_point3(DVec3::ZERO), m.transform_vector3(DVec3::X).normalize()));
+    }
     let ramp = ramp || name.contains("Ramp");
     if let Some(mesh) = node.mesh() {
         let mut points = Vec::new();
@@ -239,5 +258,91 @@ fn walk(node: &gltf::Node, parent: DMat4, blob: Option<&[u8]>, ramp: bool, read:
     }
     for child in node.children() {
         walk(&child, m, blob, ramp, read);
+    }
+}
+
+#[cfg(test)]
+mod mount_fixture_tests {
+    use super::*;
+
+    #[test]
+    fn imported_registry_slots_preserve_named_supported_fittings() {
+        let spec = hull_from_gltf(include_bytes!("../../../../assets/models/mc07.glb"), "assets/models/mc07.glb").unwrap();
+        let record = crate::ship::hull_record(&spec).unwrap();
+        for slot in record.slots.iter().filter(|s| crate::modules::SlotKind::from_record(s.kind).is_some()) {
+            let actual = spec.slots.iter().find(|s| s.name == slot.name).expect("registry slot lost");
+            assert_eq!(actual.size, slot.size as u8);
+            if let Some(fit) = record.fit.iter().find(|f| f.slot == slot.name && content().handle::<Module>(&f.item).is_some()) {
+                let fitted = spec.fit.iter().find(|(s,_)| s == &slot.name).expect("fitted item lost");
+                assert_eq!(content().get(fitted.1).key, fit.item);
+            }
+        }
+    }
+
+    #[test]
+    fn cargo_ramp_uses_authored_hinge_not_boarding_marker() {
+        let bytes = include_bytes!("../../../../assets/models/mc07.glb");
+        let spec = hull_from_gltf(bytes, "assets/models/mc07.glb").unwrap();
+        let shape = spec.shape();
+        let r = shape.ramp.as_ref().unwrap();
+        let hinge = r.hinge + shape.made_centre;
+        assert!(hinge.distance(DVec3::new(0.0, -7.15, 2.6)) < 2e-6, "{hinge:?}");
+        assert!(r.axis.distance(DVec3::NEG_X) < 2e-6);
+        let expected_length = read(bytes).unwrap().ramp.iter().flatten().map(|p| hinge.z - p.z).fold(0.0, f64::max);
+        assert!((r.length - expected_length).abs() < 1e-4);
+        assert!(r.length > 9.19 && r.length < 9.22);
+        assert!(r.hinge.distance(shape.node("hatch").unwrap().at) > 3.8);
+        let toe = r.hinge + DVec3::NEG_Z * r.length;
+        let moved = r.hinge + r.turn(0.5176) * (toe - r.hinge);
+        assert!(moved.y < toe.y - 4.0);
+        assert!((r.turn(0.5176) * r.axis - r.axis).length() < 1e-12);
+    }
+
+    #[test]
+    fn provisional_radiator_frames_keep_axes_and_one_root_turn() {
+        // Ships' meshless placement study, not an accepted/installed hull. Keep the
+        // full frames as integration goldens; current Shape nodes still lose roll.
+        let bytes = include_bytes!("../tests/fixtures/mc07-radiator-mounts/mount-frames.glb");
+        let gold: serde_json::Value = serde_json::from_str(include_str!("../tests/fixtures/mc07-radiator-mounts/mount-frames.json")).unwrap();
+        let gltf = gltf::Gltf::from_slice(bytes).unwrap();
+        assert_eq!(gltf.meshes().count(), 0);
+        let mut frames = std::collections::BTreeMap::new();
+        fn visit(node: gltf::Node<'_>, parent: DMat4, frames: &mut std::collections::BTreeMap<String, DMat4>) {
+            let m = parent * DMat4::from_cols_array_2d(&node.transform().matrix().map(|c| c.map(f64::from)));
+            if let Some(name) = node.name().filter(|n| n.starts_with("mount_")) {
+                assert!(frames.insert(name.to_string(), m).is_none());
+            }
+            for child in node.children() { visit(child, m, frames); }
+        }
+        for root in gltf.default_scene().unwrap().nodes() { visit(root, DMat4::IDENTITY, &mut frames); }
+        let read = read(bytes).unwrap();
+        assert_eq!(read.nodes.len(), 4);
+        assert_eq!(frames.len(), 4);
+        let mut max_error = 0.0f64;
+        for g in gold["mounts"].as_array().unwrap() {
+            let name = g["node"].as_str().unwrap();
+            assert_eq!(name.strip_prefix("mount_").unwrap(), g["slot"].as_str().unwrap());
+            let cols: Vec<f64> = g["hull_model_gltf_column_major"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect();
+            let expected = DMat4::from_cols_slice(&cols);
+            let frame = frames[name];
+            for (a, b) in frame.to_cols_array().iter().zip(&cols) {
+                max_error = max_error.max((a - b).abs());
+            }
+            assert!((frame.determinant() - 1.0).abs() < 2e-6);
+            for axis in [DVec3::X, DVec3::Y, DVec3::Z] {
+                assert!((frame.transform_vector3(axis).length() - 1.0).abs() < 2e-6);
+                // Full right-handed frame, including roll, compared to the export.
+                assert!(frame.transform_vector3(axis).distance(expected.transform_vector3(axis)) < 2e-6);
+            }
+            let (_, at, dir) = read.nodes.iter().find(|n| n.0 == name).unwrap();
+            assert!(at.distance(expected.transform_point3(DVec3::ZERO)) < 2e-6);
+            // Legacy forward is -Z, NOT the radiator's outward +Y normal.
+            assert!(dir.distance(expected.transform_vector3(DVec3::NEG_Z).normalize()) < 2e-6);
+            assert!(dir.dot(expected.transform_vector3(DVec3::Y)).abs() < 2e-6);
+        }
+        assert!(max_error < 2e-6, "matrix error {max_error}");
+        println!("four provisional mount frames: maximum component error {max_error:e}");
+        // A fixture of empties must never be mistaken for an installable hull.
+        assert_eq!(hull_from_gltf(bytes, "fixture.glb").unwrap_err(), "no geometry to make its hull from");
     }
 }

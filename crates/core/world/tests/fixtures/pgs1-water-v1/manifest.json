@@ -1,0 +1,123 @@
+{
+  "format": "planet-graph-surface/1",
+  "contract": "planet-unfold 42bde8a docs/format-v4.md",
+  "cases": [
+    {
+      "name": "ocean_cut",
+      "bytes": 1584,
+      "sha256": "5ec4a7853de0d5a9e80d49d1fe29f50cf750e09c19ebecab5a9c78b91ff2f476",
+      "version": 1,
+      "capabilities": 3,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 656,
+          "bytes": 400,
+          "count": 10
+        },
+        {
+          "kind": 2,
+          "offset": 1056,
+          "bytes": 512,
+          "count": 16
+        },
+        {
+          "kind": 4,
+          "offset": 1568,
+          "bytes": 16,
+          "count": 1
+        }
+      ],
+      "queries": 61,
+      "maximum_error_m": 2.5579538487363607e-13,
+      "source_field_maximum_error_m": 5.710814083338227e-14
+    },
+    {
+      "name": "lake_cut",
+      "bytes": 2016,
+      "sha256": "785accd9a0c712bfd0b3f063a1164a9043e45b2f8f7ecd0f0e21fc55847f0cb2",
+      "version": 1,
+      "capabilities": 3,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 656,
+          "bytes": 560,
+          "count": 14
+        },
+        {
+          "kind": 2,
+          "offset": 1216,
+          "bytes": 768,
+          "count": 24
+        },
+        {
+          "kind": 4,
+          "offset": 1984,
+          "bytes": 32,
+          "count": 2
+        }
+      ],
+      "queries": 85,
+      "maximum_error_m": 2.8421709430404007e-13,
+      "source_field_maximum_error_m": 7.070184437907301e-10
+    },
+    {
+      "name": "lake_spill_cap",
+      "bytes": 1600,
+      "sha256": "1f8f3106ea48ef952e846323ea484935daed8ce3bdb7f10f5dd7b536be2a0dcd",
+      "version": 1,
+      "capabilities": 3,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 656,
+          "bytes": 400,
+          "count": 10
+        },
+        {
+          "kind": 2,
+          "offset": 1056,
+          "bytes": 512,
+          "count": 16
+        },
+        {
+          "kind": 4,
+          "offset": 1568,
+          "bytes": 32,
+          "count": 2
+        }
+      ],
+      "queries": 61,
+      "maximum_error_m": 2.3069581212050466e-13,
+      "source_field_maximum_error_m": 5.684341886080802e-14
+    }
+  ],
+  "files": {
+    "lake_cut.json": {
+      "bytes": 24171,
+      "sha256": "4f006d391d4cd36d59d23795f491c0b946788d80c2285ad692d1bb32f7997d3d"
+    },
+    "lake_cut.pgs": {
+      "bytes": 2016,
+      "sha256": "785accd9a0c712bfd0b3f063a1164a9043e45b2f8f7ecd0f0e21fc55847f0cb2"
+    },
+    "lake_spill_cap.json": {
+      "bytes": 19097,
+      "sha256": "1c5af7e7ef4ad9b33000f2fc00645ce93f53610c374163b9f71d4464498fed90"
+    },
+    "lake_spill_cap.pgs": {
+      "bytes": 1600,
+      "sha256": "1f8f3106ea48ef952e846323ea484935daed8ce3bdb7f10f5dd7b536be2a0dcd"
+    },
+    "ocean_cut.json": {
+      "bytes": 18615,
+      "sha256": "8f0c916d7c1c441c1d2f953dd33942a708d04b0de4b7b381c1ec14957b15ff97"
+    },
+    "ocean_cut.pgs": {
+      "bytes": 1584,
+      "sha256": "5ec4a7853de0d5a9e80d49d1fe29f50cf750e09c19ebecab5a9c78b91ff2f476"
+    }
+  },
+  "note": "Synthetic analytical fixtures; not a registry world."
+}

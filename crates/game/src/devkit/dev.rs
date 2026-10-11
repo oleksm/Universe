@@ -8,6 +8,35 @@ use universe_sim::{BodyKind, Controls, Event, GateFrame, NavTarget, PadFrame, Ph
 use crate::observer::Focus;
 use crate::{App, Mode};
 
+/// An explicit terrain or terrain/water lab package, isolated to this process. Both world
+/// and charts receive the same source before either is generated.
+pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
+    use universe_sim::world::{World, worlds::{pgs::Surface, sha256}};
+    let Some(folder) = std::env::var_os("UNIVERSE_PGS1") else { return Ok(World::new(seed)); };
+    let key = std::env::var("UNIVERSE_BODY").map_err(|_| "UNIVERSE_PGS1 requires UNIVERSE_BODY")?;
+    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight")) {
+        return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet or lowflight".into());
+    }
+    if std::env::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
+    let folder = std::path::PathBuf::from(folder);
+    let manifest: serde_json::Value = serde_json::from_slice(&std::fs::read(folder.join("manifest.json")).map_err(|e| e.to_string())?).map_err(|e| e.to_string())?;
+    let bytes = std::fs::read(folder.join("surface.pgs")).map_err(|e| e.to_string())?;
+    let entry = &manifest["files"]["surface.pgs"];
+    if manifest["format"] != "planet-graph-surface/1" || entry["sha256"] != sha256(&bytes) || entry["bytes"].as_u64() != Some(bytes.len() as u64) {
+        return Err("surface manifest/hash/size mismatch".into());
+    }
+    let surface = std::sync::Arc::new(Surface::read(&bytes)?);
+    if !matches!(surface.capabilities, 1 | 3 | 33 | 35) { return Err("this preview supports canonical terrain, water and category roots only".into()); }
+    if !surface.provenance[0].is_empty() && surface.provenance[0] != key { return Err("package body binding differs from UNIVERSE_BODY".into()); }
+    crate::pgs_preview::configure(&folder, &key, &surface, &sha256(&bytes), &manifest)?;
+    let world = World::with_surfaces(seed, std::sync::Arc::new([(key.clone(), surface)].into_iter().collect()));
+    let system = world.system(world.home_system);
+    let body = system.bodies.iter().find(|b| b.key == key).ok_or("preview body is not in the home system")?;
+    if !body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Err("preview body has no terrain".into()); }
+    log::info!("PGS1 PREVIEW: {} on {}; explicit water where supplied; optional category/rock appearance previews (visual tuning); no physical textures or local climate; registry unchanged", folder.display(), key);
+    Ok(world)
+}
+
 pub fn apply(app: &mut App, name: &str) {
     // (Scenarios start in flight behind the home station, as a new pilot
     // once did, not parked on its deck.)
@@ -40,6 +69,10 @@ pub fn apply(app: &mut App, name: &str) {
         }
     }
     app.messages.clear();
+    if app.charts.has_surface_sources() && !crate::pgs_debug::active(&c.sys.bodies[c.planet]) {
+        let palette = crate::pgs_preview::palette(&c.sys.bodies[c.planet]);
+        app.say(if palette.is_some_and(|p| p.materials()) { "PGS1: ROCK APPEARANCE PILOT - VISUAL TUNING" } else if palette.is_some() { "PGS1: DIAGNOSTIC ROCK COLOURS, NOT PHYSICAL TEXTURES" } else { "PGS1: NEUTRAL TERRAIN / EXPORTED WATER" }.into());
+    }
     let u = app.engine.universe();
     log::info!("scenario {name}: pending events {:?}, clearance {:?}", u.events, u.avionics().clearance);
     if std::env::var_os("UNIVERSE_ATC_JOURNAL").is_some() {
@@ -1137,6 +1170,7 @@ fn s_alarms(app: &mut App, _name: &str, _c: &Ctx) {
 }
 
 fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
+    app.observer.studio = std::env::var_os("UNIVERSE_STUDIO").is_some();
     // Our ship as the hull UNIVERSE_HULL names (default the hauler),
     // in sunlight by the home station, seen from the side and above.
     let key = std::env::var("UNIVERSE_HULL").unwrap_or_else(|_| "hull.hauler".into());
@@ -1146,6 +1180,12 @@ fn s_showship(app: &mut App, _name: &str, _c: &Ctx) {
         u.vessels[universe_sim::PLAYER].ship.class = h;
         u.vessels[universe_sim::PLAYER].ship.fit = None;
         u.vessels[universe_sim::PLAYER].ship.refresh();
+    }
+    if let Some(slot) = std::env::var("UNIVERSE_INSPECT_SLOT").ok().filter(|s| !s.is_empty()) {
+        let ship=&u.vessels[universe_sim::PLAYER].ship;
+        if let Some(at)=crate::mounted::for_ship(ship).slot_origin(&slot) {
+            app.observer.inspection_offset=at-ship.spec().shape().made_centre;
+        } else { log::warn!("inspection slot {slot} has no ready mounted visual"); }
     }
     app.mode = Mode::Observer;
     app.observer.focus = Focus::Ship;
@@ -1438,6 +1478,10 @@ fn s_lowflight(app: &mut App, _name: &str, c: &Ctx) {
     // (Where the sun stands overhead now, in the registry's latitude and longitude.)
     let noon = universe_sim::world::worlds::lon_lat(rot.inverse() * (positions[0] - positions[planet]));
     log::info!("lowflight: the sun overhead at {:.1}, {:.1}", noon.lat, noon.lon);
+    if terrain.canonical_surface() {
+        let sun = (positions[0] - positions[planet]).normalize();
+        log::info!("PGS1 lowflight comparison: time={t:.6}s surface={:.6}m sun_elevation={:.6}deg terrain_shadows={}", terrain.surface(off), up.dot(sun).clamp(-1.0,1.0).asin().to_degrees(), crate::pgs_preview::terrain_shadows(b));
+    }
     // (UNIVERSE_ALT: the height instead, m; UNIVERSE_SPEED: the ground speed, m/s.)
     let env = crate::devenv::num;
     app.engine.universe().vessels[universe_sim::PLAYER].ship.position = positions[planet] + up * (b.surface_radius_at(positions[planet], positions[planet] + up, t) + env("UNIVERSE_ALT").unwrap_or(6000.0));

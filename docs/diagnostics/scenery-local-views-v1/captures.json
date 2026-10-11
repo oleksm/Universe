@@ -1,0 +1,254 @@
+{
+  "binary_sha256": "323c1eb62065beff63a51b993211e26187196202ff0e6810921622f76cd94525",
+  "captures": [
+    {
+      "id": "high_to_low-control-neutral",
+      "settings": {
+        "UNIVERSE_PGS1": "/home/alexm/git/planet-trees/out/benchmarks/scenery-mesh-control-s15-1250-v1",
+        "UNIVERSE_PGS1_COLOURS": "neutral",
+        "UNIVERSE_PGS1_SHADOWS": "off",
+        "UNIVERSE_BODY": "body.treistun.treistun-e",
+        "UNIVERSE_SCENARIO": "lowflight",
+        "UNIVERSE_ENGINE_THREAD": "0",
+        "UNIVERSE_LAT": "-50.930818875027846",
+        "UNIVERSE_LON": "-19.20780668536734",
+        "UNIVERSE_HOURS": "2",
+        "UNIVERSE_ALT": "1301.9774296701935",
+        "UNIVERSE_DOWN": "0.10326849032826112",
+        "UNIVERSE_HEADING": "132.45577440642353",
+        "UNIVERSE_SPEED": "0",
+        "UNIVERSE_SETTLERS": "0",
+        "UNIVERSE_PAUSED": "1",
+        "UNIVERSE_SCREENSHOT": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-control-neutral.png",
+        "UNIVERSE_SCREENSHOT_AT": "240",
+        "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/control-empty-debug.json",
+        "UNIVERSE_PGS1_GEOMETRY": "off"
+      },
+      "png_sha256": "7cc4e896a161bb1e255d3e3d9f7e458c3ae44f00624c4ab473449e4bd5a4ece1",
+      "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-control-neutral.log",
+      "runtime_eye_height_m": [
+        6751.402175,
+        6751.402175
+      ],
+      "comparison": [
+        "time=7200.000000s surface=5449.428795m sun_elevation=15.658530deg terrain_shadows=false"
+      ],
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 44, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 44, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175"
+      ]
+    },
+    {
+      "id": "low_to_high-control-neutral",
+      "settings": {
+        "UNIVERSE_PGS1": "/home/alexm/git/planet-trees/out/benchmarks/scenery-mesh-control-s15-1250-v1",
+        "UNIVERSE_PGS1_COLOURS": "neutral",
+        "UNIVERSE_PGS1_SHADOWS": "off",
+        "UNIVERSE_BODY": "body.treistun.treistun-e",
+        "UNIVERSE_SCENARIO": "lowflight",
+        "UNIVERSE_ENGINE_THREAD": "0",
+        "UNIVERSE_LAT": "-51.00222698954717",
+        "UNIVERSE_LON": "-19.083665220874618",
+        "UNIVERSE_HOURS": "2",
+        "UNIVERSE_ALT": "1408.9679775800641",
+        "UNIVERSE_DOWN": "0.08699189567157428",
+        "UNIVERSE_HEADING": "312.35934399854943",
+        "UNIVERSE_SPEED": "0",
+        "UNIVERSE_SETTLERS": "0",
+        "UNIVERSE_PAUSED": "1",
+        "UNIVERSE_SCREENSHOT": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-control-neutral.png",
+        "UNIVERSE_SCREENSHOT_AT": "240",
+        "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/control-empty-debug.json",
+        "UNIVERSE_PGS1_GEOMETRY": "off"
+      },
+      "png_sha256": "cddd8b7a06c8c7b985fa96ebaa973072c52b4dab5276561d96399a6730ed7b43",
+      "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-control-neutral.log",
+      "runtime_eye_height_m": [
+        6751.402171,
+        6751.402171
+      ],
+      "comparison": [
+        "time=7200.000000s surface=5342.397239m sun_elevation=15.742591deg terrain_shadows=false"
+      ],
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402171",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402171"
+      ]
+    },
+    {
+      "id": "high_to_low-candidate-channels",
+      "settings": {
+        "UNIVERSE_PGS1": "/home/alexm/git/planet-trees/out/planet/earth_s15/basin_review_001",
+        "UNIVERSE_PGS1_COLOURS": "neutral",
+        "UNIVERSE_PGS1_SHADOWS": "off",
+        "UNIVERSE_BODY": "body.treistun.treistun-e",
+        "UNIVERSE_SCENARIO": "lowflight",
+        "UNIVERSE_ENGINE_THREAD": "0",
+        "UNIVERSE_LAT": "-50.930818875027846",
+        "UNIVERSE_LON": "-19.20780668536734",
+        "UNIVERSE_HOURS": "2",
+        "UNIVERSE_ALT": "1000.0841443167183",
+        "UNIVERSE_DOWN": "0.10326849032826112",
+        "UNIVERSE_HEADING": "132.45577440642353",
+        "UNIVERSE_SPEED": "0",
+        "UNIVERSE_SETTLERS": "0",
+        "UNIVERSE_PAUSED": "1",
+        "UNIVERSE_SCREENSHOT": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-candidate-channels.png",
+        "UNIVERSE_SCREENSHOT_AT": "240",
+        "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/planet-trees/out/planet/earth_s15/debug_review_002/scenery-debug.json",
+        "UNIVERSE_PGS1_DEBUG_LAYERS": "reference_rivers,native_rivers,connector",
+        "UNIVERSE_PGS1_DEBUG_LIFT": "2",
+        "UNIVERSE_PGS1_GEOMETRY": "off"
+      },
+      "png_sha256": "7f2b97bbc2ec4c2b49aa661e510ab0d406bb45c1e20ebb40547ce72844d321c8",
+      "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-candidate-channels.log",
+      "runtime_eye_height_m": [
+        6751.402175,
+        6751.402175
+      ],
+      "comparison": [
+        "time=7200.000000s surface=5751.402172m sun_elevation=15.658530deg terrain_shadows=false"
+      ],
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175"
+      ]
+    },
+    {
+      "id": "high_to_low-candidate-neutral",
+      "settings": {
+        "UNIVERSE_PGS1": "/home/alexm/git/planet-trees/out/planet/earth_s15/basin_review_001",
+        "UNIVERSE_PGS1_COLOURS": "neutral",
+        "UNIVERSE_PGS1_SHADOWS": "off",
+        "UNIVERSE_BODY": "body.treistun.treistun-e",
+        "UNIVERSE_SCENARIO": "lowflight",
+        "UNIVERSE_ENGINE_THREAD": "0",
+        "UNIVERSE_LAT": "-50.930818875027846",
+        "UNIVERSE_LON": "-19.20780668536734",
+        "UNIVERSE_HOURS": "2",
+        "UNIVERSE_ALT": "1000.0841443167183",
+        "UNIVERSE_DOWN": "0.10326849032826112",
+        "UNIVERSE_HEADING": "132.45577440642353",
+        "UNIVERSE_SPEED": "0",
+        "UNIVERSE_SETTLERS": "0",
+        "UNIVERSE_PAUSED": "1",
+        "UNIVERSE_SCREENSHOT": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-candidate-neutral.png",
+        "UNIVERSE_SCREENSHOT_AT": "240",
+        "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/candidate-empty-debug.json",
+        "UNIVERSE_PGS1_GEOMETRY": "off"
+      },
+      "png_sha256": "8cb3f89d5493f27bd9f300fda9b3ed5639d5e83f7fe09fa382da7e1ed728fd21",
+      "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/high_to_low-candidate-neutral.log",
+      "runtime_eye_height_m": [
+        6751.402175,
+        6751.402175
+      ],
+      "comparison": [
+        "time=7200.000000s surface=5751.402172m sun_elevation=15.658530deg terrain_shadows=false"
+      ],
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 72, 8: 74, 9: 66, 10: 65, 11: 76, 12: 64} pending=0 eye_height_m=6751.402175"
+      ]
+    },
+    {
+      "id": "low_to_high-candidate-channels",
+      "settings": {
+        "UNIVERSE_PGS1": "/home/alexm/git/planet-trees/out/planet/earth_s15/basin_review_001",
+        "UNIVERSE_PGS1_COLOURS": "neutral",
+        "UNIVERSE_PGS1_SHADOWS": "off",
+        "UNIVERSE_BODY": "body.treistun.treistun-e",
+        "UNIVERSE_SCENARIO": "lowflight",
+        "UNIVERSE_ENGINE_THREAD": "0",
+        "UNIVERSE_LAT": "-51.00222698954717",
+        "UNIVERSE_LON": "-19.083665220874618",
+        "UNIVERSE_HOURS": "2",
+        "UNIVERSE_ALT": "1189.1148909711637",
+        "UNIVERSE_DOWN": "0.08699189567157428",
+        "UNIVERSE_HEADING": "312.35934399854943",
+        "UNIVERSE_SPEED": "0",
+        "UNIVERSE_SETTLERS": "0",
+        "UNIVERSE_PAUSED": "1",
+        "UNIVERSE_SCREENSHOT": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-candidate-channels.png",
+        "UNIVERSE_SCREENSHOT_AT": "240",
+        "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/planet-trees/out/planet/earth_s15/debug_review_002/scenery-debug.json",
+        "UNIVERSE_PGS1_DEBUG_LAYERS": "reference_rivers,native_rivers,connector",
+        "UNIVERSE_PGS1_DEBUG_LIFT": "2",
+        "UNIVERSE_PGS1_GEOMETRY": "off"
+      },
+      "png_sha256": "33f73a687e5f0d521a73eb3fd79cfa83826d73573cedc31f9f526e65df2cbd62",
+      "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-candidate-channels.log",
+      "runtime_eye_height_m": [
+        6751.402172,
+        6751.402172
+      ],
+      "comparison": [
+        "time=7200.000000s surface=5562.324482m sun_elevation=15.742591deg terrain_shadows=false"
+      ],
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172"
+      ]
+    },
+    {
+      "id": "low_to_high-candidate-neutral",
+      "settings": {
+        "UNIVERSE_PGS1": "/home/alexm/git/planet-trees/out/planet/earth_s15/basin_review_001",
+        "UNIVERSE_PGS1_COLOURS": "neutral",
+        "UNIVERSE_PGS1_SHADOWS": "off",
+        "UNIVERSE_BODY": "body.treistun.treistun-e",
+        "UNIVERSE_SCENARIO": "lowflight",
+        "UNIVERSE_ENGINE_THREAD": "0",
+        "UNIVERSE_LAT": "-51.00222698954717",
+        "UNIVERSE_LON": "-19.083665220874618",
+        "UNIVERSE_HOURS": "2",
+        "UNIVERSE_ALT": "1189.1148909711637",
+        "UNIVERSE_DOWN": "0.08699189567157428",
+        "UNIVERSE_HEADING": "312.35934399854943",
+        "UNIVERSE_SPEED": "0",
+        "UNIVERSE_SETTLERS": "0",
+        "UNIVERSE_PAUSED": "1",
+        "UNIVERSE_SCREENSHOT": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-candidate-neutral.png",
+        "UNIVERSE_SCREENSHOT_AT": "240",
+        "UNIVERSE_PGS1_DEBUG": "/home/alexm/git/universe/out/review/pgs-local-views-v1/candidate-empty-debug.json",
+        "UNIVERSE_PGS1_GEOMETRY": "off"
+      },
+      "png_sha256": "a139fff3a6b7f735857a7e9fd2f4f0447ade08813f11e23dfe8d75f7e1485c35",
+      "log": "/home/alexm/git/universe/out/review/pgs-local-views-v1/low_to_high-candidate-neutral.log",
+      "runtime_eye_height_m": [
+        6751.402172,
+        6751.402172
+      ],
+      "comparison": [
+        "time=7200.000000s surface=5562.324482m sun_elevation=15.742591deg terrain_shadows=false"
+      ],
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 48, 7: 64, 8: 72, 9: 75, 10: 63, 11: 68, 12: 64} pending=0 eye_height_m=6751.402172"
+      ]
+    }
+  ],
+  "visual_inspection": "All six final calibrated images inspected: high-to-low source/native guides visible; reverse native guide only. Neutral relief remains broad and faint; mountain scenery goal unmet.",
+  "comparison_crops": {
+    "high_to_low": {
+      "bounds_xy": [
+        440,
+        560,
+        1600,
+        680
+      ],
+      "mean_abs_channel": 0.527919061302682,
+      "max_abs_channel": 18
+    },
+    "low_to_high": {
+      "bounds_xy": [
+        440,
+        560,
+        1600,
+        680
+      ],
+      "mean_abs_channel": 0.44645354406130267,
+      "max_abs_channel": 5
+    }
+  }
+}

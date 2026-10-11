@@ -1,0 +1,12 @@
+{
+  "glb_sha256": "3a0a28a686a66ccb3e3dcdb9cbb006f3520c6739235fe1d40138d1e0be5264b0",
+  "fixture_sha256": "3b208f0c9c1fe160e353708b726ccca10764eb518034b279d8bc0e6f516f85a6",
+  "glb_nodes": 12,
+  "reference_poses": 129,
+  "rest_control": 0,
+  "max_bind_matrix_component_error": 1.1173690239729694e-06,
+  "max_parent_composition_component_error": 1.1173690239729694e-06,
+  "max_orthogonality_error": 5.960462661214194e-07,
+  "min_determinant": 0.9999996280487349,
+  "scope": "Independent static binds and all-reference hierarchy/rigidity only; source vertex equivalence and mechanism dynamics not independently re-evaluated; moving runtime held"
+}

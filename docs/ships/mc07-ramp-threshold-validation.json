@@ -1,0 +1,1089 @@
+{
+  "manifest": {
+    "fixture_sha256": "8603586786a778ed8ba1354447919922329db567a1cbc3acf7680110911173f8",
+    "outputs": [
+      {
+        "pose": "closed",
+        "objects": 14,
+        "triangles": 28029,
+        "glb_sha256": "66881844744e7738954b5f1099ca65c5c797301e514a68520a200bc8bf2b2d3b",
+        "json_sha256": "74ea95ef6c6c7118824aac90bfbb442db49e49f71dac0666570b4205ea0c2e6d"
+      },
+      {
+        "pose": "deployed",
+        "objects": 14,
+        "triangles": 28029,
+        "glb_sha256": "e2c5d92b812fc6d68192ea3999624d7645944dd38eaaac0201989f2f0bec23ba",
+        "json_sha256": "7ada4ada117bf6b7ff7da23f29096091df5c10cbf112d88ec91f6d06ecb1fee8"
+      }
+    ],
+    "included_objects": [
+      "Hull_Main",
+      "Hull_Keel",
+      "Bottom_Greebles_HullGrey",
+      "Bottom_Greebles_DarkMetal",
+      "CargoRamp",
+      "CargoRam_L_Body",
+      "CargoRam_L_Rod",
+      "CargoRam_R_Body",
+      "CargoRam_R_Rod",
+      "FixedRamp_TrueAxisPin_-1",
+      "FixedRamp_EndPedestal_-1",
+      "FixedRamp_TrueAxisPin_1",
+      "FixedRamp_EndPedestal_1",
+      "FixedRamp_ThresholdCover"
+    ],
+    "scope": "Exact isolated fixed hull/cover/support and five ramp groups only. Helpers and other equipment excluded. Full included hull meshes retained uncut to avoid artificial cut edges; no synthetic collision shapes. Root action cleared; other mechanisms stowed. Geometry only, not runtime walker acceptance.",
+    "source_unchanged": true,
+    "glb_packing": "pack_exact_glb.py preserves all collision triangles; ordinary visual exporter discarded tiny/duplicate original faces. JSON authoritative, exact GLB equivalent. No geometry cleaning performed."
+  },
+  "routes": [
+    {
+      "pose": "closed",
+      "route": "heel",
+      "exit": 0,
+      "stderr": "",
+      "cargo": "unsupported: no cargo traversal body",
+      "fixture": "/home/alexm/git/blender/mc07-ramp-fit/runtime-collision-v01/closed.glb",
+      "gravity_m_s2": 9.80665,
+      "results": [
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            1.7047441431827924e-07,
+            -7.150000095367432,
+            1.9500000000000073
+          ],
+          "frames": 41,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.154142272993493,
+          "pass": true,
+          "progress_m": 2.0500000000000007,
+          "reached_end": true,
+          "requested_end": [
+            1.7484555314695172e-07,
+            -7.150000095367432,
+            2.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            1.7265998373261653e-07,
+            -7.150000095367432,
+            1.9750000000000072
+          ],
+          "frames": 81,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261392,
+          "pass": true,
+          "progress_m": 2.025000000000001,
+          "reached_end": true,
+          "requested_end": [
+            1.7484555314695172e-07,
+            -7.150000095367432,
+            2.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            1.7375276843978497e-07,
+            -7.150000095367432,
+            1.9875000000000427
+          ],
+          "frames": 161,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261418,
+          "pass": true,
+          "progress_m": 2.0124999999999655,
+          "reached_end": true,
+          "requested_end": [
+            1.7484555314695172e-07,
+            -7.150000095367432,
+            2.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.5406224512257586e-07,
+            -7.150000095367432,
+            4.049999999999993
+          ],
+          "frames": 41,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.15414227299349,
+          "pass": true,
+          "progress_m": 2.0500000000000007,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            1.7484555314695172e-07,
+            -7.150000095367432,
+            2.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.518766757082386e-07,
+            -7.150000095367432,
+            4.024999999999992
+          ],
+          "frames": 81,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261385,
+          "pass": true,
+          "progress_m": 2.0250000000000004,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            1.7484555314695172e-07,
+            -7.150000095367432,
+            2.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.507838910010702e-07,
+            -7.150000095367432,
+            4.0124999999999575
+          ],
+          "frames": 161,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261375,
+          "pass": true,
+          "progress_m": 2.0124999999999655,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            1.7484555314695172e-07,
+            -7.150000095367432,
+            2.0
+          ],
+          "unsupported": []
+        }
+      ],
+      "sha256": "66881844744e7738954b5f1099ca65c5c797301e514a68520a200bc8bf2b2d3b",
+      "triangles": 28029
+    },
+    {
+      "pose": "closed",
+      "route": "full",
+      "exit": 0,
+      "stderr": "",
+      "cargo": "unsupported: no cargo traversal body",
+      "fixture": "/home/alexm/git/blender/mc07-ramp-fit/runtime-collision-v01/closed.glb",
+      "gravity_m_s2": 9.80665,
+      "results": [
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            -3.5406224512257326e-07,
+            -7.150000095367432,
+            -4.0499999999999705
+          ],
+          "frames": 161,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.154142272993493,
+          "pass": true,
+          "progress_m": 8.050000000000002,
+          "reached_end": true,
+          "requested_end": [
+            -3.4969110629390343e-07,
+            -7.150000095367432,
+            -4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            -3.5187667570823496e-07,
+            -7.150000095367432,
+            -4.024999999999971
+          ],
+          "frames": 321,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261392,
+          "pass": true,
+          "progress_m": 8.025000000000002,
+          "reached_end": true,
+          "requested_end": [
+            -3.4969110629390343e-07,
+            -7.150000095367432,
+            -4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            -3.5078389100106583e-07,
+            -7.150000095367432,
+            -4.012499999999901
+          ],
+          "frames": 641,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261418,
+          "pass": true,
+          "progress_m": 8.01249999999993,
+          "reached_end": true,
+          "requested_end": [
+            -3.4969110629390343e-07,
+            -7.150000095367432,
+            -4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.5406224512257326e-07,
+            -7.150000095367432,
+            4.0499999999999705
+          ],
+          "frames": 161,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.154142272993481,
+          "pass": true,
+          "progress_m": 8.050000000000002,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            -3.4969110629390343e-07,
+            -7.150000095367432,
+            -4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.5187667570823496e-07,
+            -7.150000095367432,
+            4.024999999999971
+          ],
+          "frames": 321,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261364,
+          "pass": true,
+          "progress_m": 8.025000000000002,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            -3.4969110629390343e-07,
+            -7.150000095367432,
+            -4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.5078389100106583e-07,
+            -7.150000095367432,
+            4.012499999999901
+          ],
+          "frames": 641,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.175000262261318,
+          "pass": true,
+          "progress_m": 8.01249999999993,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            -3.4969110629390343e-07,
+            -7.150000095367432,
+            -4.0
+          ],
+          "unsupported": []
+        }
+      ],
+      "sha256": "66881844744e7738954b5f1099ca65c5c797301e514a68520a200bc8bf2b2d3b",
+      "triangles": 28029
+    },
+    {
+      "pose": "deployed",
+      "route": "heel",
+      "exit": 0,
+      "stderr": "",
+      "cargo": "unsupported: no cargo traversal body",
+      "fixture": "/home/alexm/git/blender/mc07-ramp-fit/runtime-collision-v01/deployed.glb",
+      "gravity_m_s2": 9.80665,
+      "results": [
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            1.7047441431827924e-07,
+            -7.520096762275456,
+            1.9500000000000073
+          ],
+          "frames": 41,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.520096762275456,
+          "pass": true,
+          "progress_m": 2.0500000000000007,
+          "reached_end": true,
+          "requested_end": [
+            1.7484555314695172e-07,
+            -7.4916276931762695,
+            2.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            1.7265998373261653e-07,
+            -7.505862276874124,
+            1.9750000000000072
+          ],
+          "frames": 81,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.505862276874124,
+          "pass": true,
+          "progress_m": 2.025000000000001,
+          "reached_end": true,
+          "requested_end": [
+            1.7484555314695172e-07,
+            -7.4916276931762695,
+            2.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            1.7375276843978497e-07,
+            -7.498745034173438,
+            1.9875000000000427
+          ],
+          "frames": 161,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.498745034173438,
+          "pass": true,
+          "progress_m": 2.0124999999999655,
+          "reached_end": true,
+          "requested_end": [
+            1.7484555314695172e-07,
+            -7.4916276931762695,
+            2.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.5406224512257586e-07,
+            -7.150000095367432,
+            4.049999999999993
+          ],
+          "frames": 41,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.491627791472796,
+          "pass": true,
+          "progress_m": 2.0500000000000007,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            1.7484555314695172e-07,
+            -7.491627791472796,
+            2.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.518766757082386e-07,
+            -7.150000095367432,
+            4.024999999999992
+          ],
+          "frames": 81,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.491627791472796,
+          "pass": true,
+          "progress_m": 2.0250000000000004,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            1.7484555314695172e-07,
+            -7.491627791472796,
+            2.0
+          ],
+          "unsupported": []
+        },
+        {
+          "airborne_frames": 0,
+          "continuous_support": true,
+          "final": [
+            3.507838910010702e-07,
+            -7.150000095367432,
+            4.0124999999999575
+          ],
+          "frames": 161,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -7.491627791472796,
+          "pass": true,
+          "progress_m": 2.0124999999999655,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            1.7484555314695172e-07,
+            -7.491627791472796,
+            2.0
+          ],
+          "unsupported": []
+        }
+      ],
+      "sha256": "e2c5d92b812fc6d68192ea3999624d7645944dd38eaaac0201989f2f0bec23ba",
+      "triangles": 28029
+    },
+    {
+      "pose": "deployed",
+      "route": "full",
+      "exit": 1,
+      "stderr": "Error: \"continuous supported traversal gate failed; see reached_end separately\"\n",
+      "cargo": "unsupported: no cargo traversal body",
+      "fixture": "/home/alexm/git/blender/mc07-ramp-fit/runtime-collision-v01/deployed.glb",
+      "gravity_m_s2": 9.80665,
+      "results": [
+        {
+          "airborne_frames": 2,
+          "continuous_support": false,
+          "final": [
+            -3.5406224512257326e-07,
+            -10.936373304229868,
+            -4.0499999999999705
+          ],
+          "frames": 161,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -10.936373304229868,
+          "pass": false,
+          "progress_m": 8.050000000000002,
+          "reached_end": true,
+          "requested_end": [
+            -3.4969110629390343e-07,
+            -10.907904624938965,
+            -4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": [
+            {
+              "down_ray": {
+                "distance": 0.4748743759926207,
+                "normal": [
+                  -1.0025599146835476e-07,
+                  0.2646078492542163,
+                  -0.9643560992253057
+                ]
+              },
+              "feet": [
+                -2.622683297204245e-07,
+                -10.297937972962783,
+                -2.9999999999999747
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4972633424541787,
+                "normal": [
+                  -6.393959190840101e-08,
+                  0.8690091837286251,
+                  -0.49479595652683406
+                ]
+              },
+              "feet": [
+                -2.6663946854909825e-07,
+                -10.319730528518338,
+                -3.0499999999999745
+              ]
+            }
+          ]
+        },
+        {
+          "airborne_frames": 4,
+          "continuous_support": false,
+          "final": [
+            -3.5187667570823496e-07,
+            -10.922138818398434,
+            -4.024999999999971
+          ],
+          "frames": 321,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -10.922138818398434,
+          "pass": false,
+          "progress_m": 8.025000000000002,
+          "reached_end": true,
+          "requested_end": [
+            -3.4969110629390343e-07,
+            -10.907904624938965,
+            -4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": [
+            {
+              "down_ray": {
+                "distance": 0.47200074264804576,
+                "normal": [
+                  -8.354638001778943e-08,
+                  0.2646196083884975,
+                  -0.9643528725815624
+                ]
+              },
+              "feet": [
+                4.152581887240354e-08,
+                -8.325406272514437,
+                0.4750000000000125
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4933114749520221,
+                "normal": [
+                  -4.7954692837068e-08,
+                  0.8690091901570794,
+                  -0.49479594523655357
+                ]
+              },
+              "feet": [
+                3.934024945806665e-08,
+                -8.330854411403326,
+                0.4500000000000126
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4688122133269442,
+                "normal": [
+                  -1.0025599146835476e-07,
+                  0.2646078492542163,
+                  -0.9643560992253057
+                ]
+              },
+              "feet": [
+                -2.6226832972042307e-07,
+                -10.30400013562846,
+                -2.9999999999999747
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.49331111062373434,
+                "normal": [
+                  -6.393959190840101e-08,
+                  0.8690091837286251,
+                  -0.49479595652683406
+                ]
+              },
+              "feet": [
+                -2.6445389913475995e-07,
+                -10.309448274517349,
+                -3.0249999999999746
+              ]
+            }
+          ]
+        },
+        {
+          "airborne_frames": 8,
+          "continuous_support": false,
+          "final": [
+            -3.5078389100106583e-07,
+            -10.915021575482678,
+            -4.012499999999901
+          ],
+          "frames": 641,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -10.915021575482678,
+          "pass": false,
+          "progress_m": 8.01249999999993,
+          "reached_end": true,
+          "requested_end": [
+            -3.4969110629390343e-07,
+            -10.907904624938965,
+            -4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "unsupported": [
+            {
+              "down_ray": {
+                "distance": 0.4577164676239925,
+                "normal": [
+                  -8.354678908369186e-08,
+                  0.2646024003740356,
+                  -0.9643575943166993
+                ]
+              },
+              "feet": [
+                7.977328362329934e-08,
+                -8.081376682228534,
+                0.9125000000000465
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4852064321806045,
+                "normal": [
+                  -4.7954692837068e-08,
+                  0.8690091901570794,
+                  -0.49479594523655357
+                ]
+              },
+              "feet": [
+                7.86804989161309e-08,
+                -8.082738716950756,
+                0.9000000000000465
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4669265115992069,
+                "normal": [
+                  -8.354638001778943e-08,
+                  0.2646196083884975,
+                  -0.9643528725815624
+                ]
+              },
+              "feet": [
+                4.1525818872403906e-08,
+                -8.330480503563146,
+                0.47500000000004805
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4852061053692939,
+                "normal": [
+                  -4.7954692837068e-08,
+                  0.8690091901570794,
+                  -0.49479594523655357
+                ]
+              },
+              "feet": [
+                4.043303416523546e-08,
+                -8.331842538285368,
+                0.4625000000000481
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4653335368867022,
+                "normal": [
+                  -8.354706858787793e-08,
+                  0.2645906418893055,
+                  -0.9643608205565997
+                ]
+              },
+              "feet": [
+                -1.1037125542400953e-07,
+                -9.319776919948032,
+                -1.2624999999999456
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.48520642437695016,
+                "normal": [
+                  -4.7954692837068e-08,
+                  0.8690091901570794,
+                  -0.49479594523655357
+                ]
+              },
+              "feet": [
+                -1.1146404013117797e-07,
+                -9.321138954670253,
+                -1.2749999999999455
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4637380799106072,
+                "normal": [
+                  -1.0025599146835476e-07,
+                  0.2646078492542163,
+                  -0.9643560992253057
+                ]
+              },
+              "feet": [
+                -2.622683297204224e-07,
+                -10.309074269044604,
+                -2.999999999999922
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.48520583845851,
+                "normal": [
+                  -6.393959190840101e-08,
+                  0.8690091837286251,
+                  -0.49479595652683406
+                ]
+              },
+              "feet": [
+                -2.633611144275908e-07,
+                -10.310436303766826,
+                -3.0124999999999216
+              ]
+            }
+          ]
+        },
+        {
+          "airborne_frames": 1,
+          "continuous_support": false,
+          "final": [
+            3.5406224512257326e-07,
+            -7.150000095367432,
+            4.0499999999999705
+          ],
+          "frames": 161,
+          "hz": 30,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -10.907904332567018,
+          "pass": false,
+          "progress_m": 8.050000000000002,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            -3.4969110629390343e-07,
+            -10.907904332567018,
+            -4.0
+          ],
+          "unsupported": [
+            {
+              "down_ray": {
+                "distance": 0.39492220020519686,
+                "normal": [
+                  -1.0025599146835476e-07,
+                  0.2646078492542163,
+                  -0.9643560992253057
+                ]
+              },
+              "feet": [
+                -2.622683297204284e-07,
+                -10.377890148750312,
+                -3.0000000000000036
+              ]
+            }
+          ]
+        },
+        {
+          "airborne_frames": 2,
+          "continuous_support": false,
+          "final": [
+            3.5187667570823496e-07,
+            -7.150000095367432,
+            4.024999999999971
+          ],
+          "frames": 321,
+          "hz": 60,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -10.907904332567018,
+          "pass": false,
+          "progress_m": 8.025000000000002,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            -3.4969110629390343e-07,
+            -10.907904332567018,
+            -4.0
+          ],
+          "unsupported": [
+            {
+              "down_ray": {
+                "distance": 0.4173288943699654,
+                "normal": [
+                  -1.0025599146835476e-07,
+                  0.2646078492542163,
+                  -0.9643560992253057
+                ]
+              },
+              "feet": [
+                -2.622683297204284e-07,
+                -10.355483454585544,
+                -3.0000000000000036
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4205170593627789,
+                "normal": [
+                  -8.354638001778943e-08,
+                  0.2646196083884975,
+                  -0.9643528725815624
+                ]
+              },
+              "feet": [
+                4.1525818872398215e-08,
+                -8.376889955799808,
+                0.47499999999998405
+              ]
+            }
+          ]
+        },
+        {
+          "airborne_frames": 4,
+          "continuous_support": false,
+          "final": [
+            3.5078389100106583e-07,
+            -7.150000095367432,
+            4.012499999999901
+          ],
+          "frames": 641,
+          "hz": 120,
+          "max_feet_y": -7.119999885559082,
+          "min_feet_y": -10.907904332567018,
+          "pass": false,
+          "progress_m": 8.01249999999993,
+          "reached_end": true,
+          "requested_end": [
+            3.4969110629390343e-07,
+            -7.150000095367432,
+            4.0
+          ],
+          "speed_m_s": 1.5,
+          "start": [
+            -3.4969110629390343e-07,
+            -10.907904332567018,
+            -4.0
+          ],
+          "unsupported": [
+            {
+              "down_ray": {
+                "distance": 0.42648918936906827,
+                "normal": [
+                  -1.0025599146835476e-07,
+                  0.2646078492542163,
+                  -0.9643560992253057
+                ]
+              },
+              "feet": [
+                -2.622683297204284e-07,
+                -10.346323159586506,
+                -3.0000000000000213
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.42808406042672514,
+                "normal": [
+                  -8.354706858787793e-08,
+                  0.2645906418893055,
+                  -0.9643608205565997
+                ]
+              },
+              "feet": [
+                -1.1037125542401559e-07,
+                -9.357026396408372,
+                -1.2625000000000453
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.4296773541468848,
+                "normal": [
+                  -8.354638001778943e-08,
+                  0.2646196083884975,
+                  -0.9643528725815624
+                ]
+              },
+              "feet": [
+                4.152581887239785e-08,
+                -8.367729661015831,
+                0.4749999999999485
+              ]
+            },
+            {
+              "down_ray": {
+                "distance": 0.42046698336036026,
+                "normal": [
+                  -8.354678908369186e-08,
+                  0.2646024003740356,
+                  -0.9643575943166993
+                ]
+              },
+              "feet": [
+                7.977328362329327e-08,
+                -8.118626166492529,
+                0.9124999999999469
+              ]
+            }
+          ]
+        }
+      ],
+      "sha256": "e2c5d92b812fc6d68192ea3999624d7645944dd38eaaac0201989f2f0bec23ba",
+      "triangles": 28029
+    }
+  ],
+  "scope": "Isolated static snapshots, diagnostic centreline, both directions, 30/60/120 Hz; no combined hull or live motion acceptance.",
+  "cargo": "UNSUPPORTED: aggregate inventory only; registry confirms no carrier/container traversal contract."
+}

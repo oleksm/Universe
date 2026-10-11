@@ -33,7 +33,8 @@ properties:
     properties:
       mass: { type: number, exclusiveMinimum: 0, x-unit: "kg", description: "kg, the heaviest equipment it carries" }
       thrust: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most push one nozzle may put through it (a drive, thrusters or lift)" }
-      recoil: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a weapon may kick against it" }
+      recoil: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a weapon may kick against it, or a breaker push back on it" }
+      hold: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a clamp or docking gear holds the ship by through it: what it grips with reaches the hull here" }
       landing: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most a landing leg may put into it" }
   attachment:
     description: "How what is fitted fastens to the hull: the points the load goes through, so that a frame can be built to the socket and a module strutted to it without a hull."

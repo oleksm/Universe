@@ -1,0 +1,88 @@
+{
+  "scope": "Single-run Vulkan diagnostic, visual tuning, not calibrated material appearance or benchmark",
+  "frames": 480,
+  "captures": {
+    "summit-neutral": {
+      "file": "/tmp/pgs-material-pilot/summit-neutral.png",
+      "sha256": "b0e3f95a4f0ba1fafd2d6aa298d036e4d0502c51d9a6e02931eab3b8bc296e7e",
+      "comparison": "time=7200.000000s surface=5456.784229m sun_elevation=15.684057deg terrain_shadows=false",
+      "ms_per_frame": 24.54,
+      "scene_gpu_ms": 1.6
+    },
+    "summit-categories": {
+      "file": "/tmp/pgs-material-pilot/summit-categories.png",
+      "sha256": "50e099ad51a609f7e6f681e086833eb48da86624bb95e1dd3e114ae6f4d6c0f7",
+      "comparison": "time=7200.000000s surface=5456.784229m sun_elevation=15.684057deg terrain_shadows=false",
+      "ms_per_frame": 24.26,
+      "scene_gpu_ms": 0.23
+    },
+    "summit-materials": {
+      "file": "/tmp/pgs-material-pilot/summit-materials.png",
+      "sha256": "e44c9059842ae941b780b509f9214935f14764b8504503d878d28aacc3ca0090",
+      "comparison": "time=7200.000000s surface=5456.784229m sun_elevation=15.684057deg terrain_shadows=false",
+      "ms_per_frame": 23.56,
+      "scene_gpu_ms": 0.85
+    },
+    "lake-neutral": {
+      "file": "/tmp/pgs-material-pilot/lake-neutral.png",
+      "sha256": "67d1bd8f05d81e9ad337a3c365d29d86ca0de58620507aad4de2d584cd442bae",
+      "comparison": "time=33503.400000s surface=620.613115m sun_elevation=12.521021deg terrain_shadows=false",
+      "ms_per_frame": 30.41,
+      "scene_gpu_ms": 0.2
+    },
+    "lake-categories": {
+      "file": "/tmp/pgs-material-pilot/lake-categories.png",
+      "sha256": "d68a28e5c9ed15b62b00a5ec6dd13ff8a1e3e5d8c6cef33992b2e185a9507ab0",
+      "comparison": "time=33503.400000s surface=620.613115m sun_elevation=12.521021deg terrain_shadows=false",
+      "ms_per_frame": 29.99,
+      "scene_gpu_ms": 0.2
+    },
+    "lake-materials": {
+      "file": "/tmp/pgs-material-pilot/lake-materials.png",
+      "sha256": "f6242d8ec2dd7aa352c09cf894d7bf3172757a09ad269e2841c2515237dda591",
+      "comparison": "time=33503.400000s surface=620.613115m sun_elevation=12.521021deg terrain_shadows=false",
+      "ms_per_frame": 30.13,
+      "scene_gpu_ms": 0.2
+    }
+  },
+  "lake_region": {
+    "xyxy": [
+      1000,
+      450,
+      1200,
+      650
+    ],
+    "comparisons": {
+      "categories": {
+        "max_channel_difference": 1,
+        "mean_channel_difference": 0.0009083333333333334,
+        "changed_pixels": 102
+      },
+      "materials": {
+        "max_channel_difference": 1,
+        "mean_channel_difference": 6.666666666666667e-05,
+        "changed_pixels": 8
+      }
+    }
+  },
+  "summit_region": {
+    "xyxy": [
+      600,
+      450,
+      1300,
+      700
+    ],
+    "comparisons": {
+      "categories": {
+        "max_channel_difference": 28,
+        "mean_channel_difference": 20.57191238095238,
+        "changed_pixels": 175000
+      },
+      "materials": {
+        "max_channel_difference": 38,
+        "mean_channel_difference": 35.09780761904762,
+        "changed_pixels": 175000
+      }
+    }
+  }
+}

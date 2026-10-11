@@ -1,0 +1,108 @@
+{
+  "format": "planet-graph-surface/1",
+  "contract": "planet-unfold 42bde8a docs/format-v4.md",
+  "cases": [
+    {
+      "name": "root",
+      "bytes": 960,
+      "sha256": "33889bbb54be3e6a425ba6df50dba2e523061719ae0f9e05f0fcb9542d5cffbc",
+      "version": 1,
+      "capabilities": 1,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 464,
+          "bytes": 240,
+          "count": 6
+        },
+        {
+          "kind": 2,
+          "offset": 704,
+          "bytes": 256,
+          "count": 8
+        }
+      ],
+      "queries": 37,
+      "maximum_error_m": 2.2737367544323206e-13
+    },
+    {
+      "name": "split",
+      "bytes": 1064,
+      "sha256": "45d25697beb3844503a1adf14a9d6b0fffa00acb1841995180f0288cc83966ab",
+      "version": 1,
+      "capabilities": 1,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 464,
+          "bytes": 280,
+          "count": 7
+        },
+        {
+          "kind": 2,
+          "offset": 744,
+          "bytes": 320,
+          "count": 10
+        }
+      ],
+      "queries": 43,
+      "maximum_error_m": 2.2737367544323206e-13
+    },
+    {
+      "name": "shore",
+      "bytes": 1152,
+      "sha256": "1e9aebec726a20095edbf19b0b8b602e0d453b96cbcf286d8cc96f50dd2d8353",
+      "version": 1,
+      "capabilities": 3,
+      "sections": [
+        {
+          "kind": 1,
+          "offset": 536,
+          "bytes": 280,
+          "count": 7
+        },
+        {
+          "kind": 2,
+          "offset": 816,
+          "bytes": 320,
+          "count": 10
+        },
+        {
+          "kind": 4,
+          "offset": 1136,
+          "bytes": 16,
+          "count": 1
+        }
+      ],
+      "queries": 43,
+      "maximum_error_m": 2.2737367544323206e-13
+    }
+  ],
+  "files": {
+    "root.json": {
+      "bytes": 8356,
+      "sha256": "d9043bf2b4c4994a5eed8e0de5a1cab59e316726afb6951b280ed053a6754230"
+    },
+    "root.pgs": {
+      "bytes": 960,
+      "sha256": "33889bbb54be3e6a425ba6df50dba2e523061719ae0f9e05f0fcb9542d5cffbc"
+    },
+    "shore.json": {
+      "bytes": 11330,
+      "sha256": "85a5ef927e2beef05249e9f71a9c930378b183d9d237f768624c549fea0d78b2"
+    },
+    "shore.pgs": {
+      "bytes": 1152,
+      "sha256": "1e9aebec726a20095edbf19b0b8b602e0d453b96cbcf286d8cc96f50dd2d8353"
+    },
+    "split.json": {
+      "bytes": 9951,
+      "sha256": "9781298353c5244299af92a66d494f58c3348ab9e943875aea22761caca8bc90"
+    },
+    "split.pgs": {
+      "bytes": 1064,
+      "sha256": "45d25697beb3844503a1adf14a9d6b0fffa00acb1841995180f0288cc83966ab"
+    }
+  },
+  "note": "Analytical goldens, not an installable world. Body 7 is fixture-only."
+}

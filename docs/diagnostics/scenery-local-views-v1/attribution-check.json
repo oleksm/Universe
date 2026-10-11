@@ -1,0 +1,125 @@
+{
+  "artifact": "/home/alexm/git/planet-trees/out/benchmarks/scenery-detail-attribution-v3",
+  "manifest_sha256": "52237264085f017998de715fd3edf204e7348cbe80711958ca75abb97ac47035",
+  "samples": 1480,
+  "interior_samples": 1310,
+  "metrics": {
+    "native_source": {
+      "departure_rms_m": 2.6277511835569185,
+      "correlation": 1.0
+    },
+    "source_2500": {
+      "departure_rms_m": 1.0188590288162231,
+      "correlation": 0.6425646828600334
+    },
+    "vector": {
+      "departure_rms_m": 0.7862493658130991,
+      "correlation": 0.2572683526998284
+    },
+    "mesh_vector": {
+      "departure_rms_m": 0.7009032719064651,
+      "correlation": 0.273937788121398
+    },
+    "target_delta": {
+      "departure_rms_m": 0.7037154926719928,
+      "correlation": 0.2768390729547293
+    },
+    "candidate_delta": {
+      "departure_rms_m": 1.9977460019223918,
+      "correlation": 0.09035272289961804
+    }
+  },
+  "cross_sections": {
+    "native_source": {
+      "2500": {
+        "both_flanks_above": 44,
+        "median_contrast_m": 0.7423324584960938
+      },
+      "5000": {
+        "both_flanks_above": 41,
+        "median_contrast_m": 1.3389358520507812
+      }
+    },
+    "source_2500": {
+      "2500": {
+        "both_flanks_above": 33,
+        "median_contrast_m": 0.5042381286621094
+      },
+      "5000": {
+        "both_flanks_above": 34,
+        "median_contrast_m": 1.090728759765625
+      }
+    },
+    "vector": {
+      "2500": {
+        "both_flanks_above": 32,
+        "median_contrast_m": 0.5252706852101099
+      },
+      "5000": {
+        "both_flanks_above": 34,
+        "median_contrast_m": 1.1715029933198302
+      }
+    },
+    "target_delta": {
+      "2500": {
+        "both_flanks_above": 31,
+        "median_contrast_m": 0.5087341084304686
+      },
+      "5000": {
+        "both_flanks_above": 33,
+        "median_contrast_m": 1.1367954608174418
+      }
+    },
+    "candidate_delta": {
+      "2500": {
+        "both_flanks_above": 37,
+        "median_contrast_m": 0.5896888216974538
+      },
+      "5000": {
+        "both_flanks_above": 34,
+        "median_contrast_m": 1.5867279306603468
+      }
+    },
+    "baseline_total": {
+      "2500": {
+        "both_flanks_above": 0,
+        "median_contrast_m": 7.470730724890018e-05
+      },
+      "5000": {
+        "both_flanks_above": 0,
+        "median_contrast_m": 0.0002987918601320416
+      }
+    },
+    "candidate_total": {
+      "2500": {
+        "both_flanks_above": 4,
+        "median_contrast_m": 0.5830885316249805
+      },
+      "5000": {
+        "both_flanks_above": 1,
+        "median_contrast_m": 0.9659237584328366
+      }
+    },
+    "baseline_plus_vector": {
+      "2500": {
+        "both_flanks_above": 2,
+        "median_contrast_m": 0.44729869947286716
+      },
+      "5000": {
+        "both_flanks_above": 1,
+        "median_contrast_m": 0.4987333109852443
+      }
+    },
+    "target_total": {
+      "2500": {
+        "both_flanks_above": 2,
+        "median_contrast_m": 0.46608452204509376
+      },
+      "5000": {
+        "both_flanks_above": 1,
+        "median_contrast_m": 0.4817294028125616
+      }
+    }
+  },
+  "scope": "Independent saved-array arithmetic and construction code review; no independent native dataset extraction or source/target replay. Coarse correlated probes, not bank surveys or continuous drainage. 0.01m is diagnostic comparison tolerance, not an accepted physical threshold. Source planar frame, not host-radius slopes."
+}

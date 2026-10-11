@@ -1,0 +1,83 @@
+{
+  "source": "/home/alexm/git/planet-trees/out/benchmarks/scenery-basin-s15-coarse-diagnostic-v1",
+  "sha256": "273765a6a3bffe98907718c628e969b5ee3f819bd0764322a705550a6703465f",
+  "b_dot_y": -0.00021499697966120834,
+  "max_At_y": 1.1102230246251565e-16,
+  "support": [
+    {
+      "row": 225,
+      "weight": 356.35617278782286,
+      "scaled_weight": 0.18501092406280728,
+      "rhs": 0.011856021238943752,
+      "provenance": {
+        "kind": "reference_river",
+        "source_vertices": [
+          45,
+          29
+        ],
+        "queries": [
+          269,
+          270
+        ]
+      },
+      "vertices": [
+        29161,
+        31775,
+        45907
+      ],
+      "coefficients": [
+        0.00011874569418222027,
+        -0.000519174180751358,
+        0.0004004284865691377
+      ]
+    },
+    {
+      "row": 233,
+      "weight": 755.3029862034095,
+      "scaled_weight": 0.3863366574116917,
+      "rhs": 0.007397007358607435,
+      "provenance": {
+        "kind": "reference_river",
+        "source_vertices": [
+          46,
+          45
+        ],
+        "queries": [
+          278,
+          279
+        ]
+      },
+      "vertices": [
+        29161,
+        31775,
+        45907
+      ],
+      "coefficients": [
+        0.0005114989143014561,
+        -0.0003225745150133417,
+        -0.0001889243992881143
+      ]
+    },
+    {
+      "row": 1388,
+      "weight": 1038.310633894111,
+      "scaled_weight": 0.42865241852550084,
+      "rhs": -0.009450122898487286,
+      "provenance": {
+        "kind": "basin_exterior",
+        "vertices": [
+          31775,
+          29161
+        ]
+      },
+      "vertices": [
+        29161,
+        31775
+      ],
+      "coefficients": [
+        -0.0004128363945555195,
+        0.0004128363945555195
+      ]
+    }
+  ]
+}

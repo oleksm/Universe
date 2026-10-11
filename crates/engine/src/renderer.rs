@@ -444,6 +444,7 @@ struct Target {
     color: wgpu::TextureView,
     depth: wgpu::TextureView,
     hud: wgpu::TextureView,
+    hud_depth: wgpu::TextureView,
     /// The front layer (see `Frame::in_front`): drawn, and resolved.
     front_msaa: wgpu::TextureView,
     front: wgpu::TextureView,
@@ -474,6 +475,7 @@ pub(crate) struct Renderer {
     line_pipe: wgpu::RenderPipeline,
     point_pipe: wgpu::RenderPipeline,
     hud_tri_pipe: wgpu::RenderPipeline,
+    canvas_pipe: wgpu::RenderPipeline,
     hud_pipe: wgpu::RenderPipeline,
     blit_pipe: wgpu::RenderPipeline,
     /// Same as `blit_pipe`, but into the RGBA composite texture for screenshots.
@@ -787,8 +789,8 @@ impl Renderer {
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
         // Lights' glows add up, behind what's solid, hiding nothing.
         let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
-        let (atlas_bind, hud_tri_pipe) = hud_atlas(gpu, &globals_layout);
-        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha, (COLOR_FORMAT, 1));
+        let (atlas_bind, hud_tri_pipe, canvas_pipe) = hud_atlas(gpu, &globals_layout);
+        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, Some((false, Cmp::Always)), alpha, (COLOR_FORMAT, 1));
 
         let (blit_layout, blit_pipe, capture_pipe, sampler, linear) = blit_stage(gpu);
 
@@ -814,6 +816,7 @@ impl Renderer {
             line_pipe,
             point_pipe,
             hud_tri_pipe,
+            canvas_pipe,
             hud_pipe,
             blit_pipe,
             capture_pipe,
@@ -904,6 +907,7 @@ impl Renderer {
         let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING, SAMPLES);
         // (The HUD's layout is `hud_size` pixels; drawn at the screen's full resolution.)
         let hud = texture("hud", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        let hud_depth = texture("canvas depth", out, DEPTH_FORMAT, U::RENDER_ATTACHMENT);
         let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let front = texture("front", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let composite = texture("composite", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
@@ -919,7 +923,7 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 5, resource: globals.as_entire_binding() },
             ],
         });
-        Target { size, out, hud_size, color_msaa, color, depth, hud, front_msaa, front, composite, blit }
+        Target { size, out, hud_size, color_msaa, color, depth, hud, hud_depth, front_msaa, front, composite, blit }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
@@ -1084,7 +1088,7 @@ impl Renderer {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, true);
             self.sunprobe.copy_out(&mut encoder);
         }
-        self.hud_pass(&mut encoder);
+        self.hud_pass(&mut encoder, frame);
         let readback = capture.map(|_| {
             self.composite(&mut encoder, &self.target.composite, &self.capture_pipe);
             self.copy_to_buffer(gpu, &mut encoder)
@@ -1234,25 +1238,48 @@ impl Renderer {
         self.front_glows.draw(&mut pass, &self.glow_pipe);
     }
 
-    /// The HUD's layer: its panels and text, then its lines.
-    fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder) {
-        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some("hud"),
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: &self.target.hud,
-                depth_slice: None,
-                resolve_target: None,
-                ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
-            })],
-            depth_stencil_attachment: None,
-            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(3)),
-            occlusion_query_set: None,
-            multiview_mask: None,
-        });
-        pass.set_bind_group(0, &self.globals_bind, &[]);
-        pass.set_bind_group(1, &self.atlas_bind, &[]);
-        self.hud_tris.draw(&mut pass, &self.hud_tri_pipe);
-        self.hud.draw(&mut pass, &self.hud_pipe);
+    /// Ordered UI and perspective canvases. A new canvas clears only depth;
+    /// UI keeps its submission order and never tests or writes canvas depth.
+    fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame) {
+        let mut sections = vec![(0usize, 0u32)];
+        let mut scene = 0;
+        for (i, v) in frame.hud_tris.iter().enumerate().step_by(3) {
+            if v.scene != 0 && v.scene != scene {
+                scene = v.scene;
+                if i == 0 { sections[0].1 = scene; }
+                else { sections.push((i, scene)); }
+            }
+        }
+        for (section, &(start, _)) in sections.iter().enumerate() {
+            let end = sections.get(section + 1).map_or(frame.hud_tris.len(), |s| s.0);
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("UI / depth canvas"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.target.hud, depth_slice: None, resolve_target: None,
+                    ops: wgpu::Operations { load: if section == 0 { wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT) } else { wgpu::LoadOp::Load }, store: wgpu::StoreOp::Store },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.target.hud_depth,
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.), store: wgpu::StoreOp::Store }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: if section == 0 { self.gputime.as_ref().map(|t| t.pass(3)) } else { None },
+                occlusion_query_set: None, multiview_mask: None,
+            });
+            pass.set_bind_group(0, &self.globals_bind, &[]);
+            pass.set_bind_group(1, &self.atlas_bind, &[]);
+            pass.set_vertex_buffer(0, self.hud_tris.buffer.slice(..));
+            let mut first = start;
+            while first < end {
+                let geometry = frame.hud_tris[first].scene != 0;
+                let mut last = first + 3;
+                while last < end && (frame.hud_tris[last].scene != 0) == geometry { last += 3; }
+                pass.set_pipeline(if geometry { &self.canvas_pipe } else { &self.hud_tri_pipe });
+                pass.draw(first as u32..last as u32, 0..1);
+                first = last;
+            }
+            if section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
+        }
     }
 
     /// Meshes for this frame: new ones uploaded, unused ones dropped; the
@@ -1463,7 +1490,7 @@ pub fn wait_for_writes() {
 
 /// The HUD's triangles (panels and text): the font's atlas bound, and their pipeline. (The HUD has
 /// its own layer without depth, antialiasing or HDR.)
-fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline) {
+fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline, wgpu::RenderPipeline) {
     let device = &gpu.device;
     let alpha = wgpu::BlendState::ALPHA_BLENDING;
     let atlas_data = crate::font::atlas();
@@ -1505,7 +1532,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
         entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
     });
     let hud_shader = crate::shaders::single(device, "hud");
-    let hud_tri_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+    let pipeline = |geometry: bool| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: Some("hud tris"),
         layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
         vertex: wgpu::VertexState {
@@ -1515,11 +1542,15 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
             buffers: &[Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<crate::frame::HudVertex>() as u64,
                 step_mode: wgpu::VertexStepMode::Vertex,
-                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4],
+                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4, 3 => Float32x2],
             })],
         },
         primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
-        depth_stencil: None,
+        depth_stencil: Some(wgpu::DepthStencilState {
+            format: DEPTH_FORMAT, depth_write_enabled: Some(geometry),
+            depth_compare: Some(if geometry { wgpu::CompareFunction::Greater } else { wgpu::CompareFunction::Always }),
+            stencil: Default::default(), bias: Default::default(),
+        }),
         multisample: Default::default(),
         fragment: Some(wgpu::FragmentState {
             module: &hud_shader,
@@ -1530,7 +1561,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
         multiview_mask: None,
         cache: None,
     });
-    (atlas_bind, hud_tri_pipe)
+    (atlas_bind, pipeline(false), pipeline(true))
 }
 
 /// The last stage: what puts the scene, front and HUD layers together on the screen (or a

@@ -1,0 +1,13 @@
+scenery-job-62fb4036c19e41d89eab29f6c888e403.scope: 2 CPU, 8 GiB; shared ceiling 25 CPU / 24 GiB
+[2026-10-11T01:52:10Z WARN  universe_world::import] hull.mc-07 slot air: equipment.tank.air.s1 is not in the playable module catalogue; fitting held
+[2026-10-11T01:52:10Z WARN  universe_world::import] hull.mc-07 slot water: equipment.tank.water.s1 is not in the playable module catalogue; fitting held
+[2026-10-11T01:52:10Z INFO  game::mounted] mounted equipment: drawing equipment.computer.fbw.s1 at computer, model-frame origin DVec3(4.800000190734863, 0.8487879037857056, -31.200056076049805)
+[2026-10-11T01:52:10Z INFO  game::mounted] mounted equipment: drawing equipment.transponder.s1 at transponder, model-frame origin DVec3(2.0, 6.0307297706604, -27.99995231628418)
+[2026-10-11T01:52:10Z WARN  game::mounted] mounted equipment: equipment.sensors.radar.s1 at sensors: missing mount_sensors; native drawing retained
+[2026-10-11T01:52:10Z WARN  game::mounted] mounted equipment: equipment.comm.basic.s1 at comm: missing mount_comm; native drawing retained
+[2026-10-11T01:52:10Z WARN  game::mounted] mounted equipment: equipment.hardpoint.mining-hammer.mc07 at hardpoint_1: missing mount_hardpoint_1; native drawing retained
+[2026-10-11T01:52:10Z WARN  game::mounted] mounted equipment: equipment.hardpoint.mining-hammer.mc07-right at hardpoint_2: missing mount_hardpoint_2; native drawing retained
+[2026-10-11T01:52:10Z INFO  game::devkit::dev] scenario showship: pending events [], clearance None
+[2026-10-11T01:52:10Z INFO  universe_engine::gpu] GPU: AdapterInfo { name: "NVIDIA GeForce RTX 5090", vendor: 4318, device: 11141, device_type: DiscreteGpu, device_pci_bus_id: "0000:01:00.0", driver: "NVIDIA", driver_info: "615.78.08", backend: Vulkan, subgroup_min_size: 32, subgroup_max_size: 32, transient_saves_memory: Some(false), limit_bucket: None }
+[2026-10-11T01:52:49Z INFO  universe_engine::app] 120 frames in 38.77s (323.09 ms/frame)
+[2026-10-11T01:52:49Z INFO  universe_engine::app] GPU a pass (ms): shadows 0.15, scene 0.32, front 0.02, hud 0.00, upscale 0.04

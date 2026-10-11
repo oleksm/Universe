@@ -1,0 +1,39 @@
+{
+  "behind_camera": 3159,
+  "camera": {
+    "absolute_h": 6456.784228772857,
+    "down": 0.25,
+    "heading": 90.0,
+    "lat": -50.927589054482716,
+    "lon": -19.166702846855568
+  },
+  "centre_ray_hit": {
+    "lat": -50.92757380993493,
+    "lon": -19.1069538805085,
+    "range_m": 4259.4186008889665
+  },
+  "dry_samples": 6561,
+  "height_error_m": {
+    "max": 0.9286390704619407,
+    "p95": 0.0032043708270066418,
+    "rms": 0.0292034442496375
+  },
+  "levels": {
+    "11": 1663,
+    "12": 4898
+  },
+  "nominal_cell_m": {
+    "max": 301.10940317503844,
+    "min": 150.55470158751922
+  },
+  "normal_angle_error_deg": {
+    "max": 0.9390515474356048,
+    "p95": 0.0016460576553714633,
+    "rms": 0.03620039700254211
+  },
+  "radius_m": 6281370.0,
+  "scope": "settled ideal LOD; 20km square/250m spacing; f32 patch and morph reproduction, not actual GPU residency",
+  "source_radius_m": 6371000.0,
+  "surface_sha256": "5029fe82637cdde3e2c7ac93b980eee3af0ae509caf2555450d774685b37bfd7",
+  "wet_skipped": 0
+}

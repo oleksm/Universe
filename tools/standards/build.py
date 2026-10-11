@@ -229,6 +229,7 @@ EQUIPMENT_READS = {
     "features": "What it can do.", "interlock": "m it holds the ship from a body's ground in hyperdrive", "governor": "1/s, its hyperdrive governor", "cadence": "s between its throws",
     "resolves": "a survey makes out a rock at this many times its size", "survey_range": "m, the farthest a survey reaches",
     "muzzle_speed": "m/s", "slug_mass": "kg", "magazine": "rounds", "beam_power": "W on the target", "focus": "m its beam holds together", "burn": "s of firing to too hot", "cool": "s to cool",
+    "blow_energy": "J a blow", "blow_rate": "blows a second", "hydraulic_power": "W of hydraulic power", "feed_force": "N it pushes back on the ship",
     "excavator_power": "W it cuts with", "throughput": "kg/s of spoil at most", "anchor_reach": "m", "anchor_speed": "m/s it holds below",
     "stroke": "m its strut compresses over", "sink_rate": "m/s, the touchdown it is designed for", "extended": "m, mount to pad, gear down",
     "volume": "m3 it holds, heaped", "fill_density": "kg/m3 of broken rock its capacity is reckoned at", "reset": "the share of too hot it cools to before firing again", "heat_to_hull": "the share of the jet's power that reaches the hull as heat", "water_recovery": "the share of water recovered", "air_recovery": "the share of oxygen won back",

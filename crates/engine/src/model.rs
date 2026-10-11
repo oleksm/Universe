@@ -7,7 +7,9 @@ use glam::{DVec3, Quat, Vec3};
 /// cube face order +X −X +Y −Y +Z −Z, rows top down): per texel its height
 /// (in units of the world's relief, ocean below 0) and how far inside a
 /// crater it is (0..1). Drawn with `Frame::with_globe`: colour, coasts and
-/// slopes worked out per pixel from it.
+/// slopes worked out per pixel from it. Canonical palette 4 uses absolute visible
+/// height / relief and a known-water mask (0 dry, 1 wet); palette 3 leaves the
+/// mask zero for unknown water.
 pub struct GlobeMap {
     id: u64,
     pub size: u32,

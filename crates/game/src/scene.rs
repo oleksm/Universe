@@ -954,7 +954,9 @@ fn hull(frame: &mut Frame, app: &App, ship: &universe_sim::world::Ship, scheme: 
         // (Its hull is centred on its centre of mass; the model is in the frame it was made in.)
         let shape = ship.spec().shape();
         let (rot, c) = (t.rotation.as_dquat(), shape.made_centre);
+        let equipment = crate::mounted::for_ship(ship);
         frame.model_pbr(&m, &Transform { position: t.position + rot * -c, ..*t });
+        equipment.draw(frame, t, c);
         // Its inside as we've laid it out (our own ship; close by): in the scene even in
         // the chase view's front layer, so the hull hides it.
         if std::ptr::eq(ship, &app.ship)

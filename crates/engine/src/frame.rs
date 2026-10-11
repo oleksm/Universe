@@ -51,6 +51,8 @@ pub(crate) struct HudVertex {
     pub pos: [f32; 2],
     pub uv: [f32; 2],
     pub color: [f32; 4],
+    pub depth: [f32; 2], // eye distance, near plane; zero for UI
+    pub scene: u32, // independent canvas depth scope (CPU batching)
 }
 
 /// What the renderer draws of what it can: each on by default, each off
@@ -137,6 +139,7 @@ pub struct Frame {
     /// Glows drawn with the front layer (see `in_front`).
     pub(crate) front_glows: Vec<Vertex>,
     pub(crate) hud_tris: Vec<HudVertex>,
+    canvas_scene: u32,
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
@@ -208,7 +211,7 @@ pub(crate) struct Instance {
     /// tight the glint (a power: higher, sharper), how much it glows itself.
     pub material: [f32; 4],
     /// A globe's surface map (see `Frame::with_globe`): its layer + 1 (0:
-    /// none), the world's kind (0 Earth-like, 1 dry, 2 cratered), its relief
+    /// none), the world's kind (0 Earth-like, 1 dry, 2 cratered, 3 canonical terrain, 4 canonical terrain/water, 5 diagnostic categories), its relief
     /// (m, scaled), the brightness of its colours.
     pub globe: [f32; 4],
     /// Where its vertices are on the world, in radii: `pos * w + xyz` (a
@@ -360,6 +363,7 @@ impl Frame {
             points: Vec::new(),
             glows: Vec::new(),
             hud_tris: Vec::new(),
+            canvas_scene: 1,
             hud: Vec::new(),
             meshes: Vec::new(),
             pbr: Vec::new(),
@@ -760,7 +764,23 @@ impl Frame {
     pub fn hud_triangle_colored(&mut self, p: [Vec2; 3], c: [Color; 3]) {
         let solid = crate::font::atlas().solid;
         for k in 0..3 {
-            self.hud_tris.push(HudVertex { pos: [p[k].x, p[k].y], uv: solid, color: c[k].0 });
+            self.hud_tris.push(HudVertex { pos: [p[k].x, p[k].y], uv: solid, color: c[k].0, depth: [0.; 2], scene: 0 });
+        }
+    }
+
+    /// Begin an independent 3D canvas (e.g. the catalogue card). UI remains
+    /// ordered above/below geometry by submission, but never writes its depth.
+    pub fn canvas_scene(&mut self) {
+        self.canvas_scene += 1;
+    }
+
+    /// Perspective triangle in layout pixels, with original eye distances.
+    /// Reversed depth and perspective-correct colour interpolation run on GPU.
+    pub fn canvas_triangle(&mut self, p: [Vec2; 3], distance: [f32; 3], near: f32, c: [Color; 3]) {
+        assert!(near > 0. && distance.iter().all(|z| z.is_finite() && *z >= near));
+        for k in 0..3 {
+            self.hud_tris.push(HudVertex { pos: p[k].to_array(), uv: [0.; 2], color: c[k].0,
+                depth: [distance[k], near], scene: self.canvas_scene });
         }
     }
 
@@ -774,7 +794,7 @@ impl Frame {
         for i in 0..segments {
             let (p, q) = (at(i), at(i + 1));
             for (v, c) in [(center, inner), (p, outer), (q, outer)] {
-                self.hud_tris.push(HudVertex { pos: [v.x, v.y], uv: crate::font::atlas().solid, color: c.0 });
+                self.hud_tris.push(HudVertex { pos: [v.x, v.y], uv: crate::font::atlas().solid, color: c.0, depth: [0.; 2], scene: 0 });
             }
         }
     }
@@ -783,7 +803,7 @@ impl Frame {
     pub fn hud_rect(&mut self, pos: Vec2, size: Vec2, color: Color) {
         let (a, b) = (pos, pos + size);
         for [x, y] in [[a.x, a.y], [b.x, a.y], [b.x, b.y], [a.x, a.y], [b.x, b.y], [a.x, b.y]] {
-            self.hud_tris.push(HudVertex { pos: [x, y], uv: crate::font::atlas().solid, color: color.0 });
+            self.hud_tris.push(HudVertex { pos: [x, y], uv: crate::font::atlas().solid, color: color.0, depth: [0.; 2], scene: 0 });
         }
     }
 
@@ -880,7 +900,7 @@ impl Frame {
                 let p = cursor + Vec2::new(inset + g.at[0], crate::font::BASELINE + g.at[1]) * scale;
                 let (a, b) = (p, p + Vec2::new(g.at[2], g.at[3]) * scale);
                 let (u0, v0, u1, v1) = (g.uv[0], g.uv[1], g.uv[2], g.uv[3]);
-                let v = |x: f32, y: f32, u: f32, w: f32| HudVertex { pos: [x, y], uv: [u, w], color: color.0 };
+                let v = |x: f32, y: f32, u: f32, w: f32| HudVertex { pos: [x, y], uv: [u, w], color: color.0, depth: [0.; 2], scene: 0 };
                 self.hud_tris.extend([v(a.x, a.y, u0, v0), v(b.x, a.y, u1, v0), v(b.x, b.y, u1, v1), v(a.x, a.y, u0, v0), v(b.x, b.y, u1, v1), v(a.x, b.y, u0, v1)]);
             }
             cursor.x += GLYPH * scale;

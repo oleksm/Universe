@@ -1,0 +1,87 @@
+{
+  "task": "20261010T181713-planets-ebbf",
+  "engine_commit": "2534310e",
+  "control_export": "../planet-trees/out/benchmarks/scenery-mesh-control-s15-v2",
+  "baseline_export": "../planet-trees/out/planet/earth_s15/surface_model_006",
+  "manifest_files_verified": true,
+  "parent_owners_and_unchanged_answers": 185,
+  "reader": {
+    "bytes": 6141424,
+    "capabilities": 35,
+    "category_vocabularies": [
+      "ground-vocabulary.rock@1",
+      "ground-vocabulary.pattern@1"
+    ],
+    "coherent_query_us": 0.11372270000000001,
+    "distributed_query_us": 0.3190136,
+    "faces": 118050,
+    "installed": false,
+    "load_ms": 55.249432,
+    "max_error_m": 1.4097167877480388e-10,
+    "points": 59027,
+    "preview": null,
+    "queries_passed": 185,
+    "surface_sha256": "452027f891038a9eeabdd1261b2403561c36f739ffec107b1f54462282349dbb"
+  },
+  "derivative_against_006": {
+    "height_error_m": 1.405169314239174e-10,
+    "normal_error": 6.328271240363392e-15,
+    "queries": 185,
+    "slope_error": 2.213507155346406e-15
+  },
+  "captures": {
+    "summit": {
+      "comparison": "time=7200.000000s surface=5456.784229m sun_elevation=15.684057deg terrain_shadows=false",
+      "file": "/tmp/pgs-mesh-control-v2/summit-materials.png",
+      "sha256": "9e041472612ce417a7a24af717ca2df858a04eed37a412098e29c4bc6b6cec34",
+      "ms_per_frame": 27.15,
+      "regions": {
+        "full": {
+          "max_channel": 1,
+          "mean_channel": 0.0007211291152263374,
+          "pixels_changed": 4344,
+          "pixels_changed_over_2": 0
+        },
+        "terrain_no_hud": {
+          "max_channel": 1,
+          "mean_channel": 0.0012304761904761905,
+          "pixels_changed": 607,
+          "pixels_changed_over_2": 0
+        }
+      }
+    },
+    "lake": {
+      "comparison": "time=33503.400000s surface=620.613115m sun_elevation=12.521021deg terrain_shadows=false",
+      "file": "/tmp/pgs-mesh-control-v2/lake-materials.png",
+      "sha256": "53431d6abbdb968df9419f3e4560dc4007f77f2c86815ab3c38ccf06b9519175",
+      "ms_per_frame": 30.48,
+      "regions": {
+        "full": {
+          "max_channel": 1,
+          "mean_channel": 0.0004565329218106996,
+          "pixels_changed": 2786,
+          "pixels_changed_over_2": 0
+        },
+        "terrain_no_hud": {
+          "max_channel": 1,
+          "mean_channel": 0.00034285714285714285,
+          "pixels_changed": 173,
+          "pixels_changed_over_2": 0
+        },
+        "water": {
+          "max_channel": 1,
+          "mean_channel": 0.0009666666666666667,
+          "pixels_changed": 109,
+          "pixels_changed_over_2": 0
+        },
+        "shore": {
+          "max_channel": 1,
+          "mean_channel": 0.003553544494720965,
+          "pixels_changed": 559,
+          "pixels_changed_over_2": 0
+        }
+      }
+    }
+  },
+  "scope": "Read-only development control acceptance, not new relief or installation. Single-run timings are not a benchmark."
+}

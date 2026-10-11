@@ -13,6 +13,7 @@ use crate::units::LIGHT_YEAR;
 
 pub struct Charts {
     pub seed: u64,
+    surfaces: Arc<crate::worlds::pgs::Sources>,
     pub galaxy: Galaxy,
     pub gate_links: Vec<(usize, usize)>,
     pub goods: Vec<Item>,
@@ -27,8 +28,16 @@ impl Charts {
     }
 
     pub fn new(seed: u64, galaxy: Galaxy, gate_links: Vec<(usize, usize)>, goods: Vec<Item>, home_system: usize) -> Self {
-        Charts { seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()) }
+        Charts { surfaces: Default::default(), seed, galaxy, gate_links, goods, home_system, systems: Mutex::new(HashMap::new()) }
     }
+
+    pub(crate) fn with_surfaces(mut self, sources: Arc<crate::worlds::pgs::Sources>) -> Self {
+        self.surfaces = sources;
+        self
+    }
+
+    /// Explicit terrain sources are not yet represented by seed-only saves/replays.
+    pub fn has_surface_sources(&self) -> bool { !self.surfaces.is_empty() }
 
     /// Star system `i`, generated on first look (with its gates).
     pub fn system(&self, i: usize) -> Arc<StarSystem> {
@@ -36,7 +45,9 @@ impl Charts {
         if let Some(s) = cache.get(&i) {
             return s.clone();
         }
-        let sys = Arc::new(generate(&self.galaxy, &self.gate_links, i));
+        let mut sys = generate(&self.galaxy, &self.gate_links, i);
+        crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
+        let sys = Arc::new(sys);
         cache.insert(i, sys.clone());
         sys
     }

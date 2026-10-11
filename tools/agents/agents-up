@@ -1,0 +1,7 @@
+#!/bin/sh
+# Launch every agent: each one that is down starts in its own watched terminal, with its own tmux server; one already
+# running is left alone (a window opens on it if none shows it). The mail watcher is started too. Run it again any time.
+#   agents-up                  all agents in ~/.agents/agents.json that have a start command
+#   agents-up engine blender   only these
+#   agents-up --no-windows     start them, open no windows (agentmsg term <name> shows one later)
+exec python3 "$(dirname "$(readlink -f "$0")")/agentmsg.py" up "$@"

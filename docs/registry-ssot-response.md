@@ -997,7 +997,7 @@ interval is what a port's contracts should be sized to; air and water are outsid
    to its slots, built of the parts you measured from the model (moved whole, re-coded MGF/MGR/MCR/
    MAC/MML): `equipment.gear.front.mc07` and `.rear` (four gear slots; a leg holds 1 and 1.2 MN,
    where its 150 × 10 strut buckles), `equipment.access.cargo-ramp.mc07`, `equipment.access.anchor-clamp.mc07`
-   (two access slots), `equipment.hardpoint.mining-laser.mc07` (both hardpoints; the pulse laser's beam
+   (two access slots), `equipment.hardpoint.mining-hammer.mc07` (both hardpoints; the pulse laser's beam
    figures as a stand-in, priced the same in prices.ron as a placeholder). `world::legs::reckon` now
    also takes fitted landing gear (`EquipmentFunction::LandingGear`) beside hull parts, so the
    MC-07's legs reckon as before.

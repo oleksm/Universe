@@ -1,0 +1,31 @@
+{
+  "source_sha256": "86ecc638b23de37af8dedbdf9b3f34924ead81ddc144b47583938bc1d89ac09b",
+  "reference_sha256": "86ecc638b23de37af8dedbdf9b3f34924ead81ddc144b47583938bc1d89ac09b",
+  "poses": 129,
+  "nodes": 12,
+  "half_turn_convention": "preconstraint-x",
+  "precision": "f32",
+  "half_turn_evaluations": 26,
+  "worst": {
+    "error": 6.48200511932373e-07,
+    "node": "Gear_RL_ActRod",
+    "control": 0.2421875
+  },
+  "per_node_component_error": {
+    "mount_gear_rear": 0,
+    "MiningShip_Root": 0,
+    "Gear_RL_Strut": 0,
+    "Gear_RL_ActLug": 0,
+    "Gear_RL_Piston": 0,
+    "Gear_RL_Pad": 1.1920928955078125e-07,
+    "contact_gear_rear": 2.384185791015625e-07,
+    "Gear_RL_DoorOut": 0,
+    "Gear_RL_DoorIn": 5.960464477539063e-08,
+    "Gear_RL_ActAttach": 1.1920928955078125e-07,
+    "Gear_RL_ActBody": 5.811452865600586e-07,
+    "Gear_RL_ActRod": 6.48200511932373e-07
+  },
+  "threshold": 2e-06,
+  "pass": true,
+  "scope": "Independent analytic deployment from authored drivers and unconstrained TRS; right conjugation; no reference transforms used to evaluate motion. Half-turn follows author handoff gear-motion-contract.yaml; no runtime enablement or collision/landing qualification."
+}

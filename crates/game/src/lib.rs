@@ -27,6 +27,8 @@ mod scene;
 mod interior;
 mod shipyard;
 mod studio;
+mod mounted;
+mod equipment_visual;
 mod studio_only;
 mod test_drive;
 mod planet_studio;
@@ -35,6 +37,9 @@ mod sound;
 mod terrain_lod;
 mod lines_near;
 mod terrain_view;
+mod pgs_preview;
+#[cfg(feature = "dev")]
+mod pgs_debug;
 mod thrusterpanel;
 mod passengers;
 mod manual;
@@ -375,7 +380,7 @@ impl App {
     }
 
     fn new() -> Self {
-        let mut u = Universe::new(seed());
+        let mut u = Universe::from_world(dev::world(seed()).unwrap_or_else(|e| panic!("PGS1 preview: {e}")));
         // UNIVERSE_RECORD=path: record the session from its start, saved there
         // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
         if std::env::var_os("UNIVERSE_RECORD").is_some() {
@@ -1336,7 +1341,7 @@ impl App {
     fn focus_position(&self) -> DVec3 {
         match self.observer.focus {
             Focus::Body { body, .. } => self.view.positions[body],
-            Focus::Ship => self.view.ship_pos,
+            Focus::Ship => self.view.ship_pos + self.place(Who::Me).1 * self.observer.inspection_offset,
             Focus::Craft(i) => self.place(Who::Craft(i)).0,
         }
     }

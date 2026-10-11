@@ -10,6 +10,7 @@ use crate::scene::color;
 
 /// Color for a kind of ground on a body.
 pub fn surface_color(body: &Body, kind: TerrainKind, surface: Ground) -> Color {
+    if body.terrain.as_ref().is_some_and(|t| t.canonical_surface()) { return Color::rgb(0.45, 0.45, 0.45); }
     let base = color(body.color);
     let lighten = |c: Color, k: f32| {
         let [r, g, b, a] = c.0;
@@ -54,6 +55,18 @@ pub fn air(body: &Body) -> Option<([f32; 3], f32)> {
 /// Texels a side of each face of a world's surface map.
 pub const MAP_SIZE: u32 = 512;
 
+/// Canonical display sample: absolute visible height / relief, and known wet mask.
+/// Unknown water stays unmarked, including terrain below the reference datum.
+pub(super) fn canonical_texel(terrain: &universe_sim::Terrain, dir: DVec3) -> Option<[f32; 2]> {
+    use universe_sim::world::worlds::pgs::Water;
+    let sample = terrain.surface_sample(dir)?;
+    let (height, wet) = match sample.water {
+        Water::Wet { level_m, .. } => (level_m, 1.0),
+        Water::Dry | Water::Unknown => (sample.height_m, 0.0),
+    };
+    Some([(height / terrain.amplitude.max(1.0)) as f32, wet])
+}
+
 /// A world's surface map (see `GlobeMap`): its terrain sampled on a cube,
 /// height in units of its relief and crater-ness (or, below zero, how much
 /// a spaceport's plain it is), made on all cores.
@@ -71,6 +84,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
                     let row = k * rows + i / n;
                     let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
                     let dir = universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y);
+                    if let Some(sample) = canonical_texel(terrain, dir) { *t = sample; continue; }
                     let (h, inside) = terrain.height_and_crater_coarse(dir);
                     // (A port's plain marked in place of crater-ness, below zero.)
                     let plain = terrain.port_plain(dir);
@@ -82,6 +96,22 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
     let map = universe_engine::GlobeMap::new(MAP_SIZE, texels);
     // A world grown by the planet simulation: its own colour, texel by texel (a world drawn from
     // its lines: the flat ground under them, else its bake's).
+    if terrain.canonical_surface() {
+        let Some(palette) = crate::pgs_preview::palette(body) else { return Some(map) };
+        let mut colours = vec![[0u8; 4]; 6 * n * n];
+        std::thread::scope(|s| {
+            for (k, chunk) in colours.chunks_mut(rows * n).enumerate() {
+                s.spawn(move || {
+                    for (i, colour) in chunk.iter_mut().enumerate() {
+                        let row = k * rows + i / n;
+                        let dir = universe_engine::GlobeMap::direction(MAP_SIZE, row / n, (i % n) as u32, (row % n) as u32);
+                        *colour = palette.colour(terrain.surface_sample(dir).expect("canonical surface"));
+                    }
+                });
+            }
+        });
+        return Some(map.with_colors(colours));
+    }
     let Some(image) = universe_sim::world::worlds::lines_colour(&body.key).or_else(|| terrain.colour()) else { return Some(map) };
     let mut colors = vec![[0u8; 4]; 6 * n * n];
     std::thread::scope(|s| {
@@ -104,7 +134,7 @@ pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
 /// peaks and lows, on a unit globe just over its highest ground, and its highest peaks and lowest
 /// lows to pin. None: it has no lines.
 pub fn lines(body: &Body) -> Option<(WireModel, universe_sim::world::worlds::LinesDraw)> {
-    body.terrain.as_ref()?;
+    if body.terrain.as_ref()?.canonical_surface() { return None; }
     let d = universe_sim::world::worlds::lines_draw(&body.key, lines_lift(body))?;
     let mut m = WireModel::default();
     m.positions = d.positions.iter().map(|&p| universe_engine::glam::Vec3::from(p)).collect();
@@ -127,6 +157,10 @@ pub fn globe_bright(body: &Body) -> f32 {
 
 /// The palette a world's surface map is drawn with (see `Frame::with_globe`).
 pub fn globe_kind(body: &Body) -> f32 {
+    // Palettes 3/4: measured surface, unknown categories, optional explicit water.
+    if let Some(t) = body.terrain.as_ref().filter(|t| t.canonical_surface()) {
+        return if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) { 6.0 } else if crate::pgs_preview::palette(body).is_some() { 5.0 } else if t.canonical_water() { 4.0 } else { 3.0 };
+    }
     match body.terrain.as_ref().map(|t| t.kind) {
         Some(TerrainKind::Terran) | None => 0.0,
         Some(TerrainKind::Dry) => 1.0,
@@ -270,3 +304,51 @@ pub fn crater_rims(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
 
 /// How bright the ground's fill is, relative to its line color.
 pub const FILL: f32 = 0.2;
+
+#[cfg(test)]
+mod canonical_preview_tests {
+    use super::*;
+    use universe_sim::world::worlds::pgs::{Surface, Water};
+
+    #[test]
+    fn exported_water_levels_and_unknowns_reach_display_unchanged() {
+        let cases: [(&[u8], &str); 3] = [
+            (include_bytes!("../../core/world/tests/fixtures/pgs1-water-v1/lake_cut.pgs"), include_str!("../../core/world/tests/fixtures/pgs1-water-v1/lake_cut.json")),
+            (include_bytes!("../../core/world/tests/fixtures/pgs1-water-v1/ocean_cut.pgs"), include_str!("../../core/world/tests/fixtures/pgs1-water-v1/ocean_cut.json")),
+            (include_bytes!("../../core/world/tests/fixtures/pgs1-v1/root.pgs"), include_str!("../../core/world/tests/fixtures/pgs1-v1/root.json")),
+        ];
+        let mut lake_above_zero = false;
+        let mut unknown_below_zero = false;
+        for (bytes, json) in cases {
+            let source = Surface::read(bytes).unwrap();
+            let water = source.capabilities & 2 != 0;
+            let mut terrain = universe_sim::Terrain::new(TerrainKind::Terran, 6.0e6, 17);
+            terrain.from_surface(std::sync::Arc::new(source));
+            assert_eq!(terrain.canonical_water(), water);
+            let gold: serde_json::Value = serde_json::from_str(json).unwrap();
+            for q in gold["queries"].as_array().unwrap() {
+                let d = &q["direction"];
+                let dir = DVec3::new(d[0].as_f64().unwrap(), d[1].as_f64().unwrap(), d[2].as_f64().unwrap());
+                let sample = terrain.surface_sample(dir).unwrap();
+                assert!(sample.categories.is_none());
+                let [h, wet] = canonical_texel(&terrain, dir).unwrap();
+                let expected = match sample.water {
+                    Water::Wet { level_m, .. } => {
+                        lake_above_zero |= level_m > 0.0;
+                        assert_eq!(wet, 1.0);
+                        level_m
+                    }
+                    _ => {
+                        unknown_below_zero |= sample.water == Water::Unknown && sample.height_m < 0.0;
+                        assert_eq!(wet, 0.0);
+                        sample.height_m
+                    }
+                };
+                assert!((h as f64 * terrain.amplitude.max(1.0) - expected).abs() < 0.001);
+                assert!((terrain.surface(dir) - expected).abs() < 1e-9);
+                assert!((terrain.surface_coarse(dir) - expected).abs() < 1e-9);
+            }
+        }
+        assert!(lake_above_zero && unknown_below_zero);
+    }
+}

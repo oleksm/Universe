@@ -30,6 +30,9 @@ pub struct Observer {
     /// studio lights (to judge a design as in a modelling tool), not as space lights it.
     #[serde(skip)]
     pub studio: bool,
+    /// Development inspection offset in the focused ship frame (COM-relative).
+    #[serde(skip)]
+    pub inspection_offset: DVec3,
 }
 
 pub const MAX_DISTANCE: f64 = 6.0e21;
@@ -37,7 +40,7 @@ const SHIP_SIZE: f64 = 30.0;
 
 impl Observer {
     pub fn new() -> Self {
-        Self { focus: Focus::Ship, yaw: 0.6, pitch: 0.25, distance: 180.0, transition: DVec3::ZERO, star_cycle: None, studio: false }
+        Self { focus: Focus::Ship, yaw: 0.6, pitch: 0.25, distance: 180.0, transition: DVec3::ZERO, star_cycle: None, studio: false, inspection_offset: DVec3::ZERO }
     }
 
     /// The galaxy index of the system this camera is looking at.
@@ -120,11 +123,16 @@ impl Observer {
         }
         if crate::keys::pressed(input, crate::keys::Act::Home) {
             self.focus = Focus::Ship;
+            self.inspection_offset = DVec3::ZERO;
             self.distance = 180.0;
             self.star_cycle = None;
         }
 
-        let min = self.focus_radius(charts) * 1.2;
+        let min = if matches!(self.focus, Focus::Ship) && self.inspection_offset != DVec3::ZERO {
+            0.1 // Explicit equipment inspection may enter the hull's bounding sphere.
+        } else {
+            self.focus_radius(charts) * 1.2
+        };
         self.distance = self.distance.clamp(min, MAX_DISTANCE);
         self.focus != old
     }
@@ -137,7 +145,8 @@ impl Observer {
     pub fn camera_in(&self, target: DVec3, frame: glam::DQuat) -> Camera {
         let dir = frame * DVec3::new(self.pitch.cos() * self.yaw.sin(), self.pitch.sin(), self.pitch.cos() * self.yaw.cos());
         let target = target + self.transition;
-        let mut camera = Camera { position: target + dir * self.distance, near: 1.0, ..Default::default() };
+        let near = if matches!(self.focus, Focus::Ship) && self.inspection_offset != DVec3::ZERO { 0.02 } else { 1.0 };
+        let mut camera = Camera { position: target + dir * self.distance, near, ..Default::default() };
         camera.look_at(target, (frame * DVec3::Y).as_vec3());
         camera
     }

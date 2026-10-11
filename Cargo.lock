@@ -2554,6 +2554,7 @@ dependencies = [
  "pollster",
  "rayon",
  "serde",
+ "serde_json",
  "texpresso",
  "universe-prof",
  "universe-world",
@@ -2623,6 +2624,7 @@ version = "0.1.0"
 dependencies = [
  "glam",
  "gltf",
+ "log",
  "png",
  "rayon",
  "ron",

@@ -229,6 +229,13 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     let step = 600.0 / r;
     let fields = |d: DVec3| -> [f32; 4] {
         let Some(t) = body.terrain.as_ref() else { return [0.0; 4] };
+        // Palette 4 reads the local authoritative wet mask, independent of the orbit map.
+        if let Some(sample) = crate::terrain_view::canonical_texel(t, d) {
+            let slope = if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) {
+                t.surface_differential(d, r).map_or(0.0, |(_, derivative)| derivative.slope as f32)
+            } else { 0.0 };
+            return [sample[1], 0.0, 0.0, -(1.0+slope)];
+        }
         let (f, w) = t.surface_fields_view(d);
         whole.set(whole.get() && w);
         let e1 = d.any_orthonormal_vector();
@@ -379,6 +386,12 @@ impl Lod {
         }
         // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
         let draw = shown;
+        #[cfg(feature = "dev")]
+        if crate::pgs_debug::active(body) && now % 120 == 0 {
+            let mut levels = std::collections::BTreeMap::new();
+            for k in &draw { *levels.entry(k.level).or_insert(0usize) += 1; }
+            log::info!("SCENERY DEBUG frame={now} resident_draw_levels={levels:?} pending={} eye_height_m={:.6}", self.pending.len(), eye_dist-r);
+        }
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();
@@ -388,14 +401,20 @@ impl Lod {
             p.used = now;
             let at = [(p.origin.x / r) as f32, (p.origin.y / r) as f32, (p.origin.z / r) as f32, (1.0 / r) as f32];
             let t = Transform { position: center + rotation * p.origin, rotation: turn, scale: 1.0 };
-            frame.ground_shadow(|frame| {
+            let draw_patch = |frame: &mut Frame| {
                 frame.with_air(depth, shell, |frame| {
                     frame.with_globe(map, kind, relief, crate::terrain_view::globe_bright(body), at, p.origin, |frame| {
                         frame.model_shaded_faded(&p.mesh, &t, tint, tint, 0.0);
                     })
                 })
-            });
+            };
+            #[cfg(feature = "dev")]
+            crate::pgs_debug::patch(frame, body, &p.mesh, p.origin, center, rotation);
+            if crate::pgs_preview::terrain_shadows(body) { frame.ground_shadow(draw_patch); }
+            else { frame.no_shadow(draw_patch); }
         }
+        #[cfg(feature = "dev")]
+        crate::pgs_debug::draw(frame, body, center, rotation);
         self.patches.retain(|_, p| now - p.used < KEEP);
         if self.patches.len() > MAX_PATCHES {
             let mut by_use: Vec<(u64, Key)> = self.patches.iter().map(|(k, p)| (p.used, *k)).collect();

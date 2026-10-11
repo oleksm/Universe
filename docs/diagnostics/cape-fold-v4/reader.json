@@ -1,0 +1,18 @@
+{
+  "bytes": 16961272,
+  "capabilities": 3,
+  "category_vocabularies": [
+    "",
+    ""
+  ],
+  "coherent_query_us": 0.1660267,
+  "distributed_query_us": 0.43181410000000003,
+  "faces": 326110,
+  "installed": false,
+  "load_ms": 324.27362,
+  "max_error_m": 2.773958840407431e-10,
+  "points": 163057,
+  "preview": null,
+  "queries_passed": 198,
+  "surface_sha256": "f3df5e5920dc69fa0742dfaa5c002e07456309c96fd38db77d580afba8cd4899"
+}

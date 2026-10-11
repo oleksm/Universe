@@ -204,3 +204,10 @@ fn ground_material(i: GroundIn) -> vec3<f32> {
     col = mix(col, SNOW, snow);
     return col;
 }
+
+// PGS pilot: existing rock colour, analytic canonical slope, visual tuning only.
+// No climate, cover, noise, banding, inferred scree or physical reflectance claim.
+// Existing rock multipliers 0.62/0.8; invented blend reaches 0.8 at rise/run 0.5.
+fn ground_rock_pilot(rock: vec3<f32>, slope: f32) -> vec3<f32> {
+    return rock * mix(0.62, 0.8, clamp(slope / 0.5, 0.0, 1.0));
+}

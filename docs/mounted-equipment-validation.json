@@ -1,0 +1,33 @@
+{
+  "scope": "Reviewed provisional static additive mounts, native mechanisms retained",
+  "gpu": "Vulkan RTX 5090",
+  "workspace_tests": {
+    "passed": 129,
+    "failed": 0,
+    "log": "/tmp/mounted-final-tests.log"
+  },
+  "registry_build": "passed",
+  "binary_sha256": "cfb25d9ed53e8cee5fe4a17d132a8d09f0b7e4b30a0f1f1fa5998b66446c3f37",
+  "hull_sha256": "11e3402c23ddfbb300c2f3b8cfdd865617ff355f63ba4fce00fd6be7d7b890ce",
+  "overlay_sha256": "9f41b48b352aa52b85246bfc2298e4b953d50637f7ada2322f7e48d36c577b9d",
+  "captures": {
+    "ship": {
+      "path": "/home/alexm/git/universe/out/review/mc07-mounted-v1/ship.png",
+      "sha256": "64569ed653dea2fb0662a11a52a2cde092aad39b706202da865f8691f4a48494"
+    },
+    "computer": {
+      "path": "/home/alexm/git/universe/out/review/mc07-mounted-v1/computer.png",
+      "sha256": "f729f6e64ebf62e4e2c591800714271305a11cd993215fa08b0c41417e9399a1"
+    },
+    "transponder": {
+      "path": "/home/alexm/git/universe/out/review/mc07-mounted-v1/transponder.png",
+      "sha256": "08830b828a08d41890d42ffc1391739128e8c48a1348ef38fe8740e1536698f0"
+    }
+  },
+  "visible_items": [
+    "equipment.computer.fbw.s1",
+    "equipment.transponder.s1"
+  ],
+  "live_view": "computer at distance2 yaw2 pitch0.5; H returns whole ship",
+  "registry_commit": "1689c89353c1841b2c7261fa49fc72260102dccc"
+}

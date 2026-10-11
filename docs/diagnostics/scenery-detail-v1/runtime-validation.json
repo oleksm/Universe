@@ -1,0 +1,75 @@
+{
+  "surface_sha256": "b84f9ef3e0b44739c1072f93b896a9a64431265b9a9233a8a76f609ada6f66d2",
+  "sidecar_sha256": "e94cec9402f983711201cc2d3e350ec4bece2f9e5a1f9d5ded7d4df7e5a1abf0",
+  "source_radius_m": 6371000,
+  "host_radius_m": 6281370,
+  "binary_sha256": "3b2570cb085e3fdfdeaba9f7363dae410ab8043ca0d9f1470c41709add747d0b",
+  "workspace_tests_passed": 131,
+  "registry_build": "passed",
+  "no_default_features": "check passed (existing slot_origin dead-code warning)",
+  "display_lift_m": 2,
+  "normal_glyph_length_m": 100,
+  "display_range_m": 30000,
+  "captures": {
+    "wire": {
+      "png": "/home/alexm/git/universe/out/review/pgs-debug-v1/wire.png",
+      "png_sha256": "b8bf40f2a2533a3e09157baafc6be88bf1e0128ad3e5f33242d19b27b3276f62",
+      "log_sha256": "95e58cca62a0a2fcfd487315f85a732a5bd715151ce4316fb6f268291cb0b14e",
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 68, 8: 73, 9: 69, 10: 69, 11: 75, 12: 68} pending=0 eye_height_m=6456.257570",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 68, 8: 73, 9: 69, 10: 69, 11: 75, 12: 68} pending=0 eye_height_m=6456.257570"
+      ],
+      "timing": [
+        "240 frames in 13.63s (56.81 ms/frame)",
+        "GPU a pass (ms): shadows 0.02, scene 0.29, front 0.02, hud 0.01, upscale 0.04"
+      ]
+    },
+    "lines": {
+      "png": "/home/alexm/git/universe/out/review/pgs-debug-v1/lines.png",
+      "png_sha256": "67b8bde1d28d54c3b972d9b382275d63f6200a5894aa3eb8fb83ac2166f2dc46",
+      "log_sha256": "d8d80f6a0d5993b2d85fdbf2c2d231671bf705edeac68bfef2b6b6dde66a00fc",
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 68, 8: 73, 9: 69, 10: 69, 11: 75, 12: 68} pending=0 eye_height_m=6456.257570",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 68, 8: 73, 9: 69, 10: 69, 11: 75, 12: 68} pending=0 eye_height_m=6456.257570"
+      ],
+      "timing": [
+        "240 frames in 12.43s (51.78 ms/frame)",
+        "GPU a pass (ms): shadows 0.02, scene 0.23, front 0.02, hud 0.01, upscale 0.04"
+      ]
+    },
+    "geometry": {
+      "png": "/home/alexm/git/universe/out/review/pgs-debug-v1/geometry.png",
+      "png_sha256": "00decfb1f50064644978f851f7aa98bedc67a8a53ff12f9b2a3b8f189abdf78d",
+      "log_sha256": "745c4f2e69b3ed6197f977e22c6da7c428ee86ef7f8f22f16c6bf9333d7b96d3",
+      "residency": [
+        "SCENERY DEBUG frame=120 resident_draw_levels={6: 45, 7: 68, 8: 73, 9: 69, 10: 69, 11: 75, 12: 68} pending=0 eye_height_m=6456.257570",
+        "SCENERY DEBUG frame=240 resident_draw_levels={6: 45, 7: 68, 8: 73, 9: 69, 10: 69, 11: 75, 12: 68} pending=0 eye_height_m=6456.257570"
+      ],
+      "timing": [
+        "240 frames in 12.27s (51.13 ms/frame)",
+        "GPU a pass (ms): shadows 0.02, scene 0.29, front 0.02, hud 0.01, upscale 0.04"
+      ]
+    },
+    "neutral": {
+      "png": "/home/alexm/git/universe/out/review/pgs-debug-v1/neutral.png",
+      "png_sha256": "2723da8379a23f295365b99ef35de595a4234c88f3d045455aac6553532cba6b",
+      "log_sha256": "67b277fd30ba776cf7a8320418b958e58db205992260d48153ebc11bb4763cb6",
+      "residency": [],
+      "timing": [
+        "240 frames in 12.51s (52.11 ms/frame)",
+        "GPU a pass (ms): shadows 0.02, scene 0.22, front 0.02, hud 0.01, upscale 0.04"
+      ]
+    }
+  },
+  "unoverlaid_terrain_crop_comparison": {
+    "bounds_xy": [
+      440,
+      560,
+      1400,
+      800
+    ],
+    "max_channel_difference": 0,
+    "mean_channel_difference": 0.0,
+    "scope": "line-only vs neutral, one unobstructed crop; not a full-image/physics proof"
+  }
+}

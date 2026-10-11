@@ -1,0 +1,1077 @@
+{
+  "format": "planet-graph-surface/1",
+  "surface_sha256": "1f8f3106ea48ef952e846323ea484935daed8ce3bdb7f10f5dd7b536be2a0dcd",
+  "height_tolerance_m": 0.001,
+  "ownership_tolerance_radians": 1e-12,
+  "queries": [
+    {
+      "kind": "vertex",
+      "direction": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 1000.0,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "face": 6,
+      "height_m": 1000.0,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 100.0000000000002,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 899.9999999999998
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "face": 12,
+      "height_m": -100.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 100.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "face": 0,
+      "height_m": 999.9999999999998,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "face": 2,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.09090909090909094,
+        -0.9090909090909091,
+        0.0
+      ],
+      "face": 3,
+      "height_m": 0.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        -0.9090909090909091,
+        -0.09090909090909091
+      ],
+      "face": 3,
+      "height_m": 1.1102230246251565e-13,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        0.0,
+        -0.9090909090909091,
+        0.09090909090909091
+      ],
+      "face": 1,
+      "height_m": -2.3069581212050466e-13,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "vertex",
+      "direction": [
+        -0.09090909090909094,
+        -0.9090909090909091,
+        0.0
+      ],
+      "face": 9,
+      "height_m": 0.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        0.5,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 550.0,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 450.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        0.0,
+        0.5
+      ],
+      "face": 0,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        0.0,
+        -0.5
+      ],
+      "face": 2,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5454545454545454,
+        -0.45454545454545453,
+        0.0
+      ],
+      "face": 3,
+      "height_m": 499.9999999999999,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        -0.45454545454545453,
+        -0.045454545454545456
+      ],
+      "face": 3,
+      "height_m": 500.0,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.5,
+        -0.45454545454545453,
+        0.045454545454545456
+      ],
+      "face": 1,
+      "height_m": 499.9999999999999,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        0.5,
+        0.0
+      ],
+      "face": 6,
+      "height_m": 550.0,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 450.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        0.0,
+        0.5
+      ],
+      "face": 7,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        0.0,
+        -0.5
+      ],
+      "face": 6,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        -0.45454545454545453,
+        -0.045454545454545456
+      ],
+      "face": 8,
+      "height_m": 499.9999999999999,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5,
+        -0.45454545454545453,
+        0.045454545454545456
+      ],
+      "face": 10,
+      "height_m": 500.00000000000017,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.5454545454545454,
+        -0.45454545454545453,
+        0.0
+      ],
+      "face": 9,
+      "height_m": 499.9999999999999,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        0.5,
+        0.5
+      ],
+      "face": 0,
+      "height_m": 550.0000000000002,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 449.9999999999998
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        0.5,
+        -0.5
+      ],
+      "face": 2,
+      "height_m": 549.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 450.0000000000001
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.04545454545454547,
+        -0.9545454545454546,
+        0.0
+      ],
+      "face": 12,
+      "height_m": -50.000000000000064,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 50.000000000000064
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        -0.9545454545454546,
+        -0.045454545454545456
+      ],
+      "face": 13,
+      "height_m": -50.00000000000006,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 50.00000000000006
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        -0.9545454545454546,
+        0.045454545454545456
+      ],
+      "face": 12,
+      "height_m": -50.000000000000036,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 50.000000000000036
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.04545454545454547,
+        -0.9545454545454546,
+        0.0
+      ],
+      "face": 14,
+      "height_m": -50.00000000000004,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 50.00000000000004
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        -0.45454545454545453,
+        0.5454545454545454
+      ],
+      "face": 1,
+      "height_m": 500.00000000000006,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.0,
+        -0.45454545454545453,
+        -0.5454545454545454
+      ],
+      "face": 4,
+      "height_m": 500.0,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.04545454545454547,
+        -0.9090909090909091,
+        -0.045454545454545456
+      ],
+      "face": 3,
+      "height_m": 0.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        0.04545454545454547,
+        -0.9090909090909091,
+        0.045454545454545456
+      ],
+      "face": 5,
+      "height_m": 0.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.04545454545454547,
+        -0.9090909090909091,
+        -0.045454545454545456
+      ],
+      "face": 9,
+      "height_m": 0.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "edge",
+      "direction": [
+        -0.04545454545454547,
+        -0.9090909090909091,
+        0.045454545454545456
+      ],
+      "face": 11,
+      "height_m": 0.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        0.37,
+        0.44
+      ],
+      "face": 0,
+      "height_m": 667.0,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 333.0
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        -0.39999999999999997,
+        0.41
+      ],
+      "face": 1,
+      "height_m": 559.9999999999999,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        0.44,
+        -0.37
+      ],
+      "face": 2,
+      "height_m": 603.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 396.0000000000001
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.22363636363636363,
+        -0.7363636363636363,
+        -0.04
+      ],
+      "face": 3,
+      "height_m": 190.00000000000017,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.19,
+        -0.33636363636363636,
+        -0.47363636363636363
+      ],
+      "face": 4,
+      "height_m": 630.0000000000001,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.23,
+        -0.7363636363636363,
+        0.03363636363636364
+      ],
+      "face": 5,
+      "height_m": 190.00000000000017,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        0.37,
+        -0.44
+      ],
+      "face": 6,
+      "height_m": 667.0,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 333.0
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        0.44,
+        0.37
+      ],
+      "face": 7,
+      "height_m": 603.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 396.0000000000001
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        -0.39999999999999997,
+        -0.41
+      ],
+      "face": 8,
+      "height_m": 559.9999999999999,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.23,
+        -0.7363636363636363,
+        -0.03363636363636364
+      ],
+      "face": 9,
+      "height_m": 190.00000000000017,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.19,
+        -0.33636363636363636,
+        0.47363636363636363
+      ],
+      "face": 10,
+      "height_m": 630.0000000000001,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.22363636363636363,
+        -0.7363636363636363,
+        0.04
+      ],
+      "face": 11,
+      "height_m": 190.00000000000017,
+      "water": {
+        "state": "dry"
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.033636363636363645,
+        -0.9263636363636363,
+        0.04
+      ],
+      "face": 12,
+      "height_m": -19.000000000000107,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 19.000000000000107
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        0.040000000000000015,
+        -0.9263636363636363,
+        -0.03363636363636364
+      ],
+      "face": 13,
+      "height_m": -18.99999999999997,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 18.99999999999997
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.040000000000000015,
+        -0.9263636363636363,
+        0.03363636363636364
+      ],
+      "face": 14,
+      "height_m": -18.99999999999995,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 18.99999999999995
+      }
+    },
+    {
+      "kind": "interior",
+      "direction": [
+        -0.033636363636363645,
+        -0.9263636363636363,
+        -0.04
+      ],
+      "face": 15,
+      "height_m": -19.000000000000107,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 19.000000000000107
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        -5e-13
+      ],
+      "face": 0,
+      "height_m": 549.9999999998408,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 450.00000000015916
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5e-13
+      ],
+      "face": 0,
+      "height_m": 550.0000000001592,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 449.99999999984084
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        -2e-12
+      ],
+      "face": 2,
+      "height_m": 550.0000000006363,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 449.9999999993637
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        2e-12
+      ],
+      "face": 0,
+      "height_m": 550.0000000006363,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 449.9999999993637
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        -5e-11
+      ],
+      "face": 2,
+      "height_m": 550.0000000159099,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 449.9999999840901
+      }
+    },
+    {
+      "kind": "near_edge",
+      "direction": [
+        0.7071067811865475,
+        0.7071067811865475,
+        5e-11
+      ],
+      "face": 0,
+      "height_m": 550.0000000159099,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 449.9999999840901
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "face": 0,
+      "height_m": 100.0000000000002,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 899.9999999999998
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        0.0,
+        -1.0,
+        0.0
+      ],
+      "face": 12,
+      "height_m": -100.0,
+      "water": {
+        "state": "wet",
+        "body": 0,
+        "level_m": 0.0,
+        "depth_m": 100.0
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "face": 2,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        1e-10,
+        0.0,
+        -1.0
+      ],
+      "face": 2,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    },
+    {
+      "kind": "pole_or_seam",
+      "direction": [
+        -1e-10,
+        0.0,
+        -1.0
+      ],
+      "face": 6,
+      "height_m": 999.9999999999999,
+      "water": {
+        "state": "wet",
+        "body": 3,
+        "level_m": 1000.0,
+        "depth_m": 0.0
+      }
+    }
+  ],
+  "source_points": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      -1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      -1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0
+    ]
+  ],
+  "source_heights_m": [
+    1000.0,
+    1000.0,
+    100.0,
+    -100.0,
+    1000.0,
+    1000.0
+  ],
+  "source_triangles": [
+    [
+      0,
+      2,
+      4
+    ],
+    [
+      0,
+      3,
+      5
+    ],
+    [
+      0,
+      4,
+      3
+    ],
+    [
+      0,
+      5,
+      2
+    ],
+    [
+      1,
+      2,
+      5
+    ],
+    [
+      1,
+      3,
+      4
+    ],
+    [
+      1,
+      4,
+      2
+    ],
+    [
+      1,
+      5,
+      3
+    ]
+  ],
+  "source_faces": [
+    0,
+    2,
+    3,
+    1,
+    1,
+    2,
+    4,
+    6,
+    7,
+    7,
+    5,
+    5,
+    2,
+    1,
+    5,
+    7
+  ],
+  "water_rule": {
+    "rule": "native-spill-cap/1",
+    "input_lake_samples": 1,
+    "resolved_lake_samples": 1,
+    "oceans": 1,
+    "lakes": 1,
+    "adjustments": [
+      {
+        "sample": 2,
+        "requested_m": 1500.0,
+        "resolved_m": 1000.0,
+        "reason": "native_spill_cap"
+      }
+    ],
+    "adjusted_samples": 1,
+    "maximum_level_lowering_m": 500.0,
+    "merged_body_ids": {},
+    "note": "Water geometry rule, not a new runoff/evaporation or conservation model."
+  },
+  "shores": [
+    {
+      "body": 3,
+      "points": [
+        0,
+        4,
+        1,
+        5,
+        0
+      ]
+    },
+    {
+      "body": 0,
+      "points": [
+        8,
+        6,
+        7,
+        9,
+        8
+      ]
+    }
+  ]
+}

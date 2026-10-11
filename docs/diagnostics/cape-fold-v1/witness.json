@@ -1,0 +1,171 @@
+{
+  "exact_binary_float_certificate": {
+    "weights": [
+      "2391916889299172/4783833778597261",
+      "2391916889298089/4783833778597261"
+    ],
+    "rhs": "-551538483516303558840221465/5515384837809412224628945359732736",
+    "coefficient_sum": "0",
+    "adjustable_vertex": 132062
+  },
+  "longdouble_epsilon": 1.0842021724855044e-19,
+  "constraint_dump_sha256": "43c2dc5b84df44cb9289a67e3c3191fc3f685551c27d59e7f362303d5fbb3963",
+  "rows": [
+    {
+      "row": 152,
+      "provenance": {
+        "kind": "reference_river",
+        "source_vertices": [
+          14,
+          20
+        ],
+        "queries": [
+          166,
+          167
+        ]
+      },
+      "owner_face": 184817,
+      "face_vertices": [
+        24676,
+        132062,
+        43264
+      ],
+      "interval_length_m": 4.021629406862595e-07,
+      "end_to_junction_m": 6.33120946712713e-10,
+      "signed_edge_distance_m": [
+        832.1309710317063,
+        1.274307906578057e-07,
+        -2.0017044829133673e-07
+      ],
+      "edge_vertices": [
+        [
+          24676,
+          132062
+        ],
+        [
+          132062,
+          43264
+        ],
+        [
+          43264,
+          24676
+        ]
+      ],
+      "longdouble_boundary_parameters": [
+        1.4581417568465787,
+        0.999999999999855,
+        0.9999999999998508
+      ],
+      "route_query_range": [
+        159,
+        167
+      ],
+      "query_ids": [
+        166,
+        167
+      ],
+      "last_endpoint": [
+        0.593950114421443,
+        -0.7794173399272497,
+        0.19949606166046496
+      ],
+      "midpoint_owners": [
+        184817,
+        260295,
+        281881,
+        281882,
+        264908,
+        188537,
+        202886,
+        202885
+      ],
+      "endpoint_vertex_43264_direction_error": 1.0378215236281232e-16,
+      "endpoint_incident_edges": [
+        false,
+        true,
+        true
+      ]
+    },
+    {
+      "row": 301,
+      "provenance": {
+        "kind": "reference_river",
+        "source_vertices": [
+          32,
+          20
+        ],
+        "queries": [
+          332,
+          333
+        ]
+      },
+      "owner_face": 184817,
+      "face_vertices": [
+        24676,
+        132062,
+        43264
+      ],
+      "interval_length_m": 4.971432608585259e-07,
+      "end_to_junction_m": 5.126135230666579e-07,
+      "signed_edge_distance_m": [
+        832.1309703330232,
+        -4.851844392559073e-07,
+        7.613100072773916e-07
+      ],
+      "edge_vertices": [
+        [
+          24676,
+          132062
+        ],
+        [
+          132062,
+          43264
+        ],
+        [
+          43264,
+          24676
+        ]
+      ],
+      "longdouble_boundary_parameters": [
+        0.5418582431534809,
+        1.000000000000145,
+        1.0000000000001492
+      ],
+      "route_query_range": [
+        325,
+        335
+      ],
+      "query_ids": [
+        332,
+        333
+      ],
+      "last_endpoint": [
+        0.593950114421443,
+        -0.7794173399272497,
+        0.19949606166046496
+      ],
+      "midpoint_owners": [
+        184817,
+        260295,
+        281881,
+        281882,
+        264908,
+        188537,
+        202886,
+        202885
+      ],
+      "endpoint_vertex_43264_direction_error": 1.0378215236281232e-16,
+      "endpoint_incident_edges": [
+        false,
+        true,
+        true
+      ]
+    }
+  ],
+  "weights": [
+    0.5000000000001131,
+    0.49999999999988676
+  ],
+  "max_adjustable_coefficient": 4.2270894588327336e-20,
+  "weighted_rhs": -9.99999999517889e-08
+}

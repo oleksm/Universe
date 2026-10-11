@@ -39,6 +39,7 @@ pub struct StepResult {
 
 pub struct World {
     pub galaxy: Galaxy,
+    surfaces: std::sync::Arc<crate::worlds::pgs::Sources>,
     /// Seconds since the epoch.
     pub time: f64,
     pub home_system: usize,
@@ -120,10 +121,16 @@ impl World {
     }
 
     pub fn new(seed: u64) -> Self {
+        Self::with_surfaces(seed, Default::default())
+    }
+
+    /// Construct an instance with explicit immutable terrain sources, shared with its charts.
+    pub fn with_surfaces(seed: u64, surfaces: std::sync::Arc<crate::worlds::pgs::Sources>) -> Self {
         let galaxy = Galaxy::generate(seed);
         let home_system = network::find_home(&galaxy, seed);
         let gate_links = network::build(&galaxy, home_system);
         Self {
+            surfaces,
             galaxy,
             time: 0.0,
             home_system,
@@ -169,14 +176,16 @@ impl World {
         if let Some(sys) = systems.get(&i) {
             return sys.clone();
         }
-        let sys = Arc::new(crate::charts::generate(&self.galaxy, &self.gate_links, i));
+        let mut sys = crate::charts::generate(&self.galaxy, &self.gate_links, i);
+        crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
+        let sys = Arc::new(sys);
         systems.insert(i, sys.clone());
         sys
     }
 
     /// The charts of this galaxy, to share (with the client).
     pub fn charts(&self) -> crate::charts::Charts {
-        crate::charts::Charts::new(self.galaxy.seed, self.galaxy.clone(), self.gate_links.clone(), self.goods.clone(), self.home_system)
+        crate::charts::Charts::new(self.galaxy.seed, self.galaxy.clone(), self.gate_links.clone(), self.goods.clone(), self.home_system).with_surfaces(self.surfaces.clone())
     }
 
     /// The stars nearest to star `i`, nearest first (see `NEIGHBOURS`).

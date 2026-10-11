@@ -1,0 +1,36 @@
+{
+  "glb_sha256": "a3317607be4fe50c2792b128efda999463dffa375db7891fad73c3152f566093",
+  "fixture_sha256": "fd5465ac1b0acec662b8ebb9dfd28ac7ee698f37db7571c2b75d2d1ff175fd09",
+  "glb_nodes": 20,
+  "reference_poses": 112,
+  "rest_control": 0,
+  "max_bind_matrix_component_error": 3.9258907236217055e-07,
+  "max_parent_composition_component_error": 1.7390186002330665e-06,
+  "max_orthogonality_error": 8.304308507511848e-08,
+  "min_determinant": 0.9999999376267718,
+  "scope": "Independent static binds and all-reference hierarchy/rigidity only; source vertex equivalence and mechanism dynamics not independently re-evaluated; moving runtime held",
+  "control_semantics": {
+    "name": "reference_pose_index",
+    "min": 0,
+    "max": 111,
+    "rest": 0,
+    "meaning": "Fixture index only, not a mechanical scalar. Each pose carries actual five controls and Blender frame/subframe."
+  },
+  "rest_pose_controls": {
+    "mining_hammers": 0.0,
+    "hammer_yaw": 90,
+    "hammer_pitch": -12,
+    "hammer_reach": 0,
+    "hammer_strike": 0
+  },
+  "rest_pose_frame": 1.0,
+  "complete_node_sets_and_export_parent_agreement": true,
+  "all_reference_matrices_affine_and_finite": true,
+  "export_has_no_animations_skins_or_morphs": true,
+  "source_fixture": "/home/alexm/git/blender/mc07-equipment/mining-hammer/handedness-v01/review/right-motion.json",
+  "source_glb": "/home/alexm/git/blender/mc07-equipment/mining-hammer/handedness-v01/exports/mining-hammer-right.glb",
+  "motion_clearance_hold": {
+    "source": "/home/alexm/git/blender/mc07-combined-fit/hammer-right-chisel-contact.json",
+    "finding": "Ships reports nominal zero chisel/well clearance at deployment 0.375; static gate does not accept moving clearance."
+  }
+}

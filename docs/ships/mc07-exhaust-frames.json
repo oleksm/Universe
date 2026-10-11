@@ -1,0 +1,488 @@
+{
+  "source": "assets/models/mc07.glb",
+  "sha256": "11e3402c23ddfbb300c2f3b8cfdd865617ff355f63ba4fce00fd6be7d7b890ce",
+  "basis": "metres, glTF +Y up; hull model root before physics made_centre shift",
+  "scope": "Current engine checkout GLB nozzle geometry only; no plume clearance certification. Regenerate for the ships candidate export.",
+  "nozzles": [
+    {
+      "node": "nozzle_lift_0",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        -2.5,
+        -9.114999771118164,
+        -17.362499237060547
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_lift_1",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        2.5,
+        -9.114999771118164,
+        -17.362499237060547
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_lift_2",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        -2.5,
+        -9.114999771118164,
+        1.1000003814697266
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_lift_3",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        2.5,
+        -9.114999771118164,
+        1.1000003814697266
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_lift_4",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        -2.5,
+        -9.114999771118164,
+        19.5625
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_lift_5",
+      "slot": "lift",
+      "origin_hull_gltf_m": [
+        2.5,
+        -9.114999771118164,
+        19.5625
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_main_0",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        2.8013598694087705e-06,
+        1.3999998569488525,
+        32.54000473022461
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_main_1",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        4.000002861022949,
+        1.3999994993209839,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_main_2",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        2.814395202221931e-06,
+        -2.0999996662139893,
+        32.53999710083008
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_main_3",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        -3.9999969005584717,
+        -2.0999999046325684,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_main_4",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        4.000002384185791,
+        -2.0999996662139893,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_main_5",
+      "slot": "drive",
+      "origin_hull_gltf_m": [
+        -3.9999964237213135,
+        1.3999994993209839,
+        32.540000915527344
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_left_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_left_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_left_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_left_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        -0.9999999999999911,
+        0.0,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_left_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_right_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_right_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_right_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_right_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.9999999999999911,
+        0.0,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_nose_right_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        -26.963001251220703
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_left_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_left_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_left_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_left_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        -0.9999999999999911,
+        0.0,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_left_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        -8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_right_aft",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        6.181722568672406e-08,
+        -6.181722568672406e-08,
+        0.9999999999999962
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_right_down",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        -0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_right_fore",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_right_side",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.9999999999999911,
+        0.0,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    },
+    {
+      "node": "nozzle_tail_right_up",
+      "slot": "thrusters",
+      "origin_hull_gltf_m": [
+        8.19299030303955,
+        16.942153930664062,
+        29.163002014160156
+      ],
+      "exhaust_direction_hull_gltf": [
+        0.0,
+        0.9999999999999911,
+        1.3435883843274954e-07
+      ],
+      "exclusion_envelope": null
+    }
+  ]
+}
