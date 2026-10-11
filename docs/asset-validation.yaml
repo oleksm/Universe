@@ -1588,3 +1588,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU and hull placement; assumed inner vessel, pressure strength, cryogenics and structural loads unqualified."
+  - key: equipment.tank.deuterium.s4
+    version: 1
+    manifest_sha256: "9734820c69840259cf8a2530903a7ef7655447fbd4a93f2f7eeba80d9704ce73"
+    installed: f59e853f
+    game: "the loader (world::assets) at fso f59e853f"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-deuterium-s4/v1 (220968 bytes, bounds [-5.75, 0.0, -5.75] to [5.75, 11.9456, 6.1669]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU and hull placement; assumed inner vessel, pressure strength, cryogenics, mounting mass margin and structural loads unqualified."
