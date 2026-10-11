@@ -16,6 +16,10 @@ for variant,package in packages.items():
     empty=out/(variant+'-empty-debug.json')
     empty.write_text(json.dumps({'version':'scenery-debug/1','surface_sha256':data['surface_sha256'],'radius_m':6371000.,'layers':[]}))
     settings.update(UNIVERSE_PGS1_DEBUG=str(empty),UNIVERSE_PGS1_GEOMETRY='off')
+   # Calibrated from the first run's actual frame240 eye heights; compensate
+   # surface lookup/frame rounding, preserving requested absolute camera height.
+   observed={('control','high_to_low'):6751.398120,('control','low_to_high'):6751.439128,('candidate','high_to_low'):6751.318028,('candidate','low_to_high'):6751.364972}
+   settings['UNIVERSE_ALT']=str(v['launch_alt_m']+c['absolute_height_m']-observed[(variant,c['id'])])
    env.update(settings)
    with log.open('w') as f:subprocess.run([str(root/'target/debug/freefall')],env=env,stdout=f,stderr=subprocess.STDOUT,check=True,timeout=180)
    records.append({'id':name,'settings':settings,'png_sha256':hashlib.sha256(png.read_bytes()).hexdigest(),'log':str(log)})
