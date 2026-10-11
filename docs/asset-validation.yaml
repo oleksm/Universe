@@ -868,3 +868,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, actual forklift/world placement, game lighting, GPU cost and temporal filtering pending; carton packing, thin film assumptions and payload/stack qualification unresolved."
+  - key: package.ladle
+    version: 1
+    manifest_sha256: "cb0116ba40a30de18df63024b41c917d3be3dbaa7b1d659cb3fc0d43510f6bb0"
+    installed: 51dbebf9
+    game: "the loader (world::assets) at fso 51dbebf9"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle/v1 (82460 bytes, bounds [-0.99, 0.0, -1.02] to [0.99, 2.197, 0.69]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, stock tint/temperature glow, actual crane/yoke placement and motion, game lighting, GPU cost and temporal filtering pending; refractory grade/thermal and6tonne lifting engineering unqualified."
