@@ -27,6 +27,12 @@ function:
   hydraulic_power: 53000
   reach: 1.48
   feed_force: 7800
+visual:
+  format: "freefall-model/1"
+  path: "models/hardpoint-mining-hammer-mc07-right/v1"
+  manifest_sha256: "5781c20f88024a0370e3fd86fc5d6a60577b753eb3cdb6879ccb096a719107dc"
+  version: 1
+  triangles: 8144
 life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, note: "Measured from the model; its volume the box round it." }
