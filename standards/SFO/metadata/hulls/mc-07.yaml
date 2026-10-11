@@ -104,14 +104,14 @@ fit:
   - { slot: avionics, item: equipment.avionics.nav-basic.s1 }
   - { slot: power, item: equipment.power.fusion.s1 }
   - { slot: gear_0, item: equipment.gear.front.mc07 }
-  - { slot: gear_1, item: equipment.gear.front.mc07 }
+  - { slot: gear_1, item: equipment.gear.front.mc07-right }
   - { slot: gear_2, item: equipment.gear.rear.mc07 }
-  - { slot: gear_3, item: equipment.gear.rear.mc07 }
+  - { slot: gear_3, item: equipment.gear.rear.mc07-right }
   - { slot: cargo_ramp, item: equipment.access.cargo-ramp.mc07 }
   - { slot: clamp_fwd, item: equipment.access.anchor-clamp.mc07-fwd }
   - { slot: clamp_aft, item: equipment.access.anchor-clamp.mc07-aft }
   - { slot: hardpoint_1, item: equipment.hardpoint.mining-hammer.mc07 }
-  - { slot: hardpoint_2, item: equipment.hardpoint.mining-hammer.mc07 }
+  - { slot: hardpoint_2, item: equipment.hardpoint.mining-hammer.mc07-right }
   # Heat, people, air and water (the ships session's request, docs/ships/mc07-heat-cabin-request.md on branch ships, 2026-10-06):
   # 47.4 MW aboard at full burn (the plant's loss, everything drawn, the jets' share) wants 54 MW of radiator and 50 MW of loops;
   # six seats; air and water for them. The mass is the mass: 18.7 t more, and the figures say what the MC-07 is.
