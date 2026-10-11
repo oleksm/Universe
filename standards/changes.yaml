@@ -1101,7 +1101,7 @@
 - { record: package.carton-pallet, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "a7a0d06163b4b8b1" }
 - { record: package.coil, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "7d64d6043e396dcb" }
 - { record: package.cold-crate, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "6661ab80f7593789" }
-- { record: package.crate-heavy, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "c87c7f93b2b67317" }
+- { record: package.crate-heavy, at: "2026-10-11T16:09:26Z", status: "", summary: "changed: visual", sha: "ad320ca7ba5fce5f" }
 - { record: package.cryo-dewar, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "ee0b730852e94ab4" }
 - { record: package.fish-tank, at: "2026-10-11T15:54:27Z", status: "", summary: "changed: visual", sha: "820c0c779fdcda26" }
 - { record: package.gas-rack, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "622ce6f227d7c416" }
