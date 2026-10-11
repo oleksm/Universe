@@ -16,6 +16,7 @@ fn every_visual_reads() {
         .chain(r.structures.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .chain(r.gates.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .chain(r.hulls.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
+        .chain(r.packages.iter().filter_map(|x| x.visual.as_ref().map(|v| (x.identity.key.as_str(), v))))
         .collect();
     let mut bad = Vec::new();
     for (key, v) in &keys {
