@@ -601,3 +601,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.thermal.coolant-loop.s1
+    version: 2
+    manifest_sha256: "edd43f80a1c219771640cec9cc3b5d4853ade2560d2103528605b6e5c0b66e67"
+    installed: c100fb37513af5043ba007a9a50c28ea6d9fd7fd
+    game: "the loader (world::assets) at fso c100fb37"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-coolant-loop-s1/v2 (458240 bytes, bounds [-1.0, 0.0, -0.5] to [1.0, 0.9825, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
