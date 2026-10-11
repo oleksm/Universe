@@ -1620,3 +1620,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU, hull fit, exhaust VFX, fusion performance, component mass allocation, thermal and structural qualification."
+  - key: equipment.thrusters.quad.s3
+    version: 1
+    manifest_sha256: "2f42f4a1e50caddb4b14bb6d088261037f0c098a50b9e7394279ccd4f47fe415"
+    installed: 06e055d4
+    game: "the loader (world::assets) at fso 06e055d4"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thrusters-quad-s3/v1 (147108 bytes, bounds [-1.04, 0.0, -1.04] to [1.04, 2.0829, 1.04]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU, hull fit, exhaust VFX, fusion performance, component mass allocation, thermal and structural qualification."
