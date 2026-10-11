@@ -68,6 +68,8 @@ def package_for(d, g):
         return "coil"
     if name in LIQUIDS:
         return "tote"
+    if name == "live-fish":
+        return "fish-tank"
     if name.startswith("live-"):
         return "livestock-crate"
     t = p.get("storage_max_temperature")

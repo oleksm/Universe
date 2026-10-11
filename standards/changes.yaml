@@ -1103,9 +1103,10 @@
 - { record: package.cold-crate, at: "2026-10-11T13:53:48Z", status: "", summary: "changed: visual", sha: "7b744726d25ba51b" }
 - { record: package.crate-heavy, at: "2026-10-11T13:34:04Z", status: "", summary: "changed: visual", sha: "58631658381004d4" }
 - { record: package.cryo-dewar, at: "2026-10-11T13:37:32Z", status: "", summary: "first tracked", sha: "d1b2f90d81474ee9" }
+- { record: package.fish-tank, at: "2026-10-11T14:49:54Z", status: "", summary: "first tracked", sha: "da4456885e113154" }
 - { record: package.gas-rack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "aa025afe1f15cdbd" }
 - { record: package.ladle, at: "2026-10-11T14:20:16Z", status: "", summary: "changed: visual", sha: "3b1a0cf1d05598bf" }
-- { record: package.livestock-crate, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "e8b0c7026baa8a43" }
+- { record: package.livestock-crate, at: "2026-10-11T14:49:54Z", status: "", summary: "changed: identity, holds, shows_contents, basis", sha: "99c9563fef365e59" }
 - { record: package.plate-stack, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "cd52c8d67d6bed33" }
 - { record: package.produce-crate, at: "2026-10-11T13:59:40Z", status: "", summary: "changed: visual", sha: "b5412101014d15db" }
 - { record: package.skip, at: "2026-10-11T13:28:57Z", status: "", summary: "changed: shows_contents", sha: "052f812cab0000dc" }
@@ -1722,7 +1723,7 @@
 - { record: stock.lithium-pegmatite-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "e9b050b11a84348f" }
 - { record: stock.live-cattle-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "3dac8a9dc1ea81a4" }
 - { record: stock.live-chickens-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "d5c28c960a83d838" }
-- { record: stock.live-fish-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "9a0b5c509eeb2a98" }
+- { record: stock.live-fish-bulk, at: "2026-10-11T14:49:54Z", status: review, summary: "changed: package", sha: "0089f3e09c090a4e" }
 - { record: stock.live-pigs-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "75cb780a447ab1a8" }
 - { record: stock.live-sheep-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "3252ce48fdb43278" }
 - { record: stock.machine-tools-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "18862ef90f83184a" }
