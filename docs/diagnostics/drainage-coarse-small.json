@@ -1,0 +1,35 @@
+{
+  "source": "/home/alexm/git/planet-trees/out/benchmarks/scenery-basin-s15-coarse-diagnostic-v1",
+  "rows": [
+    225,
+    233,
+    1388
+  ],
+  "vertices": [
+    29161,
+    31775,
+    45907
+  ],
+  "weights": [
+    0.1657493858597794,
+    0.35130865033678604,
+    0.48294196380343457
+  ],
+  "rhs_sum": -1.0000000017456683e-07,
+  "coefficient_residual": [
+    -1.415305558718053e-20,
+    4.125810989931814e-20,
+    1.5011212704181784e-20
+  ],
+  "residual_bound_at_150m": 1.0563356728602069e-17,
+  "intended": [
+    false,
+    true,
+    true
+  ],
+  "target": [
+    4271.377471838877,
+    4294.267951028973,
+    4271.447458222264
+  ]
+}
