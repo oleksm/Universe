@@ -1715,6 +1715,10 @@ fn hold_to_cores(n: Option<usize>) {
 /// `--fit`, `--compare` print and return true; with none, the interior studio's window
 /// (`[design]` the design to open). False: none was asked for and `window` is false.
 pub fn studio(args: &[String], window: bool) -> bool {
+    if let Some(result) = interior::ship_code::cli(args) {
+        match result { Ok(text) => print!("{text}"), Err(e) => { eprintln!("ship code: {e}"); std::process::exit(2); } }
+        return true;
+    }
     // (`--fit <design>`: its frame fitted (mounted, sized, braced) and saved, the
     // old one kept in backups/.)
     if let Some(k) = args.iter().position(|a| a == "--fit") {
@@ -1740,6 +1744,12 @@ pub fn studio(args: &[String], window: bool) -> bool {
     if window || flag.is_some() {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
+        if let Some(path) = design.filter(|p| p.ends_with(".ship.yaml") || p.ends_with(".ship.yml")) {
+            if let Err(e) = interior::ship_code::check_path(std::path::Path::new(path)) {
+                eprintln!("ship code: {e}");
+                std::process::exit(2);
+            }
+        }
         run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
         return true;
     }
