@@ -1,0 +1,121 @@
+{
+  "render_radius_m": 6281370.0,
+  "source_radius_m": 6371000.0,
+  "surface_sha256": "b84f9ef3e0b44739c1072f93b896a9a64431265b9a9233a8a76f609ada6f66d2",
+  "scope": "frozen 60deg vertical FOV,16:9; point frustum only, no terrain occlusion; counts are vertices, not area",
+  "masks": {
+    "changed": {
+      "vertices": 21364,
+      "in_frustum": 9966,
+      "behind_camera": 3499,
+      "surface_range_m": [
+        0.0,
+        136043.11547889342
+      ],
+      "height_range_m": [
+        4116.552109664607,
+        5753.845101726809
+      ]
+    },
+    "intended_basin": {
+      "vertices": 8457,
+      "in_frustum": 3947,
+      "behind_camera": 282,
+      "surface_range_m": [
+        0.0,
+        118205.1736793995
+      ],
+      "height_range_m": [
+        4322.281271757978,
+        5751.402172316716
+      ]
+    },
+    "mapped_source_basin": {
+      "vertices": 8454,
+      "in_frustum": 3944,
+      "behind_camera": 282,
+      "surface_range_m": [
+        0.0,
+        117404.8175933799
+      ],
+      "height_range_m": [
+        4333.740962277464,
+        5751.402172316716
+      ]
+    }
+  },
+  "targets": {
+    "basin_high_vertex": {
+      "point_id": 82290,
+      "lat": -50.930818875027846,
+      "lon": -19.20780668536734,
+      "height_m": 5751.402172316716
+    },
+    "basin_low_vertex": {
+      "point_id": 40655,
+      "lat": -51.561345105964605,
+      "lon": -17.77319755997412,
+      "height_m": 4322.281271757978
+    },
+    "connector_start": {
+      "point_id": 23109,
+      "lat": -51.542385439601595,
+      "lon": -17.815991213635968,
+      "height_m": 4356.660149243277
+    },
+    "connector_end": {
+      "point_id": 23000,
+      "lat": -62.505117538633215,
+      "lon": -19.114335977573393,
+      "height_m": 0.0
+    }
+  },
+  "local_camera_targets": {
+    "local_high": {
+      "point_id": 82290,
+      "lat": -50.930818875027846,
+      "lon": -19.20780668536734,
+      "height_m": 5751.402172316716
+    },
+    "local_low": {
+      "point_id": 86772,
+      "lat": -51.00222698954717,
+      "lon": -19.083665220874618,
+      "height_m": 5562.324481662287
+    }
+  },
+  "proposed_cameras": [
+    {
+      "id": "high_to_low",
+      "diagnostic_only": true,
+      "camera_point_id": 82290,
+      "target_point_id": 86772,
+      "lat": -50.930818875027846,
+      "lon": -19.20780668536734,
+      "absolute_height_m": 6751.402172316716,
+      "candidate_alt_m": 1000.0,
+      "heading_deg": 132.45577440642353,
+      "down": 0.10326849032826112,
+      "target_range_m": 11680.173461848268,
+      "time_s": 7200,
+      "colours": "neutral",
+      "shadows": "off"
+    },
+    {
+      "id": "low_to_high",
+      "diagnostic_only": true,
+      "camera_point_id": 86772,
+      "target_point_id": 82290,
+      "lat": -51.00222698954717,
+      "lon": -19.083665220874618,
+      "absolute_height_m": 6751.402172316716,
+      "candidate_alt_m": 1189.0776906544288,
+      "heading_deg": 312.35934399854943,
+      "down": 0.08699189567157428,
+      "target_range_m": 11662.615778981148,
+      "time_s": 7200,
+      "colours": "neutral",
+      "shadows": "off"
+    }
+  ]
+}

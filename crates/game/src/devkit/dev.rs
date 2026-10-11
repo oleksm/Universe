@@ -69,7 +69,7 @@ pub fn apply(app: &mut App, name: &str) {
         }
     }
     app.messages.clear();
-    if app.charts.has_surface_sources() {
+    if app.charts.has_surface_sources() && !crate::pgs_debug::active(&c.sys.bodies[c.planet]) {
         let palette = crate::pgs_preview::palette(&c.sys.bodies[c.planet]);
         app.say(if palette.is_some_and(|p| p.materials()) { "PGS1: ROCK APPEARANCE PILOT - VISUAL TUNING" } else if palette.is_some() { "PGS1: DIAGNOSTIC ROCK COLOURS, NOT PHYSICAL TEXTURES" } else { "PGS1: NEUTRAL TERRAIN / EXPORTED WATER" }.into());
     }

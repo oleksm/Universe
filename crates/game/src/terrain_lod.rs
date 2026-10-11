@@ -386,6 +386,12 @@ impl Lod {
         }
         // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
         let draw = shown;
+        #[cfg(feature = "dev")]
+        if crate::pgs_debug::active(body) && now % 120 == 0 {
+            let mut levels = std::collections::BTreeMap::new();
+            for k in &draw { *levels.entry(k.level).or_insert(0usize) += 1; }
+            log::info!("SCENERY DEBUG frame={now} resident_draw_levels={levels:?} pending={} eye_height_m={:.6}", self.pending.len(), eye_dist-r);
+        }
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();
@@ -402,9 +408,13 @@ impl Lod {
                     })
                 })
             };
+            #[cfg(feature = "dev")]
+            crate::pgs_debug::patch(frame, body, &p.mesh, p.origin, center, rotation);
             if crate::pgs_preview::terrain_shadows(body) { frame.ground_shadow(draw_patch); }
             else { frame.no_shadow(draw_patch); }
         }
+        #[cfg(feature = "dev")]
+        crate::pgs_debug::draw(frame, body, center, rotation);
         self.patches.retain(|_, p| now - p.used < KEEP);
         if self.patches.len() > MAX_PATCHES {
             let mut by_use: Vec<(u64, Key)> = self.patches.iter().map(|(k, p)| (p.used, *k)).collect();

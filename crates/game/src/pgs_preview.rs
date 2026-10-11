@@ -46,6 +46,7 @@ pub fn palette(body: &Body) -> Option<&'static Palette> {
 
 #[cfg(feature = "dev")]
 pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::world::worlds::pgs::Surface, surface_hash: &str, manifest: &serde_json::Value) -> Result<(), String> {
+    crate::pgs_debug::configure(body, surface, surface_hash)?;
     let shadows = match std::env::var("UNIVERSE_PGS1_SHADOWS").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("off") => false,
         Ok("on") => true,

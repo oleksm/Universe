@@ -1,0 +1,24 @@
+{
+  "sidecar_sha256": "e94cec9402f983711201cc2d3e350ec4bece2f9e5a1f9d5ded7d4df7e5a1abf0",
+  "scope": "canonical_mesh segments with midpoint within20km of frozen summit surface point; actual3D length",
+  "source": {
+    "radius_m": 6371000,
+    "segments": 7256,
+    "edge_m": {
+      "min": 603.9600969114431,
+      "median": 826.9363740330294,
+      "p95": 1219.068878210859,
+      "max": 1224.2892833472886
+    }
+  },
+  "host": {
+    "radius_m": 6281370,
+    "segments": 7454,
+    "edge_m": {
+      "min": 595.4708756250247,
+      "median": 815.3133797000778,
+      "p95": 1201.9299855513686,
+      "max": 1207.1026717034727
+    }
+  }
+}

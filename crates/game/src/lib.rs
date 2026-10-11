@@ -37,6 +37,8 @@ mod terrain_lod;
 mod lines_near;
 mod terrain_view;
 mod pgs_preview;
+#[cfg(feature = "dev")]
+mod pgs_debug;
 mod thrusterpanel;
 mod passengers;
 mod manual;
