@@ -649,3 +649,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: module.field
+    version: 1
+    manifest_sha256: "7b010f3e7f488cca243f1c0067753e6a7277305ee302792eb98fd0e812112e64"
+    installed: 0b589ce2
+    game: "the loader (world::assets) at fso 0b589ce2"
+    date: "2026-10-10"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/field/v1 (36108 bytes, bounds [-500.0, 0.0, -500.0] to [500.0, 0.32, 500.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
+      - "Actual settlement terrain seating and boundary transitions, aerial GPU appearance/temporal filtering/cost, crop/growth game state; flat generic canopy only"
