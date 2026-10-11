@@ -938,7 +938,7 @@
 - { record: module.ladle-station, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "4c09f1341df24411" }
 - { record: module.lead-smelter, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "437a2e414d6a0cf0" }
 - { record: module.lime-kiln, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d98f87ed3b8a23ab" }
-- { record: module.livestock-barn, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87cf70ef2b472809" }
+- { record: module.livestock-barn, at: "2026-10-11T03:05:20Z", status: review, summary: "changed: identity", sha: "4183a57352629c5f" }
 - { record: module.loading-dock, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "98d790daaa86cbde" }
 - { record: module.machine-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "3b2102d84ec08c87" }
 - { record: module.machining-centre, at: "2026-10-07T04:19:21Z", status: review, summary: "changed: cuts", sha: "f790041a3627e9d2" }

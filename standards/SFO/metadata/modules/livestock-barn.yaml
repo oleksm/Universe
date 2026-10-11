@@ -4,7 +4,7 @@ identity:
   key: module.livestock-barn
   name: "Livestock barn"
   step: "Raise animals"
-  description: "Sheds, yards and feed stores for animals raised on feed and hay brought to them. Set to one kind of animal at a time."
+  description: "Sheds, yards and feed stores for animals raised on feed and hay brought to them. Set to one kind of animal at a time. Its box is the whole site (200 x 50 x 8 m): a main shed of 145 x 26 m (eaves 6 m, ridge 8 m, a steel portal frame clad and closed), a fenced handling yard at its east end, a covered feed store and a service apron, all on the ground at 0."
 physical:
   length: 200
   width: 50
