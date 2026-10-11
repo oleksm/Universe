@@ -1284,3 +1284,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game lighting, temporal edge filtering, GPU cost and final hull fit pending. Provisional SMES energy density, containment, refrigeration, internal packing and structural qualification unresolved."
+  - key: equipment.cargo.rack.s1
+    version: 1
+    manifest_sha256: "d8a7b963c6a4ee526cb81a7d073e94ac6f19bd76dcdd09fdd611054e1a5f4dd8"
+    installed: b92fa6b6
+    game: "the loader (world::assets) at fso b92fa6b6"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-rack-s1/v1 (112356 bytes, bounds [-1.585, 0.0, -0.795] to [1.585, 1.59, 0.795]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual GPU materials, temporal edges, performance, final hull upper/lower mounting and loaded cargo fit pending;4tonne dynamic strength, restraint and handling unqualified. Static empty package only."
