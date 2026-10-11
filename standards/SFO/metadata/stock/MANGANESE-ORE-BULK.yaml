@@ -7,5 +7,6 @@ identity:
   name: "Manganese ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.22, 0.2, 0.2]
 made_from:
   - item: good.manganese-ore

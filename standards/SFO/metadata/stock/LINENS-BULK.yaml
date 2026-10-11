@@ -7,5 +7,6 @@ identity:
   name: "Linens, in bulk"
   form: bulk
 package: package.carton-pallet
+tint: [0.86, 0.83, 0.76]
 made_from:
   - item: good.linens

@@ -7,5 +7,6 @@ identity:
   name: "Shale zinc-lead ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.5, 0.5, 0.5]
 made_from:
   - item: good.shale-zinc-ore

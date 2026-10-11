@@ -7,5 +7,6 @@ identity:
   name: "Nitric acid, in bulk"
   form: bulk
 package: package.tote
+tint: [0.92, 0.92, 0.85]
 made_from:
   - item: good.nitric-acid

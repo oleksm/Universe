@@ -7,5 +7,6 @@ identity:
   name: "Sugar beet, in bulk"
   form: bulk
 package: package.produce-crate
+tint: [0.97, 0.97, 0.97]
 made_from:
   - item: good.sugar-beet

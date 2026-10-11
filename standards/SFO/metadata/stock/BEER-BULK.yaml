@@ -7,5 +7,6 @@ identity:
   name: "Beer, in bulk"
   form: bulk
 package: package.tote
+tint: [0.85, 0.6, 0.15]
 made_from:
   - item: good.beer

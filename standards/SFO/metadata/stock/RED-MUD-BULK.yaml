@@ -7,5 +7,6 @@ identity:
   name: "Red mud, in bulk"
   form: bulk
 package: package.skip
+tint: [0.58, 0.25, 0.18]
 made_from:
   - item: good.red-mud

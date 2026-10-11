@@ -7,5 +7,6 @@ identity:
   traded_as: market.metals
   form: scrap
 package: package.skip
+tint: [0.44, 0.45, 0.47]
 made_from:
   - item: material.high-strength-steel-4340

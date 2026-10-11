@@ -7,5 +7,6 @@ identity:
   name: "Unconformity uranium ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.4, 0.42, 0.3]
 made_from:
   - item: good.unconformity-uranium-ore

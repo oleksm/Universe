@@ -7,5 +7,6 @@ identity:
   name: "Machine tools, in bulk"
   form: bulk
 package: package.crate-heavy
+tint: [0.4, 0.44, 0.48]
 made_from:
   - item: good.machine-tools

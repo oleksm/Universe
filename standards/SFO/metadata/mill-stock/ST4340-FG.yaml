@@ -7,6 +7,7 @@ identity:
   form: forging
   temper: "quenched and tempered"
 package: package.crate-heavy
+tint: [0.44, 0.45, 0.47]
 made_from:
   - item: material.high-strength-steel-4340
 physical:

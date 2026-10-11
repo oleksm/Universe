@@ -7,5 +7,6 @@ identity:
   name: "Rare earth clay, in bulk"
   form: bulk
 package: package.skip
+tint: [0.7, 0.52, 0.38]
 made_from:
   - item: good.rare-earth-clay-ore

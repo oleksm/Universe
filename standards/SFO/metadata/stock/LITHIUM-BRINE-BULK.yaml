@@ -7,5 +7,6 @@ identity:
   name: "Lithium brine, in bulk"
   form: bulk
 package: package.tote
+tint: [0.78, 0.76, 0.72]
 made_from:
   - item: good.lithium-brine

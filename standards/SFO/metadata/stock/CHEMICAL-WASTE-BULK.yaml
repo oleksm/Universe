@@ -7,5 +7,6 @@ identity:
   name: "Chemical waste, in bulk"
   form: bulk
 package: package.tote
+tint: [0.86, 0.86, 0.84]
 made_from:
   - item: good.chemical-waste

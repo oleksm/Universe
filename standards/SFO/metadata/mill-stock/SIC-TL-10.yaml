@@ -6,6 +6,7 @@ identity:
   traded_as: market.minerals
   form: tile
 package: package.plate-stack
+tint: [0.24, 0.24, 0.26]
 made_from:
   - item: material.silicon-carbide
 size:

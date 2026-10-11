@@ -7,5 +7,6 @@ identity:
   name: "Hot ingot, Ti-6Al-4V, in bulk"
   form: bulk
 package: package.ladle
+tint: [0.56, 0.56, 0.59]
 made_from:
   - item: good.hot-ingot-ti64

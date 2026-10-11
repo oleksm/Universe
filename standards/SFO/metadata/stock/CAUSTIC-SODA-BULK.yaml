@@ -7,5 +7,6 @@ identity:
   name: "Caustic soda, in bulk"
   form: bulk
 package: package.tote
+tint: [0.92, 0.92, 0.92]
 made_from:
   - item: good.caustic-soda

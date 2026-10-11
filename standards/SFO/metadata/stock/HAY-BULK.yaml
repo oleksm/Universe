@@ -7,5 +7,6 @@ identity:
   name: "Hay, in bulk"
   form: bulk
 package: package.bale
+tint: [0.8, 0.72, 0.42]
 made_from:
   - item: good.hay

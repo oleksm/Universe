@@ -6,6 +6,7 @@ identity:
   traded_as: market.metals
   form: honeycomb
 package: package.plate-stack
+tint: [0.8, 0.8, 0.7]
 made_from:
   - item: material.titanium-honeycomb
 size:

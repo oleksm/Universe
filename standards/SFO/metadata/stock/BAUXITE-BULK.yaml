@@ -7,5 +7,6 @@ identity:
   name: "Bauxite, in bulk"
   form: bulk
 package: package.skip
+tint: [0.62, 0.36, 0.24]
 made_from:
   - item: good.bauxite

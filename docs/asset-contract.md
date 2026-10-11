@@ -28,7 +28,8 @@ Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--su
 ## Packages: the contents convention
 
 A package model is drawn full. What it carries is the meshes under one node named `contents`, all with one material
-named `contents` (neutral light grey, no texture): the game tints that material by the stock's material colour, and may
+named `contents` (neutral light grey, no texture): the game tints that material by the stock's `tint` (sRGB 0 to 1 on
+every stock record, artistic, tools/standards/tints.py), and may
 hide or scale the node for a part-full package. Everything else (pallet, straps, cage, frame) is the package itself, in
 its own materials, never tinted. No labels, no text. The contents stand for any stock the package carries: a
 representative load, not its count, cross-section or weight. The bar bundle's contents are round tubes (71 of the 73

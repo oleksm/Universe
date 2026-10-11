@@ -6,5 +6,6 @@ identity:
   traded_as: market.metals
   form: ingot
 package: package.crate-heavy
+tint: [0.56, 0.56, 0.59]
 made_from:
   - item: material.titanium-alloy-ti-6al-4v

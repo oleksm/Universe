@@ -7,5 +7,6 @@ identity:
   name: "Fish, in bulk"
   form: bulk
 package: package.livestock-crate
+tint: [0.75, 0.78, 0.8]
 made_from:
   - item: good.live-fish

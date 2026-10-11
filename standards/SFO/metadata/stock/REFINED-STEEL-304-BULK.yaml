@@ -7,5 +7,6 @@ identity:
   name: "Refined steel, 304, in bulk"
   form: bulk
 package: package.ladle
+tint: [0.72, 0.73, 0.75]
 made_from:
   - item: good.refined-steel-304

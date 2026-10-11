@@ -7,5 +7,6 @@ identity:
   name: "Tin concentrate, in bulk"
   form: bulk
 package: package.skip
+tint: [0.45, 0.44, 0.42]
 made_from:
   - item: good.tin-concentrate

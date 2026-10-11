@@ -7,5 +7,6 @@ identity:
   name: "Impact diamond rock, in bulk"
   form: bulk
 package: package.skip
+tint: [0.88, 0.9, 0.92]
 made_from:
   - item: good.impact-diamond-rock

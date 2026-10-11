@@ -7,5 +7,6 @@ identity:
   name: "Phosphate fertiliser, in bulk"
   form: bulk
 package: package.bulk-bag
+tint: [0.7, 0.66, 0.58]
 made_from:
   - item: good.phosphate-fertiliser

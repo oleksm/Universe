@@ -7,6 +7,7 @@ identity:
   form: tube
   temper: "quenched and tempered"
 package: package.bar-bundle
+tint: [0.44, 0.45, 0.47]
 made_from:
   - item: material.high-strength-steel-4340
 size:

@@ -7,5 +7,6 @@ identity:
   name: "Chromite ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.2, 0.2, 0.21]
 made_from:
   - item: good.chromite-ore

@@ -7,5 +7,6 @@ identity:
   name: "Potash ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.8, 0.62, 0.55]
 made_from:
   - item: good.potash-ore

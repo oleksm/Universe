@@ -6,6 +6,7 @@ identity:
   traded_as: market.textiles
   form: fibre
 package: package.coil
+tint: [0.86, 0.75, 0.25]
 made_from:
   - item: material.aramid-fibre
 basis:

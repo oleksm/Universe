@@ -7,5 +7,6 @@ identity:
   name: "Polysilicon, in bulk"
   form: bulk
 package: package.crate-heavy
+tint: [0.56, 0.57, 0.59]
 made_from:
   - item: good.polysilicon

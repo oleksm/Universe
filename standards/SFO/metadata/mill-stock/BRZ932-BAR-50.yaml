@@ -6,6 +6,7 @@ identity:
   traded_as: market.metals
   form: bar
 package: package.bar-bundle
+tint: [0.66, 0.49, 0.26]
 made_from:
   - item: material.bearing-bronze-c93200
 size:

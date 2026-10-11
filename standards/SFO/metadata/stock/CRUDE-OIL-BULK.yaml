@@ -7,5 +7,6 @@ identity:
   name: "Crude oil, in bulk"
   form: bulk
 package: package.tote
+tint: [0.08, 0.07, 0.06]
 made_from:
   - item: good.crude-oil

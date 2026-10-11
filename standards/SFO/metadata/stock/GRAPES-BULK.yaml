@@ -7,5 +7,6 @@ identity:
   name: "Grapes, in bulk"
   form: bulk
 package: package.cold-crate
+tint: [0.4, 0.18, 0.35]
 made_from:
   - item: good.grapes

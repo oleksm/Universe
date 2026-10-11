@@ -7,5 +7,6 @@ identity:
   name: "Meteoritic iron, in bulk"
   form: bulk
 package: package.crate-heavy
+tint: [0.4, 0.38, 0.36]
 made_from:
   - item: good.meteoritic-iron

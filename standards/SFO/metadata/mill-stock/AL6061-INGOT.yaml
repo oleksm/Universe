@@ -7,5 +7,6 @@ identity:
   traded_as: market.metals
   form: ingot
 package: package.crate-heavy
+tint: [0.8, 0.81, 0.83]
 made_from:
   - item: material.aluminium-alloy-6061

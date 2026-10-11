@@ -7,5 +7,6 @@ identity:
   name: "Slag, in bulk"
   form: bulk
 package: package.skip
+tint: [0.3, 0.3, 0.31]
 made_from:
   - item: good.slag

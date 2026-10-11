@@ -7,5 +7,6 @@ identity:
   name: "Phosphate rock, in bulk"
   form: bulk
 package: package.skip
+tint: [0.7, 0.66, 0.58]
 made_from:
   - item: good.phosphate-rock

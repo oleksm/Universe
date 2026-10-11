@@ -7,5 +7,6 @@ identity:
   name: "Salt-dome sulphur ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.86, 0.8, 0.3]
 made_from:
   - item: good.salt-dome-sulphur-ore

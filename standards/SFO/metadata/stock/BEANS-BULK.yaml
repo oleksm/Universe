@@ -7,5 +7,6 @@ identity:
   name: "Beans, in bulk"
   form: bulk
 package: package.bulk-bag
+tint: [0.6, 0.35, 0.25]
 made_from:
   - item: good.beans

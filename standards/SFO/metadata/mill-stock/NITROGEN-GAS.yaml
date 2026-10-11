@@ -6,6 +6,7 @@ identity:
   name: "Nitrogen, compressed"
   form: fluid
 package: package.tote
+tint: [0.8, 0.84, 0.88]
 made_from:
   - item: material.nitrogen
 basis:

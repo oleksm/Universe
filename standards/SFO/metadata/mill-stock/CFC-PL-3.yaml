@@ -6,6 +6,7 @@ identity:
   traded_as: market.chemicals
   form: plate
 package: package.plate-stack
+tint: [0.12, 0.12, 0.13]
 made_from:
   - item: material.carbon-fibre-composite
 size:

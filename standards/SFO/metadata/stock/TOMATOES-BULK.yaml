@@ -7,5 +7,6 @@ identity:
   name: "Tomatoes, in bulk"
   form: bulk
 package: package.produce-crate
+tint: [0.85, 0.2, 0.12]
 made_from:
   - item: good.tomatoes

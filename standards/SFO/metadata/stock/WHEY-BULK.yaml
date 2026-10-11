@@ -7,5 +7,6 @@ identity:
   name: "Whey, in bulk"
   form: bulk
 package: package.tote
+tint: [0.93, 0.92, 0.8]
 made_from:
   - item: good.whey

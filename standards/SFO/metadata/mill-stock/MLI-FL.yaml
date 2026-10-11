@@ -6,6 +6,7 @@ identity:
   traded_as: market.chemicals
   form: film
 package: package.coil
+tint: [0.86, 0.86, 0.84]
 made_from:
   - item: material.multi-layer-insulation
 size:

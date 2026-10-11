@@ -6,6 +6,7 @@ identity:
   traded_as: market.metals
   form: wire
 package: package.coil
+tint: [0.73, 0.45, 0.2]
 made_from:
   - item: material.copper
 size:

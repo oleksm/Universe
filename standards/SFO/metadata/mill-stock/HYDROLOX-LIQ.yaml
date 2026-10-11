@@ -6,6 +6,7 @@ identity:
   name: "Hydrolox, liquid"
   form: fluid
 package: package.tote
+tint: [0.15, 0.15, 0.15]
 made_from:
   - item: material.hydrolox
 basis:

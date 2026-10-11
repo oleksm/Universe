@@ -7,5 +7,6 @@ identity:
   name: "Nickel-Iron Ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.47, 0.26, 0.18]
 made_from:
   - item: good.nickel-iron-ore

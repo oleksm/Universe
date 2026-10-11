@@ -7,5 +7,6 @@ identity:
   name: "Asteroid Water Ice, in bulk"
   form: bulk
 package: package.cold-crate
+tint: [0.86, 0.92, 0.97]
 made_from:
   - item: good.asteroid-water-ice

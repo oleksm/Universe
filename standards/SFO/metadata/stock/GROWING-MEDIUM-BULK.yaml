@@ -7,5 +7,6 @@ identity:
   name: "Growing medium, in bulk"
   form: bulk
 package: package.bale
+tint: [0.52, 0.44, 0.3]
 made_from:
   - item: good.growing-medium

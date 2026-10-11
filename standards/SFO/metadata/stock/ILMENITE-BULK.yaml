@@ -7,5 +7,6 @@ identity:
   name: "Ilmenite, in bulk"
   form: bulk
 package: package.skip
+tint: [0.18, 0.18, 0.19]
 made_from:
   - item: good.ilmenite

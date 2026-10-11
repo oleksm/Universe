@@ -7,5 +7,6 @@ identity:
   name: "Carbon anode, in bulk"
   form: bulk
 package: package.crate-heavy
+tint: [0.12, 0.12, 0.13]
 made_from:
   - item: good.carbon-anode

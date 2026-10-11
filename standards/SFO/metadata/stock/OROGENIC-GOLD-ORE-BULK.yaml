@@ -7,5 +7,6 @@ identity:
   name: "Orogenic gold ore, in bulk"
   form: bulk
 package: package.skip
+tint: [0.52, 0.46, 0.36]
 made_from:
   - item: good.orogenic-gold-ore

@@ -7,6 +7,7 @@ identity:
   form: tube
   temper: "T6"
 package: package.bar-bundle
+tint: [0.8, 0.81, 0.83]
 made_from:
   - item: material.aluminium-alloy-6061
 size:
