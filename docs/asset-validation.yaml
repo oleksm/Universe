@@ -724,3 +724,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static stowed only; runtime deployment, final hull placement, thermal view factor,1000K joints,mass/structure/internal packing and actual GPU appearance/filtering/cost remain unqualified. Standing registry174a ownership."
+  - key: package.bar-bundle
+    version: 1
+    manifest_sha256: "62ca8da3248286e12498f4982f2db784fa344d1783825ef60ce0b3ee15bfcc82"
+    installed: c8a32cba
+    game: "the loader (world::assets) at fso c8a32cba"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/bar-bundle/v1 (93800 bytes, bounds [-3.0, 0.0, -0.2] to [3.0, 0.3965, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package world/cargo drawing and per-stock contents RGB tint are not implemented; actual placement, GPU appearance/cost and temporal filtering pending. No part-full scaling for bundles/cages. Representative load, not qualified tare/payload or handling/stack strength."
