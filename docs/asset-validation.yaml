@@ -756,3 +756,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Package drawing, per-stock contents tint, world/cargo placement, GPU appearance/cost and temporal filtering remain unimplemented or unmeasured. Rated5t lifting strength and handling rig are not qualified by the static asset; provisional339.45kg geometric steel estimate versus350kg tare."
+  - key: package.bulk-bag
+    version: 1
+    manifest_sha256: "037c6d74141843013ab0225a631b66be71322abf1a3b96f3533988aebad14b30"
+    installed: e60666e3
+    game: "the loader (world::assets) at fso e60666e3"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/bulk-bag/v1 (77120 bytes, bounds [-0.5508, 0.0, -0.55] to [0.55, 1.25, 0.55]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Package drawing, actual forklift/world placement, GPU appearance/cost and temporal filtering pending. Closed bag has no contents node or tint by contract23aa25f6. Rated1500kg loading/stack2 and cloth/hoisting behavior not qualified; full static exterior only."
