@@ -1099,7 +1099,7 @@
 - { record: package.bar-bundle, at: "2026-10-11T15:57:49Z", status: "", summary: "changed: visual", sha: "df0cbb3575c1656b" }
 - { record: package.bulk-bag, at: "2026-10-11T16:03:27Z", status: "", summary: "changed: visual", sha: "206d41f29970f4a2" }
 - { record: package.carton-pallet, at: "2026-10-11T16:23:03Z", status: "", summary: "changed: visual", sha: "6e91bc9d58b4cee9" }
-- { record: package.coil, at: "2026-10-11T16:40:11Z", status: "", summary: "changed: labels", sha: "434a538baecd329b" }
+- { record: package.coil, at: "2026-10-11T16:41:22Z", status: "", summary: "changed: visual", sha: "92599addc98d32a4" }
 - { record: package.cold-crate, at: "2026-10-11T16:15:53Z", status: "", summary: "changed: visual", sha: "bfd01383484de204" }
 - { record: package.crate-heavy, at: "2026-10-11T16:09:26Z", status: "", summary: "changed: visual", sha: "ad320ca7ba5fce5f" }
 - { record: package.cryo-dewar, at: "2026-10-11T15:45:07Z", status: "", summary: "changed: labels, label", sha: "ee0b730852e94ab4" }
