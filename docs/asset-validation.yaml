@@ -409,3 +409,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "GPU appearance/cost, final hull placement, fusion/thermal/shielding/load feasibility; provisional static exterior only"
+  - key: equipment.cargo.rack.s3
+    version: 2
+    manifest_sha256: "81a63e5a8b0a24f54a5e77763ffab23fc88433573dbf3c3a44cddd42898a17de"
+    installed: 0e8cc8c92b4a9749349a65b257cb8df1c00cba06
+    game: "the loader (world::assets) at fso 0e8cc8c9"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-rack-s3/v2 (160500 bytes, bounds [-1.355, 0.0, -2.715] to [1.355, 2.71, 2.715]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
