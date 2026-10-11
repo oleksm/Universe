@@ -35,3 +35,9 @@ It does not resolve registry records/assets, enforce full lock coverage against 
 models, verify hull anchor snapshots, prove polygon simplicity/collision/structure,
 check flight readiness or migrate old saves. Those remain consumer responsibilities.
 A schema-valid or locally valid document is not an accepted ship.
+
+Measured foundation check (2026-10-11, shared2CPU/8GiB, dev build): a1000-module
+230306-byte document emitted in2.91ms and parsed+validated in18.00ms. This is a
+bounded synthetic parser probe, not an editor/renderer performance claim.
+Thirteen focused tests cover the full draft fixture, scalar spelling traps,
+malformed input, schema parity/snapshot, source paths, deck references and limits.
