@@ -15,10 +15,10 @@ handling: forklift
 stack: 3
 visual:
   format: "freefall-model/1"
-  path: "models/plate-stack/v1"
-  manifest_sha256: "9c6b6e05e1a78d9e4a12c998e2c7c0ab4bf85cc9cecd6830addd72eddd92039c"
-  version: 1
-  triangles: 656
+  path: "models/plate-stack/v2"
+  manifest_sha256: "b3839fe2b2515aeebd052b75a48cf00e54068c8823cbe7d104a74d2950e611f8"
+  version: 2
+  triangles: 660
 labels:
   - { node: label, face: "+Z", centre: [0.0, 0.36, 0.501], size: [0.3, 0.15] }
   - { node: label_2, face: "-Z", centre: [0.0, 0.36, -0.501], size: [0.3, 0.15] }
