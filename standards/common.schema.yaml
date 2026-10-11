@@ -103,6 +103,7 @@ definitions:
       fixed: { type: array, items: { type: string }, description: "The groups or figures that will not change, where the rest may." }
       because: { type: string, description: "Why it stands where it does: what it rests on, or what waits on it." }
       ask: { type: string, description: "Where a proposal to change it goes: a file of the repository." }
+      priority: { enum: [low], description: "low: its work waits behind everything else (the asset queue puts it last): a hold the user set, said in because" }
   mark:
     description: "A made thing's mark (SFO 21): given once where it is made and never changed. What carries one: hulls, equipment, industrial modules, structures, parts (one serial a unit). Ownership and registration are separate records that point at the serial. The game stamps every unit it produces; the registry carries marks only on day-0 stock."
     type: object
