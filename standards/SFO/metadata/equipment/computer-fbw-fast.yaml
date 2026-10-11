@@ -31,6 +31,12 @@ function:
   kind: flight_computer
   turn_rate: 1.8
   roll_rate: 3
+visual:
+  format: "freefall-model/1"
+  path: "models/computer-fbw-fast/v1"
+  manifest_sha256: "135b377f16184ada8d663a60e0ac260abc040ccc9aa89ff27cd19b9c18c79941"
+  version: 1
+  triangles: 1242
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
