@@ -497,7 +497,7 @@
 - { record: equipment.thrusters.quad.s3, at: "2026-10-11T21:02:53Z", status: draft, summary: "changed: visual", sha: "b348e576b88cd0e8" }
 - { record: equipment.transponder.s1, at: "2026-10-11T02:40:51Z", status: draft, summary: "changed: visual", sha: "2d455f48eff153ca" }
 - { record: equipment.utility.compressor.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6223ecae75b2e757" }
-- { record: equipment.utility.fire.s1, at: "2026-10-11T23:50:07Z", status: draft, summary: "changed: identity, basis", sha: "d66c4dd0d760bf3d" }
+- { record: equipment.utility.fire.s1, at: "2026-10-11T23:55:07Z", status: draft, summary: "changed: visual", sha: "f4758eba5b118982" }
 - { record: equipment.utility.mining-rig.s2, at: "2026-10-11T19:23:28Z", status: draft, summary: "changed: visual", sha: "2829778aa555442d" }
 - { record: equipment.utility.pumps.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "3ff204b62385ca29" }
 - { record: equipment.utility.reaction-wheels.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "f776b4d8052ff51f" }
