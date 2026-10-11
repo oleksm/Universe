@@ -228,3 +228,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Equipment drawing at mounts; live gimbal pointing and RF boresight consumer; GPU appearance/cost and temporal edges; final hull fit and structural/RF qualification"
+  - key: equipment.sensors.radar.s1
+    version: 1
+    manifest_sha256: "a10fc7b117ddfc09c81465f7ee1ac2bd8e00324756c8d85445eee652820a56e6"
+    installed: 95a2a6c4
+    game: "the loader (world::assets) at fso 95a2a6c4"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/sensors-radar-s1/v1 (55432 bytes, bounds [-2.0, 0.0, -1.0] to [2.0, 0.1, 1.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Equipment drawing at mounts; radar75kW heat accounting and ship coolant hookup; final hull fit; GPU appearance/cost and temporal edges; RF/thermal/structural qualification"
