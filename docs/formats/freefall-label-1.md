@@ -14,7 +14,7 @@ label plates.
 | lot | the batch (`batch.lot`), `TICKER-000000` |
 | serial | this package: `TICKER-000000-0000` (lot and a count within it); the barcode carries it |
 | made at | the works (`facility.*`, `rig.*`): its name |
-| made on | world time the lot was finished (s); printed as `DAY d HH:MM` |
+| made on | world time the lot was begun, its first output (s); printed as `DAY d HH:MM` |
 | packed on | world time it was filled and labelled (s); printed the same way |
 | net, gross | kg of contents; kg with the package's tare |
 | package | the template (`package.*`): its name, `stack` and `keeps` print as handling marks |

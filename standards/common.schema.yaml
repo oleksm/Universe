@@ -128,7 +128,7 @@ definitions:
       lot: { type: string, pattern: "^[A-Z]{2,4}-[0-9]{6}$", description: "The batch it came from (batch.lot)" }
       serial: { type: string, pattern: "^[A-Z]{2,4}-[0-9]{6}-[0-9]{4}$", description: "This package: its lot and a four-figure count within the lot, BWD-004471-0007; the barcode carries it" }
       made_at: { type: string, x-ref: [facility, rig], description: "The works, by its key" }
-      made_on: { type: number, x-unit: "s", description: "s of world time when its lot was finished" }
+      made_on: { type: number, x-unit: "s", description: "s of world time when its lot was begun (the works' first output into it: docs/packing-contract.md)" }
       packed_on: { type: number, x-unit: "s", description: "s of world time when it was filled and labelled" }
       net_mass: { type: number, x-unit: "kg", description: "kg of contents" }
       gross_mass: { type: number, x-unit: "kg", description: "kg with the package (its tare)" }
@@ -143,7 +143,7 @@ definitions:
       lot: { type: string, pattern: '^[A-Z]{2,4}-[0-9]{6}$', description: "The maker's ticker and a six-figure sequence the works gives: HHI-004471." }
       heat: { type: string, description: "For mill stock: the melt it came from, the melter's lot number." }
       made_at: { type: string, x-ref: [facility, rig], description: "The works, by its key." }
-      made_on: { type: number, x-unit: "s", description: "s of world time when the lot was finished." }
+      made_on: { type: number, x-unit: "s", description: "s of world time when the lot was begun (its first output)." }
   product_identity:
     description: "What every made product's identity says (a shape: a kind's identity derives from it with allOf and adds its own words). Flattened by the generator and the validators."
     type: object
