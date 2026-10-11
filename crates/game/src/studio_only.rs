@@ -48,6 +48,7 @@ impl StudioOnly {
         if let Some(k) = crate::devenv::num("UNIVERSE_VIEW").map(|n| n as u8) {
             interior.flat_view(k);
         }
+        if std::env::var_os("UNIVERSE_SHIP_CODE").is_some(){interior.open_code();}
         let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
         StudioOnly { interior, spec, deckplans: Vec::new(), issue }
     }
