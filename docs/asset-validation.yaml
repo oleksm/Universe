@@ -1028,3 +1028,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game package drawing, label printing, placement/handling, GPU cost and temporal filtering; original oxygen/diffusion, thermal/stocking/structural qualification and tare discrepancy remain open."
+  - key: package.bar-bundle
+    version: 3
+    manifest_sha256: "638f247886b69bf0be80f79595f2b3193257f9d83f87fef6b944e0704f9cf4bd"
+    installed: 6a41e079
+    game: "the loader (world::assets) at fso 6a41e079"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/bar-bundle/v3 (95896 bytes, bounds [-3.001, 0.0, -0.2] to [3.001, 0.3965, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game package drawing, label printing/readability, handling/tint, GPU cost and temporal filtering; rigid end-tag attachment and baseline lifting/stacking/capacity qualification remain open."
