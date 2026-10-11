@@ -569,3 +569,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
+  - key: equipment.thermal.radiator.s3
+    version: 2
+    manifest_sha256: "d78c533a0353509c55e8a738171db75e0823f0445005ba6a56ef08591dfb1495"
+    installed: 857d22c9e21d3b2a41625592cda6bb2d948e519b
+    game: "the loader (world::assets) at fso 857d22c9"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-radiator-s3/v2 (364404 bytes, bounds [-0.0, -0.0, -6.05] to [24.1975, 0.08, 6.05]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Preview-only backfill; all prior GPU, hull, operational and engineering limitations retained"
