@@ -1172,3 +1172,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game label printing, content tint, GPU look/cost and hot-work engineering remain open; added pad mass estimated, attachment and heat durability unqualified."
+  - key: package.bale
+    version: 2
+    manifest_sha256: "718af567b38f4e40d5e88b93e41eb453e360b2639a67351172379fb4ec4da776"
+    installed: 0936dadc
+    game: "the loader (world::assets) at fso 0936dadc"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/bale/v2 (235864 bytes, bounds [-1.203, -0.0, -0.6082] to [1.203, 1.201, 0.6082]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game label printing, contents tint, GPU look/cost and handling remain open; label pad density and retention assumptions recorded."
