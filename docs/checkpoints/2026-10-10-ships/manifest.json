@@ -1,0 +1,1329 @@
+{
+  "scope": "Ships authored fit studies and decision evidence; candidate-only, not production assets",
+  "original_root": "/home/alexm/git/blender",
+  "archive": "studies.tar.gz",
+  "sha256": "c47aebadd5d29bd90443b76fa17cb65bd797560174c3538ebde66e0750258de1",
+  "excluded": "Redundant .blend1 backups and Python bytecode; installed equipment packages remain in freefall-assets and registry checkpoints",
+  "files": [
+    {
+      "path": "mc07-combined-fit/build_handoff.py",
+      "bytes": 3988,
+      "sha256": "761dbae9b6705c5ec423b7e50254b06b47e775d55ae032d41521f18f272ecec8"
+    },
+    {
+      "path": "mc07-combined-fit/check_hammer_right_vertices.py",
+      "bytes": 2093,
+      "sha256": "fb77ada3ba9ba1a0e8fafe94c9313683e142e1ed1656c50c11f2c59ca3238888"
+    },
+    {
+      "path": "mc07-combined-fit/check_rear_right_vertices.py",
+      "bytes": 2070,
+      "sha256": "c7105349f6dde09f0a6b8320190c55431304c457e0666218b54275139831d4e4"
+    },
+    {
+      "path": "mc07-combined-fit/check_right_vertices.py",
+      "bytes": 2074,
+      "sha256": "e4b4e07b870d72231305dd7bf6c6bca847ef3fa314fcb8f07953c04fd44bbed9"
+    },
+    {
+      "path": "mc07-combined-fit/combined-deck.png",
+      "bytes": 760375,
+      "sha256": "db1ff406481ee630ed724dad6faca130e1d6fd69e72d53ea03f225d5074588c0"
+    },
+    {
+      "path": "mc07-combined-fit/combined-export-source-v01.blend",
+      "bytes": 2017322,
+      "sha256": "519dbc487a609ff9a27d75c95c0534ff2abdafcd812989197f30a3daccb71b9a"
+    },
+    {
+      "path": "mc07-combined-fit/combined-hull-v01.glb",
+      "bytes": 10426280,
+      "sha256": "e001013154e1410127145ffeb6d774372430bddb319541438272edc85e4de473"
+    },
+    {
+      "path": "mc07-combined-fit/combined-review.yaml",
+      "bytes": 2255,
+      "sha256": "539d3768fa2b29121d8f607fae2c60b2f1633d4a6e5d4543307df9ccac93fe45"
+    },
+    {
+      "path": "mc07-combined-fit/combined-source-v01.blend",
+      "bytes": 2011328,
+      "sha256": "8eedc86d23f717f7594c69d238d8052b8042e3ed365af82781b6ed56d444b828"
+    },
+    {
+      "path": "mc07-combined-fit/combined-underside.png",
+      "bytes": 765546,
+      "sha256": "096ea19da6196d20946b6b635053ffe693b859b823d65b565cf6524ca663f320"
+    },
+    {
+      "path": "mc07-combined-fit/compose.log",
+      "bytes": 510,
+      "sha256": "324d853d68f4459802c6d0a8d45fec3c0bd90144f779d13c5f2fbb197738f9bf"
+    },
+    {
+      "path": "mc07-combined-fit/compose.py",
+      "bytes": 4747,
+      "sha256": "32046f5d1b644b921845dccc29bad4fcf5cf8045e608330e52b987ff808476f8"
+    },
+    {
+      "path": "mc07-combined-fit/composition.json",
+      "bytes": 3511,
+      "sha256": "7f38830b24e872231b333974cd0b57e418c9feb356c3c973c00a4aba570f61a0"
+    },
+    {
+      "path": "mc07-combined-fit/cross-mechanism-envelopes.json",
+      "bytes": 2668,
+      "sha256": "1f2c57238f0987e2de39d3602be51b3d00f576d6ba68b1b560ff96b744e4be0d"
+    },
+    {
+      "path": "mc07-combined-fit/envelopes.log",
+      "bytes": 1037,
+      "sha256": "239e1f233a9b6a94830ab65fe8be69aac2b21ae8f0dcaa73d5e4d323fd57e265"
+    },
+    {
+      "path": "mc07-combined-fit/export-audit.json",
+      "bytes": 2378,
+      "sha256": "be25c22111dbcf0590ca68e7360d87013d0b6141b950760dd03dbc13f96d1b3f"
+    },
+    {
+      "path": "mc07-combined-fit/export-names.json",
+      "bytes": 4839,
+      "sha256": "0f24ef4f5141030367e39359633db269b389e3a24a595cbf1d76148a612b26b5"
+    },
+    {
+      "path": "mc07-combined-fit/export.log",
+      "bytes": 30217,
+      "sha256": "92cc9dbc8263e78ef8ee8ee8ae65af5921f47652fc4e2cfd4f9ef171b06c2689"
+    },
+    {
+      "path": "mc07-combined-fit/front-right-placement.json",
+      "bytes": 9332,
+      "sha256": "8f02de2fb12444516d59344c45029bec407b4d471840e67fc6cd7174058402a3"
+    },
+    {
+      "path": "mc07-combined-fit/front-right-probe.log",
+      "bytes": 408,
+      "sha256": "95c777016420b536312771c76fabfceb6f4627dbc2f348a94932c80699d2035b"
+    },
+    {
+      "path": "mc07-combined-fit/front-right-vertex-equivalence.json",
+      "bytes": 621,
+      "sha256": "44b20b1dcdb6bddd3d56d81dfd61a0d26d6040888b52829048dc66ee8c07d6e5"
+    },
+    {
+      "path": "mc07-combined-fit/front-v04-hull-sweep.json",
+      "bytes": 51542,
+      "sha256": "960f6164aea9dbc169dacda58c3940e9d56d612881dc627b6e2e0de5c80a6bb6"
+    },
+    {
+      "path": "mc07-combined-fit/front.log",
+      "bytes": 1000,
+      "sha256": "9fc6636190cb3f613ee8bd3781e5519a6c683baca037afd3a9a417850353bf21"
+    },
+    {
+      "path": "mc07-combined-fit/front_probe.py",
+      "bytes": 3680,
+      "sha256": "b2895039309231d95388c0c7597e4edf1297aca94371b55f64884db43a99e6fe"
+    },
+    {
+      "path": "mc07-combined-fit/front_right_probe.py",
+      "bytes": 4063,
+      "sha256": "eaa2c9975c96c488077f5d112c995857a15b76d7ebb9b0ab6633318749335562"
+    },
+    {
+      "path": "mc07-combined-fit/hammer-right-chisel-contact.json",
+      "bytes": 710,
+      "sha256": "79187826e8e11f767bda2c4b11a9c9c0989823f005e80442fc8d9de10961019d"
+    },
+    {
+      "path": "mc07-combined-fit/hammer-right-placement.json",
+      "bytes": 29893,
+      "sha256": "75d9cecbf240edcca6c8baf43810e4e889dd78e9ef1a0ed8d10c7ef6ab1c2603"
+    },
+    {
+      "path": "mc07-combined-fit/hammer-right-probe.log",
+      "bytes": 491,
+      "sha256": "ee5b9eb76f05ac8c36f9f5bd07838281d1f6ddf9c49c66047d454060c3345c22"
+    },
+    {
+      "path": "mc07-combined-fit/hammer-right-vertex-equivalence.json",
+      "bytes": 1053,
+      "sha256": "a0a853e7473ddad7075bb5f00cc9ce15a4c62d7b077c13bfb2f4b0383b06620a"
+    },
+    {
+      "path": "mc07-combined-fit/hammer.log",
+      "bytes": 1468,
+      "sha256": "0278f5816b94dfe4fe071505823c55ebe0b9380aaf776f5ed6c549f0e80d5303"
+    },
+    {
+      "path": "mc07-combined-fit/hammer_probe.py",
+      "bytes": 2688,
+      "sha256": "31163dac9175f883e78f9d328ea098ed00881f3e75092c202305c5e482714480"
+    },
+    {
+      "path": "mc07-combined-fit/hammer_right_probe.py",
+      "bytes": 4952,
+      "sha256": "dbd6c924d618e2dd2f86dc743430a390dee203b0974dffb1a652e37910ff31da"
+    },
+    {
+      "path": "mc07-combined-fit/heel-pocket-sweep.json",
+      "bytes": 18178,
+      "sha256": "e2fa60af2cf65a68cea6038aea84d3e4dfeb625ba5d7c3fa82ba00b99b870cd0"
+    },
+    {
+      "path": "mc07-combined-fit/installed-right-packages.json",
+      "bytes": 1243,
+      "sha256": "9834d75e79aa20f56a0343fa98f60c899d44325ad69532f9e1627f5ecf4fdb68"
+    },
+    {
+      "path": "mc07-combined-fit/planned-bindings.json",
+      "bytes": 9702,
+      "sha256": "184657b30447684fec7e6e4e9e1771adf0b5df9b8d8e154f70a411136b78b71f"
+    },
+    {
+      "path": "mc07-combined-fit/prepare-export.log",
+      "bytes": 255,
+      "sha256": "8a40cba336751351030da9da487894233444f07a2fdbd3c22fe0c2f4030a4bba"
+    },
+    {
+      "path": "mc07-combined-fit/prepare_export.py",
+      "bytes": 3024,
+      "sha256": "d293cef142067f280b459355ef7363fb6f6091e46e7a7601fd9c193af09eef92"
+    },
+    {
+      "path": "mc07-combined-fit/ramp.log",
+      "bytes": 580,
+      "sha256": "58ae38fb2155737abbd6d8a8e94190d2a1a54d6ff1d80932ae02123d342eb796"
+    },
+    {
+      "path": "mc07-combined-fit/ramp_probe.py",
+      "bytes": 3540,
+      "sha256": "43223dcf5e02d5079444f530a74adeb8f720140aad80795bd203e36839b22c51"
+    },
+    {
+      "path": "mc07-combined-fit/rear-right-placement.json",
+      "bytes": 9327,
+      "sha256": "2e6078cd35d3b3019c8e11876afd0dce754a9aa19ddb156176bc865b743cb837"
+    },
+    {
+      "path": "mc07-combined-fit/rear-right-probe.log",
+      "bytes": 404,
+      "sha256": "b25acb19490f3abc3764144783a47058ac5d4f742fb91f101d606434b778c03d"
+    },
+    {
+      "path": "mc07-combined-fit/rear-right-vertex-equivalence.json",
+      "bytes": 618,
+      "sha256": "c280f375eb7bd5a413068c4440dacf229d0ae604e1abc6a4c379ec74357f16ed"
+    },
+    {
+      "path": "mc07-combined-fit/rear-v04-hull-sweep.json",
+      "bytes": 51396,
+      "sha256": "ec9079c547b2b21d7717866646ba67f14cac474b5c4ad269c2752a68c1cfc9a9"
+    },
+    {
+      "path": "mc07-combined-fit/rear.log",
+      "bytes": 990,
+      "sha256": "046236c4ed4ca43f9933c3c4aacb11553539ee173eb61c24091325144b0ea4fd"
+    },
+    {
+      "path": "mc07-combined-fit/rear_probe.py",
+      "bytes": 3675,
+      "sha256": "66f212bc99a9795bac788e2e5150e5c01b063401d5dc5c70e26afb5a0ae76881"
+    },
+    {
+      "path": "mc07-combined-fit/rear_right_probe.py",
+      "bytes": 4056,
+      "sha256": "ecc8793c097c3ea90999862e01102834c80985de1f89b612d8999f81959f4d85"
+    },
+    {
+      "path": "mc07-combined-fit/registry-build.log",
+      "bytes": 6554,
+      "sha256": "00fda782e6488a18116fb847c7de4d3c71ffbdcf9f1fc17dcb4e40f9658df820"
+    },
+    {
+      "path": "mc07-combined-fit/render-export.log",
+      "bytes": 18446,
+      "sha256": "bc2754ed10d32daef41b9cc6a2f182bd04c4ba2417207445352123b72f2f5626"
+    },
+    {
+      "path": "mc07-combined-fit/render_export.py",
+      "bytes": 1018,
+      "sha256": "880246ddcc8926cfc4a8a59bf23ff4b1671556db2df72e79df897ebcdc57c571"
+    },
+    {
+      "path": "mc07-combined-fit/right-hand-contract.json",
+      "bytes": 2996,
+      "sha256": "09278d3ac36ad3835fffa1bc2fec5561bd680f6e4f657515e7a6b2b7e1e31c1a"
+    },
+    {
+      "path": "mc07-combined-fit/sweep_envelopes.py",
+      "bytes": 2263,
+      "sha256": "7930794b304acb4ea3401bafe72ecac5dbc07530041e593bf58112170f994bdd"
+    },
+    {
+      "path": "mc07-combined-fit/v04-hull-sweep.json",
+      "bytes": 2052623,
+      "sha256": "6aee36c14a91bd9ce62580d5b93518211e0f5bbc98da605b40a7b688efe0fbbc"
+    },
+    {
+      "path": "mc07-equipment/gear-front/handedness-v01/review/ships-static-package-decision.yaml",
+      "bytes": 1294,
+      "sha256": "4dc660137463c8b80f603c081d0ef5b289c397b42ac763a5260bed1eafb8d431"
+    },
+    {
+      "path": "mc07-equipment/gear-rear/handedness-v01/review/ships-static-package-decision.yaml",
+      "bytes": 1368,
+      "sha256": "0a565f0533a33848a87bbb97cbff6e2dcc926189c6049bb283e068c2f055db68"
+    },
+    {
+      "path": "mc07-equipment/mining-hammer/handedness-v01/review/ships-metadata-rebind.json",
+      "bytes": 670,
+      "sha256": "d3287a90c3da611fc4079f0f0746ba4a935c55cf22aa968482dc3463ae5ce9da"
+    },
+    {
+      "path": "mc07-equipment/mining-hammer/handedness-v01/review/ships-static-package-decision.yaml",
+      "bytes": 2474,
+      "sha256": "8b5fcc757e02fa57254aeddd3c1ad11ac655aed79e9bfee33e824f6ff0a39931"
+    },
+    {
+      "path": "mc07-equipment-integration-request.yaml",
+      "bytes": 3034,
+      "sha256": "b26ddf3896b50329a2133dc3c73601302b6bcea44531ab0d4ed2d11f9fb2b8d3"
+    },
+    {
+      "path": "mc07-gear-fit/add_bearings.py",
+      "bytes": 3906,
+      "sha256": "0a4114bbd161cb859f59ba2cfa16fcc4a24f525829d16e0951b04e5942503b8a"
+    },
+    {
+      "path": "mc07-gear-fit/assemble-bearings.log",
+      "bytes": 551,
+      "sha256": "ef6e983db8910aa9d23a855d129eb7b90bb099d6c87228ac2c30e4a283e16474"
+    },
+    {
+      "path": "mc07-gear-fit/assemble.log",
+      "bytes": 527,
+      "sha256": "83649c9e249e9c01d9a1fa1ea76af2a64a25122c5296631a6b45657278b2f0bb"
+    },
+    {
+      "path": "mc07-gear-fit/assemble_bearings.py",
+      "bytes": 2106,
+      "sha256": "32485f0c43e2e14c12fe24d9c087419ae2bf1bd559fd276614e1264d0aa763c8"
+    },
+    {
+      "path": "mc07-gear-fit/assemble_fixture.py",
+      "bytes": 2098,
+      "sha256": "7662a09ae9e47ab4ea02acffc41ca4ba5b8f030d2e2516c6da74a79e7100e1fb"
+    },
+    {
+      "path": "mc07-gear-fit/bearing-changes.json",
+      "bytes": 16954,
+      "sha256": "a13e1ab060882ce38d594eb63f87af6bddeb62839c0adc2e120ecebb349494b8"
+    },
+    {
+      "path": "mc07-gear-fit/bearing-review.yaml",
+      "bytes": 2096,
+      "sha256": "f949575e89493075e981e6cf019871a9bc97aa84805b79ba8356d541ee4259e2"
+    },
+    {
+      "path": "mc07-gear-fit/bearings.log",
+      "bytes": 249,
+      "sha256": "2f965f7b506892610f6b8a6d0c19792dfbe2e9b572942052e8f6735d1fcbe1e2"
+    },
+    {
+      "path": "mc07-gear-fit/blender-front-bearing.png",
+      "bytes": 1028231,
+      "sha256": "88e38d04b32440c28022b9313d37f133d3dc56cd07cb2992e837c9288dcae9f1"
+    },
+    {
+      "path": "mc07-gear-fit/blender-front-door-v02.png",
+      "bytes": 1021512,
+      "sha256": "1b47700ede8c47c45bd2783ce36a29cc937992245eea24ec7aae951ac56b1ea8"
+    },
+    {
+      "path": "mc07-gear-fit/blender-front-door.png",
+      "bytes": 1008756,
+      "sha256": "c42ade5752e5e2329dbe527df3fc788866f8aaae24a5ca316cc0610784ee8238"
+    },
+    {
+      "path": "mc07-gear-fit/blender-front-main-bearing-v02.png",
+      "bytes": 1071220,
+      "sha256": "9261faf60de3548428e69b14da7356e70cca795107bfb4cfdd6fae619ca29c83"
+    },
+    {
+      "path": "mc07-gear-fit/blender-interface-qc-v02.yaml",
+      "bytes": 1478,
+      "sha256": "d304f039dd804ed637e831b826875136c65305dd709a9834ef2022047ae01e77"
+    },
+    {
+      "path": "mc07-gear-fit/blender-interface-qc.yaml",
+      "bytes": 1969,
+      "sha256": "db104cd1ca8dbccc1a8f9d4b19dde2d3dd6c8e4af24d7d661cc669a69ed47d1f"
+    },
+    {
+      "path": "mc07-gear-fit/blender-rear-bearing.png",
+      "bytes": 1023237,
+      "sha256": "65342b15eeceb3e04764933b47378fcb3ad33bf3888ef48d7fb18ca9239d076a"
+    },
+    {
+      "path": "mc07-gear-fit/blender-rear-main-bearing-v02.png",
+      "bytes": 985877,
+      "sha256": "1f494ae669de658018e2cabaced9763c1b2520883bc3b64d5418e5ddddb28c8f"
+    },
+    {
+      "path": "mc07-gear-fit/blender-support-components-v02.json",
+      "bytes": 23313,
+      "sha256": "b2730b988cc90cbfdfab1e0ea2b2cfe7d14c9b746145f9a8f9b969339edd9192"
+    },
+    {
+      "path": "mc07-gear-fit/blender-support-components.json",
+      "bytes": 23313,
+      "sha256": "b2730b988cc90cbfdfab1e0ea2b2cfe7d14c9b746145f9a8f9b969339edd9192"
+    },
+    {
+      "path": "mc07-gear-fit/blender-support-rays.json",
+      "bytes": 1904,
+      "sha256": "aa2635c2c97adb35218e4bbc90b1d9c9b52c85d3d300946a60a05b6536c4d1c4"
+    },
+    {
+      "path": "mc07-gear-fit/build-relief.log",
+      "bytes": 220,
+      "sha256": "6f587be8aa8a84fdce0a3fbd87e804c900d7f08d7591a55c69c18a29976724cf"
+    },
+    {
+      "path": "mc07-gear-fit/build_relief.py",
+      "bytes": 4304,
+      "sha256": "31ef070dc0e86814c5c710bf5c35f3fcf6c0d7bab6d47001d7d518e7b9e4039f"
+    },
+    {
+      "path": "mc07-gear-fit/front-baseline-hull-sweep.json",
+      "bytes": 47413,
+      "sha256": "c27fb5beaaee5f11ab07ee4919f63a823f7eec99333876e96a84d13a58639ce4"
+    },
+    {
+      "path": "mc07-gear-fit/front-baseline.log",
+      "bytes": 911,
+      "sha256": "2891a5e3d0e0ffdd659a782876a9e99032b8e2c0fdc8fc5aa192679310a57151"
+    },
+    {
+      "path": "mc07-gear-fit/front-bearing-fixture-0.5.png",
+      "bytes": 782125,
+      "sha256": "f52b66ba14a809ad43233900085f1863c68dd93b0dc63e769246c9bceae955b1"
+    },
+    {
+      "path": "mc07-gear-fit/front-bearing-fixture-0.png",
+      "bytes": 777277,
+      "sha256": "1fe7c5efdc3e45e910191d32f20fded434c13c6e4ca3cc30d665128be38387ff"
+    },
+    {
+      "path": "mc07-gear-fit/front-bearing-fixture-1.png",
+      "bytes": 783729,
+      "sha256": "8264d96f856e3939a9b63cba080d0b31986c5ff550b4da276af449c967887683"
+    },
+    {
+      "path": "mc07-gear-fit/front-bearings.log",
+      "bytes": 992,
+      "sha256": "b15674180d2ea7621cc7704fbe644aa0b9a5795b32883a992c200ddb0cad8e17"
+    },
+    {
+      "path": "mc07-gear-fit/front-fit-review.yaml",
+      "bytes": 2081,
+      "sha256": "3813cfdeed53a2c35108e4e8e9656a8072fdf93a980071325075da411af9a568"
+    },
+    {
+      "path": "mc07-gear-fit/front-fixture-0.5.png",
+      "bytes": 780987,
+      "sha256": "a5ec2c2327fa7747f7e76a834da5e0c3ed4bc047e0af67dfbb3ad5a26dacce5d"
+    },
+    {
+      "path": "mc07-gear-fit/front-fixture-0.png",
+      "bytes": 775154,
+      "sha256": "47005622f6a73a57a285f96bd65923c78f628651fb39a84a3a678bae38f9648b"
+    },
+    {
+      "path": "mc07-gear-fit/front-fixture-1.png",
+      "bytes": 782422,
+      "sha256": "bfb9c20e08ded506869c231e31cef73555a2b161bca4ba14b5ff02952a1e7247"
+    },
+    {
+      "path": "mc07-gear-fit/front-integration-plan.yaml",
+      "bytes": 2802,
+      "sha256": "5e664f1c66e9571a44eb5cbc78c1897a5df22a792df0bf23e3eaf9d6e7c24dfb"
+    },
+    {
+      "path": "mc07-gear-fit/front-relief-v01-sweep.json",
+      "bytes": 24390,
+      "sha256": "0b4f072c916b356898055d600d531ba49d30ba00112c0087a7943f1ca0f190d9"
+    },
+    {
+      "path": "mc07-gear-fit/front-relief-v02-sweep.json",
+      "bytes": 51097,
+      "sha256": "f7a95078073fca2977e0036fb5a43c14ecc35436af4c32641bba6d198a891ca7"
+    },
+    {
+      "path": "mc07-gear-fit/front-relief.log",
+      "bytes": 442,
+      "sha256": "f8ba2b7a2cb89ac39973a50d5d4e25895221cccdc951c760404918d0cd9bcf5d"
+    },
+    {
+      "path": "mc07-gear-fit/front-static-package-decision.yaml",
+      "bytes": 1908,
+      "sha256": "971c6a813d30eac73ecdddbd1d77562323ec7d1ba0f9acf0f1c54a3155885f63"
+    },
+    {
+      "path": "mc07-gear-fit/front-v04-hull-sweep.json",
+      "bytes": 60764,
+      "sha256": "3578e3abc4a2433e9f18e1506b00c1933002b41f11c146fd015a6fb544f519e6"
+    },
+    {
+      "path": "mc07-gear-fit/front.log",
+      "bytes": 1192,
+      "sha256": "361430e4ce7ce81f5e9587302d7b164ade81f20c2eef73f3d534b802e8e6e850"
+    },
+    {
+      "path": "mc07-gear-fit/front_baseline_probe.py",
+      "bytes": 3636,
+      "sha256": "984d1750778dee67739f82fec346eae52709a7eeaadc9bdc251c14856598e0ed"
+    },
+    {
+      "path": "mc07-gear-fit/front_bearings_probe.py",
+      "bytes": 3648,
+      "sha256": "1774c872f96dca38909fcd5a1c360fe33eb68155cd89ebb07c4057c4db76dd10"
+    },
+    {
+      "path": "mc07-gear-fit/front_probe.py",
+      "bytes": 3628,
+      "sha256": "bf7ce61f5ae9bcb2c99ebec28b2ba9cd55d7115c4a7fc0dd5237a2bdd9134b60"
+    },
+    {
+      "path": "mc07-gear-fit/front_relief_probe.py",
+      "bytes": 3648,
+      "sha256": "a93890e8674953511c6ad1acd6a0e34d438be45e13f72241581f5db22fafdac0"
+    },
+    {
+      "path": "mc07-gear-fit/gear-hull-relief-fixture-v01.blend",
+      "bytes": 1843227,
+      "sha256": "b35bbeba1699673d8a1c4ac47e2ba1a3a9dd4c826fa25d7a40616a62c1570ce1"
+    },
+    {
+      "path": "mc07-gear-fit/gear-hull-relief-fixture-v02.blend",
+      "bytes": 1850446,
+      "sha256": "3d378b331e5d9521957c66b99994d5db0fd6b57834866bc33fb370d9858b6cde"
+    },
+    {
+      "path": "mc07-gear-fit/hull-relief-v01.blend",
+      "bytes": 1702257,
+      "sha256": "a8e079ee0e5bc9093230824469ee409450de50739355dae297353b919dc4c6f4"
+    },
+    {
+      "path": "mc07-gear-fit/hull-relief-v02.blend",
+      "bytes": 1722381,
+      "sha256": "39f7bae3427b16d51e8f1043b8a728051647cb30505b470e5cb34d7dacf91f85"
+    },
+    {
+      "path": "mc07-gear-fit/rear-bearings.log",
+      "bytes": 982,
+      "sha256": "12e76409fd0450995df0d955e1ea2e6cbcb5e7eaaa24e00c7f26bd8fdf6564f4"
+    },
+    {
+      "path": "mc07-gear-fit/rear-integration-plan.yaml",
+      "bytes": 3094,
+      "sha256": "51270764db98c2a86f6822f6d8d7d65a9e4a54c533aacc6bf388c88d8e2a2d36"
+    },
+    {
+      "path": "mc07-gear-fit/rear-relief-v01-sweep.json",
+      "bytes": 24240,
+      "sha256": "5eba76682e8b69783d691dce19a97ad271ab6d7f6bc5228b57e05dab9787fae6"
+    },
+    {
+      "path": "mc07-gear-fit/rear-relief-v02-sweep.json",
+      "bytes": 50969,
+      "sha256": "827a6c85e2377edfe4e7c1bf4f2c1c1b81405f311dbe15ed7041ef625f5643ee"
+    },
+    {
+      "path": "mc07-gear-fit/rear-relief.log",
+      "bytes": 440,
+      "sha256": "3a950798ac611abb4dad05cd90ef1323a91a6a40fe1082a0726c55ee951fe462"
+    },
+    {
+      "path": "mc07-gear-fit/rear-static-package-decision.yaml",
+      "bytes": 2009,
+      "sha256": "3f98bec9615e0c683fe6341cc05ec4a6af802b8565c49cd209a5604925cd31b9"
+    },
+    {
+      "path": "mc07-gear-fit/rear-v04-hull-sweep.json",
+      "bytes": 54329,
+      "sha256": "69cb50a53014482e2a9c84fc01317ece06f1f7e1a2f4e1cac5ca851b10f86c27"
+    },
+    {
+      "path": "mc07-gear-fit/rear.log",
+      "bytes": 1152,
+      "sha256": "077c4f786c4132b91835fe07769656b5b23f5d8a5b2e07b52e380adba0be66d5"
+    },
+    {
+      "path": "mc07-gear-fit/rear_bearings_probe.py",
+      "bytes": 3644,
+      "sha256": "a88ae5bc173be6843b7c0fd672341b6cf79b36d309cd0b0a4af31af788510f69"
+    },
+    {
+      "path": "mc07-gear-fit/rear_probe.py",
+      "bytes": 3624,
+      "sha256": "9d4eae9f0e4cbcab6fd1aa4295ddec9142de75b96aee24e4deccce6b307f592f"
+    },
+    {
+      "path": "mc07-gear-fit/rear_relief_probe.py",
+      "bytes": 3644,
+      "sha256": "be8afea3ac049f18f986ebd5878efab9f1d2fad9b8f875359745646441426787"
+    },
+    {
+      "path": "mc07-gear-fit/relief-changes.json",
+      "bytes": 11343,
+      "sha256": "d276d7508097cb01e00fde57a367c764fe17923d1fc8f9952360b59ad6540876"
+    },
+    {
+      "path": "mc07-gear-fit/relief-review.yaml",
+      "bytes": 2083,
+      "sha256": "62024f3e994c51e65cce4f07733285fe6adcd2986daca49da6f10318ea76492b"
+    },
+    {
+      "path": "mc07-gear-fit/support-seat-qc.json",
+      "bytes": 3233,
+      "sha256": "ffc395f1f8b887eb3431a26958011459cf3e75f76b2f11983a205e9c15386bcb"
+    },
+    {
+      "path": "mc07-gear-fit/support-seat.log",
+      "bytes": 192,
+      "sha256": "9362f488d86989b54dd0538e3312ec38266f353ef2e654d3529c27599cbddcac"
+    },
+    {
+      "path": "mc07-gear-fit/support_seat_probe.py",
+      "bytes": 1050,
+      "sha256": "860edf84ca54c7504096afa1b0ba17bc21b2cf561fead03b42ea9d022e638e12"
+    },
+    {
+      "path": "mc07-hammer-fit/accept_v04.py",
+      "bytes": 3174,
+      "sha256": "a17290020fe84a99bc912f0080ad8e1dfcbc70f2a6e77ab70a391ebbda0b8f82"
+    },
+    {
+      "path": "mc07-hammer-fit/antenna-qc.json",
+      "bytes": 6184,
+      "sha256": "22f2503d09549a0b85a92c9e95d520a9dba02fe47982a737c311012f4e5484ae"
+    },
+    {
+      "path": "mc07-hammer-fit/antenna.log",
+      "bytes": 1225,
+      "sha256": "b0fd89b7a8530aa7b9c0f568971409eb1b2e748fdd19500aff91ee3962b1a274"
+    },
+    {
+      "path": "mc07-hammer-fit/antenna_probe.py",
+      "bytes": 3057,
+      "sha256": "9d72319e78ec45b879bc9411fd6a829759ad7fc447e3c585cc216c0ced0f4f03"
+    },
+    {
+      "path": "mc07-hammer-fit/clear_corridor.py",
+      "bytes": 4275,
+      "sha256": "14defd3f6caf4247673fa84d9e7f092b2d2d95de95d5d104f70c337749a6a484"
+    },
+    {
+      "path": "mc07-hammer-fit/context-0.1.png",
+      "bytes": 957133,
+      "sha256": "166d69744c97b49623c83001daa08883d6e668caf9875628e12ab9dc2d384892"
+    },
+    {
+      "path": "mc07-hammer-fit/context-0.25.png",
+      "bytes": 960267,
+      "sha256": "e05400e51db07988fb4c362828496489bf4c255bfa1e56c5a052e22438e7f561"
+    },
+    {
+      "path": "mc07-hammer-fit/context-0.png",
+      "bytes": 955473,
+      "sha256": "9c3fa5f01cc969edcd2d2401dee1474281ebdece466c065eb1e55d3a6d25d292"
+    },
+    {
+      "path": "mc07-hammer-fit/context-1.png",
+      "bytes": 966375,
+      "sha256": "74e1b01faaf459b0f299c264796da514dd286d2320a66197bb8d5dc4f649dfc9"
+    },
+    {
+      "path": "mc07-hammer-fit/corridor.log",
+      "bytes": 5959,
+      "sha256": "37f41093641ed0ba9f09ed05c1f368590134789239f565c1e6abf8c02a2963be"
+    },
+    {
+      "path": "mc07-hammer-fit/deck-changes.json",
+      "bytes": 9328,
+      "sha256": "ab91f3d43b3e5966287373cb140e73103f591e4394a547cdd6a60ff6251caaf5"
+    },
+    {
+      "path": "mc07-hammer-fit/deck-corridor-fixture-v01.blend",
+      "bytes": 1240519,
+      "sha256": "1deeb77f97d192b632cefeed3f5af1c149f66c8d37969f2dd8bebb7ecf405994"
+    },
+    {
+      "path": "mc07-hammer-fit/fit-review.yaml",
+      "bytes": 1609,
+      "sha256": "213344902e6272682a43b0259d878fbd208114b452103c97948f6d89b1092b47"
+    },
+    {
+      "path": "mc07-hammer-fit/hatch-screen.json",
+      "bytes": 89942,
+      "sha256": "81695b9899bc659ca5c7da092b483faafee07d26c32e1a37ce5b98791bca3621"
+    },
+    {
+      "path": "mc07-hammer-fit/integration-plan.yaml",
+      "bytes": 3396,
+      "sha256": "ff9f0ca5585e3ebca88692bec4f939bd6e2105911db33efeb403e593de69bea6"
+    },
+    {
+      "path": "mc07-hammer-fit/render.log",
+      "bytes": 927,
+      "sha256": "ce0485be35aa7e17dae918a91c52669a128c309b6d820a4129c5be31423479a0"
+    },
+    {
+      "path": "mc07-hammer-fit/render_fixture.py",
+      "bytes": 1622,
+      "sha256": "24923bca87215bf472bc8334402e2cd2d90508862f48da994dc52e1055744509"
+    },
+    {
+      "path": "mc07-hammer-fit/seat.log",
+      "bytes": 1800,
+      "sha256": "8435e519e26855bf15fc2a7df9fdba5f7b8e5cf3bd1dd25181cd0c863b0ea2c0"
+    },
+    {
+      "path": "mc07-hammer-fit/seat_probe.py",
+      "bytes": 654,
+      "sha256": "b4f878ab9c533386bb0af5d8b302ad353521387527f26d7715f6d84a669cc177"
+    },
+    {
+      "path": "mc07-hammer-fit/static-package-decision-v02-superseded.yaml",
+      "bytes": 1222,
+      "sha256": "c46bac7b3af2dfc53e70c01deef0b700ccf797a4050e28a575783ae641c158bb"
+    },
+    {
+      "path": "mc07-hammer-fit/static-package-decision-v03-superseded.yaml",
+      "bytes": 965,
+      "sha256": "e8921bcd9b101e5f8954875e8978546a0c38566626ae608a665190438a512328"
+    },
+    {
+      "path": "mc07-hammer-fit/static-package-decision.yaml",
+      "bytes": 2100,
+      "sha256": "fce4b615a4a8c3e06be9a63648fe1a4d9510316a33bce1d4210fce26eb0bf380"
+    },
+    {
+      "path": "mc07-hammer-fit/v03-components.log",
+      "bytes": 1574,
+      "sha256": "7a07fd770a06e4669c5cfec3c13fb562432f6343a50990de5e0737dcf6944686"
+    },
+    {
+      "path": "mc07-hammer-fit/v03-hull-sweep.json",
+      "bytes": 2051544,
+      "sha256": "350bb160afcc9e73951427b80346bff18454fb20197f4c1d20483a4f9f54b377"
+    },
+    {
+      "path": "mc07-hammer-fit/v03-hull-sweep.log",
+      "bytes": 1767,
+      "sha256": "fb571c863895112825600db5d1b5be795e7f84f70baa7d85da97c3c49f0fdebe"
+    },
+    {
+      "path": "mc07-hammer-fit/v03-rest-contact-components.json",
+      "bytes": 1974,
+      "sha256": "69777a0c134ab36dfcfbadb622110ce9a05294713e3593d997b3cf689bc8620f"
+    },
+    {
+      "path": "mc07-hammer-fit/v03_component_probe.py",
+      "bytes": 2748,
+      "sha256": "0c9789fa34d20efffd807af2249119533c08098d8153571da6be86b26a8ada59"
+    },
+    {
+      "path": "mc07-hammer-fit/v03_hull_probe.py",
+      "bytes": 2721,
+      "sha256": "fea44df7dbd910163ef372530e1b2940c7c242bf79ddfe35c2263804e7f8ce8f"
+    },
+    {
+      "path": "mc07-hammer-fit/v04-hull-sweep.json",
+      "bytes": 2050088,
+      "sha256": "a3bec5293f486a982a5a68a9fb7b9019a91ae9d3a12de9d97c66a402c8583131"
+    },
+    {
+      "path": "mc07-hammer-fit/v04-hull-sweep.log",
+      "bytes": 1503,
+      "sha256": "8e3ddcadb3a587b040ed5b3bbe4fd21a0079d75dbee409fb40b3f6c282ffb759"
+    },
+    {
+      "path": "mc07-hammer-fit/v04_hull_probe.py",
+      "bytes": 2721,
+      "sha256": "b0aa7b4f8d2ba4b448cc32d75c13962f468d2741a15565d6c62cfddae972ffb0"
+    },
+    {
+      "path": "mc07-interface-review/anchor-probe-front065.json",
+      "bytes": 1105,
+      "sha256": "c12aefdb4f97ab8b3b5f2be344c091ab38920a3d98dc7e2a40caae3782e7d7d6"
+    },
+    {
+      "path": "mc07-interface-review/anchor-probe.json",
+      "bytes": 1057,
+      "sha256": "2def9092430ae06ca9df09b5bc3f94fe57db40a2a0d67d215b26e580ced7a496"
+    },
+    {
+      "path": "mc07-interface-review/gear-decision.yaml",
+      "bytes": 3910,
+      "sha256": "01ec3e55ae5972ba651b7e6edffbd3d9352d9290999b9a105d4c5ced72b96c32"
+    },
+    {
+      "path": "mc07-interface-review/hammer-decision.yaml",
+      "bytes": 1913,
+      "sha256": "ba297a220eef7a822972d0e1a4d29b879a696d8c60d4048965f4f9d22486de72"
+    },
+    {
+      "path": "mc07-interface-review/hammer-hull-probe.json",
+      "bytes": 2333,
+      "sha256": "88e2a8a047615360550ec71307d2ff79922785c1c9439f2b7644927c49c12ee5"
+    },
+    {
+      "path": "mc07-interface-review/hammer-hull.log",
+      "bytes": 1418,
+      "sha256": "001870edaef81b1de446e50fe8a69af91140b45e09f5c407de61729d27e76e55"
+    },
+    {
+      "path": "mc07-interface-review/hammer-raised-probe.json",
+      "bytes": 123,
+      "sha256": "74e6169608a868613eec620249bad4b4a830ec4dc0dd8115fb8e4c437f594c60"
+    },
+    {
+      "path": "mc07-interface-review/hammer.log",
+      "bytes": 224,
+      "sha256": "5d79d02bb36d04cda12859e3107ce924a7472edab54d461af473718f77917a38"
+    },
+    {
+      "path": "mc07-interface-review/hammer_hull_probe.py",
+      "bytes": 1415,
+      "sha256": "f35494ffa4071fe39b23d0eb70a8c88267031e1b160774339b901720fa37003b"
+    },
+    {
+      "path": "mc07-interface-review/hammer_probe.py",
+      "bytes": 1374,
+      "sha256": "5098589d9e0358c21d527f958f0dd057e80a18fa46c0aecc09e1a7aa81e4d0e7"
+    },
+    {
+      "path": "mc07-interface-review/probe-front065.log",
+      "bytes": 988,
+      "sha256": "32b719e45aa82daa7a4ba8af4b9ffa648f5f79826afe34b39e445838b92b080b"
+    },
+    {
+      "path": "mc07-interface-review/probe.log",
+      "bytes": 940,
+      "sha256": "89a4f3bcea244e5d8445e5e9a5a5738bbee267c457896f22dd35a6c89425c557"
+    },
+    {
+      "path": "mc07-interface-review/probe.py",
+      "bytes": 1053,
+      "sha256": "627e60d4985640e603a5aa0e913047b585857dca1f320170884928eba92ac850"
+    },
+    {
+      "path": "mc07-interface-review/probe_front065.py",
+      "bytes": 1062,
+      "sha256": "97f4e7f65761e895f8189e53c379b1763ed1d1839fed479baf22c7938dc08237"
+    },
+    {
+      "path": "mc07-interface-review/probe_rear_y216.py",
+      "bytes": 2514,
+      "sha256": "d9495c2c09c6410174554eedc8c4282ef30348c42bc2a610b186f7f3e20923a6"
+    },
+    {
+      "path": "mc07-interface-review/rcs-hull.log",
+      "bytes": 167,
+      "sha256": "eb30608598df27180596412b3c3b66fe2025cdeb78d2cae363bd76f6cc748ae2"
+    },
+    {
+      "path": "mc07-interface-review/rcs_hull_probe.py",
+      "bytes": 1619,
+      "sha256": "cfb83200c7aef27e25fd8266273e01f194bccaa02b6ca938752435a5559b3181"
+    },
+    {
+      "path": "mc07-interface-review/rear-y216-probe.json",
+      "bytes": 90152,
+      "sha256": "5c9e09418b2e8e8adb7c744df9ea15516d7d9e8778338d00fae55327a28aa143"
+    },
+    {
+      "path": "mc07-interface-review/rear-y216.log",
+      "bytes": 987,
+      "sha256": "5d1969a2a643a521774f6c03214fa0564e11756a5c09fce119891062c92d6323"
+    },
+    {
+      "path": "mc07-radiator-fit/fit-review.yaml",
+      "bytes": 4630,
+      "sha256": "2d9baa41f05f296b7b3b6adb7f16f5857fdb264e4efbd6582c06b8365a06f273"
+    },
+    {
+      "path": "mc07-radiator-fit/probe.py",
+      "bytes": 532,
+      "sha256": "032de5b2c3721230a792abc17f4451a0e0e84424f9e79fda735a3fe8fa1a1603"
+    },
+    {
+      "path": "mc07-radiator-fit/review/exhaust-screening.json",
+      "bytes": 543437,
+      "sha256": "9ccb4804bd6c8dfede7d4d1883b59667d3fb76ccec51bcf4c1f7e7b001fa7475"
+    },
+    {
+      "path": "mc07-radiator-fit/review/mount-export.log",
+      "bytes": 600,
+      "sha256": "2686f33e643c6a54757a642fa202f2b54c2b74ff6b2aa8f0973806ed439fd28b"
+    },
+    {
+      "path": "mc07-radiator-fit/review/mount-frames.glb",
+      "bytes": 724,
+      "sha256": "e819ec8547e64666c4bc00d4c32e0f9d972945bcc943365253258e123fced623"
+    },
+    {
+      "path": "mc07-radiator-fit/review/mount-frames.json",
+      "bytes": 4202,
+      "sha256": "a69ae31b9f4032d6b8dd780a86ec5bca85e0336100c0131482441f0d0fa97e8d"
+    },
+    {
+      "path": "mc07-radiator-fit/review/placement-study-v01.json",
+      "bytes": 9402,
+      "sha256": "c428c3897101eeba0c8833962a5a0dbb418e245169f11b32d81b811813c9ee6f"
+    },
+    {
+      "path": "mc07-radiator-fit/review/placement-study-v02.json",
+      "bytes": 98436,
+      "sha256": "31cc1185becd2abb9a2bd3febe78dcc830b5852ca08174375213cffb655b2c00"
+    },
+    {
+      "path": "mc07-radiator-fit/review/placement-study.json",
+      "bytes": 17453,
+      "sha256": "4065a91ec9dc84630ebff2b5383609d84fab00b3d11939c14db19256ba7f8d54"
+    },
+    {
+      "path": "mc07-radiator-fit/review/probe.log",
+      "bytes": 21326,
+      "sha256": "80233f204f67e069ecea2a6893e2b668a01228ed1a0bce5e78cd4645f831cad8"
+    },
+    {
+      "path": "mc07-radiator-fit/review/proposal-deployed.png",
+      "bytes": 1242116,
+      "sha256": "937644086c3cde2af423e728ce2a9dc808189b99a639a679249796c78146a7c1"
+    },
+    {
+      "path": "mc07-radiator-fit/review/proposal-stowed.png",
+      "bytes": 1176813,
+      "sha256": "3ecadee2763aa303aa9b97800317e6b5a656885298c7d56c51e945510041ef79"
+    },
+    {
+      "path": "mc07-radiator-fit/review/study.log",
+      "bytes": 516,
+      "sha256": "36a7469567c528603523eab3e313ffa9d9aa975941b32d96fd3182e92e2d7c37"
+    },
+    {
+      "path": "mc07-radiator-fit/review/surface-intersections.json",
+      "bytes": 2,
+      "sha256": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+    },
+    {
+      "path": "mc07-radiator-fit/source/check_support.py",
+      "bytes": 503,
+      "sha256": "96d07b60baccf4cac0d46a557b5f67346e1b88940618ce4c3bc90fdb34081b84"
+    },
+    {
+      "path": "mc07-radiator-fit/source/export_mount_fixture.py",
+      "bytes": 1287,
+      "sha256": "cddbc670cd1232030909f06e54e03b90b5e9a97cba8c34ae8dd339f919fe2d16"
+    },
+    {
+      "path": "mc07-radiator-fit/source/mc07-s2-placement-study.blend",
+      "bytes": 1355219,
+      "sha256": "f16bbd3aafda8a70430be8b17ae3e246f0fbf49bb065b848ee8d0b96c8949b9b"
+    },
+    {
+      "path": "mc07-radiator-fit/source/screen_exhaust.py",
+      "bytes": 3671,
+      "sha256": "26b78b02eda2f94f73afaa1769501c269f372bdadf4ec0f953190e6e036dfeca"
+    },
+    {
+      "path": "mc07-radiator-fit/source/study-v01.py",
+      "bytes": 8678,
+      "sha256": "8a7dfa3d6a25301f04c6ece86dd224de7159793df8f51df0e7096a47e18492a1"
+    },
+    {
+      "path": "mc07-radiator-fit/source/study.py",
+      "bytes": 12361,
+      "sha256": "d3c51e52fea6b7c8ba4efc534eebf9d559ee3abd3072031fcc814ece1fa35dde"
+    },
+    {
+      "path": "mc07-ramp-fit/action-cleared.log",
+      "bytes": 586,
+      "sha256": "f1cbf114d32b867abea1158f6e1552befbaad22950d85b25272c1413f7d7f23a"
+    },
+    {
+      "path": "mc07-ramp-fit/action_cleared_probe.py",
+      "bytes": 3518,
+      "sha256": "01ff1807a5305d7764232494d17fdd38eaec20a558b992b69e54e17a2fc0618d"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-qc.yaml",
+      "bytes": 1910,
+      "sha256": "25844dc73c5337268664f8b6e14dab26d64cf23660217525d0ef5d20bafea2ef"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-render.log",
+      "bytes": 977,
+      "sha256": "77a226542e4c91f5628c5e4e94aa0140022a97ff8c7b59ae54ff81c9f009f7d1"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/inputs.json",
+      "bytes": 323,
+      "sha256": "9ecf26a564de1d7179743cfac5eece19e47c223897fd15e07d67290ed108fdcd"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/live-ramp.blend",
+      "bytes": 1469188,
+      "sha256": "6b1f84aff7ff58da1f8b883320686d711b74b48ae44c4f767c33e7d288ccb996"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/pin-0.5.png",
+      "bytes": 710071,
+      "sha256": "d6c9a36b6afa0bbd31bd5155c7a5f4db193cb5b8d86637b3751d7bbd62df028f"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/pin-0.png",
+      "bytes": 706224,
+      "sha256": "6606323a27b40c689a8fcad471bf33ebe7b92fc994e1dda0174d9f56bbe61b6d"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/pin-1.png",
+      "bytes": 706964,
+      "sha256": "5405ceb58e3ab50671b5ea5fa324625353d85929ed3fa7bedc138cf2a3ea0627"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/underside-0.5.png",
+      "bytes": 731809,
+      "sha256": "f1075f4faad5f8dcd76658c0f04d0e47d2c0b5501a97c7b3fc3350a309ad5fb5"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/walkway-0.png",
+      "bytes": 816830,
+      "sha256": "8112fc194fb31d0c965cec02041b0efbffb3c49d205c1b39be6500c1c57035a6"
+    },
+    {
+      "path": "mc07-ramp-fit/blender-interface-review/walkway-1.png",
+      "bytes": 732407,
+      "sha256": "4bf33f2dd8c8f4a4a7c9dff92992a6d94c7e7fb336fdac4555d389ae4174c8ce"
+    },
+    {
+      "path": "mc07-ramp-fit/build-heel.log",
+      "bytes": 449,
+      "sha256": "6d244810706bb8bf3196b2c2f5f43c2b3951b43965b3e844abe1475c1288dd0f"
+    },
+    {
+      "path": "mc07-ramp-fit/build_heel_pocket.py",
+      "bytes": 3523,
+      "sha256": "4398ddc2d5792c7a01bed40f07bbd0f7a72b0f048c4014057f8ae8d045160a4b"
+    },
+    {
+      "path": "mc07-ramp-fit/fit-review.yaml",
+      "bytes": 3198,
+      "sha256": "d0cf6ebcddfffcb07dc12ffe01f8c163f24456fccfedc975c0b0fe6ed7f7a2f6"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-pocket-changes.json",
+      "bytes": 1374,
+      "sha256": "20e5b19cbfa16f5c1c64e48eb64623560d628f7ead75f39bafef20cc1b21ef46"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-pocket-fixture-v01.blend",
+      "bytes": 1554822,
+      "sha256": "8603586786a778ed8ba1354447919922329db567a1cbc3acf7680110911173f8"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-pocket-review.yaml",
+      "bytes": 2831,
+      "sha256": "1032115fe223c8978fbbc2d958d61d25d2260e8fc4297707068febd6ccec0ecb"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-pocket-sweep.json",
+      "bytes": 18178,
+      "sha256": "659fc26350a7d844abe49b4acb14cff2aa3355a5d8b731ac1f66791fbbc3bfc9"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-probe.log",
+      "bytes": 580,
+      "sha256": "22cc6c640560a21281e2002ceb253e623274715a763f7d1dab6d435aad33929e"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-seat-qc.json",
+      "bytes": 1364,
+      "sha256": "4a40e8c824c2d2c46647c21bd2c8f0c4bfb77ac3f60d36ebb02e19ab0216dd6a"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-underside-0.5.png",
+      "bytes": 587503,
+      "sha256": "3ab7ae1dee72a344e37712230534b539c9b59fc459c79bce22e697c0e939db07"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-underside-0.png",
+      "bytes": 578423,
+      "sha256": "9d41162ba9bca40830db388363c11c67de876d6c8b4cee0ab8f3170328037b70"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-underside-1.png",
+      "bytes": 618660,
+      "sha256": "5fd139f8a82f982fe2a93ec85df643122f0978ddf55c485a8297212f5d6e0968"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-walkway-0.5.png",
+      "bytes": 668444,
+      "sha256": "195cc1a57f80987e0401cfe1844e227a758803a3794fa248d2983a3e82488524"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-walkway-0.png",
+      "bytes": 692301,
+      "sha256": "f902457863b6fc35a3f2669aab8aa7168cb6c53a9c49d7d2fcb17ae42f11e5ec"
+    },
+    {
+      "path": "mc07-ramp-fit/heel-walkway-1.png",
+      "bytes": 600931,
+      "sha256": "b7ea1afee649882dbd785db98ca81d70785408b5bb1635638206a2d0a4fa86c3"
+    },
+    {
+      "path": "mc07-ramp-fit/heel_pocket_probe.py",
+      "bytes": 3536,
+      "sha256": "c663442c0436df94dcb80d3bde7aaf49b7b1ff3c84d1808a8867bbe6e26ed1bc"
+    },
+    {
+      "path": "mc07-ramp-fit/hinge-witness.json",
+      "bytes": 1096,
+      "sha256": "3a91ed12a3eac2ab085a89bc42a67a6348ce0636e82cb93471f6dbfeeafd35a2"
+    },
+    {
+      "path": "mc07-ramp-fit/hull-sweep.json",
+      "bytes": 94768,
+      "sha256": "a5d3aa60b14c7fff554958adbbabec6c11f1274b44ddbeda35851387ac5bc8fe"
+    },
+    {
+      "path": "mc07-ramp-fit/inspect-heel.log",
+      "bytes": 1413,
+      "sha256": "c17fc0bb1ec1d91d1e01c624adfa7dcb0f38b3c7804241d1a8052cf3d554a33f"
+    },
+    {
+      "path": "mc07-ramp-fit/inspect_heel.py",
+      "bytes": 3186,
+      "sha256": "7f92a9f9bc141153c261197ae96b0bcb2a67ca86f817f7470fdfdea881ffb15b"
+    },
+    {
+      "path": "mc07-ramp-fit/integration-plan.yaml",
+      "bytes": 2066,
+      "sha256": "6af8a346d7c25b631e960136403b3eb1acc9f6a0ef6d144c444fd0b0fb71d6e7"
+    },
+    {
+      "path": "mc07-ramp-fit/motion-handoff.yaml",
+      "bytes": 2830,
+      "sha256": "eab851c4d58249ad73dea4c7604d144e9f56f5eae1aa6cccc04ec4dca9e8faac"
+    },
+    {
+      "path": "mc07-ramp-fit/physical-hull-sweep.json",
+      "bytes": 12062,
+      "sha256": "db95029d14bee8678ec0c16e45f071ded606bf0c5ac88e22f311a4651f3f0244"
+    },
+    {
+      "path": "mc07-ramp-fit/physical.log",
+      "bytes": 561,
+      "sha256": "10d055dfd949edd80a3c6321dfd6afc79d43d5b9a29e2e4798aeaa0fa50a8f82"
+    },
+    {
+      "path": "mc07-ramp-fit/physical_probe.py",
+      "bytes": 3178,
+      "sha256": "31d92f899b62488a0e39c468eedccdebc88d4eb80fbf1b4f851ececd18219f6f"
+    },
+    {
+      "path": "mc07-ramp-fit/placement-study.blend",
+      "bytes": 1242858,
+      "sha256": "8aec8b5fd9671247cf24ffbabbe4a39a649883670e8e241122adf553d3e85b16"
+    },
+    {
+      "path": "mc07-ramp-fit/probe.log",
+      "bytes": 3201,
+      "sha256": "d0931bbb7921c3ccd9202ff444ba8e866c3ded92bb165f98d07dd054b03ef59d"
+    },
+    {
+      "path": "mc07-ramp-fit/probe.py",
+      "bytes": 2967,
+      "sha256": "298e083c278365f0908c3e41b2af7d451d2b6c5bcdb715f2feae57dda65883c8"
+    },
+    {
+      "path": "mc07-ramp-fit/ramp-action-cleared-sweep.json",
+      "bytes": 20281,
+      "sha256": "197d554df82209e92699f74728a0c53e87dfe88746ae33091cfe03f534cecf4c"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/classify-treads.log",
+      "bytes": 1697,
+      "sha256": "5a11c95db6cca9d28c19fea09a9fe73b46cf85f3214c368a7d3aae750e4b091d"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/classify_treads.py",
+      "bytes": 3320,
+      "sha256": "9d3e48310409ad9ecb5152044cbff8a17188a5ba481275d0d588ff51c0107f09"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/closed.glb",
+      "bytes": 507904,
+      "sha256": "66881844744e7738954b5f1099ca65c5c797301e514a68520a200bc8bf2b2d3b"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/closed.triangles.json",
+      "bytes": 1233301,
+      "sha256": "74ea95ef6c6c7118824aac90bfbb442db49e49f71dac0666570b4205ea0c2e6d"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/deployed.glb",
+      "bytes": 507908,
+      "sha256": "e2c5d92b812fc6d68192ea3999624d7645944dd38eaaac0201989f2f0bec23ba"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/deployed.triangles.json",
+      "bytes": 1233719,
+      "sha256": "7ada4ada117bf6b7ff7da23f29096091df5c10cbf112d88ec91f6d06ecb1fee8"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/export.log",
+      "bytes": 4451,
+      "sha256": "eb21c8ce5d5aa4df46a388f4c42bac5d13e22f961ea645cd6f1cf69bad91758c"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/export_collision.py",
+      "bytes": 5009,
+      "sha256": "5b0129bcb3571a10dc6f84c6ea8f91e57b1a87e0741456f103d67731639a25f9"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/handoff.yaml",
+      "bytes": 1377,
+      "sha256": "b0ebebc7fe0f9a5ff7a2b0886df4c32d98792ecfd2f8005949d7aed1d670d1e4"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/manifest.json",
+      "bytes": 1578,
+      "sha256": "399bdd6c13272fd036e85dd40a71f1fd8764d794ba9cbcfb8b1e239d14675e0d"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/pack_exact_glb.py",
+      "bytes": 2161,
+      "sha256": "3ba21f722dcfc543d9896792f141ba22a95d3a227c88709bac3e0dc9645e4c3c"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/tread-classification.yaml",
+      "bytes": 1810,
+      "sha256": "71bf3726d3a7c8aa8578848c7fcdd010dba56212c0a27c8ab6532f378db6651a"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/tread-face-classification.json",
+      "bytes": 21541,
+      "sha256": "80f872e4fa402c87009428c19f635d8c3405e486e87a4b6a96d0aea4a1b57461"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/verification.json",
+      "bytes": 506,
+      "sha256": "62acce25ff16cccd1d8d5add606f5d79639327485f43886336634b117d961336"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/verify.py",
+      "bytes": 2061,
+      "sha256": "8c51f44e37ad3879c2401dd0b82e40a219e4435acd95030b44b31ce16a2b36cd"
+    },
+    {
+      "path": "mc07-ramp-fit/runtime-collision-v01/walking-path.json",
+      "bytes": 28448,
+      "sha256": "e58d439be93851f449f401d235adac0cf5e28dc2d450e70572bce3af1ed385e0"
+    },
+    {
+      "path": "mc07-ramp-fit/witness.log",
+      "bytes": 959,
+      "sha256": "343c45dae75e2f844a593bc180c142e2c56cd79eea42eb11d3b9fae03e68daa9"
+    },
+    {
+      "path": "mc07-ramp-fit/witness.py",
+      "bytes": 893,
+      "sha256": "c63d950ad805272e3cb992f5af24ce27d2c56ef29c73f5db51954afb41d79ce1"
+    },
+    {
+      "path": "mc07-static-fit/build.log",
+      "bytes": 14064,
+      "sha256": "a5387c604d4d3d888239c66eec211e8c705411977d278b1182fc5ead3633fe1b"
+    },
+    {
+      "path": "mc07-static-fit/build_subset.py",
+      "bytes": 4257,
+      "sha256": "b5a046759715569ce9e9ccbdd5208d119bd3b5b20f705f4bbf8d257383cffc62"
+    },
+    {
+      "path": "mc07-static-fit/computer-placement.png",
+      "bytes": 883289,
+      "sha256": "f88a00135af300df7dcaa1de9d8e484e8cf115b2a2404112172fd7d0c12a846d"
+    },
+    {
+      "path": "mc07-static-fit/fit-review.yaml",
+      "bytes": 2109,
+      "sha256": "0df8d67d195c416cc79934134d424712712da8224cd9c38ad1369f0723088305"
+    },
+    {
+      "path": "mc07-static-fit/mount-overlay.json",
+      "bytes": 969,
+      "sha256": "9f41b48b352aa52b85246bfc2298e4b953d50637f7ada2322f7e48d36c577b9d"
+    },
+    {
+      "path": "mc07-static-fit/placement-qc.json",
+      "bytes": 3464,
+      "sha256": "197cec1556ffe7030e48660941a934d125d63c83b9bed0a696eaa1c413cb1905"
+    },
+    {
+      "path": "mc07-static-fit/probe.log",
+      "bytes": 12917,
+      "sha256": "7e7dc58c4813064521e54a9c1f19cf57c4b9e9454b8813c2265ea1f95ec79d55"
+    },
+    {
+      "path": "mc07-static-fit/probe.py",
+      "bytes": 1533,
+      "sha256": "7ab6e5a7ddd54fd7fe021f7bcb26c5f0c43bec8ce4297f6bb6f3d7827dfe39d9"
+    },
+    {
+      "path": "mc07-static-fit/ready-subset.json",
+      "bytes": 3150,
+      "sha256": "03914aba111e553702b70b43caea276cb2f29642527bd04a81fa5da7cdc28965"
+    },
+    {
+      "path": "mc07-static-fit/render.log",
+      "bytes": 397,
+      "sha256": "27418eecd24166c9dae789fed2ab06ba7875d123ecda3c8cf17f7cca2e42a17e"
+    },
+    {
+      "path": "mc07-static-fit/render_subset.py",
+      "bytes": 1080,
+      "sha256": "6e9cb44be1f54eb9843f21ffdd2507ae37989e2527f2f7788ac7c0170eef9e65"
+    },
+    {
+      "path": "mc07-static-fit/roof.log",
+      "bytes": 11467,
+      "sha256": "e68769cc6689bbb3e28d10a25b29d12f93beb040e1fdd79daed3aaf493a72df7"
+    },
+    {
+      "path": "mc07-static-fit/roof_probe.py",
+      "bytes": 1038,
+      "sha256": "f5018d6d337a96efdd35185e7d0674733a4057b26b26e04ec1c3881ee4974956"
+    },
+    {
+      "path": "mc07-static-fit/static-subset-fixture.blend",
+      "bytes": 8562426,
+      "sha256": "f33b607d01ba00ff15356ff8eb8b6628400d4ae15e26963952c5d0459022bf68"
+    },
+    {
+      "path": "mc07-static-fit/surface-probe.json",
+      "bytes": 815,
+      "sha256": "94aeb8329bf22cad90f08d0b6db32eebdf420fc0ee150d72860a4f917b05570e"
+    },
+    {
+      "path": "mc07-static-fit/transponder-placement.png",
+      "bytes": 874381,
+      "sha256": "d5bfee445d7b08e0e0a46454e741f1622435430ed3143ae7c117b4429c5c19fb"
+    }
+  ]
+}
