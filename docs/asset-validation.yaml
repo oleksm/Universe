@@ -303,3 +303,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull placement and runtime muzzle-marker consumption; registry engineering figures provisional; static exterior only"
+  - key: equipment.hardpoint.mining-hammer.mc07
+    version: 2
+    manifest_sha256: "395e6388cdceb39d4c787af64380be464622b2fcef3f9d2ca4fc23c6f73d4dbd"
+    installed: 9ec2e645
+    game: "the loader (world::assets) at fso 9ec2e645"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hardpoint-mining-hammer-mc07/v2 (266844 bytes, bounds [-2.67, -1.49, -3.22] to [2.67, 3.75, 3.22]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime motion, opposite-side handedness, fixed hull supports and combined hull clearance remain pending; v2 changes only primary marker naming."
