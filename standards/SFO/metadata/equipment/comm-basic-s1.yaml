@@ -35,6 +35,12 @@ function:
   link: 7500000000
   lag: 0.05
   capacity: 0.166666666667
+visual:
+  format: "freefall-model/1"
+  path: "models/comm-basic-s1/v1"
+  manifest_sha256: "7a5a84a638851bc1330c37a6c6039aeb03b139ba4680dd6c4f327b9869de7bba"
+  version: 1
+  triangles: 5436
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
