@@ -54,6 +54,7 @@ pub struct Ledger {
     /// oldest first.
     marks: HashMap<ShipId, BTreeMap<usize, VecDeque<Mark>>>,
     lots: HashMap<ShipId, BTreeMap<usize, crate::lots::Lots>>,
+    packages: HashMap<ShipId, BTreeMap<usize, crate::packages::Units>>,
     /// The latest transfers, oldest first (the last `KEEP`).
     pub journal: Vec<Entry>,
 }
@@ -119,9 +120,42 @@ impl Ledger {
     /// Out of pilot `pilot`'s hold: `units` of good `good` (`kg` of it), their marks and lots,
     /// oldest first.
     pub fn unload_marked(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>) {
+        let (marks, lots, _) = self.unload_cargo(pilot, good, units, kg);
+        (marks, lots)
+    }
+
+    pub fn unload_cargo(&mut self, pilot: ShipId, good: usize, units: usize, kg: f64) -> (Vec<Mark>, Vec<(Batch, f64)>, Vec<crate::packages::Unit>) {
+        let before = self.lots.get(&pilot).and_then(|l| l.get(&good)).cloned().unwrap_or_default();
         let marks = self.marks.get_mut(&pilot).and_then(|m| m.get_mut(&good)).map_or(Vec::new(), |m| m.drain(..units.min(m.len())).collect());
         let lots = self.lots.get_mut(&pilot).and_then(|l| l.get_mut(&good)).map_or(Vec::new(), |l| crate::lots::take(l, kg));
-        (marks, lots)
+        let packages = self.packages.get_mut(&pilot).and_then(|p| p.get_mut(&good)).map_or_else(Vec::new, |p| crate::packages::take(p, &before, &lots));
+        (marks, lots, packages)
+    }
+
+    pub fn load_cargo(&mut self, pilot: ShipId, good: usize, marks: Vec<Mark>, lots: Vec<(Batch, f64)>, packages: Vec<crate::packages::Unit>) {
+        self.load_marked(pilot, good, marks, lots);
+        self.packages.entry(pilot).or_default().entry(good).or_default().extend(packages);
+    }
+
+    pub fn hold_lots(&self, pilot: ShipId) -> Option<&BTreeMap<usize, crate::lots::Lots>> { self.lots.get(&pilot) }
+    pub fn hold_packages(&self, pilot: ShipId) -> Option<&BTreeMap<usize, crate::packages::Units>> { self.packages.get(&pilot) }
+
+    pub fn preview_packages(&self, pilot: ShipId, good: usize, kg: f64) -> Vec<crate::packages::Unit> {
+        match (self.packages.get(&pilot).and_then(|p| p.get(&good)), self.lots.get(&pilot).and_then(|p| p.get(&good))) {
+            (Some(units), Some(lots)) => crate::packages::preview(units, lots, kg),
+            _ => Vec::new(),
+        }
+    }
+
+    pub fn cargo_mass(&self, pilot: ShipId, goods: &[universe_world::goods::Item]) -> f64 {
+        crate::market::cargo_mass(goods, &self.hold(pilot)) + self.packages.get(&pilot).into_iter().flat_map(|p| p.values()).flatten().map(|u| u.tare).sum::<f64>()
+    }
+
+    pub fn cargo_volume(&self, pilot: ShipId, goods: &[universe_world::goods::Item]) -> f64 {
+        let loose = crate::market::cargo_volume(goods, &self.hold(pilot));
+        loose + self.packages.get(&pilot).into_iter().flat_map(|p| p.iter()).map(|(i, units)| {
+            units.iter().map(|u| (u.volume - u.net_mass / (1000.0 * goods[*i].bulk_density)).max(0.0)).sum::<f64>()
+        }).sum::<f64>()
     }
 
     /// The marks of the products in pilot `pilot`'s hold, by good.
@@ -133,6 +167,7 @@ impl Ledger {
     pub fn write_off(&mut self, pilot: ShipId, tick: Tick, cause: Cause) {
         self.marks.remove(&pilot);
         self.lots.remove(&pilot);
+        self.packages.remove(&pilot);
         for (good, _) in self.hold(pilot) {
             self.settle(Party::Pilot(pilot), Asset::Goods(good), 0.0, tick, cause);
         }

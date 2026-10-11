@@ -56,6 +56,10 @@ fn main() {
         g.object(&name, &v, f);
         records.push((name, kinds));
     }
+    // Runtime stamps are schema types too, even when no day-zero record contains one.
+    g.record = None;
+    let common = root.join("common.schema.yaml").canonicalize().unwrap();
+    g.reference("#/definitions/label", &common);
     let mut out = String::from("// Generated from the registry's schemas by build.rs: edit the schemas, not this.\n\n");
     out.push_str(&g.out);
     // The registry: a list of each kind of record.

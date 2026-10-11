@@ -63,6 +63,7 @@ pub struct Pool {
     pub room: f64,
     pub marks: BTreeMap<usize, VecDeque<Mark>>,
     pub lots: BTreeMap<usize, crate::lots::Lots>,
+    pub packages: BTreeMap<usize, crate::packages::Units>,
 }
 
 /// Is stock item `item` a made product (one serial a unit: a hull, equipment, an industrial module,
@@ -78,7 +79,7 @@ impl Pool {
     }
 
     pub fn total(&self) -> f64 {
-        self.stock.values().sum()
+        self.stock.values().sum::<f64>() + self.packages.values().flatten().map(|u| u.tare).sum::<f64>()
     }
 
     /// Room left (kg).
@@ -110,8 +111,15 @@ impl Pool {
 
     /// Take up to `kg`, and the marks of the whole units and the lots it was, oldest first.
     pub fn take_with(&mut self, item: usize, kg: f64) -> (f64, Vec<Mark>, Vec<(Batch, f64)>) {
+        let (kg, marks, lots, _) = self.take_cargo(item, kg);
+        (kg, marks, lots)
+    }
+
+    /// A transfer preserves whole package identities; consumption uses take_with instead.
+    pub fn take_cargo(&mut self, item: usize, kg: f64) -> (f64, Vec<Mark>, Vec<(Batch, f64)>, Vec<crate::packages::Unit>) {
+        let before = self.lots.get(&item).cloned().unwrap_or_default();
         let Some(have) = self.stock.get_mut(&item) else {
-            return (0.0, Vec::new(), Vec::new());
+            return (0.0, Vec::new(), Vec::new(), Vec::new());
         };
         let t = kg.min(*have).max(0.0);
         *have -= t;
@@ -139,7 +147,20 @@ impl Pool {
                 self.lots.remove(&item);
             }
         }
-        (t, marks, lots)
+        let packages = self.packages.get_mut(&item).map_or_else(Vec::new, |units| crate::packages::take(units, &before, &lots));
+        (t, marks, lots, packages)
+    }
+
+    pub fn preview_packages(&self, item: usize, kg: f64) -> Vec<crate::packages::Unit> {
+        match (self.packages.get(&item), self.lots.get(&item)) {
+            (Some(units), Some(lots)) => crate::packages::preview(units, lots, kg),
+            _ => Vec::new(),
+        }
+    }
+
+    pub fn put_cargo(&mut self, item: usize, kg: f64, marks: Vec<Mark>, lots: Vec<(Batch, f64)>, packages: Vec<crate::packages::Unit>) {
+        self.put_with(item, kg, marks, lots);
+        self.packages.entry(item).or_default().extend(packages);
     }
 }
 
@@ -467,6 +488,7 @@ pub struct Economy {
     /// The last number given in each series (SFO 21): a serial's maker and product
     /// (`TOL-HAULER`), a lot's maker (`TOL`).
     pub sequences: BTreeMap<String, u32>,
+    pub package_sequences: crate::packages::Sequences,
 }
 
 /// One works in a place's step: which (`k`), who owns it, who marks what it makes (maker and
@@ -552,8 +574,8 @@ impl Economy {
 
     /// Move `kg` of `item` from works `from` to works `to`, with its marks and lots.
     fn shift(&mut self, from: usize, to: usize, item: usize, kg: f64) {
-        let (t, marks, lots) = self.works[from].pool.take_with(item, kg);
-        self.works[to].pool.put_with(item, t, marks, lots);
+        let (t, marks, lots, packages) = self.works[from].pool.take_cargo(item, kg);
+        self.works[to].pool.put_cargo(item, t, marks, lots, packages);
     }
 
     /// The registry's rig `key`, body `body` of `system` (see `world::rigs`):
@@ -849,6 +871,21 @@ impl Economy {
         let out = pool.take_with(item, kg);
         p.stock = pool.clone();
         out
+    }
+
+    pub fn take_cargo(&mut self, system: usize, f: Facility, item: usize, kg: f64) -> (f64, Vec<Mark>, Vec<(Batch, f64)>, Vec<crate::packages::Unit>) {
+        let Some((p, pool)) = self.market_mut(system, f) else { return (0.0, vec![], vec![], vec![]) };
+        let out = pool.take_cargo(item, kg);
+        p.stock = pool.clone();
+        out
+    }
+
+    pub fn put_cargo(&mut self, system: usize, f: Facility, item: usize, kg: f64, marks: Vec<Mark>, lots: Vec<(Batch, f64)>, packages: Vec<crate::packages::Unit>) -> bool {
+        let Some((p, pool)) = self.market_mut(system, f) else { return false };
+        if kg + packages.iter().map(|u| u.tare).sum::<f64>() > pool.free() + 1e-6 { return false; }
+        pool.put_cargo(item, kg, marks, lots, packages);
+        p.stock = pool.clone();
+        true
     }
 
     /// As `put`, with the marks and lots of what's put (SFO 21).
