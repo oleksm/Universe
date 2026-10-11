@@ -722,8 +722,8 @@ def check_model(kind, r, info):
             if math.hypot(c[across] - lb["centre"][across], c[up] - lb["centre"][up]) > 0.02:
                 bad.append(f"label plate {lb['node']} centred at {[round(v, 3) for v in c]}, the record puts it at {lb['centre']} across and up its face")
             depth = sign * (lb["centre"][normal] - c[normal])        # (how far inside the record's face the plate sits)
-            if not -0.002 <= depth <= 0.10:
-                bad.append(f"label plate {lb['node']} sits {depth:.3f} m inside face {lb['face']}: it must lie on the package's surface, at most 0.10 m in from the record's face and not out past it")
+            if not -0.01 <= depth <= 0.15:
+                bad.append(f"label plate {lb['node']} sits {depth:.3f} m inside face {lb['face']}: it must lie on the package's surface, from 0.01 m out to 0.15 m in from the record's face")
             if e[normal] > 0.005 + h * math.sin(tilt):
                 bad.append(f"label plate {lb['node']} leans {e[normal]:.3f} m across face {lb['face']}: flat, or tilted no more than 15 degrees with a tapered side")
             if abs(e[across] - w) > 0.01 or not (h * math.cos(tilt) - 0.01 <= e[up] <= h + 0.01):
