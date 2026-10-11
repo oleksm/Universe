@@ -1492,3 +1492,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU lighting/cost, station placement and mounting; full feed deployment, pointing, 1 MW thermal path, RF and structural loads remain unqualified."
+  - key: equipment.gate.transceiver.beacon
+    version: 2
+    manifest_sha256: "331bad66ffcbc2511750cb30553d94707ce475a7745a7f3e934dd6cec46b9b9d"
+    installed: 9d051434
+    game: "the loader (world::assets) at fso 9d051434"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gate-transceiver-beacon/v2 (493172 bytes, bounds [-14.55, 0.0, -14.55] to [14.55, 4.1531, 14.55]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU lighting/cost, gate placement and mounting; full feed deployment, pointing, 300 kW thermal path, RF and structural loads remain unqualified."
