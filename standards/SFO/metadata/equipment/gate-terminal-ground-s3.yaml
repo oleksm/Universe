@@ -5,7 +5,7 @@ identity:
   maker: org.tallis
   revision: outdated
   slot: gate
-  description: "A 20.6 m dish that links a ground station to the gate overhead. Drawn stowed: the dish face up on its low gimbal, a mesh reflector on ribs, the feed mast folded down across it (it stands 14.7 m above the dish when deployed). It points within 13 degrees of the zenith: further and its rim sweeps the ground."
+  description: "A 20.6 m dish that links a ground station to the gate overhead. Drawn stowed: the dish face up on its low gimbal, a mesh reflector on ribs, the feed mast folded down across it (it stands 14.7 m above the dish when deployed). It points within 13 degrees of the zenith: further and the bowl reaches the ground (its lowest point in a tilt lies inside the bowl, not at the rim: blender's sweep)."
 size_class: 3
 fits: mount.gate-s3
 physical:
