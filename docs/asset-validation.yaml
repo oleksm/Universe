@@ -1796,3 +1796,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static upright only; game drawing, lighting/GPU cost, runtime lowering, final hull threshold and lock receivers, placement,60t capacity/drive and14.078t versus10t mass remain unqualified."
+  - key: equipment.access.docking.clamp
+    version: 1
+    manifest_sha256: "032e046ab73bfb75bafec9f023707fafa33e403dc90f9aa063bd61145d448cf8"
+    installed: d7e47564
+    game: "the loader (world::assets) at fso c1847a66"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-docking-clamp/v1 (222864 bytes, bounds [-0.6, 0.0, -0.6] to [0.6, 1.0, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Game drawing/lighting/GPU cost,docking interaction and runtime release,final hull/rail fit,2MN strength/drive and1123kg partial versus800kg mass unqualified."
