@@ -30,6 +30,12 @@ function:
   kind: tank
   capacity: 80000
   holds: material.deuterium
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-deuterium-s4/v1"
+  manifest_sha256: "9734820c69840259cf8a2530903a7ef7655447fbd4a93f2f7eeba80d9704ce73"
+  version: 1
+  triangles: 6248
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
