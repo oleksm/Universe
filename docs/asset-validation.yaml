@@ -333,3 +333,18 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Provisional exterior only: registry energy/mass contradiction and cryogenic/load qualification unresolved; final hull service routing and GPU appearance/cost pending."
+  - key: equipment.gear.front.mc07-right
+    version: 1
+    manifest_sha256: "4ec7da9c98516e6f92db978a19e792e35318afa989ee6c5289cd35590c7ee7f0"
+    installed: dbcdd64e
+    game: "the loader (world::assets) at fso dbcdd64e"
+    date: "2026-10-10"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-front-mc07-right/v1 (108976 bytes, bounds [-1.1025, -1.41, -0.58] to [1.1025, 0.67, 5.88]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Requires v02 fixed hull supports and proper gear_1 mount frame; moving runtime, combined hull installation, landing suspension/load and GPU review remain held."
