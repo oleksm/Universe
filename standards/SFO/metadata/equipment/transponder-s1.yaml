@@ -27,6 +27,12 @@ making:
   module: module.assembly-shop
 function:
   kind: transponder
+visual:
+  format: "freefall-model/1"
+  path: "models/transponder-s1/v1"
+  manifest_sha256: "b89cbc78acfe21a741db81c382756308303e40a28d26f71b7cb1cab9f3fc3f36"
+  version: 1
+  triangles: 840
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
