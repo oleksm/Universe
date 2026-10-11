@@ -26,6 +26,12 @@ function:
   kind: "cargo_lift"
   load: 20000
   travel: 8.0
+visual:
+  format: "freefall-model/1"
+  path: "models/access-cargo-lift-s2/v1"
+  manifest_sha256: "e1f233d652523501118aef9e94b16689b3aae86c99c18f0e2d3b994b9f4503e2"
+  version: 1
+  triangles: 7334
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "A 3 by 3 m platform lifting 20 t through 8 m: a heavy goods lift's figures. Chosen. Four columns cannot fold 8 m into a 1 m box (blender, 2026-10-11): it is a three-stage scissor, as heavy dock and loading lifts are, folded flat in its box and owning its whole mechanism; the hull gives only the opening it rises through." }
