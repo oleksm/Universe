@@ -2372,3 +2372,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static stowed package;runtime deployment,Ti64 at1000K,thermal/seal/structural qualification,final hull and release envelope,GPU and temporal edges open."
+  - key: equipment.utility.pumps.s1
+    version: 1
+    manifest_sha256: "b9377fdea5979d901a6e0ac0c59e49c2990cbeda5d3dc439ca6270de8f3c4d7f"
+    installed: fb1b9b37
+    game: "the loader (world::assets) at fso fb1b9b37"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-pumps-s1/v1 (112180 bytes, bounds [-0.5, 0.0, -0.3] to [0.5, 0.6, 0.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pump flow/pressure/cavitation,fluid compatibility,heat rejection,structural loads,internal packing,final hull/plumbing,GPU and temporal edges unqualified."
