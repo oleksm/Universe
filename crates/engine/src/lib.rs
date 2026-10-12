@@ -5,6 +5,7 @@
 //! GPU, where `f32` is plenty.
 
 pub mod app;
+pub mod assets;
 pub mod audio;
 pub mod font;
 pub mod camera;
