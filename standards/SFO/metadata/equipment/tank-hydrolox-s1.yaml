@@ -10,10 +10,10 @@ size_class: 1
 fits: mount.tank-s1
 physical:
   mass: 1830
-  volume: 97.3
-  length: 4.6
+  volume: 108.4
+  length: 4.934
   width: 4.6
-  height: 4.6
+  height: 4.778
 built_of:
   parts: tank-hydrolox-s1
   list:
@@ -32,5 +32,6 @@ life: 473364000
 basis:
   - { of: [function.capacity, built_of.list], tier: derived, review: true, note: "Inside the 4.6 m envelope: 100 mm of insulation (liquid hydrogen at 20 K wants twice the methalox tanks' 50 mm) and a 5 mm wall leave 2.195 m of inner radius, 44.3 m3. The common bulkhead (100 mm, 14.2 m2) takes 1.4 m3 and splits the rest 25:75, the CH-S2 engine's mass ratio of 5.5 at 1,141 kg/m3 of oxygen and 70.8 kg/m3 of hydrogen: 10.9 m3 of oxygen space, 32.0 m3 of hydrogen space. 3% ullage in each leaves 10.6 m3 of oxygen (12,070 kg) and 31.0 m3 of hydrogen (2,200 kg): 14,270 kg, 343 kg/m3 as stowed. The old 15,700 kg filled 49 m3 at the material's 320 kg/m3, more than the inside of the shell, with no bulkhead or ullage." }
   - { of: [built_of.list, physical.mass, identity.description], tier: invented, review: true, note: "Pressure and wall: 0.35 MPa most in service (an expander engine's pumps want about 0.2 to 0.3 MPa at the inlet), times 1.5 ultimate, against 165 MPa for welded 6061-T6 at the weld (from memory): 3.5 mm, taken as the 5 mm plate stock for welding and handling, 820 kg bare plus 20% for lands, bosses and doublers. The bulkhead must keep 20 K hydrogen off 90 K oxygen (oxygen freezes at 54 K): a 100 mm sandwich, skins 1.6 mm each on 50 kg/m3 foam at about 0.01 W/m K (from memory) passes about 100 W, 20 kg of hydrogen boiled a day, 0.9% of the load, besides what leaks in from outside; a hull that holds hydrogen long fits a vent burner or a cooler. One sphere with a common bulkhead, not two vessels: two spheres in this envelope would hold about a third less. Insulation 3.3 kg/m2, saddles 40 kg each (the S2's 70 kg scaled to 397 kN), fittings 250 kg. Total 1,830 kg, 12.8% of what it holds (it was 1,880 at an assumed 12%). Chosen; review." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The fitted envelope, from the modeller's exterior layout (candidate v01): the 4.6 m sphere stands on four steel saddles 0.178 m clear of its bottom, 4.778 m high in all; the oxygen and hydrogen service bosses stand opposed, 0.167 m beyond the sphere on each side along the length, 4.934 m long in all; 4.6 m across. The drawn saddles weigh 135 kg of the 160 kg allowed. Within the mount's 5.88 m." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
