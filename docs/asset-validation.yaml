@@ -2084,3 +2084,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull, airflow corridors and coolant routing; actual game GPU appearance/cost and temporal fin/guard stability; runtime fan spin absent; low-density fan-power/cooling rating, aerodynamics, coolant pressure, loads and containment unqualified."
+  - key: equipment.thermal.coolant-loop.s0
+    version: 1
+    manifest_sha256: "8c118d91793d323d6b12e49ef3d7fcb35fc46b80664b674fd2a913482668b8c2"
+    installed: c2bb60ba
+    game: "the loader (world::assets) at fso c2bb60ba"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-coolant-loop-s0/v1 (141540 bytes, bounds [-0.25, 0.0, -0.2] to [0.25, 0.3, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and distributed pipe/coldplate routing; actual game GPU appearance/cost and temporal stability; pump curve/head, pressure, mixture, thermal integration, reservoir zero-g fluid management and mount loads unqualified. Model excludes12kg distributed kit;30kg record is whole loop."
