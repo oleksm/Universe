@@ -57,6 +57,8 @@ pub fn get(key: &str) -> Option<Arc<Visual>> {
                                 material.map_or([0.6, 0.6, 0.6, 1.], |m| m.base_color),
                             ),
                             double_sided: material.is_some_and(|m| m.double_sided),
+                            blend: material.is_some_and(|m| m.blend),
+                            alpha_cutoff: material.and_then(|m| m.alpha_cutoff),
                         });
                     }
                 }
@@ -88,6 +90,9 @@ pub struct Face {
     pub normals: [Vec3; 3],
     pub colour: universe_engine::Color,
     pub double_sided: bool,
+    /// Authored glTF alpha mode; a low base alpha alone does not imply blending.
+    pub blend: bool,
+    pub alpha_cutoff: Option<f32>,
 }
 
 /// One resolved visual, shared by design, walk, balance and test drive. Physical
@@ -132,6 +137,8 @@ pub fn placed(
                 normals: [normal; 3],
                 colour: universe_engine::Color::rgb(0.55, 0.5, 0.62),
                 double_sided: true,
+                blend: false,
+                alpha_cutoff: None,
             }
         })
         .collect();
@@ -158,10 +165,19 @@ pub struct Projected {
     pub distances: [f32; 3],
     pub near: f32,
     pub colours: [universe_engine::Color; 3],
+    pub blend: bool,
+    pub alpha_cutoff: Option<f32>,
 }
 impl Projected {
     pub fn draw(&self, frame: &mut universe_engine::Frame) {
-        frame.canvas_triangle(self.points, self.distances, self.near, self.colours);
+        let alpha = if self.blend {
+            universe_engine::CanvasAlpha::Blend
+        } else if let Some(cutoff) = self.alpha_cutoff {
+            universe_engine::CanvasAlpha::Mask(cutoff)
+        } else {
+            universe_engine::CanvasAlpha::Opaque
+        };
+        frame.canvas_triangle_alpha(self.points, self.distances, self.near, self.colours, alpha);
     }
 }
 
@@ -217,6 +233,8 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
                         camera.centre + glam::Vec2::new(p.x, -p.y) * (camera.focal / p.z)
                     }),
                     colours: triangle.map(|(_, c)| Color(c.to_array())),
+                    blend: face.blend,
+                    alpha_cutoff: face.alpha_cutoff,
                 });
             }
         }
@@ -227,6 +245,47 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn authored_alpha_survives_clipping_and_placed_transforms() {
+        let camera = Camera {
+            eye: Vec3::ZERO,
+            right: Vec3::X,
+            up: Vec3::Y,
+            forward: Vec3::Z,
+            focal: 100.,
+            centre: glam::Vec2::ZERO,
+            near: 0.1,
+        };
+        // Low factor alpha is valid even for OPAQUE: preserve the mode separately.
+        for (blend, alpha_cutoff) in [(false, None), (false, Some(0.5)), (true, None)] {
+            let face = Face {
+                positions: [
+                    Vec3::new(-1., -1., 0.02),
+                    Vec3::new(1., -1., 2.),
+                    Vec3::new(0., 1., 2.),
+                ],
+                normals: [Vec3::NEG_Z; 3],
+                colour: universe_engine::Color([0.3, 0.6, 0.9, 0.2]),
+                double_sided: true,
+                blend,
+                alpha_cutoff,
+            };
+            let item = Placed {
+                faces: Arc::new(vec![face]),
+                transform: glam::Mat4::from_translation(Vec3::X),
+                installed: true,
+            };
+            // A flight parent and placement cancel; every clipped child keeps its material.
+            let projected = project(&[item], glam::Mat4::from_translation(Vec3::NEG_X), &camera);
+            assert_eq!(projected.len(), 2);
+            for triangle in projected {
+                assert_eq!(triangle.blend, blend);
+                assert_eq!(triangle.alpha_cutoff, alpha_cutoff);
+                assert!(triangle.colours.iter().all(|c| (c.0[3] - 0.2).abs() < 1e-6));
+                assert!(triangle.distances.iter().all(|z| *z >= camera.near));
+            }
+        }
+    }
     #[test]
     fn fallback_and_near_clipping_use_shared_projection() {
         let triangle = [
@@ -246,15 +305,14 @@ mod tests {
             near: 0.1,
         };
         let visible = project(&[item], glam::Mat4::IDENTITY, &camera);
+        assert!(visible.iter().all(|t| !t.blend && t.alpha_cutoff.is_none()));
         assert_eq!(
             visible.len(),
             2,
             "triangle crossing near plane becomes clipped quad"
         );
-        assert!(
-            visible
-                .iter()
-                .all(|t| t.depth >= camera.near && t.points.iter().all(|p| p.is_finite()))
-        );
+        assert!(visible
+            .iter()
+            .all(|t| t.depth >= camera.near && t.points.iter().all(|p| p.is_finite())));
     }
 }
