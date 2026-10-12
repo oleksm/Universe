@@ -9,7 +9,7 @@ identity:
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 54
+  mass: 59
   volume: 0.378
   length: 1.0
   width: 0.6
@@ -19,6 +19,7 @@ built_of:
   list:
     - { code: TKN50KG-01, name: "Composite pressure vessel", mass: 48, length: 0.91, width: 0.6, height: 0.6, item: stock.cfc-pl-3, quantity: 55.2, module: module.welding-bay }
     - { code: TKN50KG-02, name: "Valve and regulator", mass: 6, length: 0.439, width: 0.351, height: 0.351, item: stock.st304-pl-3, quantity: 6.9, module: module.machining-centre }
+    - { code: TKN50KG-03, name: "Saddles and bands", description: "Two aluminium saddles and straps that seat the bottle on its mount.", mass: 5, length: 0.6, width: 0.6, height: 0.2, item: stock.al6061-pl-5, quantity: 5.75, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -27,6 +28,6 @@ function:
   holds: material.nitrogen
 life: 473364000
 basis:
-  - { of: [physical, function], tier: derived, review: true, note: "Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1; ideal gas would give 345), so 50 kg needs 0.161 m3 inside. A cylinder with hemispherical ends, 0.6 m across over a 25 mm wall, is 0.91 m long, and a valve and regulator take 0.1 m more; saddles hold it 30 mm off the floor (0.63 m high). The 25 mm is a space allowance: the laminate itself averages about 19 mm (hoop 30 MPa x 0.28 m / about 800 MPa is 10 mm, helical layers and liner the rest), which is what the vessel's mass below implies; a uniform 25 mm shell of CFC at 1,580 kg/m3 would be 63 kg. A type IV composite vessel stores about 100 kJ of pressure-volume per kilogram (from memory of commercial 300 to 700 bar bottles): 30 MPa x 0.161 m3 is 4.8 MJ, so 48 kg of vessel, plus the valve. Recomputed 2026-10-11 from 0.6 kg a kilogram of gas, which did not fit its box." }
+  - { of: [physical, function], tier: derived, review: true, note: "Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1; ideal gas would give 345), so 50 kg needs 0.161 m3 inside. A cylinder with hemispherical ends, 0.6 m across over a 25 mm wall, is 0.91 m long, and a valve and regulator take 0.1 m more; saddles hold it 30 mm off the floor (0.63 m high). The 25 mm is a space allowance: the laminate itself averages about 19 mm (hoop 30 MPa x 0.28 m / about 800 MPa is 10 mm, helical layers and liner the rest), which is what the vessel's mass below implies; a uniform 25 mm shell of CFC at 1,580 kg/m3 would be 63 kg. A type IV composite vessel stores about 100 kJ of pressure-volume per kilogram (from memory of commercial 300 to 700 bar bottles): 30 MPa x 0.161 m3 is 4.8 MJ, so 48 kg of vessel, plus the valve and 5 kg of saddles and bands (the 50 kg bottle's drawn at 4.9 kg in Blender). Recomputed 2026-10-11 from 0.6 kg a kilogram of gas, which did not fit its box." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
