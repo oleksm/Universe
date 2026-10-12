@@ -26,6 +26,12 @@ function:
   kind: tank
   capacity: 300
   holds: material.nitrogen
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-nitrogen-s1/v1"
+  manifest_sha256: "f8435163a24f8272f77596d1e807232db641142f64a9c12d8459a756fed4f41c"
+  version: 1
+  triangles: 3328
 life: 473364000
 basis:
   - { of: [physical, function], tier: derived, review: true, note: "Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1), so 300 kg needs 0.968 m3 inside. A cylinder with hemispherical ends, 1.09 m across over a 45 mm space allowance, is 1.66 m long; valves and regulator take about 0.14 m more and saddles hold it 50 mm off the floor: 1.8 x 1.09 x 1.14 m. The laminate averages about 35 mm (hoop 30 MPa x 0.5 m / about 800 MPa is 19 mm, helical layers and liner the rest). A type IV composite vessel stores about 100 kJ of pressure-volume per kilogram (from memory): 30 MPa x 0.968 m3 is 29 MJ, so 290 kg of vessel, 30 kg of valves and 15 kg of saddles. Blowdown at 0.5 kN takes 0.7 kg/s (cold nitrogen, about 73 s of specific impulse). Recomputed 2026-10-11 from half a kilogram a kilogram of gas, which did not fit its box." }
