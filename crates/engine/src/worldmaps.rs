@@ -308,6 +308,11 @@ impl WorldBind {
         self.current == Some(maps.id)
     }
 
+    /// Are `maps` the set bound now (all up)? Asks only: `bind` uploads.
+    pub fn ready_for(&self, maps: &WorldMaps) -> bool {
+        self.current == Some(maps.id)
+    }
+
     /// A texture for `s`, empty.
     fn texture(device: &wgpu::Device, s: &Source) -> wgpu::Texture {
         device.create_texture(&wgpu::TextureDescriptor {
