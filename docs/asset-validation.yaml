@@ -2260,3 +2260,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static open berth package only; runtime screen controls and lighting, final hull corridor/service placement, human access and restraints, fire/ventilation, structural loads, GPU look/cost and temporal readability remain open."
+  - key: equipment.cargo.galley.s1
+    version: 1
+    manifest_sha256: "5ca1683385fa40036adc4053a07267af9ae02f7df92765e4608b3a7f6f4ec559"
+    installed: 426373c7
+    game: "the loader (world::assets) at fso 426373c7"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-galley-s1/v1 (405024 bytes, bounds [-0.75, 0.0, -0.45] to [0.75, 2.0, 0.454]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static closed package only; runtime access, complete machine mass/packing, food/fluid/fire/thermal/load qualification, actual hull working/eating corridor and services, GPU look/cost and temporal readability remain open."
