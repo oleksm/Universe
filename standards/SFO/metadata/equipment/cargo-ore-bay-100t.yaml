@@ -9,20 +9,20 @@ identity:
 size_class: 3
 fits: mount.cargo-s3
 physical:
-  mass: 10000
+  mass: 8800
   volume: 84.8
   length: 8.55
   width: 3.15
   height: 3.15
 built_of:
   parts: cargo-ore-bay-100t
-  shares: rule.haul-truck-shares
   list:
-    - { code: OBS07-01, name: "Shell", description: "The hopper's plates, sloped to the gate.", mass: 4000, length: 4.303, width: 2.151, height: 2.151, item: stock.sta36-pl-20, quantity: 4600.0, module: module.welding-bay }
-    - { code: OBS07-02, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 2000, length: 3.415, width: 1.708, height: 1.708, item: stock.st4340-pl-3, quantity: 2300.0, module: module.cutting-table }
-    - { code: OBS07-03, name: "Top doors", description: "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight.", mass: 1500, length: 3.103, width: 1.551, height: 1.551, item: stock.al6061-pl-5, quantity: 1725.0, module: module.welding-bay }
-    - { code: OBS07-04, name: "Discharge gate", description: "A slot gate the length of the floor, about 0.5 m wide, sliding on bearing beds ribbed to the shell along both edges of the slot (end guides alone cannot carry the loaded plate), and its drive, that lets the ore out at the dock.", mass: 1000, length: 2.711, width: 1.355, height: 1.355, item: stock.st4340-bar-120, quantity: 1150.0, module: module.machining-centre }
-    - { code: OBS07-05, name: "Frame", description: "Tube chords and uprights that carry the hopper to its mount.", mass: 1500, length: 3.103, width: 1.551, height: 1.551, item: stock.st4340-tb-160x5, quantity: 1725.0, module: module.welding-bay }
+    - { code: OBS07-01, name: "Shell", description: "The hopper's 8 mm plates, sloped to the gate.", mass: 3980, length: 6.563, width: 2.418, height: 2.418, item: stock.sta36-pl-8, quantity: 4577.0, module: module.welding-bay }
+    - { code: OBS07-02, name: "Ribs", description: "8 mm webs welded round the shell every 0.35 m and up the end walls.", mass: 1930, length: 5.156, width: 1.900, height: 1.900, item: stock.sta36-pl-8, quantity: 2219.5, module: module.welding-bay }
+    - { code: OBS07-03, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 1500, length: 4.741, width: 1.747, height: 1.747, item: stock.st4340-pl-3, quantity: 1725.0, module: module.cutting-table }
+    - { code: OBS07-04, name: "Top doors", description: "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight.", mass: 380, length: 3.000, width: 1.105, height: 1.105, item: stock.al6061-pl-5, quantity: 437.0, module: module.welding-bay }
+    - { code: OBS07-05, name: "Discharge gate", description: "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted).", mass: 480, length: 3.243, width: 1.195, height: 1.195, item: stock.sta36-pl-8, quantity: 552.0, module: module.welding-bay }
+    - { code: OBS07-06, name: "Frame", description: "Tube chords and end frames that carry the hopper to its mount, with a tie across the top at every rib.", mass: 530, length: 3.351, width: 1.235, height: 1.235, item: stock.st4340-tb-80x3, quantity: 609.5, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -39,8 +39,8 @@ visual:
 life: 473364000
 basis:
   - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
-  - { of: [physical.mass], tier: invented, review: true, note: "A tenth of its capacity: a haul truck's body is about 11% of its payload (a 363 t truck's 40 t body, from memory). Not sourced." }
+  - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "Worked out from its dimensions, loads and materials (tools/standards/ore_bays.py): ore at 2,000 kg/m3 at 3 g presses 159 kPa at the gate (as a liquid at the full clear depth; loose rock presses less). 8 mm A36 plate held by ribs every 0.35 m (stress p b2 / 2t2 within two thirds of yield), the ribs 8 mm webs 170 mm deep: shell 3.98 t, ribs 1.93; 3 mm 4340 liners over all it touches 1.50; 5 mm aluminium doors ribbed for a reverse 0.3 g 0.38; an 8 mm ribbed gate on two bearing strips 0.48; held at its corners, the loaded bay bends as a beam, 543 kN in each top chord: 4340 tube 80 x 3 mm with ties at every rib (buckling between ties 1.5 times the load or more), frame 0.53. 8.80 t, 0.09 of its capacity; drives, seals and fasteners not counted; the ribs' free edges unchecked for buckling. Review." }
   - { of: [size_class], tier: invented, review: true, note: "Its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }
   - { of: [identity.description, physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "Fitted round its 50 m3, at the modeller's request (the first box, 5.84 x 2.92 x 2.92 m, held only 49.8 m3 with no walls, frame or doors). Outer 3.15 m square, inside the class 3 mount's 3.21 m; frame, shell and liners take about 0.2 m a side, so 2.75 m clear inside; the doors take 0.15 m at the top and the gate and frame 0.3 m below, so 2.7 m clear high. A V bottom at 45 degrees (steeper than broken rock's 35 to 40 degree repose, so it empties under gravity) from 2.75 m down to a 0.5 m slot is 1.125 m deep, under 1.575 m of straight side: 6.16 m2 of section. 50 m3 needs 8.12 m of trough; with the 0.2 m end walls, 8.55 m long, inside the mount's 8.69. Chosen; review." }
-  - { of: [built_of.list], tier: derived, review: true, note: "Flagged, not thinned: the shell is about 64 m2 (two sides of 1.6 m straight and 1.6 m slope, two ends of 6.2 m2, by 8.1 m). At 20 mm of A36 (157 kg/m2, the stock named) that is about 10 t, against the 4 t given, which allows about 8 mm on average. Either the shell is thinner, ribbed plate (as a haul truck body is), or the bay is heavier than a tenth of its load. Measured on the modeller's candidate (blender cargo-ore-bay-100t/candidate-v02, 20 mm shell, 3 mm liners, 160x5 tube frame, 5 mm door skins, gate on wear beds and 22 hollow 120x180x8 ribs at 0.72 m to the base chords; 50.02 m3 clear): shell 10.09 t, liners 1.50, frame 1.89, doors 1.31, gate and beds 3.53, 18.3 t before the hidden drives; loaded strength unqualified, against the 10 t recorded and the parts as given. Left at 10 t until reviewed. The gate needs bearing beds the length of the slot (the modeller's finding): under 3 g (invented) with 2.7 m of ore above it, the 0.5 m gate carries about 160 kPa, some 80 kN per metre, which no plate spans 8 m between end guides; beds ribbed to the shell carry it every few hundred millimetres. Their steel is in the 18.3 t above. Review." }
+  - { of: [visual], tier: derived, review: true, note: "The installed model was built of 20 mm plate without ribs and weighs 18.3 t (measured by the modeller); it is to be rebuilt to the worked-out 8 mm plate and ribs." }
   - { of: [life], rule: rule.life-ship-system }
