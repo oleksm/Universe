@@ -26,8 +26,8 @@ CUT = 1.15   # stock bought for a part cut from it (rule.cut-loss)
 TUBES = [(60, 2), (80, 3), (100, 5), (120, 10), (150, 10), (200, 15), (250, 20), (300, 30), (400, 30)]   # 4340 tube stock, mm
 
 # The families' sections: outer square, clear width, slot width, clear height (a 45 degree V to the slot under straight sides),
-# and how far the gate runs below the shell to clear its webs (measured in the models: 100 t v3 and 10 t v2; 20 t not yet).
-SECTIONS = {3.15: (2.75, 0.5, 2.7, 0.11), 2.25: (1.93, 0.3, 1.95, 0.05), 1.72: (1.4, 0.3, 1.42, 0.045)}
+# and how far the gate runs below the shell to clear its webs (measured in the models: 100 t v3, 10 t v2 and the 20 t rebuild).
+SECTIONS = {3.15: (2.75, 0.5, 2.7, 0.11), 2.25: (1.93, 0.3, 1.95, 0.065), 1.72: (1.4, 0.3, 1.42, 0.045)}
 
 
 def tube(d, t):
