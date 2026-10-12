@@ -418,3 +418,11 @@ fn analytic_derivative_matches_independent_owner_face_goldens() {
     }
     assert_eq!(count,330);
 }
+
+#[test]
+fn fine_oblique_edges_preserve_vertex_ownership() {
+    check(
+        include_bytes!("fixtures/pgs1-fine-owner/oblique.pgs"),
+        include_str!("fixtures/pgs1-fine-owner/oblique.json"),
+    );
+}
