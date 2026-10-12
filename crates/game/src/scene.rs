@@ -1542,7 +1542,10 @@ fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
         }
     }
     let key = format!("{}/{}/{} built {}", s.system, s.body, s.name, g.works.iter().map(|w| format!("{}:{}", w.parcel, (0..w.blocks.len()).filter(|&k| w.progress(k, now) >= 1.0).count())).collect::<Vec<_>>().join(","));
-    let mesh = crate::models::ground_blocks(key, &built, r);
+    // Async completion changes which blocks still need boxes even when no
+    // construction progress changed. Do not reuse the old fallback mesh.
+    let revision = format!("fallback {}", built.iter().map(|(b,_)| format!("{}@{:?}", b.module, b.centre)).collect::<Vec<_>>().join(","));
+    let mesh = crate::models::ground_blocks(key, revision, &built, r);
     frame.with_surface(0.15, 16.0, 0.0, |frame| frame.model_shaded(&mesh, &tr, Color::hex(0x3a3f45), Color::hex(0x8c9196)));
     for w in &g.works {
         for (k, bl) in w.blocks.iter().enumerate() {
@@ -1552,7 +1555,7 @@ fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
             }
             let step = (p * 32.0).ceil() / 32.0;
             let key = format!("{}/{} parcel {} block {k} at {step}", s.body, s.name, w.parcel);
-            let rising = crate::models::ground_blocks(key, &[(bl, bl.height * step)], r);
+            let rising = crate::models::ground_blocks(key, String::new(), &[(bl, bl.height * step)], r);
             frame.with_surface(0.1, 12.0, 0.0, |frame| frame.model_shaded(&rising, &tr, Color::hex(0x6a5a30), Color::hex(0x7a7468)));
         }
     }

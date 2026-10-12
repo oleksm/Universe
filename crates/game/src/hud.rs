@@ -55,6 +55,9 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
     }
     if let Some(y) = &app.panels.shipyard {
         universe_prof::time("draw/studio", || crate::shipyard::draw(frame, app, y));
+        let mut top = 95.0;
+        if app.debug > 0 { top = perf(frame, app, ctx, top) + 6.0; }
+        if universe_prof::enabled() { profile_panel(frame, top); }
         return;
     }
     // The thrusters panel: a screen of its own (in the pilot's seat).
@@ -2006,8 +2009,30 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
         lines.push((format!("STOPS {} GATES {} CRASHES {} COLLISIONS {}", t.stops, t.transits, t.crashes, t.collision_losses), DIM));
         lines.push((format!("TRADES {} KILLS {} POSSES {}/{}", t.trades, t.shot_down, t.defences, t.aggressors_downed), DIM));
     }
+    lines.extend(asset_lines(ctx));
     let bottom = right_column(frame, top, &lines);
     frame_graph(frame, p, bottom + 4.0)
+}
+
+fn asset_lines(ctx: &Context) -> Vec<(String, Color)> {
+    let mut lines = Vec::new();
+    let gpu = &ctx.perf.resources;
+    lines.push((format!("ASSET GPU {:.1} MIB UP {} DOWN {} PENDING {}", gpu.asset_gpu_bytes as f64/1048576., gpu.asset_uploads, gpu.asset_unloads, gpu.asset_preparing), DIM));
+    let assets = crate::visual_assets::snapshot();
+    lines.push((format!("ASSETS LOAD {} HIT {} UNLOAD {} RELOAD {}", assets.loads, assets.hits, assets.unloads, assets.reloads), DIM));
+    lines.push((format!("ASSETS {:.1} MIB + {:.1} RESERVED  QUEUE {} RUN {}", assets.resident_bytes as f64/1048576., assets.reserved_bytes as f64/1048576., assets.queued, assets.loading), DIM));
+    lines.push((format!("ASSETS COALESCED {} ERROR {} REJECT {}", assets.coalesced, assets.failures, assets.rejected), if assets.failures + assets.rejected > 0 {AMBER} else {DIM}));
+    lines
+}
+
+/// Shared diagnostics for the standalone Studio (which has no App/universe).
+pub fn studio_assets(frame: &mut Frame, ctx: &Context, debug: u8) {
+    if debug == 0 { return; }
+    let mut lines = vec![(format!("{:.0} FPS  {:.1} MS",ctx.fps,ctx.perf.frame_ms),DIM)];
+    lines.extend(asset_lines(ctx));
+    let bottom = right_column(frame, 95.0, &lines);
+    let bottom = frame_graph(frame, &ctx.perf, bottom+4.0);
+    if debug > 1 { profile_panel(frame,bottom+4.0); }
 }
 
 /// The last frames' times as bars, against the right edge: green under

@@ -12,6 +12,7 @@ pub struct StudioOnly {
     deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
     /// Dev (UNIVERSE_ISSUE=n): the issue to go to, once the checks have it.
     issue: Option<usize>,
+    debug: u8,
 }
 
 impl StudioOnly {
@@ -49,12 +50,17 @@ impl StudioOnly {
             interior.flat_view(k);
         }
         let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
-        StudioOnly { interior, spec, deckplans: Vec::new(), issue }
+        StudioOnly { interior, spec, deckplans: Vec::new(), issue, debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
     }
 }
 
 impl Game for StudioOnly {
     fn update(&mut self, ctx: &mut Context) {
+        crate::visual_assets::maintain();
+        if ctx.input.pressed(universe_engine::KeyCode::F3) {
+            self.debug = (self.debug+1)%3;
+            universe_prof::enable(self.debug == 2);
+        }
         let stay = crate::interior::input_with(self.spec, &mut self.deckplans, ctx, &mut self.interior);
         // (A test drive steering with the mouse takes it, as the game's flight does.)
         let want = self.interior.wants_mouse();
@@ -77,9 +83,10 @@ impl Game for StudioOnly {
         Camera::default()
     }
 
-    fn draw(&self, frame: &mut Frame, _ctx: &Context) {
+    fn draw(&self, frame: &mut Frame, ctx: &Context) {
         let size = frame.size();
         frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
         crate::interior::draw(frame, "STUDIO", &self.interior);
+        crate::hud::studio_assets(frame, ctx, self.debug);
     }
 }

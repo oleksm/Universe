@@ -1,0 +1,95 @@
+{
+  "branch": "ships-asset-consumers",
+  "main_base": "504591ad",
+  "engine_commits": [
+    "2a51f0ed",
+    "60c8cbfc"
+  ],
+  "workspace": {
+    "passed": 175,
+    "ignored_gpu_test": 1,
+    "exit": 0
+  },
+  "explicit_gpu_test": {
+    "passed": 1,
+    "exit": 0
+  },
+  "registry_exit": 0,
+  "studio_debug_build_exit": 0,
+  "captures": {
+    "binary_sha256": "814a1586043aaca8c33c0dc89f6d7e41e7df1ce22a8263f90a1e446a1bcb818a",
+    "records": [
+      {
+        "mode": "design",
+        "sha256": "8771978c382bc2ece466cc315326075192d6df15f7ceffd4eb60d071f2b5d0eb"
+      },
+      {
+        "mode": "walk",
+        "sha256": "6e88797f0d8dd849fda1499c67078c64ec6079f3785e193d3b25071c9a1fe882"
+      },
+      {
+        "mode": "balance",
+        "sha256": "376655824009a7277fce3a6d3a50820869fbe13b614b7f945c66551a7287c833"
+      },
+      {
+        "mode": "drive",
+        "sha256": "72d714fd157321b97c3bc7e3ea1a3b5a155c4105019a26f4b7644ff2cd2e13d0"
+      }
+    ]
+  },
+  "cpu_scene_return": {
+    "requests": 10,
+    "hits": 3,
+    "misses": 2,
+    "coalesced": 5,
+    "loads": 2,
+    "unloads": 1,
+    "reloads": 1,
+    "failures": 0,
+    "cancelled": 0,
+    "rejected": 0,
+    "retries": 0,
+    "resident_bytes": 8757417,
+    "reserved_bytes": 0,
+    "peak_bytes": 268435456,
+    "queued": 0,
+    "loading": 0,
+    "queue_seconds": 3.8462e-05,
+    "prepare_seconds": 0.008917132000000001,
+    "entries": [
+      {
+        "key": "ch-s2",
+        "state": "ready",
+        "bytes": 8757417,
+        "class": 1,
+        "idle_seconds": 9.31e-07,
+        "leases": 1,
+        "error": null
+      }
+    ]
+  },
+  "pbr_warm_return": {
+    "cpu_loads": 1,
+    "cpu_hits": 199,
+    "gpu_uploads": 1,
+    "gpu_bytes": 2147808,
+    "failures": 0,
+    "brief_absence_frames": [
+      100,
+      109
+    ],
+    "screenshot_sha256": "b8dd2724ec672a38b17dae2f8f0da4d42bb73f5a958d14c0274d40eb2618603b"
+  },
+  "main_release_hashes_unchanged": true,
+  "evidence": "out/review/async-visual-consumers",
+  "limits": [
+    "Cold means empty process cache, not cold OS file cache.",
+    "Studio captures use two CH-S2 instances; no fuel/gear or flight-readiness acceptance.",
+    "Studio uses CPU projected canvas; its zero PBR GPU residency counter is expected.",
+    "PBR capture is an unlit engine fixture, not live world commissioning.",
+    "Reservation is a provisional estimate, not a decoder peak memory guarantee.",
+    "Native hull/showcase/standalone hull commissioning remains synchronous.",
+    "No trajectory/jump/turn prediction; only visible, selected and limited row prefetch demand.",
+    "Main not merged."
+  ]
+}

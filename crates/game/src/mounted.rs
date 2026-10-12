@@ -4,7 +4,7 @@ use glam::{DMat4, DVec3};
 use serde::Deserialize;
 use std::collections::{BTreeMap, HashMap, HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
-use universe_engine::{Frame, PbrModel, Transform};
+use universe_engine::{Frame, Transform};
 use universe_sim::world::{Ship, assets, content::content};
 
 #[derive(Clone, Deserialize)]
@@ -31,7 +31,6 @@ struct Hull {
 #[derive(Default)]
 struct Cache {
     hulls: HashMap<String, Option<Arc<Hull>>>,
-    items: HashMap<(String, String), Option<(PbrModel, DMat4)>>,
     warnings: HashSet<String>,
     announced: HashSet<(String, String)>,
 }
@@ -81,32 +80,31 @@ impl Cache {
         }
         self.hulls.get(path).cloned().flatten()
     }
-    fn item(&mut self, key: &str, slot: &str) -> Option<(PbrModel, DMat4)> {
-        let k = (key.to_string(), slot.to_string());
-        if !self.items.contains_key(&k) {
-            let read = || -> Result<_, String> {
-                let m = crate::equipment_visual::get(key).ok_or("no usable installed visual")?;
-                if m.has_motion {
-                    return Err("motion contract requires articulated mounted consumer".into());
-                }
-                let inverse_primary = assets::mounts::placement(DMat4::IDENTITY, &m.nodes, slot)?;
-                Ok((m.model.clone(), inverse_primary))
-            };
-            let result = match read() {
-                Ok(v) => Some(v),
-                Err(e) => {
-                    self.warn(format!("{key} at {slot}: {e}"));
-                    None
-                }
-            };
-            self.items.insert(k.clone(), result);
+    fn item(
+        &mut self,
+        key: &str,
+        slot: &str,
+    ) -> Option<(Arc<crate::visual_assets::Visual>, DMat4)> {
+        // A pending result is not a rejection. Poll the common service next frame.
+        let m = crate::equipment_visual::get(key)?;
+        if m.has_motion {
+            self.warn(format!(
+                "{key} at {slot}: motion contract requires articulated mounted consumer"
+            ));
+            return None;
         }
-        self.items.get(&k).cloned().flatten()
+        match assets::mounts::placement(DMat4::IDENTITY, &m.nodes, slot) {
+            Ok(primary) => Some((m, primary)),
+            Err(e) => {
+                self.warn(format!("{key} at {slot}: {e}"));
+                None
+            }
+        }
     }
 }
 
 pub struct Mounted {
-    draws: Vec<(String, PbrModel, DMat4)>,
+    draws: Vec<(String, Arc<crate::visual_assets::Visual>, DMat4)>,
 }
 impl Mounted {
     pub fn slot_origin(&self, slot: &str) -> Option<DVec3> {
@@ -122,7 +120,7 @@ impl Mounted {
                 continue;
             };
             frame.model_pbr(
-                model,
+                &model.model.with_lease(model.clone()),
                 &Transform {
                     position: hull.position + hull.rotation.as_dquat() * (at - centre),
                     rotation: hull.rotation * rotation.as_quat(),

@@ -6027,6 +6027,8 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     frame.hud_box(wp, wc, LABEL.scale(0.25));
     let size = block.map_or(f.size, |b| b.size);
     let shape = Block { id: f.id.clone(), at: Vec3::ZERO, size, push: block.and_then(|b|b.push) };
+    // Selected/hovered catalogue card is needed now, ahead of speculative rows.
+    let _ = crate::visual_assets::request(&f.key, 0);
     let visual = placed_module(&shape, Some(f));
     let (yaw, tilt) = (interior.spin * 0.5, 0.45f32);
     let distance = size.length().max(1e-3)*25.;
@@ -8540,6 +8542,8 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             let (mass, volume) = plan.blocks.iter().filter_map(fitted_of).fold((0.0, 0.0), |(m, v), f| (m + f.mass, v + f.volume));
             let placed = plan.blocks.len();
             for (n, (k, f)) in interior.fit.iter().enumerate().skip(interior.fit_top).take(FIT_ROWS).enumerate() {
+                // Prefetch only two visible rows, not the entire catalogue.
+                if n < 2 { let _ = crate::visual_assets::request(&f.key, 3); }
                 let (q, qc) = module_row(n);
                 let copies = plan.blocks.iter().filter(|b| kind(&b.id) == f.id).count();
                 let block = plan.blocks.iter().find(|b| kind(&b.id) == f.id);
