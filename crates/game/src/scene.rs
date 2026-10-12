@@ -815,33 +815,24 @@ fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
     if frame.projected_radius(center, b.rail.radius) < 4.0 {
         return;
     }
+    // Optional lights appear only with worker-prepared surface placements.
+    let Some(globe) = app.caches.globes.get(&(app.view.cache, i)) else { return };
     for (k, port) in sys.spaceports.iter().enumerate().filter(|(_, p)| p.body == i) {
         let people = app.v.economy.iter().find(|p| p.system == app.view.origin && p.facility == universe_sim::world::Facility::Spaceport(k)).map_or(0.0, |p| p.population);
         if people <= 0.0 {
             continue;
         }
         let towns = (people * 1.5).clamp(6.0, 120.0) as usize;
-        let (e1, e2) = universe_sim::world::spaceport::tangent(port.direction);
+        let Some((_, radii)) = globe.city_radii.iter().find(|(p, _)| *p == k) else { continue };
         for t in 0..towns {
-            let h = |s: u64| {
-                let mut x = (k as u64 * 7919 + t as u64 * 104_729 + s).wrapping_mul(0x9E37_79B9_7F4A_7C15);
-                x ^= x >> 29;
-                (x % 10_000) as f64 / 10_000.0
-            };
-            // (Most close in, some far out along the roads.)
-            let spread = 0.12 * h(1).powf(1.8);
-            let a = h(2) * std::f64::consts::TAU;
-            let local = (port.direction + (e1 * a.cos() + e2 * a.sin()) * spread).normalize();
+            let local = crate::globe_assets::city_direction(k, t, port.direction);
             let world = rot * local;
             let night = -world.dot(sun);
             if night < 0.05 {
                 continue;
             }
-            let glow = (night.min(0.4) / 0.4) as f32 * (0.6 + 1.4 * h(3) as f32) * if t == 0 { 2.5 } else { 1.0 };
-            // Decorative lights use resident terrain only. The physical sampler
-            // may synchronously read fine bake tiles on first approach.
-            let height = b.terrain.as_ref().map_or(0.0, |terrain| terrain.surface_view(local).0);
-            frame.glow(center + world * (b.rail.radius + height + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
+            let glow = (night.min(0.4) / 0.4) as f32 * (0.6 + 1.4 * crate::globe_assets::city_noise(k, t, 3) as f32) * if t == 0 { 2.5 } else { 1.0 };
+            frame.glow(center + world * (radii[t] + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
         }
     }
 }
