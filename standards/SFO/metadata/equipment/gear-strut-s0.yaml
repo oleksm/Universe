@@ -31,6 +31,12 @@ function:
   efficiency: 0.8
   sink_rate: 3.0
   extended: 1.2
+visual:
+  format: "freefall-model/1"
+  path: "models/gear-strut-s0/v1"
+  manifest_sha256: "b85253d5883b387c0eb673a928662968486cc35ce7d574d4f490d58275f6600c"
+  version: 1
+  triangles: 4984
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "At 1.2 kg a kilonewton (an A320's gear, as the S1 was sized) a 60 kN leg is about 70 kg; 60 kg with titanium. Chosen." }
