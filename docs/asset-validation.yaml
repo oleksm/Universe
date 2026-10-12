@@ -2228,3 +2228,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Provisional mass and internal packing, rotary seals, bearing/structural/pressure/thermal ratings; final hull and service clearance; mounted motion, command wiring, GPU appearance/cost and temporal stability."
+  - key: equipment.tank.methalox.s2
+    version: 1
+    manifest_sha256: "46d0095a3559df81119a55b573854838ec18165b6d7782aa0bffb78935d3f695"
+    installed: 98d55eb8
+    game: "the loader (world::assets) at fso 98d55eb8"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-methalox-s2/v1 (305972 bytes, bounds [-2.8, 0.0, -3.003] to [2.8, 5.817, 3.003]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure, common-bulkhead buckling/thermal/cryogenic design, loaded saddle strength and heat isolation, final hull/service placement, GPU appearance/cost and temporal stability."
