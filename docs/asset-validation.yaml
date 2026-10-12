@@ -1972,3 +1972,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and rear service fit; GPU look/cost and temporal edge stability; 150 kg nominal versus 211.55 kg provisional mass, 1000 kg carrying capacity and refrigeration performance unqualified."
+  - key: equipment.life-support.s0
+    version: 1
+    manifest_sha256: "ce6cd03944161bb31bfb6a5ebf7201f021e70a8b21f757e07f05d44f12e41dde"
+    installed: fba8ae0f
+    game: "the loader (world::assets) at fso fba8ae0f"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/life-support-s0/v1 (101868 bytes, bounds [-0.4, 0.0, -0.3] to [0.4, 0.6, 0.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and rear service fit; ship coolant integration; GPU look/cost and temporal edge stability; power/bottle mass flags, complete packing, pressure, chemistry, airflow, endurance and loads unqualified."
