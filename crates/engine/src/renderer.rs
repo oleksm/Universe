@@ -969,19 +969,24 @@ impl Renderer {
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
         // this frame: its globe map isn't up yet).
-        let world_at = frame.world_maps.as_ref().map_or([0.0; 4], |(_, _, c, r)| {
+        let world_ready = frame.world_maps.as_ref().is_some_and(|(maps, ..)| {
+            universe_prof::time("render/upload world map chunks", || self.world.bind(&gpu.device, &gpu.queue, maps))
+        });
+        let world_at = frame.world_maps.as_ref().filter(|_| world_ready).map_or([0.0; 4], |(_, _, c, r)| {
             let d = (*c - frame.camera.position).as_vec3();
             [d.x, d.y, d.z, *r as f32]
         });
         let (world_layer, world_fade, world_luts) = match &frame.world_maps {
-            Some((maps, globe, _, _)) => {
-                self.world.bind(&gpu.device, &gpu.queue, maps);
+            Some((maps, globe, _, _)) if world_ready => {
                 // (`on`: their format's version, for the lab's shader to read their maps by.)
                 let clouds = if gr.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0 { [frame.world_clouds[0], frame.world_clouds[1], frame.world_clouds[2], maps.clouds_format as f32] } else { [0.0; 4] };
                 gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
                 (self.globes.layers.iter().position(|l| l.is_some_and(|l| l.id == *globe && l.ready)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
-            None => (0.0, 0.0, 0.0),
+            _ => {
+                gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&[0.0f32; 4]));
+                (0.0, 0.0, 0.0)
+            }
         };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
@@ -1053,12 +1058,13 @@ impl Renderer {
         // The environment as light, for this frame.
         self.env.render(&mut encoder, &self.globals_bind);
         // The bound world's clouds cached: filled, refreshed, re-centred under the eye.
-        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| frame.graphics.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0);
+        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| self.world.ready_for(maps) && frame.graphics.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0);
         let under = clouded.map_or(glam::DVec3::Y, |(_, _, c, _)| frame.world_turn.inverse() * (frame.camera.position - *c).normalize_or(glam::DVec3::Y));
         let world = clouded.and_then(|(maps, _, _, r)| Some((maps.id(), *r, &self.world.clouds, self.world.cloud_maps.as_ref()?)));
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
         self.shadow_passes(&mut encoder, sun.is_some());
-        self.scene_pass(&mut encoder, frame.clear, probe.is_some());
+        let clear = if world_ready && frame.world_maps.as_ref().is_some_and(|(m, ..)| m.air[15] > 0.5) { crate::Color::BLACK } else { frame.clear };
+        self.scene_pass(&mut encoder, clear, probe.is_some());
         if probe.is_some() {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, false);
         }

@@ -454,7 +454,11 @@ impl App {
                 None
             },
             observe_tried: false,
-            observing: false,
+            observing: {
+                let on = std::env::var_os("UNIVERSE_OBSERVING").is_some();
+                if on { universe_prof::enable(true); }
+                on
+            },
             recording: None,
             sparks: Vec::new(),
             showcase: None,
