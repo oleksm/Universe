@@ -1892,3 +1892,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual room placement and front/rear access,game appearance and GPU cost;registry deferred door motion,suits/packs and interactions;locker43.18kg versus40kg,complete160kg,internal packing and8-hour endurance unqualified."
+  - key: equipment.engine.cg.s1
+    version: 1
+    manifest_sha256: "325ce3cdf47d5b85e3fa487dc51fe827c0ec6846899d2941505e521363348612"
+    installed: a4c03d8c
+    game: "the loader (world::assets) at fso a4c03d8c"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-cg-s1/v1 (241900 bytes, bounds [-0.2, 0.0, -0.2] to [0.2, 0.4, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull placement and exhaust clearance,per-nozzle firing/pulses/VFX,game lighting/readability and GPU cost;11.53kg exterior with full15kg,hidden packing,pressure/flow/exhaust performance unqualified;500N is4x125N aggregate capacity."
