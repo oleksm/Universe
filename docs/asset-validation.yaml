@@ -2436,3 +2436,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior only; full docking capture/hook cycle, pressure and loads, final hull and hatch fit, mounted GPU appearance/cost and temporal readability remain unqualified."
+  - key: equipment.access.door.s1
+    version: 1
+    manifest_sha256: "a13649ffd696ba388b7b302898d7030a68bfc5f616032dfaa413162e39e6a65b"
+    installed: e29aa034
+    game: "the loader (world::assets) at fso e29aa034"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-door-s1/v1 (290572 bytes, bounds [-0.5, 0.0, -0.03] to [0.5, 1.9, 0.074]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static closed hatch only; pressure/fatigue/seal/window/load qualification, drive and equalization internals, game interaction, final hull and GPU appearance/cost remain pending."
