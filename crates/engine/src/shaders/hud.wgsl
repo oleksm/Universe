@@ -14,6 +14,7 @@ struct HudIn {
     @location(1) uv: vec2<f32>,
     @location(2) color: vec4<f32>,
     @location(3) depth: vec2<f32>,
+    @location(4) alpha: vec2<f32>,
 };
 
 struct HudOut {
@@ -21,6 +22,7 @@ struct HudOut {
     @location(0) uv: vec2<f32>,
     @location(1) color: vec4<f32>,
     @location(2) @interpolate(flat) geometry: u32,
+    @location(3) @interpolate(flat) alpha: vec2<f32>,
 };
 
 @vertex
@@ -29,14 +31,18 @@ fn vs_hud(v: HudIn) -> HudOut {
     if v.depth.x > 0.0 {
         // Keep clip W: GPU interpolates colours perspectively and near/z
         // affinely in screen space. UI/font coverage must not affect meshes.
-        return HudOut(vec4<f32>(screen.xy * v.depth.x, v.depth.y, v.depth.x), v.uv, v.color, 1u);
+        return HudOut(vec4<f32>(screen.xy * v.depth.x, v.depth.y, v.depth.x), v.uv, v.color, 1u, v.alpha);
     }
-    return HudOut(screen, v.uv, v.color, 0u);
+    return HudOut(screen, v.uv, v.color, 0u, v.alpha);
 }
 
 @fragment
 fn fs_hud(in: HudOut) -> @location(0) vec4<f32> {
-    if in.geometry != 0u { return in.color; }
+    if in.geometry != 0u {
+        if in.alpha.x == 1.0 && in.color.a < in.alpha.y { discard; }
+        if in.alpha.x == 2.0 { return in.color; }
+        return vec4<f32>(in.color.rgb, 1.0);
+    }
     let cover = textureSample(atlas, atlas_sampler, in.uv).r;
     return vec4<f32>(in.color.rgb, in.color.a * cover);
 }
