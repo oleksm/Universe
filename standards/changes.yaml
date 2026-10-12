@@ -337,7 +337,7 @@
 - { record: equipment.access.cargo-ramp.s2, at: "2026-10-11T23:27:35Z", status: draft, summary: "changed: visual", sha: "c7e82ab627bea318" }
 - { record: equipment.access.docking.clamp, at: "2026-10-11T23:47:33Z", status: draft, summary: "changed: visual", sha: "6dc0a2a9bd913706" }
 - { record: equipment.access.docking.collar, at: "2026-10-12T19:01:30Z", status: draft, summary: "changed: visual", sha: "1e19bf605882d498" }
-- { record: equipment.access.door.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "537a9e8a221494ec" }
+- { record: equipment.access.door.s1, at: "2026-10-12T19:03:59Z", status: draft, summary: "changed: identity, built_of, basis", sha: "981da9cc328ec9ba" }
 - { record: equipment.avionics.nav-basic.s1, at: "2026-10-12T01:15:34Z", status: draft, summary: "changed: visual", sha: "913752612922b9b8" }
 - { record: equipment.avionics.nav-full.s1, at: "2026-10-11T02:40:00Z", status: draft, summary: "changed: visual", sha: "f45d1b9a28faeb92" }
 - { record: equipment.capacitor.s1, at: "2026-10-11T02:35:59Z", status: draft, summary: "changed: visual", sha: "366dccda6684e4e0" }

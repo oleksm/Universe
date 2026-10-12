@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: access
-  description: "A hatch that holds a cabin's pressure across it, either way, with a window: a hole vents one compartment, not the ship. The studio's doors between compartments are these."
+  description: "A hatch that holds a cabin's pressure across it, either way, with a window: a hole vents one compartment, not the ship. The studio's doors between compartments are these. A frame 1.0 m wide, 1.9 m tall and 0.1 m deep around an 0.8 by 1.7 m clear opening; a hollow aluminium leaf (two skins on ribs) swings on three hinges and seats on a seal in the frame; six dogs round its edge drive out into the frame, so pressure on either face is held (from one side by the seat, from the other by the dogs). A small window, retained in the leaf. To open: retract the dogs, then swing. Rest pose: closed and dogged."
 size_class: 1
 fits: mount.access-s1
 physical:
@@ -17,8 +17,8 @@ physical:
 built_of:
   parts: access-door-s1
   list:
-    - { code: PDR1-01, name: "Door leaf and frame", mass: 63, length: 0.888, width: 0.0888, height: 1.69, item: stock.al6061-pl-5, quantity: 72.45, module: module.machining-centre }
-    - { code: PDR1-02, name: "Seal, latches and window", mass: 27, length: 0.669, width: 0.0669, height: 1.27, item: stock.st304-pl-3, quantity: 31.05, module: module.machining-centre }
+    - { code: PDR1-01, name: "Door leaf and frame: hollow leaf (two skins on ribs) and the frame", mass: 63, length: 0.888, width: 0.0888, height: 1.69, item: stock.al6061-pl-5, quantity: 72.45, module: module.machining-centre }
+    - { code: PDR1-02, name: "Seal, three hinges, six dogs and their drive, retained window", mass: 27, length: 0.669, width: 0.0669, height: 1.27, item: stock.st304-pl-3, quantity: 31.05, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -28,5 +28,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "An 0.8 m clear opening in a 1.0 by 1.9 m leaf and frame, 90 kg: by the station's hatches (about 70 to 100 kg, from memory). It holds one atmosphere either way. Chosen." }
+  - { of: [function], tier: derived, note: "Loads: one atmosphere on the 0.8 by 1.7 m opening is about 138 kN, about 23 kN a dog. A leaf 60 mm deep with 3 mm 6061 skins spanning 0.8 m bends to about 45 MPa, well under its 276 MPa yield; skins and ribs about 30 kg, frame about 33 kg, as PDR1-01. Unqualified: no fatigue, seal or crash case yet." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
