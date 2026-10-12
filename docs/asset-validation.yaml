@@ -2292,3 +2292,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static closed package; final hull access and services, runtime access joints, GPU appearance/cost, human factors, sanitation/fluid behavior, loads and thermal balance unqualified."
+  - key: equipment.power.switchgear.s1
+    version: 1
+    manifest_sha256: "d4acac327bfa22a1b3fcbd915c162357ba49919187ad5e310ba3cae65847971d"
+    installed: 89519e19
+    game: "the loader (world::assets) at fso 89519e19"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-switchgear-s1/v1 (130128 bytes, bounds [-0.75, 0.0, -0.4] to [0.75, 2.0, 0.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior only; electrical ratings/fault duty/insulation, thermal/load qualification, internal packing, final hull/harness access and GPU checks remain open."
