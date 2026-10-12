@@ -27,6 +27,12 @@ function:
   capacity: 20.0
   holds: element.o
   pressure: 30000000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-oxygen-20kg/v1"
+  manifest_sha256: "414f0899606f8a2bd4fe46f3c1d8a56f198d0dc78c255afa822c0b2ef6e2fd04"
+  version: 1
+  triangles: 3328
 life: 473364000
 basis:
   - { of: [physical, function], tier: derived, review: true, note: "Oxygen at 300 bar and 293 K is about 385 kg/m3 (nearly ideal, compressibility about 1.0; from memory), so 20 kg needs 0.052 m3 inside. For oxygen the liner is aluminium, not polymer (a type III vessel: a polymer liner and its fittings can ignite in high-pressure oxygen), with a carbon overwrap. A cylinder with hemispherical ends, 0.38 m across over a 17 mm space allowance, is 0.72 m long; the laminate and liner average about 14 mm (hoop 30 MPa x r / about 800 MPa is 7 mm). The valve, cleaned for oxygen, takes about 0.1 m more and saddles lift it off the floor: 0.82 x 0.38 x 0.405 m. A type III vessel stores about 60 kJ of pressure-volume per kilogram (from memory of breathing-set bottles): 30 MPa x 0.052 m3 is 1.56 MJ, so 26 kg of vessel, 6 kg of valve and regulator and 2 kg of saddles. Recomputed 2026-10-11 from 1.5 kg a kilogram of oxygen in a box too small for the gas." }
