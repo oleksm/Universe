@@ -1876,3 +1876,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual hull placement and downward mount aim,unobstructed optical view,game lighting/readability and GPU cost;5km range,0.1m accuracy,40W,complete8kg and hidden packing unqualified;exterior2.44kg under3mm shell assumption."
+  - key: equipment.utility.suits.s1
+    version: 1
+    manifest_sha256: "b822701138f329875cf006a2aa47d34b7624a8e30c021242a20a5aacddc76aa1"
+    installed: b106b3d8
+    game: "the loader (world::assets) at fso b106b3d8"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-suits-s1/v1 (217392 bytes, bounds [-0.5, 0.0, -0.3] to [0.5, 2.0, 0.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual room placement and front/rear access,game appearance and GPU cost;registry deferred door motion,suits/packs and interactions;locker43.18kg versus40kg,complete160kg,internal packing and8-hour endurance unqualified."
