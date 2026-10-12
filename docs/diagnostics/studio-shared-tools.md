@@ -71,3 +71,29 @@ requests and 60 FPS at the configured 60 FPS ceiling. First shell submission was
 A separate five-second-delay run `ready.png` shows both installed meshes, two loads
 and zero failures. These tests establish fallback and eventual promotion, not
 nozzle-axis correctness or flight acceptance.
+
+## First performance diagnosis
+
+The observer/recording check passed all four views on an exported copy of the
+owner's commuter-3 design. Before screenshot recording, DESIGN sampled 37.5 FPS,
+WALK 59.9, BALANCE 56.6 and DRIVE 48.7, with a 60 FPS ceiling. DESIGN's 120-frame
+profile measured 21.8 ms mean draw CPU, 14.0 ms design-model submission including
+9.45 ms equipment projection, versus 5.66 ms render-thread CPU. About 180,546
+triangles were submitted. GPU passes were around 0.02 ms each in this capture.
+
+This identifies CPU projection/submission as the leading candidate for the
+reported ~40 FPS. It is not an FPS fix or a controlled hardware benchmark:
+profiling/HUD were enabled and bounded compilation was running concurrently.
+Full measurements and validation paths are in `studio-observer-validation.json`.
+
+The combined `e5a61913` build also passes the live Studio observer check with
+engine renderer scopes and globe cache counters. Native-world Vulkan captures
+with `UNIVERSE_GLOBE_LOAD_DELAY_MS=10000` show a live ship/base scene at 59 FPS
+while world requests are queued/running. The first-shell submission was 510 ms
+and prerequisite publication 2227 ms in that run (another test window and bounded
+builds were active). The trace identifies a separate first-draw sky cost of
+588 ms; this was reported to engine, and is not attributed to delayed globe I/O.
+A subsequent one-second-delay run loaded two globe visuals without errors and
+rendered at 60 FPS at frame 600; one world preparation job remained in progress.
+See `out/review/loading-audit/world-{pending,ready}.{png,log}`. This verifies
+fallback progress, not completion of every terrain asset or a hitch-free launch.

@@ -1,0 +1,195 @@
+{
+  "code": "ec808745",
+  "fixture": "commuter-3.ship.yaml exported from an isolated copy of saved commuter-3.json",
+  "fixture_sha256": "76f4daca6295181bed2d91d122bf45dbdeba0f512c08439a410b7b6376e5a093",
+  "platform": "Linux Vulkan; RTX 5090; existing OS caches warm",
+  "capture_root": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit",
+  "scope": "shared Studio observer/recording integration; FPS samples with profiler/HUD on, before screenshot recording",
+  "results": {
+    "design": {
+      "draw_ms": 24.25882339477539,
+      "drawn": {
+        "lines": 548,
+        "points": 0,
+        "triangles": 180546
+      },
+      "fps": 37.483604431152344,
+      "frame_ms": 24.535799026489258,
+      "gpu_pass_ms": [
+        [
+          "shadows",
+          0.02378721535205841
+        ],
+        [
+          "scene",
+          0.025164349004626274
+        ],
+        [
+          "front",
+          0.019269810989499092
+        ],
+        [
+          "hud",
+          0.024448389187455177
+        ],
+        [
+          "upscale",
+          0.019972020760178566
+        ]
+      ],
+      "hitches": 0,
+      "render_thread_ms": 5.808069705963135,
+      "screen_wait_ms": 0.05090385302901268,
+      "update_ms": 0.14315134286880493,
+      "worst_ms": 36.235557556152344,
+      "validation": true
+    },
+    "walk": {
+      "draw_ms": 4.627159595489502,
+      "drawn": {
+        "lines": 6,
+        "points": 0,
+        "triangles": 1609
+      },
+      "fps": 59.917301177978516,
+      "frame_ms": 16.686870574951172,
+      "gpu_pass_ms": [
+        [
+          "shadows",
+          0.02225807122886181
+        ],
+        [
+          "scene",
+          0.025444692000746727
+        ],
+        [
+          "front",
+          0.019160905852913857
+        ],
+        [
+          "hud",
+          0.021515831351280212
+        ],
+        [
+          "upscale",
+          0.020666850730776787
+        ]
+      ],
+      "hitches": 0,
+      "render_thread_ms": 0.4654354155063629,
+      "screen_wait_ms": 0.013718463480472565,
+      "update_ms": 0.026214540004730225,
+      "worst_ms": 16.71133804321289,
+      "validation": true
+    },
+    "balance": {
+      "draw_ms": 17.495311737060547,
+      "drawn": {
+        "lines": 191,
+        "points": 0,
+        "triangles": 175564
+      },
+      "fps": 56.60128402709961,
+      "frame_ms": 17.625228881835938,
+      "gpu_pass_ms": [
+        [
+          "shadows",
+          0.023855604231357574
+        ],
+        [
+          "scene",
+          0.025906631723046303
+        ],
+        [
+          "front",
+          0.019165201112627983
+        ],
+        [
+          "hud",
+          0.021526189520955086
+        ],
+        [
+          "upscale",
+          0.019948305562138557
+        ]
+      ],
+      "hitches": 0,
+      "render_thread_ms": 3.465794324874878,
+      "screen_wait_ms": 0.026629440486431122,
+      "update_ms": 0.019210271537303925,
+      "worst_ms": 21.569791793823242,
+      "validation": true
+    },
+    "drive": {
+      "draw_ms": 18.510662078857422,
+      "drawn": {
+        "lines": 861,
+        "points": 0,
+        "triangles": 176378
+      },
+      "fps": 48.72450637817383,
+      "frame_ms": 18.704870223999023,
+      "gpu_pass_ms": [
+        [
+          "shadows",
+          0.02310013957321644
+        ],
+        [
+          "scene",
+          0.02563433349132538
+        ],
+        [
+          "front",
+          0.019057810306549072
+        ],
+        [
+          "hud",
+          0.02835928648710251
+        ],
+        [
+          "upscale",
+          0.01984729990363121
+        ]
+      ],
+      "hitches": 0,
+      "render_thread_ms": 3.7501602172851562,
+      "screen_wait_ms": 0.032676637172698975,
+      "update_ms": 0.04018133506178856,
+      "worst_ms": 27.069679260253906,
+      "validation": true
+    }
+  },
+  "interpretation": "Design draw CPU dominates: profile mean21.794ms; design-models14.046ms including project-equipment9.446ms. These nested CPU scopes are not additive. This is one saved design, not a benchmark of all ships.",
+  "limits": [
+    "Profile/HUD overhead present. Builds concurrently bounded on CPU; this is diagnosis, not controlled hardware benchmark.",
+    "Recording screenshots adds overhead; FPS samples precede recording.",
+    "Neutral meshes do not prove flight, mechanical acceptance or nozzle orientation.",
+    "Frame graph/render thread timing distinct from actual GPU pass timestamps."
+  ],
+  "combined": {
+    "code": "e5a61913",
+    "studio": {
+      "status": {
+        "cpu": null,
+        "debug": 2,
+        "fps": 59.187583923339844,
+        "mode": "studio",
+        "view": "design"
+      },
+      "session": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/combined-studio/data/freefall/sessions/1791847701",
+      "trace_events": 1267,
+      "passed": true
+    },
+    "world_pending": "world-pending.png/log: 10s delay, 59FPS, globe loads0/run2/queue2; sky first-draw588ms reported to engine",
+    "world_ready": "world-ready.png/log: loads2/error0/run1 at600frames,60FPS",
+    "freefall_sha256": "25e2d20738e370b6fc4eae1a716ca8a8e65afe265118aa1251f77ef2abbae91f",
+    "studio_sha256": "50337cd109a656621b1c2e133e8c103be92f5386ecac6763a213b2f420343db2",
+    "workspace": {
+      "passed": 234,
+      "failed": 0,
+      "ignored": 1,
+      "log": "out/review/loading-audit/workspace.log"
+    },
+    "registry_build": "passed; out/review/loading-audit/registry.log"
+  }
+}
