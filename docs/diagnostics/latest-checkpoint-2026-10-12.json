@@ -1,0 +1,475 @@
+{
+  "baseline_main": "0a6d1ea2",
+  "registry_tip": "c288b4ab",
+  "studio_code": "c6b98cea",
+  "pgs_fix": "860e6802",
+  "installed_changed_models": [
+    {
+      "key": "equipment.access.docking.collar",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/access-docking-collar/v1",
+        "manifest_sha256": "9883cb98f6981444424d52738e9710ba90b9c090217770e410b12e2446ce2402",
+        "version": 1,
+        "triangles": 11682
+      }
+    },
+    {
+      "key": "equipment.access.door.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/access-door-s1/v1",
+        "manifest_sha256": "a13649ffd696ba388b7b302898d7030a68bfc5f616032dfaa413162e39e6a65b",
+        "version": 1,
+        "triangles": 6176
+      }
+    },
+    {
+      "key": "equipment.cargo.berths.2",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-berths-2/v1",
+        "manifest_sha256": "79b4d33a111b1027d0e16a3c28a0738f7328a42d24850a03757a7d10d682e17e",
+        "version": 1,
+        "triangles": 3400
+      }
+    },
+    {
+      "key": "equipment.cargo.berths.4",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-berths-4/v1",
+        "manifest_sha256": "eecb3882d6f649f382f14f61330ff7a4b6c5455a888670f911074349cc4c38ad",
+        "version": 1,
+        "triangles": 6800
+      }
+    },
+    {
+      "key": "equipment.cargo.berths.6",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-berths-6/v1",
+        "manifest_sha256": "84f1249025689efa73e65bfc0c166a52a2e12d50709b57cc25f427feaf31495a",
+        "version": 1,
+        "triangles": 9480
+      }
+    },
+    {
+      "key": "equipment.cargo.galley.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-galley-s1/v1",
+        "manifest_sha256": "5ca1683385fa40036adc4053a07267af9ae02f7df92765e4608b3a7f6f4ec559",
+        "version": 1,
+        "triangles": 6492
+      }
+    },
+    {
+      "key": "equipment.cargo.head.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-head-s1/v1",
+        "manifest_sha256": "bdb6548385e1104bd8c71d3cc163f45ef424ba29f0898d3965db3183f20f9a1e",
+        "version": 1,
+        "triangles": 6040
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.100t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-100t/v2",
+        "manifest_sha256": "dfe7434c9928f118b5c784522425c32620b85cd787d9ed3ff8615469cf7e0476",
+        "version": 2,
+        "triangles": 8156
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.10t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-10t/v1",
+        "manifest_sha256": "1ebe013333bf9fa1f719a06d88b6b7d89d3cfe7e15566477d68959531deee6f6",
+        "version": 1,
+        "triangles": 6864
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.150t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-150t/v1",
+        "manifest_sha256": "157caaf66f792eed6876b4d77bcadde127e68f861c4b6fc1f273fe16f1f29444",
+        "version": 1,
+        "triangles": 10476
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.200t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-200t/v1",
+        "manifest_sha256": "c3b0a3db4871f72393ac833bfa0f6f00efac61b3ed74bed1b4e4af3d3a02a888",
+        "version": 1,
+        "triangles": 12796
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.20t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-20t/v1",
+        "manifest_sha256": "387d687312e334d47b91d97fc1d426282a3c8cb92bc439ae54c484e3e393010f",
+        "version": 1,
+        "triangles": 6872
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.300t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-300t/v1",
+        "manifest_sha256": "4667c3613a17fcaf7cd532f70c0c3e0c25a712ed1dee01356c5521a47b487176",
+        "version": 1,
+        "triangles": 17484
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.35t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-35t/v1",
+        "manifest_sha256": "31a19821c97e525a71dd581cbe13225bbc3522c61433a0ae9ee25fd9b7647805",
+        "version": 1,
+        "triangles": 6660
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.50t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-50t/v1",
+        "manifest_sha256": "4c704ebb813b980310a5173861728eacfd4a214212957257518734393923687f",
+        "version": 1,
+        "triangles": 6900
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.5t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-5t/v1",
+        "manifest_sha256": "63cd407f76c09a42948b1f345f88f83d8d36cadf15d7512e72e5cbb9269554ef",
+        "version": 1,
+        "triangles": 5704
+      }
+    },
+    {
+      "key": "equipment.cargo.ore-bay.75t",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/cargo-ore-bay-75t/v1",
+        "manifest_sha256": "5b75465a5b2293e872ae00b52ed8bcb3d22095d3cd115cd8e77376d049c62f6e",
+        "version": 1,
+        "triangles": 8012
+      }
+    },
+    {
+      "key": "equipment.comm.long.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/comm-long-s1/v1",
+        "manifest_sha256": "21674a3116ea02051380992ade510ba4ea378d8493d1a1df99c9f3fc48d67f24",
+        "version": 1,
+        "triangles": 7504
+      }
+    },
+    {
+      "key": "equipment.command.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/command-s1/v2",
+        "manifest_sha256": "c597abcfd9971e2646936dc376fc3c9c9d2e67a7ceb3da65812321fe02402db4",
+        "version": 2,
+        "triangles": 3408
+      }
+    },
+    {
+      "key": "equipment.command.s2",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/command-s2/v2",
+        "manifest_sha256": "10934661807a7736464a1cf4779d403e9939c011dfbb938cacf6e3016f35b70c",
+        "version": 2,
+        "triangles": 4876
+      }
+    },
+    {
+      "key": "equipment.command.s3",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/command-s3/v1",
+        "manifest_sha256": "92da5ed45c983784168d8d71a94fc8c2dd7075c33986f8eef3215029f8d2daae",
+        "version": 1,
+        "triangles": 11556
+      }
+    },
+    {
+      "key": "equipment.engine.ca.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/engine-ca-s1/v1",
+        "manifest_sha256": "734a572b2dff2cce6109711ef6dbe39edf00a9d0c07f5d73b5d12437659398e6",
+        "version": 1,
+        "triangles": 5542
+      }
+    },
+    {
+      "key": "equipment.engine.cg.s2",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/engine-cg-s2/v1",
+        "manifest_sha256": "b1c251fc553945bd2ae34fd533ccd59e5fbbb7c50b9ae1ac7f4e1026842ccccf",
+        "version": 1,
+        "triangles": 3784
+      }
+    },
+    {
+      "key": "equipment.engine.ch.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/engine-ch-s1/v1",
+        "manifest_sha256": "a54ef394c012721fb945dd2a065da81f9c7459b1a8ed13c36cc233abc0bb008e",
+        "version": 1,
+        "triangles": 34828
+      }
+    },
+    {
+      "key": "equipment.engine.ch.s4",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/engine-ch-s4/v1",
+        "manifest_sha256": "6817e34cdc643c855a4e9322d8e1643caaf6daacd372a4fbf669e020be582d98",
+        "version": 1,
+        "triangles": 15716
+      }
+    },
+    {
+      "key": "equipment.gear.strut.180kn",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/gear-strut-180kn/v1",
+        "manifest_sha256": "81629c5678403048a60ff84f74050d02c370d082ad02e26534a002deb31181be",
+        "version": 1,
+        "triangles": 4984
+      }
+    },
+    {
+      "key": "equipment.gear.strut.s0",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/gear-strut-s0/v1",
+        "manifest_sha256": "b85253d5883b387c0eb673a928662968486cc35ce7d574d4f490d58275f6600c",
+        "version": 1,
+        "triangles": 4984
+      }
+    },
+    {
+      "key": "equipment.gear.strut.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/gear-strut-s1/v1",
+        "manifest_sha256": "19414d2138e6ccc0138f3af0617acf72d0b0d4276480745f7b0a1b35b1f07a93",
+        "version": 1,
+        "triangles": 5076
+      }
+    },
+    {
+      "key": "equipment.gear.strut.s3",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/gear-strut-s3/v1",
+        "manifest_sha256": "2897cee40e6fe70ae2d7fc30a8fd332ca978db9873af5b3c8863330705bd6e5b",
+        "version": 1,
+        "triangles": 5044
+      }
+    },
+    {
+      "key": "equipment.hyperdrive.halcyon.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/hyperdrive-halcyon-s1/v1",
+        "manifest_sha256": "5097f25bc5c6e236c211e02527e002b81a7540e66aa03ef4cde46a159a3ec708",
+        "version": 1,
+        "triangles": 3096
+      }
+    },
+    {
+      "key": "equipment.power.switchgear.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/power-switchgear-s1/v1",
+        "manifest_sha256": "d4acac327bfa22a1b3fcbd915c162357ba49919187ad5e310ba3cae65847971d",
+        "version": 1,
+        "triangles": 2762
+      }
+    },
+    {
+      "key": "equipment.sensors.camera.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/sensors-camera-s1/v1",
+        "manifest_sha256": "7d687b8482e249c7954e617528a33c8f9f13dd2a92590b85dc971c008f5b9506",
+        "version": 1,
+        "triangles": 1504
+      }
+    },
+    {
+      "key": "equipment.tank.hydrolox.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/tank-hydrolox-s1/v1",
+        "manifest_sha256": "724093e8f54740d7721a3dac5b937c606f11cb20c58255022bef61f467159aac",
+        "version": 1,
+        "triangles": 7728
+      }
+    },
+    {
+      "key": "equipment.tank.methalox.s2",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/tank-methalox-s2/v1",
+        "manifest_sha256": "46d0095a3559df81119a55b573854838ec18165b6d7782aa0bffb78935d3f695",
+        "version": 1,
+        "triangles": 7728
+      }
+    },
+    {
+      "key": "equipment.tank.waste.s2",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/tank-waste-s2/v1",
+        "manifest_sha256": "88a278c129555d5d50d3d649a4370878748a6d85d66f7cd290a2740efa3e80b3",
+        "version": 1,
+        "triangles": 6264
+      }
+    },
+    {
+      "key": "equipment.thermal.air-cooler.s0",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/thermal-air-cooler-s0/v1",
+        "manifest_sha256": "daf36c6fa4d5ba3c44a636eaed58c957ea975e699cd139ec0228d27724df69af",
+        "version": 1,
+        "triangles": 2450
+      }
+    },
+    {
+      "key": "equipment.thermal.coolant-loop.s0",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/thermal-coolant-loop-s0/v1",
+        "manifest_sha256": "8c118d91793d323d6b12e49ef3d7fcb35fc46b80664b674fd2a913482668b8c2",
+        "version": 1,
+        "triangles": 4600
+      }
+    },
+    {
+      "key": "equipment.thermal.radiator.s0",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/thermal-radiator-s0/v1",
+        "manifest_sha256": "9c1bc31bb4d05ff2ba343a89114c7278897a3e194f937aca526068c907247d81",
+        "version": 1,
+        "triangles": 2080
+      }
+    },
+    {
+      "key": "equipment.thermal.radiator.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/thermal-radiator-s1/v1",
+        "manifest_sha256": "36d9b7f5571711b5f2901cf1caa8522d4cba3b5e7c6202577e37d8d4c789df68",
+        "version": 1,
+        "triangles": 3412
+      }
+    },
+    {
+      "key": "equipment.utility.pumps.s1",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/utility-pumps-s1/v1",
+        "manifest_sha256": "b9377fdea5979d901a6e0ac0c59e49c2990cbeda5d3dc439ca6270de8f3c4d7f",
+        "version": 1,
+        "triangles": 3184
+      }
+    },
+    {
+      "key": "equipment.utility.reaction-wheels.s2",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/utility-reaction-wheels-s2/v1",
+        "manifest_sha256": "8ab375f5da8b12fa4e16c999fca21646b8954831cb67cbe2011b1de6478cb88f",
+        "version": 1,
+        "triangles": 6976
+      }
+    },
+    {
+      "key": "equipment.engine.ch.s3",
+      "visual": {
+        "format": "freefall-model/1",
+        "path": "models/engine-ch-s3/v1",
+        "manifest_sha256": "a544c4c7858b749dcb636f9502b78d7ad5342d309afbfcd54f9be40497401f3d",
+        "version": 1,
+        "triangles": 15428
+      }
+    }
+  ],
+  "changed_model_keys": 42,
+  "package_read_and_pbr_decode": {
+    "models": 134,
+    "registry": "687b8e60",
+    "failures": 0
+  },
+  "added_ch_s3": {
+    "gpu": "Vulkan PASS",
+    "cpu_loads": 1,
+    "gpu_uploads": 1,
+    "errors": 0,
+    "capture_sha256": "0528adf3739529fbfe153518572a611eaa3a0f528d575c479edf3dffd55723b8",
+    "scope": "unlit loader/residency fixture, not motion/engineering qualification"
+  },
+  "held": [
+    "Existing motion/hull-fit enablement gates",
+    "Ore-bay meshes remain20mm unribbed against new8mm ribbed records; rebuild required",
+    "Experimental scenery, accepted S15 unchanged",
+    "Existing Studio basis mismatch: CH-S1/S3/S4 authored thrust -Z vs design thrust +Y; neutral previews render but thrust-arrow alignment needs explicit model-to-design basis conversion. No physics retune."
+  ],
+  "loader_remaining": "4480.671ms first-use globe initialization remains; this checkpoint does not fix it",
+  "final_validation": {
+    "source": "c6b98cea",
+    "registry": "c288b4ab",
+    "workspace_passed": 232,
+    "ignored_gpu_test": 1,
+    "registry_exit": 0,
+    "release_exit": 0,
+    "cli_passed": 8,
+    "vulkan_modes": [
+      "CODE",
+      "DESIGN",
+      "DRIVE",
+      "error"
+    ],
+    "details": "studio-yaml-integration.json"
+  },
+  "binaries": {
+    "freefall": {
+      "path": "/home/alexm/git/universe-ships-yaml-integration/out/release-target/release/freefall",
+      "sha256": "ed56df5408dfee94290fdfac479a13cbe471f38dbc96aff75add1deeb17c60fa"
+    },
+    "freefall-studio": {
+      "path": "/home/alexm/git/universe-ships-yaml-integration/out/release-target/release/freefall-studio",
+      "sha256": "1799ac663450c4e32a1c264d65f664f30f47b6509ba90a55d23d9ce41c8dabb8"
+    }
+  }
+}
