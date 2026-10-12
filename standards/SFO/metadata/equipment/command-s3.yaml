@@ -30,6 +30,12 @@ function:
   persons: 4
   g_rating: 58.8
   facing: thrust
+visual:
+  format: "freefall-model/1"
+  path: "models/command-s3/v1"
+  manifest_sha256: "92da5ed45c983784168d8d71a94fc8c2dd7075c33986f8eef3215029f8d2daae"
+  version: 1
+  triangles: 11556
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Four stations in a room: pilot, co-pilot, engineer, navigator; seats rated to 6 g (a transport's, not a fighter's), consoles for each and a shared display wall. From memory; chosen." }

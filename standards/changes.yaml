@@ -371,7 +371,7 @@
 - { record: equipment.comm.long.s1, at: "2026-10-12T18:26:09Z", status: draft, summary: "changed: visual", sha: "5cb6c82f3fc57bff" }
 - { record: equipment.command.s1, at: "2026-10-12T21:41:33Z", status: draft, summary: "changed: basis", sha: "41971bd390c6d036" }
 - { record: equipment.command.s2, at: "2026-10-12T21:41:33Z", status: draft, summary: "changed: basis", sha: "5cd0bf2986f5ce64" }
-- { record: equipment.command.s3, at: "2026-10-12T21:47:02Z", status: draft, summary: "changed: basis", sha: "a89823d630efa6bb" }
+- { record: equipment.command.s3, at: "2026-10-12T21:48:59Z", status: draft, summary: "changed: visual", sha: "ce9dcf73f01c0b5b" }
 - { record: equipment.computer.fbw.fast, at: "2026-10-11T19:46:06Z", status: draft, summary: "changed: visual", sha: "32434debfc85f64d" }
 - { record: equipment.computer.fbw.s1, at: "2026-10-11T02:38:35Z", status: draft, summary: "changed: visual", sha: "199e7a0ffe056c1b" }
 - { record: equipment.drive.kestrel.k2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "ecc930140ca66688" }
