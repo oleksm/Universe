@@ -2148,3 +2148,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static gear-down package only; source fold/compression demo not runtime motion. Final hull bay clearance,GPU appearance/cost,load/damping/drive/lock and ball-joint qualification pending. Registry corrected touchdown basis f7e8a360."
+  - key: equipment.thermal.radiator.s0
+    version: 1
+    manifest_sha256: "9c1bc31bb4d05ff2ba343a89114c7278897a3e194f937aca526068c907247d81"
+    installed: 0c4cbdecc844e78ed0779c081d705cc86829d269
+    game: "the loader (world::assets) at fso 0c4cbdec"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-radiator-s0/v1 (77720 bytes, bounds [-1.0, -0.025, -1.0] to [1.0, 0.025, 0.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Fixed fin: final hull placement and both-face view factors/shadowing; actual thermal/flow/pressure/joining/mount strength; GPU appearance/cost and temporal edge stability unqualified."
