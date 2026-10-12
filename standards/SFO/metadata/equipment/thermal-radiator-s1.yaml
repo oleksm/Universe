@@ -27,6 +27,12 @@ function:
   rejects: 1930000.0
   temperature: 1000
   area: 18.94
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-radiator-s1/v1"
+  manifest_sha256: "36d9b7f5571711b5f2901cf1caa8522d4cba3b5e7c6202577e37d8d4c789df68"
+  version: 1
+  triangles: 3412
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Throws off 2 MW at 1,000 K from 20 m2, both faces to deep space (Stefan-Boltzmann, emissivity 0.9): twice as long as wide. 12 kg/m2 chosen for a titanium panel with its headers." }
