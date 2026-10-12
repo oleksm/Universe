@@ -2100,3 +2100,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and distributed pipe/coldplate routing; actual game GPU appearance/cost and temporal stability; pump curve/head, pressure, mixture, thermal integration, reservoir zero-g fluid management and mount loads unqualified. Model excludes12kg distributed kit;30kg record is whole loop."
+  - key: equipment.hyperdrive.halcyon.s1
+    version: 1
+    manifest_sha256: "5097f25bc5c6e236c211e02527e002b81a7540e66aa03ef4cde46a159a3ec708"
+    installed: 9b2929c6b1e266117fd6b232e9ecff9b9fce77c9
+    game: "the loader (world::assets) at fso 9b2929c6"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-halcyon-s1/v1 (154440 bytes, bounds [-1.19, 0.0, -0.795] to [1.19, 1.59, 0.795]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual GPU appearance/cost, final hull mounting and loads, fictional field behavior, cryogenic heat sink and internal packing remain unqualified."
