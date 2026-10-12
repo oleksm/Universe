@@ -343,7 +343,7 @@
 - { record: equipment.capacitor.s1, at: "2026-10-11T02:35:59Z", status: draft, summary: "changed: visual", sha: "366dccda6684e4e0" }
 - { record: equipment.capacitor.s2, at: "2026-10-11T17:20:51Z", status: draft, summary: "changed: visual", sha: "d6a18d68186dafde" }
 - { record: equipment.capacitor.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "230036994d4464da" }
-- { record: equipment.cargo.berths.2, at: "2026-10-12T14:33:44Z", status: draft, summary: "changed: identity, physical, basis", sha: "0afe1f8a1b9980b3" }
+- { record: equipment.cargo.berths.2, at: "2026-10-12T14:48:01Z", status: draft, summary: "changed: visual", sha: "a154d2471e6aa8ce" }
 - { record: equipment.cargo.berths.4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "41605ba1574e479f" }
 - { record: equipment.cargo.berths.6, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7a9260504362f833" }
 - { record: equipment.cargo.cabin.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "894d3c55751f16ae" }
