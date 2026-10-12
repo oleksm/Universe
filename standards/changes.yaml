@@ -353,16 +353,16 @@
 - { record: equipment.cargo.food-store.s1, at: "2026-10-12T01:55:46Z", status: draft, summary: "changed: visual", sha: "31156fab432e785b" }
 - { record: equipment.cargo.galley.s1, at: "2026-10-12T15:09:28Z", status: draft, summary: "changed: visual", sha: "cb6e0970b6b28063" }
 - { record: equipment.cargo.head.s1, at: "2026-10-12T15:32:28Z", status: draft, summary: "changed: visual", sha: "6d32393ffd85d85a" }
-- { record: equipment.cargo.ore-bay.100t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c4436a039c8f4d86" }
-- { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "21f2d896e8c93993" }
-- { record: equipment.cargo.ore-bay.150t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "77f204d69e71485d" }
-- { record: equipment.cargo.ore-bay.200t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ffa1a91e738d6b32" }
-- { record: equipment.cargo.ore-bay.20t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "76076913d136a504" }
-- { record: equipment.cargo.ore-bay.300t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "ecf9bf29f7e517fe" }
-- { record: equipment.cargo.ore-bay.35t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "9601c7eede1ada0f" }
-- { record: equipment.cargo.ore-bay.50t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "bc004927b0d6b10d" }
-- { record: equipment.cargo.ore-bay.5t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e157b2474694840a" }
-- { record: equipment.cargo.ore-bay.75t, at: "2026-10-12T22:59:56Z", status: draft, summary: "changed: physical, built_of, basis", sha: "3683116e9415e07c" }
+- { record: equipment.cargo.ore-bay.100t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "c8e60ef88ea73077" }
+- { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "4196038a071049db" }
+- { record: equipment.cargo.ore-bay.150t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "918f6949e2c115f1" }
+- { record: equipment.cargo.ore-bay.200t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "34e6bf8cb6917c5b" }
+- { record: equipment.cargo.ore-bay.20t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "f303385ff37b190d" }
+- { record: equipment.cargo.ore-bay.300t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "62ac2ef0c3020d4b" }
+- { record: equipment.cargo.ore-bay.35t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "99c6c238565ff2b3" }
+- { record: equipment.cargo.ore-bay.50t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "1170e08e2f701a46" }
+- { record: equipment.cargo.ore-bay.5t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "3f3504402ea225a4" }
+- { record: equipment.cargo.ore-bay.75t, at: "2026-10-12T23:18:31Z", status: draft, summary: "changed: built_of, basis", sha: "45466775c697c806" }
 - { record: equipment.cargo.rack.s1, at: "2026-10-11T17:31:23Z", status: draft, summary: "changed: visual", sha: "d95d081add67d2c8" }
 - { record: equipment.cargo.rack.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "9500260dfc20e4a9" }
 - { record: equipment.cargo.rack.s3, at: "2026-10-11T02:34:38Z", status: draft, summary: "changed: visual", sha: "37568773642e99b1" }

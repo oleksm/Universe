@@ -64,8 +64,9 @@ def work(rec):
     ribs = (n * P + 2 * (math.ceil(c / b) - 1) * 0.8 * H) * h * T * A36
     liners = area * T_LINER * S4340
     # Doors: 5 mm plate, ribbed at the spacing the reverse load allows, each leaf a beam from hinge to latch; 10% hinges.
+    # The door ribs hang between the roof ties when shut, so their pitch is a whole number of rib spacings.
     pd = ORE * A_DOOR * H
-    bd = min(math.floor(T_DOOR / math.sqrt(pd / (2 * SIG_AL)) / 0.05) * 0.05, Lt)
+    bd = min(max(math.floor(T_DOOR / math.sqrt(pd / (2 * SIG_AL)) / b + 1e-9), 1) * b, Lt)
     hd = up(math.sqrt(3 * (pd * bd * (c / 2) ** 2 / 8 / SIG_AL) / T_DOOR), 0.01)
     doors = (c * Lt * T_DOOR + (math.floor(Lt / bd) + 1) * c * hd * T_DOOR) * AL * 1.1
     # Gate: 8 mm plate over the slot and 60 mm onto each bed, ribbed at b across the slot; two 100 mm bearing strips.
@@ -83,7 +84,7 @@ def work(rec):
         if abs(new - m) < 0.5:
             break
         m = new
-    return dict(cap=cap, L=L, W=W, Lt=Lt, p=p, b=b, h=h, n=n, bd=bd, hd=hd, hg=hg, tube=tb, F=F, shell=shell, ribs=ribs,
+    return dict(cap=cap, L=L, W=W, s=s, Lt=Lt, p=p, b=b, h=h, n=n, bd=bd, hd=hd, hg=hg, tube=tb, F=F, shell=shell, ribs=ribs,
                 liners=liners, doors=doors, gate=gate, frame=frame, total=new)
 
 
@@ -99,7 +100,10 @@ def note(w, total):
             f"all it touches {w['liners'] / 1e3:.2f}; 5 mm aluminium doors ribbed for a reverse 0.3 g {w['doors'] / 1e3:.2f}; "
             f"an 8 mm ribbed gate on two bearing strips {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
             f"beam, {w['F'] / 1e3:.0f} kN in each top chord: 4340 tube {w['tube'][0]} x {w['tube'][1]} mm with ties at every "
-            f"rib (buckling between ties 1.5 times the load or more), frame {w['frame'] / 1e3:.2f}. {total / 1e3:.2f} t, "
+            f"rib (buckling between ties 1.5 times the load or more), frame {w['frame'] / 1e3:.2f}. Loaded by pouring through the open roof: the ties form a "
+            f"grate with {w['b'] - 0.06:.2f} m gaps that screens off lumps too big for the {w['s']:.1f} m gate slot (a slot "
+            f"passes lumps up to about a third of its width, {w['s'] / 3:.2f} m), so ore is broken to that before loading; the "
+            f"door ribs, every {w['bd']:.2f} m, hang between the ties when shut. {total / 1e3:.2f} t, "
             f"{total / w['cap']:.2f} of its capacity; drives, seals and fasteners not counted; the ribs' free edges unchecked "
             f"for buckling. Review.")
 
@@ -110,7 +114,7 @@ def parts(w, rec, prefix):
     rows = [("Shell", "The hopper's 8 mm plates, sloped to the gate.", w["shell"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Ribs", f"8 mm webs welded round the shell every {w['b']:.2f} m and up the end walls.", w["ribs"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Wear liners", "Hard plates bolted inside where the rock lands and slides.", w["liners"], "stock.st4340-pl-3", "module.cutting-table"),
-            ("Top doors", "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight.", w["doors"], "stock.al6061-pl-5", "module.welding-bay"),
+            ("Top doors", "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight; ribbed beneath, the ribs falling between the roof ties.", w["doors"], "stock.al6061-pl-5", "module.welding-bay"),
             ("Discharge gate", "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted).", w["gate"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Frame", "Tube chords and end frames that carry the hopper to its mount, with a tie across the top at every rib.", w["frame"], tb, "module.welding-bay")]
     total = sum(r10(r[2]) for r in rows)
