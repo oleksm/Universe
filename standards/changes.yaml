@@ -369,9 +369,9 @@
 - { record: equipment.cargo.rack.s4, at: "2026-10-11T19:39:50Z", status: draft, summary: "changed: visual", sha: "1c727e57107ea5f7" }
 - { record: equipment.comm.basic.s1, at: "2026-10-11T02:42:50Z", status: draft, summary: "changed: visual", sha: "0f6f2cc60ab24c10" }
 - { record: equipment.comm.long.s1, at: "2026-10-12T18:26:09Z", status: draft, summary: "changed: visual", sha: "5cb6c82f3fc57bff" }
-- { record: equipment.command.s1, at: "2026-10-12T21:38:44Z", status: draft, summary: "changed: visual", sha: "8b7c20180e60dd93" }
-- { record: equipment.command.s2, at: "2026-10-12T00:34:04Z", status: draft, summary: "changed: visual", sha: "a02b54612d4db36e" }
-- { record: equipment.command.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4caef18e8c8babb2" }
+- { record: equipment.command.s1, at: "2026-10-12T21:41:33Z", status: draft, summary: "changed: basis", sha: "41971bd390c6d036" }
+- { record: equipment.command.s2, at: "2026-10-12T21:41:33Z", status: draft, summary: "changed: basis", sha: "5cd0bf2986f5ce64" }
+- { record: equipment.command.s3, at: "2026-10-12T21:41:33Z", status: draft, summary: "changed: basis", sha: "37ccb9ebbd0bc533" }
 - { record: equipment.computer.fbw.fast, at: "2026-10-11T19:46:06Z", status: draft, summary: "changed: visual", sha: "32434debfc85f64d" }
 - { record: equipment.computer.fbw.s1, at: "2026-10-11T02:38:35Z", status: draft, summary: "changed: visual", sha: "199e7a0ffe056c1b" }
 - { record: equipment.drive.kestrel.k2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "ecc930140ca66688" }
