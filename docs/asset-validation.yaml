@@ -1940,3 +1940,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static rest package only; source spin demo is not runtime motion. Final hull airflow clearance, operating RPM, GPU look/cost, temporal aliasing, structural/thermal/aerodynamic qualification, nominal mass and registry power-density/efficiency flags remain open."
+  - key: equipment.power.battery-vtol.s1
+    version: 1
+    manifest_sha256: "95c82550c01025de57a53869a5027325ab76e7bd3bf409b1b216f30398465223"
+    installed: 729eecba
+    game: "the loader (world::assets) at fso 729eecba"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-battery-vtol-s1/v1 (118428 bytes, bounds [-0.45, 0.0, -0.35] to [0.45, 0.5, 0.35]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull/service access, thermal/electrical integration, GPU look/cost and temporal edge stability pending. Complete 500 kg mass, internal packing, containment, 250 MJ/2 MW/1500-cycle performance remain unqualified."
