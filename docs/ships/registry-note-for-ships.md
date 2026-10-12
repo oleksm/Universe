@@ -354,7 +354,7 @@ the 1.5, and a pack at 1.5 kW/kg spirals. New:
 | Key | Figures |
 |---|---|
 | `equipment.power.battery-vtol.s0 / s1 / s2` | high-rate packs: 4 kW/kg, 0.5 MJ/kg, 1,500 cycles (`function.cycles`, new): 150 kg = 0.6 MW / 75 MJ; 500 kg = 2 MW / 250 MJ; 1,500 kg = 6 MW / 750 MJ. A 10 t craft's 6.2 MW hover is one S2 pack (1.5 t) for 2 minutes, or two S1 |
-| `equipment.thermal.radiator.s0` | 2 m², 330 K, 40 kg: 10 kW rated; in vacuum its two faces radiate 2.4 kW, the rest is convection in air |
+| `equipment.thermal.radiator.s0` | 2 m², 330 K, 40 kg: 2.4 kW rated, its two faces to space (was 10 kW, corrected 2026-10-11); a fixed fin |
 | `equipment.thermal.coolant-loop.s0` | 20 kW, 0.5 kg/s, 30 kg, 300 W |
 | `equipment.thermal.air-cooler.s0` | kind heat_exchanger, 20 kW to the air from the loop, 15 kg, 400 W; nothing in vacuum (air of 0.3 kg/m³ or more) |
 | `equipment.gear.strut.180kn` | 180 kN, 0.4 m stroke, 190 kg |
