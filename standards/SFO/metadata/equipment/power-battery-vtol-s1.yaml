@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: power
-  description: "A pack built for a landing, not a voyage: 2 MW out for 125 s from 250 MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule."
+  description: "A pack built for a landing, not a voyage: 2 MW out for 125 s from 250 MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule. A closed aluminium case on four bolted corner feet and a conductive base that carries its mount's load; capped power and data ports and two coolant ports at the rear. Its cold plates absorb one full discharge in the pack's own mass (15 MJ of loss, 40 K of warming); the ship's coolant loop takes the heat away through the ports between flights and while it charges."
 size_class: 1
 fits: mount.power-s1
 physical:
