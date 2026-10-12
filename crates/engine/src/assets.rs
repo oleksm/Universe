@@ -70,6 +70,14 @@ pub struct Snapshot {
     pub queue_seconds: f64,
     pub prepare_seconds: f64,
     pub entries: Vec<EntrySnapshot>,
+    pub events: Vec<Event>,
+}
+#[derive(Clone, Debug, serde::Serialize)]
+pub struct Event {
+    pub seconds: f64,
+    pub key: String,
+    pub kind: &'static str,
+    pub bytes: usize,
 }
 #[derive(Clone, Debug, serde::Serialize)]
 pub struct EntrySnapshot {
@@ -78,6 +86,8 @@ pub struct EntrySnapshot {
     pub bytes: usize,
     pub class: u8,
     pub idle_seconds: f64,
+    pub time_to_need_seconds: f64,
+    pub estimated_cost_seconds: f64,
     pub leases: usize,
     pub error: Option<String>,
 }
@@ -92,6 +102,7 @@ struct Entry<T> {
     status: Status<T>,
     demand: Demand,
     deadline: Instant,
+    priority_until: Instant,
     queued: Instant,
     used: Instant,
 }
@@ -100,6 +111,9 @@ struct State<T> {
     stats: Snapshot,
     recent_unloads: std::collections::VecDeque<String>,
     stop: bool,
+    costs: HashMap<String, Duration>,
+    epoch: Instant,
+    events: std::collections::VecDeque<Event>,
 }
 struct Shared<T> {
     state: Mutex<State<T>>,
@@ -119,6 +133,9 @@ impl<T: Send + Sync + 'static> AssetCache<T> {
                 stats: Snapshot::default(),
                 recent_unloads: Default::default(),
                 stop: false,
+                costs: HashMap::new(),
+                epoch: Instant::now(),
+                events: Default::default(),
             }),
             wake: Condvar::new(),
             config,
@@ -139,13 +156,17 @@ impl<T: Send + Sync + 'static> AssetCache<T> {
     pub fn request(
         &self,
         key: String,
-        demand: Demand,
+        mut demand: Demand,
         load: impl FnOnce() -> Result<Loaded<T>, String> + Send + 'static,
     ) -> Option<Arc<T>> {
         let now = Instant::now();
         let s = &self.shared;
         let mut st = s.state.lock().unwrap_or_else(|e| e.into_inner());
         st.stats.requests += 1;
+        if let Some(cost) = st.costs.get(&key) {
+            demand.estimated_cost = *cost;
+        }
+
         let mut hit = None;
         let mut coalesced = false;
         let mut retry = false;
@@ -160,10 +181,14 @@ impl<T: Send + Sync + 'static> AssetCache<T> {
             if !matches!(e.status, Status::Failed(_)) {
                 e.used = now;
             }
-            if demand.class < e.demand.class
+            if now >= e.priority_until
+                || demand.class < e.demand.class
                 || (demand.class == e.demand.class && now + demand.time_to_need < e.deadline)
             {
                 // Running reservations must never change underneath the worker.
+                if now >= e.priority_until {
+                    e.priority_until = now + Duration::from_millis(100);
+                }
                 e.demand.class = demand.class;
                 e.deadline = now + demand.time_to_need;
             }
@@ -200,12 +225,14 @@ impl<T: Send + Sync + 'static> AssetCache<T> {
             st.stats.reloads += 1;
         }
         st.stats.misses += 1;
+        event(&mut st, &key, "queued", demand.estimated_bytes);
         st.entries.insert(
             key,
             Entry {
                 status: Status::Queued(Some(Box::new(load))),
                 demand,
                 deadline: now + demand.time_to_need,
+                priority_until: now + Duration::from_millis(100),
                 queued: now,
                 used: now,
             },
@@ -223,9 +250,26 @@ impl<T: Send + Sync + 'static> AssetCache<T> {
         {
             st.entries.remove(key);
             st.stats.cancelled += 1;
+            event(&mut st, key, "cancelled", 0);
             true
         } else {
             false
+        }
+    }
+    /// Drop queued prefetch after a scene jump. Running jobs retain their
+    /// reservations and immutable identity; no completion can replace another key.
+    pub fn cancel_speculation(&self) {
+        let mut st = self.shared.state.lock().unwrap_or_else(|e| e.into_inner());
+        let keys: Vec<_> = st
+            .entries
+            .iter()
+            .filter(|(_, e)| e.demand.class >= 2 && matches!(e.status, Status::Queued(_)))
+            .map(|(k, _)| k.clone())
+            .collect();
+        for key in keys {
+            st.entries.remove(&key);
+            st.stats.cancelled += 1;
+            event(&mut st, &key, "scene-cancelled", 0);
         }
     }
     pub fn maintain(&self) {
@@ -266,10 +310,13 @@ impl<T: Send + Sync + 'static> AssetCache<T> {
                 bytes,
                 class: e.demand.class,
                 idle_seconds: now.duration_since(e.used).as_secs_f64(),
+                time_to_need_seconds: e.deadline.saturating_duration_since(now).as_secs_f64(),
+                estimated_cost_seconds: e.demand.estimated_cost.as_secs_f64(),
                 leases,
                 error,
             });
         }
+        out.events = st.events.iter().cloned().collect();
         out.entries.sort_by(|a, b| a.key.cmp(&b.key));
         out
     }
@@ -284,6 +331,17 @@ impl<T> Drop for AssetCache<T> {
         for w in self.workers.drain(..) {
             let _ = w.join();
         }
+    }
+}
+fn event<T>(st: &mut State<T>, key: &str, kind: &'static str, bytes: usize) {
+    st.events.push_back(Event {
+        seconds: st.epoch.elapsed().as_secs_f64(),
+        key: key.into(),
+        kind,
+        bytes,
+    });
+    while st.events.len() > 512 {
+        st.events.pop_front();
     }
 }
 fn evict<T>(st: &mut State<T>, config: &Config, now: Instant, pressure: bool) {
@@ -312,6 +370,16 @@ fn evict<T>(st: &mut State<T>, config: &Config, now: Instant, pressure: bool) {
             if let Status::Ready(_, n) = e.status {
                 st.stats.resident_bytes -= n;
                 st.stats.unloads += 1;
+                event(
+                    st,
+                    &key,
+                    if pressure {
+                        "evicted-pressure"
+                    } else {
+                        "evicted-idle"
+                    },
+                    n,
+                );
                 st.recent_unloads.push_back(key);
                 while st.recent_unloads.len() > config.max_entries {
                     st.recent_unloads.pop_front();
@@ -330,7 +398,23 @@ fn worker<T: Send + Sync + 'static>(shared: Arc<Shared<T>>) {
                 }
                 let now = Instant::now();
                 evict(&mut st, &shared.config, now, false);
-                let next = st
+                let stale: Vec<_> = st
+                    .entries
+                    .iter()
+                    .filter(|(_, e)| {
+                        e.demand.class >= 2
+                            && matches!(e.status, Status::Queued(_))
+                            && now.duration_since(e.used) > Duration::from_secs(5)
+                    })
+                    .map(|(k, _)| k.clone())
+                    .collect();
+                for key in stale {
+                    st.entries.remove(&key);
+                    st.stats.cancelled += 1;
+                    event(&mut st, &key, "expired-speculation", 0);
+                }
+
+                let mut next = st
                     .entries
                     .iter()
                     .filter(|(_, e)| matches!(e.status, Status::Queued(_)))
@@ -338,9 +422,16 @@ fn worker<T: Send + Sync + 'static>(shared: Arc<Shared<T>>) {
                         // Age promotes speculative work after five seconds. Within a class,
                         // deadline slack starts expensive urgent work early; cost breaks ties.
                         let class = |e: &Entry<T>| {
-                            e.demand.class.saturating_sub(
-                                (now.duration_since(e.queued).as_secs() / 5).min(3) as u8,
-                            )
+                            if e.demand.class == 0 {
+                                0
+                            } else {
+                                e.demand
+                                    .class
+                                    .saturating_sub(
+                                        (now.duration_since(e.queued).as_secs() / 5).min(3) as u8,
+                                    )
+                                    .max(1)
+                            }
                         };
                         let slack = |e: &Entry<T>| {
                             e.deadline.saturating_duration_since(now).as_secs_f64()
@@ -348,11 +439,47 @@ fn worker<T: Send + Sync + 'static>(shared: Arc<Shared<T>>) {
                         };
                         class(a)
                             .cmp(&class(b))
-                            .then_with(|| slack(a).total_cmp(&slack(b)))
+                            .then_with(|| {
+                                (slack(a) / 0.1)
+                                    .floor()
+                                    .total_cmp(&(slack(b) / 0.1).floor())
+                            })
                             .then(a.demand.estimated_cost.cmp(&b.demand.estimated_cost))
                             .then(a.queued.cmp(&b.queued))
                     })
                     .map(|(k, e)| (k.clone(), e.demand.estimated_bytes));
+                let available = shared
+                    .config
+                    .budget_bytes
+                    .saturating_sub(st.stats.resident_bytes)
+                    .saturating_sub(st.stats.reserved_bytes);
+                if next.as_ref().is_some_and(|(_, n)| *n > available) {
+                    let before = st.entries.len();
+                    evict(&mut st, &shared.config, now, true);
+                    if st.entries.len() < before {
+                        continue;
+                    }
+                    // Pinned/in-flight memory cannot be evicted. Let cheap work
+                    // use the remaining reservation rather than idle both workers.
+                    if let Some((key, e)) = st
+                        .entries
+                        .iter()
+                        .filter(|(_, e)| {
+                            matches!(e.status, Status::Queued(_))
+                                && e.demand.estimated_bytes <= available
+                        })
+                        .min_by_key(|(_, e)| {
+                            (
+                                e.demand.class,
+                                e.deadline,
+                                e.demand.estimated_cost,
+                                e.queued,
+                            )
+                        })
+                    {
+                        next = Some((key.clone(), e.demand.estimated_bytes));
+                    }
+                }
                 if let Some((key, reservation)) = next {
                     if st
                         .stats
@@ -368,6 +495,7 @@ fn worker<T: Send + Sync + 'static>(shared: Arc<Shared<T>>) {
                         let job = job.take().unwrap();
                         let waited = now.duration_since(e.queued).as_secs_f64();
                         e.status = Status::Loading;
+                        event(&mut st, &key, "started", reservation);
                         st.stats.queue_seconds += waited;
                         st.stats.reserved_bytes += reservation;
                         st.stats.peak_bytes = st
@@ -396,6 +524,12 @@ fn worker<T: Send + Sync + 'static>(shared: Arc<Shared<T>>) {
         let mut st = shared.state.lock().unwrap_or_else(|e| e.into_inner());
         st.stats.reserved_bytes -= reservation;
         st.stats.prepare_seconds += started.elapsed().as_secs_f64();
+        if st.costs.len() >= shared.config.max_entries && !st.costs.contains_key(&key) {
+            if let Some(k) = st.costs.keys().next().cloned() {
+                st.costs.remove(&k);
+            }
+        }
+        st.costs.insert(key.clone(), started.elapsed());
         let status = match result {
             Ok(v) if v.bytes <= reservation => {
                 st.stats.loads += 1;
@@ -411,6 +545,11 @@ fn worker<T: Send + Sync + 'static>(shared: Arc<Shared<T>>) {
                 Status::Failed(e)
             }
         };
+        let (kind, bytes) = match &status {
+            Status::Ready(_, n) => ("loaded", *n),
+            _ => ("failed", 0),
+        };
+        event(&mut st, &key, kind, bytes);
         if let Some(e) = st.entries.get_mut(&key) {
             e.status = status;
             e.used = Instant::now();
@@ -431,6 +570,99 @@ mod tests {
             idle_for: Duration::from_secs(60),
             retry_after: Duration::from_secs(60),
         }
+    }
+    #[test]
+    fn fitting_job_runs_while_large_job_waits_for_a_lease() {
+        let cache = AssetCache::new(config());
+        cache.request(
+            "pin".into(),
+            Demand {
+                estimated_bytes: 48,
+                ..demand()
+            },
+            || {
+                Ok(Loaded {
+                    value: 7usize,
+                    bytes: 48,
+                })
+            },
+        );
+        let pin = ready(&cache, "pin");
+        cache.request(
+            "large".into(),
+            Demand {
+                class: 0,
+                estimated_bytes: 32,
+                ..demand()
+            },
+            || {
+                Ok(Loaded {
+                    value: 2,
+                    bytes: 32,
+                })
+            },
+        );
+        cache.request("small".into(), demand(), || {
+            Ok(Loaded {
+                value: 3,
+                bytes: 16,
+            })
+        });
+        let small = ready(&cache, "small");
+        assert_eq!(*small, 3);
+        assert_eq!(*pin, 7);
+        let snapshot = cache.snapshot();
+        assert!(
+            snapshot
+                .entries
+                .iter()
+                .any(|e| e.key == "large" && e.state == "queued")
+        );
+        assert!(
+            snapshot
+                .events
+                .iter()
+                .any(|e| e.key == "small" && e.kind == "loaded")
+        );
+        cache.cancel("large");
+    }
+    #[test]
+    fn scene_cancel_only_removes_queued_speculation() {
+        let cache = AssetCache::new(config());
+        let (tx, rx) = mpsc::channel();
+        cache.request("busy".into(), demand(), move || {
+            rx.recv().unwrap();
+            Ok(Loaded {
+                value: 1usize,
+                bytes: 16,
+            })
+        });
+        // A required job remains regardless of whether the worker took it yet.
+        cache.request("required".into(), demand(), || {
+            Ok(Loaded {
+                value: 2,
+                bytes: 16,
+            })
+        });
+        cache.request(
+            "prefetch".into(),
+            Demand {
+                class: 3,
+                ..demand()
+            },
+            || {
+                Ok(Loaded {
+                    value: 3,
+                    bytes: 16,
+                })
+            },
+        );
+        cache.cancel_speculation();
+        let snapshot = cache.snapshot();
+        assert!(!snapshot.entries.iter().any(|e| e.key == "prefetch"));
+        assert!(snapshot.entries.iter().any(|e| e.key == "required"));
+        assert_eq!(snapshot.cancelled, 1);
+        tx.send(()).unwrap();
     }
     fn demand() -> Demand {
         Demand {

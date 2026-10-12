@@ -950,6 +950,7 @@ impl Renderer {
             instances: self.instances.count as usize,
             models: self.pbr.model_count(),
             asset_uploads: self.pbr.uploads(),
+            asset_hits: self.pbr.hits(),
             asset_unloads: self.pbr.evictions(),
             asset_gpu_bytes: self.pbr.resident_bytes(),
             asset_preparing: self.pbr.preparing(),

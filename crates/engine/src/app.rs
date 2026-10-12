@@ -74,6 +74,7 @@ pub struct Resources {
     /// Textured (glTF) models uploaded.
     pub models: usize,
     pub asset_uploads: u64,
+    pub asset_hits: u64,
     pub asset_unloads: u64,
     pub asset_gpu_bytes: usize,
     pub asset_preparing: usize,

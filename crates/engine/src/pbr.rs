@@ -146,9 +146,9 @@ impl PbrModel {
     /// what hangs from it) is part `k + 1`, drawn on its own (`Frame::model_pbr_part`).
     pub fn load_gltf_parts(bytes: &[u8], parts: &[&str]) -> Result<Self, String> {
         let _profile = universe_prof::scope("assets/gltf decode");
-        let (doc, buffers, images) = gltf::import_slice(bytes).map_err(|e| e.to_string())?;
+        let (doc, buffers, images) = bounded_import(bytes)?;
         let mut data = PbrData {
-            images: images.iter().map(to_rgba).collect(),
+            images,
             ..Default::default()
         };
         let tex = |t: Option<gltf::texture::Texture>| t.map(|t| t.source().index());
@@ -319,48 +319,115 @@ fn tangents(pos: &[Vec3], normals: &[Vec3], uvs: &[Vec2], indices: &[u32]) -> Ve
         .collect()
 }
 
-fn to_rgba(img: &gltf::image::Data) -> Image {
-    use gltf::image::Format as F;
-    let px = (img.width * img.height) as usize;
-    let rgba = match img.format {
-        F::R8G8B8A8 => img.pixels.clone(),
-        F::R8G8B8 => img
-            .pixels
-            .as_chunks::<3>()
-            .0
-            .iter()
-            .flat_map(|c| [c[0], c[1], c[2], 255])
-            .collect(),
-        F::R8G8 => img
-            .pixels
-            .as_chunks::<2>()
-            .0
-            .iter()
-            .flat_map(|c| [c[0], c[1], 0, 255])
-            .collect(),
-        F::R8 => img.pixels.iter().flat_map(|&c| [c, c, c, 255]).collect(),
-        // (16-bit channels: their high bytes.)
-        F::R16G16B16A16 => img
-            .pixels
-            .as_chunks::<8>()
-            .0
-            .iter()
-            .flat_map(|c| [c[1], c[3], c[5], c[7]])
-            .collect(),
-        F::R16G16B16 => img
-            .pixels
-            .as_chunks::<6>()
-            .0
-            .iter()
-            .flat_map(|c| [c[1], c[3], c[5], 255])
-            .collect(),
-        _ => vec![255; px * 4],
-    };
-    Image {
-        width: img.width,
-        height: img.height,
-        rgba,
+/// Embedded GLB only: bound input, accessor expansion and image dimensions
+/// before decoding. Logical payload ceilings exclude allocator/driver overhead.
+fn bounded_import(
+    bytes: &[u8],
+) -> Result<(gltf::Document, Vec<gltf::buffer::Data>, Vec<Image>), String> {
+    const INPUT: usize = 64 * 1024 * 1024;
+    const EXPANDED: usize = 128 * 1024 * 1024;
+    if bytes.len() > INPUT {
+        return Err("GLB exceeds 64 MiB input limit".into());
     }
+    let gltf = gltf::Gltf::from_slice(bytes).map_err(|e| e.to_string())?;
+    let blob = gltf.blob.ok_or("asset requires embedded GLB buffer")?;
+    let doc = gltf.document;
+    if doc.buffers().count() > 1 {
+        return Err("GLB must use one embedded buffer".into());
+    }
+    if doc
+        .buffers()
+        .any(|b| !matches!(b.source(), gltf::buffer::Source::Bin) || b.length() > blob.len())
+    {
+        return Err("external or oversized GLB buffer".into());
+    }
+    let mut parents = std::collections::HashSet::new();
+    for node in doc.nodes() {
+        for child in node.children() {
+            if !parents.insert(child.index()) {
+                return Err("shared child in GLB hierarchy".into());
+            }
+        }
+    }
+    for scene in doc.scenes() {
+        let mut pending: Vec<_> = scene.nodes().map(|n| (n, 0usize)).collect();
+        let mut seen = std::collections::HashSet::new();
+        while let Some((node, depth)) = pending.pop() {
+            if depth > 128 || !seen.insert(node.index()) {
+                return Err("cyclic, repeated or overdeep GLB hierarchy".into());
+            }
+            pending.extend(node.children().map(|n| (n, depth + 1)));
+        }
+    }
+    let mut expanded = blob.len();
+    // Count each scene instance conservatively; CPU faces add three positions
+    // and normals per triangle on the shared consumer side.
+    for node in doc.nodes() {
+        if let Some(mesh) = node.mesh() {
+            for p in mesh.primitives() {
+                let n = p.get(&gltf::Semantic::Positions).map_or(0, |a| a.count());
+                let indices = p.indices().map_or(n, |a| a.count());
+                expanded = expanded
+                    .checked_add(n.checked_mul(96).ok_or("geometry size overflow")?)
+                    .and_then(|v| v.checked_add(indices.checked_mul(96)?))
+                    .ok_or("geometry size overflow")?;
+            }
+        }
+    }
+    let mut image_ranges = Vec::new();
+    for image in doc.images() {
+        let gltf::image::Source::View { view, .. } = image.source() else {
+            return Err("external/data URI image not supported by bounded GLB loader".into());
+        };
+        let end = view
+            .offset()
+            .checked_add(view.length())
+            .ok_or("image range overflow")?;
+        let data = blob
+            .get(view.offset()..end)
+            .ok_or("image outside GLB buffer")?;
+        let reader = image::ImageReader::new(std::io::Cursor::new(data))
+            .with_guessed_format()
+            .map_err(|e| e.to_string())?;
+        let (w, h) = reader.into_dimensions().map_err(|e| e.to_string())?;
+        if w == 0 || h == 0 || w > 8192 || h > 8192 {
+            return Err("image exceeds 8192 pixel dimension limit".into());
+        }
+        expanded = expanded
+            .checked_add(
+                (w as usize)
+                    .checked_mul(h as usize)
+                    .and_then(|n| n.checked_mul(16))
+                    .ok_or("image size overflow")?,
+            )
+            .ok_or("asset size overflow")?;
+        image_ranges.push((view.offset(), end, w, h));
+    }
+    if expanded > EXPANDED {
+        return Err("asset exceeds 128 MiB expanded payload estimate".into());
+    }
+    let mut images = Vec::new();
+    for (start, end, w, h) in image_ranges {
+        let mut reader = image::ImageReader::new(std::io::Cursor::new(&blob[start..end]))
+            .with_guessed_format()
+            .map_err(|e| e.to_string())?;
+        let mut limits = image::Limits::default();
+        limits.max_image_width = Some(8192);
+        limits.max_image_height = Some(8192);
+        limits.max_alloc = Some(EXPANDED as u64);
+        reader.limits(limits);
+        let rgba = reader
+            .decode()
+            .map_err(|e| e.to_string())?
+            .into_rgba8()
+            .into_raw();
+        images.push(Image {
+            width: w,
+            height: h,
+            rgba,
+        });
+    }
+    Ok((doc, vec![gltf::buffer::Data(blob)], images))
 }
 
 /// The mip chain of an RGBA8 image: each level half the last, box filtered
@@ -438,6 +505,7 @@ pub(crate) struct PbrRenderer {
     retired: Vec<(Arc<std::sync::atomic::AtomicBool>, GpuModel)>,
     retired_pending: Vec<(Arc<std::sync::atomic::AtomicBool>, ModelUpload)>,
     uploads: u64,
+    hits: u64,
     evictions: u64,
     instances: wgpu::Buffer,
     capacity: u64,
@@ -507,6 +575,9 @@ impl PbrRenderer {
         queue
             .on_submitted_work_done(move || flag.store(true, std::sync::atomic::Ordering::Release));
         self.retired.push((done, model));
+    }
+    pub fn hits(&self) -> u64 {
+        self.hits
     }
     pub fn uploads(&self) -> u64 {
         self.uploads
@@ -706,6 +777,7 @@ impl PbrRenderer {
             retired: Vec::new(),
             retired_pending: Vec::new(),
             uploads: 0,
+            hits: 0,
             evictions: 0,
             instances,
             capacity: 64,
@@ -763,7 +835,33 @@ impl PbrRenderer {
             });
             self.retired_pending.push((done, p));
         }
-        let ids: Vec<_> = self.pending.keys().copied().collect();
+        let mut ids: Vec<_> = self.pending.keys().copied().collect();
+        let importance = |id: &u64| {
+            draws
+                .iter()
+                .filter(|d| d.model.id() == *id)
+                .map(|d| {
+                    let distance = glam::Vec3::from_slice(&d.instance.t[..3]).length().max(1.);
+                    (d.reach / distance).max(0.001) as f64
+                })
+                .fold(0.001, f64::max)
+        };
+        ids.sort_by(|a, b| {
+            let pa = &self.pending[a];
+            let pb = &self.pending[b];
+            (!visible.contains(a))
+                .cmp(&(!visible.contains(b)))
+                .then_with(|| {
+                    (now.duration_since(pb.last_served) > std::time::Duration::from_secs(1)).cmp(
+                        &(now.duration_since(pa.last_served) > std::time::Duration::from_secs(1)),
+                    )
+                })
+                .then_with(|| {
+                    ((pa.bytes as f64) / importance(a))
+                        .total_cmp(&((pb.bytes as f64) / importance(b)))
+                })
+                .then(a.cmp(b))
+        });
         for id in ids {
             let job = self.pending.get_mut(&id).unwrap();
             while upload_bytes < 8 * 1024 * 1024
@@ -775,6 +873,7 @@ impl PbrRenderer {
                     break;
                 }
                 upload_bytes += sent;
+                job.last_served = now;
             }
             if job.tasks.is_empty() {
                 let job = self.pending.remove(&id).unwrap();
@@ -803,6 +902,7 @@ impl PbrRenderer {
             if let Some(m) = self.models.get_mut(&d.model.id()) {
                 m.used = now;
                 if !m.placeholder {
+                    self.hits += 1;
                     continue;
                 }
             }
@@ -1413,6 +1513,7 @@ struct ModelUpload {
     bytes: usize,
     bc: bool,
     last_needed: std::time::Instant,
+    last_served: std::time::Instant,
 }
 impl ModelUpload {
     fn new(device: &wgpu::Device, model: PbrModel, prepared: Arc<PreparedTextures>) -> Self {
@@ -1494,6 +1595,7 @@ impl ModelUpload {
             bytes,
             bc,
             last_needed: std::time::Instant::now(),
+            last_served: std::time::Instant::now(),
         }
     }
     fn transfer(&mut self, queue: &wgpu::Queue, budget: usize) -> usize {
@@ -1588,6 +1690,52 @@ impl ModelUpload {
 #[cfg(test)]
 mod streaming_tests {
     use super::*;
+    fn glb(json: serde_json::Value, mut bin: Vec<u8>) -> Vec<u8> {
+        let mut json = serde_json::to_vec(&json).unwrap();
+        while json.len() % 4 != 0 {
+            json.push(b' ');
+        }
+        while bin.len() % 4 != 0 {
+            bin.push(0);
+        }
+        let mut out = b"glTF".to_vec();
+        out.extend(2u32.to_le_bytes());
+        out.extend(((28 + json.len() + bin.len()) as u32).to_le_bytes());
+        out.extend((json.len() as u32).to_le_bytes());
+        out.extend(b"JSON");
+        out.extend(json);
+        out.extend((bin.len() as u32).to_le_bytes());
+        out.extend(b"BIN\0");
+        out.extend(bin);
+        out
+    }
+    #[test]
+    fn image_dimensions_refused_before_expansion() {
+        let mut png = Vec::new();
+        {
+            let mut enc = png::Encoder::new(&mut png, 8193, 1);
+            enc.set_color(png::ColorType::Rgba);
+            enc.set_depth(png::BitDepth::Eight);
+            enc.write_header()
+                .unwrap()
+                .write_image_data(&vec![0; 8193 * 4])
+                .unwrap();
+        }
+        let bytes = glb(
+            serde_json::json!({"asset":{"version":"2.0"},"buffers":[{"byteLength":png.len()}],"bufferViews":[{"buffer":0,"byteLength":png.len()}],"images":[{"bufferView":0,"mimeType":"image/png"}]}),
+            png,
+        );
+        assert!(bounded_import(&bytes).err().unwrap().contains("8192"));
+    }
+    #[test]
+    fn cyclic_nodes_refused_before_walk() {
+        let bytes = glb(
+            serde_json::json!({"asset":{"version":"2.0"},"buffers":[{"byteLength":4}],"nodes":[{"children":[1]},{"children":[0]}],"scenes":[{"nodes":[0]}]}),
+            vec![0; 4],
+        );
+        assert!(bounded_import(&bytes).is_err());
+    }
+
     #[test]
     fn owner_lease_survives_frame_and_worker_clones_without_pinning_source_model() {
         let owner = Arc::new(());

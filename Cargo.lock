@@ -2548,6 +2548,7 @@ dependencies = [
  "font8x8",
  "glam",
  "gltf",
+ "image",
  "log",
  "naga",
  "png",

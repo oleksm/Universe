@@ -42,3 +42,64 @@ pub fn standing(frame: &mut Frame, l: &Loaded, ground: &Transform, base: DVec3, 
         },
     );
 }
+
+// One camera sample per scene frame; this is demand metadata, not a second cache.
+static VIEW: std::sync::Mutex<
+    Option<(
+        universe_engine::asset_prediction::View,
+        std::time::Instant,
+        String,
+    )>,
+> = std::sync::Mutex::new(None);
+pub fn begin_view(camera: &universe_engine::Camera, velocity: DVec3, scene: String) {
+    let now = std::time::Instant::now();
+    let mut state = VIEW.lock().unwrap();
+    let mut angular_speed = 0.;
+    let mut velocity = velocity;
+    if let Some((old, at, key)) = state.as_ref() {
+        let dt = now.duration_since(*at).as_secs_f64();
+        let displacement = camera.position - old.position;
+        let jumped = *key != scene || (displacement - velocity * dt).length() > 100_000.;
+        if jumped {
+            crate::visual_assets::cancel_speculation();
+        }
+        if !jumped && dt > 1e-4 && dt < 1. {
+            velocity = displacement / dt;
+            angular_speed = old
+                .forward
+                .dot(camera.forward().as_dvec3())
+                .clamp(-1., 1.)
+                .acos()
+                / dt;
+        }
+    }
+    *state = Some((
+        universe_engine::asset_prediction::View {
+            position: camera.position,
+            velocity,
+            forward: camera.forward().as_dvec3(),
+            angular_speed,
+            horizon_seconds: 5.,
+        },
+        now,
+        scene,
+    ));
+}
+impl Visuals {
+    pub fn spatial(
+        &self,
+        key: &str,
+        position: DVec3,
+        velocity: DVec3,
+        radius: f64,
+        reach: f64,
+    ) -> Option<Loaded> {
+        let state = VIEW.lock().unwrap();
+        let demand = state
+            .as_ref()?
+            .0
+            .demand(position, velocity, radius, reach)?;
+        drop(state);
+        crate::visual_assets::request_demand(key, demand)
+    }
+}

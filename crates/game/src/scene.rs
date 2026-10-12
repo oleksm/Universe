@@ -18,6 +18,7 @@ pub fn color(c: [f32; 3]) -> Color {
 }
 
 pub fn draw(frame: &mut Frame, app: &App) {
+    crate::visuals::begin_view(&frame.camera, app.ship.velocity * app.warp(), format!("{:?}",app.view.cache));
     if app.mode == Mode::Observer && app.observer.studio {
         studio(frame, app);
         return;
@@ -574,10 +575,16 @@ fn bodies(frame: &mut Frame, app: &App) {
         let px = frame.projected_radius(center, b.rail.radius);
         let rotation = b.rotation(t).as_quat();
 
+        let visual_key = if b.kind==BodyKind::Gate {
+            universe_sim::world::registry::registry().gates.first().map(|g|g.identity.key.as_str())
+        } else if b.kind==BodyKind::Rig {Some(b.key.as_str())} else {None};
+        // Request before the visible-size gate: approach and camera turns can
+        // prepare the asset while the point/envelope remains on screen.
+        let visual = visual_key.and_then(|key| app.caches.visuals.spatial(key, center, sys.velocity(i,t)*app.warp(), b.rail.radius, b.rail.radius*1000.));
         if b.kind == BodyKind::Gate {
             if frame.projected_radius(center, b.rail.radius) > 0.8 {
                 // (Its ring's model, where the ring design's record has one; else the ring made from its size.)
-                let ring = universe_sim::world::registry::registry().gates.first().and_then(|g| app.caches.visuals.get(&g.identity.key));
+                let ring = visual;
                 if let Some(l) = ring {
                     crate::visuals::centred(frame, &l, center, b.rotation(t));
                 } else {
@@ -595,7 +602,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // Its model where its record has one; else its box at its size, a faint fill, its edges, its
             // name along them.
             match universe_sim::world::rigs::half(b) {
-                Some(half) if px > 0.8 => match app.caches.visuals.get(&b.key) {
+                Some(half) if px > 0.8 => match visual {
                     Some(l) => crate::visuals::centred(frame, &l, center, b.rotation(t)),
                     None => rig_box(frame, center, b.rotation(t), half, &b.name),
                 },
@@ -1532,7 +1539,7 @@ fn settlement_ground(frame: &mut Frame, app: &App, port: usize, t: f64) {
     // the rest are boxes in the one mesh.)
     let mut built = Vec::new();
     for (bl, h) in all_built {
-        match app.caches.visuals.get(&bl.module) {
+        match app.caches.visuals.spatial(&bl.module, origin + basis * DVec3::new(bl.centre.0,0.,-bl.centre.1), sys.velocity(sp.body,t)*app.warp(), bl.length.max(bl.width).max(h)*0.5, 60_000.) {
             Some(l) => {
                 let (e, n) = bl.centre;
                 let floor = -(e * e + n * n) / (2.0 * r);

@@ -6,6 +6,7 @@
 
 pub mod app;
 pub mod assets;
+pub mod asset_prediction;
 pub mod audio;
 pub mod font;
 pub mod camera;
