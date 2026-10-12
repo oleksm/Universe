@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: utility
-  description: "Smoke and heat detectors and a bottle of agent for one pressurised room of up to 50 m3. One in each pressurised room."
+  description: "One closed cabinet on the wall of a pressurised room: a smoke-sampling grille and heat pickup in front, two outlet nozzles, and inside a bottle of clean agent and its controller. It floods the room when it senses a fire. One in each pressurised room."
 size_class: 1
 fits: mount.utility-s1
 physical:
@@ -26,8 +26,15 @@ making:
 function:
   kind: fire_unit
   protects: 50
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-fire-s1/v1"
+  manifest_sha256: "32edd69baafece679e9497919701d7ea6e811787492a690350b6b66e0572227a"
+  version: 1
+  triangles: 2424
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A 10 kg bottle of clean agent (as the station's portable extinguishers, from memory), detectors and the bottle's valve: 25 kg in all, covering 50 m3. Chosen." }
+  - { of: [function.protects], tier: derived, review: true, note: "The agent is taken as a fluoroketone clean agent (FK-5-1-12 class), kept under nitrogen at 25 bar (invented). It floods a room at about 4.5% by volume, which takes roughly 0.6 kg per m3. So 10 kg covers only about 17 m3; 50 m3 would need about 30 kg. Left for review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

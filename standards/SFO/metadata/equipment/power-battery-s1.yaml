@@ -29,6 +29,12 @@ function:
   stores: 1000000000.0
   rate: 1000000.0
   efficiency: 0.97
+visual:
+  format: "freefall-model/1"
+  path: "models/power-battery-s1/v1"
+  manifest_sha256: "82a57bee99653af4140ae0b821efb336507b4532599ea5f29bf44e8f4d78848a"
+  version: 1
+  triangles: 2384
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "1 GJ (278 kWh) at 150 Wh/kg, the usual for lithium packs with their housing; 1 MW in or out. From memory. Not sourced." }

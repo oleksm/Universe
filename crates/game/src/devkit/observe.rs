@@ -219,6 +219,7 @@ fn perf(ctx: &Context) -> Value {
 fn resources(app: &App, ctx: &Context) -> Value {
     json!({
         "renderer": ctx.perf.resources,
+        "assets": crate::visual_assets::snapshot(),
         "terrain_patches": app.caches.terrain_lod.borrow().patch_count(),
         "crafts": app.v.crafts.len(),
         "crafts_here": app.v.crafts.iter().filter(|c| c.system == app.view.origin).count(),

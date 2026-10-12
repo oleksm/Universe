@@ -43,6 +43,12 @@ function:
   air_recovery: 0.5
   persons: 3
   cooling: 1500
+visual:
+  format: "freefall-model/1"
+  path: "models/life-support-s1/v1"
+  manifest_sha256: "0953077148b25fe71de6194a10fee23e16004c5bac832127bc1789ca1a530b7e"
+  version: 1
+  triangles: 2636
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }

@@ -15,11 +15,13 @@ handling: crane
 stack: 1
 visual:
   format: "freefall-model/1"
-  path: "models/skip/v1"
-  manifest_sha256: "afdc7536ffabefedc16120a5f28767992989f6812ed63fc1db011a9dce38470a"
-  version: 1
-  triangles: 1490
-label: 2
+  path: "models/skip/v2"
+  manifest_sha256: "031abdeff63675e4f10092e1fb93d70217c38cfd9a46642fa51e96d854f5e614"
+  version: 2
+  triangles: 1494
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.6, 0.701], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.6, -0.701], size: [0.3, 0.15] }
 shows_contents: true
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

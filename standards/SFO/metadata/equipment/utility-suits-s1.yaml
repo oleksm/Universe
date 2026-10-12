@@ -27,6 +27,12 @@ function:
   kind: suit_locker
   persons: 2
   endurance: 28800
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-suits-s1/v1"
+  manifest_sha256: "b822701138f329875cf006a2aa47d34b7624a8e30c021242a20a5aacddc76aa1"
+  version: 1
+  triangles: 3076
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A light EVA suit with its pack at 60 kg (between a 10 kg flight suit and the station's 145 kg suit; from memory) and 8 hours of air (the station's suit's 8.5); the locker 40 kg. Chosen." }

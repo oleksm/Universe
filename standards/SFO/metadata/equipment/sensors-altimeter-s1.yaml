@@ -30,6 +30,12 @@ function:
   kind: altimeter
   range: 5000
   accuracy: 0.1
+visual:
+  format: "freefall-model/1"
+  path: "models/sensors-altimeter-s1/v1"
+  manifest_sha256: "2eb71f63b6111d40bad672d50bbe4bc2241e2d9322a6ffbbf625bae4fe0645fb"
+  version: 1
+  triangles: 2040
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A lidar altimeter of a lander's class: 5 km range, 0.1 m accuracy, 8 kg, 40 W (from memory of planetary landers' lidars; a radar altimeter reads to about 0.5 m). Chosen." }

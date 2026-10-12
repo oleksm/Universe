@@ -5,7 +5,7 @@ identity:
   maker: org.garrick
   revision: outdated
   slot: hardpoint
-  description: "A weapon."
+  description: "A weapon. Fixed: it fires straight ahead and the ship aims it. Drawn on a low base with four pads, closed laser banks at its sides, a cooler at the rear, the beam director forward with its exit aperture (the emitter node)."
 size_class: 1
 fits: mount.hardpoint-s1
 physical:
@@ -39,6 +39,12 @@ function:
   burn: 8
   cool: 4
   reset: 0.3
+visual:
+  format: "freefall-model/1"
+  path: "models/hardpoint-pulse-laser-s1/v1"
+  manifest_sha256: "15f8cc8aead6b090b019e38285ddcd5212fdeb825b4a9e7bcb484d69133d4633"
+  version: 1
+  triangles: 2262
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
@@ -46,4 +52,5 @@ basis:
   - { of: [function.beam_power, function.focus, function.range, function.burn, function.cool], tier: sourced, review: true, source: "the game: crates/core/world/src/weapons.rs", note: "The figure the game's code holds for every such device, moved here. Itself a first guess." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "By HELLADS: 150 kW of beam in 3 m3, so 2 MW in 40 m3. Its weight (1.2 t) is far under what that volume of laser would weigh: the invented part." }
   - { of: [function.reset], tier: invented, review: true, note: "The game's figure (weapons.rs LASER_RESET), brought onto the record so no constant is left in the code: locked out after overheating until it has cooled to three tenths." }
+  - { of: [function.beam_power, needs.power], tier: invented, review: true, note: "Open: 2 MW on the target from 2.5 MW drawn is 80% from the wall; high-power lasers manage 30 to 50% (from memory), so about 5 MW drawn and 3 MW of heat to shed is likelier. The game uses these figures: engine first." }
   - { of: [life], rule: rule.life-ship-system }

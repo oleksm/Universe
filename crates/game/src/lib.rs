@@ -2,6 +2,7 @@ mod palette;
 mod devenv;
 mod devkit;
 mod visuals;
+mod visual_assets;
 use devkit::{dev, observe};
 mod economy;
 mod zoning;
@@ -1385,6 +1386,7 @@ impl App {
 
 impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
+        crate::visual_assets::maintain();
         let dt = ctx.dt as f64;
         // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
         if self.panels.shipyard.is_some() != self.held_to_cores {

@@ -13,13 +13,15 @@ holds:
   mass: 700
 handling: forklift
 stack: 3
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.72, 0.605], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.72, -0.605], size: [0.3, 0.15] }
 shows_contents: true
 visual:
   format: "freefall-model/1"
-  path: "models/bale/v1"
-  manifest_sha256: "95bbe92190f52cb0d08bbb82063c6010561994e5c8f00aeed2ec6decd57ee5eb"
-  version: 1
-  triangles: 5496
+  path: "models/bale/v2"
+  manifest_sha256: "718af567b38f4e40d5e88b93e41eb453e360b2639a67351172379fb4ec4da776"
+  version: 2
+  triangles: 5524
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

@@ -43,6 +43,14 @@ pub(crate) struct Vertex {
     pub color: [f32; 4],
 }
 
+/// Material alpha policy for perspective canvas geometry.
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub enum CanvasAlpha {
+    Opaque,
+    Mask(f32),
+    Blend,
+}
+
 /// A HUD triangle's corner: where (layout pixels), what of the font atlas
 /// (a glyph's coverage, or its solid patch for plain fills), what colour.
 #[repr(C)]
@@ -52,6 +60,7 @@ pub(crate) struct HudVertex {
     pub uv: [f32; 2],
     pub color: [f32; 4],
     pub depth: [f32; 2], // eye distance, near plane; zero for UI
+    pub alpha: [f32; 2], // mode (opaque/mask/blend), cutoff
     pub scene: u32, // independent canvas depth scope (CPU batching)
 }
 
@@ -771,12 +780,14 @@ impl Frame {
     pub fn hud_triangle_colored(&mut self, p: [Vec2; 3], c: [Color; 3]) {
         let solid = crate::font::atlas().solid;
         for k in 0..3 {
-            self.hud_tris.push(HudVertex { pos: [p[k].x, p[k].y], uv: solid, color: c[k].0, depth: [0.; 2], scene: 0 });
+            self.hud_tris.push(HudVertex { pos: [p[k].x, p[k].y], uv: solid, color: c[k].0, depth: [0.; 2], alpha: [0.; 2], scene: 0 });
         }
     }
 
-    /// Begin an independent 3D canvas (e.g. the catalogue card). UI remains
-    /// ordered above/below geometry by submission, but never writes its depth.
+    /// Begin an independent 3D canvas (e.g. a catalogue card). Opaque/masked
+    /// geometry precedes globally depth-sorted blends. UI submitted after the
+    /// first geometry is an overlay over this whole scene; start another canvas
+    /// for a new camera/card. UI never writes canvas depth.
     pub fn canvas_scene(&mut self) {
         self.canvas_scene += 1;
     }
@@ -784,10 +795,25 @@ impl Frame {
     /// Perspective triangle in layout pixels, with original eye distances.
     /// Reversed depth and perspective-correct colour interpolation run on GPU.
     pub fn canvas_triangle(&mut self, p: [Vec2; 3], distance: [f32; 3], near: f32, c: [Color; 3]) {
-        assert!(near > 0. && distance.iter().all(|z| z.is_finite() && *z >= near));
+        let alpha = if c.iter().any(|c| c.0[3] < 1.) { CanvasAlpha::Blend } else { CanvasAlpha::Opaque };
+        self.canvas_triangle_alpha(p, distance, near, c, alpha);
+    }
+
+    /// Explicit material mode. Opaque/mask output alpha one; blends preserve
+    /// alpha and depth-test without writing depth. Mask discards below cutoff.
+    pub fn canvas_triangle_alpha(&mut self, p: [Vec2; 3], distance: [f32; 3], near: f32, c: [Color; 3], alpha: CanvasAlpha) {
+        assert!(near.is_finite() && near > 0. && distance.iter().all(|z| z.is_finite() && *z >= near));
+        let alpha = match alpha {
+            CanvasAlpha::Opaque => [0., 0.],
+            CanvasAlpha::Mask(cutoff) => {
+                assert!(cutoff.is_finite() && cutoff >= 0.);
+                [1., cutoff]
+            }
+            CanvasAlpha::Blend => [2., 0.],
+        };
         for k in 0..3 {
             self.hud_tris.push(HudVertex { pos: p[k].to_array(), uv: [0.; 2], color: c[k].0,
-                depth: [distance[k], near], scene: self.canvas_scene });
+                depth: [distance[k], near], alpha, scene: self.canvas_scene });
         }
     }
 
@@ -801,7 +827,7 @@ impl Frame {
         for i in 0..segments {
             let (p, q) = (at(i), at(i + 1));
             for (v, c) in [(center, inner), (p, outer), (q, outer)] {
-                self.hud_tris.push(HudVertex { pos: [v.x, v.y], uv: crate::font::atlas().solid, color: c.0, depth: [0.; 2], scene: 0 });
+                self.hud_tris.push(HudVertex { pos: [v.x, v.y], uv: crate::font::atlas().solid, color: c.0, depth: [0.; 2], alpha: [0.; 2], scene: 0 });
             }
         }
     }
@@ -810,7 +836,7 @@ impl Frame {
     pub fn hud_rect(&mut self, pos: Vec2, size: Vec2, color: Color) {
         let (a, b) = (pos, pos + size);
         for [x, y] in [[a.x, a.y], [b.x, a.y], [b.x, b.y], [a.x, a.y], [b.x, b.y], [a.x, b.y]] {
-            self.hud_tris.push(HudVertex { pos: [x, y], uv: crate::font::atlas().solid, color: color.0, depth: [0.; 2], scene: 0 });
+            self.hud_tris.push(HudVertex { pos: [x, y], uv: crate::font::atlas().solid, color: color.0, depth: [0.; 2], alpha: [0.; 2], scene: 0 });
         }
     }
 
@@ -907,7 +933,7 @@ impl Frame {
                 let p = cursor + Vec2::new(inset + g.at[0], crate::font::BASELINE + g.at[1]) * scale;
                 let (a, b) = (p, p + Vec2::new(g.at[2], g.at[3]) * scale);
                 let (u0, v0, u1, v1) = (g.uv[0], g.uv[1], g.uv[2], g.uv[3]);
-                let v = |x: f32, y: f32, u: f32, w: f32| HudVertex { pos: [x, y], uv: [u, w], color: color.0, depth: [0.; 2], scene: 0 };
+                let v = |x: f32, y: f32, u: f32, w: f32| HudVertex { pos: [x, y], uv: [u, w], color: color.0, depth: [0.; 2], alpha: [0.; 2], scene: 0 };
                 self.hud_tris.extend([v(a.x, a.y, u0, v0), v(b.x, a.y, u1, v0), v(b.x, b.y, u1, v1), v(a.x, a.y, u0, v0), v(b.x, b.y, u1, v1), v(a.x, b.y, u0, v1)]);
             }
             cursor.x += GLYPH * scale;
