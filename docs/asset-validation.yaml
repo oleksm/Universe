@@ -2020,3 +2020,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull/pressure-line fit; GPU look/cost and temporal stability; fill thermodynamics, laminate/liner/boss, burst/cycles and mount-load qualification. 25mm visual shell is space allowance, not physical laminate."
+  - key: equipment.tank.nitrogen.s1
+    version: 1
+    manifest_sha256: "f8435163a24f8272f77596d1e807232db641142f64a9c12d8459a756fed4f41c"
+    installed: 4c179053
+    game: "the loader (world::assets) at fso 4c179053"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-nitrogen-s1/v1 (89460 bytes, bounds [-0.9, 0.0, -0.545] to [0.9, 1.14, 0.545]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and pressure-line fit; actual game GPU appearance/cost and temporal stability; pressure, liner, laminate, bosses, burst margin, cycles, fill thermal, regulator flow and mount strength unqualified."
