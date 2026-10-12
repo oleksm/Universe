@@ -2756,3 +2756,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Production mounted motion and commands; GPU appearance and cost; final hull placement and clearance; pressure, thermal, fatigue and internal packing qualification. Asset-side CPU motion, enclosure and connection checks passed."
+  - key: equipment.engine.ch.s3
+    version: 1
+    manifest_sha256: "a544c4c7858b749dcb636f9502b78d7ad5342d309afbfcd54f9be40497401f3d"
+    installed: 2b3ed1a6
+    game: "the loader (world::assets) at fso 2b3ed1a6"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-ch-s3/v1 (441000 bytes, bounds [-0.3036, -0.3036, 0.0] to [0.3036, 0.3036, 1.572]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Production mounted motion and commands; GPU appearance and cost; final hull placement and clearance; pressure, thermal, seal, fatigue, load and internal packing qualification. Asset-side CPU motion, enclosure and connections passed."

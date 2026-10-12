@@ -37,6 +37,14 @@ recipes:
       - { item: stock.sta36-scrap, quantity: 0.22 }
     rate: 27.7777777777778
     power: 26500000.0
+  - makes: stock.sta36-pl-8
+    does: "A hot ingot of structural steel passed between rolls until it is plate."
+    inputs:
+      - { item: good.hot-ingot-a36, quantity: 1.22 }
+    outputs:
+      - { item: stock.sta36-scrap, quantity: 0.22 }
+    rate: 27.7777777777778
+    power: 26500000.0
   - makes: stock.st304-pl-3
     does: "A hot ingot of stainless steel passed between rolls until it is plate."
     inputs:
