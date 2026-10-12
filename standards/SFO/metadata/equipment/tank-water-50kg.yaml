@@ -25,6 +25,12 @@ function:
   kind: store
   capacity: 50
   holds: good.water
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-water-50kg/v1"
+  manifest_sha256: "c26214119b5ff128d6dd268e37b77fe4b398f8bd4cf8f5d6622a59784d710bb8"
+  version: 1
+  triangles: 1028
 life: 473364000
 basis:
   - { of: [physical, function], tier: invented, review: true, note: "A small aluminium tank at a fifth of its contents. Chosen; review." }

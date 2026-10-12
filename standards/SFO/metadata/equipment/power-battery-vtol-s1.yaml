@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: power
-  description: "A pack built for a landing, not a voyage: 2 MW out for 125 s from 250 MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule."
+  description: "A pack built for a landing, not a voyage: 2 MW out for 125 s from 250 MJ; about 1,500 full cycles. Lighter per kilowatt than the S0 and S1, heavier per joule. A closed aluminium case on four bolted corner feet and a conductive base that carries its mount's load; capped power and data ports and two coolant ports at the rear. Its cold plates absorb one full discharge in the pack's own mass (15 MJ of loss, 40 K of warming); the ship's coolant loop takes the heat away through the ports between flights and while it charges."
 size_class: 1
 fits: mount.power-s1
 physical:
@@ -30,6 +30,12 @@ function:
   rate: 2000000.0
   efficiency: 0.94
   cycles: 1500
+visual:
+  format: "freefall-model/1"
+  path: "models/power-battery-vtol-s1/v1"
+  manifest_sha256: "95c82550c01025de57a53869a5027325ab76e7bd3bf409b1b216f30398465223"
+  version: 1
+  triangles: 2384
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review." }

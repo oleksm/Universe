@@ -29,6 +29,12 @@ function:
   cycle: 300
   passage: 0.8
   air_lost: 1.0
+visual:
+  format: "freefall-model/1"
+  path: "models/access-airlock-crew/v1"
+  manifest_sha256: "f10b41eaad437cd78dd6d288b773eda7130984cdc71911645e38e0965cfced7a"
+  version: 1
+  triangles: 3768
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Two people a cycle through an 0.8 m door, as the ISS Quest lock's crew side (about 2 m across, 5 minutes a cycle, ~1 kg of air lost with its pumps run): from memory of Quest's figures. Not sourced." }

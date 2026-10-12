@@ -14,14 +14,16 @@ holds:
 handling: walk
 stack: 1
 keeps: ventilated
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 1.08, 0.601], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 1.08, -0.601], size: [0.3, 0.15] }
 shows_contents: false
 visual:
   format: "freefall-model/1"
-  path: "models/livestock-crate/v1"
-  manifest_sha256: "d5f6c778e513b06c0dbf8927bd67afd5098a8eacd56cc0ebfb7f6026f2e4b69e"
-  version: 1
-  triangles: 2512
+  path: "models/livestock-crate/v2"
+  manifest_sha256: "487fdcfef9182ba300c4a3b253ca246bf0f44a01ce75b343ddf2f9df612aafc7"
+  version: 2
+  triangles: 2516
 basis:
   - { of: [holds.volume], tier: derived, review: true, note: "Blender's measured interior, 2.30 x 1.08 x 1.686 m less the trough and feet: 4.15 m3 (was 5, the outside); its tare 301.2 kg from the drawn steel (7,850 kg/m3) and polymer (950)." }
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

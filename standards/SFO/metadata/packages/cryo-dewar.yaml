@@ -13,14 +13,16 @@ holds:
   mass: 1200
 handling: forklift
 stack: 1
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 1.14, 0.601], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 1.14, -0.601], size: [0.3, 0.15] }
 shows_contents: false
 keeps: cold
 visual:
   format: "freefall-model/1"
-  path: "models/cryo-dewar/v1"
-  manifest_sha256: "84494a9efd36f567c7e33690ef863ee2e30c8caa33b3edf94997e041ff81e35c"
-  version: 1
-  triangles: 3642
+  path: "models/cryo-dewar/v2"
+  manifest_sha256: "d28409c385a20ca240bfa84fd22c50488e968682480686d754007833fb8d192d"
+  version: 2
+  triangles: 3646
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A transportable dewar of the 1,000-litre class, sized by the registry (2026-10-10); 1,200 kg so liquid oxygen (1,141 kg/m3) fills it by volume." }

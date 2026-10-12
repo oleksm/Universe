@@ -8,8 +8,9 @@
     python3 tools/standards/next_asset.py --hulls         # include hulls (the ships session's designs)
 
 The queue is every record of a kind that takes a model (equipment, modules, buildings, structures, gates; hulls on
-asking) with no `visual` yet and not retired, in the order the player sees them most: equipment fitted on hulls and
-structures first (ship equipment first, the user's order of 2026-10-10), then the rest of the equipment, then structures
+asking) with no `visual` yet and not retired, in the order the player sees them most: equipment the experimental ship
+designs use first (docs/asset-usage.yaml, the user's order of 2026-10-11: most designs, then most fitted), then equipment
+fitted on hulls and structures (ship equipment first, the user's order of 2026-10-10), then the rest of the equipment, then structures
 and gates, then works modules and buildings (their vision still being settled), held records (revision priority low:
 the MC-07) last; within each, the most used first, current designs before outdated ones. Docs:
 docs/asset-contract.md.
@@ -44,6 +45,13 @@ def usage():
         for x in d.get("buildings") or []:
             add(x.get("building"), x.get("count", 1))
     return used
+
+
+def designs():
+    """Equipment the experimental ship designs use (docs/asset-usage.yaml): key -> (designs using it, instances)."""
+    f = os.path.join(os.path.dirname(TREE), "docs", "asset-usage.yaml")
+    d = (yaml.safe_load(open(f)) or {}) if os.path.exists(f) else {}
+    return {k: tuple(v) for k, v in (d.get("equipment") or {}).items()}
 
 
 def tier(kind, key, used):
@@ -113,7 +121,9 @@ def queue(hulls=False):
     q = [(kind, key, path, r) for kind, key, path, r in records()
          if not r.get("visual") and stage(r) != "retired" and (hulls or kind != "hull")]
     low = lambda r: (r.get("revision") or {}).get("priority") == "low"     # (a hold the user set: last of all)
-    q.sort(key=lambda x: (low(x[3]), tier(x[0], x[1], used), stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
+    ds = designs()      # (the experimental designs' equipment ahead of the rest: the user, 2026-10-11)
+    q.sort(key=lambda x: (low(x[3]), x[1] not in ds, tuple(-n for n in ds.get(x[1], (0, 0))), tier(x[0], x[1], used),
+                          stage(x[3]) == "outdated", -used.get(x[1], 0), x[1]))
     return q, used
 
 

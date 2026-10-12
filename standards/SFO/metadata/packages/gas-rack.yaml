@@ -14,13 +14,15 @@ holds:
 handling: forklift
 stack: 1
 keeps: sealed
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 1.11, 0.401], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 1.11, -0.401], size: [0.3, 0.15] }
 shows_contents: false
 visual:
   format: "freefall-model/1"
-  path: "models/gas-rack/v1"
-  manifest_sha256: "6858a033dc89c4fef8a3e1691f013f556f42506616261152af42cdecdc7dd5af"
-  version: 1
-  triangles: 8476
+  path: "models/gas-rack/v2"
+  manifest_sha256: "0e12f50c9ad70fecd59b35a70caf16ec855eecb548028de71b846265fde549c8"
+  version: 2
+  triangles: 8528
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }

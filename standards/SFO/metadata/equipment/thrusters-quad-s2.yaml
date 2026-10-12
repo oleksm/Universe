@@ -40,6 +40,12 @@ function:
   efficiency: 0.3
   burns: material.deuterium
   heat_to_hull: 1.0e-06
+visual:
+  format: "freefall-model/1"
+  path: "models/thrusters-quad-s2/v1"
+  manifest_sha256: "3898afeb2d8afe9259bcbaf118008e0210644af90197a9e005896d41bcd423d3"
+  version: 1
+  triangles: 3232
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }

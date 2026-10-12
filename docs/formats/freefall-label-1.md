@@ -30,7 +30,13 @@ label plates.
 
 ## On the model
 
-Each package model carries `label` plates (its record's `label`: 1 or 2): flat quads named `label` and `label_2`, 2:1,
-UV 0 to 1 across them (u along the long side, v up), 1 mm proud of the surface they sit on, on the faces seen most, in
-one material named `label`. The game draws each packed unit's label into that material. The plate is part of the
-shared template; the label is the unit's.
+The package record says where its plates go (`labels`: node, face, centre, size), so every model of it puts them in the
+same place. The package's model frame: origin at the centre of its base, X along its length, Z across, Y up (glTF
+metres). Pallets and crates carry two 0.30 x 0.15 m plates on their long faces (+Z and -Z) at six tenths of their height;
+the bar bundle carries 0.16 x 0.08 m tags on its two ends; the ladle on its two sides. Each plate is a flat quad under a
+node of its name (`label`, `label_2`), 1 mm proud of the face, UV 0 to 1 across it (u along its width, v up), in one
+material named `label`. The record's centre fixes the plate across and up its face (within 2 cm); along the face's normal the plate lies on the
+package's real surface, 1 mm proud of it, anywhere from 1 cm outside the record's face to 15 cm inside it (a tapered skip, a
+round dewar, a bulging bale, a coil's recessed bands), flat or tilted up to 15 degrees with a tapered side. The installer checks those, and its size within 1 cm. The
+game draws each packed unit's label into that material. The plate is part of the shared template; the label is the
+unit's.

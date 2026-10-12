@@ -14,13 +14,15 @@ holds:
 handling: forklift
 stack: 2
 keeps: cold
-label: 2
+labels:
+  - { node: label, face: "+Z", centre: [0.0, 0.84, 0.501], size: [0.3, 0.15] }
+  - { node: label_2, face: "-Z", centre: [0.0, 0.84, -0.501], size: [0.3, 0.15] }
 shows_contents: false
 visual:
   format: "freefall-model/1"
-  path: "models/cold-crate/v1"
-  manifest_sha256: "f3d0909e4df68ed821c69d25cd93f948107559cb8ea5414eb4ccbc1c70b41a9b"
-  version: 1
-  triangles: 2104
+  path: "models/cold-crate/v2"
+  manifest_sha256: "fbeb93066a67afdc2bffdfdafaeb3baf2a3a7fd9fd1ac754256795bfd9316356"
+  version: 2
+  triangles: 2108
 basis:
   - { of: [physical, holds, handling, stack], tier: invented, review: true, note: "A standard unit as logistics uses them (pallet 1.2 x 1.0 m, 1 m3 bags and totes, 6 m bundles), sized by the registry (2026-10-10); not sourced figure by figure." }
