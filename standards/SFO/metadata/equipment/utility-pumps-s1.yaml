@@ -27,6 +27,12 @@ function:
   kind: "pump"
   flow: 20.0
   head: 1000000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-pumps-s1/v1"
+  manifest_sha256: "b9377fdea5979d901a6e0ac0c59e49c2990cbeda5d3dc439ca6270de8f3c4d7f"
+  version: 1
+  triangles: 3184
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Two pumps moving 20 kg/s against 1 MPa (10 bar). Chosen." }
