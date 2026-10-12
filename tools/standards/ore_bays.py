@@ -68,7 +68,9 @@ def work(rec):
     pd = ORE * A_DOOR * H
     bd = min(max(math.floor(T_DOOR / math.sqrt(pd / (2 * SIG_AL)) / b + 1e-9), 1) * b, Lt)
     hd = up(math.sqrt(3 * (pd * bd * (c / 2) ** 2 / 8 / SIG_AL) / T_DOOR), 0.01)
-    doors = (c * Lt * T_DOOR + (math.floor(Lt / bd) + 1) * c * hd * T_DOOR) * AL * 1.1
+    # Hinges, pins, locks and drives a quarter of the leaves; the steel coaming round the opening they shut on, 8 mm and
+    # 50 mm deeper than the door ribs.
+    doors = (c * Lt * T_DOOR + (math.floor(Lt / bd) + 1) * c * hd * T_DOOR) * AL * 1.25 + 2 * (Lt + c) * (hd + 0.05) * T * A36
     # Gate: 8 mm plate over the slot and 60 mm onto each bed, ribbed at b across the slot; two 100 mm bearing strips.
     gw = s + 0.12
     hg = up(math.sqrt(3 * (p * b * s ** 2 / 8 / SIG_A36) / T), 0.01)
@@ -76,7 +78,11 @@ def work(rec):
     # each a cantilever from the slot's edge under the full pressure: 8 mm holds it.
     ds = max(up(h - 0.06, 0.01), 0.03)
     assert math.sqrt(3 * p * ds ** 2 / SIG_A36) <= T, ds
-    gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1 + 2 * Lt * ds) * T * A36
+    # The gate's load to the frame: at every rib a pair of webs as deep as the ribs from the beds out half the V's half-width,
+    # and along each side a seat and a guide, 8 mm and 20 mm deeper than the ribs.
+    gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1 + 2 * Lt * ds + 2 * n * h * (c - s) / 4 + 4 * Lt * (h + 0.02)) * T * A36
+    # The hopper's load to the frame: every rib carried on down from the V's mid-slope to the bottom chords, two legs a rib.
+    ribs += 2 * n * h * T * A36 * (d / 2 + ds + hg)
     ties = n * c * tube(60, 2)[1]
     # Frame: held at its eight corners, the loaded bay bends as a beam over its length; the top chords take the compression.
     m = shell + ribs + liners + doors + gate + ties
@@ -100,9 +106,9 @@ def note(w, total):
     return (f"Worked out from its dimensions, loads and materials (tools/standards/ore_bays.py): ore at 2,000 kg/m3 at 3 g "
             f"presses {w['p'] / 1e3:.0f} kPa at the gate (as a liquid at the full clear depth; loose rock presses less). 8 mm A36 "
             f"plate held by ribs every {w['b']:.2f} m (stress p b2 / 2t2 within two thirds of yield), the ribs 8 mm webs "
-            f"{w['h'] * 1000:.0f} mm deep: shell {w['shell'] / 1e3:.2f} t, ribs {w['ribs'] / 1e3:.2f}; 3 mm 4340 liners over "
-            f"all it touches {w['liners'] / 1e3:.2f}; 5 mm aluminium doors ribbed for a reverse 0.3 g {w['doors'] / 1e3:.2f}; "
-            f"an 8 mm ribbed gate on two bearing strips, {w['ds'] * 1000:.0f} mm below the shell on 8 mm skirts that carry the slot down past the webs, {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
+            f"{w['h'] * 1000:.0f} mm deep carried on down to the bottom chords: shell {w['shell'] / 1e3:.2f} t, ribs {w['ribs'] / 1e3:.2f}; 3 mm 4340 liners over "
+            f"all it touches {w['liners'] / 1e3:.2f}; 5 mm aluminium doors ribbed for a reverse 0.3 g, with hinges, locks and the steel coaming they shut on {w['doors'] / 1e3:.2f}; "
+            f"an 8 mm ribbed gate on two bearing strips, {w['ds'] * 1000:.0f} mm below the shell on 8 mm skirts that carry the slot down past the webs, with the webs, seats and guides that carry it to the frame, {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
             f"beam, {w['F'] / 1e3:.0f} kN in each top chord: 4340 tube {w['tube'][0]} x {w['tube'][1]} mm with ties at every "
             f"rib (buckling between ties 1.5 times the load or more), frame {w['frame'] / 1e3:.2f}. Loaded by pouring through the open roof: the ties form a "
             f"grate with {w['b'] - 0.06:.2f} m gaps that screens off lumps too big for the {w['s']:.1f} m gate slot (a slot "
