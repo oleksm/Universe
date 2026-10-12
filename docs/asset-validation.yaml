@@ -1988,3 +1988,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and rear service fit; ship coolant integration; GPU look/cost and temporal edge stability; power/bottle mass flags, complete packing, pressure, chemistry, airflow, endurance and loads unqualified."
+  - key: equipment.power.battery.s1
+    version: 1
+    manifest_sha256: "82a57bee99653af4140ae0b821efb336507b4532599ea5f29bf44e8f4d78848a"
+    installed: 9f7def4a
+    game: "the loader (world::assets) at fso 9f7def4a"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-battery-s1/v1 (118380 bytes, bounds [-1.0, 0.0, -0.5] to [1.0, 1.2, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull/service fit, thermal/electrical integration, GPU look/cost and temporal stability; cell packing, containment, loads and 1GJ/1MW thermal performance unqualified."
