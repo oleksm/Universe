@@ -30,8 +30,17 @@ function:
   persons: 4
   g_rating: 58.8
   facing: thrust
+visual:
+  format: "freefall-model/1"
+  path: "models/command-s3/v1"
+  manifest_sha256: "92da5ed45c983784168d8d71a94fc8c2dd7075c33986f8eef3215029f8d2daae"
+  version: 1
+  triangles: 11556
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Four stations in a room: pilot, co-pilot, engineer, navigator; seats rated to 6 g (a transport's, not a fighter's), consoles for each and a shared display wall. From memory; chosen." }
+  - { of: [fits], tier: derived, review: true, note: "At its 58.8 m/s2 (6 g) rating the station and four crew of 100 kg each, 1,300 kg, pull 76.4 kN on its mount: about 19.1 kN on each of 4 points, against the 8.27 kN they take. Mounts were set at 3 g (rule.mounts-margin); seats need the g they are rated to. As the one- and two-seat stations; left for review." }
+  - { of: [needs.power], tier: derived, review: true, note: "Its 6 kW all ends as heat. The life support's cabin cooler is sized for 500 W a head, a person's 137 W and the rest for displays, lights and fans (the six-person plant's 3 kW), so the computers cannot dump it all into the cabin air: they sit on cold plates on a capped coolant pair at the rear, to the ship's coolant loop, and only about a fifth (the screens' faces and the fans), 1.2 kW, about 300 W a seat, reaches the cabin air. It takes power, data and coolant." }
+  - { of: [physical.mass], tier: invented, review: true, note: "Modelled (candidate-v01: 3 mm aluminium shells as stand-ins, a 5 mm deck, solid fittings, four cold plates; not engineered) the seats, consoles, display wall and frame are about 711 kg. With the listed displays and computers (315 kg) and wiring (90 kg), that is about 1,116 kg against 900, just inside the mount's 1,120 kg; with its crew, 89.1 kN on the mount at 6 g (22.3 kN a point). Uncertain; left for review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

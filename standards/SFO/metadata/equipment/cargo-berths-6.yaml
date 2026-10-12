@@ -5,30 +5,37 @@ identity:
   maker: org.hadley
   revision: draft
   slot: cargo
-  description: "Where 6 of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is."
+  description: "Six sleep pods: three stacks of two, side by side, each stack 1 m wide and 2 m deep. Each pod is a 1.94 x 0.82 m bunk entered from its end: you slide in head first from the hull's corridor, along the bed. All six open on the one 3 m face, each with a sliding privacy screen, and a narrow fixed ladder by each stack, 70 mm proud, reaches its upper pod. The locker is at the far end of each pod, over the feet, clear of the entry. A reading light and a fan a pod. There is no aisle inside; you stand, sit or dress in the corridor. The walls and screens are for privacy, not pressure. In a cargo slot, as a cabin is."
 size_class: 2
 fits: mount.cargo-s2
 physical:
   mass: 780
-  volume: 12
+  volume: 12.42
   length: 3
-  width: 2
+  width: 2.07
   height: 2
 needs:
   power: 300
 built_of:
   parts: cargo-berths-6
   list:
-    - { code: BRT6-01, name: "Bunks and lockers", description: "A bunk, a locker and a reading light a head.", mass: 351, length: 2.3, width: 1.53, height: 1.53, item: stock.al6061-pl-5, quantity: 403.6, module: module.machining-centre }
-    - { code: BRT6-02, name: "Partition and door", description: "The wall round them.", mass: 312, length: 2.21, width: 1.47, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 358.8, module: module.welding-bay }
+    - { code: BRT6-01, name: "Bunks and lockers", description: "Six bunk trays, 1.94 x 0.82 m each, three stacks of two, end on to the open face; a mattress 0.1 m thick; a locker at the far (foot) end of each; three ladders.", mass: 351, length: 2.3, width: 1.53, height: 1.53, item: stock.al6061-pl-5, quantity: 403.6, module: module.machining-centre }
+    - { code: BRT6-02, name: "Partition and screens", description: "The back, the two ends, the walls between the stacks, the shelves between the pods and the tops; on the open face, a sliding privacy screen a pod. No pressure door: the open face is the hull's corridor wall.", mass: 312, length: 2.21, width: 1.47, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 358.8, module: module.welding-bay }
     - { code: BRT6-03, name: "Linings, bedding, lights", mass: 117, length: 1.59, width: 1.06, height: 1.06, item: stock.mli-fl, quantity: 117, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: berths
   persons: 6
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-berths-6/v1"
+  manifest_sha256: "84f1249025689efa73e65bfc0c166a52a2e12d50709b57cc25f427feaf31495a"
+  version: 1
+  triangles: 9480
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
+  - { of: [identity.description, physical.width, physical.volume, built_of.list], tier: derived, review: true, note: "From the modeller's proposal: a 3 x 2 x 2 m body cannot open three side-entry stacks (each 2 x 1 m) onto one corridor, so the pods turn end on. Three stacks 1 m wide (about 0.94 m clear inside, over the 0.82 m bed) and 2 m deep give 1.94 m beds; 0.85 m clear over the lower bed and 0.78 m over the upper, as in Crew berths 2. Each end opening is about 0.94 x 0.8 m, but the pillow and the ladder's rungs take part of it: the modeller measured a clear lie-in path of only 0.54 x 0.60 m above the pillow, beside the ladder (candidate v01). You enter lying down: workable in free fall, cramped under gravity and too tight for a suited or bulky person. Fitted 3 x 2.07 x 2 m with the 70 mm ladders, inside the class 2 mount (4.74 x 2.37 x 2.37). The hull gives one corridor at least 0.8 m wide from the ladder face and 2 m high along the 3 m face. Mass 780 kg and 300 W unchanged (three of Crew berths 2). Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

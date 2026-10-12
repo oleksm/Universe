@@ -5,30 +5,37 @@ identity:
   maker: org.hadley
   revision: draft
   slot: cargo
-  description: "Where 4 of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is."
+  description: "Four sleep pods: two stacks of two, back to back, each stack as in Crew berths 2. Each pod is a 1.94 x 0.82 m bunk with a locker over the feet, a reading light and a fan. The two stacks open on opposite long faces, onto two hull corridors, one each side; there is no aisle inside. A narrow fixed ladder at the foot end of each face, 70 mm proud, reaches its upper pod. Between the stacks, behind the back walls, a shared concealed service spine carries power, light and air to all four pods. The walls and sliding screens are for privacy, not pressure. In a cargo slot, as a cabin is."
 size_class: 1
 fits: mount.cargo-s1
 physical:
   mass: 520
-  volume: 8
+  volume: 8.56
   length: 2
-  width: 2
+  width: 2.14
   height: 2
 needs:
   power: 200
 built_of:
   parts: cargo-berths-4
   list:
-    - { code: BRT4-01, name: "Bunks and lockers", description: "A bunk, a locker and a reading light a head.", mass: 234, length: 1.53, width: 1.53, height: 1.53, item: stock.al6061-pl-5, quantity: 269.1, module: module.machining-centre }
-    - { code: BRT4-02, name: "Partition and door", description: "The wall round them.", mass: 208, length: 1.47, width: 1.47, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 239.2, module: module.welding-bay }
+    - { code: BRT4-01, name: "Bunks and lockers", description: "Four bunk trays, 1.94 x 0.82 m each, two stacks of two; a mattress 0.1 m thick; above the feet of each, a locker 0.35 m long and 0.35 m high across the bunk; two foot-end ladders.", mass: 234, length: 1.53, width: 1.53, height: 1.53, item: stock.al6061-pl-5, quantity: 269.1, module: module.machining-centre }
+    - { code: BRT4-02, name: "Partition, screens and service spine", description: "The shared back wall and service spine, the ends, the shelves between the pods and the tops; on each open face, a sliding privacy screen a pod. No pressure door: each open face is a hull corridor wall.", mass: 208, length: 1.47, width: 1.47, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 239.2, module: module.welding-bay }
     - { code: BRT4-03, name: "Linings, bedding, lights", mass: 78, length: 1.06, width: 1.06, height: 1.06, item: stock.mli-fl, quantity: 78, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: berths
   persons: 4
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-berths-4/v1"
+  manifest_sha256: "eecb3882d6f649f382f14f61330ff7a4b6c5455a888670f911074349cc4c38ad"
+  version: 1
+  triangles: 6800
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
+  - { of: [identity.description, physical.width, physical.volume, built_of.list], tier: derived, review: true, note: "Two Crew berths 2 stacks (accepted model) set back to back, from the modeller's proposal: body 2 x 2 x 2 m, fitted 2 x 2.14 x 2 m with a 70 mm ladder on each open face, inside the mount's 2.2 m. Each face needs its own hull corridor at least 0.8 m wide measured from the ladder face and 2 m high, as for Crew berths 2. Mass 520 kg and 200 W are two Crew berths 2; the shared spine and back wall are left inside the partition's share, not thinned. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

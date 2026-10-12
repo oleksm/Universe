@@ -5,27 +5,24 @@ identity:
   maker: org.tallis
   revision: outdated
   slot: comm
+  description: "A long-range radio: the basic comm's 3 m offset dish and gimbal, on Ka band, with a larger amplifier box behind the dish that sends its heat to the hull's coolant loop. Reaches ten times as far."
 size_class: 1
 fits: mount.comm-s1
 physical:
   mass: 300
-  volume: 5.4
+  volume: 13.5
   length: 3.0
   width: 3.0
-  height: 0.6
+  height: 1.5
 needs:
-  power: 200000
+  power: 2500
 built_of:
   parts: comm-long-s1
   list:
-    - { code: CML1-01, name: "Transponder and amplifiers", mass: 59, length: 1.74, width: 1.74, height: 0.349, item: good.electronics, quantity: 59, module: module.assembly-shop,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
-    - { code: CML1-02, name: "Dish", mass: 72, length: 1.86, width: 1.86, height: 0.373, item: stock.al6061-sh-2-panel, quantity: 72.0, module: module.welding-bay,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
-    - { code: CML1-03, name: "Gimbal", description: "Points the dish.", mass: 143, length: 2.34, width: 2.34, height: 0.469, item: good.electric-motors, quantity: 143, module: module.assembly-shop,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
-    - { code: CML1-04, name: "Waveguide", mass: 26, length: 1.33, width: 1.33, height: 0.266, item: stock.cu-wire-2, quantity: 29.9, module: module.machining-centre,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Its share of a deep-space radio, as on the Mars Reconnaissance Orbiter, brought to this product's weight." }] }
+    - { code: CML1-01, name: "Transponder and amplifiers", description: "A Ka-band transponder and four 250 W travelling-wave tube amplifiers with their power supplies: 1 kW of radio out of 2.5 kW drawn. In a box behind the dish, on the gimbal's moving side, larger than the basic comm's, on a cold plate fed by rigid tubes. The coolant crosses the gimbal through a two-way rotary union in the azimuth bearing (it turns all round) and short flexible loops across the 13-degree tilt; the hull's coolant loop meets it at two capped ports, supply and return, on the base plate.", mass: 110, length: 0.8, width: 0.6, height: 0.4, item: good.electronics, quantity: 110, module: module.assembly-shop }
+    - { code: CML1-02, name: "Dish", description: "The basic comm's offset dual-reflector optics (a 3.0 m offset paraboloid, a 0.45 m ellipsoidal subreflector on a strut to one side, the feed below it; boresight 50.2 degrees from the mount normal at rest), but a carbon-fibre reflector held to about 0.5 mm of its true shape, as a Ka-band dish must be. Its stock is a mass proxy.", mass: 60, length: 3.0, width: 3.0, height: 1.2, item: stock.cfc-sh-0p5, quantity: 69.0, module: module.assembly-shop }
+    - { code: CML1-03, name: "Gimbal", description: "As the basic comm's: a cone 13 degrees about the mount's normal (azimuth all round; elevation 77 to 90 degrees); the ship turns for the rest. Carries the coolant's rotary union in its azimuth bearing. Stiffer and finer: a Ka-band beam from 3 m is 0.2 degrees wide, so it holds the dish to about 0.02 degrees. Its base plate bolts to the hull's mount, the rest is the equipment's.", mass: 100, length: 0.6, width: 0.6, height: 0.3, item: good.electric-motors, quantity: 100, module: module.assembly-shop }
+    - { code: CML1-04, name: "Waveguide", description: "Ka-band waveguide from the amplifiers through the gimbal's rotary joints to the feed.", mass: 30, length: 0.4, width: 0.25, height: 0.25, item: stock.cu-wire-2, quantity: 34.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -34,9 +31,16 @@ function:
   link: 75000000000
   lag: 0.05
   capacity: 0.833333333333
+visual:
+  format: "freefall-model/1"
+  path: "models/comm-long-s1/v1"
+  manifest_sha256: "21674a3116ea02051380992ade510ba4ea378d8493d1a1df99c9f3fc48d67f24"
+  version: 1
+  triangles: 7504
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], rule: rule.early-list }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design, in the shares of the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide. A larger one is the same, larger." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "A 3 m dish, as the basic comm's: its hundredfold power, not a bigger dish, gives its tenfold reach (range goes with the square root of power). The rest of its 300 kg is amplifiers." }
+  - { of: [physical.mass, function, size_class], rule: rule.early-list }
+  - { of: [making], tier: invented, review: true, note: "A first design, after the Mars Reconnaissance Orbiter's radio: a dish on a gimbal, amplifiers, a transponder, waveguide." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "The basic comm's 3 m offset dish in the same 3 x 3 x 1.5 m (the old 3 x 3 x 0.6 m was the dish alone), the same gimbal cone, so it fits the same mount (3.3 x 3.3 x 1.65 m); the amplifier box behind it is larger." }
+  - { of: [needs.power, built_of.list, identity.description], tier: derived, review: true, note: "Ten times the reach needs a hundred times the signal (range goes with the square root of transmitted power times antenna gain). The old way, a hundred times the basic comm's power, was 200 kW drawn by 300 kg: about 150 kW of heat, a radiator larger than the set. Instead the same dish on Ka band (32 GHz) rather than X band (8.4 GHz): its gain goes with frequency squared, 14.5 times, so 7 times the radio power does the rest: about 1 kW out (four 250 W tubes) for 2.5 kW drawn, and 1.5 kW of heat to the coolant loop. Ka band asks for a dish true to about 0.5 mm (carbon fibre, not aluminium panels) and pointing to about 0.02 degrees; rain fade does not matter in space. Shares of the 300 kg: amplifiers and transponder 110, dish 60, gimbal 100, waveguide 30. Frequencies, tube sizes and efficiencies from memory; review." }
   - { of: [life], rule: rule.life-ship-system }

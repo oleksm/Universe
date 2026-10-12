@@ -32,14 +32,15 @@ function:
   facing: thrust
 visual:
   format: "freefall-model/1"
-  path: "models/command-s2/v1"
-  manifest_sha256: "fb69dd4ab11b7eef1d33705cc0febc3cb598fe844dbaa3a5bb70360da81142a7"
-  version: 1
-  triangles: 4584
+  path: "models/command-s2/v2"
+  manifest_sha256: "10934661807a7736464a1cf4779d403e9939c011dfbb938cacf6e3016f35b70c"
+  version: 2
+  triangles: 4876
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two seats side by side, each as the pilot's station, with a shared console between (an airliner's pedestal). From memory; chosen." }
   - { of: [fits], tier: derived, review: true, note: "At its 88.3 m/s2 (9 g) rating the station and two crew of 100 kg each, 540 kg, pull 48 kN on its mount: about 12 kN on each of 4 points, against the 3.13 kN they take. Mounts were set at 3 g (rule.mounts-margin); seats need the g they are rated to. Left for review." }
-  - { of: [physical.mass], tier: invented, review: true, note: "Modelled (candidate-v01: 3 mm aluminium shells as stand-ins, solid deck and brackets, padding at 120 kg/m3, polymer at 1,200; not engineered) the seats, consoles and frame are about 280 kg. With the listed displays and computers (119 kg) and wiring (34 kg), that is about 433 kg against 340, and past the mount's 425 kg. Uncertain; left for review." }
+  - { of: [physical.mass], tier: invented, review: true, note: "Modelled (candidate-v02: 3 mm aluminium shells as stand-ins, solid deck and brackets, padding at 120 kg/m3, polymer at 1,200, a cold plate and the rear coolant pair; not engineered) the seats, consoles and frame are about 283 kg. With the listed displays and computers (119 kg) and wiring (34 kg), that is about 436 kg against 340, and past the mount's 425 kg; with its two crew, 56.1 kN on the mount at 9 g (14 kN a point). Uncertain; left for review." }
+  - { of: [needs.power], tier: derived, review: true, note: "Its 2.5 kW all ends as heat. The life support's cabin cooler is sized for 500 W a head, a person's 137 W and the rest for displays, lights and fans (the three-person plant's 1.5 kW), so the computers cannot dump it all into the cabin air: they sit on cold plates on a capped coolant pair at the rear, to the ship's coolant loop, and only about a fifth (the screens' faces and the fans), 500 W, about 300 W a seat, reaches the cabin air. It takes power, data and coolant." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

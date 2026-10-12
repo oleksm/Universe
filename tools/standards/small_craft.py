@@ -145,10 +145,10 @@ def records():
             [("[function, physical]", "invented", None, "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review.")])
     # kilowatt thermal, for a craft that makes tens of kilowatts of heat, not megawatts
     rec("thermal-radiator-s0", "equipment.thermal.radiator.s0", "Radiator S0", "thermal", 1, 40, 2.0, 1.0, 0.05, 0,
-        {"kind": "radiator", "rejects": 10000.0, "temperature": 330, "area": 2.0},
+        {"kind": "radiator", "rejects": 2400.0, "temperature": 330, "area": 2.0},
         [("Panel", "", 0.6, AL, MC), ("Tubes and manifold", "", 0.3, ST, WB), ("Fittings", "", 0.1, ST, MC)], "RAD0",
-        "A 2 m2 panel at 330 K: 10 kW to space from both faces in vacuum; in air it also convects, more. For a cabin's and a pack's heat.",
-        [("[function, physical]", "derived", None, "Two faces of 2 m2 at 330 K and emissivity 0.9 radiate 2 x 2 x 0.9 x 5.67e-8 x 330^4 = 2.4 kW to empty space; a 10 kW rating takes a pumped panel at 20 kg/m2 that sheds the rest by convection in air of 1 kg/m3 and more; in vacuum rate it at its radiated 2.4 kW. Chosen; review.")])
+        "A 2 m2 panel at 330 K: 2.4 kW to space from both faces. A fixed fin, no hinge: it stands out from the hull on its root edge, where its two headers, feet and capped coolant inlet and outlet are, so both dark faces see space. In air it also convects, a little more; heat to the air is the air cooler's job. For a cabin's and a pack's heat.",
+        [("[function, physical]", "derived", None, "Two faces of 2 m2 at 330 K and emissivity 0.9 radiate 2 x 2 x 0.9 x 5.67e-8 x 330^4 = 2.4 kW to empty space; rated at that (Blender, 2026-10-11: the old 10 kW counted convection in air, which a space radiator cannot claim). 20 kg/m2 is heavy for it; review.")])
     rec("thermal-coolant-loop-s0", "equipment.thermal.coolant-loop.s0", "Coolant loop S0", "thermal", 1, 30, 0.5, 0.4, 0.3, 300,
         {"kind": "coolant_loop", "carries": 20000.0, "flow": 0.5},
         [("Pump and reservoir", "", 0.5, PU, AS), ("Lines and cold plates", "", 0.4, ST, MC), ("Controls", "", 0.1, EL, AS)], "CLP0",
