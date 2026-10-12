@@ -12,3 +12,10 @@ worker, keeping the loading/error shell responsive.
 
 Validation and exact audit: docs/diagnostics/studio-yaml-integration.json.
 Existing model motion, fit and ship acceptance gates remain unchanged.
+
+Post-capture basis review: CH-S1/S4 nozzle-to-force alignment remains held.
+Their glTF thrust is -Z while the pre-existing Studio adapter assumes +Y and
+has no model-to-design basis conversion. YAML is not the source of this
+90-degree mismatch. Exact manifest hashes, transformed-axis witnesses and
+prior-main comparison are in docs/diagnostics/studio-engine-basis-review.json.
+No physics or saved pose changes were made.

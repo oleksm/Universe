@@ -25,7 +25,8 @@
     "Clipboard integration tests use injected ClipboardAccess; no desktop clipboard automation claimed",
     "Existing first-use globe/terrain stalls are outside this YAML integration",
     "MC-07 legacy air/water fitting warnings remain; not changed by this integration",
-    "Capture fixture initially omitted required empty access/structure maps; corrected before final eight CLI checks and all reviewed captures"
+    "Capture fixture initially omitted required empty access/structure maps; corrected before final eight CLI checks and all reviewed captures",
+    "CH-S1/S4 nozzle-to-thrust alignment remains held: existing raw-glTF/+Y Studio basis mismatch, detailed in studio-engine-basis-review.json. Vulkan pass is drawing/UI only."
   ],
   "tested_code": "c6b98ceaae8b2a3bb11cfbbb9932906c29b3e734",
   "registry_cutoff": "c288b4ab",

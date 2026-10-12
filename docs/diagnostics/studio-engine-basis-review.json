@@ -1,0 +1,83 @@
+{
+  "status": "existing consumer basis mismatch; orientation acceptance held",
+  "reviewed_code": "c6b98cea",
+  "prior_main": "0a6d1ea2",
+  "registry": "c288b4ab",
+  "assets": [
+    {
+      "key": "equipment.engine.ch.s1",
+      "manifest": "/home/alexm/git/freefall-assets/models/engine-ch-s1/v1/manifest.json",
+      "sha256": "a54ef394c012721fb945dd2a065da81f9c7459b1a8ed13c36cc233abc0bb008e",
+      "authored_basis": "Metres; Blender Z up, mount face Y=0, exhaust -Y. glTF Y up, exhaust +Z; nozzle marker local -Z points outward."
+    },
+    {
+      "key": "equipment.engine.ch.s4",
+      "manifest": "/home/alexm/git/freefall-assets/models/engine-ch-s4/v1/manifest.json",
+      "sha256": "6817e34cdc643c855a4e9322d8e1643caaf6daacd372a4fbf669e020be582d98",
+      "authored_basis": "Metres. Blender mount Y0, exhaust -Y, up +Z; glTF +Y up, exhaust +Z. Primary mount identity. Neutral box 1.3 x1.3 x3.1 m in glTF."
+    }
+  ],
+  "contract": {
+    "yaml_pose": "Quaternion q maps Studio module coordinates into design coordinates. Local module thrust is +Y; push_of uses q*Y. Physical envelope stays design-axis-aligned.",
+    "model": "Both packages declare neutral glTF exhaust +Z, hence neutral glTF thrust -Z.",
+    "current_visual": "placed_rotated applies q directly to centred raw glTF faces; assets::Model does not extract a model-to-design basis.",
+    "prior_main": "equipment_visual::placed computes r=from_rotation_arc(+Y,requested_thrust) and applies r directly to centred raw faces. Same absent basis conversion before YAML integration."
+  },
+  "witnesses": [
+    {
+      "fixture": "engines.ship.yaml large_engine",
+      "q_xyzw": [
+        -0.7071067811865476,
+        0,
+        0,
+        0.7071067811865476
+      ],
+      "physics_thrust": [
+        0,
+        0,
+        -1
+      ],
+      "drawn_model_thrust": [
+        0,
+        -1,
+        0
+      ],
+      "drawn_exhaust": [
+        0,
+        1,
+        0
+      ],
+      "angle_deg": 90
+    },
+    {
+      "fixture": "engines.ship.yaml small_engine",
+      "q_xyzw": [
+        0,
+        0,
+        0,
+        1
+      ],
+      "physics_thrust": [
+        0,
+        1,
+        0
+      ],
+      "drawn_model_thrust": [
+        0,
+        0,
+        -1
+      ],
+      "drawn_exhaust": [
+        0,
+        0,
+        1
+      ],
+      "angle_deg": 90
+    }
+  ],
+  "proof": "For any unit q, dot(q*Y,q*(-Z))=dot(Y,-Z)=0. Centre translation cannot change an axis. Retaining q across pending-to-ready promotion fixes roll loss but cannot supply the absent basis.",
+  "scope": "DESIGN/catalogue/walk/balance/test-drive share this Studio adapter. Native world socket alignment is a separate contract; no blanket claim about native fitted hulls. Newly installed models expose the older consumer assumption.",
+  "acceptance": "YAML editing/save/async regression gates pass. CH-S1/S4 preview nozzle-to-force alignment is explicitly NOT accepted. No physics, asset geometry, saved pose or envelope was retuned. Engine owns follow-up with registry machine-readable basis contract.",
+  "evidence": "out/review/yaml-main-integration/design.png and drive.png",
+  "follow_up": "Specify and validate a per-asset full proper model-to-design basis, including roll and origin. Compose q*basis for visuals and preserve q*Y physics and existing saves; do not guess one global rotation for all equipment."
+}
