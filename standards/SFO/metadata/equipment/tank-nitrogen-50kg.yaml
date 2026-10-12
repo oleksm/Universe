@@ -26,6 +26,12 @@ function:
   kind: tank
   capacity: 50.0
   holds: material.nitrogen
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-nitrogen-50kg/v1"
+  manifest_sha256: "45f10c32b65abd9913b408de894f824c8fc2910791fb3ddc084b98e2ccb2c2ff"
+  version: 1
+  triangles: 3328
 life: 473364000
 basis:
   - { of: [physical, function], tier: derived, review: true, note: "Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1; ideal gas would give 345), so 50 kg needs 0.161 m3 inside. A cylinder with hemispherical ends, 0.6 m across over a 25 mm wall, is 0.91 m long, and a valve and regulator take 0.1 m more; saddles hold it 30 mm off the floor (0.63 m high). The 25 mm is a space allowance: the laminate itself averages about 19 mm (hoop 30 MPa x 0.28 m / about 800 MPa is 10 mm, helical layers and liner the rest), which is what the vessel's mass below implies; a uniform 25 mm shell of CFC at 1,580 kg/m3 would be 63 kg. A type IV composite vessel stores about 100 kJ of pressure-volume per kilogram (from memory of commercial 300 to 700 bar bottles): 30 MPa x 0.161 m3 is 4.8 MJ, so 48 kg of vessel, plus the valve and 5 kg of saddles and bands (the 50 kg bottle's drawn at 4.9 kg in Blender). Recomputed 2026-10-11 from 0.6 kg a kilogram of gas, which did not fit its box." }
