@@ -23,7 +23,8 @@ pub struct Models {
 
 impl Models {
     pub fn new() -> Self {
-        Self {
+        let started = std::time::Instant::now();
+        let models = Self {
             rocky: Mesh::new(WireModel::globe(12, 7, 4)),
             giant: Mesh::new(WireModel::globe(8, 13, 3)), // many parallels read as cloud bands
             moon: Mesh::new(WireModel::globe(8, 5, 4)),
@@ -35,7 +36,9 @@ impl Models {
             hull_bells: content().hulls.iter().map(|(_, h)| Mesh::new(bells(h))).collect(),
             hull_glass: content().hulls.iter().map(|(_, h)| Mesh::new(canopy(h.shape()))).collect(),
             gate: Mesh::new(gate_ring()),
-        }
+        };
+        log::info!("startup procedural models: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
+        models
     }
 }
 
@@ -177,17 +180,8 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
 /// An imported hull's model (its glTF file), loaded once and kept; its
 /// `*Ramp*` meshes part 1 (drawn swung down: see `scene::hull`).
 pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
-    use std::collections::HashMap;
-    use std::sync::{Mutex, OnceLock};
-    static LOADED: OnceLock<Mutex<HashMap<String, Option<universe_engine::PbrModel>>>> = OnceLock::new();
-    let mut loaded = LOADED.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
-    loaded
-        .entry(path.to_string())
-        .or_insert_with(|| {
-            let r = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf_parts(&b, &["Ramp"]));
-            r.map_err(|e| log::warn!("model {path}: {e}")).ok()
-        })
-        .clone()
+    let model = crate::visual_assets::request_native(std::path::Path::new(path), &["Ramp"])?;
+    Some(model.model.with_lease(model.clone()))
 }
 
 impl Models {
