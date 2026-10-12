@@ -27,6 +27,12 @@ making:
 function:
   kind: galley
   persons: 6
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-galley-s1/v1"
+  manifest_sha256: "5ca1683385fa40036adc4053a07267af9ae02f7df92765e4608b3a7f6f4ec559"
+  version: 1
+  triangles: 6492
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "An airliner's galley unit: about 250 kg fitted, 3 kW of ovens and a chiller (from memory of a galley insert's weights). Feeds six in turns; two for a larger crew. Chosen." }
