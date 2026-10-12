@@ -502,7 +502,7 @@
 - { record: equipment.utility.pumps.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "3ff204b62385ca29" }
 - { record: equipment.utility.reaction-wheels.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "f776b4d8052ff51f" }
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "8c71ab68a02f8a0e" }
-- { record: equipment.utility.suits.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4f8a45262a6c363d" }
+- { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4e73424afb3f7a65" }
 - { record: equipment.utility.window.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b94ba33b7d46352f" }
 - { record: equipment.utility.window.s2, at: "2026-10-12T00:19:28Z", status: draft, summary: "changed: visual", sha: "3218d61a505e2c69" }
