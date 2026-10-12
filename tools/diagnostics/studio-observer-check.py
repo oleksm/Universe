@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 """Exercise shared live diagnostics in an isolated Studio process (no user save writes)."""
 import argparse, json, os, pathlib, subprocess, time, urllib.request
-p=argparse.ArgumentParser();p.add_argument('binary');p.add_argument('design');p.add_argument('output');p.add_argument('--port',type=int,default=17879);p.add_argument('--mode',choices=['design','drive','balance','walk'],default='design');a=p.parse_args()
+p=argparse.ArgumentParser();p.add_argument('binary');p.add_argument('design');p.add_argument('output');p.add_argument('--port',type=int,default=17879);p.add_argument('--mode',choices=['design','drive','balance','walk'],default='design');p.add_argument('--warmup',type=float,default=4);p.add_argument('--samples',type=int,default=1);p.add_argument('--debug',type=int,default=2);a=p.parse_args()
 out=pathlib.Path(a.output).resolve();out.mkdir(parents=True,exist_ok=True)
-env=dict(os.environ,UNIVERSE_OBSERVING='1',UNIVERSE_OBSERVE_PORT=str(a.port),XDG_DATA_HOME=str(out/'data'),UNIVERSE_DEBUG='2',UNIVERSE_MAX_FPS='60')
+env=dict(os.environ,UNIVERSE_OBSERVING='1',UNIVERSE_OBSERVE_PORT=str(a.port),XDG_DATA_HOME=str(out/'data'),UNIVERSE_DEBUG=str(a.debug),UNIVERSE_MAX_FPS='60')
 for k in ['UNIVERSE_SCREENSHOT','UNIVERSE_SCREENSHOT_AT']:env.pop(k,None)
 if a.mode=='drive':env['UNIVERSE_DRIVE']='0'
 if a.mode=='balance':env['UNIVERSE_BALANCE']='trim'
@@ -22,7 +22,12 @@ with (out/'run.log').open('w') as log:
                 if time.monotonic()>until:raise
                 time.sleep(.2)
         assert status['mode']=='studio' and status['view']==a.mode,status
-        time.sleep(4)
+        time.sleep(a.warmup)
+        samples=[]
+        for n in range(a.samples):
+            if n:time.sleep(.5)
+            samples.append(json.loads(get('/perf')))
+        (out/'perf-samples.json').write_text(json.dumps(samples,indent=2)+'\n')
         for route in ['status','perf','profile','resources','graphics']:
             body=get('/'+route);(out/(route+('.txt' if route=='profile' else '.json'))).write_text(body)
         shot=json.loads(get('/screenshot'))

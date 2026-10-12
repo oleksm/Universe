@@ -2740,7 +2740,7 @@ fn draw_design_models(frame: &mut Frame, cam: &Camera, placed: &[crate::equipmen
     let _scope = universe_prof::scope("draw/studio/design-models");
     frame.canvas_scene();
     let camera = crate::equipment_visual::Camera {eye:cam.eye,right:cam.right,up:cam.up,forward:cam.forward,focal:cam.focal,centre:cam.centre,near:0.1};
-    for t in crate::equipment_visual::project(placed, universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
+    crate::equipment_visual::draw(placed, universe_engine::glam::Mat4::IDENTITY, &camera, frame);
 }
 
 /// Whether a placed engine has a swivel at it that bears its thrust: it can turn to
@@ -4454,9 +4454,9 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
         }
     }
     let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near};
-    for t in crate::equipment_visual::project(&s.equipment, universe_engine::glam::Mat4::IDENTITY, &camera) {
+    crate::equipment_visual::project_each(&s.equipment, universe_engine::glam::Mat4::IDENTITY, &camera, |t| {
         items.push((t.depth, Item::Equipment(t)));
-    }
+    });
     // (Inside a room, its walls hide the frame round it: no members.)
     let head = eye;
     let inside_room = s.rooms.iter().any(|&(a, b, hw, hh)| {
@@ -6090,7 +6090,7 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     let right = forward.cross(Vec3::Y).normalize();
     let camera = crate::equipment_visual::Camera {eye,right,up:right.cross(forward),forward,focal:wc.y*0.85/size.length().max(1e-3)*distance,centre:wp+wc*0.5,near:0.1};
     frame.canvas_scene();
-    for t in crate::equipment_visual::project(&[visual], universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
+    crate::equipment_visual::draw(&[visual], universe_engine::glam::Mat4::IDENTITY, &camera, frame);
     // Its size, mass, volume, what it draws.
     let mut y = p.y + 122.0;
     let dims = format!("L {:.2} X W {:.2} X H {:.2} M", f.size.z, f.size.x, f.size.y);

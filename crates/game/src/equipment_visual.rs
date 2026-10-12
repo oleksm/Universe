@@ -34,8 +34,13 @@ pub struct Placed {
 impl Placed {
     /// Locally authored structure has no external cache owner or pending asset.
     pub fn structure(faces: Vec<Face>) -> Self {
-        Self { faces: Arc::new(faces), transform: glam::Mat4::IDENTITY,
-            installed: false, lease: None, pending: None }
+        Self {
+            faces: Arc::new(faces),
+            transform: glam::Mat4::IDENTITY,
+            installed: false,
+            lease: None,
+            pending: None,
+        }
     }
 }
 
@@ -122,11 +127,34 @@ impl Projected {
 
 /// Camera adaptation, shading, near clipping and ordering have one implementation.
 /// parent is identity in design/walk; flight supplies pose * translation(-COM).
+#[cfg(test)]
 pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Projected> {
+    let mut output = Vec::new();
+    project_each(placed, parent, camera, |triangle| output.push(triangle));
+    output
+}
+
+/// Stream triangles into the consumer: dense installed meshes need no intermediate
+/// projected mesh allocation/copy on every frame. Walk may still collect its labels
+/// and geometry for ordering; design, catalogue and flight submit directly.
+pub fn draw(
+    placed: &[Placed],
+    parent: glam::Mat4,
+    camera: &Camera,
+    frame: &mut universe_engine::Frame,
+) {
+    project_each(placed, parent, camera, |triangle| triangle.draw(frame));
+}
+
+pub fn project_each(
+    placed: &[Placed],
+    parent: glam::Mat4,
+    camera: &Camera,
+    mut emit: impl FnMut(Projected),
+) {
     use universe_engine::Color;
     let _scope = universe_prof::scope("draw/studio/project-equipment");
     let light = (-camera.forward + camera.up * 0.7 - camera.right * 0.4).normalize();
-    let mut output = Vec::new();
     for item in placed {
         // A stand/test craft may have been built while the asset was pending.
         // Resolve again at draw time so it promotes without rebuilding physics.
@@ -147,37 +175,51 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
             if !face.double_sided && geometric.dot(camera.eye - positions[0]) <= 0. {
                 continue;
             }
-            let vertices: Vec<_> = (0..3)
-                .map(|i| {
-                    let delta = positions[i] - camera.eye;
-                    let p = Vec3::new(
-                        delta.dot(camera.right),
-                        delta.dot(camera.up),
-                        delta.dot(camera.forward),
-                    );
-                    let n = matrix
-                        .transform_vector3(face.normals[i])
-                        .normalize_or_zero();
-                    let shade = 0.3 + 0.7 * n.dot(light).max(0.);
-                    let c = glam::Vec4::from_array(face.colour.0)
-                        * glam::Vec4::new(shade, shade, shade, 1.);
-                    (p, c)
-                })
-                .collect();
-            let mut clipped = Vec::new();
-            for i in 0..3 {
-                let (a, b) = (vertices[i], vertices[(i + 1) % 3]);
-                if a.0.z >= camera.near {
-                    clipped.push(a);
-                }
-                if (a.0.z >= camera.near) != (b.0.z >= camera.near) {
-                    let t = (camera.near - a.0.z) / (b.0.z - a.0.z);
-                    clipped.push((a.0.lerp(b.0, t), a.1.lerp(b.1, t)));
+            let view = positions.map(|p| {
+                let delta = p - camera.eye;
+                Vec3::new(
+                    delta.dot(camera.right),
+                    delta.dot(camera.up),
+                    delta.dot(camera.forward),
+                )
+            });
+            if view.iter().all(|p| p.z < camera.near) {
+                continue;
+            }
+            let vertices = [0, 1, 2].map(|i| {
+                let p = view[i];
+                let n = matrix
+                    .transform_vector3(face.normals[i])
+                    .normalize_or_zero();
+                let shade = 0.3 + 0.7 * n.dot(light).max(0.);
+                let c = glam::Vec4::from_array(face.colour.0)
+                    * glam::Vec4::new(shade, shade, shade, 1.);
+                (p, c)
+            });
+            // A triangle clipped by one plane has at most four vertices. The
+            // overwhelmingly common all-visible case requires no clipping.
+            let mut clipped = [(Vec3::ZERO, glam::Vec4::ZERO); 4];
+            let mut count = 0;
+            if view.iter().all(|p| p.z >= camera.near) {
+                clipped[..3].copy_from_slice(&vertices);
+                count = 3;
+            } else {
+                for i in 0..3 {
+                    let (a, b) = (vertices[i], vertices[(i + 1) % 3]);
+                    if a.0.z >= camera.near {
+                        clipped[count] = a;
+                        count += 1;
+                    }
+                    if (a.0.z >= camera.near) != (b.0.z >= camera.near) {
+                        let t = (camera.near - a.0.z) / (b.0.z - a.0.z);
+                        clipped[count] = (a.0.lerp(b.0, t), a.1.lerp(b.1, t));
+                        count += 1;
+                    }
                 }
             }
-            for i in 1..clipped.len().saturating_sub(1) {
+            for i in 1..count.saturating_sub(1) {
                 let triangle = [clipped[0], clipped[i], clipped[i + 1]];
-                output.push(Projected {
+                emit(Projected {
                     depth: triangle.iter().map(|v| v.0.z).sum::<f32>() / 3.,
                     distances: triangle.map(|v| v.0.z.max(camera.near)),
                     near: camera.near,
@@ -191,12 +233,138 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
             }
         }
     }
-    output
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    fn reference_project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Projected> {
+        use universe_engine::Color;
+        let light = (-camera.forward + camera.up * 0.7 - camera.right * 0.4).normalize();
+        let mut output = Vec::new();
+        for item in placed {
+            // A stand/test craft may have been built while the asset was pending.
+            // Resolve again at draw time so it promotes without rebuilding physics.
+            let ready = item.pending.as_ref().and_then(|(key, at, r)| {
+                get(key).map(|v| {
+                    let matrix = glam::Mat4::from_rotation_translation(*r, *at - *r * v.centre);
+                    (v, matrix)
+                })
+            });
+            let (faces, transform) = ready
+                .as_ref()
+                .map_or((&item.faces, item.transform), |(v, m)| (&v.faces, *m));
+            let _lease = &item.lease;
+            let matrix = parent * transform;
+            for face in faces.iter() {
+                let positions = face.positions.map(|p| matrix.transform_point3(p));
+                let geometric = (positions[1] - positions[0]).cross(positions[2] - positions[0]);
+                if !face.double_sided && geometric.dot(camera.eye - positions[0]) <= 0. {
+                    continue;
+                }
+                let vertices: Vec<_> = (0..3)
+                    .map(|i| {
+                        let delta = positions[i] - camera.eye;
+                        let p = Vec3::new(
+                            delta.dot(camera.right),
+                            delta.dot(camera.up),
+                            delta.dot(camera.forward),
+                        );
+                        let n = matrix
+                            .transform_vector3(face.normals[i])
+                            .normalize_or_zero();
+                        let shade = 0.3 + 0.7 * n.dot(light).max(0.);
+                        let c = glam::Vec4::from_array(face.colour.0)
+                            * glam::Vec4::new(shade, shade, shade, 1.);
+                        (p, c)
+                    })
+                    .collect();
+                let mut clipped = Vec::new();
+                for i in 0..3 {
+                    let (a, b) = (vertices[i], vertices[(i + 1) % 3]);
+                    if a.0.z >= camera.near {
+                        clipped.push(a);
+                    }
+                    if (a.0.z >= camera.near) != (b.0.z >= camera.near) {
+                        let t = (camera.near - a.0.z) / (b.0.z - a.0.z);
+                        clipped.push((a.0.lerp(b.0, t), a.1.lerp(b.1, t)));
+                    }
+                }
+                for i in 1..clipped.len().saturating_sub(1) {
+                    let triangle = [clipped[0], clipped[i], clipped[i + 1]];
+                    output.push(Projected {
+                        depth: triangle.iter().map(|v| v.0.z).sum::<f32>() / 3.,
+                        distances: triangle.map(|v| v.0.z.max(camera.near)),
+                        near: camera.near,
+                        points: triangle.map(|(p, _)| {
+                            camera.centre + glam::Vec2::new(p.x, -p.y) * (camera.focal / p.z)
+                        }),
+                        colours: triangle.map(|(_, c)| Color(c.to_array())),
+                        blend: face.blend,
+                        alpha_cutoff: face.alpha_cutoff,
+                    });
+                }
+            }
+        }
+        output
+    }
+
+    // Independent pre-optimization path: all near-plane classifications, rotated
+    // parents/placements, sidedness and material modes must yield identical pixels.
+    #[test]
+    fn streamed_projection_matches_reference_at_near_plane() {
+        let camera = Camera {
+            eye: Vec3::ZERO,
+            right: Vec3::X,
+            up: Vec3::Y,
+            forward: Vec3::Z,
+            focal: 120.,
+            centre: glam::Vec2::splat(240.),
+            near: 0.1,
+        };
+        let mut faces = Vec::new();
+        for a in [-0.4, 0.1, 0.9] {
+            for b in [-0.4, 0.1, 0.9] {
+                for c in [-0.4, 0.1, 0.9] {
+                    for double_sided in [false, true] {
+                        for (blend, alpha_cutoff) in
+                            [(false, None), (true, None), (false, Some(0.5))]
+                        {
+                            faces.push(Face {
+                                positions: [
+                                    Vec3::new(-1., -1., a),
+                                    Vec3::new(0., 1., b),
+                                    Vec3::new(1., -1., c),
+                                ],
+                                normals: [Vec3::NEG_Z, Vec3::NEG_Y, Vec3::X],
+                                colour: universe_engine::Color([0.2, 0.5, 0.8, 0.4]),
+                                double_sided,
+                                blend,
+                                alpha_cutoff,
+                            });
+                        }
+                    }
+                }
+            }
+        }
+        let mut item = Placed::structure(faces);
+        for angle in [0., 0.3, 1.5] {
+            item.transform = glam::Mat4::from_rotation_y(angle);
+            let parent = glam::Mat4::from_rotation_x(angle * 0.5);
+            let expected = reference_project(std::slice::from_ref(&item), parent, &camera);
+            let actual = project(std::slice::from_ref(&item), parent, &camera);
+            assert_eq!(actual.len(), expected.len());
+            for (a, b) in actual.iter().zip(&expected) {
+                assert_eq!(a.points, b.points);
+                assert_eq!(a.distances, b.distances);
+                assert_eq!(a.depth, b.depth);
+                assert_eq!(a.colours.map(|c| c.0), b.colours.map(|c| c.0));
+                assert_eq!(a.blend, b.blend);
+                assert_eq!(a.alpha_cutoff, b.alpha_cutoff);
+            }
+        }
+    }
+
     #[test]
     fn pending_stand_promotes_and_world_uses_same_model() {
         use std::time::{Duration, Instant};
@@ -227,7 +395,12 @@ mod tests {
         assert!(Arc::ptr_eq(&ready, &world));
         let installed = placed_rotated(key, at, r, || panic!("ready model fell back"));
         assert!(Arc::ptr_eq(installed.lease.as_ref().unwrap(), &ready));
-        assert!(installed.transform.transform_vector3(Vec3::X).abs_diff_eq(r * Vec3::X, 1e-6));
+        assert!(
+            installed
+                .transform
+                .transform_vector3(Vec3::X)
+                .abs_diff_eq(r * Vec3::X, 1e-6)
+        );
         let cam = Camera {
             eye: Vec3::ZERO,
             right: Vec3::X,
@@ -316,7 +489,12 @@ mod tests {
             Vec3::new(1., -1., 2.),
             Vec3::new(0., 1., 2.),
         ];
-        let item = placed_rotated("no-such-equipment", Vec3::ZERO, glam::Quat::IDENTITY, || vec![triangle]);
+        let item = placed_rotated(
+            "no-such-equipment",
+            Vec3::ZERO,
+            glam::Quat::IDENTITY,
+            || vec![triangle],
+        );
         assert!(!item.installed);
         let camera = Camera {
             eye: Vec3::ZERO,
