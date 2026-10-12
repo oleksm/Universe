@@ -380,7 +380,7 @@
 - { record: equipment.drive.torch.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "22a7762606e2e6bc" }
 - { record: equipment.engine.ca.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "67af8cbce4c9b5ec" }
 - { record: equipment.engine.cg.s1, at: "2026-10-12T01:04:26Z", status: draft, summary: "changed: visual", sha: "8f09bad0fb16fbc1" }
-- { record: equipment.engine.cg.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "69cf10f08d584cb2" }
+- { record: equipment.engine.cg.s2, at: "2026-10-12T04:22:34Z", status: draft, summary: "changed: visual", sha: "939d83558d5ead65" }
 - { record: equipment.engine.ch.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1ecad538381fe42d" }
 - { record: equipment.engine.ch.s2, at: "2026-10-11T02:51:18Z", status: draft, summary: "changed: visual", sha: "c4d9a17800a85a95" }
 - { record: equipment.engine.ch.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b1c91e52b5c1918a" }
