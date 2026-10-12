@@ -32,10 +32,10 @@ function:
   facing: thrust
 visual:
   format: "freefall-model/1"
-  path: "models/command-s1/v1"
-  manifest_sha256: "2b8aabf6da870636ac02d26d91d5165b3fdd40d7faeb745d748e26cb397cf31c"
-  version: 1
-  triangles: 3116
+  path: "models/command-s1/v2"
+  manifest_sha256: "c597abcfd9971e2646936dc376fc3c9c9d2e67a7ceb3da65812321fe02402db4"
+  version: 2
+  triangles: 3408
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "One pilot: a seat rated to 9 g eyeballs-in (a fighter's seat and harness, 40 kg), a console of controls (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner's flight deck seat is about 35 kg. From memory; chosen." }

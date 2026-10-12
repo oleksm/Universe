@@ -369,7 +369,7 @@
 - { record: equipment.cargo.rack.s4, at: "2026-10-11T19:39:50Z", status: draft, summary: "changed: visual", sha: "1c727e57107ea5f7" }
 - { record: equipment.comm.basic.s1, at: "2026-10-11T02:42:50Z", status: draft, summary: "changed: visual", sha: "0f6f2cc60ab24c10" }
 - { record: equipment.comm.long.s1, at: "2026-10-12T18:26:09Z", status: draft, summary: "changed: visual", sha: "5cb6c82f3fc57bff" }
-- { record: equipment.command.s1, at: "2026-10-12T21:52:05Z", status: draft, summary: "changed: basis", sha: "6663acea146abb88" }
+- { record: equipment.command.s1, at: "2026-10-12T21:53:24Z", status: draft, summary: "changed: visual", sha: "9610f691213b915d" }
 - { record: equipment.command.s2, at: "2026-10-12T21:41:33Z", status: draft, summary: "changed: basis", sha: "5cd0bf2986f5ce64" }
 - { record: equipment.command.s3, at: "2026-10-12T21:48:59Z", status: draft, summary: "changed: visual", sha: "ce9dcf73f01c0b5b" }
 - { record: equipment.computer.fbw.fast, at: "2026-10-11T19:46:06Z", status: draft, summary: "changed: visual", sha: "32434debfc85f64d" }
