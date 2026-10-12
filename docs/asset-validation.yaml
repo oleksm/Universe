@@ -2324,3 +2324,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static opaque camera exterior; real optics/image quality,10W heater,loads/sealing,final hull orientation/occlusion,cable routing,video runtime and GPU checks open."
+  - key: equipment.tank.hydrolox.s1
+    version: 1
+    manifest_sha256: "724093e8f54740d7721a3dac5b937c606f11cb20c58255022bef61f467159aac"
+    installed: 8cd19e55
+    game: "the loader (world::assets) at fso 8cd19e55"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-hydrolox-s1/v1 (305980 bytes, bounds [-2.3, 0.0, -2.4668] to [2.3, 4.7782, 2.4668]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior; final hull/service clearance,GPU appearance/cost,pressure,bulkhead,cryogenic isolation/boiloff,loaded supports andinternal packing unqualified."
