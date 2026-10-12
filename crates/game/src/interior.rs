@@ -5118,13 +5118,10 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
     Craft {
         name: i.plan.hull.clone(),
         equipment: placed_equipment(i),
-        structure: vec![crate::equipment_visual::Placed {
-            faces: Arc::new(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
+        structure: vec![crate::equipment_visual::Placed::structure(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
                 let normal=(positions[1]-positions[0]).cross(positions[2]-positions[0]).normalize_or_zero();
-                crate::equipment_visual::Face {positions,normals:[normal;3],colour,double_sided:true}
-            }).collect()),
-            transform:glam::Mat4::IDENTITY,installed:false,
-        }],
+                crate::equipment_visual::Face {positions,normals:[normal;3],colour,double_sided:true,blend:false,alpha_cutoff:None}
+            }).collect())],
         visual_origin: mid32,
         rates: placed.iter().find(|p|p.2=="flight_computer").map(|p|DVec3::new(num(&p.3,"turn_rate"),num(&p.3,"turn_rate"),num(&p.3,"roll_rate"))),
         mass: total,

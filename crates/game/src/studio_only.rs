@@ -18,6 +18,11 @@ pub struct StudioOnly {
 impl StudioOnly {
     /// The studio with `design` open (none: a new design with no hull).
     pub fn new(design: Option<&str>) -> Self {
+        // Validation can load registry data; keep it inside the preparation worker.
+        if let Some(path) = design.filter(|p| p.ends_with(".ship.yaml") || p.ends_with(".ship.yml")) {
+            crate::interior::ship_code::check_path(std::path::Path::new(path))
+                .unwrap_or_else(|e| panic!("ship code: {e}"));
+        }
         crate::mounted::prepare();
         let started = std::time::Instant::now();
         let content = universe_sim::world::content::content();

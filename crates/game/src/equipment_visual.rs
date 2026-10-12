@@ -28,7 +28,15 @@ pub struct Placed {
     pub installed: bool,
     // Hold the full cache lease whenever faces are retained outside the cache.
     lease: Option<Arc<Visual>>,
-    pending: Option<(String, Vec3, Option<Vec3>)>,
+    pending: Option<(String, Vec3, glam::Quat)>,
+}
+
+impl Placed {
+    /// Locally authored structure has no external cache owner or pending asset.
+    pub fn structure(faces: Vec<Face>) -> Self {
+        Self { faces: Arc::new(faces), transform: glam::Mat4::IDENTITY,
+            installed: false, lease: None, pending: None }
+    }
 }
 
 pub fn rotation(thrust: Option<Vec3>) -> glam::Quat {
@@ -76,7 +84,7 @@ pub fn placed_rotated(
         transform: glam::Mat4::IDENTITY,
         installed: false,
         lease: None,
-        pending: Some((key.into(), at, thrust)),
+        pending: Some((key.into(), at, r)),
     }
 }
 
@@ -121,10 +129,9 @@ pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Pr
     for item in placed {
         // A stand/test craft may have been built while the asset was pending.
         // Resolve again at draw time so it promotes without rebuilding physics.
-        let ready = item.pending.as_ref().and_then(|(key, at, thrust)| {
+        let ready = item.pending.as_ref().and_then(|(key, at, r)| {
             get(key).map(|v| {
-                let r = rotation(*thrust);
-                let matrix = glam::Mat4::from_rotation_translation(r, *at - r * v.centre);
+                let matrix = glam::Mat4::from_rotation_translation(*r, *at - *r * v.centre);
                 (v, matrix)
             })
         });
@@ -197,10 +204,10 @@ mod tests {
         }
         let key = "equipment.engine.ch.s2";
         let at = Vec3::new(3., 2., 10.);
-        let thrust = Some(Vec3::Z);
+        let r = glam::Quat::from_euler(glam::EulerRot::XYZ, 0.21, 0.37, 0.55);
         // Represent a stand created before loading starts, regardless of other tests.
-        let mut pending = placed("not-installed", at, thrust, || vec![]);
-        pending.pending = Some((key.into(), at, thrust));
+        let mut pending = placed_rotated("not-installed", at, r, || vec![]);
+        pending.pending = Some((key.into(), at, r));
         let until = Instant::now() + Duration::from_secs(15);
         let ready = loop {
             if let Some(v) = get(key) {
@@ -217,8 +224,9 @@ mod tests {
             .get(key)
             .expect("world shares ready entry");
         assert!(Arc::ptr_eq(&ready, &world));
-        let installed = placed(key, at, thrust, || panic!("ready model fell back"));
+        let installed = placed_rotated(key, at, r, || panic!("ready model fell back"));
         assert!(Arc::ptr_eq(installed.lease.as_ref().unwrap(), &ready));
+        assert!(installed.transform.transform_vector3(Vec3::X).abs_diff_eq(r * Vec3::X, 1e-6));
         let cam = Camera {
             eye: Vec3::ZERO,
             right: Vec3::X,

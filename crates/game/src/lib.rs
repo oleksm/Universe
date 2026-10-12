@@ -1756,12 +1756,6 @@ pub fn studio(args: &[String], window: bool) -> bool {
     if window || flag.is_some() {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
-        if let Some(path) = design.filter(|p| p.ends_with(".ship.yaml") || p.ends_with(".ship.yml")) {
-            if let Err(e) = interior::ship_code::check_path(std::path::Path::new(path)) {
-                eprintln!("ship code: {e}");
-                std::process::exit(2);
-            }
-        }
         let design = design.map(str::to_owned);
         universe_engine::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
         return true;
