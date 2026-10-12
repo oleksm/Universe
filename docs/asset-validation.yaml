@@ -2116,3 +2116,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual GPU appearance/cost, final hull mounting and loads, fictional field behavior, cryogenic heat sink and internal packing remain unqualified."
+  - key: equipment.gear.strut.180kn
+    version: 1
+    manifest_sha256: "81629c5678403048a60ff84f74050d02c370d082ad02e26534a002deb31181be"
+    installed: e4974f36
+    game: "the loader (world::assets) at fso e4974f36"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-strut-180kn/v1 (150024 bytes, bounds [-0.2, -1.6, -0.2] to [0.2, 0.0, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static gear-down package only; source fold/compression demo not enabled at runtime. Final hull bay clearance, GPU appearance/cost, damping/load/drive/lock and ball-joint qualification pending."
