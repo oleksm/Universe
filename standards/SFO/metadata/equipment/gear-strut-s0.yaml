@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: gear
-  description: "A light oleo leg for a vehicle of ten to fifteen tonnes: 60 kN a leg, a 0.3 m stroke."
+  description: "A light oleo leg for a vehicle of up to about 7.7 t on four legs, or 11.6 t on six: 60 kN a leg, a 0.3 m stroke. Its size is the leg down and locked, 0.3 x 0.3 x 1.2 m from the mount face to the sole of the pad, the 180 kN leg's layout at three quarters."
 size_class: 1
 fits: mount.gear-s1
 physical:
@@ -33,6 +33,7 @@ function:
   extended: 1.2
 life: 473364000
 basis:
-  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "At 1.2 kg a kilonewton (an A320's gear, as the S1 was sized) a 60 kN leg is about 70 kg; 60 kg with titanium. Four hold 24 t at touchdown: a 13 t vehicle at 3 m/s with a 0.3 m stroke decelerates at 1.5 g, 20 t of force over four legs. Chosen." }
+  - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "At 1.2 kg a kilonewton (an A320's gear, as the S1 was sized) a 60 kN leg is about 70 kg; 60 kg with titanium. Chosen." }
+  - { of: [identity.description], tier: derived, note: "Recomputed (Blender, 2026-10-11): a leg must take (m/n)(g + v²/2s)/eta, gravity included: 13 t on four at 3 m/s on 0.3 m at 0.8 needs 100.8 kN a leg. 60 kN holds 7.74 t on four, 11.6 t on six. The old note left out gravity and efficiency. The leg is unchanged; the craft it suits is smaller." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
