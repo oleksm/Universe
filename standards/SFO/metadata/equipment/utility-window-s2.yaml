@@ -25,6 +25,12 @@ function:
   kind: "window"
   area: 2.0
   pressure: 101300
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-window-s2/v1"
+  manifest_sha256: "285e836e683ca68b42e68c3b397fd2ad32b110f5d84826e590bb8326000c550c"
+  version: 1
+  triangles: 9812
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Two square metres: a bridge window. Chosen. The pane stock is a stand-in." }
