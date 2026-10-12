@@ -29,6 +29,12 @@ function:
   kind: "reaction_wheels"
   torque: 2000
   momentum: 13000
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-reaction-wheels-s2/v1"
+  manifest_sha256: "8ab375f5da8b12fa4e16c999fca21646b8954831cb67cbe2011b1de6478cb88f"
+  version: 1
+  triangles: 6976
 life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, size_class, function.torque], tier: invented, review: true, note: "A 1.5 m cluster pushing 2 kN m. Chosen." }
