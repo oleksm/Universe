@@ -163,5 +163,14 @@
     "inspected": true,
     "result": "Native hull and two eligible mounted models present; zero asset errors, no publication crash.",
     "limitation": "HUD reports 4567ms worst frame and164 hitches during initialization; this validates loading/correctness, not a stutter-free game or a frame-time performance win."
+  },
+  "main_integration": {
+    "commit": "5cc0ce97",
+    "mode": "fast-forward, tested source unchanged",
+    "release_binaries": {
+      "freefall": "f216888c5491b23bdd6d25073aca7e968111f42946b038b288558d581f2fbadc",
+      "freefall-studio": "24bbfc7f5787a9b09b8dcc61005f6174d775d7650a89e99fe676ebe839db28c0"
+    },
+    "source_equivalence": "crates and Cargo files match ships-startup-loader ce297c52"
   }
 }
