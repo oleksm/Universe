@@ -2660,3 +2660,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static closed visual only; 14.77t drawn versus7.5t record, loaded strength, flow, drives, final hull placement, runtime doors/gate and GPU look/cost unqualified."
+  - key: equipment.command.s1
+    version: 1
+    manifest_sha256: "2b8aabf6da870636ac02d26d91d5165b3fdd40d7faeb745d748e26cb397cf31c"
+    installed: fb78e224
+    game: "the loader (world::assets) at fso fb78e224"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/command-s1/v1 (227184 bytes, bounds [-0.5, 0.0, -0.6] to [0.5, 1.5, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static station only; ~220kg estimate vs180kg record,9g mount/restraint qualification,final bridge fit,crew interactions,game lighting and GPU cost open."
