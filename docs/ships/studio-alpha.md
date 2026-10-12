@@ -26,3 +26,16 @@ near-plane clipping and the combination of placement with a flight parent.
 GPU acceptance must include opaque geometry submitted after glass, reverse
 object order, front/back and oblique viewport views, and independent UI/camera
 boundaries. Validation results will be recorded with the renderer handoff.
+
+Validation: renderer `a48f7870` plus consumer `c9bc0f51`/`e16c74e6`, combined
+at `75f2b4d4`, passes the registry build and all 165 workspace tests. Engine's
+33 Vulkan captures cover the prototype and final pane assets, both source and
+sorted ordering, and an explicit alpha/UI/depth test. Ships independently checked
+eight source/sorted image pairs (all pixel-identical) and inspected front and
+oblique pane images: the background remains visible and the frame occludes it.
+Results are recorded in `docs/diagnostics/studio-alpha-v1.json`.
+
+Evidence: `/home/alexm/git/universe/out/review/viewport-s2-gpu-fixed/review.md`
+and `../viewport-s2-gpu-final/review.md`. These are isolated actual-renderer and
+shared-projector tests, not full saved-ship UI/placement acceptance. Main and the
+running Studio were not changed by this handoff.
