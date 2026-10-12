@@ -473,7 +473,7 @@
 - { record: equipment.tank.methalox.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7240f034046d7d11" }
 - { record: equipment.tank.methalox.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "aea3e29927211f98" }
 - { record: equipment.tank.nitrogen.100kg, at: "2026-10-12T02:14:02Z", status: draft, summary: "changed: physical, built_of, basis", sha: "b1656ae29736ece1" }
-- { record: equipment.tank.nitrogen.50kg, at: "2026-10-12T02:14:02Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c6ff3d3277d94fe5" }
+- { record: equipment.tank.nitrogen.50kg, at: "2026-10-12T02:16:05Z", status: draft, summary: "changed: physical, basis", sha: "74a23dec01457e54" }
 - { record: equipment.tank.nitrogen.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7b1fb27fa7a6d522" }
 - { record: equipment.tank.oxygen.10kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "2f86ca2db0c5437b" }
 - { record: equipment.tank.oxygen.20kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "e0b5eabac5d4b7a3" }
