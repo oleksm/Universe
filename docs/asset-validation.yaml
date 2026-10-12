@@ -2068,3 +2068,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and service-line fit; actual game GPU appearance/cost and temporal stability; pressure, food-contact finish, cleanability, baffling, pump flow, freeze/slosh behavior and mount loads unqualified."
+  - key: equipment.thermal.air-cooler.s0
+    version: 1
+    manifest_sha256: "daf36c6fa4d5ba3c44a636eaed58c957ea975e699cd139ec0228d27724df69af"
+    installed: 1364f057
+    game: "the loader (world::assets) at fso 1364f057"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-air-cooler-s0/v1 (115640 bytes, bounds [-0.25, 0.0, -0.2] to [0.25, 0.3, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull, airflow corridors and coolant routing; actual game GPU appearance/cost and temporal fin/guard stability; runtime fan spin absent; low-density fan-power/cooling rating, aerodynamics, coolant pressure, loads and containment unqualified."
