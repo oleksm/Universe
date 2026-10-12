@@ -117,6 +117,7 @@ impl App {
         if self.view.positions.len() < sys.bodies.len() {
             return;
         }
+        let now = self.now();
         let mut wanted = std::collections::HashSet::new();
         let mut request_body = |f, i, b: &Body| {
             let key = (origin, f, i);
@@ -126,7 +127,7 @@ impl App {
         for (f, field) in sys.fields.iter().enumerate() {
             request_body(f, field.body, &sys.bodies[field.body]);
         }
-        for (f, i, _) in belt_in_sight(&sys, self.camera.position, self.view.positions[0], self.now()) {
+        for (f, i, _) in belt_in_sight(&sys, self.camera.position, self.view.positions[0], now) {
             request_body(f, i, &sys.field_bodies(f)[i]);
         }
         if let Some(f) = swarm_in_sight(&sys, self.camera.position, &self.view.positions) {
