@@ -28,6 +28,12 @@ function:
   kind: store
   capacity: 1000
   holds: market.food
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-food-store-s1/v1"
+  manifest_sha256: "e5b54b291678257979e93ede1c9603acbe0d563f29dc3ecac4f7379c16b22fa2"
+  version: 1
+  triangles: 3624
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A tonne of packed food in 3.6 m3 of racks, of which about 2.7 m3 is usable bin space: 370 kg/m3, inside the 300 to 600 kg/m3 of packaged provisions (from memory). One bin of eight chilled (an eighth of the space); the racks and bins 150 kg. Chosen." }
