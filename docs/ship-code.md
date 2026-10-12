@@ -74,3 +74,13 @@ behavior. Automated Vulkan captures cover CODE, Design, Walk, Balance and Test
 Drive. Clipboard-to-Apply uses the real editor with an injected test clipboard;
 manual desktop clicking was not part of this run. See
 [verification record](diagnostics/ship-code-v2.json).
+
+Installed engine orientation limitation (2026-10-12): the Studio module pose
+uses local +Y for simulated thrust. CH-S1 and CH-S4 packages declare glTF +Z
+exhaust (therefore -Z thrust), but the shared preview adapter currently applies
+the saved quaternion directly to their raw mesh. Their nozzle direction is
+90 degrees from the simulated force in every Studio view. This predates the
+YAML integration; model loading/drawing is verified, nozzle-to-force alignment
+is held. See [the basis review](diagnostics/studio-engine-basis-review.json).
+A registry-backed model-to-design basis is required; changing the saved pose
+cannot repair this relative mismatch. Physics and saved designs are unchanged.
