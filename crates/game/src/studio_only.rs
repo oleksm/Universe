@@ -13,6 +13,8 @@ pub struct StudioOnly {
     /// Dev (UNIVERSE_ISSUE=n): the issue to go to, once the checks have it.
     issue: Option<usize>,
     debug: u8,
+    #[cfg(feature = "dev")]
+    diagnostics: Diagnostics,
 }
 
 impl StudioOnly {
@@ -59,16 +61,24 @@ impl StudioOnly {
         }
         if std::env::var_os("UNIVERSE_SHIP_CODE").is_some(){interior.open_code();}
         let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
-        StudioOnly { interior, spec, deckplans: Vec::new(), issue, debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
+        StudioOnly { interior, spec, deckplans: Vec::new(), issue, #[cfg(feature = "dev")] diagnostics: Diagnostics::default(), debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
     }
 }
 
 impl Game for StudioOnly {
     fn update(&mut self, ctx: &mut Context) {
+        let _scope = universe_prof::scope("update/studio");
         crate::visual_assets::maintain();
-        if ctx.input.pressed(universe_engine::KeyCode::F3) {
+        #[cfg(feature = "dev")]
+        self.observe(ctx);
+        let shift = ctx.input.down(universe_engine::KeyCode::ShiftLeft) || ctx.input.down(universe_engine::KeyCode::ShiftRight);
+        if ctx.input.pressed(universe_engine::KeyCode::F3) && !shift {
             self.debug = (self.debug+1)%3;
-            universe_prof::enable(self.debug == 2);
+            #[cfg(feature = "dev")]
+            let observing = self.diagnostics.on;
+            #[cfg(not(feature = "dev"))]
+            let observing = false;
+            universe_prof::enable(self.debug == 2 || observing);
         }
         let stay = crate::interior::input_with(self.spec, &mut self.deckplans, ctx, &mut self.interior);
         // (A test drive steering with the mouse takes it, as the game's flight does.)
@@ -84,6 +94,8 @@ impl Game for StudioOnly {
             self.issue = None;
         }
         if !stay {
+            #[cfg(feature = "dev")]
+            crate::devkit::observe::stop(self, ctx);
             ctx.exit();
         }
     }
@@ -97,5 +109,69 @@ impl Game for StudioOnly {
         frame.hud_rect(Vec2::ZERO, size, Color([0.012, 0.018, 0.026, 1.0]));
         crate::interior::draw(frame, "STUDIO", &self.interior);
         crate::hud::studio_assets(frame, ctx, self.debug);
+        #[cfg(feature = "dev")]
+        if self.diagnostics.on {
+            frame.text(Vec2::new(12., 55.), "OBSERVING  SHIFT+F3 TO STOP", Color::hex(0xe5c778));
+        }
+    }
+}
+
+#[cfg(feature = "dev")]
+struct Diagnostics {
+    on: bool,
+    tried: bool,
+    port: Option<std::sync::mpsc::Receiver<crate::devkit::observe::Request>>,
+    recording: Option<crate::devkit::observe::Recording>,
+}
+#[cfg(feature = "dev")]
+impl Default for Diagnostics {
+    fn default() -> Self {
+        Self { on: std::env::var("UNIVERSE_OBSERVING").as_deref() == Ok("1"), tried: false, port: None, recording: None }
+    }
+}
+#[cfg(feature = "dev")]
+impl StudioOnly {
+    fn observe(&mut self, ctx: &mut Context) {
+        use crate::devkit::observe;
+        let shift = ctx.input.down(universe_engine::KeyCode::ShiftLeft) || ctx.input.down(universe_engine::KeyCode::ShiftRight);
+        if ctx.input.pressed(universe_engine::KeyCode::F3) && shift {
+            if self.diagnostics.on {
+                observe::stop(self, ctx);
+                self.diagnostics.on = false;
+                universe_prof::enable(self.debug == 2);
+            } else {
+                self.diagnostics.on = true;
+                observe::start(self, ctx);
+            }
+        }
+        if !self.diagnostics.tried {
+            if self.diagnostics.on {
+                self.diagnostics.tried = true;
+                self.diagnostics.port = observe::listen();
+                universe_prof::enable(true);
+            }
+        }
+        ctx.watch_hitches = self.diagnostics.on;
+        observe::answer(self, ctx);
+        observe::frame(self, ctx);
+        // Flush recordings before the app exits through Escape/window navigation.
+    }
+}
+#[cfg(feature = "dev")]
+impl crate::devkit::observe::Host for StudioOnly {
+    fn status(&self, ctx: &Context) -> serde_json::Value {
+        serde_json::json!({"mode":"studio", "view":self.interior.diagnostic_mode(), "fps":ctx.fps,
+            "debug":self.debug, "cpu":crate::devkit::observe::cpu()})
+    }
+    fn resources(&self, ctx: &Context) -> serde_json::Value {
+        serde_json::json!({"renderer":ctx.perf.resources,"assets":crate::visual_assets::snapshot()})
+    }
+    fn recording(&mut self) -> &mut Option<crate::devkit::observe::Recording> { &mut self.diagnostics.recording }
+    fn requests(&self) -> Option<&std::sync::mpsc::Receiver<crate::devkit::observe::Request>> { self.diagnostics.port.as_ref() }
+    fn observing(&self) -> bool { self.diagnostics.on }
+    fn profiling(&self) -> bool { self.debug == 2 || self.diagnostics.on }
+    fn notify(&mut self, text: String) { log::info!("{text}"); }
+    fn graphics(&mut self, _query: &str) -> serde_json::Value {
+        serde_json::json!({"supported":false,"reason":"Studio uses the shared canvas; world PBR graphics switches do not apply"})
     }
 }
