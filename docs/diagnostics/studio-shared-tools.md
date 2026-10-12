@@ -22,6 +22,8 @@ Recordings are stored under `$XDG_DATA_HOME/freefall/sessions` (normally
 `trace.json` for Perfetto, start/end status and resource counters. Recording
 screenshots adds overhead; measure steady FPS with `/perf` before recording.
 The network observer remains dev-feature-only, as in the existing game.
+When running game and Studio observers at the same time, give them distinct
+`UNIVERSE_OBSERVE_PORT` values; the default localhost port is shared.
 
 `RENDER` in the HUD is render-thread CPU time. GPU pass timings are shown on a
 separate line when timestamp queries are supported. Scope times across threads
@@ -30,7 +32,7 @@ are cumulative CPU time, not frame wall time. Nested scopes must not be summed.
 New named scopes cover Studio input, refit, craft construction, budget calculation,
 shared equipment projection, design submission, catalogue, walk, balance and drive.
 They distinguish CPU projection/submission costs from GPU pass and screen-wait
-measurements; the owner's reported 40 FPS is not yet attributed to one cause.
+measurements; the measured CPU bottleneck is described below.
 
 ## Reproduce
 
@@ -98,9 +100,9 @@ rendered at 60 FPS at frame 600; one world preparation job remained in progress.
 See `out/review/loading-audit/world-{pending,ready}.{png,log}`. This verifies
 fallback progress, not completion of every terrain asset or a hitch-free launch.
 
-## Final integrated checks
+## Earlier integrated checks
 
-Final code `8446e24c` includes engine `90cf894d`'s full world-map staging,
+Earlier code `8446e24c` includes engine `90cf894d`'s full world-map staging,
 nonblocking sky/rocks and shared engine trace scopes, plus the cached-time borrow
 fix. Workspace: **234 passed, 1 ignored**; no-dev check, registry build and both
 release binaries pass. The observer check passes again in Studio (1562 trace
@@ -118,3 +120,25 @@ The ~40 FPS Studio CPU cost is diagnosed, not optimized by this instrumentation.
 A further frame-900 planet capture (`baked-day.png`, TRD1 at three radii, yaw -0.9)
 shows surface texture and atmospheric rim after maps encode in 2.6 s. This is a
 ready-view smoke check; separate cloud-on/off visual acceptance was not performed.
+
+## Final handoff: 29cbd483
+
+Engine's worker-prepared city-light radii remove the remaining draw-time terrain
+lookup. A repeated gate then exposed a 260 ms terrain lookup in HTTP `/status`
+itself. The shared observer now reports explicitly labelled reference-radius
+altitude without sampling terrain, and traces `update/diagnostics`. Physical
+altitude, collision and flight behavior are unchanged.
+
+The exact final delayed TRD1 gate passes: pending 59.94 FPS and ready 59.93 FPS,
+zero hitches in both samples, worst frame 16.71 ms. Full world maps encode in
+2.6 s on the worker; the recording contains renderer scopes. Evidence is in
+`out/review/loading-audit/final-baked-observer`. This supersedes the earlier
+city-light and observer hitch results, while preserving them for comparison.
+The dense debug HUD overlaps scenario labels at the test viewport; it is not a
+clean presentation capture.
+
+Final workspace: 234 passed, one ignored; no-dev check and both release builds
+pass. Registry unchanged since the passed build. Exact binary paths and SHA256
+hashes are in `studio-observer-validation.json`. Earlier Studio four-mode and
+native tests remain applicable; the final changes concern world preparation
+and diagnostic altitude. Engine owns main merge and installation.
