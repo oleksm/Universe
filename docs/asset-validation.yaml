@@ -1956,3 +1956,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull/service access, thermal/electrical integration, GPU look/cost and temporal edge stability pending. Complete 500 kg mass, internal packing, containment, 250 MJ/2 MW/1500-cycle performance remain unqualified."
+  - key: equipment.cargo.food-store.s1
+    version: 1
+    manifest_sha256: "e5b54b291678257979e93ede1c9603acbe0d563f29dc3ecac4f7379c16b22fa2"
+    installed: 1bede1e2
+    game: "the loader (world::assets) at fso 1bede1e2"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-food-store-s1/v1 (248456 bytes, bounds [-0.75, 0.0, -0.6] to [0.75, 2.0, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and rear service fit; GPU look/cost and temporal edge stability; 150 kg nominal versus 211.55 kg provisional mass, 1000 kg carrying capacity and refrigeration performance unqualified."
