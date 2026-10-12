@@ -2740,3 +2740,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior only; hidden packing, pressure/performance/duty/thermal/load qualification, actual hull/exhaust clearance, runtime pulse VFX and GPU appearance/cost remain open."
+  - key: equipment.engine.ch.s1
+    version: 1
+    manifest_sha256: "a54ef394c012721fb945dd2a065da81f9c7459b1a8ed13c36cc233abc0bb008e"
+    installed: dc51c681
+    game: "the loader (world::assets) at fso dc51c681"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-ch-s1/v1 (1009752 bytes, bounds [-0.3209, -0.3209, -0.0] to [0.3358, 0.3358, 1.2931]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Production mounted motion and commands; GPU appearance and cost; final hull placement and clearance; pressure, thermal, fatigue and internal packing qualification. Asset-side CPU motion, enclosure and connection checks passed."
