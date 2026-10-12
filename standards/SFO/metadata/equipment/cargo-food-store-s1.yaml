@@ -32,4 +32,5 @@ life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A tonne of packed food in 3.6 m3 of racks, of which about 2.7 m3 is usable bin space: 370 kg/m3, inside the 300 to 600 kg/m3 of packaged provisions (from memory). One bin of eight chilled (an eighth of the space); the racks and bins 150 kg. Chosen." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [physical.mass], tier: derived, review: true, note: "Flag: the Blender candidate (cargo-food-store-s1 v01, 2.72 m3 usable) comes to about 212 kg before wiring and insulation: thin-wall rack and bins 160 kg, chilled liner 7 kg, chiller 45 kg, against 150. Either the mass rises to about 220 to 230 kg or the rack is lightened; not changed." }
   - { of: [life], rule: rule.life-ship-system }
