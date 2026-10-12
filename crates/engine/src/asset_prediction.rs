@@ -41,12 +41,14 @@ impl View {
         let horizon = self.horizon_seconds.clamp(0., 30.);
         let turn = (self.angular_speed.abs() * horizon).min(std::f64::consts::PI);
         if distance <= reach {
+            let facing_view = facing >= (1.2 + turn).min(std::f64::consts::PI).cos();
+            // Keep only a short rear neighbourhood warm. Re-requesting the
+            // entire rear visibility radius every frame would prevent eviction.
+            if !facing_view && distance > reach * 0.25 {
+                return None;
+            }
             return Some(Demand {
-                class: if facing >= (1.2 + turn).min(std::f64::consts::PI).cos() {
-                    1
-                } else {
-                    2
-                },
+                class: if facing_view { 1 } else { 2 },
                 time_to_need: Duration::ZERO,
                 ..Default::default()
             });
@@ -70,7 +72,7 @@ impl View {
         }
         // Modest surrounding coverage makes camera turns cheap without loading
         // every distant object. It is speculative and expires unless renewed.
-        (distance <= reach * 1.5).then_some(Demand {
+        (distance <= reach * 1.5 && (facing >= 0. || turn > 0.2)).then_some(Demand {
             class: 3,
             time_to_need: Duration::from_secs_f64(horizon),
             ..Default::default()
@@ -106,12 +108,13 @@ mod tests {
     fn stationary_nearby_turn_and_large_silhouette() {
         let mut v = view();
         assert_eq!(
-            v.demand(DVec3::Z * 5., DVec3::ZERO, 0., 10.).unwrap().class,
+            v.demand(DVec3::Z * 2., DVec3::ZERO, 0., 10.).unwrap().class,
             2
         );
+        assert!(v.demand(DVec3::Z * 8., DVec3::ZERO, 0., 10.).is_none());
         v.angular_speed = 1.;
         assert_eq!(
-            v.demand(DVec3::Z * 5., DVec3::ZERO, 0., 10.).unwrap().class,
+            v.demand(DVec3::Z * 2., DVec3::ZERO, 0., 10.).unwrap().class,
             1
         );
         assert!(
