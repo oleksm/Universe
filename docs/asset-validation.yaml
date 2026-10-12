@@ -2356,3 +2356,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Pressure,structural loads,sanitation,capillary drainage,final hull/service fit and temporal edge stability unqualified;static exterior only."
+  - key: equipment.thermal.radiator.s1
+    version: 1
+    manifest_sha256: "36d9b7f5571711b5f2901cf1caa8522d4cba3b5e7c6202577e37d8d4c789df68"
+    installed: c3ae89de
+    game: "the loader (world::assets) at fso c3ae89de"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-radiator-s1/v1 (225580 bytes, bounds [-0.0, -0.0, -1.565] to [6.2575, 0.08, 1.565]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed package;runtime deployment,Ti64 at1000K,thermal/seal/structural qualification,final hull and release envelope,GPU and temporal edges open."
