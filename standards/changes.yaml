@@ -412,7 +412,7 @@
 - { record: equipment.gear.strut.s0, at: "2026-10-12T03:57:56Z", status: draft, summary: "changed: visual", sha: "c9b7eaa9c421dad3" }
 - { record: equipment.gear.strut.s1, at: "2026-10-12T04:34:18Z", status: draft, summary: "changed: visual", sha: "d496ad9e34efb6af" }
 - { record: equipment.gear.strut.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "08d90cb3e21ee123" }
-- { record: equipment.gear.strut.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "066438e1bbdddbef" }
+- { record: equipment.gear.strut.s3, at: "2026-10-12T04:45:27Z", status: draft, summary: "changed: visual", sha: "51ac10015155c5a9" }
 - { record: equipment.handling.conveyor.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4e53c1a403104f38" }
 - { record: equipment.handling.conveyor.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "2681eea7a8d7463b" }
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c543e988b3b31052" }
