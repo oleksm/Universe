@@ -257,7 +257,12 @@ mod tests {
             near: 0.1,
         };
         // Low factor alpha is valid even for OPAQUE: preserve the mode separately.
-        for (blend, alpha_cutoff) in [(false, None), (false, Some(0.5)), (true, None)] {
+        for (blend, alpha_cutoff) in [
+            (false, None),
+            (false, Some(0.5)),
+            (false, Some(1.5)),
+            (true, None),
+        ] {
             let face = Face {
                 positions: [
                     Vec3::new(-1., -1., 0.02),
