@@ -33,7 +33,20 @@ properties:
   handling: { enum: [forklift, crane, pump, walk], description: "what moves it: a forklift's tines (pallets, skids), a crane's hook (skips, ladles, bundles), a pump through its valves (and a forklift), or animals led" }
   stack: { type: integer, minimum: 1, x-unit: "1", description: "how many high it may stand, full" }
   shows_contents: { type: boolean, description: "true: its load can be seen, and its model carries it under a node and material named contents, tinted by the stock; false: closed, no contents node (docs/asset-contract.md, Packages)" }
-  label: { type: integer, minimum: 1, maximum: 2, x-unit: "1", description: "how many label plates its model carries (nodes label, label_2): the game prints each packed unit's label on them (docs/formats/freefall-label-1.md)" }
+  labels:
+    type: array
+    minItems: 1
+    maxItems: 2
+    description: "Where its label plates are (docs/formats/freefall-label-1.md): part of the package, so every model of it puts them in the same place. In the package's model frame: origin at the centre of its base, X along its length, Z across, Y up (glTF metres)."
+    items:
+      type: object
+      additionalProperties: false
+      required: [node, face, centre, size]
+      properties:
+        node: { enum: [label, label_2], description: "the plate's node name" }
+        face: { enum: ["+X", "-X", "+Z", "-Z", "+Y"], description: "the face it sits on, facing out" }
+        centre: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, the plate's centre in the model frame, 1 mm proud of the face" }
+        size: { type: array, items: { type: number, exclusiveMinimum: 0 }, minItems: 2, maxItems: 2, x-unit: "m", description: "m, width and height of the plate (2:1)" }
   keeps: { type: string, description: "what it keeps its contents from, or at: cold, dry, sealed, ventilated" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision: { $ref: "../../common.schema.yaml#/definitions/record_revision" }

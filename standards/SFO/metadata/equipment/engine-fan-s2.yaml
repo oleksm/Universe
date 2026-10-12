@@ -40,7 +40,8 @@ function:
   min_density: 0.3
 life: 473364000
 basis:
-  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan: thrust T from a disc of area A = 2.01 m2 in air of density 1.2 kg/m3 leaves at v = sqrt(T / (rho A)) = 102 m/s and takes P = T^1.5 / sqrt(2 rho A) / eta of shaft power at eta = 0.75 for motor and duct: 2.4 MW. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
+  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan whose exit is as wide as its disc (A = 2.01 m2, air 1.2 kg/m3): the wake does not contract, so T = rho A v2 and the air leaves the duct at v = sqrt(T / (rho A)), the exhaust given. This is the duct exit velocity, not an open rotor's disc (sqrt(T / 2 rho A)) or far-wake (twice that) velocity. Shaft power was taken as the open-rotor ideal T^1.5 / sqrt(2 rho A) / 0.75; see the flag. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
+  - { of: [needs.power, function.efficiency], tier: derived, review: true, note: "Flag: the ducted ideal jet power is T v / 2 = 1.27 MW, but the power (2.40 MW) used the open-rotor ideal (1.80 MW) / 0.75, so against the duct it is 0.53 efficient, not 0.75. Either power falls to 1.70 MW at 0.75, or efficiency is 0.53; heat_to_hull follows. Not changed." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }

@@ -45,6 +45,12 @@ function:
   throughput: 10
   anchor_reach: 30
   anchor_speed: 0.5
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-mining-rig-s2/v1"
+  manifest_sha256: "74050edc19bb8eabb1c80844122f938076aa65c6447bf3e97f6c18d89158014b"
+  version: 1
+  triangles: 7830
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }

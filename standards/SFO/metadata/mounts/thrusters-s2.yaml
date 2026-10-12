@@ -19,7 +19,7 @@ attachment:
   each:
     tension: 98200.0
     compression: 98200.0
-    shear: 49100.0
+    shear: 84400.0
 feeds:
   power: 250000.0
   cooling: 1690000.0

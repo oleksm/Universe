@@ -18,7 +18,7 @@ built_of:
   parts: access-cargo-lift-s2
   list:
     - { code: CLF0-01, name: "Platform", description: "The 3 by 3 m deck.", mass: 1200, length: 2.58, width: 2.58, height: 0.737, item: stock.sta36-pl-20, quantity: 1380.0, module: module.welding-bay }
-    - { code: CLF0-02, name: "Masts and rams", description: "Four hydraulic columns.", mass: 1200, length: 2.58, width: 2.58, height: 0.737, item: stock.st4340-tb-120x3, quantity: 1380.0, module: module.machining-centre }
+    - { code: CLF0-02, name: "Scissor and rams", description: "Three scissor stages under the deck and the hydraulic rams that open them.", mass: 1200, length: 2.58, width: 2.58, height: 0.737, item: stock.st4340-tb-120x3, quantity: 1380.0, module: module.machining-centre }
     - { code: CLF0-03, name: "Drive and controls", description: "The pump, its motor and the controls.", mass: 600, length: 2.05, width: 2.05, height: 0.585, item: stock.st4340-bar-120, quantity: 690.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
@@ -26,8 +26,15 @@ function:
   kind: "cargo_lift"
   load: 20000
   travel: 8.0
+visual:
+  format: "freefall-model/1"
+  path: "models/access-cargo-lift-s2/v1"
+  manifest_sha256: "e1f233d652523501118aef9e94b16689b3aae86c99c18f0e2d3b994b9f4503e2"
+  version: 1
+  triangles: 7334
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 3 by 3 m platform lifting 20 t through 8 m: a heavy goods lift's figures. Chosen." }
+  - { of: [physical, function, size_class], tier: invented, review: true, note: "A 3 by 3 m platform lifting 20 t through 8 m: a heavy goods lift's figures. Chosen. Four columns cannot fold 8 m into a 1 m box (blender, 2026-10-11): it is a three-stage scissor, as heavy dock and loading lifts are, folded flat in its box and owning its whole mechanism; the hull gives only the opening it rises through." }
+  - { of: [physical.mass, built_of], tier: invented, review: true, note: "3 t is light for a scissor that carries 20 t up 8 m: lifts of that duty weigh several times that. And folded to 0.21 m a tier, its rams must push about 18 MN to start 20 t at 1 g (blender, 2026-10-11): a real heavy scissor starts from a steeper least angle (a taller box) or lifts less from the floor. Its model is kinematic only; capacity and drive left for review. Measured (candidate-v01): the drawn steel structure, 12 mm deck, 6 mm walls to arms and frame and its side slider guides, is 3,776 kg before the pump and valves, already over its 3 t; the ideal folded force is 18.234 MN before the mechanism's own weight and losses." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

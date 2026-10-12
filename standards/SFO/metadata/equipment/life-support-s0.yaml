@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: life_support
-  description: "Open-loop air for two for a day: an oxygen bottle, lithium hydroxide scrubber canisters, fans and a cabin cooler; nothing recovered. For a commuter or a lifeboat, not a voyage."
+  description: "Open-loop air for two for a day: an oxygen bottle, lithium hydroxide scrubber canisters, fans and a cabin cooler; nothing recovered. For a commuter or a lifeboat, not a voyage. A closed case on four feet with a service lid; two guarded cabin air faces at the front, capped coolant, power and data ports at the rear. It rejects nothing to the cabin: the cooler's hot side and all its own losses go to the ship's coolant loop through the rear ports."
 size_class: 1
 fits: mount.life-support-s1
 physical:
@@ -33,8 +33,16 @@ function:
   cooling: 400
   air_store: 2.2
   water_store: 5
+visual:
+  format: "freefall-model/1"
+  path: "models/life-support-s0/v1"
+  manifest_sha256: "ce6cd03944161bb31bfb6a5ebf7201f021e70a8b21f757e07f05d44f12e41dde"
+  version: 1
+  triangles: 2104
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two people breathe 1.8 kg of oxygen a day (need.air) and give off 2.2 kg of carbon dioxide, which 2.5 kg of lithium hydroxide takes up; the bottle, canisters, fans and a 400 W cooler (two people's 137 W each and their displays) come to 150 kg. A capsule's open-loop pack, from memory of Apollo's and the station's figures. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [needs.power], tier: derived, review: true, note: "Flag: 2 kW looks high. A heat pump lifting 400 W at a COP of 2 to 3 takes 130 to 200 W, the fans about 100 W and the controller about 20 W: about 300 to 400 W. All input ends as heat, so the coolant loop takes the input plus the 400 W lifted (2.4 kW as recorded, about 0.8 kW if lowered). Not changed." }
+  - { of: [built_of.list], tier: derived, review: true, note: "Flag: 2.2 kg of oxygen at 300 bar is about 6 L of gas; a composite bottle of that size with its regulator weighs about 5 to 8 kg, not 45 (from memory). The spare mass would cover the case, plumbing and more lithium hydroxide (2.5 kg is near the bare 2.4 kg that 2.2 kg of carbon dioxide needs; packed canisters run about half as much again). Not changed." }
   - { of: [life], rule: rule.life-ship-system }

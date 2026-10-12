@@ -5,20 +5,21 @@ identity:
   maker: org.hadley
   revision: draft
   slot: tank
-  description: "A composite bottle of 20 kg of oxygen at 300 bar: 22 person-days of breathing (need.air)."
+  description: "An aluminium-lined composite bottle of 20 kg of oxygen at 300 bar: 22 person-days of breathing (need.air)."
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 30
-  volume: 0.072
-  length: 0.8
-  width: 0.3
-  height: 0.3
+  mass: 34
+  volume: 0.126
+  length: 0.82
+  width: 0.38
+  height: 0.405
 built_of:
   parts: tank-oxygen-20kg
   list:
-    - { code: TKO20KG-01, name: "Composite pressure vessel", mass: 24, length: 0.743, width: 0.278, height: 0.278, item: stock.cfc-pl-3, quantity: 27.6, module: module.welding-bay }
+    - { code: TKO20KG-01, name: "Composite pressure vessel", mass: 26, length: 0.72, width: 0.38, height: 0.38, item: stock.cfc-pl-3, quantity: 29.9, module: module.welding-bay }
     - { code: TKO20KG-02, name: "Valve and regulator", mass: 6, length: 0.468, width: 0.175, height: 0.175, item: stock.st304-pl-3, quantity: 6.9, module: module.machining-centre }
+    - { code: TKO20KG-03, name: "Saddles and bands", description: "Two aluminium saddles and straps that seat the bottle on its mount.", mass: 2, length: 0.38, width: 0.38, height: 0.12, item: stock.al6061-pl-5, quantity: 2.30, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -26,8 +27,14 @@ function:
   capacity: 20.0
   holds: element.o
   pressure: 30000000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-oxygen-20kg/v1"
+  manifest_sha256: "414f0899606f8a2bd4fe46f3c1d8a56f198d0dc78c255afa822c0b2ef6e2fd04"
+  version: 1
+  triangles: 3328
 life: 473364000
 basis:
-  - { of: [physical, function], tier: invented, review: true, note: "A composite overwrapped bottle at about 1.5 kg a kilogram of oxygen at this size, with its regulator. From memory; review." }
+  - { of: [physical, function], tier: derived, review: true, note: "Oxygen at 300 bar and 293 K is about 385 kg/m3 (nearly ideal, compressibility about 1.0; from memory), so 20 kg needs 0.052 m3 inside. For oxygen the liner is aluminium, not polymer (a type III vessel: a polymer liner and its fittings can ignite in high-pressure oxygen), with a carbon overwrap. A cylinder with hemispherical ends, 0.38 m across over a 17 mm space allowance, is 0.72 m long; the laminate and liner average about 14 mm (hoop 30 MPa x r / about 800 MPa is 7 mm). The valve, cleaned for oxygen, takes about 0.1 m more and saddles lift it off the floor: 0.82 x 0.38 x 0.405 m. A type III vessel stores about 60 kJ of pressure-volume per kilogram (from memory of breathing-set bottles): 30 MPa x 0.052 m3 is 1.56 MJ, so 26 kg of vessel, 6 kg of valve and regulator and 2 kg of saddles. Recomputed 2026-10-11 from 1.5 kg a kilogram of oxygen in a box too small for the gas." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

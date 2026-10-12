@@ -71,7 +71,7 @@ def main():
         if fig.get("hold"): s += f"  hold: {r(fig['hold'] * M)!r}\n"
         pattern, pts = PATTERN.get(kind, ("corners", 4 if fig["mass"] < 2000 else 8))
         per = (fig["mass"] * DESIGN_G + fig["thrust"] + fig["landing"] + fig["recoil"] + fig.get("hold", 0)) * M / pts
-        s += f"attachment:\n  points: {pts}\n  pattern: {pattern}\n  each:\n    tension: {r(per)!r}\n    compression: {r(per)!r}\n    shear: {r(per / 2)!r}\n"
+        s += f"attachment:\n  points: {pts}\n  pattern: {pattern}\n  each:\n    tension: {r(per)!r}\n    compression: {r(per)!r}\n    shear: {r(max(per / 2, fig["thrust"] * M / pts) if kind == "thrusters" else per / 2)!r}\n"
         feeds = []
         if fig["power"]: feeds.append(f"  power: {r(fig['power'] * M)!r}\n")
         if fig["heat"]: feeds.append(f"  cooling: {r(fig['heat'] * M)!r}\n")
