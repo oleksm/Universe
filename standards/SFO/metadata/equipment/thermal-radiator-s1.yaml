@@ -5,13 +5,13 @@ identity:
   maker: org.aurel
   revision: draft
   slot: thermal
-  description: "A deployable radiator panel: stowed flat against the hull for flight in air and docking, swung out on its root hinge to stand clear so both faces see space, where it throws off 2 MW at 1,000 K."
+  description: "A deployable radiator panel: stowed flat against the hull for flight in air and docking, swung out on its root hinge to stand clear so both faces see space, where it throws off 1.93 MW at 1,000 K."
 size_class: 1
 fits: mount.thermal-s1
 physical:
   mass: 240
   volume: 1.57
-  length: 6.26
+  length: 6.258
   width: 3.13
   height: 0.08
 built_of:
@@ -24,13 +24,14 @@ making:
   module: module.assembly-shop
 function:
   kind: "radiator"
-  rejects: 2000000.0
+  rejects: 1930000.0
   temperature: 1000
-  area: 19.6
+  area: 18.94
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Throws off 2 MW at 1,000 K from 20 m2, both faces to deep space (Stefan-Boltzmann, emissivity 0.9): twice as long as wide. 12 kg/m2 chosen for a titanium panel with its headers." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [built_of.list, identity.description], tier: derived, review: true, note: "As the S2's (2026-10-10): the part boxes follow the panel (they were scaled stand-ins). Deployable, exported stowed (the record's 6.26 x 3.13 x 0.08 m, inside the mount's 6.89 x 3.44 x 1.1 m envelope); hinge brackets and tip latches are the mount's four corners; deployed it turns 90 degrees about the root edge (motion later). A 6 m cantilever at 12 kg/m2 is for free fall only: deploying or slewing under thrust loads its root, unchecked (review). The hull's view of the deployed panel is ignored (review)." }
   - { of: [physical.mass, built_of.list], tier: invented, review: true, note: "Open, as for the S2: titanium Ti-6Al-4V is not a 1,000 K material (its strength falls away above about 700 K, from memory); a panel this hot wants carbon-carbon fins on niobium-alloy or stainless headers, or a cooler panel 4 times larger. The stock stays a mass proxy until that is settled." }
+  - { of: [function.rejects, function.area, physical.length], tier: derived, review: true, note: "From the modeller's measured panel (candidate v01): the root and edge recesses leave a face of 6.11 x 3.10 m, 18.94 m2 (it was 19.6, the whole box). Both faces at 1,000 K, emissivity 0.9: 1.93 MW (it was 2 MW), ideal, before the coolant's fall in temperature along the tubes and the hull's view of the panel. Fitted 6.258 x 3.13 x 0.08 m. The mass screen: 0.65 mm skins 109 kg and 1 mm edge channels 11 kg leave 12 kg of the panel's 132 kg for the fins inside; tight, kept (review)." }
   - { of: [life], rule: rule.life-ship-system }
