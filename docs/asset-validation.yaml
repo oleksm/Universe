@@ -1924,3 +1924,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull placement, rear cable access, conductive thermal integration for 100 W, complete mass/internal packing, GPU look/cost and temporal edge stability remain unqualified."
+  - key: equipment.engine.fan.s3
+    version: 1
+    manifest_sha256: "f38b7dc46b0421fa5b88c06a6743d0f2b0471e8a2dd2ce65c80d2caeb2661cea"
+    installed: 0affa708
+    game: "the loader (world::assets) at fso 0affa708"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-fan-s3/v1 (265884 bytes, bounds [-1.35, 0.0, -1.35] to [1.35, 1.2, 1.35]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static rest package only; source spin demo is not runtime motion. Final hull airflow clearance, operating RPM, GPU look/cost, temporal aliasing, structural/thermal/aerodynamic qualification, nominal mass and registry power-density/efficiency flags remain open."
