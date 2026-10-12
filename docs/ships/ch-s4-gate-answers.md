@@ -98,8 +98,8 @@ bracket, which are intended seats. Still open: the final seats, containment and 
 
 ## Mass screen (blender candidate v01, 20261012T085544): recorded, flagged
 
-The candidate's measured screen is 1,483 kg before the pump and turbine internals, against 1,630 kg in total. The nozzle
-is counted as solid copper, 556 kg. That leaves 147 kg for the internals. The shaft power is about 55 MW (derived), and
+The candidate's measured screen is 1,485 kg before the pump and turbine internals, against 1,630 kg in total. The nozzle
+is counted as solid copper, 556 kg. That leaves 145 kg for the internals. The shaft power is about 55 MW (derived), and
 turbopumps need roughly 270 to 550 kg for it (invented range). A hollowed channel liner, about 430 kg, frees about 120 kg.
 The record keeps 1,630 kg, with a review note that it may be 0 to 400 kg short. It is not thinned to fit. The
 geometry and detail scope are unchanged.
