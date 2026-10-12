@@ -192,7 +192,7 @@
     },
     "registry_build": "passed; out/review/loading-audit/registry.log"
   },
-  "final": {
+  "previous_integrated": {
     "code": "8446e24c",
     "workspace": {
       "passed": 234,
@@ -276,5 +276,48 @@
       "maps_encoded_s": 2.6,
       "inspection": "Surface texture and atmospheric rim visible after staged upload; no separate clouds A/B acceptance claimed."
     }
+  },
+  "final": {
+    "code": "29cbd483",
+    "workspace": {
+      "passed": 234,
+      "ignored": 1,
+      "log": "out/review/loading-audit/workspace-observer-fixed.log"
+    },
+    "no_dev": "out/review/loading-audit/no-dev-observer-fixed.log",
+    "registry_build": "unchanged registry; previous build passed",
+    "release_build": "out/review/loading-audit/release-observer-fixed.log",
+    "binaries": {
+      "freefall": "/home/alexm/git/universe-ships-loading-audit/out/release-target/release/freefall",
+      "freefall-studio": "/home/alexm/git/universe-ships-loading-audit/out/release-target/release/freefall-studio"
+    },
+    "sha256": {
+      "freefall": "be6f23dddb8ce69aa45a039fd6217ba52f6b86fc7bd1670f30afd0cded622a1f",
+      "freefall-studio": "36da97d51e8f07e5f22d2bfa8eb75b75f67049249a275232ccbebcd57463332c"
+    },
+    "baked_gate": {
+      "passed": true,
+      "mode": "Observer",
+      "trace_events": 4160,
+      "session": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-baked-observer/data/freefall/sessions/1791848939",
+      "evidence": "out/review/loading-audit/final-baked-observer",
+      "pending": {
+        "fps": 59.94384765625,
+        "hitches": 0,
+        "worst_ms": 16.710397720336914
+      },
+      "ready": {
+        "fps": 59.9292106628418,
+        "hitches": 0,
+        "worst_ms": 16.704696655273438
+      }
+    },
+    "limitations": [
+      "Studio CPU projection/draw bottleneck diagnosed, not optimized.",
+      "Reference-radius observer altitude is not physical terrain clearance.",
+      "Warm OS cache; deliberate 10-second globe-worker delay; not a cold-machine benchmark.",
+      "Dense debug HUD overlaps scenario text at this viewport; ready planet visual independently checked in baked-day.png.",
+      "Earlier four-mode Studio checks retained; latest fixes affect world preparation and world status only."
+    ]
   }
 }
