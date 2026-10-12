@@ -53,7 +53,7 @@ pub fn sha256(bytes: &[u8]) -> String {
     Sha256::digest(bytes).iter().map(|b| format!("{b:02x}")).collect()
 }
 
-/// A package's manifest: its files and their hashes.
+/// A package's manifest: its files, their hashes and (where given) their sizes.
 #[derive(Deserialize)]
 struct Manifest {
     files: HashMap<String, FileEntry>,
@@ -62,23 +62,90 @@ struct Manifest {
 #[derive(Deserialize)]
 struct FileEntry {
     sha256: String,
+    #[serde(default)]
+    size: Option<u64>,
+}
+
+/// How much a package may hold (bytes), checked before anything is allocated or read: its manifest,
+/// any one file, and all the files its manifest lists together. The registry's own packages and the
+/// world bakes read with `NONE`; the assets store with `Limits::visual()`.
+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
+pub struct Limits {
+    pub manifest: u64,
+    pub file: u64,
+    pub package: u64,
+}
+
+impl Limits {
+    /// No limits.
+    pub const NONE: Limits = Limits { manifest: u64::MAX, file: u64::MAX, package: u64::MAX };
+    /// A visual package's: a 1 MiB manifest (the largest installed is 85 kB), a 64 MiB file (1.2 MB),
+    /// 256 MiB in all.
+    pub const VISUAL: Limits = Limits { manifest: 1 << 20, file: 64 << 20, package: 256 << 20 };
+
+    /// `VISUAL`, each overridden by `UNIVERSE_ASSET_MAX_MANIFEST`, `_FILE` or `_PACKAGE` (bytes) where
+    /// set to a whole number.
+    pub fn visual() -> Limits {
+        let var = |name: &str, default: u64| std::env::var(name).ok().and_then(|v| v.trim().parse().ok()).unwrap_or(default);
+        Limits {
+            manifest: var("UNIVERSE_ASSET_MAX_MANIFEST", Self::VISUAL.manifest),
+            file: var("UNIVERSE_ASSET_MAX_FILE", Self::VISUAL.file),
+            package: var("UNIVERSE_ASSET_MAX_PACKAGE", Self::VISUAL.package),
+        }
+    }
+}
+
+/// The file at `path`, refused before allocating if it is over `limit` bytes or not the `size` its
+/// manifest gives, and refused if it grows or shrinks while read.
+fn read_bounded(path: &Path, limit: u64, size: Option<u64>) -> Result<Vec<u8>, String> {
+    use std::io::Read;
+    let file = std::fs::File::open(path).map_err(|e| format!("{}: {e}", path.display()))?;
+    let len = file.metadata().map_err(|e| format!("{}: {e}", path.display()))?.len();
+    check_size(path, len, limit, size)?;
+    let mut bytes = Vec::with_capacity(len as usize);
+    file.take(len.saturating_add(1)).read_to_end(&mut bytes).map_err(|e| format!("{}: {e}", path.display()))?;
+    if bytes.len() as u64 != len {
+        return Err(format!("{}: changed while read ({len} bytes, then {})", path.display(), bytes.len()));
+    }
+    Ok(bytes)
+}
+
+fn check_size(path: &Path, len: u64, limit: u64, size: Option<u64>) -> Result<(), String> {
+    if len > limit {
+        return Err(format!("{}: {len} bytes, over the limit of {limit}", path.display()));
+    }
+    if let Some(size) = size
+        && len != size
+    {
+        return Err(format!("{}: {len} bytes, its manifest says {size}", path.display()));
+    }
+    Ok(())
 }
 
 /// A package folder, its manifest checked against `want` (the record's hash).
 pub(crate) struct Package {
     folder: PathBuf,
-    files: HashMap<String, String>,
+    files: HashMap<String, FileEntry>,
+    manifest: Vec<u8>,
+    limits: Limits,
 }
 
 impl Package {
     /// The package in `folder`, its manifest's hash `want` (None: not checked against a record:
     /// a preview, see `Bake::open`).
     pub(crate) fn open(folder: PathBuf, want: &str) -> Result<Self, String> {
-        Self::open_checked(folder, Some(want))
+        Self::open_checked(folder, Some(want), Limits::NONE)
     }
 
-    fn open_checked(folder: PathBuf, want: Option<&str>) -> Result<Self, String> {
-        let bytes = std::fs::read(folder.join("manifest.json")).map_err(|e| format!("{}: {e}", folder.display()))?;
+    /// As `open`, within `limits`: the manifest is refused before it is read if over its limit, and
+    /// the package if a file it lists is declared over the file limit or all together over the
+    /// package limit.
+    pub(crate) fn open_limited(folder: PathBuf, want: &str, limits: Limits) -> Result<Self, String> {
+        Self::open_checked(folder, Some(want), limits)
+    }
+
+    fn open_checked(folder: PathBuf, want: Option<&str>, limits: Limits) -> Result<Self, String> {
+        let bytes = read_bounded(&folder.join("manifest.json"), limits.manifest, None)?;
         let got = sha256(&bytes);
         if let Some(want) = want
             && got != want
@@ -86,14 +153,49 @@ impl Package {
             return Err(format!("{}: manifest is {got}, the record says {want}", folder.display()));
         }
         let m: Manifest = serde_json::from_slice(&bytes).map_err(|e| format!("{}: {e}", folder.display()))?;
-        Ok(Package { folder, files: m.files.into_iter().map(|(k, v)| (k, v.sha256)).collect() })
+        let mut total = 0u64;
+        for (name, f) in &m.files {
+            // (A file is named inside its package: no absolute paths, no `..`.)
+            if !Path::new(name).components().all(|c| matches!(c, std::path::Component::Normal(_))) {
+                return Err(format!("{}: {name:?} is not a file inside the package", folder.display()));
+            }
+            if let Some(size) = f.size {
+                check_size(&folder.join(name), size, limits.file, None)?;
+                total = total.saturating_add(size);
+            }
+        }
+        if total > limits.package {
+            return Err(format!("{}: its manifest lists {total} bytes, over the limit of {}", folder.display(), limits.package));
+        }
+        Ok(Package { folder, files: m.files, manifest: bytes, limits })
     }
 
-    /// File `name`'s bytes, checked against the manifest.
+    /// Every file the manifest lists as it lies, before any is read: there, each within the file
+    /// limit and the size its manifest gives, all together within the package limit.
+    pub(crate) fn preflight(&self) -> Result<(), String> {
+        let mut total = 0u64;
+        for (name, f) in &self.files {
+            let path = self.folder.join(name);
+            let len = std::fs::metadata(&path).map_err(|e| format!("{}: {e}", path.display()))?.len();
+            check_size(&path, len, self.limits.file, f.size)?;
+            total = total.saturating_add(len);
+        }
+        if total > self.limits.package {
+            return Err(format!("{}: its files are {total} bytes, over the limit of {}", self.folder.display(), self.limits.package));
+        }
+        Ok(())
+    }
+
+    /// The manifest's bytes, as checked against the record.
+    pub(crate) fn manifest(&self) -> &[u8] {
+        &self.manifest
+    }
+
+    /// File `name`'s bytes, checked against the manifest (and within the limits, before it is read).
     pub(crate) fn read(&self, name: &str) -> Result<Vec<u8>, String> {
-        let want = self.files.get(name).ok_or_else(|| format!("{}: {name} is not in its manifest", self.folder.display()))?;
-        let bytes = std::fs::read(self.folder.join(name)).map_err(|e| format!("{}/{name}: {e}", self.folder.display()))?;
-        if &sha256(&bytes) != want {
+        let entry = self.files.get(name).ok_or_else(|| format!("{}: {name} is not in its manifest", self.folder.display()))?;
+        let bytes = read_bounded(&self.folder.join(name), self.limits.file, entry.size)?;
+        if sha256(&bytes) != entry.sha256 {
             return Err(format!("{}/{name}: not the file its manifest names", self.folder.display()));
         }
         Ok(bytes)
@@ -124,7 +226,7 @@ impl Bake {
             && let Some(folder) = std::env::var_os(format!("UNIVERSE_BAKE_{id}"))
         {
             eprintln!("PREVIEW: {key}'s ground from {} (UNIVERSE_BAKE_{id}), not the bake its record names", PathBuf::from(&folder).display());
-            return Some(Package::open_checked(PathBuf::from(folder), None).map(|package| Bake { package, world: id }));
+            return Some(Package::open_checked(PathBuf::from(folder), None, Limits::NONE).map(|package| Bake { package, world: id }));
         }
         let b = body.bake.as_ref()?;
         let world = body.survey.as_ref().map_or_else(|| key.to_string(), |s| s.world_id.clone());
