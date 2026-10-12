@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.sta36-pl-8
+  code: STA36-PL-8
+  name: "A36 plate 8 mm"
+  traded_as: market.metals
+  form: plate
+package: package.plate-stack
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.structural-steel-a36
+size:
+  thickness: 0.008
+physical:
+  shock_limit: 784.532
+basis:
+  - { of: [size], tier: derived, review: true, note: "The gauge the ore bays' walls need between ribs (tools/standards/ore_bays.py); a common structural plate." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }
