@@ -2404,3 +2404,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior only; runtime CMG steering, final hull fit, GPU look/cost, rotor containment, composite/bearing/motor/load/thermal qualification remain open."
+  - key: equipment.comm.long.s1
+    version: 1
+    manifest_sha256: "21674a3116ea02051380992ade510ba4ea378d8493d1a1df99c9f3fc48d67f24"
+    installed: 31353c9b
+    game: "the loader (world::assets) at fso 31353c9b"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/comm-long-s1/v1 (293536 bytes, bounds [-1.5, 0.0, -1.5] to [1.5, 1.4907, 1.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior only; game pointing, flexible-hose runtime, final hull fit, GPU look/cost, RF precision/link, structural/thermal/pressure qualification pending."
