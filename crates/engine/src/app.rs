@@ -491,6 +491,11 @@ impl<G: Send + 'static> Preparing<G> {
         Self { factory: Some(Box::new(factory)), receiver: None, game: None, error: None,
             started: Instant::now(), first_draw: std::cell::Cell::new(true) }
     }
+    fn advance(&mut self, update: impl FnOnce(&mut G)) {
+        if self.game.is_none() { self.poll(); }
+        // A promoted game receives its first update before it can be drawn.
+        if let Some(game) = self.game.as_mut() { update(game); }
+    }
     fn poll(&mut self) {
         if let Some(factory) = self.factory.take() {
             let (tx, rx) = std::sync::mpsc::channel();
@@ -520,10 +525,12 @@ impl<G: Send + 'static> Preparing<G> {
 }
 impl<G: Game + Send + 'static> Game for Preparing<G> {
     fn update(&mut self, ctx: &mut Context) {
-        if let Some(game) = self.game.as_mut() { game.update(ctx); return; }
-        if ctx.input.pressed(crate::KeyCode::Escape) { ctx.exit(); return; }
-        // Present at least one shell frame, even when preparation is already cached.
-        if !self.first_draw.get() { self.poll(); }
+        if self.game.is_none() {
+            if ctx.input.pressed(crate::KeyCode::Escape) { ctx.exit(); return; }
+            // Present at least one shell frame before beginning preparation.
+            if self.first_draw.get() { return; }
+        }
+        self.advance(|game| game.update(ctx));
     }
     fn camera(&self) -> Camera { self.game.as_ref().map_or_else(Camera::default, Game::camera) }
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
@@ -552,6 +559,17 @@ impl<G: Game + Send + 'static> Game for Preparing<G> {
 #[cfg(test)]
 mod preparation_tests {
     use super::*;
+    #[test]
+    fn promotion_runs_update_before_first_game_draw() {
+        let mut shell = Preparing::new(|| false);
+        let until = Instant::now() + std::time::Duration::from_secs(2);
+        while shell.game.is_none() {
+            shell.advance(|updated| *updated = true);
+            assert!(Instant::now() < until);
+            std::thread::yield_now();
+        }
+        assert_eq!(shell.game, Some(true), "first drawable state must already have been updated");
+    }
     #[test]
     fn publishes_only_complete_factory_and_keeps_errors() {
         let (tx, rx) = std::sync::mpsc::channel();
