@@ -13,6 +13,7 @@ use universe_engine::{
 use universe_sim::world::assets;
 
 pub struct Visual {
+    pub source_sha256: String,
     pub model: PbrModel,
     pub faces: Arc<Vec<crate::equipment_visual::Face>>,
     pub centre: Vec3,
@@ -26,6 +27,11 @@ static CACHE: OnceLock<AssetCache<Visual>> = OnceLock::new();
 fn cache() -> &'static AssetCache<Visual> {
     CACHE.get_or_init(|| AssetCache::new(Config::default()))
 }
+pub fn cancel_speculation() {
+    if let Some(c) = CACHE.get() {
+        c.cancel_speculation();
+    }
+}
 pub fn maintain() {
     if let Some(c) = CACHE.get() {
         c.maintain();
@@ -37,19 +43,13 @@ pub fn snapshot() -> Snapshot {
         .map_or_else(Snapshot::default, AssetCache::snapshot)
 }
 
-// Provisional reservation, not a proven decoder peak bound. The engine refuses
-// publication if retained allocations exceed this; malformed/compressed inputs
-// still require decoder-side limits. No filesystem metadata on the request path.
+// Peak reservation complements package and decoder preflight ceilings. Retained
+// output above it is refused; allocator/driver overhead is not measured here.
+// No filesystem metadata is queried on the requesting thread.
 const RESERVATION: usize = 256 * 1024 * 1024;
 pub fn request(key: &str, class: u8) -> Option<Arc<Visual>> {
-    let record = assets::visual(key)?;
-    let identity = format!(
-        "{}:{}:{}:{}",
-        key, record.format, record.path, record.manifest_sha256
-    );
-    let key = key.to_owned();
-    cache().request(
-        identity,
+    request_demand(
+        key,
         Demand {
             class,
             time_to_need: if class > 1 {
@@ -57,8 +57,22 @@ pub fn request(key: &str, class: u8) -> Option<Arc<Visual>> {
             } else {
                 Duration::ZERO
             },
-            estimated_bytes: RESERVATION,
-            ..Demand::default()
+            ..Default::default()
+        },
+    )
+}
+pub fn request_demand(key: &str, mut demand: Demand) -> Option<Arc<Visual>> {
+    let record = assets::visual(key)?;
+    let identity = format!("package:{}:{}", record.format, record.manifest_sha256);
+    let key = key.to_owned();
+    cache().request(
+        identity,
+        {
+            demand.estimated_bytes = RESERVATION;
+            demand.estimated_cost = Duration::from_secs_f64(
+                (record.triangles.unwrap_or(100_000) as f64 / 2_000_000. + 0.01).clamp(0.01, 10.),
+            );
+            demand
         },
         move || match prepare(record) {
             Ok(value) => {
@@ -76,17 +90,67 @@ pub fn request(key: &str, class: u8) -> Option<Arc<Visual>> {
         },
     )
 }
+/// Native paths are immutable within a process. Decode options participate in
+/// identity; the actual bytes' hash is published for hull-overlay validation.
+pub fn request_native(path: &std::path::Path, parts: &[&str]) -> Option<Arc<Visual>> {
+    let identity = format!("native:{}:{parts:?}", path.display());
+    let path = path.to_owned();
+    let parts: Vec<String> = parts.iter().map(|p| (*p).into()).collect();
+    cache().request(
+        identity,
+        Demand {
+            estimated_bytes: RESERVATION,
+            ..Default::default()
+        },
+        move || {
+            use std::io::Read;
+            let file = std::fs::File::open(&path).map_err(|e| e.to_string())?;
+            let len = file.metadata().map_err(|e| e.to_string())?.len();
+            if len > 64 * 1024 * 1024 {
+                return Err("native model exceeds 64 MiB".into());
+            }
+            let mut bytes = Vec::with_capacity(len as usize);
+            file.take(len + 1)
+                .read_to_end(&mut bytes)
+                .map_err(|e| e.to_string())?;
+            if bytes.len() as u64 != len {
+                return Err("native model changed while read".into());
+            }
+            let parts: Vec<&str> = parts.iter().map(String::as_str).collect();
+            let value = prepare_bytes(&bytes, &parts, false, [0.; 3], [0.; 3], false)?;
+            let bytes = resident_bytes(&value);
+            Ok(Loaded { value, bytes })
+        },
+    )
+}
 fn prepare(record: &universe_sim::world::registry::Visual) -> Result<Visual, String> {
     let package = assets::model(record)?;
+    prepare_bytes(
+        &package.glb,
+        &[],
+        true,
+        package.lo,
+        package.hi,
+        package.has_motion,
+    )
+}
+fn prepare_bytes(
+    glb: &[u8],
+    parts: &[&str],
+    faces_needed: bool,
+    bound_lo: [f64; 3],
+    bound_hi: [f64; 3],
+    has_motion: bool,
+) -> Result<Visual, String> {
+    let model = PbrModel::load_gltf_parts(glb, parts)?;
+    let source_sha256 = universe_sim::world::worlds::sha256(glb);
     // A sidecar can describe future motion while the GLB remains a
     // valid neutral rigid model. Do not silently ignore skin/morph data.
-    let (nodes, neutral_error) = match assets::mounts::require_static(&package.glb)
-        .and_then(|()| assets::mounts::frames(&package.glb))
-    {
-        Ok(nodes) => (nodes, None),
-        Err(e) => (BTreeMap::new(), Some(e)),
-    };
-    let model = PbrModel::load_gltf(&package.glb)?;
+    let (nodes, neutral_error) =
+        match assets::mounts::require_static(glb).and_then(|()| assets::mounts::frames(glb)) {
+            Ok(nodes) => (nodes, None),
+            Err(e) => (BTreeMap::new(), Some(e)),
+        };
     let (mut lo, mut hi) = (Vec3::splat(f32::INFINITY), Vec3::splat(f32::NEG_INFINITY));
     for v in model.data.primitives.iter().flat_map(|p| &p.vertices) {
         let p = Vec3::from(v.pos);
@@ -100,7 +164,7 @@ fn prepare(record: &universe_sim::world::registry::Visual) -> Result<Visual, Str
         return Err("empty model".into());
     }
     let mut faces = Vec::new();
-    for primitive in &model.data.primitives {
+    for primitive in model.data.primitives.iter().filter(|_| faces_needed) {
         let material = model.data.materials.get(primitive.material);
         for idx in primitive.indices.chunks_exact(3) {
             let vs = [idx[0], idx[1], idx[2]].map(|i| primitive.vertices[i as usize]);
@@ -117,19 +181,28 @@ fn prepare(record: &universe_sim::world::registry::Visual) -> Result<Visual, Str
         }
     }
     Ok(Visual {
+        source_sha256,
         faces: Arc::new(faces),
         model,
         centre: (lo + hi) * 0.5,
         nodes,
-        has_motion: package.has_motion,
-        lo: glam::DVec3::from(package.lo),
-        hi: glam::DVec3::from(package.hi),
+        has_motion,
+        lo: if faces_needed {
+            glam::DVec3::from(bound_lo)
+        } else {
+            lo.as_dvec3()
+        },
+        hi: if faces_needed {
+            glam::DVec3::from(bound_hi)
+        } else {
+            hi.as_dvec3()
+        },
         neutral_error,
     })
 }
 fn resident_bytes(v: &Visual) -> usize {
     let d = &v.model.data;
-    std::mem::size_of::<Visual>()
+    std::mem::size_of::<Visual>() + v.source_sha256.capacity()
         + d.primitives.capacity() * std::mem::size_of::<universe_engine::pbr::Primitive>()
         + d.materials.capacity() * std::mem::size_of::<universe_engine::pbr::Material>()
         + d.images.capacity() * std::mem::size_of::<universe_engine::pbr::Image>()
@@ -144,6 +217,28 @@ fn resident_bytes(v: &Visual) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn native_request_shares_verified_bytes_without_projected_faces() {
+        let Some(store) = assets::store() else { return };
+        let record = assets::visual("equipment.engine.ch.s2").unwrap();
+        let path = store.join(&record.path).join("model.glb");
+        let until = std::time::Instant::now() + Duration::from_secs(5);
+        let loaded = loop {
+            if let Some(v) = request_native(&path, &[]) {
+                break v;
+            }
+            assert!(std::time::Instant::now() < until, "{:?}", snapshot());
+            std::thread::sleep(Duration::from_millis(2));
+        };
+        assert!(loaded.faces.is_empty());
+        assert_eq!(
+            loaded.source_sha256,
+            universe_sim::world::worlds::sha256(&std::fs::read(&path).unwrap())
+        );
+        assert!(Arc::ptr_eq(&loaded, &request_native(&path, &[]).unwrap()));
+        assert!(!loaded.nodes.is_empty());
+    }
+
     #[test]
     fn real_asset_cold_warm_and_scene_return_accounting() {
         use std::time::Instant;
