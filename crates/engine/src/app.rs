@@ -502,7 +502,10 @@ impl<G: Send + 'static> Preparing<G> {
             self.receiver = Some(rx);
             // Detached: closing the shell must not join a long-running preparation.
             if let Err(error) = std::thread::Builder::new().name("game-prepare".into()).spawn(move || {
-                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(factory))
+                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    let _scope = universe_prof::scope("startup/prepare prerequisites");
+                    factory()
+                }))
                     .map_err(|e| e.downcast_ref::<String>().cloned()
                         .or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string()))
                         .unwrap_or_else(|| "preparation panicked".into()));

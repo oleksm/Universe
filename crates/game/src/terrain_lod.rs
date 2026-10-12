@@ -74,6 +74,7 @@ type Made = (Key, Mesh, DVec3, bool);
 pub struct Lod {
     patches: HashMap<Key, Patch>,
     frame: u64,
+    sources: HashMap<(usize, usize), u64>,
     /// Made on the pool (two cores left to the rest), and those being made.
     pool: Option<rayon::ThreadPool>,
     pending: std::collections::HashSet<Key>,
@@ -267,8 +268,18 @@ impl Lod {
     /// Draw world `body` (of system `system`, its middle at `center`,
     /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
     #[allow(clippy::too_many_arguments)]
-    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) {
+    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) -> bool {
         let body = &sys.bodies[body_index];
+        let source = (system, body_index);
+        if self.sources.get(&source).is_some_and(|id| *id != map.id()) {
+            // A new canonical source (including a Studio edit) cannot reuse the
+            // previous world's patches or accept its in-flight completions.
+            self.patches.clear();
+            self.pending.clear();
+            self.done = Default::default();
+            self.last_eye = None;
+        }
+        self.sources.insert(source, map.id());
         self.frame += 1;
         let now = self.frame;
         // Take in what the pool has made (a few a frame: each is an upload).
@@ -319,12 +330,9 @@ impl Lod {
             }
             draw.push(key);
         }
-        // The whole faces made now if they're missing (nothing stands in for them).
-        for key in draw.iter().copied().filter(|k| k.level == 0 && !self.patches.contains_key(k)).collect::<Vec<_>>() {
-            let (m, origin, partial) = make(body, key);
-            self.pending.remove(&key);
-            self.patches.insert(key, Patch { mesh: m.into(), origin, used: now, partial });
-        }
+        // Root patches are optional assets too. The caller draws the base globe
+        // until all visible roots are ready; never sample them on the UI thread.
+        let missing_root = draw.iter().any(|k| k.level == 0 && !self.patches.contains_key(k));
         // Where the eye is heading: the patches it will want in a second, two, four.
         let clock = std::time::Instant::now();
         let velocity = self.last_eye.map_or(DVec3::ZERO, |(e, t)| (eye_local - e) / clock.duration_since(t).as_secs_f64().max(1e-3));
@@ -358,19 +366,20 @@ impl Lod {
         let ahead: Vec<Key> = ahead.into_iter().filter(|k| !todo.contains(k)).collect();
         todo.extend(ahead);
         let pool = self.pool.get_or_insert_with(|| {
-            let cores = std::thread::available_parallelism().map_or(4, |c| c.get());
-            rayon::ThreadPoolBuilder::new().num_threads(cores.saturating_sub(2).max(1)).thread_name(|i| format!("ground {i}")).build().expect("the ground's pool")
+            rayon::ThreadPoolBuilder::new().num_threads(2).thread_name(|i| format!("ground {i}")).build().expect("the ground's pool")
         });
         for k in todo.into_iter().take(IN_FLIGHT.saturating_sub(self.pending.len())) {
             self.pending.insert(k);
             let (sys, done) = (sys.clone(), self.done.clone());
             pool.spawn(move || {
+                let _scope = universe_prof::scope("assets/terrain/patch");
                 let (m, origin, partial) = make(&sys.bodies[body_index], k);
                 if let Ok(mut d) = done.lock() {
                     d.push((k, m.into(), origin, partial));
                 }
             });
         }
+        if missing_root { return false; }
         // What's not made yet: the nearest made above it stands in (each once).
         let mut shown: Vec<Key> = Vec::with_capacity(draw.len());
         for mut key in draw {
@@ -423,5 +432,6 @@ impl Lod {
                 self.patches.remove(&k);
             }
         }
+        true
     }
 }

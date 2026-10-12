@@ -110,7 +110,8 @@ fn height_pins(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     let size = frame.size();
     let mut placed: Vec<(Vec2, Vec2)> = Vec::new();
-    for (&(origin, i), (_, lines)) in &app.caches.lines {
+    for (&(origin, i), globe) in &app.caches.globes {
+        let Some((_, lines)) = &globe.lines else { continue };
         if origin != app.view.cache {
             continue;
         }
@@ -553,10 +554,11 @@ fn bodies(frame: &mut Frame, app: &App) {
         .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
         .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
     if let Some((i, maps)) = near
-        && let Some((_, _, map)) = app.caches.globes.get(&(app.view.cache, i))
+        && let Some(globe) = app.caches.globes.get(&(app.view.cache, i))
     {
         if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
-            frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
+            frame.keep_alive(globe.clone());
+            frame.world_maps(&maps, &globe.map, app.view.positions[i], sys.bodies[i].rail.radius);
             // Its clouds now: the year's phase and El Niño's index at world time (one epoch for
             // every player), the time wrapped as the clouds' shader wants it.
             if let Some((year_days, enso)) = &maps.clouds_year {
@@ -625,18 +627,20 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some((full, coarse, map)) = app.caches.globes.get(&(app.view.cache, i)) {
+        if let Some(ready) = app.caches.globes.get(&(app.view.cache, i)) {
+            frame.keep_alive(ready.clone());
+            let (full, coarse, map) = (&ready.full, &ready.coarse, &ready.map);
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: from afar its globe; near, its ground as patches
             // finer toward the eye (see `terrain_lod`).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
-            if near {
-                universe_prof::time("draw/scene/bodies/ground", || {
-                    app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
-                });
+            let patches_ready = near && universe_prof::time("draw/scene/bodies/ground", || {
+                app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c)
+            });
+            if patches_ready {
                 // A world drawn from its lines: the lines laid on the ground round the eye.
-                if let Some((_, lines)) = app.caches.lines.get(&(app.view.cache, i)) {
+                if let Some((_, lines)) = ready.lines.as_ref() {
                     universe_prof::time("draw/scene/bodies/lines near", || {
                         crate::lines_near::draw(&mut app.caches.lines_near.borrow_mut(), frame, (app.view.cache, i), &app.view.system, lines, center, b.rotation(t), cam);
                     });
@@ -653,7 +657,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                         })
                     });
                     // A world drawn from its vector lines: the lines over it, in their own colours.
-                    if let Some((lines, _)) = app.caches.lines.get(&(app.view.cache, i)) {
+                    if let Some((lines, _)) = ready.lines.as_ref() {
                         frame.no_shadow(|frame| frame.model_colored(lines, &Transform { position: center, rotation, scale: b.rail.radius }, 1.0, 0.0));
                     }
                 });
