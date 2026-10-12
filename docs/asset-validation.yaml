@@ -2164,3 +2164,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Fixed fin: final hull placement and both-face view factors/shadowing; actual thermal/flow/pressure/joining/mount strength; GPU appearance/cost and temporal edge stability unqualified."
+  - key: equipment.engine.cg.s2
+    version: 1
+    manifest_sha256: "b1c251fc553945bd2ae34fd533ccd59e5fbbb7c50b9ae1ac7f4e1026842ccccf"
+    installed: a3e7b220
+    game: "the loader (world::assets) at fso a3e7b220"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-cg-s2/v1 (242824 bytes, bounds [-0.35, 0.0, -0.35] to [0.35, 0.7, 0.35]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior only: draft pressure/flow/exhaust capability and internal packing; mount loads; final hull/exhaust clearance; independent per-nozzle firing and VFX; GPU lighting/cost and temporal edge stability."
