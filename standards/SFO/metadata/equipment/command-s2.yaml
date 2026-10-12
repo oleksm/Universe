@@ -30,6 +30,12 @@ function:
   persons: 2
   g_rating: 88.3
   facing: thrust
+visual:
+  format: "freefall-model/1"
+  path: "models/command-s2/v1"
+  manifest_sha256: "fb69dd4ab11b7eef1d33705cc0febc3cb598fe844dbaa3a5bb70360da81142a7"
+  version: 1
+  triangles: 4584
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two seats side by side, each as the pilot's station, with a shared console between (an airliner's pedestal). From memory; chosen." }
