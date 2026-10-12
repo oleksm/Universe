@@ -2500,3 +2500,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Provisional mass: drawn15.93t versus10t record; source-only roof/gate motion, loaded-flight/impact/mount/drive/ore-flow qualification and final hull clearance remain open"
+  - key: equipment.cargo.ore-bay.10t
+    version: 1
+    manifest_sha256: "1ebe013333bf9fa1f719a06d88b6b7d89d3cfe7e15566477d68959531deee6f6"
+    installed: 29faec25
+    game: "the loader (world::assets) at fso 29faec25"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-ore-bay-10t/v1 (404036 bytes, bounds [-1.65, 0.0, -0.86] to [1.65, 1.72, 0.86]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull fit, runtime doors/gate and ore interaction, GPU look/cost; drawn4.22t vs1t mass and loaded structure/flow/drive unqualified."
