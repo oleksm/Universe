@@ -2308,3 +2308,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior only; electrical ratings/fault duty/insulation, thermal/load qualification, internal packing, final hull/harness access and GPU checks remain open."
+  - key: equipment.sensors.camera.s1
+    version: 1
+    manifest_sha256: "7d687b8482e249c7954e617528a33c8f9f13dd2a92590b85dc971c008f5b9506"
+    installed: 3c643826
+    game: "the loader (world::assets) at fso 3c643826"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/sensors-camera-s1/v1 (69688 bytes, bounds [-0.05, 0.0, -0.05] to [0.05, 0.15, 0.05]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static opaque camera exterior; real optics/image quality,10W heater,loads/sealing,final hull orientation/occlusion,cable routing,video runtime and GPU checks open."
