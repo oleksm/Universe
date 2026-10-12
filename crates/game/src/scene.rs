@@ -110,7 +110,8 @@ fn height_pins(frame: &mut Frame, app: &App) {
     let cam = frame.camera.position;
     let size = frame.size();
     let mut placed: Vec<(Vec2, Vec2)> = Vec::new();
-    for (&(origin, i), (_, lines)) in &app.caches.lines {
+    for (&(origin, i), globe) in &app.caches.globes {
+        let Some((_, lines)) = &globe.lines else { continue };
         if origin != app.view.cache {
             continue;
         }
@@ -257,12 +258,18 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let sun = app.view.positions[star];
     let t = app.now();
     let air = sys.bodies.iter().enumerate().find_map(|(i, b)| {
-        let terran = b.terrain.as_ref().is_some_and(|tr| tr.kind == universe_sim::TerrainKind::Terran);
+        let terrain = b.terrain.as_ref().filter(|tr| tr.kind == universe_sim::TerrainKind::Terran)?;
         let center = app.view.positions[i];
-        let altitude = cam.distance(center) - b.surface_radius_at(center, cam, t);
-        (terran && altitude < ATMOSPHERE).then_some((i, center, altitude))
+        let radial_altitude = cam.distance(center) - b.rail.radius;
+        // Sky colour is a visual query, not collision: never synchronously load
+        // fine terrain (especially for every distant world in the system).
+        if radial_altitude > ATMOSPHERE + terrain.max_height() { return None; }
+        let local = b.rotation(t).inverse() * (cam-center).normalize_or(DVec3::Y);
+        let (height, _) = terrain.surface_view(local);
+        let altitude = radial_altitude - height;
+        (altitude < ATMOSPHERE).then_some((i, center, altitude))
     });
-    let Some((world, center, altitude)) = air else { return 1.0 };
+    let Some((_world, center, altitude)) = air else { return 1.0 };
     let up = (cam - center).normalize();
     let elevation = up.dot((sun - cam).normalize()) as f32; // sine of the sun's height
     let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
@@ -274,12 +281,8 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let dusk = [0.85, 0.38, 0.16];
     let c = |j: usize| (blue[j] * day * bright * (0.6 + 0.4 * tint[j]) + dusk[j] * twilight * 0.35 * tint[j]) * thick;
     frame.clear = Color([c(0), c(1), c(2), 1.0]);
-    // (A world grown with its own air: its sky is the air's light itself, drawn behind everything
-    // (`fs_air_sky`), on black.)
-    if app.caches.world_maps.get(&(app.view.cache, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
-    {
-        frame.clear = Color::BLACK;
-    }
+    // Keep this base sky until the renderer has uploaded the complete air/maps
+    // package. CPU readiness alone must not black out the pending sky.
     1.0 - 0.97 * day * thick
 }
 
@@ -553,10 +556,11 @@ fn bodies(frame: &mut Frame, app: &App) {
         .filter(|(i, _)| app.view.positions[*i].distance(cam) < sys.bodies[*i].rail.radius * 6.0)
         .min_by(|a, b| app.view.positions[a.0].distance(cam).total_cmp(&app.view.positions[b.0].distance(cam)));
     if let Some((i, maps)) = near
-        && let Some((_, _, map)) = app.caches.globes.get(&(app.view.cache, i))
+        && let Some(globe) = app.caches.globes.get(&(app.view.cache, i))
     {
         if std::env::var_os("UNIVERSE_NO_WORLD_MAPS").is_none() {
-            frame.world_maps(&maps, map, app.view.positions[i], sys.bodies[i].rail.radius);
+            frame.keep_alive(globe.clone());
+            frame.world_maps(&maps, &globe.map, app.view.positions[i], sys.bodies[i].rail.radius);
             // Its clouds now: the year's phase and El Niño's index at world time (one epoch for
             // every player), the time wrapped as the clouds' shader wants it.
             if let Some((year_days, enso)) = &maps.clouds_year {
@@ -625,18 +629,20 @@ fn bodies(frame: &mut Frame, app: &App) {
             continue;
         }
 
-        if let Some((full, coarse, map)) = app.caches.globes.get(&(app.view.cache, i)) {
+        if let Some(ready) = app.caches.globes.get(&(app.view.cache, i)) {
+            frame.keep_alive(ready.clone());
+            let (full, coarse, map) = (&ready.full, &ready.coarse, &ready.map);
             // Small on screen: the coarse mesh does (a sixteenth of the triangles).
             let globe = if px > GLOBE_FULL_PX { full } else { coarse };
             // Terrain world: from afar its globe; near, its ground as patches
             // finer toward the eye (see `terrain_lod`).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
-            if near {
-                universe_prof::time("draw/scene/bodies/ground", || {
-                    app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c);
-                });
+            let patches_ready = near && universe_prof::time("draw/scene/bodies/ground", || {
+                app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c)
+            });
+            if patches_ready {
                 // A world drawn from its lines: the lines laid on the ground round the eye.
-                if let Some((_, lines)) = app.caches.lines.get(&(app.view.cache, i)) {
+                if let Some((_, lines)) = ready.lines.as_ref() {
                     universe_prof::time("draw/scene/bodies/lines near", || {
                         crate::lines_near::draw(&mut app.caches.lines_near.borrow_mut(), frame, (app.view.cache, i), &app.view.system, lines, center, b.rotation(t), cam);
                     });
@@ -653,7 +659,7 @@ fn bodies(frame: &mut Frame, app: &App) {
                         })
                     });
                     // A world drawn from its vector lines: the lines over it, in their own colours.
-                    if let Some((lines, _)) = app.caches.lines.get(&(app.view.cache, i)) {
+                    if let Some((lines, _)) = ready.lines.as_ref() {
                         frame.no_shadow(|frame| frame.model_colored(lines, &Transform { position: center, rotation, scale: b.rail.radius }, 1.0, 0.0));
                     }
                 });
@@ -696,7 +702,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         if b.rail.atmosphere.is_some() {
             atmosphere(frame, app, i, center);
         }
-        city_lights(frame, app, i, center);
+        universe_prof::time("draw/scene/bodies/city lights", || city_lights(frame, app, i, center));
 
         // True silhouette outline, plus a halo for stars.
         let to = center - cam;
@@ -809,30 +815,24 @@ fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
     if frame.projected_radius(center, b.rail.radius) < 4.0 {
         return;
     }
+    // Optional lights appear only with worker-prepared surface placements.
+    let Some(globe) = app.caches.globes.get(&(app.view.cache, i)) else { return };
     for (k, port) in sys.spaceports.iter().enumerate().filter(|(_, p)| p.body == i) {
         let people = app.v.economy.iter().find(|p| p.system == app.view.origin && p.facility == universe_sim::world::Facility::Spaceport(k)).map_or(0.0, |p| p.population);
         if people <= 0.0 {
             continue;
         }
         let towns = (people * 1.5).clamp(6.0, 120.0) as usize;
-        let (e1, e2) = universe_sim::world::spaceport::tangent(port.direction);
+        let Some((_, radii)) = globe.city_radii.iter().find(|(p, _)| *p == k) else { continue };
         for t in 0..towns {
-            let h = |s: u64| {
-                let mut x = (k as u64 * 7919 + t as u64 * 104_729 + s).wrapping_mul(0x9E37_79B9_7F4A_7C15);
-                x ^= x >> 29;
-                (x % 10_000) as f64 / 10_000.0
-            };
-            // (Most close in, some far out along the roads.)
-            let spread = 0.12 * h(1).powf(1.8);
-            let a = h(2) * std::f64::consts::TAU;
-            let local = (port.direction + (e1 * a.cos() + e2 * a.sin()) * spread).normalize();
+            let local = crate::globe_assets::city_direction(k, t, port.direction);
             let world = rot * local;
             let night = -world.dot(sun);
             if night < 0.05 {
                 continue;
             }
-            let glow = (night.min(0.4) / 0.4) as f32 * (0.6 + 1.4 * h(3) as f32) * if t == 0 { 2.5 } else { 1.0 };
-            frame.glow(center + world * (b.surface_radius(local) + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
+            let glow = (night.min(0.4) / 0.4) as f32 * (0.6 + 1.4 * crate::globe_assets::city_noise(k, t, 3) as f32) * if t == 0 { 2.5 } else { 1.0 };
+            frame.glow(center + world * (radii[t] + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
         }
     }
 }

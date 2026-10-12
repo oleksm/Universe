@@ -17,21 +17,27 @@ pub struct GlobeMap {
     /// The world's own colour (sRGB) texel by texel, where it has one (a world grown by the
     /// planet simulation): drawn in place of the palette.
     pub colors: Option<Vec<[u8; 4]>>,
+    pub(crate) uploads: Vec<GlobeUpload>,
 }
 
 impl GlobeMap {
     pub fn new(size: u32, texels: Vec<[f32; 2]>) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         assert_eq!(texels.len(), (6 * size * size) as usize);
-        GlobeMap { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), size, texels, colors: None }
+        let uploads = globe_uploads(size, &texels, None);
+        GlobeMap { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), size, texels, colors: None, uploads }
     }
 
     /// With its own colours (sRGB, as many as its texels).
     pub fn with_colors(mut self, colors: Vec<[u8; 4]>) -> Self {
         assert_eq!(colors.len(), self.texels.len());
+        self.uploads = globe_uploads(self.size, &self.texels, Some(&colors));
         self.colors = Some(colors);
         self
     }
+
+    /// CPU staging payload retained until GPU uploads complete (and for later reload).
+    pub fn upload_bytes(&self) -> usize { self.uploads.iter().map(|u| u.bytes.capacity()).sum() }
 
     pub fn id(&self) -> u64 {
         self.id
@@ -51,6 +57,46 @@ impl GlobeMap {
         };
         d.normalize()
     }
+}
+
+/// Fully prepared mip data: no filtering or float conversion on the render thread.
+pub(crate) struct GlobeUpload {
+    pub color: bool,
+    pub face: u32,
+    pub mip: u32,
+    pub side: u32,
+    pub bytes: Vec<u8>,
+}
+fn globe_uploads(size: u32, texels: &[[f32; 2]], colors: Option<&[[u8; 4]]>) -> Vec<GlobeUpload> {
+    assert!(size.is_power_of_two());
+    let _scope = universe_prof::scope("assets/globe/mips");
+    let n = size as usize;
+    let mut out = Vec::new();
+    for face in 0..6 {
+        let mut height = texels[face*n*n..(face+1)*n*n].to_vec();
+        let mut color = colors.map_or_else(|| vec![[0; 4]; n*n], |c| c[face*n*n..(face+1)*n*n].to_vec());
+        let mut side = n;
+        let mut mip = 0;
+        loop {
+            let half: Vec<u16> = height.iter().flat_map(|t| [crate::renderer::half(t[0]), crate::renderer::half(t[1])]).collect();
+            out.push(GlobeUpload { color: false, face: face as u32, mip, side: side as u32, bytes: bytemuck::cast_slice(&half).to_vec() });
+            out.push(GlobeUpload { color: true, face: face as u32, mip, side: side as u32, bytes: bytemuck::cast_slice(&color).to_vec() });
+            if side == 1 { break; }
+            let next = side / 2;
+            let indices = |i: usize| { let a = (i/next*2)*side + i%next*2; [a,a+1,a+side,a+side+1] };
+            height = (0..next*next).map(|i| {
+                let [a,b,c,d] = indices(i).map(|j| height[j]);
+                [(a[0]+b[0]+c[0]+d[0])/4., (a[1]+b[1]+c[1]+d[1])/4.]
+            }).collect();
+            color = (0..next*next).map(|i| {
+                let [a,b,c,d] = indices(i).map(|j| color[j]);
+                std::array::from_fn(|k| ((a[k] as u32+b[k] as u32+c[k] as u32+d[k] as u32+2)/4) as u8)
+            }).collect();
+            side = next;
+            mip += 1;
+        }
+    }
+    out
 }
 
 /// A model to draw, kept on the GPU: uploaded the first time it's drawn
@@ -258,5 +304,23 @@ mod winding {
         outward_about(&WireModel::globe(8, 5, 4), |_| Vec3::ZERO);
         let cube: Vec<Vec3> = (0..8).map(|k| Vec3::new((k & 1) as f32, (k >> 1 & 1) as f32, (k >> 2 & 1) as f32) + 3.0).collect();
         outward_about(&WireModel::convex_hull(&cube), |_| Vec3::splat(3.5));
+    }
+}
+
+#[cfg(test)]
+mod globe_mip_tests {
+    use super::*;
+    #[test]
+    fn globe_prepared_mips_preserve_height_colour_and_clear_reused_layers() {
+        let values = [[1., 0.], [2., 0.], [3., 0.], [4., 0.]].repeat(6);
+        let map = GlobeMap::new(2, values);
+        assert_eq!(map.uploads.len(), 24);
+        assert!(map.uploads.iter().filter(|u| u.color).all(|u| u.bytes.iter().all(|b| *b == 0)));
+        for u in map.uploads.iter().filter(|u| !u.color && u.mip == 1) {
+            assert_eq!(u.bytes, bytemuck::cast_slice::<u16, u8>(&[crate::renderer::half(2.5), 0]));
+        }
+        let map = map.with_colors([[0, 4, 8, 255], [4, 8, 12, 255], [8, 12, 16, 255], [12, 16, 20, 255]].repeat(6));
+        for u in map.uploads.iter().filter(|u| u.color && u.mip == 1) { assert_eq!(u.bytes, [6,10,14,255]); }
+        assert_eq!(map.upload_bytes(), 6*(4+1)*8);
     }
 }

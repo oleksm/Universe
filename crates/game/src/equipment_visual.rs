@@ -124,6 +124,7 @@ impl Projected {
 /// parent is identity in design/walk; flight supplies pose * translation(-COM).
 pub fn project(placed: &[Placed], parent: glam::Mat4, camera: &Camera) -> Vec<Projected> {
     use universe_engine::Color;
+    let _scope = universe_prof::scope("draw/studio/project-equipment");
     let light = (-camera.forward + camera.up * 0.7 - camera.right * 0.4).normalize();
     let mut output = Vec::new();
     for item in placed {

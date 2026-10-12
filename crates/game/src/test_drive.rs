@@ -187,6 +187,7 @@ impl Drive {
 
     #[cfg(test)]
     pub fn advance(&mut self, dt: f64) {
+    let _scope = universe_prof::scope("update/studio/flight");
         for _ in 0..4 {
             self.step(dt / 4.0, Controls::default());
         }
@@ -577,6 +578,7 @@ impl Balance {
 /// weight down from it); each push as an arrow its length; the pushes' sum along the
 /// line it acts on; and what the turning is and the trim takes.
 pub fn draw_balance(frame: &mut Frame, b: &Balance) {
+    let _scope = universe_prof::scope("draw/studio/balance");
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.03, 0.04, 0.08, 1.0]));
     let c = &b.craft;
@@ -686,6 +688,7 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
 /// it lies, each actuator's push as a line the length of its throttle; and what it
 /// reads.
 pub fn draw(frame: &mut Frame, d: &Drive) {
+    let _scope = universe_prof::scope("draw/studio/drive");
     let size = frame.size();
     let sky = if d.density(d.pos.y) > 0.05 { Color([0.05, 0.09, 0.16, 1.0]) } else { Color([0.01, 0.01, 0.03, 1.0]) };
     frame.hud_rect(Vec2::ZERO, size, sky);
