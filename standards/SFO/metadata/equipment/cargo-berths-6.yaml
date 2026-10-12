@@ -27,6 +27,12 @@ making:
 function:
   kind: berths
   persons: 6
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-berths-6/v1"
+  manifest_sha256: "84f1249025689efa73e65bfc0c166a52a2e12d50709b57cc25f427feaf31495a"
+  version: 1
+  triangles: 9480
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
