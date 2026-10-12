@@ -354,14 +354,14 @@
 - { record: equipment.cargo.galley.s1, at: "2026-10-12T15:09:28Z", status: draft, summary: "changed: visual", sha: "cb6e0970b6b28063" }
 - { record: equipment.cargo.head.s1, at: "2026-10-12T15:32:28Z", status: draft, summary: "changed: visual", sha: "6d32393ffd85d85a" }
 - { record: equipment.cargo.ore-bay.100t, at: "2026-10-12T23:28:49Z", status: draft, summary: "changed: visual", sha: "5cfae57742886ee3" }
-- { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e2436e37e5709012" }
+- { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T23:33:59Z", status: draft, summary: "changed: physical, built_of, basis", sha: "6bf00f632579dd5e" }
 - { record: equipment.cargo.ore-bay.150t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "3d2d35d047ff6505" }
 - { record: equipment.cargo.ore-bay.200t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "a5453e9751e36d79" }
 - { record: equipment.cargo.ore-bay.20t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "682ef5b009921c81" }
 - { record: equipment.cargo.ore-bay.300t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "62ca4875b9090c47" }
 - { record: equipment.cargo.ore-bay.35t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "3e4bddd5583cb420" }
 - { record: equipment.cargo.ore-bay.50t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "9f811975fa4b6dda" }
-- { record: equipment.cargo.ore-bay.5t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "27f85acbdd41cff6" }
+- { record: equipment.cargo.ore-bay.5t, at: "2026-10-12T23:33:59Z", status: draft, summary: "changed: basis", sha: "7360958e92bd21de" }
 - { record: equipment.cargo.ore-bay.75t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "132db19387966b96" }
 - { record: equipment.cargo.rack.s1, at: "2026-10-11T17:31:23Z", status: draft, summary: "changed: visual", sha: "d95d081add67d2c8" }
 - { record: equipment.cargo.rack.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "9500260dfc20e4a9" }

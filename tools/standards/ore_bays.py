@@ -25,8 +25,9 @@ T, T_LINER, T_DOOR = 0.008, 0.003, 0.005
 CUT = 1.15   # stock bought for a part cut from it (rule.cut-loss)
 TUBES = [(60, 2), (80, 3), (100, 5), (120, 10), (150, 10), (200, 15), (250, 20), (300, 30), (400, 30)]   # 4340 tube stock, mm
 
-# The families' sections: outer square, clear width, slot width, clear height (a 45 degree V to the slot under straight sides).
-SECTIONS = {3.15: (2.75, 0.5, 2.7), 2.25: (1.93, 0.3, 1.95), 1.72: (1.4, 0.3, 1.42)}
+# The families' sections: outer square, clear width, slot width, clear height (a 45 degree V to the slot under straight sides),
+# and how far the gate runs below the shell to clear its webs (measured in the models: 100 t v3 and 10 t v2; 20 t not yet).
+SECTIONS = {3.15: (2.75, 0.5, 2.7, 0.11), 2.25: (1.93, 0.3, 1.95, 0.05), 1.72: (1.4, 0.3, 1.42, 0.045)}
 
 
 def tube(d, t):
@@ -48,7 +49,7 @@ def up(x, step):
 def work(rec):
     cap = rec["function"]["capacity"]; vol = rec["function"]["volume"]
     L, W = rec["physical"]["length"], rec["physical"]["width"]
-    c, s, H = SECTIONS[W]
+    c, s, H, ds = SECTIONS[W]
     d = (c - s) / 2; hs = H - d; leg = d * math.sqrt(2)
     P = 2 * hs + 2 * leg; sec = c * hs + (c + s) / 2 * d
     Lt = vol / sec
@@ -74,9 +75,8 @@ def work(rec):
     # Gate: 8 mm plate over the slot and 60 mm onto each bed, ribbed at b across the slot; two 100 mm bearing strips.
     gw = s + 0.12
     hg = up(math.sqrt(3 * (p * b * s ** 2 / 8 / SIG_A36) / T), 0.01)
-    # The gate runs below the shell's webs (their depth less 60 mm lower), the slot carried down to it by two skirts,
-    # each a cantilever from the slot's edge under the full pressure: 8 mm holds it.
-    ds = max(up(h - 0.06, 0.01), 0.03)
+    # The gate runs below the shell's webs (ds, by section), the slot carried down to it by two skirts, each a cantilever
+    # from the slot's edge under the full pressure: 8 mm holds it.
     assert math.sqrt(3 * p * ds ** 2 / SIG_A36) <= T, ds
     # The gate's load to the frame: at every rib a pair of webs as deep as the ribs from the beds out half the V's half-width,
     # and along each side a seat and a guide, 8 mm and 20 mm deeper than the ribs.
