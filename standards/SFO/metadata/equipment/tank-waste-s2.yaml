@@ -5,29 +5,38 @@ identity:
   maker: org.hadley
   revision: draft
   slot: tank
-  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+  description: "A welded aluminium sphere 2.71 m across holding 10 m3 of waste water (10,000 kg) with 3% ullage, at 0.2 MPa at most. Lined inside against the waste. Baffles stop slosh; the drain draws through a capillary screen, so it empties in free fall. Coated outside, on four saddles; fill, drain, vent and gauge ports capped until the hull connects them."
 size_class: 2
 fits: mount.tank-s2
 physical:
-  mass: 500
-  volume: 19.0
-  length: 2.67
-  width: 2.67
-  height: 2.67
+  mass: 530
+  volume: 21.4
+  length: 2.809
+  width: 2.71
+  height: 2.815
 built_of:
   parts: tank-waste-s2
   list:
-    - { code: WST0-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 350, length: 2.37, width: 2.37, height: 2.37, item: stock.al6061-pl-5, quantity: 402.0, module: module.welding-bay }
+    - { code: WST0-01, name: "Shell", description: "The ball, welded from pressed halves: 2.71 m across outside, 5 mm wall, with weld lands, bosses and saddle doublers; lined inside, coated outside.", mass: 350, length: 2.71, width: 2.71, height: 2.71, item: stock.al6061-pl-5, quantity: 402.0, module: module.welding-bay }
     - { code: WST0-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.al6061-pl-5, quantity: 86.2, module: module.cutting-table }
-    - { code: WST0-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.st304-pl-3, quantity: 86.2, module: module.machining-centre }
+    - { code: WST0-03, name: "Fittings", description: "Fill, drain (through a capillary screen at the outlet), vent and gauge; every port capped until the hull connects it.", mass: 75, length: 1.42, width: 1.42, height: 1.42, item: stock.st304-pl-3, quantity: 86.2, module: module.machining-centre }
+    - { code: WST0-04, name: "Saddles", description: "Four, one at each mount attachment, below the equator; together they carry the full tank, 10.5 t.", mass: 30, length: 0.5, width: 0.3, height: 0.35, item: stock.st304-pl-3, quantity: 34.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
   kind: "store"
   capacity: 10000
   holds: "good.waste-water"
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-waste-s2/v1"
+  manifest_sha256: "88a278c129555d5d50d3d649a4370878748a6d85d66f7cd290a2740efa3e80b3"
+  version: 1
+  triangles: 6264
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "10 m3 as a ball 2.67 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
+  - { of: [function.capacity, size_class], tier: invented, review: true, note: "10 m3 of waste water at about 1,000 kg/m3. Chosen." }
+  - { of: [physical, built_of.list], tier: derived, review: true, note: "10 m3 usable plus 3% ullage is 10.31 m3 inside: 1.350 m of inner radius, 2.71 m across outside a 5 mm wall (the modeller's candidate v01; it was 2.67 m, which held no ullage). At 0.2 MPa (invented: enough to push the waste to the hull's lines) the wall carries 27 MPa, far under welded 6061's 165 MPa (from memory): 5 mm is the plate stock and handling gauge, not the pressure's. Bare shell 310 kg, 350 with lands, bosses and doublers. Saddles 30 kg (the modeller scaled about 28), so 530 kg in all, up from 500. Waste water corrodes bare aluminium, hence the lining; its mass is within the shell's. Pressure, sanitation and loads provisional; review." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The fitted envelope, from the modeller's exterior (candidate v01): the 2.71 m sphere on four saddles, 2.815 m high in all; the capped ports bring the length to 2.809 m; 2.71 m across. The drawn saddles weigh 27.7 kg of the 30 kg allowed. Within the mount's 7.25 m." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

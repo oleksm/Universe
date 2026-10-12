@@ -5,7 +5,7 @@ identity:
   maker: org.kestrel
   revision: draft
   slot: engine
-  description: "Four small pressure-fed methalox thrusters, 5 kN in all at 3 km/s: ten times the impulse of cold gas for the same propellant, with a flame. Pulsed."
+  description: "Four small pressure-fed methalox thrusters, 5 kN in all (1.25 kN each, facing out four ways in one plane) at 3 km/s: about four times the impulse of cold nitrogen (0.7 km/s) for the same propellant, with a flame. Pulsed."
 size_class: 1
 fits: mount.engine-s1
 physical:
@@ -39,8 +39,16 @@ function:
   shield_pass: 1
   reaction_offset: 0
   heat_to_hull: 0.0001
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-ca-s1/v1"
+  manifest_sha256: "734a572b2dff2cce6109711ef6dbe39edf00a9d0c07f5d73b5d12437659398e6"
+  version: 1
+  triangles: 5542
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "Small pressure-fed bipropellant thrusters, as a spacecraft's reaction control: about 3 km/s, kilonewtons, tens of kilograms. From memory; review." }
+  - { of: [identity.description], tier: derived, review: true, note: "Corrected from ten times: 3 km/s against cold nitrogen's 0.7 km/s (the cold gas block) is about 4.3 times the impulse a kilogram." }
+  - { of: [fits], tier: derived, review: true, note: "The class 1 engine mount (6.6 x 3.3 x 3.3 m, 31 kN, eight ring points) was set round the largest class 1 engine; this 0.6 m, 45 kg block, like the cold gas block, uses a sliver of it. No smaller engine mount exists yet; an attitude-block mount is open. Left for review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: thermal
-  description: "A pumped water-glycol loop carrying 20 kW from cold plates to a radiator or an air cooler: 0.5 kg/s at a 10 K rise."
+  description: "A pumped water-glycol loop carrying 20 kW from cold plates to a radiator or an air cooler: 0.53 kg/s at a 10 K rise. The box is the skid: an enclosed pump and reservoir, controls and short 20 mm lines on four bolted feet, with capped inlet and outlet ports and a power port. The lines and cold plates (12 kg) come as a loose kit, run through the ship where its fit puts them; the 30 kg is the whole loop, about 18 kg of it the skid."
 size_class: 1
 fits: mount.thermal-s1
 physical:
@@ -20,16 +20,22 @@ built_of:
   parts: thermal-coolant-loop-s0
   list:
     - { code: CLP0-01, name: "Pump and reservoir", mass: 15, length: 0.397, width: 0.317, height: 0.238, item: good.pumps, quantity: 15, module: module.assembly-shop }
-    - { code: CLP0-02, name: "Lines and cold plates", mass: 12, length: 0.368, width: 0.295, height: 0.221, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
+    - { code: CLP0-02, name: "Lines and cold plates", description: "A loose kit: lines and cold plates fitted along the ship, not in the skid", mass: 12, length: 0.368, width: 0.295, height: 0.221, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
     - { code: CLP0-03, name: "Controls", mass: 3, length: 0.232, width: 0.186, height: 0.139, item: good.electronics, quantity: 3, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: coolant_loop
   carries: 20000.0
-  flow: 0.5
+  flow: 0.53
+visual:
+  format: "freefall-model/1"
+  path: "models/thermal-coolant-loop-s0/v1"
+  manifest_sha256: "8c118d91793d323d6b12e49ef3d7fcb35fc46b80664b674fd2a913482668b8c2"
+  version: 1
+  triangles: 4600
 life: 473364000
 basis:
-  - { of: [function, physical, needs], tier: derived, review: true, note: "20 kW at a 10 K rise in water-glycol (3.8 kJ/kg K) is 0.53 kg/s; a 300 W pump; 30 kg of pump, lines and plates. Chosen; review." }
+  - { of: [function, physical, needs], tier: derived, review: true, note: "20 kW at a 10 K rise in water-glycol (3.8 kJ/kg K) is 0.53 kg/s (1.6 m/s in a 20 mm bore); a 300 W pump; 30 kg of pump, lines and plates, the lines and plates (CLP0-02) a loose kit fitted along the ship, not inside the skid box. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

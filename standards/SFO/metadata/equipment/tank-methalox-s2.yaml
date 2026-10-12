@@ -5,29 +5,39 @@ identity:
   maker: org.hadley
   revision: draft
   slot: tank
-  description: "A 92 m3 tank holding 76,400 kg of methalox."
+  description: "One insulated sphere 5.6 m across, split by a common domed bulkhead: liquid oxygen aft (48.9 m3), liquid methane forward (36.7 m3), each its own circuit with its own outlet, pressurisation, vent and relief, capped. Holds 54,100 kg of oxygen and 15,000 kg of methane, 69,200 kg at the engines' 3.6 to 1, with 3% ullage in each. Runs at 0.45 MPa at most. Sits on four saddles."
 size_class: 2
 fits: mount.tank-s2
 physical:
-  mass: 4580
-  volume: 176
-  length: 5.6
+  mass: 3080
+  volume: 196
+  length: 6.006
   width: 5.6
-  height: 5.6
+  height: 5.817
 built_of:
   parts: tank-methalox-s2
   list:
-    - { code: TKML2-01, name: "Shell", mass: 3206, length: 4.97, width: 4.97, height: 4.97, item: stock.al6061-pl-5, quantity: 3687, module: module.welding-bay }
-    - { code: TKML2-02, name: "Insulation", mass: 916, length: 3.27, width: 3.27, height: 3.27, item: stock.mli-fl, quantity: 916, module: module.assembly-shop }
-    - { code: TKML2-03, name: "Fittings and gauging", mass: 458, length: 2.6, width: 2.6, height: 2.6, item: stock.st304-pl-3, quantity: 526.7, module: module.machining-centre }
+    - { code: TKML2-01, name: "Shell", description: "Welded aluminium sphere, 5.5 m across outside, 6 mm wall, with weld lands, bosses and saddle doublers.", mass: 1850, length: 5.5, width: 5.5, height: 5.5, item: stock.al6061-pl-5, quantity: 2128, module: module.welding-bay }
+    - { code: TKML2-02, name: "Common bulkhead", description: "A 2:1 ellipsoidal dome, 5.35 m across at its rim, 1.34 m high, bulging forward into the methane: two aluminium skins on a 46 mm foam core, 50 mm in all, welded to the shell at a Y-ring. Its stock is a mass proxy: foam-core sandwich stock is not in the registry yet.", mass: 400, length: 5.35, width: 5.35, height: 1.39, item: stock.al6061-pl-5, quantity: 460, module: module.welding-bay }
+    - { code: TKML2-03, name: "Insulation", description: "40 mm of foam on the shell under a multilayer blanket and closeout, 50 mm in all: the sphere is 5.6 m across over it.", mass: 200, length: 5.6, width: 5.6, height: 5.6, item: stock.mli-fl, quantity: 200, module: module.assembly-shop }
+    - { code: TKML2-04, name: "Saddles", description: "Four, one at each mount attachment, below the equator, each taking 745 kN.", mass: 280, length: 1.0, width: 0.6, height: 0.8, item: stock.st304-pl-3, quantity: 322, module: module.machining-centre }
+    - { code: TKML2-05, name: "Fittings and gauging", description: "For each circuit: an outlet with an anti-vortex screen, a pressurant diffuser, fill and drain, vent and relief valves, level gauging; slosh baffles. Every port is capped until the hull connects it.", mass: 350, length: 1.2, width: 0.8, height: 0.8, item: stock.st304-pl-3, quantity: 402.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
   kind: tank
-  capacity: 76400
+  capacity: 69200
   holds: material.methalox
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-methalox-s2/v1"
+  manifest_sha256: "46d0095a3559df81119a55b573854838ec18165b6d7782aa0bffb78935d3f695"
+  version: 1
+  triangles: 7728
 life: 473364000
 basis:
-  - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S2's volume filled with methalox at 830 kg/m3; a low-pressure liquid tank at 6% of its contents. Chosen; review." }
+  - { of: [function.capacity, built_of.list], tier: derived, review: true, note: "Inside the 5.6 m envelope: 50 mm of insulation and a 6 mm wall leave 2.744 m of inner radius, 86.5 m3. The common bulkhead (50 mm, rim 0.60 m aft of the centre, rising 1.34 m) takes 1.1 m3 and splits the rest 57:43, the engines' mass ratio of 3.6 at 1,141 kg/m3 of oxygen and 422 kg/m3 of methane: 48.9 m3 of oxygen space, 36.7 m3 of methane space. 3% ullage in each leaves 47.4 m3 of oxygen (54,100 kg) and 35.6 m3 of methane (15,000 kg): 69,200 kg. The old 76,400 kg filled the bare sphere, 92 m3, with no wall, insulation, bulkhead or ullage." }
+  - { of: [built_of.list, physical.mass], tier: invented, review: true, note: "Pressure and wall: 0.45 MPa most in service (the pump inlets want about 0.5 MPa with the acceleration head), times 1.5 ultimate, against 165 MPa for welded 6061-T6 at the weld (from memory): 5.6 mm, taken as 6 mm, 1,540 kg bare plus 20% for lands, bosses and doublers. The bulkhead skins are 1.6 mm each on 50 kg/m3 foam, sized for 0.45 MPa from either side, so it buckles neither way. Its foam keeps the methane from freezing on the oxygen (methane freezes at 91 K, oxygen boils at 90 K): about 300 W across it. Insulation 2 kg/m2, saddles 70 kg each, fittings 350 kg. Total 3,080 kg, 4.5% of what it holds (it was 4,580 at an assumed 6%). Chosen; review." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The fitted envelope, from the modeller's exterior layout (candidate v01): the 5.6 m sphere stands on four contoured steel saddles 0.217 m clear of its bottom, 5.817 m high in all; the oxygen and methane service bosses stand opposed, guarded, 0.203 m beyond the sphere on each side along the length, 6.006 m long in all; 5.6 m across. The sphere alone is 5.6 m. Within the mount's 7.25 m." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

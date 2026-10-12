@@ -31,6 +31,12 @@ function:
   kind: hyperdrive
   efficiency: 0.75
   top_speed: 1049273603000
+visual:
+  format: "freefall-model/1"
+  path: "models/hyperdrive-halcyon-s1/v1"
+  manifest_sha256: "5097f25bc5c6e236c211e02527e002b81a7540e66aa03ef4cde46a159a3ec708"
+  version: 1
+  triangles: 3096
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }

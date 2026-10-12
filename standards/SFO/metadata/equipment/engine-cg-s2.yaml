@@ -37,6 +37,12 @@ function:
   shield_pass: 1
   reaction_offset: 0
   heat_to_hull: 0
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-cg-s2/v1"
+  manifest_sha256: "b1c251fc553945bd2ae34fd533ccd59e5fbbb7c50b9ae1ac7f4e1026842ccccf"
+  version: 1
+  triangles: 3784
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "Scaled from the half-kilonewton block. From memory; review." }

@@ -5,23 +5,23 @@ identity:
   maker: org.hadley
   revision: draft
   slot: cargo
-  description: "A hopper for 10 t of loose ore under top doors, with a discharge gate: one of ten sizes, so a hull takes the bay that fits."
+  description: "A short trough hopper for 10 t of loose ore: straight sides above a V bottom sloped at 45 degrees to a slot gate the length of the floor, with a pair of top doors the length of the roof, all in a tube frame. The doors open to the excavator and shut for flight; the gate slides open at the dock to let the ore out. One of ten sizes, so a hull takes the bay that fits."
 size_class: 1
 fits: mount.cargo-s1
 physical:
   mass: 1000
-  volume: 5.0
-  length: 2.72
-  width: 1.36
-  height: 1.36
+  volume: 9.76
+  length: 3.3
+  width: 1.72
+  height: 1.72
 built_of:
   parts: cargo-ore-bay-10t
   shares: rule.haul-truck-shares
   list:
     - { code: OBS02-01, name: "Shell", description: "The hopper's plates, sloped to the gate.", mass: 400, length: 2.004, width: 1.002, height: 1.002, item: stock.sta36-pl-20, quantity: 460.0, module: module.welding-bay }
     - { code: OBS02-02, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 200, length: 1.591, width: 0.795, height: 0.795, item: stock.st4340-pl-3, quantity: 230.0, module: module.cutting-table }
-    - { code: OBS02-03, name: "Top doors", description: "The pair that opens to the excavator and shuts for flight.", mass: 150, length: 1.445, width: 0.723, height: 0.723, item: stock.al6061-pl-5, quantity: 172.5, module: module.welding-bay }
-    - { code: OBS02-04, name: "Discharge gate", description: "The slide at the bottom, and its drive, that lets the ore out at the dock.", mass: 100, length: 1.263, width: 0.631, height: 0.631, item: stock.st4340-bar-120, quantity: 115.0, module: module.machining-centre }
+    - { code: OBS02-03, name: "Top doors", description: "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight.", mass: 150, length: 1.445, width: 0.723, height: 0.723, item: stock.al6061-pl-5, quantity: 172.5, module: module.welding-bay }
+    - { code: OBS02-04, name: "Discharge gate", description: "A slot gate the length of the floor, about 0.3 m wide, sliding on bearing beds ribbed to the shell along both edges of the slot (end guides alone cannot carry the loaded plate), and its drive, that lets the ore out at the dock.", mass: 100, length: 1.263, width: 0.631, height: 0.631, item: stock.st4340-bar-120, quantity: 115.0, module: module.machining-centre }
     - { code: OBS02-05, name: "Frame", description: "Tube chords and uprights that carry the hopper to its mount.", mass: 150, length: 1.445, width: 0.723, height: 0.723, item: stock.st4340-tb-160x5, quantity: 172.5, module: module.welding-bay }
 making:
   module: module.assembly-shop
@@ -30,9 +30,17 @@ function:
   capacity: 10000
   volume: 5.0
   fill_density: 2000
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-ore-bay-10t/v1"
+  manifest_sha256: "1ebe013333bf9fa1f719a06d88b6b7d89d3cfe7e15566477d68959531deee6f6"
+  version: 1
+  triangles: 6864
 life: 473364000
 basis:
   - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
   - { of: [physical.mass], tier: invented, review: true, note: "A tenth of its capacity: a haul truck's body is about 11% of its payload (a 363 t truck's 40 t body, from memory). Not sourced." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume, size_class], tier: invented, review: true, note: "A hopper twice as long as wide and as deep as wide, to its heaped volume; its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }
+  - { of: [size_class], tier: invented, review: true, note: "Its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }
+  - { of: [identity.description, physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "Fitted round its 5 m3 at the modeller's request, as the 100 t bay was (the first box, 2.72 x 1.36 x 1.36 m, held only 5.03 m3 with no walls, frame or doors). Outer 1.72 m square, inside the class 1 mount's 2.2 m; 1.4 m clear wide and 1.42 m clear high. A V bottom at 45 degrees (steeper than broken rock's 35 to 40 degree repose) from 1.4 m down to a 0.3 m slot is 0.55 m deep, under 0.87 m of straight side: 1.69 m2 of section. 5 m3 needs 2.97 m of trough; with end walls, 3.3 m long, inside the mount's 3.49. The modeller's proposal (5.006 m3 clear); review." }
+  - { of: [built_of.list], tier: derived, review: true, note: "Flagged, not thinned: at the 20 mm A36 named (the registry's one structural plate gauge) the shell is about 2.07 t as modelled, against the 400 kg given. Physically a thinner ribbed shell would do: ore at 2,000 kg/m3 under 3 g (an invented design load) 1.42 m deep presses about 84 kPa; a plate clamped on ribs 0.4 m apart holds that at two thirds of A36's yield at about 6 mm (t = b sqrt(p / 2 sigma)), some 0.6 t of plate and 0.2 t of ribs, still about double the 400 kg. A thinner A36 gauge in the registry would settle this and the 100 t bay's flag together. Measured on the modeller's candidate (blender cargo-ore-bay-10t/candidate-v01: 20 mm shell, 3 mm liners, 100x100x5 tube frame, ribbed gate beds): shell 2.10 t, liners 0.31, frame 0.53, doors 0.45, gate and beds 0.83, 4.22 t against the 1 t recorded; strength and ore flow unqualified. Left at 1 t until reviewed. Review." }
   - { of: [life], rule: rule.life-ship-system }
