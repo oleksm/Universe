@@ -45,3 +45,29 @@ in the same frame and basis as the accepted CH-S2 package. Runtime visualisation
 ## Not changed
 
 CH-S3 has the same unreachable 3.6 km/s; it gets the same treatment when its turn comes.
+
+## Feeds through the trunnions (blender's proposal, 20261011T235512): accepted, provisional
+
+The proposal routes oxygen and methane through opposite hollow pitch trunnions, then pitch-owned curved ducts to opposite
+hollow yaw trunnions, then the moving pump inlets. Each axis has a coaxial cryogenic rotary union; the bores are 0.30
+and 0.26 m.
+
+This is physically sound as exterior scope. Each union only turns ±0.26 rad about its own axis, so no hose bends and
+the motion is pure nested rotation (`freefall-motion/1` nodes, no hose entries). The pressure load acts along each
+union's axis and is held inside the union. Seal qualification stays open (invented, review). Conditions for the
+blockout:
+
+- **Axes:** pitch and yaw axes intersect at the pivot (Y -0.35). The two unions on an axis are coaxial with it.
+- **Trunnion pins carry the thrust:** 2.3 MN over two pins is 1.15 MN each.
+  - Ti-6Al-4V hollow pins are about 0.36 m outside for the 0.30 m oxygen bore and 0.33 m for the 0.26 m methane bore.
+  - Each pin bears on a lined journal about 70 mm long, at about 50 MPa (derived).
+  - The bearing sits outboard of the seal. The union housing is about 0.5 m across: draw it at the trunnion ends.
+- **Oxygen side:** no hydrocarbon lubricant (metal and PTFE seals only). Methane at 112 K and oxygen at 90 K: draw the
+  ring ducts and union housings insulated or jacketed. The two propellants stay on opposite sides, each in its own
+  trunnion.
+- **Ownership:** the engine owns the pins, unions, gimbal ring and ring ducts, and the frame that holds the pitch
+  bearings. That frame bolts to the hull's flange, which stays the hull's (R3 unchanged).
+- **Clearance:** the ring ducts ride with pitch. The yaw unions and the pump inlets ride with the engine. Clear the full
+  15° cone at every pose.
+- **Flown practice:** engines of this class mostly use gimballed bellows ducts. Rotary unions are this design's
+  choice; record them as such. The record's figures do not change.
