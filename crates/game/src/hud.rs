@@ -2026,6 +2026,8 @@ fn asset_lines(ctx: &Context) -> Vec<(String, Color)> {
     let mut lines = Vec::new();
     let gpu = &ctx.perf.resources;
     lines.push((format!("ASSET GPU {:.1} MIB UP {} HIT {} DOWN {} PENDING {}", gpu.asset_gpu_bytes as f64/1048576., gpu.asset_uploads, gpu.asset_hits, gpu.asset_unloads, gpu.asset_preparing), DIM));
+    let globes = crate::globe_assets::snapshot();
+    lines.push((format!("WORLD VISUALS LOAD {} QUEUE {} RUN {} ERROR {}", globes.loads, globes.queued, globes.loading, globes.failures), DIM));
     let assets = crate::visual_assets::snapshot();
     lines.push((format!("ASSETS LOAD {} HIT {} UNLOAD {} RELOAD {}", assets.loads, assets.hits, assets.unloads, assets.reloads), DIM));
     lines.push((format!("ASSETS {:.1} MIB + {:.1} RESERVED  QUEUE {} RUN {}", assets.resident_bytes as f64/1048576., assets.reserved_bytes as f64/1048576., assets.queued, assets.loading), DIM));
