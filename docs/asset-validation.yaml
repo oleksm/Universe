@@ -1844,3 +1844,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Studio alpha-depth fix renderer a48f7870 plus ships c9bc0f51 remains on isolated branches,no main merge;full Studio UI and installed ship/hull-ring fit,pressure/seal/structure qualification,721kg versus250kg mass,GPU cost and general transparency pending. Exact frozen GLB isolated PBR/patched shared Studio four-camera gate passed."
+  - key: equipment.command.s2
+    version: 1
+    manifest_sha256: "fb69dd4ab11b7eef1d33705cc0febc3cb598fe844dbaa3a5bb70360da81142a7"
+    installed: 21f76b6d
+    game: "the loader (world::assets) at fso 21f76b6d"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/command-s2/v1 (335628 bytes, bounds [-1.1, 0.0, -0.6] to [1.1, 1.5, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual bridge placement,crew entry and interactions,live screen/control/seat/restraint motion,game lighting and GPU cost;registry ad3f9c1d mass estimate433kg versus340,mount425kg bears and roughly56kN occupied load unqualified;human fixture illustrative only."
