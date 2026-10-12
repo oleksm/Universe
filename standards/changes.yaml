@@ -441,7 +441,7 @@
 - { record: equipment.power.battery-vtol.s1, at: "2026-10-12T01:40:18Z", status: draft, summary: "changed: visual", sha: "03fe8e8ac782e425" }
 - { record: equipment.power.battery-vtol.s2, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "0a95e43209f1af41" }
 - { record: equipment.power.battery.s0, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "ec40adc93ef3fcf4" }
-- { record: equipment.power.battery.s1, at: "2026-10-07T13:44:06Z", status: draft, summary: "changed: physical, basis", sha: "7b2b5c3b801231d1" }
+- { record: equipment.power.battery.s1, at: "2026-10-12T02:10:45Z", status: draft, summary: "changed: visual", sha: "8e06eecd1ef3a586" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "7c3fc251be4c2ecf" }
 - { record: equipment.power.fusion.s1, at: "2026-10-11T20:27:09Z", status: draft, summary: "changed: visual", sha: "a667001cb27bb1c6" }
 - { record: equipment.power.fusion.s2, at: "2026-10-11T03:49:02Z", status: draft, summary: "changed: visual", sha: "4ea82e04d9539e72" }
