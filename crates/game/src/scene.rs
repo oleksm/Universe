@@ -702,7 +702,7 @@ fn bodies(frame: &mut Frame, app: &App) {
         if b.rail.atmosphere.is_some() {
             atmosphere(frame, app, i, center);
         }
-        city_lights(frame, app, i, center);
+        universe_prof::time("draw/scene/bodies/city lights", || city_lights(frame, app, i, center));
 
         // True silhouette outline, plus a halo for stars.
         let to = center - cam;
@@ -838,7 +838,10 @@ fn city_lights(frame: &mut Frame, app: &App, i: usize, center: DVec3) {
                 continue;
             }
             let glow = (night.min(0.4) / 0.4) as f32 * (0.6 + 1.4 * h(3) as f32) * if t == 0 { 2.5 } else { 1.0 };
-            frame.glow(center + world * (b.surface_radius(local) + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
+            // Decorative lights use resident terrain only. The physical sampler
+            // may synchronously read fine bake tiles on first approach.
+            let height = b.terrain.as_ref().map_or(0.0, |terrain| terrain.surface_view(local).0);
+            frame.glow(center + world * (b.rail.radius + height + 50.0), 1500.0, [2.2 * glow, 1.6 * glow, 0.8 * glow], 0.8);
         }
     }
 }
