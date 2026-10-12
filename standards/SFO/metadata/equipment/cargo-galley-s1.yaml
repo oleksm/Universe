@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: cargo
-  description: "Where food is kept cold, heated and eaten, for a crew of six in turns."
+  description: "Where food for a crew of six is kept cold and heated, in turns: one fitted unit against the hull's corridor, with a fridge and a service cupboard below a worktop 0.9 m high, two closed heaters above, and a covered basin. Its water works in free fall as well as under thrust: a sealed dispenser fills pouches and cups through a valve, and the basin's drain draws air and water out together. Food goes in closed packs and trays that clip down. The crew eat and stand in the corridor, not in the unit."
 size_class: 1
 fits: mount.cargo-s1
 physical:
@@ -19,9 +19,9 @@ needs:
 built_of:
   parts: cargo-galley-s1
   list:
-    - { code: GAL1-01, name: "Cabinet and worktop", mass: 100, length: 1.11, width: 0.663, height: 1.47, item: stock.al6061-pl-5, quantity: 115, module: module.machining-centre }
-    - { code: GAL1-02, name: "Cold store and ovens", description: "A refrigerator and two heaters.", mass: 112, length: 1.15, width: 0.69, height: 1.53, item: good.heat-pumps, quantity: 112, module: module.assembly-shop }
-    - { code: GAL1-03, name: "Water fittings", description: "A tap, a drain to the waste water.", mass: 38, length: 0.797, width: 0.478, height: 1.06, item: stock.st304-pl-3, quantity: 43.7, module: module.machining-centre }
+    - { code: GAL1-01, name: "Cabinet and worktop", description: "The carcass, a service cupboard, the worktop with tie-down points, closed doors with latches, eight corner mounts.", mass: 100, length: 1.11, width: 0.663, height: 1.47, item: stock.al6061-pl-5, quantity: 115, module: module.machining-centre }
+    - { code: GAL1-02, name: "Cold store and ovens", description: "A refrigerator below the worktop and two closed heaters above it, latched shut, food warmed in its packs.", mass: 112, length: 1.15, width: 0.69, height: 1.53, item: good.heat-pumps, quantity: 112, module: module.assembly-shop }
+    - { code: GAL1-03, name: "Water fittings", description: "A sealed water dispenser, hot and cold, that fills a pouch or a lidded cup through a valve; a basin under a lid with a drain that draws air and water together to the waste water, so nothing floats free. It works the same in free fall and under thrust.", mass: 38, length: 0.797, width: 0.478, height: 1.06, item: stock.st304-pl-3, quantity: 43.7, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -30,5 +30,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "An airliner's galley unit: about 250 kg fitted, 3 kW of ovens and a chiller (from memory of a galley insert's weights). Feeds six in turns; two for a larger crew. Chosen." }
+  - { of: [identity.description, built_of.list], tier: invented, review: true, note: "Layout from the modeller (candidate v01). A ship coasts most of a trip, in free fall, so an open tap and a gravity drain would not work: water would float free. Like a space station's galley, the water goes into closed pouches through a valve, and the basin's drain is driven by air (a small fan, inside the 3 kW). Under thrust the same fittings work. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
