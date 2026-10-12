@@ -165,13 +165,15 @@ fn status(app: &App, ctx: &Context) -> Value {
     let star = universe_sim::names::star_name(app.charts.galaxy.stars[v.origin].seed);
     let near = v.system.dominant(cam, &v.positions);
     let b = &v.system.bodies[near];
-    let alt = cam.distance(v.positions[near]) - b.surface_radius_at(v.positions[near], cam, app.now());
+    // Observing must not synchronously load terrain just to describe the camera.
+    // This is altitude above the body's reference radius, explicitly labelled below.
+    let alt = cam.distance(v.positions[near]) - b.rail.radius;
     json!({
         "time": app.now(),
         "mode": format!("{:?}", app.mode),
         "system": star,
         "near": b.name,
-        "camera": { "altitude_m": alt, "position": [cam.x, cam.y, cam.z], "orientation": app.camera.orientation.to_array() },
+        "camera": { "altitude_m": alt, "altitude_reference": "body reference radius; no terrain sampled", "position": [cam.x, cam.y, cam.z], "orientation": app.camera.orientation.to_array() },
         "ship": { "name": app.ship.spec().name, "state": format!("{:?}", app.ship.state), "powered": app.ship.powered, "speed_m_s": app.ship.velocity.length() },
         "crew": format!("{:?}", app.v.crew.place),
         "fps": ctx.fps,
@@ -357,6 +359,7 @@ GET /sessions        recordings kept, newest first, with their summaries
 
 /// The live port's questions, answered (each frame, on the main thread).
 pub fn answer(app: &mut impl Host, ctx: &mut Context) {
+    let _scope = universe_prof::scope("update/diagnostics");
     let Some(rx) = app.requests() else { return };
     let pending: Vec<Request> = rx.try_iter().collect();
     for req in pending {
