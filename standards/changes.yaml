@@ -483,7 +483,7 @@
 - { record: equipment.tank.water.s1, at: "2026-10-11T02:43:43Z", status: draft, summary: "changed: visual", sha: "e34a78988ac94117" }
 - { record: equipment.tank.water.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6b50a26d061ac722" }
 - { record: equipment.thermal.air-cooler.s0, at: "2026-10-12T03:08:43Z", status: draft, summary: "changed: visual", sha: "f874ce1f745ce6b6" }
-- { record: equipment.thermal.coolant-loop.s0, at: "2026-10-12T03:13:09Z", status: draft, summary: "changed: identity, built_of, function, basis", sha: "1ba8d78eefea5678" }
+- { record: equipment.thermal.coolant-loop.s0, at: "2026-10-12T03:23:31Z", status: draft, summary: "changed: visual", sha: "d092833ef951e72d" }
 - { record: equipment.thermal.coolant-loop.s1, at: "2026-10-11T02:47:24Z", status: draft, summary: "changed: visual", sha: "f68babb31c8d295b" }
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-11T02:46:30Z", status: draft, summary: "changed: visual", sha: "ee98e3c0e9eb3051" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1af7c793e15a2cfb" }
