@@ -7,3 +7,5 @@ The profiler adds a bounded 512-event preparation/eviction history and separate 
 Package reads are bounded before allocation. Embedded GLB decoding now checks image dimensions, aggregate geometry/image expansion, external references and hierarchy depth/cycles before decoding. Development limits: 64 MiB GLB input, 8192 pixels per image dimension, 128 MiB conservative expanded payload estimate. These are logical allocation safeguards, not process-RSS or driver-memory guarantees. Native paths are immutable per process; authored registry packages remain hash-bound.
 
 The five-second lookahead, 100 ms urgency grouping and geometric visibility ranges are development tuning. They do not change physics, collision, saved transforms or authored models.
+
+Vulkan forced-retirement check: one CPU load, two GPU uploads, one GPU unload, zero failures; returned geometry inspected. `UNIVERSE_ASSET_GPU_IDLE_MS` permits bounded development retention tests (default 30 seconds). Evidence: `docs/diagnostics/asset-loader-finish-v1.json`.

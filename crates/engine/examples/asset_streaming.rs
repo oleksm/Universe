@@ -53,7 +53,12 @@ impl Game for Fixture {
             assert_eq!(cpu.loads, 1);
             assert!(cpu.hits > 0);
             assert_eq!(
-                ctx.perf.resources.asset_uploads, 1,
+                ctx.perf.resources.asset_uploads,
+                if std::env::var_os("ASSET_FIXTURE_EVICT").is_some() {
+                    2
+                } else {
+                    1
+                },
                 "warm return must not upload again"
             );
             println!("ASSET_FIXTURE cpu={cpu:?} gpu={:?}", ctx.perf.resources);
@@ -64,7 +69,12 @@ impl Game for Fixture {
     }
     fn draw(&self, f: &mut Frame, _: &Context) {
         // Brief absence exercises retention without rebuilding the immutable model.
-        if !(100..110).contains(&self.frame) {
+        let end = if std::env::var_os("ASSET_FIXTURE_EVICT").is_some() {
+            160
+        } else {
+            110
+        };
+        if !(100..end).contains(&self.frame) {
             if let Some(m) = &self.model {
                 f.model_pbr(&m.with_lease(m.clone()), &Transform::default());
             }
