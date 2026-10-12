@@ -476,6 +476,7 @@ pub(crate) struct Renderer {
     point_pipe: wgpu::RenderPipeline,
     hud_tri_pipe: wgpu::RenderPipeline,
     canvas_pipe: wgpu::RenderPipeline,
+    canvas_blend_pipe: wgpu::RenderPipeline,
     hud_pipe: wgpu::RenderPipeline,
     blit_pipe: wgpu::RenderPipeline,
     /// Same as `blit_pipe`, but into the RGBA composite texture for screenshots.
@@ -789,7 +790,7 @@ impl Renderer {
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
         // Lights' glows add up, behind what's solid, hiding nothing.
         let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
-        let (atlas_bind, hud_tri_pipe, canvas_pipe) = hud_atlas(gpu, &globals_layout);
+        let (atlas_bind, hud_tri_pipe, canvas_pipe, canvas_blend_pipe) = hud_atlas(gpu, &globals_layout);
         let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, Some((false, Cmp::Always)), alpha, (COLOR_FORMAT, 1));
 
         let (blit_layout, blit_pipe, capture_pipe, sampler, linear) = blit_stage(gpu);
@@ -817,6 +818,7 @@ impl Renderer {
             point_pipe,
             hud_tri_pipe,
             canvas_pipe,
+            canvas_blend_pipe,
             hud_pipe,
             blit_pipe,
             capture_pipe,
@@ -1241,17 +1243,8 @@ impl Renderer {
     /// Ordered UI and perspective canvases. A new canvas clears only depth;
     /// UI keeps its submission order and never tests or writes canvas depth.
     fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame) {
-        let mut sections = vec![(0usize, 0u32)];
-        let mut scene = 0;
-        for (i, v) in frame.hud_tris.iter().enumerate().step_by(3) {
-            if v.scene != 0 && v.scene != scene {
-                scene = v.scene;
-                if i == 0 { sections[0].1 = scene; }
-                else { sections.push((i, scene)); }
-            }
-        }
-        for (section, &(start, _)) in sections.iter().enumerate() {
-            let end = sections.get(section + 1).map_or(frame.hud_tris.len(), |s| s.0);
+        let sections = canvas_batches(&frame.hud_tris);
+        for (section, batches) in sections.iter().enumerate() {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("UI / depth canvas"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
@@ -1269,14 +1262,13 @@ impl Renderer {
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.atlas_bind, &[]);
             pass.set_vertex_buffer(0, self.hud_tris.buffer.slice(..));
-            let mut first = start;
-            while first < end {
-                let geometry = frame.hud_tris[first].scene != 0;
-                let mut last = first + 3;
-                while last < end && (frame.hud_tris[last].scene != 0) == geometry { last += 3; }
-                pass.set_pipeline(if geometry { &self.canvas_pipe } else { &self.hud_tri_pipe });
-                pass.draw(first as u32..last as u32, 0..1);
-                first = last;
+            for (range, kind) in batches {
+                pass.set_pipeline(match kind {
+                    0 => &self.hud_tri_pipe,
+                    1 => &self.canvas_pipe,
+                    _ => &self.canvas_blend_pipe,
+                });
+                pass.draw(range.clone(), 0..1);
             }
             if section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
         }
@@ -1490,7 +1482,7 @@ pub fn wait_for_writes() {
 
 /// The HUD's triangles (panels and text): the font's atlas bound, and their pipeline. (The HUD has
 /// its own layer without depth, antialiasing or HDR.)
-fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline, wgpu::RenderPipeline) {
+fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::RenderPipeline) {
     let device = &gpu.device;
     let alpha = wgpu::BlendState::ALPHA_BLENDING;
     let atlas_data = crate::font::atlas();
@@ -1532,7 +1524,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
         entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
     });
     let hud_shader = crate::shaders::single(device, "hud");
-    let pipeline = |geometry: bool| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+    let pipeline = |geometry: bool, write_depth: bool| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: Some("hud tris"),
         layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
         vertex: wgpu::VertexState {
@@ -1542,12 +1534,12 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
             buffers: &[Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<crate::frame::HudVertex>() as u64,
                 step_mode: wgpu::VertexStepMode::Vertex,
-                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4, 3 => Float32x2],
+                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4, 3 => Float32x2, 4 => Float32x2],
             })],
         },
         primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
         depth_stencil: Some(wgpu::DepthStencilState {
-            format: DEPTH_FORMAT, depth_write_enabled: Some(geometry),
+            format: DEPTH_FORMAT, depth_write_enabled: Some(write_depth),
             depth_compare: Some(if geometry { wgpu::CompareFunction::Greater } else { wgpu::CompareFunction::Always }),
             stencil: Default::default(), bias: Default::default(),
         }),
@@ -1561,7 +1553,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
         multiview_mask: None,
         cache: None,
     });
-    (atlas_bind, pipeline(false), pipeline(true))
+    (atlas_bind, pipeline(false, false), pipeline(true, true), pipeline(true, false))
 }
 
 /// The last stage: what puts the scene, front and HUD layers together on the screen (or a
@@ -1650,4 +1642,75 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
         ..Default::default()
     });
     (blit_layout, blit_pipe, capture_pipe, sampler, linear)
+}
+
+/// Group by explicit canvas ID. UI before a canvas remains before it; UI
+/// interleaved with geometry is an overlay after that scene's alpha pass.
+fn canvas_batches(vertices: &[crate::frame::HudVertex]) -> Vec<Vec<(std::ops::Range<u32>, u8)>> {
+    let mut starts = vec![0];
+    let mut scene = 0;
+    for (i, triangle) in vertices.chunks_exact(3).enumerate() {
+        let id = triangle[0].scene;
+        if id != 0 && id != scene {
+            scene = id;
+            if i != 0 { starts.push(i * 3); }
+        }
+    }
+    starts.push(vertices.len());
+    starts.windows(2).map(|bounds| {
+        let mut solid = Vec::new();
+        let mut blend = Vec::new();
+        let mut ui = Vec::new();
+        for i in (bounds[0]..bounds[1]).step_by(3) {
+            if vertices[i].scene == 0 { ui.push(i); }
+            else if vertices[i].alpha[0] == 2. { blend.push(i); }
+            else { solid.push(i); }
+        }
+        // f64 sum avoids overflow for finite f32 eye distances. Stable ties
+        // retain authored ordering; intersecting triangles still need splitting.
+        let depth = |i: usize| vertices[i..i+3].iter().map(|v| v.depth[0] as f64).sum::<f64>();
+        blend.sort_by(|&a, &b| depth(b).total_cmp(&depth(a)));
+        let mut batches: Vec<(std::ops::Range<u32>, u8)> = Vec::new();
+        for (items, kind) in [(solid, 1), (blend, 2), (ui, 0)] {
+            for i in items {
+                if let Some((range, last_kind)) = batches.last_mut() {
+                    if *last_kind == kind && range.end == i as u32 { range.end += 3; continue; }
+                }
+                batches.push((i as u32..i as u32 + 3, kind));
+            }
+        }
+        batches
+    }).collect()
+}
+
+#[cfg(test)]
+mod canvas_alpha_tests {
+    use super::canvas_batches;
+    use crate::frame::HudVertex;
+    fn tri(scene: u32, mode: f32, distance: f32) -> [HudVertex; 3] {
+        [HudVertex { pos: [0.;2], uv: [0.;2], color: [1.;4], depth: [distance,0.1], alpha: [mode,0.5], scene };3]
+    }
+    #[test]
+    fn cutoff_above_one_is_preserved_for_shader_discard() {
+        use crate::{Frame, Camera, CanvasAlpha, Color};
+        use glam::Vec2;
+        let mut f = Frame::new(Camera::default(), Vec2::splat(100.), Vec2::splat(100.));
+        f.canvas_scene();
+        f.canvas_triangle_alpha([Vec2::ZERO;3], [2.;3], 0.1, [Color::WHITE;3], CanvasAlpha::Mask(2.));
+        assert!(f.hud_tris.iter().all(|v| v.alpha == [1.,2.]));
+    }
+    #[test]
+    fn alpha_spans_objects_and_ui_but_not_canvas_boundaries() {
+        let v = [tri(0,0.,0.), tri(1,2.,2.), tri(0,0.,0.), tri(1,0.,8.),
+                 tri(1,2.,9.), tri(1,1.,4.), tri(2,2.,100.), tri(2,0.,200.)].concat();
+        assert_eq!(canvas_batches(&v), vec![vec![(0..3,0)],
+            vec![(9..12,1),(15..18,1),(12..15,2),(3..6,2),(6..9,0)],
+            vec![(21..24,1),(18..21,2)]]);
+    }
+    #[test]
+    fn transparent_equal_depth_is_stable_and_empty_frame_clears_hud() {
+        let v = [tri(1,2.,f32::MAX),tri(1,2.,f32::MAX)].concat();
+        assert_eq!(canvas_batches(&v),vec![vec![(0..6,2)]]);
+        assert_eq!(canvas_batches(&[]),vec![vec![]]);
+    }
 }
