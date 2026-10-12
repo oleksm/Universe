@@ -27,6 +27,12 @@ function:
   passage: 0.8
   holds: 200000
   standard: "IDSS"
+visual:
+  format: "freefall-model/1"
+  path: "models/access-docking-collar/v1"
+  manifest_sha256: "9883cb98f6981444424d52738e9710ba90b9c090217770e410b12e2446ce2402"
+  version: 1
+  triangles: 11682
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "The International Docking System Standard: an 0.8 m passage in a 1.4 m ring; NASA's IDA weighs 526 kg. From memory of the IDSS and the IDA. Not sourced." }
