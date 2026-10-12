@@ -185,6 +185,14 @@ definitions:
       manifest_sha256: { type: string, pattern: "^[0-9a-f]{64}$", description: "Of the version's manifest.json." }
       version: { type: integer, minimum: 1 }
       triangles: { type: integer, description: "triangles drawn, from the model" }
+      axes:
+        description: "Which of the model's own axes point along the design frame's forward (+Y) and up (+Z); right (+X) is forward x up, so the pair fixes a proper rotation. Absent: the model is already in the design frame (forward +Y, up +Z). The two must be perpendicular. Staged (registry-axes): no record carries it until the game reads it."
+        type: object
+        additionalProperties: false
+        required: [forward, up]
+        properties:
+          forward: { enum: ["+X", "-X", "+Y", "-Y", "+Z", "-Z"], description: "the model axis that points forward (for an engine, the way it pushes the ship)" }
+          up: { enum: ["+X", "-X", "+Y", "-Y", "+Z", "-Z"], description: "the model axis that points up" }
       note: { type: string }
   physical_object:
     description: "A thing that exists in the world: it has physical figures. A kind of record that is one derives from this (allOf), and adds the figures its kind must have. A company, a law or a need does not."

@@ -10,7 +10,9 @@ optionally stats and evidence; it goes in the manifest as `about`, beside the st
 --thumb=<thumb.png> and --icon=<icon.png> (previews, required with --push: square PNG with a transparent background,
 512 and 128 px; written into the package as thumb.png and icon.png),
 --motion=<file.json> (freefall-motion/1, docs/formats/freefall-motion-1.schema.yaml: how its parts move; checked against
-the model and the record, then written into the package as motion.json).
+the model and the record, then written into the package as motion.json),
+--axes=<forward>,<up> (which of the model's axes point forward and up, e.g. --axes=-Z,+Y: written as the record's
+visual.axes; the two must be perpendicular; without it the record keeps the axes it has, and --axes=design clears them).
 
 It reads the model itself (no manifest from the modeller needed): its size (the world bounds of its meshes), its node
 names, its triangles (meshes named COL_* are collision and not counted), and checks them against the record: the three
@@ -26,7 +28,7 @@ import datetime, json, os, re, shutil, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from assets import FORMAT, MOTION_FORMAT, PREVIEWS, ROOT, check_model, check_motion, check_png, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
+from assets import axes_problem, FORMAT, MOTION_FORMAT, PREVIEWS, ROOT, check_model, check_motion, check_png, inspect_glb, read_about, records, sha, size_of, store, tail  # noqa: E402
 
 
 def die(msg):
@@ -72,6 +74,12 @@ def main(argv):
             bad += check_png(previews[name], side)
         elif push:
             bad.append(f"--push needs --{name}=<{name}.png> ({side} x {side} px, transparent background): every installed item can be previewed")
+    axes = (rec.get("visual") or {}).get("axes")
+    if isinstance(opt.get("axes"), str):
+        a = opt["axes"].split(",")
+        axes = None if opt["axes"] == "design" else {"forward": a[0], "up": a[1] if len(a) > 1 else None}
+    if axes and axes_problem(axes):
+        bad.append(f"--axes: {axes_problem(axes)}")
     motion = None
     if isinstance(opt.get("motion"), str):
         try:
@@ -102,11 +110,12 @@ def main(argv):
     dest = os.path.join(store(), rel)
     print(f"  2. package {rel}: {'unchanged' if same else 'new'}")
     cur = rec.get("visual") or {}
-    if same and cur.get("path") == rel:
+    if same and cur.get("path") == rel and cur.get("axes") == axes:
         print("  nothing to change: the record already has this model.")
         return
     if not apply:
-        print(f"  3. record {os.path.relpath(rec_path, ROOT)}: visual {cur.get('path')} -> {rel}")
+        print(f"  3. record {os.path.relpath(rec_path, ROOT)}: visual {cur.get('path')} -> {rel}"
+              + (f", axes {cur.get('axes')} -> {axes}" if cur.get("axes") != axes else ""))
         print("  dry run: nothing written. --apply to do it, --push to commit and push too.")
         return
     if not same:
@@ -134,6 +143,8 @@ def main(argv):
     # 3. the record
     text = open(rec_path, encoding="utf-8").read()
     block = f'visual:\n  format: "{FORMAT}"\n  path: "{rel}"\n  manifest_sha256: "{msha}"\n  version: {version}\n  triangles: {info["triangles"]}\n'
+    if axes:
+        block += f'  axes: {{ forward: "{axes["forward"]}", up: "{axes["up"]}" }}\n'
     if re.search(r"^visual:\n", text, flags=re.M):
         new = re.sub(r"^visual:\n(?:  .*\n)+", block, text, count=1, flags=re.M)
     elif re.search(r"^life:", text, flags=re.M):

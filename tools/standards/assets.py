@@ -56,6 +56,36 @@ def records():
     return out
 
 
+AXES = {"+X": (1, 0, 0), "-X": (-1, 0, 0), "+Y": (0, 1, 0), "-Y": (0, -1, 0), "+Z": (0, 0, 1), "-Z": (0, 0, -1)}
+DESIGN = {"forward": "+Y", "up": "+Z"}      # the design frame: right +X, forward +Y, up +Z
+
+
+def axes_problem(axes):
+    """What is wrong with a visual.axes pair (None: it fixes a proper rotation)."""
+    f, u = (axes or DESIGN).get("forward"), (axes or DESIGN).get("up")
+    if f not in AXES or u not in AXES:
+        return f"axes {f!r}, {u!r}: each one of {', '.join(AXES)}"
+    if sum(a * b for a, b in zip(AXES[f], AXES[u])):
+        return f"axes forward {f} and up {u} are parallel: they must be perpendicular"
+    return None
+
+
+def axes_rotation(axes):
+    """The rotation that takes a model's coordinates into the design frame, rows right, forward, up (each a model axis):
+    design = R @ model. None or absent: the identity."""
+    bad = axes_problem(axes)
+    if bad:
+        raise ValueError(bad)
+    f, u = AXES[(axes or DESIGN)["forward"]], AXES[(axes or DESIGN)["up"]]
+    r = (f[1] * u[2] - f[2] * u[1], f[2] * u[0] - f[0] * u[2], f[0] * u[1] - f[1] * u[0])      # right = forward x up
+    return (r, f, u)
+
+
+def to_design(axes, v):
+    """A model-frame vector in the design frame."""
+    return tuple(sum(a * b for a, b in zip(row, v)) for row in axes_rotation(axes))
+
+
 def size_of(kind, r):
     """The record's size, length by width by height (m), or None where it says none."""
     ph = r.get("physical") or {}
