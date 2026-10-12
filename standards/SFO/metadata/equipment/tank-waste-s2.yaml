@@ -10,10 +10,10 @@ size_class: 2
 fits: mount.tank-s2
 physical:
   mass: 530
-  volume: 19.9
-  length: 2.71
+  volume: 21.4
+  length: 2.809
   width: 2.71
-  height: 2.71
+  height: 2.815
 built_of:
   parts: tank-waste-s2
   list:
@@ -31,5 +31,6 @@ life: 473364000
 basis:
   - { of: [function.capacity, size_class], tier: invented, review: true, note: "10 m3 of waste water at about 1,000 kg/m3. Chosen." }
   - { of: [physical, built_of.list], tier: derived, review: true, note: "10 m3 usable plus 3% ullage is 10.31 m3 inside: 1.350 m of inner radius, 2.71 m across outside a 5 mm wall (the modeller's candidate v01; it was 2.67 m, which held no ullage). At 0.2 MPa (invented: enough to push the waste to the hull's lines) the wall carries 27 MPa, far under welded 6061's 165 MPa (from memory): 5 mm is the plate stock and handling gauge, not the pressure's. Bare shell 310 kg, 350 with lands, bosses and doublers. Saddles 30 kg (the modeller scaled about 28), so 530 kg in all, up from 500. Waste water corrodes bare aluminium, hence the lining; its mass is within the shell's. Pressure, sanitation and loads provisional; review." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The fitted envelope, from the modeller's exterior (candidate v01): the 2.71 m sphere on four saddles, 2.815 m high in all; the capped ports bring the length to 2.809 m; 2.71 m across. The drawn saddles weigh 27.7 kg of the 30 kg allowed. Within the mount's 7.25 m." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
