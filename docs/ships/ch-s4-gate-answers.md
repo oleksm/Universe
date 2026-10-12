@@ -95,3 +95,11 @@ The swept envelope from blockout v13 (513 poses, pivot -0.60) is now in the reco
 aft to Y -3.183, nothing at Y > 0. That matches the geometry: rim radius 0.65, 2.5 m behind the pivot, at 0.26 rad.
 Hull bays leave a swept box 2.542 x 2.542 x 3.183 m. The four contacts left are each actuator against its own fixed
 bracket, which are intended seats. Still open: the final seats, containment and export QC.
+
+## Mass screen (blender candidate v01, 20261012T085544): recorded, flagged
+
+The candidate's measured screen is 1,483 kg before the pump and turbine internals, against 1,630 kg in total. The nozzle
+is counted as solid copper, 556 kg. That leaves 147 kg for the internals. The shaft power is about 55 MW (derived), and
+turbopumps need roughly 270 to 550 kg for it (invented range). A hollowed channel liner, about 430 kg, frees about 120 kg.
+The record keeps 1,630 kg, with a review note that it may be 0 to 400 kg short. It is not thinned to fit. The
+geometry and detail scope are unchanged.
