@@ -57,6 +57,12 @@ function:
     coolant_out: 350
     exit_manifold: 0.023
     vacuum_only: false
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-ch-s3/v1"
+  manifest_sha256: "a544c4c7858b749dcb636f9502b78d7ad5342d309afbfcd54f9be40497401f3d"
+  version: 1
+  triangles: 15428
 life: 473364000
 basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "between the RL10 and a Raptor by thrust. Not a Raptor's weight per thrust, as first written: that would be about 354 kg (the S4 engine's 1,630 kg for 2,300 kN); small engines run heavier per thrust, and 600 kg is kept until measured. Review" }
