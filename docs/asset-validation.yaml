@@ -2788,3 +2788,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual hull integration, game motion and GPU appearance/cost; loaded structure, fatigue, drive sizing and ore flow unqualified."
+  - key: equipment.cargo.ore-bay.10t
+    version: 2
+    manifest_sha256: "6c3662ea0b300178e55fa73ee0321d0c47053238d62f9e11db3d2112be025c34"
+    installed: 752d4c01
+    game: "the loader (world::assets) at fso 752d4c01"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-ore-bay-10t/v2 (511948 bytes, bounds [-1.64, 0.0005, -0.85] to [1.645, 1.7195, 0.85]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual hull integration, game motion, GPU appearance/cost; structural loads, ore flow and drives unqualified; measured mass delta remains flagged in registry71f0d447."
