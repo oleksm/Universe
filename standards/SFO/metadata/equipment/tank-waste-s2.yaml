@@ -27,6 +27,12 @@ function:
   kind: "store"
   capacity: 10000
   holds: "good.waste-water"
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-waste-s2/v1"
+  manifest_sha256: "88a278c129555d5d50d3d649a4370878748a6d85d66f7cd290a2740efa3e80b3"
+  version: 1
+  triangles: 6264
 life: 473364000
 basis:
   - { of: [function.capacity, size_class], tier: invented, review: true, note: "10 m3 of waste water at about 1,000 kg/m3. Chosen." }
