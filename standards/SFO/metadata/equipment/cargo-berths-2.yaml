@@ -5,14 +5,14 @@ identity:
   maker: org.hadley
   revision: draft
   slot: cargo
-  description: "Two sleep pods, one above the other, each a 1.94 x 0.82 m bunk with a locker over the feet, a reading light and a fan. They open along one long face straight onto the hull's corridor: there is no aisle inside, and the corridor is the hull's. The pods are for sleeping only: you lie in a pod and stand, sit or dress in the corridor. The walls and screens are for privacy, not pressure. In a cargo slot, as a cabin is."
+  description: "Two sleep pods, one above the other, each a 1.94 x 0.82 m bunk with a locker over the feet, a reading light and a fan. They open along one long face straight onto the hull's corridor: there is no aisle inside, and the corridor is the hull's. The pods are for sleeping only: you lie in a pod and stand, sit or dress in the corridor. A narrow fixed ladder at the foot end, 70 mm proud of the open face and outside the screens' sweep, reaches the upper pod. The walls and screens are for privacy, not pressure. In a cargo slot, as a cabin is."
 size_class: 1
 fits: mount.cargo-s1
 physical:
   mass: 260
-  volume: 4
+  volume: 4.28
   length: 2
-  width: 1
+  width: 1.07
   height: 2
 needs:
   power: 100
@@ -30,6 +30,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
-  - { of: [identity.description, built_of.list], tier: invented, review: true, note: "Fitting two people in 2 x 1 x 2 m (the modeller's layout, candidate v01): bunks 1.94 m long sleep a person up to about 1.85 m tall (most). Measured in the modeller's blockout: 0.85 m clear over the lower bed and 0.78 m over the upper, below seated height (about 0.9 m), so neither pod is a seat. End walls 30 mm thick give 1.94 m of bed. So the module is two sleep pods, not a cabin: no aisle, no room to stand or dress inside. The hull must give a corridor at least 0.8 m wide and 2 m high along the open face. The opening is 1.9 x 0.75 m a pod, closed by a sliding privacy screen; no display, a reading light only. A fan a pod, from the hull's air, so breath does not pool round a face in free fall. Chosen; review." }
+  - { of: [identity.description, built_of.list], tier: invented, review: true, note: "Fitting two people in 2 x 1 x 2 m (the modeller's layout, candidate v01): bunks 1.94 m long sleep a person up to about 1.85 m tall (most). Measured in the modeller's blockout: 0.85 m clear over the lower bed and 0.78 m over the upper, below seated height (about 0.9 m), so neither pod is a seat. End walls 30 mm thick give 1.94 m of bed. So the module is two sleep pods, not a cabin: no aisle, no room to stand or dress inside. The hull must give a corridor at least 0.8 m wide, measured from the ladder's face, and 2 m high along the open face. The fitted box is 2 x 1.07 x 2 m with the ladder (1 m without), inside the mount's 2.2 m. The opening is 1.9 x 0.75 m a pod, closed by a sliding privacy screen; no display, a reading light only. A fan a pod, from the hull's air, so breath does not pool round a face in free fall. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
