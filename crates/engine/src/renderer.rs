@@ -83,7 +83,25 @@ struct Globes {
     texture: wgpu::Texture,
     /// Their own colours (sRGB; alpha 0 where a world has none), layer for layer.
     colors: wgpu::Texture,
-    layers: Vec<Option<(u64, u64)>>,
+    layers: Vec<Option<GlobeLayer>>,
+    upload_frame: u64,
+    upload_remaining: usize,
+}
+
+#[derive(Clone, Copy)]
+struct GlobeLayer { id: u64, used: u64, next: usize, ready: bool }
+const GLOBE_UPLOAD_PER_FRAME: usize = 2 * 1024 * 1024;
+impl GlobeLayer {
+    fn take(&mut self, map: &crate::model::GlobeMap, budget: &mut usize) -> std::ops::Range<usize> {
+        let begin = self.next;
+        while let Some(upload) = map.uploads.get(self.next) {
+            if upload.bytes.len() > *budget { break; }
+            *budget -= upload.bytes.len();
+            self.next += 1;
+        }
+        self.ready = self.next == map.uploads.len();
+        begin..self.next
+    }
 }
 
 impl Globes {
@@ -119,90 +137,44 @@ impl Globes {
             mipmap_filter: wgpu::MipmapFilterMode::Linear,
             ..Default::default()
         });
-        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] }, globe_view, globe_colors_view, globe_sampler)
+        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize], upload_frame: 0, upload_remaining: 0 }, globe_view, globe_colors_view, globe_sampler)
     }
 }
 
 impl Globes {
-    /// Whether `map` is in a layer already.
     fn resident(&self, map: &crate::model::GlobeMap) -> bool {
-        self.layers.iter().any(|l| matches!(l, Some((id, _)) if *id == map.id()))
+        self.layers.iter().flatten().any(|l| l.id == map.id() && l.ready)
     }
-
-    /// The layer holding `map` for frame `now`, uploading it if it's new
-    /// into the oldest layer not drawn this frame. None: every layer is
-    /// someone's this frame (a layer given out is never overwritten before
-    /// the frame's drawn: that showed one world's ground as another's).
+    /// Pending layers are never sampled. Upload a bounded number of prepared
+    /// bytes across all worlds per frame; plain base geometry remains drawable.
     fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64) -> Option<u32> {
-        if let Some(k) = self.layers.iter().position(|l| matches!(l, Some((id, _)) if *id == map.id())) {
-            self.layers[k] = Some((map.id(), now));
-            return Some(k as u32);
+        let _scope = universe_prof::scope("render/upload globe chunks");
+        assert_eq!(map.size, GLOBE_SIZE);
+        if self.upload_frame != now {
+            self.upload_frame = now;
+            self.upload_remaining = GLOBE_UPLOAD_PER_FRAME;
         }
-        let k = (0..self.layers.len()).filter(|&k| self.layers[k].is_none_or(|(_, used)| used != now)).min_by_key(|&k| self.layers[k].map_or(0, |(_, used)| used + 1))?;
-        self.layers[k] = Some((map.id(), now));
-        self.upload(gpu, map, k as u32);
-        Some(k as u32)
-    }
-
-    fn upload(&self, gpu: &Gpu, map: &crate::model::GlobeMap, layer: u32) {
-        let n = map.size as usize;
-        assert_eq!(map.size, GLOBE_SIZE, "globe maps are {GLOBE_SIZE} a side");
-        for face in 0..6 {
-            let mut level: Vec<[f32; 2]> = map.texels[face * n * n..(face + 1) * n * n].to_vec();
-            let mut side = n;
-            for mip in 0..GLOBE_MIPS {
-                let bytes: Vec<u16> = level.iter().flat_map(|t| [half(t[0]), half(t[1])]).collect();
-                gpu.queue.write_texture(
-                    wgpu::TexelCopyTextureInfo { texture: &self.texture, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
-                    bytemuck::cast_slice(&bytes),
-                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
-                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
-                );
-                if side == 1 {
-                    break;
-                }
-                // (The next level: each texel the mean of four.)
-                let half_side = side / 2;
-                level = (0..half_side * half_side)
-                    .map(|i| {
-                        let (x, y) = (i % half_side * 2, i / half_side * 2);
-                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
-                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
-                        [(a[0] + b[0] + c[0] + d[0]) / 4.0, (a[1] + b[1] + c[1] + d[1]) / 4.0]
-                    })
-                    .collect();
-                side = half_side;
+        let k = match self.layers.iter().position(|l| l.is_some_and(|l| l.id == map.id())) {
+            Some(k) => k,
+            None => {
+                let k = (0..self.layers.len()).filter(|&k| self.layers[k].is_none_or(|l| l.used != now))
+                    .min_by_key(|&k| self.layers[k].map_or(0, |l| l.used+1))?;
+                self.layers[k] = Some(GlobeLayer { id: map.id(), used: now, next: 0, ready: false });
+                k
             }
+        };
+        let layer = self.layers[k].as_mut().unwrap();
+        layer.used = now;
+        for upload in &map.uploads[layer.take(map, &mut self.upload_remaining)] {
+            gpu.queue.write_texture(
+                wgpu::TexelCopyTextureInfo { texture: if upload.color { &self.colors } else { &self.texture }, mip_level: upload.mip,
+                    origin: wgpu::Origin3d { x: 0, y: 0, z: k as u32*6 + upload.face }, aspect: wgpu::TextureAspect::All },
+                &upload.bytes,
+                wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(upload.side*4), rows_per_image: Some(upload.side) },
+                wgpu::Extent3d { width: upload.side, height: upload.side, depth_or_array_layers: 1 },
+            );
         }
-        // Its own colours, or none (cleared: the layer may have held another world's).
-        for face in 0..6 {
-            let mut level: Vec<[u8; 4]> = match &map.colors {
-                Some(c) => c[face * n * n..(face + 1) * n * n].to_vec(),
-                None => vec![[0; 4]; n * n],
-            };
-            let mut side = n;
-            for mip in 0..GLOBE_MIPS {
-                gpu.queue.write_texture(
-                    wgpu::TexelCopyTextureInfo { texture: &self.colors, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
-                    bytemuck::cast_slice(&level),
-                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
-                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
-                );
-                if side == 1 {
-                    break;
-                }
-                let half_side = side / 2;
-                level = (0..half_side * half_side)
-                    .map(|i| {
-                        let (x, y) = (i % half_side * 2, i / half_side * 2);
-                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
-                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
-                        std::array::from_fn(|k| ((a[k] as u32 + b[k] as u32 + c[k] as u32 + d[k] as u32 + 2) / 4) as u8)
-                    })
-                    .collect();
-                side = half_side;
-            }
-        }
+        layer.ready.then_some(k as u32)
     }
 }
 
@@ -1007,7 +979,7 @@ impl Renderer {
                 // (`on`: their format's version, for the lab's shader to read their maps by.)
                 let clouds = if gr.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0 { [frame.world_clouds[0], frame.world_clouds[1], frame.world_clouds[2], maps.clouds_format as f32] } else { [0.0; 4] };
                 gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
-                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
+                (self.globes.layers.iter().position(|l| l.is_some_and(|l| l.id == *globe && l.ready)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
             None => (0.0, 0.0, 0.0),
         };
@@ -1055,12 +1027,12 @@ impl Renderer {
         self.front_glows.upload(gpu, &frame.front_glows);
         self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
-        self.upload_meshes(gpu, frame);
-        self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5);
+        universe_prof::time("render/upload meshes", || self.upload_meshes(gpu, frame));
+        universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5));
         drop(upload);
 
         let acquire = std::time::Instant::now();
-        let next = gpu.surface.get_current_texture();
+        let next = universe_prof::time("render/acquire surface", || gpu.surface.get_current_texture());
         self.wait = acquire.elapsed();
         // (No frame from the window (a screen asleep, a window hidden): nothing to show, but a
         // capture asked for is still drawn and saved, from the offscreen composite.)
@@ -1095,7 +1067,7 @@ impl Renderer {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, true);
             self.sunprobe.copy_out(&mut encoder);
         }
-        self.hud_pass(&mut encoder, frame);
+        universe_prof::time("render/encode canvas and HUD", || self.hud_pass(&mut encoder, frame));
         let readback = capture.map(|_| {
             self.composite(&mut encoder, &self.target.composite, &self.capture_pipe);
             self.copy_to_buffer(gpu, &mut encoder)
@@ -1124,7 +1096,7 @@ impl Renderer {
         if let Some(t) = self.gputime.as_mut() {
             t.copy_out(&mut encoder);
         }
-        gpu.queue.submit([encoder.finish()]);
+        universe_prof::time("render/submit", || gpu.queue.submit([encoder.finish()]));
         self.sunprobe.submitted();
         if let Some(t) = self.gputime.as_mut() {
             t.submitted();
@@ -1717,5 +1689,30 @@ mod canvas_alpha_tests {
         let v = [tri(1,2.,f32::MAX),tri(1,2.,f32::MAX)].concat();
         assert_eq!(canvas_batches(&v),vec![vec![(0..6,2)]]);
         assert_eq!(canvas_batches(&[]),vec![vec![]]);
+    }
+}
+
+#[cfg(test)]
+mod globe_stream_tests {
+    use super::*;
+    #[test]
+    fn globe_upload_budget_never_exposes_partial_or_skips_mips() {
+        let map = crate::GlobeMap::new(4, vec![[1., 0.]; 6*4*4]);
+        let mut layer = GlobeLayer { id: map.id(), used: 0, next: 0, ready: false };
+        let mut copied = Vec::new();
+        let total = map.uploads.iter().map(|u| u.bytes.len()).sum::<usize>();
+        let mut bytes = 0;
+        while !layer.ready {
+            let mut budget = 64;
+            let range = layer.take(&map, &mut budget);
+            assert!(!range.is_empty());
+            bytes += 64-budget;
+            copied.extend(range);
+            assert_eq!(layer.ready, layer.next == map.uploads.len());
+        }
+        assert_eq!(copied, (0..map.uploads.len()).collect::<Vec<_>>());
+        assert_eq!(bytes, total);
+        let mut empty = 0;
+        assert!(layer.take(&map, &mut empty).is_empty());
     }
 }

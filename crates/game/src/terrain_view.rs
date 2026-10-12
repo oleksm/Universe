@@ -69,13 +69,13 @@ pub(super) fn canonical_texel(terrain: &universe_sim::Terrain, dir: DVec3) -> Op
 
 /// A world's surface map (see `GlobeMap`): its terrain sampled on a cube,
 /// height in units of its relief and crater-ness (or, below zero, how much
-/// a spaceport's plain it is), made on all cores.
-pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
+/// a spaceport's plain it is). Worker callers choose bounded parallelism.
+pub(super) fn globe_map_with_threads(body: &Body, threads: usize) -> Option<universe_engine::GlobeMap> {
     let terrain = body.terrain.as_ref()?;
     let n = MAP_SIZE as usize;
     let amp = terrain.amplitude.max(1.0);
     let mut texels = vec![[0.0f32; 2]; 6 * n * n];
-    let threads = std::thread::available_parallelism().map_or(4, |c| c.get()).max(1);
+    let threads = threads.clamp(1, 2);
     let rows = (6 * n).div_ceil(threads);
     std::thread::scope(|s| {
         for (k, chunk) in texels.chunks_mut(rows * n).enumerate() {

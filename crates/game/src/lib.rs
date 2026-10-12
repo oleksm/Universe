@@ -39,6 +39,7 @@ mod sound;
 mod terrain_lod;
 mod lines_near;
 mod terrain_view;
+mod globe_assets;
 mod pgs_preview;
 #[cfg(feature = "dev")]
 mod pgs_debug;
@@ -350,11 +351,8 @@ pub struct NetState {
 pub struct Caches {
     /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
     pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
-    /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
-    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
-    /// Worlds drawn from their vector lines: the lines as a mesh of edges and the peaks and lows
-    /// pinned, by (system, body).
-    pub lines: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, std::sync::Arc<universe_sim::world::worlds::LinesDraw>)>,
+    /// Ready globe leases for the current view. Missing entries draw base geometry.
+    pub globes: std::collections::HashMap<(usize, usize), Arc<globe_assets::Globe>>,
     /// The registry's things' models (`visual`), loaded the first time each is drawn.
     pub visuals: visuals::Visuals,
     /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
@@ -509,7 +507,6 @@ impl App {
             },
             caches: Caches {
                 globes: std::collections::HashMap::new(),
-                lines: std::collections::HashMap::new(),
                 lines_near: Default::default(),
                 visuals: Default::default(),
                 world_maps: std::collections::HashMap::new(),
@@ -816,17 +813,17 @@ impl App {
         }
         // SHIFT+F4: the heights of worlds drawn from their lines stretched, x1, x5, x10, for seeing
         // their relief; their globes, ground and lines made again.
-        if input.pressed(KeyCode::F4) && shift && !self.caches.lines.is_empty() {
+        if input.pressed(KeyCode::F4) && shift && self.caches.globes.values().any(|g| g.lines.is_some()) {
             let next = match universe_sim::world::worlds::stretch() as u32 {
                 1 => 5.0,
                 5 => 10.0,
                 _ => 1.0,
             };
             universe_sim::world::worlds::set_stretch(next);
-            let worlds: Vec<(usize, usize)> = self.caches.lines.keys().copied().collect();
+            globe_assets::invalidate();
+            let worlds: Vec<(usize, usize)> = self.caches.globes.keys().copied().collect();
             for k in worlds {
                 self.caches.globes.remove(&k);
-                self.caches.lines.remove(&k);
             }
             *self.caches.lines_near.borrow_mut() = Default::default();
             *self.caches.terrain_lod.borrow_mut() = Default::default();
@@ -1196,14 +1193,16 @@ impl App {
     /// a baked world near the eye.
     fn build_globes(&mut self) {
         let origin = self.view.cache;
+        // Drop inactive leases; the shared scheduler retains recently used data for return.
+        self.caches.globes.retain(|&(o, _), _| o == origin);
+        self.caches.world_maps.retain(|&(o, _), _| o == origin);
+        globe_assets::maintain();
         for (i, b) in self.view.system.bodies.iter().enumerate() {
-            if !self.caches.globes.contains_key(&(origin, i))
-                && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
-            {
-                self.caches.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
-                if let Some((lines, draw)) = terrain_view::lines(b) {
-                    self.caches.lines.insert((origin, i), (lines.into(), std::sync::Arc::new(draw)));
-                }
+            let position = self.view.positions.get(i).copied().unwrap_or_default();
+            if let Some(globe) = globe_assets::request(self.view.system.clone(), i, &self.camera, position) {
+                self.caches.globes.insert((origin, i), globe);
+            } else {
+                self.caches.globes.remove(&(origin, i));
             }
             // A world with a bake: its full-resolution maps, read and encoded on a thread of their
             // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
@@ -1214,6 +1213,7 @@ impl App {
             }
             if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
                 && away < WORLD_MAPS_NEAR
+                && self.caches.globes.contains_key(&(origin, i))
                 && !self.caches.world_maps.contains_key(&(origin, i))
             {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
@@ -1223,7 +1223,7 @@ impl App {
                 // aren't today's, so none.)
                 let then = self.world_frame.clone().filter(|f| f.key == b.key);
                 let key = b.key.clone();
-                let lines = self.caches.lines.contains_key(&(origin, i));
+                let lines = self.caches.globes.get(&(origin, i)).is_some_and(|g| g.lines.is_some());
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
