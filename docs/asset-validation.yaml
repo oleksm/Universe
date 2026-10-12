@@ -2708,3 +2708,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static cooling revision;~222kgvs180kg,mount/restraint9g,hidden cooling capacity,final bridge/crew interaction/GPU open."
+  - key: equipment.command.s2
+    version: 2
+    manifest_sha256: "10934661807a7736464a1cf4779d403e9939c011dfbb938cacf6e3016f35b70c"
+    installed: 9b7e2a35
+    game: "the loader (world::assets) at fso 9b7e2a35"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/command-s2/v2 (354788 bytes, bounds [-1.1, 0.0, -0.6] to [1.1, 1.5, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static coolingrevision;~436kgvs340kg,past425kgmount;9gmount/restraint,cooling capacity,final bridge/crewinteraction/GPU open."
