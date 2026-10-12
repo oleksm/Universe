@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: cargo
-  description: "Where 2 of the crew sleep: bunks, lockers and the partition round them. In a cargo slot, as a cabin is."
+  description: "Two sleep pods, one above the other, each a 1.94 x 0.82 m bunk with a locker over the feet, a reading light and a fan. They open along one long face straight onto the hull's corridor: there is no aisle inside, and the corridor is the hull's. You lie or sit up hunched in a pod; you stand in the corridor. The walls and screens are for privacy, not pressure. In a cargo slot, as a cabin is."
 size_class: 1
 fits: mount.cargo-s1
 physical:
@@ -19,8 +19,8 @@ needs:
 built_of:
   parts: cargo-berths-2
   list:
-    - { code: BRT2-01, name: "Bunks and lockers", description: "A bunk, a locker and a reading light a head.", mass: 117, length: 1.53, width: 0.766, height: 1.53, item: stock.al6061-pl-5, quantity: 134.5, module: module.machining-centre }
-    - { code: BRT2-02, name: "Partition and door", description: "The wall round them.", mass: 104, length: 1.47, width: 0.737, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 119.6, module: module.welding-bay }
+    - { code: BRT2-01, name: "Bunks and lockers", description: "Two bunk trays, 1.94 x 0.82 m each, stacked; a mattress 0.1 m thick; above the feet of each, a locker 0.35 m long and 0.35 m high across the bunk, the feet sliding under it.", mass: 117, length: 1.53, width: 0.766, height: 1.53, item: stock.al6061-pl-5, quantity: 134.5, module: module.machining-centre }
+    - { code: BRT2-02, name: "Partition and door", description: "The back, the ends, the shelf between the pods and the top; on the open face, a sliding screen a pod. No pressure door: the module's open face is the hull's corridor wall.", mass: 104, length: 1.47, width: 0.737, height: 1.47, item: stock.al6061-sh-2-panel, quantity: 119.6, module: module.welding-bay }
     - { code: BRT2-03, name: "Linings, bedding, lights", mass: 39, length: 1.06, width: 0.531, height: 1.06, item: stock.mli-fl, quantity: 39, module: module.assembly-shop }
 making:
   module: module.assembly-shop
@@ -30,5 +30,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "130 kg a berth: a bunk and locker (40 kg, a ship's), its share of partition (60 kg) and fittings (30 kg); 1 m2 of deck a bunk at two high, 50 W a head of light. From memory of a ship's crew cabin; chosen." }
+  - { of: [identity.description, built_of.list], tier: invented, review: true, note: "Fitting two people in 2 x 1 x 2 m (the modeller's layout, candidate v01): bunks 1.94 m long sleep a person up to about 1.85 m tall (most). Each pod is 1.0 m high: 0.03 m of tray and 0.1 m of mattress leave about 0.85 m over it, enough to sit up hunched but not upright (seated height is about 0.9 m), like a capsule hotel. So the module is two sleep pods, not a cabin: no aisle, no room to stand or dress inside. The hull must give a corridor at least 0.8 m wide and 2 m high along the open face. The opening is 1.9 x 0.75 m a pod. A fan a pod, from the hull's air, so breath does not pool round a face in free fall. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
