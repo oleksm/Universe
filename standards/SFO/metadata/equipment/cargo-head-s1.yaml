@@ -10,9 +10,9 @@ size_class: 1
 fits: mount.cargo-s1
 physical:
   mass: 200
-  volume: 2.55
+  volume: 2.546
   length: 1.2
-  width: 1.063
+  width: 1.061
   height: 2
 needs:
   power: 500
@@ -31,6 +31,6 @@ life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "A compartment of 1.2 by 1.0 m with a space toilet (the station's is about 100 kg with its fans and separator; from memory) and a basin; 500 W of fans and heating. Serves six; one more for every six. Chosen." }
   - { of: [identity], tier: invented, review: true, note: "Layout after Blender (2026-10-12). Free fall rules out open water: the toilet and basin both pull air and liquid through one fan and separator, as space toilets do. Static state is the door closed; open is a pose, not a separate model." }
-  - { of: [physical], tier: derived, note: "Fitted envelope from Blender's model (2026-10-12): 1.2 x 1.063 x 2 m with the door grip 63 mm proud of the face; inside 1.14 x 0.94 x 1.94 m; door 0.816 x 1.90 m with a 20 mm sill. The open door sweeps 1.382 m out from the case centre, about 0.88 m beyond the door face, so it blocks a 0.8 m corridor while open. Mass kept at 200; the drawn case is about 127 kg, leaving about 73 kg for fan, separator, canister and plumbing." }
+  - { of: [physical], tier: derived, note: "Fitted envelope from Blender's model (2026-10-12): 1.2 x 1.061 x 2 m (exported bounds) with the door grip 61 mm proud of the face; inside 1.14 x 0.94 x 1.94 m; door 0.816 x 1.90 m with a 20 mm sill. The open door sweeps 1.382 m out from the case centre, about 0.88 m beyond the door face, so it blocks a 0.8 m corridor while open. Mass kept at 200; the drawn case is about 127 kg, leaving about 73 kg for fan, separator, canister and plumbing." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
