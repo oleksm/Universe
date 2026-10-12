@@ -353,7 +353,7 @@
 - { record: equipment.cargo.food-store.s1, at: "2026-10-12T01:55:46Z", status: draft, summary: "changed: visual", sha: "31156fab432e785b" }
 - { record: equipment.cargo.galley.s1, at: "2026-10-12T15:09:28Z", status: draft, summary: "changed: visual", sha: "cb6e0970b6b28063" }
 - { record: equipment.cargo.head.s1, at: "2026-10-12T15:32:28Z", status: draft, summary: "changed: visual", sha: "6d32393ffd85d85a" }
-- { record: equipment.cargo.ore-bay.100t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "8dbf29642ead3995" }
+- { record: equipment.cargo.ore-bay.100t, at: "2026-10-12T23:28:49Z", status: draft, summary: "changed: visual", sha: "5cfae57742886ee3" }
 - { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e2436e37e5709012" }
 - { record: equipment.cargo.ore-bay.150t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "3d2d35d047ff6505" }
 - { record: equipment.cargo.ore-bay.200t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "a5453e9751e36d79" }
