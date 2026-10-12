@@ -25,6 +25,12 @@ function:
   kind: pressure_door
   passage: 0.8
   pressure: 101325
+visual:
+  format: "freefall-model/1"
+  path: "models/access-door-s1/v1"
+  manifest_sha256: "a13649ffd696ba388b7b302898d7030a68bfc5f616032dfaa413162e39e6a65b"
+  version: 1
+  triangles: 6176
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "An 0.8 m clear opening in a 1.0 by 1.9 m leaf and frame, 90 kg: by the station's hatches (about 70 to 100 kg, from memory). It holds one atmosphere either way. Chosen." }
