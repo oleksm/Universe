@@ -2132,3 +2132,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static gear-down package only; source fold/compression demo not enabled at runtime. Final hull bay clearance, GPU appearance/cost, damping/load/drive/lock and ball-joint qualification pending."
+  - key: equipment.gear.strut.s0
+    version: 1
+    manifest_sha256: "b85253d5883b387c0eb673a928662968486cc35ce7d574d4f490d58275f6600c"
+    installed: 9f4357f3
+    game: "the loader (world::assets) at fso 9f4357f3"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-strut-s0/v1 (150032 bytes, bounds [-0.15, -1.2, -0.15] to [0.15, 0.0, 0.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static gear-down package only; source fold/compression demo not runtime motion. Final hull bay clearance,GPU appearance/cost,load/damping/drive/lock and ball-joint qualification pending. Registry corrected touchdown basis f7e8a360."
