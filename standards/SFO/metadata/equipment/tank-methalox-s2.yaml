@@ -10,10 +10,10 @@ size_class: 2
 fits: mount.tank-s2
 physical:
   mass: 3080
-  volume: 176
-  length: 5.6
+  volume: 196
+  length: 6.006
   width: 5.6
-  height: 5.6
+  height: 5.817
 built_of:
   parts: tank-methalox-s2
   list:
@@ -32,5 +32,6 @@ life: 473364000
 basis:
   - { of: [function.capacity, built_of.list], tier: derived, review: true, note: "Inside the 5.6 m envelope: 50 mm of insulation and a 6 mm wall leave 2.744 m of inner radius, 86.5 m3. The common bulkhead (50 mm, rim 0.60 m aft of the centre, rising 1.34 m) takes 1.1 m3 and splits the rest 57:43, the engines' mass ratio of 3.6 at 1,141 kg/m3 of oxygen and 422 kg/m3 of methane: 48.9 m3 of oxygen space, 36.7 m3 of methane space. 3% ullage in each leaves 47.4 m3 of oxygen (54,100 kg) and 35.6 m3 of methane (15,000 kg): 69,200 kg. The old 76,400 kg filled the bare sphere, 92 m3, with no wall, insulation, bulkhead or ullage." }
   - { of: [built_of.list, physical.mass], tier: invented, review: true, note: "Pressure and wall: 0.45 MPa most in service (the pump inlets want about 0.5 MPa with the acceleration head), times 1.5 ultimate, against 165 MPa for welded 6061-T6 at the weld (from memory): 5.6 mm, taken as 6 mm, 1,540 kg bare plus 20% for lands, bosses and doublers. The bulkhead skins are 1.6 mm each on 50 kg/m3 foam, sized for 0.45 MPa from either side, so it buckles neither way. Its foam keeps the methane from freezing on the oxygen (methane freezes at 91 K, oxygen boils at 90 K): about 300 W across it. Insulation 2 kg/m2, saddles 70 kg each, fittings 350 kg. Total 3,080 kg, 4.5% of what it holds (it was 4,580 at an assumed 6%). Chosen; review." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The fitted envelope, from the modeller's exterior layout (candidate v01): the 5.6 m sphere stands on four contoured steel saddles 0.217 m clear of its bottom, 5.817 m high in all; the oxygen and methane service bosses stand opposed, guarded, 0.203 m beyond the sphere on each side along the length, 6.006 m long in all; 5.6 m across. The sphere alone is 5.6 m. Within the mount's 7.25 m." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
