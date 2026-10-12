@@ -2052,3 +2052,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and service-line fit; actual game GPU appearance/cost and temporal stability; oxygen compatibility/cleanliness, pressure, Al liner, laminate, bosses, burst margin, cycles, fill thermal, regulator flow and mount strength unqualified."
+  - key: equipment.tank.water.50kg
+    version: 1
+    manifest_sha256: "c26214119b5ff128d6dd268e37b77fe4b398f8bd4cf8f5d6622a59784d710bb8"
+    installed: 27b45aa1
+    game: "the loader (world::assets) at fso 27b45aa1"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-water-50kg/v1 (50216 bytes, bounds [-0.3, 0.0, -0.2] to [0.3, 0.4, 0.2]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and service-line fit; actual game GPU appearance/cost and temporal stability; pressure, food-contact finish, cleanability, baffling, pump flow, freeze/slosh behavior and mount loads unqualified."
