@@ -2388,3 +2388,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Pump flow/pressure/cavitation,fluid compatibility,heat rejection,structural loads,internal packing,final hull/plumbing,GPU and temporal edges unqualified."
+  - key: equipment.utility.reaction-wheels.s2
+    version: 1
+    manifest_sha256: "8ab375f5da8b12fa4e16c999fca21646b8954831cb67cbe2011b1de6478cb88f"
+    installed: cf0985a2
+    game: "the loader (world::assets) at fso cf0985a2"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-reaction-wheels-s2/v1 (257108 bytes, bounds [-0.75, 0.0, -0.75] to [0.75, 1.5, 0.75]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior only; runtime CMG steering, final hull fit, GPU look/cost, rotor containment, composite/bearing/motor/load/thermal qualification remain open."
