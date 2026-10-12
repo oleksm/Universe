@@ -103,3 +103,16 @@ impl Visuals {
         crate::visual_assets::request_demand(key, demand)
     }
 }
+
+/// The same measured camera prediction used by model and procedural-world assets.
+/// Before the first scene draw (or after a jump), use a stationary current view.
+pub(super) fn prediction(camera: &universe_engine::Camera) -> universe_engine::asset_prediction::View {
+    let state = VIEW.lock().unwrap();
+    if let Some((view, at, _)) = state.as_ref()
+        && at.elapsed().as_secs_f64() < 1.
+        && view.position.distance(camera.position) < 100_000.
+    {
+        return universe_engine::asset_prediction::View { position: camera.position, forward: camera.forward().as_dvec3(), ..*view };
+    }
+    universe_engine::asset_prediction::View { position: camera.position, velocity: DVec3::ZERO, forward: camera.forward().as_dvec3(), angular_speed: 0., horizon_seconds: 5. }
+}

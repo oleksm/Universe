@@ -361,7 +361,7 @@ pub struct Caches {
     /// background (None till ready), by (system, body).
     pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
-    pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
+    pub rocks: std::collections::HashMap<(usize, usize, usize), Arc<rocks::Ready>>,
     /// Mining rigs: how far each ship's gear is out (see `rig`).
     pub rigs: rig::Rigs,
     /// The galaxy's stars as seen from a system: (system, direction and colour of each).

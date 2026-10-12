@@ -258,10 +258,16 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let sun = app.view.positions[star];
     let t = app.now();
     let air = sys.bodies.iter().enumerate().find_map(|(i, b)| {
-        let terran = b.terrain.as_ref().is_some_and(|tr| tr.kind == universe_sim::TerrainKind::Terran);
+        let terrain = b.terrain.as_ref().filter(|tr| tr.kind == universe_sim::TerrainKind::Terran)?;
         let center = app.view.positions[i];
-        let altitude = cam.distance(center) - b.surface_radius_at(center, cam, t);
-        (terran && altitude < ATMOSPHERE).then_some((i, center, altitude))
+        let radial_altitude = cam.distance(center) - b.rail.radius;
+        // Sky colour is a visual query, not collision: never synchronously load
+        // fine terrain (especially for every distant world in the system).
+        if radial_altitude > ATMOSPHERE + terrain.max_height() { return None; }
+        let local = b.rotation(t).inverse() * (cam-center).normalize_or(DVec3::Y);
+        let (height, _) = terrain.surface_view(local);
+        let altitude = radial_altitude - height;
+        (altitude < ATMOSPHERE).then_some((i, center, altitude))
     });
     let Some((world, center, altitude)) = air else { return 1.0 };
     let up = (cam - center).normalize();

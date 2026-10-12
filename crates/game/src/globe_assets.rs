@@ -2,7 +2,7 @@
 //! terrain or reads files; the scene keeps its base globe until a lease is ready.
 use std::sync::{Arc, OnceLock, atomic::{AtomicU64, Ordering}};
 use std::time::Duration;
-use universe_engine::{Camera, GlobeMap, Mesh, WireModel, assets::{AssetCache, Config, Demand, Loaded, Snapshot}};
+use universe_engine::{Camera, GlobeMap, Mesh, WireModel, assets::{AssetCache, Config, Loaded, Snapshot}};
 use universe_engine::glam::DVec3;
 use universe_sim::StarSystem;
 
@@ -36,20 +36,14 @@ pub fn request(system: Arc<StarSystem>, i: usize, camera: &Camera, position: DVe
     let body = system.bodies.get(i)?;
     body.terrain.as_ref()?;
     let radius = body.rail.radius;
-    let delta = position - camera.position;
-    // The base sphere is enough below a small angular silhouette. Retain nearby
-    // rear worlds, but stop refreshing distant rear data so it can be evicted.
-    let distance = delta.length();
-    let facing = delta.normalize_or_zero().dot(camera.forward().as_dvec3());
-    if distance > radius * 4. && (facing < -0.2 || distance > radius * 2000.) { return None; }
+    // Use the common measured motion/turn prediction, including rear release
+    // and time-to-need scheduling. Tiny distant globes keep their base sphere.
+    let mut demand = crate::visuals::prediction(camera).demand(position, DVec3::ZERO, radius, radius*2000.)?;
+    if position.distance(camera.position) < radius*6. { demand.class = 0; }
     let epoch = REVISION.load(Ordering::SeqCst);
     let identity = format!("globe:{:p}:{i}:{epoch}", Arc::as_ptr(&system));
-    let demand = Demand {
-        class: if distance < radius * 6. { 0 } else if facing > 0. { 1 } else { 2 },
-        time_to_need: Duration::from_secs_f64((distance / radius.max(1.) / 2000.).clamp(0., 5.)),
-        estimated_bytes: 96 * 1024 * 1024,
-        estimated_cost: Duration::from_secs(1),
-    };
+    demand.estimated_bytes = 96 * 1024 * 1024;
+    demand.estimated_cost = Duration::from_secs(1);
     cache().request(identity, demand, move || prepare(system, i, epoch))
 }
 fn current(epoch: u64) -> Result<(), String> {
