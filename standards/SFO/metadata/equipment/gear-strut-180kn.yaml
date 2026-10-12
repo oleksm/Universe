@@ -31,6 +31,12 @@ function:
   efficiency: 0.8
   sink_rate: 3.0
   extended: 1.6
+visual:
+  format: "freefall-model/1"
+  path: "models/gear-strut-180kn/v1"
+  manifest_sha256: "81629c5678403048a60ff84f74050d02c370d082ad02e26534a002deb31181be"
+  version: 1
+  triangles: 4984
 life: 473364000
 basis:
   - { of: [physical, function, needs], tier: invented, review: true, note: "At about 1 kg a kilonewton with titanium (the A320's 1.2 kg/kN, as the S1), 190 kg. Four hold a 24 t craft at 3 m/s on a 0.4 m stroke (1.1 g). Chosen; review." }
