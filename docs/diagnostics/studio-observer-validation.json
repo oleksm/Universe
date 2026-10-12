@@ -191,5 +191,90 @@
       "log": "out/review/loading-audit/workspace.log"
     },
     "registry_build": "passed; out/review/loading-audit/registry.log"
+  },
+  "final": {
+    "code": "8446e24c",
+    "workspace": {
+      "passed": 234,
+      "failed": 0,
+      "ignored": 1,
+      "log": "out/review/loading-audit/workspace-final-fixed.log"
+    },
+    "no_dev": "pass; existing slot_origin dead-code warning only",
+    "registry_build": "pass",
+    "release_build": "pass",
+    "freefall_sha256": "529061aad7ed1741eb9a470d0410eab01c60f1329909d3ae39331893a556d74c",
+    "studio_sha256": "e29ea2738384a2e29f124af2f51337f5b375e3ac6a7224d5a2b1cd09a7171300",
+    "binaries": "/home/alexm/git/universe-ships-loading-audit/out/release-target/release",
+    "tests": {
+      "final-world": {
+        "passed": true,
+        "mode": "Pilot",
+        "trace_events": 3190,
+        "session": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-world/data/freefall/sessions/1791848186",
+        "evidence": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-world",
+        "pending": {
+          "fps": 59.947574615478516,
+          "frame_ms": 16.670625686645508,
+          "worst_ms": 16.72502326965332,
+          "hitches": 0,
+          "draw_ms": 1.7321065664291382
+        },
+        "ready": {
+          "fps": 59.95188903808594,
+          "frame_ms": 16.679298400878906,
+          "worst_ms": 16.715024948120117,
+          "hitches": 0,
+          "draw_ms": 1.6716142892837524
+        }
+      },
+      "final-baked": {
+        "passed": true,
+        "mode": "Observer",
+        "trace_events": 4077,
+        "session": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-baked/data/freefall/sessions/1791848246",
+        "evidence": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-baked",
+        "pending": {
+          "fps": 59.942691802978516,
+          "frame_ms": 17.200090408325195,
+          "worst_ms": 261.3291015625,
+          "hitches": 1,
+          "draw_ms": 0.7764310240745544
+        },
+        "ready": {
+          "fps": 59.925540924072266,
+          "frame_ms": 16.686294555664062,
+          "worst_ms": 16.721281051635742,
+          "hitches": 1,
+          "draw_ms": 0.35977479815483093
+        }
+      },
+      "final-studio": {
+        "status": {
+          "cpu": null,
+          "debug": 2,
+          "fps": 64.69850158691406,
+          "mode": "studio",
+          "view": "design"
+        },
+        "session": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-studio/data/freefall/sessions/1791848275",
+        "trace_events": 1562,
+        "passed": true,
+        "evidence": "/home/alexm/git/universe-ships-loading-audit/out/review/loading-audit/final-studio"
+      }
+    },
+    "limitations": [
+      "Near TRD1 first draw/scene/bodies still costs259.6ms (261.3ms frame); reported to engine. Later pending and ready samples60FPS.",
+      "Baked world CPU maps encoded in2.5s; render/upload world map chunks scope active; no new GPU worldmap-ready counter was added.",
+      "Studio~40FPS CPU canvas projection/submission remains; this change instruments it, not a claimed FPS fix.",
+      "Native ship dynamic replacement and engine visual-axis acceptance gates unchanged."
+    ],
+    "baked_visual": {
+      "image": "out/review/loading-audit/baked-day.png",
+      "log": "out/review/loading-audit/baked-day.log",
+      "scenario": "planet; body.treistun.treistun-d; distance3 radii; yaw-0.9; frame900",
+      "maps_encoded_s": 2.6,
+      "inspection": "Surface texture and atmospheric rim visible after staged upload; no separate clouds A/B acceptance claimed."
+    }
   }
 }

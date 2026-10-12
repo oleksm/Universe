@@ -97,3 +97,24 @@ A subsequent one-second-delay run loaded two globe visuals without errors and
 rendered at 60 FPS at frame 600; one world preparation job remained in progress.
 See `out/review/loading-audit/world-{pending,ready}.{png,log}`. This verifies
 fallback progress, not completion of every terrain asset or a hitch-free launch.
+
+## Final integrated checks
+
+Final code `8446e24c` includes engine `90cf894d`'s full world-map staging,
+nonblocking sky/rocks and shared engine trace scopes, plus the cached-time borrow
+fix. Workspace: **234 passed, 1 ignored**; no-dev check, registry build and both
+release binaries pass. The observer check passes again in Studio (1562 trace
+events), native flight (3190) and near baked TRD1 (4077).
+
+The final native pending and ready samples both run at 59.95 FPS, worst frame
+16.73 ms or less, zero hitches. Near TRD1, full maps finish CPU encoding in 2.5 s
+and the world-map upload scope is active; ready view runs at 60 FPS. A separate
+first-draw `draw/scene/bodies` cost remains: 259.6 ms, a 261.3 ms frame. Engine has
+that evidence. The earlier sky hitch is absent in the final native check.
+
+`studio-observer-validation.json` records exact binary paths/hashes and all logs.
+The ~40 FPS Studio CPU cost is diagnosed, not optimized by this instrumentation.
+
+A further frame-900 planet capture (`baked-day.png`, TRD1 at three radii, yaw -0.9)
+shows surface texture and atmospheric rim after maps encode in 2.6 s. This is a
+ready-view smoke check; separate cloud-on/off visual acceptance was not performed.
