@@ -2,7 +2,7 @@
 //! Geometry stays in authored glTF metres; COM is subtracted exactly once.
 use glam::{DMat4, DVec3};
 use serde::Deserialize;
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{HashSet};
 use std::sync::{Arc, Mutex, OnceLock};
 use universe_engine::{Frame, Transform};
 use universe_sim::world::{Ship, assets, content::content};
@@ -18,19 +18,37 @@ struct Binding {
     #[serde(default)]
     equipment: Option<String>,
 }
-#[derive(Deserialize)]
+#[derive(Clone, Deserialize)]
 #[serde(deny_unknown_fields)]
 struct Overlay {
     hull_sha256: String,
     bindings: Vec<Binding>,
 }
-struct Hull {
-    nodes: BTreeMap<String, DMat4>,
-    bindings: Vec<Binding>,
+// Read development metadata only while the startup factory is gated.
+static OVERLAY: OnceLock<Result<Option<Overlay>, String>> = OnceLock::new();
+pub fn prepare() {
+    OVERLAY.get_or_init(|| {
+        let Some(file) = std::env::var_os("UNIVERSE_EQUIPMENT_MOUNTS") else { return Ok(None); };
+        use std::io::Read;
+        // Development metadata ceiling, not a hull/equipment specification.
+        let mut bytes = Vec::new();
+        std::fs::File::open(file).map_err(|e| e.to_string())?
+            .take(4 * 1024 * 1024 + 1).read_to_end(&mut bytes).map_err(|e| e.to_string())?;
+        if bytes.len() > 4 * 1024 * 1024 { return Err("mount overlay exceeds 4 MiB metadata limit".into()); }
+        let overlay: Overlay = serde_json::from_slice(&bytes).map_err(|e| e.to_string())?;
+        let mut seen = HashSet::new();
+        for b in &overlay.bindings {
+            if !seen.insert(&b.slot) { return Err(format!("duplicate overlay slot {}", b.slot)); }
+            assets::mounts::rigid(DMat4::from_cols_array(&b.transform))?;
+            if !b.replace_nodes.is_empty() {
+                return Err("native replacement requires a complete motion/collision consumer; static overlay held".into());
+            }
+        }
+        Ok(Some(overlay))
+    });
 }
 #[derive(Default)]
 struct Cache {
-    hulls: HashMap<String, Option<Arc<Hull>>>,
     warnings: HashSet<String>,
     announced: HashSet<(String, String)>,
 }
@@ -40,45 +58,20 @@ impl Cache {
             log::warn!("mounted equipment: {message}");
         }
     }
-    fn hull(&mut self, path: &str) -> Option<Arc<Hull>> {
-        if !self.hulls.contains_key(path) {
-            let read = || -> Result<_, String> {
-                let bytes = std::fs::read(path).map_err(|e| e.to_string())?;
-                let nodes = assets::mounts::frames(&bytes)?;
-                let mut bindings = Vec::new();
-                // A reviewed development socket fixture; production uses hull nodes.
-                // Hash refusal prevents applying a frame to a different hull export.
-                if let Some(file) = std::env::var_os("UNIVERSE_EQUIPMENT_MOUNTS") {
-                    let overlay: Overlay =
-                        serde_json::from_slice(&std::fs::read(file).map_err(|e| e.to_string())?)
-                            .map_err(|e| e.to_string())?;
-                    if overlay.hull_sha256 != universe_sim::world::worlds::sha256(&bytes) {
-                        return Err("mount overlay hull hash mismatch".into());
-                    }
-                    let mut seen = HashSet::new();
-                    for b in &overlay.bindings {
-                        if !seen.insert(&b.slot) {
-                            return Err(format!("duplicate overlay slot {}", b.slot));
-                        }
-                        assets::mounts::rigid(DMat4::from_cols_array(&b.transform))?;
-                        if !b.replace_nodes.is_empty() {
-                            return Err("native replacement requires a complete motion/collision consumer; static overlay held".into());
-                        }
-                    }
-                    bindings = overlay.bindings;
+    fn hull(&mut self, path: &str) -> Option<(Arc<crate::visual_assets::Visual>, &'static [Binding])> {
+        let model = crate::visual_assets::request_native(std::path::Path::new(path), &["Ramp"])?;
+        let bindings = match OVERLAY.get()? {
+            Ok(Some(overlay)) => {
+                if overlay.hull_sha256 != model.source_sha256 {
+                    self.warn(format!("{path}: mount overlay hull hash mismatch"));
+                    return None;
                 }
-                Ok(Arc::new(Hull { nodes, bindings }))
-            };
-            let result = match read() {
-                Ok(v) => Some(v),
-                Err(e) => {
-                    self.warn(format!("{path}: {e}"));
-                    None
-                }
-            };
-            self.hulls.insert(path.into(), result);
-        }
-        self.hulls.get(path).cloned().flatten()
+                overlay.bindings.as_slice()
+            }
+            Ok(None) => &[],
+            Err(error) => { self.warn(error.clone()); return None; }
+        };
+        Some((model, bindings))
     }
     fn item(
         &mut self,
@@ -144,10 +137,10 @@ pub fn for_ship(ship: &Ship) -> Mounted {
     let Some(path) = spec.visual.as_deref() else {
         return result;
     };
-    let Some(hull) = cache.hull(path) else {
+    let Some((hull, bindings)) = cache.hull(path) else {
         return result;
     };
-    let Hull { nodes, bindings } = hull.as_ref();
+    let nodes = &hull.nodes;
     for (slot, module) in &spec.fit {
         let key = &content().get(*module).key;
         if assets::visual(key).is_none() {

@@ -18,10 +18,13 @@ pub struct StudioOnly {
 impl StudioOnly {
     /// The studio with `design` open (none: a new design with no hull).
     pub fn new(design: Option<&str>) -> Self {
+        crate::mounted::prepare();
+        let started = std::time::Instant::now();
         let content = universe_sim::world::content::content();
         let path = "assets/models/mc07.glb";
         let class = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_sim::world::import::commission(&b, path));
         let spec = content.get(class.unwrap_or_else(|e| panic!("the studio needs the MC-07's model, {path}: {e}")));
+        log::info!("startup Studio hull physics: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
         let mut interior = crate::interior::Interior::new();
         match design {
             Some(name) => interior.open_design(name),

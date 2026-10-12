@@ -50,7 +50,7 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
-use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
+use universe_engine::{Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
 use universe_sim::world::crew::Reach;
 use universe_sim::world::{CrewEvent, Triggers, WalkCommands};
 use universe_sim::world::charts::Charts;
@@ -233,6 +233,7 @@ pub struct App {
     pub sparks: Vec<Spark>,
     /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
     pub showcase: Option<universe_engine::PbrModel>,
+    showcase_path: Option<std::path::PathBuf>,
     /// On foot: what's in reach to use.
     pub reach: Option<Reach>,
     /// Defence turrets of the system in view, where they are now.
@@ -382,6 +383,8 @@ impl App {
     }
 
     fn new() -> Self {
+        mounted::prepare();
+        let started = std::time::Instant::now();
         let mut u = Universe::from_world(dev::world(seed()).unwrap_or_else(|e| panic!("PGS1 preview: {e}")));
         // UNIVERSE_RECORD=path: record the session from its start, saved there
         // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
@@ -391,6 +394,7 @@ impl App {
         // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 1,000).
         let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
         u.spawn_settlers(settlers, seed());
+        log::info!("startup world and traffic: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
         let engine = EngineHandle::new(u);
         let (v, charts) = (engine.view(), engine.charts());
         let origin = v.ship_system;
@@ -455,10 +459,8 @@ impl App {
             observing: false,
             recording: None,
             sparks: Vec::new(),
-            showcase: std::env::var("UNIVERSE_MODEL").ok().and_then(|path| {
-                let r = std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
-                r.map_err(|e| log::warn!("showcase {path}: {e}")).ok()
-            }),
+            showcase: None,
+            showcase_path: std::env::var_os("UNIVERSE_MODEL").map(Into::into),
             reach: None,
             turrets: Vec::new(),
             following: None,
@@ -1386,6 +1388,14 @@ impl App {
 
 impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
+        if self.showcase.is_none() {
+            if let Some(path) = &self.showcase_path {
+                if let Some(model) = visual_assets::request_native(path, &[]) {
+                    self.showcase = Some(model.model.with_lease(model.clone()));
+                }
+            }
+        }
+
         crate::visual_assets::maintain();
         let dt = ctx.dt as f64;
         // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
@@ -1742,7 +1752,8 @@ pub fn studio(args: &[String], window: bool) -> bool {
     if window || flag.is_some() {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
-        run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
+        let design = design.map(str::to_owned);
+        universe_engine::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
         return true;
     }
     false
@@ -1769,5 +1780,5 @@ pub fn play() {
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {
         let _ = std::fs::create_dir_all(dir);
     }
-    run(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new());
+    universe_engine::run_prepared(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new);
 }

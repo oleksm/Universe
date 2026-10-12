@@ -470,3 +470,100 @@ fn chrono_stamp() -> String {
     let t = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).map(|d| d.as_secs_f64()).unwrap_or(0.0);
     format!("[{t:.3}]")
 }
+
+/// Open a responsive shell before constructing simulation/model prerequisites.
+/// Only the completed game crosses the thread boundary; partial physics is never used.
+pub fn run_prepared<G: Game + Send + 'static>(config: Config, factory: impl FnOnce() -> G + Send + 'static) {
+    run(config, Preparing::new(factory));
+}
+
+struct Preparing<G> {
+    factory: Option<Box<dyn FnOnce() -> G + Send>>,
+    receiver: Option<std::sync::mpsc::Receiver<Result<G, String>>>,
+    game: Option<G>,
+    error: Option<String>,
+    started: Instant,
+    first_draw: std::cell::Cell<bool>,
+}
+impl<G: Send + 'static> Preparing<G> {
+    fn new(factory: impl FnOnce() -> G + Send + 'static) -> Self {
+        Self { factory: Some(Box::new(factory)), receiver: None, game: None, error: None,
+            started: Instant::now(), first_draw: std::cell::Cell::new(true) }
+    }
+    fn poll(&mut self) {
+        if let Some(factory) = self.factory.take() {
+            let (tx, rx) = std::sync::mpsc::channel();
+            self.receiver = Some(rx);
+            // Detached: closing the shell must not join a long-running preparation.
+            if let Err(error) = std::thread::Builder::new().name("game-prepare".into()).spawn(move || {
+                let result = std::panic::catch_unwind(std::panic::AssertUnwindSafe(factory))
+                    .map_err(|e| e.downcast_ref::<String>().cloned()
+                        .or_else(|| e.downcast_ref::<&str>().map(|s| s.to_string()))
+                        .unwrap_or_else(|| "preparation panicked".into()));
+                let _ = tx.send(result);
+            }) { self.error = Some(error.to_string()); self.receiver = None; }
+        }
+        let result = self.receiver.as_ref().map(|r| r.try_recv());
+        match result {
+            Some(Ok(Ok(game))) => {
+                self.game = Some(game); self.receiver = None;
+                log::info!("startup prepared: {:.3} ms since run_prepared (CPU/physics ready; optional visuals may follow)", self.started.elapsed().as_secs_f64()*1000.);
+            }
+            Some(Ok(Err(error))) => { log::error!("startup preparation failed: {error}"); self.error = Some(error); self.receiver = None; }
+            Some(Err(std::sync::mpsc::TryRecvError::Disconnected)) => {
+                self.error = Some("preparation worker disconnected".into()); self.receiver = None;
+            }
+            _ => {}
+        }
+    }
+}
+impl<G: Game + Send + 'static> Game for Preparing<G> {
+    fn update(&mut self, ctx: &mut Context) {
+        if let Some(game) = self.game.as_mut() { game.update(ctx); return; }
+        if ctx.input.pressed(crate::KeyCode::Escape) { ctx.exit(); return; }
+        // Present at least one shell frame, even when preparation is already cached.
+        if !self.first_draw.get() { self.poll(); }
+    }
+    fn camera(&self) -> Camera { self.game.as_ref().map_or_else(Camera::default, Game::camera) }
+    fn draw(&self, frame: &mut Frame, ctx: &Context) {
+        if self.first_draw.replace(false) {
+            log::info!("startup first shell: {:.3} ms since run_prepared (CPU draw submission, not GPU presentation)", self.started.elapsed().as_secs_f64()*1000.);
+        }
+        if let Some(game) = &self.game { game.draw(frame, ctx); return; }
+        let size = frame.size();
+        frame.hud_rect(glam::Vec2::ZERO, size, crate::Color::hex(0x030509));
+        let at = glam::Vec2::new(24., size.y * 0.4);
+        frame.text(at, if self.error.is_some() { "PREPARATION FAILED" } else { "PREPARING SHIP AND WORLD" }, crate::Color::hex(0xe5c778));
+        if let Some(error) = &self.error {
+            // Keep long errors readable inside the shell; the full error also reaches the log.
+            let width = ((size.x - 48.) / 8.).max(20.) as usize;
+            let chars: Vec<_> = error.chars().collect();
+            for (k, line) in chars.chunks(width).take(8).enumerate() {
+                frame.text(at + glam::Vec2::new(0., 24. + k as f32 * 14.), &line.iter().collect::<String>(), crate::Color::hex(0xffaa88));
+            }
+        } else {
+            frame.text(at + glam::Vec2::new(0., 24.), &format!("{:.1} S - CHECKING FLIGHT AND COLLISION DATA", self.started.elapsed().as_secs_f64()), crate::Color::hex(0x91adbb));
+        }
+        frame.text(glam::Vec2::new(24., size.y - 28.), "ESC TO EXIT", crate::Color::hex(0x91adbb));
+    }
+}
+
+#[cfg(test)]
+mod preparation_tests {
+    use super::*;
+    #[test]
+    fn publishes_only_complete_factory_and_keeps_errors() {
+        let (tx, rx) = std::sync::mpsc::channel();
+        let mut shell = Preparing::new(move || { rx.recv().unwrap(); 42usize });
+        shell.poll();
+        assert!(shell.game.is_none());
+        tx.send(()).unwrap();
+        let until = Instant::now() + std::time::Duration::from_secs(2);
+        while shell.game.is_none() { shell.poll(); assert!(Instant::now() < until); std::thread::yield_now(); }
+        assert_eq!(shell.game, Some(42));
+        let mut broken = Preparing::<usize>::new(|| panic!("missing hull physics"));
+        while broken.error.is_none() { broken.poll(); assert!(Instant::now() < until); std::thread::yield_now(); }
+        assert_eq!(broken.error.as_deref(), Some("missing hull physics"));
+        assert!(broken.game.is_none());
+    }
+}
