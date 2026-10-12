@@ -2452,3 +2452,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static closed hatch only; pressure/fatigue/seal/window/load qualification, drive and equalization internals, game interaction, final hull and GPU appearance/cost remain pending."
+  - key: equipment.cargo.berths.4
+    version: 1
+    manifest_sha256: "eecb3882d6f649f382f14f61330ff7a4b6c5455a888670f911074349cc4c38ad"
+    installed: 947e2e6f
+    game: "the loader (world::assets) at fso 947e2e6f"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-berths-4/v1 (439040 bytes, bounds [-1.0, 0.0, -1.07] to [1.0, 2.0, 1.07]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Four privacy screens source-only; actual hull corridors, human and structural qualification, ventilation and restraints remain open"
