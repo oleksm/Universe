@@ -2212,3 +2212,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static gear-down release, source-only fold/compression. Final hull bay andplacement,runtime motion,GPU appearance/cost andtemporal stability; damping/pressure/buckling/fatigue/side loads,pad/ball/mount/drive strength andinternal packing unqualified."
+  - key: equipment.engine.ch.s4
+    version: 1
+    manifest_sha256: "6817e34cdc643c855a4e9322d8e1643caaf6daacd372a4fbf669e020be582d98"
+    installed: 10bd05b1
+    game: "the loader (world::assets) at fso 10bd05b1"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-ch-s4/v1 (447204 bytes, bounds [-0.65, -0.65, 0.0] to [0.65, 0.65, 3.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Provisional mass and internal packing, rotary seals, bearing/structural/pressure/thermal ratings; final hull and service clearance; mounted motion, command wiring, GPU appearance/cost and temporal stability."
