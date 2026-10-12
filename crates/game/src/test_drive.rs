@@ -839,7 +839,8 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         format!("TEST DRIVE - {}   {:.1} S", c.name.to_uppercase(), d.time),
         format!("ALTITUDE {:.1} M OVER THE GROUND   CLIMB {:+.1} M/S   SPEED {:.1} M/S", d.craft.legs.iter().map(|l| (d.pos + d.rot * l.foot).y).fold(d.pos.y, f64::min).max(0.0), d.vel.y, DVec3::new(d.vel.x, 0.0, d.vel.z).length()),
         format!("PITCH {pitch:+.0}   ROLL {roll:+.0}   HEADING {heading:.0}   {}", if up_now.y < 0.0 { "UPSIDE DOWN" } else { "" }),
-        format!("THROTTLE {:.0}%   {}   {}", d.throttle * 100.0, if d.grabbed { "THE MOUSE STEERS (ESC FREES IT)" } else { "CLICK TO STEER WITH THE MOUSE" }, if d.assist { "FLIGHT COMPUTER ON: IT STEERS (G FOR MANUAL)".to_string() } else { format!("MANUAL THRUSTERS (G FOR THE FLIGHT COMPUTER): HELD {}", d.held.iter().enumerate().filter(|(_, h)| **h).map(|(k, _)| manual_labels[k].clone()).collect::<Vec<_>>().join(" ")) }),
+        control_status(d),
+        lift_help(d, &manual_labels),
         format!("POWER {:.2} MW OF {:.2} MW   BATTERIES {:.0}%{left}", d.power / 1e6, (c.rate + c.plants) / 1e6, if c.stored > 0.0 { d.energy.max(0.0) / c.stored * 100.0 } else { 0.0 }),
         format!("PACKS +{:.1} K OF {:.0} K   PROPELLANT {:.0} KG   MASS {:.2} T", d.warm, c.warming, d.propellant, d.mass / 1000.0),
         format!("AIR {:.3} KG/M3 (Z)   GRAVITY {:.2} G   HARDEST TOUCHDOWN {:.1} M/S   MOST ON A LEG {:.0} KN", d.density(d.pos.y), c.gravity / 9.80665, d.hardest, d.leg_most.0 / 1000.0),
@@ -929,7 +930,38 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     };
     scope.body(frame, to_scanner(DVec3::new(0.0, 0.0, -PAD_AHEAD)), Color([1.0, 0.85, 0.35, 1.0]), 2.5);
     scope.craft(frame, to_scanner(DVec3::new(0.0, 6.0, 0.0)), Color([1.0, 0.35, 0.3, 1.0]), false);
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "CLICK: MOUSE STEERS - W/S THROTTLE - SHIFT+WASDQE TRANSLATES - ARROWS/A/D/Q/E TURN - G MANUAL NUMPAD/W - Z AIR - R RESTART - ESC BACK", Color([0.75, 0.88, 1.0, 0.7]), 0.6);
+    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), control_help(d), Color([0.75, 0.88, 1.0, 0.7]), 0.6);
+}
+
+// The instructions must describe the fitted controller, including ships without one.
+fn control_status(d: &Drive) -> String {
+    if d.stopped { return "CRASHED - R RESTARTS THE TEST DRIVE".into(); }
+    if d.assist {
+        format!("FORWARD THROTTLE {:.0}% - FLIGHT COMPUTER ON - G FOR MANUAL", d.throttle * 100.0)
+    } else if d.craft.rates.is_none() {
+        "POWER ON / MANUAL ONLY - FIT A FLIGHT COMPUTER FOR ASSIST".into()
+    } else {
+        "POWER ON / MANUAL - G ENABLES THE FITTED FLIGHT COMPUTER".into()
+    }
+}
+
+fn lift_help(d: &Drive, labels: &[String]) -> String {
+    if !d.craft.actuators.iter().any(|a| a.dir.y > 0.5) {
+        return "NO UPWARD ENGINES FITTED - W COMMANDS FORWARD, NOT UP".into();
+    }
+    if d.assist { return "HOLD SHIFT+E FOR UPWARD THRUST - W/S SET FORWARD THROTTLE".into(); }
+    let up: Vec<_> = d.craft.actuators.iter().zip(labels).filter(|(a, _)| a.dir.y > 0.5)
+        .map(|(_, key)| if key.is_empty() { "UNBOUND" } else { key.as_str() }).collect();
+    format!("UPWARD ENGINES: HOLD NUMPAD [ {} ] - NO AUTOMATIC STABILISATION", up.join(" "))
+}
+
+fn control_help(d: &Drive) -> &'static str {
+    if d.stopped { "R RESTART - ESC RELEASE MOUSE / BACK" }
+    else if d.assist {
+        "CLICK: MOUSE STEERS - SHIFT+E UP - W/S FORWARD THROTTLE - SHIFT+WASDQE TRANSLATE - ARROWS/A/D/Q/E TURN - G MANUAL - R RESTART - ESC BACK"
+    } else {
+        "HOLD NUMPAD KEYS SHOWN AT ENGINES TO FIRE - W FORWARD ENGINES - Z AIR - R RESTART - ESC RELEASE MOUSE / BACK"
+    }
 }
 
 #[cfg(test)]
@@ -945,6 +977,31 @@ mod tests {
         Craft { name:"controller parity".into(),mass:100.,inertia:DMat3::from_diagonal(DVec3::splat(100.)),
             rates:Some(DVec3::new(1.,1.,1.8)),propellant:10.,actuators,
             boxes:vec![(Vec3::splat(-1.),Vec3::ONE)],..Default::default() }
+    }
+
+    #[test]
+    fn lift_only_ship_without_computer_uses_shared_manual_keys() {
+        use universe_engine::KeyCode;
+        let mut craft = vacuum_craft();
+        craft.rates = None;
+        craft.actuators.retain(|a| a.dir == DVec3::Y);
+        let mut d = Drive::new(craft);
+        d.air = 3;
+        d.pos.y = 100.;
+        assert!(!d.assist);
+        let ts = d.craft.thrusters();
+        let forward = crate::manual::held_keys(|k| k == KeyCode::KeyW, &ts);
+        assert_eq!(forward, 0, "W fires forward engines, not vertical engines");
+        let lift = crate::manual::held_keys(|k| k != KeyCode::KeyW, &ts);
+        for (k, held) in d.held.iter_mut().enumerate() { *held = lift & (1 << k) != 0; }
+        d.step(1./60., Controls::default());
+        assert!(d.vel.y > 0.);
+        assert!(d.pushes.iter().all(|push| *push > 0.));
+        assert!(control_status(&d).contains("FIT A FLIGHT COMPUTER"));
+        assert!(lift_help(&d, &crate::manual::labels_for(&ts)).contains("NUMPAD"));
+        assert!(!control_help(&d).contains("MOUSE STEERS"));
+        d.stopped = true;
+        assert!(control_status(&d).contains("R RESTART"));
     }
 
     #[test]

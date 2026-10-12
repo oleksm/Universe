@@ -71,11 +71,15 @@ pub fn held(input: &Input, spec: &ClassSpec) -> u64 {
 }
 
 pub fn held_for(input: &Input, ts: &[universe_sim::world::ship::Thruster]) -> u64 {
+    held_keys(|key| input.down(key), ts)
+}
+
+pub(crate) fn held_keys(down: impl Fn(KeyCode) -> bool, ts: &[universe_sim::world::ship::Thruster]) -> u64 {
     let mut bits = 0u64;
     for (k, key) in keys_for(ts).into_iter().enumerate().take(64) {
         let down = match key {
-            Some(p) => input.down(PAD[p].0),
-            None => ts[k].role == ThrusterRole::Main && input.down(KeyCode::KeyW),
+            Some(p) => down(PAD[p].0),
+            None => ts[k].role == ThrusterRole::Main && down(KeyCode::KeyW),
         };
         if down {
             bits |= 1 << k;
