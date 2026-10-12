@@ -1908,3 +1908,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull placement and exhaust clearance,per-nozzle firing/pulses/VFX,game lighting/readability and GPU cost;11.53kg exterior with full15kg,hidden packing,pressure/flow/exhaust performance unqualified;500N is4x125N aggregate capacity."
+  - key: equipment.avionics.nav-basic.s1
+    version: 1
+    manifest_sha256: "2554804406443188a83d8a4bf417adf4bdba5f7f2fb18db7a7177e3797c089f0"
+    installed: f9fb3b67
+    game: "the loader (world::assets) at fso f9fb3b67"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/avionics-nav-basic-s1/v1 (48068 bytes, bounds [-0.2, 0.0, -0.15] to [0.2, 0.25, 0.15]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull placement, rear cable access, conductive thermal integration for 100 W, complete mass/internal packing, GPU look/cost and temporal edge stability remain unqualified."
