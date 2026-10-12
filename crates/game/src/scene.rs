@@ -269,7 +269,7 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
         let altitude = radial_altitude - height;
         (altitude < ATMOSPHERE).then_some((i, center, altitude))
     });
-    let Some((world, center, altitude)) = air else { return 1.0 };
+    let Some((_world, center, altitude)) = air else { return 1.0 };
     let up = (cam - center).normalize();
     let elevation = up.dot((sun - cam).normalize()) as f32; // sine of the sun's height
     let thick = (1.0 - altitude / ATMOSPHERE).clamp(0.0, 1.0) as f32;
@@ -281,12 +281,8 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
     let dusk = [0.85, 0.38, 0.16];
     let c = |j: usize| (blue[j] * day * bright * (0.6 + 0.4 * tint[j]) + dusk[j] * twilight * 0.35 * tint[j]) * thick;
     frame.clear = Color([c(0), c(1), c(2), 1.0]);
-    // (A world grown with its own air: its sky is the air's light itself, drawn behind everything
-    // (`fs_air_sky`), on black.)
-    if app.caches.world_maps.get(&(app.view.cache, world)).is_some_and(|m| m.lock().ok().and_then(|m| m.as_ref().map(|m| m.air[15] > 0.5)).unwrap_or(false))
-    {
-        frame.clear = Color::BLACK;
-    }
+    // Keep this base sky until the renderer has uploaded the complete air/maps
+    // package. CPU readiness alone must not black out the pending sky.
     1.0 - 0.97 * day * thick
 }
 
