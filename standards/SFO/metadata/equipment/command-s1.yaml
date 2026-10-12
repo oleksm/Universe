@@ -33,5 +33,7 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "One pilot: a seat rated to 9 g eyeballs-in (a fighter's seat and harness, 40 kg), a console of controls (60 kg) and its displays, computers and frame (80 kg); 1.5 kW of displays and computers. An airliner's flight deck seat is about 35 kg. From memory; chosen." }
+  - { of: [fits], tier: derived, review: true, note: "At its 88.3 m/s2 (9 g) rating the station and its pilot of 100 kg, 280 kg, pull 24.7 kN on its mount: about 6.2 kN on each of 4 points, against the 1.65 kN they take. Mounts were set at 3 g (rule.mounts-margin); seats need the g they are rated to. As the two-seat station; left for review." }
+  - { of: [needs.power], tier: derived, review: true, note: "Its 1.5 kW all ends as heat in the cabin air: the displays and computers are air-cooled by their own fans through the console, and the life support's cabin cooler carries it to the hull with the crew's heat. No coolant connection at the station; it takes power and data only." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
