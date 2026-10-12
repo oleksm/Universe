@@ -2468,3 +2468,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Four privacy screens source-only; actual hull corridors, human and structural qualification, ventilation and restraints remain open"
+  - key: equipment.cargo.berths.6
+    version: 1
+    manifest_sha256: "84f1249025689efa73e65bfc0c166a52a2e12d50709b57cc25f427feaf31495a"
+    installed: b590d48e
+    game: "the loader (world::assets) at fso b590d48e"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-berths-6/v1 (608956 bytes, bounds [-1.5, 0.0, -1.0] to [1.5, 2.0, 1.07]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Six source-only privacy screens; cramped end entry, occupant/fire/ventilation/restraint/structural qualification and actual hull corridor remain open"
