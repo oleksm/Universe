@@ -5,11 +5,11 @@ identity:
   maker: org.orbital
   revision: draft
   slot: utility
-  description: "Turns the ship without fuel: four control moment gyros, each a carbon-fibre rotor spinning at 19,000 rpm in its own sealed, evacuated steel can, tilted on a gimbal to push the ship round. The four sit in a pyramid, spin axes 54.7 degrees from the vertical, in a 1.5 m frame, so any three steer every axis. Holds 25 kN m s about any axis and pushes 2 kN m; after that the thrusters must unload it. For pointing and slow turns: a big ship still swings round on its thrusters."
+  description: "Turns the ship without fuel: four control moment gyros, each a carbon-fibre rotor spinning at 11,200 rpm in its own sealed, evacuated steel can, which turns on a gimbal to push the ship round. The gimbal axes stand in a pyramid, 54.7 degrees from the vertical; the four cans sit at alternate corners of the 1.5 m frame, at staggered heights, so each turns freely through a full circle. Holds 13 kN m s about any axis and pushes 2 kN m; after that the thrusters must unload it. For pointing and holding steady: a big ship still swings round on its thrusters."
 size_class: 2
 fits: mount.utility-s2
 physical:
-  mass: 1120
+  mass: 1160
   volume: 3.38
   length: 1.5
   width: 1.5
@@ -19,8 +19,8 @@ needs:
 built_of:
   parts: utility-reaction-wheels-s2
   list:
-    - { code: RWH0-01, name: "Rotors", description: "Four, each a filament-wound carbon-fibre rim (85 kg, 0.6 m across at its middle, 0.68 m outside) on a titanium hub and shaft (15 kg); rim speed 600 m/s. Its stock is a mass proxy: filament-wound rim stock is not in the registry yet.", mass: 400, length: 0.68, width: 0.68, height: 0.14, item: stock.cfc-pl-3, quantity: 460.0, module: module.machining-centre }
-    - { code: RWH0-02, name: "Containment cans", description: "Four sealed steel cans, 0.8 m across, held at vacuum, each sized to catch its rotor if it bursts (15 MJ spinning).", mass: 320, length: 0.8, width: 0.8, height: 0.3, item: stock.st304-pl-3, quantity: 368.0, module: module.welding-bay }
+    - { code: RWH0-01, name: "Rotors", description: "Four, each a filament-wound carbon-fibre rim (86 kg; 0.42 m across inside, 0.68 m outside, 0.24 m deep) on a titanium hub and shaft (15 kg); rim speed 400 m/s. Its stock is a mass proxy: filament-wound rim stock is not in the registry yet.", mass: 400, length: 0.68, width: 0.68, height: 0.24, item: stock.cfc-pl-3, quantity: 460.0, module: module.machining-centre }
+    - { code: RWH0-02, name: "Containment cans", description: "Four sealed steel cans, 0.72 m across and 0.36 m deep, 6 mm wall with bearing mounts and flanges, held at vacuum by a getter; each sized to catch its rotor if it bursts (4.8 MJ spinning). Each turns on its gimbal through a full circle, sweeping a sphere 0.81 m across.", mass: 360, length: 0.72, width: 0.72, height: 0.36, item: stock.st304-pl-3, quantity: 414.0, module: module.welding-bay }
     - { code: RWH0-03, name: "Gimbals, motors and controls", description: "For each gyro: a gimbal yoke and its torque motor, the spin motor and bearings; one control box with the steering law and the drives.", mass: 280, length: 0.877, width: 0.877, height: 0.877, item: stock.cu-wire-2, quantity: 322.0, module: module.electronics-works }
     - { code: RWH0-04, name: "Frame", description: "The 1.5 m frame holding the four in their pyramid, on the mount's corners.", mass: 120, length: 1.5, width: 1.5, height: 1.5, item: stock.st4340-tb-120x3, quantity: 138.0, module: module.welding-bay }
 making:
@@ -28,10 +28,10 @@ making:
 function:
   kind: "reaction_wheels"
   torque: 2000
-  momentum: 25000
+  momentum: 13000
 life: 473364000
 basis:
   - { of: [physical.length, physical.width, physical.height, size_class, function.torque], tier: invented, review: true, note: "A 1.5 m cluster pushing 2 kN m. Chosen." }
-  - { of: [function.momentum, built_of.list, physical.mass, identity.description, needs.power], tier: derived, review: true, note: "What a spinning rim holds is its mass times its radius times its rim speed, and the rim speed is capped by its material: a thin ring's hoop stress is its density times the speed squared. 4340 steel at 400 MPa allowed (half its strength) caps a rim at 226 m/s; carbon fibre at 576 MPa allowed (about a third of a wound rim's hoop strength) and 1,600 kg/m3, 600 m/s (all from memory). An 85 kg rim at 0.3 m and 600 m/s holds 15.3 kN m s. In the pyramid, the weakest body axis gets 1.63 times one gyro's: 25 kN m s, the rating (2.31 times, 35 kN m s, along the pyramid's axis). The old 200 kN m s needed 50 kN m s a wheel: 210 kg of rim at 794 m/s, a 4.95 GPa hoop stress in steel, which nothing holds. Each rotor spins 15 MJ, so each sits in a can that catches it. Wheels driven by their motors could not push 2 kN m: at 2,000 rad/s that is 4 MW a wheel. Gyros push by tilting: 15.3 kN m s on a gimbal turning 0.13 rad/s gives 2 kN m from a small torque motor. Power 2 kW: spin-up from rest, 61 MJ in about 8.5 hours, and the gimbals; about 0.5 kW holding. A 150 t ship 30 m long (about 11,000 t m2 about its middle) turns at most 0.13 degrees a second on 25 kN m s: 90 degrees in about 12 minutes (13 s to reach that rate at 2 kN m, the rest coasting). Chosen; review." }
+  - { of: [function.momentum, built_of.list, physical.mass, identity.description, needs.power], tier: derived, review: true, note: "What a spinning rim holds is its spin inertia times its spin rate, and the rim speed is capped by its material: a ring's hoop stress is about its density times the rim speed squared. 4340 steel at 400 MPa allowed caps a rim at 226 m/s; carbon fibre (1,600 kg/m3) could run 600 m/s, but each rotor would then spin 11 MJ and its can would outweigh the set. Run at 400 m/s: 256 MPa, about a sixth of a wound rim's hoop strength (from memory), and 4.8 MJ, which a 6 mm can catches (invented). 86 kg of carbon is 0.054 m3: a rim 0.21 to 0.34 m in radius, 0.24 m deep (the modeller's check: a 0.14 m rotor could not hold 85 kg). At 1,176 rad/s it holds 8.1 kN m s. Four gyros on a 54.7-degree pyramid reach about 3 times one gyro's momentum, but steering clear of their singularities leaves about 1.6 times: 13 kN m s, the rating. They push by turning: 8.1 kN m s on a gimbal turning 0.25 rad/s gives 2 kN m from a small torque motor (wheels driven by their motors could not: 2 kN m at 1,176 rad/s is 2.4 MW a wheel). Packing: a can turning through a full circle sweeps a sphere 0.81 m across; at alternate corners of a 0.69 m cube inside the 1.5 m frame the spheres stand 0.98 m apart, 0.18 m clear for the yokes. Power 2 kW: spin-up from rest, 19 MJ in about 2.6 hours, and the gimbals; about 0.5 kW holding. A 150 t ship 30 m long (about 11,000 t m2 about its middle) turns at most 0.07 degrees a second on 13 kN m s: 90 degrees in about 22 minutes. The old 200 kN m s needed 210 kg of steel rim at 794 m/s, a 4.95 GPa hoop stress, which nothing holds. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
