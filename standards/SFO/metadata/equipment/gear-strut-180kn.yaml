@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: gear
-  description: "A middle leg: 180 kN, a 0.4 m stroke, for craft of 20 to 40 t on four or six legs."
+  description: "A middle leg: 180 kN, a 0.4 m stroke, for craft of 20 to 40 t on four or six legs. Its size is the leg down and locked, 0.4 x 0.4 x 1.6 m from the mount face at the top to the sole of the pad: a titanium oleo strut on a trunnion at the mount, a 0.4 m square pad on a ball joint, and an enclosed geared retraction drive beside the trunnion that swings the leg up and locks it. Folded, it lies in the hull's gear bay; the bay is the hull's, not the leg's."
 size_class: 1
 fits: mount.gear-s1
 physical:
@@ -19,9 +19,9 @@ needs:
 built_of:
   parts: gear-strut-180kn
   list:
-    - { code: GRS180-01, name: "Strut and oleo", mass: 114, length: 0.337, width: 0.337, height: 1.35, item: stock.ti64-pl-5, quantity: 131.1, module: module.machining-centre }
-    - { code: GRS180-02, name: "Pad", mass: 38, length: 0.234, width: 0.234, height: 0.936, item: stock.al6061-pl-5, quantity: 43.7, module: module.machining-centre }
-    - { code: GRS180-03, name: "Retraction actuator", mass: 38, length: 0.234, width: 0.234, height: 0.936, item: good.electric-motors, quantity: 38, module: module.assembly-shop }
+    - { code: GRS180-01, name: "Strut and oleo", mass: 114, length: 0.337, width: 0.337, height: 1.35, description: "The trunnion, outer cylinder and piston: the oleo that stops the craft over the 0.4 m stroke.", item: stock.ti64-pl-5, quantity: 131.1, module: module.machining-centre }
+    - { code: GRS180-02, name: "Pad", description: "A ribbed 0.4 m square foot on a ball joint; about 1.1 MPa at full load, for pads and rock, not soft ground.", mass: 38, length: 0.234, width: 0.234, height: 0.936, item: stock.al6061-pl-5, quantity: 43.7, module: module.machining-centre }
+    - { code: GRS180-03, name: "Retraction actuator", description: "An enclosed geared motor drive at the trunnion that raises the leg and locks it up or down.", mass: 38, length: 0.234, width: 0.234, height: 0.936, item: good.electric-motors, quantity: 38, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -34,5 +34,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function, needs], tier: invented, review: true, note: "At about 1 kg a kilonewton with titanium (the A320's 1.2 kg/kN, as the S1), 190 kg. Four hold a 24 t craft at 3 m/s on a 0.4 m stroke (1.1 g). Chosen; review." }
+  - { of: [physical, function.extended], tier: derived, note: "The record's size is the leg down (function.extended = height, mount to sole), as the S1; the model is exported gear down. The folded stowage is the hull bay's size." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

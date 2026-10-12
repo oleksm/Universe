@@ -408,7 +408,7 @@
 - { record: equipment.gear.front.mc07-right, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "21d1bee5c162bbda" }
 - { record: equipment.gear.rear.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "49ee82db0970e21c" }
 - { record: equipment.gear.rear.mc07-right, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "4f79c8abe887a333" }
-- { record: equipment.gear.strut.180kn, at: "2026-10-07T13:31:46Z", status: draft, summary: "first tracked", sha: "f19d0fbf15dc56e9" }
+- { record: equipment.gear.strut.180kn, at: "2026-10-12T03:37:02Z", status: draft, summary: "changed: identity, built_of, basis", sha: "63031c0dc096c6a3" }
 - { record: equipment.gear.strut.s0, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "612ae88b6091f21e" }
 - { record: equipment.gear.strut.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "62571a9071942820" }
 - { record: equipment.gear.strut.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "08d90cb3e21ee123" }
