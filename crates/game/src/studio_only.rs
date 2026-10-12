@@ -164,7 +164,7 @@ impl crate::devkit::observe::Host for StudioOnly {
             "debug":self.debug, "cpu":crate::devkit::observe::cpu()})
     }
     fn resources(&self, ctx: &Context) -> serde_json::Value {
-        serde_json::json!({"renderer":ctx.perf.resources,"assets":crate::visual_assets::snapshot(),"world_visuals":crate::globe_assets::snapshot()})
+        serde_json::json!({"renderer":ctx.perf.resources,"assets":crate::visual_assets::snapshot(),"world_visuals":crate::globe_assets::snapshot(),"rock_visuals":crate::rocks::snapshot()})
     }
     fn recording(&mut self) -> &mut Option<crate::devkit::observe::Recording> { &mut self.diagnostics.recording }
     fn requests(&self) -> Option<&std::sync::mpsc::Receiver<crate::devkit::observe::Request>> { self.diagnostics.port.as_ref() }

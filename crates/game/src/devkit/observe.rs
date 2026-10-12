@@ -250,6 +250,7 @@ fn resources(app: &App, ctx: &Context) -> Value {
         "renderer": ctx.perf.resources,
         "assets": crate::visual_assets::snapshot(),
         "world_visuals": crate::globe_assets::snapshot(),
+        "rock_visuals": crate::rocks::snapshot(),
         "terrain_patches": app.caches.terrain_lod.borrow().patch_count(),
         "crafts": app.v.crafts.len(),
         "crafts_here": app.v.crafts.iter().filter(|c| c.system == app.view.origin).count(),
