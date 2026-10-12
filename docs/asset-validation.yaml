@@ -1828,3 +1828,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual room placement,game drawing/lighting/GPU cost and fire effects;50m3 coverage contradiction,25bar assumption,complete25kg mass and internal bottle/controller unqualified."
+  - key: equipment.utility.window.s2
+    version: 1
+    manifest_sha256: "285e836e683ca68b42e68c3b397fd2ad32b110f5d84826e590bb8326000c550c"
+    installed: a19b9dec
+    game: "the loader (world::assets) at fso a19b9dec"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-window-s2/v1 (546520 bytes, bounds [-0.8, 0.0, -0.8] to [0.8, 0.2, 0.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Studio alpha-depth fix renderer a48f7870 plus ships c9bc0f51 remains on isolated branches,no main merge;full Studio UI and installed ship/hull-ring fit,pressure/seal/structure qualification,721kg versus250kg mass,GPU cost and general transparency pending. Exact frozen GLB isolated PBR/patched shared Studio four-camera gate passed."
