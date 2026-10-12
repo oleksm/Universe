@@ -88,3 +88,10 @@ Injector -1.15, throat -1.65, exit -3.1 and the 1.3 m neutral width stay.
   plus the side load at 15 degrees (about 0.6 MN).
 - **Pass condition:** no contact between fixed and moving groups at any pose of the full 0.26 cone (intended bearing
   seats separated out). Nothing crosses Y0.
+
+## Swept bounds (blender v13, 20261012T001821): recorded
+
+The swept envelope from blockout v13 (513 poses, pivot -0.60) is now in the record's basis: ±1.271 m in X and Z,
+aft to Y -3.183, nothing at Y > 0. That matches the geometry: rim radius 0.65, 2.5 m behind the pivot, at 0.26 rad.
+Hull bays leave a swept box 2.542 x 2.542 x 3.183 m. The four contacts left are each actuator against its own fixed
+bracket, which are intended seats. Still open: the final seats, containment and export QC.
