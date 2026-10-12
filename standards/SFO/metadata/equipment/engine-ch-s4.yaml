@@ -57,6 +57,12 @@ function:
     coolant_out: 350
     exit_manifold: 0.05
     vacuum_only: false
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-ch-s4/v1"
+  manifest_sha256: "6817e34cdc643c855a4e9322d8e1643caaf6daacd372a4fbf669e020be582d98"
+  version: 1
+  triangles: 15716
 life: 473364000
 basis:
   - { of: [function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review" }
