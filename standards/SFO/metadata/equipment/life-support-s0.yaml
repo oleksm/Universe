@@ -33,6 +33,12 @@ function:
   cooling: 400
   air_store: 2.2
   water_store: 5
+visual:
+  format: "freefall-model/1"
+  path: "models/life-support-s0/v1"
+  manifest_sha256: "ce6cd03944161bb31bfb6a5ebf7201f021e70a8b21f757e07f05d44f12e41dde"
+  version: 1
+  triangles: 2104
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], tier: invented, review: true, note: "Two people breathe 1.8 kg of oxygen a day (need.air) and give off 2.2 kg of carbon dioxide, which 2.5 kg of lithium hydroxide takes up; the bottle, canisters, fans and a 400 W cooler (two people's 137 W each and their displays) come to 150 kg. A capsule's open-loop pack, from memory of Apollo's and the station's figures. Chosen; review." }
