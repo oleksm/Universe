@@ -38,6 +38,12 @@ function:
   reaction_offset: 0
   heat_to_hull: 0.107
   min_density: 0.3
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-fan-s3/v1"
+  manifest_sha256: "f38b7dc46b0421fa5b88c06a6743d0f2b0471e8a2dd2ce65c80d2caeb2661cea"
+  version: 1
+  triangles: 8212
 life: 473364000
 basis:
   - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan whose exit is as wide as its disc (A = 4.91 m2, air 1.2 kg/m3): the wake does not contract, so T = rho A v2 and the air leaves the duct at v = sqrt(T / (rho A)), the exhaust given. This is the duct exit velocity, not an open rotor's disc (sqrt(T / 2 rho A)) or far-wake (twice that) velocity. Shaft power was taken as the open-rotor ideal T^1.5 / sqrt(2 rho A) / 0.75; see the flag. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
