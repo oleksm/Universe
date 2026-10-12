@@ -10,14 +10,14 @@ size_class: 1
 fits: mount.engine-s1
 physical:
   mass: 80
-  volume: 0.432
-  length: 1.2
-  width: 0.6
-  height: 0.6
+  volume: 0.504
+  length: 1.27
+  width: 0.63
+  height: 0.63
 built_of:
   parts: engine-ch-s1
   list:
-    - { code: CHE1-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 36, length: 0.92, width: 0.46, height: 0.46, item: stock.st304-pl-3, quantity: 41.4, module: module.welding-bay }
+    - { code: CHE1-01, name: "Thrust chamber and nozzle", description: "One piece, injector face to exit rim, as the S2 engine's at a smaller throat: 1.11 m long (chamber 0.34 m to the throat, bell 0.77 m to the exit), 0.63 m across the rim (exit 0.58 m inside, a 24 mm exit torus outside it). Brazed stainless tubes of 0.3 mm wall, 90 from the chamber to an area ratio of 20, each branching in two below it, 180 to the exit; two hydrogen passes with every line at the chamber end. Its stock is a mass proxy.", mass: 36, length: 1.11, width: 0.63, height: 0.63, item: stock.st304-pl-3, quantity: 41.4, module: module.welding-bay }
     - { code: CHE1-02, name: "Turbopumps", mass: 24, length: 0.803, width: 0.402, height: 0.402, item: good.pumps, quantity: 24, module: module.assembly-shop }
     - { code: CHE1-03, name: "Valves, lines and injector", mass: 12, length: 0.638, width: 0.319, height: 0.319, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
     - { code: CHE1-04, name: "Controller and gimbal actuators", mass: 8, length: 0.557, width: 0.278, height: 0.278, item: good.electric-motors, quantity: 8, module: module.assembly-shop }
@@ -36,10 +36,37 @@ function:
   shield_pass: 1
   reaction_offset: 0.6
   heat_to_hull: 0.0001
+  chamber:
+    feed: expander
+    pressure: 4200000.0
+    mixture_ratio: 5.5
+    thrust_coefficient: 1.9
+    throat_diameter: 0.063
+    exit_diameter: 0.579
+    expansion_ratio: 84
+    chamber_diameter: 0.126
+    chamber_length: 0.34
+    nozzle_length: 0.77
+    cooling: regenerative
+    wall: material.stainless-steel-304
+    construction: tubes
+    tubes: 90
+    tubes_lower: 180
+    splice_expansion: 20
+    tube_wall: 0.0003
+    coolant_passes: 2
+    coolant_pressure: 7000000.0
+    hot_wall_temperature: 830
+    coolant_in: 25
+    coolant_out: 200
+    exit_manifold: 0.024
+    vacuum_only: true
 life: 473364000
 basis:
   - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "scaled from the RL10 by thrust; review" }
   - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (9.7 MJ/kg) over the blend's 13 MJ/kg: 0.74." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
+  - { of: [function.chamber, physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "The S2 engine's chamber (an RL10-class expander at 42 bar, mixture 5.5, expansion 84) for this record's 25 kN at 4.4 km/s (5.7 kg/s): a throat of 0.00313 m2 (25 kN / (1.9 x 4.2 MPa)), 63 mm across; an exit 84 times that, 0.579 m; an 80% bell 0.77 m long. The chamber keeps S2's 4 to 1 contraction and its 1.35 m characteristic length (the gas needs the same time to burn), so 0.126 m across and 0.34 m long: it does not shrink with the throat. 1.11 m with the bell, about 0.16 m of pump, valves and injector ahead: 1.27 m. The rim, 0.58 m plus the torus, 0.63 m across: wider than the first box's 0.6. At 0.07 rad of gimbal the rim swings about 0.08 m to each side." }
+  - { of: [function.chamber.tubes, function.chamber.tubes_lower, function.chamber.vacuum_only], tier: derived, review: true, note: "Half S2's tubes keep its tube sizes: 90 at the throat are 2.2 mm wide; 9.9 mm at the splice (area ratio 20), 180 at the exit 10.1 mm: at 7 MPa over a 0.3 mm wall, 118 MPa at worst, a margin of 1.75 on 304's yield. Expansion 84 leaves about 3.4 kPa at the exit; sea-level air on its 0.263 m2 pushes back 27 kN, more than its 25 kN: vacuum or air thinner than about 3 kPa only, like S2. Feeds (invented speed 5 m/s in the pump inlets): hydrogen 0.87 kg/s, 12.3 L/s, a 56 mm bore; oxygen 4.8 kg/s, 4.2 L/s, a 33 mm bore." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
