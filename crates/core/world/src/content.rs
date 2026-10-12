@@ -590,8 +590,11 @@ static CONTENT: OnceLock<Content> = OnceLock::new();
 /// at the start than as nonsense in play.
 pub fn content() -> &'static Content {
     CONTENT.get_or_init(|| {
+        let _profile=universe_prof::scope("startup/content validation");
+        let start=std::time::Instant::now();
         let overrides: Vec<PathBuf> = std::env::var("UNIVERSE_CONTENT").map(|v| v.split(':').filter(|s| !s.is_empty()).map(PathBuf::from).collect()).unwrap_or_default();
-        Content::load(&overrides).unwrap_or_else(|e| panic!("content: {e}"))
+        let content=Content::load(&overrides).unwrap_or_else(|e| panic!("content: {e}"));
+        log::info!("startup content validation: {:.3} ms",start.elapsed().as_secs_f64()*1000.);content
     })
 }
 

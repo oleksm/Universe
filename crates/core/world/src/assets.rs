@@ -44,6 +44,7 @@ pub struct Model {
 /// The model `visual` names, from the assets store, checked (the manifest against the record's hash,
 /// `model.glb` against the manifest).
 pub fn model(visual: &Visual) -> Result<Model, String> {
+    let _profile=universe_prof::scope("assets/read and verify");
     if visual.format != "freefall-model/1" {
         return Err(format!("{}: format {:?}, this reads freefall-model/1", visual.path, visual.format));
     }
