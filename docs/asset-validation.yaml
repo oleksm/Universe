@@ -2180,3 +2180,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior only: draft pressure/flow/exhaust capability and internal packing; mount loads; final hull/exhaust clearance; independent per-nozzle firing and VFX; GPU lighting/cost and temporal edge stability."
+  - key: equipment.gear.strut.s1
+    version: 1
+    manifest_sha256: "19414d2138e6ccc0138f3af0617acf72d0b0d4276480745f7b0a1b35b1f07a93"
+    installed: ed454140
+    game: "the loader (world::assets) at fso ed454140"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-strut-s1/v1 (154656 bytes, bounds [-0.44, -2.5, -0.44] to [0.44, 0.0, 0.44]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static gear-down package; source-only fold/compression. Final hull/folding bay, runtime motion, GPU look/cost and temporal stability; damping/pressure/buckling/fatigue/side-load, mount/ball/pad/drive qualification and internal packing remain open."
