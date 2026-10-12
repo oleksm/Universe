@@ -1,0 +1,28 @@
+{
+  "gpu_return": {
+    "counters": {
+      "loads": 1,
+      "hits": 199,
+      "failures": 0,
+      "asset_uploads": 2,
+      "asset_hits": 123,
+      "asset_unloads": 1,
+      "asset_gpu_bytes": 853200
+    },
+    "backend": "Vulkan",
+    "gpu_idle_ms": 20,
+    "os_file_cache": "uncontrolled",
+    "screenshot": "out/review/loader-finish/gpu-return.png",
+    "screenshot_sha256": "d007b6d0875dc319981a795dff37ddb70f787ce996b25ed20d8a1b2bb69ee573",
+    "visually_inspected": true,
+    "scope": "Forced GPU retirement with retained CPU model; no disk reload or missing returned geometry."
+  },
+  "engine_unit_tests": {
+    "passed": 16,
+    "ignored": 1
+  },
+  "workspace_pre_startup_adapter": {
+    "passed": 182
+  },
+  "startup": "awaiting combined adapter measurements"
+}

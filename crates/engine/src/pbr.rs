@@ -506,6 +506,7 @@ pub(crate) struct PbrRenderer {
     retired_pending: Vec<(Arc<std::sync::atomic::AtomicBool>, ModelUpload)>,
     uploads: u64,
     hits: u64,
+    idle_for: std::time::Duration,
     evictions: u64,
     instances: wgpu::Buffer,
     capacity: u64,
@@ -778,6 +779,13 @@ impl PbrRenderer {
             retired_pending: Vec::new(),
             uploads: 0,
             hits: 0,
+            idle_for: std::time::Duration::from_millis(
+                std::env::var("UNIVERSE_ASSET_GPU_IDLE_MS")
+                    .ok()
+                    .and_then(|s| s.parse::<u64>().ok())
+                    .unwrap_or(30_000)
+                    .clamp(1, 300_000),
+            ),
             evictions: 0,
             instances,
             capacity: 64,
@@ -887,10 +895,7 @@ impl PbrRenderer {
         let expired: Vec<_> = self
             .models
             .iter()
-            .filter(|(id, m)| {
-                !visible.contains(id)
-                    && now.duration_since(m.used) >= std::time::Duration::from_secs(30)
-            })
+            .filter(|(id, m)| !visible.contains(id) && now.duration_since(m.used) >= self.idle_for)
             .map(|(id, _)| *id)
             .collect();
         for id in expired {
