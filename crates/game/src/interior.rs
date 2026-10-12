@@ -2737,6 +2737,7 @@ fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed>
 }
 
 fn draw_design_models(frame: &mut Frame, cam: &Camera, placed: &[crate::equipment_visual::Placed]) {
+    let _scope = universe_prof::scope("draw/studio/design-models");
     frame.canvas_scene();
     let camera = crate::equipment_visual::Camera {eye:cam.eye,right:cam.right,up:cam.up,forward:cam.forward,focal:cam.focal,centre:cam.centre,near:0.1};
     for t in crate::equipment_visual::project(placed, universe_engine::glam::Mat4::IDENTITY, &camera) {t.draw(frame);}
@@ -3805,6 +3806,7 @@ impl Interior {
 
     /// What `spec` is fitted with, to be placed (as it is now: refitted, it changes).
     pub fn refit(&mut self) {
+    let _scope = universe_prof::scope("studio/refit");
         self.fit = match self.spec() {
             Some(spec) => fit_of(spec),
             None => catalogue().to_vec(),
@@ -4390,6 +4392,7 @@ fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
 /// near ones over the far), cut where it passes behind the eye; the frame's
 /// members as lines among them; a cross at the middle; how to walk.
 fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
+    let _scope = universe_prof::scope("draw/studio/walk");
     frame.canvas_scene();
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.02, 0.03, 0.06, 1.0]));
@@ -5068,6 +5071,7 @@ const DOCK_TEMPERATURE: f64 = 293.0;
 /// solid box); each engine and fan pushing from where it is; each leg a spring at
 /// its foot; the batteries and plants; what the rest draws.
 fn craft(i: &Interior) -> crate::test_drive::Craft {
+    let _scope = universe_prof::scope("studio/build-craft");
     use crate::test_drive::{Actuator, Craft, Kind, Leg};
     use universe_engine::glam::{DMat3, DVec3};
     let num = |m: &Fields, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
@@ -5147,6 +5151,11 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
 impl Interior {
     /// Does the studio want the mouse taken (hidden, held in the window)? A test
     /// drive steering with it.
+    #[cfg(feature = "dev")]
+    pub fn diagnostic_mode(&self) -> &'static str {
+        if self.balance.is_some() { "balance" } else if self.drive.is_some() { "drive" }
+        else if self.stand.is_some() { "walk" } else { "design" }
+    }
     pub fn wants_mouse(&self) -> bool {
         self.drive.as_ref().is_some_and(|d| d.grabbed())
     }
@@ -5361,6 +5370,7 @@ fn frame_masses(i: &Interior) -> (f64, f64, f64) {
 }
 
 fn budget(i: &Interior) -> Budget {
+    let _scope = universe_prof::scope("studio/budget");
     let (members, nodes, decks) = frame_masses(i);
     let frame_mass = members + nodes + decks;
     let num = |m: &serde_json::Map<String, serde_json::Value>, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
@@ -6048,6 +6058,7 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
 }
 
 fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<&Block>) {
+    let _scope = universe_prof::scope("draw/studio/catalogue");
     let reg = universe_sim::world::registry::registry();
     let e = reg.equipment(&f.key);
     let (pp, pc) = PANEL;
@@ -6575,6 +6586,7 @@ pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
 /// This frame's input, given the ship's hull spec and the deck plans (what the game
 /// keeps; the studio alone keeps its own). False: close it.
 pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, ctx: &Context, interior: &mut Interior) -> bool {
+    let _scope = universe_prof::scope("update/studio/input");
     let input = &ctx.input;
     let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
     let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
@@ -7734,6 +7746,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
 }
 
 pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
+    let _scope = universe_prof::scope("draw/studio");
     if let Some(b) = &interior.balance {
         crate::test_drive::draw_balance(frame, b);
         return;

@@ -29,6 +29,34 @@ use universe_engine::Context;
 
 use crate::App;
 
+/// Host data is supplied by the current app; transport, recordings and profiling are shared.
+pub trait Host {
+    fn status(&self, ctx: &Context) -> Value;
+    fn resources(&self, ctx: &Context) -> Value;
+    fn recording(&mut self) -> &mut Option<Recording>;
+    fn requests(&self) -> Option<&mpsc::Receiver<Request>>;
+    fn observing(&self) -> bool;
+    fn profiling(&self) -> bool;
+    fn notify(&mut self, text: String);
+    fn graphics(&mut self, query: &str) -> Value;
+}
+impl Host for App {
+    fn status(&self, ctx: &Context) -> Value { status(self, ctx) }
+    fn resources(&self, ctx: &Context) -> Value { resources(self, ctx) }
+    fn recording(&mut self) -> &mut Option<Recording> { &mut self.recording }
+    fn requests(&self) -> Option<&mpsc::Receiver<Request>> { self.observe_port.as_ref() }
+    fn observing(&self) -> bool { self.observing }
+    fn profiling(&self) -> bool { self.debug == 2 || self.observing }
+    fn notify(&mut self, text: String) { self.say(text); }
+    fn graphics(&mut self, query: &str) -> Value {
+        for pair in query.split('&').filter(|p| !p.is_empty()) {
+            let (name, value) = pair.split_once('=').unwrap_or((pair, "on"));
+            crate::graphics::set(&mut self.graphics, name, matches!(value, "on" | "1" | "true"));
+        }
+        json!(self.graphics)
+    }
+}
+
 /// The longest a recording runs (s), and the most frames it keeps.
 pub const MAX_SECONDS: f64 = 10.0;
 pub const MAX_FRAMES: usize = 1500;
@@ -157,7 +185,7 @@ fn status(app: &App, ctx: &Context) -> Value {
 /// The game's CPU by kind of thread since the last ask (% of one core): the
 /// world's crowd ("crowd"), the main thread ("freefall"), the studios' work
 /// ("studio-*"), the rest by name; Linux only (null elsewhere, and on the first ask).
-fn cpu() -> Value {
+pub fn cpu() -> Value {
     use std::collections::HashMap;
     use std::sync::Mutex;
     // (Each thread's name and CPU ticks, by its id, when last asked.)
@@ -209,6 +237,7 @@ fn perf(ctx: &Context) -> Value {
         "fps": ctx.fps,
         "frame_ms": p.frame_ms, "update_ms": p.update_ms, "draw_ms": p.draw_ms,
         "render_thread_ms": p.render_ms, "screen_wait_ms": p.wait_ms,
+        "gpu_pass_ms": universe_engine::gputime::times(),
         "worst_ms": p.history.iter().copied().fold(0.0, f32::max),
         "hitches": p.hitches,
         "history_ms": p.history,
@@ -220,6 +249,8 @@ fn resources(app: &App, ctx: &Context) -> Value {
     json!({
         "renderer": ctx.perf.resources,
         "assets": crate::visual_assets::snapshot(),
+        "world_visuals": crate::globe_assets::snapshot(),
+        "rock_visuals": crate::rocks::snapshot(),
         "terrain_patches": app.caches.terrain_lod.borrow().patch_count(),
         "crafts": app.v.crafts.len(),
         "crafts_here": app.v.crafts.iter().filter(|c| c.system == app.view.origin).count(),
@@ -229,24 +260,24 @@ fn resources(app: &App, ctx: &Context) -> Value {
 }
 
 /// Start recording (debug on, the profiler and a trace with it).
-pub fn start(app: &mut App, ctx: &Context) {
-    if app.recording.is_some() {
+pub fn start(app: &mut impl Host, ctx: &Context) {
+    if app.recording().is_some() {
         return;
     }
     let dir = sessions_dir().join(stamp().to_string());
     if std::fs::create_dir_all(dir.join("frames")).is_err() {
-        app.say("RECORDING: CAN'T MAKE ITS FOLDER".into());
+        app.notify("RECORDING: CAN'T MAKE ITS FOLDER".into());
         return;
     }
-    let _ = std::fs::write(dir.join("status_start.json"), serde_json::to_vec_pretty(&status(app, ctx)).unwrap_or_default());
+    let _ = std::fs::write(dir.join("status_start.json"), serde_json::to_vec_pretty(&app.status(ctx)).unwrap_or_default());
     universe_prof::start_trace();
-    app.recording = Some(Recording { dir, started: Instant::now(), frames: Vec::new() });
-    app.say("RECORDING: PROFILE, TRACE AND EVERY FRAME".into());
+    *app.recording() = Some(Recording { dir, started: Instant::now(), frames: Vec::new() });
+    app.notify("RECORDING: PROFILE, TRACE AND EVERY FRAME".into());
 }
 
 /// A frame of the recording: its time and scopes, its picture asked for; stopped when it's long enough.
-pub fn frame(app: &mut App, ctx: &mut Context) {
-    let Some(r) = app.recording.as_mut() else { return };
+pub fn frame(app: &mut impl Host, ctx: &mut Context) {
+    let Some(r) = app.recording().as_mut() else { return };
     let n = r.frames.len();
     let scopes: Vec<Value> = universe_prof::last_frame().into_iter().filter(|x| x.1 >= 0.05).take(40).map(|(name, ms, calls)| json!([name, (ms * 1000.0).round() / 1000.0, calls])).collect();
     r.frames.push(json!({
@@ -262,18 +293,18 @@ pub fn frame(app: &mut App, ctx: &mut Context) {
 }
 
 /// Stop recording: the session written out.
-pub fn stop(app: &mut App, ctx: &Context) {
-    let Some(r) = app.recording.take() else { return };
+pub fn stop(app: &mut impl Host, ctx: &Context) {
+    let Some(r) = app.recording().take() else { return };
     let trace = universe_prof::stop_trace();
     // (Observing still: the profiler stays on for the port's questions.)
-    universe_prof::enable(app.debug == 2 || app.observing);
+    universe_prof::enable(app.profiling());
     let dir = r.dir.clone();
     let _ = std::fs::write(dir.join("trace.json"), trace);
-    let _ = std::fs::write(dir.join("status_end.json"), serde_json::to_vec_pretty(&status(app, ctx)).unwrap_or_default());
-    let _ = std::fs::write(dir.join("resources.json"), serde_json::to_vec_pretty(&resources(app, ctx)).unwrap_or_default());
+    let _ = std::fs::write(dir.join("status_end.json"), serde_json::to_vec_pretty(&app.status(ctx)).unwrap_or_default());
+    let _ = std::fs::write(dir.join("resources.json"), serde_json::to_vec_pretty(&app.resources(ctx)).unwrap_or_default());
     let _ = std::fs::write(dir.join("summary.txt"), summary(&r));
     let _ = std::fs::write(dir.join("profile.json"), serde_json::to_vec(&json!({ "frames": r.frames })).unwrap_or_default());
-    app.say(format!("RECORDED {} FRAMES: {}", r.frames.len(), dir.display()).to_uppercase());
+    app.notify(format!("RECORDED {} FRAMES: {}", r.frames.len(), dir.display()).to_uppercase());
 }
 
 /// What to read first: the frame times, the slowest frames and where their time went.
@@ -325,34 +356,28 @@ GET /sessions        recordings kept, newest first, with their summaries
 ";
 
 /// The live port's questions, answered (each frame, on the main thread).
-pub fn answer(app: &mut App, ctx: &mut Context) {
-    let Some(rx) = app.observe_port.as_ref() else { return };
+pub fn answer(app: &mut impl Host, ctx: &mut Context) {
+    let Some(rx) = app.requests() else { return };
     let pending: Vec<Request> = rx.try_iter().collect();
     for req in pending {
         // (Not observing: nothing's answered but that.)
-        if !app.observing {
+        if !app.observing() {
             let _ = req.reply.send(("text/plain", b"not observing: SHIFT+F3 in the game turns it on\n".to_vec()));
             continue;
         }
         let (path, query) = req.path.split_once('?').unwrap_or((req.path.as_str(), ""));
         let js = |v: Value| ("application/json", serde_json::to_vec_pretty(&v).unwrap_or_default());
         let answer = match path {
-            "/status" => js(status(app, ctx)),
+            "/status" => js(app.status(ctx)),
             "/perf" => js(perf(ctx)),
-            "/resources" => js(resources(app, ctx)),
+            "/resources" => js(app.resources(ctx)),
             "/profile" => {
                 let was = universe_prof::enabled();
                 universe_prof::enable(true);
                 let text = if was { universe_prof::report_text() } else { "the profiler was off: on now; ask again in a few seconds\n".to_string() };
                 ("text/plain", text.into_bytes())
             }
-            "/graphics" => {
-                for pair in query.split('&').filter(|p| !p.is_empty()) {
-                    let (name, value) = pair.split_once('=').unwrap_or((pair, "on"));
-                    crate::graphics::set(&mut app.graphics, name, matches!(value, "on" | "1" | "true"));
-                }
-                js(json!(app.graphics))
-            }
+            "/graphics" => js(app.graphics(query)),
             "/screenshot" => {
                 let p: PathBuf = sessions_dir().join("live").join(format!("shot_{}_{}.png", stamp(), ctx.perf.history.len()));
                 ctx.screenshot(p.clone());
@@ -360,10 +385,10 @@ pub fn answer(app: &mut App, ctx: &mut Context) {
             }
             "/record/start" => {
                 start(app, ctx);
-                js(json!({ "recording": app.recording.as_ref().map(|r| r.dir.display().to_string()) }))
+                js(json!({ "recording": app.recording().as_ref().map(|r| r.dir.display().to_string()) }))
             }
             "/record/stop" => {
-                let dir = app.recording.as_ref().map(|r| r.dir.display().to_string());
+                let dir = app.recording().as_ref().map(|r| r.dir.display().to_string());
                 stop(app, ctx);
                 js(json!({ "written": dir }))
             }
