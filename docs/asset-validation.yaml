@@ -2340,3 +2340,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior; final hull/service clearance,GPU appearance/cost,pressure,bulkhead,cryogenic isolation/boiloff,loaded supports andinternal packing unqualified."
+  - key: equipment.tank.waste.s2
+    version: 1
+    manifest_sha256: "88a278c129555d5d50d3d649a4370878748a6d85d66f7cd290a2740efa3e80b3"
+    installed: 3e073c5b
+    game: "the loader (world::assets) at fso 3e073c5b"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-waste-s2/v1 (222544 bytes, bounds [-1.3551, 0.0, -1.3551] to [1.3551, 2.8153, 1.4534]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure,structural loads,sanitation,capillary drainage,final hull/service fit and temporal edge stability unqualified;static exterior only."
