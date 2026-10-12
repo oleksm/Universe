@@ -186,7 +186,7 @@ def engines():
     CH = [(1, "hydrolox", 25000.0, 4400, 80, 1.2, 0.6, 0.6, 0.2, 0.07, "CHE1", "scaled from the RL10 by thrust; review"),
           (2, "hydrolox", 110000.0, 4400, 300, 2.3, 1.5, 1.5, 0.2, 0.07, "CHE2", "the RL10: about 110 kN, 300 kg, hydrogen and oxygen; its extendable nozzle is carbon-carbon"),
           (3, "methalox", 500000.0, 3600, 600, 2.5, 1.2, 1.2, 0.4, 0.26, "CHE3", "between the RL10 and a Raptor by thrust, at a Raptor's weight per thrust; review"),
-          (4, "methalox", 2300000.0, 3600, 1630, 3.1, 1.3, 1.3, 0.4, 0.26, "CHE4", "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review")]
+          (4, "methalox", 2300000.0, 3290, 1630, 3.1, 1.3, 1.3, 0.4, 0.26, "CHE4", "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review")]
     for cls, prop, thrust, ve, mass, L, W, H, thr, gim, code, scale in CH:
         jet = 0.5 * thrust * ve; energy = {"hydrolox": 13e6, "methalox": 10e6}[prop]; eff = float(f"{0.5 * ve * ve / energy:.2g}")
         equipment(f"engine-ch-s{cls}", f"equipment.engine.ch.s{cls}", f"Chemical engine S{cls} ({prop})", "engine", cls, mass, L, W, H, 0,

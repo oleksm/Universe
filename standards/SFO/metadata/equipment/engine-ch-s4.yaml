@@ -5,7 +5,7 @@ identity:
   maker: org.kestrel
   revision: draft
   slot: engine
-  description: "Methalox burnt and expanded: 2300 kN at 3.6 km/s, 4.1 GW of jet, 639 kg/s of propellant. Hovering a 156 t ship at 1 g takes 0.7 of these and 425 kg/s: a 60-second landing burns 26 t. The lander's engine."
+  description: "Methalox burnt and expanded: 2300 kN at 3.29 km/s in vacuum (2185 kN at 3.12 km/s at sea level), 3.8 GW of jet, 699 kg/s of propellant. Hovering a 156 t ship at 1 g takes 0.7 of these and 465 kg/s: a 60-second landing burns 28 t. The lander's engine: a full-flow staged-combustion chamber at 30 MPa with a short bell that fires at sea level."
 size_class: 4
 fits: mount.engine-s4
 physical:
@@ -17,7 +17,7 @@ physical:
 built_of:
   parts: engine-ch-s4
   list:
-    - { code: CHE4-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 734, length: 2.38, width: 0.996, height: 0.996, item: stock.st304-pl-3, quantity: 844.1, module: module.welding-bay }
+    - { code: CHE4-01, name: "Thrust chamber and nozzle", description: "One piece, injector face to exit rim: 1.95 m long (chamber 0.5 m to the throat, bell 1.45 m to the exit), 1.3 m across the rim (exit 1.2 m inside, the 50 mm turnaround manifold outside it). A milled copper liner closed by a steel jacket, methane in its channels: two passes, down half the channels to the exit manifold and back up the others, so every line sits at the chamber end, forward of the throat, behind the hull's closure; no line runs to the rim. The engine owns its gimbal ring and thrust take-out; the mount's flange and struts are the hull's. Its stock is a mass proxy: copper liner stock and a channel-milling and brazing works are not in the registry yet.", mass: 734, length: 1.95, width: 1.3, height: 1.3, item: stock.st304-pl-3, quantity: 844.1, module: module.welding-bay }
     - { code: CHE4-02, name: "Turbopumps", mass: 489, length: 2.08, width: 0.87, height: 0.87, item: good.pumps, quantity: 489, module: module.assembly-shop }
     - { code: CHE4-03, name: "Valves, lines and injector", mass: 244, length: 1.65, width: 0.691, height: 0.691, item: stock.st304-pl-3, quantity: 280.6, module: module.machining-centre }
     - { code: CHE4-04, name: "Controller and gimbal actuators", mass: 163, length: 1.44, width: 0.603, height: 0.603, item: good.electric-motors, quantity: 163, module: module.assembly-shop }
@@ -27,8 +27,8 @@ function:
   kind: engine
   cycle: chemical
   thrust: 2.3e+06
-  exhaust: 3600
-  efficiency: 0.65
+  exhaust: 3290
+  efficiency: 0.54
   burns: material.methalox
   throttle: 0.4
   gimbal: 0.26
@@ -36,10 +36,35 @@ function:
   shield_pass: 1
   reaction_offset: 1.55
   heat_to_hull: 0.0001
+  chamber:
+    feed: staged_combustion
+    pressure: 30000000.0
+    mixture_ratio: 3.6
+    thrust_coefficient: 1.81
+    throat_diameter: 0.232
+    exit_diameter: 1.2
+    expansion_ratio: 26.8
+    chamber_diameter: 0.4
+    chamber_length: 0.5
+    nozzle_length: 1.45
+    cooling: regenerative
+    wall: material.copper
+    construction: channels
+    coolant_passes: 2
+    coolant_pressure: 45000000.0
+    hot_wall_temperature: 800
+    coolant_in: 112
+    coolant_out: 350
+    exit_manifold: 0.05
+    vacuum_only: false
 life: 473364000
 basis:
-  - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review" }
-  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (6.5 MJ/kg) over the blend's 10 MJ/kg: 0.65." }
+  - { of: [function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "a Raptor 2 class engine, from memory: about 230 tf, 1,630 kg, methane and oxygen, throttling to about 40%, gimbal about 15 degrees. No source looked up. Review" }
+  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (5.4 MJ/kg) over the blend's 10 MJ/kg: 0.54." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
+  - { of: [function.exhaust, function.chamber], tier: derived, review: true, note: "The earlier 3.6 km/s (invented) is out of reach: methalox would need an area ratio over 100 for it, an exit far wider than the 1.3 m engine. Derived instead for 2300 kN in vacuum at a Raptor-class 30 MPa and mixture 3.6 (from memory, no source looked up), gas ratio 1.2, c* 1,813 m/s (98% of an ideal 1,850), 98% of the ideal nozzle's momentum: the widest exit the 1.3 m width holds, 1.2 m inside a 50 mm manifold, gives an area ratio of 26.8, a thrust coefficient of 1.81 in vacuum and 1.72 at sea level, a throat of 0.0423 m2 (2.3 MN / (1.81 x 30 MPa)), 0.232 m across. Exhaust 3,290 m/s in vacuum, 3,120 at sea level (2,185 kN); 699 kg/s, 547 of oxygen and 152 of methane. An 80% bell, 1.45 m throat to exit. A chamber of 3 times the throat's area (0.4 m) and a characteristic length of 1 m: 0.5 m injector face to throat. Measured from the mount face: injector face 1.15 m, throat 1.65 m, exit 3.1 m." }
+  - { of: [function.chamber.vacuum_only], tier: derived, review: true, note: "The exit gas is at 105 kPa at full thrust, about a sea-level atmosphere: no separation in air up to about 250 kPa (a bell separates when its exit pressure falls below about 0.4 of the air's, the Summerfield rule, from memory). At the 40% throttle the exit is at 42 kPa: still attached at sea level, the limit; deeper throttling in thick air would separate. A landed-atmosphere engine for worlds up to about Earth's air." }
+  - { of: [function.chamber.construction, function.chamber.wall, function.chamber.coolant_pressure, function.chamber.hot_wall_temperature, function.chamber.coolant_in, function.chamber.coolant_out, function.chamber.coolant_passes], tier: invented, review: true, note: "At 30 MPa tubes cannot hold: a copper liner with milled channels under a steel jacket, as high-pressure engines are built (from memory). Methane enters at 112 K, leaves at about 350 K; the gas side of the liner runs at about 800 K; the coolant at 45 MPa, 1.5 times the chamber, for the preburner's and injector's drops. Two passes keep every line at the chamber end (the owner's rule). Chosen; review." }
+  - { of: [built_of.list], tier: derived, review: true, note: "CHE4-01's box: 0.5 + 1.45 m long; the rim 1.2 + 2 x 0.05 m across. The engine's 3.1 m: 1.15 m of turbopumps, preburners, valves, injector and gimbal ahead of the injector face; the pivot 0.35 m behind the mount face. The whole engine, pumps included, swings on the gimbal: 0.26 rad (15 degrees) in any direction, a cone. The rim, 2.75 m behind the pivot, swings 0.71 m to each side: the full sweep is about 2.7 m across at the rim, room the hull leaves. 734 kg of plate is a mass proxy." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
