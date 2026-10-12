@@ -72,7 +72,11 @@ def work(rec):
     # Gate: 8 mm plate over the slot and 60 mm onto each bed, ribbed at b across the slot; two 100 mm bearing strips.
     gw = s + 0.12
     hg = up(math.sqrt(3 * (p * b * s ** 2 / 8 / SIG_A36) / T), 0.01)
-    gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1) * T * A36
+    # The gate runs below the shell's webs (their depth less 60 mm lower), the slot carried down to it by two skirts,
+    # each a cantilever from the slot's edge under the full pressure: 8 mm holds it.
+    ds = max(up(h - 0.06, 0.01), 0.03)
+    assert math.sqrt(3 * p * ds ** 2 / SIG_A36) <= T, ds
+    gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1 + 2 * Lt * ds) * T * A36
     ties = n * c * tube(60, 2)[1]
     # Frame: held at its eight corners, the loaded bay bends as a beam over its length; the top chords take the compression.
     m = shell + ribs + liners + doors + gate + ties
@@ -84,7 +88,7 @@ def work(rec):
         if abs(new - m) < 0.5:
             break
         m = new
-    return dict(cap=cap, L=L, W=W, s=s, Lt=Lt, p=p, b=b, h=h, n=n, bd=bd, hd=hd, hg=hg, tube=tb, F=F, shell=shell, ribs=ribs,
+    return dict(cap=cap, L=L, W=W, s=s, Lt=Lt, p=p, b=b, h=h, n=n, ds=ds, bd=bd, hd=hd, hg=hg, tube=tb, F=F, shell=shell, ribs=ribs,
                 liners=liners, doors=doors, gate=gate, frame=frame, total=new)
 
 
@@ -98,7 +102,7 @@ def note(w, total):
             f"plate held by ribs every {w['b']:.2f} m (stress p b2 / 2t2 within two thirds of yield), the ribs 8 mm webs "
             f"{w['h'] * 1000:.0f} mm deep: shell {w['shell'] / 1e3:.2f} t, ribs {w['ribs'] / 1e3:.2f}; 3 mm 4340 liners over "
             f"all it touches {w['liners'] / 1e3:.2f}; 5 mm aluminium doors ribbed for a reverse 0.3 g {w['doors'] / 1e3:.2f}; "
-            f"an 8 mm ribbed gate on two bearing strips {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
+            f"an 8 mm ribbed gate on two bearing strips, {w['ds'] * 1000:.0f} mm below the shell on 8 mm skirts that carry the slot down past the webs, {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
             f"beam, {w['F'] / 1e3:.0f} kN in each top chord: 4340 tube {w['tube'][0]} x {w['tube'][1]} mm with ties at every "
             f"rib (buckling between ties 1.5 times the load or more), frame {w['frame'] / 1e3:.2f}. Loaded by pouring through the open roof: the ties form a "
             f"grate with {w['b'] - 0.06:.2f} m gaps that screens off lumps too big for the {w['s']:.1f} m gate slot (a slot "
@@ -115,7 +119,7 @@ def parts(w, rec, prefix):
             ("Ribs", f"8 mm webs welded round the shell every {w['b']:.2f} m and up the end walls.", w["ribs"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Wear liners", "Hard plates bolted inside where the rock lands and slides.", w["liners"], "stock.st4340-pl-3", "module.cutting-table"),
             ("Top doors", "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight; ribbed beneath, the ribs falling between the roof ties.", w["doors"], "stock.al6061-pl-5", "module.welding-bay"),
-            ("Discharge gate", "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted).", w["gate"], "stock.sta36-pl-8", "module.welding-bay"),
+            ("Discharge gate", "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted); it runs below the shell's webs, the slot carried down to it by two skirts.", w["gate"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Frame", "Tube chords and end frames that carry the hopper to its mount, with a tie across the top at every rib.", w["frame"], tb, "module.welding-bay")]
     total = sum(r10(r[2]) for r in rows)
     out = []
