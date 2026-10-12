@@ -2036,3 +2036,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and pressure-line fit; actual game GPU appearance/cost and temporal stability; pressure, liner, laminate, bosses, burst margin, cycles, fill thermal, regulator flow and mount strength unqualified."
+  - key: equipment.tank.oxygen.20kg
+    version: 1
+    manifest_sha256: "414f0899606f8a2bd4fe46f3c1d8a56f198d0dc78c255afa822c0b2ef6e2fd04"
+    installed: 4fb0af9d
+    game: "the loader (world::assets) at fso 4fb0af9d"
+    date: "2026-10-11"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-oxygen-20kg/v1 (89480 bytes, bounds [-0.41, 0.0, -0.19] to [0.41, 0.405, 0.19]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and service-line fit; actual game GPU appearance/cost and temporal stability; oxygen compatibility/cleanliness, pressure, Al liner, laminate, bosses, burst margin, cycles, fill thermal, regulator flow and mount strength unqualified."
