@@ -5,7 +5,7 @@ identity:
   maker: org.hadley
   revision: draft
   slot: engine
-  description: "An electric fan in a 2.5 m duct: 60 kN in air of 1.2 kg/m3 for 5.7 MW, nothing burnt. Its thrust falls with the cube root of the air's density at the same power; below 0.3 kg/m3 it is not rated."
+  description: "An electric fan in a 2.5 m duct: 60 kN in air of 1.2 kg/m3 for 5.7 MW, nothing burnt. Its thrust falls with the cube root of the air's density at the same power; below 0.3 kg/m3 it is not rated. A 2.7 m duct with a 2.5 m clear bore, 1.2 m deep, held by eight rim mounts; the motor sits at the centre on the downstream stators, the inverter in a covered pod on the duct. Air enters at the top and leaves at the bottom, along the duct's axis; the thrust is the opposite way."
 size_class: 3
 fits: mount.engine-s3
 physical:
@@ -43,4 +43,5 @@ basis:
   - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan: thrust T from a disc of area A = 4.91 m2 in air of density 1.2 kg/m3 leaves at v = sqrt(T / (rho A)) = 101 m/s and takes P = T^1.5 / sqrt(2 rho A) / eta of shaft power at eta = 0.75 for motor and duct: 5.7 MW. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
+  - { of: [built_of.list], tier: derived, review: true, note: "Flag: the motor (FAN3-03) is 122 kg for 5.7 MW, 47 kW/kg, and the inverter (FAN3-04) 35 kg, 163 kW/kg; motors of the 2020s ran about 10 to 15 kW/kg continuous and SiC inverters about 50 to 100 kW/kg (from memory), which would make them about 400 to 570 kg and 60 to 115 kg, the fan about 700 to 900 kg. Either a better motor (label it invented) or the mass rises; for review, not changed." }
   - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }
