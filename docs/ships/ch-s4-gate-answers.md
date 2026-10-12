@@ -71,3 +71,20 @@ blockout:
   15° cone at every pose.
 - **Flown practice:** engines of this class mostly use gimballed bellows ducts. Rotary unions are this design's
   choice; record them as such. The record's figures do not change.
+
+## Pivot depth (blender v04 packing, 20261012T000433): Y -0.60 accepted, once measured clear
+
+The pivot is not one of the record's figures. Only the basis note's geometry follows it, and that note now says 0.6 m.
+Injector -1.15, throat -1.65, exit -3.1 and the 1.3 m neutral width stay.
+
+- **Aft:** the rim's lever shortens to 2.5 m. It swings 0.64 m each way, about 2.54 m across at the rim (was 2.7): less
+  room for the hull to leave.
+- **Forward:** parts ahead of the pivot swing the other way and up toward the mount face. A moving part d ahead of the
+  pivot at radius r stays aft of Y0 at full gimbal while `d cos 0.26 + r sin 0.26 <= 0.60`. Example: a moving edge
+  0.5 m ahead (Y -0.10) may reach r 0.45 m, not 0.65. Taper the forward pump and union package to that cone, or the
+  hull must leave room ahead of the face, and the record would have to say so.
+- **Thin front plate:** the fixed frame that holds the pitch bearings reaches 0.6 m aft of the flange. It still carries
+  2.3 MN to the flange, so it must stay engine-owned structure of real section, not just a plate. Size it for 2.3 MN
+  plus the side load at 15 degrees (about 0.6 MN).
+- **Pass condition:** no contact between fixed and moving groups at any pose of the full 0.26 cone (intended bearing
+  seats separated out). Nothing crosses Y0.
