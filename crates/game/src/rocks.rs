@@ -17,6 +17,34 @@ const SWARM_SIGHT: f64 = 300_000.0;
 /// Fragments show as dots out to this far (m).
 const DOT_RANGE: f64 = 60_000.0;
 
+/// Residency lease for an immutable procedural rock asset.
+pub struct Ready {
+    mesh: universe_engine::Mesh,
+    _source: std::sync::Arc<universe_sim::world::belt::Rock>,
+}
+static CACHE: std::sync::OnceLock<universe_engine::assets::AssetCache<Ready>> = std::sync::OnceLock::new();
+fn cache() -> &'static universe_engine::assets::AssetCache<Ready> {
+    CACHE.get_or_init(|| universe_engine::assets::AssetCache::new(universe_engine::assets::Config {
+        workers: 1, max_entries: 4096, budget_bytes: 32*1024*1024, ..Default::default()
+    }))
+}
+pub fn snapshot() -> universe_engine::assets::Snapshot {
+    CACHE.get().map_or_else(Default::default, |c| c.snapshot())
+}
+fn request(body: &Body) -> Option<std::sync::Arc<Ready>> {
+    let source = body.rock.as_ref()?;
+    let key = format!("rock:{:p}:{}", std::sync::Arc::as_ptr(source), body.rail.radius.to_bits());
+    let body = body.clone();
+    cache().request(key, universe_engine::assets::Demand {
+        estimated_bytes: 64*1024, estimated_cost: std::time::Duration::from_millis(1), ..Default::default()
+    }, move || {
+        let _scope = universe_prof::scope("assets/rock/build");
+        let mesh = mesh(&body).ok_or("no rock geometry")?;
+        let bytes = mesh.positions.capacity()*12 + mesh.edges.capacity()*8 + mesh.faces.capacity()*12;
+        Ok(universe_engine::assets::Loaded { bytes, value: Ready { mesh: mesh.into(), _source: body.rock.unwrap() } })
+    })
+}
+
 /// A unit icosphere, its faces split `levels` times.
 fn icosphere(levels: u32) -> (Vec<Vec3>, Vec<[u32; 3]>) {
     let t = (1.0 + 5f32.sqrt()) / 2.0;
@@ -89,30 +117,25 @@ impl App {
         if self.view.positions.len() < sys.bodies.len() {
             return;
         }
+        let mut wanted = std::collections::HashSet::new();
+        let mut request_body = |f, i, b: &Body| {
+            let key = (origin, f, i);
+            wanted.insert(key);
+            if let Some(ready) = request(b) { self.caches.rocks.insert(key, ready); }
+        };
         for (f, field) in sys.fields.iter().enumerate() {
-            if !self.caches.rocks.contains_key(&(origin, f, field.body))
-                && let Some(m) = mesh(&sys.bodies[field.body])
-            {
-                self.caches.rocks.insert((origin, f, field.body), m.into());
-            }
+            request_body(f, field.body, &sys.bodies[field.body]);
         }
-        // (Belt rocks in sight.)
         for (f, i, _) in belt_in_sight(&sys, self.camera.position, self.view.positions[0], self.now()) {
-            if !self.caches.rocks.contains_key(&(origin, f, i))
-                && let Some(m) = mesh(&sys.field_bodies(f)[i])
-            {
-                self.caches.rocks.insert((origin, f, i), m.into());
-            }
+            request_body(f, i, &sys.field_bodies(f)[i]);
         }
-        let Some(f) = swarm_in_sight(&sys, self.camera.position, &self.view.positions) else { return };
-        let bodies = sys.field_bodies(f);
-        for i in sys.bodies.len()..bodies.len() {
-            if !self.caches.rocks.contains_key(&(origin, f, i))
-                && let Some(m) = mesh(&bodies[i])
-            {
-                self.caches.rocks.insert((origin, f, i), m.into());
-            }
+        if let Some(f) = swarm_in_sight(&sys, self.camera.position, &self.view.positions) {
+            let bodies = sys.field_bodies(f);
+            for i in sys.bodies.len()..bodies.len() { request_body(f, i, &bodies[i]); }
         }
+        self.caches.rocks.retain(|key, _| wanted.contains(key));
+        if let Some(c) = CACHE.get() { c.maintain(); }
+
     }
 }
 
@@ -143,10 +166,12 @@ fn rock(frame: &mut Frame, app: &App, f: usize, i: usize, b: &Body, center: DVec
             return;
         }
     }
-    let Some(mesh) = app.caches.rocks.get(&(app.view.origin, f, i)) else {
-        frame.point(center, c);
+    let Some(ready) = app.caches.rocks.get(&(app.view.origin, f, i)) else {
+        frame.model(&app.models.rocky, &Transform { position: center, rotation: b.rotation(t).as_quat(), scale: b.rail.radius * remaining(app, f, i, b) }, c, universe_engine::Color([0.; 4]));
         return;
     };
+    frame.keep_alive(ready.clone());
+    let mesh = &ready.mesh;
     let edges = ((px - 2.0) / 30.0).clamp(0.0, 1.0);
     let at = Transform { position: center, rotation: b.rotation(t).as_quat(), scale: b.rail.radius * remaining(app, f, i, b) };
     // (Rock: matte, its edges no more than creases.)
