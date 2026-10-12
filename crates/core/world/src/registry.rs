@@ -11,7 +11,11 @@ pub(crate) static ENCODED: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/reg
 /// The registry the game was built with.
 pub fn registry() -> &'static Registry {
     static REGISTRY: OnceLock<Registry> = OnceLock::new();
-    REGISTRY.get_or_init(|| Registry::decode(ENCODED))
+    REGISTRY.get_or_init(|| {
+        let _profile=universe_prof::scope("startup/registry decode");
+        let start=std::time::Instant::now();let registry=Registry::decode(ENCODED);
+        log::info!("startup registry decode: {:.3} ms ({} encoded bytes)",start.elapsed().as_secs_f64()*1000.,ENCODED.len());registry
+    })
 }
 
 /// Clock `k`'s period (s of game time) as its record gives it (`Engine/metadata/scheduling`):

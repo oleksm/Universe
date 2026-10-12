@@ -947,6 +947,10 @@ impl Renderer {
             meshes: self.meshes.len(),
             instances: self.instances.count as usize,
             models: self.pbr.model_count(),
+            asset_uploads: self.pbr.uploads(),
+            asset_unloads: self.pbr.evictions(),
+            asset_gpu_bytes: self.pbr.resident_bytes(),
+            asset_preparing: self.pbr.preparing(),
             globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
             globe_capacity: self.globes.layers.len(),
         }

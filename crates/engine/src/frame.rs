@@ -91,6 +91,7 @@ impl Default for Graphics {
 ///
 /// World-space input is `f64`; it is converted to camera-relative `f32` on submission.
 pub struct Frame {
+    keepalive: Vec<std::sync::Arc<dyn Send + Sync>>,
     pub camera: Camera,
     pub clear: Color,
     /// The light (e.g. the star), for the `*_shaded` draws. None: they draw
@@ -340,6 +341,7 @@ impl Frame {
 
     pub(crate) fn new(camera: Camera, scene_size: Vec2, hud_size: Vec2) -> Self {
         Self {
+            keepalive: Vec::new(),
             camera,
             clear: Color::BLACK,
             light: None,
@@ -680,8 +682,13 @@ impl Frame {
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
 
-    /// A textured, physically based model (glTF), lit as meshes are: the
-    /// sun, its shadows, the reflecting planet's light.
+    /// Keep a CPU asset owner alive until this frame has been consumed.
+    /// For PBR preparation spanning frames, also use `PbrModel::with_lease`.
+    pub fn keep_alive(&mut self, owner: std::sync::Arc<dyn Send + Sync>) {
+        self.keepalive.push(owner);
+    }
+
+    /// Draw a textured model, lit by the sun, shadows and reflected light.
     pub fn model_pbr(&mut self, model: &crate::pbr::PbrModel, t: &Transform) {
         self.model_pbr_part(model, t, 0);
     }

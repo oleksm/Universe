@@ -73,6 +73,10 @@ pub struct Resources {
     pub instances: usize,
     /// Textured (glTF) models uploaded.
     pub models: usize,
+    pub asset_uploads: u64,
+    pub asset_unloads: u64,
+    pub asset_gpu_bytes: usize,
+    pub asset_preparing: usize,
     /// Worlds' surface maps in GPU layers, of the layers there are.
     pub globe_layers: usize,
     pub globe_capacity: usize,
