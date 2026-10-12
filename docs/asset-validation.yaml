@@ -2724,3 +2724,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static coolingrevision;~436kgvs340kg,past425kgmount;9gmount/restraint,cooling capacity,final bridge/crewinteraction/GPU open."
+  - key: equipment.engine.ca.s1
+    version: 1
+    manifest_sha256: "734a572b2dff2cce6109711ef6dbe39edf00a9d0c07f5d73b5d12437659398e6"
+    installed: dbb111d7
+    game: "the loader (world::assets) at fso dbb111d7"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-ca-s1/v1 (209000 bytes, bounds [-0.3, 0.0, -0.3] to [0.3, 0.6025, 0.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior only; hidden packing, pressure/performance/duty/thermal/load qualification, actual hull/exhaust clearance, runtime pulse VFX and GPU appearance/cost remain open."
