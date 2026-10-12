@@ -1727,6 +1727,10 @@ fn hold_to_cores(n: Option<usize>) {
 /// `--fit`, `--compare` print and return true; with none, the interior studio's window
 /// (`[design]` the design to open). False: none was asked for and `window` is false.
 pub fn studio(args: &[String], window: bool) -> bool {
+    if let Some(result) = interior::ship_code::cli(args) {
+        match result { Ok(text) => print!("{text}"), Err(e) => { eprintln!("ship code: {e}"); std::process::exit(2); } }
+        return true;
+    }
     // (`--fit <design>`: its frame fitted (mounted, sized, braced) and saved, the
     // old one kept in backups/.)
     if let Some(k) = args.iter().position(|a| a == "--fit") {

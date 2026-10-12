@@ -1,0 +1,188 @@
+%YAML 1.2
+---
+# yaml-language-server: $schema=./ship.schema.json
+# Ship code proposal: illustrative layout, not an accepted ship.
+# YAML is the human-facing source; JSON is equivalent machine interchange.
+$schema: ./ship.schema.json
+format: freefall.ship
+version: 1-draft
+design:
+  id: schema-study
+  name: All layers schema study
+  notes: Invented illustrative placement and dimensions; deliberately incomplete engineering design.
+    This tests representation, not ship acceptance. Not importable by the current Studio.
+coordinates: right-handed-x-right-y-up-z-aft-metres
+placement_convention: studio-centered-v1
+hull: null
+requirements:
+  gravity_m_s2: 9.80665
+  delta_v_m_s: 500
+  cargo_kg: 100
+  crew: 2
+  trip_s: 7200
+modules:
+  engine_left:
+    kind: equipment
+    record: equipment.engine.ch.s2
+    pose:
+      position_m: [-2, 1, 3]
+      # Local +Y thrust points toward -Z, the ship nose.
+      rotation_xyzw: [-0.7071067811865475, 0, 0, 0.7071067811865476]
+    envelope_m: [1.5, 1.5, 2.3]
+  flight_computer:
+    kind: equipment
+    record: equipment.computer.fbw.s1
+    pose:
+      position_m: [0, 1, -3]
+      rotation_xyzw: [0, 0, 0, 1]
+    envelope_m: [0.65, 0.34, 0.48]
+access:
+  points:
+    entry:
+      position_m: [0, 0, 3]
+      name: ENTRY
+    cockpit:
+      position_m: [0, 0, -3]
+      name: DASH
+  paths:
+    corridor:
+      from: entry
+      to: cockpit
+      profile:
+        shape: square
+        width_m: 1.5
+        height_m: 2.4
+        placement: floor
+  groups:
+    cabin:
+      paths:
+        - corridor
+      walled: true
+  side_doors:
+    service_hatch:
+      path: corridor
+      fraction: 0.5
+      side: right
+      hatch:
+        shape: square
+        width_m: 0.9
+        height_m: 2.1
+        slide: side
+  ends:
+    entry_end:
+      path: corridor
+      end: from
+      state: door
+      hatch:
+        shape: square
+        width_m: 0.9
+        height_m: 2.1
+        slide: side
+    cockpit_end:
+      path: corridor
+      end: to
+      state: closed
+structure:
+  members:
+    rail_left:
+      from_m: [-3, 0, -4]
+      to_m: [-3, 0, 4]
+      stock: stock.ti64-tb-300x20
+      pinned: [false, false]
+  plates:
+    main_plate:
+      min_xz_m: [-3, -4]
+      max_xz_m: [3, 4]
+      height_m: 0
+      stock: stock.st4340-pl-25
+  landing_pads:
+    front_left: [-2, -1, -3]
+decks:
+  main:
+    floor_m: 0
+    headroom_m: 2.6
+    floors:
+      floor:
+        - [-3, -4]
+        - [3, -4]
+        - [3, 4]
+        - [-3, 4]
+    walls:
+      partition:
+        points_xz_m:
+          - [-3, 0]
+          - [0, 0.2]
+          - [3, 0]
+        bulges_m: [0.1, 0]
+        doors:
+          door:
+            distance_m: 1.5
+            width_m: 0.9
+            height_m: 2.1
+        rail: false
+      rail:
+        points_xz_m:
+          - [-2, 2]
+          - [2, 2]
+        bulges_m:
+          - 0
+        doors: {}
+        rail: true
+    ladders:
+      ladder:
+        at_xz_m: [2, -2]
+        to_deck: upper
+    stairs:
+      stairs:
+        from_xz_m: [-2, 1]
+        to_xz_m: [-2, 3]
+        width_m: 1
+        to_deck: upper
+  upper:
+    floor_m: 3
+    headroom_m: 2.6
+    floors:
+      floor:
+        - [-3, -4]
+        - [3, -4]
+        - [3, 4]
+        - [-3, 4]
+    walls: {}
+    ladders: {}
+    stairs: {}
+view:
+  layers:
+    hull: true
+    grid_measures: true
+    points: true
+    points.entry: true
+    points.dash: true
+    points.windows: true
+    points.service: true
+    points.mining: true
+    points.mounts_engines: true
+    points.laid: true
+    points.names: true
+    access: true
+    access.lines: true
+    access.outlines: true
+    access.walls: true
+    access.hatches: true
+    clashes: true
+    decks_2d: true
+    decks_2d.floors: true
+    decks_2d.walls: true
+    hollow_map: true
+    reach: true
+    modules: true
+    frame: true
+    pressure: true
+    decks: true
+  work_plane_m: 0
+  camera:
+    target_m: [0, 1, 0]
+    yaw_rad: 0.7
+    pitch_rad: 0.3
+    distance_m: 20
+dependencies:
+  policy: compatible

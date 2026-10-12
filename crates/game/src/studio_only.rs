@@ -18,6 +18,11 @@ pub struct StudioOnly {
 impl StudioOnly {
     /// The studio with `design` open (none: a new design with no hull).
     pub fn new(design: Option<&str>) -> Self {
+        // Validation can load registry data; keep it inside the preparation worker.
+        if let Some(path) = design.filter(|p| p.ends_with(".ship.yaml") || p.ends_with(".ship.yml")) {
+            crate::interior::ship_code::check_path(std::path::Path::new(path))
+                .unwrap_or_else(|e| panic!("ship code: {e}"));
+        }
         crate::mounted::prepare();
         let started = std::time::Instant::now();
         let content = universe_sim::world::content::content();
@@ -52,6 +57,7 @@ impl StudioOnly {
         if let Some(k) = crate::devenv::num("UNIVERSE_VIEW").map(|n| n as u8) {
             interior.flat_view(k);
         }
+        if std::env::var_os("UNIVERSE_SHIP_CODE").is_some(){interior.open_code();}
         let issue = crate::devenv::num("UNIVERSE_ISSUE").map(|n| n as usize);
         StudioOnly { interior, spec, deckplans: Vec::new(), issue, debug: std::env::var("UNIVERSE_DEBUG").ok().and_then(|v|v.parse().ok()).unwrap_or(0) }
     }
