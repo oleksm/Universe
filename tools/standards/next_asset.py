@@ -4,6 +4,7 @@
     python3 tools/standards/next_asset.py --json          # the same, as JSON (for an agent)
     python3 tools/standards/next_asset.py --list 20       # the queue, the first 20
     python3 tools/standards/next_asset.py --summary       # how many records have a model, by kind
+    python3 tools/standards/next_asset.py --report        # done and left as a page (out/model-report.html), opened; --no-open to only write it
     python3 tools/standards/next_asset.py --key equipment.power.battery.s1   # the brief of one record
     python3 tools/standards/next_asset.py --hulls         # include hulls (the ships session's designs)
 
@@ -15,7 +16,7 @@ and gates, then works modules and buildings (their vision still being settled), 
 the MC-07) last; within each, the most used first, current designs before outdated ones. Docs:
 docs/asset-contract.md.
 """
-import glob, json, os, sys
+import datetime, glob, json, os, subprocess, sys
 import yaml
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -127,6 +128,47 @@ def queue(hulls=False):
     return q, used
 
 
+REPORT_CSS = """:root{--bg:#fbfaf7;--fg:#1d1d1b;--mute:#6b6a66;--line:#e2e0da;--bar:#3f7d5a;--track:#e8e6e0}
+@media (prefers-color-scheme:dark){:root{--bg:#161615;--fg:#e9e7e2;--mute:#9a9892;--line:#2d2c2a;--bar:#5fae82;--track:#2a2928}}
+body{background:var(--bg);color:var(--fg);font:14px/1.45 system-ui,sans-serif;margin:0 auto;max-width:1100px;padding:24px 16px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:28px 0 8px}p{color:var(--mute);margin:0 0 16px}
+table{border-collapse:collapse;width:100%;margin-bottom:8px}th,td{text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:600}td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}code{font-size:12.5px}
+.bar{background:var(--track);border-radius:3px;height:8px;min-width:120px}.bar i{display:block;background:var(--bar);height:8px;border-radius:3px}
+.wrap{overflow-x:auto}"""
+
+
+def report(q, used):
+    """The models done and left, as an HTML page in out/ (git-ignored): totals by kind, the queue in order, what is in."""
+    from html import escape as e
+    rows, done = {}, []
+    for kind, key, path, r in records():
+        t = rows.setdefault(kind, [0, 0, 0]); t[0] += 1; t[1] += bool(r.get("visual")); t[2] += stage(r) == "retired"
+        if r.get("visual"):
+            done.append((kind, key, r))
+    name = lambda r: e((r.get("identity") or {}).get("name") or "")
+    h = [f"<!doctype html><meta charset=utf-8><meta name=viewport content='width=device-width,initial-scale=1'><title>Model report</title><style>{REPORT_CSS}</style>",
+         f"<h1>Model report</h1><p>{datetime.datetime.now():%Y-%m-%d %H:%M}, from <code>next_asset.py --report</code>. "
+         f"{sum(t[1] for t in rows.values())} modelled, {len(q)} in the queue.</p>",
+         "<h2>By kind</h2><div class=wrap><table><tr><th>Kind</th><th class=n>Records</th><th class=n>Done</th><th class=n>Retired</th><th class=n>Left</th><th>Progress</th></tr>"]
+    for kind, (n, m, x) in rows.items():
+        live = n - x
+        h.append(f"<tr><td>{kind}</td><td class=n>{n}</td><td class=n>{m}</td><td class=n>{x}</td><td class=n>{live - m}</td>"
+                 f"<td><div class=bar><i style='width:{100 * m / live if live else 100:.0f}%'></i></div></td></tr>")
+    h.append("</table></div><h2>Left, in queue order</h2><div class=wrap><table><tr><th class=n>#</th><th>Kind</th><th>Key</th><th>Name</th><th>Stage</th><th class=n>Used</th></tr>")
+    for n, (kind, key, path, r) in enumerate(q, 1):
+        h.append(f"<tr><td class=n>{n}</td><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td>{stage(r) or 'draft'}</td><td class=n>{used.get(key, 0)}</td></tr>")
+    h.append("</table></div><h2>Done</h2><div class=wrap><table><tr><th>Kind</th><th>Key</th><th>Name</th><th class=n>Version</th><th class=n>Triangles</th></tr>")
+    for kind, key, r in sorted(done, key=lambda x: (x[0], x[1])):
+        v = r["visual"]
+        h.append(f"<tr><td>{kind}</td><td><code>{key}</code></td><td>{name(r)}</td><td class=n>{v.get('version', '')}</td><td class=n>{v.get('triangles', 0):,}</td></tr>")
+    h.append("</table></div>")
+    out = os.path.join(os.path.dirname(TREE), "out", "model-report.html")
+    os.makedirs(os.path.dirname(out), exist_ok=True)
+    open(out, "w").write("\n".join(h))
+    return out
+
+
 def main(argv):
     opt = {a.split("=", 1)[0].lstrip("-"): (a.split("=", 1)[1] if "=" in a else True) for a in argv[1:] if a.startswith("--")}
     if "list" in opt and opt["list"] is True and len(argv) > argv.index("--list") + 1:
@@ -142,6 +184,12 @@ def main(argv):
             print(f"{kind:<10} {n:>7} {m:>8} {x:>7}")
         return
     q, used = queue(bool(opt.get("hulls")))
+    if opt.get("report"):
+        out = report(q, used)
+        print(out)
+        if not opt.get("no-open"):
+            subprocess.Popen(["xdg-open", out], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return
     if opt.get("key"):
         hit = [(k, key, p, r) for k, key, p, r in records() if key == opt["key"]]
         if not hit:

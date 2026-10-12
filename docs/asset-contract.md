@@ -22,7 +22,7 @@ edges, so nothing waits on a model to exist.
     python3 tools/standards/install_model.py model.glb --as=<key> --source=model.blend            # 3. dry run: the checks
     python3 tools/standards/install_model.py model.glb --as=<key> --source=model.blend --push     # 4. install, commit, push
 
-Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--summary` (records and models by kind),
+Other views: `next_asset.py` (the brief as text), `--list 20` (the queue), `--summary` (records and models by kind), `--report` (done and left as a page, opened),
 `--key <key>` (one record's brief), `--hulls` (hulls too).
 
 ## Packages: the contents convention
