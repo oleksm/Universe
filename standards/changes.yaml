@@ -428,7 +428,7 @@
 - { record: equipment.hyperdrive.s2, at: "2026-10-11T18:38:43Z", status: draft, summary: "changed: visual", sha: "a74ae18b015dc484" }
 - { record: equipment.hyperdrive.s3, at: "2026-10-11T20:17:49Z", status: draft, summary: "changed: visual", sha: "080dde7b5aacb1d2" }
 - { record: equipment.life-support.cartridge, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "17042cd9ce16e4a7" }
-- { record: equipment.life-support.s0, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "4ebff4179ab2a999" }
+- { record: equipment.life-support.s0, at: "2026-10-12T01:58:24Z", status: draft, summary: "changed: identity, basis", sha: "90f36c441a92b555" }
 - { record: equipment.life-support.s1, at: "2026-10-11T18:50:00Z", status: draft, summary: "changed: visual", sha: "68f2aeb4cdd2d961" }
 - { record: equipment.life-support.s2, at: "2026-10-11T03:27:54Z", status: draft, summary: "changed: visual", sha: "dca5121157bab0ff" }
 - { record: equipment.lift.belly.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "b14a92771fd37651" }
