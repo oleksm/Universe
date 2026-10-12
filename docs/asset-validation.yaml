@@ -2420,3 +2420,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static exterior only; game pointing, flexible-hose runtime, final hull fit, GPU look/cost, RF precision/link, structural/thermal/pressure qualification pending."
+  - key: equipment.access.docking.collar
+    version: 1
+    manifest_sha256: "9883cb98f6981444424d52738e9710ba90b9c090217770e410b12e2446ce2402"
+    installed: 84a4797f
+    game: "the loader (world::assets) at fso 84a4797f"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/access-docking-collar/v1 (543820 bytes, bounds [-0.799, 0.0, -0.799] to [0.799, 0.6, 0.799]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior only; full docking capture/hook cycle, pressure and loads, final hull and hatch fit, mounted GPU appearance/cost and temporal readability remain unqualified."
