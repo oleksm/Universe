@@ -5,19 +5,19 @@ identity:
   maker: org.kestrel
   revision: draft
   slot: engine
-  description: "Methalox burnt and expanded: 500 kN at 3.6 km/s, 0.9 GW of jet, 139 kg/s of propellant. Hovering a 156 t ship at 1 g takes 3.1 of these and 425 kg/s: a 60-second landing burns 26 t. The lander's engine."
+  description: "Methalox burnt and expanded: 500 kN at 3.29 km/s in vacuum (475 kN at 3.12 km/s at sea level), 0.82 GW of jet, 152 kg/s of propellant. Hovering a 156 t ship at 1 g takes 3.1 of these and 465 kg/s: a 60-second landing burns 28 t. The lander's engine: the S4 engine's full-flow staged-combustion chamber at 30 MPa made smaller, with a short bell that fires at sea level."
 size_class: 3
 fits: mount.engine-s3
 physical:
   mass: 600
-  volume: 3.6
-  length: 2.5
-  width: 1.2
-  height: 1.2
+  volume: 0.584
+  length: 1.57
+  width: 0.61
+  height: 0.61
 built_of:
   parts: engine-ch-s3
   list:
-    - { code: CHE3-01, name: "Thrust chamber and nozzle", description: "Regeneratively cooled.", mass: 270, length: 1.92, width: 0.92, height: 0.92, item: stock.st304-pl-3, quantity: 310.5, module: module.welding-bay }
+    - { code: CHE3-01, name: "Thrust chamber and nozzle", description: "One piece, injector face to exit rim, as the S4 engine's at a smaller throat: 1.04 m long (chamber 0.36 m to the throat: a 0.29 m cylinder and a 0.07 m cone; bell 0.68 m to the exit), 0.61 m across the rim (exit 0.56 m inside, a 23 mm turnaround manifold outside it). A milled copper liner closed by a steel jacket, methane in its channels, two passes with every line at the chamber end. Its stock is a mass proxy.", mass: 270, length: 1.04, width: 0.61, height: 0.61, item: stock.st304-pl-3, quantity: 310.5, module: module.welding-bay }
     - { code: CHE3-02, name: "Turbopumps", mass: 180, length: 1.67, width: 0.803, height: 0.803, item: good.pumps, quantity: 180, module: module.assembly-shop }
     - { code: CHE3-03, name: "Valves, lines and injector", mass: 90, length: 1.33, width: 0.638, height: 0.638, item: stock.st304-pl-3, quantity: 103.5, module: module.machining-centre }
     - { code: CHE3-04, name: "Controller and gimbal actuators", mass: 60, length: 1.16, width: 0.557, height: 0.557, item: good.electric-motors, quantity: 60, module: module.assembly-shop }
@@ -27,8 +27,8 @@ function:
   kind: engine
   cycle: chemical
   thrust: 500000
-  exhaust: 3600
-  efficiency: 0.65
+  exhaust: 3290
+  efficiency: 0.54
   burns: material.methalox
   throttle: 0.4
   gimbal: 0.26
@@ -36,10 +36,34 @@ function:
   shield_pass: 1
   reaction_offset: 1.25
   heat_to_hull: 0.0001
+  chamber:
+    feed: staged_combustion
+    pressure: 30000000.0
+    mixture_ratio: 3.6
+    thrust_coefficient: 1.81
+    throat_diameter: 0.108
+    exit_diameter: 0.561
+    expansion_ratio: 26.8
+    chamber_diameter: 0.188
+    chamber_length: 0.358
+    nozzle_length: 0.677
+    cooling: regenerative
+    wall: material.copper
+    construction: channels
+    coolant_passes: 2
+    coolant_pressure: 45000000.0
+    hot_wall_temperature: 800
+    coolant_in: 112
+    coolant_out: 350
+    exit_manifold: 0.023
+    vacuum_only: false
 life: 473364000
 basis:
-  - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "between the RL10 and a Raptor by thrust, at a Raptor's weight per thrust; review" }
-  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (6.5 MJ/kg) over the blend's 10 MJ/kg: 0.65." }
+  - { of: [function.exhaust, function.thrust, physical.mass, function.throttle, function.gimbal], tier: invented, review: true, note: "between the RL10 and a Raptor by thrust. Not a Raptor's weight per thrust, as first written: that would be about 354 kg (the S4 engine's 1,630 kg for 2,300 kN); small engines run heavier per thrust, and 600 kg is kept until measured. Review" }
+  - { of: [function.efficiency], tier: derived, review: true, note: "Half the exhaust speed squared (5.4 MJ/kg) over the blend's 10 MJ/kg: 0.54." }
   - { of: [function.heat_to_hull], tier: invented, review: true, note: "A chemical engine's heat is its own, carried off by its propellant; a ten-thousandth of the jet soaks back into the mount. Chosen." }
+  - { of: [function.exhaust, function.chamber, identity.description], tier: derived, review: true, note: "The earlier 3.6 km/s (invented) is out of reach in this size, as for the S4 engine: methalox would need an area ratio over 100. The S4 engine's chamber made smaller (30 MPa, mixture 3.6, area ratio 26.8, thrust coefficient 1.81 in vacuum and 1.72 at sea level, exhaust 3,290 and 3,120 m/s): for 500 kN in vacuum a throat of 0.00921 m2 (500 kN / (1.81 x 30 MPa)), 0.108 m across; an exit of 0.561 m; an 80% bell 0.677 m long. 152 kg/s, 119 of oxygen and 33 of methane. A chamber of 3 times the throat's area (0.188 m) holding S4's 1 m characteristic length (9.2 litres): a 0.29 m cylinder and a 0.07 m cone at about 30 degrees, 0.358 m injector face to throat. Exit gas at 105 kPa at full thrust, as S4: fires at sea level and up to about 250 kPa of air; at 40% throttle the limit is sea level." }
+  - { of: [function.chamber.construction, function.chamber.wall, function.chamber.coolant_pressure, function.chamber.hot_wall_temperature, function.chamber.coolant_in, function.chamber.coolant_out, function.chamber.coolant_passes], tier: invented, review: true, note: "As the S4 engine: at 30 MPa a copper liner with milled channels under a steel jacket, methane in at 112 K and out at about 350 K, the gas side at about 800 K, coolant at 45 MPa. Chosen; review." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "The first box, 2.5 x 1.2 x 1.2 m, was set for 3.6 km/s; S4's layout scaled by the throat (0.467): 0.54 m of turbopumps, preburners, valves, injector and gimbal ahead of the injector face, 0.358 m of chamber and 0.677 m of bell: 1.57 m; the rim 0.561 + 2 x 0.023 m: 0.61 m. The whole engine swings on the gimbal, 0.26 rad in any direction; with the pivot 0.28 m behind the mount face (S4's 0.6 scaled) the rim sweeps about 0.62 m either side of the axis and 1.60 m aft of the face (1.29 sin 0.26 + 0.30 cos 0.26; 0.28 + 1.29 cos 0.26 + 0.30 sin 0.26), a swept box of about 1.24 x 1.24 x 1.60 m the hull leaves; to be measured. Feeds at the pump inlets (invented speed 5 m/s): oxygen 119 kg/s, 0.104 m3/s, a 163 mm bore; methane 33 kg/s, 0.078 m3/s, a 141 mm bore. Part boxes and stock are mass proxies." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
