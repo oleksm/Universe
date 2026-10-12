@@ -5,7 +5,7 @@ identity:
   maker: org.orbital
   revision: outdated
   slot: avionics
-  description: "Navigation aids: docking and landing."
+  description: "Navigation aids for docking and landing in one sealed case: the computer and a receiver board, power, data and sensor ports at the rear, a conductive base that carries its 100 W into the mount. It has no heads of its own: it reads the ship's sensors (altimeter, camera, radar), which are their own equipment, as the full nav computer does."
 size_class: 1
 fits: mount.avionics-s1
 physical:
@@ -21,7 +21,7 @@ built_of:
   shares: rule.shares-chosen
   list:
     - { code: NVS1-01, name: "Navigation computer", description: "Runs the autopilots.", mass: 7.5, length: 0.317, width: 0.238, height: 0.198, item: good.computers, quantity: 7.5, module: module.assembly-shop }
-    - { code: NVS1-02, name: "Approach sensors", description: "Range and bearing to a pad or a port.", mass: 4.5, length: 0.268, width: 0.201, height: 0.167, item: good.electronics, quantity: 4.5, module: module.assembly-shop }
+    - { code: NVS1-02, name: "Approach sensors", description: "The receiver board that takes the ship's sensor feeds and works out range and bearing to a pad or a port; inside the case.", mass: 4.5, length: 0.268, width: 0.201, height: 0.167, item: good.electronics, quantity: 4.5, module: module.assembly-shop }
     - { code: NVS1-03, name: "Case", mass: 3.0, length: 0.234, width: 0.175, height: 0.146, item: stock.al6061-sh-2-panel, quantity: 3.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
