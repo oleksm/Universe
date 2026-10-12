@@ -368,7 +368,7 @@
 - { record: equipment.cargo.rack.s3, at: "2026-10-11T02:34:38Z", status: draft, summary: "changed: visual", sha: "37568773642e99b1" }
 - { record: equipment.cargo.rack.s4, at: "2026-10-11T19:39:50Z", status: draft, summary: "changed: visual", sha: "1c727e57107ea5f7" }
 - { record: equipment.comm.basic.s1, at: "2026-10-11T02:42:50Z", status: draft, summary: "changed: visual", sha: "0f6f2cc60ab24c10" }
-- { record: equipment.comm.long.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "46645b4b8014f41a" }
+- { record: equipment.comm.long.s1, at: "2026-10-12T18:12:22Z", status: draft, summary: "changed: identity, physical, needs, built_of, basis", sha: "e5ed62eb1a777c21" }
 - { record: equipment.command.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b27d29c5d812c323" }
 - { record: equipment.command.s2, at: "2026-10-12T00:34:04Z", status: draft, summary: "changed: visual", sha: "a02b54612d4db36e" }
 - { record: equipment.command.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4caef18e8c8babb2" }
