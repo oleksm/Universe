@@ -346,7 +346,7 @@
 - { record: equipment.cargo.berths.2, at: "2026-10-12T14:48:01Z", status: draft, summary: "changed: visual", sha: "a154d2471e6aa8ce" }
 - { record: equipment.cargo.berths.4, at: "2026-10-12T19:34:02Z", status: draft, summary: "changed: visual", sha: "4bcdd5fef3042029" }
 - { record: equipment.cargo.berths.6, at: "2026-10-12T19:44:00Z", status: draft, summary: "changed: visual", sha: "a735887cc50312e4" }
-- { record: equipment.cargo.cabin.s1, at: "2026-10-13T20:12:43Z", status: draft, summary: "changed: physical, built_of, basis", sha: "538f1ac9925e7bf6" }
+- { record: equipment.cargo.cabin.s1, at: "2026-10-13T20:14:25Z", status: draft, summary: "changed: basis", sha: "51d72ad39b53e81f" }
 - { record: equipment.cargo.cabin.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7e21a71f8f5a9306" }
 - { record: equipment.cargo.cabin.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "06f69b7d7887a197" }
 - { record: equipment.cargo.cabin.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "31bd3c3a606979a8" }
