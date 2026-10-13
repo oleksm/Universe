@@ -91,7 +91,7 @@ const AHEAD_BUDGET: usize = 8;
 
 /// The patches an eye at `eye` (the world's frame, m) would draw, made or not: the leaves of the
 /// split as far as it goes, behind the horizon left out (the lowest ground `low` from the centre).
-fn ideal(system: usize, body: usize, r: f64, low: f64, eye: DVec3) -> Vec<Key> {
+fn ideal(system: usize, body: usize, r: f64, low: f64, eye: DVec3, patches: &HashMap<Key, Patch>, canonical: bool) -> Vec<Key> {
     let eye_dist = eye.length();
     let eye_dir = eye / eye_dist.max(1.0);
     let horizon = (low / eye_dist).clamp(-1.0, 1.0).acos();
@@ -102,7 +102,7 @@ fn ideal(system: usize, body: usize, r: f64, low: f64, eye: DVec3) -> Vec<Key> {
         if mid.angle_between(eye_dir) > horizon + size * 0.75 + 0.02 {
             continue;
         }
-        if key.level < MAX_LEVEL && (mid * r).distance(eye) < SPLIT * size * r {
+        if key.level < MAX_LEVEL && key.centre(patches, r, canonical).distance(eye) < SPLIT * size * r {
             stack.extend(key.children());
         } else {
             out.push(key);
@@ -112,6 +112,22 @@ fn ideal(system: usize, body: usize, r: f64, low: f64, eye: DVec3) -> Vec<Key> {
 }
 
 impl Key {
+    /// Use already prepared terrain metadata, never a canonical query on the draw thread.
+    /// A missing child inherits its nearest resident ancestor's elevation until built.
+    fn centre(self, patches: &HashMap<Key, Patch>, r: f64, canonical: bool) -> DVec3 {
+        let mid = self.shape().0;
+        if canonical {
+            let mut ancestor = Some(self);
+            while let Some(key) = ancestor {
+                if let Some(patch) = patches.get(&key) {
+                    return mid * patch.origin.length();
+                }
+                ancestor = key.parent();
+            }
+        }
+        mid * r
+    }
+
     fn parent(self) -> Option<Key> {
         (self.level > 0).then(|| Key { level: self.level - 1, x: self.x / 2, y: self.y / 2, ..self })
     }
@@ -292,6 +308,7 @@ impl Lod {
             self.patches.insert(k, Patch { mesh, origin, used: now, partial });
         }
         let r = body.rail.radius;
+        let canonical = body.terrain.as_ref().is_some_and(|t| t.canonical_surface());
         let eye_local = rotation.inverse() * (eye - center);
         let eye_dist = eye_local.length();
         let eye_dir = eye_local / eye_dist.max(1.0);
@@ -307,7 +324,7 @@ impl Lod {
             if mid.angle_between(eye_dir) > horizon + size * 0.75 + 0.02 {
                 continue;
             }
-            let dist = (mid * r).distance(eye_local);
+            let dist = key.centre(&self.patches, r, canonical).distance(eye_local);
             if key.level < MAX_LEVEL && dist < SPLIT * size * r {
                 let children = key.children();
                 if children.iter().all(|c| self.patches.contains_key(c)) {
@@ -340,7 +357,7 @@ impl Lod {
         let mut ahead: Vec<Key> = Vec::new();
         if velocity.length() > 1.0 {
             for t in AHEAD {
-                for k in ideal(system, body_index, r, low, eye_local + velocity * t) {
+                for k in ideal(system, body_index, r, low, eye_local + velocity * t, &self.patches, canonical) {
                     if !self.patches.contains_key(&k) && !self.pending.contains(&k) && !ahead.contains(&k) {
                         ahead.push(k);
                     }
@@ -358,8 +375,8 @@ impl Lod {
         todo.extend(draw.iter().copied().filter(|k| self.patches.get(k).is_some_and(|p| p.partial)));
         todo.retain(|k| !self.pending.contains(k));
         let near = |k: &Key| {
-            let (mid, size) = k.shape();
-            (mid * r).distance(eye_local) / (size * r)
+            let (_, size) = k.shape();
+            k.centre(&self.patches, r, canonical).distance(eye_local) / (size * r)
         };
         todo.sort_by(|a, b| near(a).total_cmp(&near(b)));
         todo.dedup();
@@ -401,6 +418,18 @@ impl Lod {
             for k in &draw { *levels.entry(k.level).or_insert(0usize) += 1; }
             log::info!("SCENERY DEBUG frame={now} resident_draw_levels={levels:?} pending={} eye_height_m={:.6}", self.pending.len(), eye_dist-r);
         }
+        #[cfg(feature = "dev")]
+        if canonical && now % 120 == 0 && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
+            let canonical_height = body.terrain.as_ref().unwrap().surface(eye_dir);
+            let mut hits = Vec::new();
+            for key in &draw {
+                let Some(patch) = self.patches.get(key) else { continue };
+                if let Some(height) = rendered_height(patch, eye_local, r) {
+                    hits.push(serde_json::json!({"level":key.level,"height_m":height,"gap_m":height-canonical_height}));
+                }
+            }
+            log::info!("PGS_CONTACT {}", serde_json::json!({"frame":now,"radius_m":r,"eye_height_m":eye_dist-r,"canonical_height_m":canonical_height,"resident":self.patches.len(),"pending":self.pending.len(),"hits":hits}));
+        }
         let kind = crate::terrain_view::globe_kind(body);
         let relief = body.terrain.as_ref().map_or(0.0, |t| t.amplitude) as f32;
         let turn = rotation.as_quat();
@@ -433,5 +462,52 @@ impl Lod {
             }
         }
         true
+    }
+}
+
+/// Diagnostic ray intersection against the actual submitted grid vertices, including shader
+/// geomorph, excluding seam skirts. This does not alter contact or draw selection.
+#[cfg(feature = "dev")]
+fn rendered_height(patch: &Patch, eye: DVec3, radius: f64) -> Option<f64> {
+    let d = -eye.normalize();
+    let start = eye - patch.origin;
+    let vertex = |id: usize| {
+        let own = patch.mesh.positions[id];
+        let color = patch.mesh.colors[id];
+        let far = (SPLIT * 2.0 * color[3] as f64 * 0.95) as f32;
+        let distance = (patch.origin + own.as_dvec3() - eye).length() as f32;
+        let t = ((distance-far*0.6)/(far*0.4)).clamp(0.0,1.0);
+        (own + universe_engine::glam::Vec3::new(color[0],color[1],color[2]) * (t*t*(3.0-2.0*t))).as_dvec3()
+    };
+    for f in patch.mesh.faces.iter().take((GRID*GRID*2) as usize) {
+        let [a,b,c] = f.map(|i| vertex(i as usize));
+        let e1 = b-a; let e2 = c-a;
+        let p = d.cross(e2); let det = e1.dot(p);
+        if det.abs() < 1e-12 { continue; }
+        let tvec = start-a; let u = tvec.dot(p)/det;
+        let q = tvec.cross(e1); let v = d.dot(q)/det;
+        if u < -1e-8 || v < -1e-8 || u+v > 1.0+1e-8 { continue; }
+        let distance = e2.dot(q)/det;
+        return Some(eye.length()-distance-radius);
+    }
+    None
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn elevated_canonical_patch_refines_at_the_feet() {
+        let key = Key { system: 0, body: 1, face: 0, level: 13, x: 4096, y: 4096 };
+        let r = 6_281_370.0;
+        let (mid, size) = key.shape();
+        let origin = mid * (r + 5_000.0);
+        let patches = HashMap::from([(key, Patch { mesh: WireModel::default().into(), origin, used: 0, partial: false })]);
+        let eye = mid * (r + 5_001.7);
+        assert!(key.centre(&patches, r, false).distance(eye) > SPLIT * size * r);
+        assert!(key.centre(&patches, r, true).distance(eye) < SPLIT * size * r);
+        let child = key.children()[0];
+        assert!((child.centre(&patches, r, true).length() - (r + 5_000.0)).abs() < 1e-8);
+        assert!((child.centre(&HashMap::new(), r, true).length() - r).abs() < 1e-8);
     }
 }

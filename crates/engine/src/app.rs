@@ -320,6 +320,9 @@ impl<G: Game> Runner<G> {
         if auto_capture {
             let elapsed = (now - self.start).as_secs_f64();
             log::info!("{} frames in {elapsed:.2}s ({:.2} ms/frame)", s.frame_count, elapsed * 1000.0 / s.frame_count as f64);
+            if std::env::var_os("UNIVERSE_FRAME_TIMINGS").is_some() {
+                log::info!("FRAME_WINDOW history_ms={:?} update_ms={} draw_ms={} render_ms={} wait_ms={} resources={:?} triangles={}", p.history, p.update_ms, p.draw_ms, p.render_ms, p.wait_ms, p.resources, p.triangles);
+            }
             let passes = crate::gputime::times();
             if !passes.is_empty() {
                 log::info!("GPU a pass (ms): {}", passes.iter().map(|(n, ms)| format!("{n} {ms:.2}")).collect::<Vec<_>>().join(", "));
