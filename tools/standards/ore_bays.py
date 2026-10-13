@@ -49,7 +49,8 @@ def up(x, step):
 def work(rec):
     cap = rec["function"]["capacity"]; vol = rec["function"]["volume"]
     L, W = rec["physical"]["length"], rec["physical"]["width"]
-    c, s, H, ds = SECTIONS[W]
+    # A bay whose chords stand proud of its section (the 300 t's 200 mm tubes) is wider than the section it is built round.
+    c, s, H, ds = SECTIONS[max(k for k in SECTIONS if k <= W + 1e-9)]
     d = (c - s) / 2; hs = H - d; leg = d * math.sqrt(2)
     P = 2 * hs + 2 * leg; sec = c * hs + (c + s) / 2 * d
     Lt = vol / sec
