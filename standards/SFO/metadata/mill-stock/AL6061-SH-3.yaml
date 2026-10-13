@@ -1,0 +1,19 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-sh-3
+  code: AL6061-SH-3
+  name: "6061 sheet 3 mm"
+  traded_as: market.metals
+  form: sheet
+  temper: "T6"
+package: package.plate-stack
+tint: [0.8, 0.81, 0.83]
+made_from:
+  - item: material.aluminium-alloy-6061
+size:
+  thickness: 0.003
+physical:
+  shock_limit: 392.266
+basis:
+  - { of: [size], tier: derived, review: true, note: "The gauge the hydrolox tank 2 t wants: 0.35 MPa plus the oxygen head at 30 m/s2, times 1.5, needs 2.25 mm over its 1.15 m radius (2026-10-13)." }
+  - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

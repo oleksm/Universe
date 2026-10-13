@@ -8,7 +8,7 @@ parcel: parcel.treistun.port-trethi.1
 # economy's business.
 lines:
   - makes: stock.al6061-pl-5
-    also: [stock.al6061-sh-2]
+    also: [stock.al6061-sh-2, stock.al6061-sh-3]
     modules:
       - { module: module.reheat-furnace, count: 1 }
       - { module: module.hot-rolling-mill, count: 1 }
