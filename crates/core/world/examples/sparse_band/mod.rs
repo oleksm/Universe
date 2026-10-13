@@ -30,6 +30,7 @@ fn edge_key(mut a: [u32; 3], mut b: [u32; 3]) -> String {
 /// Exact provenance identifies a shared cube-grid line; proximity never does.
 pub fn chain(chart: &Chart, grid: &[Triangle], bound: f64) -> Result<(Vec<Event>, Value), Value> {
     let mut events: BTreeMap<String, Event> = BTreeMap::new();
+    let mut contributors = BTreeMap::<String, Value>::new();
     let mut max = 0f64;
     let mut aliases = 0;
     for tri in grid {
@@ -64,16 +65,18 @@ pub fn chain(chart: &Chart, grid: &[Triangle], bound: f64) -> Result<(Vec<Event>
                         "{}:boundary:{axis}:{side}",
                         edge_key(tri.tags[a], tri.tags[b])
                     );
+                    let contributor = json!({"patch":tri.patch,"eye":tri.eye.to_array(),"size":tri.size,"origin":tri.origin.to_array(),"edge_tags":[tri.tags[a],tri.tags[b]],"fraction":t,"raw":[tri.raw[a].to_array(),tri.raw[b].to_array()],"target":[tri.target[a].to_array(),tri.target[b].to_array()],"morph":[tri.morph[a],tri.morph[b]],"world":[tri.world[a].to_array(),tri.world[b].to_array()],"triangle_world":tri.world.map(|p|p.to_array()),"intersection":pos.to_array()});
                     if let Some(old) = events.get_mut(&id) {
                         let error = old.world.distance(pos);
                         max = max.max(error);
                         aliases += 1;
                         if error > 1e-5 {
                             return Err(
-                                json!({"reason":"same lattice boundary disagrees with retained geometry","identity":id,"first_uv":old.uv.to_array(),"next_uv":uv.to_array(),"distance_m":error,"edge_tags":[tri.tags[a],tri.tags[b]]}),
+                                json!({"reason":"same lattice boundary disagrees with retained geometry","identity":id,"first_uv":old.uv.to_array(),"next_uv":uv.to_array(),"distance_m":error,"edge_tags":[tri.tags[a],tri.tags[b]],"first":contributors[&id],"second":contributor}),
                             );
                         }
                     } else {
+                        contributors.insert(id.clone(), contributor);
                         events.insert(
                             id.clone(),
                             Event {

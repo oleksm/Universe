@@ -5,6 +5,13 @@ use universe_world::worlds::pgs::{Surface, Water};
 #[derive(Clone)]
 pub struct Triangle {
     pub tags: [[u32; 3]; 3],
+    pub patch: [u32; 4],
+    pub eye: DVec3,
+    pub size: f64,
+    pub origin: DVec3,
+    pub raw: [DVec3; 3],
+    pub target: [DVec3; 3],
+    pub morph: [f32; 3],
     pub world: [DVec3; 3],
     pub uv: Vec<DVec2>,
     pub lo: DVec2,
@@ -127,6 +134,8 @@ pub fn retained(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), St
         }
         let at = |i: usize, j: usize| raw[j * 17 + i];
         let mut vertices = Vec::with_capacity(289);
+        let mut targets = Vec::new();
+        let mut morphs = Vec::new();
         for j in 0..17 {
             for i in 0..17 {
                 let own = at(i, j);
@@ -139,6 +148,8 @@ pub fn retained(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), St
                 let far = (2.4 * 2. * size * 0.95) as f32;
                 let distance = (origin + own.as_dvec3() - eye).length() as f32;
                 let t = ((distance - far * 0.6) / (far * 0.4)).clamp(0., 1.);
+                targets.push(origin + target.as_dvec3());
+                morphs.push(t * t * (3. - 2. * t));
                 vertices.push(origin + (own + (target - own) * (t * t * (3. - 2. * t))).as_dvec3());
             }
         }
@@ -166,6 +177,13 @@ pub fn retained(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), St
                         .copied()
                         .fold(DVec2::splat(f64::NEG_INFINITY), DVec2::max);
                     out.push(Triangle {
+                        patch: key,
+                        eye,
+                        size,
+                        origin,
+                        raw: ids.map(|k| origin + raw[k].as_dvec3()),
+                        target: ids.map(|k| targets[k]),
+                        morph: ids.map(|k| morphs[k]),
                         world,
                         uv,
                         lo,

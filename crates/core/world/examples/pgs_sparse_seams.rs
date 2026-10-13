@@ -69,6 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let mut tolerant_missing = 0;
         let mut count = 0;
         let mut worst = Value::Null;
+        let mut misses = vec![];
         for &(a, b) in &edges {
             for fraction in [0., 0.25, 0.5, 0.75, 1.] {
                 count += 1;
@@ -78,6 +79,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 let p = positions[a] * (1. - fraction) + positions[b] * fraction;
                 let q = chart.project(p)?;
                 let d = p.normalize();
+                let mut supports = vec![];
                 let mut strict = 0;
                 let mut tolerant = 0;
                 for tr in &old {
@@ -99,6 +101,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                         strict += 1;
                     }
                     if minimum >= -1e-5 {
+                        supports.push(json!({"world":tr.world.map(|p|p.to_array()),"uv":tr.uv.iter().map(|p|p.to_array()).collect::<Vec<_>>(),"patch":tr.patch,"tags":tr.tags,"minimum":minimum}));
                         tolerant += 1;
                         let error = (grid::radial(tr, d) - p.length()).abs();
                         if error > max {
@@ -108,14 +111,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     }
                 }
                 if strict == 0 {
-                    strict_missing += 1
+                    strict_missing += 1;
+                    misses.push(json!({"point":p.to_array(),"query_uv":q.to_array(),"edge":[a,b],"fraction":fraction,"supports":supports}));
                 }
                 if tolerant == 0 {
                     tolerant_missing += 1
                 }
             }
         }
-        results.push(json!({"feature":id,"geometry_sha256":sha256(&bytes),"outer_edges":edges.len(),"samples":count,"max_radial_seam_m":max,"strict_support_missing":strict_missing,"support_missing_within_10um":tolerant_missing,"worst":worst,"scope":"physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding"}));
+        results.push(json!({"feature":id,"geometry_sha256":sha256(&bytes),"outer_edges":edges.len(),"samples":count,"max_radial_seam_m":max,"strict_support_missing":strict_missing,"misses":misses,"chart":{"c":chart.c.to_array(),"e":chart.e.to_array(),"n":chart.n.to_array(),"r":chart.r},"support_missing_within_10um":tolerant_missing,"worst":worst,"scope":"physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding"}));
     }
     std::fs::write(
         &a[4],

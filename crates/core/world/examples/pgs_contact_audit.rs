@@ -57,6 +57,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let mut inner = vec![];
         let mut outer = vec![];
         let mut core_normal = vec![];
+        let mut core_interior_same_owner = vec![];
+        let mut core_boundary_same_owner = vec![];
+        let mut core_other_owner = vec![];
+        let mut interior_same_owner = vec![];
+        let mut boundary_same_owner = vec![];
+        let mut other_owner = vec![];
         let mut band_normal = vec![];
         let mut count = 0;
         let mut degenerate_triangles = 0;
@@ -72,7 +78,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 .map(|p| origin + vec(p).as_vec3().as_dvec3())
                 .collect::<Vec<_>>();
             let uv = t["uv"].as_array().unwrap();
-            for tri in t["triangles"].as_array().unwrap() {
+            for (ti, tri) in t["triangles"].as_array().unwrap().iter().enumerate() {
                 let ids = [0, 1, 2].map(|i| tri[i].as_u64().unwrap() as usize);
                 let p = ids.map(|i| v[i]);
                 triangles.push(p);
@@ -115,7 +121,22 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     };
                     let normal = if normal.dot(d) < 0. { -normal } else { normal };
                     let angle = normal.angle_between(want).to_degrees();
+                    let owner = t["provenance"][ti][0].as_u64().unwrap() as u32;
+                    if q.face != owner {
+                        other_owner.push(angle)
+                    } else if w.iter().all(|v| *v > 0.) {
+                        interior_same_owner.push(angle)
+                    } else {
+                        boundary_same_owner.push(angle)
+                    }
                     if dist <= 32. + 1e-7 {
+                        if q.face != owner {
+                            core_other_owner.push(angle)
+                        } else if w.iter().all(|v| *v > 0.) {
+                            core_interior_same_owner.push(angle)
+                        } else {
+                            core_boundary_same_owner.push(angle)
+                        }
                         core.push(error);
                         core_normal.push(angle);
                         if matches!(q.water, Water::Wet { .. }) {
@@ -165,7 +186,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
             frozen.push(json!({"label":q["label"],"hit_count":hits.len(),"error":stats(&hits),"water":format!("{:?}",sample.water)}));
         }
-        results.push(json!({"feature":id,"geometry_sha256":sha256(&data),"sample_count":count,"degenerate_triangles":degenerate_triangles,"core_visible_error_m":stats(&core),"dry_core_error_m":stats(&dry_core),"wet_core_visible_error_m":stats(&wet_core),"band_error_m":stats(&band),"inner_error_m":stats(&inner),"outer_error_m":stats(&outer),"core_normal_degrees":stats(&core_normal),"band_normal_degrees":stats(&band_normal),"worst":worst,"frozen_queries":frozen,"scope":"finite physical f32 triangle samples; wet visible geometry is not dry contact"}));
+        results.push(json!({"feature":id,"geometry_sha256":sha256(&data),"sample_count":count,"degenerate_triangles":degenerate_triangles,"core_visible_error_m":stats(&core),"dry_core_error_m":stats(&dry_core),"wet_core_visible_error_m":stats(&wet_core),"band_error_m":stats(&band),"inner_error_m":stats(&inner),"outer_error_m":stats(&outer),"core_normal_attribution":{"interior_same_owner":stats(&core_interior_same_owner),"boundary_same_owner":stats(&core_boundary_same_owner),"different_query_owner":stats(&core_other_owner)},"normal_attribution":{"interior_same_owner":stats(&interior_same_owner),"boundary_same_owner":stats(&boundary_same_owner),"different_query_owner":stats(&other_owner)},"core_normal_degrees":stats(&core_normal),"band_normal_degrees":stats(&band_normal),"worst":worst,"frozen_queries":frozen,"scope":"finite physical f32 triangle samples; wet visible geometry is not dry contact"}));
     }
     std::fs::write(
         &a[4],
