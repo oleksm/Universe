@@ -3316,3 +3316,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Hidden packing, electrical and cooling performance, containment, loaded structure and final service routing unqualified."
+  - key: equipment.power.fuelcell.s1
+    version: 1
+    manifest_sha256: "4c97b21cba0e96f8a8a414c247294ce7e94846b6ccb7f0cdfce8534162d1bf16"
+    installed: d2ae31c6
+    game: "the loader (world::assets) at fso d2ae31c6"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-fuelcell-s1/v1 (109260 bytes, bounds [-0.4, 0.0, -0.25] to [0.4, 0.5, 0.25]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Gas conditioning, potable water quality, hidden packing, thermal and electrical ratings, containment, structural qualification and final service routing unqualified."
