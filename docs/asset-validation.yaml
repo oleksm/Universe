@@ -3956,3 +3956,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static stowed only; deployment drive/runtime, CFC rail temperature, thermal leakage, panel stiffness, machinery, final hull and GPU appearance/cost unqualified."
+  - key: equipment.tank.deuterium.s2
+    version: 1
+    manifest_sha256: "8f5895d9dd6bc126f8653124076aeaecccd706c1485e56616a84fb28158181b2"
+    installed: 24cf51d6
+    game: "the loader (world::assets) at fso 24cf51d6"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-deuterium-s2/v1 (221692 bytes, bounds [-3.295, 0.0, -3.295] to [3.295, 6.9, 3.585]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual GPU appearance/cost and temporal edges; final hull placement/clearance; pressure, cryogenic and loaded support qualification"
