@@ -3908,3 +3908,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull placement,mount loads,GPU appearance/cost and temporal filtering; fictional field performance,3MW thermal balance and internal packing unqualified."
+  - key: equipment.power.aurel.s1
+    version: 1
+    manifest_sha256: "a67eccc06e993f62cfd43fcb083ca30548f253ea1968327ae29ee5e49f6964be"
+    installed: 7095f6c5
+    game: "the loader (world::assets) at fso 7095f6c5"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-aurel-s1/v1 (282320 bytes, bounds [-6.25, 0.0, -3.135] to [6.25, 2.149, 3.38]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed package only; source65pose study does not provide deployment drive or runtime motion. Hull clearance,GPU appearance/cost,rail temperature,panel stiffness,reactor internals and thermal operation remain unqualified."
