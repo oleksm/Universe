@@ -389,7 +389,7 @@
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
 - { record: equipment.engine.ft.s1, at: "2026-10-13T01:06:15Z", status: draft, summary: "changed: visual", sha: "1fd6fb7dcc3b318c" }
-- { record: equipment.engine.ft.s2, at: "2026-10-13T00:51:10Z", status: draft, summary: "changed: function, basis", sha: "bec1d5cc68720dbe" }
+- { record: equipment.engine.ft.s2, at: "2026-10-13T01:09:52Z", status: draft, summary: "changed: built_of, basis", sha: "59285b7f3195dd0c" }
 - { record: equipment.engine.ft.s3, at: "2026-10-13T00:51:10Z", status: draft, summary: "changed: function, basis", sha: "832387b418a536be" }
 - { record: equipment.engine.nt.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "349e51df289b5885" }
 - { record: equipment.engine.nt.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4875b18e30a56e77" }
