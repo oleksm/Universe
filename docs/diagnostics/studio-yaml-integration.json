@@ -1,0 +1,76 @@
+{
+  "status": "passed",
+  "base_main": "0a6d1ea2",
+  "yaml_source": "24152fd1",
+  "missing_source_commits": [
+    "804bf255",
+    "5241a16c",
+    "4757c8b8",
+    "e78f198f",
+    "5d5af429",
+    "ab309e7a",
+    "83a92f1a",
+    "24152fd1"
+  ],
+  "integration_merge": "ea51499e",
+  "fixes": [
+    "Full authored quaternion retained across asynchronous fallback-to-model promotion",
+    "Uncached structure constructor supplies explicit opaque alpha flags and no asset lease",
+    "YAML launch validation executes within responsive preparation worker"
+  ],
+  "evidence": "out/review/yaml-main-integration",
+  "limitations": [
+    "Neutral installed visuals only; existing motion and fit gates unchanged",
+    "Visual review fixture is not a flight-qualified design",
+    "Clipboard integration tests use injected ClipboardAccess; no desktop clipboard automation claimed",
+    "Existing first-use globe/terrain stalls are outside this YAML integration",
+    "MC-07 legacy air/water fitting warnings remain; not changed by this integration",
+    "Capture fixture initially omitted required empty access/structure maps; corrected before final eight CLI checks and all reviewed captures",
+    "CH-S1/S4 nozzle-to-thrust alignment remains held: existing raw-glTF/+Y Studio basis mismatch, detailed in studio-engine-basis-review.json. Vulkan pass is drawing/UI only."
+  ],
+  "tested_code": "c6b98ceaae8b2a3bb11cfbbb9932906c29b3e734",
+  "registry_cutoff": "c288b4ab",
+  "final_registry_merge": "6821d475",
+  "checks": {
+    "workspace": {
+      "exit": 0,
+      "passed": 232,
+      "ignored": 1
+    },
+    "registry_build": {
+      "exit": 0
+    },
+    "release": {
+      "exit": 0
+    },
+    "cli": {
+      "cases": 8,
+      "passed": 8,
+      "yaml_export_byte_exact": true
+    },
+    "vulkan": {
+      "gpu": "NVIDIA GeForce RTX 5090",
+      "reviewed": [
+        "code.png",
+        "design.png",
+        "drive.png",
+        "error.png"
+      ],
+      "installed_models": [
+        "equipment.engine.ch.s4",
+        "equipment.engine.ch.s1"
+      ],
+      "scope": "CODE legibility; installed neutral model draw with distinct authored poses in DESIGN and DRIVE; malformed YAML error legibility. No powered flight or motion acceptance."
+    }
+  },
+  "binaries": {
+    "freefall": {
+      "path": "/home/alexm/git/universe-ships-yaml-integration/out/release-target/release/freefall",
+      "sha256": "ed56df5408dfee94290fdfac479a13cbe471f38dbc96aff75add1deeb17c60fa"
+    },
+    "freefall-studio": {
+      "path": "/home/alexm/git/universe-ships-yaml-integration/out/release-target/release/freefall-studio",
+      "sha256": "1799ac663450c4e32a1c264d65f664f30f47b6509ba90a55d23d9ce41c8dabb8"
+    }
+  }
+}

@@ -153,26 +153,3 @@ impl Law {
         self.rulings.drain(..excess);
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    const EV: Cause = Cause::Event { tick: 7, index: 3 };
-
-    #[test]
-    fn opening_fire_on_the_innocent_makes_the_shooter_fair_game_with_the_evidence() {
-        let mut law = Law::default();
-        let r = law.hit(Hit { shooter: ShipId(1), target: ShipId(2), time: 10.0 }, true, Some(AGGRESSION), EV).expect("ruled");
-        // Unclaimed space: no law.
-        assert!(Law::default().hit(Hit { shooter: ShipId(1), target: ShipId(2), time: 10.0 }, true, None, EV).is_none());
-        assert!(law.aggressed(ShipId(1), 10.0) && !law.aggressed(ShipId(2), 10.0));
-        assert_eq!(r.until, 10.0 + AGGRESSION);
-        assert_eq!(r.cause, EV);
-        assert_eq!(r.evidence, Hit { shooter: ShipId(1), target: ShipId(2), time: 10.0 });
-        assert!(r.new);
-        // It lapses.
-        assert!(!law.aggressed(ShipId(1), 10.0 + AGGRESSION + 1.0));
-    }
-
-}

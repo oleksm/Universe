@@ -1,0 +1,47 @@
+{
+  "scope": "Editable ship YAML: clipboard/code Apply, stable author IDs, whole document undo/save, all-layer shared visuals",
+  "workspace_tests": {
+    "passed": 191,
+    "failed": 0,
+    "log": "out/review/ship-code-v2/workspace-tests.txt"
+  },
+  "final_game_tests": {
+    "passed": 33,
+    "failed": 0,
+    "log": "out/review/ship-code-v2/game-final-tests.txt"
+  },
+  "registry_build": "passed",
+  "binary_build": "passed",
+  "cli": {
+    "passed": 6,
+    "evidence": "out/review/ship-code-v2/cli-checks.json"
+  },
+  "vulkan": {
+    "backend": "Vulkan / NVIDIA RTX 5090",
+    "captures": {
+      "code": "out/review/ship-code-v2/code.png",
+      "design": "out/review/ship-code-v2/design.png",
+      "walk": "out/review/ship-code-v2/walk.png",
+      "balance": "out/review/ship-code-v2/balance.png",
+      "drive": "out/review/ship-code-v2/drive.png"
+    },
+    "visually_inspected": true
+  },
+  "clipboard": "Real TextEditor ordered Ctrl+V event with injected ClipboardAccess, followed by actual Apply; desktop button clicking not tested",
+  "limits": [
+    "Canonical structural edits retain comments in a labelled appendix, not original layout",
+    "External file check is optimistic, not cross-process locking",
+    "Named hull anchors and unverified dependency locks/hashes reject explicitly",
+    "Neutral models and existing collision/flight acceptance limits remain; example has no fuel/gear and is not a flight-qualified ship"
+  ],
+  "sha256": {
+    "crates/game/src/interior/ship_code.rs": "bbe3da75aaa020278c47b84d25d98a5a15ac1c757f7f5e3f4421c242d22b1e90",
+    "crates/game/src/test_drive.rs": "824a97ba1989c475c0c3b34a9d0ea1c8c28f262342071ac494f32b5f99aa6373",
+    "crates/core/world/src/deckplan.rs": "fcbcfe6e09df79c63f54e36227d8c7625df6280e008a329397a6569837870e9b",
+    "out/review/ship-code-v2/code.png": "f484d3b500ea79e4a0f3e67b6975ddc03c1b4cc304af1905caba8bf72cbc767a",
+    "out/review/ship-code-v2/design.png": "bcd5107bced459ee60e7af841b6c5d0965817bafbc4e82965f44d836d6a7b764",
+    "out/review/ship-code-v2/balance.png": "97d51481625e04f384643f9c9ea73461525d2147655f3f190e1fa392dc6fd7f0",
+    "out/review/ship-code-v2/drive.png": "533c9ecdec1fb8db8c898dfb7ee00cdcb66d016099a81f159dbd0670358b4032",
+    "out/review/ship-code-v2/walk.png": "38b762b8017f2baee3ba951bd6516b970efdb6b739c80dfee93fde95512121cb"
+  }
+}

@@ -3,7 +3,9 @@
 //! its plants and soil, its normals, its climate and its rock map (`docs/planet-studio-plan.md`).
 //! They are encoded where they're made (block-compressed, on the caller's threads: a world's
 //! colour is 8192 × 4096) and handed to the renderer whole; one world's set is bound at a time
-//! (group 2 of the mesh shaders), the one whose globe layer `Frame::world_maps` names.
+//! (group 2 of the mesh shaders), the one whose globe layer `Frame::world_maps` names. The
+//! renderer uploads a new set a slice a frame (`UPLOAD_BYTES`), keeping the set bound before it
+//! until every map is up, then swaps to it in one frame.
 
 use crate::pbr::Image;
 
@@ -19,6 +21,13 @@ const BINDINGS: [u32; SLOTS] = [0, 1, 2, 3, 4, 8];
 
 /// Frames a world's maps take to fade in once bound.
 const FADE_FRAMES: f32 = 60.0;
+
+/// Bytes of maps uploaded a frame, at most (a slice of a level is whole rows: one row more
+/// than this, at worst; a world's set, ~150 MiB, takes about 75 frames).
+const UPLOAD_BYTES: usize = 2 << 20;
+
+/// Views in group 2 that hold textures: the maps by slot, the air's two tables, the clouds' three.
+const VIEWS: usize = SLOTS + 5;
 
 /// One map, encoded for the GPU: its format and each mip level's bytes.
 pub struct Encoded {
@@ -36,8 +45,8 @@ pub struct WorldMaps {
     /// Its air, as the shaders' `Air` (16 floats; the last 1 if it has air, 0 if none).
     pub air: [f32; 16],
     /// Its air's tables: the sun's transmittance and the higher orders' light, (width, height,
-    /// RGBA floats), if baked (bindings 9 and 10, as half floats: filterable everywhere).
-    pub air_luts: Option<[(u32, u32, Vec<f32>); 2]>,
+    /// RGBA half floats), if baked (bindings 9 and 10: filterable everywhere).
+    pub air_luts: Option<[(u32, u32, Vec<u16>); 2]>,
     /// Its clouds' maps (the lab's: by month, El Niño's change, the air they sit in), RGBA8
     /// read exactly (bindings 12 to 14), if baked.
     pub clouds: Option<[Image; 3]>,
@@ -60,9 +69,9 @@ impl WorldMaps {
         self.clouds.is_some()
     }
 
-    /// With its air's tables.
+    /// With its air's tables (RGBA floats; made half floats here, on the caller's thread).
     pub fn with_air_luts(mut self, luts: Option<[(u32, u32, Vec<f32>); 2]>) -> Self {
-        self.air_luts = luts;
+        self.air_luts = luts.map(|l| l.map(|(w, h, px)| (w, h, px.iter().map(|v| crate::renderer::half(*v)).collect())));
         self
     }
 
@@ -125,6 +134,40 @@ impl WorldMaps {
     pub fn id(&self) -> u64 {
         self.id
     }
+
+    /// View `k`'s texture (as `WorldBind::group` orders them): its format, size and levels, each
+    /// (width, height, bytes, bytes a row, rows, texels a row covers), if it has one and the GPU
+    /// can read it (`bc`: block compression).
+    fn source(&self, k: usize, bc: bool) -> Option<Source<'_>> {
+        if k < SLOTS {
+            let e = self.maps[k].as_ref().filter(|e| bc || !e.format.is_compressed())?;
+            let block = if e.format.is_compressed() { 4 } else { 1 };
+            let levels = e.levels.iter().map(|(w, h, b, row, rows)| (*w, *h, b.as_slice(), *row, *rows, block)).collect();
+            Some(Source { label: "world map", format: e.format, width: e.width, height: e.height, levels })
+        } else if k < SLOTS + 2 {
+            let (w, h, px) = &self.air_luts.as_ref()?[k - SLOTS];
+            Some(Source { label: "world air table", format: wgpu::TextureFormat::Rgba16Float, width: *w, height: *h, levels: vec![(*w, *h, bytemuck::cast_slice(px), w * 8, *h, 1)] })
+        } else {
+            let img = &self.clouds.as_ref()?[k - SLOTS - 2];
+            Some(Source { label: "world clouds", format: wgpu::TextureFormat::Rgba8Unorm, width: img.width, height: img.height, levels: vec![(img.width, img.height, img.rgba.as_slice(), img.width * 4, img.height, 1)] })
+        }
+    }
+}
+
+/// A texture to make and fill (`WorldMaps::source`).
+struct Source<'a> {
+    label: &'static str,
+    format: wgpu::TextureFormat,
+    width: u32,
+    height: u32,
+    levels: Vec<(u32, u32, &'a [u8], u32, u32, u32)>,
+}
+
+/// A set on its way up: its textures, made, and how far they're filled (view, level, row).
+struct Pending {
+    maps: std::sync::Arc<WorldMaps>,
+    textures: Vec<Option<wgpu::Texture>>,
+    at: (usize, usize, u32),
 }
 
 /// The renderer's side: the bound set (group 2) and what it holds.
@@ -146,6 +189,10 @@ pub(crate) struct WorldBind {
     /// The cloud cache (bindings 16 to 18: its uniform, its new and old copies).
     pub cache: crate::cloudcache::CloudCache,
     since: u32,
+    /// The texel of nothing, for the views without a map.
+    blank: wgpu::TextureView,
+    /// The set being uploaded, if any (the bound one stays until it's all up).
+    pending: Option<Pending>,
 }
 
 impl WorldBind {
@@ -184,9 +231,9 @@ impl WorldBind {
         });
         let nearest = device.create_sampler(&wgpu::SamplerDescriptor { label: Some("world maps, exact"), address_mode_u: wgpu::AddressMode::Repeat, address_mode_v: wgpu::AddressMode::ClampToEdge, ..Default::default() });
         let blank = Self::blank(device, queue);
-        let views: Vec<wgpu::TextureView> = (0..SLOTS + 5).map(|_| blank.clone()).collect();
+        let views: Vec<wgpu::TextureView> = (0..VIEWS).map(|_| blank.clone()).collect();
         let bind = Self::group(device, &layout, &views, &linear, &nearest, &air, &clamped, &clouds, &cache);
-        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0 }
+        WorldBind { layout, bind, linear, nearest, air, clamped, clouds, current: None, cloud_maps: None, cache, since: 0, blank, pending: None }
     }
 
     /// A texel of nothing (alpha 0: no map).
@@ -238,100 +285,87 @@ impl WorldBind {
         (self.since as f32 / FADE_FRAMES).min(1.0)
     }
 
-    /// Bind `maps` (uploading them, if they aren't bound already).
-    pub fn bind(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, maps: &WorldMaps) {
+    /// Bind `maps`: upload the next slice of them (`UPLOAD_BYTES`), and once they're all up, bind
+    /// them in place of the set bound before. True when `maps` are the ones bound (until then the
+    /// set bound before, or none, stays). A set half up when another is asked for is finished
+    /// first, then the newest asked for is begun: a stream of sets (a world's history played)
+    /// still shows each one it finishes.
+    pub fn bind(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, maps: &std::sync::Arc<WorldMaps>) -> bool {
         if self.current == Some(maps.id) {
-            return;
+            self.pending = None;
+            return true;
         }
-        self.since = 0;
         let bc = device.features().contains(wgpu::Features::TEXTURE_COMPRESSION_BC);
-        let views: Vec<wgpu::TextureView> = maps
-            .maps
-            .iter()
-            .map(|m| match m {
-                Some(e) if bc || !e.format.is_compressed() => {
-                    let t = device.create_texture(&wgpu::TextureDescriptor {
-                        label: Some("world map"),
-                        size: wgpu::Extent3d { width: e.width, height: e.height, depth_or_array_layers: 1 },
-                        mip_level_count: e.levels.len() as u32,
-                        sample_count: 1,
-                        dimension: wgpu::TextureDimension::D2,
-                        format: e.format,
-                        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-                        view_formats: &[],
-                    });
-                    for (level, (w, h, bytes, row, rows)) in e.levels.iter().enumerate() {
-                        // (A compressed level is whole blocks: one smaller than a block is its block's size.)
-                        let (w, h) = if e.format.is_compressed() { (w.div_ceil(4) * 4, h.div_ceil(4) * 4) } else { (*w, *h) };
-                        queue.write_texture(
-                            wgpu::TexelCopyTextureInfo { texture: &t, mip_level: level as u32, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
-                            bytes,
-                            wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(*row), rows_per_image: Some(*rows) },
-                            wgpu::Extent3d { width: w, height: h, depth_or_array_layers: 1 },
-                        );
-                    }
-                    t.create_view(&Default::default())
-                }
-                _ => Self::blank(device, queue),
-            })
-            .collect();
-        queue.write_buffer(&self.air, 0, bytemuck::cast_slice(&maps.air));
-        let mut views = views;
-        // The air's tables as half floats (filterable without a feature), or none.
-        for k in 0..2 {
-            views.push(match &maps.air_luts {
-                Some(luts) => {
-                    let (w, h, px) = &luts[k];
-                    let t = device.create_texture(&wgpu::TextureDescriptor {
-                        label: Some("world air table"),
-                        size: wgpu::Extent3d { width: *w, height: *h, depth_or_array_layers: 1 },
-                        mip_level_count: 1,
-                        sample_count: 1,
-                        dimension: wgpu::TextureDimension::D2,
-                        format: wgpu::TextureFormat::Rgba16Float,
-                        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-                        view_formats: &[],
-                    });
-                    let half: Vec<u16> = px.iter().map(|v| crate::renderer::half(*v)).collect();
-                    queue.write_texture(
-                        wgpu::TexelCopyTextureInfo { texture: &t, mip_level: 0, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
-                        bytemuck::cast_slice(&half),
-                        wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(w * 8), rows_per_image: Some(*h) },
-                        wgpu::Extent3d { width: *w, height: *h, depth_or_array_layers: 1 },
-                    );
-                    t.create_view(&Default::default())
-                }
-                None => Self::blank(device, queue),
-            });
+        let p = self.pending.get_or_insert_with(|| Pending {
+            maps: maps.clone(),
+            textures: (0..VIEWS).map(|k| maps.source(k, bc).map(|s| Self::texture(device, &s))).collect(),
+            at: (0, 0, 0),
+        });
+        if Self::upload(queue, p, bc, UPLOAD_BYTES) {
+            let p = self.pending.take().expect("pending");
+            self.swap(device, queue, p);
         }
-        // The clouds' maps as they are (read exactly), or none.
-        for k in 0..3 {
-            views.push(match &maps.clouds {
-                Some(c) => {
-                    let img = &c[k];
-                    let t = device.create_texture(&wgpu::TextureDescriptor {
-                        label: Some("world clouds"),
-                        size: wgpu::Extent3d { width: img.width, height: img.height, depth_or_array_layers: 1 },
-                        mip_level_count: 1,
-                        sample_count: 1,
-                        dimension: wgpu::TextureDimension::D2,
-                        format: wgpu::TextureFormat::Rgba8Unorm,
-                        usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
-                        view_formats: &[],
-                    });
-                    queue.write_texture(
-                        wgpu::TexelCopyTextureInfo { texture: &t, mip_level: 0, origin: wgpu::Origin3d::ZERO, aspect: wgpu::TextureAspect::All },
-                        &img.rgba,
-                        wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(img.width * 4), rows_per_image: Some(img.height) },
-                        wgpu::Extent3d { width: img.width, height: img.height, depth_or_array_layers: 1 },
-                    );
-                    t.create_view(&Default::default())
-                }
-                None => Self::blank(device, queue),
-            });
+        self.current == Some(maps.id)
+    }
+
+    /// Are `maps` the set bound now (all up)? Asks only: `bind` uploads.
+    pub fn ready_for(&self, maps: &WorldMaps) -> bool {
+        self.current == Some(maps.id)
+    }
+
+    /// A texture for `s`, empty.
+    fn texture(device: &wgpu::Device, s: &Source) -> wgpu::Texture {
+        device.create_texture(&wgpu::TextureDescriptor {
+            label: Some(s.label),
+            size: wgpu::Extent3d { width: s.width, height: s.height, depth_or_array_layers: 1 },
+            mip_level_count: s.levels.len() as u32,
+            sample_count: 1,
+            dimension: wgpu::TextureDimension::D2,
+            format: s.format,
+            usage: wgpu::TextureUsages::TEXTURE_BINDING | wgpu::TextureUsages::COPY_DST,
+            view_formats: &[],
+        })
+    }
+
+    /// Fill `p` on, `budget` bytes at most (whole rows, at least one); true when it's all up.
+    fn upload(queue: &wgpu::Queue, p: &mut Pending, bc: bool, budget: usize) -> bool {
+        let mut spent = 0;
+        while p.at.0 < VIEWS {
+            let (k, level, row0) = p.at;
+            let (Some(t), Some(s)) = (&p.textures[k], p.maps.source(k, bc)) else {
+                p.at = (k + 1, 0, 0);
+                continue;
+            };
+            let Some(&(w, h, bytes, row, rows, block)) = s.levels.get(level) else {
+                p.at = (k + 1, 0, 0);
+                continue;
+            };
+            if spent >= budget {
+                return false;
+            }
+            let n = (((budget - spent) / row.max(1) as usize).max(1) as u32).min(rows - row0);
+            // (A compressed level is whole blocks: one smaller than a block is its block's size.)
+            let (w, h) = if block > 1 { (w.div_ceil(block) * block, h.div_ceil(block) * block) } else { (w, h) };
+            let a = (row0 * row) as usize;
+            queue.write_texture(
+                wgpu::TexelCopyTextureInfo { texture: t, mip_level: level as u32, origin: wgpu::Origin3d { x: 0, y: row0 * block, z: 0 }, aspect: wgpu::TextureAspect::All },
+                &bytes[a..a + (n * row) as usize],
+                wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(row), rows_per_image: Some(n) },
+                wgpu::Extent3d { width: w, height: (n * block).min(h - row0 * block), depth_or_array_layers: 1 },
+            );
+            spent += (n * row) as usize;
+            p.at = if row0 + n < rows { (k, level, row0 + n) } else { (k, level + 1, 0) };
         }
-        self.cloud_maps = maps.clouds.as_ref().map(|_| [views[SLOTS + 2].clone(), views[SLOTS + 3].clone(), views[SLOTS + 4].clone()]);
+        true
+    }
+
+    /// Bind `p`, all up, in one go.
+    fn swap(&mut self, device: &wgpu::Device, queue: &wgpu::Queue, p: Pending) {
+        let views: Vec<wgpu::TextureView> = p.textures.iter().map(|t| t.as_ref().map_or_else(|| self.blank.clone(), |t| t.create_view(&Default::default()))).collect();
+        queue.write_buffer(&self.air, 0, bytemuck::cast_slice(&p.maps.air));
+        self.cloud_maps = p.maps.clouds.as_ref().map(|_| [views[SLOTS + 2].clone(), views[SLOTS + 3].clone(), views[SLOTS + 4].clone()]);
         self.bind = Self::group(device, &self.layout, &views, &self.linear, &self.nearest, &self.air, &self.clamped, &self.clouds, &self.cache);
-        self.current = Some(maps.id);
+        self.current = Some(p.maps.id);
+        self.since = 0;
     }
 }

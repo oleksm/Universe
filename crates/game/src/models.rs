@@ -23,7 +23,8 @@ pub struct Models {
 
 impl Models {
     pub fn new() -> Self {
-        Self {
+        let started = std::time::Instant::now();
+        let models = Self {
             rocky: Mesh::new(WireModel::globe(12, 7, 4)),
             giant: Mesh::new(WireModel::globe(8, 13, 3)), // many parallels read as cloud bands
             moon: Mesh::new(WireModel::globe(8, 5, 4)),
@@ -35,7 +36,9 @@ impl Models {
             hull_bells: content().hulls.iter().map(|(_, h)| Mesh::new(bells(h))).collect(),
             hull_glass: content().hulls.iter().map(|(_, h)| Mesh::new(canopy(h.shape()))).collect(),
             gate: Mesh::new(gate_ring()),
-        }
+        };
+        log::info!("startup procedural models: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
+        models
     }
 }
 
@@ -177,17 +180,8 @@ pub fn layout(plan: &universe_sim::world::deckplan::DeckPlan, shape: &universe_s
 /// An imported hull's model (its glTF file), loaded once and kept; its
 /// `*Ramp*` meshes part 1 (drawn swung down: see `scene::hull`).
 pub fn pbr(path: &str) -> Option<universe_engine::PbrModel> {
-    use std::collections::HashMap;
-    use std::sync::{Mutex, OnceLock};
-    static LOADED: OnceLock<Mutex<HashMap<String, Option<universe_engine::PbrModel>>>> = OnceLock::new();
-    let mut loaded = LOADED.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
-    loaded
-        .entry(path.to_string())
-        .or_insert_with(|| {
-            let r = std::fs::read(path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf_parts(&b, &["Ramp"]));
-            r.map_err(|e| log::warn!("model {path}: {e}")).ok()
-        })
-        .clone()
+    let model = crate::visual_assets::request_native(std::path::Path::new(path), &["Ramp"])?;
+    Some(model.model.with_lease(model.clone()))
 }
 
 impl Models {
@@ -660,28 +654,49 @@ fn gate_ring() -> WireModel {
 /// of its own while it goes up), standing on ground that falls away with the
 /// body's curve (`radius`), sunk a metre so no gap shows. Built once per
 /// `key` and kept.
-pub fn ground_blocks(key: String, blocks: &[(&universe_sim::world::settlements::Block, f64)], radius: f64) -> Mesh {
+pub fn ground_blocks(key: String, revision: String, blocks: &[(&universe_sim::world::settlements::Block, f64)], radius: f64) -> Mesh {
     use std::collections::HashMap;
     use std::sync::{Mutex, OnceLock};
-    static BUILT: OnceLock<Mutex<HashMap<String, Mesh>>> = OnceLock::new();
+    static BUILT: OnceLock<Mutex<HashMap<String, (String, Mesh)>>> = OnceLock::new();
     let mut built = BUILT.get_or_init(Default::default).lock().unwrap_or_else(|e| e.into_inner());
-    built
-        .entry(key)
-        .or_insert_with(|| {
-            let mut m = WireModel::default();
-            for &(b, height) in blocks {
-                let (he, hn) = b.half_extent();
-                let (e, n) = b.centre;
-                let floor = -(e * e + n * n) / (2.0 * radius) - 1.0;
-                let (lo, hi) = (DVec3::new(e - he, floor, -(n + hn)), DVec3::new(e + he, floor + height.max(0.5) + 1.0, -(n - hn)));
-                let planes = [(DVec3::X, hi.x), (DVec3::NEG_X, -lo.x), (DVec3::Y, hi.y), (DVec3::NEG_Y, -lo.y), (DVec3::Z, hi.z), (DVec3::NEG_Z, -lo.z)];
-                let part = WireModel::convex_hull(&chamfered(&planes, ((hi - lo).min_element() * 0.05).min(1.5)));
-                let base = m.positions.len() as u32;
-                m.positions.extend_from_slice(&part.positions);
-                m.faces.extend(part.faces.iter().map(|f| f.map(|i| i + base)));
-                m.edges.extend(part.edges.iter().map(|e| e.map(|i| i + base)));
-            }
-            Mesh::new(m)
-        })
-        .clone()
+    if let Some((old, mesh)) = built.get(&key) {
+        if old == &revision { return mesh.clone(); }
+    }
+    // Replace the old fallback, rather than caching every readiness permutation.
+    let mut m = WireModel::default();
+    for &(b, height) in blocks {
+        let (he, hn) = b.half_extent();
+        let (e, n) = b.centre;
+        let floor = -(e * e + n * n) / (2.0 * radius) - 1.0;
+        let (lo, hi) = (DVec3::new(e - he, floor, -(n + hn)), DVec3::new(e + he, floor + height.max(0.5) + 1.0, -(n - hn)));
+        let planes = [(DVec3::X, hi.x), (DVec3::NEG_X, -lo.x), (DVec3::Y, hi.y), (DVec3::NEG_Y, -lo.y), (DVec3::Z, hi.z), (DVec3::NEG_Z, -lo.z)];
+        let part = WireModel::convex_hull(&chamfered(&planes, ((hi - lo).min_element() * 0.05).min(1.5)));
+        let base = m.positions.len() as u32;
+        m.positions.extend_from_slice(&part.positions);
+        m.faces.extend(part.faces.iter().map(|f| f.map(|i| i + base)));
+        m.edges.extend(part.edges.iter().map(|e| e.map(|i| i + base)));
+    }
+    let mesh = Mesh::new(m);
+    built.insert(key, (revision, mesh.clone()));
+    mesh
+}
+
+#[cfg(test)]
+mod streaming_tests {
+    use super::*;
+    #[test]
+    fn completed_asset_removes_cached_ground_box_and_eviction_restores_it() {
+        let block = universe_sim::world::settlements::Block { module:"test.async".into(), centre:(0.,0.), length:4., width:3., height:2., heading:0. };
+        let key="async-ground-regression".to_string();
+        let pending=ground_blocks(key.clone(),"pending".into(), &[(&block,2.)],1000.);
+        assert!(!pending.faces.is_empty());
+        let ready=ground_blocks(key.clone(),"ready".into(), &[],1000.);
+        assert!(ready.faces.is_empty());
+        assert_ne!(pending.id(),ready.id());
+        let again=ground_blocks(key.clone(),"ready".into(), &[],1000.);
+        assert_eq!(ready.id(),again.id());
+        let evicted=ground_blocks(key,"pending".into(), &[(&block,2.)],1000.);
+        assert_eq!(evicted.faces.len(),pending.faces.len());
+        assert_ne!(evicted.id(),pending.id(),"old readiness permutations are replaced, not retained");
+    }
 }

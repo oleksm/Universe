@@ -23,7 +23,9 @@ canonical hull installation or mechanical/thermal qualification. A changed hull
 hash refuses it; explicit replacement lists are held until a complete moving
 geometry/collision consumer exists. Authored hull sockets need no overlay.
 
-To build against the installed registry records without merging fso:
+The2026-10-10 checkpoint merged installed registry records into main. A normal
+`cargo build -p universe --bin freefall` now includes them. To inspect a later
+fso-only record set without merging it:
 
 ```sh
 UNIVERSE_REGISTRY_ROOT=/home/alexm/git/universe-fso/standards \
@@ -62,6 +64,9 @@ logged, not assigned invented prices or functions. Base required systems still
 must exist. Unsupported gear/access/thermal/engine slot kinds remain outside
 that fitter, and no installed package changes this by itself.
 
+Independent four-variant gear deployment evaluation now passes all129 poses;
+see `ships/mc07-gear-motion-review.md`. This remains a diagnostic gate.
+
 Remaining integration: moving gear, ramp, clamps and hammer need combined-hull
 interfaces plus their full motion/collision/interaction consumers; radiators
 need accepted placement. CH-S2 is not the MC-07's fitted torch drive and must
@@ -96,5 +101,5 @@ representation and fixture contract, not moving-device enablement or installatio
 The right-handed hammer also has an explicit 14,000-credit game price, matching
 fso `a8fca58b` and registry reply `20261010T201758-registry-308c`. It is not a
 rename/inherited alias. This preserves its inert fitted mass/box in the fso
-preview without inventing pricing or enabling breaker mechanics. Current main
-registry has no such record, so the extra keyed price has no effect there.
+preview without inventing pricing or enabling breaker mechanics. The2026-10-10 checkpoint includes the right-hand record and explicit price on
+main. The approved mining-hammer rename is also present.

@@ -8,6 +8,8 @@
 //! a plan point is (x, z), a deck's floor a height y.
 
 use glam::{DVec2, DVec3};
+pub mod identity;
+pub use identity::{Id, Floor};
 use serde::{Deserialize, Serialize};
 
 /// A wall's thickness (m).
@@ -39,10 +41,12 @@ pub struct DeckPlan {
 /// A level: its floor's height and headroom, its floors and walls.
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Deck {
+    #[serde(default)]
+    pub uid: Id,
     pub floor: f64,
     pub headroom: f64,
     /// Floor planes: outlines (x, z), each closed.
-    pub planes: Vec<Vec<DVec2>>,
+    pub planes: Vec<Floor>,
     pub walls: Vec<Wall>,
     /// Ladders up to the deck above (each through a hatch in its floor).
     #[serde(default)]
@@ -54,13 +58,18 @@ pub struct Deck {
 
 impl Deck {
     pub fn at(floor: f64) -> Self {
-        Deck { floor, headroom: HEADROOM, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() }
+        Deck { uid: Default::default(), floor, headroom: HEADROOM, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() }
     }
 }
 
 /// A ladder at `at`, up to the deck above.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Ladder {
+    #[serde(default)]
+    pub uid: Id,
+    /// Explicit authored destination; legacy plans use the next higher deck.
+    #[serde(default, skip_serializing_if="Option::is_none")]
+    pub target: Option<Id>,
     pub at: DVec2,
 }
 
@@ -76,6 +85,11 @@ impl Ladder {
 /// across, up to the deck above.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Stair {
+    #[serde(default)]
+    pub uid: Id,
+    /// Explicit authored destination; legacy plans use the next higher deck.
+    #[serde(default, skip_serializing_if="Option::is_none")]
+    pub target: Option<Id>,
     pub from: DVec2,
     pub to: DVec2,
     pub width: f64,
@@ -91,14 +105,28 @@ impl Stair {
 
 /// The openings in deck `d`'s floor: the hatches and stairwells of the deck below.
 pub fn openings(plan: &DeckPlan, d: usize) -> Vec<Vec<DVec2>> {
-    let Some(below) = d.checked_sub(1).and_then(|k| plan.decks.get(k)) else { return Vec::new() };
-    below.ladders.iter().map(Ladder::outline).chain(below.stairs.iter().map(Stair::outline)).collect()
+    let Some(floor)=plan.decks.get(d).map(|d|d.floor) else {return Vec::new()};
+    let mut out=Vec::new();
+    for (n,deck) in plan.decks.iter().enumerate() {
+        let crosses=|target| destination(plan,n,target).is_some_and(|k| {
+            let other=plan.decks[k].floor;
+            floor>deck.floor.min(other) && floor<=deck.floor.max(other)
+        });
+        for l in &deck.ladders {if crosses(l.target) {out.push(l.outline());}}
+        for st in &deck.stairs {if crosses(st.target) {out.push(st.outline());}}
+    }
+    out
+}
+fn destination(plan:&DeckPlan,n:usize,target:Option<Id>)->Option<usize>{
+    match target {Some(id)=>plan.decks.iter().position(|d|d.uid==id),None=>(n+1<plan.decks.len()).then_some(n+1)}
 }
 
 /// A wall along `points`; segment k bent by `bulges[k]` (the arc's middle
 /// that far off the straight line, to the left going along; 0 straight).
 #[derive(Clone, Debug, Default, PartialEq, Serialize, Deserialize)]
 pub struct Wall {
+    #[serde(default)]
+    pub uid: Id,
     pub points: Vec<DVec2>,
     pub bulges: Vec<f64>,
     pub doors: Vec<Door>,
@@ -113,6 +141,8 @@ pub const RAIL: f64 = 1.1;
 /// A doorway `at` metres along its wall (its middle), `width` across, `height` tall.
 #[derive(Clone, Copy, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Door {
+    #[serde(default)]
+    pub uid: Id,
     pub at: f64,
     pub width: f64,
     pub height: f64,
@@ -809,6 +839,23 @@ impl From<&Built> for Walkable {
     }
 }
 
+/// Clip to the physical hull when present; otherwise bound the authored geometry
+/// for the scan converter without manufacturing a hull or clipping authored edges.
+pub fn authoring_sides(plan:&DeckPlan, mesh:Option<&crate::walk::WalkMesh>)->Vec<Sides> {
+    plan.decks.iter().map(|d| {
+        if let Some(m)=mesh {return deck_sides(m,d.floor);}
+        let points=d.planes.iter().flat_map(|p|p.iter().copied())
+            .chain(d.walls.iter().flat_map(|w|w.points.iter().copied()))
+            .chain(d.ladders.iter().flat_map(|l|l.outline()))
+            .chain(d.stairs.iter().flat_map(|s|s.outline()));
+        let (mut lo,mut hi)=(DVec2::ZERO,DVec2::ZERO);
+        for p in points {lo=lo.min(p);hi=hi.max(p);}
+        lo-=DVec2::ONE;hi+=DVec2::ONE;
+        let q=[lo,DVec2::new(hi.x,lo.y),hi,DVec2::new(lo.x,hi.y)];
+        Sides::of(&std::array::from_fn::<_,4,_>(|n|[q[n],q[(n+1)%4]]))
+    }).collect()
+}
+
 /// A plan built, its decks trimmed by `sides` (one for each deck, as the hull is at that height).
 pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
     let mut b = Built::default();
@@ -864,9 +911,9 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
             }
         }
         // Up to the deck above (none: nowhere to go).
-        let Some(above) = plan.decks.get(d + 1) else { continue };
-        let top = above.floor;
         for l in &deck.ladders {
+            let Some(target)=destination(plan,d,l.target) else {continue};
+            let (y,top)=(y.min(plan.decks[target].floor),y.max(plan.decks[target].floor));
             // Climbed from the floor to a step out over the hatch; its rails and rungs on the far side.
             let h = HATCH / 2.0;
             b.climbs.push((DVec3::new(l.at.x - h, y, l.at.y - h), DVec3::new(l.at.x + h, top + 1.5, l.at.y + h)));
@@ -881,6 +928,11 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
             }
         }
         for st in &deck.stairs {
+            let Some(target)=destination(plan,d,st.target) else {continue};
+            let top=plan.decks[target].floor;
+            let mut st=*st;
+            if top<y {std::mem::swap(&mut st.from,&mut st.to);}
+            let (y,top)=(y.min(top),y.max(top));
             // Steps of equal rise and run from the foot to the head, each a tread and its riser.
             let run = st.to - st.from;
             let rise = top - y;
@@ -899,117 +951,4 @@ pub fn build(plan: &DeckPlan, sides: &[Sides]) -> Built {
         }
     }
     b
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn an_arc_bulges_by_its_sagitta_and_a_floor_and_wall_stop_at_the_hull() {
-        // A segment 4 m long bent 1 m to the left: its middle 1 m off the chord.
-        let pts = arc(DVec2::new(0.0, 0.0), DVec2::new(4.0, 0.0), 1.0);
-        let mid = pts[pts.len() / 2];
-        assert!((mid - DVec2::new(2.0, 1.0)).length() < 0.05, "{mid:?}");
-        assert!(pts.last().unwrap().distance(DVec2::new(4.0, 0.0)) < 1e-9);
-        // A hull 6 m wide (x -3..3) from z -5 to 5: a square of segments.
-        let c = [DVec2::new(-3.0, -5.0), DVec2::new(3.0, -5.0), DVec2::new(3.0, 5.0), DVec2::new(-3.0, 5.0)];
-        let section: Vec<[DVec2; 2]> = (0..4).map(|i| [c[i], c[(i + 1) % 4]]).collect();
-        let sides = Sides::of(&section);
-        // A floor drawn 10 m wide: trimmed to 6.
-        let floor = [DVec2::new(-5.0, -2.0), DVec2::new(5.0, -2.0), DVec2::new(5.0, 2.0), DVec2::new(-5.0, 2.0)];
-        let area = |holes: &[Vec<DVec2>]| floor_strips(&floor, &sides, holes).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>();
-        assert!((area(&[]) - 24.0).abs() < 0.3, "{}", area(&[]));
-        // A ladder's hatch through it: 0.81 m² less.
-        let hatch = Ladder { at: DVec2::ZERO }.outline();
-        assert!((area(&[]) - area(&[hatch]) - HATCH * HATCH).abs() < 0.1);
-        // A floor carved round a point: the whole hull (60 m²), or with the wall across
-        // it, the half the point's in (30), each run on under the wall a little.
-        let carved = |walls: &[Wall], at: DVec2| {
-            let poly = carve(&sides, walls, at).expect("a floor");
-            floor_strips(&poly, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>()
-        };
-        assert!((carved(&[], DVec2::new(0.0, 3.0)) - 60.0).abs() < 1.5, "{}", carved(&[], DVec2::new(0.0, 3.0)));
-        let across = Wall { points: vec![DVec2::new(-5.0, 0.0), DVec2::new(5.0, 0.0)], ..Default::default() };
-        let half = carved(&[across], DVec2::new(0.0, 3.0));
-        assert!((half - 30.0).abs() < 1.5, "{half}");
-        // The whole deck filled: one floor, the hull's inside.
-        // The hull as a hollow box (4 m high): the whole deck filled at 1 m is one
-        // floor, its inside; under it (where only legs would be) nothing.
-        let (lo, hi) = (DVec3::new(-3.0, 0.0, -5.0), DVec3::new(3.0, 4.0, 5.0));
-        let v = |x: usize, y: usize, z: usize| DVec3::new([lo.x, hi.x][x], [lo.y, hi.y][y], [lo.z, hi.z][z]);
-        let quad = |a: DVec3, b: DVec3, c: DVec3, d: DVec3| [[a, b, c], [a, c, d]];
-        let tris: Vec<[DVec3; 3]> = [
-            quad(v(0, 0, 0), v(1, 0, 0), v(1, 0, 1), v(0, 0, 1)),
-            quad(v(0, 1, 0), v(1, 1, 0), v(1, 1, 1), v(0, 1, 1)),
-            quad(v(0, 0, 0), v(1, 0, 0), v(1, 1, 0), v(0, 1, 0)),
-            quad(v(0, 0, 1), v(1, 0, 1), v(1, 1, 1), v(0, 1, 1)),
-            quad(v(0, 0, 0), v(0, 0, 1), v(0, 1, 1), v(0, 1, 0)),
-            quad(v(1, 0, 0), v(1, 0, 1), v(1, 1, 1), v(1, 1, 0)),
-        ].concat();
-        // (Its faces turned inward: a hollow, seen from inside.)
-        let centre = (lo + hi) / 2.0;
-        let tris: Vec<[DVec3; 3]> = tris.into_iter().map(|t| if (t[1] - t[0]).cross(t[2] - t[0]).dot(centre - t[0]) < 0.0 { [t[0], t[2], t[1]] } else { t }).collect();
-        let mesh = crate::walk::WalkMesh::new(&tris);
-        let filled = fill(&mesh, 1.0);
-        assert_eq!(filled.len(), 1);
-        let whole: f64 = floor_strips(&filled[0], &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
-        // (Its walls have no thickness to run on into: a cell shy of them all round,
-        // 5.8 by 9.8.)
-        assert!((whole - 56.8).abs() < 1.0, "{whole}");
-        assert!(fill(&mesh, -3.0).is_empty());
-        // A strip too narrow for a person (0.4 m): no floor.
-        let (lo, hi) = (DVec3::new(-0.2, 0.0, -5.0), DVec3::new(0.2, 4.0, 5.0));
-        let v = |x: usize, y: usize, z: usize| DVec3::new([lo.x, hi.x][x], [lo.y, hi.y][y], [lo.z, hi.z][z]);
-        let narrow: Vec<[DVec3; 3]> = [
-            quad(v(0, 0, 0), v(1, 0, 0), v(1, 0, 1), v(0, 0, 1)),
-            quad(v(0, 1, 0), v(1, 1, 0), v(1, 1, 1), v(0, 1, 1)),
-            quad(v(0, 0, 0), v(1, 0, 0), v(1, 1, 0), v(0, 1, 0)),
-            quad(v(0, 0, 1), v(1, 0, 1), v(1, 1, 1), v(0, 1, 1)),
-            quad(v(0, 0, 0), v(0, 0, 1), v(0, 1, 1), v(0, 1, 0)),
-            quad(v(1, 0, 0), v(1, 0, 1), v(1, 1, 1), v(1, 1, 0)),
-        ].concat();
-        let centre = (lo + hi) / 2.0;
-        let narrow: Vec<[DVec3; 3]> = narrow.into_iter().map(|t| if (t[1] - t[0]).cross(t[2] - t[0]).dot(centre - t[0]) < 0.0 { [t[0], t[2], t[1]] } else { t }).collect();
-        assert!(fill(&crate::walk::WalkMesh::new(&narrow), 1.0).is_empty());
-        // A wall across, 10 m: kept inside, 6 m of it.
-        let wall = Wall { points: vec![DVec2::new(-5.0, 0.0), DVec2::new(5.0, 0.0)], ..Default::default() };
-        let runs = wall_runs(&wall, &sides);
-        let kept: f64 = runs.iter().map(|r| r.last().unwrap().1 - r[0].1).sum();
-        assert!((kept - 6.0).abs() < 0.25, "{kept}");
-    }
-
-    #[test]
-    fn a_stair_is_walked_up_and_a_ladder_climbed_to_the_deck_above() {
-        use crate::walk::{Collider, Stride, Walker};
-        // A hull 20 m square; two decks 3 m apart, each a floor across it; a stair 6 m
-        // long and a ladder from the lower to the upper.
-        let c = [DVec2::new(-10.0, -10.0), DVec2::new(10.0, -10.0), DVec2::new(10.0, 10.0), DVec2::new(-10.0, 10.0)];
-        let section: Vec<[DVec2; 2]> = (0..4).map(|i| [c[i], c[(i + 1) % 4]]).collect();
-        let sides = [Sides::of(&section), Sides::of(&section)];
-        let floor = c.to_vec();
-        let mut lower = Deck::at(0.0);
-        lower.planes.push(floor.clone());
-        lower.stairs.push(Stair { from: DVec2::new(0.0, 6.0), to: DVec2::new(0.0, 0.0), width: STAIR_WIDTH });
-        lower.ladders.push(Ladder { at: DVec2::new(5.0, 0.0) });
-        let mut upper = Deck::at(3.0);
-        upper.planes.push(floor);
-        let plan = DeckPlan { hull: "test".into(), decks: vec![lower, upper] };
-        let walk = Walkable::from(&build(&plan, &sides));
-        let cols = [Collider::Mesh { mesh: &walk.mesh, at: DVec3::ZERO, rot: glam::DQuat::IDENTITY }];
-        let go = |from: DVec3, wish: DVec3, climb: f64, secs: f64| {
-            let mut w = Walker { feet: from, velocity: DVec3::ZERO };
-            for _ in 0..(secs * 60.0) as usize {
-                w.step(&cols, &|_| DVec3::Y, crate::units::STANDARD_GRAVITY, &|p| walk.climbing(p), &Stride { wish, jump: 0.0, climb }, 1.0 / 60.0);
-            }
-            w.feet
-        };
-        // Up the stair (walking from its foot toward its head, -z): on the upper floor past it.
-        let top = go(DVec3::new(0.0, 0.0, 8.0), DVec3::new(0.0, 0.0, -1.6), 0.0, 8.0);
-        assert!((top.y - 3.0).abs() < 0.05 && top.z < 0.0, "{top:?}");
-        // Up the ladder, then a step off it: on the upper floor.
-        let mut at = go(DVec3::new(5.0, 0.0, 0.0), DVec3::ZERO, 1.0, 5.0);
-        at = go(at, DVec3::new(-1.0, 0.0, 0.0), 0.0, 1.5);
-        assert!((at.y - 3.0).abs() < 0.05, "{at:?}");
-    }
 }

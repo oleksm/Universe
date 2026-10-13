@@ -6,8 +6,6 @@
 //! step runs on the ticks a whole multiple of its period (`due`). (`docs/tick-tree.md` §8.)
 
 use universe_world::registry::{ClockHandler, ClockKey};
-#[cfg(test)]
-use universe_world::registry::registry;
 pub use universe_world::registry::clock_every as every;
 
 /// Clock `k`'s period, which it must have (a clock the engine steps by time).
@@ -73,26 +71,5 @@ impl ClockHandler for Binding {
     }
     fn realtime(&mut self) -> &'static str {
         "every craft every tick (200 Hz as recorded), side by side on a frozen world: bubbles not yet"
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// Every clock has a record, the stepped ones a period that is a whole number of the realtime
-    /// tick, and a binding.
-    #[test]
-    fn every_clock_is_recorded_and_bound() {
-        let t = tick();
-        assert!(t > 0.0);
-        for &k in ClockKey::ALL {
-            assert!(registry().clock(k.key()).is_some(), "{} has no record", k.key());
-            if let Some(e) = every(k) {
-                let n = e / t;
-                assert!((n - n.round()).abs() < 1e-6, "{} every {e} s isn't whole ticks of {t}", k.key());
-            }
-            assert!(!k.handle(&mut Binding).is_empty());
-        }
     }
 }

@@ -5,7 +5,7 @@
 use universe_protocol::ShipId;
 use std::collections::{HashMap, VecDeque};
 
-use universe_services::market::{cargo_mass, Order, Quote};
+use universe_services::market::{Order, Quote};
 use universe_services::Party;
 use universe_world::traffic::{docked_at, facilities};
 use universe_world::Facility;
@@ -127,8 +127,7 @@ impl Universe {
         let r = self.services.markets.trade(&mut self.services.ledger, &sys, order, self.world.time, self.tick, cause);
         if r.is_ok() {
             // The core: the hold weighs what's in it.
-            let hold = self.services.ledger.hold(pilot);
-            let (mass, volume) = (cargo_mass(&self.world.goods, &hold), universe_services::market::cargo_volume(&self.world.goods, &hold));
+            let (mass, volume) = (self.services.ledger.cargo_mass(pilot, &self.world.goods), self.services.ledger.cargo_volume(pilot, &self.world.goods));
             let ship = &mut self.vessels[pilot].ship;
             ship.cargo = mass;
             ship.cargo_volume = volume;
@@ -169,18 +168,19 @@ impl Universe {
         let Some(jolt) = jolts.into_iter().reduce(f64::max) else { return Vec::new() };
         let g = jolt * universe_physics::laws::STANDARD_GRAVITY;
         let goods = self.world.goods.clone();
-        let broken: Vec<(usize, u32)> = self.services.ledger.hold(id).into_iter().filter(|(i, _)| goods[*i].shock_limit.is_some_and(|l| g > l)).collect();
-        for &(item, _) in &broken {
+        let broken: Vec<(usize, f64)> = self.services.ledger.hold_quantities(id).into_iter().flatten().filter(|(i, q)| **q > 0. && goods[**i].shock_limit.is_some_and(|l| g > l)).map(|(&i, &q)| (i, q)).collect();
+        for &(item, units) in &broken {
+            self.services.ledger.unload_marked(id, item, units.ceil() as usize, goods[item].mass * units);
             self.services.ledger.settle(Party::Pilot(id), universe_services::ledger::Asset::Goods(item), 0.0, self.tick, universe_protocol::Cause::Rules);
         }
         if !broken.is_empty() {
-            let hold = self.services.ledger.hold(id);
+            let (mass, volume) = (self.services.ledger.cargo_mass(id, &goods), self.services.ledger.cargo_volume(id, &goods));
             if let Some(ship) = self.ship_mut_by_id(id) {
-                ship.cargo = universe_services::market::cargo_mass(&goods, &hold);
-                ship.cargo_volume = universe_services::market::cargo_volume(&goods, &hold);
+                ship.cargo = mass;
+                ship.cargo_volume = volume;
             }
         }
-        broken.into_iter().map(|(item, units)| universe_world::ShipEvent::CargoBroken { item, units }).collect()
+        broken.into_iter().map(|(item, units)| universe_world::ShipEvent::CargoBroken { item, units: units.ceil() as u32 }).collect()
     }
 
     /// The `n`-th of ship `id`'s `Mined` events in this tick's log, as a cause.

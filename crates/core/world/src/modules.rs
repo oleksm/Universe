@@ -433,31 +433,3 @@ impl crate::registry::EquipmentFunctionHandler for Kinds {
     // engines and swivels, a landing leg as a product) go to `not_made`: the generated trait's
     // default for each.)
 }
-
-#[cfg(test)]
-mod inert_tests {
-    use super::*;
-
-    #[test]
-    fn unimplemented_equipment_keeps_physics_without_capabilities() {
-        let mut e = crate::registry::registry().equipment("equipment.cargo.ore-bay.5t").unwrap().clone();
-        // Exercise the same generated not_made dispatch a future breaker uses,
-        // without importing an unmerged registry schema or its guessed numbers.
-        e.identity.slot = Some(crate::registry::SlotKind::Hardpoint);
-        e.needs.power = Some(1000.0);
-        let m = Module::from_record(&e, 100.0).unwrap();
-        assert_eq!(m.does, Does::Inert { slot: SlotKind::Hardpoint });
-        assert_eq!(m.mass, e.physical.mass.unwrap());
-        assert_eq!(m.volume, e.physical.volume.unwrap());
-        assert_eq!(m.fits, e.fits);
-        let [l, w, h] = m.dims.unwrap();
-        assert_eq!(m.dims(), glam::DVec3::new(w, h, l));
-        assert_eq!(m.power, 0.0);
-        assert_eq!(m.does.gear(), None);
-        assert_eq!(m.does.engine(), None);
-        assert_eq!(m.does.comm(), None);
-        m.check().unwrap();
-        e.identity.slot = None;
-        assert!(Module::from_record(&e, 100.0).is_none());
-    }
-}

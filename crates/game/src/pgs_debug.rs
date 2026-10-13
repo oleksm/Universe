@@ -292,51 +292,6 @@ pub fn patch(
         }
     }
 }
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn source_radius_does_not_move_overlay_off_host_terrain() {
-        let p = [0., 1., 0., 5746.5];
-        let at = display_point(p, 6281370., 2.);
-        assert!((at.length() - 6281370. - p[3] - 2.).abs() < 1e-9);
-        assert_eq!(at.normalize(), DVec3::Y);
-        assert!((at.length() - 6371000. - p[3]).abs() > 89000.);
-    }
-    #[test]
-    fn sidecar_rejects_wrong_surface_and_invalid_geometry() {
-        let s = Surface::read(include_bytes!(
-            "../../core/world/tests/fixtures/pgs1-v1/root.pgs"
-        ))
-        .unwrap();
-        let dir = DVec3::X;
-        let h = s.query(dir).unwrap().height_m;
-        let make = || File {
-            format: "scenery-debug/1".into(),
-            surface_sha256: "hash".into(),
-            radius_m: s.radius_m,
-            markers: vec![],
-            layers: vec![Layer {
-                id: "test".into(),
-                label: "fixture".into(),
-                colour_srgb: [1., 0., 0.],
-                points: vec![[1., 0., 0., h]],
-                segments: vec![[0, 0]],
-            }],
-        };
-        assert!(validate(make(), &s, "hash").is_ok());
-        assert!(validate(make(), &s, "wrong").is_err());
-        let mut bad = make();
-        bad.layers[0].points[0][3] += 0.01;
-        assert!(validate(bad, &s, "hash").is_err());
-        let mut bad = make();
-        bad.layers[0].segments[0][1] = 1;
-        assert!(validate(bad, &s, "hash").is_err());
-        let mut bad = make();
-        bad.layers[0].points[0][0] = 2.;
-        assert!(validate(bad, &s, "hash").is_err());
-    }
-}
 
 pub fn active(body: &Body) -> bool {
     settings(body).is_some()

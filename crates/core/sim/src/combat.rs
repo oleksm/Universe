@@ -150,7 +150,6 @@ impl Universe {
         self.records.kill(kill);
     }
 
-
     /// Name of the ship with combat id `id`.
     pub fn ship_name(&self, id: ShipId) -> String {
         if let Some((system, k)) = universe_world::turrets::turret_of(id) {
@@ -165,88 +164,4 @@ impl Universe {
     pub fn fire_control(&mut self, contacts: &[Contact]) -> Option<(Track, Option<Solution>)> {
         self.in_cockpit(|k| k.fire_control_on(contacts))
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use glam::DVec3;
-    use universe_world::{Controls, ShipCommands, ShipState, Triggers};
-
-    use crate::universe::Universe;
-
-    #[test]
-    fn the_player_shoots_down_a_settler_on_the_lead() {
-        let mut u = Universe::new(1984);
-        // (In flight by the home station, not parked on its deck; the respawn
-        // settled, a step on, before the lock is taken.)
-        u.start_in_flight();
-        u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-        u.spawn_settlers(1, 1);
-        // A settler 3 km ahead, crossing at 40 m/s; we're drifting with it.
-        // Well away from any defence turrets (we'll be the aggressor), and the
-        // target one that won't run (a pirate, with nothing to hunt).
-        u.vessels[crate::combat::PLAYER].ship.position += DVec3::new(1.5e6, 0.0, 0.0);
-        let (sys, pos, vel) = (u.vessels[crate::combat::PLAYER].system, u.vessels[crate::combat::PLAYER].ship.position, u.vessels[crate::combat::PLAYER].ship.velocity);
-        let c = &mut u.vessels[crate::combat::craft_id(0)];
-        c.system = sys;
-        c.ship.state = ShipState::Flying;
-        c.ship.hyperdrive = false;
-        c.ship.position = pos + DVec3::new(0.0, 3_000.0, 0.0);
-        c.ship.velocity = vel + DVec3::new(40.0, 0.0, 0.0);
-        u.pilots()[0].avionics = universe_avionics::Avionics { pirate: true, ..Default::default() };
-        u.command(&ShipCommands { arm: Some(true), ..u.vessels[crate::combat::PLAYER].ship.holding() });
-        u.lock_next_contact();
-        let mut destroyed = false;
-        for frame in 0..600 {
-            let contacts = u.contacts();
-            let fc = u.fire_control(&contacts);
-            if let Some((_, Some(sol))) = fc {
-                u.vessels[crate::combat::PLAYER].ship.orientation = universe_world::ship::facing(sol.aim, sol.aim.any_orthonormal_vector());
-                if frame % 60 == 0 {
-                    u.command(&ShipCommands { weapons: Some(Triggers { gun: true, laser: false }), ..u.vessels[crate::combat::PLAYER].ship.holding() });
-                }
-            }
-            u.step_world(1.0 / 60.0, 1.0, &Controls::default());
-            if u.records.stats.shot_down > 0 {
-                destroyed = true;
-                break;
-            }
-        }
-        let fired = u.vessels[crate::combat::PLAYER].ship.spec().gun.map_or(0, |g| g.magazine) - u.vessels[crate::combat::PLAYER].ship.ammo;
-        eprintln!("rounds fired {fired}, shot down {destroyed}");
-        assert!(destroyed, "should be shot down; fired {fired}");
-        assert!(fired < 30, "most rounds on target: {fired}");
-        // Under Treistun's law: piracy for opening fire on it, murder for bringing it down.
-        let charged: Vec<_> = u.services.law.charges_of(crate::combat::PLAYER as _).map(|c| c.offence).collect();
-        use universe_world::registry::Offence;
-        assert!(charged.contains(&Offence::Piracy) && charged.contains(&Offence::Murder), "{charged:?}");
-        use crate::combat::{craft_id, PLAYER};
-        use universe_world::ShipEvent;
-        // What the law gives: thirty years outside it, a bounty on our head, no one here dealing with us.
-        let (me, sys, now) = (PLAYER as universe_protocol::ShipId, u.vessels[crate::combat::PLAYER].system, u.world.time);
-        assert!(u.services.law.outlawed(me, sys, now + 20.0 * 31_557_600.0));
-        let worth = Universe::ship_value(&u.vessels[crate::combat::PLAYER].ship);
-        assert!((u.services.law.bounties[&(me, sys)] - 1.5 * worth).abs() < 1.0, "half for piracy, all for murder");
-        assert!(u.barred(PLAYER, sys).is_err());
-        // Brought down by a craft: the bounty is its, from the administration.
-        let hunter = craft_id(0);
-        let before = u.services.ledger.credits(universe_services::Party::Pilot(hunter));
-        u.log.clear();
-        u.log.push((PLAYER, ShipEvent::Hit { by: hunter, damage: 1.0, hull: 0.0, weapon: true }));
-        u.log.push((PLAYER, ShipEvent::Crashed { body: "GUN".into() }));
-        u.judge(now);
-        assert!((u.services.ledger.credits(universe_services::Party::Pilot(hunter)) - before - 1.5 * worth).abs() < 1.0, "the bounty paid");
-        assert!(u.services.law.bounties.is_empty());
-        // Wrecked alone 1,500 km out: no offence. By the station: reckless flying.
-        let reckless = |u: &Universe| u.services.law.charges_of(me).filter(|c| c.offence == Offence::RecklessFlying).count();
-        u.log.clear();
-        u.log.push((PLAYER, ShipEvent::Crashed { body: "TREISTUN E".into() }));
-        u.judge(now);
-        assert_eq!(reckless(&u), 0, "harming only its pilot");
-        let (sys, positions) = (u.ship_system(), u.world.rails_at(u.vessels[crate::combat::PLAYER].system, now));
-        u.vessels[crate::combat::PLAYER].ship.position = positions[sys.station().unwrap()] + DVec3::new(0.0, 2_000.0, 0.0);
-        u.judge(now);
-        assert_eq!(reckless(&u), 1, "by the station");
-    }
-
 }

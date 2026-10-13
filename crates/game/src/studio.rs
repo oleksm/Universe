@@ -773,7 +773,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             if over && input.button_pressed(MouseButton::Left) {
                 // (A plane closes on its first corner again.)
                 if studio.tool == Tool::Plane && studio.drawing.len() >= 3 && near(studio.drawing[0]) {
-                    deck.planes.push(std::mem::take(&mut studio.drawing));
+                    deck.planes.push(std::mem::take(&mut studio.drawing).into());
                 } else {
                     studio.drawing.push(p);
                 }
@@ -783,17 +783,17 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
             }
             if finish {
                 if studio.tool == Tool::Plane && studio.drawing.len() >= 3 {
-                    deck.planes.push(std::mem::take(&mut studio.drawing));
+                    deck.planes.push(std::mem::take(&mut studio.drawing).into());
                 } else if studio.tool == Tool::Wall && studio.drawing.len() >= 2 {
                     let points = std::mem::take(&mut studio.drawing);
                     let bulges = vec![0.0; points.len() - 1];
-                    deck.walls.push(Wall { points, bulges, doors: Vec::new(), rail: false });
+                    deck.walls.push(Wall { uid: Default::default(), points, bulges, doors: Vec::new(), rail: false });
                 }
             }
         }
         Tool::Ladder => {
             if over && input.button_pressed(MouseButton::Left) {
-                deck.ladders.push(deckplan::Ladder { at: p });
+                deck.ladders.push(deckplan::Ladder { uid: Default::default(), target:None, at: p });
             }
         }
         Tool::Stair => {
@@ -801,7 +801,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                 // Its foot, then its head.
                 if let Some(&from) = studio.drawing.first() {
                     if from.distance(p) >= 0.5 {
-                        deck.stairs.push(deckplan::Stair { from, to: p, width: deckplan::STAIR_WIDTH });
+                        deck.stairs.push(deckplan::Stair { uid: Default::default(), target:None, from, to: p, width: deckplan::STAIR_WIDTH });
                     }
                     studio.drawing.clear();
                 } else {
@@ -820,7 +820,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
                     } else {
                         let len = w.length();
                         let half = deckplan::DOOR_WIDTH / 2.0;
-                        w.doors.push(Door { at: along.clamp(half.min(len / 2.0), (len - half).max(len / 2.0)), width: deckplan::DOOR_WIDTH, height: deckplan::DOOR_HEIGHT });
+                        w.doors.push(Door { uid: Default::default(), at: along.clamp(half.min(len / 2.0), (len - half).max(len / 2.0)), width: deckplan::DOOR_WIDTH, height: deckplan::DOOR_HEIGHT });
                     }
                 }
             }
@@ -887,7 +887,7 @@ pub fn input(app: &mut App, ctx: &Context, hull_key: &str, shape: &universe_sim:
     // The floors' panel's FILL: floors over the whole deck, now.
     if auto_shown(studio) && input.button_pressed(MouseButton::Left) && in_rect({ let (p, c) = auto_button(studio); (p, p + c) }, cursor) {
         if let Some(mesh) = shape.walk.as_ref() {
-            deck.planes.extend(deckplan::fill(mesh, deck.floor));
+            deck.planes.extend(deckplan::fill(mesh, deck.floor).into_iter().map(Into::into));
             studio.pick = deck.planes.len().checked_sub(1).map(Pick::Plane);
         }
         return true;

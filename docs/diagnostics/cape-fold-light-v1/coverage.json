@@ -1,0 +1,28 @@
+{
+  "changed": {
+    "faces_touching_mask": 202,
+    "total_sampled_faces": 202,
+    "canonical_slope_degrees": {
+      "median": 1.8104222632252356,
+      "max": 4.475992778024115
+    }
+  },
+  "intended_basin": {
+    "faces_touching_mask": 201,
+    "total_sampled_faces": 202,
+    "canonical_slope_degrees": {
+      "median": 1.8221632610801566,
+      "max": 4.475992778024115
+    }
+  },
+  "mapped_source_basin": {
+    "faces_touching_mask": 201,
+    "total_sampled_faces": 202,
+    "canonical_slope_degrees": {
+      "median": 1.8221632610801566,
+      "max": 4.475992778024115
+    }
+  },
+  "source_mask_sha256": "1b3de87972b99bdd9d427674b1c5dd48f8504095c4fda89f7aeb4db0a8124f78",
+  "scope": "Any vertex of canonical owner face in producer mask, not exact mask-area fraction or visibility integral."
+}

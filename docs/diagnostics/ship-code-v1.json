@@ -1,0 +1,41 @@
+{
+  "scope": "Ship-code typed foundation, legacy all-layer export, YAML preview, shared quaternion placement",
+  "workspace_tests": {
+    "passed": 164,
+    "failed": 0,
+    "warnings": 0,
+    "log": "out/review/ship-code-v1/workspace-tests.txt"
+  },
+  "registry_build": "passed",
+  "binary_build": "debug freefall-studio passed",
+  "cli": {
+    "example_validation": "passed",
+    "legacy_and_decks_export": "passed",
+    "export_validation": "passed",
+    "existing_output": "rejected with exit 2",
+    "original_files_unchanged": true,
+    "evidence": "out/review/ship-code-v1/cli-checks.json"
+  },
+  "vulkan": {
+    "preview": "passed; capture visually inspected",
+    "installed_models": [
+      "equipment.engine.ch.s2",
+      "equipment.computer.fbw.s1"
+    ],
+    "image": "out/review/ship-code-v1/design.png",
+    "log": "out/review/ship-code-v1/preview.log"
+  },
+  "boundaries": [
+    "Preview cannot save visual edits to source or native designs",
+    "Canonical emitter does not preserve comments",
+    "Stable editor IDs and unified deck undo/save remain pending",
+    "Code panel and clipboard import/export remain pending",
+    "Hull-free deck geometry still depends on existing hull clipping support",
+    "Neutral visuals and validation are not engineering or flight acceptance"
+  ],
+  "sha256": {
+    "crates/core/ship-design/ship.schema.json": "a1045205ba21cb60431b3ef8ced2ecdadf37f2cf98cb9c122b73f9cc740f3a53",
+    "docs/proposals/ship-code-v1/all-layers.ship.yaml": "bed0fad06db8eda06a0f49c2789ae58a3206760f559b575048b69301837132ee",
+    "crates/game/src/interior/ship_code.rs": "125035936521e1c2241e1cd1406551df8b7359156854b74a3e409ae7606fa6e3"
+  }
+}

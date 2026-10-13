@@ -1,0 +1,176 @@
+{
+  "gpu_return": {
+    "counters": {
+      "loads": 1,
+      "hits": 199,
+      "failures": 0,
+      "asset_uploads": 2,
+      "asset_hits": 123,
+      "asset_unloads": 1,
+      "asset_gpu_bytes": 853200
+    },
+    "backend": "Vulkan",
+    "gpu_idle_ms": 20,
+    "os_file_cache": "uncontrolled",
+    "screenshot": "out/review/loader-finish/gpu-return.png",
+    "screenshot_sha256": "d007b6d0875dc319981a795dff37ddb70f787ce996b25ed20d8a1b2bb69ee573",
+    "visually_inspected": true,
+    "scope": "Forced GPU retirement with retained CPU model; no disk reload or missing returned geometry."
+  },
+  "engine_unit_tests": {
+    "passed": 16,
+    "ignored": 1
+  },
+  "workspace_pre_startup_adapter": {
+    "passed": 182
+  },
+  "startup": {
+    "baseline_capture_exit": [
+      {
+        "name": "baseline-0",
+        "exit": 0,
+        "process_seconds": 0.8181552040041424,
+        "events": [],
+        "os_cache": "uncontrolled, not flushed; repeated launch warms filesystem cache",
+        "process_asset_cache": "new process, empty",
+        "binary_sha256": "634dfad2b73b3cb6725f22ce5a2f7b562a387eeb5931b1e93c5eba09d3a02778"
+      },
+      {
+        "name": "baseline-1",
+        "exit": 0,
+        "process_seconds": 0.8208874959964305,
+        "events": [],
+        "os_cache": "uncontrolled, not flushed; repeated launch warms filesystem cache",
+        "process_asset_cache": "new process, empty",
+        "binary_sha256": "634dfad2b73b3cb6725f22ce5a2f7b562a387eeb5931b1e93c5eba09d3a02778"
+      }
+    ],
+    "candidate_shell_capture_exit": [
+      {
+        "name": "candidate-shell-0",
+        "exit": 0,
+        "process_seconds": 0.2925487929896917,
+        "events": [
+          {
+            "seconds_from_spawn": 0.22780761399189942,
+            "line": "[2026-10-12T03:57:37Z INFO  universe_engine::app] startup first shell: 218.024 ms since run_prepared (CPU draw submission, not GPU presentation)"
+          }
+        ],
+        "os_cache": "uncontrolled, not flushed; repeated launch warms filesystem cache",
+        "process_asset_cache": "new process, empty",
+        "binary_sha256": "43c3d83c36d8611ba66fee74af7df7ca26320ded62599b4547544868ff6b78d2"
+      },
+      {
+        "name": "candidate-shell-1",
+        "exit": 0,
+        "process_seconds": 0.2625188889942365,
+        "events": [
+          {
+            "seconds_from_spawn": 0.20432180499483366,
+            "line": "[2026-10-12T03:57:38Z INFO  universe_engine::app] startup first shell: 187.475 ms since run_prepared (CPU draw submission, not GPU presentation)"
+          }
+        ],
+        "os_cache": "uncontrolled, not flushed; repeated launch warms filesystem cache",
+        "process_asset_cache": "new process, empty",
+        "binary_sha256": "43c3d83c36d8611ba66fee74af7df7ca26320ded62599b4547544868ff6b78d2"
+      }
+    ],
+    "candidate_ready_capture": [
+      {
+        "name": "candidate-0",
+        "exit": 0,
+        "process_seconds": 10.10535723999783,
+        "events": [
+          {
+            "seconds_from_spawn": 0.2748914340045303,
+            "line": "[2026-10-12T03:56:37Z INFO  universe_engine::app] startup first shell: 262.465 ms since run_prepared (CPU draw submission, not GPU presentation)"
+          },
+          {
+            "seconds_from_spawn": 0.2955341229971964,
+            "line": "[2026-10-12T03:56:37Z INFO  universe_world::registry] startup registry decode: 9.058 ms (3470571 encoded bytes)"
+          },
+          {
+            "seconds_from_spawn": 0.757389182006591,
+            "line": "[2026-10-12T03:56:38Z INFO  universe_world::content] startup content validation: 473.992 ms"
+          },
+          {
+            "seconds_from_spawn": 0.7879066199966474,
+            "line": "[2026-10-12T03:56:38Z INFO  game::studio_only] startup Studio hull physics: 504.536 ms"
+          },
+          {
+            "seconds_from_spawn": 0.7925255629961612,
+            "line": "[2026-10-12T03:56:38Z INFO  universe_engine::app] startup prepared: 780.113 ms since run_prepared (CPU/physics ready; optional visuals may follow)"
+          }
+        ],
+        "os_cache": "uncontrolled, not flushed; repeated launch warms filesystem cache",
+        "process_asset_cache": "new process, empty",
+        "binary_sha256": "43c3d83c36d8611ba66fee74af7df7ca26320ded62599b4547544868ff6b78d2"
+      },
+      {
+        "name": "candidate-1",
+        "exit": 0,
+        "process_seconds": 10.376577354007168,
+        "events": [
+          {
+            "seconds_from_spawn": 0.28104766400065273,
+            "line": "[2026-10-12T03:56:47Z INFO  universe_engine::app] startup first shell: 259.799 ms since run_prepared (CPU draw submission, not GPU presentation)"
+          },
+          {
+            "seconds_from_spawn": 0.29897447999974247,
+            "line": "[2026-10-12T03:56:47Z INFO  universe_world::registry] startup registry decode: 8.000 ms (3470571 encoded bytes)"
+          },
+          {
+            "seconds_from_spawn": 0.7583517720049713,
+            "line": "[2026-10-12T03:56:48Z INFO  universe_world::content] startup content validation: 470.118 ms"
+          },
+          {
+            "seconds_from_spawn": 0.7882715809973888,
+            "line": "[2026-10-12T03:56:48Z INFO  game::studio_only] startup Studio hull physics: 500.047 ms"
+          },
+          {
+            "seconds_from_spawn": 0.7884692210063804,
+            "line": "[2026-10-12T03:56:48Z INFO  universe_engine::app] startup prepared: 767.251 ms since run_prepared (CPU/physics ready; optional visuals may follow)"
+          }
+        ],
+        "os_cache": "uncontrolled, not flushed; repeated launch warms filesystem cache",
+        "process_asset_cache": "new process, empty",
+        "binary_sha256": "43c3d83c36d8611ba66fee74af7df7ca26320ded62599b4547544868ff6b78d2"
+      }
+    ],
+    "interpretation": "Shell responsiveness measured separately from CPU readiness; process time includes capture and exit. OS caches uncontrolled. These measurements precede publication-first-update fix and final rear residency adjustment; final capture validation follows."
+  },
+  "workspace_with_startup_adapter": {
+    "passed": 185,
+    "ignored": 1,
+    "log": "/tmp/loader-complete-workspace.log"
+  },
+  "rear_residency_regressions": {
+    "passed": 2,
+    "commit": "acd08df7"
+  },
+  "final_workspace": {
+    "passed": 186,
+    "ignored": 1,
+    "validated_source_branch": "ships-startup-loader ce297c52",
+    "engine_equivalent": "2607e521",
+    "log": "/tmp/startup-final-workspace.log",
+    "source_comparison": "crates and Cargo files identical"
+  },
+  "registry_build": "passed",
+  "final_native_capture": {
+    "path": "/home/alexm/git/universe-ships-startup-loader/out/review/startup-loader/native-hull.png",
+    "sha256": "21ac134c005f7e3e21cd0f959518dd48ceaaaebdb5cb36f261fab958312b5afc",
+    "inspected": true,
+    "result": "Native hull and two eligible mounted models present; zero asset errors, no publication crash.",
+    "limitation": "HUD reports 4567ms worst frame and164 hitches during initialization; this validates loading/correctness, not a stutter-free game or a frame-time performance win."
+  },
+  "main_integration": {
+    "commit": "5cc0ce97",
+    "mode": "fast-forward, tested source unchanged",
+    "release_binaries": {
+      "freefall": "f216888c5491b23bdd6d25073aca7e968111f42946b038b288558d581f2fbadc",
+      "freefall-studio": "24bbfc7f5787a9b09b8dcc61005f6174d775d7650a89e99fe676ebe839db28c0"
+    },
+    "source_equivalence": "crates and Cargo files match ships-startup-loader ce297c52"
+  }
+}

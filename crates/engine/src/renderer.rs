@@ -83,7 +83,25 @@ struct Globes {
     texture: wgpu::Texture,
     /// Their own colours (sRGB; alpha 0 where a world has none), layer for layer.
     colors: wgpu::Texture,
-    layers: Vec<Option<(u64, u64)>>,
+    layers: Vec<Option<GlobeLayer>>,
+    upload_frame: u64,
+    upload_remaining: usize,
+}
+
+#[derive(Clone, Copy)]
+struct GlobeLayer { id: u64, used: u64, next: usize, ready: bool }
+const GLOBE_UPLOAD_PER_FRAME: usize = 2 * 1024 * 1024;
+impl GlobeLayer {
+    fn take(&mut self, map: &crate::model::GlobeMap, budget: &mut usize) -> std::ops::Range<usize> {
+        let begin = self.next;
+        while let Some(upload) = map.uploads.get(self.next) {
+            if upload.bytes.len() > *budget { break; }
+            *budget -= upload.bytes.len();
+            self.next += 1;
+        }
+        self.ready = self.next == map.uploads.len();
+        begin..self.next
+    }
 }
 
 impl Globes {
@@ -119,90 +137,44 @@ impl Globes {
             mipmap_filter: wgpu::MipmapFilterMode::Linear,
             ..Default::default()
         });
-        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize] }, globe_view, globe_colors_view, globe_sampler)
+        (Globes { texture: globe_texture, colors: globe_colors, layers: vec![None; GLOBE_LAYERS as usize], upload_frame: 0, upload_remaining: 0 }, globe_view, globe_colors_view, globe_sampler)
     }
 }
 
 impl Globes {
-    /// Whether `map` is in a layer already.
     fn resident(&self, map: &crate::model::GlobeMap) -> bool {
-        self.layers.iter().any(|l| matches!(l, Some((id, _)) if *id == map.id()))
+        self.layers.iter().flatten().any(|l| l.id == map.id() && l.ready)
     }
-
-    /// The layer holding `map` for frame `now`, uploading it if it's new
-    /// into the oldest layer not drawn this frame. None: every layer is
-    /// someone's this frame (a layer given out is never overwritten before
-    /// the frame's drawn: that showed one world's ground as another's).
+    /// Pending layers are never sampled. Upload a bounded number of prepared
+    /// bytes across all worlds per frame; plain base geometry remains drawable.
     fn layer(&mut self, gpu: &Gpu, map: &crate::model::GlobeMap, now: u64) -> Option<u32> {
-        if let Some(k) = self.layers.iter().position(|l| matches!(l, Some((id, _)) if *id == map.id())) {
-            self.layers[k] = Some((map.id(), now));
-            return Some(k as u32);
+        let _scope = universe_prof::scope("render/upload globe chunks");
+        assert_eq!(map.size, GLOBE_SIZE);
+        if self.upload_frame != now {
+            self.upload_frame = now;
+            self.upload_remaining = GLOBE_UPLOAD_PER_FRAME;
         }
-        let k = (0..self.layers.len()).filter(|&k| self.layers[k].is_none_or(|(_, used)| used != now)).min_by_key(|&k| self.layers[k].map_or(0, |(_, used)| used + 1))?;
-        self.layers[k] = Some((map.id(), now));
-        self.upload(gpu, map, k as u32);
-        Some(k as u32)
-    }
-
-    fn upload(&self, gpu: &Gpu, map: &crate::model::GlobeMap, layer: u32) {
-        let n = map.size as usize;
-        assert_eq!(map.size, GLOBE_SIZE, "globe maps are {GLOBE_SIZE} a side");
-        for face in 0..6 {
-            let mut level: Vec<[f32; 2]> = map.texels[face * n * n..(face + 1) * n * n].to_vec();
-            let mut side = n;
-            for mip in 0..GLOBE_MIPS {
-                let bytes: Vec<u16> = level.iter().flat_map(|t| [half(t[0]), half(t[1])]).collect();
-                gpu.queue.write_texture(
-                    wgpu::TexelCopyTextureInfo { texture: &self.texture, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
-                    bytemuck::cast_slice(&bytes),
-                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
-                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
-                );
-                if side == 1 {
-                    break;
-                }
-                // (The next level: each texel the mean of four.)
-                let half_side = side / 2;
-                level = (0..half_side * half_side)
-                    .map(|i| {
-                        let (x, y) = (i % half_side * 2, i / half_side * 2);
-                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
-                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
-                        [(a[0] + b[0] + c[0] + d[0]) / 4.0, (a[1] + b[1] + c[1] + d[1]) / 4.0]
-                    })
-                    .collect();
-                side = half_side;
+        let k = match self.layers.iter().position(|l| l.is_some_and(|l| l.id == map.id())) {
+            Some(k) => k,
+            None => {
+                let k = (0..self.layers.len()).filter(|&k| self.layers[k].is_none_or(|l| l.used != now))
+                    .min_by_key(|&k| self.layers[k].map_or(0, |l| l.used+1))?;
+                self.layers[k] = Some(GlobeLayer { id: map.id(), used: now, next: 0, ready: false });
+                k
             }
+        };
+        let layer = self.layers[k].as_mut().unwrap();
+        layer.used = now;
+        for upload in &map.uploads[layer.take(map, &mut self.upload_remaining)] {
+            gpu.queue.write_texture(
+                wgpu::TexelCopyTextureInfo { texture: if upload.color { &self.colors } else { &self.texture }, mip_level: upload.mip,
+                    origin: wgpu::Origin3d { x: 0, y: 0, z: k as u32*6 + upload.face }, aspect: wgpu::TextureAspect::All },
+                &upload.bytes,
+                wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(upload.side*4), rows_per_image: Some(upload.side) },
+                wgpu::Extent3d { width: upload.side, height: upload.side, depth_or_array_layers: 1 },
+            );
         }
-        // Its own colours, or none (cleared: the layer may have held another world's).
-        for face in 0..6 {
-            let mut level: Vec<[u8; 4]> = match &map.colors {
-                Some(c) => c[face * n * n..(face + 1) * n * n].to_vec(),
-                None => vec![[0; 4]; n * n],
-            };
-            let mut side = n;
-            for mip in 0..GLOBE_MIPS {
-                gpu.queue.write_texture(
-                    wgpu::TexelCopyTextureInfo { texture: &self.colors, mip_level: mip, origin: wgpu::Origin3d { x: 0, y: 0, z: layer * 6 + face as u32 }, aspect: wgpu::TextureAspect::All },
-                    bytemuck::cast_slice(&level),
-                    wgpu::TexelCopyBufferLayout { offset: 0, bytes_per_row: Some(side as u32 * 4), rows_per_image: Some(side as u32) },
-                    wgpu::Extent3d { width: side as u32, height: side as u32, depth_or_array_layers: 1 },
-                );
-                if side == 1 {
-                    break;
-                }
-                let half_side = side / 2;
-                level = (0..half_side * half_side)
-                    .map(|i| {
-                        let (x, y) = (i % half_side * 2, i / half_side * 2);
-                        let at = |dx: usize, dy: usize| level[(y + dy) * side + x + dx];
-                        let (a, b, c, d) = (at(0, 0), at(1, 0), at(0, 1), at(1, 1));
-                        std::array::from_fn(|k| ((a[k] as u32 + b[k] as u32 + c[k] as u32 + d[k] as u32 + 2) / 4) as u8)
-                    })
-                    .collect();
-                side = half_side;
-            }
-        }
+        layer.ready.then_some(k as u32)
     }
 }
 
@@ -444,6 +416,7 @@ struct Target {
     color: wgpu::TextureView,
     depth: wgpu::TextureView,
     hud: wgpu::TextureView,
+    hud_depth: wgpu::TextureView,
     /// The front layer (see `Frame::in_front`): drawn, and resolved.
     front_msaa: wgpu::TextureView,
     front: wgpu::TextureView,
@@ -474,6 +447,8 @@ pub(crate) struct Renderer {
     line_pipe: wgpu::RenderPipeline,
     point_pipe: wgpu::RenderPipeline,
     hud_tri_pipe: wgpu::RenderPipeline,
+    canvas_pipe: wgpu::RenderPipeline,
+    canvas_blend_pipe: wgpu::RenderPipeline,
     hud_pipe: wgpu::RenderPipeline,
     blit_pipe: wgpu::RenderPipeline,
     /// Same as `blit_pipe`, but into the RGBA composite texture for screenshots.
@@ -787,8 +762,8 @@ impl Renderer {
         let point_pipe = scene_pipeline("points", "vs_line", Topo::PointList, Some((false, Cmp::GreaterEqual)), alpha, world);
         // Lights' glows add up, behind what's solid, hiding nothing.
         let glow_pipe = scene_pipeline("glows", "vs_line", Topo::TriangleList, Some((false, Cmp::GreaterEqual)), additive, world);
-        let (atlas_bind, hud_tri_pipe) = hud_atlas(gpu, &globals_layout);
-        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, None, alpha, (COLOR_FORMAT, 1));
+        let (atlas_bind, hud_tri_pipe, canvas_pipe, canvas_blend_pipe) = hud_atlas(gpu, &globals_layout);
+        let hud_pipe = scene_pipeline("hud", "vs_hud", Topo::LineList, Some((false, Cmp::Always)), alpha, (COLOR_FORMAT, 1));
 
         let (blit_layout, blit_pipe, capture_pipe, sampler, linear) = blit_stage(gpu);
 
@@ -814,6 +789,8 @@ impl Renderer {
             line_pipe,
             point_pipe,
             hud_tri_pipe,
+            canvas_pipe,
+            canvas_blend_pipe,
             hud_pipe,
             blit_pipe,
             capture_pipe,
@@ -904,6 +881,7 @@ impl Renderer {
         let depth = texture_n("scene depth", size, DEPTH_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING, SAMPLES);
         // (The HUD's layout is `hud_size` pixels; drawn at the screen's full resolution.)
         let hud = texture("hud", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
+        let hud_depth = texture("canvas depth", out, DEPTH_FORMAT, U::RENDER_ATTACHMENT);
         let front_msaa = texture_n("front (antialiased)", size, SCENE_FORMAT, U::RENDER_ATTACHMENT, SAMPLES);
         let front = texture("front", size, SCENE_FORMAT, U::RENDER_ATTACHMENT | U::TEXTURE_BINDING);
         let composite = texture("composite", out, COLOR_FORMAT, U::RENDER_ATTACHMENT | U::COPY_SRC);
@@ -919,7 +897,7 @@ impl Renderer {
                 wgpu::BindGroupEntry { binding: 5, resource: globals.as_entire_binding() },
             ],
         });
-        Target { size, out, hud_size, color_msaa, color, depth, hud, front_msaa, front, composite, blit }
+        Target { size, out, hud_size, color_msaa, color, depth, hud, hud_depth, front_msaa, front, composite, blit }
     }
 
     pub fn resize(&mut self, gpu: &Gpu) {
@@ -943,6 +921,11 @@ impl Renderer {
             meshes: self.meshes.len(),
             instances: self.instances.count as usize,
             models: self.pbr.model_count(),
+            asset_uploads: self.pbr.uploads(),
+            asset_hits: self.pbr.hits(),
+            asset_unloads: self.pbr.evictions(),
+            asset_gpu_bytes: self.pbr.resident_bytes(),
+            asset_preparing: self.pbr.preparing(),
             globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
             globe_capacity: self.globes.layers.len(),
         }
@@ -986,19 +969,24 @@ impl Renderer {
         let (gr, on) = (frame.graphics, |b: bool| if b { 1.0f32 } else { 0.0 });
         // A world's full-resolution maps, bound; the globe layer they're for (+ 1; 0: none
         // this frame: its globe map isn't up yet).
-        let world_at = frame.world_maps.as_ref().map_or([0.0; 4], |(_, _, c, r)| {
+        let world_ready = frame.world_maps.as_ref().is_some_and(|(maps, ..)| {
+            universe_prof::time("render/upload world map chunks", || self.world.bind(&gpu.device, &gpu.queue, maps))
+        });
+        let world_at = frame.world_maps.as_ref().filter(|_| world_ready).map_or([0.0; 4], |(_, _, c, r)| {
             let d = (*c - frame.camera.position).as_vec3();
             [d.x, d.y, d.z, *r as f32]
         });
         let (world_layer, world_fade, world_luts) = match &frame.world_maps {
-            Some((maps, globe, _, _)) => {
-                self.world.bind(&gpu.device, &gpu.queue, maps);
+            Some((maps, globe, _, _)) if world_ready => {
                 // (`on`: their format's version, for the lab's shader to read their maps by.)
                 let clouds = if gr.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0 { [frame.world_clouds[0], frame.world_clouds[1], frame.world_clouds[2], maps.clouds_format as f32] } else { [0.0; 4] };
                 gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&clouds));
-                (self.globes.layers.iter().position(|l| matches!(l, Some((id, _)) if id == globe)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
+                (self.globes.layers.iter().position(|l| l.is_some_and(|l| l.id == *globe && l.ready)).map_or(0.0, |k| k as f32 + 1.0), self.world.fade(), if maps.has_air_luts() { 1.0 } else { 0.0 })
             }
-            None => (0.0, 0.0, 0.0),
+            _ => {
+                gpu.queue.write_buffer(&self.world.clouds, 0, bytemuck::cast_slice(&[0.0f32; 4]));
+                (0.0, 0.0, 0.0)
+            }
         };
         let globals = Globals {
             view_proj: frame.camera.view_proj(size.x / size.y).to_cols_array_2d(),
@@ -1044,12 +1032,12 @@ impl Renderer {
         self.front_glows.upload(gpu, &frame.front_glows);
         self.hud_tris.upload_bytes(gpu, bytemuck::cast_slice(&frame.hud_tris), frame.hud_tris.len() as u32);
         self.hud.upload(gpu, &frame.hud);
-        self.upload_meshes(gpu, frame);
-        self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5);
+        universe_prof::time("render/upload meshes", || self.upload_meshes(gpu, frame));
+        universe_prof::time("render/upload PBR", || self.pbr.upload(&gpu.device, &gpu.queue, &frame.pbr, frame.shadow_reach as f32 * 1.5));
         drop(upload);
 
         let acquire = std::time::Instant::now();
-        let next = gpu.surface.get_current_texture();
+        let next = universe_prof::time("render/acquire surface", || gpu.surface.get_current_texture());
         self.wait = acquire.elapsed();
         // (No frame from the window (a screen asleep, a window hidden): nothing to show, but a
         // capture asked for is still drawn and saved, from the offscreen composite.)
@@ -1070,12 +1058,13 @@ impl Renderer {
         // The environment as light, for this frame.
         self.env.render(&mut encoder, &self.globals_bind);
         // The bound world's clouds cached: filled, refreshed, re-centred under the eye.
-        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| frame.graphics.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0);
+        let clouded = frame.world_maps.as_ref().filter(|(maps, ..)| self.world.ready_for(maps) && frame.graphics.clouds && maps.has_clouds() && frame.world_clouds[3] > 0.0);
         let under = clouded.map_or(glam::DVec3::Y, |(_, _, c, _)| frame.world_turn.inverse() * (frame.camera.position - *c).normalize_or(glam::DVec3::Y));
         let world = clouded.and_then(|(maps, _, _, r)| Some((maps.id(), *r, &self.world.clouds, self.world.cloud_maps.as_ref()?)));
         self.world.cache.frame(&gpu.device, &gpu.queue, &mut encoder, world, under);
         self.shadow_passes(&mut encoder, sun.is_some());
-        self.scene_pass(&mut encoder, frame.clear, probe.is_some());
+        let clear = if world_ready && frame.world_maps.as_ref().is_some_and(|(m, ..)| m.air[15] > 0.5) { crate::Color::BLACK } else { frame.clear };
+        self.scene_pass(&mut encoder, clear, probe.is_some());
         if probe.is_some() {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, false);
         }
@@ -1084,7 +1073,7 @@ impl Renderer {
             self.sunprobe.run(&gpu.device, &mut encoder, &self.target.depth, true);
             self.sunprobe.copy_out(&mut encoder);
         }
-        self.hud_pass(&mut encoder);
+        universe_prof::time("render/encode canvas and HUD", || self.hud_pass(&mut encoder, frame));
         let readback = capture.map(|_| {
             self.composite(&mut encoder, &self.target.composite, &self.capture_pipe);
             self.copy_to_buffer(gpu, &mut encoder)
@@ -1113,7 +1102,7 @@ impl Renderer {
         if let Some(t) = self.gputime.as_mut() {
             t.copy_out(&mut encoder);
         }
-        gpu.queue.submit([encoder.finish()]);
+        universe_prof::time("render/submit", || gpu.queue.submit([encoder.finish()]));
         self.sunprobe.submitted();
         if let Some(t) = self.gputime.as_mut() {
             t.submitted();
@@ -1234,25 +1223,38 @@ impl Renderer {
         self.front_glows.draw(&mut pass, &self.glow_pipe);
     }
 
-    /// The HUD's layer: its panels and text, then its lines.
-    fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder) {
-        let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-            label: Some("hud"),
-            color_attachments: &[Some(wgpu::RenderPassColorAttachment {
-                view: &self.target.hud,
-                depth_slice: None,
-                resolve_target: None,
-                ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
-            })],
-            depth_stencil_attachment: None,
-            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(3)),
-            occlusion_query_set: None,
-            multiview_mask: None,
-        });
-        pass.set_bind_group(0, &self.globals_bind, &[]);
-        pass.set_bind_group(1, &self.atlas_bind, &[]);
-        self.hud_tris.draw(&mut pass, &self.hud_tri_pipe);
-        self.hud.draw(&mut pass, &self.hud_pipe);
+    /// Ordered UI and perspective canvases. A new canvas clears only depth;
+    /// UI keeps its submission order and never tests or writes canvas depth.
+    fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame) {
+        let sections = canvas_batches(&frame.hud_tris);
+        for (section, batches) in sections.iter().enumerate() {
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("UI / depth canvas"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.target.hud, depth_slice: None, resolve_target: None,
+                    ops: wgpu::Operations { load: if section == 0 { wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT) } else { wgpu::LoadOp::Load }, store: wgpu::StoreOp::Store },
+                })],
+                depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
+                    view: &self.target.hud_depth,
+                    depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.), store: wgpu::StoreOp::Store }),
+                    stencil_ops: None,
+                }),
+                timestamp_writes: if section == 0 { self.gputime.as_ref().map(|t| t.pass(3)) } else { None },
+                occlusion_query_set: None, multiview_mask: None,
+            });
+            pass.set_bind_group(0, &self.globals_bind, &[]);
+            pass.set_bind_group(1, &self.atlas_bind, &[]);
+            pass.set_vertex_buffer(0, self.hud_tris.buffer.slice(..));
+            for (range, kind) in batches {
+                pass.set_pipeline(match kind {
+                    0 => &self.hud_tri_pipe,
+                    1 => &self.canvas_pipe,
+                    _ => &self.canvas_blend_pipe,
+                });
+                pass.draw(range.clone(), 0..1);
+            }
+            if section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
+        }
     }
 
     /// Meshes for this frame: new ones uploaded, unused ones dropped; the
@@ -1463,7 +1465,7 @@ pub fn wait_for_writes() {
 
 /// The HUD's triangles (panels and text): the font's atlas bound, and their pipeline. (The HUD has
 /// its own layer without depth, antialiasing or HDR.)
-fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline) {
+fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGroup, wgpu::RenderPipeline, wgpu::RenderPipeline, wgpu::RenderPipeline) {
     let device = &gpu.device;
     let alpha = wgpu::BlendState::ALPHA_BLENDING;
     let atlas_data = crate::font::atlas();
@@ -1505,7 +1507,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
         entries: &[wgpu::BindGroupEntry { binding: 0, resource: wgpu::BindingResource::TextureView(&atlas_view) }, wgpu::BindGroupEntry { binding: 1, resource: wgpu::BindingResource::Sampler(&atlas_sampler) }],
     });
     let hud_shader = crate::shaders::single(device, "hud");
-    let hud_tri_pipe = device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
+    let pipeline = |geometry: bool, write_depth: bool| device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
         label: Some("hud tris"),
         layout: Some(&device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor { label: Some("hud"), bind_group_layouts: &[Some(globals_layout), Some(&atlas_layout)], immediate_size: 0 })),
         vertex: wgpu::VertexState {
@@ -1515,11 +1517,15 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
             buffers: &[Some(wgpu::VertexBufferLayout {
                 array_stride: size_of::<crate::frame::HudVertex>() as u64,
                 step_mode: wgpu::VertexStepMode::Vertex,
-                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4],
+                attributes: &wgpu::vertex_attr_array![0 => Float32x2, 1 => Float32x2, 2 => Float32x4, 3 => Float32x2, 4 => Float32x2],
             })],
         },
         primitive: wgpu::PrimitiveState { topology: wgpu::PrimitiveTopology::TriangleList, ..Default::default() },
-        depth_stencil: None,
+        depth_stencil: Some(wgpu::DepthStencilState {
+            format: DEPTH_FORMAT, depth_write_enabled: Some(write_depth),
+            depth_compare: Some(if geometry { wgpu::CompareFunction::Greater } else { wgpu::CompareFunction::Always }),
+            stencil: Default::default(), bias: Default::default(),
+        }),
         multisample: Default::default(),
         fragment: Some(wgpu::FragmentState {
             module: &hud_shader,
@@ -1530,7 +1536,7 @@ fn hud_atlas(gpu: &Gpu, globals_layout: &wgpu::BindGroupLayout) -> (wgpu::BindGr
         multiview_mask: None,
         cache: None,
     });
-    (atlas_bind, hud_tri_pipe)
+    (atlas_bind, pipeline(false, false), pipeline(true, true), pipeline(true, false))
 }
 
 /// The last stage: what puts the scene, front and HUD layers together on the screen (or a
@@ -1619,4 +1625,87 @@ fn blit_stage(gpu: &Gpu) -> (wgpu::BindGroupLayout, wgpu::RenderPipeline, wgpu::
         ..Default::default()
     });
     (blit_layout, blit_pipe, capture_pipe, sampler, linear)
+}
+
+/// Group by explicit canvas ID. UI before a canvas remains before it; UI
+/// interleaved with geometry is an overlay after that scene's alpha pass.
+fn canvas_batches(vertices: &[crate::frame::HudVertex]) -> Vec<Vec<(std::ops::Range<u32>, u8)>> {
+    let mut starts = vec![0];
+    let mut scene = 0;
+    for (i, triangle) in vertices.chunks_exact(3).enumerate() {
+        let id = triangle[0].scene;
+        if id != 0 && id != scene {
+            scene = id;
+            if i != 0 { starts.push(i * 3); }
+        }
+    }
+    starts.push(vertices.len());
+    starts.windows(2).map(|bounds| {
+        let mut solid = Vec::new();
+        let mut blend = Vec::new();
+        let mut ui = Vec::new();
+        for i in (bounds[0]..bounds[1]).step_by(3) {
+            if vertices[i].scene == 0 { ui.push(i); }
+            else if vertices[i].alpha[0] == 2. { blend.push(i); }
+            else { solid.push(i); }
+        }
+        // f64 sum avoids overflow for finite f32 eye distances. Stable ties
+        // retain authored ordering; intersecting triangles still need splitting.
+        let depth = |i: usize| vertices[i..i+3].iter().map(|v| v.depth[0] as f64).sum::<f64>();
+        blend.sort_by(|&a, &b| depth(b).total_cmp(&depth(a)));
+        let mut batches: Vec<(std::ops::Range<u32>, u8)> = Vec::new();
+        for (items, kind) in [(solid, 1), (blend, 2), (ui, 0)] {
+            for i in items {
+                if let Some((range, last_kind)) = batches.last_mut() {
+                    if *last_kind == kind && range.end == i as u32 { range.end += 3; continue; }
+                }
+                batches.push((i as u32..i as u32 + 3, kind));
+            }
+        }
+        batches
+    }).collect()
+}
+
+#[cfg(test)]
+mod canvas_alpha_tests {
+    use super::canvas_batches;
+    use crate::frame::HudVertex;
+    fn tri(scene: u32, mode: f32, distance: f32) -> [HudVertex; 3] {
+        [HudVertex { pos: [0.;2], uv: [0.;2], color: [1.;4], depth: [distance,0.1], alpha: [mode,0.5], scene };3]
+    }
+
+    #[test]
+    fn alpha_spans_objects_and_ui_but_not_canvas_boundaries() {
+        let v = [tri(0,0.,0.), tri(1,2.,2.), tri(0,0.,0.), tri(1,0.,8.),
+                 tri(1,2.,9.), tri(1,1.,4.), tri(2,2.,100.), tri(2,0.,200.)].concat();
+        assert_eq!(canvas_batches(&v), vec![vec![(0..3,0)],
+            vec![(9..12,1),(15..18,1),(12..15,2),(3..6,2),(6..9,0)],
+            vec![(21..24,1),(18..21,2)]]);
+    }
+
+}
+
+#[cfg(test)]
+mod globe_stream_tests {
+    use super::*;
+    #[test]
+    fn globe_upload_budget_never_exposes_partial_or_skips_mips() {
+        let map = crate::GlobeMap::new(4, vec![[1., 0.]; 6*4*4]);
+        let mut layer = GlobeLayer { id: map.id(), used: 0, next: 0, ready: false };
+        let mut copied = Vec::new();
+        let total = map.uploads.iter().map(|u| u.bytes.len()).sum::<usize>();
+        let mut bytes = 0;
+        while !layer.ready {
+            let mut budget = 64;
+            let range = layer.take(&map, &mut budget);
+            assert!(!range.is_empty());
+            bytes += 64-budget;
+            copied.extend(range);
+            assert_eq!(layer.ready, layer.next == map.uploads.len());
+        }
+        assert_eq!(copied, (0..map.uploads.len()).collect::<Vec<_>>());
+        assert_eq!(bytes, total);
+        let mut empty = 0;
+        assert!(layer.take(&map, &mut empty).is_empty());
+    }
 }

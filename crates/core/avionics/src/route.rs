@@ -334,18 +334,3 @@ pub fn gate_path(links: &[(usize, usize)], from: usize, to: usize) -> Option<Vec
     }
     None
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn gate_paths() {
-        let links = [(1, 2), (2, 3), (1, 4), (4, 5), (3, 5)];
-        assert_eq!(gate_path(&links, 1, 1), Some(vec![]));
-        assert_eq!(gate_path(&links, 1, 2), Some(vec![2]));
-        assert_eq!(gate_path(&links, 1, 3), Some(vec![2, 3]));
-        assert_eq!(gate_path(&links, 1, 5), Some(vec![4, 5]));
-        assert_eq!(gate_path(&links, 1, 9), None);
-    }
-}

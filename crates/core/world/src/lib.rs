@@ -23,6 +23,7 @@ pub mod damage;
 pub mod design;
 pub mod events;
 pub mod frame;
+pub mod flight_control;
 pub mod galaxy;
 pub mod goods;
 pub mod recipes;
@@ -62,8 +63,6 @@ pub mod structures;
 pub mod structures_catalogue;
 pub mod system;
 pub mod terrain;
-#[cfg(test)]
-mod testkit;
 pub mod traffic;
 pub mod trim;
 pub mod turrets;

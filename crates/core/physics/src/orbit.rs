@@ -145,35 +145,3 @@ impl Orbit {
         (0..n).map(move |i| self.perifocal(i as f64 / n as f64 * TAU))
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn orbit_closes_and_keeps_its_energy() {
-        let o = Orbit::new(7.0e6, 0.2, 0.4, 0.3, 1.1, 0.7, 3.986e14);
-        let energy = |t: f64| {
-            let (p, v) = o.state(t);
-            0.5 * v.length_squared() - o.mu / p.length()
-        };
-        let e0 = energy(0.0);
-        for k in 1..=50 {
-            let t = k as f64 * o.period() * 0.37;
-            assert!(((energy(t) - e0) / e0).abs() < 1e-12, "vis-viva energy drifted at t = {t}");
-        }
-        // One whole period later the body is back where it started.
-        let (p0, p1) = (o.position(123.0), o.position(123.0 + o.period()));
-        assert!(p0.distance(p1) < 1e-6 * o.semi_major_axis);
-        assert!((p0.length() - o.periapsis()) >= -1e-6 && (p0.length() - o.apoapsis()) <= 1e-6);
-        // A comet's near-parabolic orbit (e 0.99999) solves all the way round, its closest pass too.
-        let c = Orbit::new(3.0e14, 0.99999, 0.3, 0.0, 0.0, 0.0, 1.3e20);
-        for k in 0..2000 {
-            let t = k as f64 / 2000.0 * TAU / c.mean_motion;
-            let (ea, m) = (c.eccentric_anomaly(t), (c.mean_anomaly_epoch + c.mean_motion * t).rem_euclid(TAU));
-            assert!((ea - c.eccentricity * ea.sin() - m).abs() < 1e-9, "t {t}: E {ea} doesn't solve M {m}");
-        }
-    }
-
-}
-

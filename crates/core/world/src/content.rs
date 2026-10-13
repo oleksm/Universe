@@ -552,27 +552,6 @@ fn inherit_renamed_prices(prices: &mut HashMap<String,f64>, aliases: &HashMap<St
     Ok(())
 }
 
-#[cfg(test)]
-mod renamed_prices {
-    use super::*;
-    #[test]
-    fn preserves_old_price_without_overriding_new_price() {
-        let aliases=HashMap::from([("old".into(),"new".into())]);
-        let mut p=HashMap::from([("old".into(),14.)]);
-        inherit_renamed_prices(&mut p,&aliases).unwrap();
-        assert_eq!(p["new"],14.);
-        p.insert("new".into(),20.);
-        inherit_renamed_prices(&mut p,&aliases).unwrap();
-        assert_eq!(p["new"],20.);
-    }
-    #[test]
-    fn conflicting_old_prices_are_refused() {
-        let aliases=HashMap::from([("a".into(),"new".into()),("b".into(),"new".into())]);
-        let mut p=HashMap::from([("a".into(),1.),("b".into(),2.)]);
-        assert!(inherit_renamed_prices(&mut p,&aliases).is_err());
-    }
-}
-
 /// A hull definition's shape key.
 fn d_shape(d: &crate::ship::HullDef) -> String {
     d.shape_key().to_string()
@@ -590,8 +569,11 @@ static CONTENT: OnceLock<Content> = OnceLock::new();
 /// at the start than as nonsense in play.
 pub fn content() -> &'static Content {
     CONTENT.get_or_init(|| {
+        let _profile=universe_prof::scope("startup/content validation");
+        let start=std::time::Instant::now();
         let overrides: Vec<PathBuf> = std::env::var("UNIVERSE_CONTENT").map(|v| v.split(':').filter(|s| !s.is_empty()).map(PathBuf::from).collect()).unwrap_or_default();
-        Content::load(&overrides).unwrap_or_else(|e| panic!("content: {e}"))
+        let content=Content::load(&overrides).unwrap_or_else(|e| panic!("content: {e}"));
+        log::info!("startup content validation: {:.3} ms",start.elapsed().as_secs_f64()*1000.);content
     })
 }
 

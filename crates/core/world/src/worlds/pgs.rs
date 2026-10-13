@@ -307,7 +307,10 @@ impl Surface {
             let [a, c, d] = vertices.map(|v| points[v].position);
             let normal = (c - a).cross(d - a);
             let plane = normal.dot(a);
-            let edges = [a.cross(c), c.cross(d), d.cross(a)];
+            // Equivalent to a×b, but products are edge-sized before subtraction.
+            // Direct crosses of nearby oblique endpoints lose enough precision after
+            // normalization to disconnect a vertex's 1e-12 angular ownership fan.
+            let edges = [a.cross(c - a), c.cross(d - c), d.cross(a - d)];
             if !plane.is_finite() || plane <= 0.0 || edges.iter().any(|e| e.length() == 0.0) {
                 return Err("degenerate or inward face".into());
             }

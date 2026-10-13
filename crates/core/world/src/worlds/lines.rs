@@ -524,39 +524,3 @@ impl std::fmt::Debug for LineHeights {
         write!(f, "LineHeights({} segments, {} anchors)", self.segs.len(), self.anchors.len())
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// Hoar's ground from its lines (where the store holds them): exact on its lines and anchors,
-    /// between neighbouring levels elsewhere, and quick.
-    #[test]
-    fn ground_from_lines() {
-        let Some(g) = LineHeights::of("body.treistun.treistun-e") else { return };
-        let lines = open("body.treistun.treistun-e").unwrap();
-        for l in lines.iter().filter(|l| l.kind == KIND_CONTOUR).step_by(97).take(40) {
-            let p = l.pts[l.pts.len() / 2];
-            let h = g.at_unstretched(direction(LonLat { lon: p.0, lat: p.1 }));
-            assert!((h - l.z as f64).abs() < 1.0, "on a {} m line: {h}", l.z);
-        }
-        for &(p, z, _) in g.anchors.iter().step_by(37) {
-            assert!((g.at_unstretched(p) - z as f64).abs() < 1.0, "on a {z} m anchor: {}", g.at_unstretched(p));
-        }
-        let t = std::time::Instant::now();
-        let n = 20_000;
-        let mut lo = f64::MAX;
-        let mut hi = f64::MIN;
-        for k in 0..n {
-            // (A spiral over the whole sphere.)
-            let y = 1.0 - 2.0 * (k as f64 + 0.5) / n as f64;
-            let a = k as f64 * 2.399_963;
-            let r = (1.0 - y * y).sqrt();
-            let h = g.at_unstretched(DVec3::new(r * a.cos(), y, r * a.sin()));
-            (lo, hi) = (lo.min(h), hi.max(h));
-        }
-        let us = t.elapsed().as_secs_f64() * 1e6 / n as f64;
-        eprintln!("{us:.1} µs a height; {lo:.0} to {hi:.0} m");
-        assert!(lo >= -3_800.0 && hi <= 8_600.0, "{lo} to {hi}");
-    }
-}

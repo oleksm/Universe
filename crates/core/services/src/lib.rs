@@ -7,6 +7,7 @@ pub mod atc;
 pub mod economy;
 pub mod land;
 pub mod lots;
+pub mod packages;
 pub mod law;
 pub mod ledger;
 pub mod market;

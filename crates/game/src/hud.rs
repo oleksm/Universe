@@ -54,7 +54,10 @@ pub fn draw(frame: &mut Frame, app: &App, ctx: &Context) {
         return;
     }
     if let Some(y) = &app.panels.shipyard {
-        universe_prof::time("draw/studio", || crate::shipyard::draw(frame, app, y));
+        universe_prof::time("draw/shipyard", || crate::shipyard::draw(frame, app, y));
+        let mut top = 95.0;
+        if app.debug > 0 { top = perf(frame, app, ctx, top) + 6.0; }
+        if universe_prof::enabled() { profile_panel(frame, top); }
         return;
     }
     // The thrusters panel: a screen of its own (in the pilot's seat).
@@ -1971,7 +1974,6 @@ const TRADE_SHOWN: f64 = 12.0;
 fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
     let p = &ctx.perf;
     let ships = 1 + app.v.crafts.len();
-    let k = |n: u32| if n >= 10_000 { format!("{:.0}K", n as f32 / 1000.0) } else if n >= 1000 { format!("{:.1}K", n as f32 / 1000.0) } else { n.to_string() };
     let mut lines = vec![
         (format!("{:.0} FPS  {:.1} MS", ctx.fps, p.frame_ms), DIM),
         (format!("SIM {:.2} MS  {ships} SHIPS  {:.1} US EACH", app.sim_ms, app.sim_ms * 1000.0 / ships as f32), DIM),
@@ -1988,7 +1990,25 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
     if app.collision.is_some() {
         lines.push((format!("COLLIDE {:.1} MS EVERY 0.2 S", app.collision_cost * 1000.0), DIM));
     }
-    lines.push((format!("UPD {:.1} DRAW {:.1} GPU {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
+    lines.extend(frame_lines(ctx));
+    if !app.v.crafts.is_empty() {
+        let here = app.v.crafts.iter().filter(|c| c.system == app.view.origin).count();
+        let t = &app.v.traffic;
+        lines.push((format!("TRAFFIC {} SHIPS, {here} HERE", app.v.crafts.len()), DIM));
+        lines.push((format!("STOPS {} GATES {} CRASHES {} COLLISIONS {}", t.stops, t.transits, t.crashes, t.collision_losses), DIM));
+        lines.push((format!("TRADES {} KILLS {} POSSES {}/{}", t.trades, t.shot_down, t.defences, t.aggressors_downed), DIM));
+    }
+    lines.extend(asset_lines(ctx));
+    let bottom = right_column(frame, top, &lines);
+    frame_graph(frame, p, bottom + 4.0)
+}
+
+/// Frame, render-thread and GPU-pass measurements shared by world and Studio.
+fn frame_lines(ctx: &Context) -> Vec<(String, Color)> {
+    let p = &ctx.perf;
+    let k = |n: u32| if n >= 10_000 { format!("{:.0}K", n as f32 / 1000.0) } else { n.to_string() };
+    let mut lines = Vec::new();
+    lines.push((format!("UPD {:.1} DRAW {:.1} RENDER {:.1} IDLE {:.1}", p.update_ms, p.draw_ms, p.render_ms, p.wait_ms), DIM));
     // (The GPU's own time a pass, where it stamps them: what the wait for the screen sums.)
     let passes = universe_engine::gputime::times();
     if !passes.is_empty() {
@@ -1999,15 +2019,33 @@ fn perf(frame: &mut Frame, app: &App, ctx: &Context, top: f32) -> f32 {
     let worst = p.history.iter().copied().fold(0.0, f32::max);
     lines.push((format!("WORST {worst:.0} MS OF {}  HITCHES {}", p.history.len(), p.hitches), if p.hitches > 0 { AMBER } else { DIM }));
     lines.push((format!("{} LINES {} TRIS {} PTS", k(p.lines), k(p.triangles), k(p.points)), DIM));
-    if !app.v.crafts.is_empty() {
-        let here = app.v.crafts.iter().filter(|c| c.system == app.view.origin).count();
-        let t = &app.v.traffic;
-        lines.push((format!("TRAFFIC {} SHIPS, {here} HERE", app.v.crafts.len()), DIM));
-        lines.push((format!("STOPS {} GATES {} CRASHES {} COLLISIONS {}", t.stops, t.transits, t.crashes, t.collision_losses), DIM));
-        lines.push((format!("TRADES {} KILLS {} POSSES {}/{}", t.trades, t.shot_down, t.defences, t.aggressors_downed), DIM));
-    }
-    let bottom = right_column(frame, top, &lines);
-    frame_graph(frame, p, bottom + 4.0)
+    lines
+}
+
+fn asset_lines(ctx: &Context) -> Vec<(String, Color)> {
+    let mut lines = Vec::new();
+    let gpu = &ctx.perf.resources;
+    lines.push((format!("ASSET GPU {:.1} MIB UP {} HIT {} DOWN {} PENDING {}", gpu.asset_gpu_bytes as f64/1048576., gpu.asset_uploads, gpu.asset_hits, gpu.asset_unloads, gpu.asset_preparing), DIM));
+    let rocks = crate::rocks::snapshot();
+    lines.push((format!("ROCK VISUALS LOAD {} QUEUE {} RUN {} ERROR {}", rocks.loads, rocks.queued, rocks.loading, rocks.failures), DIM));
+    let globes = crate::globe_assets::snapshot();
+    lines.push((format!("WORLD VISUALS LOAD {} QUEUE {} RUN {} ERROR {}", globes.loads, globes.queued, globes.loading, globes.failures), DIM));
+    let assets = crate::visual_assets::snapshot();
+    lines.push((format!("ASSETS LOAD {} HIT {} UNLOAD {} RELOAD {}", assets.loads, assets.hits, assets.unloads, assets.reloads), DIM));
+    lines.push((format!("ASSETS {:.1} MIB + {:.1} RESERVED  QUEUE {} RUN {}", assets.resident_bytes as f64/1048576., assets.reserved_bytes as f64/1048576., assets.queued, assets.loading), DIM));
+    lines.push((format!("ASSETS COALESCED {} ERROR {} REJECT {}", assets.coalesced, assets.failures, assets.rejected), if assets.failures + assets.rejected > 0 {AMBER} else {DIM}));
+    lines
+}
+
+/// Shared diagnostics for the standalone Studio (which has no App/universe).
+pub fn studio_assets(frame: &mut Frame, ctx: &Context, debug: u8) {
+    if debug == 0 && !universe_prof::enabled() { return; }
+    let mut lines = vec![(format!("{:.0} FPS  {:.1} MS",ctx.fps,ctx.perf.frame_ms),DIM)];
+    lines.extend(frame_lines(ctx));
+    lines.extend(asset_lines(ctx));
+    let bottom = right_column(frame, 95.0, &lines);
+    let bottom = frame_graph(frame, &ctx.perf, bottom+4.0);
+    if debug > 1 || universe_prof::enabled() { profile_panel(frame,bottom+4.0); }
 }
 
 /// The last frames' times as bars, against the right edge: green under

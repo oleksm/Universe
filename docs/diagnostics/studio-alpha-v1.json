@@ -1,0 +1,63 @@
+{
+  "engine_commit": "a48f7870",
+  "consumer_commits": [
+    "c9bc0f51",
+    "e16c74e6"
+  ],
+  "tested_combined_commit": "75f2b4d4",
+  "registry_build": "pass",
+  "workspace": {
+    "passed": 165,
+    "failed": 0,
+    "ignored": 0
+  },
+  "gpu_captures": 33,
+  "gpu_scope": "Isolated actual renderer and extracted shared Studio projector, not full saved-ship UI placement",
+  "image_pairs": [
+    {
+      "fixture": "viewport-s2-gpu-fixed",
+      "view": "front",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-fixed",
+      "view": "back",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-fixed",
+      "view": "front-oblique",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-fixed",
+      "view": "back-oblique",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-final",
+      "view": "front",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-final",
+      "view": "back",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-final",
+      "view": "front-oblique",
+      "source_equals_sorted": true
+    },
+    {
+      "fixture": "viewport-s2-gpu-final",
+      "view": "back-oblique",
+      "source_equals_sorted": true
+    }
+  ],
+  "inspected_images": [
+    "viewport-s2-gpu-fixed/front-studio.png",
+    "viewport-s2-gpu-fixed/back-oblique-studio.png",
+    "viewport-s2-gpu-final/front-oblique-studio.png"
+  ]
+}

@@ -1,0 +1,158 @@
+[
+  {
+    "current_layer_index": 0,
+    "code_key": "hull",
+    "authored_source": "hull",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 1,
+    "code_key": "grid_measures",
+    "authored_source": "view.layers",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 2,
+    "code_key": "points",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 3,
+    "code_key": "points.entry",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 4,
+    "code_key": "points.dash",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 5,
+    "code_key": "points.windows",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 6,
+    "code_key": "points.service",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 7,
+    "code_key": "points.mining",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 8,
+    "code_key": "points.mounts_engines",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 9,
+    "code_key": "points.laid",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 10,
+    "code_key": "points.names",
+    "authored_source": "access.points",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 11,
+    "code_key": "access",
+    "authored_source": "access",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 12,
+    "code_key": "access.lines",
+    "authored_source": "access",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 13,
+    "code_key": "access.outlines",
+    "authored_source": "access",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 14,
+    "code_key": "access.walls",
+    "authored_source": "access",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 15,
+    "code_key": "access.hatches",
+    "authored_source": "access",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 16,
+    "code_key": "clashes",
+    "authored_source": "view.layers",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 17,
+    "code_key": "decks_2d",
+    "authored_source": "decks",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 18,
+    "code_key": "decks_2d.floors",
+    "authored_source": "decks",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 19,
+    "code_key": "decks_2d.walls",
+    "authored_source": "decks",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 20,
+    "code_key": "hollow_map",
+    "authored_source": "view.layers",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 21,
+    "code_key": "reach",
+    "authored_source": "view.layers",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 22,
+    "code_key": "modules",
+    "authored_source": "modules",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 23,
+    "code_key": "frame",
+    "authored_source": "structure",
+    "recalculate_geometry_or_overlay": false
+  },
+  {
+    "current_layer_index": 24,
+    "code_key": "pressure",
+    "authored_source": "view.layers",
+    "recalculate_geometry_or_overlay": true
+  },
+  {
+    "current_layer_index": 25,
+    "code_key": "decks",
+    "authored_source": "structure",
+    "recalculate_geometry_or_overlay": false
+  }
+]

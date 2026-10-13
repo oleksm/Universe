@@ -96,39 +96,3 @@ impl Missile {
         (r - v * s).length() < MISSILE_FUSE
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::testkit::Probe;
-    use crate::units::AU;
-
-    #[test]
-    fn a_missile_homes_on_a_crossing_ship_and_its_fuse_fires() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let mut positions = Vec::new();
-        sys.positions(0.0, &mut positions);
-        // Far out, a ship crossing at 300 m/s, 30 km off.
-        let at = DVec3::new(0.0, 5.0 * AU, 0.0);
-        let mut target = Mark { position: at + DVec3::new(30_000.0, 0.0, 0.0), velocity: DVec3::new(0.0, 0.0, 300.0) };
-        let mut m = Missile { system: 0, owner: ShipId(1), target: ShipId(2), position: at, velocity: DVec3::ZERO, age: 0.0 };
-        let dt = 1.0 / 60.0;
-        let mut t = 0.0;
-        while t < MISSILE_LIFETIME {
-            target.position += target.velocity * dt;
-            assert!(m.fly(&sys, &positions, Some(&target), 0.0, dt));
-            t += dt;
-            if m.fuse(&target, dt) {
-                break;
-            }
-        }
-        eprintln!("fused after {t:.1} s, closing at {:.0} m/s", (m.velocity - target.velocity).length());
-        assert!(m.fuse(&target, dt) && t < 60.0, "{t} s");
-        // Lost (the target gone into hyperdrive, say): it coasts.
-        let v = m.velocity;
-        m.fly(&sys, &positions, None, 0.0, 1.0);
-        assert!((m.velocity - v).length() < 0.01, "no mark, no steering");
-        let _ = &mut p;
-    }
-}

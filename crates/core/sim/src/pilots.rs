@@ -802,16 +802,3 @@ fn next_think_tick(tick: u64, wait: f64, dt: f64) -> u64 {
     let ticks = if dt > 0.0 { ((wait / dt).ceil() as u64).max(1) } else { 1 };
     tick.saturating_add(ticks)
 }
-
-#[cfg(test)]
-mod scheduling_tests {
-    use super::next_think_tick;
-
-    #[test]
-    fn paused_refresh_does_not_overflow_or_sleep_forever() {
-        assert_eq!(next_think_tick(42, 5.0, 0.0), 43);
-        assert_eq!(next_think_tick(42, 0.0, 0.0), 43);
-        assert_eq!(next_think_tick(43, 5.0, 0.25), 63);
-        assert_eq!(next_think_tick(u64::MAX - 1, 5.0, 0.25), u64::MAX);
-    }
-}

@@ -1,0 +1,58 @@
+{
+  "trace_sha256": "ec470c6000e81d4d3e015ea1d7624ace271d9ee4571f41d85023d44fed87bd71",
+  "constraint_dump_sha256": "62fa73bda58256737b24c6319f90c9bc9bcf316887afb685deed923461c2332b",
+  "path": [
+    54323,
+    26877,
+    54335,
+    32262,
+    67514,
+    32268,
+    62665,
+    29751
+  ],
+  "target_endpoint_rise_m": 517.4225234955111,
+  "exact_coefficient_sum": "0",
+  "exact_weighted_rhs": "-192102378522145669270728858985165884657556784753310906885463168395108518262215682365938159438683584709418332/883540579646954737252223999109081244682046732873563139731706738878962299660618817129484145935393231677175",
+  "contradiction_gap_m": 217.42337923958848,
+  "path_only_minimum_symmetric_adjustment_m": 258.71168961979424,
+  "weights": [
+    {
+      "row": 9837,
+      "exact_positive_weight": "4611686018427387904/3772394322891965"
+    },
+    {
+      "row": 10330,
+      "exact_positive_weight": "9223372036854775808/7544731721961075"
+    },
+    {
+      "row": 10336,
+      "exact_positive_weight": "9223372036854775808/7544677020683225"
+    },
+    {
+      "row": 12478,
+      "exact_positive_weight": "4611686018427387904/3772408970574933"
+    },
+    {
+      "row": 12490,
+      "exact_positive_weight": "9223372036854775808/7544759906057131"
+    },
+    {
+      "row": 13298,
+      "exact_positive_weight": "4611686018427387904/3772325251750205"
+    },
+    {
+      "row": 13786,
+      "exact_positive_weight": "9223372036854775808/7544704093507385"
+    },
+    {
+      "row": 27923,
+      "exact_positive_weight": "1"
+    },
+    {
+      "row": 44921,
+      "exact_positive_weight": "1"
+    }
+  ],
+  "scope": "Seven stored collar rows plus the stated +/-150m adjustment bounds; not a global minimum or proof that alternate routing is feasible."
+}

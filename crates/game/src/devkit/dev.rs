@@ -152,14 +152,14 @@ fn demo_plan(app: &App) -> universe_sim::world::deckplan::DeckPlan {
     use universe_sim::world::deckplan::{Deck, DeckPlan, Door, Wall};
     let floor = app.ship.spec().shape().walk.as_ref().map_or(-7.7, |m| m.lo.y + 5.1);
     let mut deck = Deck::at(floor);
-    deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
-    deck.walls.push(Wall { points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { at: 14.0, width: 0.9, height: 2.1 }], rail: false });
-    deck.walls.push(Wall { points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![], rail: false });
+    deck.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)].into());
+    deck.walls.push(Wall { uid: Default::default(), points: vec![DVec2::new(-14.0, -3.0), DVec2::new(14.0, -3.0)], bulges: vec![0.0], doors: vec![Door { uid: Default::default(), at: 14.0, width: 0.9, height: 2.1 }], rail: false });
+    deck.walls.push(Wall { uid: Default::default(), points: vec![DVec2::new(-6.0, -3.0), DVec2::new(-6.0, 6.0), DVec2::new(6.0, 6.0)], bulges: vec![0.0, 2.5], doors: vec![], rail: false });
     // A stair and a ladder up to a deck above it.
-    deck.stairs.push(universe_sim::world::deckplan::Stair { from: DVec2::new(9.0, 6.0), to: DVec2::new(9.0, 0.0), width: 1.0 });
-    deck.ladders.push(universe_sim::world::deckplan::Ladder { at: DVec2::new(-10.0, 3.0) });
+    deck.stairs.push(universe_sim::world::deckplan::Stair { uid: Default::default(), target:None, from: DVec2::new(9.0, 6.0), to: DVec2::new(9.0, 0.0), width: 1.0 });
+    deck.ladders.push(universe_sim::world::deckplan::Ladder { uid: Default::default(), target:None, at: DVec2::new(-10.0, 3.0) });
     let mut upper = Deck::at(floor + 3.8);
-    upper.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)]);
+    upper.planes.push(vec![DVec2::new(-14.0, -12.0), DVec2::new(14.0, -12.0), DVec2::new(14.0, 8.0), DVec2::new(-14.0, 8.0)].into());
     DeckPlan { hull: app.ship.spec().key.clone(), decks: vec![deck, upper] }
 }
 
@@ -1757,7 +1757,7 @@ fn s_layoutlook(app: &mut App, _name: &str, _c: &Ctx) {
     plan.decks = (0..6).map(|k| {
         let mut d = universe_sim::world::deckplan::Deck::at(mesh.lo.y + 5.6 + 2.9 * k as f64);
         if std::env::var_os("UNIVERSE_EMPTY").is_none() {
-            d.planes = universe_sim::world::deckplan::fill(&mesh, d.floor);
+            d.planes = universe_sim::world::deckplan::fill(&mesh, d.floor).into_iter().map(Into::into).collect();
         }
         d
     }).collect();
@@ -1814,7 +1814,7 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
     {
         floor = mesh.lo.y + up;
         let mut d = universe_sim::world::deckplan::Deck::at(floor);
-        d.planes = universe_sim::world::deckplan::fill(&mesh, floor);
+        d.planes = universe_sim::world::deckplan::fill(&mesh, floor).into_iter().map(Into::into).collect();
         plan.decks = vec![d];
     }
     let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
@@ -1939,7 +1939,7 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
         {
             let deck = &mut plan.decks[0];
             let sides = universe_sim::world::deckplan::deck_sides(mesh, deck.floor);
-            deck.planes = universe_sim::world::deckplan::carve(&sides, &deck.walls, universe_engine::glam::DVec2::new(x, z)).into_iter().collect();
+            deck.planes = universe_sim::world::deckplan::carve(&sides, &deck.walls, universe_engine::glam::DVec2::new(x, z)).into_iter().map(Into::into).collect();
             if let Some(poly) = deck.planes.first() {
                 let (lo, hi) = poly.iter().fold((universe_engine::glam::DVec2::MAX, universe_engine::glam::DVec2::MIN), |m, p| (m.0.min(*p), m.1.max(*p)));
                 let area: f64 = universe_sim::world::deckplan::floor_strips(poly, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum();
@@ -1950,7 +1950,7 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
         let n = crate::devenv::num("UNIVERSE_DECKS").map_or(0, |v| v as usize);
         while plan.decks.len() < n {
             let last = plan.decks.last().expect("a deck");
-            let deck = universe_sim::world::deckplan::Deck { floor: last.floor + 2.9, headroom: last.headroom, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() };
+            let deck = universe_sim::world::deckplan::Deck { uid: Default::default(), floor: last.floor + 2.9, headroom: last.headroom, planes: Vec::new(), walls: Vec::new(), ladders: Vec::new(), stairs: Vec::new() };
             plan.decks.push(deck);
         }
         // (UNIVERSE_FLOOR=m: deck 1 that far up from the keel, alone.)
@@ -1965,7 +1965,7 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
         {
             let deck = &mut plan.decks[0];
             let sides = universe_sim::world::deckplan::deck_sides(mesh, deck.floor);
-            deck.planes = universe_sim::world::deckplan::fill(mesh, deck.floor);
+            deck.planes = universe_sim::world::deckplan::fill(mesh, deck.floor).into_iter().map(Into::into).collect();
             let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
             log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
         }

@@ -1,0 +1,13 @@
+{
+  "surface_sha256": "f3df5e5920dc69fa0742dfaa5c002e07456309c96fd38db77d580afba8cd4899",
+  "png_sha256": {
+    "summit-control-calibration": "f33b2c27b033c29120177aa4816316f9aba8062d7281d0ccba74fde0afca18a2",
+    "summit-candidate-calibration": "acc51df95a7c05ff7a3e7a010125857e4c5324e388f5de84f01a586a7889d4ea",
+    "summit-control-final": "40cc9a3f2635881f72307284a5227b097bd8419acaca8ce683bb5c16ef38679b",
+    "summit-candidate-final": "ff2323e0c63fba8f454ae413ebe0080b98cbda4d1057590f79ab0e8146fb4286",
+    "lake-control-calibration": "0c9136827e6d3e45b06138e241be0af4461fd463e29fd073d61a3fa3036adec0",
+    "lake-candidate-calibration": "c3428d8c50e96efb8f1ac1a4e4fd89462672222291d603a560cee67a52e642a2",
+    "lake-control-final": "0c9136827e6d3e45b06138e241be0af4461fd463e29fd073d61a3fa3036adec0",
+    "lake-candidate-final": "c3428d8c50e96efb8f1ac1a4e4fd89462672222291d603a560cee67a52e642a2"
+  }
+}

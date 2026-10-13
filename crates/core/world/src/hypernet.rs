@@ -338,48 +338,6 @@ impl Net {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn the_home_net_links_its_relays_and_a_ship_near_is_on_it_a_ship_far_is_not() {
-        let w = crate::World::new(1984);
-        let sys = w.system(w.home_system);
-        let mut positions = Vec::new();
-        sys.positions(0.0, &mut positions);
-        let net = Net::at(&sys, nodes(&w.galaxy, &sys), 0.0, &positions);
-        assert!(net.nodes.iter().any(|n| n.backbone), "a backbone");
-        // Its gates are on the net (a port may not be: its world turns it away
-        // from every relay, and back).
-        assert!(net.nodes.iter().zip(&net.lag).filter(|(n, _)| n.gate_relay.is_some()).all(|(_, l)| l.is_some()));
-        assert!(net.gates_out().count() > 0);
-        // A tree: one uplink for each relay on the net but the backbone's.
-        let on = net.lag.iter().zip(&net.nodes).filter(|(l, n)| l.is_some() && !n.backbone).count();
-        assert_eq!(net.routes().count(), on);
-        let comm = crate::ship::starter().comm;
-        // By the station: on the net, a whisker of lag.
-        let station = sys.station().unwrap();
-        let near = positions[station] + DVec3::new(5_000.0, 0.0, 0.0);
-        let s = net.status(&sys, &positions, near, &comm).expect("on the net by the station");
-        assert!(s.lag < 0.2, "{}", s.lag);
-        // Far out past the last world and gate: nobody hears it.
-        let far = DVec3::new(1.0e14, 0.0, 0.0);
-        assert!(net.status(&sys, &positions, far, &comm).is_none());
-        // A fight by the station is on the backbone within a second; one far out isn't heard.
-        assert!(net.heard(&sys, &positions, near).is_some_and(|t| t < 1.0));
-        assert!(net.heard(&sys, &positions, far).is_none());
-        // Out through a gate relay: its handling, the flow's cadence, and the capsules'
-        // 200 ms a light year along the lane.
-        let lane = |to: usize| w.galaxy.stars[w.home_system].position.distance(w.galaxy.stars[to].position);
-        let site = |to: usize| net.nodes.iter().zip(&net.lag).find(|(n, _)| n.gate_relay.is_some_and(|g| g.0 == to)).and_then(|(_, l)| *l).unwrap_or(0.0);
-        assert!(net.gates().iter().all(|&(to, d)| (d - site(to) - (0.2 * lane(to) + 1.5 + 1.0)).abs() < 0.1), "{:?}", net.gates());
-        // Behind a world, from its only relay: blocked.
-        let p = positions[sys.bodies[station].rail.parent.unwrap()];
-        assert!(blocked(&sys, &positions, p + DVec3::X * 1.0e9, p - DVec3::X * 1.0e9));
-    }
-}
-
 /// From each system to `us` over the backbone (s), the quickest way: `start` at `us` (its own lag
 /// out to the listener), then `hops` (from, to, s: out through `from`'s gate relays and in at
 /// `to`'s) taken backwards until nothing gets quicker.

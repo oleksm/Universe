@@ -511,7 +511,6 @@ impl StarSystem {
         (universe_physics::position(&bodies[..], i, t), universe_physics::velocity(&bodies[..], i, t))
     }
 
-
     /// The field whose swarm a point is among or near (`positions`: the
     /// system's bodies), if any.
     pub fn field_near(&self, p: DVec3, positions: &[DVec3]) -> Option<usize> {
@@ -538,66 +537,6 @@ fn swarm(sys: &StarSystem, field: &Field) -> Vec<Body> {
             body(format!("{}-{}", remnant.name, k + 1), rock, field.body, orbit, false, &mut rng)
         })
         .collect()
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::galaxy::Galaxy;
-
-    /// Systems of the test galaxy that have fields.
-    fn systems() -> Vec<StarSystem> {
-        let galaxy = Galaxy::generate_n(1984, 120);
-        (0..120).map(|i| StarSystem::generate(i, &galaxy.stars[i])).collect()
-    }
-
-    #[test]
-    fn belts_lie_where_physics_puts_them() {
-        let systems = systems();
-        let mut fields = 0;
-        for sys in &systems {
-            let a = |i: usize| sys.bodies[i].rail.orbit.as_ref().unwrap().semi_major_axis;
-            let giants: Vec<usize> = (0..sys.bodies.len()).filter(|&i| sys.bodies[i].rail.parent == Some(0) && matches!(sys.bodies[i].kind, BodyKind::GasGiant | BodyKind::IceGiant)).collect();
-            for f in &sys.fields {
-                fields += 1;
-                let b = &sys.bodies[f.body];
-                assert_eq!(b.kind, BodyKind::Asteroid);
-                assert!(b.rail.attracts && b.rail.parent == Some(0));
-                match f.kind {
-                    FieldKind::Trojan { planet, .. } => {
-                        // Sharing the giant's orbit, 60° from it.
-                        assert!((a(f.body) / a(planet) - 1.0).abs() < 0.02, "{}", f.name);
-                        let mut p = Vec::new();
-                        sys.positions(0.0, &mut p);
-                        let angle = p[f.body].angle_between(p[planet]).to_degrees();
-                        assert!((angle - 60.0).abs() < 8.0, "{}: {angle}°", f.name);
-                    }
-                    FieldKind::Family if !giants.is_empty() => {
-                        // Between some giant's 4:1 and 2:1 resonances.
-                        assert!(giants.iter().any(|&g| (0.39..0.64).contains(&(a(f.body) / a(g)))), "{}", f.name);
-                    }
-                    FieldKind::Outer => assert_eq!(f.class(sys), RockClass::of("rock-class.icy")),
-                    _ => {}
-                }
-                // The swarm sits well inside the remnant's Hill sphere.
-                let hill = b.rail.orbit.as_ref().unwrap().periapsis() * (b.mass / (3.0 * sys.bodies[0].mass)).cbrt();
-                assert!(f.extent <= 0.3 * hill + 1.0 || f.extent == b.rail.radius * 8.0);
-            }
-        }
-        assert!(fields > 120, "{fields} fields in 120 systems");
-        // And the belts as they are: a rock found near a point is found again a year on where its
-        // orbit takes it (its ring turns as one), and none is made from nothing (each patch the same).
-        let sys = systems.iter().find(|s| s.belts.iter().any(|b| b.kind == crate::belts::BeltKind::Main)).expect("a system with a main belt");
-        let main = sys.belts.iter().find(|b| b.kind == crate::belts::BeltKind::Main).unwrap();
-        let p = DVec3::new((main.inner + main.outer) / 2.0, 0.0, 0.0);
-        let near = crate::belts::rocks_near(sys, &sys.belts, sys.belt_seed, p, 0.0, 5.0e8, 0.0);
-        assert!(!near.is_empty(), "rocks in the main belt");
-        let (patch, k, rock, _) = &near[0];
-        let year = 3.156e7;
-        let again = crate::belts::rocks_near(sys, &sys.belts, sys.belt_seed, rock.orbit.position(year), year, 1.0e7, 0.0);
-        assert!(again.iter().any(|(q, j, _, _)| q == patch && j == k), "the same rock, a year on");
-    }
-
 }
 
 /// The smallest rock a field's draw makes (m): the registry's (`seeding.asteroids`

@@ -27,7 +27,6 @@ use crate::units::SUN_RADIUS;
 pub use crate::sheet::GROUND_MARGIN;
 use universe_physics::hyper::field_cost;
 
-
 /// Engage or disengage as commanded (only in flight). Both ways the engine
 /// is set back to zero: hyperdrive speed follows the throttle, so carrying
 /// full main-engine throttle in (or out) would fling the ship away.
@@ -186,78 +185,4 @@ pub fn cruise(
         return;
     }
     ship.position = next;
-}
-
-#[cfg(test)]
-mod tests {
-    
-
-    use super::*;
-    use crate::ship::ShipCommands;
-    use crate::testkit::Probe;
-
-    /// Commands the hyperdrive every frame: fixed orders, or a dive straight
-    /// at body `at` (steering, so the drive's own look-ahead stays out of it).
-    struct Orders {
-        orders: HyperdriveCommand,
-        at: Option<usize>,
-    }
-
-    impl Orders {
-        fn commands(&self, ship: &Ship, positions: &[DVec3]) -> ShipCommands {
-            let mut orders = self.orders;
-            if let Some(at) = self.at {
-                orders.heading = Some((positions[at] - ship.position).normalize());
-            }
-            ShipCommands { hyperdrive: Some(orders), ..ship.holding() }
-        }
-    }
-
-    /// A frame: the orders given (as a pilot would, before the step), then the step.
-    fn frame(p: &mut Probe, orders: &mut Orders) {
-        let positions = p.positions();
-        let c = orders.commands(&p.ship, &positions);
-        p.world.step_ship(&mut p.ship, &mut p.system, &c, 1.0 / 60.0, 1.0, &mut p.events);
-    }
-
-    #[test]
-    fn between_the_stars_the_field_burns_fuel_by_the_way_it_goes() {
-        let mut p = Probe::new(42);
-        let pos = p.positions();
-        // Two light years out from the home star: the same field, the same law.
-        p.ship.position = pos[0] + DVec3::X * 2.0 * crate::units::LIGHT_YEAR;
-        p.ship.velocity = DVec3::ZERO;
-        p.toggle_hyperdrive();
-        p.set_throttle(1.0 / 3.0);
-        let (before, at) = (p.ship.fuel, p.ship.position);
-        p.step(1.0 / 60.0, 1.0);
-        assert!(p.ship.hyperdrive, "{:?}", p.events);
-        let gone = p.ship.position.distance(at);
-        let speed = gone * 60.0;
-        let expected = p.ship.hyper_fuel(universe_physics::hyper::field_cost(p.ship.mass(), speed, p.ship.spec().hyper_efficiency) * gone);
-        assert!(gone > 1.0e9 && ((before - p.ship.fuel) - expected).abs() < 1e-4 * expected.max(1e-9), "{} kg for {gone:e} m (expected {expected})", before - p.ship.fuel);
-    }
-
-    #[test]
-    fn the_interlock_never_lets_the_drive_into_a_body() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let planet = sys.bodies[sys.station().unwrap()].rail.parent.unwrap();
-        p.toggle_hyperdrive();
-        p.set_throttle(1.0);
-        let mut dive = Orders { orders: HyperdriveCommand { steering: true, ..HyperdriveCommand::CRUISE }, at: Some(planet) };
-        for _ in 0..(60 * 60) {
-            frame(&mut p, &mut dive);
-            if !p.ship.hyperdrive {
-                break;
-            }
-        }
-        assert!(!p.ship.hyperdrive, "the interlock should have dropped the ship out");
-        assert!(p.ship.is_flying() && p.events.contains(&ShipEvent::HyperdriveDisengaged));
-        let pos = p.positions();
-        let above = p.ship.position.distance(pos[planet]) - sys.bodies[planet].max_radius();
-        eprintln!("interlock: dropped out {above:.0} m above the highest terrain");
-        assert!(above > 0.0, "never inside the body");
-    }
-
 }

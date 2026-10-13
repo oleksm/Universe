@@ -1,0 +1,85 @@
+{
+  "samples": {
+    "left_near": [
+      255,
+      0,
+      0
+    ],
+    "right_near": [
+      0,
+      255,
+      0
+    ],
+    "reverse_left": [
+      255,
+      0,
+      0
+    ],
+    "reverse_right": [
+      0,
+      255,
+      0
+    ],
+    "ui": [
+      255,
+      255,
+      255
+    ],
+    "new_camera": [
+      0,
+      0,
+      255
+    ]
+  },
+  "opposite_order_mismatched_pixels": 0,
+  "captures": [
+    {
+      "name": "depth-regression",
+      "settings": {},
+      "sha256": "c8df53fc142f23c353fd92c9e85fa5b0c4a0a560f1982491919ed8d3826653df"
+    },
+    {
+      "name": "dish-after",
+      "settings": {
+        "XDG_DATA_HOME": "/home/alexm/git/universe/out/review/studio-depth-v1/data"
+      },
+      "sha256": "bd6966be2c0cae92761d9ac0a1c189e97ce74fd6cfc694588d237c81e0659f50"
+    },
+    {
+      "name": "design",
+      "settings": {
+        "XDG_DATA_HOME": "/home/alexm/git/universe/out/review/studio-equipment-v1/data",
+        "UNIVERSE_TOOL": "modules"
+      },
+      "sha256": "62c2588d265e742df0730298040c2dc00c600b0054d7beb5815e6ef5b8af83cb"
+    },
+    {
+      "name": "walk",
+      "settings": {
+        "XDG_DATA_HOME": "/home/alexm/git/universe/out/review/studio-equipment-v1/data",
+        "UNIVERSE_STUDIO_WALK": "0,0.45,8,0"
+      },
+      "sha256": "91e8aa0b77e7300faa27d76804357865b50757919830727c2fe2f3fb474964d9"
+    },
+    {
+      "name": "balance",
+      "settings": {
+        "XDG_DATA_HOME": "/home/alexm/git/universe/out/review/studio-equipment-v1/data",
+        "UNIVERSE_BALANCE": "trim"
+      },
+      "sha256": "051f1dd007185ec100cb0bdaaaa77315f07386547cf6bcfcb85844bf21425fd0"
+    },
+    {
+      "name": "drive",
+      "settings": {
+        "XDG_DATA_HOME": "/home/alexm/git/universe/out/review/studio-equipment-v1/data",
+        "UNIVERSE_DRIVE": "0"
+      },
+      "sha256": "0e6befe846e5504c6ed90397d3dd87590d5a72f3be1957f3071caba0aa123635"
+    }
+  ],
+  "binary_sha256": "161615e8dce2ba3d694bb145b87ffcb79499fb24435c26cf2c4b3735e33fa213",
+  "before_sha256": "ab59464a6c021e8bf92b9126e7cffae23fd3d5265b15fb8e3e14d9cdbe523d1f",
+  "before_binary_sha256": "40c6258bc4d9399396f9c37f84543972c9fa6b85ce44dfe2f4f2a475707a1a95",
+  "workspace_tests": 135
+}

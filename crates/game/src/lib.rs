@@ -2,6 +2,7 @@ mod palette;
 mod devenv;
 mod devkit;
 mod visuals;
+mod visual_assets;
 use devkit::{dev, observe};
 mod economy;
 mod zoning;
@@ -28,14 +29,17 @@ mod interior;
 mod shipyard;
 mod studio;
 mod mounted;
+mod equipment_visual;
 mod studio_only;
 mod test_drive;
+mod flight_input;
 mod planet_studio;
 mod standards;
 mod sound;
 mod terrain_lod;
 mod lines_near;
 mod terrain_view;
+mod globe_assets;
 mod pgs_preview;
 #[cfg(feature = "dev")]
 mod pgs_debug;
@@ -47,7 +51,7 @@ use std::sync::Arc;
 
 use serde::{Deserialize, Serialize};
 use universe_engine::glam::DVec3;
-use universe_engine::{run, Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
+use universe_engine::{Camera, Config, Context, Frame, Game, KeyCode, MouseButton};
 use universe_sim::world::crew::Reach;
 use universe_sim::world::{CrewEvent, Triggers, WalkCommands};
 use universe_sim::world::charts::Charts;
@@ -230,6 +234,7 @@ pub struct App {
     pub sparks: Vec<Spark>,
     /// A glTF model shown ahead of the eye (dev: `UNIVERSE_MODEL=file.glb`).
     pub showcase: Option<universe_engine::PbrModel>,
+    showcase_path: Option<std::path::PathBuf>,
     /// On foot: what's in reach to use.
     pub reach: Option<Reach>,
     /// Defence turrets of the system in view, where they are now.
@@ -346,11 +351,8 @@ pub struct NetState {
 pub struct Caches {
     /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
     pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
-    /// Terrain worlds' globes (full, coarse) and surface maps, by (system, body).
-    pub globes: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, universe_engine::Mesh, std::sync::Arc<universe_engine::GlobeMap>)>,
-    /// Worlds drawn from their vector lines: the lines as a mesh of edges and the peaks and lows
-    /// pinned, by (system, body).
-    pub lines: std::collections::HashMap<(usize, usize), (universe_engine::Mesh, std::sync::Arc<universe_sim::world::worlds::LinesDraw>)>,
+    /// Ready globe leases for the current view. Missing entries draw base geometry.
+    pub globes: std::collections::HashMap<(usize, usize), Arc<globe_assets::Globe>>,
     /// The registry's things' models (`visual`), loaded the first time each is drawn.
     pub visuals: visuals::Visuals,
     /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
@@ -359,7 +361,7 @@ pub struct Caches {
     /// background (None till ready), by (system, body).
     pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
-    pub rocks: std::collections::HashMap<(usize, usize, usize), universe_engine::Mesh>,
+    pub rocks: std::collections::HashMap<(usize, usize, usize), Arc<rocks::Ready>>,
     /// Mining rigs: how far each ship's gear is out (see `rig`).
     pub rigs: rig::Rigs,
     /// The galaxy's stars as seen from a system: (system, direction and colour of each).
@@ -379,6 +381,8 @@ impl App {
     }
 
     fn new() -> Self {
+        mounted::prepare();
+        let started = std::time::Instant::now();
         let mut u = Universe::from_world(dev::world(seed()).unwrap_or_else(|e| panic!("PGS1 preview: {e}")));
         // UNIVERSE_RECORD=path: record the session from its start, saved there
         // on exit (replay it: `cargo run -p universe-sim --release --example replay -- path`).
@@ -388,6 +392,7 @@ impl App {
         // Traffic: reproducible settlers (UNIVERSE_SETTLERS, default 1,000).
         let settlers = std::env::var("UNIVERSE_SETTLERS").ok().and_then(|v| v.parse().ok()).unwrap_or(1_000);
         u.spawn_settlers(settlers, seed());
+        log::info!("startup world and traffic: {:.3} ms", started.elapsed().as_secs_f64()*1000.);
         let engine = EngineHandle::new(u);
         let (v, charts) = (engine.view(), engine.charts());
         let origin = v.ship_system;
@@ -449,13 +454,15 @@ impl App {
                 None
             },
             observe_tried: false,
-            observing: false,
+            observing: {
+                let on = std::env::var_os("UNIVERSE_OBSERVING").is_some();
+                if on { universe_prof::enable(true); }
+                on
+            },
             recording: None,
             sparks: Vec::new(),
-            showcase: std::env::var("UNIVERSE_MODEL").ok().and_then(|path| {
-                let r = std::fs::read(&path).map_err(|e| e.to_string()).and_then(|b| universe_engine::PbrModel::load_gltf(&b));
-                r.map_err(|e| log::warn!("showcase {path}: {e}")).ok()
-            }),
+            showcase: None,
+            showcase_path: std::env::var_os("UNIVERSE_MODEL").map(Into::into),
             reach: None,
             turrets: Vec::new(),
             following: None,
@@ -504,7 +511,6 @@ impl App {
             },
             caches: Caches {
                 globes: std::collections::HashMap::new(),
-                lines: std::collections::HashMap::new(),
                 lines_near: Default::default(),
                 visuals: Default::default(),
                 world_maps: std::collections::HashMap::new(),
@@ -811,17 +817,17 @@ impl App {
         }
         // SHIFT+F4: the heights of worlds drawn from their lines stretched, x1, x5, x10, for seeing
         // their relief; their globes, ground and lines made again.
-        if input.pressed(KeyCode::F4) && shift && !self.caches.lines.is_empty() {
+        if input.pressed(KeyCode::F4) && shift && self.caches.globes.values().any(|g| g.lines.is_some()) {
             let next = match universe_sim::world::worlds::stretch() as u32 {
                 1 => 5.0,
                 5 => 10.0,
                 _ => 1.0,
             };
             universe_sim::world::worlds::set_stretch(next);
-            let worlds: Vec<(usize, usize)> = self.caches.lines.keys().copied().collect();
+            globe_assets::invalidate();
+            let worlds: Vec<(usize, usize)> = self.caches.globes.keys().copied().collect();
             for k in worlds {
                 self.caches.globes.remove(&k);
-                self.caches.lines.remove(&k);
             }
             *self.caches.lines_near.borrow_mut() = Default::default();
             *self.caches.terrain_lod.borrow_mut() = Default::default();
@@ -1038,45 +1044,18 @@ impl App {
             return Controls::default();
         }
 
-        // Shift turns W/S/A/D/Q/E into translation thrusters (RCS).
-        let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
-        let mut command = self.v.ship.holding();
-        if shift {
-            command.rcs = DVec3::new(
-                input.axis(KeyCode::KeyA, KeyCode::KeyD) as f64,
-                input.axis(KeyCode::KeyQ, KeyCode::KeyE) as f64,
-                input.axis(KeyCode::KeyW, KeyCode::KeyS) as f64,
-            );
-        } else {
-            command.rcs = DVec3::ZERO;
-        }
-        // The throttle as a change (the engine has the ship as it is now).
-        let delta = if shift { 0.0 } else { input.axis(KeyCode::KeyS, KeyCode::KeyW) as f64 * 0.6 * dt };
-        let set = None;
-        if delta != 0.0 || set.is_some() {
-            self.engine.send(Command::Throttle { delta, set });
-        }
-        self.engine.send(Command::Thrusters(command.rcs));
-
-        let keys: f32 = if shift { 0.0 } else { 1.0 };
-        let mut c = Controls {
-            pitch: input.axis(KeyCode::ArrowUp, KeyCode::ArrowDown) as f64,
-            yaw: (input.axis(KeyCode::KeyE, KeyCode::KeyQ) * keys) as f64,
-            roll: (input.axis(KeyCode::KeyD, KeyCode::KeyA) * keys + input.axis(KeyCode::ArrowRight, KeyCode::ArrowLeft))
-                .clamp(-1.0, 1.0) as f64,
-        };
-        // (Not while T's list has the mouse.)
-        if ctx.cursor_grabbed() && !listing {
-            let m = if self.engine.running() {
+        let mouse = if ctx.cursor_grabbed() && !listing {
+            Some(if self.engine.running() {
                 self.mouse_since_tick += input.mouse_delta;
                 self.mouse_since_tick
-            } else {
-                input.mouse_delta
-            };
-            c.pitch = (c.pitch - m.y as f64 * 0.08).clamp(-1.0, 1.0);
-            c.yaw = (c.yaw - m.x as f64 * 0.08).clamp(-1.0, 1.0);
+            } else { input.mouse_delta })
+        } else { None };
+        let pilot = flight_input::sample(input, mouse, dt);
+        if pilot.throttle_delta != 0.0 {
+            self.engine.send(Command::Throttle { delta: pilot.throttle_delta, set: None });
         }
-        c
+        self.engine.send(Command::Thrusters(pilot.translation));
+        pilot.turn
     }
 
     fn handle_events(&mut self, ctx: &Context) {
@@ -1218,14 +1197,16 @@ impl App {
     /// a baked world near the eye.
     fn build_globes(&mut self) {
         let origin = self.view.cache;
+        // Drop inactive leases; the shared scheduler retains recently used data for return.
+        self.caches.globes.retain(|&(o, _), _| o == origin);
+        self.caches.world_maps.retain(|&(o, _), _| o == origin);
+        globe_assets::maintain();
         for (i, b) in self.view.system.bodies.iter().enumerate() {
-            if !self.caches.globes.contains_key(&(origin, i))
-                && let (Some(full), Some(coarse), Some(map)) = (terrain_view::globe(b, 8), terrain_view::globe(b, 2), terrain_view::globe_map(b))
-            {
-                self.caches.globes.insert((origin, i), (full.into(), coarse.into(), std::sync::Arc::new(map)));
-                if let Some((lines, draw)) = terrain_view::lines(b) {
-                    self.caches.lines.insert((origin, i), (lines.into(), std::sync::Arc::new(draw)));
-                }
+            let position = self.view.positions.get(i).copied().unwrap_or_default();
+            if let Some(globe) = globe_assets::request(self.view.system.clone(), i, &self.camera, position) {
+                self.caches.globes.insert((origin, i), globe);
+            } else {
+                self.caches.globes.remove(&(origin, i));
             }
             // A world with a bake: its full-resolution maps, read and encoded on a thread of their
             // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
@@ -1236,6 +1217,7 @@ impl App {
             }
             if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
                 && away < WORLD_MAPS_NEAR
+                && self.caches.globes.contains_key(&(origin, i))
                 && !self.caches.world_maps.contains_key(&(origin, i))
             {
                 let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
@@ -1245,7 +1227,7 @@ impl App {
                 // aren't today's, so none.)
                 let then = self.world_frame.clone().filter(|f| f.key == b.key);
                 let key = b.key.clone();
-                let lines = self.caches.lines.contains_key(&(origin, i));
+                let lines = self.caches.globes.get(&(origin, i)).is_some_and(|g| g.lines.is_some());
                 std::thread::spawn(move || {
                     let started = std::time::Instant::now();
                     // (Each read and encoded before the next is read: one image held at a time.)
@@ -1410,6 +1392,15 @@ impl App {
 
 impl Game for App {
     fn update(&mut self, ctx: &mut Context) {
+        if self.showcase.is_none() {
+            if let Some(path) = &self.showcase_path {
+                if let Some(model) = visual_assets::request_native(path, &[]) {
+                    self.showcase = Some(model.model.with_lease(model.clone()));
+                }
+            }
+        }
+
+        crate::visual_assets::maintain();
         let dt = ctx.dt as f64;
         // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
         if self.panels.shipyard.is_some() != self.held_to_cores {
@@ -1740,6 +1731,10 @@ fn hold_to_cores(n: Option<usize>) {
 /// `--fit`, `--compare` print and return true; with none, the interior studio's window
 /// (`[design]` the design to open). False: none was asked for and `window` is false.
 pub fn studio(args: &[String], window: bool) -> bool {
+    if let Some(result) = interior::ship_code::cli(args) {
+        match result { Ok(text) => print!("{text}"), Err(e) => { eprintln!("ship code: {e}"); std::process::exit(2); } }
+        return true;
+    }
     // (`--fit <design>`: its frame fitted (mounted, sized, braced) and saved, the
     // old one kept in backups/.)
     if let Some(k) = args.iter().position(|a| a == "--fit") {
@@ -1765,7 +1760,8 @@ pub fn studio(args: &[String], window: bool) -> bool {
     if window || flag.is_some() {
         let first = flag.map_or(1, |k| k + 1);
         let design = args.get(first).filter(|a| !a.starts_with("--")).map(String::as_str);
-        run(Config { title: "Freefall studio".into(), ..Default::default() }, studio_only::StudioOnly::new(design));
+        let design = design.map(str::to_owned);
+        universe_engine::run_prepared(Config { title: "Freefall studio".into(), ..Default::default() }, move || studio_only::StudioOnly::new(design.as_deref()));
         return true;
     }
     false
@@ -1792,5 +1788,5 @@ pub fn play() {
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {
         let _ = std::fs::create_dir_all(dir);
     }
-    run(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new());
+    universe_engine::run_prepared(Config { title: "Freefall".into(), hitch_log, ..Default::default() }, App::new);
 }

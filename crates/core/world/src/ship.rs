@@ -1116,35 +1116,21 @@ impl Ship {
         // The push: the main drive along the nose, the thrusters as set — as
         // much as they give without turning the ship (off balance, less: the
         // flight computer keeps it straight first).
-        let c = self.rcs.clamp(DVec3::splat(-1.0), DVec3::ONE);
         let a = if push { self.authority() } else { Authority { main: 0.0, lift: 0.0, side: 0.0 } };
-        let force = if push { DVec3::NEG_Z * (self.throttle.clamp(0.0, 1.0) * a.main) + DVec3::new(c.x * a.side, c.y * if c.y > 0.0 { a.lift } else { a.side }, c.z * a.side) } else { DVec3::ZERO };
-        // The turn: toward the rates asked, as fast as the span allows.
-        let want = turn.map(|t| DVec3::new(t.pitch.clamp(-1.0, 1.0) * s.turn_rate, t.yaw.clamp(-1.0, 1.0) * s.turn_rate, t.roll.clamp(-1.0, 1.0) * s.roll_rate));
-        let torque = want.map_or(DVec3::ZERO, |want| inertia * ((want - w) / dt.max(TURN_RESPONSE)));
-        if self.fuel <= 0.0 || (force == DVec3::ZERO && torque.length_squared() < 1e-6) {
-            // (Nothing asked, or nothing to burn: every jet off.)
-            self.jets.iter_mut().for_each(|j| *j = 0.0);
-            self.applied = (DVec3::ZERO, DVec3::ZERO);
-        } else {
-            // The drive at the throttle (its nozzles together, as far as it
-            // goes straight); the thrusters and lift do the rest.
-            let level = if push { self.throttle.clamp(0.0, 1.0) * a.main / s.main_thrust.max(1.0) } else { 0.0 };
-            let thrusters = crate::trim::thrusters(s, &self.trim);
-            self.applied = crate::thrusters::allocate_with(&thrusters, self.centre_of_mass(), self.mass(), inertia, Some(level), force, torque, &mut self.jets);
-        }
-        // Turning: I ω̇ = τ. (The spin's own coupling, ω × Iω, is left out:
-        // the flight computer holds against it when it turns the ship, and a
-        // ship tumbling free keeps its spin about its own axes — near enough
-        // for a hull this close to symmetric, and steady over the long steps
-        // the planner takes.) Never past the rates asked in one span.
-        let accel = inertia.inverse() * self.applied.1;
-        let mut next = w + accel * dt;
-        if let Some(want) = want {
-            let toward = |w: f64, n: f64, t: f64| if (t - w) * (t - n) < 0.0 { t } else { n };
-            next = DVec3::new(toward(w.x, next.x, want.x), toward(w.y, next.y, want.y), toward(w.z, next.z, want.z));
-        }
-        self.angular_velocity = next;
+        let (force, level) = crate::flight_control::force_demand(self.throttle, self.rcs, a, s.main_thrust, push);
+        let want = turn.map(|t| crate::flight_control::rates(
+            DVec3::new(t.pitch, t.yaw, t.roll),
+            DVec3::new(s.turn_rate, s.turn_rate, s.roll_rate),
+        ));
+        let thrusters = crate::trim::thrusters(s, &self.trim);
+        let result = crate::flight_control::step(
+            &thrusters,
+            crate::flight_control::Body { mass: self.mass(), com: self.centre_of_mass(), inertia, spin: w },
+            crate::flight_control::Demand { force, want_rates: want, drive: Some(level), enabled: self.fuel > 0.0 },
+            dt, &mut self.jets,
+        );
+        self.applied = (result.force, result.torque);
+        self.angular_velocity = result.spin;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
     }
 
@@ -1152,22 +1138,14 @@ impl Ship {
     /// fuel), every other off; the ship pushed and turned by just what
     /// they give about its centre of mass, nothing held against it.
     fn drive_manual(&mut self, dt: f64) {
-        let s = self.spec();
-        let com = self.centre_of_mass();
-        self.jets.resize(s.thrusters.len(), 0.0);
-        let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);
-        let thrusters = crate::trim::thrusters(s, &self.trim);
-        for (k, t) in thrusters.iter().enumerate() {
-            let on = k < 64 && self.held & (1 << k) != 0 && self.fuel > 0.0;
-            self.jets[k] = if on { 1.0 } else { 0.0 };
-            if on {
-                let f = t.push * t.thrust;
-                force += f;
-                torque += (t.at - com).cross(f);
-            }
-        }
-        self.applied = (force, torque);
-        self.angular_velocity += self.inertia().inverse() * torque * dt;
+        let thrusters = crate::trim::thrusters(self.spec(), &self.trim);
+        let result = crate::flight_control::manual(
+            &thrusters,
+            crate::flight_control::Body { mass: self.mass(), com: self.centre_of_mass(), inertia: self.inertia(), spin: self.angular_velocity },
+            self.held, self.fuel > 0.0, dt, &mut self.jets,
+        );
+        self.applied = (result.force, result.torque);
+        self.angular_velocity = result.spin;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
     }
 
@@ -1407,124 +1385,5 @@ fn cruise() -> HyperdriveCommand {
 }
 
 #[cfg(test)]
-mod classes {
-    use super::*;
-    use crate::content::content;
-
-    #[test]
-    fn every_hull_is_balanced_and_sized_for_its_job() {
-        // (Not the hulls the registry marks outdated: rough early guesses, never sized for real
-        // equipment, they fly as they are.)
-        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.") && !outdated_hull(&h.key)) {
-            let h: &'static ClassSpec = h;
-            // Every way it pushes, nearly all of it without turning (at the
-            // load it's balanced for: a full tank, the hold half full).
-            let a = h.authority(h.fuel_capacity, h.hold_capacity / 2.0);
-            for (what, got, full) in [("drive", a.main, h.main_thrust), ("lift", a.lift, h.lift_thrust), ("thrusters", a.side, h.rcs_thrust)] {
-                assert!(got > 0.9 * full, "{}: {what} only {:.0}%", h.key, 100.0 * got / full);
-            }
-            let loaded = h.dry_mass + h.fuel_capacity;
-            eprintln!(
-                "{:<16} dry {:>5.1} t  tank {:>4.0} t  hold {:>5.0} t  main {:>4.1} m/s²  lift {:>4.1} m/s² (full hold {:>4.1})  turns {:.1}/{:.1}/{:.1}  {:.0} CR",
-                h.name, h.dry_mass / 1e3, h.fuel_capacity / 1e3, h.hold_capacity / 1e3, h.main_thrust / loaded, h.lift_thrust / loaded, h.lift_thrust / (loaded + h.hold_capacity), h.turn_accel.x, h.turn_accel.y, h.turn_accel.z, h.frame.price
-            );
-            // MC-07 hold/tank/lift sizing is owner-deferred (2026-10-05):
-            // standards/SFO/metadata/hulls/mc-07.yaml revision.because.
-            // Keep its allocator checks above; only the unaccepted hover target
-            // is exempt until the registry settles sizing from flight trials.
-            if h.key != "hull.import.mc07" {
-                assert!(h.lift_thrust / loaded > crate::units::STANDARD_GRAVITY * 1.1, "{}: can't hover at 1 g with an empty hold", h.key);
-            }
-        }
-    }
-}
-
-#[cfg(test)]
-mod balance {
-    use super::*;
-    use crate::content::content;
-
-    #[test]
-    fn loading_moves_the_centre_of_mass_and_off_balance_costs_authority() {
-        // (Not the hulls the registry marks outdated: rough early guesses, never sized for real
-        // equipment, they fly as they are.)
-        for (_, h) in content().hulls.iter().filter(|(_, h)| h.key.starts_with("hull.") && !outdated_hull(&h.key)) {
-            let h: &'static ClassSpec = h;
-            // Built balanced about its usual load: empty to full, it keeps nearly all its push.
-            let (empty, full) = (h.authority(h.fuel_capacity, 0.0), h.authority(h.fuel_capacity, h.hold_capacity));
-            for (what, a) in [("empty", empty), ("full", full)] {
-                assert!(a.lift > 0.9 * h.lift_thrust && a.main > 0.9 * h.main_thrust && a.side > 0.85 * h.rcs_thrust, "{} {what}: {a:?}", h.key);
-            }
-        }
-        // 3 m off its balance, the lift can't push straight with all it has. (The Drover, an
-        // outdated hull: no longer its hold forward of its centre, its equipment at real size
-        // crowding it; but off balance is off balance.)
-        let d = starter();
-        let (com, m) = (d.centre_of_mass(d.fuel_capacity, 0.0), d.dry_mass + d.fuel_capacity);
-        let i = d.inertia(d.fuel_capacity, 0.0);
-        let straight = crate::thrusters::STRAIGHT * d.turn_accel.min_element();
-        let off = crate::thrusters::balanced(&d.thrusters, com + DVec3::Z * 3.0, m, i, DVec3::Y, d.lift_thrust, straight);
-        assert!(off < 0.85 * d.lift_thrust, "{:.0}%", 100.0 * off / d.lift_thrust);
-    }
-}
-
-
-#[cfg(test)]
-mod energy_tests {
-    use super::*;
-
-    #[test]
-    fn the_plant_charges_the_banks_burning_fuel_for_it() {
-        let mut ship = Ship::new(DVec3::ZERO, DVec3::ZERO, DQuat::IDENTITY);
-        ship.energy = 0.0;
-        let (fuel, spec) = (ship.fuel, ship.spec().clone());
-        ship.burn(10.0);
-        let power = ship.spare_power().min(spec.capacitor_rate);
-        assert!(power > 0.0, "a stock ship has power to spare");
-        assert!((ship.energy - power * 10.0).abs() < 1.0, "{} J", ship.energy);
-        assert!((fuel - ship.fuel - ship.reactor_fuel(power * 10.0)).abs() < 1e-9, "fuel burnt for it");
-        // Full, it stops.
-        ship.energy = spec.capacitor_capacity;
-        let fuel = ship.fuel;
-        ship.burn(10.0);
-        assert_eq!((ship.energy, ship.fuel), (spec.capacitor_capacity, fuel));
-    }
-}
-
-
-#[cfg(test)]
-mod inert_fitting_tests {
-    use super::*;
-    use crate::{content::content, modules::{Does, SlotKind, Gear}};
-
-    #[test]
-    fn inert_hardpoints_add_mass_and_boxes_but_no_weapons() {
-        let c = content();
-        let base = starter();
-        let mut modules: std::collections::HashMap<_, _> = base.fit.iter()
-            .map(|(_, h)| (*h, c.get(*h).clone())).collect();
-        let mut added = 0.0;
-        for m in modules.values_mut().filter(|m| m.does.slot() == SlotKind::Hardpoint) {
-            m.does = Does::Inert { slot: SlotKind::Hardpoint };
-            m.power = 0.0;
-            m.mass += 123.0;
-        }
-        for (_, h) in &base.fit {
-            added += modules[h].mass - c.get(*h).mass;
-        }
-        assert!(added > 0.0);
-        let build = |modules: &std::collections::HashMap<_, crate::modules::Module>| ClassSpec::assemble(
-            base.key.clone(), base.name.clone(), base.shape.clone(), base.shape_ref,
-            base.shape(), base.frame.clone(), base.fit.clone(), |h| &modules[&h]);
-        let fitted = build(&modules).unwrap();
-        assert!((fitted.dry_mass - base.dry_mass - added).abs() < 1e-8);
-        assert!(fitted.gun.is_none() && fitted.laser.is_none());
-        assert!(!fitted.has(Gear::Gun) && !fitted.has(Gear::Laser));
-        assert_eq!(fitted.layout().len(), base.layout().len());
-        // Physical presence must not satisfy a mandatory functioning base block.
-        for m in modules.values_mut().filter(|m| m.does.slot() == SlotKind::Sensors) {
-            m.does = Does::Inert { slot: SlotKind::Sensors };
-        }
-        assert!(build(&modules).unwrap_err().contains("no Sensors"));
-    }
-}
+#[path = "flight_control_tests.rs"]
+mod flight_control_tests;

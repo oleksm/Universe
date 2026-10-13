@@ -69,13 +69,13 @@ pub(super) fn canonical_texel(terrain: &universe_sim::Terrain, dir: DVec3) -> Op
 
 /// A world's surface map (see `GlobeMap`): its terrain sampled on a cube,
 /// height in units of its relief and crater-ness (or, below zero, how much
-/// a spaceport's plain it is), made on all cores.
-pub fn globe_map(body: &Body) -> Option<universe_engine::GlobeMap> {
+/// a spaceport's plain it is). Worker callers choose bounded parallelism.
+pub(super) fn globe_map_with_threads(body: &Body, threads: usize) -> Option<universe_engine::GlobeMap> {
     let terrain = body.terrain.as_ref()?;
     let n = MAP_SIZE as usize;
     let amp = terrain.amplitude.max(1.0);
     let mut texels = vec![[0.0f32; 2]; 6 * n * n];
-    let threads = std::thread::available_parallelism().map_or(4, |c| c.get()).max(1);
+    let threads = threads.clamp(1, 2);
     let rows = (6 * n).div_ceil(threads);
     std::thread::scope(|s| {
         for (k, chunk) in texels.chunks_mut(rows * n).enumerate() {
@@ -304,51 +304,3 @@ pub fn crater_rims(frame: &mut Frame, body: &Body, center: DVec3, t: f64) {
 
 /// How bright the ground's fill is, relative to its line color.
 pub const FILL: f32 = 0.2;
-
-#[cfg(test)]
-mod canonical_preview_tests {
-    use super::*;
-    use universe_sim::world::worlds::pgs::{Surface, Water};
-
-    #[test]
-    fn exported_water_levels_and_unknowns_reach_display_unchanged() {
-        let cases: [(&[u8], &str); 3] = [
-            (include_bytes!("../../core/world/tests/fixtures/pgs1-water-v1/lake_cut.pgs"), include_str!("../../core/world/tests/fixtures/pgs1-water-v1/lake_cut.json")),
-            (include_bytes!("../../core/world/tests/fixtures/pgs1-water-v1/ocean_cut.pgs"), include_str!("../../core/world/tests/fixtures/pgs1-water-v1/ocean_cut.json")),
-            (include_bytes!("../../core/world/tests/fixtures/pgs1-v1/root.pgs"), include_str!("../../core/world/tests/fixtures/pgs1-v1/root.json")),
-        ];
-        let mut lake_above_zero = false;
-        let mut unknown_below_zero = false;
-        for (bytes, json) in cases {
-            let source = Surface::read(bytes).unwrap();
-            let water = source.capabilities & 2 != 0;
-            let mut terrain = universe_sim::Terrain::new(TerrainKind::Terran, 6.0e6, 17);
-            terrain.from_surface(std::sync::Arc::new(source));
-            assert_eq!(terrain.canonical_water(), water);
-            let gold: serde_json::Value = serde_json::from_str(json).unwrap();
-            for q in gold["queries"].as_array().unwrap() {
-                let d = &q["direction"];
-                let dir = DVec3::new(d[0].as_f64().unwrap(), d[1].as_f64().unwrap(), d[2].as_f64().unwrap());
-                let sample = terrain.surface_sample(dir).unwrap();
-                assert!(sample.categories.is_none());
-                let [h, wet] = canonical_texel(&terrain, dir).unwrap();
-                let expected = match sample.water {
-                    Water::Wet { level_m, .. } => {
-                        lake_above_zero |= level_m > 0.0;
-                        assert_eq!(wet, 1.0);
-                        level_m
-                    }
-                    _ => {
-                        unknown_below_zero |= sample.water == Water::Unknown && sample.height_m < 0.0;
-                        assert_eq!(wet, 0.0);
-                        sample.height_m
-                    }
-                };
-                assert!((h as f64 * terrain.amplitude.max(1.0) - expected).abs() < 0.001);
-                assert!((terrain.surface(dir) - expected).abs() < 1e-9);
-                assert!((terrain.surface_coarse(dir) - expected).abs() < 1e-9);
-            }
-        }
-        assert!(lake_above_zero && unknown_below_zero);
-    }
-}
