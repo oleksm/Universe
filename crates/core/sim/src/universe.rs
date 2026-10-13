@@ -615,9 +615,11 @@ impl Universe {
         let sys = self.ship_system();
         sys.positions(self.world.time, &mut self.positions);
         let mut events = Vec::new();
+        let mut crew = self.crew;
         let around = self.around_crew(&sys);
         let layout = self.interiors.layouts.get(&self.vessels[crate::combat::PLAYER].ship.spec().key).cloned();
-        self.crew.step(&sys, &self.vessels[crate::combat::PLAYER].ship, self.world.time, &self.positions, &around, layout.as_deref(), c, real_dt, &mut events);
+        crew.step(&sys, &self.vessels[crate::combat::PLAYER].ship, self.world.time, &self.positions, &around, layout.as_deref(), c, real_dt, &mut events);
+        self.crew = crew;
         self.events.extend(events.into_iter().map(Event::Crew));
     }
 
@@ -668,7 +670,7 @@ impl Universe {
     /// What stands near the pilot on a body, to walk on and bump into (its
     /// frame): the buildings of its ports (as far as they're built), the ships
     /// landed close by.
-    fn around_crew(&self, sys: &StarSystem) -> Vec<universe_world::walk::Collider<'static>> {
+    fn around_crew(&self, sys: &StarSystem) -> Vec<universe_world::walk::Collider<'_>> {
         use universe_world::walk::Collider;
         let mut out = Vec::new();
         let Place::Outside { body, position, .. } = self.crew.place else { return out };

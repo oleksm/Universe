@@ -53,7 +53,7 @@ pub fn segment_distance(a: DVec3, b: DVec3, p: DVec3) -> f64 {
 /// the original untouched. Rail bodies are solved exactly at every substep,
 /// or extrapolated from an `ephemeris` valid around `span.t` (as `integrate`).
 pub fn simulate<B: OnRails>(bodies: &[B], ephemeris: Option<&Ephemeris>, body: &RigidBody, span: Span, driver: &mut impl Driver) -> (RigidBody, Outcome) {
-    let mut copy = *body;
+    let mut copy = body.clone();
     let mut positions = Vec::with_capacity(bodies.len());
     let outcome = integrate(bodies, ephemeris, &mut positions, &mut copy, span, driver);
     (copy, outcome)

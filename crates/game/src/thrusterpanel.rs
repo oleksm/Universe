@@ -36,7 +36,7 @@ fn label(nozzle: &str) -> String {
 /// idle), where its centre of mass is, and (in the planner) its module
 /// mounts, one of them picked.
 pub struct Picture<'a> {
-    pub spec: &'static universe_sim::world::ship::ClassSpec,
+    pub spec: &'a universe_sim::world::ship::ClassSpec,
     pub jets: &'a [f64],
     pub com: DVec3,
     /// Draw its modules (boxes where they sit), those in these slots bright.

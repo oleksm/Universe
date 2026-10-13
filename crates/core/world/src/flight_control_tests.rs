@@ -4,7 +4,8 @@ fn legacy_drive(ship: &mut Ship, turn: Option<&Controls>, dt: f64, push: bool) {
         if ship.manual && push {
             return legacy_manual(ship, dt);
         }
-        let s = ship.spec();
+        let spec = ship.spec().clone();
+        let s = &spec;
         let inertia = ship.inertia();
         let w = ship.angular_velocity;
         // The push: the main drive along the nose, the thrusters as set — as
@@ -43,7 +44,8 @@ fn legacy_drive(ship: &mut Ship, turn: Option<&Controls>, dt: f64, push: bool) {
     }
 
 fn legacy_manual(ship: &mut Ship, dt: f64) {
-        let s = ship.spec();
+        let spec = ship.spec().clone();
+        let s = &spec;
         let com = ship.centre_of_mass();
         ship.jets.resize(s.thrusters.len(), 0.0);
         let (mut force, mut torque) = (DVec3::ZERO, DVec3::ZERO);

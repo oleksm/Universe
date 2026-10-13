@@ -27,7 +27,7 @@ pub struct ClassSpec {
     pub shape: String,
     pub shape_ref: crate::content::Handle<crate::shape::Shape>,
     /// A designed hull's own shape (not in the content: see `design`).
-    pub shape_own: Option<&'static crate::shape::Shape>,
+    pub shape_own: Option<std::sync::Arc<crate::shape::Shape>>,
     /// An imported hull's model (a glTF file's path: see `import`), drawn as made.
     pub visual: Option<String>,
     /// The frame alone (kg), its slots, and what's fitted in them.
@@ -469,25 +469,31 @@ impl ClassSpec {
     /// the nose, the belly lift up, the thrusters in their weakest direction
     /// (N). Off balance, less than they're rated. Worked out per tonne of
     /// fuel and load (a tonne either way changes little).
-    pub fn authority(&'static self, fuel: f64, load: f64) -> Authority {
+    pub fn authority(&self, fuel: f64, load: f64) -> Authority {
         self.authority_trimmed(fuel, load, &crate::trim::Trim::default())
     }
 
     /// `authority`, with the ship trimmed by `trim` (see `trim`).
-    pub fn authority_trimmed(&'static self, fuel: f64, load: f64, trim: &crate::trim::Trim) -> Authority {
-        let key = (self as *const ClassSpec as usize, (fuel / 1000.0).round() as i64, (load / 1000.0).round() as i64, trim.key());
+    pub fn authority_trimmed(&self, fuel: f64, load: f64, trim: &crate::trim::Trim) -> Authority {
+        let (fuel, load) = ((fuel / 1000.0).round() as i64 as f64 * 1000.0, (load / 1000.0).round() as i64 as f64 * 1000.0);
+        let (com, mass, inertia) = (crate::trim::centre_of_mass(self, fuel, load, trim), self.dry_mass + fuel + load, crate::trim::inertia(self, fuel, load, trim));
+        let straight = crate::thrusters::STRAIGHT * self.turn_accel.min_element();
+        let thrusters = crate::trim::thrusters(self, trim);
+        // Cache the solver's exact inputs: addresses can be reused after a local
+        // definition is dropped, and an unshared definition can still be edited.
+        let mut key: Vec<u64> = com.to_array().into_iter().chain(inertia.to_cols_array())
+            .chain([mass, straight, self.main_thrust, self.lift_thrust, self.rcs_thrust])
+            .map(f64::to_bits).collect();
+        for t in thrusters.iter() {
+            key.extend(t.at.to_array().into_iter().chain(t.push.to_array()).chain([t.thrust]).map(f64::to_bits));
+            key.push(t.role as u64);
+        }
         thread_local! {
-            static CACHE: std::cell::RefCell<std::collections::HashMap<(usize, i64, i64, i64), Authority>> = Default::default();
+            static CACHE: std::cell::RefCell<std::collections::HashMap<Vec<u64>, Authority>> = Default::default();
         }
         if let Some(a) = CACHE.with(|c| c.borrow().get(&key).copied()) {
             return a;
         }
-        // (At the tonne the key stands for, so it's the same answer whoever
-        // asks first: the world stays the same to the bit.)
-        let (fuel, load) = (key.1 as f64 * 1000.0, key.2 as f64 * 1000.0);
-        let (com, mass, inertia) = (crate::trim::centre_of_mass(self, fuel, load, trim), self.dry_mass + fuel + load, crate::trim::inertia(self, fuel, load, trim));
-        let straight = crate::thrusters::STRAIGHT * self.turn_accel.min_element();
-        let thrusters = crate::trim::thrusters(self, trim);
         let push = |d: DVec3, full: f64| crate::thrusters::balanced(&thrusters, com, mass, inertia, d, full, straight);
         let a = Authority {
             main: crate::thrusters::balanced_with(&thrusters, com, mass, inertia, DVec3::NEG_Z, self.main_thrust, straight, true),
@@ -521,6 +527,21 @@ impl ClassSpec {
         fit: Fit,
         get: impl Fn(crate::content::Handle<crate::modules::Module>) -> &'m crate::modules::Module,
     ) -> Result<ClassSpec, String> {
+        Self::assemble_install(key, name, shape_key, shape_ref, shape, frame, fit, get, true)
+    }
+
+    #[allow(clippy::too_many_arguments)]
+    fn assemble_install<'m>(
+        key: String,
+        name: String,
+        shape_key: String,
+        shape_ref: crate::content::Handle<crate::shape::Shape>,
+        shape: &crate::shape::Shape,
+        frame: HullFrame,
+        fit: Fit,
+        get: impl Fn(crate::content::Handle<crate::modules::Module>) -> &'m crate::modules::Module,
+        validate_install: bool,
+    ) -> Result<ClassSpec, String> {
         use crate::modules::{Does, SlotKind, BASE_BLOCKS};
         let mut fitted: Vec<(&Slot, &crate::modules::Module)> = Vec::new();
         let mut misfits = Vec::new();
@@ -543,7 +564,7 @@ impl ClassSpec {
             }
             fitted.push((slot, m));
         }
-        for base in BASE_BLOCKS {
+        for base in BASE_BLOCKS.into_iter().filter(|_| validate_install) {
             if !fitted.iter().any(|(s, m)| s.kind == base && !matches!(m.does, Does::Inert { .. })) {
                 return Err(format!("no {base:?}: every ship must carry one"));
             }
@@ -569,13 +590,13 @@ impl ClassSpec {
         let hyper_top = modules().filter_map(|m| if let Does::Hyperdrive { top_speed, .. } = m.does { Some(top_speed) } else { None }).fold(0.0, f64::max);
         let plant_efficiency = modules().filter_map(|m| if let Does::PowerPlant { output, efficiency, .. } = m.does { Some(output * efficiency) } else { None }).sum::<f64>() / power_output.max(1e-9);
         let power_draw: f64 = modules().map(|m| m.power).sum();
-        if power_draw > power_output {
+        if validate_install && power_draw > power_output {
             return Err(format!("its modules draw {:.1} MW, its plant makes {:.1} MW", power_draw / 1e6, power_output / 1e6));
         }
-        let comm = modules().find_map(|m| m.does.comm()).expect("a comm (a base block)");
+        let comm = modules().find_map(|m| m.does.comm()).unwrap_or(crate::modules::Comm { capture: 0.0, link: 0.0, lag: 0.0, capacity: 0.0 });
         let (turn_rate, roll_rate) = modules()
             .find_map(|m| if let Does::FlightComputer { turn_rate, roll_rate } = m.does { Some((turn_rate, roll_rate)) } else { None })
-            .expect("a flight computer (a base block)");
+            .unwrap_or((0.0, 0.0));
         let mut features: Vec<crate::modules::Feature> = modules().flat_map(|m| if let Does::NavComputer { features, .. } = &m.does { features.clone() } else { Vec::new() }).collect();
         features.sort();
         features.dedup();
@@ -684,11 +705,36 @@ impl ClassSpec {
         })
     }
 
+    /// Assemble a session-owned definition using the same module, mass and
+    /// thruster calculations as a registry hull. Does not register or leak it.
+    pub fn assemble_owned(key: String, name: String, shape: std::sync::Arc<crate::shape::Shape>, frame: HullFrame, fit: Fit) -> Result<Self, String> {
+        Self::assemble_owned_install(key, name, shape, frame, fit, true)
+    }
+
+    /// Build a local prototype without a commissioned ship's base-block or
+    /// power-sufficiency requirements. Slot/type/fuel/geometry checks still apply.
+    /// Missing comm has zero capabilities; missing flight computer has zero
+    /// turn rates (manual control only). Actual power output and draw are kept;
+    /// this adds no modules or alternative runtime power rules. Refit/commission
+    /// paths still validate a complete installation.
+    pub fn assemble_uncommissioned_owned(key: String, name: String, shape: std::sync::Arc<crate::shape::Shape>, frame: HullFrame, fit: Fit) -> Result<Self, String> {
+        Self::assemble_owned_install(key, name, shape, frame, fit, false)
+    }
+
+    fn assemble_owned_install(key: String, name: String, shape: std::sync::Arc<crate::shape::Shape>, frame: HullFrame, fit: Fit, validate_install: bool) -> Result<Self, String> {
+        let c = crate::content::content();
+        // The content handle is only a fallback; shape_own always wins.
+        let shape_ref = c.shapes.iter().next().map(|(h, _)| h).ok_or("the content has no shapes")?;
+        let mut spec = Self::assemble_install(key, name, shape.key.clone(), shape_ref, &shape, frame, fit, |h| c.get(h), validate_install)?;
+        spec.shape_own = Some(shape);
+        Ok(spec)
+    }
+
     /// This hull with another fit (refused, with the reason, if it won't do).
     pub fn refit(&self, fit: Fit) -> Result<ClassSpec, String> {
         let c = crate::content::content();
         let mut s = ClassSpec::assemble(self.key.clone(), self.name.clone(), self.shape.clone(), self.shape_ref, self.shape(), self.frame.clone(), fit, |h| c.get(h))?;
-        s.shape_own = self.shape_own;
+        s.shape_own = self.shape_own.clone();
         Ok(s)
     }
 
@@ -705,8 +751,8 @@ impl ClassSpec {
 
 impl ClassSpec {
     /// Its shape.
-    pub fn shape(&self) -> &'static crate::shape::Shape {
-        self.shape_own.unwrap_or_else(|| crate::content::content().get(self.shape_ref))
+    pub fn shape(&self) -> &crate::shape::Shape {
+        self.shape_own.as_deref().unwrap_or_else(|| crate::content::content().get(self.shape_ref))
     }
 
     /// How high its centre stands over the ground when it's set down: on a
@@ -856,6 +902,9 @@ pub struct Ship {
     /// Its numbers, hull and fit together (kept to hand; see `spec`).
     #[serde(skip)]
     spec_ref: Option<&'static ClassSpec>,
+    /// Session-owned definition; never entered into the content registry or saves.
+    #[serde(skip)]
+    transient: Option<std::sync::Arc<ClassSpec>>,
     /// Fuel on board (kg).
     #[serde(default = "full_tank")]
     pub fuel: f64,
@@ -973,6 +1022,7 @@ impl Ship {
             fit: None,
             marks: None,
             spec_ref: None,
+            transient: None,
             hangar: None,
             powered: true,
             manual: false,
@@ -1008,6 +1058,18 @@ impl Ship {
         }
     }
 
+    /// A local ship using an owned definition, without commissioning a content hull.
+    /// Clones share the definition; its shape is freed with the final owner.
+    /// The definition is not serialized: this constructor is for local sessions.
+    pub fn with_spec(spec: std::sync::Arc<ClassSpec>, position: DVec3, velocity: DVec3, orientation: DQuat) -> Self {
+        let mut ship = Self::new(position, velocity, orientation);
+        ship.fuel = spec.fuel_capacity;
+        ship.energy = spec.capacitor_capacity;
+        ship.ammo = spec.gun.as_ref().map_or(0, |g| g.magazine);
+        ship.transient = Some(spec);
+        ship
+    }
+
     /// What's seen of it from another system: where it is, how it moves,
     /// what it's doing and on what hull; nothing inside it (no lists, nothing
     /// to allocate). Its fuel, cargo, weapons and the rest are a new ship's.
@@ -1019,7 +1081,10 @@ impl Ship {
             powered: self.powered,
             hangar: self.hangar,
             class: self.class,
-            ..Ship::new(self.position, self.velocity, self.orientation)
+            ..match &self.transient {
+                Some(spec) => Ship::with_spec(spec.clone(), self.position, self.velocity, self.orientation),
+                None => Ship::new(self.position, self.velocity, self.orientation),
+            }
         }
     }
 
@@ -1029,7 +1094,8 @@ impl Ship {
     }
 
     /// What its class is built with.
-    pub fn spec(&self) -> &'static ClassSpec {
+    pub fn spec(&self) -> &ClassSpec {
+        if let Some(spec) = &self.transient { return spec; }
         match (self.spec_ref, &self.fit) {
             (Some(s), _) => s,
             (None, None) => crate::content::content().get(self.class),
@@ -1048,6 +1114,7 @@ impl Ship {
 
     /// Its numbers to hand again (after loading).
     pub fn refresh(&mut self) {
+        if self.transient.is_some() { return; }
         self.spec_ref = self.fit.as_ref().and_then(|f| fitted(self.class, f).ok());
     }
 
@@ -1055,7 +1122,11 @@ impl Ship {
     /// or the hold it leaves can't take what's in it; a smaller tank keeps
     /// what it holds.
     pub fn refit(&mut self, fit: Fit) -> Result<(), String> {
-        let spec = fitted(self.class, &fit)?;
+        let owned = self.transient.as_ref().map(|s| s.refit(fit.clone()).map(std::sync::Arc::new)).transpose()?;
+        let spec = match &owned {
+            Some(s) => s.as_ref(),
+            None => fitted(self.class, &fit)?,
+        };
         if self.cargo_volume > spec.hold_volume + 1e-6 {
             return Err(format!("THE HOLD WOULD HOLD {:.0} M3, THERE'S {:.1} M3 IN IT", spec.hold_volume, self.cargo_volume));
         }
@@ -1063,6 +1134,13 @@ impl Ship {
             return Err(format!("THE HOLD WOULD TAKE {:.0} T, THERE'S {:.1} T IN IT", spec.hold_capacity / 1000.0, (self.cargo + self.hopper) / 1000.0));
         }
         self.fuel = self.fuel.min(spec.fuel_capacity);
+        if let Some(spec) = owned {
+            self.transient = Some(spec);
+            self.fit = Some(std::sync::Arc::new(fit));
+            self.jets.clear();
+            return Ok(());
+        }
+        let spec = fitted(self.class, &fit)?;
         let stock = &crate::content::content().get(self.class).fit;
         if &fit == stock {
             self.fit = None;
@@ -1110,6 +1188,7 @@ impl Ship {
         if self.manual && push {
             return self.drive_manual(dt);
         }
+        let mut jets = std::mem::take(&mut self.jets);
         let s = self.spec();
         let inertia = self.inertia();
         let w = self.angular_velocity;
@@ -1127,8 +1206,9 @@ impl Ship {
             &thrusters,
             crate::flight_control::Body { mass: self.mass(), com: self.centre_of_mass(), inertia, spin: w },
             crate::flight_control::Demand { force, want_rates: want, drive: Some(level), enabled: self.fuel > 0.0 },
-            dt, &mut self.jets,
+            dt, &mut jets,
         );
+        self.jets = jets;
         self.applied = (result.force, result.torque);
         self.angular_velocity = result.spin;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
@@ -1138,12 +1218,14 @@ impl Ship {
     /// fuel), every other off; the ship pushed and turned by just what
     /// they give about its centre of mass, nothing held against it.
     fn drive_manual(&mut self, dt: f64) {
+        let mut jets = std::mem::take(&mut self.jets);
         let thrusters = crate::trim::thrusters(self.spec(), &self.trim);
         let result = crate::flight_control::manual(
             &thrusters,
             crate::flight_control::Body { mass: self.mass(), com: self.centre_of_mass(), inertia: self.inertia(), spin: self.angular_velocity },
-            self.held, self.fuel > 0.0, dt, &mut self.jets,
+            self.held, self.fuel > 0.0, dt, &mut jets,
         );
+        self.jets = jets;
         self.applied = (result.force, result.torque);
         self.angular_velocity = result.spin;
         self.orientation = (self.orientation * DQuat::from_scaled_axis(self.angular_velocity * dt)).normalize();
@@ -1225,7 +1307,12 @@ impl Ship {
     pub fn rigid(&self) -> RigidBody {
         // Drag in air (none in the hyperdrive's field).
         let ballistic = if self.hyperdrive { 0.0 } else { self.mass() / self.spec().drag_area };
-        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: self.spec().radius, parts: &self.spec().shape().spheres, ballistic }
+        let spec = self.spec();
+        let parts = match &spec.shape_own {
+            Some(shape) => std::borrow::Cow::Owned(shape.spheres.clone()),
+            None => std::borrow::Cow::Borrowed(&crate::content::content().get(spec.shape_ref).spheres[..]),
+        };
+        RigidBody { position: self.position, velocity: self.velocity, orientation: self.orientation, angular_velocity: self.angular_velocity, radius: self.spec().radius, parts, ballistic }
     }
 
     /// Take Dogma's word for where the ship is and how it moves.

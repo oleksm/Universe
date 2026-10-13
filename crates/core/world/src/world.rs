@@ -39,6 +39,7 @@ pub struct StepResult {
 
 pub struct World {
     pub galaxy: Galaxy,
+    isolated: bool,
     surfaces: std::sync::Arc<crate::worlds::pgs::Sources>,
     /// Seconds since the epoch.
     pub time: f64,
@@ -129,7 +130,28 @@ impl World {
         let galaxy = Galaxy::generate(seed);
         let home_system = network::find_home(&galaxy, seed);
         let gate_links = network::build(&galaxy, home_system);
+        Self::empty(galaxy, home_system, gate_links, surfaces, false)
+    }
+
+    /// A single explicit system with independent time, caches and combat state.
+    /// No galaxy generation, gate network, or implicit system generation occurs.
+    /// Events remain caller-owned, as with `step_ship` and `command`.
+    /// The existing integrator requires body 0 as a root (it may be inert).
+    pub fn isolated(galaxy: Galaxy, system: StarSystem) -> Result<Self, String> {
+        if galaxy.stars.len() != 1 || system.index != 0 {
+            return Err("an isolated world requires one galaxy star and system index 0".into());
+        }
+        if system.bodies.first().is_none_or(|b| b.rail.parent.is_some()) {
+            return Err("an isolated system requires body 0 as its root".into());
+        }
+        let world = Self::empty(galaxy, 0, Vec::new(), Default::default(), true);
+        lock(&world.systems).insert(0, Arc::new(system));
+        Ok(world)
+    }
+
+    fn empty(galaxy: Galaxy, home_system: usize, gate_links: Vec<(usize, usize)>, surfaces: Arc<crate::worlds::pgs::Sources>, isolated: bool) -> Self {
         Self {
+            isolated,
             surfaces,
             galaxy,
             time: 0.0,
@@ -147,7 +169,7 @@ impl World {
             missiles: Vec::new(),
             beams: Vec::new(),
             impacts: Vec::new(),
-            goods: crate::goods::catalog(),
+            goods: if isolated { Vec::new() } else { crate::goods::catalog() },
             mined: HashMap::new(),
             turrets: Default::default(),
             turret_guns: HashMap::new(),
@@ -176,6 +198,7 @@ impl World {
         if let Some(sys) = systems.get(&i) {
             return sys.clone();
         }
+        assert!(!self.isolated, "system {i} is not in this isolated world");
         let mut sys = crate::charts::generate(&self.galaxy, &self.gate_links, i);
         crate::worlds::pgs::apply_sources(&mut sys, &self.surfaces);
         let sys = Arc::new(sys);
@@ -185,6 +208,9 @@ impl World {
 
     /// The charts of this galaxy, to share (with the client).
     pub fn charts(&self) -> crate::charts::Charts {
+        if self.isolated {
+            return crate::charts::Charts::isolated(self.galaxy.clone(), self.system(0));
+        }
         crate::charts::Charts::new(self.galaxy.seed, self.galaxy.clone(), self.gate_links.clone(), self.goods.clone(), self.home_system).with_surfaces(self.surfaces.clone())
     }
 

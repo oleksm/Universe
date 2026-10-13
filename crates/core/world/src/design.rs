@@ -411,10 +411,10 @@ impl Design {
         let radius = 0.3 * self.length.max(self.width + 2.0 * self.wing_span) * 0.5 + 6.0;
         let drag = self.width * self.height * 0.6;
         let def = crate::ship::HullDef::made(key, self.name.to_uppercase(), shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, STRENGTH_PER_KG * frame_mass);
-        let shape: &'static crate::shape::Shape = Box::leak(Box::new(shape));
+        let shape = std::sync::Arc::new(shape);
         let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
         let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
-        let mut spec = def.build(any, shape, module)?;
+        let mut spec = def.build(any, &shape, module)?;
         spec.shape_own = Some(shape);
         Ok(spec)
     }

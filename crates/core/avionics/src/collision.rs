@@ -183,7 +183,7 @@ pub fn predict_within(sys: &StarSystem, ship: &Ship, t: f64, positions: &[DVec3]
         }
         body = next;
         time = now;
-        prev = (ahead, next.position);
+        prev = (ahead, body.position);
     }
     out
 }

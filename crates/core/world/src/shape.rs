@@ -71,8 +71,9 @@ pub struct Shape {
     pub part_points: Vec<std::ops::Range<usize>>,
     /// Each convex part's reach and probes (as `solids`).
     pub parts: Vec<Part>,
-    /// Where its centre of mass was in the frame it was made in (it's
-    /// centred on it since): a model made in that frame is drawn shifted by −this.
+    /// The input-frame origin subtracted during construction: normally its
+    /// uniform-density centroid, or the explicit origin from `from_parts_at`.
+    /// A model made in the input frame is drawn shifted by −this.
     pub made_centre: DVec3,
     /// A modelled hull's own surfaces, to walk on and bump into (its frame);
     /// none for a shape made from points.
@@ -106,6 +107,32 @@ impl Ramp {
 }
 
 impl Shape {
+    /// Build owned geometry from convex point sets and named nodes in metres.
+    /// Uses the content shape builder without registering the result. The first
+    /// part is the hull; additional parts are joined, with overlaps counted twice.
+    /// `made_centre` is the input-frame, uniform-density volume centroid. Mesh,
+    /// nodes and contacts are shifted by its negative; `solid.centroid` is zero.
+    /// A material-weighted mass centre must be expressed in that shifted frame.
+    pub fn from_parts(key: String, parts: Vec<Vec<DVec3>>, nodes: Vec<(String, DVec3, DVec3)>) -> Result<Self, String> {
+        let mut parts = parts.into_iter();
+        let body = parts.next().unwrap_or_default();
+        ShapeDef::made(key, body, parts.collect(), Vec::new(), nodes).build()
+    }
+
+    /// `from_parts`, using an explicit input-frame origin (for example an
+    /// authored material-weighted COM). All geometry and contact data are built
+    /// in that frame in one pass. `made_centre` equals `origin`; `solid.centroid`
+    /// is the uniform-density centroid minus `origin`, and `solid.inertia`
+    /// remains about that uniform centroid. No walk mesh or ramp is synthesized.
+    pub fn from_parts_at(key: String, parts: Vec<Vec<DVec3>>, nodes: Vec<(String, DVec3, DVec3)>, origin: DVec3) -> Result<Self, String> {
+        if !origin.is_finite() {
+            return Err("shape origin must be finite".into());
+        }
+        let mut parts = parts.into_iter();
+        let body = parts.next().unwrap_or_default();
+        ShapeDef::made(key, body, parts.collect(), Vec::new(), nodes).build_at(Some(origin))
+    }
+
     pub fn nodes(&self, role: Role) -> impl Iterator<Item = &Node> {
         self.nodes.iter().filter(move |n| n.role == role)
     }
@@ -287,6 +314,10 @@ impl ShapeDef {
     /// The shape it describes, checked: a real solid, its nodes named for
     /// their roles and pointing somewhere.
     pub fn build(self) -> Result<Shape, String> {
+        self.build_at(None)
+    }
+
+    fn build_at(self, origin: Option<DVec3>) -> Result<Shape, String> {
         let s = self.scale;
         if !(s.is_finite() && s > 0.0) {
             return Err(format!("scale must be positive ({s})"));
@@ -321,13 +352,13 @@ impl ShapeDef {
         if solid.volume <= 0.0 {
             return Err("its hull has no volume (the points are flat)".into());
         }
-        // Centred on its centre of mass: what moves it turns about it.
-        let c = solid.centroid;
+        // Choose the reference frame once, before building any derived contacts.
+        let c = origin.unwrap_or(solid.centroid);
         let mut mesh = mesh;
         for p in &mut mesh.points {
             *p -= c;
         }
-        solid.centroid = DVec3::ZERO;
+        solid.centroid -= c;
         let mut nodes = Vec::new();
         for n in self.nodes {
             let role = Role::of(&n.name).ok_or_else(|| format!("node '{}': name it mount_*, nozzle_*, gear_*, dock_*, door_*, cockpit or hatch", n.name))?;

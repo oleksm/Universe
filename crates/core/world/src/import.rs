@@ -120,10 +120,10 @@ pub fn hull_from_gltf(bytes: &[u8], visual: &str) -> Result<ClassSpec, String> {
     // (The mount each slot offers, where its record says.)
     let mounts = record.map_or_else(Vec::new, |h| h.slots.iter().filter_map(|s| s.mount.clone().map(|m| (s.name.clone(), m))).collect());
     let def = crate::ship::HullDef::made(key, name, shape.key.clone(), frame_mass, price, slots, fit, thrusters, radius, drag, strength).with_bay(bay.0, bay.1).with_mounts(mounts);
-    let shape: &'static crate::shape::Shape = Box::leak(Box::new(shape));
+    let shape = std::sync::Arc::new(shape);
     let any = content().shapes.iter().next().map(|(h, _)| h).expect("the content has shapes");
     let module = |k: &str| content().handle::<Module>(k).map(|h| (h, content().get(h)));
-    let mut spec = def.build(any, shape, module)?;
+    let mut spec = def.build(any, &shape, module)?;
     spec.shape_own = Some(shape);
     spec.visual = Some(visual.to_string());
     Ok(spec)
