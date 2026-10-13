@@ -3684,3 +3684,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull/pipes, GPU appearance/cost and temporal edge stability; thermal/pressure ratings, plate/weld/fatigue design and loaded structure unqualified."
+  - key: equipment.thermal.heat.sink
+    version: 1
+    manifest_sha256: "291b4996c69dc1b1581da3334a8a6bdf2d376f7b4d096931adba22a6ace500e9"
+    installed: 58ed04cd
+    game: "the loader (world::assets) at fso 58ed04cd"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-heat-sink/v1 (288396 bytes, bounds [-1.275, 0.0, -0.705] to [1.275, 1.46, 0.705]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Game GPU appearance/cost, final hull and plumbing, thermal stratification and heat-transfer rate, pressure fatigue, thermal bridges and loaded support qualification."
