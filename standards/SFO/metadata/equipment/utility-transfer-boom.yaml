@@ -5,11 +5,11 @@ identity:
   maker: org.hadley
   revision: draft
   slot: utility
-  description: "A connection through the hull for taking fuel, water or air aboard, or giving it out."
+  description: "Gives one liquid to another ship or takes it: a rigid 8 m boom on a slewing, luffing root, the liquid in a 125 mm pipe inside it, a 1 m telescoping tip with the same dry-break coupling as the refuelling port. No hose."
 size_class: 2
 fits: mount.utility-s2
 physical:
-  mass: 900
+  mass: 480
   volume: 2.88
   length: 8.0
   width: 0.6
@@ -17,9 +17,14 @@ physical:
 built_of:
   parts: utility-transfer-boom
   list:
-    - { code: TBM0-01, name: "Boom", description: "Telescoping tube.", mass: 450, length: 6.35, width: 0.476, height: 0.476, item: stock.al6061-tb-120x3, quantity: 518.0, module: module.welding-bay }
-    - { code: TBM0-02, name: "Hose and coupling", mass: 270, length: 5.36, width: 0.402, height: 0.402, item: stock.st304-pl-3, quantity: 310.0, module: module.machining-centre }
-    - { code: TBM0-03, name: "Rams and controls", mass: 180, length: 4.68, width: 0.351, height: 0.351, item: stock.st4340-bar-120, quantity: 207.0, module: module.machining-centre }
+    - { code: TBM0-01, name: "Boom", description: "A 200 x 5 mm aluminium tube, 7 m, the vacuum jacket and the structure in one.", mass: 58, length: 7.0, width: 0.2, height: 0.2, item: stock.al6061-tb-200x5, quantity: 66.7, module: module.welding-bay }
+    - { code: TBM0-02, name: "Product pipe", description: "125 mm stainless pipe, 3 mm wall, inside the boom on spacers.", mass: 66, length: 7.0, width: 0.13, height: 0.13, item: stock.st304-pl-3, quantity: 75.9, module: module.welding-bay }
+    - { code: TBM0-03, name: "Telescoping tip", description: "A 1 m stroke inner tube on a sliding seal gland, for the last metre and to ride out the two ships' drift.", mass: 15, length: 1.5, width: 0.18, height: 0.18, item: stock.st304-pl-3, quantity: 22.5, module: module.machining-centre }
+    - { code: TBM0-04, name: "Coupling and valve", description: "The refuelling port's 125 mm dry-break coupling half and isolation valve.", mass: 58, length: 0.45, width: 0.25, height: 0.25, item: stock.st304-pl-3, quantity: 87.0, module: module.machining-centre }
+    - { code: TBM0-05, name: "Fluid swivels", description: "Two 125 mm rotary joints at the root, one on each axis, so the liquid passes the joints without a hose.", mass: 50, length: 0.4, width: 0.3, height: 0.3, item: stock.st304-pl-3, quantity: 75.0, module: module.machining-centre }
+    - { code: TBM0-06, name: "Root turret", description: "Slew and luff bearings and the base frame on the eight mount points; the root datum is the slew axis at the mount face.", mass: 80, length: 0.6, width: 0.6, height: 0.6, item: stock.st4340-bar-120, quantity: 120.0, module: module.machining-centre }
+    - { code: TBM0-07, name: "Drives", description: "Slew and luff, 4 kN m each.", mass: 134, length: 0.4, width: 0.3, height: 0.3, item: good.electric-motors, quantity: 134.0, module: module.assembly-shop }
+    - { code: TBM0-08, name: "Latches and controls", description: "Three stow latches along the boom; the drives' controls, the tip camera and range sensors.", mass: 19, length: 0.3, width: 0.2, height: 0.1, item: good.electronics, quantity: 19.0, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:
@@ -28,6 +33,7 @@ function:
   reach: 8.0
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "An 8 m boom giving 20 kg/s to another ship. Chosen." }
+  - { of: [function, size_class], tier: invented, review: true, note: "An 8 m boom giving 20 kg/s to another ship. Chosen." }
+  - { of: [built_of.list, physical, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. Stowed it lies along the hull, 8 m from root to tip; deployed it swings out (slew 180 degrees, luff 0 to 90, chosen) and the coupling sits 8 m from the slew axis, 9 m with the tip run out. A hose would want a reel and a bend radius the box cannot hold, so the liquid runs in a rigid pipe and passes the root through two fluid swivels, as a dockside loading arm does. Same scope as the refuelling port S1: one liquid (water, liquid oxygen or liquid methane), 125 mm, 1 MPa, 90 to 370 K; the boom's annulus is the vacuum jacket. Design tip load 500 N (chosen, the two ships' drift caught by the tip): 4 kN m at the root, 25 MPa in the 200 x 5 tube, 80 mm tip deflection. Drives at 60 N m/kg (the swivels' invented density): 67 kg each. Total 480 kg (it was 900)." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
