@@ -3892,3 +3892,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual hull placement and mount loads; GPU appearance/cost and temporal filtering; fictional field performance,1.5MW thermal balance and internal packing unqualified."
+  - key: equipment.hyperdrive.halcyon.s3
+    version: 1
+    manifest_sha256: "2c265588f72b48d33b93ac665913c2230f7c3de8d687fab63708b9002e06ba5e"
+    installed: 3027ba00
+    game: "the loader (world::assets) at fso 3027ba00"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-halcyon-s3/v1 (154444 bytes, bounds [-1.835, 0.0, -1.225] to [1.835, 2.45, 1.225]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull placement,mount loads,GPU appearance/cost and temporal filtering; fictional field performance,3MW thermal balance and internal packing unqualified."
