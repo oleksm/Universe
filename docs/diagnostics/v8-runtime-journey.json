@@ -1,0 +1,381 @@
+{
+  "rule": "v8-runtime-journey/1",
+  "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+  "base_revision": "0c484a5651a09c82a5db0fdffab6a4bcaed615da",
+  "spawn": {
+    "altitude_datum": 100000.0,
+    "circular_speed": 7705.783812039148,
+    "fuel": 30000.0,
+    "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+    "lift_accel": 23.18668868397578,
+    "main_accel": 29.591310586442294,
+    "mode": "orbit",
+    "orientation": [
+      0.36330768748676645,
+      -0.46209822012243934,
+      0.8081848314417203,
+      -0.03619443880225032
+    ],
+    "policy": "one explicit initial spawn; lowflight is a separate downstream test, not continuation of failed orbit; target PadFrame at canonical direction, no port/flattening/ATC mutation; no subsequent flight state resets",
+    "position": [
+      18730687142.532375,
+      185861535.28698155,
+      96518074849.50842
+    ],
+    "radius": 6281370.0,
+    "ready_ms": 3393.9298839999997,
+    "ship": "DROVER",
+    "source_radius": 6371000.0,
+    "stage": "spawn",
+    "time": 22680.0,
+    "velocity": [
+      34491.68624799237,
+      -5478.624351280096,
+      -5556.287495510013
+    ]
+  },
+  "phase_counts": {
+    "Approach": 75209,
+    "Descent": 5374
+  },
+  "coast_altitude_range_m": [
+    94443.59094421007,
+    95181.75636069849
+  ],
+  "coast_ticks": 300,
+  "crossing_altitudes": {
+    "10000": {
+      "time_s_since_spawn": 688.3999999899825,
+      "tick": 6884
+    },
+    "5000": {
+      "time_s_since_spawn": 898.1199999869314,
+      "tick": 8982
+    },
+    "1000": {
+      "time_s_since_spawn": 2259.5600000166487,
+      "tick": 77054
+    },
+    "100": {
+      "time_s_since_spawn": 2293.160000017382,
+      "tick": 78734
+    }
+  },
+  "landing": {
+    "altitude_canonical_before": 7.210001097992063,
+    "commands": {
+      "anchor": null,
+      "arm": null,
+      "excavate": null,
+      "gun_target": null,
+      "hangar": null,
+      "hyperdrive": null,
+      "jets": null,
+      "manual": null,
+      "power": null,
+      "rcs": [
+        -0.002958763104513868,
+        0.40807132427002385,
+        -0.003531456715902565
+      ],
+      "throttle": 0.0,
+      "turn": {
+        "pitch": 2.2985774790832e-05,
+        "roll": 2.574966066346946e-05,
+        "yaw": -7.207763820810223e-05
+      },
+      "weapons": null
+    },
+    "dt": 0.020000000000436557,
+    "events": [
+      "SystemsOff",
+      {
+        "RuleFired": {
+          "outcome": "locked",
+          "rule": "Hoar E ground"
+        }
+      },
+      {
+        "Landed": {
+          "body": "Hoar E",
+          "station": false
+        }
+      }
+    ],
+    "fuel": 29195.852830754622,
+    "hull": 1.0,
+    "orientation": [
+      0.7524730828421095,
+      0.017088927587557957,
+      -0.45865567072068353,
+      -0.47236342350753513
+    ],
+    "phase": "Descent",
+    "position": [
+      18799113205.751953,
+      186196571.0232373,
+      96499922187.20045
+    ],
+    "stage": "flight",
+    "state": {
+      "Landed": {
+        "body": 7,
+        "local_orientation": [
+          0.772347892975354,
+          0.3278939454526849,
+          0.5364845734873191,
+          -0.09026956941368391
+        ],
+        "local_position": [
+          3793010.5233212607,
+          -4832310.424030505,
+          1335145.0932030836
+        ]
+      }
+    },
+    "target_horizontal_before": 0.3935133039793763,
+    "target_plane_height_before": -4.794590716006362,
+    "target_speed_before": 1.4837970521244876,
+    "tick": 80583,
+    "time": 25010.14000001819,
+    "velocity": [
+      29365.57837796665,
+      110.05470922362613,
+      -7794.337534341298
+    ]
+  },
+  "ordinary_walk_ground_clearance_range_m": [
+    -2.3228494683280587e-09,
+    1.927219273056835e-09
+  ],
+  "walk_samples": 1200,
+  "walk_sampled_dry_count": 1200,
+  "final": {
+    "all_walk_samples_dry": true,
+    "base": "0c484a56",
+    "exit": true,
+    "final_ship_state": {
+      "Landed": {
+        "body": 7,
+        "local_orientation": [
+          0.7723478929752555,
+          0.32789394545264217,
+          0.5364845734872491,
+          -0.09026956941367276
+        ],
+        "local_position": [
+          3793010.5233212607,
+          -4832310.424030505,
+          1335145.0932030836
+        ]
+      }
+    },
+    "fuel_used": 804.1471692453779,
+    "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+    "hull": 1.0,
+    "initial_orbit": {
+      "radius_m": 6381370.0,
+      "seconds_coasted": 30,
+      "speed_m_s": 7705.783812039148
+    },
+    "jump_max_ground_clearance_m": 0.44457449670881033,
+    "landed": true,
+    "live_reboard_check": {
+      "crew_after_live_walk": {
+        "place": {
+          "Outside": {
+            "body": 7,
+            "pitch": 0.0,
+            "position": [
+              3792997.9470829065,
+              -4832312.717109263,
+              1335118.6174235106
+            ],
+            "velocity": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "yaw": -2.265839710466108
+          }
+        }
+      },
+      "events": [],
+      "fresh_isolated_game_plan": {
+        "decks": [],
+        "hull": "hull.drover"
+      },
+      "layout_present_after_normal_set_layout": false,
+      "reboard": false,
+      "same_world_and_ship_state": true,
+      "shape_walk_present": false
+    },
+    "reach_before_reboard": "Some(Ramp)",
+    "reboard": false,
+    "remaining_fuel": 29195.852830754622,
+    "render_contact_gate": "owned by engine; not measured here",
+    "return_orbit_and_eviction": "not attempted",
+    "runtime": "actual main rlibs; command harness, not GUI or render validation",
+    "simulated_total_seconds": 2350.173333351231,
+    "source_ready_before_first_tick": true,
+    "start_mode": "orbit",
+    "state_resets_after_spawn": 0,
+    "ticks": 80583,
+    "walk_max_distance_m": 12.819640389969612,
+    "wall_seconds": 7.873991013
+  },
+  "failed_original_attempt": {
+    "base": "0c484a56",
+    "exit": false,
+    "final_ship_state": {
+      "Destroyed": {
+        "respawn_in": 3.0
+      }
+    },
+    "fuel_used": 249.38725643331418,
+    "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+    "hull": 1.0,
+    "initial_orbit": {
+      "radius_m": 6381370.0,
+      "seconds_coasted": 0,
+      "speed_m_s": 7705.783812039148
+    },
+    "jump_max_ground_clearance_m": 0.0,
+    "landed": false,
+    "reach_before_reboard": null,
+    "reboard": false,
+    "remaining_fuel": 29750.612743566686,
+    "render_contact_gate": "owned by engine; not measured here",
+    "return_orbit_and_eviction": "not attempted",
+    "runtime": "actual main rlibs; command harness, not GUI or render validation",
+    "simulated_flight_seconds": 711.0199999954493,
+    "source_ready_before_first_tick": true,
+    "state_resets_after_spawn": 0,
+    "ticks": 13483,
+    "walk_max_distance_m": 0.0,
+    "wall_seconds": 4.539453943
+  },
+  "separate_lowflight": {
+    "base": "0c484a56",
+    "exit": true,
+    "final_ship_state": {
+      "Landed": {
+        "body": 7,
+        "local_orientation": [
+          0.7700329186936936,
+          0.327502600697254,
+          0.5398020622627244,
+          -0.09167924651337968
+        ],
+        "local_position": [
+          3793010.5277237073,
+          -4832310.383027715,
+          1335145.2149999565
+        ]
+      }
+    },
+    "fuel_used": 6.6616747826301435,
+    "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+    "hull": 1.0,
+    "initial_orbit": null,
+    "jump_max_ground_clearance_m": 0.4445744948461652,
+    "landed": true,
+    "reach_before_reboard": "Some(Ramp)",
+    "reboard": false,
+    "remaining_fuel": 29993.33832521737,
+    "render_contact_gate": "owned by engine; not measured here",
+    "return_orbit_and_eviction": "not attempted",
+    "runtime": "actual main rlibs; command harness, not GUI or render validation",
+    "simulated_total_seconds": 92.81333333463044,
+    "source_ready_before_first_tick": true,
+    "start_mode": "lowflight",
+    "state_resets_after_spawn": 0,
+    "ticks": 3639,
+    "walk_max_distance_m": 12.819666876526608,
+    "wall_seconds": 4.076166282
+  },
+  "scope": {
+    "headless_shared_runtime": true,
+    "continuous_gui_journey": false,
+    "production_install": false,
+    "return_to_orbit": false,
+    "eviction_revisit": false,
+    "render_contact_verified_here": false
+  },
+  "trace_paths": {
+    "baseline": {
+      "path": "/home/alexm/git/universe-ships-pgs-journey/out/review/v8-runtime-journey/baseline/trace.jsonl",
+      "sha256": "c0e69ccae2463c994194f8dc368b08fd6a6c30e3c749fcf47b43813061ea8b64",
+      "bytes": 10448833
+    },
+    "lowflight-live": {
+      "path": "/home/alexm/git/universe-ships-pgs-journey/out/review/v8-runtime-journey/lowflight-live/trace.jsonl",
+      "sha256": "d3b7581f7f75493b17bac42a41ebaaa68aa3cec331830a9eed482c5b9c44d0c2",
+      "bytes": 3851245
+    },
+    "orbit-diagnostic": {
+      "path": "/home/alexm/git/universe-ships-pgs-journey/out/review/v8-runtime-journey/orbit-diagnostic/trace.jsonl",
+      "sha256": "865f346b912a84bf5c15b9fc9118a2a4e6afe9190094aa5f646c0fdae2980269",
+      "bytes": 72748408
+    },
+    "orbit-final": {
+      "path": "/home/alexm/git/universe-ships-pgs-journey/out/review/v8-runtime-journey/orbit-final/trace.jsonl",
+      "sha256": "429e61aa62f6aff8fae54341b62393d70f85119d55fa5cbe00d9a6f5682a3ac0",
+      "bytes": 72895595
+    }
+  },
+  "provenance": {
+    "base": "0c484a5651a09c82a5db0fdffab6a4bcaed615da",
+    "source": "/home/alexm/git/universe-ships-pgs-journey/tools/review/v8_runtime_journey.rs",
+    "source_sha256": "64ce65926704fa30be2469cf557d29aae358e817f99d466875ce7ac60faba3df",
+    "binary_sha256": "4c0a5fe8ee7b8c483ac76085bd3a789530034def39c437a37bfad7398e5537fc",
+    "linked": {
+      "universe_world": {
+        "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_world-737773266b9cb189.rlib",
+        "sha256": "daacb02584e42ad9dac951e3222b5c109628a76bf395fa7d33d636092242301d"
+      },
+      "universe_avionics": {
+        "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_avionics-3b1bd9672ee1e129.rlib",
+        "sha256": "6557277a06db281e1368dc8995ac26b081f4392138b777068649df3cd9ef0727"
+      },
+      "universe_sim": {
+        "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_sim-df218cce4ee08173.rlib",
+        "sha256": "e38e8b84383bcaa873aeb553aa6ded43c6b11afbd9f37c6751a6626f3b0db411"
+      },
+      "glam": {
+        "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libglam-0d3222e24b2a642a.rlib",
+        "sha256": "5d4d4543cb5e6b58cc30ad46ee7b145a80591b532558fe62e5fb757e7932ef1a"
+      },
+      "serde_json": {
+        "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libserde_json-ac9f5323bf4c8534.rlib",
+        "sha256": "90eed1e621bebdc987b31d3305020cde51cca9e4634fed1d4127756c8c094529"
+      }
+    },
+    "command": [
+      "rustc",
+      "--edition=2024",
+      "/home/alexm/git/universe-ships-pgs-journey/tools/review/v8_runtime_journey.rs",
+      "-L",
+      "dependency=/home/alexm/git/universe-ships-ready-main/target/release/deps",
+      "-C",
+      "opt-level=2",
+      "-o",
+      "out/review/v8-runtime-journey/orbit-final/journey",
+      "--extern",
+      "universe_world=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_world-737773266b9cb189.rlib",
+      "--extern",
+      "universe_avionics=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_avionics-3b1bd9672ee1e129.rlib",
+      "--extern",
+      "universe_sim=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_sim-df218cce4ee08173.rlib",
+      "--extern",
+      "glam=/home/alexm/git/universe-ships-ready-main/target/release/deps/libglam-0d3222e24b2a642a.rlib",
+      "--extern",
+      "serde_json=/home/alexm/git/universe-ships-ready-main/target/release/deps/libserde_json-ac9f5323bf4c8534.rlib"
+    ],
+    "mode": "orbit",
+    "handoff_sha256": "03eec8eb64dea2726d23741ec5855057ee110c2d199ebf3d272f3e7f15dafa24",
+    "scope": "headless actual shared runtime; no desktop/GPU/input-device validation; run this entire script under shared scenery launcher2CPU8GiB600s",
+    "exit": 0,
+    "run_seconds": 7.953604669979541
+  }
+}
