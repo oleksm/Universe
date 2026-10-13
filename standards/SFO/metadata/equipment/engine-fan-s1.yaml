@@ -9,7 +9,7 @@ identity:
 size_class: 1
 fits: mount.engine-s1
 physical:
-  mass: 60
+  mass: 73.8
   volume: 1.15
   length: 1.2
   width: 1.2
@@ -19,8 +19,8 @@ needs:
 built_of:
   parts: engine-fan-s1
   list:
-    - { code: FAN1-01, name: "Duct and stators", mass: 18, length: 0.803, width: 0.803, height: 0.536, item: stock.cfc-pl-3, quantity: 20.7, module: module.machining-centre }
-    - { code: FAN1-02, name: "Fan and hub", mass: 15, length: 0.756, width: 0.756, height: 0.504, item: stock.ti64-pl-5, quantity: 17.25, module: module.machining-centre }
+    - { code: FAN1-01, name: "Duct and stators", mass: 33.4, length: 1.2, width: 1.2, height: 0.8, item: stock.cfc-pl-3, quantity: 38.4, module: module.machining-centre }
+    - { code: FAN1-02, name: "Fan and hub", mass: 13.4, length: 0.976, width: 0.976, height: 0.504, item: stock.ti64-pl-5, quantity: 15.4, module: module.machining-centre }
     - { code: FAN1-03, name: "Electric motor", mass: 21, length: 0.846, width: 0.846, height: 0.564, item: good.electric-motors, quantity: 21, module: module.assembly-shop }
     - { code: FAN1-04, name: "Inverter and controls", mass: 6, length: 0.557, width: 0.557, height: 0.371, item: good.electronics, quantity: 6, module: module.assembly-shop }
 making:
@@ -40,8 +40,9 @@ function:
   min_density: 0.3
 life: 473364000
 basis:
-  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan whose exit is as wide as its disc (A = 0.79 m2, air 1.2 kg/m3): the wake does not contract, so T = rho A v2 and the air leaves the duct at v = sqrt(T / (rho A)), the exhaust given. This is the duct exit velocity, not an open rotor's disc (sqrt(T / 2 rho A)) or far-wake (twice that) velocity. Shaft power was taken as the open-rotor ideal T^1.5 / sqrt(2 rho A) / 0.75; see the flag. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
+  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan whose exit is as wide as its disc (A = 0.79 m2, air 1.2 kg/m3): the wake does not contract, so T = rho A v2 and the air leaves the duct at v = sqrt(T / (rho A)), the exhaust given. This is the duct exit velocity, not an open rotor's disc (sqrt(T / 2 rho A)) or far-wake (twice that) velocity. Shaft power was taken as the open-rotor ideal T^1.5 / sqrt(2 rho A) / 0.75; see the flag. Mass first taken at about 6 kg a kilonewton (60 kg); now worked out from the parts, see below. Chosen; review." }
   - { of: [needs.power, function.efficiency], tier: derived, review: true, note: "Flag: the ducted ideal jet power is T v / 2 = 0.51 MW, but the power (0.97 MW) used the open-rotor ideal (0.73 MW) / 0.75, so against the duct it is 0.53 efficient, not 0.75. Either power falls to 0.68 MW at 0.75, or efficiency is 0.53; heat_to_hull follows. Not changed." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "Worked out from material and dimensions, in the modeller's first build (v1): the duct a closed 3 mm carbon-composite shell, inner skin round the 1.0 m bore, outer round the 1.2 m outside, 0.8 m long, with its end rings, about 6.2 m2 at 1,580 kg/m3, 28.4 kg; hollow 3 mm stators 2.4 and titanium mount pads 2.6 (FAN1-01, 33.4 kg). Titanium blades 7.6, hub 3.0 and shaft 2.8 at a 12 mm tip gap (FAN1-02, 13.4). Motor and inverter kept at 21 and 6 kg (their power density flagged as for the S3). 73.8 kg against the 60 first taken. No cooling, laminate reinforcement or fasteners counted. Review." }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }
