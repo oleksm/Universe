@@ -10,14 +10,14 @@ size_class: 1
 fits: mount.tank-s1
 physical:
   mass: 117
-  volume: 0.736
+  volume: 0.764
   length: 1.15
   width: 0.8
-  height: 0.8
+  height: 0.83
 built_of:
   parts: tank-nitrogen-100kg
   list:
-    - { code: TKN100KG-01, name: "Composite pressure vessel", mass: 97, length: 1.05, width: 0.8, height: 0.8, item: stock.cfc-pl-3, quantity: 111.6, module: module.welding-bay }
+    - { code: TKN100KG-01, name: "Composite pressure vessel", description: "A type IV bottle: a polymer liner and aluminium bosses under a carbon and epoxy overwrap, 25 mm in all; hoop and helical layers. Its stock is a mass proxy for the overwrap.", mass: 97, length: 1.05, width: 0.8, height: 0.8, item: stock.cfc-pl-3, quantity: 111.6, module: module.welding-bay }
     - { code: TKN100KG-02, name: "Valve and regulator", mass: 12, length: 0.585, width: 0.351, height: 0.351, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
     - { code: TKN100KG-03, name: "Saddles and bands", description: "Two aluminium saddles and straps that seat the bottle on its mount.", mass: 8, length: 0.8, width: 0.8, height: 0.25, item: stock.al6061-pl-5, quantity: 9.20, module: module.machining-centre }
 making:
@@ -26,8 +26,15 @@ function:
   kind: tank
   capacity: 100.0
   holds: material.nitrogen
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-nitrogen-100kg/v1"
+  manifest_sha256: "a929301ae57b4a6135d267e150ecbb649c0c474e42a96935524b288b182c4e40"
+  version: 1
+  triangles: 3312
 life: 473364000
 basis:
   - { of: [physical, function], tier: derived, review: true, note: "Nitrogen at 300 bar and 293 K is about 310 kg/m3 (compressibility about 1.1; ideal gas would give 345), so 100 kg needs 0.323 m3 inside. A cylinder with hemispherical ends, 0.8 m across over a 25 mm wall, is 1.05 m long, and a valve and regulator take 0.1 m more. A type IV composite vessel stores about 100 kJ of pressure-volume per kilogram (from memory of commercial 300 to 700 bar bottles): 30 MPa x 0.323 m3 is 9.7 MJ, so 97 kg of vessel, plus the valve and 8 kg of saddles and bands (the 50 kg bottle's drawn at 4.9 kg in Blender). Recomputed 2026-10-11 from 0.6 kg a kilogram of gas, which did not fit its box." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Wall check (2026-10-13, for the modeller's blockout v01): hoop fibre at 1,500 MPa in the laminate (from memory) times a burst factor of 2.25 wants 17 mm at 30 MPa over 0.375 m; the helical layers about half again: 25 mm, as drawn. 25 mm at 1,580 kg/m3 over the vessel is 98.6 kg against the 97 kg from stored energy: the two agree. Height 0.83 m with the saddles' 30 mm under the bottle." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

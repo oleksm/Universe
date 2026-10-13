@@ -30,9 +30,16 @@ function:
   kind: capacitor
   capacity: 40000000000
   rate: 150000000
+visual:
+  format: "freefall-model/1"
+  path: "models/capacitor-s3/v1"
+  manifest_sha256: "6bd57e9ea58f873a94d83d00847b76de9325cbf33021ed06409ca76ea87e21f2"
+  version: 1
+  triangles: 4034
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a store of energy as current in a superconducting coil. A real one holds 4 to 40 kJ for each kg, and the largest magnets built (ITER's) 5; this is asked for 10,000." }
   - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a coil in its case, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [function.capacity], tier: invented, review: true, note: "Open, as for the S1 and S2: 40 GJ in 4,000 kg is 10 MJ/kg; a magnet's structure caps it near 0.2 MJ/kg (titanium alloy, virial theorem), so 40 GJ needs about 200 t. Engine decides the gameplay first. Blockout 2026-10-13 reuses the S2 layout (horizontal coil case, refrigerator and switchgear at the service end) in an open cage to the mount's 8 corner pads; parts stay proxies." }
   - { of: [life], rule: rule.life-ship-system }

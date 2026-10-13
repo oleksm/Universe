@@ -5,11 +5,11 @@ identity:
   maker: org.hadley
   revision: draft
   slot: power
-  description: "50 kW from hydrogen and oxygen at 55%, its water drinkable: a commuter's power with no reactor aboard. It burns the same hydrolox as the engines, 7 g/s at full."
+  description: "50 kW from hydrogen and oxygen at 55%, its water drinkable: a commuter's power with no reactor aboard. It burns the same hydrolox as the engines, 7 g/s at full, as gas from the hull's tanks; its 41 kW of heat goes to the ship's coolant loop."
 size_class: 1
 fits: mount.power-s1
 physical:
-  mass: 90
+  mass: 87.8
   volume: 0.2
   length: 0.8
   width: 0.5
@@ -19,7 +19,8 @@ built_of:
   list:
     - { code: FCL1-01, name: "Stack", mass: 45, length: 0.635, width: 0.397, height: 0.397, item: good.electronics, quantity: 45, module: module.assembly-shop }
     - { code: FCL1-02, name: "Pumps, valves and plumbing", mass: 27, length: 0.536, width: 0.335, height: 0.335, item: good.pumps, quantity: 27, module: module.assembly-shop }
-    - { code: FCL1-03, name: "Housing and radiator", mass: 18, length: 0.468, width: 0.292, height: 0.292, item: stock.al6061-pl-5, quantity: 20.7, module: module.machining-centre }
+    - { code: FCL1-03, name: "Case and lids", mass: 9.5, length: 0.8, width: 0.5, height: 0.5, item: stock.al6061-sh-2, quantity: 10.9, module: module.cutting-table }
+    - { code: FCL1-04, name: "Base and feet", mass: 6.3, length: 0.8, width: 0.5, height: 0.013, item: stock.al6061-pl-5, quantity: 7.2, module: module.cutting-table }
 making:
   module: module.assembly-shop
 function:
@@ -27,8 +28,15 @@ function:
   output: 50000
   efficiency: 0.55
   burns: material.hydrolox
+visual:
+  format: "freefall-model/1"
+  path: "models/power-fuelcell-s1/v1"
+  manifest_sha256: "4c97b21cba0e96f8a8a414c247294ce7e94846b6ccb7f0cdfce8534162d1bf16"
+  version: 1
+  triangles: 3056
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "An Apollo-type cell scaled to 50 kW: about 1.8 kg a kilowatt (the shuttle's three cells gave 21 kW for 118 kg each, from memory); 55% of the hydrolox's 13 MJ/kg to power, the rest heat and warm water. Review." }
-  - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [built_of, physical.mass], tier: derived, review: true, note: "The case from the modeller's layout (blockout-v01): 2 mm 6061 walls and lids, 1.7 m2, 9.2 kg plus fasteners; 5 mm base 0.4 m2, 5.4 kg, and four 8 mm corner feet, 6.3 kg. No radiator on the case: 50 kW at 55% leaves 40.9 kW of heat at stack temperature (about 350 K), which needs about 53 m2 of radiating face in vacuum (emissivity 0.9) against the case's 2.1 m2, so a rear coolant pair hands it to the ship's loop (thermal-coolant-loop) and the hull's radiators. The stack-to-loop heat exchanger is in FCL1-02. H2 and O2 come in as separate gases; the hull's tanks own storage and boil-off. Product water leaves by its own outlet." }
+  - { of: [making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

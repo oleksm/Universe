@@ -53,7 +53,8 @@ def main():
                 "thrust": g(lambda d: fnk(d).get("thrust", 0)) * k, "heat": g(heat) * k, "burn": g(burn) * k,
                 "recoil": g(lambda d: fnk(d).get("slug_mass", 0) * fnk(d).get("muzzle_speed", 0) * fnk(d).get("rate", 0) + (fnk(d).get("feed_force", 0) if fnk(d)["kind"] == "breaker" else 0)) * k,
                 "hold": g(lambda d: fnk(d).get("holds", 0) if fnk(d)["kind"] == "docking" else 0) * k,
-                "landing": g(lambda d: fnk(d).get("holds", 0) if fnk(d)["kind"] == "landing_gear" else 0) * k}, k, here is not None
+                "landing": g(lambda d: fnk(d).get("holds", 0) if fnk(d)["kind"] == "landing_gear" else 0) * k,
+                "moment": g(lambda d: fnk(d).get("moment", 0)) * k}, k, here is not None
 
     n = 0
     for kind, cls in sorted(set(eq) | slots):
@@ -69,8 +70,10 @@ def main():
         if fig["recoil"]: s += f"  recoil: {r(fig['recoil'] * M)!r}\n"
         if fig["landing"]: s += f"  landing: {r(fig['landing'] * M)!r}\n"
         if fig.get("hold"): s += f"  hold: {r(fig['hold'] * M)!r}\n"
+        if fig.get("moment"): s += f"  moment: {r(fig['moment'] * M)!r}\n"
         pattern, pts = PATTERN.get(kind, ("corners", 4 if fig["mass"] < 2000 else 8))
         per = (fig["mass"] * DESIGN_G + fig["thrust"] + fig["landing"] + fig["recoil"] + fig.get("hold", 0)) * M / pts
+        per += fig.get("moment", 0) * M / (0.8 * fig["W"] * pts / 2)   # a moment: half the points pull, across four fifths of the width
         s += f"attachment:\n  points: {pts}\n  pattern: {pattern}\n  each:\n    tension: {r(per)!r}\n    compression: {r(per)!r}\n    shear: {r(max(per / 2, fig["thrust"] * M / pts) if kind == "thrusters" else per / 2)!r}\n"
         feeds = []
         if fig["power"]: feeds.append(f"  power: {r(fig['power'] * M)!r}\n")

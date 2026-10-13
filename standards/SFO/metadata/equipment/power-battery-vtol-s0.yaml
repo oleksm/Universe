@@ -30,6 +30,12 @@ function:
   rate: 600000.0
   efficiency: 0.94
   cycles: 1500
+visual:
+  format: "freefall-model/1"
+  path: "models/power-battery-vtol-s0/v1"
+  manifest_sha256: "9ea0bbf6650810aa167830032b3ae030a23138f82763be8fea8adf5b14097dc2"
+  version: 1
+  triangles: 2432
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "4 kW/kg and 0.5 MJ/kg (140 Wh/kg) at the pack, with cooling plates: the high-rate lithium packs of electric VTOL craft of the 2020s, from memory; 1,500 cycles to 80%. Review." }

@@ -29,6 +29,12 @@ function:
   stores: 100000000.0
   rate: 300000.0
   efficiency: 0.97
+visual:
+  format: "freefall-model/1"
+  path: "models/power-battery-s0/v1"
+  manifest_sha256: "a2cf7b63a985e78fa70b45692a87da9e76287939de5c26a3b6b24fcc56f71728"
+  version: 1
+  triangles: 2432
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "150 Wh/kg with its housing, as the S1; 300 kW in or out. From memory; review." }

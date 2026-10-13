@@ -320,6 +320,7 @@ properties:
           kind: { const: handling }
           throughput: { type: number, x-unit: "kg/s", description: "kg/s it moves at most" }
           reach: { type: number, x-unit: "m", description: "m, from its mount" }
+          moment: { type: number, exclusiveMinimum: 0, x-unit: "N m", description: "N m, the most it bends its mount by at work: a boom held out, loaded, at 1 g" }
       - description: "Throws heat into space from a hot surface. Not in the game yet."
         type: object
         x-in-game: "not made"

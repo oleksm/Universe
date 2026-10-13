@@ -9,25 +9,33 @@ identity:
 size_class: 2
 fits: mount.tank-s2
 physical:
-  mass: 2600
-  volume: 176
-  length: 5.6
-  width: 5.6
-  height: 5.6
+  mass: 2501
+  volume: 217.0
+  length: 6.08
+  width: 5.86
+  height: 6.09
 built_of:
   parts: tank-hydrogen-s2
   list:
-    - { code: TKH22-01, name: "Shell", mass: 1820, length: 4.97, width: 4.97, height: 4.97, item: stock.al6061-pl-5, quantity: 2093, module: module.welding-bay }
-    - { code: TKH22-02, name: "Insulation", mass: 520, length: 3.27, width: 3.27, height: 3.27, item: stock.mli-fl, quantity: 520, module: module.assembly-shop }
-    - { code: TKH22-03, name: "Fittings and gauging", mass: 260, length: 2.6, width: 2.6, height: 2.6, item: stock.st304-pl-3, quantity: 299, module: module.machining-centre }
+    - { code: TKH22-01, name: "Shell", description: "Welded aluminium sphere, 5.663 m across outside, 5 mm wall, with weld lands, bosses and saddle doublers.", mass: 1629, length: 5.663, width: 5.663, height: 5.663, item: stock.al6061-pl-5, quantity: 1873.4, module: module.welding-bay }
+    - { code: TKH22-02, name: "Insulation", description: "80 mm of foam on the shell under a multilayer blanket and closeout, 100 mm in all: the sphere is 5.863 m across over it.", mass: 332, length: 5.863, width: 5.863, height: 5.863, item: stock.mli-fl, quantity: 332, module: module.assembly-shop }
+    - { code: TKH22-03, name: "Saddles", description: "Four, one at each mount attachment, below the equator, each taking 745 kN.", mass: 280, length: 1.0, width: 0.6, height: 0.7, item: stock.st304-pl-3, quantity: 322, module: module.machining-centre }
+    - { code: TKH22-04, name: "Fittings and gauging", description: "An outlet with an anti-vortex screen, a pressurant diffuser, fill and drain, vent and relief valves, level gauging; slosh baffles. Every port is capped until the hull connects it.", mass: 260, length: 1.0, width: 0.7, height: 0.7, item: stock.st304-pl-3, quantity: 299, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
   kind: tank
   capacity: 6500
   holds: material.hydrogen
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-hydrogen-s2/v1"
+  manifest_sha256: "cc6dbdeef80190a34724f26de681ef7c0462890c2667cc76c90d5bfa46a44c86"
+  version: 1
+  triangles: 7036
 life: 473364000
 basis:
-  - { of: [physical, function], tier: invented, review: true, note: "The deuterium tank S2's volume filled with hydrogen at 71 kg/m3; a cryogenic tank at 20 K with its insulation and boil-off plant: 40% of its light contents. Chosen; review." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the hydrogen S1 (2026-10-13, for the modeller): 6,500 kg at 70.8 kg/m3 with 3% ullage is 94.6 m3, 2.826 m inner radius. 0.35 MPa times 1.5 against 165 MPa for welded 6061-T6: 4.5 mm, taken as the 5 mm plate, 1,357 kg bare plus 20% for lands, bosses and doublers. Insulation 100 mm at 3.3 kg/m2. Saddles 280 kg as drawn on the modeller's blockout v01 (it had none); fittings 260 kg allowed (124 drawn so far). Total 2,501 kg, 38% of what it holds (it was 2,600 at an assumed 40%). Box from the blockout: 6.08 x 5.86 x 6.09 m, inside the mount's 7.25 m. Chosen; review." }
+  - { of: [built_of.list], tier: invented, review: true, note: "Boil-off: about 1 W/m2 through the blanket from a 300 K hull (from memory), 108 W on the 108 m2, about 21 kg of hydrogen a day (0.3%), more in sunlight. The tank holds it to 0.35 MPa with its vent and relief valves; what is vented, burnt or cooled back is the hull's plant, not the tank's." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
