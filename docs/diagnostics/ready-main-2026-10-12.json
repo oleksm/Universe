@@ -1,0 +1,189 @@
+{
+  "base_main": "b0d0da15dfbde605d93a0295610fae7efe439fcc",
+  "studio_checkpoint": "9ea5100e",
+  "registry_cutoff": "ddc59ca78de5da0012decc8a7ea7721bc324de77",
+  "assets_store": "/home/alexm/git/freefall-assets",
+  "new_models": [
+    {
+      "key": "equipment.engine.ft.s3",
+      "path": "models/engine-ft-s3/v1",
+      "manifest_sha256": "d7843aba63fb8c3fbafda489b83596af415ead76f99d6e6e1fccb0cc474a6ac3",
+      "triangles": 14548
+    },
+    {
+      "key": "equipment.engine.nt.s1",
+      "path": "models/engine-nt-s1/v1",
+      "manifest_sha256": "f1613070592bc5c60bc115d439440ef38e540d72949d97af3d6633d6dd321a3a",
+      "triangles": 15324
+    },
+    {
+      "key": "equipment.engine.nt.s2",
+      "path": "models/engine-nt-s2/v1",
+      "manifest_sha256": "dec4aa5bfe21b3718b585cbdd523bf38a822ff985017524f5899e19dfde4c0e4",
+      "triangles": 16244
+    },
+    {
+      "key": "equipment.engine.nt.s3",
+      "path": "models/engine-nt-s3/v1",
+      "manifest_sha256": "de57cbde80404a188965e61a3bae2ed0d04365dc90e046aa39777bd7c3786614",
+      "triangles": 16592
+    },
+    {
+      "key": "equipment.engine.swivel.s1",
+      "path": "models/engine-swivel-s1/v1",
+      "manifest_sha256": "73961b08620093872729f93dba937b5674964e213203285d85dba73a98cbc19a",
+      "triangles": 9992
+    },
+    {
+      "key": "equipment.engine.swivel.s2",
+      "path": "models/engine-swivel-s2/v1",
+      "manifest_sha256": "b70bc333850a897b21b430d445f718e42479146eb017d44a065b6509d6e77795",
+      "triangles": 9716
+    },
+    {
+      "key": "equipment.engine.swivel.s3",
+      "path": "models/engine-swivel-s3/v1",
+      "manifest_sha256": "095b00a804bcf2cdd662267153d8707cd0ffdc8c2627b45ecdffadca36a4a3fd",
+      "triangles": 9718
+    },
+    {
+      "key": "equipment.engine.swivel.s4",
+      "path": "models/engine-swivel-s4/v1",
+      "manifest_sha256": "f8c154312b3cadef7af7d1616d45de3808fe253527a20840d8aac93cbd9ff09b",
+      "triangles": 10260
+    },
+    {
+      "key": "equipment.gate.throat-coil.s3",
+      "path": "models/gate-throat-coil-s3/v1",
+      "manifest_sha256": "308a6af7cabdbc6d267936210db2a34c925972182937d35c906a1245842d098b",
+      "triangles": 5560
+    },
+    {
+      "key": "equipment.gear.strut.s2",
+      "path": "models/gear-strut-s2/v1",
+      "manifest_sha256": "af8c0d79056b65d4da641e06013a6c1a701cdaee2186b658a7b925498c1c385c",
+      "triangles": 5044
+    },
+    {
+      "key": "equipment.handling.conveyor.s1",
+      "path": "models/handling-conveyor-s1/v1",
+      "manifest_sha256": "f408c0d772d29c648b9e40d77d107be4e2cbfb033024f2b1a008913a48e7d724",
+      "triangles": 7336
+    },
+    {
+      "key": "equipment.handling.conveyor.s2",
+      "path": "models/handling-conveyor-s2/v1",
+      "manifest_sha256": "f3018514b10386536efab028a788b2d57c6b92010822f090d94dc95976ef5b24",
+      "triangles": 7448
+    }
+  ],
+  "scope": "Ready installed neutral/static models; motion, structural, handedness and combined-hull acceptance gates retained. Gate coil remains outside ship equipment catalogue.",
+  "historical_audit": "6e928194, explicitly superseded by implemented shared runtime",
+  "evidence_directory": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main",
+  "tested_source_commit": "3b20e7ce6f9aaa1308d463e82fdeb0eebc0b8a9f",
+  "checks": {
+    "registry_validate": {
+      "exit": 0,
+      "schema_misfits": 0
+    },
+    "registry_build": {
+      "exit": 0,
+      "build_problems": 0
+    },
+    "workspace": {
+      "command": "cargo test --workspace --features dev -q",
+      "exit": 0,
+      "passed": 67,
+      "ignored": 0
+    },
+    "release": {
+      "command": "cargo build --release --bins",
+      "exit": 0
+    },
+    "player": {
+      "command": "cargo check -p universe --no-default-features --release",
+      "exit": 0,
+      "warnings": [
+        "Existing dev-only use of Mounted::slot_origin leaves a dead-code warning in player builds."
+      ]
+    },
+    "yaml": {
+      "exit": 0,
+      "modules": 11
+    },
+    "package_hashes": {
+      "passed": 12,
+      "all_declared_files": true
+    },
+    "independent_pbr": {
+      "renderer_revision": "d2c7920d929d39a71dfc5b70cd99d955572babe9",
+      "cutoff": "ddc59ca78de5da0012decc8a7ea7721bc324de77",
+      "harness_sha256": "a1d35c9c20b9e4d612af9afaef654e2ecc56039c394023f97d7b7e9e4a1388b9",
+      "binary_sha256": "c84f71be910a069a5d63ab2f81dc9c0a9e7fad095b664306633e6d48bfd9253b",
+      "results_sha256": "dc676b51d9defaeb6bae5a65429f915e624cfdc4c088efde226afe96da898206",
+      "passed": 12,
+      "views_inspected": 48,
+      "scope": "neutral PBR decode/upload/static appearance; not motion, fit, engineering or temporal acceptance"
+    },
+    "model_loader": {
+      "command": "cargo run -q -p universe-world --example validate_models",
+      "exit": 0,
+      "models_read": 151
+    },
+    "independent_renderer_tree_equal": true
+  },
+  "binaries": {
+    "freefall": {
+      "sha256": "011e1b7b0bececa2813821bd51fe1dd10d1a008831639f3ccd373c40459c7ef2",
+      "tested_path": "/home/alexm/git/universe-ships-ready-main/target/release/freefall",
+      "installed_path": "/home/alexm/git/universe/target/release/freefall"
+    },
+    "freefall-studio": {
+      "sha256": "9f4a3f325e4384f85ac9a4d7af9f5ced08c8c0fb0c1f09143bb4ec5c4ae7c995",
+      "tested_path": "/home/alexm/git/universe-ships-ready-main/target/release/freefall-studio",
+      "installed_path": "/home/alexm/git/universe/target/release/freefall-studio"
+    }
+  },
+  "gpu_smoke": {
+    "design": {
+      "exit": 0,
+      "image": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/design.png",
+      "sha256": "66d964def0f6fd7961533b7b8b366283ba9d59480481962d4e22cb67efa88d93",
+      "log": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/design.log"
+    },
+    "walk": {
+      "exit": 0,
+      "image": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/walk.png",
+      "sha256": "fb1b3be70f211b27e7d07e99053773073cdd680dbe666fee4073375196f1cd9e",
+      "log": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/walk.log"
+    },
+    "drive": {
+      "exit": 0,
+      "image": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/drive.png",
+      "sha256": "c3a314a10232a65e5dfb12d19e83243c0cbd5324d5414766eea1bc3129459dfa",
+      "log": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/drive.log"
+    },
+    "game": {
+      "exit": 0,
+      "scene": "Procedural Drover; first diagnostic supplied registry key rather than CLI GLB path. Native hull rerun separately.",
+      "image": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/game.png",
+      "sha256": "4e9d71e18c9d8f4a1204086dae5a40a6f91615570c6de9b2f4d907f2e948af8d"
+    },
+    "game_native": {
+      "exit": 0,
+      "scene": "MC-07 imported through assets/models/mc07.glb; studio-lit observer",
+      "image": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/game-native.png",
+      "sha256": "2775c49f5917cdd1842fc7da777bef46b86181bd9ad5c585b5af56eccc1350a2",
+      "log": "/home/alexm/git/universe-ships-ready-main/out/review/ready-main/game-native.log",
+      "qualification": "Existing missing mount warnings retain native drawing; dynamic equipment replacements remain held."
+    }
+  },
+  "performance_scope": "Correctness captures, not matched benchmarks. Surface acquire dominates these capture rates; prior workspace/title/monitor confound remains. No desktop settings changed.",
+  "historical_validation": "docs/diagnostics/studio-rebuild.json describes the earlier isolated branch validation; this record binds the combined cutoff.",
+  "publication": {
+    "destination": "origin/main",
+    "authorized_by": "Owner: Go merge anything ready - studio, engine, models",
+    "tested_code_and_registry_commit": "3b20e7ce6f9aaa1308d463e82fdeb0eebc0b8a9f",
+    "installed_binaries": "target/release/freefall and target/release/freefall-studio in main worktree"
+  }
+}
