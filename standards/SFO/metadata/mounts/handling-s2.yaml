@@ -7,17 +7,20 @@ identity:
   size_class: 2
   description: "What a class 2 handling slot offers, and what fits it."
 envelope:
-  length: 16.5
-  width: 1.65
-  height: 1.65
+  length: 17.8
+  width: 1.41
+  height: 1.71
 bears:
-  mass: 5000.0
+  mass: 1520.0
+  moment: 114000.0
 attachment:
-  points: 8
+  points: 4
   pattern: corners
   each:
-    tension: 18400.0
-    compression: 18400.0
-    shear: 9190.0
+    tension: 66700.0
+    compression: 66700.0
+    shear: 33400.0
+feeds:
+  power: 9380.0
 basis:
-  - { of: [envelope, bears, attachment], rule: rule.mounts-margin }
+  - { of: [envelope, bears, attachment, feeds], rule: rule.mounts-margin }

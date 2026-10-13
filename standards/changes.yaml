@@ -416,7 +416,7 @@
 - { record: equipment.handling.conveyor.s1, at: "2026-10-13T04:31:34Z", status: draft, summary: "changed: visual", sha: "ece3fdc790b24133" }
 - { record: equipment.handling.conveyor.s2, at: "2026-10-13T04:40:26Z", status: draft, summary: "changed: visual", sha: "d9a2dc261c323b5a" }
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-13T05:14:48Z", status: draft, summary: "changed: visual", sha: "31364f23ee27bab3" }
-- { record: equipment.handling.transfer.arm, at: "2026-10-13T05:30:27Z", status: draft, summary: "changed: physical, built_of, basis", sha: "f51f5ad72b5fdb11" }
+- { record: equipment.handling.transfer.arm, at: "2026-10-13T05:32:00Z", status: draft, summary: "changed: function, basis", sha: "b4a5ccb800be34e8" }
 - { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-11T02:37:05Z", status: draft, summary: "changed: visual", sha: "2826a7d76e0ce87f" }
 - { record: equipment.hardpoint.mining-hammer.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "92f797ed52ebf7ab" }
 - { record: equipment.hardpoint.mining-hammer.mc07-right, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "bba06c634d9b1793" }
@@ -1016,7 +1016,7 @@
 - { record: mount.gear-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "189a5c663281c403" }
 - { record: mount.gear-s3, at: "2026-10-10T22:25:54Z", status: draft, summary: "changed", sha: "be796d2e6ac11691" }
 - { record: mount.handling-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "c59020d1504a39e4" }
-- { record: mount.handling-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "00d6159948962cb9" }
+- { record: mount.handling-s2, at: "2026-10-13T05:32:00Z", status: draft, summary: "changed: envelope, bears, attachment, feeds, basis", sha: "4a3732dfa39440c5" }
 - { record: mount.hardpoint-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fe1ebaa01dc6b8db" }
 - { record: mount.hardpoint-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "7b983472ec4ac271" }
 - { record: mount.hardpoint-s3, at: "2026-10-10T23:04:31Z", status: draft, summary: "changed: envelope", sha: "4d1aecaa9189e66a" }
@@ -1502,7 +1502,7 @@
 - { record: rule.life-hull, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "c7ee9eaf08afffd3" }
 - { record: rule.life-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "fbda7bc757c6f115" }
 - { record: rule.life-ship-system, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "dfb76750c01c37b7" }
-- { record: rule.mounts-margin, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "5bc27d346d64f78a" }
+- { record: rule.mounts-margin, at: "2026-10-13T05:32:00Z", status: review, summary: "changed: statement", sha: "88491f348e30a319" }
 - { record: rule.plant-weights-from-memory, at: "2026-10-07T03:28:39Z", status: review, summary: "first tracked", sha: "d4bff33987b75c18" }
 - { record: rule.shares-chosen, at: "2026-10-07T03:53:08Z", status: review, summary: "first tracked", sha: "2f29f0362d9d7f04" }
 - { record: seeding.asteroids, at: "2026-10-10T16:13:03Z", status: "", summary: "changed: basis", sha: "523d44e4bfa3af5f" }
