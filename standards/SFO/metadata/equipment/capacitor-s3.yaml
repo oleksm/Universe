@@ -30,6 +30,12 @@ function:
   kind: capacitor
   capacity: 40000000000
   rate: 150000000
+visual:
+  format: "freefall-model/1"
+  path: "models/capacitor-s3/v1"
+  manifest_sha256: "6bd57e9ea58f873a94d83d00847b76de9325cbf33021ed06409ca76ea87e21f2"
+  version: 1
+  triangles: 4034
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
