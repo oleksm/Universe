@@ -395,7 +395,7 @@
 - { record: equipment.engine.nt.s2, at: "2026-10-13T02:06:07Z", status: draft, summary: "changed: visual", sha: "d485b3df704248eb" }
 - { record: equipment.engine.nt.s3, at: "2026-10-13T02:50:46Z", status: draft, summary: "changed: visual", sha: "cb5d8c594580a6b6" }
 - { record: equipment.engine.swivel.s1, at: "2026-10-13T03:19:18Z", status: draft, summary: "changed: visual", sha: "4e654babd42066f1" }
-- { record: equipment.engine.swivel.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7ac485e08054e31e" }
+- { record: equipment.engine.swivel.s2, at: "2026-10-13T03:23:20Z", status: draft, summary: "changed: identity, physical, needs, built_of, basis", sha: "35c44527c3ce81f9" }
 - { record: equipment.engine.swivel.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c67ea95c6f2f05ad" }
 - { record: equipment.engine.swivel.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "d2e6ae25cfd9141a" }
 - { record: equipment.gate.relay.gate, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "35828400db155884" }
