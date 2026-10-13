@@ -126,6 +126,15 @@ fn main() {
     let pack = &s.devices.as_ref().unwrap().packs[0];
     assert!((pack.energy - 968750.).abs() < 1e-8);
     assert!((pack.temperature - 306.25).abs() < 1e-8);
+    let mut assisted = craft();
+    assisted.manual = false;
+    assisted.held = 0;
+    assisted.rcs = DVec3::Y;
+    assisted.drive(None, 0.1, true);
+    assert!(
+        assisted.applied.0.y > 19000.,
+        "assisted fan allocation retains lift with zero yaw authority"
+    );
     let mut split = craft();
     split.drive(None, 1., true);
     for _ in 0..4 {
@@ -237,6 +246,12 @@ fn main() {
         assert!(s.devices.as_ref().unwrap().density > 1.19);
         if !empty {
             assert!(s.devices.as_ref().unwrap().packs[0].energy < 1e6);
+            let before = s.velocity.y;
+            world.step_ship(&mut s, &mut 0, &commands, 0.01, 1., &mut Vec::new());
+            assert!(
+                s.velocity.y > before,
+                "fuel-free fan must accelerate through the shared physics Driver"
+            );
         }
     }
     println!("PASS: manual fuel-free fan, partial-span debit, thermal/energy/air limits, final charge, landing limits and realized-lift release");
