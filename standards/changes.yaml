@@ -481,7 +481,7 @@
 - { record: equipment.tank.water.100kg, at: "2026-10-13T17:25:30Z", status: draft, summary: "changed: visual", sha: "e639887f014c4b82" }
 - { record: equipment.tank.water.50kg, at: "2026-10-12T02:52:06Z", status: draft, summary: "changed: visual", sha: "75cd6a61a77202dd" }
 - { record: equipment.tank.water.s1, at: "2026-10-11T02:43:43Z", status: draft, summary: "changed: visual", sha: "e34a78988ac94117" }
-- { record: equipment.tank.water.s2, at: "2026-10-13T17:29:00Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "85e4d39417c2a05b" }
+- { record: equipment.tank.water.s2, at: "2026-10-13T17:32:38Z", status: draft, summary: "changed: visual", sha: "78a3904730ad0c88" }
 - { record: equipment.thermal.air-cooler.s0, at: "2026-10-12T03:08:43Z", status: draft, summary: "changed: visual", sha: "f874ce1f745ce6b6" }
 - { record: equipment.thermal.coolant-loop.s0, at: "2026-10-12T03:23:31Z", status: draft, summary: "changed: visual", sha: "d092833ef951e72d" }
 - { record: equipment.thermal.coolant-loop.s1, at: "2026-10-11T02:47:24Z", status: draft, summary: "changed: visual", sha: "f68babb31c8d295b" }
