@@ -9,7 +9,7 @@ identity:
 size_class: 4
 fits: mount.tank-s4
 physical:
-  mass: 4175
+  mass: 4300
   volume: 214.0
   length: 5.828
   width: 5.828
@@ -19,7 +19,7 @@ built_of:
   list:
     - { code: LCT0-01, name: "Shell", description: "A sphere welded from pressed halves: 5.818 m inside, 5 mm wall, 5.828 m outside, with weld lands, bosses and saddle doublers.", mass: 1725, length: 5.828, width: 5.828, height: 5.828, item: stock.al6061-pl-5, quantity: 1983.8, module: module.welding-bay }
     - { code: LCT0-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 750, length: 5.8, width: 5.8, height: 5.8, item: stock.al6061-pl-5, quantity: 862.0, module: module.cutting-table }
-    - { code: LCT0-03, name: "Fittings", description: "Fill, drain, vent and gauge on a boss at the top, under a guard.", mass: 150, length: 0.6, width: 0.6, height: 0.25, item: stock.st304-pl-3, quantity: 172.5, module: module.machining-centre }
+    - { code: LCT0-03, name: "Fittings", description: "Fill, drain, vent and gauge on a boss at the top, under a guard.", mass: 275, length: 0.845, width: 0.642, height: 0.414, item: stock.st304-pl-3, quantity: 316.25, module: module.machining-centre }
     - { code: LCT0-04, name: "Saddles", description: "Four contoured steel web saddles under the sphere, one per mount point.", mass: 1550, length: 1.2, width: 0.6, height: 0.5, item: stock.sta36-pl-20, quantity: 1782.5, module: module.welding-bay }
 making:
   module: module.assembly-shop
@@ -30,6 +30,6 @@ function:
 life: 473364000
 basis:
   - { of: [function, size_class], tier: invented, review: true, note: "100 m3 of water or another ordinary liquid. Chosen. A cargo tank takes any liquid that suits aluminium at low pressure; water names its kind." }
-  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized from the modeller's blockout v01 (2026-10-13): 100 m3 with 3% ullage, 2.909 m inner radius. Wall: 0.1 MPa (chosen) plus the water's head at 30 m/s2 (175 kPa), times 1.5 against 165 MPa welded, wants 3.6 mm: the 5 mm plate, 1,438 kg bare plus 20% for lands and bosses. Saddles as the gas cargo S3's scaled to load: the full tank, 105 t, puts 790 kN on each at 30 m/s2 (the mount allows 965 kN), 1,550 kg for four. Baffles 750 kg (the first allowance, invented), fittings 150 kg. Total 4,175 kg, 4.2% of what it holds (it was 5,000 kg at an assumed twentieth). Box 5.828 x 5.828 x 6.301 m with saddles and guarded top fittings. Chosen; review." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized from the modeller's blockout v01 (2026-10-13): 100 m3 with 3% ullage, 2.909 m inner radius. Wall: 0.1 MPa (chosen) plus the water's head at 30 m/s2 (175 kPa), times 1.5 against 165 MPa welded, wants 3.6 mm: the 5 mm plate, 1,438 kg bare plus 20% for lands and bosses. Saddles as the gas cargo S3's scaled to load: the full tank, 105 t, puts 790 kN on each at 30 m/s2 (the mount allows 965 kN), 1,550 kg for four. Baffles 750 kg (the first allowance, invented), fittings 275 kg (198 drawn on the blockout before caps, gauge and handle, about 50 hidden inside; the first 150 was too low). Total 4,300 kg, 4.3% of what it holds (it was 5,000 kg at an assumed twentieth). Box 5.828 x 5.828 x 6.301 m with saddles and guarded top fittings. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
