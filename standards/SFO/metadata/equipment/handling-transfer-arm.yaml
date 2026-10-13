@@ -43,6 +43,12 @@ function:
   throughput: 20
   reach: 15.0
   moment: 91000
+visual:
+  format: "freefall-model/1"
+  path: "models/handling-transfer-arm/v1"
+  manifest_sha256: "6a45f571303f5dcceee13946ad0044a1fb3fd57b97ed7bd33064cd4000208d9e"
+  version: 1
+  triangles: 16670
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "20 kg/s over 15 m to a dock or another ship. Slews +-170 degrees, luffs -5 to +60 degrees: from the rest it lifts before it slews, and dips below level only clear of the rest. Chosen." }
