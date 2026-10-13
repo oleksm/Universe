@@ -28,6 +28,12 @@ function:
   kind: tank
   capacity: 29400
   holds: material.hydrolox
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-hydrolox-s2/v1"
+  manifest_sha256: "343d63c8e2eb31c781537216467b73f6a33144da92b94300f95d489756f9b4e0"
+  version: 1
+  triangles: 8792
 life: 473364000
 basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the 3.5 t (2026-10-13, from the modeller's blockout v01): 29,400 kg at O/F 5.5 (24,880 kg of oxygen, 4,520 of hydrogen), 85.7 m3 of liquid, each side with 3% ullage, the 100 mm common bulkhead inside a 2.786 m inner radius. Wall: 0.35 MPa plus the oxygen's head at 30 m/s2 (191 kPa), times 1.5 against 165 MPa welded, wants 6.85 mm: 8 mm plate, 2,113 kg bare plus 20% for lands and bosses. Insulation 100 mm, bulkhead 308 kg, saddles 270 kg, fittings 353 kg. Total 3,791 kg, 12.9% of what it holds (it was 3,530 kg at an assumed 12%). Box: 6.209 x 5.789 x 6.013 m with saddles and opposed service bosses, inside the mount's 7.25 m. Chosen; review." }
