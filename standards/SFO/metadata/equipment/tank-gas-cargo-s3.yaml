@@ -27,6 +27,12 @@ function:
   capacity: 7880.0
   holds: "element.o"
   pressure: 30000000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-gas-cargo-s3/v1"
+  manifest_sha256: "fc89a03ad192e83fc6d9aed36fa77515ad3389c507080ff023adc84624f09d02"
+  version: 1
+  triangles: 7300
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "20 m3 at 30 MPa holds 7,876 kg of oxygen (ideal gas at 293 K); the steel shell weighs four times its contents, as a high-pressure gas cylinder does (a 50 l cylinder: 60 kg for 10 kg of gas, from memory)." }
