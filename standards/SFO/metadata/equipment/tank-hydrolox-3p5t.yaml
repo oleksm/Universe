@@ -9,17 +9,19 @@ identity:
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 420
-  volume: 22
-  length: 2.8
-  width: 2.8
-  height: 2.8
+  mass: 476
+  volume: 29.24
+  length: 3.187
+  width: 2.972
+  height: 3.087
 built_of:
   parts: tank-hydrolox-3p5t
   list:
-    - { code: TKHL0-01, name: "Shell", mass: 294, length: 2.49, width: 2.49, height: 2.49, item: stock.al6061-pl-5, quantity: 338.1, module: module.welding-bay }
-    - { code: TKHL0-02, name: "Insulation", mass: 84, length: 1.64, width: 1.64, height: 1.64, item: stock.mli-fl, quantity: 84, module: module.assembly-shop }
-    - { code: TKHL0-03, name: "Fittings and gauging", mass: 42, length: 1.3, width: 1.3, height: 1.3, item: stock.st304-pl-3, quantity: 48.3, module: module.machining-centre }
+    - { code: TKHL0-01, name: "Shell", description: "Welded aluminium sphere, 2.772 m across outside, 3 mm wall, with weld lands, bosses and saddle doublers.", mass: 234, length: 2.772, width: 2.772, height: 2.772, item: stock.al6061-sh-3, quantity: 269.1, module: module.welding-bay }
+    - { code: TKHL0-02, name: "Insulation", description: "80 mm of foam on the shell under a multilayer blanket and closeout, 100 mm in all: the sphere is 2.972 m across over it.", mass: 79.7, length: 2.972, width: 2.972, height: 2.972, item: stock.mli-fl, quantity: 79.7, module: module.assembly-shop }
+    - { code: TKHL0-03, name: "Fittings and gauging", description: "For each circuit: an outlet with an anti-vortex screen, a pressurant diffuser, fill and drain, vent and relief valves, level gauging. Every port is capped until the hull connects it.", mass: 50, length: 0.8, width: 0.45, height: 0.45, item: stock.st304-pl-3, quantity: 57.5, module: module.machining-centre }
+    - { code: TKHL0-04, name: "Common bulkhead", description: "A dome bulging into the hydrogen: two 1.6 mm aluminium skins on a 97 mm foam core, 100 mm in all, welded to the shell at a Y-ring. Its stock is a mass proxy: foam-core sandwich stock is not in the registry yet.", mass: 76, length: 2.28, width: 2.28, height: 0.62, item: stock.al6061-sh-2, quantity: 87.4, module: module.welding-bay }
+    - { code: TKHL0-05, name: "Saddles", description: "Four, one at each mount attachment, below the equator.", mass: 36.5, length: 0.4, width: 0.25, height: 0.32, item: stock.st304-pl-3, quantity: 42.0, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -29,5 +31,6 @@ function:
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Hydrolox at 320 kg/m3: 10.9 m3 as a ball 2.75 m across, in a 2.8 m box; insulated for liquid hydrogen and oxygen at 12% of its contents. Sized for the Wren commuter (2026-10-07): a landing and a take-off at 1 g take about 3 t. Chosen." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the 2 t (2026-10-13, from the modeller's blockout v01): 3,500 kg at O/F 5.5, each side with 3% ullage, the 100 mm common bulkhead inside a 1.383 m inner radius. Wall: 0.35 MPa plus the oxygen's full-diameter head at 30 m/s2 (95 kPa), times 1.5 against 165 MPa welded, wants 2.8 mm: 3 mm sheet, 195 kg bare plus 20% for lands and bosses. Insulation 100 mm at 3.3 kg/m2, bulkhead 76 kg, saddles 36.5 kg, fittings 50 kg for two circuits (32 drawn). Total 476 kg, 14% of what it holds (it was 420 kg at an assumed 12%). Box: 3.187 x 2.972 x 3.087 m with saddles and opposed service bosses; it was a 2.8 m box with no room for the insulation. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
