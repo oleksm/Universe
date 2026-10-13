@@ -3716,3 +3716,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Game GPU appearance/cost, final hull piping, pressure/flow/thermal performance, vibration and internal packing qualification; no oxygen or hydrogen service."
+  - key: equipment.utility.refuelling-port.s1
+    version: 1
+    manifest_sha256: "d9f27f9f2ea2e8681690406f7b2b24315563ff2e4c514bc360ba847eac54f3d3"
+    installed: 6f65b198
+    game: "the loader (world::assets) at fso 6f65b198"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-refuelling-port-s1/v1 (158416 bytes, bounds [-0.3, -0.366, -0.3] to [0.3, 0.034, 0.3]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and mating coupling, game GPU appearance/cost and runtime door motion, pressure/cryogenic seals/oxygen cleanliness, thermal cycling and loaded strength. Single configured liquid only; no H2/gas."
