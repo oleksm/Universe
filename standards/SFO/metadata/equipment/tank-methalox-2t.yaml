@@ -9,17 +9,19 @@ identity:
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 160
-  volume: 5.45
-  length: 1.76
-  width: 1.76
-  height: 1.76
+  mass: 158.7
+  volume: 6.585
+  length: 1.939
+  width: 1.808
+  height: 1.878
 built_of:
   parts: tank-methalox-2t
   list:
-    - { code: TKME2T-01, name: "Shell", mass: 112, length: 1.56, width: 1.56, height: 1.56, item: stock.al6061-pl-5, quantity: 128.8, module: module.welding-bay }
-    - { code: TKME2T-02, name: "Insulation", mass: 32, length: 1.03, width: 1.03, height: 1.03, item: stock.mli-fl, quantity: 32, module: module.assembly-shop }
-    - { code: TKME2T-03, name: "Fittings and gauging", mass: 16, length: 0.817, width: 0.817, height: 0.817, item: stock.st304-pl-3, quantity: 18.4, module: module.machining-centre }
+    - { code: TKME2T-01, name: "Shell", description: "Welded aluminium sphere, 1.708 m across outside, 3 mm wall, with weld lands, bosses and saddle doublers.", mass: 88.8, length: 1.708, width: 1.708, height: 1.708, item: stock.al6061-sh-3, quantity: 102.1, module: module.welding-bay }
+    - { code: TKME2T-02, name: "Insulation", description: "Foam under a multilayer blanket and closeout, 50 mm in all: the sphere is 1.808 m across over it.", mass: 18.3, length: 1.808, width: 1.808, height: 1.808, item: stock.mli-fl, quantity: 18.3, module: module.assembly-shop }
+    - { code: TKME2T-03, name: "Fittings and gauging", description: "For each circuit: an outlet with an anti-vortex screen, a pressurant diffuser, fill and drain, vent and relief valves, level gauging. Every port is capped until the hull connects it.", mass: 20, length: 0.5, width: 0.32, height: 0.32, item: stock.st304-pl-3, quantity: 23, module: module.machining-centre }
+    - { code: TKME2T-04, name: "Common bulkhead", description: "A dome between the oxygen and the methane: two 1.6 mm aluminium skins on a foam core, 50 mm in all, welded to the shell at a Y-ring. Its stock is a mass proxy: foam-core sandwich stock is not in the registry yet.", mass: 23.3, length: 1.4, width: 1.4, height: 0.37, item: stock.al6061-sh-2, quantity: 26.8, module: module.welding-bay }
+    - { code: TKME2T-05, name: "Saddles", description: "Four, one at each mount attachment, below the equator.", mass: 8.3, length: 0.27, width: 0.15, height: 0.21, item: stock.st304-pl-3, quantity: 9.55, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -28,6 +30,6 @@ function:
   holds: material.methalox
 life: 473364000
 basis:
-  - { of: [physical, function], tier: invented, review: true, note: "methalox at 830 kg/m3: 2.4 m3 as a ball 1.66 m across; the tank 8% of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the 1 t (2026-10-13, from the modeller's blockout v01): 2,000 kg at O/F 3.6, each side with 3% ullage, the 50 mm common bulkhead inside a 0.851 m inner radius. Wall: 0.45 MPa plus the oxygen's head at 30 m/s2, times 1.5 against 165 MPa welded, wants 1.97 mm: 2 mm would leave 34 microns, so 3 mm sheet, 74 kg bare plus 20% for lands and bosses. Insulation 50 mm at 2 kg/m2, bulkhead 23.3 kg, saddles 8.3 kg, fittings 20 kg for two circuits. Total 158.7 kg, 7.9% of what it holds (it was 160 kg). Box: 1.939 x 1.808 x 1.878 m with saddles and opposed service bosses. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
