@@ -388,9 +388,9 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
-- { record: equipment.engine.ft.s1, at: "2026-10-13T00:50:11Z", status: draft, summary: "changed: built_of, basis", sha: "734029d38b3a8ad2" }
-- { record: equipment.engine.ft.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "1d7cee630db71b29" }
-- { record: equipment.engine.ft.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b7751c56000b2537" }
+- { record: equipment.engine.ft.s1, at: "2026-10-13T00:51:10Z", status: draft, summary: "changed: function, basis", sha: "7e4c76d4ddda373a" }
+- { record: equipment.engine.ft.s2, at: "2026-10-13T00:51:10Z", status: draft, summary: "changed: function, basis", sha: "bec1d5cc68720dbe" }
+- { record: equipment.engine.ft.s3, at: "2026-10-13T00:51:10Z", status: draft, summary: "changed: function, basis", sha: "832387b418a536be" }
 - { record: equipment.engine.nt.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "349e51df289b5885" }
 - { record: equipment.engine.nt.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4875b18e30a56e77" }
 - { record: equipment.engine.nt.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "aec911b1cd48a6a5" }
