@@ -3300,3 +3300,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Hidden packing, electrical and cooling performance, containment, loaded structure and final service routing unqualified."
+  - key: equipment.power.battery.s0
+    version: 1
+    manifest_sha256: "a2cf7b63a985e78fa70b45692a87da9e76287939de5c26a3b6b24fcc56f71728"
+    installed: 5d09e9e4
+    game: "the loader (world::assets) at fso 5d09e9e4"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-battery-s0/v1 (89496 bytes, bounds [-0.4, 0.0, -0.25] to [0.4, 0.5, 0.25]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Hidden packing, electrical and cooling performance, containment, loaded structure and final service routing unqualified."
