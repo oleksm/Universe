@@ -30,9 +30,9 @@ function:
   holds: material.hydrolox
 visual:
   format: "freefall-model/1"
-  path: "models/tank-hydrolox-2t/v1"
-  manifest_sha256: "ebf4083fab40f40bf5d2d6c1aaf68151b4a1b66c3dcbc5e25049f216b1ae6343"
-  version: 1
+  path: "models/tank-hydrolox-2t/v2"
+  manifest_sha256: "cd4bf1570fc2ada8fc331359538eca11e32a23c41121e10cb30d01d624ed633a"
+  version: 2
   triangles: 8792
 life: 473364000
 basis:
