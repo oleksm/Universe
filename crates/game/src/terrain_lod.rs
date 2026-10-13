@@ -6,6 +6,8 @@
 //! it stands in, and they're kept a while. Each has its own origin, so nothing shakes up
 //! close; skirts hang from their edges to hide the seams between sizes.
 
+pub(crate) mod contact;
+
 use std::collections::HashMap;
 use std::sync::Arc;
 
@@ -37,7 +39,7 @@ const KEEP: u64 = 600;
 const MAX_PATCHES: usize = 3000;
 
 #[derive(Clone, Copy, Debug, Hash, PartialEq, Eq)]
-struct Key {
+pub(crate) struct Key {
     system: usize,
     body: usize,
     face: u8,
@@ -60,7 +62,7 @@ impl Key {
     }
 }
 
-struct Patch {
+pub(crate) struct Patch {
     mesh: Mesh,
     /// Made before all its ground was read: made again once it is.
     partial: bool,
@@ -84,6 +86,7 @@ pub struct Lod {
     done: Arc<std::sync::Mutex<Vec<Made>>>,
     /// Where the eye was last frame (the world's frame) and when: its way ahead, for the look-ahead.
     last_eye: Option<(DVec3, std::time::Instant)>,
+    contact_inputs: contact::ResidentInputs,
 }
 
 /// How far ahead the look-ahead looks (s): the patches the eye will want then are made after those
@@ -279,26 +282,29 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
 }
 
 impl Lod {
+    /// Immutable actual-selected inputs; no requested or ideal neighbours.
+    pub(crate) fn contact_snapshot(&self) -> Option<Arc<contact::Snapshot>> { self.contact_inputs.snapshot() }
+
     /// Patches made and kept.
     pub fn patch_count(&self) -> usize {
         self.patches.len()
     }
 
-    /// Draw world `body` (of system `system`, its middle at `center`,
-    /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
-    #[allow(clippy::too_many_arguments)]
-    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) -> bool {
+    /// The actual worker/fallback selection shared by drawing and bounded CPU export.
+    /// This does not invent missing children or reconstruct resident geometry.
+    fn select_resident(&mut self, system:usize, sys:&Arc<universe_sim::StarSystem>, body_index:usize, map_id:u64, center:DVec3, rotation:DQuat, eye:DVec3)->Option<Vec<Key>> {
         let body = &sys.bodies[body_index];
         let source = (system, body_index);
-        if self.sources.get(&source).is_some_and(|id| *id != map.id()) {
+        if self.sources.get(&source).is_some_and(|id| *id != map_id) {
             // A new canonical source (including a Studio edit) cannot reuse the
             // previous world's patches or accept its in-flight completions.
             self.patches.clear();
             self.pending.clear();
             self.done = Default::default();
             self.last_eye = None;
+            self.contact_inputs.invalidate();
         }
-        self.sources.insert(source, map.id());
+        self.sources.insert(source, map_id);
         self.frame += 1;
         let now = self.frame;
         // Take in what the pool has made (a few a frame: each is an upload).
@@ -400,11 +406,12 @@ impl Lod {
             });
         }
         if missing_root {
+            self.contact_inputs.invalidate();
             #[cfg(feature = "dev")]
             if canonical && (now <= 10 || now % 30 == 0) && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
                 log::info!("PGS_CONTACT {}", serde_json::json!({"frame":now,"state":"base_globe_pending_roots","resident":self.patches.len(),"pending":self.pending.len(),"hits":[]}));
             }
-            return false;
+            return None;
         }
         // What's not made yet: the nearest made above it stands in (each once).
         let mut shown: Vec<Key> = Vec::with_capacity(draw.len());
@@ -421,6 +428,37 @@ impl Lod {
         }
         // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
         let draw = shown;
+        if canonical && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
+            self.contact_inputs.capture((system, body_index, map_id), r, eye_local, &draw, &self.patches);
+        } else { self.contact_inputs.invalidate(); }
+        Some(draw)
+    }
+
+    fn evict_unused(&mut self, now:u64) {
+        self.patches.retain(|_, p| now - p.used < KEEP);
+        if self.patches.len() > MAX_PATCHES {
+            let mut by_use: Vec<(u64, Key)> = self.patches.iter().map(|(k, p)| (p.used, *k)).collect();
+            by_use.sort_unstable_by_key(|(u, _)| *u);
+            for (_, k) in by_use.into_iter().take(self.patches.len() - MAX_PATCHES) {
+                self.patches.remove(&k);
+            }
+        }
+    }
+
+    /// Draw world `body` (of system `system`, its middle at `center`,
+    /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
+    #[allow(clippy::too_many_arguments)]
+    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color) -> bool {
+        let draw = match self.select_resident(system, sys, body_index, map.id(), center, rotation, eye) {
+            Some(draw) => draw, None => return false,
+        };
+        let body = &sys.bodies[body_index];
+        let now = self.frame;
+        let r = body.rail.radius;
+        let canonical = body.terrain.as_ref().is_some_and(|t| t.canonical_surface());
+        let eye_local = rotation.inverse() * (eye - center);
+        let eye_dist = eye_local.length();
+        let eye_dir = eye_local / eye_dist.max(1.0);
         #[cfg(feature = "dev")]
         if crate::pgs_debug::active(body) && now % 120 == 0 {
             let mut levels = std::collections::BTreeMap::new();
@@ -462,14 +500,7 @@ impl Lod {
         }
         #[cfg(feature = "dev")]
         crate::pgs_debug::draw(frame, body, center, rotation);
-        self.patches.retain(|_, p| now - p.used < KEEP);
-        if self.patches.len() > MAX_PATCHES {
-            let mut by_use: Vec<(u64, Key)> = self.patches.iter().map(|(k, p)| (p.used, *k)).collect();
-            by_use.sort_unstable_by_key(|(u, _)| *u);
-            for (_, k) in by_use.into_iter().take(self.patches.len() - MAX_PATCHES) {
-                self.patches.remove(&k);
-            }
-        }
+        self.evict_unused(now);
         true
     }
 }
@@ -518,5 +549,71 @@ mod tests {
         let child = key.children()[0];
         assert!((child.centre(&patches, r, true).length() - (r + 5_000.0)).abs() < 1e-8);
         assert!((child.centre(&HashMap::new(), r, true).length() - r).abs() < 1e-8);
+    }
+}
+
+#[cfg(test)]
+mod contact_export {
+    use super::*;
+    use std::io::Write;
+    /// External lab data and scheduler fixture: explicit invocation only, no GPU/window.
+    #[test]
+    #[ignore = "requires frozen PGS and feature witnesses; bounded CPU scheduler export"]
+    fn actual_selected_contact_inputs() {
+        use universe_sim::world::{World, worlds::{pgs::{Surface,Water},sha256}};
+        let folder=std::path::PathBuf::from(std::env::var("UNIVERSE_CONTACT_EXPORT").expect("output folder"));
+        std::fs::create_dir_all(&folder).unwrap();
+        let bytes=std::fs::read(std::env::var("UNIVERSE_CONTACT_PGS").expect("frozen PGS")).unwrap();
+        let hash=sha256(&bytes);
+        assert_eq!(hash,"4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80");
+        let source=Arc::new(Surface::read(&bytes).unwrap());drop(bytes);
+        let world=World::with_surfaces(universe_sim::world::registry::registry().galaxy().unwrap().seed as u64,Arc::new([("body.treistun.treistun-e".to_string(),source.clone())].into_iter().collect()));
+        let system=world.home_system;let sys=world.system(system);
+        let body=sys.bodies.iter().position(|b|b.key=="body.treistun.treistun-e").unwrap();
+        let radius=sys.bodies[body].rail.radius;assert_eq!(radius,6281370.);
+        let fs:serde_json::Value=serde_json::from_slice(&std::fs::read(std::env::var("UNIVERSE_CONTACT_FEATURES").expect("frozen features")).unwrap()).unwrap();
+        struct Limit<W>{writer:W,bytes:usize}
+        impl<W:Write> Write for Limit<W>{
+            fn write(&mut self,b:&[u8])->std::io::Result<usize>{if b.len()>128*1024*1024-self.bytes{return Err(std::io::Error::other("128MiB snapshot disk cap"));}let n=self.writer.write(b)?;self.bytes+=n;Ok(n)}
+            fn flush(&mut self)->std::io::Result<()>{self.writer.flush()}
+        }
+        let mut results=Vec::new();
+        for feature in fs["features"].as_array().unwrap().iter().filter(|f|["canonical_crest_1","canonical_crest_2","parent_face_join"].contains(&f["id"].as_str().unwrap())) {
+            let id=feature["id"].as_str().unwrap();
+            let direction=DVec3::from_array(serde_json::from_value(feature["queries"][0]["unit_direction"].clone()).unwrap());
+            let sample=source.query(direction).unwrap();let visible=match sample.water{Water::Wet{level_m,..}=>level_m,_=>sample.height_m};
+            let eye=direction*(radius+visible+1.7);
+            // Real map identity, no GPU upload or material claim; selection geometry comes from source.
+            let map=GlobeMap::new(1,vec![[0.;2];6]);
+            let mut lod=Lod::default();let began=std::time::Instant::now();let mut exported_parent=false;let mut stable=0;
+            let mut trace=std::io::BufWriter::new(std::fs::OpenOptions::new().write(true).create_new(true).open(folder.join(format!("{id}-states.jsonl"))).unwrap());
+            let mut export=|stage:&str,snapshot:&contact::Snapshot,pending_count:usize|{
+                let path=folder.join(format!("{id}-{stage}.json"));
+                let file=std::fs::OpenOptions::new().write(true).create_new(true).open(&path).unwrap();
+                let mut writer=Limit{writer:std::io::BufWriter::new(file),bytes:0};snapshot.write_json(&mut writer,&hash).unwrap();writer.flush().unwrap();
+                results.push(serde_json::json!({"feature":id,"stage":stage,"path":path,"bytes":writer.bytes,"selected":snapshot.patches.len(),"generation":snapshot.generation,"pending":pending_count,"gpu":false}));
+            };
+            let mut settled=false;
+            for _ in 0..1500 {
+                assert!(began.elapsed().as_secs()<150,"site scheduler timeout");
+                let selected=lod.select_resident(system,&sys,body,map.id(),DVec3::ZERO,DQuat::IDENTITY,eye);
+                if let Some(keys)=&selected {for key in keys {lod.patches.get_mut(key).unwrap().used=lod.frame;}}
+                let snapshot=lod.contact_snapshot();
+                let state=if selected.is_none(){"roots_pending"}else if lod.pending.is_empty(){"selected_settled"}else{"selected_loading"};
+                let ids=snapshot.as_ref().map(|s|s.stamp.selected.iter().map(|(k,id)|([k.face as u32,k.level as u32,k.x,k.y],*id)).collect::<Vec<_>>()).unwrap_or_default();
+                writeln!(trace,"{}",serde_json::json!({"frame":lod.frame,"simulation_time_s":0.,"state":state,"ready":false,"source_sha256":hash,"source_generation":1,"selection_generation":snapshot.as_ref().map(|s|s.generation),"map_id":map.id(),"eye":eye.to_array(),"radius_m":radius,"selected":ids,"resident":lod.patches.len(),"pending":lod.pending.len(),"workers":2,"subject":"camera","measurement":"cpu_actual_selected_geometry","active_group":null,"gpu_bytes":{"active":0,"uploading":0,"retired":0}})).unwrap();
+                if let Some(s)=snapshot.as_ref().filter(|s|s.complete()) {
+                    let foot_level=s.patches.iter().filter(|p|p.key.shape().0.angle_between(direction)<p.key.shape().1*1.5).filter_map(|p|rendered_height(&Patch{mesh:p.mesh.clone(),origin:p.origin,partial:p.partial,used:0},eye,radius).map(|_|p.key.level)).max();
+                    if !exported_parent && foot_level.is_some_and(|l|(13..19).contains(&l)) && !lod.pending.is_empty(){export("parent",s,lod.pending.len());exported_parent=true;}
+                    if lod.pending.is_empty(){stable+=1;}else{stable=0;}
+                    if stable>=3 {export("settled",s,lod.pending.len());settled=true;break;}
+                }
+                lod.evict_unused(lod.frame);
+                std::thread::sleep(std::time::Duration::from_millis(10));
+            }
+            trace.flush().unwrap();assert!(settled,"no settled actual selection");
+        }
+        assert_eq!(results.iter().filter(|r|r["stage"]=="settled").count(),3);
+        std::fs::write(folder.join("exports.json"),serde_json::to_vec_pretty(&results).unwrap()).unwrap();
     }
 }

@@ -4,7 +4,7 @@ Active task 20261013T130727-engine-bd9a. Isolated branch ships-contact-adapter f
 
 Snapshot only after Lod's actual fallback-selected `shown` list is complete. Each entry is the real selected `Key`, immutable `Mesh.id`, cheap shared `Mesh` clone, body-frame origin and partial flag. Source identity includes system/body, GlobeMap.id, immutable Surface Arc, selected-set generation, radius, eye and exact morph parameters. No `ideal()` neighbours or sampled reconstruction stand in for absent resident meshes. Refuse partial, absent or overlapping ancestor/descendant support at publication unless the worker explicitly models the actual overlap.
 
-For the world-owned worker, avoid an engine dependency and avoid copying vertex arrays. Proposed world trait:
+For the shared client worker (`universe-terrain-contact`, depending on world), avoid an engine dependency and avoid copying vertex arrays. The initial game bridge trait is:
 
 ```rust
 pub trait RetainedMesh: Send + Sync {
@@ -23,8 +23,16 @@ pub struct RetainedPatch {
 
 The game implements the trait with a retained engine Mesh clone. Accessors return actual positions/colors; faces() exposes only the 512 grid triangles, excluding skirts. It does not regenerate the grid or assume all shader offsets vanish. The snapshot array is bounded by the existing 3000 patch cap; shared geometry leases are existing resident data, not newly copied arrays. Worker still must meter metadata, temporary construction and returned geometry against the declared 16 MiB transient cap.
 
-The shared worker returns a typed complete corrected group: exact source/selection generation, input patch keys and IDs, replacement meshes and origins, any complete retained support replacements, verified CPU topology/core/join evidence, and explicit GPU group ownership. Every affected incident patch is part of one transaction. Corrected positions and morph must be frozen together; unchanged mesh IDs alone are insufficient if boundary morph is still changing.
+The shared worker returns a typed complete corrected group: exact source/selection generation, input patch keys and IDs, replacement meshes and origins, any complete retained support replacements, verified CPU topology/core/join evidence, and explicit GPU group ownership. Every affected incident patch is part of one transaction. Lock only boundary-crossed triangle vertices and the finite-owner endpoint/incident dependencies proven necessary by the worker. Publish every incident selected patch atomically. Unchanged exterior vertices retain their original morph; freezing whole support patches would open their other edges as the eye moves. Locked vertices must retain positive color.w footprint size while their delta xyz becomes zero; zero size makes the shader smoothstep undefined. New tiles also need a positive derived footprint size.
 
 Stage all replacement meshes using Frame::prepare_mesh. Readiness requires every Mesh::gpu_resident receipt, the current selected/input IDs and unchanged source/generation. Only then choose the whole group for this frame. Pending, failed, stale, missing-owner, changed-selection, budget refusal or partially uploaded groups keep the actual existing terrain draw selection and explicitly report not walk-ready. Never hide only some input patches. Geometry readiness must not reset or replace canonical physics.
 
 Engine owns Terrain::surface_source, source/group worker, MeshBudget::group and GPU retirement lifetime. Ships owns terrain_lod snapshot, generation checks, atomic draw substitution and readiness adapter. GPU experiments remain held until final actual-resident CPU join gates pass. The earlier seven-site CPU pilot used settled ideal selected grids; it does not certify these runtime snapshots.
+
+## Delivered CPU foundation and remaining admission gap
+
+The real drawing selector now feeds a retained snapshot without rebuilding neighbours. Four scoped terrain tests pass, including the external CPU export fixture. Six snapshots were produced: loading-parent and settled states for both canonical crests and the parent-face join. See [validation](terrain-contact-actual-snapshots.md).
+
+The current snapshot stamp includes exact eye, system/body/map ID, radius and selected mesh IDs. That is conservative stationary-input cancellation for this CPU diagnostic. It is **not** moving-job admission: every eye change cancels the current stamp and could starve asynchronous jobs. Runtime integration must separate source/selected-ID generation from each job's immutable recorded eye, retain the immutable Surface Arc identity, and admit completed geometry only after verified incident-lock/excision closure and current subject coverage in its accurate core. Source Arc identity is proposed above but not yet retained by this game snapshot.
+
+No corrected group is drawn, no native selection is suppressed, and no GPU walk-ready state is published. Shared engine hooks are available, but the worker's actual-input join and dependency closure gates remain prerequisites to the consumer.
