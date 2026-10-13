@@ -3860,3 +3860,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static empty rack; actual mounted placement and GPU look/cost, temporal filtering, cargo handling and restraint, full3g deck/weld/structure qualification remain pending."
+  - key: equipment.gate.relay.gate
+    version: 1
+    manifest_sha256: "0cabe7b3127938a66e23e54b5faf1f39cc5469d45e211ebd8de66ffa766a682e"
+    installed: 7d5ff620
+    game: "the loader (world::assets) at fso 7d5ff620"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gate-relay-gate/v1 (213704 bytes, bounds [-1.2, 0.0, -0.8] to [1.2, 2.0, 0.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static laser relay only; actual gate optical alignment and utilities, runtime pointing/data link, GPU look/cost and temporal filtering, internal packing/load/thermal qualification remain pending. Source +/-5deg study is provisional."
