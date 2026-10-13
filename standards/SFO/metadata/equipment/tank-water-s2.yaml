@@ -5,21 +5,22 @@ identity:
   maker: org.hadley
   revision: draft
   slot: tank
-  description: "Holds a liquid or a gas that is not the ship's fuel: water, waste, liquid or gas cargo, air."
+  description: "Holds 50 m3 of water or another ordinary liquid that does not attack aluminium, at up to 0.1 MPa: not cryogens, not gas."
 size_class: 3
 fits: mount.tank-s3
 physical:
-  mass: 2500
-  volume: 95.4
-  length: 4.57
-  width: 4.57
-  height: 4.57
+  mass: 2381
+  volume: 107.1
+  length: 4.627
+  width: 4.627
+  height: 5.003
 built_of:
   parts: tank-water-s2
   list:
-    - { code: WTK2-01, name: "Shell", description: "The ball, welded from pressed halves.", mass: 1750, length: 4.06, width: 4.06, height: 4.06, item: stock.al6061-pl-5, quantity: 2010.0, module: module.welding-bay }
-    - { code: WTK2-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 375, length: 2.43, width: 2.43, height: 2.43, item: stock.al6061-pl-5, quantity: 431.0, module: module.cutting-table }
-    - { code: WTK2-03, name: "Fittings", description: "Fill, drain, vent and gauge.", mass: 375, length: 2.43, width: 2.43, height: 2.43, item: stock.st304-pl-3, quantity: 431.0, module: module.machining-centre }
+    - { code: WTK2-01, name: "Shell", description: "A sphere welded from pressed halves: 4.617 m inside, 5 mm wall, 4.627 m outside, with weld lands, bosses and saddle doublers.", mass: 1087, length: 4.627, width: 4.627, height: 4.627, item: stock.al6061-pl-5, quantity: 1250.1, module: module.welding-bay }
+    - { code: WTK2-02, name: "Baffles", description: "Keep the liquid from sloshing.", mass: 375, length: 4.6, width: 4.6, height: 4.6, item: stock.al6061-pl-5, quantity: 431.0, module: module.cutting-table }
+    - { code: WTK2-03, name: "Fittings", description: "Fill, drain, vent and gauge on a boss at the top, under a guard.", mass: 140, length: 0.7, width: 0.55, height: 0.35, item: stock.st304-pl-3, quantity: 161.0, module: module.machining-centre }
+    - { code: WTK2-04, name: "Saddles", description: "Four contoured steel web saddles under the sphere, one per mount point.", mass: 779, length: 1.0, width: 0.5, height: 0.45, item: stock.sta36-pl-20, quantity: 895.9, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -28,6 +29,7 @@ function:
   holds: "good.water"
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "50 m3 as a ball 4.57 m across; a twentieth of its contents in aluminium (a low-pressure liquid tank). Chosen." }
+  - { of: [function, size_class], tier: invented, review: true, note: "50 m3 of water or another ordinary liquid. Chosen." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the liquid cargo S4 (2026-10-13, from the modeller's blockout v01): 50 m3 with 3% ullage, 2.309 m inner radius. Wall: 0.1 MPa plus the water's head at 30 m/s2, times 1.5 against 165 MPa welded, wants 2.5 mm: the 5 mm plate, 906 kg bare plus 20% for lands and bosses. Saddles 779 kg as drawn; full at 30 m/s2 the tank puts about 392 kN on each mount point (483 kN allowed). Baffles 375 kg (the first allowance, invented); fittings 140 kg (99 drawn before caps and gauge, scaled as the S4's). Total 2,381 kg, 4.8% of what it holds (it was 2,500 at an assumed twentieth). Box 4.627 x 4.627 x 5.003 m with saddles and guarded top fittings. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
