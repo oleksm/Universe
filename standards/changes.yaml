@@ -454,7 +454,7 @@
 - { record: equipment.tank.air.s1, at: "2026-10-11T02:44:35Z", status: draft, summary: "changed: visual", sha: "773197aed42ee1dd" }
 - { record: equipment.tank.deuterium.s0, at: "2026-10-11T20:42:22Z", status: review, summary: "changed: visual", sha: "3759b1127356f895" }
 - { record: equipment.tank.deuterium.s1, at: "2026-10-11T20:46:10Z", status: draft, summary: "changed: visual", sha: "2ff820e4df5c65a3" }
-- { record: equipment.tank.deuterium.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7530b38f5c6c0dec" }
+- { record: equipment.tank.deuterium.s2, at: "2026-10-13T23:53:14Z", status: draft, summary: "changed: visual", sha: "6dbefb30e4e5f45b" }
 - { record: equipment.tank.deuterium.s3, at: "2026-10-11T19:03:33Z", status: draft, summary: "changed: visual", sha: "8952dc5911d17234" }
 - { record: equipment.tank.deuterium.s4, at: "2026-10-11T20:50:56Z", status: draft, summary: "changed: visual", sha: "0f8c55158dbe69d3" }
 - { record: equipment.tank.gas-cargo.s3, at: "2026-10-13T14:29:34Z", status: draft, summary: "changed: visual", sha: "5d2065ed7b8e3a60" }
