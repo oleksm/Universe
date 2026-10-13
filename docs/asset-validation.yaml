@@ -3092,3 +3092,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static asset only; source demo is not runtime motion. Full engine/hull services and clearance, live motion, GPU look/cost and loaded drive/brake qualification pending."
+  - key: equipment.engine.swivel.s2
+    version: 1
+    manifest_sha256: "b70bc333850a897b21b430d445f718e42479146eb017d44a065b6509d6e77795"
+    installed: 8f9f55c7
+    game: "the loader (world::assets) at fso 8f9f55c7"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-swivel-s2/v1 (322220 bytes, bounds [-0.6, -0.6, 0.0] to [0.6, 0.6, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static asset only; source demo is not runtime motion. Full engine/hull services and clearance, live motion, GPU look/cost and loaded drive/brake qualification pending."
