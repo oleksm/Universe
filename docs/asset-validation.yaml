@@ -3812,3 +3812,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, pressure/load/fire/occupant/thermal qualification and hidden packing"
+  - key: equipment.cargo.cabin.s3
+    version: 1
+    manifest_sha256: "c4f7e08cf0e9630afba6b36cca2ce01c087a380a695672a7273ed4d17fd5465f"
+    installed: f76e3e34
+    game: "the loader (world::assets) at fso f76e3e34"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-cabin-s3/v1 (2003908 bytes, bounds [-1.35, 0.0, -3.95] to [1.35, 2.24, 3.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, pressure/load/fire/occupant/thermal qualification and hidden packing"
