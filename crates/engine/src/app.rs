@@ -77,6 +77,8 @@ pub struct Resources {
     pub asset_hits: u64,
     pub asset_unloads: u64,
     pub asset_gpu_bytes: usize,
+    /// All cached untextured mesh buffers; reservation budgets additionally cover retired work.
+    pub mesh_gpu_bytes: usize,
     pub asset_preparing: usize,
     /// Worlds' surface maps in GPU layers, of the layers there are.
     pub globe_layers: usize,
