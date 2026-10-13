@@ -39,6 +39,12 @@ function:
   shield_pass: 0.01
   reaction_offset: 3
   heat_to_hull: 0.00071
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-ft-s2/v1"
+  manifest_sha256: "f95b0b508b9d4574bc5a517af95e9e6e7e8522c67d0e627468ab6a4b881b37be"
+  version: 1
+  triangles: 14540
 life: 473364000
 basis:
   - { of: [function.exhaust, function.efficiency, function.thrust], tier: sourced, review: true, source: "standards/sources/research_ship_equipment.json", note: "Discovery II (NASA/TM-2005-213559): exhaust 347 km/s at the nozzle exit, 4.83 GW of jet from 7.9 GW of fusion (0.61), 6,250 lbf = 27.8 kN, 0.08 kg/s. The S3 is that engine; the others scale." }
