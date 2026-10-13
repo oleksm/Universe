@@ -3764,3 +3764,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Game transparency and GPU cost, temporal edge stability, final hull placement and retaining-ring qualification, pressure glass and seals remain pending"
+  - key: equipment.capacitor.s3
+    version: 1
+    manifest_sha256: "6bd57e9ea58f873a94d83d00847b76de9325cbf33021ed06409ca76ea87e21f2"
+    installed: f5b44009
+    game: "the loader (world::assets) at fso f5b44009"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/capacitor-s3/v1 (203312 bytes, bounds [-1.41, 0.0, -0.94] to [1.41, 1.88, 0.94]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual game GPU look/cost, temporal edge stability and final hull placement; capacity/mass contradiction awaits engine decision, mass calculations deferred by registry; electromagnetic, cooling, quench and support strength unqualified"
