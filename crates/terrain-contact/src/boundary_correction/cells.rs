@@ -11,7 +11,18 @@ pub fn rebuild(
     coalesce: Option<[f64; 2]>,
     reverse: bool,
 ) -> Result<crease::Pair, Value> {
-    let chart = Chart::new(c, 6281370.);
+    rebuild_radius(s, c, 6281370., base, coalesce, reverse)
+}
+/// As `rebuild`, on the host radius the runtime actually draws with.
+pub fn rebuild_radius(
+    s: &Surface,
+    c: DVec3,
+    r: f64,
+    base: &crease::Pair,
+    coalesce: Option<[f64; 2]>,
+    reverse: bool,
+) -> Result<crease::Pair, Value> {
+    let chart = Chart::new(c, r);
     // Same representation in both controls; keep the left original tile origin.
     let origin = DVec3::from_array(base.tiles[0].origin);
     let mut faces = base

@@ -6,6 +6,8 @@
 pub mod boundary_correction;
 pub mod contact_core;
 pub mod crease;
+pub mod replacement;
+pub mod worker;
 pub mod sparse_band;
 
 pub use boundary_correction::retained::{
