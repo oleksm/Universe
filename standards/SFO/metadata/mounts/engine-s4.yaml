@@ -11,14 +11,14 @@ envelope:
   width: 3.3
   height: 1.65
 bears:
-  mass: 4160.0
+  mass: 4080.0
   thrust: 2880000.0
 attachment:
   points: 8
   pattern: ring
   each:
-    tension: 375000.0
-    compression: 375000.0
+    tension: 374000.0
+    compression: 374000.0
     shear: 187000.0
 feeds:
   power: 8750.0
