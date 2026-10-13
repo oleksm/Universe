@@ -4435,6 +4435,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
     let mut items: Vec<(f32, Item)> = Vec::new();
     // (The ground first, beneath all; then the rest far to near.)
     let mut ground = Vec::new();
+    let faces_scope = universe_prof::scope("draw/studio/walk/faces");
     for (k, (t, colour)) in s.faces.iter().enumerate() {
         let v = t.map(view);
         if v.iter().all(|p| p.z < near) {
@@ -4453,11 +4454,13 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
             items.push((depth, Item::Face(poly, c)));
         }
     }
+    drop(faces_scope);
     let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near};
     crate::equipment_visual::project_each(&s.equipment, universe_engine::glam::Mat4::IDENTITY, &camera, |t| {
         items.push((t.depth, Item::Equipment(t)));
     });
     // (Inside a room, its walls hide the frame round it: no members.)
+    let details_scope = universe_prof::scope("draw/studio/walk/details");
     let head = eye;
     let inside_room = s.rooms.iter().any(|&(a, b, hw, hh)| {
         let d = b - a;
@@ -4494,7 +4497,11 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
         }
         items.push((v.z - 0.05, Item::Label(screen(v), name.clone(), scale)));
     }
+    drop(details_scope);
+    let sort_scope = universe_prof::scope("draw/studio/walk/sort");
     items.sort_by(|a, b| b.0.total_cmp(&a.0));
+    drop(sort_scope);
+    let submit_scope = universe_prof::scope("draw/studio/walk/submit");
     for (poly, c) in ground {
         let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
         for k in 1..q.len() - 1 {
@@ -4517,6 +4524,7 @@ fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
             }
         }
     }
+    drop(submit_scope);
     let c = size * 0.5;
     frame.hud_line(c - Vec2::new(6.0, 0.0), c + Vec2::new(6.0, 0.0), LABEL);
     frame.hud_line(c - Vec2::new(0.0, 6.0), c + Vec2::new(0.0, 6.0), LABEL);
