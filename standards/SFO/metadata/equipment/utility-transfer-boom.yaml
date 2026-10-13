@@ -32,6 +32,12 @@ function:
   kind: "port"
   flow: 20.0
   reach: 8.0
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-transfer-boom/v1"
+  manifest_sha256: "ca16cfd33caa151aafa156f280ce5945e387fbd2746067072423c8aeb748b21f"
+  version: 1
+  triangles: 8876
 life: 473364000
 basis:
   - { of: [function, size_class], tier: invented, review: true, note: "An 8 m boom giving 20 kg/s to another ship. Chosen." }
