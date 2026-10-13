@@ -62,11 +62,30 @@ very `Surface` the world holds (`pgs_preview::loaded_hash`), checked each frame;
 Crest 1 rerun (`crest1-walk2`): every frame bound; two coarse refusals (8.0 mm at a level-1 patch 233 km out,
 75 µm at level 7); first ready frame 148, then no frame not ready; staged rim–patch max 4.3 µm.
 
+## Follow-up: a real walker, moving appearance, rebuild debounce
+
+- **Walker.** Dev scenario `groundwalk` (lowflight's place, set down, stepped out, walked clear) and
+  `UNIVERSE_PGS1_WALKER` (after 20 s, forward held through the game's own walking commands, as W is). The trace
+  marks each frame `walker` while the crew is outside; the root says `walker` only if every frame did. Crest 1
+  (`walker-crest1`, trace `185cc8492b64`): 1,618 frames, every one the walker's; 102.7 m walked; 16 groups; ready
+  from frame 141 with no gap after; dry contact ≤ 2.0 µm; peak extra GPU 12.1 MB. Checker failures: frames ≤ 140
+  only (startup, no group).
+- **Rebuild debounce.** The ground under a group changing must hold 30 frames before a new group is built for it.
+  From 40 m up at 2.5 m/s the old rule rebuilt every 4–6 frames (66 jobs in 720 frames, peak 15.1 MB, 122 frames
+  not ready while frame capture slowed the run). Now (`high-walk`, trace `ee047d5f1196`): 241.6 m in 2,250 frames,
+  30 groups, no gap after frame 133, dry contact ≤ 1.6 µm, peak 11.0 MB.
+- **Moving appearance.** 294 consecutive frames from 40 m, 60° down, camera walking 2.5 m/s, spanning about seven
+  group swaps (`burst`, pre-debounce build). Terrain pixels changed at most 10 grey levels frame to frame at the
+  99.9th percentile; the only larger changes were HUD (a message fading in, a distance marker). No pop at a swap
+  and no visible footprint edge. Neutral shading: a weak appearance test; it does not show normals, colour or
+  texture differences across band, rim and patches. Captures deleted; statistics above.
+
 ## Not established
 
 - **Frame time.** The test window on workspace 8 is throttled by the compositor: the renderer drew about one frame
   in eight game frames. No frame-time claim; the 33.3 ms p95 gate needs a visible window.
 - **Appearance.** Screenshots show no visible hole or seam at the views taken (neutral shading, HUD on); the rim's
   normals are its own and band/rim/patch shading across the square's edge needs a close look.
-- **A walker.** The subject is the camera; actual walker inputs and the orbit-to-walk journey are not in these runs.
+- **The journey.** The walker stands at the place directly (set down there); orbit-to-walk and reboarding are not
+  in these runs.
 - **GPU depth.** Submitted heights are CPU ray casts of the submitted geometry, not depth readback.

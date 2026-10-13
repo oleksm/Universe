@@ -638,7 +638,7 @@ fn bodies(frame: &mut Frame, app: &App) {
             // finer toward the eye (see `terrain_lod`).
             let near = cam.distance(center) - b.rail.radius < terrain_view::near_altitude(b);
             let patches_ready = near && universe_prof::time("draw/scene/bodies/ground", || {
-                app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c, t)
+                app.caches.terrain_lod.borrow_mut().draw(frame, app.view.cache, &app.view.system, i, map, center, b.rotation(t), cam, c, t, matches!(app.v.crew.place, universe_sim::world::Place::Outside { .. }))
             });
             if patches_ready {
                 // A world drawn from its lines: the lines laid on the ground round the eye.

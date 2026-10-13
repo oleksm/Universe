@@ -509,7 +509,7 @@ impl Lod {
     /// Draw world `body` (of system `system`, its middle at `center`,
     /// turned `rotation`) as patches for an eye at `eye`, surfaced from `map`.
     #[allow(clippy::too_many_arguments)]
-    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color, time_s: f64) -> bool {
+    pub fn draw(&mut self, frame: &mut Frame, system: usize, sys: &Arc<universe_sim::StarSystem>, body_index: usize, map: &Arc<GlobeMap>, center: DVec3, rotation: DQuat, eye: DVec3, tint: Color, time_s: f64, on_foot: bool) -> bool {
         let draw = match self.select_resident(system, sys, body_index, map.id(), center, rotation, eye) {
             Some(draw) => draw, None => return false,
         };
@@ -591,7 +591,7 @@ impl Lod {
                     .filter(|(m, o, _)| (*o - eye_dir * o.dot(eye_dir)).length() <= m.radius() as f64 + 1.)
                     .filter_map(|&(m, o, ground)| group::ray_hit(m, ground, o, eye_local))
                     .reduce(f64::max);
-                trace.record(now, time_s, eye_local, &surface, submitted, &self.contact_group, self.pending.len(), self.patches.len());
+                trace.record(now, time_s, on_foot, eye_local, &surface, submitted, &self.contact_group, self.pending.len(), self.patches.len());
             }
         }
         #[cfg(feature = "dev")]

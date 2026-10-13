@@ -21,6 +21,8 @@ use universe_terrain_contact::worker;
 pub(crate) const GPU_BUDGET: usize = 16 << 20;
 /// A new group is asked for when the eye comes within this of its core's edge (m).
 const REANCHOR_MARGIN: f64 = 8.;
+/// Frames the ground under a group must stay changed before a new one is built for it.
+const CHANGE_HOLD: u64 = 30;
 /// Frames to wait after a refusal before asking again.
 const COOLDOWN: u64 = 60;
 
@@ -95,10 +97,12 @@ pub(crate) struct Runtime {
     /// Retired meshes' ids, told to the renderer every frame until this frame (a frame may be
     /// replaced before it is drawn); their reservations then wait only for the GPU.
     releasing: Vec<(u64, u64)>,
+    /// Since when the ground under the newest group, as the eye would now have it, differs.
+    changed_since: Option<u64>,
 }
 impl Default for Runtime {
     fn default() -> Self {
-        Self { budget: MeshBudget::new(GPU_BUDGET), source: Arc::new(AtomicU64::new(1)), job: None, staged: None, active: None, next_id: 1, cooldown: 0, events: vec![], releasing: vec![] }
+        Self { budget: MeshBudget::new(GPU_BUDGET), source: Arc::new(AtomicU64::new(1)), job: None, staged: None, active: None, next_id: 1, cooldown: 0, events: vec![], releasing: vec![], changed_since: None }
     }
 }
 
@@ -209,7 +213,12 @@ impl Runtime {
         // eye would now have it changed. Built only from ground settled round the eye.
         let dir = eye.normalize();
         let newest = self.staged.as_ref().or(self.active.as_ref());
-        let wanted = newest.is_none_or(|p| !p.meta.in_core(dir, REANCHOR_MARGIN) || !p.meta.current(natural, patches));
+        // (The ground changing under it must hold a while first: from a height, or moving fast,
+        // the selection there flickers between levels, and each rebuild costs a job and an upload.)
+        let changed = newest.is_some_and(|p| !p.meta.current(natural, patches));
+        self.changed_since = if changed { self.changed_since.or(Some(frame)) } else { None };
+        let changed = self.changed_since.is_some_and(|since| frame - since >= CHANGE_HOLD);
+        let wanted = newest.is_none_or(|p| !p.meta.in_core(dir, REANCHOR_MARGIN)) || changed;
         if !wanted || !settled || self.job.is_some() || frame < self.cooldown {
             return;
         }
@@ -371,7 +380,7 @@ impl Trace {
         Some(Self { path, sha: sha.to_owned(), radius, frames: vec![], written: 0 })
     }
     #[allow(clippy::too_many_arguments)]
-    pub fn record(&mut self, frame: u64, time_s: f64, eye: DVec3, surface: &universe_sim::world::worlds::pgs::Surface, submitted: Option<f64>, runtime: &Runtime, pending: usize, resident: usize) {
+    pub fn record(&mut self, frame: u64, time_s: f64, on_foot: bool, eye: DVec3, surface: &universe_sim::world::worlds::pgs::Surface, submitted: Option<f64>, runtime: &Runtime, pending: usize, resident: usize) {
         if self.frames.len() >= 36_000 {
             return;
         }
@@ -393,7 +402,7 @@ impl Trace {
         });
         let ready = runtime.active.as_ref().is_some_and(|p| p.meta.in_core(dir, 0.));
         self.frames.push(json!({
-            "frame":frame,"simulation_time_s":time_s,"source_sha256":sha,"source_generation":runtime.source_generation(),
+            "frame":frame,"simulation_time_s":time_s,"subject":if on_foot {"walker"} else {"camera"},"source_sha256":sha,"source_generation":runtime.source_generation(),
             "foot_direction":dir.to_array(),"ready":ready,"water":water,"canonical_bed_height_m":bed,
             "submitted_ground_height_m":submitted.map(|h| h - self.radius),
             "gpu_bytes":{"active":active,"uploading":uploading,"retired":retired},
@@ -404,8 +413,10 @@ impl Trace {
         }
     }
     pub fn write(&mut self, runtime: &Runtime) {
+        // A walker only if every frame's subject was one (the eye over the walker's feet).
+        let walker = !self.frames.is_empty() && self.frames.iter().all(|f| f["subject"] == "walker");
         let root = json!({"format":"planet-readiness-trace/1","source_sha256":self.sha,"host_radius_m":self.radius,
-            "measurement":"submitted_geometry","subject":"camera","frames":self.frames});
+            "measurement":"submitted_geometry","subject":if walker {"walker"} else {"camera"},"frames":self.frames});
         let tmp = self.path.with_extension("tmp");
         if std::fs::write(&tmp, serde_json::to_vec(&root).unwrap_or_default()).is_ok() {
             let _ = std::fs::rename(&tmp, &self.path);

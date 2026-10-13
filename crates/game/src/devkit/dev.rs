@@ -14,8 +14,8 @@ pub fn world(seed: u64) -> Result<universe_sim::world::World, String> {
     use universe_sim::world::{World, worlds::{pgs::Surface, sha256}};
     let Some(folder) = std::env::var_os("UNIVERSE_PGS1") else { return Ok(World::new(seed)); };
     let key = std::env::var("UNIVERSE_BODY").map_err(|_| "UNIVERSE_PGS1 requires UNIVERSE_BODY")?;
-    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight")) {
-        return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet or lowflight".into());
+    if !matches!(std::env::var("UNIVERSE_SCENARIO").as_deref(), Ok("planet" | "lowflight" | "groundwalk")) {
+        return Err("PGS1 preview requires UNIVERSE_SCENARIO=planet, lowflight or groundwalk".into());
     }
     if std::env::var_os("UNIVERSE_RECORD").is_some() { return Err("PGS1 preview sources are not supported by seed-only replay yet".into()); }
     let folder = std::path::PathBuf::from(folder);
@@ -271,6 +271,7 @@ pub const SCENARIOS: &[Scenario] = &[
     Scenario { names: &["aboard"], about: "Out of the seat, at the back of the cabin looking forward up the corridor.", run: s_aboard },
     Scenario { names: &["boarded"], about: "Just in through the hatch, facing into the ship.", run: s_boarded },
     Scenario { names: &["vending", "vendingopen"], about: "Landed at the port, on foot by its vending machine, facing it (\"vendingopen\".", run: s_vending },
+    Scenario { names: &["groundwalk"], about: "Lowflight's place (UNIVERSE_LAT/LON, UNIVERSE_HEADING), set down there, stepped out and a few metres off: on foot on open ground (UNIVERSE_PGS1_WALKER walks on).", run: s_groundwalk },
     Scenario { names: &["rawland"], about: "Set down on open ground (no port), step out, walk off a way and face the ship.", run: s_rawland },
     Scenario { names: &["sunlook"], about: "Landed (on a pad at Port Trethi, by day), standing in the hold, looking straight at the sun (through the hull).", run: s_sunlook },
     Scenario { names: &["studiowalk"], about: "The demo layout walked: up the ramp (UNIVERSE_SIDE m off the centre line) and on forward, through the wall's door or into it (where you end: logged).", run: s_studiowalk },
@@ -1683,6 +1684,38 @@ fn s_rawland(app: &mut App, _name: &str, _c: &Ctx) {
     log::info!("scenario rawland: ship {:?}, crew {:?}", u.vessels[universe_sim::PLAYER].ship.state, u.crew.place);
 }
 
+fn s_groundwalk(app: &mut App, _name: &str, c: &Ctx) {
+    // Over the place, a few metres up, still; let it settle onto the ground.
+    s_lowflight(app, "lowflight", c);
+    let mut ticks = 0;
+    while ticks < 3600 && !matches!(app.engine.universe().vessels[universe_sim::PLAYER].ship.state, ShipState::Landed { .. }) {
+        app.engine.universe().step_world(1.0 / 60.0, 1.0, &Controls::default());
+        ticks += 1;
+    }
+    at_hatch(app, 0.0);
+    if !universe_sim::world::crew::walks_out(&app.engine.universe().vessels[universe_sim::PLAYER].ship) {
+        app.engine.universe().walk(&universe_sim::world::WalkCommands { interact: true, ..Default::default() }, 0.02);
+    }
+    for _ in 0..250 {
+        app.engine.universe().walk(&universe_sim::world::WalkCommands { forward: 1.0, ..Default::default() }, 0.02);
+    }
+    let u = app.engine.universe();
+    log::info!("scenario groundwalk: landed after {ticks} ticks; ship {:?}, crew {:?}", u.vessels[universe_sim::PLAYER].ship.state, u.crew.place);
+}
+
+/// (Dev: `UNIVERSE_PGS1_WALKER`, on foot: after `UNIVERSE_PGS1_CAMERA_WALK_AFTER` s (20) the
+/// walker walks on (forward held, as W is) through the game's own walking commands.)
+pub fn walker_input(mut c: universe_sim::world::WalkCommands) -> universe_sim::world::WalkCommands {
+    static START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+    if std::env::var_os("UNIVERSE_PGS1_WALKER").is_some() {
+        let after = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_AFTER").unwrap_or(20.0);
+        if START.get_or_init(std::time::Instant::now).elapsed().as_secs_f64() > after {
+            c.forward = 1.0;
+        }
+    }
+    c
+}
+
 fn s_sunlook(app: &mut App, _name: &str, _c: &Ctx) {
     // Landed (on a pad at Port Trethi, by day), standing in the hold, looking
     // straight at the sun (through the hull).
@@ -2217,5 +2250,14 @@ pub fn camera_walk(app: &mut App) {
     let a = gone / b.rail.radius;
     let dir = (w.from * a.cos() + w.toward * a.sin()).normalize();
     let height = terrain.surface(dir);
-    app.camera.position = centre + b.rotation(t) * (dir * (b.rail.radius + height + universe_sim::world::crew::EYE));
+    // (UNIVERSE_PGS1_CAMERA_WALK_HEIGHT: that far over the ground instead of eye height, m.)
+    let over = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_HEIGHT").unwrap_or(universe_sim::world::crew::EYE);
+    app.camera.position = centre + b.rotation(t) * (dir * (b.rail.radius + height + over));
+    // (UNIVERSE_PGS1_CAMERA_PITCH: looking that many degrees down along the way, instead of as it was.)
+    if let Some(down) = crate::devenv::num("UNIVERSE_PGS1_CAMERA_PITCH") {
+        let rot = b.rotation(t);
+        let (up, ahead) = (rot * dir, rot * (w.toward - dir * w.toward.dot(dir)).normalize());
+        let look = ahead * down.to_radians().cos() - up * down.to_radians().sin();
+        app.camera.orientation = universe_sim::ship::facing(look, if down > 60.0 { ahead } else { up }).as_quat();
+    }
 }

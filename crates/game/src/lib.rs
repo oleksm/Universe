@@ -883,6 +883,8 @@ impl App {
                 return Controls::default();
             }
             let c = onfoot::commands(ctx);
+            #[cfg(feature = "dev")]
+            let c = dev::walker_input(c);
             self.engine.send(Command::Walk(c, ctx.dt as f64));
             return Controls::default();
         }
