@@ -28,6 +28,12 @@ function:
   kind: tank
   capacity: 500
   holds: material.hydrolox
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-hydrolox-0p5t/v1"
+  manifest_sha256: "d9ba6a61e6de461e32ec390f1cd29c487568c5ecfbdea0e925dea46ad689cd46"
+  version: 1
+  triangles: 8792
 life: 473364000
 basis:
   - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the hydrolox S1 (2026-10-13, from the modeller's blockout v01): 500 kg at O/F 5.5 is 423 kg of oxygen (0.371 m3) and 77 kg of hydrogen (1.086 m3), each with 3% ullage, with the 100 mm common bulkhead inside a 0.735 m inner radius. Wall: 0.35 MPa times 1.5 against 165 MPa welded wants 1.2 mm, so the 2 mm sheet, not the big tanks' 5 mm plate: 37 kg bare plus 20% for lands and bosses (the modeller's 5 mm made it 111). Insulation 100 mm at 3.3 kg/m2, bulkhead 21.5 kg, saddles 7 kg, fittings 20 kg for two circuits (6 drawn). Total 115 kg, 23% of what it holds: a small tank's insulation and bulkhead do not shrink with it (the old 70 kg was an assumed 14%). Box: 1.795 x 1.673 x 1.739 m with saddles and opposed service bosses. Chosen; review." }
