@@ -8,7 +8,7 @@ identity:
 size_class: 1
 fits: mount.power-s1
 physical:
-  mass: 1400
+  mass: 2303
   volume: 157.0
   length: 12.5
   width: 6.26
@@ -25,8 +25,8 @@ built_of:
     - { code: PAS1-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 16, length: 2.82, width: 1.41, height: 0.45, item: stock.ti64-pl-5, quantity: 18.4, module: module.machining-centre }
     - { code: PAS1-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 12, length: 2.56, width: 1.28, height: 0.409, item: good.electric-motors, quantity: 12, module: module.assembly-shop }
     - { code: PAS1-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 23, length: 3.18, width: 1.59, height: 0.508, item: good.electronics, quantity: 23, module: module.assembly-shop }
-    - { code: PAS1-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 39, length: 3.79, width: 1.9, height: 0.606, item: stock.cfc-pl-3, quantity: 44.8, module: module.welding-bay }
-    - { code: PAS1-10, name: "Frame", description: "Carries the set.", mass: 8, length: 2.23, width: 1.12, height: 0.358, item: stock.al6061-pl-5-panel, quantity: 8.0, module: module.welding-bay }
+    - { code: PAS1-09, name: "Radiator panel", description: "Sheds the heat the turbine cannot use: one carbon-carbon plate over half the roof, hinged on its long edge to stand up and radiate from both faces.", mass: 205, length: 6.25, width: 6.26, height: 0.003, item: stock.cc-pl-3, quantity: 235.8, module: module.welding-bay }
+    - { code: PAS1-10, name: "Frame", description: "Carries the set to the four corner pads: two side trusses, floor beams under the plant, and the radiator's rails.", mass: 744, length: 12.5, width: 6.26, height: 2.0, item: stock.al6061-pl-5, quantity: 855.6, module: module.welding-bay }
     - { code: PAS1-11, name: "Flywheel", description: "Evens the load.", mass: 20, length: 3.03, width: 1.52, height: 0.485, item: stock.st4340-bar-120, quantity: 23.0, module: module.machining-centre }
     - { code: PAS1-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 16, length: 2.82, width: 1.41, height: 0.45, item: good.pumps, quantity: 16, module: module.assembly-shop }
     - { code: PAS1-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 27, length: 3.35, width: 1.68, height: 0.536, item: stock.st304-pl-3, quantity: 31.0, module: module.welding-bay }
@@ -43,5 +43,6 @@ life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Radiator and frame from material, size and load, the rest of the list as before: 2,303 kg (was 1,400). Panel: 6.25 by 6.26 m of 3 mm carbon-carbon at 1,750 kg/m3, 205 kg; 39.1 m2 radiating from both faces sheds 4 MW at 1,000 K and emissivity 0.9, so it must stand up to run at full power (flat, half). Epoxy carbon cannot run at 1,000 K. Frame in welded 6061 at 110 MPa, the whole plant at the mount's 3 g: two side trusses 1.9 m deep in six bays (70 by 3 mm tube, 80 by 3 diagonals; chords 44 MPa, diagonals 25 kN against 30 kN buckling over 1.5), seven floor beams 120 by 80 by 6 box across 6.26 m (104 MPa), seven top ties of 70 by 3 tube, and radiator rails 140 by 60 by 4 box (92 MPa when standing up at 1 g, stowed flat for more), plus 10% for joints and the hinge; 744 kg. Four pads at 17.5 kN carry 70 kN against 67.8 kN. Coolant lines and the reactor parts are still in Discovery II's shares." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 4.0 MW of waste heat at 1,000 K, 39 m2 of panel, with the plant beneath." }
   - { of: [life], rule: rule.life-ship-system }

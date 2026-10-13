@@ -1,0 +1,15 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cc-pl-3
+  code: CC-PL-3
+  name: "Carbon-carbon plate 3 mm"
+  traded_as: market.chemicals
+  form: plate
+package: package.plate-stack
+tint: [0.09, 0.09, 0.1]
+made_from:
+  - item: material.carbon-carbon-composite
+size:
+  thickness: 0.003
+basis:
+  - { of: [size], tier: invented, review: true, note: "Chosen: the gauge of the carbon composite plate." }

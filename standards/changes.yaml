@@ -434,7 +434,7 @@
 - { record: equipment.lift.belly.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "b14a92771fd37651" }
 - { record: equipment.lift.belly.s2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2510b2eaa9ec3756" }
 - { record: equipment.lift.belly.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "038d104c6c6ef3cf" }
-- { record: equipment.power.aurel.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "251760207b02825a" }
+- { record: equipment.power.aurel.s1, at: "2026-10-13T22:27:53Z", status: draft, summary: "changed: physical, built_of, basis", sha: "3832caf5000a19d1" }
 - { record: equipment.power.aurel.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "52afa37a742918eb" }
 - { record: equipment.power.aurel.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "dcc73336b2bb792d" }
 - { record: equipment.power.battery-vtol.s0, at: "2026-10-13T06:30:43Z", status: draft, summary: "changed: visual", sha: "e1305a44edbdbfb0" }
@@ -846,6 +846,7 @@
 - { record: material.aramid-fibre, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "227e3abb55679db0" }
 - { record: material.aramid-honeycomb, at: "2026-10-06T19:01:21Z", status: review, summary: "first tracked", sha: "7b084cefd4f1eeb0" }
 - { record: material.bearing-bronze-c93200, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity, basis", sha: "173ec820caaeaab9" }
+- { record: material.carbon-carbon-composite, at: "2026-10-13T22:27:27Z", status: review, summary: "first tracked", sha: "c9379c1cd39cc924" }
 - { record: material.carbon-fibre-composite, at: "2026-10-06T19:02:12Z", status: review, summary: "changed: identity", sha: "f42a1535f8e70864" }
 - { record: material.copper, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "4f49fb5d47775d83" }
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
@@ -900,7 +901,7 @@
 - { record: module.coal-mine, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b02515441a9e47bc" }
 - { record: module.cold-rolling-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "355f447980ff081a" }
 - { record: module.cold-store, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "2d554d50b08192ab" }
-- { record: module.composites-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "9d3c1216c3a0916f" }
+- { record: module.composites-works, at: "2026-10-13T22:27:27Z", status: review, summary: "changed: recipes, basis", sha: "12b0413dc53722e0" }
 - { record: module.compost-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7ca9feac66a2e8d1" }
 - { record: module.concentrator, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "22c801b0a9939e84" }
 - { record: module.concrete-plant, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b0e93672cd952988" }
@@ -1617,6 +1618,7 @@
 - { record: stock.carrots-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f053c13808bdb247" }
 - { record: stock.cassava-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "e67d902599472741" }
 - { record: stock.caustic-soda-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "dde6e6e559c186f2" }
+- { record: stock.cc-pl-3, at: "2026-10-13T22:27:27Z", status: review, summary: "first tracked", sha: "7e56c54059ce503a" }
 - { record: stock.cement-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "ab7a73a4c557b39a" }
 - { record: stock.cfc-pl-3, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "fde61babb7e3ca80" }
 - { record: stock.cfc-sh-0p5, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "243d28f0ebdd4a12" }
