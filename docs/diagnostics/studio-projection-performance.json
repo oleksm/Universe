@@ -1,0 +1,86 @@
+{
+  "source": "f2a7626d",
+  "baseline": "08b50dc3",
+  "gpu": "NVIDIA GeForce RTX5090 / Vulkan",
+  "viewport": [
+    1920,
+    1080
+  ],
+  "fps_cap": 60,
+  "frames_per_capture": 300,
+  "warm_os_cache": true,
+  "draw_scopes": {
+    "design": {
+      "baseline": {
+        "mean_draw_ms": 11.132,
+        "max_draw_ms": 13.618,
+        "evidence": "out/review/studio-perf/capture-baseline-design"
+      },
+      "optimized": {
+        "mean_draw_ms": 6.332,
+        "max_draw_ms": 11.325,
+        "evidence": "out/review/studio-perf/capture-optimized-design"
+      }
+    },
+    "walk": {
+      "baseline": {
+        "mean_draw_ms": 4.394,
+        "max_draw_ms": 5.839,
+        "evidence": "out/review/studio-perf/capture-baseline-walk"
+      },
+      "optimized": {
+        "mean_draw_ms": 1.01,
+        "max_draw_ms": 1.528,
+        "evidence": "out/review/studio-perf/capture-optimized-walk"
+      }
+    },
+    "balance": {
+      "baseline": {
+        "mean_draw_ms": 10.299,
+        "max_draw_ms": 12.337,
+        "evidence": "out/review/studio-perf/capture-baseline-balance"
+      },
+      "optimized": {
+        "mean_draw_ms": 4.99,
+        "max_draw_ms": 5.6,
+        "evidence": "out/review/studio-perf/capture-optimized-balance"
+      }
+    },
+    "drive": {
+      "baseline": {
+        "mean_draw_ms": 11.599,
+        "max_draw_ms": 14.296,
+        "evidence": "out/review/studio-perf/capture-baseline-drive"
+      },
+      "optimized": {
+        "mean_draw_ms": 4.894,
+        "max_draw_ms": 5.954,
+        "evidence": "out/review/studio-perf/capture-optimized-drive"
+      }
+    },
+    "walk_ship_facing": {
+      "baseline": {
+        "mean_draw_ms": 18.139,
+        "max_draw_ms": 25.032
+      },
+      "optimized": {
+        "mean_draw_ms": 16.262,
+        "max_draw_ms": 18.536
+      },
+      "pose": "feet(0,0,12),yaw0",
+      "evidence": "out/review/studio-perf/walk-facing-{baseline,optimized}",
+      "pixels": "identical outside profiler HUD"
+    }
+  },
+  "tests": {
+    "workspace_passed": 235,
+    "ignored": 1,
+    "failed": 0,
+    "registry": "passed",
+    "no_default_features": "passed"
+  },
+  "binaries": {
+    "freefall": "08e48d5d39552149e4650303288c200d31136f831e8bebd2e7dd778624218e68",
+    "freefall-studio": "924e26631f5a37ae3051bf0407c734131cd1eda0c0150fb88dd1be7b3814f724"
+  }
+}

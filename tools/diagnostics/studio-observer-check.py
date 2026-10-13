@@ -31,6 +31,12 @@ with (out/'run.log').open('w') as log:
         for route in ['status','perf','profile','resources','graphics']:
             body=get('/'+route);(out/(route+('.txt' if route=='profile' else '.json'))).write_text(body)
         shot=json.loads(get('/screenshot'))
+        until=time.monotonic()+5
+        while not pathlib.Path(shot['path']).exists():
+            assert time.monotonic()<until,shot
+            time.sleep(.05)
+        # Let the asynchronous PNG writer finish before enabling recording's HUD.
+        time.sleep(.3)
         recording=json.loads(get('/record/start'));assert recording['recording']
         time.sleep(2)
         stopped=json.loads(get('/record/stop'));assert stopped['written']==recording['recording']
