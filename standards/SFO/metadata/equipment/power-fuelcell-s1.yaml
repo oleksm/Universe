@@ -28,6 +28,12 @@ function:
   output: 50000
   efficiency: 0.55
   burns: material.hydrolox
+visual:
+  format: "freefall-model/1"
+  path: "models/power-fuelcell-s1/v1"
+  manifest_sha256: "4c97b21cba0e96f8a8a414c247294ce7e94846b6ccb7f0cdfce8534162d1bf16"
+  version: 1
+  triangles: 3056
 life: 473364000
 basis:
   - { of: [function, physical], tier: invented, review: true, note: "An Apollo-type cell scaled to 50 kW: about 1.8 kg a kilowatt (the shuttle's three cells gave 21 kW for 118 kg each, from memory); 55% of the hydrolox's 13 MJ/kg to power, the rest heat and warm water. Review." }
