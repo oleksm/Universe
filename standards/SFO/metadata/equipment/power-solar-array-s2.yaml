@@ -32,6 +32,12 @@ function:
   area: 85
   output: 30100
   efficiency: 0.26
+visual:
+  format: "freefall-model/1"
+  path: "models/power-solar-array-s2/v1"
+  manifest_sha256: "ef2d568c964c7284f3dbe95cd48e1304971cb08ee7a748c18c34769d3e73acb1"
+  version: 1
+  triangles: 12836
 life: 473364000
 basis:
   - { of: [size_class], tier: invented, review: true, note: "A 30 kW wing: one deployable wing's figures (the ISS wings ~ 1.1 t for 400 m2 at 14%). From memory. At Treistun's worlds sunlight is 0.23 to 1.07 of Earth's." }
