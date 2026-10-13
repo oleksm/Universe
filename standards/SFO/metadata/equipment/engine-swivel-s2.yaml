@@ -5,11 +5,11 @@ identity:
   maker: org.kestrel
   revision: draft
   slot: engine
-  description: "A trunnion that turns an engine of up to 120 kN through 90 degrees in about 17 s: aft in flight, down to land. Vectored thrust; the price is 202 kg a unit against a gimbal's nothing."
+  description: "A trunnion that turns an engine of up to 120 kN through 90 degrees in about 17 s: aft in flight, down to land. Vectored thrust; the price is 204 kg a unit against a gimbal's nothing."
 size_class: 2
 fits: mount.engine-s2
 physical:
-  mass: 201.5
+  mass: 204.3
   volume: 0.864
   length: 1.2
   width: 1.2
@@ -19,10 +19,10 @@ needs:
 built_of:
   parts: engine-swivel-s2
   list:
-    - { code: SWV2-01, name: "Fixed frame", description: "Bolts to the mount face at Y 0: S1's frame at 1.5 times the size in 9 mm plate (the stock gauge stands for it): a square flange of 120 mm angle with a centre relief in its lower return, two cheeks (YZ) at X +-0.40 built up to 28 mm round the bushings, and a tie plate on +Z. Open aft (-Y) and below (-Z) for the engine.", mass: 76, length: 1.2, width: 1.2, height: 0.6, item: stock.al6061-pl-5, quantity: 87.4, module: module.welding-bay }
-    - { code: SWV2-02, name: "Adapter ring", description: "The moving part the engine bolts to: a welded 90 x 60 mm box ring of 5 mm plate, 0.72 m across, 0.54 m bore, with sleeves for the pins at +-X.", mass: 13.3, length: 0.72, width: 0.72, height: 0.06, item: stock.ti64-pl-5, quantity: 15.3, module: module.welding-bay }
+    - { code: SWV2-01, name: "Fixed frame", description: "Bolts to the mount face at Y 0: S1's frame at 1.5 times the size in 9 mm plate (the stock gauge stands for it): a square flange of 120 mm angle with a centre relief in its lower return, two cheeks (YZ) at X +-0.40 built up to 28 mm round the bushings, and a tie plate on +Z. Open aft (-Y) and below (-Z) for the engine.", mass: 78.7, length: 1.2, width: 1.2, height: 0.6, item: stock.al6061-pl-5, quantity: 90.5, module: module.welding-bay }
+    - { code: SWV2-02, name: "Adapter ring", description: "The moving part the engine bolts to: a welded 90 x 60 mm box ring of 5 mm plate, 0.72 m across, 0.54 m bore, with sleeves for the pins at +-X.", mass: 13.5, length: 0.72, width: 0.72, height: 0.06, item: stock.ti64-pl-5, quantity: 15.5, module: module.welding-bay }
     - { code: SWV2-03, name: "Trunnion pins", description: "Two solid 60 mm pins, 0.16 m long, on the X axis at Y -0.4125; keyed to the ring, driven at their outer ends.", mass: 4, length: 0.16, width: 0.06, height: 0.06, item: stock.ti64-ingot, quantity: 6, module: module.machining-centre }
-    - { code: SWV2-04, name: "Bushings", description: "Two bronze bushings, 72 mm outside, 60 mm bore, 70 mm long, in the cheeks.", mass: 1.6, length: 0.072, width: 0.072, height: 0.07, item: stock.brz932-bar-50, quantity: 2.9, module: module.machining-centre }
+    - { code: SWV2-04, name: "Bushings", description: "Two bronze bushings, 72 mm outside, 60 mm bore, 70 mm long, in the cheeks.", mass: 1.5, length: 0.072, width: 0.072, height: 0.07, item: stock.brz932-bar-50, quantity: 2.9, module: module.machining-centre }
     - { code: SWV2-05, name: "Drive, +X", description: "Enclosed harmonic-geared actuator with brake, outboard of the +X cheek, coaxial with the pin.", mass: 53.3, length: 0.19, width: 0.34, height: 0.34, item: good.electric-motors, quantity: 53.3, module: module.assembly-shop }
     - { code: SWV2-06, name: "Drive, -X", description: "The same, outboard of the -X cheek.", mass: 53.3, length: 0.19, width: 0.34, height: 0.34, item: good.electric-motors, quantity: 53.3, module: module.assembly-shop }
 making:
@@ -34,7 +34,7 @@ function:
   slew: 0.1
 life: 473364000
 basis:
-  - { of: [function], tier: invented, review: true, note: "A quarter turn in about seventeen seconds (0.1 rad/s, 1 s to speed up and to stop) under up to 120 kN. Chosen; no flown example at this scale. The engine it carries: up to 350 kg (CH-S2 is 300), centre of mass within 1.0 m of the pivot, no wider than 0.72 m for the first 90 mm behind the ring and 0.78 m on to 0.675 m from the pivot; to be confirmed by the modeller's sweep as for S1. Feed lines and wiring cross the turn as the engine's and hull's services, not the swivel's." }
-  - { of: [built_of.list, physical, needs], tier: derived, review: true, note: "S1's layout at 1.5 times (frame 1.2 x 1.2 x 0.6, pivot Y -0.4125: at 0.5 m deep the modeller's sweep fouled the front flange), parts sized from four times the load. Pins: 60 kN each, 2,700 N m bending at 45 mm needs 40 mm of Ti-6Al-4V at half yield; 60 mm taken for 14 MPa on the bronze. Ring: 0.137 F R = 5.1 kN m out of plane; the 90 x 60 x 5 box holds 11.5 kN m. Cheeks: 30 MPa bearing needs 28 mm round a 72 mm bushing. Plates: same deflection per span as S1 needs 1.8 times the thickness, so the frame is S1's measured 18.8 kg times 2.25 for area and 1.8 for gauge. Drive torque: 350 kg at 1.0 m passing horizontal at 1.5 g is 5,150 N m, 2,575 a drive, 3,200 peak; at S1's invented 60 N m a kilogram, 53.3 kg each. Power: 515 W at the pivot, 0.6 efficient, plus brakes: 1,000 W." }
+  - { of: [function], tier: invented, review: true, note: "A quarter turn in about seventeen seconds (0.1 rad/s, 1 s to speed up and to stop) under up to 120 kN. Chosen; no flown example at this scale. The engine it carries: up to 350 kg (CH-S2 is 300), centre of mass within 1.0 m of the pivot, no wider than 0.72 m for the first 90 mm behind the ring and 0.78 m on to 0.675 m from the pivot; confirmed clear by the modeller's 65-pose sweep (candidate-v01). Feed lines and wiring cross the turn as the engine's and hull's services, not the swivel's." }
+  - { of: [built_of.list, physical, needs], tier: derived, review: true, note: "S1's layout at 1.5 times (frame 1.2 x 1.2 x 0.6, pivot Y -0.4125: at 0.5 m deep the modeller's sweep fouled the front flange), parts sized from four times the load. Pins: 60 kN each, 2,700 N m bending at 45 mm needs 40 mm of Ti-6Al-4V at half yield; 60 mm taken for 14 MPa on the bronze. Ring: 0.137 F R = 5.1 kN m out of plane; the 90 x 60 x 5 box holds 11.5 kN m. Cheeks: 30 MPa bearing needs 28 mm round a 72 mm bushing. Plates: same deflection per span as S1 needs 1.8 times the thickness, so the frame is S1's measured 18.8 kg times 2.25 for area and 1.8 for gauge. Drive torque: 350 kg at 1.0 m passing horizontal at 1.5 g is 5,150 N m, 2,575 a drive, 3,200 peak; at S1's invented 60 N m a kilogram, 53.3 kg each. Power: 515 W at the pivot, 0.6 efficient, plus brakes: 1,000 W. Frame, ring, pin and bushing masses are the modeller's measured volumes (candidate-v01: 78.7, 13.5, 4.0, 1.5 kg, bosses included); drives stay at the 106.6 kg allowance." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
