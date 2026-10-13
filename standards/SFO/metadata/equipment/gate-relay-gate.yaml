@@ -5,27 +5,26 @@ identity:
   maker: org.halcyon
   revision: outdated
   slot: gate
-  description: "Throws and catches data capsules through the gate's tube, linking two systems' networks."
+  description: "Links two systems' networks through the gate's open tube: a pair of laser terminals looking down the tube's axis at the partner ring's relay, on a cabinet of switching computers, power and cooling. No capsules and no coils of its own; the ring holds the tube open."
 size_class: 4
 fits: mount.gate-s4
 physical:
-  mass: 40000
-  volume: 100
-  length: 6.08
-  width: 4.05
-  height: 4.05
+  mass: 2400
+  volume: 7.68
+  length: 2.4
+  width: 1.6
+  height: 2.0
 needs:
-  power: 2000000
+  power: 30000
 built_of:
   parts: gate-relay-gate
   shares: rule.shares-chosen
   list:
-    - { code: RLGT-01, name: "Field coil cases", description: "Hold the coils that open a thread through hyperspace.", mass: 14000, length: 4.28, width: 2.85, height: 2.85, item: stock.ti64-pl-5, quantity: 16100.0, module: module.welding-bay }
-    - { code: RLGT-02, name: "Field coil windings", description: "Superconducting windings.", mass: 800, length: 1.65, width: 1.1, height: 1.1, item: stock.cu-wire-2, quantity: 920.0, module: module.machining-centre }
-    - { code: RLGT-03, name: "Power conditioning", mass: 8000, length: 3.56, width: 2.37, height: 2.37, item: good.electronics, quantity: 8000, module: module.assembly-shop }
-    - { code: RLGT-04, name: "Refrigerator", description: "Keeps the windings cold.", mass: 2400, length: 2.38, width: 1.59, height: 1.59, item: good.heat-pumps, quantity: 2400, module: module.assembly-shop }
-    - { code: RLGT-05, name: "Switching computers", description: "Sort the messages and throw them in turn.", mass: 4800, length: 3.0, width: 2.0, height: 2.0, item: good.computers, quantity: 4800, module: module.assembly-shop }
-    - { code: RLGT-06, name: "Frame", mass: 10000, length: 3.83, width: 2.55, height: 2.55, item: stock.al6061-pl-5-panel, quantity: 10000.0, module: module.welding-bay }
+    - { code: RLGT-01, name: "Link terminals", description: "Two laser terminals on top of the cabinet, one working and one spare, each a small telescope on a gimbal looking along +X down the tube.", mass: 300, length: 0.8, width: 0.8, height: 0.6, item: good.electronics, quantity: 300, module: module.assembly-shop }
+    - { code: RLGT-03, name: "Power conditioning", mass: 400, length: 0.8, width: 0.6, height: 1.8, item: good.electronics, quantity: 400, module: module.assembly-shop }
+    - { code: RLGT-04, name: "Cooler", description: "Carries the cabinet's heat to the ring's coolant.", mass: 300, length: 0.8, width: 0.6, height: 1.2, item: good.heat-pumps, quantity: 300, module: module.assembly-shop }
+    - { code: RLGT-05, name: "Switching computers", description: "Sort the messages and send them in turn; two racks, one a spare.", mass: 800, length: 1.2, width: 0.8, height: 1.8, item: good.computers, quantity: 800, module: module.assembly-shop }
+    - { code: RLGT-06, name: "Frame", description: "The cabinet and its eight mount pads.", mass: 600, length: 2.4, width: 1.6, height: 2.0, item: stock.al6061-pl-5-panel, quantity: 600.0, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -36,6 +35,5 @@ function:
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: a hyperdrive's coils turned to carrying messages, with the computers that sort them." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a rack, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [built_of, making, physical, needs.power, identity.description], tier: invented, review: true, note: "Reworked 2026-10-13 (story follows physics): the ring's throat coils hold the tube open all the time, so light crosses it; a signal down the tube needs no capsules and no thread of its own (it was a hyperdrive's coils throwing capsules, 40 t and 2 MW). 50,000 messages an hour is little for a laser link: real space laser terminals weigh tens of kilograms (from memory); here two at 150 kg. Computers, power, cooler and frame are guesses; 30 kW for the cabinet. The partner relay must sit on the tube's axis line at the far ring; that placement is the gate's to give." }
   - { of: [life], rule: rule.life-ship-system }
