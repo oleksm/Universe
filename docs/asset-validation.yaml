@@ -3044,3 +3044,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual hull fit, live gimbal motion, GPU look/cost; reactor, pressure, radiation, cryogenic seals and loaded drives unqualified."
+  - key: equipment.engine.nt.s2
+    version: 1
+    manifest_sha256: "dec4aa5bfe21b3718b585cbdd523bf38a822ff985017524f5899e19dfde4c0e4"
+    installed: 70d2f7f1
+    game: "the loader (world::assets) at fso 70d2f7f1"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-nt-s2/v1 (586948 bytes, bounds [-0.894, -0.885, -0.0] to [0.894, 0.885, 5.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual hull fit, live gimbal motion, GPU look/cost; reactor, pressure, radiation, cryogenic seals and loaded drives unqualified."
