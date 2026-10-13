@@ -397,7 +397,7 @@
 - { record: equipment.engine.swivel.s1, at: "2026-10-13T03:19:18Z", status: draft, summary: "changed: visual", sha: "4e654babd42066f1" }
 - { record: equipment.engine.swivel.s2, at: "2026-10-13T03:34:29Z", status: draft, summary: "changed: visual", sha: "f33109e155d70375" }
 - { record: equipment.engine.swivel.s3, at: "2026-10-13T03:44:00Z", status: draft, summary: "changed: visual", sha: "f6693862d41065f9" }
-- { record: equipment.engine.swivel.s4, at: "2026-10-13T03:52:00Z", status: draft, summary: "changed: physical, built_of, basis", sha: "010c38e07334c405" }
+- { record: equipment.engine.swivel.s4, at: "2026-10-13T03:54:40Z", status: draft, summary: "changed: visual", sha: "abe9ce554ad285df" }
 - { record: equipment.gate.relay.gate, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "35828400db155884" }
 - { record: equipment.gate.relay.hyper, at: "2026-10-11T17:40:22Z", status: draft, summary: "changed: visual", sha: "5a423c722b987f66" }
 - { record: equipment.gate.terminal-ground.s3, at: "2026-10-11T18:10:42Z", status: draft, summary: "changed: visual", sha: "86e6bc8ce81ef23f" }
