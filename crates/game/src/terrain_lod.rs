@@ -19,6 +19,9 @@ const GRID: u32 = 16;
 /// cells), and four levels finer (some 1.2 m cells) once the ground's runtime detail is in
 /// (`world::detail::ACTIVE`): within a few kilometres of the eye, as `SPLIT` has it.
 const MAX_LEVEL: u8 = if universe_sim::world::detail::ACTIVE { 19 } else { 15 };
+/// Canonical data already contains its relief. Finer samples resolve that field; no
+/// procedural detail is added. Levels16..19 are requested only close to the eye.
+const CANONICAL_MAX_LEVEL: u8 = 19;
 /// A patch splits when the eye is nearer than this many times its size (the engine's: its mesh
 /// shader geomorphs by the same).
 const SPLIT: f64 = universe_engine::shaders::GEOMORPH_SPLIT;
@@ -102,7 +105,7 @@ fn ideal(system: usize, body: usize, r: f64, low: f64, eye: DVec3, patches: &Has
         if mid.angle_between(eye_dir) > horizon + size * 0.75 + 0.02 {
             continue;
         }
-        if key.level < MAX_LEVEL && key.centre(patches, r, canonical).distance(eye) < SPLIT * size * r {
+        if key.level < (if canonical { CANONICAL_MAX_LEVEL } else { MAX_LEVEL }) && key.centre(patches, r, canonical).distance(eye) < SPLIT * size * r {
             stack.extend(key.children());
         } else {
             out.push(key);
@@ -325,7 +328,7 @@ impl Lod {
                 continue;
             }
             let dist = key.centre(&self.patches, r, canonical).distance(eye_local);
-            if key.level < MAX_LEVEL && dist < SPLIT * size * r {
+            if key.level < (if canonical { CANONICAL_MAX_LEVEL } else { MAX_LEVEL }) && dist < SPLIT * size * r {
                 let children = key.children();
                 if children.iter().all(|c| self.patches.contains_key(c)) {
                     // (All four kept while their parent splits, those out of
@@ -396,7 +399,13 @@ impl Lod {
                 }
             });
         }
-        if missing_root { return false; }
+        if missing_root {
+            #[cfg(feature = "dev")]
+            if canonical && (now <= 10 || now % 30 == 0) && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
+                log::info!("PGS_CONTACT {}", serde_json::json!({"frame":now,"state":"base_globe_pending_roots","resident":self.patches.len(),"pending":self.pending.len(),"hits":[]}));
+            }
+            return false;
+        }
         // What's not made yet: the nearest made above it stands in (each once).
         let mut shown: Vec<Key> = Vec::with_capacity(draw.len());
         for mut key in draw {
@@ -419,7 +428,7 @@ impl Lod {
             log::info!("SCENERY DEBUG frame={now} resident_draw_levels={levels:?} pending={} eye_height_m={:.6}", self.pending.len(), eye_dist-r);
         }
         #[cfg(feature = "dev")]
-        if canonical && now % 120 == 0 && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
+        if canonical && (now <= 10 || now % 30 == 0) && std::env::var_os("UNIVERSE_PGS1_CONTACT_AUDIT").is_some() {
             let canonical_height = body.terrain.as_ref().unwrap().surface(eye_dir);
             let mut hits = Vec::new();
             for key in &draw {

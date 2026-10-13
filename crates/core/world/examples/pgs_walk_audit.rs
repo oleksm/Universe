@@ -177,11 +177,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let (q, derivative) = s.query_differential(d, r)?;
             if matches!(q.water, Water::Wet { .. }) {
                 wet += 1;
-                continue;
+                if std::env::var_os("PGS_WALK_INCLUDE_WATER").is_none() { continue; }
             }
-            height.push(radial - r - q.height_m);
-            samples.push(json!({"x_m":x,"y_m":y,"level":level,"canonical_height_m":q.height_m,"render_height_m":radial-r,"error_m":radial-r-q.height_m}));
-            normals.push(normal.angle_between(derivative.normal).to_degrees());
+            let contact_height = match q.water { Water::Wet { level_m, .. } => level_m, _ => q.height_m };
+            height.push(radial - r - contact_height);
+            samples.push(json!({"x_m":x,"y_m":y,"level":level,"canonical_height_m":contact_height,"terrain_height_m":q.height_m,"water":format!("{:?}",q.water),"render_height_m":radial-r,"error_m":radial-r-contact_height}));
+            normals.push(normal.angle_between(if matches!(q.water,Water::Wet {..}) {d} else {derivative.normal}).to_degrees());
             if (d * (r + q.height_m) - eye).dot(forward) < 0. {
                 behind += 1;
             }
@@ -216,7 +217,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         a.sort_by(f64::total_cmp);
         json!({"max":a.last(),"p95":a[a.len()*95/100],"rms":(v.iter().map(|x|x*x).sum::<f64>()/v.len()as f64).sqrt()})
     };
-    let result = json!({"terrain_aware_distance":std::env::var_os("PGS_WALK_TERRAIN_DISTANCE").is_some(),"max_level_override":std::env::var("PGS_WALK_MAX_LEVEL").ok(),"decode_index_ms":decode_ms,"audit_ms":query_clock.elapsed().as_secs_f64()*1000.,"samples":samples,"surface_sha256":sha256(&bytes),"radius_m":r,"source_radius_m":s.radius_m,"camera":{"lat":v[0],"lon":v[1],"absolute_h":v[2],"heading":v[3],"down":v[4]},"each_sample_eye_1_7m":std::env::var_os("PGS_WALK_AT_EACH").is_some(),"corridor":std::env::var_os("PGS_WALK_HANDOFF").is_some(),"scope":"settled ideal LOD; default20km square/250m spacing or explicit handoff corridor; f32 patch/morph reconstruction, not actual GPU residency","levels":levels,"nominal_cell_m":{"min":cells.iter().copied().fold(f64::INFINITY,f64::min),"max":cells.iter().copied().fold(0.,f64::max)},"dry_samples":height.len(),"wet_skipped":wet,"height_error_m":stats(&height),"normal_angle_error_deg":stats(&normals),"behind_camera":behind,"centre_ray_hit":hit});
+    let result = json!({"terrain_aware_distance":std::env::var_os("PGS_WALK_TERRAIN_DISTANCE").is_some(),"max_level_override":std::env::var("PGS_WALK_MAX_LEVEL").ok(),"decode_index_ms":decode_ms,"audit_ms":query_clock.elapsed().as_secs_f64()*1000.,"samples":samples,"surface_sha256":sha256(&bytes),"radius_m":r,"source_radius_m":s.radius_m,"camera":{"lat":v[0],"lon":v[1],"absolute_h":v[2],"heading":v[3],"down":v[4]},"each_sample_eye_1_7m":std::env::var_os("PGS_WALK_AT_EACH").is_some(),"corridor":std::env::var_os("PGS_WALK_HANDOFF").is_some(),"scope":"settled ideal LOD; default20km square/250m spacing or explicit handoff corridor; f32 patch/morph reconstruction, not actual GPU residency","levels":levels,"nominal_cell_m":{"min":cells.iter().copied().fold(f64::INFINITY,f64::min),"max":cells.iter().copied().fold(0.,f64::max)},"dry_samples":height.len(),"wet_queries":wet,"wet_included":std::env::var_os("PGS_WALK_INCLUDE_WATER").is_some(),"height_error_m":stats(&height),"normal_angle_error_deg":stats(&normals),"behind_camera":behind,"centre_ray_hit":hit});
     std::fs::write(&args[6], serde_json::to_vec_pretty(&result)?)?;
     println!("{}", result);
     Ok(())

@@ -193,7 +193,19 @@ struct Runner<G> {
     start: Instant,
 }
 
-pub fn run<G: Game>(config: Config, game: G) {
+pub fn run<G: Game>(mut config: Config, game: G) {
+    // Isolated presentation controls for captures; normal launches are unchanged.
+    if std::env::var_os("UNIVERSE_SCREENSHOT").is_some() || std::env::var_os("UNIVERSE_TEST").is_some() {
+        if let Ok(mode) = std::env::var("UNIVERSE_DIAGNOSTIC_PRESENT") {
+            config.vsync = match mode.as_str() {
+                "auto-vsync" => true,
+                "auto-no-vsync" => false,
+                _ => panic!("UNIVERSE_DIAGNOSTIC_PRESENT: auto-vsync|auto-no-vsync"),
+            };
+        }
+        if let Ok(title) = std::env::var("UNIVERSE_DIAGNOSTIC_TITLE") { config.title = title; }
+        log::info!("presentation diagnostic: title={:?} vsync={} window={:?}", config.title, config.vsync, config.window_size);
+    }
     let event_loop = EventLoop::new().expect("failed to create event loop");
     event_loop.set_control_flow(ControlFlow::Poll);
     let mut runner = Runner { config, game, state: None, start: Instant::now() };
