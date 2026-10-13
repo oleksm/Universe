@@ -27,6 +27,12 @@ function:
   kind: "store"
   capacity: 100000
   holds: "good.water"
+visual:
+  format: "freefall-model/1"
+  path: "models/tank-liquid-cargo-s4/v1"
+  manifest_sha256: "5552727d3e02285004b23b7597efcef65cab3529c894f5e715100668314b617f"
+  version: 1
+  triangles: 7300
 life: 473364000
 basis:
   - { of: [function, size_class], tier: invented, review: true, note: "100 m3 of water or another ordinary liquid. Chosen. A cargo tank takes any liquid that suits aluminium at low pressure; water names its kind." }
