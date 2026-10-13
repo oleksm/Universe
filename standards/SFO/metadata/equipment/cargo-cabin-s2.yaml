@@ -32,6 +32,12 @@ making:
 function:
   kind: cabin
   seats: 12
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-cabin-s2/v1"
+  manifest_sha256: "c514a2910f56e084bfb8512be50b3eb61b69b99325c2fd9473c27591bfa1d884"
+  version: 1
+  triangles: 14816
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
