@@ -2884,3 +2884,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual hull integration, game motion and GPU appearance/cost; loaded structure, fatigue, drive sizing and ore flow unqualified."
+  - key: equipment.cargo.ore-bay.35t
+    version: 2
+    manifest_sha256: "87391ed5c6273d1b9382b851677e80dfe85262b59152ba0142d341753f8d051b"
+    installed: 9c00e3f8
+    game: "the loader (world::assets) at fso 9c00e3f8"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-ore-bay-35t/v2 (582272 bytes, bounds [-1.621, 0.0005, -1.56] to [1.631, 3.15, 1.56]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual hull integration, game motion and GPU appearance/cost; loaded structure, fatigue, drive sizing and ore flow unqualified."
