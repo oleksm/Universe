@@ -30,7 +30,7 @@ pub struct Pair {
     pub gpu_expanded_bytes: usize,
     pub retained_cpu_capacity_bytes: usize,
 }
-fn area(p: &[DVec2]) -> f64 {
+pub(super) fn area(p: &[DVec2]) -> f64 {
     if p.len() < 3 {
         return 0.;
     }
@@ -40,7 +40,7 @@ fn area(p: &[DVec2]) -> f64 {
         .abs()
         * 0.5
 }
-fn rect(mut p: Vec<DVec2>, bounds: [f64; 4]) -> Vec<DVec2> {
+pub(super) fn rect(mut p: Vec<DVec2>, bounds: [f64; 4]) -> Vec<DVec2> {
     for (axis, bound, sign) in [
         (0, bounds[0], 1.),
         (0, bounds[1], -1.),
@@ -69,7 +69,7 @@ fn rect(mut p: Vec<DVec2>, bounds: [f64; 4]) -> Vec<DVec2> {
     }
     p
 }
-fn world(f: &FaceGeometry, d: DVec3, radius: f64) -> Result<DVec3, String> {
+pub(super) fn world(f: &FaceGeometry, d: DVec3, radius: f64) -> Result<DVec3, String> {
     let [a, b, c] = f.positions;
     let n = (b - a).cross(c - a);
     let p = d * (n.dot(a) / n.dot(d));
