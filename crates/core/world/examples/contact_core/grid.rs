@@ -6,16 +6,20 @@ use universe_world::worlds::pgs::{Surface, Water};
 pub struct Triangle {
     pub tags: [[u32; 3]; 3],
     pub patch: [u32; 4],
-    pub eye: DVec3,
-    pub size: f64,
     pub origin: DVec3,
-    pub raw: [DVec3; 3],
-    pub target: [DVec3; 3],
-    pub morph: [f32; 3],
+    pub trace: Option<Box<Trace>>,
     pub world: [DVec3; 3],
     pub uv: Vec<DVec2>,
     pub lo: DVec2,
     pub hi: DVec2,
+}
+#[derive(Clone)]
+pub struct Trace {
+    pub eye: DVec3,
+    pub size: f64,
+    pub raw: [DVec3; 3],
+    pub target: [DVec3; 3],
+    pub morph: [f32; 3],
 }
 pub fn visible(s: &Surface, d: DVec3) -> Result<f64, String> {
     let q = s.query(d)?;
@@ -52,6 +56,16 @@ fn cube(d: DVec3) -> u32 {
     }
 }
 pub fn retained(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), String> {
+    retained_mode(s, chart, true)
+}
+pub fn retained_compact(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), String> {
+    retained_mode(s, chart, false)
+}
+fn retained_mode(
+    s: &Surface,
+    chart: &Chart,
+    trace: bool,
+) -> Result<(Vec<Triangle>, usize), String> {
     let f = cube(chart.c);
     for x in [-64., 64.] {
         for y in [-64., 64.] {
@@ -178,12 +192,16 @@ pub fn retained(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), St
                         .fold(DVec2::splat(f64::NEG_INFINITY), DVec2::max);
                     out.push(Triangle {
                         patch: key,
-                        eye,
-                        size,
                         origin,
-                        raw: ids.map(|k| origin + raw[k].as_dvec3()),
-                        target: ids.map(|k| targets[k]),
-                        morph: ids.map(|k| morphs[k]),
+                        trace: trace.then(|| {
+                            Box::new(Trace {
+                                eye,
+                                size,
+                                raw: ids.map(|k| origin + raw[k].as_dvec3()),
+                                target: ids.map(|k| targets[k]),
+                                morph: ids.map(|k| morphs[k]),
+                            })
+                        }),
                         world,
                         uv,
                         lo,
