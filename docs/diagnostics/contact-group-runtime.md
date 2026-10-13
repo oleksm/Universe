@@ -80,10 +80,17 @@ Crest 1 rerun (`crest1-walk2`): every frame bound; two coarse refusals (8.0 mm a
   and no visible footprint edge. Neutral shading: a weak appearance test; it does not show normals, colour or
   texture differences across band, rim and patches. Captures deleted; statistics above.
 
+- **Frame time (visible window).** With the owner's leave, a visible window (1440×810, vsync, 120 Hz display),
+  the real walker from crest 1 (`visible-crest1-long2`): 16,762 consecutive traced frames, 139.9 s, 193.6 m walked,
+  51 groups. Frame interval from the trace's `wall_s` (wall clock per frame): p50 8.33 ms, p95 8.93, p99 9.30,
+  p99.9 11.84, max 21.70; none over 33.3 ms, one over 16.7. Ready from frame 298, never not ready after; peak
+  extra GPU 8.1 MB. The planets checker (`check.json`) fails frames 2–297 only (startup, no group).
+  The run before (`visible-crest1-long`) had 68 frames of 33–83 ms, every one on a 120th frame and growing with the
+  run: the trace rewriting its whole file every 120 frames. The trace now appends each 120 frames to
+  `<trace>.frames.jsonl` and writes `trace.json` whole only at exit.
+
 ## Not established
 
-- **Frame time.** The test window on workspace 8 is throttled by the compositor: the renderer drew about one frame
-  in eight game frames. No frame-time claim; the 33.3 ms p95 gate needs a visible window.
 - **Appearance.** Screenshots show no visible hole or seam at the views taken (neutral shading, HUD on); the rim's
   normals are its own and band/rim/patch shading across the square's edge needs a close look.
 - **The journey.** The walker stands at the place directly (set down there); orbit-to-walk and reboarding are not

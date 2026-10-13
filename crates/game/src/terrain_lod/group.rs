@@ -360,24 +360,27 @@ fn built(g: worker::Group, snapshot: &Snapshot, body: &Body, source_generation: 
 
 /// The readiness trace (`UNIVERSE_PGS1_READINESS_TRACE` = its path): one record a frame in the
 /// planets lab's `planet-readiness-trace/1`, the subject the camera, the ground under it measured
-/// from what was submitted that frame. Rewritten whole every 120 frames and when dropped.
+/// from what was submitted that frame. Frames appended every 120 to `<trace>.frames.jsonl`; written whole when dropped.
 pub(crate) struct Trace {
     path: std::path::PathBuf,
     sha: String,
     radius: f64,
     frames: Vec<Value>,
     written: usize,
+    /// Wall clock at the trace's start: each frame's `wall_s` times the frames as shown.
+    start: std::time::Instant,
 }
 impl Trace {
     /// Bound to the source the world actually holds: the SHA256 of the bytes it was read from
     /// (none: no trace).
     pub fn from_env(radius: f64, surface: &universe_sim::world::worlds::pgs::Surface) -> Option<Self> {
-        let path = std::env::var_os("UNIVERSE_PGS1_READINESS_TRACE")?.into();
+        let path: std::path::PathBuf = std::env::var_os("UNIVERSE_PGS1_READINESS_TRACE")?.into();
         let Some(sha) = crate::pgs_preview::loaded_hash(surface) else {
             log::warn!("readiness trace: the world's source is not the one this process loaded and hashed; no trace");
             return None;
         };
-        Some(Self { path, sha: sha.to_owned(), radius, frames: vec![], written: 0 })
+        let _ = std::fs::remove_file(path.with_extension("frames.jsonl"));
+        Some(Self { path, sha: sha.to_owned(), radius, frames: vec![], written: 0, start: std::time::Instant::now() })
     }
     #[allow(clippy::too_many_arguments)]
     pub fn record(&mut self, frame: u64, time_s: f64, on_foot: bool, eye: DVec3, surface: &universe_sim::world::worlds::pgs::Surface, submitted: Option<f64>, runtime: &Runtime, pending: usize, resident: usize) {
@@ -402,15 +405,27 @@ impl Trace {
         });
         let ready = runtime.active.as_ref().is_some_and(|p| p.meta.in_core(dir, 0.));
         self.frames.push(json!({
-            "frame":frame,"simulation_time_s":time_s,"subject":if on_foot {"walker"} else {"camera"},"source_sha256":sha,"source_generation":runtime.source_generation(),
+            "frame":frame,"simulation_time_s":time_s,"wall_s":self.start.elapsed().as_secs_f64(),"subject":if on_foot {"walker"} else {"camera"},"source_sha256":sha,"source_generation":runtime.source_generation(),
             "foot_direction":dir.to_array(),"ready":ready,"water":water,"canonical_bed_height_m":bed,
             "submitted_ground_height_m":submitted.map(|h| h - self.radius),
             "gpu_bytes":{"active":active,"uploading":uploading,"retired":retired},
             "pending":pending,"resident_patches":resident,"workers":2,"active_group":group,
         }));
+        // (Appended in batches as lines: rewriting the whole trace here cost a frame 35-50 ms.)
         if self.frames.len() - self.written >= 120 {
-            self.write(runtime);
+            self.append();
         }
+    }
+    /// The frames not yet appended, one JSON line each, to `<trace>.frames.jsonl` (kept if the run
+    /// dies before `write`).
+    fn append(&mut self) {
+        use std::io::Write;
+        let lines: String = self.frames[self.written..].iter().map(|f| f.to_string() + "\n").collect();
+        let file = std::fs::OpenOptions::new().create(true).append(true).open(self.path.with_extension("frames.jsonl"));
+        if let Ok(mut file) = file {
+            let _ = file.write_all(lines.as_bytes());
+        }
+        self.written = self.frames.len();
     }
     pub fn write(&mut self, runtime: &Runtime) {
         // A walker only if every frame's subject was one (the eye over the walker's feet).
@@ -423,7 +438,7 @@ impl Trace {
         }
         let events: String = runtime.events.iter().map(|e| e.to_string() + "\n").collect();
         let _ = std::fs::write(self.path.with_extension("events.jsonl"), events);
-        self.written = self.frames.len();
+        self.append();
     }
 }
 
