@@ -9,7 +9,7 @@ identity:
 size_class: 3
 fits: mount.cargo-s3
 physical:
-  mass: 6117
+  mass: 5814
   volume: 47.78
   length: 7.9
   width: 2.7
@@ -20,9 +20,9 @@ built_of:
   parts: cargo-cabin-s3
   shares: rule.shares-chosen
   list:
-    - { code: CBS3-01, name: "Shell", description: "The pressure wall and floor: 5 mm aluminium plate on 130 mm deep T-frames 0.23 m apart (120 x 6 web, 110 x 10 flange), corner frames, and the Passenger cabin 6 plug door centred on the aisle, a 0.82 x 1.92 m leaf 110 mm thick that opens inward so the pressure seats it.", mass: 3790, length: 7.9, width: 2.7, height: 2.24, item: stock.al6061-pl-5, quantity: 4358.5, module: module.welding-bay }
-    - { code: CBS3-02, name: "Seats", mass: 540, length: 3.895, width: 0.912, height: 0.986, item: stock.al6061-pl-5, quantity: 621.0, module: module.machining-centre }
-    - { code: CBS3-03, name: "Linings and insulation", mass: 212, length: 1.925, width: 0.797, height: 0.862, item: stock.mli-fl, quantity: 243.8, module: module.assembly-shop,
+    - { code: CBS3-01, name: "Shell", description: "The pressure wall and floor: 5 mm aluminium plate on 130 mm deep T-frames 0.23 m apart (120 x 6 web, 110 x 10 flange), corner frames, and the Passenger cabin 6 plug door centred on the aisle, a 0.82 x 1.92 m leaf 110 mm thick that opens inward so the pressure seats it.", mass: 3478, length: 7.9, width: 2.7, height: 2.24, item: stock.al6061-pl-5, quantity: 3999.7, module: module.welding-bay }
+    - { code: CBS3-02, name: "Seats", mass: 537, length: 3.873, width: 0.912, height: 0.986, item: stock.al6061-pl-5, quantity: 617.55, module: module.machining-centre }
+    - { code: CBS3-03, name: "Linings and insulation", mass: 224, length: 2.034, width: 0.797, height: 0.862, item: stock.mli-fl, quantity: 257.6, module: module.assembly-shop,
         basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
     - { code: CBS3-04, name: "Air plant", description: "Fans, scrubber and oxygen feed for those aboard.", mass: 675, length: 4.2, width: 0.983, height: 1.06, item: good.electric-motors, quantity: 675, module: module.assembly-shop }
     - { code: CBS3-05, name: "Cooler", mass: 450, length: 3.665, width: 0.859, height: 0.928, item: good.heat-pumps, quantity: 450, module: module.assembly-shop }
@@ -37,5 +37,5 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
   - { of: [physical.length, physical.width, physical.height, physical.volume, identity.description], tier: derived, review: true, note: "Modeller's blockout v01 (2026-10-13): eight rows of 2+2 at 0.79 m, 0.48 m seat places, 0.50 m aisle, 2.43 m clear between frames; cabin 6's front aisle and rear space: 3.16 + 6 x 0.79 = 7.90 m long, 2.43 + 2 x 0.13 frames = 2.70 m wide, floor 0.16 m, ceiling 2.105 m (1.945 m clear), 2.24 m high; inside the class 3 mount's 8.69 x 3.21 x 3.21. It was a 1.85 m wide box that could not hold three abreast and an aisle with its frames." }
-  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Shell as cabin 6's (101.3 kPa, 6061 at 110 MPa, 5 mm plate between frames at 0.23 m). Frames as fixed-ended beams over the 2.70 m floor and roof: 23.3 kN/m makes 14.2 kN m, a 129 cm3 section; the modeller's 130 mm T with a 90 mm flange gives 122 cm3 (116 MPa) and fails, a 110 mm flange gives 143 cm3 (99 MPa), 4.9 kg/m. Skin 90.2 m2, 1,217 kg; 34 girth frames of 9.88 m and 11 ribs on each end wall, 385 m, 1,891 kg; plus 20% for corner frames, door surround and doublers, the door's net 35 kg and a 25 kg reserve: 3,790 kg. Seats 18 kg each from cabin 6's model, linings 2.35 kg/m2 from cabin 12's; air plant, cooler, lights and controls at cabin 6's per-seat figures (allowances); power 60 kW as listed. 6,117 kg in all (it was 4,200): 204 kg a seat." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Shell as cabin 6's (101.3 kPa, 6061 at 110 MPa, 5 mm plate between frames at 0.23 m). Frames as fixed-ended beams over the 2.70 m floor and roof: 23.3 kN/m makes 14.2 kN m, a 129 cm3 section; the modeller's 130 mm T with a 90 mm flange gives 122 cm3 (116 MPa) and fails, a 110 mm flange gives 143 cm3 (99 MPa), 4.9 kg/m. Skin 90.2 m2, 1,217 kg; 34 girth frames of 9.88 m and 11 ribs on each end wall, 385 m, 1,891 kg; plus 20% for corner frames, door surround and doublers, the door's net 35 kg and a 25 kg reserve: 3,790 kg. Seats 18 kg each from cabin 6's model, linings 2.35 kg/m2 from cabin 12's; air plant, cooler, lights and controls at cabin 6's per-seat figures (allowances); power 60 kW as listed. 3,790 kg shell by hand. Bound to the modeller's candidate v01 (2026-10-13), solid volumes times density: shell, deck and door 3,453 kg with the hardware drawn, plus the 25 kg reserve, 3,478 kg; seats 537 kg; linings 224 kg. 5,814 kg in all (it was 4,200): 194 kg a seat." }
   - { of: [life], rule: rule.life-ship-system }
