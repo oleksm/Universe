@@ -446,7 +446,7 @@
 - { record: equipment.power.fusion.s1, at: "2026-10-11T20:27:09Z", status: draft, summary: "changed: visual", sha: "a667001cb27bb1c6" }
 - { record: equipment.power.fusion.s2, at: "2026-10-11T03:49:02Z", status: draft, summary: "changed: visual", sha: "4ea82e04d9539e72" }
 - { record: equipment.power.fusion.s3, at: "2026-10-11T20:37:05Z", status: draft, summary: "changed: visual", sha: "09fb2cf3092d898a" }
-- { record: equipment.power.solar-array.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "9d872cb69d629e4a" }
+- { record: equipment.power.solar-array.s2, at: "2026-10-13T13:37:22Z", status: draft, summary: "changed: identity, physical, built_of, function, basis", sha: "700c42bc47c0a9f1" }
 - { record: equipment.power.switchgear.s1, at: "2026-10-12T15:43:34Z", status: draft, summary: "changed: visual", sha: "9918c6813669d603" }
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-12T00:41:34Z", status: draft, summary: "changed: visual", sha: "ac5a015c7002afad" }
 - { record: equipment.sensors.camera.s1, at: "2026-10-12T15:54:37Z", status: draft, summary: "changed: visual", sha: "02c26949cfc650d8" }

@@ -5,11 +5,11 @@ identity:
   maker: org.meridian
   revision: draft
   slot: power
-  description: "Makes power from sunlight."
+  description: "Makes power from sunlight: one rigid 20 x 5 m wing that lies flat on the hull for stowage and swings out on a hinge along its 5 m root edge."
 size_class: 2
 fits: mount.power-s2
 physical:
-  mass: 500
+  mass: 331
   volume: 10.0
   length: 20.0
   width: 5.0
@@ -17,18 +17,26 @@ physical:
 built_of:
   parts: power-solar-array-s2
   list:
-    - { code: SOL0-01, name: "Cells and blanket", mass: 300, length: 16.9, width: 4.22, height: 0.0843, item: stock.al6061-sh-2, quantity: 345.0, module: module.electronics-works }
-    - { code: SOL0-02, name: "Booms and hinges", mass: 150, length: 13.4, width: 3.35, height: 0.0669, item: stock.al6061-tb-120x3, quantity: 172.0, module: module.welding-bay }
-    - { code: SOL0-03, name: "Harness", mass: 50, length: 9.28, width: 2.32, height: 0.0464, item: stock.cu-wire-2, quantity: 57.5, module: module.electronics-works }
+    - { code: SOL0-01, name: "Cells and cover glass", mass: 89, length: 20.0, width: 5.0, height: 0.0004, item: good.electronics, quantity: 89.0, module: module.electronics-works }
+    - { code: SOL0-02, name: "Face sheet", mass: 79, length: 20.0, width: 5.0, height: 0.0005, item: stock.cfc-sh-0p5, quantity: 90.9, module: module.composites-works }
+    - { code: SOL0-03, name: "Harness", mass: 12, length: 20.0, width: 0.1, height: 0.03, item: stock.cu-wire-2, quantity: 13.8, module: module.electronics-works }
+    - { code: SOL0-04, name: "Longerons", mass: 62, length: 20.0, width: 5.0, height: 0.08, item: stock.cfc-tb-80x2, quantity: 71.3, module: module.composites-works }
+    - { code: SOL0-05, name: "Ribs", mass: 60, length: 20.0, width: 5.0, height: 0.06, item: stock.cfc-tb-60x2, quantity: 69.0, module: module.composites-works }
+    - { code: SOL0-06, name: "Root hinges", mass: 12, length: 5.0, width: 0.15, height: 0.1, item: stock.ti64-pl-5, quantity: 18.0, module: module.machining-centre }
+    - { code: SOL0-07, name: "Hinge drive", mass: 8, length: 0.3, width: 0.15, height: 0.1, item: good.electric-motors, quantity: 8.0, module: module.assembly-shop }
+    - { code: SOL0-08, name: "Stow latches", mass: 9, length: 0.2, width: 0.1, height: 0.08, item: stock.ti64-pl-5, quantity: 13.5, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
   kind: "solar_array"
-  area: 100
-  output: 30000
-  efficiency: 0.3
+  area: 85
+  output: 30100
+  efficiency: 0.26
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "100 m2 at 30% gives 30 kW face on at Earth's sunlight (1,361 W/m2), 5 kg/m2 with its booms: a deployable wing's figures (the ISS wings ~ 1.1 t for 400 m2 at 14%). From memory. At Treistun's worlds sunlight is 0.23 to 1.07 of Earth's." }
+  - { of: [size_class], tier: invented, review: true, note: "A 30 kW wing: one deployable wing's figures (the ISS wings ~ 1.1 t for 400 m2 at 14%). From memory. At Treistun's worlds sunlight is 0.23 to 1.07 of Earth's." }
+  - { of: [function], tier: derived, review: true, note: "85 m2 of cells on the 100 m2 face (0.85 packed). Triple-junction cells at 0.30, less 6% hot (about 60 C at -0.2%/K), 2% wiring and 5% mismatch and wear, give 0.26 at the bus: 85 x 1,361 x 0.26 = 30.1 kW face on. Cell and loss figures from memory." }
+  - { of: [physical, built_of], tier: derived, review: true, note: "Cells 0.14 mm germanium-based with 0.1 mm cover glass, about 1.05 kg/m2 on 85 m2: 89 kg. Face 0.5 mm carbon sheet (1,580 kg/m3) on 100 m2: 79 kg. Under it 4 longerons of 80 x 2 mm carbon tube along the 20 m (0.77 kg/m, 62 kg) and 21 ribs of 60 x 2 mm across the 5 m every metre (0.58 kg/m, 60 kg); 81 mm deep, inside the 0.1 m. Harness at 300 V and 100 A: two 6 mm2 trunks for 2% drop are 2.2 kg, with string leads, insulation and the root connector 12 kg (allowance invented). Two titanium root hinges 6 kg each, a 67 N m drive (8 kg), six latches 1.5 kg each. Total 331 kg, 3.3 kg/m2." }
+  - { of: [physical], tier: derived, review: true, note: "Section EI about 2.0e5 N m2 (carbon at 60 GPa), 16 kg a metre. Out on its hinge, a cantilever of 20 m: the tip bends 1.6 m per m/s2 and the first mode is 0.16 Hz, so the wing is deployed only below 0.2 m/s2 (tip 0.3 m; operating limit invented). Stowed, it lies flat on the hull, held at the two root hinges and three pairs of latches at 6.7, 13.3 and 20 m: under 30 m/s2 the face stress is about 40 MPa, against 457 MPa if held at root and tip only. The 8 points: 2 hinges and 6 latches; the hull owns the pads, the wing owns the hinges, latches and drive. Hinge range 0 to 180 degrees from stowed, 90 degrees in 60 s (invented); one axis, the ship's attitude does the rest." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
