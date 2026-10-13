@@ -9,7 +9,7 @@ identity:
 size_class: 2
 fits: mount.thermal-s2
 physical:
-  mass: 2996
+  mass: 3017.5
   volume: 5.25
   length: 2.55
   width: 1.41
@@ -22,7 +22,7 @@ built_of:
     - { code: HSK0-03, name: "Insulation", description: "Foam under a multilayer blanket and closeout, 50 mm in all.", mass: 23, length: 2.47, width: 1.41, height: 1.41, item: stock.mli-fl, quantity: 23.0, module: module.assembly-shop }
     - { code: HSK0-04, name: "Diffusers and bladder", description: "Slotted inlet and outlet pipes along the top and bottom that keep the hot layer over the cold, and the expansion bladder.", mass: 40, length: 2.2, width: 1.2, height: 1.2, item: stock.st304-pl-3, quantity: 46.0, module: module.machining-centre }
     - { code: HSK0-05, name: "Nozzles and valves", description: "The coolant pair on the end heads, hot in high at one end and cold out low at the other, feeding the diffusers inside; a drain, a vent and the temperature probes' connector; capped until the hull connects them.", mass: 40, length: 0.4, width: 0.3, height: 0.3, item: stock.st304-pl-3, quantity: 46.0, module: module.machining-centre }
-    - { code: HSK0-06, name: "Saddles and feet", description: "Two saddles under the vessel on four feet, one per mount point.", mass: 60, length: 1.6, width: 1.41, height: 0.2, item: stock.st304-pl-3, quantity: 69.0, module: module.welding-bay }
+    - { code: HSK0-06, name: "Saddles and feet", description: "Two saddles under the vessel on four feet, one per mount point: contoured seat pads, 8 mm webs, 12 mm cross rails, 10 mm feet (81.5 kg as drawn on the candidate v01).", mass: 81.5, length: 1.6, width: 1.41, height: 0.2, item: stock.st304-pl-3, quantity: 93.7, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -31,6 +31,6 @@ function:
 life: 473364000
 basis:
   - { of: [function, size_class], tier: invented, review: true, note: "1 GJ: 200 s of the coolant loop S1's 5 MW. Chosen." }
-  - { of: [built_of.list, physical, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. The 5 t of salt could not hold 1 GJ: rock salt is about 0.9 kJ/kg K (from memory), 0.45 GJ over 100 K, and heat would need coils of hundreds of m2 to get into it in a burst. Water at 4.18 kJ/kg K from 278 to 368 K (kept off freezing and boiling at the loop's 0.6 MPa) holds 376 kJ/kg: 1 GJ in 2,660 kg, 2.7 m3, plus 4% for expansion. The loop runs through it, so no coils: it takes heat as fast as the loop brings it. Shell: 0.6 MPa plus the water's head at 30 m/s2, times 1.5, against 165 MPa welded wants 3.8 mm, so 5 mm plate, 144 kg bare plus 20%. A cylinder, not a box, to hold the pressure; it lies within the mount's 1.65 m height. Full at 30 m/s2 it puts 22 kN on each mount point (50.6 kN allowed). Total 2,996 kg (it was 5,500). The loop's coolant is water-glycol, and there is no glycol good yet: the fill is water." }
+  - { of: [built_of.list, physical, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. The 5 t of salt could not hold 1 GJ: rock salt is about 0.9 kJ/kg K (from memory), 0.45 GJ over 100 K, and heat would need coils of hundreds of m2 to get into it in a burst. Water at 4.18 kJ/kg K from 278 to 368 K (kept off freezing and boiling at the loop's 0.6 MPa) holds 376 kJ/kg: 1 GJ in 2,660 kg, 2.7 m3, plus 4% for expansion. The loop runs through it, so no coils: it takes heat as fast as the loop brings it. Shell: 0.6 MPa plus the water's head at 30 m/s2, times 1.5, against 165 MPa welded wants 3.8 mm, so 5 mm plate, 144 kg bare plus 20%. A cylinder, not a box, to hold the pressure; it lies within the mount's 1.65 m height. Full at 30 m/s2 it puts 22 kN on each mount point (50.6 kN allowed). Total 3,017.5 kg with the saddles as drawn (it was 5,500). The loop's coolant is water-glycol, and there is no glycol good yet: the fill is water." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
