@@ -25,6 +25,12 @@ making:
   module: module.assembly-shop
 function:
   kind: throat_coil
+visual:
+  format: "freefall-model/1"
+  path: "models/gate-throat-coil-s3/v1"
+  manifest_sha256: "308a6af7cabdbc6d267936210db2a34c925972182937d35c906a1245842d098b"
+  version: 1
+  triangles: 5560
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "What a tube asks of a coil is invented: here, about 3 T across the coil's bore, the most this case holds. Not in the game yet." }
