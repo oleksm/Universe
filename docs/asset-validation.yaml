@@ -3156,3 +3156,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static local coil. Magnetic target and plant performance unqualified; actual gate support/service placement, field rendering and GPU look/cost pending."
+  - key: equipment.gear.strut.s2
+    version: 1
+    manifest_sha256: "af8c0d79056b65d4da641e06013a6c1a701cdaee2186b658a7b925498c1c385c"
+    installed: 01c3abde
+    game: "the loader (world::assets) at fso 01c3abde"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gear-strut-s2/v1 (153040 bytes, bounds [-0.7, -4.0, -0.7] to [0.7, 0.0, 0.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime folding/compression, final hull bay and placement, GPU look/cost, temporal edges, load/damping/buckling/pad/drive qualification"
