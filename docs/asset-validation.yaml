@@ -3012,3 +3012,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual hull, runtime magnetic steering, GPU appearance/cost; reactor, shielding, >=369 MW plus ~190 MW heat, radiator ownership and loads unqualified."
+  - key: equipment.engine.ft.s3
+    version: 1
+    manifest_sha256: "d7843aba63fb8c3fbafda489b83596af415ead76f99d6e6e1fccb0cc474a6ac3"
+    installed: 7ca9bdb7
+    game: "the loader (world::assets) at fso 7ca9bdb7"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-ft-s3/v1 (585212 bytes, bounds [-3.8933, -3.8933, 0.0] to [3.8933, 3.8933, 24.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual hull, runtime magnetic steering, GPU appearance/cost; reactor, shielding, >=1.8 GW plus1.06 GW heat, radiator ownership and loads unqualified."
