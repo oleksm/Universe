@@ -15,7 +15,6 @@ use universe_sim::world::assets;
 pub struct Visual {
     pub source_sha256: String,
     pub model: PbrModel,
-    pub faces: Arc<Vec<crate::equipment_visual::Face>>,
     pub centre: Vec3,
     pub nodes: BTreeMap<String, DMat4>,
     pub has_motion: bool,
@@ -137,7 +136,7 @@ fn prepare(record: &universe_sim::world::registry::Visual) -> Result<Visual, Str
 fn prepare_bytes(
     glb: &[u8],
     parts: &[&str],
-    faces_needed: bool,
+    package_bounds: bool,
     bound_lo: [f64; 3],
     bound_hi: [f64; 3],
     has_motion: bool,
@@ -163,36 +162,18 @@ fn prepare_bytes(
     if !lo.is_finite() || !hi.is_finite() {
         return Err("empty model".into());
     }
-    let mut faces = Vec::new();
-    for primitive in model.data.primitives.iter().filter(|_| faces_needed) {
-        let material = model.data.materials.get(primitive.material);
-        for idx in primitive.indices.chunks_exact(3) {
-            let vs = [idx[0], idx[1], idx[2]].map(|i| primitive.vertices[i as usize]);
-            faces.push(crate::equipment_visual::Face {
-                positions: vs.map(|v| Vec3::from(v.pos)),
-                normals: vs.map(|v| Vec3::from(v.normal)),
-                colour: universe_engine::Color(
-                    material.map_or([0.6, 0.6, 0.6, 1.], |m| m.base_color),
-                ),
-                double_sided: material.is_some_and(|m| m.double_sided),
-                blend: material.is_some_and(|m| m.blend),
-                alpha_cutoff: material.and_then(|m| m.alpha_cutoff),
-            });
-        }
-    }
     Ok(Visual {
         source_sha256,
-        faces: Arc::new(faces),
         model,
         centre: (lo + hi) * 0.5,
         nodes,
         has_motion,
-        lo: if faces_needed {
+        lo: if package_bounds {
             glam::DVec3::from(bound_lo)
         } else {
             lo.as_dvec3()
         },
-        hi: if faces_needed {
+        hi: if package_bounds {
             glam::DVec3::from(bound_hi)
         } else {
             hi.as_dvec3()
@@ -208,7 +189,6 @@ fn resident_bytes(v: &Visual) -> usize {
         + d.images.capacity() * std::mem::size_of::<universe_engine::pbr::Image>()
         + d.primitives.iter().map(|p| p.vertices.capacity() * std::mem::size_of::<universe_engine::pbr::PbrVertex>() + p.indices.capacity() * 4).sum::<usize>()
         + d.images.iter().map(|i| i.rgba.capacity()).sum::<usize>()
-        + v.faces.capacity() * std::mem::size_of::<crate::equipment_visual::Face>()
         // Includes conservative BTree node allocation overhead, not just payload.
         + v.nodes.iter().map(|(k,_)| k.capacity() + std::mem::size_of::<DMat4>() + 128).sum::<usize>()
         + v.neutral_error.as_ref().map_or(0, String::capacity)
@@ -260,6 +240,22 @@ mod tests {
         let warm = request().unwrap();
         assert!(Arc::ptr_eq(&cold, &warm));
         assert_eq!(cache.snapshot().loads, 1);
+        let mut scene = universe_engine::scene::Scene::default();
+        let object = universe_engine::scene::ObjectId(1);
+        scene
+            .set(
+                object,
+                universe_engine::scene::Node {
+                    geometry: Some(universe_engine::scene::Geometry::Model {
+                        model: cold.model.with_lease(cold.clone()),
+                        part: 0,
+                    }),
+                    ..Default::default()
+                },
+            )
+            .unwrap();
+        drop(warm);
+        drop(cold);
         std::thread::sleep(Duration::from_millis(50));
         cache.maintain();
         assert_eq!(
@@ -267,8 +263,15 @@ mod tests {
             bytes,
             "scene leases pin resident data"
         );
-        drop(warm);
-        drop(cold);
+        let submitted = scene.get(object).unwrap().geometry.clone();
+        scene.remove(object);
+        cache.maintain();
+        assert_eq!(
+            cache.snapshot().resident_bytes,
+            bytes,
+            "submitted PBR handle pins cache after scene removal"
+        );
+        drop(submitted);
         cache.maintain();
         assert_eq!(cache.snapshot().resident_bytes, 0);
         assert_eq!(cache.snapshot().unloads, 1);
@@ -283,5 +286,4 @@ mod tests {
             serde_json::to_string(&snapshot).unwrap()
         );
     }
-
 }
