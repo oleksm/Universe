@@ -3113,7 +3113,9 @@ version = "0.1.0"
 dependencies = [
  "glam",
  "gltf",
+ "libc",
  "log",
+ "memmap2",
  "png",
  "rayon",
  "ron",
