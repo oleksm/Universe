@@ -5,11 +5,11 @@ identity:
   maker: org.aurel
   revision: draft
   slot: thermal
-  description: "Passes heat from one loop to another."
+  description: "Passes heat from one loop to another: a plate-and-shell exchanger, round welded plate pairs in a horizontal pressure shell. The hot loop runs inside the plate pairs through the end nozzles; the cold loop runs round them through the two top nozzles."
 size_class: 1
 fits: mount.thermal-s1
 physical:
-  mass: 800
+  mass: 604
   volume: 1.5
   length: 1.5
   width: 1.0
@@ -17,9 +17,10 @@ physical:
 built_of:
   parts: thermal-heat-exchanger
   list:
-    - { code: HEX0-01, name: "Shell", description: "The pressure shell.", mass: 280, length: 1.06, width: 0.705, height: 0.705, item: stock.st304-pl-3, quantity: 322.0, module: module.welding-bay }
-    - { code: HEX0-02, name: "Tube bundle", description: "Hundreds of thin tubes the hot side runs through.", mass: 400, length: 1.19, width: 0.794, height: 0.794, item: stock.st304-pl-3, quantity: 460.0, module: module.machining-centre }
-    - { code: HEX0-03, name: "Headers", description: "The ends that gather the flows.", mass: 120, length: 0.797, width: 0.531, height: 0.531, item: stock.st304-pl-3, quantity: 138.0, module: module.welding-bay }
+    - { code: HEX0-01, name: "Shell", description: "A 3 mm stainless cylinder, 0.69 m across and 1.0 m long, with the two cold-loop nozzles on top.", mass: 51, length: 1.0, width: 0.69, height: 0.69, item: stock.st304-pl-3, quantity: 58.7, module: module.welding-bay }
+    - { code: HEX0-02, name: "Plate pack", description: "300 round plates of 0.6 mm pressed stainless, 0.64 m across, welded in pairs at a 3 mm pitch, on tie rods: 87 m2. The stock is a mass proxy: thin stainless sheet is not in the registry yet.", mass: 475, length: 0.9, width: 0.64, height: 0.64, item: stock.st304-pl-3, quantity: 546.3, module: module.machining-centre }
+    - { code: HEX0-03, name: "Heads and nozzles", description: "Two 3 mm 2:1 dished heads, each with an axial hot-loop nozzle, and four 80 mm nozzles with flanges, capped until the hull connects them.", mass: 48, length: 0.25, width: 0.69, height: 0.69, item: stock.st304-pl-3, quantity: 55.2, module: module.welding-bay }
+    - { code: HEX0-04, name: "Saddles and feet", description: "Two saddles under the shell on four bored feet, one per mount point.", mass: 30, length: 0.8, width: 0.92, height: 0.25, item: stock.st304-pl-3, quantity: 34.5, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -27,6 +28,7 @@ function:
   transfers: 5000000.0
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "Passes 5 MW between two loops: a shell-and-tube exchanger of about this size. From memory. Not sourced." }
+  - { of: [function, size_class], tier: invented, review: true, note: "Passes 5 MW: the coolant loop S1's load, water-glycol at 12 kg/s each side. Chosen." }
+  - { of: [built_of.list, physical.mass, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. Equal flows with a 100 K range each side run counterflow at a constant approach; at 18 K (chosen) and 3,200 W/m2 K for water-glycol in chevron plates (from memory) 5 MW wants 87 m2. A shell-and-tube bundle cannot give that in this box: 10 mm tubes 1 m long need some 2,800 holes at 12.5 mm pitch, 0.44 m2 of tube sheet against the shell's 0.37. Round plates can: 300 of 0.29 m2 at 3 mm pitch fill 0.9 m. Pressure 0.6 MPa (chosen: the pump's head over glycol's low vapour pressure), times 1.5, against 138 MPa for welded 304: 2.2 mm for the shell and the 2:1 heads, so 3 mm. Nozzles 80 mm for 12 kg/s at 2.5 m/s. Total 604 kg (it was 800, from memory). Full of coolant (about 0.4 t) at 30 m/s2 it puts 7.5 kN on each mount point (9.2 kN allowed)." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
