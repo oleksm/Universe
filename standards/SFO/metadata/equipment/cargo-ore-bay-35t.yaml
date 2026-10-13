@@ -32,10 +32,10 @@ function:
   fill_density: 2000
 visual:
   format: "freefall-model/1"
-  path: "models/cargo-ore-bay-35t/v1"
-  manifest_sha256: "31a19821c97e525a71dd581cbe13225bbc3522c61433a0ae9ee25fd9b7647805"
-  version: 1
-  triangles: 6660
+  path: "models/cargo-ore-bay-35t/v2"
+  manifest_sha256: "87391ed5c6273d1b9382b851677e80dfe85262b59152ba0142d341753f8d051b"
+  version: 2
+  triangles: 9944
 life: 473364000
 basis:
   - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
