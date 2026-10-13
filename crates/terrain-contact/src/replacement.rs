@@ -424,6 +424,7 @@ pub fn excise(
     let mut degenerate = 0;
     let (mut merged, mut merges) = (0f64, 0);
     let mut rim_patch = 0f64;
+    let mut rim_worst = Value::Null;
     let bo = band_origin;
     for (pi, face, ids, uv) in &crossed {
         let (pi, face) = (*pi, *face);
@@ -566,7 +567,11 @@ pub fn excise(
                         // The same point as the patch draws it, in its own frame.
                         let mine = bo + Vec3::from_array(rim.positions[k as usize]).as_dvec3();
                         let theirs = o + (world(v) - o).as_vec3().as_dvec3();
-                        rim_patch = rim_patch.max(mine.distance(theirs));
+                        let gap = mine.distance(theirs);
+                        if gap > rim_patch {
+                            rim_patch = gap;
+                            rim_worst = json!({"patch":p.key,"vertex":v,"gap_m":gap,"from_band_origin_m":(world(v) - bo).length(),"from_patch_origin_m":(world(v) - o).length()});
+                        }
                     }
                     k
                 };
@@ -617,6 +622,13 @@ pub fn excise(
                 }
             }
                 let _ = o;
+    }
+
+    // The rim meets each patch where they share a vertex. Over a coarse patch (a loading one
+    // spanning the whole footprint) the shared vertex can lie kilometres from both origins, and
+    // two f32 frames cannot hold it to the seam budget there: refuse, as any other seam.
+    if rim_patch > SEAM {
+        return Err(json!({"reason":"rim meets a patch beyond the seam budget (coarse support)","worst":rim_worst}));
     }
 
     // The exterior meets the band's outer edge, point for point.
@@ -702,7 +714,7 @@ pub fn excise(
         "footprint_triangles":footprint_triangles,"crossed_triangles":crossed.len(),
         "footprint_locks":footprint_locks,"closure_locks":locked.len()-footprint_locks,
         "exterior_triangles":new_tris,"exterior_degenerate_dropped":degenerate,"f32_coincident_points_merged":merges,"f32_coincident_max_gap_m":merged,
-        "rim_vertices":rim.positions.len(),"rim_patch_quantization_max_m":rim_patch,"band_points_stitched":stitched,
+        "rim_vertices":rim.positions.len(),"rim_patch_seam_max_m":rim_patch,"rim_patch_worst":rim_worst,"band_points_stitched":stitched,
         "band_outer_edges":band_edges.len(),"exterior_outer_edges":exterior_boundary.len(),
         "band_seam_max_m":band_seam,"band_edges_not_shared_exactly":unmatched_edges,"relations_checked":checked,"eyes_checked":eyes.len(),
         "max_seam_widening_m":worst.max(0.),

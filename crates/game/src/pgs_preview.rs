@@ -45,7 +45,17 @@ pub fn palette(body: &Body) -> Option<&'static Palette> {
 }
 
 #[cfg(feature = "dev")]
+/// The source this process loaded: its body, the SHA256 of the bytes read, and the Surface
+/// made from them (its address: the very instance the world holds).
+static LOADED: std::sync::OnceLock<(String, String, usize)> = std::sync::OnceLock::new();
+
+/// The SHA256 of the bytes `surface` was read from, if it is the source this process loaded.
+pub fn loaded_hash(surface: &universe_sim::world::worlds::pgs::Surface) -> Option<&'static str> {
+    LOADED.get().filter(|(_, _, at)| *at == surface as *const _ as usize).map(|(_, sha, _)| sha.as_str())
+}
+
 pub fn configure(folder: &std::path::Path, body: &str, surface: &universe_sim::world::worlds::pgs::Surface, surface_hash: &str, manifest: &serde_json::Value) -> Result<(), String> {
+    let _ = LOADED.set((body.to_owned(), surface_hash.to_owned(), surface as *const _ as usize));
     crate::pgs_debug::configure(body, surface, surface_hash)?;
     let shadows = match std::env::var("UNIVERSE_PGS1_SHADOWS").as_deref() {
         Err(std::env::VarError::NotPresent) | Ok("off") => false,

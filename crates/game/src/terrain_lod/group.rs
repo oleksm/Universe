@@ -360,11 +360,15 @@ pub(crate) struct Trace {
     written: usize,
 }
 impl Trace {
-    pub fn from_env(radius: f64) -> Option<Self> {
+    /// Bound to the source the world actually holds: the SHA256 of the bytes it was read from
+    /// (none: no trace).
+    pub fn from_env(radius: f64, surface: &universe_sim::world::worlds::pgs::Surface) -> Option<Self> {
         let path = std::env::var_os("UNIVERSE_PGS1_READINESS_TRACE")?.into();
-        // The run names the frozen source it installed; the trace carries it, it does not prove it.
-        let sha = std::env::var("UNIVERSE_PGS1_SOURCE_SHA256").unwrap_or_default();
-        Some(Self { path, sha, radius, frames: vec![], written: 0 })
+        let Some(sha) = crate::pgs_preview::loaded_hash(surface) else {
+            log::warn!("readiness trace: the world's source is not the one this process loaded and hashed; no trace");
+            return None;
+        };
+        Some(Self { path, sha: sha.to_owned(), radius, frames: vec![], written: 0 })
     }
     #[allow(clippy::too_many_arguments)]
     pub fn record(&mut self, frame: u64, time_s: f64, eye: DVec3, surface: &universe_sim::world::worlds::pgs::Surface, submitted: Option<f64>, runtime: &Runtime, pending: usize, resident: usize) {
@@ -372,6 +376,8 @@ impl Trace {
             return;
         }
         let dir = eye.normalize();
+        // Each frame bound to the source the world holds now (empty: not the one loaded).
+        let sha = crate::pgs_preview::loaded_hash(surface).unwrap_or("");
         let (bed, water) = match surface.query(dir) {
             Ok(s) => (json!(s.height_m), match s.water {
                 universe_sim::world::worlds::pgs::Water::Dry => "dry",
@@ -382,12 +388,12 @@ impl Trace {
         };
         let (active, uploading, retired) = runtime.gpu_bytes();
         let group = runtime.active.as_ref().map(|p| {
-            json!({"id":format!("g{}",p.meta.id),"source_sha256":self.sha,"source_generation":p.meta.source_generation,
+            json!({"id":format!("g{}",p.meta.id),"source_sha256":sha,"source_generation":p.meta.source_generation,
                 "centre":p.meta.centre.to_array(),"east":p.meta.east.to_array(),"north":p.meta.north.to_array(),"core_half_width_m":worker::CORE_HALF})
         });
         let ready = runtime.active.as_ref().is_some_and(|p| p.meta.in_core(dir, 0.));
         self.frames.push(json!({
-            "frame":frame,"simulation_time_s":time_s,"source_sha256":self.sha,"source_generation":runtime.source_generation(),
+            "frame":frame,"simulation_time_s":time_s,"source_sha256":sha,"source_generation":runtime.source_generation(),
             "foot_direction":dir.to_array(),"ready":ready,"water":water,"canonical_bed_height_m":bed,
             "submitted_ground_height_m":submitted.map(|h| h - self.radius),
             "gpu_bytes":{"active":active,"uploading":uploading,"retired":retired},

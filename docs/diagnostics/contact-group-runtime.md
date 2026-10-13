@@ -51,6 +51,17 @@ at the shore, over water (`not_known_dry_ground`, correctly not a walking pass).
 once, at 0.01 s simulated, when the world settled the ship the scenario had put 1.7 m over the water; the trace
 records it. Re-anchors: each new group replaced the active one in the same frame.
 
+## Follow-up: rim–patch seam gate and source binding (planets 0281)
+
+Planets' replay found staged rim–patch gaps up to 2.298 mm. All came from startup groups built over one coarse
+patch (level 1–10) spanning the whole footprint, whose shared vertex lies kilometres from both f32 origins; every
+settled group stayed at or below 4.3 µm. The worker now refuses a group whose rim meets a patch beyond 10 µm
+(`rim meets a patch beyond the seam budget (coarse support)`, with the vertex, gap and distances), so those frames
+are not ready instead of published. The trace's source hash is now the SHA256 of the bytes this process read for the
+very `Surface` the world holds (`pgs_preview::loaded_hash`), checked each frame; the environment variable is gone.
+Crest 1 rerun (`crest1-walk2`): every frame bound; two coarse refusals (8.0 mm at a level-1 patch 233 km out,
+75 µm at level 7); first ready frame 148, then no frame not ready; staged rim–patch max 4.3 µm.
+
 ## Not established
 
 - **Frame time.** The test window on workspace 8 is throttled by the compositor: the renderer drew about one frame

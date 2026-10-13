@@ -580,10 +580,11 @@ impl Lod {
             else { frame.no_shadow(draw_patch); }
         }
         if canonical && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
+            let surface = body.terrain.as_ref().and_then(|t| t.surface_source());
             if self.readiness.is_none() {
-                self.readiness = group::Trace::from_env(r);
+                self.readiness = surface.as_ref().and_then(|s| group::Trace::from_env(r, s));
             }
-            if let (Some(trace), Some(surface)) = (self.readiness.as_mut(), body.terrain.as_ref().and_then(|t| t.surface_source())) {
+            if let (Some(trace), Some(surface)) = (self.readiness.as_mut(), surface) {
                 // Diagnostic only: the ground under the eye, from the pieces actually submitted.
                 let submitted = pieces
                     .iter()
