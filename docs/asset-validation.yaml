@@ -3348,3 +3348,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static stowed model only; runtime deployment, final hull clearance, structural and thermal qualification remain pending."
+  - key: equipment.tank.gas-cargo.s3
+    version: 1
+    manifest_sha256: "fc89a03ad192e83fc6d9aed36fa77515ad3389c507080ff023adc84624f09d02"
+    installed: f4c7056d
+    game: "the loader (world::assets) at fso f4c7056d"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-gas-cargo-s3/v1 (182912 bytes, bounds [-1.724, 0.0, -1.724] to [1.724, 3.728, 1.724]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static exterior; pressure and structural qualification, final hull placement and service routing remain pending."
