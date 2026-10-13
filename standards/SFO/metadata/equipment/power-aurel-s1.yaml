@@ -9,9 +9,9 @@ size_class: 1
 fits: mount.power-s1
 physical:
   mass: 2303
-  volume: 157.0
+  volume: 162.8
   length: 12.5
-  width: 6.26
+  width: 6.51
   height: 2.0
 built_of:
   parts: power-aurel-s1
@@ -44,5 +44,5 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
   - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Radiator and frame from material, size and load, the rest of the list as before: 2,303 kg (was 1,400). Panel: 6.25 by 6.26 m of 3 mm carbon-carbon at 1,750 kg/m3, 205 kg; 39.1 m2 radiating from both faces sheds 4 MW at 1,000 K and emissivity 0.9, so it must stand up to run at full power (flat, half). Epoxy carbon cannot run at 1,000 K. Frame in welded 6061 at 110 MPa, the whole plant at the mount's 3 g: two side trusses 1.9 m deep in six bays (70 by 3 mm tube, 80 by 3 diagonals; chords 44 MPa, diagonals 25 kN against 30 kN buckling over 1.5), seven floor beams 120 by 80 by 6 box across 6.26 m (104 MPa), seven top ties of 70 by 3 tube, and radiator rails 140 by 60 by 4 box (92 MPa when standing up at 1 g, stowed flat for more), plus 10% for joints and the hinge; 744 kg. Four pads at 17.5 kN carry 70 kN against 67.8 kN. Coolant lines and the reactor parts are still in Discovery II's shares." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 4.0 MW of waste heat at 1,000 K, 39 m2 of panel, with the plant beneath." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 4.0 MW of waste heat at 1,000 K, 39 m2 of panel, with the plant beneath. Width 6.51 m: the bay is 6.26, and the hinge sits 0.25 m outboard so the root needs no reliefs and the whole 39.1 m2 radiates (blender's blockout v02); within the mount's 6.89." }
   - { of: [life], rule: rule.life-ship-system }
