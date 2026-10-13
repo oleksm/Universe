@@ -9,17 +9,19 @@ identity:
 size_class: 1
 fits: mount.tank-s1
 physical:
-  mass: 140
-  volume: 6.97
-  length: 1.91
-  width: 1.91
-  height: 1.91
+  mass: 174.5
+  volume: 9.49
+  length: 2.191
+  width: 2.042
+  height: 2.122
 built_of:
   parts: tank-hydrolox-1t
   list:
-    - { code: TKHY1T-01, name: "Shell", mass: 98, length: 1.7, width: 1.7, height: 1.7, item: stock.al6061-pl-5, quantity: 112.7, module: module.welding-bay }
-    - { code: TKHY1T-02, name: "Insulation", mass: 28, length: 1.12, width: 1.12, height: 1.12, item: stock.mli-fl, quantity: 28, module: module.assembly-shop }
-    - { code: TKHY1T-03, name: "Fittings and gauging", mass: 14, length: 0.887, width: 0.887, height: 0.887, item: stock.st304-pl-3, quantity: 16.1, module: module.machining-centre }
+    - { code: TKHY1T-01, name: "Shell", description: "Welded aluminium sphere, 1.842 m across outside, 2 mm wall, with weld lands, bosses and saddle doublers.", mass: 69, length: 1.842, width: 1.842, height: 1.842, item: stock.al6061-sh-2, quantity: 79.4, module: module.welding-bay }
+    - { code: TKHY1T-02, name: "Common bulkhead", description: "A dome bulging into the hydrogen: two 1.6 mm aluminium skins on a 97 mm foam core, 100 mm in all, welded to the shell at a Y-ring. Its stock is a mass proxy: foam-core sandwich stock is not in the registry yet.", mass: 33.5, length: 1.5, width: 1.5, height: 0.42, item: stock.al6061-sh-2, quantity: 38.5, module: module.welding-bay }
+    - { code: TKHY1T-03, name: "Insulation", description: "80 mm of foam on the shell under a multilayer blanket and closeout, 100 mm in all: the sphere is 2.042 m across over it.", mass: 35, length: 2.042, width: 2.042, height: 2.042, item: stock.mli-fl, quantity: 35, module: module.assembly-shop }
+    - { code: TKHY1T-04, name: "Saddles", description: "Four, one at each mount attachment, below the equator.", mass: 12, length: 0.3, width: 0.18, height: 0.24, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
+    - { code: TKHY1T-05, name: "Fittings and gauging", description: "For each circuit: an outlet with an anti-vortex screen, a pressurant diffuser, fill and drain, vent and relief valves, level gauging. Every port is capped until the hull connects it.", mass: 25, length: 0.6, width: 0.35, height: 0.35, item: stock.st304-pl-3, quantity: 28.75, module: module.machining-centre }
 making:
   module: module.assembly-shop
 function:
@@ -28,6 +30,6 @@ function:
   holds: material.hydrolox
 life: 473364000
 basis:
-  - { of: [physical, function], tier: invented, review: true, note: "hydrolox at 320 kg/m3: 3.1 m3 as a ball 1.81 m across; the tank 14% of its contents, more than a big tank's share since a small one's wall and insulation do not shrink with it. Chosen; review." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Sized as the 0.5 t (2026-10-13, from the modeller's blockout v01): 1,000 kg at O/F 5.5 is 846 kg of oxygen and 154 kg of hydrogen, each with 3% ullage, with the 100 mm common bulkhead inside a 0.919 m inner radius. Wall: 0.35 MPa times 1.5 against 165 MPa welded wants 1.46 mm, so the 2 mm sheet: 57 kg bare plus 20% for lands and bosses. Insulation 100 mm at 3.3 kg/m2, bulkhead 33.5 kg, saddles 12 kg, fittings 25 kg for two circuits (10 drawn). Total 174.5 kg, 17% of what it holds (the old 140 kg was an assumed 14%). Box: 2.191 x 2.042 x 2.122 m with saddles and opposed service bosses. Chosen; review." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
