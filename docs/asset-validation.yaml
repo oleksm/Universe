@@ -3380,3 +3380,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Pressure, cryogenic and mount-load qualification; final hull service routing and placement; GPU appearance, cost and temporal edge stability."
+  - key: equipment.tank.hydrogen.s2
+    version: 1
+    manifest_sha256: "cc6dbdeef80190a34724f26de681ef7c0462890c2667cc76c90d5bfa46a44c86"
+    installed: 4dd85494
+    game: "the loader (world::assets) at fso 4dd85494"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-hydrogen-s2/v1 (264456 bytes, bounds [-2.9312, 0.0, -2.9312] to [2.9312, 6.0897, 3.1438]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure, cryogenic and mount-load qualification; final hull service routing and placement; GPU appearance, cost and temporal edge stability."
