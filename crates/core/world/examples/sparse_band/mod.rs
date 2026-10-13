@@ -65,7 +65,17 @@ pub fn chain(chart: &Chart, grid: &[Triangle], bound: f64) -> Result<(Vec<Event>
                         "{}:boundary:{axis}:{side}",
                         edge_key(tri.tags[a], tri.tags[b])
                     );
-                    let contributor = json!({"patch":tri.patch,"eye":tri.eye.to_array(),"size":tri.size,"origin":tri.origin.to_array(),"edge_tags":[tri.tags[a],tri.tags[b]],"fraction":t,"raw":[tri.raw[a].to_array(),tri.raw[b].to_array()],"target":[tri.target[a].to_array(),tri.target[b].to_array()],"morph":[tri.morph[a],tri.morph[b]],"world":[tri.world[a].to_array(),tri.world[b].to_array()],"triangle_world":tri.world.map(|p|p.to_array()),"intersection":pos.to_array()});
+                    let mut contributor = json!({"patch":tri.patch,"origin":tri.origin.to_array(),"edge_tags":[tri.tags[a],tri.tags[b]],"fraction":t,"world":[tri.world[a].to_array(),tri.world[b].to_array()],"triangle_world":tri.world.map(|p|p.to_array()),"intersection":pos.to_array()});
+                    if let Some(trace) = &tri.trace {
+                        contributor["eye"] = json!(trace.eye.to_array());
+                        contributor["size"] = json!(trace.size);
+                        contributor["raw"] =
+                            json!([trace.raw[a].to_array(), trace.raw[b].to_array()]);
+                        contributor["target"] =
+                            json!([trace.target[a].to_array(), trace.target[b].to_array()]);
+                        contributor["morph"] = json!([trace.morph[a], trace.morph[b]]);
+                    }
+
                     if let Some(old) = events.get_mut(&id) {
                         let error = old.world.distance(pos);
                         max = max.max(error);
@@ -125,12 +135,24 @@ fn bits(p: [f32; 3]) -> [u32; 3] {
     p.map(f32::to_bits)
 }
 pub fn build(s: &Surface, c: DVec3, id: &str) -> Result<Value, Value> {
-    let clock = std::time::Instant::now();
     let r = 6281370.;
     let chart = Chart::new(c, r);
     let base = crease::build(s, c, r, id, &std::sync::atomic::AtomicU64::new(1), 1)
         .map_err(|e| json!({"reason":e}))?;
     let (grid, visits) = grid::retained(s, &chart).map_err(|e| json!({"reason":e}))?;
+    build_prepared(s, c, id, base, grid, visits)
+}
+pub fn build_prepared(
+    s: &Surface,
+    c: DVec3,
+    id: &str,
+    base: crease::Pair,
+    grid: Vec<Triangle>,
+    visits: usize,
+) -> Result<Value, Value> {
+    let clock = std::time::Instant::now();
+    let r = 6281370.;
+    let chart = Chart::new(c, r);
     let origin = chart.c * (r + s.query(c).map_err(|e| json!({"reason":e}))?.height_m);
     let (mut events, chain_report) = chain(&chart, &grid, 64.)?;
     // Canonical source/8m boundary vertices are independently required constraints.

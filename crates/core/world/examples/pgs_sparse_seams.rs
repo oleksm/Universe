@@ -1,4 +1,6 @@
 #[allow(dead_code)]
+mod boundary_correction;
+#[allow(dead_code)]
 mod contact_core;
 #[allow(dead_code)]
 mod crease;
@@ -14,9 +16,26 @@ fn v(p: &Value) -> DVec3 {
         p[2].as_f64().unwrap(),
     )
 }
+fn triangle_distance(p: DVec3, t: &grid::Triangle) -> f64 {
+    let [a, b, c] = t.world;
+    let n = (b - a).cross(c - a);
+    let q = p - n * ((p - a).dot(n) / n.length_squared());
+    let v = (q - a).cross(c - a).dot(n) / n.length_squared();
+    let w = (b - a).cross(q - a).dot(n) / n.length_squared();
+    if v >= 0. && w >= 0. && v + w <= 1. {
+        return p.distance(q);
+    }
+    [(a, b), (b, c), (c, a)]
+        .into_iter()
+        .map(|(a, b)| {
+            let d = b - a;
+            p.distance(a + d * ((p - a).dot(d) / d.length_squared()).clamp(0., 1.))
+        })
+        .fold(f64::INFINITY, f64::min)
+}
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let a = std::env::args().skip(1).collect::<Vec<_>>();
-    if a.len() != 5 {
+    if !(5..=6).contains(&a.len()) {
         return Err("source geometry features plan report".into());
     }
     let b = std::fs::read(&a[0])?;
@@ -35,9 +54,29 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
         let bytes = std::fs::read(path)?;
         let g: Value = serde_json::from_slice(&bytes)?;
-        let c = v(&f["queries"][0]["unit_direction"]);
+        let c = v(g.get("anchor_direction").unwrap_or(&f["queries"][0]["unit_direction"]));
         let chart = Chart::new(c, 6281370.);
-        let (old, _) = grid::retained(&s, &chart)?;
+        let (mut old, _) = grid::retained_compact(&s, &chart)?;
+        if a.len() == 6 {
+            boundary_correction::ownership::correct(
+                &mut old,
+                &std::sync::atomic::AtomicU64::new(1),
+                1,
+                &chart,
+            )
+            .map_err(|e| e.to_string())?;
+            for t in &mut old {
+                t.uv = t.world.iter().map(|p| chart.project(*p).unwrap()).collect();
+                t.lo =
+                    t.uv.iter()
+                        .copied()
+                        .fold(DVec2::splat(f64::INFINITY), DVec2::min);
+                t.hi =
+                    t.uv.iter()
+                        .copied()
+                        .fold(DVec2::splat(f64::NEG_INFINITY), DVec2::max);
+            }
+        }
         let t = &g["tiles"][0];
         let origin = v(&t["origin"]);
         let positions = t["vertices"]
@@ -65,12 +104,36 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             }
         }
         let mut max = 0f64;
+        let mut full_edge_bound = 0f64;
+        let mut full_edge_failures = vec![];
         let mut strict_missing = 0;
         let mut tolerant_missing = 0;
         let mut count = 0;
         let mut worst = Value::Null;
         let mut misses = vec![];
         for &(a, b) in &edges {
+            let qa = chart.project(positions[a])?;
+            let qb = chart.project(positions[b])?;
+            let mut bound = f64::INFINITY;
+            for tr in &old {
+                if qa.min(qb).x < tr.lo.x - 1e-5
+                    || qa.max(qb).x > tr.hi.x + 1e-5
+                    || qa.min(qb).y < tr.lo.y - 1e-5
+                    || qa.max(qb).y > tr.hi.y + 1e-5
+                {
+                    continue;
+                }
+                bound = bound.min(
+                    triangle_distance(positions[a], tr).max(triangle_distance(positions[b], tr)),
+                );
+            }
+            full_edge_bound = full_edge_bound.max(bound);
+            if bound > 1e-5 {
+                full_edge_failures.push(
+                    json!({"edge":[a,b],"bound_m":if bound.is_finite(){Some(bound)}else{None}}),
+                );
+            }
+
             for fraction in [0., 0.25, 0.5, 0.75, 1.] {
                 count += 1;
                 if count > 300000 {
@@ -119,7 +182,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        results.push(json!({"feature":id,"geometry_sha256":sha256(&bytes),"outer_edges":edges.len(),"samples":count,"max_radial_seam_m":max,"strict_support_missing":strict_missing,"misses":misses,"chart":{"c":chart.c.to_array(),"e":chart.e.to_array(),"n":chart.n.to_array(),"r":chart.r},"support_missing_within_10um":tolerant_missing,"worst":worst,"scope":"physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding"}));
+        results.push(json!({"feature":id,"geometry_sha256":sha256(&bytes),"outer_edges":edges.len(),"samples":count,"max_radial_seam_m":max,"complete_edge_support_bound_m":if full_edge_bound.is_finite(){Some(full_edge_bound)}else{None},"complete_edge_failures":full_edge_failures,"strict_support_missing":strict_missing,"misses":misses,"chart":{"c":chart.c.to_array(),"e":chart.e.to_array(),"n":chart.n.to_array(),"r":chart.r},"support_missing_within_10um":tolerant_missing,"worst":worst,"scope":"physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding"}));
     }
     std::fs::write(
         &a[4],
