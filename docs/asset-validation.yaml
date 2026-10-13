@@ -2964,3 +2964,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull airflow/service clearance, runtime rotor motion, GPU appearance/cost and temporal quality; motor density,cooling,structure and aerodynamic performance unqualified."
+  - key: equipment.engine.fan.s2
+    version: 1
+    manifest_sha256: "4dd5a9d191d720e7577cc11ddd9a2dffff6474d858eef47fd6f7a6238ae1c4de"
+    installed: cda35727
+    game: "the loader (world::assets) at fso cda35727"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/engine-fan-s2/v1 (266452 bytes, bounds [-0.9, 0.0, -0.9] to [0.9, 1.0, 0.9]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull airflow/service clearance, runtime rotor motion, GPU appearance/cost and temporal quality; motor density,cooling,structure and aerodynamic performance unqualified."
