@@ -3140,3 +3140,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static asset only; source demo is not runtime motion. Full engine/hull services and clearance, live motion, GPU look/cost and loaded drive/brake qualification pending."
+  - key: equipment.gate.throat-coil.s3
+    version: 1
+    manifest_sha256: "308a6af7cabdbc6d267936210db2a34c925972182937d35c906a1245842d098b"
+    installed: 15bd32cf
+    game: "the loader (world::assets) at fso 15bd32cf"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gate-throat-coil-s3/v1 (190608 bytes, bounds [-4.93, 0.0, -1.235] to [4.93, 2.47, 1.235]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static local coil. Magnetic target and plant performance unqualified; actual gate support/service placement, field rendering and GPU look/cost pending."
