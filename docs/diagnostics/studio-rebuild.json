@@ -1,0 +1,1908 @@
+{
+  "source_commit": "e29d3f0b27a118da23d10cbe22c0e0710393a560",
+  "branch": "ships-studio-rebuild",
+  "main_merged": false,
+  "checks": {
+    "workspace": {
+      "command": "cargo test --workspace --features dev -q",
+      "log": "/tmp/studio-rebuild-exact-tests.log",
+      "passed": 67
+    },
+    "registry": {
+      "command": "python3 tools/standards/build.py",
+      "exit": 0,
+      "log": "/tmp/studio-rebuild-complete-registry.log"
+    },
+    "player": {
+      "command": "cargo check -p universe --no-default-features",
+      "exit": 0,
+      "log": "/tmp/studio-rebuild-player-check.log",
+      "warnings": [
+        "Existing dev-only use of Mounted::slot_origin leaves a dead-code warning in the player build."
+      ]
+    },
+    "release": {
+      "command": "cargo build --release -p universe --bins --features dev",
+      "exit": 0,
+      "log": "/tmp/studio-rebuild-host-release.log"
+    }
+  },
+  "binaries": {
+    "freefall": {
+      "path": "/home/alexm/git/universe-ships-studio-rebuild/target/release/freefall",
+      "sha256": "26ae66c8c2e40afa0969f1dfd2b10d633447083660d14cdc0cf755ebd3fe1971"
+    },
+    "freefall-studio": {
+      "path": "/home/alexm/git/universe-ships-studio-rebuild/target/release/freefall-studio",
+      "sha256": "74e5a5db3b17ee1933b848de8e562ff3f85260184736e4a96325afc97becc534"
+    }
+  },
+  "gpu": {
+    "adapter": "NVIDIA GeForce RTX5090",
+    "backend": "Vulkan",
+    "driver": "615.78.08",
+    "frames": [
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/design-current.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "assets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gltf decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gpu transfer",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "read and verify",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "texture prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.315,
+            "max_ms": 0.54,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.271,
+            "max_ms": 0.475,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "design-models",
+            "mean_ms": 0.015,
+            "max_ms": 0.037,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 0.001,
+            "max_ms": 0.008,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 0.943,
+            "max_ms": 1.348,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 0.011,
+            "max_ms": 0.021,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.016,
+            "max_ms": 0.03,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 0.668,
+            "max_ms": 0.996,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.009,
+            "max_ms": 0.013,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.001,
+            "max_ms": 0.002,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.048,
+            "max_ms": 0.057,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 0.011,
+            "max_ms": 0.022,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.112,
+            "max_ms": 0.18,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "budget",
+            "mean_ms": 0.112,
+            "max_ms": 0.18,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.042,
+            "max_ms": 0.088,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.042,
+            "max_ms": 0.088,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.039,
+            "max_ms": 0.082,
+            "calls_per_frame": 1.0
+          }
+        ]
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/balance-current.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "assets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gltf decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gpu transfer",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "read and verify",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "texture prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.054,
+            "max_ms": 0.132,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.022,
+            "max_ms": 0.058,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "balance",
+            "mean_ms": 0.022,
+            "max_ms": 0.058,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 0.001,
+            "max_ms": 0.004,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 1.011,
+            "max_ms": 1.48,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 0.013,
+            "max_ms": 0.036,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.013,
+            "max_ms": 0.022,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 0.727,
+            "max_ms": 1.056,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.01,
+            "max_ms": 0.016,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.001,
+            "max_ms": 0.002,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.036,
+            "max_ms": 0.057,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 0.013,
+            "max_ms": 0.036,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "build-craft",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.003,
+            "max_ms": 0.012,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.003,
+            "max_ms": 0.009,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 1.0
+          }
+        ]
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/drive-current.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "assets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gltf decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gpu transfer",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "read and verify",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "texture prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.094,
+            "max_ms": 0.23,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.053,
+            "max_ms": 0.144,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "drive",
+            "mean_ms": 0.053,
+            "max_ms": 0.143,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 0.001,
+            "max_ms": 0.037,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 1.079,
+            "max_ms": 1.403,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 0.011,
+            "max_ms": 0.027,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.016,
+            "max_ms": 0.037,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 0.779,
+            "max_ms": 1.017,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.009,
+            "max_ms": 0.021,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.001,
+            "max_ms": 0.002,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.047,
+            "max_ms": 0.066,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 0.011,
+            "max_ms": 0.028,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "sim",
+            "mean_ms": 0.004,
+            "max_ms": 0.015,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "crafts",
+            "mean_ms": 0.004,
+            "max_ms": 0.015,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 8,
+            "scope": "tick",
+            "mean_ms": 0.004,
+            "max_ms": 0.015,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "world step",
+            "mean_ms": 0.004,
+            "max_ms": 0.015,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 12,
+            "scope": "heat",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.1
+          },
+          {
+            "depth": 12,
+            "scope": "landed",
+            "mean_ms": 0.004,
+            "max_ms": 0.012,
+            "calls_per_frame": 1.7
+          },
+          {
+            "depth": 12,
+            "scope": "surroundings",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 0.1
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "build-craft",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.009,
+            "max_ms": 0.025,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.008,
+            "max_ms": 0.024,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.006,
+            "max_ms": 0.019,
+            "calls_per_frame": 1.0
+          }
+        ]
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/code-current.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.068,
+            "max_ms": 0.11,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.031,
+            "max_ms": 0.061,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 0.002,
+            "max_ms": 0.004,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 0.656,
+            "max_ms": 1.044,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 0.017,
+            "max_ms": 0.044,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.013,
+            "max_ms": 0.019,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 0.433,
+            "max_ms": 0.715,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.003,
+            "max_ms": 0.006,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.001,
+            "max_ms": 0.001,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.028,
+            "max_ms": 0.047,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 0.017,
+            "max_ms": 0.045,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.015,
+            "max_ms": 0.052,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.014,
+            "max_ms": 0.051,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.014,
+            "max_ms": 0.049,
+            "calls_per_frame": 1.0
+          }
+        ]
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/walk-final.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "assets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gltf decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gpu transfer",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "read and verify",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "texture prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.066,
+            "max_ms": 0.142,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.018,
+            "max_ms": 0.046,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "walk",
+            "mean_ms": 0.018,
+            "max_ms": 0.045,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 0.001,
+            "max_ms": 0.003,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 0.996,
+            "max_ms": 1.477,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 0.011,
+            "max_ms": 0.026,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.011,
+            "max_ms": 0.024,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 0.721,
+            "max_ms": 1.094,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.012,
+            "max_ms": 0.02,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.004,
+            "max_ms": 0.017,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.036,
+            "max_ms": 0.051,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 0.011,
+            "max_ms": 0.026,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.024,
+            "max_ms": 0.044,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.023,
+            "max_ms": 0.043,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.02,
+            "max_ms": 0.038,
+            "calls_per_frame": 1.0
+          }
+        ]
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/commuter-drive.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "assets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gltf decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gpu transfer",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "read and verify",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "texture prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.125,
+            "max_ms": 0.665,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.066,
+            "max_ms": 0.364,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "drive",
+            "mean_ms": 0.065,
+            "max_ms": 0.36,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 0.002,
+            "max_ms": 0.009,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 1.458,
+            "max_ms": 6.48,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 0.018,
+            "max_ms": 0.057,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.015,
+            "max_ms": 0.061,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 1.084,
+            "max_ms": 4.94,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.015,
+            "max_ms": 0.059,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.001,
+            "max_ms": 0.006,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.057,
+            "max_ms": 0.191,
+            "calls_per_frame": 2.0
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 0.018,
+            "max_ms": 0.057,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "build-craft",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.009,
+            "max_ms": 0.058,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.009,
+            "max_ms": 0.055,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.002,
+            "max_ms": 0.011,
+            "calls_per_frame": 1.0
+          }
+        ]
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/native-walk-outside.log",
+        "profile": []
+      },
+      {
+        "log": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild/embedded-walk-final.log",
+        "profile": [
+          {
+            "depth": 4,
+            "scope": "assets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gltf decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "gpu transfer",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "read and verify",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "texture prepare",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "cockpit",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "flight plan",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prediction",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 4,
+            "scope": "draw",
+            "mean_ms": 0.099,
+            "max_ms": 0.256,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "hud",
+            "mean_ms": 0.099,
+            "max_ms": 0.256,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "shipyard",
+            "mean_ms": 0.018,
+            "max_ms": 0.108,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.016,
+            "max_ms": 0.102,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 8,
+            "scope": "walk",
+            "mean_ms": 0.016,
+            "max_ms": 0.102,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "hand over to the render thread",
+            "mean_ms": 26.372,
+            "max_ms": 50.075,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "pilots",
+            "mean_ms": 0.099,
+            "max_ms": 0.227,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "think",
+            "mean_ms": 0.099,
+            "max_ms": 0.227,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 4,
+            "scope": "render",
+            "mean_ms": 27.534,
+            "max_ms": 75.302,
+            "calls_per_frame": 0.9
+          },
+          {
+            "depth": 6,
+            "scope": "acquire surface",
+            "mean_ms": 26.485,
+            "max_ms": 73.713,
+            "calls_per_frame": 0.9
+          },
+          {
+            "depth": 6,
+            "scope": "encode canvas and HUD",
+            "mean_ms": 0.016,
+            "max_ms": 0.04,
+            "calls_per_frame": 1.8
+          },
+          {
+            "depth": 6,
+            "scope": "submit",
+            "mean_ms": 0.771,
+            "max_ms": 1.325,
+            "calls_per_frame": 1.8
+          },
+          {
+            "depth": 6,
+            "scope": "upload PBR",
+            "mean_ms": 0.007,
+            "max_ms": 0.022,
+            "calls_per_frame": 1.8
+          },
+          {
+            "depth": 6,
+            "scope": "upload meshes",
+            "mean_ms": 0.003,
+            "max_ms": 0.012,
+            "calls_per_frame": 1.8
+          },
+          {
+            "depth": 6,
+            "scope": "upload vertices",
+            "mean_ms": 0.108,
+            "max_ms": 0.176,
+            "calls_per_frame": 1.8
+          },
+          {
+            "depth": 6,
+            "scope": "wait for the surface (vsync)",
+            "mean_ms": 26.486,
+            "max_ms": 73.713,
+            "calls_per_frame": 0.9
+          },
+          {
+            "depth": 4,
+            "scope": "sim",
+            "mean_ms": 2.558,
+            "max_ms": 5.348,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "combat",
+            "mean_ms": 0.005,
+            "max_ms": 0.013,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "collisions",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 10,
+            "scope": "movers",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "pairs",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "shapes",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "who",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 8,
+            "scope": "gunners",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "law",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "weapons",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 10,
+            "scope": "fire",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "missiles",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "turrets",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "crafts",
+            "mean_ms": 0.004,
+            "max_ms": 0.011,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "freeze",
+            "mean_ms": 0.001,
+            "max_ms": 0.002,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "in order",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "side by side",
+            "mean_ms": 0.001,
+            "max_ms": 0.004,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "tick",
+            "mean_ms": 0.165,
+            "max_ms": 0.358,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 10,
+            "scope": "world step",
+            "mean_ms": 0.165,
+            "max_ms": 0.358,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 12,
+            "scope": "flight (physics)",
+            "mean_ms": 0.164,
+            "max_ms": 0.355,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 12,
+            "scope": "handover",
+            "mean_ms": 0.001,
+            "max_ms": 0.004,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 6,
+            "scope": "dead man",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "economy",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 6,
+            "scope": "ground ahead",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 0.1
+          },
+          {
+            "depth": 6,
+            "scope": "pilot view",
+            "mean_ms": 1.531,
+            "max_ms": 3.163,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "rails and turrets",
+            "mean_ms": 1.52,
+            "max_ms": 3.135,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "ships and board",
+            "mean_ms": 0.005,
+            "max_ms": 0.014,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "snapshot",
+            "mean_ms": 0.002,
+            "max_ms": 0.007,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 6,
+            "scope": "pilots",
+            "mean_ms": 0.006,
+            "max_ms": 0.037,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 6,
+            "scope": "player",
+            "mean_ms": 0.192,
+            "max_ms": 0.429,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "world step",
+            "mean_ms": 0.189,
+            "max_ms": 0.421,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 6,
+            "scope": "postings",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "events",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 8,
+            "scope": "requests",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "recorder",
+            "mean_ms": 0.0,
+            "max_ms": 0.002,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 6,
+            "scope": "traffic presence",
+            "mean_ms": 0.008,
+            "max_ms": 0.034,
+            "calls_per_frame": 0.3
+          },
+          {
+            "depth": 6,
+            "scope": "view",
+            "mean_ms": 0.812,
+            "max_ms": 1.654,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "cockpit",
+            "mean_ms": 0.001,
+            "max_ms": 0.002,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "crafts",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 8,
+            "scope": "rest",
+            "mean_ms": 0.808,
+            "max_ms": 1.648,
+            "calls_per_frame": 5.5
+          },
+          {
+            "depth": 4,
+            "scope": "startup",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "content validation",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "prepare prerequisites",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 6,
+            "scope": "registry decode",
+            "mean_ms": 0.0,
+            "max_ms": 0.0,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 4,
+            "scope": "studio",
+            "mean_ms": 0.04,
+            "max_ms": 0.091,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "refit",
+            "mean_ms": 0.031,
+            "max_ms": 0.068,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 4,
+            "scope": "update",
+            "mean_ms": 0.296,
+            "max_ms": 0.455,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "build view",
+            "mean_ms": 0.012,
+            "max_ms": 0.026,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "diagnostics",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "events",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "sound",
+            "mean_ms": 0.0,
+            "max_ms": 0.001,
+            "calls_per_frame": 1.0
+          },
+          {
+            "depth": 6,
+            "scope": "studio",
+            "mean_ms": 0.008,
+            "max_ms": 0.018,
+            "calls_per_frame": 0.0
+          },
+          {
+            "depth": 8,
+            "scope": "input",
+            "mean_ms": 0.008,
+            "max_ms": 0.018,
+            "calls_per_frame": 1.0
+          }
+        ]
+      }
+    ],
+    "images_visually_reviewed": [
+      "design.png",
+      "balance.png",
+      "drive-final.png",
+      "orthographic-catalogue.png",
+      "code.png",
+      "walk-final.png",
+      "native-walk-outside.png",
+      "embedded-walk-final.png"
+    ]
+  },
+  "performance": {
+    "method": "Fresh processes; last120frame profiler samples; OS cache not flushed. Vsync/max120 enabled. Startup-inclusive frame averages are not warm frame costs. User desktop/GPU activity not isolated.",
+    "walk": {
+      "fixture": "Copied commuter-3;41modules,135beams,1plate;same eye and direction",
+      "baseline_binary_sha256": "924e26631f5a37ae3051bf0407c734131cd1eda0c0150fb88dd1be7b3814f724",
+      "baseline_source_commit": "Unconfirmed; pre-existing release executable, not claimed to equal a particular revision.",
+      "baseline_draw_mean_ms": 2.704,
+      "new_draw_mean_ms": 0.066,
+      "baseline_projection_mean_ms": 1.333,
+      "projection_and_sorter_removed": true,
+      "baseline_asset_resident_mib": 15.6,
+      "new_asset_resident_mib": 5.3,
+      "warm_display_fps": 120
+    },
+    "drive": {
+      "fixture": "12module registry-sized diagnostic layout;invented placements,not accepted ship",
+      "before_shared_fix_update_mean_ms": 46.48,
+      "after_update_mean_ms": 0.009,
+      "after_display_fps": 120,
+      "authority_cache_exact": true,
+      "dynamic_physical_changes_invalidate_cache": true
+    },
+    "embedded": {
+      "warm_fps": 33,
+      "cpu_draw_mean_ms": 0.099,
+      "cpu_update_mean_ms": 0.296,
+      "gpu_ms_approx": 2.0,
+      "surface_acquire_mean_ms": 26.485,
+      "confounder": "Exact Freefall test title is sent to workspace8 silent by ~/.config/hypr/hyprland.conf58; Freefall studio test is not matched. Placement/focus differs.",
+      "diagnosis": "No renderer scheduling fork found. Low displayed FPS is dominated by surface wait in this off-workspace capture; do not attribute it to CPU drawing or GPU saturation.",
+      "desktop_changed": false
+    }
+  },
+  "limits": [
+    "One shared fuel pool; incompatible resource mixtures block DRIVE.",
+    "Draft collision strength is explicitly unrated; no structural certification.",
+    "Shared leg limits do not provide individual spring-load telemetry.",
+    "Neutral asset motion and previously held model-to-design basis mismatches remain gated.",
+    "No user save files were overwritten; test data uses isolated copies."
+  ],
+  "evidence_dir": "/home/alexm/git/universe-ships-studio-rebuild/out/review/studio-rebuild"
+}
