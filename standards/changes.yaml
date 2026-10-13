@@ -357,7 +357,7 @@
 - { record: equipment.cargo.ore-bay.10t, at: "2026-10-12T23:38:37Z", status: draft, summary: "changed: visual", sha: "802658ef28338540" }
 - { record: equipment.cargo.ore-bay.150t, at: "2026-10-12T23:48:47Z", status: draft, summary: "changed: basis", sha: "b007307605ad0558" }
 - { record: equipment.cargo.ore-bay.200t, at: "2026-10-12T23:56:22Z", status: draft, summary: "changed: basis", sha: "e69b83a05773cfc8" }
-- { record: equipment.cargo.ore-bay.20t, at: "2026-10-13T00:01:15Z", status: draft, summary: "changed: visual", sha: "d92bcda435984935" }
+- { record: equipment.cargo.ore-bay.20t, at: "2026-10-13T00:12:27Z", status: draft, summary: "changed: visual", sha: "7e2d32b7b4600e70" }
 - { record: equipment.cargo.ore-bay.300t, at: "2026-10-13T00:09:17Z", status: draft, summary: "changed: visual", sha: "4198f15ff5a727ee" }
 - { record: equipment.cargo.ore-bay.35t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "3e4bddd5583cb420" }
 - { record: equipment.cargo.ore-bay.50t, at: "2026-10-12T23:25:51Z", status: draft, summary: "changed: physical, built_of, basis", sha: "9f811975fa4b6dda" }
