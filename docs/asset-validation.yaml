@@ -3556,3 +3556,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull fit and service routing; GPU look/cost and temporal edge stability; pressure, cryogenic, fatigue and loaded mount qualification."
+  - key: equipment.tank.methalox.1t
+    version: 1
+    manifest_sha256: "4d2fbbaf88aa111bd08ef1f2dd141e8319d6f1b1a769d00089bb1b2ae6df606d"
+    installed: 8337d311
+    game: "the loader (world::assets) at fso 8337d311"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-methalox-1t/v1 (361536 bytes, bounds [-0.73, 0.0, -0.7829] to [0.73, 1.5165, 0.7829]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and service routing; GPU appearance/cost and temporal edge stability; pressure, thermal, fatigue and loaded support qualification."
