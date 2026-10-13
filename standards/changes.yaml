@@ -487,7 +487,7 @@
 - { record: equipment.thermal.coolant-loop.s1, at: "2026-10-11T02:47:24Z", status: draft, summary: "changed: visual", sha: "f68babb31c8d295b" }
 - { record: equipment.thermal.coolant-loop.s2, at: "2026-10-11T02:46:30Z", status: draft, summary: "changed: visual", sha: "ee98e3c0e9eb3051" }
 - { record: equipment.thermal.heat.exchanger, at: "2026-10-13T17:50:25Z", status: draft, summary: "changed: visual", sha: "a4ac2793c3ff1dee" }
-- { record: equipment.thermal.heat.sink, at: "2026-10-13T18:03:26Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e3ec4f62352c0a2e" }
+- { record: equipment.thermal.heat.sink, at: "2026-10-13T18:12:52Z", status: draft, summary: "changed: visual", sha: "343fbececea099dd" }
 - { record: equipment.thermal.radiator.s0, at: "2026-10-12T04:15:48Z", status: draft, summary: "changed: visual", sha: "48f9aef49a6b859e" }
 - { record: equipment.thermal.radiator.s1, at: "2026-10-12T17:36:00Z", status: draft, summary: "changed: visual", sha: "42af60e8122c5192" }
 - { record: equipment.thermal.radiator.s2, at: "2026-10-11T02:48:17Z", status: draft, summary: "changed: visual", sha: "bfbfc35087f0be28" }
