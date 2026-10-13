@@ -51,6 +51,8 @@ pub struct Craft {
     /// Faithfully compiled runtime hardware; absent means DRIVE is unavailable.
     pub spec: Option<std::sync::Arc<universe_sim::ship::ClassSpec>>,
     pub runtime_errors: Vec<String>,
+    /// Exact per-record shared devices compiled with the same thruster ordering.
+    pub devices: Option<universe_sim::world::ship_devices::Fit>,
     pub name: String,
     pub equipment: Vec<crate::equipment_visual::Placed>,
     pub structure: Vec<crate::equipment_visual::Placed>,
@@ -96,7 +98,6 @@ pub struct Drive {
     flight: Option<LocalFlight>,
     scene: std::cell::RefCell<universe_engine::scene::Scene>,
     pos: DVec3,
-    vel: DVec3,
     rot: DQuat,
     energy: f64,
     skin_temp: f64,
@@ -108,6 +109,7 @@ pub struct Drive {
     time: f64,
     throttles: Vec<f64>,
     grabbed: bool,
+    mouse_pending: Vec2,
     hardest: f64,
     pub events: Vec<String>,
     stopped: bool,
@@ -133,8 +135,15 @@ impl Drive {
                 .spec
                 .clone()
                 .ok_or_else(|| "NO COMPILED LIVE SHIP: RETURN TO DESIGN".to_string())
-                .and_then(|s| LocalFlight::new(s, craft.gravity, air, craft.rates.is_none()))
-            {
+                .and_then(|s| {
+                    LocalFlight::new(
+                        s,
+                        craft.devices.clone(),
+                        craft.gravity,
+                        air,
+                        craft.rates.is_none(),
+                    )
+                }) {
                 Ok(f) => Some(f),
                 Err(e) => {
                     events.push(e);
@@ -145,14 +154,22 @@ impl Drive {
             None
         };
         if let Some(f) = &flight {
-            if !craft.legs.is_empty() && universe_sim::world::legs::of_spec(f.ship.spec()).is_none()
+            if !craft.legs.is_empty()
+                && f.ship
+                    .devices
+                    .as_ref()
+                    .is_none_or(|d| d.fit.legs.is_empty())
+                && universe_sim::world::legs::of_spec(f.ship.spec()).is_none()
             {
                 events.push("DRAFT LEG LOADS UNAVAILABLE: SHARED GROUND CONTACT RULES ONLY".into());
+            } else if !craft.legs.is_empty() {
+                events.push(
+                    "SHARED LEG LANDING LIMITS; INDIVIDUAL SPRING LOADS ARE NOT REPORTED".into(),
+                );
             }
         }
         let mut d = Self {
             pos: DVec3::ZERO,
-            vel: DVec3::ZERO,
             rot: DQuat::IDENTITY,
             energy: 0.0,
             skin_temp: 0.0,
@@ -164,6 +181,7 @@ impl Drive {
             time: 0.0,
             throttles: Vec::new(),
             grabbed: false,
+            mouse_pending: Vec2::ZERO,
             hardest: 0.0,
             events,
             stopped: false,
@@ -190,6 +208,7 @@ impl Drive {
     }
     pub fn release(&mut self) {
         self.grabbed = false;
+        self.mouse_pending = Vec2::ZERO;
     }
     pub fn set_assist(&mut self, on: bool) {
         self.assist = on && self.craft.rates.is_some();
@@ -233,7 +252,12 @@ impl Drive {
         if clicked {
             self.grabbed = true;
         }
-        let mouse = (self.grabbed && !clicked).then_some(input.mouse_delta);
+        if self.grabbed && !clicked {
+            self.mouse_pending += input.mouse_delta;
+        } else {
+            self.mouse_pending = Vec2::ZERO;
+        }
+        let mouse = (self.grabbed && !clicked).then_some(self.mouse_pending);
         let dt = f64::from(ctx.dt);
         let pilot = crate::flight_input::sample(input, mouse, dt.min(0.05));
         if !self.grabbed && input.button_down(MouseButton::Right) {
@@ -258,7 +282,12 @@ impl Drive {
                 f.commands.turn = None;
                 f.commands.jets = Some(crate::manual::held_for(input, &f.ship.spec().thrusters));
             }
-            if let Err(e) = f.advance(dt) {
+            let before = f.world.time;
+            let result = f.advance(dt);
+            if f.world.time > before {
+                self.mouse_pending = Vec2::ZERO;
+            }
+            if let Err(e) = result {
                 self.say(e);
             }
         }
@@ -271,7 +300,6 @@ impl Drive {
         };
         let s = &f.ship;
         self.pos = s.position - f.origin;
-        self.vel = s.velocity;
         self.rot = s.orientation;
         self.energy = s.energy;
         self.skin_temp = s.skin_temp;
@@ -977,27 +1005,8 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             seg(frame, from, to, Color([0.4, 0.8, 1.0, 0.9]));
         }
         if let Some(q) = project(from) {
-            let push = live_thrusters
-                .and_then(|ts| ts.get(k))
-                .map_or(0.0, |a| a.thrust * t);
             let label = manual_labels.get(k).map_or("", String::as_str);
-            let text = if push >= 1000.0 {
-                format!(
-                    "{} [{}] DEMAND {:.1} KN {:.0}%",
-                    k + 1,
-                    label,
-                    push / 1000.0,
-                    t * 100.0
-                )
-            } else {
-                format!(
-                    "{} [{}] DEMAND {:.0} N {:.0}%",
-                    k + 1,
-                    label,
-                    push,
-                    t * 100.0
-                )
-            };
+            let text = format!("{} [{}] OUTPUT {:.0}%", k + 1, label, t * 100.0);
             let col = if t > 0.01 {
                 Color([0.6, 0.95, 1.0, 1.0])
             } else {
@@ -1018,18 +1027,36 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     let roll = (d.rot * DVec3::X).y.asin().to_degrees();
     let heading = nose.x.atan2(-nose.z).to_degrees();
     let c = &d.craft;
+    let devices = d.flight.as_ref().and_then(|f| f.ship.devices.as_ref());
+    let bus = devices.map_or_else(
+        || "NO ADDITIONAL ELECTRICAL DEVICES".to_string(),
+        |s| {
+            let energy: f64 = s.packs.iter().map(|p| p.energy).sum();
+            let hottest = s.packs.iter().map(|p| p.temperature).reduce(f64::max);
+            let temperature =
+                hottest.map_or_else(|| "NO PACKS".into(), |t| format!("HOTTEST {t:.1} K"));
+            format!(
+                "BUS {:.2}/{:.2} MW DELIVERED/ASKED   PACKS {:.2} MJ   {temperature}",
+                s.delivered_w / 1e6,
+                s.demand_w / 1e6,
+                energy / 1e6
+            )
+        },
+    );
+    let height = d.flight.as_ref().map_or(0.0, |f| {
+        d.craft
+            .legs
+            .iter()
+            .map(|leg| f.altitude(leg.foot))
+            .fold(f.altitude(DVec3::ZERO), f64::min)
+            .max(0.0)
+    });
+    let climb = d.flight.as_ref().map_or(0.0, LocalFlight::climb);
+    let ground_speed = d.flight.as_ref().map_or(0.0, LocalFlight::ground_speed);
     let lines = [
         format!("TEST DRIVE - {}   {:.1} S", c.name.to_uppercase(), d.time),
         format!(
-            "ALTITUDE {:.1} M OVER THE GROUND   CLIMB {:+.1} M/S   SPEED {:.1} M/S",
-            d.craft
-                .legs
-                .iter()
-                .map(|l| (d.pos + d.rot * l.foot).y)
-                .fold(d.pos.y, f64::min)
-                .max(0.0),
-            d.vel.y,
-            DVec3::new(d.vel.x, 0.0, d.vel.z).length()
+            "ALTITUDE {height:.1} M OVER THE GROUND   CLIMB {climb:+.1} M/S   SPEED {ground_speed:.1} M/S"
         ),
         format!(
             "PITCH {pitch:+.0}   ROLL {roll:+.0}   HEADING {heading:.0}   {}",
@@ -1054,6 +1081,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             "SHARED WORLD / UNLIT SMOOTH SPHERE   CLOCK BACKLOG {:.3} S",
             d.flight.as_ref().map_or(0.0, LocalFlight::pending)
         ),
+        bus,
     ];
     let panel = Color([0.02, 0.06, 0.13, 0.85]);
     frame.hud_rect(
@@ -1084,18 +1112,6 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
     // (The tapes: altitude over the ground (the lowest foot's height) on the right,
     // with the climb beside it; speed over the ground on the left; each reading
     // large in its box at the middle.)
-    let feet = d
-        .craft
-        .legs
-        .iter()
-        .map(|l| (d.pos + d.rot * l.foot).y)
-        .fold(f64::MAX, f64::min);
-    let height = if feet == f64::MAX {
-        d.pos.y
-    } else {
-        feet.max(0.0)
-    };
-    let ground_speed = DVec3::new(d.vel.x, 0.0, d.vel.z).length();
     let tape = |frame: &mut Frame,
                 x: f32,
                 value: f64,
@@ -1206,7 +1222,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             Vec2::new(14.0, h),
             Color([0.5, 0.8, 1.0, 0.5]),
         );
-        let climb = d.vel.y.clamp(-10.0, 10.0);
+        let climb = climb.clamp(-10.0, 10.0);
         let len = (climb / 10.0) as f32 * h * 0.5;
         let rated = d
             .craft
@@ -1248,7 +1264,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         );
         frame.text_scaled(
             Vec2::new(x - 24.0, mid + h * 0.5 + 18.0),
-            &format!("{:+.1} M/S", d.vel.y),
+            &format!("{climb:+.1} M/S"),
             c,
             0.7,
         );

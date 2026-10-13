@@ -28,6 +28,7 @@ pub(super) struct LocalFlight {
 impl LocalFlight {
     pub fn new(
         spec: Arc<ClassSpec>,
+        devices: Option<universe_sim::world::ship_devices::Fit>,
         gravity: f64,
         air: usize,
         manual: bool,
@@ -46,8 +47,12 @@ impl LocalFlight {
         };
         let world = World::isolated(galaxy, system)?;
         let origin = DVec3::Y * EARTH_RADIUS;
-        let position = origin + DVec3::Y * spec.rest_height();
-        let mut ship = Ship::with_spec(spec, position, DVec3::ZERO, DQuat::IDENTITY);
+        let mut ship = Ship::with_spec(spec, origin, DVec3::ZERO, DQuat::IDENTITY);
+        if let Some(fit) = devices {
+            ship.configure_devices(fit, 1.0, universe_sim::world::heat::AMBIENT)?;
+        }
+        let position = origin + DVec3::Y * ship.rest_height();
+        ship.position = position;
         ship.state = ShipState::Landed {
             body: 1,
             local_position: position,
@@ -100,6 +105,26 @@ impl LocalFlight {
         sys.positions(self.world.time, &mut positions);
         universe_sim::physics::air_at(&sys.bodies, self.ship.position, &positions, self.world.time)
             .map_or(0.0, |(density, _)| density)
+    }
+
+    /// Instruments measure against the same spherical body used by Dogma,
+    /// while the ground grid remains a local tangent-frame drawing.
+    pub fn altitude(&self, local_point: DVec3) -> f64 {
+        let p = self.ship.position + self.ship.orientation * local_point;
+        let sys = self.world.system(0);
+        let ground = &sys.bodies[1];
+        p.length() - ground.surface_radius_at(DVec3::ZERO, p, self.world.time)
+    }
+
+    pub fn climb(&self) -> f64 {
+        self.ship
+            .velocity
+            .dot(self.ship.position.normalize_or_zero())
+    }
+
+    pub fn ground_speed(&self) -> f64 {
+        let up = self.ship.position.normalize_or_zero();
+        (self.ship.velocity - up * self.climb()).length()
     }
 
     pub fn pending(&self) -> f64 {
@@ -177,8 +202,8 @@ mod tests {
     #[test]
     fn scheduled_flight_matches_direct_world_step_and_keeps_other_world_untouched() {
         let spec = fixture();
-        let mut local = LocalFlight::new(spec.clone(), 9.0, 3, false).unwrap();
-        let mut direct = LocalFlight::new(spec, 9.0, 3, false).unwrap();
+        let mut local = LocalFlight::new(spec.clone(), None, 9.0, 3, false).unwrap();
+        let mut direct = LocalFlight::new(spec, None, 9.0, 3, false).unwrap();
         for f in [&mut local, &mut direct] {
             f.ship.state = ShipState::Flying;
             f.ship.position += DVec3::Y * 100.0;
@@ -195,7 +220,7 @@ mod tests {
                 ..f.ship.holding()
             };
         }
-        let untouched = LocalFlight::new(fixture(), 9.0, 3, false).unwrap();
+        let untouched = LocalFlight::new(fixture(), None, 9.0, 3, false).unwrap();
         let initial = untouched.ship.position;
         let dt = universe_sim::clocks::tick();
         for _ in 0..10 {
@@ -228,7 +253,7 @@ mod tests {
     fn edges_survive_subtick_frames_and_reset_releases_owned_world_and_spec() {
         let spec = fixture();
         let weak = Arc::downgrade(&spec);
-        let mut local = LocalFlight::new(spec, 9.0, 0, false).unwrap();
+        let mut local = LocalFlight::new(spec, None, 9.0, 0, false).unwrap();
         let system = Arc::downgrade(&local.world.system(0));
         local.commands.power = Some(true);
         let dt = universe_sim::clocks::tick();
@@ -246,11 +271,75 @@ mod tests {
         drop(local);
         assert!(weak.upgrade().is_none());
         assert!(system.upgrade().is_none());
-        let reset = LocalFlight::new(fixture(), 9.0, 3, false).unwrap();
+        let reset = LocalFlight::new(fixture(), None, 9.0, 3, false).unwrap();
         assert_eq!(reset.world.time, 0.0);
         assert_eq!(reset.pending(), 0.0);
         assert!(reset.events.is_empty());
         assert!(!reset.ship.powered);
         assert_eq!(reset.density(), 0.0);
+        let mut zero_g = LocalFlight::new(fixture(), None, 0.0, 3, true).unwrap();
+        zero_g.ship.state = ShipState::Flying;
+        zero_g.ship.position += DVec3::Y * 100.0;
+        zero_g.advance(dt * 4.0).unwrap();
+        assert!(zero_g.ship.position.is_finite() && zero_g.ship.velocity.is_finite());
+        assert!(zero_g.ship.orientation.is_finite());
+    }
+    #[test]
+    fn battery_fan_manual_takeoff_uses_shared_devices_and_cannot_lift_in_vacuum() {
+        use universe_sim::world::{
+            ship::{Thruster, ThrusterRole},
+            ship_devices::{Battery, Fan, Fit},
+        };
+        // Explicit laboratory hardware: one centred fan, one full battery,
+        // zero propellant and zero plant output. No fuel-gate workaround.
+        let mut spec = (*fixture()).clone();
+        spec.fuel_capacity = 0.0;
+        spec.power_output = 0.0;
+        spec.power_draw = 0.0;
+        spec.thrusters = vec![Thruster {
+            nozzle: "test_fan".into(),
+            at: spec.dry_com,
+            push: DVec3::Y,
+            thrust: spec.dry_mass * 9.0 * 2.0,
+            role: ThrusterRole::Lift,
+            exhaust: 0.0,
+            efficiency: 1.0,
+        }];
+        let spec = Arc::new(spec);
+        let fit = Fit {
+            fans: vec![Fan {
+                thruster: 0,
+                full_power: 1e6,
+                min_density: 0.1,
+                reference_density: universe_sim::physics::laws::EARTH_AIR_DENSITY,
+            }],
+            batteries: vec![Battery {
+                capacity: 1e9,
+                rate: 2e6,
+                efficiency: 1.0,
+                heat_capacity: 1e6,
+                max_temperature: 500.0,
+            }],
+            legs: Vec::new(),
+        };
+        let mut air = LocalFlight::new(spec.clone(), Some(fit.clone()), 9.0, 0, true).unwrap();
+        let mut vacuum = LocalFlight::new(spec, Some(fit), 9.0, 3, true).unwrap();
+        for f in [&mut air, &mut vacuum] {
+            f.commands.power = Some(true);
+            f.commands.jets = Some(1);
+            for _ in 0..100 {
+                f.advance(universe_sim::clocks::tick()).unwrap();
+            }
+        }
+        assert!(
+            air.ship.is_flying(),
+            "manual fan should take off through shared ground rules"
+        );
+        assert_eq!(air.ship.fuel, 0.0);
+        assert!(air.ship.devices.as_ref().unwrap().packs[0].energy < 1e9);
+        assert!(air.ship.position.is_finite() && air.ship.velocity.is_finite());
+        assert!(matches!(vacuum.ship.state, ShipState::Landed { .. }));
+        assert_eq!(vacuum.ship.devices.as_ref().unwrap().packs[0].energy, 1e9);
+        assert!(vacuum.ship.applied.0.length() < 1e-10);
     }
 }
