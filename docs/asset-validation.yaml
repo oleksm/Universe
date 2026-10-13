@@ -3844,3 +3844,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, single-door egress, pressure/seat/load/fire/thermal qualification and hidden packing"
+  - key: equipment.cargo.rack.s2
+    version: 1
+    manifest_sha256: "ea61f6183079fcecb8edffa52b905084b5512e5fa9c1a203a8cadd36f6e40c43"
+    installed: d9424d3e
+    game: "the loader (world::assets) at fso d9424d3e"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-rack-s2/v1 (107860 bytes, bounds [-2.155, 0.0, -1.075] to [2.155, 2.15, 1.075]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static empty rack; actual mounted placement and GPU look/cost, temporal filtering, cargo handling and restraint, full3g deck/weld/structure qualification remain pending."
