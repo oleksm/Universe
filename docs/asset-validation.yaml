@@ -3236,3 +3236,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Source-only slew/luff demonstration; runtime controls, GPU appearance/cost, final hull/receiver placement, loaded structure, flow, rotary seals and internal drive packing remain unqualified."
+  - key: equipment.handling.transfer.arm
+    version: 1
+    manifest_sha256: "6a45f571303f5dcceee13946ad0044a1fb3fd57b97ed7bd33064cd4000208d9e"
+    installed: 754dd503
+    game: "the loader (world::assets) at fso 4b8a6325"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/handling-transfer-arm/v1 (502152 bytes, bounds [-0.6, 0.0, -15.6] to [0.605, 1.55, 0.6]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Source-only slew/luff demonstration; runtime controls, GPU appearance/cost, final hull/receiver placement, loaded structure, flow, rotary seals and internal drive packing remain unqualified."
