@@ -5,22 +5,24 @@ identity:
   maker: org.hadley
   revision: draft
   slot: life_support
-  description: "A lithium hydroxide canister with a fan: takes up two people's carbon dioxide for twelve hours, then is swapped. No oxygen of its own: fit a bottle (tank.oxygen) for the air they breathe."
+  description: "A lithium hydroxide cartridge with a fan: takes up two people's carbon dioxide for twelve hours, then the cartridge is pulled from the front and swapped. No oxygen of its own: fit a bottle (tank.oxygen) for the air they breathe."
 size_class: 1
 fits: mount.life-support-s1
 physical:
-  mass: 20
+  mass: 8.7
   volume: 0.036
   length: 0.4
   width: 0.3
   height: 0.3
 needs:
-  power: 200
+  power: 15
 built_of:
   parts: life-support-cartridge
   list:
-    - { code: LSC1-01, name: "Lithium hydroxide canister", mass: 12, length: 0.337, width: 0.253, height: 0.253, item: stock.st304-pl-3, quantity: 13.8, module: module.machining-centre }
-    - { code: LSC1-02, name: "Fan and housing", mass: 8, length: 0.295, width: 0.221, height: 0.221, item: stock.al6061-pl-5, quantity: 9.2, module: module.machining-centre }
+    - { code: LSC1-01, name: "Cartridge", description: "Pulls out of the front: a 1 mm stainless box, 0.24 x 0.22 x 0.12, with perforated screens either side of a 3.2 litre bed, an intake grille, two latches and a folding handle. Holds 1.5 kg of lithium hydroxide when charged.", mass: 3.7, length: 0.24, width: 0.22, height: 0.12, item: stock.st304-pl-3, quantity: 2.5, module: module.cutting-table }
+    - { code: LSC1-02, name: "Housing", description: "2 mm aluminium sheet box, 0.4 x 0.3 x 0.3, with the cartridge bay at the front, the fan behind it, a guarded exhaust at the back and four feet.", mass: 4.3, length: 0.4, width: 0.3, height: 0.3, item: stock.al6061-sh-2, quantity: 4.9, module: module.cutting-table }
+    - { code: LSC1-03, name: "Fan", description: "A small blower drawing cabin air through the bed.", mass: 0.4, length: 0.1, width: 0.1, height: 0.06, item: good.electric-motors, quantity: 0.4, module: module.assembly-shop }
+    - { code: LSC1-04, name: "Power port and wiring", mass: 0.3, length: 0.05, width: 0.05, height: 0.03, item: good.electronics, quantity: 0.3, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -31,6 +33,8 @@ function:
   cooling: 0
 life: 473364000
 basis:
-  - { of: [function, physical, needs], tier: invented, review: true, note: "Two people give off 2.2 kg of carbon dioxide a day (need.air); 1.3 kg of lithium hydroxide takes up twelve hours of it; with its canister and fan, 20 kg. Apollo's canisters, from memory. Review." }
+  - { of: [function], tier: invented, review: true, note: "Two people for twelve hours between swaps. Chosen." }
+  - { of: [built_of.list, physical.mass, needs], tier: derived, review: true, note: "Two people breathe out 1.085 kg of carbon dioxide in twelve hours (need.air). 2 LiOH + CO2 -> Li2CO3 + H2O takes 1.09 kg of hydroxide a kilogram; at 0.75 of it used (spacecraft canisters reach 0.7 to 0.85), 1.5 kg, at 0.47 kg/L a 3.2 L bed. Stainless, since the hydroxide eats aluminium; 1 mm (the 3 mm stock stands for the gauge): 1.7 kg of box, 0.5 kg of screens, grille, latches and handle, and the 1.5 kg charge (no lithium hydroxide good in the registry yet; counted in the cartridge). Air: to hold the cabin at 0.5% CO2 and take 90% in one pass, 3 L/s through about 500 Pa of bed: 1.5 W of air, a 15 W fan. The 2 mm housing: 0.66 m2, 3.6 kg, with baffle and feet 4.3 kg." }
+  - { of: [physical.volume, physical.length, physical.width, physical.height], tier: invented, review: true, note: "The first envelope, kept." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
