@@ -79,7 +79,7 @@ type Made = (Key, Mesh, DVec3, bool);
 pub struct Lod {
     patches: HashMap<Key, Patch>,
     frame: u64,
-    sources: HashMap<(usize, usize), u64>,
+    sources: HashMap<(usize, usize), (u64, usize)>,
     /// Made on the pool (two cores left to the rest), and those being made.
     pool: Option<rayon::ThreadPool>,
     pending: std::collections::HashSet<Key>,
@@ -295,7 +295,9 @@ impl Lod {
     fn select_resident(&mut self, system:usize, sys:&Arc<universe_sim::StarSystem>, body_index:usize, map_id:u64, center:DVec3, rotation:DQuat, eye:DVec3)->Option<Vec<Key>> {
         let body = &sys.bodies[body_index];
         let source = (system, body_index);
-        if self.sources.get(&source).is_some_and(|id| *id != map_id) {
+        let surface = body.terrain.as_ref().and_then(|t| t.surface_source());
+        let source_identity = (map_id, surface.as_ref().map_or(0, |s| Arc::as_ptr(s) as usize));
+        if self.sources.get(&source).is_some_and(|id| *id != source_identity) {
             // A new canonical source (including a Studio edit) cannot reuse the
             // previous world's patches or accept its in-flight completions.
             self.patches.clear();
@@ -304,7 +306,7 @@ impl Lod {
             self.last_eye = None;
             self.contact_inputs.invalidate();
         }
-        self.sources.insert(source, map_id);
+        self.sources.insert(source, source_identity);
         self.frame += 1;
         let now = self.frame;
         // Take in what the pool has made (a few a frame: each is an upload).
@@ -428,8 +430,8 @@ impl Lod {
         }
         // (A stand-in and a patch inside it both drawn: the finer wins in depth, hardly seen.)
         let draw = shown;
-        if canonical && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
-            self.contact_inputs.capture((system, body_index, map_id), r, eye_local, &draw, &self.patches);
+        if canonical && surface.is_some() && std::env::var_os("UNIVERSE_PGS1_CONTACT_GROUP").is_some() {
+            self.contact_inputs.capture((system, body_index, map_id), r, eye_local, surface, &draw, &self.patches);
         } else { self.contact_inputs.invalidate(); }
         Some(draw)
     }
@@ -603,6 +605,7 @@ mod contact_export {
                 let ids=snapshot.as_ref().map(|s|s.stamp.selected.iter().map(|(k,id)|([k.face as u32,k.level as u32,k.x,k.y],*id)).collect::<Vec<_>>()).unwrap_or_default();
                 writeln!(trace,"{}",serde_json::json!({"frame":lod.frame,"simulation_time_s":0.,"state":state,"ready":false,"source_sha256":hash,"source_generation":1,"selection_generation":snapshot.as_ref().map(|s|s.generation),"map_id":map.id(),"eye":eye.to_array(),"radius_m":radius,"selected":ids,"resident":lod.patches.len(),"pending":lod.pending.len(),"workers":2,"subject":"camera","measurement":"cpu_actual_selected_geometry","active_group":null,"gpu_bytes":{"active":0,"uploading":0,"retired":0}})).unwrap();
                 if let Some(s)=snapshot.as_ref().filter(|s|s.complete()) {
+                    assert!(Arc::ptr_eq(s.surface.as_ref().unwrap(), &source));
                     let foot_level=s.patches.iter().filter(|p|p.key.shape().0.angle_between(direction)<p.key.shape().1*1.5).filter_map(|p|rendered_height(&Patch{mesh:p.mesh.clone(),origin:p.origin,partial:p.partial,used:0},eye,radius).map(|_|p.key.level)).max();
                     if !exported_parent && foot_level.is_some_and(|l|(13..19).contains(&l)) && !lod.pending.is_empty(){export("parent",s,lod.pending.len());exported_parent=true;}
                     if lod.pending.is_empty(){stable+=1;}else{stable=0;}

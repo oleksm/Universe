@@ -8,13 +8,14 @@ use std::{
     },
 };
 use universe_engine::{Mesh, glam::DVec3};
+use universe_sim::world::worlds::pgs::Surface;
 
-/// Identifies an immutable input vertex set, including the eye used by shader morph.
+/// Identifies source and selected geometry; a job eye is immutable but not a cancellation key.
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub(crate) struct Stamp {
     pub source: (usize, usize, u64),
     pub radius: u64,
-    pub eye: [u64; 3],
+    pub surface_identity: Option<usize>,
     pub selected: Vec<(Key, u64)>,
 }
 #[derive(Clone)]
@@ -31,7 +32,8 @@ pub(crate) struct Snapshot {
     pub stamp: Stamp,
     pub radius: f64,
     pub eye: DVec3,
-    pub patches: Vec<ResidentPatch>,
+    pub patches: Arc<[ResidentPatch]>,
+    pub surface: Option<Arc<Surface>>,
 }
 impl Snapshot {
     pub fn current(&self) -> bool {
@@ -60,6 +62,7 @@ impl ResidentInputs {
         source: (usize, usize, u64),
         radius: f64,
         eye: DVec3,
+        surface: Option<Arc<Surface>>,
         shown: &[Key],
         patches: &HashMap<Key, Patch>,
     ) {
@@ -104,15 +107,29 @@ impl ResidentInputs {
         let stamp = Stamp {
             source,
             radius: radius.to_bits(),
-            eye: eye.to_array().map(f64::to_bits),
+            surface_identity: surface.as_ref().map(|s| Arc::as_ptr(s) as usize),
             selected,
         };
         // Readiness changes when partial patches are remade (a new Mesh.id), not on draw-counter churn.
-        if self.snapshot.as_ref().is_some_and(|s| s.stamp == stamp) {
+        if let Some(previous) = self.snapshot.as_ref().filter(|s| s.stamp == stamp) {
+            if previous.eye == eye {
+                return;
+            }
+            // Existing jobs keep their recorded morph eye. Current coverage/closure is a
+            // separate admission gate; being current alone never makes geometry publishable.
+            self.snapshot = Some(Arc::new(Snapshot {
+                generation: previous.generation,
+                cancellation: self.generation.clone(),
+                stamp,
+                radius,
+                eye,
+                patches: previous.patches.clone(),
+                surface,
+            }));
             return;
         }
         let generation = self.generation.fetch_add(1, Ordering::AcqRel) + 1;
-        let resident = stamp
+        let resident: Arc<[ResidentPatch]> = stamp
             .selected
             .iter()
             .map(|(key, _)| {
@@ -132,6 +149,7 @@ impl ResidentInputs {
             radius,
             eye,
             patches: resident,
+            surface,
         }));
     }
 }
@@ -162,24 +180,29 @@ mod tests {
         }
     }
     #[test]
-    fn resident_identity_eye_source_and_remake_cancel_old_inputs() {
+    fn resident_identity_survives_eye_motion_but_source_and_remake_cancel_jobs() {
         let k = key(1, 0);
         let mut patches = HashMap::from([(k, patch(false))]);
         let mut inputs = ResidentInputs::default();
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101., &[k], &patches);
+        inputs.capture((0, 1, 4), 100., DVec3::X * 101., None, &[k], &patches);
         let first = inputs.snapshot().unwrap();
         assert!(first.complete());
         assert_eq!(first.patches[0].mesh.id(), patches[&k].mesh.id());
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101., &[k], &patches);
+        inputs.capture((0, 1, 4), 100., DVec3::X * 101., None, &[k], &patches);
         assert!(Arc::ptr_eq(&first, &inputs.snapshot().unwrap()));
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101.001, &[k], &patches);
-        assert!(!first.current());
+        inputs.capture((0, 1, 4), 100., DVec3::X * 101.001, None, &[k], &patches);
+        assert!(first.current());
         let second = inputs.snapshot().unwrap();
+        assert_eq!(first.generation, second.generation);
+        assert_eq!(first.eye, DVec3::X * 101.);
+        assert_ne!(first.eye, second.eye);
+        assert!(Arc::ptr_eq(&first.patches, &second.patches));
         patches.insert(k, patch(false));
-        inputs.capture((0, 1, 4), 100., DVec3::X * 101.001, &[k], &patches);
+        inputs.capture((0, 1, 4), 100., DVec3::X * 101.001, None, &[k], &patches);
         assert!(!second.current());
+        assert!(!first.current());
         let third = inputs.snapshot().unwrap();
-        inputs.capture((0, 1, 5), 100., DVec3::X * 101.001, &[k], &patches);
+        inputs.capture((0, 1, 5), 100., DVec3::X * 101.001, None, &[k], &patches);
         assert!(!third.current());
     }
     #[test]
@@ -188,12 +211,19 @@ mod tests {
         let child = key(1, 0);
         let mut patches = HashMap::from([(parent, patch(false)), (child, patch(true))]);
         let mut inputs = ResidentInputs::default();
-        inputs.capture((0, 1, 1), 100., DVec3::X * 101., &[child], &patches);
+        inputs.capture((0, 1, 1), 100., DVec3::X * 101., None, &[child], &patches);
         assert!(!inputs.snapshot().unwrap().complete());
-        inputs.capture((0, 1, 1), 100., DVec3::X * 101., &[parent, child], &patches);
+        inputs.capture(
+            (0, 1, 1),
+            100.,
+            DVec3::X * 101.,
+            None,
+            &[parent, child],
+            &patches,
+        );
         assert!(inputs.snapshot().is_none());
         patches.remove(&child);
-        inputs.capture((0, 1, 1), 100., DVec3::X * 101., &[child], &patches);
+        inputs.capture((0, 1, 1), 100., DVec3::X * 101., None, &[child], &patches);
         assert!(inputs.snapshot().is_none());
     }
 }
