@@ -504,7 +504,7 @@
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:47:21Z", status: draft, summary: "changed: visual", sha: "3c30b51453242ef5" }
 - { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-13T19:14:06Z", status: draft, summary: "changed: visual", sha: "b390569c732891a4" }
-- { record: equipment.utility.window.s1, at: "2026-10-13T19:17:36Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "83109605ce697336" }
+- { record: equipment.utility.window.s1, at: "2026-10-13T19:28:03Z", status: draft, summary: "changed: visual", sha: "ea70f128c22a8636" }
 - { record: equipment.utility.window.s2, at: "2026-10-12T00:19:28Z", status: draft, summary: "changed: visual", sha: "3218d61a505e2c69" }
 - { record: facility.treistun.ashfall-camp.ashfall-life-support, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "0b27523c1caa4f00" }
 - { record: facility.treistun.ashfall-camp.ashfall-mine, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: modules", sha: "fa007901d7ff41a3" }

@@ -25,6 +25,12 @@ function:
   kind: "window"
   area: 0.5
   pressure: 101300
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-window-s1/v1"
+  manifest_sha256: "df00a72f257a547ae0644aff97146185614701feb51d23bd5f5bb2a0498e97a5"
+  version: 1
+  triangles: 6916
 life: 473364000
 basis:
   - { of: [physical, function, size_class], tier: invented, review: true, note: "Half a square metre of triple glazing: the ISS cupola's side windows are about this (0.8 m, three panes). From memory. The pane stock is a stand-in: the registry has no glass stock yet." }
