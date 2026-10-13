@@ -1,7 +1,8 @@
 //! PGS1 revision 4 package, read the way the engine would: files mapped, the cell index as the
 //! load path, no tree and no section read whole. Measures a cold open and first query (the page
 //! cache emptied of the package's files first), the pages touched, then answers every v8 fixture.
-//! cargo run -p universe-world --release --example pgs2_cold -- PACKAGE_DIR FIXTURES.json OUT.json
+//! cargo run -p universe-world --release --example pgs2_cold -- PACKAGE_DIR FIXTURES.json OUT.json [MONOLITHIC.pgs]
+//! cargo run -p universe-world --release --example pgs2_cold -- --goldens PGS2_FIXTURE_DIR OUT.json
 use glam::DVec3;
 use memmap2::Mmap;
 use serde_json::{Value, json};
@@ -222,6 +223,27 @@ impl Pgs {
         let _ = (ha, hc, hd);
         Ok((edges, [ha, hc, hd], normal, normal.dot(a)))
     }
+    /// A point's composed key, in order: a kept point by its root id, then added points in stored
+    /// order (their rank among added points is monotone in the local id).
+    fn key(&self, p: u32) -> Result<(u8, u32), String> {
+        let root = self.map.u32(self.section(16)?.offset + p as usize * 4)?;
+        Ok(if root == NONE { (1, p) } else { (0, root) })
+    }
+    fn face_key(&self, f: u32) -> Result<[(u8, u32); 3], String> {
+        let v = self.face(f)?.0;
+        let k = [self.key(v[0])?, self.key(v[1])?, self.key(v[2])?];
+        let r = (0..3).min_by_key(|&i| k[i]).unwrap();
+        Ok([k[r], k[(r + 1) % 3], k[(r + 2) % 3]])
+    }
+    /// The writer's rule, checked on touch: a region's faces stored in canonical (composed) order.
+    fn check_order(&self, f: u32) -> Result<(), String> {
+        let n = self.section(2)?.count as u32;
+        let here = self.face_key(f)?;
+        if (f > 0 && self.face_key(f - 1)? >= here) || (f + 1 < n && self.face_key(f + 1)? <= here) {
+            return Err(format!("{}: region faces not in canonical order (face {f})", self.map.name));
+        }
+        Ok(())
+    }
     fn holds(&self, f: u32, q: DVec3) -> Result<bool, String> {
         Ok(self.geometry(f)?.0.iter().all(|e| q.dot(*e) >= -TIE))
     }
@@ -240,6 +262,7 @@ impl Pgs {
 struct Region {
     lowest: u32,
     faces: u32,
+    id: String,
     file: PathBuf,
     opening: Value,
     pgs: Option<Pgs>,
@@ -255,6 +278,8 @@ struct Package {
 }
 struct Answer {
     face: u64,
+    owner: (Option<usize>, u32),
+    tied: Vec<(Option<usize>, u32)>,
     height_m: f64,
     water: Value,
     categories: (u16, u16),
@@ -279,7 +304,7 @@ impl Package {
                 lowest = lowest.min(f);
                 owner.push((f, k));
             }
-            regions.push(Region { lowest, faces: 0, file: dir.join(r["file"].as_str().ok_or("region file")?), opening: r["opening"].clone(), pgs: None });
+            regions.push(Region { lowest, faces: 0, id: r["id"].as_str().unwrap_or("").to_owned(), file: dir.join(r["file"].as_str().ok_or("region file")?), opening: r["opening"].clone(), pgs: None });
         }
         owner.sort();
         if owner.windows(2).any(|w| w[0].0 == w[1].0) { return Err("footprints overlap".into()); }
@@ -290,6 +315,9 @@ impl Package {
     fn region(&mut self, k: usize) -> Result<&Pgs, String> {
         if self.regions[k].pgs.is_none() {
             let pgs = Pgs::open(&self.regions[k].file, &self.regions[k].opening)?;
+            if pgs.strings.get(8) != Some(&self.regions[k].id) {
+                return Err(format!("{}: region id in the header differs from the manifest", pgs.map.name));
+            }
             self.regions[k].faces = pgs.section(2)?.count as u32;
             self.regions[k].pgs = Some(pgs);
         }
@@ -327,7 +355,10 @@ impl Package {
         for k in touched_regions {
             let region = self.region(k)?;
             for f in region.candidates(q)? {
-                if region.holds(f, q)? { tied.push((Some(k), f)); }
+                if region.holds(f, q)? {
+                    region.check_order(f)?;
+                    tied.push((Some(k), f));
+                }
             }
         }
         let mut ids = vec![];
@@ -353,7 +384,7 @@ impl Package {
                 }
             }
         };
-        Ok(Answer { face, height_m, water, categories })
+        Ok(Answer { face, owner: (file, f), tied, height_m, water, categories })
     }
     fn file(&self, file: Option<usize>) -> &Pgs {
         match file { None => &self.root, Some(k) => self.regions[k].pgs.as_ref().unwrap() }
@@ -399,8 +430,58 @@ fn cold(dir: &Path, q: DVec3, label: &str) -> Result<Value, String> {
         "header_strings":package.root.strings, "manifest_files":package.files}))
 }
 
+/// The planets lab's revision-4 goldens: every query (owner, tie set, composed id, height,
+/// categories), and each refused package refused.
+fn goldens(root: &Path, out: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let index: Value = serde_json::from_slice(&std::fs::read(root.join("fixtures.json"))?)?;
+    let queries: Value = serde_json::from_slice(&std::fs::read(root.join("queries.json"))?)?;
+    let mut package = Package::open(&root.join(queries["package"].as_str().ok_or("package")?))?;
+    let tolerance = queries["height_tolerance_m"].as_f64().ok_or("tolerance")?;
+    let (mut pass, mut bit, mut worst, mut ties, mut failures) = (0, 0, 0f64, 0, vec![]);
+    let all = queries["queries"].as_array().ok_or("queries")?;
+    for q in all {
+        let d = DVec3::from_slice(&q["direction"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect::<Vec<_>>());
+        let r = package.query(d)?;
+        let name = |file: Option<usize>| match file { None => package.root.map.name.clone(), Some(k) => package.regions[k].pgs.as_ref().unwrap().map.name.clone() };
+        let mut got: Vec<(String, u64)> = r.tied.iter().map(|&(file, f)| (name(file), f as u64)).collect();
+        let mut want: Vec<(String, u64)> = q["candidates"].as_array().unwrap().iter().map(|c| (c["file"].as_str().unwrap().to_owned(), c["face"].as_u64().unwrap())).collect();
+        got.sort();
+        want.sort();
+        let h = q["height_m"].as_f64().unwrap();
+        worst = worst.max((r.height_m - h).abs());
+        bit += (r.height_m.to_bits() == h.to_bits()) as usize;
+        ties += (want.len() > 1) as usize;
+        let owner = (name(r.owner.0), r.owner.1 as u64) == (q["owner"]["file"].as_str().unwrap().to_owned(), q["owner"]["face"].as_u64().unwrap());
+        let ok = owner && got == want && q["composed_face"].as_u64() == Some(r.face) && (r.height_m - h).abs() <= tolerance
+            && q["categories"]["rock"].as_u64() == Some(r.categories.0 as u64) && q["categories"]["pattern"].as_u64() == Some(r.categories.1 as u64);
+        if ok { pass += 1 } else if failures.len() < 10 {
+            failures.push(json!({"query":q,"got":{"composed_face":r.face,"owner":[name(r.owner.0),r.owner.1],"tied":got,"height_m":r.height_m}}));
+        }
+    }
+    let mut refused = vec![];
+    for case in index["refused"].as_array().ok_or("refused")? {
+        let dir = root.join(case["dir"].as_str().unwrap());
+        // Open, then ask every golden direction: a fault found on touch counts.
+        let outcome = Package::open(&dir).and_then(|mut p| {
+            for q in all {
+                let d = DVec3::from_slice(&q["direction"].as_array().unwrap().iter().map(|v| v.as_f64().unwrap()).collect::<Vec<_>>());
+                p.query(d)?;
+            }
+            Ok(())
+        });
+        refused.push(json!({"dir":case["dir"],"expect":case["expect"],"refused":outcome.is_err(),"reason":outcome.err()}));
+    }
+    let report = json!({"format":"pgs2-goldens-read/1","fixtures":root,"queries":all.len(),"passed":pass,"ties":ties,"height_bit_identical":bit,"height_max_abs_diff_m":worst,"failures":failures,"refused":refused});
+    std::fs::write(out, serde_json::to_vec_pretty(&report)?)?;
+    println!("{}", serde_json::to_string(&json!({"queries":all.len(),"passed":pass,"ties":ties,"bit":bit,"worst":worst,"refused":refused.iter().map(|r| json!([r["dir"],r["refused"],r["reason"]])).collect::<Vec<_>>()}))?);
+    Ok(())
+}
+
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let a: Vec<String> = std::env::args().skip(1).collect();
+    if let [flag, root, out] = &a[..] && flag == "--goldens" {
+        return goldens(Path::new(root), out);
+    }
     let (dir, fixtures, out) = match &a[..] { [d, f, o] | [d, f, o, _] => (d, f, o), _ => return Err("usage: pgs2_cold PACKAGE_DIR FIXTURES.json OUT.json [MONOLITHIC.pgs]".into()) };
     // The canonical reader on the monolithic file, for bit-for-bit comparison.
     let canonical = match a.get(3) { Some(p) => Some(universe_world::worlds::pgs::Surface::read(&std::fs::read(p)?)?), None => None };

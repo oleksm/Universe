@@ -30,3 +30,13 @@ divided by its length, as the canonical reader does (multiplying by the reciproc
 blocks: the canonical order (faces sorted by vertex triples, added points in the writer's order) is not spatial. With
 added points along a space-filling curve over the cube-face cells, and faces following by the same canonical sort,
 a cell's faces and points would sit in a few blocks: a few hundred KB per first query instead of 3.9 MB.
+
+## Goldens (planet-trees `pgs2` 8f93131, `tests/fixtures/pgs2-v1`)
+
+`pgs2_cold --goldens`: root of 300 points and two regions sharing a root edge. All 226 queries pass: owner
+(file, local face), tie set (15 ties), composed face id, categories, height within the 1 mm tolerance (51 bit
+identical, the rest within 2.4e-12 m of the lab's heights). The five broken packages are refused for their reasons:
+footprints hash, block 0 hash (on touch), header/table hash, overlapping footprints, faces out of canonical order.
+The reader checks the region id in a region's header against the manifest, and the canonical order on touch (each
+held face against its stored neighbours, by composed vertex keys: kept points by root id, then added points in
+stored order). With these checks the v8 figures above hold (region 11–17 ms, root 1.3 ms, 4.0 MB / 0.45 MB).
