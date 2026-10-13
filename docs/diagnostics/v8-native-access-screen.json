@@ -1,0 +1,603 @@
+{
+  "rule": "v8-native-access-screen/1",
+  "base": "0c484a56",
+  "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+  "cases": {
+    "miner-lowflight-final": {
+      "result": {
+        "all_walk_samples_dry": null,
+        "base": "0c484a56",
+        "exit": false,
+        "final_ship_state": {
+          "Landed": {
+            "body": 7,
+            "local_orientation": [
+              0.7700132583229172,
+              0.32749887621457496,
+              0.5398302885734636,
+              -0.09169148064961144
+            ],
+            "local_position": [
+              3793008.5167502123,
+              -4832312.123045978,
+              1335140.181251984
+            ]
+          }
+        },
+        "fuel_used": 4.9042108415706025,
+        "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+        "hull": 1.0,
+        "initial_orbit": null,
+        "jump_max_ground_clearance_m": 0.0,
+        "landed": true,
+        "live_reboard_check": {
+          "crew_after_live_walk": {
+            "place": {
+              "Outside": {
+                "body": 7,
+                "pitch": 0.0,
+                "position": [
+                  3792986.5278351777,
+                  -4832323.499476391,
+                  1335150.3536016832
+                ],
+                "velocity": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "yaw": 2.4552195017030543
+              }
+            }
+          },
+          "events": [],
+          "fresh_isolated_game_plan": {
+            "decks": [],
+            "hull": "hull.import.miner"
+          },
+          "layout_present_after_normal_set_layout": false,
+          "reboard": false,
+          "same_world_and_ship_state": true,
+          "shape_walk_present": true
+        },
+        "model": "assets/models/miner.glb",
+        "model_sha256": "7f94682e6cda10beb632c48fcbb14d393627043cef8aa9a6c92a3809e249e407",
+        "native_route": {
+          "exit_route_arrived": false,
+          "requested": true
+        },
+        "reach_before_reboard": "None",
+        "reboard": false,
+        "remaining_fuel": 3995.0957891584294,
+        "render_contact_gate": "owned by engine; not measured here",
+        "return_orbit_and_eviction": "not attempted",
+        "runtime": "actual main rlibs; command harness, not GUI or render validation",
+        "simulated_total_seconds": 79.46333333483562,
+        "source_ready_before_first_tick": true,
+        "start_mode": "lowflight",
+        "state_resets_after_spawn": 0,
+        "ticks": 3654,
+        "walk_max_distance_m": 0.0,
+        "wall_seconds": 3.695616047
+      },
+      "witnesses": [
+        {
+          "altitude_datum": 6172.089497722385,
+          "circular_speed": 7763.066940897205,
+          "fuel": 4000.0,
+          "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+          "lift_accel": 18.759133335791436,
+          "main_accel": 51.160399956621106,
+          "mode": "lowflight",
+          "model": "assets/models/miner.glb",
+          "model_sha256": "7f94682e6cda10beb632c48fcbb14d393627043cef8aa9a6c92a3809e249e407",
+          "orientation": [
+            0.8081848314417203,
+            0.03619443880225032,
+            -0.36330768748676645,
+            -0.46209822012243934
+          ],
+          "policy": "one explicit initial spawn; lowflight is a separate downstream test, not continuation of failed orbit; target PadFrame at canonical direction, no port/flattening/ATC mutation; no subsequent flight state resets",
+          "position": [
+            18730713157.64153,
+            185915046.3196933,
+            96518147399.21733
+          ],
+          "radius": 6281370.0,
+          "ready_ms": 3324.091827,
+          "ship": "ORE CUTTER",
+          "source_radius": 6371000.0,
+          "stage": "spawn",
+          "time": 22680.0,
+          "velocity": [
+            29346.494131716718,
+            131.55428051822668,
+            -7849.2493867182375
+          ]
+        },
+        {
+          "altitude_canonical_before": 8.164689810946584,
+          "commands": {
+            "anchor": null,
+            "arm": null,
+            "excavate": null,
+            "gun_target": null,
+            "hangar": null,
+            "hyperdrive": null,
+            "jets": null,
+            "manual": null,
+            "power": null,
+            "rcs": [
+              -0.005018079743744264,
+              0.5097038422432395,
+              -0.0062223812799736935
+            ],
+            "throttle": 0.0,
+            "turn": {
+              "pitch": 2.265643495870471e-05,
+              "roll": 3.027657121224497e-05,
+              "yaw": -7.207747947282259e-05
+            },
+            "weapons": null
+          },
+          "dt": 0.020000000000436557,
+          "events": [
+            "SystemsOff",
+            {
+              "RuleFired": {
+                "outcome": "locked",
+                "rule": "Hoar E ground"
+              }
+            },
+            {
+              "Landed": {
+                "body": "Hoar E",
+                "station": false
+              }
+            }
+          ],
+          "fuel": 3995.0957891584294,
+          "hull": 1.0,
+          "orientation": [
+            0.806650356737516,
+            0.0355253232109013,
+            -0.3662505650848682,
+            -0.4625080290773491
+          ],
+          "phase": "Descent",
+          "position": [
+            18732858090.205124,
+            185925201.3637029,
+            96517574606.55333
+          ],
+          "stage": "flight",
+          "state": {
+            "Landed": {
+              "body": 7,
+              "local_orientation": [
+                0.7700132583229501,
+                0.32749887621459,
+                0.5398302885734881,
+                -0.09169148064961533
+              ],
+              "local_position": [
+                3793008.5167502123,
+                -4832312.123045978,
+                1335140.181251984
+              ]
+            }
+          },
+          "target_horizontal_before": 0.3375683871988053,
+          "target_plane_height_before": -2.7818556028719916,
+          "target_speed_before": 1.4777750138882004,
+          "tick": 3654,
+          "time": 22753.080000001595,
+          "velocity": [
+            29347.287510874492,
+            131.72354284531107,
+            -7846.350668063529
+          ]
+        },
+        {
+          "crew": {
+            "place": {
+              "Outside": {
+                "body": 7,
+                "pitch": 0.0,
+                "position": [
+                  3792984.8872440243,
+                  -4832324.585826943,
+                  1335151.2205875132
+                ],
+                "velocity": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "yaw": 2.4552195017030543
+              }
+            }
+          },
+          "events": [
+            "StoodUp"
+          ],
+          "reach": "None",
+          "stage": "exit",
+          "time": 22753.09666666826
+        },
+        {
+          "arrived": false,
+          "height_error": -3.659773396978057,
+          "local": [
+            2.3543090434952063e-06,
+            -2.3618907456305855,
+            -26.661464709140823
+          ],
+          "reason": "no horizontal progress for5s",
+          "stage": "native_exit_route",
+          "target": [
+            3.143342435634639e-16,
+            -6.021664142608643,
+            -2.3114674981135233
+          ],
+          "time": 22759.44666666817
+        },
+        {
+          "crew": {
+            "place": {
+              "Outside": {
+                "body": 7,
+                "pitch": 0.0,
+                "position": [
+                  3792986.5278351777,
+                  -4832323.499476391,
+                  1335150.3536016832
+                ],
+                "velocity": [
+                  0.0,
+                  0.0,
+                  0.0
+                ],
+                "yaw": 2.4552195017030543
+              }
+            }
+          },
+          "crew_elapsed_seconds": 6.383333333240444,
+          "events": [],
+          "inside_hatch": [
+            3.143342435634639e-16,
+            -6.021664142608643,
+            -2.3114674981135233
+          ],
+          "reach_before": "None",
+          "stage": "reboard_attempt"
+        },
+        {
+          "result": {
+            "crew_after_live_walk": {
+              "place": {
+                "Outside": {
+                  "body": 7,
+                  "pitch": 0.0,
+                  "position": [
+                    3792986.5278351777,
+                    -4832323.499476391,
+                    1335150.3536016832
+                  ],
+                  "velocity": [
+                    0.0,
+                    0.0,
+                    0.0
+                  ],
+                  "yaw": 2.4552195017030543
+                }
+              }
+            },
+            "events": [],
+            "fresh_isolated_game_plan": {
+              "decks": [],
+              "hull": "hull.import.miner"
+            },
+            "layout_present_after_normal_set_layout": false,
+            "reboard": false,
+            "same_world_and_ship_state": true,
+            "shape_walk_present": true
+          },
+          "stage": "live_universe_reboard_check"
+        }
+      ],
+      "provenance": {
+        "base": "04b47fb6dd465c7c7b030a58d3db30ba51c0acd2",
+        "source": "/home/alexm/git/universe-ships-pgs-journey/tools/review/v8_runtime_journey.rs",
+        "source_sha256": "95ac94dbbc158b0dba1090269bb9301cd6de20bd7f3f44065fc7b7cfe3a60bca",
+        "binary_sha256": "80ed7efd71a08092204415c82818f3cbc410a7550d7a501e3add9572ac8bd54a",
+        "linked": {
+          "universe_world": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_world-737773266b9cb189.rlib",
+            "sha256": "daacb02584e42ad9dac951e3222b5c109628a76bf395fa7d33d636092242301d"
+          },
+          "universe_avionics": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_avionics-3b1bd9672ee1e129.rlib",
+            "sha256": "6557277a06db281e1368dc8995ac26b081f4392138b777068649df3cd9ef0727"
+          },
+          "universe_sim": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_sim-df218cce4ee08173.rlib",
+            "sha256": "e38e8b84383bcaa873aeb553aa6ded43c6b11afbd9f37c6751a6626f3b0db411"
+          },
+          "glam": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libglam-0d3222e24b2a642a.rlib",
+            "sha256": "5d4d4543cb5e6b58cc30ad46ee7b145a80591b532558fe62e5fb757e7932ef1a"
+          },
+          "serde_json": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libserde_json-ac9f5323bf4c8534.rlib",
+            "sha256": "90eed1e621bebdc987b31d3305020cde51cca9e4634fed1d4127756c8c094529"
+          }
+        },
+        "command": [
+          "rustc",
+          "--edition=2024",
+          "/home/alexm/git/universe-ships-pgs-journey/tools/review/v8_runtime_journey.rs",
+          "-L",
+          "dependency=/home/alexm/git/universe-ships-ready-main/target/release/deps",
+          "-C",
+          "opt-level=2",
+          "-o",
+          "out/review/v8-runtime-journey/miner-lowflight-final/journey",
+          "--extern",
+          "universe_world=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_world-737773266b9cb189.rlib",
+          "--extern",
+          "universe_avionics=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_avionics-3b1bd9672ee1e129.rlib",
+          "--extern",
+          "universe_sim=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_sim-df218cce4ee08173.rlib",
+          "--extern",
+          "glam=/home/alexm/git/universe-ships-ready-main/target/release/deps/libglam-0d3222e24b2a642a.rlib",
+          "--extern",
+          "serde_json=/home/alexm/git/universe-ships-ready-main/target/release/deps/libserde_json-ac9f5323bf4c8534.rlib"
+        ],
+        "mode": "lowflight",
+        "hull": "assets/models/miner.glb",
+        "handoff_sha256": "03eec8eb64dea2726d23741ec5855057ee110c2d199ebf3d272f3e7f15dafa24",
+        "scope": "headless actual shared runtime; no desktop/GPU/input-device validation; run this entire script under shared scenery launcher2CPU8GiB600s",
+        "exit": 0,
+        "run_seconds": 3.777350632008165
+      },
+      "trace": {
+        "path": "/home/alexm/git/universe-ships-pgs-journey/out/review/v8-runtime-journey/miner-lowflight-final/trace.jsonl",
+        "sha256": "03a93f670040906643eedd4bde0c53d48e625cc162c06708489ed0b174eefbd9"
+      }
+    },
+    "mc07-lowflight-final": {
+      "result": {
+        "all_walk_samples_dry": null,
+        "base": "0c484a56",
+        "exit": false,
+        "final_ship_state": {
+          "Destroyed": {
+            "respawn_in": 3.0
+          }
+        },
+        "fuel_used": 2.5471140876675236,
+        "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+        "hull": 1.0,
+        "initial_orbit": null,
+        "jump_max_ground_clearance_m": 0.0,
+        "landed": false,
+        "live_reboard_check": {
+          "attempted": false,
+          "reason": "ship did not land",
+          "reboard": false
+        },
+        "model": "assets/models/mc07.glb",
+        "model_sha256": "11e3402c23ddfbb300c2f3b8cfdd865617ff355f63ba4fce00fd6be7d7b890ce",
+        "native_route": {
+          "requested": true
+        },
+        "reach_before_reboard": null,
+        "reboard": false,
+        "remaining_fuel": 3997.4528859123325,
+        "render_contact_gate": "owned by engine; not measured here",
+        "return_orbit_and_eviction": "not attempted",
+        "runtime": "actual main rlibs; command harness, not GUI or render validation",
+        "simulated_total_seconds": 22.920000000500295,
+        "source_ready_before_first_tick": true,
+        "start_mode": "lowflight",
+        "state_resets_after_spawn": 0,
+        "ticks": 1146,
+        "walk_max_distance_m": 0.0,
+        "wall_seconds": 3.801917065
+      },
+      "witnesses": [
+        {
+          "altitude_datum": 6172.089497722385,
+          "circular_speed": 7763.066940897205,
+          "fuel": 4000.0,
+          "hash": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+          "lift_accel": 8.179659247957229,
+          "main_accel": 33.461489087389296,
+          "mode": "lowflight",
+          "model": "assets/models/mc07.glb",
+          "model_sha256": "11e3402c23ddfbb300c2f3b8cfdd865617ff355f63ba4fce00fd6be7d7b890ce",
+          "orientation": [
+            0.8081848314417203,
+            0.03619443880225032,
+            -0.36330768748676645,
+            -0.46209822012243934
+          ],
+          "policy": "one explicit initial spawn; lowflight is a separate downstream test, not continuation of failed orbit; target PadFrame at canonical direction, no port/flattening/ATC mutation; no subsequent flight state resets",
+          "position": [
+            18730713157.64153,
+            185915046.3196933,
+            96518147399.21733
+          ],
+          "radius": 6281370.0,
+          "ready_ms": 3586.519303,
+          "ship": "MC-07",
+          "source_radius": 6371000.0,
+          "stage": "spawn",
+          "time": 22680.0,
+          "velocity": [
+            29346.494131716718,
+            131.55428051822668,
+            -7849.2493867182375
+          ]
+        },
+        {
+          "altitude_canonical_before": 14.31716356985271,
+          "commands": {
+            "anchor": null,
+            "arm": null,
+            "excavate": null,
+            "gun_target": null,
+            "hangar": null,
+            "hyperdrive": null,
+            "jets": null,
+            "manual": null,
+            "power": null,
+            "rcs": [
+              -0.008740358206253903,
+              1.0,
+              -0.016597486028007365
+            ],
+            "throttle": 0.0,
+            "turn": {
+              "pitch": 2.4943824421197e-05,
+              "roll": 3.0397183010961102e-05,
+              "yaw": -7.207754000480574e-05
+            },
+            "weapons": null
+          },
+          "dt": 0.020000000000436557,
+          "events": [
+            {
+              "RuleFired": {
+                "outcome": "refused: a leg gave way",
+                "rule": "Hoar E ground"
+              }
+            },
+            {
+              "Crashed": {
+                "body": "A LEG GAVE WAY AT 44.5 M/S (IT TAKES 8.0)"
+              }
+            }
+          ],
+          "fuel": 3997.4528859123325,
+          "hull": 1.0,
+          "orientation": [
+            0.8077046123108268,
+            0.03598306295565045,
+            -0.36422534341323365,
+            -0.462231952214101
+          ],
+          "phase": "Descent",
+          "position": [
+            18731386055.186386,
+            185918621.84762144,
+            96517968263.1714
+          ],
+          "stage": "flight",
+          "state": {
+            "Destroyed": {
+              "respawn_in": 3.0
+            }
+          },
+          "target_horizontal_before": 0.28829217167424015,
+          "target_plane_height_before": 1.5300527849730576,
+          "target_speed_before": 44.46663271028903,
+          "tick": 1146,
+          "time": 22702.9200000005,
+          "velocity": [
+            29359.03467687222,
+            156.6886027045229,
+            -7814.345161903747
+          ]
+        },
+        {
+          "result": {
+            "attempted": false,
+            "reason": "ship did not land",
+            "reboard": false
+          },
+          "stage": "live_universe_reboard_check"
+        }
+      ],
+      "provenance": {
+        "base": "04b47fb6dd465c7c7b030a58d3db30ba51c0acd2",
+        "source": "/home/alexm/git/universe-ships-pgs-journey/tools/review/v8_runtime_journey.rs",
+        "source_sha256": "95ac94dbbc158b0dba1090269bb9301cd6de20bd7f3f44065fc7b7cfe3a60bca",
+        "binary_sha256": "80ed7efd71a08092204415c82818f3cbc410a7550d7a501e3add9572ac8bd54a",
+        "linked": {
+          "universe_world": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_world-737773266b9cb189.rlib",
+            "sha256": "daacb02584e42ad9dac951e3222b5c109628a76bf395fa7d33d636092242301d"
+          },
+          "universe_avionics": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_avionics-3b1bd9672ee1e129.rlib",
+            "sha256": "6557277a06db281e1368dc8995ac26b081f4392138b777068649df3cd9ef0727"
+          },
+          "universe_sim": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_sim-df218cce4ee08173.rlib",
+            "sha256": "e38e8b84383bcaa873aeb553aa6ded43c6b11afbd9f37c6751a6626f3b0db411"
+          },
+          "glam": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libglam-0d3222e24b2a642a.rlib",
+            "sha256": "5d4d4543cb5e6b58cc30ad46ee7b145a80591b532558fe62e5fb757e7932ef1a"
+          },
+          "serde_json": {
+            "path": "/home/alexm/git/universe-ships-ready-main/target/release/deps/libserde_json-ac9f5323bf4c8534.rlib",
+            "sha256": "90eed1e621bebdc987b31d3305020cde51cca9e4634fed1d4127756c8c094529"
+          }
+        },
+        "command": [
+          "rustc",
+          "--edition=2024",
+          "/home/alexm/git/universe-ships-pgs-journey/tools/review/v8_runtime_journey.rs",
+          "-L",
+          "dependency=/home/alexm/git/universe-ships-ready-main/target/release/deps",
+          "-C",
+          "opt-level=2",
+          "-o",
+          "out/review/v8-runtime-journey/mc07-lowflight-final/journey",
+          "--extern",
+          "universe_world=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_world-737773266b9cb189.rlib",
+          "--extern",
+          "universe_avionics=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_avionics-3b1bd9672ee1e129.rlib",
+          "--extern",
+          "universe_sim=/home/alexm/git/universe-ships-ready-main/target/release/deps/libuniverse_sim-df218cce4ee08173.rlib",
+          "--extern",
+          "glam=/home/alexm/git/universe-ships-ready-main/target/release/deps/libglam-0d3222e24b2a642a.rlib",
+          "--extern",
+          "serde_json=/home/alexm/git/universe-ships-ready-main/target/release/deps/libserde_json-ac9f5323bf4c8534.rlib"
+        ],
+        "mode": "lowflight",
+        "hull": "assets/models/mc07.glb",
+        "handoff_sha256": "03eec8eb64dea2726d23741ec5855057ee110c2d199ebf3d272f3e7f15dafa24",
+        "scope": "headless actual shared runtime; no desktop/GPU/input-device validation; run this entire script under shared scenery launcher2CPU8GiB600s",
+        "exit": 0,
+        "run_seconds": 3.8866533010150306
+      },
+      "trace": {
+        "path": "/home/alexm/git/universe-ships-pgs-journey/out/review/v8-runtime-journey/mc07-lowflight-final/trace.jsonl",
+        "sha256": "40679eb22f28f1152a8f5d2e52a298b71e281203798606988e7675c77c98579f"
+      }
+    }
+  },
+  "model_access_probe": "scenery-job-85b5e1581ea844e6af5380c3b98520da.scope: 2 CPU, 8.58993 GB; shared memory 35.699 GB; host ceiling 50 GB, 15% headroom, common 25 CPU\nassets/models/mc07.glb: name=MC-07 mass=161380 fuel=4000 main=33.461489087389296 lift=8.179659247957229 walk=Some((DVec3(-18.3859806060791, -12.784075736999512, -38.66799545288086), DVec3(18.3859806060791, 20.27307891845703, 35.1820068359375))) seat=Some(DVec3(-2.797165529063332e-7, -4.799075126647948, -30.954234581901495)) inside=Some(DVec3(-2.797165529063332e-7, -7.819075107574463, -8.482995682670538)) stair=(DVec3(-2.797165529063332e-7, -7.779075058052871, -9.282995682670538), DVec3(-2.797165529063332e-7, -7.779075058052871, -1.2829956826705384)) ramp=Some((DVec3(-5.241734215258164e-8, -7.819075019905898, -0.24299619765466973), DVec3(-0.9999999999999962, 0.0, 8.742277657347553e-8), 9.199999809265172))\nassets/models/miner.glb: name=ORE CUTTER mass=70366.96354858932 fuel=4000 main=51.160399956621106 lift=18.759133335791436 walk=Some((DVec3(-16.200000762939453, -10.94166374206543, -31.961467742919922), DVec3(16.200000762939453, 13.608336448669434, 28.388532638549805))) seat=Some(DVec3(3.143342435634639e-16, -2.3325728000681427, -28.811467498113522)) inside=Some(DVec3(3.143342435634639e-16, -6.021664142608643, -2.3114674981135233)) stair=(DVec3(3.143342435634639e-16, -6.141663878890032, -2.3114674981135233), DVec3(3.143342435634639e-16, -6.141663878890032, 5.688532501886477)) ramp=None\nassets/models/test_hull.glb: NO ROOM FOR BELLY LIFT S1 (552 M3), NO ROOM FOR TORCH DRIVE S1 (387 M3)\n",
+  "model_owner_reply": "20261013T105434-blender-d9b1",
+  "miner_source": {
+    "path": "tools/blender/miner.py",
+    "sha256": "8b3696de104236ed552f5e7c59cc2ca5e13f371a88fb72b32e6fe15fcb1a1c2a",
+    "evidence": "slab() is closed chamfered cube; bridge authored as slab; keel hatch_frame/hatch_door are closed decorative plates. No cut corridor is authored by this builder."
+  },
+  "scope": {
+    "full_journey_resolved": false,
+    "takeoff": false,
+    "orbit_return": false,
+    "continuous_GUI": false,
+    "model_changes": false,
+    "physics_changes": false,
+    "registry_changes": false,
+    "install_or_merge": false,
+    "navigation_probe": "straight route from actual seat floor to actual hatch floor; not a comprehensive search of every MC07 access option"
+  },
+  "next_dependency": "An existing verified physical access route/hull or separately authorized authored access repair and its shared runtime integration; no fabricated interior floor or seat teleport."
+}
