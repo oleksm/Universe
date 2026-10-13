@@ -9,7 +9,7 @@ identity:
 size_class: 3
 fits: mount.cargo-s3
 physical:
-  mass: 6840
+  mass: 7910
   volume: 64.7
   length: 6.52
   width: 3.15
@@ -17,12 +17,12 @@ physical:
 built_of:
   parts: cargo-ore-bay-75t
   list:
-    - { code: OBS06-01, name: "Shell", description: "The hopper's 8 mm plates, sloped to the gate.", mass: 3170, length: 5.046, width: 2.438, height: 2.438, item: stock.sta36-pl-8, quantity: 3645.5, module: module.welding-bay }
-    - { code: OBS06-02, name: "Ribs", description: "8 mm webs welded round the shell every 0.35 m and up the end walls.", mass: 1530, length: 3.958, width: 1.912, height: 1.912, item: stock.sta36-pl-8, quantity: 1759.5, module: module.welding-bay }
-    - { code: OBS06-03, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 1200, length: 3.650, width: 1.763, height: 1.763, item: stock.st4340-pl-3, quantity: 1380.0, module: module.cutting-table }
-    - { code: OBS06-04, name: "Top doors", description: "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight.", mass: 290, length: 2.273, width: 1.098, height: 1.098, item: stock.al6061-pl-5, quantity: 333.5, module: module.welding-bay }
-    - { code: OBS06-05, name: "Discharge gate", description: "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted).", mass: 360, length: 2.443, width: 1.180, height: 1.180, item: stock.sta36-pl-8, quantity: 414.0, module: module.welding-bay }
-    - { code: OBS06-06, name: "Frame", description: "Tube chords and end frames that carry the hopper to its mount, with a tie across the top at every rib.", mass: 290, length: 2.273, width: 1.098, height: 1.098, item: stock.st4340-tb-60x2, quantity: 333.5, module: module.welding-bay }
+    - { code: OBS06-01, name: "Shell", description: "The hopper's 8 mm plates, sloped to the gate.", mass: 3170, length: 4.807, width: 2.322, height: 2.322, item: stock.sta36-pl-8, quantity: 3645.5, module: module.welding-bay }
+    - { code: OBS06-02, name: "Ribs", description: "8 mm webs welded round the shell every 0.35 m and up the end walls.", mass: 1810, length: 3.988, width: 1.927, height: 1.927, item: stock.sta36-pl-8, quantity: 2081.5, module: module.welding-bay }
+    - { code: OBS06-03, name: "Wear liners", description: "Hard plates bolted inside where the rock lands and slides.", mass: 1200, length: 3.477, width: 1.680, height: 1.680, item: stock.st4340-pl-3, quantity: 1380.0, module: module.cutting-table }
+    - { code: OBS06-04, name: "Top doors", description: "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight; ribbed beneath, the ribs falling between the roof ties.", mass: 490, length: 2.580, width: 1.246, height: 1.246, item: stock.al6061-pl-5, quantity: 563.5, module: module.welding-bay }
+    - { code: OBS06-05, name: "Discharge gate", description: "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted); it runs below the shell's webs, the slot carried down to it by two skirts.", mass: 950, length: 3.217, width: 1.554, height: 1.554, item: stock.sta36-pl-8, quantity: 1092.5, module: module.welding-bay }
+    - { code: OBS06-06, name: "Frame", description: "Tube chords and end frames that carry the hopper to its mount, with a tie across the top at every rib.", mass: 290, length: 2.166, width: 1.046, height: 1.046, item: stock.st4340-tb-60x2, quantity: 333.5, module: module.welding-bay }
 making:
   module: module.assembly-shop
 function:
@@ -32,15 +32,15 @@ function:
   fill_density: 2000
 visual:
   format: "freefall-model/1"
-  path: "models/cargo-ore-bay-75t/v1"
-  manifest_sha256: "5b75465a5b2293e872ae00b52ed8bcb3d22095d3cd115cd8e77376d049c62f6e"
-  version: 1
-  triangles: 8012
+  path: "models/cargo-ore-bay-75t/v2"
+  manifest_sha256: "e0f8049fc55e0d11d103a161258d16989725709ac1c23d88d43fd7a1bf44e019"
+  version: 2
+  triangles: 13492
 life: 473364000
 basis:
   - { of: [function.capacity, function.volume, function.fill_density], tier: derived, review: true, note: "Its volume is its capacity at 2,000 kg/m3, broken rock heaped (loose basalt about 1,600, iron ore 2,500: with denser ore it carries its capacity part full; with lighter it fills first and carries less)." }
-  - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "Worked out from its dimensions, loads and materials (tools/standards/ore_bays.py): ore at 2,000 kg/m3 at 3 g presses 159 kPa at the gate (as a liquid at the full clear depth; loose rock presses less). 8 mm A36 plate held by ribs every 0.35 m (stress p b2 / 2t2 within two thirds of yield), the ribs 8 mm webs 170 mm deep: shell 3.17 t, ribs 1.53; 3 mm 4340 liners over all it touches 1.20; 5 mm aluminium doors ribbed for a reverse 0.3 g 0.29; an 8 mm ribbed gate on two bearing strips 0.36; held at its corners, the loaded bay bends as a beam, 311 kN in each top chord: 4340 tube 60 x 2 mm with ties at every rib (buckling between ties 1.5 times the load or more), frame 0.29. 6.84 t, 0.09 of its capacity; drives, seals and fasteners not counted; the ribs' free edges unchecked for buckling. Review." }
+  - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "Worked out from its dimensions, loads and materials (tools/standards/ore_bays.py): ore at 2,000 kg/m3 at 3 g presses 159 kPa at the gate (as a liquid at the full clear depth; loose rock presses less). 8 mm A36 plate held by ribs every 0.35 m (stress p b2 / 2t2 within two thirds of yield), the ribs 8 mm webs 170 mm deep carried on down to the bottom chords: shell 3.17 t, ribs 1.81; 3 mm 4340 liners over all it touches 1.20; 5 mm aluminium doors ribbed for a reverse 0.3 g, with hinges, locks and the steel coaming they shut on 0.49; an 8 mm ribbed gate on two bearing strips, 110 mm below the shell on 8 mm skirts that carry the slot down past the webs, with the webs, seats and guides that carry it to the frame, 0.95; held at its corners, the loaded bay bends as a beam, 316 kN in each top chord: 4340 tube 60 x 2 mm with ties at every rib (buckling between ties 1.5 times the load or more), frame 0.29. Loaded by pouring through the open roof: the ties form a grate with 0.29 m gaps that screens off lumps too big for the 0.5 m gate slot (a slot passes lumps up to about a third of its width, 0.17 m), so ore is broken to that before loading; the door ribs, every 0.70 m, hang between the ties when shut. 7.91 t, 0.11 of its capacity; drives, seals and fasteners not counted; the ribs' free edges unchecked for buckling. Review." }
   - { of: [size_class], tier: invented, review: true, note: "Its class by what it carries: 10 t and under class 1, 35 t class 2, 100 t class 3, above class 4." }
   - { of: [identity.description, physical.length, physical.width, physical.height, physical.volume, built_of.list], tier: derived, review: true, note: "Fitted round its 37.5 m3 at the modeller's request (the first box, 5.32 x 2.66 x 2.66 m, held only 37.6 m3 with no walls, frame or doors). The 100 t bay's section unchanged (outer 3.15 m square, 2.75 m clear wide, 2.7 m clear high, a 45 degree V to a 0.5 m slot: 6.16 m2); 37.5 m3 needs 6.09 m of trough, 6.52 m long with end walls. Inside the class 3 mount (8.69 x 3.21 x 3.21 m). The modeller's proposal (37.51 m3 clear); review." }
-  - { of: [visual], tier: derived, review: true, note: "The installed model was built of 20 mm plate without ribs and weighs 14.77 t (measured by the modeller); it is to be rebuilt to the worked-out 8 mm plate and ribs." }
+  - { of: [visual], tier: derived, review: false, note: "The model (v2) is built to the worked-out design, 8 mm plate and ribs, and weighs 7,984 kg by its material volumes (measured by the modeller), 1% over the 7,910 kg worked out: its ribs 1,893 against 1,813 and its doors 545 against 490, its gate lighter at 845 against 947." }
   - { of: [life], rule: rule.life-ship-system }

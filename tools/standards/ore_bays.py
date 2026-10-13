@@ -25,8 +25,9 @@ T, T_LINER, T_DOOR = 0.008, 0.003, 0.005
 CUT = 1.15   # stock bought for a part cut from it (rule.cut-loss)
 TUBES = [(60, 2), (80, 3), (100, 5), (120, 10), (150, 10), (200, 15), (250, 20), (300, 30), (400, 30)]   # 4340 tube stock, mm
 
-# The families' sections: outer square, clear width, slot width, clear height (a 45 degree V to the slot under straight sides).
-SECTIONS = {3.15: (2.75, 0.5, 2.7), 2.25: (1.93, 0.3, 1.95), 1.72: (1.4, 0.3, 1.42)}
+# The families' sections: outer square, clear width, slot width, clear height (a 45 degree V to the slot under straight sides),
+# and how far the gate runs below the shell to clear its webs (measured in the models: 100 t v3, 10 t v2 and the 20 t rebuild).
+SECTIONS = {3.15: (2.75, 0.5, 2.7, 0.11), 2.25: (1.93, 0.3, 1.95, 0.065), 1.72: (1.4, 0.3, 1.42, 0.045)}
 
 
 def tube(d, t):
@@ -48,7 +49,8 @@ def up(x, step):
 def work(rec):
     cap = rec["function"]["capacity"]; vol = rec["function"]["volume"]
     L, W = rec["physical"]["length"], rec["physical"]["width"]
-    c, s, H = SECTIONS[W]
+    # A bay whose chords stand proud of its section (the 300 t's 200 mm tubes) is wider than the section it is built round.
+    c, s, H, ds = SECTIONS[max(k for k in SECTIONS if k <= W + 1e-9)]
     d = (c - s) / 2; hs = H - d; leg = d * math.sqrt(2)
     P = 2 * hs + 2 * leg; sec = c * hs + (c + s) / 2 * d
     Lt = vol / sec
@@ -64,14 +66,24 @@ def work(rec):
     ribs = (n * P + 2 * (math.ceil(c / b) - 1) * 0.8 * H) * h * T * A36
     liners = area * T_LINER * S4340
     # Doors: 5 mm plate, ribbed at the spacing the reverse load allows, each leaf a beam from hinge to latch; 10% hinges.
+    # The door ribs hang between the roof ties when shut, so their pitch is a whole number of rib spacings.
     pd = ORE * A_DOOR * H
-    bd = min(math.floor(T_DOOR / math.sqrt(pd / (2 * SIG_AL)) / 0.05) * 0.05, Lt)
+    bd = min(max(math.floor(T_DOOR / math.sqrt(pd / (2 * SIG_AL)) / b + 1e-9), 1) * b, Lt)
     hd = up(math.sqrt(3 * (pd * bd * (c / 2) ** 2 / 8 / SIG_AL) / T_DOOR), 0.01)
-    doors = (c * Lt * T_DOOR + (math.floor(Lt / bd) + 1) * c * hd * T_DOOR) * AL * 1.1
+    # Hinges, pins, locks and drives a quarter of the leaves; the steel coaming round the opening they shut on, 8 mm and
+    # 50 mm deeper than the door ribs.
+    doors = (c * Lt * T_DOOR + (math.floor(Lt / bd) + 1) * c * hd * T_DOOR) * AL * 1.25 + 2 * (Lt + c) * (hd + 0.05) * T * A36
     # Gate: 8 mm plate over the slot and 60 mm onto each bed, ribbed at b across the slot; two 100 mm bearing strips.
     gw = s + 0.12
     hg = up(math.sqrt(3 * (p * b * s ** 2 / 8 / SIG_A36) / T), 0.01)
-    gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1) * T * A36
+    # The gate runs below the shell's webs (ds, by section), the slot carried down to it by two skirts, each a cantilever
+    # from the slot's edge under the full pressure: 8 mm holds it.
+    assert math.sqrt(3 * p * ds ** 2 / SIG_A36) <= T, ds
+    # The gate's load to the frame: at every rib a pair of webs as deep as the ribs from the beds out half the V's half-width,
+    # and along each side a seat and a guide, 8 mm and 20 mm deeper than the ribs.
+    gate = (gw * Lt + n * gw * hg + 2 * Lt * 0.1 + 2 * Lt * ds + 2 * n * h * (c - s) / 4 + 4 * Lt * (h + 0.02)) * T * A36
+    # The hopper's load to the frame: every rib carried on down from the V's mid-slope to the bottom chords, two legs a rib.
+    ribs += 2 * n * h * T * A36 * (d / 2 + ds + hg)
     ties = n * c * tube(60, 2)[1]
     # Frame: held at its eight corners, the loaded bay bends as a beam over its length; the top chords take the compression.
     m = shell + ribs + liners + doors + gate + ties
@@ -83,7 +95,7 @@ def work(rec):
         if abs(new - m) < 0.5:
             break
         m = new
-    return dict(cap=cap, L=L, W=W, Lt=Lt, p=p, b=b, h=h, n=n, bd=bd, hd=hd, hg=hg, tube=tb, F=F, shell=shell, ribs=ribs,
+    return dict(cap=cap, L=L, W=W, s=s, Lt=Lt, p=p, b=b, h=h, n=n, ds=ds, bd=bd, hd=hd, hg=hg, tube=tb, F=F, shell=shell, ribs=ribs,
                 liners=liners, doors=doors, gate=gate, frame=frame, total=new)
 
 
@@ -95,11 +107,14 @@ def note(w, total):
     return (f"Worked out from its dimensions, loads and materials (tools/standards/ore_bays.py): ore at 2,000 kg/m3 at 3 g "
             f"presses {w['p'] / 1e3:.0f} kPa at the gate (as a liquid at the full clear depth; loose rock presses less). 8 mm A36 "
             f"plate held by ribs every {w['b']:.2f} m (stress p b2 / 2t2 within two thirds of yield), the ribs 8 mm webs "
-            f"{w['h'] * 1000:.0f} mm deep: shell {w['shell'] / 1e3:.2f} t, ribs {w['ribs'] / 1e3:.2f}; 3 mm 4340 liners over "
-            f"all it touches {w['liners'] / 1e3:.2f}; 5 mm aluminium doors ribbed for a reverse 0.3 g {w['doors'] / 1e3:.2f}; "
-            f"an 8 mm ribbed gate on two bearing strips {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
+            f"{w['h'] * 1000:.0f} mm deep carried on down to the bottom chords: shell {w['shell'] / 1e3:.2f} t, ribs {w['ribs'] / 1e3:.2f}; 3 mm 4340 liners over "
+            f"all it touches {w['liners'] / 1e3:.2f}; 5 mm aluminium doors ribbed for a reverse 0.3 g, with hinges, locks and the steel coaming they shut on {w['doors'] / 1e3:.2f}; "
+            f"an 8 mm ribbed gate on two bearing strips, {w['ds'] * 1000:.0f} mm below the shell on 8 mm skirts that carry the slot down past the webs, with the webs, seats and guides that carry it to the frame, {w['gate'] / 1e3:.2f}; held at its corners, the loaded bay bends as a "
             f"beam, {w['F'] / 1e3:.0f} kN in each top chord: 4340 tube {w['tube'][0]} x {w['tube'][1]} mm with ties at every "
-            f"rib (buckling between ties 1.5 times the load or more), frame {w['frame'] / 1e3:.2f}. {total / 1e3:.2f} t, "
+            f"rib (buckling between ties 1.5 times the load or more), frame {w['frame'] / 1e3:.2f}. Loaded by pouring through the open roof: the ties form a "
+            f"grate with {w['b'] - 0.06:.2f} m gaps that screens off lumps too big for the {w['s']:.1f} m gate slot (a slot "
+            f"passes lumps up to about a third of its width, {w['s'] / 3:.2f} m), so ore is broken to that before loading; the "
+            f"door ribs, every {w['bd']:.2f} m, hang between the ties when shut. {total / 1e3:.2f} t, "
             f"{total / w['cap']:.2f} of its capacity; drives, seals and fasteners not counted; the ribs' free edges unchecked "
             f"for buckling. Review.")
 
@@ -110,8 +125,8 @@ def parts(w, rec, prefix):
     rows = [("Shell", "The hopper's 8 mm plates, sloped to the gate.", w["shell"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Ribs", f"8 mm webs welded round the shell every {w['b']:.2f} m and up the end walls.", w["ribs"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Wear liners", "Hard plates bolted inside where the rock lands and slides.", w["liners"], "stock.st4340-pl-3", "module.cutting-table"),
-            ("Top doors", "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight.", w["doors"], "stock.al6061-pl-5", "module.welding-bay"),
-            ("Discharge gate", "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted).", w["gate"], "stock.sta36-pl-8", "module.welding-bay"),
+            ("Top doors", "The pair, hinged at the sides, the length of the roof, that opens to the excavator and shuts for flight; ribbed beneath, the ribs falling between the roof ties.", w["doors"], "stock.al6061-pl-5", "module.welding-bay"),
+            ("Discharge gate", "A slot gate the length of the floor, ribbed beneath, sliding on bearing strips along both edges of the slot, that lets the ore out at the dock (its drive not counted); it runs below the shell's webs, the slot carried down to it by two skirts.", w["gate"], "stock.sta36-pl-8", "module.welding-bay"),
             ("Frame", "Tube chords and end frames that carry the hopper to its mount, with a tie across the top at every rib.", w["frame"], tb, "module.welding-bay")]
     total = sum(r10(r[2]) for r in rows)
     out = []

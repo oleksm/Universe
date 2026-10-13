@@ -9,7 +9,7 @@ identity:
 size_class: 2
 fits: mount.engine-s2
 physical:
-  mass: 150
+  mass: 164.5
   volume: 3.24
   length: 1.8
   width: 1.8
@@ -19,8 +19,8 @@ needs:
 built_of:
   parts: engine-fan-s2
   list:
-    - { code: FAN2-01, name: "Duct and stators", mass: 45, length: 1.2, width: 1.2, height: 0.669, item: stock.cfc-pl-3, quantity: 51.75, module: module.machining-centre }
-    - { code: FAN2-02, name: "Fan and hub", mass: 38, length: 1.13, width: 1.13, height: 0.63, item: stock.ti64-pl-5, quantity: 43.7, module: module.machining-centre }
+    - { code: FAN2-01, name: "Duct and stators", mass: 63, length: 1.8, width: 1.8, height: 1, item: stock.cfc-pl-3, quantity: 72.45, module: module.machining-centre }
+    - { code: FAN2-02, name: "Fan and hub", mass: 34.5, length: 1.561, width: 1.561, height: 0.63, item: stock.ti64-pl-5, quantity: 39.68, module: module.machining-centre }
     - { code: FAN2-03, name: "Electric motor", mass: 52, length: 1.27, width: 1.27, height: 0.705, item: good.electric-motors, quantity: 52, module: module.assembly-shop }
     - { code: FAN2-04, name: "Inverter and controls", mass: 15, length: 0.835, width: 0.835, height: 0.464, item: good.electronics, quantity: 15, module: module.assembly-shop }
 making:
@@ -38,10 +38,17 @@ function:
   reaction_offset: 0
   heat_to_hull: 0.107
   min_density: 0.3
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-fan-s2/v1"
+  manifest_sha256: "4dd5a9d191d720e7577cc11ddd9a2dffff6474d858eef47fd6f7a6238ae1c4de"
+  version: 1
+  triangles: 8212
 life: 473364000
 basis:
-  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan whose exit is as wide as its disc (A = 2.01 m2, air 1.2 kg/m3): the wake does not contract, so T = rho A v2 and the air leaves the duct at v = sqrt(T / (rho A)), the exhaust given. This is the duct exit velocity, not an open rotor's disc (sqrt(T / 2 rho A)) or far-wake (twice that) velocity. Shaft power was taken as the open-rotor ideal T^1.5 / sqrt(2 rho A) / 0.75; see the flag. Mass at about 6 kg a kilonewton (electric VTOL fans of the 2020s, from memory). Chosen; review." }
+  - { of: [function, physical, needs], tier: derived, review: true, note: "Momentum theory for a ducted fan whose exit is as wide as its disc (A = 2.01 m2, air 1.2 kg/m3): the wake does not contract, so T = rho A v2 and the air leaves the duct at v = sqrt(T / (rho A)), the exhaust given. This is the duct exit velocity, not an open rotor's disc (sqrt(T / 2 rho A)) or far-wake (twice that) velocity. Shaft power was taken as the open-rotor ideal T^1.5 / sqrt(2 rho A) / 0.75; see the flag. Mass first taken at about 6 kg a kilonewton (150 kg); now worked out from the parts, see below. Chosen; review." }
   - { of: [needs.power, function.efficiency], tier: derived, review: true, note: "Flag: the ducted ideal jet power is T v / 2 = 1.27 MW, but the power (2.40 MW) used the open-rotor ideal (1.80 MW) / 0.75, so against the duct it is 0.53 efficient, not 0.75. Either power falls to 1.70 MW at 0.75, or efficiency is 0.53; heat_to_hull follows. Not changed." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [physical.mass, built_of.list], tier: derived, review: true, note: "Worked out from material and dimensions, in the modeller's first build (v1): the duct a closed 3 mm carbon-composite shell, inner skin round the 1.6 m bore, outer round the 1.8 m outside, 1.0 m long, with its end rings, about 11.7 m2 at 1,580 kg/m3, 53.7 kg; hollow 3 mm stators 4.7 and titanium mount pads 4.6 (FAN2-01, 63 kg). Titanium blades 20.8, hub 6.5 and shaft 7.2 at a 19.5 mm tip gap (FAN2-02, 34.5). Motor and inverter kept at 52 and 15 kg. 164.5 kg against the 150 first taken. No cooling, laminate reinforcement or fasteners counted; rotor not checked at operating speed. Review." }
   - { of: [life], rule: rule.life-ship-system }
   - { of: [function.heat_to_hull], tier: derived, review: true, note: "The motor and inverter lose about 8% of the electrical power as heat in the hull (0.92 efficient); electrical power is jet power / 0.75, so that is 0.107 of the jet power, the share lib.jet_heat counts. The duct's own losses go to the air it moves, not the hull." }
