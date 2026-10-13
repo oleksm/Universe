@@ -32,6 +32,12 @@ function:
   kind: "handling"
   throughput: 10
   reach: 8.0
+visual:
+  format: "freefall-model/1"
+  path: "models/handling-conveyor-s1/v1"
+  manifest_sha256: "f408c0d772d29c648b9e40d77d107be4e2cbfb033024f2b1a008913a48e7d724"
+  version: 1
+  triangles: 7336
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "10 kg/s over 8 m: a small ore feed. Chosen." }
