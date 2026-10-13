@@ -35,7 +35,7 @@ fn triangle_distance(p: DVec3, t: &grid::Triangle) -> f64 {
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let a = std::env::args().skip(1).collect::<Vec<_>>();
-    if !(5..=6).contains(&a.len()) {
+    if a.len() < 5 {
         return Err("source geometry features plan report".into());
     }
     let b = std::fs::read(&a[0])?;
@@ -45,6 +45,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
     let s = Surface::read(&b)?;
     let features: Value = serde_json::from_slice(&std::fs::read(&a[2])?)?;
+    let snapshot_bytes = if let Some(i)=a.iter().position(|a|a=="--snapshot") {Some(std::fs::read(a.get(i+1).ok_or("snapshot path")?)?)} else {None};
+    let snapshot: Option<boundary_correction::retained::Snapshot> = snapshot_bytes.as_ref().map(|b|serde_json::from_slice(b)).transpose()?;
+    if snapshot.as_ref().is_some_and(|s| s.source_sha256!=plan["source_sha256"].as_str().unwrap_or("")) {return Err("snapshot source binding".into());}
     let mut results = vec![];
     for f in features["features"].as_array().unwrap() {
         let id = f["id"].as_str().unwrap();
@@ -56,8 +59,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let g: Value = serde_json::from_slice(&bytes)?;
         let c = v(g.get("anchor_direction").unwrap_or(&f["queries"][0]["unit_direction"]));
         let chart = Chart::new(c, 6281370.);
-        let (mut old, _) = grid::retained_compact(&s, &chart)?;
-        if a.len() == 6 {
+        let (mut old, _) = match &snapshot {Some(input)=>boundary_correction::retained::triangles(input,&chart),None=>grid::retained_compact(&s,&chart)}?;
+        if a.iter().any(|a|a=="--corrected") {
             boundary_correction::ownership::correct(
                 &mut old,
                 &std::sync::atomic::AtomicU64::new(1),
@@ -182,11 +185,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 }
             }
         }
-        results.push(json!({"feature":id,"geometry_sha256":sha256(&bytes),"outer_edges":edges.len(),"samples":count,"max_radial_seam_m":max,"complete_edge_support_bound_m":if full_edge_bound.is_finite(){Some(full_edge_bound)}else{None},"complete_edge_failures":full_edge_failures,"strict_support_missing":strict_missing,"misses":misses,"chart":{"c":chart.c.to_array(),"e":chart.e.to_array(),"n":chart.n.to_array(),"r":chart.r},"support_missing_within_10um":tolerant_missing,"worst":worst,"scope":"physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding"}));
+        results.push(json!({"feature":id,"geometry_sha256":sha256(&bytes),"outer_edges":edges.len(),"samples":count,"max_radial_seam_m":max,"complete_edge_support_bound_m":if full_edge_bound.is_finite(){Some(full_edge_bound)}else{None},"complete_edge_failures":full_edge_failures,"strict_support_missing":strict_missing,"misses":misses,"chart":{"c":chart.c.to_array(),"e":chart.e.to_array(),"n":chart.n.to_array(),"r":chart.r},"support_missing_within_10um":tolerant_missing,"worst":worst,"scope":"physical f32 outer edges sampled at endpoints, quarters and midpoint against declared retained input planes; strict misses retained;10um support tolerance is a diagnostic, not welding"}));
     }
     std::fs::write(
         &a[4],
-        serde_json::to_vec_pretty(&json!({"source_sha256":sha256(&b),"results":results}))?,
+        serde_json::to_vec_pretty(&json!({"source_sha256":sha256(&b),"snapshot_sha256":snapshot_bytes.as_ref().map(|b|sha256(b)),"input_kind":if snapshot.is_some(){"actual_selected_snapshot"}else{"settled_reconstruction"},"results":results}))?,
     )?;
     Ok(())
 }

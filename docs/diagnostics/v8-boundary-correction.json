@@ -190,5 +190,16 @@
     "complete retained replacement and incident morph closure",
     "GPU lifetime and submitted-geometry trace",
     "moving/cancel/delay/revisit"
-  ]
+  ],
+  "implementation_commit": "a4ae5ea9",
+  "source_snapshots": {
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/boundary_correction/ownership.rs": "aa92db8b8ad273f83869c2c19ebb07db981854caf5d82cdcb96ac24176d6ac66",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/boundary_correction/cells.rs": "1956d6c5508a3503e79f7ba6b6a478f18ec494306126c0d0a15cbc8d441fc86a",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/boundary_correction/mod.rs": "2654a900b5f2bb931660e9d1e64e6e97631f3d1a1386bc656584742214384623",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/boundary_correction/retained.rs": "26000db2f33e6e434bc2d7538a5445fe482b1ad388e06fa18b2e4445e06eea2a",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/pgs_boundary_correction.rs": "27026ef6186d23839c64dada283bd45e2b75e6c3b5ffe9b212a2d849fb9f0d40",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/pgs_sparse_seams.rs": "f78d83c101be99237ae0383221c07992b07778ac888f3884c4cc6f22bc4111ea",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/contact_core/grid.rs": "9829210a87e486c58b7f6cc1f607beba8e2f271f99f42a2aa774016fe5837459",
+    "out/review/v8-boundary-correction/source-a4ae5ea9/crates/core/world/examples/sparse_band/mod.rs": "67505857febc9bf2165fa6d9a111681c73100497bf8be8b6f62190729654f00f"
+  }
 }

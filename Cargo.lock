@@ -3097,6 +3097,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "universe-terrain-contact"
+version = "0.1.0"
+dependencies = [
+ "glam",
+ "serde",
+ "serde_json",
+ "universe-world",
+]
+
+[[package]]
 name = "universe-world"
 version = "0.1.0"
 dependencies = [

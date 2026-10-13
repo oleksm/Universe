@@ -136,6 +136,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let fs: Value = serde_json::from_slice(&std::fs::read(&a[1])?)?;
     let snapshot = a.iter().position(|a| a == "--snapshot").map(|i| -> Result<boundary_correction::retained::Snapshot, Box<dyn std::error::Error>> { Ok(serde_json::from_slice(&std::fs::read(a.get(i+1).ok_or("snapshot path")?)?)?) }).transpose()?;
     if snapshot.as_ref().is_some_and(|s|s.source_sha256 != plan["source_sha256"].as_str().unwrap_or("")) { return Err("snapshot source binding".into()); }
+    let snapshot_copy_bytes = snapshot.as_ref().map_or(0, |s|s.copy_bytes());
     let out = std::path::Path::new(&a[3]);
     std::fs::create_dir_all(out)?;
     let mut results = vec![];
@@ -163,7 +164,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let r = run(&s, c, id, snapshot.as_ref());
         let peak = PEAK.load(Ordering::Relaxed).saturating_sub(baseline);
         let time = start.elapsed().as_secs_f64() * 1000.;
-        match r {Ok(g)=>{let blob=serde_json::to_vec(&g)?;let peak=PEAK.load(Ordering::Relaxed).saturating_sub(baseline);std::fs::write(out.join(format!("{id}.json")),&blob)?;results.push(json!({"feature":id,"status":if peak<=16777216{"built_for_audit"}else{"memory_refused"},"peak_transient_bytes":peak,"cpu_ms":time,"geometry_sha256":sha256(&blob),"correction":g["correction"],"triangles":g["triangles"]}));},Err(e)=>results.push(json!({"feature":id,"status":"refused","witness":e,"peak_transient_bytes":peak,"cpu_ms":time}))}
+        match r {Ok(g)=>{let blob=serde_json::to_vec(&g)?;let peak=PEAK.load(Ordering::Relaxed).saturating_sub(baseline);std::fs::write(out.join(format!("{id}.json")),&blob)?;results.push(json!({"feature":id,"status":if peak.saturating_add(snapshot_copy_bytes)<=16777216{"built_for_audit"}else{"memory_refused"},"peak_transient_bytes":peak,"snapshot_copy_bytes":snapshot_copy_bytes,"combined_transient_bytes":peak.saturating_add(snapshot_copy_bytes),"cpu_ms":time,"geometry_sha256":sha256(&blob),"correction":g["correction"],"triangles":g["triangles"]}));},Err(e)=>results.push(json!({"feature":id,"status":"refused","witness":e,"peak_transient_bytes":peak,"snapshot_copy_bytes":snapshot_copy_bytes,"combined_transient_bytes":peak.saturating_add(snapshot_copy_bytes),"cpu_ms":time}))}
     }
     std::fs::write(
         out.join("results.json"),
