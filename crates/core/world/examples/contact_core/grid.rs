@@ -4,6 +4,7 @@ use glam::{DVec2, DVec3};
 use universe_world::worlds::pgs::{Surface, Water};
 #[derive(Clone)]
 pub struct Triangle {
+    pub tags: [[u32; 3]; 3],
     pub world: [DVec3; 3],
     pub uv: Vec<DVec2>,
     pub lo: DVec2,
@@ -164,7 +165,19 @@ pub fn retained(s: &Surface, chart: &Chart) -> Result<(Vec<Triangle>, usize), St
                         .iter()
                         .copied()
                         .fold(DVec2::splat(f64::NEG_INFINITY), DVec2::max);
-                    out.push(Triangle { world, uv, lo, hi });
+                    out.push(Triangle {
+                        world,
+                        uv,
+                        lo,
+                        hi,
+                        tags: ids.map(|k| {
+                            [
+                                f,
+                                (x * 16 + (k % 17) as u32) << (19 - l),
+                                (y * 16 + (k / 17) as u32) << (19 - l),
+                            ]
+                        }),
+                    });
                 }
             }
         }
