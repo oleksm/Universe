@@ -9,7 +9,7 @@ identity:
 size_class: 1
 fits: mount.handling-s1
 physical:
-  mass: 522.7
+  mass: 588.4
   volume: 6.0
   length: 2.0
   width: 2.0
@@ -19,13 +19,13 @@ needs:
 built_of:
   parts: handling-ore-scoop-s1
   list:
-    - { code: OSC1-01, name: "Hood", description: "8 mm plate: a 1.6 x 1.2 m mouth on +Y tapering over 1.3 m aft to a 0.3 m square throat.", mass: 320.5, length: 1.6, width: 1.3, height: 1.2, item: stock.sta36-pl-8, quantity: 368.6, module: module.welding-bay }
-    - { code: OSC1-02, name: "Liners", description: "3 mm hard plates on the faces the rock strikes: the rear of the taper and the lower faces, about half the inside.", mass: 59.2, length: 1.3, width: 1.6, height: 1.2, item: stock.st4340-pl-3, quantity: 68.1, module: module.cutting-table }
-    - { code: OSC1-03, name: "Lids", description: "Two side-hinged clamshells of 5 mm plate with edge stiffeners over the mouth; they keep dust in, not rock. Closed at rest.", mass: 31, length: 1.6, width: 0.1, height: 1.2, item: stock.al6061-pl-5, quantity: 35.7, module: module.welding-bay }
+    - { code: OSC1-01, name: "Hood", description: "8 mm plate: a 1.6 x 1.2 m mouth on +Y tapering over 1.3 m aft to a 0.3 m square throat.", mass: 316.3, length: 1.6, width: 1.3, height: 1.2, item: stock.sta36-pl-8, quantity: 363.7, module: module.welding-bay }
+    - { code: OSC1-02, name: "Liners", description: "3 mm hard plates on the faces the rock strikes: the rear of the taper and the lower faces, about half the inside.", mass: 47.3, length: 1.3, width: 1.6, height: 1.2, item: stock.st4340-pl-3, quantity: 54.4, module: module.cutting-table }
+    - { code: OSC1-03, name: "Lids", description: "Two side-hinged clamshells of 5 mm plate with edge stiffeners, hinge arms and pins, over the mouth; they keep dust in, not rock. Closed at rest.", mass: 54.2, length: 1.6, width: 0.1, height: 1.2, item: stock.al6061-pl-5, quantity: 62.3, module: module.welding-bay }
     - { code: OSC1-04, name: "Lid actuators", description: "Two small geared motors at the hinges.", mass: 10, length: 0.15, width: 0.1, height: 0.1, item: good.electric-motors, quantity: 10, module: module.assembly-shop }
-    - { code: OSC1-05, name: "Base frame and feet", description: "A tube frame round the hood and four feet.", mass: 55, length: 2.0, width: 2.0, height: 0.3, item: stock.al6061-tb-120x5, quantity: 63.3, module: module.welding-bay }
-    - { code: OSC1-06, name: "Feeder trough", description: "A 160 mm steel tube, 0.6 m, from the throat aft (-Y) at the base centre, ending in a 150 mm flange that meets a conveyor's inlet; the screw end shows in it.", mass: 7, length: 0.6, width: 0.16, height: 0.16, item: stock.st4340-tb-160x3, quantity: 8, module: module.welding-bay }
-    - { code: OSC1-07, name: "Feeder screw", description: "A 150 mm screw on its shaft; stopped, it shuts the outlet.", mass: 15, length: 0.65, width: 0.15, height: 0.15, item: stock.st4340-bar-120, quantity: 22.5, module: module.machining-centre }
+    - { code: OSC1-05, name: "Base frame and feet", description: "A tube frame round the hood and four feet.", mass: 102.2, length: 2.0, width: 2.0, height: 0.3, item: stock.al6061-tb-120x5, quantity: 117.5, module: module.welding-bay }
+    - { code: OSC1-06, name: "Feeder trough", description: "A 160 mm steel tube, 0.6 m, from the throat aft (-Y) at the base centre, ending in a 150 mm flange that meets a conveyor's inlet; the screw end shows in it.", mass: 24.8, length: 0.6, width: 0.16, height: 0.16, item: stock.st4340-tb-160x3, quantity: 28.5, module: module.welding-bay }
+    - { code: OSC1-07, name: "Feeder screw", description: "Flights 146 mm across at 120 mm pitch on a 44 mm shaft, 0.42 m of flight, turning at 230 rpm; stopped, it shuts the outlet.", mass: 8.6, length: 0.65, width: 0.146, height: 0.146, item: stock.st4340-bar-120, quantity: 13, module: module.machining-centre }
     - { code: OSC1-08, name: "Feeder drive", description: "Gear motor with brake on the screw shaft.", mass: 25, length: 0.35, width: 0.2, height: 0.2, item: good.electric-motors, quantity: 25, module: module.assembly-shop }
 making:
   module: module.assembly-shop
@@ -36,7 +36,7 @@ function:
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "Takes 10 kg/s of loose rock from the excavator into a conveyor or bay. Chosen." }
-  - { of: [built_of.list, physical.mass, needs], tier: derived, review: true, note: "A hopper feeds by gravity and does nothing in free fall; this catches rock already moving (the excavator throws it) and a choke-fed screw packs it on. Hood: the modeller's measured 8 mm body (blockout, 320.5 kg); liners half its 118.5 kg full lining. Lids: 1.92 m2 of 5 mm aluminium plus a fifth for stiffeners. Frame: 8 m of 120 x 5 tube and four feet. Screw: 150 mm at 160 rpm, choke-fed, 0.9 full, 1,600 kg/m3: 10.2 kg/s; 0.25 kW to push 0.6 m of packed rock, 1.1 kW for starts; the lids 0.2 kW: 1.3 kW." }
+  - { of: [built_of.list, physical.mass, needs], tier: derived, review: true, note: "A hopper feeds by gravity and does nothing in free fall; this catches rock already moving (the excavator throws it) and a choke-fed screw packs it on. Hood, liners, lids, frame, trough and screw are the modeller's measured volumes (candidate-v01: 316.3, 47.3, 54.2, 102.2, 24.8, 8.6 kg); the two drives are allowances (10 and 25 kg), drawn as housings only. Screw: 0.0152 m2 of flight annulus x 0.12 m pitch at 230 rpm, choke-fed, 0.9 full, 1,600 kg/m3: 10.1 kg/s (7.0 at 160 rpm); 0.25 kW to push 0.6 m of packed rock, 1.1 kW for starts; the lids 0.2 kW: 1.3 kW." }
   - { of: [physical.volume, physical.length, physical.width, physical.height], tier: invented, review: true, note: "The first envelope, kept." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
