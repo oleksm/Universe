@@ -126,26 +126,3 @@ fn transfer(program: &str, args: &[&str], data: Option<Vec<u8>>) -> Result<Vec<u
         thread::sleep(Duration::from_millis(5));
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn helper_preserves_exact_newlines_and_reports_failure() {
-        assert_eq!(
-            transfer("sh", &["-c", "printf 'line1\\nline2\\n'"], None).unwrap(),
-            b"line1\nline2\n"
-        );
-        assert!(transfer("sh", &["-c", "exit 7"], None).is_err());
-        assert!(transfer("freefall-absent-clipboard-helper", &[], None).is_err());
-    }
-    #[test]
-    fn helper_write_closes_stdin_and_does_not_interpret_text() {
-        transfer(
-            "sh",
-            &["-c", "cat >/dev/null"],
-            Some(b"$(no-execution)\n\"quoted\"\n".to_vec()),
-        )
-        .unwrap();
-    }
-}

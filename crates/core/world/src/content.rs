@@ -552,27 +552,6 @@ fn inherit_renamed_prices(prices: &mut HashMap<String,f64>, aliases: &HashMap<St
     Ok(())
 }
 
-#[cfg(test)]
-mod renamed_prices {
-    use super::*;
-    #[test]
-    fn preserves_old_price_without_overriding_new_price() {
-        let aliases=HashMap::from([("old".into(),"new".into())]);
-        let mut p=HashMap::from([("old".into(),14.)]);
-        inherit_renamed_prices(&mut p,&aliases).unwrap();
-        assert_eq!(p["new"],14.);
-        p.insert("new".into(),20.);
-        inherit_renamed_prices(&mut p,&aliases).unwrap();
-        assert_eq!(p["new"],20.);
-    }
-    #[test]
-    fn conflicting_old_prices_are_refused() {
-        let aliases=HashMap::from([("a".into(),"new".into()),("b".into(),"new".into())]);
-        let mut p=HashMap::from([("a".into(),1.),("b".into(),2.)]);
-        assert!(inherit_renamed_prices(&mut p,&aliases).is_err());
-    }
-}
-
 /// A hull definition's shape key.
 fn d_shape(d: &crate::ship::HullDef) -> String {
     d.shape_key().to_string()

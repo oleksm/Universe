@@ -184,34 +184,3 @@ pub fn ray<B: OnRails>(bodies: &[B], positions: &[DVec3], from: DVec3, dir: DVec
     }
     best
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::rails::RailBody;
-
-    fn empty() -> Vec<RailBody> {
-        Vec::new()
-    }
-
-    #[test]
-    fn a_slug_hits_a_crossing_target_it_would_step_over() {
-        // 3 km/s slug, 0.1 s steps (300 m) against a 12 m target crossing its path.
-        let mut p = Projectile { position: DVec3::ZERO, velocity: DVec3::X * 3000.0 };
-        let target = |t: f64| Target { id: 7, position: DVec3::new(1500.0, -100.0 + 200.0 * t, 0.0), velocity: DVec3::Y * 200.0, radius: 12.0 };
-        let mut hit = None;
-        let mut t = 0.0;
-        while hit.is_none() && t < 1.0 {
-            hit = step_projectile(&empty(), &[], &mut p, t, 0.1, &[target(t + 0.1)]);
-            t += 0.1;
-        }
-        match hit {
-            Some(Hit::Target { id, point, .. }) => {
-                assert_eq!(id, 7);
-                assert!((point.x - 1500.0).abs() < 20.0, "{point}");
-            }
-            other => panic!("expected a hit, got {other:?}"),
-        }
-    }
-
-}

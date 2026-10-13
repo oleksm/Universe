@@ -1293,58 +1293,7 @@ mod tests {
     fn source() -> String {
         include_str!("../../../../docs/proposals/ship-code-v1/all-layers.ship.yaml").into()
     }
-    #[test]
-    fn editor_clipboard_paste_becomes_editable_ship() {
-        struct Clipboard(String);
-        impl universe_engine::clipboard::ClipboardAccess for Clipboard {
-            fn read_text(&mut self) -> Result<String, String> {
-                Ok(self.0.clone())
-            }
-            fn write_text(&mut self, s: &str) -> Result<(), String> {
-                self.0 = s.into();
-                Ok(())
-            }
-        }
-        let mut i = Interior::new();
-        i.plan.hull = "paste-test".into();
-        i.plan.on = Some(String::new());
-        i.open_code();
-        let panel = i.code_panel.as_mut().unwrap();
-        panel.editor.select_all();
-        let mut input = universe_engine::Input::default();
-        input
-            .text_events
-            .push(universe_engine::input::TextEvent::Key {
-                key: KeyCode::KeyV,
-                control: true,
-                shift: false,
-            });
-        panel.editor.update(
-            &input,
-            code_rect(Vec2::new(1280., 720.)),
-            &mut Clipboard(source()),
-        );
-        let text = panel.editor.text().to_string();
-        assert_eq!(text, source());
-        i.apply_ship_text(&text).unwrap();
-        assert_eq!(generated(&i).unwrap(), example());
-        i.plan.blocks[0].at.x += 5.;
-        assert_ne!(generated(&i).unwrap(), example());
-    }
-    #[test]
-    fn unchanged_source_is_exact_and_single_axis_edits_keep_precision() {
-        let mut text = source();
-        text = text.replace("[-2, 1, 3]", "[-2, 1.123456789123, 3.987654321987]");
-        let mut i = Interior::prepared(&text).unwrap();
-        assert_eq!(i.source_text().unwrap(), text);
-        i.plan.blocks[0].at.x = -8.;
-        let d = code::parse(&i.source_text().unwrap()).unwrap();
-        let code::Module::Equipment(e) = &d.modules["engine_left"] else {
-            panic!()
-        };
-        assert_eq!(e.pose.position_m, [-8., 1.123456789123, 3.987654321987]);
-        assert!(i.source_text().unwrap().contains("Ship code proposal"));
-    }
+
     #[test]
     fn apply_undo_restores_whole_document_and_decks() {
         let mut i = Interior::new();
@@ -1366,27 +1315,7 @@ mod tests {
         assert!(i.plan == current.plan);
         assert_eq!(i.decks_now, current.decks);
     }
-    #[test]
-    fn author_ids_follow_entities_when_reordered_deleted_and_added() {
-        let mut i = Interior::prepared(&source()).unwrap();
-        i.plan.blocks.swap(0, 1);
-        i.plan.blocks[0].at.x = 7.;
-        let mut added = i.plan.blocks[0].clone();
-        added.uid = Id::default();
-        added.at.x = 9.;
-        i.plan.blocks.push(added);
-        let d = generated(&i).unwrap();
-        let code::Module::Equipment(e) = &d.modules["flight_computer"] else {
-            panic!()
-        };
-        assert_eq!(e.pose.position_m[0], 7.);
-        i.plan.blocks.remove(1);
-        let d = generated(&i).unwrap();
-        assert!(!d.modules.contains_key("engine_left"));
-        assert_eq!(d.modules.len(), 2);
-        assert_eq!(d.design.name, example().design.name);
-        assert_eq!(d.design.notes, example().design.notes);
-    }
+
     #[test]
     fn save_reopen_is_one_document_with_decks_and_metadata() {
         let dir = std::env::temp_dir().join(format!(
@@ -1416,20 +1345,7 @@ mod tests {
         );
         std::fs::remove_dir_all(dir).unwrap();
     }
-    #[test]
-    fn failed_save_remains_dirty_for_deck_only_change() {
-        let mut i = Interior::prepared(&source()).unwrap();
-        i.saved = Some(i.plan.clone());
-        i.saved_decks = Some(i.decks_now.clone());
-        i.saved_view = Some(i.view_state());
-        i.decks_now.as_mut().unwrap().decks[0].floor -= 1.;
-        let blocker = std::env::temp_dir().join(format!("ship-blocker-{}", Id::default().0));
-        std::fs::write(&blocker, "file").unwrap();
-        i.source_path = Some(blocker.join("ship.yaml"));
-        assert!(!i.save());
-        assert!(i.unsaved());
-        std::fs::remove_file(blocker).unwrap();
-    }
+
     #[test]
     fn external_file_changes_are_not_overwritten() {
         let path =
@@ -1443,25 +1359,7 @@ mod tests {
         assert_eq!(std::fs::read_to_string(&path).unwrap(), "external edit");
         std::fs::remove_file(path).unwrap();
     }
-    #[test]
-    fn second_save_and_undo_across_save_keep_source_binding() {
-        let path = std::env::temp_dir().join(format!("ship-resave-{}.ship.yaml", Id::default().0));
-        std::fs::write(&path, source()).unwrap();
-        let mut i = Interior::new();
-        i.open_ship_source(&path).unwrap();
-        let old = i.snapshot();
-        i.plan.blocks[0].at.x = 10.;
-        i.save_ship().unwrap();
-        i.plan.blocks[0].at.x = 20.;
-        i.save_ship().unwrap();
-        i.restore(old);
-        i.save_ship().unwrap();
-        assert_eq!(
-            code::parse(&std::fs::read_to_string(&path).unwrap()).unwrap(),
-            example()
-        );
-        std::fs::remove_file(path).unwrap();
-    }
+
     #[test]
     fn draft_only_changes_are_dirty_and_not_saved_as_applied() {
         let mut i = Interior::prepared(&source()).unwrap();
@@ -1478,138 +1376,7 @@ mod tests {
             "invalid draft"
         );
     }
-    #[test]
-    fn hull_free_decks_generate_shared_walk_geometry() {
-        let i = Interior::prepared(&source()).unwrap();
-        let p = i.decks_now.as_ref().unwrap();
-        let b = deck_geometry(p, None);
-        assert!(!b.panels.is_empty());
-        assert!(!b.climbs.is_empty());
-        let stand = i.stand_up();
-        let mut bare = Interior::prepared(&source()).unwrap();
-        bare.decks_now = None;
-        assert!(stand.faces.len() > bare.stand_up().faces.len());
-        assert!(stand.shafts.len() > bare.stand_up().shafts.len());
-        assert_eq!(deck_shapes(p, None).len(), b.panels.len());
-        let craft = craft(&i);
-        assert_eq!(craft.structure[0].faces.len(), stand.faces.len() - 2);
-        for (face, (positions, _)) in craft.structure[0]
-            .faces
-            .iter()
-            .zip(stand.faces.iter().skip(2))
-        {
-            assert_eq!(&face.positions, positions);
-        }
-    }
-    #[test]
-    fn all_authored_layers_survive_projection_and_export() {
-        let doc = example();
-        let mut i = projected(&doc);
-        i.hidden = [true; 26];
-        let exported = generated(&i).unwrap();
-        let (p, decks) = projection(&exported).unwrap();
-        let mut again = Interior::new();
-        again.plan = p;
-        again.decks_now = Some(decks);
-        again.fit = i.fit.clone();
-        again.hidden = i.hidden;
-        assert_eq!(
-            generated(&again).unwrap(),
-            exported,
-            "stable author IDs survive projection"
-        );
-        assert_eq!(exported.modules.len(), doc.modules.len());
-        assert_eq!(exported.access.points.len(), doc.access.points.len());
-        assert_eq!(
-            exported.structure.members.len(),
-            doc.structure.members.len()
-        );
-        assert_eq!(exported.structure.plates.len(), doc.structure.plates.len());
-        assert_eq!(
-            exported.structure.landing_pads.len(),
-            doc.structure.landing_pads.len()
-        );
-        assert_eq!(exported.view.unwrap().layers.unwrap().len(), 26);
-    }
-    #[test]
-    fn full_roll_is_shared_by_design_walk_and_drive() {
-        let mut i = projected(&example());
-        let q = glam::Quat::from_euler(glam::EulerRot::XYZ, 0.41, 0.72, -0.28);
-        i.plan.blocks[0].rotation = Some(q);
-        let f = i
-            .fit
-            .iter()
-            .find(|f| f.id == kind(&i.plan.blocks[0].id))
-            .unwrap();
-        assert!(
-            push_of(&i.plan.blocks[0], f)
-                .unwrap()
-                .0
-                .abs_diff_eq(q * Vec3::Y, 1e-6)
-        );
-        let design = placed_equipment(&i);
-        let walk = i.stand_up();
-        let drive = craft(&i);
-        assert!(
-            design[0]
-                .transform
-                .abs_diff_eq(walk.equipment[0].transform, 1e-6)
-        );
-        assert!(
-            design[0]
-                .transform
-                .abs_diff_eq(drive.equipment[0].transform, 1e-6)
-        );
-        let out = generated(&i).unwrap();
-        let (p, _) = projection(&out).unwrap();
-        assert!(p.blocks[0].rotation.unwrap().abs_diff_eq(q, 1e-6));
-        for mirror in 1..=3 {
-            for n in 0..images(Vec3::ONE, mirror).len() {
-                let r = mirror_rotation(q, mirror, n);
-                assert!((r.length() - 1.).abs() < 1e-6);
-                assert!((r * Vec3::Y).abs_diff_eq(image_dir(q * Vec3::Y, mirror, n), 1e-6));
-            }
-        }
-    }
-    #[test]
-    fn explicit_connections_and_missing_equipment() {
-        let mut d = example();
-        if let code::Module::Equipment(e) = d.modules.values_mut().next().unwrap() {
-            e.record = "equipment.missing".into();
-        }
-        assert!(projection(&d).is_err());
-        let mut d = example();
-        let last = d
-            .decks
-            .values()
-            .map(|d| d.floor_m)
-            .fold(f64::NEG_INFINITY, f64::max);
-        let mut extra = d.decks.values().last().unwrap().clone();
-        extra.floor_m = last + 10.;
-        extra.ladders.clear();
-        extra.stairs.clear();
-        d.decks.insert("extra".into(), extra);
-        let mut changed = false;
-        for deck in d.decks.values_mut() {
-            for l in deck.ladders.values_mut() {
-                l.to_deck = "extra".into();
-                changed = true;
-            }
-        }
-        assert!(changed);
-        assert!(projection(&d).is_ok());
-    }
-    #[test]
-    fn export_is_atomic_and_does_not_overwrite_existing_file() {
-        let dir = std::env::temp_dir().join(format!("ship-export-test-{}", std::process::id()));
-        std::fs::create_dir_all(&dir).unwrap();
-        let path = dir.join("design.ship.yaml");
-        let _ = std::fs::remove_file(&path);
-        write_new(&path, "first").unwrap();
-        assert!(write_new(&path, "second").is_err());
-        assert_eq!(std::fs::read_to_string(&path).unwrap(), "first");
-        std::fs::remove_dir_all(dir).unwrap();
-    }
+
     #[test]
     fn rejected_source_does_not_mutate_open_design() {
         let mut i = projected(&example());

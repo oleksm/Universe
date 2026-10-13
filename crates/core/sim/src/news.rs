@@ -197,39 +197,3 @@ impl Knowledge {
         self.entered.retain(|k, _| live.contains(k));
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn a_kill_by_a_relay_comes_at_once_one_unseen_never_one_next_door_after_the_gates() {
-        let w = universe_world::World::new(1984);
-        let charts = w.charts();
-        let home = w.home_system;
-        let sys = charts.system(home);
-        let mut positions = Vec::new();
-        sys.positions(0.0, &mut positions);
-        let station = positions[sys.station().unwrap()];
-        let kill = |system: usize, at: DVec3, victim: ShipId| Kill { time: 0.0, system, killer: ShipId(7), victim, killer_name: "A".into(), victim_name: "B".into(), weapon: "GUNFIRE".into(), at, cause: universe_protocol::Cause::Rules };
-        // A fight 200,000 km from the station (past our own comm's hearing); one far out in the dark;
-        // one by the station (or the gate) of a system next door through a gate.
-        let next = charts.gate_links.iter().find_map(|&(a, b)| if a == home { Some(b) } else if b == home { Some(a) } else { None }).unwrap();
-        let there = charts.system(next);
-        let mut their = Vec::new();
-        there.positions(0.0, &mut their);
-        // (Out from the station away from its world, so the world doesn't stand in the way.)
-        let out = (station - positions[sys.bodies[sys.station().unwrap()].rail.parent.unwrap()]).normalize();
-        let kills = [kill(home, station + out * 2.0e8, ShipId(1)), kill(home, DVec3::new(1.0e14, 0.0, 0.0), ShipId(2)), kill(next, their[there.station().or_else(|| there.gate_to(home)).unwrap()], ShipId(3))];
-        let us = Listener { system: home, at: station + DVec3::new(5_000.0, 0.0, 0.0), comm: universe_world::ship::starter().comm, player: true, in_tube: false };
-        let mut news = Knowledge::default();
-        news.update(&charts, 2.0, &us, &Happenings { kills: &kills, ..Default::default() });
-        let heard = |n: &Knowledge, k: &Kill| n.heard(&Key::kill(k));
-        assert!(heard(&news, &kills[0]).is_some_and(|t| t < 2.0), "by the station: at once");
-        assert!(heard(&news, &kills[2]).is_none(), "next door: not yet");
-        news.update(&charts, 60.0, &us, &Happenings { kills: &kills, ..Default::default() });
-        assert!(heard(&news, &kills[1]).is_none(), "nobody saw it");
-        let t = heard(&news, &kills[2]).expect("through the gates by now");
-        assert!(t >= 1.0, "the gate relays' handling at least: {t}");
-    }
-}

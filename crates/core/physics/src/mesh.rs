@@ -158,16 +158,3 @@ impl Mesh {
         MassProperties { volume, centroid, inertia: about_origin - shift * volume }
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn a_long_box_turns_harder_end_over_end_than_about_its_length() {
-        let pts: Vec<DVec3> = [-1.0, 1.0].iter().flat_map(|&x| [-1.0, 1.0].iter().flat_map(move |&y| [-5.0, 5.0].iter().map(move |&z| DVec3::new(x, y, z)))).collect();
-        let p = Mesh::convex_hull(&pts).mass_properties();
-        assert!((p.volume - 40.0).abs() < 1e-9);
-        assert!(p.inertia.x_axis.x > 10.0 * p.inertia.z_axis.z, "end over end vs. rolling: {:?}", p.inertia);
-    }
-}

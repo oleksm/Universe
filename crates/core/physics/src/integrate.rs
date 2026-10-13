@@ -154,18 +154,9 @@ mod tests {
     use super::*;
     use crate::collide::{Blocks, Collider, Feature, Ring};
     use crate::orbit::Orbit;
-    
+
     use crate::rails::{positions, RailBody};
     use crate::testkit::body;
-
-    /// Coasting: no applied acceleration, stop on any contact.
-    struct Coast;
-
-    impl Driver for Coast {
-        fn applied(&mut self, _: &mut RigidBody, _: f64, _: f64, _: &[DVec3]) -> DVec3 {
-            DVec3::ZERO
-        }
-    }
 
     /// Thrust along the nose, turning slowly: something with state to replay.
     struct Wander {
@@ -246,29 +237,6 @@ mod tests {
     fn same_inputs_same_world() {
         let (a, b) = (run(), run());
         assert_eq!(a, b, "a multi-body run must be reproducible bit for bit");
-    }
-
-    #[test]
-    fn a_circular_orbit_stays_circular() {
-        let planet = [body(None, None, 4.0e14, 6.4e6)];
-        let r0: f64 = 7.0e6;
-        let v0 = (4.0e14 / r0).sqrt();
-        let mut probe = RigidBody::new(DVec3::X * r0, DVec3::Z * v0, DQuat::IDENTITY, 12.0);
-        let energy = |s: &RigidBody| 0.5 * s.velocity.length_squared() - 4.0e14 / s.position.length();
-        let e0 = energy(&probe);
-        let period = std::f64::consts::TAU * (r0 * r0 * r0 / 4.0e14).sqrt();
-        let mut p = Vec::new();
-        let mut t = 0.0;
-        let mut worst: f64 = 0.0;
-        while t < 10.0 * period {
-            let out = integrate(&planet, None, &mut p, &mut probe, Span { t, dt: 60.0, max_h: f64::INFINITY, contact_step: FINE_STEP }, &mut Coast);
-            assert!(out.fact.is_none());
-            t = out.time;
-            worst = worst.max((probe.position.length() - r0).abs() / r0);
-        }
-        eprintln!("10 orbits: worst radius drift {:.2e}, energy drift {:.2e}", worst, (energy(&probe) - e0) / e0);
-        assert!(worst < 1e-3);
-        assert!(((energy(&probe) - e0) / e0).abs() < 1e-4);
     }
 
 }

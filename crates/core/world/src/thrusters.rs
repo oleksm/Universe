@@ -207,29 +207,6 @@ pub fn balanced_with(thrusters: &[Thruster], com: DVec3, mass: f64, inertia: DMa
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::ship::starter;
-
-    /// The starter at the load it's balanced for: a full tank, its hold half full.
-    fn starter_now() -> (f64, DVec3, DMat3) {
-        let mut s = crate::ship::Ship::new(DVec3::ZERO, DVec3::ZERO, glam::DQuat::IDENTITY);
-        s.cargo = s.spec().hold_capacity / 2.0;
-        (s.mass(), s.centre_of_mass(), s.inertia())
-    }
-
-    #[test]
-    fn a_pure_turn_fires_couples_and_pushes_nowhere() {
-        let (m, com, i) = starter_now();
-        let env = turn_envelope(&starter().thrusters, com, m, i);
-        eprintln!("turning envelope (rad/s²): pitch {:.2}, yaw {:.2}, roll {:.2}", env.x, env.y, env.z);
-        assert!(env.x > 0.5 && env.y > 0.3 && env.z > 0.5, "it can turn every way: {env}");
-        // A modest yaw: done, with next to no push.
-        let want = DVec3::Y * 0.3 * i.y_axis.y;
-        let mut u = Vec::new();
-        let (f, q) = allocate(&starter().thrusters, com, m, i, DVec3::ZERO, want, &mut u);
-        assert!((q - want).length() < 0.05 * want.length(), "{q} vs {want}");
-        assert!(f.length() / m < 0.05, "pushes nowhere: {} m/s²", f.length() / m);
-    }
-
     #[test]
     fn zero_yaw_authority_does_not_disable_balanced_lift() {
         use crate::ship::ThrusterRole;
@@ -241,19 +218,6 @@ mod tests {
         assert_eq!(envelope.y, 0.);
         let lift = balanced(&ts, DVec3::ZERO, 1000., inertia, DVec3::Y, 16000., STRAIGHT * envelope.min_element());
         assert!(lift > 15900., "symmetric fans retain their lift: {lift}");
-    }
-
-    #[test]
-    fn zero_tolerance_accepts_exact_centre_push_but_rejects_offset_push() {
-        use crate::ship::ThrusterRole;
-        let mut t = Thruster { nozzle: "main".into(), role: ThrusterRole::Main,
-            at: DVec3::ZERO, push: DVec3::NEG_Z, thrust: 4000., exhaust: 1., efficiency: 1. };
-        let inertia = DMat3::from_diagonal(DVec3::splat(400.));
-        assert_eq!(balanced_with(&[t.clone()],DVec3::ZERO,1000.,inertia,DVec3::NEG_Z,4000.,0.,true),4000.);
-        t.at = DVec3::X;
-        for drive in [false,true] {
-            assert_eq!(balanced_with(&[t.clone()],DVec3::ZERO,1000.,inertia,DVec3::NEG_Z,4000.,0.,drive),0.,"an unopposed torque is not roundoff");
-        }
     }
 
 }

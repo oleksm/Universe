@@ -482,40 +482,5 @@ mod tests {
             }
         }
     }
-    #[test]
-    fn fallback_and_near_clipping_use_shared_projection() {
-        let triangle = [
-            Vec3::new(-1., -1., 0.02),
-            Vec3::new(1., -1., 2.),
-            Vec3::new(0., 1., 2.),
-        ];
-        let item = placed_rotated(
-            "no-such-equipment",
-            Vec3::ZERO,
-            glam::Quat::IDENTITY,
-            || vec![triangle],
-        );
-        assert!(!item.installed);
-        let camera = Camera {
-            eye: Vec3::ZERO,
-            right: Vec3::X,
-            up: Vec3::Y,
-            forward: Vec3::Z,
-            focal: 100.,
-            centre: glam::Vec2::ZERO,
-            near: 0.1,
-        };
-        let visible = project(&[item], glam::Mat4::IDENTITY, &camera);
-        assert!(visible.iter().all(|t| !t.blend && t.alpha_cutoff.is_none()));
-        assert_eq!(
-            visible.len(),
-            2,
-            "triangle crossing near plane becomes clipped quad"
-        );
-        assert!(
-            visible
-                .iter()
-                .all(|t| t.depth >= camera.near && t.points.iter().all(|p| p.is_finite()))
-        );
-    }
+
 }

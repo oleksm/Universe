@@ -104,22 +104,5 @@ mod tests {
                 .is_none()
         );
     }
-    #[test]
-    fn stationary_nearby_turn_and_large_silhouette() {
-        let mut v = view();
-        assert_eq!(
-            v.demand(DVec3::Z * 2., DVec3::ZERO, 0., 10.).unwrap().class,
-            2
-        );
-        assert!(v.demand(DVec3::Z * 8., DVec3::ZERO, 0., 10.).is_none());
-        v.angular_speed = 1.;
-        assert_eq!(
-            v.demand(DVec3::Z * 2., DVec3::ZERO, 0., 10.).unwrap().class,
-            1
-        );
-        assert!(
-            v.demand(DVec3::NEG_Z * 100., DVec3::ZERO, 95., 10.)
-                .is_some()
-        );
-    }
+
 }

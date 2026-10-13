@@ -63,8 +63,6 @@ pub mod structures;
 pub mod structures_catalogue;
 pub mod system;
 pub mod terrain;
-#[cfg(test)]
-mod testkit;
 pub mod traffic;
 pub mod trim;
 pub mod turrets;

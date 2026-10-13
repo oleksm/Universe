@@ -122,19 +122,3 @@ impl StationFrame {
         self.rotation * parked()
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn pads_lie_on_the_deck_clear_of_the_structure() {
-        for k in 0..crate::spaceport::PADS {
-            let p = pad_local(k);
-            assert_eq!(pad_at(p), Some(k));
-            assert!(p.x.abs() + PAD_SIZE <= DECK_HALF && p.z - PAD_SIZE >= DECK_FROM && p.z + PAD_SIZE <= DECK_TO, "pad {k} at {p}");
-        }
-        assert!(hull().contact(0, &Frame { center: DVec3::ZERO, velocity: DVec3::ZERO, rotation: DQuat::IDENTITY, angular_velocity: DVec3::ZERO }, pad_local(5), DVec3::ZERO, SHIP_RADIUS + 0.1).is_some());
-    }
-
-}

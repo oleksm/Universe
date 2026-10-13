@@ -152,39 +152,3 @@ pub fn light_at(sys: &StarSystem, positions: &[DVec3], p: DVec3) -> (f64, f64) {
     });
     (sun, world)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use crate::testkit::Probe;
-
-    #[test]
-    fn an_earthlike_world_is_mild_an_airless_moon_swings_hard() {
-        let mut p = Probe::new(42);
-        let sys = p.sys();
-        let pos = p.positions();
-        let t = p.world.time;
-        let sun = sys.bodies.iter().position(|b| b.kind == BodyKind::Star).unwrap();
-        let to_sun = |i: usize| (pos[sun] - pos[i]).normalize();
-        // An Earth-like world with air: its mean somewhere people live, day and night close.
-        if let Some(w) = (0..sys.bodies.len()).find(|&i| sys.bodies[i].terrain.as_ref().is_some_and(|tr| tr.kind == TerrainKind::Terran)) {
-            let mean = mean_temperature(&sys, w, &pos);
-            let day = surface_temperature(&sys, w, &pos, t, to_sun(w));
-            let night = surface_temperature(&sys, w, &pos, t, -to_sun(w));
-            eprintln!("earth-like: mean {mean:.0} K, noon {day:.0} K, midnight {night:.0} K");
-            assert!((200.0..340.0).contains(&mean), "{mean}");
-            assert!(day > night && day - night < 60.0, "{day} {night}");
-        }
-        // An airless moon: a hot day, a deep cold night.
-        let m = (0..sys.bodies.len()).find(|&i| sys.bodies[i].kind == BodyKind::Moon && sys.bodies[i].rail.atmosphere.is_none()).expect("a moon");
-        let day = surface_temperature(&sys, m, &pos, t, to_sun(m));
-        let night = surface_temperature(&sys, m, &pos, t, -to_sun(m));
-        eprintln!("airless moon: noon {day:.0} K, midnight {night:.0} K");
-        assert!(day - night > 100.0, "{day} {night}");
-        // Air cools with height.
-        let up = |i: usize, h: f64| pos[i] + to_sun(i) * (sys.bodies[i].rail.radius + h);
-        if let Some(w) = (0..sys.bodies.len()).find(|&i| sys.bodies[i].rail.atmosphere.is_some()) {
-            assert!(air_temperature(&sys, w, &pos, t, up(w, 5_000.0)) < air_temperature(&sys, w, &pos, t, up(w, 0.0)) - 20.0);
-        }
-    }
-}

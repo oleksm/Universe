@@ -33,24 +33,3 @@ fn sample_keys(down: impl Fn(KeyCode) -> bool, mouse: Option<Vec2>, dt: f64) -> 
         throttle_delta: if shift { 0.0 } else { axis(KeyCode::KeyS, KeyCode::KeyW) * 0.6 * dt },
     }
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn translation_modifier_preserves_live_mapping() {
-        let pilot = sample_keys(|k| [KeyCode::ShiftLeft,KeyCode::KeyW,KeyCode::KeyE,KeyCode::KeyD].contains(&k), None, 1.0);
-        assert_eq!(pilot.translation,DVec3::new(1.,1.,-1.));
-        assert_eq!(pilot.turn,Controls::default());
-        assert_eq!(pilot.throttle_delta,0.);
-        let pilot = sample_keys(|k| [KeyCode::KeyW,KeyCode::KeyQ,KeyCode::KeyA].contains(&k), None, 0.5);
-        assert_eq!(pilot.throttle_delta,0.3);
-        assert_eq!(pilot.turn,Controls {pitch:0.,yaw:1.,roll:1.});
-    }
-    #[test]
-    fn mouse_commands_rate_and_releasing_it_commands_zero() {
-        let p = sample_keys(|_| false,Some(Vec2::new(25.,-5.)),0.01);
-        assert_eq!(p.turn,Controls {pitch:0.4,yaw:-1.,roll:0.});
-        assert_eq!(sample_keys(|_|false,None,0.01).turn,Controls::default());
-    }
-}

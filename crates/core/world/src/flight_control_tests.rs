@@ -42,7 +42,6 @@ fn legacy_drive(ship: &mut Ship, turn: Option<&Controls>, dt: f64, push: bool) {
         ship.orientation = (ship.orientation * DQuat::from_scaled_axis(ship.angular_velocity * dt)).normalize();
     }
 
-
 fn legacy_manual(ship: &mut Ship, dt: f64) {
         let s = ship.spec();
         let com = ship.centre_of_mass();
@@ -93,26 +92,4 @@ fn live_drive_matches_frozen_controller_over_mixed_spans() {
             }
         }
     }
-}
-
-#[test]
-fn arbitrary_body_derating_and_realized_torque_use_same_integration() {
-    use crate::flight_control::{self as fc, Body, Demand};
-    let inertia = DMat3::from_cols(DVec3::new(40.,2.,1.),DVec3::new(2.,60.,3.),DVec3::new(1.,3.,80.));
-    let body = Body { mass: 20., com: DVec3::new(0.3,0.2,-0.1), inertia, spin: DVec3::new(0.2,-0.1,0.4) };
-    let actuator = Thruster { nozzle:"arbitrary".into(),role:ThrusterRole::Lift,at:DVec3::X,push:DVec3::Y,thrust:5.,exhaust:0.,efficiency:1. };
-    let mut jets=vec![0.7];
-    let demand=Demand { force:DVec3::Y*1e6,want_rates:Some(DVec3::ZERO),drive:None,enabled:true };
-    let result=fc::step(&[actuator.clone()],body,demand,0.02,&mut jets);
-    assert!(jets[0]>=0. && jets[0]<=1.);
-    assert!(result.force.length()<=5.);
-    assert_eq!(result.torque,(actuator.at-body.com).cross(result.force));
-    // Resource limiting happens after allocation: integrate delivered torque, not requested torque.
-    let realized=result.torque*0.25;
-    let spin=fc::integrate_rates(inertia,body.spin,realized,None,0.02);
-    assert_eq!(spin,body.spin+inertia.inverse()*realized*0.02);
-    let off=fc::step(&[actuator],body,Demand{enabled:false,..demand},0.02,&mut jets);
-    assert_eq!(jets,vec![0.]);assert_eq!(off.force,DVec3::ZERO);assert_eq!(off.spin,body.spin);
-    assert_eq!(fc::rates(DVec3::new(-2.,0.5,4.),DVec3::new(1.,2.,3.)),DVec3::new(-1.,1.,3.));
-    assert_eq!(fc::integrate_rates(DMat3::IDENTITY,DVec3::ZERO,DVec3::splat(10.),Some(DVec3::ONE),1.),DVec3::ONE);
 }

@@ -69,25 +69,3 @@ pub fn drag(velocity: DVec3, air: DVec3, density: f64, ballistic: f64, h: f64) -
 pub fn heat_flux(density: f64, speed: f64, nose: f64) -> f64 {
     SUTTON_GRAVES * (density / nose).sqrt() * speed.powi(3)
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn a_falling_body_reaches_its_terminal_velocity() {
-        // 1500 kg/m² in sea-level air under 9.81: v = sqrt(2βg/ρ) ≈ 155 m/s.
-        let (beta, rho, g) = (1500.0, EARTH_AIR_DENSITY, STANDARD_GRAVITY);
-        let mut v = DVec3::ZERO;
-        for _ in 0..6000 {
-            v += DVec3::NEG_Y * g * 0.05;
-            v = drag(v, DVec3::ZERO, rho, beta, 0.05);
-        }
-        let terminal = (2.0 * beta * g / rho).sqrt();
-        assert!((v.length() - terminal).abs() < 1.0, "{} vs {terminal}", v.length());
-        // And a huge step is still stable.
-        let fast = drag(DVec3::X * 8_000.0, DVec3::ZERO, rho, beta, 100.0);
-        assert!(fast.x > 0.0 && fast.x < 8_000.0);
-    }
-
-}

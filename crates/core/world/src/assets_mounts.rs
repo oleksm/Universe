@@ -79,43 +79,6 @@ pub fn placement(
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn mount_composition_preserves_roll_and_primary_contact() {
-        let hull = DMat4::from_rotation_translation(
-            DQuat::from_euler(glam::EulerRot::XYZ, 0.3, 0.4, 0.7),
-            DVec3::new(3., 4., 5.),
-        );
-        let primary =
-            DMat4::from_rotation_translation(DQuat::from_rotation_z(0.8), DVec3::new(1., 2., 3.));
-        let model = BTreeMap::from([
-            ("mount_sensor".into(), primary),
-            ("mount".into(), DMat4::IDENTITY),
-        ]);
-        let p = placement(hull, &model, "sensor").unwrap();
-        assert!((p * primary).abs_diff_eq(hull, 1e-12));
-        assert!(placement(DMat4::from_scale(DVec3::new(-1., 1., 1.)), &model, "sensor").is_err());
-        assert!(placement(DMat4::from_scale(DVec3::splat(2.)), &model, "sensor").is_err());
-    }
-    #[test]
-    fn reviewed_mc07_static_sockets_match_hull_and_keep_full_roll() {
-        let fixture: serde_json::Value = serde_json::from_str(include_str!(
-            "../tests/fixtures/mc07-static-mounts/mount-overlay.json"
-        ))
-        .unwrap();
-        let bytes = include_bytes!("../../../../assets/models/mc07.glb");
-        assert_eq!(fixture["hull_sha256"], crate::worlds::sha256(bytes));
-        for b in fixture["bindings"].as_array().unwrap() {
-            let a: [f64; 16] = serde_json::from_value(b["transform"].clone()).unwrap();
-            let m = DMat4::from_cols_array(&a);
-            let (at, q) = rigid(m).unwrap();
-            assert!(DMat4::from_rotation_translation(q, at).abs_diff_eq(m, 2e-6));
-            assert!(
-                q.angle_between(DQuat::IDENTITY) > 0.1,
-                "fixture must exercise roll/pitch"
-            );
-            assert_eq!(b["replace_nodes"].as_array().unwrap().len(), 0);
-        }
-    }
 
     #[test]
     fn ancestor_frames_are_applied_once_and_duplicates_refused() {

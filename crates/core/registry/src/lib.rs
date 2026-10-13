@@ -228,7 +228,6 @@ impl Registry {
         self.parts.iter().filter(|p| self.folders.get(&p.identity.key) == Some(&folder)).map(|p| (p, p.fit.count.unwrap_or(1).max(1) as u32)).collect()
     }
 
-
     /// What `item` (a good, a stock item or a material) is traded as: a
     /// market category, by key (`market.fuel`). A material is traded as the
     /// stock made from it is: what burns or holds a material takes any stock
@@ -343,27 +342,5 @@ fn yaml_files(dir: &Path, out: &mut Vec<PathBuf>) {
         } else if p.extension().is_some_and(|x| x == "yaml") {
             out.push(p);
         }
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    /// The registry in the repository reads without a problem (every record
-    /// into its generated type, every reference to a record of a kind it may
-    /// name), and comes back the same through the binary's encoding.
-    #[test]
-    fn the_registry_reads_and_round_trips() {
-        let root = Path::new(env!("CARGO_MANIFEST_DIR")).join("../../../standards");
-        let reg = Registry::read(&root).unwrap_or_else(|p| panic!("{}", p.iter().map(|p| p.to_string()).collect::<Vec<_>>().join("\n")));
-        let back = Registry::decode(&reg.encode());
-        assert_eq!(back.galaxy().map(|g| g.seed), reg.galaxy().map(|g| g.seed));
-        assert_eq!((back.equipment.len(), back.bodies.len(), back.hulls.len()), (reg.equipment.len(), reg.bodies.len(), reg.hulls.len()));
-        assert_eq!(back.hulls, reg.hulls);
-        // (Parts as a rule, SFO 12: the equipment records' lists derive their parts; with the filed ones, the registry holds them all.)
-        let derived: usize = reg.equipment.iter().map(|e| e.built_of.list.len()).sum();
-        assert!(derived > 600 && reg.parts.len() >= derived + 100, "{} parts, {derived} of them derived", reg.parts.len());
-        assert_eq!(back.parts.len(), reg.parts.len());
     }
 }

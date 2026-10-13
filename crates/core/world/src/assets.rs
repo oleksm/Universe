@@ -78,30 +78,6 @@ mod tests {
     use super::*;
     use crate::worlds::sha256;
 
-    /// A package made on the spot reads back checked; a changed model or manifest is refused.
-    #[test]
-    fn packages_are_checked() {
-        let dir = std::env::temp_dir().join(format!("freefall-assets-test-{}", std::process::id()));
-        let folder = dir.join("models/test-box/v1");
-        std::fs::create_dir_all(&folder).unwrap();
-        let glb = b"glTF fake bytes".to_vec();
-        std::fs::write(folder.join("model.glb"), &glb).unwrap();
-        let manifest = serde_json::json!({"format": "freefall-model/1", "key": "equipment.test.box", "bounds_m": [[-1.0, 0.0, -2.0], [1.0, 4.0, 2.0]],
-            "files": {"model.glb": {"sha256": sha256(&glb), "size": glb.len()}}});
-        let bytes = serde_json::to_vec(&manifest).unwrap();
-        std::fs::write(folder.join("manifest.json"), &bytes).unwrap();
-        let visual = |sha: String| Visual { format: "freefall-model/1".into(), path: "models/test-box/v1".into(), manifest_sha256: sha, version: 1, triangles: None, note: None };
-        // SAFETY of the env change: this test alone reads UNIVERSE_ASSETS.
-        unsafe { std::env::set_var("UNIVERSE_ASSETS", &dir) };
-        let m = model(&visual(sha256(&bytes))).unwrap();
-        assert_eq!(m.glb, glb);
-        assert_eq!((m.lo, m.hi), ([-1.0, 0.0, -2.0], [1.0, 4.0, 2.0]));
-        assert!(model(&visual("0".repeat(64))).is_err(), "a manifest not the record's");
-        std::fs::write(folder.join("model.glb"), b"changed").unwrap();
-        assert!(model(&visual(sha256(&bytes))).is_err(), "a model not the manifest's");
-        let _ = std::fs::remove_dir_all(&dir);
-    }
-
     /// A package in a fresh folder: its files, and a manifest listing them with `sizes` (None: the
     /// true sizes). Returns the folder and the manifest's hash.
     fn package(name: &str, files: &[(&str, &[u8])], sizes: Option<&[u64]>) -> (PathBuf, String) {

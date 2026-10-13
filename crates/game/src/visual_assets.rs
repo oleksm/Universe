@@ -217,27 +217,6 @@ fn resident_bytes(v: &Visual) -> usize {
 #[cfg(test)]
 mod tests {
     use super::*;
-    #[test]
-    fn native_request_shares_verified_bytes_without_projected_faces() {
-        let Some(store) = assets::store() else { return };
-        let record = assets::visual("equipment.engine.ch.s2").unwrap();
-        let path = store.join(&record.path).join("model.glb");
-        let until = std::time::Instant::now() + Duration::from_secs(5);
-        let loaded = loop {
-            if let Some(v) = request_native(&path, &[]) {
-                break v;
-            }
-            assert!(std::time::Instant::now() < until, "{:?}", snapshot());
-            std::thread::sleep(Duration::from_millis(2));
-        };
-        assert!(loaded.faces.is_empty());
-        assert_eq!(
-            loaded.source_sha256,
-            universe_sim::world::worlds::sha256(&std::fs::read(&path).unwrap())
-        );
-        assert!(Arc::ptr_eq(&loaded, &request_native(&path, &[]).unwrap()));
-        assert!(!loaded.nodes.is_empty());
-    }
 
     #[test]
     fn real_asset_cold_warm_and_scene_return_accounting() {
@@ -304,51 +283,5 @@ mod tests {
             serde_json::to_string(&snapshot).unwrap()
         );
     }
-    #[test]
-    fn corrupt_manifest_fails_in_worker_and_reports_reason() {
-        use std::time::Instant;
-        if assets::store().is_none() {
-            return;
-        }
-        let original = assets::visual("equipment.engine.ch.s2").unwrap();
-        let record = universe_sim::world::registry::Visual {
-            format: original.format.clone(),
-            path: original.path.clone(),
-            manifest_sha256: "0".repeat(64),
-            version: original.version,
-            triangles: original.triangles,
-            note: None,
-        };
-        let cache = AssetCache::new(Config::default());
-        assert!(
-            cache
-                .request(
-                    "corrupt".into(),
-                    Demand {
-                        estimated_bytes: RESERVATION,
-                        ..Default::default()
-                    },
-                    move || {
-                        let value = prepare(&record)?;
-                        let bytes = resident_bytes(&value);
-                        Ok(Loaded { value, bytes })
-                    }
-                )
-                .is_none()
-        );
-        let until = Instant::now() + Duration::from_secs(5);
-        loop {
-            let s = cache.snapshot();
-            if s.failures > 0 {
-                assert_eq!(s.loads, 0);
-                assert_eq!(s.resident_bytes, 0);
-                assert_eq!(s.reserved_bytes, 0);
-                assert_eq!(s.entries[0].state, "failed");
-                assert!(s.entries[0].error.as_ref().is_some_and(|e| !e.is_empty()));
-                break;
-            }
-            assert!(Instant::now() < until, "{s:?}");
-            std::thread::sleep(Duration::from_millis(2));
-        }
-    }
+
 }

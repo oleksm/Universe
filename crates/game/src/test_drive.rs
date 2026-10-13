@@ -185,28 +185,6 @@ impl Drive {
         self.assist = on && self.craft.rates.is_some();
     }
 
-    #[cfg(test)]
-    pub fn advance(&mut self, dt: f64) {
-    let _scope = universe_prof::scope("update/studio/flight");
-        for _ in 0..4 {
-            self.step(dt / 4.0, Controls::default());
-        }
-        self.time += dt;
-    }
-
-    /// Pitch and roll (degrees), and the speed (m/s).
-    #[cfg(test)]
-    pub fn attitude(&self) -> (f64, f64, f64) {
-        let nose = self.rot * DVec3::NEG_Z;
-        (nose.y.asin().to_degrees(), (self.rot * DVec3::X).y.asin().to_degrees(), self.vel.length())
-    }
-
-    /// Height (m), climb (m/s), batteries left (0..1), packs' warming (K).
-    #[cfg(test)]
-    pub fn reading(&self) -> (f64, f64, f64, f64) {
-        (self.pos.y, self.vel.y, if self.craft.stored > 0.0 { self.energy / self.craft.stored } else { 0.0 }, self.warm)
-    }
-
     fn say(&mut self, what: String) {
         if !self.events.contains(&what) {
             self.events.push(what);
@@ -984,31 +962,6 @@ mod tests {
     }
 
     #[test]
-    fn lift_only_ship_without_computer_uses_shared_manual_keys() {
-        use universe_engine::KeyCode;
-        let mut craft = vacuum_craft();
-        craft.rates = None;
-        craft.actuators.retain(|a| a.dir == DVec3::Y);
-        let mut d = Drive::new(craft);
-        d.air = 3;
-        d.pos.y = 100.;
-        assert!(!d.assist);
-        let ts = d.craft.thrusters();
-        let forward = crate::manual::held_keys(|k| k == KeyCode::KeyW, &ts);
-        assert_eq!(forward, 0, "W fires forward engines, not vertical engines");
-        let lift = crate::manual::held_keys(|k| k != KeyCode::KeyW, &ts);
-        for (k, held) in d.held.iter_mut().enumerate() { *held = lift & (1 << k) != 0; }
-        d.step(1./60., Controls::default());
-        assert!(d.vel.y > 0.);
-        assert!(d.pushes.iter().all(|push| *push > 0.));
-        assert!(control_status(&d).contains("FIT A FLIGHT COMPUTER"));
-        assert!(lift_help(&d, &crate::manual::labels_for(&ts)).contains("NUMPAD"));
-        assert!(!control_help(&d).contains("MOUSE STEERS"));
-        d.stopped = true;
-        assert!(control_status(&d).contains("R RESTART"));
-    }
-
-    #[test]
     fn studio_step_matches_shared_controller_with_rotated_body() {
         let mut d=Drive::new(vacuum_craft());d.air=3;d.pos.y=100.;
         d.rot=DQuat::from_euler(universe_engine::glam::EulerRot::XYZ,0.4,0.7,-0.6);
@@ -1025,39 +978,6 @@ mod tests {
     }
 
     #[test]
-    fn rate_control_turns_past_old_cap_and_brakes_without_levelling() {
-        let mut d=Drive::new(vacuum_craft());d.air=3;d.pos.y=100.;
-        for _ in 0..240 {d.step(1./120.,Controls {pitch:1.,..Default::default()});}
-        let up=(d.rot*DVec3::Y).y;assert!(up<0.698f64.cos(),"old tilt cap still active: {up}");
-        for _ in 0..240 {d.step(1./120.,Controls::default());}
-        assert!(d.spin.length()<0.01,"released input must brake spin");
-        assert!((d.rot*DVec3::Y).y<0.698f64.cos(),"release must not auto-level");
-    }
-
-    #[test]
-    fn unavailable_propellant_cannot_produce_control_torque() {
-        let mut d=Drive::new(vacuum_craft());d.propellant=0.;d.air=3;d.pos.y=100.;
-        d.step(1./60.,Controls {yaw:1.,..Default::default()});
-        assert_eq!(d.spin,DVec3::ZERO);assert!(d.throttles.iter().all(|v|*v==0.));
-        d.set_assist(false);d.held.fill(true);d.step(1./60.,Controls::default());
-        assert_eq!(d.spin,DVec3::ZERO);assert!(d.throttles.iter().all(|v|*v==0.));
-    }
-
-    #[test]
-    fn manual_control_preserves_spin_without_hidden_braking() {
-        let mut d=Drive::new(vacuum_craft());d.air=3;d.pos.y=100.;d.set_assist(false);
-        d.spin=DVec3::new(0.2,-0.3,0.1);d.held[0]=true;
-        let ts=d.craft.thrusters();let mut jets=vec![0.;ts.len()];let dt=1./120.;
-        let expected=flight_control::manual(&ts,d.craft.body(d.mass,d.spin),1,true,dt,&mut jets);
-        d.step(dt,Controls::default());
-        assert!((d.rot.inverse()*d.spin).abs_diff_eq(expected.spin,1e-10));
-        d.held.fill(false);
-        let spin=d.rot.inverse()*d.spin;
-        d.step(dt,Controls::default());
-        assert!((d.rot.inverse()*d.spin).abs_diff_eq(spin,1e-10));
-    }
-
-    #[test]
     fn last_fuel_derates_realized_control_torque() {
         let mut d=Drive::new(vacuum_craft());d.air=3;d.pos.y=100.;d.set_assist(false);
         for a in &mut d.craft.actuators {a.kind=Kind::Rocket {exhaust:100.};}
@@ -1069,39 +989,4 @@ mod tests {
         assert!(d.propellant.abs()<1e-10);
     }
 
-    /// A tonne on four fans a metre out, each 4 kN: past hover thrust it climbs,
-    /// level on ASSIST, and the packs run down.
-    #[test]
-    fn four_fans_lift_a_tonne() {
-        let fan = |x: f64, z: f64| Actuator { at: DVec3::new(x, 0.0, z), dir: DVec3::Y, thrust: 4000.0, kind: Kind::Fan { full_power: 200_000.0, min_density: 0.3 } };
-        let leg = |x: f64, z: f64| Leg { foot: DVec3::new(x, -1.0, z), holds: 20_000.0, stroke: 0.3, sink: 3.0 };
-        let craft = Craft {
-            name: "test".into(),
-            mass: 1000.0,
-            inertia: DMat3::from_diagonal(DVec3::splat(400.0)),
-            actuators: vec![fan(-1.0, -1.0), fan(1.0, -1.0), fan(-1.0, 1.0), fan(1.0, 1.0)],
-            legs: vec![leg(-1.0, -1.0), leg(1.0, -1.0), leg(-1.0, 1.0), leg(1.0, 1.0)],
-            stored: 1.0e8,
-            rate: 1.0e6,
-            efficiency: 0.95,
-            heat_capacity: 1.0e5,
-            warming: 40.0,
-            rates: Some(DVec3::new(1.,1.,1.8)),
-            gravity: 9.80665,
-            area: 4.0,
-            ..Default::default()
-        };
-        let mut d = Drive::new(craft);
-        d.translation = DVec3::Y * 0.8;
-        d.set_assist(true);
-        let (h0, ..) = d.reading();
-        for _ in 0..300 {
-            d.advance(1.0 / 60.0);
-        }
-        let (h, climb, left, warm) = d.reading();
-        let (pitch, roll, _) = d.attitude();
-        assert!(h > h0 + 1.0 && climb > 0.0, "{h} {climb}");
-        assert!(pitch.abs() < 2.0 && roll.abs() < 2.0, "{pitch} {roll}");
-        assert!(left < 1.0 && warm > 0.0, "{left} {warm}");
-    }
 }

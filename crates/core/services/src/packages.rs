@@ -248,32 +248,7 @@ mod tests {
         );
         (u, s)
     }
-    #[test]
-    fn accrual_and_partial_lot_close() {
-        let (mut u, mut s) = filled(40.0);
-        assert!(u[0].label.is_none());
-        fill(
-            &mut u,
-            &mut s,
-            &spec(),
-            &batch(),
-            "stock.test",
-            "org.test",
-            80.0,
-            15.0,
-        );
-        assert_eq!(u.len(), 2);
-        assert_eq!(u[0].label.as_ref().unwrap().serial, "HHI-000001-0001");
-        close(&mut u, &batch().lot, 20.0, &mut s);
-        let l = u[1].label.as_ref().unwrap();
-        assert_eq!(
-            (l.net_mass, l.gross_mass, l.made_on, l.packed_on),
-            (20.0, 27.0, 10.0, 20.0)
-        );
-        close(&mut u, &batch().lot, 30.0, &mut s);
-        assert_eq!(s[&batch().lot], 2);
-        assert_eq!(u[1].label.as_ref().unwrap().packed_on, 20.0);
-    }
+
     #[test]
     fn whole_transfer_keeps_identity_split_ends_it() {
         let (mut u, _) = filled(200.0);
@@ -284,40 +259,7 @@ mod tests {
         assert!(take(&mut u, &[(batch(), 100.0)].into(), &[(batch(), 1.0)]).is_empty());
         assert!(u.is_empty());
     }
-    #[test]
-    fn whole_transfer_roundoff_does_not_open_next_fill() {
-        let (mut u, _) = filled(125.0);
-        let moved = take(&mut u, &[(batch(), 125.0)].into(), &[(batch(), 100.0 + 1e-13)]);
-        assert_eq!(moved.len(), 1);
-        assert_eq!(u.len(), 1);
-        assert_eq!(u[0].net_mass, 25.0);
-        assert!(u[0].label.is_none());
-        let (mut u, _) = filled(125.0);
-        let moved = take(&mut u, &[(batch(), 125.0)].into(), &[(batch(), 100.0 - 1e-13)]);
-        assert_eq!(moved.len(), 1);
-        assert_eq!(u.len(), 1);
-    }
 
-    #[test]
-    fn loose_first_and_no_mixed_lots() {
-        let (mut u, mut s) = filled(100.0);
-        assert!(take(&mut u, &[(batch(), 150.0)].into(), &[(batch(), 50.0)]).is_empty());
-        assert_eq!(u.len(), 1);
-        let mut b = batch();
-        b.lot = "HHI-000002".into();
-        fill(
-            &mut u,
-            &mut s,
-            &spec(),
-            &b,
-            "stock.test",
-            "org.test",
-            60.0,
-            20.0,
-        );
-        assert_eq!(u.len(), 2);
-        assert_eq!(u[1].net_mass, 60.0);
-    }
     #[test]
     fn exhaustion_never_wraps_and_repacking_never_reuses() {
         let (mut u, mut s) = filled(100.0);

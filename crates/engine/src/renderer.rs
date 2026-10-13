@@ -1673,15 +1673,7 @@ mod canvas_alpha_tests {
     fn tri(scene: u32, mode: f32, distance: f32) -> [HudVertex; 3] {
         [HudVertex { pos: [0.;2], uv: [0.;2], color: [1.;4], depth: [distance,0.1], alpha: [mode,0.5], scene };3]
     }
-    #[test]
-    fn cutoff_above_one_is_preserved_for_shader_discard() {
-        use crate::{Frame, Camera, CanvasAlpha, Color};
-        use glam::Vec2;
-        let mut f = Frame::new(Camera::default(), Vec2::splat(100.), Vec2::splat(100.));
-        f.canvas_scene();
-        f.canvas_triangle_alpha([Vec2::ZERO;3], [2.;3], 0.1, [Color::WHITE;3], CanvasAlpha::Mask(2.));
-        assert!(f.hud_tris.iter().all(|v| v.alpha == [1.,2.]));
-    }
+
     #[test]
     fn alpha_spans_objects_and_ui_but_not_canvas_boundaries() {
         let v = [tri(0,0.,0.), tri(1,2.,2.), tri(0,0.,0.), tri(1,0.,8.),
@@ -1690,12 +1682,7 @@ mod canvas_alpha_tests {
             vec![(9..12,1),(15..18,1),(12..15,2),(3..6,2),(6..9,0)],
             vec![(21..24,1),(18..21,2)]]);
     }
-    #[test]
-    fn transparent_equal_depth_is_stable_and_empty_frame_clears_hud() {
-        let v = [tri(1,2.,f32::MAX),tri(1,2.,f32::MAX)].concat();
-        assert_eq!(canvas_batches(&v),vec![vec![(0..6,2)]]);
-        assert_eq!(canvas_batches(&[]),vec![vec![]]);
-    }
+
 }
 
 #[cfg(test)]

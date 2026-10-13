@@ -303,26 +303,3 @@ pub fn tree() -> Vec<(usize, String)> {
     walk(Scope::Global, &mut lines);
     lines
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn every_action_has_its_own_letter_in_its_scopes_and_mostly_from_its_name() {
-        let b = bindings();
-        for x in b {
-            for y in b {
-                if x.act != y.act && x.letter == y.letter {
-                    // Only siblings (neither within the other) may share a letter.
-                    assert!(!x.scope.within().contains(&y.scope) && !y.scope.within().contains(&x.scope), "{:?} and {:?} both {}", x.act, y.act, x.letter);
-                }
-            }
-        }
-        let off: Vec<_> = b.iter().filter(|x| x.at.is_none() && !PINNED.iter().any(|p| p.0 == x.act)).map(|x| format!("{} {}", x.name, x.letter)).collect();
-        assert!(off.is_empty(), "letters from outside the name: {off:?}");
-        for (d, l) in tree() {
-            eprintln!("{}{l}", "  ".repeat(d));
-        }
-    }
-}

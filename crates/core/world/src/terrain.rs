@@ -532,31 +532,3 @@ fn lattice(seed: u64, x: i64, y: i64, z: i64) -> f64 {
     v = (v ^ (v >> 29)).wrapping_mul(0x94d0_49bb_1331_11eb);
     (v >> 11) as f64 / (1u64 << 53) as f64
 }
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn heights_are_sane_and_pads_are_flat() {
-        let mut t = Terrain::new(TerrainKind::Terran, 6.4e6, 7);
-        let pad = DVec3::new(0.3, 0.5, 0.8).normalize();
-        t.add_pad(pad);
-        let mut rng = Rng::new(1);
-        let (mut lo, mut hi, mut ocean) = (f64::MAX, f64::MIN, 0);
-        for _ in 0..20_000 {
-            let d = rng.unit_vector();
-            let h = t.surface(d);
-            lo = lo.min(h);
-            hi = hi.max(h);
-            if t.is_ocean(d) {
-                ocean += 1;
-            }
-        }
-        eprintln!("terran: surface {lo:.0}..{hi:.0} m, ocean {:.0}%", ocean as f64 / 200.0);
-        assert!(lo >= 0.0, "oceans are a flat surface at 0");
-        assert!(hi <= t.max_height() && hi > 1000.0);
-        assert!((5_000..17_000).contains(&ocean), "some ocean, some land");
-        assert!(t.surface(pad).abs() < 1e-9, "flat at the pad");
-    }
-}

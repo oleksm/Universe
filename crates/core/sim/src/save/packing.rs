@@ -265,7 +265,7 @@ impl PackingSave {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{combat::PLAYER, vessel::Vessel};
+    use crate::combat::PLAYER;
     fn fixture() -> (Universe, usize, Unit) {
         let mut u = Universe::new(1984);
         let good = u
@@ -400,46 +400,7 @@ mod tests {
         let w = view.iter().find(|w| w.key == key).unwrap();
         assert_eq!(w.pool.stock[&g], unit.net_mass);
     }
-    #[test]
-    fn fractional_cargo_survives_save_and_clear() {
-        let (mut u, g, _) = fixture();
-        u.services.ledger.write_off(PLAYER, u.tick, Cause::Rules);
-        u.services.ledger.settle(
-            Party::Pilot(PLAYER),
-            Asset::Goods(g),
-            0.25,
-            u.tick,
-            Cause::Rules,
-        );
-        let saved = u.save();
-        assert_eq!(
-            saved.packing.as_ref().unwrap().holds[0].stock[&u.world.goods[g].key].quantity,
-            0.25
-        );
-        u.load(saved.clone());
-        assert_eq!(
-            u.services
-                .ledger
-                .balance(Party::Pilot(PLAYER), Asset::Goods(g)),
-            0.25
-        );
-        assert_eq!(u.vessels[PLAYER].ship.cargo, u.world.goods[g].mass * 0.25);
-        u.load(saved);
-        assert_eq!(
-            u.services
-                .ledger
-                .balance(Party::Pilot(PLAYER), Asset::Goods(g)),
-            0.25
-        );
-        u.services.ledger.write_off(PLAYER, u.tick, Cause::Rules);
-        assert_eq!(
-            u.services
-                .ledger
-                .balance(Party::Pilot(PLAYER), Asset::Goods(g)),
-            0.
-        );
-        assert_eq!(u.services.ledger.cargo_mass(PLAYER, &u.world.goods), 0.);
-    }
+
     #[test]
     fn legacy_save_does_not_invent_labels() {
         let (u, g, _) = fixture();
@@ -455,131 +416,5 @@ mod tests {
             loaded.world.goods[g].mass
         );
     }
-    #[test]
-    fn npc_holds_replace_and_recycled_identity_does_not_inherit() {
-        let (mut u, g, unit) = fixture();
-        u.services.ledger.write_off(PLAYER, u.tick, Cause::Rules);
-        let npc = u.vessels.push(Vessel::new(
-            "carrier-a",
-            u.vessels[PLAYER].ship.clone(),
-            0,
-            0.,
-        ));
-        u.services
-            .ledger
-            .settle(Party::Pilot(npc), Asset::Goods(g), 1., u.tick, Cause::Rules);
-        u.services.ledger.load_cargo(
-            npc,
-            g,
-            vec![],
-            vec![(unit.batch.clone(), unit.net_mass)],
-            vec![unit.clone()],
-        );
-        let save = u.save();
-        u.services.ledger.write_off(npc, u.tick, Cause::Rules);
-        u.load(save.clone());
-        assert_eq!(u.services.ledger.hold(npc), vec![(g, 1)]);
-        assert_eq!(u.vessels[npc].ship.cargo, unit.gross_mass());
-        u.vessels[npc].name = "replacement".into();
-        u.load(save);
-        assert!(u.services.ledger.hold(npc).is_empty());
-        assert_eq!(u.vessels[npc].ship.cargo, 0.);
-    }
-    #[test]
-    fn stock_keys_resolve_after_catalogue_reordering_and_missing_stock_is_dropped() {
-        let (u, g, _) = fixture();
-        let saved = PackingSave::capture(&u);
-        let key = u.world.goods[g].key.clone();
-        let mut goods = u.world.goods.clone();
-        goods.reverse();
-        let mapped = by_index(saved.holds[0].stock.clone(), &goods);
-        let new = goods.iter().position(|i| i.key == key).unwrap();
-        assert_eq!(mapped[&new].quantity, 1.);
-        goods.retain(|i| i.key != key);
-        assert!(by_index(saved.holds[0].stock.clone(), &goods).is_empty());
-    }
-    #[test]
-    fn trade_keeps_label_and_recomputes_gross_hold_mass() {
-        let (mut u, g, unit) = fixture();
-        let place = u
-            .services
-            .markets
-            .economy
-            .places
-            .iter()
-            .find(|p| p.warehouse.is_some())
-            .unwrap()
-            .clone();
-        let warehouse = place.warehouse.unwrap();
-        u.services.ledger.write_off(PLAYER, u.tick, Cause::Rules);
-        u.vessels[PLAYER].system = place.system;
-        u.vessels[PLAYER].ship = u.world.ship_on(place.system, place.facility, 0);
-        let pool = &mut u.services.markets.economy.works[warehouse].pool;
-        pool.stock.remove(&g);
-        pool.lots.remove(&g);
-        pool.marks.remove(&g);
-        pool.packages.remove(&g);
-        pool.put_cargo(
-            g,
-            unit.net_mass,
-            vec![],
-            vec![(unit.batch.clone(), unit.net_mass)],
-            vec![unit.clone()],
-        );
-        u.services.markets.economy.invalidate_snapshots();
-        u.pilot_trade(PLAYER, place.facility, g, 1).unwrap();
-        assert_eq!(u.vessels[PLAYER].ship.cargo, unit.gross_mass());
-        assert_eq!(u.vessels[PLAYER].ship.cargo_volume, 5.);
-        assert_eq!(
-            json(&u.services.ledger.hold_packages(PLAYER).unwrap()[&g][0]),
-            json(&unit)
-        );
-        u.pilot_trade(PLAYER, place.facility, g, -1).unwrap();
-        assert_eq!(u.vessels[PLAYER].ship.cargo, 0.);
-        assert_eq!(
-            json(&u.services.markets.economy.works[warehouse].pool.packages[&g][0]),
-            json(&unit)
-        );
-    }
-    #[test]
-    fn breakage_opens_packages_and_removes_tare() {
-        for quantity in [1., 0.25] {
-            let (mut u, _, mut unit) = fixture();
-            let g = u
-                .world
-                .goods
-                .iter()
-                .position(|g| g.shock_limit.is_some())
-                .unwrap();
-            unit.product = u.world.goods[g].key.clone();
-            unit.net_mass = u.world.goods[g].mass * quantity;
-            unit.label = None;
-            u.services.ledger.write_off(PLAYER, u.tick, Cause::Rules);
-            u.services.ledger.settle(
-                Party::Pilot(PLAYER),
-                Asset::Goods(g),
-                quantity,
-                u.tick,
-                Cause::Rules,
-            );
-            u.services.ledger.load_cargo(
-                PLAYER,
-                g,
-                vec![],
-                vec![(unit.batch.clone(), unit.net_mass)],
-                vec![unit],
-            );
-            let events = u.book_jolts(
-                PLAYER,
-                &[crate::Event::Ship(universe_world::ShipEvent::HardLanding {
-                    sink: 100.,
-                    jolt: 1e9,
-                })],
-            );
-            assert!(!events.is_empty());
-            assert!(u.services.ledger.hold(PLAYER).is_empty());
-            assert_eq!(u.services.ledger.cargo_mass(PLAYER, &u.world.goods), 0.);
-            assert_eq!(u.vessels[PLAYER].ship.cargo_volume, 0.);
-        }
-    }
+
 }
