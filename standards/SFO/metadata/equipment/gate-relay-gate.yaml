@@ -32,6 +32,12 @@ function:
   lag: 1
   capacity: 13.8888888889
   cadence: 3
+visual:
+  format: "freefall-model/1"
+  path: "models/gate-relay-gate/v1"
+  manifest_sha256: "0cabe7b3127938a66e23e54b5faf1f39cc5469d45e211ebd8de66ffa766a682e"
+  version: 1
+  triangles: 4552
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
