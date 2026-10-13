@@ -1,0 +1,15 @@
+# Shared live ship devices
+
+`Ship::configure_devices(ship_devices::Fit, initial_charge_fraction, temperature_K)` attaches physical fan, battery and leg data to any owned or registered ship. The compiler supplies SI values from the equipment records; it includes device mass in ClassSpec once. A fan refers to its index in ClassSpec.thrusters. Coordinates match the authored shape/COM frame. Duplicate/out-of-range fan indices and invalid physical limits are refused.
+
+World samples the actual atmosphere before control allocation. Fan full-power thrust scales with the cube root of density/reference density, capped at rated thrust, and is unavailable below minimum density. Power varies as commanded fraction^1.5. Rocket fuel, plant output, battery output/remaining energy and thermal headroom limit realized fractions. Existing flight_control allocation/rate integration and the existing physics Driver consume the result. No alternate rigid-body integrator exists here.
+
+The bus serves steady demand before fans; fuel first serves commanded rockets. Remaining fueled plant output precedes battery discharge. Surplus plant power may charge the existing capacitor, with the same fuel budget. Battery loss heats each pack using its own efficiency and whole-pack heat capacity. Debit occurs for actual integrated spans through Ship::burn, including landed operation. Pack charging/cooling are not implemented by this adapter; do not advertise either. Last demand/delivery and pack state are exposed for presentation.
+
+Landed ships now allocate both manual and assisted commands. Release requires realized outward acceleration greater than local gravity; command flags alone cannot launch an empty, overheated or underpowered craft. Existing hangar/taxi exclusions and structure release offsets remain.
+
+Legs reuse the live landing-lock/shock model: equal loading limited by the weakest leg, shortest effective stroke and lowest rated sink speed. Foot positions set rest height. This is a conservative aggregate capacity check, not independent spring/contact integration or a load-distribution solver. The compiler must not claim per-leg suspension simulation.
+
+`devices: None` retains stock propulsion/resource behavior. Refit clears index-bound device attachments; the compiler must reattach them after changing a definition. Ship serde includes device state, but a persistence adapter must also restore the matching owned definition. This does not extend the manual UniverseSave format.
+
+Validation: `cargo run -p universe-world --example device_accept` checks synthetic limits (not product tuning), partial-span consumption, empty/hot/airless fans, final charge, thermal cutoff, leg capacity and manual takeoff through the real World tick. Existing workspace tests remain the compatibility gate. This branch requires ships-local-world 593b569d (local cherry-pick 8744faa5).

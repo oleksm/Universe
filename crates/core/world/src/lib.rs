@@ -84,3 +84,5 @@ pub use terrain::{Ground, Terrain, TerrainKind};
 pub use traffic::Facility;
 pub use universe_physics as physics;
 pub use world::{Devices, StepResult, World, NEIGHBOURS};
+
+pub mod ship_devices;

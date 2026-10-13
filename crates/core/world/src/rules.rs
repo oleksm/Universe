@@ -141,7 +141,7 @@ pub fn apply(rules: &Rules, sys: &StarSystem, system: usize, ship: &mut Ship, fa
             let b = &sys.bodies[body];
             let rot = b.rotation(t);
             // On legs: what they take, for this ship as it is (cargo and all) on this ground.
-            if let Some(legs) = crate::legs::of_spec(ship.spec()) {
+            if let Some(legs) = ship.devices.as_ref().and_then(|d| d.fit.landing()).or_else(|| crate::legs::of_spec(ship.spec())) {
                 let sink = (-c.relative_velocity.dot(c.normal)).max(0.0);
                 let g = b.surface_gravity();
                 let hardest = legs.hardest(ship.mass(), g);
@@ -240,9 +240,11 @@ pub fn release(rules: &Rules, sys: &StarSystem, body: usize, local_position: DVe
     match release {
         Release::LiftOff { speed, lift, up, says } => {
             let normal = up.map_or_else(|| (rot * local_position).normalize(), |u| rot * u);
-            let nose_up_burn = ship.throttle > 0.05 && ship.forward().dot(normal) > 0.2;
-            let lifting = ship.rcs.y > 0.1 && (ship.orientation * DVec3::Y).dot(normal) > 0.5;
-            if !(nose_up_burn || lifting) {
+            // Release only on realized outward acceleration, after allocation and
+            // device limits. Command flags miss manual firing and empty batteries.
+            let gravity = b.rail.mu / local_position.length_squared().max(1.0);
+            let lift_accel = ship.thrust().dot(normal);
+            if !ship.powered || !lift_accel.is_finite() || lift_accel <= gravity.max(0.0) {
                 return false;
             }
             ship.velocity += normal * *speed;

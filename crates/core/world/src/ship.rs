@@ -911,6 +911,9 @@ pub struct Ship {
     /// Energy in its capacitor banks (J).
     #[serde(default)]
     pub energy: f64,
+    /// Additional compiled physical devices; None preserves stock device behavior.
+    #[serde(default)]
+    pub devices: Option<crate::ship_devices::State>,
     /// Cargo on board (kg): the mass of what's in the hold; and the room it
     /// takes (m³).
     #[serde(default)]
@@ -1018,6 +1021,7 @@ impl Ship {
             rcs: DVec3::ZERO,
             fuel: starter().fuel_capacity,
             energy: starter().capacitor_capacity,
+            devices: None,
             class: starting_hull(),
             fit: None,
             marks: None,
@@ -1075,6 +1079,7 @@ impl Ship {
     /// to allocate). Its fuel, cargo, weapons and the rest are a new ship's.
     pub fn far(&self) -> Ship {
         Ship {
+            devices: self.devices.clone(),
             angular_velocity: self.angular_velocity,
             state: self.state.clone(),
             hyperdrive: self.hyperdrive,
@@ -1106,6 +1111,7 @@ impl Ship {
 
     /// Back to its hull's stock fit, with a full tank (a basic ship).
     pub fn refresh_stock(&mut self) {
+        self.devices = None;
         self.fit = None;
         self.spec_ref = None;
         self.fuel = self.spec().fuel_capacity;
@@ -1150,6 +1156,7 @@ impl Ship {
             self.spec_ref = Some(spec);
         }
         self.jets.clear();
+        self.devices = None;
         Ok(())
     }
 
@@ -1185,6 +1192,7 @@ impl Ship {
     /// sets the drive's speed, or on the ground, where the landing gear's
     /// rules decide lift-off.)
     pub fn drive(&mut self, turn: Option<&Controls>, dt: f64, push: bool) {
+        if self.devices.is_some() { return self.drive_devices(turn, dt, push); }
         if self.manual && push {
             return self.drive_manual(dt);
         }
@@ -1296,6 +1304,9 @@ impl Ship {
 
     /// How high its centre stands over the ground when it's set down.
     pub fn rest_height(&self) -> f64 {
+        if let Some(d) = &self.devices {
+            if let Some(h) = d.fit.legs.iter().map(|l| -l.foot.y).reduce(f64::max) { return h.max(0.); }
+        }
         self.spec().rest_height()
     }
 
@@ -1369,7 +1380,7 @@ impl Ship {
     /// Acceleration from the main engine and thrusters as set (m/s^2): thrust / current mass.
     pub fn thrust(&self) -> DVec3 {
         // (No fuel, no thrust.)
-        if self.fuel <= 0.0 {
+        if self.fuel <= 0.0 && self.devices.is_none() {
             return DVec3::ZERO;
         }
         self.orientation * self.applied.0 / self.mass()
@@ -1378,16 +1389,22 @@ impl Ship {
     /// What the engine and thrusters burn as set (kg/s): their thrust over
     /// the exhaust velocity.
     pub fn fuel_flow(&self) -> f64 {
-        self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u / t.exhaust).sum::<f64>()
+        if let Some(d) = &self.devices { return d.rocket_fuel_rate + d.plant_fuel_rate; }
+        self.spec().thrusters.iter().zip(&self.jets).map(|(t, &u)| t.thrust * u / t.exhaust).sum()
     }
 
     /// `dt` seconds of the drives as set: the fuel they burn. And, powered and
     /// out of the hyperdrive, the plant's spare power charges the capacitor
     /// banks (the reactor burning fuel for it).
     pub fn burn(&mut self, dt: f64) {
+        if !dt.is_finite() || dt <= 0.0 { return; }
+        if let Some(d) = &self.devices {
+            self.energy = (self.energy + d.capacitor_w * dt).min(self.spec().capacitor_capacity);
+        }
+        self.consume_devices(dt);
         self.fuel = (self.fuel - self.fuel_flow() * dt).max(0.0);
         let spec = self.spec();
-        if self.powered && !self.hyperdrive && self.fuel > 0.0 && self.energy < spec.capacitor_capacity {
+        if self.devices.is_none() && self.powered && !self.hyperdrive && self.fuel > 0.0 && self.energy < spec.capacitor_capacity {
             let power = self.spare_power().min(spec.capacitor_rate);
             let taken = (power * dt).min(spec.capacitor_capacity - self.energy);
             self.energy += taken;
