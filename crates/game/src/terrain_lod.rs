@@ -591,9 +591,15 @@ mod contact_export {
             let mut trace=std::io::BufWriter::new(std::fs::OpenOptions::new().write(true).create_new(true).open(folder.join(format!("{id}-states.jsonl"))).unwrap());
             let mut export=|stage:&str,snapshot:&contact::Snapshot,pending_count:usize|{
                 let path=folder.join(format!("{id}-{stage}.json"));
+                let input=Arc::new(snapshot.clone()).worker_input().unwrap();
+                let chart=universe_terrain_contact::Chart::new(snapshot.eye.normalize(),snapshot.radius);
+                let (converted,visited)=input.triangles(&chart).unwrap();
+                assert!(!converted.is_empty());
+                assert_eq!(visited,input.patches.len());
+                assert_eq!(input.selected.len(),snapshot.patches.len());
                 let file=std::fs::OpenOptions::new().write(true).create_new(true).open(&path).unwrap();
                 let mut writer=Limit{writer:std::io::BufWriter::new(file),bytes:0};snapshot.write_json(&mut writer,&hash).unwrap();writer.flush().unwrap();
-                results.push(serde_json::json!({"feature":id,"stage":stage,"path":path,"bytes":writer.bytes,"selected":snapshot.patches.len(),"generation":snapshot.generation,"pending":pending_count,"gpu":false}));
+                results.push(serde_json::json!({"feature":id,"stage":stage,"path":path,"bytes":writer.bytes,"selected":snapshot.patches.len(),"generation":snapshot.generation,"pending":pending_count,"shared_worker_triangles":converted.len(),"borrowed_patches":visited,"gpu":false}));
             };
             let mut settled=false;
             for _ in 0..1500 {

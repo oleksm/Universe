@@ -38,3 +38,19 @@ Source/selection cancellation now excludes eye: the stamp binds system/body/map 
 No corrected group is drawn, no native selection is suppressed, and no GPU walk-ready state is published. Shared engine hooks are available, but the worker's actual-input join and dependency closure gates remain prerequisites to the consumer.
 
 Publication must also account for the full patch topology, including skirt-top aliases and skirt triangles in or crossing the replaced footprint. The 512 grid-face CPU contact bridge is insufficient evidence for suppression or for GPU geometry budgeting. Replacement must preserve aliases to locked grid vertices, excise all affected original triangles, and count actual full mesh faces rather than the grid-only lower bound. An overlay on the existing patches is not an accepted replacement.
+
+## Shared bridge integration
+
+The game now directly implements the committed shared client `RetainedMesh`; `Snapshot::worker_input` emits complete `Binding` metadata and nearby strongly retained `RetainedPatch` wrappers. No vertex arrays are copied and no helper implementation is duplicated. All six fresh CPU cases pass shared conversion. The full snapshot retains all actual selected meshes if a later closure traversal requires further incident owners. Only the nearby subset is currently passed to the contact conversion; its fixed export ring does not certify closure. Live worker admission/scheduling, mesh group staging and draw substitution remain held.
+
+| Consumer step | State |
+|---|---|
+| Actual fallback-selected snapshot and complete selected identity | Implemented, CPU fixture tested |
+| Retained physical source and source/selection cancellation | Implemented; movement preserves job eye and leases |
+| Shared client retained-geometry bridge | Implemented; six actual conversions pass |
+| Corrected typed worker flow with verified reverse closure | Pending engine closure handoff |
+| Full exterior/skirt excision and alias coordination | Pending |
+| Complete group GPU preparation and atomic draw substitution | Held pending CPU proof |
+| Moving subject core coverage and per-frame ready trace | Pending; current traces are CPU-only/not-ready |
+
+Dependencies on this branch: engine hooks `792f2bac`, actual-input reader `a4ae5ea9`, shared client worker `186e4be5`, and game snapshot/source-generation commits `104470d8` + `b0ec1e8b`. No runtime publication gate has been relaxed.

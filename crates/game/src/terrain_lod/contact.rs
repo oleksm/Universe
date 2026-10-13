@@ -9,6 +9,7 @@ use std::{
 };
 use universe_engine::{Mesh, glam::DVec3};
 use universe_sim::world::worlds::pgs::Surface;
+use universe_terrain_contact::{Binding, RetainedMesh, RetainedPatch};
 
 /// Identifies source and selected geometry; a job eye is immutable but not a cancellation key.
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -228,13 +229,7 @@ mod tests {
     }
 }
 
-/// Zero-copy bridge to the world-owned worker. No engine type occurs in the trait.
-pub(crate) trait RetainedMesh: Send + Sync {
-    fn vertex_count(&self) -> usize;
-    fn position(&self, index: usize) -> [f32; 3];
-    fn morph(&self, index: usize) -> [f32; 4];
-    fn faces(&self) -> &[[u32; 3]];
-}
+// Geometry access uses the shared client crate's contract directly; no local worker trait.
 impl RetainedMesh for ResidentPatch {
     fn vertex_count(&self) -> usize {
         self.mesh.positions.len()
@@ -423,5 +418,89 @@ impl Snapshot {
             return Err("snapshot cancelled during export".into());
         }
         Ok(())
+    }
+}
+
+/// Immutable borrowed-geometry job input, not a publishable replacement.
+/// Only metadata/Arc wrappers are newly allocated; resident vertex arrays stay leased.
+pub(crate) struct WorkerInput {
+    pub snapshot: Arc<Snapshot>,
+    pub selected: Vec<Binding>,
+    pub patches: Vec<RetainedPatch>,
+}
+impl WorkerInput {
+    pub fn triangles(
+        &self,
+        chart: &universe_terrain_contact::Chart,
+    ) -> Result<
+        (
+            Vec<universe_terrain_contact::contact_core::grid::Triangle>,
+            usize,
+        ),
+        String,
+    > {
+        if !self.snapshot.current() {
+            return Err("stale resident job input".into());
+        }
+        let result = universe_terrain_contact::triangles_retained(
+            self.snapshot.radius,
+            self.snapshot.eye.to_array(),
+            self.snapshot.generation,
+            &self.selected,
+            &self.patches,
+            chart,
+        )?;
+        if !self.snapshot.current() {
+            return Err("resident job cancelled during conversion".into());
+        }
+        Ok(result)
+    }
+}
+impl Snapshot {
+    /// Full selected binding plus nearby actual geometry leases for the shared worker.
+    /// The worker must refuse absent finite-owner/incident closure, not synthesize support.
+    pub fn worker_input(self: &Arc<Self>) -> Result<WorkerInput, String> {
+        if !self.complete() || self.surface.is_none() {
+            return Err("incomplete or unbound resident source".into());
+        }
+        // Validate before the subset selector accesses vertex/morph arrays.
+        if self.patches.iter().any(|p| {
+            p.vertex_count() < 289
+                || p.mesh.colors.len() != p.vertex_count()
+                || p.faces().len() != 512
+        }) {
+            return Err("invalid resident job geometry".into());
+        }
+        let selected = self
+            .patches
+            .iter()
+            .map(|p| Binding {
+                key: [p.key.face as u32, p.key.level as u32, p.key.x, p.key.y],
+                mesh_id: p.mesh.id(),
+                partial: p.partial,
+            })
+            .collect();
+        let patches = self
+            .nearby_indices()
+            .into_iter()
+            .map(|i| {
+                let p = &self.patches[i];
+                RetainedPatch {
+                    key: [p.key.face as u32, p.key.level as u32, p.key.x, p.key.y],
+                    mesh_id: p.mesh.id(),
+                    origin: p.origin.to_array(),
+                    partial: p.partial,
+                    mesh: Arc::new(p.clone()),
+                }
+            })
+            .collect::<Vec<_>>();
+        if patches.is_empty() || !self.current() {
+            return Err("empty or stale resident job subset".into());
+        }
+        Ok(WorkerInput {
+            snapshot: self.clone(),
+            selected,
+            patches,
+        })
     }
 }

@@ -2990,6 +2990,7 @@ dependencies = [
  "universe-prof",
  "universe-ship-design",
  "universe-sim",
+ "universe-terrain-contact",
 ]
 
 [[package]]
