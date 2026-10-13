@@ -478,7 +478,7 @@
 - { record: equipment.tank.oxygen.10kg, at: "2026-10-13T17:18:20Z", status: draft, summary: "changed: visual", sha: "7ebbb144a7251381" }
 - { record: equipment.tank.oxygen.20kg, at: "2026-10-12T02:45:07Z", status: draft, summary: "changed: visual", sha: "06fa29708260650a" }
 - { record: equipment.tank.waste.s2, at: "2026-10-12T17:24:24Z", status: draft, summary: "changed: visual", sha: "7dd9b6fc36170bae" }
-- { record: equipment.tank.water.100kg, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "445cd6a60195253e" }
+- { record: equipment.tank.water.100kg, at: "2026-10-13T17:25:30Z", status: draft, summary: "changed: visual", sha: "e639887f014c4b82" }
 - { record: equipment.tank.water.50kg, at: "2026-10-12T02:52:06Z", status: draft, summary: "changed: visual", sha: "75cd6a61a77202dd" }
 - { record: equipment.tank.water.s1, at: "2026-10-11T02:43:43Z", status: draft, summary: "changed: visual", sha: "e34a78988ac94117" }
 - { record: equipment.tank.water.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "6b50a26d061ac722" }
