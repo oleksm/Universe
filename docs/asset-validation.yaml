@@ -3412,3 +3412,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Pressure and common-bulkhead thermal qualification, boiloff, loaded supports; final hull service routing; GPU appearance, cost and temporal edge stability."
+  - key: equipment.tank.hydrolox.1t
+    version: 1
+    manifest_sha256: "39583d0a9b450f34fc81022511c988cef1184890058ec5cf0a37f6cc14ac572d"
+    installed: 5051e18c
+    game: "the loader (world::assets) at fso 5051e18c"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-hydrolox-1t/v1 (361520 bytes, bounds [-1.0212, 0.0, -1.0953] to [1.0212, 2.1216, 1.0953]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure and common-bulkhead thermal qualification, boiloff, loaded supports; final hull service routing; GPU appearance, cost and temporal edge stability."
