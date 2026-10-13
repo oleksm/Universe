@@ -39,6 +39,12 @@ function:
   output: 4000000
   efficiency: 0.5
   burns: material.deuterium
+visual:
+  format: "freefall-model/1"
+  path: "models/power-aurel-s1/v1"
+  manifest_sha256: "a67eccc06e993f62cfd43fcb083ca30548f253ea1968327ae29ee5e49f6964be"
+  version: 1
+  triangles: 5672
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
