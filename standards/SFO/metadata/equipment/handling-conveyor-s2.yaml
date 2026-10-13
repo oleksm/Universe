@@ -5,29 +5,43 @@ identity:
   maker: org.cormorant
   revision: draft
   slot: handling
-  description: "Moves bulk or cargo aboard: a scoop, a conveyor, an arm."
+  description: "A tubular drag conveyor: discs on an aramid rope drawn through two closed tubes, so it carries bulk under thrust or in free fall, at any angle. S1's design, side by side and larger."
 size_class: 2
 fits: mount.handling-s2
 physical:
-  mass: 3000
-  volume: 11.5
+  mass: 1066
+  volume: 12.29
   length: 12.0
-  width: 1.2
+  width: 1.28
   height: 0.8
+needs:
+  power: 7500
 built_of:
   parts: handling-conveyor-s2
   list:
-    - { code: CNV2-01, name: "Frame", description: "Tube stringers and cross members.", mass: 1200, length: 8.84, width: 0.884, height: 0.589, item: stock.al6061-tb-160x5, quantity: 1380.0, module: module.welding-bay }
-    - { code: CNV2-02, name: "Belt and rollers", description: "The belt, its idlers and the drums.", mass: 1200, length: 8.84, width: 0.884, height: 0.589, item: stock.st4340-bar-120, quantity: 1380.0, module: module.machining-centre }
-    - { code: CNV2-03, name: "Drive", description: "Motor, gearbox and controls.", mass: 600, length: 7.02, width: 0.702, height: 0.468, item: stock.st4340-bar-120, quantity: 690.0, module: module.machining-centre }
+    - { code: CNV2-01, name: "Tubes", description: "Two aluminium tubes, 300 mm, 6 mm wall, 9.6 m between the housings, side by side at 0.9 m, with collars at the housings.", mass: 296.7, length: 9.6, width: 1.2, height: 0.3, item: stock.al6061-tb-300x6, quantity: 341.2, module: module.welding-bay }
+    - { code: CNV2-02, name: "Rope", description: "An endless 24 mm aramid rope, 24 m, through both tubes and round the wheels.", mass: 9.6, length: 24, width: 0.024, height: 0.024, item: stock.aramid-fb, quantity: 11, module: module.textile-mill }
+    - { code: CNV2-03, name: "Discs", description: "96 polyethylene discs, 280 mm across and 30 mm thick, every 0.25 m on the rope.", mass: 167, length: 0.28, width: 0.28, height: 0.03, item: good.polyethylene, quantity: 192, module: module.composites-works }
+    - { code: CNV2-04, name: "Wheels and shafts", description: "Two pocketed steel wheels, 0.9 m, lying flat, one in each end box, on 80 mm upright shafts; the tail one on a screw take-up.", mass: 224, length: 0.9, width: 0.9, height: 0.8, item: stock.st4340-bar-120, quantity: 336, module: module.machining-centre }
+    - { code: CNV2-05, name: "End housings", description: "Two sealed boxes of 5 mm plate, 1.2 x 1.28 x 0.8, round the wheels, with lids: the capped inlet port in the tail one, the capped outlet in the head one.", mass: 192.2, length: 1.2, width: 1.28, height: 0.8, item: stock.al6061-pl-5, quantity: 221, module: module.welding-bay }
+    - { code: CNV2-06, name: "Supports", description: "Four tube brackets every 1.9 m and eight feet; the feet stand at Z 0.", mass: 56.5, length: 12.0, width: 1.28, height: 0.8, item: stock.al6061-pl-5, quantity: 65, module: module.welding-bay }
+    - { code: CNV2-07, name: "Drive", description: "Gear motor with brake on the head shaft, inside the head housing.", mass: 120, length: 0.6, width: 0.35, height: 0.35, item: good.electric-motors, quantity: 120, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: "handling"
   throughput: 50
   reach: 12.0
+visual:
+  format: "freefall-model/1"
+  path: "models/handling-conveyor-s2/v1"
+  manifest_sha256: "f3018514b10386536efab028a788b2d57c6b92010822f090d94dc95976ef5b24"
+  version: 1
+  triangles: 7448
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "Twelve metres of 1 m belt moving 50 kg/s. From memory. Not sourced." }
+  - { of: [function], tier: invented, review: true, note: "50 kg/s over 12 m: a working ore feed. Chosen." }
+  - { of: [built_of.list, physical.mass, needs], tier: derived, review: true, note: "S1's tubular drag conveyor at the modeller's layout (twin 300 mm tubes side by side at 0.9 m, 1.2 m end boxes, 8 feet). Capacity: 288 mm bore, 0.7 full, 0.7 m/s, 1,600 kg/m3: 51 kg/s. Aluminium tube, 15 kg/m (no 6 mm steel tube is stocked; wear is the reason to review it), plus 8% collars as S1 measured; rope 0.4 kg/m; polyethylene disc 1.74 kg; wheel webs 20 mm; housings 7.0 m2 of 5 mm plate each plus 7% lids and ports as S1 measured; supports from S1's measured 21.7 kg, 2.5 times. Drive: 700 kg of load on the carrying run at 1 g and 0.5 friction, 3.4 kN, with disc drag 5 kN at 0.7 m/s, 3.5 kW; 7.5 kW for packed starts in free fall. Tubes, housings and supports are the modeller's measured volumes (candidate-v01: 296.7, 192.2, 56.5 kg)." }
+  - { of: [physical.volume, physical.length, physical.width, physical.height], tier: invented, review: true, note: "The first envelope, widened by the modeller to 1.28 m so the end boxes have skin round the 330 mm tube collars (the mount gives 1.65)." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }

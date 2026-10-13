@@ -390,18 +390,18 @@
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
 - { record: equipment.engine.ft.s1, at: "2026-10-13T01:06:15Z", status: draft, summary: "changed: visual", sha: "1fd6fb7dcc3b318c" }
 - { record: equipment.engine.ft.s2, at: "2026-10-13T01:12:22Z", status: draft, summary: "changed: visual", sha: "dc17f2e2b475823c" }
-- { record: equipment.engine.ft.s3, at: "2026-10-13T01:15:00Z", status: draft, summary: "changed: built_of, basis", sha: "1c926d806c35e80e" }
-- { record: equipment.engine.nt.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "349e51df289b5885" }
-- { record: equipment.engine.nt.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4875b18e30a56e77" }
-- { record: equipment.engine.nt.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "aec911b1cd48a6a5" }
-- { record: equipment.engine.swivel.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "56f83532ced7f897" }
-- { record: equipment.engine.swivel.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "7ac485e08054e31e" }
-- { record: equipment.engine.swivel.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c67ea95c6f2f05ad" }
-- { record: equipment.engine.swivel.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "d2e6ae25cfd9141a" }
+- { record: equipment.engine.ft.s3, at: "2026-10-13T01:17:48Z", status: draft, summary: "changed: visual", sha: "86ea52dedce26c92" }
+- { record: equipment.engine.nt.s1, at: "2026-10-13T01:51:30Z", status: draft, summary: "changed: visual", sha: "110a68ce2e357997" }
+- { record: equipment.engine.nt.s2, at: "2026-10-13T02:06:07Z", status: draft, summary: "changed: visual", sha: "d485b3df704248eb" }
+- { record: equipment.engine.nt.s3, at: "2026-10-13T02:50:46Z", status: draft, summary: "changed: visual", sha: "cb5d8c594580a6b6" }
+- { record: equipment.engine.swivel.s1, at: "2026-10-13T03:19:18Z", status: draft, summary: "changed: visual", sha: "4e654babd42066f1" }
+- { record: equipment.engine.swivel.s2, at: "2026-10-13T03:34:29Z", status: draft, summary: "changed: visual", sha: "f33109e155d70375" }
+- { record: equipment.engine.swivel.s3, at: "2026-10-13T03:44:00Z", status: draft, summary: "changed: visual", sha: "f6693862d41065f9" }
+- { record: equipment.engine.swivel.s4, at: "2026-10-13T03:54:40Z", status: draft, summary: "changed: visual", sha: "abe9ce554ad285df" }
 - { record: equipment.gate.relay.gate, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "35828400db155884" }
 - { record: equipment.gate.relay.hyper, at: "2026-10-11T17:40:22Z", status: draft, summary: "changed: visual", sha: "5a423c722b987f66" }
 - { record: equipment.gate.terminal-ground.s3, at: "2026-10-11T18:10:42Z", status: draft, summary: "changed: visual", sha: "86e6bc8ce81ef23f" }
-- { record: equipment.gate.throat-coil.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "39ae4b78488b113e" }
+- { record: equipment.gate.throat-coil.s3, at: "2026-10-13T04:09:32Z", status: draft, summary: "changed: visual", sha: "54d06901d3832b23" }
 - { record: equipment.gate.transceiver.beacon, at: "2026-10-11T20:09:06Z", status: draft, summary: "changed: visual", sha: "526b6ba78709865f" }
 - { record: equipment.gate.transceiver.station, at: "2026-10-11T20:05:33Z", status: draft, summary: "changed: visual", sha: "5b1a7984575348c3" }
 - { record: equipment.gear.front.mc07, at: "2026-10-11T02:06:40Z", status: draft, summary: "changed: revision", sha: "694aab786d48a786" }
@@ -411,10 +411,10 @@
 - { record: equipment.gear.strut.180kn, at: "2026-10-12T03:49:44Z", status: draft, summary: "changed: visual", sha: "49c650bd7fb9a620" }
 - { record: equipment.gear.strut.s0, at: "2026-10-12T03:57:56Z", status: draft, summary: "changed: visual", sha: "c9b7eaa9c421dad3" }
 - { record: equipment.gear.strut.s1, at: "2026-10-12T04:34:18Z", status: draft, summary: "changed: visual", sha: "d496ad9e34efb6af" }
-- { record: equipment.gear.strut.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "08d90cb3e21ee123" }
+- { record: equipment.gear.strut.s2, at: "2026-10-13T04:18:06Z", status: draft, summary: "changed: visual", sha: "d220970783973f7d" }
 - { record: equipment.gear.strut.s3, at: "2026-10-12T04:45:27Z", status: draft, summary: "changed: visual", sha: "51ac10015155c5a9" }
-- { record: equipment.handling.conveyor.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4e53c1a403104f38" }
-- { record: equipment.handling.conveyor.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "2681eea7a8d7463b" }
+- { record: equipment.handling.conveyor.s1, at: "2026-10-13T04:31:34Z", status: draft, summary: "changed: visual", sha: "ece3fdc790b24133" }
+- { record: equipment.handling.conveyor.s2, at: "2026-10-13T04:40:26Z", status: draft, summary: "changed: visual", sha: "d9a2dc261c323b5a" }
 - { record: equipment.handling.ore-scoop.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "c543e988b3b31052" }
 - { record: equipment.handling.transfer.arm, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "635247105c3cc019" }
 - { record: equipment.hardpoint.mass-driver.s1, at: "2026-10-11T02:37:05Z", status: draft, summary: "changed: visual", sha: "2826a7d76e0ce87f" }
@@ -1009,7 +1009,7 @@
 - { record: mount.engine-s1, at: "2026-10-07T13:18:43Z", status: draft, summary: "changed: feeds", sha: "e6eebfc94108de62" }
 - { record: mount.engine-s2, at: "2026-10-07T13:18:43Z", status: draft, summary: "changed: feeds", sha: "7c1740e5483c28ed" }
 - { record: mount.engine-s3, at: "2026-10-07T13:18:43Z", status: draft, summary: "changed: feeds", sha: "b852f9cd995348d5" }
-- { record: mount.engine-s4, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "4a123e0c6f9c1798" }
+- { record: mount.engine-s4, at: "2026-10-13T03:52:00Z", status: draft, summary: "changed: bears, attachment", sha: "2ef2419768d9ef5d" }
 - { record: mount.gate-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "9e3ff67950951127" }
 - { record: mount.gate-s4, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "feb65bbeedf8a4a4" }
 - { record: mount.gear-s1, at: "2026-10-07T13:31:46Z", status: draft, summary: "changed: feeds", sha: "86a51254c8593e9e" }

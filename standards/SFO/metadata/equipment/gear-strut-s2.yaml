@@ -34,6 +34,12 @@ function:
   efficiency: 0.8
   sink_rate: 3.05
   extended: 4.0
+visual:
+  format: "freefall-model/1"
+  path: "models/gear-strut-s2/v1"
+  manifest_sha256: "af8c0d79056b65d4da641e06013a6c1a701cdaee2186b658a7b925498c1c385c"
+  version: 1
+  triangles: 5044
 life: 473364000
 basis:
   - { of: [function.holds, size_class], tier: invented, review: true, note: "Sized for a 120 t ship on four legs: the MC-07 empty: the ship's weight at 1.5 g on its legs, the airliner rule (14 CFR 25.473), with the lightest ship of the class on four legs." }
