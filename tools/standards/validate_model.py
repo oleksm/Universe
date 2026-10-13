@@ -2,8 +2,8 @@
 
     python3 tools/standards/validate_model.py <key> [--installed=<commit>] [--pending="..."]... [--push]
 
-From ~/git/universe-fso. It runs the game's own loader on every installed model (cargo test -p universe-world --test
-visuals), takes this key's line (package found, manifest matching the record's hash, model.glb matching the manifest,
+From ~/git/universe-fso. It runs the game's own loader on every installed model (cargo run -p universe-world --example
+validate_models), takes this key's line (package found, manifest matching the record's hash, model.glb matching the manifest,
 bounds), and appends an entry to docs/asset-validation.yaml: result `partial` while the game does not draw the kind
 (equipment at mounts, today), with the standing pending checks and any --pending given; `fail` if the loader refuses it.
 With --push it commits that file on fso and pushes. Frames in the game (step 2 of the contract) stay a look by the
@@ -31,7 +31,7 @@ def main(argv):
     kind, rec = hit[0]
     v = rec.get("visual") or sys.exit(f"validate_model: {key} has no visual (not installed)")
     capped = [os.path.expanduser("~/bin/capped")] if os.path.exists(os.path.expanduser("~/bin/capped")) else []
-    out = subprocess.run([*capped, "cargo", "test", "-q", "-p", "universe-world", "--test", "visuals", "--", "--nocapture"],
+    out = subprocess.run([*capped, "cargo", "run", "-q", "-p", "universe-world", "--example", "validate_models"],
                          cwd=ROOT, capture_output=True, text=True)
     text = out.stdout + out.stderr
     line = next((ln for ln in text.splitlines() if ln.startswith(key + ":")), None)

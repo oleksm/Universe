@@ -147,7 +147,7 @@ report. The first build takes a few minutes; later runs are quick.
 The registry validates installed models in the game. After `--push`, the modeller sends the registry a `task` naming the
 key, the commit and the package's manifest. The registry then:
 
-1. runs the game's own loader on every model (`cargo test -p universe-world --test visuals -- --nocapture`): the
+1. runs the game's own loader on every model (`cargo run -p universe-world --example validate_models`): the
    package found, its manifest matching the record's hash, the model matching the manifest, bounds to centre it by;
 2. where the game draws that kind, looks at it in the game (frames captured on workspace 8): place, scale, materials,
    readability at play distance;
