@@ -3396,3 +3396,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Pressure, cryogenic and mount-load qualification; final hull service routing and placement; GPU appearance, cost and temporal edge stability."
+  - key: equipment.tank.hydrolox.0p5t
+    version: 1
+    manifest_sha256: "d9ba6a61e6de461e32ec390f1cd29c487568c5ecfbdea0e925dea46ad689cd46"
+    installed: caa6adc8
+    game: "the loader (world::assets) at fso caa6adc8"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-hydrolox-0p5t/v1 (361552 bytes, bounds [-0.8367, 0.0, -0.8974] to [0.8367, 1.7383, 0.8974]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure and common-bulkhead thermal qualification, boiloff, loaded supports; final hull service routing; GPU appearance, cost and temporal edge stability."
