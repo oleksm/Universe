@@ -9,7 +9,7 @@ identity:
 size_class: 1
 fits: mount.cargo-s1
 physical:
-  mass: 1757
+  mass: 1805
   volume: 14.88
   length: 3.16
   width: 2.16
@@ -20,7 +20,7 @@ built_of:
   parts: cargo-cabin-s1
   shares: rule.shares-chosen
   list:
-    - { code: CBS1-01, name: "Shell", description: "The pressure wall and floor: 5 mm aluminium plate on 100 mm T-frames 0.23 m apart, corner frames, and a 0.8 x 1.9 m plug door that opens inward so the pressure seats it.", mass: 1262, length: 3.16, width: 2.16, height: 2.18, item: stock.al6061-pl-5, quantity: 1451.3, module: module.welding-bay }
+    - { code: CBS1-01, name: "Shell", description: "The pressure wall and floor: 5 mm aluminium plate on 100 mm T-frames 0.23 m apart, corner frames, and a 0.8 x 1.9 m plug door that opens inward so the pressure seats it.", mass: 1310, length: 3.16, width: 2.16, height: 2.18, item: stock.al6061-pl-5, quantity: 1506.5, module: module.welding-bay }
     - { code: CBS1-02, name: "Seats", mass: 108, length: 0.779, width: 0.912, height: 0.986, item: stock.al6061-pl-5, quantity: 124.2, module: module.machining-centre }
     - { code: CBS1-03, name: "Linings and insulation", mass: 72, length: 0.681, width: 0.797, height: 0.862, item: stock.mli-fl, quantity: 82.8, module: module.assembly-shop,
         basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
@@ -36,6 +36,6 @@ life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume, identity.description], tier: derived, review: true, note: "Modeller's blockout v01 (2026-10-13): 2 rows of 2+1 at an airliner's 0.79 m pitch, 0.45 m cushions in 0.48 m armrests, 0.50 m aisle, 0.80 m front cross aisle to the door, 0.25 m rear service space; shell 3.10 x 2.10 x 2.12 m, 3.16 x 2.16 x 2.18 with pads, in the mount's 3.49 x 2.2 x 2.2. The 1.58 x 1.85 first listed held the seats only. A cylinder would be the lighter vessel but cannot give the width at the floor and the height in 2.2 m, so it is a box. Clear height under the frames about 1.9 m." }
-  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Shell at 101.3 kPa inside (as the windows), 6061 welded at 165 MPa over a safety factor 1.5 (110 MPa). Plate between frames as a long clamped strip, stress = p x b^2 / (2 t^2): 0.23 m spacing gives 4.9 mm, so 5 mm plate, 35.1 m2, 473 kg. Frames as fixed-ended beams over 2.12 m: 23.3 kN/m makes 8.7 kN m, a 79 cm3 section; a 100 x 6 web with an 80 x 10 flange, the skin the other flange, gives 90 cm3 at 3.8 kg/m; 13 girth frames of 8.44 m and 9 ribs on each end wall, 148 m, 558 kg. Plus 20% for corner frames, door surround and doublers, plus 25 kg door hinges and latches: 1,262 kg. Seats, linings, air plant, cooler and controls keep their first figures; power 12 kW is not worked out. 1,757 kg in all (it was 900): 293 kg a seat. Hull owns the corridor and the power, oxygen and coolant feeds; ports capped." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, identity.description], tier: derived, review: true, note: "Modeller's blockout v01 (2026-10-13): 2 rows of 2+1 at an airliner's 0.79 m pitch, 0.45 m cushions in 0.48 m armrests, 0.50 m aisle, 0.80 m front cross aisle to the door, 0.25 m rear service space; shell the full 3.16 x 2.16 x 2.18 m with the corner pads inset (100 mm frames inside a 2.10 m shell left 1.89 m, short of the 1.94 m of seats and aisle), in the mount's 3.49 x 2.2 x 2.2. The 1.58 x 1.85 first listed held the seats only. A cylinder would be the lighter vessel but cannot give the width at the floor and the height in 2.2 m, so it is a box. Clear between frames 1.95 m wide; floor 0.13 m up, ceiling 2.075 m, 1.945 m clear." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Shell at 101.3 kPa inside (as the windows), 6061 welded at 165 MPa over a safety factor 1.5 (110 MPa). Plate between frames as a long clamped strip, stress = p x b^2 / (2 t^2): 0.23 m spacing gives 4.9 mm, so 5 mm plate, 36.8 m2, 497 kg. Frames as fixed-ended beams over 2.18 m: 23.3 kN/m makes 9.2 kN m, an 84 cm3 section; a 100 x 6 web with an 80 x 10 flange, the skin the other flange, gives 90 cm3 at 3.8 kg/m; 13 girth frames of 8.68 m and 9 ribs on each end wall, 152 m, 574 kg. Plus 20% for corner frames, door surround and doublers, plus 25 kg door hinges and latches: 1,310 kg. Seats, linings, air plant, cooler and controls keep their first figures; power 12 kW is not worked out. 1,805 kg in all (it was 900): 301 kg a seat. Hull owns the corridor and the power, oxygen and coolant feeds; ports capped." }
   - { of: [life], rule: rule.life-ship-system }
