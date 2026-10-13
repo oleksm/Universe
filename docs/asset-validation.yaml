@@ -3220,3 +3220,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static package only. Source cover/screw demonstration is not runtime motion. Actual GPU appearance/cost, final hull/feed fit, capture/throughput, drive packing/torque, impact strength and wear remain unqualified."
+  - key: equipment.handling.transfer.arm
+    version: 1
+    manifest_sha256: "6a45f571303f5dcceee13946ad0044a1fb3fd57b97ed7bd33064cd4000208d9e"
+    installed: 754dd503
+    game: "the loader (world::assets) at fso 754dd503"
+    date: "2026-10-13"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Source-only slew/luff demonstration; runtime controls, GPU appearance/cost, final hull/receiver placement, loaded structure, flow, rotary seals and internal drive packing remain unqualified."
