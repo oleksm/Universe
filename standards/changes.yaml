@@ -503,7 +503,7 @@
 - { record: equipment.utility.reaction-wheels.s2, at: "2026-10-12T18:10:06Z", status: draft, summary: "changed: visual", sha: "76c4f3043e7b6b86" }
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:47:21Z", status: draft, summary: "changed: visual", sha: "3c30b51453242ef5" }
 - { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
-- { record: equipment.utility.transfer.boom, at: "2026-10-13T18:50:59Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "95d19d9c98bca77c" }
+- { record: equipment.utility.transfer.boom, at: "2026-10-13T18:54:00Z", status: draft, summary: "changed: physical, built_of, basis", sha: "5e11aa8b112a2fc4" }
 - { record: equipment.utility.window.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b94ba33b7d46352f" }
 - { record: equipment.utility.window.s2, at: "2026-10-12T00:19:28Z", status: draft, summary: "changed: visual", sha: "3218d61a505e2c69" }
 - { record: facility.treistun.ashfall-camp.ashfall-life-support, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "0b27523c1caa4f00" }
