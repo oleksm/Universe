@@ -29,6 +29,12 @@ function:
   kind: "compressor"
   flow: 0.1
   pressure: 30000000.0
+visual:
+  format: "freefall-model/1"
+  path: "models/utility-compressor-s1/v1"
+  manifest_sha256: "3d9e95969618feed760bf5c2c2984d183fbf214e88ba291e771b392013c065fc"
+  version: 1
+  triangles: 2980
 life: 473364000
 basis:
   - { of: [function, size_class], tier: invented, review: true, note: "Fills a 30 MPa store at 0.1 kg/s. Chosen." }
