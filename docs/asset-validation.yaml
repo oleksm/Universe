@@ -3284,3 +3284,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Hidden packing, electrical and cooling performance, containment, loaded structure and final service routing unqualified."
+  - key: equipment.power.battery-vtol.s2
+    version: 1
+    manifest_sha256: "a6e52257d243ea909e603337441a156583b9ce6384d8f2d62ce4cfcf2f206ba7"
+    installed: f933b1e2
+    game: "the loader (world::assets) at fso f933b1e2"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-battery-vtol-s2/v1 (127776 bytes, bounds [-0.6, 0.0, -0.45] to [0.6, 0.6, 0.45]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Hidden packing, electrical and cooling performance, containment, loaded structure and final service routing unqualified."
