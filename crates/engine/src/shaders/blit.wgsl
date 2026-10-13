@@ -85,3 +85,8 @@ fn fs_main(in: VertexOut) -> @location(0) vec4<f32> {
     let world = film(scene.rgb) * (1.0 - front.a) + film(front.rgb / fa) * front.a;
     return vec4<f32>(world * (1.0 - hud.a) + hud.rgb, 1.0);
 }
+
+@fragment
+fn fs_copy(in: VertexOut) -> @location(0) vec4<f32> {
+    return textureSample(scene_tex, soft, in.uv);
+}

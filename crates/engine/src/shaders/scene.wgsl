@@ -455,7 +455,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     // drew each edge as a dark dash.)
     // (How obliquely from the world's smooth up, not the triangle's flat normal: that stepped the
     // pixel's size, the maps' level and the material's noise at every triangle edge.)
-    let oblique = 1.0 / max(abs(dot(normalize(in.up), normalize(-in.at))), 0.25);
+    let oblique = 1.0 / max(abs(dot(normalize(in.up), eye_direction(in.at))), 0.25);
     let span = 2.0 * length(in.at) * g.view.x * oblique;
     let footprint = select((length(ldx) + length(ldy)) / max(length(in.local), 1e-6), span / radius, on_patch);
     // (The globe maps' level on a patch from that: a texel spans π/2 / GLOBE_SIZE radians.)
@@ -650,7 +650,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
     var c = albedo.rgb * (vec3<f32>(in.ambient) + (1.0 - in.ambient) * light);
     // The sun's glint: where the surface turns the light to the eye (Blinn).
     if (in.material.x > 0.0 && dot(n, in.sun_dir) > 0.0) {
-        let h = normalize(in.sun_dir + normalize(-in.at));
+        let h = normalize(in.sun_dir + eye_direction(in.at));
         c += in.sun_light * in.material.x * pow(max(dot(n, h), 0.0), in.material.y) * seen;
     }
     // What glows of itself (windows, lamps, hot metal).
@@ -667,7 +667,7 @@ fn fs_mesh(in: MeshOut) -> @location(0) vec4<f32> {
             var si: SeaIn;
             si.depth_m = max(-ground.r * in.globe.z, 0.5);
             si.wind_ms = 9.0 * (1.0 - clamp(calm.r, 0.35, 1.0));
-            si.to_eye = normalize(-in.at);
+            si.to_eye = eye_direction(in.at);
             si.up = up;
             si.sun_dir = in.sun_dir;
             si.sun = in.sun_light * seen;
@@ -767,4 +767,13 @@ fn vs_mesh_line(v: MeshIn) -> MeshOut {
     clip.z *= 1.003;
     // (Edges, panel lines: no glint of their own.)
     return MeshOut(clip, v.color * v.line_tint, k * v.light_color.rgb, fill(v, n), v.light_color.w, p, n, v.light_dir.xyz, v.light_color.rgb, vec4<f32>(0.0, 1.0, v.material.z, 0.0), v.pos * v.globe_at.w + v.globe_at.xyz, vec4<f32>(0.0), 1.0, vec3<f32>(0.0), vec4<f32>(0.0), vec2<f32>(0.0), n, vec4<f32>(0.0));
+}
+
+fn eye_direction(at: vec3<f32>) -> vec3<f32> {
+    if g.view.w > 0.5 {
+        let a = g.inv_view_proj * vec4<f32>(0.0, 0.0, 1.0, 1.0);
+        let b = g.inv_view_proj * vec4<f32>(0.0, 0.0, 0.5, 1.0);
+        return normalize(a.xyz / a.w - b.xyz / b.w);
+    }
+    return normalize(-at);
 }

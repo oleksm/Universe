@@ -102,6 +102,8 @@ impl Default for Graphics {
 pub struct Frame {
     keepalive: Vec<std::sync::Arc<dyn Send + Sync>>,
     pub camera: Camera,
+    pub projection: crate::viewport::Projection,
+    pub(crate) views: Vec<(u64, crate::viewport::PixelRect, Box<Frame>)>,
     pub clear: Color,
     /// The light (e.g. the star), for the `*_shaded` draws. None: they draw
     /// unlit (full brightness).
@@ -348,10 +350,29 @@ impl Frame {
         (n(&self.lines) / 2 + n(&self.hud) / 2 + mesh_lines as u32, n(&self.solids) / 3 + self.hud_tris.len() as u32 / 3 + mesh_tris as u32, n(&self.points) + n(&self.sky))
     }
 
+    /// Retained scene into an isolated viewport. Rect uses this frame's HUD coordinates.
+    /// Configure lighting/overlays on the child; its UI and depth are independent.
+    /// View IDs must be unique per host frame; nested views are refused.
+    pub fn scene_view(&mut self, id: u64, scene: &crate::scene::Scene,
+        view: &crate::viewport::View, configure: impl FnOnce(&mut Frame)) {
+        assert!(!self.views.iter().any(|(v,_,_)| *v == id), "duplicate view id");
+        let r = view.rect;
+        assert!(r.origin.is_finite() && r.size.is_finite() && r.origin.min_element() >= 0.
+            && r.size.min_element() > 0. && (r.origin + r.size).cmple(self.size).all(), "invalid view rectangle");
+        let mut child = Frame::new(view.camera, r.size, r.size);
+        child.projection = view.projection;
+        configure(&mut child);
+        assert!(child.views.is_empty(), "nested views unsupported");
+        scene.draw(&mut child, view.layers);
+        self.views.push((id, r, Box::new(child)));
+    }
+
     pub(crate) fn new(camera: Camera, scene_size: Vec2, hud_size: Vec2) -> Self {
         Self {
             keepalive: Vec::new(),
             camera,
+            projection: Default::default(),
+            views: Vec::new(),
             clear: Color::BLACK,
             light: None,
             reflector: None,
@@ -578,7 +599,7 @@ impl Frame {
     }
 
     pub fn project(&self, p: DVec3) -> Option<Vec2> {
-        let clip = self.camera.view_proj(self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
+        let clip = self.projection.matrix(&self.camera, self.size.x / self.size.y) * self.camera.relative(p).extend(1.0);
         if clip.w <= 0.0 {
             return None;
         }
@@ -912,6 +933,19 @@ impl Frame {
 
     /// Draw text (the HUD typeface, on its monospaced grid); `\n` starts a
     /// new line. Returns the end position.
+    /// A label anchored in world space. Depth-tested labels use the view's actual
+    /// scene depth (opaque/masked geometry); glass does not occlude them.
+    pub fn world_text(&mut self, at: DVec3, text: &str, color: Color, scale: f32, depth_tested: bool) {
+        let clip = self.projection.matrix(&self.camera, self.size.x/self.size.y) * self.camera.relative(at).extend(1.);
+        if clip.w <= 0. || !(0.0..=1.0).contains(&(clip.z/clip.w)) { return; }
+        let pos = Vec2::new((clip.x/clip.w+1.)*0.5*self.size.x, (1.-clip.y/clip.w)*0.5*self.size.y);
+        let start = self.hud_tris.len();
+        self.text_scaled(pos, text, color, scale);
+        if depth_tested {
+            for vertex in &mut self.hud_tris[start..] { vertex.alpha = [3., clip.z/clip.w]; }
+        }
+    }
+
     pub fn text(&mut self, pos: Vec2, text: &str, color: Color) -> Vec2 {
         self.text_scaled(pos, text, color, 1.0)
     }

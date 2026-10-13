@@ -38,3 +38,6 @@ pub use worldmaps::WorldMaps;
 
 pub mod clipboard;
 pub mod text_editor;
+
+pub mod scene;
+pub mod viewport;
