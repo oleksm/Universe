@@ -3204,3 +3204,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static empty exterior only; internal rope/disc/wheel packing and operation, loads/drive/sealing/wear, free-fall feed handoff, runtime/GPU appearance/cost, temporal edges and final hull installation unqualified"
+  - key: equipment.handling.ore-scoop.s1
+    version: 1
+    manifest_sha256: "42fb4fe8343def5f9b14558dd1024cce3b5c9de1049706fea59ff09be636f62f"
+    installed: cc2ff902
+    game: "the loader (world::assets) at fso cc2ff902"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/handling-ore-scoop-s1/v1 (414664 bytes, bounds [-0.975, 0.0, -1.042] to [0.975, 1.495, 1.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static package only. Source cover/screw demonstration is not runtime motion. Actual GPU appearance/cost, final hull/feed fit, capture/throughput, drive packing/torque, impact strength and wear remain unqualified."
