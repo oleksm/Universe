@@ -61,6 +61,8 @@ pub struct State {
     pub(crate) rocket_fuel_rate: f64,
     #[serde(skip)]
     pub(crate) capacitor_w: f64,
+    #[serde(skip)]
+    authority_cache: Option<(Vec<u64>, Authority)>,
 }
 impl Fit {
     pub fn validate(&self, thrusters: usize) -> Result<(), String> {
@@ -159,8 +161,29 @@ impl State {
             plant_fuel_rate: 0.,
             rocket_fuel_rate: 0.,
             capacitor_w: 0.,
+            authority_cache: None,
         })
     }
+    /// Per-ship, bounded to one exact solver input. Spin, time, battery energy
+    /// and temperature are not authority inputs; their limits remain in plan().
+    /// Mass, COM, full inertia and every effective actuator column/role are.
+    fn authority(&mut self, ts: &[Thruster], body: crate::flight_control::Body) -> Authority {
+        let key: Vec<u64> = std::iter::once(body.mass)
+            .chain(body.com.to_array()).chain(body.inertia.to_cols_array())
+            .map(f64::to_bits)
+            .chain(ts.iter().flat_map(|t| t.at.to_array().into_iter()
+                .chain(t.push.to_array()).chain([t.thrust]).map(f64::to_bits)
+                .chain(std::iter::once(t.role as u64))))
+            .collect();
+        if let Some((old, result)) = &self.authority_cache {
+            if *old == key { return *result; }
+        }
+        let _scope = universe_prof::scope("sim/devices/authority");
+        let result = authority(ts, body);
+        self.authority_cache = Some((key, result));
+        result
+    }
+
     pub fn is_fan(&self, index: usize) -> bool {
         self.fit.fans.iter().any(|f| f.thruster == index)
     }
@@ -387,7 +410,13 @@ impl Ship {
         if self.manual && push {
             crate::flight_control::manual(&ts, body, self.held, self.powered, dt, &mut self.jets);
         } else {
-            let a = authority(&ts, body);
+            // No translational request needs no envelope. Angular control still
+            // uses the live allocator below. Never solve disabled hardware.
+            let a = if self.powered && push && (self.throttle > 0. || self.rcs != DVec3::ZERO) {
+                state.authority(&ts, body)
+            } else {
+                Authority { main: 0., lift: 0., side: 0. }
+            };
             let main = ts
                 .iter()
                 .filter(|t| t.role == crate::ship::ThrusterRole::Main)
@@ -435,6 +464,43 @@ impl Ship {
     pub(crate) fn consume_devices(&mut self, dt: f64) {
         if let Some(state) = &mut self.devices {
             state.consume(dt);
+        }
+    }
+}
+
+#[cfg(test)]
+mod authority_tests {
+    use super::*;
+    #[test]
+    fn exact_authority_cache_tracks_physical_inputs_not_spin() {
+        use crate::flight_control::Body;
+        use crate::ship::ThrusterRole;
+        let mut state = State::new(Fit::default(), 4, 1., 293.).unwrap();
+        let mut ts: Vec<_> = [(-2.,-2.),(-2.,2.),(2.,-2.),(2.,2.)].into_iter().map(|(x,z)| Thruster {
+            nozzle: "test".into(), at:DVec3::new(x,0.,z), push:DVec3::Y,
+            thrust:5000., role:ThrusterRole::Lift, exhaust:0., efficiency:1.,
+        }).collect();
+        let mut b = Body { mass:1000., com:DVec3::ZERO, inertia:glam::DMat3::IDENTITY*4000., spin:DVec3::ZERO };
+        let cold = std::time::Instant::now();
+        let expected = authority(&ts,b);
+        let cold = cold.elapsed();
+        assert_eq!(state.authority(&ts,b),expected);
+        let warm = std::time::Instant::now();
+        for _ in 0..1000 { assert_eq!(state.authority(&ts,b),expected); }
+        println!("authority cold={cold:?};1000 exact hits={:?}",warm.elapsed());
+        let old = state.authority_cache.clone().unwrap().0;
+        b.spin = DVec3::ONE;
+        assert_eq!(state.authority(&ts,b),expected);
+        assert_eq!(state.authority_cache.as_ref().unwrap().0,old);
+        for case in 0..6 {
+            let prior=state.authority_cache.as_ref().unwrap().0.clone();
+            match case {
+                0=>b.mass+=1., 1=>b.com.x+=0.01, 2=>b.inertia.x_axis.x+=1.,
+                3=>ts[0].thrust*=0.9, 4=>ts[0].at.z+=0.01,
+                _=>ts[0].role=ThrusterRole::Rcs,
+            }
+            assert_eq!(state.authority(&ts,b),authority(&ts,b));
+            assert_ne!(state.authority_cache.as_ref().unwrap().0,prior);
         }
     }
 }

@@ -15,3 +15,18 @@ Legs reuse the live landing-lock/shock model: equal loading limited by the weake
 Validation: `cargo run -p universe-world --example device_accept` checks synthetic limits (not product tuning), partial-span consumption, empty/hot/airless fans, final charge, thermal cutoff, leg capacity and manual takeoff through the real World tick. Existing workspace tests remain the compatibility gate. This branch requires ships-local-world 593b569d (local cherry-pick 8744faa5).
 
 Validated on 2026-10-12: registry build and device_accept pass; `44` tests pass with `cargo test --workspace --exclude universe`. The full isolated branch initially hit eight game borrow errors from owned spec lifetimes; Ships fixed the client adapters in its combined rebuild and reports game compilation passes. Combined GPU/client acceptance belongs to that branch. Evidence: `out/review/live-devices/validation.json` and its hashed logs. Core/API commits `16b19f11`, acceptance follow-up `734fa099`. Main and installed binaries unchanged.
+
+Authority performance follow-up: each device State retains one exact authority
+input/result. The key includes effective thruster positions, directions, thrust
+and roles, mass, COM and the full inertia tensor. Spin is not an authority input;
+battery/thermal limits still run on every allocation. No density or mass
+quantization is introduced, so changing airborne thrust invalidates the entry.
+Disabled devices and zero translation demand skip the envelope entirely while
+angular allocation and resource accounting continue. The `sim/devices/authority`
+profile scope identifies remaining cold solves.
+
+A synthetic symmetric four-fan check measured a 4.99 ms cold solve versus
+0.251 ms for 1000 exact hits (optimized debug on this host; not an FPS promise).
+Regression checks compare fresh and cached results exactly and invalidate mass,
+COM, inertia, thrust, position and role changes. The cache is per-ship, bounded
+to one entry, omitted from saves and discarded with device replacement.
