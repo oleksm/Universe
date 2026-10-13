@@ -31,6 +31,12 @@ function:
   air_recovery: 0
   persons: 2
   cooling: 0
+visual:
+  format: "freefall-model/1"
+  path: "models/life-support-cartridge/v1"
+  manifest_sha256: "a8c323d81d635ce3f4e78229da5f70077c10ec4c57896b34b27368e822c333e5"
+  version: 1
+  triangles: 2332
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "Two people for twelve hours between swaps. Chosen." }
