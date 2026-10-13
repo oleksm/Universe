@@ -5,21 +5,27 @@ identity:
   maker: org.cormorant
   revision: draft
   slot: handling
-  description: "Moves bulk or cargo aboard: a scoop, a conveyor, an arm."
+  description: "A tubular drag conveyor: discs on an aramid rope drawn through two closed tubes, so it carries bulk under thrust or in free fall, at any angle. An open belt would let the load float off."
 size_class: 1
 fits: mount.handling-s1
 physical:
-  mass: 1200
+  mass: 473
   volume: 3.84
   length: 8.0
   width: 0.8
   height: 0.6
+needs:
+  power: 1500
 built_of:
   parts: handling-conveyor-s1
   list:
-    - { code: CNV1-01, name: "Frame", description: "Tube stringers and cross members.", mass: 480, length: 5.89, width: 0.589, height: 0.442, item: stock.al6061-tb-120x3, quantity: 552.0, module: module.welding-bay }
-    - { code: CNV1-02, name: "Belt and rollers", description: "The belt, its idlers and the drums.", mass: 480, length: 5.89, width: 0.589, height: 0.442, item: stock.st4340-bar-120, quantity: 552.0, module: module.machining-centre }
-    - { code: CNV1-03, name: "Drive", description: "Motor, gearbox and controls.", mass: 240, length: 4.68, width: 0.468, height: 0.351, item: stock.st4340-bar-120, quantity: 276.0, module: module.machining-centre }
+    - { code: CNV1-01, name: "Tubes", description: "Two steel tubes, 160 mm, 3 mm wall, 8 m: the carrying run above, the return below, 0.45 m apart.", mass: 186, length: 8.0, width: 0.16, height: 0.61, item: stock.st4340-tb-160x3, quantity: 214, module: module.welding-bay }
+    - { code: CNV1-02, name: "Rope", description: "An endless 16 mm aramid rope, 17 m, through both tubes and round the wheels.", mass: 3.4, length: 17, width: 0.016, height: 0.016, item: stock.aramid-fb, quantity: 4, module: module.textile-mill }
+    - { code: CNV1-03, name: "Discs", description: "113 polyethylene discs, 150 mm across and 20 mm thick, every 0.15 m on the rope.", mass: 37, length: 0.15, width: 0.15, height: 0.02, item: good.polyethylene, quantity: 42.5, module: module.composites-works }
+    - { code: CNV1-04, name: "Wheels and shafts", description: "Two pocketed steel wheels, 0.45 m, one at each end, on 50 mm shafts; the tail one on a screw take-up.", mass: 90, length: 0.45, width: 0.45, height: 0.6, item: stock.st4340-bar-120, quantity: 135, module: module.machining-centre }
+    - { code: CNV1-05, name: "End housings", description: "Two sealed boxes of 5 mm plate, 0.6 x 0.8 x 0.6, round the wheels: the inlet port in the tail one, the outlet in the head one.", mass: 71, length: 0.6, width: 0.8, height: 0.6, item: stock.al6061-pl-5, quantity: 81.7, module: module.welding-bay }
+    - { code: CNV1-06, name: "Supports", description: "Five tube brackets every 1.6 m and four corner feet.", mass: 32, length: 8.0, width: 0.8, height: 0.6, item: stock.al6061-pl-5, quantity: 36.8, module: module.welding-bay }
+    - { code: CNV1-07, name: "Drive", description: "Gear motor with brake on the head shaft, inside the head housing.", mass: 40, length: 0.4, width: 0.25, height: 0.25, item: good.electric-motors, quantity: 40, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
@@ -28,6 +34,8 @@ function:
   reach: 8.0
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "Eight metres of 0.6 m belt moving 10 kg/s: a light mine conveyor. From memory. Not sourced." }
+  - { of: [function], tier: invented, review: true, note: "10 kg/s over 8 m: a small ore feed. Chosen." }
+  - { of: [built_of.list, physical.mass, needs], tier: derived, review: true, note: "Tubular drag (disc) conveyor, as in powder plants: the load is packed between discs and pushed, so it needs no gravity. A pipe belt was rejected: it needs about 25 tube diameters to open flat at each end, 3.75 m, most of an 8 m run, open. Capacity: 150 mm bore, 0.7 full, 0.6 m/s, 1,600 kg/m3 bulk: 11.9 kg/s. Masses from sizes and densities: steel tube 11.6 kg/m, aramid rope 0.2 kg/m, polyethylene disc 0.33 kg. Drive: 158 kg of load on the carrying run at 1 g and 0.5 friction, 780 N, with disc drag 1 kN at 0.6 m/s, 0.6 kW; 1.5 kW for packed starts in free fall." }
+  - { of: [physical.volume, physical.length, physical.width, physical.height], tier: invented, review: true, note: "The first envelope, kept: the wheels set the height and the housings the width." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
