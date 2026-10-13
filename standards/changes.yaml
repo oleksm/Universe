@@ -501,7 +501,7 @@
 - { record: equipment.utility.mining-rig.s2, at: "2026-10-11T19:23:28Z", status: draft, summary: "changed: visual", sha: "2829778aa555442d" }
 - { record: equipment.utility.pumps.s1, at: "2026-10-12T17:44:27Z", status: draft, summary: "changed: visual", sha: "35c588c32167d350" }
 - { record: equipment.utility.reaction-wheels.s2, at: "2026-10-12T18:10:06Z", status: draft, summary: "changed: visual", sha: "76c4f3043e7b6b86" }
-- { record: equipment.utility.refuelling-port.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "8c71ab68a02f8a0e" }
+- { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:27:39Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "1f08020602af1c20" }
 - { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "4e73424afb3f7a65" }
 - { record: equipment.utility.window.s1, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "b94ba33b7d46352f" }

@@ -5,11 +5,11 @@ identity:
   maker: org.hadley
   revision: draft
   slot: utility
-  description: "A connection through the hull for taking fuel, water or air aboard, or giving it out."
+  description: "A connection through the hull for taking one liquid aboard or giving it out: water, liquid oxygen or liquid methane, set when it is fitted. Not hydrogen, not gas. A 125 mm vacuum-jacketed dry-break coupling behind a hinged door."
 size_class: 1
 fits: mount.utility-s1
 physical:
-  mass: 120
+  mass: 81
   volume: 0.144
   length: 0.6
   width: 0.6
@@ -17,8 +17,10 @@ physical:
 built_of:
   parts: utility-refuelling-port-s1
   list:
-    - { code: RFP0-01, name: "Coupling", description: "The quick coupling and its valve.", mass: 72, length: 0.506, width: 0.506, height: 0.337, item: stock.st304-pl-3, quantity: 82.8, module: module.machining-centre }
-    - { code: RFP0-02, name: "Door and controls", description: "The hull door over it and the controls.", mass: 48, length: 0.442, width: 0.442, height: 0.295, item: stock.al6061-pl-5, quantity: 55.2, module: module.machining-centre }
+    - { code: RFP0-01, name: "Coupling and valve", description: "A 125 mm dry-break coupling half, its isolation valve and a vacuum-jacketed spool to the rear connector, which carries a transport cap until the hull's line is joined.", mass: 50, length: 0.45, width: 0.25, height: 0.25, item: stock.st304-pl-3, quantity: 75.0, module: module.machining-centre }
+    - { code: RFP0-02, name: "Door and actuator", description: "A 5 mm hinged door that keeps dust and sunlight off the coupling; it holds no pressure.", mass: 15, length: 0.6, width: 0.6, height: 0.03, item: stock.al6061-pl-5, quantity: 22.5, module: module.machining-centre }
+    - { code: RFP0-03, name: "Housing and seat flange", description: "The recessed 2 mm box and the flange with four mounts that sits on the hull's seat.", mass: 13, length: 0.6, width: 0.6, height: 0.4, item: stock.al6061-sh-2, quantity: 15.0, module: module.welding-bay }
+    - { code: RFP0-04, name: "Controls", description: "Valve and door control, leak and temperature sensing.", mass: 3, length: 0.2, width: 0.15, height: 0.05, item: good.electronics, quantity: 3.0, module: module.electronics-works }
 making:
   module: module.assembly-shop
 function:
@@ -26,6 +28,7 @@ function:
   flow: 20.0
 life: 473364000
 basis:
-  - { of: [physical, function, size_class], tier: invented, review: true, note: "Takes 20 kg/s through a flush coupling. Chosen." }
+  - { of: [function, size_class], tier: invented, review: true, note: "Takes 20 kg/s through a flush coupling. Chosen." }
+  - { of: [built_of.list, physical.mass, identity.description], tier: derived, review: true, note: "Worked out 2026-10-13 for the modeller's blockout v01. One fluid a port, so oxygen never meets fuel in a coupling. 20 kg/s of the lightest liquid in scope, methane at 422 kg/m3, is 0.047 m3/s; at 4 m/s (kept low so a cryogen does not flash) that wants 123 mm: a 125 mm bore. Rated 1 MPa (the tanks' 0.35 to 0.45 MPa plus the transfer pump's head) from 90 to 370 K, vacuum-jacketed so the cold liquids do not boil in it. Hydrogen at 71 kg/m3 would want a 300 mm bore: another port. Masses: coupling, valve and spool 50 kg (from memory of 125 mm stainless fittings), door 15, housing 13, controls 3. Total 81 kg (it was 120). The port owns all this; the hull owns its seat and the line from the rear connector." }
   - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
