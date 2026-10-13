@@ -3700,3 +3700,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Game GPU appearance/cost, final hull and plumbing, thermal stratification and heat-transfer rate, pressure fatigue, thermal bridges and loaded support qualification."
+  - key: equipment.utility.compressor.s1
+    version: 1
+    manifest_sha256: "3d9e95969618feed760bf5c2c2984d183fbf214e88ba291e771b392013c065fc"
+    installed: 3eb7530c
+    game: "the loader (world::assets) at fso 3eb7530c"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-compressor-s1/v1 (106904 bytes, bounds [-0.75, 0.0, -0.4] to [0.75, 1.0, 0.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Game GPU appearance/cost, final hull piping, pressure/flow/thermal performance, vibration and internal packing qualification; no oxygen or hydrogen service."
