@@ -924,5 +924,6 @@
     "freefall-geometry": "40fce6eea27725a786b4203766de3e3fa785c53e853673f969baa69f619c44c8",
     "freefall-presentation": "a0ea03e6780816e05c238179a6b4e3b03771f57eeb0ecace800aec5f612b3fb0"
   },
-  "evidence_root": "/home/alexm/git/universe-engine-pgs-walk/out/review/v8-near-ground"
+  "evidence_root": "/home/alexm/git/universe-engine-pgs-walk/out/review/v8-near-ground",
+  "presentation_correction": "Fixed-camera claim withdrawn: baseline eye changes at terrainframe540; repeat changes1140 inside final window; alternate title runs retain earlier scalar height. Full transform identity not logged. See v8-crease-cpu.json."
 }
