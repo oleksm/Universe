@@ -148,6 +148,7 @@ impl Game for Fixture {
     }
     fn draw(&self, f: &mut Frame, _: &Context) {
         let size = f.size();
+        f.hud_rect(Vec2::ZERO, size, Color::rgb(0.05, 0.08, 0.15));
         for i in 0..3 {
             let mut camera = Camera::default();
             camera.position = DVec3::new(0., 0., 4.);

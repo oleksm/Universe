@@ -103,7 +103,7 @@ pub struct Frame {
     keepalive: Vec<std::sync::Arc<dyn Send + Sync>>,
     pub camera: Camera,
     pub projection: crate::viewport::Projection,
-    pub(crate) views: Vec<(u64, crate::viewport::PixelRect, Box<Frame>)>,
+    pub(crate) views: Vec<(u64, crate::viewport::PixelRect, Box<Frame>, usize)>,
     pub clear: Color,
     /// The light (e.g. the star), for the `*_shaded` draws. None: they draw
     /// unlit (full brightness).
@@ -355,7 +355,7 @@ impl Frame {
     /// View IDs must be unique per host frame; nested views are refused.
     pub fn scene_view(&mut self, id: u64, scene: &crate::scene::Scene,
         view: &crate::viewport::View, configure: impl FnOnce(&mut Frame)) {
-        assert!(!self.views.iter().any(|(v,_,_)| *v == id), "duplicate view id");
+        assert!(!self.views.iter().any(|(v,_,_,_)| *v == id), "duplicate view id");
         assert!(view.valid(), "invalid view");
         let r = view.rect;
         assert!(r.origin.is_finite() && r.size.is_finite() && r.origin.min_element() >= 0.
@@ -365,7 +365,8 @@ impl Frame {
         configure(&mut child);
         assert!(child.views.is_empty(), "nested views unsupported");
         scene.draw(&mut child, view.layers);
-        self.views.push((id, r, Box::new(child)));
+        self.views.push((id, r, Box::new(child), self.hud_tris.len()));
+        self.canvas_scene();
     }
 
     pub(crate) fn new(camera: Camera, scene_size: Vec2, hud_size: Vec2) -> Self {

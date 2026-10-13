@@ -32,7 +32,7 @@ frame.scene_view(view_id, &scene, &view, |child| {
 Each view has an independent color/depth target and camera-relative submissions.
 The shared renderer submits each view before reusing scratch globals and instance
 buffers; it does not create another device, model cache or shader implementation.
-Views are composited in submission order below the host's UI. A view's own UI is
+Views are composited at their submission point: earlier UI backgrounds stay behind them, later UI overlays stay above. Each view starts a fresh canvas depth scope. A view's own UI is
 local to its rectangle. Duplicate IDs, out-of-frame rectangles and nested views are
 refused. Closing a view drops its target; resize recreates that target. Per-frame
 model demand is the union of all views and the host. PBR upload byte/time budgets

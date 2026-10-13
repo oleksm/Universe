@@ -969,12 +969,12 @@ impl Renderer {
     pub fn render(&mut self, gpu: &mut Gpu, frame: &Frame, capture: Option<&Path>) {
         self.pbr.begin_frame();
         // Gather union demand before any child upload/eviction decision.
-        self.pbr.view_demand = frame.pbr.iter().chain(frame.views.iter().flat_map(|(_,_,f)| f.pbr.iter()))
+        self.pbr.view_demand = frame.pbr.iter().chain(frame.views.iter().flat_map(|(_,_,f,_)| f.pbr.iter()))
             .map(|d| d.model.id()).collect();
-        self.view_targets.retain(|id,_| frame.views.iter().any(|(i,_,_)| i == id));
+        self.view_targets.retain(|id,_| frame.views.iter().any(|(i,_,_,_)| i == id));
         let scale = self.target.out.as_vec2() / frame.size();
         let timing = self.gputime.take();
-        for (id, rect, child) in &frame.views {
+        for (id, rect, child, _) in &frame.views {
             let out = (rect.size * scale).ceil().as_uvec2().max(UVec2::ONE);
             let mut target = self.view_targets.remove(id).filter(|t| t.out == out).unwrap_or_else(||
                 Self::create_target(gpu, self.low_height, self.hud_scale, None, &self.blit_layout,
@@ -1283,53 +1283,67 @@ impl Renderer {
     /// Ordered UI and perspective canvases. A new canvas clears only depth;
     /// UI keeps its submission order and never tests or writes canvas depth.
     fn hud_pass(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame) {
-        if !frame.views.is_empty() {
-            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                label: Some("view composition"),
+        // Explicit UI/view submission boundaries; views neither hide earlier UI
+        // outside their rectangles nor get covered by earlier card backgrounds.
+        {
+            let _clear = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("clear UI"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &self.target.hud, depth_slice: None, resolve_target: None,
                     ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
                 })], depth_stencil_attachment: None, timestamp_writes: None,
                 occlusion_query_set: None, multiview_mask: None,
             });
+        }
+        let mut start = 0;
+        for (vi, (id, rect, _, end)) in frame.views.iter().enumerate() {
+            self.hud_range(encoder, frame, start..*end, false, vi == 0);
+            let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
+                label: Some("view composition"),
+                color_attachments: &[Some(wgpu::RenderPassColorAttachment {
+                    view: &self.target.hud, depth_slice: None, resolve_target: None,
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
+                })], depth_stencil_attachment: None, timestamp_writes: None,
+                occlusion_query_set: None, multiview_mask: None,
+            });
             pass.set_pipeline(&self.view_pipe);
             let scale = self.target.out.as_vec2()/frame.size();
-            for (id, rect, _) in &frame.views {
-                let origin = rect.origin * scale; let size = rect.size * scale;
-                pass.set_viewport(origin.x, origin.y, size.x, size.y, 0., 1.);
-                pass.set_bind_group(0, &self.view_targets[id].copy, &[]);
-                pass.draw(0..3, 0..1);
-            }
+            let origin = rect.origin * scale; let size = rect.size * scale;
+            pass.set_viewport(origin.x, origin.y, size.x, size.y, 0., 1.);
+            pass.set_bind_group(0, &self.view_targets[id].copy, &[]);
+            pass.draw(0..3, 0..1);
+            start = *end;
         }
-        let sections = canvas_batches(&frame.hud_tris);
+        self.hud_range(encoder, frame, start..frame.hud_tris.len(), true, frame.views.is_empty());
+    }
+
+    fn hud_range(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame,
+        range: std::ops::Range<usize>, final_range: bool, stamp: bool) {
+        let sections = canvas_batches(&frame.hud_tris[range.clone()]);
         for (section, batches) in sections.iter().enumerate() {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("UI / depth canvas"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &self.target.hud, depth_slice: None, resolve_target: None,
-                    ops: wgpu::Operations { load: if section == 0 && frame.views.is_empty() { wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT) } else { wgpu::LoadOp::Load }, store: wgpu::StoreOp::Store },
+                    ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
                 })],
                 depth_stencil_attachment: Some(wgpu::RenderPassDepthStencilAttachment {
                     view: &self.target.hud_depth,
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.), store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: if section == 0 { self.gputime.as_ref().map(|t| t.pass(3)) } else { None },
+                timestamp_writes: if stamp && section == 0 { self.gputime.as_ref().map(|t| t.pass(3)) } else { None },
                 occlusion_query_set: None, multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);
             pass.set_bind_group(1, &self.atlas_bind, &[]);
             pass.set_bind_group(2, &self.target.depth_bind, &[]);
             pass.set_vertex_buffer(0, self.hud_tris.buffer.slice(..));
-            for (range, kind) in batches {
-                pass.set_pipeline(match kind {
-                    0 => &self.hud_tri_pipe,
-                    1 => &self.canvas_pipe,
-                    _ => &self.canvas_blend_pipe,
-                });
-                pass.draw(range.clone(), 0..1);
+            for (local, kind) in batches {
+                pass.set_pipeline(match kind { 0 => &self.hud_tri_pipe, 1 => &self.canvas_pipe, _ => &self.canvas_blend_pipe });
+                pass.draw(local.start+range.start as u32..local.end+range.start as u32, 0..1);
             }
-            if section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
+            if final_range && section + 1 == sections.len() { self.hud.draw(&mut pass, &self.hud_pipe); }
         }
     }
 
