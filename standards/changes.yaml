@@ -465,7 +465,7 @@
 - { record: equipment.tank.hydrolox.2t, at: "2026-10-13T15:38:05Z", status: draft, summary: "changed: visual", sha: "b1df869b6cd9d9c2" }
 - { record: equipment.tank.hydrolox.3p5t, at: "2026-10-13T15:53:27Z", status: draft, summary: "changed: visual", sha: "b53b2f147a11c3f6" }
 - { record: equipment.tank.hydrolox.s1, at: "2026-10-12T17:15:03Z", status: draft, summary: "changed: visual", sha: "53973cea65292cc9" }
-- { record: equipment.tank.hydrolox.s2, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "22c9ea31e2360003" }
+- { record: equipment.tank.hydrolox.s2, at: "2026-10-13T15:56:42Z", status: draft, summary: "changed: physical, built_of, basis", sha: "1304ae038d3e860c" }
 - { record: equipment.tank.liquid-cargo.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "dfb4ca220f8952ce" }
 - { record: equipment.tank.methalox.0p5t, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "ae761540f51bf6ac" }
 - { record: equipment.tank.methalox.1t, at: "2026-10-07T13:18:43Z", status: draft, summary: "first tracked", sha: "0c4fb4b2183449ee" }
@@ -547,7 +547,7 @@
 - { record: facility.treistun.port-trethi.trethi-foundry, at: "2026-10-06T18:50:34Z", status: "", summary: "changed: processes", sha: "25e9773f7e633394" }
 - { record: facility.treistun.port-trethi.trethi-halls, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "457659c2302eeaef" }
 - { record: facility.treistun.port-trethi.trethi-life-support, at: "2026-10-05T22:01:13Z", status: "", summary: "first tracked", sha: "20bc6eb10d26153f" }
-- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-13T15:32:44Z", status: "", summary: "changed: lines", sha: "f06fd5b52c0d5f26" }
+- { record: facility.treistun.port-trethi.trethi-mill, at: "2026-10-13T15:56:42Z", status: "", summary: "changed: lines", sha: "f63c11ac0ff39248" }
 - { record: facility.treistun.port-trethi.trethi-power-station, at: "2026-10-07T01:45:03Z", status: "", summary: "changed: lines, modules", sha: "f731112f2e7df315" }
 - { record: facility.treistun.port-trethi.trethi-smelter, at: "2026-10-05T18:44:00Z", status: "", summary: "changed: stock", sha: "24ef6e22e88cb38b" }
 - { record: facility.treistun.port-trethi.trethi-warehouse, at: "2026-10-07T03:22:23Z", status: "", summary: "changed", sha: "aca0748cf7bad876" }
@@ -917,7 +917,7 @@
 - { record: module.field, at: "2026-10-11T03:02:00Z", status: review, summary: "changed: visual", sha: "3ced5955f60e9443" }
 - { record: module.filament-winder, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "772c4dd324afb3d9" }
 - { record: module.film-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "a0461a62fc61979b" }
-- { record: module.finishing-line, at: "2026-10-13T15:32:44Z", status: review, summary: "changed: recipes", sha: "dab710cdaa1d275d" }
+- { record: module.finishing-line, at: "2026-10-13T15:56:42Z", status: review, summary: "changed: recipes", sha: "980e702f0c07d1c3" }
 - { record: module.fish-farm, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b04e1dc1f14879fc" }
 - { record: module.flour-mill, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "805541cd82d79f7e" }
 - { record: module.forging-press, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "c2072cd3c2d06190" }
@@ -1561,6 +1561,7 @@
 - { record: stock.al6061-pl-5, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "d73e25d11a9b4c8c" }
 - { record: stock.al6061-pl-5-blank, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "bee97ea988406d0b" }
 - { record: stock.al6061-pl-5-panel, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "b19683a9346386bf" }
+- { record: stock.al6061-pl-8, at: "2026-10-13T15:56:42Z", status: review, summary: "first tracked", sha: "2372f9a73fdb1330" }
 - { record: stock.al6061-scrap, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "32825fa297420889" }
 - { record: stock.al6061-sh-0p5, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "c2c0c3da771e7fb9" }
 - { record: stock.al6061-sh-2, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "44d1030666ed8278" }
