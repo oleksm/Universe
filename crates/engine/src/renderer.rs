@@ -973,7 +973,7 @@ impl Renderer {
             .map(|d| d.model.id()).collect();
         self.view_targets.retain(|id,_| frame.views.iter().any(|(i,_,_,_)| i == id));
         let scale = self.target.out.as_vec2() / frame.size();
-        let timing = self.gputime.take();
+        if let Some(t) = self.gputime.as_mut() { t.begin_frame(); }
         for (id, rect, child, _) in &frame.views {
             let out = (rect.size * scale).ceil().as_uvec2().max(UVec2::ONE);
             let mut target = self.view_targets.remove(id).filter(|t| t.out == out).unwrap_or_else(||
@@ -984,7 +984,6 @@ impl Renderer {
             std::mem::swap(&mut target, &mut self.target);
             self.view_targets.insert(*id, target);
         }
-        self.gputime = timing;
         self.render_frame(gpu, frame, capture, true);
     }
 
@@ -1148,7 +1147,7 @@ impl Renderer {
                     },
                 })],
                 depth_stencil_attachment: None,
-                timestamp_writes: self.gputime.as_ref().map(|t| t.pass(4)),
+                timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(4)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1156,13 +1155,13 @@ impl Renderer {
             pass.set_bind_group(0, &self.target.blit, &[]);
             pass.draw(0..3, 0..1);
         }
-        if let Some(t) = self.gputime.as_mut() {
-            t.copy_out(&mut encoder);
+        if present {
+            if let Some(t) = self.gputime.as_mut() { t.copy_out(&mut encoder); }
         }
         universe_prof::time("render/submit", || gpu.queue.submit([encoder.finish()]));
         self.sunprobe.submitted();
-        if let Some(t) = self.gputime.as_mut() {
-            t.submitted();
+        if present {
+            if let Some(t) = self.gputime.as_mut() { t.submitted(); }
         }
         if let Some(t) = surface_texture {
             gpu.queue.present(t);
@@ -1189,7 +1188,7 @@ impl Renderer {
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(1.0), store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: self.gputime.as_ref().map(|t| t.shadow(k as u32)),
+                timestamp_writes: self.gputime.as_ref().and_then(|t| t.shadow(k as u32)),
                 occlusion_query_set: None,
                 multiview_mask: None,
             });
@@ -1229,7 +1228,7 @@ impl Renderer {
                 }),
                 stencil_ops: None,
             }),
-            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(1)),
+            timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(1)),
             occlusion_query_set: None,
             multiview_mask: None,
         });
@@ -1267,7 +1266,7 @@ impl Renderer {
                 depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.0), store: if keep_depth { wgpu::StoreOp::Store } else { wgpu::StoreOp::Discard } }),
                 stencil_ops: None,
             }),
-            timestamp_writes: self.gputime.as_ref().map(|t| t.pass(2)),
+            timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(2)),
             occlusion_query_set: None,
             multiview_mask: None,
         });
@@ -1291,19 +1290,19 @@ impl Renderer {
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &self.target.hud, depth_slice: None, resolve_target: None,
                     ops: wgpu::Operations { load: wgpu::LoadOp::Clear(wgpu::Color::TRANSPARENT), store: wgpu::StoreOp::Store },
-                })], depth_stencil_attachment: None, timestamp_writes: None,
+                })], depth_stencil_attachment: None, timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(3)),
                 occlusion_query_set: None, multiview_mask: None,
             });
         }
         let mut start = 0;
-        for (vi, (id, rect, _, end)) in frame.views.iter().enumerate() {
-            self.hud_range(encoder, frame, start..*end, false, vi == 0);
+        for (id, rect, _, end) in &frame.views {
+            self.hud_range(encoder, frame, start..*end, false);
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
                 label: Some("view composition"),
                 color_attachments: &[Some(wgpu::RenderPassColorAttachment {
                     view: &self.target.hud, depth_slice: None, resolve_target: None,
                     ops: wgpu::Operations { load: wgpu::LoadOp::Load, store: wgpu::StoreOp::Store },
-                })], depth_stencil_attachment: None, timestamp_writes: None,
+                })], depth_stencil_attachment: None, timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(3)),
                 occlusion_query_set: None, multiview_mask: None,
             });
             pass.set_pipeline(&self.view_pipe);
@@ -1314,11 +1313,11 @@ impl Renderer {
             pass.draw(0..3, 0..1);
             start = *end;
         }
-        self.hud_range(encoder, frame, start..frame.hud_tris.len(), true, frame.views.is_empty());
+        self.hud_range(encoder, frame, start..frame.hud_tris.len(), true);
     }
 
     fn hud_range(&self, encoder: &mut wgpu::CommandEncoder, frame: &Frame,
-        range: std::ops::Range<usize>, final_range: bool, stamp: bool) {
+        range: std::ops::Range<usize>, final_range: bool) {
         let sections = canvas_batches(&frame.hud_tris[range.clone()]);
         for (section, batches) in sections.iter().enumerate() {
             let mut pass = encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
@@ -1332,7 +1331,7 @@ impl Renderer {
                     depth_ops: Some(wgpu::Operations { load: wgpu::LoadOp::Clear(0.), store: wgpu::StoreOp::Store }),
                     stencil_ops: None,
                 }),
-                timestamp_writes: if stamp && section == 0 { self.gputime.as_ref().map(|t| t.pass(3)) } else { None },
+                timestamp_writes: self.gputime.as_ref().and_then(|t| t.pass(3)),
                 occlusion_query_set: None, multiview_mask: None,
             });
             pass.set_bind_group(0, &self.globals_bind, &[]);

@@ -61,3 +61,16 @@ and reversed model submission is pixel-identical. `--mask` produces the expected
 checker shadow; `SOLID=1 --mask` produces the solid control. Captures and hashes are
 in `out/review/scene-runtime/validation.json` in the engine-scene-runtime worktree.
 This evidence does not establish client-mode parity or a performance budget.
+
+Frame geometry statistics include child views, front meshes/lines and PBR part
+instances. They describe submitted geometry, including pending GPU models, not
+post-culling raster work; shadow redraws and view-composition triangles are not
+additional submitted geometry. GPU pass times sum unique timestamp pairs for
+all views, shadow cascades, UI sections and composition passes, resolving once
+per complete frame. Profiling uses at most 2048 physical passes per frame;
+overflow drops that sample rather than reporting a partial total. Transfers,
+CPU work and presentation waits are outside these pass times.
+
+Validation: engine library tests include mixed parent/child/part/instance counts;
+`SCENE_METRICS=1` on the scene_views example prints aggregate GPU times. The
+three-view Vulkan check is recorded in out/review/scene-runtime/metrics.log.

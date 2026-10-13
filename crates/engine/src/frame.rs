@@ -342,12 +342,28 @@ const RIM: [(f32, f32); 12] = [
 pub const GLYPH: f32 = 8.0;
 
 impl Frame {
-    /// Lines, triangles and points in the draw lists (scene and HUD).
+    /// Submitted lines, triangles and points across the complete frame, including
+    /// child views and repeated instances. Shadows/composition are not extra
+    /// geometry submissions; PBR counts include only the requested part. These
+    /// are demand counts, not GPU residency or post-culling raster counts.
     pub(crate) fn counts(&self) -> (u32, u32, u32) {
-        let n = |v: &Vec<Vertex>| v.len() as u32;
-        let mesh_lines: usize = self.meshes.iter().filter(|m| m.edges).map(|m| m.mesh.edges.len()).sum();
-        let mesh_tris: usize = self.meshes.iter().map(|m| m.mesh.faces.len()).sum();
-        (n(&self.lines) / 2 + n(&self.hud) / 2 + mesh_lines as u32, n(&self.solids) / 3 + self.hud_tris.len() as u32 / 3 + mesh_tris as u32, n(&self.points) + n(&self.sky))
+        let meshes = || self.meshes.iter().chain(&self.front);
+        let mut lines = (self.lines.len() + self.front_lines.len() + self.hud.len()) / 2
+            + meshes().filter(|m| m.edges).map(|m| m.mesh.edges.len()).sum::<usize>();
+        let mut triangles = (self.solids.len() + self.hud_tris.len()) / 3
+            + meshes().map(|m| m.mesh.faces.len()).sum::<usize>()
+            + self.pbr.iter().map(|d| d.model.data.primitives.iter()
+                .filter(|p| p.part == d.part).map(|p| p.indices.len() / 3).sum::<usize>())
+                .sum::<usize>();
+        let mut points = self.points.len() + self.sky.len();
+        for (_, _, child, _) in &self.views {
+            let (l, t, p) = child.counts();
+            lines = lines.saturating_add(l as usize);
+            triangles = triangles.saturating_add(t as usize);
+            points = points.saturating_add(p as usize);
+        }
+        let count = |n: usize| n.min(u32::MAX as usize) as u32;
+        (count(lines), count(triangles), count(points))
     }
 
     /// Retained scene into an isolated viewport. Rect uses this frame's HUD coordinates.
@@ -997,4 +1013,35 @@ pub fn text_size(text: &str) -> Vec2 {
         h += 1;
     }
     Vec2::new(w as f32 * GLYPH, h as f32 * (GLYPH + 2.0) - 2.0)
+}
+
+#[cfg(test)]
+mod count_tests {
+    use super::*;
+    #[test]
+    fn complete_frame_counts_instances_parts_front_and_views_once() {
+        use crate::pbr::{PbrData, PbrModel, Primitive};
+        let model = PbrModel::new(PbrData {
+            primitives: vec![
+                Primitive { vertices: vec![], indices: vec![0; 6], material: 0, part: 0 },
+                Primitive { vertices: vec![], indices: vec![0; 9], material: 0, part: 1 },
+            ], ..Default::default()
+        });
+        let mut frame = Frame::new(Camera::default(), Vec2::splat(100.), Vec2::splat(100.));
+        let t = Transform::default();
+        frame.model_pbr(&model, &t); // two body triangles, not the other part
+        frame.model_pbr(&model, &t); // a second instance counts again
+        frame.in_front(|f| f.line(DVec3::ZERO, DVec3::X, Color::WHITE));
+        let mesh = Mesh::new(crate::model::WireModel {
+            positions: vec![Vec3::ZERO, Vec3::X, Vec3::Y],
+            edges: vec![[0, 1]], faces: vec![[0, 1, 2]], ..Default::default()
+        });
+        frame.in_front(|f| f.model(&mesh, &t, Color::WHITE, Color::WHITE));
+        let mut child = Frame::new(Camera::default(), Vec2::splat(50.), Vec2::splat(50.));
+        child.model_pbr_part(&model, &t, 1);
+        child.point(DVec3::ZERO, Color::WHITE);
+        child.hud_rect(Vec2::ZERO, Vec2::ONE, Color::WHITE);
+        frame.views.push((1, crate::viewport::PixelRect { origin: Vec2::ZERO, size: Vec2::splat(50.) }, Box::new(child), 0));
+        assert_eq!(frame.counts(), (2, 10, 1));
+    }
 }

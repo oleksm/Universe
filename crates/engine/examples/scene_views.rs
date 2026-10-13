@@ -142,7 +142,15 @@ fn checks() {
     println!("scene transforms/cycles/removal, camera/ray roundtrip, scheduling: PASS");
 }
 impl Game for Fixture {
-    fn update(&mut self, _: &mut Context) {}
+    fn update(&mut self, _: &mut Context) {
+        if std::env::var_os("SCENE_METRICS").is_some() {
+            let times = universe_engine::gputime::times();
+            if !times.is_empty() {
+                assert!(times.iter().all(|(_, ms)| ms.is_finite() && *ms >= 0.));
+                println!("GPU complete-frame ms: {times:?}");
+            }
+        }
+    }
     fn camera(&self) -> Camera {
         Camera::default()
     }
