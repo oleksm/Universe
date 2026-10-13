@@ -3668,3 +3668,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull/service routes, GPU appearance/cost and temporal stability; pressure, welds, fatigue, slosh, relief sizing and loaded structure remain unqualified."
+  - key: equipment.thermal.heat.exchanger
+    version: 1
+    manifest_sha256: "880249c784dd178572614251a81f21642ac22c96a60e4b1131150ff2450f9ea3"
+    installed: 7cefb0c9
+    game: "the loader (world::assets) at fso 7cefb0c9"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/thermal-heat-exchanger/v1 (223140 bytes, bounds [-0.75, 0.0, -0.5] to [0.75, 1.0, 0.5]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull/pipes, GPU appearance/cost and temporal edge stability; thermal/pressure ratings, plate/weld/fatigue design and loaded structure unqualified."
