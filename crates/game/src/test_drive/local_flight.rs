@@ -65,7 +65,11 @@ impl LocalFlight {
             world,
             ship,
             system: 0,
-            clock: TickClock::new(universe_sim::clocks::tick(), 40).map_err(str::to_owned)?,
+            clock: TickClock::new(
+                universe_sim::clocks::tick(),
+                universe_sim::universe::TICK_BUDGET as u32,
+            )
+            .map_err(str::to_owned)?,
             origin,
             commands,
             events: Vec::new(),
@@ -263,7 +267,8 @@ mod tests {
         local.advance(dt).unwrap();
         assert!(local.ship.powered);
         assert_eq!(local.commands.power, None);
-        local.advance(dt * 100.0).unwrap();
+        let budget = universe_sim::universe::TICK_BUDGET as f64;
+        local.advance(dt * (budget + 60.0)).unwrap();
         assert!(
             local.pending() >= dt * 59.0,
             "catchup cap must retain elapsed time"

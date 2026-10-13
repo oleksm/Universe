@@ -623,20 +623,6 @@ impl Universe {
         self.events.extend(events.into_iter().map(Event::Crew));
     }
 
-    /// The studio's walk-through: the pilot on foot at `feet` (ship frame) facing
-    /// `yaw` (aboard, or on the ground the ship rests on), or (None) back in the seat.
-    pub fn preview(&mut self, at: Option<(DVec3, f64)>) {
-        match at {
-            Some((feet, yaw)) => {
-                let sys = self.ship_system();
-                sys.positions(self.world.time, &mut self.positions);
-                let ship = self.vessels[crate::combat::PLAYER].ship.clone();
-                self.crew.stand(&sys, &ship, self.world.time, &self.positions, feet, yaw);
-            }
-            None => self.crew.place = universe_world::Place::Seat,
-        }
-    }
-
     /// A hull's inside as walls (its frame's triangles): walked in and bumped into.
     /// (Kept beside its decks: both walked in together.)
     pub fn set_walls(&mut self, hull: &str, walls: &[[DVec3; 3]]) {

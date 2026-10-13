@@ -13,7 +13,7 @@ pub struct Shipyard {
     page: Page,
     /// Initial live decks are copied once; all edits and saved-design loads stay here.
     deckplans: Vec<universe_sim::world::deckplan::DeckPlan>,
-    seed: Option<&'static universe_sim::world::ship::ClassSpec>,
+    seed: Option<std::sync::Arc<universe_sim::world::ship::ClassSpec>>,
     studio: crate::studio::Studio,
     interior: crate::interior::Interior,
 }
@@ -47,13 +47,13 @@ impl Shipyard {
     fn initialize(&mut self, app: &App) {
         if self.seed.is_none() {
             self.deckplans = app.deckplans.clone();
-            self.seed = Some(app.ship.spec());
+            self.seed = Some(std::sync::Arc::new(app.ship.spec().clone()));
             self.sync(0.0);
         }
     }
 
     fn sync(&mut self, dt: f32) {
-        if let Some(spec) = self.seed {
+        if let Some(spec) = &self.seed {
             self.interior.sync(&spec.key, spec.shape(), &mut self.deckplans, dt);
         }
     }
@@ -61,22 +61,6 @@ impl Shipyard {
     /// The editor's document, for dev fixtures prepared after opening the panel.
     pub fn deckplans_mut(&mut self) -> &mut Vec<universe_sim::world::deckplan::DeckPlan> {
         &mut self.deckplans
-    }
-
-    /// The walls being walked through: the interior studio's walled tubes (from
-    /// either studio).
-    pub fn walls(&self) -> Option<Vec<[universe_engine::glam::DVec3; 3]>> {
-        Some(self.interior.walls())
-    }
-
-    /// The interior studio's hatches' leaves (closed).
-    pub fn leaves(&self) -> Vec<crate::interior::Leaf> {
-        self.interior.leaves()
-    }
-
-    /// Those walls to draw: each triangle with its colour.
-    pub fn wall_faces(&self) -> Option<Vec<crate::interior::WallFace>> {
-        Some(self.interior.wall_faces())
     }
 
     /// The interior studio turned to look from `yaw`, `pitch` (dev scenarios).
@@ -106,10 +90,7 @@ impl Shipyard {
         &mut self.studio
     }
 
-    /// Back from a walk-through: the studio as it was left.
-    pub fn back_to(studio: crate::studio::Studio) -> Self {
-        Shipyard { page: Page::Layout, deckplans: Vec::new(), seed: None, studio, interior: crate::interior::Interior::new() }
-    }
+
 }
 
 impl Shipyard {

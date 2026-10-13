@@ -6,7 +6,7 @@ use std::sync::{Arc, OnceLock};
 use universe_engine::{
     PbrModel,
     pbr::{Material, PbrData, PbrVertex, Primitive},
-    scene::{Geometry, Node, ObjectId, Pose, Scene},
+    scene::{Geometry, ObjectId, Pose, Scene},
     viewport::{PixelRect, Projection, View},
 };
 
@@ -61,7 +61,6 @@ pub struct Placed {
     model: PbrModel,
     pub transform: Mat4,
     /// Whether installed at construction (not an operational/physics gate).
-    pub installed: bool,
     bounds: Option<[glam::DVec3; 2]>,
     pending: Option<Arc<Pending>>,
 }
@@ -132,7 +131,7 @@ impl Placed {
         Self {
             model: PbrModel::new(data),
             transform: Mat4::IDENTITY,
-            installed: false,
+
             bounds: (lo.is_finite() && hi.is_finite()).then(|| [lo.as_dvec3(), hi.as_dvec3()]),
             pending: None,
         }
@@ -230,7 +229,7 @@ pub fn placed_rotated(
             model: ready.model,
             transform: ready.transform,
             bounds: ready.bounds,
-            installed: true,
+
             pending: None,
         };
     }
@@ -307,56 +306,10 @@ impl Camera {
     }
 }
 
-/// Transitional submission of a combined equipment + structure list. Geometry
-/// stays retained; only this small graph is temporary. Use distinct viewport IDs
-/// for main/catalogue views, and call once per view to share depth and lighting.
-/// Sessions should instead keep a Scene, set_node on changes, and scene_view it.
-pub fn draw(
-    placed: &[Placed],
-    parent: Mat4,
-    camera: &Camera,
-    frame: &mut universe_engine::Frame,
-    viewport_id: u64,
-    rect: PixelRect,
-) -> Result<(), &'static str> {
-    let view = camera.view(rect)?;
-    let mut scene = Scene::default();
-    let root = ObjectId(0);
-    scene.set(
-        root,
-        Node {
-            pose: pose(parent)?,
-            ..Node::default()
-        },
-    )?;
-    for (index, item) in placed.iter().enumerate() {
-        item.set_node(&mut scene, &ObjectId(index as u64 + 1), Some(root))?;
-    }
-    let (clear, graphics) = (frame.clear, frame.graphics);
-    let light = frame.light.unwrap_or(universe_engine::Light {
-        position: view.camera.position
-            + (-camera.forward + camera.up * 0.7 - camera.right * 0.4)
-                .normalize()
-                .as_dvec3()
-                * 10_000.,
-        color: [1.; 3],
-        luminosity: 1.,
-        reference: 10_000.,
-        radius: 100.,
-    });
-    frame.scene_view(viewport_id, &scene, &view, |child| {
-        child.clear = clear;
-        child.graphics = graphics;
-        child.studio = true;
-        child.ambient = 0.3;
-        child.light = Some(light);
-    });
-    Ok(())
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
+    use universe_engine::scene::Node;
     use glam::{DQuat, DVec3, Vec2};
 
     fn face(blend: bool, cutoff: Option<f32>) -> Face {
@@ -490,7 +443,7 @@ mod tests {
         item.set_node(&mut scene, &id, Some(root)).unwrap();
         assert_eq!(scene.revision(), revision);
         assert!(
-            !item.installed,
+            item.pending.is_some(),
             "promotion must not change saved/physics state"
         );
         // Queued frame submission is another clone of the very same PBR handle.

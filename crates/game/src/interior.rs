@@ -7,10 +7,14 @@ use std::sync::{mpsc, Arc};
 use universe_engine::glam::{Vec2, Vec3};
 use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
 
-use crate::App;
 use universe_sim::world::deckplan::Id;
 
 pub(crate) mod ship_code;
+mod walk;
+mod scene;
+mod compile;
+mod preparation;
+use walk::{Stand, stand_input, stand_spot, draw_stand};
 
 /// The blueprint's paper, its lines, its ground grid, its writing.
 const PAPER: Color = Color([0.02, 0.07, 0.15, 1.0]);
@@ -124,6 +128,9 @@ const FOV: f32 = 0.85;
 
 #[derive(Default)]
 pub struct Interior {
+    retained: std::cell::RefCell<scene::AuthoringScene>,
+    catalogue: std::cell::RefCell<scene::CatalogueScene>,
+    preparation: Option<preparation::Pending>,
     source_path: Option<std::path::PathBuf>,
     saved_source: Option<String>,
     code_panel: Option<ship_code::CodePanel>,
@@ -2736,11 +2743,26 @@ fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed>
     interior.plan.blocks.iter().map(|b| placed_module(b, interior.fit.iter().find(|f|f.id==kind(&b.id)))).collect()
 }
 
-fn draw_design_models(frame: &mut Frame, cam: &Camera, placed: &[crate::equipment_visual::Placed]) {
+fn draw_design_models(frame: &mut Frame, cam: &Camera, interior: &Interior) {
     let _scope = universe_prof::scope("draw/studio/design-models");
-    frame.canvas_scene();
-    let camera = crate::equipment_visual::Camera {eye:cam.eye,right:cam.right,up:cam.up,forward:cam.forward,focal:cam.focal,centre:cam.centre,near:0.1};
-    crate::equipment_visual::draw(placed, universe_engine::glam::Mat4::IDENTITY, &camera, frame);
+    let mut retained = interior.retained.borrow_mut();
+    retained.sync(interior);
+    frame.scene_view(1, &retained.scene, &cam.view(), |child| {
+        child.studio = true;
+        child.ambient = 0.45;
+        child.clear = PAPER;
+    });
+}
+
+/// Shared engine bounds picking, keyed by stable document identity.
+fn module_at(i: &Interior, cam: &Camera, pixel: Vec2) -> Option<(usize,f32)> {
+    if !i.shown(layer::MODULES) {return None;}
+    let ray=cam.view().ray(pixel)?;
+    let mut retained=i.retained.borrow_mut();
+    retained.sync(i);
+    retained.scene.pick(ray,u64::MAX).into_iter().find_map(|(id,distance)| {
+        i.plan.blocks.iter().position(|b|b.uid.0==id.0).map(|n|(n,distance as f32))
+    })
 }
 
 /// Whether a placed engine has a swivel at it that bears its thrust: it can turn to
@@ -2756,33 +2778,30 @@ fn swivelled(plan: &Plan, fit: &[Fitted], b: &Block) -> bool {
 }
 
 impl Block {
-    /// Its two corners.
+    /// One authoring pose for visuals, picking and collision proxies.
+    fn orientation(&self) -> universe_engine::glam::Quat {
+        self.rotation.unwrap_or_else(|| {
+            let push=self.push.or_else(||catalogue().iter().find(|f| f.id==kind(&self.id)).and_then(|f|f.push.map(|p|p.0)));
+            crate::equipment_visual::rotation(push)
+        })
+    }
+
+    fn place(&self, local: Vec3) -> Vec3 { self.at + self.orientation() * local }
+
+    /// Conservative world bounds of the oriented local envelope.
     fn bounds(&self) -> (Vec3, Vec3) {
-        (self.at - self.size * 0.5, self.at + self.size * 0.5)
+        {
+            let q = self.orientation();
+            let h = self.size * 0.5;
+            let extent = (q * Vec3::X).abs() * h.x + (q * Vec3::Y).abs() * h.y + (q * Vec3::Z).abs() * h.z;
+            (self.at - extent, self.at + extent)
+        }
     }
 
     /// Is `p` in it (a round one: in its egg)?
     fn holds(&self, p: Vec3, round: bool) -> bool {
-        let d = (p - self.at) / (self.size * 0.5).max(Vec3::splat(1e-3));
+        let d = (self.orientation().inverse() * (p - self.at)) / (self.size * 0.5).max(Vec3::splat(1e-3));
         if round { d.length_squared() <= 1.0 } else { d.abs().max_element() <= 1.0 }
-    }
-
-    /// Where the ray from `from` along `dir` first meets its box (how far), if it does.
-    fn hit(&self, from: Vec3, dir: Vec3) -> Option<f32> {
-        let (lo, hi) = self.bounds();
-        let (mut near, mut far) = (0.0f32, f32::MAX);
-        for k in 0..3 {
-            if dir[k].abs() < 1e-6 {
-                if from[k] < lo[k] || from[k] > hi[k] {
-                    return None;
-                }
-                continue;
-            }
-            let (a, b) = ((lo[k] - from[k]) / dir[k], (hi[k] - from[k]) / dir[k]);
-            near = near.max(a.min(b));
-            far = far.min(a.max(b));
-        }
-        (near <= far).then_some(near)
     }
 
     /// Its outline to draw: a box's twelve edges; a round one's three rings.
@@ -2792,14 +2811,14 @@ impl Block {
             let n = 32;
             let ring = |f: &dyn Fn(f32) -> Vec3| (0..n).map(|k| {
                 let (a, b) = (k as f32 / n as f32 * std::f32::consts::TAU, (k + 1) as f32 / n as f32 * std::f32::consts::TAU);
-                [self.at + f(a), self.at + f(b)]
+                [self.place(f(a)), self.place(f(b))]
             }).collect::<Vec<_>>();
             let mut out = ring(&|a| Vec3::new(a.cos() * h.x, 0.0, a.sin() * h.z));
             out.extend(ring(&|a| Vec3::new(a.cos() * h.x, a.sin() * h.y, 0.0)));
             out.extend(ring(&|a| Vec3::new(0.0, a.sin() * h.y, a.cos() * h.z)));
             return out;
         }
-        let c = |i: usize| self.at + Vec3::new(if i & 1 == 0 { -h.x } else { h.x }, if i & 2 == 0 { -h.y } else { h.y }, if i & 4 == 0 { -h.z } else { h.z });
+        let c = |i: usize| self.place(Vec3::new(if i & 1 == 0 { -h.x } else { h.x }, if i & 2 == 0 { -h.y } else { h.y }, if i & 4 == 0 { -h.z } else { h.z }));
         [(0, 1), (2, 3), (4, 5), (6, 7), (0, 2), (1, 3), (4, 6), (5, 7), (0, 4), (1, 5), (2, 6), (3, 7)].map(|(a, b)| [c(a), c(b)]).to_vec()
     }
 
@@ -2811,7 +2830,7 @@ impl Block {
             let (around, up) = (16, 10);
             let at = |i: usize, j: usize| {
                 let (a, b) = (i as f32 / around as f32 * std::f32::consts::TAU, j as f32 / up as f32 * std::f32::consts::PI - std::f32::consts::FRAC_PI_2);
-                self.at + Vec3::new(a.cos() * b.cos() * h.x, b.sin() * h.y, a.sin() * b.cos() * h.z)
+                self.place(Vec3::new(a.cos() * b.cos() * h.x, b.sin() * h.y, a.sin() * b.cos() * h.z))
             };
             let mut out = Vec::new();
             for j in 0..up {
@@ -2823,7 +2842,7 @@ impl Block {
             }
             return out;
         }
-        let c = |x: f32, y: f32, z: f32| self.at + Vec3::new(x * h.x, y * h.y, z * h.z);
+        let c = |x: f32, y: f32, z: f32| self.place(Vec3::new(x * h.x, y * h.y, z * h.z));
         let quads = [
             [c(-1., -1., -1.), c(1., -1., -1.), c(1., -1., 1.), c(-1., -1., 1.)],
             [c(-1., 1., -1.), c(-1., 1., 1.), c(1., 1., 1.), c(1., 1., -1.)],
@@ -3643,10 +3662,11 @@ impl Interior {
     }
 
     fn refresh(&mut self) {
+        self.poll_preparation();
         if let Some((k, rx)) = &self.job
             && let Ok(h) = rx.try_recv()
         {
-            self.lines = Some((k.clone(), Arc::new(h)));
+            if *k == self.plan.hull { self.lines = Some((k.clone(), Arc::new(h))); }
             self.job = None;
         }
         let key = self.plan.hull.clone();
@@ -3698,6 +3718,11 @@ impl Interior {
     /// they are now (their floors and walls worked out again when they change).
     pub fn sync(&mut self, ship: &str, shape: &universe_sim::world::shape::Shape, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, dt: f32) {
         self.seed(ship, shape);
+        self.sync_decks(deckplans, dt);
+    }
+
+    /// Synchronize the editor-owned decks without requiring a live ship.
+    pub(crate) fn sync_decks(&mut self, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, dt: f32) {
         let key = self.plan.hull.clone();
         let key = key.as_str();
         let walk = self.spec().and_then(|s| s.shape().walk.clone());
@@ -3846,6 +3871,17 @@ impl Interior {
         self.stand = Some(s);
     }
 
+    #[cfg(feature = "dev")]
+    pub(crate) fn stand_pitch(&mut self, pitch: f64) {
+        if let Some(s)=self.stand.as_mut() {s.pitch=pitch.clamp(-1.4,1.4);}
+    }
+
+    /// Walk this document in its own session; the live vessel is never modified.
+    pub(crate) fn walk_at(&mut self, at: universe_engine::glam::DVec3) {
+        self.stand_test(Some([at.x, at.y, at.z, 0.]));
+        self.walk = None;
+    }
+
     /// A dialog open (dev scenarios): NEW, or OPEN.
     pub fn show_dialog(&mut self, open: bool) {
         self.dialog = Some(if open { Dialog::Open(Self::designs()) } else { Dialog::New });
@@ -3942,6 +3978,12 @@ impl Interior {
     /// own name), or none; the plan saved as `id` if there is one, else fresh (the
     /// hull's own places as points); its decks too.
     fn start(&mut self, id: &str, shape: Option<&universe_sim::world::shape::Shape>, on: Option<String>) {
+        self.stand = None;
+        self.drive = None;
+        self.balance = None;
+        self.retained = Default::default();
+        self.catalogue = Default::default();
+        self.preparation = None;
         if Self::ship_file(id).exists(){if let Err(e)=self.open_ship_source(&Self::ship_file(id)){self.note(&e);}return;}
         self.source_path = None;
         self.saved_source = None;
@@ -4131,407 +4173,6 @@ impl Interior {
     }
 }
 
-/// The test stand: a design with no hull stood on the ground (its landing legs'
-/// feet) and walked, first person, in the studio. What's solid: its rooms' walls and
-/// floors, its modules, the ground; a ramp a slope from the ground up to the
-/// airlock it serves; an airlock a passage (floor, walls, roof, open at its ends);
-/// a vertical room a shaft climbed as a ladder. The walk is the game's own walker.
-struct Stand {
-    mesh: universe_sim::world::walk::WalkMesh,
-    /// What's drawn: each face and its colour (the first two the ground, beneath
-    /// all); the frame's members as lines; the rooms (axis ends, half width,
-    /// half height), to know when the walker's inside.
-    faces: Vec<([Vec3; 3], Color)>,
-    equipment: Vec<crate::equipment_visual::Placed>,
-    rooms: Vec<(Vec3, Vec3, f32, f32)>,
-    /// Each module's name on each face of its box: the face's middle, which way it
-    /// faces, how wide it is (m), the name.
-    labels: Vec<(Vec3, Vec3, f32, String)>,
-    members: Vec<[Vec3; 2]>,
-    /// The shafts climbed: each one's axis and radius.
-    shafts: Vec<(Vec3, Vec3, f32)>,
-    feet: universe_engine::glam::DVec3,
-    velocity: universe_engine::glam::DVec3,
-    yaw: f64,
-    pitch: f64,
-}
-
-/// A box's faces (`lo` to `hi`), less those `skip` says (0..6: -y, +y, -z, +z,
-/// -x, +x).
-fn box_faces(lo: Vec3, hi: Vec3, skip: &[usize]) -> Vec<[Vec3; 3]> {
-    let c = |x: f32, y: f32, z: f32| Vec3::new(if x < 0.5 { lo.x } else { hi.x }, if y < 0.5 { lo.y } else { hi.y }, if z < 0.5 { lo.z } else { hi.z });
-    let quads = [
-        [c(0., 0., 0.), c(1., 0., 0.), c(1., 0., 1.), c(0., 0., 1.)],
-        [c(0., 1., 0.), c(0., 1., 1.), c(1., 1., 1.), c(1., 1., 0.)],
-        [c(0., 0., 0.), c(0., 1., 0.), c(1., 1., 0.), c(1., 0., 0.)],
-        [c(0., 0., 1.), c(1., 0., 1.), c(1., 1., 1.), c(0., 1., 1.)],
-        [c(0., 0., 0.), c(0., 0., 1.), c(0., 1., 1.), c(0., 1., 0.)],
-        [c(1., 0., 0.), c(1., 1., 0.), c(1., 1., 1.), c(1., 0., 1.)],
-    ];
-    quads.iter().enumerate().filter(|(k, _)| !skip.contains(k)).flat_map(|(_, q)| [[q[0], q[1], q[2]], [q[0], q[2], q[3]]]).collect()
-}
-
-impl Interior {
-    /// The design stood on its test stand, ready to walk from the foot of its
-    /// boarding ramp (or, with none, on the ground before it).
-    fn stand_up(&self) -> Stand {
-        use universe_engine::glam::DVec3;
-        let kind_of = |b: &Block| self.fit.iter().find(|f| f.id == kind(&b.id)).and_then(figures).map(|(k, ..)| k).unwrap_or_default();
-        let ground = self.plan.blocks.iter().filter(|b| kind_of(b) == "landing_gear").map(|b| b.at.y - b.size.y * 0.5).fold(f32::INFINITY, f32::min);
-        let ground = if ground.is_finite() { ground } else { self.plan.blocks.iter().map(|b| b.at.y - b.size.y * 0.5).fold(0.0, f32::min) };
-        // The ground: wide, flat, at the legs' feet (drawn first: beneath all).
-        let g = 300.0;
-        let ground_colour = Color([0.24, 0.27, 0.22, 1.0]);
-        let mut faces: Vec<([Vec3; 3], Color)> = vec![
-            ([Vec3::new(-g, ground, -g), Vec3::new(g, ground, -g), Vec3::new(g, ground, g)], ground_colour),
-            ([Vec3::new(-g, ground, -g), Vec3::new(g, ground, g), Vec3::new(-g, ground, g)], ground_colour),
-        ];
-        // Its rooms' walls and floors.
-        for p in self.panels().iter() {
-            let q = &p.outline;
-            let c = p.colour();
-            for k in 1..q.len().saturating_sub(1) {
-                faces.push(([q[0], q[k], q[k + 1]], Color(c)));
-            }
-        }
-        // Its decks: floors (but one under a walkway: its floor is drawn with it).
-        let under_walkway = |plate: &Plate| {
-            let m = Vec3::new((plate.lo.x + plate.hi.x) * 0.5, plate.y, (plate.lo.y + plate.hi.y) * 0.5);
-            self.plan.lines.iter().enumerate().any(|(k, &PathLine(a, b, pr, _))| {
-                let (pa, pb) = (self.plan.points[a].at, self.plan.points[b].at);
-                let d = pb - pa;
-                let t = (m - pa).dot(d) / d.length_squared().max(1e-6);
-                let off = m - (pa + d * t.clamp(0.0, 1.0));
-                pr.stand && self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled) && (0.0..=1.0).contains(&t) && off.y.abs() < 0.3 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
-            })
-        };
-        for plate in self.plan.plates.iter().filter(|p| !under_walkway(p)) {
-            let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
-            let colour = Color([0.6, 0.55, 0.45, 1.0]);
-            faces.push(([c[0], c[1], c[2]], colour));
-            faces.push(([c[0], c[2], c[3]], colour));
-        }
-        let authored_decks=self.decks_now.as_ref().map(|p|deck_geometry(p,self.spec().and_then(|s|s.shape().walk.as_deref())));
-        if let Some(b)=&authored_decks {
-            for (q,floor) in &b.panels {let c=if *floor {DECK}else{Color([0.62,0.65,0.68,1.])};let q=q.map(|p|p.as_vec3());faces.push(([q[0],q[1],q[2]],c));faces.push(([q[0],q[2],q[3]],c));}
-        }
-        let structure_faces = faces.len();
-        // Its modules: solid, but an airlock a passage and a ramp a slope; each one's
-        // name on every face of its box, to know what's walked past.
-        let airlocks: Vec<&Block> = self.plan.blocks.iter().filter(|b| kind_of(b) == "airlock").collect();
-        let mut start = None;
-        let mut labels = Vec::new();
-        for b in &self.plan.blocks {
-            if let Some(f) = self.fit.iter().find(|f| f.id == kind(&b.id)) {
-                let h = b.size * 0.5;
-                for n in [Vec3::X, Vec3::NEG_X, Vec3::Y, Vec3::NEG_Y, Vec3::Z, Vec3::NEG_Z] {
-                    // (Its width across: a side's along the ground, the top's longer way.)
-                    let wide = if n.y != 0.0 { b.size.x.max(b.size.z) } else if n.x != 0.0 { b.size.z } else { b.size.x };
-                    labels.push((b.at + n * (h.dot(n.abs()) + 0.02), n, wide, f.name.clone()));
-                }
-            }
-            let (lo, hi) = b.bounds();
-            let k = kind_of(b);
-            let along_z = b.size.z >= b.size.x;
-            match k.as_str() {
-                "airlock" => {
-                    // (Open at its ends, along its length.)
-                    let open = if along_z { [2, 3] } else { [4, 5] };
-                    for t in box_faces(lo, hi, &open) {
-                        faces.push((t, Color([0.62, 0.66, 0.7, 1.0])));
-                    }
-                }
-                "ramp" => {
-                    // (From the end nearest an airlock, at that airlock's floor, down
-                    // to the ground at the far end.)
-                    let lock = airlocks.iter().min_by(|a, c| a.at.distance(b.at).total_cmp(&c.at.distance(b.at)));
-                    let top = lock.map_or(hi.y, |l| l.at.y - l.size.y * 0.5);
-                    let (near, far, half) = if along_z {
-                        let to = lock.map_or(1.0, |l| (l.at.z - b.at.z).signum());
-                        (Vec3::new(b.at.x, top, b.at.z + to * b.size.z * 0.5), Vec3::new(b.at.x, ground, b.at.z - to * b.size.z * 0.5), Vec3::X * b.size.x * 0.5)
-                    } else {
-                        let to = lock.map_or(1.0, |l| (l.at.x - b.at.x).signum());
-                        (Vec3::new(b.at.x + to * b.size.x * 0.5, top, b.at.z), Vec3::new(b.at.x - to * b.size.x * 0.5, ground, b.at.z), Vec3::Z * b.size.z * 0.5)
-                    };
-                    let (a, c, d, e) = (near - half, near + half, far + half, far - half);
-                    let colour = Color([0.85, 0.7, 0.35, 1.0]);
-                    faces.push(([a, c, d], colour));
-                    faces.push(([a, d, e], colour));
-                    // (Walked up from its foot, facing up it.)
-                    let up = near - far;
-                    start = Some((far + (far - near).normalize_or_zero() * 1.5, f64::from((-up.x).atan2(-up.z))));
-                }
-                _ => {
-                    let round = self.round(&b.id);
-                    let colour = if k == "landing_gear" { Color([0.4, 0.42, 0.46, 1.0]) } else { Color([0.55, 0.5, 0.62, 1.0]) };
-                    for (t, _) in b.faces(round) {
-                        faces.push((t, colour));
-                    }
-                }
-            }
-        }
-        let tris: Vec<[DVec3; 3]> = faces.iter().map(|(t, _)| t.map(|p| p.as_dvec3())).collect();
-        let mesh = universe_sim::world::walk::WalkMesh::new(&tris);
-        faces.truncate(structure_faces); // drawing is resolved once; collision stays above
-        // The shafts: walled rooms standing upright.
-        let mut shafts: Vec<_> = (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).filter_map(|k| {
-            let (a, b) = self.plan.axis(k);
-            ((b - a).normalize_or_zero().y.abs() > 0.9).then_some((a.min(b), a.max(b), self.plan.lines[k].2.width * 0.5))
-        }).collect();
-        if let Some(b)=&authored_decks {shafts.extend(b.climbs.iter().map(|(lo,hi)|{let lo=lo.as_vec3();let hi=hi.as_vec3();let x=(lo.x+hi.x)*0.5;let z=(lo.z+hi.z)*0.5;(Vec3::new(x,lo.y,z),Vec3::new(x,hi.y,z),(hi.x-lo.x)*0.5)}));}
-        let (feet, yaw) = start.unwrap_or_else(|| (Vec3::new(0.0, ground, -40.0), 0.0));
-        Stand {
-            equipment: placed_equipment(self),
-            mesh,
-            faces,
-            labels,
-            members: self.plan.beams.iter().map(|b| [b.a, b.b]).collect(),
-            // (And each airlock, a room too: along its length.)
-            rooms: (0..self.plan.lines.len()).filter(|&k| self.plan.group_of(k).is_some_and(|g| self.plan.groups[g].walled)).map(|k| {
-                let (a, b) = self.plan.axis(k);
-                let p = self.plan.lines[k].2;
-                (a, b, p.width * 0.5, p.height * 0.5)
-            }).chain(airlocks.iter().map(|b| {
-                let along = if b.size.z >= b.size.x { Vec3::Z * b.size.z * 0.5 } else { Vec3::X * b.size.x * 0.5 };
-                (b.at - along, b.at + along, b.size.x.min(b.size.z) * 0.5, b.size.y * 0.5)
-            })).collect(),
-            shafts,
-            feet: DVec3::new(f64::from(feet.x), f64::from(ground) + 0.05, f64::from(feet.z)),
-            velocity: DVec3::ZERO,
-            yaw,
-            pitch: 0.0,
-        }
-    }
-}
-
-/// Where a walker clicked at would stand on the stand: the floor of the first room
-/// the ray from `eye` along `dir` passes into; else the first floor it meets (a
-/// side met: what's under that spot, backed off it a little); none if it meets
-/// nothing.
-fn stand_spot(s: &Stand, eye: Vec3, dir: Vec3) -> Option<universe_engine::glam::DVec3> {
-    use universe_engine::glam::DVec3;
-    let d = dir.as_dvec3();
-    let mut from = eye.as_dvec3();
-    // (Along the ray, surface after surface: the first room's floor it passes over,
-    // or else the first floor it meets; a side met, what's under that spot.)
-    let mut first: Option<DVec3> = None;
-    for _ in 0..16 {
-        let Some((t, n)) = s.mesh.ray(from, d, 2000.0) else { break };
-        let hit = from + d * t;
-        let level = n.y.abs() > 0.6;
-        let spot = if level && d.y < 0.0 {
-            Some(hit + DVec3::Y * 0.05)
-        } else if !level {
-            let back = hit - d * 0.4;
-            s.mesh.ray(back, DVec3::NEG_Y, 2000.0).map(|(down, _)| back - DVec3::Y * (down - 0.05))
-        } else {
-            None
-        };
-        if let Some(p) = spot {
-            if in_rooms(s, (p + DVec3::Y * 0.9).as_vec3()) {
-                return Some(p);
-            }
-            first = first.or(Some(p));
-        }
-        from = hit + d * 0.05;
-    }
-    first
-}
-
-/// Is `p` inside one of the stand's rooms (or airlocks)?
-fn in_rooms(s: &Stand, p: Vec3) -> bool {
-    s.rooms.iter().any(|&(a, b, hw, hh)| {
-        let d = b - a;
-        let t = ((p - a).dot(d) / d.length_squared().max(1e-6)).clamp(0.0, 1.0);
-        let off = p - (a + d * t);
-        if d.normalize_or_zero().y.abs() > 0.9 { Vec2::new(off.x, off.z).length() < hw } else { off.y.abs() < hh && Vec3::new(off.x, 0.0, off.z).length() < hw }
-    })
-}
-
-/// The test stand walked for a frame: WASD, the arrows or a drag to look, SPACE to
-/// jump, SHIFT to run (up a shaft: forward climbs, looking down goes down); ESC
-/// back to the studio.
-fn stand_input(ctx: &Context, s: &mut Stand, g: f64) {
-    use universe_engine::glam::DVec3;
-    use universe_sim::world::walk::{Collider, Stride, Walker};
-    let input = &ctx.input;
-    let dt = f64::from(ctx.dt).min(0.05);
-    let key = |k: KeyCode| if input.down(k) { 1.0 } else { 0.0 };
-    let turn = key(KeyCode::ArrowRight) - key(KeyCode::ArrowLeft);
-    let tilt = key(KeyCode::ArrowUp) - key(KeyCode::ArrowDown);
-    s.yaw -= turn * 1.8 * dt;
-    s.pitch = (s.pitch + tilt * 1.2 * dt).clamp(-1.4, 1.4);
-    if input.button_down(MouseButton::Left) {
-        s.yaw -= f64::from(input.mouse_delta.x) * 0.006;
-        s.pitch = (s.pitch - f64::from(input.mouse_delta.y) * 0.006).clamp(-1.4, 1.4);
-    }
-    let forward = key(KeyCode::KeyW) - key(KeyCode::KeyS);
-    let right = key(KeyCode::KeyD) - key(KeyCode::KeyA);
-    let run = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
-    let (sn, co) = s.yaw.sin_cos();
-    let (fwd, side) = (DVec3::new(-sn, 0.0, -co), DVec3::new(co, 0.0, -sn));
-    let speed = if run { universe_sim::world::crew::RUN } else { universe_sim::world::crew::WALK };
-    let wish = (fwd * forward + side * right).clamp_length_max(1.0) * speed;
-    let jump = if input.pressed(KeyCode::Space) { universe_sim::world::crew::JUMP } else { 0.0 };
-    let climb = forward * universe_sim::world::crew::CLIMB * if s.pitch < -0.5 { -1.0 } else { 1.0 };
-    // (A shaft's ladder runs a metre past its top, so the climber's feet come level
-    // with the floor there to step off.)
-    let shafts = s.shafts.clone();
-    let climbable = move |p: DVec3| shafts.iter().any(|&(lo, hi, r)| {
-        let q = p.as_vec3();
-        q.y >= lo.y - 0.3 && q.y <= hi.y + 1.0 && Vec2::new(q.x - lo.x, q.z - lo.z).length() < r
-    });
-    let colliders = [Collider::Mesh { mesh: &s.mesh, at: DVec3::ZERO, rot: universe_engine::glam::DQuat::IDENTITY }];
-    let mut w = Walker { feet: s.feet, velocity: s.velocity };
-    w.step(&colliders, &|_| DVec3::Y, g, &climbable, &Stride { wish, jump, climb }, dt);
-    s.feet = w.feet;
-    s.velocity = w.velocity;
-}
-
-/// The test stand seen first person: every face shaded and drawn far to near (the
-/// near ones over the far), cut where it passes behind the eye; the frame's
-/// members as lines among them; a cross at the middle; how to walk.
-fn draw_stand(frame: &mut Frame, s: &Stand, place: &str) {
-    let _scope = universe_prof::scope("draw/studio/walk");
-    frame.canvas_scene();
-    let size = frame.size();
-    frame.hud_rect(Vec2::ZERO, size, Color([0.02, 0.03, 0.06, 1.0]));
-    let eye = (s.feet + universe_engine::glam::DVec3::Y * 1.65).as_vec3();
-    let (sy, cy) = (s.yaw as f32).sin_cos();
-    let (sp, cp) = (s.pitch as f32).sin_cos();
-    let forward = Vec3::new(-sy * cp, sp, -cy * cp);
-    let right = Vec3::new(cy, 0.0, -sy);
-    let up = right.cross(forward);
-    let focal = size.y * 0.5 / (FOV * 0.5).tan();
-    let near = 0.08;
-    let view = |p: Vec3| {
-        let d = p - eye;
-        Vec3::new(d.dot(right), d.dot(up), d.dot(forward))
-    };
-    let screen = |v: Vec3| size * 0.5 + Vec2::new(v.x, -v.y) * (focal / v.z);
-    // (A polygon in view space cut at the near plane.)
-    let clip = |poly: &[Vec3]| -> Vec<Vec3> {
-        let mut out = Vec::new();
-        for k in 0..poly.len() {
-            let (a, b) = (poly[k], poly[(k + 1) % poly.len()]);
-            if a.z >= near {
-                out.push(a);
-            }
-            if (a.z >= near) != (b.z >= near) {
-                let t = (near - a.z) / (b.z - a.z);
-                out.push(a.lerp(b, t));
-            }
-        }
-        out
-    };
-    let light = Vec3::new(0.4, 0.8, 0.45).normalize();
-    // (Everything to draw, with its distance: faces, then the members.)
-    enum Item {
-        Face(Vec<Vec3>, Color),
-        Equipment(crate::equipment_visual::Projected),
-        Member(Vec3, Vec3),
-        Label(Vec2, String, f32),
-    }
-    let mut items: Vec<(f32, Item)> = Vec::new();
-    // (The ground first, beneath all; then the rest far to near.)
-    let mut ground = Vec::new();
-    let faces_scope = universe_prof::scope("draw/studio/walk/faces");
-    for (k, (t, colour)) in s.faces.iter().enumerate() {
-        let v = t.map(view);
-        if v.iter().all(|p| p.z < near) {
-            continue;
-        }
-        let n = (t[1] - t[0]).cross(t[2] - t[0]).normalize_or_zero();
-        let shade = 0.45 + 0.55 * n.dot(light).abs();
-        let c = Color([colour.0[0] * shade, colour.0[1] * shade, colour.0[2] * shade, 1.0]);
-        let poly = clip(&v);
-        if poly.len() >= 3 {
-            if k < 2 {
-                ground.push((poly, c));
-                continue;
-            }
-            let depth = poly.iter().map(|p| p.z).sum::<f32>() / poly.len() as f32;
-            items.push((depth, Item::Face(poly, c)));
-        }
-    }
-    drop(faces_scope);
-    let camera = crate::equipment_visual::Camera {eye,right,up,forward,focal,centre:size*0.5,near};
-    crate::equipment_visual::project_each(&s.equipment, universe_engine::glam::Mat4::IDENTITY, &camera, |t| {
-        items.push((t.depth, Item::Equipment(t)));
-    });
-    // (Inside a room, its walls hide the frame round it: no members.)
-    let details_scope = universe_prof::scope("draw/studio/walk/details");
-    let head = eye;
-    let inside_room = s.rooms.iter().any(|&(a, b, hw, hh)| {
-        let d = b - a;
-        let t = ((head - a).dot(d) / d.length_squared().max(1e-6)).clamp(0.0, 1.0);
-        let off = head - (a + d * t);
-        if d.normalize_or_zero().y.abs() > 0.9 { Vec2::new(off.x, off.z).length() < hw } else { off.y.abs() < hh + 0.3 && Vec3::new(off.x, 0.0, off.z).length() < hw }
-    });
-    for [a, b] in s.members.iter().filter(|_| !inside_room) {
-        let (va, vb) = (view(*a), view(*b));
-        if va.z < near && vb.z < near {
-            continue;
-        }
-        let poly = clip(&[va, vb]);
-        if let [p, q, ..] = poly[..] {
-            items.push(((p.z + q.z) * 0.5, Item::Member(p, q)));
-        }
-    }
-    // (Each module's name on its faces turned this way, near enough to read, drawn
-    // just in front of its face: what's in front of the face hides it too.)
-    for (at, n, wide, name) in &s.labels {
-        if n.dot(eye - *at) <= 0.0 || at.distance(eye) > 40.0 {
-            continue;
-        }
-        let v = view(*at);
-        if v.z < near + 0.2 {
-            continue;
-        }
-        // (About 0.3 m tall where it is, but no wider than nine tenths of its face;
-        // too small then to read: none.)
-        let fit = 0.9 * wide * focal / v.z / (name.chars().count() as f32 * universe_engine::frame::GLYPH);
-        let scale = (0.3 * focal / v.z / 8.0).min(fit).min(2.5);
-        if scale < 0.4 {
-            continue;
-        }
-        items.push((v.z - 0.05, Item::Label(screen(v), name.clone(), scale)));
-    }
-    drop(details_scope);
-    let sort_scope = universe_prof::scope("draw/studio/walk/sort");
-    items.sort_by(|a, b| b.0.total_cmp(&a.0));
-    drop(sort_scope);
-    let submit_scope = universe_prof::scope("draw/studio/walk/submit");
-    for (poly, c) in ground {
-        let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
-        for k in 1..q.len() - 1 {
-            frame.canvas_triangle([q[0], q[k], q[k + 1]], [poly[0].z.max(near), poly[k].z.max(near), poly[k+1].z.max(near)], near, [c; 3]);
-        }
-    }
-    for (_, item) in items {
-        match item {
-            Item::Equipment(t) => t.draw(frame),
-            Item::Face(poly, c) => {
-                let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
-                for k in 1..q.len() - 1 {
-                    frame.canvas_triangle([q[0], q[k], q[k + 1]], [poly[0].z.max(near), poly[k].z.max(near), poly[k+1].z.max(near)], near, [c; 3]);
-                }
-            }
-            Item::Member(p, q) => frame.hud_line(screen(p), screen(q), Color([0.4, 0.95, 0.55, 0.9])),
-            Item::Label(at, name, scale) => {
-                let w = name.chars().count() as f32 * universe_engine::frame::GLYPH * scale;
-                frame.text_scaled(at - Vec2::new(w * 0.5, 4.0 * scale), &name, Color([1.0, 0.92, 0.6, 1.0]), scale);
-            }
-        }
-    }
-    drop(submit_scope);
-    let c = size * 0.5;
-    frame.hud_line(c - Vec2::new(6.0, 0.0), c + Vec2::new(6.0, 0.0), LABEL);
-    frame.hud_line(c - Vec2::new(0.0, 6.0), c + Vec2::new(0.0, 6.0), LABEL);
-    frame.text(Vec2::new(12.0, 10.0), &format!("{place}   TEST STAND"), LABEL);
-    frame.text_scaled(Vec2::new(12.0, size.y - 18.0), "WASD WALK - DRAG OR ARROWS LOOK - SPACE JUMP - SHIFT RUN - UP A SHAFT: FORWARD CLIMBS, LOOK DOWN TO GO DOWN - ESC BACK TO THE STUDIO", LABEL.scale(0.7), 0.7);
-}
-
 /// The camera, for the hull drawn in a `size` screen: where it is, its axes
 /// (right, up, forward) and its focal length (pixels).
 struct Camera {
@@ -4541,6 +4182,7 @@ struct Camera {
     forward: Vec3,
     focal: f32,
     centre: Vec2,
+    ortho: Option<(f32, f32)>,
 }
 
 impl Camera {
@@ -4560,31 +4202,43 @@ impl Camera {
         let middle = (lo + hi) * 0.5;
         let target = i.target.unwrap_or(middle);
         let radius = (hi - lo).length() * 0.5;
-        // (A flat view: from far off with a long lens, so near enough flat.)
-        let flat = if i.view > 0 { 25.0 } else { 1.0 };
-        let focal = size.y * 0.5 / (FOV * 0.5).tan() * flat;
+        let focal = size.y * 0.5 / (FOV * 0.5).tan();
         // (Far enough back that the whole hull fits, unless zoomed.)
-        let distance = i.distance.unwrap_or(radius / (FOV * 0.5).tan() * 0.8) * flat;
+        let distance = i.distance.unwrap_or(radius / (FOV * 0.5).tan() * 0.8).max(0.2);
         let back = Vec3::new(i.pitch.cos() * i.yaw.sin(), i.pitch.sin(), i.pitch.cos() * i.yaw.cos());
         let eye = target + back * distance;
         let forward = (target - eye).normalize();
         let right = forward.cross(Vec3::Y).normalize();
         let up = right.cross(forward);
-        Camera { eye, right, up, forward, focal, centre: size * 0.5 }
+        Camera { eye, right, up, forward, focal, centre: size * 0.5, ortho: (i.view > 0).then_some((size.y * distance / focal, (distance + radius * 4.).max(1000.))) }
     }
 
-    /// The way into the scene through screen point `q`.
-    fn ray(&self, q: Vec2) -> Vec3 {
-        let d = (q - self.centre) / self.focal;
-        (self.forward + self.right * d.x - self.up * d.y).normalize()
+    fn view(&self) -> universe_engine::viewport::View {
+        use universe_engine::{viewport::{View, Projection, PixelRect}, glam::{Quat, Mat3}};
+        let size = self.centre * 2.;
+        View {
+            camera: universe_engine::Camera {
+                position: self.eye.as_dvec3(),
+                orientation: Quat::from_mat3(&Mat3::from_cols(self.right,self.up,-self.forward)),
+                fov_y: 2. * (size.y * 0.5 / self.focal).atan(), near: 0.1,
+            },
+            projection: self.ortho.map_or(Projection::Perspective, |(height,far)| Projection::Orthographic {height,far}),
+            rect: PixelRect {origin: Vec2::ZERO, size}, layers: u64::MAX,
+        }
     }
 
-    /// Where `p` lands on screen, and how far in front it is (none: behind).
+    fn ray(&self, q: Vec2) -> (Vec3,Vec3) {
+        self.view().ray(q).map_or((self.eye,self.forward), |r| (r.origin.as_vec3(),r.direction.as_vec3()))
+    }
+
+    fn pixels_per_metre(&self, depth: f32) -> f32 {
+        self.ortho.map_or(self.focal / depth, |(height,_)| self.centre.y*2./height)
+    }
+
     fn project(&self, p: Vec3) -> Option<(Vec2, f32)> {
-        let d = p - self.eye;
-        let z = d.dot(self.forward);
-        (z > 0.1).then(|| (self.centre + Vec2::new(d.dot(self.right), -d.dot(self.up)) * (self.focal / z), z))
+        self.view().project(p.as_dvec3()).map(|v| (v.truncate(), (p-self.eye).dot(self.forward)))
     }
+
 }
 
 /// The toolbar: the tools (key, name).
@@ -5076,14 +4730,13 @@ const DOCK_TEMPERATURE: f64 = 293.0;
 
 /// The design as a craft to test drive: every part's mass where it sits (modules
 /// full, members, decks), its middle of mass and inertia from them (each module a
-/// solid box); each engine and fan pushing from where it is; each leg a spring at
-/// its foot; the batteries and plants; what the rest draws.
+/// solid box); each engine and fan pushing from where it is; the shared landing
+/// policy, batteries and plants; what the rest draws.
 fn craft(i: &Interior) -> crate::test_drive::Craft {
     let _scope = universe_prof::scope("studio/build-craft");
     use crate::test_drive::{Actuator, Craft, Kind, Leg};
     use universe_engine::glam::{DMat3, DVec3};
     let num = |m: &Fields, k: &str| m.get(k).and_then(|v| v.as_f64()).unwrap_or(0.0);
-    let reg = universe_sim::world::registry::registry();
     let mut placed: Vec<(&Block, &Fitted, String, Fields, f64)> = Vec::new();
     for b in &i.plan.blocks {
         if let Some(f) = i.fit.iter().find(|f| f.id == kind(&b.id))
@@ -5094,11 +4747,17 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
     }
     // (Each mass: where, how much, its box's size (none: a point).)
     let mut masses: Vec<(DVec3, f64, DVec3)> = placed.iter().map(|p| (p.0.at.as_dvec3(), p.1.mass + p.1.load, p.0.size.as_dvec3())).collect();
+    if let Some(spec)=i.spec() {
+        let shape=spec.shape();
+        let (lo,hi)=shape.mesh.extent();
+        masses.push((shape.solid.centroid,spec.frame_mass,hi-lo));
+    }
     masses.extend(i.plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| (((b.a + b.b) * 0.5).as_dvec3(), s.per_metre * f64::from(b.a.distance(b.b)), DVec3::ZERO))));
     masses.extend(i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| (DVec3::new(f64::from(p.lo.x + p.hi.x) * 0.5, f64::from(p.y), f64::from(p.lo.y + p.hi.y) * 0.5), s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()), DVec3::new(f64::from(p.hi.x - p.lo.x).abs(), 0.02, f64::from(p.hi.y - p.lo.y).abs())))));
-    let (m_nodes, n_nodes) = { let ms = frame_masses(i); (ms.1, i.plan.beams.len().max(1)) };
-    let _ = n_nodes;
-    let total: f64 = masses.iter().map(|m| m.1).sum::<f64>() + m_nodes;
+    for (at,diameter,node) in nodes(&i.plan.beams,&roots(&i.plan,&i.fit)) {
+        if let Some(node)=node {masses.push((at.as_dvec3(),node.mass,DVec3::splat(f64::from(diameter))));}
+    }
+    let total: f64 = masses.iter().map(|m|m.1).sum();
     let middle = masses.iter().fold(DVec3::ZERO, |c, m| c + m.0 * m.1) / masses.iter().map(|m| m.1).sum::<f64>().max(1.0);
     // (Inertia: each box's own, and its mass at its distance.)
     let mut inertia = DMat3::ZERO;
@@ -5115,20 +4774,16 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         Some(Actuator { at: (p.0.at - mid32).as_dvec3(), dir: dir.normalize_or_zero().as_dvec3(), thrust, kind })
     }).collect();
     let legs = placed.iter().filter_map(|p| {
-        let (holds, stroke, _, sink) = p.1.gear?;
-        let (lo, _) = p.0.bounds();
-        Some(Leg { foot: (Vec3::new(p.0.at.x, lo.y, p.0.at.z) - mid32).as_dvec3(), holds, stroke, sink })
+        let (_, _, _, sink) = p.1.gear?;
+        Some(Leg { foot: (p.0.place(Vec3::NEG_Y*p.0.size.y*0.5) - mid32).as_dvec3(), sink })
     }).collect();
     let of = |k: &'static str| placed.iter().filter(move |p| p.2 == k);
-    let rate: f64 = of("battery").map(|p| num(&p.3, "rate")).sum();
-    let efficiency = if rate > 0.0 { of("battery").map(|p| num(&p.3, "rate") * p.3.get("efficiency").and_then(|v| v.as_f64()).unwrap_or(1.0)).sum::<f64>() / rate } else { 1.0 };
-    let phys = |p: &&(&Block, &Fitted, String, Fields, f64)| reg.equipment(&p.1.key).map(|e| (e.physical.specific_heat, e.physical.operating_max_temperature));
-    let warming = of("battery").filter_map(|p| phys(&p).and_then(|x| x.1)).fold(f64::MAX, f64::min);
-    let rockets: Vec<String> = placed.iter().filter(|p| p.1.push.is_some() && p.3.get("full_power").is_none()).filter_map(|p| p.3.get("propellant").filter(|v| !v.is_null()).or(p.3.get("burns")).and_then(|v| v.as_str()).map(|s| bare(s).to_string())).collect();
     let boxes: Vec<(Vec3, Vec3)> = i.plan.blocks.iter().map(|b| { let (lo, hi) = b.bounds(); (lo - mid32, hi - mid32) }).collect();
     let (lo, hi) = boxes.iter().fold((Vec3::splat(f32::MAX), Vec3::splat(f32::MIN)), |(a, z), b| (a.min(b.0), z.max(b.1)));
-    Craft {
+    let mut craft = Craft {
+        spec: None, devices: None, runtime_errors: Vec::new(),
         name: i.plan.hull.clone(),
+        native: i.spec().and_then(|s|s.visual.as_ref().map(|v|(v.clone(),s.shape().made_centre))),
         equipment: placed_equipment(i),
         structure: vec![crate::equipment_visual::Placed::structure(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
                 let normal=(positions[1]-positions[0]).cross(positions[2]-positions[0]).normalize_or_zero();
@@ -5140,20 +4795,22 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         inertia,
         actuators,
         legs,
-        stored: of("battery").map(|p| num(&p.3, "stores")).sum(),
-        rate,
-        efficiency,
-        heat_capacity: of("battery").map(|p| p.1.mass * phys(&p).and_then(|x| x.0).unwrap_or(PACK_HEAT_CAPACITY)).sum(),
-        warming: if warming == f64::MAX { PACK_WARMING } else { warming - DOCK_TEMPERATURE },
         plants: of("power_plant").map(|p| num(&p.3, "output")).sum(),
         steady: placed.iter().map(|p| p.4).sum(),
-        propellant: of("tank").filter(|t| t.3.get("holds").and_then(|v| v.as_str()).is_some_and(|h| rockets.iter().any(|r| r == bare(h)))).map(|t| num(&t.3, "capacity")).sum(),
-        leg_boxes: i.plan.blocks.iter().map(|b| i.fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.gear.is_some())).collect(),
         boxes,
         members: i.plan.beams.iter().map(|b| [b.a - mid32, b.b - mid32]).collect(),
         gravity: i.plan.gravity(),
         area: f64::from(((hi.x - lo.x) * (hi.z - lo.z)).max(1.0)),
+    };
+    match compile::devices(i, &craft) {
+        Ok(devices) => craft.devices = Some(devices),
+        Err(error) => craft.runtime_errors.push(error),
     }
+    match compile::compile(i, &craft) {
+        Ok(spec) => craft.spec = Some(spec),
+        Err(error) => craft.runtime_errors.push(error),
+    }
+    craft
 }
 
 impl Interior {
@@ -5161,7 +4818,7 @@ impl Interior {
     /// drive steering with it.
     #[cfg(feature = "dev")]
     pub fn diagnostic_mode(&self) -> &'static str {
-        if self.balance.is_some() { "balance" } else if self.drive.is_some() { "drive" }
+        if self.preparation.is_some() { "preparing" } else if self.balance.is_some() { "balance" } else if self.drive.is_some() { "drive" }
         else if self.stand.is_some() { "walk" } else { "design" }
     }
     pub fn wants_mouse(&self) -> bool {
@@ -5171,20 +4828,13 @@ impl Interior {
     /// The balance room opened (dev: `freefall --studio` with UNIVERSE_BALANCE: T
     /// trims it if set to "trim").
     pub fn balance_room(&mut self, trimmed: bool) {
-        let mut b = crate::test_drive::Balance::new(craft(self));
-        b.set_trim(trimmed);
-        self.balance = Some(b);
+        self.prepare(preparation::Mode::Balance(trimmed));
     }
 
     /// TEST DRIVE started (dev: `freefall --studio` with UNIVERSE_DRIVE: its
     /// forward throttle set there; UNIVERSE_DRIVE_MANUAL: manual thrusters).
     pub fn test_drive(&mut self, collective: Option<f64>) {
-        let mut d = crate::test_drive::Drive::new(craft(self));
-        if let Some(c) = collective {
-            d.set_throttle(c);
-            d.set_assist(!crate::devenv::flag("UNIVERSE_DRIVE_MANUAL"));
-        }
-        self.drive = Some(d);
+        self.prepare(preparation::Mode::Drive(collective));
     }
 }
 
@@ -6090,15 +5740,20 @@ fn draw_sheet(frame: &mut Frame, interior: &Interior, f: &Fitted, block: Option<
     let shape = Block { uid: Id::default(), id: f.id.clone(), at: Vec3::ZERO, size, push: block.and_then(|b|b.push), rotation: block.and_then(|b| b.rotation) };
     // Selected/hovered catalogue card is needed now, ahead of speculative rows.
     let _ = crate::visual_assets::request(&f.key, 0);
-    let visual = placed_module(&shape, Some(f));
+    let mut catalogue = interior.catalogue.borrow_mut();
+    catalogue.sync(&shape, f);
     let (yaw, tilt) = (interior.spin * 0.5, 0.45f32);
     let distance = size.length().max(1e-3)*25.;
     let eye = Vec3::new(yaw.sin()*tilt.cos(),tilt.sin(),yaw.cos()*tilt.cos())*distance;
     let forward = -eye.normalize();
     let right = forward.cross(Vec3::Y).normalize();
     let camera = crate::equipment_visual::Camera {eye,right,up:right.cross(forward),forward,focal:wc.y*0.85/size.length().max(1e-3)*distance,centre:wp+wc*0.5,near:0.1};
-    frame.canvas_scene();
-    crate::equipment_visual::draw(&[visual], universe_engine::glam::Mat4::IDENTITY, &camera, frame);
+    let view = camera.view(universe_engine::viewport::PixelRect {origin: wp, size: wc}).expect("catalogue camera");
+    frame.scene_view(2, &catalogue.scene, &view, |child| {
+        child.studio = true;
+        child.ambient = 0.45;
+        child.clear = Color([0.02, 0.06, 0.13, 1.]);
+    });
     // Its size, mass, volume, what it draws.
     let mut y = p.y + 122.0;
     let dims = format!("L {:.2} X W {:.2} X H {:.2} M", f.size.z, f.size.x, f.size.y);
@@ -6504,12 +6159,12 @@ fn on_line(i: &Interior, cam: &Camera, q: Vec2, k: usize) -> Option<(Vec3, Optio
 /// with SHIFT, from the path's last point straight along the plane's x or z,
 /// whichever is nearer.
 fn on_plane(i: &Interior, cam: &Camera, plane: f32, q: Vec2, shift: bool) -> Option<Vec3> {
-    let ray = cam.ray(q);
-    let t = if ray.y.abs() > 1e-4 { (plane - cam.eye.y) / ray.y } else { -1.0 };
+    let (from,ray) = cam.ray(q);
+    let t = if ray.y.abs() > 1e-4 { (plane - from.y) / ray.y } else { -1.0 };
     if t <= 0.0 {
         return None;
     }
-    let at = cam.eye + ray * t;
+    let at = from + ray * t;
     let step = i.snap.unwrap_or(0.25);
     let mut at = Vec3::new((at.x / step).round() * step, plane, (at.z / step).round() * step);
     if shift && let Some(a) = i.from {
@@ -6555,7 +6210,7 @@ fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
         && let Some((_, ns)) = i.node_cache.as_ref().filter(|(p, _)| *p == i.plan)
         && let Some(n) = ns.iter().filter_map(|n| {
             let (s, z) = cam.project(n.0)?;
-            let w = (n.2.map_or(n.1, |x| x.diameter) * cam.focal / z).max(6.0) * 0.5;
+            let w = (n.2.map_or(n.1, |x| x.diameter) * cam.pixels_per_metre(z)).max(6.0) * 0.5;
             (s.distance(q) < w).then_some((n.0, s.distance(q)))
         }).min_by(|a, b| a.1.total_cmp(&b.1))
     {
@@ -6575,33 +6230,31 @@ fn hover_at(i: &Interior, cam: &Camera, q: Vec2) -> Option<Hover> {
     if i.shown(layer::FRAME) && let Some(k) = beam_at(i, cam, q) {
         return Some(Hover::Member(k));
     }
-    let ray = cam.ray(q);
-    let module = i.plan.blocks.iter().enumerate().filter(|_| i.shown(layer::MODULES)).filter_map(|(n, b)| b.hit(cam.eye, ray).map(|t| (Hover::Module(n), t)));
+    let (from,ray) = cam.ray(q);
+    let module = module_at(i,cam,q).map(|(n,t)|(Hover::Module(n),t)).into_iter();
     let deck = i.plan.plates.iter().enumerate().filter(|_| i.shown(layer::DECKS)).filter_map(|(n, p)| {
-        let t = (p.y - cam.eye.y) / ray.y;
-        let at = cam.eye + ray * t;
+        let t = (p.y - from.y) / ray.y;
+        let at = from + ray * t;
         (t > 0.0 && at.x >= p.lo.x.min(p.hi.x) && at.x <= p.lo.x.max(p.hi.x) && at.z >= p.lo.y.min(p.hi.y) && at.z <= p.lo.y.max(p.hi.y)).then_some((Hover::Deck(n), t))
     });
     module.chain(deck).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(h, _)| h)
 }
 
-/// This frame's input. False: close it. (A change to the plan is kept for UNDO.)
-pub fn input(app: &mut App, ctx: &Context, interior: &mut Interior) -> bool {
-    let spec = app.ship.spec();
-    input_with(spec, &mut app.deckplans, ctx, interior)
-}
-
 /// This frame's input, given the ship's hull spec and the deck plans (what the game
 /// keeps; the studio alone keeps its own). False: close it.
-pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, ctx: &Context, interior: &mut Interior) -> bool {
+pub fn input_with(deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, ctx: &Context, interior: &mut Interior) -> bool {
     let _scope = universe_prof::scope("update/studio/input");
     let input = &ctx.input;
     let ctrl = input.down(KeyCode::ControlLeft) || input.down(KeyCode::ControlRight);
     let shift = input.down(KeyCode::ShiftLeft) || input.down(KeyCode::ShiftRight);
     // (The hull's lines picked up, its plan seeded, whatever else is going on.)
     interior.spin += ctx.dt;
-    interior.sync(&spec.key, spec.shape(), deckplans, 0.0);
+    interior.sync_decks(deckplans, 0.0);
     interior.refresh();
+    if interior.preparation.is_some() {
+        if input.pressed(KeyCode::Escape) { interior.preparation = None; }
+        return true;
+    }
     // The balance room: ENTER flies it, ESC back to the studio.
     if let Some(b) = interior.balance.as_mut() {
         match b.input(ctx) {
@@ -6729,7 +6382,7 @@ pub fn input_with(spec: &universe_sim::world::ship::ClassSpec, deckplans: &mut V
     }
     // TEST DRIVE (on the budgets panel, or CTRL+T): the design flown.
     if (input.button_pressed(MouseButton::Left) && inside(drive_button(), input.cursor)) || (ctrl && input.pressed(KeyCode::KeyT)) {
-        interior.balance = Some(crate::test_drive::Balance::new(craft(interior)));
+        interior.balance_room(false);
         return true;
     }
     // SET TARGETS (on the budgets panel): the job typed in.
@@ -7327,8 +6980,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     // (MODULES: the nearest placed one under the cursor.)
     interior.block_hover = None;
     if interior.tool == Tool::Modules && interior.shown(layer::MODULES) && !inside(PANEL, cursor) {
-        let ray = cam.ray(cursor);
-        interior.block_hover = interior.plan.blocks.iter().enumerate().filter_map(|(n, b)| b.hit(cam.eye, ray).map(|t| (n, t))).min_by(|a, b| a.1.total_cmp(&b.1)).map(|(n, _)| n);
+        interior.block_hover = module_at(interior,&cam,cursor).map(|(n,_)|n);
     }
     interior.module_hover = interior.block_hover.and_then(|n| interior.fit.iter().position(|f| f.id == kind(&interior.plan.blocks[n].id)));
     // A walk-through: F over a point or a tube, there; WALK HERE, then a click on one.
@@ -7343,7 +6995,8 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
         if input.pressed(KeyCode::KeyF) || (interior.walk_armed && pressed && !inside(PANEL, cursor)) {
             interior.refit();
             let mut s = interior.stand_up();
-            if let Some(feet) = stand_spot(&s, cam.eye, cam.ray(cursor)) {
+            let (from,dir)=cam.ray(cursor);
+            if let Some(feet) = stand_spot(&s, from, dir) {
                 s.feet = feet;
                 s.yaw = f64::from((-cam.forward.x).atan2(-cam.forward.z));
             }
@@ -7458,7 +7111,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     if interior.lifting {
         if input.button_down(MouseButton::Left) {
             let handle = plane_handle(&cam, &h, plane);
-            let per_pixel = (handle - cam.eye).length() / cam.focal;
+            let per_pixel = 1. / cam.pixels_per_metre((handle - cam.eye).length());
             // (Where the mouse has it, unsnapped, so it moves on past a point.)
             let free = interior.lift_free.unwrap_or(plane) - d.y * per_pixel;
             interior.lift_free = Some(free.clamp(h.lo.y, h.hi.y));
@@ -7729,7 +7382,7 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
     let radius = (h.hi - h.lo).length() * 0.5;
     let distance = (cam.eye - interior.target.unwrap_or((h.lo + h.hi) * 0.5)).length();
     if (input.button_down(MouseButton::Right) && !interior.stopped) || input.button_down(MouseButton::Middle) {
-        let per_pixel = distance / cam.focal;
+        let per_pixel = 1. / cam.pixels_per_metre(distance);
         let target = interior.target.unwrap_or((h.lo + h.hi) * 0.5);
         interior.target = Some(target + (-cam.right * d.x + cam.up * d.y) * per_pixel);
     }
@@ -7755,6 +7408,12 @@ fn input_plan(ctx: &Context, interior: &mut Interior) -> bool {
 
 pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     let _scope = universe_prof::scope("draw/studio");
+    if interior.preparation.is_some() {
+        frame.hud_rect(Vec2::ZERO, frame.size(), PAPER);
+        frame.text(Vec2::new(24.,24.), "PREPARING TEST FLIGHT", LABEL);
+        frame.text(Vec2::new(24.,48.), "ESC RETURNS TO DESIGN", LABEL);
+        return;
+    }
     if let Some(b) = &interior.balance {
         crate::test_drive::draw_balance(frame, b);
         return;
@@ -7771,6 +7430,9 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     let size = frame.size();
     let spec = interior.spec();
     frame.hud_rect(Vec2::ZERO, size, PAPER);
+    if let Some(hull) = interior.hull() {
+        draw_design_models(frame, &Camera::of(interior, &hull, size), interior);
+    }
     let on = spec.map_or("NO HULL".to_string(), |s| s.name.to_uppercase());
     frame.text(Vec2::new(12.0, 10.0), &format!("{place}   INTERIOR STUDIO - {} ({on}){}", interior.plan.hull.to_uppercase(), if interior.plan.authored.is_some() { " - SHIP CODE" } else { "" }), LABEL);
     let (p,c)=ship_code::code_button(size);frame.hud_rect(p,c,PAPER);frame.text(p+Vec2::new(4.,5.),"CODE ^E",LABEL);
@@ -8198,8 +7860,6 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
     }
     // The modules placed: faintly filled, outlined (picked or under the cursor lit;
     // clashing red), named.
-    let module_visuals = if interior.shown(layer::MODULES) { placed_equipment(interior) } else { Vec::new() };
-    draw_design_models(frame, &cam, &module_visuals);
     let block_clash = interior.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks).map(|(_, c)| c.as_slice()).unwrap_or(&[]);
     for (n, b) in plan.blocks.iter().enumerate().filter(|_| interior.shown(layer::MODULES)) {
         let Some(k) = interior.fit.iter().position(|f| f.id == kind(&b.id)) else { continue };
@@ -8220,7 +7880,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             }
         }
         let col = if lit { PICKED } else if block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES) { CLASH } else { MODULE };
-        let has_visual = module_visuals.get(n).is_some_and(|v|v.installed);
+        let has_visual = crate::equipment_visual::get(&f.key).is_some();
         for [p, q] in b.edges(f.round).into_iter().filter(|_| !has_visual || lit || (block_clash.get(n) == Some(&true) && interior.shown(layer::CLASHES))) {
             seg(frame, p, q, Color([col.0[0], col.0[1], col.0[2], 0.85]));
         }
@@ -8289,7 +7949,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                     let r = stocks().iter().find(|s| s.key == b.stock).map_or(0.03, |s| s.section.diameter as f32 * 0.5);
                     let (za, zb) = (cam.project(b.a).map_or(1.0, |p| p.1), cam.project(b.b).map_or(1.0, |p| p.1));
                     let side = (pb - pa).perp().normalize_or_zero();
-                    let (wa, wb) = ((r * cam.focal / za).max(0.6), (r * cam.focal / zb).max(0.6));
+                    let (wa, wb) = ((r * cam.pixels_per_metre(za)).max(0.6), (r * cam.pixels_per_metre(zb)).max(0.6));
                     if member_clash.get(k).is_some_and(|c| c.is_some()) {
                         let (oa, ob) = (side * (wa + 1.5), side * (wb + 1.5));
                         frame.hud_triangle_colored([pa + oa, pb + ob, pb - ob], [CLASH; 3]);
@@ -8306,7 +7966,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             for (at, widest, node) in ns {
                 if let Some((q, z)) = cam.project(*at) {
                     let d = node.map_or(*widest, |n| n.diameter);
-                    let w = (d * cam.focal / z).max(3.0);
+                    let w = (d * cam.pixels_per_metre(z)).max(3.0);
                     let lit = [interior.pick, interior.hover].contains(&Some(Hover::Node(*at)));
                     frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if lit { PICKED } else if node.is_some() { Color([0.9, 0.95, 1.0, 0.9]) } else { CLASH });
                 }

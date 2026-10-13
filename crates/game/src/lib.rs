@@ -199,8 +199,6 @@ pub struct App {
     pub world_look: planet_studio::Look,
     /// The star systems we've been to (kept in the save).
     pub explored: std::collections::BTreeSet<usize>,
-    /// The game held to the shipyard studio's budget of cores (see `hold_to_cores`).
-    held_to_cores: bool,
     /// At a vending machine, its panel open: the item picked.
     pub vending: Option<usize>,
     /// Ships' insides as laid out in the shipyard's studio, one per hull (kept with the
@@ -299,8 +297,6 @@ pub struct Panels {
     pub market: Option<market::MarketView>,
     /// The ship planner (the shipyard, docked at a station), while open.
     pub shipyard: Option<shipyard::Shipyard>,
-    /// Walking through a plan from the shipyard: the shipyard as it was left (ESC goes back to it).
-    pub preview: Option<shipyard::Shipyard>,
     /// The standards registry open (docked), and where in its tree.
     pub standards: Option<standards::StandardsView>,
 }
@@ -437,7 +433,6 @@ impl App {
             world_frame: None,
             world_look: Default::default(),
             explored: Default::default(),
-            held_to_cores: false,
             deckplans: Vec::new(),
             layout_sent: None,
             vending: None,
@@ -487,7 +482,6 @@ impl App {
                 planet_studio: None,
                 market: None,
                 shipyard: None,
-                preview: None,
             },
             plan: PlanState {
                 current: None,
@@ -709,15 +703,6 @@ impl App {
     /// TAB (watch or fly), the time warp.
     fn world_keys(&mut self, ctx: &mut Context) {
         let input = &ctx.input;
-        // Walking through the plan: ESC (or the shipyard key) back to the studio, seated.
-        if self.panels.preview.is_some() && (input.pressed(KeyCode::Escape) || keys::pressed(input, keys::Act::Shipyard)) {
-            self.engine.send(Command::Preview(None));
-            if let Some(s) = self.panels.preview.take() {
-                self.panels.shipyard = Some(s);
-            }
-            ctx.grab_cursor(false);
-            return;
-        }
         let seated_pilot = self.mode == Mode::Pilot && self.v.crew.seated();
         if keys::pressed(input, keys::Act::Economy) {
             self.panels.economy_panel = Some(Default::default());
@@ -1402,11 +1387,6 @@ impl Game for App {
 
         crate::visual_assets::maintain();
         let dt = ctx.dt as f64;
-        // (In the shipyard studio, the game kept to a few cores; out of it, all of them.)
-        if self.panels.shipyard.is_some() != self.held_to_cores {
-            self.held_to_cores = self.panels.shipyard.is_some();
-            hold_to_cores(self.held_to_cores.then(universe_sim::engine::cores));
-        }
         // The observer: the live port's questions answered; a recording's frame kept.
         observe::answer(self, ctx);
         observe::frame(self, ctx);
@@ -1425,7 +1405,7 @@ impl Game for App {
         // takes them, and nothing under it sees them; the system's keys work in any.
         self.system_keys(ctx);
         // Our hull's inside as laid out, to the world engine when it changes (to walk
-        // in); not while it's being designed in the shipyard (a walk-through sends it).
+        // in); the editor's private document stays in its client session.
         if self.panels.shipyard.is_none() {
             self.send_layout();
         }
@@ -1539,9 +1519,12 @@ impl Game for App {
         if fresh {
             universe_prof::time("update/events", || self.handle_events(ctx));
         }
-        universe_prof::time("update/globes", || self.build_globes());
-        universe_prof::time("update/rocks", || self.build_rocks());
-        self.update_rigs(ctx.dt);
+        // An opaque Studio owns the visible scene; prepare the world again when it returns.
+        if self.panels.shipyard.is_none() {
+            universe_prof::time("update/globes", || self.build_globes());
+            universe_prof::time("update/rocks", || self.build_rocks());
+            self.update_rigs(ctx.dt);
+        }
         if self.route_labels_for != v.avionics.route.stops {
             self.route_labels_for = v.avionics.route.stops.clone();
             self.route_labels = self.route_labels_for.iter().map(|&s| universe_sim::route::stop_name(&self.charts.system(s.system), s).to_uppercase()).collect();
@@ -1660,7 +1643,9 @@ impl Game for App {
 
     fn draw(&self, frame: &mut Frame, ctx: &Context) {
         frame.graphics = self.graphics;
-        universe_prof::time("draw/scene", || scene::draw(frame, self));
+        if self.panels.shipyard.is_none() {
+            universe_prof::time("draw/scene", || scene::draw(frame, self));
+        }
         // (Dev: the showcased model alone, no HUD: `UNIVERSE_MODEL_CLEAN`.)
         if !(self.showcase.is_some() && std::env::var_os("UNIVERSE_MODEL_CLEAN").is_some()) {
             universe_prof::time("draw/hud", || hud::draw(frame, self, ctx));
@@ -1685,47 +1670,6 @@ pub fn ship_visible(app: &App) -> bool {
 
 /// The galaxy's stars seen from a system: the system, and each star's direction and colour.
 pub type SkyCache = (usize, Vec<(universe_engine::glam::Vec3, universe_engine::Color)>);
-
-/// The game kept to `n` cores while the shipyard studio is open (Linux: its
-/// threads, now and later, may run on those only), or (None) let go to every
-/// core it was allowed at the start. Elsewhere, nothing.
-fn hold_to_cores(n: Option<usize>) {
-    #[cfg(target_os = "linux")]
-    // SAFETY: cpu_set_t values made empty, filled with CPUs we're allowed, and handed
-    // to the kernel for this process's threads; nothing else touches them.
-    unsafe {
-        static ALLOWED: std::sync::OnceLock<libc::cpu_set_t> = std::sync::OnceLock::new();
-        let allowed = *ALLOWED.get_or_init(|| {
-            let mut allowed: libc::cpu_set_t = std::mem::zeroed();
-            libc::sched_getaffinity(0, std::mem::size_of::<libc::cpu_set_t>(), &mut allowed);
-            allowed
-        });
-        let set = match n {
-            Some(n) => {
-                let mut set: libc::cpu_set_t = std::mem::zeroed();
-                let mut taken = 0;
-                for cpu in 0..libc::CPU_SETSIZE as usize {
-                    if taken < n && libc::CPU_ISSET(cpu, &allowed) {
-                        libc::CPU_SET(cpu, &mut set);
-                        taken += 1;
-                    }
-                }
-                set
-            }
-            None => allowed,
-        };
-        // (Every thread: rayon's and the engine's, one by one.)
-        if let Ok(tasks) = std::fs::read_dir("/proc/self/task") {
-            for t in tasks.flatten() {
-                if let Ok(tid) = t.file_name().to_string_lossy().parse::<libc::pid_t>() {
-                    libc::sched_setaffinity(tid, std::mem::size_of::<libc::cpu_set_t>(), &set);
-                }
-            }
-        }
-    }
-    #[cfg(not(target_os = "linux"))]
-    let _ = n;
-}
 
 /// The studio modes, alone (`freefall-studio`, or `freefall` with one of these flags): `--report`,
 /// `--fit`, `--compare` print and return true; with none, the interior studio's window
@@ -1775,14 +1719,12 @@ pub fn play() {
     if studio(&args, false) {
         return;
     }
-    // (The cores shared out before anything starts using them: see `thread_budget`;
-    // what the game may use at all, noted before the shipyard holds it to fewer.)
+    // The renderer and simulation configure their worker pools before startup.
     universe_sim::engine::size_thread_pools();
     // (UNIVERSE_HEIGHTS_STRETCH: the lines' heights stretched from the start, as SHIFT+F4 does.)
     if let Some(k) = std::env::var("UNIVERSE_HEIGHTS_STRETCH").ok().and_then(|k| k.parse::<f64>().ok()) {
         universe_sim::world::worlds::set_stretch(k);
     }
-    hold_to_cores(None);
     // (Slow frames written down beside the quicksave: hitches.log.)
     let hitch_log = Some(save::data_dir().join("freefall").join("hitches.log"));
     if let Some(dir) = hitch_log.as_ref().and_then(|p| p.parent()) {

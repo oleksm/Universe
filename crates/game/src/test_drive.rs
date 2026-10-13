@@ -39,8 +39,6 @@ pub enum Kind {
 #[derive(Clone)]
 pub struct Leg {
     pub foot: DVec3,
-    pub holds: f64,
-    pub stroke: f64,
     pub sink: f64,
 }
 
@@ -54,6 +52,7 @@ pub struct Craft {
     /// Exact per-record shared devices compiled with the same thruster ordering.
     pub devices: Option<universe_sim::world::ship_devices::Fit>,
     pub name: String,
+    pub native: Option<(String,DVec3)>,
     pub equipment: Vec<crate::equipment_visual::Placed>,
     pub structure: Vec<crate::equipment_visual::Placed>,
     /// Design coordinates to centre on the physical COM exactly once.
@@ -63,22 +62,11 @@ pub struct Craft {
     pub inertia: DMat3,
     pub actuators: Vec<Actuator>,
     pub legs: Vec<Leg>,
-    /// The batteries: what they store (J), the most they give (W), how efficiently
-    /// (0..1), their heat capacity (J/K) and how far they may warm (K); what the
-    /// power plants give (W); what the rest draws all the while (W).
-    pub stored: f64,
-    pub rate: f64,
-    pub efficiency: f64,
-    pub heat_capacity: f64,
-    pub warming: f64,
+    /// Registry power plant output and steady equipment demand (W).
     pub plants: f64,
     pub steady: f64,
-    /// The rockets' propellant (kg).
-    pub propellant: f64,
-    /// Its boxes and members, to draw and to touch the ground with (each box: is
-    /// it a leg's, which may).
+    /// Presentation envelopes and structural members; collision uses spec.shape().
     pub boxes: Vec<(Vec3, Vec3)>,
-    pub leg_boxes: Vec<bool>,
     pub members: Vec<[Vec3; 2]>,
     /// Fitted flight computer pitch/yaw/roll limits (rad/s); absent means manual only.
     pub rates: Option<DVec3>,
@@ -322,6 +310,9 @@ impl Drive {
 
 impl Craft {
     fn thrusters(&self) -> Vec<Thruster> {
+        if let Some(spec) = &self.spec {
+            return spec.thrusters.clone();
+        }
         self.actuators
             .iter()
             .enumerate()
@@ -348,12 +339,24 @@ impl Craft {
             })
             .collect()
     }
-    fn body(&self, mass: f64, spin: DVec3) -> flight_control::Body {
-        flight_control::Body {
-            mass,
-            com: DVec3::ZERO,
-            inertia: self.inertia,
-            spin,
+    /// BALANCE uses the same full-tank, empty-cargo state as a fresh DRIVE.
+    /// Uncompiled drafts retain an explicitly labelled estimate for analysis.
+    fn balance_body(&self) -> flight_control::Body {
+        if let Some(spec) = &self.spec {
+            let fuel = spec.fuel_capacity;
+            flight_control::Body {
+                mass: spec.dry_mass + fuel,
+                com: spec.centre_of_mass(fuel, 0.0),
+                inertia: spec.inertia(fuel, 0.0),
+                spin: DVec3::ZERO,
+            }
+        } else {
+            flight_control::Body {
+                mass: self.mass,
+                com: DVec3::ZERO,
+                inertia: self.inertia,
+                spin: DVec3::ZERO,
+            }
         }
     }
 }
@@ -361,7 +364,7 @@ impl Craft {
 /// Balance uses the same bounded flight allocator, with an explicit stand lift demand.
 fn throttles(c: &Craft, collective: f64, want: DVec3) -> Vec<f64> {
     let ts = c.thrusters();
-    let body = c.body(c.mass, DVec3::ZERO);
+    let body = c.balance_body();
     let mut settings = vec![0.; ts.len()];
     let lift = ts.iter().map(|t| t.push.y.max(0.) * t.thrust).sum::<f64>();
     flight_control::step(
@@ -381,25 +384,24 @@ fn throttles(c: &Craft, collective: f64, want: DVec3) -> Vec<f64> {
 
 /// The push and turning of throttles (the craft's frame, about its middle of mass).
 fn push_and_turn(c: &Craft, throttles: &[f64]) -> (DVec3, DVec3) {
-    c.actuators
+    let com = c.balance_body().com;
+    c.thrusters()
         .iter()
         .zip(throttles)
         .fold((DVec3::ZERO, DVec3::ZERO), |(f, t), (a, &th)| {
-            let push = a.dir * a.thrust * th;
-            (f + push, t + a.at.cross(push))
+            let push = a.push * a.thrust * th;
+            (f + push, t + (a.at - com).cross(push))
         })
 }
 
-/// The collective that holds its weight up, its lifting thrust all at once (none:
-/// nothing lifts it).
+/// Rated static lift balance, without atmospheric or electrical derating.
 fn hover_collective(c: &Craft) -> Option<f64> {
     let lift: f64 = c
-        .actuators
+        .thrusters()
         .iter()
-        .filter(|a| a.dir.y > 0.5)
-        .map(|a| a.thrust * a.dir.y)
+        .map(|a| a.thrust * a.push.y.max(0.0))
         .sum();
-    (lift > 0.0).then(|| c.mass * c.gravity / lift)
+    (lift > 0.0).then(|| c.balance_body().mass * c.gravity / lift)
 }
 
 /// The balance room: the craft on a stand, its middle of mass and its pushes shown,
@@ -467,10 +469,13 @@ impl Balance {
         let turn = crate::flight_input::sample(input, None, dt).turn;
         self.command = flight_control::rates(
             DVec3::new(turn.pitch, turn.yaw, turn.roll),
-            self.craft.rates.unwrap_or(DVec3::ZERO),
+            self.craft.spec.as_ref().map_or_else(
+                || self.craft.rates.unwrap_or(DVec3::ZERO),
+                |s| DVec3::new(s.turn_rate, s.turn_rate, s.roll_rate),
+            ),
         );
         if input.pressed(KeyCode::Tab) {
-            let n = self.craft.actuators.len();
+            let n = self.craft.thrusters().len();
             self.single = match self.single {
                 None if n > 0 => Some(0),
                 Some(k) if k + 1 < n => Some(k + 1),
@@ -494,7 +499,7 @@ impl Balance {
     /// collective, the keys and (T) the trim.
     fn now(&self) -> Vec<f64> {
         match self.single {
-            Some(k) => (0..self.craft.actuators.len())
+            Some(k) => (0..self.craft.thrusters().len())
                 .map(|i| {
                     if i == k {
                         self.collective.max(0.5)
@@ -508,9 +513,9 @@ impl Balance {
             }
             None => self
                 .craft
-                .actuators
+                .thrusters()
                 .iter()
-                .map(|a| if a.dir.y > 0.5 { self.collective } else { 0. })
+                .map(|a| if a.push.y > 0.0 { self.collective } else { 0. })
                 .collect(),
         }
     }
@@ -524,6 +529,9 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
     let size = frame.size();
     frame.hud_rect(Vec2::ZERO, size, Color([0.03, 0.04, 0.08, 1.0]));
     let c = &b.craft;
+    let body = c.balance_body();
+    let thrusters = c.thrusters();
+    let com = body.com.as_vec3();
     let (sy, cy) = b.cam_yaw.sin_cos();
     let (sp, cp) = b.cam_pitch.sin_cos();
     let eye = Vec3::new(sy * cp, sp, cy * cp) * b.cam_dist;
@@ -560,21 +568,6 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
         .map(|l| l.foot.y as f32)
         .chain(c.boxes.iter().map(|b| b.0.y))
         .fold(f32::MAX, f32::min);
-    for k in -8..=8 {
-        let o = k as f32 * 2.0;
-        seg(
-            frame,
-            Vec3::new(o, floor, -16.0),
-            Vec3::new(o, floor, 16.0),
-            Color([0.3, 0.5, 0.4, 0.25]),
-        );
-        seg(
-            frame,
-            Vec3::new(-16.0, floor, o),
-            Vec3::new(16.0, floor, o),
-            Color([0.3, 0.5, 0.4, 0.25]),
-        );
-    }
     let camera = crate::equipment_visual::Camera {
         eye,
         right,
@@ -585,20 +578,34 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
         near: 0.2,
     };
     frame.canvas_scene();
-    visuals::draw(&b.scene, c, DVec3::ZERO, DQuat::IDENTITY, &camera, frame);
+    visuals::draw(
+        &b.scene,
+        c,
+        DVec3::ZERO,
+        DQuat::IDENTITY,
+        &camera,
+        frame,
+        visuals::Environment::Balance {
+            floor: if floor.is_finite() && floor != f32::MAX {
+                f64::from(floor)
+            } else {
+                0.0
+            },
+        },
+    );
     for [a, bb] in &c.members {
         seg(frame, *a, *bb, Color([1.0, 0.7, 0.3, 0.35]));
     }
     // (The scale: the strongest push 4 m long.)
-    let strongest = c
-        .actuators
+    let strongest = thrusters
         .iter()
         .map(|a| a.thrust)
-        .fold(c.mass * c.gravity, f64::max);
+        .fold(body.mass * c.gravity, f64::max)
+        .max(f64::MIN_POSITIVE);
     let metres = |n: f64| (n / strongest * 4.0) as f32;
     let ts = b.now();
     let (force, turn) = push_and_turn(c, &ts);
-    for (k, (a, &t)) in c.actuators.iter().zip(&ts).enumerate() {
+    for (k, (a, &t)) in thrusters.iter().zip(&ts).enumerate() {
         let at = a.at.as_vec3();
         let col = if b.single == Some(k) {
             Color([1.0, 1.0, 0.4, 1.0])
@@ -609,7 +616,7 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
             arrow(
                 frame,
                 at,
-                a.dir.as_vec3(),
+                a.push.as_vec3(),
                 metres(a.thrust * t).max(0.3),
                 col,
             );
@@ -624,7 +631,7 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
         }
     }
     // (The middle of mass: a cross and a ring; its weight straight down.)
-    if let Some(q) = project(Vec3::ZERO) {
+    if let Some(q) = project(com) {
         frame.hud_line(
             q - Vec2::new(10.0, 0.0),
             q + Vec2::new(10.0, 0.0),
@@ -649,9 +656,9 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
     }
     arrow(
         frame,
-        Vec3::ZERO,
+        com,
         Vec3::NEG_Y,
-        metres(c.mass * c.gravity),
+        metres(body.mass * c.gravity),
         Color([1.0, 0.85, 0.3, 0.8]),
     );
     // (The pushes' sum, along the line it acts on: through the point of that line
@@ -664,7 +671,7 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
     };
     if f2 > 1e-6 {
         let dir = force.normalize().as_vec3();
-        let p = through.as_vec3();
+        let p = com + through.as_vec3();
         seg(frame, p - dir * 3.0, p, Color([1.0, 0.4, 0.9, 0.6]));
         arrow(
             frame,
@@ -674,11 +681,11 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
             Color([1.0, 0.4, 0.9, 1.0]),
         );
         if through.length() > 0.02 {
-            seg(frame, Vec3::ZERO, p, Color([1.0, 0.4, 0.9, 0.8]));
+            seg(frame, com, p, Color([1.0, 0.4, 0.9, 0.8]));
         }
     }
     // (What it reads.)
-    let weight = c.mass * c.gravity;
+    let weight = body.mass * c.gravity;
     let hover = hover_collective(c);
     let verdict = match hover {
         None => ("NOTHING LIFTS IT: NO HOVER TO BALANCE".to_string(), false),
@@ -700,15 +707,29 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
         }
     };
     let lines = [
-        format!("BALANCE ROOM - {}", c.name.to_uppercase()),
         format!(
-            "MASS {:.2} T   WEIGHT {:.1} KN AT {:.2} G",
-            c.mass / 1000.0,
-            weight / 1000.0,
-            c.gravity / 9.80665
+            "BALANCE ROOM - {} - {}",
+            c.name.to_uppercase(),
+            if c.spec.is_some() {
+                "COMPILED / FULL TANK"
+            } else {
+                "UNCOMPILED ESTIMATE"
+            }
         ),
         format!(
-            "COLLECTIVE {:.0}%{}   HOVERS AT {}",
+            "MASS {:.2} T   WEIGHT {:.1} KN AT {:.2} G",
+            body.mass / 1000.0,
+            weight / 1000.0,
+            c.gravity / universe_sim::world::units::STANDARD_GRAVITY
+        ),
+        format!(
+            "INERTIA XX/YY/ZZ {:.3}/{:.3}/{:.3} T M2   RATED STATIC ANALYSIS (NO AIR/POWER LIMITS)",
+            body.inertia.x_axis.x / 1000.0,
+            body.inertia.y_axis.y / 1000.0,
+            body.inertia.z_axis.z / 1000.0
+        ),
+        format!(
+            "COLLECTIVE {:.0}%{}   RATED HOVER {}",
             b.collective * 100.0,
             b.single
                 .map_or(String::new(), |k| format!("   ONE ALONE: NUMBER {}", k + 1)),
@@ -801,180 +822,7 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             frame.hud_line(p, q, c);
         }
     };
-    // (The floor: a sheet of see-through tiles round under the craft, cut where it
-    // passes behind the eye; over it a grid of 5 m lines, every 25 m brighter; it
-    // fades out at its edge.)
-    let view = |p: Vec3| {
-        let v = p - eye;
-        Vec3::new(v.dot(right), v.dot(up), v.dot(forward))
-    };
-    let near = 0.3;
-    let screen = |v: Vec3| size * 0.5 + Vec2::new(v.x, -v.y) * (focal / v.z);
-    let reach = 150.0f32;
-    let (cx, cz) = (
-        (target.x / 25.0).round() * 25.0,
-        (target.z / 25.0).round() * 25.0,
-    );
-    let tile = 25.0f32;
-    let tiles = (reach / tile) as i32;
-    for i in -tiles..tiles {
-        for j in -tiles..tiles {
-            let (x0, z0) = (cx + i as f32 * tile, cz + j as f32 * tile);
-            let quad = [
-                Vec3::new(x0, 0.0, z0),
-                Vec3::new(x0 + tile, 0.0, z0),
-                Vec3::new(x0 + tile, 0.0, z0 + tile),
-                Vec3::new(x0, 0.0, z0 + tile),
-            ]
-            .map(view);
-            let mut poly = Vec::new();
-            for k in 0..4 {
-                let (a, b) = (quad[k], quad[(k + 1) % 4]);
-                if a.z >= near {
-                    poly.push(a);
-                }
-                if (a.z >= near) != (b.z >= near) {
-                    poly.push(a.lerp(b, (near - a.z) / (b.z - a.z)));
-                }
-            }
-            if poly.len() < 3 {
-                continue;
-            }
-            let far =
-                Vec2::new(x0 + tile * 0.5 - target.x, z0 + tile * 0.5 - target.z).length() / reach;
-            let shade = if (i + j) % 2 == 0 { 0.16 } else { 0.12 };
-            let c = Color([0.2, 0.42, 0.32, shade * (1.0 - far).max(0.0)]);
-            let q: Vec<Vec2> = poly.iter().map(|p| screen(*p)).collect();
-            for k in 1..q.len() - 1 {
-                frame.hud_triangle_colored([q[0], q[k], q[k + 1]], [c; 3]);
-            }
-        }
-    }
-    let line = |frame: &mut Frame, a: Vec3, b: Vec3, c: Color| {
-        let (mut va, mut vb) = (view(a), view(b));
-        if va.z < near && vb.z < near {
-            return;
-        }
-        if va.z < near {
-            va = va.lerp(vb, (near - va.z) / (vb.z - va.z));
-        } else if vb.z < near {
-            vb = vb.lerp(va, (near - vb.z) / (va.z - vb.z));
-        }
-        frame.hud_line(screen(va), screen(vb), c);
-    };
-    let (gx, gz) = (
-        (target.x / 5.0).round() * 5.0,
-        (target.z / 5.0).round() * 5.0,
-    );
-    let lines_out = (reach / 5.0) as i32;
-    for k in -lines_out..=lines_out {
-        let o = k as f32 * 5.0;
-        let major = ((gx + o) / 25.0).fract().abs() < 1e-3;
-        let c = if major {
-            Color([0.45, 0.75, 0.6, 0.55])
-        } else {
-            Color([0.35, 0.6, 0.5, 0.25])
-        };
-        line(
-            frame,
-            Vec3::new(gx + o, 0.0, gz - reach),
-            Vec3::new(gx + o, 0.0, gz + reach),
-            c,
-        );
-        let major = ((gz + o) / 25.0).fract().abs() < 1e-3;
-        let c = if major {
-            Color([0.45, 0.75, 0.6, 0.55])
-        } else {
-            Color([0.35, 0.6, 0.5, 0.25])
-        };
-        line(
-            frame,
-            Vec3::new(gx - reach, 0.0, gz + o),
-            Vec3::new(gx + reach, 0.0, gz + o),
-            c,
-        );
-    }
-    // (The pad: its ring, its middle's cross, lights round its edge; the beacon:
-    // a mast at the start, its light on top.)
-    let pad = Vec3::new(0.0, 0.0, -PAD_AHEAD as f32);
-    let half = PAD_ACROSS as f32 * 0.5;
-    let pad_col = Color([1.0, 0.85, 0.35, 0.9]);
-    for k in 0..48 {
-        let (a0, a1) = (
-            k as f32 / 48.0 * std::f32::consts::TAU,
-            (k + 1) as f32 / 48.0 * std::f32::consts::TAU,
-        );
-        line(
-            frame,
-            pad + Vec3::new(a0.cos(), 0.0, a0.sin()) * half,
-            pad + Vec3::new(a1.cos(), 0.0, a1.sin()) * half,
-            pad_col,
-        );
-        line(
-            frame,
-            pad + Vec3::new(a0.cos(), 0.0, a0.sin()) * half * 0.6,
-            pad + Vec3::new(a1.cos(), 0.0, a1.sin()) * half * 0.6,
-            Color([1.0, 0.85, 0.35, 0.5]),
-        );
-    }
-    line(
-        frame,
-        pad - Vec3::X * half * 0.4,
-        pad + Vec3::X * half * 0.4,
-        pad_col,
-    );
-    line(
-        frame,
-        pad - Vec3::Z * half * 0.4,
-        pad + Vec3::Z * half * 0.4,
-        pad_col,
-    );
-    for k in 0..8 {
-        let a = k as f32 / 8.0 * std::f32::consts::TAU;
-        let p = pad + Vec3::new(a.cos(), 0.0, a.sin()) * half;
-        if let Some(q) = project(p) {
-            frame.hud_box(
-                q - Vec2::splat(2.0),
-                Vec2::splat(4.0),
-                Color([1.0, 0.4, 0.3, 1.0]),
-            );
-        }
-    }
-    if let Some(q) = project(pad + Vec3::Y * 0.5) {
-        frame.text_scaled(q + Vec2::new(8.0, -10.0), "PAD", pad_col, 0.6);
-    }
-    let blink = if (d.time * 2.0).fract() < 0.5 {
-        1.0
-    } else {
-        0.35
-    };
-    line(
-        frame,
-        Vec3::ZERO,
-        Vec3::Y * 6.0,
-        Color([0.8, 0.85, 0.9, 0.8]),
-    );
-    if let Some(q) = project(Vec3::Y * 6.0) {
-        frame.hud_box(
-            q - Vec2::splat(3.0),
-            Vec2::splat(6.0),
-            Color([1.0, 0.3, 0.3, blink]),
-        );
-        frame.text_scaled(
-            q + Vec2::new(8.0, -4.0),
-            "BEACON",
-            Color([1.0, 0.5, 0.45, 0.9]),
-            0.6,
-        );
-    }
     let place = |p: Vec3| (d.pos + d.rot * p.as_dvec3()).as_vec3();
-    // (Its shadow: straight down.)
-    seg(
-        frame,
-        target,
-        Vec3::new(target.x, 0.0, target.z),
-        Color([0.6, 0.6, 0.6, 0.4]),
-    );
     let camera = crate::equipment_visual::Camera {
         eye,
         right,
@@ -985,7 +833,19 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
         near: 0.2,
     };
     frame.canvas_scene();
-    visuals::draw(&d.scene, &d.craft, d.pos, d.rot, &camera, frame);
+    visuals::draw(
+        &d.scene,
+        &d.craft,
+        d.pos,
+        d.rot,
+        &camera,
+        frame,
+        visuals::Environment::Flight {
+            position: d.pos,
+            time: d.time,
+            sky,
+        },
+    );
     for [a, b] in &d.craft.members {
         seg(frame, place(*a), place(*b), Color([1.0, 0.7, 0.3, 0.8]));
     }

@@ -1211,12 +1211,11 @@ fn s_manual(app: &mut App, _name: &str, _c: &Ctx) {
     u.start_in_flight();
     let s = u.vessels[universe_sim::PLAYER].ship.spec();
     let bit = |name: &str| s.thrusters.iter().position(|t| t.nozzle.ends_with(name)).map_or(0, |k| 1u64 << k);
+    let held = if std::env::var("UNIVERSE_BURN").is_ok() {
+        s.thrusters.iter().take(64).enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum()
+    } else {bit("nose_left_side") | bit("tail_right_side")};
     u.vessels[universe_sim::PLAYER].ship.manual = true;
-    u.vessels[universe_sim::PLAYER].ship.held = bit("nose_left_side") | bit("tail_right_side");
-    // UNIVERSE_BURN: the mains held instead (to see the drive lit from behind).
-    if std::env::var("UNIVERSE_BURN").is_ok() {
-        u.vessels[universe_sim::PLAYER].ship.held = s.thrusters.iter().enumerate().filter(|(_, t)| t.role == universe_sim::world::ship::ThrusterRole::Main).map(|(k, _)| 1u64 << k).sum();
-    }
+    u.vessels[universe_sim::PLAYER].ship.held = held;
     for _ in 0..20 {
         u.step_world(1.0 / 60.0, 1.0, &Controls::default());
     }
@@ -1817,13 +1816,21 @@ fn s_studiopreview(app: &mut App, _name: &str, _c: &Ctx) {
         d.planes = universe_sim::world::deckplan::fill(&mesh, floor).into_iter().map(Into::into).collect();
         plan.decks = vec![d];
     }
-    let at = (universe_engine::glam::DVec3::new(x, floor + 0.05, z), yaw);
-    app.engine.universe().set_layout(&plan);
-    app.engine.universe().preview(Some(at));
-    app.panels.preview = app.panels.shipyard.take();
-    app.mode = Mode::Pilot;
-    app.chase_cam = false;
-    app.engine.universe().walk(&universe_sim::world::WalkCommands { pitch, ..Default::default() }, 0.02);
+    if let Some(y) = app.panels.shipyard.as_mut() {
+        studio_decks(y, plan);
+        y.interior_mut().stand_test(Some([x, floor + 0.05, z, yaw]));
+        y.interior_mut().stand_pitch(pitch);
+    }
+}
+
+/// Seed only the editor document, after consuming any pending saved-deck load.
+fn studio_decks(y: &mut crate::shipyard::Shipyard, plan: universe_sim::world::deckplan::DeckPlan) {
+    let mut decks = std::mem::take(y.deckplans_mut());
+    y.interior_mut().sync_decks(&mut decks, 0.0);
+    decks.retain(|p| p.hull != plan.hull);
+    decks.push(plan);
+    y.interior_mut().sync_decks(&mut decks, 0.0);
+    *y.deckplans_mut() = decks;
 }
 
 fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
@@ -1836,10 +1843,15 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
     // check of it is a picture or a report, fastest with the world asleep.)
     app.paused = true;
     let turn: Vec<f32> = crate::devenv::list("UNIVERSE_TURN");
-    let mut y = match turn[..] {
-        [yaw, pitch] => crate::shipyard::Shipyard::interior_turned(yaw, pitch),
-        _ => crate::shipyard::Shipyard::interior(app),
-    };
+    let mut y = crate::shipyard::Shipyard::interior(app);
+    if let [yaw, pitch] = turn[..] {
+        // Keep the initialized session so its first frame cannot replace fixture decks.
+        *y.interior_mut() = crate::interior::Interior::turned(yaw, pitch);
+        let mut decks = std::mem::take(y.deckplans_mut());
+        let spec = app.ship.spec();
+        y.interior_mut().sync(&spec.key, spec.shape(), &mut decks, 0.0);
+        *y.deckplans_mut() = decks;
+    }
     // (UNIVERSE_NEW=none|<hull key>: a new design; UNIVERSE_DIALOG=new|open: that
     // dialog open.)
     if let Ok(h) = std::env::var("UNIVERSE_NEW") {
@@ -1891,8 +1903,7 @@ fn s_interior(app: &mut App, _name: &str, _c: &Ctx) {
         y.interior_mut().sample(&spec.key, spec.shape());
         // (And the deck studio's demo decks, to be seen here too.)
         let decks = demo_plan(app);
-        app.deckplans.retain(|p| p.hull != decks.hull);
-        app.deckplans.push(decks);
+        studio_decks(&mut y, decks);
         // (UNIVERSE_WALK=k: walked in the middle of line k, as WALK HERE.)
         if let Some(k) = std::env::var("UNIVERSE_WALK").ok().and_then(|v| v.parse().ok()) {
             y.interior_mut().walk_line(k);
@@ -1907,7 +1918,6 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
     apply(app, "docked");
     mc07(app);
     let key = app.ship.spec().key.clone();
-    app.deckplans.retain(|p| p.hull != key);
     let mut y = crate::shipyard::Shipyard::laying_out(app);
     // (UNIVERSE_PLAN: the 3D studio's sample access plan, to be seen here.)
     if std::env::var_os("UNIVERSE_PLAN").is_some() {
@@ -1969,7 +1979,9 @@ fn s_studio(app: &mut App, _name: &str, _c: &Ctx) {
             let areas: Vec<String> = deck.planes.iter().map(|p| format!("{:.0}", universe_sim::world::deckplan::floor_strips(p, &sides, &[]).iter().map(|s| (s.1 - s.0) * (s.3 - s.2)).sum::<f64>())).collect();
             log::info!("scenario studio: filled {} floors, m2 {}", deck.planes.len(), areas.join(" "));
         }
-        app.deckplans.push(plan);
+        studio_decks(&mut y, plan);
+    } else {
+        studio_decks(&mut y, universe_sim::world::deckplan::DeckPlan { hull: key, decks: Vec::new() });
     }
     app.panels.shipyard = Some(y);
 }
