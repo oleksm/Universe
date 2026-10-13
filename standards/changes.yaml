@@ -435,7 +435,7 @@
 - { record: equipment.lift.belly.s2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2510b2eaa9ec3756" }
 - { record: equipment.lift.belly.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "038d104c6c6ef3cf" }
 - { record: equipment.power.aurel.s1, at: "2026-10-13T22:49:56Z", status: draft, summary: "changed: physical, basis", sha: "5919e0331f716db4" }
-- { record: equipment.power.aurel.s2, at: "2026-10-13T23:32:50Z", status: draft, summary: "changed: physical, built_of, basis", sha: "e7bc4e9a3bea4d53" }
+- { record: equipment.power.aurel.s2, at: "2026-10-13T23:36:27Z", status: draft, summary: "changed: visual", sha: "e1cbac80a67643a1" }
 - { record: equipment.power.aurel.s3, at: "2026-10-13T23:23:43Z", status: draft, summary: "changed: physical, built_of, basis", sha: "55f57c583989a2a4" }
 - { record: equipment.power.battery-vtol.s0, at: "2026-10-13T06:30:43Z", status: draft, summary: "changed: visual", sha: "e1305a44edbdbfb0" }
 - { record: equipment.power.battery-vtol.s1, at: "2026-10-12T01:40:18Z", status: draft, summary: "changed: visual", sha: "03fe8e8ac782e425" }
