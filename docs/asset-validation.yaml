@@ -3524,3 +3524,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Metadata-only v2; original engineering, final hull, GPU appearance/cost and temporal edges remain pending."
+  - key: equipment.tank.liquid-cargo.s4
+    version: 1
+    manifest_sha256: "5552727d3e02285004b23b7597efcef65cab3529c894f5e715100668314b617f"
+    installed: bc66985e
+    game: "the loader (world::assets) at fso bc66985e"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-liquid-cargo-s4/v1 (183080 bytes, bounds [-2.9138, 0.0, -2.9138] to [2.9138, 6.3008, 2.9138]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure/fatigue/slosh and loaded supports unqualified; final hull placement, GPU appearance/cost and temporal edges pending."
