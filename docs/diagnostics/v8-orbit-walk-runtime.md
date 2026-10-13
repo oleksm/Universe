@@ -37,7 +37,7 @@ Generic `UNIVERSE_FRAME_TIMINGS=1` now logs raw history and existing resource/ti
 
 Ships owns the separate command-driven shared World/Person replay on `ships-pgs-journey`. Initial 100 km circular-orbit attempt crashed in Approach at 711.02 simulated seconds. A separate orbit run with a 30-second coast before unchanged landing guidance landed at 2330.14 simulated seconds, then exited, walked 12.82 m and jumped about 0.445 m. A separate 1000 m lowflight run landed in 72.78 s. These are independent trials with disclosed initial/command timing, not a successful replay of the failed trial.
 
-Reboarding remains under investigation at the Drover ramp: `inside_hatch` finds no walk floor. No invented floor, state reset, teleport to seat or alternate walker is accepted. Headless command replay and fixed Vulkan captures are separate evidence, not one GUI journey. Return to orbit and revisit after eviction remain unverified.
+Reboarding fails at the Drover ramp: `inside_hatch` finds no walk floor. Ships reproduced it through the live `Universe::walk` call on the preserved final state: normal `set_layout` leaves layout absent because `shape.walk` is absent; crew stays Outside and emits no reboard event. This is not repaired by supplying the normal empty game plan. No invented floor, state reset, teleport to seat or alternate walker is accepted. Headless command replay and fixed Vulkan captures are separate evidence, not one GUI journey. Return to orbit and revisit after eviction remain unverified.
 
 ## Validation and next bounded work
 
@@ -46,3 +46,5 @@ Release build, registry build and 68 workspace tests pass, including a regressio
 Next: resolve the actual shared-hull boarding path and approach reliability, then run one continuous GUI journey with repeatable inputs; preserve canonical crease/shore geometry near the feet or introduce a measured-error refinement policy; separate surface-presentation waits from terrain cost in a controlled frame test; exercise orbit return/patch eviction. No further bakery terrain edits, global coverage expansion or production installation are justified by this pilot.
 
 Evidence root: `/home/alexm/git/universe-engine-pgs-walk/out/review/v8-walk-runtime` (`runs.json`, `day-runs.json`, `candidate-runs.json`, `reader.log`, contact JSONs, `summary.json`, screenshots, build/test logs). `run.py`, `run-day.py`, `run-candidate.py` and `controls.py` record reproduction commands. All heavy jobs use the shared scenery launcher with 2 CPU, <=8 GiB, <=600 seconds per job. CPU audit source: `crates/core/world/examples/pgs_walk_audit.rs`.
+
+Ships final runtime evidence: `/home/alexm/git/universe-ships-pgs-journey/docs/diagnostics/v8-runtime-journey.json` and `out/review/v8-runtime-journey/orbit-final/result.json` in that worktree. It records actual landing commands, variable dt, phase changes and untouched post-spawn state; the initial crash is retained under `baseline`.
