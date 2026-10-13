@@ -116,7 +116,29 @@ struct Section {
     hash: [u8; 32],
 }
 
+/// Immutable copy of one canonical chord face for bounded visual workers.
+/// `water_level_m` is visible water, never a replacement for `bed_heights_m`.
+#[derive(Clone, Copy, Debug)]
+pub struct FaceGeometry {
+    pub positions: [DVec3; 3],
+    pub bed_heights_m: [f64; 3],
+    pub neighbours: [u32; 3],
+    pub body: u32,
+    pub water_level_m: Option<f64>,
+}
+
 impl Surface {
+    pub fn face_geometry(&self, id: u32) -> Option<FaceGeometry> {
+        let f = self.faces.get(id as usize)?;
+        Some(FaceGeometry {
+            positions: f.vertices.map(|i| self.points[i].position),
+            bed_heights_m: f.vertices.map(|i| self.points[i].height),
+            neighbours: f.neighbours.map(|i| i as u32),
+            body: f.body,
+            water_level_m: self.bodies.get(&f.body).copied(),
+        })
+    }
+
     /// Strict canonical root reader, with per-section checksums and closed topology.
     pub fn read(data: &[u8]) -> Result<Self, String> {
         let mut b = Bytes { data, at: 0 };

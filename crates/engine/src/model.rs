@@ -103,6 +103,8 @@ fn globe_uploads(size: u32, texels: &[[f32; 2]], colors: Option<&[[u8; 4]]>) -> 
 /// and reused every frame after, by its id. Cheap to clone (shared).
 #[derive(Clone, Debug)]
 pub struct Mesh {
+    pub(crate) gpu_residents: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+    pub(crate) reservation: Option<std::sync::Arc<crate::mesh_budget::Reservation>>,
     id: u64,
     model: std::sync::Arc<WireModel>,
     /// How far its farthest point is from its origin.
@@ -113,8 +115,11 @@ impl Mesh {
     pub fn new(model: WireModel) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         let radius = model.positions.iter().map(|p| p.length()).fold(0.0, f32::max);
-        Mesh { id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), model: std::sync::Arc::new(model), radius }
+        Mesh { gpu_residents: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)), reservation: None, id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), model: std::sync::Arc::new(model), radius }
     }
+
+    /// True while at least one renderer cache has completed upload of this exact mesh ID.
+    pub fn gpu_resident(&self) -> bool { self.gpu_residents.load(std::sync::atomic::Ordering::Acquire)>0 }
 
     /// How far its farthest point is from its origin (unscaled).
     pub fn radius(&self) -> f32 {

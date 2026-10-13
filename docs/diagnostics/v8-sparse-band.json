@@ -1,0 +1,1149 @@
+{
+  "format": "v8-sparse-band-review/1",
+  "status": "refused_before_gpu",
+  "base_commit": "ce89628d",
+  "plan": {
+    "format": "v8-sparse-band-plan/1",
+    "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+    "radius_m": 6281370,
+    "patch_pair_m": [
+      128,
+      128
+    ],
+    "tile_half_width_m": 64,
+    "grid_cell_m": 8,
+    "max_search_faces_per_pair": 4096,
+    "max_output_vertices_per_pair": 32768,
+    "max_output_triangles_per_pair": 32768,
+    "max_serialized_geometry_bytes_per_pair": 2097152,
+    "max_working_bytes_excluding_resident_source": 16777216,
+    "max_sample_queries_per_pair": 300000,
+    "max_job_seconds": 540,
+    "threads": 2,
+    "memory_gib": 8,
+    "method": "Face-adjacency bounded search from frozen feature owner, clip footprints to common tangent-grid cells and two adjacent tiles; deterministic shared intersections; per-face triangulation. No GPU integration, no morph, no source/physics edit. Source is already resident; initial reader cost separately measured. Refuse on caps or missing coverage, do not enlarge.",
+    "gate_sampled_contact_m": 0.1,
+    "gate_seam_m": 1e-05,
+    "scope": "compiled worker and interface preflight first; runtime only after prerequisite gates",
+    "gpu_additional_lifetime_bytes": 16777216,
+    "gpu_mesh_vertex_stride": 56,
+    "gpu_expansion": "unindexed 3 vertices per triangle, 56 bytes each; 4-byte alignment; no prototype edges, but current renderer allocates 40-byte empty edge buffer per tile",
+    "gpu_ownership": "Reserve before upload; reservation must remain held by renderer allocation until destruction, including frames and retired cache entries. CPU Mesh lifetime alone insufficient.",
+    "publication": "CPU gates first; scoped GPU only if core, seam, topology and limits pass. Record explicit refusal otherwise.",
+    "outer_interface": "Frozen 128m square; sample existing settled level19 cube-grid field at every boundary split and edge interior. A transition constrained to the unchanged outer boundary cannot repair a boundary contact failure. Refuse this footprint if boundary exceeds 0.1m; do not enlarge footprint/caps.",
+    "queue": "2 workers / 48 total pending / 3000 total patches; generation plus cancellation required",
+    "accounting_correction": "Inspected GpuMesh::new: empty edge buffer is40 not minimum4. Added72bytes per pair;16MiB ceiling unchanged; corrected before any upload.",
+    "core_half_width_m": 32,
+    "transition": "wx=smoothstep(clamp((abs(x)-32)/32)); wy likewise; t=1-(1-wx)*(1-wy), a C1 tensor-product taper. Radial height=(1-t)*canonical_visible+t*ray_intersection_retained_f32_triangle. Overlay canonical and retained triangle edges. Band not contact-ready.",
+    "cpu_preflight": "same seven frozen features; centre eye visible+1.7m; reconstruct actual grid vertex/morph arithmetic and triangle topology, no analytic surrogate. Retained source patches selected at settled ideal LOD, not GPU residency.",
+    "search_work": "4096 source face visits retained; up to4096 patch nodes for bounded retained-grid traversal; refuse on geometry limits including retained edge overlay. Source/retained intersection checks prefilter by chart bbox.",
+    "source_contract": "Wet visible output uses body level; bed remains separate; core only dry samples can be walk-ready. Prior full128m contact gate remains FAILED.",
+    "algorithm": "Reuse accepted canonical8m cell mesh. Blend vertex heights against actual retained triangles only in band. Insert ordered intersections at outer boundary only; core has no retained-grid splits. Canonicalize each retained edge evaluation by stable endpoint identity; no proximity welding. Refuse conflicting shared constraints, f32 collapse, topology or caps.",
+    "regressions": "Reproduce all saved20 collapses; retain source face and clipping boundary; trace retained edge identities. Small regression must show same edge intersections reuse identity irrespective incident orientation; distinct constraints sharing f32 point must refuse.",
+    "outer_chain": "Ordered chart-boundary intersection events from retained triangles. Exact shared physical edge endpoints canonicalized once; semantically distinct edges remain distinct. Before mesh construction require each consecutive required event to be f32-representable without identifying unrelated constraints. Record source/grid/clip provenance on refusal.",
+    "gpu_policy": "No GPU before all CPU gates pass. This bounded CPU slice reports construction plus any outer constraint refusal. GPU lifetime, moving feet and delayed build gates remain outstanding."
+  },
+  "construction": {
+    "results": [
+      {
+        "chain": {
+          "max_retained_position_disagreement_m": 1.2934989337208685e-06,
+          "proven_identity_reuses": 1112
+        },
+        "cpu_ms": 12.385913,
+        "feature": "nearest_known_shore",
+        "geometry_sha256": "da5cc5b58d847b3dd904e28cf7fca40a07a6b5eaef619ba1158f210a254bd0bf",
+        "gpu_bytes": 301432,
+        "outer_constraints": 1182,
+        "serialized_bytes": 183083,
+        "status": "built_for_audit",
+        "triangles": 1794,
+        "vertices": 1487
+      },
+      {
+        "cpu_ms": 13.233728,
+        "feature": "parent_face_join",
+        "status": "refused",
+        "witness": {
+          "ids": [
+            89,
+            88,
+            90
+          ],
+          "owner": [
+            40805,
+            4294967295
+          ],
+          "positions": [
+            [
+              5.737661361694336,
+              5.200888633728027,
+              2.032350778579712
+            ],
+            [
+              -9.406358003616333e-08,
+              0.0,
+              1.2177042663097382e-07
+            ],
+            [
+              -9.406358003616333e-08,
+              0.0,
+              1.2177042663097382e-07
+            ]
+          ],
+          "reason": "physical triangle collapsed",
+          "triangle": 483,
+          "uv": [
+            [
+              0.0,
+              8.0
+            ],
+            [
+              -1e-08,
+              0.0
+            ],
+            [
+              0.0,
+              0.0
+            ]
+          ]
+        }
+      },
+      {
+        "chain": {
+          "max_retained_position_disagreement_m": 1.7080429358429706e-06,
+          "proven_identity_reuses": 1046
+        },
+        "cpu_ms": 16.887602,
+        "feature": "sampling_window_join",
+        "geometry_sha256": "ab6aa40e2204d4f129d032c8ed9db4623cc92cab69f3706787eefcf392901d7c",
+        "gpu_bytes": 409288,
+        "outer_constraints": 1154,
+        "serialized_bytes": 230095,
+        "status": "built_for_audit",
+        "triangles": 2436,
+        "vertices": 1794
+      },
+      {
+        "chain": {
+          "max_retained_position_disagreement_m": 1.358924503812806e-06,
+          "proven_identity_reuses": 1126
+        },
+        "cpu_ms": 17.368641,
+        "feature": "relief_native_join",
+        "geometry_sha256": "57fbc1b3ab8341e0bb13744e6d753adc050ca6edb3edd2bb4d3c996a1aacc01f",
+        "gpu_bytes": 478168,
+        "outer_constraints": 1252,
+        "serialized_bytes": 270580,
+        "status": "built_for_audit",
+        "triangles": 2846,
+        "vertices": 2048
+      },
+      {
+        "cpu_ms": 10.340277,
+        "feature": "canonical_crest_1",
+        "status": "refused",
+        "witness": {
+          "distance_m": 0.0007197657678543202,
+          "edge_tags": [
+            [
+              3,
+              7753625,
+              2752544
+            ],
+            [
+              3,
+              7753626,
+              2752544
+            ]
+          ],
+          "first_uv": [
+            30.68666154370016,
+            -64.0
+          ],
+          "identity": "cube:3:v:2752544:boundary:1:-64",
+          "next_uv": [
+            30.686662231606537,
+            -64.0
+          ],
+          "reason": "same lattice boundary disagrees with retained geometry"
+        }
+      },
+      {
+        "cpu_ms": 10.058811,
+        "feature": "canonical_crest_2",
+        "status": "refused",
+        "witness": {
+          "distance_m": 0.00014144977160738742,
+          "edge_tags": [
+            [
+              3,
+              7750432,
+              2756615
+            ],
+            [
+              3,
+              7750432,
+              2756616
+            ]
+          ],
+          "first_uv": [
+            64.0,
+            30.966457313166963
+          ],
+          "identity": "cube:3:u:7750432:boundary:0:64",
+          "next_uv": [
+            64.0,
+            30.966457542243315
+          ],
+          "reason": "same lattice boundary disagrees with retained geometry"
+        }
+      },
+      {
+        "chain": {
+          "max_retained_position_disagreement_m": 1.3459964480200202e-06,
+          "proven_identity_reuses": 1022
+        },
+        "cpu_ms": 17.955046999999997,
+        "feature": "canonical_crest_3",
+        "geometry_sha256": "2e237af84fa46ccc747b0cbe36e7b1fb843b893b3d335541bd6535901ec40b45",
+        "gpu_bytes": 512272,
+        "outer_constraints": 1159,
+        "serialized_bytes": 281610,
+        "status": "built_for_audit",
+        "triangles": 3049,
+        "vertices": 2103
+      }
+    ],
+    "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80"
+  },
+  "height_audit": {
+    "results": [
+      {
+        "band_error_m": {
+          "count": 11392,
+          "finite_count": 11392,
+          "invalid_count": 0,
+          "max": 0.0019056314486078918,
+          "p99": 0.0004623766872100532,
+          "rms": 0.00010027197812922028
+        },
+        "band_normal_degrees": {
+          "count": 11392,
+          "finite_count": 11392,
+          "invalid_count": 0,
+          "max": 0.32069031906598283,
+          "p99": 0.04666379070805707,
+          "rms": 0.01922327179428568
+        },
+        "core_normal_degrees": {
+          "count": 1166,
+          "finite_count": 1166,
+          "invalid_count": 0,
+          "max": 0.26028418935049075,
+          "p99": 0.2602697453766423,
+          "rms": 0.048796749172684846
+        },
+        "core_visible_error_m": {
+          "count": 1166,
+          "finite_count": 1166,
+          "invalid_count": 0,
+          "max": 3.217544872313738e-06,
+          "p99": 3.004862264788244e-06,
+          "rms": 1.3576915595961123e-06
+        },
+        "degenerate_triangles": 0,
+        "dry_core_error_m": {
+          "count": 542,
+          "finite_count": 542,
+          "invalid_count": 0,
+          "max": 3.0956930459069554e-06,
+          "p99": 3.004862264788244e-06,
+          "rms": 1.3394228455906066e-06
+        },
+        "feature": "nearest_known_shore",
+        "frozen_queries": [
+          {
+            "error": {
+              "count": 7,
+              "finite_count": 7,
+              "invalid_count": 0,
+              "max": 1.1437805369496346e-07,
+              "p99": 1.1437805369496346e-07,
+              "rms": 1.1291658474290147e-07
+            },
+            "hit_count": 7,
+            "label": "edge",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.944717951118946e-07,
+              "p99": 1.944717951118946e-07,
+              "rms": 1.944717951118946e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_0.1m",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0004544973553493037 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.9149956642650068e-07,
+              "p99": 1.9149956642650068e-07,
+              "rms": 1.9149956642650068e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 8.566421456634998e-07,
+              "p99": 8.566421456634998e-07,
+              "rms": 8.566421456634998e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_1.0m",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.004544973543488595 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 8.269871614174917e-07,
+              "p99": 8.269871614174917e-07,
+              "rms": 8.269871614174917e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.7106649465858936e-06,
+              "p99": 1.7106649465858936e-06,
+              "rms": 1.7106649465858936e-06
+            },
+            "hit_count": 1,
+            "label": "face_a_side_10.0m",
+            "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.04544973630891036 }"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.8835662558558397e-06,
+              "p99": 1.8835662558558397e-06,
+              "rms": 1.8835662558558397e-06
+            },
+            "hit_count": 1,
+            "label": "face_b_side_10.0m",
+            "water": "Dry"
+          }
+        ],
+        "geometry_sha256": "da5cc5b58d847b3dd904e28cf7fca40a07a6b5eaef619ba1158f210a254bd0bf",
+        "inner_error_m": {
+          "count": 274,
+          "finite_count": 274,
+          "invalid_count": 0,
+          "max": 2.215441782027483e-06,
+          "p99": 1.9630533643066883e-06,
+          "rms": 7.831767972220688e-07
+        },
+        "outer_error_m": {
+          "count": 3724,
+          "finite_count": 3724,
+          "invalid_count": 0,
+          "max": 0.0019056314486078918,
+          "p99": 0.00031841936288401484,
+          "rms": 0.0001222243216996532
+        },
+        "sample_count": 12558,
+        "scope": "finite physical f32 triangle samples; wet visible geometry is not dry contact",
+        "wet_core_visible_error_m": {
+          "count": 624,
+          "finite_count": 624,
+          "invalid_count": 0,
+          "max": 3.217544872313738e-06,
+          "p99": 2.9754010029137135e-06,
+          "rms": 1.3733623811239127e-06
+        },
+        "worst": {
+          "bed_height_m": 3074.348567041844,
+          "chart_xy": [
+            -64.0,
+            29.65245079
+          ],
+          "error_m": 0.0019056314486078918,
+          "visible_height_m": 3074.3485670432565,
+          "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0 }"
+        }
+      },
+      {
+        "band_error_m": {
+          "count": 14738,
+          "finite_count": 14738,
+          "invalid_count": 0,
+          "max": 4.4233674998395145e-06,
+          "p99": 2.9506109058274888e-06,
+          "rms": 1.0430782077105519e-06
+        },
+        "band_normal_degrees": {
+          "count": 14738,
+          "finite_count": 14738,
+          "invalid_count": 0,
+          "max": 0.7096053256661601,
+          "p99": 0.01434512346503643,
+          "rms": 0.02119097869130982
+        },
+        "core_normal_degrees": {
+          "count": 2314,
+          "finite_count": 2314,
+          "invalid_count": 0,
+          "max": 0.0013952194848846108,
+          "p99": 0.0005416196278808604,
+          "rms": 0.00012382714609113208
+        },
+        "core_visible_error_m": {
+          "count": 2314,
+          "finite_count": 2314,
+          "invalid_count": 0,
+          "max": 3.4571603464428335e-06,
+          "p99": 2.9868151614209637e-06,
+          "rms": 1.127017527638257e-06
+        },
+        "degenerate_triangles": 0,
+        "dry_core_error_m": {
+          "count": 2314,
+          "finite_count": 2314,
+          "invalid_count": 0,
+          "max": 3.4571603464428335e-06,
+          "p99": 2.9868151614209637e-06,
+          "rms": 1.127017527638257e-06
+        },
+        "feature": "sampling_window_join",
+        "frozen_queries": [
+          {
+            "error": {
+              "count": 9,
+              "finite_count": 9,
+              "invalid_count": 0,
+              "max": 2.309570845682174e-07,
+              "p99": 2.309570845682174e-07,
+              "rms": 2.3013026596186303e-07
+            },
+            "hit_count": 9,
+            "label": "edge",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.4270062820287421e-07,
+              "p99": 1.4270062820287421e-07,
+              "rms": 1.4270062820287421e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.3946737453807145e-07,
+              "p99": 1.3946737453807145e-07,
+              "rms": 1.3946737453807145e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.696329026250169e-07,
+              "p99": 5.696329026250169e-07,
+              "rms": 5.696329026250169e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.964066076558083e-07,
+              "p99": 5.964066076558083e-07,
+              "rms": 5.964066076558083e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 7.613662091898732e-07,
+              "p99": 7.613662091898732e-07,
+              "rms": 7.613662091898732e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_10.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 8.651713869767264e-07,
+              "p99": 8.651713869767264e-07,
+              "rms": 8.651713869767264e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_10.0m",
+            "water": "Dry"
+          }
+        ],
+        "geometry_sha256": "ab6aa40e2204d4f129d032c8ed9db4623cc92cab69f3706787eefcf392901d7c",
+        "inner_error_m": {
+          "count": 425,
+          "finite_count": 425,
+          "invalid_count": 0,
+          "max": 2.1144696802366525e-06,
+          "p99": 1.9175076886313036e-06,
+          "rms": 7.77260388035576e-07
+        },
+        "outer_error_m": {
+          "count": 3752,
+          "finite_count": 3752,
+          "invalid_count": 0,
+          "max": 3.4147278711316176e-06,
+          "p99": 2.459918505337555e-06,
+          "rms": 8.707582400269969e-07
+        },
+        "sample_count": 17052,
+        "scope": "finite physical f32 triangle samples; wet visible geometry is not dry contact",
+        "wet_core_visible_error_m": null,
+        "worst": {
+          "bed_height_m": 4911.440889739948,
+          "chart_xy": [
+            -60.0,
+            -60.0
+          ],
+          "error_m": -4.4233674998395145e-06,
+          "visible_height_m": 4911.440889739948,
+          "water": "Dry"
+        }
+      },
+      {
+        "band_error_m": {
+          "count": 17137,
+          "finite_count": 17137,
+          "invalid_count": 0,
+          "max": 0.00020047165071446216,
+          "p99": 9.236763071385212e-05,
+          "rms": 1.6879159673497696e-05
+        },
+        "band_normal_degrees": {
+          "count": 17137,
+          "finite_count": 17137,
+          "invalid_count": 0,
+          "max": 1.9344922799461808,
+          "p99": 0.03552893937193675,
+          "rms": 0.040580920697283446
+        },
+        "core_normal_degrees": {
+          "count": 2785,
+          "finite_count": 2785,
+          "invalid_count": 0,
+          "max": 0.09275623413559235,
+          "p99": 0.020198864630147518,
+          "rms": 0.0060633563810726515
+        },
+        "core_visible_error_m": {
+          "count": 2785,
+          "finite_count": 2785,
+          "invalid_count": 0,
+          "max": 3.4727736419881694e-06,
+          "p99": 2.607570422696881e-06,
+          "rms": 9.860295316986462e-07
+        },
+        "degenerate_triangles": 0,
+        "dry_core_error_m": {
+          "count": 2785,
+          "finite_count": 2785,
+          "invalid_count": 0,
+          "max": 3.4727736419881694e-06,
+          "p99": 2.607570422696881e-06,
+          "rms": 9.860295316986462e-07
+        },
+        "feature": "relief_native_join",
+        "frozen_queries": [
+          {
+            "error": {
+              "count": 7,
+              "finite_count": 7,
+              "invalid_count": 0,
+              "max": 2.3952270566951483e-07,
+              "p99": 2.3952270566951483e-07,
+              "rms": 2.388583645539313e-07
+            },
+            "hit_count": 7,
+            "label": "edge",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 3.1433955882675946e-07,
+              "p99": 3.1433955882675946e-07,
+              "rms": 3.1433955882675946e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 3.2437856134492904e-07,
+              "p99": 3.2437856134492904e-07,
+              "rms": 3.2437856134492904e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 9.159693945548497e-07,
+              "p99": 9.159693945548497e-07,
+              "rms": 9.159693945548497e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.0275371096213348e-06,
+              "p99": 1.0275371096213348e-06,
+              "rms": 1.0275371096213348e-06
+            },
+            "hit_count": 1,
+            "label": "face_b_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 7.809776434442028e-07,
+              "p99": 7.809776434442028e-07,
+              "rms": 7.809776434442028e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_10.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 9.294935807702132e-07,
+              "p99": 9.294935807702132e-07,
+              "rms": 9.294935807702132e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_10.0m",
+            "water": "Dry"
+          }
+        ],
+        "geometry_sha256": "57fbc1b3ab8341e0bb13744e6d753adc050ca6edb3edd2bb4d3c996a1aacc01f",
+        "inner_error_m": {
+          "count": 499,
+          "finite_count": 499,
+          "invalid_count": 0,
+          "max": 1.927362973219715e-06,
+          "p99": 1.927362973219715e-06,
+          "rms": 7.277600557472642e-07
+        },
+        "outer_error_m": {
+          "count": 4090,
+          "finite_count": 4090,
+          "invalid_count": 0,
+          "max": 0.00019195186177967116,
+          "p99": 9.799191320780665e-05,
+          "rms": 1.7257293148898257e-05
+        },
+        "sample_count": 19922,
+        "scope": "finite physical f32 triangle samples; wet visible geometry is not dry contact",
+        "wet_core_visible_error_m": null,
+        "worst": {
+          "bed_height_m": 5072.896296682958,
+          "chart_xy": [
+            -54.83914045,
+            57.54160597
+          ],
+          "error_m": 0.00020047165071446216,
+          "visible_height_m": 5072.896296682958,
+          "water": "Dry"
+        }
+      },
+      {
+        "band_error_m": {
+          "count": 17414,
+          "finite_count": 17414,
+          "invalid_count": 0,
+          "max": 0.22563210808766598,
+          "p99": 0.09290634558237798,
+          "rms": 0.016178765429929878
+        },
+        "band_normal_degrees": {
+          "count": 17414,
+          "finite_count": 17414,
+          "invalid_count": 0,
+          "max": 78.07896712353096,
+          "p99": 18.663142229864146,
+          "rms": 3.398358145257249
+        },
+        "core_normal_degrees": {
+          "count": 3929,
+          "finite_count": 3929,
+          "invalid_count": 0,
+          "max": 34.476071829890074,
+          "p99": 34.36979470146158,
+          "rms": 4.433440333024375
+        },
+        "core_visible_error_m": {
+          "count": 3929,
+          "finite_count": 3929,
+          "invalid_count": 0,
+          "max": 3.7306726881070063e-06,
+          "p99": 3.0404462449951097e-06,
+          "rms": 1.0530832701728953e-06
+        },
+        "degenerate_triangles": 0,
+        "dry_core_error_m": {
+          "count": 3929,
+          "finite_count": 3929,
+          "invalid_count": 0,
+          "max": 3.7306726881070063e-06,
+          "p99": 3.0404462449951097e-06,
+          "rms": 1.0530832701728953e-06
+        },
+        "feature": "canonical_crest_3",
+        "frozen_queries": [
+          {
+            "error": {
+              "count": 2,
+              "finite_count": 2,
+              "invalid_count": 0,
+              "max": 2.2005224309396e-08,
+              "p99": 2.2005224309396e-08,
+              "rms": 2.1544595972470892e-08
+            },
+            "hit_count": 2,
+            "label": "edge",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 4.26698534283787e-08,
+              "p99": 4.26698534283787e-08,
+              "rms": 4.26698534283787e-08
+            },
+            "hit_count": 1,
+            "label": "face_a_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 5.834663170389831e-07,
+              "p99": 5.834663170389831e-07,
+              "rms": 5.834663170389831e-07
+            },
+            "hit_count": 1,
+            "label": "face_b_side_0.1m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.5515615814365447e-07,
+              "p99": 1.5515615814365447e-07,
+              "rms": 1.5515615814365447e-07
+            },
+            "hit_count": 1,
+            "label": "face_a_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 3.5977791412733495e-08,
+              "p99": 3.5977791412733495e-08,
+              "rms": 3.5977791412733495e-08
+            },
+            "hit_count": 1,
+            "label": "face_b_side_1.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.224478182848543e-06,
+              "p99": 1.224478182848543e-06,
+              "rms": 1.224478182848543e-06
+            },
+            "hit_count": 1,
+            "label": "face_a_side_10.0m",
+            "water": "Dry"
+          },
+          {
+            "error": {
+              "count": 1,
+              "finite_count": 1,
+              "invalid_count": 0,
+              "max": 1.2948812582180835e-06,
+              "p99": 1.2948812582180835e-06,
+              "rms": 1.2948812582180835e-06
+            },
+            "hit_count": 1,
+            "label": "face_b_side_10.0m",
+            "water": "Dry"
+          }
+        ],
+        "geometry_sha256": "2e237af84fa46ccc747b0cbe36e7b1fb843b893b3d335541bd6535901ec40b45",
+        "inner_error_m": {
+          "count": 593,
+          "finite_count": 593,
+          "invalid_count": 0,
+          "max": 2.4066575861070305e-06,
+          "p99": 1.7759084585122764e-06,
+          "rms": 7.793460945943054e-07
+        },
+        "outer_error_m": {
+          "count": 3836,
+          "finite_count": 3836,
+          "invalid_count": 0,
+          "max": 0.22563210808766598,
+          "p99": 0.08482232107780874,
+          "rms": 0.015709696549051667
+        },
+        "sample_count": 21343,
+        "scope": "finite physical f32 triangle samples; wet visible geometry is not dry contact",
+        "wet_core_visible_error_m": null,
+        "worst": {
+          "bed_height_m": 5492.599793512645,
+          "chart_xy": [
+            6.71982683,
+            -64.0
+          ],
+          "error_m": -0.22563210808766598,
+          "visible_height_m": 5492.599793512645,
+          "water": "Dry"
+        }
+      }
+    ],
+    "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80"
+  },
+  "validity": [
+    {
+      "feature": "canonical_crest_3",
+      "geometry_sha256": "2e237af84fa46ccc747b0cbe36e7b1fb843b893b3d335541bd6535901ec40b45",
+      "vertices": 2103,
+      "used_vertices": 2103,
+      "triangles": 3049,
+      "unmatched_edges": 0,
+      "directed_edge_failures": 0,
+      "degenerate_f32_triangles": 0,
+      "negative_chart_triangles": 0,
+      "components": 1,
+      "euler": 1,
+      "chart_area_m2": 16384.0,
+      "boundary_vertices": 1155,
+      "boundary_degree2": true,
+      "examples": {
+        "edges": [],
+        "degenerate": []
+      },
+      "pass": true
+    },
+    {
+      "feature": "nearest_known_shore",
+      "geometry_sha256": "da5cc5b58d847b3dd904e28cf7fca40a07a6b5eaef619ba1158f210a254bd0bf",
+      "vertices": 1487,
+      "used_vertices": 1487,
+      "triangles": 1794,
+      "unmatched_edges": 0,
+      "directed_edge_failures": 0,
+      "degenerate_f32_triangles": 0,
+      "negative_chart_triangles": 0,
+      "components": 1,
+      "euler": 1,
+      "chart_area_m2": 16384.0,
+      "boundary_vertices": 1178,
+      "boundary_degree2": true,
+      "examples": {
+        "edges": [],
+        "degenerate": []
+      },
+      "pass": true
+    },
+    {
+      "feature": "relief_native_join",
+      "geometry_sha256": "57fbc1b3ab8341e0bb13744e6d753adc050ca6edb3edd2bb4d3c996a1aacc01f",
+      "vertices": 2048,
+      "used_vertices": 2048,
+      "triangles": 2846,
+      "unmatched_edges": 0,
+      "directed_edge_failures": 0,
+      "degenerate_f32_triangles": 0,
+      "negative_chart_triangles": 0,
+      "components": 1,
+      "euler": 1,
+      "chart_area_m2": 16384.0,
+      "boundary_vertices": 1248,
+      "boundary_degree2": true,
+      "examples": {
+        "edges": [],
+        "degenerate": []
+      },
+      "pass": true
+    },
+    {
+      "feature": "sampling_window_join",
+      "geometry_sha256": "ab6aa40e2204d4f129d032c8ed9db4623cc92cab69f3706787eefcf392901d7c",
+      "vertices": 1794,
+      "used_vertices": 1794,
+      "triangles": 2436,
+      "unmatched_edges": 0,
+      "directed_edge_failures": 0,
+      "degenerate_f32_triangles": 0,
+      "negative_chart_triangles": 0,
+      "components": 1,
+      "euler": 1,
+      "chart_area_m2": 16384.0,
+      "boundary_vertices": 1150,
+      "boundary_degree2": true,
+      "examples": {
+        "edges": [],
+        "degenerate": []
+      },
+      "pass": true
+    }
+  ],
+  "seams": {
+    "results": [
+      {
+        "feature": "nearest_known_shore",
+        "geometry_sha256": "da5cc5b58d847b3dd904e28cf7fca40a07a6b5eaef619ba1158f210a254bd0bf",
+        "max_radial_seam_m": 3.1189993023872375e-06,
+        "outer_edges": 1178,
+        "samples": 5890,
+        "scope": "physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding",
+        "strict_support_missing": 10,
+        "support_missing_within_10um": 0,
+        "worst": {
+          "chart_xy": [
+            -63.3233316039737,
+            -63.99999845741351
+          ],
+          "edge": [
+            966,
+            967
+          ],
+          "fraction": 1.0,
+          "outside_triangle_m": 0.0,
+          "radial_seam_m": 3.1189993023872375e-06
+        }
+      },
+      {
+        "feature": "sampling_window_join",
+        "geometry_sha256": "ab6aa40e2204d4f129d032c8ed9db4623cc92cab69f3706787eefcf392901d7c",
+        "max_radial_seam_m": 3.437511622905731e-06,
+        "outer_edges": 1150,
+        "samples": 5750,
+        "scope": "physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding",
+        "strict_support_missing": 4,
+        "support_missing_within_10um": 0,
+        "worst": {
+          "chart_xy": [
+            63.999999393955235,
+            63.28399779694975
+          ],
+          "edge": [
+            1232,
+            1233
+          ],
+          "fraction": 1.0,
+          "outside_triangle_m": 0.0,
+          "radial_seam_m": 3.437511622905731e-06
+        }
+      },
+      {
+        "feature": "relief_native_join",
+        "geometry_sha256": "57fbc1b3ab8341e0bb13744e6d753adc050ca6edb3edd2bb4d3c996a1aacc01f",
+        "max_radial_seam_m": 3.4514814615249634e-06,
+        "outer_edges": 1248,
+        "samples": 6240,
+        "scope": "physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding",
+        "strict_support_missing": 4,
+        "support_missing_within_10um": 0,
+        "worst": {
+          "chart_xy": [
+            -57.158500936195686,
+            -64.00000127126849
+          ],
+          "edge": [
+            317,
+            1459
+          ],
+          "fraction": 1.0,
+          "outside_triangle_m": 1.545429949127421e-06,
+          "radial_seam_m": 3.4514814615249634e-06
+        }
+      },
+      {
+        "feature": "canonical_crest_3",
+        "geometry_sha256": "2e237af84fa46ccc747b0cbe36e7b1fb843b893b3d335541bd6535901ec40b45",
+        "max_radial_seam_m": 3.715045750141144e-06,
+        "outer_edges": 1155,
+        "samples": 5775,
+        "scope": "physical f32 outer edges sampled at endpoints, quarters and midpoint against reconstructed retained planes; strict misses retained;10um support tolerance is a diagnostic, not welding",
+        "strict_support_missing": 8,
+        "support_missing_within_10um": 0,
+        "worst": {
+          "chart_xy": [
+            -60.75661628150581,
+            -64.00000118840389
+          ],
+          "edge": [
+            1527,
+            1528
+          ],
+          "fraction": 1.0,
+          "outside_triangle_m": 0.0,
+          "radial_seam_m": 3.715045750141144e-06
+        }
+      }
+    ],
+    "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80"
+  },
+  "resources": {
+    "peak_rss_kib": 1683216
+  },
+  "regressions": [
+    {
+      "feature": "nearest_known_shore",
+      "collapses_reproduced": 9,
+      "orientation_reuse": {
+        "events": 2,
+        "pass": true,
+        "report": {
+          "max_retained_position_disagreement_m": 0.0,
+          "proven_identity_reuses": 2
+        }
+      }
+    },
+    {
+      "feature": "parent_face_join",
+      "collapses_reproduced": 11,
+      "orientation_reuse": {
+        "events": 2,
+        "pass": true,
+        "report": {
+          "max_retained_position_disagreement_m": 0.0,
+          "proven_identity_reuses": 2
+        }
+      }
+    }
+  ],
+  "bindings": {
+    "out/review/v8-sparse-band/audit.json": "9e367420626f8c2d0fbf0388c24c852e1307c9edcb899f5bafb6cf5fb67e57e4",
+    "out/review/v8-sparse-band/geometry/canonical_crest_3.json": "2e237af84fa46ccc747b0cbe36e7b1fb843b893b3d335541bd6535901ec40b45",
+    "out/review/v8-sparse-band/geometry/nearest_known_shore.json": "da5cc5b58d847b3dd904e28cf7fca40a07a6b5eaef619ba1158f210a254bd0bf",
+    "out/review/v8-sparse-band/geometry/regressions.json": "d29fc41a44fb942f3f9819feba312bfa78bbe9607d2ab614003036c5d31130e9",
+    "out/review/v8-sparse-band/geometry/relief_native_join.json": "57fbc1b3ab8341e0bb13744e6d753adc050ca6edb3edd2bb4d3c996a1aacc01f",
+    "out/review/v8-sparse-band/geometry/results.json": "ad96761dbd0d1777b45e9cfa79f381697e07d12e0e7fff27fa1100b29c86d0d9",
+    "out/review/v8-sparse-band/geometry/sampling_window_join.json": "ab6aa40e2204d4f129d032c8ed9db4623cc92cab69f3706787eefcf392901d7c",
+    "out/review/v8-sparse-band/plan.json": "c592e7127f7efa811170abe0ec5ab97869d6a64cc929a6026170e7c5b81a9f61",
+    "out/review/v8-sparse-band/resources.json": "916786d7189a2b3059fc991d405131dd39b4835cc43ece7460ed6461f2c5f366",
+    "out/review/v8-sparse-band/seams.json": "15faf402413573379905bd00f63489332e5c45ba9bbe113d52fcef627fb5e1ef",
+    "out/review/v8-sparse-band/topology.json": "f8349e020ee5a8360b74c2cda3e8dec75f303d1a73511115bb11b979b2c3a824",
+    "out/review/v8-sparse-band/validity.json": "05f0c3a023674eb04b102df2a5e769c5195b01ec33fa94b0d535c4c937fbcfcf",
+    "out/review/v8-sparse-band/workspace.log": "f01f077c9c1c4bba56ccbf4038dae8d298daa0a2f61c25c9a393dce1d95bc76b",
+    "out/review/v8-sparse-band/registry.log": "bbf283370c5ced830a44e5c03edb0956761d2e27d0abf248829f6f08cd969379"
+  },
+  "source_bindings": {
+    "crates/core/world/examples/contact_core/grid.rs": "9df3e06c1bc0dce4368fafb6866a6653b5f4bd71bf39ece3e47a5d5ec5e6a29c",
+    "crates/core/world/examples/pgs_sparse_band.rs": "b41fd10d9bd2436073e2d0671da15bef4ecd6a03f4adf9f1373a5fbf4268f404",
+    "crates/core/world/examples/pgs_sparse_seams.rs": "c9a58aa6d7a533f0af5f18695a13092058a42d0db3fbd1873f1ca3d07e242989",
+    "crates/core/world/examples/sparse_band/mod.rs": "e9c76af22aed32dedee774ad30bd7fdeb1d4a920aca6d88838f3950f15db7e3d",
+    "tools/diagnostics/pgs_mesh_validity.py": "9b029e7968be8668665c74e7f55abd93057a3ccf1aded63f05e990c48fc8685b"
+  },
+  "validation": {
+    "workspace": {
+      "exit_code": 0,
+      "passed": 68,
+      "failed": 0
+    },
+    "registry": {
+      "exit_code": 0
+    },
+    "gpu": "not_run",
+    "main": "unchanged",
+    "diff_check": "pass",
+    "python_compile": "pass"
+  }
+}

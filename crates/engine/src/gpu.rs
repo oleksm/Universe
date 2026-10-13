@@ -67,6 +67,7 @@ impl Gpu {
         } else {
             wgpu::PresentMode::AutoNoVsync
         };
+        log::info!("surface configured: {}x{} present={:?}", config.width, config.height, config.present_mode);
         surface.configure(&device, &config);
 
         Self { surface, device, queue, config }

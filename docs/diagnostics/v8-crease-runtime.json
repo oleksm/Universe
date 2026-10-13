@@ -1,0 +1,395 @@
+{
+  "status": "refused_outer_interface_before_gpu",
+  "source_sha256": "4b30e7eda8e707dff50498f0be80476bf82d5dfd4b8160c662b1a2113dadfe80",
+  "cpu": {
+    "decode_ms": 2757.99727,
+    "sample_count": 127374,
+    "sample_max_error_m": 4.520118636719417e-06,
+    "seam_max_m": 3.6530452269635533e-06,
+    "frozen_query_count": 49,
+    "frozen_max_error_m": 2.251274054287933e-06,
+    "geometry": [
+      {
+        "feature": "nearest_known_shore",
+        "geometry_sha256": "809bfc81947daa39da512c6cf169a959abadc56d06fda7b46c902f2ed2d9bf6a",
+        "gpu_expanded_bytes": 93152,
+        "retained_cpu_capacity_bytes": 35459,
+        "seam_max_m": 2.7538289240498607e-06,
+        "search_faces": 6,
+        "seed_owner": 3210574,
+        "serialized_bytes": 32431,
+        "triangles": 554,
+        "vertices": 328,
+        "worker_ms": 0.11202999999999999
+      },
+      {
+        "feature": "parent_face_join",
+        "geometry_sha256": "18081872c2e83f51578f177d158c54448babad87c0cb352b3c69558304f76f23",
+        "gpu_expanded_bytes": 93824,
+        "retained_cpu_capacity_bytes": 35456,
+        "seam_max_m": 2.4194837841405036e-06,
+        "search_faces": 8,
+        "seed_owner": 40805,
+        "serialized_bytes": 32948,
+        "triangles": 558,
+        "vertices": 331,
+        "worker_ms": 0.239217
+      },
+      {
+        "feature": "sampling_window_join",
+        "geometry_sha256": "5dadce514f45fc96887488b4969b1920f9d9c1916706cc2e368c3d6a04ec243f",
+        "gpu_expanded_bytes": 201008,
+        "retained_cpu_capacity_bytes": 60036,
+        "seam_max_m": 2.3690052897994014e-06,
+        "search_faces": 85,
+        "seed_owner": 42868,
+        "serialized_bytes": 72292,
+        "triangles": 1196,
+        "vertices": 676,
+        "worker_ms": 0.275976
+      },
+      {
+        "feature": "relief_native_join",
+        "geometry_sha256": "52a7626c243151a78f99f2d4c3ed93dc1ebee3fb4f822a7a800545874c009c94",
+        "gpu_expanded_bytes": 251072,
+        "retained_cpu_capacity_bytes": 70274,
+        "seam_max_m": 2.7754439054075207e-06,
+        "search_faces": 146,
+        "seed_owner": 2820897,
+        "serialized_bytes": 93519,
+        "triangles": 1494,
+        "vertices": 836,
+        "worker_ms": 0.6414599999999999
+      },
+      {
+        "feature": "canonical_crest_1",
+        "geometry_sha256": "485c75e60c2395ec34881a92c926b3c8c22d8ea6c58e3f75ef642086df73b3f2",
+        "gpu_expanded_bytes": 310712,
+        "retained_cpu_capacity_bytes": 84609,
+        "seam_max_m": 2.916565796799682e-06,
+        "search_faces": 235,
+        "seed_owner": 3118951,
+        "serialized_bytes": 115998,
+        "triangles": 1849,
+        "vertices": 1027,
+        "worker_ms": 0.436136
+      },
+      {
+        "feature": "canonical_crest_2",
+        "geometry_sha256": "1cf0f3f603a110614a2fca1126e95e62a611a7ceffb339fb9670f033df72cd89",
+        "gpu_expanded_bytes": 309200,
+        "retained_cpu_capacity_bytes": 84609,
+        "seam_max_m": 3.6530452269635533e-06,
+        "search_faces": 229,
+        "seed_owner": 3143391,
+        "serialized_bytes": 115308,
+        "triangles": 1840,
+        "vertices": 1020,
+        "worker_ms": 0.436216
+      },
+      {
+        "feature": "canonical_crest_3",
+        "geometry_sha256": "b8754577d6161cc97d4c4deb57171e87d6680da42140dcd66ddddabd513607c7",
+        "gpu_expanded_bytes": 300968,
+        "retained_cpu_capacity_bytes": 70273,
+        "seam_max_m": 2.458368876060777e-06,
+        "search_faces": 219,
+        "seed_owner": 3148032,
+        "serialized_bytes": 112162,
+        "triangles": 1791,
+        "vertices": 994,
+        "worker_ms": 0.404086
+      },
+      {
+        "feature": "large_native_face_centroid",
+        "geometry_sha256": "dfb38eaf0f2af3fd1f700af3058564f08e803c393322f0d5a0a381be53cd2c53",
+        "gpu_expanded_bytes": 86768,
+        "retained_cpu_capacity_bytes": 35466,
+        "seam_max_m": 2.1747778059195874e-06,
+        "search_faces": 8,
+        "seed_owner": 3210574,
+        "serialized_bytes": 31526,
+        "triangles": 516,
+        "vertices": 310,
+        "worker_ms": 0.099846
+      }
+    ],
+    "process": {
+      "peak_rss_kib": 1682564
+    },
+    "stale_refusal": "stale generation",
+    "peak_transient_per_pair_bytes": null,
+    "transient_gate": "unverified; not enabled in runtime"
+  },
+  "outer_interface": {
+    "scope": "Frozen128m outer boundary against existing settled grid/morph at centre eye; boundary-conforming strip cannot change its outer endpoint. Finite CPU preflight, not actual submitted/GPU geometry.",
+    "results": [
+      {
+        "feature": "nearest_known_shore",
+        "outer_edges": 66,
+        "samples": 396,
+        "failures": 0,
+        "max_error_m": 0.001905185345094651,
+        "worst": {
+          "canonical_height_m": 3074.3485670432565,
+          "error_m": 0.001905185345094651,
+          "level": 19,
+          "render_height_m": 3074.3504722286016,
+          "terrain_height_m": 3074.348567043238,
+          "water": "Wet { body: 18196, level_m: 3074.3485670432565, depth_m: 0.0 }",
+          "x_m": -64.0,
+          "y_m": 29.65245079
+        },
+        "levels": {
+          "19": 396
+        },
+        "camera": {
+          "absolute_h": 3076.0485670432563,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -55.038429180916694,
+          "lon": -22.517500469273187
+        },
+        "report_sha256": "2cb0e985184b2996eadef7c5dfe69698941f5d0db65286360956ba8178407622"
+      },
+      {
+        "feature": "parent_face_join",
+        "outer_edges": 68,
+        "samples": 408,
+        "failures": 0,
+        "max_error_m": 0.00046857712004566565,
+        "worst": {
+          "canonical_height_m": 4772.907459309186,
+          "error_m": -0.00046857712004566565,
+          "level": 19,
+          "render_height_m": 4772.906990732066,
+          "terrain_height_m": 4772.907459309186,
+          "water": "Dry",
+          "x_m": -64.0,
+          "y_m": -16.59979474
+        },
+        "levels": {
+          "18": 57,
+          "19": 351
+        },
+        "camera": {
+          "absolute_h": 4774.90195780936,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -49.89014011233388,
+          "lon": -19.50477722233989
+        },
+        "report_sha256": "7f1bfd22558dc2089c5a375c106b2667fd6d06e4945a10f80bc5b11ce4e2f0bd"
+      },
+      {
+        "feature": "sampling_window_join",
+        "outer_edges": 104,
+        "samples": 624,
+        "failures": 0,
+        "max_error_m": 5.013935151509941e-07,
+        "worst": {
+          "canonical_height_m": 4910.833031667738,
+          "error_m": -5.013935151509941e-07,
+          "level": 18,
+          "render_height_m": 4910.833031166345,
+          "terrain_height_m": 4910.833031667738,
+          "water": "Dry",
+          "x_m": -62.0,
+          "y_m": 64.0
+        },
+        "levels": {
+          "18": 118,
+          "19": 506
+        },
+        "camera": {
+          "absolute_h": 4913.203238772982,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -50.16755433433626,
+          "lon": -19.52394551341236
+        },
+        "report_sha256": "a137a4e32bb4cbfa621aede0b82c9e22cfbcea9a0de0e7367d6aff22d733a23b"
+      },
+      {
+        "feature": "relief_native_join",
+        "outer_edges": 122,
+        "samples": 732,
+        "failures": 0,
+        "max_error_m": 0.00019200680435460526,
+        "worst": {
+          "canonical_height_m": 5072.895391992539,
+          "error_m": 0.00019200680435460526,
+          "level": 19,
+          "render_height_m": 5072.895583999343,
+          "terrain_height_m": 5072.895391992539,
+          "water": "Dry",
+          "x_m": -64.0,
+          "y_m": 46.33028534
+        },
+        "levels": {
+          "18": 30,
+          "19": 702
+        },
+        "camera": {
+          "absolute_h": 5075.157540635197,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -50.295303099622465,
+          "lon": -19.293174729276434
+        },
+        "report_sha256": "1be76b3e3144036a637797d68cd57cf1c4d90f346b398de571509bf64cb330fc"
+      },
+      {
+        "feature": "canonical_crest_1",
+        "outer_edges": 133,
+        "samples": 798,
+        "failures": 12,
+        "max_error_m": 0.20888542682769184,
+        "worst": {
+          "canonical_height_m": 5487.413426988953,
+          "error_m": -0.20888542682769184,
+          "level": 19,
+          "render_height_m": 5487.204541562125,
+          "terrain_height_m": 5487.413426988953,
+          "water": "Dry",
+          "x_m": 24.53980745,
+          "y_m": 64.0
+        },
+        "levels": {
+          "18": 159,
+          "19": 639
+        },
+        "camera": {
+          "absolute_h": 5481.406623850311,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -50.177194461733244,
+          "lon": -19.383410839912244
+        },
+        "report_sha256": "f909953ef60ea142356b73076f6245b444228a34ab95ff2bb4cd00c32e086cb5"
+      },
+      {
+        "feature": "canonical_crest_2",
+        "outer_edges": 132,
+        "samples": 792,
+        "failures": 4,
+        "max_error_m": 0.20413180587729585,
+        "worst": {
+          "canonical_height_m": 5571.02212518135,
+          "error_m": -0.20413180587729585,
+          "level": 19,
+          "render_height_m": 5570.817993375473,
+          "terrain_height_m": 5571.02212518135,
+          "water": "Dry",
+          "x_m": 21.26613374,
+          "y_m": 64.0
+        },
+        "levels": {
+          "18": 148,
+          "19": 644
+        },
+        "camera": {
+          "absolute_h": 5562.215304614608,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -50.21813051449725,
+          "lon": -19.352715305079613
+        },
+        "report_sha256": "9a2d13f694ec8848065bc09c2870cae40733152a09638dd7db61e59364f997ac"
+      },
+      {
+        "feature": "canonical_crest_3",
+        "outer_edges": 133,
+        "samples": 798,
+        "failures": 33,
+        "max_error_m": 0.22563285914475273,
+        "worst": {
+          "canonical_height_m": 5492.599793570798,
+          "error_m": -0.22563285914475273,
+          "level": 19,
+          "render_height_m": 5492.3741607116535,
+          "terrain_height_m": 5492.599793570798,
+          "water": "Dry",
+          "x_m": 6.71982683,
+          "y_m": -64.0
+        },
+        "levels": {
+          "18": 157,
+          "19": 641
+        },
+        "camera": {
+          "absolute_h": 5483.068001525015,
+          "down": 1.0,
+          "heading": 90.0,
+          "lat": -50.28437883268399,
+          "lon": -19.418214026951713
+        },
+        "report_sha256": "4cdcf59c111ec930cffc7b869f0cbb1a27c402de2ff842eae602ea4b9db7e0e2"
+      }
+    ]
+  },
+  "gpu": {
+    "ceiling_bytes": 16777216,
+    "additional_allocated_bytes": 0,
+    "queued_output_bytes": 0,
+    "total_renderer_geometry_bytes": null,
+    "status": "not launched; expansion estimates only",
+    "max_pair_expanded_bytes": 310712
+  },
+  "not_run": [
+    "runtime GPU fixed sites",
+    "full camera transform logging",
+    "shader normals/material fidelity",
+    "atomic publication",
+    "moving camera/walker",
+    "mid-flight cancellation",
+    "eviction/revisit",
+    "presentation benchmarking"
+  ],
+  "validation": {
+    "workspace_passed": 68,
+    "registry": "exit0"
+  },
+  "files": {
+    "out/review/v8-crease-runtime/plan.json": "415928aa01037780f537050dc79247ab07d19d73814fd36dccde0b957f18d5c2",
+    "out/review/v8-crease-runtime/worker-resource.json": "b0464cb5be9aed24c3c4385fd5e654c1b4cc5fbe9b33bf5da30ee71c8847a17c",
+    "out/review/v8-crease-runtime/audit.json": "3f4ca561d2e6b1b7c4988ef1cda855f0edbd389f9c83fc4144a074f4dd48c212",
+    "out/review/v8-crease-runtime/commands.json": "8f1dc6e05ede7581d571e0bfe1af97791b2723d787bbd95a4b747eb64bb946e3",
+    "out/review/v8-crease-runtime/topology.json": "b5fe448bbfa11a8d50a3424775e0fb1f8cd0530a3583a2afadd0c8c0f2f39d40",
+    "out/review/v8-crease-runtime/plan-frozen.json": "793d6acdf270cb07aa536df022c0a812a105d4c1caaaf5e4413eb6d2fd30b257",
+    "out/review/v8-crease-runtime/geometry/nearest_known_shore.json": "809bfc81947daa39da512c6cf169a959abadc56d06fda7b46c902f2ed2d9bf6a",
+    "out/review/v8-crease-runtime/geometry/parent_face_join.json": "18081872c2e83f51578f177d158c54448babad87c0cb352b3c69558304f76f23",
+    "out/review/v8-crease-runtime/geometry/sampling_window_join.json": "5dadce514f45fc96887488b4969b1920f9d9c1916706cc2e368c3d6a04ec243f",
+    "out/review/v8-crease-runtime/geometry/relief_native_join.json": "52a7626c243151a78f99f2d4c3ed93dc1ebee3fb4f822a7a800545874c009c94",
+    "out/review/v8-crease-runtime/geometry/canonical_crest_1.json": "485c75e60c2395ec34881a92c926b3c8c22d8ea6c58e3f75ef642086df73b3f2",
+    "out/review/v8-crease-runtime/geometry/canonical_crest_2.json": "1cf0f3f603a110614a2fca1126e95e62a611a7ceffb339fb9670f033df72cd89",
+    "out/review/v8-crease-runtime/geometry/canonical_crest_3.json": "b8754577d6161cc97d4c4deb57171e87d6680da42140dcd66ddddabd513607c7",
+    "out/review/v8-crease-runtime/geometry/large_native_face_centroid.json": "dfb38eaf0f2af3fd1f700af3058564f08e803c393322f0d5a0a381be53cd2c53",
+    "out/review/v8-crease-runtime/geometry/results.json": "69d3d96b3c8019f6720a80944f9a4893a5b34ee3490275421f7bb5bdfdc85e4a",
+    "out/review/v8-crease-runtime/interface/nearest_known_shore-probes.json": "c97fae2083e214f44a2145ca76db631c726cc551c56fbdcb78f72d897b425733",
+    "out/review/v8-crease-runtime/interface/nearest_known_shore-grid.json": "2cb0e985184b2996eadef7c5dfe69698941f5d0db65286360956ba8178407622",
+    "out/review/v8-crease-runtime/interface/parent_face_join-probes.json": "231dd70047fd8ded3f9d0c0c59a16677dbebfb3aaeaba83c68b98134a9a1ccab",
+    "out/review/v8-crease-runtime/interface/parent_face_join-grid.json": "7f1bfd22558dc2089c5a375c106b2667fd6d06e4945a10f80bc5b11ce4e2f0bd",
+    "out/review/v8-crease-runtime/interface/sampling_window_join-probes.json": "2a864a12fdf9ced9fcebee4db407c5d31328a90c7f2dc45d8475a0343e8d7b43",
+    "out/review/v8-crease-runtime/interface/sampling_window_join-grid.json": "a137a4e32bb4cbfa621aede0b82c9e22cfbcea9a0de0e7367d6aff22d733a23b",
+    "out/review/v8-crease-runtime/interface/relief_native_join-probes.json": "a63c2b0a29eef01fd2aca011402909f81b0f520e36eb87790def7d854977120d",
+    "out/review/v8-crease-runtime/interface/relief_native_join-grid.json": "1be76b3e3144036a637797d68cd57cf1c4d90f346b398de571509bf64cb330fc",
+    "out/review/v8-crease-runtime/interface/canonical_crest_1-probes.json": "9d7957f34f6e688641ab36d5a94d27d7aba79906d15e65412496bfb347294543",
+    "out/review/v8-crease-runtime/interface/canonical_crest_1-grid.json": "f909953ef60ea142356b73076f6245b444228a34ab95ff2bb4cd00c32e086cb5",
+    "out/review/v8-crease-runtime/interface/canonical_crest_2-probes.json": "2505ed38a2837ce94d64240461b010eef2a950273850ba216f1a9b6a46e6f797",
+    "out/review/v8-crease-runtime/interface/canonical_crest_2-grid.json": "9a2d13f694ec8848065bc09c2870cae40733152a09638dd7db61e59364f997ac",
+    "out/review/v8-crease-runtime/interface/canonical_crest_3-probes.json": "6a2bf1d4ceb7a6ba3f72b3db23f7fa2d89a5c198aedf809a1a7fe7057a0ea8b8",
+    "out/review/v8-crease-runtime/interface/canonical_crest_3-grid.json": "4cdcf59c111ec930cffc7b869f0cbb1a27c402de2ff842eae602ea4b9db7e0e2",
+    "out/review/v8-crease-runtime/interface/results.json": "ca83cc946066ed6ef73eb7023b0406e1e8f02a246551ab0ae5e7ba4118fb4df0",
+    "out/review/v8-crease-runtime/tests.log": "7832864b0b8a74b7742baf92b2d61dbef0b081c57f41dc2931737f5e2b8e2883",
+    "out/review/v8-crease-runtime/registry.log": "49623b36bdc4e6d13411774ecd5e95b5da7878d00205bc8d8dffa3dbcd8ed814",
+    "out/review/v8-crease-runtime/old-origin-witness.log": "0d68ed74b268a9cbc6adc17caf2b2b0517e9ce0d324da3d0b3b51adf97b0b49d",
+    "crates/core/world/src/worlds/pgs.rs": "cc6a43ea4b3e355f5a6d15855ee67c01a7788f9c872fc74d92631b0da84050f1",
+    "crates/core/world/examples/pgs_crease_worker.rs": "a72e0e3879df6870b5751978dce2b2b5b5dfb14f0b4bfc009ba7f9a61c465b7f",
+    "crates/core/world/examples/crease/mod.rs": "f8fb44f8fcbfefba638278fa19c38e77e5803ad6bee0f60f1ac9a34f8270784e",
+    "tools/diagnostics/pgs_crease_interface.py": "9f212cfa1f1972f9a9a4a379f639c22f9ce4956f82a06049d2cc89474ae62986",
+    "target/release/examples/pgs_crease_worker": "256b34afc42bbca3e92f03f6a05feaf3f22b8686f128fcfb2a9a1a8022c03739",
+    "target/release/examples/pgs_crease_audit": "747aa7a634877c0aa1ac1f8c2e3c35db1f274db48d97a9cb2f830591b4a9dbf1",
+    "target/release/examples/pgs_walk_audit": "03722ab36e577ac40c17bb4b479bb6e054aa601ad04f6a79e6853253bde6f0b9"
+  }
+}
