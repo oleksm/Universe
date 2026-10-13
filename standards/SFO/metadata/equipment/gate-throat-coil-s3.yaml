@@ -5,34 +5,30 @@ identity:
   maker: org.halcyon
   revision: draft
   slot: gate
-  description: "What holds the tube. One stands in each segment of a ring; together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
+  description: "What holds the tube. One stands in each segment of a ring, about 160 m apart: a closed racetrack coil in a titanium case, its cold plant and switchgear behind it. Together, round the whole ring, they hold its tube open, and all the power that takes goes through them."
 size_class: 3
 fits: mount.gate-s3
 physical:
   volume: 60
-  mass: 150000
+  mass: 112100
   length: 9.86
   width: 2.47
   height: 2.47
 built_of:
   parts: gate-throat-coil-s3
   list:
-    - { code: THCL-01, name: "Coil case", description: "The ring of plate that holds the winding against its own force.", mass: 120000, length: 9.15, width: 2.29, height: 2.29, item: stock.ti64-pl-5, quantity: 138000.0, module: module.welding-bay,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
-    - { code: THCL-02, name: "Winding", description: "Superconducting cable.", mass: 6000, length: 3.37, width: 0.845, height: 0.845, item: stock.cu-wire-2, quantity: 6900.0, module: module.machining-centre,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
-    - { code: THCL-03, name: "Refrigerator", mass: 12000, length: 4.25, width: 1.06, height: 1.06, item: good.heat-pumps, quantity: 12000, module: module.assembly-shop,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
-    - { code: THCL-04, name: "Current leads and switchgear", mass: 12000, length: 4.25, width: 1.06, height: 1.06, item: good.electronics, quantity: 12000, module: module.assembly-shop,
-        basis: [{ of: [physical.mass, fit], tier: derived, review: true, source: "standards/sources/research_ship_equipment.json", note: "Chosen. A real large coil (ITER's) is mostly its steel case; that is kept." }] }
+    - { code: THCL-01, name: "Coil case", description: "A closed racetrack in the XZ plane, 9.86 m by 2.47 m outside, 1.4 m deep in Y: two straight legs 0.6 m thick (Z) round a 1.27 m bore, joined by the end arcs; sealed, the winding inside it.", mass: 78500, length: 9.86, width: 1.4, height: 2.47, item: stock.ti64-pl-5, quantity: 90275, module: module.welding-bay }
+    - { code: THCL-02, name: "Winding", description: "Superconducting cable, about 0.058 m2 in each leg, round the racetrack inside the case.", mass: 9600, length: 9.5, width: 1.3, height: 2.1, item: stock.cu-wire-2, quantity: 11040, module: module.machining-centre }
+    - { code: THCL-03, name: "Refrigerator", description: "Behind the coil (+Y), on one side.", mass: 12000, length: 4.25, width: 1.06, height: 1.06, item: good.heat-pumps, quantity: 12000, module: module.assembly-shop }
+    - { code: THCL-04, name: "Current leads and switchgear", description: "Behind the coil (+Y), beside the refrigerator.", mass: 12000, length: 4.25, width: 1.06, height: 1.06, item: good.electronics, quantity: 12000, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: throat_coil
 life: 473364000
 basis:
-  - { of: [physical], tier: invented, review: true, note: "A guess, to be reviewed: nothing says what holds a tube or what it weighs. Not in the game yet." }
-  - { of: [built_of, making], tier: invented, review: true, note: "A first design, and invented: one great coil of a gate ring, in its case, with its cold plant. ITER's eighteen coils weigh 330 t each; this is 150 t." }
-  - { of: [physical.volume], tier: invented, review: true, note: "Chosen: about twice the room its 150 t of metal takes." }
-  - { of: [physical.length, physical.width, physical.height], tier: invented, review: true, note: "Not worked out, but shaped: a segment of a ring: long and curved, to its volume. A stand-in until it is sized from what it must do." }
+  - { of: [function], tier: invented, review: true, note: "What a tube asks of a coil is invented: here, about 3 T across the coil's bore, the most this case holds. Not in the game yet." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Sized from the coil's own magnetic load. 3.1 T is a pressure B2/2mu0 of 3.9 MPa on the inner face of each straight leg: 5.4 MN a metre over 7.4 m, 37 MN m of bending, which a solid Ti-6Al-4V leg 0.6 m thick and 1.4 m deep holds at half yield. Ampere-turns: B x 1.4 m / (mu0 x 0.6) = 5.8 MA, at 100 A/mm2 (a cable's engineering current density) 0.058 m2 a leg, 9.6 t over an 18.7 m mean turn (the copper wire stock stands for the cable). Case: 18.8 m3 of racetrack less the winding, 78.5 t. The refrigerator and switchgear are kept from the first design (invented)." }
+  - { of: [physical.volume, physical.length, physical.width, physical.height], tier: invented, review: true, note: "The first stand-in envelope, kept: the coil fills 1.4 m of its depth and the cold plant and switchgear the 1.07 m behind." }
+  - { of: [built_of, making], rule: rule.first-design-parts }
   - { of: [life], rule: rule.life-ship-system }
