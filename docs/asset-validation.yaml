@@ -3332,3 +3332,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Gas conditioning, potable water quality, hidden packing, thermal and electrical ratings, containment, structural qualification and final service routing unqualified."
+  - key: equipment.power.solar-array.s2
+    version: 1
+    manifest_sha256: "ef2d568c964c7284f3dbe95cd48e1304971cb08ee7a748c18c34769d3e73acb1"
+    installed: 34fc6d6a
+    game: "the loader (world::assets) at fso 34fc6d6a"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-solar-array-s2/v1 (526528 bytes, bounds [-0.015, 0.0, -2.61] to [20.1, 0.0997, 2.61]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed model only; runtime deployment, final hull clearance, structural and thermal qualification remain pending."
