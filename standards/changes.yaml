@@ -342,7 +342,7 @@
 - { record: equipment.avionics.nav-full.s1, at: "2026-10-11T02:40:00Z", status: draft, summary: "changed: visual", sha: "f45d1b9a28faeb92" }
 - { record: equipment.capacitor.s1, at: "2026-10-11T02:35:59Z", status: draft, summary: "changed: visual", sha: "366dccda6684e4e0" }
 - { record: equipment.capacitor.s2, at: "2026-10-11T17:20:51Z", status: draft, summary: "changed: visual", sha: "d6a18d68186dafde" }
-- { record: equipment.capacitor.s3, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "230036994d4464da" }
+- { record: equipment.capacitor.s3, at: "2026-10-13T19:30:12Z", status: draft, summary: "changed: basis", sha: "da54fb27ce15eab7" }
 - { record: equipment.cargo.berths.2, at: "2026-10-12T14:48:01Z", status: draft, summary: "changed: visual", sha: "a154d2471e6aa8ce" }
 - { record: equipment.cargo.berths.4, at: "2026-10-12T19:34:02Z", status: draft, summary: "changed: visual", sha: "4bcdd5fef3042029" }
 - { record: equipment.cargo.berths.6, at: "2026-10-12T19:44:00Z", status: draft, summary: "changed: visual", sha: "a735887cc50312e4" }
