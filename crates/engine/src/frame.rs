@@ -155,6 +155,7 @@ pub struct Frame {
     pub(crate) hud: Vec<Vertex>,
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
+    pub(crate) mesh_uploads: Vec<Mesh>,
     /// Meshes drawn over everything, the HUD included (see `in_front`).
     pub(crate) front: Vec<MeshDraw>,
     /// Textured, physically based models to draw this frame (see `model_pbr`).
@@ -416,6 +417,7 @@ impl Frame {
             canvas_scene: 1,
             hud: Vec::new(),
             meshes: Vec::new(),
+            mesh_uploads: Vec::new(),
             pbr: Vec::new(),
             front: Vec::new(),
             front_glows: Vec::new(),
@@ -732,6 +734,9 @@ impl Frame {
         let d = MeshDraw { mesh: mesh.clone(), instance: inst, edges, casts: self.casts, reach: mesh.radius() * t.scale as f32, ground: self.ground };
         if self.in_front { self.front.push(d) } else { self.meshes.push(d) }
     }
+
+    /// Stage an immutable mesh without drawing it. Poll Mesh::gpu_resident before group publication.
+    pub fn prepare_mesh(&mut self, mesh: &Mesh) { self.mesh_uploads.push(mesh.clone()); }
 
     /// Keep a CPU asset owner alive until this frame has been consumed.
     /// For PBR preparation spanning frames, also use `PbrModel::with_lease`.

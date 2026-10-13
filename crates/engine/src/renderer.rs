@@ -305,10 +305,15 @@ struct GpuMesh {
     edges: wgpu::Buffer,
     edge_vertices: u32,
     used: u64,
+    // Dropped after both buffer handles; defer the reservation through submitted GPU work.
+    _fence: MeshFence,
 }
+struct MeshFence { resident:std::sync::Arc<std::sync::atomic::AtomicUsize>, queue: wgpu::Queue, reservation: Option<std::sync::Arc<crate::mesh_budget::Reservation>> }
+impl Drop for MeshFence { fn drop(&mut self) { self.resident.fetch_sub(1,std::sync::atomic::Ordering::Release);if let Some(r)=self.reservation.take(){self.queue.on_submitted_work_done(move||drop(r));}} }
 
 impl GpuMesh {
-    fn new(device: &wgpu::Device, mesh: &Mesh) -> Self {
+    fn new(gpu: &Gpu, mesh: &Mesh) -> Self {
+        let device=&gpu.device;
         use wgpu::util::DeviceExt;
         let color = |i: u32| mesh.colors.get(i as usize).copied().unwrap_or([1.0; 4]);
         let data = |i: u32| mesh.data.get(i as usize).copied().unwrap_or([0.0; 4]);
@@ -353,7 +358,16 @@ impl GpuMesh {
                 usage: wgpu::BufferUsages::VERTEX,
             })
         };
-        GpuMesh { faces: buffer("mesh faces", &faces), face_vertices: faces.len() as u32, edges: buffer("mesh edges", &edges), edge_vertices: edges.len() as u32, used: 0 }
+        let face_buffer = buffer("mesh faces", &faces);
+        let edge_buffer = buffer("mesh edges", &edges);
+        // Publish the receipt only after both buffers exist.
+        mesh.gpu_residents.fetch_add(1, std::sync::atomic::Ordering::Release);
+        GpuMesh {
+            faces: face_buffer, face_vertices: faces.len() as u32,
+            edges: edge_buffer, edge_vertices: edges.len() as u32, used: 0,
+            _fence: MeshFence { resident: mesh.gpu_residents.clone(),
+                queue: gpu.queue.clone(), reservation: mesh.reservation.clone() },
+        }
     }
 }
 
@@ -959,6 +973,7 @@ impl Renderer {
             asset_hits: self.pbr.hits(),
             asset_unloads: self.pbr.evictions(),
             asset_gpu_bytes: self.pbr.resident_bytes(),
+            mesh_gpu_bytes: self.meshes.values().map(|m|(m.faces.size()+m.edges.size()) as usize).sum(),
             asset_preparing: self.pbr.preparing(),
             globe_layers: self.globes.layers.iter().filter(|l| l.is_some()).count(),
             globe_capacity: self.globes.layers.len(),
@@ -1352,9 +1367,10 @@ impl Renderer {
         self.frames += 1;
         let now = self.frames;
         for d in frame.meshes.iter().chain(&frame.front) {
-            self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(&gpu.device, &d.mesh)).used = now;
+            self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(gpu, &d.mesh)).used = now;
         }
-        self.meshes.retain(|_, m| now - m.used < MESH_KEEP);
+        for mesh in &frame.mesh_uploads {self.meshes.entry(mesh.id()).or_insert_with(||GpuMesh::new(gpu,mesh)).used=now;}
+        self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
         (self.front_face_runs, self.front_edge_runs) = batch(&frame.front, &mut data);

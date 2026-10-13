@@ -41,3 +41,5 @@ pub mod text_editor;
 
 pub mod scene;
 pub mod viewport;
+
+pub mod mesh_budget;
