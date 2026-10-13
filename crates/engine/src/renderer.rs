@@ -1370,6 +1370,9 @@ impl Renderer {
             self.meshes.entry(d.mesh.id()).or_insert_with(|| GpuMesh::new(gpu, &d.mesh)).used = now;
         }
         for mesh in &frame.mesh_uploads {self.meshes.entry(mesh.id()).or_insert_with(||GpuMesh::new(gpu,mesh)).used=now;}
+        // Released by their owner: gone now unless drawn this frame (their fence still waits
+        // for submitted work before any reservation is let go).
+        for id in &frame.mesh_releases { if self.meshes.get(id).is_some_and(|m| m.used != now) { self.meshes.remove(id); } }
         self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);

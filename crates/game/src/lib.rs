@@ -1372,6 +1372,8 @@ impl App {
                 self.prev_focus = None;
             }
         }
+        #[cfg(feature = "dev")]
+        dev::camera_walk(self);
     }
 }
 

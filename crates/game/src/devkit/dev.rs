@@ -2188,3 +2188,34 @@ fn s_marketnear(app: &mut App, name: &str, _c: &Ctx) {
     m.refresh(app);
     app.panels.market = Some(m);
 }
+
+/// (Dev: `UNIVERSE_PGS1_CAMERA_WALK`=m/s, paused over canonical ground: after
+/// `UNIVERSE_PGS1_CAMERA_WALK_AFTER` s (20), the camera alone walks on from where it stands, 1.7 m
+/// over the canonical ground, along its own heading: a moving camera subject for the contact
+/// group's readiness trace. The ship and the world stay put; nothing physical walks.)
+pub fn camera_walk(app: &mut App) {
+    struct Walk { start: std::time::Instant, planet: usize, from: DVec3, toward: DVec3 }
+    static WALK: std::sync::Mutex<Option<Walk>> = std::sync::Mutex::new(None);
+    let Some(speed) = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK") else { return };
+    let sys = app.charts.system(app.v.ship_system);
+    let t = app.now();
+    let Ok(mut walk) = WALK.lock() else { return };
+    if walk.is_none() {
+        let Some(planet) = std::env::var("UNIVERSE_BODY").ok().and_then(|k| sys.bodies.iter().position(|b| b.key == k)) else { return };
+        let Some(centre) = app.view.positions.get(planet).copied() else { return };
+        let inv = sys.bodies[planet].rotation(t).inverse();
+        let from = (inv * (app.camera.position - centre)).normalize();
+        let look = inv * (app.camera.orientation.as_dquat() * -DVec3::Z);
+        let toward = (look - from * look.dot(from)).normalize();
+        *walk = Some(Walk { start: std::time::Instant::now(), planet, from, toward });
+    }
+    let Some(w) = walk.as_ref() else { return };
+    let b = &sys.bodies[w.planet];
+    let (Some(terrain), Some(centre)) = (b.terrain.as_ref(), app.view.positions.get(w.planet).copied()) else { return };
+    let after = crate::devenv::num("UNIVERSE_PGS1_CAMERA_WALK_AFTER").unwrap_or(20.0);
+    let gone = speed * (w.start.elapsed().as_secs_f64() - after).max(0.0);
+    let a = gone / b.rail.radius;
+    let dir = (w.from * a.cos() + w.toward * a.sin()).normalize();
+    let height = terrain.surface(dir);
+    app.camera.position = centre + b.rotation(t) * (dir * (b.rail.radius + height + universe_sim::world::crew::EYE));
+}

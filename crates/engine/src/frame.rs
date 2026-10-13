@@ -156,6 +156,7 @@ pub struct Frame {
     /// Meshes to draw this frame (transformed and lit on the GPU).
     pub(crate) meshes: Vec<MeshDraw>,
     pub(crate) mesh_uploads: Vec<Mesh>,
+    pub(crate) mesh_releases: Vec<u64>,
     /// Meshes drawn over everything, the HUD included (see `in_front`).
     pub(crate) front: Vec<MeshDraw>,
     /// Textured, physically based models to draw this frame (see `model_pbr`).
@@ -418,6 +419,7 @@ impl Frame {
             hud: Vec::new(),
             meshes: Vec::new(),
             mesh_uploads: Vec::new(),
+            mesh_releases: Vec::new(),
             pbr: Vec::new(),
             front: Vec::new(),
             front_glows: Vec::new(),
@@ -737,6 +739,9 @@ impl Frame {
 
     /// Stage an immutable mesh without drawing it. Poll Mesh::gpu_resident before group publication.
     pub fn prepare_mesh(&mut self, mesh: &Mesh) { self.mesh_uploads.push(mesh.clone()); }
+    /// Its owner is done with mesh `id`: the renderer drops its buffers now rather than after
+    /// they go unused a while (unless drawn this frame). A reservation still waits for the GPU.
+    pub fn release_mesh(&mut self, id: u64) { self.mesh_releases.push(id); }
 
     /// Keep a CPU asset owner alive until this frame has been consumed.
     /// For PBR preparation spanning frames, also use `PbrModel::with_lease`.
