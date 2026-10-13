@@ -463,7 +463,7 @@
 - { record: equipment.tank.hydrolox.0p5t, at: "2026-10-13T15:18:00Z", status: draft, summary: "changed: visual", sha: "9d8bd219ab8e2ac1" }
 - { record: equipment.tank.hydrolox.1t, at: "2026-10-13T16:11:38Z", status: draft, summary: "changed: visual", sha: "6d374b52b3de1448" }
 - { record: equipment.tank.hydrolox.2t, at: "2026-10-13T16:13:27Z", status: draft, summary: "changed: visual", sha: "5e90b5b8b88b95ef" }
-- { record: equipment.tank.hydrolox.3p5t, at: "2026-10-13T15:53:27Z", status: draft, summary: "changed: visual", sha: "b53b2f147a11c3f6" }
+- { record: equipment.tank.hydrolox.3p5t, at: "2026-10-13T16:15:49Z", status: draft, summary: "changed: visual", sha: "81726b1badecdea2" }
 - { record: equipment.tank.hydrolox.s1, at: "2026-10-12T17:15:03Z", status: draft, summary: "changed: visual", sha: "53973cea65292cc9" }
 - { record: equipment.tank.hydrolox.s2, at: "2026-10-13T16:01:51Z", status: draft, summary: "changed: visual", sha: "526d5d04fa9c9798" }
 - { record: equipment.tank.liquid-cargo.s4, at: "2026-10-07T03:58:19Z", status: draft, summary: "changed: built_of", sha: "dfb4ca220f8952ce" }
