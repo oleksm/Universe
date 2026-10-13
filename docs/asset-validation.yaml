@@ -3252,3 +3252,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Source-only slew/luff demonstration; runtime controls, GPU appearance/cost, final hull/receiver placement, loaded structure, flow, rotary seals and internal drive packing remain unqualified."
+  - key: equipment.life-support.cartridge
+    version: 1
+    manifest_sha256: "a8c323d81d635ce3f4e78229da5f70077c10ec4c57896b34b27368e822c333e5"
+    installed: c58225fa
+    game: "the loader (world::assets) at fso c58225fa"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/life-support-cartridge/v1 (106072 bytes, bounds [-0.2, 0.0, -0.15] to [0.2, 0.3, 0.149]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Chemical performance, internal packing, retention loads, 200 mm cartridge service corridor and final cabin placement unqualified."
