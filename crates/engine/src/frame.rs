@@ -356,6 +356,7 @@ impl Frame {
     pub fn scene_view(&mut self, id: u64, scene: &crate::scene::Scene,
         view: &crate::viewport::View, configure: impl FnOnce(&mut Frame)) {
         assert!(!self.views.iter().any(|(v,_,_)| *v == id), "duplicate view id");
+        assert!(view.valid(), "invalid view");
         let r = view.rect;
         assert!(r.origin.is_finite() && r.size.is_finite() && r.origin.min_element() >= 0.
             && r.size.min_element() > 0. && (r.origin + r.size).cmple(self.size).all(), "invalid view rectangle");
@@ -430,6 +431,9 @@ impl Frame {
 
     /// Approximate on-screen radius of a sphere, in scene (low-res) pixels.
     pub fn projected_radius(&self, center: DVec3, radius: f64) -> f32 {
+        if let crate::viewport::Projection::Orthographic { height, .. } = self.projection {
+            return radius as f32 * self.scene_size.y / height;
+        }
         let d = (center - self.camera.position).length();
         if d <= radius {
             return f32::INFINITY;

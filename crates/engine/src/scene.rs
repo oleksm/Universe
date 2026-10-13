@@ -160,6 +160,12 @@ impl Scene {
     /// Ray/OBB proxy hits sorted by world distance. Never a physics collision query.
     pub fn pick(&self, ray: crate::viewport::Ray, layers: u64) -> Vec<(ObjectId, f64)> {
         let mut hits = Vec::new();
+        if !ray.origin.is_finite()
+            || !ray.direction.is_finite()
+            || (ray.direction.length_squared() - 1.).abs() > 1e-8
+        {
+            return hits;
+        }
         for (&id, n) in &self.nodes {
             if !self.shown(id) || n.layers & layers == 0 {
                 continue;

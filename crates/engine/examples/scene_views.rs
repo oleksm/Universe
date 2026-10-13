@@ -14,7 +14,7 @@ fn quad(z: f32, color: [f32; 4], blend: bool) -> PbrModel {
                     pos,
                     normal: [0., 0., 1.],
                     tangent: [1., 0., 0., 1.],
-                    uv: [0., 0.],
+                    uv: [(pos[0] + 1.) * 0.5, (pos[1] + 1.) * 0.5],
                 })
                 .to_vec(),
             indices: vec![0, 1, 2, 0, 2, 3],
@@ -42,6 +42,7 @@ fn quad(z: f32, color: [f32; 4], blend: bool) -> PbrModel {
 }
 struct Fixture {
     scene: Scene,
+    mask: bool,
 }
 fn checks() {
     let mut s = Scene::default();
@@ -86,6 +87,26 @@ fn checks() {
         )
         .is_err()
     );
+    let ray = universe_engine::viewport::Ray {
+        origin: p.position + DVec3::Z * 10.,
+        direction: -DVec3::Z,
+    };
+    let hits = s.pick(ray, u64::MAX);
+    assert_eq!(hits.len(), 1);
+    assert_eq!(hits[0].0, ObjectId(2));
+    assert!((hits[0].1 - 8.).abs() < 1e-12);
+    let revision = s.revision();
+    assert!(
+        s.set(
+            ObjectId(3),
+            Node {
+                parent: Some(ObjectId(99)),
+                ..Node::default()
+            }
+        )
+        .is_err()
+    );
+    assert_eq!(s.revision(), revision);
     for projection in [
         Projection::Perspective,
         Projection::Orthographic {
@@ -138,6 +159,10 @@ impl Game for Fixture {
                 camera.position = DVec3::new(2., 1., 4.);
                 camera.look_at(DVec3::ZERO, Vec3::Y);
             }
+            if self.mask {
+                camera.position = DVec3::new(if i == 1 { -4. } else { 4. }, 5., 6.);
+                camera.look_at(DVec3::ZERO, Vec3::Y);
+            }
             let view = View {
                 camera,
                 projection: if i == 2 {
@@ -155,8 +180,32 @@ impl Game for Fixture {
                 layers: u64::MAX,
             };
             f.scene_view(i, &self.scene, &view, |child| {
-                child.ambient = 1.;
+                child.ambient = if self.mask { 0.05 } else { 1. };
+                if self.mask {
+                    child.light = Some(universe_engine::frame::Light {
+                        position: DVec3::new(-10., 20., 10.),
+                        color: [1.; 3],
+                        luminosity: 1.,
+                        reference: 30.,
+                        radius: 0.,
+                    });
+                    child.shadow_reach = 120.;
+                }
                 child.studio = true;
+                child.world_text(
+                    DVec3::new(-0.7, 0.4, -0.5),
+                    "HIDDEN",
+                    Color::WHITE,
+                    1.,
+                    true,
+                );
+                child.world_text(
+                    DVec3::new(-0.7, -0.4, 0.7),
+                    "VISIBLE",
+                    Color::WHITE,
+                    1.,
+                    true,
+                );
             });
         }
         f.hud_rect(
@@ -179,7 +228,11 @@ fn main() {
     ] {
         scene
             .set(
-                ObjectId(id),
+                ObjectId(if std::env::var_os("REVERSE").is_some() {
+                    4 - id
+                } else {
+                    id
+                }),
                 Node {
                     geometry: Some(Geometry::Model {
                         model: quad(z, color, blend),
@@ -190,11 +243,77 @@ fn main() {
             )
             .unwrap();
     }
+    let mask = std::env::args().any(|s| s == "--mask");
+    if mask {
+        scene = mask_scene();
+    }
     universe_engine::run(
         Config {
             title: "Shared scene views".into(),
             ..Default::default()
         },
-        Fixture { scene },
+        Fixture { scene, mask },
     );
+}
+
+fn mask_scene() -> Scene {
+    let mut scene = Scene::default();
+    let q = quad(0., [0.8, 0.8, 0.8, 1.], false);
+    let mut data = std::sync::Arc::try_unwrap(q.data).unwrap();
+    data.materials[0].alpha_cutoff = Some(if std::env::var_os("SOLID").is_some() {
+        0.
+    } else {
+        0.5
+    });
+    data.materials[0].base_tex = Some(0);
+    let rgba = (0..64)
+        .flat_map(|i| {
+            [
+                255,
+                255,
+                255,
+                if (i % 8 + i / 8) % 2 == 0 { 255 } else { 0 },
+            ]
+        })
+        .collect();
+    data.images.push(universe_engine::pbr::Image {
+        width: 8,
+        height: 8,
+        rgba,
+    });
+    scene
+        .set(
+            ObjectId(1),
+            Node {
+                pose: Pose {
+                    position: DVec3::Y,
+                    rotation: DQuat::from_rotation_x(-std::f64::consts::FRAC_PI_2),
+                    scale: 1.,
+                },
+                geometry: Some(Geometry::Model {
+                    model: PbrModel::new(data),
+                    part: 0,
+                }),
+                ..Node::default()
+            },
+        )
+        .unwrap();
+    scene
+        .set(
+            ObjectId(2),
+            Node {
+                pose: Pose {
+                    rotation: DQuat::from_rotation_x(-std::f64::consts::FRAC_PI_2),
+                    scale: 3.,
+                    ..Pose::default()
+                },
+                geometry: Some(Geometry::Model {
+                    model: quad(0., [0.8, 0.6, 0.3, 1.], false),
+                    part: 0,
+                }),
+                ..Node::default()
+            },
+        )
+        .unwrap();
+    scene
 }

@@ -30,11 +30,34 @@ pub struct View {
     pub layers: u64,
 }
 impl View {
+    pub fn valid(&self) -> bool {
+        let c = self.camera;
+        self.rect.origin.is_finite()
+            && self.rect.size.is_finite()
+            && self.rect.size.min_element() > 0.
+            && c.position.is_finite()
+            && c.orientation.is_finite()
+            && (c.orientation.length_squared() - 1.).abs() < 1e-4
+            && c.near.is_finite()
+            && c.near > 0.
+            && match self.projection {
+                Projection::Perspective => {
+                    c.fov_y.is_finite() && c.fov_y > 0. && c.fov_y < std::f32::consts::PI
+                }
+                Projection::Orthographic { height, far } => {
+                    height.is_finite() && height > 0. && far.is_finite() && far > c.near
+                }
+            }
+    }
+
     pub fn matrix(&self) -> Mat4 {
         self.projection
             .matrix(&self.camera, self.rect.size.x / self.rect.size.y)
     }
     pub fn project(&self, point: DVec3) -> Option<Vec3> {
+        if !self.valid() || !point.is_finite() {
+            return None;
+        }
         let c = self.matrix() * self.camera.relative(point).extend(1.);
         if c.w <= 0. {
             return None;
@@ -47,6 +70,9 @@ impl View {
         Some(xy.extend(p.z))
     }
     pub fn ray(&self, pixel: Vec2) -> Option<Ray> {
+        if !self.valid() {
+            return None;
+        }
         if !pixel.is_finite() || !self.rect.size.is_finite() || self.rect.size.min_element() <= 0. {
             return None;
         }
