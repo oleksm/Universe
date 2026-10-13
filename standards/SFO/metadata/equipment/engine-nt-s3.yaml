@@ -18,7 +18,7 @@ built_of:
   parts: engine-nt-s3
   list:
     - { code: NTE3-01, name: "Reactor core and vessel", description: "Fuel elements in their pressure vessel.", mass: 7200, length: 5.16, width: 1.84, height: 1.84, item: stock.ti64-pl-5, quantity: 8280, module: module.welding-bay }
-    - { code: NTE3-02, name: "Shadow shield", mass: 4500, length: 4.41, width: 1.57, height: 1.57, item: good.carbon, quantity: 4500, module: module.assembly-shop }
+    - { code: NTE3-02, name: "Shadow shield", description: "A nuclear-graphite disc at the mount face, 2.3 m across and 0.58 m thick; it does not swing with the engine.", mass: 4500, length: 2.3, width: 2.3, height: 0.58, item: good.carbon, quantity: 4500, module: module.assembly-shop }
     - { code: NTE3-03, name: "Nozzle", description: "Regeneratively cooled.", mass: 2700, length: 3.72, width: 1.33, height: 1.33, item: stock.st304-pl-3, quantity: 3105, module: module.welding-bay }
     - { code: NTE3-04, name: "Turbopump and feed", mass: 2160, length: 3.45, width: 1.23, height: 1.23, item: good.pumps, quantity: 2160, module: module.assembly-shop }
     - { code: NTE3-05, name: "Controls", mass: 1440, length: 3.02, width: 1.08, height: 1.08, item: good.electronics, quantity: 1440, module: module.assembly-shop }
@@ -38,10 +38,24 @@ function:
   shield_pass: 0.01
   reaction_offset: 2.8
   heat_to_hull: 0.000126
+  chamber:
+    feed: expander
+    pressure: 4000000.0
+    thrust_coefficient: 1.71
+    throat_diameter: 0.248
+    exit_diameter: 1.4
+    expansion_ratio: 32
+    chamber_diameter: 1.84
+    nozzle_length: 2.3
+    cooling: regenerative
+    wall: material.stainless-steel-304
 life: 473364000
 basis:
   - { of: [function.exhaust, function.thrust, physical.mass], tier: invented, review: true, note: "NERVA-class, from memory: the NERVA XE gave about 250 kN at 7 km/s from about 18 t with its shield; 9 km/s is the advanced solid-core figure (Isp about 900 s). The classes scale by thrust. No source looked up. Review." }
   - { of: [function.isotropic_loss, function.shield_pass, function.heat_to_hull], tier: invented, review: true, note: "About a twentieth of the reactor's power leaks as neutrons and gamma in every direction; a shadow shield passes a hundredth toward the ship: 0.000126 of the jet aboard at a twentieth of the sphere. From memory; review." }
   - { of: [function.throttle, function.gimbal], tier: invented, review: true, note: "A solid core throttles to about a third; a gimballed nozzle gives about six degrees. Chosen." }
   - { of: [built_of, making], rule: rule.first-design-parts }
+  - { of: [built_of.list, function.gimbal], tier: derived, review: true, note: "Gimbal and feed, as the S1 and S2, from the modeller's S3 blockout (v01). Two powered trunnions at right angles, 1.75 m aft of the face on two side brackets, swing the reactor, nozzle and pump together; hydrogen comes in through coaxial rotary unions on the trunnion axes, before the pump, so they see tank pressure only. Checked: 36.7 kg/s of liquid hydrogen (70 kg/m3) in a 330 mm bore runs at 6.1 m/s. The hollow pins, 410 mm outside and 330 mm bore, have 0.0465 m2 of section: 330 kN of thrust shears one at 7.1 MPa, and 12 t swung at 5 g sideways at 12.8 MPa. Slewing about 48,000 kg m2 through 0.1 rad in 1 s takes about 19 kN m, taken to fit in the controls' 1,440 kg. Bearing, bending and the cryogenic seals are not checked. Review." }
+  - { of: [function.chamber], tier: derived, review: true, note: "Same 4 MPa chamber as the S1. The 1.4 m exit is the most the 2.5 m width allows with the swing, so the expansion is 32 and the ideal vacuum thrust coefficient (gamma 1.4) is 1.71 (the modeller took 1.70). The throat is 330 kN / (1.71 x 4 MPa) = 0.0482 m2, 248 mm across. Holding 9 km/s then needs c* of 5,260 m/s, about 3,140 K at the core exit, 140 K hotter than the S1; the bigger classes trade nozzle for core temperature. The bell is about 2.3 m, throat to exit. chamber_diameter is the vessel's 1.84 m. Review." }
+  - { of: [built_of.list, function.gimbal], tier: derived, review: true, note: "Layout, with the modeller's S3 blockout (v01). The shield is fixed at the face, Y -0.82 to -1.4: graphite at 1,800 kg/m3, 2.3 m across and 0.58 m thick, 4,337 kg, 4,500 kg cased. From the core centre 1.4 m behind it, it shades a cone of about 39 degrees half-angle. The core is centred 2.8 m aft (reaction_offset), the throat at about 4.7 m and the exit at 7 m. At 0.1 rad the exit edge reaches 1.235 m from the axis, inside the 1.25 m half-width with 15 mm to spare. The other part boxes are cube-root placeholders. Review." }
   - { of: [life], rule: rule.life-ship-system }
