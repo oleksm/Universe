@@ -3604,3 +3604,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Full-tank mount limit about37m/s2; final hull and service routing; GPU appearance/cost/temporal stability; pressure, thermal, fatigue and loaded support qualification."
+  - key: equipment.tank.nitrogen.100kg
+    version: 1
+    manifest_sha256: "a929301ae57b4a6135d267e150ecbb649c0c474e42a96935524b288b182c4e40"
+    installed: 83dcc80f
+    game: "the loader (world::assets) at fso 83dcc80f"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-nitrogen-100kg/v1 (88808 bytes, bounds [-0.575, 0.0, -0.4] to [0.575, 0.83, 0.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and gasline access; GPU appearance/cost and temporal edge stability; COPV laminate, pressure, gasfill, fatigue and loaded support qualification."
