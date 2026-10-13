@@ -3876,3 +3876,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Static laser relay only; actual gate optical alignment and utilities, runtime pointing/data link, GPU look/cost and temporal filtering, internal packing/load/thermal qualification remain pending. Source +/-5deg study is provisional."
+  - key: equipment.hyperdrive.halcyon.s2
+    version: 1
+    manifest_sha256: "83b08b3b213a9ede4a759abe392409e3649ae9608713816559591667253e9fa6"
+    installed: 6ad99d32
+    game: "the loader (world::assets) at fso 6ad99d32"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-halcyon-s2/v1 (154444 bytes, bounds [-1.41, 0.0, -0.94] to [1.41, 1.88, 0.94]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual hull placement and mount loads; GPU appearance/cost and temporal filtering; fictional field performance,1.5MW thermal balance and internal packing unqualified."
