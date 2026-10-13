@@ -3748,3 +3748,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Runtime boom motion, game GPU appearance/cost, final hull and neighbouring-equipment clearance, pressure/cryogenic seals, loads and drive qualification."
+  - key: equipment.utility.window.s1
+    version: 1
+    manifest_sha256: "df00a72f257a547ae0644aff97146185614701feb51d23bd5f5bb2a0498e97a5"
+    installed: 9cb0e47e
+    game: "the loader (world::assets) at fso 9cb0e47e"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/utility-window-s1/v1 (385468 bytes, bounds [-0.4, 0.0, -0.4] to [0.4, 0.15, 0.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Game transparency and GPU cost, temporal edge stability, final hull placement and retaining-ring qualification, pressure glass and seals remain pending"
