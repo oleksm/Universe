@@ -3460,3 +3460,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Pressure/fatigue/thermal and loaded supports unqualified; final hull placement, GPU appearance/cost and temporal edges pending."
+  - key: equipment.tank.hydrolox.s2
+    version: 1
+    manifest_sha256: "343d63c8e2eb31c781537216467b73f6a33144da92b94300f95d489756f9b4e0"
+    installed: c1101324
+    game: "the loader (world::assets) at fso c1101324"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-hydrolox-s2/v1 (361648 bytes, bounds [-2.8945, 0.0, -3.1043] to [2.8945, 6.0133, 3.1043]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Pressure/fatigue/thermal and loaded supports unqualified; final hull placement, GPU appearance/cost and temporal edges pending."
