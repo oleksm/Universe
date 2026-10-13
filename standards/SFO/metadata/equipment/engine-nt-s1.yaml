@@ -49,6 +49,12 @@ function:
     nozzle_length: 1
     cooling: regenerative
     wall: material.stainless-steel-304
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-nt-s1/v1"
+  manifest_sha256: "f1613070592bc5c60bc115d439440ef38e540d72949d97af3d6633d6dd321a3a"
+  version: 1
+  triangles: 15324
 life: 473364000
 basis:
   - { of: [function.exhaust, function.thrust, physical.mass], tier: invented, review: true, note: "NERVA-class, from memory: the NERVA XE gave about 250 kN at 7 km/s from about 18 t with its shield; 9 km/s is the advanced solid-core figure (Isp about 900 s). The classes scale by thrust. No source looked up. Review." }
