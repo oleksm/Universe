@@ -3620,3 +3620,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Final hull and gasline access; GPU appearance/cost and temporal edge stability; COPV laminate, pressure, gasfill, fatigue and loaded support qualification."
+  - key: equipment.tank.oxygen.10kg
+    version: 1
+    manifest_sha256: "d0f66ec1e40056e8eaaee6e5c39d02e9be8a1ca4d53ec0b48f1c096d0a11a7ed"
+    installed: 7face2a0
+    game: "the loader (world::assets) at fso 7face2a0"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-oxygen-10kg/v1 (88808 bytes, bounds [-0.31, 0.0, -0.16] to [0.31, 0.345, 0.16]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull and line access, GPU appearance/cost, temporal edge stability, pressure/liner/laminate, oxygen cleanliness, regulator and loaded mounts remain unqualified."
