@@ -33,6 +33,12 @@ function:
   kind: "handling"
   throughput: 10
   reach: 2.0
+visual:
+  format: "freefall-model/1"
+  path: "models/handling-ore-scoop-s1/v1"
+  manifest_sha256: "42fb4fe8343def5f9b14558dd1024cce3b5c9de1049706fea59ff09be636f62f"
+  version: 1
+  triangles: 9126
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "Takes 10 kg/s of loose rock from the excavator into a conveyor or bay. Chosen." }
