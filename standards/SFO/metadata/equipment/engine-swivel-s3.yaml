@@ -32,6 +32,12 @@ function:
   turns: 1.571
   bears: 500000
   slew: 0.1
+visual:
+  format: "freefall-model/1"
+  path: "models/engine-swivel-s3/v1"
+  manifest_sha256: "095b00a804bcf2cdd662267153d8707cd0ffdc8c2627b45ecdffadca36a4a3fd"
+  version: 1
+  triangles: 9718
 life: 473364000
 basis:
   - { of: [function], tier: invented, review: true, note: "A quarter turn in about seventeen seconds (0.1 rad/s, 1 s to speed up and to stop) under up to 500 kN. Chosen; no flown example at this scale. The engine it carries: up to 700 kg (CH-S3 is 600), centre of mass within 1.0 m of the pivot, no wider than 1.08 m for the first 135 mm behind the ring and 1.17 m on to 1.01 m from the pivot; confirmed clear by the modeller's 65-pose sweep (candidate-v01). Feed lines and wiring cross the turn as the engine's and hull's services, not the swivel's." }
