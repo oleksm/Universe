@@ -3172,3 +3172,19 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Runtime folding/compression, final hull bay and placement, GPU look/cost, temporal edges, load/damping/buckling/pad/drive qualification"
+  - key: equipment.handling.conveyor.s1
+    version: 1
+    manifest_sha256: "f408c0d772d29c648b9e40d77d107be4e2cbfb033024f2b1a008913a48e7d724"
+    installed: 42b120a2
+    game: "the loader (world::assets) at fso 42b120a2"
+    date: "2026-10-12"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/handling-conveyor-s1/v1 (259188 bytes, bounds [-4.0, 0.0, -0.4] to [4.0, 0.65, 0.4]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static empty exterior only; internal mechanism/packing, throughput/strength/pressure seal, free-fall feed handoff, runtime motion, GPU look/cost, temporal edges and final hull placement unqualified"
