@@ -376,12 +376,13 @@ def ladle_units():
     # Stair tower: four flights to a 12 m walkway in a 3 x 6 m lattice of kit struts.
     sg, _, sn, _ = lattice((-1.5, -3.0, 0.0, 1.5, 3.0, 12.0), 3.0, 3, None, [])
     ssec = frames.lightest_section((4 * 750.0 + 3.0 * 6.0 * 5000.0) * G / 4, with_diagonal=True)
-    sframe = sum(n * strut(ssec, 3.0, diag)[1]["physical"]["mass"] for g_ in ("wall", "roof") for diag, n in ((False, sg[g_][0]), (True, sg[g_][1])))
+    inner = {False: 3, True: 4}                       # the y 0 face's three ties and four diagonals left out: they would cross the flights (blender)
+    sframe = sum((n - (inner[diag] if g_ == "wall" else 0)) * strut(ssec, 3.0, diag)[1]["physical"]["mass"] for g_ in ("wall", "roof") for diag, n in ((False, sg[g_][0]), (True, sg[g_][1])))
     snode = yaml.safe_load(open(S + "mill-stock/" + strut(ssec, 3.0)[1]["kit"]["node"].split(".", 1)[1].upper() + ".yaml"))
     sframe += sn * frames.node_mass(snode, frames.materials())
     out["stair-tower-12m"] = dict(
-        name="Stair tower, 12 m", size_class=1, fits="bay-s1", dims=(3.0, 6.0, 12.0),
-        desc="Four flights of steel stairs (3 m rise each, 37 degrees, 0.9 m wide) with a landing at each turn, inside a 3 x 6 m lattice of kit struts; the top landing on its -x face at local (-1.5, 0, 12) meets a walkway. For people and hand tools only.",
+        name="Stair tower, 12 m", size_class=1, fits="bay-s1", dims=(3.0, 6.0, 13.1),
+        desc="Four switchback flights of steel stairs (each 18 risers of 167 mm over a 4 m run, 0.9 m wide) with 1 m landings at the ends, inside a perimeter lattice of kit struts 3 x 6 m (none across its middle, where the flights pass); the top landing at z 12 on its -x face at local (-1.5, 0, 12) meets a walkway, its guard rails to z 13.1. For people and hand tools only.",
         built_of=[part("Stairs and landings", A36, 4 * 750.0, "four flights with treads and rails and their landings, 750 kg each, from memory"),
                   part("Frame", f"stock.{ssec}-s3000", sframe, f"the lattice in {ssec} with its nodes, the kit's lightest for its own weight and 5 kPa on its landings with half again to spare")],
         needs={},
@@ -692,9 +693,9 @@ def ladle_station_air(us, recs):
     links = [
         link("rail", "ladle rail", (-24.0, 0.0, 0.0), (24.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the arc furnace shop's rail, out by the east door to the casting bay's; the car's centre stops at x -9 (the ladle furnace) and x 3 (the degasser's crane lift)"),
         link("busbar", "secondary bus", (-9.0, -9.0 + tW / 2, tH * 2 / 3), (-9.0, -5.0, 6.0), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {L_I2 / 1000:.0f} kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side"),
-        link("conveyor", "alloy feed", (-9.0, 27.0, 7.0), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), rising 2.4 m (6 degrees) from under the bins' transfer chute to 0.4 m over the ladle furnace's chute, through the north wall at z 8.2"),
+        link("conveyor", "alloy feed", (-9.9, 27.0, 6.2), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), its tail 0.9 m west of the bins' centre (clear of their middle leg at x -9, y 25.5) under a steep 1.2 m drop chute from the transfer chute's foot; rising 3.2 m (7.6 degrees) to 0.4 m over the ladle furnace's chute, through the north wall"),
         link("duct", "fume", (-7.0, 0.0, 7.5), (9.0, 20.0, 10.0), A36, math.pi * 1.0 * 0.006 * RHO["steel"], None, "1 m across, 6 mm plate: up from the ladle furnace's roof elbow, through the north wall's opening, to the baghouse's inlet, at z 11 under the gantry's north tie (its top 0.1 m below the tie at 11.6); the roof's fume is cooler than an arc furnace's, so the duct is not water-cooled", via=[(-7.0, 0.0, 11.0), (0.0, 6.0, 11.0), (0.0, 17.0, 12.0), (9.0, 17.0, 10.0)]),
-        link("pipe", "cooling water to the ladle furnace", (tx, -9.0, 0.75), (-13.5, -4.5, 1.0), A36, pipe_m, None, "a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower's first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault to the ladle furnace's manifold", via=[(tx + 1.5, -9.0, 0.75), (tx + 1.5, -9.0, 1.5), (-16.0, -9.0, 1.5), (-16.0, -4.5, 1.5)]),
+        link("pipe", "cooling water to the ladle furnace", (tx, -9.0, 0.75), (-13.5, -4.5, 1.0), A36, pipe_m, None, "a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower's first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault, then east just south of the ladle furnace's south-west column (x -14, y -4.4) and up into its manifold", via=[(tx + 1.5, -9.0, 0.75), (tx + 1.5, -9.0, 1.5), (-16.0, -9.0, 1.5), (-16.0, -5.3, 1.5), (-13.5, -5.3, 1.0)]),
         link("pipe", "cooling water to the transformer", (-16.0, -9.0, 1.5), (-9.0 - tL / 2, -9.0, 1.0), A36, tr_pipe_m, None, "a pair of 100 mm pipes, 4 mm wall, teed off the furnace pair, through the vault's west wall to the transformer's cooler ports"),
     ]
     mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-9.0, 0.0, 0.0]}]

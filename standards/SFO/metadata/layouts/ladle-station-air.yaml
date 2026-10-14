@@ -65,13 +65,13 @@ links:
   note: three water-cooled copper tube bars, 6575 mm2 each for 26 kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side
 - kind: conveyor
   name: alloy feed
-  from: [-9.0, 27.0, 7.0]
+  from: [-9.9, 27.0, 6.2]
   to: [-9.0, 3.0, 9.4]
-  length: 24.12
+  length: 24.23
   item: material.structural-steel-a36
-  mass: 2894.0
+  mass: 2907.0
   power: 20000.0
-  note: 0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), rising 2.4 m (6 degrees) from under the bins' transfer chute to 0.4 m over the ladle furnace's chute, through the north wall at z 8.2
+  note: 0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), its tail 0.9 m west of the bins' centre (clear of their middle leg at x -9, y 25.5) under a steep 1.2 m drop chute from the transfer chute's foot; rising 3.2 m (7.6 degrees) to 0.4 m over the ladle furnace's chute, through the north wall
 - kind: duct
   name: fume
   from: [-7.0, 0.0, 7.5]
@@ -96,8 +96,9 @@ links:
   - [-25.5, -9.0, 0.75]
   - [-25.5, -9.0, 1.5]
   - [-16.0, -9.0, 1.5]
-  - [-16.0, -4.5, 1.5]
-  note: 'a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower''s first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault to the ladle furnace''s manifold'
+  - [-16.0, -5.3, 1.5]
+  - [-13.5, -5.3, 1.0]
+  note: 'a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower''s first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault, then east just south of the ladle furnace''s south-west column (x -14, y -4.4) and up into its manifold'
 - kind: pipe
   name: cooling water to the transformer
   from: [-16.0, -9.0, 1.5]

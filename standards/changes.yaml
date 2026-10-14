@@ -828,7 +828,7 @@
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
 - { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T19:11:30Z", status: draft, summary: "changed", sha: "39f79738e350feef" }
-- { record: layout.ladle-station-air, at: "2026-10-14T19:58:53Z", status: draft, summary: "changed: bays, links", sha: "f4a6af8ba30fd234" }
+- { record: layout.ladle-station-air, at: "2026-10-14T20:00:01Z", status: draft, summary: "changed: links", sha: "f369986c48a468cc" }
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
@@ -2784,7 +2784,7 @@
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
 - { record: unit.stacker-reclaimer-1500th, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "37f21c4682c96ba8" }
-- { record: unit.stair-tower-12m, at: "2026-10-14T19:55:55Z", status: draft, summary: "first tracked", sha: "37f704d47300fa7b" }
+- { record: unit.stair-tower-12m, at: "2026-10-14T20:00:01Z", status: draft, summary: "changed: identity, physical, built_of", sha: "35409f4e4dbd1252" }
 - { record: unit.stripper-crane-20t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "badfb6c3f9f6eccb" }
 - { record: unit.stripper-gantry-20t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "b6a035fa51651740" }
 - { record: unit.top-gas-condenser-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "61482cc1d5511262" }

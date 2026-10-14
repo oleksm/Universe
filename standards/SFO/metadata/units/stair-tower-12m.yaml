@@ -1,12 +1,12 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.stair-tower-12m, name: 'Stair tower, 12 m', description: 'Four flights of steel stairs (3 m rise each, 37 degrees, 0.9 m wide) with a landing at each turn, inside a 3 x 6 m lattice of kit struts; the top landing on its -x face at local (-1.5, 0, 12) meets a walkway. For people and hand tools only.'}
+identity: {key: unit.stair-tower-12m, name: 'Stair tower, 12 m', description: 'Four switchback flights of steel stairs (each 18 risers of 167 mm over a 4 m run, 0.9 m wide) with 1 m landings at the ends, inside a perimeter lattice of kit struts 3 x 6 m (none across its middle, where the flights pass); the top landing at z 12 on its -x face at local (-1.5, 0, 12) meets a walkway, its guard rails to z 13.1. For people and hand tools only.'}
 size_class: 1
 fits: plant-mount.bay-s1
-physical: {length: 3.0, width: 6.0, height: 12.0, mass: 6619.0}
+physical: {length: 3.0, width: 6.0, height: 13.1, mass: 6384.0}
 built_of:
 - {what: Stairs and landings, item: material.structural-steel-a36, mass: 3000.0, note: 'four flights with treads and rails and their landings, 750 kg each, from memory'}
-- {what: Frame, item: stock.st4340-tb-120x3-s3000, mass: 3619.0, note: 'the lattice in st4340-tb-120x3 with its nodes, the kit''s lightest for its own weight and 5 kPa on its landings with half again to spare'}
+- {what: Frame, item: stock.st4340-tb-120x3-s3000, mass: 3384.0, note: 'the lattice in st4340-tb-120x3 with its nodes, the kit''s lightest for its own weight and 5 kPa on its landings with half again to spare'}
 needs: {}
 life: 788940000
 basis:
