@@ -192,10 +192,15 @@ def car_units():
         holds=HEAT * 1.1, needs={"power": 50000.0},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Sized to hold a tap of 80 t of steel (7,000 kg/m3) with its slag cover and freeboard: 17 m3 inside. Lining thicknesses from memory."}])
     vol = SLAG / 1500 * 1.25
+    R1, R2, tp = 1.45, 1.25, 0.08                                    # pot radii inside, top and bottom, and its wall (blender, 2026-10-14)
+    Hp = vol / (math.pi / 3 * (R1 ** 2 + R1 * R2 + R2 ** 2))         # its depth inside for the volume
+    frustum = lambda a, b, h: math.pi / 3 * h * (a ** 2 + a * b + b ** 2)
+    pot_m = (frustum(R1 + tp, R2 + tp, Hp + tp) - frustum(R1, R2, Hp)) * RHO["steel"]
     out["slag-pot-car"] = dict(
         name=f"Slag pot car, {vol:.0f} m3", size_class=1, dims=(5.0, 3.5, 3.4),
         desc="A tapered cast steel pot (2.9 m across at the top, 2.5 m at the bottom, 1.74 m deep) seated on a four-wheel rail car that runs under the furnace's slag door and takes the slag out to be cooled and broken. It travels along its length; 2.5 m gauge between the heads' inner faces, its origin on the running plane; the pot's lip 3.4 m up. The slag falls from the vessel's door through the platform's slag tunnel; the car has no chute.",
-        built_of=[part("Pot", A36, 25 * 0.08 * RHO["steel"] * vol / 10, f"cast steel 80 mm, {vol:.0f} m3"),
+        built_of=[part("Pot", A36, pot_m, f"cast steel 80 mm: a frustum {2 * R1:.1f} m across at the top, {2 * R2:.1f} m at the bottom, {Hp:.2f} m deep inside, {vol:.0f} m3"),
+                  part("Trunnion ring and pins", A36, 2516.0, "measured on blender's model (slag-pot-car candidate v01: ring 2,200 kg, pins 316 kg)"),
                   part("Car", A36, 9000.0, "from memory"),
                   part("Drives", "good.electric-motors", 1500.0, "from memory")],
         holds=SLAG, needs={"power": 30000.0},
