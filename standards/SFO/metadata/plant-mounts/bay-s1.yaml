@@ -10,4 +10,4 @@ basis:
   note: 'Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid.'
 - of: [bears, feeds]
   rule: rule.mounts-margin
-  note: Round the units fitted to it in the trial (unit.dri-bin-200t, unit.furnace-transformer-14mva) at 1 g, full.
+  note: Round the units fitted to it in the trial (unit.dri-bin-200t, unit.furnace-transformer-14mva, unit.sampling-lab) at 1 g, full.

@@ -60,7 +60,7 @@ properties:
       additionalProperties: false
       required: [kind, from, to, length, mass]
       properties:
-        kind: { enum: [conveyor, duct, rail, busbar, pipe, cable] }
+        kind: { enum: [conveyor, duct, rail, busbar, pipe, cable, road], description: "road: a paved lane that wheeled units (forklifts, trucks) run on." }
         name: { type: string }
         from: { $ref: "#/definitions/point" }
         to: { $ref: "#/definitions/point" }

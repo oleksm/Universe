@@ -1555,6 +1555,219 @@ def pellet_plant_air(us, recs):
     return layout, bays
 
 
+# ---------------------------------------------------------------- the yards at the line's two ends
+omod = yaml.safe_load(open(S + "modules/ore-yard.yaml"))
+imod = yaml.safe_load(open(S + "modules/ingot-yard.yaml"))
+ORE_BULK = yaml.safe_load(open(S + "goods/iron-ore.yaml"))["physical"]["bulk_density"]
+REPOSE = 37.0                      # degrees: iron ore's angle of repose, from memory
+CRATE = yaml.safe_load(open(S + "packages/crate-heavy.yaml"))
+
+
+def yard_units():
+    out = {}
+    out["stacker-reclaimer-1500th"] = dict(
+        name="Bucket wheel stacker-reclaimer, 1,500 t an hour", size_class=3, dims=(40.0, 12.0, 20.0),
+        desc="Runs on its rail between two stockpile beds: stacking, its boom (32 m, slewing either side) drops ore from the yard belt's tripper onto a bed; reclaiming, the bucket wheel at the boom's end cuts into the pile's face and sends the ore back down the boom onto the yard belt, which then runs the other way. Stacks 1,500 t an hour (a ship's load landed at the port in a day), reclaims 500. Travels along its x on 10 m gauge, its origin on the running plane at the slewing centre.",
+        built_of=[part("Boom, counterweight boom and slewing frame", A36, 260000.0, "from memory"),
+                  part("Portal and bogies", A36, 120000.0, "from memory"),
+                  part("Bucket wheel, drives and belts", "good.electric-motors", 70000.0, "from memory")],
+        needs={"power": 900e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "Masses, rates and power from memory of stacker-reclaimers of this size."}])
+    out["truck-dump-hopper"] = dict(
+        name="Truck dump hopper", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 8.0),
+        desc="A steel hopper over a pit that a tipping truck backs onto and empties into, 100 t, with an apron feeder under it onto the yard belt; its grizzly bars keep out the lumps. The trucks come from the port, its feeder's outlet at local (0, 0, -4) in the pit.",
+        built_of=[part("Hopper and grizzly", A36, 45000.0, "from memory"), part("Apron feeder", "good.electric-motors", 25000.0, "from memory")],
+        holds=100000.0, needs={"power": 150e3},
+        basis=[{"of": ["physical", "built_of", "holds", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    out["ingot-crane-10t"] = bridge_crane_unit(10000.0, 22.8, 3000.0, kind="Ingot crane", job="it lifts hot ingots off the ingot car with its tongs, a row at a time, onto the cooling racks, and later onto the crating line's roller table", gear="ingot tongs")
+    out["sampling-lab"] = dict(
+        name="Sampling laboratory", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 3.5),
+        desc="A cabin with a saw that cuts a sample from one ingot of each heat, a grinder, and a spark emission spectrometer that reads the steel's composition in minutes, so the heat's grade can be certified on its crates' labels.",
+        built_of=[part("Cabin", A36, 8000.0, "from memory"), part("Saw, grinder and spectrometer", "good.electric-motors", 3000.0, "from memory")],
+        needs={"power": 60e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    out["crating-line"] = dict(
+        name="Crating line", size_class=2, fits="bay-s2", dims=(12.0, 4.0, 3.0),
+        desc="A roller table along x: a cooled ingot set on at its -x end is weighed, laid in a heavy crate on its skids, the lid nailed on and the label printed with the heat, grade and mass; the crate leaves at the +x end for a forklift.",
+        built_of=[part("Roller table, scale and nailer", A36, 12000.0, "from memory")],
+        needs={"power": 40e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    out["forklift-2t5"] = dict(
+        name="Forklift, 2.5 t", size_class=1, dims=(3.6, 1.3, 2.2),
+        desc="A battery-electric counterbalance forklift that moves heavy crates from the crating line to the stacks and from the stacks onto trucks; it lifts a loaded crate (1.6 t) onto another, two high.",
+        built_of=[part("Chassis and counterweight", A36, 3200.0, "from memory"), part("Mast, motors and battery", "good.electric-motors", 1000.0, "from memory")],
+        needs={"power": 8e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory; power the average charge."}])
+    return out
+
+
+def ore_yard_air(us, recs):
+    """The ore yard on a world with air: two stockpile beds either side of a stacker-reclaimer's rail."""
+    hold = omod["capacity"]["holds"]
+    h = 15.0
+    base = 2 * h / math.tan(math.radians(REPOSE))
+    bed_L = hold / 2 / ORE_BULK / (base * h / 2)
+    x0 = -bed_L / 2
+    bays = [{"id": "H", "mount": "plant-mount.bay-s2", "unit": "unit.truck-dump-hopper", "at": [r(x0 - 24.0), 0.0, 0.0], "note": "at the rail's west end, its feeder in a pit onto the yard belt"}]
+    gauge_y = 0.0
+    beds_y = (base / 2 + 8.0)
+    links = [
+        link("rail", "machine rail", (r(x0 - 10), 0.0, 0.0), (r(-x0 + 10), 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 10 m gauge on a concrete bed"),
+        link("conveyor", "yard belt", (r(x0 - 24.0), 0.0, -4.0), (r(-x0 + 20), 0.0, 1.0), A36, 200.0, 400000.0, "a 1.4 m reversible belt beside the rail, with the machine's tripper on it: ore from the hopper to the machine stacking, from the machine to the out belt reclaiming", via=[(r(x0 - 14.0), 0.0, 1.0)]),
+        link("conveyor", "out belt", (r(-x0 + 20), 0.0, 1.0), (r(-x0 + 80), 0.0, 1.0), A36, 150.0, 100000.0, "a 1 m belt to the pellet plant's ore belt, beyond the layout"),
+        link("pipe", "dust sprays", (r(x0), beds_y + base / 2 + 2, 1.0), (r(-x0), -(beds_y + base / 2 + 2), 1.0), A36, math.pi * 0.1 * 0.004 * RHO["steel"], None, "100 mm, along both beds' outer edges, spraying water to keep the dust down", via=[(r(-x0), beds_y + base / 2 + 2, 1.0), (r(-x0) + 2, 0.0, 1.0), (r(x0) - 2, 0.0, 1.0), (r(x0), -(beds_y + base / 2 + 2), 1.0)]),
+    ]
+    mobile = [{"unit": "unit.stacker-reclaimer-1500th", "rides": "machine rail", "at": [0.0, 0.0, 0.0]}]
+    ground = [
+        {"what": "Rail bed", "item": CONC, "volume": r((bed_L + 20) * 2 * 1.0 * 0.8), "note": "two strips 1 m wide and 0.8 m deep under the rails"},
+        {"what": "Hopper pit", "item": CONC, "volume": r(12 * 10 * 0.6 + 2 * (12 + 10) * 6 * 0.4), "note": "6 m deep under the hopper, 0.4 m walls"},
+        {"what": "Bed pads", "item": CONC, "volume": r(2 * bed_L * base * 0.2), "note": f"two pads {bed_L:.0f} x {base:.0f} m, 0.2 m, at y -{beds_y:.0f} and {beds_y:.0f}, sloped to drains"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    total = mass_units + mass_links + mass_ground
+    L = r(-x0 + 80 - (x0 - 30))
+    W = r(2 * (beds_y + base / 2 + 3))
+    water = 0.2
+    mp = omod["physical"]
+    against = (f"module.ore-yard: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, holding {hold / 1e6:.0f} kt. "
+               f"This layout: two beds {bed_L:.0f} m long, {base:.0f} m across and {h:g} m high (iron ore at {ORE_BULK} kg/m3 lying at {REPOSE:g} degrees) hold the same; {power / 1e6:.2f} MW with every drive running, against the module's {omod['needs']['power'] / 1e6:.1f}; "
+               f"{(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of concrete.")
+    layout = {
+        "identity": {"key": "layout.ore-yard-air", "name": "Ore yard, world with air",
+                     "description": "Two stockpile beds of ore either side of a bucket wheel stacker-reclaimer's rail. Trucks from the port tip into a hopper; the yard belt takes the ore to the machine, which stacks it, and later reclaims it onto the belt for the pellet plant. Water sprays keep the dust down. Open ground, no hall. For a world with air at about 1 g."},
+        "stands_for": "module.ore-yard",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": L, "width": W, "height": 20.0, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "totals": {"rate": 0.0, "power": r(power), "heat": 0.0, "water": water, "mass": r(total), "against_module": against},
+        "staff": omod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out from memory of ore yards."},
+                  {"of": ["ground", "physical"], "tier": "derived", "review": True, "note": f"The beds from the module's {hold / 1e6:.0f} kt, the ore's bulk density and its angle of repose (from memory); concrete at 2,400 kg/m3."},
+                  {"of": ["totals.water"], "tier": "invented", "review": True, "note": "Dust sprays, from memory."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.ore-yard-air: {total / 1000:,.0f} t, beds {bed_L:.0f} x {base:.0f} x {h:g} m, {L:.0f} x {W:.0f} m")
+    return layout, bays
+
+
+def ingot_yard_air(us, recs):
+    """The ingot yard on a world with air: a cooling hall with an ingot crane, the sampling lab, a crating line, and the
+    crates block-stacked two high on a paved yard, worked by forklifts."""
+    cell, box = 3.0, (-30.0, -15.0, 0.0, 30.0, 15.0, 15.0)
+    doors = [(-30.0, 3.0, 0.0, -27.0, 9.0, 6.0),           # the ingot rail in, west
+             (27.0, -6.0, 0.0, 30.0, 0.0, 6.0)]            # crates out to the yard, east
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 4, None, doors)
+    x0, y0, z0, x1, y1, z1 = box
+    span_in = y1 - y0 - 2 * cell
+    crane = recs["ingot-crane-10t"]
+    cap, trolley = 10000.0, 3000.0
+    roof_q = (0.002 * RHO["aluminium"] + 20.0) * G + 1000.0
+    chord = roof_q * cell * span_in ** 2 / 8 / cell
+    wheel = ((cap + trolley) * (1 - 1.5 / (span_in - 1.2)) + crane["physical"]["mass"] / 2) * G / 2
+    vert = wheel + roof_q * cell * span_in / 2
+    sec = {"roof": frames.lightest_section(chord), "wall": frames.lightest_section(vert)}
+    members, fmass = [], 0.0
+    for g in ("wall", "roof"):
+        for diag, n in ((False, groups[g][0]), (True, groups[g][1])):
+            key, st = strut(sec[g], cell, diag)
+            members.append({"item": key, "count": n, "where": g})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec["wall"], cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    rw_a = 0.4 * 0.4 - 0.35 * 0.35
+    x_in = x1 - x0 - 2 * cell
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 2, "where": f"crane runways, one a side, {x_in:.0f} m, their rail plane 9 m up at y -11.4 and +11.4"})
+    fmass += 2 * x_in * rw_a * RHO["steel"]
+    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
+    clad = clad_area * 0.002 * RHO["aluminium"]
+    sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
+    sized = (f"At 1 g: roof {roof_q:.0f} Pa over a {span_in:.0f} m span puts {chord / 1e3:.0f} kN in a chord: {sec['roof']} takes {frames.strut_capacity(sec_stock('roof')) / 1e3:.0f} kN. "
+             f"A wheel of the 10 t crane loaded at the runway's end, with the roof's share, puts {vert / 1e3:.0f} kN on a wall node: {sec['wall']} takes {frames.strut_capacity(sec_stock('wall')) / 1e3:.0f} kN. Wind and footings not yet checked.")
+    # The ingots: as the casting bay makes them, cooled a day on racks.
+    ing_rate = C_RATE * SOUND / ING_M                      # ingots a second
+    cool_h = 24.0
+    on_racks = math.ceil(ing_rate * cool_h * 3600)
+    rack_heat = C_RATE * SOUND * 600.0 * (700.0 - 40.0)    # W the ingots give the hall's air, cooling from about 700 deg C
+    # The stacks: block-stacked two high in lanes ten crates deep off 4.5 m forklift aisles.
+    crates = math.ceil(imod["capacity"]["holds"] / (ING_M + CRATE["physical"]["mass"]))
+    lanes = math.ceil(crates / CRATE["stack"] / 10)
+    lane_w = CRATE["physical"]["width"] + 0.1
+    lane_d = 10 * CRATE["physical"]["length"]
+    rows = 6                                               # aisles, so the yard comes out near square
+    per_row = math.ceil(lanes / (2 * rows))                # lanes face both sides of each aisle
+    yard_L = per_row * lane_w
+    yard_W = rows * (2 * lane_d + 4.5)
+    yx0 = x1 + 10.0
+    aisle_y = [r(-yard_W / 2 + lane_d + 2.25 + i * (2 * lane_d + 4.5)) for i in range(rows)]
+    aisle_path = []
+    for i, y in enumerate(aisle_y):
+        ends = (yx0, yx0 + yard_L) if i % 2 == 0 else (yx0 + yard_L, yx0)
+        aisle_path += [(r(ends[0]), y, 0.0), (r(ends[1]), y, 0.0)]
+    bays = [
+        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.sampling-lab", "at": [-21.0, -9.0, 0.0], "note": "in the hall, by the ingot rail"},
+        {"id": "K", "mount": "plant-mount.bay-s2", "unit": "unit.crating-line", "at": [18.0, -3.0, 0.0], "note": "in the hall, running out of its east door"},
+    ]
+    links = [
+        link("rail", "ingot rail", (-36.0, 6.0, 0.0), (-6.0, 6.0, 0.0), A36, 2 * 50.0, None, "two 50 kg/m rails at 2 m gauge, set in the floor: in by the west door from the casting bay; the car stops at x -15 under the crane"),
+        link("road", "yard aisles", aisle_path[0], aisle_path[-1], CONC, 4.5 * 0.25 * RHO["concrete"], None, f"{rows} forklift aisles 4.5 m wide, {yard_L:.0f} m long, joined end to end, paved 0.25 m (the rest of the yard is the ground's)", via=aisle_path[1:-1]),
+        link("road", "truck lane", (x1, -3.0, 0.0), (yx0 + yard_L + 20.0, -3.0, 0.0), CONC, 7.0 * 0.3 * RHO["concrete"], None, "7 m wide, paved 0.3 m: trucks load crates at the yard's east end for the port, beyond the layout"),
+    ]
+    mobile = [{"unit": "unit.forklift-2t5", "rides": "yard aisles", "at": [r(yx0 + 10.0 + 20.0 * i), aisle_y[i % rows], 0.0]} for i in range(6)]
+    ground = [
+        {"what": "Cooling floor and racks' footings", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m under the hall: steel racks (in the hall's frame) for the {on_racks} ingots of a day's cooling"},
+        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+        {"what": "Stack yard", "item": CONC, "volume": r((yard_L * yard_W - rows * yard_L * 4.5) * 0.25), "note": f"{yard_L:.0f} x {yard_W:.0f} m paved 0.25 m east of the hall: {crates:,} crates two high in {lanes} lanes ten deep, either side of its aisles; outdoors, the crates under tarpaulins"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    racks = on_racks * 60.0                                # kg of rack steel an ingot place, from memory
+    members.append({"item": "stock.st4340-box-300x300x20", "count": math.ceil(racks / (box_tube(0.3, 0.3, 0.02, 6.0) * RHO["steel"])), "where": f"cooling racks in 6 m lengths for {on_racks} ingots, from memory"})
+    fmass += racks
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    frame_mass = fmass + clad
+    total = mass_units + mass_links + frame_mass + mass_ground
+    mp = imod["physical"]
+    L = r(yx0 + yard_L + 20.0 - (x0 - 6.0))
+    W = r(max(y1 - y0, yard_W))
+    against = (f"module.ingot-yard: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, holding {imod['capacity']['holds'] / 1e6:.0f} kt. "
+               f"This layout: {crates:,} heavy crates of one ingot each, two high as the crate allows, need a yard {yard_L:.0f} x {yard_W:.0f} m ({yard_L * yard_W / 1e4:.1f} ha), more than the module's box; "
+               f"the cooling hall gives {rack_heat / 1e6:.1f} MW of the ingots' heat to the air; {power / 1e6:.2f} MW against the module's {imod['needs']['power'] / 1e6:.1f}; "
+               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant, frame and paving, {mass_ground / 1000:,.0f} t of concrete.")
+    layout = {
+        "identity": {"key": "layout.ingot-yard-air", "name": "Ingot yard, world with air",
+                     "description": "The ingots come in hot on their car from the casting bay; a crane lays them on racks in a cooling hall for a day; one of each heat is sampled and analysed; a crating line puts each ingot in a heavy crate with its label; forklifts stack the crates two high on a paved yard and load them onto trucks for the port. For a world with air at about 1 g."},
+        "stands_for": "module.ingot-yard",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": L, "width": W, "height": z1, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 12 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; doors 6 m wide for the ingot rail (west) and the crates (east). Its walls' lower cells open at the sides for air (not yet drawn).",
+                  "openings": [list(d) for d in doors], "members": members,
+                  "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
+                  "carries": ["unit.ingot-crane-10t"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": 0.0, "power": r(power), "heat": 0.0, "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": imod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile", "frame.box"], "tier": "invented", "review": True, "note": "Laid out from memory; a day's cooling on the racks from memory."},
+                  {"of": ["ground", "physical"], "tier": "derived", "review": True, "note": "The yard from the module's holding, the crate's size and its stacking limit (package.crate-heavy), lanes ten deep and 4.5 m aisles (from memory)."},
+                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": "Counted from the lattice; sections chosen by the loads in frame.sized; racks from memory."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.ingot-yard-air: {total / 1000:,.0f} t, {crates:,} crates, yard {yard_L:.0f} x {yard_W:.0f} m, {on_racks} ingots cooling, {rack_heat / 1e6:.1f} MW to air")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -1602,8 +1815,9 @@ def main():
     hu["cooling-tower-h2"] = cooling_unit(N_BLK * (hu["electrolyser-block-20mw"]["needs"]["heat"] + hu["rectifier-transformer-21mva"]["needs"]["heat"]), "the electrolysers' and rectifiers'")
     us.update(hu)
     us.update(pellet_units())
+    us.update(yard_units())
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)
