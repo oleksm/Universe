@@ -64,6 +64,7 @@ properties:
         name: { type: string }
         from: { $ref: "#/definitions/point" }
         to: { $ref: "#/definitions/point" }
+        via: { type: array, items: { $ref: "#/definitions/point" }, description: "Corners the link turns at, in order from `from`; it runs straight between them." }
         length: { type: number, exclusiveMinimum: 0, x-unit: "m" }
         item: { type: string, x-ref: [material, stock, good] }
         mass: { type: number, exclusiveMinimum: 0, x-unit: "kg" }
