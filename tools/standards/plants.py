@@ -216,16 +216,17 @@ def car_units():
     # Hall crane: a double-girder bridge over the 24 m span.
     span, cap = 24.0, 20000.0
     gird = 2 * box_tube(0.6, 1.4, 0.012, span) * RHO["steel"]
-    I = 2 * 0.6 * 0.012 * 0.7 ** 2 + 2 * 0.012 * 1.4 ** 3 / 12
+    I = (0.6 * 1.4 ** 3 - (0.6 - 0.024) * (1.4 - 0.024) ** 3) / 12   # one girder, the box exactly
     defl = cap * G * span ** 3 / (48 * 205e9 * 2 * I)
+    defl_all = (cap + 6000.0) * G * span ** 3 / (48 * 205e9 * 2 * I) + 5 * gird / span * G * span ** 4 / (384 * 205e9 * 2 * I)   # with the trolley and the girders' own weight
     out["hall-crane-20t"] = dict(
         name="Hall crane, 20 t", size_class=2, dims=(6.0, span, 3.0),
         desc="A double-girder bridge crane on the hall's runways, for the roof, the electrodes and relining. Hangs on the frame; names no bay. It travels along its x on four wheels, two end carriages 6 m long at y -11.7 and +11.7; its origin on the runway's rail plane, the two girders 1.8 m either side of it; the trolley runs 10 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall's centre.",
-        built_of=[part("Bridge girders", A36, gird, f"two box girders 1.4 x 0.6 m, 12 mm wall, {span:.0f} m: {defl * 1000:.0f} mm under 20 t at mid-span, span/{span / defl:.0f}"),
+        built_of=[part("Bridge girders", A36, gird, f"two box girders 1.4 x 0.6 m, 12 mm wall, {span:.0f} m: at mid-span {defl * 1000:.1f} mm under the 20 t load alone (span/{span / defl:.0f}), {defl_all * 1000:.1f} mm with the trolley and their own weight (span/{span / defl_all:.0f}); checked by blender, 2026-10-14"),
                   part("Trolley and hoist", A36, 6000.0, "from memory"),
                   part("End carriages and drives", "good.electric-motors", 4000.0, "from memory")],
         needs={"power": 60000.0},
-        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Girders sized for 20 t at mid-span within span/800; trolley and drives from memory."}])
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Girders sized for 20 t at mid-span within span/800, which they meet with the trolley and their own weight too; trolley and drives from memory; the hook, reeving and drives not sized."}])
     return out
 
 
