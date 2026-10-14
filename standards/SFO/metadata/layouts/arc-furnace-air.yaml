@@ -73,7 +73,7 @@ links:
   length: 37.5
   item: material.structural-steel-a36
   mass: 4500.0
-  note: two 60 kg/m rails under the tap, out of the hall's east door to the ladle station
+  note: two 60 kg/m rails at 3 m gauge, their running plane the floor (z 0), under the tap, out of the hall's east door to the ladle station
 - kind: rail
   name: slag rail
   from: [-16.5, 0.0, 0.0]
