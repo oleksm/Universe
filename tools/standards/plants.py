@@ -991,11 +991,13 @@ def shaft_units():
               f"the reduction zone ({zones['reduction']:g} m); the bustle main, a ring {d_b:.1f} m across round the shaft at z {z_bustle:.0f}, through whose ports hydrogen at {T_GAS:.0f} deg C enters, its inlet on -y; "
               f"the transition; the cooling zone ({zones['cooling']:g} m), cooled by a loop of cold hydrogen in at z {z_ring - 8:.0f} and out at z {z_ring - 3:.0f} (ports on -x); a discharge cone to burden feeders and a lock at z {Z_OUT:g}, over the layout's product belt. "
               f"Hung from a ring girder whose underside is at z {z_ring:.0f} (radius {Do / 2 + 0.4:.1f} m to its centre, the cooling zone's top, under the bustle), seated on the layout's columns' tops. The bustle's inlet is a short stub out of the ring on -y, its flange on the unit's face at y -{side / 2:g}. About {burden / 1000:,.0f} t of burden inside."),
-        built_of=[part("Shell", A36, shell, f"{Do:.2f} m across, {hot + cold:g} m, {t_sh * 1000:.0f} mm plate; the cones not counted apart"),
+        built_of=[part("Shell", A36, 247694.8, f"{Do:.2f} m across, {hot + cold:g} m, {t_sh * 1000:.0f} mm plate, with its cones, roof and bands; measured on model v1 (by formula {shell:,.0f} kg for the cylinder)"),
                   part("Lining", REF, lining, f"{t_hot * 1000:.0f} mm in the hot {hot:g} m, {t_cold * 1000:.0f} mm against wear in the cooling zone and cone"),
-                  part("Bustle main", A36, bustle_s, f"a ring {2 * R_b:.1f} m across of {d_b + 0.4:.1f} m pipe, 20 mm plate"),
+                  part("Bustle main", A36, bustle_s, f"a ring {2 * R_b:.1f} m across of {d_b + 0.4:.1f} m pipe, 20 mm plate; by formula (the faceted model's skin {61069.5:,.0f} kg), with 12 ports of 0.65 m into the shaft ({12 * math.pi * 0.65 ** 2 / 4:.1f} m2, half the main's bore, so the ring evens the flow)"),
                   part("Bustle lining", REF, bustle_r, "200 mm inside the ring"),
-                  part("Support ring girder", A36, ring, "a box 0.8 x 1.2 m, 40 mm plate, round the shaft"),
+                  part("Support ring girder", A36, 35860.7, f"a box 0.8 x 1.2 m, 40 mm plate, round the shaft, with its seating land; measured on model v1 (by formula {ring:,.0f} kg)"),
+                  part("Bustle struts", A36, 1037.6, "8 inclined fabricated boxes 200 x 200 x 12 mm from the ring girder's top (r 4.1 m, z 23.2) to the bustle's underside (r 5.6 m, z 24.2), at the columns' angles: about 0.36 MN up each at 1 g, 0.64 MN along it (72 MPa); measured on model v1"),
+                  part("Strut saddles and feet", A36, 4637.8, "curved pads under the bustle and on the girder that spread each strut's load, provisionally 40 mm plate; as drawn on model v1 (140 mm envelopes), local bearing not checked"),
                   part("Charge hopper, seal leg and distributor", A36, 40000.0, "from memory"),
                   part("Burden feeders and discharge lock", "good.electric-motors", 30000.0, "from memory")],
         holds=burden,

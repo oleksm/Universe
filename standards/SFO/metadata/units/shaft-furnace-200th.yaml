@@ -4,13 +4,15 @@ identity: {key: unit.shaft-furnace-200th, name: 'Hydrogen shaft furnace, 200 t a
     The bustle''s inlet is a short stub out of the ring on -y, its flange on the unit''s face at y -7.5. About 1,993 t of burden inside.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 15, width: 15, height: 50.0, mass: 1232000.0}
+physical: {length: 15, width: 15, height: 50.0, mass: 1242000.0}
 built_of:
-- {what: Shell, item: material.structural-steel-a36, mass: 247500.0, note: '7.38 m across, 34 m, 40 mm plate; the cones not counted apart'}
+- {what: Shell, item: material.structural-steel-a36, mass: 247700.0, note: '7.38 m across, 34 m, 40 mm plate, with its cones, roof and bands; measured on model v1 (by formula 247,523 kg for the cylinder)'}
 - {what: Lining, item: good.refractory-brick, mass: 592100.0, note: '350 mm in the hot 20 m, 150 mm against wear in the cooling zone and cone'}
-- {what: Bustle main, item: material.structural-steel-a36, mass: 63120.0, note: 'a ring 11.2 m across of 3.6 m pipe, 20 mm plate'}
+- {what: Bustle main, item: material.structural-steel-a36, mass: 63120.0, note: 'a ring 11.2 m across of 3.6 m pipe, 20 mm plate; by formula (the faceted model''s skin 61,070 kg), with 12 ports of 0.65 m into the shaft (4.0 m2, half the main''s bore, so the ring evens the flow)'}
 - {what: Bustle lining, item: good.refractory-brick, mass: 228000.0, note: 200 mm inside the ring}
-- {what: Support ring girder, item: material.structural-steel-a36, mass: 30990.0, note: 'a box 0.8 x 1.2 m, 40 mm plate, round the shaft'}
+- {what: Support ring girder, item: material.structural-steel-a36, mass: 35860.0, note: 'a box 0.8 x 1.2 m, 40 mm plate, round the shaft, with its seating land; measured on model v1 (by formula 30,986 kg)'}
+- {what: Bustle struts, item: material.structural-steel-a36, mass: 1038.0, note: '8 inclined fabricated boxes 200 x 200 x 12 mm from the ring girder''s top (r 4.1 m, z 23.2) to the bustle''s underside (r 5.6 m, z 24.2), at the columns'' angles: about 0.36 MN up each at 1 g, 0.64 MN along it (72 MPa); measured on model v1'}
+- {what: Strut saddles and feet, item: material.structural-steel-a36, mass: 4638.0, note: 'curved pads under the bustle and on the girder that spread each strut''s load, provisionally 40 mm plate; as drawn on model v1 (140 mm envelopes), local bearing not checked'}
 - {what: 'Charge hopper, seal leg and distributor', item: material.structural-steel-a36, mass: 40000.0, note: from memory}
 - {what: Burden feeders and discharge lock, item: good.electric-motors, mass: 30000.0, note: from memory}
 holds: 1993000.0
