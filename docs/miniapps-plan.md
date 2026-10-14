@@ -143,15 +143,21 @@ internals, it only stops hosting the other apps.
 | 3 Clock runtime | done: `sim::clocks::{Runtime, Subscriptions, Clocked}`; DRIVE and WALK on it; DRIVE/WALK captures byte-identical | b1989495 |
 | 4 Planet view extracted | done: `game::planet_view`; game captures differ from main as main does from itself | 16d95e35 |
 | 5 Planet viewer app | done: `freefall-planet [world id]`, opens in about 0.8 s without the universe | c008e653 |
-| 6 Game as an app | done: WORLDS opens the planet viewer over the game; planet studio state gone from `App`. **Not done:** the shipyard still embeds its studio (needs a document handed back to the game) | 41ce3ac5 |
+| 6 Game as an app | done: WORLDS opens the planet viewer over the game; planet studio state gone from `App` | 41ce3ac5 |
 | 7 Launcher | done: `freefall --apps`, `freefall --app <game, planet, studio> [arg]` | 02362b49 |
-| 8 Factory, scenes | not started | |
+| 6b Shipyard as an app | done: `ShipyardApp` over the game; `Cover::Covers` and `Context::covered` (the game runs on under it, undrawn) | ce8229ed |
+| 8a Scenes | done: `freefall --app scene <file>`; a lab copy of the home system, crafts on orbits, only the file's clocks (Realtime, Celestial, Planetary); `content/scenes/two-orbits.scene.yaml` | f2d3af8b |
+| 8b Factory layout | done: `freefall --app factory [facility]`; a works' modules as boxes at their records' sizes on its parcel; move, turn, save; out of place counted; no clocks | 37134eb8 |
 
 Deviations from the plan above: apps are modules in the `game` crate, not crates of their own
 (§5's second question, left open); DRIVE and WALK subscribe to Realtime only (Machinery has no work
 of its own in a lab world yet); `Cover::Pauses` is named for what it does to the apps under it,
-and the game under the planet viewer uses `Hides` (its live world runs on, as before: it runs on
-its own thread).
+and the game under the planet viewer and the shipyard is covered (`Covers`: updated without input,
+not drawn), so the live world never stops for an app. The shipyard needed no hand-back: its deck
+document was always copied from the game once and kept to itself. The standalone Studio and the
+shipyard still host the interior studio separately (the shipyard adds the 2D deck page); the
+editor itself is one. §5: the live world runs on under an app (multiplayer: it never pauses for
+one player); apps stay modules of `game` while the shared parts depend on its modules.
 
 ## 4. Rules kept
 
