@@ -338,18 +338,19 @@ def ladle_units():
     out["furnace-transformer-14mva"] = transformer_unit(L_MVA, f"the ladle furnace's arc: {L_ARC / 1e6:.1f} MW to heat 80 t at {L_HEATING * 60:.0f} degrees a minute, {L_ARC_EFF:.0%} of it reaching the steel, at a power factor of {PF}; about {L_V2:.0f} V and {L_I2 / 1000:.0f} kA a phase")
     # Vacuum tank degasser: the ladle is lowered into a tank in a pit, the lid closed, the tank pumped down while argon stirs.
     Ti, Th = 4.5, 5.5
+    VD_LINE = 11.04                    # m of vacuum line, measured on blender's model
     tank = cyl_shell(Ti + 0.08, Th, 0.04, bottom=1.0) * RHO["steel"]
     tank_ref = math.pi * (Ti / 2) ** 2 * 0.3 * RHO["refractory"]
     lid = math.pi * 2.6 ** 2 * 1.15 * 0.05 * RHO["steel"]
     out["vacuum-degasser-80t"] = dict(
         name="Vacuum tank degasser, 80 t", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 9.0),
         desc="Takes the dissolved hydrogen and nitrogen out of an 80 t heat: the crane lowers the ladle into a steel tank standing in a pit, a lid on a car closes it, and pumps take it down to about 67 Pa while argon stirs the melt. Local frame: the tank's centre at (-3, 2), 4.5 m inside and 5.5 m deep, its rim at the floor; the lid car on its own rails parks at (3, 2); the pump set fills the strip y -5 to -2 along the unit, its vacuum line to a flange on the tank's side. 3 m above the floor and 6 m below it (the pit is the layout's).",
-        built_of=[part("Tank", A36, tank, f"{Ti} m inside, {Th} m deep, 40 mm plate, its bottom the same"),
-                  part("Tank floor lining", REF, tank_ref, "0.3 m of refractory under the ladle"),
-                  part("Lid", A36, lid, "a dish 5.2 m across, 50 mm plate, 1.15 times the disc"),
-                  part("Lid car and rails", A36, 12000.0, "from memory"),
+        built_of=[part("Tank", A36, 30893.7, f"{Ti} m inside, {Th} m deep, 40 mm plate, its bottom the same, with its rim; measured on blender's model ({tank:.0f} kg as a plain shell)"),
+                  part("Tank floor lining", REF, 14290.9, "0.3 m of refractory under the ladle, measured"),
+                  part("Lid", A36, 9320.9, "a shallow dish 5.2 m across, 50 mm plate, measured"),
+                  part("Lid car and rails", A36, 12000.0, "from memory, with two short girders carrying the rails over the pit's open ring"),
                   part("Vacuum pump set", "good.pumps", 25000.0, "dry screw pumps behind Roots boosters, from memory"),
-                  part("Vacuum line", A36, math.pi * 1.0 * 0.010 * 12.0 * RHO["steel"], "1 m across, 10 mm, 12 m")],
+                  part("Vacuum line", A36, 3061.0, f"1 m across, 10 mm, {VD_LINE} m of main, header and branches (measured centreline) with flanges, run at z -1.2 under the rail bridge; measured")],
         needs={"power": VD_PUMPS},
         basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "Sizes and the pumps' power from memory of tank degassers for 80 to 100 t ladles."}])
     # Alloy bins: eight bins on a steel stand, a weigh hopper and a belt to the furnace's chute.
