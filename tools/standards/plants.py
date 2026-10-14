@@ -1024,13 +1024,18 @@ def shaft_units():
               f"The gas in at the bottom of each from a cold header ({hd_c:.2f} m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit's face (x -12); "
               f"out at the top of each into a lined hot header ({hd_h:.2f} m bore inside 200 mm of refractory, 16 mm shell, {hd_h + 0.432:.2f} m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit's top. "
               "Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header's flange). The headers' supports are the unit's own."),
-        built_of=[part("Vessels", A36, hv, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, heads twice the disc"),
+        built_of=[part("Vessels", A36, 166322.1, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, 1 m deep ellipsoidal heads, with their bands; measured on model v1 (by formula {hv:,.0f} kg)"),
+                  part("Skirts and base rings", A36, 12229.5, "8 mm skirts from the floor to the vessels' bottoms; measured on model v1"),
                   part("Lining", REF, hr, "300 mm"),
                   part("Elements", "material.stainless-steel-304", elem, f"FeCrAl strip, which the registry has not got: stainless steel stands for it; {elem / 1000:.0f} t at 20 kW/m2 of surface"),
-                  part("Cold header", A36, hdr_c, f"{hL:g} m of {hd_c:.2f} m pipe, 12 mm wall"),
-                  part("Hot header", A36, hdr_hs, f"{hL:g} m of {hd_h + 0.4:.2f} m shell, 16 mm plate"),
-                  part("Hot header lining", REF, hdr_hr, "200 mm"),
-                  part("Branches, supports, terminals and controls", A36, 30000.0, "from memory")],
+                  part("Cold header", A36, 14768.4, f"22 m of {hd_c:.2f} m pipe, 12 mm wall, with its inlet; measured on model v1 (by formula {hdr_c * 22 / hL:,.0f} kg)"),
+                  part("Hot header and outlet", A36, 29445.0 + 4309.0, f"{hL:g} m of {hd_h + 0.4:.2f} m shell, 16 mm plate, and its 3 m outlet; measured on model v1"),
+                  part("Hot header lining", REF, hdr_hr * (hL + 3.0) / hL, "200 mm, in the header and its outlet"),
+                  part("Branches", A36, 9598.5, "a cold (1.2 m bore) and a hot (1.6 m bore, lined) branch to each vessel; measured on model v1"),
+                  part("Header supports", A36, 29061.6, "box columns 400 mm under the hot header, braced at 4, 8 and 12 m, with saddles; measured on model v1"),
+                  part("Flanges and blind ends", A36, 4183.4, "measured on model v1"),
+                  part("Terminal house base", A36, 2845.6, "measured on model v1"),
+                  part("Terminals, thyristor sets and controls", "good.electric-motors", 10000.0, "from memory")],
         needs={"power": Q_HEATER / 0.98},
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "Vessels and element loading from memory; elements sized from the duty."},
                {"of": ["needs"], "tier": "derived", "note": f"The gas's {GAS:.1f} kg/s at {CP_H2 / 1e3:.1f} kJ/kg K over {T_GAS - T_PRE:.0f} K, at 98% (from memory)."}])
