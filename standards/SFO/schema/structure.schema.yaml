@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Structure
 x-kind: [structure]
-description: "One kind of structure a settlement is: a station, a spaceport, an outpost, an orbital site. A maker's product, as a hull or a gate ring is (a gate ring has its own schema). What it is built of is not said yet."
+description: "One kind of structure a settlement is: a station, a spaceport, an outpost, an orbital site. A maker's product, as a hull or a gate ring is (a gate ring has its own schema). Its ground works are listed; what its halls are built of is not said yet."
 type: object
 additionalProperties: false
 required: [identity, fit]
@@ -25,6 +25,10 @@ properties:
         count: { type: integer, minimum: 1 }
   physical: { $ref: "../../common.schema.yaml#/definitions/physical", description: "Its site: length (x) by width (z) of the ground it stands on, and its height above the ground." }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
+  ground:
+    description: "Its ground works: pads, berms, mounds, roads, of regolith or concrete, each with its volume and the mass that follows from its material."
+    type: array
+    items: { type: object, additionalProperties: false, required: [what, item, volume, mass], properties: { what: { type: string }, item: { type: string, x-ref: [good, material] }, volume: { type: number, x-unit: "m3" }, mass: { type: number, x-unit: "kg" }, note: { type: string } } }
   revision:
     $ref: "../../common.schema.yaml#/definitions/record_revision"
     default: { status: draft, owner: registry, on_conflict: propose, because: "A list of equipment, not yet a built thing.", ask: docs/registry-ssot-request.md }

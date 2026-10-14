@@ -872,6 +872,8 @@
 - { record: material.polyethylene-uhmw, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "26af8bdb2f507c81" }
 - { record: material.polyimide-film, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "287b8c5cff16eee0" }
 - { record: material.ptfe, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "11facd796d3868ff" }
+- { record: material.regolith, at: "2026-10-14T16:38:11Z", status: review, summary: "first tracked", sha: "3f7bd5c6fbd458da" }
+- { record: material.regolith-sintered, at: "2026-10-14T16:38:11Z", status: review, summary: "first tracked", sha: "a10b0fffdb304669" }
 - { record: material.silica-aerogel, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "b11e134209b0af63" }
 - { record: material.silica-tile-li-900, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "f42183a9650011b5" }
 - { record: material.silicon-carbide, at: "2026-10-06T18:50:34Z", status: review, summary: "changed: identity", sha: "ce704c88879358d7" }
@@ -2702,7 +2704,7 @@
 - { record: street.treistun.port-zaudalein.dock-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "57eeceb4623143a7" }
 - { record: street.treistun.port-zaudalein.east-road, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3f2152608557a534" }
 - { record: structure.orbital, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "e604e676cbc1d3fe" }
-- { record: structure.outpost, at: "2026-10-14T01:44:29Z", status: draft, summary: "changed: identity, physical, basis", sha: "f5dd8c5b3c136eeb" }
+- { record: structure.outpost, at: "2026-10-14T16:38:11Z", status: draft, summary: "changed: physical, ground, basis", sha: "91cfa0e2922bf224" }
 - { record: structure.platform, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "f53f28932fce2a25" }
 - { record: structure.spaceport, at: "2026-10-07T03:42:03Z", status: draft, summary: "changed: fit", sha: "b2e176d2347765f8" }
 - { record: system.biraidim, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "45c285c7343ec94b" }
