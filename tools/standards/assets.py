@@ -687,7 +687,10 @@ def check_model(kind, r, info):
     if size is None:
         bad.append("the record says no size (physical.length, width, height): ask the registry for one first")
     else:
-        m, s = sorted(info["bounds"], reverse=True), sorted(size, reverse=True)
+        b = list(info["bounds"])
+        if kind in ("layout", "structure") and info.get("lo") and info["lo"][1] < 0:
+            b[1] = round(info["hi"][1] - max(info["lo"][1], 0.0), 4)   # height above grade: its ground works below z 0 are in the record's ground, not its size
+        m, s = sorted(b, reverse=True), sorted(size, reverse=True)
         planar = s[2] < s[0] / 50          # (a field, a pad: its thin side is relief, held only to at most the record's)
         for k, (a, e) in enumerate(zip(m, s)):
             if planar and k == 2:
