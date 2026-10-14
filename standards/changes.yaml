@@ -2710,7 +2710,7 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
-- { record: unit.baghouse-800k, at: "2026-10-14T14:19:02Z", status: draft, summary: "changed", sha: "591db29690296910" }
+- { record: unit.baghouse-800k, at: "2026-10-14T14:35:21Z", status: draft, summary: "changed", sha: "bb22825684322723" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:32:37Z", status: draft, summary: "changed: visual", sha: "a34f346c65e5970f" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T13:48:05Z", status: draft, summary: "changed", sha: "c3f8d82e8f55274a" }
