@@ -11,6 +11,12 @@ built_of:
 - {what: Fans and motors, item: good.electric-motors, mass: 16000.0, note: 'two induced-draught fans, from memory'}
 holds: 5760.0
 needs: {power: 1185000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/baghouse-800k/v1"
+  manifest_sha256: "2566757b0a7d9325f998decf37abd1029d67d37cd73ae32d6c78fa45f0349356"
+  version: 1
+  triangles: 8136
 life: 788940000
 basis:
 - of: [physical, built_of, needs.power]
