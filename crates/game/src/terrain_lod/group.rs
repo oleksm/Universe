@@ -328,7 +328,7 @@ fn built(g: worker::Group, snapshot: &Snapshot, body: &Body, source_generation: 
         .band
         .vertices
         .iter()
-        .map(|v| super::fields_at(body, g.radius, (band_origin + Vec3::from_array(*v).as_dvec3()).normalize()).0)
+        .map(|v| super::fields_at(body, g.radius, (band_origin + Vec3::from_array(*v).as_dvec3()).normalize(), 0.0).0)
         .collect();
     let band = model(&g.band.vertices, band_faces, vec![[0., 0., 0., 128.]; g.band.vertices.len()], band_data);
     let rim_data = g

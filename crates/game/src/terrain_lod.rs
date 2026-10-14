@@ -28,6 +28,20 @@ const CANONICAL_MAX_LEVEL: u8 = 19;
 /// A patch splits when the eye is nearer than this many times its size (the engine's: its mesh
 /// shader geomorphs by the same).
 const SPLIT: f64 = universe_engine::shaders::GEOMORPH_SPLIT;
+/// Half a pixel at 1280 pixels across 60° (rad): the drawn field may stand this far (as an
+/// angle) from level 0 at the distance a patch is drawn from (revision-5 levels).
+pub(crate) const DRAWN_TOLERANCE_RAD: f64 = 4.1e-4;
+/// The tolerance (m) a patch with cells of `cell` m is drawn to: half a pixel at the nearest
+/// distance of its middle where it is drawn (SPLIT times its size; nearer, it splits).
+pub(crate) fn patch_tolerance(cell: f64) -> f64 {
+    DRAWN_TOLERANCE_RAD * SPLIT * GRID as f64 * cell
+}
+/// A package's region files resident at most (bytes, page cache), and how long one stays after
+/// its last read (ms): past either, its pages are released (`Surface::trim_package`).
+const PACKAGE_BUDGET: u64 = 256 << 20;
+const PACKAGE_IDLE_MS: f64 = 20_000.0;
+/// Frames between residency passes.
+const PACKAGE_TRIM_EVERY: u64 = 120;
 /// Patches wanted a frame (the next finer), at most.
 const BUDGET: usize = 12;
 /// Patches being made at once, at most.
@@ -168,8 +182,11 @@ fn face_dir(face: u8, u: f64, v: f64) -> DVec3 {
 /// The ground's height at `dir` (m; the sea's surface over an Earth-like world's deeps), as far
 /// as it's read (a world's bake reads in the background), and whether that's all of it.
 /// The runtime detail to the band `cell` (m): the patch's cells.
+/// A canonical surface is read to the patch's tolerance (`patch_tolerance`).
 fn ground(body: &Body, dir: DVec3, cell: f64) -> (f64, bool) {
-    body.terrain.as_ref().map_or((0.0, true), |t| t.surface_view_to(dir, cell))
+    let Some(t) = body.terrain.as_ref() else { return (0.0, true) };
+    if let Some(h) = t.canonical_view_to(dir, patch_tolerance(cell)) { return (h, true); }
+    t.surface_view_to(dir, cell)
 }
 
 /// A patch's mesh: its grid on the ground (round its origin), and skirts.
@@ -258,7 +275,7 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
     m.colors = colors;
     // Each vertex's surface fields and slope, for the ground's material (see `fields_at`).
     let fields = |d: DVec3| -> [f32; 4] {
-        let (f, w) = fields_at(body, r, d);
+        let (f, w) = fields_at(body, r, d, patch_tolerance(cell));
         whole.set(whole.get() && w);
         f
     };
@@ -276,12 +293,13 @@ fn make(body: &Body, key: Key) -> (WireModel, DVec3, bool) {
 /// rock), and its slope (rise over run) from the heights 600 m either side of it each way (central
 /// differences: smooth from vertex to vertex, where a triangle's own normal steps at its edges), for
 /// the ground's material: w = ±(1 + slope), + where the fields are read. And whether all was read.
-pub(crate) fn fields_at(body: &Body, r: f64, d: DVec3) -> ([f32; 4], bool) {
+/// A canonical surface is read to `tolerance` (m; 0 is level 0).
+pub(crate) fn fields_at(body: &Body, r: f64, d: DVec3, tolerance: f64) -> ([f32; 4], bool) {
     let Some(t) = body.terrain.as_ref() else { return ([0.0; 4], true) };
     // Palette 4 reads the local authoritative wet mask, independent of the orbit map.
-    if let Some(sample) = crate::terrain_view::canonical_texel(t, d) {
+    if let Some(sample) = crate::terrain_view::canonical_texel(t, d, tolerance) {
         let slope = if crate::pgs_preview::palette(body).is_some_and(|p| p.materials()) {
-            t.surface_differential(d, r).map_or(0.0, |(_, derivative)| derivative.slope as f32)
+            t.surface_differential_to(d, r, tolerance).map_or(0.0, |(_, derivative)| derivative.slope as f32)
         } else { 0.0 };
         return ([sample[1], 0.0, 0.0, -(1.0+slope)], true);
     }
@@ -520,6 +538,11 @@ impl Lod {
         let eye_local = rotation.inverse() * (eye - center);
         let eye_dist = eye_local.length();
         let eye_dir = eye_local / eye_dist.max(1.0);
+        if canonical && now % PACKAGE_TRIM_EVERY == 0 {
+            if let Some(trim) = body.terrain.as_ref().and_then(|t| t.surface_source()).and_then(|s| s.trim_package(PACKAGE_IDLE_MS, PACKAGE_BUDGET)) {
+                if trim["released"].as_array().is_some_and(|r| !r.is_empty()) { log::info!("PGS_RESIDENCY {}", serde_json::json!({"frame":now,"trim":trim})); }
+            }
+        }
         #[cfg(feature = "dev")]
         if crate::pgs_debug::active(body) && now % 120 == 0 {
             let mut levels = std::collections::BTreeMap::new();

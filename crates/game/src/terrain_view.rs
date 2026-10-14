@@ -61,9 +61,9 @@ pub const MAP_SIZE: u32 = 512;
 
 /// Canonical display sample: absolute visible height / relief, and known wet mask.
 /// Unknown water stays unmarked, including terrain below the reference datum.
-pub(super) fn canonical_texel(terrain: &universe_sim::Terrain, dir: DVec3) -> Option<[f32; 2]> {
+pub(super) fn canonical_texel(terrain: &universe_sim::Terrain, dir: DVec3, tolerance: f64) -> Option<[f32; 2]> {
     use universe_sim::world::worlds::pgs::Water;
-    let sample = terrain.surface_sample(dir)?;
+    let sample = terrain.surface_sample_to(dir, tolerance)?;
     let (height, wet) = match sample.water {
         Water::Wet { level_m, .. } => (level_m, 1.0),
         Water::Dry | Water::Unknown => (sample.height_m, 0.0),
@@ -78,6 +78,8 @@ pub(super) fn globe_map_with_threads(body: &Body, threads: usize) -> Option<univ
     let terrain = body.terrain.as_ref()?;
     let n = MAP_SIZE as usize;
     let amp = terrain.amplitude.max(1.0);
+    // A canonical surface is read to half a texel (m): nothing finer shows in the map.
+    let tolerance = std::f64::consts::FRAC_PI_2 * body.rail.radius / MAP_SIZE as f64 / 2.0;
     let mut texels = vec![[0.0f32; 2]; 6 * n * n];
     let threads = threads.clamp(1, 2);
     let rows = (6 * n).div_ceil(threads);
@@ -88,7 +90,7 @@ pub(super) fn globe_map_with_threads(body: &Body, threads: usize) -> Option<univ
                     let row = k * rows + i / n;
                     let (face, y, x) = (row / n, (row % n) as u32, (i % n) as u32);
                     let dir = universe_engine::GlobeMap::direction(MAP_SIZE, face, x, y);
-                    if let Some(sample) = canonical_texel(terrain, dir) { *t = sample; continue; }
+                    if let Some(sample) = canonical_texel(terrain, dir, tolerance) { *t = sample; continue; }
                     let (h, inside) = terrain.height_and_crater_coarse(dir);
                     // (A port's plain marked in place of crater-ness, below zero.)
                     let plain = terrain.port_plain(dir);
@@ -109,7 +111,7 @@ pub(super) fn globe_map_with_threads(body: &Body, threads: usize) -> Option<univ
                     for (i, colour) in chunk.iter_mut().enumerate() {
                         let row = k * rows + i / n;
                         let dir = universe_engine::GlobeMap::direction(MAP_SIZE, row / n, (i % n) as u32, (row % n) as u32);
-                        *colour = palette.colour(terrain.surface_sample(dir).expect("canonical surface"));
+                        *colour = palette.colour(terrain.surface_sample_to(dir, tolerance).expect("canonical surface"));
                     }
                 });
             }

@@ -265,7 +265,8 @@ fn sky(frame: &mut Frame, app: &App) -> f32 {
         // fine terrain (especially for every distant world in the system).
         if radial_altitude > ATMOSPHERE + terrain.max_height() { return None; }
         let local = b.rotation(t).inverse() * (cam-center).normalize_or(DVec3::Y);
-        let (height, _) = terrain.surface_view(local);
+        // (A canonical surface to half a pixel at this altitude.)
+        let height = terrain.canonical_view_to(local, crate::terrain_lod::DRAWN_TOLERANCE_RAD * radial_altitude.max(0.0)).unwrap_or_else(|| terrain.surface_view(local).0);
         let altitude = radial_altitude - height;
         (altitude < ATMOSPHERE).then_some((i, center, altitude))
     });

@@ -2316,9 +2316,13 @@ pub fn camera_flight(app: &mut App) {
     let s = if z.frame > a.frame { ((now.min(z.frame) - a.frame) as f64 / (z.frame - a.frame) as f64).clamp(0.0, 1.0) } else { 0.0 };
     let angle = a.dir.angle_between(z.dir);
     let dir = if angle < 1e-12 { a.dir } else { ((a.dir * ((1.0 - s) * angle).sin() + z.dir * (s * angle).sin()) / angle.sin()).normalize() };
-    let over = |k: &Key| if k.ground { k.alt } else { k.alt - terrain.surface(k.dir) };
+    let over = |k: &Key| if k.ground { k.alt } else { k.alt - terrain.canonical_view_to(k.dir, crate::terrain_lod::DRAWN_TOLERANCE_RAD * k.alt.max(0.0)).unwrap_or_else(|| terrain.surface(k.dir)) };
     let (oa, oz) = (over(a).max(1.7), over(z).max(1.7));
-    let height = terrain.surface(dir) + (oa.ln() * (1.0 - s) + oz.ln() * s).exp();
+    let over_ground = (oa.ln() * (1.0 - s) + oz.ln() * s).exp();
+    // The flight's own ground: a visual reference, to half a pixel at its height over it (so the
+    // instrument does not read level 0 from orbit).
+    let ground = terrain.canonical_view_to(dir, crate::terrain_lod::DRAWN_TOLERANCE_RAD * over_ground).unwrap_or_else(|| terrain.surface(dir));
+    let height = ground + over_ground;
     let pitch = (a.pitch * (1.0 - s) + z.pitch * s).to_radians();
     let heading = (a.heading * (1.0 - s) + z.heading * s).to_radians();
     let rot = b.rotation(t);
@@ -2328,9 +2332,9 @@ pub fn camera_flight(app: &mut App) {
     let look = rot * (ahead * pitch.cos() - dir * pitch.sin());
     app.camera.position = centre + rot * (dir * (b.rail.radius + height));
     app.camera.orientation = universe_sim::ship::facing(look, if pitch.to_degrees() > 60.0 { rot * ahead } else { rot * dir }).as_quat();
-    app.camera.near = (0.5f32).min((height - terrain.surface(dir)).max(0.05) as f32 * 0.5);
+    app.camera.near = (0.5f32).min((height - ground).max(0.05) as f32 * 0.5);
     if let Some(k) = f.keys.iter().find(|k| k.frame == now) {
-        log::info!("FLIGHT frame {now}: key at {:?}, {:.1} m over the ground, pitch {:.0}, heading {:.0}", dir.to_array(), height - terrain.surface(dir), pitch.to_degrees(), heading.to_degrees());
+        log::info!("FLIGHT frame {now}: key at {:?}, {:.1} m over the ground, pitch {:.0}, heading {:.0}", dir.to_array(), height - ground, pitch.to_degrees(), heading.to_degrees());
         if let Some(shot) = &k.shot {
             *PENDING_SHOT.lock().unwrap() = Some(f.folder.join(format!("{shot}.png")));
         }

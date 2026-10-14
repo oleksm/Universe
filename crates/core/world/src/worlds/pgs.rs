@@ -530,14 +530,21 @@ impl Surface {
     /// Exact derivative of chord-plane barycentric height, using query's tie owner.
     /// `radius_m` is the radius where the host draws this surface; water is not terrain.
     pub fn query_differential(&self, direction: DVec3, radius_m: f64) -> Result<(Sample, Differential), String> {
-        let sample = self.query(direction)?;
+        self.query_differential_to(direction, radius_m, 0.0)
+    }
+    /// As `query_differential`, answered to `tolerance_m` (see `query_to`).
+    pub fn query_differential_to(&self, direction: DVec3, radius_m: f64, tolerance_m: f64) -> Result<(Sample, Differential), String> {
+        let (sample, corners) = match &self.package {
+            Some(p) => { let (s, c) = p.query_to(direction, tolerance_m)?; (s, Some(c)) }
+            None => (self.query(direction)?, None),
+        };
         let radius = radius_m + sample.height_m;
         if !radius_m.is_finite() || radius_m <= 0.0 || radius <= 0.0 {
             return Err("invalid differential radius".into());
         }
         let q = direction.normalize();
-        let ([pa, pb, pc], [ha, hb, hc]) = match &self.package {
-            Some(p) => p.corners(sample.face)?,
+        let ([pa, pb, pc], [ha, hb, hc]) = match corners {
+            Some(c) => c,
             None => {
                 let f = &self.faces[sample.face as usize];
                 let [a, b, c] = f.vertices.map(|i| &self.points[i]);
@@ -561,6 +568,33 @@ impl Surface {
     /// the entire tied fan, including a wet face when the terrain owner is dry.
     pub fn query(&self, direction: DVec3) -> Result<Sample, String> {
         if let Some(p) = &self.package { return p.query(direction); }
+        self.query_decoded(direction)
+    }
+
+    /// A visual query, answered to `tolerance_m` metres: from a revision-5 package, the coarsest
+    /// representation whose declared deviation from level 0 is at or below it (the root, a level,
+    /// level 0), nothing finer opened. Tolerance 0 is `query` exactly. `face` is the composed id
+    /// over the mixture the tolerance names (each region in its representation; ids, neighbours
+    /// and face geometry otherwise level 0's). Physics never asks this.
+    pub fn query_to(&self, direction: DVec3, tolerance_m: f64) -> Result<Sample, String> {
+        match &self.package {
+            Some(p) => p.query_to(direction, tolerance_m).map(|(s, _)| s),
+            None => self.query(direction),
+        }
+    }
+
+    /// Residency for a package: release region files untouched for `idle_ms`, then the least
+    /// lately touched while their resident bytes exceed `budget_bytes`. None for a decoded file.
+    pub fn trim_package(&self, idle_ms: f64, budget_bytes: u64) -> Option<serde_json::Value> {
+        self.package.as_ref().map(|p| p.trim(idle_ms, budget_bytes))
+    }
+
+    /// A package region's levels checked against level 0 (gates 1 and 2): heavy, for the lab.
+    pub fn verify_levels(&self, region: &str) -> Result<serde_json::Value, String> {
+        self.package.as_ref().ok_or("not a package")?.verify_levels(region)
+    }
+
+    fn query_decoded(&self, direction: DVec3) -> Result<Sample, String> {
         let length = direction.length();
         if !direction.is_finite() || !length.is_finite() || length == 0.0 {
             return Err("invalid query direction".into());

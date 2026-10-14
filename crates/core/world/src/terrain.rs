@@ -124,6 +124,26 @@ impl Terrain {
         self.graph.as_ref().map(|s| s.query(dir).expect("valid terrain direction"))
     }
 
+    /// A visual canonical query answered to `tolerance_m` (see `pgs::Surface::query_to`): a
+    /// package may answer from a coarser representation within that many metres of level 0.
+    pub fn surface_sample_to(&self, dir: DVec3, tolerance_m: f64) -> Option<crate::worlds::pgs::Sample> {
+        self.graph.as_ref().map(|s| s.query_to(dir, tolerance_m).expect("valid terrain direction/tolerance"))
+    }
+
+    /// As `surface_differential`, answered to `tolerance_m` (visual: a ground patch's slope).
+    pub fn surface_differential_to(&self, dir: DVec3, radius_m: f64, tolerance_m: f64) -> Option<(crate::worlds::pgs::Sample, crate::worlds::pgs::Differential)> {
+        self.graph.as_ref().map(|s| s.query_differential_to(dir, radius_m, tolerance_m).expect("valid terrain direction/radius/tolerance"))
+    }
+
+    /// The drawn surface (water's level over wet ground) from a canonical surface, answered to
+    /// `tolerance_m`. None when no canonical surface supplies the terrain.
+    pub fn canonical_view_to(&self, dir: DVec3, tolerance_m: f64) -> Option<f64> {
+        self.surface_sample_to(dir, tolerance_m).map(|s| match s.water {
+            crate::worlds::pgs::Water::Wet { level_m, .. } => level_m,
+            _ => s.height_m,
+        })
+    }
+
     /// Owner-face analytic terrain derivative, independent of rendering LOD.
     pub fn surface_differential(&self, dir: DVec3, radius_m: f64) -> Option<(crate::worlds::pgs::Sample, crate::worlds::pgs::Differential)> {
         self.graph.as_ref().map(|s| s.query_differential(dir, radius_m).expect("valid terrain direction/radius"))
