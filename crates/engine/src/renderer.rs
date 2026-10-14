@@ -374,9 +374,9 @@ impl GpuMesh {
 /// Each edge's normal, to light it by: the faces it bounds, averaged (a
 /// crease lit as either side is); a detail line (on a face, not bounding
 /// one), the face nearest its middle; a bare line, the way out from the centre.
-/// Above this many faces, an edge with no face of its own by index takes its ends' faces (by
-/// position), not the nearest face (a search over every face for every edge).
-const NEAREST_FACE_MAX: usize = 4096;
+/// An edge with no face by index or by its ends' positions takes the nearest face only in a model
+/// this small (the search is over every face for every such edge).
+const NEAREST_FACE_MAX: usize = 256;
 
 fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
     let face_n: Vec<Vec3> = mesh.faces.iter().map(|f| {
@@ -390,10 +390,9 @@ fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
         }
     }
     // Edges given vertices of their own (not the faces'): their faces found by where their ends
-    // are. The nearest-face search is for small models only: it is edges x faces.
-    let large = mesh.faces.len() > NEAREST_FACE_MAX;
+    // are (linear). The nearest-face search, edges x faces, is the last resort for small models.
     let mut by_point: HashMap<[u32; 3], Vec3> = HashMap::new();
-    if large {
+    if mesh.edges.iter().any(|e| !by_edge.contains_key(&(e[0].min(e[1]), e[0].max(e[1])))) {
         for (f, &n) in mesh.faces.iter().zip(&face_n) {
             for &i in f {
                 *by_point.entry(mesh.positions[i as usize].to_array().map(f32::to_bits)).or_default() += n;
@@ -406,9 +405,14 @@ fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
             return n;
         }
         let mid = (mesh.positions[a as usize] + mesh.positions[b as usize]) / 2.0;
-        if large {
-            let at = |i: u32| by_point.get(&mesh.positions[i as usize].to_array().map(f32::to_bits)).copied().unwrap_or_default();
-            return (at(a) + at(b)).try_normalize().unwrap_or_else(|| mid.normalize_or_zero());
+        let at = |i: u32| by_point.get(&mesh.positions[i as usize].to_array().map(f32::to_bits)).copied();
+        if let (Some(n), Some(m)) = (at(a), at(b))
+            && let Some(n) = (n + m).try_normalize()
+        {
+            return n;
+        }
+        if mesh.faces.len() > NEAREST_FACE_MAX {
+            return mid.normalize_or_zero();
         }
         let nearest = mesh.faces.iter().zip(&face_n).filter(|(_, n)| **n != Vec3::ZERO).map(|(f, n)| {
             let [p, q, r] = f.map(|i| mesh.positions[i as usize]);
