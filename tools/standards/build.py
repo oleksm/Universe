@@ -188,7 +188,8 @@ def read_schema(path):
     # (And a module's one recipe as its own figures, as they were before recipes: rate, inputs, outputs, needs.)
     if kind == "module" and "recipes" in props:
         props.pop("throughput", None)
-        R, cap = props.pop("recipes")["items"]["properties"], props.pop("capacity")["properties"]
+        item = props.pop("recipes")["items"]
+        R, cap = (V.resolve(item["$ref"], path)[0] if "$ref" in item else item)["properties"], props.pop("capacity")["properties"]
         group = lambda d: {"type": "object", "additionalProperties": False, "properties": d}
         was = {"rate": group({"throughput": R["rate"], "batch": R["batch"], **cap, "product": R["makes"], "power": props.pop("generation")["properties"]["supplies"]}),
                "inputs": group({"materials": {**R["inputs"], "description": "What goes in, t per t of its product."}}),
