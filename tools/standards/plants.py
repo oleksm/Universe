@@ -100,6 +100,7 @@ def units():
             part("Slag spout", A36, spout_s, f"a steel trough {sp_w} m wide, {sp_d} m deep, 30 mm plate, {sp_L:.2f} m long, outside sizes (a clear channel {sp_w - 2 * 0.18:.2f} m wide and {sp_d - 0.18:.2f} m deep inside its wall and lining); its floor from the slag door's sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot"),
             part("Slag spout lining", REF, spout_r, "150 mm of refractory in the trough"),
             part("Slag spout brackets", A36, 169.8, "four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender's model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)"),
+            part("Water hoses", "material.silicone-rubber", 2 * 3.964 * math.pi * 0.32 * 0.02 * 1075.0, "two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender's model, v3), a supported dogleg from the vessel's ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt's travel not checked"),
             part("Tilt and mast hydraulics", "good.pumps", hyd, "cylinders, pumps and valves; from memory"),
         ],
         holds=holds,
