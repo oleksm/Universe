@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-tb-60x2-s500
+  code: AL6061-TB-60X2-S500
+  name: "6061 tube 60 x 2 mm strut, 0.5 m"
+  traded_as: market.metals
+  form: strut
+  temper: "T6"
+package: package.bar-bundle
+tint: [0.8, 0.81, 0.83]
+made_from:
+  - item: material.aluminium-alloy-6061
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.06
+  wall: 0.002
+  length: 0.38
+kit:
+  section: stock.al6061-tb-60x2
+  node: stock.st4340-node-120
+  end: stock.st4340-end-60
+  bolt: stock.st4340-bolt-m16
+  module: 0.5
+  cut: 0.26
+physical:
+  mass: 0.92
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.5 m node centre to node centre; 0.26 m of 6061 tube 60 x 2 mm between two 60 mm ENDs, made to meet 120 mm nodes, an M16 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

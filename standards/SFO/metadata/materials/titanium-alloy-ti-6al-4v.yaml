@@ -18,6 +18,7 @@ identity:
   - plate
   - tube
   - sheet
+  - strut
 mass:
   density: 4470.0
 mechanical:

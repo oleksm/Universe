@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-tb-200x5-s2000
+  code: ST4340-TB-200X5-S2000
+  name: "4340 tube 200 x 5 mm strut, 2 m"
+  traded_as: market.metals
+  form: strut
+  temper: "quenched and tempered"
+package: package.bar-bundle
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.2
+  wall: 0.005
+  length: 1.6
+kit:
+  section: stock.st4340-tb-200x5
+  node: stock.st4340-node-400h
+  end: stock.st4340-end-200
+  bolt: stock.st4340-bolt-m56
+  module: 2.0
+  cut: 1.2
+physical:
+  mass: 55.19
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 2 m node centre to node centre; 1.2 m of 4340 tube 200 x 5 mm between two 200 mm ENDs, made to meet 400 mm nodes, an M56 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

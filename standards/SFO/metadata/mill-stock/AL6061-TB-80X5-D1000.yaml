@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-tb-80x5-d1000
+  code: AL6061-TB-80X5-D1000
+  name: "6061 tube 80 x 5 mm strut, diagonal, 1 m square"
+  traded_as: market.metals
+  form: strut
+  temper: "T6"
+package: package.bar-bundle
+tint: [0.8, 0.81, 0.83]
+made_from:
+  - item: material.aluminium-alloy-6061
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.08
+  wall: 0.005
+  length: 1.2542
+kit:
+  section: stock.al6061-tb-80x5
+  node: stock.st4340-node-160
+  end: stock.st4340-end-80
+  bolt: stock.st4340-bolt-m20
+  module: 1.4142
+  cut: 1.0942
+physical:
+  mass: 4.96
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 1.4142 m node centre to node centre, the face diagonal of a 1 m square; 1.0942 m of 6061 tube 80 x 5 mm between two 80 mm ENDs, made to meet 160 mm nodes, an M20 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

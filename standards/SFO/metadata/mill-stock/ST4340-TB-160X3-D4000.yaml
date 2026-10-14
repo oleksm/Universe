@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-tb-160x3-d4000
+  code: ST4340-TB-160X3-D4000
+  name: "4340 tube 160 x 3 mm strut, diagonal, 4 m square"
+  traded_as: market.metals
+  form: strut
+  temper: "quenched and tempered"
+package: package.bar-bundle
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.16
+  wall: 0.003
+  length: 5.3069
+kit:
+  section: stock.st4340-tb-160x3
+  node: stock.st4340-node-350
+  end: stock.st4340-end-160
+  bolt: stock.st4340-bolt-m42
+  module: 5.6569
+  cut: 4.9869
+physical:
+  mass: 70.39
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 5.6569 m node centre to node centre, the face diagonal of a 4 m square; 4.9869 m of 4340 tube 160 x 3 mm between two 160 mm ENDs, made to meet 350 mm nodes, an M42 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
