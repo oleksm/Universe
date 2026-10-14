@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 78.0, width: 60.0, height: 27.0, mass: 3922000.0}
+physical: {length: 78.0, width: 60.0, height: 27.0, mass: 3920000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -43,20 +43,20 @@ links:
 - kind: conveyor
   name: sponge iron feed
   from: [-12.0, 30.0, 6.0]
-  to: [-12.0, 6.0, 13.0]
-  length: 25.0
+  to: [-12.0, 7.8, 13.3]
+  length: 23.37
   item: material.structural-steel-a36
-  mass: 3750.0
+  mass: 3505.0
   power: 24030.0
-  note: 0.8 m troughed belt, 150 kg/m with its gallery (from memory), 16 degrees; into the roof's fifth hole
+  note: 0.8 m troughed belt, 150 kg/m with its gallery (from memory), 16 degrees; into the roof's fifth hole, 1.8 m north of the electrodes
 - kind: duct
   name: off-gas
-  from: [-12.0, 6.0, 14.0]
+  from: [-10.0, 7.5, 13.5]
   to: [6.0, 24.0, 15.0]
-  length: 25.48
+  length: 23.03
   item: material.structural-steel-a36
-  mass: 12570.0
-  note: 2 m across, 10 mm plate, water-cooled for its first part; from the roof's fourth hole to the baghouse
+  mass: 11360.0
+  note: 2 m across, 10 mm plate, water-cooled for its first part; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse
 - kind: busbar
   name: secondary bus
   from: [-12.0, -1.0, 4.0]
@@ -122,7 +122,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 187.2, mass: 449300.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
-totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 3922000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1188 t of plant and frame and 2734 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 3920000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1187 t of plant and frame and 2734 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
