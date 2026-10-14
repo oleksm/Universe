@@ -134,6 +134,25 @@ Steps 1 to 3 are small and independent of the planet work. Step 4 is the largest
 entangled with `App`). Step 6 is where most of the 28 `&App` call sites stay untouched: the game keeps its
 internals, it only stops hosting the other apps.
 
+## 3.1 Where it stands (2026-10-14)
+
+| Step | State | Commit |
+|---|---|---|
+| 1 Host and trait | done: `engine::apps` (App, Host, Next, Cover, plan) | c1219828 |
+| 2 Studio as an app | done: empty Studio capture byte-identical to main | ace4995e |
+| 3 Clock runtime | done: `sim::clocks::{Runtime, Subscriptions, Clocked}`; DRIVE and WALK on it; DRIVE/WALK captures byte-identical | b1989495 |
+| 4 Planet view extracted | done: `game::planet_view`; game captures differ from main as main does from itself | 16d95e35 |
+| 5 Planet viewer app | done: `freefall-planet [world id]`, opens in about 0.8 s without the universe | c008e653 |
+| 6 Game as an app | done: WORLDS opens the planet viewer over the game; planet studio state gone from `App`. **Not done:** the shipyard still embeds its studio (needs a document handed back to the game) | 41ce3ac5 |
+| 7 Launcher | done: `freefall --apps`, `freefall --app <game, planet, studio> [arg]` | (this commit) |
+| 8 Factory, scenes | not started | |
+
+Deviations from the plan above: apps are modules in the `game` crate, not crates of their own
+(§5's second question, left open); DRIVE and WALK subscribe to Realtime only (Machinery has no work
+of its own in a lab world yet); `Cover::Pauses` is named for what it does to the apps under it,
+and the game under the planet viewer uses `Hides` (its live world runs on, as before: it runs on
+its own thread).
+
 ## 4. Rules kept
 
 - The engine holds no simulation types; the sim holds no app or window types.

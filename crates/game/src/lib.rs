@@ -1618,9 +1618,43 @@ pub fn studio(args: &[String], window: bool) -> bool {
     false
 }
 
-/// The planet viewer alone (`freefall-planet [world id]`): no universe loaded.
+/// The apps the launcher opens alone (`freefall --app <name> [its argument]`), and what each is.
+pub const APPS: &[(&str, &str)] = &[
+    ("game", "the game: the live world"),
+    ("planet", "the planet viewer: every released world, [world id] to open at"),
+    ("studio", "the ship studio: [design] to open"),
+];
+
+/// The launcher: `--apps` lists the apps, `--app <name> [arg]` opens one alone. False: neither was
+/// asked for.
+fn launch(args: &[String]) -> bool {
+    if args.iter().any(|a| a == "--apps") {
+        for (name, about) in APPS {
+            println!("{name:<8} {about}");
+        }
+        return true;
+    }
+    let Some(k) = args.iter().position(|a| a == "--app") else { return false };
+    let rest: Vec<String> = std::iter::once(args[0].clone()).chain(args[k + 2..].iter().cloned()).collect();
+    match args.get(k + 1).map(String::as_str) {
+        Some("game") => return false,
+        Some("planet") => planet(&rest),
+        Some("studio") => {
+            let mut a = rest.clone();
+            a.insert(1, "--studio".into());
+            studio(&a, true);
+        }
+        other => {
+            eprintln!("no app {:?}: freefall --apps lists them", other.unwrap_or(""));
+            std::process::exit(2);
+        }
+    }
+    true
+}
+
+/// The planet viewer alone (`freefall-planet [world id]`, `freefall --app planet`): no universe loaded.
 pub fn planet(args: &[String]) {
-    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).init();
+    let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
     let id = args.get(1).filter(|a| !a.starts_with("--")).cloned();
     universe_engine::apps::run_prepared(Config { title: "Freefall planets".into(), ..Default::default() }, move || {
         planet_app::PlanetApp::new(id.as_deref()).unwrap_or_else(|e| panic!("planet viewer: {e}"))
@@ -1632,7 +1666,7 @@ pub fn play() {
     env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn"))
         .init();
     let args: Vec<String> = std::env::args().collect();
-    if studio(&args, false) {
+    if launch(&args) || studio(&args, false) {
         return;
     }
     // The renderer and simulation configure their worker pools before startup.
