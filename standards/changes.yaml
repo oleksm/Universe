@@ -824,7 +824,7 @@
 - { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
 - { record: layout.casting-bay-air, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "aff1c8c3aeeaf451" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
-- { record: layout.ladle-station-air, at: "2026-10-14T18:35:23Z", status: draft, summary: "changed: bays", sha: "09cc28b7062b5850" }
+- { record: layout.ladle-station-air, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: physical, bays, links, ground, totals", sha: "d3b475ddaa972b7a" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
 - { record: layout.shaft-furnace-air, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "63006f42442df554" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
@@ -1353,8 +1353,8 @@
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
 - { record: plant-mount.bay-s1, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed: feeds, basis", sha: "1f3d43114cd34842" }
-- { record: plant-mount.bay-s2, at: "2026-10-14T19:05:01Z", status: draft, summary: "changed: basis", sha: "e69766045826073f" }
-- { record: plant-mount.bay-s3, at: "2026-10-14T19:05:01Z", status: draft, summary: "changed: basis", sha: "f7dd19ff233656c9" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: bears, basis", sha: "26ac0b3f00d3dd63" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: basis", sha: "e19fcadc46824201" }
 - { record: plant-mount.bay-s4, at: "2026-10-14T19:05:01Z", status: draft, summary: "changed: bears, feeds, basis", sha: "e772d01bb29700be" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
@@ -2720,7 +2720,7 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
-- { record: unit.alloy-bins-8, at: "2026-10-14T18:55:37Z", status: draft, summary: "changed", sha: "6805e537b4624c5b" }
+- { record: unit.alloy-bins-8, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: size_class, fits, physical", sha: "6d6996996ea20656" }
 - { record: unit.baghouse-200k, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "8353facc61f04e80" }
 - { record: unit.baghouse-450k, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "71f7f9f26631f8e6" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }

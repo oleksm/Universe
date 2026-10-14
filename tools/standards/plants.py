@@ -360,7 +360,7 @@ def ladle_units():
     bins = 8 * (cyl_shell(Db, Hc, 0.006) + math.pi * Db / 2 * math.hypot(Db / 2, Hk) * 0.006) * RHO["steel"]
     stand = (6 * box_tube(0.3, 0.3, 0.02, 9.7) + 2 * box_tube(0.4, 0.4, 0.025, 12.0) + 10 * box_tube(0.3, 0.3, 0.02, 2.1)) * RHO["steel"] + 12 * 6 * 0.01 * RHO["steel"]
     out["alloy-bins-8"] = dict(
-        name="Alloy bins, 8", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 15.0),
+        name="Alloy bins, 8", size_class=3, fits="bay-s3", dims=(12.56, 6.3, 15.14),   # blender's model (v1): the legs' feet reach x 6.28, the walkway's edge beams y 3.15, the fill caps z 15.14; past a class 2 bay's 12 m
         desc=("Eight steel bins of ferroalloys and fluxes hung in a deck 12 m up, two rows of four at local x -4.5, -1.5, 1.5, 4.5 and y -1.5, 1.5: "
               f"each {Db} m across, its cylinder z 12 to 15, its cone down to an outlet at z 10.5. Under each outlet a vibrating feeder (z 10 to 10.5) sends its alloy inward to a weigh hopper "
               "shared by the pair across y, four hoppers on load cells at x -4.5, -1.5, 1.5, 4.5, y 0, z 8.6 to 9.8, each weighing up to 2 t. "
@@ -664,7 +664,7 @@ def ladle_station_air(us, recs):
         {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t", "at": [-9.0, 0.0, 0.0], "note": "over the ladle rail; the car stops at x -9 under its roof"},
         {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [-9.0, -9.0, 0.0], "note": "in a fire-walled vault (y -12 to -6) south of the ladle furnace, its terminals facing it"},
         {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.vacuum-degasser-80t", "at": [6.0, -7.0, 0.0], "note": "south of the rail, its box from y -12 to the car's lane at -2: the tank at (3, -5), its rim 0.7 m clear of the lane; the crane lifts the ladle from the car stopped at x 3"},
-        {"id": "A", "mount": "plant-mount.bay-s2", "unit": "unit.alloy-bins-8", "at": [-9.0, 21.0, 0.0], "note": "outside, north; a stair tower (not yet sized) up to its walkway's access at (-3, 21, 12), for filling and the feeders' upkeep"},
+        {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [-9.0, 27.0, 0.0], "note": "outside, north, its 24 m bay clear of the hall's wall (y 15); a stair tower (not yet sized) up to its walkway's access at (-3, 27, 12), for filling and the feeders' upkeep"},
         {"id": "B", "mount": "plant-mount.bay-s2", "unit": "unit.baghouse-200k", "at": [9.0, 24.0, 0.0], "note": "outside, north-east"},
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower-1cell", "at": [-33.0, -9.0, 0.0], "note": "outside, west of the hall and south of the rail"},
     ]
@@ -676,7 +676,7 @@ def ladle_station_air(us, recs):
     links = [
         link("rail", "ladle rail", (-24.0, 0.0, 0.0), (24.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the arc furnace shop's rail, out by the east door to the casting bay's; the car's centre stops at x -9 (the ladle furnace) and x 3 (the degasser's crane lift)"),
         link("busbar", "secondary bus", (-9.0, -9.0 + tW / 2, tH * 2 / 3), (-9.0, -5.0, 6.0), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {L_I2 / 1000:.0f} kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side"),
-        link("conveyor", "alloy feed", (-9.0, 21.0, 7.0), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), rising 2.4 m (8 degrees) from under the bins' transfer chute to 0.4 m over the ladle furnace's chute, through the north wall at z 7.8"),
+        link("conveyor", "alloy feed", (-9.0, 27.0, 7.0), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), rising 2.4 m (6 degrees) from under the bins' transfer chute to 0.4 m over the ladle furnace's chute, through the north wall at z 8.2"),
         link("duct", "fume", (-7.0, 0.0, 7.5), (9.0, 20.0, 10.0), A36, math.pi * 1.0 * 0.006 * RHO["steel"], None, "1 m across, 6 mm plate: up from the ladle furnace's roof elbow, through the north wall's opening, to the baghouse's inlet; the roof's fume is cooler than an arc furnace's, so the duct is not water-cooled", via=[(-7.0, 0.0, 12.0), (0.0, 6.0, 12.0), (0.0, 17.0, 12.0), (9.0, 17.0, 10.0)]),
         link("pipe", "cooling water to the ladle furnace", (tx, -9.0, 0.75), (-13.5, -4.5, 1.0), A36, pipe_m, None, "a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower's first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault to the ladle furnace's manifold", via=[(tx + 1.5, -9.0, 0.75), (tx + 1.5, -9.0, 1.5), (-16.0, -9.0, 1.5), (-16.0, -4.5, 1.5)]),
         link("pipe", "cooling water to the transformer", (-16.0, -9.0, 1.5), (-9.0 - tL / 2, -9.0, 1.0), A36, tr_pipe_m, None, "a pair of 100 mm pipes, 4 mm wall, teed off the furnace pair, through the vault's west wall to the transformer's cooler ports"),
@@ -690,7 +690,7 @@ def ladle_station_air(us, recs):
         {"what": "Degasser floor", "item": CONC, "volume": r(12 * 10 * 0.5 - math.pi * (pit_r + 0.6) ** 2 * 0.5), "note": "x 0 to 12, y -12 to -2 round the pit, 0.5 m"},
         {"what": "Transformer vault", "item": CONC, "volume": r(8 * 6 * 0.5 + 28 * 6 * 0.3), "note": "x -13 to -5, y -12 to -6 round the transformer: a 0.5 m slab and 0.3 m fire walls 6 m tall; the bus through its north wall, 1 m short of the ladle furnace's box"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
-        {"what": "Bins footing", "item": CONC, "volume": 72.0, "note": "12 x 6 x 1 m"},
+        {"what": "Bins footing", "item": CONC, "volume": 72.0, "note": "12 x 6 x 1 m at (-9, 27), pads under the six feet"},
         {"what": "Baghouse slab", "item": CONC, "volume": r(12 * 8 * 0.6)},
         {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * 12.6 * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 5 * 0.6 * 0.6 * 2.0), "note": f"sunk as the furnace shop's: 0.3 m walls round its {tw:.0f} x 12 m footprint, tops at z 0, floor top at z -2; five pedestals"},
         {"what": "Rail beds", "item": CONC, "volume": r(48 * 0.125), "note": "under the ladle rail, 0.125 m3 a metre as the furnace shop's"},
