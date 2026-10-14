@@ -42,7 +42,7 @@ properties:
       water: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of water it uses up" }
       gravity: { type: number, minimum: 0, x-unit: "m/s2", description: "m/s2, the least gravity it works in" }
       atmosphere: { enum: [any, air, vacuum], description: "What it needs round it. any (the default)." }
-  recipes: { $ref: "module.schema.yaml#/properties/recipes" }
+  recipes: { type: array, items: { $ref: "module.schema.yaml#/definitions/module_recipe" }, description: "What it can be set to make, as a module's recipes (SFO 10)." }
   life: { type: number, x-unit: "s" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }
   revision:
