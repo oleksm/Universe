@@ -282,17 +282,17 @@ def baghouse_unit(q_m3h, dims):
         basis=[{"of": ["physical", "built_of", "needs.power"], "tier": "invented", "review": True, "note": f"{q_m3h:,.0f} m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power {fan / 1e3:.0f} kW."}])
 
 
-def bridge_crane_unit(cap, span, trolley, kind="Ladle crane", job="it lifts and carries a full ladle: off its car into the degasser and back, or over the moulds to pour", gear="a main hoist and a ladle beam"):
+def bridge_crane_unit(cap, span, trolley, kind="Ladle crane", job="it lifts and carries a full ladle: off its car into the degasser and back, or over the moulds to pour", gear="a main hoist and a ladle beam", g=G, h_min=1.4):
     """A double-girder bridge crane: the lightest pair of box girders that keeps the load's deflection within span/800 and
     their bending stress, all loads on, within 150 MPa (0.6 of A36's yield)."""
     best = None
-    for h in [x / 10 for x in range(14, 31)]:
+    for h in [x / 10 for x in range(round(h_min * 10), 31)]:
         for t in (0.012, 0.016, 0.020, 0.025):
             b, g_len = 0.8, span + 0.6
             I = (b * h ** 3 - (b - 2 * t) * (h - 2 * t) ** 3) / 12
             m = 2 * box_tube(b, h, t, g_len) * RHO["steel"]
-            defl = cap * G * span ** 3 / (48 * 205e9 * 2 * I)
-            M = (cap + trolley) * G * span / 4 + m / g_len * G * span ** 2 / 8
+            defl = cap * g * span ** 3 / (48 * 205e9 * 2 * I)
+            M = (cap + trolley) * g * span / 4 + m / g_len * g * span ** 2 / 8
             sigma = M / (2 * I / (h / 2))
             if defl <= span / 800 and sigma <= 150e6 and (best is None or m < best[0]):
                 best = (m, h, t, I, defl, sigma)
@@ -447,6 +447,8 @@ def unit_record(slug, u):
     if u.get("holds"):
         d["holds"] = r(u["holds"])
     d["needs"] = {k: (r(v) if isinstance(v, float) else v) for k, v in u.get("needs", {}).items()}
+    if u.get("rejects"):
+        d["rejects"] = {k: r(v) for k, v in u["rejects"].items()}
     if u.get("recipes"):
         d["recipes"] = u["recipes"]
     d["life"] = u.get("life") or mod.get("life")
@@ -1768,6 +1770,171 @@ def ingot_yard_air(us, recs):
     return layout, bays
 
 
+# ---------------------------------------------------------------- airless: a moon's ground
+SIGMA = 5.670e-8
+MOON_G = (1.6, 2.0)                # m/s2: the site range the airless layouts are sized for (Earth's moon is 1.62)
+RAD_EPS, RAD_ALPHA, SUN = 0.9, 0.2, 1361.0   # a white-coated panel's emissivity and absorptance (from memory), the sun at 1 au
+T_UNDER = 300.0                    # K: the ground in a raised panel's shade at lunar noon, which its underside sees (invented)
+SINTER = "material.regolith-sintered"
+RHO_SINTER = 2500.0
+DRI_C = 0.02                       # share of carbon in the sponge iron, from memory
+
+
+def radiator_unit(T, whose):
+    """A field of raised horizontal radiator panels filling a class 4 bay, rejecting a loop's heat at T to the sky.
+    Sized for the worst case on an airless moon: the sun overhead on the top face, warm shaded ground under."""
+    top = RAD_EPS * SIGMA * T ** 4 - RAD_ALPHA * SUN
+    under = RAD_EPS * SIGMA * (T ** 4 - T_UNDER ** 4)
+    q = top + under
+    A = 44.0 * 44.0                                   # m2 of panel, 2 m gaps at the bay's edges for the loop's headers
+    panels = A / (6.0 * 12.0)
+    face = A * 0.002 * 2 * RHO["aluminium"]
+    tubes = A / 0.15 * math.pi * 0.02 * 0.0015 * RHO["aluminium"]
+    legs = panels * 4 * box_tube(0.1, 0.1, 0.004, 3.0) * RHO["aluminium"]
+    water = A / 0.15 * math.pi / 4 * 0.017 ** 2 * RHO["water"]
+    pumps = q * A / (4186 * 10) / 1000 * 300e3 / 0.75
+    return dict(
+        name=f"Radiator field, {q * A / 1e6:.1f} MW at {T:.0f} K", size_class=4, fits="bay-s4", dims=(48.0, 48.0, 3.5),
+        desc=(f"{panels:.0f} aluminium panels 6 x 12 m, raised 3 m on legs and laid flat edge to edge over 44 x 44 m, carrying {whose} loop's water at about {T:.0f} K through tubes bonded between their two face sheets; "
+              f"the top face, white, radiates to the sky, the underside to the shaded ground. {q:.0f} W a m2 of panel at lunar noon, the worst case: the sun overhead on the top ({RAD_ALPHA:g} of {SUN:.0f} W/m2 absorbed), the ground under it at {T_UNDER:.0f} K; more at night. "
+              "The loop's headers run round the edge, its ports at local (-24, 0, 1). For airless ground only: on a world with air a tower is lighter. Kept clean of dust, which darkens the white."),
+        built_of=[part("Panels", "material.aluminium-alloy-6061", face + tubes, f"two 2 mm face sheets and tubes 20 mm across, 1.5 mm wall, at 150 mm"),
+                  part("Legs", "material.aluminium-alloy-6061", legs, "four 100 mm box legs, 4 mm, 3 m, a panel"),
+                  part("Headers and pumps", "good.pumps", 4000.0 + 20.0 * A / 44.0, "from memory")],
+        holds=water, rejects={"heat": q * A, "temperature": T}, needs={"power": pumps, "atmosphere": "vacuum"},
+        basis=[{"of": ["rejects", "physical"], "tier": "derived", "review": True, "note": f"Stefan-Boltzmann at emissivity {RAD_EPS}; absorptance, the shaded ground's temperature and the panel's layout invented or from memory."},
+               {"of": ["built_of", "holds", "needs"], "tier": "derived", "review": True, "note": "From the panel's sheets and tubes; pumps at 3 bar and 75%."}])
+
+
+def airless_units(us):
+    """The airless furnace shop's own units."""
+    out = {}
+    v = dict(us["eaf-vessel-80t"])
+    v["name"] = "Arc furnace vessel, 80 t, sealed"
+    v["desc"] = ("The 80 t arc furnace closed for airless ground: its roof sealed to the shell, glands round the three electrodes, the sponge iron fed through a lock in the fifth hole, and the off-gas taken by a sealed bellows joint from the fourth, so the furnace holds its own gas (the CO its charge gives off, started with argon) at about 1 bar: "
+                 "the arc burns as in air, the melt neither boils nor loses its manganese to the vacuum, and the slag foams. It tilts only a few degrees to tap and 15 to deslag, through the bellows. Otherwise as unit.eaf-vessel-80t: " + us["eaf-vessel-80t"]["desc"])
+    v["built_of"] = list(us["eaf-vessel-80t"]["built_of"]) + [
+        part("Roof seal and electrode glands", A36, 4000.0, "a sand seal round the roof's rim and three water-cooled glands, from memory"),
+        part("Feed lock", A36, 3000.0, "two valves and a chamber over the fifth hole, from memory"),
+        part("Off-gas bellows", "material.stainless-steel-304", 1500.0, "2 m across, from memory")]
+    v["needs"] = dict(us["eaf-vessel-80t"]["needs"], atmosphere="any")
+    v["basis"] = us["eaf-vessel-80t"]["basis"] + [{"of": ["identity.description"], "tier": "invented", "review": True, "note": "Sealed as closed ferroalloy furnaces are; not a design that has been built for vacuum."}]
+    out["eaf-vessel-80t-sealed"] = v
+    co = DRI * DRI_C * 28.0 / 12.0
+    out["offgas-filter-sealed"] = dict(
+        name="Off-gas filter, sealed", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 10.0),
+        desc=(f"Takes the furnace's {co:.1f} kg/s of CO with its dust from the steam-cooled duct at about 1 bar and 250 deg C, through ceramic candle filters in a closed vessel, and lets it out past the valve that holds the furnace's pressure, up a short stack: on an airless world the gas simply leaves (or a later unit can compress it as fuel). "
+              "The dust is let out through a lock into sealed bins. Gas in at local (-6, 0, 8)."),
+        built_of=[part("Vessel", A36, cyl_shell(4.0, 8.0, 0.012, bottom=2.0) * RHO["steel"], "4 m across, 8 m, 12 mm"),
+                  part("Candles", "material.silicon-carbide", 3000.0, "from memory"),
+                  part("Valve, stack and dust lock", A36, 6000.0, "from memory")],
+        needs={"power": 50e3, "atmosphere": "vacuum"},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": f"From memory; the CO from {DRI_C:.0%} carbon in the sponge iron (from memory) burnt to CO by the melt's oxygen."}])
+    out["gantry-crane-20t-moon"] = bridge_crane_unit(20000.0, 24.0, 6000.0, kind="Gantry crane", job="on its own legs over the furnace and its transformer: it sets electrodes, lifts the roof and swaps the shell", gear="a main hoist", g=MOON_G[1], h_min=0.6)
+    gc = out["gantry-crane-20t-moon"]
+    legs = 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"] + 2 * box_tube(0.8, 0.6, 0.02, 10.0) * RHO["steel"]
+    gc["built_of"].append(part("Legs and sill beams", A36, legs, "four box legs 0.8 x 0.8 m, 20 mm, 22 m, and two sill beams"))
+    gc["dims"] = (10.0, 25.0, 25.0)
+    gc["desc"] = gc["desc"].replace("on the hall's runways", "on its own legs, running on two ground rails 24 m apart").replace("its origin on the runway's rail plane", "its origin on the ground rails' plane, its girders 22 m up") + f" Sized for {MOON_G[1]:g} m/s2."
+    out["crew-post"] = dict(
+        name="Crew post, pressurised", size_class=1, fits="bay-s1", dims=(6.0, 6.0, 5.0),
+        desc="The shift's control room on airless ground: an aluminium cylinder 4 m across and 6 m long at 1 bar, an airlock at its -x end, windows onto the furnace and the controls, air and water kept for its watch, under a berm of loose regolith 1 m deep against radiation and the cold.",
+        built_of=[part("Shell", "material.aluminium-alloy-6061", cyl_shell(4.0, 6.0, 0.006, bottom=2.0) * RHO["aluminium"], "4 m across, 6 m, 6 mm (1 bar gives 33 MPa)"),
+                  part("Airlock, life support and fit-out", "good.electric-motors", 3000.0, "from memory")],
+        needs={"power": 20e3, "atmosphere": "vacuum"},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory."}])
+    out["radiator-field-330k"] = radiator_unit(330.0, "the panels' and transformer's")
+    out["radiator-field-485k"] = radiator_unit(485.0, "the off-gas duct's evaporative")
+    return out
+
+
+def arc_furnace_airless(us, recs):
+    """The arc furnace shop on airless ground at about a moon's gravity: no hall (no weather, and no air to carry heat
+    off), a sealed furnace, radiators for the tower, sintered regolith for concrete (no water to make it with)."""
+    vessel_at = (-12.0, 6.0, 5.0)
+    hot = 485.0
+    low_heat = WATER_SHARE * P + TRANSFORMER_LOSS * S_MVA
+    duct_heat = OFFGAS_SHARE * P
+    f_low, f_hot = recs["radiator-field-330k"]["rejects"]["heat"], recs["radiator-field-485k"]["rejects"]["heat"]
+    n_low, n_hot = math.ceil(low_heat / f_low), math.ceil(duct_heat / f_hot)
+    bays = [
+        {"id": "V", "mount": "plant-mount.bay-s2", "unit": "unit.eaf-vessel-80t-sealed", "at": list(vessel_at), "note": "on the furnace platform, 5 m up, as in the shop for air"},
+        {"id": "T", "mount": "plant-mount.bay-s2", "unit": "unit.furnace-transformer-90mva", "at": [-12.0, -6.0, 0.0], "note": "on its slab beside the platform: no fire walls, since nothing burns without air"},
+        {"id": "F", "mount": "plant-mount.bay-s1", "unit": "unit.dri-bin-200t", "at": [-12.0, 33.0, 0.0], "note": "north, as for air"},
+        {"id": "G", "mount": "plant-mount.bay-s2", "unit": "unit.offgas-filter-sealed", "at": [6.0, 24.0, 0.0], "note": "north-east, where the baghouse stands for air"},
+        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [6.0, -12.0, 0.0], "note": "south-east, under its berm, its windows toward the furnace"},
+    ]
+    cols = 4
+    low_at = [(-48.0 - 48.0 * (i % cols), -6.0 - 48.0 * (i // cols)) for i in range(n_low)]
+    bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": "unit.radiator-field-330k", "at": [x, y, 0.0], "note": f"west and south-west, in rows of {cols}"} for i, (x, y) in enumerate(low_at)]
+    bays += [{"id": f"RH{i + 1}", "mount": "plant-mount.bay-s4", "unit": "unit.radiator-field-485k", "at": [-48.0 - 48.0 * i, 42.0, 0.0], "note": "north-west"} for i in range(n_hot)]
+    bus_area = I2 / 4e6
+    pipe_m = math.pi * 0.5 * 0.008 * RHO["steel"] * 2
+    rows_y = sorted({y for _, y in low_at}, reverse=True)
+    snake = []
+    for k, y in enumerate(rows_y):
+        xs_row = [x for x, yy in low_at if yy == y]
+        ends = (max(xs_row) + 24.0, min(xs_row) - 22.0) if k % 2 == 0 else (min(xs_row) - 22.0, max(xs_row) + 24.0)
+        snake += [(ends[0], y - 24.0, 1.0), (ends[1], y - 24.0, 1.0)]
+    links = [
+        link("conveyor", "sponge iron feed", (-12.0, 30.0, 6.0), (-12.0, 7.8, 14.2), A36, 150.0, DRI * MOON_G[1] * 8.2 / 0.5 + 20000, "0.8 m chevron-cleated belt, as for air but open (no gallery), its head over the feed lock; its bearings and grease vacuum-rated"),
+        link("duct", "off-gas", (-10.0, 7.5, 13.65), (0.0, 24.0, 8.0), A36, math.pi * 1.2 * 0.010 * RHO["steel"], None, f"1.2 m across (the gas is not diluted with air, as it is for air: a fifth of the flow), 10 mm plate, evaporatively cooled: water boils in its jacket at about {hot:.0f} K and the steam gives its heat to the hot radiators; from the bellows on the roof's fourth hole to the filter", heat=duct_heat, via=[(-10.0, 7.5, 15.0), (-4.0, 13.5, 15.0), (0.0, 20.0, 12.0)]),
+        link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, as for air; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are wrapped and spaced as if in air"),
+        link("rail", "ladle rail", (-10.5, 6.0, 0.0), (33.0, 6.0, 0.0), A36, 2 * 60.0, None, "as for air: two 60 kg/m rails at 3 m gauge, on sintered regolith sleepers; on to the ladle station. A ladle standing in vacuum loses its hydrogen: the degasser's work begins here"),
+        link("rail", "slag rail", (-16.5, 0.5, 0.0), (-16.5, 23.25, 0.0), A36, 2 * 60.0, None, "as for air: 2.5 m gauge, on sintered regolith sleepers"),
+        link("rail", "crane rails", (-30.0, -12.0, 0.0), (6.0, 12.0, 0.0), A36, 2 * 50.0, None, "the gantry crane's two rails, 24 m apart along x (y -12 and 12), 36 m long", via=[(6.0, -12.0, 0.0), (6.0, 12.0, 0.0), (-30.0, 12.0, 0.0)]),
+        link("pipe", "cooling water to the radiators", snake[-1], (-15.8, 11.1, 5.5), A36, pipe_m, None, f"a pair of 500 mm pipes, 8 mm wall, flow and return, at about 330 K: along the edges of the {n_low} low radiator fields' rows, their headers teed off it, then east to the furnace's manifold, a branch to the transformer", via=list(reversed(snake[:-1])) + [(-24.0, -30.0, 1.0), (-24.0, -0.5, 1.0), (-19.5, -0.5, 1.5), (-19.5, -0.5, 5.5), (-19.5, 11.1, 5.5)]),
+        link("pipe", "steam to the hot radiators", (-4.0, 13.5, 14.0), (-72.0 + 24.0, 42.0, 1.0), A36, math.pi * 0.4 * 0.012 * RHO["steel"] * 2, None, f"a pair of 400 mm pipes, 12 mm wall: steam from the duct's jacket at about {hot:.0f} K (17 bar) to the hot radiator field, its water back", via=[(-4.0, 13.5, 1.0), (-24.0, 42.0, 1.0)]),
+    ]
+    mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-7.5, 6.0, 0.0]},
+              {"unit": "unit.slag-pot-car", "rides": "slag rail", "at": [-16.5, 6.0, 0.0]},
+              {"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [-12.0, 0.0, 0.0]}]
+    P0, P1, PY = (-20.0, -6.0), (0.0, 12.0), 5.0
+    plat_v = (P0[1] - P0[0]) * (P1[1] - P1[0]) * PY - 5.0 * 5.0 * PY - 5.0 * 12.0 * 4.4 - 3.0 * 3.0 * 0.6 + (P0[1] - P0[0]) * (P1[1] - P1[0]) * 1.0
+    ground = [
+        {"what": "Furnace platform", "item": SINTER, "volume": r(plat_v), "note": "as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete"},
+        {"what": "Transformer slab", "item": SINTER, "volume": r(12 * 12 * 0.6), "note": "no fire walls"},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6), "note": "loose regolith heaped 1 m over the post"},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": r((n_low + n_hot) * 4 * (44.0 * 44.0 / 72.0) * 0.3 * 0.3 * 0.3), "note": "a 0.3 m block under each leg"},
+        {"what": "Rail sleepers and pads", "item": SINTER, "volume": r(43.5 * 1.0 + 22.75 * 1.0 + 72.0 * 0.6 + 12 * 6 * 0.4 + 6.0), "note": "under the ladle, slag and crane rails, the filter and the bin"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used) + sum(l.get("heat", 0) for l in links)
+    rejects = sum(u.get("rejects", {}).get("heat", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    total = mass_units + mass_links + mass_ground
+    hp_w = low_heat / (0.5 * hot / (hot - 330.0))
+    hp_fields = math.ceil((low_heat + hp_w + duct_heat) / f_hot)
+    against = (f"module.arc-furnace: one box, the same on every world. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_low + n_hot} radiator fields ({rejects / 1e6:.1f} MW at lunar noon), "
+               f"{n_low} at 330 K for the panels and transformer and {n_hot} at {hot:.0f} K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); "
+               f"{(mass_units + mass_links) / 1000:,.0f} t of plant and {mass_ground / 1000:,.0f} t of sintered regolith. The radiators cover {(n_low + n_hot) * 48 * 48 / 1e4:.1f} ha: the heat that went up a tower's plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels' heat to {hot:.0f} K (at half Carnot's) would need about {hp_w / 1e6:.0f} MW more power and {hp_fields} hot fields in place of all {n_low + n_hot} (not fitted).")
+    xs = [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    layout = {
+        "identity": {"key": "layout.arc-furnace-airless", "name": "Arc furnace shop, airless",
+                     "description": "The 80 t arc furnace on airless ground at about a moon's gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels' water and one hot for the duct's steam; its off-gas filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused."},
+        "stands_for": "module.arc-furnace",
+        "site": {"atmosphere": "none", "gravity": list(MOON_G)},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": 25.0, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links,
+        "ground": ground,
+        "totals": {"rate": RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": mod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground."},
+                  {"of": ["totals.heat"], "tier": "derived", "note": "The units' and the duct's heat; the radiator fields from the rejection a field gives at lunar noon (unit.radiator-field-330k, -485k)."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes as for air, of sintered regolith at 2,500 kg/m3 and loose regolith at 1,500."},
+                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged; it works from the crew post."}],
+    }
+    print(f"layout.arc-furnace-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_low}+{n_hot} radiator fields ({f_low / 1e6:.1f} and {f_hot / 1e6:.1f} MW each)")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -1816,8 +1983,9 @@ def main():
     us.update(hu)
     us.update(pellet_units())
     us.update(yard_units())
+    us.update(airless_units(us))
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

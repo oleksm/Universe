@@ -42,6 +42,13 @@ properties:
       water: { type: number, minimum: 0, x-unit: "kg/s", description: "kg/s of water it uses up" }
       gravity: { type: number, minimum: 0, x-unit: "m/s2", description: "m/s2, the least gravity it works in" }
       atmosphere: { enum: [any, air, vacuum], description: "What it needs round it. any (the default)." }
+  rejects:
+    type: object
+    additionalProperties: false
+    description: "What a cooling unit (a tower, a radiator field) can take off the layout's loop at full rate."
+    properties:
+      heat: { type: number, minimum: 0, x-unit: "W" }
+      temperature: { type: number, minimum: 0, x-unit: "K", description: "The loop's temperature it is sized for." }
   recipes: { type: array, items: { $ref: "module.schema.yaml#/definitions/module_recipe" }, description: "What it can be set to make, as a module's recipes (SFO 10)." }
   life: { type: number, x-unit: "s" }
   visual: { $ref: "../../common.schema.yaml#/definitions/visual" }

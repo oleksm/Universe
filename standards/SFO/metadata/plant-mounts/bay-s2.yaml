@@ -2,7 +2,7 @@
 # Written by tools/standards/plants.py: change it there.
 identity: {key: plant-mount.bay-s2, name: 'Plant bay, class 2', size_class: 2, description: A 12 m square of prepared ground or floor and the feeds to it.}
 footprint: {length: 12.0, width: 12.0}
-bears: {load: 5080000.0}
+bears: {load: 5180000.0}
 feeds: {power: 90000000.0, heat: 95200000.0}
 basis:
 - of: [footprint]
@@ -10,4 +10,4 @@ basis:
   note: 'Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid.'
 - of: [bears, feeds]
   rule: rule.mounts-margin
-  note: Round the units fitted to it in the trial (unit.eaf-vessel-80t, unit.furnace-transformer-90mva, unit.ladle-furnace-80t, unit.vacuum-degasser-80t, unit.baghouse-200k, unit.recuperator, unit.top-gas-scrubber, unit.heater-transformer-131mva, unit.dri-cooling-loop, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.hydrogen-purifier, unit.water-treatment, unit.disc-filter-2, unit.balling-disc-7m5, unit.balling-disc-7m5, unit.balling-disc-7m5, unit.balling-disc-7m5, unit.plant-transformer-35mva, unit.truck-dump-hopper, unit.crating-line) at 1 g, full.
+  note: Round the units fitted to it in the trial (unit.eaf-vessel-80t, unit.furnace-transformer-90mva, unit.ladle-furnace-80t, unit.vacuum-degasser-80t, unit.baghouse-200k, unit.recuperator, unit.top-gas-scrubber, unit.heater-transformer-131mva, unit.dri-cooling-loop, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.rectifier-transformer-21mva, unit.hydrogen-purifier, unit.water-treatment, unit.disc-filter-2, unit.balling-disc-7m5, unit.balling-disc-7m5, unit.balling-disc-7m5, unit.balling-disc-7m5, unit.plant-transformer-35mva, unit.truck-dump-hopper, unit.crating-line, unit.eaf-vessel-80t-sealed, unit.furnace-transformer-90mva, unit.offgas-filter-sealed) at 1 g, full.

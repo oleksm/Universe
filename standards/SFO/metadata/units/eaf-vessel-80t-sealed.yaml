@@ -1,0 +1,64 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.eaf-vessel-80t-sealed, name: 'Arc furnace vessel, 80 t, sealed', description: 'The 80 t arc furnace closed for airless ground: its roof sealed to the shell, glands round the three electrodes, the sponge iron fed through a lock in the fifth hole, and the off-gas taken by a sealed bellows joint from the fourth, so the furnace holds its own gas (the CO its charge gives off, started with argon) at about 1 bar: the arc burns as in air, the melt neither boils nor loses its manganese to the vacuum, and the slag foams. It tilts only a few degrees to tap and 15 to deslag, through the bellows. Otherwise as unit.eaf-vessel-80t: An AC arc furnace that taps 80 t: a refractory hearth 6.6 m across, water-cooled upper shell and roof, three graphite electrodes on masts, a tilting cradle and an eccentric bottom tap. Fed sponge iron through a fifth hole in the roof. Stands on a platform 5 m up so a ladle car runs under its tap. Its cooling water comes by two flexible hoses of its own (it
+    tilts), 300 mm bore, flow and return, from its ports at local (-3.8, 3.2, 2.6) and (-3.8, 3.6, 2.6), clear of the tilt pin and its actuator, down to a fixed manifold on the deck whose two ports face up at local (-3.8, 4.9, 0.5) and (-3.8, 5.3, 0.5). Its box is not centred across: the arms'' tails and the secondary cables reach 6.25 m behind the furnace''s axis (toward the transformer), its water hoses'' couplings at the deck manifold 5.49 m in front (the manifold itself is the layout''s); 14 m tall with the masts at rest.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 11.74, height: 14.0, mass: 315400.0}
+built_of:
+- {what: Hearth shell, item: material.structural-steel-a36, mass: 33060.0, note: '6.6 m across, 2.0 m tall, 50 mm plate, its dished bottom 1.25 times the disc'}
+- {what: Hearth lining, item: good.refractory-brick, mass: 148400.0, note: '0.9 m under the bath, 0.45 m up the hearth wall'}
+- {what: Upper shell panels and cage, item: material.structural-steel-a36, mass: 13590.0, note: 'water-cooled pipe panels 2.5 m tall round the shell (70 x 8 mm pipes side by side), the cage that holds them half as much again'}
+- {what: Roof panels, item: material.structural-steel-a36, mass: 7298.0, note: 'water-cooled pipe panels over a dome 6.8 m across, 1.15 times the disc'}
+- {what: Roof delta, item: good.refractory-brick, mass: 3770.0, note: 'the refractory centre round the three electrode ports, 2 m across, 0.4 m thick'}
+- {what: Tilting cradle, item: material.structural-steel-a36, mass: 52790.0, note: 'two rocker box girders 1.5 x 1 m, 40 mm wall, 9 m long, and a deck 9 x 9 m of 40 mm plate'}
+- {what: Electrode masts, item: material.structural-steel-a36, mass: 23400.0, note: 'three box masts 0.8 x 0.8 m, 40 mm wall, 7.27, 8.17 and 9.07 m long, staggered so the arms clear; shown at rest, moving in fixed guide collars on seated rams'}
+- {what: Current-conducting arms, item: material.aluminium-1350, mass: 3482.0, note: 'three box arms 6 m long, 0.6 m deep, 30 mm wall: rear 4 m 0.8 m wide, 0.5 m taper, front 1.5 m 0.3 m wide to clear the neighbouring rods (geometric gap 30 mm; electrical clearance not yet checked)'}
+- {what: Secondary cables, item: material.copper, mass: 4190.0, note: 'two water-cooled copper cables a phase, 12 m, each 6495 mm2 for half of 65 kA at 5 A/mm2'}
+- {what: Slag spout, item: material.structural-steel-a36, mass: 648.4, note: 'a steel trough 0.8 m wide, 0.4 m deep, 30 mm plate, 1.79 m long, outside sizes (a clear channel 0.44 m wide and 0.22 m deep inside its wall and lining); its floor from the slag door''s sill (local x -3.32, 3.2 m up) sloping 20 degrees down to x -5.0, 2.59 m up, 0.5 m past the cradle deck, so the slag falls clear into the pot'}
+- {what: Slag spout lining, item: good.refractory-brick, mass: 949.3, note: 150 mm of refractory in the trough}
+- {what: Slag spout brackets, item: material.structural-steel-a36, mass: 169.8, note: 'four seated brackets of 120 x 120 x 6 mm tube and plate that carry the trough on the cradle; measured on blender''s model (eaf-vessel-80t candidate v02: tubes 83.4 kg, plates 86.4 kg)'}
+- {what: Water hoses, item: material.silicone-rubber, mass: 171.4, note: 'two flexible hoses, flow and return, 300 mm bore, 20 mm wall, 3.964 m each along their centreline (measured on blender''s model, v3), a supported dogleg from the vessel''s ports to the deck manifold; reinforced EPDM hose, which the registry has not got: silicone rubber (1,075 kg/m3) stands for it, the wire not counted. At rest only: pressure loss, bend radius and the tilt''s travel not checked'}
+- {what: Tilt and mast hydraulics, item: good.pumps, mass: 15000.0, note: 'cylinders, pumps and valves; from memory'}
+- {what: Roof seal and electrode glands, item: material.structural-steel-a36, mass: 4000.0, note: 'a sand seal round the roof''s rim and three water-cooled glands, from memory'}
+- {what: Feed lock, item: material.structural-steel-a36, mass: 3000.0, note: 'two valves and a chamber over the fifth hole, from memory'}
+- {what: Off-gas bellows, item: material.stainless-steel-304, mass: 1500.0, note: '2 m across, from memory'}
+holds: 107100.0
+needs: {power: 72000000, heat: 10800000.0, gravity: 1.6, atmosphere: any}
+recipes:
+- makes: good.liquid-steel
+  does: The sponge iron is melted. Lime forms a slag that takes up the impurities.
+  inputs:
+  - {item: good.sponge-iron, quantity: 1.1}
+  - {item: good.lime, quantity: 0.05}
+  - {item: element.c, quantity: 0.015}
+  - {item: good.graphite-electrode, quantity: 0.003}
+  outputs:
+  - {item: good.slag, quantity: 0.15}
+  - {item: good.dust, quantity: 0.015}
+  rate: 26.6666666666667
+  batch: 80000
+  power: 72000000
+life: 788940000
+basis:
+- of: [recipes]
+  tier: derived
+  note: 'The module''s recipe (module.arc-furnace), carried here for the trial: the module stays the game''s until it reads layouts. Its sources are the module''s.'
+- of: [physical, built_of, holds]
+  tier: derived
+  review: true
+  note: 'From the materials and dimensions in built_of. Dimensions from memory of 80 to 100 t furnaces. The electrodes are not counted: they are a good it uses up (good.graphite-electrode). The heel, a sixth of the tap, from memory. A draft mass, not a measured total: the mast guide collars, ram seats and electrode clamps are not counted, and the strength is not checked (blender feasibility, 2026-10-13: its model matches the shell, masts and arms; its opened cradle is 0.9 t lighter).'
+- of: [needs.heat]
+  tier: invented
+  review: true
+  note: The water-cooled panels and roof take about 15% of the arc's power, from memory.
+- of: [needs.gravity]
+  tier: invented
+  review: true
+  note: Slag floats off the steel and the tap pours by gravity. Settling goes as g (Stokes), a sixth as fast at 1.6 m/s2; below that not checked.
+- of: [identity.description]
+  tier: invented
+  review: true
+  note: Sealed as closed ferroalloy furnaces are; not a design that has been built for vacuum.
+- of: [life]
+  rule: rule.life-plant
