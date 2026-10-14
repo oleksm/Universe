@@ -79,7 +79,7 @@ pub(super) fn globe_map_with_threads(body: &Body, threads: usize) -> Option<univ
     let n = MAP_SIZE as usize;
     let amp = terrain.amplitude.max(1.0);
     // A canonical surface is read to half a texel (m): nothing finer shows in the map.
-    let tolerance = std::f64::consts::FRAC_PI_2 * body.rail.radius / MAP_SIZE as f64 / 2.0;
+    let tolerance = crate::terrain_lod::drawn_scale() * std::f64::consts::FRAC_PI_2 * body.rail.radius / MAP_SIZE as f64 / 2.0;
     let mut texels = vec![[0.0f32; 2]; 6 * n * n];
     let threads = threads.clamp(1, 2);
     let rows = (6 * n).div_ceil(threads);

@@ -71,6 +71,8 @@ struct File {
     used: AtomicU64,
     /// Times the file's pages were released.
     releases: AtomicU64,
+    /// Queries this file answered (owned the sample).
+    answered: AtomicU64,
 }
 
 impl File {
@@ -145,7 +147,7 @@ impl File {
         let file = Self {
             name, map, handle: file, capabilities, strings, sections, windows, prefix, block, hashes, blocks,
             verified, read: AtomicU64::new((prefix + blocks * 32) as u64), opened: Instant::now(), first_block_ms: OnceLock::new(),
-            heights, used: AtomicU64::new(0), releases: AtomicU64::new(0),
+            heights, used: AtomicU64::new(0), releases: AtomicU64::new(0), answered: AtomicU64::new(0),
         };
         for (field, kind) in [("faces", 2), ("points", 1)] {
             if entry[field].as_u64() != Some(file.count(kind) as u64) { return Err(file.fail(&format!("{field} differ from the manifest"))); }
@@ -290,7 +292,7 @@ impl File {
     fn report(&self) -> Value {
         let checked: u32 = self.verified.iter().map(|w| w.load(Ordering::Relaxed).count_ones()).sum();
         json!({"file":self.name,"bytes":self.map.len(),"bytes_read":self.read.load(Ordering::Relaxed),"blocks":self.blocks,"blocks_checked":checked,"resident_bytes":self.resident(),
-            "first_block_ms_after_open":self.first_block_ms.get(),"releases":self.releases.load(Ordering::Relaxed),"idle_ms":self.idle_ms()})
+            "first_block_ms_after_open":self.first_block_ms.get(),"releases":self.releases.load(Ordering::Relaxed),"idle_ms":self.idle_ms(),"queries_answered":self.answered.load(Ordering::Relaxed)})
     }
 }
 
@@ -713,6 +715,7 @@ impl Package {
         let &(region, rep, f) = tied.iter().min_by_key(|t| key(t)).ok_or("no containing face")?;
         let file = match region { None => &self.root, Some(k) => self.rep_file(k, rep)? };
         let ([a, b, c], h) = file.corners(f)?;
+        file.answered.fetch_add(1, Ordering::Relaxed);
         let height_m = height(q, [a, b, c], h);
         let categories = file.face(f)?.3;
         let face = self.composed_at(tolerance_m, region, rep, f);
@@ -962,6 +965,10 @@ impl Package {
             let fine = r.file.get().and_then(|f| f.as_ref().ok()).map(|f| (k, Rep::Fine, f));
             fine.into_iter().chain(r.levels.iter().enumerate().filter_map(move |(i, l)| l.file.get().and_then(|f| f.as_ref().ok()).map(|f| (k, Rep::Level(i), f))))
         })
+    }
+    /// The region files opened so far, by name (cheap: no file read).
+    pub(crate) fn opened_names(&self) -> Vec<String> {
+        self.opened_files().map(|(_, _, f)| f.name.clone()).collect()
     }
     /// Residency: release every region file (level 0 or a level) untouched for `idle_ms`, then,
     /// while the region files' resident bytes exceed `budget`, the least lately touched. The root

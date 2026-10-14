@@ -589,6 +589,11 @@ impl Surface {
         self.package.as_ref().map(|p| p.trim(idle_ms, budget_bytes))
     }
 
+    /// For a package: the region files opened so far (level 0 and levels), by file name.
+    pub fn package_opened(&self) -> Vec<String> {
+        self.package.as_ref().map_or_else(Vec::new, |p| p.opened_names())
+    }
+
     /// A package region's levels checked against level 0 (gates 1 and 2): heavy, for the lab.
     pub fn verify_levels(&self, region: &str) -> Result<serde_json::Value, String> {
         self.package.as_ref().ok_or("not a package")?.verify_levels(region)

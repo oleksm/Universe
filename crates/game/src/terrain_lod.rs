@@ -34,7 +34,13 @@ pub(crate) const DRAWN_TOLERANCE_RAD: f64 = 4.1e-4;
 /// The tolerance (m) a patch with cells of `cell` m is drawn to: half a pixel at the nearest
 /// distance of its middle where it is drawn (SPLIT times its size; nearer, it splits).
 pub(crate) fn patch_tolerance(cell: f64) -> f64 {
-    DRAWN_TOLERANCE_RAD * SPLIT * GRID as f64 * cell
+    drawn_scale() * DRAWN_TOLERANCE_RAD * SPLIT * GRID as f64 * cell
+}
+/// 0 under `UNIVERSE_PGS1_LEVEL0_ONLY` (ground patches and the globe map drawn from level 0, for
+/// matched captures), else 1.
+pub(crate) fn drawn_scale() -> f64 {
+    static SCALE: std::sync::OnceLock<f64> = std::sync::OnceLock::new();
+    *SCALE.get_or_init(|| if std::env::var_os("UNIVERSE_PGS1_LEVEL0_ONLY").is_some() { 0.0 } else { 1.0 })
 }
 /// A package's region files resident at most (bytes, page cache), and how long one stays after
 /// its last read (ms): past either, its pages are released (`Surface::trim_package`).

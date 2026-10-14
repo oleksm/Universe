@@ -2339,8 +2339,18 @@ pub fn camera_flight(app: &mut App) {
             *PENDING_SHOT.lock().unwrap() = Some(f.folder.join(format!("{shot}.png")));
         }
     }
-    // The package's reads and the process's resident memory, every 300 frames and at keyframes.
-    if now % 300 == 0 || f.keys.iter().any(|k| k.frame == now) {
+    // Each region file's first opening, with the eye's height over the ground then.
+    if let Some(source) = terrain.surface_source() {
+        static OPENED: std::sync::Mutex<usize> = std::sync::Mutex::new(0);
+        let names = source.package_opened();
+        let mut seen = OPENED.lock().unwrap();
+        if names.len() > *seen {
+            log::info!("PGS_OPENED {}", serde_json::json!({"frame":now,"over_ground_m":height - ground,"files":names}));
+            *seen = names.len();
+        }
+    }
+    // The package's reads and the process's resident memory, every 100 frames and at keyframes.
+    if now % 100 == 0 || f.keys.iter().any(|k| k.frame == now) {
         if let Some(report) = terrain.surface_source().and_then(|s| s.package_report()) {
             let rss = std::fs::read_to_string("/proc/self/status").ok().and_then(|s| s.lines().find(|l| l.starts_with("VmRSS:")).and_then(|l| l.split_whitespace().nth(1)?.parse::<u64>().ok())).map(|kb| kb * 1024);
             log::info!("PGS_PACKAGE {}", serde_json::json!({"frame":now,"process_rss_bytes":rss,"reads":report}));
