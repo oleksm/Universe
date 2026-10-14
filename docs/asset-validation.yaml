@@ -4168,3 +4168,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.eaf-vessel-80t
+    version: 2
+    manifest_sha256: "3ebe600067528b1f48200ac4e18069efc2deed597596b8d2394b2eb8ad034cb6"
+    installed: d1873376
+    game: "the loader (world::assets) at fso d1873376"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/eaf-vessel-80t/v2 (1012440 bytes, bounds [-5.85, -0.0, -4.5] to [5.85, 14.0, 6.2433]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
