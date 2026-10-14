@@ -4153,3 +4153,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.slag-pot-car
+    version: 1
+    manifest_sha256: "948c3d48f02fc2c5e5d7eddebd5ad26a118f7f1da4d74d1ae6673ab977c1d455"
+    installed: 83143847
+    game: "the loader (world::assets) at fso 83143847"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/slag-pot-car/v1 (273736 bytes, bounds [-2.5, -0.04, -1.75] to [2.5, 3.4, 1.75]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
