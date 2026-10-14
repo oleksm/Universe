@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4490000.0}
+physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4493000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -89,18 +89,18 @@ links:
 - kind: pipe
   name: cooling water to the hall
   from: [-27.0, -6.0, 0.75]
-  to: [-17.5, 1.0, 5.5]
-  length: 21.25
+  to: [-15.8, 11.1, 5.5]
+  length: 33.05
   item: material.structural-steel-a36
-  mass: 4192.0
+  mass: 6521.0
   via:
   - [-25.5, -6.0, 0.75]
   - [-25.5, -6.0, 1.5]
   - [-19.5, -6.0, 1.5]
   - [-19.5, -0.5, 1.5]
   - [-19.5, -0.5, 5.5]
-  - [-17.5, -0.5, 5.5]
-  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s first port pair: up to 1.5 m before the west wall (clear of its diagonals), east through a sleeve at y -6, north in the gap between the wall and the vault, up beside the platform''s south-west corner to a fixed manifold on its deck; the vessel''s own flexible hoses (it tilts) run from the manifold to its panels and roof'
+  - [-19.5, 11.1, 5.5]
+  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s first port pair: up to 1.5 m before the west wall (clear of its diagonals), east through a sleeve at y -6, north in the gap between the wall and the vault, up beside the platform''s south-west corner, north along the deck''s west edge (shielded where it passes the slag well) and east along its north edge to a fixed manifold beside the vessel''s water ports; the vessel''s own flexible hoses (it tilts) run from the manifold to its panels and roof'
 - kind: pipe
   name: cooling water to the transformer
   from: [-19.5, -6.0, 1.5]
@@ -152,7 +152,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 187.2, note: a 0.5 m floor and 2 m walls, mass: 449300.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
-totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4490000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1205 t of plant and frame and 3285 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4493000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1207 t of plant and frame and 3285 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}
