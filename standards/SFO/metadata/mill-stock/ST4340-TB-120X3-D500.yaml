@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.st4340-tb-120x3-d500
+  code: ST4340-TB-120X3-D500
+  name: "4340 tube 120 x 3 mm strut, diagonal, 0.5 m square"
+  traded_as: market.metals
+  form: strut
+  temper: "quenched and tempered"
+package: package.bar-bundle
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: material.high-strength-steel-4340
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.12
+  wall: 0.003
+  length: 0.5471
+kit:
+  section: stock.st4340-tb-120x3
+  node: stock.st4340-node-160b
+  end: stock.st4340-end-120
+  bolt: stock.st4340-bolt-m30
+  module: 0.7071
+  cut: 0.3071
+physical:
+  mass: 7.65
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.7071 m node centre to node centre, the face diagonal of a 0.5 m square; 0.3071 m of 4340 tube 120 x 3 mm between two 120 mm ENDs, made to meet 160 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

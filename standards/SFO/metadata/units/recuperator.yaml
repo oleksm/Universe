@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.recuperator, name: 'Recuperator, 53 MW', description: 'Two vertical shell-and-tube exchangers side by side (local x -3 and 3): the top gas from the shaft, 350 deg C with its steam, down through the tubes to 103 deg C, above its dew point; the cleaned recycle gas up through the shells from 40 to 300 deg C. Top gas in at the top, out at the bottom on +y; recycle in at the bottom and out at the top on -y.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 6.0, height: 18.0, mass: 288100.0}
+built_of:
+- {what: Tubes, item: material.stainless-steel-304, mass: 207100.0, note: '4,932 tubes 50 mm, 3 mm wall, 12 m: 9,297 m2'}
+- {what: Shells and heads, item: material.structural-steel-a36, mass: 81010.0, note: 'two shells 4.5 m across, 16 m, 20 mm plate'}
+needs: {}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Area from the duty (53 MW) at 100 W/m2 K, from memory for hydrogen on both sides; shells from memory.
+- of: [life]
+  rule: rule.life-plant

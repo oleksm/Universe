@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.stripper-crane-20t, name: 'Stripper crane, 20 t', description: 'A double-girder stripper crane on the hall''s runways: it lifts each frozen ingot up out of its mould by the hot top, the arms of its tongs holding the mould down by its lugs (a big-end-up mould frees its ingot only upward), and sets the ingots on the ingot car. Hangs on the frame; names no bay. It travels along its x, its wheels at y -11.4 and +11.4 (22.8 m between the rails), its ends 0.3 m beyond; its origin on the runway''s rail plane; the trolley, with ingot tongs whose arms hold the mould down, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall''s centre.'}
+size_class: 2
+physical: {length: 8.0, width: 23.4, height: 3.0, mass: 28190.0}
+built_of:
+- {what: Bridge girders, item: material.structural-steel-a36, mass: 19190.0, note: 'two box girders 1.4 x 0.8 m, 12 mm wall, 23.4 m long over a 22.8 m span, the lightest that meet span/800 under the load (8.2 mm, span/2791) and 150 MPa with every load on (48 MPa)'}
+- {what: Trolley and hoist, item: material.structural-steel-a36, mass: 6000.0, note: 'with ingot tongs whose arms hold the mould down: 30% of the load, from memory'}
+- {what: End carriages and drives, item: good.electric-motors, mass: 3000.0, note: '15% of the load, from memory'}
+needs: {power: 40000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Girders sized as the desc says; trolley and end carriages from memory; the hook, reeving and drives not sized.
+- of: [needs.power]
+  tier: invented
+  review: true
+  note: 2 W a kilogram of rated load, from memory.
+- of: [life]
+  rule: rule.life-plant

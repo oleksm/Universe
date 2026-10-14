@@ -3,4 +3,4 @@ identity:
   key: standard.sfo.14
 title: Assemblies
 parent: standard.sfo.8
-purpose: An assembly is a part made of other parts, fitted to a hull whole (a landing leg, a ramp, a hull section).
+purpose: "An assembly is a part made of other parts, fitted to a hull whole (a landing leg, a ramp, a hull section). A built frame is one: its members, nodes and decks, cut from mill stock and joined, filed in metadata/assemblies (schema/assembly.schema.yaml; tools/standards/frames.py derives its fittings, bill of stock and weight)."

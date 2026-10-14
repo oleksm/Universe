@@ -28,7 +28,7 @@ HEAVY_MARKETS = {"market.ores", "market.minerals"}
 FORMS = {"plate": "plate-stack", "sheet": "plate-stack", "panel": "plate-stack", "sandwich": "plate-stack",
          "honeycomb": "plate-stack", "tile": "plate-stack", "bar": "bar-bundle", "tube": "bar-bundle", "wire": "coil",
          "fibre": "coil", "film": "coil", "ingot": "crate-heavy", "blank": "crate-heavy", "forging": "crate-heavy",
-         "box": "crate-heavy", "scrap": "skip"}
+         "box": "crate-heavy", "fastener": "crate-heavy", "strut": "bar-bundle", "scrap": "skip"}
 
 
 def goods():

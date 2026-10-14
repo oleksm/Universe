@@ -13,5 +13,7 @@ made_from:
 size:
   diameter: 0.3
   wall: 0.02
+  length: 6.0
 basis:
+  - { of: [size.length], tier: invented, review: true, note: "Mill lengths: 6 m for tube and bar, 12 m for box section, the commonest mill and extrusion lengths on Earth; chosen, a frame longer than its member's length is spliced (tools/standards/frames.py)." }
   - { of: [size], tier: invented, review: true, note: "A heavy rung of the member ladder (SFO 13) in titanium: 78.6 kg a metre, extruded over a mandrel (Ti-6-4 is extruded to about 300 mm; from memory). Added 2026-10-07." }

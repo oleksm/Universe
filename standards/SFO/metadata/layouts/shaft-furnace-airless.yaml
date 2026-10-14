@@ -1,0 +1,418 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.shaft-furnace-airless, name: 'Hydrogen shaft furnace, airless', description: 'Direct reduction by hydrogen on airless ground at about a moon''s gravity: the gas loop at 8 bar so the top gas''s water condenses warm enough for radiators to take its heat, the sponge iron discharged hot through a lock straight to the arc furnace shop, the heat to fields of radiators. Hydrogen leaking into vacuum just leaves (no air, no fire), so the tower is an open lattice for bracing, not for venting. Built separately from the plant for air.'}
+stands_for: module.shaft-furnace
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+physical: {length: 473.3, width: 456.0, height: 45.0, mass: 7997000.0}
+bays:
+- id: F
+  mount: plant-mount.bay-s3
+  unit: unit.shaft-furnace-200th-hp
+  at: [0.0, 0.0, 0.0]
+  note: in the tower, on its columns; the hot conveyor under its discharge lock
+- id: R
+  mount: plant-mount.bay-s2
+  unit: unit.recuperator
+  at: [24.0, 24.0, 0.0]
+  note: as for air; its shells hold 8 bar
+- id: S
+  mount: plant-mount.bay-s2
+  unit: unit.top-gas-condenser-8bar
+  at: [48.0, 24.0, 0.0]
+  note: where the scrubber stands for air
+- id: K
+  mount: plant-mount.bay-s2
+  unit: unit.recycle-compressor-8bar
+  at: [48.0, 0.0, 0.0]
+  note: east
+- id: H
+  mount: plant-mount.bay-s3
+  unit: unit.gas-heater-119mw-8bar
+  at: [24.0, -24.0, 0.0]
+  note: south-east
+- id: T
+  mount: plant-mount.bay-s2
+  unit: unit.heater-transformer-131mva
+  at: [48.0, -24.0, 0.0]
+  note: on its slab, no fire walls
+- id: P
+  mount: plant-mount.bay-s1
+  unit: unit.crew-post
+  at: [-24.0, -24.0, 0.0]
+  note: south-west, under its berm
+- id: RL1
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 60.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL2
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 60.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL3
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 60.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL4
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 60.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL5
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 60.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL6
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 60.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL7
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 108.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL8
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 108.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL9
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 108.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL10
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 108.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL11
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 108.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL12
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 108.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL13
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 156.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL14
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 156.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL15
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 156.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL16
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 156.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL17
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 156.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL18
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 156.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL19
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 204.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL20
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 204.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL21
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 204.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL22
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 204.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL23
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 204.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL24
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 204.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL25
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 252.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL26
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 252.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL27
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 252.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL28
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 252.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL29
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 252.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL30
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 252.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL31
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 300.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL32
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 300.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL33
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 300.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL34
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 300.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL35
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 300.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL36
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 300.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL37
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 348.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL38
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-108.0, 348.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL39
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-156.0, 348.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL40
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-204.0, 348.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL41
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-252.0, 348.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL42
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-300.0, 348.0, 0.0]
+  note: north-west, in rows of 6
+- id: RL43
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-60.0, 396.0, 0.0]
+  note: north-west, in rows of 6
+links:
+- kind: conveyor
+  name: pellet belt
+  from: [149.3, 0.0, 2.0]
+  to: [0.0, 0.0, 42.0]
+  length: 154.6
+  item: material.structural-steel-a36
+  mass: 18550.0
+  power: 111200.0
+  note: a 1.2 m belt on trestles, open, rising at 15 degrees to the charge lock's hopper; its bearings and grease vacuum-rated
+- kind: conveyor
+  name: hot sponge iron
+  from: [0.0, 0.0, 6.0]
+  to: [-60.0, 0.0, 6.0]
+  length: 60.0
+  item: material.stainless-steel-304
+  mass: 24000.0
+  power: 150000.0
+  note: 'a closed drag chain conveyor in an insulated casing: 55.6 kg/s of sponge iron at about 650 deg C to the arc furnace shop''s bin, beyond the layout; the hot charge saves the furnace about 24 MW'
+- kind: pipe
+  name: top gas main
+  from: [6.0, 0.0, 31.0]
+  to: [24.0, 24.0, 18.0]
+  length: 47.63
+  item: material.structural-steel-a36
+  mass: 27440.0
+  via:
+  - [15.0, 0.0, 31.0]
+  - [24.0, 24.0, 31.0]
+  note: 1.5 m, 16 mm wall for 8 bar, insulated
+- kind: pipe
+  name: gas to the condenser and compressor
+  from: [24.0, 27.0, 1.5]
+  to: [42.0, 0.0, 1.5]
+  length: 87.83
+  item: material.structural-steel-a36
+  mass: 35280.0
+  via:
+  - [24.0, 32.0, 1.5]
+  - [42.0, 32.0, 1.5]
+  - [42.0, 24.0, 12.0]
+  - [54.0, 24.0, 2.0]
+  - [54.0, 0.0, 1.5]
+  note: 1.0 m, 16 mm
+- kind: pipe
+  name: compressed gas back to the recuperator and heater
+  from: [42.0, 0.0, 1.5]
+  to: [24.0, -28.0, 2.0]
+  length: 116.6
+  item: material.structural-steel-a36
+  mass: 46840.0
+  via:
+  - [36.0, 0.0, 1.5]
+  - [36.0, 14.0, 1.5]
+  - [24.0, 14.0, 17.0]
+  - [14.0, 14.0, 17.0]
+  - [14.0, -28.0, 17.0]
+  - [14.0, -28.0, 2.0]
+  note: 1.0 m, 16 mm, insulated after the recuperator
+- kind: pipe
+  name: hot gas to the bustle
+  from: [24.0, -20.0, 15.0]
+  to: [0.0, -6.0, 16.0]
+  length: 39.0
+  item: material.structural-steel-a36
+  mass: 205300.0
+  via:
+  - [24.0, -20.0, 16.0]
+  - [0.0, -20.0, 16.0]
+  note: 1.9 m inside 200 mm of refractory, 25 mm shell for 8 bar
+- kind: pipe
+  name: hydrogen make-up
+  from: [100.0, 4.0, 1.5]
+  to: [54.0, 4.0, 1.5]
+  length: 46.0
+  item: material.stainless-steel-304
+  mass: 2269.0
+  note: 3.00 kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed
+- kind: pipe
+  name: condensate to the hydrogen plant
+  from: [54.0, 24.0, 0.5]
+  to: [100.0, 24.0, 0.5]
+  length: 46.0
+  item: material.stainless-steel-304
+  mass: 1370.0
+  note: '200 mm: 20.5 kg/s of water back to the electrolysers: on a moon every kilogram comes back'
+- kind: pipe
+  name: loop water to the radiators
+  from: [-82.0, 396.0, 1.0]
+  to: [48.0, 20.0, 1.0]
+  length: 506.0
+  item: material.structural-steel-a36
+  mass: 216900.0
+  via:
+  - [-36.0, 396.0, 1.0]
+  - [-36.0, 36.0, 1.0]
+  - [48.0, 36.0, 1.0]
+  note: 'a pair of 0.87 m pipes at about 345 K: 1,483 kg/s along the 43 radiator fields'' rows to the condenser, a branch to the transformer'
+- kind: cable
+  name: heater supply
+  from: [48.0, -24.0, 4.0]
+  to: [12.0, -24.0, 2.0]
+  length: 36.06
+  item: material.copper
+  mass: 2651.0
+  note: as for air
+frame:
+  box: [-12.0, -12.0, 0.0, 12.0, 12.0, 45.0]
+  cell: 3.0
+  shape: An open braced tower 24 x 24 m and 45 m tall of aluminium kit struts round the shaft; six grating platforms; no cladding.
+  openings:
+  - [9.0, -3.0, 28.0, 12.0, 3.0, 42.0]
+  - [-3.0, -12.0, 13.0, 3.0, -9.0, 19.0]
+  - [-12.0, -3.0, 3.0, -9.0, 3.0, 9.0]
+  members:
+  - {item: stock.al6061-tb-80x2-s3000, count: 1991, where: tower walls}
+  - {item: stock.al6061-tb-80x2-d3000, count: 1537, where: tower walls}
+  - {item: stock.al6061-tb-80x2-s3000, count: 290, where: tower roof}
+  - {item: stock.al6061-tb-80x2-d3000, count: 246, where: tower roof}
+  - {item: stock.st4340-node-110b, count: 934, where: nodes}
+  - {item: stock.st4340-box-300x300x20, count: 8, where: 'columns under the shaft''s ring girder, 12 m, braced to the tower every 6 m'}
+  carries: [unit.shaft-furnace-200th-hp]
+  mass: 79470.0
+  sized: 'At 2 m/s2 the shaft with its burden, 4.8 MN, on 8 columns of 300 x 300 x 20 mm 4340 box: 27 MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), the kit''s lightest aluminium strut (al6061-tb-80x2). Footings not yet checked.'
+ground:
+- {what: Tower foundation, item: material.regolith-sintered, volume: 864.0, note: a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g), mass: 2160000.0}
+- {what: Unit pads, item: material.regolith-sintered, volume: 259.9, note: 0.5 m under each unit, mass: 649800.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 124.9, mass: 312200.0}
+- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
+- {what: Trestle footings, item: material.regolith-sintered, volume: 39.0, mass: 97500.0}
+totals: {rate: 55.5555555555556, power: 127500000.0, heat: 62090000.0, water: 0.0, mass: 7997000.0, against_module: 'module.shaft-furnace: one box, 22 MW. The layout for air draws 152 MW and sends 130 MW up four towers. This layout: the same rate; 127 MW (heater 121, compressor 4.1: at 8 bar the compressor only makes up the loop''s pressure drop); 62 MW to 43 radiator fields at 345 K (10 ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. 4,531 t of plant and frame, 3,466 t of sintered regolith.'}
+staff:
+- {profession: profession.plant-operator, count: 6}
+- {profession: profession.metalworker, count: 2}
+- {profession: profession.technician, count: 1}
+- {profession: profession.engineer, count: 1}
+basis:
+- of: [bays, links, frame.box]
+  tier: invented
+  review: true
+  note: Laid out as the plant for air, for airless ground; the loop's pressure and temperatures from memory of high-pressure shafts.
+- of: [totals]
+  tier: derived
+  review: true
+  note: 'The heat balance as for air with the loop at 8 bar: the recuperator stops above the top gas''s dew point, the condenser takes the rest down to 80 deg C.'
+- of: [frame.members, frame.mass]
+  tier: derived
+  review: true
+  note: Counted from the lattice; sections chosen by the loads in frame.sized.
+- of: [ground]
+  tier: derived
+  review: true
+  note: Sintered regolith at 2,500 kg/m3, loose at 1,500.
+- of: [physical]
+  tier: derived
+  note: Summed from the units, links, frame and ground.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.

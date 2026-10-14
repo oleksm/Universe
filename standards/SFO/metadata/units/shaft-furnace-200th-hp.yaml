@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.shaft-furnace-200th-hp, name: 'Hydrogen shaft furnace, 200 t an hour, 8 bar, hot discharge', description: 'The shaft of unit.shaft-furnace-200th built for airless ground: the gas loop at about 8 bar, so the shell is a pressure vessel (78 MPa in its 40 mm plate) and the charge and discharge go through pressure locks; no cooling zone: the sponge iron leaves through a lock at about 650 deg C into a closed hot conveyor to the arc furnace shop, which in vacuum it cannot rust on the way. Local frame: the axis at (0, 0); the discharge lock at z 8; the ring girder at z 12 (radius 4.1 m); the bustle main (1.9 m pipe) at z 16, its inlet on -y; the top gas outlet at z 31 on +x; the charge lock and hopper z 32 to 40. About 1,387 t of burden inside.'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 13, width: 13, height: 40.0, mass: 1034000.0}
+built_of:
+- {what: Shell, item: material.structural-steel-a36, mass: 174700.0, note: '7.38 m across, 24 m, 40 mm plate'}
+- {what: Lining, item: good.refractory-brick, mass: 550200.0, note: 350 mm}
+- {what: Bustle main, item: material.structural-steel-a36, mass: 42970.0, note: 'a ring 9.8 m across, 25 mm plate for the pressure'}
+- {what: Bustle lining, item: good.refractory-brick, mass: 119700.0, note: 200 mm}
+- {what: Support ring girder, item: material.structural-steel-a36, mass: 30990.0, note: as for air}
+- {what: Charge and discharge pressure locks, item: material.structural-steel-a36, mass: 90000.0, note: 'two lock hoppers with their valves, from memory'}
+- {what: Burden feeders, item: good.electric-motors, mass: 25000.0, note: from memory}
+holds: 1387000.0
+needs: {power: 400000.0, gravity: 1.0, atmosphere: any}
+recipes:
+- makes: good.sponge-iron
+  does: Hot hydrogen takes the oxygen out of the pellets, leaving sponge iron.
+  inputs:
+  - {item: good.iron-ore-pellets, quantity: 1.43}
+  - {item: element.h, quantity: 0.054}
+  outputs:
+  - {item: good.water, quantity: 0.484}
+  rate: 55.5555555555556
+  power: 22000000
+life: 788940000
+basis:
+- of: [recipes]
+  tier: derived
+  note: The module's recipe (module.shaft-furnace), carried here.
+- of: [physical, built_of, holds]
+  tier: derived
+  review: true
+  note: As unit.shaft-furnace-200th less its cooling zone; the shell checked for the loop's pressure; the locks from memory.
+- of: [needs.gravity]
+  tier: invented
+  review: true
+  note: 'At 1.6 m/s2 the burden weighs about 3 kPa a metre of bed against the gas''s drag of about 1 (from memory): it still sinks; at 8 bar the gas is slower.'
+- of: [life]
+  rule: rule.life-plant

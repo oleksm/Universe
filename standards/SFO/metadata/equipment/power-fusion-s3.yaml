@@ -9,11 +9,11 @@ identity:
 size_class: 3
 fits: mount.power-s3
 physical:
-  mass: 5000
-  volume: 1020.0
-  length: 31.9
-  width: 16.0
-  height: 2.0
+  mass: 9416
+  volume: 1127.2
+  length: 31.96
+  width: 16.23
+  height: 2.173
 built_of:
   parts: power-fusion-s3
   shares: rule.discovery-ii-reactor-shares
@@ -26,8 +26,8 @@ built_of:
     - { code: PFS3-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 56, length: 7.14, width: 3.58, height: 0.447, item: stock.ti64-pl-5, quantity: 64.4, module: module.machining-centre }
     - { code: PFS3-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 42, length: 6.48, width: 3.25, height: 0.407, item: good.electric-motors, quantity: 42, module: module.assembly-shop }
     - { code: PFS3-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 84, length: 8.17, width: 4.1, height: 0.512, item: good.electronics, quantity: 84, module: module.assembly-shop }
-    - { code: PFS3-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 140, length: 9.69, width: 4.86, height: 0.607, item: stock.cfc-pl-3, quantity: 161.0, module: module.welding-bay }
-    - { code: PFS3-10, name: "Frame", description: "Carries the set.", mass: 28, length: 5.66, width: 2.84, height: 0.355, item: stock.al6061-pl-5-panel, quantity: 28.0, module: module.welding-bay }
+    - { code: PFS3-09, name: "Radiator panel", description: "Sheds the heat the turbine cannot use: one carbon-carbon plate beside the plant bay, hinged on its long edge to stand up and radiate from both faces.", mass: 1341, length: 15.98, width: 15.98, height: 0.003, item: stock.cc-pl-3, quantity: 1542.1, module: module.assembly-shop }
+    - { code: PFS3-10, name: "Frame", description: "Carries the set to the corner pads: two side trusses, floor beams under the plant, and the radiator's rails, in bonded carbon tube.", mass: 3243, length: 31.96, width: 15.98, height: 1.91, item: stock.cfc-tb-160x5, quantity: 3729.4, module: module.assembly-shop }
     - { code: PFS3-11, name: "Flywheel", description: "Evens the load.", mass: 70, length: 7.69, width: 3.86, height: 0.482, item: stock.st4340-bar-120, quantity: 80.5, module: module.machining-centre }
     - { code: PFS3-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 56, length: 7.14, width: 3.58, height: 0.447, item: good.pumps, quantity: 56, module: module.assembly-shop }
     - { code: PFS3-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 98, length: 8.6, width: 4.31, height: 0.539, item: stock.st304-pl-3, quantity: 112.7, module: module.welding-bay }
@@ -51,4 +51,6 @@ basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 26.0 MW of waste heat at 1,000 K, 255 m2 of panel radiating both sides (a 16 by 16 m panel), the plant in a closed 15.9 m bay beside it, as the S2 lays it out (blender, 2026-10-11)." }
+  - { of: [built_of.list, physical], tier: derived, review: true, note: "Radiator and frame from material, size and load, as the Aurel plants (2026-10-13), the rest of the list as before: 9,416 kg (was 5,000). Built for airless places: the hot carbon plate would burn in air, and air carries heat off besides, so a plant for a world with air wants another radiator. Panel: 15.98 by 15.98 m of 3 mm carbon-carbon at 1,750 kg/m3, 1,341 kg; 255 m2 from both faces sheds the 26.0 MW the turbine cannot use (14 MW out at 35%) at 1,000 K and emissivity 0.9, standing up, on fused-silica stand-offs; it lies beside the plant bay when stowed. Frame in carbon composite (1,580 kg/m3, 55 GPa, 300 MPa allowed for bonded joints; invented knock-down), the whole plant at the mount's 3 g: two side trusses 1.75 m deep in 12 bays of 2.66 m, chords 160 by 5 mm tube, diagonals 160 by 3; floor beams 250 by 5; top ties and stiffeners 80 by 3; radiator rails 250 by 8; chords 316 kN against 375 kN; diagonals 126 kN against 163 kN; floor beams 184 MPa; rails 209 MPa; plus 10% for joints and the hinge: 3,243 kg. 69.3 kN at each plan corner. Size: the bays, an outboard hinge, chords, rails, stand-offs and plate. Over the old power mounts, which were regenerated from it. Open, as the Aurel plants: the rails' temperature under the stand-offs, and the reactor parts, still mass proxies." }
+  - { of: [built_of.list], tier: derived, review: true, note: "Open (2026-10-13): the panel is taken at one temperature all over, but heat has to reach it. A 3 mm carbon-carbon fin at 1,000 K (k about 60 W/m K in the plane, invented) spreads heat only a few centimetres before radiating it, so the panel needs heat pipes or coolant channels a few centimetres apart, or a high-conductivity pitch-fibre plate. Their mass is not in the panel yet." }
   - { of: [life], rule: rule.life-ship-system }

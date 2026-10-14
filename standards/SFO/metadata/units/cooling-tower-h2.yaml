@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.cooling-tower-h2, name: 'Cooling tower, 3 cells', description: 'An induced-draught wet tower: the electrolysers'' and rectifiers'' closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan''s draught and evaporates. The loop''s pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +18, 0.75 m up, at y 0 and +4.5), and the layout''s pipes and concrete basin are not the unit''s. On a world with air only; airless ground needs radiators instead.'}
+size_class: 4
+fits: plant-mount.bay-s4
+physical: {length: 36.0, width: 12.0, height: 14.0, mass: 223000.0}
+built_of:
+- {what: Cells, item: material.structural-steel-a36, mass: 180000.0, note: 'steel frame, fill, drift eliminators and fan deck: 60 t a cell, from memory'}
+- {what: Fans and motors, item: good.electric-motors, mass: 18000.0, note: 'one 10 m fan a cell, from memory'}
+- {what: Loop pumps and exchanger, item: good.pumps, mass: 25000.0, note: from memory}
+needs: {power: 494000.0, water: 13.17}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: 10 MW a 12 m cell and the masses from memory.
+- of: [needs]
+  tier: derived
+  review: true
+  note: 'The loop''s 23.8 MW at a 10 K rise is 569 kg/s, pumped at 4 bar and 75%: 303 kW; fans 0.8% of the heat (from memory). Evaporating it all takes 10.5 kg/s of water (2.26 MJ/kg); blowdown and drift a quarter more (from memory).'
+- of: [life]
+  rule: rule.life-plant

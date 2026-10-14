@@ -1,0 +1,228 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.arc-furnace-airless, name: 'Arc furnace shop, airless', description: 'The 80 t arc furnace on airless ground at about a moon''s gravity: sealed, holding its own gas at 1 bar; no hall (no weather to keep off) but a gantry crane on its own legs; its heat to fields of radiator panels instead of a cooling tower, one set cool for the panels'' water and one hot for the duct''s steam; its off-gas filtered and let go; the crew in a pressurised post under a berm; its platform of sintered regolith. Built separately from the shop for air, not reused.'}
+stands_for: module.arc-furnace
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+physical: {length: 249.0, width: 192.0, height: 25.0, mass: 3697000.0}
+bays:
+- id: V
+  mount: plant-mount.bay-s2
+  unit: unit.eaf-vessel-80t-sealed
+  at: [-12.0, 6.0, 5.0]
+  note: on the furnace platform, 5 m up, as in the shop for air
+- id: T
+  mount: plant-mount.bay-s2
+  unit: unit.furnace-transformer-90mva
+  at: [-12.0, -6.0, 0.0]
+  note: 'on its slab beside the platform: no fire walls, since nothing burns without air'
+- id: F
+  mount: plant-mount.bay-s1
+  unit: unit.dri-bin-200t
+  at: [-12.0, 33.0, 0.0]
+  note: north, as for air
+- id: G
+  mount: plant-mount.bay-s2
+  unit: unit.offgas-filter-sealed
+  at: [6.0, 24.0, 0.0]
+  note: north-east, where the baghouse stands for air
+- id: P
+  mount: plant-mount.bay-s1
+  unit: unit.crew-post
+  at: [6.0, -12.0, 0.0]
+  note: south-east, under its berm, its windows toward the furnace
+- id: RL1
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-48.0, -6.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL2
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-96.0, -6.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL3
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-144.0, -6.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL4
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-192.0, -6.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL5
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-48.0, -54.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL6
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-96.0, -54.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL7
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-144.0, -54.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL8
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-192.0, -54.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL9
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-48.0, -102.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL10
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-96.0, -102.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL11
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-144.0, -102.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RL12
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-330k
+  at: [-192.0, -102.0, 0.0]
+  note: west and south-west, in rows of 4
+- id: RH1
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-485k
+  at: [-48.0, 42.0, 0.0]
+  note: north-west
+mobile:
+- unit: unit.ladle-car-80t
+  rides: ladle rail
+  at: [-7.5, 6.0, 0.0]
+- unit: unit.slag-pot-car
+  rides: slag rail
+  at: [-16.5, 6.0, 0.0]
+- unit: unit.gantry-crane-20t-moon
+  rides: crane rails
+  at: [-12.0, 0.0, 0.0]
+links:
+- kind: conveyor
+  name: sponge iron feed
+  from: [-12.0, 30.0, 6.0]
+  to: [-12.0, 7.8, 14.2]
+  length: 23.67
+  item: material.structural-steel-a36
+  mass: 3550.0
+  power: 20960.0
+  note: 0.8 m chevron-cleated belt, as for air but open (no gallery), its head over the feed lock; its bearings and grease vacuum-rated
+- kind: duct
+  name: off-gas
+  from: [-10.0, 7.5, 13.65]
+  to: [0.0, 24.0, 8.0]
+  length: 23.69
+  item: material.structural-steel-a36
+  mass: 7012.0
+  via:
+  - [-10.0, 7.5, 15.0]
+  - [-4.0, 13.5, 15.0]
+  - [0.0, 20.0, 12.0]
+  heat: 7200000.0
+  note: '1.2 m across (the gas is not diluted with air, as it is for air: a fifth of the flow), 10 mm plate, evaporatively cooled: water boils in its jacket at about 485 K and the steam gives its heat to the hot radiators; from the bellows on the roof''s fourth hole to the filter'
+- kind: busbar
+  name: secondary bus
+  from: [-12.0, -3.5, 4.0]
+  to: [-12.0, 0.8, 7.3]
+  length: 5.42
+  item: material.copper
+  mass: 2366.0
+  note: three water-cooled copper tube bars, as for air; in vacuum their gaps hold no air to break down, but the gas a seal lets out can (Paschen), so the bars are wrapped and spaced as if in air
+- kind: rail
+  name: ladle rail
+  from: [-10.5, 6.0, 0.0]
+  to: [33.0, 6.0, 0.0]
+  length: 43.5
+  item: material.structural-steel-a36
+  mass: 5220.0
+  note: 'as for air: two 60 kg/m rails at 3 m gauge, on sintered regolith sleepers; on to the ladle station. A ladle standing in vacuum loses its hydrogen: the degasser''s work begins here'
+- kind: rail
+  name: slag rail
+  from: [-16.5, 0.5, 0.0]
+  to: [-16.5, 23.25, 0.0]
+  length: 22.75
+  item: material.structural-steel-a36
+  mass: 2730.0
+  note: 'as for air: 2.5 m gauge, on sintered regolith sleepers'
+- kind: rail
+  name: crane rails
+  from: [-30.0, -12.0, 0.0]
+  to: [6.0, 12.0, 0.0]
+  length: 132.0
+  item: material.structural-steel-a36
+  mass: 13200.0
+  via:
+  - [6.0, -12.0, 0.0]
+  - [6.0, 12.0, 0.0]
+  - [-30.0, 12.0, 0.0]
+  note: the gantry crane's two rails, 24 m apart along x (y -12 and 12), 36 m long
+- kind: pipe
+  name: cooling water to the radiators
+  from: [-214.0, -126.0, 1.0]
+  to: [-15.8, 11.1, 5.5]
+  length: 719.3
+  item: material.structural-steel-a36
+  mass: 141900.0
+  via:
+  - [-24.0, -126.0, 1.0]
+  - [-24.0, -78.0, 1.0]
+  - [-214.0, -78.0, 1.0]
+  - [-214.0, -30.0, 1.0]
+  - [-24.0, -30.0, 1.0]
+  - [-24.0, -30.0, 1.0]
+  - [-24.0, -0.5, 1.0]
+  - [-19.5, -0.5, 1.5]
+  - [-19.5, -0.5, 5.5]
+  - [-19.5, 11.1, 5.5]
+  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, at about 330 K: along the edges of the 12 low radiator fields'' rows, their headers teed off it, then east to the furnace''s manifold, a branch to the transformer'
+- kind: pipe
+  name: steam to the hot radiators
+  from: [-4.0, 13.5, 14.0]
+  to: [-48.0, 42.0, 1.0]
+  length: 71.82
+  item: material.structural-steel-a36
+  mass: 17000.0
+  via:
+  - [-4.0, 13.5, 1.0]
+  - [-24.0, 42.0, 1.0]
+  note: 'a pair of 400 mm pipes, 12 mm wall: steam from the duct''s jacket at about 485 K (17 bar) to the hot radiator field, its water back'
+ground:
+- {what: Furnace platform, item: material.regolith-sintered, volume: 613.6, note: 'as for air (the ladle slot, slag tunnel and well), of sintered regolith blocks: there is no water to make concrete', mass: 1534000.0}
+- {what: Transformer slab, item: material.regolith-sintered, volume: 86.4, note: no fire walls, mass: 216000.0}
+- {what: Crew post berm, item: material.regolith, volume: 164.6, note: loose regolith heaped 1 m over the post, mass: 246900.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 37.75, note: a 0.3 m block under each leg, mass: 94380.0}
+- {what: Rail sleepers and pads, item: material.regolith-sintered, volume: 144.2, note: 'under the ladle, slag and crane rails, the filter and the bin', mass: 360500.0}
+totals: {rate: 26.6666666666667, power: 72880000.0, heat: 18450000.0, water: 0.0, mass: 3697000.0, against_module: 'module.arc-furnace: one box, the same on every world. This layout: the same rate; 72.9 MW; 18.4 MW to 13 radiator fields (21.8 MW at lunar noon), 12 at 330 K for the panels and transformer and 1 at 485 K for the duct, in place of the tower; no water used up (closed loops); no hall, no baghouse (the furnace is sealed); 1,246 t of plant and 2,452 t of sintered regolith. The radiators cover 3.0 ha: the heat that went up a tower''s plume as steam must here leave as light, and at 330 K a panel in the noon sun sheds little. A heat pump lifting the panels'' heat to 485 K (at half Carnot''s) would need about 7 MW more power and 3 hot fields in place of all 13 (not fitted).'}
+staff:
+- {profession: profession.plant-operator, count: 6}
+- {profession: profession.metalworker, count: 2}
+- {profession: profession.technician, count: 1}
+- {profession: profession.engineer, count: 1}
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: 'Laid out from the shop for air: the platform, vault and rails where they were; the rest for airless ground.'
+- of: [totals.heat]
+  tier: derived
+  note: The units' and the duct's heat; the radiator fields from the rejection a field gives at lunar noon (unit.radiator-field-330k, -485k).
+- of: [ground]
+  tier: derived
+  review: true
+  note: Volumes as for air, of sintered regolith at 2,500 kg/m3 and loose regolith at 1,500.
+- of: [physical]
+  tier: derived
+  note: Summed from the units, links and ground.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged; it works from the crew post.

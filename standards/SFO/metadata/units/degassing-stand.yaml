@@ -1,0 +1,23 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.degassing-stand, name: Degassing stand, description: 'Where the ladle stands on its car in the open vacuum for a quarter hour while argon through its porous plug stirs the melt: the hydrogen and nitrogen leave of themselves, as they do in a degasser''s tank on a world with air, and the carbon and oxygen meet as CO. A refractory heat shield on a swing arm hangs 1 m over the ladle''s open top, with gaps for the gas, so the melt loses less heat by radiation (about 4 MW open, 4 degrees a minute); the argon and a sampling lance come from the stand. Before the alloys, which the sealed ladle furnace adds. The car stops at local (0, 0).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 10.0, width: 8.0, height: 8.0, mass: 18580.0}
+built_of:
+- {what: Swing arm and post, item: material.structural-steel-a36, mass: 12000.0, note: from memory}
+- {what: Heat shield, item: good.refractory-brick, mass: 4580.0, note: '3.6 m across, 150 mm'}
+- {what: Argon valve stand and lance, item: material.structural-steel-a36, mass: 2000.0, note: from memory}
+needs: {power: 30000.0, atmosphere: vacuum}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: From memory.
+- of: [identity.description]
+  tier: derived
+  review: true
+  note: Radiation from 7 m2 of melt at 1,873 K at emissivity 0.9; 80 t at 820 J/kg K.
+- of: [life]
+  rule: rule.life-plant

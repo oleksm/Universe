@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.cfc-tb-80x2-s500
+  code: CFC-TB-80X2-S500
+  name: "carbon tube 80 x 2 mm strut, 0.5 m"
+  traded_as: market.metals
+  form: strut
+  temper: "cured"
+package: package.bar-bundle
+tint: [0.12, 0.12, 0.13]
+made_from:
+  - item: material.carbon-fibre-composite
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.08
+  wall: 0.002
+  length: 0.39
+kit:
+  section: stock.cfc-tb-80x2
+  node: stock.st4340-node-110b
+  end: stock.st4340-end-80
+  bolt: stock.st4340-bolt-m20
+  module: 0.5
+  cut: 0.23
+physical:
+  mass: 1.66
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.5 m node centre to node centre; 0.23 m of carbon tube 80 x 2 mm between two 80 mm ENDs, made to meet 110 mm nodes, an M20 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

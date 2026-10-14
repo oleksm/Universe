@@ -8,11 +8,11 @@ identity:
 size_class: 3
 fits: mount.power-s3
 physical:
-  mass: 4000
-  volume: 549.0
+  mass: 6045
+  volume: 601.2
   length: 23.4
-  width: 11.7
-  height: 2.0
+  width: 11.95
+  height: 2.15
 built_of:
   parts: power-aurel-s3
   shares: rule.discovery-ii-reactor-shares
@@ -25,8 +25,8 @@ built_of:
     - { code: PAS3-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 45, length: 5.24, width: 2.62, height: 0.448, item: stock.ti64-pl-5, quantity: 51.7, module: module.machining-centre }
     - { code: PAS3-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 34, length: 4.78, width: 2.39, height: 0.408, item: good.electric-motors, quantity: 34, module: module.assembly-shop }
     - { code: PAS3-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 67, length: 5.99, width: 2.99, height: 0.512, item: good.electronics, quantity: 67, module: module.assembly-shop }
-    - { code: PAS3-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 112, length: 7.11, width: 3.55, height: 0.607, item: stock.cfc-pl-3, quantity: 128.8, module: module.welding-bay }
-    - { code: PAS3-10, name: "Frame", description: "Carries the set.", mass: 22, length: 4.13, width: 2.07, height: 0.353, item: stock.al6061-pl-5-panel, quantity: 22.0, module: module.welding-bay }
+    - { code: PAS3-09, name: "Radiator panel", description: "Sheds the heat the turbine cannot use: one carbon-carbon plate over half the roof, hinged on its long edge to stand up and radiate from both faces.", mass: 719, length: 11.7, width: 11.7, height: 0.003, item: stock.cc-pl-3, quantity: 826.9, module: module.assembly-shop }
+    - { code: PAS3-10, name: "Frame", description: "Carries the set to the corner pads: two side trusses, floor beams under the plant, and the radiator's rails, in bonded carbon tube.", mass: 1461, length: 23.4, width: 11.7, height: 1.91, item: stock.cfc-tb-160x3, quantity: 1680.2, module: module.assembly-shop }
     - { code: PAS3-11, name: "Flywheel", description: "Evens the load.", mass: 56, length: 5.64, width: 2.82, height: 0.482, item: stock.st4340-bar-120, quantity: 64.4, module: module.machining-centre }
     - { code: PAS3-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 45, length: 5.24, width: 2.62, height: 0.448, item: good.pumps, quantity: 45, module: module.assembly-shop }
     - { code: PAS3-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 78, length: 6.3, width: 3.15, height: 0.538, item: stock.st304-pl-3, quantity: 89.7, module: module.welding-bay }
@@ -39,9 +39,17 @@ function:
   output: 14000000
   efficiency: 0.5
   burns: material.deuterium
+visual:
+  format: "freefall-model/1"
+  path: "models/power-aurel-s3/v1"
+  manifest_sha256: "faa75b6b5ad08414c0beea09c8405c92e09ca0a1c525fa514c60acd8ed4ce845"
+  version: 1
+  triangles: 11166
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 14.0 MW of waste heat at 1,000 K, 137 m2 of panel, with the plant beneath." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Radiator and frame from material, size and load as the S2's, the rest of the list as before: 6,045 kg (was 4,000). Panel: 11.7 by 11.7 m of 3 mm carbon-carbon, 719 kg; 137 m2 radiating from both faces sheds 14 MW at 1,000 K and emissivity 0.9, standing up, on fused-silica stand-offs. Frame in carbon composite at 300 MPa allowed, the plant at the mount's 3 g: two side trusses 1.75 m deep in ten bays of 2.34 m, chords 160 by 3 tube (149 kN, 100 MPa, buckling 301 kN over 1.5), diagonals 120 by 3 (74 kN against 80); eleven floor beams 160 by 5 across 11.7 m (259 MPa); top ties and stiffeners 80 by 3; radiator rails 200 by 5 (190 MPa standing up at 1 g); plus 10% for joints and the hinge; 1,461 kg. Blender drew it (candidate v01): 1,435.5 kg with the hinge, 72 silica saddles and eight bored metal compression lands; the 1,461 kept leaves 25.5 kg for bonding. Eight corner points as the S2's: 44.5 kN a corner against two pads' 46, and 6,045 kg against the mount's 6,250, so little to spare. Open: rail temperature under the stand-offs (epoxy to about 450 K), plate stiffness, machinery. Built for airless places (space, airless moons): carbon-carbon burns in hot air and the panel would shed heat by convection as well, so a plant for a world with air wants a different radiator (a coated or ceramic panel, or an air-cooled exchanger), not this one. Coolant lines and the reactor parts are still in Discovery II's shares." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 14.0 MW of waste heat at 1,000 K, 137 m2 of panel, with the plant beneath. Width 11.95 m: the 11.7 bay and an outboard hinge; height 2.15 m: chords to 1.91 m, then 200 mm rails, stand-offs and plate; as drawn, 23.4 by 11.95 by 2.138 m; within the mount's 35.1 by 17.6 by 2.2." }
+  - { of: [built_of.list], tier: derived, review: true, note: "Open (2026-10-13): the panel is taken at one temperature all over, but heat has to reach it. A 3 mm carbon-carbon fin at 1,000 K (k about 60 W/m K in the plane, invented) spreads heat only a few centimetres before radiating it, so the panel needs heat pipes or coolant channels a few centimetres apart, or a high-conductivity pitch-fibre plate. Their mass is not in the panel yet." }
   - { of: [life], rule: rule.life-ship-system }

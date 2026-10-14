@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-tb-200x5-s1500
+  code: AL6061-TB-200X5-S1500
+  name: "6061 tube 200 x 5 mm strut, 1.5 m"
+  traded_as: market.metals
+  form: strut
+  temper: "T6"
+package: package.bar-bundle
+tint: [0.8, 0.81, 0.83]
+made_from:
+  - item: material.aluminium-alloy-6061
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.2
+  wall: 0.005
+  length: 1.21
+kit:
+  section: stock.al6061-tb-200x5
+  node: stock.st4340-node-290b
+  end: stock.st4340-end-200
+  bolt: stock.st4340-bolt-m56
+  module: 1.5
+  cut: 0.81
+physical:
+  mass: 33.03
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 1.5 m node centre to node centre; 0.81 m of 6061 tube 200 x 5 mm between two 200 mm ENDs, made to meet 290 mm nodes, an M56 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

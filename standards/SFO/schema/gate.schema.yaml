@@ -17,7 +17,7 @@ properties:
     type: object
     additionalProperties: false
     properties:
-      opening: { type: number, x-unit: "m", description: "m, the diameter of the ring, and of the tube it holds" }
+      opening: { type: number, x-unit: "m", description: "m, the clear diameter inside the ring, and of the tube it holds" }
       thickness: { type: number, x-unit: "m", description: "m, how thick the ring's structure is" }
   performance:
     type: object

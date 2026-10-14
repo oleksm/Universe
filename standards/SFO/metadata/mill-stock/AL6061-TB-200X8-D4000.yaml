@@ -1,0 +1,28 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.al6061-tb-200x8-d4000
+  code: AL6061-TB-200X8-D4000
+  name: "6061 tube 200 x 8 mm strut, diagonal, 4 m square"
+  traded_as: market.metals
+  form: strut
+  temper: "T6"
+package: package.bar-bundle
+tint: [0.8, 0.81, 0.83]
+made_from:
+  - item: material.aluminium-alloy-6061
+  - item: material.high-strength-steel-4340
+size:
+  diameter: 0.2
+  wall: 0.008
+  length: 5.3669
+kit:
+  section: stock.al6061-tb-200x8
+  node: stock.st4340-node-290b
+  end: stock.st4340-end-200
+  bolt: stock.st4340-bolt-m56
+  module: 5.6569
+  cut: 4.9669
+physical:
+  mass: 91.05
+basis:
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 5.6569 m node centre to node centre, the face diagonal of a 4 m square; 4.9669 m of 6061 tube 200 x 8 mm between two 200 mm ENDs, made to meet 290 mm nodes, an M56 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

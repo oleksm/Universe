@@ -5,35 +5,43 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: cargo
+  description: "Two hundred seats six abreast in a ribbed aluminium pressure box: 34 rows of two, two and two facing forward between two aisles, the front left and centre pairs left out for a cross aisle and the inward-opening door on the left aisle, a service space at the back."
 size_class: 4
 fits: mount.cargo-s4
 physical:
-  mass: 26000
-  volume: 199.0
-  length: 26.9
-  width: 3.7
-  height: 2.0
+  mass: 38216
+  volume: 302.56
+  length: 28.44
+  width: 4.36
+  height: 2.44
 needs:
   power: 400000
 built_of:
   parts: cargo-cabin-s4
   shares: rule.shares-chosen
   list:
-    - { code: CBS4-01, name: "Shell", description: "The pressure wall, floor and door.", mass: 11700, length: 20.6, width: 2.84, height: 1.53, item: stock.al6061-sh-2-panel, quantity: 11700.0, module: module.welding-bay }
-    - { code: CBS4-02, name: "Seats", mass: 3120, length: 13.3, width: 1.82, height: 0.986, item: stock.al6061-pl-5, quantity: 3588.0, module: module.machining-centre }
-    - { code: CBS4-03, name: "Linings and insulation", mass: 2080, length: 11.6, width: 1.59, height: 0.862, item: stock.mli-fl, quantity: 2392.0, module: module.assembly-shop,
+    - { code: CBS4-01, name: "Shell", description: "The pressure wall and floor: 5 mm aluminium plate on 230 mm deep T-frames 0.23 m apart (218 x 8 web, 180 x 12 flange), corner frames, and the Passenger cabin 6 plug door on the left aisle, a 0.82 x 1.92 m leaf 110 mm thick that opens inward so the pressure seats it.", mass: 24107, length: 28.44, width: 4.36, height: 2.44, item: stock.al6061-pl-5, quantity: 27723.05, module: module.welding-bay }
+    - { code: CBS4-02, name: "Seats", mass: 2600, length: 12.51, width: 1.712, height: 0.927, item: stock.al6061-pl-5, quantity: 2990.0, module: module.machining-centre }
+    - { code: CBS4-03, name: "Linings and insulation", mass: 1009, length: 9.13, width: 1.251, height: 0.678, item: stock.mli-fl, quantity: 1160.35, module: module.assembly-shop,
         basis: [{ of: [made_from, making], rule: rule.cut-loss }] }
-    - { code: CBS4-04, name: "Air plant", description: "Fans, scrubber and oxygen feed for those aboard.", mass: 3900, length: 14.3, width: 1.97, height: 1.06, item: good.electric-motors, quantity: 3900, module: module.assembly-shop }
-    - { code: CBS4-05, name: "Cooler", mass: 2600, length: 12.5, width: 1.72, height: 0.928, item: good.heat-pumps, quantity: 2600, module: module.assembly-shop }
-    - { code: CBS4-06, name: "Lights and controls", mass: 2600, length: 12.5, width: 1.72, height: 0.928, item: good.electronics, quantity: 2600, module: module.assembly-shop }
+    - { code: CBS4-04, name: "Air plant", description: "Fans, scrubber and oxygen feed for those aboard.", mass: 4500, length: 15.0, width: 2.067, height: 1.112, item: good.electric-motors, quantity: 4500, module: module.assembly-shop }
+    - { code: CBS4-05, name: "Cooler", mass: 3000, length: 13.11, width: 1.804, height: 0.973, item: good.heat-pumps, quantity: 3000, module: module.assembly-shop }
+    - { code: CBS4-06, name: "Lights and controls", mass: 3000, length: 13.11, width: 1.804, height: 0.973, item: good.electronics, quantity: 3000, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: cabin
   seats: 200
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-cabin-s4/v1"
+  manifest_sha256: "dee021a444c70bab02877ef9bd18b7876facc5799661e57244e99b062afc7138"
+  version: 1
+  triangles: 59968
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a pressure shell of sheet with seats, its own small air plant and a cooler. An airliner's lightest seat is 10 kg; here a seat place, with its share of shell and air, is 130 to 150 kg." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "200 seats, 6 abreast with two aisles: 34 rows at an airliner's pitch of 0.79 m and seat width of 0.45 m (from memory), 2 m high." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume, identity.description], tier: derived, review: true, note: "Modeller's blockout v01 (2026-10-13): 34 rows of 2+2+2 at 0.79 m, 0.48 m seat places, two 0.50 m aisles, 3.89 m clear between frames; cabin 6's front aisle and rear space: 3.16 + 32 x 0.79 = 28.44 m long, 3.89 + 2 x 0.23 frames = 4.36 m wide, floor 0.26 m, ceiling 2.205 m (1.945 m clear), 2.44 m high; inside the class 4 mount's 29.6 x 5.84 x 5.84. It was a 3.7 x 2.0 m section that could not hold six abreast, two aisles, frames and headroom. One 0.8 m door is the family's look; egress for 200 is not worked out." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Shell as cabin 6's (101.3 kPa, 6061 at 110 MPa, 5 mm plate between frames at 0.23 m). Frames as fixed-ended beams over the 4.36 m floor and roof: 23.3 kN/m makes 36.9 kN m, a 335 cm3 section; the modeller's 230 mm T (218 x 8 web, 180 x 12 flange, skin 0.23 m wide) gives 341 cm3 (108 MPa), 10.5 kg/m. Skin 408 m2, 5,509 kg; 123 girth frames of 13.6 m and 18 ribs on each end wall, 1,761 m, 18,557 kg; plus 20% for corner frames, door surround and doublers, the door's net 35 kg and a 25 kg reserve: 28,939 kg. A tie line down the middle would quarter the frame moment; not chosen. Seats 18 kg each and linings 2.48 kg/m2 from cabin 30's model; air plant, cooler, lights and controls at cabin 6's per-seat figures (allowances); power 400 kW as listed. 28,939 kg shell by hand. Bound to the modeller's candidate v01 (2026-10-13), solid volumes times density: shell, deck and door 24,082 kg with the hardware drawn, plus the 25 kg reserve, 24,107 kg; seats 2,600 kg on shared solid benches and rails (strength not worked out); linings 1,009 kg. 38,216 kg in all (it was 26,000): 191 kg a seat." }
   - { of: [life], rule: rule.life-ship-system }

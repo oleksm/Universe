@@ -1,0 +1,43 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Plant mount
+x-kind: [plant-mount]
+description: "standards/SFO/metadata/plant-mounts/bay-s<class>.yaml: a standard bay a plant unit is built to (SFO 24), the works' counterpart of a ship's mount (SFO 19). It says the ground it takes, the load its foundation bears and what it feeds. Any unit within its figures fits any layout that offers it."
+type: object
+additionalProperties: false
+required: [identity, footprint, bears]
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name, size_class]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      size_class: { type: integer, minimum: 1, maximum: 4, description: "Its size class, 1 to 4. A bay takes a unit of its class or smaller." }
+      description: { type: string }
+  footprint:
+    description: "The ground the bay takes: a unit's plan must lie within it."
+    type: object
+    additionalProperties: false
+    required: [length, width]
+    properties:
+      length: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+      width: { type: number, exclusiveMinimum: 0, x-unit: "m" }
+  bears:
+    type: object
+    additionalProperties: false
+    required: [load]
+    properties:
+      load: { type: number, exclusiveMinimum: 0, x-unit: "N", description: "N, the most its foundation takes: a unit's mass in service times the site's gravity, with what it holds" }
+  feeds:
+    description: "What the layout brings to the bay, at most."
+    type: object
+    additionalProperties: false
+    properties:
+      power: { type: number, exclusiveMinimum: 0, x-unit: "W", description: "W of electric power" }
+      heat: { type: number, exclusiveMinimum: 0, x-unit: "W", description: "W of heat the layout's cooling loop carries away" }
+      water: { type: number, exclusiveMinimum: 0, x-unit: "kg/s", description: "kg/s of water" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: registry, on_conflict: propose, because: "A trial standard (SFO 24), set round the units of the first layout with a margin.", ask: docs/proposals/modular-factories.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

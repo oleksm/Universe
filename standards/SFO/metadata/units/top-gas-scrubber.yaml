@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.top-gas-scrubber, name: Top gas scrubber, description: 'A packed tower 8.5 m across and 22 m tall: the top gas up through it against sprayed water, which cools it to 40 deg C, condenses the 26.9 kg/s of water the reduction made and washes out the dust. Gas in at the bottom on -x, out at the top to the compressor; the condensate and spray water drain from its sump to a plate exchanger on its skid, which gives the heat to the tower loop, the condensate overflowing to the hydrogen plant.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 12.0, height: 24.0, mass: 270000.0}
+built_of:
+- {what: Shell, item: material.structural-steel-a36, mass: 88050.0, note: '8.5 m across, 22 m, 16 mm plate'}
+- {what: Packing, item: material.stainless-steel-304, mass: 141900.0, note: 10 m of metal packing at 250 kg/m3}
+- {what: 'Sprays, pumps and exchanger', item: good.pumps, mass: 40000.0, note: from memory}
+needs: {power: 727800.0, heat: 76160000.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: Across from the gas's 170 m3/s at 3 m/s; height and packing from memory.
+- of: [needs]
+  tier: derived
+  note: 'The gas cooled from 103 to 40 deg C and 97% of its steam condensed at 2.4 MJ/kg: 76 MW to the tower; its spray water pumped at 3 bar and 75%.'
+- of: [life]
+  rule: rule.life-plant

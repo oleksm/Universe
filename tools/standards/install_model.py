@@ -134,6 +134,7 @@ def main(argv):
     # 3. the record
     text = open(rec_path, encoding="utf-8").read()
     block = f'visual:\n  format: "{FORMAT}"\n  path: "{rel}"\n  manifest_sha256: "{msha}"\n  version: {version}\n  triangles: {info["triangles"]}\n'
+    text = re.sub(r"^visual: \{.*\}\n", "", text, flags=re.M)   # a one-line visual (plants.py writes them) goes; the block below takes its place
     if re.search(r"^visual:\n", text, flags=re.M):
         new = re.sub(r"^visual:\n(?:  .*\n)+", block, text, count=1, flags=re.M)
     elif re.search(r"^life:", text, flags=re.M):

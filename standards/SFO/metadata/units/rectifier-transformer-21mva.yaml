@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.rectifier-transformer-21mva, name: 'Rectifier transformer, 20 MVA', description: 'Steps the grid down for one electrolyser block: a 12-pulse thyristor rectifier in the same skid gives 43 kA at 443 V direct, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. The rectifier''s two DC terminals on one long face (+y), 2.4 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault.'}
+size_class: 1
+fits: plant-mount.bay-s1
+physical: {length: 4.9, width: 3.0, height: 3.6, mass: 42160.0}
+built_of:
+- {what: Core, item: material.structural-steel-a36, mass: 12860.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
+- {what: Windings, item: material.copper, mass: 8040.0}
+- {what: Tank and fittings, item: material.structural-steel-a36, mass: 4824.0}
+- {what: Oil, item: material.hydraulic-fluid, mass: 6432.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
+- {what: Rectifier, item: material.aluminium-1350, mass: 10000.0, note: 'thyristor stacks on water-cooled aluminium heat sinks, from memory'}
+needs: {power: 542400.0, heat: 542400.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: 1.6 t a MVA and the shares of core, copper, tank and oil from memory of furnace transformers; its size scaled from the 90 MVA one by the cube root of the rating.
+- of: [needs]
+  tier: invented
+  review: true
+  note: Losses 0.5% of its rating, carried off by the cooling loop; from memory.
+- of: [life]
+  rule: rule.life-plant

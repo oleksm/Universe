@@ -8,14 +8,14 @@ identity:
   revision: draft
   description: "A length of the ring's tube: skin panels over hoop frames. Sixty make the ring."
 physical:
-  length: 157.1
+  length: 163.4
   width: 120
   height: 120
 shape:
-  surface_area: 59218
+  surface_area: 61586
 making:
   module: module.assembly-jig
 fit:
   count: 60
 basis:
-  - { of: [physical, shape, fit], tier: invented, review: true, note: "A guess, to be reviewed: the ring (3 km across, 120 m thick, the game's figures) cut into sixty equal lengths." }
+  - { of: [physical, shape, fit], tier: invented, review: true, note: "A guess, to be reviewed: the ring (3 km clear inside, 120 m thick, the game's figures) cut into sixty equal lengths: the tube's centreline at 1,560 m radius, 163.4 m of it to a segment, 61,586 m2 of skin (was 157.1 m at 1,500, before the opening was read as the clear one; blender, 2026-10-13)." }

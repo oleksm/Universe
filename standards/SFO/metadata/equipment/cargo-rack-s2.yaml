@@ -5,10 +5,11 @@ identity:
   maker: org.hadley
   revision: outdated
   slot: cargo
+  description: "Racks that hold cargo in the hold, the 4 t racks' family made bigger. An open frame round a railed deck: 200 x 80 x 5 mm rectangular tube along the bottom, 100 x 100 x 4 mm uprights, 80 x 60 x 4 mm along the top; eight corner mount pads (four at the base, four on top), loaded from +X, its locks and drives recessed at rest; a clear load space of 3.5 x 1.8 x 1.72 m; drawn empty and still."
 size_class: 2
 fits: mount.cargo-s2
 physical:
-  mass: 800
+  mass: 701
   volume: 20.0
   length: 4.31
   width: 2.15
@@ -17,17 +18,25 @@ built_of:
   parts: cargo-rack-s2
   shares: rule.shares-chosen
   list:
-    - { code: RKS2-01, name: "Frame", description: "Tube uprights and beams.", mass: 440, length: 3.53, width: 1.76, height: 1.76, item: stock.st4340-tb-120x10, quantity: 506.0, module: module.welding-bay }
-    - { code: RKS2-02, name: "Decking and rails", mass: 280, length: 3.04, width: 1.52, height: 1.52, item: stock.al6061-pl-5-panel, quantity: 280.0, module: module.welding-bay }
+    - { code: RKS2-01, name: "Frame", description: "Tube uprights and beams.", mass: 467, length: 3.53, width: 1.76, height: 1.76, item: stock.st4340-tb-120x10, quantity: 537.05, module: module.welding-bay }
+    - { code: RKS2-02, name: "Decking and rails", mass: 154, length: 2.49, width: 1.245, height: 1.245, item: stock.al6061-pl-5-panel, quantity: 154.0, module: module.welding-bay }
     - { code: RKS2-03, name: "Locks and drives", description: "Hold the load and move it to the door.", mass: 80, length: 2.0, width: 0.998, height: 0.998, item: good.electric-motors, quantity: 80, module: module.assembly-shop }
 making:
   module: module.assembly-shop
 function:
   kind: rack
   capacity: 10000
+visual:
+  format: "freefall-model/1"
+  path: "models/cargo-rack-s2/v1"
+  manifest_sha256: "ea61f6183079fcecb8edffa52b905084b5512e5fa9c1a203a8cadd36f6e40c43"
+  version: 1
+  triangles: 1812
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a frame of tube and plate with rails and locks. It holds about eleven to seventeen times its own weight." }
   - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, note: "The room its load takes at 500 kg a m3, a middling cargo as stowed: 10,000 kg is 20 m3, twice as long as wide. The racks themselves are in it." }
+  - { of: [identity.description, built_of.list, physical.mass], tier: derived, review: true, note: "Modeller's blockout v01 (2026-10-13) with my load case: the 10 t at 3 g (the mounts' design acceleration) on the two bottom long beams, simply supported over the 4.31 m between pads; 4340 at 1,300 MPa yield, quenched and tempered after welding, over a safety factor 1.5 (867 MPa). 140 x 80 x 5 gives 966 MPa and fails; 200 x 80 x 5 gives 567 MPa, sagging 49 mm (L/88). Frame 443 kg from the sections plus 39 kg for the deeper beams, 482 kg before weld unions. Bound to the modeller's candidate v01 (2026-10-13), solid volumes times density: frame 467 kg, aluminium deck, rails and 9 ribs 154 kg; locks and drives stay an 80 kg allowance; 701 kg in all (it was 800). Deck and restraint strength at 3 g not worked out. The stock named stays a proxy." }
+  - { of: [function.capacity], tier: derived, review: true, note: "10 t is the mass it holds. The clear load space, checked loading from +X, is 3.5 x 1.8 x 1.72 m, 10.8 m3 of the 20 m3 box, so a full 10 t needs cargo of 923 kg/m3 or denser; at a middling 500 kg/m3 it fills at 5.4 t." }
   - { of: [life], rule: rule.life-ship-system }

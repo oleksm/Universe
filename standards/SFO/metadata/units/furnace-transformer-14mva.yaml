@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.furnace-transformer-14mva, name: 'Furnace transformer, 14 MVA', description: 'Steps the grid down for the ladle furnace''s arc: 10.9 MW to heat 80 t at 4 degrees a minute, 40% of it reaching the steel, at a power factor of 0.8; about 300 V and 26 kA a phase, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.1 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault.'}
+size_class: 1
+fits: plant-mount.bay-s1
+physical: {length: 4.3, width: 2.7, height: 3.2, mass: 21870.0}
+built_of:
+- {what: Core, item: material.structural-steel-a36, mass: 8747.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
+- {what: Windings, item: material.copper, mass: 5467.0}
+- {what: Tank and fittings, item: material.structural-steel-a36, mass: 3280.0}
+- {what: Oil, item: material.hydraulic-fluid, mass: 4373.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
+needs: {power: 68330.0, heat: 68330.0}
+life: 788940000
+visual: {format: freefall-model/1, path: models/furnace-transformer-14mva/v1, manifest_sha256: 00d3e40f27f25b6ca4afd5e0fc71e025156f8fd9d07031ac093b81cefb03d043, version: 1, triangles: 8336}
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: 1.6 t a MVA and the shares of core, copper, tank and oil from memory of furnace transformers; its size scaled from the 90 MVA one by the cube root of the rating.
+- of: [needs]
+  tier: invented
+  review: true
+  note: Losses 0.5% of its rating, carried off by the cooling loop; from memory.
+- of: [life]
+  rule: rule.life-plant

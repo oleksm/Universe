@@ -24,10 +24,35 @@ recipes:
       - { item: good.carbon-dioxide, quantity: 0.2014 }
     rate: 2.0
     power: 20500000
+  - makes: stock.fs-pl-6
+    does: "Pure quartz sand fused in an electric furnace into a clear ingot, sawn into plate, annealed, ground and polished."
+    inputs:
+      - { item: good.silica-sand, quantity: 1.3 }
+    rate: 0.05
+    power: 2000000
+  - makes: stock.fs-pl-12
+    does: "Pure quartz sand fused in an electric furnace into a clear ingot, sawn into plate, annealed, ground and polished."
+    inputs:
+      - { item: good.silica-sand, quantity: 1.3 }
+    rate: 0.05
+    power: 2000000
+  - makes: stock.fs-pl-27
+    does: "Pure quartz sand fused in an electric furnace into a clear ingot, sawn into plate, annealed, ground and polished."
+    inputs:
+      - { item: good.silica-sand, quantity: 1.3 }
+    rate: 0.05
+    power: 2000000
+  - makes: stock.fs-pl-54
+    does: "Pure quartz sand fused in an electric furnace into a clear ingot, sawn into plate, annealed, ground and polished."
+    inputs:
+      - { item: good.silica-sand, quantity: 1.3 }
+    rate: 0.05
+    power: 2000000
 life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: derived, review: true, source: "standards/sources/research_people_plant.json", note: "Worked back from what flat glass is made of (71% silica, 14% soda, 13% lime and magnesia, the rest alumina) to the rock that gives each; the magnesia is taken as lime." }
   - { of: [recipes.power], tier: sourced, source: "standards/sources/research_people_plant.json", note: "10.2 GJ a tonne: the average of flat-glass furnaces in the United States (8.8 million Btu a short ton)." }
   - { of: [physical, recipes.rate], tier: invented, review: true, note: "Its size and how much it puts through are chosen. To be reviewed." }
   - { of: [staff], tier: invented, review: true, note: "A furnace or works' watch: six operators, two metalworkers, a technician, an engineer. Coarse: by the kind of plant, not this one; to be reviewed." }
+  - { of: [recipes], tier: invented, review: true, note: "The fused silica plates (2026-10-13): sand of high purity fused electrically, about 40 MJ a kg, and 0.3 of it lost to sawing, grinding and polishing. Chosen; not looked up." }
   - { of: [life], rule: rule.life-plant }

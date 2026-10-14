@@ -5,8 +5,26 @@ identity:
   maker: org.halvard
   kind: outpost
   revision: outdated
-  description: "A small settlement's port: pads, a works, a few thousand people."
+  description: "A small settlement's port on airless ground: two class 2 pads, 100 m across, each ringed by a regolith blast berm, 250 m apart on a 400 by 300 m graded site; between them a pressurised terminal, a 60 by 24 by 8 m hall under a 3 m regolith mound, with a crew airlock and a cargo lock; a rover road joining pads, terminal and the settlement. The settlement's buildings and works are not part of it, nor is the fitted ground terminal, which stands on the site."
+physical:
+  length: 400
+  width: 300
+  height: 11
+  mass: 64359050
+ground:
+  - { what: "Landing pads", item: material.regolith-sintered, volume: 4710.5, mass: 11776250, note: "two discs 100 m across, 0.3 m of sintered regolith on compacted ground" }
+  - { what: "Blast berms", item: material.regolith, volume: 12845.6, mass: 19268400, note: "a ring round each pad, 3 m tall, its sides at 35 degrees, tapered to the ground at an 8 m entry" }
+  - { what: "Terminal mound", item: material.regolith, volume: 21995.6, mass: 32993400, note: "3 m of regolith over the 60 x 24 x 8 m hall, for shielding; the hall's own volume left out" }
+  - { what: "Rover roads", item: material.regolith-sintered, volume: 128.4, mass: 321000, note: "sintered strips joining the pads, the terminal and the settlement's edge" }
 fit:
   - { item: equipment.gate.terminal-ground.s3, count: 1 }
+visual:
+  format: "freefall-model/1"
+  path: "models/outpost/v1"
+  manifest_sha256: "e1d98ac398197e8adc8a3926b179bc42d8814bcbb6e43b6c81eb426a89315ffe"
+  version: 1
+  triangles: 7102
 basis:
+  - { of: [ground, physical.mass], tier: derived, review: true, note: "Volumes measured on blender's blockout (structure-outpost blockout v02, 2026-10-14); masses from the regolith materials, both to review. The 400 x 300 m site is graded too (31,290 m3 of regolith moved in place, not counted as mass). The mass leaves out the terminal hall and its locks: their pressure construction is not designed (the model's portal linings are envelopes, not steel)." }
+  - { of: [identity.description, physical], tier: invented, review: true, note: "Scope set 2026-10-13 for the modeller (blender asked). Only the port: the settlement record carries its buildings and its works (the modules), so a works hall here would count them twice. For airless places (most outposts stand on moons); a world with air wants another design, open for Halden Camp on Heath. Pads class 2 (SFO 23), 100 m to stand the 66 m MC-07 and the 60 m hauler with room round them. On airless ground a landing jet throws regolith a long way (Apollo 12 sandblasted Surveyor III 160 m off, from memory), so each pad has a 3 m berm and they stand 250 m apart. The 3 m mound over the hall shields it from radiation and micrometeoroids, as lunar base studies propose (2 to 3 m, from memory). Height: the mound, 8 m hall and 3 m cover. Sizes chosen, nothing sized for a load; what it is built of is open." }
   - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }

@@ -9,6 +9,26 @@ allOf:
   - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
   - { properties: { physical: { required: [length, width] } } }
 definitions:
+  module_recipe:
+    description: "One thing a module (or a plant unit, SFO 24) can be set to make, with what that takes."
+    type: object
+    additionalProperties: false
+    required: [makes, inputs, rate, power]
+    properties:
+      makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
+      does: { type: string, description: "What happens in it, set to this." }
+      inputs: { $ref: "#/definitions/amounts", description: "What goes in. Nothing is made of nothing: a recipe has at least one." }
+      outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
+      rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, at full rate, set to this" }
+      batch: { type: number, x-unit: "kg", description: "kg in one batch" }
+      power: { type: number, x-unit: "W", description: "W it draws at full rate, set to this" }
+      changeover:
+        description: "What it costs to set it to this from another of its recipes."
+        type: object
+        additionalProperties: false
+        properties:
+          time: { type: number, x-unit: "s", description: "s it stands while it is changed over" }
+          loss: { type: number, x-unit: "kg", description: "kg of its first output lost" }
   amounts:
     type: array
     items:
@@ -53,24 +73,7 @@ properties:
     description: "What it can be set to make: each one thing, with what that takes. A module with one recipe makes one thing and needs no choosing; one with several is set to one of them at a time (its setup, which is the game's state, not written here)."
     type: array
     items:
-      type: object
-      additionalProperties: false
-      required: [makes, inputs, rate, power]
-      properties:
-        makes: { type: string, x-ref: [element, material, good, stock, part, hull, gate, equipment, module], description: "What it makes, by its key." }
-        does: { type: string, description: "What happens in it, set to this." }
-        inputs: { $ref: "#/definitions/amounts", description: "What goes in. Nothing is made of nothing: a recipe has at least one." }
-        outputs: { $ref: "#/definitions/amounts", description: "What else comes out." }
-        rate: { type: number, x-unit: "kg/s", description: "kg/s of what it makes, at full rate, set to this" }
-        batch: { type: number, x-unit: "kg", description: "kg in one batch" }
-        power: { type: number, x-unit: "W", description: "W it draws at full rate, set to this" }
-        changeover:
-          description: "What it costs to set it to this from another of its recipes."
-          type: object
-          additionalProperties: false
-          properties:
-            time: { type: number, x-unit: "s", description: "s it stands while it is changed over" }
-            loss: { type: number, x-unit: "kg", description: "kg of its first output lost" }
+      $ref: "#/definitions/module_recipe"
   throughput:
     description: "For a shop module (one that cuts, machines, welds or assembles whatever it is given): how much it can put through. It has no recipes of its own. Its recipes are the parts, hulls and gates that name it as the module that makes them: what goes in is what each is made from."
     type: object
