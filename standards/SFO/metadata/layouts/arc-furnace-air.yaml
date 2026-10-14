@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4484000.0}
+physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4485000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -127,7 +127,7 @@ frame:
   cladding: {item: stock.al6061-sh-2, area: 4212.0, mass: 22740.0}
   carries: [unit.hall-crane-20t]
   mass: 228400.0
-  sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord; a st4340-tb-100x5 strut takes 380 kN over 3 m. A crane wheel at the runway''s end puts 186 kN on a wall node, with the roof''s share 231 kN; a st4340-tb-120x5 strut takes 673 kN. Both with half again to spare. Wind on the walls and the footings'' loads not yet checked.'
+  sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord; a st4340-tb-100x5 strut takes 380 kN over 3 m. A crane wheel at the runway''s end puts 187 kN on a wall node, with the roof''s share 232 kN; a st4340-tb-120x5 strut takes 673 kN. Both with half again to spare. Wind on the walls and the footings'' loads not yet checked.'
 ground:
 - {what: Furnace platform, item: good.concrete, volume: 613.6, note: 'x -20 to -6, y 0 to 12, top 5 m, on a 1 m slab; a ladle slot open above between the rockers (x -11 to -6, y 3.5 to 8.5, the tap over it); a slag tunnel along y (x -19 to -14, 4.4 m clear under a 0.6 m deck) with a 3 x 3 m well in the deck (x -18.5 to -15.5, y 4.5 to 7.5) under the spout', mass: 1473000.0}
 - {what: Transformer vault, item: good.concrete, volume: 201.6, note: 'x -18 to -6, y -12 to 0 round the transformer: a 0.6 m slab and 0.3 m fire walls 8 m tall; the bus through its north wall', mass: 483800.0}
@@ -135,7 +135,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 187.2, note: a 0.5 m floor and 2 m walls, mass: 449300.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
-totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4484000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1199 t of plant and frame and 3285 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4485000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1199 t of plant and frame and 3285 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

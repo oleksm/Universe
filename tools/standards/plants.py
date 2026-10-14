@@ -215,14 +215,15 @@ def car_units():
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"A tap's slag ({SLAG / 1000:.0f} t, the recipe's 0.15) foamed to about 1,500 kg/m3 (from memory), a quarter to spare."}])
     # Hall crane: a double-girder bridge, rails at y -11.4 and +11.4 so its ends (0.3 m past the wheels) clear the wall's inner nodes (y +/-12, 160 mm balls) by about 0.2 m (blender, assembly check).
     span, cap = 22.8, 20000.0
-    gird = 2 * box_tube(0.6, 1.4, 0.012, span) * RHO["steel"]
+    g_len = span + 0.6                       # the girders run over the end carriages to the crane's ends; they bend over the span between the rails
+    gird = 2 * box_tube(0.6, 1.4, 0.012, g_len) * RHO["steel"]
     I = (0.6 * 1.4 ** 3 - (0.6 - 0.024) * (1.4 - 0.024) ** 3) / 12   # one girder, the box exactly
     defl = cap * G * span ** 3 / (48 * 205e9 * 2 * I)
-    defl_all = (cap + 6000.0) * G * span ** 3 / (48 * 205e9 * 2 * I) + 5 * gird / span * G * span ** 4 / (384 * 205e9 * 2 * I)   # with the trolley and the girders' own weight
+    defl_all = (cap + 6000.0) * G * span ** 3 / (48 * 205e9 * 2 * I) + 5 * gird / g_len * G * span ** 4 / (384 * 205e9 * 2 * I)   # with the trolley and the girders' own weight
     out["hall-crane-20t"] = dict(
-        name="Hall crane, 20 t", size_class=2, dims=(6.0, r(span + 0.6, 3), 3.0),
+        name="Hall crane, 20 t", size_class=2, dims=(6.0, r(g_len, 3), 3.0),
         desc=f"A double-girder bridge crane on the hall's runways, for the roof, the electrodes and relining. Hangs on the frame; names no bay. It travels along its x on four wheels, two end carriages 6 m long, their wheels at y -11.4 and +11.4 ({span} m between the rails), their ends 0.3 m beyond; its origin on the runway's rail plane, the two girders 1.8 m either side of it; the trolley runs 9.5 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall's centre.",
-        built_of=[part("Bridge girders", A36, gird, f"two box girders 1.4 x 0.6 m, 12 mm wall, {span:.0f} m: at mid-span {defl * 1000:.1f} mm under the 20 t load alone (span/{span / defl:.0f}), {defl_all * 1000:.1f} mm with the trolley and their own weight (span/{span / defl_all:.0f}); checked by blender, 2026-10-14"),
+        built_of=[part("Bridge girders", A36, gird, f"two box girders 1.4 x 0.6 m, 12 mm wall, {g_len:.1f} m long over a {span} m span: at mid-span {defl * 1000:.1f} mm under the 20 t load alone (span/{span / defl:.0f}), {defl_all * 1000:.1f} mm with the trolley and their own weight (span/{span / defl_all:.0f}); checked by blender, 2026-10-14"),
                   part("Trolley and hoist", A36, 6000.0, "from memory"),
                   part("End carriages and drives", "good.electric-motors", 4000.0, "from memory")],
         needs={"power": 60000.0},
