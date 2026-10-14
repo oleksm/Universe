@@ -5,9 +5,14 @@ identity:
   maker: org.halvard
   kind: station
   revision: outdated
-  description: "An orbital platform: a deck of 16 pads, the main structure on one edge, its hangar inside."
+  description: "An orbital platform, in vacuum and free fall: an open truss deck carrying 16 pads, the main structure along one edge with an unpressurised hangar inside. Station frame (the game's, crates/core/world/src/station.rs): the deck faces +y, its top at y -100, its bottom at y -150, across x -300 to 300, along z -225 to 375; the main structure from z -375 to -225, y -150 to 150, its hangar door on its face at z -225. The pads, 90 m across (a 45 m capture radius), in a 4 x 4 grid at 150 m: x -225, -75, 75, 225 and z -150, 0, 150, 300. Nothing on it is built for weight: in orbit the deck takes berthing and the station's slow turn, so it is a space frame, not a slab. The deck: primary Warren trusses 50 m deep along every pad-grid line between the pads (x -300, -150, 0, 150, 300 and z -225, -75, 75, 225, 375), a 3 m strut lattice under a walkway grating on top, and a pad plate with berthing clamps at each pad. The main structure: a strut-lattice hall clad in 2 mm aluminium for shielding from sun and debris; the hangar a 200 x 120 x 80 m bay behind a door 100 m wide and 60 m tall (y -100 to -40), its crew and plant in pressurised modules inside the hall, not yet designed. The fitted transceiver and relay are separate."
+physical:
+  length: 600
+  width: 750
+  height: 300
 fit:
   - { item: equipment.gate.transceiver.station, count: 1 }
   - { item: equipment.gate.relay.hyper, count: 1 }
 basis:
+  - { of: [identity.description, physical], tier: invented, review: true, note: "Scope set 2026-10-14 for the modeller (blender asked). The envelope and datums are the game's (station.rs) so play stays as it is; the construction follows from free fall: a 50 m deep solid deck would be absurd, so the deck is a deep open truss. Members, masses and the pressurised modules not yet sized; struts from the kit (SFO 13) on a 0.5 m grid, aluminium 6061. Static: hangar door closed." }
   - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }
