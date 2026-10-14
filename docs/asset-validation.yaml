@@ -4123,3 +4123,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.baghouse-800k
+    version: 2
+    manifest_sha256: "fb223ba9c9cb718e522451aeec890f43ae3a2cd898c69b1f745aefaf348e3c8d"
+    installed: 1097f388
+    game: "the loader (world::assets) at fso 1097f388"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/baghouse-800k/v2 (531952 bytes, bounds [-11.99, 0.0, -4.525] to [10.775, 18.0, 6.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
