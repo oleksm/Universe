@@ -31,7 +31,7 @@ bays:
   mount: plant-mount.bay-s1
   unit: unit.stair-tower-12m
   at: [-1.0, 27.0, 0.0]
-  note: against the bins' east end, its top landing at the walkway's access (-3, 27, 12); its 6 m square overlaps the bins' bay at its edge, not the bins
+  note: 'against the bins'' east end, 0.22 m clear of their feet: its top landing''s -x face at x -2.5, a 0.5 m grating bridge to the walkway''s access (-3, 27, 12); its 6 m square overlaps the bins'' bay at its edge, not the bins'
 - id: B
   mount: plant-mount.bay-s2
   unit: unit.baghouse-200k
@@ -76,15 +76,15 @@ links:
   name: fume
   from: [-7.0, 0.0, 7.5]
   to: [9.0, 20.0, 10.0]
-  length: 36.94
+  length: 35.98
   item: material.structural-steel-a36
-  mass: 5466.0
+  mass: 5325.0
   via:
-  - [-7.0, 0.0, 12.0]
-  - [0.0, 6.0, 12.0]
+  - [-7.0, 0.0, 11.0]
+  - [0.0, 6.0, 11.0]
   - [0.0, 17.0, 12.0]
   - [9.0, 17.0, 10.0]
-  note: '1 m across, 6 mm plate: up from the ladle furnace''s roof elbow, through the north wall''s opening, to the baghouse''s inlet; the roof''s fume is cooler than an arc furnace''s, so the duct is not water-cooled'
+  note: '1 m across, 6 mm plate: up from the ladle furnace''s roof elbow, through the north wall''s opening, to the baghouse''s inlet, at z 11 under the gantry''s north tie (its top 0.1 m below the tie at 11.6); the roof''s fume is cooler than an arc furnace''s, so the duct is not water-cooled'
 - kind: pipe
   name: cooling water to the ladle furnace
   from: [-27.0, -9.0, 0.75]
