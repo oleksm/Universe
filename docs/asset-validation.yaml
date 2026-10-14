@@ -4243,3 +4243,17 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: structure.outpost
+    version: 1
+    manifest_sha256: "e1d98ac398197e8adc8a3926b179bc42d8814bcbb6e43b6c81eb426a89315ffe"
+    installed: 2d94ff13
+    game: "the loader (world::assets) at fso 2d94ff13"
+    date: "2026-10-14"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/outpost/v1 (426084 bytes, bounds [-200.0, -0.3, -150.0] to [200.0, 11.0, 150.0]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
