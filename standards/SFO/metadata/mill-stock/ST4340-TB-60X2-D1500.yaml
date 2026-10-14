@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.06
   wall: 0.002
-  length: 2.0013
+  length: 2.0313
 kit:
   section: stock.st4340-tb-60x2
-  node: stock.st4340-node-120
+  node: stock.st4340-node-90b
   end: stock.st4340-end-60
   bolt: stock.st4340-bolt-m16
   module: 2.1213
-  cut: 1.8813
+  cut: 1.9113
 physical:
-  mass: 6.05
+  mass: 6.14
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 2.1213 m node centre to node centre, the face diagonal of a 1.5 m square; 1.8813 m of 4340 tube 60 x 2 mm between two 60 mm ENDs, made to meet 120 mm nodes, an M16 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 2.1213 m node centre to node centre, the face diagonal of a 1.5 m square; 1.9113 m of 4340 tube 60 x 2 mm between two 60 mm ENDs, made to meet 90 mm nodes, an M16 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

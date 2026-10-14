@@ -253,6 +253,54 @@ recipes:
       - { item: stock.st4340-scrap, quantity: 0.2 }
     rate: 1.38888888888889
     power: 6000000
+  - makes: stock.st4340-node-110b
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-160b
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-220b
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-290b
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-330b
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-node-90b
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
 life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }

@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.08
   wall: 0.005
-  length: 0.5471
+  length: 0.5971
 kit:
   section: stock.st4340-tb-80x5
-  node: stock.st4340-node-160
+  node: stock.st4340-node-110b
   end: stock.st4340-end-80
   bolt: stock.st4340-bolt-m20
   module: 0.7071
-  cut: 0.3871
+  cut: 0.4371
 physical:
-  mass: 5.06
+  mass: 5.52
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.7071 m node centre to node centre, the face diagonal of a 0.5 m square; 0.3871 m of 4340 tube 80 x 5 mm between two 80 mm ENDs, made to meet 160 mm nodes, an M20 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 0.7071 m node centre to node centre, the face diagonal of a 0.5 m square; 0.4371 m of 4340 tube 80 x 5 mm between two 80 mm ENDs, made to meet 110 mm nodes, an M20 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

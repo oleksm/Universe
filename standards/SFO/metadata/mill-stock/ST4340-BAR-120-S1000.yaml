@@ -13,15 +13,15 @@ made_from:
   - item: material.high-strength-steel-4340
 size:
   diameter: 0.12
-  length: 0.75
+  length: 0.84
 kit:
   section: stock.st4340-bar-120
-  node: stock.st4340-node-250
+  node: stock.st4340-node-160b
   end: stock.st4340-end-120
   bolt: stock.st4340-bolt-m30
   module: 1.0
-  cut: 0.51
+  cut: 0.6
 physical:
-  mass: 50.27
+  mass: 58.26
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 1 m node centre to node centre; 0.51 m of 4340 bar 120 mm between two 120 mm ENDs, made to meet 250 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 1 m node centre to node centre; 0.6 m of 4340 bar 120 mm between two 120 mm ENDs, made to meet 160 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }

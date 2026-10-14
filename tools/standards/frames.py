@@ -23,8 +23,11 @@ The designer places members, nodes and decks; the rest follows:
 Standard struts (form strut, `kit`): a member sold whole, its section cut to length with an END and a bolt in each end,
 like a space-frame kit (MERO). Its standard length is the module, node centre to node centre, on a 0.5 m grid: straight
 0.5, 1, 1.5, 2, 3, 4 and 6 m, and the face diagonal of a square of each up to 4 m (L * sqrt 2), as their own items.
-Each section meets one node size, the smallest at least twice as wide; the cut is the module less that node's diameter
-and the two ENDs (each as long as the section is wide). A module is offered where the cut is at least twice the
+Each section meets one node: a bolted hollow node (NODE-<mm>B), two hot-pressed hemispheres welded, bored and tapped,
+its wall 1.25 bolt diameters (the thread's grip), wide enough that two END faces (each two bolt diameters across)
+clear each other at 45 degrees, the tightest angle a square grid's diagonal makes (D >= 4 b / (pi / 4)), and no
+narrower than the section; to the 10 mm above. The cut is the module less that node's diameter and the two ENDs (each
+as long as the section is wide). A module is offered where the cut is at least twice the
 section's width, no longer than a mill length, and the module at most 200 radii of gyration (a compression member's
 usual limit). Tube and bar of 4340, 6061, Ti-6Al-4V and carbon composite up to 250 mm; box sections are beams, not
 kit. Keys: stock.<section>-s<mm> straight, stock.<section>-d<mm> the diagonal of a <mm> square. In an assembly a strut
@@ -48,6 +51,14 @@ SLEEVE, NODE_TOL, DECK_TOL = 0.3, 0.001, 0.02
 STRAIGHT, SQUARES = [0.5, 1.0, 1.5, 2.0, 3.0, 4.0, 6.0], [0.5, 1.0, 1.5, 2.0, 3.0, 4.0]
 KIT_MATERIALS = {"material.high-strength-steel-4340", "material.aluminium-alloy-6061", "material.carbon-fibre-composite", "material.titanium-alloy-ti-6al-4v"}
 KIT_MAX_WIDTH, KIT_SLENDER = 0.25, 200
+NODE_WALL, NODE_ANGLE = 1.25, math.pi / 4      # a bolted node's wall in bolt diameters; the tightest angle members meet at
+
+
+def kit_node(w):
+    """(diameter, wall) of the bolted hollow node a section w across meets."""
+    b = bolt_for(w) / 1000
+    D = max(w, 2 * (2 * b) / NODE_ANGLE)
+    return math.ceil(D * 100 - 1e-9) / 100, round(NODE_WALL * b, 4)
 SCRAP = {"material.high-strength-steel-4340": "stock.st4340-scrap", "material.aluminium-alloy-6061": "stock.al6061-scrap", "material.titanium-alloy-ti-6al-4v": "stock.ti64-scrap"}
 STEEL = "material.high-strength-steel-4340"
 STOCK_NOTE_TUBE = "Mill lengths: 6 m for tube and bar, 12 m for box section, the commonest mill and extrusion lengths on Earth; chosen, a frame longer than its member's length is spliced (tools/standards/frames.py)."
@@ -237,7 +248,50 @@ def fmt(v):
 def struts():
     """Write the standard struts and their recipes in the welding bay. Idempotent: rewrites every strut record."""
     stocks, mats = load("mill-stock"), materials()
-    nodes = sorted(((d["size"]["diameter"], "wall" in d["size"], k) for k, (f, d) in stocks.items() if ".st4340-node-" in k))
+    # (The bolted hollow nodes the struts meet, with their recipes in the forging press.)
+    widths = sorted({round(d["size"]["diameter"], 3) for k, (f, d) in stocks.items() if d["identity"]["form"] in ("tube", "bar")
+                     and d["made_from"][0]["item"] in KIT_MATERIALS and d["size"]["diameter"] <= KIT_MAX_WIDTH + 1e-9})
+    bolted = {}
+    for w in widths:
+        D, t = kit_node(w)
+        mm = round(D * 1000)
+        code, nk = f"ST4340-NODE-{mm}B", f"stock.st4340-node-{mm}b"
+        bolted[w] = (D, nk)
+        text = f"""# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: {nk}
+  code: {code}
+  name: "4340 bolted hollow node {mm} mm, {round(t * 1000)} mm wall"
+  traded_as: market.metals
+  form: forging
+  temper: "quenched and tempered"
+package: package.crate-heavy
+tint: [0.44, 0.45, 0.47]
+made_from:
+  - item: {STEEL}
+size:
+  diameter: {D}
+  wall: {t}
+basis:
+  - {{ of: [size], tier: derived, review: true, note: {q(f"A bolted hollow node (tools/standards/frames.py): two hot-pressed hemispheres welded, bored and tapped for up to eight M{bolt_for(w)} bolts, its wall 1.25 bolt diameters for the thread's grip, wide enough that END faces two bolt diameters across clear at 45 degrees: about {round(node_mass({'size': {'diameter': D, 'wall': t}, 'made_from': [{'item': STEEL}]}, mats), 1)} kg. The rule chosen; the thread's grip from common practice (a steel thread engages about one diameter), not sized for a load.")} }}
+"""
+        path = os.path.join(S, "mill-stock", code + ".yaml")
+        if not os.path.exists(path) or open(path, encoding="utf-8").read() != text:
+            open(path, "w", encoding="utf-8").write(text)
+    stocks = load("mill-stock")
+    fp = os.path.join(S, "modules/forging-press.yaml")
+    have = open(fp, encoding="utf-8").read()
+    new = "".join(f"""  - makes: {nk}
+    does: "Two hemispheres hot-pressed from plate between dies, welded, then bored and tapped for its bolts."
+    inputs:
+      - {{ item: good.hot-ingot-4340, quantity: 1.2 }}
+    outputs:
+      - {{ item: stock.st4340-scrap, quantity: 0.2 }}
+    rate: 1.38888888888889
+    power: 6000000
+""" for nk in sorted({v[1] for v in bolted.values()}) if f"makes: {nk}\n" not in have)
+    if new:
+        edit(fp, lambda t_: t_.replace("\nlife:", "\n" + new.rstrip("\n") + "\nlife:", 1))
     made, n = [], 0
     for key, (f, d) in sorted(stocks.items()):
         idn, z = d["identity"], d.get("size") or {}
@@ -245,10 +299,7 @@ def struts():
         if idn["form"] not in ("tube", "bar") or mat not in KIT_MATERIALS or z["diameter"] > KIT_MAX_WIDTH + 1e-9:
             continue
         w = z["diameter"]
-        node = next(((D, k) for D, hollow, k in nodes if D >= 2 * w - 1e-9), None)
-        if not node:
-            continue
-        D, nk = node
+        D, nk = bolted[round(w, 3)]
         a_, rho = area(d), density(d, mats)
         t = min(z.get("wall", w / 2), w / 2)
         gyr = math.sqrt(w * w + (w - 2 * t) ** 2) / 4

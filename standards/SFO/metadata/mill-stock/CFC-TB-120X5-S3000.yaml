@@ -14,15 +14,15 @@ made_from:
 size:
   diameter: 0.12
   wall: 0.005
-  length: 2.75
+  length: 2.84
 kit:
   section: stock.cfc-tb-120x5
-  node: stock.st4340-node-250
+  node: stock.st4340-node-160b
   end: stock.st4340-end-120
   bolt: stock.st4340-bolt-m30
   module: 3.0
-  cut: 2.51
+  cut: 2.6
 physical:
-  mass: 12.15
+  mass: 12.41
 basis:
-  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 3 m node centre to node centre; 2.51 m of carbon tube 120 x 5 mm between two 120 mm ENDs, made to meet 250 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
+  - { of: [size, kit, physical.mass], tier: derived, review: true, note: "A standard strut (tools/standards/frames.py): 3 m node centre to node centre; 2.6 m of carbon tube 120 x 5 mm between two 120 mm ENDs, made to meet 160 mm nodes, an M30 bolt in each END. Its length here is END tip to END tip. Ladder, grid and limits chosen." }
