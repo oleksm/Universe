@@ -2722,7 +2722,7 @@
 - { record: unit.cooling-tower-1cell, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "0bde51925dfb5ed3" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
-- { record: unit.furnace-transformer-14mva, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "078a8a23a650b575" }
+- { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:08:44Z", status: draft, summary: "changed: visual", sha: "075bb1464935a02c" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
 - { record: unit.ingot-car-40t, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "6d0a1c08ea1ffee4" }
