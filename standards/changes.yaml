@@ -2713,11 +2713,11 @@
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
-- { record: unit.eaf-vessel-80t, at: "2026-10-14T14:55:33Z", status: draft, summary: "changed: physical, built_of", sha: "c8cdfb424b749542" }
+- { record: unit.eaf-vessel-80t, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed: built_of", sha: "543442e72d29f694" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T13:57:32Z", status: draft, summary: "changed", sha: "341b2e97a3acbe52" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5e8e21a5adca9521" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
-- { record: unit.slag-pot-car, at: "2026-10-14T14:57:20Z", status: draft, summary: "changed: visual", sha: "4c61183abc420c4f" }
+- { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }

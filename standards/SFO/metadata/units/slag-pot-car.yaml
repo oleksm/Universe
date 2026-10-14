@@ -10,13 +10,8 @@ built_of:
 - {what: Drives, item: good.electric-motors, mass: 1500.0, note: from memory}
 holds: 12000.0
 needs: {power: 30000.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/slag-pot-car/v1"
-  manifest_sha256: "948c3d48f02fc2c5e5d7eddebd5ad26a118f7f1da4d74d1ae6673ab977c1d455"
-  version: 1
-  triangles: 5952
 life: 788940000
+visual: {format: freefall-model/1, path: models/slag-pot-car/v1, manifest_sha256: 948c3d48f02fc2c5e5d7eddebd5ad26a118f7f1da4d74d1ae6673ab977c1d455, version: 1, triangles: 5952}
 basis:
 - of: [physical, built_of]
   tier: derived
