@@ -360,13 +360,14 @@ links:
 - kind: cable
   name: heater supply
   from: [48.0, -21.1875, 4.5]
-  to: [13.0, -18.0, 3.0]
-  length: 40.99
+  to: [12.45, -21.4, 1.575]
+  length: 47.06
   item: material.copper
-  mass: 3014.0
+  mass: 3460.0
   via:
   - [48.0, -17.0, 4.5]
-  - [13.0, -17.0, 4.5]
+  - [12.45, -17.0, 4.5]
+  - [12.45, -17.0, 1.575]
   note: as for air
 frame:
   box: [-12.0, -12.0, 0.0, 12.0, 12.0, 45.0]

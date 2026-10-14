@@ -832,8 +832,8 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-14T23:17:30Z", status: draft, summary: "changed: links", sha: "7909700ff162c595" }
-- { record: layout.shaft-furnace-airless, at: "2026-10-14T23:17:30Z", status: draft, summary: "changed: links, totals", sha: "d333be158acf5295" }
+- { record: layout.shaft-furnace-air, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: links, totals", sha: "3fdccb22e6a9469e" }
+- { record: layout.shaft-furnace-airless, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: links", sha: "70d4654d45f2a991" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -2756,8 +2756,8 @@
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
 - { record: unit.gantry-crane-150t-moon, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "2bac67a62284e749" }
 - { record: unit.gantry-crane-20t-moon, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3ca773510e64b059" }
-- { record: unit.gas-heater-119mw-8bar, at: "2026-10-14T23:17:30Z", status: draft, summary: "changed: identity", sha: "558d02b9814a217e" }
-- { record: unit.gas-heater-122mw, at: "2026-10-14T23:17:30Z", status: draft, summary: "changed: identity", sha: "c3cfc94b3e77f19d" }
+- { record: unit.gas-heater-119mw-8bar, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: identity", sha: "0dea2e83b88bdb70" }
+- { record: unit.gas-heater-122mw, at: "2026-10-14T23:18:51Z", status: draft, summary: "changed: identity", sha: "0387b010dcb0fe1c" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
 - { record: unit.heater-transformer-131mva, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "00e8d55b912e6476" }
 - { record: unit.hydrogen-purifier, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e16be6555070dc6b" }
