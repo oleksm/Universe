@@ -103,6 +103,11 @@ impl App for StudioOnly {
         "studio"
     }
 
+    /// (F3 and SHIFT+F3 are its own: the debug view, the observer.)
+    fn debug_keys(&self) -> bool {
+        true
+    }
+
     fn update(&mut self, ctx: &mut Context) -> Next {
         let _scope = universe_prof::scope("update/studio");
         crate::visual_assets::maintain();

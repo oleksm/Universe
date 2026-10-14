@@ -374,6 +374,10 @@ impl GpuMesh {
 /// Each edge's normal, to light it by: the faces it bounds, averaged (a
 /// crease lit as either side is); a detail line (on a face, not bounding
 /// one), the face nearest its middle; a bare line, the way out from the centre.
+/// Above this many faces, an edge with no face of its own by index takes its ends' faces (by
+/// position), not the nearest face (a search over every face for every edge).
+const NEAREST_FACE_MAX: usize = 4096;
+
 fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
     let face_n: Vec<Vec3> = mesh.faces.iter().map(|f| {
         let [a, b, c] = f.map(|i| mesh.positions[i as usize]);
@@ -385,12 +389,27 @@ fn edge_normals(mesh: &Mesh) -> Vec<Vec3> {
             *by_edge.entry((a.min(b), a.max(b))).or_default() += n;
         }
     }
+    // Edges given vertices of their own (not the faces'): their faces found by where their ends
+    // are. The nearest-face search is for small models only: it is edges x faces.
+    let large = mesh.faces.len() > NEAREST_FACE_MAX;
+    let mut by_point: HashMap<[u32; 3], Vec3> = HashMap::new();
+    if large {
+        for (f, &n) in mesh.faces.iter().zip(&face_n) {
+            for &i in f {
+                *by_point.entry(mesh.positions[i as usize].to_array().map(f32::to_bits)).or_default() += n;
+            }
+        }
+    }
     mesh.edges.iter().map(|e| {
         let (a, b) = (e[0].min(e[1]), e[0].max(e[1]));
         if let Some(n) = by_edge.get(&(a, b)).and_then(|n| n.try_normalize()) {
             return n;
         }
         let mid = (mesh.positions[a as usize] + mesh.positions[b as usize]) / 2.0;
+        if large {
+            let at = |i: u32| by_point.get(&mesh.positions[i as usize].to_array().map(f32::to_bits)).copied().unwrap_or_default();
+            return (at(a) + at(b)).try_normalize().unwrap_or_else(|| mid.normalize_or_zero());
+        }
         let nearest = mesh.faces.iter().zip(&face_n).filter(|(_, n)| **n != Vec3::ZERO).map(|(f, n)| {
             let [p, q, r] = f.map(|i| mesh.positions[i as usize]);
             (distance_to_triangle(mid, p, q, r), *n)
