@@ -5,7 +5,7 @@ stands_for: module.arc-furnace
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4485000.0}
+physical: {length: 84.0, width: 60.0, height: 27.0, mass: 4488000.0}
 bays:
 - id: V
   mount: plant-mount.bay-s2
@@ -85,29 +85,42 @@ links:
 - kind: pipe
   name: cooling water to the hall
   from: [-27.0, -6.0, 0.75]
-  to: [-18.5, 0.5, 5.5]
-  length: 19.16
+  to: [-17.5, 1.0, 5.5]
+  length: 21.25
   item: material.structural-steel-a36
-  mass: 3781.0
+  mass: 4192.0
   via:
-  - [-19.5, -6.0, 0.75]
-  - [-19.5, -0.5, 0.75]
+  - [-25.5, -6.0, 0.75]
+  - [-25.5, -6.0, 1.5]
+  - [-19.5, -6.0, 1.5]
+  - [-19.5, -0.5, 1.5]
   - [-19.5, -0.5, 5.5]
-  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s first port pair: east through a sleeve in the west wall at y -6, north in the gap between the wall and the vault, up beside the platform''s south-west corner to its deck'
+  - [-17.5, -0.5, 5.5]
+  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s first port pair: up to 1.5 m before the west wall (clear of its diagonals), east through a sleeve at y -6, north in the gap between the wall and the vault, up beside the platform''s south-west corner to a fixed manifold on its deck; the vessel''s own flexible hoses (it tilts) run from the manifold to its panels and roof'
 - kind: pipe
-  name: cooling water to the baghouse
-  from: [-27.0, -1.5, 0.75]
-  to: [-6.0, 24.0, 2.0]
-  length: 51.25
+  name: cooling water to the transformer
+  from: [-19.5, -6.0, 1.5]
+  to: [-16.0, -6.0, 1.0]
+  length: 3.707
   item: material.structural-steel-a36
-  mass: 10110.0
+  mass: 137.1
+  via:
+  - [-16.5, -6.0, 1.5]
+  note: 'a pair of 150 mm pipes, 5 mm wall, teed off the hall pair, through the vault''s west wall to the transformer''s cooler ports (its -x end, 1 m up): 450 kW at a 10 K rise is 11 kg/s'
+- kind: pipe
+  name: cooling water to the off-gas duct
+  from: [-27.0, -1.5, 0.75]
+  to: [-0.8, 17.0, 14.4]
+  length: 63.85
+  item: material.structural-steel-a36
+  mass: 12600.0
   via:
   - [-26.0, -1.5, 0.75]
   - [-26.0, -1.5, -1.0]
   - [-26.0, 18.0, -1.0]
-  - [-6.0, 18.0, -1.0]
-  - [-6.0, 18.0, 2.0]
-  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s second port pair: outside the hall, down into a covered trench 1 m deep, north past the hall''s west end, east along y 18 under the slag rail, up to the baghouse'
+  - [-0.8, 18.0, -1.0]
+  - [-0.8, 18.0, 14.4]
+  note: 'a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower''s second port pair: outside the hall, down into a covered trench 1 m deep, north past the hall''s west end, east along y 18 under the slag rail, up a riser to the duct''s water jacket where the duct leaves the hall; the jacket carries the water back along the duct''s water-cooled first part (the baghouse takes no water)'
 frame:
   box: [-24.0, -15.0, 0.0, 9.0, 15.0, 27.0]
   cell: 3.0
@@ -135,7 +148,7 @@ ground:
 - {what: Baghouse slab, item: good.concrete, volume: 172.8, mass: 414700.0}
 - {what: Cooling tower basin, item: good.concrete, volume: 187.2, note: a 0.5 m floor and 2 m walls, mass: 449300.0}
 - {what: Bin footing, item: good.concrete, volume: 36.0, mass: 86400.0}
-totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4485000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1199 t of plant and frame and 3285 t of concrete.'}
+totals: {rate: 26.6666666666667, power: 74200000.0, heat: 18450000.0, water: 10.2, mass: 4488000.0, against_module: 'module.arc-furnace: one box 100 x 40 x 35 m, 72 MW, its parts 930 t. This layout: the same rate; 74.2 MW (the module left out the transformer''s losses, the fans and pumps); 10.2 kg/s of water the module did not name (the tower''s evaporation); 1202 t of plant and frame and 3285 t of concrete.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

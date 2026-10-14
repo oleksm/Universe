@@ -8,13 +8,8 @@ built_of:
 - {what: Trolley and hoist, item: material.structural-steel-a36, mass: 6000.0, note: from memory}
 - {what: End carriages and drives, item: good.electric-motors, mass: 4000.0, note: from memory}
 needs: {power: 60000.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/hall-crane-20t/v2"
-  manifest_sha256: "59f02a1de6bc44d5679baab4b24f5927ead0327684602226b6c50f1e0614285f"
-  version: 2
-  triangles: 5952
 life: 788940000
+visual: {format: freefall-model/1, path: models/hall-crane-20t/v2, manifest_sha256: 59f02a1de6bc44d5679baab4b24f5927ead0327684602226b6c50f1e0614285f, version: 2, triangles: 5952}
 basis:
 - of: [physical, built_of]
   tier: derived
