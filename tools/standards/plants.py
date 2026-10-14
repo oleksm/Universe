@@ -358,13 +358,17 @@ def ladle_units():
     Db, Hc, Hk = 2.5, 3.0, 1.5
     vol1 = math.pi * (Db / 2) ** 2 * Hc + math.pi * (Db / 2) ** 2 * Hk / 3
     bins = 8 * (cyl_shell(Db, Hc, 0.006) + math.pi * Db / 2 * math.hypot(Db / 2, Hk) * 0.006) * RHO["steel"]
-    stand = 6 * box_tube(0.3, 0.3, 0.02, 9.0) * RHO["steel"] + 12 * 6 * 0.02 * RHO["steel"]
+    stand = 6 * box_tube(0.3, 0.3, 0.02, 12.0) * RHO["steel"] + 12 * 6 * 0.02 * RHO["steel"]
     out["alloy-bins-8"] = dict(
         name="Alloy bins, 8", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 15.0),
-        desc="Eight steel bins of ferroalloys and fluxes on a stand 9 m up, each over a vibrating feeder into one weigh hopper; the hopper's outlet at local (0, -2.5, 10) drops onto the layout's belt to the ladle furnace's chute.",
+        desc=("Eight steel bins of ferroalloys and fluxes hung in a deck 12 m up, two rows of four at local x -4.5, -1.5, 1.5, 4.5 and y -1.5, 1.5: "
+              f"each {Db} m across, its cylinder z 12 to 15, its cone down to an outlet at z 10.5. Under each outlet a vibrating feeder (z 10 to 10.5) sends its alloy inward to a weigh hopper "
+              "shared by the pair across y, four hoppers on load cells at x -4.5, -1.5, 1.5, 4.5, y 0, z 8.6 to 9.8, each weighing up to 2 t. "
+              "The hoppers empty onto two collecting belts at z 8, the west two running east and the east two running west, both into a transfer chute at x 0, y 0, "
+              "whose foot at local (0, 0, 7.4) drops onto the layout's belt to the ladle furnace's chute. Six box legs at x -6, 0, 6 and y -3, 3."),
         built_of=[part("Bins", A36, bins, f"8 bins {Db} m across, {Hc} m of cylinder over a {Hk} m cone, 6 mm plate"),
-                  part("Stand", "stock.st4340-box-300x300x20", stand, "six box legs 300 x 300 x 20 mm, 9 m, and a 12 x 6 m deck of 20 mm plate"),
-                  part("Feeders and weigh hopper", "good.electric-motors", 4000.0, "from memory")],
+                  part("Stand", "stock.st4340-box-300x300x20", stand, "six box legs 300 x 300 x 20 mm, 12 m, and a 12 x 6 m deck of 20 mm plate"),
+                  part("Feeders, weigh hoppers and collecting belts", "good.electric-motors", 6000.0, "eight vibrating feeders, four weigh hoppers on load cells, two short belts and a transfer chute, from memory")],
         holds=8 * vol1 * 3500 * 0.8, needs={"power": 40000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Eight bins of {vol1:.1f} m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full."}])
     out["baghouse-200k"] = baghouse_unit(200000, (12.0, 8.0, 12.0))
@@ -671,7 +675,7 @@ def ladle_station_air(us, recs):
     links = [
         link("rail", "ladle rail", (-24.0, 0.0, 0.0), (24.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the arc furnace shop's rail, out by the east door to the casting bay's; the car's centre stops at x -9 (the ladle furnace) and x 3 (the degasser's crane lift)"),
         link("busbar", "secondary bus", (-9.0, -9.0 + tW / 2, tH * 2 / 3), (-9.0, -5.0, 6.0), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {L_I2 / 1000:.0f} kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side"),
-        link("conveyor", "alloy feed", (-9.0, 18.5, 10.0), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), falling gently from the weigh hopper to 0.4 m over the ladle furnace's chute, through the north wall"),
+        link("conveyor", "alloy feed", (-9.0, 21.0, 7.0), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), rising 2.4 m (8 degrees) from under the bins' transfer chute to 0.4 m over the ladle furnace's chute, through the north wall at z 7.8"),
         link("duct", "fume", (-7.0, 0.0, 7.5), (9.0, 20.0, 10.0), A36, math.pi * 1.0 * 0.006 * RHO["steel"], None, "1 m across, 6 mm plate: up from the ladle furnace's roof elbow, through the north wall's opening, to the baghouse's inlet; the roof's fume is cooler than an arc furnace's, so the duct is not water-cooled", via=[(-7.0, 0.0, 12.0), (0.0, 6.0, 12.0), (0.0, 17.0, 12.0), (9.0, 17.0, 10.0)]),
         link("pipe", "cooling water to the ladle furnace", (tx, -9.0, 0.75), (-13.5, -4.5, 1.0), A36, pipe_m, None, "a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower's first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault to the ladle furnace's manifold", via=[(tx + 1.5, -9.0, 0.75), (tx + 1.5, -9.0, 1.5), (-16.0, -9.0, 1.5), (-16.0, -4.5, 1.5)]),
         link("pipe", "cooling water to the transformer", (-16.0, -9.0, 1.5), (-9.0 - tL / 2, -9.0, 1.0), A36, tr_pipe_m, None, "a pair of 100 mm pipes, 4 mm wall, teed off the furnace pair, through the vault's west wall to the transformer's cooler ports"),
