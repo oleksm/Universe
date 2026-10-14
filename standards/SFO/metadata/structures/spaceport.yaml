@@ -5,8 +5,13 @@ identity:
   maker: org.halvard
   kind: spaceport
   revision: outdated
-  description: "A port on a world's ground: 16 pads on a cleared plain."
+  description: "A port on the ground of a world with air at about 1 g (Heath's kind; airless ground has the outpost's design). Site frame (the game's, crates/core/world/src/spaceport.rs): x east, y north, z up, from the pad grid's centre. 16 class 2 pads (SFO 23), 90 m square, in a 4 x 4 grid at 150 m (centres x and y -225, -75, 75, 225): each 0.6 m of reinforced concrete on 0.5 m of crushed stone, a flame trench 6 m wide and 4 m deep across its middle east to west, lined with refractory brick, open at the pad's east edge. Taxiways 30 m wide, 0.4 m concrete, in the 60 m gaps between the pads (along x and y -150, 0, 150) and one south from the grid's edge (y -270) to the hangar's door. The hangar, its centre at y -450: a strut-lattice hall 96 m across (x) by 156 m deep (y) and 30 m tall, walls one 3 m cell thick, a roof two cells deep, clad in 2 mm aluminium, on a 0.4 m slab; it holds four ships of the MC-07's size (66.1 x 30.9 x 19.1 m) two by two, nose in; its door in the north face, 45 m wide and 24 m tall, one ship at a time, closed. Drainage ditches round the pads and the site. The fitted ground terminal stands on the site and is separate; the game's vending machine is the game's."
+physical:
+  length: 600
+  width: 860
+  height: 30
 fit:
   - { item: equipment.gate.terminal-ground.s3, count: 1 }
 basis:
+  - { of: [identity.description, physical], tier: invented, review: true, note: "Scope set 2026-10-14 for the modeller (blender asked). The pad grid and the hangar's place are the game's (spaceport.rs) so play stays as it is; the game's hangar (80 x 60 x 25 m, a 44 x 16 m door) cannot take a 66 m ship, so this one is sized to four MC-07s. Pads class 2 by SFO 23 (refractory concrete, a flame trench); heavy ships at 1 g want class 3 (a deluge), not given here. Thicknesses from memory of airfield and launch-pad practice. Masses to be worked out from the volumes once modelled." }
   - { of: [fit], tier: invented, review: true, note: "As the game has it (content/base/structures.ron), an early list: to be reviewed. What it is built of, its size and what it weighs are not said." }
