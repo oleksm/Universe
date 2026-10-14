@@ -3780,3 +3780,195 @@ validations:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
       - "Actual game GPU look/cost, temporal edge stability and final hull placement; capacity/mass contradiction awaits engine decision, mass calculations deferred by registry; electromagnetic, cooling, quench and support strength unqualified"
+  - key: equipment.cargo.cabin.s1
+    version: 1
+    manifest_sha256: "45aa71129d070020fa8876183127afbcb1815bf6e73bd290c38b05fd89c0f84e"
+    installed: 6de8b0e3
+    game: "the loader (world::assets) at fso 6de8b0e3"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-cabin-s1/v1 (654544 bytes, bounds [-1.08, 0.0, -1.58] to [1.08, 2.18, 1.58]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, pressure/load/fire/occupant/thermal qualification and hidden packing"
+  - key: equipment.cargo.cabin.s2
+    version: 1
+    manifest_sha256: "c514a2910f56e084bfb8512be50b3eb61b69b99325c2fd9473c27591bfa1d884"
+    installed: 4ba69079
+    game: "the loader (world::assets) at fso 4ba69079"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-cabin-s2/v1 (1011444 bytes, bounds [-1.08, 0.0, -2.37] to [1.08, 2.18, 2.37]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, pressure/load/fire/occupant/thermal qualification and hidden packing"
+  - key: equipment.cargo.cabin.s3
+    version: 1
+    manifest_sha256: "c4f7e08cf0e9630afba6b36cca2ce01c087a380a695672a7273ed4d17fd5465f"
+    installed: f76e3e34
+    game: "the loader (world::assets) at fso f76e3e34"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-cabin-s3/v1 (2003908 bytes, bounds [-1.35, 0.0, -3.95] to [1.35, 2.24, 3.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, pressure/load/fire/occupant/thermal qualification and hidden packing"
+  - key: equipment.cargo.cabin.s4
+    version: 1
+    manifest_sha256: "dee021a444c70bab02877ef9bd18b7876facc5799661e57244e99b062afc7138"
+    installed: 892b11c6
+    game: "the loader (world::assets) at fso 892b11c6"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-cabin-s4/v1 (4141856 bytes, bounds [-2.18, 0.0, -14.22] to [2.18, 2.44, 14.22]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Runtime door/walking, GPU appearance/cost, final hull access/utilities, single-door egress, pressure/seat/load/fire/thermal qualification and hidden packing"
+  - key: equipment.cargo.rack.s2
+    version: 1
+    manifest_sha256: "ea61f6183079fcecb8edffa52b905084b5512e5fa9c1a203a8cadd36f6e40c43"
+    installed: d9424d3e
+    game: "the loader (world::assets) at fso d9424d3e"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cargo-rack-s2/v1 (107860 bytes, bounds [-2.155, 0.0, -1.075] to [2.155, 2.15, 1.075]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static empty rack; actual mounted placement and GPU look/cost, temporal filtering, cargo handling and restraint, full3g deck/weld/structure qualification remain pending."
+  - key: equipment.gate.relay.gate
+    version: 1
+    manifest_sha256: "0cabe7b3127938a66e23e54b5faf1f39cc5469d45e211ebd8de66ffa766a682e"
+    installed: 7d5ff620
+    game: "the loader (world::assets) at fso 7d5ff620"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/gate-relay-gate/v1 (213704 bytes, bounds [-1.2, 0.0, -0.8] to [1.2, 2.0, 0.8]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static laser relay only; actual gate optical alignment and utilities, runtime pointing/data link, GPU look/cost and temporal filtering, internal packing/load/thermal qualification remain pending. Source +/-5deg study is provisional."
+  - key: equipment.hyperdrive.halcyon.s2
+    version: 1
+    manifest_sha256: "83b08b3b213a9ede4a759abe392409e3649ae9608713816559591667253e9fa6"
+    installed: 6ad99d32
+    game: "the loader (world::assets) at fso 6ad99d32"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-halcyon-s2/v1 (154444 bytes, bounds [-1.41, 0.0, -0.94] to [1.41, 1.88, 0.94]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual hull placement and mount loads; GPU appearance/cost and temporal filtering; fictional field performance,1.5MW thermal balance and internal packing unqualified."
+  - key: equipment.hyperdrive.halcyon.s3
+    version: 1
+    manifest_sha256: "2c265588f72b48d33b93ac665913c2230f7c3de8d687fab63708b9002e06ba5e"
+    installed: 3027ba00
+    game: "the loader (world::assets) at fso 3027ba00"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/hyperdrive-halcyon-s3/v1 (154444 bytes, bounds [-1.835, 0.0, -1.225] to [1.835, 2.45, 1.225]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Final hull placement,mount loads,GPU appearance/cost and temporal filtering; fictional field performance,3MW thermal balance and internal packing unqualified."
+  - key: equipment.power.aurel.s1
+    version: 1
+    manifest_sha256: "a67eccc06e993f62cfd43fcb083ca30548f253ea1968327ae29ee5e49f6964be"
+    installed: 7095f6c5
+    game: "the loader (world::assets) at fso 7095f6c5"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-aurel-s1/v1 (282320 bytes, bounds [-6.25, 0.0, -3.135] to [6.25, 2.149, 3.38]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed package only; source65pose study does not provide deployment drive or runtime motion. Hull clearance,GPU appearance/cost,rail temperature,panel stiffness,reactor internals and thermal operation remain unqualified."
+  - key: equipment.power.aurel.s2
+    version: 1
+    manifest_sha256: "d7fe89ee6fc06c887a08a3e6fb6c2f3a0bab517c386b8343e64bd66a760ae056"
+    installed: 23dbaad7
+    game: "the loader (world::assets) at fso 23dbaad7"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-aurel-s2/v1 (489216 bytes, bounds [-8.85, -0.0, -4.425] to [8.85, 2.148, 4.675]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed only; deployment drive/runtime, thermal rail temperature, panel stiffness, machinery, final hull fit and GPU appearance/cost unqualified."
+  - key: equipment.power.aurel.s3
+    version: 1
+    manifest_sha256: "faa75b6b5ad08414c0beea09c8405c92e09ca0a1c525fa514c60acd8ed4ce845"
+    installed: f00438fa
+    game: "the loader (world::assets) at fso f00438fa"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/power-aurel-s3/v1 (571140 bytes, bounds [-11.7, -0.0, -5.85] to [11.7, 2.138, 6.1]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Static stowed only; deployment drive/runtime, CFC rail temperature, thermal leakage, panel stiffness, machinery, final hull and GPU appearance/cost unqualified."
+  - key: equipment.tank.deuterium.s2
+    version: 1
+    manifest_sha256: "8f5895d9dd6bc126f8653124076aeaecccd706c1485e56616a84fb28158181b2"
+    installed: 24cf51d6
+    game: "the loader (world::assets) at fso 24cf51d6"
+    date: "2026-10-13"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/tank-deuterium-s2/v1 (221692 bytes, bounds [-3.295, 0.0, -3.295] to [3.295, 6.9, 3.585]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Actual GPU appearance/cost and temporal edges; final hull placement/clearance; pressure, cryogenic and loaded support qualification"

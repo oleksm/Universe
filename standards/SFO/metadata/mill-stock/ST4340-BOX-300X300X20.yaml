@@ -14,5 +14,7 @@ size:
   width: 0.3
   height: 0.3
   wall: 0.02
+  length: 12.0
 basis:
+  - { of: [size.length], tier: invented, review: true, note: "Mill lengths: 6 m for tube and bar, 12 m for box section, the commonest mill and extrusion lengths on Earth; chosen, a frame longer than its member's length is spliced (tools/standards/frames.py)." }
   - { of: [size], tier: invented, review: true, note: "A welded box section for primary structure (a thrust structure, an engine frame): four plates of 20 mm welded at the corners, 176 kg a metre; what launch vehicles put round an engine mount in place of round tube. Added 2026-10-07 at the ships session's ask." }

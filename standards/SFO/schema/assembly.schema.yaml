@@ -1,0 +1,93 @@
+$schema: http://json-schema.org/draft-07/schema#
+title: Assembly
+x-kind: [assembly]
+description: 'standards/SFO/metadata/assemblies/<name>.yaml: one built frame (SFO 14), the members, nodes and decks a design''s structure is cut and joined from, in the design''s own frame (metres, as the studio saves it). Every piece names its mill stock, and the stock''s form and size give its shape (SFO 13), so the game draws the frame from this record and needs no model. What the designer places is members, nodes and decks; the fittings, the bill of stock and the physical figures are derived from them by tools/standards/frames.py (one rule, which the studio follows when it saves): a member end at a node of its own material is welded, any other end (a pinned one, or one into a node of another material) is bolted through a forged end fitting sized to its tube; a member longer than its stock''s mill length is spliced; a deck is held by a clip every half metre along each member it rests on. No model: its stock''s shapes.'
+type: object
+additionalProperties: false
+required: [identity, members, physical]
+allOf:
+  - { $ref: "../../common.schema.yaml#/definitions/physical_object" }
+  - { properties: { physical: { required: [mass, length, width, height] } } }
+properties:
+  identity:
+    type: object
+    additionalProperties: false
+    required: [key, name]
+    properties:
+      key: { $ref: "../../common.schema.yaml#/definitions/key" }
+      name: { type: string }
+      description: { type: string }
+      maker: { type: string, x-ref: [org], description: "The company that designed it, by its key." }
+      hull: { type: string, x-ref: [hull], description: "The hull it is the frame of, by its key, where it is one of the registry's." }
+      design: { type: string, description: "The studio design it was saved from, by name, where it is not (yet) a hull of the registry's." }
+      revision: { $ref: "../../common.schema.yaml#/definitions/revision" }
+
+  nodes:
+    description: "Where members meet: a forged node (mill stock of form forging, a ball of its diameter, hollow where its stock gives a wall), its centre in the design's frame."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [at, stock]
+      properties:
+        at: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [x, y, z]: its centre" }
+        stock: { type: string, x-ref: [stock], description: "The node forging, by its key." }
+
+  members:
+    description: "The frame's bars: each a length of one tube, bar or box section between two points. An end within 1 mm of a node's centre meets that node."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [a, b, stock]
+      properties:
+        a: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [x, y, z]: one end, on its axis" }
+        b: { type: array, items: { type: number }, minItems: 3, maxItems: 3, x-unit: "m", description: "m, [x, y, z]: the other end" }
+        stock: { type: string, x-ref: [stock], description: "The tube, bar or box section it is cut from, by its key." }
+        pinned: { type: array, items: { type: boolean }, minItems: 2, maxItems: 2, description: "[at a, at b]: free to turn there, a rod end bolted through, carrying no bending into what it meets." }
+        roll: { type: number, x-unit: "rad", description: "rad, a box section's turn about its own axis, from its height standing in the plane of the member and the design's up (y); 0 where not said." }
+
+  decks:
+    description: "Plates laid level: a rectangle at height y, from lo to hi in the design's x and z, cut from one plate, sheet or sandwich panel stock and borne by the members it rests on."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [lo, hi, y, stock]
+      properties:
+        lo: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m, [x, z]: one corner" }
+        hi: { type: array, items: { type: number }, minItems: 2, maxItems: 2, x-unit: "m", description: "m, [x, z]: the opposite corner" }
+        y: { type: number, x-unit: "m", description: "m, the height of its underside" }
+        stock: { type: string, x-ref: [stock], description: "The plate, sheet or panel it is cut from, by its key." }
+
+  fittings:
+    description: "Derived (tools/standards/frames.py): what joins the pieces, by kind and stock, how many, and what they weigh."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [kind, stock, count, mass]
+      properties:
+        kind: { enum: [end, bolt, clip, splice], description: "end: a forged end fitting in a bolted member end; bolt: its bolt into the node, or a deck clip's; clip: a deck clip, bent from plate round its member; splice: a sleeve of the member's own stock where it is longer than its mill length (steel is butt-welded instead, and counts none)." }
+        stock: { type: string, x-ref: [stock] }
+        count: { type: integer, minimum: 1 }
+        mass: { type: number, x-unit: "kg", description: "kg, all of them" }
+
+  bill:
+    description: "Derived (tools/standards/frames.py): the mill stock it is cut from, in the lengths and sheets it is sold in: members packed into mill lengths, decks laid out on sheets. What is bought less what is built in is scrap."
+    type: array
+    items:
+      type: object
+      additionalProperties: false
+      required: [stock, pieces, mass]
+      properties:
+        stock: { type: string, x-ref: [stock] }
+        pieces: { type: integer, minimum: 1, description: "mill lengths, sheets or (fittings) pieces bought" }
+        mass: { type: number, x-unit: "kg", description: "kg bought" }
+
+  physical: { $ref: "../../common.schema.yaml#/definitions/physical" }
+  making: { $ref: "../../common.schema.yaml#/definitions/making" }
+  revision:
+    $ref: "../../common.schema.yaml#/definitions/record_revision"
+    default: { status: draft, owner: ships, on_conflict: propose, because: "Saved from the studio: the designer owns the members, nodes and decks; the derived groups follow them.", ask: docs/registry-ssot-request.md }
+  basis: { $ref: "../../common.schema.yaml#/definitions/basis" }

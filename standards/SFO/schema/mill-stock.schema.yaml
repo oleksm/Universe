@@ -1,7 +1,7 @@
 $schema: http://json-schema.org/draft-07/schema#
 title: Mill stock
 x-kind: [stock]
-description: 'Stock: what lies in a store and is sold. Only stock, and the made things kept by the piece (parts, equipment, hulls), names a market category: a material or a good does not. standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. standards/SFO/metadata/stock/<code>.yaml: a good in the form it is stocked and sold in. What a unit of it weighs is worked out from its material''s density.'
+description: 'Stock: what lies in a store and is sold. Only stock, and the made things kept by the piece (parts, equipment, hulls), names a market category: a material or a good does not. standards/SFO/metadata/mill-stock/<code>.yaml: one item of mill stock: a material in a form and a size. standards/SFO/metadata/stock/<code>.yaml: a good in the form it is stocked and sold in. What a unit of it weighs is worked out from its material''s density. Its shape follows from its form and size, and the game draws it from them, with no model: a tube is round, its diameter outside and its wall; a bar is a solid round of its diameter; a box is a rectangular hollow section, width by height outside, and its wall; a forging named NODE is a ball of its diameter, hollow where a wall is given; an END forging is a cone as long as the tube it ends is wide, from the tube''s diameter to its bolt''s; a fastener is a hex bolt and nut, the bolt''s diameter by its length under the head; plate, sheet and panel are slabs of their thickness. Length, and a plate''s width, are as sold (mill lengths, sheet sizes).'
 type: object
 additionalProperties: false
 required: [identity, made_from]
@@ -25,9 +25,10 @@ properties:
     additionalProperties: false
     properties:
       thickness: { type: number, x-unit: "m", description: "m, of sheet, plate or film" }
+      length: { type: number, x-unit: "m", description: "m, as sold: a tube, bar or box sections mill length, a plates or sheets length, a bolts length under its head" }
       diameter: { type: number, x-unit: "m", description: "m, of bar, wire or tube (a tube's outside)" }
       wall: { type: number, x-unit: "m", description: "m, of a tube or a box section" }
-      width: { type: number, x-unit: "m", description: "m, of a box section (outside)" }
+      width: { type: number, x-unit: "m", description: "m, of a box section (outside), or a plates or sheets width as sold" }
       height: { type: number, x-unit: "m", description: "m, of a box section (outside)" }
   sandwich:
     description: "For a sandwich panel (form sandwich): two faces held apart by a core. The panel bends as a sandwich: stiffness from the faces apart (E_face * t_face * d^2 / 2 a metre of width, d the faces' centre spacing = core depth + face thickness), the face stress M / (t_face * d), the core in shear (V / (b * d) against its shear strength). Faces take their stiffness and strength from their material's record; the core's shear figures are on its own material record and repeated here, in the ribbon (weaker) direction. Mass a m2 = 2 faces + core + the bond."

@@ -11,10 +11,13 @@ made_from:
   - item: material.honeycomb-sandwich-panel
 size:
   thickness: 0.0264
+  length: 3.0
+  width: 1.5
 sandwich:
   faces: { material: material.aluminium-alloy-6061, thickness: 0.0005 }
   core: { material: material.aluminium-honeycomb, depth: 0.0254, density: 50, shear_strength: 900000.0, shear_modulus: 152000000.0 }
   bond: 0.3
   mass_per_area: 4.27
 basis:
+  - { of: [size.length, size.width], tier: invented, review: true, note: "Sold in sheets of 3.0 by 1.5 m: 6 by 2 m for metal plate, 2.5 by 1.25 m for sheet, 3 by 1.5 m for composite and sandwich panel (an autoclave's bed); chosen. A deck is laid out on whole sheets (tools/standards/frames.py)." }
   - { of: [size, sandwich], tier: derived, review: true, note: "Two 6061 faces of 0.5 mm on a 25.4 mm aluminium honeycomb core: 4.27 kg/m2 (faces 2 x 2700 x 0.0005, core 50 x 0.0254, bond 0.3). The faces' stiffness and strength are their material's; the core's shear figures are its material's, repeated here. The ladder is the ships session's ask (2026-10-06): a floor that holds 500 kg/m2 over 2 m at a quarter of solid plate's weight." }

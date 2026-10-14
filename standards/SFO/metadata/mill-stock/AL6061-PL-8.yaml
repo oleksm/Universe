@@ -12,8 +12,11 @@ made_from:
   - item: material.aluminium-alloy-6061
 size:
   thickness: 0.008
+  length: 6.0
+  width: 2.0
 physical:
   shock_limit: 392.266
 basis:
+  - { of: [size.length, size.width], tier: invented, review: true, note: "Sold in sheets of 6.0 by 2.0 m: 6 by 2 m for metal plate, 2.5 by 1.25 m for sheet, 3 by 1.5 m for composite and sandwich panel (an autoclave's bed); chosen. A deck is laid out on whole sheets (tools/standards/frames.py)." }
   - { of: [size], tier: derived, review: true, note: "The gauge the hydrolox tank S2 wants: 0.35 MPa plus the oxygen head at 30 m/s2, times 1.5, needs 6.85 mm over its 2.79 m radius (2026-10-13)." }
   - { of: [physical.shock_limit], tier: invented, review: true, note: "A guess, to be reviewed: no source was found for what a jolt does to it." }

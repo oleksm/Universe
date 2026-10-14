@@ -8,11 +8,11 @@ identity:
 size_class: 2
 fits: mount.power-s2
 physical:
-  mass: 2400
-  volume: 314.0
+  mass: 3512
+  volume: 346.3
   length: 17.7
-  width: 8.85
-  height: 2.0
+  width: 9.1
+  height: 2.15
 built_of:
   parts: power-aurel-s2
   shares: rule.discovery-ii-reactor-shares
@@ -25,8 +25,8 @@ built_of:
     - { code: PAS2-06, name: "Turbine and compressor", description: "The gas turbine that the reactor's heat drives.", mass: 27, length: 3.97, width: 1.98, height: 0.448, item: stock.ti64-pl-5, quantity: 31.0, module: module.machining-centre }
     - { code: PAS2-07, name: "Alternator", description: "Turns the turbine's work to current.", mass: 20, length: 3.59, width: 1.79, height: 0.405, item: good.electric-motors, quantity: 20, module: module.assembly-shop }
     - { code: PAS2-08, name: "Power conditioning", description: "Switchgear and converters.", mass: 40, length: 4.52, width: 2.26, height: 0.511, item: good.electronics, quantity: 40, module: module.assembly-shop }
-    - { code: PAS2-09, name: "Radiator panels", description: "Shed the heat the turbine cannot use: carbon panels run hot.", mass: 67, length: 5.37, width: 2.68, height: 0.607, item: stock.cfc-pl-3, quantity: 77.0, module: module.welding-bay }
-    - { code: PAS2-10, name: "Frame", description: "Carries the set.", mass: 13, length: 3.11, width: 1.55, height: 0.351, item: stock.al6061-pl-5-panel, quantity: 13, module: module.welding-bay }
+    - { code: PAS2-09, name: "Radiator panel", description: "Sheds the heat the turbine cannot use: one carbon-carbon plate over half the roof, hinged on its long edge to stand up and radiate from both faces.", mass: 411, length: 8.85, width: 8.85, height: 0.003, item: stock.cc-pl-3, quantity: 472.7, module: module.assembly-shop }
+    - { code: PAS2-10, name: "Frame", description: "Carries the set to the corner pads: two side trusses, floor beams under the plant, and the radiator's rails, in bonded carbon tube.", mass: 781, length: 17.7, width: 8.85, height: 1.97, item: stock.cfc-tb-120x3, quantity: 898.2, module: module.assembly-shop }
     - { code: PAS2-11, name: "Flywheel", description: "Evens the load.", mass: 34, length: 4.28, width: 2.14, height: 0.484, item: stock.st4340-bar-120, quantity: 39.1, module: module.machining-centre }
     - { code: PAS2-12, name: "Coolant pumps", description: "Drive the coolant.", mass: 27, length: 3.97, width: 1.98, height: 0.448, item: good.pumps, quantity: 27, module: module.assembly-shop }
     - { code: PAS2-13, name: "Coolant lines", description: "Pipes and manifolds.", mass: 47, length: 4.77, width: 2.39, height: 0.539, item: stock.st304-pl-3, quantity: 54.0, module: module.welding-bay }
@@ -39,9 +39,16 @@ function:
   output: 8000000
   efficiency: 0.5
   burns: material.deuterium
+visual:
+  format: "freefall-model/1"
+  path: "models/power-aurel-s2/v1"
+  manifest_sha256: "d7fe89ee6fc06c887a08a3e6fb6c2f3a0bab517c386b8343e64bd66a760ae056"
+  version: 1
+  triangles: 9784
 life: 473364000
 basis:
   - { of: [physical, needs, function, size_class], rule: rule.early-list }
   - { of: [built_of, making], tier: invented, review: true, note: "A first design: a fusion reactor and the turbine set that turns its heat to power, in the shares of NASA's Discovery II, brought to this product's weight. What makes one maker's plant lighter or thriftier than another's is not yet in its parts." }
-  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 8.0 MW of waste heat at 1,000 K, 78 m2 of panel, with the plant beneath." }
+  - { of: [built_of.list, physical.mass], tier: derived, review: true, note: "Radiator and frame from material, size and load, the rest of the list as before: 3,482 kg (was 2,400). Panel: 8.85 by 8.85 m of 3 mm carbon-carbon at 1,750 kg/m3, 411 kg; 78.3 m2 radiating from both faces sheds 8 MW at 1,000 K and emissivity 0.9, standing up (flat, half), on 10 mm fused-silica stand-offs as the S1. Frame: in 6061 the 17.7 m span at the mount's 3 g came to some 4,100 kg of plant, over the mount's 3,750, so it is carbon composite (1,580 kg/m3, 55 GPa, 700 MPa to first failure taken at 300 MPa allowed for bonded joints; invented knock-down). Two side trusses 1.85 m deep in eight bays of 2.21 m, 120 by 3 mm tube (chords 61 kN, 56 MPa, buckling 140 kN over 1.5; diagonals 40 kN against 82 kN); nine floor beams 160 by 3 tube across 8.85 m (221 MPa); nine top ties and stiffeners 80 by 3; radiator rails 160 by 3 tube (203 MPa standing up at 1 g, stowed flat for more); plus 10% for joints and the hinge; 751 kg. Blender drew it (candidate v01): 770.8 kg with the hinge, 56 silica saddles and eight bored aluminium compression lands, top and bottom, where tubes block the bolt seats; bound at 781, the drawing and 10 kg for bonding; plant 3,512 kg. The mount's eight corner points are the four plan corners, a pad at each end of each truss's top and bottom chord: 25.8 kN a corner against two pads' 27.6. Open: epoxy carbon is good to about 450 K, so the rails' temperature under the stand-offs needs working out, as the S1's; plate stiffness and machinery not worked out. Built for airless places (space, airless moons): carbon-carbon burns in hot air and the panel would shed heat by convection as well, so a plant for a world with air wants a different radiator (a coated or ceramic panel, or an air-cooled exchanger), not this one. Coolant lines and the reactor parts are still in Discovery II's shares." }
+  - { of: [physical.length, physical.width, physical.height, physical.volume], tier: derived, review: true, source: "docs/ships/mc-07-equipment-dimensions.md", note: "As the S1 plant: its radiator for 8.0 MW of waste heat at 1,000 K, 78 m2 of panel, with the plant beneath. Width 9.1 m: the 8.85 bay and an outboard hinge as the S1's; height 2.15 m: chords to 1.97 m, then 160 mm rails, stand-offs and plate; as drawn, 17.7 by 9.1 by 2.148 m; within the mount's 26.5 by 13.3 by 2.2." }
   - { of: [life], rule: rule.life-ship-system }

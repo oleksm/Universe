@@ -93,6 +93,166 @@ recipes:
       - { item: stock.st4340-scrap, quantity: 0.15 }
     rate: 1.38888888888889
     power: 6000000
+  - makes: stock.st4340-end-50
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-60
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-80
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-100
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-120
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-150
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-160
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-200
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-250
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-300
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-end-400
+    does: "A forged END fitting pressed between dies, bored and machined true."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m10
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m16
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m20
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m30
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m42
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m56
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m64
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m80
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
+  - makes: stock.st4340-bolt-m100
+    does: "Bar cut to length, its head upset hot and its thread rolled; the nut likewise."
+    inputs:
+      - { item: good.hot-ingot-4340, quantity: 1.2 }
+    outputs:
+      - { item: stock.st4340-scrap, quantity: 0.2 }
+    rate: 1.38888888888889
+    power: 6000000
 life: 788940000
 basis:
   - { of: [recipes.inputs, recipes.outputs], tier: invented, review: true, note: "Approximate, from memory." }

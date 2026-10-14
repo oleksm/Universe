@@ -19,7 +19,7 @@ made_from:
 making:
   module: module.panel-line
 fit:
-  count: 2961
+  count: 3080
 basis:
   - { of: [physical.mass], tier: derived, note: "Its surface in the stock it is cut from." }
   - { of: [physical.length, physical.width, physical.height, shape, made_from, fit], tier: invented, review: true, note: "A guess, to be reviewed: 3 mm steel plate in panels of 8 by 2.5 m over the whole of the segment's skin, and 15% more lost in cutting. Nothing says what loads the ring carries, so its gauge is not sized." }
