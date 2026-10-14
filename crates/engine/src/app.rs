@@ -375,10 +375,11 @@ impl<G: Game> ApplicationHandler for Runner<G> {
             return;
         }
         let (w, h) = self.config.window_size;
-        // (A test or dev run, UNIVERSE_TEST or UNIVERSE_SCREENSHOT set: titled "<title> test", so
-        // the window manager can put it out of the way: workspace 8, by the user's rule.)
+        // (A test or dev run, UNIVERSE_TEST or UNIVERSE_SCREENSHOT set: titled "Freefall test" whatever
+        // the app, so the window manager puts it out of the way: workspace 8, by the user's rule,
+        // which matches that title exactly.)
         let test = std::env::var_os("UNIVERSE_TEST").is_some() || std::env::var_os("UNIVERSE_SCREENSHOT").is_some();
-        let title = if test { format!("{} test", self.config.title) } else { self.config.title.clone() };
+        let title = if test { "Freefall test".to_string() } else { self.config.title.clone() };
         let window = Arc::new(
             event_loop
                 .create_window(
