@@ -77,6 +77,10 @@ def units():
     arms = 3 * arm * RHO["aluminium"]
     cable_area = I2 / 2 / 5e6           # m2 each of two water-cooled cables a phase at 5 A/mm2
     cables = 3 * 2 * 12.0 * cable_area * RHO["copper"]
+    # Slag spout: from the door sill (local x -3.32, 3.8 m up) out past the cradle deck's edge (x -4.5) to x -5.0, over the slag pot (blender, slag fixture)
+    sp_L, sp_w, sp_d = 1.68 / math.cos(math.radians(20)), 0.8, 0.4      # sloped 20 degrees down, a trough 0.8 m wide and 0.4 m deep
+    spout_s = (sp_w + 2 * sp_d) * sp_L * 0.03 * RHO["steel"]
+    spout_r = (sp_w + 2 * sp_d) * sp_L * 0.15 * RHO["refractory"]
     hyd = 15000.0
     holds = HEAT + 0.15 * HEAT + SLAG + up_w + roof_w   # the charge, a sixth left as the heel (from memory), slag and panel water
     out["eaf-vessel-80t"] = dict(
@@ -92,6 +96,8 @@ def units():
             part("Electrode masts", A36, masts, "three box masts 0.8 x 0.8 m, 40 mm wall, 7.27, 8.17 and 9.07 m long, staggered so the arms clear; shown at rest, moving in fixed guide collars on seated rams"),
             part("Current-conducting arms", AL, arms, "three box arms 6 m long, 0.6 m deep, 30 mm wall: rear 4 m 0.8 m wide, 0.5 m taper, front 1.5 m 0.3 m wide to clear the neighbouring rods (geometric gap 30 mm; electrical clearance not yet checked)"),
             part("Secondary cables", CU, cables, f"two water-cooled copper cables a phase, 12 m, each {cable_area * 1e6:.0f} mm2 for half of {I2 / 1000:.0f} kA at 5 A/mm2"),
+            part("Slag spout", A36, spout_s, f"a steel trough {sp_w} m wide, {sp_d} m deep, 30 mm plate, {sp_L:.2f} m long, from the slag door's sill (local x -3.32, 3.8 m up) sloping 20 degrees down to x -5.0, 0.5 m past the cradle deck, so the slag falls clear into the pot"),
+            part("Slag spout lining", REF, spout_r, "150 mm of refractory in the trough"),
             part("Tilt and mast hydraulics", "good.pumps", hyd, "cylinders, pumps and valves; from memory"),
         ],
         holds=holds,
