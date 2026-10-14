@@ -1843,8 +1843,13 @@ fn labels(frame: &mut Frame, app: &App) {
 /// `center`, turned `rot`, drawn as a faint fill, its twelve edges, and its
 /// `name` along the edge of its top nearest the eye.
 fn rig_box(frame: &mut Frame, center: DVec3, rot: DQuat, half: DVec3, name: &str) {
+    named_box(frame, center, rot, half, name, Color::hex(0x9fb4c8));
+}
+
+/// A thing with no model: a translucent box at its size, its edges in `edge`, its name along the top
+/// edge nearest the eye (the rigs', the factory layout's modules).
+pub(crate) fn named_box(frame: &mut Frame, center: DVec3, rot: DQuat, half: DVec3, name: &str, edge: Color) {
     let corner = |k: usize| center + rot * DVec3::new(if k & 1 == 0 { -half.x } else { half.x }, if k & 2 == 0 { -half.y } else { half.y }, if k & 4 == 0 { -half.z } else { half.z });
-    let edge = Color::hex(0x9fb4c8);
     for (a, b) in [(0, 1), (2, 3), (4, 5), (6, 7), (0, 2), (1, 3), (4, 6), (5, 7), (0, 4), (1, 5), (2, 6), (3, 7)] {
         frame.line(corner(a), corner(b), edge);
     }

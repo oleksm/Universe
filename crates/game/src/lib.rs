@@ -33,6 +33,7 @@ mod equipment_visual;
 mod studio_only;
 mod test_drive;
 mod flight_input;
+mod factory_app;
 mod planet_app;
 mod scene_app;
 mod planet_studio;
@@ -1614,6 +1615,7 @@ pub const APPS: &[(&str, &str)] = &[
     ("planet", "the planet viewer: every released world, [world id] to open at"),
     ("studio", "the ship studio: [design] to open"),
     ("scene", "a scene: <file.scene.yaml>, run on its own clocks in a world of its own"),
+    ("factory", "the factory layout studio: a works' modules on its parcel, [facility key] to open"),
 ];
 
 /// The launcher: `--apps` lists the apps, `--app <name> [arg]` opens one alone. False: neither was
@@ -1630,6 +1632,13 @@ fn launch(args: &[String]) -> bool {
     match args.get(k + 1).map(String::as_str) {
         Some("game") => return false,
         Some("planet") => planet(&rest),
+        Some("factory") => {
+            let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
+            let key = rest.get(1).cloned();
+            universe_engine::apps::run_prepared(Config { title: "Freefall factory layout".into(), ..Default::default() }, move || {
+                factory_app::FactoryApp::new(key.as_deref()).unwrap_or_else(|e| panic!("factory layout: {e}"))
+            });
+        }
         Some("scene") => {
             let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
             let Some(path) = rest.get(1).cloned() else {
