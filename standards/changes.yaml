@@ -832,7 +832,7 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed: physical, links, ground, totals", sha: "a73e8f9483c46d72" }
+- { record: layout.shaft-furnace-air, at: "2026-10-14T23:22:40Z", status: draft, summary: "changed: links", sha: "3c8fc3127901de5d" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed: physical, links, ground, totals", sha: "82148b5af36b8c6f" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -2776,7 +2776,7 @@
 - { record: unit.radiator-field-345k, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f1f0da9d08b1b0af" }
 - { record: unit.radiator-field-485k, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "3792fab468aa81d4" }
 - { record: unit.rectifier-transformer-21mva, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "e88f00a03453c505" }
-- { record: unit.recuperator, at: "2026-10-14T23:21:51Z", status: draft, summary: "changed: identity, physical", sha: "892527e5a85efb07" }
+- { record: unit.recuperator, at: "2026-10-14T23:22:40Z", status: draft, summary: "changed: identity", sha: "e94aeb7b9f29b727" }
 - { record: unit.recycle-compressor, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "20665cbbf05406cb" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
 - { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
