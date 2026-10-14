@@ -5,7 +5,7 @@ stands_for: module.casting-bay
 site:
   atmosphere: air
   gravity: [8.0, 11.0]
-physical: {length: 72.0, width: 30.0, height: 27.0, mass: 3380000.0}
+physical: {length: 72.0, width: 30.0, height: 27.0, mass: 3460000.0}
 bays: []
 mobile:
 - unit: unit.ladle-car-80t
@@ -77,15 +77,19 @@ frame:
   - {item: stock.st4340-tb-100x3-d3000, count: 852, where: roof}
   - {item: stock.st4340-node-220b, count: 1458, where: nodes}
   - {item: stock.st4340-box-400x400x25, count: 4, where: 'crane runways, two a side, 30 m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4; the ladle crane works the west half, the stripper crane the east'}
-  cladding: {item: stock.al6061-sh-2, area: 7092.0, mass: 38300.0}
+  - {item: stock.st4340-box-400x400x25, count: 42, where: 'runway brackets: a 1 m stub under the runway at each inner wall node a side, measured on blender''s hall (candidate v01), 12,363.8 kg'}
+  - {item: stock.st4340-tb-160x8, count: 42, where: 'runway brackets'' diagonals, from each stub''s end down to the wall node 3 m below, 97.8 m in all, measured on blender''s hall (candidate v01), 2,932.9 kg'}
+  cladding: {item: stock.al6061-sh-2, area: 7242.0, mass: 39110.0}
   carries: [unit.ladle-crane-150t, unit.stripper-crane-20t]
-  mass: 654100.0
+  mass: 670200.0
   sized: 'At 1 g: roof 1249 Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a 24 m span in 3 m deep strips puts 90 kN in a chord: st4340-tb-100x3 takes 242 kN. A wheel of the 150 t crane with a full ladle at the runway''s end puts 1070 kN on a wall node, with the roof''s share 1115 kN: st4340-tb-160x8 takes 1795 kN. Each the kit''s lightest section with half again to spare. A wheel between two nodes bends the runway to 182 MPa, against 470 MPa for 4340 with half again to spare. Wind on the walls and the footings'' loads not yet checked.'
 ground:
-- {what: Casting floor, item: good.concrete, volume: 576.0, note: 'a 0.4 m slab over the hall''s floor, 60 x 24 m, so spilt steel meets concrete, not soil', mass: 1382000.0}
-- {what: Teeming pit, item: good.concrete, volume: 54.0, note: 'x -30 to 0, y -9 to -3: 0.3 m more concrete below the floor slab under the teeming, its top flush with the floor (z 0) so the rails sit as elsewhere: a spill freezes on the floor and the thicker slab keeps it off the ground beneath', mass: 129600.0}
-- {what: Frame footings, item: good.concrete, volume: 261.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 116 ground nodes, mass: 626400.0}
-totals: {rate: 27.7777777777778, power: 670000.0, heat: 0.0, water: 0.0, mass: 3380000.0, against_module: 'module.casting-bay: one box 100 x 40 x 35 m, 1.0 MW. This layout: the same rate, 100 t an hour; 0.67 MW, the cranes and the cars; no cooling water (the moulds and ingots cool in the hall''s air); 1242 t of plant and frame and 2138 t of concrete. A heat of 80 t fills 44 moulds on 4 cars: 44 ingots of 1,592 kg, one to a heavy crate.'}
+- {what: Casting floor, item: good.concrete, volume: 570.32, note: 'a 0.4 m slab over the hall''s floor, 60 x 24 m, so spilt steel meets concrete, not soil; measured on blender''s hall (candidate v01)', mass: 1369000.0}
+- {what: Teeming pit, item: good.concrete, volume: 54.0, note: 'x -30 to 0, y -9 to -3: 0.3 m more concrete below the floor slab under the teeming, its top flush with the floor (z 0) so the rails sit as elsewhere: a spill freezes on the floor and the thicker slab keeps it off the ground beneath; measured on blender''s hall (candidate v01)', mass: 129600.0}
+- {what: Frame footings, item: good.concrete, volume: 261.0, note: a 1.5 x 1.5 x 1 m pad under each of the lattice's 116 ground nodes; measured on blender's hall (candidate v01), mass: 626400.0}
+- {what: Door aprons, item: good.concrete, volume: 28.15, note: 'a 6 x 6 x 0.4 m slab outside each rail door, the rails set in it; measured on blender''s hall (candidate v01)', mass: 67560.0}
+- {what: Rail seat beds, item: good.concrete, volume: 3.52, note: 'the rails'' channels in the floor, after the flangeway cuts; measured on blender''s hall (candidate v01)', mass: 8448.0}
+totals: {rate: 27.7777777777778, power: 670000.0, heat: 0.0, water: 0.0, mass: 3460000.0, against_module: 'module.casting-bay: one box 100 x 40 x 35 m, 1.0 MW. This layout: the same rate, 100 t an hour; 0.67 MW, the cranes and the cars; no cooling water (the moulds and ingots cool in the hall''s air); 1259 t of plant and frame and 2201 t of concrete. A heat of 80 t fills 44 moulds on 4 cars: 44 ingots of 1,592 kg, one to a heavy crate.'}
 staff:
 - {profession: profession.plant-operator, count: 6}
 - {profession: profession.metalworker, count: 2}

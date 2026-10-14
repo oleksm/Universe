@@ -848,7 +848,11 @@ def casting_bay_air(us, recs):
     x_in = x1 - x0 - 2 * cell
     members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": f"crane runways, two a side, {x_in / 2:.0f} m lengths, along x on the inside of the long walls: their rail plane 18 m up at y -11.4 and +11.4; the ladle crane works the west half, the stripper crane the east"})
     fmass += 2 * x_in * rw_a * RHO["steel"]
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 42, "where": "runway brackets: a 1 m stub under the runway at each inner wall node a side, measured on blender's hall (candidate v01), 12,363.8 kg"})
+    members.append({"item": "stock.st4340-tb-160x8", "count": 42, "where": "runway brackets' diagonals, from each stub's end down to the wall node 3 m below, 97.8 m in all, measured on blender's hall (candidate v01), 2,932.9 kg"})
+    fmass += 12363.8 + 2932.9
     clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
+    clad_area = 7242.4                                    # m2 measured on blender's hall (candidate v01), with reveals and returns
     clad = clad_area * 0.002 * RHO["aluminium"]
     sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
     rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))
@@ -870,8 +874,14 @@ def casting_bay_air(us, recs):
         {"what": "Casting floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"a 0.4 m slab over the hall's floor, {x_in:.0f} x {span_in:.0f} m, so spilt steel meets concrete, not soil"},
         {"what": "Teeming pit", "item": CONC, "volume": r(30 * 6 * 0.3), "note": "x -30 to 0, y -9 to -3: 0.3 m more concrete below the floor slab under the teeming, its top flush with the floor (z 0) so the rails sit as elsewhere: a spill freezes on the floor and the thicker slab keeps it off the ground beneath"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+        {"what": "Door aprons", "item": CONC, "volume": 28.15, "note": "a 6 x 6 x 0.4 m slab outside each rail door, the rails set in it; measured on blender's hall (candidate v01)"},
+        {"what": "Rail seat beds", "item": CONC, "volume": 3.52, "note": "the rails' channels in the floor, after the flangeway cuts; measured on blender's hall (candidate v01)"},
     ]
+    measured = {"Casting floor": 570.32, "Teeming pit": 54.0, "Frame footings": 261.0}   # m3 on blender's hall (candidate v01), after flangeway cuts
     for g in ground:
+        if g["what"] in measured:
+            g["volume"] = measured[g["what"]]
+            g["note"] += "; measured on blender's hall (candidate v01)"
         g["mass"] = r(g["volume"] * RHO["concrete"])
     used = [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane, recs["stripper-crane-20t"]]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
