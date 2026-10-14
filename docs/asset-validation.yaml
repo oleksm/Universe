@@ -4017,3 +4017,19 @@ validations:
     pending:
       - "frames at play distance, GPU look and cost"
       - "Engine owns gate radius/light/collision reconciliation, GPU appearance/cost, temporal edges and external equipment placement; draft structure unqualified"
+  - key: unit.eaf-vessel-80t
+    version: 1
+    manifest_sha256: "b205d2e72511dd1998ef14f371154417848820edba73d18889caad932fc0b094"
+    installed: ed9f298d
+    game: "the loader (world::assets) at fso ed9f298d"
+    date: "2026-10-13"
+    result: fail
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): no line for this key in the loader's output: FAIL"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
+      - "Unit/layout scene assembly, combined shop fit, operational motion, runtime/GPU appearance and cost; draft mass, strength and dusty phase insulation remain unqualified"
