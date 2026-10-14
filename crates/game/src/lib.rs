@@ -34,6 +34,7 @@ mod studio_only;
 mod test_drive;
 mod flight_input;
 mod planet_studio;
+mod planet_view;
 mod standards;
 mod sound;
 mod terrain_lod;
@@ -345,17 +346,10 @@ pub struct NetState {
 
 /// What's built for drawing and kept between frames.
 pub struct Caches {
-    /// The ground near worlds, as patches (see `terrain_lod`); made while drawing.
-    pub terrain_lod: std::cell::RefCell<terrain_lod::Lod>,
-    /// Ready globe leases for the current view. Missing entries draw base geometry.
-    pub globes: std::collections::HashMap<(usize, usize), Arc<globe_assets::Globe>>,
+    /// Worlds' globes, maps, ground and lines (see `planet_view`).
+    pub planet: planet_view::PlanetView,
     /// The registry's things' models (`visual`), loaded the first time each is drawn.
     pub visuals: visuals::Visuals,
-    /// The lines laid on the ground round the eye, near a world drawn from its lines (see `lines_near`).
-    pub lines_near: std::cell::RefCell<lines_near::Near>,
-    /// Worlds grown by the planet simulation: their full-resolution maps, made in the
-    /// background (None till ready), by (system, body).
-    pub world_maps: std::collections::HashMap<(usize, usize), std::sync::Arc<std::sync::Mutex<Option<std::sync::Arc<universe_engine::WorldMaps>>>>>,
     /// Asteroid meshes, built once per (system, field, body among the field's bodies).
     pub rocks: std::collections::HashMap<(usize, usize, usize), Arc<rocks::Ready>>,
     /// Mining rigs: how far each ship's gear is out (see `rig`).
@@ -504,11 +498,8 @@ impl App {
                 newsroom: None,
             },
             caches: Caches {
-                globes: std::collections::HashMap::new(),
-                lines_near: Default::default(),
+                planet: Default::default(),
                 visuals: Default::default(),
-                world_maps: std::collections::HashMap::new(),
-                terrain_lod: Default::default(),
                 rocks: std::collections::HashMap::new(),
                 rigs: Default::default(),
                 sky: std::cell::RefCell::new(None),
@@ -802,7 +793,7 @@ impl App {
         }
         // SHIFT+F4: the heights of worlds drawn from their lines stretched, x1, x5, x10, for seeing
         // their relief; their globes, ground and lines made again.
-        if input.pressed(KeyCode::F4) && shift && self.caches.globes.values().any(|g| g.lines.is_some()) {
+        if input.pressed(KeyCode::F4) && shift && self.caches.planet.globes.values().any(|g| g.lines.is_some()) {
             let next = match universe_sim::world::worlds::stretch() as u32 {
                 1 => 5.0,
                 5 => 10.0,
@@ -810,12 +801,12 @@ impl App {
             };
             universe_sim::world::worlds::set_stretch(next);
             globe_assets::invalidate();
-            let worlds: Vec<(usize, usize)> = self.caches.globes.keys().copied().collect();
+            let worlds: Vec<(usize, usize)> = self.caches.planet.globes.keys().copied().collect();
             for k in worlds {
-                self.caches.globes.remove(&k);
+                self.caches.planet.globes.remove(&k);
             }
-            *self.caches.lines_near.borrow_mut() = Default::default();
-            *self.caches.terrain_lod.borrow_mut() = Default::default();
+            *self.caches.planet.lines_near.borrow_mut() = Default::default();
+            *self.caches.planet.terrain_lod.borrow_mut() = Default::default();
             self.say(format!("HEIGHTS X{next}"));
         }
         if input.pressed(KeyCode::F2) {
@@ -1180,78 +1171,6 @@ impl App {
         }
     }
 
-    /// Terrain globes for the system in view (built once, on first sight), and the full maps of
-    /// a baked world near the eye.
-    fn build_globes(&mut self) {
-        let origin = self.view.cache;
-        // Drop inactive leases; the shared scheduler retains recently used data for return.
-        self.caches.globes.retain(|&(o, _), _| o == origin);
-        self.caches.world_maps.retain(|&(o, _), _| o == origin);
-        globe_assets::maintain();
-        for (i, b) in self.view.system.bodies.iter().enumerate() {
-            let position = self.view.positions.get(i).copied().unwrap_or_default();
-            if let Some(globe) = globe_assets::request(self.view.system.clone(), i, &self.camera, position) {
-                self.caches.globes.insert((origin, i), globe);
-            } else {
-                self.caches.globes.remove(&(origin, i));
-            }
-            // A world with a bake: its full-resolution maps, read and encoded on a thread of their
-            // own once the eye comes within `WORLD_MAPS_NEAR` of it, let go past `WORLD_MAPS_FAR`
-            // (a few hundred megabytes each while held).
-            let away = self.view.positions.get(i).map_or(f64::INFINITY, |c| c.distance(self.camera.position)) / b.rail.radius;
-            if away > WORLD_MAPS_FAR {
-                self.caches.world_maps.remove(&(origin, i));
-            }
-            if let Some(t) = b.terrain.as_ref().filter(|t| t.baked())
-                && away < WORLD_MAPS_NEAR
-                && self.caches.globes.contains_key(&(origin, i))
-                && !self.caches.world_maps.contains_key(&(origin, i))
-            {
-                let slot = std::sync::Arc::new(std::sync::Mutex::new(None));
-                self.caches.world_maps.insert((origin, i), slot.clone());
-                let (t, look) = (t.clone(), self.world_look);
-                // (A frame of its history in place of today's colour: its sea and clouds then
-                // aren't today's, so none.)
-                let then = self.world_frame.clone().filter(|f| f.key == b.key);
-                let key = b.key.clone();
-                let lines = self.caches.globes.get(&(origin, i)).is_some_and(|g| g.lines.is_some());
-                std::thread::spawn(move || {
-                    let started = std::time::Instant::now();
-                    // (Each read and encoded before the next is read: one image held at a time.)
-                    let names = [look.file(), "globe_ground.jpg", "globe_normal.jpg", "climate.png", "rockid.png", "globe_spec.png"];
-                    let mut k = 0;
-                    let encoded = names.map(|name| {
-                        let image = match &then {
-                            Some(f) if k == 0 => f.history.image(f.frame),
-                            Some(_) if name == "globe_spec.png" => None,
-                            // (A world drawn from its lines: their flat ground in place of its colour, and
-                            // none of its bake's other maps: ground, normals, climate, rock, shine.)
-                            None if lines => if k == 0 { universe_sim::world::worlds::lines_colour_rgba(&key) } else { None },
-                            _ => t.bake_image(name),
-                        };
-                        let e = image.and_then(|(w, h, rgba)| universe_engine::WorldMaps::encode(k, universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba }));
-                        k += 1;
-                        e
-                    });
-                    let maps = universe_engine::WorldMaps::encoded(encoded, t.bake_air())
-                        .with_air_luts(t.bake_air_luts().map(|l| [l.transmittance, l.multiscatter]));
-                    let mut maps = maps;
-                    if let Some(c) = t.bake_clouds().filter(|_| then.is_none()) {
-                        let img = |(w, h, rgba): (usize, usize, Vec<u8>)| universe_engine::pbr::Image { width: w as u32, height: h as u32, rgba };
-                        let [a, b, c3] = c.maps;
-                        maps.clouds_year = Some((c.year_days, c.enso));
-                        maps.clouds_format = c.format;
-                        maps = maps.with_clouds(Some([img(a), img(b), img(c3)]));
-                    }
-                    log::info!("world maps read and encoded in {:.1} s", started.elapsed().as_secs_f64());
-                    if let Ok(mut s) = slot.lock() {
-                        *s = Some(std::sync::Arc::new(maps));
-                    }
-                });
-            }
-        }
-    }
-
     /// The nav target (or else the nearest station), where it is at the moment drawn.
     fn nav_marker_now(&self) -> Option<(String, DVec3)> {
         let (name, _) = self.v.nav_marker.clone()?;
@@ -1447,7 +1366,7 @@ impl Game for App {
                     self.panels.planet_studio = None;
                     // (Its world alone goes with it: back to the system's star.)
                     if self.world_frame.take().is_some() {
-                        self.caches.world_maps.clear();
+                        self.caches.planet.world_maps.clear();
                     }
                     if self.studio_world.take().is_some() {
                         self.observer.focus = observer::Focus::Body { system: self.view.origin, body: 0 };
@@ -1531,7 +1450,7 @@ impl Game for App {
         }
         // An opaque Studio owns the visible scene; prepare the world again when it returns.
         if self.panels.shipyard.is_none() {
-            universe_prof::time("update/globes", || self.build_globes());
+            universe_prof::time("update/globes", || self.caches.planet.prepare(&self.view.system, self.view.cache, &self.view.positions, &self.camera, self.world_look, self.world_frame.clone()));
             universe_prof::time("update/rocks", || self.build_rocks());
             self.update_rigs(ctx.dt);
         }

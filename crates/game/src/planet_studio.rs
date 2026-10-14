@@ -84,7 +84,7 @@ impl PlanetStudio {
 pub fn go_to(app: &mut App, r: &Release) -> Result<(), String> {
     app.studio_world = None;
     if app.world_frame.take().is_some() {
-        app.caches.world_maps.clear();
+        app.caches.planet.world_maps.clear();
     }
     let history = match History::release(r) {
         Some(Ok(h)) => Some(std::sync::Arc::new(h)),
@@ -195,13 +195,13 @@ pub fn input(app: &mut App, ctx: &Context) -> bool {
         };
         if next != now {
             app.world_frame = next.map(|frame| WorldFrame { key, history, frame });
-            app.caches.world_maps.clear();
+            app.caches.planet.world_maps.clear();
         }
     }
     if input.pressed(KeyCode::KeyL) {
         app.world_look = app.world_look.next();
         // (Its maps made again in the new look.)
-        app.caches.world_maps.clear();
+        app.caches.planet.world_maps.clear();
     }
     if input.pressed(KeyCode::Enter) {
         let r = app.panels.planet_studio.as_ref().and_then(|s| s.list.get(s.selected).cloned());
