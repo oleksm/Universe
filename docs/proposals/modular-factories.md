@@ -117,3 +117,13 @@ The owner approved one example, for blender to model. `tools/standards/plants.py
 Result, 2026-10-14: blender modelled all eight units and assembled the shop (`models/arc-furnace-air/v1`, 257,238 triangles). The game's loader reads every model; drawing units and layouts is engine's. Fitting the units together found about 30 faults that one box per module could never show. Examples: the slag fell onto the furnace's own cradle until a spout was added; the slag car did not fit the hall; the crane's ends touched the walls; the pipes ran through walls; the bin's cone was missing from its height. Each was fixed in `tools/standards/plants.py`, and where blender measured a part, its mass is bound as measured. Still open: anything that moves (tilt, crane, cars), electrical clearance, wind and footing loads, combustion in the off-gas gap.
 
 Blender's brief: `python3 tools/standards/next_asset.py --key unit.<name>` for each unit, and `--key layout.arc-furnace-air` for the assembly.
+
+## 10. The steel line, next (2026-10-14)
+
+The owner left the next step to registry's judgement ("things are made of anything that look reasonable for the situation and conditions"). So the steel line goes on as units, layout by layout, along the ladle rail:
+
+- `layouts/ladle-station-air.yaml`: an 80 t ladle furnace and a vacuum tank degasser under a crane hall, the heat arriving on its car from the arc furnace shop. New units: ladle furnace (its transformer rated for 4 degrees a minute of heating, 14 MVA), vacuum degasser, alloy bins, a 200,000 m3/h baghouse, a one-cell cooling tower, a 150 t ladle crane (its girders the lightest that meet span/800 and 150 MPa). The hall's wall struts are chosen for the crane's wheel loads. 2,868 t, 8.9 MW against the module's 7.5.
+- Then the casting bay, the shaft furnace and its hydrogen, the pellet plant, and the airless variants.
+
+Sizing helpers shared by the generators: `frames.lattice_count`, `frames.strut_capacity`, `frames.lightest_section`.
+

@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.baghouse-200k, name: 'Fume baghouse, 200,000 m3/h', description: 'Cleans a furnace''s fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -4, 10).'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 8.0, height: 12.0, mass: 68690.0}
+built_of:
+- {what: Casing and hoppers, item: material.structural-steel-a36, mass: 42200.0, note: '12 x 8 x 12 m, 8 mm plate'}
+- {what: Structure, item: material.structural-steel-a36, mass: 21100.0, note: 'half the casing, from memory'}
+- {what: Filter bags, item: material.ptfe, mass: 1389.0, note: '737 bags 150 mm across and 8 m long, 2778 m2 of PTFE-membrane cloth at 0.5 kg/m2'}
+- {what: Fan and motor, item: good.electric-motors, mass: 4000.0, note: 'an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory'}
+needs: {power: 296300.0}
+life: 788940000
+basis:
+- of: [physical, built_of, needs.power]
+  tier: invented
+  review: true
+  note: '200,000 m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power 296 kW.'
+- of: [life]
+  rule: rule.life-plant

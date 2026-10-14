@@ -821,7 +821,8 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
-- { record: layout.arc-furnace-air, at: "2026-10-14T16:28:13Z", status: draft, summary: "changed: visual", sha: "a2b26af2f77bd136" }
+- { record: layout.arc-furnace-air, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed", sha: "a2407e84fcd931d4" }
+- { record: layout.ladle-station-air, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "cf01ab94614b46ef" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -1345,9 +1346,9 @@
 - { record: part.wb-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "3796f49a5bc8fa2e" }
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
-- { record: plant-mount.bay-s1, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "fb1701d5df1ba8b3" }
-- { record: plant-mount.bay-s2, at: "2026-10-14T16:00:56Z", status: draft, summary: "changed: bears", sha: "f51d5822733afc50" }
-- { record: plant-mount.bay-s3, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed: feeds", sha: "c6571ee53bcba2c0" }
+- { record: plant-mount.bay-s1, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed: feeds, basis", sha: "1f3d43114cd34842" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed: bears, basis", sha: "1b50dc9954d67769" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T17:43:17Z", status: draft, summary: "changed: basis", sha: "e266cf43e5390661" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
 - { record: population.biraidim.taumeibru-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2626282163a26720" }
@@ -2712,14 +2713,21 @@
 - { record: system.liham, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "891572eaa9c2ef46" }
 - { record: system.moryemzai, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "f8e4fd33ee4cf599" }
 - { record: system.treistun, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "dd9719e496514353" }
+- { record: unit.alloy-bins-8, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "0aad14266e6521bd" }
+- { record: unit.baghouse-200k, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "8353facc61f04e80" }
 - { record: unit.baghouse-800k, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "ab9ba06de66e8e3c" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
+- { record: unit.cooling-tower-1cell, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "0bde51925dfb5ed3" }
 - { record: unit.dri-bin-200t, at: "2026-10-14T14:08:01Z", status: draft, summary: "changed", sha: "1077e81910f4da8c" }
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
+- { record: unit.furnace-transformer-14mva, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "078a8a23a650b575" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
+- { record: unit.ladle-crane-150t, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "88909849a3665800" }
+- { record: unit.ladle-furnace-80t, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "493dd880944510dc" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
+- { record: unit.vacuum-degasser-80t, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "364457c5e1379e97" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }

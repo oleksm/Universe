@@ -590,3 +590,25 @@ def lattice_count(cells, rank):
     tally = lambda d, g: sum(1 for v in d.values() if v == g)
     return {g: (tally(edges, g), tally(faces, g), tally(nodes, g)) for g in rank}
 
+
+def strut_capacity(section, L=3.0):
+    """N a straight tube strut of this section takes in compression over L pinned: the lesser of Euler buckling and yield
+    (0.6 of 4340's tensile, the rule plants.py and spaceport.py check by)."""
+    z = section["size"]
+    d, t = z["diameter"], z["wall"]
+    I = math.pi / 64 * (d ** 4 - (d - 2 * t) ** 4)
+    return min(math.pi ** 2 * 205e9 * I / L ** 2, area(section) * 470e6)
+
+
+def lightest_section(force, metal="st4340", margin=1.5):
+    """The kit's lightest tube section (by its 3 m strut's mass) whose strut takes force with the margin to spare."""
+    S = "standards/SFO/metadata/mill-stock/"
+    best = None
+    for f in os.listdir(S):
+        if f.startswith(f"{metal.upper()}-TB-") and f.endswith("-S3000.yaml"):
+            st = yaml.safe_load(open(S + f, encoding="utf-8"))
+            sec = yaml.safe_load(open(S + st["kit"]["section"].split(".", 1)[1].upper() + ".yaml", encoding="utf-8"))
+            if strut_capacity(sec) >= margin * force and (best is None or st["physical"]["mass"] < best[0]):
+                best = (st["physical"]["mass"], f[:-11].lower())
+    return best[1]
+

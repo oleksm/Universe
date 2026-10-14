@@ -1,0 +1,20 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.alloy-bins-8, name: 'Alloy bins, 8', description: 'Eight steel bins of ferroalloys and fluxes on a stand 9 m up, each over a vibrating feeder into one weigh hopper; the hopper''s outlet at local (0, -2.5, 10) drops onto the layout''s belt to the ladle furnace''s chute.'}
+size_class: 2
+fits: plant-mount.bay-s2
+physical: {length: 12.0, width: 6.0, height: 15.0, mass: 36570.0}
+built_of:
+- {what: Bins, item: material.structural-steel-a36, mass: 11770.0, note: '8 bins 2.5 m across, 3.0 m of cylinder over a 1.5 m cone, 6 mm plate'}
+- {what: Stand, item: stock.st4340-box-300x300x20, mass: 20800.0, note: 'six box legs 300 x 300 x 20 mm, 9 m, and a 12 x 6 m deck of 20 mm plate'}
+- {what: Feeders and weigh hopper, item: good.electric-motors, mass: 4000.0, note: from memory}
+holds: 384800.0
+needs: {power: 40000.0}
+life: 788940000
+basis:
+- of: [physical, built_of, holds]
+  tier: derived
+  review: true
+  note: Eight bins of 17.2 m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full.
+- of: [life]
+  rule: rule.life-plant

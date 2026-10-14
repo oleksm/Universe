@@ -165,7 +165,7 @@ def units():
     return out
 
 
-def cooling_unit(heat):
+def cooling_unit(heat, whose="the furnace's"):
     """The cooling tower, sized to the heat the loop gathers."""
     cells = math.ceil(heat / 10e6)
     flow = heat / (4186 * 10)                 # kg/s at a 10 K rise
@@ -174,7 +174,7 @@ def cooling_unit(heat):
     fans = 0.008 * heat
     return dict(
         name=f"Cooling tower, {cells} cells", size_class=3, fits="bay-s3", dims=(12.0 * cells, 12.0, 14.0),
-        desc=f"An induced-draught wet tower: the furnace's closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan's draught and evaporates. The loop's pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +{6.0 * cells:.0f}, 0.75 m up, at y 0 and +4.5), and the layout's pipes and concrete basin are not the unit's. On a world with air only; airless ground needs radiators instead.",
+        desc=f"An induced-draught wet tower: {whose} closed water loop gives up its heat through a plate exchanger to tower water, which sprays down through fill against a fan's draught and evaporates. The loop's pumps and exchanger stand on a skid inside its footprint; the loop leaves by two pairs of 500 mm ports on its east end (local x +{6.0 * cells:.0f}, 0.75 m up, at y 0 and +4.5), and the layout's pipes and concrete basin are not the unit's. On a world with air only; airless ground needs radiators instead.",
         built_of=[part("Cells", A36, 60000.0 * cells, "steel frame, fill, drift eliminators and fan deck: 60 t a cell, from memory"),
                   part("Fans and motors", "good.electric-motors", 6000.0 * cells, "one 10 m fan a cell, from memory"),
                   part("Loop pumps and exchanger", "good.pumps", 25000.0, "from memory")],
@@ -229,6 +229,144 @@ def car_units():
                   part("End carriages and drives", "good.electric-motors", 4000.0, "from memory")],
         needs={"power": 60000.0},
         basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Girders sized for 20 t at mid-span within span/800, which they meet with the trolley and their own weight too; trolley and drives from memory; the hook, reeving and drives not sized."}])
+    return out
+
+
+# ---------------------------------------------------------------- the ladle station's figures
+lmod = yaml.safe_load(open(S + "modules/ladle-station.yaml"))
+LREC = lmod["recipes"][0]
+L_P, L_RATE, L_HEAT = LREC["power"], LREC["rate"], LREC["batch"]   # W (sourced, 50 kWh a tonne), kg/s and kg (invented)
+L_V2 = 300.0                          # secondary volts of a ladle furnace, from memory
+L_HEATING = 4.0 / 60                  # K/s: a ladle furnace heats its melt about 4 degrees a minute, from memory
+L_ARC_EFF = 0.4                       # share of the arc's power that reaches the steel, from memory
+L_ARC = L_HEAT * 820.0 * L_HEATING / L_ARC_EFF     # W of arc to heat the melt at that rate (liquid steel about 820 J/kg K)
+L_MVA = L_ARC / PF
+L_I2 = L_MVA / (math.sqrt(3) * L_V2)
+L_WATER = 0.20                        # share of the arc's power the water-cooled roof takes, from memory
+VD_PUMPS = 600e3                      # W of the degasser's dry screw and Roots pumps, from memory
+
+
+def transformer_unit(mva, purpose):
+    """A furnace transformer by its rating: 1.6 t a MVA, sized in proportion to the 90 MVA one (8 x 5 x 6 m)."""
+    m = 1.6e-3 * mva
+    k = (mva / S_MVA) ** (1 / 3)
+    L, W, H = (round(8.0 * k, 1), round(5.0 * k, 1), round(6.0 * k, 1))
+    return dict(
+        name=f"Furnace transformer, {mva / 1e6:.0f} MVA", size_class=1 if max(L, W) <= 6 else 2, fits="bay-s1" if max(L, W) <= 6 else "bay-s2", dims=(L, W, H),
+        desc=f"Steps the grid down for {purpose}, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), {H * 2 / 3:.1f} m up; the oil-to-water cooler's water ports on its -x end, 1 m up. Stands in a fire-walled vault.",
+        built_of=[part("Core", A36, 0.40 * m, "grain-oriented electrical steel, which the registry has not got: structural steel stands for it"),
+                  part("Windings", CU, 0.25 * m, ""),
+                  part("Tank and fittings", A36, 0.15 * m, ""),
+                  part("Oil", "material.hydraulic-fluid", 0.20 * m, "transformer mineral oil, which the registry has not got: hydraulic fluid stands for it")],
+        needs={"power": TRANSFORMER_LOSS * mva, "heat": TRANSFORMER_LOSS * mva},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": f"1.6 t a MVA and the shares of core, copper, tank and oil from memory of furnace transformers; its size scaled from the 90 MVA one by the cube root of the rating."},
+               {"of": ["needs"], "tier": "invented", "review": True, "note": f"Losses {TRANSFORMER_LOSS:.1%} of its rating, carried off by the cooling loop; from memory."}])
+
+
+def baghouse_unit(q_m3h, dims):
+    """A pulse-jet baghouse for q_m3h of fume, in a casing of dims."""
+    Q = q_m3h / 3600
+    cloth = Q * 60 / 1.2
+    bags = math.ceil(cloth / (math.pi * 0.15 * 8.0))
+    L, W, H = dims
+    casing = 2 * (L * W + L * H + W * H) * 0.008 * RHO["steel"]
+    fan = Q * 4000 / 0.75
+    return dict(
+        name=f"Fume baghouse, {q_m3h:,.0f} m3/h", size_class=2 if max(L, W) <= 12 else 3, fits="bay-s2" if max(L, W) <= 12 else "bay-s3", dims=dims,
+        desc=f"Cleans a furnace's fume before it goes to the air: filter bags in a closed steel casing over hoppers, the dust shaken down and let out through sealed valves; a fan and its stack at one end draw the gas through. The gas comes in at the top of one long side (local 0, -{W / 2:g}, {H - 2:g}).",
+        built_of=[part("Casing and hoppers", A36, casing, f"{L:g} x {W:g} x {H:g} m, 8 mm plate"),
+                  part("Structure", A36, casing * 0.5, "half the casing, from memory"),
+                  part("Filter bags", "material.ptfe", cloth * 0.5, f"{bags} bags 150 mm across and 8 m long, {cloth:.0f} m2 of PTFE-membrane cloth at 0.5 kg/m2"),
+                  part("Fan and motor", "good.electric-motors", 8000.0 * q_m3h / 400000, "an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory")],
+        needs={"power": fan},
+        basis=[{"of": ["physical", "built_of", "needs.power"], "tier": "invented", "review": True, "note": f"{q_m3h:,.0f} m3/h, 1.2 m/min through the cloth, the fan at 4 kPa and 75%: from memory. Fan power {fan / 1e3:.0f} kW."}])
+
+
+def ladle_crane_unit(cap, span, trolley):
+    """A double-girder ladle crane: the lightest pair of box girders that keeps the load's deflection within span/800 and
+    their bending stress, all loads on, within 150 MPa (0.6 of A36's yield)."""
+    best = None
+    for h in [x / 10 for x in range(14, 31)]:
+        for t in (0.012, 0.016, 0.020, 0.025):
+            b, g_len = 0.8, span + 0.6
+            I = (b * h ** 3 - (b - 2 * t) * (h - 2 * t) ** 3) / 12
+            m = 2 * box_tube(b, h, t, g_len) * RHO["steel"]
+            defl = cap * G * span ** 3 / (48 * 205e9 * 2 * I)
+            M = (cap + trolley) * G * span / 4 + m / g_len * G * span ** 2 / 8
+            sigma = M / (2 * I / (h / 2))
+            if defl <= span / 800 and sigma <= 150e6 and (best is None or m < best[0]):
+                best = (m, h, t, I, defl, sigma)
+    m, h, t, I, defl, sigma = best
+    ends = 0.15 * cap                                     # end carriages, wheels and drives: from memory
+    return dict(
+        name=f"Ladle crane, {cap / 1000:.0f} t", size_class=2, dims=(8.0, r(span + 0.6, 3), r(h + 1.6, 3)),
+        desc=f"A double-girder ladle crane on the hall's runways: it lifts a full ladle off its car into the degasser and back. Hangs on the frame; names no bay. It travels along its x, its wheels at y -{span / 2:g} and +{span / 2:g} ({span} m between the rails), its ends 0.3 m beyond; its origin on the runway's rail plane; the trolley, with a main hoist and a ladle beam, runs 9 m either way along y, the hook raised to 0.1 m under the rail plane. Parked at the hall's centre.",
+        built_of=[part("Bridge girders", A36, m, f"two box girders {h:.1f} x 0.8 m, {t * 1000:.0f} mm wall, {span + 0.6:.1f} m long over a {span} m span, the lightest that meet span/800 under the load ({defl * 1000:.1f} mm, span/{span / defl:.0f}) and 150 MPa with every load on ({sigma / 1e6:.0f} MPa)"),
+                  part("Trolley, hoist and ladle beam", A36, trolley, f"{trolley / cap:.0%} of the load, from memory"),
+                  part("End carriages and drives", "good.electric-motors", ends, "15% of the load, from memory")],
+        needs={"power": 2.0 * cap},
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Girders sized as the desc says; trolley and end carriages from memory; the hook, reeving and drives not sized."},
+               {"of": ["needs.power"], "tier": "invented", "review": True, "note": "2 W a kilogram of rated load, from memory."}])
+
+
+def ladle_units():
+    """The ladle station's own units."""
+    out = {}
+    # Ladle furnace: a gantry over the ladle rail carrying a water-cooled roof, three electrodes on masts and their arms.
+    roof_s, roof_w = pipe_panel(1.15 * math.pi * 2.3 ** 2)
+    delta = math.pi * 0.6 ** 2 * 0.3 * RHO["refractory"]
+    gantry = (4 * box_tube(0.6, 0.6, 0.025, 12.0) + 2 * box_tube(0.8, 0.5, 0.025, 10.0)) * RHO["steel"]
+    masts = 3 * box_tube(0.5, 0.5, 0.025, 7.0) * RHO["steel"]
+    arms = 3 * box_tube(0.5, 0.35, 0.02, 4.0) * RHO["aluminium"]
+    cable_area = L_I2 / 2 / 5e6
+    cables = 3 * 2 * 10.0 * cable_area * RHO["copper"]
+    out["ladle-furnace-80t"] = dict(
+        name="Ladle furnace, 80 t", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 14.0),
+        desc=f"Reheats and trims an 80 t heat in its ladle, the ladle standing on its car under the furnace: a steel gantry straddles the ladle rail (a lane 5 m wide left clear under it along x), carrying a water-cooled roof 4.6 m across that is lowered onto the ladle, three graphite electrodes on masts with their arms, and an alloy chute through the roof. Its arc, about {L_ARC / 1e6:.1f} MW at full heat, comes from its own transformer by a bus on its -y side (local 0, -5, 6); its cooling water by a manifold at local (-4.5, -4.5, 1); the alloys by a chute whose top stands at local (0, 3, 9); its fume leaves by an elbow on the roof at local (2, 0, 7.5). Argon is blown through the ladle's porous plug from the car.",
+        built_of=[part("Roof panels", A36, roof_s * 1.5, "water-cooled pipe panels over a dome 4.6 m across, 1.15 times the disc, the lifting frame half as much again"),
+                  part("Roof delta", REF, delta, "the refractory centre round the electrode ports, 1.2 m across, 0.3 m thick"),
+                  part("Gantry", A36, gantry, "four box columns 0.6 m, 25 mm wall, 12 m tall, and two box beams 0.8 x 0.5 m, 10 m"),
+                  part("Electrode masts", A36, masts, "three box masts 0.5 m, 25 mm wall, 7 m"),
+                  part("Current-conducting arms", AL, arms, "three box arms 0.5 x 0.35 m, 20 mm wall, 4 m"),
+                  part("Secondary cables", CU, cables, f"two water-cooled copper cables a phase, 10 m, each {cable_area * 1e6:.0f} mm2 for half of {L_I2 / 1000:.0f} kA at 5 A/mm2"),
+                  part("Roof lift and mast hydraulics", "good.pumps", 6000.0, "from memory")],
+        holds=roof_w, needs={"power": L_P, "heat": L_WATER * L_P, "gravity": 1.6, "atmosphere": "any"},
+        recipes=lmod["recipes"], life=lmod.get("life"),
+        basis=[{"of": ["recipes"], "tier": "derived", "note": "The module's recipes (module.ladle-station), carried here: the module stays the game's until it reads layouts. Their sources are the module's; its power, 50 kWh a tonne, is the average the arc draws."},
+               {"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"From the materials and dimensions in built_of; dimensions from memory of 80 to 100 t ladle furnaces. The electrodes are a good it uses, not counted. Secondary {L_V2:.0f} V, from memory."},
+               {"of": ["needs.heat"], "tier": "invented", "review": True, "note": f"The water-cooled roof takes about {L_WATER:.0%} of the arc's power, from memory."}])
+    out["furnace-transformer-14mva"] = transformer_unit(L_MVA, f"the ladle furnace's arc: {L_ARC / 1e6:.1f} MW to heat 80 t at {L_HEATING * 60:.0f} degrees a minute, {L_ARC_EFF:.0%} of it reaching the steel, at a power factor of {PF}; about {L_V2:.0f} V and {L_I2 / 1000:.0f} kA a phase")
+    # Vacuum tank degasser: the ladle is lowered into a tank in a pit, the lid closed, the tank pumped down while argon stirs.
+    Ti, Th = 4.5, 5.5
+    tank = cyl_shell(Ti + 0.08, Th, 0.04, bottom=1.0) * RHO["steel"]
+    tank_ref = math.pi * (Ti / 2) ** 2 * 0.3 * RHO["refractory"]
+    lid = math.pi * 2.6 ** 2 * 1.15 * 0.05 * RHO["steel"]
+    out["vacuum-degasser-80t"] = dict(
+        name="Vacuum tank degasser, 80 t", size_class=2, fits="bay-s2", dims=(12.0, 10.0, 9.0),
+        desc="Takes the dissolved hydrogen and nitrogen out of an 80 t heat: the crane lowers the ladle into a steel tank standing in a pit, a lid on a car closes it, and pumps take it down to about 67 Pa while argon stirs the melt. Local frame: the tank's centre at (-3, 2), 4.5 m inside and 5.5 m deep, its rim at the floor; the lid car on its own rails parks at (3, 2); the pump set fills the strip y -5 to -2 along the unit, its vacuum line to a flange on the tank's side. 3 m above the floor and 6 m below it (the pit is the layout's).",
+        built_of=[part("Tank", A36, tank, f"{Ti} m inside, {Th} m deep, 40 mm plate, its bottom the same"),
+                  part("Tank floor lining", REF, tank_ref, "0.3 m of refractory under the ladle"),
+                  part("Lid", A36, lid, "a dish 5.2 m across, 50 mm plate, 1.15 times the disc"),
+                  part("Lid car and rails", A36, 12000.0, "from memory"),
+                  part("Vacuum pump set", "good.pumps", 25000.0, "dry screw pumps behind Roots boosters, from memory"),
+                  part("Vacuum line", A36, math.pi * 1.0 * 0.010 * 12.0 * RHO["steel"], "1 m across, 10 mm, 12 m")],
+        needs={"power": VD_PUMPS},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "Sizes and the pumps' power from memory of tank degassers for 80 to 100 t ladles."}])
+    # Alloy bins: eight bins on a steel stand, a weigh hopper and a belt to the furnace's chute.
+    Db, Hc, Hk = 2.5, 3.0, 1.5
+    vol1 = math.pi * (Db / 2) ** 2 * Hc + math.pi * (Db / 2) ** 2 * Hk / 3
+    bins = 8 * (cyl_shell(Db, Hc, 0.006) + math.pi * Db / 2 * math.hypot(Db / 2, Hk) * 0.006) * RHO["steel"]
+    stand = 6 * box_tube(0.3, 0.3, 0.02, 9.0) * RHO["steel"] + 12 * 6 * 0.02 * RHO["steel"]
+    out["alloy-bins-8"] = dict(
+        name="Alloy bins, 8", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 15.0),
+        desc="Eight steel bins of ferroalloys and fluxes on a stand 9 m up, each over a vibrating feeder into one weigh hopper; the hopper's outlet at local (0, -2.5, 10) drops onto the layout's belt to the ladle furnace's chute.",
+        built_of=[part("Bins", A36, bins, f"8 bins {Db} m across, {Hc} m of cylinder over a {Hk} m cone, 6 mm plate"),
+                  part("Stand", "stock.st4340-box-300x300x20", stand, "six box legs 300 x 300 x 20 mm, 9 m, and a 12 x 6 m deck of 20 mm plate"),
+                  part("Feeders and weigh hopper", "good.electric-motors", 4000.0, "from memory")],
+        holds=8 * vol1 * 3500 * 0.8, needs={"power": 40000.0},
+        basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Eight bins of {vol1:.1f} m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full."}])
+    out["baghouse-200k"] = baghouse_unit(200000, (12.0, 8.0, 12.0))
+    out["ladle-crane-150t"] = ladle_crane_unit(150000.0, 22.8, 37500.0)
     return out
 
 
@@ -309,13 +447,23 @@ def unit_record(slug, u):
     return d
 
 
-def main():
-    us = units()
-    loop_heat = sum(u["needs"].get("heat", 0) for u in us.values()) + OFFGAS_SHARE * P   # the units and the layout's water-cooled duct
-    us["cooling-tower"] = cooling_unit(loop_heat)
-    us.update(car_units())
-    recs = {slug: unit_record(slug, u) for slug, u in us.items()}
+def link(kind, name, a, b, item, per_m, power=None, note=None, heat=None, via=()):
+    pts = [a, *via, b]
+    L = sum(math.dist(p, q) for p, q in zip(pts, pts[1:]))
+    d = {"kind": kind, "name": name, "from": list(a), "to": list(b), "length": r(L), "item": item, "mass": r(per_m * L)}
+    if via:
+        d["via"] = [list(v) for v in via]
+    if power:
+        d["power"] = r(power)
+    if heat:
+        d["heat"] = r(heat)
+    if note:
+        d["note"] = note
+    return d
 
+
+def arc_furnace_air(us, recs):
+    """The trial: the arc furnace shop on a world with air at 1 g. Returns the layout and its bays."""
     # The layout: hall x[-24, 9] y[-15, 15], 3 m lattice walls one cell thick, a roof one cell deep at 24 m.
     # West wall one cell out from the slag rail (x -16.5) so the 3.5 m slag car runs 2.75 m clear of it (blender, assembly check).
     cell, box = 3.0, (-24.0, -15.0, 0.0, 9.0, 15.0, 27.0)
@@ -369,19 +517,6 @@ def main():
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower", "at": [-39.0, -6.0, 0.0], "note": "outside, west, 3 m from the hall"},
     ]
 
-    def link(kind, name, a, b, item, per_m, power=None, note=None, heat=None, via=()):
-        pts = [a, *via, b]
-        L = sum(math.dist(p, q) for p, q in zip(pts, pts[1:]))
-        d = {"kind": kind, "name": name, "from": list(a), "to": list(b), "length": r(L), "item": item, "mass": r(per_m * L)}
-        if via:
-            d["via"] = [list(v) for v in via]
-        if power:
-            d["power"] = r(power)
-        if heat:
-            d["heat"] = r(heat)
-        if note:
-            d["note"] = note
-        return d
     pipe_m = math.pi * 0.5 * 0.008 * RHO["steel"] * 2
     tr_pipe_m = math.pi * 0.15 * 0.005 * RHO["steel"] * 2
     bus_area = I2 / 4e6
@@ -424,30 +559,6 @@ def main():
     for g in ground:
         g["mass"] = r(g["volume"] * RHO["concrete"])
 
-    # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
-    g_max = 9.81 * 1.0
-    by_class = {}
-    for b in bays:
-        u = recs[b["unit"].split(".", 1)[1]]
-        c = int(b["mount"][-1])
-        need = u.get("needs", {})
-        cur = by_class.setdefault(c, {"load": 0, "power": 0, "heat": 0, "water": 0, "units": []})
-        cur["load"] = max(cur["load"], (u["physical"]["mass"] + u.get("holds", 0)) * g_max)
-        for k in ("power", "heat", "water"):
-            cur[k] = max(cur[k], need.get(k, 0))
-        cur["units"].append(u["identity"]["key"])
-    mounts = {}
-    for c, v in sorted(by_class.items()):
-        feeds = {k: r(v[k] * M, 3) for k in ("power", "heat", "water") if v[k]}
-        mounts[f"bay-s{c}"] = {"identity": {"key": f"plant-mount.bay-s{c}", "name": f"Plant bay, class {c}", "size_class": c,
-                                            "description": f"A {BAY[c]:.0f} m square of prepared ground or floor and the feeds to it."},
-                               "footprint": {"length": BAY[c], "width": BAY[c]}, "bears": {"load": r(v["load"] * M, 3)}, **({"feeds": feeds} if feeds else {}),
-                               "basis": [{"of": ["footprint"], "tier": "invented", "note": "Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid."},
-                                         {"of": ["bears", "feeds"], "rule": "rule.mounts-margin", "note": f"Round the units fitted to it in the trial ({', '.join(v['units'])}) at 1 g, full."}]}
-    for b in bays:
-        u, m = recs[b["unit"].split(".", 1)[1]], mounts[b["mount"].split(".", 1)[1]]
-        assert u["physical"]["length"] <= m["footprint"]["length"] and u["physical"]["width"] <= m["footprint"]["width"], b
-
     # Totals.
     used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [recs["hall-crane-20t"]]
     power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
@@ -489,12 +600,181 @@ def main():
                   {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
                   {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged: whether staff go by unit is open."}],
     }
+    print(f"layout.arc-furnace-air: {total / 1000:.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s water, frame {frame_mass / 1000:.0f} t")
+    return layout, bays
+
+
+def ladle_station_air(us, recs):
+    """The ladle station on a world with air at 1 g: the ladle furnace and the degasser under a crane hall on the ladle rail.
+    The ladle comes in by the west door from the arc furnace shop and leaves by the east door for the casting bay."""
+    cell, box = 3.0, (-21.0, -15.0, 0.0, 21.0, 15.0, 27.0)
+    doors = [(-21.0, -3.0, 0.0, -18.0, 3.0, 6.0),     # ladle rail in, west
+             (18.0, -3.0, 0.0, 21.0, 3.0, 6.0),       # ladle rail out, east
+             (-12.0, 12.0, 6.0, -6.0, 15.0, 15.0),    # alloy belt through the north wall
+             (-3.0, 12.0, 9.0, 3.0, 15.0, 15.0)]      # fume duct, 1 m across, through the north wall
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 8, None, doors)
+    x0, y0, z0, x1, y1, z1 = box
+    span_in = y1 - y0 - 2 * cell
+    crane = recs["ladle-crane-150t"]
+    cap, trolley = 150000.0, 37500.0
+    RUNWAY = 18.0                                         # the crane's rail plane: its top 3.8 m higher, under the roof's bottom chord at 24
+    roof_q = (0.002 * RHO["aluminium"] + 20.0) * G + 1000.0
+    chord = roof_q * cell * span_in ** 2 / 8 / cell
+    wheel = ((cap + trolley) * (1 - 1.5 / (span_in - 1.2)) + crane["physical"]["mass"] / 2) * G / 2
+    vert = wheel + roof_q * cell * span_in / 2
+    sec = {"roof": frames.lightest_section(chord), "wall": frames.lightest_section(vert)}
+    members, fmass = [], 0.0
+    for g in ("wall", "roof"):
+        for diag, n in ((False, groups[g][0]), (True, groups[g][1])):
+            key, st = strut(sec[g], cell, diag)
+            members.append({"item": key, "count": n, "where": g})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec["wall"], cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    # Runways: the kit's 4340 box 400 x 400 x 25 mm, one a side, bearing on the wall's nodes every 3 m.
+    rw_a = 0.4 * 0.4 - 0.35 * 0.35
+    rw_I = (0.4 ** 4 - 0.35 ** 4) / 12
+    rw_M = wheel * cell / 4
+    rw_sigma = rw_M / (rw_I / 0.2)
+    assert 1.5 * rw_sigma <= 470e6, rw_sigma
+    x_in = x1 - x0 - 2 * cell
+    runway = 2 * x_in * rw_a * RHO["steel"]
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 4, "where": f"crane runways, two a side, {x_in / 2:.0f} m lengths, along x on the inside of the long walls: their rail plane {RUNWAY:g} m up at y -11.4 and +11.4"})
+    fmass += runway
+    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in doors)
+    clad = clad_area * 0.002 * RHO["aluminium"]
+    rcap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec["roof"], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
+    wcap = frames.strut_capacity(yaml.safe_load(open(S + "mill-stock/" + strut(sec["wall"], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml")))
+    sized = (f"At 1 g: roof {roof_q:.0f} Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a {span_in:.0f} m span in 3 m deep strips puts {chord / 1e3:.0f} kN in a chord: "
+             f"{sec['roof']} takes {rcap / 1e3:.0f} kN. A wheel of the 150 t crane with a full ladle at the runway's end puts {wheel / 1e3:.0f} kN on a wall node, with the roof's share {vert / 1e3:.0f} kN: "
+             f"{sec['wall']} takes {wcap / 1e3:.0f} kN. Each the kit's lightest section with half again to spare. A wheel between two nodes bends the runway to {rw_sigma / 1e6:.0f} MPa, against 470 MPa for 4340 with half again to spare. Wind on the walls and the footings' loads not yet checked.")
+
+    tr = us["furnace-transformer-14mva"]
+    tL, tW, tH = tr["dims"]
+    bays = [
+        {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t", "at": [-9.0, 0.0, 0.0], "note": "over the ladle rail; the car stops at x -9 under its roof"},
+        {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [-9.0, -9.0, 0.0], "note": "in a fire-walled vault (y -12 to -6) south of the ladle furnace, its terminals facing it"},
+        {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.vacuum-degasser-80t", "at": [6.0, -7.0, 0.0], "note": "south of the rail, its box from y -12 to the car's lane at -2: the tank at (3, -5), its rim 0.7 m clear of the lane; the crane lifts the ladle from the car stopped at x 3"},
+        {"id": "A", "mount": "plant-mount.bay-s2", "unit": "unit.alloy-bins-8", "at": [-9.0, 21.0, 0.0], "note": "outside, north"},
+        {"id": "B", "mount": "plant-mount.bay-s2", "unit": "unit.baghouse-200k", "at": [9.0, 24.0, 0.0], "note": "outside, north-east"},
+        {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower-1cell", "at": [-33.0, -9.0, 0.0], "note": "outside, west of the hall and south of the rail"},
+    ]
+    pipe_m = math.pi * 0.25 * 0.006 * RHO["steel"] * 2
+    tr_pipe_m = math.pi * 0.1 * 0.004 * RHO["steel"] * 2
+    bus_area = L_I2 / 4e6
+    tower = us["cooling-tower-1cell"]
+    tx = -33.0 + tower["dims"][0] / 2
+    links = [
+        link("rail", "ladle rail", (-24.0, 0.0, 0.0), (24.0, 0.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 3 m gauge between the heads' inner faces, set in the floor with 40 mm flangeways, running plane the floor; in by the west door from the arc furnace shop's rail, out by the east door to the casting bay's; the car's centre stops at x -9 (the ladle furnace) and x 3 (the degasser's crane lift)"),
+        link("busbar", "secondary bus", (-9.0, -9.0 + tW / 2, tH * 2 / 3), (-9.0, -5.0, 6.0), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {L_I2 / 1000:.0f} kA at 4 A/mm2, from the transformer's terminals through the vault's north wall to the ladle furnace's bus on its -y side"),
+        link("conveyor", "alloy feed", (-9.0, 18.5, 10.0), (-9.0, 3.0, 9.4), A36, 120.0, 20000.0, "0.65 m belt in a covered gallery, 120 kg/m with the gallery (from memory), falling gently from the weigh hopper to 0.4 m over the ladle furnace's chute, through the north wall"),
+        link("duct", "fume", (-7.0, 0.0, 7.5), (9.0, 20.0, 10.0), A36, math.pi * 1.0 * 0.006 * RHO["steel"], None, "1 m across, 6 mm plate: up from the ladle furnace's roof elbow, through the north wall's opening, to the baghouse's inlet; the roof's fume is cooler than an arc furnace's, so the duct is not water-cooled", via=[(-7.0, 0.0, 12.0), (0.0, 6.0, 12.0), (0.0, 17.0, 12.0), (9.0, 17.0, 10.0)]),
+        link("pipe", "cooling water to the ladle furnace", (tx, -9.0, 0.75), (-13.5, -4.5, 1.0), A36, pipe_m, None, "a pair of 250 mm pipes, 6 mm wall, flow and return, from the tower's first port pair: up to 1.5 m, east through a sleeve in the west wall at y -9, north west of the vault to the ladle furnace's manifold", via=[(tx + 1.5, -9.0, 0.75), (tx + 1.5, -9.0, 1.5), (-16.0, -9.0, 1.5), (-16.0, -4.5, 1.5)]),
+        link("pipe", "cooling water to the transformer", (-16.0, -9.0, 1.5), (-9.0 - tL / 2, -9.0, 1.0), A36, tr_pipe_m, None, "a pair of 100 mm pipes, 4 mm wall, teed off the furnace pair, through the vault's west wall to the transformer's cooler ports"),
+    ]
+    mobile = [{"unit": "unit.ladle-car-80t", "rides": "ladle rail", "at": [-9.0, 0.0, 0.0]}]
+    tw = tower["dims"][0]
+    pit_r, pit_d = 3.5, 6.0
+    ground = [
+        {"what": "Ladle furnace foundation", "item": CONC, "volume": r(12 * 10 * 1.0 - 5 * 12 * 0.3), "note": "x -15 to -3, y -5 to 5, 1 m, a 0.3 m recess along the car's lane for the rails"},
+        {"what": "Degasser pit", "item": CONC, "volume": r(math.pi * ((pit_r + 0.6) ** 2 - pit_r ** 2) * pit_d + math.pi * (pit_r + 0.6) ** 2 * 1.0), "note": f"round the tank at (3, -5): {2 * pit_r:g} m across inside, {pit_d:g} m deep, 0.6 m walls, a 1 m floor"},
+        {"what": "Degasser floor", "item": CONC, "volume": r(12 * 10 * 0.5 - math.pi * (pit_r + 0.6) ** 2 * 0.5), "note": "x 0 to 12, y -12 to -2 round the pit, 0.5 m"},
+        {"what": "Transformer vault", "item": CONC, "volume": r(8 * 6 * 0.5 + 28 * 6 * 0.3), "note": "x -13 to -5, y -12 to -6 round the transformer: a 0.5 m slab and 0.3 m fire walls 6 m tall; the bus through its north wall, 1 m short of the ladle furnace's box"},
+        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+        {"what": "Bins footing", "item": CONC, "volume": 72.0, "note": "12 x 6 x 1 m"},
+        {"what": "Baghouse slab", "item": CONC, "volume": r(12 * 8 * 0.6)},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * 12.6 * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 5 * 0.6 * 0.6 * 2.0), "note": f"sunk as the furnace shop's: 0.3 m walls round its {tw:.0f} x 12 m footprint, tops at z 0, floor top at z -2; five pedestals"},
+        {"what": "Rail beds", "item": CONC, "volume": r(48 * 0.125), "note": "under the ladle rail, 0.125 m3 a metre as the furnace shop's"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile] + [crane]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used) + sum(l.get("heat", 0) for l in links)
+    water = sum(u.get("needs", {}).get("water", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    frame_mass = fmass + clad
+    total = mass_units + mass_links + frame_mass + mass_ground
+    mp = lmod["physical"]
+    against = (f"module.ladle-station: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {L_P / 1e6:.1f} MW. "
+               f"This layout: the same rate; {power / 1e6:.1f} MW (the module's figure is the arc's average; the degasser's pumps, the fan, the crane and the tower are on top); "
+               f"{water:.1f} kg/s of water the module did not name; {(mass_units + mass_links + frame_mass) / 1000:.0f} t of plant and frame and {mass_ground / 1000:.0f} t of concrete.")
+    xs = [x0, x1] + [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [y0, y1] + [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    layout = {
+        "identity": {"key": "layout.ladle-station-air", "name": "Ladle station, world with air",
+                     "description": "An 80 t ladle furnace and a vacuum tank degasser on the ladle rail under a crane hall, with the furnace's transformer, alloy bins, a fume baghouse and a cooling tower. The heat comes in on its car from the arc furnace shop, is reheated and trimmed under the ladle furnace, lifted by the 150 t crane into the degasser and back, and goes on to the casting bay. For a world with air at about 1 g."},
+        "stands_for": "module.ladle-station",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; doors 6 m wide and tall for the ladle rail, west and east; framed openings in the north wall for the alloy belt and the fume duct.",
+                  "openings": [list(d) for d in doors], "members": members,
+                  "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
+                  "carries": ["unit.ladle-crane-150t"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": L_RATE, "power": r(power), "heat": r(heat), "water": r(water), "mass": r(total), "against_module": against},
+        "staff": lmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile", "frame.box", "frame.openings"], "tier": "invented", "review": True, "note": "Laid out after the arc furnace shop, on its ladle rail. Lengths from memory of ladle metallurgy shops."},
+                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": "Counted from the lattice (tools/standards/plants.py): every cell edge a straight strut, every square face one diagonal, a node at every corner; sections chosen by the loads in frame.sized; masses from the strut and node records."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes from the shapes in the notes, concrete at 2,400 kg/m3; not sized for the ground's bearing."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.ladle-station-air: {total / 1000:.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s water, frame {frame_mass / 1000:.0f} t ({sec})")
+    return layout, bays
+
+
+def mounts_for(bays, recs):
+    # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
+    g_max = 9.81 * 1.0
+    by_class = {}
+    for b in bays:
+        u = recs[b["unit"].split(".", 1)[1]]
+        c = int(b["mount"][-1])
+        need = u.get("needs", {})
+        cur = by_class.setdefault(c, {"load": 0, "power": 0, "heat": 0, "water": 0, "units": []})
+        cur["load"] = max(cur["load"], (u["physical"]["mass"] + u.get("holds", 0)) * g_max)
+        for k in ("power", "heat", "water"):
+            cur[k] = max(cur[k], need.get(k, 0))
+        cur["units"].append(u["identity"]["key"])
+    mounts = {}
+    for c, v in sorted(by_class.items()):
+        feeds = {k: r(v[k] * M, 3) for k in ("power", "heat", "water") if v[k]}
+        mounts[f"bay-s{c}"] = {"identity": {"key": f"plant-mount.bay-s{c}", "name": f"Plant bay, class {c}", "size_class": c,
+                                            "description": f"A {BAY[c]:.0f} m square of prepared ground or floor and the feeds to it."},
+                               "footprint": {"length": BAY[c], "width": BAY[c]}, "bears": {"load": r(v["load"] * M, 3)}, **({"feeds": feeds} if feeds else {}),
+                               "basis": [{"of": ["footprint"], "tier": "invented", "note": "Sides 6, 12, 24, 48 m by class: chosen, each twice the last, so the bays of a layout share one grid."},
+                                         {"of": ["bears", "feeds"], "rule": "rule.mounts-margin", "note": f"Round the units fitted to it in the trial ({', '.join(v['units'])}) at 1 g, full."}]}
+    for b in bays:
+        u, m = recs[b["unit"].split(".", 1)[1]], mounts[b["mount"].split(".", 1)[1]]
+        assert u["physical"]["length"] <= m["footprint"]["length"] and u["physical"]["width"] <= m["footprint"]["width"], b
+
+    return mounts
+
+
+def main():
+    us = units()
+    loop_heat = sum(u["needs"].get("heat", 0) for u in us.values()) + OFFGAS_SHARE * P   # the units and the layout's water-cooled duct
+    us["cooling-tower"] = cooling_unit(loop_heat)
+    us.update(car_units())
+    lu = ladle_units()
+    lu["cooling-tower-1cell"] = cooling_unit(sum(u["needs"].get("heat", 0) for u in lu.values()), "the ladle station's")
+    us.update(lu)
+    recs = {slug: unit_record(slug, u) for slug, u in us.items()}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs)}
+    mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)
     for slug, d in recs.items():
         write(S + f"units/{slug}.yaml", d)
-    write(S + "layouts/arc-furnace-air.yaml", layout)
-    print(f"{len(mounts)} mounts, {len(recs)} units, 1 layout: {total / 1000:.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to the tower, {water:.1f} kg/s water, frame {frame_mass / 1000:.0f} t")
+    for slug, (d, _) in layouts.items():
+        write(S + f"layouts/{slug}.yaml", d)
+    print(f"{len(mounts)} mounts, {len(recs)} units, {len(layouts)} layouts")
 
 
 if __name__ == "__main__":
