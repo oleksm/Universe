@@ -2734,7 +2734,7 @@
 - { record: unit.ball-mill-4m4, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "099aa608fdd86d06" }
 - { record: unit.balling-disc-7m5, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "580b8fd9433fdd37" }
 - { record: unit.cooling-tower, at: "2026-10-14T14:37:56Z", status: draft, summary: "changed", sha: "20447996507fd0ba" }
-- { record: unit.cooling-tower-1cell, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "0bde51925dfb5ed3" }
+- { record: unit.cooling-tower-1cell, at: "2026-10-14T19:43:42Z", status: draft, summary: "changed: visual", sha: "87c38cc29ba3c825" }
 - { record: unit.cooling-tower-h2, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "f32056eb92214f48" }
 - { record: unit.cooling-tower-shaft-1, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "e800d229120d5b00" }
 - { record: unit.cooling-tower-shaft-2, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "10e173a1b39f7a13" }

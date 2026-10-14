@@ -9,6 +9,12 @@ built_of:
 - {what: Fans and motors, item: good.electric-motors, mass: 6000.0, note: 'one 10 m fan a cell, from memory'}
 - {what: Loop pumps and exchanger, item: good.pumps, mass: 25000.0, note: from memory}
 needs: {power: 32530.0, water: 0.8674}
+visual:
+  format: "freefall-model/1"
+  path: "models/cooling-tower-1cell/v1"
+  manifest_sha256: "b175b95c754040052e3d258c969ee77cfd7fe3037f4dc2f84dc3055b9adbb098"
+  version: 1
+  triangles: 7484
 life: 788940000
 basis:
 - of: [physical, built_of]
