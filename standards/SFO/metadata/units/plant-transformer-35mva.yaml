@@ -1,0 +1,24 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.plant-transformer-35mva, name: 'Plant transformer, 35 MVA', description: 'Steps the grid down for the pellet plant: its torches, mill, fans and drives, with on-load taps. Oil-filled in a closed tank, HV bushings and conservator on top, cooled by oil to water. Three secondary terminals on one long face (+y), 2.9 m up; the oil-to-water cooler''s water ports on its -x end, 1 m up. Stands in a fire-walled vault.'}
+size_class: 1
+fits: plant-mount.bay-s1
+physical: {length: 5.8, width: 3.7, height: 4.4, mass: 56220.0}
+built_of:
+- {what: Core, item: material.structural-steel-a36, mass: 22490.0, note: 'grain-oriented electrical steel, which the registry has not got: structural steel stands for it'}
+- {what: Windings, item: material.copper, mass: 14060.0}
+- {what: Tank and fittings, item: material.structural-steel-a36, mass: 8433.0}
+- {what: Oil, item: material.hydraulic-fluid, mass: 11240.0, note: 'transformer mineral oil, which the registry has not got: hydraulic fluid stands for it'}
+needs: {power: 175700.0, heat: 175700.0}
+life: 788940000
+basis:
+- of: [physical, built_of]
+  tier: invented
+  review: true
+  note: 1.6 t a MVA and the shares of core, copper, tank and oil from memory of furnace transformers; its size scaled from the 90 MVA one by the cube root of the rating.
+- of: [needs]
+  tier: invented
+  review: true
+  note: Losses 0.5% of its rating, carried off by the cooling loop; from memory.
+- of: [life]
+  rule: rule.life-plant

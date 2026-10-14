@@ -1,0 +1,41 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.induration-grate-125th, name: 'Induration grate, 125 t an hour', description: 'A straight grate 4 m wide with 28 m under its hood: a chain of 44 pallet cars carries a bed of green balls on a layer of fired ones along +x through drying, preheating, firing at about 1,300 deg C, and cooling; the cooling zone''s hot air goes back over the bed to the firing zone, so it needs only 500 kJ of new heat a kilogram, here 17.4 MW from 12 electric plasma torches in the hood (there is no fuel to burn). Wind boxes under the grate, 5 m up on the machine''s frame, draw the gas down through the bed to four process fans. Green balls in on a roller feeder at local (-20, 0, 9); fired pellets off its +x end at (21, 0, 2); waste gas out to the layout''s duct at (0, 6, 3).'}
+size_class: 4
+fits: plant-mount.bay-s4
+physical: {length: 44.0, width: 12.0, height: 18.0, mass: 937900.0}
+built_of:
+- {what: Pallet cars, item: material.stainless-steel-304, mass: 220000.0, note: '44 cars 4 x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy'}
+- {what: Hood lining, item: good.refractory-brick, mass: 352800.0, note: '392 m2 of hood, 300 mm'}
+- {what: Hood casing, item: material.structural-steel-a36, mass: 30770.0, note: 10 mm}
+- {what: Wind boxes, item: material.structural-steel-a36, mass: 70340.0, note: 'under the grate, 10 mm plate'}
+- {what: 'Machine frame, sprockets and drive', item: material.structural-steel-a36, mass: 200000.0, note: from memory}
+- {what: Plasma torches, item: good.electric-motors, mass: 24000.0, note: '12 torches of 1.5 MW, 2 t each with their supplies, from memory'}
+- {what: Process fans, item: good.electric-motors, mass: 40000.0, note: 'four fans, from memory'}
+needs: {power: 21790000.0, gravity: 1.0}
+recipes:
+- makes: good.iron-ore-pellets
+  does: The ore is crushed, ground, cleaned of waste rock and formed into pellets.
+  inputs:
+  - {item: good.iron-ore, quantity: 0.955}
+  - {item: element.o, quantity: 0.045}
+  rate: 34.7222222222222
+  power: 23000000
+life: 788940000
+basis:
+- of: [recipes]
+  tier: derived
+  note: 'The module''s recipe (module.pellet-plant), carried here: the module stays the game''s until it reads layouts.'
+- of: [physical, built_of]
+  tier: derived
+  review: true
+  note: The grate from the rate at about 27 t a m2 a day; the hood, pallets and frame from memory.
+- of: [needs.power]
+  tier: derived
+  note: The firing heat the module's source gives, 0.5 GJ a tonne, made by torches at 90%; the fans 2.5 MW at 20 kWh a tonne (from memory).
+- of: [needs.gravity]
+  tier: invented
+  review: true
+  note: The bed lies on the grate by its weight against the gas drawn down through it; not checked below 1 m/s2.
+- of: [life]
+  rule: rule.life-plant

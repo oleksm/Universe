@@ -1367,6 +1367,194 @@ def hydrogen_plant_air(us, recs):
     return layout, bays
 
 
+# ---------------------------------------------------------------- the pellet plant's figures
+pmod = yaml.safe_load(open(S + "modules/pellet-plant.yaml"))
+PREC = pmod["recipes"][0]
+P_RATE, P_P = PREC["rate"], PREC["power"]                 # kg/s of fired pellets, W (sourced: 45 kWh and 0.5 GJ of heat a tonne)
+P_FIRE = 0.5e9 * P_RATE / 1000                            # W of firing heat (the module's source), made here by electricity
+P_ELEC = P_P - P_FIRE                                     # W of drives, fans and the rest
+P_ORE = PREC["inputs"][0]["quantity"] * P_RATE
+MOIST = 0.09                                              # share of water in the green balls, from memory
+P_WATER = P_ORE * MOIST / (1 - MOIST)                     # kg/s of water dried off the green balls
+GRATE_W, GRATE_L = 4.0, 28.0                              # m: the induration grate, chosen for about 27 t a m2 a day (straight grates run 20 to 30, from memory)
+
+
+def pellet_units():
+    out = {}
+    D, Lm = 4.4, 7.0
+    shell = cyl_shell(D, Lm, 0.045, bottom=2.0) * RHO["steel"]
+    liners = math.pi * (D - 0.15) * Lm * 0.075 * RHO["steel"]
+    balls = math.pi * ((D - 0.3) / 2) ** 2 * Lm * 0.35 * 4650.0
+    P_mill = 18.0 * 3600 * P_ORE                          # W at 18 kWh a tonne (from memory, for pellet feed from fines)
+    out["ball-mill-4m4"] = dict(
+        name=f"Ball mill, {D:g} m", size_class=3, fits="bay-s3", dims=(18.0, 9.0, 7.0),
+        desc=(f"Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum {D:g} m across and {Lm:g} m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a {P_mill / 1e6:.1f} MW motor at its +x end. "
+              "Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5)."),
+        built_of=[part("Shell and heads", A36, shell, f"{D:g} m across, {Lm:g} m, 45 mm plate"),
+                  part("Liners", A36, liners, "75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it"),
+                  part("Trunnions, bearings and girth gear", "material.high-strength-steel-4340", 40000.0, "from memory"),
+                  part("Motor and gearbox", "good.electric-motors", 6.0 * P_mill / 1e3, "6 t a MW, from memory"),
+                  part("Slurry sump and pumps", "good.pumps", 8000.0, "from memory")],
+        holds=balls, needs={"power": P_mill, "water": P_WATER},
+        basis=[{"of": ["physical", "built_of", "holds", "needs.power"], "tier": "derived", "review": True, "note": f"Drum from memory for a mill drawing about {P_mill / 1e6:.1f} MW; masses from its plate; the ball charge a third of its volume at 4,650 kg/m3 (from memory)."},
+               {"of": ["needs.water"], "tier": "derived", "note": f"The water the plant loses: the green balls hold {MOIST:.0%}, dried off on the grate; the rest of the grinding water comes back from the filters."}])
+    A_f = P_ORE * 3600 / 1000 / 1.0
+    out["disc-filter-2"] = dict(
+        name="Disc filters, 2", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 6.0),
+        desc=f"Two vacuum disc filters side by side ({A_f / 2:.0f} m2 each) take the water out of the slurry down to {MOIST:.0%}; the cake drops onto the layout's belt below their discharge (local 0, -4, 1); the vacuum pumps on their -x end, the filtrate back to the mill.",
+        built_of=[part("Filters", A36, 30000.0 * 2, "from memory"), part("Vacuum pumps", "good.pumps", 12000.0, "from memory")],
+        needs={"power": 600e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": f"{A_f:.0f} m2 at a tonne a m2 an hour, masses and power from memory."}])
+    out["balling-disc-7m5"] = dict(
+        name="Balling disc, 7.5 m", size_class=2, fits="bay-s2", dims=(9.0, 9.0, 7.0),
+        desc="A shallow pan 7.5 m across, tilted 45 degrees and turning, rolls the moist ore into green balls 9 to 16 mm across; they spill over its rim onto a roller screen that sends the small ones back. Cake in from above (local 0, 2, 7), green balls out at (0, -4.5, 1).",
+        built_of=[part("Pan, frame and screen", A36, 40000.0, "from memory"), part("Drive", "good.electric-motors", 4000.0, "from memory")],
+        needs={"power": 90e3},
+        basis=[{"of": ["physical", "built_of", "needs"], "tier": "invented", "review": True, "note": "From memory; about 45 t of green balls an hour each, with what is sent back."}])
+    pallets = math.ceil((2 * GRATE_L + 10.0) / 1.5)
+    hood_a = (2 * 4.0 + 6.0) * GRATE_L
+    torches = math.ceil(P_FIRE / 1.5e6)
+    fans = 20.0 * 3600 * P_RATE                           # W at 20 kWh a tonne (from memory)
+    out["induration-grate-125th"] = dict(
+        name=f"Induration grate, {P_RATE * 3.6:.0f} t an hour", size_class=4, fits="bay-s4", dims=(44.0, 12.0, 18.0),
+        desc=(f"A straight grate {GRATE_W:g} m wide with {GRATE_L:g} m under its hood: a chain of {pallets} pallet cars carries a bed of green balls on a layer of fired ones along +x through drying, preheating, firing at about 1,300 deg C, and cooling; "
+              f"the cooling zone's hot air goes back over the bed to the firing zone, so it needs only {P_FIRE / P_RATE / 1e3:.0f} kJ of new heat a kilogram, here {P_FIRE / 1e6:.1f} MW from {torches} electric plasma torches in the hood (there is no fuel to burn). "
+              f"Wind boxes under the grate, 5 m up on the machine's frame, draw the gas down through the bed to four process fans. Green balls in on a roller feeder at local (-20, 0, 9); fired pellets off its +x end at (21, 0, 2); waste gas out to the layout's duct at (0, 6, 3)."),
+        built_of=[part("Pallet cars", "material.stainless-steel-304", pallets * 5000.0, f"{pallets} cars {GRATE_W:g} x 1.5 m of heat-resisting cast steel, 5 t each (from memory); stainless steel stands for the alloy"),
+                  part("Hood lining", REF, hood_a * 0.3 * RHO["refractory"], f"{hood_a:.0f} m2 of hood, 300 mm"),
+                  part("Hood casing", A36, hood_a * 0.010 * RHO["steel"], "10 mm"),
+                  part("Wind boxes", A36, GRATE_L * GRATE_W * 4.0 * 0.5 * 0.010 * RHO["steel"] * 4, "under the grate, 10 mm plate"),
+                  part("Machine frame, sprockets and drive", A36, 200000.0, "from memory"),
+                  part("Plasma torches", "good.electric-motors", torches * 2000.0, f"{torches} torches of 1.5 MW, 2 t each with their supplies, from memory"),
+                  part("Process fans", "good.electric-motors", 4 * 10000.0, "four fans, from memory")],
+        needs={"power": P_FIRE / 0.9 + fans, "gravity": 1.0},
+        recipes=pmod["recipes"], life=pmod.get("life"),
+        basis=[{"of": ["recipes"], "tier": "derived", "note": "The module's recipe (module.pellet-plant), carried here: the module stays the game's until it reads layouts."},
+               {"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": f"The grate from the rate at about {P_RATE * 86.4 / (GRATE_W * GRATE_L):.0f} t a m2 a day; the hood, pallets and frame from memory."},
+               {"of": ["needs.power"], "tier": "derived", "note": f"The firing heat the module's source gives, 0.5 GJ a tonne, made by torches at 90%; the fans {fans / 1e6:.1f} MW at 20 kWh a tonne (from memory)."},
+               {"of": ["needs.gravity"], "tier": "invented", "review": True, "note": "The bed lies on the grate by its weight against the gas drawn down through it; not checked below 1 m/s2."}])
+    out["mill-crane-30t"] = bridge_crane_unit(30000.0, 22.8, 9000.0, kind="Maintenance crane", job="it lifts the mill's liners and the grate's pallet cars and fans for their change", gear="a main hoist")
+    tp = transformer_unit(P_P / 0.9 / PF * 1.1, "the pellet plant: its torches, mill, fans and drives")
+    tp["name"] = tp["name"].replace("Furnace", "Plant")
+    out[f"plant-transformer-{P_P / 0.9 / PF * 1.1 / 1e6:.0f}mva"] = tp
+    out["baghouse-450k"] = baghouse_unit(450000, (24.0, 12.0, 14.0))
+    return out
+
+
+def pellet_plant_air(us, recs):
+    """The pellet plant on a world with air at 1 g: grinding, filtering, balling and the induration grate in one crane hall."""
+    cell, box = 3.0, (-60.0, -15.0, 0.0, 69.0, 15.0, 27.0)
+    openings = [(-60.0, -3.0, 6.0, -57.0, 3.0, 12.0),     # the ore belt in, west
+                (66.0, -3.0, 0.0, 69.0, 3.0, 6.0),        # the pellet belt out, east
+                (36.0, 12.0, 0.0, 42.0, 15.0, 6.0),       # the waste gas duct out, north
+                (-3.0, -15.0, 0.0, 3.0, -12.0, 6.0)]      # a door and the cables, south
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, 8, None, openings)
+    x0, y0, z0, x1, y1, z1 = box
+    span_in = y1 - y0 - 2 * cell
+    crane = recs["mill-crane-30t"]
+    cap, trolley = 30000.0, 9000.0
+    RUNWAY = 18.0
+    roof_q = (0.002 * RHO["aluminium"] + 20.0) * G + 1000.0
+    chord = roof_q * cell * span_in ** 2 / 8 / cell
+    wheel = ((cap + trolley) * (1 - 1.5 / (span_in - 1.2)) + crane["physical"]["mass"] / 2) * G / 2
+    vert = wheel + roof_q * cell * span_in / 2
+    sec = {"roof": frames.lightest_section(chord), "wall": frames.lightest_section(vert)}
+    members, fmass = [], 0.0
+    for g in ("wall", "roof"):
+        for diag, n in ((False, groups[g][0]), (True, groups[g][1])):
+            key, st = strut(sec[g], cell, diag)
+            members.append({"item": key, "count": n, "where": g})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec["wall"], cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    rw_a = 0.4 * 0.4 - 0.35 * 0.35
+    rw_sigma = wheel * cell / 4 / ((0.4 ** 4 - 0.35 ** 4) / 12 / 0.2)
+    assert 1.5 * rw_sigma <= 470e6, rw_sigma
+    x_in = x1 - x0 - 2 * cell
+    members.append({"item": "stock.st4340-box-400x400x25", "count": 8, "where": f"crane runways, four a side, {x_in / 4:.1f} m lengths, along x on the inside of the long walls: their rail plane {RUNWAY:g} m up at y -11.4 and +11.4"})
+    fmass += 2 * x_in * rw_a * RHO["steel"]
+    clad_area = 2 * (x1 - x0) * (z1 - z0) + 2 * (y1 - y0) * (z1 - z0) + (x1 - x0) * (y1 - y0) - sum(max(d - a, e - b) * (f - c) for a, b, c, d, e, f in openings)
+    clad = clad_area * 0.002 * RHO["aluminium"]
+    sec_stock = lambda g: yaml.safe_load(open(S + "mill-stock/" + strut(sec[g], cell)[1]["kit"]["section"].split(".", 1)[1].upper() + ".yaml"))
+    rcap, wcap = frames.strut_capacity(sec_stock("roof")), frames.strut_capacity(sec_stock("wall"))
+    sized = (f"At 1 g: roof {roof_q:.0f} Pa (2 mm aluminium, the frame about 20 kg/m2, 1 kPa of snow and wind, the last invented) over a {span_in:.0f} m span in 3 m deep strips puts {chord / 1e3:.0f} kN in a chord: "
+             f"{sec['roof']} takes {rcap / 1e3:.0f} kN. A wheel of the 30 t crane loaded at the runway's end puts {wheel / 1e3:.0f} kN on a wall node, with the roof's share {vert / 1e3:.0f} kN: "
+             f"{sec['wall']} takes {wcap / 1e3:.0f} kN. Each the kit's lightest section with half again to spare. The runway bends to {rw_sigma / 1e6:.0f} MPa between nodes, against 470 MPa with half again to spare. Wind and footings not yet checked.")
+    tkey = next(k for k in us if k.startswith("plant-transformer-"))
+    bays = [
+        {"id": "M", "mount": "plant-mount.bay-s3", "unit": "unit.ball-mill-4m4", "at": [-45.0, 0.0, 0.0], "note": "in the hall, west end"},
+        {"id": "F", "mount": "plant-mount.bay-s2", "unit": "unit.disc-filter-2", "at": [-24.0, 0.0, 6.0], "note": "on a deck 6 m up, so the cake falls to the belt"},
+        {"id": "B1", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [-6.0, -6.0, 0.0], "note": "two rows of two"},
+        {"id": "B2", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [6.0, -6.0, 0.0], "note": ""},
+        {"id": "B3", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [-6.0, 6.0, 0.0], "note": ""},
+        {"id": "B4", "mount": "plant-mount.bay-s2", "unit": "unit.balling-disc-7m5", "at": [6.0, 6.0, 0.0], "note": ""},
+        {"id": "G", "mount": "plant-mount.bay-s4", "unit": "unit.induration-grate-125th", "at": [41.0, 0.0, 0.0], "note": "in the hall's east end: its 48 m mount square is wider than the hall (the floor it stands on runs wall to wall)"},
+        {"id": "D", "mount": "plant-mount.bay-s3", "unit": "unit.baghouse-450k", "at": [39.0, 36.0, 0.0], "note": "outside, north, its stack at its east end"},
+        {"id": "T", "mount": "plant-mount.bay-s2", "unit": f"unit.{tkey}", "at": [0.0, -24.0, 0.0], "note": "outside, south, in a fire-walled vault"},
+    ]
+    q_gas = 450000 / 3600
+    d_gas = math.sqrt(4 * q_gas / (math.pi * 20.0))
+    links = [
+        link("conveyor", "ore belt", (-100.0, 0.0, 2.0), (-53.0, 0.0, 4.0), A36, 150.0, 100000.0, f"a 1 m belt in a gallery: {P_ORE:.1f} kg/s of ore fines from the ore yard, beyond the layout, through the west wall into the mill's chute", via=[(-62.0, 0.0, 9.0)]),
+        link("pipe", "slurry", (-37.0, 3.0, 0.5), (-24.0, 0.0, 9.0), A36, math.pi * 0.25 * 0.010 * RHO["steel"], None, "250 mm rubber-lined, 10 mm wall, pumped from the mill's sump up to the filters' troughs on their deck"),
+        link("conveyor", "cake belt", (-24.0, -4.0, 7.0), (6.0, 8.0, 7.5), A36, 100.0, 40000.0, "a 0.8 m belt from under the filters, shuttling over the four discs' feed points", via=[(-12.0, -4.0, 8.0), (-12.0, 0.0, 8.5), (6.0, 0.0, 8.5)]),
+        link("conveyor", "green ball belt", (-6.0, -10.5, 1.0), (21.0, 0.0, 9.0), A36, 100.0, 40000.0, "a 0.8 m belt collecting the four discs' green balls (the north pair's by a short cross belt from y 1.5), rising to the grate's roller feeder", via=[(12.0, -10.5, 1.0)]),
+        link("conveyor", "pellet belt", (62.0, 0.0, 2.0), (110.0, 0.0, 2.0), A36, 150.0, 100000.0, f"a 1 m belt: {P_RATE:.1f} kg/s of fired pellets off the grate's end, out by the east wall to the shaft furnace's pellet belt, beyond the layout"),
+        link("duct", "waste gas", (41.0, 6.0, 3.0), (39.0, 30.0, 12.0), A36, math.pi * d_gas * 0.006 * RHO["steel"], None, f"{d_gas:.1f} m across, 6 mm plate, insulated: from the process fans' discharge through the north wall to the baghouse's inlet", via=[(39.0, 6.0, 3.0), (39.0, 20.0, 3.0), (39.0, 20.0, 12.0)]),
+        link("cable", "plant supply", (0.0, -24.0 + us[tkey]["dims"][1] / 2, 4.0), (0.0, -10.0, 3.0), CU, 3 * P_P / 0.9 / PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "three phases at 6.6 kV in a cable tray, copper at 4 A/mm2, through the south door to the hall's switchroom"),
+    ]
+    ground = [
+        {"what": "Hall floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"0.4 m, {x_in:.0f} x {span_in:.0f} m"},
+        {"what": "Mill foundation", "item": CONC, "volume": r(18 * 9 * 3.0), "note": "two piers under the trunnions on a 3 m block, sized to the drum's dynamic load (not yet checked)"},
+        {"what": "Filter deck", "item": CONC, "volume": r(12 * 8 * 0.5 + 6 * 1.0 * 1.0 * 6.0), "note": "a 0.5 m deck 6 m up on six columns"},
+        {"what": "Grate foundations", "item": CONC, "volume": r(44 * 12 * 1.0), "note": "under the machine's frame"},
+        {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
+        {"what": "Outside slabs", "item": CONC, "volume": r(24 * 12 * 0.6 + 12 * 8 * 0.5 + 28 * 6 * 0.3), "note": "the baghouse's slab and the transformer's vault"},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * RHO["concrete"])
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays] + [crane]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    water = sum(u.get("needs", {}).get("water", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    frame_mass = fmass + clad
+    total = mass_units + mass_links + frame_mass + mass_ground
+    mp = pmod["physical"]
+    xs = [x0, x1] + [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [y0, y1] + [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    against = (f"module.pellet-plant: one box {mp['length']:g} x {mp['width']:g} x {mp['height']:g} m, {P_P / 1e6:.0f} MW (45 kWh and 0.5 GJ of heat a tonne, the heat counted as power). "
+               f"This layout: the same {P_RATE * 3.6:.0f} t an hour; {power / 1e6:.1f} MW, of which {P_FIRE / 0.9 / 1e6:.1f} the grate's plasma torches; no cooling water (the pellets cool on the grate in the air it draws, the waste gas leaves by the baghouse's stack); "
+               f"{water:.1f} kg/s of water dried off the green balls; {(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of concrete. "
+               f"One shaft furnace at its full rate takes {PELLETS:.1f} kg/s of pellets, about {PELLETS / P_RATE:.1f} of these.")
+    layout = {
+        "identity": {"key": "layout.pellet-plant-air", "name": "Pellet plant, world with air",
+                     "description": "Fine ore made into fired pellets for the shaft furnace: a ball mill grinds it wet, disc filters dry it, four balling discs roll it into green balls, and a straight induration grate dries, fires and cools them, its heat from electric plasma torches; a baghouse cleans the waste gas. One crane hall. For a world with air at about 1 g."},
+        "stands_for": "module.pellet-plant",
+        "site": {"atmosphere": "air", "gravity": [8.0, 11.0]},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": z1, "mass": r(total)},
+        "bays": bays, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"Walls one cell thick, 24 m tall; a roof one cell deep over a {x_in:.0f} x {span_in:.0f} m floor; framed openings for the ore belt (west), the pellet belt (east), the waste gas duct (north) and a door (south).",
+                  "openings": [list(o) for o in openings], "members": members,
+                  "cladding": {"item": "stock.al6061-sh-2", "area": r(clad_area), "mass": r(clad)},
+                  "carries": ["unit.mill-crane-30t"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": P_RATE, "power": r(power), "heat": 0.0, "water": r(water), "mass": r(total), "against_module": against},
+        "staff": pmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "frame.box", "frame.openings"], "tier": "invented", "review": True, "note": "Laid out from memory of straight-grate pellet plants."},
+                  {"of": ["totals"], "tier": "derived", "note": "Summed from the units."},
+                  {"of": ["frame.members", "frame.mass", "frame.cladding"], "tier": "derived", "review": True, "note": "Counted from the lattice; sections chosen by the loads in frame.sized."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Volumes from the shapes in the notes, concrete at 2,400 kg/m3."},
+                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.pellet-plant-air: {total / 1000:,.0f} t, {power / 1e6:.1f} MW (torches {P_FIRE / 0.9 / 1e6:.1f}), {water:.1f} kg/s water, frame {frame_mass / 1000:.0f} t ({sec})")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -1413,8 +1601,9 @@ def main():
     hu = hydrogen_units()
     hu["cooling-tower-h2"] = cooling_unit(N_BLK * (hu["electrolyser-block-20mw"]["needs"]["heat"] + hu["rectifier-transformer-21mva"]["needs"]["heat"]), "the electrolysers' and rectifiers'")
     us.update(hu)
+    us.update(pellet_units())
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
-    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs)}
+    layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

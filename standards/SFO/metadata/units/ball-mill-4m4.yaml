@@ -1,0 +1,25 @@
+# yaml-language-server: $schema=../../schema/unit.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: unit.ball-mill-4m4, name: 'Ball mill, 4.4 m', description: 'Grinds the ore wet, to about 80% finer than 45 um, so it can be balled: a steel drum 4.4 m across and 7 m long on trunnion bearings, its axis along x 3 m up, a third full of steel balls, turned by a girth gear and a 2.1 MW motor at its +x end. Ore and water in by a chute at its -x trunnion (local -8, 0, 4); the slurry out of its +x trunnion into a sump and pumped on (local 8, 3, 0.5).'}
+size_class: 3
+fits: plant-mount.bay-s3
+physical: {length: 18.0, width: 9.0, height: 7.0, mass: 160800.0}
+built_of:
+- {what: Shell and heads, item: material.structural-steel-a36, mass: 44920.0, note: '4.4 m across, 7 m, 45 mm plate'}
+- {what: Liners, item: material.structural-steel-a36, mass: 55030.0, note: '75 mm wear liners of manganese steel, which the registry has not got: structural steel stands for it'}
+- {what: 'Trunnions, bearings and girth gear', item: material.high-strength-steel-4340, mass: 40000.0, note: from memory}
+- {what: Motor and gearbox, item: good.electric-motors, mass: 12890.0, note: '6 t a MW, from memory'}
+- {what: Slurry sump and pumps, item: good.pumps, mass: 8000.0, note: from memory}
+holds: 150400.0
+needs: {power: 2149000.0, water: 3.28}
+life: 788940000
+basis:
+- of: [physical, built_of, holds, needs.power]
+  tier: derived
+  review: true
+  note: Drum from memory for a mill drawing about 2.1 MW; masses from its plate; the ball charge a third of its volume at 4,650 kg/m3 (from memory).
+- of: [needs.water]
+  tier: derived
+  note: 'The water the plant loses: the green balls hold 9%, dried off on the grate; the rest of the grinding water comes back from the filters.'
+- of: [life]
+  rule: rule.life-plant
