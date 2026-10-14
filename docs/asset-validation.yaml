@@ -4093,3 +4093,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.cooling-tower
+    version: 1
+    manifest_sha256: "153c06fcb277d34b63461c5f35f26ee3f6460c23c7641d6ce7086ed7e887aba5"
+    installed: 0a6486a1
+    game: "the loader (world::assets) at fso 0a6486a1"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/cooling-tower/v1 (748860 bytes, bounds [-11.975, 0.0, -5.95] to [12.0, 14.0, 5.95]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
