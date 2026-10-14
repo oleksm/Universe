@@ -1,17 +1,12 @@
 # yaml-language-server: $schema=../../schema/structure.schema.yaml
-# built_of and physical.mass written by tools/standards/platform.py; the rest by hand.
+# built_of and physical.mass written by tools/standards/station_platform.py; the rest by hand.
 identity: {key: structure.platform, name: Halvard platform, maker: org.halvard, kind: station, revision: outdated, description: 'An orbital platform, in vacuum and free fall: an open truss deck carrying 16 pads, the main structure along one edge with an unpressurised hangar inside. Station frame (the game''s, crates/core/world/src/station.rs): the deck faces +y, its top at y -100, its bottom at y -150, across x -300 to 300, along z -225 to 375; the main structure from z -375 to -225, y -150 to 150, its hangar door on its face at z -225. The pads, 90 m square plates (the 45 m capture radius inside them), in a 4 x 4 grid at 150 m: x -225, -75, 75, 225 and z -150, 0, 150, 300. Nothing on it is built for weight: in orbit the deck takes berthing and the station''s slow turn, so it is a space frame, not a slab. The deck: primary lattice trusses 45 m deep (3 m thick) along every pad-grid line between the pads (x -300, -150, 0, 150, 300 and z -225, -75, 75, 225, 375), a 3 m strut lattice one cell
     deep on top (y -103 to -100), walkways over the trusses, and a square pad plate 90 m a side with four recessed berthing clamps at each pad. The main structure: a strut-lattice hall clad in 2 mm aluminium for shielding from sun and debris; the hangar a 200 x 120 x 80 m bay behind a door 102 m wide and 60 m tall (x -51 to 51, y -100 to -40), its crew and plant in pressurised modules inside the hall, not yet designed. The fitted transceiver and relay are separate.'}
 physical: {length: 600, width: 750, height: 300, mass: 31822044}
 fit:
 - {item: equipment.gate.transceiver.station, count: 1}
 - {item: equipment.gate.relay.hyper, count: 1}
-visual:
-  format: "freefall-model/1"
-  path: "models/platform/v1"
-  manifest_sha256: "200e6c7f546e905a2268fcf727384db255dd312c6735d1e418d5a22d79065334"
-  version: 1
-  triangles: 100976
+visual: {format: freefall-model/1, path: models/platform/v1, manifest_sha256: 200e6c7f546e905a2268fcf727384db255dd312c6735d1e418d5a22d79065334, version: 1, triangles: 100976}
 basis:
 - of: [identity.description, physical]
   tier: invented
@@ -24,7 +19,7 @@ basis:
 - of: [built_of, physical.mass]
   tier: derived
   review: true
-  note: 'Counted by tools/standards/platform.py from the 3 m lattice (every cell edge a straight strut, every square face one diagonal, a node at every corner; where groups meet, the truss''s heavier kit). Masses from the strut and node records. Free fall: berthing a 150 t ship at 0.3 m/s, stopped over 0.5 m, puts about 14 kN on its pad, which a al6061-tb-100x3 strut carries many times over; the game''s deck speed (10 m/s) would put about 15 MN, which no deck takes. Not checked: the station''s turn, thermal cycling, the pressurised modules (not designed).'
+  note: 'Counted by tools/standards/station_platform.py from the 3 m lattice (every cell edge a straight strut, every square face one diagonal, a node at every corner; where groups meet, the truss''s heavier kit). Masses from the strut and node records. Free fall: berthing a 150 t ship at 0.3 m/s, stopped over 0.5 m, puts about 14 kN on its pad, which a al6061-tb-100x3 strut carries many times over; the game''s deck speed (10 m/s) would put about 15 MN, which no deck takes. Not checked: the station''s turn, thermal cycling, the pressurised modules (not designed).'
 built_of:
 - {what: 'Deck trusses: struts', item: stock.al6061-tb-160x5-s3000, mass: 8818633, note: 'ten lattice trusses 3 m thick and 45 m deep under the deck, on the pad-grid lines (x -300, -150, 0, 150, 300 along z; z -225, -75, 75, 225, 375 along x): 153,360 straight struts stock.al6061-tb-160x5-s3000 (28.64 kg) and 120,250 diagonals stock.al6061-tb-160x5-d3000 (36.81 kg), one in every square face'}
 - {what: 'Deck trusses: nodes', item: stock.st4340-node-220b, mass: 2992419, note: '62,720 nodes'}

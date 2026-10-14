@@ -53,24 +53,7 @@ def cells():
 
 
 def count(cs):
-    edges, faces = {}, {}
-    def claim(d, key, g):
-        if RANK[g] > RANK.get(d.get(key), 0):
-            d[key] = g
-    for (i, j, k), g in cs.items():
-        for a in (0, 1):
-            for b in (0, 1):
-                claim(edges, ((i, j + a, k + b), 0), g); claim(edges, ((i + a, j, k + b), 1), g); claim(edges, ((i + a, j + b, k), 2), g)
-        for s in (0, 1):
-            claim(faces, (0, i + s, j, k), g); claim(faces, (1, i, j + s, k), g); claim(faces, (2, i, j, k + s), g)
-    nodes = {}
-    for ((p, ax), g) in edges.items():
-        q = (p[0] + (ax == 0), p[1] + (ax == 1), p[2] + (ax == 2))
-        for n in (p, q):
-            if RANK[g] > RANK.get(nodes.get(n), 0):
-                nodes[n] = g
-    tally = lambda d, g: sum(1 for v in d.values() if v == g)
-    return {g: (tally(edges, g), tally(faces, g), tally(nodes, g)) for g in SECTION}
+    return frames.lattice_count(cs, RANK)
 
 
 def stock(key):
@@ -117,13 +100,13 @@ def main():
     rec = yaml.safe_load(open(REC, encoding="utf-8"))
     rec["built_of"] = built
     rec["physical"]["mass"] = r(total)
-    note = (f"Counted by tools/standards/platform.py from the 3 m lattice (every cell edge a straight strut, every square face one diagonal, a node at every corner; "
+    note = (f"Counted by tools/standards/station_platform.py from the 3 m lattice (every cell edge a straight strut, every square face one diagonal, a node at every corner; "
             f"where groups meet, the truss's heavier kit). Masses from the strut and node records. Free fall: berthing a 150 t ship at {v} m/s, stopped over {stop} m, "
             f"puts about {F / 1e3:.0f} kN on its pad, which a {SECTION['deck']} strut carries many times over; the game's deck speed (10 m/s) would put about "
             f"{ship * 10 ** 2 / (2 * stop) / 1e6:.0f} MN, which no deck takes. Not checked: the station's turn, thermal cycling, the pressurised modules (not designed).")
     rec["basis"] = [b for b in rec.get("basis", []) if b.get("of") != ["built_of", "physical.mass"]] + [{"of": ["built_of", "physical.mass"], "tier": "derived", "review": True, "note": note}]
     with open(REC, "w", encoding="utf-8") as f:
-        f.write("# yaml-language-server: $schema=../../schema/structure.schema.yaml\n# built_of and physical.mass written by tools/standards/platform.py; the rest by hand.\n")
+        f.write("# yaml-language-server: $schema=../../schema/structure.schema.yaml\n# built_of and physical.mass written by tools/standards/station_platform.py; the rest by hand.\n")
         yaml.safe_dump(rec, f, sort_keys=False, width=1000, allow_unicode=True, default_flow_style=None)
     print(f"platform: frame {frame_m / 1e3:,.0f} t, total {total / 1e3:,.0f} t;", {g: v for g, v in n.items()})
 
