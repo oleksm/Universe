@@ -388,9 +388,9 @@
 - { record: equipment.engine.fan.s1, at: "2026-10-13T00:40:35Z", status: draft, summary: "changed: visual", sha: "8571271370838a45" }
 - { record: equipment.engine.fan.s2, at: "2026-10-13T00:46:03Z", status: draft, summary: "changed: visual", sha: "131081299755298f" }
 - { record: equipment.engine.fan.s3, at: "2026-10-12T01:31:44Z", status: draft, summary: "changed: visual", sha: "cc49eb09dba4218d" }
-- { record: equipment.engine.ft.s1, at: "2026-10-13T01:06:15Z", status: draft, summary: "changed: visual", sha: "1fd6fb7dcc3b318c" }
-- { record: equipment.engine.ft.s2, at: "2026-10-13T01:12:22Z", status: draft, summary: "changed: visual", sha: "dc17f2e2b475823c" }
-- { record: equipment.engine.ft.s3, at: "2026-10-13T01:17:48Z", status: draft, summary: "changed: visual", sha: "86ea52dedce26c92" }
+- { record: equipment.engine.ft.s1, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "73ded0be9c4688a3" }
+- { record: equipment.engine.ft.s2, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "d0cc1d885805d9bf" }
+- { record: equipment.engine.ft.s3, at: "2026-10-14T01:51:31Z", status: draft, summary: "changed: physical, built_of, basis", sha: "cceabfddba9813c6" }
 - { record: equipment.engine.nt.s1, at: "2026-10-13T01:51:30Z", status: draft, summary: "changed: visual", sha: "110a68ce2e357997" }
 - { record: equipment.engine.nt.s2, at: "2026-10-13T02:06:07Z", status: draft, summary: "changed: visual", sha: "d485b3df704248eb" }
 - { record: equipment.engine.nt.s3, at: "2026-10-13T02:50:46Z", status: draft, summary: "changed: visual", sha: "cb5d8c594580a6b6" }
@@ -863,6 +863,7 @@
 - { record: material.kerolox, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "a89067f18adc3c4e" }
 - { record: material.lead, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "7c000bf7e6d32043" }
 - { record: material.methalox, at: "2026-10-07T01:45:03Z", status: review, summary: "changed: identity", sha: "3e3a93123f4f38da" }
+- { record: material.molybdenum, at: "2026-10-14T01:51:31Z", status: review, summary: "changed", sha: "ea610c770f90eaec" }
 - { record: material.molybdenum-disulphide, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "73f997d94032fa1e" }
 - { record: material.multi-layer-insulation, at: "2026-10-05T18:39:28Z", status: review, summary: "changed: mass, basis", sha: "4eb924c5d35488a9" }
 - { record: material.nitrogen, at: "2026-10-07T01:45:03Z", status: review, summary: "changed", sha: "979738c8be4e54b9" }
@@ -947,7 +948,7 @@
 - { record: module.market-garden, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "cb404f9dcff13fe6" }
 - { record: module.meat-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "a5cf19321ff594ae" }
 - { record: module.mine, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "a976bc47d41b1d9a" }
-- { record: module.molybdenum-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "16d0df1918971083" }
+- { record: module.molybdenum-works, at: "2026-10-14T01:51:31Z", status: review, summary: "changed: recipes, basis", sha: "62cb534106f52770" }
 - { record: module.nickel-smelter, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "646bf04e9d59751c" }
 - { record: module.oil-press, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "aee9597293b30d9b" }
 - { record: module.oil-well, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7c6f9092d2d9590e" }
@@ -2100,6 +2101,7 @@
 - { record: stock.methanol-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "7b56073189270525" }
 - { record: stock.milk-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "b70950abfb337f9f" }
 - { record: stock.mli-fl, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "378c2f47269f044f" }
+- { record: stock.mo-tb-12x0p5, at: "2026-10-14T01:51:31Z", status: review, summary: "first tracked", sha: "8455df0109a2bcfe" }
 - { record: stock.molybdenum-concentrate-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "28f315fd88422bd1" }
 - { record: stock.mutton-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "2e9582a1491bb236" }
 - { record: stock.natural-gas-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "4127ccde7981d434" }

@@ -1,0 +1,21 @@
+# yaml-language-server: $schema=../../schema/material.schema.yaml
+# Data: Wikipedia: Molybdenum, from memory (2026-10-13); to be checked against the page.
+identity:
+  key: material.molybdenum
+  name: Molybdenum
+  class: metal
+  form:
+  - tube
+  composition:
+  - part: element.mo
+    share: 1.0
+mass:
+  density: 10280.0
+mechanical:
+  youngs_modulus: 329000000000.0
+  poissons_ratio: 0.31
+thermal:
+  melting_point: 2896.0
+  thermal_conductivity: 138.0
+basis:
+  - { of: [mass, mechanical, thermal], tier: sourced, review: true, source: "Wikipedia: Molybdenum", note: "From memory, not looked up this time: to be checked. For heat pipes that run hot (lithium inside, 1,300 to 1,800 K), as the fusion engines' radiators." }
