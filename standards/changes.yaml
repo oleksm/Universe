@@ -434,9 +434,9 @@
 - { record: equipment.lift.belly.s1, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "b14a92771fd37651" }
 - { record: equipment.lift.belly.s2, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "2510b2eaa9ec3756" }
 - { record: equipment.lift.belly.s3, at: "2026-10-11T18:55:25Z", status: draft, summary: "changed: revision", sha: "038d104c6c6ef3cf" }
-- { record: equipment.power.aurel.s1, at: "2026-10-13T22:49:56Z", status: draft, summary: "changed: physical, basis", sha: "5919e0331f716db4" }
-- { record: equipment.power.aurel.s2, at: "2026-10-13T23:36:27Z", status: draft, summary: "changed: visual", sha: "e1cbac80a67643a1" }
-- { record: equipment.power.aurel.s3, at: "2026-10-13T23:45:49Z", status: draft, summary: "changed: physical, basis", sha: "1072299df5ea6d30" }
+- { record: equipment.power.aurel.s1, at: "2026-10-14T00:30:43Z", status: draft, summary: "changed: basis", sha: "1f56e59619ac5ac6" }
+- { record: equipment.power.aurel.s2, at: "2026-10-14T00:30:43Z", status: draft, summary: "changed: basis", sha: "fe242d7724e4f408" }
+- { record: equipment.power.aurel.s3, at: "2026-10-14T00:30:43Z", status: draft, summary: "changed: basis", sha: "57cae14997caa959" }
 - { record: equipment.power.battery-vtol.s0, at: "2026-10-13T06:30:43Z", status: draft, summary: "changed: visual", sha: "e1305a44edbdbfb0" }
 - { record: equipment.power.battery-vtol.s1, at: "2026-10-12T01:40:18Z", status: draft, summary: "changed: visual", sha: "03fe8e8ac782e425" }
 - { record: equipment.power.battery-vtol.s2, at: "2026-10-13T06:36:57Z", status: draft, summary: "changed: visual", sha: "a0f2d85a4b00bdb8" }
