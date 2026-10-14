@@ -832,7 +832,7 @@
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
 - { record: layout.ore-yard-air, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "80cee716ce980cb3" }
 - { record: layout.pellet-plant-air, at: "2026-10-14T19:05:01Z", status: draft, summary: "first tracked", sha: "17d04bf873e1439b" }
-- { record: layout.shaft-furnace-air, at: "2026-10-14T21:56:50Z", status: draft, summary: "changed: physical, frame, totals", sha: "e586a2693867e91c" }
+- { record: layout.shaft-furnace-air, at: "2026-10-14T21:59:36Z", status: draft, summary: "changed: physical, totals", sha: "b84fc76825789c56" }
 - { record: layout.shaft-furnace-airless, at: "2026-10-14T21:51:51Z", status: draft, summary: "changed: physical, links, totals", sha: "9348f3c3f7c692eb" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
@@ -1361,7 +1361,7 @@
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
 - { record: plant-mount.bay-s1, at: "2026-10-14T19:55:55Z", status: draft, summary: "changed: basis", sha: "bbbf5a586af24ac7" }
 - { record: plant-mount.bay-s2, at: "2026-10-14T21:38:01Z", status: draft, summary: "changed: basis", sha: "27477f79222caf49" }
-- { record: plant-mount.bay-s3, at: "2026-10-14T21:56:50Z", status: draft, summary: "changed: bears", sha: "6bc18ff0e4762bf3" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T21:59:36Z", status: draft, summary: "changed: bears", sha: "5d7dd90bfd97897a" }
 - { record: plant-mount.bay-s4, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "748d2f3be058a7e3" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
@@ -2780,7 +2780,7 @@
 - { record: unit.recycle-compressor, at: "2026-10-14T18:55:37Z", status: draft, summary: "first tracked", sha: "20665cbbf05406cb" }
 - { record: unit.recycle-compressor-8bar, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "f34cdf84380aedc8" }
 - { record: unit.sampling-lab, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "fe76c914c3297692" }
-- { record: unit.shaft-furnace-200th, at: "2026-10-14T21:56:50Z", status: draft, summary: "changed: physical, built_of", sha: "73d6ce6f1a3710fd" }
+- { record: unit.shaft-furnace-200th, at: "2026-10-14T21:59:36Z", status: draft, summary: "changed: physical, built_of", sha: "d457d06dc7bccc78" }
 - { record: unit.shaft-furnace-200th-hp, at: "2026-10-14T19:26:44Z", status: draft, summary: "first tracked", sha: "a36f3c28899dff95" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.stack-crane-20t, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "dada8ceeb1793c71" }
