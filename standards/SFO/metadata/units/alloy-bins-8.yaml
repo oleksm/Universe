@@ -11,6 +11,12 @@ built_of:
 - {what: 'Feeders, weigh hoppers and collecting belts', item: good.electric-motors, mass: 6000.0, note: 'eight vibrating feeders, four weigh hoppers on load cells, two short belts and a transfer chute, from memory'}
 holds: 384800.0
 needs: {power: 40000.0}
+visual:
+  format: "freefall-model/1"
+  path: "models/alloy-bins-8/v1"
+  manifest_sha256: "7ebfccfbf3e6feb46fbdcadf82126b9a4b7f784075906326e6d1968d940b0c30"
+  version: 1
+  triangles: 26220
 life: 788940000
 basis:
 - of: [physical, built_of, holds]
