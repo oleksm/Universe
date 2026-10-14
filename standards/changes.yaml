@@ -2725,7 +2725,7 @@
 - { record: unit.hall-crane-20t, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed", sha: "88da9f2b1f1ffdd5" }
 - { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
 - { record: unit.ladle-crane-150t, at: "2026-10-14T17:43:17Z", status: draft, summary: "first tracked", sha: "88909849a3665800" }
-- { record: unit.ladle-furnace-80t, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "493dd880944510dc" }
+- { record: unit.ladle-furnace-80t, at: "2026-10-14T17:46:49Z", status: draft, summary: "changed: identity", sha: "ab86ed83f81389ab" }
 - { record: unit.slag-pot-car, at: "2026-10-14T14:59:35Z", status: draft, summary: "changed", sha: "99ae6089782a9bea" }
 - { record: unit.vacuum-degasser-80t, at: "2026-10-14T17:44:16Z", status: draft, summary: "changed", sha: "364457c5e1379e97" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
