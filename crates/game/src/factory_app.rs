@@ -225,6 +225,12 @@ impl App for FactoryApp {
         "factory"
     }
 
+    fn status(&self) -> String {
+        let o = self.open.as_ref();
+        serde_json::json!({"works": o.map(|o| o.layout.facility.clone()), "modules": o.map(|o| o.shown.len()),
+            "picked": o.and_then(|o| o.picked.map(|i| o.layout.modules[i].module.clone())), "unsaved": o.map(|o| o.unsaved)}).to_string()
+    }
+
     fn update(&mut self, ctx: &mut Context) -> Next {
         let input = &ctx.input;
         if input.pressed(KeyCode::Escape) {

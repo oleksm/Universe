@@ -109,13 +109,32 @@ pub struct Mesh {
     model: std::sync::Arc<WireModel>,
     /// How far its farthest point is from its origin.
     radius: f32,
+    /// Its last copy gone (the owner's, every frame's): the renderer lets its GPU copy go then,
+    /// not after `MESH_KEEP` frames unused (a client replacing many meshes would pile them up).
+    _gone: std::sync::Arc<Gone>,
+}
+
+/// Dropped with a mesh's last copy: its id queued for the renderer to let go.
+#[derive(Debug)]
+pub(crate) struct Gone(u64);
+
+/// Meshes whose every copy is gone, for the renderer's next frame.
+pub(crate) static GONE: std::sync::Mutex<Vec<u64>> = std::sync::Mutex::new(Vec::new());
+
+impl Drop for Gone {
+    fn drop(&mut self) {
+        if let Ok(mut g) = GONE.lock() {
+            g.push(self.0);
+        }
+    }
 }
 
 impl Mesh {
     pub fn new(model: WireModel) -> Self {
         static NEXT: std::sync::atomic::AtomicU64 = std::sync::atomic::AtomicU64::new(1);
         let radius = model.positions.iter().map(|p| p.length()).fold(0.0, f32::max);
-        Mesh { gpu_residents: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)), reservation: None, id: NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed), model: std::sync::Arc::new(model), radius }
+        let id = NEXT.fetch_add(1, std::sync::atomic::Ordering::Relaxed);
+        Mesh { gpu_residents: std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0)), reservation: None, id, model: std::sync::Arc::new(model), radius, _gone: std::sync::Arc::new(Gone(id)) }
     }
 
     /// True while at least one renderer cache has completed upload of this exact mesh ID.

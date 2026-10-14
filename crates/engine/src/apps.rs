@@ -45,10 +45,24 @@ pub trait App: Send {
     fn cover(&self) -> Cover {
         Cover::Hides
     }
-    /// Whether it handles F3 (the debug view and profiler) itself; if not, the host does for it.
+    /// Whether it handles F3 and SHIFT+F3 (the debug view, the profiler, the observer) itself; if
+    /// not, the host does for it.
     fn debug_keys(&self) -> bool {
         false
     }
+    /// Its own state for whoever's observing (the observer's `/status`, a recording's start and
+    /// end): a JSON object as text, empty for none.
+    fn status(&self) -> String {
+        String::new()
+    }
+}
+
+/// What the client runs beside every app that doesn't handle the debug keys itself: the game's
+/// observer (SHIFT+F3, the live port, recordings). Called before the apps each frame, with the app
+/// on top and the host's debug level (F3); drawn after them.
+pub trait Service: Send {
+    fn update(&mut self, ctx: &mut Context, top: &dyn App, debug: u8);
+    fn draw(&self, _frame: &mut Frame, _ctx: &Context) {}
 }
 
 /// The host's debug view over the apps (F3: 0 off, 1 frame figures, 2 and the profiler): drawn
@@ -123,16 +137,23 @@ pub struct Host {
     /// The host's debug view (F3), for apps that don't handle it, and how it's drawn.
     debug: u8,
     overlay: Overlay,
+    service: Option<Box<dyn Service>>,
 }
 
 impl Host {
     pub fn new(first: Box<dyn App>) -> Self {
-        Host { apps: vec![first], debug: 0, overlay: plain_overlay }
+        Host { apps: vec![first], debug: 0, overlay: plain_overlay, service: None }
     }
 
     /// Its debug view drawn by `overlay` (the client's own).
     pub fn with_overlay(mut self, overlay: Overlay) -> Self {
         self.overlay = overlay;
+        self
+    }
+
+    /// The client's service beside the apps (see `Service`).
+    pub fn with_service(mut self, service: Option<Box<dyn Service>>) -> Self {
+        self.service = service;
         self
     }
 
@@ -155,6 +176,9 @@ impl Game for Host {
         }
         if !self.top().debug_keys() {
             ctx.watch_hitches = self.debug > 0;
+            if let Some(s) = self.service.as_mut() {
+                s.update(ctx, self.apps.last().expect("a host always has an app").as_ref(), self.debug);
+            }
         }
         let plan = plan(&self.covers());
         let top = self.apps.len() - 1;
@@ -199,6 +223,9 @@ impl Game for Host {
         }
         if !self.top().debug_keys() {
             (self.overlay)(frame, ctx, self.debug);
+            if let Some(s) = &self.service {
+                s.draw(frame, ctx);
+            }
         }
     }
 }
@@ -221,12 +248,12 @@ impl App for Closed {
 
 /// Start a host whose first app is made by `factory`, off the window's thread (see `run_prepared`).
 pub fn run_prepared<A: App + 'static>(config: crate::app::Config, factory: impl FnOnce() -> A + Send + 'static) {
-    run_prepared_with(config, plain_overlay, factory);
+    run_prepared_with(config, plain_overlay, None, factory);
 }
 
-/// `run_prepared` with the client's debug view (`Overlay`).
-pub fn run_prepared_with<A: App + 'static>(config: crate::app::Config, overlay: Overlay, factory: impl FnOnce() -> A + Send + 'static) {
-    crate::app::run_prepared(config, move || Host::new(Box::new(factory())).with_overlay(overlay));
+/// `run_prepared` with the client's debug view (`Overlay`) and service beside the apps (`Service`).
+pub fn run_prepared_with<A: App + 'static>(config: crate::app::Config, overlay: Overlay, service: Option<Box<dyn Service>>, factory: impl FnOnce() -> A + Send + 'static) {
+    crate::app::run_prepared(config, move || Host::new(Box::new(factory())).with_overlay(overlay).with_service(service));
 }
 
 /// Any `Game` as an app that stays until the window closes (the game before it is moved).

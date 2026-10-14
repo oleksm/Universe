@@ -205,6 +205,12 @@ impl App for SceneApp {
         "scene"
     }
 
+    fn status(&self) -> String {
+        let crafts: Vec<_> = self.crafts.iter().map(|c| serde_json::json!({"name": c.name, "position": c.ship.position.to_array(), "velocity": c.ship.velocity.to_array()})).collect();
+        serde_json::json!({"scene": self.file.name, "file": self.path, "running": self.running, "time_s": self.clocks.time(), "scale": self.file.scale,
+            "clocks": self.file.clocks, "realtime_pending_s": self.clocks.pending(ClockKey::Realtime), "crafts": crafts}).to_string()
+    }
+
     fn update(&mut self, ctx: &mut Context) -> Next {
         let _scope = universe_prof::scope("update/scene");
         crate::visual_assets::maintain();

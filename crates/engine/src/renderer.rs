@@ -1396,6 +1396,9 @@ impl Renderer {
         // Released by their owner: gone now unless drawn this frame (their fence still waits
         // for submitted work before any reservation is let go).
         for id in &frame.mesh_releases { if self.meshes.get(id).is_some_and(|m| m.used != now) { self.meshes.remove(id); } }
+        // Meshes whose every copy is gone: let go now (none can be drawn again).
+        let gone = std::mem::take(&mut *crate::model::GONE.lock().unwrap_or_else(|e| e.into_inner()));
+        for id in gone { self.meshes.remove(&id); }
         self.meshes.retain(|_,m|now-m.used<MESH_KEEP);
         let mut data: Vec<Instance> = Vec::with_capacity((frame.meshes.len() + frame.front.len()) * 2);
         (self.face_runs, self.edge_runs) = batch(&frame.meshes, &mut data);
