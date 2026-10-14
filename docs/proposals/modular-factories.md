@@ -71,7 +71,7 @@ Start with one line, from ore to cast steel: `pellet-plant`, `shaft-furnace`, `a
 
 1. Plant mount standard (SFO 24 proposed) and schemas for units and layouts.
 2. Split the five modules into units. Size the units from real plant (sourced where possible, labelled invented where not). Weights come from material, dimensions and loads.
-3. Two layouts each: one for a world with air at standard gravity (must give today's rates, so nothing in the game moves) and one airless at low gravity (Heath's moons).
+3. Two layouts each: one for a world with air at standard gravity (must give today's rates, so nothing in the game moves) and one airless at low gravity (a moon).
 4. A generator derives the layout figures and checks them in `build.py`, as `frames.misfits()` does for struts.
 5. Then a generator moves the other modules over, in batches.
 
