@@ -4002,3 +4002,18 @@ validations:
     pending:
       - "frames at play distance, GPU look and cost"
       - "Engine owns actual gate GPU appearance/cost, temporal edges, centreline/light radius and aperture/collision; separate external equipment placement; draft structure unqualified"
+  - key: gate.ring.iii
+    version: 1
+    manifest_sha256: "877080fa8f220f1e47bb7254bbdf12dbf71910e328c40a8854febcdfe0f04389"
+    installed: bf5b37da
+    game: "the loader (world::assets) at fso bf5b37da"
+    date: "2026-10-13"
+    result: partial
+    drawn: true
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ring-iii/v1 (959168 bytes, bounds [-1619.9994, -60.0, -1619.9994] to [1619.9994, 60.0, 1619.9994]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames at play distance, GPU look and cost"
+      - "Engine owns gate radius/light/collision reconciliation, GPU appearance/cost, temporal edges and external equipment placement; draft structure unqualified"
