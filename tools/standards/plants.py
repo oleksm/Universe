@@ -795,7 +795,7 @@ def casting_units():
                   part("Bogies and drive", "good.electric-motors", 3000.0, "from memory")],
         holds=PER_CAR * (ING_M + HOT_TOP), needs={"power": 30000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"The ingot sized to the heavy crate (2 t); its hot top the module's scrap share. Moulds about their ingot's mass and more, as practice runs (from memory). Car and drive from memory."}])
-    out["stripper-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stripper crane", job="it lifts each frozen ingot up out of its mould by the hot top, the arms of its tongs holding the mould down by its lugs (a big-end-up mould frees its ingot only upward), and sets the ingots on the ingot car", gear="stripping tongs and a ram")
+    out["stripper-crane-20t"] = bridge_crane_unit(20000.0, 22.8, 6000.0, kind="Stripper crane", job="it lifts each frozen ingot up out of its mould by the hot top, the arms of its tongs holding the mould down by its lugs (a big-end-up mould frees its ingot only upward), and sets the ingots on the ingot car", gear="ingot tongs whose arms hold the mould down")
     deck = 8.0 * 3.0 * 0.04 * RHO["steel"]
     frame2 = 2 * box_tube(0.4, 0.4, 0.025, 8.0) * RHO["steel"]
     out["ingot-car-40t"] = dict(
@@ -1984,7 +1984,7 @@ def airless_ladle_units(us):
         basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
                {"of": ["identity.description"], "tier": "derived", "review": True, "note": "Radiation from 7 m2 of melt at 1,873 K at emissivity 0.9; 80 t at 820 J/kg K."}])
     for cap, trolley, kind, job, gear, key in ((150000.0, 37500.0, "Ladle gantry crane", "on its own legs over the teeming rail and the ladle rail: it lifts the full ladle off its car and holds it over each mould in turn", "a main hoist and a ladle beam", "gantry-crane-150t-moon"),
-                                                (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts each frozen ingot up out of its mould by the hot top, the mould held down by its lugs, and sets the ingots on the ingot car", "stripping tongs and a ram", "stripper-gantry-20t-moon")):
+                                                (20000.0, 6000.0, "Stripper gantry crane", "on its own legs over the teeming rail's east half: it lifts each frozen ingot up out of its mould by the hot top, the mould held down by its lugs, and sets the ingots on the ingot car", "ingot tongs whose arms hold the mould down", "stripper-gantry-20t-moon")):
         c = bridge_crane_unit(cap, 24.0, trolley, kind=kind, job=job, gear=gear, g=MOON_G[1], h_min=0.6)
         legs = 4 * box_tube(1.0, 1.0, 0.025, 24.0) * RHO["steel"] if cap > 50000 else 4 * box_tube(0.8, 0.8, 0.02, 22.0) * RHO["steel"]
         c["built_of"].append(part("Legs and sill beams", A36, legs * 1.15, "four box legs and two sill beams, from the legs' size (the sills 15%)"))
