@@ -4,7 +4,7 @@
 
 use std::sync::{mpsc, Arc};
 
-use universe_engine::glam::{Vec2, Vec3};
+use universe_engine::glam::{IVec3, Vec2, Vec3};
 use universe_engine::{Color, Context, Frame, KeyCode, MouseButton};
 
 use universe_sim::world::deckplan::Id;
@@ -479,6 +479,9 @@ fn issues(i: &Interior, faults: &[String]) -> Vec<Issue> {
             let m = &plan.beams[k];
             out.push(Issue { text: format!("CLASH MEMBER {k} {say}"), at: Some((m.a + m.b) * 0.5), pick: Some(Hover::Member(k)) });
         }
+    }
+    for (k, m) in plan.beams.iter().enumerate().filter(|(_, m)| misfit(m)) {
+        out.push(Issue { text: format!("MISFIT MEMBER {k} {:.3} M: NO STANDARD STRUT THAT LONG", m.a.distance(m.b)), at: Some((m.a + m.b) * 0.5), pick: Some(Hover::Member(k)) });
     }
     if let Some((_, clash)) = i.block_clash.as_ref().filter(|(b, _)| *b == plan.blocks) {
         for (k, _) in clash.iter().enumerate().filter(|(_, c)| **c) {
@@ -1431,6 +1434,8 @@ fn stocks() -> &'static [Stock] {
 
 /// A node fitting, where a frame's members meet: one of the registry's forgings.
 pub struct NodeStock {
+    /// Its key in the registry.
+    pub key: String,
     /// Hollow (a shell, its wall on record), or a solid forging.
     hollow: bool,
     /// Across (m), and what it weighs (kg: a solid ball of its material).
@@ -1452,7 +1457,7 @@ fn node_stocks() -> &'static [NodeStock] {
                 Some(w) => 4.0 * std::f64::consts::PI * (d * 0.5).powi(2) * w * rho * (1.0 - w / d),
                 None => std::f64::consts::PI / 6.0 * d.powi(3) * rho,
             };
-            Some(NodeStock { hollow: s.size.wall.is_some(), diameter: d as f32, mass })
+            Some(NodeStock { key: s.identity.key.clone(), hollow: s.size.wall.is_some(), diameter: d as f32, mass })
         }).collect();
         out.sort_by(|a, b| a.mass.total_cmp(&b.mass));
         out
@@ -1469,6 +1474,54 @@ fn node_for(widest: f32, root: bool) -> Option<&'static NodeStock> {
     node_stocks().iter().filter(|n| !root || !n.hollow).find(|n| n.diameter >= widest * NODE_RATIO - 1e-4)
 }
 
+/// A standard strut (SFO 13, a kit member): one piece from node centre to node
+/// centre, its two ENDs and bolts in, made of a section to meet one node.
+pub struct Strut {
+    /// Its key in the registry.
+    pub key: String,
+    /// The tube or bar it is made of, and the node it is made to meet (keys).
+    section: String,
+    node: String,
+    /// Node centre to node centre (m), and what it weighs, ENDs and bolts in (kg).
+    module: f32,
+    mass: f64,
+}
+
+/// The registry's standard struts.
+fn struts() -> &'static [Strut] {
+    static STRUTS: std::sync::OnceLock<Vec<Strut>> = std::sync::OnceLock::new();
+    STRUTS.get_or_init(|| {
+        let reg = universe_sim::world::registry::registry();
+        reg.stock.iter().filter(|s| s.identity.form == "strut").filter_map(|s| {
+            let k = s.kit.as_ref()?;
+            Some(Strut { key: s.identity.key.clone(), section: k.section.clone(), node: k.node.clone(), module: k.module as f32, mass: s.physical.mass? })
+        }).collect()
+    })
+}
+
+/// How near a member's length must be its strut's module (m: the registry's 1 mm).
+const STRUT_FIT: f32 = 0.001;
+
+/// The standard strut a member is: of its section and as long as it, node centre
+/// to node centre. None: its section is no kit piece (a box beam), or no strut of
+/// it is that long (a misfit).
+fn strut(b: &Beam) -> Option<&'static Strut> {
+    let len = b.a.distance(b.b);
+    struts().iter().find(|s| s.section == b.stock && (s.module - len).abs() <= STRUT_FIT)
+}
+
+/// A member of a section struts are made of whose length no strut has: the frame
+/// is assembled from whole struts, never cut to fit.
+fn misfit(b: &Beam) -> bool {
+    struts().iter().any(|s| s.section == b.stock) && strut(b).is_none()
+}
+
+/// What a member weighs (kg): its strut, ENDs and bolts in; a beam (or a misfit),
+/// its length of section.
+fn member_mass(b: &Beam) -> Option<f64> {
+    strut(b).map(|s| s.mass).or_else(|| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b))))
+}
+
 /// The boxes of a plan's roots: where a landing leg is held, its landing's jolt
 /// all in a few joints (an engine pushes through many: no root).
 fn roots(plan: &Plan, fit: &[Fitted]) -> Vec<(Vec3, Vec3)> {
@@ -1479,19 +1532,24 @@ fn roots(plan: &Plan, fit: &[Fitted]) -> Vec<(Vec3, Vec3)> {
 type Node = (Vec3, f32, Option<&'static NodeStock>);
 
 /// Each joint of a frame (its members' ends as they meet), the widest tube meeting
-/// there (m across), and its node (`node_for`; a root: within `roots`' boxes).
+/// there (m across), and its node: the largest its struts are made to meet, else
+/// `node_for` (a root: within `roots`' boxes).
 fn nodes(beams: &[Beam], roots: &[(Vec3, Vec3)]) -> Vec<Node> {
-    let mut out: Vec<(Vec3, f32)> = Vec::new();
+    let mut out: Vec<(Vec3, f32, Option<&'static NodeStock>)> = Vec::new();
     for b in beams {
         let d = tube_radius(&b.stock) * 2.0;
+        let kit = strut(b).and_then(|s| node_stocks().iter().find(|n| n.key == s.node));
         for p in [b.a, b.b] {
             match out.iter_mut().find(|j| j.0.distance(p) < 0.05) {
-                Some(j) => j.1 = j.1.max(d),
-                None => out.push((p, d)),
+                Some(j) => {
+                    j.1 = j.1.max(d);
+                    j.2 = [j.2, kit].into_iter().flatten().max_by(|x, y| x.diameter.total_cmp(&y.diameter));
+                }
+                None => out.push((p, d, kit)),
             }
         }
     }
-    out.into_iter().map(|(p, d)| (p, d, node_for(d, roots.iter().any(|(lo, hi)| p.cmpge(*lo - 0.3).all() && p.cmple(*hi + 0.3).all())))).collect()
+    out.into_iter().map(|(p, d, kit)| (p, d, kit.or_else(|| node_for(d, roots.iter().any(|(lo, hi)| p.cmpge(*lo - 0.3).all() && p.cmple(*hi + 0.3).all()))))).collect()
 }
 
 /// The frame knit together at its nodes: joints nearer each other than a node
@@ -1939,6 +1997,376 @@ fn mounts(plan: &Plan, fit: &[Fitted], spacing: f32, stock: &str) -> (Vec<Beam>,
     (beams, added + joined)
 }
 
+/// The grid a kit frame's nodes lie on (m): every standard strut spans a whole
+/// number of it, node centre to node centre.
+const KIT_GRID: f32 = 0.5;
+
+/// A kit frame's cells (m): the lattice of struts round its modules.
+const KIT_CELL: f32 = 1.0;
+
+/// How far a kit frame's nodes sit from what rests on them (m): a module's foot or
+/// a deck's underside is this far off the node's centre, clear of the widest tube
+/// sizing would choose (a figure chosen).
+const KIT_SEAT: f32 = 0.1;
+
+/// The standard strut offsets from a node, `KIT_GRID` steps each way (x, y, z):
+/// along an axis, or across a square (a face diagonal), up to `most` steps.
+fn kit_steps(most: i32) -> Vec<IVec3> {
+    let mut out = Vec::new();
+    for n in 1..=most {
+        for axis in 0..3 {
+            for sign in [-1, 1] {
+                let mut v = IVec3::ZERO;
+                v[axis] = n * sign;
+                out.push(v);
+                for (other, s2) in [((axis + 1) % 3, 1), ((axis + 1) % 3, -1)] {
+                    let mut d = v;
+                    d[other] = n * s2;
+                    out.push(d);
+                }
+            }
+        }
+    }
+    out.sort_by_key(|v| v.length_squared());
+    out.dedup();
+    out
+}
+
+/// A kit frame's grid: its origin (a deck's frame level, else level 0) and the
+/// point of grid step `i`.
+#[derive(Clone, Copy)]
+struct KitGrid {
+    y0: f32,
+}
+
+impl KitGrid {
+    /// The grid for a plan, of members of `stock`: its planes under its first deck,
+    /// a member's top just under the deck.
+    fn of(plan: &Plan, stock: &str) -> KitGrid {
+        let _ = stock;
+        let y0 = plan.plates.first().map_or(0.0, |pl| pl.y - deck_depth(pl) - KIT_SEAT);
+        KitGrid { y0 }
+    }
+    fn at(&self, i: IVec3) -> Vec3 {
+        Vec3::new(i.x as f32 * KIT_GRID, self.y0 + i.y as f32 * KIT_GRID, i.z as f32 * KIT_GRID)
+    }
+    fn step(&self, p: Vec3) -> IVec3 {
+        ((p - Vec3::new(0.0, self.y0, 0.0)) / KIT_GRID).round().as_ivec3()
+    }
+}
+
+/// The node a module is mounted on: under its foot's middle (a landing leg: over
+/// its top's), `KIT_SEAT` off it.
+fn mount_of(b: &Block, fit: &[Fitted]) -> Vec3 {
+    let leg = fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.gear.is_some());
+    let (lo, hi) = b.bounds();
+    Vec3::new(b.at.x, if leg { hi.y + KIT_SEAT } else { lo.y - KIT_SEAT }, b.at.z)
+}
+
+/// A module the frame needn't hold: a light one standing on a deck (the deck
+/// carries it), or one in a walled room (the room does).
+fn on_deck(plan: &Plan, b: &Block, fit: &[Fitted]) -> bool {
+    if room_of(plan, b).is_some() {
+        return true;
+    }
+    let (lo, hi) = b.bounds();
+    let full = fit.iter().find(|f| f.id == kind(&b.id)).map_or(0.0, |f| f.mass + f.load);
+    full <= HEAVY && plan.plates.iter().any(|pl| (lo.y - pl.y).abs() < 0.1 && lo.x < pl.lo.x.max(pl.hi.x) && hi.x > pl.lo.x.min(pl.hi.x) && lo.z < pl.lo.y.max(pl.hi.y) && hi.z > pl.lo.y.min(pl.hi.y))
+}
+
+/// Do two boxes overlap (by more than a millimetre)?
+fn overlap(a: (Vec3, Vec3), b: (Vec3, Vec3)) -> bool {
+    (a.1 - b.0).min_element() > 0.001 && (b.1 - a.0).min_element() > 0.001
+}
+
+/// The walled room (its line) a module is in or set in the wall of: its box
+/// overlaps the room's, walls in.
+fn room_of(plan: &Plan, b: &Block) -> Option<usize> {
+    room_boxes(plan).into_iter().find(|(_, r)| overlap(*r, b.bounds())).map(|(k, _)| k)
+}
+
+/// The boxes round a plan's walled rooms, their walls in, by line.
+fn room_boxes(plan: &Plan) -> Vec<(usize, (Vec3, Vec3))> {
+    (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line).map(|k| {
+        let (a, b) = plan.axis(k);
+        let pr = plan.lines[k].2;
+        let wall = wall_of(pr).map_or(0.0, |w| w.0.depth as f32);
+        let half = Vec3::new(pr.width.max(pr.height) * 0.5 + wall, pr.height * 0.5 + wall, pr.width.max(pr.height) * 0.5 + wall);
+        (k, (a.min(b) - half, a.max(b) + half))
+    }).collect()
+}
+
+/// The plan's decks' edges and its modules moved onto the kit grid, each module so
+/// its mount node lands on a lattice level (`KIT_CELL` apart) and on the grid
+/// across: the least move (up to a step more each way) that overlaps no module it
+/// didn't already, nor a room; a light one on a deck left where it
+/// is. How many modules moved, and how many found nowhere clear.
+fn kit_snap(plan: &mut Plan, fit: &[Fitted], stock: &str) -> (usize, usize) {
+    let g = |v: f32| (v / KIT_GRID).round() * KIT_GRID;
+    for pl in &mut plan.plates {
+        (pl.lo, pl.hi) = (Vec2::new(g(pl.lo.x), g(pl.lo.y)), Vec2::new(g(pl.hi.x), g(pl.hi.y)));
+    }
+    let grid = KitGrid::of(plan, stock);
+    // (Modules that touch move as one: a window with its cabin.)
+    let n = plan.blocks.len();
+    let mut group: Vec<usize> = (0..n).collect();
+    for a in 0..n {
+        for b in a + 1..n {
+            if overlap(plan.blocks[a].bounds(), plan.blocks[b].bounds()) {
+                let (ga, gb) = (group[a], group[b]);
+                group.iter_mut().filter(|g| **g == gb).for_each(|g| *g = ga);
+            }
+        }
+    }
+    let full = |b: &Block| fit.iter().find(|f| f.id == kind(&b.id)).map_or(0.0, |f| f.mass + f.load);
+    let rooms: Vec<(Vec3, Vec3)> = room_boxes(plan).into_iter().map(|r| r.1).collect();
+    let (mut moved, mut stuck) = (0, 0);
+    let mut gs: Vec<usize> = group.clone();
+    gs.sort();
+    gs.dedup();
+    for g in gs {
+        let members: Vec<usize> = (0..n).filter(|&k| group[k] == g).collect();
+        // (Left where it is: light ones on a deck, all of them.)
+        if members.iter().all(|&k| on_deck(plan, &plan.blocks[k], fit)) {
+            continue;
+        }
+        let lead = *members.iter().filter(|&&k| !on_deck(plan, &plan.blocks[k], fit)).max_by(|&&a, &&b| full(&plan.blocks[a]).total_cmp(&full(&plan.blocks[b]))).expect("one held");
+        let m = mount_of(&plan.blocks[lead], fit);
+        let level = ((m.y - grid.y0) / KIT_CELL).round() * KIT_CELL + grid.y0;
+        let base = Vec3::new(grid.at(grid.step(m)).x, level, grid.at(grid.step(m)).z) - m;
+        if base.length() < 1e-4 {
+            continue;
+        }
+        let mut tries: Vec<Vec3> = Vec::new();
+        for dx in [0.0, KIT_GRID, -KIT_GRID] {
+            for dy in [0.0, KIT_CELL, -KIT_CELL] {
+                for dz in [0.0, KIT_GRID, -KIT_GRID] {
+                    tries.push(base + Vec3::new(dx, dy, dz));
+                }
+            }
+        }
+        tries.sort_by(|a, b| a.length().total_cmp(&b.length()));
+        let clear = tries.into_iter().find(|d| {
+            members.iter().all(|&k| {
+                let mut b = plan.blocks[k].clone();
+                b.at += *d;
+                plan.blocks.iter().enumerate().all(|(j, o)| group[j] == g || !overlap(o.bounds(), b.bounds())) && !rooms.iter().any(|r| overlap(*r, b.bounds()))
+            })
+        });
+        match clear {
+            Some(d) => {
+                members.iter().for_each(|&k| plan.blocks[k].at += d);
+                moved += members.len();
+            }
+            None => stuck += members.len(),
+        }
+    }
+    (moved, stuck)
+}
+
+/// A frame of standard struts only, of `stock`, on the kit grid: a lattice of
+/// `KIT_CELL` cells, the layer under each deck its spine, and from each module the
+/// frame holds an arm of cells to the rest, the shortest way through cells clear
+/// of every module; each module's mount node joined to the lattice by a box of
+/// half cells (a grid step each way it's off the lattice); each box's edges and a
+/// diagonal across each face, less what would run into a module, a room or a deck;
+/// and the pieces joined, each to the rest by the shortest strut that runs clear.
+/// The members, and how many pieces couldn't be joined.
+fn kit_frame(plan: &Plan, fit: &[Fitted], stock: &str) -> (Vec<Beam>, usize) {
+    use std::collections::{HashMap, HashSet};
+    let grid = KitGrid::of(plan, stock);
+    let r = tube_radius(stock);
+    let cell = (KIT_CELL / KIT_GRID).round() as i32;
+    // (Strictly clear: no point along it inside a module, whatever it ends at.)
+    let bare = Plan { blocks: Vec::new(), ..plan.clone() };
+    let clear = |a: Vec3, b: Vec3, others: &[Beam]| {
+        let m = Beam { uid: Id::default(), a, b, stock: stock.to_string(), pinned: [false; 2] };
+        let len = a.distance(b);
+        let n = ((len / 0.05).ceil() as usize).max(2);
+        let inside = (1..n).map(|k| a.lerp(b, k as f32 / n as f32)).any(|p| plan.blocks.iter().any(|blk| {
+            let (lo, hi) = blk.bounds();
+            p.clamp(lo, hi).distance(p) < r - TOUCH
+        }));
+        !inside && passes(&bare, &m, others).is_none()
+    };
+    // (Cells by their least corner, in cells; a cell's span in the ship.)
+    let mut cells: HashSet<IVec3> = HashSet::new();
+    let span = |c: IVec3| {
+        let lo = grid.at(c * cell);
+        (lo, lo + Vec3::splat(KIT_CELL))
+    };
+    let rooms: Vec<(Vec3, Vec3)> = room_boxes(plan).into_iter().map(|r| r.1).collect();
+    let free = |c: IVec3| !plan.blocks.iter().any(|b| overlap(b.bounds(), span(c))) && !rooms.iter().any(|r| overlap(*r, span(c)));
+    for pl in &plan.plates {
+        let lo = grid.step(Vec3::new(pl.lo.x.min(pl.hi.x), grid.y0, pl.lo.y.min(pl.hi.y)));
+        let hi = grid.step(Vec3::new(pl.lo.x.max(pl.hi.x), grid.y0, pl.lo.y.max(pl.hi.y)));
+        for x in lo.x.div_euclid(cell)..(hi.x + cell - 1).div_euclid(cell) {
+            for z in lo.z.div_euclid(cell)..(hi.z + cell - 1).div_euclid(cell) {
+                cells.insert(IVec3::new(x, lo.y.div_euclid(cell) - 1, z));
+            }
+        }
+    }
+    // (A box's edges, and a diagonal across each face: the same way on every face,
+    // so neighbours share none.)
+    let pairs_of = |o: IVec3, size: IVec3| -> Vec<(IVec3, IVec3)> {
+        let corners: Vec<IVec3> = (0..8).map(|k| o + IVec3::new(k & 1, (k >> 1) & 1, (k >> 2) & 1) * size).collect();
+        let mut pairs: Vec<(IVec3, IVec3)> = Vec::new();
+        for a in &corners {
+            for b in &corners {
+                let d = *b - *a;
+                let across = (d.x != 0) as i32 + (d.y != 0) as i32 + (d.z != 0) as i32;
+                if (1..=2).contains(&across) && d.cmpge(IVec3::ZERO).all() && !pairs.contains(&(*a, *b)) {
+                    pairs.push((*a, *b));
+                }
+            }
+        }
+        pairs
+    };
+    // (Each module's mount node, the lattice node its half-cell box reaches, and the
+    // cell its arm starts from: under that node (a landing leg's: over it), on the
+    // ship's middle side; that way blocked, whichever way leaves most of the box
+    // clear.)
+    let mut boxes: Vec<(IVec3, IVec3)> = Vec::new();
+    let full = |b: &Block| fit.iter().find(|f| f.id == kind(&b.id)).map_or(0.0, |f| f.mass + f.load);
+    let mut held: Vec<&Block> = plan.blocks.iter().filter(|b| !on_deck(plan, b, fit)).collect();
+    held.sort_by(|a, b| full(b).total_cmp(&full(a)));
+    for b in held {
+        let leg = fit.iter().find(|f| f.id == kind(&b.id)).is_some_and(|f| f.gear.is_some());
+        let m = grid.step(mount_of(b, fit));
+        let toward = |v: i32| if v > 0 { -1 } else { 1 };
+        let off = IVec3::new(m.x.rem_euclid(cell), m.y.rem_euclid(cell), m.z.rem_euclid(cell));
+        let (fx, fy, fz) = (toward(m.x), if leg { 1 } else { -1 }, toward(m.z));
+        let dirs = [(fx, fy, fz), (-fx, fy, fz), (fx, fy, -fz), (-fx, fy, -fz), (fx, -fy, fz), (-fx, -fy, fz), (fx, -fy, -fz), (-fx, -fy, -fz)].map(|(x, y, z)| IVec3::new(x, y, z));
+        // (Off the lattice by a step: a step the way it goes.)
+        let reach_of = |dir: IVec3| m + IVec3::new(if off.x != 0 { dir.x * off.x.min(cell - off.x) } else { 0 }, if off.y != 0 { dir.y * off.y.min(cell - off.y) } else { 0 }, if off.z != 0 { dir.z * off.z.min(cell - off.z) } else { 0 });
+        let blocked = |dir: IVec3| {
+            let reach = reach_of(dir);
+            pairs_of(m.min(reach), (reach - m).abs()).into_iter().filter(|(a, b)| a != b && !clear(grid.at(*a), grid.at(*b), &[])).count()
+        };
+        let dir = *dirs.iter().min_by_key(|d| blocked(**d)).expect("eight ways");
+        let reach = reach_of(dir);
+        if reach != m {
+            boxes.push((m.min(reach), (reach - m).abs()));
+        }
+        let start = IVec3::new(reach.x.div_euclid(cell) - i32::from(dir.x < 0), reach.y.div_euclid(cell) - i32::from(dir.y < 0), reach.z.div_euclid(cell) - i32::from(dir.z < 0));
+        // (The layer of cells under its whole foot (a leg's: over its top), what it
+        // rests on, with the one its box reaches.)
+        let (lo, hi) = b.bounds();
+        let (c0, c1) = (grid.step(lo).div_euclid(IVec3::splat(cell)), (grid.step(hi) + IVec3::splat(cell - 1)).div_euclid(IVec3::splat(cell)));
+        let mut feet: Vec<IVec3> = (c0.x..c1.x.max(c0.x + 1)).flat_map(|x| (c0.z..c1.z.max(c0.z + 1)).map(move |z| IVec3::new(x, start.y, z))).collect();
+        if !feet.contains(&start) {
+            feet.push(start);
+        }
+        if cells.is_empty() {
+            cells.extend(feet);
+            continue;
+        }
+        // (Breadth first through clear cells to one already in.)
+        let mut from: HashMap<IVec3, IVec3> = feet.iter().map(|c| (*c, *c)).collect();
+        let mut front = feet.clone();
+        let mut reached = None;
+        'search: for _ in 0..40 {
+            let mut next = Vec::new();
+            for c in front {
+                if cells.contains(&c) {
+                    reached = Some(c);
+                    break 'search;
+                }
+                for d in [IVec3::X, IVec3::NEG_X, IVec3::Y, IVec3::NEG_Y, IVec3::Z, IVec3::NEG_Z] {
+                    let n = c + d;
+                    if !from.contains_key(&n) && (cells.contains(&n) || free(n)) {
+                        from.insert(n, c);
+                        next.push(n);
+                    }
+                }
+            }
+            front = next;
+        }
+        cells.extend(feet);
+        let mut c = reached.unwrap_or(start);
+        loop {
+            cells.insert(c);
+            let p = from[&c];
+            if p == c {
+                break;
+            }
+            c = p;
+        }
+    }
+    let mut sorted: Vec<IVec3> = cells.into_iter().collect();
+    sorted.sort_by_key(|c| (c.y, c.z, c.x));
+    boxes.extend(sorted.into_iter().map(|c| (c * cell, IVec3::splat(cell))));
+    // (Each box's edges and face diagonals, once each.)
+    let mut seen: HashSet<(IVec3, IVec3)> = HashSet::new();
+    let mut out: Vec<Beam> = Vec::new();
+    for (o, size) in boxes {
+        for (a, b) in pairs_of(o, size) {
+            if a != b && seen.insert((a, b)) && clear(grid.at(a), grid.at(b), &[]) {
+                out.push(Beam { uid: Id::default(), a: grid.at(a), b: grid.at(b), stock: stock.to_string(), pinned: [false; 2] });
+            }
+        }
+    }
+    // (A half-cell box's edges along a cell's: the cell's split there, once each.)
+    let (mut out, _) = knit(out);
+    // (The pieces joined: each smaller one to the rest by its shortest clear strut.)
+    let far = kit_steps(12);
+    let mut lost = 0;
+    loop {
+        let mut piece: HashMap<IVec3, usize> = HashMap::new();
+        let mut parent: Vec<usize> = Vec::new();
+        fn root(p: &mut [usize], mut k: usize) -> usize {
+            while p[k] != k {
+                p[k] = p[p[k]];
+                k = p[k];
+            }
+            k
+        }
+        for x in &out {
+            let ids: Vec<usize> = [grid.step(x.a), grid.step(x.b)].iter().map(|s| *piece.entry(*s).or_insert_with(|| {
+                parent.push(parent.len());
+                parent.len() - 1
+            })).collect();
+            let (a, b) = (root(&mut parent, ids[0]), root(&mut parent, ids[1]));
+            parent[a] = b;
+        }
+        let mut groups: HashMap<usize, Vec<IVec3>> = HashMap::new();
+        for (s, k) in &piece {
+            let r = root(&mut parent, *k);
+            groups.entry(r).or_default().push(*s);
+        }
+        if groups.len() <= 1 {
+            break;
+        }
+        let mut gs: Vec<Vec<IVec3>> = groups.into_values().collect();
+        gs.sort_by_key(|g| std::cmp::Reverse(g.len()));
+        let main: HashSet<IVec3> = gs[0].iter().copied().collect();
+        let mut joined = false;
+        for g in &gs[1..] {
+            let link = far.iter().find_map(|d| g.iter().find(|s| main.contains(&(**s + *d)) && clear(grid.at(**s), grid.at(**s + *d), &out)).map(|s| (*s, *s + *d)));
+            if let Some((a, b)) = link {
+                out.push(Beam { uid: Id::default(), a: grid.at(a), b: grid.at(b), stock: stock.to_string(), pinned: [false; 2] });
+                joined = true;
+                break;
+            }
+        }
+        if !joined {
+            lost = gs.len() - 1;
+            break;
+        }
+    }
+    (out, lost)
+}
+
+/// The lightest section struts come in for every length a kit frame takes (a
+/// grid step to `KIT_CELL`, straight and across a square), of `of`'s material if
+/// it has one.
+fn kit_stock(of: &str) -> Option<String> {
+    let lengths: Vec<f32> = (1..=(KIT_CELL / KIT_GRID).round() as i32).flat_map(|n| [n as f32 * KIT_GRID, n as f32 * KIT_GRID * std::f32::consts::SQRT_2]).collect();
+    let whole = |s: &&Stock| lengths.iter().all(|l| struts().iter().any(|t| t.section == s.key && (t.module - l).abs() <= 0.002));
+    let material = stocks().iter().find(|s| s.key == of).map(|s| s.of.clone());
+    stocks().iter().filter(whole).find(|s| material.as_ref().is_none_or(|m| *m == s.of)).or_else(|| stocks().iter().filter(whole).min_by(|a, b| a.per_metre.total_cmp(&b.per_metre))).map(|s| s.key.clone())
+}
+
 /// The members and decks as AUTO-SIZE leaves them, the rounds it took, and how many
 /// need more than the biggest tube (or plate) their material comes in.
 type Sized = (Vec<Beam>, Vec<Plate>, usize, usize);
@@ -1958,42 +2386,34 @@ struct FitHow {
     mix: bool,
 }
 
-/// The frame fitted in one go: joints knit, every module mounted (members of
-/// `stock`, `spacing` apart), then sized and braced in turn until bracing adds
-/// nothing (six rounds at most), and sized once more after the last brace. Each
-/// step said through `say`; `stop` set: given up (none).
+/// The frame fitted in one go, of standard struts only: its modules and decks
+/// moved onto the kit grid, a kit frame laid round them (of `stock`'s material, its
+/// lightest section that comes in every length the kit takes), then sized. The
+/// frame it had is replaced. Each step said through `say`; `stop` set: given up
+/// (none).
 fn fit_frame(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship::ClassSpec>, how: &FitHow, stop: &std::sync::atomic::AtomicBool, say: &dyn Fn(Fitting)) -> Option<(Plan, usize)> {
     let (mix, stock, spacing) = (how.mix, how.stock.as_str(), how.spacing);
     use std::sync::atomic::Ordering;
     let mut plan = plan.clone();
-    say(Fitting::Step("MOUNTING EVERY MODULE".into()));
-    plan.beams = knit(std::mem::take(&mut plan.beams)).0;
-    plan.beams = mounts(&plan, fit, spacing, stock).0;
-    plan.beams = knit(std::mem::take(&mut plan.beams)).0;
-    let mut rounds = 0;
-    let mut braced = true;
-    while braced && rounds < 6 {
-        if stop.load(Ordering::Relaxed) {
-            return None;
-        }
-        rounds += 1;
-        say(Fitting::Step(format!("ROUND {rounds}: SIZING")));
-        let (bs, ps, _, _) = auto_size(&plan, fit, spec, mix);
-        (plan.beams, plan.plates) = (bs, ps);
-        if stop.load(Ordering::Relaxed) {
-            return None;
-        }
-        say(Fitting::Step(format!("ROUND {rounds}: BRACING WHAT'S OVER")));
-        let b = bearing(&plan, fit, spec, plan.gravity());
-        let (bs, n) = brace(&plan, &b);
-        braced = n > 0;
-        plan.beams = bs;
+    let _ = spacing;
+    let Some(stock) = kit_stock(stock) else {
+        say(Fitting::Step("NO SECTION COMES AS STANDARD STRUTS OF EVERY LENGTH A KIT FRAME TAKES".into()));
+        return None;
+    };
+    let (moved, stuck) = kit_snap(&mut plan, fit, &stock);
+    say(Fitting::Step(format!("{moved} MODULES MOVED ONTO THE {KIT_GRID} M GRID{}", if stuck > 0 { format!(", {stuck} WITH NOWHERE CLEAR") } else { String::new() })));
+    if stop.load(Ordering::Relaxed) {
+        return None;
     }
-    if braced {
-        say(Fitting::Step("SIZING THE LAST BRACES".into()));
-        let (bs, ps, _, _) = auto_size(&plan, fit, spec, mix);
-        (plan.beams, plan.plates) = (bs, ps);
+    let (beams, lost) = kit_frame(&plan, fit, &stock);
+    say(Fitting::Step(format!("{} STANDARD STRUTS ON A {KIT_CELL} M LATTICE{}", beams.len(), if lost > 0 { format!(", {lost} PIECES LEFT UNJOINED") } else { String::new() })));
+    plan.beams = beams;
+    if stop.load(Ordering::Relaxed) {
+        return None;
     }
+    say(Fitting::Step("SIZING".into()));
+    let (bs, ps, rounds, _) = auto_size(&plan, fit, spec, mix);
+    (plan.beams, plan.plates) = (bs, ps);
     Some((plan, rounds))
 }
 
@@ -2079,6 +2499,11 @@ fn auto_size(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::shi
             let needed = |s: &Stock| forces.iter().map(|f| work(&Member { pinned: [false; 2], a: 0, b: 1, section: s.section, material: s.material }, *f, length, sf).design).fold(0.0, f64::max);
             let ladder: Vec<&Stock> = ladder_of(&beam.stock).into_iter().filter(|s| s.material.stiffness >= decks_on[k] * 0.9).collect();
             let ladder = if ladder.is_empty() { ladder_of(&beam.stock) } else { ladder };
+            // (A strut stays a strut: only sections with a standard strut its length.)
+            let ladder: Vec<&Stock> = match strut(beam) {
+                Some(_) => ladder.into_iter().filter(|s| struts().iter().any(|t| t.section == s.key && (f64::from(t.module) - length).abs() <= f64::from(STRUT_FIT))).collect(),
+                None => ladder,
+            };
             // (None that fits under strong enough: a break is worse than a clash, so
             // any; the clash is said.)
             let fits: Vec<&Stock> = ladder.iter().copied().filter(|s| under[k].is_none_or(|room| s.section.diameter <= room)).collect();
@@ -2346,16 +2771,10 @@ fn bearing(plan: &Plan, fit: &[Fitted], spec: Option<&universe_sim::world::ship:
         let Some(f) = fit.iter().find(|f| f.id == kind(&blk.id)) else { continue };
         let (lo, hi) = blk.bounds();
         let mut at: Vec<usize> = mounted(lo, hi);
-        // (Nothing at it, but in a walled room: the room carries it, on its floor.)
+        // (Nothing at it, but in a walled room or set in its wall: the room carries
+        // it, on its floor.)
         if at.is_empty()
-            && let Some(k) = (0..plan.lines.len()).filter(|&k| plan.group_of(k).is_some_and(|g| plan.groups[g].walled) && plan.lines[k].2.section != Section::Line).find(|&k| {
-                let (p, e) = plan.axis(k);
-                let pr = plan.lines[k].2;
-                let d = e - p;
-                let t = (blk.at - p).dot(d) / d.length_squared().max(1e-6);
-                let off = blk.at - (p + d * t.clamp(0.0, 1.0));
-                (0.0..=1.0).contains(&t) && off.y.abs() < pr.height * 0.5 && Vec3::new(off.x, 0.0, off.z).length() < pr.width * 0.5
-            })
+            && let Some(k) = room_of(plan, blk)
         {
             let (a, b) = plan.axis(k);
             let pr = plan.lines[k].2;
@@ -2737,6 +3156,16 @@ fn push_of(b: &Block, f: &Fitted) -> Option<(Vec3, f64)> {
 
 fn placed_module(b: &Block, f: Option<&Fitted>) -> crate::equipment_visual::Placed {
     crate::equipment_visual::placed_rotated(f.map_or("",|f|f.key.as_str()), b.at, b.rotation.unwrap_or_else(|| crate::equipment_visual::rotation(f.and_then(|f|push_of(b,f).map(|p|p.0)))), || b.faces(f.is_some_and(|f|f.round)).into_iter().map(|(t,_)|t).collect())
+}
+
+/// The frame's members and nodes as drawn from their stock (its decks are drawn
+/// with the rooms), in the design's frame.
+fn frame_structure(i: &Interior) -> Option<crate::equipment_visual::Placed> {
+    use crate::frame_visual as fv;
+    let members: Vec<fv::Member> = i.plan.beams.iter().map(|b| fv::Member { a: b.a, b: b.b, stock: &b.stock, roll: 0.0 }).collect();
+    let ns = nodes(&i.plan.beams, &roots(&i.plan, &i.fit));
+    let nodes: Vec<fv::Node> = ns.iter().filter_map(|(at, _, n)| n.map(|n| fv::Node { at: *at, stock: &n.key })).collect();
+    fv::placed(&members, &nodes, &[])
 }
 
 fn placed_equipment(interior: &Interior) -> Vec<crate::equipment_visual::Placed> {
@@ -4752,7 +5181,7 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         let (lo,hi)=shape.mesh.extent();
         masses.push((shape.solid.centroid,spec.frame_mass,hi-lo));
     }
-    masses.extend(i.plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| (((b.a + b.b) * 0.5).as_dvec3(), s.per_metre * f64::from(b.a.distance(b.b)), DVec3::ZERO))));
+    masses.extend(i.plan.beams.iter().filter_map(|b| member_mass(b).map(|m| (((b.a + b.b) * 0.5).as_dvec3(), m, DVec3::ZERO))));
     masses.extend(i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| (DVec3::new(f64::from(p.lo.x + p.hi.x) * 0.5, f64::from(p.y), f64::from(p.lo.y + p.hi.y) * 0.5), s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()), DVec3::new(f64::from(p.hi.x - p.lo.x).abs(), 0.02, f64::from(p.hi.y - p.lo.y).abs())))));
     for (at,diameter,node) in nodes(&i.plan.beams,&roots(&i.plan,&i.fit)) {
         if let Some(node)=node {masses.push((at.as_dvec3(),node.mass,DVec3::splat(f64::from(diameter))));}
@@ -4785,10 +5214,10 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         name: i.plan.hull.clone(),
         native: i.spec().and_then(|s|s.visual.as_ref().map(|v|(v.clone(),s.shape().made_centre))),
         equipment: placed_equipment(i),
-        structure: vec![crate::equipment_visual::Placed::structure(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
+        structure: std::iter::once(crate::equipment_visual::Placed::structure(i.stand_up().faces.into_iter().skip(2).map(|(positions,colour)| {
                 let normal=(positions[1]-positions[0]).cross(positions[2]-positions[0]).normalize_or_zero();
                 crate::equipment_visual::Face {positions,normals:[normal;3],colour,double_sided:true,blend:false,alpha_cutoff:None}
-            }).collect())],
+            }).collect())).chain(frame_structure(i)).collect(),
         visual_origin: mid32,
         rates: placed.iter().find(|p|p.2=="flight_computer").map(|p|DVec3::new(num(&p.3,"turn_rate"),num(&p.3,"turn_rate"),num(&p.3,"roll_rate"))),
         mass: total,
@@ -4798,7 +5227,6 @@ fn craft(i: &Interior) -> crate::test_drive::Craft {
         plants: of("power_plant").map(|p| num(&p.3, "output")).sum(),
         steady: placed.iter().map(|p| p.4).sum(),
         boxes,
-        members: i.plan.beams.iter().map(|b| [b.a - mid32, b.b - mid32]).collect(),
         gravity: i.plan.gravity(),
         area: f64::from(((hi.x - lo.x) * (hi.z - lo.z)).max(1.0)),
     };
@@ -5017,7 +5445,7 @@ pub fn compare_designs(a: &str, b: &str) -> String {
 /// The frame's mass by part: its members, its nodes, its decks (kg). One figure
 /// for the studio and the report alike.
 fn frame_masses(i: &Interior) -> (f64, f64, f64) {
-    let members: f64 = i.plan.beams.iter().filter_map(|m| stocks().iter().find(|s| s.key == m.stock).map(|s| s.per_metre * f64::from(m.a.distance(m.b)))).sum();
+    let members: f64 = i.plan.beams.iter().filter_map(member_mass).sum();
     let decks: f64 = i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs()))).sum();
     let node = |ns: &[Node]| ns.iter().filter_map(|n| n.2).map(|n| n.mass).sum::<f64>();
     let nodes = match i.node_cache.as_ref().filter(|(p, _)| *p == i.plan) {
@@ -5194,7 +5622,7 @@ fn budget(i: &Interior) -> Budget {
         let mass_at = |p: &&(&Block, &Fitted, String, Fields, f64)| (p.0.at, p.1.mass + p.1.load);
         // (Its frame and decks too: each member at its middle, each deck at its own.)
         let mut all: Vec<(Vec3, f64)> = placed.iter().map(|p| mass_at(&p)).collect();
-        all.extend(i.plan.beams.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| ((b.a + b.b) * 0.5, s.per_metre * f64::from(b.a.distance(b.b))))));
+        all.extend(i.plan.beams.iter().filter_map(|b| member_mass(b).map(|m| ((b.a + b.b) * 0.5, m))));
         all.extend(i.plan.plates.iter().filter_map(|p| plate_stocks().iter().find(|s| s.key == p.stock).map(|s| (Vec3::new((p.lo.x + p.hi.x) * 0.5, p.y, (p.lo.y + p.hi.y) * 0.5), s.per_square_metre * f64::from(((p.hi.x - p.lo.x) * (p.hi.y - p.lo.y)).abs())))));
         let total: f64 = all.iter().map(|a| a.1).sum::<f64>().max(1.0);
         let centre = all.iter().fold(Vec3::ZERO, |c, a| c + a.0 * (a.1 / total) as f32);
@@ -5392,6 +5820,11 @@ fn budget(i: &Interior) -> Budget {
         if of("landing_gear").count() > 0 && of("altimeter").count() == 0 {
             faults.push("IT LANDS BLIND: NO ALTIMETER".into());
         }
+    }
+    // (Members of a strut's section whose length no strut has: not cut to fit.)
+    let misfits = i.plan.beams.iter().filter(|b| misfit(b)).count();
+    if misfits > 0 {
+        faults.push(format!("{misfits} MEMBER{} NO STANDARD STRUT'S LENGTH", if misfits == 1 { "" } else { "S" }));
     }
     // (Joints with no node in stock wide enough for their widest tube.)
     if let Some((_, ns)) = i.node_cache.as_ref().filter(|(p, _)| *p == i.plan) {
@@ -5624,7 +6057,11 @@ fn draw_selected(frame: &mut Frame, interior: &Interior) {
             let len = m.a.distance(m.b);
             let mut rows = vec![
                 (format!("TUBE {:.0} X {:.0} MM, {:.2} M LONG", st.section.diameter * 1000.0, st.section.wall * 1000.0, len), LABEL),
-                (format!("MASS {:.1} KG ({:.2} KG/M)", st.per_metre * f64::from(len), st.per_metre), LABEL),
+                match strut(m) {
+                    Some(s) => (format!("STRUT {}, {:.1} KG ENDS IN", s.key.trim_start_matches("stock.").to_uppercase(), s.mass), LABEL),
+                    None if misfit(m) => ("NO STANDARD STRUT THIS LONG".into(), CLASH),
+                    None => (format!("MASS {:.1} KG ({:.2} KG/M)", st.per_metre * f64::from(len), st.per_metre), LABEL),
+                },
                 (format!("YIELDS {:.0} MPA, BREAKS {:.0} MPA, E {:.0} GPA", st.material.yield_strength / 1e6, st.material.tensile_strength / 1e6, st.material.stiffness / 1e9), LABEL),
                 (format!("FROM {:.2},{:.2},{:.2} TO {:.2},{:.2},{:.2}", m.a.x, m.a.y, m.a.z, m.b.x, m.b.y, m.b.z), LABEL.scale(0.75)),
             ];
@@ -6522,7 +6959,7 @@ pub fn input_with(deckplans: &mut Vec<universe_sim::world::deckplan::DeckPlan>, 
         if *plan == interior.plan {
             let before_state = interior.snapshot();
             let before = before_state.plan.clone();
-            let mass = |bs: &[Beam]| bs.iter().filter_map(|b| stocks().iter().find(|s| s.key == b.stock).map(|s| s.per_metre * f64::from(b.a.distance(b.b)))).sum::<f64>();
+            let mass = |bs: &[Beam]| bs.iter().filter_map(member_mass).sum::<f64>();
             let (was, now) = (mass(&before.beams), mass(&beams));
             interior.plan.beams = beams;
             interior.plan.plates = plates;
@@ -7894,9 +8331,12 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         let deck_col = if [interior.pick, interior.hover].contains(&Some(Hover::Deck(n))) || interior.set.contains(&Hover::Deck(n)) { PICKED } else { DECK };
         let c = [Vec3::new(plate.lo.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.lo.y), Vec3::new(plate.hi.x, plate.y, plate.hi.y), Vec3::new(plate.lo.x, plate.y, plate.hi.y)];
         if let [Some((a, _)), Some((b, _)), Some((cc, _)), Some((d, _))] = c.map(|p| cam.project(p)) {
-            let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
-            frame.hud_triangle_colored([a, b, cc], fill);
-            frame.hud_triangle_colored([a, cc, d], fill);
+            // (Filled only picked: the plate itself is drawn from its stock.)
+            if deck_col == PICKED {
+                let fill = [Color([DECK.0[0], DECK.0[1], DECK.0[2], 0.45]); 3];
+                frame.hud_triangle_colored([a, b, cc], fill);
+                frame.hud_triangle_colored([a, cc, d], fill);
+            }
         }
         // (Its underside too: it is as thick as its stock.)
         let under = c.map(|p| p - Vec3::Y * deck_depth(plate));
@@ -7925,13 +8365,16 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
         };
         for (k, b) in plan.beams.iter().enumerate() {
             let lit = interior.beam_pick == Some(k) || interior.beam_hover == Some(k) || [interior.pick, interior.hover].contains(&Some(Hover::Member(k))) || interior.set.contains(&Hover::Member(k));
-            let (col, broken) = match outcome(k) {
+            // (How hard it's worked shows while framing; else the tube itself.)
+            let worked = if interior.tool == Tool::Frame { outcome(k) } else { None };
+            let (col, broken) = match worked {
                 _ if lit => (PICKED, false),
                 Some((_, true)) => (CLASH, true),
                 Some((u, _)) if u >= 1.0 => (Color([1.0, 0.3, 0.25, 1.0]), false),
                 Some((u, _)) if u >= 0.5 => (Color([1.0, 0.7, 0.2, 1.0]), false),
-                Some(_) => (Color([0.4, 1.0, 0.5, 1.0]), false),
-                None => (Color([0.75, 0.8, 0.85, 1.0]), false),
+                // (Easy, or not worked out: the tube itself shows, drawn from its stock.)
+                _ if member_clash.get(k).is_some_and(|c| c.is_some()) || misfit(b) => (CLASH, false),
+                _ => continue,
             };
             if let (Some((pa, _)), Some((pb, _))) = (cam.project(b.a), cam.project(b.b)) {
                 if broken {
@@ -7956,6 +8399,7 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                         frame.hud_triangle_colored([pa + oa, pb - ob, pa - oa], [CLASH; 3]);
                     }
                     let (oa, ob) = (side * wa, side * wb);
+                    let col = Color([col.0[0], col.0[1], col.0[2], col.0[3] * 0.7]);
                     frame.hud_triangle_colored([pa + oa, pb + ob, pb - ob], [col; 3]);
                     frame.hud_triangle_colored([pa + oa, pb - ob, pa - oa], [col; 3]);
                 }
@@ -7968,7 +8412,10 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
                     let d = node.map_or(*widest, |n| n.diameter);
                     let w = (d * cam.pixels_per_metre(z)).max(3.0);
                     let lit = [interior.pick, interior.hover].contains(&Some(Hover::Node(*at)));
-                    frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if lit { PICKED } else if node.is_some() { Color([0.9, 0.95, 1.0, 0.9]) } else { CLASH });
+                    // (A node in stock is drawn as its ball: marked here only picked, or missing.)
+                    if lit || node.is_none() {
+                        frame.hud_rect(q - Vec2::splat(w * 0.5), Vec2::splat(w), if lit { PICKED } else { CLASH });
+                    }
                 }
             }
         }
@@ -8539,5 +8986,31 @@ pub fn draw(frame: &mut Frame, place: &str, interior: &Interior) {
             let (bp, bc) = buttons[k];
             draw_cell(frame, bp, bc, key, name, if inside((bp, bc), interior.cursor) { Lamp::On } else { Lamp::Off });
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_member_is_a_whole_strut_or_a_misfit() {
+        let s = struts().iter().find(|s| s.module == 2.0).expect("a 2 m strut");
+        let beam = |len: f32| Beam { uid: Default::default(), a: Vec3::ZERO, b: Vec3::new(len, 0.0, 0.0), stock: s.section.clone(), pinned: [false; 2] };
+        assert_eq!(strut(&beam(2.0)).map(|t| &t.key), Some(&s.key));
+        assert!(!misfit(&beam(2.0)));
+        assert!(misfit(&beam(2.1)), "a member is never cut to fit");
+        assert_eq!(member_mass(&beam(2.0)), Some(s.mass), "a strut weighs its ENDs and bolts in");
+        let n = nodes(&[beam(2.0)], &[]);
+        assert!(n.iter().all(|j| j.2.is_some_and(|x| x.key == s.node)), "its ends meet the node it is made for");
+    }
+
+    #[test]
+    fn a_kit_frame_has_a_section_in_every_length() {
+        let key = kit_stock("").expect("a section in every kit length");
+        for l in [0.5, 1.0, 0.5 * std::f32::consts::SQRT_2, std::f32::consts::SQRT_2] {
+            assert!(struts().iter().any(|t| t.section == key && (t.module - l).abs() <= 0.002), "{key} at {l} m");
+        }
+        assert_eq!(kit_steps(1).len(), 18, "six straight and twelve across a square");
     }
 }

@@ -65,9 +65,8 @@ pub struct Craft {
     /// Registry power plant output and steady equipment demand (W).
     pub plants: f64,
     pub steady: f64,
-    /// Presentation envelopes and structural members; collision uses spec.shape().
+    /// Presentation envelopes; collision uses spec.shape().
     pub boxes: Vec<(Vec3, Vec3)>,
-    pub members: Vec<[Vec3; 2]>,
     /// Fitted flight computer pitch/yaw/roll limits (rad/s); absent means manual only.
     pub rates: Option<DVec3>,
     /// The gravity it's flown in (m/s2); the area it drags by (m2).
@@ -593,9 +592,6 @@ pub fn draw_balance(frame: &mut Frame, b: &Balance) {
             },
         },
     );
-    for [a, bb] in &c.members {
-        seg(frame, *a, *bb, Color([1.0, 0.7, 0.3, 0.35]));
-    }
     // (The scale: the strongest push 4 m long.)
     let strongest = thrusters
         .iter()
@@ -846,9 +842,6 @@ pub fn draw(frame: &mut Frame, d: &Drive) {
             sky,
         },
     );
-    for [a, b] in &d.craft.members {
-        seg(frame, place(*a), place(*b), Color([1.0, 0.7, 0.3, 0.8]));
-    }
     // (Each push: a line the other way from where it pushes, its throttle long.)
     // Display the same manual key assignment as normal flight.
     let live_thrusters = d.flight.as_ref().map(|f| &f.ship.spec().thrusters);
