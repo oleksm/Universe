@@ -563,7 +563,7 @@
 - { record: facility.treistun.port-zaudalein.zaudalein-warehouse, at: "2026-10-07T03:22:23Z", status: "", summary: "changed", sha: "9e07662a977525f1" }
 - { record: gate.ring.i, at: "2026-10-14T01:27:41Z", status: review, summary: "changed: visual", sha: "fd41721e35742e7d" }
 - { record: gate.ring.ii, at: "2026-10-14T01:33:41Z", status: review, summary: "changed: visual", sha: "d5a649f3ad2ec6d7" }
-- { record: gate.ring.iii, at: "2026-10-14T01:21:21Z", status: review, summary: "changed: basis", sha: "b8eda6f1b95f7d16" }
+- { record: gate.ring.iii, at: "2026-10-14T01:40:08Z", status: review, summary: "changed: visual", sha: "44f16a4a72028ab4" }
 - { record: good.aggregate, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "7bb7e1dbd16457ee" }
 - { record: good.almonds, at: "2026-10-05T21:50:29Z", status: review, summary: "changed: identity", sha: "d336f0a6e736548b" }
 - { record: good.alumina, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "b032433665f28491" }

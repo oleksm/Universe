@@ -22,6 +22,12 @@ power:
   station: module.fusion-power-station
 making:
   module: module.assembly-jig
+visual:
+  format: "freefall-model/1"
+  path: "models/ring-iii/v1"
+  manifest_sha256: "877080fa8f220f1e47bb7254bbdf12dbf71910e328c40a8854febcdfe0f04389"
+  version: 1
+  triangles: 46080
 basis:
   - { of: [fit], tier: invented, review: true, note: "The relays and the transceiver are what the game fits to a ring. The coils, one to a segment, are a guess, to be reviewed. Each is its own record and is modelled apart from the ring: the coils sit inside the tube, out of sight; the relays and the transceiver stand on its outside, where they can be seen." }
   - { of: [size], tier: invented, source: "the game: content/base/sheet.ron (GATE_RADIUS, RING_TUBE)", note: "The game's figures, marked there as tuning. The opening is wide enough for capital ships, which are to come; it is not yet worked out from one. The opening is the clear diameter inside the ring: the 120 m tube's centreline runs at 1,560 m radius, 3,240 m outside. The ring lies in the XZ plane, its axis +Y (the throat opening along it), centred on the origin, as the game draws it." }
