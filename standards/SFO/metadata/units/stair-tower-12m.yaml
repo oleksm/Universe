@@ -8,6 +8,12 @@ built_of:
 - {what: Stairs and landings, item: material.structural-steel-a36, mass: 3000.0, note: 'four flights with treads and rails and their landings, 750 kg each, from memory'}
 - {what: Frame, item: stock.st4340-tb-120x3-s3000, mass: 3384.0, note: 'the lattice in st4340-tb-120x3 with its nodes, the kit''s lightest for its own weight and 5 kPa on its landings with half again to spare'}
 needs: {}
+visual:
+  format: "freefall-model/1"
+  path: "models/stair-tower-12m/v1"
+  manifest_sha256: "0145bca239eb47c0071f8c4cb9fdb7797324f36c8b3facb2d5257d07ebdf125c"
+  version: 1
+  triangles: 7496
 life: 788940000
 basis:
 - of: [physical, built_of]
