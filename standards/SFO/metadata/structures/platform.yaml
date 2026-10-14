@@ -6,6 +6,12 @@ physical: {length: 600, width: 750, height: 300, mass: 31822044}
 fit:
 - {item: equipment.gate.transceiver.station, count: 1}
 - {item: equipment.gate.relay.hyper, count: 1}
+visual:
+  format: "freefall-model/1"
+  path: "models/platform/v1"
+  manifest_sha256: "200e6c7f546e905a2268fcf727384db255dd312c6735d1e418d5a22d79065334"
+  version: 1
+  triangles: 100976
 basis:
 - of: [identity.description, physical]
   tier: invented
