@@ -600,12 +600,13 @@ def strut_capacity(section, L=3.0):
     return min(math.pi ** 2 * 205e9 * I / L ** 2, area(section) * 470e6)
 
 
-def lightest_section(force, metal="st4340", margin=1.5):
-    """The kit's lightest tube section (by its 3 m strut's mass) whose strut takes force with the margin to spare."""
+def lightest_section(force, metal="st4340", margin=1.5, with_diagonal=False):
+    """The kit's lightest tube section (by its 3 m strut's mass) whose strut takes force with the margin to spare;
+    with_diagonal: only sections the kit also cuts a 3 m cell's diagonal of."""
     S = "standards/SFO/metadata/mill-stock/"
     best = None
     for f in os.listdir(S):
-        if f.startswith(f"{metal.upper()}-TB-") and f.endswith("-S3000.yaml"):
+        if f.startswith(f"{metal.upper()}-TB-") and f.endswith("-S3000.yaml") and (not with_diagonal or os.path.exists(S + f.replace("-S3000", "-D3000"))):
             st = yaml.safe_load(open(S + f, encoding="utf-8"))
             sec = yaml.safe_load(open(S + st["kit"]["section"].split(".", 1)[1].upper() + ".yaml", encoding="utf-8"))
             if strut_capacity(sec) >= margin * force and (best is None or st["physical"]["mass"] < best[0]):

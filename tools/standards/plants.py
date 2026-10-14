@@ -2089,6 +2089,205 @@ def casting_bay_airless(us, recs):
     return layout, bays
 
 
+# The shaft furnace on airless ground: a high-pressure loop so the top gas's water condenses warm, a hot discharge.
+HP_SHAFT, HP_SUCTION = 8.5e5, 7.3e5      # Pa: the loop at about 8 bar, as high-pressure shafts run (from memory)
+T_COND = 80.0                            # deg C: the recycle gas out of the condenser, its water 6% (the rest condensed)
+T_REC_OUT = 125.0                        # deg C: the top gas out of the recuperator, above its dew point at 8 bar (about 116)
+T_HOT_DRI = 650.0                        # deg C: the sponge iron discharged hot
+_top_cap = H2_TOP * CP_H2 + STEAM * CP_STEAM
+HP_Q_RECUP = _top_cap * (T_TOP - T_REC_OUT)
+HP_T_PRE = T_COND + HP_Q_RECUP / (GAS * CP_H2)
+HP_Q_HEATER = GAS * CP_H2 * (T_GAS - HP_T_PRE)
+_left = 0.06 / 0.94 * mol_flow(H2_TOP) * 18.015e-3          # kg/s of water the recycle carries on
+HP_Q_COND = _top_cap * (T_REC_OUT - T_COND) + (STEAM - _left) * 2.33e6
+HP_W_COMP = GAS * CP_H2 * (T_COND + 273.15) * ((HP_SHAFT / HP_SUCTION) ** ((GAMMA - 1) / GAMMA) - 1) / ETA_K
+HP_T_LOOP = 345.0                        # K: the condenser's water loop to the radiators
+
+
+def shaft_airless_units(us):
+    out = {}
+    D = 6.6
+    zones = {"top": 4.0, "reduction": 12.0, "transition": 4.0, "cone": 4.0}
+    hot = zones["top"] + zones["reduction"] + zones["transition"] + zones["cone"]
+    t_ref, t_sh = 0.35, 0.04
+    Do = D + 2 * t_ref + 2 * t_sh
+    Z_OUT = 8.0
+    z_ring = Z_OUT + zones["cone"]
+    z_bustle = z_ring + zones["transition"]
+    z_top = Z_OUT + hot
+    H = z_top + 8.0
+    hoop = HP_SHAFT * Do / (2 * t_sh)
+    shell = cyl_shell(Do, hot, t_sh) * RHO["steel"]
+    lining = math.pi * ((D / 2 + t_ref) ** 2 - (D / 2) ** 2) * hot * RHO["refractory"]
+    burden = (math.pi * (D / 2) ** 2 * (hot - zones["cone"]) + math.pi * (D / 2) ** 2 * zones["cone"] / 3) * 1900.0
+    d_b = main_dia(mol_flow(GAS), T_GAS, HP_SHAFT)
+    R_b = Do / 2 + 0.3 + d_b / 2
+    side = max(12.0, round(2 * R_b + d_b + 1.0))
+    out["shaft-furnace-200th-hp"] = dict(
+        name=f"Hydrogen shaft furnace, {S_RATE * 3.6:.0f} t an hour, 8 bar, hot discharge", size_class=2 if side <= 12 else 3, fits="bay-s2" if side <= 12 else "bay-s3", dims=(side, side, round(H, 1)),
+        desc=(f"The shaft of unit.shaft-furnace-200th built for airless ground: the gas loop at about {HP_SHAFT / 1e5:.0f} bar, so the shell is a pressure vessel ({hoop / 1e6:.0f} MPa in its {t_sh * 1000:.0f} mm plate) and the charge and discharge go through pressure locks; "
+              f"no cooling zone: the sponge iron leaves through a lock at about {T_HOT_DRI:.0f} deg C into a closed hot conveyor to the arc furnace shop, which in vacuum it cannot rust on the way. "
+              f"Local frame: the axis at (0, 0); the discharge lock at z {Z_OUT:g}; the ring girder at z {z_ring:.0f} (radius {Do / 2 + 0.4:.1f} m); the bustle main ({d_b:.1f} m pipe) at z {z_bustle:.0f}, its inlet on -y; the top gas outlet at z {z_top - 1:.0f} on +x; the charge lock and hopper z {z_top:.0f} to {H:.0f}. About {burden / 1000:,.0f} t of burden inside."),
+        built_of=[part("Shell", A36, shell, f"{Do:.2f} m across, {hot:g} m, {t_sh * 1000:.0f} mm plate"),
+                  part("Lining", REF, lining, f"{t_ref * 1000:.0f} mm"),
+                  part("Bustle main", A36, math.pi * (d_b + 0.4) * 0.025 * 2 * math.pi * R_b * RHO["steel"], f"a ring {2 * R_b:.1f} m across, 25 mm plate for the pressure"),
+                  part("Bustle lining", REF, math.pi * (d_b + 0.2) * 0.2 * 2 * math.pi * R_b * RHO["refractory"], "200 mm"),
+                  part("Support ring girder", A36, 2 * math.pi * (Do / 2 + 0.4) * box_tube(0.8, 1.2, 0.04, 1.0) * RHO["steel"], "as for air"),
+                  part("Charge and discharge pressure locks", A36, 90000.0, "two lock hoppers with their valves, from memory"),
+                  part("Burden feeders", "good.electric-motors", 25000.0, "from memory")],
+        holds=burden,
+        needs={"power": 400e3, "gravity": 1.0, "atmosphere": "any"},
+        recipes=smod["recipes"], life=smod.get("life"),
+        basis=[{"of": ["recipes"], "tier": "derived", "note": "The module's recipe (module.shaft-furnace), carried here."},
+               {"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": "As unit.shaft-furnace-200th less its cooling zone; the shell checked for the loop's pressure; the locks from memory."},
+               {"of": ["needs.gravity"], "tier": "invented", "review": True, "note": "At 1.6 m/s2 the burden weighs about 3 kPa a metre of bed against the gas's drag of about 1 (from memory): it still sinks; at 8 bar the gas is slower."}])
+    out["top-gas-condenser-8bar"] = dict(
+        name=f"Top gas condenser, {HP_Q_COND / 1e6:.0f} MW", size_class=2, fits="bay-s2", dims=(12.0, 8.0, 14.0),
+        desc=(f"Two vertical shell-and-tube condensers at 8 bar: the top gas down through the tubes from {T_REC_OUT:.0f} to {T_COND:.0f} deg C, its water condensing (dew point about 116 deg C at this pressure, so the heat leaves warm), the loop's water round the tubes from about {HP_T_LOOP - 10 - 273.15:.0f} to {HP_T_LOOP - 273.15:.0f} deg C; "
+              f"{STEAM - _left:.1f} kg/s of water drains to a pot and on to the hydrogen plant. A candle filter ahead of it takes the dust. Gas in at local (-6, 0, 12), out at (6, 0, 2)."),
+        built_of=[part("Shells and tubes", "material.stainless-steel-304", 2 * cyl_shell(3.0, 12.0, 0.016, bottom=2.0) * 7900 + 30000.0, "two shells 3 m across, 12 m, 16 mm, and their tubes (30 t, from memory)"),
+                  part("Filter and drain pots", A36, 15000.0, "from memory")],
+        needs={"heat": HP_Q_COND + HP_W_COMP, "atmosphere": "vacuum"},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
+               {"of": ["needs.heat"], "tier": "derived", "note": f"The top gas cooled {T_REC_OUT:.0f} to {T_COND:.0f} deg C and its water condensed down to 6% of the recycle (2.33 MJ/kg); with the compressor's aftercooler."}])
+    out["recycle-compressor-8bar"] = dict(
+        name=f"Recycle compressor, {HP_W_COMP / 1e6:.1f} MW, 8 bar", size_class=2, fits="bay-s2", dims=(12.0, 6.0, 5.0),
+        desc=f"Raises {GAS:.1f} kg/s of hydrogen from {HP_SUCTION / 1e5:.1f} to {HP_SHAFT / 1e5:.1f} bar, the loop's pressure drop only: two centrifugal stages in one casing and a motor. At 8 bar the gas is dense enough that this is a small machine. Suction at local (6, 0, 1.5), discharge at (-6, 0, 1.5).",
+        built_of=[part("Casing, rotor and motor", "material.high-strength-steel-4340", 8000.0 * HP_W_COMP / 1e6, "8 t a MW of drive, from memory")],
+        needs={"power": HP_W_COMP / 0.96, "atmosphere": "any"},
+        basis=[{"of": ["physical", "built_of"], "tier": "invented", "review": True, "note": "From memory."},
+               {"of": ["needs"], "tier": "derived", "note": f"Isentropic at {ETA_K:.0%}, a motor at 96%; its heat leaves by the condenser's aftercooler."}])
+    hh = dict(us[next(k for k in us if k.startswith("gas-heater-"))])
+    hh["name"] = f"Hydrogen heater, {HP_Q_HEATER / 1e6:.0f} MW, 8 bar"
+    hh["desc"] = hh["desc"].replace(f"from {T_PRE:.0f} to", f"from {HP_T_PRE:.0f} to") + " Its vessels hold the loop's 8 bar (25 mm plate at 4 m: 64 MPa, the shell kept cool by its lining)."
+    hh["needs"] = {"power": HP_Q_HEATER / 0.98}
+    out[f"gas-heater-{HP_Q_HEATER / 1e6:.0f}mw-8bar"] = hh
+    out[f"radiator-field-{HP_T_LOOP:.0f}k"] = radiator_unit(HP_T_LOOP, "the condenser's")
+    return out
+
+
+def shaft_furnace_airless(us, recs):
+    """The hydrogen shaft furnace on airless ground at about a moon's gravity."""
+    sh_key = "shaft-furnace-200th-hp"
+    sh = us[sh_key]
+    side, _, H = sh["dims"]
+    cell = 3.0
+    top = math.ceil((H + 4.0) / cell) * cell
+    box = (-12.0, -12.0, 0.0, 12.0, 12.0, top)
+    z_top_gas = float(sh["desc"].split("top gas outlet at z ")[1].split(" ")[0])
+    z_bustle = float(sh["desc"].split("bustle main (")[1].split("at z ")[1].split(",")[0])
+    z_ring = float(sh["desc"].split("ring girder at z ")[1].split(" ")[0])
+    openings = [(9.0, -3.0, z_top_gas - 3.0, 12.0, 3.0, top - 3.0), (-3.0, -12.0, z_bustle - 3.0, 3.0, -9.0, z_bustle + 3.0), (-12.0, -3.0, 3.0, -9.0, 3.0, 9.0)]
+    groups, ground_nodes, n_nodes, cells = lattice(box, cell, round(top / cell) - 1, None, openings)
+    srec = recs[sh_key]
+    g = MOON_G[1]
+    load = (srec["physical"]["mass"] + srec.get("holds", 0)) * g
+    col_a = 0.3 * 0.3 - 0.26 * 0.26
+    n_col = 8
+    col_sigma = load / n_col / col_a
+    assert 1.5 * col_sigma <= 470e6
+    # No wind: the lattice only braces the columns and carries the platforms; the kit's lightest aluminium strut does.
+    plat_q = 6 * (box[3] - box[0]) * (box[4] - box[1]) * 0.6 * 0.006 * RHO["aluminium"] * g
+    per_node = plat_q / max(1, ground_nodes) * 4
+    sec = frames.lightest_section(per_node + 1.0, metal="al6061", with_diagonal=True)
+    members, fmass = [], 0.0
+    for gname in ("wall", "roof"):
+        for diag, n in ((False, groups[gname][0]), (True, groups[gname][1])):
+            key, st = strut(sec, cell, diag)
+            members.append({"item": key, "count": n, "where": "tower walls" if gname == "wall" else "tower roof"})
+            fmass += n * st["physical"]["mass"]
+    node_key = strut(sec, cell)[1]["kit"]["node"]
+    node = yaml.safe_load(open(S + "mill-stock/" + node_key.split(".", 1)[1].upper() + ".yaml"))
+    members.append({"item": node_key, "count": n_nodes, "where": "nodes"})
+    fmass += n_nodes * frames.node_mass(node, frames.materials())
+    members.append({"item": "stock.st4340-box-300x300x20", "count": n_col, "where": f"columns under the shaft's ring girder, {z_ring:.0f} m, braced to the tower every 6 m"})
+    fmass += n_col * z_ring * col_a * RHO["steel"]
+    deck = 6 * (box[3] - box[0]) * (box[4] - box[1]) * 0.6 * 0.006 * RHO["aluminium"]
+    sized = (f"At {g:g} m/s2 the shaft with its burden, {load / 1e6:.1f} MN, on {n_col} columns of 300 x 300 x 20 mm 4340 box: {col_sigma / 1e6:.0f} MPa each. No wind: the lattice braces the columns and carries six aluminium grating platforms (6 mm, 60% of the plan), "
+             f"the kit's lightest aluminium strut ({sec}). Footings not yet checked.")
+    heater = next(k for k in us if k.startswith("gas-heater-") and k.endswith("-8bar"))
+    rad = f"radiator-field-{HP_T_LOOP:.0f}k"
+    loop_heat = recs["top-gas-condenser-8bar"]["needs"]["heat"] + recs["heater-transformer-131mva"]["needs"].get("heat", 0)
+    n_rad = math.ceil(loop_heat / recs[rad]["rejects"]["heat"])
+    cols = 6
+    rad_at = [(-60.0 - 48.0 * (i % cols), 60.0 + 48.0 * (i // cols)) for i in range(n_rad)]
+    bays = [
+        {"id": "F", "mount": f"plant-mount.{sh['fits']}", "unit": f"unit.{sh_key}", "at": [0.0, 0.0, 0.0], "note": "in the tower, on its columns; the hot conveyor under its discharge lock"},
+        {"id": "R", "mount": "plant-mount.bay-s2", "unit": "unit.recuperator", "at": [24.0, 24.0, 0.0], "note": "as for air; its shells hold 8 bar"},
+        {"id": "S", "mount": "plant-mount.bay-s2", "unit": "unit.top-gas-condenser-8bar", "at": [48.0, 24.0, 0.0], "note": "where the scrubber stands for air"},
+        {"id": "K", "mount": "plant-mount.bay-s2", "unit": "unit.recycle-compressor-8bar", "at": [48.0, 0.0, 0.0], "note": "east"},
+        {"id": "H", "mount": "plant-mount.bay-s3", "unit": f"unit.{heater}", "at": [24.0, -24.0, 0.0], "note": "south-east"},
+        {"id": "T", "mount": "plant-mount.bay-s2", "unit": "unit.heater-transformer-131mva", "at": [48.0, -24.0, 0.0], "note": "on its slab, no fire walls"},
+        {"id": "P", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [-24.0, -24.0, 0.0], "note": "south-west, under its berm"},
+    ]
+    bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": f"north-west, in rows of {cols}"} for i, (x, y) in enumerate(rad_at)]
+    d_top = main_dia(mol_flow(H2_TOP, STEAM), T_TOP, HP_SUCTION)
+    d_hot = main_dia(mol_flow(GAS), T_GAS, HP_SHAFT)
+    d_gas = main_dia(mol_flow(GAS), T_COND, HP_SHAFT)
+    pm = lambda d, t=0.016: math.pi * d * t * RHO["steel"]
+    lined = lambda d: math.pi * (d + 0.4) * 0.025 * RHO["steel"] + math.pi * (d + 0.2) * 0.2 * RHO["refractory"]
+    flow = loop_heat / (4186 * 10)
+    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
+    rise = 15.0
+    belt_x = H / math.sin(math.radians(rise)) * math.cos(math.radians(rise))
+    links = [
+        link("conveyor", "pellet belt", (round(belt_x, 1), 0.0, 2.0), (0.0, 0.0, round(H + 2.0, 1)), A36, 120.0, 300000.0 * MOON_G[1] / G + 50000.0, f"a 1.2 m belt on trestles, open, rising at {rise:g} degrees to the charge lock's hopper; its bearings and grease vacuum-rated"),
+        link("conveyor", "hot sponge iron", (0.0, 0.0, 6.0), (-60.0, 0.0, 6.0), "material.stainless-steel-304", 400.0, 150000.0, f"a closed drag chain conveyor in an insulated casing: {S_RATE:.1f} kg/s of sponge iron at about {T_HOT_DRI:.0f} deg C to the arc furnace shop's bin, beyond the layout; the hot charge saves the furnace about {S_RATE * CP_DRI * (T_HOT_DRI - 25) / 1e6:.0f} MW"),
+        link("pipe", "top gas main", (side / 2 - 0.5, 0.0, z_top_gas), (24.0, 24.0, 18.0), A36, pm(d_top), None, f"{d_top:.1f} m, 16 mm wall for 8 bar, insulated", via=[(15.0, 0.0, z_top_gas), (24.0, 24.0, z_top_gas)]),
+        link("pipe", "gas to the condenser and compressor", (24.0, 27.0, 1.5), (42.0, 0.0, 1.5), A36, pm(d_gas), None, f"{d_gas:.1f} m, 16 mm", via=[(24.0, 32.0, 1.5), (42.0, 32.0, 1.5), (42.0, 24.0, 12.0), (54.0, 24.0, 2.0), (54.0, 0.0, 1.5)]),
+        link("pipe", "compressed gas back to the recuperator and heater", (42.0, 0.0, 1.5), (24.0, -28.0, 2.0), A36, pm(d_gas), None, f"{d_gas:.1f} m, 16 mm, insulated after the recuperator", via=[(36.0, 0.0, 1.5), (36.0, 14.0, 1.5), (24.0, 14.0, 17.0), (14.0, 14.0, 17.0), (14.0, -28.0, 17.0), (14.0, -28.0, 2.0)]),
+        link("pipe", "hot gas to the bustle", (24.0, -20.0, 15.0), (0.0, -(side / 2 - 0.5), z_bustle), A36, lined(d_hot), None, f"{d_hot:.1f} m inside 200 mm of refractory, 25 mm shell for 8 bar", via=[(24.0, -20.0, z_bustle), (0.0, -20.0, z_bustle)]),
+        link("pipe", "hydrogen make-up", (100.0, 4.0, 1.5), (54.0, 4.0, 1.5), "material.stainless-steel-304", pm(0.25, 0.008), None, f"{H2_USED:.2f} kg/s from the hydrogen plant's electrolysers, which run at 10 bar so that no make-up compressor is needed"),
+        link("pipe", "condensate to the hydrogen plant", (54.0, 24.0, 0.5), (100.0, 24.0, 0.5), "material.stainless-steel-304", math.pi * 0.2 * 0.006 * 7900, None, f"200 mm: {STEAM - _left:.1f} kg/s of water back to the electrolysers: on a moon every kilogram comes back"),
+        link("pipe", "loop water to the radiators", (rad_at[-1][0] - 22.0, rad_at[-1][1], 1.0), (48.0, 20.0, 1.0), A36, 2 * pm(d_cw, 0.010), None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the condenser, a branch to the transformer", via=[(-36.0, rad_at[-1][1], 1.0), (-36.0, 36.0, 1.0), (48.0, 36.0, 1.0)]),
+        link("cable", "heater supply", (48.0, -24.0, 4.0), (12.0, -24.0, 2.0), CU, 3 * HP_Q_HEATER / HEATER_PF / (math.sqrt(3) * 6600) / 4e6 * RHO["copper"], None, "as for air"),
+    ]
+    ground = [
+        {"what": "Tower foundation", "item": SINTER, "volume": r(24 * 24 * 1.5), "note": "a mat of sintered regolith blocks 1.5 m thick (a fifth of the load of 1 g)"},
+        {"what": "Unit pads", "item": SINTER, "volume": r(sum(recs[b["unit"].split(".", 1)[1]]["physical"]["length"] * recs[b["unit"].split(".", 1)[1]]["physical"]["width"] * 0.5 for b in bays[1:] if not b["id"].startswith("RL"))), "note": "0.5 m under each unit"},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6)},
+        {"what": "Trestle footings", "item": SINTER, "volume": r(math.ceil(belt_x / 18) * 3.0 + 6 * 2.0)},
+    ]
+    for gr in ground:
+        gr["mass"] = r(gr["volume"] * (RHO_SINTER if gr["item"] == SINTER else 1500.0))
+    used = [recs[b["unit"].split(".", 1)[1]] for b in bays]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used) + sum(l.get("power", 0) for l in links)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(gr["mass"] for gr in ground)
+    frame_mass = fmass + deck
+    total = mass_units + mass_links + frame_mass + mass_ground
+    air_power = yaml.safe_load(open(S + "layouts/shaft-furnace-air.yaml"))["totals"]["power"] if os.path.exists(S + "layouts/shaft-furnace-air.yaml") else 0
+    against = (f"module.shaft-furnace: one box, {S_P / 1e6:.0f} MW. The layout for air draws {air_power / 1e6:.0f} MW and sends 130 MW up four towers. This layout: the same rate; {power / 1e6:.0f} MW (heater {HP_Q_HEATER / 0.98 / 1e6:.0f}, compressor {HP_W_COMP / 1e6:.1f}: at 8 bar the compressor only makes up the loop's pressure drop); "
+               f"{heat / 1e6:.0f} MW to {n_rad} radiator fields at {HP_T_LOOP:.0f} K ({n_rad * 48 * 48 / 1e4:.0f} ha), for the water must condense somewhere and only light can take the heat away; no cooling zone or loop (the sponge iron goes on hot); no water used up. "
+               f"{(mass_units + mass_links + frame_mass) / 1000:,.0f} t of plant and frame, {mass_ground / 1000:,.0f} t of sintered regolith.")
+    xs = [b["at"][0] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [b["at"][1] + s * BAY[int(b["mount"][-1])] / 2 for b in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    layout = {
+        "identity": {"key": "layout.shaft-furnace-airless", "name": "Hydrogen shaft furnace, airless",
+                     "description": "Direct reduction by hydrogen on airless ground at about a moon's gravity: the gas loop at 8 bar so the top gas's water condenses warm enough for radiators to take its heat, the sponge iron discharged hot through a lock straight to the arc furnace shop, the heat to fields of radiators. Hydrogen leaking into vacuum just leaves (no air, no fire), so the tower is an open lattice for bracing, not for venting. Built separately from the plant for air."},
+        "stands_for": "module.shaft-furnace",
+        "site": {"atmosphere": "none", "gravity": list(MOON_G)},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": top, "mass": r(total)},
+        "bays": bays, "links": links,
+        "frame": {"box": list(box), "cell": cell, "shape": f"An open braced tower {box[3] - box[0]:.0f} x {box[4] - box[1]:.0f} m and {top:.0f} m tall of aluminium kit struts round the shaft; six grating platforms; no cladding.",
+                  "openings": [list(o) for o in openings], "members": members, "carries": [f"unit.{sh_key}"], "mass": r(frame_mass), "sized": sized},
+        "ground": ground,
+        "totals": {"rate": S_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": smod.get("staff"),
+        "basis": [{"of": ["bays", "links", "frame.box"], "tier": "invented", "review": True, "note": "Laid out as the plant for air, for airless ground; the loop's pressure and temperatures from memory of high-pressure shafts."},
+                  {"of": ["totals"], "tier": "derived", "review": True, "note": "The heat balance as for air with the loop at 8 bar: the recuperator stops above the top gas's dew point, the condenser takes the rest down to 80 deg C."},
+                  {"of": ["frame.members", "frame.mass"], "tier": "derived", "review": True, "note": "Counted from the lattice; sections chosen by the loads in frame.sized."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Sintered regolith at 2,500 kg/m3, loose at 1,500."},
+                  {"of": ["physical"], "tier": "derived", "note": "Summed from the units, links, frame and ground."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.shaft-furnace-airless: {total / 1000:,.0f} t, {power / 1e6:.0f} MW (heater {HP_Q_HEATER / 1e6:.0f}, comp {HP_W_COMP / 1e6:.1f}), {heat / 1e6:.0f} MW to {n_rad} fields of {recs[rad]['rejects']['heat'] / 1e6:.2f} MW, T_pre {HP_T_PRE:.0f} C")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -2139,9 +2338,11 @@ def main():
     us.update(yard_units())
     us.update(airless_units(us))
     us.update(airless_ladle_units(us))
+    us.update(shaft_airless_units(us))
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
-               "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs)}
+               "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),
+               "shaft-furnace-airless": shaft_furnace_airless(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)
