@@ -81,7 +81,7 @@ links:
   length: 21.0
   item: material.structural-steel-a36
   mass: 2520.0
-  note: under the slag door, out of the north door
+  note: two 60 kg/m rails at 2.5 m gauge between the heads' inner faces, running plane the floor; under the slag door, out of the north door
 - kind: pipe
   name: cooling water to the hall
   from: [-24.0, -6.0, 0.75]

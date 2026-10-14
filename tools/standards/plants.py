@@ -194,7 +194,7 @@ def car_units():
     vol = SLAG / 1500 * 1.25
     out["slag-pot-car"] = dict(
         name=f"Slag pot car, {vol:.0f} m3", size_class=1, dims=(5.0, 3.5, 3.4),
-        desc="A cast steel pot on a rail car that runs under the furnace's slag door and takes the slag out to be cooled and broken.",
+        desc="A tapered cast steel pot (2.9 m across at the top, 2.5 m at the bottom, 1.74 m deep) seated on a four-wheel rail car that runs under the furnace's slag door and takes the slag out to be cooled and broken. It travels along its length; 2.5 m gauge between the heads' inner faces, its origin on the running plane; the pot's lip 3.4 m up. The slag falls from the vessel's door through the platform's slag tunnel; the car has no chute.",
         built_of=[part("Pot", A36, 25 * 0.08 * RHO["steel"] * vol / 10, f"cast steel 80 mm, {vol:.0f} m3"),
                   part("Car", A36, 9000.0, "from memory"),
                   part("Drives", "good.electric-motors", 1500.0, "from memory")],
@@ -363,7 +363,7 @@ def main():
         link("duct", "off-gas", (-10.0, 7.5, 13.5), (6.0, 24.0, 15.0), A36, math.pi * 2.0 * 0.010 * RHO["steel"], None, f"2 m across, 10 mm plate, water-cooled for its first part (it takes about {OFFGAS_SHARE:.0%} of the arc's power from the hot gas, from memory), with the burn-out gap where air comes in and the CO burns; from the roof's fourth hole, 2 m east and 1.5 m north of the electrodes, to the baghouse's inlet", heat=OFFGAS_SHARE * P),
         link("busbar", "secondary bus", (-12.0, -3.5, 4.0), (-12.0, 0.8, 7.3), CU, 3 * bus_area * RHO["copper"], None, f"three water-cooled copper tube bars, {bus_area * 1e6:.0f} mm2 each for {I2 / 1000:.0f} kA at 4 A/mm2; from the transformer's three secondary terminals (its +y face, x -1.3, 0 and +1.3 m, 4 m up) through the vault wall to three insulated terminals spread 1.3 m apart along x behind the mast bank, then the furnace's cables"),
         link("rail", "ladle rail", (-7.5, 6.0, 0.0), (30.0, 6.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails (heads 72 mm wide) at 3 m gauge between the heads' inner faces, as railways measure it; their running plane the floor (z 0), under the tap, out of the hall's east door to the ladle station"),
-        link("rail", "slag rail", (-16.5, 0.0, 0.0), (-16.5, 21.0, 0.0), A36, 2 * 60.0, None, "under the slag door, out of the north door"),
+        link("rail", "slag rail", (-16.5, 0.0, 0.0), (-16.5, 21.0, 0.0), A36, 2 * 60.0, None, "two 60 kg/m rails at 2.5 m gauge between the heads' inner faces, running plane the floor; under the slag door, out of the north door"),
         link("pipe", "cooling water to the hall", (-24.0, -6.0, 0.75), (-18.0, 0.0, 5.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's first port pair"),
         link("pipe", "cooling water to the baghouse", (-24.0, -1.5, 0.75), (-6.0, 24.0, 2.0), A36, pipe_m, None, "a pair of 500 mm pipes, 8 mm wall, flow and return, from the tower's second port pair"),
     ]

@@ -821,7 +821,7 @@
 - { record: law.tube-mass, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "a2f143c80b1de3d3" }
 - { record: law.tube-time, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "934385090028c5e6" }
 - { record: law.year, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "29f1ef4424e5cc98" }
-- { record: layout.arc-furnace-air, at: "2026-10-14T14:42:12Z", status: draft, summary: "changed: links", sha: "d5df5d69bd5b947f" }
+- { record: layout.arc-furnace-air, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed: links", sha: "af829616e0038773" }
 - { record: market.art, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "517671b6a46daee3" }
 - { record: market.artifacts, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "6b51c19897f56c1a" }
 - { record: market.biologics, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "003ee842af8f7674" }
@@ -2716,8 +2716,8 @@
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T13:48:05Z", status: draft, summary: "changed", sha: "c3f8d82e8f55274a" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T13:57:32Z", status: draft, summary: "changed", sha: "341b2e97a3acbe52" }
 - { record: unit.hall-crane-20t, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "5e8e21a5adca9521" }
-- { record: unit.ladle-car-80t, at: "2026-10-14T14:48:21Z", status: draft, summary: "changed: visual", sha: "22f757f930d6ec46" }
-- { record: unit.slag-pot-car, at: "2026-10-14T02:49:38Z", status: draft, summary: "first tracked", sha: "2934b5dd3f375f29" }
+- { record: unit.ladle-car-80t, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed", sha: "455ad05163bdf8c8" }
+- { record: unit.slag-pot-car, at: "2026-10-14T14:50:41Z", status: draft, summary: "changed: identity", sha: "363423c4fb02aa78" }
 - { record: vocabulary.asteroid, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "c85b5b93f49a4621" }
 - { record: vocabulary.asteroid-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "3893f86924156b47" }
 - { record: vocabulary.asteroid-moon, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "8de295aa732db166" }
