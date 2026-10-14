@@ -10,13 +10,8 @@ built_of:
 - {what: Filter bags, item: material.ptfe, mass: 1389.0, note: '737 bags 150 mm across and 8 m long, 2778 m2 of PTFE-membrane cloth at 0.5 kg/m2'}
 - {what: Fan and motor, item: good.electric-motors, mass: 4000.0, note: 'an induced-draught fan, 8 t for 400,000 m3/h, in proportion; from memory'}
 needs: {power: 296300.0}
-visual:
-  format: "freefall-model/1"
-  path: "models/baghouse-200k/v1"
-  manifest_sha256: "231f35b8d6e30c34a6d6724812d3d620a44d0df1a604c49b5405e8021a64e5f2"
-  version: 1
-  triangles: 4932
 life: 788940000
+visual: {format: freefall-model/1, path: models/baghouse-200k/v1, manifest_sha256: 231f35b8d6e30c34a6d6724812d3d620a44d0df1a604c49b5405e8021a64e5f2, version: 1, triangles: 4932}
 basis:
 - of: [physical, built_of, needs.power]
   tier: invented

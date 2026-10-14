@@ -373,6 +373,19 @@ def ladle_units():
         holds=8 * vol1 * 3500 * 0.8, needs={"power": 40000.0},
         basis=[{"of": ["physical", "built_of", "holds"], "tier": "derived", "review": True, "note": f"Eight bins of {vol1:.1f} m3 at about 3,500 kg/m3 of ferroalloy lumps (from memory), four fifths full."}])
     out["baghouse-200k"] = baghouse_unit(200000, (12.0, 8.0, 12.0))
+    # Stair tower: four flights to a 12 m walkway in a 3 x 6 m lattice of kit struts.
+    sg, _, sn, _ = lattice((-1.5, -3.0, 0.0, 1.5, 3.0, 12.0), 3.0, 3, None, [])
+    ssec = frames.lightest_section((4 * 750.0 + 3.0 * 6.0 * 5000.0) * G / 4, with_diagonal=True)
+    sframe = sum(n * strut(ssec, 3.0, diag)[1]["physical"]["mass"] for g_ in ("wall", "roof") for diag, n in ((False, sg[g_][0]), (True, sg[g_][1])))
+    snode = yaml.safe_load(open(S + "mill-stock/" + strut(ssec, 3.0)[1]["kit"]["node"].split(".", 1)[1].upper() + ".yaml"))
+    sframe += sn * frames.node_mass(snode, frames.materials())
+    out["stair-tower-12m"] = dict(
+        name="Stair tower, 12 m", size_class=1, fits="bay-s1", dims=(3.0, 6.0, 12.0),
+        desc="Four flights of steel stairs (3 m rise each, 37 degrees, 0.9 m wide) with a landing at each turn, inside a 3 x 6 m lattice of kit struts; the top landing on its -x face at local (-1.5, 0, 12) meets a walkway. For people and hand tools only.",
+        built_of=[part("Stairs and landings", A36, 4 * 750.0, "four flights with treads and rails and their landings, 750 kg each, from memory"),
+                  part("Frame", f"stock.{ssec}-s3000", sframe, f"the lattice in {ssec} with its nodes, the kit's lightest for its own weight and 5 kPa on its landings with half again to spare")],
+        needs={},
+        basis=[{"of": ["physical", "built_of"], "tier": "derived", "review": True, "note": "Frame counted from its lattice; the stairs from memory."}])
     out["ladle-crane-150t"] = bridge_crane_unit(150000.0, 22.8, 37500.0)
     return out
 
@@ -666,7 +679,8 @@ def ladle_station_air(us, recs):
         {"id": "L", "mount": "plant-mount.bay-s2", "unit": "unit.ladle-furnace-80t", "at": [-9.0, 0.0, 0.0], "note": "over the ladle rail; the car stops at x -9 under its roof"},
         {"id": "T", "mount": "plant-mount.bay-s1", "unit": "unit.furnace-transformer-14mva", "at": [-9.0, -9.0, 0.0], "note": "in a fire-walled vault (y -12 to -6) south of the ladle furnace, its terminals facing it"},
         {"id": "D", "mount": "plant-mount.bay-s2", "unit": "unit.vacuum-degasser-80t", "at": [6.0, -7.0, 0.0], "note": "south of the rail, its box from y -12 to the car's lane at -2: the tank at (3, -5), its rim 0.7 m clear of the lane; the crane lifts the ladle from the car stopped at x 3"},
-        {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [-9.0, 27.0, 0.0], "note": "outside, north, its 24 m bay clear of the hall's wall (y 15); a stair tower (not yet sized) up to its walkway's access at (-3, 27, 12), for filling and the feeders' upkeep"},
+        {"id": "A", "mount": "plant-mount.bay-s3", "unit": "unit.alloy-bins-8", "at": [-9.0, 27.0, 0.0], "note": "outside, north, its 24 m bay clear of the hall's wall (y 15)"},
+        {"id": "S", "mount": "plant-mount.bay-s1", "unit": "unit.stair-tower-12m", "at": [-1.0, 27.0, 0.0], "note": "against the bins' east end, its top landing at the walkway's access (-3, 27, 12); its 6 m square overlaps the bins' bay at its edge, not the bins"},
         {"id": "B", "mount": "plant-mount.bay-s2", "unit": "unit.baghouse-200k", "at": [9.0, 24.0, 0.0], "note": "outside, north-east"},
         {"id": "C", "mount": "plant-mount.bay-s3", "unit": "unit.cooling-tower-1cell", "at": [-33.0, -9.0, 0.0], "note": "outside, west of the hall and south of the rail"},
     ]
@@ -692,9 +706,10 @@ def ladle_station_air(us, recs):
         {"what": "Degasser floor", "item": CONC, "volume": r(12 * 10 * 0.5 - math.pi * (pit_r + 0.6) ** 2 * 0.5), "note": "x 0 to 12, y -12 to -2 round the pit, 0.5 m"},
         {"what": "Transformer vault", "item": CONC, "volume": r(8 * 6 * 0.5 + 28 * 6 * 0.3), "note": "x -13 to -5, y -12 to -6 round the transformer: a 0.5 m slab and 0.3 m fire walls 6 m tall; the bus through its north wall, 1 m short of the ladle furnace's box"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
-        {"what": "Bins footing", "item": CONC, "volume": 72.0, "note": "12 x 6 x 1 m at (-9, 27), pads under the six feet"},
+        {"what": "Bins footing", "item": CONC, "volume": r(12.8 * 6.6 * 1.0), "note": "12.8 x 6.6 x 1 m at (-9, 27), past the bins' feet (12.56 x 6.30, blender)"},
+        {"what": "Stair tower footing", "item": CONC, "volume": r(3.6 * 6.6 * 0.6), "note": "under the stair tower"},
         {"what": "Baghouse slab", "item": CONC, "volume": r(12 * 8 * 0.6)},
-        {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * 12.6 * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 5 * 0.6 * 0.6 * 2.0), "note": f"sunk as the furnace shop's: 0.3 m walls round its {tw:.0f} x 12 m footprint, tops at z 0, floor top at z -2; five pedestals"},
+        {"what": "Cooling tower basin", "item": CONC, "volume": r((tw + 0.6) * 12.6 * 0.5 + 2 * (tw + 0.3 + 12.3) * 2.0 * 0.3 + 8 * 0.6 * 0.6 * 2.0), "note": f"sunk as the furnace shop's: 0.3 m walls round its {tw:.0f} x 12 m footprint, tops at z 0, floor top at z -2; eight pedestals, under the tower's four feet and its skid's four corners (blender)"},
         {"what": "Rail beds", "item": CONC, "volume": r(48 * 0.125), "note": "under the ladle rail, 0.125 m3 a metre as the furnace shop's"},
     ]
     for g in ground:
