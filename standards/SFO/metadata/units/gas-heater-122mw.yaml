@@ -1,16 +1,16 @@
 # yaml-language-server: $schema=../../schema/unit.schema.yaml
 # Written by tools/standards/plants.py: change it there.
-identity: {key: unit.gas-heater-122mw, name: 'Hydrogen heater, 122 MW', description: 'Heats 14.3 kg/s of hydrogen from 300 to 900 deg C with electric resistance elements: 4 lined vessels 4 m across and 16 m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit''s centre line. The gas in at the bottom of each from a cold header (2.26 m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit''s face (x -12); out at the top of each into a lined hot header (3.23 m bore inside 200 mm of refractory, 16 mm shell, 3.67 m outside) along x at y 4, z 15, from x -10 to 10, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit''s top. Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header''s flange). The headers'' supports are the unit''s own.'}
+identity: {key: unit.gas-heater-122mw, name: 'Hydrogen heater, 122 MW', description: 'Heats 14.3 kg/s of hydrogen from 300 to 900 deg C with electric resistance elements: 4 lined vessels 4 m across and 16 m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit''s centre line. The gas in at the bottom of each from a cold header (2.26 m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit''s face (x -12); out at the top of each into a lined hot header (3.23 m bore inside 200 mm of refractory, 16 mm shell, 3.67 m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit''s top. Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header''s flange). The headers'' supports are the unit''s own.'}
 size_class: 3
 fits: plant-mount.bay-s3
-physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1088000.0}
+physical: {length: 24.0, width: 12.0, height: 18.0, mass: 1093000.0}
 built_of:
 - {what: Vessels, item: material.structural-steel-a36, mass: 177600.0, note: '4 vessels 4 m across, 16 m, 25 mm plate, heads twice the disc'}
 - {what: Lining, item: good.refractory-brick, mass: 669500.0, note: 300 mm}
 - {what: Elements, item: material.stainless-steel-304, mass: 39450.0, note: 'FeCrAl strip, which the registry has not got: stainless steel stands for it; 39 t at 20 kW/m2 of surface'}
-- {what: Cold header, item: material.structural-steel-a36, mass: 13450.0, note: '20 m of 2.26 m pipe, 12 mm wall'}
-- {what: Hot header, item: material.structural-steel-a36, mass: 28800.0, note: '20 m of 3.63 m shell, 16 mm plate'}
-- {what: Hot header lining, item: good.refractory-brick, mass: 129400.0, note: 200 mm}
+- {what: Cold header, item: material.structural-steel-a36, mass: 13780.0, note: '20.5 m of 2.26 m pipe, 12 mm wall'}
+- {what: Hot header, item: material.structural-steel-a36, mass: 29520.0, note: '20.5 m of 3.63 m shell, 16 mm plate'}
+- {what: Hot header lining, item: good.refractory-brick, mass: 132700.0, note: 200 mm}
 - {what: 'Branches, supports, terminals and controls', item: material.structural-steel-a36, mass: 30000.0, note: from memory}
 needs: {power: 124800000.0}
 life: 788940000

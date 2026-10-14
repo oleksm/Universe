@@ -1014,7 +1014,7 @@ def shaft_units():
     hr = n_h * math.pi * ((Dh / 2) ** 2 - (Dh / 2 - 0.3) ** 2) * Hh * RHO["refractory"]
     hd_c = main_dia(mol_flow(GAS), T_PRE, P_SHAFT)     # m bore of the cold header, as the layout's warm gas pipe
     hd_h = main_dia(mol_flow(GAS), T_GAS, P_SHAFT)     # m bore of the hot header, as the layout's hot duct
-    hL = 20.0
+    hL = 20.5                                         # m: the hot header x -10.25 to 10.25, clear of the end branches (2.03 m outside at x +-9)
     hdr_c = math.pi * (hd_c + 0.012) * 0.012 * hL * RHO["steel"]
     hdr_hs = math.pi * (hd_h + 0.4 + 0.016) * 0.016 * hL * RHO["steel"]
     hdr_hr = math.pi * (hd_h + 0.2) * 0.2 * hL * RHO["refractory"]
@@ -1022,7 +1022,7 @@ def shaft_units():
         name=f"Hydrogen heater, {Q_HEATER / 1e6:.0f} MW", size_class=3, fits="bay-s3", dims=(24.0, 12.0, 18.0),
         desc=(f"Heats {GAS:.1f} kg/s of hydrogen from {T_PRE:.0f} to {T_GAS:.0f} deg C with electric resistance elements: {n_h} lined vessels {Dh:g} m across and {Hh:g} m tall (z 0.5 to 16.5) in a row along x at 6 m (x -9, -3, 3, 9), on the unit's centre line. "
               f"The gas in at the bottom of each from a cold header ({hd_c:.2f} m bore, 12 mm wall) along x at y -3.3, z 2, whose inlet flange is on its -x end at the unit's face (x -12); "
-              f"out at the top of each into a lined hot header ({hd_h:.2f} m bore inside 200 mm of refractory, 16 mm shell, {hd_h + 0.432:.2f} m outside) along x at y 4, z 15, from x -10 to 10, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit's top. "
+              f"out at the top of each into a lined hot header ({hd_h:.2f} m bore inside 200 mm of refractory, 16 mm shell, {hd_h + 0.432:.2f} m outside) along x at y 4, z 15, from x -10.25 to 10.25, whose outlet is a stub up from its middle (x 0) to a flange at z 18, the unit's top. "
               "Its power by cables from its transformer to a terminal house at its -x end, on the +y side (clear of the cold header's flange). The headers' supports are the unit's own."),
         built_of=[part("Vessels", A36, hv, f"{n_h} vessels {Dh:g} m across, {Hh:g} m, 25 mm plate, heads twice the disc"),
                   part("Lining", REF, hr, "300 mm"),
