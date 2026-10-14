@@ -4315,3 +4315,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.vacuum-degasser-80t
+    version: 1
+    manifest_sha256: "6c9ff58be0366a24c0f3c71096b72d95ee06c68f9913180f72a43d62b9200f8d"
+    installed: 122db8df
+    game: "the loader (world::assets) at fso 122db8df"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/vacuum-degasser-80t/v1 (756472 bytes, bounds [-6.0, -6.0, -4.975] to [5.9, 2.7, 4.65]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
