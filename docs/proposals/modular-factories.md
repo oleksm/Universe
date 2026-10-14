@@ -140,6 +140,13 @@ The owner left the next step to registry's judgement ("things are made of anythi
   - Units can now say what they reject (`rejects: heat, temperature`).
 - `layouts/ladle-station-airless.yaml`: the vacuum does the degasser's work. The ladle stands a quarter hour on an open stand while argon stirs it, then goes under a sealed ladle furnace that adds the alloys under 50 kPa of argon. Open to vacuum, a 1% manganese melt would lose about a fifth of its manganese in that time. There is no degasser and no ladle crane, since nothing is lifted into a tank. 1,625 t against 2,925 for air.
 - `layouts/casting-bay-airless.yaml`: teeming as for air, under 150 t and 20 t gantry cranes on their own legs, sized for 2 m/s2. The moulds and ingots cool by radiation alone; how much longer the second train stands is not yet worked out.
+- `layouts/shaft-furnace-airless.yaml`: on a sunlit moon the hard part is the heat. In the plant for air, about 100 MW of 40 °C heat goes up the cooling towers, and radiators that cool would cover tens of hectares. So:
+  - The gas loop runs at 8 bar, as high-pressure shafts do. The top gas's water then condenses near 116 °C, and its heat goes to radiator fields at 345 K.
+  - The recycle compressor only makes up the loop's pressure drop: 4.1 MW instead of 20.
+  - The sponge iron leaves hot (650 °C) through a pressure lock. In vacuum it cannot rust, so there is no cooling zone or cooling loop.
+  - 127 MW and 62 MW to 43 radiator fields (10 ha), against 152 MW and 130 MW up the towers for air.
+- `layouts/hydrogen-plant-airless.yaml`: the electrolyser blocks run at 10 bar in the open, feeding the shaft furnace's loop with no compressor. All their water comes back from the shaft furnace, and the oxygen is kept. 23.8 MW go to 17 radiator fields.
+- Open: the pellet plant on airless ground. The grate fires the pellets by drawing oxidising gas down through the bed, and that has no simple sealed form. Two ways to choose between later: a sealed grate-kiln on a recirculated gas loop, using the hydrogen plant's oxygen, which matches the recipe's 1.6 kg/s; or no pellets at all, reducing the ore fines in a fluidised bed of hydrogen. The yards on airless ground are also open: there is no timber for crates, and the ore yard has no water for its dust sprays.
 
 Sizing helpers shared by the generators: `frames.lattice_count`, `frames.strut_capacity`, `frames.lightest_section`.
 
