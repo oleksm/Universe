@@ -868,7 +868,7 @@ def casting_bay_air(us, recs):
     mobile += [{"unit": "unit.ingot-car-40t", "rides": "ingot rail", "at": [15.0, 6.0, 0.0]}]
     ground = [
         {"what": "Casting floor", "item": CONC, "volume": r(x_in * span_in * 0.4), "note": f"a 0.4 m slab over the hall's floor, {x_in:.0f} x {span_in:.0f} m, so spilt steel meets concrete, not soil"},
-        {"what": "Teeming pit", "item": CONC, "volume": r(30 * 6 * 0.3), "note": "x -30 to 0, y -9 to -3: a 0.3 m deeper lining under the teeming, to catch a spill"},
+        {"what": "Teeming pit", "item": CONC, "volume": r(30 * 6 * 0.3), "note": "x -30 to 0, y -9 to -3: 0.3 m more concrete below the floor slab under the teeming, its top flush with the floor (z 0) so the rails sit as elsewhere: a spill freezes on the floor and the thicker slab keeps it off the ground beneath"},
         {"what": "Frame footings", "item": CONC, "volume": r(ground_nodes * 2.25), "note": f"a 1.5 x 1.5 x 1 m pad under each of the lattice's {ground_nodes} ground nodes"},
     ]
     for g in ground:
