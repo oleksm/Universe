@@ -4063,3 +4063,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.dri-bin-200t
+    version: 1
+    manifest_sha256: "645258c5520f113d6bb15698eb1955bcbe62f93a416ab3858055398d1541096a"
+    installed: e408d15e
+    game: "the loader (world::assets) at fso e408d15e"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/dri-bin-200t/v1 (307712 bytes, bounds [-3.0, 0.0, -3.0] to [3.0, 15.3, 3.01]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
