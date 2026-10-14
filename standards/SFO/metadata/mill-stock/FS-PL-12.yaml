@@ -1,0 +1,18 @@
+# yaml-language-server: $schema=../../schema/mill-stock.schema.yaml
+identity:
+  key: stock.fs-pl-12
+  code: FS-PL-12
+  name: "fused silica plate 12 mm"
+  traded_as: market.minerals
+  form: plate
+  temper: "annealed, polished"
+package: package.plate-stack
+tint: [0.85, 0.9, 0.92]
+made_from:
+  - item: material.fused-silica
+size:
+  thickness: 0.012
+  length: 1.5
+  width: 1.5
+basis:
+  - { of: [size], tier: invented, review: true, note: "Window glass: the gauges the viewports' panes come to (equipment.utility.window.s1, s2), sold in polished blanks 1.5 m square, enough for the S2's 1.49 m pane. Chosen." }

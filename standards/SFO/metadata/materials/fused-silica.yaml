@@ -5,6 +5,8 @@ identity:
   key: material.fused-silica
   name: Fused silica
   class: glass
+  form:
+  - plate
   composition:
   - part: element.si
     share: 0.467

@@ -504,8 +504,8 @@
 - { record: equipment.utility.refuelling-port.s1, at: "2026-10-13T18:47:21Z", status: draft, summary: "changed: visual", sha: "3c30b51453242ef5" }
 - { record: equipment.utility.suits.s1, at: "2026-10-12T00:52:18Z", status: draft, summary: "changed: visual", sha: "2410dcd4ec4f928c" }
 - { record: equipment.utility.transfer.boom, at: "2026-10-13T19:14:06Z", status: draft, summary: "changed: visual", sha: "b390569c732891a4" }
-- { record: equipment.utility.window.s1, at: "2026-10-13T19:28:03Z", status: draft, summary: "changed: visual", sha: "ea70f128c22a8636" }
-- { record: equipment.utility.window.s2, at: "2026-10-12T00:19:28Z", status: draft, summary: "changed: visual", sha: "3218d61a505e2c69" }
+- { record: equipment.utility.window.s1, at: "2026-10-14T01:47:58Z", status: draft, summary: "changed: built_of, basis", sha: "9730a7473504e93d" }
+- { record: equipment.utility.window.s2, at: "2026-10-14T01:47:58Z", status: draft, summary: "changed: physical, built_of, basis", sha: "5f3d9382050291f3" }
 - { record: facility.treistun.ashfall-camp.ashfall-life-support, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "0b27523c1caa4f00" }
 - { record: facility.treistun.ashfall-camp.ashfall-mine, at: "2026-10-06T18:38:56Z", status: "", summary: "changed: modules", sha: "fa007901d7ff41a3" }
 - { record: facility.treistun.ashfall-camp.ashfall-power-station, at: "2026-10-06T18:25:49Z", status: "", summary: "first tracked", sha: "b86cf193f2405fbb" }
@@ -852,7 +852,7 @@
 - { record: material.d-he3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "95cc7aff5ad7f8d1" }
 - { record: material.d-t, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "3727abb5d8549761" }
 - { record: material.deuterium, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "c18843da0cb0ca3d" }
-- { record: material.fused-silica, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "51744f8a80a6dc50" }
+- { record: material.fused-silica, at: "2026-10-14T01:47:58Z", status: review, summary: "changed: identity", sha: "9cea1619c54b3692" }
 - { record: material.gold, at: "2026-10-06T19:17:39Z", status: review, summary: "changed: identity", sha: "e066e4b18ad2df65" }
 - { record: material.helium-3, at: "2026-10-05T16:52:43Z", status: review, summary: "first tracked", sha: "566c90a94918ede3" }
 - { record: material.high-strength-steel-4340, at: "2026-10-14T01:29:44Z", status: review, summary: "changed: identity", sha: "4846a6f75f86b9c9" }
@@ -926,7 +926,7 @@
 - { record: module.fusion-power-station, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "6a5bdc8121dd1e12" }
 - { record: module.gas-well, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "87bd449e5ddf5dbd" }
 - { record: module.general-warehouse, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "94ac9dafa1aa51e9" }
-- { record: module.glassworks, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d1954bd11ce20472" }
+- { record: module.glassworks, at: "2026-10-14T01:47:58Z", status: review, summary: "changed: recipes, basis", sha: "5c5ddb42e816eaa1" }
 - { record: module.gold-works, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "d944e8ad72cfcf2a" }
 - { record: module.grain-silo, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "e0dec37d17cbeb5c" }
 - { record: module.grow-hall, at: "2026-10-07T03:28:39Z", status: review, summary: "changed: basis", sha: "0386f6f594d065b9" }
@@ -2025,6 +2025,10 @@
 - { record: stock.flax-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "c748a510ff7abcc2" }
 - { record: stock.flour-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "f1c1e325a9491ad2" }
 - { record: stock.fossil-placer-ore-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "e4bef8e3573710fb" }
+- { record: stock.fs-pl-12, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "01b3645dddb9e935" }
+- { record: stock.fs-pl-27, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "e6567b012f589aa5" }
+- { record: stock.fs-pl-54, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "ade353360ba04ad6" }
+- { record: stock.fs-pl-6, at: "2026-10-14T01:47:58Z", status: review, summary: "first tracked", sha: "15ca3960ba4535ab" }
 - { record: stock.garlic-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "7c277d47f23cd23f" }
 - { record: stock.glass-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "1b3735a0ccbfff9e" }
 - { record: stock.glycerine-bulk, at: "2026-10-11T03:57:33Z", status: review, summary: "changed: tint", sha: "0fdd950ad1345704" }
