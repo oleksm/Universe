@@ -1,0 +1,304 @@
+# yaml-language-server: $schema=../../schema/layout.schema.yaml
+# Written by tools/standards/plants.py: change it there.
+identity: {key: layout.hydrogen-plant-airless, name: 'Hydrogen plant, airless', description: 'Water split by electricity on airless ground at about a moon''s gravity: 5 electrolyser blocks at 10 bar in the open, their rectifiers beside them, the heat to radiator fields; the water comes back from the shaft furnace, the hydrogen goes to it at its loop''s pressure, the oxygen is kept. Built separately from the plant for air.'}
+stands_for: module.hydrogen-plant
+site:
+  atmosphere: none
+  gravity: [1.6, 2.0]
+physical: {length: 288.0, width: 198.0, height: 25.0, mass: 4751000.0}
+bays:
+- id: E1
+  mount: plant-mount.bay-s3
+  unit: unit.electrolyser-block-20mw-10bar
+  at: [-48.0, 0.0, 0.0]
+  note: on its pad in the open
+- id: E2
+  mount: plant-mount.bay-s3
+  unit: unit.electrolyser-block-20mw-10bar
+  at: [-24.0, 0.0, 0.0]
+  note: on its pad in the open
+- id: E3
+  mount: plant-mount.bay-s3
+  unit: unit.electrolyser-block-20mw-10bar
+  at: [0.0, 0.0, 0.0]
+  note: on its pad in the open
+- id: E4
+  mount: plant-mount.bay-s3
+  unit: unit.electrolyser-block-20mw-10bar
+  at: [24.0, 0.0, 0.0]
+  note: on its pad in the open
+- id: E5
+  mount: plant-mount.bay-s3
+  unit: unit.electrolyser-block-20mw-10bar
+  at: [48.0, 0.0, 0.0]
+  note: on its pad in the open
+- id: R1
+  mount: plant-mount.bay-s2
+  unit: unit.rectifier-transformer-21mva
+  at: [-48.0, -24.0, 0.0]
+  note: south, no fire walls
+- id: R2
+  mount: plant-mount.bay-s2
+  unit: unit.rectifier-transformer-21mva
+  at: [-24.0, -24.0, 0.0]
+  note: south, no fire walls
+- id: R3
+  mount: plant-mount.bay-s2
+  unit: unit.rectifier-transformer-21mva
+  at: [0.0, -24.0, 0.0]
+  note: south, no fire walls
+- id: R4
+  mount: plant-mount.bay-s2
+  unit: unit.rectifier-transformer-21mva
+  at: [24.0, -24.0, 0.0]
+  note: south, no fire walls
+- id: R5
+  mount: plant-mount.bay-s2
+  unit: unit.rectifier-transformer-21mva
+  at: [48.0, -24.0, 0.0]
+  note: south, no fire walls
+- id: P
+  mount: plant-mount.bay-s2
+  unit: unit.hydrogen-purifier
+  at: [72.0, 0.0, 0.0]
+  note: east
+- id: W
+  mount: plant-mount.bay-s2
+  unit: unit.water-treatment
+  at: [72.0, -24.0, 0.0]
+  note: 'south-east: polishes the shaft furnace''s condensate and the ice miners'' water'
+- id: Q
+  mount: plant-mount.bay-s1
+  unit: unit.crew-post
+  at: [-72.0, -24.0, 0.0]
+  note: south-west, under its berm
+- id: RL1
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-120.0, 48.0, 0.0]
+  note: north, in rows of 6
+- id: RL2
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-72.0, 48.0, 0.0]
+  note: north, in rows of 6
+- id: RL3
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-24.0, 48.0, 0.0]
+  note: north, in rows of 6
+- id: RL4
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [24.0, 48.0, 0.0]
+  note: north, in rows of 6
+- id: RL5
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [72.0, 48.0, 0.0]
+  note: north, in rows of 6
+- id: RL6
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [120.0, 48.0, 0.0]
+  note: north, in rows of 6
+- id: RL7
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-120.0, 96.0, 0.0]
+  note: north, in rows of 6
+- id: RL8
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-72.0, 96.0, 0.0]
+  note: north, in rows of 6
+- id: RL9
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-24.0, 96.0, 0.0]
+  note: north, in rows of 6
+- id: RL10
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [24.0, 96.0, 0.0]
+  note: north, in rows of 6
+- id: RL11
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [72.0, 96.0, 0.0]
+  note: north, in rows of 6
+- id: RL12
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [120.0, 96.0, 0.0]
+  note: north, in rows of 6
+- id: RL13
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-120.0, 144.0, 0.0]
+  note: north, in rows of 6
+- id: RL14
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-72.0, 144.0, 0.0]
+  note: north, in rows of 6
+- id: RL15
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [-24.0, 144.0, 0.0]
+  note: north, in rows of 6
+- id: RL16
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [24.0, 144.0, 0.0]
+  note: north, in rows of 6
+- id: RL17
+  mount: plant-mount.bay-s4
+  unit: unit.radiator-field-345k
+  at: [72.0, 144.0, 0.0]
+  note: north, in rows of 6
+mobile:
+- unit: unit.gantry-crane-20t-moon
+  rides: crane rails
+  at: [0.0, 0.0, 0.0]
+links:
+- kind: busbar
+  name: DC bus 1
+  from: [-48.0, -22.5, 2.4]
+  to: [-48.0, -6.0, 3.0]
+  length: 16.51
+  item: material.aluminium-1350
+  mass: 2564.0
+  note: as for air, its insulation spaced for vacuum
+- kind: busbar
+  name: DC bus 2
+  from: [-24.0, -22.5, 2.4]
+  to: [-24.0, -6.0, 3.0]
+  length: 16.51
+  item: material.aluminium-1350
+  mass: 2564.0
+  note: as for air, its insulation spaced for vacuum
+- kind: busbar
+  name: DC bus 3
+  from: [0.0, -22.5, 2.4]
+  to: [0.0, -6.0, 3.0]
+  length: 16.51
+  item: material.aluminium-1350
+  mass: 2564.0
+  note: as for air, its insulation spaced for vacuum
+- kind: busbar
+  name: DC bus 4
+  from: [24.0, -22.5, 2.4]
+  to: [24.0, -6.0, 3.0]
+  length: 16.51
+  item: material.aluminium-1350
+  mass: 2564.0
+  note: as for air, its insulation spaced for vacuum
+- kind: busbar
+  name: DC bus 5
+  from: [48.0, -22.5, 2.4]
+  to: [48.0, -6.0, 3.0]
+  length: 16.51
+  item: material.aluminium-1350
+  mass: 2564.0
+  note: as for air, its insulation spaced for vacuum
+- kind: pipe
+  name: hydrogen header
+  from: [-37.5, -2.5, 8.0]
+  to: [66.0, 0.0, 6.0]
+  length: 108.4
+  item: material.stainless-steel-304
+  mass: 3873.0
+  via:
+  - [-37.5, -2.5, 9.0]
+  - [58.5, -2.5, 9.0]
+  - [58.5, 0.0, 6.0]
+  note: 0.24 m stainless at 10 bar, to the purifier
+- kind: pipe
+  name: hydrogen to the shaft furnace
+  from: [78.0, 0.0, 2.0]
+  to: [110.0, 0.0, 2.0]
+  length: 32.0
+  item: material.stainless-steel-304
+  mass: 1143.0
+  note: 0.525 kg/s at 10 bar, beyond the layout
+- kind: pipe
+  name: oxygen header
+  from: [-37.5, 2.5, 8.0]
+  to: [110.0, 6.0, 9.0]
+  length: 152.0
+  item: material.stainless-steel-304
+  mass: 4093.0
+  via:
+  - [-37.5, 2.5, 9.0]
+  - [58.5, 2.5, 9.0]
+  - [58.5, 6.0, 9.0]
+  note: 'the 4.2 kg/s of oxygen, beyond the layout: on a moon it is worth keeping (crews'' air, the pellet plant''s firing)'
+- kind: pipe
+  name: water in
+  from: [110.0, -24.0, 0.5]
+  to: [78.0, -24.0, 0.5]
+  length: 32.0
+  item: material.stainless-steel-304
+  mass: 595.6
+  note: '150 mm: the shaft furnace''s condensate and make-up from ice, beyond the layout'
+- kind: pipe
+  name: demineralised water
+  from: [66.0, -24.0, 0.5]
+  to: [59.0, 6.0, 1.0]
+  length: 37.04
+  item: material.stainless-steel-304
+  mass: 367.7
+  via:
+  - [62.0, -24.0, 0.5]
+  - [62.0, 6.0, 0.5]
+  note: 4.7 kg/s to the blocks
+- kind: pipe
+  name: loop water to the radiators
+  from: [96.0, 144.0, 1.0]
+  to: [-37.0, 6.0, 1.0]
+  length: 271.0
+  item: material.structural-steel-a36
+  mass: 71950.0
+  via:
+  - [84.0, 144.0, 1.0]
+  - [84.0, 20.0, 1.0]
+  - [-37.0, 20.0, 1.0]
+  note: 'a pair of 0.54 m pipes at about 345 K: 569 kg/s along the 17 radiator fields'' rows to the blocks'' coolers, a branch to the rectifiers'
+- kind: rail
+  name: crane rails
+  from: [-60.0, -12.0, 0.0]
+  to: [60.0, 12.0, 0.0]
+  length: 384.0
+  item: material.structural-steel-a36
+  mass: 38400.0
+  via:
+  - [60.0, -12.0, 0.0]
+  - [60.0, 12.0, 0.0]
+  - [-60.0, 12.0, 0.0]
+  note: the maintenance gantry's two rails, 24 m apart, along the blocks
+ground:
+- {what: Block pads, item: material.regolith-sintered, volume: 576.0, note: 0.4 m of sintered regolith with lye-proof bunds, mass: 1440000.0}
+- {what: Rectifier and outside pads, item: material.regolith-sintered, volume: 336.0, mass: 840000.0}
+- {what: Radiator legs' pads, item: material.regolith-sintered, volume: 49.37, mass: 123400.0}
+- {what: Crew post berm, item: material.regolith, volume: 164.6, mass: 246900.0}
+totals: {rate: 0.525, power: 99010000.0, heat: 23820000.0, water: 0.0, mass: 4751000.0, against_module: 'module.hydrogen-plant: one box, 100 MW. This layout: the same rate; 99.0 MW; 23.8 MW to 17 radiator fields at 345 K (3.9 ha); its 4.7 kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace''s loop with no compressor. 2,101 t of plant, 2,650 t of sintered regolith.'}
+staff:
+- {profession: profession.chemist, count: 2}
+- {profession: profession.plant-operator, count: 4}
+- {profession: profession.technician, count: 1}
+basis:
+- of: [bays, links, mobile]
+  tier: invented
+  review: true
+  note: As the plant for air, for airless ground.
+- of: [totals, physical]
+  tier: derived
+  note: Summed from the units, links and ground.
+- of: [ground]
+  tier: derived
+  review: true
+  note: Sintered regolith at 2,500 kg/m3, loose at 1,500.
+- of: [staff]
+  tier: derived
+  note: The module's watch, unchanged.

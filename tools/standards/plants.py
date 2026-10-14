@@ -2288,6 +2288,90 @@ def shaft_furnace_airless(us, recs):
     return layout, bays
 
 
+def hydrogen_airless_units(us):
+    out = {}
+    b = dict(us["electrolyser-block-20mw"])
+    b["name"] = b["name"] + ", 10 bar"
+    seps = 2 * cyl_shell(2.0, 6.0, 0.025, bottom=2.0) * RHO["steel"]
+    b["built_of"] = [p_ for p_ in us["electrolyser-block-20mw"]["built_of"] if p_["what"] != "Separators"] + [part("Separators", A36, seps, "two vessels 2 m across, 6 m, 25 mm plate for 10 bar (40 MPa)")]
+    b["desc"] = ("The electrolyser block built for airless ground: its stacks and separators held at about 10 bar, so the hydrogen goes to the shaft furnace's 8 bar loop with no compressor, standing in the open on a pad with no hall (in vacuum there is no air for a leak to burn in, but the oxygen side is kept apart and its lines are clean). "
+                 "Its lye at about 80 deg C gives its heat to the layout's loop through its coolers. Otherwise as unit.electrolyser-block-20mw: " + us["electrolyser-block-20mw"]["desc"])
+    b["needs"] = dict(us["electrolyser-block-20mw"]["needs"], atmosphere="any")
+    out["electrolyser-block-20mw-10bar"] = b
+    return out
+
+
+def hydrogen_plant_airless(us, recs):
+    """The hydrogen plant on airless ground: the blocks at 10 bar in the open, radiators for the tower, every kilogram
+    of water kept."""
+    xs_b = [-48.0, -24.0, 0.0, 24.0, 48.0]
+    rad = f"radiator-field-{HP_T_LOOP:.0f}k"
+    loop = N_BLK * (recs["electrolyser-block-20mw-10bar"]["needs"]["heat"] + recs["rectifier-transformer-21mva"]["needs"]["heat"])
+    n_rad = math.ceil(loop / recs[rad]["rejects"]["heat"])
+    cols = 6
+    rad_at = [(-120.0 + 48.0 * (i % cols), 48.0 + 48.0 * (i // cols)) for i in range(n_rad)]
+    bays = [{"id": f"E{i + 1}", "mount": "plant-mount.bay-s3", "unit": "unit.electrolyser-block-20mw-10bar", "at": [x, 0.0, 0.0], "note": "on its pad in the open"} for i, x in enumerate(xs_b)]
+    bays += [{"id": f"R{i + 1}", "mount": "plant-mount.bay-s2", "unit": "unit.rectifier-transformer-21mva", "at": [x, -24.0, 0.0], "note": "south, no fire walls"} for i, x in enumerate(xs_b)]
+    bays += [{"id": "P", "mount": "plant-mount.bay-s2", "unit": "unit.hydrogen-purifier", "at": [72.0, 0.0, 0.0], "note": "east"},
+             {"id": "W", "mount": "plant-mount.bay-s2", "unit": "unit.water-treatment", "at": [72.0, -24.0, 0.0], "note": "south-east: polishes the shaft furnace's condensate and the ice miners' water"},
+             {"id": "Q", "mount": "plant-mount.bay-s1", "unit": "unit.crew-post", "at": [-72.0, -24.0, 0.0], "note": "south-west, under its berm"}]
+    bays += [{"id": f"RL{i + 1}", "mount": "plant-mount.bay-s4", "unit": f"unit.{rad}", "at": [x, y, 0.0], "note": f"north, in rows of {cols}"} for i, (x, y) in enumerate(rad_at)]
+    rt = us["rectifier-transformer-21mva"]
+    rW, rH = rt["dims"][1], rt["dims"][2]
+    bus_a = I_DC / 1.5e6
+    ss = "material.stainless-steel-304"
+    pm = lambda d, t: math.pi * d * t * 7900
+    d_h2 = main_dia(mol_flow(H_RATE), 40.0, 10e5) * math.sqrt(30.0 / 15.0)
+    flow = loop / (4186 * 10)
+    d_cw = math.sqrt(4 * flow / 1000 / 2.5 / math.pi)
+    links = [link("busbar", f"DC bus {i + 1}", (x, -24.0 + rW / 2, rH * 2 / 3), (x, -6.0, 3.0), AL, 2 * bus_a * RHO["aluminium"], None, "as for air, its insulation spaced for vacuum") for i, x in enumerate(xs_b)]
+    links += [
+        link("pipe", "hydrogen header", (xs_b[0] + 10.5, -2.5, 8.0), (66.0, 0.0, 6.0), ss, pm(d_h2, 0.006), None, f"{d_h2:.2f} m stainless at 10 bar, to the purifier", via=[(xs_b[0] + 10.5, -2.5, 9.0), (58.5, -2.5, 9.0), (58.5, 0.0, 6.0)]),
+        link("pipe", "hydrogen to the shaft furnace", (78.0, 0.0, 2.0), (110.0, 0.0, 2.0), ss, pm(d_h2, 0.006), None, f"{H_RATE:.3f} kg/s at 10 bar, beyond the layout"),
+        link("pipe", "oxygen header", (xs_b[0] + 10.5, 2.5, 8.0), (110.0, 6.0, 9.0), ss, pm(math.sqrt(4 * (H_O2 / 32e-3 * 8.314 * 353 / 10e5) / (math.pi * 15.0)), 0.006), None, f"the {H_O2:.1f} kg/s of oxygen, beyond the layout: on a moon it is worth keeping (crews' air, the pellet plant's firing)", via=[(xs_b[0] + 10.5, 2.5, 9.0), (58.5, 2.5, 9.0), (58.5, 6.0, 9.0)]),
+        link("pipe", "water in", (110.0, -24.0, 0.5), (78.0, -24.0, 0.5), ss, pm(0.15, 0.005), None, "150 mm: the shaft furnace's condensate and make-up from ice, beyond the layout"),
+        link("pipe", "demineralised water", (66.0, -24.0, 0.5), (59.0, 6.0, 1.0), ss, pm(0.1, 0.004), None, f"{H_WATER:.1f} kg/s to the blocks", via=[(62.0, -24.0, 0.5), (62.0, 6.0, 0.5)]),
+        link("pipe", "loop water to the radiators", (rad_at[-1][0] + 24.0, rad_at[-1][1], 1.0), (-48.0 + 11.0, 6.0, 1.0), A36, 2 * math.pi * d_cw * 0.010 * RHO["steel"], None, f"a pair of {d_cw:.2f} m pipes at about {HP_T_LOOP:.0f} K: {flow:,.0f} kg/s along the {n_rad} radiator fields' rows to the blocks' coolers, a branch to the rectifiers", via=[(84.0, rad_at[-1][1], 1.0), (84.0, 20.0, 1.0), (-37.0, 20.0, 1.0)]),
+        link("rail", "crane rails", (-60.0, -12.0, 0.0), (60.0, 12.0, 0.0), A36, 2 * 50.0, None, "the maintenance gantry's two rails, 24 m apart, along the blocks", via=[(60.0, -12.0, 0.0), (60.0, 12.0, 0.0), (-60.0, 12.0, 0.0)]),
+    ]
+    mobile = [{"unit": "unit.gantry-crane-20t-moon", "rides": "crane rails", "at": [0.0, 0.0, 0.0]}]
+    ground = [
+        {"what": "Block pads", "item": SINTER, "volume": r(N_BLK * 24 * 12 * 0.4), "note": "0.4 m of sintered regolith with lye-proof bunds"},
+        {"what": "Rectifier and outside pads", "item": SINTER, "volume": r(N_BLK * 12 * 8 * 0.5 + 2 * 12 * 8 * 0.5)},
+        {"what": "Radiator legs' pads", "item": SINTER, "volume": r(n_rad * 4 * (44.0 * 44.0 / 72.0) * 0.027)},
+        {"what": "Crew post berm", "item": "material.regolith", "volume": r(10 * 8 * 3.0 - math.pi * 4 * 6)},
+    ]
+    for g in ground:
+        g["mass"] = r(g["volume"] * (RHO_SINTER if g["item"] == SINTER else 1500.0))
+    used = [recs[b_["unit"].split(".", 1)[1]] for b_ in bays] + [recs[m_["unit"].split(".", 1)[1]] for m_ in mobile]
+    power = sum(u.get("needs", {}).get("power", 0) for u in used)
+    heat = sum(u.get("needs", {}).get("heat", 0) for u in used)
+    mass_units = sum(u["physical"]["mass"] for u in used)
+    mass_links = sum(l["mass"] for l in links)
+    mass_ground = sum(g["mass"] for g in ground)
+    total = mass_units + mass_links + mass_ground
+    against = (f"module.hydrogen-plant: one box, {H_P / 1e6:.0f} MW. This layout: the same rate; {power / 1e6:.1f} MW; {heat / 1e6:.1f} MW to {n_rad} radiator fields at {HP_T_LOOP:.0f} K ({n_rad * 48 * 48 / 1e4:.1f} ha); "
+               f"its {H_WATER:.1f} kg/s of water all comes back from the shaft furnace, none evaporated; no hall; the blocks at 10 bar feed the furnace's loop with no compressor. {(mass_units + mass_links) / 1000:,.0f} t of plant, {mass_ground / 1000:,.0f} t of sintered regolith.")
+    xs = [b_["at"][0] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[0] for l in links for p in (l["from"], l["to"])]
+    ys = [b_["at"][1] + s * BAY[int(b_["mount"][-1])] / 2 for b_ in bays for s in (-1, 1)] + [p[1] for l in links for p in (l["from"], l["to"])]
+    layout = {
+        "identity": {"key": "layout.hydrogen-plant-airless", "name": "Hydrogen plant, airless",
+                     "description": f"Water split by electricity on airless ground at about a moon's gravity: {N_BLK} electrolyser blocks at 10 bar in the open, their rectifiers beside them, the heat to radiator fields; the water comes back from the shaft furnace, the hydrogen goes to it at its loop's pressure, the oxygen is kept. Built separately from the plant for air."},
+        "stands_for": "module.hydrogen-plant",
+        "site": {"atmosphere": "none", "gravity": list(MOON_G)},
+        "physical": {"length": r(max(xs) - min(xs)), "width": r(max(ys) - min(ys)), "height": 25.0, "mass": r(total)},
+        "bays": bays, "mobile": mobile, "links": links, "ground": ground,
+        "totals": {"rate": H_RATE, "power": r(power), "heat": r(heat), "water": 0.0, "mass": r(total), "against_module": against},
+        "staff": hmod.get("staff"),
+        "basis": [{"of": ["bays", "links", "mobile"], "tier": "invented", "review": True, "note": "As the plant for air, for airless ground."},
+                  {"of": ["totals", "physical"], "tier": "derived", "note": "Summed from the units, links and ground."},
+                  {"of": ["ground"], "tier": "derived", "review": True, "note": "Sintered regolith at 2,500 kg/m3, loose at 1,500."},
+                  {"of": ["staff"], "tier": "derived", "note": "The module's watch, unchanged."}],
+    }
+    print(f"layout.hydrogen-plant-airless: {total / 1000:,.0f} t, {power / 1e6:.1f} MW, {heat / 1e6:.1f} MW to {n_rad} fields")
+    return layout, bays
+
+
 def mounts_for(bays, recs):
     # Mounts: each class round what its bays take, a quarter to spare, at the site's most gravity.
     g_max = 9.81 * 1.0
@@ -2339,10 +2423,11 @@ def main():
     us.update(airless_units(us))
     us.update(airless_ladle_units(us))
     us.update(shaft_airless_units(us))
+    us.update(hydrogen_airless_units(us))
     recs = {slug: unit_record(slug, u) for slug, u in us.items()}
     layouts = {"arc-furnace-air": arc_furnace_air(us, recs), "ladle-station-air": ladle_station_air(us, recs), "casting-bay-air": casting_bay_air(us, recs), "shaft-furnace-air": shaft_furnace_air(us, recs), "hydrogen-plant-air": hydrogen_plant_air(us, recs), "pellet-plant-air": pellet_plant_air(us, recs), "ore-yard-air": ore_yard_air(us, recs), "ingot-yard-air": ingot_yard_air(us, recs), "arc-furnace-airless": arc_furnace_airless(us, recs),
                "ladle-station-airless": ladle_station_airless(us, recs), "casting-bay-airless": casting_bay_airless(us, recs),
-               "shaft-furnace-airless": shaft_furnace_airless(us, recs)}
+               "shaft-furnace-airless": shaft_furnace_airless(us, recs), "hydrogen-plant-airless": hydrogen_plant_airless(us, recs)}
     mounts = mounts_for([b for _, bays in layouts.values() for b in bays], recs)
     for slug, d in mounts.items():
         write(S + f"plant-mounts/{slug}.yaml", d)

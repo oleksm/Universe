@@ -826,6 +826,7 @@
 - { record: layout.casting-bay-air, at: "2026-10-14T17:51:14Z", status: draft, summary: "first tracked", sha: "aff1c8c3aeeaf451" }
 - { record: layout.casting-bay-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "c79d0a2965525bdc" }
 - { record: layout.hydrogen-plant-air, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "379207799e0d24b5" }
+- { record: layout.hydrogen-plant-airless, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "7d8c41a2b8a39bdb" }
 - { record: layout.ingot-yard-air, at: "2026-10-14T19:11:30Z", status: draft, summary: "changed", sha: "39f79738e350feef" }
 - { record: layout.ladle-station-air, at: "2026-10-14T19:07:37Z", status: draft, summary: "changed: physical, bays, links, ground, totals", sha: "d3b475ddaa972b7a" }
 - { record: layout.ladle-station-airless, at: "2026-10-14T19:21:56Z", status: draft, summary: "first tracked", sha: "47acf5ee6202ed61" }
@@ -1358,10 +1359,10 @@
 - { record: part.wb-02, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "3796f49a5bc8fa2e" }
 - { record: part.wb-03, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "fc9231a50b47acd4" }
 - { record: part.wb-04, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "63ae488f7cfc4f5a" }
-- { record: plant-mount.bay-s1, at: "2026-10-14T19:26:44Z", status: draft, summary: "changed: basis", sha: "f2ed18df348688e9" }
-- { record: plant-mount.bay-s2, at: "2026-10-14T19:26:44Z", status: draft, summary: "changed: basis", sha: "a09689fe439d41ea" }
-- { record: plant-mount.bay-s3, at: "2026-10-14T19:26:44Z", status: draft, summary: "changed: basis", sha: "1742c3a606da4255" }
-- { record: plant-mount.bay-s4, at: "2026-10-14T19:26:44Z", status: draft, summary: "changed: basis", sha: "a0d2f0e685bb8391" }
+- { record: plant-mount.bay-s1, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "c4a8b0ad066f160e" }
+- { record: plant-mount.bay-s2, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "d1848ab02209882b" }
+- { record: plant-mount.bay-s3, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "e4f71783b5703302" }
+- { record: plant-mount.bay-s4, at: "2026-10-14T19:28:17Z", status: draft, summary: "changed: basis", sha: "748d2f3be058a7e3" }
 - { record: population.biraidim.far-cloud, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "4d04c1b699eb49db" }
 - { record: population.biraidim.shikra-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "86d3c16b41bc181d" }
 - { record: population.biraidim.taumeibru-family, at: "2026-10-05T16:52:43Z", status: "", summary: "first tracked", sha: "2626282163a26720" }
@@ -2748,6 +2749,7 @@
 - { record: unit.eaf-vessel-80t, at: "2026-10-14T16:01:10Z", status: draft, summary: "changed: physical, built_of, visual", sha: "f948e3f34829ba7e" }
 - { record: unit.eaf-vessel-80t-sealed, at: "2026-10-14T19:18:22Z", status: draft, summary: "first tracked", sha: "6a1b4d84de74483c" }
 - { record: unit.electrolyser-block-20mw, at: "2026-10-14T19:01:11Z", status: draft, summary: "first tracked", sha: "acb6b5721d188de4" }
+- { record: unit.electrolyser-block-20mw-10bar, at: "2026-10-14T19:28:17Z", status: draft, summary: "first tracked", sha: "8f4f42aafcbab7aa" }
 - { record: unit.forklift-2t5, at: "2026-10-14T19:10:42Z", status: draft, summary: "first tracked", sha: "f2ec04344ce47c2c" }
 - { record: unit.furnace-transformer-14mva, at: "2026-10-14T18:15:58Z", status: draft, summary: "changed", sha: "f296531f2bc7dd18" }
 - { record: unit.furnace-transformer-90mva, at: "2026-10-14T15:45:44Z", status: draft, summary: "changed: identity", sha: "d7b34abc2bacd989" }
