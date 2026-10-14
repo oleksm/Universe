@@ -34,6 +34,7 @@ mod studio_only;
 mod test_drive;
 mod flight_input;
 mod planet_app;
+mod scene_app;
 mod planet_studio;
 mod planet_view;
 mod standards;
@@ -1612,6 +1613,7 @@ pub const APPS: &[(&str, &str)] = &[
     ("game", "the game: the live world"),
     ("planet", "the planet viewer: every released world, [world id] to open at"),
     ("studio", "the ship studio: [design] to open"),
+    ("scene", "a scene: <file.scene.yaml>, run on its own clocks in a world of its own"),
 ];
 
 /// The launcher: `--apps` lists the apps, `--app <name> [arg]` opens one alone. False: neither was
@@ -1628,6 +1630,18 @@ fn launch(args: &[String]) -> bool {
     match args.get(k + 1).map(String::as_str) {
         Some("game") => return false,
         Some("planet") => planet(&rest),
+        Some("scene") => {
+            let _ = env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("info,wgpu_core=warn,wgpu_hal=warn")).try_init();
+            let Some(path) = rest.get(1).cloned() else {
+                eprintln!("freefall --app scene <file.scene.yaml> (content/scenes has some)");
+                std::process::exit(2);
+            };
+            let scene = scene_app::SceneApp::open(&path).unwrap_or_else(|e| {
+                eprintln!("scene: {e}");
+                std::process::exit(2);
+            });
+            universe_engine::apps::run_prepared(Config { title: "Freefall scene".into(), ..Default::default() }, move || scene);
+        }
         Some("studio") => {
             let mut a = rest.clone();
             a.insert(1, "--studio".into());
