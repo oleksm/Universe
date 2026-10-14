@@ -36,6 +36,7 @@ mod test_drive;
 mod flight_input;
 mod factory_app;
 mod planet_app;
+mod hud_kit;
 mod planet_lod_app;
 mod scene_app;
 mod planet_studio;
