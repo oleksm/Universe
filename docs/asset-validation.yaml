@@ -4375,3 +4375,18 @@ validations:
     pending:
       - "frames in the game: the game does not draw this kind yet (engine)"
       - "GPU look and cost, placement on a real hull"
+  - key: unit.ladle-crane-150t
+    version: 1
+    manifest_sha256: "0f8e3ad4ef5e8ec0b692d35648d1da1b510e78d033b8f6aff3216b4a24ec9233"
+    installed: de4b2e62
+    game: "the loader (world::assets) at fso de4b2e62"
+    date: "2026-10-14"
+    result: partial
+    drawn: false
+    checked:
+      - "loader (cargo test -p universe-world --test visuals): models/ladle-crane-150t/v1 (369424 bytes, bounds [-4.0, -0.1, -11.7] to [4.0, 3.7, 11.7]): pass"
+      - "installer checks at install (size, nodes, budget, static): pass"
+      - "previews (thumb.png, icon.png in the package): pass"
+    pending:
+      - "frames in the game: the game does not draw this kind yet (engine)"
+      - "GPU look and cost, placement on a real hull"
