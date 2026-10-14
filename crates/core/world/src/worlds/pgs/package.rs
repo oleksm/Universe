@@ -842,6 +842,9 @@ impl Package {
         };
         let fe = edges(fine)?;
         let mut out = vec![];
+        let near = std::env::var_os("PGS_VERIFY_NEAR").is_some();
+        // Diagnostic: every counted crossing per level (face, level a b, level-0 a b, t, s, deviation).
+        let dump = std::env::var_os("PGS_VERIFY_DUMP");
         for (i, level) in self.regions[k].levels.iter().enumerate() {
             let file = self.level_file(k, i)?;
             let lp = points(file)?;
@@ -865,6 +868,7 @@ impl Package {
             let le = edges(file)?;
             let cell = level.entry["spacing_m"].as_f64().unwrap_or(1000.0) * r_units;
             let (mut cross_worst, mut cross_n) = (0f64, 0u64);
+            let mut rows: Vec<String> = vec![];
             let (mut point_worst, mut points_n) = (0f64, 0u64);
             let mut counted = vec![false; fp.len()];
             for &rf in &self.regions[k].footprint {
@@ -877,6 +881,15 @@ impl Package {
                 let e2 = nrm.cross(e1);
                 let inv = glam::DMat3::from_cols(a, b, c).inverse();
                 let on = |p: DVec3| { let w = inv * p; (w.x + w.y + w.z - 1.0).abs() <= 1e-9 && w.min_element() >= -1e-12 };
+                if near && i == 0 {
+                    for (j, p) in fp.iter().enumerate() {
+                        let w = inv * p.0;
+                        let (sum, mn) = ((w.x + w.y + w.z - 1.0).abs(), w.min_element());
+                        if (sum > 1e-11 && sum < 1e-7) || (mn.abs() > 1e-14 && mn.abs() < 1e-10) {
+                            eprintln!("PGS_NEAR face {rf} fine point {j} sum_off {sum:e} min_w {mn:e} on {}", on(p.0));
+                        }
+                    }
+                }
                 let xy = |p: DVec3| { let d = p - a; glam::DVec2::new(d.dot(e1), d.dot(e2)) };
                 // Level-0 points on this face against the level's own faces, each once (a point on
                 // an edge two footprint faces share is one overlay vertex).
@@ -932,15 +945,26 @@ impl Package {
                         // Strictly inside both edges; nearer an end it is a vertex touch, a level-0
                         // point already counted.
                         let eps = 1e-9;
+                        if near {
+                            let m = t.min(1.0 - t).min(s).min(1.0 - s);
+                            let r = den.abs() / (da.length() * db.length());
+                            if (m > 1e-11 && m < 1e-7) || r < 1e-7 {
+                                eprintln!("PGS_NEAR L{} face {rf} level ({la},{lb}) fine ({fa},{fb}) t {t:e} s {s:e} den_ratio {r:e} counted {}", level.k, t > eps && t < 1.0 - eps && s > eps && s < 1.0 - eps);
+                            }
+                        }
                         if !(t > eps && t < 1.0 - eps && s > eps && s < 1.0 - eps) { continue; }
                         let (hla, hlb) = (lp[la as usize].1, lp[lb as usize].1);
                         let (hfa, hfb) = (fp[fa as usize].1, fp[fb as usize].1);
                         let d = ((hla + (hlb - hla) * t) - (hfa + (hfb - hfa) * s)).abs();
                         cross_worst = cross_worst.max(d);
                         cross_n += 1;
+                        if dump.is_some() { rows.push(format!("{rf}\t{la}\t{lb}\t{fa}\t{fb}\t{t:.17e}\t{s:.17e}\t{d:.17e}")); }
                         add(d);
                     }
                 }
+            }
+            if let Some(dir) = &dump {
+                std::fs::write(std::path::Path::new(dir).join(format!("{:.8}-L{}.tsv", id, level.k)), rows.join("\n") + "\n").map_err(|e| e.to_string())?;
             }
             let rms = (sq / n.max(1) as f64).sqrt();
             let declared = (level.deviation_max_m, level.entry["deviation_rms_m"].as_f64().unwrap_or(f64::NAN), level.entry["deviation_points"].as_u64());
