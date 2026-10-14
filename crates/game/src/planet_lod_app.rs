@@ -115,7 +115,9 @@ struct Meta {
 struct Ui {
     panel: Option<Hit>,
     hits: Vec<Hit>,
-    in_view: usize,
+    /// The last view-box count, from a worker (one at a time, every 0.3 s).
+    in_view: std::sync::Arc<std::sync::atomic::AtomicUsize>,
+    counting: std::sync::Arc<std::sync::atomic::AtomicBool>,
     sent: usize,
     chunks_drawn: usize,
     tiles_drawn: usize,
@@ -172,6 +174,8 @@ pub struct PlanetLodApp {
     queued: Vec<bool>,
     /// UNIVERSE_PLANETLOD_FLY: the camera descends and drifts by itself (captures ignore the keys).
     fly: bool,
+    /// UNIVERSE_PLANETLOD_MAXDRAW: at most this many chunks drawn (to tell a draw's cost from a triangle's).
+    max_draw: usize,
     meta: Meta,
     ex: f64,
     show_edges: bool,
@@ -187,7 +191,7 @@ pub struct PlanetLodApp {
     scan: [usize; 3],
     risen: (usize, usize),
     /// (altitude, drawn share, fully-in share) as flown, for the chart.
-    history: Vec<[f32; 3]>,
+    history: std::collections::VecDeque<[f32; 3]>,
     last_hist: f64,
     feat: Option<Mesh>,
     pins: Vec<(DVec3, f64, String, bool)>,
@@ -450,6 +454,7 @@ impl PlanetLodApp {
             stats: Stats::default(),
             queued,
             fly: std::env::var_os("UNIVERSE_PLANETLOD_FLY").is_some(),
+            max_draw: std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX),
             meta,
             ex: 1.0,
             show_edges: true,
@@ -462,7 +467,7 @@ impl PlanetLodApp {
             lvl_count: vec![0; 256],
             scan: [0; 3],
             risen: (0, 0),
-            history: vec![],
+            history: Default::default(),
             last_hist: 0.0,
             feat: None,
             pins,
@@ -711,61 +716,53 @@ impl PlanetLodApp {
     /// The chunk's mesh again: its finest triangles through their drawn stand-ins.
     fn build_chunk(&self, c: usize) -> (Mesh, usize) {
         let ch = &self.chunks[c];
-        let d = &self.d;
-        let mut m = WireModel::default();
-        let o = ch.origin;
-        let real = self.view == View::Real;
-        for &t in &ch.tris {
-            let [a, b, cc] = d.ft[t as usize].map(|v| self.resolve(v));
-            if a == b || b == cc || a == cc {
-                continue;
-            }
-            let k = m.positions.len() as u32;
-            for v in [a, b, cc] {
-                m.positions.push((d.pos[v as usize] - o).as_vec3());
-            }
-            m.faces.push([k, k + 1, k + 2]);
-            let rgb = if real { d.col[cc as usize].map(srgb_to_linear) } else { [1.0; 3] };
-            m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
-        }
-        let tris = m.faces.len();
-        if !real {
-            for &e in &ch.edges {
-                let [a, b] = d.fe[e as usize].map(|v| self.resolve(v));
-                if a == b {
-                    continue;
-                }
-                let k = m.positions.len() as u32;
-                m.positions.push((d.pos[a as usize] - o).as_vec3());
-                m.positions.push((d.pos[b as usize] - o).as_vec3());
-                m.colors.extend([[1.0; 4]; 2]);
-                m.edges.push([k, k + 1]);
-            }
-        }
-        (Mesh::new(m), tris)
+        let tris: Vec<[u32; 3]> = ch.tris.iter().map(|&t| self.d.ft[t as usize].map(|v| self.resolve(v))).filter(|[a, b, c]| a != b && b != c && a != c).collect();
+        let edges: Vec<[u32; 2]> = if self.view == View::Mesh {
+            ch.edges.iter().map(|&e| self.d.fe[e as usize].map(|v| self.resolve(v))).filter(|[a, b]| a != b).collect()
+        } else {
+            vec![]
+        };
+        let n = tris.len();
+        (self.model(ch.origin, &tris, &edges), n)
     }
 
     fn build_tiles(&self, g: &TileGroup) -> Mesh {
+        let edges: &[[u32; 2]] = if self.view == View::Mesh { &g.edges } else { &[] };
+        self.model(g.origin, &g.tris, edges)
+    }
+
+    /// A mesh of planet vertices about `origin`. Mesh view: the corners shared, the edges indexing
+    /// them (the engine finds an edge's normal by its ends); Real view: each face its own corners in
+    /// its last corner's colour (the page's flat colour), no edges.
+    fn model(&self, origin: DVec3, tris: &[[u32; 3]], edges: &[[u32; 2]]) -> Mesh {
         let d = &self.d;
         let mut m = WireModel::default();
-        let real = self.view == View::Real;
-        for t in &g.tris {
-            let k = m.positions.len() as u32;
-            for &v in t {
-                m.positions.push((d.pos[v as usize] - g.origin).as_vec3());
-            }
-            m.faces.push([k, k + 1, k + 2]);
-            let rgb = if real { d.col[t[2] as usize].map(srgb_to_linear) } else { [1.0; 3] };
-            m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
-        }
-        if !real {
-            for e in &g.edges {
+        if self.view == View::Real {
+            for t in tris {
                 let k = m.positions.len() as u32;
-                m.positions.push((d.pos[e[0] as usize] - g.origin).as_vec3());
-                m.positions.push((d.pos[e[1] as usize] - g.origin).as_vec3());
-                m.colors.extend([[1.0; 4]; 2]);
-                m.edges.push([k, k + 1]);
+                for &v in t {
+                    m.positions.push((d.pos[v as usize] - origin).as_vec3());
+                }
+                m.faces.push([k, k + 1, k + 2]);
+                let rgb = d.col[t[2] as usize].map(srgb_to_linear);
+                m.colors.extend([[rgb[0], rgb[1], rgb[2], 1.0]; 3]);
             }
+            return Mesh::new(m);
+        }
+        let mut local: std::collections::HashMap<u32, u32> = std::collections::HashMap::with_capacity(tris.len());
+        let mut at = |v: u32, m: &mut WireModel| -> u32 {
+            *local.entry(v).or_insert_with(|| {
+                m.positions.push((d.pos[v as usize] - origin).as_vec3());
+                m.positions.len() as u32 - 1
+            })
+        };
+        for t in tris {
+            let f = [at(t[0], &mut m), at(t[1], &mut m), at(t[2], &mut m)];
+            m.faces.push(f);
+        }
+        for e in edges {
+            let pair = [at(e[0], &mut m), at(e[1], &mut m)];
+            m.edges.push(pair);
         }
         Mesh::new(m)
     }
@@ -940,9 +937,9 @@ impl App for PlanetLodApp {
         if ctx.time - self.last_hist > 0.15 {
             self.last_hist = ctx.time;
             let nm = n.max(1) as f32;
-            self.history.push([self.alt as f32, self.stats.drawn as f32 / nm, self.risen.0 as f32 / nm]);
+            self.history.push_back([self.alt as f32, self.stats.drawn as f32 / nm, self.risen.0 as f32 / nm]);
             if self.history.len() > 5000 {
-                self.history.remove(0);
+                self.history.pop_front();
             }
         }
         let l = &mut self.log;
@@ -1013,8 +1010,7 @@ impl App for PlanetLodApp {
             sent += g.tris.len();
             drawn.push((mesh, g.origin));
         }
-        // (UNIVERSE_PLANETLOD_MAXDRAW: at most this many chunks, to tell a draw's cost from a triangle's.)
-        let max_draw: usize = std::env::var("UNIVERSE_PLANETLOD_MAXDRAW").ok().and_then(|v| v.parse().ok()).unwrap_or(usize::MAX);
+        let max_draw = self.max_draw;
         for ch in &self.chunks {
             if chunks_drawn >= max_draw {
                 break;
@@ -1064,9 +1060,18 @@ impl App for PlanetLodApp {
         ui.chunks_drawn = chunks_drawn;
         ui.tiles_drawn = tiles_drawn;
         ui.pattern_tris = pattern_tris;
-        if ctx.time - ui.last_count > 0.3 {
+        use std::sync::atomic::Ordering;
+        if ctx.time - ui.last_count > 0.3 && !ui.counting.load(Ordering::Acquire) {
             ui.last_count = ctx.time;
-            ui.in_view = view_box_count(&cam, aspect as f32, &drawn);
+            ui.counting.store(true, Ordering::Release);
+            let meshes: Vec<(Mesh, DVec3)> = drawn.iter().map(|(m, o)| ((*m).clone(), *o)).collect();
+            let (out, busy) = (ui.in_view.clone(), ui.counting.clone());
+            let aspect = aspect as f32;
+            std::thread::spawn(move || {
+                let refs: Vec<(&Mesh, DVec3)> = meshes.iter().map(|(m, o)| (m, *o)).collect();
+                out.store(view_box_count(&cam, aspect, &refs), Ordering::Release);
+                busy.store(false, Ordering::Release);
+            });
         }
         if !self.hud {
             ui.panel = None;
@@ -1182,7 +1187,7 @@ impl PlanetLodApp {
         let off = self.tiles.iter().map(|g| g.tris.len()).sum::<usize>();
         p.row("triangles off the pattern", &thousands(off as f64), &format!("{} land · {} sea", kilo(m.land_tris), kilo(m.sea_tris)));
         p.row("sent to the GPU", &thousands(ui.sent as f64), "");
-        p.row("in the view box", &thousands(ui.in_view as f64), "");
+        p.row("in the view box", &thousands(ui.in_view.load(std::sync::atomic::Ordering::Acquire) as f64), "");
         if ui.vis_note {
             p.row("visible", "needs the engine's ID render", "");
         } else {
