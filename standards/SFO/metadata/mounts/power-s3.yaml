@@ -7,18 +7,18 @@ identity:
   size_class: 3
   description: "What a class 3 power plant slot offers, and what fits it."
 envelope:
-  length: 35.1
-  width: 17.6
-  height: 2.2
+  length: 35.2
+  width: 17.9
+  height: 2.39
 bears:
-  mass: 6250.0
+  mass: 11800.0
 attachment:
   points: 8
   pattern: corners
   each:
-    tension: 23000.0
-    compression: 23000.0
-    shear: 11500.0
+    tension: 43300.0
+    compression: 43300.0
+    shear: 21600.0
 feeds:
   cooling: 32500000.0
   fuel: 1.45e-07

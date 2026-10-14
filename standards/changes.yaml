@@ -443,9 +443,9 @@
 - { record: equipment.power.battery.s0, at: "2026-10-13T06:41:10Z", status: draft, summary: "changed: visual", sha: "4d3bfd92acb08d32" }
 - { record: equipment.power.battery.s1, at: "2026-10-12T02:10:45Z", status: draft, summary: "changed: visual", sha: "8e06eecd1ef3a586" }
 - { record: equipment.power.fuelcell.s1, at: "2026-10-13T13:32:36Z", status: draft, summary: "changed: visual", sha: "45d1aee343bd0a5c" }
-- { record: equipment.power.fusion.s1, at: "2026-10-11T20:27:09Z", status: draft, summary: "changed: visual", sha: "a667001cb27bb1c6" }
-- { record: equipment.power.fusion.s2, at: "2026-10-11T03:49:02Z", status: draft, summary: "changed: visual", sha: "4ea82e04d9539e72" }
-- { record: equipment.power.fusion.s3, at: "2026-10-11T20:37:05Z", status: draft, summary: "changed: visual", sha: "09fb2cf3092d898a" }
+- { record: equipment.power.fusion.s1, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: physical, built_of, basis", sha: "c9a50189f3a00d7c" }
+- { record: equipment.power.fusion.s2, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: identity, physical, built_of, basis", sha: "2178ba44fd955a37" }
+- { record: equipment.power.fusion.s3, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: physical, built_of, basis", sha: "2689c404b9562bf5" }
 - { record: equipment.power.solar-array.s2, at: "2026-10-13T14:11:52Z", status: draft, summary: "changed: visual", sha: "f72449f6041078d2" }
 - { record: equipment.power.switchgear.s1, at: "2026-10-12T15:43:34Z", status: draft, summary: "changed: visual", sha: "9918c6813669d603" }
 - { record: equipment.sensors.altimeter.s1, at: "2026-10-12T00:41:34Z", status: draft, summary: "changed: visual", sha: "ac5a015c7002afad" }
@@ -1029,9 +1029,9 @@
 - { record: mount.lift-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "6b35c9456ceaaaa5" }
 - { record: mount.lift-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "b22decd225f5fdea" }
 - { record: mount.lift-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "cedb65151cca5ef7" }
-- { record: mount.power-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "8d0abf5517101457" }
-- { record: mount.power-s2, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "a8adff45792f449b" }
-- { record: mount.power-s3, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "8c3a945c5a2040c7" }
+- { record: mount.power-s1, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "cb04e34cb64fe1d2" }
+- { record: mount.power-s2, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "be79c012d8c24a97" }
+- { record: mount.power-s3, at: "2026-10-14T01:25:20Z", status: draft, summary: "changed: envelope, bears, attachment", sha: "e1c52bce146287fe" }
 - { record: mount.sensors-s1, at: "2026-10-07T03:28:39Z", status: draft, summary: "changed: basis", sha: "1000e803e3158c1b" }
 - { record: mount.tank-s1, at: "2026-10-11T01:40:20Z", status: draft, summary: "changed: bears, attachment", sha: "1246333c6709598d" }
 - { record: mount.tank-s2, at: "2026-10-11T01:40:20Z", status: draft, summary: "changed: bears, attachment", sha: "50ff660ceeb3b06a" }
